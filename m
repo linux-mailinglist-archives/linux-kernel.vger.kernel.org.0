@@ -2,105 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10216D8BCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58226D8BD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:54:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391680AbfJPIyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:54:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53688 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732135AbfJPIye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:54:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 455E6AEC4;
-        Wed, 16 Oct 2019 08:54:33 +0000 (UTC)
-Message-ID: <52cb6d848c5d1d7d0e8dc359e9c3fe6c00ddceeb.camel@suse.de>
-Subject: Re: [PATCH -next v2] arm64: mm: Fix unused variable warning in
- zone_sizes_init
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Wed, 16 Oct 2019 10:54:31 +0200
-In-Reply-To: <20191016031107.30045-1-natechancellor@gmail.com>
-References: <20191015224304.20963-1-natechancellor@gmail.com>
-         <20191016031107.30045-1-natechancellor@gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-XL1H6941T8hAsoF71YoD"
-User-Agent: Evolution 3.32.4 
+        id S2391804AbfJPIyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:54:54 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:38265 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732135AbfJPIyx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:54:53 -0400
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 87D0224000E;
+        Wed, 16 Oct 2019 08:54:48 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     laurent.pinchart@ideasonboard.com,
+        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, uli+renesas@fpond.eu
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, airlied@linux.ie,
+        daniel@ffwll.ch, linux-renesas-soc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/8] drm: rcar-du: Add Color Management Module (CMM)
+Date:   Wed, 16 Oct 2019 10:55:40 +0200
+Message-Id: <20191016085548.105703-1-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Minimal increment to the CMM series, this time should really be the last one.
 
---=-XL1H6941T8hAsoF71YoD
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Just missing Rob's ack on [1/8] and Laurent's one on [5/8].
 
-On Tue, 2019-10-15 at 20:11 -0700, Nathan Chancellor wrote:
-> When building arm64 allnoconfig, CONFIG_ZONE_DMA and CONFIG_ZONE_DMA32
-> get disabled so there is a warning about max_dma being unused.
->=20
-> ../arch/arm64/mm/init.c:215:16: warning: unused variable 'max_dma'
-> [-Wunused-variable]
->         unsigned long max_dma =3D min;
->                       ^
-> 1 warning generated.
->=20
-> Add an ifdef around the variable to fix this.
->=20
-> Fixes: 1a8e1cef7603 ("arm64: use both ZONE_DMA and ZONE_DMA32")
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->=20
-> v1 -> v2:
->=20
-> * Fix check for CONFIG_ZONE_DMA32 as pointed out by Will.
->=20
->  arch/arm64/mm/init.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 44f07fdf7a59..359c3b08b968 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -212,7 +212,9 @@ static void __init zone_sizes_init(unsigned long min,
-> unsigned long max)
->  	struct memblock_region *reg;
->  	unsigned long zone_size[MAX_NR_ZONES], zhole_size[MAX_NR_ZONES];
->  	unsigned long max_dma32 =3D min;
-> +#if defined(CONFIG_ZONE_DMA) || defined(CONFIG_ZONE_DMA32)
->  	unsigned long max_dma =3D min;
-> +#endif
-> =20
->  	memset(zone_size, 0, sizeof(zone_size));
-> =20
+Changelog is minimal:
+CMM
+- Remove the cmm_config.enable flag. The cmm_config.table field validity is
+  used to enable/disable the LUT operations
+- Expand comments as suggested by Laurent
 
-Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+CRTC
+- use drm_color_lut_size() to check the LUT table size
+- Inline calls to rcar_cmm_enable()/disable()
+- Add TODO entries as suggested by Laurent
 
-Thanks!
+For the record, the full series changelog is available at:
+https://paste.debian.net/1107427/
 
+v5 from yesterday with informations on testing is available at:
+https://lkml.org/lkml/2019/10/15/337
 
---=-XL1H6941T8hAsoF71YoD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Geert will you collect for DTS patches for the next release?
+I assume the DU changes go through Laurent instead ?
 
------BEGIN PGP SIGNATURE-----
+Thanks
+   j
 
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl2m2sgACgkQlfZmHno8
-x/7nEwf+LdOYEsxQAo4l3mtCRbpNKjXVZ2OFojqmoIsNuqZIqyPBsjYenMIxAvm2
-ytDau7vxVIP2CaX3ozL3bHrVeEeYW4M3QUZxotu0iIP92s+6wJt5RVPP7eiwESrK
-6m3eCPfbuYbk427JLLliu18X0cpDAgzPtLURkSSs44p9eTIQys0y+1HEexmArZr9
-afEwVp0p+X9hkQPI3+Se3ezBFIzFr3Jo2dC8UTrNy0k4hwIi3MCVD/3FEtXsz1DA
-YS+z16lCsKBk1jCZ9TDcbUsvZ0eaPUSvDpHFWhglqTR7YiDhyPoPrEvcf7DeP2Ah
-KnaMCQsCM47uhChDL7WzDjudTAVKlw==
-=KDT/
------END PGP SIGNATURE-----
+Jacopo Mondi (8):
+  dt-bindings: display: renesas,cmm: Add R-Car CMM documentation
+  dt-bindings: display, renesas,du: Document cmms property
+  drm: rcar-du: Add support for CMM
+  drm: rcar-du: kms: Initialize CMM instances
+  drm: rcar-du: crtc: Control CMM operations
+  drm: rcar-du: crtc: Register GAMMA_LUT properties
+  arm64: dts: renesas: Add CMM units to Gen3 SoCs
+  drm: rcar-du: kms: Expand comment in vsps parsing routine
 
---=-XL1H6941T8hAsoF71YoD--
+ .../bindings/display/renesas,cmm.yaml         |  67 ++++++
+ .../bindings/display/renesas,du.txt           |   5 +
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi      |  39 ++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi      |  31 ++-
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi     |  31 ++-
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi     |  21 ++
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi     |  21 ++
+ drivers/gpu/drm/rcar-du/Kconfig               |   7 +
+ drivers/gpu/drm/rcar-du/Makefile              |   1 +
+ drivers/gpu/drm/rcar-du/rcar_cmm.c            | 212 ++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_cmm.h            |  58 +++++
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c        |  65 ++++++
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h        |   2 +
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h         |   2 +
+ drivers/gpu/drm/rcar-du/rcar_du_group.c       |  10 +
+ drivers/gpu/drm/rcar-du/rcar_du_group.h       |   2 +
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c         |  82 ++++++-
+ drivers/gpu/drm/rcar-du/rcar_du_regs.h        |   5 +
+ 18 files changed, 658 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/renesas,cmm.yaml
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.c
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.h
+
+--
+2.23.0
 
