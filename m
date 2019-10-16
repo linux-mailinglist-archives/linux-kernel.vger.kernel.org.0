@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB973DA0FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3473DA004
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390047AbfJPWSA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:18:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44638 "EHLO mail.kernel.org"
+        id S2438177AbfJPWHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:07:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437713AbfJPVyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:54:38 -0400
+        id S2438128AbfJPV6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:19 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 282E421A4C;
-        Wed, 16 Oct 2019 21:54:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E001D21928;
+        Wed, 16 Oct 2019 21:58:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262876;
-        bh=rfASr3IKubPje+T8VgFF+tS3jyFedjIoi1VksgpQP8w=;
+        s=default; t=1571263099;
+        bh=nDFW/KXTTRLxhK+S/6xxs6fJH57zdvFinbc4C0dY+u8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=otcNFN26lcutWUbKy49Hfk2XodixNz3pKXwFU1Mf4usNPr0q9dBN6IrkzfwbfuAqH
-         mvT115tMwkBRIbE2tySGX5xtVK9ErN89u4rbdehX3Z0fn2VaqCoEP43X6jhL3EH4P+
-         R1Plq6zp4CP64/DrF+iSz4qhz0YuRifoWUwi07Ho=
+        b=kr5pdc+oBaa3sQ1dKjGZ4ecSYFkkF7GfQqZeeCLCHbrVbHDsoypj6MAXobJ+PZcH8
+         1zF6okPkA/CJfIBWrr7tAoqFVGtQ/6KUHPK+Osal/YtN0Q1VF0kUlw1zkYByTDFva7
+         n8PkD0LOq6FUhMIV0Gqm4l4HCePlfxEsegvPruMU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 39/92] USB: yurex: fix NULL-derefs on disconnect
+Subject: [PATCH 5.3 020/112] USB: iowarrior: fix use-after-free after driver unbind
 Date:   Wed, 16 Oct 2019 14:50:12 -0700
-Message-Id: <20191016214829.782371694@linuxfoundation.org>
+Message-Id: <20191016214849.604722565@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,90 +44,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit aafb00a977cf7d81821f7c9d12e04c558c22dc3c upstream.
+commit b5f8d46867ca233d773408ffbe691a8062ed718f upstream.
 
-The driver was using its struct usb_interface pointer as an inverted
-disconnected flag, but was setting it to NULL without making sure all
-code paths that used it were done with it.
+Make sure to stop also the asynchronous write URBs on disconnect() to
+avoid use-after-free in the completion handler after driver unbind.
 
-Before commit ef61eb43ada6 ("USB: yurex: Fix protection fault after
-device removal") this included the interrupt-in completion handler, but
-there are further accesses in dev_err and dev_dbg statements in
-yurex_write() and the driver-data destructor (sic!).
-
-Fix this by unconditionally stopping also the control URB at disconnect
-and by using a dedicated disconnected flag.
-
-Note that we need to take a reference to the struct usb_interface to
-avoid a use-after-free in the destructor whenever the device was
-disconnected while the character device was still open.
-
-Fixes: aadd6472d904 ("USB: yurex.c: remove dbg() usage")
-Fixes: 45714104b9e8 ("USB: yurex.c: remove err() usage")
-Cc: stable <stable@vger.kernel.org>     # 3.5: ef61eb43ada6
+Fixes: 946b960d13c1 ("USB: add driver for iowarrior devices.")
+Cc: stable <stable@vger.kernel.org>	# 2.6.21: 51a2f077c44e ("USB: introduce usb_anchor")
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191009153848.8664-6-johan@kernel.org
+Link: https://lore.kernel.org/r/20191009104846.5925-4-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/yurex.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/usb/misc/iowarrior.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -64,6 +64,7 @@ struct usb_yurex {
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -87,6 +87,7 @@ struct iowarrior {
+ 	char chip_serial[9];		/* the serial number string of the chip connected */
+ 	int report_size;		/* number of bytes in a report */
+ 	u16 product_id;
++	struct usb_anchor submitted;
+ };
  
- 	struct kref		kref;
- 	struct mutex		io_mutex;
-+	unsigned long		disconnected:1;
- 	struct fasync_struct	*async_queue;
- 	wait_queue_head_t	waitq;
- 
-@@ -111,6 +112,7 @@ static void yurex_delete(struct kref *kr
- 				dev->int_buffer, dev->urb->transfer_dma);
- 		usb_free_urb(dev->urb);
- 	}
-+	usb_put_intf(dev->interface);
- 	usb_put_dev(dev->udev);
- 	kfree(dev);
- }
-@@ -209,7 +211,7 @@ static int yurex_probe(struct usb_interf
- 	init_waitqueue_head(&dev->waitq);
- 
- 	dev->udev = usb_get_dev(interface_to_usbdev(interface));
--	dev->interface = interface;
-+	dev->interface = usb_get_intf(interface);
- 
- 	/* set up the endpoint information */
+ /*--------------*/
+@@ -425,11 +426,13 @@ static ssize_t iowarrior_write(struct fi
+ 			retval = -EFAULT;
+ 			goto error;
+ 		}
++		usb_anchor_urb(int_out_urb, &dev->submitted);
+ 		retval = usb_submit_urb(int_out_urb, GFP_KERNEL);
+ 		if (retval) {
+ 			dev_dbg(&dev->interface->dev,
+ 				"submit error %d for urb nr.%d\n",
+ 				retval, atomic_read(&dev->write_busy));
++			usb_unanchor_urb(int_out_urb);
+ 			goto error;
+ 		}
+ 		/* submit was ok */
+@@ -770,6 +773,8 @@ static int iowarrior_probe(struct usb_in
  	iface_desc = interface->cur_altsetting;
-@@ -326,8 +328,9 @@ static void yurex_disconnect(struct usb_
+ 	dev->product_id = le16_to_cpu(udev->descriptor.idProduct);
  
- 	/* prevent more I/O from starting */
- 	usb_poison_urb(dev->urb);
-+	usb_poison_urb(dev->cntl_urb);
- 	mutex_lock(&dev->io_mutex);
--	dev->interface = NULL;
-+	dev->disconnected = 1;
- 	mutex_unlock(&dev->io_mutex);
- 
- 	/* wakeup waiters */
-@@ -415,7 +418,7 @@ static ssize_t yurex_read(struct file *f
- 	dev = file->private_data;
- 
- 	mutex_lock(&dev->io_mutex);
--	if (!dev->interface) {		/* already disconnected */
-+	if (dev->disconnected) {		/* already disconnected */
- 		mutex_unlock(&dev->io_mutex);
- 		return -ENODEV;
- 	}
-@@ -450,7 +453,7 @@ static ssize_t yurex_write(struct file *
- 		goto error;
- 
- 	mutex_lock(&dev->io_mutex);
--	if (!dev->interface) {		/* already disconnected */
-+	if (dev->disconnected) {		/* already disconnected */
- 		mutex_unlock(&dev->io_mutex);
- 		retval = -ENODEV;
- 		goto error;
++	init_usb_anchor(&dev->submitted);
++
+ 	res = usb_find_last_int_in_endpoint(iface_desc, &dev->int_in_endpoint);
+ 	if (res) {
+ 		dev_err(&interface->dev, "no interrupt-in endpoint found\n");
+@@ -885,6 +890,7 @@ static void iowarrior_disconnect(struct
+ 		   Deleting the device is postponed until close() was called.
+ 		 */
+ 		usb_kill_urb(dev->int_in_urb);
++		usb_kill_anchored_urbs(&dev->submitted);
+ 		wake_up_interruptible(&dev->read_wait);
+ 		wake_up_interruptible(&dev->write_wait);
+ 		mutex_unlock(&dev->mutex);
 
 
