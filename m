@@ -2,146 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1D52DB3A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2BAEDB3B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436937AbfJQRoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 13:44:34 -0400
-Received: from mail-wm1-f73.google.com ([209.85.128.73]:52390 "EHLO
-        mail-wm1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436736AbfJQRoa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 13:44:30 -0400
-Received: by mail-wm1-f73.google.com with SMTP id m6so1369265wmf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 10:44:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=DZyz5ifI341bXtuxQKpF9qIDEXiA9LUCP3qLu12KvmI=;
-        b=rDCONwuGL9P/UjsBrRTvqq4TgaTmw0JEo3OY3q/6WL+pk/uigSe3SL+epvmUJXHWOw
-         ivTZfPGKIDlx0EJn0Hy/yOoijYg+0K9rgA1mGUUaCTXhMBuIz3E4pQv4Io6pwdQtpsHY
-         E5931ZpIiE4s7MJhbSraBFa1126ts0ujrXQJeXupw/QoCkgE8GlJCOaDc1DbZid4roP9
-         /7tYjDAD27kYK7kAxIdvh85LhQbCvUwYPXZDG+Qltrcd0EgaEF7ZrG8QRC9gpP0rDVWT
-         hz+R8liNNfnbZjhTfD8gdghobnJbzydh2gVwx+rkM5Y570nwG7vvWCcDamkj0rR/Lq65
-         5K0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=DZyz5ifI341bXtuxQKpF9qIDEXiA9LUCP3qLu12KvmI=;
-        b=dqO1i6rzpoIIMJ77WB1mahINkcqHWzROQZvTIk6lFadxOyJW6y1tTHFWP3JNd8G6pI
-         EtvhjijPN+GZ43B5P/g0Yp4c8d1o7R3mII9M+WptgWaCrh8FRyp3JGRnSs3J/J2Wdegn
-         6iSd6bgomlXYHZhX7kC2NlA+M4MVmGZlyqRlBEnMTHlSsdS6tsk+eTfg1StRenotx8mi
-         Pf7bexLU+wnuMAHnEXDOMVgLcgg0wa1twZrBdA5sBLKi7uOUVJmFsLJg78oQY0UxOLFA
-         5tPpAlfYEgtZkafGKdBDJCtEO/k50U+gfoD7zqfTXc400m3FZPxJszPdcZisAFrW4FnE
-         znuA==
-X-Gm-Message-State: APjAAAU3/F57rVP3saMwSBgMEW2GrJpOG9V/nnmg2rSWpGq9lgWq4Rk3
-        VqIR4XUJRLyEGMfZumdlAf47MjZiBXEmHtpd
-X-Google-Smtp-Source: APXvYqyQfzmOGIC6uE4UWoekhXejv7paAyEONnZV9FBZpte7RHsOxbLKwJiyn7qvRZmdNM6/kofHt4VnE4gL2e+C
-X-Received: by 2002:adf:ee10:: with SMTP id y16mr4077481wrn.67.1571334268533;
- Thu, 17 Oct 2019 10:44:28 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 19:44:15 +0200
-In-Reply-To: <cover.1571333592.git.andreyknvl@google.com>
-Message-Id: <af26317c0efd412dd660e81d548a173942f8a0ad.1571333592.git.andreyknvl@google.com>
-Mime-Version: 1.0
-References: <cover.1571333592.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
-Subject: [PATCH RFC 3/3] vhost, kcov: collect coverage from vhost_worker
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     linux-usb@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Windsor <dwindsor@gmail.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Andrey Konovalov <andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S2437028AbfJQRpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 13:45:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389827AbfJQRpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 13:45:35 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1D5B20820;
+        Thu, 17 Oct 2019 17:45:34 +0000 (UTC)
+Date:   Thu, 17 Oct 2019 13:45:26 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] libtraceevent: perf script -g python segfaults
+Message-ID: <20191017134526.097f1490@gandalf.local.home>
+In-Reply-To: <20191017154205.GC8974@kernel.org>
+References: <20191017154205.GC8974@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds kcov_remote_start/kcov_remote_stop annotations to the
-vhost_worker function, which is responsible for processing vhost works.
-Since vhost_worker is spawned when a vhost device instance is created,
-the common kcov handle is used for kcov_remote_start/stop annotations.
+On Thu, 17 Oct 2019 12:42:05 -0300
+Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- drivers/vhost/vhost.c | 15 +++++++++++++++
- drivers/vhost/vhost.h |  3 +++
- 2 files changed, 18 insertions(+)
+> I'll try and continue later, but if you guys can take a look...
+> 
+> The first call in that loop:
+> 
+>   while ((event = trace_find_next_event(pevent, event)))
+> 
+> works and the event is valid, one of the sched: tracepoints, but then
+> the next call returns this:
+> 
+> struct tep_event *trace_find_next_event(struct tep_handle *pevent,
+>                                         struct tep_event *event)
+> {
+>         static int idx;
+>         int events_count;
+>         struct tep_event *all_events;
+> 
+>         all_events = tep_get_first_event(pevent);
+>         events_count = tep_get_events_count(pevent);
+>         if (!pevent || !all_events || events_count < 1)
+>                 return NULL;
+> 
+>         if (!event) {
+>                 idx = 0;
+>                 return all_events;
+>         }
+> 
+>         if (idx < events_count && event == (all_events + idx)) {
+>                 idx++;
+>                 if (idx == events_count)
+>                         return NULL;
+>                 return (all_events + idx);
+>         }
+> 
+>         for (idx = 1; idx < events_count; idx++) {
+>                 if (event == (all_events + (idx - 1)))
+>                         return (all_events + idx);
+>         }
+>         return NULL;
+> }
+> 
+> Oh, static int idx, oops, anyway, the all_events + idx returned for the
+> second call to trace_find_next_event() fails, in a hurry now, will get
+> back to this later.
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 36ca2cf419bf..71a349f6b352 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -357,7 +357,13 @@ static int vhost_worker(void *data)
- 		llist_for_each_entry_safe(work, work_next, node, node) {
- 			clear_bit(VHOST_WORK_QUEUED, &work->flags);
- 			__set_current_state(TASK_RUNNING);
-+#ifdef CONFIG_KCOV
-+			kcov_remote_start(dev->kcov_handle);
-+#endif
- 			work->fn(work);
-+#ifdef CONFIG_KCOV
-+			kcov_remote_stop();
-+#endif
- 			if (need_resched())
- 				schedule();
- 		}
-@@ -546,6 +552,9 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
- 
- 	/* No owner, become one */
- 	dev->mm = get_task_mm(current);
-+#ifdef CONFIG_KCOV
-+	dev->kcov_handle = current->kcov_handle;
-+#endif
- 	worker = kthread_create(vhost_worker, dev, "vhost-%d", current->pid);
- 	if (IS_ERR(worker)) {
- 		err = PTR_ERR(worker);
-@@ -571,6 +580,9 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
- 	if (dev->mm)
- 		mmput(dev->mm);
- 	dev->mm = NULL;
-+#ifdef CONFIG_KCOV
-+	dev->kcov_handle = 0;
-+#endif
- err_mm:
- 	return err;
- }
-@@ -682,6 +694,9 @@ void vhost_dev_cleanup(struct vhost_dev *dev)
- 	if (dev->worker) {
- 		kthread_stop(dev->worker);
- 		dev->worker = NULL;
-+#ifdef CONFIG_KCOV
-+		dev->kcov_handle = 0;
-+#endif
- 	}
- 	if (dev->mm)
- 		mmput(dev->mm);
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index e9ed2722b633..010ca1ebcbd5 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -173,6 +173,9 @@ struct vhost_dev {
- 	int iov_limit;
- 	int weight;
- 	int byte_weight;
-+#ifdef CONFIG_KCOV
-+	u64 kcov_handle;
-+#endif
- };
- 
- bool vhost_exceeds_weight(struct vhost_virtqueue *vq, int pkts, int total_len);
--- 
-2.23.0.866.gb869b98d4c-goog
+Yeah, this is obviously broken. :-( 
 
+I'll have a patch later today.
+
+-- Steve
