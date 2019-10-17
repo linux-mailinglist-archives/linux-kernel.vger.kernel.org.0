@@ -2,192 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CC3DDB37C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:38:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C9F1DB366
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:38:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503133AbfJQRiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 13:38:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37842 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503117AbfJQRiT (ORCPT
+        id S2440739AbfJQRh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 13:37:56 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37298 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2440729AbfJQRhw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 13:38:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=beV2TrydHrYLZOLTznLZKJeyXBjPaXx2Er11cQ1xqkA=; b=J7Oc2tPAZn7jV+kT/yfMdDRbmc
-        tnkCInRWuy5HpFKdYrhvLMIIYvQXpX8nqkutcL3vnGIk3GZlGZ/mTD6J9t872R0LAlya+bMULb3te
-        nPIix4Jz2WZva7tgqfCxVhbZ6pc21tIgcuIxM5UOBpkBUDyr6d5muuDHLnEO+Pd3Om0jh7HBZWcD8
-        0J7mT4E5skGJD1y6Nk0SHtjs/nBI7ohOv0rpg/ai3eNp1/SrcwMAAts2TmQCg6y0jcxFyEpGDSAYC
-        iHsYwp//40OWx6wlD3n2q2i6QUxgmZNcdCqJfbcAkEdlXFL1zOVGVnYG0VHNsUKRZFhB5slTEPn0s
-        2zxo7HVw==;
-Received: from [2001:4bb8:18c:d7b:c70:4a89:bc61:3] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iL9j5-00081a-Qb; Thu, 17 Oct 2019 17:38:16 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 12/15] riscv: clear the instruction cache and all registers when booting
-Date:   Thu, 17 Oct 2019 19:37:40 +0200
-Message-Id: <20191017173743.5430-13-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191017173743.5430-1-hch@lst.de>
-References: <20191017173743.5430-1-hch@lst.de>
+        Thu, 17 Oct 2019 13:37:52 -0400
+Received: by mail-qt1-f194.google.com with SMTP id n17so4802763qtr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 10:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aceUwkkVxfnoNY/+s3ZJ1xTD/awywXhqdnMzBifH9/U=;
+        b=p0A+U3EHAH0PU+dbixFcwYDYh2bSzZaPUAXBq3X+y0qht3kFoixLuC9f1W2Q5vfqmz
+         0TbRhBd8EcJi3S6Om8gTPg4NDdtLU7VhQhTkcNi8S0UuRDqBfEELA7v6JdK94T1InBsT
+         cbJ2QQz+REGB+J9rN4abVfWkcciK4XzgqunbZ1hPsWxYKxfEcylopZ8d1PRtVGCZ7dQY
+         MX68+gw0dGchlP9YS3rz6S/4d68ezz+VDGSLVvHJarYTLMdYySR2SMpav7Up3jZSgFlv
+         HI6NNq5P4IUwl2WUJ2nClYoBoVG0AP6gjq7i+Cem6fAPVcgYYgVmQ48RDQdY4MrlXWQ+
+         3MqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aceUwkkVxfnoNY/+s3ZJ1xTD/awywXhqdnMzBifH9/U=;
+        b=G23JBrrQXcrYZqrMH0/DJBHaXbe2JMQYX+8kivkE6ifEEJztKGqy0F8lIlqwZdVwRl
+         MXmxXueATaxmYyDoA9ulxlEcfRPLMeySsUamKI+ZqGGuuVGafCj+YKdYsGaysGcxkByK
+         N+4l+OdIF9m/rK/yIdM+vX0smxEwsmRZInoisDlomqFBqMk99slIzxYcir1qfsmny+/L
+         WN5802D5Qc1nkba4/GjhVunZI6AJKEvwNTbay6vRz8wUBh9b/4V/N0OII8wFpuoygd4J
+         G27HjbY6Y/fo1SwXCAfzMqasnk9FJ0BO6S4IefW7qg+CajNfzxAHZWaqbTEv2APaaa/X
+         SPIQ==
+X-Gm-Message-State: APjAAAX0HL1jtTBCh/XBwLXVi6p2KQaB9FBBgiYMRqUmfcPQztcdvL4T
+        EmbsH81qSN7PjkW7DadOuZyM+HRU6ph9fr/3yuk=
+X-Google-Smtp-Source: APXvYqwVt6TX7IQ6z4AE1gMJB06hGN47z5+R6yZGws5+GRJVkDdVPu4cYIXw2dZQdnKadDd4lhD84iqGJSh5pkh/0tA=
+X-Received: by 2002:a0c:f788:: with SMTP id s8mr5119067qvn.92.1571333870915;
+ Thu, 17 Oct 2019 10:37:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20191017164223.2762148-1-songliubraving@fb.com> <20191017164223.2762148-2-songliubraving@fb.com>
+In-Reply-To: <20191017164223.2762148-2-songliubraving@fb.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 17 Oct 2019 10:37:40 -0700
+Message-ID: <CAHbLzkqL4iUVF5d01uBU8HhT7U3jq4urdNZNCE3pK2QfySSYHw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] proc/meminfo: fix output alignment
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        matthew.wilcox@oracle.com, kernel-team@fb.com,
+        william.kucharski@oracle.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we get booted we want a clear slate without any leaks from previous
-supervisors or the firmware.  Flush the instruction cache and then clear
-all registers to known good values.  This is really important for the
-upcoming nommu support that runs on M-mode, but can't really harm when
-running in S-mode either.  Vaguely based on the concepts from opensbi.
+On Thu, Oct 17, 2019 at 9:42 AM Song Liu <songliubraving@fb.com> wrote:
+>
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>
+> Add extra space for FileHugePages and FilePmdMapped, so the output is
+> aligned with other rows.
+>
+> Fixes: 60fbf0ab5da1 ("mm,thp: stats for file backed THP")
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Tested-by: Song Liu <songliubraving@fb.com>
+> Signed-off-by: Song Liu <songliubraving@fb.com>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/riscv/include/asm/csr.h |  1 +
- arch/riscv/kernel/head.S     | 88 +++++++++++++++++++++++++++++++++++-
- 2 files changed, 88 insertions(+), 1 deletion(-)
+Acked-by: Yang Shi <yang.shi@linux.alibaba.com>
 
-diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-index d0b5113e1a54..ee0101278608 100644
---- a/arch/riscv/include/asm/csr.h
-+++ b/arch/riscv/include/asm/csr.h
-@@ -83,6 +83,7 @@
- /* symbolic CSR names: */
- #define CSR_MHARTID		0xf14
- #define CSR_MSTATUS		0x300
-+#define CSR_MISA		0x301
- #define CSR_MIE			0x304
- #define CSR_MTVEC		0x305
- #define CSR_MSCRATCH		0x340
-diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-index 583784cb3a32..25867b99cc95 100644
---- a/arch/riscv/kernel/head.S
-+++ b/arch/riscv/kernel/head.S
-@@ -11,6 +11,7 @@
- #include <asm/thread_info.h>
- #include <asm/page.h>
- #include <asm/csr.h>
-+#include <asm/hwcap.h>
- #include <asm/image.h>
- 
- __INIT
-@@ -51,12 +52,18 @@ _start_kernel:
- 	csrw CSR_XIP, zero
- 
- #ifdef CONFIG_RISCV_M_MODE
-+	/* flush the instruction cache */
-+	fence.i
-+
-+	/* Reset all registers except ra, a0, a1 */
-+	call reset_regs
-+
- 	/*
- 	 * The hartid in a0 is expected later on, and we have no firmware
- 	 * to hand it to us.
- 	 */
- 	csrr a0, CSR_MHARTID
--#endif
-+#endif /* CONFIG_RISCV_M_MODE */
- 
- 	/* Load the global pointer */
- .option push
-@@ -203,6 +210,85 @@ relocate:
- 	j .Lsecondary_park
- END(_start)
- 
-+#ifdef CONFIG_RISCV_M_MODE
-+ENTRY(reset_regs)
-+	li	sp, 0
-+	li	gp, 0
-+	li	tp, 0
-+	li	t0, 0
-+	li	t1, 0
-+	li	t2, 0
-+	li	s0, 0
-+	li	s1, 0
-+	li	a2, 0
-+	li	a3, 0
-+	li	a4, 0
-+	li	a5, 0
-+	li	a6, 0
-+	li	a7, 0
-+	li	s2, 0
-+	li	s3, 0
-+	li	s4, 0
-+	li	s5, 0
-+	li	s6, 0
-+	li	s7, 0
-+	li	s8, 0
-+	li	s9, 0
-+	li	s10, 0
-+	li	s11, 0
-+	li	t3, 0
-+	li	t4, 0
-+	li	t5, 0
-+	li	t6, 0
-+	csrw	sscratch, 0
-+
-+#ifdef CONFIG_FPU
-+	csrr	t0, CSR_MISA
-+	andi	t0, t0, (COMPAT_HWCAP_ISA_F | COMPAT_HWCAP_ISA_D)
-+	bnez	t0, .Lreset_regs_done
-+
-+	li	t1, SR_FS
-+	csrs	CSR_XSTATUS, t1
-+	fmv.s.x	f0, zero
-+	fmv.s.x	f1, zero
-+	fmv.s.x	f2, zero
-+	fmv.s.x	f3, zero
-+	fmv.s.x	f4, zero
-+	fmv.s.x	f5, zero
-+	fmv.s.x	f6, zero
-+	fmv.s.x	f7, zero
-+	fmv.s.x	f8, zero
-+	fmv.s.x	f9, zero
-+	fmv.s.x	f10, zero
-+	fmv.s.x	f11, zero
-+	fmv.s.x	f12, zero
-+	fmv.s.x	f13, zero
-+	fmv.s.x	f14, zero
-+	fmv.s.x	f15, zero
-+	fmv.s.x	f16, zero
-+	fmv.s.x	f17, zero
-+	fmv.s.x	f18, zero
-+	fmv.s.x	f19, zero
-+	fmv.s.x	f20, zero
-+	fmv.s.x	f21, zero
-+	fmv.s.x	f22, zero
-+	fmv.s.x	f23, zero
-+	fmv.s.x	f24, zero
-+	fmv.s.x	f25, zero
-+	fmv.s.x	f26, zero
-+	fmv.s.x	f27, zero
-+	fmv.s.x	f28, zero
-+	fmv.s.x	f29, zero
-+	fmv.s.x	f30, zero
-+	fmv.s.x	f31, zero
-+	csrw	fcsr, 0
-+	/* note that the caller must clear SR_FS */
-+#endif /* CONFIG_FPU */
-+.Lreset_regs_done:
-+	ret
-+END(reset_regs)
-+#endif /* CONFIG_RISCV_M_MODE */
-+
- __PAGE_ALIGNED_BSS
- 	/* Empty zero page */
- 	.balign PAGE_SIZE
--- 
-2.20.1
-
+> ---
+>  fs/proc/meminfo.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+> index ac9247371871..8c1f1bb1a5ce 100644
+> --- a/fs/proc/meminfo.c
+> +++ b/fs/proc/meminfo.c
+> @@ -132,9 +132,9 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+>                     global_node_page_state(NR_SHMEM_THPS) * HPAGE_PMD_NR);
+>         show_val_kb(m, "ShmemPmdMapped: ",
+>                     global_node_page_state(NR_SHMEM_PMDMAPPED) * HPAGE_PMD_NR);
+> -       show_val_kb(m, "FileHugePages: ",
+> +       show_val_kb(m, "FileHugePages:  ",
+>                     global_node_page_state(NR_FILE_THPS) * HPAGE_PMD_NR);
+> -       show_val_kb(m, "FilePmdMapped: ",
+> +       show_val_kb(m, "FilePmdMapped:  ",
+>                     global_node_page_state(NR_FILE_PMDMAPPED) * HPAGE_PMD_NR);
+>  #endif
+>
+> --
+> 2.17.1
+>
+>
