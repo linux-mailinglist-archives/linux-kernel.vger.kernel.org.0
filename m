@@ -2,107 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B822DAA87
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 12:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1A1CDAA65
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 12:50:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409146AbfJQKv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 06:51:56 -0400
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:42446 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730498AbfJQKvz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 06:51:55 -0400
-X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Oct 2019 06:51:53 EDT
-X-AuditID: c0a8fbf4-199ff70000001fa6-ab-5da844423d90
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 3C.E8.08102.24448AD5; Thu, 17 Oct 2019 12:36:50 +0200 (CEST)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Thu, 17 Oct 2019 12:36:45 +0200
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
-CC:     "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>
-Subject: Re: [RFC PATCH 09/13] mfd: rtc: support RTC on ROHM BD71828 with
- BD70528 driver
-Thread-Topic: [RFC PATCH 09/13] mfd: rtc: support RTC on ROHM BD71828 with
- BD70528 driver
-Thread-Index: AQHVhNCZAuXq65juYU207wWeSYVtU6dee5aAgAAGywA=
-Date:   Thu, 17 Oct 2019 10:36:44 +0000
-Message-ID: <a1aa91f74b41033fed4a7106247f48f9b9f78bd9.camel@fi.rohmeurope.com>
-References: <cover.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
-         <9ccc83f3dfd0fd0dc8178adf41b52115f960c45a.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
-         <20191017101225.GB3125@piout.net>
-In-Reply-To: <20191017101225.GB3125@piout.net>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D169F61A87AB4D42B380287D302510DF@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S2409072AbfJQKue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 06:50:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:24521 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2409047AbfJQKue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 06:50:34 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 76A7A3083363;
+        Thu, 17 Oct 2019 10:50:33 +0000 (UTC)
+Received: from jason-ThinkPad-X1-Carbon-6th.redhat.com (ovpn-12-185.pek2.redhat.com [10.72.12.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 001F561F40;
+        Thu, 17 Oct 2019 10:49:58 +0000 (UTC)
+From:   Jason Wang <jasowang@redhat.com>
+To:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        cohuck@redhat.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
+        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
+        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
+        stefanha@redhat.com, Jason Wang <jasowang@redhat.com>
+Subject: [PATCH V4 2/6] modpost: add support for mdev class id
+Date:   Thu, 17 Oct 2019 18:48:32 +0800
+Message-Id: <20191017104836.32464-3-jasowang@redhat.com>
+In-Reply-To: <20191017104836.32464-1-jasowang@redhat.com>
+References: <20191017104836.32464-1-jasowang@redhat.com>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAJsWRmVeSWpSXmKPExsVyYMXvTbpOLitiDaZ+07JYcvEqu0X7u2Xs
-        Fl/mnmKxmPrwCZvF/CPnWC26T29htbi9dQOLxf2vRxktvl3pYLKY8mc5k8XHnnusFpvn/2G0
-        uLxrDpvF1jfrGC2Orb7CZrH0+kUmizlLT7BYXDzlanH31FE2i9a9R9gt/l3byOIg6rFm3hpG
-        j/c3Wtk95q2p9tg56y67x6ZVnWwed67tYfM4fmM7k8f0eT+ZPFas/s7u8XmTXABXFLdNUmJJ
-        WXBmep6+XQJ3xpd5K1kLXvFW9N5oZG5g3MPbxcjJISFgItG58SpbFyMXh5DANUaJ5c8fs4Ik
-        hAROMEocvq7fxcjBwSZgI9F1kx0kLCLgLDHvfBsLSD2zwCQOiSuzzjCDJIQFoiT6mp8wQxRF
-        S9ycMokVwraSOLLuFhuIzSKgKrH6Ux8TiM0r4CfRcmsyK8RioF2LZjYygyzjFNCTWL0gGaSG
-        UUBWorPhHVg9s4C4xKZn31khjhaQWLLnPDOELSrx8vE/qLiSxN6fD1lAxjALaEqs36UP0eog
-        0dt1jQXCVpSY0v2QHeIEQYmTM5+wTGAUm4VkwyyE7llIumch6Z6FpHsBI+sqRoncxMyc9MSS
-        VEO9otRSvaL8jFwglZyfu4kRkmK+7GD8f8jzECMTB+MhRkkOJiVR3s/rlscK8SXlp1RmJBZn
-        xBeV5qQWH2KU4GBWEuGd37IkVog3JbGyKrUoHyYlzcGiJM6r/nBirJAAyK7s1NSC1CKYrAwH
-        h5IE7yqHFbFCgkWp6akVaZk5JQhpJg5OkOFcUiLFqXkpqUWJpSUZ8aDkEV8MTB8gKR6gveLO
-        QO28xQWJuUBRiNZTjNocE17OXcTMcWTu0kXMQix5+XmpUuK8RxyBSgVASjNK8+AWvWIU52BU
-        EuZtBBnEA8w2cHNeAa1gAlrxXnk5yIqSRISUVANjW+PKQJcf8kf3mcZt3Ddj3V6GnXfPOHJ2
-        xXOVFB+W+fSgU2kG8/m4A7cml3W67m+pcFZ818jDsZbb2Kc4QsDY6fS+H8X1BdrB3kIGnrZn
-        WA/Ypuk8uNt48jvHuiuu/S4qF5bL3Bd+75e0NPplwpttES189+sMtd1qow9W70vOYiuLXnDv
-        5FQlluKMREMt5qLiRADrac888wMAAA==
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 17 Oct 2019 10:50:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8gQWxleGFuZHJlLA0KDQpUaGFua3MgZm9yIHF1aWNrIGNoZWNrISBJJ2xsIGJlIG9mZiBm
-b3IgdGhlIHJlc3Qgb2YgdGhlIHdlZWsgYnV0IEkgd2lsbA0KcmUtd29yayB0aGlzIHBhdGNoIGF0
-IG5leHQgd2VlayA6KSBJIGFncmVlIHdpdGggeW91IHJlZ2FyZGluZyBtb3N0IG9mDQp0aGUgY29t
-bWVudHMuDQoNCj4gPiArDQo+ID4gKw0KPiA+ICsvKg0KPiA+ICsgKiBSVEMgZGVmaW5pdGlvbnMg
-c2hhcmVkIGJldHdlZW4NCj4gPiArICoNCj4gPiArICogQkQ3MDUyOA0KPiA+ICsgKiBhbmQgQkQ3
-MTgyOA0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKyNkZWZpbmUgUk9ITV9CRDFfTUFTS19SVENfU0VD
-CQkweDdmDQo+ID4gKyNkZWZpbmUgUk9ITV9CRDFfTUFTS19SVENfTUlOVVRFCTB4N2YNCj4gPiAr
-I2RlZmluZSBST0hNX0JEMV9NQVNLX1JUQ19IT1VSXzI0SAkweDgwDQo+ID4gKyNkZWZpbmUgUk9I
-TV9CRDFfTUFTS19SVENfSE9VUl9QTQkweDIwDQo+ID4gKyNkZWZpbmUgUk9ITV9CRDFfTUFTS19S
-VENfSE9VUgkJMHgzZg0KPiA+ICsjZGVmaW5lIFJPSE1fQkQxX01BU0tfUlRDX0RBWQkJMHgzZg0K
-PiA+ICsjZGVmaW5lIFJPSE1fQkQxX01BU0tfUlRDX1dFRUsJCTB4MDcNCj4gPiArI2RlZmluZSBS
-T0hNX0JEMV9NQVNLX1JUQ19NT05USAkJMHgxZg0KPiA+ICsjZGVmaW5lIFJPSE1fQkQxX01BU0tf
-UlRDX1lFQVIJCTB4ZmYNCj4gPiArI2RlZmluZSBST0hNX0JEMV9NQVNLX0FMTV9FTgkJMHg3DQo+
-ID4gKw0KPiANCj4gQWxsIHRoYXQgcmVuYW1pbmcgaXMgZGlzdHJhY3RpbmcgYW5kIHVzZWxlc3Mu
-IFBsZWFzZSByZXN1Ym1pdCB3aXRob3V0DQo+IHJlbmFtaW5nIGRlZmluZXMsIHN0cnVjdHMgYW5k
-IGZ1bmN0aW9ucyB0byBtYWtlIGl0IGVhc2llciB0byByZXZpZXcuDQoNCkkgd291bGQgcHJlZmVy
-IHJlbmFtaW5nIGJlY2F1c2UgaXQgbWFrZXMgaXQgY2xlYXJseSB2aXNpYmxlIHdoaWNoDQpkZWZp
-bmVzL3N0cnVjdHMvZnVuY3Rpb25zIGFyZSBjb21tb24gZm9yIGJvdGggUE1JQ3MgYW5kIHdoaWNo
-IGFyZSBQTUlDDQpzcGVjaWZpYy4gQnV0IEkgcmVhbGx5IHVuZGVyc3RhbmQgdGhlIHByb2JsZW0g
-b2Ygc3BvdHRpbmcgcmVhbCBjaGFuZ2VzLg0KV291bGQgaXQgYmUgT2sgaWYgSSBkaWQgcmVuYW1p
-bmcgaW4gc2VwYXJhdGUgcGF0Y2ggd2hpY2ggZG9lcyBub3QgYnJpbmcNCmluIGFueSBvdGhlciBj
-aGFuZ2VzIC0gYW5kIHRoZW4gdGhlIGZ1bmN0aW9uYWwgY2hhbmdlcyBpbiBzZXBhcmF0ZQ0KcGF0
-Y2g/DQoNCkJlc3QgUmVnYXJkcw0KCU1hdHRpIFZhaXR0aW5lbg0K
+Add support to parse mdev class id table.
+
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/vfio/mdev/vfio_mdev.c     |  2 ++
+ scripts/mod/devicetable-offsets.c |  3 +++
+ scripts/mod/file2alias.c          | 10 ++++++++++
+ 3 files changed, 15 insertions(+)
+
+diff --git a/drivers/vfio/mdev/vfio_mdev.c b/drivers/vfio/mdev/vfio_mdev.c
+index 7b24ee9cb8dd..cb701cd646f0 100644
+--- a/drivers/vfio/mdev/vfio_mdev.c
++++ b/drivers/vfio/mdev/vfio_mdev.c
+@@ -125,6 +125,8 @@ static const struct mdev_class_id id_table[] = {
+ 	{ 0 },
+ };
+ 
++MODULE_DEVICE_TABLE(mdev, id_table);
++
+ static struct mdev_driver vfio_mdev_driver = {
+ 	.name	= "vfio_mdev",
+ 	.probe	= vfio_mdev_probe,
+diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
+index 054405b90ba4..6cbb1062488a 100644
+--- a/scripts/mod/devicetable-offsets.c
++++ b/scripts/mod/devicetable-offsets.c
+@@ -231,5 +231,8 @@ int main(void)
+ 	DEVID(wmi_device_id);
+ 	DEVID_FIELD(wmi_device_id, guid_string);
+ 
++	DEVID(mdev_class_id);
++	DEVID_FIELD(mdev_class_id, id);
++
+ 	return 0;
+ }
+diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+index c91eba751804..d365dfe7c718 100644
+--- a/scripts/mod/file2alias.c
++++ b/scripts/mod/file2alias.c
+@@ -1335,6 +1335,15 @@ static int do_wmi_entry(const char *filename, void *symval, char *alias)
+ 	return 1;
+ }
+ 
++/* looks like: "mdev:cN" */
++static int do_mdev_entry(const char *filename, void *symval, char *alias)
++{
++	DEF_FIELD(symval, mdev_class_id, id);
++
++	sprintf(alias, "mdev:c%02X", id);
++	return 1;
++}
++
+ /* Does namelen bytes of name exactly match the symbol? */
+ static bool sym_is(const char *name, unsigned namelen, const char *symbol)
+ {
+@@ -1407,6 +1416,7 @@ static const struct devtable devtable[] = {
+ 	{"typec", SIZE_typec_device_id, do_typec_entry},
+ 	{"tee", SIZE_tee_client_device_id, do_tee_entry},
+ 	{"wmi", SIZE_wmi_device_id, do_wmi_entry},
++	{"mdev", SIZE_mdev_class_id, do_mdev_entry},
+ };
+ 
+ /* Create MODULE_ALIAS() statements.
+-- 
+2.19.1
+
