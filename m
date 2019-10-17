@@ -2,194 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24072DB70E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 21:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F36EADB713
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 21:12:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441477AbfJQTLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 15:11:55 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:35058 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbfJQTLy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 15:11:54 -0400
-Received: by mail-oi1-f195.google.com with SMTP id x3so3145987oig.2;
-        Thu, 17 Oct 2019 12:11:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6pNn+3a0mSOImc8lwCiiMBTaCf4ZMHWOyJsIWR4MRyo=;
-        b=OQDVLCuzkwM5MvVNgeXUM2wwe23MX7r52ZpL0jVT9mxxUS9ez/vABY2I8NGYzIX6hx
-         veOIo7uZc1ZVmYxC95DnvM8xT4erPAm30HMtcXub2xmiKUuDEoC2BKZCNOb8e6zD9TxT
-         DjdYjwvuWOT7c4zwIpyViPA2q8bVtrMiBsxYuFRxyPIuk4jJY1PSaxXhI8OfSQl1xQ0Y
-         9PKtvUISZOZ553pro5dU33I2OkcRAPaNNFYGiAPfT7Jcqq+OeN5ZD4n4SHYRF0yUE/fb
-         vLy5oenpvbIjLDOuY2E0LcYwUGvqn4Ks2QtQoRmD+OxOumF7O+Ior0QkdEOH42D/BAnC
-         9G9Q==
-X-Gm-Message-State: APjAAAVyylqEvjuUM+csr5H0TJMWYFUMs70fbNfYmeXaLhIrajeQPzR+
-        8UYBYwsvGgbuSRw3xsNZ3g==
-X-Google-Smtp-Source: APXvYqyLtpa4JcFkjiCx780J6I9B1F/uD9BsRXrz/UaxOGuWozT33iIfQ63TlzPlmKHRSwDk+KhHxA==
-X-Received: by 2002:aca:5148:: with SMTP id f69mr4711582oib.172.1571339513398;
-        Thu, 17 Oct 2019 12:11:53 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o184sm731351oia.28.2019.10.17.12.11.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 12:11:52 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 14:11:52 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc:     jic23@kernel.org, dragos.bogdan@analog.com,
-        alexandru.ardelean@analog.com, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        kernel-usp@googlegroups.com
-Subject: Re: [PATCH v2 2/2] dt-bindings: iio: adc: Add DT docs for AD7292
-Message-ID: <20191017191152.GA11222@bogus>
-References: <20191016025220.td3xb7oxlfkznxl6@smtp.gmail.com>
+        id S2441504AbfJQTMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 15:12:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41848 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727646AbfJQTL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 15:11:59 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9E97B307D985;
+        Thu, 17 Oct 2019 19:11:58 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-123-81.rdu2.redhat.com [10.10.123.81])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 45D23600C8;
+        Thu, 17 Oct 2019 19:11:56 +0000 (UTC)
+Subject: Re: [PATCH 3/3] pci: Default to PCI_MSI_IRQ_DOMAIN
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Christoph Hellwig <hch@infradead.org>, michal.simek@xilinx.com,
+        helgaas@kernel.org
+Cc:     tony.luck@intel.com, fenghua.yu@intel.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, bhelgaas@google.com, will@kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        kstewart@linuxfoundation.org, pbonzini@redhat.com,
+        firoz.khan@linaro.org, yamada.masahiro@socionext.com,
+        mingo@kernel.org, peterz@infradead.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-pci@vger.kernel.org
+References: <20191017181937.7004-1-palmer@sifive.com>
+ <20191017181937.7004-4-palmer@sifive.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <38389bfa-3fb2-c941-9f9d-0fa573112c58@redhat.com>
+Date:   Thu, 17 Oct 2019 15:11:55 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016025220.td3xb7oxlfkznxl6@smtp.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191017181937.7004-4-palmer@sifive.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 17 Oct 2019 19:11:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 11:52:23PM -0300, Marcelo Schmitt wrote:
-> Add a device tree binding doc for AD7292 monitor and control system.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+On 10/17/19 2:19 PM, Palmer Dabbelt wrote:
+> As far as I can tell, the only reason there was an architecture
+> whitelist for PCI_MSI_IRQ_DOMAIN is because it requires msi.h.  I've
+> built this for all the architectures that play nice with make.cross, but
+> I haven't boot tested it anywhere.
+>
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 > ---
->  .../bindings/iio/adc/adi,ad7292.yaml          | 107 ++++++++++++++++++
->  MAINTAINERS                                   |   1 +
->  2 files changed, 108 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
-> new file mode 100644
-> index 000000000000..40028332d9e2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
-> @@ -0,0 +1,107 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7292.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD7292 10-Bit Monitor and Control System
-> +
-> +maintainers:
-> +  - Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> +
-> +description: |
-> +  Analog Devices AD7292 10-Bit Monitor and Control System with ADC, DACs,
-> +  Temperature Sensor, and GPIOs
-> +
-> +  Specifications about the part can be found at:
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7292.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ad7292
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vref-supply:
-> +    description: |
-> +      The regulator supply for ADC and DAC reference voltage.
-> +    maxItems: 1
+>  drivers/pci/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+> index a304f5ea11b9..77c1428cd945 100644
+> --- a/drivers/pci/Kconfig
+> +++ b/drivers/pci/Kconfig
+> @@ -52,7 +52,7 @@ config PCI_MSI
+>  	   If you don't know what to do here, say Y.
+>  
+>  config PCI_MSI_IRQ_DOMAIN
+> -	def_bool ARC || ARM || ARM64 || X86 || RISCV
+> +	def_bool y
+>  	depends on PCI_MSI
+>  	select GENERIC_MSI_IRQ_DOMAIN
+>  
 
-Not necessary, regulator supplies are always 1 item, so drop maxItems.
+The linking of asm-generic/msi.h is currently enabled for
 
-> +
-> +  spi-cpha:
-> +    description: |
-> +      See Documentation/devicetree/bindings/spi/spi-controller.yaml
-> +    maxItems: 1
+./arch/powerpc/include/asm/Kbuild:generic-y += msi.h
+./arch/arm/include/asm/Kbuild:generic-y += msi.h
+./arch/mips/include/asm/Kbuild:generic-y += msi.h
+./arch/riscv/include/asm/Kbuild:generic-y += msi.h
+./arch/arc/include/asm/Kbuild:generic-y += msi.h
+./arch/arm64/include/asm/Kbuild:generic-y += msi.h
+./arch/sparc/include/asm/Kbuild:generic-y += msi.h
 
-This is just wrong because spi-cpha is a boolean. Just 'spi-cpha: true' 
-is sufficient. If this device needs this property, then it should 
-probably be required.
+Your patchset adds 2 more and x86 has its own asm/msi.h. That leads to a
+total of 10 archs, but there are 37 sub-directories under arch. It is
+possible that the other architectures don't have PCI_MSI set. Still it
+may be a bit risky to set it to "def_bool y".
 
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +patternProperties:
-> +  "^channel@[0-7]$":
-> +    type: object
-> +    description: |
-> +      Represents the external channels which are connected to the ADC.
-> +      See Documentation/devicetree/bindings/iio/adc/adc.txt.
-> +
-> +    properties:
-> +      reg:
-> +        description: |
-> +          The channel number. It can have up to 8 channels numbered from 0 to 7.
-> +        maxItems: 1
-> +
-> +      diff-channels:
-> +        description: see Documentation/devicetree/bindings/iio/adc/adc.txt
-> +        maxItems: 1
-> +
-> +    required:
-> +      - reg
-> +
-> +examples:
-> +  - |
-> +    spi {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      ad7292: ad7292@0 {
+Cheers,
+Longman
 
-adc@0
-
-> +        compatible = "adi,ad7292";
-> +        reg = <0>;
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        spi-max-frequency = <25000000>;
-> +        vref-supply = <&adc_vref>;
-> +        spi-cpha;
-> +
-> +        channel@0 {
-> +          reg = <0>;
-> +          diff-channels = <0 1>;
-> +        };
-> +        channel@2 {
-> +          reg = <2>;
-> +        };
-> +        channel@3 {
-> +          reg = <3>;
-> +        };
-> +        channel@4 {
-> +          reg = <4>;
-> +        };
-> +        channel@5 {
-> +          reg = <5>;
-> +        };
-> +        channel@6 {
-> +          reg = <6>;
-> +        };
-> +        channel@7 {
-> +          reg = <7>;
-> +        };
-> +      };
-> +    }
-
-Missing ';'. Make sure this builds with 'make -k dt_binding_check'. The 
-'-k' is due to some other breakage ATM.
-
-Rob
