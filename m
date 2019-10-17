@@ -2,97 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0FC3DB21E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 18:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 089F0DB221
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 18:17:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394380AbfJQQRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 12:17:06 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:53733 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730526AbfJQQRG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 12:17:06 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iL8SN-0002xh-RE; Thu, 17 Oct 2019 18:16:55 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5EB891C009F;
-        Thu, 17 Oct 2019 18:16:55 +0200 (CEST)
-Date:   Thu, 17 Oct 2019 16:16:55 -0000
-From:   "tip-bot2 for Scott Wood" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/Kconfig: Enforce limit of 512 CPUs with MAXSMP and
- no CPUMASK_OFFSTACK
-Cc:     Scott Wood <swood@redhat.com>, Borislav Petkov <bp@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Mike Travis <mike.travis@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191012070054.28657-1-swood@redhat.com>
-References: <20191012070054.28657-1-swood@redhat.com>
+        id S2502091AbfJQQRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 12:17:33 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50818 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390456AbfJQQRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 12:17:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=hWsCtqoArOgNErY48M2iOin53oYnCZbWFLPfHGmnMVo=; b=SK8J2NQ6JYkFN81PSHbyMCtvbV
+        RgyBT217Q9tdQEKFwVpb2MA2TyKL8D9g63yJaHu5l/04MBhRtUNM9I4S5gIDxXyZJKGpuZWrzX8KT
+        tO37524+UhSqlDAKmVkdA4aea7TD3iwy8zjGMH4F2bg0icqzaNmiGBTlH0CLEHG+Kw8k=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1iL8Sg-0005CA-8y; Thu, 17 Oct 2019 18:17:14 +0200
+Date:   Thu, 17 Oct 2019 18:17:14 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Chen Wandun <chenwandun@huawei.com>
+Cc:     igor.russkikh@aquantia.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: aquantia: add an error handling in
+ aq_nic_set_multicast_list
+Message-ID: <20191017161714.GQ17013@lunn.ch>
+References: <1571279116-4421-1-git-send-email-chenwandun@huawei.com>
 MIME-Version: 1.0
-Message-ID: <157132901520.29376.161729676075623652.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1571279116-4421-1-git-send-email-chenwandun@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/cpu branch of tip:
+On Thu, Oct 17, 2019 at 10:25:16AM +0800, Chen Wandun wrote:
+> From: Chenwandun <chenwandun@huawei.com>
 
-Commit-ID:     1edae1ae62589f28d00da186465a003e2a7f9c6c
-Gitweb:        https://git.kernel.org/tip/1edae1ae62589f28d00da186465a003e2a7f9c6c
-Author:        Scott Wood <swood@redhat.com>
-AuthorDate:    Sat, 12 Oct 2019 02:00:54 -05:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Thu, 17 Oct 2019 18:04:51 +02:00
+Hi Chen
 
-x86/Kconfig: Enforce limit of 512 CPUs with MAXSMP and no CPUMASK_OFFSTACK
+There needs to be some sort of commit message. What [problems are you
+seeing? That does this fix?
 
-The help text of NR_CPUS says that the maximum number of CPUs supported
-without CPUMASK_OFFSTACK is 512. However, NR_CPUS_RANGE_END allows this
-limit to be bypassed by MAXSMP even if CPUMASK_OFFSTACK is not set.
-
-This scenario can currently only happen in the RT tree, since it has
-"select CPUMASK_OFFSTACK if !PREEMPT_RT_FULL" in MAXSMP. However,
-even if we ignore the RT tree, checking for MAXSMP in addition to
-CPUMASK_OFFSTACK is redundant.
-
-Signed-off-by: Scott Wood <swood@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Mike Travis <mike.travis@hpe.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191012070054.28657-1-swood@redhat.com
----
- arch/x86/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 91c22ee..896f840 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1000,8 +1000,8 @@ config NR_CPUS_RANGE_END
- config NR_CPUS_RANGE_END
- 	int
- 	depends on X86_64
--	default 8192 if  SMP && ( MAXSMP ||  CPUMASK_OFFSTACK)
--	default  512 if  SMP && (!MAXSMP && !CPUMASK_OFFSTACK)
-+	default 8192 if  SMP && CPUMASK_OFFSTACK
-+	default  512 if  SMP && !CPUMASK_OFFSTACK
- 	default    1 if !SMP
- 
- config NR_CPUS_DEFAULT
+Thanks
+	Andrew
