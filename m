@@ -2,61 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 274E4DA2B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 02:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C1ADDA2C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 02:41:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394027AbfJQAcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 20:32:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725877AbfJQAcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 20:32:35 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57CB921848;
-        Thu, 17 Oct 2019 00:32:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571272354;
-        bh=x+Xg+um+3arak66QXngQRbWrisF5xOKXVnntskQXOj0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=06Lu8qQ4MsxFbpxc4SctE1Ioaas2QaprGiBHYXpAJxfPb6VnDXnOxBlk5feE6FTRp
-         1igHy1IDbzKYW8IhMk96pcqSe1niybDSe0titVIUKbM3otlueY3y8kL0lDwXRgvkCI
-         SU7y4LhxzBL+fmVdL/8OuK/4lxWLGnLs4bDNh7uY=
-Date:   Wed, 16 Oct 2019 17:32:33 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     David Gow <davidgow@google.com>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH linux-kselftest/test v2] lib/list-test: add a test for
- the 'list' doubly linked list
-Message-Id: <20191016173233.2bd9c9d47f12453c1cb4a9b7@linux-foundation.org>
-In-Reply-To: <CABVgOS=W4cfFoE=JT4mbk1zkUsreucrw_B81R2jwDCFPocomHQ@mail.gmail.com>
-References: <20191010185631.26541-1-davidgow@google.com>
-        <20191011140727.49160042fafa20d5867f8df7@linux-foundation.org>
-        <CABVgOS=UwWxwD97c6y-XzbLWVhznPjBO3qvQEzX=8jTJ-gBi3A@mail.gmail.com>
-        <20191011145519.7b7a1d16ecdead9bec212c01@linux-foundation.org>
-        <CABVgOS=W4cfFoE=JT4mbk1zkUsreucrw_B81R2jwDCFPocomHQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2395054AbfJQAlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 20:41:19 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:47790 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbfJQAlT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 20:41:19 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9H0Tci2054010;
+        Thu, 17 Oct 2019 00:41:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=hz+5f6iLUqcsD4s/JDp34cnZKqTf0cQyrV5VqWsRJSg=;
+ b=ou7y+4ZXtq6FvVzAlIpvfIRcRF74cR/PrexWYRrcJdBZt8F6oNpKO7Kk8FvvqMk4ylVn
+ 9/Y+wL2emggLxopUh4WScKUOc6NEQtE9xp5axlhZUQM+YsV0DnMO0EeC3EYI8NO59DLF
+ 3X/GtqpDEHSedQiE6h2tEYnI+/aH7XEvO9wCOaeicvkapotOhC7+nMR5RiDanHLSwU2j
+ jwLNGcjnyqIqvkOvA8g3qN9LuyVIM2/5anfl/fLTh873VIgz7EJ+bwAoiZUYX3pZfWEs
+ P8667totgyTYCvgftiEOtb4QRm5PaTa7zhMoucybPqt9+4T18DuxflHkl4OxgUZqVaw1 iA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2vk68utp35-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 00:41:05 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9H0SPtW167879;
+        Thu, 17 Oct 2019 00:41:04 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2vp70nvkv7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 00:41:04 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9H0f2Vh022438;
+        Thu, 17 Oct 2019 00:41:02 GMT
+Received: from z2.cn.oracle.com (/10.182.70.159)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 17 Oct 2019 00:41:01 +0000
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     rjw@rjwysocki.net, daniel.lezcano@linaro.org,
+        linux-pm@vger.kernel.org, mtosatti@redhat.com,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Joao Martins <joao.m.martins@oracle.com>
+Subject: [PATCH] cpuidle-haltpoll: make haltpoll aware of 'idle=' override
+Date:   Thu, 17 Oct 2019 08:39:10 +0800
+Message-Id: <1571272750-29798-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=995
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910170001
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910170001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Oct 2019 14:48:59 -0700 David Gow <davidgow@google.com> wrote:
+Currenly haltpoll isn't aware of the 'idle=' override, the priority is
+'idle=poll' > haltpoll > 'idle=halt'. When 'idle=poll' is used, cpuidle
+driver is bypassed but current_driver in sys still shows 'haltpoll'.
 
-> Since KUnit is not yet in Linus' branch, though, it probably makes
-> sense to put this test into the linux-kselftest/test branch, so that
-> there aren't any chances of the list test getting in without the KUnit
-> infrastructure. Ultimately, once KUnit is upstream, this shouldn't be
-> an issue, but it is probably easier to consolidate things for now.
-> Does that sound sensible?
+When 'idle=halt' is used, haltpoll take precedence and make 'idle=halt'
+no effect.
 
-Well, whatever.  I have a note that it's dependent on kunit.
+Add a check to not load haltpoll driver if there is 'idle=' and haltpoll
+is built in. If haltpoll is built as a module, still give a chance for
+admin to use it despite 'idle='.
+
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+---
+ drivers/cpuidle/cpuidle-haltpoll.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle-haltpoll.c
+index 932390b..00e9821 100644
+--- a/drivers/cpuidle/cpuidle-haltpoll.c
++++ b/drivers/cpuidle/cpuidle-haltpoll.c
+@@ -95,6 +95,12 @@ static int __init haltpoll_init(void)
+ 	int ret;
+ 	struct cpuidle_driver *drv = &haltpoll_driver;
+ 
++#if !defined(CONFIG_HALTPOLL_CPUIDLE_MODULE)
++	/* Do not load haltpoll if idle= is passed */
++	if (boot_option_idle_override != IDLE_NO_OVERRIDE)
++		return -ENODEV;
++#endif
++
+ 	cpuidle_poll_state_init(drv);
+ 
+ 	if (!kvm_para_available() ||
+-- 
+1.8.3.1
+
