@@ -2,167 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8FC1DB644
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:35:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B1B6DB650
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:36:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438916AbfJQSfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 14:35:47 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34632 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438870AbfJQSfq (ORCPT
+        id S2439045AbfJQSg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 14:36:28 -0400
+Received: from sender4-of-o54.zoho.com ([136.143.188.54]:21442 "EHLO
+        sender4-of-o54.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404424AbfJQSg2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:35:46 -0400
-Received: by mail-ot1-f68.google.com with SMTP id m19so2801629otp.1;
-        Thu, 17 Oct 2019 11:35:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rLXeE5tDWR528aYmAdtQR/tQKMyidpkE7QGnDFQ38Io=;
-        b=IcFJY0gnT0UBrPh6/Cy32lwDFrIAMwNa2l/ci9KluKFFRFA6SWoGKaKhUDcoVsX9Ou
-         Ai/ss2cbSHiuri++vruETpVOrxtXd34lBUyk/bhjf7M8dVceYrLlzviSRe7wal9h47mT
-         oMAjhr0S0kZIcABStm9kT9QElbGVIe9rip74s6nfNRxq095rQK0FB7t2b4su1jyUvltJ
-         NBkCO2jCqUHXmvi+/Y+suodU74/3txTHzObDKByvOuZzQ3TJJEzUjnhedqD2fIkbo/q6
-         3ogRz3EouCAELh+ViJOTbvjdetnTIp3exaizxpAU1fSUp5Lnb8ZtXvV6Pbpo6PilLezO
-         NSTg==
-X-Gm-Message-State: APjAAAUiKQgCWMhuQp2Aumq5JkLmHLapAeAhxJ8I3vJgPsfPVrlfHf3J
-        1GjYuH0nqGQR13b4Tc+f+g==
-X-Google-Smtp-Source: APXvYqx1QhuF+1Hdzlmm+RA+5TKr7r6oHJCWnwtex4XEqDWWEc7Ao9vjGEquEZQuo0+tlgF0u4VyvA==
-X-Received: by 2002:a9d:6a0c:: with SMTP id g12mr4020150otn.141.1571337345362;
-        Thu, 17 Oct 2019 11:35:45 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q14sm790999otc.50.2019.10.17.11.35.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 11:35:44 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 13:35:43 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v3 3/6] dt-bindings: regulator: max77650: convert the
- binding document to yaml
-Message-ID: <20191017183543.GA28403@bogus>
-References: <20191017071234.8719-1-brgl@bgdev.pl>
- <20191017071234.8719-4-brgl@bgdev.pl>
+        Thu, 17 Oct 2019 14:36:28 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1571337357; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=GZ0wkqT4oX70b4/Yw7CTeHHoyNrnOItU1Avnktv0zPsd75nDD7Ux05VFtEdRJ7OH4w/IImYQEARcSdF52WUWwtQyJYCigMfCLVUGDYoY0I1oMGKdlRhG6zbHSuKFwg/87qJWf2sdV2Ykic6zm0xwkjfOgl6XLPEdxed0bOwEBgY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1571337357; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=xpH+wwCAITSzAO9czGlDj9un1CpDMmdRQVqIEoGfq70=; 
+        b=kIt5Q300JKxlLLQ0InuiBOme/SWy/3ozlG7qRKZrawRplc+5ERNvAMrYu3EEi/x4iwpxZxT1W4UVHYpCs8tJ1XLnCpQ3oWctK53F0VQljcaneIIkwfFFxNYdEwh0rpIAa4+J/ddZmiGU/YTQfdyB2A3/EmVrFD8PnmFq/5vklEA=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=didiksetiawan.com;
+        spf=pass  smtp.mailfrom=ds@didiksetiawan.com;
+        dmarc=pass header.from=<ds@didiksetiawan.com> header.from=<ds@didiksetiawan.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1571337357;
+        s=zoho; d=didiksetiawan.com; i=ds@didiksetiawan.com;
+        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To;
+        l=859; bh=xpH+wwCAITSzAO9czGlDj9un1CpDMmdRQVqIEoGfq70=;
+        b=KfyqrKg9pr8q+C9r1woJfkGlVle+OvcXS+1rn5cfraXq4OTUL7Qc5znjYjDcc+q/
+        ARXXcisai8HQcwIsti+lwLzXheIq08kJ1VppW0pGCOfFypLm6DOQdceddtgTHavPkQT
+        sQeOw7ffY1ChOQN6rPbodulUkxyiKDQm3fN4uEqw=
+Received: from thinkpad-e420s (120.188.94.47 [120.188.94.47]) by mx.zohomail.com
+        with SMTPS id 1571337356737811.3215165603303; Thu, 17 Oct 2019 11:35:56 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 01:35:44 +0700
+From:   Didik Setiawan <ds@didiksetiawan.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 00/81] 4.19.80-stable review
+Message-ID: <20191017183544.GA9782@thinkpad-e420s>
+References: <20191016214805.727399379@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191017071234.8719-4-brgl@bgdev.pl>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 09:12:31AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed, Oct 16, 2019 at 02:50:11PM -0700, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.80 release.
+> There are 81 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Convert the binding document for MAX77650 regulator module to YAML.
+> Responses should be made by Fri 18 Oct 2019 09:43:41 PM UTC.
+> Anything received after that time might be too late.
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  .../bindings/regulator/max77650-regulator.txt | 41 -------------------
->  .../regulator/max77650-regulator.yaml         | 31 ++++++++++++++
->  2 files changed, 31 insertions(+), 41 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/regulator/max77650-regulator.txt
->  create mode 100644 Documentation/devicetree/bindings/regulator/max77650-regulator.yaml
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.80-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
 > 
-> diff --git a/Documentation/devicetree/bindings/regulator/max77650-regulator.txt b/Documentation/devicetree/bindings/regulator/max77650-regulator.txt
-> deleted file mode 100644
-> index f1cbe813c30f..000000000000
-> --- a/Documentation/devicetree/bindings/regulator/max77650-regulator.txt
-> +++ /dev/null
-> @@ -1,41 +0,0 @@
-> -Regulator driver for MAX77650 PMIC from Maxim Integrated.
-> -
-> -This module is part of the MAX77650 MFD device. For more details
-> -see Documentation/devicetree/bindings/mfd/max77650.txt.
-> -
-> -The regulator controller is represented as a sub-node of the PMIC node
-> -on the device tree.
-> -
-> -The device has a single LDO regulator and a SIMO buck-boost regulator with
-> -three independent power rails.
-> -
-> -Required properties:
-> ---------------------
-> -- compatible:		Must be "maxim,max77650-regulator"
-> -
-> -Each rail must be instantiated under the regulators subnode of the top PMIC
-> -node. Up to four regulators can be defined. For standard regulator properties
-> -refer to Documentation/devicetree/bindings/regulator/regulator.txt.
-> -
-> -Available regulator compatible strings are: "ldo", "sbb0", "sbb1", "sbb2".
-> -
-> -Example:
-> ---------
-> -
-> -	regulators {
-> -		compatible = "maxim,max77650-regulator";
-> -
-> -		max77650_ldo: regulator@0 {
-> -			regulator-compatible = "ldo";
-> -			regulator-name = "max77650-ldo";
-> -			regulator-min-microvolt = <1350000>;
-> -			regulator-max-microvolt = <2937500>;
-> -		};
-> -
-> -		max77650_sbb0: regulator@1 {
-> -			regulator-compatible = "sbb0";
-> -			regulator-name = "max77650-sbb0";
-> -			regulator-min-microvolt = <800000>;
-> -			regulator-max-microvolt = <1587500>;
-> -		};
-> -	};
-> diff --git a/Documentation/devicetree/bindings/regulator/max77650-regulator.yaml b/Documentation/devicetree/bindings/regulator/max77650-regulator.yaml
-> new file mode 100644
-> index 000000000000..a8770742836d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/max77650-regulator.yaml
-> @@ -0,0 +1,31 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/max77650-regulator.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Regulator driver for MAX77650 PMIC from Maxim Integrated.
-> +
-> +maintainers:
-> +  - Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> +
-> +description: |
-> +  This module is part of the MAX77650 MFD device. For more details
-> +  see Documentation/devicetree/bindings/mfd/max77650.txt.
+> thanks,
+> 
+> greg k-h
 
-.yaml?
+Compiled, booted, and no regressions found on my x86_64 system.
 
-> +
-> +  The regulator controller is represented as a sub-node of the PMIC node
-> +  on the device tree.
-> +
-> +  The device has a single LDO regulator and a SIMO buck-boost regulator with
-> +  three independent power rails.
-> +
-> +properties:
-> +  compatible:
-> +    const: maxim,max77650-regulator
-> +
-> +patternProperties:
-> +  "^regulator@[0-3]$":
-> +    $ref: "regulator.yaml#"
-> +
-> +required:
-> +  - compatible
-> -- 
-> 2.23.0
-> 
+Thanks,
+Didik Setiawan
+
