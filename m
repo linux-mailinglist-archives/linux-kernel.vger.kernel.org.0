@@ -2,101 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6339DAD9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:58:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 817DCDADAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:59:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390796AbfJQM6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 08:58:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40762 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbfJQM6D (ORCPT
+        id S2390906AbfJQM7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 08:59:24 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58018 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726534AbfJQM7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:58:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fqfvJwGghxY/zvJczuG3/Ld93T9mcoCDDrIkbXWs7Sk=; b=po5ekprxuyc4XbZj/GiSZZOxK
-        XnmJuBTsnFVusvf8RHqb32e2q+BmM2FLOphxhDvtk100NFpDBCIJDmALheko0WV94K640qpsZBEf6
-        VDmAMk6fwXdR4STE0QPGHixD/qfmg5dirQ/+mR47pm+PwKrf69zIVmSnmJXN7wI3UzGAwQAfug5CB
-        NOQ2eO28le2sE8uQlLKcBeyvLXrRj4vbfixTaHuis7SrNbS+txcPtnMBawip8mC3BO8RKfnRsop4U
-        hGzu2L34yC0b1u++srYXLiy3fHJkhIsZro05OdLPxkzL4gBWXseVaW2TzTPGxfVYsTT75hKwlPOq3
-        XhVZZjgvw==;
-Received: from [179.95.49.118] (helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iL5Lp-0006o4-7D; Thu, 17 Oct 2019 12:57:57 +0000
-Date:   Thu, 17 Oct 2019 09:57:51 -0300
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <mripard@bootlin.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v8 3/3] media: cedrus: Add HEVC/H.265 decoding support
-Message-ID: <20191017095751.5a229051@coco.lan>
-In-Reply-To: <20190927143411.141526-4-paul.kocialkowski@bootlin.com>
-References: <20190927143411.141526-1-paul.kocialkowski@bootlin.com>
-        <20190927143411.141526-4-paul.kocialkowski@bootlin.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 17 Oct 2019 08:59:23 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9HCqajx130707;
+        Thu, 17 Oct 2019 08:58:57 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vprdx92pf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Oct 2019 08:58:56 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x9HCqeNS131031;
+        Thu, 17 Oct 2019 08:58:56 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vprdx92nx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Oct 2019 08:58:56 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x9HCuGTX003724;
+        Thu, 17 Oct 2019 12:58:55 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma02dal.us.ibm.com with ESMTP id 2vk6f815ts-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Oct 2019 12:58:55 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9HCwroP31457722
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 12:58:53 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 390AF13605E;
+        Thu, 17 Oct 2019 12:58:53 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DAA4013605D;
+        Thu, 17 Oct 2019 12:58:50 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.85.165.227])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 17 Oct 2019 12:58:50 +0000 (GMT)
+Subject: Re: [PATCH v7 2/8] powerpc: add support to initialize ima policy
+ rules
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Ricther <erichte@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Paul Mackerras <paulus@samba.org>, Jeremy Kerr <jk@ozlabs.org>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        George Wilson <gcwilson@linux.ibm.com>
+References: <1570497267-13672-1-git-send-email-nayna@linux.ibm.com>
+ <1570497267-13672-3-git-send-email-nayna@linux.ibm.com>
+ <871rveuu0i.fsf@mpe.ellerman.id.au>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <fbd8ca54-19ff-b77b-9e15-d900168bbdb3@linux.vnet.ibm.com>
+Date:   Thu, 17 Oct 2019 08:58:50 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <871rveuu0i.fsf@mpe.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-17_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910170119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, 27 Sep 2019 16:34:11 +0200
-Paul Kocialkowski <paul.kocialkowski@bootlin.com> escreveu:
-
-> This introduces support for HEVC/H.265 to the Cedrus VPU driver, with
-> both uni-directional and bi-directional prediction modes supported.
-> 
-> Field-coded (interlaced) pictures, custom quantization matrices and
-> 10-bit output are not supported at this point.
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
-
-...
-
-> +		unsigned int ctb_size_luma =
-> +			1 << log2_max_luma_coding_block_size;
-
-Shifts like this is a little scary. "1" constant is signed. So, if
-log2_max_luma_coding_block_size is 31, the above logic has undefined
-behavior. Different archs and C compilers may handle it on different
-ways.
-
-> +#define VE_DEC_H265_LOW_ADDR_PRIMARY_CHROMA(a) \
-> +	(((a) << 24) & GENMASK(31, 24))
-
-Same applies here and on other similar macros. You need to enforce
-(a) to be unsigned, as otherwise the behavior is undefined.
-
-Btw, this is a recurrent pattern on this file. I would define a
-macro, e. g. something like:
-
-	#define MASK_BITS_AND_SHIFT(v, high, low) \
-		((UL(v) << low) & GENMASK(high, low))
-
-And use it for all similar patterns here.
-
-The best would be to include such macro at linux/bits.h, although some
-upstream discussion is required.
-
-So, for now, let's add it at this header file, but work upstream
-to have it merged there.
 
 
-Thanks,
-Mauro
+On 10/15/2019 07:29 AM, Michael Ellerman wrote:
+> Nayna Jain <nayna@linux.ibm.com> writes:
+>> PowerNV systems uses kernel based bootloader, thus its secure boot
+>> implementation uses kernel IMA security subsystem to verify the kernel
+>> before kexec. Since the verification policy might differ based on the
+>> secure boot mode of the system, the policies are defined at runtime.
+>>
+>> This patch implements the arch-specific support to define the IMA policy
+>> rules based on the runtime secure boot mode of the system.
+>>
+>> This patch provides arch-specific IMA policies if PPC_SECURE_BOOT
+>> config is enabled.
+> ...
+>> diff --git a/arch/powerpc/kernel/ima_arch.c b/arch/powerpc/kernel/ima_arch.c
+>> new file mode 100644
+>> index 000000000000..c22d82965eb4
+>> --- /dev/null
+>> +++ b/arch/powerpc/kernel/ima_arch.c
+>> @@ -0,0 +1,33 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2019 IBM Corporation
+>> + * Author: Nayna Jain
+>> + */
+>> +
+>> +#include <linux/ima.h>
+>> +#include <asm/secure_boot.h>
+>> +
+>> +bool arch_ima_get_secureboot(void)
+>> +{
+>> +	return is_powerpc_os_secureboot_enabled();
+>> +}
+>> +
+>> +/* Defines IMA appraise rules for secureboot */
+>> +static const char *const arch_rules[] = {
+>> +	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig",
+>> +#if !IS_ENABLED(CONFIG_MODULE_SIG_FORCE)
+>> +	"appraise func=MODULE_CHECK appraise_type=imasig|modsig",
+>> +#endif
+> This confuses me.
+>
+> If I spell it out we get:
+>
+> #if IS_ENABLED(CONFIG_MODULE_SIG_FORCE)
+> 	// nothing
+> #else
+> 	"appraise func=MODULE_CHECK appraise_type=imasig|modsig",
+> #endif
+>
+> Which is just:
+>
+> #ifdef CONFIG_MODULE_SIG_FORCE
+> 	// nothing
+> #else
+> 	"appraise func=MODULE_CHECK appraise_type=imasig|modsig",
+> #endif
+>
+> But CONFIG_MODULE_SIG_FORCE enabled says that we *do* require modules to
+> have a valid signature. Isn't that the inverse of what the rules say?
+>
+> Presumably I'm misunderstanding something :)
+
+To avoid duplicate signature verification as much as possible, the IMA 
+policy rule is added only if CONFIG_MODULE_SIG_FORCE is not enabled. 
+CONFIG_MODULE_SIG_FORCE is part of modules support. IMA signature 
+verification is based on policy.
+
+Thanks & Regards,
+      - Nayna
+
