@@ -2,80 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9578DA678
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:29:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB3C4DA67C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392815AbfJQH3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 03:29:49 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51506 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728553AbfJQH3s (ORCPT
+        id S2392834AbfJQHay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 03:30:54 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:34388 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731498AbfJQHax (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 03:29:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7wFvMRX5TjmoFzlFtCpVT79A1OWYMSfZ1xr6DoHurAY=; b=FHgaLqDuzNECct36pr4DbNDQP
-        cR5oenemMl5KnQ+4YcOwPUe4ceiGkr751/GQYZx2vLWPUQmfHutK9OCWO3Di7eaS9gCX8PxBpHuTx
-        oY84EGCL3F7c12O3AEZzU1+YbPf0Kn6ctG5TN4YbhiQFbMBalp0ITm3TH12v7a2YknLpXhhmsab3x
-        tkp/3jiBq5vL+7kAHQvXRydh4LJMDWrxgPPesMHNPuPoXxY3K1Bq9xCu0P/VV4F4dxrSMlJlPP+3t
-        jl7AotmrdXoclsnu2bvNhKXHmj8EzPo8vD2ThImHRTPMKL+I9ae89iWzuzrIThf0oXWRnyKRYRjen
-        r4weYZWpg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iL0Dr-0003IB-Ia; Thu, 17 Oct 2019 07:29:23 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6FCC7304B4C;
-        Thu, 17 Oct 2019 09:28:25 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B2C1929E86617; Thu, 17 Oct 2019 09:29:20 +0200 (CEST)
-Date:   Thu, 17 Oct 2019 09:29:20 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH -tip v4 0/4] x86: kprobes: Prohibit kprobes on Xen/KVM
- emulate prefixes
-Message-ID: <20191017072920.GU2328@hirez.programming.kicks-ass.net>
-References: <156777561745.25081.1205321122446165328.stgit@devnote2>
- <20190917151403.60023814bda80304777a35e5@kernel.org>
- <20191009123106.GK2311@hirez.programming.kicks-ass.net>
- <20191017122655.6fae3c0e44417a0af30cd2d1@kernel.org>
+        Thu, 17 Oct 2019 03:30:53 -0400
+Received: by mail-yw1-f68.google.com with SMTP id d192so543613ywa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 00:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
+        b=ufNvNS5YYpr5Zs9Q8Ix4GjcrJHD3nUCFYTBJ1HbZNIeVxk2cCNv5CbfQeml2QbcUot
+         UtzQGcxs0j/8o6iYBEqXk+cu4WytbnlPFK5e0SbsW9Tq0WjaqhawKGAmcefgsdoGsZJR
+         A6pxM5buFjERBSpevBNgBIhlrfaqW9m71XcHGG1oF7qCpr0Ylx89Fk3xw5Ai9quj3hDb
+         nejOu5g4dupF0maLkm7uxVtaHbtmH1+fMvzOQS77nl6kL86pZNWoV2DXWCjA6qqMRWG/
+         C8P5RtYdvjqBwm3mtklRnBLSeFnjWnwsZAqJCEPFNLtOGsfrR84W5dWo77d50ARTeSv6
+         A4TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
+        b=Qv25yDbg2Pi1CVdnqS8A8D/BaqDT4FFxCNZK7DlZkHM+yJvuQprfEK+3wI00tjuXMf
+         JwSwFVzUGCgx52VDcSVL71ahLDzJPj5563jUosxEdIvAClgJLNka4qQp0SLoGTDk5JNI
+         rEIQUJAFuviO64BPl88zoPVdMbRiLRLHbcWqL6M2LY047CIK2Blod41ZJEYQGIAVZ0aB
+         d8+85pWRNunKDhVfaqVNFGw59DXmWEvWCeKoh97MPWy8C1cB86IK73VcRdH2syB11qnZ
+         pc8v77SHI4vKflmehJHtsu5r8M1yB7FD+58o/dIuaPi2K6NMsGeOuhuMKAsCZxuIomDy
+         9zjg==
+X-Gm-Message-State: APjAAAWeDn8zFsAekX0Cf/Soubp+l+ElyouOMh/TJzZMN5G/X58X1tnZ
+        ifqFk9sitPOQLKm3kYErAcxwWn49htdB6rWxoeg=
+X-Google-Smtp-Source: APXvYqzYNqCP4xe5IUJfoRdOaDYFwjccKbXA5GqTe9eEAJww0AQbTx2drRXiojAb/LR8VkSg38PojitjT0VhGT83jkg=
+X-Received: by 2002:a81:7acf:: with SMTP id v198mr1538205ywc.253.1571297452924;
+ Thu, 17 Oct 2019 00:30:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017122655.6fae3c0e44417a0af30cd2d1@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a0d:d8d0:0:0:0:0:0 with HTTP; Thu, 17 Oct 2019 00:30:52
+ -0700 (PDT)
+Reply-To: ayishagddafio@mail.com
+From:   AISHA GADDAFI <mrmusakabore13@gmail.com>
+Date:   Thu, 17 Oct 2019 00:30:52 -0700
+Message-ID: <CAJ-siTpC5dE_TT1Yf0zVjKmjmXUx_bwyA2H2Q5cKDAQ7b+Gj7g@mail.gmail.com>
+Subject: Dear Friend (Assalamu Alaikum),
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 12:26:55PM +0900, Masami Hiramatsu wrote:
-> Hi Peter,
-> 
-> On Wed, 9 Oct 2019 14:31:06 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > On Tue, Sep 17, 2019 at 03:14:03PM +0900, Masami Hiramatsu wrote:
-> > > Hi Peter,
-> > > 
-> > > Could you review this version?
-> > 
-> > These look good to me; shall I merge them or what was the plan?
-> 
-> Thanks for the review, yes, could you merge this series to support emulated prefixes correctly?
+-- 
+Dear Friend (Assalamu Alaikum),
 
-OK, I'll get them merged.
+I came across your e-mail contact prior a private search while in need of
+your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
+with three Children. I am the only biological Daughter of late Libyan
+President (Late Colonel Muammar Gaddafi).
+
+I have investment funds worth Twenty Seven Million Five Hundred Thousand
+United State Dollar ($27.500.000.00 ) and i need a trusted investment
+Manager/Partner because of my current refugee status, however, I am
+interested in you for investment project assistance in your country, may be
+from there, we can build business relationship in the nearest future.
+
+I am willing to negotiate investment/business profit sharing ratio with you
+base on the future investment earning profits.
+
+If you are willing to handle this project on my behalf kindly reply urgent
+to enable me provide you more information about the investment funds.
+
+Your Urgent Reply Will Be Appreciated. write me at this email address(
+ayishagddafio@mail.com ) for further discussion.
+
+Best Regards
+Mrs Aisha Al-Qaddafi
+Reply to: ayishagddafio@mail.com
