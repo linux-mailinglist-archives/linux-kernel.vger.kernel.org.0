@@ -2,109 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A82DCDA388
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 04:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79693DA38C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 04:18:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395482AbfJQCRf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 22:17:35 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:46370 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393050AbfJQCRf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 22:17:35 -0400
-Received: by mail-io1-f67.google.com with SMTP id c6so991616ioo.13;
-        Wed, 16 Oct 2019 19:17:33 -0700 (PDT)
+        id S2437609AbfJQCSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 22:18:52 -0400
+Received: from mail-eopbgr1410111.outbound.protection.outlook.com ([40.107.141.111]:43403
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729268AbfJQCSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 22:18:51 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VTvfHNFKZ6slUgRa/SgPDCP900u2bxZC7uSuA+utt+ORc4bjclKveRaB7KjrinVim0m+MV9rIf7r4KjRbgpbZfWLBgTA6leJ82/7LVaQ7sFpktzqUswTuzQ4GDIRbvRO64odKRlmzPgTOJckdr9QUpSAt8L2Kr/QI41Nv+MIflOTRnc93dU9OxMeBV9IlV2mtPUuVg9sfhozzubvqIG1OC3Zljk3zLWgzBYV5GMp8BqOcwKzVAafM5v06svKWT1k0GFjOmVRTVzbQIm9K4T/gqmYs6nXMP5/uaevK8MD4P2Hsra4Jsp2ENKqBQqklO2uT5gz43wVIePsSiTcLUPvTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n7K8JUzNCsIlrCLSWrn6zcIqZ/rsDhaLTwEYuZsx+sc=;
+ b=oLxXuYy1HO3ORPzMHBXAzfOk3/C+QNMv97eYcUvsa2ATcH+Q8hlOwcP3FRRJ8ij/UfvTBoYd7GxFCR4lPrxmmQoF5UkM6FEdK7CnPo+OMC9d9sN7TW3hV9aaKunmI/RZCUpcsvBRK1ZBut6ECIG9w7f0/vp2tu2CB+TKjBFbz9ALBOKxKeckvPuxLClWk3+RvAGNV2iKLMagNfOaTCr8AkRe5V4z4LY0pq7BRXgaoWLXg2QgEplx9M6yMpd5GT2yQEE10l1kFjDKqBIvfD1YRrohumNlj8543GnXL7Qjod2yrRuY1a3cqN7rWnlD7oaP22Wcwvvqz5c/XGuOepznzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AK1OtpwhD+5T5SYc4aqWUSJoX7IiVAlBKWUj0KHIhec=;
-        b=uBh8gacbPpI0VJl5KhIjIShsglvHOpHqpSWiu+6AxZwpiR2br9ZYDKkGK4jzLu+SUZ
-         7pgTlEXcdIACDCfz+ZcAn1V3BDOLqi6DGWoP5O2RU3WMcLv1Lh90cXa+FJJrvFJQR2aT
-         bAPtAcTfnfiJL+4duRq6FOhydOf/C+oXrqvtrxoGjsvx/VtGH1nkHRyAnI3TwxWEh6ex
-         ReT4YQ6smyx7AQxDNe85Egx7Ln9loTOI253cZKhTn+qZA5IW7+3rjqztC8mgvP6Rcb+y
-         WLxo78bSS6cWb63/APDyM9X9QxXPq5M3bemJVqbqCvakXx23eoJQZMAe3a4aculMMmgS
-         AMcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AK1OtpwhD+5T5SYc4aqWUSJoX7IiVAlBKWUj0KHIhec=;
-        b=mLU7tYNnGyXA8rQhdEMKyJMX2JMrRhoEwE0uB64D8D3mAql93OnkdiA2f6BrM5ch/v
-         FjVhHHW8zuCkFXuXW5Mypprm7Ylz/WklblU0dEaeYRQxJNVQHh4ezmFSyeGo1L3jnA1C
-         e46IHak4JYUAsyRQ6GPeuFNshEDCXcyZOXDwpada7urcwn7SqshBDTQ0BhWa5x9A3bOK
-         aPMaVWiF7PXFVozSq4sv0kmtZeynSsdpgWmUT7bcPQNKGPiMNdSaMgfrmpH/ETBeEN5V
-         WvstdylAyu96ccD3D7BotpvWGyBupyjTl+oxAjKLe8+T0Pl5nX+Hz7jpHhOfctYaLqhV
-         rIqQ==
-X-Gm-Message-State: APjAAAVXv2B4evh5rw2caL1OdEBiJaL0uvioVoGYQi9kTg+Ee9U/DRil
-        Z9JyckTFOK0timimsWSQmWlW5AsaBokj2xkm+KY=
-X-Google-Smtp-Source: APXvYqxULrKgQ13wwrDcc/ZVRpDzrh5ucuhgVylaQdb5YcGidUlTidsU1sTS0PxjOuF31m58p9CFtoXVTVngUlEoyDs=
-X-Received: by 2002:a02:a11e:: with SMTP id f30mr1061524jag.95.1571278652391;
- Wed, 16 Oct 2019 19:17:32 -0700 (PDT)
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n7K8JUzNCsIlrCLSWrn6zcIqZ/rsDhaLTwEYuZsx+sc=;
+ b=jc4afxqYno/wz8o64LlmGSTPgESyUymMCBjoMKOU4M/jebOYmVKkxwjYjV2WCUxiGsvAdkXNgije05JCo+NCdgwj++hDCxRsn3Dz+/lZnwqxtGdWUROkH4rp0lcqqAAu7/chjJyJsGNohSPdmNkO/WaCr3LPkIJzl8YNR8BIcJ4=
+Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com (20.179.175.203) by
+ TYAPR01MB3664.jpnprd01.prod.outlook.com (20.178.137.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.18; Thu, 17 Oct 2019 02:18:47 +0000
+Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com
+ ([fe80::548:32de:c810:1947]) by TYAPR01MB4544.jpnprd01.prod.outlook.com
+ ([fe80::548:32de:c810:1947%4]) with mapi id 15.20.2347.023; Thu, 17 Oct 2019
+ 02:18:47 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Simon Horman <horms@verge.net.au>
+CC:     "linux-kernel@lists.codethink.co.uk" 
+        <linux-kernel@lists.codethink.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+Subject: RE: [PATCH] usb: renesas_usbhs: fix __le16 warnings
+Thread-Topic: [PATCH] usb: renesas_usbhs: fix __le16 warnings
+Thread-Index: AQHVg3BX7WaejZzh5Uuo1PfP1tSBgKddMx4AgADnaMA=
+Date:   Thu, 17 Oct 2019 02:18:47 +0000
+Message-ID: <TYAPR01MB45440369B72F2C994CF8C85FD86D0@TYAPR01MB4544.jpnprd01.prod.outlook.com>
+References: <20191015155044.11858-1-ben.dooks@codethink.co.uk>
+ <20191016122656.3jpmes4rnz47u5wc@verge.net.au>
+In-Reply-To: <20191016122656.3jpmes4rnz47u5wc@verge.net.au>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [150.249.235.54]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d8dded65-8466-47ce-f294-08d752a8577d
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: TYAPR01MB3664:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <TYAPR01MB366448B5893101792AC4CA88D86D0@TYAPR01MB3664.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 01930B2BA8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(376002)(396003)(366004)(39860400002)(346002)(189003)(199004)(256004)(99286004)(6306002)(102836004)(4326008)(33656002)(76176011)(2906002)(6436002)(478600001)(9686003)(305945005)(66066001)(966005)(7736002)(229853002)(86362001)(7696005)(55016002)(25786009)(71190400001)(14454004)(74316002)(6246003)(476003)(52536014)(6506007)(486006)(71200400001)(11346002)(446003)(6916009)(6116002)(3846002)(66556008)(66946007)(316002)(66476007)(8676002)(8936002)(66446008)(64756008)(76116006)(81166006)(81156014)(186003)(54906003)(5660300002)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB3664;H:TYAPR01MB4544.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: /QukEE4bZ1lNoCqT0ULIykjMQ5Ncusx1G8vYYWIhA2uPFjkkC2eK/NuIscagx5wJkZp/g6UCk6YRqwRL7kxl63IDtSGqo3G88k83hzcmj0C+c0XcQmsT42TUYIjpk8BSOfSEqbwDs9lYJB8I1g2eU+9lmiSNpfblqpXyN1YYWSKKjv6rdv8ZfJyqfCyc02dP8CSmjmVfULoN05k8mTI5xxedcWR7h+6ksOgx9JMVk7TTgXpmjkTv8OVq37eo2jDzicY4ltm8qKUweK9nztxM4K+MVRksdyzVkzpXtmXolCKyeQB6F60zPq5ZnYIOfkgfPIbFOUiJX7qhSOvBP5pXDVQLGQztG5lhfk9Q6heJ+nIlBA9++c8cTKl0rE2TqnVM8YYc/Njl1nzkk6DfJZ3xxlNGMeJXROvvJBxa7jcQ2Dl/J1ypo1v45OmyFc3qPQySnEQc/ElicXm4DvC9AaxNcQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190729130912.7imtg3hfnvb4lt2y@MacBook-Pro-91.local>
- <20190729164226.22632-1-navid.emamdoost@gmail.com> <20190910113521.GA9895@unicorn.suse.cz>
-In-Reply-To: <20190910113521.GA9895@unicorn.suse.cz>
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Date:   Wed, 16 Oct 2019 21:17:21 -0500
-Message-ID: <CAEkB2ES8rc4kkPwA+okfMa9CpFoDqmt=tx8H8vHZKBCfw9L_tg@mail.gmail.com>
-Subject: Re: [PATCH v2] nbd_genl_status: null check for nla_nest_start
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     Josef Bacik <josef@toxicpanda.com>, Kangjie Lu <kjlu@umn.edu>,
-        Stephen McCamant <smccaman@umn.edu>, secalert@redhat.com,
-        Navid Emamdoost <emamd001@umn.edu>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        nbd@other.debian.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8dded65-8466-47ce-f294-08d752a8577d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2019 02:18:47.0600
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: umWYp1oHE2jyPWmndTpf82Eq4TlO3XjfPiTgRkcP1M+jNn3ijMsUJxv2a3mqHGXcHtQUixFMTdGRf+HzbhWWbNw+pVswzHc9SlOPngTfOrhDi71fndYetNop06+OmHBu
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3664
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal, please check v3 at https://lore.kernel.org/patchwork/patch/1126650/
+Hi Simon-san,
 
-
-Thanks,
-Navid.
-
-On Tue, Sep 10, 2019 at 6:35 AM Michal Kubecek <mkubecek@suse.cz> wrote:
->
-> (Just stumbled upon this patch when link to it came with a CVE bug report.)
->
-> On Mon, Jul 29, 2019 at 11:42:26AM -0500, Navid Emamdoost wrote:
-> > nla_nest_start may fail and return NULL. The check is inserted, and
-> > errno is selected based on other call sites within the same source code.
-> > Update: removed extra new line.
+> From: Simon Horman, Sent: Wednesday, October 16, 2019 9:27 PM
+<snip>
+> > diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_u=
+sbhs/common.c
+> > index 4c3de777ef6c..a3c30b609433 100644
+> > --- a/drivers/usb/renesas_usbhs/common.c
+> > +++ b/drivers/usb/renesas_usbhs/common.c
+> > @@ -162,17 +162,17 @@ void usbhs_usbreq_get_val(struct usbhs_priv *priv=
+, struct usb_ctrlrequest *req)
+> >  	req->bRequest		=3D (val >> 8) & 0xFF;
+> >  	req->bRequestType	=3D (val >> 0) & 0xFF;
 > >
-> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-> > Reviewed-by: Bob Liu <bob.liu@oracle.com>
-> > ---
-> >  drivers/block/nbd.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
+> > -	req->wValue	=3D usbhs_read(priv, USBVAL);
+> > -	req->wIndex	=3D usbhs_read(priv, USBINDX);
+> > -	req->wLength	=3D usbhs_read(priv, USBLENG);
+> > +	req->wValue	=3D cpu_to_le16(usbhs_read(priv, USBVAL));
+> > +	req->wIndex	=3D cpu_to_le16(usbhs_read(priv, USBINDX));
+> > +	req->wLength	=3D cpu_to_le16(usbhs_read(priv, USBLENG));
+>=20
+> usbhs_read is backed by readl which performs
+> a le->cpu conversion. Rather than have a double conversion
+> perhaps it would be nicer to introduce usbhs_read_le.
+> Likewise for write.
+
+I'm afraid but, I could not understand these comments.
+At the moment, the usbhs_{read,write}() call io{read,write}16(),
+not {read,write}l().
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
+vers/usb/renesas_usbhs/common.c?h=3Dv5.4-rc3#n62
+
+Best regards,
+Yoshihiro Shimoda
+
+>=20
+> >  }
 > >
-> > diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-> > index 9bcde2325893..2410812d1e82 100644
-> > --- a/drivers/block/nbd.c
-> > +++ b/drivers/block/nbd.c
-> > @@ -2149,6 +2149,11 @@ static int nbd_genl_status(struct sk_buff *skb, struct genl_info *info)
-> >       }
+> >  void usbhs_usbreq_set_val(struct usbhs_priv *priv, struct usb_ctrlrequ=
+est *req)
+> >  {
+> >  	usbhs_write(priv, USBREQ,  (req->bRequest << 8) | req->bRequestType);
+> > -	usbhs_write(priv, USBVAL,  req->wValue);
+> > -	usbhs_write(priv, USBINDX, req->wIndex);
+> > -	usbhs_write(priv, USBLENG, req->wLength);
+> > +	usbhs_write(priv, USBVAL,  le16_to_cpu(req->wValue));
+> > +	usbhs_write(priv, USBINDX, le16_to_cpu(req->wIndex));
+> > +	usbhs_write(priv, USBLENG, le16_to_cpu(req->wLength));
 > >
-> >       dev_list = nla_nest_start_noflag(reply, NBD_ATTR_DEVICE_LIST);
-> > +     if (!dev_list) {
-> > +             ret = -EMSGSIZE;
-> > +             goto out;
-> > +     }
-> > +
-> >       if (index == -1) {
-> >               ret = idr_for_each(&nbd_index_idr, &status_cb, reply);
-> >               if (ret) {
->
-> You should also call nlmsg_free(reply) when you bail out so that you
-> don't introduce a memory leak.
->
-> Michal Kubecek
-
-
-
--- 
-Navid.
+> >  	usbhs_bset(priv, DCPCTR, SUREQ, SUREQ);
+> >  }
+> > --
+> > 2.23.0
+> >
