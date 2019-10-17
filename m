@@ -2,159 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C3B5DB020
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:33:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BBB3DB024
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:34:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440248AbfJQOd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 10:33:28 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34977 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbfJQOd1 (ORCPT
+        id S2440310AbfJQOeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 10:34:18 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34615 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726583AbfJQOeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 10:33:27 -0400
-Received: by mail-qt1-f195.google.com with SMTP id m15so3918533qtq.2;
-        Thu, 17 Oct 2019 07:33:27 -0700 (PDT)
+        Thu, 17 Oct 2019 10:34:18 -0400
+Received: by mail-io1-f68.google.com with SMTP id q1so3304149ion.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 07:34:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=FmGHNpejQ29nIiQ+vBc6/ce+Q7SqcsDKzIUla6egsaM=;
+        b=eNBADHMVYXgGhZ9PnWXPEUKpsg3A3/TH0AkzNBh3Z8jAZrqnZdB9NUMKZJp6f4gGP+
+         pJhyu5IveRXR/PG+SdOrcbmzMCdCN/76o0KshYP/6jPvUgfxtEfhD7cf0pXPf4qgegWS
+         +YNsvD9/4JzseUFErTgMPvBLT+IONSnhLff/ytcpT1Sx2JxUM3tcOU1T6/6VZJnn6A9m
+         f0XEIv+xcE2wztGvQirbH5aXwy46bMEDrX09Cv0Fj/afoxgB5iooeg1CcPdi60B70RcZ
+         BUs89yaT4Jk5/P/jV/DVX/Z5lT7Kq+e77iDvGCKozuFW2t3tgEq6tmd0UhjPOmX6OSQn
+         h9lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PxqpxXBkdXm8+PD0xJUGu+5NPhpp64cZpau/yKP1PZY=;
-        b=fTM5hjnOYN0BD62J4BVMJ5Bx14uPDXFzyayGQpcdL9pzHwLz2Mc/QrGm92hSRKXQEd
-         NLtFbUe0ZfIyIfyKuqT3ff3UxTPoY41KEOnD3H+tI8qL5ms1/9aNk9jVIhuR0nClc2jn
-         kdjZk4TIqG4Cqt8PZyACl1cY1HucjqEVIxDBghzWFLF7hdS6IabG90cILbH+YOEOJQtW
-         GGeZWrCSJIhl59JNYxe+zkCX93/ORN6Mk0en4w79UrK0CSrecuun7jltqFZXMceJI2a2
-         w6jjcuygfoJBbHtdXR/rUVLoZTWwZ3XoXmvjBz0M2VWGp6skb21S1bQvuW6DMv0itdNs
-         59kQ==
-X-Gm-Message-State: APjAAAVNYqCmHx8gdAeH4kZdadvGXNEG8j/4kE2GYvjp9ChbKwCHh22t
-        9yfRn/M1bWEv0hYnzVyK8J2MZB1CtJHk0GWV1QE=
-X-Google-Smtp-Source: APXvYqzvTygfLmPgy5cG7H73eugUrdFK6qsnTv2IvbiQ3RJPDn04cLz8yPwWU8xHjvUQ/3XK3Pv4SUukJRbVUi3ELPg=
-X-Received: by 2002:a05:6214:1150:: with SMTP id b16mr4100968qvt.197.1571322806412;
- Thu, 17 Oct 2019 07:33:26 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=FmGHNpejQ29nIiQ+vBc6/ce+Q7SqcsDKzIUla6egsaM=;
+        b=MgU68Sr+8RVuaeumWMqG7/YVBMVqRHCK1B2AgYnU5YwMtmme5Acy4nS5SgrS7cP0h1
+         NocdWFB6mxRkKyNx63+RBI6lXe27IN5CmwzFfW5IRA04XeIUEbA2V0xJkIbmTNh3+C7R
+         Lrv9PMM0F3C+eipalkWJmUfccQEyXQQCsPkVzUUUDt7TNCzNKkkwxj6yprwupvx1nxWE
+         sFXTulsD2DEp4yZ8JcpxkU6/wmIlHM25CQ1etBJkEmKVPSYC+dOzXhG7CrP1khZiAVOH
+         btAy2MaDxxSjPIHcx9h+ln3li/IbGK5HD0ruHmujK7iH5003tBaK9TIFZ147WF4fWc/a
+         nlhw==
+X-Gm-Message-State: APjAAAVWn9oEPPWe8mHsqgiJOWLfxXvR5rSdsaY0uCyjCCE5/Qpulw8d
+        ouO09hwp3Brv9RjHzjpcC4SrNpsQ3LZ5hRzdeTg=
+X-Google-Smtp-Source: APXvYqxsXF8TAHSo19OZLGoFE0LX2psbQiLRVLbeLZB2nNgr2fjZLUbJ/ziLVatSp7Pl6iYET9fM0EWK0lWxHyQ9y0U=
+X-Received: by 2002:a5e:9202:: with SMTP id y2mr3364284iop.300.1571322856210;
+ Thu, 17 Oct 2019 07:34:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191009190853.245077-1-arnd@arndb.de> <20191009191044.308087-10-arnd@arndb.de>
- <d1022cda6bd6ce73e9875644a5a2c65e4d554f37.camel@codethink.co.uk>
-In-Reply-To: <d1022cda6bd6ce73e9875644a5a2c65e4d554f37.camel@codethink.co.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 17 Oct 2019 16:33:09 +0200
-Message-ID: <CAK8P3a0BYkPTSnQUmde2k+HVcg7XNihzWTEzrCD4d8G8ecO9-w@mail.gmail.com>
-Subject: Re: [Y2038] [PATCH v6 10/43] compat_ioctl: move rtc handling into rtc-dev.c
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Received: by 2002:a02:9403:0:0:0:0:0 with HTTP; Thu, 17 Oct 2019 07:34:15
+ -0700 (PDT)
+From:   Amidal Serge <sergeamidal01@gmail.com>
+Date:   Thu, 17 Oct 2019 15:34:15 +0100
+Message-ID: <CA+aY+6pVToyy3qWuF9FF9KWf+nm_9MqgfnBkuCikYs3FhdkgKQ@mail.gmail.com>
+Subject: Bonjour
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 3:42 PM Ben Hutchings
-<ben.hutchings@codethink.co.uk> wrote:
->
-> On Wed, 2019-10-09 at 21:10 +0200, Arnd Bergmann wrote:
-> > We no longer need the rtc compat handling to be in common code, now that
-> > all drivers are either moved to the rtc-class framework, or (rarely)
-> > exist in drivers/char for architectures without compat mode (m68k,
-> > alpha and ia64, respectively).
-> >
-> > I checked the list of ioctl commands in drivers, and the ones that are
-> > not already handled are all compatible, again with the one exception of
-> > m68k driver, which implements RTC_PLL_GET and RTC_PLL_SET, but has no
-> > compat mode.
-> >
-> > Since the ioctl commands are either compatible or differ in both structure
-> > and command code between 32-bit and 64-bit, we can merge the compat
-> > handler into the native one and just implement the two common compat
-> > commands (RTC_IRQP_READ, RTC_IRQP_SET) there.
-> [...]
->
-> I don't think this can work properly on s390, because some of them take
-> integers and some take pointers.
-
-Thanks a lot for taking a look at the patch and pointing this out!
-
-I don't remember how I got to this, either I missed the problem or I
-decided that it was ok, since it will still do the right thing:
-On s390 only the highest bit is cleared in a pointer value, and we
-ensure that the RTC_IRQP_SET argument is between 1 and 8192.
-
-Passing a value of (0x80000000 + n) where n is in the valid range
-would lead to the call succeeding unexpectedly on compat s390
-(if it had an RTC, which it does not) which is clearly not good but
-mostly harmless. I certainly had not considered this case.
-
-However, looking at this again after your comment I found a rather
-more serious bug in my new RTC_IRQP_SET handling: Any 64-bit
-machine can now bypass the permission check for RTC_IRQP_SET by
-calling RTC_IRQP_SET32 instead.
-
-I'll fix it both issues by adding a rtc_compat_dev_ioctl() to handle
-RTC_IRQP_SET32/RTC_IRQP_READ32:
-
-diff --git a/drivers/rtc/dev.c b/drivers/rtc/dev.c
-index 1dc5063f78c9..9e4fd5088ead 100644
---- a/drivers/rtc/dev.c
-+++ b/drivers/rtc/dev.c
-@@ -358,16 +358,6 @@ static long rtc_dev_ioctl(struct file *file,
-                mutex_unlock(&rtc->ops_lock);
-                return rtc_update_irq_enable(rtc, 0);
-
--#ifdef CONFIG_64BIT
--#define RTC_IRQP_SET32         _IOW('p', 0x0c, __u32)
--#define RTC_IRQP_READ32                _IOR('p', 0x0b, __u32)
--       case RTC_IRQP_SET32:
--               err = rtc_irq_set_freq(rtc, arg);
--               break;
--       case RTC_IRQP_READ32:
--               err = put_user(rtc->irq_freq, (unsigned int __user *)uarg);
--               break;
--#endif
-        case RTC_IRQP_SET:
-                err = rtc_irq_set_freq(rtc, arg);
-                break;
-@@ -409,6 +399,29 @@ static long rtc_dev_ioctl(struct file *file,
-        return err;
- }
-
-+#ifdef CONFIG_COMPAT
-+#define RTC_IRQP_SET32         _IOW('p', 0x0c, __u32)
-+#define RTC_IRQP_READ32                _IOR('p', 0x0b, __u32)
-+
-+static long rtc_dev_compat_ioctl(struct file *file,
-+                                unsigned int cmd, unsigned long arg)
-+{
-+       struct rtc_device *rtc = file->private_data;
-+       void __user *uarg = compat_ptr(arg);
-+
-+       switch (cmd) {
-+       case RTC_IRQP_READ32:
-+               return put_user(rtc->irq_freq, (__u32 __user *)uarg);
-+
-+       case RTC_IRQP_SET32:
-+               /* arg is a plain integer, not pointer */
-+               return rtc_dev_ioctl(file, RTC_IRQP_SET, arg);
-+       }
-+
-+       return rtc_dev_ioctl(file, cmd, (unsigned long)uarg);
-+}
-+#endif
-+
- static int rtc_dev_fasync(int fd, struct file *file, int on)
- {
-        struct rtc_device *rtc = file->private_data;
-@@ -444,7 +457,7 @@ static const struct file_operations rtc_dev_fops = {
-        .read           = rtc_dev_read,
-        .poll           = rtc_dev_poll,
-        .unlocked_ioctl = rtc_dev_ioctl,
--       .compat_ioctl   = compat_ptr_ioctl,
-+       .compat_ioctl   = rtc_dev_compat_ioctl,
-        .open           = rtc_dev_open,
-        .release        = rtc_dev_release,
-        .fasync         = rtc_dev_fasync,
-
-If you and Alexandre are both happy with this version, I'll fold it into
-my original patch.
-
-      Arnd
+Hello
+ I need your urgent assistance in the transfer of an abandoned funds
+on your account within 10-14 days if you are interested, respond to me
+with your information for more details. your name and surname:-. your
+country:-. your phone number. :- .
+ Please respond to this email address (sergeamidal@gmail.com)
+ Best regards Amidal
