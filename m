@@ -2,139 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9BABDAFE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CCA4DAFD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:21:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440211AbfJQOWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 10:22:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40804 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2440097AbfJQOVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 10:21:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9F88DB4C5;
-        Thu, 17 Oct 2019 14:21:38 +0000 (UTC)
-From:   Oscar Salvador <osalvador@suse.de>
-To:     n-horiguchi@ah.jp.nec.com
-Cc:     mhocko@kernel.org, mike.kravetz@oracle.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: [RFC PATCH v2 16/16] mm, soft-offline: convert parameter to pfn
-Date:   Thu, 17 Oct 2019 16:21:23 +0200
-Message-Id: <20191017142123.24245-17-osalvador@suse.de>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20191017142123.24245-1-osalvador@suse.de>
-References: <20191017142123.24245-1-osalvador@suse.de>
+        id S2440092AbfJQOV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 10:21:28 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:37395 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731664AbfJQOV1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 10:21:27 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1iL6ec-0006cH-0H; Thu, 17 Oct 2019 16:21:26 +0200
+Message-ID: <2a6ff5b73c9461d9ad25da677a94f860b216a596.camel@pengutronix.de>
+Subject: Re: [PATCH] reset: hi6220: Add support for AO reset controller
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Peter Griffin <peter.griffin@linaro.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Enrico Weigelt <info@metux.net>
+Date:   Thu, 17 Oct 2019 16:21:25 +0200
+In-Reply-To: <20191009162020.GC29241@griffinp-mac>
+References: <20191001182114.69699-1-john.stultz@linaro.org>
+         <1570542167.18914.5.camel@pengutronix.de>
+         <20191009162020.GC29241@griffinp-mac>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Hi Peter,
 
-Currently soft_offline_page() receives struct page, and its sibling
-memory_failure() receives pfn. This discrepancy looks weird and makes
-precheck on pfn validity tricky. So let's align them.
+On Wed, 2019-10-09 at 17:20 +0100, Peter Griffin wrote:
+[...]
+> > Do you know whether this is actually a module reset going to the GPU,
+> > or if this is somehow part of the clock and power gating machinery?
+> 
+> I don't know for sure, there is no documentation for these registers
+> apart from the code in [1] and [2], and that is really just the register name.
 
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
----
- drivers/base/memory.c |  7 +------
- include/linux/mm.h    |  2 +-
- mm/madvise.c          |  2 +-
- mm/memory-failure.c   | 17 +++++++++--------
- 4 files changed, 12 insertions(+), 16 deletions(-)
+Ok.
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index b3cae2eb1c4f..b510b4d176c9 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -538,12 +538,7 @@ static ssize_t soft_offline_page_store(struct device *dev,
- 	if (kstrtoull(buf, 0, &pfn) < 0)
- 		return -EINVAL;
- 	pfn >>= PAGE_SHIFT;
--	if (!pfn_valid(pfn))
--		return -ENXIO;
--	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
--	if (!pfn_to_online_page(pfn))
--		return -EIO;
--	ret = soft_offline_page(pfn_to_page(pfn));
-+	ret = soft_offline_page(pfn);
- 	return ret == 0 ? count : ret;
- }
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0f80a1ce4e86..40722854d357 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2791,7 +2791,7 @@ extern int sysctl_memory_failure_early_kill;
- extern int sysctl_memory_failure_recovery;
- extern void shake_page(struct page *p, int access);
- extern atomic_long_t num_poisoned_pages __read_mostly;
--extern int soft_offline_page(struct page *page);
-+extern int soft_offline_page(unsigned long pfn);
- 
- 
- /*
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 9ca48345ce45..f83b7d4c68c1 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -890,7 +890,7 @@ static int madvise_inject_error(int behavior,
- 		if (behavior == MADV_SOFT_OFFLINE) {
- 			pr_info("Soft offlining pfn %#lx at process virtual address %#lx\n",
- 				 pfn, start);
--			ret = soft_offline_page(page);
-+			ret = soft_offline_page(pfn);
- 		} else {
- 			pr_info("Injecting memory failure for pfn %#lx at process virtual address %#lx\n",
- 				 pfn, start);
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index c038896bedf0..bfecb61fc064 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1521,7 +1521,7 @@ static void memory_failure_work_func(struct work_struct *work)
- 		if (!gotten)
- 			break;
- 		if (entry.flags & MF_SOFT_OFFLINE)
--			soft_offline_page(pfn_to_page(entry.pfn));
-+			soft_offline_page(entry.pfn);
- 		else
- 			memory_failure(entry.pfn, entry.flags);
- 	}
-@@ -1834,7 +1834,7 @@ static int soft_offline_free_page(struct page *page)
- 
- /**
-  * soft_offline_page - Soft offline a page.
-- * @page: page to offline
-+ * @pfn: pfn to soft-offline
-  *
-  * Returns 0 on success, otherwise negated errno.
-  *
-@@ -1853,16 +1853,17 @@ static int soft_offline_free_page(struct page *page)
-  * This is not a 100% solution for all memory, but tries to be
-  * ``good enough'' for the majority of memory.
-  */
--int soft_offline_page(struct page *page)
-+int soft_offline_page(unsigned long pfn)
- {
- 	int ret;
--	unsigned long pfn = page_to_pfn(page);
-+	struct page *page;
- 
--	if (is_zone_device_page(page)) {
--		pr_debug_ratelimited("soft_offline: %#lx page is device page\n",
--				pfn);
-+	if (!pfn_valid(pfn))
-+		return -ENXIO;
-+	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
-+	page = pfn_to_online_page(pfn);
-+	if (!page)
- 		return -EIO;
--	}
- 
- 	if (PageHWPoison(page)) {
- 		pr_info("soft offline: %#lx page already poisoned\n", pfn);
--- 
-2.12.3
+> > There's also clock and isolation cell control going on, so this looks a
+> > bit like it should be part of a power domain driver.
+> 
+> I choose to add it here as this driver was already managing the
+> MEDIA_SCTRL_SC_MEDIA_RSTDIS_ADDR register, so it seemed correct for it to also
+> manage the AO_SCTRL_SC_PW_RSTDIS0_ADDR register.
+
+I agree here ...
+
+> The write to AO_SCTRL_SC_PW_ISODIS0_ADDR and
+> AO_SCTRL_SC_PW_CLKEN0_ADDR I guess aren't so clear cut but I wanted to maintain the
+> same ordering from [1].
+
+... but not here, necessarily. These register names make it look like
+this is the wrong place.
+
+On the other hand, if you don't actually have a way to disable power to
+the GPU domain, it is a bit hard for me to argue that it would be more
+correct to place this in a power domain driver. Certainly the power
+domain driver could (de)assert the reset in the right order though.
+
+I notice the actual GPU reset seems to be MEDIA_G3D, and is deasserted
+after whatever is controlled via AO_SCTRL_SC_PW_* in [1], so maybe this
+is indeed just the power domain control?
+
+> I have no info about the power domains on the SoC, so not sure it will be
+> possible to make it part of a power domain driver.
+> 
+> > Do you have an (internal or external) regulator that could be disabled
+> > while the GPU is inactive, like [1]?
+> > 
+> > [1]
+> > https://raw.githubusercontent.com/96boards/meta-96boards/master/recipes-kernel/linux/linux-96boards/0004-drivers-gpu-arm-utgard-add-basic-HiKey-platform-file.patch
+> 
+> This patch is based off [1] the regulator mentioned there G3D_PD_VDD it turns
+> out has never been available and always fails to do anything.
+> 
+> So AFAIK there is no external regulator available to disable. This code has since been
+> removed from Johns tree [2].
+> 
+> [2] https://git.linaro.org/people/john.stultz/android-dev.git/commit/?h=dev/hikey-5.3&id=64ec445a8271a2ced841484492ed9bf2e1ef4313
+
+The comment
+
+  "Note: GPU DVFS is not implemented and a custom Device Tree
+         entry is needed by these platform files.  This is a
+         first working version that needs to be improved."
+
+doesn't exactly make it clear whether it is "not implemented" in the
+SoC, not implemented on the board, or just not implemented in the driver
+in this patchset.
+So even if this board has the regulator fixed, could there be others
+where GPU power could be switched off? I wouldn't want to encode the the
+limitations of a particular board into the SoC DT bindings.
+
+> > > Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> > > Cc: Peter Griffin <peter.griffin@linaro.org>
+> > > Cc: Enrico Weigelt <info@metux.net>
+> > > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > > Signed-off-by: John Stultz <john.stultz@linaro.org>
+> > > ---
+> > >  drivers/reset/hisilicon/hi6220_reset.c | 51 +++++++++++++++++++++++++-
+> > >  1 file changed, 50 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/reset/hisilicon/hi6220_reset.c b/drivers/reset/hisilicon/hi6220_reset.c
+> > > index 24e6d420b26b..d84674a2cead 100644
+> > > --- a/drivers/reset/hisilicon/hi6220_reset.c
+> > > +++ b/drivers/reset/hisilicon/hi6220_reset.c
+> > > @@ -33,6 +33,7 @@
+> > >  enum hi6220_reset_ctrl_type {
+> > >  	PERIPHERAL,
+> > >  	MEDIA,
+> > > +	AO,
+> > >  };
+> > >  
+> > >  struct hi6220_reset_data {
+> > > @@ -92,6 +93,47 @@ static const struct reset_control_ops hi6220_media_reset_ops = {
+> > >  	.deassert = hi6220_media_deassert,
+> > >  };
+> > >  
+> > > +#define AO_SCTRL_SC_PW_CLKEN0     0x800
+> > > +#define AO_SCTRL_SC_PW_CLKDIS0    0x804
+> > > +
+> > > +#define AO_SCTRL_SC_PW_RSTEN0     0x810
+> > > +#define AO_SCTRL_SC_PW_RSTDIS0    0x814
+
+Is this the only reset register in the "Always-On" (that would have been
+nice to include in the commit description for my education) controller?
+
+According to [3] there also seem to be rst4 and rst5 registers?
+
+[3] https://github.com/u-boot/u-boot/blob/master/arch/arm/include/asm/arch-hi6220/hi6220_regs_alwayson.h
+
+> > > +
+> > > +#define AO_SCTRL_SC_PW_ISOEN0     0x820
+> > > +#define AO_SCTRL_SC_PW_ISODIS0    0x824
+> > > +#define AO_MAX_INDEX              12
+
+Where does this number come from? I can't find any information about the
+bits in the PW_* registers...
+
+> > > +
+> > > +static int hi6220_ao_assert(struct reset_controller_dev *rc_dev,
+> > > +			    unsigned long idx)
+> > > +{
+> > > +	struct hi6220_reset_data *data = to_reset_data(rc_dev);
+> > > +	struct regmap *regmap = data->regmap;
+> > > +	int ret;
+> > > +
+> > > +	ret = regmap_write(regmap, AO_SCTRL_SC_PW_RSTEN0, BIT(idx));
+> > > +	ret |= regmap_write(regmap, AO_SCTRL_SC_PW_ISOEN0, BIT(idx));
+> > > +	ret |= regmap_write(regmap, AO_SCTRL_SC_PW_CLKDIS0, BIT(idx));
+> > 
+> > I would like the return values not to be ORed together, since they are
+> > returned to the caller.
+> 
+> Yes I think you mentioned that before. I did send a v2 previously that
+> addressed that https://lkml.org/lkml/2019/4/19/253. That's my fault for
+> not following this series up sooner.
+
+I'm sorry, I missed that.
+
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static int hi6220_ao_deassert(struct reset_controller_dev *rc_dev,
+> > > +			      unsigned long idx)
+> > > +{
+> > > +	struct hi6220_reset_data *data = to_reset_data(rc_dev);
+> > > +	struct regmap *regmap = data->regmap;
+> > > +	int ret;
+> > > +
+> > > +	ret = regmap_write(regmap, AO_SCTRL_SC_PW_RSTDIS0, BIT(idx));
+> > > +	ret |= regmap_write(regmap, AO_SCTRL_SC_PW_ISODIS0, BIT(idx));
+> > > +	ret |= regmap_write(regmap, AO_SCTRL_SC_PW_CLKEN0, BIT(idx));
+> > 
+> > Are you sure these are fire and forget, or might the order be important?
+> 
+> The order maybe important, I've not tried a different ordering to
+> what is here. I kept it the same as [1] which was working with the blob driver
+> and continues to work with driver.
+
+Ok, that makes sense.
+
+> > It might be necessary to disable isolation before enabling the clocks
+> > and deasserting reset, to avoid glitches.
+> 
+> You mean a register sequence like this?
+> 
+> regmap_write(regmap, AO_SCTRL_SC_PW_ISODIS0, BIT(idx));
+> regmap_write(regmap, AO_SCTRL_SC_PW_RSTDIS0, BIT(idx));
+> regmap_write(AO_SCTRL_SC_PW_CLKEN0, BIT(idx));
+
+I'm just asking whether you have considered potential side effects, but
+without better knowledge about the SoC, following the order found in the
+vendor code, is probably the best we can do.
+
+In [1] the corresponding _STAT registers (+0x8) are checked after
+setting each bit, is there a reason you dropped these checks?
+
+regards
+Philipp
 
