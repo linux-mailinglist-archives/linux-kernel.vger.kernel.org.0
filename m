@@ -2,112 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36184DA474
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 06:00:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF9ADA476
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 06:00:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbfJQEAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 00:00:09 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39025 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfJQEAJ (ORCPT
+        id S2407710AbfJQEAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 00:00:21 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:39796 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389125AbfJQEAU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 00:00:09 -0400
-Received: by mail-pg1-f194.google.com with SMTP id p12so505416pgn.6;
-        Wed, 16 Oct 2019 21:00:08 -0700 (PDT)
+        Thu, 17 Oct 2019 00:00:20 -0400
+Received: by mail-yb1-f196.google.com with SMTP id z2so271948ybn.6
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 21:00:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2yNtlok8yGySrOHq9u2AAN+TVi78mKC0EXtVMDO7RbE=;
-        b=UjfiBqxjEEkRWPhPRvbNe7ATaeszJmXFfY3w1zwUxW9IoXcHAJr9E/LvL0tg43UbUn
-         tykduJvG+eQyFEgkfubVasyQ2oM6802QtNwa2uRTIZV2BWynCrKmlgCWWfasdULf7w8c
-         wn7lqz5ihCqHtU3HBTHmSnLQGvY8/7uivC1WlA+TotlJUIFlRYFM3yQCrbZQ6CF2wrtM
-         C/X13h4l83CO9YTztKaGITN5iUhYO1yCm6rKgJIBafHOkcSvXiFDNgKIFOmTLPJdcAKI
-         QgrCCDOTFs40sXkoL155BPSVh7+V4obY5jSeF3Aw6thSK5QcaEcqrD6AgcjgiuO8zMqW
-         nnsw==
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=R7agJn2xhu/bfVAbFCngbuss5j4mtvnFbiuNdxVUHic=;
+        b=uMDdLUWiJA2yKy+OGjOmykqJj33fp+sY8NRzeKF65knMaZVdPsJWcjXpzj+tH7mAZN
+         8p07Wqcs28OXGahYnTgqWZSKUeVo+eod2yMftru17RMEjR19Jy6NWJPKgyoOFa1pgg8s
+         SwkRkX2PLPVcrNe5oK6Bm7657Zc6vGsO6TkmApgUxWUzGL+Rje+hlYvXnZ9H5M3WZvlp
+         4waQEf1JQdcmjs42vyN12NhVT9igU8sDAERWpl2QqH+MndrsyQy5Jw0Ls+fmnjzyW2t7
+         T8QOwHYIIHSWev3QHJnax5g4hCARmnZG0h6+kayPir9h+s3PzzoVZ8Z0b1Vo1EyIFuL9
+         HUTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2yNtlok8yGySrOHq9u2AAN+TVi78mKC0EXtVMDO7RbE=;
-        b=UTHCt8I9QAkpgjKxhv4Di5oLX7OF/I+Fnee75HTSvao2rw2jCjyXZsdqSm8XvcxfNL
-         NlN/2qoCFpe7DNzwcTchMCJ2og+hHH3AUjzMYbZ+FFveCbe/UGACeDuiP6y39mkELuks
-         1qAi8Jxw0S/L9BM/diraWw483XoRqEPEnlHxK8vl17rb1DoE4crmv7vhROrjzPNO2c/8
-         EkQdtdTKoBkCScbRzhmTEqT+JVMwSsQUMSGg7KMdCswa4/nnpocweCz662IDvNmmgUCE
-         t1vv3PooJYULwuWz878jGHdUxTUNxGFz5wtPyEBif5wEGz32POGhD1Yz6ywahaBuTdto
-         S67A==
-X-Gm-Message-State: APjAAAXH8dFq7OljdW1OjCw2lRIPBNDTnv8dhfFnxwP//cf0bZrUapEz
-        ueDWaAMUu7/9S8RRJ/nQNP0=
-X-Google-Smtp-Source: APXvYqzVaMKqrv1ps6lbRrvel3jjyeCl1eSNaIfxx4celkd9tFL7+xNAkROVnFHyKwkPj7+OozDt1A==
-X-Received: by 2002:a62:5c85:: with SMTP id q127mr1317813pfb.39.1571284807933;
-        Wed, 16 Oct 2019 21:00:07 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id p66sm657775pfg.127.2019.10.16.21.00.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2019 21:00:07 -0700 (PDT)
-Subject: Re: [PATCH net 0/4] net: bcmgenet: restore internal EPHY support
-To:     Doug Berger <opendmb@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jaedon.shin@gmail.com
-References: <1571267192-16720-1-git-send-email-opendmb@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <597ee52c-4dc3-2bee-87c9-5f97c382c9ba@gmail.com>
-Date:   Wed, 16 Oct 2019 21:00:05 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=R7agJn2xhu/bfVAbFCngbuss5j4mtvnFbiuNdxVUHic=;
+        b=csQQ03BGbbZmg1+mUNcnIdmmkZY7qyw3Q64whvCKWqy2Y7y5lkNRVianwSRrqbn9Hx
+         U7JlDcaopS+4p5c6fvfcpJJx4HCJ0YUf1rNNOPKiOqS/LSsrB8TtZ0gHwno4a+NujPBZ
+         sNSLRlJHa5nmyWwp9dlFWBgojG3r+TwqWG0pDrT3BzxLIgQOFMFEiuysCpLeKUkedjse
+         bljvtoRRwkyg2r3E0KRyV94jQoo2LKBuE6dhBxdbVjoIrjWWkRxPjmbT/wXDFwNcLHym
+         F5FUcwE5fcjxA59+EZsPaHUNXgzgSqrqH2ERCUeuyxOESoFP5tSEFUTKP3PD+YMCI9zm
+         iqXQ==
+X-Gm-Message-State: APjAAAUeO72wmKhm0TCtZx2ziEx0GSIvQg8CgIBH/GL2HbET8IFNe8Ju
+        LfXRA3oUNOUok4hcfXCGREjcZJX8pIBP/EJEY2k=
+X-Google-Smtp-Source: APXvYqwkz2PMs73k7TfDoKU/oUvqrfz0dY0jpp8B72pmhh7u+iciyMRx+tmMwJQwxeli7UTrzdJFmoBaBBaSHNlNL+M=
+X-Received: by 2002:a25:8292:: with SMTP id r18mr733101ybk.424.1571284820093;
+ Wed, 16 Oct 2019 21:00:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1571267192-16720-1-git-send-email-opendmb@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Reply-To: beatricejonson1@yandex.com
+Received: by 2002:a25:6141:0:0:0:0:0 with HTTP; Wed, 16 Oct 2019 21:00:19
+ -0700 (PDT)
+From:   Beatrice Johnson <beatricejonson1@gmail.com>
+Date:   Thu, 17 Oct 2019 06:00:19 +0200
+X-Google-Sender-Auth: YewXkc9XRgOFILhfOuByG6mLyZ0
+Message-ID: <CAO99B9_i2Mu7wR40FDqY-VssG2fE2JaT9+eaw5Q5NjJ6+ZMFVg@mail.gmail.com>
+Subject: I need Your Urgent assistance.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I need Your Urgent assistance.
 
+My name is Beatrice Johnson. The only daughter of the late Mr. Madou
+Johnson. Here in Burkina Faso, i got your profile while searching for
+contact on internet; I am contacting you to help me receive some
+amount of money in your country. So that I can travel To America to
+continue my education over there,
 
-On 10/16/2019 4:06 PM, Doug Berger wrote:
-> I managed to get my hands on an old BCM97435SVMB board to do some
-> testing with the latest kernel and uncovered a number of things
-> that managed to get broken over the years (some by me ;).
-> 
-> This commit set attempts to correct the errors I observed in my
-> testing.
-> 
-> The first commit applies to all internal PHYs to restore proper
-> reporting of link status when a link comes up.
-> 
-> The second commit restores the soft reset to the initialization of
-> the older internal EPHYs used by 40nm Set-Top Box devices.
-> 
-> The third corrects a bug I introduced when removing excessive soft
-> resets by altering the initialization sequence in a way that keeps
-> the GENETv3 MAC interface happy.
-> 
-> Finally, I observed a number of issues when manually configuring
-> the network interface of the older EPHYs that appear to be resolved
-> by the fourth commit.
+Before my father died he deposited the Sum of ($4.5Million) in a bank
+here and he advised me before he died to look for a faithful and
+reliable foreigner, who can help receive the Funds outside country, So
+that I can travel to meet you in your country. For my share percentage
+of the total amount 4.5 Million, from your county I will travel to
+America to continue my education and business.
 
-Thank you very much for addressing all of those problems!
+I hope you are capable to receive the 4.5 Million in your country with
+trust.  I will like to travel to your country immediately the bank
+wire the funds into your account. You will take 30% of the total 4.5
+Million for your good and kind assistance to me. I will send to you
+the full details concerning the funds immediately I hear from you
+soon.
 
-> 
-> Doug Berger (4):
->   net: bcmgenet: don't set phydev->link from MAC
->   net: phy: bcm7xxx: define soft_reset for 40nm EPHY
->   net: bcmgenet: soft reset 40nm EPHYs before MAC init
->   net: bcmgenet: reset 40nm EPHY on energy detect
-> 
->  drivers/net/ethernet/broadcom/genet/bcmgenet.c |  41 +++++----
->  drivers/net/ethernet/broadcom/genet/bcmgenet.h |   2 +-
->  drivers/net/ethernet/broadcom/genet/bcmmii.c   | 112 +++++++++++--------------
->  drivers/net/phy/bcm7xxx.c                      |   1 +
->  4 files changed, 79 insertions(+), 77 deletions(-)
-> 
+My Regards,
 
--- 
-Florian
+Beatrice Johnson.
