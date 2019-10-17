@@ -2,155 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B6A2DAD94
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6339DAD9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:58:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389462AbfJQM5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 08:57:00 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42736 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbfJQM5A (ORCPT
+        id S2390796AbfJQM6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 08:58:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40762 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbfJQM6D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:57:00 -0400
-Received: by mail-ot1-f68.google.com with SMTP id c10so1765361otd.9
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 05:57:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FzwnaF5E0NhR1cM5i+huNW3oCidI8gC26kz9mt79iqs=;
-        b=XQ84OzwtgvCjV6ernd063jJjH6HQVu0l2UXHnIngxd21LQuDClgTAI9KizdYGwRlFu
-         1DIJH2ZnR902Bdo3nrESpCk/Fi3cGFTE7Ryv5HhnTkf4yv5uVUssa9gXx2LXGJiQVDp7
-         3k6f6PGysAbM33l+VVr/h48rNmG2HnNXRTQ19ehkpEeWs/+XuMvXk4FO5vaDQXi1YOhS
-         PA9w7XCDaNMYZYTSyowuBb34D0INawMpRAqnoareBKtcwXRnU1VdqErGESIa65sDES3O
-         FPo5KxCubyWFMmpTbz0MREzAG/AtHUDpmRjEaS2e8gHFV36MydIeQ9SUtPiJeHrz+hFc
-         Zh/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FzwnaF5E0NhR1cM5i+huNW3oCidI8gC26kz9mt79iqs=;
-        b=Dwu0ne0zYQ+h9XjV40zNZUKIUsCR/lZmUISky36USQemM/arrZPNd25/sTBsEDxS0U
-         4D4Yow2PxVm/jE3CTwgTU8kxsUOe59k235fB0lMuZ0Pt0TYQzLXiyznG3xzjfaqhCC5c
-         I2w2vLVzAo1mZwEGevaiAL4bTcH1z38Ft4Wf6fpA7VwhZOxectlWkLvuxBTL/3ApPcKJ
-         TmuvpoZA4XQjR2IjMPZ5IfUwDpDA1G20ItMmx8Uw6Dd+mlnTAeC3nVe0/USSNrbTtEhf
-         R0K84TiszViEh3LyEh0N8ZnOf+Z1PJwPCvfTMAtT2OGJOtoy0YnwojJ+1+fKvZAWC5hZ
-         LMEg==
-X-Gm-Message-State: APjAAAUnxVptkLvHoUo25bF/2ukK5kxZAaZrpTkbrv55DJ/93BgYzjru
-        TUTh58pGUSUVqZbW1LaHiDyH+76rX9rmjFWY4yXCcQ==
-X-Google-Smtp-Source: APXvYqy+y9M3GDWZi6YJ5Hw8mnZtdigVitXfIq4Ig/3i+If7C1GzF5himW6c6YMs0i+K+qEJppO+poTuCiSXCcISXZI=
-X-Received: by 2002:a9d:6d89:: with SMTP id x9mr3019562otp.17.1571317019220;
- Thu, 17 Oct 2019 05:56:59 -0700 (PDT)
+        Thu, 17 Oct 2019 08:58:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fqfvJwGghxY/zvJczuG3/Ld93T9mcoCDDrIkbXWs7Sk=; b=po5ekprxuyc4XbZj/GiSZZOxK
+        XnmJuBTsnFVusvf8RHqb32e2q+BmM2FLOphxhDvtk100NFpDBCIJDmALheko0WV94K640qpsZBEf6
+        VDmAMk6fwXdR4STE0QPGHixD/qfmg5dirQ/+mR47pm+PwKrf69zIVmSnmJXN7wI3UzGAwQAfug5CB
+        NOQ2eO28le2sE8uQlLKcBeyvLXrRj4vbfixTaHuis7SrNbS+txcPtnMBawip8mC3BO8RKfnRsop4U
+        hGzu2L34yC0b1u++srYXLiy3fHJkhIsZro05OdLPxkzL4gBWXseVaW2TzTPGxfVYsTT75hKwlPOq3
+        XhVZZjgvw==;
+Received: from [179.95.49.118] (helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iL5Lp-0006o4-7D; Thu, 17 Oct 2019 12:57:57 +0000
+Date:   Thu, 17 Oct 2019 09:57:51 -0300
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <mripard@bootlin.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v8 3/3] media: cedrus: Add HEVC/H.265 decoding support
+Message-ID: <20191017095751.5a229051@coco.lan>
+In-Reply-To: <20190927143411.141526-4-paul.kocialkowski@bootlin.com>
+References: <20190927143411.141526-1-paul.kocialkowski@bootlin.com>
+        <20190927143411.141526-4-paul.kocialkowski@bootlin.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <000000000000328b2905951a7667@google.com>
-In-Reply-To: <000000000000328b2905951a7667@google.com>
-From:   Marco Elver <elver@google.com>
-Date:   Thu, 17 Oct 2019 14:56:47 +0200
-Message-ID: <CANpmjNPoBBJgMKLEAXs+bPhitF+WygseHgTkSJsuiK8WcsB==g@mail.gmail.com>
-Subject: Re: KCSAN: data-race in task_dump_owner / task_dump_owner
-To:     syzbot <syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com>
-Cc:     adobriyan@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        casey@schaufler-ca.com, christian@brauner.io,
-        Kees Cook <keescook@chromium.org>, kent.overstreet@gmail.com,
-        khlebnikov@yandex-team.ru, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, mhocko@suse.com,
-        shakeelb@google.com, syzkaller-bugs@googlegroups.com,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Em Fri, 27 Sep 2019 16:34:11 +0200
+Paul Kocialkowski <paul.kocialkowski@bootlin.com> escreveu:
 
-On Thu, 17 Oct 2019 at 14:36, syzbot
-<syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    d724f94f x86, kcsan: Enable KCSAN for x86
-> git tree:       https://github.com/google/ktsan.git kcsan
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17884db3600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c0906aa620713d80
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e392f8008a294fdf8891
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KCSAN: data-race in task_dump_owner / task_dump_owner
->
-> write to 0xffff8881255bb7fc of 4 bytes by task 7804 on cpu 0:
->   task_dump_owner+0xd8/0x260 fs/proc/base.c:1742
->   pid_update_inode+0x3c/0x70 fs/proc/base.c:1818
->   pid_revalidate+0x91/0xd0 fs/proc/base.c:1841
->   d_revalidate fs/namei.c:765 [inline]
->   d_revalidate fs/namei.c:762 [inline]
->   lookup_fast+0x7cb/0x7e0 fs/namei.c:1613
->   walk_component+0x6d/0xe80 fs/namei.c:1804
->   link_path_walk.part.0+0x5d3/0xa90 fs/namei.c:2139
->   link_path_walk fs/namei.c:2070 [inline]
->   path_openat+0x14f/0x3530 fs/namei.c:3532
->   do_filp_open+0x11e/0x1b0 fs/namei.c:3563
->   do_sys_open+0x3b3/0x4f0 fs/open.c:1089
->   __do_sys_open fs/open.c:1107 [inline]
->   __se_sys_open fs/open.c:1102 [inline]
->   __x64_sys_open+0x55/0x70 fs/open.c:1102
->   do_syscall_64+0xcf/0x2f0 arch/x86/entry/common.c:296
->   entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> write to 0xffff8881255bb7fc of 4 bytes by task 7813 on cpu 1:
->   task_dump_owner+0xd8/0x260 fs/proc/base.c:1742
->   pid_update_inode+0x3c/0x70 fs/proc/base.c:1818
->   pid_revalidate+0x91/0xd0 fs/proc/base.c:1841
->   d_revalidate fs/namei.c:765 [inline]
->   d_revalidate fs/namei.c:762 [inline]
->   lookup_fast+0x7cb/0x7e0 fs/namei.c:1613
->   walk_component+0x6d/0xe80 fs/namei.c:1804
->   lookup_last fs/namei.c:2271 [inline]
->   path_lookupat.isra.0+0x13a/0x5a0 fs/namei.c:2316
->   filename_lookup+0x145/0x2d0 fs/namei.c:2346
->   user_path_at_empty+0x4c/0x70 fs/namei.c:2606
->   user_path_at include/linux/namei.h:60 [inline]
->   vfs_statx+0xd9/0x190 fs/stat.c:187
->   vfs_stat include/linux/fs.h:3188 [inline]
->   __do_sys_newstat+0x51/0xb0 fs/stat.c:341
->   __se_sys_newstat fs/stat.c:337 [inline]
->   __x64_sys_newstat+0x3a/0x50 fs/stat.c:337
->   do_syscall_64+0xcf/0x2f0 arch/x86/entry/common.c:296
->   entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 1 PID: 7813 Comm: ps Not tainted 5.3.0+ #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> ==================================================================
+> This introduces support for HEVC/H.265 to the Cedrus VPU driver, with
+> both uni-directional and bi-directional prediction modes supported.
+> 
+> Field-coded (interlaced) pictures, custom quantization matrices and
+> 10-bit output are not supported at this point.
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
 
-My understanding is, that for every access to /proc/<pid>,
-d_revalidate is called, and /proc-fs implementation simply says that
-pid_revalidate always revalidates by rewriting uid/gid because "owning
-task may have performed a setuid(), etc." presumably so every access
-to a /proc/<pid> entry always has the right uid/gid (in effect
-updating /proc/<pid> lazily via d_revalidate).
+...
 
-Is it possible that one of the tasks above could be preempted after
-doing its writes to *ruid/*rgid, another thread writing some other
-values (after setuid / seteuid), and then the preempted thread seeing
-the other values? Assertion here should never fail:
-=== TASK 1 ===
-| seteuid(1000);
-| seteuid(0);
-| stat("/proc/<pid-of-task-1>", &fstat);
-| assert(fstat.st_uid == 0);
-=== TASK 2 ===
-| stat("/proc/<pid-of-task-1>", ...);
+> +		unsigned int ctb_size_luma =
+> +			1 << log2_max_luma_coding_block_size;
+
+Shifts like this is a little scary. "1" constant is signed. So, if
+log2_max_luma_coding_block_size is 31, the above logic has undefined
+behavior. Different archs and C compilers may handle it on different
+ways.
+
+> +#define VE_DEC_H265_LOW_ADDR_PRIMARY_CHROMA(a) \
+> +	(((a) << 24) & GENMASK(31, 24))
+
+Same applies here and on other similar macros. You need to enforce
+(a) to be unsigned, as otherwise the behavior is undefined.
+
+Btw, this is a recurrent pattern on this file. I would define a
+macro, e. g. something like:
+
+	#define MASK_BITS_AND_SHIFT(v, high, low) \
+		((UL(v) << low) & GENMASK(high, low))
+
+And use it for all similar patterns here.
+
+The best would be to include such macro at linux/bits.h, although some
+upstream discussion is required.
+
+So, for now, let's add it at this header file, but work upstream
+to have it merged there.
 
 
-Best Wishes,
--- Marco
+Thanks,
+Mauro
