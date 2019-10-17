@@ -2,94 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0021FDAEA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 898E1DAEA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:42:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436666AbfJQNlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 09:41:08 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44719 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436617AbfJQNlH (ORCPT
+        id S2436765AbfJQNmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 09:42:54 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:57832 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727368AbfJQNmy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 09:41:07 -0400
-Received: by mail-pl1-f195.google.com with SMTP id q15so1143661pll.11;
-        Thu, 17 Oct 2019 06:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TL3Bg7r1MXFPw1qs6Uz1yY89VM2LxUEc4gTHtQnByTU=;
-        b=Zy0xVF3gW175CXK55XKrdH/JLGDt7X4DOFuNpbYIGPoM14uKARAnqw7WcnM8zChdKb
-         pbzT13T67DsiJMFD8fgtHQ+/frSFrC+UkMZW4iPyvvaq5sUKJ7UmEHRwJH26u54fHRCK
-         gaRy6kNkw4M0jkSIbEYXiSOOx6wMx3Lw+lso7kMfXPgKd1iTKBTK8F2s8g9Dsltqpezj
-         n/+7TK0janpFmElAtHDN8Y1DLiLud+0DWAlLN8KsMGNTbrz/gUueF5kRvLknPkadhuFH
-         +0Su+pFYBqDdpfqgLPtkeH2LvTO74p3Gkpk4w4okqdvDKWSZC4dbUEZuHR22tWaUvDLW
-         Baqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TL3Bg7r1MXFPw1qs6Uz1yY89VM2LxUEc4gTHtQnByTU=;
-        b=fvpDt/DM+Cc/6hd6uycFP5jPqo/JMDoJgOAJe5FEt6x/plgYLG+0f5iifbrTT6KTZP
-         h2b31N+AU7eZU6X1Vlf+XDl5MhmX7BPzRDfV+0Sg22hdBfaUoW6PSDCbHjLzP34ByiYC
-         JhWszThwxnzJWIRKrQ4VwcuxS140UG3uTSTN6EduoHvvnWKFygz9IJXKW5k3MkAjkgn3
-         /HVeq4OfxZTJKgjA/D2pu3oQ8zFIdpetEiTqK4VklhQgEwUbbfyVPW8M6gRTCVvewvCL
-         bYf/ygt7dEqoYxK1R0vhPkt26Oinq6FmRxmIx0Wmv7ToQfiE8fDh3SQ+k4zrQQ/tJIT1
-         pdqA==
-X-Gm-Message-State: APjAAAUlbV0kv5VTHSkwyvXDG0JyIt/72DgntMTFO8yLFrTU7BDDtgqc
-        Ua6wEcKnSQ6gjutQ1vTpTug=
-X-Google-Smtp-Source: APXvYqwGQCGTWsGO+MsP8uWNdB9De0wiZ/ITWfcDFpRvFh1F4msaJNgw+5RJInI+8eM5QXmtXdgMpg==
-X-Received: by 2002:a17:902:ab82:: with SMTP id f2mr4192546plr.39.1571319667155;
-        Thu, 17 Oct 2019 06:41:07 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id p189sm2717695pfp.163.2019.10.17.06.41.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Oct 2019 06:41:06 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 06:41:05 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Kyle Roeschley <kyle.roeschley@ni.com>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        Thu, 17 Oct 2019 09:42:54 -0400
+Received: from [167.98.27.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iL63F-0007wo-MD; Thu, 17 Oct 2019 14:42:49 +0100
+Message-ID: <d1022cda6bd6ce73e9875644a5a2c65e4d554f37.camel@codethink.co.uk>
+Subject: Re: [Y2038] [PATCH v6 10/43] compat_ioctl: move rtc handling into
+ rtc-dev.c
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Arnd Bergmann <arnd@arndb.de>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (tmp421) Allow reading at 2Hz instead of 0.5Hz
-Message-ID: <20191017134105.GA6766@roeck-us.net>
-References: <20191014140310.7438-1-kyle.roeschley@ni.com>
+Date:   Thu, 17 Oct 2019 14:42:48 +0100
+In-Reply-To: <20191009191044.308087-10-arnd@arndb.de>
+References: <20191009190853.245077-1-arnd@arndb.de>
+         <20191009191044.308087-10-arnd@arndb.de>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014140310.7438-1-kyle.roeschley@ni.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 09:03:10AM -0500, Kyle Roeschley wrote:
-> Our driver configures the device to read at 2Hz, but then only allows the
-> user to read cached temp values at up to 0.5Hz. Let's allow users to read
-> as quickly as we do.
+On Wed, 2019-10-09 at 21:10 +0200, Arnd Bergmann wrote:
+> We no longer need the rtc compat handling to be in common code, now that
+> all drivers are either moved to the rtc-class framework, or (rarely)
+> exist in drivers/char for architectures without compat mode (m68k,
+> alpha and ia64, respectively).
 > 
-> Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
+> I checked the list of ioctl commands in drivers, and the ones that are
+> not already handled are all compatible, again with the one exception of
+> m68k driver, which implements RTC_PLL_GET and RTC_PLL_SET, but has no
+> compat mode.
+>
+> Since the ioctl commands are either compatible or differ in both structure
+> and command code between 32-bit and 64-bit, we can merge the compat
+> handler into the native one and just implement the two common compat
+> commands (RTC_IRQP_READ, RTC_IRQP_SET) there.
+[...]
 
-Applied.
+I don't think this can work properly on s390, because some of them take
+integers and some take pointers.
 
-Thanks,
-Guenter
+Ben.
 
-> ---
->  drivers/hwmon/tmp421.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/tmp421.c b/drivers/hwmon/tmp421.c
-> index a94e35cff3e5..83a4fab151d2 100644
-> --- a/drivers/hwmon/tmp421.c
-> +++ b/drivers/hwmon/tmp421.c
-> @@ -127,7 +127,8 @@ static struct tmp421_data *tmp421_update_device(struct device *dev)
->  
->  	mutex_lock(&data->update_lock);
->  
-> -	if (time_after(jiffies, data->last_updated + 2 * HZ) || !data->valid) {
-> +	if (time_after(jiffies, data->last_updated + (HZ / 2)) ||
-> +	    !data->valid) {
->  		data->config = i2c_smbus_read_byte_data(client,
->  			TMP421_CONFIG_REG_1);
->  
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
+
