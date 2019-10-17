@@ -2,76 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 086EEDB185
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 17:50:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B2E9DB191
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 17:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393305AbfJQPuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 11:50:55 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41945 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731326AbfJQPuz (ORCPT
+        id S2395347AbfJQPx1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 11:53:27 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35620 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393440AbfJQPx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 11:50:55 -0400
-Received: by mail-pl1-f195.google.com with SMTP id t10so1315350plr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 08:50:53 -0700 (PDT)
+        Thu, 17 Oct 2019 11:53:27 -0400
+Received: by mail-lj1-f195.google.com with SMTP id m7so3138523lji.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 08:53:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=b48asfDAC1xOvEXigDKMakB9AKqpopPhTm0c4Dno6I4=;
-        b=Q7IFc7xZihyEUYEqzdNDgyvTR+JI6j7aHEpGPTDNRLWFlTGtfJXqE8f/IF5LuZfSoB
-         NhMzEJiu10zAYXuV2qqebPeZYmcXUWFfJjp5JZfvw0xtruK9pfFNAgwLjaz9XPE15Rf4
-         +eKD6ZUWoxkShEtqkB3h2ossktGrIafeZiDCY5PHSA0JHbswdZku6KKCLRV6GohcJQUD
-         jUSQR0wVwpXS6PUW9keg2SOVAUg11JAnXyN1HctnVfIAN52XRRZoFY2N+mznZ8BTq7Do
-         xw08I2su8MdKZBdsPt1Gjj4wcOZKc/zcOc7Am1lPMNYunCX72Q1tQVOiKaUZPnRVeB7Y
-         C67g==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cIzDy9DTfDNRhN7LSYB97ye4DVyGrDXll/MmImkgT6U=;
+        b=BVpF6LyRGlHDFAruswmAHbv0+pLGUbDhV9wcN5xE8WS8g+zUh4x5jXcUYAsmzaIB6g
+         YMEX8gjoO+3WdmFLQuP7Ko+nM3JcFnx6Odu1iLGo112V8bGqq9akNkXniU0XB2vYqP2h
+         zo3E/L5G8PzgPvTprfyPmfiSP4luH/eHr1DuA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=b48asfDAC1xOvEXigDKMakB9AKqpopPhTm0c4Dno6I4=;
-        b=nDeGIobfNog5kbYdLFx9fdBFXZqXaCghuSa1OIPZw5d51mjE6L0Q7pWDT8Rlm3VZeB
-         TMo9NrFrXZZMx4heYmEWeXrZNPMe+ygU5PwFoem8R2gA06mqV7uKsFYdZHqK0nUE3by6
-         H1Rmdo9kmq01p4iZ+5Tz1R/h2F8iOzWJkYY65FLVj7WLg/tPUJt6oFdYr850Rw47Lodu
-         i/9uju+LtvVfjYwhjobvdvTXy+HtwjLqF/5JOwUC8OU1cb3BTfcv1xvY6wC+c8I/OqUe
-         xHxIPCHnO3oEUMZGBY15Eb09zHQhfVXYgHECq6dUQytI3SzjNOaZNex7ZCOvBWnQUN6f
-         4plw==
-X-Gm-Message-State: APjAAAVWOhlb7jZzE2hJuWRSB4TAU7261BeGbDCVLocCfBk3A4W+yZQQ
-        a1gtvN1u3lK+Twk06391wmR0nw==
-X-Google-Smtp-Source: APXvYqw+ZkikFWm1K6Ej45vWuAlQyN+QOL993PvKnUyJp89FV9RW4sQzKjWGpiIpHo1wns2qTFvzxw==
-X-Received: by 2002:a17:902:728f:: with SMTP id d15mr4802632pll.211.1571327452664;
-        Thu, 17 Oct 2019 08:50:52 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:d8f2:392e:5b44:157d])
-        by smtp.gmail.com with ESMTPSA id z29sm2942555pff.23.2019.10.17.08.50.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Oct 2019 08:50:52 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Christian Hewitt <christianshewitt@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Christian Hewitt <christianshewitt@gmail.com>
-Subject: Re: [PATCH 0/2] arm64: dts: meson: Tronsmart Vega ir keymap updates
-In-Reply-To: <1571245657-4471-1-git-send-email-christianshewitt@gmail.com>
-References: <1571245657-4471-1-git-send-email-christianshewitt@gmail.com>
-Date:   Thu, 17 Oct 2019 08:50:51 -0700
-Message-ID: <7hwod3bcbo.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cIzDy9DTfDNRhN7LSYB97ye4DVyGrDXll/MmImkgT6U=;
+        b=jCN9xjyl9tSHku37Ctf+qofQU6j0zUxbSl1v4lPgj6wCEsZkFixp/1x1O9Ow7a+DgW
+         h5Cs/QiIPlTPtl8zCeOc5DB876vQezj2eHj2TMBbMvbBqMJ94SGjtSOYg+hi9wqnmWJE
+         SNGhWrDbgjLQ+xRioem8siP1vnhh12WLBJMXSQ46/Up79Zn1Jbqg3FbxRt7Gy9/yfuie
+         xzsstPy2jrPwEZ8xDTntXKg/G59QKcSUJc0j7dh6Gp4GTWjUkrhhdAqjauubd6LxtfWC
+         EUZ0G8FGdq2NfGEElxvukZJ35H6AF3xSVBOZcXmjRCoH1kPCanO/uKvQ2/l5uG5KQ+YE
+         bZ/Q==
+X-Gm-Message-State: APjAAAXv1Gm6AK55hAoZOn350MNXgo6UEshfBKuwQPQ0V3iALPvis096
+        NLwy3RI5u7yBUN88UclgLztQ3NrWACs=
+X-Google-Smtp-Source: APXvYqylLjs9QGRV3KbYkJjsZ4tifxkItmntZxKNcPqt3SvyyUOM8HGUa3c90VGnHYsXgdYRN3zE7A==
+X-Received: by 2002:a2e:9bd2:: with SMTP id w18mr3047035ljj.140.1571327604481;
+        Thu, 17 Oct 2019 08:53:24 -0700 (PDT)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id x3sm1088673ljm.103.2019.10.17.08.53.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2019 08:53:23 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id g21so1188942lfh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 08:53:22 -0700 (PDT)
+X-Received: by 2002:a19:5504:: with SMTP id n4mr2890741lfe.106.1571327602667;
+ Thu, 17 Oct 2019 08:53:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <000000000000830fe50595115344@google.com> <00000000000071e2fc05951229ad@google.com>
+In-Reply-To: <00000000000071e2fc05951229ad@google.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 17 Oct 2019 08:53:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjFozfjV34_qy3_Z155uz_Z7qFVfE8h=_9ceGU-SVk9hA@mail.gmail.com>
+Message-ID: <CAHk-=wjFozfjV34_qy3_Z155uz_Z7qFVfE8h=_9ceGU-SVk9hA@mail.gmail.com>
+Subject: Re: WARNING: refcount bug in find_key_to_update
+To:     syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>
+Cc:     aou@eecs.berkeley.edu, David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris James Morris <jmorris@namei.org>,
+        keyrings@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Hewitt <christianshewitt@gmail.com> writes:
+On Wed, Oct 16, 2019 at 7:42 PM syzbot
+<syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has bisected this bug to 0570bc8b7c9b ("Merge tag
+>  'riscv/for-v5.3-rc1' ...")
 
-> The Tronsmart Vega S95 (S905) and S96 (S912) Android STBs use the
-> same IR remote. The rc-vega-s9x keymap has been accepted for Linux
-> v5.5 [0] so add the keymap to the respective dts.
+Yeah, that looks unlikely. The only non-riscv changes are from
+documentation updates and moving a config variable around.
 
-Queued for v5.5,
+Looks like the crash is quite unlikely, and only happens in one out of
+ten runs for the ones it has happened to.
 
-Thanks,
+The backtrace looks simple enough, though:
 
-Kevin
+  RIP: 0010:refcount_inc_checked+0x2b/0x30 lib/refcount.c:156
+   __key_get include/linux/key.h:281 [inline]
+   find_key_to_update+0x67/0x80 security/keys/keyring.c:1127
+   key_create_or_update+0x4e5/0xb20 security/keys/key.c:905
+   __do_sys_add_key security/keys/keyctl.c:132 [inline]
+   __se_sys_add_key security/keys/keyctl.c:72 [inline]
+   __x64_sys_add_key+0x219/0x3f0 security/keys/keyctl.c:72
+   do_syscall_64+0xd0/0x540 arch/x86/entry/common.c:296
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+which to me implies that there's some locking bug, and somebody
+released the key without holding a lock.
+
+That code looks a bit confused to me. Releasing a key without holding
+a lock looks permitted, but if that's the case then __key_get() is
+complete garbage. It would need to use 'refcount_inc_not_zero()' and
+failure would require failing the caller.
+
+But I haven't followed the key locking rules, so who knows. That "put
+without lock" scenario would explain the crash, though.
+
+David?
+
+              Linus
