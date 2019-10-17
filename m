@@ -2,77 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3B5CDA83B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19FD4DA841
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405448AbfJQJZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 05:25:19 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:52436 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732676AbfJQJZS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 05:25:18 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iL21W-0004XC-HS; Thu, 17 Oct 2019 11:24:51 +0200
-Date:   Thu, 17 Oct 2019 11:24:45 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dmitry Safonov <dima@arista.com>
-cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org,
-        Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCHv7 00/33] kernel: Introduce Time Namespace
-In-Reply-To: <20191011012341.846266-1-dima@arista.com>
-Message-ID: <alpine.DEB.2.21.1910171122030.1824@nanos.tec.linutronix.de>
-References: <20191011012341.846266-1-dima@arista.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S2408492AbfJQJ04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 05:26:56 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:36650 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1732676AbfJQJ0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 05:26:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3A3D1993;
+        Thu, 17 Oct 2019 02:26:30 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D84F3F718;
+        Thu, 17 Oct 2019 02:26:30 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 10:26:28 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] cpufreq: merge arm_big_little and vexpress-spc
+Message-ID: <20191017092628.GD8978@bogus>
+References: <20191016110344.15259-1-sudeep.holla@arm.com>
+ <20191016110344.15259-3-sudeep.holla@arm.com>
+ <20191017023936.vgkdfnyaz3r4k74z@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191017023936.vgkdfnyaz3r4k74z@vireshk-i7>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Oct 2019, Dmitry Safonov wrote:
-> We wrote two small benchmarks. The first one gettime_perf.c calls
-> clock_gettime() in a loop for 3 seconds. It shows us performance with
-> a hot CPU cache (more clock_gettime() cycles - the better):
-> 
->         | before    | CONFIG_TIME_NS=n | host      | inside timens
-> --------------------------------------------------------------
->         | 153242367 | 153567617        | 150933203 | 139310914
->         | 153324800 | 153115132        | 150919828 | 139299761
->         | 153125401 | 153686868        | 150930471 | 139273917
->         | 153399355 | 153694866        | 151083410 | 139286081
->         | 153489417 | 153739716        | 150997262 | 139146403
->         | 153494270 | 153724332        | 150035651 | 138835612
-> -----------------------------------------------------------
-> avg     | 153345935 | 153588088        | 150816637 | 139192114
-> diff %  | 100       | 100.1            | 98.3      | 90.7
+On Thu, Oct 17, 2019 at 08:09:36AM +0530, Viresh Kumar wrote:
+> On 16-10-19, 12:03, Sudeep Holla wrote:
+> > arm_big_little cpufreq driver was designed as a generic big little
+> > driver that could be used by any platform and make use of bL switcher.
+> > Over years alternate solutions have be designed and merged to deal with
+> > bL/HMP systems like EAS.
+> >
+> > Also since no other driver made use of generic arm_big_little cpufreq
+> > driver except Vexpress SPC, we can merge them together as vexpress-spc
+> > driver used only on Vexpress TC2(CA15_CA7) platform.
+> >
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > ---
+> >  MAINTAINERS                            |   5 +-
+> >  drivers/cpufreq/Kconfig.arm            |  12 +-
+> >  drivers/cpufreq/Makefile               |   2 -
+> >  drivers/cpufreq/arm_big_little.c       | 658 ------------------------
+> >  drivers/cpufreq/arm_big_little.h       |  43 --
+> >  drivers/cpufreq/vexpress-spc-cpufreq.c | 661 ++++++++++++++++++++++++-
+> >  6 files changed, 652 insertions(+), 729 deletions(-)
+> >  delete mode 100644 drivers/cpufreq/arm_big_little.c
+> >  delete mode 100644 drivers/cpufreq/arm_big_little.h
+>
+> The delta produced here is enormous probably because you copy/pasted things. I
+> am wondering if using git mv to rename arm_big_little.c and then move spc bits
+> into it will make this delta smaller to review ?
+>
 
+Yes, I did a quick try but slightly different order. As I need the final
+driver to be vexpress-spc-cpufreq.c, I am thinking of first merging
+vexpress-spc-cpufreq.c into arm_big_little.c and then renaming it back
+later. Does that sound good ?
 
-That host 98.3% number is weird and does not match the tests I did with the
-fallback code I provided you. On my limited testing that fallback hidden in
-the slowpath did not show any difference to the TIME_NS=n case when not
-inside a time namespace.
+drivers/cpufreq/arm_big_little.c       | 78 ++++++++++++++++++++------
+drivers/cpufreq/arm_big_little.h       | 43 --------------
+drivers/cpufreq/vexpress-spc-cpufreq.c | 71 -----------------------
+6 files changed, 68 insertions(+), 145 deletions(-)
+delete mode 100644 drivers/cpufreq/arm_big_little.h
+delete mode 100644 drivers/cpufreq/vexpress-spc-cpufreq.c
 
-Thanks,
+If we first rename arm_big_little.c, then we need change the final name
+otherwise we end up with same delta as the new name file will be merged
+into vexpress-spc-cpufreq.c
 
-	tglx
+--
+Regards,
+Sudeep
