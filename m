@@ -2,124 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EFFFDA7E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 10:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD84DA7FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:04:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408442AbfJQI7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 04:59:30 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:7992 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2404051AbfJQI73 (ORCPT
+        id S2439356AbfJQJEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 05:04:45 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:34786 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728987AbfJQJEo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 04:59:29 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9H8vAIS049285
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 04:59:26 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vpjavx1g9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 04:59:26 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <iii@linux.ibm.com>;
-        Thu, 17 Oct 2019 09:59:24 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 17 Oct 2019 09:59:21 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9H8xKoD40697858
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Oct 2019 08:59:20 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 28E61A4054;
-        Thu, 17 Oct 2019 08:59:20 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C6A40A405C;
-        Thu, 17 Oct 2019 08:59:19 +0000 (GMT)
-Received: from white.boeblingen.de.ibm.com (unknown [9.152.99.142])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 17 Oct 2019 08:59:19 +0000 (GMT)
-From:   Ilya Leoshkevich <iii@linux.ibm.com>
-To:     Jan Kiszka <jan.kiszka@siemens.com>,
-        Kieran Bingham <kbingham@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v2] scripts/gdb: fix debugging modules on s390
-Date:   Thu, 17 Oct 2019 10:59:17 +0200
-X-Mailer: git-send-email 2.23.0
+        Thu, 17 Oct 2019 05:04:44 -0400
+Received: by mail-vk1-f195.google.com with SMTP id d126so347808vkb.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 02:04:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3YEZ6kmrwj0jmNEINZ5DrxfXAkCY+f5snursTVbXw/Q=;
+        b=W2e51Z687HKzqeEUxw8//AMcHGkkuFOP8XPRGjOfymWxiy5Zp1IsFw7JpdMcbsWu2b
+         3XRp9hda4U35V3m4NBdsGLbwORsP7M6z6hcLgkBMeNdc6Kv9H54zl1XG8UyqG3oVaiRA
+         uYXbj1yTpmGTc5+j3xXkUibu704TmnkPoO2sjQNeCRQIL58QuDsOIAezBG7b14OxBFv6
+         5FbrylzIeAFhCyolzRmA8yt6ll3bpHI/fYR97EcEQ3jn9UGLTrm83xRCCHz8AS86pmze
+         m1mdnFdbPnS0BElbdxvOVcKomZv+rfTKsUOZ1i3MKBNxnh2hdw7vJ49G7aVlAm37710n
+         WkLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3YEZ6kmrwj0jmNEINZ5DrxfXAkCY+f5snursTVbXw/Q=;
+        b=J9uZPWmvwTkCh+IsFHbjLAhvRpcBJ6em5WTSgsGU0U4tcdP7I+T7RCuu3dEOKuPKfs
+         plsYdjBdNvZbmNTwqL8omTu7Om8iyd+Ymx9cOZHhRNtPjK0ZsOWlZdGjEy5+1/xboUSz
+         MxpHDTWfpZCwlovy+CzzEG3rzLQqr3mDrMxa7jSQhqKh0mVOIQYAIyB6MGtBScts3Cfy
+         yRvlPCVdbP/6n/uH2lFeVk1JRPEjDk9qFPf6MYRbCqvN7ZayJiHLdKcDz3s+gl5zMinT
+         VEGrBBhI5zW5TKt7f7M6aSr3Y4ZbNe+GNVwMlfjKRa/8rFvPVHXsNQmsJmqqdIP7kQW9
+         lSSA==
+X-Gm-Message-State: APjAAAUB5RappM1v7HBubBdzOsCB18JC9aQpf5q05GN872DTFEo6VlUm
+        10stPznqqxkyHccjHCE9kaWZDO8IhOb0cZNwWP+EOg==
+X-Google-Smtp-Source: APXvYqyt8CM8fHUNAOrVRVddOgQGQx8mRNb41o6lI3llgLFlyRzgA5YeS309L///NMZr8TxyMVq1MEKf6S7M8tbxb2E=
+X-Received: by 2002:a1f:b202:: with SMTP id b2mr1313280vkf.59.1571303083600;
+ Thu, 17 Oct 2019 02:04:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19101708-4275-0000-0000-00000372E37A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19101708-4276-0000-0000-00003885FB4D
-Message-Id: <20191017085917.81791-1-iii@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-17_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=910 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910170081
+References: <1571254641-13626-1-git-send-email-thara.gopinath@linaro.org> <1571254641-13626-7-git-send-email-thara.gopinath@linaro.org>
+In-Reply-To: <1571254641-13626-7-git-send-email-thara.gopinath@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 17 Oct 2019 11:04:07 +0200
+Message-ID: <CAPDyKFqcKfmnNJ7j4Jb+JH739FBcHg5NBD6aR4H_N=zWGwm1ww@mail.gmail.com>
+Subject: Re: [PATCH v3 6/7] dt-bindings: soc: qcom: Extend RPMh power
+ controller binding to describe thermal warming device
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>, amit.kucheria@verdurent.com,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently lx-symbols assumes that module text is always located at
-module->core_layout->base, but s390 uses the following layout:
+On Wed, 16 Oct 2019 at 21:37, Thara Gopinath <thara.gopinath@linaro.org> wrote:
+>
+> RPMh power controller hosts mx domain that can be used as thermal
+> warming device. Add a sub-node to specify this.
+>
+> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/power/qcom,rpmpd.txt | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+> index eb35b22..fff695d 100644
+> --- a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+> +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+> @@ -18,6 +18,16 @@ Required Properties:
+>  Refer to <dt-bindings/power/qcom-rpmpd.h> for the level values for
+>  various OPPs for different platforms as well as Power domain indexes
+>
+> += SUBNODES
+> +RPMh alsp hosts power domains that can behave as thermal warming device.
+> +These are expressed as subnodes of the RPMh. The name of the node is used
+> +to identify the power domain and must therefor be "mx".
+> +
+> +- #cooling-cells:
+> +       Usage: optional
+> +       Value type: <u32>
+> +       Definition: must be 2
+> +
 
-+------+  <- module->core_layout->base
-| GOT  |
-+------+  <- module->core_layout->base + module->arch->plt_offset
-| PLT  |
-+------+  <- module->core_layout->base + module->arch->plt_offset +
-| TEXT |     module->arch->plt_size
-+------+
+Just wanted to express a minor thought about this. In general we use
+subnodes of PM domain providers to represent the topology of PM
+domains (subdomains), this is something different, which I guess is
+fine.
 
-Therefore, when trying to debug modules on s390, all the symbol
-addresses are skewed by plt_offset + plt_size.
+I assume the #cooling-cells is here tells us this is not a PM domain
+provider, but a "cooling device provider"?
 
-Fix by adding plt_offset + plt_size to module_addr in
-load_module_symbols().
+Also, I wonder if it would be fine to specify "power-domains" here,
+rather than using "name" as I think that is kind of awkward!?
 
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
----
+>  Example: rpmh power domain controller and OPP table
+>
+>  #include <dt-bindings/power/qcom-rpmhpd.h>
+> --
+> 2.1.4
+>
 
-v1 -> v2: print the adjusted address.
-
- scripts/gdb/linux/symbols.py | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
-index f0d8f2ecfde7..df4c810de663 100644
---- a/scripts/gdb/linux/symbols.py
-+++ b/scripts/gdb/linux/symbols.py
-@@ -15,7 +15,7 @@ import gdb
- import os
- import re
- 
--from linux import modules
-+from linux import modules, utils
- 
- 
- if hasattr(gdb, 'Breakpoint'):
-@@ -111,6 +111,12 @@ lx-symbols command."""
-             module_file = self._get_module_file(module_name)
- 
-         if module_file:
-+            if utils.is_target_arch('s390'):
-+                # Module text is preceded by PLT stubs on s390.
-+                module_arch = module['arch']
-+                plt_offset = int(module_arch['plt_offset'])
-+                plt_size = int(module_arch['plt_size'])
-+                module_addr = hex(int(module_addr, 0) + plt_offset + plt_size)
-             gdb.write("loading @{addr}: {filename}\n".format(
-                 addr=module_addr, filename=module_file))
-             cmdline = "add-symbol-file {filename} {addr}{sections}".format(
--- 
-2.23.0
-
+Kind regards
+Uffe
