@@ -2,78 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17287DB381
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:38:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98C40DB388
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:38:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503154AbfJQRic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 13:38:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38814 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503130AbfJQRi3 (ORCPT
+        id S2503183AbfJQRiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 13:38:50 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:41555 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436714AbfJQRit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 13:38:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=J7XwwMxAEu8xNgj4ceuOb2qzHYMjyO4RwXRDEV5bohU=; b=SKFPW+Nxw5xcfq9S/I/ulP3Fq3
-        As4PG6c8VvmmBnZ5SNd8EMwKTtRxp3yQTwQsCAF4PcGDK3Gb4l49SIc8K1lhvvElhYb3UeuBQKljF
-        NcNXQqdtW9Q6btsFLrww7bVCar6bDwlLBgEOEcJOjxcEOYj8+W7CpoJGBpShmxvG3rLK0CBp9olSm
-        WjEta75ZyclYUzqCWlrgKEAEd9QRG60tA5ArlBIxQJC9XgRUr+trXPIxYGWQnZ/gCTotIlowg9zEB
-        L+20cN63a8p4ROGaKYQetQSHZWaRTt95Dw/3V0uSL4ls1LYX3t/FaBy7vz623UT2wym+ZN0Ttdaxs
-        jlnDw+kQ==;
-Received: from [2001:4bb8:18c:d7b:c70:4a89:bc61:3] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iL9jD-0008CR-LE; Thu, 17 Oct 2019 17:38:24 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 15/15] riscv: disable the EFI PECOFF header for M-mode
-Date:   Thu, 17 Oct 2019 19:37:43 +0200
-Message-Id: <20191017173743.5430-16-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191017173743.5430-1-hch@lst.de>
-References: <20191017173743.5430-1-hch@lst.de>
+        Thu, 17 Oct 2019 13:38:49 -0400
+Received: by mail-qt1-f193.google.com with SMTP id c17so1777554qtn.8
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 10:38:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uOK2In+JS6+ijshXF5nAA99W1PMr9sBNxGluOxOXzi4=;
+        b=uuCh3XEScaE3T62TSiu5ATyLc9RPyHX//i2RdT5uipINc2JME+kjezfxPT5qXOOT+T
+         SqXru3niTSd0K4iWHeqOhBqSv2GEOEkr2tlphd5r6jFCIVCFU3LI0hjcP3rsUsJWXTjd
+         kaxiaaOomOiX4tanoXZrdMuHIKLSZ9sn+JHGjuQWVqLvVrNCloAk7yEg7a2Dn0PEIfbH
+         V387Hllfv6leTVpSNKRz3+ZiAN9f3aQSCd6/zEJH3vK1wG/nkY76+qAGZ7NmjQpdmppi
+         VIHpvBkQSSYiytW3RpgdREPdMav0oGlqUJizkUW8ITYt/0SRYJZ9Jy0MYkPcjYDMsNSc
+         wnIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uOK2In+JS6+ijshXF5nAA99W1PMr9sBNxGluOxOXzi4=;
+        b=hcZBPGYKw1Wiy6ke5XLOGYUAyBAG0CH9Jc8Ghr40w1IXtW/VYvxVlgdmlgZCVOSWNK
+         5yWijB40xRDgErVNFfKS7pnqOENo1noHQMXRv8NUhv8ac6BiRdCtgdhQg+9fSDotbyzX
+         OanzFx3r4HUIG4/te06tCMHmDv5x5oOOoe5c4mt5gQPUy0vOoKC/8yie+aB/taCd04dJ
+         v1u/3nHcQKhXdcClq1C2V8HCREzkJLKcfGira8FCZuNsUakt/0ya4iB+iwJMoKLvFYYI
+         ByXUcCWbNfaciFpXvcNYOVT2lTnCCmnayBfAL0XZy2kK5RHDGttv9nkURN0HynOZxyhO
+         l4uA==
+X-Gm-Message-State: APjAAAXWdvZcKSWA8ytAWN1s8Zgs31t/P8sNfI6NXXztG7R7BYUHyIXK
+        lod9/qTtRi6oAworR6w6Geg3prSjALh8C6PH7gY=
+X-Google-Smtp-Source: APXvYqwrjvtHBSvL7dF5DK/8UEcy4NYLqcGwCPSuxjfJwjMt2yDlohIbB2Ydyq0qUv+ktsib6onmSislBcYribUrb6c=
+X-Received: by 2002:ac8:6ede:: with SMTP id f30mr4967779qtv.205.1571333928188;
+ Thu, 17 Oct 2019 10:38:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20191017164223.2762148-1-songliubraving@fb.com> <20191017164223.2762148-3-songliubraving@fb.com>
+In-Reply-To: <20191017164223.2762148-3-songliubraving@fb.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 17 Oct 2019 10:38:37 -0700
+Message-ID: <CAHbLzkq7XVfUqS7ajVcNhWPWYxg9HKcnveOzACAorZwY3uPQBA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] mm/thp: fix node page state in split_huge_page_to_list()
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        matthew.wilcox@oracle.com, kernel-team@fb.com,
+        william.kucharski@oracle.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No point in bloating the kernel image with a bootloader header if
-we run bare metal.
+On Thu, Oct 17, 2019 at 9:42 AM Song Liu <songliubraving@fb.com> wrote:
+>
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>
+> Make sure split_huge_page_to_list() handle the state of shmem THP and
+> file THP properly.
+>
+> Fixes: 60fbf0ab5da1 ("mm,thp: stats for file backed THP")
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Tested-by: Song Liu <songliubraving@fb.com>
+> Signed-off-by: Song Liu <songliubraving@fb.com>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/riscv/kernel/head.S | 2 ++
- 1 file changed, 2 insertions(+)
+Acked-by: Yang Shi <yang.shi@linux.alibaba.com>
 
-diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-index 71efbba25ed5..dc21e409cc49 100644
---- a/arch/riscv/kernel/head.S
-+++ b/arch/riscv/kernel/head.S
-@@ -16,6 +16,7 @@
- 
- __INIT
- ENTRY(_start)
-+#ifndef CONFIG_RISCV_M_MODE
- 	/*
- 	 * Image header expected by Linux boot-loaders. The image header data
- 	 * structure is described in asm/image.h.
-@@ -47,6 +48,7 @@ ENTRY(_start)
- 
- .global _start_kernel
- _start_kernel:
-+#endif /* CONFIG_RISCV_M_MODE */
- 	/* Mask all interrupts */
- 	csrw CSR_XIE, zero
- 	csrw CSR_XIP, zero
--- 
-2.20.1
-
+> ---
+>  mm/huge_memory.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index c5cb6dcd6c69..13cc93785006 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2789,8 +2789,13 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+>                         ds_queue->split_queue_len--;
+>                         list_del(page_deferred_list(head));
+>                 }
+> -               if (mapping)
+> -                       __dec_node_page_state(page, NR_SHMEM_THPS);
+> +               if (mapping) {
+> +                       if (PageSwapBacked(page))
+> +                               __dec_node_page_state(page, NR_SHMEM_THPS);
+> +                       else
+> +                               __dec_node_page_state(page, NR_FILE_THPS);
+> +               }
+> +
+>                 spin_unlock(&ds_queue->split_queue_lock);
+>                 __split_huge_page(page, list, end, flags);
+>                 if (PageSwapCache(head)) {
+> --
+> 2.17.1
+>
+>
