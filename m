@@ -2,90 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA349DA631
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BBF0DA634
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:16:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408000AbfJQHQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 03:16:32 -0400
-Received: from mga03.intel.com ([134.134.136.65]:58545 "EHLO mga03.intel.com"
+        id S2408054AbfJQHQq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 03:16:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36974 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbfJQHQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 03:16:31 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2019 00:16:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,306,1566889200"; 
-   d="scan'208";a="208177221"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga002.jf.intel.com with ESMTP; 17 Oct 2019 00:16:29 -0700
-Received: from andy by smile with local (Exim 4.92.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iL01M-0008Pi-8X; Thu, 17 Oct 2019 10:16:28 +0300
-Date:   Thu, 17 Oct 2019 10:16:28 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v5 10/14] software node: rename is_array to is_inline
-Message-ID: <20191017071628.GD32742@smile.fi.intel.com>
-References: <20191011230721.206646-1-dmitry.torokhov@gmail.com>
- <20191011230721.206646-11-dmitry.torokhov@gmail.com>
- <20191014073720.GH32742@smile.fi.intel.com>
- <20191015182206.GF105649@dtor-ws>
- <20191016075940.GP32742@smile.fi.intel.com>
- <20191016165430.GD35946@dtor-ws>
+        id S1726208AbfJQHQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 03:16:46 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3A03D89B003;
+        Thu, 17 Oct 2019 07:16:45 +0000 (UTC)
+Received: from [10.36.117.42] (ovpn-117-42.ams2.redhat.com [10.36.117.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B0581001B33;
+        Thu, 17 Oct 2019 07:16:43 +0000 (UTC)
+Subject: Re: [PATCH] mm, soft-offline: convert parameter to pfn
+To:     Naoya Horiguchi <nao.horiguchi@gmail.com>
+Cc:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20191016070924.GA10178@hori.linux.bs1.fc.nec.co.jp>
+ <e931b14b-da27-2720-5344-b5c0b08b38ad@redhat.com>
+ <20191016082735.GB13770@hori.linux.bs1.fc.nec.co.jp>
+ <c78962ba-ffa1-90e2-0116-6c94d082de2f@redhat.com>
+ <20191016085359.GD13770@hori.linux.bs1.fc.nec.co.jp>
+ <997b5b51-db71-3e27-1f84-cbaa24fa66c7@redhat.com>
+ <20191016234706.GA5493@www9186uo.sakura.ne.jp>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <ac4c1ab9-1df6-6a30-30ed-a015622ef591@redhat.com>
+Date:   Thu, 17 Oct 2019 09:16:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016165430.GD35946@dtor-ws>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191016234706.GA5493@www9186uo.sakura.ne.jp>
+Content-Type: text/plain; charset=iso-2022-jp; format=flowed; delsp=yes
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Thu, 17 Oct 2019 07:16:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 09:54:30AM -0700, Dmitry Torokhov wrote:
-> On Wed, Oct 16, 2019 at 10:59:40AM +0300, Andy Shevchenko wrote:
-> > On Tue, Oct 15, 2019 at 11:22:06AM -0700, Dmitry Torokhov wrote:
-> > > On Mon, Oct 14, 2019 at 10:37:20AM +0300, Andy Shevchenko wrote:
-> > > > On Fri, Oct 11, 2019 at 04:07:17PM -0700, Dmitry Torokhov wrote:
-
-> > > > 'stored inline' -> 'embedded in the &struct...' ?
-> > > 
-> > > I was trying to have a link "stored inline" -> "is_inline".
-> > > 
-> > > Do we want to change the flag to be "is_embedded"?
-> > 
-> > In dictionaries I have
-> > 
-> > embedded <-> unilateral
+On 17.10.19 01:47, Naoya Horiguchi wrote:
+> On Wed, Oct 16, 2019 at 10:57:57AM +0200, David Hildenbrand wrote:
+>> On 16.10.19 10:54, Naoya Horiguchi wrote:
+>>> On Wed, Oct 16, 2019 at 10:34:52AM +0200, David Hildenbrand wrote:
+>>>> On 16.10.19 10:27, Naoya Horiguchi wrote:
+>>>>> On Wed, Oct 16, 2019 at 09:56:19AM +0200, David Hildenbrand wrote:
+>>>>>> On 16.10.19 09:09, Naoya Horiguchi wrote:
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> I wrote a simple cleanup for parameter of soft_offline_page(),
+>>>>>>> based on thread https://lkml.org/lkml/2019/10/11/57.
+>>>>>>>
+>>>>>>> I know that we need more cleanup on hwpoison-inject, but I think
+>>>>>>> that will be mentioned in re-write patchset Oscar is preparing now.
+>>>>>>> So let me shared only this part as a separate one now.
+>>>>> ...
+>>>>>>
+>>>>>> I think you should rebase that patch on linux-next (where the
+>>>>>> pfn_to_online_page() check is in place). I assume you'll want to move the
+>>>>>> pfn_to_online_page() check into soft_offline_page() then as well?
+>>>>>
+>>>>> I rebased to next-20191016. And yes, we will move pfn_to_online_page()
+>>>>> into soft offline code.  It seems that we can also move pfn_valid(),
+>>>>> but is simply moving like below good enough for you?
+>>>>
+>>>> At least I can't am the patch to current next/master (due to
+>>>> pfn_to_online_page()).
+>>
+>> Could also be that my "git am" skills failed as the mail was not a
+>> proper patch itself :)
 > 
-> Are you trying to show synonym or antonym here? But I am pretty sure
-> "unilateral" is either.
-
-Antonyms. The 'unilateral' is marked as so in the dictionary.
-
-> Antonyms for our use of "embedded" are likely "detached" or
-> "disconnected".
+> Sorry for the inconvenience, my company email system breaks original
+> message by introducing quoted-printable format ('=20' or '=3D').
+> Most mail client usually handles it but git-am doesn't.
+> I give up using it and send via smtp.gmail.com.
 > 
-> > inline <-> ???
+>>> @@ -1877,11 +1877,17 @@ static int soft_offline_free_page(struct page *page)
+>>>    * This is not a 100% solution for all memory, but tries to be
+>>>    * ``good enough'' for the majority of memory.
+>>>    */
+>>> -int soft_offline_page(struct page *page, int flags)
+>>> +int soft_offline_page(unsigned long pfn, int flags)
+>>>   {
+>>>   	int ret;
+>>> -	unsigned long pfn = page_to_pfn(page);
+>>> +	struct page *page;
+>>> +	if (!pfn_valid(pfn))
+>>> +		return -ENXIO;
+>>> +	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
+>>> +	page = pfn_to_online_page(pfn);
+>>> +	if (!page)
+>>> +		return -EIO;
+>>>   	if (is_zone_device_page(page)) {
+>>
+>> -> this is now no longer possible! So you can drop the whole if
+>> (is_zone_device....) case
 > 
-> "out of line" but I still believe "stored separately" explains precisely
-> what we have here.
+> OK, thanks. I updated it.
+> 
+> Thanks,
+> Naoya Horiguchi
+> ---
+>  From 5faf227839b578726fe7f5ff414a153abb3b3a31 Mon Sep 17 00:00:00 2001
+> From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Date: Thu, 17 Oct 2019 08:40:53 +0900
+> Subject: [PATCH] mm, soft-offline: convert parameter to pfn
+> 
+> Currently soft_offline_page() receives struct page, and its sibling
+> memory_failure() receives pfn. This discrepancy looks weird and makes
+> precheck on pfn validity tricky. So let's align them.
+> 
+> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> ---
+>   drivers/base/memory.c |  7 +------
+>   include/linux/mm.h    |  2 +-
+>   mm/madvise.c          |  2 +-
+>   mm/memory-failure.c   | 19 +++++++++----------
+>   4 files changed, 12 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> index 55907c27075b..a757d9ed88a7 100644
+> --- a/drivers/base/memory.c
+> +++ b/drivers/base/memory.c
+> @@ -538,12 +538,7 @@ static ssize_t soft_offline_page_store(struct device *dev,
+>   	if (kstrtoull(buf, 0, &pfn) < 0)
+>   		return -EINVAL;
+>   	pfn >>= PAGE_SHIFT;
+> -	if (!pfn_valid(pfn))
+> -		return -ENXIO;
+> -	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
+> -	if (!pfn_to_online_page(pfn))
+> -		return -EIO;
+> -	ret = soft_offline_page(pfn_to_page(pfn), 0);
+> +	ret = soft_offline_page(pfn, 0);
+>   	return ret == 0 ? count : ret;
+>   }
+>   
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 44d058723db9..fd360d208346 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2794,7 +2794,7 @@ extern int sysctl_memory_failure_early_kill;
+>   extern int sysctl_memory_failure_recovery;
+>   extern void shake_page(struct page *p, int access);
+>   extern atomic_long_t num_poisoned_pages __read_mostly;
+> -extern int soft_offline_page(struct page *page, int flags);
+> +extern int soft_offline_page(unsigned long pfn, int flags);
+>   
+>   
+>   /*
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 2be9f3fdb05e..99dd06fecfa9 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -887,7 +887,7 @@ static int madvise_inject_error(int behavior,
+>   			pr_info("Soft offlining pfn %#lx at process virtual address %#lx\n",
+>   					pfn, start);
+>   
+> -			ret = soft_offline_page(page, MF_COUNT_INCREASED);
+> +			ret = soft_offline_page(pfn, MF_COUNT_INCREASED);
+>   			if (ret)
+>   				return ret;
+>   			continue;
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 05c8c6df25e6..af2712004a4d 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1476,7 +1476,7 @@ static void memory_failure_work_func(struct work_struct *work)
+>   		if (!gotten)
+>   			break;
+>   		if (entry.flags & MF_SOFT_OFFLINE)
+> -			soft_offline_page(pfn_to_page(entry.pfn), entry.flags);
+> +			soft_offline_page(entry.pfn, entry.flags);
+>   		else
+>   			memory_failure(entry.pfn, entry.flags);
+>   	}
+> @@ -1857,7 +1857,7 @@ static int soft_offline_free_page(struct page *page)
+>   
+>   /**
+>    * soft_offline_page - Soft offline a page.
+> - * @page: page to offline
+> + * @pfn: pfn to soft-offline
+>    * @flags: flags. Same as memory_failure().
+>    *
+>    * Returns 0 on success, otherwise negated errno.
+> @@ -1877,18 +1877,17 @@ static int soft_offline_free_page(struct page *page)
+>    * This is not a 100% solution for all memory, but tries to be
+>    * ``good enough'' for the majority of memory.
+>    */
+> -int soft_offline_page(struct page *page, int flags)
+> +int soft_offline_page(unsigned long pfn, int flags)
+>   {
+>   	int ret;
+> -	unsigned long pfn = page_to_pfn(page);
+> +	struct page *page;
+>   
+> -	if (is_zone_device_page(page)) {
+> -		pr_debug_ratelimited("soft_offline: %#lx page is device page\n",
+> -				pfn);
+> -		if (flags & MF_COUNT_INCREASED)
+> -			put_page(page);
+> +	if (!pfn_valid(pfn))
+> +		return -ENXIO;
+> +	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
+> +	page = pfn_to_online_page(pfn);
+> +	if (!page)
 
-No, 'out of line' is idiom with a special meaning.
+If you pass in a PFN with MF_COUNT_INCREASED via mm/madvise.c, you would  
+now no longer do a put_page(page) in case of ZONE_DEVICE (!page =  
+pfn_to_online_page(pfn);)
+
+something like this
+
+page = pfn_to_online_page(pfn);
+if (!page) {
+	/*
+	 * With MF_COUNT_INCREASED, we can use pfn_to_page() directly
+	 * (esp., ZONE_DEVICE).
+	 */
+	if (flags & MF_COUNT_INCREASED)
+		put_page(pfn_to_page(page));
+	return -EIO;
+}
+
+For !pfn_valid(pfn), this is not relevant.
+
+>   		return -EIO;
+> -	}
+>   
+>   	if (PageHWPoison(page)) {
+>   		pr_info("soft offline: %#lx page already poisoned\n", pfn);
+> 
+
 
 -- 
-With Best Regards,
-Andy Shevchenko
 
+Thanks,
 
+David / dhildenb
