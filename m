@@ -2,70 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4B07DA456
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 05:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2158CDA457
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 05:27:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407578AbfJQD1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 23:27:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58140 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732869AbfJQD1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 23:27:01 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 699EC20640;
-        Thu, 17 Oct 2019 03:26:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571282821;
-        bh=XvBeg7TzhsqdaOPxVpJmWL2oonJbx2FFN9cGwYruGQc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qoTsYbcs/HLjh7anCCftNRsW8YVQ03EeYfp635WLn/ka7G15TJOANN23/4lcSj+ev
-         r8DYbxdQftGy84Gu77XbREd3T6sT6eDgBw4XHQ56QCFCZ36rqpQj/k/UCuV4a3ECh5
-         gY4S1RWgElkUHJaAKIqmC+vOZyA/vz0djXCgfdT4=
-Date:   Thu, 17 Oct 2019 12:26:55 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH -tip v4 0/4] x86: kprobes: Prohibit kprobes on Xen/KVM
- emulate prefixes
-Message-Id: <20191017122655.6fae3c0e44417a0af30cd2d1@kernel.org>
-In-Reply-To: <20191009123106.GK2311@hirez.programming.kicks-ass.net>
-References: <156777561745.25081.1205321122446165328.stgit@devnote2>
-        <20190917151403.60023814bda80304777a35e5@kernel.org>
-        <20191009123106.GK2311@hirez.programming.kicks-ass.net>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S2407644AbfJQD1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 23:27:18 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50468 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732869AbfJQD1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 23:27:18 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6D5C04454FFB9CF198AE;
+        Thu, 17 Oct 2019 11:27:16 +0800 (CST)
+Received: from [127.0.0.1] (10.74.149.191) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
+ 11:27:09 +0800
+Subject: Re: [PATCH net-next 00/12] net: hns3: add some bugfixes and
+ optimizations
+To:     David Miller <davem@davemloft.net>, <jakub.kicinski@netronome.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>
+References: <1571210231-29154-1-git-send-email-tanhuazhong@huawei.com>
+ <20191016101943.415d73cf@cakuba.netronome.com>
+ <20191016.135003.672960397161023411.davem@davemloft.net>
+From:   tanhuazhong <tanhuazhong@huawei.com>
+Message-ID: <d76b854c-5f6d-27b6-d40e-e3c0404b5695@huawei.com>
+Date:   Thu, 17 Oct 2019 11:27:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20191016.135003.672960397161023411.davem@davemloft.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.149.191]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
 
-On Wed, 9 Oct 2019 14:31:06 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
 
-> On Tue, Sep 17, 2019 at 03:14:03PM +0900, Masami Hiramatsu wrote:
-> > Hi Peter,
-> > 
-> > Could you review this version?
+On 2019/10/17 1:50, David Miller wrote:
+> From: Jakub Kicinski <jakub.kicinski@netronome.com>
+> Date: Wed, 16 Oct 2019 10:19:43 -0700
 > 
-> These look good to me; shall I merge them or what was the plan?
+>> On Wed, 16 Oct 2019 15:16:59 +0800, Huazhong Tan wrote:
+>>> This patch-set includes some bugfixes and code optimizations
+>>> for the HNS3 ethernet controller driver.
+>>
+>> The code LGTM, mostly, but it certainly seems like patches 2, 3 and 4
+>> should be a separate series targeting the net tree :(
+> 
+> Agreed, there are legitimate bug fixes.
+> 
+> I have to say that I see this happening a lot, hns3 bug fixes targetting
+> net-next in a larger series of cleanups and other kinds of changes.
+> 
+> Please handle this delegation properly.  Send bug fixes as a series targetting
+> 'net', and send everything else targetting 'net-next'.
+> 
 
-Thanks for the review, yes, could you merge this series to support emulated prefixes correctly?
+Hi, David & Jakub.
 
-Thank you,
+BTW, patch01 is a cleanup which is needed by patch02,
+if patch01 targetting 'net-next', patch02 targetting 'net',
+there will be a gap again. How should I deal with this case?
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+MBR.
+Huazhong.
+
+> .
+> 
+
