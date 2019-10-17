@@ -2,199 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1FECDABAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:02:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53CB6DABA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:01:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502293AbfJQMCF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 08:02:05 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34572 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502254AbfJQMBv (ORCPT
+        id S2502235AbfJQMBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 08:01:38 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43159 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502217AbfJQMBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:01:51 -0400
-Received: by mail-wm1-f68.google.com with SMTP id y135so6874563wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 05:01:48 -0700 (PDT)
+        Thu, 17 Oct 2019 08:01:36 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j18so2019162wrq.10;
+        Thu, 17 Oct 2019 05:01:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tX0Ftqak4R2nBwIJhEYcSRn89ISdRNtAIBGqgcMm9qk=;
-        b=Tqlujk3TKIxQUIZQEQPDYzgjH8DnuJg3YtB6UepNiVhCWYfT2x3WcBMnc6H5n8TD2f
-         VyK+xUK6v3ztl59U8d0b2lFLI2UeeQRpkwyEXkNzdDm/mbIb0iazCm5nKausHG8SodMO
-         85pRPNh3gBWT5kJvYkXRV6U+iyQcO3R806HV4=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ez9CbL63sX7gDGh2tYpWp8dJ1bNhw8H/uQewxmgXJH0=;
+        b=j72IxVpRwR2WtFRCiH85HtKgQidkglY9F1ZTbkFhzRVXYtHCSVjqmXfrSlLzw+Fiit
+         C+w67spnL5+ezkB5aaoCF/SuBVhkF8F2WKRpUkLAhptxAvxbcXRjrtdyFzlL7WyKcNCI
+         anGdB+rrahzlKDTc+UXVw2VvBglXcD1GdMGLV0tYOPfI18gs1JPcNBWhepCXu4QQBsw1
+         RK9aPFm4OKRpN46A20GHLdhJg1JeixMj6rcnvwPhOEKvKZ/XonvQe4yqVy1sVtSQXf5e
+         op3/6jLGHpmbxW5XaQDdfwKCmK+evW+MZplTmhGoVqRoHmUYwAWmcNMJynPKfJRYRk7A
+         +1TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tX0Ftqak4R2nBwIJhEYcSRn89ISdRNtAIBGqgcMm9qk=;
-        b=MHT3HLDoyAfUM0n4RIdgwaWQkqPthpC60kw5TfYZFmCDGgB8oTPrff0l4Xje1TpEpT
-         bFv1s34HALNfHYJhe1inbl7LRc/XgPzoWhQCOKmHq/YXEahLLD0LZn85sl2+eyaPIn73
-         x757PNuPzoJm7VtFWzB0dWWsILEBXi8nv8lgR3BFvKAZN95SwJqHUuRp4Hnv4pQsW4Cj
-         WEdYTZxW6KQQQIevJdHhv5iBRXtRVUws30XZMZec3H3K6cOY2a4TD3NHLTR/gHFpoNF+
-         JZi7v0FnFRNWsv73lilqxw/h1E9xmbtR/AsZPnghH5CaqERlAVJwZ2ZoF/IIU8LfkyuY
-         p0gw==
-X-Gm-Message-State: APjAAAXhTsYFIqo+Dvg8vbTeL1wsKVNc3xMqpBxS5JkEIdnCH4d+Xv4Z
-        pKAp41o9m+dsECs6XEyefUTYmw==
-X-Google-Smtp-Source: APXvYqxHJGWsW5gK/1BlwQml0teEZNX2wvdoEc1ob5b9+4KfNI39J6WVOq52SMPMq0qJpm1Tl6uQNg==
-X-Received: by 2002:a05:600c:2481:: with SMTP id 1mr2454420wms.98.1571313707563;
-        Thu, 17 Oct 2019 05:01:47 -0700 (PDT)
-Received: from shitalt.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id y1sm2317949wrw.6.2019.10.17.05.01.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 17 Oct 2019 05:01:45 -0700 (PDT)
-From:   Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
-To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vikas Gupta <vikas.gupta@broadcom.com>,
-        Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tee-dev@lists.linaro.org, bcm-kernel-feedback-list@broadcom.com,
-        netdev@vger.kernel.org,
-        Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
-Subject: [PATCH V2 3/3] bnxt_en: Add support to collect crash dump via ethtool
-Date:   Thu, 17 Oct 2019 17:31:22 +0530
-Message-Id: <1571313682-28900-4-git-send-email-sheetal.tigadoli@broadcom.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1571313682-28900-1-git-send-email-sheetal.tigadoli@broadcom.com>
-References: <1571313682-28900-1-git-send-email-sheetal.tigadoli@broadcom.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ez9CbL63sX7gDGh2tYpWp8dJ1bNhw8H/uQewxmgXJH0=;
+        b=siz48idrHtkXiCoZOqm+6dZWFUoPZOrNYBKtcVtEmc1TTeo/dOO3eC/aKAsZ6edIcg
+         z44qtFXWSmvl4ihrXyJk2FVfLG0U/9cmtbCA5Il9c+V4edF+cQNdyimJV5r1CQs4bUnh
+         lmzraPXdrj4qqOupXsCdtETOqmH1uCZ+n8Xf26AdKjg71c6jofRzeQyt4qH2AclgMzYJ
+         y/tlOAEddWCyVxbJURTPYA631gn0Q6zCHrv/fUSwHLEd1QRfM09uGYGoznqbWtClGVWj
+         aho8xwiDhvVh3XTTWehK8q7dRDcQvhxIz3L+6uAdyy0ejRJlMPL1CjWiuS+196PubvZh
+         l3kQ==
+X-Gm-Message-State: APjAAAX5xfdqsL3WIllw7DOYcYk9yQck82bBn1fMf6aqjjZnggTYV9D1
+        2OJpgODx8OFWhRsLOabaEWM=
+X-Google-Smtp-Source: APXvYqzYQd9TKwpkKLqmNcrY3grnLtu5vU4vNyoc+UoM+SlJAjn5JTdas8JauIoD8/BhDV9KbpjcPg==
+X-Received: by 2002:a5d:4142:: with SMTP id c2mr2590018wrq.208.1571313693027;
+        Thu, 17 Oct 2019 05:01:33 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id n1sm2094533wrg.67.2019.10.17.05.01.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2019 05:01:29 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 14:01:28 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     JC Kuo <jckuo@nvidia.com>, Rob Herring <robh@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-tegra@vger.kernel.org,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: Re: [PATCH v4 3/5] dt-bindings: phy: tegra: Add Tegra194 support
+Message-ID: <20191017120128.GE3122066@ulmo>
+References: <20191009024343.30218-1-jckuo@nvidia.com>
+ <20191009024343.30218-4-jckuo@nvidia.com>
+ <20191009233900.GA9109@bogus>
+ <20191014131752.GF422231@ulmo>
+ <CAL_Jsq+aKxfAir3skanfqmM+nFFzXPFL4eMa-+pq1kH-90YTbg@mail.gmail.com>
+ <57692050-8284-a31f-71fd-7441823f3f2b@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="HeFlAV5LIbMFYYuh"
+Content-Disposition: inline
+In-Reply-To: <57692050-8284-a31f-71fd-7441823f3f2b@nvidia.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
 
-Driver supports 2 types of core dumps.
+--HeFlAV5LIbMFYYuh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-1. Live dump - Firmware dump when system is up and running.
-2. Crash dump - Dump which is collected during firmware crash
-                that can be retrieved after recovery.
-Crash dump is currently supported only on specific 58800 chips
-which can be retrieved using OP-TEE API only, as firmware cannot
-access this region directly.
+On Thu, Oct 17, 2019 at 03:48:52PM +0800, JC Kuo wrote:
+> Hi Thierry, Hi Rob, Hi Kishon,
+> Please let me know your thoughts of the below implementation.
+>=20
+> 1. Add a "bool disable_gen2" to "phy->attrs" structure.
+> 2. In _of_phy_get() of phy-core.c to add the follow to parse a generic pr=
+operty.
+>=20
+> 	phy->attrs.disable_gen2 =3D of_property_read_bool(args.np,
+> 							"usb-disable-gen2");
 
-User needs to set the dump flag using following command before
-initiating the dump collection:
+Regarding this, I'm not sure how Rob imagined the generic properties to
+work. Perhaps he was thinking about something like the max-link-speed
+property found in the PCI bindings.
 
-    $ ethtool -W|--set-dump eth0 N
+We could have something like this:
 
-Where N is "0" for live dump and "1" for crash dump
+  - max-link-speed:
+      If present this property specifies the USB generation supported on
+      the PHY/port. Must be:
+        1: for USB 3.1 Gen 1 (a.k.a. USB 3.0)
+        2: for USB 3.1 Gen 2
 
-Command to collect the dump after setting the flag:
+I'm not sure if we need to consider anything prior to USB 3.0. I suppose
+we could do a similar mapping to what I proposed for the PHY ->set_mode
+callback:
 
-    $ ethtool -w eth0 data Filename
+  - max-link-speed:
+      If present this property specifies the USB generation supported on
+      the PHY/port. Must be:
+        0x0100: for USB 1.0 (Low-Speed)
+        0x0101: for USB 1.1 (Full-Speed)
+        0x0200: for USB 2.0 (Hi-Speed)
+        0x0300: for USB 3.0 (SuperSpeed) (a.k.a. USB 3.1 Gen 1)
+        0x0301: for USB 3.1 (SuperSpeed 10 Gbit/s) (a.k.a. USB 3.1 Gen 2)
+        0x0302: for USB 3.2 (SuperSpeed 20 Gbit/s) (a.k.a. USB 3.2 Gen 2 x =
+2)
+        ...
 
-Cc: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.h         |  3 ++
- drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 36 +++++++++++++++++++++--
- drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h |  2 ++
- 3 files changed, 39 insertions(+), 2 deletions(-)
+Or those could just be sequentially enumerated, like in the above
+example.
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-index 0943715..3e7d1fb 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -1807,6 +1807,9 @@ struct bnxt {
- 
- 	u8			num_leds;
- 	struct bnxt_led_info	leds[BNXT_MAX_LED];
-+	u16			dump_flag;
-+#define BNXT_DUMP_LIVE		0
-+#define BNXT_DUMP_CRASH		1
- 
- 	struct bpf_prog		*xdp_prog;
- 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index 51c1404..1596221 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -3311,6 +3311,23 @@ static int bnxt_get_coredump(struct bnxt *bp, void *buf, u32 *dump_len)
- 	return rc;
- }
- 
-+static int bnxt_set_dump(struct net_device *dev, struct ethtool_dump *dump)
-+{
-+	struct bnxt *bp = netdev_priv(dev);
-+
-+#ifndef CONFIG_TEE_BNXT_FW
-+	return -EOPNOTSUPP;
-+#endif
-+
-+	if (dump->flag > BNXT_DUMP_CRASH) {
-+		netdev_err(dev, "Supports only Live(0) and Crash(1) dumps.\n");
-+		return -EINVAL;
-+	}
-+
-+	bp->dump_flag = dump->flag;
-+	return 0;
-+}
-+
- static int bnxt_get_dump_flag(struct net_device *dev, struct ethtool_dump *dump)
- {
- 	struct bnxt *bp = netdev_priv(dev);
-@@ -3323,7 +3340,12 @@ static int bnxt_get_dump_flag(struct net_device *dev, struct ethtool_dump *dump)
- 			bp->ver_resp.hwrm_fw_bld_8b << 8 |
- 			bp->ver_resp.hwrm_fw_rsvd_8b;
- 
--	return bnxt_get_coredump(bp, NULL, &dump->len);
-+	dump->flag = bp->dump_flag;
-+	if (bp->dump_flag == BNXT_DUMP_CRASH)
-+		dump->len = BNXT_CRASH_DUMP_LEN;
-+	else
-+		bnxt_get_coredump(bp, NULL, &dump->len);
-+	return 0;
- }
- 
- static int bnxt_get_dump_data(struct net_device *dev, struct ethtool_dump *dump,
-@@ -3336,7 +3358,16 @@ static int bnxt_get_dump_data(struct net_device *dev, struct ethtool_dump *dump,
- 
- 	memset(buf, 0, dump->len);
- 
--	return bnxt_get_coredump(bp, buf, &dump->len);
-+	dump->flag = bp->dump_flag;
-+	if (dump->flag == BNXT_DUMP_CRASH) {
-+#ifdef CONFIG_TEE_BNXT_FW
-+		return tee_bnxt_copy_coredump(buf, 0, dump->len);
-+#endif
-+	} else {
-+		return bnxt_get_coredump(bp, buf, &dump->len);
-+	}
-+
-+	return 0;
- }
- 
- void bnxt_ethtool_init(struct bnxt *bp)
-@@ -3446,6 +3477,7 @@ void bnxt_ethtool_free(struct bnxt *bp)
- 	.set_phys_id		= bnxt_set_phys_id,
- 	.self_test		= bnxt_self_test,
- 	.reset			= bnxt_reset,
-+	.set_dump		= bnxt_set_dump,
- 	.get_dump_flag		= bnxt_get_dump_flag,
- 	.get_dump_data		= bnxt_get_dump_data,
- };
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
-index b5b65b3..01de7e7 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
-@@ -59,6 +59,8 @@ struct hwrm_dbg_cmn_output {
- 	#define HWRM_DBG_CMN_FLAGS_MORE	1
- };
- 
-+#define BNXT_CRASH_DUMP_LEN	(8 << 20)
-+
- #define BNXT_LED_DFLT_ENA				\
- 	(PORT_LED_CFG_REQ_ENABLES_LED0_ID |		\
- 	 PORT_LED_CFG_REQ_ENABLES_LED0_STATE |		\
--- 
-1.9.1
+Rob, any thoughts?
 
+Thierry
+
+> 3. In individual phy driver, to add SOC/PHY specific programming accordin=
+gly.
+>=20
+> Thanks,
+> JC
+>=20
+> On 10/14/19 9:40 PM, Rob Herring wrote:
+> > On Mon, Oct 14, 2019 at 8:17 AM Thierry Reding <thierry.reding@gmail.co=
+m> wrote:
+> >>
+> >> On Wed, Oct 09, 2019 at 06:39:00PM -0500, Rob Herring wrote:
+> >>> On Wed, Oct 09, 2019 at 10:43:41AM +0800, JC Kuo wrote:
+> >>>> Extend the bindings to cover the set of features found in Tegra194.
+> >>>> Note that, technically, there are four more supplies connected to the
+> >>>> XUSB pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_P=
+LL)
+> >>>> , but the power sequencing requirements of Tegra194 require these to=
+ be
+> >>>> under the control of the PMIC.
+> >>>>
+> >>>> Tegra194 XUSB PADCTL supports up to USB 3.1 Gen 2 speed, however, it=
+ is
+> >>>> possible for some platforms have long signal trace that could not
+> >>>> provide sufficient electrical environment for Gen 2 speed. To deal w=
+ith
+> >>>> this, a new device node property "nvidia,disable-gen2" was added to
+> >>>> Tegra194 that be used to specifically disable Gen 2 speed for a
+> >>>> particular USB 3.0 port so that the port can be limited to Gen 1 spe=
+ed
+> >>>> and avoid the instability.
+> >>>
+> >>> I suspect this may be a common issue and we should have a common
+> >>> property. Typically, this kind of property is in the controller though
+> >>> and supports multiple speed limits. See PCI bindings for inspiration.
+> >>
+> >> Given that support for gen 2 speeds is dependent on signal trace lengt=
+h,
+> >> it doesn't really make sense to restrict the whole controller to a giv=
+en
+> >> speed if only the signal trace for a single port exceeds the limit for
+> >> which gen 2 would work.
+> >>
+> >> Also, the USB PHYs are in a different hardware block than the USB
+> >> controller, so this really is a property of the PHY block, not the USB
+> >> controller.
+> >=20
+> > Okay, but still should be common for USB PHYs IMO.
+> >=20
+> > Rob
+> >=20
+
+--HeFlAV5LIbMFYYuh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2oWBUACgkQ3SOs138+
+s6H6Lg//Z16LUbdt8qinrY+mOKkJzVJyY9gk+oxK+7eqnRev93F97H/5xmv+XL4y
+WL5gKVxkEzbuca0zrpU/nK0xxNRVQhCXQkCv7ao2dc4M16ZxUUKG6Hskgv1Pa4Ll
+nHcmxN6lNmnCH+RVmYM+AoojBUAmaxbga1atV96DBY/6lqxUl3CtkHNFzSyfGw1S
+TQ5er1i1HpEuHOqY1Fsx2XTo0x3akWJgtPL/wvnw/exNN+tPXOdgXqJXvU3LF8S1
+3bFVF/o23jN6FBnVtzTsaLR5lZyOc5HhvDiwtOUWptck0wmWmeOiL4G5QGj0Cks4
+pN5BVm7Of69i5YLWWJWM6VWX8Mo27l+/u/fUkqvyp5QpTpGdrArVbOWhZg+iqpsH
+gSeU7Uhw6xdvTrgqnH+5wKH6vdb82W19SQ+xeu01mEiMHsUp0CneAxoafQrH5DIy
+TKDfegIEfEGzEbDNYUn1k7ZMjF+5tO1JCOQ6ExLpIknbShWJG7cCi0w0qpeni83F
+73H7Sk/32VjO4TJDUe6PbdEBrmGDWHDU3S6cZpgOTujd+tbD+1TNTL3rA40pRXoo
+8ikBMJlfKDlnKjhdCtIrtT+OgOlSeA6poK73FfK/I2pvqZuCGNoGuubsvyel1xoK
+3egGGoIm5LMurdn4oazcaMcPJt2/YABalS1AYgoJ+6Y+y+oKWnw=
+=wH+F
+-----END PGP SIGNATURE-----
+
+--HeFlAV5LIbMFYYuh--
