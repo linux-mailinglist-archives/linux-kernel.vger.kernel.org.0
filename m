@@ -2,141 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F3E0DA83E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:26:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC402DA846
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:28:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408448AbfJQJ0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 05:26:50 -0400
-Received: from mail-eopbgr690078.outbound.protection.outlook.com ([40.107.69.78]:59960
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732676AbfJQJ0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 05:26:49 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dKAdGZFjXSKevQNzr+M1PycqcVPXYWjyxV0hr3I4PnFwfjNmfqHDl/96pmR2fFHeOPBtHV/oF40FLbzWSKF3G193BQMsbAGbYTNFd1nnsThwSk0ZX58RvxCz4vSBFCbxcxOXCTeR3vGf6zUx6pj0K6J1al8uDcFBKzzg3bM0vG95uyGdmUJwd7KpjObZjQRC5Rq1z5+wGtGdwX2cxozCXgRGNaZcehFKxLPr15VOr7ts4jh5bd2XC8awrih2KJvbfp3iiqVPpbM95mnQBHRYJIyAGqX+pxrItpHa2T9KlG3qWkw1K6GDTWHB4dxdg9FdVdhYeqwHXJlSegoZSLHIXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ebgojj5lmzkjXyBQkywOKrjP11zL1M6jDKVkZzVDaIo=;
- b=CwmD/7bJPqGr1vofl7eFS9NseVJPhzWNh/i/qbLY4IDKubr4xmSMpZtuWzkLglbYBf4VafGQWcwgm5K63/Dthy2gj8Ck9eLZZysqNR51j9+krlhUlKAT2Mp8jCMYmgM5b832Oq1fUeKoYCJVRkQO//JcVk6MsugIiW2/a1bVWQmAnBvFNCTUHf0e/u0BE0zIRctQrWhNYWyUsTsaioL0lgF1fY/+NYLPZUhx8WPa2QPvXYMhDpIaURxmUmAmsBzGCqcIGjKhJvHoO/wOz/ufHdKAJU9u7umypm84BnSI1c7Q0vHFH5x6N8+aegGfpmZLHRocWUufdP344tWMSNZUiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ebgojj5lmzkjXyBQkywOKrjP11zL1M6jDKVkZzVDaIo=;
- b=cBp8zqu1NfRTPQEH2yVJ5QKZOA8Gdr8dxxXGbSqKAkAzkJMJDZNaM0V/okELnczvIWLQcHrrMHQaz/zK+wktjMFX7hRIc3dVnovmHXHmuP5kVjcGhiCTLlQG7CnOH94tFSzmR06kowqzsxAjYcLS3X3elQGo7a7MWK6ByD7erPs=
-Received: from DM6PR12MB3868.namprd12.prod.outlook.com (10.255.173.213) by
- DM6PR12MB3033.namprd12.prod.outlook.com (20.178.30.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.16; Thu, 17 Oct 2019 09:26:40 +0000
-Received: from DM6PR12MB3868.namprd12.prod.outlook.com
- ([fe80::64dd:646d:6fa1:15a1]) by DM6PR12MB3868.namprd12.prod.outlook.com
- ([fe80::64dd:646d:6fa1:15a1%4]) with mapi id 15.20.2347.023; Thu, 17 Oct 2019
- 09:26:39 +0000
-From:   vishnu <vravulap@amd.com>
-To:     Lee Jones <lee.jones@linaro.org>,
-        "RAVULAPATI, VISHNU VARDHAN RAO" 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-CC:     "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>,
-        "Mehta, Sanju" <Sanju.Mehta@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/7] ASoC: amd: Registering device endpoints using MFD
- framework
-Thread-Topic: [PATCH 2/7] ASoC: amd: Registering device endpoints using MFD
- framework
-Thread-Index: AQHVd5gysBGn4q83rEe097OrmwWXeadFWHuAgADs8gD//2r6AIAAc1YAgAEphICAAAlmgIAABseAgAyKavCABePhAIAFlW4A
-Date:   Thu, 17 Oct 2019 09:26:39 +0000
-Message-ID: <ca3d7434-e15e-b701-8a42-3d9eadacf227@amd.com>
-References: <1569891524-18875-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <1569891524-18875-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <20191001064539.GB11769@dell> <2ff13a61-a346-4d49-ab3a-da5d2126727c@amd.com>
- <20191001120020.GC11769@dell>
- <BN6PR12MB180930BD7D03FD7DEB14D7C1F79D0@BN6PR12MB1809.namprd12.prod.outlook.com>
- <20191002123759.GD11769@dell>
- <BN6PR12MB1809451A3152488F3D8D1371F79C0@BN6PR12MB1809.namprd12.prod.outlook.com>
- <20191002133553.GA21172@dell>
- <DM6PR12MB3868561CDEEF9D21940E8F57E7940@DM6PR12MB3868.namprd12.prod.outlook.com>
- <20191014070318.GC4545@dell>
-In-Reply-To: <20191014070318.GC4545@dell>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: PN1PR0101CA0007.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c00:e::17) To DM6PR12MB3868.namprd12.prod.outlook.com
- (2603:10b6:5:1c8::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Vishnuvardhanrao.Ravulapati@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.159.251]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 88c61541-ce33-4d31-e558-08d752e41d67
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: DM6PR12MB3033:
-x-ms-exchange-purlcount: 2
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM6PR12MB3033FF3DA04CAF085A5D8C2EE76D0@DM6PR12MB3033.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 01930B2BA8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(396003)(376002)(346002)(136003)(189003)(199004)(81156014)(99286004)(486006)(6306002)(316002)(31686004)(6512007)(71200400001)(71190400001)(11346002)(446003)(81166006)(26005)(52116002)(8676002)(31696002)(256004)(53546011)(76176011)(6246003)(102836004)(6506007)(8936002)(66946007)(2616005)(4326008)(476003)(66476007)(64756008)(186003)(2906002)(3846002)(66446008)(14454004)(25786009)(386003)(6486002)(6636002)(6116002)(5660300002)(66066001)(66556008)(478600001)(54906003)(110136005)(7736002)(229853002)(305945005)(36756003)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3033;H:DM6PR12MB3868.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 66An7w43HP0b048ZwTCRr2uSsnBAa43sWmBwrm2+rvnofSO70auqk7sPEIL774M3HL+6ty7iYcLtFGwCGP3OAujUsIu1UDVVrQDENBbaSZPQMZm6me3rUob4N1HVXHXYeIdKJgTLe5tEsxGfnSk+oAomuRAGK5934eP4KqbxrsYTjTWVklY7jX6Wmc35oPYG5qZ1YRYTkHWotaw9ZXrlQpymRSIuEeEiErLeqUTg0CD4IWMBHXWsNkvCNjSBGnI/G5jXU5lCiVBV4JYL7LSkorc51d5FsgyWKGSKPBPsxBpcNdja9ZgL25fUji5wmwP5+V7A2WJa53U6UqibF1vSj2uUs8ZRd9w4/885MRPHZcdcWgP+xDIfw8lp4u4M5Coat7z09fRtmNKZYZUV4Nom0jXGYHYUMkTuEvymAOHiWnw=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B026E4F768F0C642A15381F8EE109635@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2408511AbfJQJ2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 05:28:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56816 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728150AbfJQJ2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 05:28:04 -0400
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2D3720869;
+        Thu, 17 Oct 2019 09:28:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571304483;
+        bh=71Gn97Vrnruwg/w4kqqAAh7f+VgYiYJZubzV77QaMxQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OQhpwzDFsBquCNw5d+S8kTpjuEPeg71p5ObVgjp4ZxTk+OSLm0rVlLn/Zo0I4scSc
+         rQauaiEk11f7VlIB0wkdhwDP/qmceaXDUnpUyh9eGx+HkzJ5geqZt3VNhxAb9/6piK
+         tXkh5UN3NfoSm4NL/vX5E6uW36F5cY7AegKTljxM=
+Date:   Thu, 17 Oct 2019 11:28:00 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        mchehab@kernel.org, hverkuil@xs4all.nl, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 5/6] media: sun4i: Add H3 deinterlace driver
+Message-ID: <20191017092800.old6jcyeoq3ruawv@gilmour>
+References: <20191016192807.1278987-1-jernej.skrabec@siol.net>
+ <20191016192807.1278987-6-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88c61541-ce33-4d31-e558-08d752e41d67
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2019 09:26:39.7352
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rb5kMJuBApSZ3ZCntMmUJ9KelmFsUgYZP8AL1bRZbKyhLviSjtipAYFl/l61YP2H4ump9nao8OcbAmZub5csEw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3033
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="amvhyb5qqkqgtzi2"
+Content-Disposition: inline
+In-Reply-To: <20191016192807.1278987-6-jernej.skrabec@siol.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGVlLA0KDQpPa2F5LldlIHdpbGwgcHJvY2VlZCB3aXRoIGV4aXN0aW5nIHBsYXRmb3JtIGRl
-dmljZSBtb2RlbC4NCg0KTWFyaywNCg0KSSB3aWxsIHJlc2VuZCB0aGUgcGF0Y2hlcyB3aXRoIHRo
-ZSByZXZpZXcgY29tbWVudHMgYWRkcmVzc2VkLg0KDQoNClRoYW5rcywNClZpc2hudQ0KDQpPbiAx
-NC8xMC8xOSAxMjozMyBQTSwgTGVlIEpvbmVzIHdyb3RlOg0KPiBPbiBUaHUsIDEwIE9jdCAyMDE5
-LCBSQVZVTEFQQVRJLCBWSVNITlUgVkFSREhBTiBSQU8gd3JvdGU6DQo+IA0KPj4gSGkgTGVlLA0K
-Pj4NCj4+IFdlIGhhdmUgdHdvIGluc3RhbmNlcyBCVCBhbmQgSTJTLg0KPj4gV2UgbmVlZCB0byBj
-cmVhdGUgZGV2aWNlcyB3aXRoIHNhbWUgbmFtZSBhZGRlZCB3aXRoIG51bWJlciBvZiBkZXZpY2UN
-Cj4+IGxpa2UgZXhhbXBsZToNCj4+IGFjcDN4X2kyc19wbGF5Y2FwLjEuYXV0bzxodHRwOi8vMS5h
-dXRvPg0KPj4gYWNwM3hfaTJzX3BsYXljYXAuMi5hdXRvPGh0dHA6Ly8yLmF1dG8+DQo+Pg0KPj4g
-YnkgdXNpbmcgTUZEIHdlIGNhbiBtYWtlIGl0IGhhcHBlbiBhdXRvbWF0aWNhbGx5IGJ5IGdpdmlu
-Zw0KPj4gImFjcDN4X2kyc19wbGF5Y2FwIiBhbmQgb3RoZXIgZXh0ZW5zaW9uIHdpbGwgYmUgYWRk
-ZWQgYnkgTUZEIGFkZCBkZXZpY2UgQVBJLg0KPiANCj4gVGhlIGF1dG8gZXh0ZW5zaW9uIGlzIGhh
-bmRlZCBieSB0aGUgcGxhdGZvcm1fZGVpdmNlX2FsbG9jKCkgQVBJLg0KPiANCj4gICAgcGxhdGZv
-cm1fZGV2aWNlX2FsbG9jKCJhY3AzeF9pMnNfcGxheWNhcCIsIFBMQVRGT1JNX0RFVklEX0FVVE8p
-Ow0KPiANCj4+IFRoaXMgaGVscHMgdXMgYnkgcmVjdGlmeWluZyB0aGUgcmVuYW1pbmcgaXNzdWUg
-d2hpY2ggd2UgZ2V0IGJ5IHVzaW5nDQo+PiBQbGF0Zm9ybV9kZXZfY3JlYXRlIEFQSWBzLklmIHdl
-IGhhdmUgdG8gdXNlIHBsYXRmb3JtIHJlbGF0ZWQgQVBJcyB0aGVuDQo+PiB3ZSBuZWVkIHRvIGdp
-dmUgZGlmZmVyZW50IG5hbWluZyBjb252ZW50aW9ucyB3aGlsZSBjcmVhdGluZyB0aGUgZGV2aWNl
-cw0KPj4gYW5kIGNhbnQgdXNlIGl0IGluIGxvb3AgYXMgd2UgaGF2ZSAzIGRldmljZXMgd2UgbmVl
-ZCB0byBjYWxsIHRocmVlDQo+PiBleHBsaWNpdGx5LlRoaXMgbWFrZSBvdXIgY29kZSBsZW5ndGh5
-Lg0KPj4gSWYgd2UgdXNlIE1GRCBpdCB3b3VsZCBoZWxwIHVzIGEgbG90Lg0KPj4NCj4+IFBsZWFz
-ZSBzdWdnZXN0IHVzIGhvdyBjYW4gd2UgcHJvY2VlZC4NCj4gDQo+IFlvdSBoYXZlIDIgY2hvaWNl
-cyBhdmFpbGFibGUgdG8geW91IGJhc2VkIG9uIHdoZXRoZXIgeW91ciBkZXZpY2UgaXMgYW4NCj4g
-TUZEIG9yIG5vdDoNCj4gDQo+IElmIHllcywgbW92ZSBpdCAob3IgYSBwYXJ0IG9mIGl0KSB0byBk
-cml2ZXJzL21mZC4NCj4gSWYgbm8sIHRoZW4gdXNlIHRoZSBwbGF0Zm9ybV9kZXZpY2VfKigpIEFQ
-SS4NCj4gDQo=
+
+--amvhyb5qqkqgtzi2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi,
+
+I have a small comment that can definitely be addressed in a subsequent patch
+
+On Wed, Oct 16, 2019 at 09:28:06PM +0200, Jernej Skrabec wrote:
+> +	dev->bus_clk = devm_clk_get(dev->dev, "bus");
+> +	if (IS_ERR(dev->bus_clk)) {
+> +		dev_err(dev->dev, "Failed to get bus clock\n");
+> +
+> +		return PTR_ERR(dev->bus_clk);
+> +	}
+> +
+> +	dev->mod_clk = devm_clk_get(dev->dev, "mod");
+> +	if (IS_ERR(dev->mod_clk)) {
+> +		dev_err(dev->dev, "Failed to get mod clock\n");
+> +
+> +		return PTR_ERR(dev->mod_clk);
+> +	}
+> +
+> +	dev->ram_clk = devm_clk_get(dev->dev, "ram");
+> +	if (IS_ERR(dev->ram_clk)) {
+> +		dev_err(dev->dev, "Failed to get ram clock\n");
+> +
+> +		return PTR_ERR(dev->ram_clk);
+> +	}
+> +
+> +	dev->rstc = devm_reset_control_get(dev->dev, NULL);
+> +	if (IS_ERR(dev->rstc)) {
+> +		dev_err(dev->dev, "Failed to get reset control\n");
+> +
+> +		return PTR_ERR(dev->rstc);
+> +	}
+> +
+> +	clk_set_rate_exclusive(dev->mod_clk, 300000000);
+
+clk_set_rate_exclusive puts a pretty big constraint on the clock tree,
+and we shouldn't really enforce it if the device is unused.
+
+I guess we should move it to the runtime_pm resume hook (with the
+put_exclusive call in suspend).
+
+Otherwise, that patch is
+Acked-by: Maxime Ripard <mripard@kernel.org>
+
+Maxime
+
+--amvhyb5qqkqgtzi2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXag0IAAKCRDj7w1vZxhR
+xaZsAP4ktQAK6tje3Cb2Qjis6/lKTHrygep8ppy1RAYh+5gmFgD/cmwwWzyQ42I7
+oxbLIVKna9bDTyghs0A+0vE3KpGYPgA=
+=4k1j
+-----END PGP SIGNATURE-----
+
+--amvhyb5qqkqgtzi2--
