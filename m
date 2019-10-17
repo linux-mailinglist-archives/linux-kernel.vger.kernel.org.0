@@ -2,84 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF31DB532
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3B1BDB556
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:00:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441201AbfJQR5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 13:57:22 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:43558 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733171AbfJQR5U (ORCPT
+        id S2395178AbfJQSAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 14:00:04 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42669 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727241AbfJQSAE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 13:57:20 -0400
-Received: by mail-il1-f195.google.com with SMTP id t5so2904819ilh.10;
-        Thu, 17 Oct 2019 10:57:19 -0700 (PDT)
+        Thu, 17 Oct 2019 14:00:04 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q12so2124357pff.9;
+        Thu, 17 Oct 2019 11:00:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WcS5hYdP3pCxm/yZLIGrFm7va/wuB5toN9M7cwBJfq4=;
-        b=BcMp4pfGIFOkf4xxZpY2CD5fOpV+6Bj+/idbEiDyJxt8lqnXd3BVwPpM6QI7ja6+aC
-         TwG4M7vMynFU9QefpWHLDy9erHpgm4+zTzlX+6+qXJQjIvo1y3AxxKMIChANbvT58y/D
-         7Vb908VUCtNaCeGApGvG6TAFpgFPwg2GmOdbx37rhNuZ4K0mD3ULJMNZ3/Sbg0M4ks2F
-         5eQsVXgVW1yU/LpdjCGtU/AKeK9aIdyUeVYZCFDh6tPeLMNs1q7HWaz3WrXh2Y3u8cfm
-         UoMsLXLym1pooH607OikvQwcu9wFJWEo3nokTGPMVgy8MzgJIPQ/RBc/szzs7bBNEGWq
-         mTQg==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=5llPGiQesTZRbdQZS+LGFIWEO3rSCU/NACr08ZgLNjA=;
+        b=CzfaisiVCNaVNalq0C+r17YG01hqWDcgSnWXfTb0t1WnHGaP3YbRAPBjXZpOVZBI1w
+         Pn138x3tkDf7RDTz4b8CE51hfOlNaqyExppRHrMUMLL/4D/Yw12dAzi2Q0iuNIbDyzWq
+         fW9hJTsP6NkBUXdab9UzuvOgY3uWonWuHEyxjFWrk5VJAEuxN2vz+yjBRfn8Xd9poNbQ
+         KoDo6a8+ugw48GLG7y+LaVJGf2mlJCEsupYTni2apeby+c0n/d4542H+lrTlkoHkgOxH
+         gS8sN0P0hHtd3JrJb5LozZZrjeN8oRzGA33HXl5uSq7zMwmN+49l8LaU/4rwFwaAVgY/
+         nmtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WcS5hYdP3pCxm/yZLIGrFm7va/wuB5toN9M7cwBJfq4=;
-        b=StpBZvcdLrnee8TWJmWaDm9B7mntFCFenfaejkF/dVEcV3z9G+B2ANsrqrkni93+8h
-         4dUNqTWMadvk/9fHPpcK7SevEFjBN2vuvFBwdseqHe5TidGx1YiEO4uIucIxaaHIFzb7
-         EtH/umQ+YNtAhKXE1sNahmZAsF3pTbCkovobRUBn/G7ZKl1SEdbvFdfH9oSgYP8rGgS8
-         2bJxf3FcpX/7SzTdhT3rrmPKg6guf1YFVXstDGNwFJ3t3iUhmsrXUc+zHlr62olt3Vzy
-         MprKVD+bWVbp0qmprWLDN1ggNO1SC5MkAJkvEmq7vyiw5qHuUaXv3rYAvmrTPE9y/0ef
-         PMsg==
-X-Gm-Message-State: APjAAAXUjVviVrFmSHtKaGxZuWJdGPD9hMXQtJdiISupSZGl908xB1Jf
-        N4xRfngeGpFaIgZbM8eXSDGNuyYjSpbDFAFjdx4=
-X-Google-Smtp-Source: APXvYqykU6l9b4dn91QLAmg0FiFZO3jTjHvdjb5410032UJVHmHeljk5z6DlHlsHPFhD+w3YNWHsIQg0GHMBWHSh/bM=
-X-Received: by 2002:a92:d652:: with SMTP id x18mr4948635ilp.58.1571335038402;
- Thu, 17 Oct 2019 10:57:18 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=5llPGiQesTZRbdQZS+LGFIWEO3rSCU/NACr08ZgLNjA=;
+        b=tzvfugzqvdaXrQpwxV9U5izayX1zsz//agNlcKudkyIKq839A24IlzU5TjB2T8lWNk
+         YKu+Q5QEPzCDpgGFiQXgzCiziZ7vP00yFMgSYYIur/hNo37ixmpoEJjFpVymCewpPxGp
+         J4Wf5i2OPOHzbyluA1700BkPbn0XZRdQ3TBH0lfjWwGxEGM0URwdmt3sCHDW6XlqN/Eg
+         mnN1p7u5uZn7by9TuGU4Ubdf+CGQDltRfVWpi+TLKQjWv0b6YOdPgSll2aJOxQ5gx9a/
+         ncQyYCJxMiSb4HpgVLnTgfgehbcDn4csw27wxkl1JkFiTi9/rxBQPxII2Mi3uyP+G1nO
+         Fcmw==
+X-Gm-Message-State: APjAAAU23BRGSh+rycmUR25KH2mits9Kcm8Cam+dK/IDzrLtI95l3Pmf
+        rgEDpykOLrPfA7iuODnOdosdpQE6
+X-Google-Smtp-Source: APXvYqxHGLaWJ8OER5XtH+HG+t/nA2kXO/TwtrQD6rTV+iO4uPlrxaUp7qRPGBp0iRNVB7UHGaEuoQ==
+X-Received: by 2002:a17:90a:304:: with SMTP id 4mr6016053pje.128.1571335202990;
+        Thu, 17 Oct 2019 11:00:02 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id 202sm3526050pfu.161.2019.10.17.11.00.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2019 11:00:02 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 11:00:00 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [git pull] Input updates for v5.4-rc3
+Message-ID: <20191017180000.GA201965@dtor-ws>
 MIME-Version: 1.0
-References: <20191002114626.12407-1-aford173@gmail.com> <1550E9D9-43ED-4345-A9AF-6D9F097FC64E@holtmann.org>
-In-Reply-To: <1550E9D9-43ED-4345-A9AF-6D9F097FC64E@holtmann.org>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Thu, 17 Oct 2019 12:57:06 -0500
-Message-ID: <CAHCN7xKA9-K4uYU9oFW+A7ywc8TGixNa-yHJgL7uSTbyXnisTQ@mail.gmail.com>
-Subject: Re: [PATCH] Revert "Bluetooth: hci_ll: set operational frequency earlier"
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Adam Ford <adam.ford@logicpd.com>,
-        Sebastian Reichel <sre@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 1:36 PM Marcel Holtmann <marcel@holtmann.org> wrote:
->
-> Hi Adam,
->
-> > As nice as it would be to update firmware faster, that patch broke
-> > at least two different boards, an OMAP4+WL1285 based Motorola Droid
-> > 4, as reported by Sebasian Reichel and the Logic PD i.MX6Q +
-> > WL1837MOD.
-> >
-> > This reverts commit a2e02f38eff84f199c8e32359eb213f81f270047.
-> >
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
->
-> patch has been applied to bluetooth-next tree.
+Hi Linus,
 
-Any change this can get pushed upstream to stable?  (including 5.4?)
+Please pull from:
 
-adam
->
-> Regards
->
-> Marcel
->
+	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+
+to receive updates for the input subsystem. The main change is that we
+are reverting blanket enablement of SMBus mode for devices with Elan
+touchpads that report BIOS release date as 2018+ because there are older
+boxes with updated BIOSes that still do not work well in SMbus mode.
+We will have to establish whitelist for SMBus mode it looks like.
+
+Changelog:
+---------
+
+Evan Green (1):
+      Input: synaptics-rmi4 - avoid processing unknown IRQs
+
+Hans de Goede (1):
+      Input: soc_button_array - partial revert of support for newer surface devices
+
+Kai-Heng Feng (1):
+      Revert "Input: elantech - enable SMBus on new (2018+) systems"
+
+Marco Felsch (1):
+      Input: da9063 - fix capability and drop KEY_SLEEP
+
+Yauhen Kharuzhy (1):
+      Input: goodix - add support for 9-bytes reports
+
+Diffstat:
+--------
+
+ drivers/input/misc/da9063_onkey.c     |  5 +--
+ drivers/input/misc/soc_button_array.c | 17 +++++++---
+ drivers/input/mouse/elantech.c        | 55 +++++++++++++++++----------------
+ drivers/input/rmi4/rmi_driver.c       |  6 +++-
+ drivers/input/touchscreen/goodix.c    | 58 ++++++++++++++++++++++++++++++-----
+ 5 files changed, 97 insertions(+), 44 deletions(-)
+
+Thanks.
+
+
+-- 
+Dmitry
