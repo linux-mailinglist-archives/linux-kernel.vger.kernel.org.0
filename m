@@ -2,110 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9AE8DB4AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3646DB4BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:49:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730666AbfJQRsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 13:48:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47148 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437169AbfJQRsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 13:48:21 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F08422089C;
-        Thu, 17 Oct 2019 17:48:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571334501;
-        bh=v34jWqxmNeAMOoNfEOFlbq2+WSKHjXcMGhvRy6ZMeig=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=M262+xKAyWHA0QeAIq39nDeoMvMpkBRJ6TbbsDN/MDmB4cd9yD90JsNNrxuEY5arz
-         uXHFuLaJGR2Sfw3uBWNd775l1T0L5DfcHX2dKE0HQnIB+FRr8bsvdWlkd5jSlZNEqM
-         AuZS6lW8VkEDJWWEBWlqhsbkz8rROA031xEABvQo=
-Content-Type: text/plain; charset="utf-8"
+        id S2394597AbfJQRty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 13:49:54 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37727 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729798AbfJQRty (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 13:49:54 -0400
+Received: by mail-pl1-f196.google.com with SMTP id u20so1484413plq.4;
+        Thu, 17 Oct 2019 10:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=/QpBt/5mAOgelZJiTzAwHWuluSTu6a1opW8nwuOlEe4=;
+        b=oXzly/O4Ik9JE2BGj2REu8kmJYtB7cafrsbA696k61+qtizgxIUOnU2dM/ZnC4W4tr
+         5JzwZnhwF38omXMNLPtNN2tSNT+lWTb3RUnH+f0o2E8R5uIE78tg6OFyWM0y5oD7gwnv
+         52nCJQWdNCLZdcSEqnUMqIL558XcoDNg72ylbADGAkNrQJJ8AkSDprsTyxHQtoUV5S2Q
+         F7kNnBj6lZw8kc6uShy/oNUYIItjq/8dyYb/L09rkayGHuq47fNUsRsTFjDT9vfAY6u2
+         SiDNMl2h7A/z6ONBuVSjapZY9nJRr1P+YfdEHzyHdF5Qmep+cdDwciwzF7AfO3wraJcK
+         VDUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=/QpBt/5mAOgelZJiTzAwHWuluSTu6a1opW8nwuOlEe4=;
+        b=RSmInVffqT0zf75LaNJdipqlQi5udniLYKvFUArh8NjXF/Ogf5aqbsNjrGtnRT9mXA
+         trRMjSXvWlgjrKI2GYAPEcJp+uzXhc88u9fqhtfoAEjlyLLb2cLk+7C3evYpA4Wfpb6e
+         LkcB1AJ2YWjy1wnf0ojdfBnUh7OvXoDO0yMGBQjSV8sZMA3mpSwcE+LSvOG3bCApCKye
+         3A1G/EaEDsV7MF0IZwYzz4VsTnJKNE1L+CT7gr1WgJsuQkxePxbMDauZI5vnVTSHyX1w
+         58itPTC8SPCLf5xjicuzWTW71w1gmK54XxeRlKm0M96fzoaqy3OKss2cC12Nf5QETXJQ
+         OTUg==
+X-Gm-Message-State: APjAAAW+tj/GEd7RdlwLHF/10BYH072FqgnNaJty1bYRRoIRiIzFIFYL
+        SPlilv1Oe39F9kvFr9cui5g=
+X-Google-Smtp-Source: APXvYqyu0QXMHaXeDuPzBNWe8UL/n21EdJYj2QxWirL3fT4lDQ0iBo5AJNm1rbGIu+XMSuH+7w8cYQ==
+X-Received: by 2002:a17:902:123:: with SMTP id 32mr5383248plb.258.1571334593388;
+        Thu, 17 Oct 2019 10:49:53 -0700 (PDT)
+Received: from iclxps (155-97-232-235.usahousing.utah.edu. [155.97.232.235])
+        by smtp.gmail.com with ESMTPSA id o11sm2790242pgp.13.2019.10.17.10.49.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2019 10:49:52 -0700 (PDT)
+Message-ID: <b113dd8da86934acc90859dc592e0234fa88cfdc.camel@gmail.com>
+Subject: Re: [PATCH v5 2/4] lib: devres: add a helper function for ioremap_uc
+From:   Tuowen Zhao <ztuowen@gmail.com>
+To:     Sasha Levin <sashal@kernel.org>, lee.jones@linaro.org,
+        linux-kernel@vger.kernel.org
+Cc:     andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
+        stable@vger.kernel.org
+Date:   Thu, 17 Oct 2019 11:49:50 -0600
+In-Reply-To: <20191017143144.9985421848@mail.kernel.org>
+References: <20191016210629.1005086-3-ztuowen@gmail.com>
+         <20191017143144.9985421848@mail.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191016122343.GM2654@vkoul-mobl>
-References: <20190917091623.3453-1-vkoul@kernel.org> <20190917161000.DAFF3206C2@mail.kernel.org> <20191016122343.GM2654@vkoul-mobl>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc: Add missing clocks in SM8150
-User-Agent: alot/0.8.1
-Date:   Thu, 17 Oct 2019 10:48:20 -0700
-Message-Id: <20191017174820.F08422089C@mail.kernel.org>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vinod Koul (2019-10-16 05:23:43)
-> Hi Steve,
->=20
-> Looks like I missed replying to this one, apologies!
->=20
-> On 17-09-19, 09:09, Stephen Boyd wrote:
-> > Quoting Vinod Koul (2019-09-17 02:16:23)
-> > > The initial upstreaming of SM8150 GCC driver missed few clock so add
-> > > them up now.
-> > >=20
-> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > > ---
-> >=20
-> > Should have some sort of fixes tag?
->=20
-> Not really, the drivers to use these clks are not upstream so we dont
-> miss it yet
+Sorry, patches in this set should have tag # v4.19+
 
-Ok.
+Should I resubmit a set with the correct tags?
 
->=20
-> >=20
-> > >  drivers/clk/qcom/gcc-sm8150.c | 172 ++++++++++++++++++++++++++++++++=
-++
-> > >  1 file changed, 172 insertions(+)
-> > >=20
-> > > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8=
-150.c
-> > > index 12ca2d14797f..13d4d14a5744 100644
-> > > --- a/drivers/clk/qcom/gcc-sm8150.c
-> > > +++ b/drivers/clk/qcom/gcc-sm8150.c
-> > > @@ -1616,6 +1616,38 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk =
-=3D {
-> > >         },
-> > >  };
-> > > =20
-> > > +static struct clk_branch gcc_gpu_gpll0_clk_src =3D {
-> > > +       .halt_check =3D BRANCH_HALT_SKIP,
-> >=20
-> > Why skip?
->=20
-> I will explore and add comments for that
->=20
-> > > +       .clkr =3D {
-> > > +               .enable_reg =3D 0x52004,
-> > > +               .enable_mask =3D BIT(15),
-> > > +               .hw.init =3D &(struct clk_init_data){
-> > > +                       .name =3D "gcc_gpu_gpll0_clk_src",
-> > > +                       .parent_hws =3D (const struct clk_hw *[]){
-> > > +                               &gpll0.clkr.hw },
-> > > +                       .num_parents =3D 1,
-> > > +                       .flags =3D CLK_SET_RATE_PARENT,
-> > > +                       .ops =3D &clk_branch2_ops,
-> > > +               },
-> > > +       },
-> > > +};
-> > > +
-> > > +static struct clk_branch gcc_gpu_gpll0_div_clk_src =3D {
-> > > +       .halt_check =3D BRANCH_HALT_SKIP,
-> >=20
-> > Why skip?
-> >=20
-
-Any answer from the explorations?
+Tuowen
 
