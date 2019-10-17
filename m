@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8287BDB5FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:22:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68427DB5F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503340AbfJQSWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 14:22:49 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45963 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503289AbfJQSWc (ORCPT
+        id S2503321AbfJQSWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 14:22:37 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40396 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503303AbfJQSWe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:22:32 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1so1805178pgj.12
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 11:22:32 -0700 (PDT)
+        Thu, 17 Oct 2019 14:22:34 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x127so2163029pfb.7
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 11:22:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding:cc:from:to;
-        bh=2KT/1Ua4Ne08bIcLoxtdMsARQdKvdiD630BlGhWeLtw=;
-        b=bQdsL2rit3I8H2bpx70ulWWPrHJc7vIUSejZbeDRN1emDkd+ay3R6vqsS4trKRooF/
-         wiJ9r1y2JSxvuG6XD04geCd7VLHBU2KO6OV4X5+JR6URhHczxgiuCbnirmufbEJKYNv2
-         P7LpL0rGwWab0mGE5A6qYchOiHRPCW7AabHmkN5ratW3aCSCb9HfNobF0xEInXsDFYzD
-         ECP+/a08RD2e9cqvlepQYp3lfzv0ayvPb3SryTLgPUgd/VrjImP+GKgCmoSyAugAOPCZ
-         cdPXVSOjB/i5A/BgrYVTOPXoKJkVRT3R60DXONE/i64XSpisr9DKa6J+TUIIA0fxaCaL
-         uivg==
-X-Gm-Message-State: APjAAAWeE0pmK0SYAPuSjYTnJbjlvDTSwc+/FTye92itm5ucWhdSEXvk
-        eDixIJimiuxHZKcwiS39aJfGYw==
-X-Google-Smtp-Source: APXvYqzRFMnoGzdJ2pTmCdShwyvvireoh2sq3hfvaMP0TW/8NOqgFYu+GU8GpPpVrwDdC5UWEBAmzA==
-X-Received: by 2002:a63:5423:: with SMTP id i35mr5812604pgb.128.1571336551338;
-        Thu, 17 Oct 2019 11:22:31 -0700 (PDT)
+        bh=DgBlxGGOySK3PLbEB8KobplGmb/95tE64KOi4eUuQBM=;
+        b=nhHyAG2o1XGKeFxMwEnzNgi7+fRoopG2256ADa7ibfoTQCJ789HwfzrH+5dPVz/PNM
+         tf4WX0+c3eZlyi15THwm7Fz474kBFv9r2x9voIli/xSkhnxHsD7KzeekqbJDp3nNBKQN
+         I3F+sq0rrxS4r7FXFNvarNWHd5mTjTnm3/2K/ZuaXIg6td4TtqiSWxUOuW98vgEFSuWW
+         ixK9QLx82scnLqM75eDlCoG9pDmv6mBwvCtGV8hzSpvYJLqeE232nPyT+OM7ljFgQAlG
+         P8qqXDbXWX92pKpKSh2Bl9dYf4+1g+InIg469A+fwc1aEaFbYjB7jEHN2AMoTreO397C
+         TOag==
+X-Gm-Message-State: APjAAAX+gkt/Qb2S3+r7/dwlp7I+Pfe9yAYkcKwC3pquwt/RtTzXcjZc
+        kyTuUQQYcAAUIbGwOOEt5St8FQ==
+X-Google-Smtp-Source: APXvYqybdVbJNTvuzOcVhsPQif36O+YC/nFlezJzYkDdm19blzh9K6d8ez4kplshP0Xrf/0pwtO9Ew==
+X-Received: by 2002:a62:cf42:: with SMTP id b63mr1721635pfg.33.1571336553006;
+        Thu, 17 Oct 2019 11:22:33 -0700 (PDT)
 Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id u5sm4007226pfl.25.2019.10.17.11.22.30
+        by smtp.gmail.com with ESMTPSA id s5sm2751586pjn.24.2019.10.17.11.22.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 11:22:30 -0700 (PDT)
-Subject: [PATCH 1/3] ia64: Use the generic msi.h
-Date:   Thu, 17 Oct 2019 11:19:35 -0700
-Message-Id: <20191017181937.7004-2-palmer@sifive.com>
+        Thu, 17 Oct 2019 11:22:32 -0700 (PDT)
+Subject: [PATCH 2/3] s390: Use the generic msi.h
+Date:   Thu, 17 Oct 2019 11:19:36 -0700
+Message-Id: <20191017181937.7004-3-palmer@sifive.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191017181937.7004-1-palmer@sifive.com>
 References: <20191017181937.7004-1-palmer@sifive.com>
@@ -66,26 +66,26 @@ PCI_MSI_IRQ_DOMAIN has historically had a whitelist of supported
 architectures, but that list is getting long enough that it's cleaner to
 just enable it everywhere.
 
-This builds with an ia64 defconfig, but I have no access to ia64 and
+This builds with an s390 defconfig, but I have no access to s390 and
 therefor can't even boot test it.
 
 Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 ---
- arch/ia64/include/asm/Kbuild | 1 +
+ arch/s390/include/asm/Kbuild | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/ia64/include/asm/Kbuild b/arch/ia64/include/asm/Kbuild
-index 390393667d3b..22d6dbefa7d7 100644
---- a/arch/ia64/include/asm/Kbuild
-+++ b/arch/ia64/include/asm/Kbuild
-@@ -6,6 +6,7 @@ generic-y += irq_work.h
- generic-y += kvm_para.h
+diff --git a/arch/s390/include/asm/Kbuild b/arch/s390/include/asm/Kbuild
+index 2531f673f099..afd35e55b358 100644
+--- a/arch/s390/include/asm/Kbuild
++++ b/arch/s390/include/asm/Kbuild
+@@ -21,6 +21,7 @@ generic-y += local64.h
  generic-y += mcs_spinlock.h
  generic-y += mm-arch-hooks.h
+ generic-y += mmiowb.h
 +generic-y += msi.h
- generic-y += preempt.h
  generic-y += trace_clock.h
- generic-y += vtime.h
+ generic-y += unaligned.h
+ generic-y += word-at-a-time.h
 -- 
 2.21.0
 
