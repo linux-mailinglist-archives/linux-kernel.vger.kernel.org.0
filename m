@@ -2,167 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5BE5DAE66
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:30:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F365DAE7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:33:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387651AbfJQNa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 09:30:29 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38475 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731404AbfJQNa2 (ORCPT
+        id S2389029AbfJQNdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 09:33:12 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52356 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729175AbfJQNdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 09:30:28 -0400
-Received: by mail-wr1-f66.google.com with SMTP id o15so1943265wru.5
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 06:30:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=rjaSf8zw6DTRcAsezcie89NERI7/xyB+gUZSDTVO6Jw=;
-        b=vMOx91oGQ6DpKfU+vZ+lrtK+QQ/NbAKKsNcwAKY96DPNR6C61fyhwFCNVCqYpEaaKG
-         Wss/xzTdFC6uoYn9y9wcN5SbDMnYxnCjnI/7kmV8tGSdqdKZjYCmRDCl8Biuw1U1G8CM
-         G1dLvfs36VWgLTFXGfUk6/7Nz2bUYbY60eEahfaTU3AFGTwbR9f4v7Ho9j7jEBORgqT3
-         aivbaWB/CaU6RcfK9vgqfqLyS4Czt4lSu7kyX1HHYYThhI5aUHgYBCQhpQHbajG77wPp
-         fQaVZQ/C+/qHzfAEN3u0Hx8aWwlUoWVZ7fJ/YVFSorJBdpnVY8SfDDvWq9WZi3KfeRev
-         owBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=rjaSf8zw6DTRcAsezcie89NERI7/xyB+gUZSDTVO6Jw=;
-        b=T3C7ZGYV60EUOtz7iVOgXvZUfnUyh27gXZdQdiBn5Auvict3Ch5SqdCg7jFy1Jn/Hx
-         CpR1UYOqOekW582owysKl8PE0AF1fQLOvPN3tLHO3THP4F4PPkx0wV8Xzn9La57jNFOQ
-         yP+dd+3hbPIRWGzr9FxLF2g6k7I8n/lt6k8RHcOADX8xl4iAFj/XghfnqN/tUWQAgNXo
-         Sn2vTOydSTvnctwZR82e17p5pWII0EgQpQol8UnGYUax66POLh9Zu4L4C4RoX8VESYLq
-         ZYIQ+CmmG177DHn002BNrvjJ9PwpCnfbi+2OJROad3nkdnJyL5UIpJNd7FmkNPN2FCxa
-         JzMQ==
-X-Gm-Message-State: APjAAAUl+RqUKZJaljbErrezmOCtgeDyRdok75jGMfGlje6AGfxyEERX
-        CaIJJ9DrqLl3SKiA6yfP3L0dHw5a6S8=
-X-Google-Smtp-Source: APXvYqyd8CrMZlUf79wYbN2VsKW/LdfXSXPM7CJxz3i3MZV7iVso3CgHyzrYbH5WQbsQ5uYN92rbpQ==
-X-Received: by 2002:a5d:5587:: with SMTP id i7mr2888198wrv.289.1571319026750;
-        Thu, 17 Oct 2019 06:30:26 -0700 (PDT)
-Received: from dell ([95.149.164.47])
-        by smtp.gmail.com with ESMTPSA id u83sm9732697wme.0.2019.10.17.06.30.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Oct 2019 06:30:26 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 14:30:24 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     kgunda@codeaurora.org
-Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
-        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
-        daniel.thompson@linaro.org, jacek.anaszewski@gmail.com,
-        pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH V7 6/6] backlight: qcom-wled: Add auto string detection
- logic
-Message-ID: <20191017133024.GQ4365@dell>
-References: <1571220826-7740-1-git-send-email-kgunda@codeaurora.org>
- <1571220826-7740-7-git-send-email-kgunda@codeaurora.org>
- <20191017122653.GO4365@dell>
- <689831a9d7561f51cdb7ea0a1760d472@codeaurora.org>
+        Thu, 17 Oct 2019 09:33:11 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HDNtRw096635;
+        Thu, 17 Oct 2019 13:33:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=lJRbZTgg/EUbW624nJ8C/GRS6p8r210DOZWdtGIn12Q=;
+ b=ixhQd+P4HH325gdVOLqTwNwpm/iyMGHswVh4cSD/6YN+fn5iBERv3YP0Qsca/2zOsyf1
+ utxLQ8cRhuMaXw0VM67xhUzxOBBymZS4CBpm41jdJyF0Fz0vnwxfOiSIZ6yhoRW7CFoQ
+ F0ChLBkkETkiP02mtnu2oTfAv+lZXSDWAV4je2I7C/4plxAnlXVDuSxghGW2r2YeoMDq
+ jJCbqeHUv/lcLT/lHfU18tMN1za6iNgJQ/LKej+2F49ymPj6nWKsunedzHzEa9qREVXa
+ 5wRSGzfEwIly5XcyWFxyAjNLrZvzETNTL0g6pjOy1MpcYqpGi/kHxZQyb/GUCtie/yEw Fw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2vk68uxcgv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 13:33:04 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HDMtei139849;
+        Thu, 17 Oct 2019 13:31:04 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2vp3bkrdyb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 13:31:04 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9HDV1H1023731;
+        Thu, 17 Oct 2019 13:31:01 GMT
+Received: from [10.175.56.189] (/10.175.56.189)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 17 Oct 2019 13:31:01 +0000
+Subject: Re: email as a bona fide git transport
+To:     Junio C Hamano <gitster@pobox.com>
+Cc:     workflows@vger.kernel.org, Git Mailing List <git@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        Eric Wong <e@80x24.org>
+References: <b9fb52b8-8168-6bf0-9a72-1e6c44a281a5@oracle.com>
+ <xmqqeezc83i6.fsf@gitster-ct.c.googlers.com>
+From:   Vegard Nossum <vegard.nossum@oracle.com>
+Message-ID: <9ec63ec0-c322-610c-e1b8-b673b983dc74@oracle.com>
+Date:   Thu, 17 Oct 2019 15:30:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <689831a9d7561f51cdb7ea0a1760d472@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <xmqqeezc83i6.fsf@gitster-ct.c.googlers.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910170122
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910170122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Oct 2019, kgunda@codeaurora.org wrote:
+On 10/17/19 5:17 AM, Junio C Hamano wrote:
+> Vegard Nossum <vegard.nossum@oracle.com> writes:
+> 
+>> Step 1:
+>>
+>> * git send-email needs to include parent SHA1s and generally all the
+>>    information needed to perfectly recreate the commit when applied so
+>>    that all the SHA1s remain the same
+>>
+>> * git am (or an alternative command) needs to recreate the commit
+>>    perfectly when applied, including applying it to the correct parent
+> 
+> You can record and convey the commit object name a series is meant
+> to be applied on top already, and it in general is a good way to
+> give a wider context in order to explain and justify the series.
+> 
+> On the other hand, "all the information needed to recreate..." is
+> not very useful.  If you want the commit object to be exactly what
+> you want to see at the tip of the end result, you are better off
+> asking your upstream to pull.  Using e-mail for that makes you and
+> project participants give up a lot of benefits the workflow based on
+> e-mail gives you, the biggest of which is the ease of giving
+> suggestions for improvements.  Once you insist "perfectly recreate
+> the commit", you are not willing to take any input from the
+> sidelines---worse yet, you are even dictating when the upstream
+> runs "git am" to turn them into commits, and do so without reading
+> the patches (there is no point reviewing as the person who runs "git
+> am" is not even allowed to fix typo or make obvious fixes to the
+> code, which will fail to perfectly recreate the commit).
+> 
+> In short, one should resist temptation to bring up "perfect
+> reproduction" when one talks about e-mail workflow.
 
-> On 2019-10-17 17:56, Lee Jones wrote:
-> > On Wed, 16 Oct 2019, Kiran Gunda wrote:
-> > 
-> > > The auto string detection algorithm checks if the current WLED
-> > > sink configuration is valid. It tries enabling every sink and
-> > > checks if the OVP fault is observed. Based on this information
-> > > it detects and enables the valid sink configuration.
-> > > Auto calibration will be triggered when the OVP fault interrupts
-> > > are seen frequently thereby it tries to fix the sink configuration.
-> > > 
-> > > The auto-detection also kicks in when the connected LED string
-> > > of the display-backlight malfunctions (because of damage) and
-> > > requires the damaged string to be turned off to prevent the
-> > > complete panel and/or board from being damaged.
-> > > 
-> > > Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> > > ---
-> > >  drivers/video/backlight/qcom-wled.c | 410
-> > > +++++++++++++++++++++++++++++++++++-
-> > >  1 file changed, 404 insertions(+), 6 deletions(-)
-> > > 
-> > > diff --git a/drivers/video/backlight/qcom-wled.c
-> > > b/drivers/video/backlight/qcom-wled.c
-> > > index b5b125c..ff7c409 100644
-> > > --- a/drivers/video/backlight/qcom-wled.c
-> > > +++ b/drivers/video/backlight/qcom-wled.c
+Please see what I wrote to Pratyush Yadav here:
 
-[...]
+https://public-inbox.org/git/a1c33600-14e6-be37-c026-8d8b8e4bad92@oracle.com/
 
-> > > +		if (int_sts & WLED3_CTRL_REG_OVP_FAULT_STATUS)
-> > > +			dev_dbg(wled->dev, "WLED OVP fault detected with SINK %d\n",
-> > > +				i + 1);
-> > 
-> > I haven't reviewed the whole patch, but this caught my eye.
-> > 
-> > I think this should be upgraded to dev_warn().
-> > 
-> Thought of keeping these messages silent, Because the string configuration
-> will be corrected in this
-> and informing it at end of the auto string detection.
+TL;DR: the goal is not necessarily for maintainers to be able to merge
+the patchset with the same SHA1 that the submitter had, but for the
+patchset to have a definite SHA1 that lives in git, and which can be
+used by all the participants -- submitter, reviewers, bots (including
+potentially testing/CI infrastructure), and maintainers.
 
-[...]
+I am definitely not proposing to get rid of the email workflow -- on the
+contrary, this it the workflow I want to preserve! :-) The "workflows"
+mailing list was created for the purpose of discussing this topic (in
+the context of Linux kernel development) and right now there are many
+proposals that either completely cut out email or reduce it to something
+like pull requests. My proposal keeps almost everything the same, except
+for a few lines of extra metadata before the actual diff.
 
-> > > +	} else {
-> > > +		dev_warn(wled->dev, "New WLED string configuration found %x\n",
-> > > +			 sink_valid);
-> > 
-> > Why would the user care about this?  Is it not normal?
-> > 
-> Actually, it comes here if the user provided string configuration in the
-> device tree is in-correct.
-> That's why just informing the user about the right string configuration,
-> after the auto string detection.
+(I will answer the rest of your email separately.)
 
-Then I think we need to be more forthcoming.  Tell the user the
-configuration is incorrect and what you've done to rectify it.
 
-"XXX is not a valid configuration - using YYY instead"
-
-[...]
-
-> > > +static int wled_configure_ovp_irq(struct wled *wled,
-> > > +				  struct platform_device *pdev)
-> > > +{
-> > > +	int rc;
-> > > +	u32 val;
-> > > +
-> > > +	wled->ovp_irq = platform_get_irq_byname(pdev, "ovp");
-> > > +	if (wled->ovp_irq < 0) {
-> > > +		dev_dbg(&pdev->dev, "ovp irq is not used\n");
-> > 
-> > I assume this is optional.  What happens if no IRQ is provided?
-> > 
-> Here OVP IRQ is used to detect the wrong string detection. If it is not
-> provided the auto string detection logic won't work.
-
-"OVP IRQ not found - disabling automatic string detection"
-
-> > If, for instance, polling mode is enabled, maybe something like this
-> > would be better?
-> > 
-> >       dev_warn(&pdev->dev, "No IRQ found, falling back to polling
-> > mode\n");
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Vegard
