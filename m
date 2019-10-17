@@ -2,146 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8F77DA645
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE3ADA64D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:20:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408096AbfJQHUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 03:20:14 -0400
-Received: from mga03.intel.com ([134.134.136.65]:58813 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408044AbfJQHUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 03:20:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2019 00:20:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,306,1566889200"; 
-   d="scan'208";a="396164642"
-Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Oct 2019 00:20:09 -0700
-From:   "Ramuthevar,Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-To:     linux-mtd@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        dwmw2@infradead.org, computersforpeace@gmail.com, richard@nod.at,
-        jwboyer@gmail.com, boris.brezillon@free-electrons.com,
-        cyrille.pitchen@atmel.com, david.oberhollenzer@sigma-star.at,
-        miquel.raynal@bootlin.com, tudor.ambarus@gmail.com,
-        vigneshr@ti.com, andriy.shevchenko@intel.com,
-        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
-        Ramuthevar Vadivel Murugan 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Subject: [PATCH v4 1/2] mtd: spi-nor: cadence-quadspi: Disable the DAC for Intel LGM SoC
-Date:   Thu, 17 Oct 2019 15:19:59 +0800
-Message-Id: <20191017072000.48860-2-vadivel.muruganx.ramuthevar@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20191017072000.48860-1-vadivel.muruganx.ramuthevar@linux.intel.com>
-References: <20191017072000.48860-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+        id S2408121AbfJQHUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 03:20:25 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52178 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408101AbfJQHUV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 03:20:21 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iL04n-0002eF-3c; Thu, 17 Oct 2019 09:20:01 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B529B1C009F;
+        Thu, 17 Oct 2019 09:20:00 +0200 (CEST)
+Date:   Thu, 17 Oct 2019 07:20:00 -0000
+From:   "tip-bot2 for Benjamin Berg" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: ras/core] x86/mce: Lower throttling MCE messages' priority to warning
+Cc:     Benjamin Berg <bberg@redhat.com>, Borislav Petkov <bp@suse.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Christian Kellner <ckellner@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "linux-edac" <linux-edac@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, "x86-ml" <x86@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191009155424.249277-1-bberg@redhat.com>
+References: <20191009155424.249277-1-bberg@redhat.com>
+MIME-Version: 1.0
+Message-ID: <157129680050.29376.455617240270032569.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+The following commit has been merged into the ras/core branch of tip:
 
-On Intel Lightning Mountain(LGM) SoCs QSPI controller do not use
-Direct Access Controller(DAC).
+Commit-ID:     9c3bafaa1fd88e4dd2dba3735a1f1abb0f2c7bb7
+Gitweb:        https://git.kernel.org/tip/9c3bafaa1fd88e4dd2dba3735a1f1abb0f2c7bb7
+Author:        Benjamin Berg <bberg@redhat.com>
+AuthorDate:    Wed, 09 Oct 2019 17:54:24 +02:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Thu, 17 Oct 2019 09:07:09 +02:00
 
-This patch adds a quirk to disable the Direct Access Controller
-for data transfer instead it uses indirect data transfer.
+x86/mce: Lower throttling MCE messages' priority to warning
 
-Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+On modern CPUs it is quite normal that the temperature limits are
+reached and the CPU is throttled. In fact, often the thermal design is
+not sufficient to cool the CPU at full load and limits can quickly be
+reached when a burst in load happens. This will even happen with
+technologies like RAPL limitting the long term power consumption of
+the package.
+
+Also, these limits are "softer", as Srinivas explains:
+
+"CPU temperature doesn't have to hit max(TjMax) to get these warnings.
+OEMs ha[ve] an ability to program a threshold where a thermal interrupt
+can be generated. In some systems the offset is 20C+ (Read only value).
+
+In recent systems, there is another offset on top of it which can be
+programmed by OS, once some agent can adjust power limits dynamically.
+By default this is set to low by the firmware, which I guess the
+prime motivation of Benjamin to submit the patch."
+
+So these messages do not usually indicate a hardware issue (e.g.
+insufficient cooling). Log them as warnings to avoid confusion about
+their severity.
+
+ [ bp: Massage commit mesage. ]
+
+Signed-off-by: Benjamin Berg <bberg@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Tested-by: Christian Kellner <ckellner@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20191009155424.249277-1-bberg@redhat.com
 ---
- drivers/mtd/spi-nor/Kconfig           |  2 +-
- drivers/mtd/spi-nor/cadence-quadspi.c | 33 +++++++++++++++++++++++++++------
- 2 files changed, 28 insertions(+), 7 deletions(-)
+ arch/x86/kernel/cpu/mce/therm_throt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/spi-nor/Kconfig b/drivers/mtd/spi-nor/Kconfig
-index f237fcdf7f86..ef1aa369c2e3 100644
---- a/drivers/mtd/spi-nor/Kconfig
-+++ b/drivers/mtd/spi-nor/Kconfig
-@@ -36,7 +36,7 @@ config SPI_ASPEED_SMC
- 
- config SPI_CADENCE_QUADSPI
- 	tristate "Cadence Quad SPI controller"
--	depends on OF && (ARM || ARM64 || COMPILE_TEST)
-+	depends on OF && (ARM || ARM64 || COMPILE_TEST || X86)
- 	help
- 	  Enable support for the Cadence Quad SPI Flash controller.
- 
-diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-index 7bef63947b29..0ad076eaa81b 100644
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -34,6 +34,7 @@
- 
- /* Quirks */
- #define CQSPI_NEEDS_WR_DELAY		BIT(0)
-+#define CQSPI_DISABLE_DAC_MODE		BIT(1)
- 
- /* Capabilities mask */
- #define CQSPI_BASE_HWCAPS_MASK					\
-@@ -600,6 +601,13 @@ static int cqspi_write_setup(struct spi_nor *nor)
- 	struct cqspi_st *cqspi = f_pdata->cqspi;
- 	void __iomem *reg_base = cqspi->iobase;
- 
-+	/* Disable direct access controller */
-+	if (!f_pdata->use_direct_mode) {
-+		reg = readl(reg_base + CQSPI_REG_CONFIG);
-+		reg &= ~CQSPI_REG_CONFIG_ENB_DIR_ACC_CTRL;
-+		writel(reg, reg_base + CQSPI_REG_CONFIG);
-+	}
-+
- 	/* Set opcode. */
- 	reg = nor->program_opcode << CQSPI_REG_WR_INSTR_OPCODE_LSB;
- 	writel(reg, reg_base + CQSPI_REG_WR_INSTR);
-@@ -1292,12 +1300,16 @@ static int cqspi_setup_flash(struct cqspi_st *cqspi, struct device_node *np)
- 		f_pdata->registered = true;
- 
- 		if (mtd->size <= cqspi->ahb_size) {
--			f_pdata->use_direct_mode = true;
--			dev_dbg(nor->dev, "using direct mode for %s\n",
--				mtd->name);
--
--			if (!cqspi->rx_chan)
--				cqspi_request_mmap_dma(cqspi);
-+			if (ddata && (ddata->quirks & CQSPI_DISABLE_DAC_MODE)) {
-+				f_pdata->use_direct_mode = false;
-+			} else {
-+				f_pdata->use_direct_mode = true;
-+				dev_dbg(nor->dev, "using direct mode for %s\n",
-+					mtd->name);
-+
-+				if (!cqspi->rx_chan)
-+					cqspi_request_mmap_dma(cqspi);
-+			}
- 		}
- 	}
- 
-@@ -1501,6 +1513,11 @@ static const struct cqspi_driver_platdata am654_ospi = {
- 	.quirks = CQSPI_NEEDS_WR_DELAY,
- };
- 
-+static const struct cqspi_driver_platdata intel_lgm_qspi = {
-+	.hwcaps_mask = CQSPI_BASE_HWCAPS_MASK,
-+	.quirks = CQSPI_DISABLE_DAC_MODE,
-+};
-+
- static const struct of_device_id cqspi_dt_ids[] = {
- 	{
- 		.compatible = "cdns,qspi-nor",
-@@ -1514,6 +1531,10 @@ static const struct of_device_id cqspi_dt_ids[] = {
- 		.compatible = "ti,am654-ospi",
- 		.data = &am654_ospi,
- 	},
-+	{
-+		.compatible = "intel,lgm-qspi",
-+		.data = &intel_lgm_qspi,
-+	},
- 	{ /* end of table */ }
- };
- 
--- 
-2.11.0
-
+diff --git a/arch/x86/kernel/cpu/mce/therm_throt.c b/arch/x86/kernel/cpu/mce/therm_throt.c
+index 6e2becf..bc441d6 100644
+--- a/arch/x86/kernel/cpu/mce/therm_throt.c
++++ b/arch/x86/kernel/cpu/mce/therm_throt.c
+@@ -188,7 +188,7 @@ static void therm_throt_process(bool new_event, int event, int level)
+ 	/* if we just entered the thermal event */
+ 	if (new_event) {
+ 		if (event == THERMAL_THROTTLING_EVENT)
+-			pr_crit("CPU%d: %s temperature above threshold, cpu clock throttled (total events = %lu)\n",
++			pr_warn("CPU%d: %s temperature above threshold, cpu clock throttled (total events = %lu)\n",
+ 				this_cpu,
+ 				level == CORE_LEVEL ? "Core" : "Package",
+ 				state->count);
