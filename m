@@ -2,101 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 932CBDBE8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:40:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B760DDBEAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:47:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442133AbfJRHkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 03:40:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36907 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393834AbfJRHkN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 03:40:13 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p14so5081804wro.4
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 00:40:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=5iztkm06g93DGhL7MltWaye7ky43Diy2spcjfqFIzXg=;
-        b=pJCPbtlKt6Rvp+pV9pRvRRTB2+C2HV3kB8c8I0/yqQfCX1XILLaTFo35IB5nQTJtDM
-         r9tTOQbpFgwCznZAP7qrE4cjnzi9qj6ZmdZGM1h1W5XfeazaxmF2MQu7674gQ2JvQYEr
-         2njL2yf4ovlyLYmjBr4GUucktQC+SrgIDf56mP73dW7lI8dxYXSRuGNBDTX7/SweYT2e
-         riAEXLMNTeT5LEopMjCuOCz8mo1DZscS2DBrV7iO6lbt7JZpcOHcZSgvd4iCvqII523b
-         d9g8mpFLw5ipUQ2n81QUKvjxUvNjgP/G6QBe5rqiruEoearvj6JcSGh2PPB4m2NZOlgO
-         ra8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=5iztkm06g93DGhL7MltWaye7ky43Diy2spcjfqFIzXg=;
-        b=X64ednzFAOmAc7HBfc6nzGpMeM3d1Nqd7bmnPZn5t6CfYqVIOovg4lzfliuE3fIAJO
-         5QJETgEg+h8KRLgm/nYMalI3pW1yppLJTgIcujdaQIRaLvzroYhCjBA5OnzNay2Yvz7d
-         iyOLabGNZYm2W2927xfFo/pCoHTqBbTvYcTjFDXAe8+Ybe+a7si4U6JH9n3fJaZm5e9q
-         mLEqAoGsH0WCdXJN0/gPemnWI5+TWvh0btIkGkUgWdMObITup8r7UgytYHz/vE8hkfEO
-         i2Yhyyu8flZq1pAbQmNBljMr4MgUqUHkYoeGd/pmiPgQfeHIU9bh9Cp3StIZjjB+pZp5
-         QBBg==
-X-Gm-Message-State: APjAAAV8KkVtNQUgRSod3gW2Ta9kZtPFecKy+BHOJKywuXD32NSOwfPE
-        1F7F9mMwqGW/OubdMoFt6V18CsFJPsY=
-X-Google-Smtp-Source: APXvYqyaR1yIy6/nHTciHSlsM7Yad4h/pKWcFB87SKBaPMe+VEelXm6J/rsxud+fKoJs55M7U1t4SQ==
-X-Received: by 2002:adf:a141:: with SMTP id r1mr6580104wrr.122.1571384409625;
-        Fri, 18 Oct 2019 00:40:09 -0700 (PDT)
-Received: from dell ([95.149.164.47])
-        by smtp.gmail.com with ESMTPSA id y1sm5466054wrw.6.2019.10.18.00.40.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 18 Oct 2019 00:40:09 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 08:40:07 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH 29/34] backlight/jornada720: Use CONFIG_PREEMPTION
-Message-ID: <20191018074007.GV4365@dell>
-References: <20191015191821.11479-1-bigeasy@linutronix.de>
- <20191015191821.11479-30-bigeasy@linutronix.de>
+        id S2409623AbfJRHri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 03:47:38 -0400
+Received: from [221.146.236.9] ([221.146.236.9]:47614 "EHLO theworld.email"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727388AbfJRHri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 03:47:38 -0400
+X-Greylist: delayed 52198 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Oct 2019 03:47:37 EDT
+Received: from (HELO 6xafk) [25.120.245.172] by 127.0.0.1 with ESMTP id 0E96AAD0676; Thu, 17 Oct 2019 21:20:47 +0400
+Message-ID: <2mac0-u$n$-7$3oh4c9l12u7@3hj1.u6>
+From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+To:     primagera@primagera.pt
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Date:   Thu, 17 Oct 19 21:20:47 GMT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191015191821.11479-30-bigeasy@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/alternative;
+        boundary="_5C.FFCBF0_9EFF."
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Oct 2019, Sebastian Andrzej Siewior wrote:
 
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
-> Both PREEMPT and PREEMPT_RT require the same functionality which today
-> depends on CONFIG_PREEMPT.
-> 
-> Switch the Kconfig dependency to CONFIG_PREEMPTION.
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Jingoo Han <jingoohan1@gmail.com>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-fbdev@vger.kernel.org
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> [bigeasy: +LCD_HP700]
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  drivers/video/backlight/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+--_5C.FFCBF0_9EFF.
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks.
+Greetings
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+My name is Barrister Hans Erich.
+
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
+
+Your full names ---------
+
+
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+
+--_5C.FFCBF0_9EFF.--
+
