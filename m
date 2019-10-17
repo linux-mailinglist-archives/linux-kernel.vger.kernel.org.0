@@ -2,115 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13E00DA303
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F5D9DA30C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:25:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395547AbfJQBYs convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 16 Oct 2019 21:24:48 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:48123 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389094AbfJQBYs (ORCPT
+        id S2404556AbfJQBZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 21:25:15 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39197 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728244AbfJQBZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 21:24:48 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x9H1OSdP000991, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCAS12.realtek.com.tw[172.21.6.16])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x9H1OSdP000991
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Oct 2019 09:24:28 +0800
-Received: from RTITMBSVM04.realtek.com.tw ([fe80::e404:880:2ef1:1aa1]) by
- RTITCAS12.realtek.com.tw ([::1]) with mapi id 14.03.0439.000; Thu, 17 Oct
- 2019 09:24:27 +0800
-From:   Pkshih <pkshih@realtek.com>
-To:     Laura Abbott <labbott@redhat.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Nicolas Waisman <nico@semmle.com>
-Subject: RE: [PATCH] rtlwifi: Fix potential overflow on P2P code
-Thread-Topic: [PATCH] rtlwifi: Fix potential overflow on P2P code
-Thread-Index: AQHVhGRS0Eb+pvqKg0iKoQwx5Knt06deCEZw
-Date:   Thu, 17 Oct 2019 01:24:26 +0000
-Message-ID: <5B2DA6FDDF928F4E855344EE0A5C39D1D5C84368@RTITMBSVM04.realtek.com.tw>
-References: <20191016205716.2843-1-labbott@redhat.com>
-In-Reply-To: <20191016205716.2843-1-labbott@redhat.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.95]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 16 Oct 2019 21:25:14 -0400
+Received: by mail-pl1-f194.google.com with SMTP id s17so286252plp.6
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 18:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/v+BCQB3jIKYbebgETHehC+eMOtsuCBonYyqEVSANPw=;
+        b=LV/EggghB5YYxtKuJ/LvnxysgWk5pxfpi5U0lFTwP5L4jb+dLK1jFqZF9wtgl9cEP/
+         09jKJ6qhDu5PS1CdAAeVPY3mDM0e6Dz79kDzbQ3hf4bh5cTnYDQqX4tkAmehjs+h6iTi
+         3HKPUk8ednFCcNziNFhBeAks1FZirphABNHf8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/v+BCQB3jIKYbebgETHehC+eMOtsuCBonYyqEVSANPw=;
+        b=H2Pl0siB3nHLiwSWAlnAjzEHHIT7b3agIBN0utqwfewMV+kdgb36VGsRO8o6ZdzQMW
+         kc0SYHhTlvdeGQOqbTYLjo4shRs/yFOcOetXk4c9A8De55UdV8VnVe45/1S5rxSn/2pL
+         numED/vo3dsajN+TBeghVXSbphrriqox6hxxweoRxV1UG2402btnf7EmU8VDmNif5q/j
+         MoNXl87zfs5+abYwkwye+GlNOiT4gXvq03C0PACNCk570PuZnsmoiyOCIU44wkt7CwoR
+         3XdP3Ck73Cfbc5iFABmfkTWvKo0QpherQ54Wpo9W1MAkeuGBq104dN0CyEjfRK48cmbg
+         aMqQ==
+X-Gm-Message-State: APjAAAX3Ti2QkX6XFBCcO8Qi0si+ruV2mmYlNHwzMG5/sxRqV2BZ9a41
+        bGgd9ggaaQrK9kUXXi7nrIhtWg==
+X-Google-Smtp-Source: APXvYqw2hw68VBwTW/kez9n9cft5vFWTQykyH+UoMnHxawQYo6U32sk95vHd3z2UOFYlf40phgA0EA==
+X-Received: by 2002:a17:902:bd08:: with SMTP id p8mr1254986pls.248.1571275513540;
+        Wed, 16 Oct 2019 18:25:13 -0700 (PDT)
+Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
+        by smtp.gmail.com with ESMTPSA id h14sm348412pfo.15.2019.10.16.18.25.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 18:25:12 -0700 (PDT)
+From:   Daniel Axtens <dja@axtens.net>
+To:     kasan-dev@googlegroups.com, linux-mm@kvack.org, x86@kernel.org,
+        aryabinin@virtuozzo.com, glider@google.com, luto@kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        dvyukov@google.com, christophe.leroy@c-s.fr
+Cc:     linuxppc-dev@lists.ozlabs.org, gor@linux.ibm.com,
+        Daniel Axtens <dja@axtens.net>
+Subject: [PATCH v9 0/5] kasan: support backing vmalloc space with real shadow memory
+Date:   Thu, 17 Oct 2019 12:25:01 +1100
+Message-Id: <20191017012506.28503-1-dja@axtens.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Currently, vmalloc space is backed by the early shadow page. This
+means that kasan is incompatible with VMAP_STACK.
 
+This series provides a mechanism to back vmalloc space with real,
+dynamically allocated memory. I have only wired up x86, because that's
+the only currently supported arch I can work with easily, but it's
+very easy to wire up other architectures, and it appears that there is
+some work-in-progress code to do this on arm64 and s390.
 
-> -----Original Message-----
-> From: linux-wireless-owner@vger.kernel.org [mailto:linux-wireless-owner@vger.kernel.org] On Behalf
-> Of Laura Abbott
-> Sent: Thursday, October 17, 2019 4:57 AM
-> To: Pkshih; Kalle Valo
-> Cc: Laura Abbott; David S. Miller; linux-wireless@vger.kernel.org; netdev@vger.kernel.org;
-> linux-kernel@vger.kernel.org; Nicolas Waisman
-> Subject: [PATCH] rtlwifi: Fix potential overflow on P2P code
-> 
-> Nicolas Waisman noticed that even though noa_len is checked for
-> a compatible length it's still possible to overrun the buffers
-> of p2pinfo since there's no check on the upper bound of noa_num.
-> Bounds check noa_num against P2P_MAX_NOA_NUM.
-> 
-> Reported-by: Nicolas Waisman <nico@semmle.com>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> Compile tested only as this was reported to the security list.
-> ---
->  drivers/net/wireless/realtek/rtlwifi/ps.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/net/wireless/realtek/rtlwifi/ps.c b/drivers/net/wireless/realtek/rtlwifi/ps.c
-> index 70f04c2f5b17..c5cff598383d 100644
-> --- a/drivers/net/wireless/realtek/rtlwifi/ps.c
-> +++ b/drivers/net/wireless/realtek/rtlwifi/ps.c
-> @@ -754,6 +754,13 @@ static void rtl_p2p_noa_ie(struct ieee80211_hw *hw, void *data,
->  				return;
->  			} else {
->  				noa_num = (noa_len - 2) / 13;
-> +				if (noa_num > P2P_MAX_NOA_NUM) {
-> +					RT_TRACE(rtlpriv, COMP_INIT, DBG_LOUD,
-> +						 "P2P notice of absence: invalid noa_num.%d\n",
-> +						 noa_num);
-> +					return;
+This has been discussed before in the context of VMAP_STACK:
+ - https://bugzilla.kernel.org/show_bug.cgi?id=202009
+ - https://lkml.org/lkml/2018/7/22/198
+ - https://lkml.org/lkml/2019/7/19/822
 
-As the discussion at <security@kernel.org>, I think it'd be better to use
-the min between noa_num and P2P_MAX_NOA_NUM, and fall through the code instead
-of return. Because ignore all NoA isn't better than apply two of them.
+In terms of implementation details:
 
+Most mappings in vmalloc space are small, requiring less than a full
+page of shadow space. Allocating a full shadow page per mapping would
+therefore be wasteful. Furthermore, to ensure that different mappings
+use different shadow pages, mappings would have to be aligned to
+KASAN_SHADOW_SCALE_SIZE * PAGE_SIZE.
 
-> +				}
-> +
->  			}
->  			noa_index = ie[3];
->  			if (rtlpriv->psc.p2p_ps_info.p2p_ps_mode ==
-> @@ -848,6 +855,13 @@ static void rtl_p2p_action_ie(struct ieee80211_hw *hw, void *data,
->  				return;
->  			} else {
->  				noa_num = (noa_len - 2) / 13;
-> +				if (noa_num > P2P_MAX_NOA_NUM) {
-> +					RT_TRACE(rtlpriv, COMP_FW, DBG_LOUD,
-> +						 "P2P notice of absence: invalid noa_len.%d\n",
-> +						 noa_len);
-> +					return;
-> +
-> +				}
->  			}
->  			noa_index = ie[3];
->  			if (rtlpriv->psc.p2p_ps_info.p2p_ps_mode ==
-> --
-> 2.21.0
+Instead, share backing space across multiple mappings. Allocate a
+backing page when a mapping in vmalloc space uses a particular page of
+the shadow region. This page can be shared by other vmalloc mappings
+later on.
+
+We hook in to the vmap infrastructure to lazily clean up unused shadow
+memory.
+
+v1: https://lore.kernel.org/linux-mm/20190725055503.19507-1-dja@axtens.net/
+v2: https://lore.kernel.org/linux-mm/20190729142108.23343-1-dja@axtens.net/
+ Address review comments:
+ - Patch 1: use kasan_unpoison_shadow's built-in handling of
+            ranges that do not align to a full shadow byte
+ - Patch 3: prepopulate pgds rather than faulting things in
+v3: https://lore.kernel.org/linux-mm/20190731071550.31814-1-dja@axtens.net/
+ Address comments from Mark Rutland:
+ - kasan_populate_vmalloc is a better name
+ - handle concurrency correctly
+ - various nits and cleanups
+ - relax module alignment in KASAN_VMALLOC case
+v4: https://lore.kernel.org/linux-mm/20190815001636.12235-1-dja@axtens.net/
+ Changes to patch 1 only:
+ - Integrate Mark's rework, thanks Mark!
+ - handle the case where kasan_populate_shadow might fail
+ - poision shadow on free, allowing the alloc path to just
+     unpoision memory that it uses
+v5: https://lore.kernel.org/linux-mm/20190830003821.10737-1-dja@axtens.net/
+ Address comments from Christophe Leroy:
+ - Fix some issues with my descriptions in commit messages and docs
+ - Dynamically free unused shadow pages by hooking into the vmap book-keeping
+ - Split out the test into a separate patch
+ - Optional patch to track the number of pages allocated
+ - minor checkpatch cleanups
+v6: https://lore.kernel.org/linux-mm/20190902112028.23773-1-dja@axtens.net/
+ Properly guard freeing pages in patch 1, drop debugging code.
+v7: https://lore.kernel.org/linux-mm/20190903145536.3390-1-dja@axtens.net/
+    Add a TLB flush on freeing, thanks Mark Rutland.
+    Explain more clearly how I think freeing is concurrency-safe.
+v8: https://lore.kernel.org/linux-mm/20191001065834.8880-1-dja@axtens.net/
+    rename kasan_vmalloc/shadow_pages to kasan/vmalloc_shadow_pages
+v9: address a number of review comments for patch 1.
+
+Daniel Axtens (5):
+  kasan: support backing vmalloc space with real shadow memory
+  kasan: add test for vmalloc
+  fork: support VMAP_STACK with KASAN_VMALLOC
+  x86/kasan: support KASAN_VMALLOC
+  kasan debug: track pages allocated for vmalloc shadow
+
+ Documentation/dev-tools/kasan.rst |  63 ++++++++
+ arch/Kconfig                      |   9 +-
+ arch/x86/Kconfig                  |   1 +
+ arch/x86/mm/kasan_init_64.c       |  60 ++++++++
+ include/linux/kasan.h             |  31 ++++
+ include/linux/moduleloader.h      |   2 +-
+ include/linux/vmalloc.h           |  12 ++
+ kernel/fork.c                     |   4 +
+ lib/Kconfig.kasan                 |  16 ++
+ lib/test_kasan.c                  |  26 ++++
+ mm/kasan/common.c                 | 237 ++++++++++++++++++++++++++++++
+ mm/kasan/generic_report.c         |   3 +
+ mm/kasan/kasan.h                  |   1 +
+ mm/vmalloc.c                      |  48 +++++-
+ 14 files changed, 503 insertions(+), 10 deletions(-)
+
+-- 
+2.20.1
 
