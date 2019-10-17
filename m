@@ -2,143 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBC39DA411
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 05:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 474FEDA42D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 05:10:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404554AbfJQDAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 23:00:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392047AbfJQDAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 23:00:03 -0400
-Received: from paulmck-ThinkPad-P72 (unknown [76.14.14.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBD8B2082C;
-        Thu, 17 Oct 2019 03:00:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571281202;
-        bh=dIlk87hzMnzxSsP3U+opZiSVL+pDY94vjhbNMGpswEY=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=iA/ooYBLhI1FOzHufS48xeAVazXiTAnlPv+hYFLeuSuXDskBXjxUI9d69dF6lwt7z
-         e0sgiR3nkgkM2fsryf0Y4moy9jhQ+2p2BE5S8zU7G3d5vP4ne5T0YJFyf9dnYJFInQ
-         7iR4Wp0YAdGZ2PNvw2K68kTJRGQT836tLk6YpB3k=
-Date:   Wed, 16 Oct 2019 20:00:00 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Lai Jiangshan <laijs@linux.alibaba.com>
-Cc:     20191015102402.1978-1-laijs@linux.alibaba.com,
-        linux-kernel@vger.kernel.org,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-Subject: Re: [PATCH 6/7] rcu: rename some CONFIG_PREEMPTION to
- CONFIG_PREEMPT_RCU
-Message-ID: <20191017030000.GB2588@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191015102850.2079-1-laijs@linux.alibaba.com>
- <20191015102850.2079-4-laijs@linux.alibaba.com>
- <20191016035407.GB2689@paulmck-ThinkPad-P72>
- <484d846f-8fbb-ccd2-d66a-a6b48d4a1df4@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <484d846f-8fbb-ccd2-d66a-a6b48d4a1df4@linux.alibaba.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S2407465AbfJQDKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 23:10:03 -0400
+Received: from lucky1.263xmail.com ([211.157.147.131]:47362 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406647AbfJQDKD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 23:10:03 -0400
+Received: from localhost (unknown [192.168.167.209])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 9498869F48;
+        Thu, 17 Oct 2019 11:02:50 +0800 (CST)
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P17817T140260256241408S1571281364775434_;
+        Thu, 17 Oct 2019 11:02:50 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <976a90d9e80f3844db1a30634c13818f>
+X-RL-SENDER: andy.yan@rock-chips.com
+X-SENDER: yxj@rock-chips.com
+X-LOGIN-NAME: andy.yan@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Andy Yan <andy.yan@rock-chips.com>
+To:     heiko@sntech.de, kever.yang@rock-chips.com,
+        linux-rockchip@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        obh+dt@kernel.org, devicetree@vger.kernel.org,
+        Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH 0/2] Add basic dts support for RK3308
+Date:   Thu, 17 Oct 2019 11:02:42 +0800
+Message-Id: <20191017030242.32219-1-andy.yan@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 11:26:23PM +0800, Lai Jiangshan wrote:
-> 
-> 
-> On 2019/10/16 11:54 上午, Paul E. McKenney wrote:
-> > On Tue, Oct 15, 2019 at 10:28:48AM +0000, Lai Jiangshan wrote:
-> > > CONFIG_PREEMPTION and CONFIG_PREEMPT_RCU are always identical,
-> > > but some code depends on CONFIG_PREEMPTION to access to
-> > > rcu_preempt functionalitis. This patch changes CONFIG_PREEMPTION
-> > > to CONFIG_PREEMPT_RCU in these cases.
-> > > 
-> > > Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
-> > > Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
-> > 
-> > I believe that this does not cause problems with Sebastian's patch
-> > "[PATCH 27/34] rcu: Use CONFIG_PREEMPTION where appropriate", but could
-> > you please check?
-> 
-> I don't know for which commit the patch "[PATCH 27/34] rcu: Use
-> CONFIG_PREEMPTION where appropriate" should be applied against
-> after several tries. But I don't think there will be any conflicts
-> which this patch by "eye" applying.
+RK3308 is a quad Cortex A35 based SOC with rich audio
+interfaces(I2S/PCM/TDM/PDM/SPDIF/VAD/HDMI ARC), which
+designed for intelligent voice interaction and audio
+input/output processing.
 
-Well, git didn't see any either, so it is now applied for review and
-testing.  Thank you!
+As the clk and pinctrl drivers are landed, we post
+the basic dts support, make it convenient for other
+module development.
 
-							Thanx, Paul
 
-> Thanks,
-> Lai
-> 
-> 
-> 
-> > 
-> > 							Thanx, Paul
-> > 
-> > > ---
-> > >   kernel/rcu/tree.c       | 4 ++--
-> > >   kernel/rcu/tree_stall.h | 6 +++---
-> > >   2 files changed, 5 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > > index 7db5ea06a9ed..81eb64fcf5ab 100644
-> > > --- a/kernel/rcu/tree.c
-> > > +++ b/kernel/rcu/tree.c
-> > > @@ -1926,7 +1926,7 @@ rcu_report_unblock_qs_rnp(struct rcu_node *rnp, unsigned long flags)
-> > >   	struct rcu_node *rnp_p;
-> > >   	raw_lockdep_assert_held_rcu_node(rnp);
-> > > -	if (WARN_ON_ONCE(!IS_ENABLED(CONFIG_PREEMPTION)) ||
-> > > +	if (WARN_ON_ONCE(!IS_ENABLED(CONFIG_PREEMPT_RCU)) ||
-> > >   	    WARN_ON_ONCE(rcu_preempt_blocked_readers_cgp(rnp)) ||
-> > >   	    rnp->qsmask != 0) {
-> > >   		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-> > > @@ -2294,7 +2294,7 @@ static void force_qs_rnp(int (*f)(struct rcu_data *rdp))
-> > >   		mask = 0;
-> > >   		raw_spin_lock_irqsave_rcu_node(rnp, flags);
-> > >   		if (rnp->qsmask == 0) {
-> > > -			if (!IS_ENABLED(CONFIG_PREEMPTION) ||
-> > > +			if (!IS_ENABLED(CONFIG_PREEMPT_RCU) ||
-> > >   			    rcu_preempt_blocked_readers_cgp(rnp)) {
-> > >   				/*
-> > >   				 * No point in scanning bits because they
-> > > diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-> > > index 0b75426ebb3e..55f9b84790d3 100644
-> > > --- a/kernel/rcu/tree_stall.h
-> > > +++ b/kernel/rcu/tree_stall.h
-> > > @@ -163,7 +163,7 @@ static void rcu_iw_handler(struct irq_work *iwp)
-> > >   //
-> > >   // Printing RCU CPU stall warnings
-> > > -#ifdef CONFIG_PREEMPTION
-> > > +#ifdef CONFIG_PREEMPT_RCU
-> > >   /*
-> > >    * Dump detailed information for all tasks blocking the current RCU
-> > > @@ -215,7 +215,7 @@ static int rcu_print_task_stall(struct rcu_node *rnp)
-> > >   	return ndetected;
-> > >   }
-> > > -#else /* #ifdef CONFIG_PREEMPTION */
-> > > +#else /* #ifdef CONFIG_PREEMPT_RCU */
-> > >   /*
-> > >    * Because preemptible RCU does not exist, we never have to check for
-> > > @@ -233,7 +233,7 @@ static int rcu_print_task_stall(struct rcu_node *rnp)
-> > >   {
-> > >   	return 0;
-> > >   }
-> > > -#endif /* #else #ifdef CONFIG_PREEMPTION */
-> > > +#endif /* #else #ifdef CONFIG_PREEMPT_RCU */
-> > >   /*
-> > >    * Dump stacks of all tasks running on stalled CPUs.  First try using
-> > > -- 
-> > > 2.20.1
-> > > 
+Andy Yan (2):
+  arm64: dts: rockchip: Add core dts for RK3308 SOC
+  arm64: dts: rockchip: Add basic dts for RK3308 EVB
+
+ .../devicetree/bindings/arm/rockchip.yaml     |    5 +
+ arch/arm64/boot/dts/rockchip/Makefile         |    1 +
+ arch/arm64/boot/dts/rockchip/rk3308-evb.dts   |  206 ++
+ arch/arm64/boot/dts/rockchip/rk3308.dtsi      | 1875 +++++++++++++++++
+ 4 files changed, 2087 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3308-evb.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3308.dtsi
+
+-- 
+2.17.1
+
+
+
