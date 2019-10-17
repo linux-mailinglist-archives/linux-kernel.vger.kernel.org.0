@@ -2,105 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DEC7DAC58
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:34:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FFA1DAC5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:35:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502385AbfJQMe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 08:34:56 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38521 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727291AbfJQMe4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:34:56 -0400
-Received: by mail-lf1-f68.google.com with SMTP id u28so1748764lfc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 05:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uMFWZhVs3nOLCl7bSNvnSRRP4v3iwqBQaN+r4cGzM5w=;
-        b=i8IC+ybAH7Xu7kPM1yyi1ejpd2G+foax89r02+eIpDfbysN1/dJVRVOC1WXOjAP7R0
-         n7QEgIsfDwQaR6XPB6O7Opdti6NPjAKKHaInhfmR/TBpfvfblOvLNtWbf+AODqeB4c1/
-         M934EFwgtgZdAu3sspAjeymnEZ83UQyhEIU70=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uMFWZhVs3nOLCl7bSNvnSRRP4v3iwqBQaN+r4cGzM5w=;
-        b=ZmLUTgF7FSHvfsvDBbMcYLIzARKMI7OLKg71Bra6KQqUFP/U+ZGMVG15aHMhVIQ2bT
-         piqtdn5BWI0UnzQC2/BFqiDv7AJ3a0PW/rfGnYmXYpW20CY0GaE2CEkkUwRNSkIvD/ls
-         9M0Bu9ZELgQ1yoVJn4HEzmhn9wCGnARXjK/qPxG9dC5pjD5T2MKfgdM8+/DMphQcH8DN
-         Vc94VR2ZfLzFNf05rojnTeJX5TO1SxtfR344YAzRWsh+VXiNXys/KBf/lB9ViJwfo+mC
-         jAie4OgSnLvlzZwTLLmPO9bgGxSbQSnZ+2qC9xP/JyONn2ubELqIsXTTORTTpcsJtp0X
-         UKkg==
-X-Gm-Message-State: APjAAAVTebAGyxG2CwpK2PHxceyLrvLTEPJYCFU2Nsf3+C+yFRjX213u
-        9zZYpFVEPTJr4HWBzdAHpNDxgA==
-X-Google-Smtp-Source: APXvYqwmJXI9/ifsToGepUzplMqcGqjd91BZPdQ3/V3K6BdotfwTLPKZg1XHe8tNSIfFdS4KkkB5AQ==
-X-Received: by 2002:ac2:50c4:: with SMTP id h4mr1544119lfm.15.1571315694244;
-        Thu, 17 Oct 2019 05:34:54 -0700 (PDT)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id y4sm1124965ljd.82.2019.10.17.05.34.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 05:34:53 -0700 (PDT)
-Subject: Re: [RFC PATCH 0/3] watchdog servicing during decompression
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Gao Xiang <xiang@kernel.org>, kernel@pengutronix.de,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20191017114906.30302-1-linux@rasmusvillemoes.dk>
- <20191017120310.GD25745@shell.armlinux.org.uk>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <c4b6805b-67fe-6bce-1777-2d81e96b4ac9@rasmusvillemoes.dk>
-Date:   Thu, 17 Oct 2019 14:34:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191017120310.GD25745@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S2502399AbfJQMfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 08:35:37 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:41462 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1727291AbfJQMfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 08:35:34 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A0131993;
+        Thu, 17 Oct 2019 05:35:14 -0700 (PDT)
+Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A84693F718;
+        Thu, 17 Oct 2019 05:35:13 -0700 (PDT)
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nico@fluxnic.net
+Subject: [PATCH v2 0/5] cpufreq: merge arm big.LITTLE and vexpress-spc drivers
+Date:   Thu, 17 Oct 2019 13:35:03 +0100
+Message-Id: <20191017123508.26130-1-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/10/2019 14.03, Russell King - ARM Linux admin wrote:
-> We used to have this on ARM - it was called from the decompressor
-> code via an arch_decomp_wdog() hook.
-> 
-> That code got removed because it is entirely unsuitable for a multi-
-> platform kernel.  This looks like it takes an address for the watchdog
-> from the Kconfig, and builds that into the decompressor, making the
-> decompressor specific to that board or platform.
-> 
-> I'm not sure distros are going to like that given where we are with
-> multiplatform kernels.
+Hi,
 
-This is definitely not for multiplatform kernels or general distros,
-it's for kernels that are built as part of a BSP for a specific board -
-hence the "Say N unless you know you need this.".
+Since vexpress-spc is the sole user of arm_big_little cpufreq driver,
+there's no point in keeping it separate anymore. I wanted to post these
+patches for ages but kept postponing for no reason.
 
-I didn't know it used to exist. But I do know that something like this
-is carried out-of-tree for lots of boards, so I thought I'd try to get
-upstream support.
+Regards,
+Sudeep
 
-The first two patches, or something like them, would be nice on their
-own, as that would minimize the conflicts when forward-porting the
-board-specific patch. But such a half-implemented feature that requires
-out-of-tree patches to actually do anything useful of course won't fly.
+v1->v2:
+	- generated the patch using -B that helps to keep delta short
+	  for review
+	- Split the last patch into 3 different patches to deal with
+	  removing bL_ops, debug messages and other code formatting
+	  separately
 
-I'm not really a big fan of the third patch, even though it does work
-for all the cases I've encountered so far - I'm sure there would be
-boards where a much more complicated solution would be needed. Another
-method I thought of was to just supply a __weak no-op
-decompress_keepalive(), and then have a config option to point at an
-extra object file to link into the compressed/vmlinux (similar to the
-initramfs_source option that also points to some external resource).
+Sudeep Holla (5):
+  cpufreq: scpi: remove stale/outdated comment about the driver
+  cpufreq: merge arm_big_little and vexpress-spc
+  cpufreq: vexpress-spc: drop unnessary cpufreq_arm_bL_ops abstraction
+  cpufreq: vexpress-spc: remove lots of debug messages
+  cpufreq: vexpress-spc: fix some coding style issues
 
-But if the mainline kernel doesn't want anything like this
-re-introduced, that's also fine, that just means a bit of job security.
+ MAINTAINERS                                   |   5 +-
+ drivers/cpufreq/Kconfig.arm                   |  12 +-
+ drivers/cpufreq/Makefile                      |   2 -
+ drivers/cpufreq/arm_big_little.h              |  43 ---
+ drivers/cpufreq/scpi-cpufreq.c                |   2 -
+ ...rm_big_little.c => vexpress-spc-cpufreq.c} | 254 ++++++------------
+ 6 files changed, 93 insertions(+), 225 deletions(-)
+ delete mode 100644 drivers/cpufreq/arm_big_little.h
+ rename drivers/cpufreq/{arm_big_little.c => vexpress-spc-cpufreq.c} (68%)
 
-Rasmus
+--
+2.17.1
+
