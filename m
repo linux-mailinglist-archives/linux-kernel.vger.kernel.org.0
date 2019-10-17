@@ -2,91 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D695DB90E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 23:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0537DB913
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 23:31:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503677AbfJQVaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 17:30:11 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38707 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732322AbfJQVaK (ORCPT
+        id S2441545AbfJQVbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 17:31:43 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:54518 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2441534AbfJQVbm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 17:30:10 -0400
-Received: by mail-pg1-f194.google.com with SMTP id w3so2087423pgt.5;
-        Thu, 17 Oct 2019 14:30:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=h/bBHRGusj98Ie+f89J7SFLKi2fjMoUyMTs7iY5sfPs=;
-        b=pek2pn2QOW42nThx78gpJ5eiILVpMLYfOI2e8D3iR7iPQEXoh5JdfF1Qu0FK+lGCHM
-         rhfvKLT4pa4vyKPCXuC6ecbmlRgJ2DH0ExZpiTPGHFMzCxwIPx8rSFDC6a/nTc8U03EU
-         RSqVFnQjyyHLm8AfXh4B4IWcgdXPwx0CwLwXZ/hksT3qm9lntnIDOo9Ng6cqVcPFJhUw
-         zhZ4K5ms0I/s4cvJNumxUpuDMNz/dO4PSh0qADEHotDYexzHpDuUk+2AwM9S2b4MbP2H
-         xolo2psfzeukidI6shOdZtzIfta+BsGZA8faGmCVcxjXbSVVbFzMpzlWMR4E9holJ3GS
-         2EmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=h/bBHRGusj98Ie+f89J7SFLKi2fjMoUyMTs7iY5sfPs=;
-        b=oKpuBNtIzHQcR+wOMfl67oEDoQl5vFHiI43HzOUW14j8xCqZ2mNETK7b6bOLIQB464
-         HAe8xcV9AmENbIJ1xqD/irj+8v9aH3FIjUiyd6fQy5lw8Qj5womFVCxMxixDMLOthZlJ
-         JK50TLk79jE+tyyI7v/rEgSN0t3c3UX4EEsGiKY6r1y/Lsy/+ct8o4O+HbQ6HVhhUkag
-         TIwUxDilq/RaPKScHSHgp75aOiNRsQedIsrvQm5YGFpZYdAzUyhBaihbiaWLpdzGzr/g
-         YbK/mEzpHezNwfyxsX7I1VruwrYubDj0nlp+30JEP23DaxFWgR8QsnTdO6Z8ZFj0KX+9
-         +MwQ==
-X-Gm-Message-State: APjAAAVffWPSXpeoAsoii0Lc/WBZy7ji5SGclms1OVeMPGFo/wObFo4B
-        NfDCWTKfakYKp16eie8ZWMc=
-X-Google-Smtp-Source: APXvYqwQH11M5d3vGXCkqWTsm7amqBAPjHqccTvWu4XC7F8fg2mPRURwIMBKTQC90afxBF7EvjNckg==
-X-Received: by 2002:a17:90a:1b49:: with SMTP id q67mr7023570pjq.115.1571347809693;
-        Thu, 17 Oct 2019 14:30:09 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id w6sm4297898pfw.84.2019.10.17.14.30.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 14:30:09 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        c-hbandi@codeaurora.org, bgodavar@codeaurora.org
-Cc:     linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH] Bluetooth: hci_qca: Add delay for wcn3990 stability
-Date:   Thu, 17 Oct 2019 14:29:55 -0700
-Message-Id: <20191017212955.6266-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 17 Oct 2019 17:31:42 -0400
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iLDMn-0007MJ-68; Thu, 17 Oct 2019 23:31:29 +0200
+Date:   Thu, 17 Oct 2019 23:31:15 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, kvm@vger.kernel.org
+Subject: Re: [RFD] x86/split_lock: Request to Intel
+In-Reply-To: <20191017172312.GC20903@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1910172207010.1869@nanos.tec.linutronix.de>
+References: <20190925180931.GG31852@linux.intel.com> <3ec328dc-2763-9da5-28d6-e28970262c58@redhat.com> <alpine.DEB.2.21.1910161142560.2046@nanos.tec.linutronix.de> <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com> <c3ff2fb3-4380-fb07-1fa3-15896a09e748@intel.com>
+ <d30652bb-89fa-671a-5691-e2c76af231d0@redhat.com> <8808c9ac-0906-5eec-a31f-27cbec778f9c@intel.com> <alpine.DEB.2.21.1910161519260.2046@nanos.tec.linutronix.de> <ba2c0aab-1d7c-5cfd-0054-ac2c266c1df3@redhat.com> <alpine.DEB.2.21.1910171322530.1824@nanos.tec.linutronix.de>
+ <20191017172312.GC20903@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the msm8998 mtp, the response to the baudrate change command is never
-received.  On the Lenovo Miix 630, the response to the baudrate change
-command is corrupted - "Frame reassembly failed (-84)".
+On Thu, 17 Oct 2019, Sean Christopherson wrote:
+> On Thu, Oct 17, 2019 at 02:29:45PM +0200, Thomas Gleixner wrote:
+> > The more I look at this trainwreck, the less interested I am in merging any
+> > of this at all.
+> > 
+> > The fact that it took Intel more than a year to figure out that the MSR is
+> > per core and not per thread is yet another proof that this industry just
+> > works by pure chance.
+> > 
+> > There is a simple way out of this misery:
+> > 
+> >   Intel issues a microcode update which does:
+> > 
+> >     1) Convert the OR logic of the AC enable bit in the TEST_CTRL MSR to
+> >        AND logic, i.e. when one thread disables AC it's automatically
+> >        disabled on the core.
+> > 
+> >        Alternatively it supresses the #AC when the current thread has it
+> >        disabled.
+> > 
+> >     2) Provide a separate bit which indicates that the AC enable logic is
+> >        actually AND based or that #AC is supressed when the current thread
+> >        has it disabled.
+> > 
+> >     Which way I don't really care as long as it makes sense.
+> 
+> The #AC bit doesn't use OR-logic, it's straight up shared, i.e. writes on
+> one CPU are immediately visible on its sibling CPU.
 
-Adding a 50ms delay before re-enabling flow to receive the baudrate change
-command response from the wcn3990 addesses both issues, and allows
-bluetooth to become functional.
+That's less horrible than I read out of your initial explanation.
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
----
- drivers/bluetooth/hci_qca.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thankfully all of this is meticulously documented in the SDM ...
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index e3164c200eac..265fc60c3850 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1156,8 +1156,10 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
- 		host_set_baudrate(hu, speed);
- 
- error:
--		if (qca_is_wcn399x(soc_type))
-+		if (qca_is_wcn399x(soc_type)) {
-+			msleep(50);
- 			hci_uart_set_flow_control(hu, false);
-+		}
- 
- 		if (soc_type == QCA_WCN3990) {
- 			/* Wait for the controller to send the vendor event
--- 
-2.17.1
+Though it changes the picture radically. The truly shared MSR allows
+regular software synchronization without IPIs and without an insane amount
+of corner case handling.
 
+So as you pointed out we need a per core state, which is influenced by:
+
+ 1) The global enablement switch
+
+ 2) Host induced #AC
+
+ 3) Guest induced #AC
+
+    A) Guest has #AC handling
+
+    B) Guest has no #AC handling
+
+#1:
+
+   - OFF: #AC is globally disabled
+
+   - ON:  #AC is globally enabled
+
+   - FORCE: same as ON but #AC is enforced on guests
+
+#2:
+
+   If the host triggers an #AC then the #AC has to be force disabled on the
+   affected core independent of the state of #1. Nothing we can do about
+   that and once the initial wave of #AC issues is fixed this should not
+   happen on production systems. That disables #3 even for the #3.A case
+   for simplicity sake.
+
+#3:
+
+   A) Guest has #AC handling
+    
+      #AC is forwarded to the guest. No further action required aside of
+      accounting
+
+   B) Guest has no #AC handling
+
+      If #AC triggers the resulting action depends on the state of #1:
+
+      	 - FORCE: Guest is killed with SIGBUS or whatever the virt crowd
+	   	  thinks is the appropriate solution
+
+         - ON: #AC triggered state is recorded per vCPU and the MSR is
+	   	toggled on VMENTER/VMEXIT in software from that point on.
+
+So the only interesting case is #3.B and #1.state == ON. There you need
+serialization of the state and the MSR write between the cores, but only
+when the vCPU triggered an #AC. Until then, nothing to do.
+
+vmenter()
+{
+	if (vcpu->ac_disable)
+		this_core_disable_ac();
+}
+
+vmexit()
+{
+	if (vcpu->ac_disable) {
+		this_core_enable_ac();
+}
+
+this_core_dis/enable_ac() takes the global state into account and has the
+necessary serialization in place.
+
+Thanks,
+
+	tglx
