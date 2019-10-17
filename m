@@ -2,117 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A251DB818
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 22:00:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FE0DDB81B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 22:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436862AbfJQUAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 16:00:42 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45468 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392579AbfJQUAl (ORCPT
+        id S2395495AbfJQUC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 16:02:29 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40818 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393263AbfJQUC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 16:00:41 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y72so2300500pfb.12
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 13:00:41 -0700 (PDT)
+        Thu, 17 Oct 2019 16:02:28 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 7so3847958ljw.7
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 13:02:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:from:to:cc:subject:user-agent:date;
-        bh=QIMZdUFoVDCCgi7u9KnfgFx2D+e8lBSYkgBbx8BMeec=;
-        b=CcY6khg3q6nubSARTDJ5XR1igh/NxAZFgNsGtnScPCLDJ20bsPOxhJh8YD0Ifo1HK1
-         UflIjODDTFl8CRWMZf1yBr9pBsZI/xNyhdGJtRt7j6N851Pii2fEu1phfhNvF5ERh0IY
-         Zl7fuIIFWYgbudcD0dq4aT9k6ojiOfJJ6/w5w=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=uyfTpc4uoGGfUXhiiQ1ULESUjtJAjGktU/a6QTF0Zxk=;
+        b=ODXUKTq6gV6Zgod339kE7rlWH0ZnqPl50KwGglJq5xCspeReCHnduUb4AEu3vi4e91
+         HiDEvxN6Cea4dbNCmZa5h3CySEQAqwknzeog8qejMsL2mUcmJCtl7aGsCN0L4uwvZ6N5
+         o/jhjerrNZxplOaJXZkIT0nHd21x4oqgULlstIPItodHfnnzb37w7EOPg+EOX3p/CKL+
+         5VZiP32aIaSqJCHhREt/zwIZsiCwyUbM+7IRJcNWjWbu1oCsscAfFOR/MycSsagKUics
+         XCQXUNZyU7MwHpjkrdFWnNu0wNqDO7BelKt9XD2SY8GJmXaahzmZgqxB6eZ2kppDdEHK
+         B5Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
-         :user-agent:date;
-        bh=QIMZdUFoVDCCgi7u9KnfgFx2D+e8lBSYkgBbx8BMeec=;
-        b=DAdJ83EG65XFFcrB4nyrEHJY8zO6/UheYTGJG01IDKYO9lUvx9vGGWKTcAuFa5T4mS
-         LmEpVmA7/n54UZAalRx+nZAQyhVdL5uq4sHoCCv3s3reiNuV4sLrXoSUrUwHrz810Xww
-         w1B2DvCYQrsBX3NZCAMBIGH4LxAp+rK2BMx/QLL1wd9I6fV1ULbHLTmjEtcHSJSylPvJ
-         incujg0aKjxoU5SsEuRV2AqT5v1Nvm3UQQS7+Rmk3twtGdNHLCKGjVFbZ5F/Wol4CfBK
-         f6nQ1XH9OeMiBlQ7tJFNbk3cCJv1RHR85FloGrb/ggAz964pQe6IfWtSyaNpO361Zb7H
-         cz0w==
-X-Gm-Message-State: APjAAAUcbDFQ7hWnp+WUaigHaiGKvEOZWIeywxvhnZDGV0TcCwDFjiRL
-        rWbMpi7BZLSZ+DEDyKZklSQznw==
-X-Google-Smtp-Source: APXvYqxn4GjJKCMJ6/dMMs6TXVT3v+iRNGMNw4x8OnF002zaL0RZvbO7aIfYNtadR0MBs08MMHevpw==
-X-Received: by 2002:a17:90a:5896:: with SMTP id j22mr6095736pji.55.1571342441026;
-        Thu, 17 Oct 2019 13:00:41 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id 74sm3834060pfy.78.2019.10.17.13.00.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 13:00:40 -0700 (PDT)
-Message-ID: <5da8c868.1c69fb81.ae709.97ff@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=uyfTpc4uoGGfUXhiiQ1ULESUjtJAjGktU/a6QTF0Zxk=;
+        b=VFzshWNeyYpXzFm/35riLsIDJ3btYeV8vNGsMSunnWcFu8KlSpG7U5K6l111QF9HnH
+         HeYEp+rqoScKIX9Cjhs3NkYTKP1SSaMxjh4YPhcQPYosH5VSQWdl2o+/fO6ytxy3rE2d
+         IWF3VEKpkrTIXI+bqgiMi33EhWkFO49uWJGOVI6RcKkX6G/6VJVCYVhLp80/uhIkS2Xf
+         kWnRKj/IHxD/GEMDHX02/rodJBJZafWXdLgvsHU/qM+3KiBGouUBvOmOztioP7tQ9C9U
+         RwYwQmeBRAT7RJGCxPwHrjiIVEWKJyWYNILXG/OTqpCTwyza9t1ana920YvYq5gmJbjr
+         sqUA==
+X-Gm-Message-State: APjAAAVSgJvosy9mxBgLitIrr9e6rp95aZ1T1LGczArqhPgcyxOhm0C+
+        0q1gthrYN7IglZtnZdBUskh26QEIzOKS1iNJKcwCeg==
+X-Google-Smtp-Source: APXvYqz7YfwiA1STU4iQjyXHFbERzSURVwH4loWX5wkYhcI2X5zdovKfhKrbF7BblnhYxlc1K6FFMYSctkyjJv+atac=
+X-Received: by 2002:a2e:5354:: with SMTP id t20mr3675619ljd.227.1571342546083;
+ Thu, 17 Oct 2019 13:02:26 -0700 (PDT)
 MIME-Version: 1.0
+References: <20191016214729.758892904@linuxfoundation.org>
+In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 18 Oct 2019 01:32:14 +0530
+Message-ID: <CA+G9fYvfDTFpba=XTMvOebUjJO1x3keK_cYiEq_x28OEHnatpw@mail.gmail.com>
+Subject: Re: [PATCH 4.4 00/79] 4.4.197-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ac7599b30461d6a814e4f36d68bba6c2@codeaurora.org>
-References: <b3606e76af42f7ecf65b1bfc2a5ed30a@codeaurora.org> <20191011105010.GA29364@lakrids.cambridge.arm.com> <7910f428bd96834c15fb56262f3c10f8@codeaurora.org> <20191011143442.515659f4@why> <ac7599b30461d6a814e4f36d68bba6c2@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Marc Zyngier <maz@kernel.org>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, rnayak@codeaurora.org,
-        suzuki.poulose@arm.com, catalin.marinas@arm.com,
-        linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, jeremy.linton@arm.com,
-        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        andrew.murray@arm.com, will@kernel.org, Dave.Martin@arm.com,
-        linux-arm-kernel@lists.infradead.org, marc.w.gonzalez@free.fr
-Subject: Re: Relax CPU features sanity checking on heterogeneous architectures
-User-Agent: alot/0.8.1
-Date:   Thu, 17 Oct 2019 13:00:39 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Sai Prakash Ranjan (2019-10-11 06:40:13)
-> On 2019-10-11 19:04, Marc Zyngier wrote:
-> > On Fri, 11 Oct 2019 18:47:39 +0530
-> > Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
-> >=20
-> >> Hi Mark,
-> >>=20
-> >> Thanks a lot for the detailed explanations, I did have a look at all=20
-> >> the variations before posting this.
-> >>=20
-> >> On 2019-10-11 16:20, Mark Rutland wrote:
-> >> > Hi,
-> >> >
-> >> > On Fri, Oct 11, 2019 at 11:19:00AM +0530, Sai Prakash Ranjan wrote:
-> >> >> On latest QCOM SoCs like SM8150 and SC7180 with big.LITTLE arch, be=
-low
-> >> >> warnings are observed during bootup of big cpu cores.
-> >> >
-> >> > For reference, which CPUs are in those SoCs?
-> >> >
-> >>=20
-> >> SM8150 is based on Cortex-A55(little cores) and Cortex-A76(big cores).=
-=20
-> >> I'm afraid I cannot give details about SC7180 yet.
-> >>=20
-> >> >> SM8150:
-> >> >> >> [    0.271177] CPU features: SANITY CHECK: Unexpected variation =
-in
-> >> >> SYS_ID_AA64PFR0_EL1. Boot CPU: 0x00000011112222, CPU4: >> 0x0000001=
-1111112
-> >> >
-> >> > The differing fields are EL3, EL2, and EL1: the boot CPU supports
-> >> > AArch64 and AArch32 at those exception levels, while the secondary o=
-nly
-> >> > supports AArch64.
-> >> >
-> >> > Do we handle this variation in KVM?
-> >>=20
-> >> We do not support KVM.
-> >=20
-> > Mainline does. You don't get to pick and choose what is supported or
-> > not.
-> >=20
->=20
-> Ok thats good.
->=20
+On Thu, 17 Oct 2019 at 03:23, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.4.197 release.
+> There are 79 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri 18 Oct 2019 09:43:41 PM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.4.197-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-I want KVM on sc7180. How do I get it? Is something going to not work?
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.4.197-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.4.y
+git commit: cb63cd392f388e3874d4bc23b0090c3e137bf22d
+git describe: v4.4.196-80-gcb63cd392f38
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
+ld/v4.4.196-80-gcb63cd392f38
+
+
+No regressions (compared to build v4.4.196)
+
+
+No fixes (compared to build v4.4.196)
+
+Ran 12991 total tests in the following environments and test suites.
+
+Environments
+--------------
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* kselftest
+* kvm-unit-tests
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-open-posix-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* network-basic-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* libhugetlbfs
+* install-android-platform-tools-r2600
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.4.197-rc1
+git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
+git branch: 4.4.197-rc1-hikey-20191016-586
+git commit: 8ef378ea28b5d306c5655fc0b219b8dc01fb1b3f
+git describe: 4.4.197-rc1-hikey-20191016-586
+Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
+-oe/build/4.4.197-rc1-hikey-20191016-586
+
+
+No regressions (compared to build 4.4.197-rc1-hikey-20191016-585)
+
+
+No fixes (compared to build 4.4.197-rc1-hikey-20191016-585)
+
+Ran 1523 total tests in the following environments and test suites.
+
+Environments
+--------------
+- hi6220-hikey - arm64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
