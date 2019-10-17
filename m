@@ -2,217 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CCA4DAFD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF1FEDAFEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:22:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440092AbfJQOV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 10:21:28 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:37395 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731664AbfJQOV1 (ORCPT
+        id S2440247AbfJQOWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 10:22:14 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:46311 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394985AbfJQOWN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 10:21:27 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1iL6ec-0006cH-0H; Thu, 17 Oct 2019 16:21:26 +0200
-Message-ID: <2a6ff5b73c9461d9ad25da677a94f860b216a596.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: hi6220: Add support for AO reset controller
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Peter Griffin <peter.griffin@linaro.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Enrico Weigelt <info@metux.net>
-Date:   Thu, 17 Oct 2019 16:21:25 +0200
-In-Reply-To: <20191009162020.GC29241@griffinp-mac>
-References: <20191001182114.69699-1-john.stultz@linaro.org>
-         <1570542167.18914.5.camel@pengutronix.de>
-         <20191009162020.GC29241@griffinp-mac>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Thu, 17 Oct 2019 10:22:13 -0400
+Received: by mail-oi1-f193.google.com with SMTP id k25so2259489oiw.13
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 07:22:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=dZE3aUjhDAXtd4pi/DbouERAtcyzka+rxI7KAIbcOEG90XUWmoBREHDL41yehhQGx0
+         mnOGBM7nDvGgQoZQSfhjTk2/rTsSH/xoKA3A0R8exVd7LNhgBhsFZ+WKjFN5Ia1jekJK
+         gO4yl+zCwTNOeKeWI1d6X2MhXDW+tJt4CR+AN8h9UVj5BhCNSujN+0S1TTs1/sQh30NT
+         +a3Ee400ftVNRKleXnAiNSZrf7th6mM95zRMXvF5n/vYKGpYRS7F/iU2WNZZ1RmOJl2a
+         gAJ2UeStLZZAnxeMkFvs8e8p/r6cgnXQ0oc1us92M1/HEjCfYrULSV/mjFK91K5Oe1nS
+         Ncrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=cQWXgT7l8K2tmnwRe9sOetpiUFkXQfoPL47Dcac1a25MetRuO3ojFvbpZs2QnGU1wh
+         ARXkNmrxnI4JaSZbEXg3LQ9t+k97CQ7I43cJWeI2mA3vhStU9fX/jp6XHS+fg43SJzss
+         qdLG5rVF239b212Ft+13u5J3dAk6/h5LTvAkPnq2Lyp0PoeBf+adxk8rvyZ0WxAp92Ph
+         LPWQxlT6seAs3DBJa1vPQtig6USajWdfW6OiG4s+dusc1jnURXAXPI0GSsy1eZJZidfd
+         Ie3/nzpV9yW5Y3R72wSbjW3u4ar2pxm0KN2PSVkdfrbgqduLZkqqgfzwuilrKlyBLYlX
+         6Zgg==
+X-Gm-Message-State: APjAAAV8VEidcdAipGCpR01B2yocV3qzhFyZaLFMoUv1fKY6xtdp14CI
+        u6WmTLWBceffs18E9vL5o9jW9fjLJUrnnFdpTac=
+X-Google-Smtp-Source: APXvYqwMnGtb8n3SnzGTsq5O5l96DjfwFi5Y3HL+cpSVAIGCz18CrbUbK9oQESRu39x7+Yr19YU3ui+pijimu3sIuBQ=
+X-Received: by 2002:aca:56d4:: with SMTP id k203mr3324728oib.74.1571322131477;
+ Thu, 17 Oct 2019 07:22:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Received: by 2002:ac9:3051:0:0:0:0:0 with HTTP; Thu, 17 Oct 2019 07:22:11
+ -0700 (PDT)
+Reply-To: eddywilliam0002@gmail.com
+From:   eddy william <moordavis0003@gmail.com>
+Date:   Thu, 17 Oct 2019 16:22:11 +0200
+Message-ID: <CAH26tOHEep6Cf9_KpLXaxDrCbVEGOHL5wn+iSx06EbX2WsMWRA@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Hallo
 
-On Wed, 2019-10-09 at 17:20 +0100, Peter Griffin wrote:
-[...]
-> > Do you know whether this is actually a module reset going to the GPU,
-> > or if this is somehow part of the clock and power gating machinery?
-> 
-> I don't know for sure, there is no documentation for these registers
-> apart from the code in [1] and [2], and that is really just the register name.
+Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
+Ihnen anbieten
+die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
+($8,5 Millionen US-Dollar)
+Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
 
-Ok.
+Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
+bei einem Autounfall ums Leben gekommen ist
+und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
+nd 50%
+sein f=C3=BCr dich.
+Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
+Informationen: eddywilliam0002gmail.com
 
-> > There's also clock and isolation cell control going on, so this looks a
-> > bit like it should be part of a power domain driver.
-> 
-> I choose to add it here as this driver was already managing the
-> MEDIA_SCTRL_SC_MEDIA_RSTDIS_ADDR register, so it seemed correct for it to also
-> manage the AO_SCTRL_SC_PW_RSTDIS0_ADDR register.
+Vielen Dank im Voraus,
+Mr. Eddy William,
 
-I agree here ...
 
-> The write to AO_SCTRL_SC_PW_ISODIS0_ADDR and
-> AO_SCTRL_SC_PW_CLKEN0_ADDR I guess aren't so clear cut but I wanted to maintain the
-> same ordering from [1].
 
-... but not here, necessarily. These register names make it look like
-this is the wrong place.
+Hello
 
-On the other hand, if you don't actually have a way to disable power to
-the GPU domain, it is a bit hard for me to argue that it would be more
-correct to place this in a power domain driver. Certainly the power
-domain driver could (de)assert the reset in the right order though.
+My name is Eddy William I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($8.5 Million)
+dollars my client left in the bank before his death.
 
-I notice the actual GPU reset seems to be MEDIA_G3D, and is deasserted
-after whatever is controlled via AO_SCTRL_SC_PW_* in [1], so maybe this
-is indeed just the power domain control?
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+Please contact my private email here for more details:eddywilliam0002gmail.=
+com
 
-> I have no info about the power domains on the SoC, so not sure it will be
-> possible to make it part of a power domain driver.
-> 
-> > Do you have an (internal or external) regulator that could be disabled
-> > while the GPU is inactive, like [1]?
-> > 
-> > [1]
-> > https://raw.githubusercontent.com/96boards/meta-96boards/master/recipes-kernel/linux/linux-96boards/0004-drivers-gpu-arm-utgard-add-basic-HiKey-platform-file.patch
-> 
-> This patch is based off [1] the regulator mentioned there G3D_PD_VDD it turns
-> out has never been available and always fails to do anything.
-> 
-> So AFAIK there is no external regulator available to disable. This code has since been
-> removed from Johns tree [2].
-> 
-> [2] https://git.linaro.org/people/john.stultz/android-dev.git/commit/?h=dev/hikey-5.3&id=64ec445a8271a2ced841484492ed9bf2e1ef4313
-
-The comment
-
-  "Note: GPU DVFS is not implemented and a custom Device Tree
-         entry is needed by these platform files.  This is a
-         first working version that needs to be improved."
-
-doesn't exactly make it clear whether it is "not implemented" in the
-SoC, not implemented on the board, or just not implemented in the driver
-in this patchset.
-So even if this board has the regulator fixed, could there be others
-where GPU power could be switched off? I wouldn't want to encode the the
-limitations of a particular board into the SoC DT bindings.
-
-> > > Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> > > Cc: Peter Griffin <peter.griffin@linaro.org>
-> > > Cc: Enrico Weigelt <info@metux.net>
-> > > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > > Signed-off-by: John Stultz <john.stultz@linaro.org>
-> > > ---
-> > >  drivers/reset/hisilicon/hi6220_reset.c | 51 +++++++++++++++++++++++++-
-> > >  1 file changed, 50 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/reset/hisilicon/hi6220_reset.c b/drivers/reset/hisilicon/hi6220_reset.c
-> > > index 24e6d420b26b..d84674a2cead 100644
-> > > --- a/drivers/reset/hisilicon/hi6220_reset.c
-> > > +++ b/drivers/reset/hisilicon/hi6220_reset.c
-> > > @@ -33,6 +33,7 @@
-> > >  enum hi6220_reset_ctrl_type {
-> > >  	PERIPHERAL,
-> > >  	MEDIA,
-> > > +	AO,
-> > >  };
-> > >  
-> > >  struct hi6220_reset_data {
-> > > @@ -92,6 +93,47 @@ static const struct reset_control_ops hi6220_media_reset_ops = {
-> > >  	.deassert = hi6220_media_deassert,
-> > >  };
-> > >  
-> > > +#define AO_SCTRL_SC_PW_CLKEN0     0x800
-> > > +#define AO_SCTRL_SC_PW_CLKDIS0    0x804
-> > > +
-> > > +#define AO_SCTRL_SC_PW_RSTEN0     0x810
-> > > +#define AO_SCTRL_SC_PW_RSTDIS0    0x814
-
-Is this the only reset register in the "Always-On" (that would have been
-nice to include in the commit description for my education) controller?
-
-According to [3] there also seem to be rst4 and rst5 registers?
-
-[3] https://github.com/u-boot/u-boot/blob/master/arch/arm/include/asm/arch-hi6220/hi6220_regs_alwayson.h
-
-> > > +
-> > > +#define AO_SCTRL_SC_PW_ISOEN0     0x820
-> > > +#define AO_SCTRL_SC_PW_ISODIS0    0x824
-> > > +#define AO_MAX_INDEX              12
-
-Where does this number come from? I can't find any information about the
-bits in the PW_* registers...
-
-> > > +
-> > > +static int hi6220_ao_assert(struct reset_controller_dev *rc_dev,
-> > > +			    unsigned long idx)
-> > > +{
-> > > +	struct hi6220_reset_data *data = to_reset_data(rc_dev);
-> > > +	struct regmap *regmap = data->regmap;
-> > > +	int ret;
-> > > +
-> > > +	ret = regmap_write(regmap, AO_SCTRL_SC_PW_RSTEN0, BIT(idx));
-> > > +	ret |= regmap_write(regmap, AO_SCTRL_SC_PW_ISOEN0, BIT(idx));
-> > > +	ret |= regmap_write(regmap, AO_SCTRL_SC_PW_CLKDIS0, BIT(idx));
-> > 
-> > I would like the return values not to be ORed together, since they are
-> > returned to the caller.
-> 
-> Yes I think you mentioned that before. I did send a v2 previously that
-> addressed that https://lkml.org/lkml/2019/4/19/253. That's my fault for
-> not following this series up sooner.
-
-I'm sorry, I missed that.
-
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +static int hi6220_ao_deassert(struct reset_controller_dev *rc_dev,
-> > > +			      unsigned long idx)
-> > > +{
-> > > +	struct hi6220_reset_data *data = to_reset_data(rc_dev);
-> > > +	struct regmap *regmap = data->regmap;
-> > > +	int ret;
-> > > +
-> > > +	ret = regmap_write(regmap, AO_SCTRL_SC_PW_RSTDIS0, BIT(idx));
-> > > +	ret |= regmap_write(regmap, AO_SCTRL_SC_PW_ISODIS0, BIT(idx));
-> > > +	ret |= regmap_write(regmap, AO_SCTRL_SC_PW_CLKEN0, BIT(idx));
-> > 
-> > Are you sure these are fire and forget, or might the order be important?
-> 
-> The order maybe important, I've not tried a different ordering to
-> what is here. I kept it the same as [1] which was working with the blob driver
-> and continues to work with driver.
-
-Ok, that makes sense.
-
-> > It might be necessary to disable isolation before enabling the clocks
-> > and deasserting reset, to avoid glitches.
-> 
-> You mean a register sequence like this?
-> 
-> regmap_write(regmap, AO_SCTRL_SC_PW_ISODIS0, BIT(idx));
-> regmap_write(regmap, AO_SCTRL_SC_PW_RSTDIS0, BIT(idx));
-> regmap_write(AO_SCTRL_SC_PW_CLKEN0, BIT(idx));
-
-I'm just asking whether you have considered potential side effects, but
-without better knowledge about the SoC, following the order found in the
-vendor code, is probably the best we can do.
-
-In [1] the corresponding _STAT registers (+0x8) are checked after
-setting each bit, is there a reason you dropped these checks?
-
-regards
-Philipp
-
+Many thanks in advance,
+Mr.Eddy William,
