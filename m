@@ -2,200 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD36EDAC78
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:41:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67F09DAC83
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406312AbfJQMlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 08:41:17 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:52671 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbfJQMlR (ORCPT
+        id S2406436AbfJQMmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 08:42:45 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:22586 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726214AbfJQMmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:41:17 -0400
-X-Originating-IP: 86.207.98.53
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: kamel.bouhara@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 04BEA6000D;
-        Thu, 17 Oct 2019 12:41:14 +0000 (UTC)
-From:   Kamel Bouhara <kamel.bouhara@bootlin.com>
-To:     Sebastian Reichel <sre@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Kamel Bouhara <kamel.bouhara@bootlin.com>
-Subject: [PATCH] power: reset: at91-reset: add sysfs interface to the power on reason
-Date:   Thu, 17 Oct 2019 14:40:58 +0200
-Message-Id: <20191017124058.19300-1-kamel.bouhara@bootlin.com>
-X-Mailer: git-send-email 2.23.0
+        Thu, 17 Oct 2019 08:42:45 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9HCfBaw021784;
+        Thu, 17 Oct 2019 14:42:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=L26QXalVQR9HzDI3UJ1eXufxROWoddqJ9iUBDb8vL5I=;
+ b=V1qAI/AZc8ULJzhq8rHQoCKUBO4QKrCmM+Tds8x0tAjcOGhCYNT6xlel6P3uOLpsS44M
+ pj79D+qYzGG4je4AZbY9LPDKuDuUP2SwVsNA0L6MVKgAFbCvVvSf2XQAQ6U2mQPOOwo0
+ L+MKHi3atsGEWE71HnO/s8Zquh8eGx6b/c4C0v83kl5n7VNZ4Cimu+/eK7I0BYkgvtiH
+ w++len1Su7YNIAxZNCmCz649vwJGEP3Emlyg2EFkU3jxMUZx9wXYqJxnOJ0eDOEcbKmx
+ xOWIuL9U5/l79s3uf/kjye0pNHKfMUHWyYLNwAUYkeK3qT/g67/Icj/f/3dAmL6fua7O uw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2vk4kxbu5b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Oct 2019 14:42:06 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0C6D510002A;
+        Thu, 17 Oct 2019 14:42:06 +0200 (CEST)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EEED32B5663;
+        Thu, 17 Oct 2019 14:42:05 +0200 (CEST)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 17 Oct
+ 2019 14:42:05 +0200
+Received: from localhost (10.201.20.122) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 17 Oct 2019 14:42:04
+ +0200
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <alexandre.torgue@st.com>
+CC:     <linux-watchdog@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] dt-bindings: watchdog: Convert stm32 watchdog bindings to json-schema
+Date:   Thu, 17 Oct 2019 14:41:59 +0200
+Message-ID: <20191017124159.13869-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.122]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-17_04:2019-10-17,2019-10-17 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch export the power on reason through the sysfs interface and
-introduce some generic reset sources.
-Update the ABI documentation to list current power on sources.
+Convert the STM32 watchdog binding to DT schema format using json-schema
 
-Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
- .../sysfs-devices-platform-power-on-reason    | 14 ++++++
- drivers/power/reset/at91-reset.c              | 44 +++++++++++++------
- include/linux/power/power_on_reason.h         | 19 ++++++++
- 3 files changed, 64 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-devices-platform-power-on-reason
- create mode 100644 include/linux/power/power_on_reason.h
+ .../devicetree/bindings/watchdog/st,stm32-iwdg.txt | 26 -----------
+ .../bindings/watchdog/st,stm32-iwdg.yaml           | 54 ++++++++++++++++++++++
+ 2 files changed, 54 insertions(+), 26 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
+ create mode 100644 Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-platform-power-on-reason b/Documentation/ABI/testing/sysfs-devices-platform-power-on-reason
-new file mode 100644
-index 000000000000..83daeb9b1aa2
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-devices-platform-power-on-reason
-@@ -0,0 +1,14 @@
-+What:		/sys/devices/platform/.../power_on_reason
-+
-+Date:		October 2019
-+KernelVersion:	5.4
-+Contact:	Kamel Bouhara <kamel.bouhara@bootlin.com>
-+Description:	This file shows system power on reason.
-+		The possible sources are:
-+		General System Power-ON, RTC wakeup, Watchdog timeout,
-+		Software Reset, User pressed reset button,
-+		CPU Clock failure, 32.768kHz Oscillator Failure,
-+		Low power mode exit, Unknown.
-+
-+		The file is read only.
-+
-diff --git a/drivers/power/reset/at91-reset.c b/drivers/power/reset/at91-reset.c
-index 44ca983a49a1..3cb2df40af37 100644
---- a/drivers/power/reset/at91-reset.c
-+++ b/drivers/power/reset/at91-reset.c
-@@ -17,7 +17,7 @@
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/reboot.h>
+diff --git a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
+deleted file mode 100644
+index d8f4430b0a13..000000000000
+--- a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
++++ /dev/null
+@@ -1,26 +0,0 @@
+-STM32 Independent WatchDoG (IWDG)
+----------------------------------
 -
-+#include <linux/power/power_on_reason.h>
- #include <soc/at91/at91sam9_ddrsdr.h>
- #include <soc/at91/at91sam9_sdramc.h>
-
-@@ -146,42 +146,42 @@ static int samx7_restart(struct notifier_block *this, unsigned long mode,
- 	return NOTIFY_DONE;
- }
-
--static void __init at91_reset_status(struct platform_device *pdev)
-+static const char *at91_reset_reason(struct platform_device *pdev)
- {
- 	const char *reason;
- 	u32 reg = readl(at91_rstc_base + AT91_RSTC_SR);
-
- 	switch ((reg & AT91_RSTC_RSTTYP) >> 8) {
- 	case RESET_TYPE_GENERAL:
--		reason = "general reset";
-+		reason = POWER_ON_REASON_GENERAL;
- 		break;
- 	case RESET_TYPE_WAKEUP:
--		reason = "wakeup";
-+		reason = POWER_ON_REASON_RTC;
- 		break;
- 	case RESET_TYPE_WATCHDOG:
--		reason = "watchdog reset";
-+		reason = POWER_ON_REASON_WATCHDOG;
- 		break;
- 	case RESET_TYPE_SOFTWARE:
--		reason = "software reset";
-+		reason = POWER_ON_REASON_SOFTWARE;
- 		break;
- 	case RESET_TYPE_USER:
--		reason = "user reset";
-+		reason = POWER_ON_REASON_USER;
- 		break;
- 	case RESET_TYPE_CPU_FAIL:
--		reason = "CPU clock failure detection";
-+		reason = POWER_ON_REASON_CPU_FAIL;
- 		break;
- 	case RESET_TYPE_XTAL_FAIL:
--		reason = "32.768 kHz crystal failure detection";
-+		reason = POWER_ON_REASON_XTAL_FAIL;
- 		break;
- 	case RESET_TYPE_ULP2:
--		reason = "ULP2 reset";
-+		reason = POWER_ON_REASON_LOW_POWER;
- 		break;
- 	default:
--		reason = "unknown reset";
-+		reason = POWER_ON_REASON_UNKNOWN;
- 		break;
- 	}
-
--	dev_info(&pdev->dev, "Starting after %s\n", reason);
-+	return reason;
- }
-
- static const struct of_device_id at91_ramc_of_match[] = {
-@@ -204,6 +204,17 @@ static struct notifier_block at91_restart_nb = {
- 	.priority = 192,
- };
-
-+static ssize_t power_on_reason_show(struct device *dev,
-+				    struct device_attribute *attr,
-+				    char *buf)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+
-+	return sprintf(buf, "%s\n", at91_reset_reason(pdev));
-+}
-+
-+static DEVICE_ATTR_RO(power_on_reason);
-+
- static int __init at91_reset_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
-@@ -248,7 +259,14 @@ static int __init at91_reset_probe(struct platform_device *pdev)
- 		return ret;
- 	}
-
--	at91_reset_status(pdev);
-+	ret = device_create_file(&pdev->dev, &dev_attr_power_on_reason);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Could not create sysfs entry\n");
-+		return ret;
-+	}
-+
-+	dev_info(&pdev->dev, "Starting after %s reset\n",
-+		 at91_reset_reason(pdev));
-
- 	return 0;
- }
-diff --git a/include/linux/power/power_on_reason.h b/include/linux/power/power_on_reason.h
+-Required properties:
+-- compatible: Should be either:
+-  - "st,stm32-iwdg"
+-  - "st,stm32mp1-iwdg"
+-- reg: Physical base address and length of the registers set for the device
+-- clocks: Reference to the clock entry lsi. Additional pclk clock entry
+-  is required only for st,stm32mp1-iwdg.
+-- clock-names: Name of the clocks used.
+-  "lsi" for st,stm32-iwdg
+-  "lsi", "pclk" for st,stm32mp1-iwdg
+-
+-Optional Properties:
+-- timeout-sec: Watchdog timeout value in seconds.
+-
+-Example:
+-
+-iwdg: watchdog@40003000 {
+-	compatible = "st,stm32-iwdg";
+-	reg = <0x40003000 0x400>;
+-	clocks = <&clk_lsi>;
+-	clock-names = "lsi";
+-	timeout-sec = <32>;
+-};
+diff --git a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml
 new file mode 100644
-index 000000000000..9978cc757427
+index 000000000000..edec96d53e6b
 --- /dev/null
-+++ b/include/linux/power/power_on_reason.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Author: Kamel Bouhra <kamel.bouhara@bootlin.com>
-+ */
++++ b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/st,stm32-iwdg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#ifndef POWER_ON_REASON_H
-+#define POWER_ON_REASON_H
++title: STMicroelectronics STM32 Independent WatchDoG (IWDG) bindings
 +
-+#define POWER_ON_REASON_GENERAL "General"
-+#define POWER_ON_REASON_RTC "RTC wakeup"
-+#define POWER_ON_REASON_WATCHDOG "Watchdog timeout"
-+#define POWER_ON_REASON_SOFTWARE "Software"
-+#define POWER_ON_REASON_USER "User"
-+#define POWER_ON_REASON_CPU_FAIL "CPU Clock Failure"
-+#define POWER_ON_REASON_XTAL_FAIL "32.768k Crystal oscillator Failure"
-+#define POWER_ON_REASON_LOW_POWER "Low power exit"
-+#define POWER_ON_REASON_UNKNOWN "Unknown"
++maintainers:
++  - Yannick Fertre <yannick.fertre@st.com>
 +
-+#endif /* POWER_ON_REASON_H */
---
-2.23.0
++allOf: 
++  - $ref: "watchdog.yaml#"
++
++properties:
++  compatible:
++    enum:
++      - st,stm32-iwdg
++      - st,stm32mp1-iwdg
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Low speed clock
++      - description: Optional peripheral clock
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    items:
++      enums: [ lsi, pclk ]
++    minItems: 1
++    maxItems: 2
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++
++examples:
++  - |
++    #include <dt-bindings/clock/stm32mp1-clks.h>
++    watchdog@5a002000 {
++      compatible = "st,stm32mp1-iwdg";
++      reg = <0x5a002000 0x400>;
++      clocks = <&rcc IWDG2>, <&rcc CK_LSI>;
++      clock-names = "pclk", "lsi";
++      timeout-sec = <32>;
++    };
++
++...
+-- 
+2.15.0
 
