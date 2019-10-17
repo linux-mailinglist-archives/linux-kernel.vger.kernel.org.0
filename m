@@ -2,61 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BBB3DB024
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04371DB025
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:34:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440310AbfJQOeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 10:34:18 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34615 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbfJQOeS (ORCPT
+        id S2440321AbfJQOeh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 10:34:37 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:9921 "EHLO
+        mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726583AbfJQOeh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 10:34:18 -0400
-Received: by mail-io1-f68.google.com with SMTP id q1so3304149ion.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 07:34:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=FmGHNpejQ29nIiQ+vBc6/ce+Q7SqcsDKzIUla6egsaM=;
-        b=eNBADHMVYXgGhZ9PnWXPEUKpsg3A3/TH0AkzNBh3Z8jAZrqnZdB9NUMKZJp6f4gGP+
-         pJhyu5IveRXR/PG+SdOrcbmzMCdCN/76o0KshYP/6jPvUgfxtEfhD7cf0pXPf4qgegWS
-         +YNsvD9/4JzseUFErTgMPvBLT+IONSnhLff/ytcpT1Sx2JxUM3tcOU1T6/6VZJnn6A9m
-         f0XEIv+xcE2wztGvQirbH5aXwy46bMEDrX09Cv0Fj/afoxgB5iooeg1CcPdi60B70RcZ
-         BUs89yaT4Jk5/P/jV/DVX/Z5lT7Kq+e77iDvGCKozuFW2t3tgEq6tmd0UhjPOmX6OSQn
-         h9lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=FmGHNpejQ29nIiQ+vBc6/ce+Q7SqcsDKzIUla6egsaM=;
-        b=MgU68Sr+8RVuaeumWMqG7/YVBMVqRHCK1B2AgYnU5YwMtmme5Acy4nS5SgrS7cP0h1
-         NocdWFB6mxRkKyNx63+RBI6lXe27IN5CmwzFfW5IRA04XeIUEbA2V0xJkIbmTNh3+C7R
-         Lrv9PMM0F3C+eipalkWJmUfccQEyXQQCsPkVzUUUDt7TNCzNKkkwxj6yprwupvx1nxWE
-         sFXTulsD2DEp4yZ8JcpxkU6/wmIlHM25CQ1etBJkEmKVPSYC+dOzXhG7CrP1khZiAVOH
-         btAy2MaDxxSjPIHcx9h+ln3li/IbGK5HD0ruHmujK7iH5003tBaK9TIFZ147WF4fWc/a
-         nlhw==
-X-Gm-Message-State: APjAAAVWn9oEPPWe8mHsqgiJOWLfxXvR5rSdsaY0uCyjCCE5/Qpulw8d
-        ouO09hwp3Brv9RjHzjpcC4SrNpsQ3LZ5hRzdeTg=
-X-Google-Smtp-Source: APXvYqxsXF8TAHSo19OZLGoFE0LX2psbQiLRVLbeLZB2nNgr2fjZLUbJ/ziLVatSp7Pl6iYET9fM0EWK0lWxHyQ9y0U=
-X-Received: by 2002:a5e:9202:: with SMTP id y2mr3364284iop.300.1571322856210;
- Thu, 17 Oct 2019 07:34:16 -0700 (PDT)
+        Thu, 17 Oct 2019 10:34:37 -0400
+X-IronPort-AV: E=Sophos;i="5.67,308,1566856800"; 
+   d="scan'208";a="323053838"
+Received: from portablejulia.rsr.lip6.fr ([132.227.76.63])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2019 16:34:34 +0200
+Date:   Thu, 17 Oct 2019 16:34:33 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: julia@hadrien
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+cc:     Himanshu Jha <himanshujha199640@gmail.com>,
+        Linus Torvalds <torvalds@linuxfoundation.org>,
+        kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        tglx@linutronix.de, Marc Zyngier <maz@kernel.org>,
+        linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com
+Subject: Re: [PATCH] coccinelle: api/devm_platform_ioremap_resource: remove
+ useless script
+In-Reply-To: <20191017142237.9734-1-alexandre.belloni@bootlin.com>
+Message-ID: <alpine.DEB.2.21.1910171633150.5777@hadrien>
+References: <20191017142237.9734-1-alexandre.belloni@bootlin.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:a02:9403:0:0:0:0:0 with HTTP; Thu, 17 Oct 2019 07:34:15
- -0700 (PDT)
-From:   Amidal Serge <sergeamidal01@gmail.com>
-Date:   Thu, 17 Oct 2019 15:34:15 +0100
-Message-ID: <CA+aY+6pVToyy3qWuF9FF9KWf+nm_9MqgfnBkuCikYs3FhdkgKQ@mail.gmail.com>
-Subject: Bonjour
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
- I need your urgent assistance in the transfer of an abandoned funds
-on your account within 10-14 days if you are interested, respond to me
-with your information for more details. your name and surname:-. your
-country:-. your phone number. :- .
- Please respond to this email address (sergeamidal@gmail.com)
- Best regards Amidal
+
+
+On Thu, 17 Oct 2019, Alexandre Belloni wrote:
+
+> While it is useful for new drivers to use devm_platform_ioremap_resource,
+> this script is currently used to spam maintainers, often updating very old
+> drivers. The net benefit is the removal of 2 lines of code in the driver
+> but the review load for the maintainers is huge. As of now, more that 560
+> patches have been sent, some of them obviously broken, as in:
+>
+> https://lore.kernel.org/lkml/9bbcce19c777583815c92ce3c2ff2586@www.loen.fr/
+>
+> Remove the script to reduce the spam.
+
+OK.
+
+Acked-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  .../api/devm_platform_ioremap_resource.cocci  | 60 -------------------
+>  1 file changed, 60 deletions(-)
+>  delete mode 100644 scripts/coccinelle/api/devm_platform_ioremap_resource.cocci
+>
+> diff --git a/scripts/coccinelle/api/devm_platform_ioremap_resource.cocci b/scripts/coccinelle/api/devm_platform_ioremap_resource.cocci
+> deleted file mode 100644
+> index 56a2e261d61d..000000000000
+> --- a/scripts/coccinelle/api/devm_platform_ioremap_resource.cocci
+> +++ /dev/null
+> @@ -1,60 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -/// Use devm_platform_ioremap_resource helper which wraps
+> -/// platform_get_resource() and devm_ioremap_resource() together.
+> -///
+> -// Confidence: High
+> -// Copyright: (C) 2019 Himanshu Jha GPLv2.
+> -// Copyright: (C) 2019 Julia Lawall, Inria/LIP6. GPLv2.
+> -// Keywords: platform_get_resource, devm_ioremap_resource,
+> -// Keywords: devm_platform_ioremap_resource
+> -
+> -virtual patch
+> -virtual report
+> -
+> -@r depends on patch && !report@
+> -expression e1, e2, arg1, arg2, arg3;
+> -identifier id;
+> -@@
+> -
+> -(
+> -- id = platform_get_resource(arg1, IORESOURCE_MEM, arg2);
+> -|
+> -- struct resource *id = platform_get_resource(arg1, IORESOURCE_MEM, arg2);
+> -)
+> -  ... when != id
+> -- e1 = devm_ioremap_resource(arg3, id);
+> -+ e1 = devm_platform_ioremap_resource(arg1, arg2);
+> -  ... when != id
+> -? id = e2
+> -
+> -@r1 depends on patch && !report@
+> -identifier r.id;
+> -type T;
+> -@@
+> -
+> -- T *id;
+> -  ...when != id
+> -
+> -@r2 depends on report && !patch@
+> -identifier id;
+> -expression e1, e2, arg1, arg2, arg3;
+> -position j0;
+> -@@
+> -
+> -(
+> -  id = platform_get_resource(arg1, IORESOURCE_MEM, arg2);
+> -|
+> -  struct resource *id = platform_get_resource(arg1, IORESOURCE_MEM, arg2);
+> -)
+> -  ... when != id
+> -  e1@j0 = devm_ioremap_resource(arg3, id);
+> -  ... when != id
+> -? id = e2
+> -
+> -@script:python depends on report && !patch@
+> -e1 << r2.e1;
+> -j0 << r2.j0;
+> -@@
+> -
+> -msg = "WARNING: Use devm_platform_ioremap_resource for %s" % (e1)
+> -coccilib.report.print_report(j0[0], msg)
+> --
+> 2.21.0
+>
+>
