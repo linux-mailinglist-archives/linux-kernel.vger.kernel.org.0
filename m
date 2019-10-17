@@ -2,127 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 448E9DB5D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5117DB609
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:23:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503238AbfJQSVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 14:21:51 -0400
-Received: from muru.com ([72.249.23.125]:37840 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2503219AbfJQSVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:21:49 -0400
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id E581C804F;
-        Thu, 17 Oct 2019 18:22:21 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-omap@vger.kernel.org
-Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] bus: ti-sysc: Fix watchdog quirk handling
-Date:   Thu, 17 Oct 2019 11:21:44 -0700
-Message-Id: <20191017182144.10175-1-tony@atomide.com>
-X-Mailer: git-send-email 2.23.0
+        id S2441389AbfJQSXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 14:23:00 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41770 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438481AbfJQSW6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 14:22:58 -0400
+Received: by mail-oi1-f196.google.com with SMTP id g81so2984443oib.8;
+        Thu, 17 Oct 2019 11:22:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+Bk+owFUyFzKLHxVQ9TZGi955m3fUTDdG0rIAOhgZF4=;
+        b=t/2+zWJyIVGYFiSuVM5vGDE63Fz5raip/EpAbiht03WczwzGnJ7JVFoWuR1GbhIknz
+         rdJHsRAbi3szLECM8X4s0XR5eOgIg/JkaQKzyc8o2n7jtcwGdpXvFf4Jt9PmQo3egxhm
+         Rs+jxfrccYfMJyHooHUkYegvBKurSHi6UwFkJoUndna1IH1HU7v7dYCBS+PTcMv6EklT
+         6Uq7MURR0sqryfcAnQ/WiIR11zMSuYpxc07zpEy8fV+48/cJq5AA/pqnh7VaWLFBJtGY
+         /QGICPpG+QIeb8H6gwPBVxqSJdI8nr2j0plUGjsPDlE5xhBz7Q1TRG4lJ21NEK0m41sY
+         7FPA==
+X-Gm-Message-State: APjAAAXDnX8GhcHpiiWqmReUp5PRgLwCqD+lIYO59GTfUnhuuPhUEVB7
+        L95zk8WAW1X+shmpOADCvw==
+X-Google-Smtp-Source: APXvYqxoyB6LIwYRwOT7YZvltCww+hzSZ2xpYH5QFe7x2JQodAk8yt9q3uBJpfEDLYt0WE9APEi6/A==
+X-Received: by 2002:aca:110b:: with SMTP id 11mr4377794oir.135.1571336577100;
+        Thu, 17 Oct 2019 11:22:57 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 21sm686623oin.26.2019.10.17.11.22.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2019 11:22:56 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 13:22:55 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Manish Narani <manish.narani@xilinx.com>
+Cc:     ulf.hansson@linaro.org, mark.rutland@arm.com,
+        adrian.hunter@intel.com, michal.simek@xilinx.com,
+        jolly.shah@xilinx.com, rajan.vaja@xilinx.com,
+        nava.manne@xilinx.com, mdf@kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, git@xilinx.com
+Subject: Re: [PATCH v3 4/8] dt-bindings: mmc: arasan: Add optional properties
+ for Arasan SDHCI
+Message-ID: <20191017182255.GA7053@bogus>
+References: <1571293310-92563-1-git-send-email-manish.narani@xilinx.com>
+ <1571293310-92563-5-git-send-email-manish.narani@xilinx.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1571293310-92563-5-git-send-email-manish.narani@xilinx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I noticed that when probed with ti-sysc, watchdog can trigger on am3, am4
-and dra7 causing a device reset.
+On Thu, Oct 17, 2019 at 11:51:46AM +0530, Manish Narani wrote:
+> Add optional propeties for Arasan SDHCI which are used to set clk delays
 
-Turns out I made several mistakes implementing the watchdog quirk handling:
+properties
 
-1. We must do both writes to spr register
+> for different speed modes in the controller.
+> 
+> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
+> ---
+>  .../devicetree/bindings/mmc/arasan,sdhci.txt      | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> index b51e40b2e0c5..e0369dd7fb18 100644
+> --- a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> +++ b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> @@ -46,6 +46,21 @@ Optional Properties:
+>      properly. Test mode can be used to force the controller to function.
+>    - xlnx,int-clock-stable-broken: when present, the controller always reports
+>      that the internal clock is stable even when it is not.
+> +  - clk-phase-legacy: Input/Output Clock Delay pair in degrees for Legacy Mode.
+> +  - clk-phase-mmc-hs: Input/Output Clock Delay pair degrees for MMC HS.
+> +  - clk-phase-sd-hs: Input/Output Clock Delay pair in degrees for SD HS.
+> +  - clk-phase-uhs-sdr12: Input/Output Clock Delay pair in degrees for SDR12.
+> +  - clk-phase-uhs-sdr25: Input/Output Clock Delay pair in degrees for SDR25.
+> +  - clk-phase-uhs-sdr50: Input/Output Clock Delay pair in degrees for SDR50.
+> +  - clk-phase-uhs-sdr104: Input/Output Clock Delay pair in degrees for SDR104.
+> +  - clk-phase-uhs-ddr50: Input/Output Clock Delay pair in degrees for SD DDR50.
+> +  - clk-phase-mmc-ddr52: Input/Output Clock Delay pair in degrees for MMC DDR52.
+> +  - clk-phase-mmc-hs200: Input/Output Clock Delay pair in degrees for MMC HS200.
+> +  - clk-phase-mmc-hs400: Input/Output Clock Delay pair in degrees for MMC HS400.
 
-2. We must also call the reset quirk on disable
+Should be common?
 
-3. On am3 and am4 we need to also set swsup quirk flag
+Range of values?
 
-I probably only tested this earlier with watchdog service running when the
-watchdog never gets disabled.
-
-Fixes: 4e23be473e30 ("bus: ti-sysc: Add support for module specific reset quirks")
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/bus/ti-sysc.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -74,6 +74,7 @@ static const char * const clock_names[SYSC_MAX_CLOCKS] = {
-  * @clk_disable_quirk: module specific clock disable quirk
-  * @reset_done_quirk: module specific reset done quirk
-  * @module_enable_quirk: module specific enable quirk
-+ * @module_disable_quirk: module specific disable quirk
-  */
- struct sysc {
- 	struct device *dev;
-@@ -100,6 +101,7 @@ struct sysc {
- 	void (*clk_disable_quirk)(struct sysc *sysc);
- 	void (*reset_done_quirk)(struct sysc *sysc);
- 	void (*module_enable_quirk)(struct sysc *sysc);
-+	void (*module_disable_quirk)(struct sysc *sysc);
- };
- 
- static void sysc_parse_dts_quirks(struct sysc *ddata, struct device_node *np,
-@@ -959,6 +961,9 @@ static int sysc_disable_module(struct device *dev)
- 	if (ddata->offsets[SYSC_SYSCONFIG] == -ENODEV)
- 		return 0;
- 
-+	if (ddata->module_disable_quirk)
-+		ddata->module_disable_quirk(ddata);
-+
- 	regbits = ddata->cap->regbits;
- 	reg = sysc_read(ddata, ddata->offsets[SYSC_SYSCONFIG]);
- 
-@@ -1248,6 +1253,9 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
- 		   SYSC_MODULE_QUIRK_SGX),
- 	SYSC_QUIRK("wdt", 0, 0, 0x10, 0x14, 0x502a0500, 0xfffff0f0,
- 		   SYSC_MODULE_QUIRK_WDT),
-+	/* Watchdog on am3 and am4 */
-+	SYSC_QUIRK("wdt", 0x44e35000, 0, 0x10, 0x14, 0x502a0500, 0xfffff0f0,
-+		   SYSC_MODULE_QUIRK_WDT | SYSC_QUIRK_SWSUP_SIDLE),
- 
- #ifdef DEBUG
- 	SYSC_QUIRK("adc", 0, 0, 0x10, -1, 0x47300001, 0xffffffff, 0),
-@@ -1440,14 +1448,14 @@ static void sysc_reset_done_quirk_wdt(struct sysc *ddata)
- 				   !(val & 0x10), 100,
- 				   MAX_MODULE_SOFTRESET_WAIT);
- 	if (error)
--		dev_warn(ddata->dev, "wdt disable spr failed\n");
-+		dev_warn(ddata->dev, "wdt disable step1 failed\n");
- 
--	sysc_write(ddata, wps, 0x5555);
-+	sysc_write(ddata, spr, 0x5555);
- 	error = readl_poll_timeout(ddata->module_va + wps, val,
- 				   !(val & 0x10), 100,
- 				   MAX_MODULE_SOFTRESET_WAIT);
- 	if (error)
--		dev_warn(ddata->dev, "wdt disable wps failed\n");
-+		dev_warn(ddata->dev, "wdt disable step2 failed\n");
- }
- 
- static void sysc_init_module_quirks(struct sysc *ddata)
-@@ -1471,8 +1479,10 @@ static void sysc_init_module_quirks(struct sysc *ddata)
- 	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_SGX)
- 		ddata->module_enable_quirk = sysc_module_enable_quirk_sgx;
- 
--	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_WDT)
-+	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_WDT) {
- 		ddata->reset_done_quirk = sysc_reset_done_quirk_wdt;
-+		ddata->module_disable_quirk = sysc_reset_done_quirk_wdt;
-+	}
- }
- 
- static int sysc_clockdomain_init(struct sysc *ddata)
--- 
-2.23.0
+> +
+> +  Above mentioned are the clock (phase) delays which are to be configured in the
+> +  controller while switching to particular speed mode. If not specified, driver
+> +  will configure the default value defined for particular mode in it.
+>  
+>  Example:
+>  	sdhci@e0100000 {
+> -- 
+> 2.17.1
+> 
