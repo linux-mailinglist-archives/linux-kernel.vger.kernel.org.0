@@ -2,165 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3188DB7F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 21:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D288DB7FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 21:49:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440520AbfJQTqX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 15:46:23 -0400
-Received: from mga04.intel.com ([192.55.52.120]:15832 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387813AbfJQTqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 15:46:23 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2019 12:46:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,308,1566889200"; 
-   d="scan'208";a="199471795"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga003.jf.intel.com with ESMTP; 17 Oct 2019 12:46:22 -0700
-Date:   Thu, 17 Oct 2019 12:46:22 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v7 1/7] KVM: CPUID: Fix IA32_XSS support in CPUID(0xd,i)
- enumeration
-Message-ID: <20191017194622.GI20903@linux.intel.com>
-References: <20190927021927.23057-1-weijiang.yang@intel.com>
- <20190927021927.23057-2-weijiang.yang@intel.com>
- <CALMp9eRXoyoX6GHQgVTXemJjm69MwqN+VDN47X=5BN36rvrAgA@mail.gmail.com>
+        id S2440689AbfJQTtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 15:49:14 -0400
+Received: from mail-qt1-f175.google.com ([209.85.160.175]:35300 "EHLO
+        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389032AbfJQTtO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 15:49:14 -0400
+Received: by mail-qt1-f175.google.com with SMTP id m15so5430643qtq.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 12:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ld3QzIh9Kjp1LuhDbcRleycPavRHyknoLj8FLlpV0Qk=;
+        b=MrtkfAXWDyFPrQeJGyQMnrzfGNn9ZzfQoSr7ab8+6Vn3/I1WewjPpluIQ0oEnHzU6x
+         RbbFLfuxUp8AdQTshlcQW0ke8X9Ly8qU96mQKLy2jeWJVZ2k2b7ObKmvhjtqNlAUu7L8
+         O9D0/gCKw/bXO0nk70ak/lIwLDeaKrbakyzDLjw/fRZavwu4zKFfllHMEZ/GHoQqq1uq
+         n5SN7BhRmIFSN2UmXVOhblbx4f3qn88ugfpNB8LmFjR/Jq+hzjdrQjtjJEc381dRtcfk
+         d4Pz4ZvgIFQo8IBNP9JWPq71s50X7ZTYJVLIwKM9AEfw60dM2BBrWwPwcLwuvVXporns
+         aqLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ld3QzIh9Kjp1LuhDbcRleycPavRHyknoLj8FLlpV0Qk=;
+        b=nOj4hCOCTgwKZ3hCjEulqfTP/yiM1uPrjPf56hTYzCjh6hD+GBRu8sDz5vJzSjxngp
+         wKmZd2IKSTuOBzZz+iS7jhhMbot33Dxg+f5vx49TvoNSyUctsfSfjETS6RqECrsZRQk/
+         HMrDN2r0UA9fKPZYBRgfvmhDOzZL/BvsMiyWqZdBrOH8RH30PZXQ9UjM0rxEnGztGA1S
+         MRY2DDxKMkMYgM8cRg0oiT0olSU/dJqa5JhtQMET+BCObLokcvC4fNJ/Lo+aRAnqe4Ft
+         7grTwm4jYi37eR5LlPhy/U/y+YK9n6wR17FDf5mqGLXZGZHgicd1qPY5Rd7sBps45wx2
+         Hvsg==
+X-Gm-Message-State: APjAAAVNB0T8HnfMX92EkLC+XzVutD6O2IqrKk3HAB4ynF+yyFJk1w8n
+        7aVBihMW+eHyyH/e2EgvLto=
+X-Google-Smtp-Source: APXvYqw7W1nN2VgpB3pKUsKoIuG8iuxcpVkxsajuI3J8hIyY/qE0SoaWx1jSMrNcx1l7V4u1lMcm/w==
+X-Received: by 2002:a0c:91bd:: with SMTP id n58mr5833422qvn.62.1571341752745;
+        Thu, 17 Oct 2019 12:49:12 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([177.195.211.77])
+        by smtp.gmail.com with ESMTPSA id v139sm1751962qkb.53.2019.10.17.12.49.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2019 12:49:11 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 0250A4DD66; Thu, 17 Oct 2019 16:49:07 -0300 (-03)
+Date:   Thu, 17 Oct 2019 16:49:07 -0300
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] libtraceevent: perf script -g python segfaults
+Message-ID: <20191017194907.GC3600@kernel.org>
+References: <20191017154205.GC8974@kernel.org>
+ <20191017143841.317b26b5@gandalf.local.home>
+ <20191017144114.48e25298@gandalf.local.home>
+ <20191017192832.GB3600@kernel.org>
+ <20191017153733.630cd5eb@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALMp9eRXoyoX6GHQgVTXemJjm69MwqN+VDN47X=5BN36rvrAgA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20191017153733.630cd5eb@gandalf.local.home>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 10:26:10AM -0700, Jim Mattson wrote:
-> On Thu, Sep 26, 2019 at 7:17 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
-> > @@ -414,6 +419,50 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
-> >         }
-> >  }
+Em Thu, Oct 17, 2019 at 03:37:33PM -0400, Steven Rostedt escreveu:
+> On Thu, 17 Oct 2019 16:28:32 -0300
+> Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
+> 
+> > Em Thu, Oct 17, 2019 at 02:41:14PM -0400, Steven Rostedt escreveu:
+> > > On Thu, 17 Oct 2019 14:38:41 -0400
+> > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > >   
+> > > >  struct tep_event *trace_find_next_event(struct tep_handle *pevent,
+> > > >  					struct tep_event *event)
+> > > >  {
+> > > > +	static struct tep_event **all_events;
+> > > >  	static int idx;
+> > > >  	int events_count;
+> > > > -	struct tep_event *all_events;  
+> > > 
+> > > If we are going to use static variables, let's make them all static and
+> > > optimize it a little more...  
+> > 
+> > I'll test it, but can't you have this somewhere else, i.e. at
+> > tep_handle perhaps?
+> > 
 > >
-> > +static inline void do_cpuid_0xd_mask(struct kvm_cpuid_entry2 *entry, int index)
-> > +{
-> > +       unsigned int f_xsaves = kvm_x86_ops->xsaves_supported() ? F(XSAVES) : 0;
 > 
-> Does Intel have CPUs that support XSAVES but don't support the "enable
-> XSAVES/XRSTORS" VM-execution control?
+> Or we can nuke the function entirely, it's a rather silly helper
+> anyway. Just do this:
 
-I doubt it.
+I like it, that is a good nuke use, nice button to press! :-)
 
-> If so, what is the behavior of XSAVESXRSTORS on those CPUs in VMX
-> non-root mode?
+Testing it now...
 
-#UD.  If not, the CPU would be in violation of the SDM:
-
-  If the "enable XSAVES/XRSTORS" VM-execution control is 0, XRSTORS causes
-  an invalid-opcode exception (#UD).
-
-> If not, why is this conditional F(XSAVES) here?
-
-Because it's technically legal for the control to not be supported even
-if the host doesn't have support.
-
-> > +       /* cpuid 0xD.1.eax */
-> > +       const u32 kvm_cpuid_D_1_eax_x86_features =
-> > +               F(XSAVEOPT) | F(XSAVEC) | F(XGETBV1) | f_xsaves;
-> > +       u64 u_supported = kvm_supported_xcr0();
-> > +       u64 s_supported = kvm_supported_xss();
-> > +       u64 supported;
-> > +
-> > +       switch (index) {
-> > +       case 0:
-> > +               entry->eax &= u_supported;
-> > +               entry->ebx = xstate_required_size(u_supported, false);
-> 
-> EBX could actually be zero, couldn't it? Since this output is
-> context-dependent, I'm not sure how to interpret it when returned from
-> KVM_GET_SUPPORTED_CPUID.
-
-*sigh*.  It took me something like ten read throughs to understand what
-you're saying.
-
-Yes, it could be zero, though that ship may have sailed since the previous
-code reported a non-zero value.  Whatever is done, KVM should be consistent
-for all indices, i.e. either report zero or the max size.
-
-> > +               entry->ecx = entry->ebx;
-> > +               entry->edx = 0;
-> 
-> Shouldn't this be: entry->edx &= u_supported >> 32?
-
-Probably.  The confusion likely stems from this wording in the SDM, where
-it states the per-bit behavior and then also says all bits are reserved.
-I think it makes sense to do as Jim suggested, and defer the reserved bit
-handling to kvm_supported_{xcr0,xss}().
-
-  Bit 31 - 00: Reports the supported bits of the upper 32 bits of XCR0.
-  XCR0[n+32] can be set to 1 only if EDX[n] is 1.
-  Bits 31 - 00: Reserved
+- Arnaldo
  
-> > +               break;
-> > +       case 1:
-> > +               supported = u_supported | s_supported;
-> > +               entry->eax &= kvm_cpuid_D_1_eax_x86_features;
-> > +               cpuid_mask(&entry->eax, CPUID_D_1_EAX);
-> > +               entry->ebx = 0;
-> > +               entry->edx = 0;
+> -- Steve
 > 
-> Shouldn't this be: entry->edx &= s_supported >> 32?
+> 
+> diff --git a/tools/perf/util/scripting-engines/trace-event-perl.c b/tools/perf/util/scripting-engines/trace-event-perl.c
+> index b93f36b887b5..f1d5f564aa46 100644
+> --- a/tools/perf/util/scripting-engines/trace-event-perl.c
+> +++ b/tools/perf/util/scripting-engines/trace-event-perl.c
+> @@ -537,10 +537,11 @@ static int perl_stop_script(void)
+>  
+>  static int perl_generate_script(struct tep_handle *pevent, const char *outfile)
+>  {
+> +	int i, not_first, count, nr_events;
+> +	struct tep_event **all_events;
+>  	struct tep_event *event = NULL;
+>  	struct tep_format_field *f;
+>  	char fname[PATH_MAX];
+> -	int not_first, count;
+>  	FILE *ofp;
+>  
+>  	sprintf(fname, "%s.pl", outfile);
+> @@ -601,8 +602,11 @@ sub print_backtrace\n\
+>  }\n\n\
+>  ");
+>  
+> +	nr_events = tep_get_events_count(pevent);
+> +	all_events = tep_list_events(pevent, TEP_EVENT_SORT_ID);
+>  
+> -	while ((event = trace_find_next_event(pevent, event))) {
+> +	for (i = 0; all_events && i < nr_events; i++) {
+> +		event = all_events[i];
+>  		fprintf(ofp, "sub %s::%s\n{\n", event->system, event->name);
+>  		fprintf(ofp, "\tmy (");
+>  
+> diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+> index 87ef16a1b17e..2a148a10d0de 100644
+> --- a/tools/perf/util/scripting-engines/trace-event-python.c
+> +++ b/tools/perf/util/scripting-engines/trace-event-python.c
+> @@ -1590,10 +1590,11 @@ static int python_stop_script(void)
+>  
+>  static int python_generate_script(struct tep_handle *pevent, const char *outfile)
+>  {
+> +	int i, not_first, count, nr_events;
+> +	struct tep_event **all_events;
+>  	struct tep_event *event = NULL;
+>  	struct tep_format_field *f;
+>  	char fname[PATH_MAX];
+> -	int not_first, count;
+>  	FILE *ofp;
+>  
+>  	sprintf(fname, "%s.py", outfile);
+> @@ -1638,7 +1639,11 @@ static int python_generate_script(struct tep_handle *pevent, const char *outfile
+>  	fprintf(ofp, "def trace_end():\n");
+>  	fprintf(ofp, "\tprint(\"in trace_end\")\n\n");
+>  
+> -	while ((event = trace_find_next_event(pevent, event))) {
+> +	nr_events = tep_get_events_count(pevent);
+> +	all_events = tep_list_events(pevent, TEP_EVENT_SORT_ID);
+> +
+> +	for (i = 0; all_events && i < nr_events; i++) {
+> +		event = all_events[i];
+>  		fprintf(ofp, "def %s__%s(", event->system, event->name);
+>  		fprintf(ofp, "event_name, ");
+>  		fprintf(ofp, "context, ");
+> 
 
-Same as above.
- 
-> > +               entry->ecx &= s_supported;
-> > +               if (entry->eax & (F(XSAVES) | F(XSAVEC)))
-> > +                       entry->ebx = xstate_required_size(supported, true);
-> 
-> As above, can't EBX just be zero, since it's context-dependent? What
-> is the context when processing KVM_GET_SUPPORTED_CPUID? And why do we
-> only fill this in when XSAVES or XSAVEC is supported?
-> 
-> > +               break;
-> > +       default:
-> > +               supported = (entry->ecx & 1) ? s_supported : u_supported;
-> > +               if (!(supported & ((u64)1 << index))) {
-> 
-> Nit: 1ULL << index.
+-- 
 
-Even better:  BIT_ULL(index)
-
-> > +                       entry->eax = 0;
-> > +                       entry->ebx = 0;
-> > +                       entry->ecx = 0;
-> > +                       entry->edx = 0;
-> > +                       return;
-> > +               }
-> > +               if (entry->ecx)
-> > +                       entry->ebx = 0;
-> 
-> This seems to back up my claims above regarding the EBX output for
-> cases 0 and 1, but aside from those subleaves, is this correct? For
-> subleaves > 1, ECX bit 1 can be set for extended state components that
-> need to be cache-line aligned. Such components could map to a valid
-> bit in XCR0 and have a non-zero offset from the beginning of the
-> non-compacted XSAVE area.
-> 
-> > +               entry->edx = 0;
-> 
-> This seems too aggressive. See my comments above regarding EDX outputs
-> for cases 0 and 1.
-> 
-> > +               break;
-> > +       }
-> > +}
+- Arnaldo
