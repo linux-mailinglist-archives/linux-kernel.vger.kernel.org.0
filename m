@@ -2,130 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7105DA9DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 12:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E23DFDA9EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 12:26:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392918AbfJQKWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 06:22:44 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:38356 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1726248AbfJQKWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 06:22:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D70DC1BF7;
-        Thu, 17 Oct 2019 03:22:18 -0700 (PDT)
-Received: from [10.1.195.43] (unknown [10.1.195.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 65DB13F718;
-        Thu, 17 Oct 2019 03:22:17 -0700 (PDT)
-Subject: Re: [RFC PATCH v3 2/6] sched/cpufreq: Attach perf domain to sugov
- policy
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-pm@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-        rjw@rjwysocki.net, viresh.kumar@linaro.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, qperret@qperret.net,
-        patrick.bellasi@matbug.net, dh.han@samsung.com
-References: <20191011134500.235736-1-douglas.raillard@arm.com>
- <20191011134500.235736-3-douglas.raillard@arm.com>
- <4ebf6419-c8e0-3998-41e0-3f7b49b34084@arm.com>
-From:   Douglas Raillard <douglas.raillard@arm.com>
-Organization: ARM
-Message-ID: <686407a7-3074-0fa2-e041-a9931f467aea@arm.com>
-Date:   Thu, 17 Oct 2019 11:22:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S2408753AbfJQK0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 06:26:02 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39294 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2404947AbfJQK0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 06:26:01 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E77D4691DBEF2CE84F46;
+        Thu, 17 Oct 2019 18:25:58 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 17 Oct 2019 18:25:52 +0800
+From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     yuqi jin <jinyuqi@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>
+Subject: [RFC] lib: optimize cpumask_local_spread()
+Date:   Thu, 17 Oct 2019 18:23:08 +0800
+Message-ID: <1571307788-43169-1-git-send-email-zhangshaokun@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <4ebf6419-c8e0-3998-41e0-3f7b49b34084@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB-large
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dietmar,
+From: yuqi jin <jinyuqi@huawei.com>
 
-On 10/17/19 9:57 AM, Dietmar Eggemann wrote:
-> On 11/10/2019 15:44, Douglas RAILLARD wrote:
-> 
-> [...]
-> 
->> @@ -66,6 +70,38 @@ static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
->>   
->>   /************************ Governor internals ***********************/
->>   
->> +#ifdef CONFIG_ENERGY_MODEL
->> +static void sugov_policy_attach_pd(struct sugov_policy *sg_policy)
->> +{
->> +	struct em_perf_domain *pd;
->> +	struct cpufreq_policy *policy = sg_policy->policy;
-> 
-> Shouldn't always order local variable declarations from longest to
-> shortest line?
+In the multi-processor and NUMA system, A device may have many numa
+nodes belonging to multiple cpus. When we get a local numa, it is better
+to find the node closest to the local numa node to return instead of
+going to the online cpu immediately.
 
-Can't find any reference to that rule in the coding style, although I'm happy to change order
-if that's deemed useful.
+For example, In Huawei Kunpeng 920 system, there are 4 NUMA node(0 -3)
+in the 2-socket system(0 - 1). If the I/O device is in socket1
+and the local NUMA node is 2, we shall choose the non-local node3 in
+the same socket when cpu core in NUMA node2 is less that I/O requirements.
+If we directly pick one cpu core from all online ones, it may be in
+the another socket and it is not friendly for performance.
 
-> 
->> +
->> +	sg_policy->pd = NULL;
->> +	pd = em_cpu_get(policy->cpu);
->> +	if (!pd)
->> +		return;
->> +
->> +	if (cpumask_equal(policy->related_cpus, to_cpumask(pd->cpus)))
->> +		sg_policy->pd = pd;
->> +	else
->> +		pr_warn("%s: Not all CPUs in schedutil policy %u share the same perf domain, no perf domain for that policy will be registered\n",
->> +			__func__, policy->cpu);
-> 
-> Maybe {} because of 2 lines?
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Signed-off-by: yuqi jin <jinyuqi@huawei.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+---
+ lib/cpumask.c | 78 ++++++++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 67 insertions(+), 11 deletions(-)
 
-+1
+diff --git a/lib/cpumask.c b/lib/cpumask.c
+index 0cb672eb107c..8f89c7cebfb0 100644
+--- a/lib/cpumask.c
++++ b/lib/cpumask.c
+@@ -192,6 +192,33 @@ void __init free_bootmem_cpumask_var(cpumask_var_t mask)
+ }
+ #endif
+ 
++static void calc_node_distance(int *node_dist, int node)
++{
++	int i;
++
++	for (i = 0; i < nr_node_ids; i++)
++		node_dist[i] = node_distance(node, i);
++}
++
++static int find_nearest_node(int *node_dist, bool *used_flag)
++{
++	int i, min_dist = node_dist[0], node_id = -1;
++
++	for (i = 0; i < nr_node_ids; i++)
++		if (used_flag[i] == 0) {
++			min_dist = node_dist[i];
++			node_id = i;
++			break;
++		}
++	for (i = 0; i < nr_node_ids; i++)
++		if (node_dist[i] < min_dist && used_flag[i] == 0) {
++			min_dist = node_dist[i];
++			node_id = i;
++		}
++
++	return node_id;
++}
++
+ /**
+  * cpumask_local_spread - select the i'th cpu with local numa cpu's first
+  * @i: index number
+@@ -205,7 +232,8 @@ void __init free_bootmem_cpumask_var(cpumask_var_t mask)
+  */
+ unsigned int cpumask_local_spread(unsigned int i, int node)
+ {
+-	int cpu;
++	int cpu, j, id, *node_dist;
++	bool *used_flag;
+ 
+ 	/* Wrap: we always want a cpu. */
+ 	i %= num_online_cpus();
+@@ -215,19 +243,47 @@ unsigned int cpumask_local_spread(unsigned int i, int node)
+ 			if (i-- == 0)
+ 				return cpu;
+ 	} else {
+-		/* NUMA first. */
+-		for_each_cpu_and(cpu, cpumask_of_node(node), cpu_online_mask)
+-			if (i-- == 0)
+-				return cpu;
++		node_dist = kmalloc_array(nr_node_ids,
++			sizeof(int), GFP_KERNEL);
++		if (!node_dist)
++			for_each_cpu(cpu, cpu_online_mask)
++				if (i-- == 0)
++					return cpu;
+ 
+-		for_each_cpu(cpu, cpu_online_mask) {
+-			/* Skip NUMA nodes, done above. */
+-			if (cpumask_test_cpu(cpu, cpumask_of_node(node)))
+-				continue;
++		used_flag = kmalloc_array(nr_node_ids,
++			sizeof(bool), GFP_KERNEL);
++		if (!used_flag)
++			for_each_cpu(cpu, cpu_online_mask)
++				if (i-- == 0) {
++					kfree(node_dist);
++					return cpu;
++				}
++		memset(used_flag, 0, nr_node_ids * sizeof(bool));
+ 
+-			if (i-- == 0)
+-				return cpu;
++		calc_node_distance(node_dist, node);
++		for (j = 0; j < nr_node_ids; j++) {
++			id = find_nearest_node(node_dist, used_flag);
++			if (id < 0)
++				break;
++			for_each_cpu_and(cpu,
++				cpumask_of_node(id), cpu_online_mask)
++				if (i-- == 0) {
++					kfree(node_dist);
++					kfree(used_flag);
++					return cpu;
++				}
++			used_flag[id] = 1;
+ 		}
++
++		for_each_cpu(cpu, cpu_online_mask)
++			if (i-- == 0) {
++				kfree(node_dist);
++				kfree(used_flag);
++				return cpu;
++			}
++
++		kfree(node_dist);
++		kfree(used_flag);
+ 	}
+ 	BUG();
+ }
+-- 
+2.7.4
 
->> +}
->> +
->> +static struct em_perf_domain *sugov_policy_get_pd(
->> +						struct sugov_policy *sg_policy)
-> 
-> 
-> Maybe this way? This format is already used in this file.
-> 
-> static struct em_perf_domain *
-> sugov_policy_get_pd(struct sugov_policy *sg_policy)
-> 
-
-I also prefer this kind of non-indented form that always stays indented across renames :)
-
->> +{
->> +	return sg_policy->pd;
->> +}
->> +#else /* CONFIG_ENERGY_MODEL */
->> +static void sugov_policy_attach_pd(struct sugov_policy *sg_policy) {}
->> +static struct em_perf_domain *sugov_policy_get_pd(
->> +						struct sugov_policy *sg_policy)
->> +{
->> +	return NULL;
->> +}
->> +#endif /* CONFIG_ENERGY_MODEL */
->> +
->>   static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
->>   {
->>   	s64 delta_ns;
->> @@ -859,6 +895,9 @@ static int sugov_start(struct cpufreq_policy *policy)
->>   							sugov_update_shared :
->>   							sugov_update_single);
->>   	}
->> +
->> +	sugov_policy_attach_pd(sg_policy);
->> +
->>   	return 0;
->>   }
-> 
-> A sugov_policy_detach_pd() called from sugov_stop() (doing for instance
-> the g_policy->pd = NULL) is not needed?
-
- From what I could see, sugov_stop() will always be followed by sugov_start() before
-it's used again, so that does not seem more risky than not de-initializing sg_cpu's
-for example.
