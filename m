@@ -2,120 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65F99DA852
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:30:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE9ABDA855
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408513AbfJQJaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 05:30:30 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46050 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393479AbfJQJa3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 05:30:29 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1so988037pgj.12
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 02:30:27 -0700 (PDT)
+        id S2408536AbfJQJbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 05:31:31 -0400
+Received: from mail-eopbgr780047.outbound.protection.outlook.com ([40.107.78.47]:11392
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2393479AbfJQJba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 05:31:30 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dahryvCP/fa5HiLi27dIJIP4+hSRejdXJuTA2cpRqbRbVpsEyQ7BPGQLMWgbcVrlFNX8QAYF3+GwXD0TPI2HBdrTbiSuEETwzAFyYWi5NoTHzZo8tD59RXVOFf+6srl3W/jMtfSBxzx10QyWErvFnVwbCmlMlNVfkvJuvaytF9VjLYIHHy0TqDqS9oXOiEDy7PQC4rMckCw6VDm1E04r26bqFlmZqJ2t1KYE6XN659k5ZrZcwChgFMS/X0YPh8MRwCcwE0jDJ6aow0l8IJcpspxTfwiYJafEVj6bEQ9lQXuouRCB15Q20cOovlg2hBPavOuXP4saBbydLZz2AqWnlg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uJiKzlV0mZCzK1+yNJIOzeXVBY8h8tN0j5HF3OyqZS4=;
+ b=lgtE544Q8FBLccZFXHJg+lVc/w+Kgs21NuV8/uU7XBoYDBi/lPdxfclY80wMlgtptogOjqwpy7OAhOk7vRmhfR0Nna5WoLJ2Y3fw2khXtoUShis9lwiOqWsFt2Mkf9MMjrLuSnQVMe9VH5Lebenm2BGQfQK5644I0XHmIDtoiqSgoQe8CTLgMlQS29C/v+tnok58l3slyB20A8Xzq0lvJfstRKxat1PzVmEuKr+ymDB3v8OxzT5QJleTkWyAJOOqTbEOiTAkn9tN12X6jnALcxv4JR0eTsSEFsbbLASjZBilc+Wmzubom+Gyu7PIjD30STozevDDCrZjztZsvS7q0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BhmzWijDe5yao7vgl7kT7tSRmrdD456yMAPTwvVZ6aE=;
-        b=ON5RjH0pSpZU2Cd7Fz0YbphH0L/Em2TGlv7YnZJBvpgopaCB/FKNcHBXq8HKwYUg7P
-         9zkm0CUSDi8v7DL/pyzSsR88zRdT+gXAfP2h3/W5kvOKlunjpsrKxnUOTDwT80UUeo50
-         4D6r0R0NHfCVid/eMA8W/jEIqrs+6PGfUdVEPeKkuRyFGFdx81pc41weawhWqG27vqEO
-         ueMpeFIhp2mICDuxVZfklOTuQxnr12o48mmafzWwEBS3QILVhVMTtY6n5DI3On4w/GId
-         e3zbFJ3f17wCZh5HFUOnvhEslPT7wGccw26PeqA8E36a8zrcusugKBnVc2c7y91AH2U3
-         ZCNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BhmzWijDe5yao7vgl7kT7tSRmrdD456yMAPTwvVZ6aE=;
-        b=V0qKQkjt5mQHhFLu03fkHv9QaK47ykILW7sBtLmC1QZ3B2CrENK1B+5jxHk+dZp67P
-         JKa2zVFQFARYKufehWxevivuDmbjD4ZPNTn0FipTGsjGUpPDiHkGdAu+K7Et2z3U7i5M
-         uMuXdneErd7H/i5z47Ll3QP49VSUzZDcIZjWS3nOaVwtYdOX2exceY54R/AIuDs4vZTO
-         5VKK0s0IghSasi2h9rpDyMj/oBdfYILcUhP9iAM7imImEdMM0BnRwf1T3g7E0Ic91Qo7
-         uxkrxC90fnrW+Kx/qoRt/UNDqwTX0yNvOB9yDYr84G5FGRVQeiQ2fCw9xzdQZ+E/16Ja
-         plmQ==
-X-Gm-Message-State: APjAAAVNGy/A6ft54vTgQj/qDvR2K5i7x7CgwhsuDFih4ygsW5SaTGgN
-        IwWRfISnbkdWS6fS7PtY3RTGZw==
-X-Google-Smtp-Source: APXvYqzE6ySNtpyo3AA5URWU3jKLTzHmlb++gJiGHbo4eEfHZNF4YHTd0p39zwIlMfLoeZpK1XK1eg==
-X-Received: by 2002:a63:1c47:: with SMTP id c7mr2994536pgm.265.1571304627200;
-        Thu, 17 Oct 2019 02:30:27 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id a17sm1897804pfi.178.2019.10.17.02.30.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 02:30:26 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 15:00:22 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] cpufreq: merge arm_big_little and vexpress-spc
-Message-ID: <20191017093022.du76n64kwzqibqhs@vireshk-i7>
-References: <20191016110344.15259-1-sudeep.holla@arm.com>
- <20191016110344.15259-3-sudeep.holla@arm.com>
- <20191017023936.vgkdfnyaz3r4k74z@vireshk-i7>
- <20191017092628.GD8978@bogus>
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uJiKzlV0mZCzK1+yNJIOzeXVBY8h8tN0j5HF3OyqZS4=;
+ b=dcccMuNbL7nejyqDz/OctC5jlXZ857fXDxu0x3C1JWgsiiCstsWSVWsPPv031yl+cREmYOOGlsY7F+Tv82Dhgqn3NuvkumTez1/2VWzmqhm8Kqi8egcJZU3GZlHgOJq942ZdE2KiczHBS2JQYOXm7WnLDy44Gc9D4+7pQXIRcEA=
+Received: from DM6PR12MB3868.namprd12.prod.outlook.com (10.255.173.213) by
+ DM6PR12MB2889.namprd12.prod.outlook.com (20.179.71.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Thu, 17 Oct 2019 09:31:28 +0000
+Received: from DM6PR12MB3868.namprd12.prod.outlook.com
+ ([fe80::64dd:646d:6fa1:15a1]) by DM6PR12MB3868.namprd12.prod.outlook.com
+ ([fe80::64dd:646d:6fa1:15a1%4]) with mapi id 15.20.2347.023; Thu, 17 Oct 2019
+ 09:31:27 +0000
+From:   vishnu <vravulap@amd.com>
+To:     Mark Brown <broonie@kernel.org>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>
+CC:     "RAVULAPATI, VISHNU VARDHAN RAO" 
+        <Vishnuvardhanrao.Ravulapati@amd.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
+        Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/7] ASoC: amd: No need PCI-MSI interrupts
+Thread-Topic: [PATCH 1/7] ASoC: amd: No need PCI-MSI interrupts
+Thread-Index: AQHVd/NK02/86+8bwUqA0+UYmDRNb6dGCguAgAABq4CAGVYTgA==
+Date:   Thu, 17 Oct 2019 09:31:27 +0000
+Message-ID: <88852f59-477f-59ef-8f6e-559f987022a1@amd.com>
+References: <1569891524-18875-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <BN6PR12MB18093C8EDE60811B3D917DEAF79D0@BN6PR12MB1809.namprd12.prod.outlook.com>
+ <20191001172941.GC4786@sirena.co.uk>
+In-Reply-To: <20191001172941.GC4786@sirena.co.uk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BM1PR01CA0075.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:1::15) To DM6PR12MB3868.namprd12.prod.outlook.com
+ (2603:10b6:5:1c8::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Vishnuvardhanrao.Ravulapati@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.159.251]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 11394baf-2bb5-45d5-7159-08d752e4c92e
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: DM6PR12MB2889:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR12MB28893D426A25F12EB31781EEE76D0@DM6PR12MB2889.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 01930B2BA8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(376002)(366004)(39860400002)(396003)(199004)(189003)(6506007)(76176011)(66066001)(8676002)(14454004)(66556008)(66476007)(31686004)(66946007)(66446008)(64756008)(102836004)(81156014)(81166006)(4744005)(25786009)(7736002)(386003)(53546011)(316002)(6636002)(305945005)(478600001)(99286004)(5660300002)(31696002)(36756003)(52116002)(71190400001)(71200400001)(186003)(2906002)(26005)(54906003)(110136005)(11346002)(486006)(446003)(6246003)(476003)(4326008)(2616005)(8936002)(229853002)(6486002)(6116002)(3846002)(6436002)(6512007)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2889;H:DM6PR12MB3868.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: r3DLhRaI67eUdMhjLzeQpTZZuhOrQobL3hlbv7/5/L668wI7/JTpUaX3VgKlM/zAqrLR1OB05J4XR76uA/VTUOTKUubc60hZFe9oB6qWy6oy1H1ALVAgTBzBGM09Ob/IyRGUcKl5RstKlHNZbzSNkGjojk8sT+hsbeq62FGDb4sl7R69IV9LwpwkDBRcQqJ1oLcm0ZEO90o0llQDntQitp+VWFB3muib8ym13OZvF0gG3ZAhUH0SEeOQH/Q/ETnrHub4s5C8dK3SdDiqCsBNrGXnx/af9Kn9xmiiBAgmZjElUTEd+/PmRwIM6G49y62qjIQ5uQXx3LfoZ1yKO2Z0fBPnlI8t+w9HQKAF3G3e/07NmMOoWvLH0LBhlaSGMqpeWJt4sQIR/y/vL7uOO5y84i9P2GnOFH0ygtaSHTvdLXc=
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <B2688D0F3331A44F8F513ACF4C12B497@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017092628.GD8978@bogus>
-User-Agent: NeoMutt/20180716-391-311a52
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11394baf-2bb5-45d5-7159-08d752e4c92e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2019 09:31:27.8818
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yblcpDkHn9iBnrbVooI0QywtbWY1KbqwlLcMUwPyM5I0VNoPZ1fIS9Oiej3F40sGd6nJkoZ3zgWJ+smZdGASzg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2889
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-10-19, 10:26, Sudeep Holla wrote:
-> On Thu, Oct 17, 2019 at 08:09:36AM +0530, Viresh Kumar wrote:
-> > On 16-10-19, 12:03, Sudeep Holla wrote:
-> > > arm_big_little cpufreq driver was designed as a generic big little
-> > > driver that could be used by any platform and make use of bL switcher.
-> > > Over years alternate solutions have be designed and merged to deal with
-> > > bL/HMP systems like EAS.
-> > >
-> > > Also since no other driver made use of generic arm_big_little cpufreq
-> > > driver except Vexpress SPC, we can merge them together as vexpress-spc
-> > > driver used only on Vexpress TC2(CA15_CA7) platform.
-> > >
-> > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > ---
-> > >  MAINTAINERS                            |   5 +-
-> > >  drivers/cpufreq/Kconfig.arm            |  12 +-
-> > >  drivers/cpufreq/Makefile               |   2 -
-> > >  drivers/cpufreq/arm_big_little.c       | 658 ------------------------
-> > >  drivers/cpufreq/arm_big_little.h       |  43 --
-> > >  drivers/cpufreq/vexpress-spc-cpufreq.c | 661 ++++++++++++++++++++++++-
-> > >  6 files changed, 652 insertions(+), 729 deletions(-)
-> > >  delete mode 100644 drivers/cpufreq/arm_big_little.c
-> > >  delete mode 100644 drivers/cpufreq/arm_big_little.h
-> >
-> > The delta produced here is enormous probably because you copy/pasted things. I
-> > am wondering if using git mv to rename arm_big_little.c and then move spc bits
-> > into it will make this delta smaller to review ?
-> >
-> 
-> Yes, I did a quick try but slightly different order. As I need the final
-> driver to be vexpress-spc-cpufreq.c, I am thinking of first merging
-> vexpress-spc-cpufreq.c into arm_big_little.c and then renaming it back
-> later. Does that sound good ?
 
-Maybe git can produce short diff even if you do this in a single patch. But two
-would be fine if that makes me review lesss stuff :)
+On 01/10/19 10:59 PM, Mark Brown wrote:
+> On Tue, Oct 01, 2019 at 05:23:43PM +0000, Deucher, Alexander wrote:
+>=20
+>>> ACP-PCI controller driver does not depends msi interrupts.
+>>> So removed msi related pci functions which have no use and does not imp=
+act
+>>> on existing functionality.
+>=20
+>> In general, however, aren't MSIs preferred to legacy interrupts?
+>=20
+> As I understand it.  Or at the very least I'm not aware of any situation
+> where they're harmful.  It'd be good to have a clear explanation of why
+> we're removing the support.
+>=20
+>> Doesn't the driver have to opt into MSI support?  As such, won't
+>> removing this code effectively disable MSI support?
+>=20
+> Yes.
+>=20
+Hi Mark,
 
-> 
-> drivers/cpufreq/arm_big_little.c       | 78 ++++++++++++++++++++------
-> drivers/cpufreq/arm_big_little.h       | 43 --------------
-> drivers/cpufreq/vexpress-spc-cpufreq.c | 71 -----------------------
-> 6 files changed, 68 insertions(+), 145 deletions(-)
-> delete mode 100644 drivers/cpufreq/arm_big_little.h
-> delete mode 100644 drivers/cpufreq/vexpress-spc-cpufreq.c
-> 
-> If we first rename arm_big_little.c, then we need change the final name
-> otherwise we end up with same delta as the new name file will be merged
-> into vexpress-spc-cpufreq.c
+Any further updates on this patch.
 
-
-
--- 
-viresh
+Regards,
+Vishnu
