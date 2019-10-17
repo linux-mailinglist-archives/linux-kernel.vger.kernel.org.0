@@ -2,75 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27A49DA3F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 04:42:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B57D1DA3F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 04:42:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407323AbfJQCmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 22:42:02 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:36581 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388198AbfJQCmB (ORCPT
+        id S2407415AbfJQCmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 22:42:06 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42115 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407367AbfJQCmD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 22:42:01 -0400
-Received: by mail-io1-f72.google.com with SMTP id g126so1246989iof.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 19:42:01 -0700 (PDT)
+        Wed, 16 Oct 2019 22:42:03 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q12so607993pff.9
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 19:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=w50KpVZhAwyoQK+bFJNDVlkqktJRIaTp8AHjS4MyY98=;
+        b=wYvJATFs5UC+eRpmP71Wq2XbCsR7tcsWHcxFtdlx3c/ZSrm8bDgLAiP2yBfljypLH0
+         jKTu0T9H+JxZgjiQCrFfL2ilZsRKKhNzw+ony7qUMN8c07VnWuTqlc/PHDNuRs3dKxtm
+         vdkmkFyJ6LnEDEvXMJczBtvyQJ68Apm0HiZLT4Z95iPTJk2+Fu1c6qNv/mVoDZIlyhBr
+         l+h9iFJyWXf+p11sj92brHslhxdk5mFiV16tMXkZVPag0e2XV57RukfnOLlyOtVK3DoM
+         rnqnSE+IrVb7+KEKe9fOUzQsXPo07DOHEXynMuhZJtnw7CwNQ+XuCMCxGtOONbN2EpS2
+         pNDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=7h0gQqNrYRzsWj9R4CAYCu9XOxzaPAZTOTXlm38+fvI=;
-        b=fOtYvrvlmA4cuYHd9VyqCVPLLSTW3hl3qdY63NBsTwmDvj2bBNWmQhVPBjcdMVmt2i
-         8ZgjQIlfVvSsH1q3ys3qOA+FZEwpGSfDhaHXpdMKcpDSwysTTQwPLlmEKQzkTec8l8DP
-         WTHV51dEJMz2ykqUTc510QX/Czby3qCKEb2OOTT9+4urgOmLkrsH3oynuvV4n1ijoYD/
-         40delF9Ecv4mCUIfz4rS745hZmUtBVeeh3/s+ey6UdhGlAbnl8E00PD5OoayVTTjxu3x
-         uw1Egx9+wjgNhlELax7KtdtCgy4KHp8v8CS2E/uBzoYBnrT2svsmttSle1Q4czSEsmN+
-         qYFQ==
-X-Gm-Message-State: APjAAAXUZPkJb4Ht83iS4irkSrnXh4p4UTmhYrbhbBf9zYez2EFe5y20
-        XNBPkkw63fTJ5WOaChWeZZW+WKz9ngId1uzQ58X6O57jN+Xs
-X-Google-Smtp-Source: APXvYqxm/PZKRcr2VOn2bSEPROOTxJZd4s/gFYz6yxRyhamcXwHcbHmC0uB12SwLAgbX/bUP1WUzw8YXMpgkcwGIQdZ6LiO9FDXe
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w50KpVZhAwyoQK+bFJNDVlkqktJRIaTp8AHjS4MyY98=;
+        b=dCyLMSy3Zg0gd2/ZacrMgsES7j/E4pCG67O7X8ZsFK6cRoJ62JYSlZh2MQqeZCip5G
+         ODWbVhBY+rj4SsBIhR2d0TRns+hvOKiXxVa3qRk40M6Ou7mf+AP4vN2PzYR1TGpnAWc0
+         1iluI1QVn2S14IFIKvvYD3ZxwNaTcmGO9V7PoGgkAR7SySMv4LM3yGHZv3Bf+nogiAP2
+         jb8nrjTxqSSPFBoApHV4VJTh5UBH2TBhvkbSSTwdnFQ0dLeJRV+z6hFYJN7/wVP07V7T
+         LvW18WvRk8N3F3wyJu/UaPvFPGjsnheQU1JRbwHrGnpWy8h9eNOWeU0rJl3goRKUN2gG
+         f9Qw==
+X-Gm-Message-State: APjAAAWwuDpX13/iMLfSmE2+IJD9EZjcuhoj/fe2H0EQHlDWLLSVyaCb
+        FLA45PUpEJ/2/zPHE/qHdbvGq42C/Ho=
+X-Google-Smtp-Source: APXvYqy5bLPP7KyCo0QyKqOM7/aGjivBgkppI0PnQog7qm9zHjIGh6aAtVvKURTYzLJCTCNI22l7xQ==
+X-Received: by 2002:a63:4e52:: with SMTP id o18mr1453491pgl.153.1571280122797;
+        Wed, 16 Oct 2019 19:42:02 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id 192sm481026pfb.110.2019.10.16.19.42.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Oct 2019 19:42:01 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 08:12:00 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] cpufreq: simplify and remove lots of debug messages
+Message-ID: <20191017024200.3hhak2wx7yvjifqh@vireshk-i7>
+References: <20191016110344.15259-1-sudeep.holla@arm.com>
+ <20191016110344.15259-4-sudeep.holla@arm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:3b8b:: with SMTP id n11mr1162464ilh.135.1571280120830;
- Wed, 16 Oct 2019 19:42:00 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 19:42:00 -0700
-In-Reply-To: <000000000000830fe50595115344@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000071e2fc05951229ad@google.com>
-Subject: Re: WARNING: refcount bug in find_key_to_update
-From:   syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>
-To:     aou@eecs.berkeley.edu, dhowells@redhat.com,
-        jarkko.sakkinen@linux.intel.com, jmorris@namei.org,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        linux-security-module@vger.kernel.org, palmer@sifive.com,
-        serge@hallyn.com, syzkaller-bugs@googlegroups.com,
-        torvalds@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016110344.15259-4-sudeep.holla@arm.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On 16-10-19, 12:03, Sudeep Holla wrote:
+> cpufreq_arm_bL_ops is no longer needed after merging the generic
+> arm_big_little and vexpress-spc driver. Remove cpufreq_arm_bL_ops
+> and rename all the bL_* function names to ve_spc_*.
+> 
+> This driver have been used for year now and the extensive debug
+> messages in the driver are not really required anymore.
 
-commit 0570bc8b7c9b41deba6f61ac218922e7168ad648
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu Jul 18 19:26:59 2019 +0000
+This does lots of cleanup in this patch and not strictly what the commit log
+says. Can you please create separate patches for remove ops, debug messages and
+other formatting things ?
 
-     Merge tag 'riscv/for-v5.3-rc1' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11b6e2bb600000
-start commit:   bc88f85c kthread: make __kthread_queue_delayed_work static
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=13b6e2bb600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b6e2bb600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e0ac4d9b35046343
-dashboard link: https://syzkaller.appspot.com/bug?extid=6455648abc28dbdd1e7f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c8adab600000
-
-Reported-by: syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com
-Fixes: 0570bc8b7c9b ("Merge tag 'riscv/for-v5.3-rc1' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+viresh
