@@ -2,93 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F8BFDC58C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B90DADC5AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:03:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410164AbfJRM50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:57:26 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:31567 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733180AbfJRM50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 08:57:26 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46vmJz4VtKzB09b0;
-        Fri, 18 Oct 2019 14:57:23 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=M64u0/vx; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id MA8gt4jfKrnu; Fri, 18 Oct 2019 14:57:23 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46vmJz3NhFzB09Zw;
-        Fri, 18 Oct 2019 14:57:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1571403443; bh=P+VjSeFKR0YVZlm5oe6xprbP52ac0pv0a6AOQUrclV0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=M64u0/vx1KJeUMfPLBz2jFxYbbMSbfmpl2+OuzWSbkbGwFaNqegzEC67qIu3LFiPX
-         6P4YxoIVPsXKPTqIgr1qlPuSVJny52O2xFRTtfoZW90pa8kk0AyHXaZfrhqunqGvWK
-         hwU92378jbMtIN5poP5BwtAJX5Att83hc9NSfPj0=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6F8038B802;
-        Fri, 18 Oct 2019 14:57:23 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id JnffNplE4Ump; Fri, 18 Oct 2019 14:57:23 +0200 (CEST)
-Received: from [192.168.204.43] (unknown [192.168.204.43])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 661508B800;
-        Fri, 18 Oct 2019 14:57:22 +0200 (CEST)
-Subject: Re: [PATCH 1/7] soc: fsl: qe: remove space-before-tab
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
- <20191018125234.21825-2-linux@rasmusvillemoes.dk>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <89dc8d74-b1fc-19f5-d8a5-cd43eda27b4d@c-s.fr>
-Date:   Fri, 18 Oct 2019 14:57:21 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2634075AbfJRNDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 09:03:22 -0400
+Received: from mail.keramplus.com ([212.3.124.226]:9315 "EHLO
+        trixbox1.localdomain" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2634065AbfJRNDV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 09:03:21 -0400
+Received: from 127.0.0.1 (trixbox1.localdomain [127.0.0.1])
+        by trixbox1.localdomain (Postfix) with SMTP id 8932EAD999D;
+        Fri, 18 Oct 2019 01:05:05 +0300 (EEST)
+Received: from [25.129.38.26]
+        by 127.0.0.1;
+        Thu, 17 Oct 2019 23:02:27 +0000
+Message-ID: <fa-p4pr$2$f7---z$wa3-8-ra91k30@49rg4kco.uj5je>
+From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+To:     yiuons@gmail.com
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Date:   Thu, 17 Oct 19 23:02:27 GMT
+X-Mailer: Microsoft Outlook IMO, Build 9.0.2416 (9.0.2910.0)
 MIME-Version: 1.0
-In-Reply-To: <20191018125234.21825-2-linux@rasmusvillemoes.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/alternative;
+        boundary="_D6C4C62.49.."
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--_D6C4C62.49..
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-Le 18/10/2019 à 14:52, Rasmus Villemoes a écrit :
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
->   drivers/soc/fsl/qe/qe.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/fsl/qe/qe.c b/drivers/soc/fsl/qe/qe.c
-> index 417df7e19281..6fcbfad408de 100644
-> --- a/drivers/soc/fsl/qe/qe.c
-> +++ b/drivers/soc/fsl/qe/qe.c
-> @@ -378,8 +378,8 @@ static int qe_sdma_init(void)
->   	}
->   
->   	out_be32(&sdma->sdebcr, (u32) sdma_buf_offset & QE_SDEBCR_BA_MASK);
-> - 	out_be32(&sdma->sdmr, (QE_SDMR_GLB_1_MSK |
-> - 					(0x1 << QE_SDMR_CEN_SHIFT)));
-> +	out_be32(&sdma->sdmr, (QE_SDMR_GLB_1_MSK |
-> +					(0x1 << QE_SDMR_CEN_SHIFT)));
+Greetings
 
-Could you also align the second line properly ?
+My name is Barrister Hans Erich.
 
-Christophe
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
 
->   
->   	return 0;
->   }
-> 
+Your full names ---------
+
+
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+
+--_D6C4C62.49..--
+
