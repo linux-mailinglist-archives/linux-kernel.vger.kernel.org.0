@@ -2,168 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EAE7DAA44
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 12:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1CC1DAA39
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 12:46:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408977AbfJQKsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 06:48:46 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4200 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404935AbfJQKsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 06:48:46 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A2180ED5B096681864B1;
-        Thu, 17 Oct 2019 18:48:44 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 17 Oct 2019 18:48:43 +0800
-From:   Daode Huang <huangdaode@hisilicon.com>
-To:     <jason@lakedaemon.net>, <andrew@lunn.ch>,
-        <gregory.clement@bootlin.com>, <sebastian.hesselbarth@gmail.com>,
-        <tglx@linutronix.de>, <maz@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <nm@ti.com>, <t-kristo@ti.com>, <ssantosh@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH v2] use devm_platform_ioremap_resource() for irqchip drivers
-Date:   Thu, 17 Oct 2019 18:45:54 +0800
-Message-ID: <1571309154-241085-1-git-send-email-huangdaode@hisilicon.com>
-X-Mailer: git-send-email 2.8.1
+        id S2408960AbfJQKqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 06:46:48 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:38936 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S2408933AbfJQKqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 06:46:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3150A1BA8;
+        Thu, 17 Oct 2019 03:46:20 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0D3B3F718;
+        Thu, 17 Oct 2019 03:46:18 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 11:46:16 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Add Marek and Shimoda-san as R-Car PCIE
+ co-maintainers
+Message-ID: <20191017104616.GD9589@e121166-lin.cambridge.arm.com>
+References: <20191016120249.16776-1-horms@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016120249.16776-1-horms@verge.net.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daode Huang <huangdaode@hislicon.com>
+On Wed, Oct 16, 2019 at 02:02:49PM +0200, Simon Horman wrote:
+> At the end of the v5.3 upstream development cycle I stepped down
+> from my role at Renesas.
+> 
+> Pass maintainership of the R-Car PCIE to Marek and Shimoda-san.
+> 
+> Signed-off-by: Simon Horman <horms@verge.net.au>
+> ---
+>  MAINTAINERS | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Use the new helper that wraps the calls to platform_get_resource()
-and devm_ioremap_resource() together
+Hi Geert,
 
-Signed-off-by: Daode Huang <huangdaode@hislicon.com>
----
-changes in v2
-    - address the commnents from Marc
+are you picking this up or I should pick it up ?
 
----
- drivers/irqchip/irq-mvebu-icu.c   | 4 +---
- drivers/irqchip/irq-mvebu-pic.c   | 4 +---
- drivers/irqchip/irq-stm32-exti.c  | 4 +---
- drivers/irqchip/irq-ti-sci-inta.c | 4 +---
- drivers/irqchip/irq-ts4800.c      | 4 +---
- 5 files changed, 5 insertions(+), 15 deletions(-)
+Either way is fine by me.
 
-diff --git a/drivers/irqchip/irq-mvebu-icu.c b/drivers/irqchip/irq-mvebu-icu.c
-index 547045d..a54e4cd 100644
---- a/drivers/irqchip/irq-mvebu-icu.c
-+++ b/drivers/irqchip/irq-mvebu-icu.c
-@@ -347,7 +347,6 @@ builtin_platform_driver(mvebu_icu_subset_driver);
- static int mvebu_icu_probe(struct platform_device *pdev)
- {
- 	struct mvebu_icu *icu;
--	struct resource *res;
- 	int i;
- 
- 	icu = devm_kzalloc(&pdev->dev, sizeof(struct mvebu_icu),
-@@ -357,8 +356,7 @@ static int mvebu_icu_probe(struct platform_device *pdev)
- 
- 	icu->dev = &pdev->dev;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	icu->base = devm_ioremap_resource(&pdev->dev, res);
-+	icu->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(icu->base)) {
- 		dev_err(&pdev->dev, "Failed to map icu base address.\n");
- 		return PTR_ERR(icu->base);
-diff --git a/drivers/irqchip/irq-mvebu-pic.c b/drivers/irqchip/irq-mvebu-pic.c
-index eec6395..d6ade62 100644
---- a/drivers/irqchip/irq-mvebu-pic.c
-+++ b/drivers/irqchip/irq-mvebu-pic.c
-@@ -124,14 +124,12 @@ static int mvebu_pic_probe(struct platform_device *pdev)
- 	struct device_node *node = pdev->dev.of_node;
- 	struct mvebu_pic *pic;
- 	struct irq_chip *irq_chip;
--	struct resource *res;
- 
- 	pic = devm_kzalloc(&pdev->dev, sizeof(struct mvebu_pic), GFP_KERNEL);
- 	if (!pic)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pic->base = devm_ioremap_resource(&pdev->dev, res);
-+	pic->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pic->base))
- 		return PTR_ERR(pic->base);
- 
-diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
-index e00f2fa..0f9b949 100644
---- a/drivers/irqchip/irq-stm32-exti.c
-+++ b/drivers/irqchip/irq-stm32-exti.c
-@@ -811,7 +811,6 @@ static int stm32_exti_probe(struct platform_device *pdev)
- 	struct irq_domain *parent_domain, *domain;
- 	struct stm32_exti_host_data *host_data;
- 	const struct stm32_exti_drv_data *drv_data;
--	struct resource *res;
- 
- 	host_data = devm_kzalloc(dev, sizeof(*host_data), GFP_KERNEL);
- 	if (!host_data)
-@@ -849,8 +848,7 @@ static int stm32_exti_probe(struct platform_device *pdev)
- 	if (!host_data->chips_data)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	host_data->base = devm_ioremap_resource(dev, res);
-+	host_data->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(host_data->base)) {
- 		dev_err(dev, "Unable to map registers\n");
- 		return PTR_ERR(host_data->base);
-diff --git a/drivers/irqchip/irq-ti-sci-inta.c b/drivers/irqchip/irq-ti-sci-inta.c
-index ef4d625..004cc8f 100644
---- a/drivers/irqchip/irq-ti-sci-inta.c
-+++ b/drivers/irqchip/irq-ti-sci-inta.c
-@@ -519,7 +519,6 @@ static int ti_sci_inta_irq_domain_probe(struct platform_device *pdev)
- 	struct device_node *parent_node, *node;
- 	struct ti_sci_inta_irq_domain *inta;
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
- 	int ret;
- 
- 	node = dev_of_node(dev);
-@@ -567,8 +566,7 @@ static int ti_sci_inta_irq_domain_probe(struct platform_device *pdev)
- 		return PTR_ERR(inta->global_event);
- 	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	inta->base = devm_ioremap_resource(dev, res);
-+	inta->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(inta->base))
- 		return -ENODEV;
- 
-diff --git a/drivers/irqchip/irq-ts4800.c b/drivers/irqchip/irq-ts4800.c
-index 2325fb3..589a8a1 100644
---- a/drivers/irqchip/irq-ts4800.c
-+++ b/drivers/irqchip/irq-ts4800.c
-@@ -94,15 +94,13 @@ static int ts4800_ic_probe(struct platform_device *pdev)
- 	struct device_node *node = pdev->dev.of_node;
- 	struct ts4800_irq_data *data;
- 	struct irq_chip *irq_chip;
--	struct resource *res;
- 	int parent_irq;
- 
- 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	data->base = devm_ioremap_resource(&pdev->dev, res);
-+	data->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(data->base))
- 		return PTR_ERR(data->base);
- 
--- 
-2.8.1
+Thanks,
+Lorenzo
 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 783569e3c4b4..b61ade7afd64 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12337,7 +12337,8 @@ F:	Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+>  F:	drivers/pci/controller/pci-tegra.c
+>  
+>  PCI DRIVER FOR RENESAS R-CAR
+> -M:	Simon Horman <horms@verge.net.au>
+> +M:	Marek Vasut <marek.vasut+renesas@gmail.com>
+> +M:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>  L:	linux-pci@vger.kernel.org
+>  L:	linux-renesas-soc@vger.kernel.org
+>  S:	Maintained
+> -- 
+> 2.11.0
+> 
