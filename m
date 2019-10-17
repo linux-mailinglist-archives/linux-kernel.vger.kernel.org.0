@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E80DAC23
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:28:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1257ADAC24
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:28:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502356AbfJQM15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 08:27:57 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41284 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502346AbfJQM14 (ORCPT
+        id S2502369AbfJQM2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 08:28:01 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45478 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502359AbfJQM2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:27:56 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t10so1057988plr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 05:27:56 -0700 (PDT)
+        Thu, 17 Oct 2019 08:28:00 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r1so1262942pgj.12
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 05:27:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=F14E7+MnIlpQiExL8cWFs9niwCwKQjYO3IRinn+L/UE=;
-        b=SW53kbOHuCdPg1DuOx63gq8I1iayGlxonA/1rDDbCiItozWianEK9QISjChUx+Xq7Q
-         GNYKWlPIzJcJ+AqJ0dGEwruPuFWCXQlSD5LKyvrMFAT4QUreATzVtl5KT0Tn5lfXwqOO
-         vLizgueqTBOf3dfRa28LH03rBDpHE/MWvmeVTSivYW67EMCfmo82FA+xFzijO9BhEUEM
-         CP51IPGhliOBPBQJI6CNSUMoG4bS6jYpo53QOvQQRtg7NsJs4xsLhkFX5fH/04mJU9tm
-         IEOveG5+RCVMGYpnOIfyvnAmD1ktwtEW8TOdKho+eZLTGahRrwtZBjTlKUimtOEEv31t
-         c9WQ==
+        bh=Dxo5X+E9Ol1EaiMF1ZycTVksoTfNCn6yYqPoCwK1ut0=;
+        b=egK4qvYjE7EBixFsyZw/Kr078NfjAaHkhTpbfmT1U8TUKYQS3TWhZar7iJge8A07DK
+         sU5cpQuotBcsaO4hCkFmOhPY4FbwLuQQd5m0yXzMcvo+Z69ZOXqN3BdJr2IRKQYu7vCp
+         K9ScS/0a9YyM8Tbd2gkLDTPN/49QzDpGta13xl6ZRzPqnGn3vmMwJQHkR4SYu1b198ho
+         KdjwHZKZZwzew3KwyZ4tYS3rNUjoJBb7eAcf+PRl70qDYOzmOMpzxBKtUDNX4wnNYRNB
+         DmtCOTZLc81gvkP/WIFXEi6syWHVXvfPUG9JjfK3ScoMSMcs3xwFeFyeyUgAULQ653oh
+         693Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=F14E7+MnIlpQiExL8cWFs9niwCwKQjYO3IRinn+L/UE=;
-        b=OzMZk2ytAvRk4m7kxYm4fKejowh1LStOI9sjzrUwye4/jNosWdxKuILVe5DR1wcbt2
-         chFCUwUflGCFeEwdj3x4vwyKv29eoQmcOekz8gTn9/7YyTvAJ3EXsUX4xHvcf6nVBmod
-         d/cWk4pnGuGqaguPNBr5yC4LaWEoxoqXt2DA1uy9q0eNMfcV9WLHuwGvvPt0EV4ruY3/
-         LpM/TgX0RudS2N/VRVaAbIh2ZFDFs0+o8I9MuE3SB6UM0XFI1bJI39S8Zq8EXpRFHV1N
-         nlHTIvXd5fKRL2t7Q2+KoJgPHEPjrIuUOlmi7IaGiM40kK7gn42G5Efm3ImuUaYg/D+w
-         DWjw==
-X-Gm-Message-State: APjAAAVmlAWt6ABPtQhpnkG7S2qXJL3HkHCI4LxrWUAdASAEAK465XY2
-        IXxQW0+vXkzSlhESRBUoHrfRtbUnph6+Mw==
-X-Google-Smtp-Source: APXvYqxPkJnxEr/SitV6b1LTVPecxRv9RdR/8xgTjWWMcFC4xoO2obdw5qvD+7daSHAfkLTb8+Wwqw==
-X-Received: by 2002:a17:902:9a93:: with SMTP id w19mr3590819plp.316.1571315275379;
-        Thu, 17 Oct 2019 05:27:55 -0700 (PDT)
+        bh=Dxo5X+E9Ol1EaiMF1ZycTVksoTfNCn6yYqPoCwK1ut0=;
+        b=ZBIIjsMYAbNdcRbME1aBwOeRfwr3mSxHBB2Z7gCa+iNZ7+tJIPPA1J3egqQtDDJ4NA
+         5fZpMltXcgxYv4dvklW3U28FC17K+9KsUwg2s2r8Bdr0EVcJN47irZl/3/ZPGt27+wx+
+         1r6oesK75hZ6QJzQzm0uFnpiFNZ7g+aaad/FGvi3FDAvbtevlP/aPXo5ejP55Qa7/hLM
+         R1kM4TmISyajUISKtkfRIIK59bvY2OT1VpAO0JL/2ToOTAISd6JTPf9v6ix3vMQBX9lV
+         VNeow9G64Nhi/BNTYUsNPiajXkgLRtTqyA/8zI4TzPBjBhPU8/NfQDQ8RFBchPbthmff
+         zC+Q==
+X-Gm-Message-State: APjAAAXaJy/pQskOaB+2NeRQDyY4Z4x0Cj2bYfNaVjSFiZcvJlJNl3db
+        FXCgy6s15RT9dWvMj/2nlF1yt42QqPYxRg==
+X-Google-Smtp-Source: APXvYqzGLzD52zmSKxtJBG7Fgaht2Hci65RkrcVoI3J604NgxX1LNv5xLN76oaaOe048MuUDrfH3EQ==
+X-Received: by 2002:a65:689a:: with SMTP id e26mr3852060pgt.346.1571315279010;
+        Thu, 17 Oct 2019 05:27:59 -0700 (PDT)
 Received: from localhost ([49.248.54.231])
-        by smtp.gmail.com with ESMTPSA id x72sm3907375pfc.89.2019.10.17.05.27.54
+        by smtp.gmail.com with ESMTPSA id 207sm2692918pfu.129.2019.10.17.05.27.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Oct 2019 05:27:54 -0700 (PDT)
+        Thu, 17 Oct 2019 05:27:58 -0700 (PDT)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         daniel.lezcano@linaro.org, viresh.kumar@linaro.org,
@@ -55,9 +55,9 @@ To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         Amit Kucheria <amit.kucheria@verdurent.com>,
         Zhang Rui <rui.zhang@intel.com>
 Cc:     linux-pm@vger.kernel.org
-Subject: [PATCH v3 3/6] cpufreq: Initialise the governors in core_initcall
-Date:   Thu, 17 Oct 2019 17:57:35 +0530
-Message-Id: <f1d7214951e4b2caa394c722b4d8aaca9cc2c4c4.1571314830.git.amit.kucheria@linaro.org>
+Subject: [PATCH v3 4/6] cpufreq: Initialize cpufreq-dt driver earlier
+Date:   Thu, 17 Oct 2019 17:57:36 +0530
+Message-Id: <9e2bce44ed6bf3aac2354650fc3bf5c43e2155b0.1571314830.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1571314830.git.amit.kucheria@linaro.org>
 References: <cover.1571314830.git.amit.kucheria@linaro.org>
@@ -68,82 +68,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initialise the cpufreq governors earlier to allow for earlier
-performance control during the boot process.
+This allows HW drivers that depend on cpufreq-dt to initialise earlier.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/cpufreq/cpufreq_conservative.c | 2 +-
- drivers/cpufreq/cpufreq_ondemand.c     | 2 +-
- drivers/cpufreq/cpufreq_performance.c  | 2 +-
- drivers/cpufreq/cpufreq_powersave.c    | 2 +-
- drivers/cpufreq/cpufreq_userspace.c    | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/cpufreq/cpufreq-dt-platdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/cpufreq_conservative.c b/drivers/cpufreq/cpufreq_conservative.c
-index b66e81c06a57..737ff3b9c2c0 100644
---- a/drivers/cpufreq/cpufreq_conservative.c
-+++ b/drivers/cpufreq/cpufreq_conservative.c
-@@ -346,7 +346,7 @@ struct cpufreq_governor *cpufreq_default_governor(void)
- 	return CPU_FREQ_GOV_CONSERVATIVE;
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index bca8d1f47fd2..3282defe14d4 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -180,4 +180,4 @@ static int __init cpufreq_dt_platdev_init(void)
+ 			       -1, data,
+ 			       sizeof(struct cpufreq_dt_platform_data)));
  }
- 
--fs_initcall(cpufreq_gov_dbs_init);
-+core_initcall(cpufreq_gov_dbs_init);
- #else
- module_init(cpufreq_gov_dbs_init);
- #endif
-diff --git a/drivers/cpufreq/cpufreq_ondemand.c b/drivers/cpufreq/cpufreq_ondemand.c
-index dced033875bf..82a4d37ddecb 100644
---- a/drivers/cpufreq/cpufreq_ondemand.c
-+++ b/drivers/cpufreq/cpufreq_ondemand.c
-@@ -483,7 +483,7 @@ struct cpufreq_governor *cpufreq_default_governor(void)
- 	return CPU_FREQ_GOV_ONDEMAND;
- }
- 
--fs_initcall(cpufreq_gov_dbs_init);
-+core_initcall(cpufreq_gov_dbs_init);
- #else
- module_init(cpufreq_gov_dbs_init);
- #endif
-diff --git a/drivers/cpufreq/cpufreq_performance.c b/drivers/cpufreq/cpufreq_performance.c
-index aaa04dfcacd9..def9afe0f5b8 100644
---- a/drivers/cpufreq/cpufreq_performance.c
-+++ b/drivers/cpufreq/cpufreq_performance.c
-@@ -50,5 +50,5 @@ MODULE_AUTHOR("Dominik Brodowski <linux@brodo.de>");
- MODULE_DESCRIPTION("CPUfreq policy governor 'performance'");
- MODULE_LICENSE("GPL");
- 
--fs_initcall(cpufreq_gov_performance_init);
-+core_initcall(cpufreq_gov_performance_init);
- module_exit(cpufreq_gov_performance_exit);
-diff --git a/drivers/cpufreq/cpufreq_powersave.c b/drivers/cpufreq/cpufreq_powersave.c
-index c143dc237d87..1ae66019eb83 100644
---- a/drivers/cpufreq/cpufreq_powersave.c
-+++ b/drivers/cpufreq/cpufreq_powersave.c
-@@ -43,7 +43,7 @@ struct cpufreq_governor *cpufreq_default_governor(void)
- 	return &cpufreq_gov_powersave;
- }
- 
--fs_initcall(cpufreq_gov_powersave_init);
-+core_initcall(cpufreq_gov_powersave_init);
- #else
- module_init(cpufreq_gov_powersave_init);
- #endif
-diff --git a/drivers/cpufreq/cpufreq_userspace.c b/drivers/cpufreq/cpufreq_userspace.c
-index cbd81c58cb8f..b43e7cd502c5 100644
---- a/drivers/cpufreq/cpufreq_userspace.c
-+++ b/drivers/cpufreq/cpufreq_userspace.c
-@@ -147,7 +147,7 @@ struct cpufreq_governor *cpufreq_default_governor(void)
- 	return &cpufreq_gov_userspace;
- }
- 
--fs_initcall(cpufreq_gov_userspace_init);
-+core_initcall(cpufreq_gov_userspace_init);
- #else
- module_init(cpufreq_gov_userspace_init);
- #endif
+-device_initcall(cpufreq_dt_platdev_init);
++core_initcall(cpufreq_dt_platdev_init);
 -- 
 2.17.1
 
