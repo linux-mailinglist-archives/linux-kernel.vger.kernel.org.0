@@ -2,109 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CA6EDA917
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:48:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4827FDA924
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:49:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408692AbfJQJsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 05:48:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53692 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393860AbfJQJsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 05:48:52 -0400
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 350DE2A09DA
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 09:48:51 +0000 (UTC)
-Received: by mail-wm1-f70.google.com with SMTP id o188so871837wmo.5
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 02:48:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=fulMV+toG6g3eSzWv6dizQDXtOUtM0UaAnY8lyzO4+w=;
-        b=em/UWNAOFFrTxcoOVbYv+FIsvyzK3Jh7s0n9PqEkm7hnhpkqPowjD/n/O2s+zcyaKe
-         V+T2Gm9gm3Hvgr5I81E2UzbUDOPbIDfR8X7WaySUzTLZ+iDVG+4pcRE4iBhb2MWNwoU+
-         BiIJRfl6p0bBaP7aOS4BNOjr0FcJ72GLKJ31MuhojGKSxIENnvjZhoaQw0hYGe8trMEH
-         iOjTBvMWhGuHS2OE8oOyY3eI99GE5a1dBWCKfomeRtazr6bEIuWII9fg7kqVs9xGrIXC
-         7eKVXBuGmzR0OuE89+BSU/ri11fwKlbDzgsjeT9CQ+BUYiLcP0IVEklSHMPKaXAcp5CB
-         VwBg==
-X-Gm-Message-State: APjAAAXt8h7nLMLH7OBOfbhX/Dl38dgAhJpmapqPLDXUl2T2qW2Xe65r
-        quvXeStJ2BGI6ZCig0WmDgqVg7IkAZNy/jDi2pii80PJHpIXYQLXxLPgZgoHWXnJfNTOMc+nIYi
-        h121/vLquibTQDaBBjfRKRaRa
-X-Received: by 2002:a1c:a784:: with SMTP id q126mr1990782wme.59.1571305729873;
-        Thu, 17 Oct 2019 02:48:49 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqz6+utTLAGkxHY41AD+u4w7d0GVfoTtd9+W82zHGNyobcnEv8oi1KJDn6bNKlNyci+bK9572g==
-X-Received: by 2002:a1c:a784:: with SMTP id q126mr1990764wme.59.1571305729627;
-        Thu, 17 Oct 2019 02:48:49 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id b62sm2305917wmc.13.2019.10.17.02.48.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 02:48:49 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     linmiaohe <linmiaohe@huawei.com>
-Cc:     "x86\@kernel.org" <x86@kernel.org>,
-        "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mingfangsen <mingfangsen@huawei.com>,
-        "pbonzini\@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar\@redhat.com" <rkrcmar@redhat.com>,
-        "sean.j.christopherson\@intel.com" <sean.j.christopherson@intel.com>,
-        "wanpengli\@tencent.com" <wanpengli@tencent.com>,
-        "jmattson\@google.com" <jmattson@google.com>,
-        "joro\@8bytes.org" <joro@8bytes.org>,
-        "tglx\@linutronix.de" <tglx@linutronix.de>,
-        "mingo\@redhat.com" <mingo@redhat.com>,
-        "bp\@alien8.de" <bp@alien8.de>, "hpa\@zytor.com" <hpa@zytor.com>
-Subject: Re: [PATCH] KVM: SVM: Fix potential wrong physical id in avic_handle_ldr_update
-In-Reply-To: <7db9f15500ab486b897bf1a7fa7e7161@huawei.com>
-References: <7db9f15500ab486b897bf1a7fa7e7161@huawei.com>
-Date:   Thu, 17 Oct 2019 11:48:48 +0200
-Message-ID: <87tv873dof.fsf@vitty.brq.redhat.com>
+        id S2439607AbfJQJtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 05:49:12 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:54131 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408604AbfJQJs6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 05:48:58 -0400
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: kamel.bouhara@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 6955320000A;
+        Thu, 17 Oct 2019 09:48:56 +0000 (UTC)
+From:   Kamel Bouhara <kamel.bouhara@bootlin.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kamel Bouhara <kamel.bouhara@bootlin.com>
+Subject: [PATCH 0/2] Add DTS for Smartkiz support
+Date:   Thu, 17 Oct 2019 11:48:51 +0200
+Message-Id: <20191017094853.14669-1-kamel.bouhara@bootlin.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-linmiaohe <linmiaohe@huawei.com> writes:
+Yet another Overkiz's SAM9G25 based board and it's documentation.
 
-> Vitaly Kuznetsov <vkuznets@redhat.com> writes:
->
->>> Guest physical APIC ID may not equal to vcpu->vcpu_id in some case.
->>> We may set the wrong physical id in avic_handle_ldr_update as we 
->>> always use vcpu->vcpu_id.
->
-> Hi, Vitaly, thanks for your reply.
-> Do you think there may be a wrong physical id in
-> avic_handle_ldr_update too ?
+Kamel Bouhara (2):
+  dt-bindings: arm: at91: Document SmartKiz board binding
+  ARM: at91: add support for SmartKiz board
 
-Honestly I'm not sure, however, as we need to put physical id to LDR
-we'd rather get it from LAPIC then assume that it's == vcpu_id so I
-think your patch makes sense even if it fixes a theoretical issue.
+ .../devicetree/bindings/arm/atmel-at91.yaml   |   8 ++
+ arch/arm/boot/dts/Makefile                    |   1 +
+ arch/arm/boot/dts/at91-smartkiz.dts           | 112 ++++++++++++++++++
+ 3 files changed, 121 insertions(+)
+ create mode 100644 arch/arm/boot/dts/at91-smartkiz.dts
 
-But I may be missing something important about AVIC.
+--
+2.23.0
 
->
->>>
->>> @@ -4591,6 +4591,8 @@ static int avic_handle_ldr_update(struct kvm_vcpu *vcpu)
->>>  	int ret = 0;
->>>  	struct vcpu_svm *svm = to_svm(vcpu);
->>>  	u32 ldr = kvm_lapic_get_reg(vcpu->arch.apic, APIC_LDR);
->>> +	u32 apic_id_reg = kvm_lapic_get_reg(vcpu->arch.apic, APIC_ID);
->>> +	u32 id = (apic_id_reg >> 24) & 0xff;
->>
->>If we reach here than we're guaranteed to be in xAPIC mode, right? Could you maybe export and use kvm_xapic_id() here then (and in
->>avic_handle_apic_id_update() too)?
->>
->
-> I think we're guaranteed to be in xAPIC mode when we reach here. I would have a try to export
-> and use use kvm_xapic_id here and in avic_handle_apic_id_update too.
-> Thanks for your suggestion.
->
-> Have a nice day.
-> Best wishes.
-
--- 
-Vitaly
