@@ -2,53 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8633EDD513
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B969DD527
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:59:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394930AbfJRWuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:50:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728752AbfJRWuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:50:06 -0400
-Subject: Re: [git pull] IOMMU Fixes for Linux v5.4-rc3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571439005;
-        bh=FKzAlNN+TyJBmE9+y4CpxN/ZJGSJcbXBg++g7FzD46g=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=RGgsiADRCN4R+BG6B7z1H/if1Fl/fC3kWBAbqgYHTIP8Y8AYqjk+48GS3rJgQdgW4
-         XmHZHiUq9t2cQfsPn7r0TJ2sOcBWEI/PGeqntId4QviOhc/Y35OpoRfElMsbKhlYzZ
-         0j9wPuamXv/vnG+LDJgjltRnKZO+gKr6bj7fPavY=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191018155403.GA9621@8bytes.org>
-References: <20191018155403.GA9621@8bytes.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191018155403.GA9621@8bytes.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
- tags/iommu-fixes-v5.4-rc3
-X-PR-Tracked-Commit-Id: 46ac18c347b00be29b265c28209b0f3c38a1f142
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 90105ae1eeef51987f40d8e2db4c9c79604fc4e4
-Message-Id: <157143900556.13317.13328781026600840171.pr-tracker-bot@kernel.org>
-Date:   Fri, 18 Oct 2019 22:50:05 +0000
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+        id S1728746AbfJRW7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:59:24 -0400
+Received: from [221.146.236.9] ([221.146.236.9]:60387 "EHLO theworld.email"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727780AbfJRW7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:59:24 -0400
+Received: from (HELO vtd86kn) [12.250.29.147] by 127.0.0.1 id 53X509v274v2; Thu, 17 Oct 2019 17:50:32 +0100
+Message-ID: <e4x--m25$74vn264z$l@98npt.5.fl>
+From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+To:     dave@optimusimages.co.uk
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Date:   Thu, 17 Oct 19 17:50:32 GMT
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+        boundary="73_DC..49._0C4E.FB1A_B"
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 18 Oct 2019 17:54:08 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-fixes-v5.4-rc3
+--73_DC..49._0C4E.FB1A_B
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/90105ae1eeef51987f40d8e2db4c9c79604fc4e4
+Greetings
 
-Thank you!
+My name is Barrister Hans Erich.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
+
+Your full names ---------
+
+
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+
+--73_DC..49._0C4E.FB1A_B--
+
