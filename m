@@ -2,100 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E004DA364
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DF2CDA366
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:47:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733006AbfJQBqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 21:46:39 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:43614 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbfJQBqj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 21:46:39 -0400
-Received: by mail-il1-f195.google.com with SMTP id t5so420609ilh.10;
-        Wed, 16 Oct 2019 18:46:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=C2efsFizgVT25garqduHjyuFt9iWInxP4xT7VjbjnDk=;
-        b=e18t10U4nw9RnbPkZAOn3y7deMeJ+ww9/LymVula1j/TQgPm8NheGWHHwSh4f3AI53
-         QTjaan4HF7ZUS4sqFWT7JB+dqwwQ8SUoQXL4Fce1xAHW9TO5Iwx+giUj0y1jqEqBBenb
-         d2bI3yKILEcIk8UcbX+dw2Us9mtXCgMTcpQBGt0XFqPtexa5sCjH/ZxGDvlg94KdfLU+
-         kX9kTcHcQJXuaOyrdFORey72399cEkOT+Tl0eSwxFpB6O+HEMuydXB/iNlspoYqvAD4L
-         tUE238iVnwa4grrnnrdI1KaHAaoAqB8Q0hqQx1tnobpXlWSwT+85N/y/SA+3QFu7QQB2
-         ++8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=C2efsFizgVT25garqduHjyuFt9iWInxP4xT7VjbjnDk=;
-        b=VqSkj++DELEL6gtkMGJCeNsLAOwCO+B7FiKhHRQUo5oFdqLnAB8QML6tu2aY2xPo9B
-         bKXypyEAYxxVdVEbvMlaYuUYLeAeNu/XIAXvLWVelklQjci+GnNmc+vtZey4biQ57hPB
-         D7jMlzi8rnL4A/A82dcWmwOz7X2hEgdfEtHWwiVSAZ7P7k7N8ybVusc//b8eCLnAIF/R
-         Tgue1+dXI9ZpErSrzdMd6ok9PEm4xFGYWXAlBMgAR/am+jP4bQozNfyb9Dblpl5KsHQi
-         XgzDzIV/5Qt3Q4So/e16lAYtvNX0Ni3AbEvr81OMm9EBYtNoZDi+7euBVWNCCvIVNZmA
-         G4Lg==
-X-Gm-Message-State: APjAAAUkMpgNmjfZpEwEGln3X77U9CsTLiRITYXolk3zaCQ+vr+lgV7C
-        zrygoOe4CwZDpCFxh5iDUKQ=
-X-Google-Smtp-Source: APXvYqyRMab6Jz+a+ZJ9RUdCBHIpko2ylTHktOoajg+JrW1s14BeuKaUXgetFur+DkmRgTL4Xkb0vQ==
-X-Received: by 2002:a92:4144:: with SMTP id o65mr1068182ila.206.1571276796906;
-        Wed, 16 Oct 2019 18:46:36 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id h17sm254867ilq.66.2019.10.16.18.46.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 18:46:35 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] apparmor: Fix use-after-free in aa_audit_rule_init
-Date:   Wed, 16 Oct 2019 20:46:18 -0500
-Message-Id: <20191017014619.26708-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        id S2391824AbfJQBr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 21:47:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44628 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727387AbfJQBr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 21:47:57 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CF0820854;
+        Thu, 17 Oct 2019 01:47:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571276876;
+        bh=Bj6PbMkOEWn9QUa6k3iFedlOuXbKcM5250I2nBSp67o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ir7ngdOqhiJz3NTtmaOmn3xa+J2uzoKwXIbPUViyXiqku47l7kGoSZOx9UeyBqIZc
+         I9cfE2AD0W7O+4DNVAzlMaPasxXt0H8QUYSw8tgIN3Yu4t4Jvxi9PP/QBFFYzxQ2Wd
+         tWJdXqurmSnpZN0QJxyfssuwP6g98d7J08OT6VQo=
+Date:   Wed, 16 Oct 2019 18:47:55 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+76a43f2b4d34cfc53548@syzkaller.appspotmail.com>
+Cc:     akpm@osdl.org, deepa.kernel@gmail.com, hch@infradead.org,
+        jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lkundrak@v3.sk,
+        syzkaller-bugs@googlegroups.com, tklauser@nuerscht.ch,
+        trond.myklebust@fys.uio.no, viro@zeniv.linux.org.uk
+Subject: Re: KASAN: use-after-free Read in mnt_warn_timestamp_expiry
+Message-ID: <20191017014755.GA1552@sol.localdomain>
+Mail-Followup-To: syzbot <syzbot+76a43f2b4d34cfc53548@syzkaller.appspotmail.com>,
+        akpm@osdl.org, deepa.kernel@gmail.com, hch@infradead.org,
+        jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lkundrak@v3.sk,
+        syzkaller-bugs@googlegroups.com, tklauser@nuerscht.ch,
+        trond.myklebust@fys.uio.no, viro@zeniv.linux.org.uk
+References: <0000000000007f489b0595115374@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000007f489b0595115374@google.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the implementation of aa_audit_rule_init(), when aa_label_parse()
-fails the allocated memory for rule is released using
-aa_audit_rule_free(). But after this release the the return statement
-tries to access the label field of the rule which results in
-use-after-free. Before releaseing the rule, copy errNo and return it
-after releasing rule.
+On Wed, Oct 16, 2019 at 06:42:11PM -0700, syzbot wrote:
+> ==================================================================
+> BUG: KASAN: use-after-free in mnt_warn_timestamp_expiry+0x4a/0x250
+> fs/namespace.c:2471
+> Read of size 8 at addr ffff888099937328 by task syz-executor.1/18510
+> 
 
-Fixes: 52e8c38001d8 ("apparmor: Fix memory leak of rule on error exit path")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- security/apparmor/audit.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Looks like a duplicate of this:
 
-diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
-index 5a98661a8b46..48c15fb0aafe 100644
---- a/security/apparmor/audit.c
-+++ b/security/apparmor/audit.c
-@@ -178,6 +178,7 @@ void aa_audit_rule_free(void *vrule)
- int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
- {
- 	struct aa_audit_rule *rule;
-+	int err;
- 
- 	switch (field) {
- 	case AUDIT_SUBJ_ROLE:
-@@ -197,8 +198,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
- 	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
- 				     GFP_KERNEL, true, false);
- 	if (IS_ERR(rule->label)) {
-+		err = rule->label;
- 		aa_audit_rule_free(rule);
--		return PTR_ERR(rule->label);
-+		return PTR_ERR(err);
- 	}
- 
- 	*vrule = rule;
--- 
-2.17.1
+#syz dup: KASAN: use-after-free Read in do_mount
 
+See the existing thread and proposed fix here:
+https://lkml.kernel.org/linux-fsdevel/000000000000805e5505945a234b@google.com/T/#u
+
+- Eric
