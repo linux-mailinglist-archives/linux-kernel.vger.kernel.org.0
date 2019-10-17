@@ -2,98 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE61FDAEC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8305DDAED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:54:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437155AbfJQNwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 09:52:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40326 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730412AbfJQNwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 09:52:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E0412B50D;
-        Thu, 17 Oct 2019 13:52:30 +0000 (UTC)
-Date:   Thu, 17 Oct 2019 15:52:29 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Whitcroft <apw@canonical.com>,
-        "DavidS. Miller" <davem@davemloft.net>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        AlexeiStarovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        GregKroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        ArnaldoCarvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/32] Kill pr_warning in the whole linux code
-Message-ID: <20191017135229.a4mvcyap6l34m5bk@pathway.suse.cz>
-References: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
- <20191002085554.ddvx6yx6nx7tdeey@pathway.suse.cz>
- <f613df39-6903-123b-a0f1-d1b783a755ce@huawei.com>
- <20191017130550.nwswlnwdroyjwwun@pathway.suse.cz>
- <21f6322c-1c2b-f857-2e6e-e1c6aa45dd2d@huawei.com>
+        id S2437237AbfJQNys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 09:54:48 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:43650 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1726470AbfJQNyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 09:54:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E73811993;
+        Thu, 17 Oct 2019 06:54:24 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2760A3F6C4;
+        Thu, 17 Oct 2019 06:54:23 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 14:54:16 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Yunfeng Ye <yeyunfeng@huawei.com>
+Cc:     David Laight <David.Laight@ACULAB.COM>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "wuyun.wu@huawei.com" <wuyun.wu@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, hushiyuan@huawei.com,
+        linfeilong@huawei.com, Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH V2] arm64: psci: Reduce waiting time of
+ cpu_psci_cpu_kill()
+Message-ID: <20191017135416.GA26312@bogus>
+References: <18068756-0f39-6388-3290-cf03746e767d@huawei.com>
+ <9df267db-e647-a81d-16bb-b8bfb06c2624@huawei.com>
+ <20191016153221.GA8978@bogus>
+ <0f550044-9ed2-5f72-1335-73417678ba45@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <21f6322c-1c2b-f857-2e6e-e1c6aa45dd2d@huawei.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <0f550044-9ed2-5f72-1335-73417678ba45@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-10-17 21:29:55, Kefeng Wang wrote:
-> 
-> 
-> On 2019/10/17 21:05, Petr Mladek wrote:
-> > On Tue 2019-10-08 14:39:32, Kefeng Wang wrote:
-> >> Hi all,
+On Thu, Oct 17, 2019 at 09:26:15PM +0800, Yunfeng Ye wrote:
+>
+>
+> On 2019/10/16 23:32, Sudeep Holla wrote:
+> > On Wed, Oct 09, 2019 at 12:45:16PM +0800, Yunfeng Ye wrote:
+> >> If psci_ops.affinity_info() fails, it will sleep 10ms, which will not
+> >> take so long in the right case. Use usleep_range() instead of msleep(),
+> >> reduce the waiting time, and give a chance to busy wait before sleep.
 > >>
-> >> On 2019/10/2 16:55, Petr Mladek wrote:
-> >>> Linus,
-> >>>
-> >>> On Fri 2019-09-20 14:25:12, Kefeng Wang wrote:
-> >>>> There are pr_warning and pr_warng to show WARNING level message,
-> >>>> most of the code using pr_warn, number based on next-20190919,
-> >>>>
-> >>>> pr_warn: 5189   pr_warning: 546 (tools: 398, others: 148)
-> >>>
-> >>> The ratio is 10:1 in favor of pr_warn(). It would make sense
-> >>> to remove the pr_warning().
-> >>>
-> >>> Would you accept pull request with these 32 simple patches
-> >>> for rc2, please?
-> >>>
-> >>> Alternative is to run a simple sed. But it is not trivial
-> >>> to fix indentation of the related lines.
+> >> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+> >> ---
+> >> V1->V2:
+> >> - use usleep_range() instead of udelay() after waiting for a while
 > >>
-> >> Kindly ping, should I respin patches with comments fixed?
-> >> Is the patchset acceptable, hope to be clear that what to do next :)
-> > 
-> > I am going to check how many conflicts appeared in linux-next.
-> > 
-> > If there are only few then I'll take it via printk.git. This way
-> > we get proper indentation and other changes.
-> 
-> There are some conflicts(not too much), and I have already rebased
-> on next-20191017 with comment fixed, added Reviewed-by/Acked-by.
-> I could resend them ASAP if necessary.
+> >>  arch/arm64/kernel/psci.c | 17 +++++++++++++----
+> >>  1 file changed, 13 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/arch/arm64/kernel/psci.c b/arch/arm64/kernel/psci.c
+> >> index c9f72b2..99b3122 100644
+> >> --- a/arch/arm64/kernel/psci.c
+> >> +++ b/arch/arm64/kernel/psci.c
+> >> @@ -82,6 +82,7 @@ static void cpu_psci_cpu_die(unsigned int cpu)
+> >>  static int cpu_psci_cpu_kill(unsigned int cpu)
+> >>  {
+> >>  	int err, i;
+> >> +	unsigned long timeout;
+> >>
+> >>  	if (!psci_ops.affinity_info)
+> >>  		return 0;
+> >> @@ -91,16 +92,24 @@ static int cpu_psci_cpu_kill(unsigned int cpu)
+> >>  	 * while it is dying. So, try again a few times.
+> >>  	 */
+> >>
+> >> -	for (i = 0; i < 10; i++) {
+> >> +	i = 0;
+> >> +	timeout = jiffies + msecs_to_jiffies(100);
+> >> +	do {
+> >>  		err = psci_ops.affinity_info(cpu_logical_map(cpu), 0);
+> >>  		if (err == PSCI_0_2_AFFINITY_LEVEL_OFF) {
+> >>  			pr_info("CPU%d killed.\n", cpu);
+> >>  			return 0;
+> >>  		}
+> >>
+> >> -		msleep(10);
+> >> -		pr_info("Retrying again to check for CPU kill\n");
+> >
+> > You dropped this message, any particular reason ?
+> >
+> When reduce the time interval to 1ms, the print message maybe increase 10
+> times. on the other hand, cpu_psci_cpu_kill() will print message on success
+> or failure, which this retry log is not very necessary. of cource, I think
+> use pr_info_once() instead of pr_info() is better.
+>
 
-OK, resend them, please.
+Yes changing it to pr_info_once is better than dropping it as it gives
+some indication to the firmware if there's scope for improvement.
 
-> > If there are too many conflicts then I'll ask Linus to do a mass
-> > change using a script.
-> 
-> For tools parts(api/bpf/perf, patch [29-31]), it renames pr_warning
-> to pr_warn, and make manually changes in some place, simply 'sed'
-> maybe not enough.
+> >> -	}
+> >> +		/* busy-wait max 1ms */
+> >> +		if (i++ < 100) {
+> >> +			cond_resched();
+> >> +			udelay(10);
+> >> +			continue;
+> >
+> > Why can't it be simple like loop of 100 * msleep(1) instead of loop of
+> > 10 * msleep(10). The above initial busy wait for 1 ms looks too much
+> > optimised for your setup where it takes 50-500us, what if it take just
+> > over 1 ms ?
+> >
+> msleep() is implemented by jiffies. when HZ=100 or HZ=250, msleep(1) is not
+> accurate. so I think usleep_range() is better. 1 ms looks simple and good, but how
+> about 100us is better? I refer a function sunxi_mc_smp_cpu_kill(), it use
+> usleep_range(50, 100).
+>
 
-Yup.
+Again that's specific to sunxi platforms and may work well. While I agree
+msleep(1) may not be accurate, I am still inclined to have a max value
+of 1000(i.e. 1ms) for usleep_range.
 
-Best Regards,
-Petr
+--
+Regards,
+Sudeep
