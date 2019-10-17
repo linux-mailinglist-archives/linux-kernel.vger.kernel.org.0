@@ -2,148 +2,246 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30E38DB28D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 18:39:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90B44DB293
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 18:40:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440485AbfJQQjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 12:39:09 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46420 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729529AbfJQQjJ (ORCPT
+        id S2408998AbfJQQke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 12:40:34 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39210 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729529AbfJQQkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 12:39:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sf8bXsEJ/gzi9qX1n3MNwbVkGFNy3+em1T/PTgOoIT8=; b=dFeTnLcQm7koViz9LdetehxIn
-        ZaE2dDqWvOxXHpKQCSdnXBm9INDomi6AfUvhaQY1T4ErhRMYP+Ka49ykZvSLxM5KW9+vLQwT2jquP
-        VYrKT8gseZspi8qEWErv4DfzppEuXlviU23K7J8beHI7TymT/lYpZHVq2EBJfmGJu2caQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iL8nq-0001RY-8s; Thu, 17 Oct 2019 16:39:06 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 641542742BAC; Thu, 17 Oct 2019 17:39:05 +0100 (BST)
-Date:   Thu, 17 Oct 2019 17:39:05 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Cc:     "festevam@gmail.com" <festevam@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>
-Subject: Re: [PATCH 5.3 112/112] ASoC: sgtl5000: add ADC mute control
-Message-ID: <20191017163905.GH4976@sirena.co.uk>
-References: <20191016214907.599726506@linuxfoundation.org>
- <20191016220044.GB11473@sirena.co.uk>
- <20191016221025.GA990599@kroah.com>
- <20191016223518.GC11473@sirena.co.uk>
- <20191016232358.GA994597@kroah.com>
- <de9630e5-341f-b48d-029a-ef1a516bf820@skidata.com>
- <AM6PR05MB653568E379699EE907E146BDF96D0@AM6PR05MB6535.eurprd05.prod.outlook.com>
- <CAGgjyvFQQ4E5VfZ3nwFu+7UiGOmkyXK-n9PHjo1p=iYNX5JrPw@mail.gmail.com>
- <20191017111122.GA4976@sirena.co.uk>
- <b90f4cfc04686a669d145b5c5e7e59e2edf58779.camel@toradex.com>
+        Thu, 17 Oct 2019 12:40:33 -0400
+Received: by mail-qt1-f194.google.com with SMTP id n7so4512220qtb.6
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 09:40:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=XohpISjZQw8574WrnhPLNt2Ktb/v0lklHrcSwa3x2Es=;
+        b=TZLEYGGWqaGbJkkAjSAizbMyVX2d4WtHdzxexBQvX4/u3nFe8ruGjk9zPRqosZPXCY
+         YouhiFzNl1ZwxHw8F1rK1VUq/KPJOLyd7fafliUNaBEt2utvNsY3dWs/snLGZd0Ads5K
+         YNaR/PKgic88s5WwqzZcxcPz79a9rMgc4GhtiW5PNjlgdEg27NK/L9lOdQ7p29AEWVuQ
+         /hfIxho8AHTFgtTpK4gIl4QWnq1k4GDk7mhmPkXgG4msrrZD6rpj78tlM+FyVTq0vhFR
+         1Ts8zya84Gkqa/ciS9yiTjQEgDvoveH2ScvW/gDQjQboOh6w9SS6fJab4Oor4GugcUL0
+         +WEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=XohpISjZQw8574WrnhPLNt2Ktb/v0lklHrcSwa3x2Es=;
+        b=pO22RPGRyWb9gYkce4R5TrFJzA0WJGp8N+Sy6VGPCIsFjSh9Eg0GkVweMKpV1tvAGc
+         SPFNGOiQdFc9w4ZbAtqs+Wj8Q7AA4CtBTnAlHSo3+dtMMkAFrqpnrLaL8ET5VAy/RpCr
+         nOldbD3UdU6a+W6ZLyT0zLGJpFjx6nVjUq2khmUCxV2vkv/mE40D5TW1w3KQnZnvBF6F
+         44qKw+jqvpoJTxUtRvCdPfibvyarR3fpFbsllYiQP7CewVid0iN4Z/FvBDwcHZhHbNcQ
+         CBHNDDlj9ItljeObuPwUGQU5bMNZ/JI4dSQ1nXbCilWcDrMa5hy8IjfNJ1dYs+SGFCrU
+         8y8Q==
+X-Gm-Message-State: APjAAAXaEUv4fcVzSeg+/ZsqcUgdQqZElRGD0Ep0gkoKD5Z60UPcgAb5
+        of9d+5Po876lzmsJb0GNdu2tyQ==
+X-Google-Smtp-Source: APXvYqxTLFy8Zvu99dQr/NqJ6+aWCZW+g+fXOkJ/92c39+uhHx8nSZG+eyQxs97qr2kb9soqMG9SFQ==
+X-Received: by 2002:a05:6214:5cd:: with SMTP id t13mr2819167qvz.86.1571330432058;
+        Thu, 17 Oct 2019 09:40:32 -0700 (PDT)
+Received: from [192.168.1.169] (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
+        by smtp.gmail.com with ESMTPSA id x55sm1514538qta.74.2019.10.17.09.40.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Oct 2019 09:40:31 -0700 (PDT)
+Subject: Re: [Patch v3 2/7] sched: Add infrastructure to store and update
+ instantaneous thermal pressure
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+References: <1571014705-19646-1-git-send-email-thara.gopinath@linaro.org>
+ <1571014705-19646-3-git-send-email-thara.gopinath@linaro.org>
+ <CAKfTPtD13=7VNvZBt9nMwMTg=_2xfJsEAApfFKagwKikh9g6-Q@mail.gmail.com>
+ <5DA78A18.9050801@linaro.org>
+ <CAKfTPtCHdrbCKePHxhOm3w2gNO4X7q7Dt-UXQLDRn-39Wk1OLQ@mail.gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ionela Voinescu <ionela.voinescu@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+Message-ID: <5DA8997D.1000904@linaro.org>
+Date:   Thu, 17 Oct 2019 12:40:29 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="bpVaumkpfGNUagdU"
-Content-Disposition: inline
-In-Reply-To: <b90f4cfc04686a669d145b5c5e7e59e2edf58779.camel@toradex.com>
-X-Cookie: Shut off engine before fueling.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKfTPtCHdrbCKePHxhOm3w2gNO4X7q7Dt-UXQLDRn-39Wk1OLQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/17/2019 04:44 AM, Vincent Guittot wrote:
+> Hi Thara,
+> 
+> On Wed, 16 Oct 2019 at 23:22, Thara Gopinath <thara.gopinath@linaro.org> wrote:
+>>
+>> Hi Vincent,
+>>
+>> Thanks for the review
+>> On 10/14/2019 11:50 AM, Vincent Guittot wrote:
+>>> Hi Thara,
+>>>
+>>> On Mon, 14 Oct 2019 at 02:58, Thara Gopinath <thara.gopinath@linaro.org> wrote:
+>>>>
+>>>> Add thermal.c and thermal.h files that provides interface
+>>>> APIs to initialize, update/average, track, accumulate and decay
+>>>> thermal pressure per cpu basis. A per cpu structure max_capacity_info is
+>>>> introduced to keep track of instantaneous per cpu thermal pressure.
+>>>> Thermal pressure is the delta between max_capacity and cap_capacity.
+>>>> API update_periodic_maxcap is called for periodic accumulate and decay
+>>>> of the thermal pressure. It is to to be called from a periodic tick
+>>>> function. This API calculates the delta between max_capacity and
+>>>> cap_capacity and passes on the delta to update_thermal_avg to do the
+>>>> necessary accumulate, decay and average. API update_maxcap_capacity is for
+>>>> the system to update the thermal pressure by updating cap_capacity.
+>>>> Considering, update_periodic_maxcap reads cap_capacity and
+>>>> update_maxcap_capacity writes into cap_capacity, one can argue for
+>>>> some sort of locking mechanism to avoid a stale value.
+>>>> But considering update_periodic_maxcap can be called from a system
+>>>> critical path like scheduler tick function, a locking mechanism is not
+>>>> ideal. This means that it is possible the value used to
+>>>> calculate average thermal pressure for a cpu can be stale for upto 1
+>>>> tick period.
+>>>>
+>>>> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+>>>> ---
+>>>>  include/linux/sched.h  | 14 +++++++++++
+>>>>  kernel/sched/Makefile  |  2 +-
+>>>>  kernel/sched/thermal.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>>>>  kernel/sched/thermal.h | 13 ++++++++++
+>>>>  4 files changed, 94 insertions(+), 1 deletion(-)
+>>>>  create mode 100644 kernel/sched/thermal.c
+>>>>  create mode 100644 kernel/sched/thermal.h
+>>>>
+>>>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>>>> index 2c2e56b..875ce2b 100644
+>>>> --- a/include/linux/sched.h
+>>>> +++ b/include/linux/sched.h
+>>>> @@ -1983,6 +1983,20 @@ static inline void rseq_syscall(struct pt_regs *regs)
+>>>>
+>>>>  #endif
+>>>>
+>>>> +#ifdef CONFIG_SMP
+>>>> +void update_maxcap_capacity(int cpu, u64 capacity);
+>>>> +
+>>>> +void populate_max_capacity_info(void);
+>>>> +#else
+>>>> +static inline void update_maxcap_capacity(int cpu, u64 capacity)
+>>>> +{
+>>>> +}
+>>>> +
+>>>> +static inline void populate_max_capacity_info(void)
+>>>> +{
+>>>> +}
+>>>> +#endif
+>>>> +
+>>>>  const struct sched_avg *sched_trace_cfs_rq_avg(struct cfs_rq *cfs_rq);
+>>>>  char *sched_trace_cfs_rq_path(struct cfs_rq *cfs_rq, char *str, int len);
+>>>>  int sched_trace_cfs_rq_cpu(struct cfs_rq *cfs_rq);
+>>>> diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
+>>>> index 21fb5a5..4d3b820 100644
+>>>> --- a/kernel/sched/Makefile
+>>>> +++ b/kernel/sched/Makefile
+>>>> @@ -20,7 +20,7 @@ obj-y += core.o loadavg.o clock.o cputime.o
+>>>>  obj-y += idle.o fair.o rt.o deadline.o
+>>>>  obj-y += wait.o wait_bit.o swait.o completion.o
+>>>>
+>>>> -obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o pelt.o
+>>>> +obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o pelt.o thermal.o
+>>>>  obj-$(CONFIG_SCHED_AUTOGROUP) += autogroup.o
+>>>>  obj-$(CONFIG_SCHEDSTATS) += stats.o
+>>>>  obj-$(CONFIG_SCHED_DEBUG) += debug.o
+>>>> diff --git a/kernel/sched/thermal.c b/kernel/sched/thermal.c
+>>>> new file mode 100644
+>>>> index 0000000..5f0b2d4
+>>>> --- /dev/null
+>>>> +++ b/kernel/sched/thermal.c
+>>>> @@ -0,0 +1,66 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * Sceduler Thermal Interactions
+>>>> + *
+>>>> + *  Copyright (C) 2018 Linaro, Inc., Thara Gopinath <thara.gopinath@linaro.org>
+>>>> + */
+>>>> +
+>>>> +#include <linux/sched.h>
+>>>> +#include "sched.h"
+>>>> +#include "pelt.h"
+>>>> +#include "thermal.h"
+>>>> +
+>>>> +struct max_capacity_info {
+>>>> +       unsigned long max_capacity;
+>>>> +       unsigned long cap_capacity;
+>>>> +};
+>>>> +
+>>>> +static DEFINE_PER_CPU(struct max_capacity_info, max_cap);
+>>>> +
+>>>> +void update_maxcap_capacity(int cpu, u64 capacity)
+>>>> +{
+>>>> +       struct max_capacity_info *__max_cap;
+>>>> +       unsigned long __capacity;
+>>>> +
+>>>> +       __max_cap = (&per_cpu(max_cap, cpu));
+>>>> +       if (!__max_cap) {
+>>>> +               pr_err("no max_capacity_info structure for cpu %d\n", cpu);
+>>>> +               return;
+>>>> +       }
+>>>> +
+>>>> +       /* Normalize the capacity */
+>>>> +       __capacity = (capacity * arch_scale_cpu_capacity(cpu)) >>
+>>>> +                                                       SCHED_CAPACITY_SHIFT;
+>>>> +       pr_debug("updating cpu%d capped capacity from %lu to %lu\n", cpu, __max_cap->cap_capacity, __capacity);
+>>>> +
+>>>> +       __max_cap->cap_capacity = __capacity;
+>>>> +}
+>>>> +
+>>>> +void populate_max_capacity_info(void)
+>>>> +{
+>>>> +       struct max_capacity_info *__max_cap;
+>>>> +       u64 capacity;
+>>>> +       int cpu;
+>>>> +
+>>>> +       for_each_possible_cpu(cpu) {
+>>>> +               __max_cap = (&per_cpu(max_cap, cpu));
+>>>> +               if (!__max_cap)
+>>>> +                       continue;
+>>>> +               capacity = arch_scale_cpu_capacity(cpu);
+>>>> +               __max_cap->max_capacity = capacity;
+>>>> +               __max_cap->cap_capacity = capacity;
+>>>> +               pr_debug("cpu %d max capacity set to %ld\n", cpu, __max_cap->max_capacity);
+>>>> +       }
+>>>> +}
+>>>
+>>> everything above seems to be there for the cpu cooling device and
+>>> should be included in it instead. The scheduler only need the capacity
+>>> capping
+>>> The cpu cooling device should just set the delta capacity in the
+>>> per-cpu variable (see my comment below)
+>> It can be a firmware  updating the thermal pressure instead of cpu
+>> cooling device. Or may be some other entity .So instead of replicating
+>> this code, isnt't it better to reside in one place ?
+> 
+> But you have now idea which kind of metrics will be provided by
+> firmware. It might not be a capped frequency and a max frequency but
+> other metrics.
+hmm. Why ? It is thermal pressure. It is finally applied to the
+scheduler metric cpu_capacity. It should not be anything other than
+capacity reduction due to thermal events that should be provided.
+> Also, __max_cap->max_capacity just save in a new per cpu struct the
+> return of arch_scale_cpu_capacity but this doesn't give us real
+> benefit
+I agree. I will change the struct into a single variable delta and
+initialize it to 0. populate_max_capacity_info need not be there. I will
+have update_maxcap_capacity calculate the delta with
+arch_scale_cpu_capacity and store it into a per cpu variable.
 
---bpVaumkpfGNUagdU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, Oct 17, 2019 at 02:16:09PM +0000, Oleksandr Suvorov wrote:
-
-> All versions of driver sgtl5000 (since creating in 2011) has a bug in
-> sgtl5000_probe():
-> ...
->        snd_soc_write(codec, SGTL5000_CHIP_ANA_CTRL,
->                        SGTL5000_HP_ZCD_EN |
->                        SGTL5000_ADC_ZCD_EN);
-> ...
-> This command rewrites the whole register value instead of just enabling
-> ZCD feature for headphone and adc.
-
-> This register has bits for HP/LineOut/ADC muting, thus sgtl5000_probe()
-> always unmutes HP/LineOut/ADC.
-
-Yes, or at the very least this is a badly documented bit of intentional
-code.  I suspect it may be the latter but at this point we can't tell.
-
-> 1. drop this patch and revert 631bc8f0134ae in stable versions 4.19,
-> 5.2, 5.3.
-> So the bug with unmuting all outputs and ADC on device probing will
-> still present in all kernel versions that include sgtl500 codec driver.
-
-This patch here being adding the userspace control of the switch and
-631bc8f0134ae being the patch that made the ZC change only update the
-specific bits rather than write an absolute value to the register.  This
-means that we end up with the audio unmuted but no user control over
-this at runtime.  From a user perspective I think this is fine, it's not
-ideal that there's no control but they can still record.
-
-Please include human readable descriptions of things like commits and
-issues being discussed in e-mail in your mails, this makes them much
-easier for humans to read.
-
-> 2. keep 631bc8f0134ae and add 694b14554d75f to 4.19, 5.2 and 5.3.
-
-This means the patch that makes ZC only update the ZC bits and also the
-patch that makes the mutes user controllable, the default being muted.
-As I pointed out up thread this would mean that someone upgrading to a
-newer stable may need to change their userspace to do the unmute instead
-of having things unconditionally unmuted by the driver.  This is not
-really what people expect from stable updates, we want them to be able
-to pull these in without thinking about it.  i
-
-To backport the addition of the controls to stable we'd need an
-additional change which sets the default for this control to unmuted,
-there's a case for having such a change upstream regardless but it's
-still not clear if any of these changes are really fixes in the sense
-that we mean for stable.
-
-> 3. add 631bc8f0134ae to 4.4, 4.9 and 4.14
->    add 694b14554d75f to 4.4-5.3
->    add 904a987345258 to 4.4
-
-This is basically the same as 2 except it adds some more user
-controllable mute controls with 904a987345258 and does different things
-in different versions for reasons I'm not clear on.  It has the same
-issue.
-
-> So this bug will be fixed in all supported versions.
-
-It is not clear that this is even a bug in the first place, it's not
-full functionality but that doesn't mean that it's a bug it just means
-that there's some missing functionality.
-
---bpVaumkpfGNUagdU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2omSgACgkQJNaLcl1U
-h9BFtwf/WoLBa6iKrS4oD2smJ7x7F9F12LWoy914JRUB1yrc5XVpYCUlO49bY3e5
-qFaPCMJi1VGslhCnWai614kNU4Utca3R04QaWyniljAiQuJdFz4GBDJCfeQgjr10
-rp082YJoky/l6d7uelGhsUmDgWIDtQVgs5Hnc/NniR0/94QAc55fh5TRSZD9U4KI
-7yuMh7kU9zl/05aHVIJ+YmrBuk7TqmCLAcfMqSfpeolvt5I0WvC4KyB0A0C7Ybbg
-0bpuIwzSMXsNPTo36fcoUvMhOaRxJ4TYchz65+wGWnLKVH8l3V3agJgKf60atwrd
-fc93BCk7uqBfZG+SxKFKhL3urP/vKw==
-=tOWv
------END PGP SIGNATURE-----
-
---bpVaumkpfGNUagdU--
+-- 
+Warm Regards
+Thara
