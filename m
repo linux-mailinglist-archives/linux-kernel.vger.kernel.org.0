@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80521DA73A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 10:26:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A94E5DA74B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 10:26:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408264AbfJQI0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 04:26:25 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:63404 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2408245AbfJQI0Z (ORCPT
+        id S2439156AbfJQI0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 04:26:50 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:11565 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2408266AbfJQI0a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 04:26:25 -0400
-X-UUID: e47f34c129364d959461b130c31496c1-20191017
-X-UUID: e47f34c129364d959461b130c31496c1-20191017
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        Thu, 17 Oct 2019 04:26:30 -0400
+X-UUID: de8f5d26d7db4dff96a3408a8889521b-20191017
+X-UUID: de8f5d26d7db4dff96a3408a8889521b-20191017
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
         (envelope-from <min.guo@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 326889473; Thu, 17 Oct 2019 16:26:12 +0800
+        with ESMTP id 1563663995; Thu, 17 Oct 2019 16:26:16 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 17 Oct 2019 16:26:10 +0800
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 17 Oct 2019 16:26:14 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 17 Oct 2019 16:26:10 +0800
+ Transport; Thu, 17 Oct 2019 16:26:13 +0800
 From:   <min.guo@mediatek.com>
 To:     Bin Liu <b-liu@ti.com>, Rob Herring <robh+dt@kernel.org>
 CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,15 +35,15 @@ CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>, <tony@atomide.com>,
         <hdegoede@redhat.com>, Min Guo <min.guo@mediatek.com>
-Subject: [PATCH RESEND v7 1/6] dt-bindings: usb: musb: Add support for MediaTek musb controller
-Date:   Thu, 17 Oct 2019 16:25:49 +0800
-Message-ID: <20191017082554.27953-2-min.guo@mediatek.com>
+Subject: [PATCH RESEND v7 2/6] arm: dts: mt2701: Add usb2 device nodes
+Date:   Thu, 17 Oct 2019 16:25:50 +0800
+Message-ID: <20191017082554.27953-3-min.guo@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20191017082554.27953-1-min.guo@mediatek.com>
 References: <20191017082554.27953-1-min.guo@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 4ED10C889B902A1A82AC1FD48C18778CAA1FE575CE1BD26985FC9F20878486BE2000:8
+X-TM-SNTS-SMTP: 8970BAFCD99880B6ECB00EF9FCDCE6C4C1DFF7C4FB63CD24EA70B392BC0959C12000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,103 +52,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Min Guo <min.guo@mediatek.com>
 
-This adds support for MediaTek musb controller in
-host, peripheral and otg mode.
+Add musb nodes and usb2 phy nodes for MT2701
 
 Signed-off-by: Min Guo <min.guo@mediatek.com>
 ---
 changes in v7:
-1. Modify compatible as
-- compatible : should be one of:
-               "mediatek,mt2701-musb"
-               ...
-               followed by "mediatek,mtk-musb"
-2. Change usb connector child node compatible as "gpio-usb-b-connector" 
+1. Change usb connector child node compatible as "gpio-usb-b-connector" 
 
 changes in v6:
 1. Modify usb connector child node
 
 changes in v5:
-suggested by Rob:
-1. Modify compatible as 
-- compatible : should be one of:
-               "mediatek,mt-2701"
-               ...
-               followed by "mediatek,mtk-musb"
-2. Add usb connector child node
+1. Add usb connector child node
 
 changes in v4:
-suggested by Sergei:
-1. String alignment
+1. no changes
 
 changes in v3:
 1. no changes
 
 changes in v2:
-suggested by Bin:
-1. Modify DRC to DRD
-suggested by Rob:
-2. Drop the "<soc-model>-musb" in compatible
-3. Remove phy-names
-4. Add space after comma in clock-names
+1. Remove phy-names
 ---
- .../devicetree/bindings/usb/mediatek,musb.txt      | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/mediatek,musb.txt
+ arch/arm/boot/dts/mt2701-evb.dts | 21 +++++++++++++++++++++
+ arch/arm/boot/dts/mt2701.dtsi    | 33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/mediatek,musb.txt b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
-new file mode 100644
-index 0000000..e53c482
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
-@@ -0,0 +1,55 @@
-+MediaTek musb DRD/OTG controller
-+-------------------------------------------
+diff --git a/arch/arm/boot/dts/mt2701-evb.dts b/arch/arm/boot/dts/mt2701-evb.dts
+index 88f8fd2..05ba43c 100644
+--- a/arch/arm/boot/dts/mt2701-evb.dts
++++ b/arch/arm/boot/dts/mt2701-evb.dts
+@@ -6,6 +6,7 @@
+  */
+ 
+ /dts-v1/;
++#include <dt-bindings/gpio/gpio.h>
+ #include "mt2701.dtsi"
+ 
+ / {
+@@ -61,6 +62,15 @@
+ 		>;
+ 		default-brightness-level = <9>;
+ 	};
 +
-+Required properties:
-+ - compatible      : should be one of:
-+                     "mediatek,mt2701-musb"
-+                     ...
-+                     followed by "mediatek,mtk-musb"
-+ - reg             : specifies physical base address and size of
-+                     the registers
-+ - interrupts      : interrupt used by musb controller
-+ - interrupt-names : must be "mc"
-+ - phys            : PHY specifier for the OTG phy
-+ - dr_mode         : should be one of "host", "peripheral" or "otg",
-+                     refer to usb/generic.txt
-+ - clocks          : a list of phandle + clock-specifier pairs, one for
-+                     each entry in clock-names
-+ - clock-names     : must contain "main", "mcu", "univpll"
-+                     for clocks of controller
++	usb_vbus: regulator@0 {
++		compatible = "regulator-fixed";
++		regulator-name = "usb_vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&pio 45 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ };
+ 
+ &auxadc {
+@@ -230,3 +240,14 @@
+ &uart0 {
+ 	status = "okay";
+ };
 +
-+Optional properties:
-+ - power-domains   : a phandle to USB power domain node to control USB's
-+                     MTCMOS
-+
-+Required child nodes:
-+ usb connector node as defined in bindings/connector/usb-connector.txt
-+Optional properties:
-+ - id-gpios        : input GPIO for USB ID pin.
-+ - vbus-gpios      : input GPIO for USB VBUS pin.
-+ - vbus-supply     : reference to the VBUS regulator, needed when supports
-+                     dual-role mode
-+
-+Example:
-+
-+usb2: usb@11200000 {
-+	compatible = "mediatek,mt2701-musb",
-+		     "mediatek,mtk-musb";
-+	reg = <0 0x11200000 0 0x1000>;
-+	interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_LOW>;
-+	interrupt-names = "mc";
-+	phys = <&u2port2 PHY_TYPE_USB2>;
-+	dr_mode = "otg";
-+	clocks = <&pericfg CLK_PERI_USB0>,
-+		 <&pericfg CLK_PERI_USB0_MCU>,
-+		 <&pericfg CLK_PERI_USB_SLV>;
-+	clock-names = "main","mcu","univpll";
-+	power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
++&usb2 {
++	status = "okay";
 +	connector{
 +		compatible = "gpio-usb-b-connector";
 +		label = "micro-USB";
@@ -157,6 +121,50 @@ index 0000000..e53c482
 +		vbus-supply = <&usb_vbus>;
 +	};
 +};
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index 51e1305..80a3b55 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -671,6 +671,39 @@
+ 		};
+ 	};
+ 
++	usb2: usb@11200000 {
++		compatible = "mediatek,mt2701-musb",
++			     "mediatek,mtk-musb";
++		reg = <0 0x11200000 0 0x1000>;
++		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "mc";
++		phys = <&u2port2 PHY_TYPE_USB2>;
++		dr_mode = "otg";
++		clocks = <&pericfg CLK_PERI_USB0>,
++			 <&pericfg CLK_PERI_USB0_MCU>,
++			 <&pericfg CLK_PERI_USB_SLV>;
++		clock-names = "main","mcu","univpll";
++		power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
++		status = "disabled";
++	};
++
++	u2phy0: usb-phy@11210000 {
++		compatible = "mediatek,generic-tphy-v1";
++		reg = <0 0x11210000 0 0x0800>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++		status = "okay";
++
++		u2port2: usb-phy@1a1c4800 {
++			reg = <0 0x11210800 0 0x0100>;
++			clocks = <&topckgen CLK_TOP_USB_PHY48M>;
++			clock-names = "ref";
++			#phy-cells = <1>;
++			status = "okay";
++		};
++	};
++
+ 	ethsys: syscon@1b000000 {
+ 		compatible = "mediatek,mt2701-ethsys", "syscon";
+ 		reg = <0 0x1b000000 0 0x1000>;
 -- 
 1.9.1
 
