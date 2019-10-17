@@ -2,111 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40939DA828
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC088DA843
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:27:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393468AbfJQJUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 05:20:19 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:2431 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2393097AbfJQJUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 05:20:18 -0400
-Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id 7866E25CA36B01519D37;
-        Thu, 17 Oct 2019 17:20:16 +0800 (CST)
-Received: from DGGEMM423-HUB.china.huawei.com (10.1.198.40) by
- DGGEMM405-HUB.china.huawei.com (10.3.20.213) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 17 Oct 2019 17:20:16 +0800
-Received: from DGGEMM527-MBX.china.huawei.com ([169.254.6.34]) by
- dggemm423-hub.china.huawei.com ([10.1.198.40]) with mapi id 14.03.0439.000;
- Thu, 17 Oct 2019 17:20:10 +0800
-From:   huangdaode <huangdaode@hisilicon.com>
-To:     Marc Zyngier <maz@kernel.org>
-CC:     "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@st.com" <alexandre.torgue@st.com>,
-        "nm@ti.com" <nm@ti.com>, "t-kristo@ti.com" <t-kristo@ti.com>,
-        "ssantosh@kernel.org" <ssantosh@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIHVzZSBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVz?=
- =?utf-8?Q?ource()_for_irqchip_drivers?=
-Thread-Topic: [PATCH] use devm_platform_ioremap_resource() for irqchip
- drivers
-Thread-Index: AQHVhLrhTEOo/fABek625E0pBMISbadd+MMAgACSrxA=
-Date:   Thu, 17 Oct 2019 09:20:10 +0000
-Message-ID: <E20AE017F0DBA04DA661272787510F9813D297B0@DGGEMM527-MBX.china.huawei.com>
-References: <1571296423-208359-1-git-send-email-huangdaode@hisilicon.com>
- <9bbcce19c777583815c92ce3c2ff2586@www.loen.fr>
-In-Reply-To: <9bbcce19c777583815c92ce3c2ff2586@www.loen.fr>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.61.13.197]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S2408497AbfJQJ1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 05:27:45 -0400
+Received: from mail2.skidata.com ([91.230.2.91]:2716 "EHLO mail2.skidata.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392048AbfJQJ1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 05:27:45 -0400
+X-Greylist: delayed 430 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Oct 2019 05:27:44 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=skidata.com; i=@skidata.com; q=dns/txt; s=selector1;
+  t=1571304464; x=1602840464;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=+j+Yjp8dnjM1nQr3RyLaL94Bw4QJ0SOznlwHGpyhZDE=;
+  b=P28/9b/eGSIKvxrqT/J3K6Ej3bnL6syWkhXehvuGH+z1LA7GrMiLl4P3
+   DfB1ENAcURaYO7WnPLabRmfshS+6oQhtzoK4AIx1+qJquKuSvI9UJybwq
+   GWzvKLr0AGyx+/QqtG9Er+JF4pfG6VUMCkJcIDL6V4I+3f+JwXP0vk6bC
+   hkQDQxEloesneJ4ogMbjSzm33kHi8cAcpz7+0bShWyFkvL3ZpyZOmG2Ip
+   Q4nd7RBB6Q5xa8bOfdK62OkG2acDi1nJ563SFMlXrkxTCGL5dyYIY1tgW
+   j5jX4YO1F8V1h6PfpB/BNTuXLV4DkuXgFQiRukg+mv8sVI2jRCKOC4y/r
+   Q==;
+IronPort-SDR: tD3ZTSbdZaCQ6ehfqXJxsB7/tK0f4C8+Wd3DkRP0hldWJcMQgtu5BiK9/3sOQzd4cpV/MzPh7C
+ gwUUaaJdEP77JUrYIcCweplChEajj2CgOeFaUDcvW4OQCc87Dbuw0NaXwfnJwagDbiVMRhTbfJ
+ X5aik8g4tYaQPppclIGjyGkrijcFSrZkf4FuPr+1ZJurPw6PLodiGS5L5uJ/SjfSVGjNKr3B2E
+ uS4eYe5C4MzWZtgKm+I4n4XscfkTg1O9KXHz8SjyEXxDTvw0RB+HMKHyw0D+sIN2WCLucNdKbg
+ KN4=
+X-IronPort-AV: E=Sophos;i="5.67,307,1566856800"; 
+   d="scan'208";a="2381611"
+Subject: Re: [PATCH 5.3 112/112] ASoC: sgtl5000: add ADC mute control
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Fabio Estevam <festevam@gmail.com>
+References: <20191016214844.038848564@linuxfoundation.org>
+ <20191016214907.599726506@linuxfoundation.org>
+ <20191016220044.GB11473@sirena.co.uk> <20191016221025.GA990599@kroah.com>
+ <20191016223518.GC11473@sirena.co.uk> <20191016232358.GA994597@kroah.com>
+From:   Richard Leitner <richard.leitner@skidata.com>
+Message-ID: <de9630e5-341f-b48d-029a-ef1a516bf820@skidata.com>
+Date:   Thu, 17 Oct 2019 11:20:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20191016232358.GA994597@kroah.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.111.252]
+X-ClientProxiedBy: sdex4srv.skidata.net (192.168.111.82) To
+ sdex5srv.skidata.net (192.168.111.83)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTWFyYw0KSSBhbSBqdXN0IGRvaW5nIHRoZSBjb2NjaWNoZWNrIHVzaW5nIHRoZSBjb21tYW5k
-ICJtYWtlIGNvY2NpY2hlY2sgTT1kcml2ZXJzL2lycWNoaXAvIiwgYW5kIGl0IHJlcG9ydCANCiQg
-bWFrZSBjb2NjaWNoZWNrIE09ZHJpdmVycy9pcnFjaGlwLw0KLi4uLi4uLg0KZHJpdmVycy9pcnFj
-aGlwLy9pcnEtbXZlYnUtaWN1LmM6MzYxOjEtMTA6IFdBUk5JTkc6IFVzZSBkZXZtX3BsYXRmb3Jt
-X2lvcmVtYXBfcmVzb3VyY2UgZm9yIGljdSAtPiBiYXNlDQpkcml2ZXJzL2lycWNoaXAvL2lycS10
-czQ4MDAuYzoxMDU6MS0xMTogV0FSTklORzogVXNlIGRldm1fcGxhdGZvcm1faW9yZW1hcF9yZXNv
-dXJjZSBmb3IgZGF0YSAtPiBiYXNlDQpkcml2ZXJzL2lycWNoaXAvL2lycS1tdmVidS1waWMuYzox
-MzQ6MS0xMDogV0FSTklORzogVXNlIGRldm1fcGxhdGZvcm1faW9yZW1hcF9yZXNvdXJjZSBmb3Ig
-cGljIC0+IGJhc2UNCmRyaXZlcnMvaXJxY2hpcC8vaXJxLXRpLXNjaS1pbnRhLmM6NTcxOjEtMTE6
-IFdBUk5JTkc6IFVzZSBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2UgZm9yIGludGEgLT4g
-YmFzZQ0KZHJpdmVycy9pcnFjaGlwLy9pcnEtc3RtMzItZXh0aS5jOjg1MzoxLTE2OiBXQVJOSU5H
-OiBVc2UgZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlIGZvciBob3N0X2RhdGEgLT4gYmFz
-ZQ0KDQpzbyBqdXN0IGZpeCB0aGUgV0FSTklORy4gDQoNCkFuZCBhZnRlciAgYXBwbHkgdGhlIHBh
-dGNoLCBJIGRvIHRoZSBjb21waWxlLCBpdCdzIE9LLCBidXQgSSBsYWNrIG9mIGhhcmR3YXJlIHRv
-IHRlc3QgaXQuIA0KVGhhdCdzIHRoZSBjYXNlLiANCg0KTUJSLg0KVGhhbmtzDQoNCi0tLS0t6YKu
-5Lu25Y6f5Lu2LS0tLS0NCuWPkeS7tuS6ujogTWFyYyBaeW5naWVyIFttYWlsdG86bWF6QGtlcm5l
-bC5vcmddIA0K5Y+R6YCB5pe26Ze0OiAyMDE55bm0MTDmnIgxN+aXpSAxNjoyNA0K5pS25Lu25Lq6
-OiBodWFuZ2Rhb2RlIDxodWFuZ2Rhb2RlQGhpc2lsaWNvbi5jb20+DQrmioTpgIE6IGphc29uQGxh
-a2VkYWVtb24ubmV0OyBhbmRyZXdAbHVubi5jaDsgZ3JlZ29yeS5jbGVtZW50QGJvb3RsaW4uY29t
-OyBzZWJhc3RpYW4uaGVzc2VsYmFydGhAZ21haWwuY29tOyB0Z2x4QGxpbnV0cm9uaXguZGU7IG1j
-b3F1ZWxpbi5zdG0zMkBnbWFpbC5jb207IGFsZXhhbmRyZS50b3JndWVAc3QuY29tOyBubUB0aS5j
-b207IHQta3Jpc3RvQHRpLmNvbTsgc3NhbnRvc2hAa2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5l
-bEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51
-eC1zdG0zMkBzdC1tZC1tYWlsbWFuLnN0b3JtcmVwbHkuY29tDQrkuLvpopg6IFJlOiBbUEFUQ0hd
-IHVzZSBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2UoKSBmb3IgaXJxY2hpcCBkcml2ZXJz
-DQoNCk9uIDIwMTktMTAtMTcgMDg6MTMsIERhb2RlIEh1YW5nIHdyb3RlOg0KPiBGcm9tOiBEYW9k
-ZSBIdWFuZyA8aHVhbmdkYW9kZUBoaXNsaWNvbi5jb20+DQo+DQo+IFVzZSB0aGUgbmV3IGhlbHBl
-ciB0aGF0IHdyYXBzIHRoZSBjYWxscyB0byBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UoKSBhbmQgDQo+
-IGRldm1faW9yZW1hcF9yZXNvdXJjZSgpIHRvZ2V0aGVyDQo+DQo+IFNpZ25lZC1vZmYtYnk6IERh
-b2RlIEh1YW5nIDxodWFuZ2Rhb2RlQGhpc2xpY29uLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2ly
-cWNoaXAvaXJxLW12ZWJ1LWljdS5jICAgfCAzICstLQ0KPiAgZHJpdmVycy9pcnFjaGlwL2lycS1t
-dmVidS1waWMuYyAgIHwgMyArLS0NCj4gIGRyaXZlcnMvaXJxY2hpcC9pcnEtc3RtMzItZXh0aS5j
-ICB8IDMgKy0tICANCj4gZHJpdmVycy9pcnFjaGlwL2lycS10aS1zY2ktaW50YS5jIHwgMyArLS0N
-Cj4gIGRyaXZlcnMvaXJxY2hpcC9pcnEtdHM0ODAwLmMgICAgICB8IDMgKy0tDQo+ICA1IGZpbGVz
-IGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLW12ZWJ1LWljdS5jIA0KPiBiL2RyaXZlcnMvaXJxY2hp
-cC9pcnEtbXZlYnUtaWN1LmMgaW5kZXggNTQ3MDQ1ZC4uZGRmOWIwZCAxMDA2NDQNCj4gLS0tIGEv
-ZHJpdmVycy9pcnFjaGlwL2lycS1tdmVidS1pY3UuYw0KPiArKysgYi9kcml2ZXJzL2lycWNoaXAv
-aXJxLW12ZWJ1LWljdS5jDQo+IEBAIC0zNTcsOCArMzU3LDcgQEAgc3RhdGljIGludCBtdmVidV9p
-Y3VfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZQ0KPiAqcGRldikNCj4NCj4gIAlpY3UtPmRl
-diA9ICZwZGV2LT5kZXY7DQo+DQo+IC0JcmVzID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKHBkZXYs
-IElPUkVTT1VSQ0VfTUVNLCAwKTsNCj4gLQlpY3UtPmJhc2UgPSBkZXZtX2lvcmVtYXBfcmVzb3Vy
-Y2UoJnBkZXYtPmRldiwgcmVzKTsNCj4gKwlpY3UtPmJhc2UgPSBkZXZtX3BsYXRmb3JtX2lvcmVt
-YXBfcmVzb3VyY2UocGRldiwgcmVzKTsNCg0Kdm9pZCBfX2lvbWVtICpkZXZtX3BsYXRmb3JtX2lv
-cmVtYXBfcmVzb3VyY2Uoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwNCiAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgaW5kZXgpDQoN
-CldoYXQgY291bGQgcG9zc2libHkgZ28gd3Jvbmc/IEknZCBzdWdnZXN0IHlvdSBzdGFydCBjb21w
-aWxpbmcgKGFuZCBwb3NzaWJseQ0KdGVzdGluZykgdGhlIGNvZGUgeW91IGNoYW5nZSBiZWZvcmUg
-c2VuZGluZyBwYXRjaGVzLi4uDQoNCiAgICAgICAgIE0uDQotLQ0KSmF6eiBpcyBub3QgZGVhZC4g
-SXQganVzdCBzbWVsbHMgZnVubnkuLi4NCg==
+
+On 17/10/2019 01:23, Greg Kroah-Hartman wrote:
+> On Wed, Oct 16, 2019 at 11:35:18PM +0100, Mark Brown wrote:
+>> On Wed, Oct 16, 2019 at 03:10:25PM -0700, Greg Kroah-Hartman wrote:
+>>> On Wed, Oct 16, 2019 at 11:00:44PM +0100, Mark Brown wrote:
+>>>> On Wed, Oct 16, 2019 at 02:51:44PM -0700, Greg Kroah-Hartman wrote:
+>>>>> From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+>>
+>>>>> commit 694b14554d75f2a1ae111202e71860d58b434a21 upstream.
+>>
+>>>>> This control mute/unmute the ADC input of SGTL5000
+>>>>> using its CHIP_ANA_CTRL register.
+>>
+>>>> This seems like a new feature and not an obvious candidate for stable?
+>>
+>>> there was a long email from Richard that said:
+>>> 	Upstream commit 631bc8f0134a ("ASoC: sgtl5000: Fix of unmute
+>>> 	outputs on probe"), which is e9f621efaebd in v5.3 replaced
+>>> 	snd_soc_component_write with snd_soc_component_update_bits and
+>>> 	therefore no longer cleared the MUTE_ADC flag. This caused the
+>>> 	ADC to stay muted and recording doesn't work any longer. This
+>>> 	patch fixes this problem by adding a Switch control for
+>>> 	MUTE_ADC.
+>>
+>>> That's why I took this.  If this isn't true, I'll be glad to drop this.
+>>
+>> That's probably not an appropriate fix for stable - it's going to add a
+>> new control which users will need to manually set (or hope their
+>> userspace automatically figures out that it should set for them, more
+>> advanced userspaces like PulseAudio should) which isn't a drop in fix.
+>> You could either drop the backport that was done for zero cross or take
+>> a new patch that clears the MUTE_ADC flag (rather than punting to
+>> userspace to do so), or just be OK with what you've got at the minute
+>> which might be fine given the lack of user reports.
+> 
+> Ok, I'll gladly go drop it, thanks!
+
+Mark, thanks for the clarification! I haven't thought of breaking 
+anything with the backport as it worked fine for our application.
+
+Greg, just to be sure:
+
+Are you going to drop this patch and revert e9f621efaebd for v5.3?
+
+Or should I send a patch which clears the MUTE_ADC flag like Mark
+suggested?
+
+thanks & regards;Richard.L
