@@ -2,91 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A811DDA3B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 04:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B32ADA3B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 04:28:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395350AbfJQC1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 22:27:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389217AbfJQC1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 22:27:07 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82EF3218DE;
-        Thu, 17 Oct 2019 02:27:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571279226;
-        bh=jyJMWrPWJgUkX+nFiCCYu/W+Q72iymLKiISBWzAG0ck=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VJ40wKubdlpVLdGUsB0bnIi41pTho0dL70FLTLOoO8nvATt16RxGpwrzgzoEShUiP
-         EtCOUnDR0DxHrbwNGzHa4qiAht4XQdgz6DYj8gIu381zMi20qLtGzkQL3e0DHXueEs
-         pb75OJpTOlVC36awr0ypCikX47Kj/vqKvxc5kFrM=
-Date:   Wed, 16 Oct 2019 19:27:05 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     syzbot <syzbot+76a43f2b4d34cfc53548@syzkaller.appspotmail.com>,
-        akpm@osdl.org, deepa.kernel@gmail.com, hch@infradead.org,
-        jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lkundrak@v3.sk,
-        syzkaller-bugs@googlegroups.com, tklauser@nuerscht.ch,
-        trond.myklebust@fys.uio.no
-Subject: Re: KASAN: use-after-free Read in mnt_warn_timestamp_expiry
-Message-ID: <20191017022705.GB1552@sol.localdomain>
-Mail-Followup-To: Al Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+76a43f2b4d34cfc53548@syzkaller.appspotmail.com>,
-        akpm@osdl.org, deepa.kernel@gmail.com, hch@infradead.org,
-        jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lkundrak@v3.sk,
-        syzkaller-bugs@googlegroups.com, tklauser@nuerscht.ch,
-        trond.myklebust@fys.uio.no
-References: <0000000000007f489b0595115374@google.com>
- <20191017014755.GA1552@sol.localdomain>
- <20191017015853.GR26530@ZenIV.linux.org.uk>
+        id S2406726AbfJQC2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 22:28:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56524 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389173AbfJQC2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 22:28:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 94D21AE8D;
+        Thu, 17 Oct 2019 02:28:04 +0000 (UTC)
+From:   Qu Wenruo <wqu@suse.com>
+To:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-trace-devel@vger.kernel.org
+Subject: [PATCH v2] tools/lib/traceevent, perf tools: Handle %pU format correctly
+Date:   Thu, 17 Oct 2019 10:28:00 +0800
+Message-Id: <20191017022800.31866-1-wqu@suse.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017015853.GR26530@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 02:58:53AM +0100, Al Viro wrote:
-> On Wed, Oct 16, 2019 at 06:47:55PM -0700, Eric Biggers wrote:
-> > On Wed, Oct 16, 2019 at 06:42:11PM -0700, syzbot wrote:
-> > > ==================================================================
-> > > BUG: KASAN: use-after-free in mnt_warn_timestamp_expiry+0x4a/0x250
-> > > fs/namespace.c:2471
-> > > Read of size 8 at addr ffff888099937328 by task syz-executor.1/18510
-> > > 
-> > 
-> > Looks like a duplicate of this:
-> > 
-> > #syz dup: KASAN: use-after-free Read in do_mount
-> > 
-> > See the existing thread and proposed fix here:
-> > https://lkml.kernel.org/linux-fsdevel/000000000000805e5505945a234b@google.com/T/#u
-> 
-> FWIW, I'd go with your "move mnt_warn_timestamp_expiry() up".  However,
-> I'd probably turn the message into something like
-> 	foofs filesystem getting mounted at /mnt/barf supports...
-> And s/mounted/reconfigured/ if mnt_has_parent(mnt) is already true.
-> 
-> Objections?
-> 
+[BUG]
+For btrfs related events, there is a field for fsid, but perf never
+parse it correctly.
 
-How about the following?
+ # perf trace -e btrfs:qgroup_meta_convert xfs_io -f -c "pwrite 0 4k" \
+   /mnt/btrfs/file1
+     0.000 xfs_io/77915 btrfs:qgroup_meta_reserve:(nil)U: refroot=5(FS_TREE) type=0x0 diff=2
+                                                  ^^^^^^ Not a correct UUID
+     ...
 
-	pr_warn("%s filesystem being %s at %s supports timestamps until %04ld (0x%llx)\n",
-		sb->s_type->name,
-		is_mounted(mnt) ? "remounted" : "mounted",
-		mntpath,
-		tm.tm_year+1900, (unsigned long long)sb->s_time_max);
+[CAUSE]
+The pretty_print() function doesn't handle the %pU format correctly.
+In fact it doesn't handle %pU as uuid at all.
 
-I think more people would understand "remounted" than "reconfigured".  Also,
-is_mounted(mnt) seems like a better choice than mnt_has_parent(real_mount(mnt)).
+[FIX]
+Add a new function, print_uuid_arg(), to handle %pU correctly.
 
-- Eric
+Now perf trace can at least print fsid correctly:
+     0.000 xfs_io/79619 btrfs:qgroup_meta_reserve:23ad1511-dd83-47d4-a79c-e96625a15a6e refroot=5(FS_TREE) type=0x0 diff=2
+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+---
+Changelog:
+v2:
+- Use more comment explaining the finetunings we skipped for %pU*
+- Use more elegant way to output uuid string
+---
+ tools/lib/traceevent/event-parse.c | 56 ++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index d948475585ce..3c9473f46efe 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -18,6 +18,7 @@
+ #include <errno.h>
+ #include <stdint.h>
+ #include <limits.h>
++#include <linux/uuid.h>
+ #include <linux/time64.h>
+ 
+ #include <netinet/in.h>
+@@ -4508,6 +4509,45 @@ get_bprint_format(void *data, int size __maybe_unused,
+ 	return format;
+ }
+ 
++static void print_uuid_arg(struct trace_seq *s, void *data, int size,
++			   struct tep_event *event, struct tep_print_arg *arg)
++{
++	unsigned char *buf;
++	int i;
++
++	if (arg->type != TEP_PRINT_FIELD) {
++		trace_seq_printf(s, "ARG TYPE NOT FIELID but %d", arg->type);
++		return;
++	}
++
++	if (!arg->field.field) {
++		arg->field.field = tep_find_any_field(event, arg->field.name);
++		if (!arg->field.field) {
++			do_warning("%s: field %s not found",
++				   __func__, arg->field.name);
++			return;
++		}
++	}
++	if (arg->field.field->size < 16) {
++		trace_seq_printf(s, "INVALID UUID: size have %u expect 16",
++				arg->field.field->size);
++		return;
++	}
++	buf = data + arg->field.field->offset;
++	/* first segment,  %02x *4 */
++	for (i = 0; i < 4; i++, buf++)
++		trace_seq_printf(s, "%02x", *buf);
++
++	/* 2nd, 3rd, 4th segment, each segment is "-%02x%02x" */
++	for (i = 0; i < 3; i++, buf += 2)
++		trace_seq_printf(s, "-%02x%02x", buf[i * 2], buf[i * 2 + 1]);
++
++	/* Final segment, '-' and '%02x' *6 */
++	trace_seq_putc(s, '-');
++	for (i = 0; i < 6; i++, buf++)
++		trace_seq_printf(s, "%02x", *buf);
++}
++
+ static void print_mac_arg(struct trace_seq *s, int mac, void *data, int size,
+ 			  struct tep_event *event, struct tep_print_arg *arg)
+ {
+@@ -5074,6 +5114,22 @@ static void pretty_print(struct trace_seq *s, void *data, int size, struct tep_e
+ 						arg = arg->next;
+ 						break;
+ 					}
++				} else if (*ptr == 'U') {
++					/*
++					 * %pU has several finetunings variants
++					 * like %pUb and %pUL.
++					 * Here we ignore them, default to
++					 * byte-order no endian, lower case
++					 * letters.
++					 */
++					if (isalpha(ptr[1]))
++						ptr += 2;
++					else
++						ptr++;
++
++					print_uuid_arg(s, data, size, event, arg);
++					arg = arg->next;
++					break;
+ 				}
+ 
+ 				/* fall through */
+-- 
+2.23.0
+
