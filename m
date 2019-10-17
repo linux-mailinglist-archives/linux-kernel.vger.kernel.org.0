@@ -2,99 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28BCCDAFC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBAC3DAFDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:22:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440087AbfJQOUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 10:20:41 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4216 "EHLO huawei.com"
+        id S2440137AbfJQOVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 10:21:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40502 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2440048AbfJQOUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 10:20:40 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5444352314939BFFAD81;
-        Thu, 17 Oct 2019 22:20:29 +0800 (CST)
-Received: from [127.0.0.1] (10.177.251.225) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
- 22:20:23 +0800
-Subject: Re: [PATCH V2] arm64: psci: Reduce waiting time of
- cpu_psci_cpu_kill()
-To:     David Laight <David.Laight@ACULAB.COM>,
-        Sudeep Holla <sudeep.holla@arm.com>
-CC:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "wuyun.wu@huawei.com" <wuyun.wu@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
-        "linfeilong@huawei.com" <linfeilong@huawei.com>
-References: <18068756-0f39-6388-3290-cf03746e767d@huawei.com>
- <9df267db-e647-a81d-16bb-b8bfb06c2624@huawei.com>
- <20191016153221.GA8978@bogus>
- <0f550044-9ed2-5f72-1335-73417678ba45@huawei.com>
- <c97c87b52f474463bc30ff8033a57e0c@AcuMS.aculab.com>
-From:   Yunfeng Ye <yeyunfeng@huawei.com>
-Message-ID: <1cd555f0-4074-36b7-8426-6f01130051d2@huawei.com>
-Date:   Thu, 17 Oct 2019 22:19:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <c97c87b52f474463bc30ff8033a57e0c@AcuMS.aculab.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.251.225]
-X-CFilter-Loop: Reflected
+        id S2440094AbfJQOVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 10:21:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0C59CB447;
+        Thu, 17 Oct 2019 14:21:32 +0000 (UTC)
+From:   Oscar Salvador <osalvador@suse.de>
+To:     n-horiguchi@ah.jp.nec.com
+Cc:     mhocko@kernel.org, mike.kravetz@oracle.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: [RFC PATCH v2 00/16] Hwpoison rework {hard,soft}-offline
+Date:   Thu, 17 Oct 2019 16:21:07 +0200
+Message-Id: <20191017142123.24245-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[NOTE]
+ Although I think the patchset is ready to go since a) it fixes
+ the original issues and b) survives all my tests, I wanted to
+ giving it a last RFC spin.
+ If no further objections are presented, I will drop the RFC.
 
+This patchset was initially based on Naoya's hwpoison rework [1], so
+thanks to him for the initial work.
+I would also like to think Naoya for testing the patchset off-line,
+and report any issues he found, that was quite helpful.
 
-On 2019/10/17 22:00, David Laight wrote:
-> From: Yunfeng Ye
->> Sent: 17 October 2019 14:26
-> ...
->>>> -	for (i = 0; i < 10; i++) {
->>>> +	i = 0;
->>>> +	timeout = jiffies + msecs_to_jiffies(100);
->>>> +	do {
->>>>  		err = psci_ops.affinity_info(cpu_logical_map(cpu), 0);
->>>>  		if (err == PSCI_0_2_AFFINITY_LEVEL_OFF) {
->>>>  			pr_info("CPU%d killed.\n", cpu);
->>>>  			return 0;
->>>>  		}
->>>>
->>>> -		msleep(10);
->>>> -		pr_info("Retrying again to check for CPU kill\n");
->>>
->>> You dropped this message, any particular reason ?
->>>
->> When reduce the time interval to 1ms, the print message maybe increase 10 times.
->> on the other hand, cpu_psci_cpu_kill() will print message on success or failure, which
->> this retry log is not very necessary. of cource, I think use pr_info_once() instead of
->> pr_info() is better.
-> 
-> Maybe you should print in on (say) the 10th time around the loop.
-> 
-Can it like this:
-  pr_info("CPU%d killed with %d loops.\n", cpu, loops);
+This patchset aims to fix some issues laying in {soft,hard}-offline handling,
+but it also takes the chance and takes some further steps to perform 
+cleanups and some refactoring as well.
 
-If put the number of waiting times in the successful printing message, it is
-not necessary to print the "Retrying ..." message.
+While this patchset was initially thought for soft-offlining, I think
+that hard-offline part can be further cleanup.
+But that would be on top of this work.
 
-thanks.
+ - Motivation:
 
-> 	David
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-> 
+   A customer and I were facing an issue were processes were killed
+   after having soft-offlined some of their pages.
+   This should not happen when soft-offlining, as it is meant to be non-disruptive.
+   I was able to reproduce the issue when I stressed the memory +
+   soft offlining pages in the meantime.
+
+   After debugging the issue, I saw that the problem was that pages were returned
+   back to user-space after having offlined them properly.
+   So, when those pages were faulted in, the fault handler returned VM_FAULT_POISON
+   all the way down to the arch handler, and it simply killed the process.
+
+   After a further anaylsis, it became clear that the problem was that when
+   kcompactd kicked in to migrate pages over, compaction_alloc callback
+   was handing poisoned pages to the migrate routine.
+
+   All this could happen because isolate_freepages_block and
+   fast_isolate_freepages just check for the page to be PageBuddy,
+   and since 1) poisoned pages can be part of a higher order page
+   and 2) poisoned pages are also Page Buddy, they can sneak in easily.
+
+   I also saw some other problems with sawap pages, but I suspected it
+   to be the same sort of problem, so I did not follow that trace.
+
+   The above refers to soft-offline.
+   But I also saw problems with hard-offline, specially hugetlb corruption,
+   and some other weird stuff. (I could paste the logs)
+
+   The full explanation refering to the soft-offline case can be found at [2].
+
+ - Approach:
+
+   The taken approach is to contain those pages and never let them hit 
+   neither pcplists nor buddy freelists.
+   Only when they are completely out of reach, we flag them as poisoned.
+
+   A full explanation of this can be found in patch#10 and patch#11.
+
+ - Outcome:
+
+   With this patchset, I no longer see the issues with soft-offline and
+   hard-offline.
+
+[1] https://lore.kernel.org/linux-mm/1541746035-13408-1-git-send-email-n-horiguchi@ah.jp.nec.com/
+[2] https://lore.kernel.org/linux-mm/20190826104144.GA7849@linux/T/#u
+
+Naoya Horiguchi (6):
+  mm,hwpoison: cleanup unused PageHuge() check
+  mm,madvise: call soft_offline_page() without MF_COUNT_INCREASED
+  mm,hwpoison-inject: don't pin for hwpoison_filter
+  mm,hwpoison: remove MF_COUNT_INCREASED
+  mm,hwpoison: remove flag argument from soft offline functions
+  mm, soft-offline: convert parameter to pfn
+
+Oscar Salvador (10):
+  mm,madvise: Refactor madvise_inject_error
+  mm,hwpoison: Un-export get_hwpoison_page and make it static
+  mm,hwpoison: Kill put_hwpoison_page
+  mm,hwpoison: Unify THP handling for hard and soft offline
+  mm,hwpoison: Rework soft offline for free pages
+  mm,hwpoison: Rework soft offline for in-use pages
+  mm,hwpoison: Refactor soft_offline_huge_page and __soft_offline_page
+  mm,hwpoison: Take pages off the buddy when hard-offlining
+  mm,hwpoison: Return 0 if the page is already poisoned in soft-offline
+  mm/hwpoison-inject: Rip off duplicated checks
+
+ drivers/base/memory.c      |   7 +-
+ include/linux/mm.h         |  11 +-
+ include/linux/page-flags.h |   5 -
+ mm/hwpoison-inject.c       |  43 +-----
+ mm/madvise.c               |  39 ++---
+ mm/memory-failure.c        | 365 +++++++++++++++++++++------------------------
+ mm/migrate.c               |  11 +-
+ mm/page_alloc.c            |  69 +++++++--
+ 8 files changed, 253 insertions(+), 297 deletions(-)
+
+-- 
+2.12.3
 
