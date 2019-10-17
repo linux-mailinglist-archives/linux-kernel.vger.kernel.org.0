@@ -2,136 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6C44DA862
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:32:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02FCDDA867
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 11:33:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439472AbfJQJcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 05:32:32 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:2164 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393479AbfJQJc2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 05:32:28 -0400
-Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
-  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="Ludovic.Desroches@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa5.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: RiPCekASyK4XX90kgCguTCZ6Fewhru0nFfg686muQ+X+vlhkeieyRjrnEUVS3yVAzWUE6DVNG+
- GbSV9HVpkfwpF5mY5RfpApF4VBMWZ6Nxn4Q20rPm7PF5NNjQ5Cpi7M9xdDogU32xpnXuMWJm0n
- 3t1QxTxeSK2r8AE+Fb7kj5deB6wBEHEx99oxp3Qz0lElf95HmZxlZUQrQNXL1fWFtxS0DWquEo
- AGwgYe+DhTVb79+g3k+w7BNGS4y2GVg7aRO4olJlG4V4OVjeRqhLz2OBHRZLPchMQ6XbubaumY
- geg=
-X-IronPort-AV: E=Sophos;i="5.67,307,1566889200"; 
-   d="scan'208";a="51838929"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Oct 2019 02:32:12 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 17 Oct 2019 02:32:10 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Thu, 17 Oct 2019 02:32:10 -0700
-Date:   Thu, 17 Oct 2019 11:32:37 +0200
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-CC:     <herbert@gondor.apana.org.au>, <mpm@selenic.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <f.fainelli@gmail.com>,
-        <rjui@broadcom.com>, <sbranden@broadcom.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <eric@anholt.net>,
-        <wahrenst@gmx.net>, <l.stelmach@samsung.com>, <kgene@kernel.org>,
-        <krzk@kernel.org>, <khilman@baylibre.com>, <dsaxena@plexity.net>,
-        <patrice.chotard@st.com>, <linux-crypto@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH -next 01/13] hwrng: atmel - use
- devm_platform_ioremap_resource() to simplify code
-Message-ID: <20191017093237.3poaq7unlm62mhwt@M43218.corp.atmel.com>
-Mail-Followup-To: YueHaibing <yuehaibing@huawei.com>,
-        herbert@gondor.apana.org.au, mpm@selenic.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, f.fainelli@gmail.com,
-        rjui@broadcom.com, sbranden@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, eric@anholt.net,
-        wahrenst@gmx.net, l.stelmach@samsung.com, kgene@kernel.org,
-        krzk@kernel.org, khilman@baylibre.com, dsaxena@plexity.net,
-        patrice.chotard@st.com, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-References: <20191016104621.26056-1-yuehaibing@huawei.com>
- <20191016104621.26056-2-yuehaibing@huawei.com>
+        id S2405597AbfJQJdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 05:33:09 -0400
+Received: from mail-eopbgr780087.outbound.protection.outlook.com ([40.107.78.87]:15539
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730379AbfJQJdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 05:33:08 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k2EC0L4E3ucE0+lZR6CVZeinYlRHsMNLESOR6GPGZJTV+MRh8/e8+dpzqLdZFaj+NBeAiwWAfo0kF2XOpnWiyMNe74KzqWerbbu8NyOMLWfjHUqExSTC4jLMD/HwiII0pB0fUoTdkzPGDm8XsC+EyVTADQTWiEdmWUKzuw15PhSdR84nhTi+r4GEvPe27WPDLCF8Sk2AXBjiKnWSPeft0crdNQIZl+3TSAXVCZXYw/Gu32EODB2IY7ha5ToGu/IyGh9qtCRblA27/0A5rVSjt2eguZKQDuqnlWO0w6NuV/58M/NoGrEiZoAwZqM7dNl9I/Awe8GaSB0qFsxNVxPE2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HWow3HfrVKIDprZArFQqovx80ZCZB5a3BFHSA73eCn8=;
+ b=MCS3UezBc1ck9IQnbgqY4qj+KXg5gg7DjIqCha2SDVw+F0GRVnBwKud0FtkHMs5UM+sUWpHfjRuyzUpN2kSLYIhr5+DcNtT18ZxLPHl7pfNQBLUf1HsFXMxhmNXAytGFWnGzmEsWjyfXCcc3960DE1beBwu8QOPunGOrXWwwmbiCgd7ZlxOcErEOG18j1Gi0PaU+Bbf4I8l06mZUyWamWsal8A4a16+vDmEjpfJPl/7Mk48+3x9tb5BgTKi0XPOkNo1f0JBTUx9hCSQTgpGSQs9l9zsu5yAovmLt6V545pSYDFDhwGXuMCf2EEx4kJ3UlbShcpYQONWEX6Kigv1nvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HWow3HfrVKIDprZArFQqovx80ZCZB5a3BFHSA73eCn8=;
+ b=BOTULZabuTRLBR15oLPqCXPoXP7U3KsxEwPD5HpdLQBPXVlrShozQ83gQt5IsOflO4k/XRWppwpAqd4qkcObKfQB7HlyXLFtb6M+t//xR7mBtzXsgxQ2wux4V9eHx1LU1wqXKdxeGIxBWgN1q6uNS5hiFbgmrTrAVWpYwiCsuog=
+Received: from DM6PR12MB3868.namprd12.prod.outlook.com (10.255.173.213) by
+ DM6PR12MB2889.namprd12.prod.outlook.com (20.179.71.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Thu, 17 Oct 2019 09:33:06 +0000
+Received: from DM6PR12MB3868.namprd12.prod.outlook.com
+ ([fe80::64dd:646d:6fa1:15a1]) by DM6PR12MB3868.namprd12.prod.outlook.com
+ ([fe80::64dd:646d:6fa1:15a1%4]) with mapi id 15.20.2347.023; Thu, 17 Oct 2019
+ 09:33:06 +0000
+From:   vishnu <vravulap@amd.com>
+To:     Mark Brown <broonie@kernel.org>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>
+CC:     "RAVULAPATI, VISHNU VARDHAN RAO" 
+        <Vishnuvardhanrao.Ravulapati@amd.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
+        Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/7] ASoC: amd: No need PCI-MSI interrupts
+Thread-Topic: [PATCH 1/7] ASoC: amd: No need PCI-MSI interrupts
+Thread-Index: AQHVd/NK02/86+8bwUqA0+UYmDRNb6dGCguAgAABq4CADmkpAIAK7WKA
+Date:   Thu, 17 Oct 2019 09:33:06 +0000
+Message-ID: <76668467-5edf-407a-a063-50f322fe785d@amd.com>
+References: <1569891524-18875-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <BN6PR12MB18093C8EDE60811B3D917DEAF79D0@BN6PR12MB1809.namprd12.prod.outlook.com>
+ <20191001172941.GC4786@sirena.co.uk>
+ <f9b1c3d5-6e02-354f-91b6-3b57e2f88bde@amd.com>
+In-Reply-To: <f9b1c3d5-6e02-354f-91b6-3b57e2f88bde@amd.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BMXPR01CA0010.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:d::20) To DM6PR12MB3868.namprd12.prod.outlook.com
+ (2603:10b6:5:1c8::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Vishnuvardhanrao.Ravulapati@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.159.251]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ebdd151c-22e3-43c9-da08-08d752e50403
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: DM6PR12MB2889:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR12MB288917FDC6A7A2DABC1542C9E76D0@DM6PR12MB2889.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 01930B2BA8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(376002)(366004)(39860400002)(396003)(199004)(189003)(6506007)(76176011)(66066001)(8676002)(14454004)(66556008)(66476007)(31686004)(66946007)(66446008)(64756008)(102836004)(81156014)(81166006)(25786009)(7736002)(386003)(53546011)(316002)(6636002)(305945005)(478600001)(99286004)(5660300002)(31696002)(36756003)(52116002)(71190400001)(71200400001)(186003)(2906002)(26005)(54906003)(110136005)(11346002)(486006)(446003)(6246003)(476003)(4326008)(2616005)(8936002)(229853002)(6486002)(6116002)(3846002)(6436002)(6512007)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2889;H:DM6PR12MB3868.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 2Owyg3vey/bbRRPUuiE4r6gGsNDieu63N8gN+h5DW9+TTzQG9CsKln/ih9mwWXLGWnhlhuj1TEjp30cuFhE2LuqcC0zgGd/0dPYXYUtzOKRsb/lKe5yVSu7kb1/uqi7dqBpKFI2GSNhHjS1p/Vq5s7Ve8nqITOqBDAaSZ3N/woZJyvGEoaBwXVIWlO0G2c3ssJ3gh3Alrk81BwX+FV+1QQ8rzki63mgohTTwWjx+4nKxGMc7EZ87/8ZIiScObMDsZayIfUoGtkM9VDOftiwVAlOpTfatJGhlE1Ze6vVveDtMG3hXgDyRUoHTrI4d1jHlA5zjbE2aAM8aOuPl4szDqcX6oNEhNGUvtL5IHm4YCZfjsAk9qDb8NGcg2TGKrs8MIvd461PjMVNDsnUl9XWtV7RDzrDFR2NzOfJn6WysYTA=
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <C7CB0298D99CA54F859578B2C90D58F1@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191016104621.26056-2-yuehaibing@huawei.com>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebdd151c-22e3-43c9-da08-08d752e50403
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2019 09:33:06.6003
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: T6L64v7ix7nt9h3njGjGJ/3ghJxcUv3MD1V5D4JVcSU4O0akqffgYeoU5VHWqdSYDcxmx5XshF+bTM0NBsaFZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2889
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 06:46:09PM +0800, YueHaibing wrote:
-> External E-Mail
-> 
-> 
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 
-Thanks
+On 11/10/19 3:03 AM, vishnu wrote:
+> Hi,
+> Please find my inline comments.
+>=20
+> Thanks,
+> Vishnu
+>=20
+> On 01/10/19 10:59 PM, Mark Brown wrote:
+>> On Tue, Oct 01, 2019 at 05:23:43PM +0000, Deucher, Alexander wrote:
+>>
+>>>> ACP-PCI controller driver does not depends msi interrupts.
+>>>> So removed msi related pci functions which have no use and does not=20
+>>>> impact
+>>>> on existing functionality.
+>>
+>>> In general, however, aren't MSIs preferred to legacy interrupts?
+>>
+>> As I understand it.=A0 Or at the very least I'm not aware of any situati=
+on
+>> where they're harmful.=A0 It'd be good to have a clear explanation of wh=
+y
+>> we're removing the support.
+>=20
+> Actually our device is audio device and it does not depends on MSI`s.
+> So we thought to remove it as it has no purpose or meaning to have
+> this code in our audio based ACP-PCI driver.
+>=20
+>>> Doesn't the driver have to opt into MSI support?=A0 As such, won't
+>>> removing this code effectively disable MSI support?
+>>
+>> Yes.
+>=20
+>=20
 
-> ---
->  drivers/char/hw_random/atmel-rng.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/char/hw_random/atmel-rng.c b/drivers/char/hw_random/atmel-rng.c
-> index e557057..b3138ec2 100644
-> --- a/drivers/char/hw_random/atmel-rng.c
-> +++ b/drivers/char/hw_random/atmel-rng.c
-> @@ -62,15 +62,13 @@ static void atmel_trng_disable(struct atmel_trng *trng)
->  static int atmel_trng_probe(struct platform_device *pdev)
->  {
->  	struct atmel_trng *trng;
-> -	struct resource *res;
->  	int ret;
->  
->  	trng = devm_kzalloc(&pdev->dev, sizeof(*trng), GFP_KERNEL);
->  	if (!trng)
->  		return -ENOMEM;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	trng->base = devm_ioremap_resource(&pdev->dev, res);
-> +	trng->base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(trng->base))
->  		return PTR_ERR(trng->base);
->  
-> -- 
-> 2.7.4
-> 
-> 
-> 
+Hi Mark,
+
+Any updates on this patch.
+
+Regards,
+Vishnu
