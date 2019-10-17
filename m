@@ -2,97 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1431CDB28A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 18:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68D91DB28E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 18:39:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408727AbfJQQiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 12:38:15 -0400
-Received: from smtprelay0231.hostedemail.com ([216.40.44.231]:45423 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729529AbfJQQiP (ORCPT
+        id S2440495AbfJQQjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 12:39:19 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:41468 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729529AbfJQQjT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 12:38:15 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 326BC181D341E;
-        Thu, 17 Oct 2019 16:38:13 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:967:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2525:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6742:8531:8985:9025:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12555:12663:12740:12760:12895:12986:13069:13095:13311:13357:13439:14181:14659:14721:21063:21080:21433:21627:21740:30012:30034:30054:30070:30091,0,RBL:47.151.135.62:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: club44_2a4e4b9966947
-X-Filterd-Recvd-Size: 3120
-Received: from XPS-9350.home (unknown [47.151.135.62])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 17 Oct 2019 16:38:10 +0000 (UTC)
-Message-ID: <c2a4d95bee896df95d277fe84295e91014835030.camel@perches.com>
-Subject: Re: [PATCH 00/32] Kill pr_warning in the whole linux code
-From:   Joe Perches <joe@perches.com>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Petr Mladek <pmladek@suse.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        "DavidS. Miller" <davem@davemloft.net>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        AlexeiStarovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        GregKroah-Hartman <gregkh@linuxfoundation.org>,
-        ArnaldoCarvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Date:   Thu, 17 Oct 2019 09:38:09 -0700
-In-Reply-To: <21f6322c-1c2b-f857-2e6e-e1c6aa45dd2d@huawei.com>
-References: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
-         <20191002085554.ddvx6yx6nx7tdeey@pathway.suse.cz>
-         <f613df39-6903-123b-a0f1-d1b783a755ce@huawei.com>
-         <20191017130550.nwswlnwdroyjwwun@pathway.suse.cz>
-         <21f6322c-1c2b-f857-2e6e-e1c6aa45dd2d@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Thu, 17 Oct 2019 12:39:19 -0400
+Received: by mail-yb1-f195.google.com with SMTP id 206so897112ybc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 09:39:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vYJvPdDl3T7Fx646ASlNZBmczwkC7H3BSoulK6E2T3I=;
+        b=L5dLzOreODZtz1fC6R658TQwqBXto0USF2KYsRzaAvcvOCiUwEbkp6P5PvMEs44M0I
+         JCSKtrJl55eSbC8ndDhVh1NmUSrMQcOPQC543hljZtgROp448B88vZ2/yI0ib41HDDoK
+         tPRnGmmoUIDibih651Fnt9rTGmwhv0x04fS6a5ZbMMukW+VYWAupBqC6dOPguuX0K0CD
+         SA44uo2bDMlXVm1hKuv7Lp1uvGn9L0pQ2IHRPUzTR834W1SQBDSAy4N+e2/Xt51BDfuT
+         HYShlFdUAiLrpHDbm8LESk4Xx2PIcuL5hLAXPkErrcCvAqxO5ArsXdEbfOiDehwjcJvC
+         6KJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vYJvPdDl3T7Fx646ASlNZBmczwkC7H3BSoulK6E2T3I=;
+        b=kREyQAMrB+rOASW80+vDA+CIaB5GQlUhhj7j3PSRup49aSfppJ4fIhaAHhkKlZSTcF
+         z0BSYPAvRKU1hUjzfglqfXdG6bP0th2vPmtgKUfRiU7RmWKQbJUawr0/URynIfjJruTm
+         hjkBBvWiDsLTDSvkAqR3haWcMY2WeTweyqRupKF7k95iTN9xMIPS8YjA1Ya3H3FY0dIs
+         ZatrTcz7trIsuZDK1eSIqsP7y/ZH3nKVuGTTWVOxVZlt/Gr3Z+U8xsgny0JoiNYo/sv1
+         5acdX5EVI2FXyeguoeagHQMk/whp1jziiE8biBsqN3p4qUldcQR2krcSc5Z2GRTVJ2ij
+         RNQA==
+X-Gm-Message-State: APjAAAUi92I1I/9HNr+LzDOP39jNnrS9lxdnVfxM2eMLS6RwuKG/AjrI
+        yNgkca8FTndeasjC5NZwqc3kX3YeHMZk41aAzQKgmA==
+X-Google-Smtp-Source: APXvYqxdYvRwKra9r9/E+OOqWK7PsmcGav4kYCUYznmop5C9tp4Z3WcERTqCA2rhAHcIwWJPWLpbrclmbwc5zuy3oDY=
+X-Received: by 2002:a25:4292:: with SMTP id p140mr2700421yba.147.1571330356542;
+ Thu, 17 Oct 2019 09:39:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20191016221148.F9CCD155@viggo.jf.intel.com> <CABCjUKDWRJO9s68qhKQGXzrW39KqfZzZhoOX0HgDcnv-RxJZPw@mail.gmail.com>
+ <85512332-d9d4-6a72-0b42-a8523abc1b5f@intel.com>
+In-Reply-To: <85512332-d9d4-6a72-0b42-a8523abc1b5f@intel.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Thu, 17 Oct 2019 09:39:04 -0700
+Message-ID: <CALvZod7S4jeXqLvu7fTbeGTZy8czfTdsd+v45dGsi70zEt39yg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] [RFC] Migrate Pages in lieu of discard
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Suleiman Souhlal <suleiman@google.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-10-17 at 21:29 +0800, Kefeng Wang wrote:
-> On 2019/10/17 21:05, Petr Mladek wrote:
-> > On Tue 2019-10-08 14:39:32, Kefeng Wang wrote:
-> > > On 2019/10/2 16:55, Petr Mladek wrote:
-> > > > On Fri 2019-09-20 14:25:12, Kefeng Wang wrote:
-> > > > > There are pr_warning and pr_warng to show WARNING level message,
-> > > > > most of the code using pr_warn, number based on next-20190919,
-> > > > > 
-> > > > > pr_warn: 5189   pr_warning: 546 (tools: 398, others: 148)
-> > > > 
-> > > > The ratio is 10:1 in favor of pr_warn(). It would make sense
-> > > > to remove the pr_warning().
-> > > > 
-> > > > Would you accept pull request with these 32 simple patches
-> > > > for rc2, please?
-> > > > 
-> > > > Alternative is to run a simple sed. But it is not trivial
-> > > > to fix indentation of the related lines.
-> > > 
-> > > Kindly ping, should I respin patches with comments fixed?
-> > > Is the patchset acceptable, hope to be clear that what to do next :)
-> > 
-> > I am going to check how many conflicts appeared in linux-next.
-> > 
-> > If there are only few then I'll take it via printk.git. This way
-> > we get proper indentation and other changes.
-[]
-> For tools parts(api/bpf/perf, patch [29-31]), it renames pr_warning
-> to pr_warn, and make manually changes in some place, simply 'sed'
-> maybe not enough.
+On Thu, Oct 17, 2019 at 9:32 AM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 10/17/19 9:01 AM, Suleiman Souhlal wrote:
+> > One problem that came up is that if you get into direct reclaim,
+> > because persistent memory can have pretty low write throughput, you
+> > can end up stalling users for a pretty long time while migrating
+> > pages.
+>
+> Basically, you're saying that memory load spikes turn into latency spikes?
+>
+> FWIW, we have been benchmarking this sucker with benchmarks that claim
+> to care about latency.  In general, compared to DRAM, we do see worse
+> latency, but nothing catastrophic yet.  I'd be interested if you have
+> any workloads that act as reasonable proxies for your latency requirements.
+>
+> > Because of that, we moved to a solution based on the proactive reclaim
+> > of idle pages, that was presented at LSFMM earlier this year:
+> > https://lwn.net/Articles/787611/ .
+>
+> I saw the presentation.  The feedback in the room as I remember it was
+> that proactive reclaim essentially replaced the existing reclaim
+> mechanism, to which the audience was not receptive.  Have folks opinions
+> changed on that, or are you looking for other solutions?
+>
 
-Perhaps tools/ should not be changed.
+I am currently working on a solution which shares the mechanisms
+between regular and proactive reclaim. The interested users/admins can
+setup proactive reclaim otherwise the regular reclaim will work on low
+memory. I will have something in one/two months and will post the
+patches.
 
-Last time I did this, I did not convert tools/ as there are
-possible external dependencies and code like pr_warning_wrapper
-exists and that adds some complexity to the change.
-
-https://lore.kernel.org/patchwork/cover/761816/
-
-
+Shakeel
