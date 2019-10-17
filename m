@@ -2,142 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2862ADA6C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:51:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71A00DA6CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:53:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404909AbfJQHvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 03:51:36 -0400
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:58019 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728735AbfJQHvf (ORCPT
+        id S2407999AbfJQHxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 03:53:17 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39097 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732594AbfJQHxR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 03:51:35 -0400
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id L0ZEiNQokPduvL0ZHitZi9; Thu, 17 Oct 2019 09:51:32 +0200
-Subject: Re: [PATCH v3 5/6] media: sun4i: Add H3 deinterlace driver
-To:     Jernej Skrabec <jernej.skrabec@siol.net>, mripard@kernel.org,
-        wens@csie.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <20191016192807.1278987-1-jernej.skrabec@siol.net>
- <20191016192807.1278987-6-jernej.skrabec@siol.net>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <d768b2bc-a942-03a6-253d-4bcc31f1b11e@xs4all.nl>
-Date:   Thu, 17 Oct 2019 09:51:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 17 Oct 2019 03:53:17 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r3so1144618wrj.6;
+        Thu, 17 Oct 2019 00:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=WmdAjijAJ1mGcWe1ZcT62QIO9S6tWqydNbncWS1uCf8=;
+        b=fv2JBe6gEpqcjAhpqxIhM/r5H5cKzRW/3x8+EWmbWgFARRM4zYG0RSIxks09MEjjMg
+         Y9vO6HDfZYXUUzi5bS5J4Vn7R2GxKZKFFlX6xN/PyIU2p+OY9zOH1J71JglnIT8szL5T
+         auzK1ruhn6aWoVs0yOkpOePm6iPkFMJ3KnZL5BIFlueSSkKca+hC3mr0wgj3c2R+Nz8v
+         oqGgmyek2JE2rZX8qVkuX8V/LWme6hOADuSlFN6+27H9Oip0HbWt0iUmIFCgFXGfEnsZ
+         lYOtToI3dLo3X5poDykpAFq0SObi/0Ty23QofOrQBYJ7A8pL2L4n6S3rIBm9CagLy77u
+         crpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=WmdAjijAJ1mGcWe1ZcT62QIO9S6tWqydNbncWS1uCf8=;
+        b=Ym1yr+VkUn9SslEZTvWE3qtxQKxXV25rm39t063DuXZlh9d5IlRys3kO46fD37D7rV
+         p8HjjJJblQdfSaDI0FaBqIDGzKHQfdCDsSjaeKR0HVljTKHHBm+oosaLokxieJX38sD+
+         FVrTr7CsdmBeoPyyIXY5XWCVFQFgN8q8N3uHsKyvU2c9Xq863FNyIaoz/6HtXs/4mJ4n
+         DfQqhMsqyN1UA8Zy7PKIYcyTwmMrIjCrgZpTgJ1rh5goze2CHDORi+2IDfczxjBnuwsf
+         UVtAvgLWHzpnEVlZrpK09r7hfYv/cz7BQ0Roko4kgRc8vPqMjfVDIOzacZXagfluUym3
+         vvYA==
+X-Gm-Message-State: APjAAAWoOsj1I5usatDEZ8A67HWNtwA0OQd5KjpiS6b07HAcVqxWkJCh
+        UI7l8nJ7rUKqe0+jYDxXb6I=
+X-Google-Smtp-Source: APXvYqzTcvcm8WbGzmcu4hbIsYWFxP+P9ICfyRC1hJQjmxFumwxQCPn3KSTizxcFDNal3frZ7VNKEg==
+X-Received: by 2002:a5d:46c6:: with SMTP id g6mr1666233wrs.331.1571298795401;
+        Thu, 17 Oct 2019 00:53:15 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id b130sm1976566wmh.12.2019.10.17.00.53.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Oct 2019 00:53:14 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 09:53:13 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20191017075313.6bxsn2d5ceuazowc@pali>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+ <20190829205631.uhz6jdboneej3j3c@pali>
+ <184209.1567120696@turing-police>
+ <20190829233506.GT5281@sasha-vm>
+ <20190830075647.wvhrx4asnkrfkkwk@pali>
+ <20191016140353.4hrncxa5wkx47oau@pali>
+ <20191016143113.GS31224@sasha-vm>
+ <20191016160349.pwghlg566hh2o7id@pali>
+ <20191016203317.GU31224@sasha-vm>
+ <207853.1571262823@turing-police>
 MIME-Version: 1.0
-In-Reply-To: <20191016192807.1278987-6-jernej.skrabec@siol.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfFzjUTWPxOlTU4hlEoCPjG/vSnr5xKQMF8XCQ+SW2mlaLMTpQxaZ4EILqCiVCuh6PT0/ZGWxxDnt9eqTiqgrU30Ii5IcSv5qXVgZKrKwRQi+3s/KXvlH
- cW3X33jRHUWkl54rP0BkXftU0szeQJ0072L78iJO5WHkMZWfgWh3+Eu0GlW9LYPLUreGywKDX382EmsMo//teqCpW8UzBd3qtfur6RZwyfW/PVnpXHTX8w54
- 3NATx7a3KgEanmyT+7lBoLehSIZJPcE3ExuqcJ85gypFZE3mPBaYNeWWbhMdOjn9xy72VKc7+rhYNrXfCbI4r1GAWenmaRGgPck9UZ/QvmmnKfCv6MfEjGzF
- mCa2bWuWOcPyvM0/TmOQgX5PPXzDQLe+f2LNK1WgOHJKCM3W4NGwSwCyk+GUWKj7cdJF40IruCU3/x3I05XQifPut6thHfBVH4LS/N5AEienYd4m/Ga7z/2p
- H1UtYUZCGmnxHATQJZxlSooZhRP/qiBbjU3WvKAlGacH643rIINbhwIy/mE=
+In-Reply-To: <207853.1571262823@turing-police>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/19 9:28 PM, Jernej Skrabec wrote:
-> Allwinner H3 SoC contains deinterlace unit, which has several modes of
-> operation - bypass, weave, bob and mixed (advanced) mode. I don't know
-> how mixed mode works, but according to Allwinner it gives best results,
-> so they use it exclusively. Currently this mode is also hardcoded here.
-> 
-> For each interleaved frame queued, this driver produces 2 deinterlaced
-> frames. Deinterlaced frames are based on 2 consequtive output buffers,
-> except for the first 2, where same output buffer is given to peripheral
-> as current and previous.
-> 
-> There is no documentation for this core, so register layout and fixed
-> values were taken from BSP driver.
-> 
-> I'm not sure if maximum size of the image unit is capable to process is
-> governed by size of "flag" buffers, frequency or it really is some HW
-> limitation. Currently driver can process full HD image in ~15ms (7.5ms
-> for each capture buffer), which allows to process 1920x1080@60i video
-> smoothly in real time.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  MAINTAINERS                                   |    7 +
->  drivers/media/platform/sunxi/Kconfig          |    1 +
->  drivers/media/platform/sunxi/Makefile         |    1 +
->  drivers/media/platform/sunxi/sun8i-di/Kconfig |   11 +
->  .../media/platform/sunxi/sun8i-di/Makefile    |    2 +
->  .../media/platform/sunxi/sun8i-di/sun8i-di.c  | 1020 +++++++++++++++++
->  .../media/platform/sunxi/sun8i-di/sun8i-di.h  |  237 ++++
->  7 files changed, 1279 insertions(+)
->  create mode 100644 drivers/media/platform/sunxi/sun8i-di/Kconfig
->  create mode 100644 drivers/media/platform/sunxi/sun8i-di/Makefile
->  create mode 100644 drivers/media/platform/sunxi/sun8i-di/sun8i-di.c
->  create mode 100644 drivers/media/platform/sunxi/sun8i-di/sun8i-di.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c7b48525822a..c375455125fb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4646,6 +4646,13 @@ M:	"Maciej W. Rozycki" <macro@linux-mips.org>
->  S:	Maintained
->  F:	drivers/net/fddi/defxx.*
->  
-> +DEINTERLACE DRIVERS FOR ALLWINNER H3
-> +M:	Jernej Skrabec <jernej.skrabec@siol.net>
-> +L:	linux-media@vger.kernel.org
-> +T:	git git://linuxtv.org/media_tree.git
-> +S:	Maintained
-> +F:	drivers/media/platform/sunxi/sun8i-di/
-> +
->  DELL SMBIOS DRIVER
->  M:	Pali Rohár <pali.rohar@gmail.com>
->  M:	Mario Limonciello <mario.limonciello@dell.com>
-> diff --git a/drivers/media/platform/sunxi/Kconfig b/drivers/media/platform/sunxi/Kconfig
-> index 71808e93ac2e..d7a5621bf327 100644
-> --- a/drivers/media/platform/sunxi/Kconfig
-> +++ b/drivers/media/platform/sunxi/Kconfig
-> @@ -1,2 +1,3 @@
->  source "drivers/media/platform/sunxi/sun4i-csi/Kconfig"
->  source "drivers/media/platform/sunxi/sun6i-csi/Kconfig"
-> +source "drivers/media/platform/sunxi/sun8i-di/Kconfig"
+On Wednesday 16 October 2019 17:53:43 Valdis Klētnieks wrote:
+> and may cause problems if Linux says "currently using FAT 2", and the
+> disk is next used on a Windows 10 box that only looks at FAT 1....
 
-This is a m2m driver, so this belongs in drivers/media/platform/Kconfig in the
-Memory-to-memory section.
+You should use same algorithm which is used for FAT32. Primary FAT is
+first. And all operations are done on Secondary FAT and then is
+Secondary FAT copied to Primary. This is backward compatible with
+systems which operates only with first primary FAT. And other systems
+which see both FATs can benefit from redundancy/recovery.
 
-> diff --git a/drivers/media/platform/sunxi/Makefile b/drivers/media/platform/sunxi/Makefile
-> index a05127529006..3878cb4efdc2 100644
-> --- a/drivers/media/platform/sunxi/Makefile
-> +++ b/drivers/media/platform/sunxi/Makefile
-> @@ -1,2 +1,3 @@
->  obj-y		+= sun4i-csi/
->  obj-y		+= sun6i-csi/
-> +obj-y		+= sun8i-di/
-> diff --git a/drivers/media/platform/sunxi/sun8i-di/Kconfig b/drivers/media/platform/sunxi/sun8i-di/Kconfig
-> new file mode 100644
-> index 000000000000..dbd77a61e3b3
-> --- /dev/null
-> +++ b/drivers/media/platform/sunxi/sun8i-di/Kconfig
-> @@ -0,0 +1,11 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config VIDEO_SUN8I_DEINTERLACE
-> +	tristate "Allwinner Deinterlace driver"
-> +	depends on VIDEO_DEV && VIDEO_V4L2
-> +	depends on HAS_DMA
-> +	depends on OF
-> +	depends on PM
-> +	select VIDEOBUF2_DMA_CONTIG
-> +	select V4L2_MEM2MEM_DEV
-> +	help
-> +	   Support for the Allwinner Deinterlace unit found on some SoCs.
-
-Shouldn't this depend on ARCH_SUNXI || COMPILE_TEST?
-And also on COMMON_CLK?
-
-Regards,
-
-	Hans
+-- 
+Pali Rohár
+pali.rohar@gmail.com
