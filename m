@@ -2,98 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DCC1DB03C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8141ADB06E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:49:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406526AbfJQOjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 10:39:53 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35474 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403882AbfJQOjx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 10:39:53 -0400
-Received: by mail-ot1-f66.google.com with SMTP id z6so2109168otb.2;
-        Thu, 17 Oct 2019 07:39:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XKvgXvqjjk8TiIeEIKyQ/yG8pWMIH1hEHS2GUYJicX0=;
-        b=lZJ6836OI2pn12aL9PXTWeUTOzXE0J5n7XVlvoTCNoIwnIxK8Xvj4RdzXEn6ftbK46
-         3UF+8s5d2F9IEDUe3e5Z7at+zUaFMAxFXavbyasPb3N/GlL4g3kImnBJkgXOjDzm/dI1
-         hQxlfuFx8RFV1aqsUS8ffCGfzJ3AWxeyZsILv+D9UchXb0UY09oE9JpOBDiyMV5LFVAn
-         kzaftBvRAkedL9oEFpik3VqHM5Qk22VsDAGQE54EE1UgbpO7jBCkEXRGEjrZGenwLkkK
-         t8+Jjmo7n15+SzoKtaHglifBWdWJe4x006uKtgIkh+Kei4UsPhQJV+3VLriUw3rsqMMs
-         qneg==
-X-Gm-Message-State: APjAAAXPABB4f9qID33UKIwyk3G+WfeN2eV/p/0/TMM5gGhUgsrCB02r
-        ueOBujpfL8FS2UcSPnzF1g==
-X-Google-Smtp-Source: APXvYqyTwFiv7B8kcSPfWUsuQZ0ie4KxRI5EDe1Qf5K0ko9ok+SIKpmViiaHcvqOyxD96G6OJvSekQ==
-X-Received: by 2002:a9d:37a1:: with SMTP id x30mr3504866otb.49.1571323192328;
-        Thu, 17 Oct 2019 07:39:52 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w33sm647877otb.68.2019.10.17.07.39.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 07:39:51 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 09:39:51 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Yu Chen <chenyu56@huawei.com>, Felipe Balbi <balbi@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Jack Pham <jackp@codeaurora.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [RFC][PATCH v3 04/11] dt-bindings: usb: dwc3: Allow clock list &
- resets to be more flexible
-Message-ID: <20191017143950.GA11204@bogus>
-References: <20191016033340.1288-1-john.stultz@linaro.org>
- <20191016033340.1288-5-john.stultz@linaro.org>
+        id S2406198AbfJQOt2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 10:49:28 -0400
+Received: from mga11.intel.com ([192.55.52.93]:25834 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727138AbfJQOt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 10:49:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2019 07:49:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,308,1566889200"; 
+   d="scan'208";a="190045703"
+Received: from albeaudr-mobl1.amr.corp.intel.com (HELO [10.252.136.206]) ([10.252.136.206])
+  by orsmga008.jf.intel.com with ESMTP; 17 Oct 2019 07:49:24 -0700
+Subject: Re: [alsa-devel] [PATCH] ASoC: Intel: sof-rt5682: add a check for
+ devm_clk_get
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Cezary Rojewski <cezary.rojewski@intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+References: <20191017025044.31474-1-hslester96@gmail.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <31fb322b-c0c2-b783-47bc-52be842f8661@linux.intel.com>
+Date:   Thu, 17 Oct 2019 08:16:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016033340.1288-5-john.stultz@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191017025044.31474-1-hslester96@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 03:33:33AM +0000, John Stultz wrote:
-> Rather then adding another device specific binding to support
-> hikey960, Rob Herring suggested we expand the current dwc3
-> binding to allow for variable numbers of clocks and resets.
+
+
+On 10/16/19 9:50 PM, Chuhong Yuan wrote:
+> sof_audio_probe misses a check for devm_clk_get and may cause problems.
+> Add a check for it to fix the bug.
+
+Indeed this is a miss, we have this test in all machine drivers except 
+this one. Thanks for the patch!
+
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+
 > 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> CC: ShuFan Lee <shufan_lee@richtek.com>
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> Cc: Yu Chen <chenyu56@huawei.com>
-> Cc: Felipe Balbi <balbi@kernel.org>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Cc: Jun Li <lijun.kernel@gmail.com>
-> Cc: Valentin Schneider <valentin.schneider@arm.com>
-> Cc: Jack Pham <jackp@codeaurora.org>
-> Cc: linux-usb@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Suggested-by: Rob Herring <Rob.Herring@arm.com>
-
-Use my kernel.org email please.
-
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 > ---
->  Documentation/devicetree/bindings/usb/dwc3.txt | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+>   sound/soc/intel/boards/sof_rt5682.c | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> diff --git a/sound/soc/intel/boards/sof_rt5682.c b/sound/soc/intel/boards/sof_rt5682.c
+> index a437567b8cee..6d15c7ff66bf 100644
+> --- a/sound/soc/intel/boards/sof_rt5682.c
+> +++ b/sound/soc/intel/boards/sof_rt5682.c
+> @@ -576,6 +576,15 @@ static int sof_audio_probe(struct platform_device *pdev)
+>   	/* need to get main clock from pmc */
+>   	if (sof_rt5682_quirk & SOF_RT5682_MCLK_BYTCHT_EN) {
+>   		ctx->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
+> +		if (IS_ERR(ctx->mclk)) {
+> +			ret = PTR_ERR(ctx->mclk);
+> +
+> +			dev_err(&pdev->dev,
+> +				"Failed to get MCLK from pmc_plt_clk_3: %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+> +
+>   		ret = clk_prepare_enable(ctx->mclk);
+>   		if (ret < 0) {
+>   			dev_err(&pdev->dev,
+> 
