@@ -2,91 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C736DB61A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 369BEDB632
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:31:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390662AbfJQS2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 14:28:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42866 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727235AbfJQS2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:28:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E878FB47D;
-        Thu, 17 Oct 2019 18:28:01 +0000 (UTC)
-Date:   Thu, 17 Oct 2019 20:27:59 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     Qian Cai <cai@lca.pw>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        David Hildenbrand <david@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: memory offline infinite loop after soft offline
-Message-ID: <20191017182759.GN24485@dhcp22.suse.cz>
-References: <1570829564.5937.36.camel@lca.pw>
- <20191014083914.GA317@dhcp22.suse.cz>
- <20191017093410.GA19973@hori.linux.bs1.fc.nec.co.jp>
- <20191017100106.GF24485@dhcp22.suse.cz>
- <1571335633.5937.69.camel@lca.pw>
+        id S2406663AbfJQSbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 14:31:33 -0400
+Received: from sender4-of-o54.zoho.com ([136.143.188.54]:21437 "EHLO
+        sender4-of-o54.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731227AbfJQSbc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 14:31:32 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1571337061; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=n2X1G2BUNp8cu7L6rDm7f49/bcr+rb7JOVb0KHhzpRRUsHaFxkyZR+Bsfdc9RyYg/eFH9QFeHLjBqzTqtzBwFaTFk05dDWvmwVf+CN8FoGLVyrYuuFEbMokqydJKfg6s2fFqaXL7kWgxAw+fYAvsQkr9gz24xsrxNnlUb4rUjyI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1571337061; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=uaBh355qz7rKIhWBpp2WVxLpaXjQT3pukq/t3NvpAsk=; 
+        b=hfuWQ2EcPKn8gvSVHPiN4+gGmmbMsuHfgtGY0z1WcYhvWVrKsmrA2LTvOX9QhbQTkVqj1fmL0yvtFzV8If/AvbNtCcSfRXUKOolSakNKpmcci+f4foZwdLc/kymjqTZzDagzoVAxqR/N4FHpZRA8NNi6HUJ1lUWJ4+I88yd1qiw=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=didiksetiawan.com;
+        spf=pass  smtp.mailfrom=ds@didiksetiawan.com;
+        dmarc=pass header.from=<ds@didiksetiawan.com> header.from=<ds@didiksetiawan.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1571337061;
+        s=zoho; d=didiksetiawan.com; i=ds@didiksetiawan.com;
+        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To;
+        l=855; bh=uaBh355qz7rKIhWBpp2WVxLpaXjQT3pukq/t3NvpAsk=;
+        b=u/2vQM9agltTpTJ3k8zqaO+n/gXrIx8wBKrwiN/oFm8ytxFs81Tb2CFJG+Im+NwY
+        9E8z+lljmlU7GtuOF1zQJ925Y7Oi4rhrFuoKH/qD+OoWisoU+p2Fpiv295nZYRa76En
+        womDnUdDzXQgB99lNQlkVGS12+wTtXHFWQ4yvZno=
+Received: from thinkpad-e420s (120.188.94.47 [120.188.94.47]) by mx.zohomail.com
+        with SMTPS id 1571337060282419.81738443610436; Thu, 17 Oct 2019 11:31:00 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 01:30:48 +0700
+From:   Didik Setiawan <ds@didiksetiawan.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.3 000/112] 5.3.7-stable review
+Message-ID: <20191017183048.GA9506@thinkpad-e420s>
+References: <20191016214844.038848564@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1571335633.5937.69.camel@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 17-10-19 14:07:13, Qian Cai wrote:
-> On Thu, 2019-10-17 at 12:01 +0200, Michal Hocko wrote:
-> > On Thu 17-10-19 09:34:10, Naoya Horiguchi wrote:
-> > > On Mon, Oct 14, 2019 at 10:39:14AM +0200, Michal Hocko wrote:
-> > 
-> > [...]
-> > > > diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-> > > > index 89c19c0feadb..5fb3fee16fde 100644
-> > > > --- a/mm/page_isolation.c
-> > > > +++ b/mm/page_isolation.c
-> > > > @@ -274,7 +274,7 @@ __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
-> > > >  			 * simple way to verify that as VM_BUG_ON(), though.
-> > > >  			 */
-> > > >  			pfn += 1 << page_order(page);
-> > > > -		else if (skip_hwpoisoned_pages && PageHWPoison(page))
-> > > > +		else if (skip_hwpoisoned_pages && PageHWPoison(compound_head(page)))
-> > > >  			/* A HWPoisoned page cannot be also PageBuddy */
-> > > >  			pfn++;
-> > > >  		else
-> > > 
-> > > This fix looks good to me. The original code only addresses hwpoisoned 4kB-page,
-> > > we seem to have this issue since the following commit,
-> > 
-> > Thanks a lot for double checking Naoya!
-> >  
-> > >   commit b023f46813cde6e3b8a8c24f432ff9c1fd8e9a64
-> > >   Author: Wen Congyang <wency@cn.fujitsu.com>
-> > >   Date:   Tue Dec 11 16:00:45 2012 -0800
-> > >   
-> > >       memory-hotplug: skip HWPoisoned page when offlining pages
-> > > 
-> > > and extension of LTP coverage finally discovered this.
-> > 
-> > Qian, could you give the patch some testing?
+On Wed, Oct 16, 2019 at 02:49:52PM -0700, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.3.7 release.
+> There are 112 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Unfortunately, this does not solve the problem. It looks to me that in
-> soft_offline_huge_page(), set_hwpoison_free_buddy_page() will only set
-> PG_hwpoison for buddy pages, so the even the compound_head() has no PG_hwpoison
-> set.
+> Responses should be made by Fri 18 Oct 2019 09:43:41 PM UTC.
+> Anything received after that time might be too late.
 > 
-> 		if (PageBuddy(page_head) && page_order(page_head) >= order) {
-> 			if (!TestSetPageHWPoison(page))
-> 				hwpoisoned = true;
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.7-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+ 
+Compiled, booted, and no regressions found on my x86_64 system.
 
-This is more than unexpected. How are we supposed to find out that the
-page is poisoned? Any idea Naoya?
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+Didik Setiawan 
+
