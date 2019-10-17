@@ -2,168 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7C11DA568
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 08:21:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B861ADA56D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 08:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407800AbfJQGVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 02:21:23 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46744 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404695AbfJQGVW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 02:21:22 -0400
-Received: by mail-lj1-f194.google.com with SMTP id d1so1175052ljl.13
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 23:21:21 -0700 (PDT)
+        id S2437754AbfJQGWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 02:22:12 -0400
+Received: from mail-eopbgr820074.outbound.protection.outlook.com ([40.107.82.74]:16224
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389411AbfJQGWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 02:22:11 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HVbT4h/4TkVLlGBIDj/bhLgHm7FFDJ8avMyLtXIv28o6KEPnKPY0/FxCSn6kAa62FgpKK/gXDzjUSoXTF1grHHYLZUyRM0uOsV6KqXxDzk0QVbs661WA8SFhTbPQA9gLidY68UA3JRAaqGO0WdoWfFjejdOCjtSOtxDx4knCG6lAfgwT5Xll8+xACfeoI1DTQWs9siQlqMysykc7kWq/Ns5k8yrihEAEF/7wGzNyP3bBZO3fSMkA4Y4q7nT9V0MdBChrJb+Ll07NO1QRTFBSonKvILXuWx8K6WTCRwWR3Tbzsx2NcCQq+0jQ2zW1Lu3B+wcrfC3IDpVnVL1fJjolfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X8ZAaEVeEpNU628p3tE43eG+T1WHOKMQZYjiHaLpqk0=;
+ b=dgEOVJ+wnJ7Cb7c2XukoHk56eIDqG9ILzUH1hsprxkZ8pVt7fFOnficJol+gcVwV43v7Ymim1I9hm1wqxRuOnITvOvfEjaIr6QP83QGmH9if41Uqb8fDt8B+VfzWLs+L/jtcVY6IT6NalIHNsr1BhJbX0b0CLidUGZqeKrQCRr39zU+PuFsUzD+rwZlTVlfxb8t7lVmfMspAhJxxXpFNvgnEDvv7WxkmiX7HvuPK7hGXbbEJjJwmNQiGUU2jGsj7/M4E3L5ESJE2Ggct/W7RizyNZv8rqCEt+oN9pZzkZuT75MK3Wr/IAxmKrOJvboaCsfVgG2gTS/2v+oaPEHKRhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=arm.com smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vJwljksPMBM6dZICB00B0fndAGErly1ln+LuF+3T1Rg=;
-        b=zjE7WN8Zy0vPZUWHzZrqOD97ssZvZUOaL9dpeEI7xBaaBeXQE1LJKoBDcG+3XDkUhB
-         DIyU5B/rVpwBFbyeDFMMYA9A245D7hrI30lt2yrK992oRHIJKoSuA/rzidJ/VLg+ptit
-         SZYkPIJ09G8CKS/J9IPSZrAaQyokbacW3FpTnYSzMYyjFroLtsd7zVzVM3LHjJsyKxCb
-         TVu5nTiE916jxYnqkGbsOoK+OUo/muc+Pfr9kwd0ImvQVO6T8OIQBN9ViPn7evumH02I
-         Oh7HN9bQnu87n+Y+JIpxuAW3QVdCu1Gu+YA+7FKjkknUoSjqY3DZ2PwfwOgLL43QKeFk
-         7BFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vJwljksPMBM6dZICB00B0fndAGErly1ln+LuF+3T1Rg=;
-        b=P0xK2Dw/yn6WtaV+HdKYwjBoUW5s0CgVEDyAp1Fr2MC8OFyIaOAnkY+QrthKyCFQQW
-         B7KvFR52W9eBFjOJPUsr/tfNQPFYjSx3W5RAHyMfM72BFtPpirBflHddwB5BmzYBdYZA
-         Sr5YvHHKeqCl+BXNWfNcs3zUJZkikpZMjVMpcRG3blriw/EMJM1pS1FiXEUKeK1BdltG
-         sMmO05HcxyIOW6LIv5Dfbyi/eF1Ks5XnhS4wEnseVp9RVG1Xj3t/CDzzb+MLLK3flj70
-         F2nhK+BmcV3kd1CTxr5prI/u9sVyGNVA9Wc21J7SkRHQjYBLuogi0PvQxl8kGub/UH7F
-         CWAQ==
-X-Gm-Message-State: APjAAAXDZhFBRmWPgrySJ3UEkkC4bw1sjdn2km9XxHhYKp1CtPexZ4AM
-        h1U5kOBgJSzRFxrxvhZ5pqUTWxmkSHgoDpB+S42ok+OkHx0=
-X-Google-Smtp-Source: APXvYqxmmTxaeIoGxwbq8L1+RJyEQesoPePa6UviAVrooX49W5WsmJeeGXHxaWGK4+b7b5GbWQsKJ7zgLPRb3H0J8Fw=
-X-Received: by 2002:a2e:9702:: with SMTP id r2mr1116080lji.194.1571293280339;
- Wed, 16 Oct 2019 23:21:20 -0700 (PDT)
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X8ZAaEVeEpNU628p3tE43eG+T1WHOKMQZYjiHaLpqk0=;
+ b=Z+E+rMKgSbC+XY7wC2OZSXbKlK1l/QVaH9rk2Gim/ONoqfXUnXxz0sABgHuBdjqWI6VA5nn0142Yt12jqnEvYgQx+nx9Qm8vcGX6m1XyA+l3mQpNbpFzGXNWy/i35lNeBTEvpgxtJwdagDfmDsLVm3cCSBqP52WdtoVqsYmOai4=
+Received: from CY4PR02CA0034.namprd02.prod.outlook.com (2603:10b6:903:117::20)
+ by DM6PR02MB6684.namprd02.prod.outlook.com (2603:10b6:5:21b::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.16; Thu, 17 Oct
+ 2019 06:22:05 +0000
+Received: from SN1NAM02FT059.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::202) by CY4PR02CA0034.outlook.office365.com
+ (2603:10b6:903:117::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.16 via Frontend
+ Transport; Thu, 17 Oct 2019 06:22:05 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; arm.com; dkim=none (message not signed)
+ header.d=none;arm.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT059.mail.protection.outlook.com (10.152.72.177) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2347.16
+ via Frontend Transport; Thu, 17 Oct 2019 06:22:05 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <manish.narani@xilinx.com>)
+        id 1iKzAh-0004ag-MK; Wed, 16 Oct 2019 23:22:03 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <manish.narani@xilinx.com>)
+        id 1iKzAc-0003f6-JB; Wed, 16 Oct 2019 23:21:58 -0700
+Received: from [172.23.64.104] (helo=xhdvnc123.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <mnarani@xilinx.com>)
+        id 1iKzAZ-0003dc-BM; Wed, 16 Oct 2019 23:21:55 -0700
+Received: by xhdvnc123.xilinx.com (Postfix, from userid 16987)
+        id 8C3B343A9A; Thu, 17 Oct 2019 11:51:54 +0530 (IST)
+From:   Manish Narani <manish.narani@xilinx.com>
+To:     ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        adrian.hunter@intel.com, michal.simek@xilinx.com,
+        jolly.shah@xilinx.com, rajan.vaja@xilinx.com,
+        nava.manne@xilinx.com, mdf@kernel.org, manish.narani@xilinx.com
+Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        git@xilinx.com
+Subject: [PATCH v3 0/8] Arasan SDHCI enhancements and ZynqMP Tap Delays Handling
+Date:   Thu, 17 Oct 2019 11:51:42 +0530
+Message-Id: <1571293310-92563-1-git-send-email-manish.narani@xilinx.com>
+X-Mailer: git-send-email 2.1.1
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(39860400002)(396003)(346002)(199004)(189003)(42186006)(16586007)(2906002)(48376002)(316002)(44832011)(6666004)(14444005)(305945005)(103686004)(126002)(486006)(2616005)(356004)(478600001)(47776003)(336012)(426003)(476003)(6266002)(26005)(36386004)(4326008)(50466002)(186003)(5660300002)(36756003)(51416003)(50226002)(8936002)(107886003)(81166006)(8676002)(81156014)(70206006)(70586007)(106002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB6684;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
 MIME-Version: 1.0
-References: <20191016214759.600329427@linuxfoundation.org>
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 17 Oct 2019 11:51:08 +0530
-Message-ID: <CA+G9fYtYEcvwRGpXFf+JnqZz+P=pgHZ4R9NAVezpSpq0BmEZvA@mail.gmail.com>
-Subject: Re: [PATCH 4.9 00/92] 4.9.197-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6394a872-59a9-4f6f-7fba-08d752ca5499
+X-MS-TrafficTypeDiagnostic: DM6PR02MB6684:
+X-Microsoft-Antispam-PRVS: <DM6PR02MB668457CD0883E18195E5A9DDC16D0@DM6PR02MB6684.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-Forefront-PRVS: 01930B2BA8
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2idbgbNeFLfivoJW9hB5+BheDMq+YlTPh/6Rom8Yqqppbc1YuPRkwqmU+iWAAQFJw3qYX8d/hi+7YrVVpSMGU8sck813QujvKLqJ2KbEeZSxuwi+6CvL90VD5GjcfmKHOhy9yEoj/nw0vtzI7xHK83FIr5nSkzD7HJ98DVJcwSM1vTbyes1qZkDZ1lphklxQ2T0gb2Mwgpa54cbMxpiTIxtjmAcV/X4SwFtKiwG88G+ENQdsQzTTHHBNHs/cJmkcnbD4zqe13+SzufMpScNdkHToK/E27csxcWBzOIw3q8Lqksy0HFlP89FcpCq+7OCZwrB59/ijuJcX4E/ocMv32uvdi03fHTJzcf4cwXh9R2s0tspLQGZKNUVQQkpWOM9QbcafE5RbK0QVPhc3F5nyepKnlzheYx84dgHqOyXmqmw=
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2019 06:22:05.1310
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6394a872-59a9-4f6f-7fba-08d752ca5499
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB6684
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Oct 2019 at 03:24, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.9.197 release.
-> There are 92 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri 18 Oct 2019 09:43:41 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.9.197-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+This patch series does the following:
+ - Reorganize the Clock Handling in Arasan SD driver
+ - Adds new sampling clock in Arasan SD driver
+ - Adds support to set Clock Delays in SD Arasan Driver
+ - Add SDIO Tap Delay handling in ZynqMP firmware driver
+ - Add support for ZynqMP Tap Delays setting in Arasan SD driver
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Changes in v2:
+	- Replaced the deprecated calls to clock framework APIs
+	- Added support for dev_clk_get() call to work for SD card clock
+	- Separated the clock data struct
+	- Fragmented the patch series in smaller patches to make it more
+	  readable
 
-Summary
-------------------------------------------------------------------------
+Changes in v3:
+	- Reverted "Replaced the deprecated calls to clock framework APIs"
+	- Removed devm_clk_get() call which was added in v2
 
-kernel: 4.9.197-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.9.y
-git commit: 5749cdc967d4817de5000f6054619fb41b4f4333
-git describe: v4.9.196-93-g5749cdc967d4
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
-ld/v4.9.196-93-g5749cdc967d4
+Manish Narani (8):
+  mmc: sdhci-of-arasan: Separate out clk related data to another
+    structure
+  dt-bindings: mmc: arasan: Update Documentation for the input clock
+  mmc: sdhci-of-arasan: Add sampling clock for a phy to use
+  dt-bindings: mmc: arasan: Add optional properties for Arasan SDHCI
+  mmc: sdhci-of-arasan: Add support to set clock phase delays for SD
+  firmware: xilinx: Add SDIO Tap Delay nodes
+  dt-bindings: mmc: arasan: Document 'xlnx,zynqmp-8.9a' controller
+  mmc: sdhci-of-arasan: Add support for ZynqMP Platform Tap Delays Setup
 
+ .../devicetree/bindings/mmc/arasan,sdhci.txt  |  40 +-
+ drivers/mmc/host/sdhci-of-arasan.c            | 477 +++++++++++++++++-
+ include/linux/firmware/xlnx-zynqmp.h          |  13 +-
+ 3 files changed, 498 insertions(+), 32 deletions(-)
 
-No regressions (compared to build v4.9.196)
+-- 
+2.17.1
 
-
-No fixes (compared to build v4.9.196)
-
-Ran 23358 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* network-basic-tests
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-* prep-tmp-disk
-* ssuite
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
