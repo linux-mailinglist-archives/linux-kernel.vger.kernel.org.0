@@ -2,159 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5E70DADA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB3A6DADB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:59:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390850AbfJQM67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 08:58:59 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:50652 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726534AbfJQM67 (ORCPT
+        id S2391024AbfJQM7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 08:59:54 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46882 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727435AbfJQM7y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:58:59 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 387398EE224;
-        Thu, 17 Oct 2019 05:58:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1571317138;
-        bh=b4kNWDqfZtxkbfL5dcugd/YKOrGXYCMtEtj7eyi1VmY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=WmW72JHd4Wd4TcyP9jiSmpW6rsQYk8NSN7664rbyTnkva4l87WSbJ+vfuk1RZptyp
-         rUPUuYZCGZflLMKIfI1d2Vqk5faqZ41STgKX41nHlbxDMu5UClwVarGpM3J62B9eIi
-         VHFbmJN82nVaStqMLiPDRoncX/W3j1cd/+Xi2JD8=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9zWOI_RLXHTt; Thu, 17 Oct 2019 05:58:57 -0700 (PDT)
-Received: from [192.168.100.84] (unknown [24.246.103.29])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 929B38EE0EF;
-        Thu, 17 Oct 2019 05:58:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1571317137;
-        bh=b4kNWDqfZtxkbfL5dcugd/YKOrGXYCMtEtj7eyi1VmY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=StPYKgDLYbhmsgk0E4jm5IETgPreDB3vbpSX3D/QV05zozc26H4z1Om1XLIK837IW
-         NJpMP+bLJqMGW8ddPTUP3RZjP8fnmsx6mQmbi747btopGiqHjUnjxLgYEVUcQ6C93D
-         G93AGCALWtAa4Ih4W6q06soqvalhzlCA5UtRqO5o=
-Message-ID: <1571317135.3728.3.camel@HansenPartnership.com>
-Subject: Re: [PATCH] KEYS: asym_tpm: Switch to get_random_bytes()
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Safford, David (GE Global Research, US)" <david.safford@ge.com>,
-        Ken Goldman <kgold@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Thu, 17 Oct 2019 08:58:55 -0400
-In-Reply-To: <CAFA6WYNNNTWXDrp_R3M60srGJYjJdRoaNpSnP54V_BinYYXTMA@mail.gmail.com>
-References: <BCA04D5D9A3B764C9B7405BBA4D4A3C035F2A38B@ALPMBAPA12.e2k.ad.ge.com>
-         <20191007000520.GA17116@linux.intel.com>
-         <59b88042-9c56-c891-f75e-7c0719eb5ff9@linux.ibm.com>
-         <20191008234935.GA13926@linux.intel.com>
-         <20191008235339.GB13926@linux.intel.com>
-         <BCA04D5D9A3B764C9B7405BBA4D4A3C035F2B995@ALPMBAPA12.e2k.ad.ge.com>
-         <20191014190033.GA15552@linux.intel.com>
-         <1571081397.3728.9.camel@HansenPartnership.com>
-         <20191016110031.GE10184@linux.intel.com>
-         <1571229252.3477.7.camel@HansenPartnership.com>
-         <20191016162543.GB6279@linux.intel.com>
-         <1571253029.17520.5.camel@HansenPartnership.com>
-         <CAFA6WYNNNTWXDrp_R3M60srGJYjJdRoaNpSnP54V_BinYYXTMA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 17 Oct 2019 08:59:54 -0400
+Received: by mail-pl1-f195.google.com with SMTP id q24so1087100plr.13
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 05:59:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JVwwdb+zQ9NSzWqZM+D+qhy9Nv1h+9z50bI96ImiwFA=;
+        b=yipLLBVIoqam9ZEQvn5Rf5/4J06Zm6A3vprEphD1/20bTuSYMwQTjsi2fXVI9RA8Vc
+         T95azBJNV68gtoOpRkyJfcXFLC/5WEiPAFdsvW2SjKW2QiRSylO7tv0w7Z/EzY8rECJG
+         kTyYu3wRJT7nLTe7uwSgq1QA6Q5dWYGnEZ41hGSTnZLcVVE2xTi5RTQidRfOh3v8rH8s
+         V3dtYdMnmXvMCOCY+2Ck1JAcalgJ/oNZ/X/as36DbTkVCa9AE4UY0NQSLsmSiO3/XruE
+         aIG0EA4BCSq6H/KkUTMOMaMFFjPcjAbuufh85d22i5l+2Q6jLn6eRlvtE3GtsRuODB9k
+         GMCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JVwwdb+zQ9NSzWqZM+D+qhy9Nv1h+9z50bI96ImiwFA=;
+        b=SrPptpHRsi9PmOnxNL1/9XN+46If6so1NUOBdFeDImh8mTbpshkckHEBtnQ9dFwPNV
+         ySqh8UbuvrntTJ+xtKaJshH9W1gsKbKklLgotF4MeSx5CUPafIwWnZS0/FopYCleoqnO
+         Em5Y752iQPKX92oUgnz6uD2Vkvb1tgHtzHapSXkdtmuOx3BTETxTiMUCSA/+tRLFrMuy
+         bwKdkEw61+fcyzXEhQ4GbOWw+Tbr32bkVhs+QHeM9e5MQstqgUrSz9GKAnqwUh0j7jcm
+         qQ5J/DVti3zgsf31utdYcBg7sgwpSPVL+cxgqEqnxiKFmkZLu0GnG2F9jPGW1oqaFEHQ
+         PHsg==
+X-Gm-Message-State: APjAAAWBCiPOw6UkoWGfSx3f1TNdlzWmOngOyqk4UVAUwN5CwrN2lm5Z
+        qLaeMha/6H4wYdf01zt5dheY
+X-Google-Smtp-Source: APXvYqyzA6Z4cjckSGIKMOaUmTPEDpjA24NdP9kjBoDo+9GggM+8hRKzvWxgrdA1/AYK9n2JcE1sZw==
+X-Received: by 2002:a17:902:bd88:: with SMTP id q8mr3605384pls.299.1571317193054;
+        Thu, 17 Oct 2019 05:59:53 -0700 (PDT)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id h2sm5064753pfq.108.2019.10.17.05.59.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Oct 2019 05:59:52 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 18:29:40 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     linus.walleij@linaro.org, afaerber@suse.de, f.fainelli@gmail.com,
+        rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, jesper.nilsson@axis.com,
+        lars.persson@axis.com, ludovic.desroches@microchip.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        baruch@tkos.co.il, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@axis.com, linux-oxnas@groups.io,
+        linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, vz@mleia.com, narmstrong@baylibre.com,
+        geert+renesas@glider.be, daniel@zonque.org,
+        haojian.zhuang@gmail.com, wens@csie.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, agross@kernel.org
+Subject: Re: [PATCH -next 28/30] pinctrl: actions: use
+ devm_platform_ioremap_resource() to simplify code
+Message-ID: <20191017125940.GA25046@mani>
+References: <20191017122640.22976-1-yuehaibing@huawei.com>
+ <20191017122640.22976-29-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191017122640.22976-29-yuehaibing@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-10-17 at 18:22 +0530, Sumit Garg wrote:
-> On Thu, 17 Oct 2019 at 00:40, James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> > 
-> > On Wed, 2019-10-16 at 19:25 +0300, Jarkko Sakkinen wrote:
-> > > On Wed, Oct 16, 2019 at 08:34:12AM -0400, James Bottomley wrote:
-> > > > reversible ciphers are generally frowned upon in random number
-> > > > generation, that's why the krng uses chacha20.  In general I
-> > > > think we shouldn't try to code our own mixing and instead
-> > > > should get the krng to do it for us using whatever the
-> > > > algorithm du jour that the crypto guys have blessed is.  That's
-> > > > why I proposed adding the TPM output to the krng as entropy
-> > > > input and then taking the output of the krng.
-> > > 
-> > > It is already registered as hwrng. What else?
-> > 
-> > It only contributes entropy once at start of OS.
-> > 
+On Thu, Oct 17, 2019 at 08:26:38PM +0800, YueHaibing wrote:
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
 > 
-> Why not just configure quality parameter of TPM hwrng as follows? It
-> would automatically initiate a kthread during hwrng_init() to feed
-> entropy from TPM to kernel random numbers pool (see:
-> drivers/char/hw_random/core.c +142).
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-The question was asked before by Jerry.  The main reason is we still
-can't guarantee that at 1024 the hwrng will choose the TPM as the best
-source (the problem being it only chooses one) and the mixing is done
-periodically in a timer thread so it's still vulnerable to an entropy
-exhaustion attack.  I think it's better to source the random number in
-the TPM when asked but mix it with whatever entropy we have in the pool
-using the crypto people's mixing algorithm.  This definitely avoids
-exhaustion and provides some protection against single source rng
-compromises.
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-James
+Thanks,
+Mani
 
-
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-
-> chip.c
-> index 3d6d394..fcc3817 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -548,6 +548,7 @@ static int tpm_add_hwrng(struct tpm_chip *chip)
->                  "tpm-rng-%d", chip->dev_num);
->         chip->hwrng.name = chip->hwrng_name;
->         chip->hwrng.read = tpm_hwrng_read;
-> +       chip->hwrng.quality = 1024; /* Here we assume TPM provides
-> full entropy */
->         return hwrng_register(&chip->hwrng);
+> ---
+>  drivers/pinctrl/actions/pinctrl-owl.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
->  }
-> 
-> > >  Was the issue that it is only used as seed when the rng is
-> > > init'd
-> > > first? I haven't at this point gone to the internals of krng.
-> > 
-> > Basically it was similar to your xor patch except I got the kernel
-> > rng
-> > to do the mixing, so it would use the chacha20 cipher at the moment
-> > until they decide that's unsafe and change it to something else:
-> > 
-> > https://lore.kernel.org/linux-crypto/1570227068.17537.4.camel@Hanse
-> > nPartnership.com/
-> > 
-> > It uses add_hwgenerator_randomness() to do the mixing.  It also has
-> > an
-> > unmixed source so that read of the TPM hwrng device works as
-> > expected.
-> 
-> Above suggestion is something similar to yours but utilizing the
-> framework already provided via hwrng core.
-> 
-> -Sumit
-> 
-> > 
-> > James
-> > 
-> > 
-> > 
-> > 
-> > 
+> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+> index 5dfe718..5a0c8e8 100644
+> --- a/drivers/pinctrl/actions/pinctrl-owl.c
+> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
+> @@ -915,7 +915,6 @@ static int owl_gpio_init(struct owl_pinctrl *pctrl)
+>  int owl_pinctrl_probe(struct platform_device *pdev,
+>  				struct owl_pinctrl_soc_data *soc_data)
+>  {
+> -	struct resource *res;
+>  	struct owl_pinctrl *pctrl;
+>  	int ret, i;
+>  
+> @@ -923,8 +922,7 @@ int owl_pinctrl_probe(struct platform_device *pdev,
+>  	if (!pctrl)
+>  		return -ENOMEM;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	pctrl->base = devm_ioremap_resource(&pdev->dev, res);
+> +	pctrl->base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(pctrl->base))
+>  		return PTR_ERR(pctrl->base);
+>  
+> -- 
+> 2.7.4
 > 
 > 
-
