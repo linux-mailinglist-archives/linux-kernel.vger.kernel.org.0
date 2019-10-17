@@ -2,158 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1995DA317
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:25:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D13FDA309
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:25:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406914AbfJQBZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 21:25:39 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36988 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394713AbfJQBZi (ORCPT
+        id S2405629AbfJQBZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 21:25:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54006 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389094AbfJQBZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 21:25:38 -0400
-Received: by mail-pl1-f194.google.com with SMTP id u20so295272plq.4
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 18:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OYfGHq7Ua8XlIFWVnYrWlfnb+Qaiu3AuIcv4KZ3ENBU=;
-        b=kPLzGqggNUsPFDxV/H8ftNKVOlHtZarUZ2uO5M1Cl+hwXsMbW/vTrWwIjhfQ+3DWYJ
-         BAJOSuNbGvc+wZSDF5mXHgUtEzM/UBmDJTY+ncpQRCjrnopVjD47CaQs12J79yMzbmaJ
-         2HoVzjwx6/PntMBB3luM9yU1+3Xh96sr83vp0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OYfGHq7Ua8XlIFWVnYrWlfnb+Qaiu3AuIcv4KZ3ENBU=;
-        b=UD4suJEqKZfRGPt/1W4gpN97HXqeQG0hgkxWDbNFbsQVJavfO/gr0P3kYjs3YJwFfG
-         I/GrSZIPNGzsbhnASnIpkI/DPqQOVGkC/KxiIzTmYO0wdgsvTB81B5NzaVtA/290wA7O
-         cAJ4qhPBLPGRNiSvukfbb2RVGjUB3NYubkuwIrWksKa5wmdTZvGfNARLajHC5cIVLKqP
-         /RAef+UBAc7fw1ISw1NYXBHq+nXunD5/4B8dpO2atPNsZizOpWUDe/TT67LByEHQNFGF
-         RXDWvaInWfK8Q107UILVXP7tsCGp5cGLxA2aoF1WUTfgTUlpSePFIM704MMayakqFIS5
-         roXA==
-X-Gm-Message-State: APjAAAWf+QKbv4S0ERp6YQgKPMQL1oi2huO8TTAqXvhpX9EMWSLVsE3u
-        z5WnanY8jWAI2+X6YB+PoR1qfA==
-X-Google-Smtp-Source: APXvYqwQlBhRRBicY30cw6VPEISaJYd+4/odDPgj5HED+MoQwNbayPMmtq4wGs1t8T3sUU1Hp+309g==
-X-Received: by 2002:a17:902:8ec1:: with SMTP id x1mr1189452plo.314.1571275537371;
-        Wed, 16 Oct 2019 18:25:37 -0700 (PDT)
-Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
-        by smtp.gmail.com with ESMTPSA id d4sm381964pjs.9.2019.10.16.18.25.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 18:25:36 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     kasan-dev@googlegroups.com, linux-mm@kvack.org, x86@kernel.org,
-        aryabinin@virtuozzo.com, glider@google.com, luto@kernel.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        dvyukov@google.com, christophe.leroy@c-s.fr
-Cc:     linuxppc-dev@lists.ozlabs.org, gor@linux.ibm.com,
-        Daniel Axtens <dja@axtens.net>
-Subject: [PATCH v9 5/5] kasan debug: track pages allocated for vmalloc shadow
-Date:   Thu, 17 Oct 2019 12:25:06 +1100
-Message-Id: <20191017012506.28503-6-dja@axtens.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191017012506.28503-1-dja@axtens.net>
-References: <20191017012506.28503-1-dja@axtens.net>
+        Wed, 16 Oct 2019 21:25:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gv/VRh25JbZQV0A+0eeM+TeAGlcaRb1tnq4YaJG9kPE=; b=W67N6dd7dSkMcvncpQwxMkwPL
+        TOyrZS2j0dKWlaB+WNuXwdFwC5v7jWlIf/ne3H/f5JI4ADBgLbXpAV6g2AqWnZXJnpJdqR6j1Lgmo
+        L6SsDXvS789U5sBQ705V3Sh1+JuGe5r0lZ+HFdf2VRF/yunIcpwQJxSvxiQp2f62IEJ0Z+tr04hUC
+        OfRx7oIvNPJaP/5ndCFXThR580JdmaBhmeZdWVqnCz16Hlg7WZ4IXyzO6WUPxWuAm+zLyihkpxwBL
+        zFu31K8B9JscExhcq4b060R/oWzKi1i90pXHXowzSCGl62Hbd11+rDYRGK76sCH94sFpnqcgChZEB
+        N2gSnNemA==;
+Received: from [2601:1c0:6280:3f0::9ef4]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iKuXQ-00051e-AJ; Thu, 17 Oct 2019 01:25:12 +0000
+Subject: Re: [PATCH] staging: sm750fb: format description of parameters the to
+ kernel doc format
+To:     Gabriela Bittencourt <gabrielabittencourt00@gmail.com>,
+        outreachy-kernel@googlegroups.com, sudipm.mukherjee@gmail.com,
+        teddy.wang@siliconmotion.com, gregkh@linuxfoundation.org,
+        linux-fbdev@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org,
+        trivial@kernel.org
+References: <20191017011849.6081-1-gabrielabittencourt00@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <799632e2-a328-d72b-397d-3ee6b5e87e06@infradead.org>
+Date:   Wed, 16 Oct 2019 18:25:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191017011849.6081-1-gabrielabittencourt00@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide the current number of vmalloc shadow pages in
-/sys/kernel/debug/kasan/vmalloc_shadow_pages.
+Hi,
 
-Signed-off-by: Daniel Axtens <dja@axtens.net>
+On 10/16/19 6:18 PM, Gabriela Bittencourt wrote:
+> Cluster comments that describes parameters of functions and create one
+> single comment before the function in kernel doc format.
 
----
+Good plan.
 
-v8: rename kasan_vmalloc/shadow_pages -> kasan/vmalloc_shadow_pages
+How did you test this patch?
 
-On v4 (no dynamic freeing), I saw the following approximate figures
-on my test VM:
+> Signed-off-by: Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
+> ---
+>  drivers/staging/sm750fb/sm750_accel.c | 65 +++++++++++++++------------
+>  1 file changed, 37 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/staging/sm750fb/sm750_accel.c b/drivers/staging/sm750fb/sm750_accel.c
+> index dbcbbd1055da..d5564cd60f3b 100644
+> --- a/drivers/staging/sm750fb/sm750_accel.c
+> +++ b/drivers/staging/sm750fb/sm750_accel.c
+> @@ -130,20 +130,24 @@ int sm750_hw_fillrect(struct lynx_accel *accel,
+>  	return 0;
+>  }
+>  
+> -int sm750_hw_copyarea(
+> -struct lynx_accel *accel,
+> -unsigned int sBase,  /* Address of source: offset in frame buffer */
+> -unsigned int sPitch, /* Pitch value of source surface in BYTE */
+> -unsigned int sx,
+> -unsigned int sy,     /* Starting coordinate of source surface */
+> -unsigned int dBase,  /* Address of destination: offset in frame buffer */
+> -unsigned int dPitch, /* Pitch value of destination surface in BYTE */
+> -unsigned int Bpp,    /* Color depth of destination surface */
+> -unsigned int dx,
+> -unsigned int dy,     /* Starting coordinate of destination surface */
+> -unsigned int width,
+> -unsigned int height, /* width and height of rectangle in pixel value */
+> -unsigned int rop2)   /* ROP value */
+> +/**
 
- - fresh boot: 720
- - after test_vmalloc: ~14000
+Missing function name and short description.  Documentation/doc-guide/kernel-doc.rst says:
 
-With v5 (lazy dynamic freeing):
+The general format of a function and function-like macro kernel-doc comment is::
 
- - boot: ~490-500
- - running modprobe test_vmalloc pushes the figures up to sometimes
-    as high as ~14000, but they drop down to ~560 after the test ends.
-    I'm not sure where the extra sixty pages are from, but running the
-    test repeately doesn't cause the number to keep growing, so I don't
-    think we're leaking.
- - with vmap_stack, spawning tasks pushes the figure up to ~4200, then
-    some clearing kicks in and drops it down to previous levels again.
----
- mm/kasan/common.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+  /**
+   * function_name() - Brief description of function.
+   * @arg1: Describe the first argument.
+   * @arg2: Describe the second argument.
+   *        One can provide multiple line descriptions
+   *        for arguments.
+   *
+   * A longer description, with more discussion of the function function_name()
+   * that might be useful to those using or modifying it. Begins with an
+   * empty comment line, and may include additional embedded empty
+   * comment lines.
+   *
+   * The longer description may have multiple paragraphs.
+   *
+   * Context: Describes whether the function can sleep, what locks it takes,
+   *          releases, or expects to be held. It can extend over multiple
+   *          lines.
+   * Return: Describe the return value of function_name.
+   *
+   * The return value description can also have multiple paragraphs, and should
+   * be placed at the end of the comment block.
+   */
 
-diff --git mm/kasan/common.c mm/kasan/common.c
-index 81521d180bec..ac05038afa5a 100644
---- mm/kasan/common.c
-+++ mm/kasan/common.c
-@@ -35,6 +35,7 @@
- #include <linux/vmalloc.h>
- #include <linux/bug.h>
- #include <linux/uaccess.h>
-+#include <linux/debugfs.h>
- 
- #include <asm/tlbflush.h>
- 
-@@ -750,6 +751,8 @@ core_initcall(kasan_memhotplug_init);
- #endif
- 
- #ifdef CONFIG_KASAN_VMALLOC
-+static u64 vmalloc_shadow_pages;
-+
- static int kasan_populate_vmalloc_pte(pte_t *ptep, unsigned long addr,
- 				      void *unused)
- {
-@@ -782,6 +785,7 @@ static int kasan_populate_vmalloc_pte(pte_t *ptep, unsigned long addr,
- 	if (likely(pte_none(*ptep))) {
- 		set_pte_at(&init_mm, addr, ptep, pte);
- 		page = 0;
-+		vmalloc_shadow_pages++;
- 	}
- 	spin_unlock(&init_mm.page_table_lock);
- 	if (page)
-@@ -836,6 +840,7 @@ static int kasan_depopulate_vmalloc_pte(pte_t *ptep, unsigned long addr,
- 		pte_clear(&init_mm, addr, ptep);
- 		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
- 		free_page(page);
-+		vmalloc_shadow_pages--;
- 	}
- 	spin_unlock(&init_mm.page_table_lock);
- 
-@@ -954,4 +959,25 @@ void kasan_release_vmalloc(unsigned long start, unsigned long end,
- 				       (unsigned long)shadow_end);
- 	}
- }
-+
-+static __init int kasan_init_debugfs(void)
-+{
-+	struct dentry *root, *count;
-+
-+	root = debugfs_create_dir("kasan", NULL);
-+	if (IS_ERR(root)) {
-+		if (PTR_ERR(root) == -ENODEV)
-+			return 0;
-+		return PTR_ERR(root);
-+	}
-+
-+	count = debugfs_create_u64("vmalloc_shadow_pages", 0444, root,
-+				   &vmalloc_shadow_pages);
-+
-+	if (IS_ERR(count))
-+		return PTR_ERR(root);
-+
-+	return 0;
-+}
-+late_initcall(kasan_init_debugfs);
- #endif
+> + * @sBase: Address of source: offset in frame buffer
+> + * @sPitch: Pitch value of source surface in BYTE
+> + * @sx, @sy: Starting coordinate of source surface
+
+Those should be on separate lines.
+
+> + * @dBase: Address of destination: offset in frame buffer
+> + * @dPitch: Pitch value of destination surface in BYTE
+> + * @Bpp: Color depth of destination surface
+> + * @dx, @dy: Starting coordinate of destination surface
+
+Ditto.
+
+> + * @width, @height: width and height of rectangle in pixel value
+> + * @rop2: ROP value
+> + */
+> +int sm750_hw_copyarea(struct lynx_accel *accel,
+> +		      unsigned int sBase, unsigned int sPitch,
+> +		      unsigned int sx, unsigned int sy,
+> +		      unsigned int dBase, unsigned int dPitch,
+> +		      unsigned int Bpp, unsigned int dx, unsigned int dy,
+> +		      unsigned int width, unsigned int height,
+> +		      unsigned int rop2)
+>  {
+>  	unsigned int nDirection, de_ctrl;
+>  
+> @@ -288,20 +292,25 @@ static unsigned int deGetTransparency(struct lynx_accel *accel)
+>  	return de_ctrl;
+>  }
+>  
+> -int sm750_hw_imageblit(struct lynx_accel *accel,
+> -		 const char *pSrcbuf, /* pointer to start of source buffer in system memory */
+> -		 u32 srcDelta,          /* Pitch value (in bytes) of the source buffer, +ive means top down and -ive mean button up */
+> -		 u32 startBit, /* Mono data can start at any bit in a byte, this value should be 0 to 7 */
+> -		 u32 dBase,    /* Address of destination: offset in frame buffer */
+> -		 u32 dPitch,   /* Pitch value of destination surface in BYTE */
+> -		 u32 bytePerPixel,      /* Color depth of destination surface */
+> -		 u32 dx,
+> -		 u32 dy,       /* Starting coordinate of destination surface */
+> -		 u32 width,
+> -		 u32 height,   /* width and height of rectangle in pixel value */
+> -		 u32 fColor,   /* Foreground color (corresponding to a 1 in the monochrome data */
+> -		 u32 bColor,   /* Background color (corresponding to a 0 in the monochrome data */
+> -		 u32 rop2)     /* ROP value */
+> +/**
+
+Similar comments here...
+
+> + * @pSrcbuf: pointer to start of source buffer in system memory
+> + * @srcDelta: Pitch value (in bytes) of the source buffer, +ive means top down
+> + * and -ive mean button up
+> + * @startBit: Mono data can start at any bit in a byte, this value should be
+> + * 0 to 7
+> + * @dBase: Address of destination: offset in frame buffer
+> + * @dPitch: Pitch value of destination surface in BYTE
+> + * @bytePerPixel: Color depth of destination surface
+> + * @dx, @dy: Starting coordinate of destination surface
+> + * @width, @height: width and height of rectangle in pixel value
+> + * @fColor: Foreground color (corresponding to a 1 in the monochrome data
+> + * @bColor: Background color (corresponding to a 0 in the monochrome data
+> + * @rop2: ROP value
+> + */
+> +int sm750_hw_imageblit(struct lynx_accel *accel, const char *pSrcbuf,
+> +		       u32 srcDelta, u32 startBit, u32 dBase, u32 dPitch,
+> +		       u32 bytePerPixel, u32 dx, u32 dy, u32 width,
+> +		       u32 height, u32 fColor, u32 bColor, u32 rop2)
+>  {
+>  	unsigned int ulBytesPerScan;
+>  	unsigned int ul4BytesPerScan;
+> 
+
+Thanks.
 -- 
-2.20.1
-
+~Randy
