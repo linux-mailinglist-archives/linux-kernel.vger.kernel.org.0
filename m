@@ -2,131 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CCD4DB67A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:41:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D0BEDB680
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:46:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441447AbfJQSlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 14:41:55 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:42330 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406702AbfJQSlz (ORCPT
+        id S2406801AbfJQSqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 14:46:16 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:34875 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388823AbfJQSqP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:41:55 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIe1Oi191239;
-        Thu, 17 Oct 2019 18:41:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=iYr+RkFrcZuWgQ1ne8vBmSzPST8gKEQ3JN/fp2+IPTQ=;
- b=OFxuw2iyzM9XEdd7/Iscl3SSNLY+m27O6ljqG1OE988Qgu7VkfH32zlfU4py66s4xmLI
- A4Rgo+25RBo5yC8Erjuzjy58ghS1vmQ0OfTEvP8v2n/qX9V/rhZdA9CTK4jOKJaNDm97
- vOFchT7abGSs0r5eKX4hD4EdjNVr61yyGaCzZy+UI+lPLinmu1opYhwJrQ7ezcVkFx3t
- vRY4UqcK1Lox559ZnPPV7/yUcJYDDzTzEunA5e1OC86GVgcKwSbOPIePR8QeYEfYfC/n
- t8bJEE6nBmkT6J4qsloQPhVd4d95NFQUxPlxPi3/ymZgjPwMf2B/PuUpKwwu7wKOUaM5 Eg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2vk68v0arg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Oct 2019 18:41:35 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIXI8q050397;
-        Thu, 17 Oct 2019 18:41:35 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2vpvtm3j3n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Oct 2019 18:41:34 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9HIfXoC009140;
-        Thu, 17 Oct 2019 18:41:33 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 17 Oct 2019 18:41:33 +0000
-Date:   Thu, 17 Oct 2019 11:41:28 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/14] iomap: pass a struct page to
- iomap_finish_page_writeback
-Message-ID: <20191017184128.GN13108@magnolia>
-References: <20191017175624.30305-1-hch@lst.de>
- <20191017175624.30305-15-hch@lst.de>
+        Thu, 17 Oct 2019 14:46:15 -0400
+Received: by mail-yb1-f193.google.com with SMTP id i6so1035601ybe.2;
+        Thu, 17 Oct 2019 11:46:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OM/S3lsFh+azFkd7x8LBwq6ZVZrV5M0QSAG7uJDmnRk=;
+        b=Nt6Lz1vJUocf3260cbfS+m4Ma8HkJwjhVujx1dzWZRaeHi2gaDr5WJJEl+D8Sy/7kA
+         3+C1eyDt9stz/AqFoXOwX6ws+UzvvkmV2GrEPvxaHThc8O3wWD2AHgjTg34u6VpCXSUx
+         wkdZQ+tXKLMKZ4x72KHKzTWbj/ChMnjaNLGg2K0jKKIbyu6ESc51cte0qWIBs1TtgRj+
+         ZjzL6vn8JfJ6Oxgvx4nki8ndGF4Ycn9wkQ7vIWsooSGRog0zExm/gUgB7YXhRme+5HQQ
+         DGwCNySlNBrkStUIDfnLr4JJSGQr6Lghzl0PAJvNbifUqA6Y7KWvXf3SkB0Q3kTdnyEZ
+         IwFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OM/S3lsFh+azFkd7x8LBwq6ZVZrV5M0QSAG7uJDmnRk=;
+        b=q01cIqinVOCsy88DZ9qszpDd2BCNTvbLjrZixslt3ONdavhP8Pdw1rXVRWacEU8QxY
+         2wOBNCJDYP8lxBll9tIBzo7BAiLhcHSTw9OrttH0VGRxzCwZrf+71m/3CWRihWkJj+Ch
+         lsnvKdQQt9UMpLT6jo0jBg10nuHeoLe5qvBPVkq61OkdjTosGRpHXWL6+/IKHPwCu+67
+         XT6pyNUJlJWNpcHIMkQkgsnk0J1avQ+aJ7NQkPU5yEukSbipzMEmDMzvDDZjh/dIKD1g
+         BL6FKx3TKpTk7kSShYVcOvjEZ6nu+TkjglkxQ7xafa4nGoqO3tph1zKl9sS1dlPFo7xC
+         dePw==
+X-Gm-Message-State: APjAAAW7sGpxsy2QziyVNPk0WcE7IY1/srbKj+sRz/21MRG909reeU3O
+        vT/gKqTj4iVyenANVeB1DII=
+X-Google-Smtp-Source: APXvYqwudHjq2c/EpVr+nuwySedX+dRgV0lUf5486GSBdOemPI2HmAgVLe0pRZjtkUb1YrrJPawlew==
+X-Received: by 2002:a25:248a:: with SMTP id k132mr3464263ybk.243.1571337974592;
+        Thu, 17 Oct 2019 11:46:14 -0700 (PDT)
+Received: from [192.168.1.62] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
+        by smtp.gmail.com with ESMTPSA id y63sm698731ywg.5.2019.10.17.11.46.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Oct 2019 11:46:14 -0700 (PDT)
+Subject: Re: [PATCH] libfdt: reduce the number of headers included from
+ libfdt_env.h
+To:     Rob Herring <robh@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+References: <20190617162123.24920-1-yamada.masahiro@socionext.com>
+ <CAK7LNATtqhxPcDneW0QOkw-5NyPNP06Qv0bYTe7A_gCiHMiU7A@mail.gmail.com>
+ <CAK7LNASMwqy0ZUZ=kTJ7MJ6OJNa=+vbj5444xzmubJ8+6vO=sg@mail.gmail.com>
+ <CAK7LNAS=9yGqMQ9eoM4L0hhvuFRYhg6S4i6J3Ou9vcB1Npj4BQ@mail.gmail.com>
+ <20191017163414.GA4205@bogus>
+ <5b5ece90-0b9f-38e4-8c23-3c9ea4105c79@gmail.com>
+ <CAL_JsqJHGcbf-p7D=MvSRiX_7CVY0Kj9bRKybhbWG=4MxaxGiw@mail.gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <fcba8d22-008a-58b7-57ae-ef5fbc6234bc@gmail.com>
+Date:   Thu, 17 Oct 2019 13:46:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017175624.30305-15-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9413 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910170166
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9413 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910170167
+In-Reply-To: <CAL_JsqJHGcbf-p7D=MvSRiX_7CVY0Kj9bRKybhbWG=4MxaxGiw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 07:56:24PM +0200, Christoph Hellwig wrote:
-> No need to pass the full bio_vec.
+On 10/17/2019 12:52, Rob Herring wrote:
+> On Thu, Oct 17, 2019 at 12:25 PM Frank Rowand <frowand.list@gmail.com> wrote:
+>>
+>> On 10/17/2019 11:34, Rob Herring wrote:
+>>> On Wed, Oct 16, 2019 at 08:01:46PM +0900, Masahiro Yamada wrote:
+>>>> Hi Andrew,
+>>>>
+>>>> Could you pick up this to akpm tree?
+>>>> https://lore.kernel.org/patchwork/patch/1089856/
+>>>>
+>>>> I believe this is correct, and a good clean-up.
+>>>>
+>>>> I pinged the DT maintainers, but they did not respond.
+>>>
+>>> Sorry I missed this. Things outside my normal paths fall thru the
+>>> cracks.
+>>>
+>>> I'll apply it now.
+>>>
+>>> Rob
+>>>
+>>
+>> Looks like my reply crossed with Rob's.  Rob, shouldn't
+>> scripts/dtc/update-dtc-source.sh make this change?
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> ---
->  fs/iomap/buffered-io.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+> No, the includes in include/linux are kernel files which wrap/replace
+> the upstream ones.
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index bb96499c352f..755b75424a97 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1110,13 +1110,13 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
->  EXPORT_SYMBOL_GPL(iomap_page_mkwrite);
->  
->  static void
-> -iomap_finish_page_writeback(struct inode *inode, struct bio_vec *bvec,
-> +iomap_finish_page_writeback(struct inode *inode, struct page *page,
->  		int error)
->  {
-> -	struct iomap_page *iop = to_iomap_page(bvec->bv_page);
-> +	struct iomap_page *iop = to_iomap_page(page);
->  
->  	if (error) {
-> -		SetPageError(bvec->bv_page);
-> +		SetPageError(page);
->  		mapping_set_error(inode->i_mapping, -EIO);
->  	}
->  
-> @@ -1124,7 +1124,7 @@ iomap_finish_page_writeback(struct inode *inode, struct bio_vec *bvec,
->  	WARN_ON_ONCE(iop && atomic_read(&iop->write_count) <= 0);
->  
->  	if (!iop || atomic_dec_and_test(&iop->write_count))
-> -		end_page_writeback(bvec->bv_page);
-> +		end_page_writeback(page);
->  }
->  
->  /*
-> @@ -1156,7 +1156,7 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
->  
->  		/* walk each page on bio, ending page IO on them */
->  		bio_for_each_segment_all(bv, bio, iter_all)
-> -			iomap_finish_page_writeback(inode, bv, error);
-> +			iomap_finish_page_writeback(inode, bv->bv_page, error);
->  		bio_put(bio);
->  	}
->  
-> -- 
-> 2.20.1
+> Rob
 > 
+
+Right you are, I overlooked the "include/linux" in the file name
+instead of "scripts/dtc/libfdt/".
+
+-Frank
