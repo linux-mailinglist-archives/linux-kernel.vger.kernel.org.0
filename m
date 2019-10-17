@@ -2,174 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39B12DAE86
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87A9DAE94
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:39:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394689AbfJQNgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 09:36:12 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45358 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729175AbfJQNgL (ORCPT
+        id S2436615AbfJQNjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 09:39:04 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37213 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388054AbfJQNjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 09:36:11 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y72so1666577pfb.12;
-        Thu, 17 Oct 2019 06:36:11 -0700 (PDT)
+        Thu, 17 Oct 2019 09:39:03 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y5so1690028pfo.4;
+        Thu, 17 Oct 2019 06:39:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Zg6xsxX43NwJNaUijMAvvFCSXNnBfu7Z7VVGMLNPK+4=;
-        b=FYZdLxZXYJToNk6FPREOKcfO5mvfjsK8AXtspR9yeoa8l7yBfhCBK5BxHyLJOdt/aq
-         Kik2XjOaZNGTwzgRNqrwscHTyKJdJg4MxYdatM/dbsa4iausUW5KjlbspimyYWgKXR9c
-         n+YNQ0Q4QG4fvqex+oLWJl8ggw6uB3NaebgoFmc0D27oJ2+VcycayyW8hiuquO1Ptp/N
-         8w+EO6NhycuFEaZML34utdhRdq4HbuoAta1bBerjjV8ZWdGKMxPDAttH8nqNZDuk02yR
-         WUXUhGr+VZy/nFExr+XAAt4eZUOQh16M9zatEDHzAp4tQJsSMejL0t+mqXagwrwN412B
-         j8xg==
+        bh=j+SsM7b+serKOV0a1OL5fJKTRYrA8B2EbLYPvjwJqF0=;
+        b=Hxy0x9pWWQ9v1MYv0iktCe2UUJRjGUPJVPsf+fMy9I3MWgi5wa82Oc7+Aa2zGV9gmk
+         3y/dWcoYWmZR20eZ5nu4jVd/WtIQhkRStD2+lfUgZmTns6YfJmckhMGLaLwB2jVkdcC2
+         lViALbi67Xl3Ufl1frKuMSPH6BmSsSv4k3Fnnb5HvloAMxJ0xW+aeqnSN39k9c0smky9
+         lRrNNdg2E85cm5fDr37uq1KRYBU03cvg4av+it7dkIA+AeidNwqd49w3sHZn4tRt0h1a
+         yfJDEBYmHNjCrK/sffnnd4BkDDvQFWq6DmjdfTxa/F5sqoviHaC7/yuRSWCdJC6/FWoZ
+         emPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zg6xsxX43NwJNaUijMAvvFCSXNnBfu7Z7VVGMLNPK+4=;
-        b=PuCuthM4jlp99cAYUXYenl3ivrR2LDAmheKJ+Wc8CCM42Qi4OVv56qERb4SxfF1kls
-         Buwdq5JMhq703BGcq8cuB39l2s6Xh7i1XLIjUAYmw4IjEHeWoPTX7N2tKn6tvaKHXPnj
-         zQ66iIZreK1OSmg53PyvCgaBgL0O/UHOcrVdHsNx2k80bJmvdFmpHzOYhbxIu9dcxBQy
-         vC70LElBG6Y96dqUcOTgHz11u2NPfQ+op3I2VuGNxXtobi2sypNnvlITSpDOKZQqo+Sl
-         UG5KwAGK9i7qBTQ03d+Pln2mWVnUktJjXtHekVcodqNAjCQ9BQiSarWeM09D3PzsBbUm
-         V1nQ==
-X-Gm-Message-State: APjAAAXmPB+iG80Pqbd3mH/CVK92nY5t37eq31vw8UZWGXLiHjKbpuja
-        us8U/6RAhSrdCNoWsPp2aT0=
-X-Google-Smtp-Source: APXvYqza6q/866iFO8Bg+FPbnr8o3johImxxI0Kt4re1cXDCvUQe7PZ49pscgX+90tZ5h2oqo1RYeg==
-X-Received: by 2002:a63:fb15:: with SMTP id o21mr4135935pgh.193.1571319370870;
-        Thu, 17 Oct 2019 06:36:10 -0700 (PDT)
+        bh=j+SsM7b+serKOV0a1OL5fJKTRYrA8B2EbLYPvjwJqF0=;
+        b=Q8Cad6UqmwrSUQ9GAbK7A+36zIVZdVCnmVGkd+tZ29kgvOVU4iIW2X4Ju020STwoCm
+         su0+3S7VLxKU6Sbjq9+Peced6ZSak74RDAAMaQ7gUginpLxCt4N/BjCk0k6oVbu0w+wt
+         ykIc07QRUTMIyhSgoX7hbiCJqyg9Nuqs0hjg0xhwmi4kISi+KN27gUYz9gxn7BC2AZ3W
+         vAUVeBapoPufBycRq9vi4+V201Ho7he1miiMgA1DtnwQs8lKtr7z1BUvp/9zMeXeyP9z
+         W8Zte6nH67brLmHQvrguEknxLaxBvclOG0cUuTkzSqoH+iKpcTFucV1KcIcpimLDkuUK
+         FL3g==
+X-Gm-Message-State: APjAAAVt/mAyk7JaHO/LKLfYje09pOtogv5zBfZv820YxAozG4nQPLnR
+        +S3LxMYmyo+i+mWbCbQs0nt8DJsq
+X-Google-Smtp-Source: APXvYqwivP6Moq2Hf1CSOnfBIzu4CkKMzsFVoLpK9HwneTAmWn06dYrwWR97qS3wohSUnruLSo2xlw==
+X-Received: by 2002:a17:90a:9416:: with SMTP id r22mr4519604pjo.20.1571319543083;
+        Thu, 17 Oct 2019 06:39:03 -0700 (PDT)
 Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id ce16sm2894133pjb.29.2019.10.17.06.36.10
+        by smtp.gmail.com with ESMTPSA id x23sm2962192pfq.140.2019.10.17.06.39.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Oct 2019 06:36:10 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 06:36:09 -0700
+        Thu, 17 Oct 2019 06:39:02 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 06:39:01 -0700
 From:   Guenter Roeck <linux@roeck-us.net>
-To:     Eddie James <eajames@linux.ibm.com>
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, jdelvare@suse.com,
-        mark.rutland@arm.com, robh+dt@kernel.org
-Subject: Re: [PATCH 2/2] hwmon: (pmbus/ibm-cffps) Add version detection
- capability
-Message-ID: <20191017133609.GA23473@roeck-us.net>
-References: <1570648262-25383-1-git-send-email-eajames@linux.ibm.com>
- <1570648262-25383-3-git-send-email-eajames@linux.ibm.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Rudolf Marek <r.marek@assembler.cz>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: w83793d: remove redundant assignment to variable
+ res
+Message-ID: <20191017133901.GA31691@roeck-us.net>
+References: <20191011170215.11539-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1570648262-25383-3-git-send-email-eajames@linux.ibm.com>
+In-Reply-To: <20191011170215.11539-1-colin.king@canonical.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 02:11:02PM -0500, Eddie James wrote:
-> Some systems may plug in either version 1 or version 2 of the IBM common
-> form factor power supply. Add a version-less compatibility string that
-> tells the driver to try and detect which version of the power supply is
-> connected.
+On Fri, Oct 11, 2019 at 06:02:15PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> The variable res is being initialized with a value that
+> is never read and is being re-assigned a little later on. The
+> assignment is redundant and hence can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Applied.
+Applied. Note that I removed the above Addreddes-Coverity tag as
+it doesn't really make much sense.
 
-Thanks,
 Guenter
 
 > ---
->  drivers/hwmon/pmbus/ibm-cffps.c | 37 +++++++++++++++++++++++++++++++++----
->  1 file changed, 33 insertions(+), 4 deletions(-)
+>  drivers/hwmon/w83793.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/hwmon/pmbus/ibm-cffps.c b/drivers/hwmon/pmbus/ibm-cffps.c
-> index d44745e..d61547e 100644
-> --- a/drivers/hwmon/pmbus/ibm-cffps.c
-> +++ b/drivers/hwmon/pmbus/ibm-cffps.c
-> @@ -3,6 +3,7 @@
->   * Copyright 2017 IBM Corp.
->   */
->  
-> +#include <linux/bitfield.h>
->  #include <linux/bitops.h>
->  #include <linux/debugfs.h>
->  #include <linux/device.h>
-> @@ -29,6 +30,10 @@
->  #define CFFPS_INPUT_HISTORY_CMD			0xD6
->  #define CFFPS_INPUT_HISTORY_SIZE		100
->  
-> +#define CFFPS_CCIN_VERSION			GENMASK(15, 8)
-> +#define CFFPS_CCIN_VERSION_1			 0x2b
-> +#define CFFPS_CCIN_VERSION_2			 0x2e
-> +
->  /* STATUS_MFR_SPECIFIC bits */
->  #define CFFPS_MFR_FAN_FAULT			BIT(0)
->  #define CFFPS_MFR_THERMAL_FAULT			BIT(1)
-> @@ -54,7 +59,7 @@ enum {
->  	CFFPS_DEBUGFS_NUM_ENTRIES
->  };
->  
-> -enum versions { cffps1, cffps2 };
-> +enum versions { cffps1, cffps2, cffps_unknown };
->  
->  struct ibm_cffps_input_history {
->  	struct mutex update_lock;
-> @@ -395,7 +400,7 @@ static int ibm_cffps_probe(struct i2c_client *client,
->  			   const struct i2c_device_id *id)
+> diff --git a/drivers/hwmon/w83793.c b/drivers/hwmon/w83793.c
+> index 9df48b70c70c..a0307e6761b8 100644
+> --- a/drivers/hwmon/w83793.c
+> +++ b/drivers/hwmon/w83793.c
+> @@ -2096,7 +2096,7 @@ static struct w83793_data *w83793_update_device(struct device *dev)
+>  static u8 w83793_read_value(struct i2c_client *client, u16 reg)
 >  {
->  	int i, rc;
-> -	enum versions vs;
-> +	enum versions vs = cffps_unknown;
->  	struct dentry *debugfs;
->  	struct dentry *ibm_cffps_dir;
->  	struct ibm_cffps *psu;
-> @@ -405,8 +410,27 @@ static int ibm_cffps_probe(struct i2c_client *client,
->  		vs = (enum versions)md;
->  	else if (id)
->  		vs = (enum versions)id->driver_data;
-> -	else
-> -		vs = cffps1;
-> +
-> +	if (vs == cffps_unknown) {
-> +		u16 ccin_version = CFFPS_CCIN_VERSION_1;
-> +		int ccin = i2c_smbus_read_word_swapped(client, CFFPS_CCIN_CMD);
-> +
-> +		if (ccin > 0)
-> +			ccin_version = FIELD_GET(CFFPS_CCIN_VERSION, ccin);
-> +
-> +		switch (ccin_version) {
-> +		default:
-> +		case CFFPS_CCIN_VERSION_1:
-> +			vs = cffps1;
-> +			break;
-> +		case CFFPS_CCIN_VERSION_2:
-> +			vs = cffps2;
-> +			break;
-> +		}
-> +
-> +		/* Set the client name to include the version number. */
-> +		snprintf(client->name, I2C_NAME_SIZE, "cffps%d", vs + 1);
-> +	}
+>  	struct w83793_data *data = i2c_get_clientdata(client);
+> -	u8 res = 0xff;
+> +	u8 res;
+>  	u8 new_bank = reg >> 8;
 >  
->  	client->dev.platform_data = &ibm_cffps_pdata;
->  	rc = pmbus_do_probe(client, id, &ibm_cffps_info[vs]);
-> @@ -465,6 +489,7 @@ static int ibm_cffps_probe(struct i2c_client *client,
->  static const struct i2c_device_id ibm_cffps_id[] = {
->  	{ "ibm_cffps1", cffps1 },
->  	{ "ibm_cffps2", cffps2 },
-> +	{ "ibm_cffps", cffps_unknown },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(i2c, ibm_cffps_id);
-> @@ -478,6 +503,10 @@ static int ibm_cffps_probe(struct i2c_client *client,
->  		.compatible = "ibm,cffps2",
->  		.data = (void *)cffps2
->  	},
-> +	{
-> +		.compatible = "ibm,cffps",
-> +		.data = (void *)cffps_unknown
-> +	},
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, ibm_cffps_of_match);
+>  	new_bank |= data->bank & 0xfc;
