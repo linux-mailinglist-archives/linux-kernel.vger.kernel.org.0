@@ -2,227 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBAE8DA9E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 12:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E2B4DA9F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 12:28:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404927AbfJQKZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 06:25:08 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33265 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfJQKZI (ORCPT
+        id S2408847AbfJQK2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 06:28:47 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:48860 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405814AbfJQK2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 06:25:08 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y127so1457945lfc.0;
-        Thu, 17 Oct 2019 03:25:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gyXHwuo4XqUIcYTgR8LNTOEpEHU35PS6SXn5l3CChhc=;
-        b=VvBqSKzP4j80m2gM/gUtVBhLRSAfX2DBTHE5xT3hNNVi9w2XgVcDXkocDr2+mfuwyr
-         8TRG5m4U5sGIMuTEizv0oPXhxLwpu1yorSkPXkeaVgJpbiU8hVyLKE3dEWGPUnPeoZDe
-         8IVbMRrE+ZDkQYidVeAhlqy82ymAluPBv+a7HAXgpO6pEtCMAL9AJm7N8HMLheKb9y+v
-         WLWXQRgNuCRA4kJuwgAsPMfrCXcclaGAWhWx4KQ8OaCaWh7iio2E9tGySAz7mhDXTqCs
-         gz3xs63ggo2nU92jz9mY66+MTc34Rau4Bn1Z1SPpEt/OvisTleXBrRQvt+jdafeMuTJ6
-         VaNQ==
-X-Gm-Message-State: APjAAAUaZvlAqnB1yud9GGz/fR6NK+SOwYtS7JSVhKdjUub8fyNizZ+S
-        4R0Zw3S98+CsMttRE7hOX5dBlL38
-X-Google-Smtp-Source: APXvYqztkRnBXK+z3FFjjL7gT9yzAyrNDJJT0krESa+3QAgAxrrIDDPd3xFMkSDPLxFA3BIGoo/yrg==
-X-Received: by 2002:a19:e018:: with SMTP id x24mr48137lfg.191.1571307905402;
-        Thu, 17 Oct 2019 03:25:05 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id c26sm971354lfp.20.2019.10.17.03.25.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 03:25:04 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@kernel.org>)
-        id 1iL2y1-0007JU-Tt; Thu, 17 Oct 2019 12:25:14 +0200
-Date:   Thu, 17 Oct 2019 12:25:13 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     syzbot <syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com>
-Cc:     andreyknvl@google.com, enric.balletbo@collabora.com,
-        gregkh@linuxfoundation.org, johan@kernel.org, kirr@nexedi.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux@roeck-us.net, logang@deltatee.com,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: slab-out-of-bounds Read in ld_usb_read (3)
-Message-ID: <20191017102513.GC21827@localhost>
-References: <00000000000070102d059511537d@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000070102d059511537d@google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        Thu, 17 Oct 2019 06:28:47 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191017102844euoutp02d9ed1758611bffd472eb064c15ed2c99~OaGoTrIKJ1684416844euoutp02c
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 10:28:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191017102844euoutp02d9ed1758611bffd472eb064c15ed2c99~OaGoTrIKJ1684416844euoutp02c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1571308124;
+        bh=iRCzuB8y77uwfElmExl0r6Se4rQgS/Q62RZNDHvwRto=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=DOVB/Q4AWQpZ7d3dCv9C3snrSob/qJBoRidXkL5Zsx27c5bSs3bgcbQK7SwZaWoZt
+         slc0pPlfW1siD0pS/HELYwrwhoj+U6oe7X1Pp4fAoCoOytHstVl1DoV7AzOfmDPzLR
+         HF0RrVmaeeoJ23xK1KjNGuvPFi3vwLaq5ylQhX8E=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191017102844eucas1p2bee1c8122997d8a01a80d763b0bef90e~OaGn19DRh1118711187eucas1p2b;
+        Thu, 17 Oct 2019 10:28:44 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 5A.00.04374.C5248AD5; Thu, 17
+        Oct 2019 11:28:44 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191017102843eucas1p164993b3644d006481fb041e36175eebe~OaGnYvAvr2840828408eucas1p1b;
+        Thu, 17 Oct 2019 10:28:43 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191017102843eusmtrp2d58a7d10f4a48b53240821211d2f0e9c~OaGnXm8t71361913619eusmtrp2K;
+        Thu, 17 Oct 2019 10:28:43 +0000 (GMT)
+X-AuditID: cbfec7f5-4f7ff70000001116-1a-5da8425c3687
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 75.49.04117.B5248AD5; Thu, 17
+        Oct 2019 11:28:43 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191017102843eusmtip2154fff2e728f839a3ab68c2c7c7c59b3~OaGm3D8PH0361203612eusmtip2R;
+        Thu, 17 Oct 2019 10:28:43 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Kamil Konieczny <k.konieczny@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] opp: core: Revert "add regulators enable and disable"
+Date:   Thu, 17 Oct 2019 12:27:58 +0200
+Message-Id: <20191017102758.8104-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSa0hTYRj229k5Ow6nx03yw8RyUZDiTLI4pISG5X4E9UOEyqEzDzp0Uzav
+        XcDNTDetlmQtExWTpvM+RVPcKBNnic1LlgijaV4gEtJpmIq1ebT+Pe9zeZ+PjxdHuCWoHy6R
+        ZVNymTiDj7GZPcO/rSEJFxpFp3498iI7de0oWTm3gJHNq98AWbemQ0mrtYNFTvVXY6TjwRAg
+        dVYzg2wdsrHIH5tjDHL3cyeT7LIPY1Eewr4qG0toNKgx4cNuAxBaZnoZQocx4Cp6nR2ZQmVI
+        cil56Pkkdprukx1kqb3ze1fWkEJQ7akB7jgkwqHVNoBpABvnEo0AjlRtM10Cl1gHcHnOnxYc
+        ADqGOpgHidmBSSYt6AFcrKxH6MGZUJumMJcLI8KgZkXjxDjuQyTC9o1zLg9CLDHgY1M36uJ5
+        xCVo3LzisjOJ43Bh0bQX5RCRsMX2E6PLjsDmjjd7+yGxjcGlmi5ACzGwqKwcpTEPfrd0s2js
+        D//01TLoQBGAcx9bWfRQDuCUSrefjoDvLBN7r0CIk7C9P5Smo2GbdgRx0ZDwhDMr3i4accKK
+        nmf7NAeW3ufS7hOwytL2r/bt+CRCYyEcXdsC9C+KoNrWhGlBQNX/rjoADMCXylFIUynFaRmV
+        J1CIpYocWargZqbUCJznMbpr2XgNzDvJg4DAAd+Do53Xi7ioOFdRIB0EEEf4Ppzaew0iLidF
+        XHCLkmcmynMyKMUgOIwz+b6c2272G1wiVZxNpVNUFiU/UBm4u18h4NUnFZPrxWZlgl3y1WaI
+        VCl3DNrn6i2UnfWl5kleCVBNBIOLZXERAgwTSA/FKk3zsbKj0dMt+mQsyEsPYu7a03VRi5dV
+        XXNPz7o5QvIb3nOaX77aKh2/VtFUHl8pQYLHbOYXy3f6JwJXZ3c+KNHpitJAnk9ZY3j8mbhj
+        BXymIk0cFoTIFeK/ti3q0hoDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsVy+t/xe7rRTitiDZ4u0LfYOGM9q8XUh0/Y
+        LFZ/fMxoseDTDFaL8+c3sFtc3jWHzeJz7xFGixnn9zFZrD1yl93izY+zTBb/rm1ksdj84Bib
+        A4/Hzll32T02repk8+jbsorR4/iN7UwenzfJBbBG6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZ
+        mVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GXMuPKAsaBTsGL720/MDYxz+LoYOTkkBEwkbu25
+        xNLFyMUhJLCUUWLOm+lsEAkZiZPTGlghbGGJP9e6wOJCAp8YJV72BoLYbAKGEl1vIeIiAokS
+        D3qes4MMYhZ4wyRx6NEjoAQHh7CAm8SmH/4gNSwCqhJPnu4Fq+cVsJFYc/cD1C55idUbDjBP
+        YORZwMiwilEktbQ4Nz232EivODG3uDQvXS85P3cTIzBotx37uWUHY9e74EOMAhyMSjy8L5iX
+        xwqxJpYVV+YeYpTgYFYS4Z3fsiRWiDclsbIqtSg/vqg0J7X4EKMp0PKJzFKiyfnAiMoriTc0
+        NTS3sDQ0NzY3NrNQEuftEDgYIySQnliSmp2aWpBaBNPHxMEp1cC439in8vI6hZDl5/45P9kv
+        /utM8qUFUrcaahzvGd0rfHjFweLVxDCDxu+vpLcb7Nv6vT9AYO3HN8dfn37dY3+a1TXz2GaH
+        A5wTI/ZFJ87pLvxtLtkts3XdWc3IHdkb23+w/f385uL0XEc9q1W3noT8EF2YJbhi48NbBWvz
+        VKN2X2GQrxWYkjClRomlOCPRUIu5qDgRAFRkTDxwAgAA
+X-CMS-MailID: 20191017102843eucas1p164993b3644d006481fb041e36175eebe
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191017102843eucas1p164993b3644d006481fb041e36175eebe
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191017102843eucas1p164993b3644d006481fb041e36175eebe
+References: <CGME20191017102843eucas1p164993b3644d006481fb041e36175eebe@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 06:42:10PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    22be26f7 usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14f6dc5f600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=387eccb7ac68ec5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=6fe95b826644f7f12b0b
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102c3227600000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a503a0e00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com
-> 
-> ldusb 1-1:0.28: Read buffer overflow, -131383859965943 bytes dropped
+All the drivers, which use the OPP framework control regulators, which
+are already enabled. Typically those regulators are also system critical,
+due to providing power to CPU core or system buses. It turned out that
+there are cases, where calling regulator_enable() on such boot-enabled
+regulator has side-effects and might change its initial voltage due to
+performing initial voltage balancing without all restrictions from the
+consumers. Until this issue becomes finally solved in regulator core,
+avoid calling regulator_enable()/disable() from the OPP framework.
 
-This warning should be using %zu and thus read 18446612689849585673.
+This reverts commit 7f93ff73f7c8c8bfa6be33bcc16470b0b44682aa.
 
-Apparently, *actual_buffer holds a kernel address ffff8881cfb42000
-instead of a transfer length. Possibly a stale value since the buffer is
-not cleared on allocation.
-
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in _copy_to_user+0x124/0x150  
-> lib/usercopy.c:28
-> Read of size 102391 at addr ffff8881cfb40008 by task syz-executor372/1737
-
-And due to missing sanity checks the driver proceeds to access data
-beyond the ring-buffer entry.
-
-> CPU: 0 PID: 1737 Comm: syz-executor372 Not tainted 5.4.0-rc3+ #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0xca/0x13e lib/dump_stack.c:113
->   print_address_description.constprop.0+0x36/0x50 mm/kasan/report.c:374
->   __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:506
->   kasan_report+0xe/0x20 mm/kasan/common.c:634
->   check_memory_region_inline mm/kasan/generic.c:185 [inline]
->   check_memory_region+0x128/0x190 mm/kasan/generic.c:192
->   _copy_to_user+0x124/0x150 lib/usercopy.c:28
->   copy_to_user include/linux/uaccess.h:152 [inline]
->   ld_usb_read+0x329/0x760 drivers/usb/misc/ldusb.c:492
->   __vfs_read+0x76/0x100 fs/read_write.c:425
->   vfs_read+0x1ea/0x430 fs/read_write.c:461
->   ksys_read+0x1e8/0x250 fs/read_write.c:587
->   do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4421d9
-> Code: e8 7c e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-> ff 0f 83 bb 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffc08eb0888 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> RAX: ffffffffffffffda RBX: 00007ffc08eb0ae0 RCX: 00000000004421d9
-> RDX: 0000000000018ff7 RSI: 0000000020000a80 RDI: 0000000000000004
-> RBP: 0000000000000000 R08: 000000000000000f R09: 0000000000402eb0
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000402eb0 R14: 0000000000000000 R15: 0000000000000000
-> 
-> The buggy address belongs to the page:
-> page:ffffea00073ed000 refcount:1 mapcount:0 mapping:0000000000000000  
-> index:0x0 compound_mapcount: 0
-> flags: 0x200000000010000(head)
-> raw: 0200000000010000 dead000000000100 dead000000000122 0000000000000000
-> raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->   ffff8881cfb55500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->   ffff8881cfb55580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > ffff8881cfb55600: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
->                     ^
->   ffff8881cfb55680: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
->   ffff8881cfb55700: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> ==================================================================
-
-The drivers ring-buffer implementation is broken so this could
-potentially be a memory-ordering issue (e.g. the entry is read before it
-has been updated).
-
-Let's try the below.
-
-Johan
-
-
-#syz test: https://github.com/google/kasan.git 22be26f7
-
-From 61c87ec9b1311949e313f633e84aab5c73975078 Mon Sep 17 00:00:00 2001
-From: Johan Hovold <johan@kernel.org>
-Date: Thu, 17 Oct 2019 11:53:04 +0200
-Subject: [PATCH] wip: USB: lsusb: fix ring-buffer locking
-
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/usb/misc/ldusb.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+This is a follow-up from the following discussion:
+https://lkml.org/lkml/2019/10/9/541
+---
+ drivers/opp/core.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/usb/misc/ldusb.c b/drivers/usb/misc/ldusb.c
-index f3108d85e768..c8d09ac7ade9 100644
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -467,7 +467,7 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 3b7ffd0234e9..9ff0538ee83a 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -1626,12 +1626,6 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+ 			goto free_regulators;
+ 		}
  
- 	/* wait for data */
- 	spin_lock_irq(&dev->rbsl);
--	if (dev->ring_head == dev->ring_tail) {
-+	while (dev->ring_head == dev->ring_tail) {
- 		dev->interrupt_in_done = 0;
- 		spin_unlock_irq(&dev->rbsl);
- 		if (file->f_flags & O_NONBLOCK) {
-@@ -477,8 +477,8 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
- 		retval = wait_event_interruptible(dev->read_wait, dev->interrupt_in_done);
- 		if (retval < 0)
- 			goto unlock_exit;
--	} else {
--		spin_unlock_irq(&dev->rbsl);
-+
-+		spin_lock_irq(&dev->rbsl);
- 	}
- 
- 	/* actual_buffer contains actual_length + interrupt_in_buffer */
-@@ -487,17 +487,19 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
- 	if (bytes_to_read < *actual_buffer)
- 		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
- 			 *actual_buffer-bytes_to_read);
-+	spin_unlock_irq(&dev->rbsl);
- 
- 	/* copy one interrupt_in_buffer from ring_buffer into userspace */
- 	if (copy_to_user(buffer, actual_buffer+1, bytes_to_read)) {
- 		retval = -EFAULT;
- 		goto unlock_exit;
- 	}
--	dev->ring_tail = (dev->ring_tail+1) % ring_buffer_size;
+-		ret = regulator_enable(reg);
+-		if (ret < 0) {
+-			regulator_put(reg);
+-			goto free_regulators;
+-		}
 -
- 	retval = bytes_to_read;
+ 		opp_table->regulators[i] = reg;
+ 	}
  
- 	spin_lock_irq(&dev->rbsl);
-+
-+	dev->ring_tail = (dev->ring_tail+1) % ring_buffer_size;
-+
- 	if (dev->buffer_overflow) {
- 		dev->buffer_overflow = 0;
- 		spin_unlock_irq(&dev->rbsl);
-@@ -693,12 +695,17 @@ static int ld_usb_probe(struct usb_interface *intf, const struct usb_device_id *
- 		dev_warn(&intf->dev, "Interrupt out endpoint not found (using control endpoint instead)\n");
+@@ -1645,10 +1639,8 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+ 	return opp_table;
  
- 	dev->interrupt_in_endpoint_size = usb_endpoint_maxp(dev->interrupt_in_endpoint);
-+	dev_info(&intf->dev, "%s - interrupt_in_endpoint_size = %zu\n",
-+			__func__, dev->interrupt_in_endpoint_size);
- 	dev->ring_buffer =
- 		kmalloc_array(ring_buffer_size,
- 			      sizeof(size_t) + dev->interrupt_in_endpoint_size,
- 			      GFP_KERNEL);
- 	if (!dev->ring_buffer)
- 		goto error;
-+	dev_info(&intf->dev, "%s - ring_buffer = %px\n", __func__,
-+			dev->ring_buffer);
-+
- 	dev->interrupt_in_buffer = kmalloc(dev->interrupt_in_endpoint_size, GFP_KERNEL);
- 	if (!dev->interrupt_in_buffer)
- 		goto error;
+ free_regulators:
+-	while (i--) {
+-		regulator_disable(opp_table->regulators[i]);
+-		regulator_put(opp_table->regulators[i]);
+-	}
++	while (i != 0)
++		regulator_put(opp_table->regulators[--i]);
+ 
+ 	kfree(opp_table->regulators);
+ 	opp_table->regulators = NULL;
+@@ -1674,10 +1666,8 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
+ 	/* Make sure there are no concurrent readers while updating opp_table */
+ 	WARN_ON(!list_empty(&opp_table->opp_list));
+ 
+-	for (i = opp_table->regulator_count - 1; i >= 0; i--) {
+-		regulator_disable(opp_table->regulators[i]);
++	for (i = opp_table->regulator_count - 1; i >= 0; i--)
+ 		regulator_put(opp_table->regulators[i]);
+-	}
+ 
+ 	_free_set_opp_data(opp_table);
+ 
 -- 
-2.23.0
+2.17.1
 
