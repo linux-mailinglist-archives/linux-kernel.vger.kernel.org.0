@@ -2,82 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB3C4DA67C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:30:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78C92DA67D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392834AbfJQHay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 03:30:54 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:34388 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731498AbfJQHax (ORCPT
+        id S2437988AbfJQHbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 03:31:20 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36649 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbfJQHbU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 03:30:53 -0400
-Received: by mail-yw1-f68.google.com with SMTP id d192so543613ywa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 00:30:53 -0700 (PDT)
+        Thu, 17 Oct 2019 03:31:20 -0400
+Received: by mail-wr1-f66.google.com with SMTP id w18so507675wrt.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 00:31:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
-        b=ufNvNS5YYpr5Zs9Q8Ix4GjcrJHD3nUCFYTBJ1HbZNIeVxk2cCNv5CbfQeml2QbcUot
-         UtzQGcxs0j/8o6iYBEqXk+cu4WytbnlPFK5e0SbsW9Tq0WjaqhawKGAmcefgsdoGsZJR
-         A6pxM5buFjERBSpevBNgBIhlrfaqW9m71XcHGG1oF7qCpr0Ylx89Fk3xw5Ai9quj3hDb
-         nejOu5g4dupF0maLkm7uxVtaHbtmH1+fMvzOQS77nl6kL86pZNWoV2DXWCjA6qqMRWG/
-         C8P5RtYdvjqBwm3mtklRnBLSeFnjWnwsZAqJCEPFNLtOGsfrR84W5dWo77d50ARTeSv6
-         A4TQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=8OEfVQbrvR0wmfK2+kxKZvqgQERq/GULj0cPgfTphk4=;
+        b=T00cp7pMvFvno4cXfCiVwYpqGiV0JJBYnQZt+ziJEYucsSUJPndzZb00evjNLP9/Ot
+         yQNHtxVVZrVZEHR9fe/9koTnuauXhwj0QATHUqETYDvkxucZKLnK6vUrF7ygFHZG/j2z
+         0zwpedtcaTcezRT85ahJEsdw1GYnCPVjtn6vKvKUXq5/9rwv5gJo3iT4ESioraPB7EV4
+         FdNaOp93VJXHBTh+CDcOtUbJjpHEgd2Z9kGtOKe9Qd5iVVdFiJP7jgocJp9onN8V0lP6
+         Y060ztZWjRYrNTtJFZw6H1/04NXZkcFPb+YO5N11I331Uy+20BHZC2zP229dcIuFMWZZ
+         6vVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
-        b=Qv25yDbg2Pi1CVdnqS8A8D/BaqDT4FFxCNZK7DlZkHM+yJvuQprfEK+3wI00tjuXMf
-         JwSwFVzUGCgx52VDcSVL71ahLDzJPj5563jUosxEdIvAClgJLNka4qQp0SLoGTDk5JNI
-         rEIQUJAFuviO64BPl88zoPVdMbRiLRLHbcWqL6M2LY047CIK2Blod41ZJEYQGIAVZ0aB
-         d8+85pWRNunKDhVfaqVNFGw59DXmWEvWCeKoh97MPWy8C1cB86IK73VcRdH2syB11qnZ
-         pc8v77SHI4vKflmehJHtsu5r8M1yB7FD+58o/dIuaPi2K6NMsGeOuhuMKAsCZxuIomDy
-         9zjg==
-X-Gm-Message-State: APjAAAWeDn8zFsAekX0Cf/Soubp+l+ElyouOMh/TJzZMN5G/X58X1tnZ
-        ifqFk9sitPOQLKm3kYErAcxwWn49htdB6rWxoeg=
-X-Google-Smtp-Source: APXvYqzYNqCP4xe5IUJfoRdOaDYFwjccKbXA5GqTe9eEAJww0AQbTx2drRXiojAb/LR8VkSg38PojitjT0VhGT83jkg=
-X-Received: by 2002:a81:7acf:: with SMTP id v198mr1538205ywc.253.1571297452924;
- Thu, 17 Oct 2019 00:30:52 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=8OEfVQbrvR0wmfK2+kxKZvqgQERq/GULj0cPgfTphk4=;
+        b=M2cSek0ZvDxnge2XJFqDAFK+i8V53jqy42I/o3XO6uXj7xP8ZGjNFkJfpNh2fsr4bd
+         XvnI0d/CuGs7u9Bbgq+mxcU0VFNHnucaaq9u6yvQJT++Y4Qpr0yH//qBp8C6OaYMTS3u
+         PhoMHhS3YuwqbEORqwMRzZaFdEXTDnGVoYaZZeqZ4+fI7vN7iuY8YNbO/d8Ac+vjt6OE
+         9JUoa1K6nEOPSvM9gqc2HMGKIjMYjmAzj+HPZzM7pQ6vfYXtWXuGMWbB/uBwGm0kxZjo
+         2skYxNGQ3TBUOPMHkZ1RBHdjX9NDKwOaMpjXyYqW/yR2JxhW6cEuie37Pvb8LDTwWPGD
+         N88Q==
+X-Gm-Message-State: APjAAAUzoQYxe/LBFc7Y8lH7MP3cvRhqijxiC8IIK/MjZVUCQunImRB/
+        xtJ919O2OwPBkn5zcTr/ClHkag==
+X-Google-Smtp-Source: APXvYqx0CVBeGKj+ANau+LA0DSzLjhV41Uq6n59ElB8MNaWs2uVBueoHrhpXdeGcdFR/pG5+lOApGw==
+X-Received: by 2002:a5d:4010:: with SMTP id n16mr1647855wrp.152.1571297478278;
+        Thu, 17 Oct 2019 00:31:18 -0700 (PDT)
+Received: from dell ([95.149.164.47])
+        by smtp.gmail.com with ESMTPSA id 26sm1327674wmf.20.2019.10.17.00.31.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Oct 2019 00:31:17 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 08:31:16 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Tuowen Zhao <ztuowen@gmail.com>, linux-kernel@vger.kernel.org,
+        mika.westerberg@linux.intel.com, acelan.kao@canonical.com,
+        mcgrof@kernel.org, davem@davemloft.net
+Subject: Re: [PATCH v5 0/4] Fix MTRR bug for intel-lpss-pci
+Message-ID: <20191017073116.GM4365@dell>
+References: <20191016210629.1005086-1-ztuowen@gmail.com>
+ <20191017071409.GC32742@smile.fi.intel.com>
 MIME-Version: 1.0
-Received: by 2002:a0d:d8d0:0:0:0:0:0 with HTTP; Thu, 17 Oct 2019 00:30:52
- -0700 (PDT)
-Reply-To: ayishagddafio@mail.com
-From:   AISHA GADDAFI <mrmusakabore13@gmail.com>
-Date:   Thu, 17 Oct 2019 00:30:52 -0700
-Message-ID: <CAJ-siTpC5dE_TT1Yf0zVjKmjmXUx_bwyA2H2Q5cKDAQ7b+Gj7g@mail.gmail.com>
-Subject: Dear Friend (Assalamu Alaikum),
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191017071409.GC32742@smile.fi.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 17 Oct 2019, Andy Shevchenko wrote:
+
+> On Wed, Oct 16, 2019 at 03:06:25PM -0600, Tuowen Zhao wrote:
+> > Some BIOS erroneously specifies write-combining BAR for intel-lpss-pci
+> > in MTRR. This will cause the system to hang during boot. If possible,
+> > this bug could be corrected with a firmware update.
+> > 
+> > Previous version: https://lkml.org/lkml/2019/10/14/575
+> > 
+> > Changes from previous version:
+> > 
+> >  * implement ioremap_uc for sparc64
+> >  * split docs changes to not CC stable (doc location moved since 5.3)
+> > 
+> 
+> It forgot to explicitly mention through which tree is supposed to go.
+> I think it's MFD one, correct?
+
+To be fair, that's not really up to the submitter to decide.
+
 -- 
-Dear Friend (Assalamu Alaikum),
-
-I came across your e-mail contact prior a private search while in need of
-your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
-with three Children. I am the only biological Daughter of late Libyan
-President (Late Colonel Muammar Gaddafi).
-
-I have investment funds worth Twenty Seven Million Five Hundred Thousand
-United State Dollar ($27.500.000.00 ) and i need a trusted investment
-Manager/Partner because of my current refugee status, however, I am
-interested in you for investment project assistance in your country, may be
-from there, we can build business relationship in the nearest future.
-
-I am willing to negotiate investment/business profit sharing ratio with you
-base on the future investment earning profits.
-
-If you are willing to handle this project on my behalf kindly reply urgent
-to enable me provide you more information about the investment funds.
-
-Your Urgent Reply Will Be Appreciated. write me at this email address(
-ayishagddafio@mail.com ) for further discussion.
-
-Best Regards
-Mrs Aisha Al-Qaddafi
-Reply to: ayishagddafio@mail.com
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
