@@ -2,179 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1753FDABD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 265D2DABE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:24:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405606AbfJQMTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 08:19:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55882 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731634AbfJQMTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:19:09 -0400
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 385AA757C6
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 12:19:09 +0000 (UTC)
-Received: by mail-wr1-f70.google.com with SMTP id n18so854198wro.11
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 05:19:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5ByTaLxAB+F0H69Cm8modgJ67wJ8Vn2On5FC62Q1PiM=;
-        b=Eo4/+efdc4mXuW/buuB9yIuNwplqZJgbg3irYOuQUw6NY19rnQtErXIA524OX6vTNZ
-         tfi8WNQXam4pe2TmkGG2tyfP5Oanahhm5Ron+RDgeb4kU2P0X0YiNC08iBPlqUv2eRM6
-         OCjobNeY6OCjAlzE/FA/eh+qVDOaClJ/IKD5/F2gkI6Cxui6ENGy18D9TWlC2Le0Z7h1
-         Sx7vOJMl7MpcP6eZzsmts1voblYIcwNcmQMdBe9gvVvU3ALUoS+vg9aSfppYtKOOEy+q
-         5Cr2UwHd/n9X2gA2Ns2jfT4tWzv4kq429tqGgDrXRDdRBKC1ad4udo3P9Img3pUg0zxC
-         V69w==
-X-Gm-Message-State: APjAAAV54WlUJilIF8/gZkZtneyJ0yC6Snm12tLQ9TTXLGS9gxDZ2eSS
-        QAUm+dNXz2Ejs0WN+HcKcJPY1eC10ZadoWm6N7YYFvftGpCBceiVu5G3c7XPMZG++4EhgVoIAzh
-        70GXBvwroOSWjRARmSB7ESEnr
-X-Received: by 2002:a5d:55c2:: with SMTP id i2mr2820941wrw.176.1571314747148;
-        Thu, 17 Oct 2019 05:19:07 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxb7W/PgRLjcJiTP8pYchkla4ZU2SNdmZiwnG7vymr8qEDJH1c/CguOGraOD9N0EIQdWll5yg==
-X-Received: by 2002:a5d:55c2:: with SMTP id i2mr2820917wrw.176.1571314746919;
-        Thu, 17 Oct 2019 05:19:06 -0700 (PDT)
-Received: from kherbst.pingu.com ([2a02:8308:b0be:6900:74c6:f288:5e52:518b])
-        by smtp.gmail.com with ESMTPSA id z9sm2163088wrv.1.2019.10.17.05.19.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 05:19:04 -0700 (PDT)
-From:   Karol Herbst <kherbst@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Karol Herbst <kherbst@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lyude Paul <lyude@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mika Westerberg <mika.westerberg@intel.com>,
-        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Subject: [PATCH v4] pci: prevent putting nvidia GPUs into lower device states on certain intel bridges
-Date:   Thu, 17 Oct 2019 14:19:01 +0200
-Message-Id: <20191017121901.13699-1-kherbst@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        id S2409368AbfJQMYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 08:24:17 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47332 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728554AbfJQMYR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 08:24:17 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HC9Pug014774;
+        Thu, 17 Oct 2019 12:24:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=2SOi+yOvifARKTdZueuOWwzS6KmvruH+Cv9v65kxebg=;
+ b=WMgijF4mCJHTNbCWNF+6WBUnk0LMSICmdN+PfRdJJGNvlPMJlErr0D/Ybys2x3zLVTHB
+ xAhrEipmmMUlWU4Tqa96MzPW8KQFuhOw/rTCKyucJfBzg7pcIHS5KaX4mPfKJCLEpcaL
+ vYH84951E0cWzV22BRgSh3JYQw5cBezWpJ/i2vowvAo57zGHKphhdaahj3oeDFlakkMs
+ f0DvElYXbWJSJ+QG2WAmWYNCZp0r4cdq+0FrWcD8WRlwTSFM3OARKxZpznzRYBH9VPSg
+ TgHwAJKtMdEPud5Xk1k4s6N6dkjm96Xze204BjsK+qY5o4YU+oft324x++BfhI6sHVzG 6A== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2vk7frnrtv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 12:24:08 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HCMtB4032584;
+        Thu, 17 Oct 2019 12:24:08 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2vpf13s0ju-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 12:24:08 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9HCO4lD004813;
+        Thu, 17 Oct 2019 12:24:04 GMT
+Received: from [10.175.56.189] (/10.175.56.189)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 17 Oct 2019 12:24:04 +0000
+Subject: Re: email as a bona fide git transport
+To:     Pratyush Yadav <me@yadavpratyush.com>
+Cc:     workflows@vger.kernel.org, Git Mailing List <git@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        Eric Wong <e@80x24.org>
+References: <b9fb52b8-8168-6bf0-9a72-1e6c44a281a5@oracle.com>
+ <20191016150020.cr6jgfpd2c6fyg7t@yadavpratyush.com>
+From:   Vegard Nossum <vegard.nossum@oracle.com>
+Message-ID: <a1c33600-14e6-be37-c026-8d8b8e4bad92@oracle.com>
+Date:   Thu, 17 Oct 2019 14:23:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191016150020.cr6jgfpd2c6fyg7t@yadavpratyush.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910170114
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910170113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes state transitions of Nvidia Pascal GPUs from D3cold into higher device
-states.
 
-v2: convert to pci_dev quirk
-    put a proper technical explanation of the issue as a in-code comment
-v3: disable it only for certain combinations of intel and nvidia hardware
-v4: simplify quirk by setting flag on the GPU itself
+On 10/16/19 5:00 PM, Pratyush Yadav wrote:
+> On 16/10/19 12:22PM, Vegard Nossum wrote:
+> Just to play the devil's advocate, even though I'm in favor of something
+> like this, I'll add in another disadvantage:
+> 
+> - The maintainer can't make small edits before pushing the changes out.
+> 
+> I do that every now and then for git-gui, and Junio does that sometimes
+> for Git. I don't know if the folks over at Linux do something like this,
+> but using '--exact' would mean that contributors would have to send a
+> re-roll for even minor changes. Its mostly an inconvenience instead of a
+> problem, but I thought I'd point it out.
 
-Signed-off-by: Karol Herbst <kherbst@redhat.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-Cc: Mika Westerberg <mika.westerberg@intel.com>
-Cc: linux-pci@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: nouveau@lists.freedesktop.org
----
- drivers/pci/pci.c    |  7 ++++++
- drivers/pci/quirks.c | 53 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/pci.h  |  1 +
- 3 files changed, 61 insertions(+)
+I don't think this is a problem.
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index b97d9e10c9cc..02e71e0bcdd7 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -850,6 +850,13 @@ static int pci_raw_set_power_state(struct pci_dev *dev, pci_power_t state)
- 	   || (state == PCI_D2 && !dev->d2_support))
- 		return -EIO;
- 
-+	/*
-+	 * check if we have a bad combination of bridge controller and nvidia
-+         * GPU, see quirk_broken_nv_runpm for more info
-+	 */
-+	if (state != PCI_D0 && dev->broken_nv_runpm)
-+		return 0;
-+
- 	pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
- 
- 	/*
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 44c4ae1abd00..0006c9e37b6f 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -5268,3 +5268,56 @@ static void quirk_reset_lenovo_thinkpad_p50_nvgpu(struct pci_dev *pdev)
- DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, 0x13b1,
- 			      PCI_CLASS_DISPLAY_VGA, 8,
- 			      quirk_reset_lenovo_thinkpad_p50_nvgpu);
-+
-+/*
-+ * Some Intel PCIe bridges cause devices to disappear from the PCIe bus after
-+ * those were put into D3cold state if they were put into a non D0 PCI PM
-+ * device state before doing so.
-+ *
-+ * This leads to various issue different issues which all manifest differently,
-+ * but have the same root cause:
-+ *  - AIML code execution hits an infinite loop (as the coe waits on device
-+ *    memory to change).
-+ *  - kernel crashes, as all pci reads return -1, which most code isn't able
-+ *    to handle well enough.
-+ *  - sudden shutdowns, as the kernel identified an unrecoverable error after
-+ *    userspace tries to access the GPU.
-+ *
-+ * In all cases dmesg will contain at least one line like this:
-+ * 'nouveau 0000:01:00.0: Refused to change power state, currently in D3'
-+ * followed by a lot of nouveau timeouts.
-+ *
-+ * ACPI code writes bit 0x80 to the not documented PCI register 0x248 of the
-+ * PCIe bridge controller in order to power down the GPU.
-+ * Nonetheless, there are other code paths inside the ACPI firmware which use
-+ * other registers, which seem to work fine:
-+ *  - 0xbc bit 0x20 (publicly available documentation claims 'reserved')
-+ *  - 0xb0 bit 0x10 (link disable)
-+ * Changing the conditions inside the firmware by poking into the relevant
-+ * addresses does resolve the issue, but it seemed to be ACPI private memory
-+ * and not any device accessible memory at all, so there is no portable way of
-+ * changing the conditions.
-+ *
-+ * The only systems where this behavior can be seen are hybrid graphics laptops
-+ * with a secondary Nvidia Pascal GPU. It cannot be ruled out that this issue
-+ * only occurs in combination with listed Intel PCIe bridge controllers and
-+ * the mentioned GPUs or if it's only a hw bug in the bridge controller.
-+ *
-+ * But because this issue was NOT seen on laptops with an Nvidia Pascal GPU
-+ * and an Intel Coffee Lake SoC, there is a higher chance of there being a bug
-+ * in the bridge controller rather than in the GPU.
-+ *
-+ * This issue was not able to be reproduced on non laptop systems.
-+ */
-+
-+static void quirk_broken_nv_runpm(struct pci_dev *dev)
-+{
-+	struct pci_dev *bridge = pci_upstream_bridge(dev);
-+
-+	if (bridge->vendor == PCI_VENDOR_ID_INTEL &&
-+	    bridge->device == 0x1901)
-+		dev->broken_nv_runpm = 1;
-+}
-+DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
-+			      PCI_BASE_CLASS_DISPLAY, 16,
-+			      quirk_broken_nv_runpm);
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index ac8a6c4e1792..903a0b3a39ec 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -416,6 +416,7 @@ struct pci_dev {
- 	unsigned int	__aer_firmware_first_valid:1;
- 	unsigned int	__aer_firmware_first:1;
- 	unsigned int	broken_intx_masking:1;	/* INTx masking can't be used */
-+	unsigned int	broken_nv_runpm:1;	/* some combinations of intel bridge controller and nvidia GPUs break rtd3 */
- 	unsigned int	io_window_1k:1;		/* Intel bridge 1K I/O windows */
- 	unsigned int	irq_managed:1;
- 	unsigned int	has_secondary_link:1;
--- 
-2.21.0
+The point of 'git am --exact' is not for maintainers per se (although
+they should use it if they don't have any manual changes to make), but
+for the bot that keeps track of patchsets submitted via email.
 
+The important part is that there is a git reference to the patchset that
+was submitted in the patchset that was merged. You could see it as the
+maintainer rolling a new version of the patchset locally and merging
+that instead of merging what was submitted directly.
+
+Of course, this relies strongly on actually having (correct) sha1
+references to previous versions inside the changelog. In my original
+idea, this reference would only appear inside the merge commit that
+binds the patchset together to minimise churn, although maybe it is
+feasible to also append it to each patch -- in that case, the "patchset"
+command from my first email is not sufficient to create a new version of
+a patchset.
+
+> One more question, not strictly related to your proposal: right now,
+> when I apply patches from contributors, I pass '-s' to 'am', so the
+> applied commit would have my sign-off. The way I see it, that sign-off
+> is supposed to signify that I have the right to push out the commit to
+> the "main" repo, just like the author's sign-off means that they have
+> the right to send me that commit.
+> 
+> Looking at git.git, I notice that Junio does the same. The new '--exact'
+> would be incompatible with '-s', correct (since the commit message has
+> changed, the SHA1 would also change)? So firstly, make sure you account
+> for something like that if you haven't already (I haven't found the time
+> to read your patches yet). Secondly, is it all right for the maintainer
+> to just not sign-off on the commits they push out?
+
+In the Linux kernel at least, only the front-line maintainers add their
+signoffs; higher-level maintainers take pull requests and don't add
+their own sign-offs. Only Linus (and Greg, perhaps) has commit rights to
+the main repository, but he only signs off on the patches that he either
+writes himself or applies directly from email.
+
+In any case, I don't think this is a concern because of what I wrote
+above -- somebody who wants to add their signoff can do it by
+essentially rolling a new version of the patchset that has the signoff,
+but refers to the sha1 that was submitted to them by the patchset author
+so that you can still find the original commits (without the signoffs)
+and reviews/discussions.
+
+I don't want to create extra work for maintainers, so I think any
+solution should involve having the existing git tools/workflows do the
+right thing automatically.
+
+How about this? If 'git am' or 'git am -s' (without --exact) finds an
+email patch where the exact commit metadata is present, it automatically
+appends a line to the changelog saying where it was taken from:
+
+     Submitted-as: 111122223333444455556666777788889999aaaa
+
+or
+
+     Applied-from: 111122223333444455556666777788889999aaaa
+
+Although, again, this would modify the changelog of the patch itself
+rather than just the changelog of the merge commit... Maybe this is
+enough and we can have the "patchset" command also add references to
+previous versions of each patch rather than the patchset as a whole.
+
+
+Vegard
