@@ -2,105 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4706DAB6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 13:47:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B470EDAB74
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 13:49:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502134AbfJQLrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 07:47:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59990 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502113AbfJQLrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 07:47:00 -0400
-Received: from localhost (unknown [209.136.236.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 984A32082C;
-        Thu, 17 Oct 2019 11:46:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571312818;
-        bh=BGGdP34jTjoBsKcz7gQvolmVC90iVG0fX2/bdXKMIa8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RtPFd2ScxlErGSDcf344njs6dtqct63lCLYzog2Zj95NrZOUa9w2qL7vhmGOB0u5Y
-         /8sqtm+N0I0SIrCT1VL9c9eSW2q/ZqSQBXBrjW6UqiK/t/QDzSesTbirgN3rFbiYs/
-         SwrXSo9gMHoYou9QNQboVYv1jCWXThs8W7dUBy7o=
-Date:   Thu, 17 Oct 2019 04:46:58 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Richard Leitner <richard.leitner@skidata.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH 5.3 112/112] ASoC: sgtl5000: add ADC mute control
-Message-ID: <20191017114658.GB1020613@kroah.com>
-References: <20191016214844.038848564@linuxfoundation.org>
- <20191016214907.599726506@linuxfoundation.org>
- <20191016220044.GB11473@sirena.co.uk>
- <20191016221025.GA990599@kroah.com>
- <20191016223518.GC11473@sirena.co.uk>
- <20191016232358.GA994597@kroah.com>
- <de9630e5-341f-b48d-029a-ef1a516bf820@skidata.com>
+        id S2405979AbfJQLtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 07:49:15 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39892 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbfJQLtO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 07:49:14 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y3so2204062ljj.6
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 04:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6FKEoEtksLya6DHfOc7QmWACPInBFdwWglmBKOVW/8A=;
+        b=gN0FgcFxl2+5+hNzCLQKNZ+X4pOQQM9SBjx677F3aDX4O0rtkz+RphkO6cJCy+mBAc
+         0ZyHC6PtJYSEoEc/hhKZo/uOv5MVIbWrZLDQBcgbDkloQSuFjDZveZPbz8yFqHY6ZEwy
+         ExdRwZA8QDfxsuJ5ehuLJdfQE/JWdxOvHpaPY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6FKEoEtksLya6DHfOc7QmWACPInBFdwWglmBKOVW/8A=;
+        b=BYoE9PN7qOJeKJbHLEZRqSFx3MJOC2O4aYXunp8RtYS1qzsHWNs3+f7m0qKCHTMD4f
+         dm5dNVK9jG8SCsl2xSWsL0Ftw2tHv8YudCao9C+Y07PPg/wYS1sVt6Yksu1ztvZvJD5R
+         1/R/6AUJ8OvRhIyfLUT9tuLLlxdh8oCG9Lh+9vxeH4C9EIP8kwY2wxT2CLFxvtw2Hdh7
+         zk1Qd9FVZe6CwXkPVZjIRfwic78krnkeCX4PGnRztbrpuseRQURxwsoO6FFkw1VEp7Iu
+         m4LkZxiPhYP/VsqKHlhsM7KWLtqWnwTVFhUDhKxGFi+V/8Jd4QjUhBLt+uAHl0BhYGlN
+         f7iw==
+X-Gm-Message-State: APjAAAWJt9dunoXWCUs+KoXIkRX8a9vxPur4sszIIosjQ8FOco6GPjw7
+        EUZLn+wGsJgVdTUTANchYWAphUGOiolekqkm
+X-Google-Smtp-Source: APXvYqwH6z0knFVZlzhAapP3XmtyBWwtK8p3HKnPSfyD6SY6TZlHYAgXjnEmvcGqR/wJYI5Uw3DWfQ==
+X-Received: by 2002:a2e:858d:: with SMTP id b13mr2011262lji.71.1571312952464;
+        Thu, 17 Oct 2019 04:49:12 -0700 (PDT)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id x30sm920772ljd.39.2019.10.17.04.49.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2019 04:49:11 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Gao Xiang <xiang@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        kernel@pengutronix.de, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [RFC PATCH 0/3] watchdog servicing during decompression
+Date:   Thu, 17 Oct 2019 13:49:03 +0200
+Message-Id: <20191017114906.30302-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de9630e5-341f-b48d-029a-ef1a516bf820@skidata.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 11:20:32AM +0200, Richard Leitner wrote:
-> 
-> On 17/10/2019 01:23, Greg Kroah-Hartman wrote:
-> > On Wed, Oct 16, 2019 at 11:35:18PM +0100, Mark Brown wrote:
-> > > On Wed, Oct 16, 2019 at 03:10:25PM -0700, Greg Kroah-Hartman wrote:
-> > > > On Wed, Oct 16, 2019 at 11:00:44PM +0100, Mark Brown wrote:
-> > > > > On Wed, Oct 16, 2019 at 02:51:44PM -0700, Greg Kroah-Hartman wrote:
-> > > > > > From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-> > > 
-> > > > > > commit 694b14554d75f2a1ae111202e71860d58b434a21 upstream.
-> > > 
-> > > > > > This control mute/unmute the ADC input of SGTL5000
-> > > > > > using its CHIP_ANA_CTRL register.
-> > > 
-> > > > > This seems like a new feature and not an obvious candidate for stable?
-> > > 
-> > > > there was a long email from Richard that said:
-> > > > 	Upstream commit 631bc8f0134a ("ASoC: sgtl5000: Fix of unmute
-> > > > 	outputs on probe"), which is e9f621efaebd in v5.3 replaced
-> > > > 	snd_soc_component_write with snd_soc_component_update_bits and
-> > > > 	therefore no longer cleared the MUTE_ADC flag. This caused the
-> > > > 	ADC to stay muted and recording doesn't work any longer. This
-> > > > 	patch fixes this problem by adding a Switch control for
-> > > > 	MUTE_ADC.
-> > > 
-> > > > That's why I took this.  If this isn't true, I'll be glad to drop this.
-> > > 
-> > > That's probably not an appropriate fix for stable - it's going to add a
-> > > new control which users will need to manually set (or hope their
-> > > userspace automatically figures out that it should set for them, more
-> > > advanced userspaces like PulseAudio should) which isn't a drop in fix.
-> > > You could either drop the backport that was done for zero cross or take
-> > > a new patch that clears the MUTE_ADC flag (rather than punting to
-> > > userspace to do so), or just be OK with what you've got at the minute
-> > > which might be fine given the lack of user reports.
-> > 
-> > Ok, I'll gladly go drop it, thanks!
-> 
-> Mark, thanks for the clarification! I haven't thought of breaking anything
-> with the backport as it worked fine for our application.
-> 
-> Greg, just to be sure:
-> 
-> Are you going to drop this patch and revert e9f621efaebd for v5.3?
+Many custom boards have an always-running external watchdog
+circuit. When the timeout of that watchdog is small, one cannot boot a
+compressed kernel since the board gets reset before it even starts
+booting the kernel proper.
 
-I dropped this patch.
+One way around that is to do the decompression in a bootloader which
+knows how to service the watchdog. However, one reason to prefer using
+the kernel's own decompressor is to be able to take advantage of
+future compression enhancements (say, a faster implementation of the
+current method, or switching over when a new method such a zstd is
+invented) - often, the bootloader cannot be updated without physical
+access or is locked down for other reasons, so the decompressor has to
+be bundled with the kernel image for that to be possible.
 
-If the revert is needed, please send that and I will be glad to queue it
-up for the next round of releases.
+This POC adds a linux/decompress/keepalive.h header which provides a
+decompress_keepalive() macro. Wiring up any given decompressor just
+amounts to including that header and adding decompress_keepalive() in
+the main loop - for simplicity, this series just does it for lz4.
 
-thanks,
+The actual decompress_keepalive() implementation is of course very
+board-specific. The third patch adds a kconfig knob that handles a
+common case (and in fact suffices for all the various boards I've come
+across): An external watchdog serviced by toggling a gpio, with the
+value of that gpio being settable in a memory-mapped register.
 
-greg k-h
+Rasmus Villemoes (3):
+  decompress/keepalive.h: prepare for watchdog keepalive during kernel
+    decompression
+  lib: lz4: wire up watchdog keepalive during decompression
+  decompress/keepalive.h: add config option for toggling a set of bits
+
+ include/linux/decompress/keepalive.h | 22 +++++++++++++++++++
+ init/Kconfig                         | 33 ++++++++++++++++++++++++++++
+ lib/lz4/lz4_decompress.c             |  2 ++
+ 3 files changed, 57 insertions(+)
+ create mode 100644 include/linux/decompress/keepalive.h
+
+-- 
+2.20.1
+
