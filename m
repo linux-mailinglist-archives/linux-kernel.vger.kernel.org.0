@@ -2,89 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2BAEDB3B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47013DB3D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:46:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437028AbfJQRpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 13:45:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389827AbfJQRpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 13:45:35 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1D5B20820;
-        Thu, 17 Oct 2019 17:45:34 +0000 (UTC)
-Date:   Thu, 17 Oct 2019 13:45:26 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] libtraceevent: perf script -g python segfaults
-Message-ID: <20191017134526.097f1490@gandalf.local.home>
-In-Reply-To: <20191017154205.GC8974@kernel.org>
-References: <20191017154205.GC8974@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2440727AbfJQRqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 13:46:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52462 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389827AbfJQRqD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 13:46:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xCRQFy9+IPozuA6foR1LSQETFb0B/WIEsA+BjHPyM30=; b=QSTEOTclGysuQmJmkIo0siPhK
+        /pLUUoz+i79TA+VG6nSlISLGCLkIr1ggrDZvwpQ3NLEg2QUFoisPbZwaVnxaG5RDV8OjPBPKoCVdh
+        tfOsZTOmTulSBDEkEOjLWPRM099VRngsLVn0kVNc3mZdqizosIMTpCNj/RDDgkVqS/GifxjwsRaqP
+        J+Qjadf6dtwYvxkn7ev6qVAfQliw55xpUjhcCgKVqqUPIFO6BH6iBpmm8fYCRFRgPGB4MIxI2E9on
+        RxttYwCplOf4tQOQpkPNU8QczjCt5DUUHhczA9nf9o/yof+J21QHemhfr90FGfBiGTUmrEb/M6V5p
+        dd9W3DXFw==;
+Received: from [2001:4bb8:18c:d7b:c70:4a89:bc61:3] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iL9qW-0005RL-Hy; Thu, 17 Oct 2019 17:45:56 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Arnd Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Guan Xuetao <gxt@pku.edu.cn>, x86@kernel.org
+Cc:     linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-mtd@lists.infradead.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: generic ioremap (and lots of cleanups) v2
+Date:   Thu, 17 Oct 2019 19:45:33 +0200
+Message-Id: <20191017174554.29840-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Oct 2019 12:42:05 -0300
-Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
+Hi all,
 
-> I'll try and continue later, but if you guys can take a look...
-> 
-> The first call in that loop:
-> 
->   while ((event = trace_find_next_event(pevent, event)))
-> 
-> works and the event is valid, one of the sched: tracepoints, but then
-> the next call returns this:
-> 
-> struct tep_event *trace_find_next_event(struct tep_handle *pevent,
->                                         struct tep_event *event)
-> {
->         static int idx;
->         int events_count;
->         struct tep_event *all_events;
-> 
->         all_events = tep_get_first_event(pevent);
->         events_count = tep_get_events_count(pevent);
->         if (!pevent || !all_events || events_count < 1)
->                 return NULL;
-> 
->         if (!event) {
->                 idx = 0;
->                 return all_events;
->         }
-> 
->         if (idx < events_count && event == (all_events + idx)) {
->                 idx++;
->                 if (idx == events_count)
->                         return NULL;
->                 return (all_events + idx);
->         }
-> 
->         for (idx = 1; idx < events_count; idx++) {
->                 if (event == (all_events + (idx - 1)))
->                         return (all_events + idx);
->         }
->         return NULL;
-> }
-> 
-> Oh, static int idx, oops, anyway, the all_events + idx returned for the
-> second call to trace_find_next_event() fails, in a hurry now, will get
-> back to this later.
+the last patches in this series add a generic ioremap implementation,
+and switch our 3 most recent and thus most tidy architeture ports over
+to use it.  With a little work and an additional arch hook or two the
+implementation should be able to eventually cover more than half of
+our ports.
 
-Yeah, this is obviously broken. :-( 
+The patches before that clean up various lose ends in the ioremap
+and iounmap implementations.
 
-I'll have a patch later today.
+A git tree is also available here:
 
--- Steve
+    git://git.infradead.org/users/hch/misc.git generic-ioremap
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/generic-ioremap
+
+Changes since v1:
+ - dropped various patches already merged
+ - keep the parts of the parisc EISA hack that are still needed
