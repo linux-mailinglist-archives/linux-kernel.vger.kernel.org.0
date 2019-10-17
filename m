@@ -2,82 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BF9ADA476
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 06:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15A0BDA47E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 06:10:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407710AbfJQEAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 00:00:21 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:39796 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389125AbfJQEAU (ORCPT
+        id S2404568AbfJQEKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 00:10:36 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:43760 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726982AbfJQEKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 00:00:20 -0400
-Received: by mail-yb1-f196.google.com with SMTP id z2so271948ybn.6
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 21:00:20 -0700 (PDT)
+        Thu, 17 Oct 2019 00:10:36 -0400
+Received: by mail-il1-f195.google.com with SMTP id t5so659652ilh.10
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 21:10:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=R7agJn2xhu/bfVAbFCngbuss5j4mtvnFbiuNdxVUHic=;
-        b=uMDdLUWiJA2yKy+OGjOmykqJj33fp+sY8NRzeKF65knMaZVdPsJWcjXpzj+tH7mAZN
-         8p07Wqcs28OXGahYnTgqWZSKUeVo+eod2yMftru17RMEjR19Jy6NWJPKgyoOFa1pgg8s
-         SwkRkX2PLPVcrNe5oK6Bm7657Zc6vGsO6TkmApgUxWUzGL+Rje+hlYvXnZ9H5M3WZvlp
-         4waQEf1JQdcmjs42vyN12NhVT9igU8sDAERWpl2QqH+MndrsyQy5Jw0Ls+fmnjzyW2t7
-         T8QOwHYIIHSWev3QHJnax5g4hCARmnZG0h6+kayPir9h+s3PzzoVZ8Z0b1Vo1EyIFuL9
-         HUTA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WfD6ayjfYqzqP/LVh7w+bvnD4qYp9ltqa0DyJebxkC8=;
+        b=eVZWpuNmW1LjNbZB427rwnRwJXN0K6rrcRk6OTdb3sr/zasrjkEs/A6KN26Cl4NOl3
+         +Rh0iGrfl7+aOKNCCEMIh2A3m1oVJSUmRHxt8CczU8cOAzykww/p2p9sxc9HAvHHCShw
+         QK5OCE7VBb+gc/OnQ/oiYModNGH7UBHpO0RGg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=R7agJn2xhu/bfVAbFCngbuss5j4mtvnFbiuNdxVUHic=;
-        b=csQQ03BGbbZmg1+mUNcnIdmmkZY7qyw3Q64whvCKWqy2Y7y5lkNRVianwSRrqbn9Hx
-         U7JlDcaopS+4p5c6fvfcpJJx4HCJ0YUf1rNNOPKiOqS/LSsrB8TtZ0gHwno4a+NujPBZ
-         sNSLRlJHa5nmyWwp9dlFWBgojG3r+TwqWG0pDrT3BzxLIgQOFMFEiuysCpLeKUkedjse
-         bljvtoRRwkyg2r3E0KRyV94jQoo2LKBuE6dhBxdbVjoIrjWWkRxPjmbT/wXDFwNcLHym
-         F5FUcwE5fcjxA59+EZsPaHUNXgzgSqrqH2ERCUeuyxOESoFP5tSEFUTKP3PD+YMCI9zm
-         iqXQ==
-X-Gm-Message-State: APjAAAUeO72wmKhm0TCtZx2ziEx0GSIvQg8CgIBH/GL2HbET8IFNe8Ju
-        LfXRA3oUNOUok4hcfXCGREjcZJX8pIBP/EJEY2k=
-X-Google-Smtp-Source: APXvYqwkz2PMs73k7TfDoKU/oUvqrfz0dY0jpp8B72pmhh7u+iciyMRx+tmMwJQwxeli7UTrzdJFmoBaBBaSHNlNL+M=
-X-Received: by 2002:a25:8292:: with SMTP id r18mr733101ybk.424.1571284820093;
- Wed, 16 Oct 2019 21:00:20 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WfD6ayjfYqzqP/LVh7w+bvnD4qYp9ltqa0DyJebxkC8=;
+        b=Qo/6bfVP3UZmA2Pj4n2jywZNuGl2fhfMWanKCg5AueqGSDU+WkXXshDnck+Wuqcn0X
+         mpCGH0oDEITDEGSd1C6hRgesm/HzHcwzTrLWVTbiC4Bf5TCHEbg712ADkow9hZu6RNDP
+         DFONZVt/UimsoEwArowRvluLdvwF2fe8NyZYB0CCniEUQWkyu8Slcr7H7ec6PfvDwG9R
+         j3wLcbw81UpH8cSvsUHsl2Gr9kFy38LLJ9Lk+abzhwvo9n35i4EyNc9voVPyS8J0l/f6
+         fQMeOJy8lC1BpKCduBTJkmNG3ENDeZI5Mp7Xci/oXGGWuZt4hmTV/DcImU2WBEboKXSO
+         xvQQ==
+X-Gm-Message-State: APjAAAVAtLB6LNRNgo5Hd6EBjS8L7ZNvxuqPaF6JMozewAVBo9YjAQSP
+        S8zdkH4j2RYsscsnfO6PElKHl1l4LN0=
+X-Google-Smtp-Source: APXvYqyouU4NwYyuwRZ51tQQZkRgY/F9/pO02gWWdGbz3DbP66T3ByP1MbCXQ7FbbiD5BZZinF+bjg==
+X-Received: by 2002:a92:5e4d:: with SMTP id s74mr1463106ilb.115.1571285435251;
+        Wed, 16 Oct 2019 21:10:35 -0700 (PDT)
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com. [209.85.166.54])
+        by smtp.gmail.com with ESMTPSA id u25sm467967ill.4.2019.10.16.21.10.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2019 21:10:34 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id n26so1266051ioj.8
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 21:10:34 -0700 (PDT)
+X-Received: by 2002:a5d:9952:: with SMTP id v18mr1049308ios.58.1571285433894;
+ Wed, 16 Oct 2019 21:10:33 -0700 (PDT)
 MIME-Version: 1.0
-Reply-To: beatricejonson1@yandex.com
-Received: by 2002:a25:6141:0:0:0:0:0 with HTTP; Wed, 16 Oct 2019 21:00:19
- -0700 (PDT)
-From:   Beatrice Johnson <beatricejonson1@gmail.com>
-Date:   Thu, 17 Oct 2019 06:00:19 +0200
-X-Google-Sender-Auth: YewXkc9XRgOFILhfOuByG6mLyZ0
-Message-ID: <CAO99B9_i2Mu7wR40FDqY-VssG2fE2JaT9+eaw5Q5NjJ6+ZMFVg@mail.gmail.com>
-Subject: I need Your Urgent assistance.
-To:     undisclosed-recipients:;
+References: <20191014154626.351-1-daniel.thompson@linaro.org> <20191014154626.351-4-daniel.thompson@linaro.org>
+In-Reply-To: <20191014154626.351-4-daniel.thompson@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 16 Oct 2019 21:10:22 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=W44zXesz8b8Z05_k7JjPW8D9z8fGT3GiGFSmSLw85zMQ@mail.gmail.com>
+Message-ID: <CAD=FV=W44zXesz8b8Z05_k7JjPW8D9z8fGT3GiGFSmSLw85zMQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] kdb: Remove special case logic from kdb_read()
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        LKML <linux-kernel@vger.kernel.org>,
+        Patch Tracking <patches@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I need Your Urgent assistance.
+Hi,
 
-My name is Beatrice Johnson. The only daughter of the late Mr. Madou
-Johnson. Here in Burkina Faso, i got your profile while searching for
-contact on internet; I am contacting you to help me receive some
-amount of money in your country. So that I can travel To America to
-continue my education over there,
+On Mon, Oct 14, 2019 at 8:46 AM Daniel Thompson
+<daniel.thompson@linaro.org> wrote:
+>
+> @@ -91,12 +92,17 @@ kdb_bt1(struct task_struct *p, unsigned long mask,
+>         kdb_ps1(p);
+>         kdb_show_stack(p, NULL);
+>         if (btaprompt) {
+> -               kdb_getstr(buffer, sizeof(buffer),
+> -                          "Enter <q> to end, <cr> to continue:");
+> -               if (buffer[0] == 'q') {
+> -                       kdb_printf("\n");
+> +               kdb_printf("Enter <q> to end, <cr> or <space> to continue:");
+> +               ch = kdb_getchar();
+> +               while (!strchr("\r\n q", ch))
+> +                       ch = kdb_getchar();
 
-Before my father died he deposited the Sum of ($4.5Million) in a bank
-here and he advised me before he died to look for a faithful and
-reliable foreigner, who can help receive the Funds outside country, So
-that I can travel to meet you in your country. For my share percentage
-of the total amount 4.5 Million, from your county I will travel to
-America to continue my education and business.
+nit: above 3 lines would be better with "do while", AKA:
 
-I hope you are capable to receive the 4.5 Million in your country with
-trust.  I will like to travel to your country immediately the bank
-wire the funds into your account. You will take 30% of the total 4.5
-Million for your good and kind assistance to me. I will send to you
-the full details concerning the funds immediately I hear from you
-soon.
+do {
+  ch = kdb_getchar();
+} while (!strchr("\r\n q", ch));
 
-My Regards,
 
-Beatrice Johnson.
+> @@ -50,14 +50,14 @@ static int kgdb_transition_check(char *buffer)
+>  }
+>
+>  /*
+> - * kdb_read_handle_escape
+> + * kdb_handle_escape
+
+Optional nit: while you're touching this comment, you could make it
+kerneldoc complaint.
+
+
+> @@ -152,7 +158,7 @@ static int kdb_read_get_key(char *buffer, size_t bufsize)
+>                                 return '\e';
+>
+>                         *ped++ = key;
+> -                       key = kdb_read_handle_escape(escape_data,
+> +                       key = kdb_handle_escape(escape_data,
+>                                                      ped - escape_data);
+
+nit: indentation no longer lines up for the "ped - escape_data" line.
+
+Nothing here is terribly important, thus:
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
