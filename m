@@ -2,220 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42076DAEA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:42:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9719EDAEB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:48:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436720AbfJQNmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 09:42:33 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:56249 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436617AbfJQNmc (ORCPT
+        id S2436849AbfJQNsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 09:48:05 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:40616 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394727AbfJQNsE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 09:42:32 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 0EAFE1BF207;
-        Thu, 17 Oct 2019 13:42:25 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli+renesas@fpond.eu
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, airlied@linux.ie,
-        daniel@ffwll.ch, linux-renesas-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6.1 5/8] drm: rcar-du: crtc: Control CMM operations
-Date:   Thu, 17 Oct 2019 15:44:09 +0200
-Message-Id: <20191017134409.535740-1-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016085548.105703-6-jacopo+renesas@jmondi.org>
-References: <20191016085548.105703-6-jacopo+renesas@jmondi.org>
+        Thu, 17 Oct 2019 09:48:04 -0400
+Received: by mail-qt1-f195.google.com with SMTP id m61so3629223qte.7;
+        Thu, 17 Oct 2019 06:48:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V9F1NynHBe9lfMAB/ZrN6cWXHTh5u4L4sRwtLfhngWc=;
+        b=G+facC80VhcAvLi/e6A7TrduLWn0vD2qJhwCrXCQM3M5ILpu7FXJbXruo/38blvJR5
+         Q9oLLeaCrnK44x/5Iju8xFk4HjeGNEu8EJAtJzKdeJlU40QpeDu7KikFtBXkeL0EpofJ
+         Wehvt2p6B7cM8Ub1BPoCUh1tIiWug2UFg00NAXwu2T5EdY7duo662MRQQA7vMfPtBnhr
+         mSqkgU+scwS6+zqRnMWS7LazQ3L7sA34yyI+rqDVn03k9VJD5ALQzh3dMciU948nlxoP
+         Ajitc4MmV6M46JL/91n4aTOi2mOmgoZmFwpYshjmkKfcEHKHbS4m3FA4/c2VYhRbCjXb
+         m+VQ==
+X-Gm-Message-State: APjAAAXSOsXBzY9+d6+zJ5ejcNPbiEEoJ/ZVzs78OY1c9awftUPobS52
+        m83lQK0zdCOJUPsfVDy9gK4P7r7Z5trw6EQGUrU=
+X-Google-Smtp-Source: APXvYqxrCvbM940pdLdmtVqE4d93GXlx6MUaBU251o7f5GEXzpxhDY9oTpugTTbJy9ZdJgE4C/nnBZc9xI85Q3+56Lw=
+X-Received: by 2002:a0c:c70a:: with SMTP id w10mr3972472qvi.222.1571320083293;
+ Thu, 17 Oct 2019 06:48:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190930121520.1388317-1-arnd@arndb.de> <20190930121520.1388317-3-arnd@arndb.de>
+ <MN2PR20MB2973D14C38B7BC7E081A73A9CA6D0@MN2PR20MB2973.namprd20.prod.outlook.com>
+In-Reply-To: <MN2PR20MB2973D14C38B7BC7E081A73A9CA6D0@MN2PR20MB2973.namprd20.prod.outlook.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 17 Oct 2019 15:47:47 +0200
+Message-ID: <CAK8P3a3+UrqS0nQxcG7UuMt4s5FDnowFq-C5-K5XU-CKpciM8g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] crypto: inside-secure - Remove #ifdef checks
+To:     Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Pascal van Leeuwen <pascalvanl@gmail.com>,
+        Kelsey Skunberg <skunberg.kelsey@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement CMM handling in the crtc begin and enable atomic callbacks,
-and enable CMM unit through the Display Extensional Functions
-register at group setup time.
+On Thu, Oct 17, 2019 at 3:26 PM Pascal Van Leeuwen
+<pvanleeuwen@verimatrix.com> wrote:
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >       /* Register PCI driver */
+> > -     pcireg_rc = pci_register_driver(&safexcel_pci_driver);
+> > -#endif
+> > +     ret = pci_register_driver(&safexcel_pci_driver);
+> >
+> > -#if IS_ENABLED(CONFIG_OF)
+> >       /* Register platform driver */
+> > -     ofreg_rc = platform_driver_register(&crypto_safexcel);
+> > - #if IS_ENABLED(CONFIG_PCI)
+> > -     /* Return success if either PCI or OF registered OK */
+> > -     return pcireg_rc ? ofreg_rc : 0;
+> > - #else
+> > -     return ofreg_rc;
+> > - #endif
+> > -#else
+> > - #if IS_ENABLED(CONFIG_PCI)
+> > -     return pcireg_rc;
+> > - #else
+> > -     return -EINVAL;
+> > - #endif
+> > -#endif
+> > +     if (IS_ENABLED(CONFIG_OF) && !ret) {
+> >
+> Hmm ... this would make it skip the OF registration if the PCIE
+> registration failed. Note that the typical embedded  system will
+> have a PCIE subsystem (e.g. Marvell A7K/A8K does) but will have
+> the EIP embedded on the SoC as an OF device.
+>
+> So the question is: is it possible somehow that PCIE registration
+> fails while OF registration does pass? Because in that case, this
+> code would be wrong ...
 
----
-v6 -> v6.1
-- Drop check for CMM in rcar_du_cmm_check as if the gamma_table property is
-  available, a CMM unit for this CRTC was registered
-- Add TODO note to investigate how the activation order of CMM and CRTC
-  impact on the first displayed fram
----
+I don't see how it would fail. When CONFIG_PCI is disabled,
+pci_register_driver() does nothing, and the pci_driver as well
+as everything referenced from it will be silently dropped from
+the object file.
+If CONFIG_PCI is enabled, then the driver will be registered
+to the PCI subsystem, waiting for a device to show up, but
+the driver registration does not care about whether there is
+such a device.
 
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 61 +++++++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 10 ++++
- drivers/gpu/drm/rcar-du/rcar_du_regs.h  |  5 ++
- 3 files changed, 76 insertions(+)
+> Other than that, I don't care much how this code is implemented
+> as long as it works for both my use cases, being an OF embedded
+> device (on a SoC _with_ or _without_ PCIE support) and a device
+> on a PCIE board in a PCI (which has both PCIE and OF support).
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 23f1d6cc1719..3f0f16946f42 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -21,6 +21,7 @@
- #include <drm/drm_plane_helper.h>
- #include <drm/drm_vblank.h>
+Yes, that should be fine. There are a lot of drivers that support
+multiple bus interfaces, and this is the normal way to handle them.
 
-+#include "rcar_cmm.h"
- #include "rcar_du_crtc.h"
- #include "rcar_du_drv.h"
- #include "rcar_du_encoder.h"
-@@ -474,6 +475,45 @@ static void rcar_du_crtc_wait_page_flip(struct rcar_du_crtc *rcrtc)
- 	rcar_du_crtc_finish_page_flip(rcrtc);
- }
-
-+/* -----------------------------------------------------------------------------
-+ * Color Management Module (CMM)
-+ */
-+
-+static int rcar_du_cmm_check(struct drm_crtc *crtc,
-+			     struct drm_crtc_state *state)
-+{
-+	struct drm_property_blob *drm_lut = state->gamma_lut;
-+	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-+	struct device *dev = rcrtc->dev->dev;
-+
-+	if (!drm_lut)
-+		return 0;
-+
-+	/* We only accept fully populated LUT tables. */
-+	if (drm_color_lut_size(drm_lut) != CM2_LUT_SIZE) {
-+		dev_err(dev, "invalid gamma lut size: %lu bytes\n",
-+			drm_lut->length);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static void rcar_du_cmm_setup(struct drm_crtc *crtc)
-+{
-+	struct drm_property_blob *drm_lut = crtc->state->gamma_lut;
-+	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-+	struct rcar_cmm_config cmm_config = {};
-+
-+	if (!rcrtc->cmm)
-+		return;
-+
-+	if (drm_lut)
-+		cmm_config.lut.table = (struct drm_color_lut *)drm_lut->data;
-+
-+	rcar_cmm_setup(rcrtc->cmm, &cmm_config);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Start/Stop and Suspend/Resume
-  */
-@@ -619,6 +659,9 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
- 	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
- 		rcar_du_vsp_disable(rcrtc);
-
-+	if (rcrtc->cmm)
-+		rcar_cmm_disable(rcrtc->cmm);
-+
- 	/*
- 	 * Select switch sync mode. This stops display operation and configures
- 	 * the HSYNC and VSYNC signals as inputs.
-@@ -642,6 +685,11 @@ static int rcar_du_crtc_atomic_check(struct drm_crtc *crtc,
- {
- 	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(state);
- 	struct drm_encoder *encoder;
-+	int ret;
-+
-+	ret = rcar_du_cmm_check(crtc, state);
-+	if (ret)
-+		return ret;
-
- 	/* Store the routes from the CRTC output to the DU outputs. */
- 	rstate->outputs = 0;
-@@ -667,6 +715,8 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
- 	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(crtc->state);
- 	struct rcar_du_device *rcdu = rcrtc->dev;
-
-+	if (rcrtc->cmm)
-+		rcar_cmm_enable(rcrtc->cmm);
- 	rcar_du_crtc_get(rcrtc);
-
- 	/*
-@@ -686,6 +736,13 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
- 	}
-
- 	rcar_du_crtc_start(rcrtc);
-+
-+	/*
-+	 * TODO: The chip manual indicates that CMM tables should be written
-+	 * after the DU channel has been activated. Investigate the impact
-+	 * of this restriction on the first displayed frame.
-+	 */
-+	rcar_du_cmm_setup(crtc);
- }
-
- static void rcar_du_crtc_atomic_disable(struct drm_crtc *crtc,
-@@ -739,6 +796,10 @@ static void rcar_du_crtc_atomic_begin(struct drm_crtc *crtc,
- 	 */
- 	rcar_du_crtc_get(rcrtc);
-
-+	/* If the active state changed, we let .atomic_enable handle CMM. */
-+	if (crtc->state->color_mgmt_changed && !crtc->state->active_changed)
-+		rcar_du_cmm_setup(crtc);
-+
- 	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
- 		rcar_du_vsp_atomic_begin(rcrtc);
- }
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index 9eee47969e77..88a783ceb3e9 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -135,6 +135,7 @@ static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
- static void rcar_du_group_setup(struct rcar_du_group *rgrp)
- {
- 	struct rcar_du_device *rcdu = rgrp->dev;
-+	u32 defr7 = DEFR7_CODE;
-
- 	/* Enable extended features */
- 	rcar_du_group_write(rgrp, DEFR, DEFR_CODE | DEFR_DEFE);
-@@ -147,6 +148,15 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
-
- 	rcar_du_group_setup_pins(rgrp);
-
-+	/*
-+	 * TODO: Handle routing of the DU output to CMM dynamically, as we
-+	 * should bypass CMM completely when no color management feature is
-+	 * used.
-+	 */
-+	defr7 |= (rgrp->cmms_mask & BIT(1) ? DEFR7_CMME1 : 0) |
-+		 (rgrp->cmms_mask & BIT(0) ? DEFR7_CMME0 : 0);
-+	rcar_du_group_write(rgrp, DEFR7, defr7);
-+
- 	if (rcdu->info->gen >= 2) {
- 		rcar_du_group_setup_defr8(rgrp);
- 		rcar_du_group_setup_didsr(rgrp);
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-index bc87f080b170..fb9964949368 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-@@ -197,6 +197,11 @@
- #define DEFR6_MLOS1		(1 << 2)
- #define DEFR6_DEFAULT		(DEFR6_CODE | DEFR6_TCNE1)
-
-+#define DEFR7			0x000ec
-+#define DEFR7_CODE		(0x7779 << 16)
-+#define DEFR7_CMME1		BIT(6)
-+#define DEFR7_CMME0		BIT(4)
-+
- /* -----------------------------------------------------------------------------
-  * R8A7790-only Control Registers
-  */
---
-2.23.0
-
+    Arnd
