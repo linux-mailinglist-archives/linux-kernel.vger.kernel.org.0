@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA611DAE43
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43858DAE47
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:26:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436525AbfJQN0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 09:26:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50782 "EHLO mx1.redhat.com"
+        id S2436584AbfJQN0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 09:26:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48818 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436450AbfJQN0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 09:26:42 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1725797AbfJQN0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 09:26:46 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8C30A10F0E;
-        Thu, 17 Oct 2019 13:26:42 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id C8685307D9CF;
+        Thu, 17 Oct 2019 13:26:46 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-43.ams2.redhat.com [10.36.116.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B52C1001B28;
-        Thu, 17 Oct 2019 13:26:39 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9FDA35C1B5;
+        Thu, 17 Oct 2019 13:26:40 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id AA7C4998A; Thu, 17 Oct 2019 15:26:38 +0200 (CEST)
+        id C1F399997; Thu, 17 Oct 2019 15:26:38 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Gerd Hoffmann <kraxel@redhat.com>,
@@ -31,52 +31,46 @@ Cc:     Gerd Hoffmann <kraxel@redhat.com>,
         VIRTUAL GPU),
         spice-devel@lists.freedesktop.org (open list:DRM DRIVER FOR QXL VIRTUAL
         GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/5] drm/qxl: drop verify_access
-Date:   Thu, 17 Oct 2019 15:26:36 +0200
-Message-Id: <20191017132638.9693-4-kraxel@redhat.com>
+Subject: [PATCH 4/5] drm/qxl: use DEFINE_DRM_GEM_FOPS()
+Date:   Thu, 17 Oct 2019 15:26:37 +0200
+Message-Id: <20191017132638.9693-5-kraxel@redhat.com>
 In-Reply-To: <20191017132638.9693-1-kraxel@redhat.com>
 References: <20191017132638.9693-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 17 Oct 2019 13:26:42 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 17 Oct 2019 13:26:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not needed any more.
+We have no qxl-specific fops any more.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/qxl/qxl_ttm.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ drivers/gpu/drm/qxl/qxl_drv.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/qxl/qxl_ttm.c b/drivers/gpu/drm/qxl/qxl_ttm.c
-index 629ac8e77a21..54cc5a5b607e 100644
---- a/drivers/gpu/drm/qxl/qxl_ttm.c
-+++ b/drivers/gpu/drm/qxl/qxl_ttm.c
-@@ -110,14 +110,6 @@ static void qxl_evict_flags(struct ttm_buffer_object *bo,
- 	*placement = qbo->placement;
+diff --git a/drivers/gpu/drm/qxl/qxl_drv.c b/drivers/gpu/drm/qxl/qxl_drv.c
+index 65464630ac98..1d601f57a6ba 100644
+--- a/drivers/gpu/drm/qxl/qxl_drv.c
++++ b/drivers/gpu/drm/qxl/qxl_drv.c
+@@ -150,15 +150,7 @@ qxl_pci_remove(struct pci_dev *pdev)
+ 	drm_dev_put(dev);
  }
  
--static int qxl_verify_access(struct ttm_buffer_object *bo, struct file *filp)
--{
--	struct qxl_bo *qbo = to_qxl_bo(bo);
--
--	return drm_vma_node_verify_access(&qbo->tbo.base.vma_node,
--					  filp->private_data);
--}
--
- static int qxl_ttm_io_mem_reserve(struct ttm_bo_device *bdev,
- 				  struct ttm_mem_reg *mem)
+-static const struct file_operations qxl_fops = {
+-	.owner = THIS_MODULE,
+-	.open = drm_open,
+-	.release = drm_release,
+-	.unlocked_ioctl = drm_ioctl,
+-	.poll = drm_poll,
+-	.read = drm_read,
+-	.mmap = drm_gem_mmap,
+-};
++DEFINE_DRM_GEM_FOPS(qxl_fops);
+ 
+ static int qxl_drm_freeze(struct drm_device *dev)
  {
-@@ -269,7 +261,6 @@ static struct ttm_bo_driver qxl_bo_driver = {
- 	.eviction_valuable = ttm_bo_eviction_valuable,
- 	.evict_flags = &qxl_evict_flags,
- 	.move = &qxl_bo_move,
--	.verify_access = &qxl_verify_access,
- 	.io_mem_reserve = &qxl_ttm_io_mem_reserve,
- 	.io_mem_free = &qxl_ttm_io_mem_free,
- 	.move_notify = &qxl_bo_move_notify,
 -- 
 2.18.1
 
