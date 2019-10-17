@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C34ADAF47
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99052DAF4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:12:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439860AbfJQOLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 10:11:43 -0400
-Received: from goliath.siemens.de ([192.35.17.28]:50691 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbfJQOLm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 10:11:42 -0400
+        id S2439867AbfJQOMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 10:12:32 -0400
+Received: from thoth.sbs.de ([192.35.17.2]:46843 "EHLO thoth.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727429AbfJQOMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 10:12:31 -0400
 Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id x9HEBKKZ011676
+        by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id x9HECJuL004263
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Oct 2019 16:11:20 +0200
+        Thu, 17 Oct 2019 16:12:19 +0200
 Received: from [139.25.68.37] ([139.25.68.37])
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id x9HEBKiK018505;
-        Thu, 17 Oct 2019 16:11:20 +0200
+        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id x9HECJNG019630;
+        Thu, 17 Oct 2019 16:12:19 +0200
 Subject: Re: [PATCH v2] scripts/gdb: fix debugging modules on s390
+From:   Jan Kiszka <jan.kiszka@siemens.com>
 To:     Ilya Leoshkevich <iii@linux.ibm.com>,
         Kieran Bingham <kbingham@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
 Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
         Vasily Gorbik <gor@linux.ibm.com>
 References: <20191017085917.81791-1-iii@linux.ibm.com>
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <a6114e4d-0b5b-4e71-8408-f2f1d41bb9d1@siemens.com>
-Date:   Thu, 17 Oct 2019 16:11:20 +0200
+ <a6114e4d-0b5b-4e71-8408-f2f1d41bb9d1@siemens.com>
+Message-ID: <fea1be57-787d-4fd7-cd75-e4f2dbb424b2@siemens.com>
+Date:   Thu, 17 Oct 2019 16:12:18 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20191017085917.81791-1-iii@linux.ibm.com>
+In-Reply-To: <a6114e4d-0b5b-4e71-8408-f2f1d41bb9d1@siemens.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -41,63 +42,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.10.19 10:59, Ilya Leoshkevich wrote:
-> Currently lx-symbols assumes that module text is always located at
-> module->core_layout->base, but s390 uses the following layout:
+On 17.10.19 16:11, Jan Kiszka wrote:
+> On 17.10.19 10:59, Ilya Leoshkevich wrote:
+>> Currently lx-symbols assumes that module text is always located at
+>> module->core_layout->base, but s390 uses the following layout:
+>>
+>> +------+  <- module->core_layout->base
+>> | GOT  |
+>> +------+  <- module->core_layout->base + module->arch->plt_offset
+>> | PLT  |
+>> +------+  <- module->core_layout->base + module->arch->plt_offset +
+>> | TEXT |     module->arch->plt_size
+>> +------+
+>>
+>> Therefore, when trying to debug modules on s390, all the symbol
+>> addresses are skewed by plt_offset + plt_size.
+>>
+>> Fix by adding plt_offset + plt_size to module_addr in
+>> load_module_symbols().
+>>
+>> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+>> ---
+>>
+>> v1 -> v2: print the adjusted address.
+>>
+>>  scripts/gdb/linux/symbols.py | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
+>> index f0d8f2ecfde7..df4c810de663 100644
+>> --- a/scripts/gdb/linux/symbols.py
+>> +++ b/scripts/gdb/linux/symbols.py
+>> @@ -15,7 +15,7 @@ import gdb
+>>  import os
+>>  import re
+>>  
+>> -from linux import modules
+>> +from linux import modules, utils
+>>  
+>>  
+>>  if hasattr(gdb, 'Breakpoint'):
+>> @@ -111,6 +111,12 @@ lx-symbols command."""
+>>              module_file = self._get_module_file(module_name)
+>>  
+>>          if module_file:
+>> +            if utils.is_target_arch('s390'):
+>> +                # Module text is preceded by PLT stubs on s390.
+>> +                module_arch = module['arch']
+>> +                plt_offset = int(module_arch['plt_offset'])
+>> +                plt_size = int(module_arch['plt_size'])
+>> +                module_addr = hex(int(module_addr, 0) + plt_offset + plt_size)
+>>              gdb.write("loading @{addr}: {filename}\n".format(
+>>                  addr=module_addr, filename=module_file))
+>>              cmdline = "add-symbol-file {filename} {addr}{sections}".format(
+>>
 > 
-> +------+  <- module->core_layout->base
-> | GOT  |
-> +------+  <- module->core_layout->base + module->arch->plt_offset
-> | PLT  |
-> +------+  <- module->core_layout->base + module->arch->plt_offset +
-> | TEXT |     module->arch->plt_size
-> +------+
+> Reviewed-by: Jan Kiszka <jan.kiszka@siemens.com>
 > 
-> Therefore, when trying to debug modules on s390, all the symbol
-> addresses are skewed by plt_offset + plt_size.
-> 
-> Fix by adding plt_offset + plt_size to module_addr in
-> load_module_symbols().
-> 
-> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-> ---
-> 
-> v1 -> v2: print the adjusted address.
-> 
->  scripts/gdb/linux/symbols.py | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
-> index f0d8f2ecfde7..df4c810de663 100644
-> --- a/scripts/gdb/linux/symbols.py
-> +++ b/scripts/gdb/linux/symbols.py
-> @@ -15,7 +15,7 @@ import gdb
->  import os
->  import re
->  
-> -from linux import modules
-> +from linux import modules, utils
->  
->  
->  if hasattr(gdb, 'Breakpoint'):
-> @@ -111,6 +111,12 @@ lx-symbols command."""
->              module_file = self._get_module_file(module_name)
->  
->          if module_file:
-> +            if utils.is_target_arch('s390'):
-> +                # Module text is preceded by PLT stubs on s390.
-> +                module_arch = module['arch']
-> +                plt_offset = int(module_arch['plt_offset'])
-> +                plt_size = int(module_arch['plt_size'])
-> +                module_addr = hex(int(module_addr, 0) + plt_offset + plt_size)
->              gdb.write("loading @{addr}: {filename}\n".format(
->                  addr=module_addr, filename=module_file))
->              cmdline = "add-symbol-file {filename} {addr}{sections}".format(
+> Thanks,
+> Jan
 > 
 
-Reviewed-by: Jan Kiszka <jan.kiszka@siemens.com>
+Sorry, forgot to CC Andrew for pickup.
 
-Thanks,
 Jan
 
 -- 
