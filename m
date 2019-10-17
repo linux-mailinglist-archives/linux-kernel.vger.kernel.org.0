@@ -2,278 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29ED7DAF0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D658EDAF12
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439802AbfJQODe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 10:03:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39264 "EHLO mx1.redhat.com"
+        id S2439820AbfJQOEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 10:04:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727542AbfJQODe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 10:03:34 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727542AbfJQOEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 10:04:10 -0400
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9815B65F7B;
-        Thu, 17 Oct 2019 14:03:32 +0000 (UTC)
-Received: from localhost (unknown [10.36.118.91])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C4CD060C5D;
-        Thu, 17 Oct 2019 14:03:31 +0000 (UTC)
-Date:   Thu, 17 Oct 2019 15:03:30 +0100
-From:   "Richard W.M. Jones" <rjones@redhat.com>
-To:     Mike Christie <mchristi@redhat.com>
-Cc:     syzbot <syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, josef@toxicpanda.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nbd@other.debian.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: INFO: task hung in nbd_ioctl
-Message-ID: <20191017140330.GB25667@redhat.com>
-References: <000000000000b1b1ee0593cce78f@google.com>
- <5D93C2DD.10103@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 7258621848;
+        Thu, 17 Oct 2019 14:04:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571321048;
+        bh=Q+CIbW5hWN6LU9dHP1eWy5eKT4TsIQ0X62levLVmljg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=B3STYhDzZ4yKr8riMTRMxdXQ18ObBJlcjzutrorC5ZT6vGzaADCEN3oTnBA962ooX
+         RJ0Dfvgi2HxIEflMVaNQ33N2DhCDnOI23So8VfH1iS5DQW5p3Umhe0CwIJVl0hnlTX
+         GZSuTcMxvr3TtpzFXPtsycB2zTUR7B66JewywZ/o=
+Received: by mail-yb1-f177.google.com with SMTP id t4so731600ybk.3;
+        Thu, 17 Oct 2019 07:04:08 -0700 (PDT)
+X-Gm-Message-State: APjAAAWDQBYHcX6JFcpUnNoDA6ntka/jRCiPL4eOAHrdOoUy4hJGm/qc
+        IbLtc+Uxedq6etoLxd6jzagsJyGQV0w34dQ/0g==
+X-Google-Smtp-Source: APXvYqzYYUwsLXd2V5tk8mtnPoKQ8x+6MZmaA0AJXKDmtcnA6M7HsmYniLbbc+lpFZSkPNZkHf/TXCYoC1rvAZLN5TU=
+X-Received: by 2002:a25:3ce:: with SMTP id 197mr2185522ybd.255.1571321047509;
+ Thu, 17 Oct 2019 07:04:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5D93C2DD.10103@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 17 Oct 2019 14:03:32 +0000 (UTC)
+References: <20191001061704.2399-1-peter.ujfalusi@ti.com> <20191001061704.2399-8-peter.ujfalusi@ti.com>
+ <20191010175232.GA24556@bogus> <ef07299b-eb43-d582-adb8-46f46681f9a5@ti.com> <d53f3bd7-d331-33c8-5232-c8f3cc9ac708@ti.com>
+In-Reply-To: <d53f3bd7-d331-33c8-5232-c8f3cc9ac708@ti.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 17 Oct 2019 09:03:55 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKWVLMa=AJ+SNHjMRFpCk6cM=UPBgmmHVonOQ03a_zxXQ@mail.gmail.com>
+Message-ID: <CAL_JsqKWVLMa=AJ+SNHjMRFpCk6cM=UPBgmmHVonOQ03a_zxXQ@mail.gmail.com>
+Subject: Re: [PATCH v3 07/14] dt-bindings: dma: ti: Add document for K3 UDMA
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Nishanth Menon <nm@ti.com>, devicetree@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>, Keerthy <j-keerthy@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tero Kristo <t-kristo@ti.com>,
+        Tony Lindgren <tony@atomide.com>, Vinod <vkoul@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 04:19:25PM -0500, Mike Christie wrote:
-> Hey Josef and nbd list,
-> 
-> I had a question about if there are any socket family restrictions for nbd?
+On Tue, Oct 15, 2019 at 12:29 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+>
+> Rob,
+>
+> On 10/11/19 10:30 AM, Peter Ujfalusi wrote:
+> >
+> > I have already moved the TR vs Packet mode channel selection, which does
+> > make sense as it was Linux's choice to use TR for certain cases.
+> >
+> > If I move these to code then we need to have big tables
+> > struct psil_config am654_psil[32767] = {};
+> > struct psil_config j721e_psil[32767] = {};
+>
+> After thinking about this a bit more, I think we can move all the PSI-L
+> endpoint configuration to the kernel as not all the 32767 threads are
+> actually in use. Sure it is going to be some amount of static data in
+> the kernel, but it is an acceptable compromise.
+>
+> The DMA binding can look like this:
+>
+> dmas = <&main_udmap 0xc400>,
+>        <&main_udmap 0x4400>;
+> dma-names = "tx", "rx";
+>
+> or
+> dmas = <&main_udmap 0x4400 UDMA_DIR_TX>,
+>        <&main_udmap 0x4400 UDMA_DIR_RX>;
+> dma-names = "tx", "rx";
+>
+> If I keep the direction.
+> 0xc400 is destination ID, which is 0x4400 | 0x8000 as per PSI-L
+> specification.
+> In the TRM only the source threads can be found as a map (thread IDs <
+> 0x7fff), but the binding document can cover this.
+>
+> This way we don't need another dtsi file and I can create the map in the
+> kernel.
+>
+> This will hide some details of the HW from DT, but since the PSI-L
+> thread configuration is static in hardware I believe it is acceptable.
+>
+> However we still have uncovered features in the binding or in code, like
+> a case when the RX does not have access to the DMA channel, only flows.
+> Not sure if I should reserve the direction parameter as an indication to
+> this or find other way.
+> Basically we communicate on the given PSI-L thread without having a DMA
+> channel as other core is owning the channel.
+>
+> What do you think?
 
-In normal circumstances, in userspace, the NBD protocol would only be
-used over AF_UNIX or AF_INET/AF_INET6.
+Seems like a reasonable solution though I don't really follow the last issue.
 
-There's a bit of confusion because netlink is used by nbd-client to
-configure the NBD device, setting things like block size and timeouts
-(instead of ioctl which is deprecated).  I think you don't mean this
-use of netlink?
-
-> The bug here is that some socket familys do not support the
-> sock->ops->shutdown callout, and when nbd calls kernel_sock_shutdown
-> their callout returns -EOPNOTSUPP. That then leaves recv_work stuck in
-> nbd_read_stat -> sock_xmit -> sock_recvmsg. My patch added a
-> flush_workqueue call, so for socket familys like AF_NETLINK in this bug
-> we hang like we see below.
-> 
-> I can just remove the flush_workqueue call in that code path since it's
-> not needed there, but it leaves the original bug my patch was hitting
-> where we leave the recv_work running which can then result in leaked
-> resources, or possible use after free crashes and you still get the hang
-> if you remove the module.
-> 
-> It looks like we have used kernel_sock_shutdown for a while so I thought
-> we might never have supported sockets that did not support the callout.
-> Is that correct? If so then I can just add a check for this in
-> nbd_add_socket and fix that bug too.
-
-Rich.
-
-> On 09/30/2019 05:39 PM, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    bb2aee77 Add linux-next specific files for 20190926
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=13385ca3600000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=e60af4ac5a01e964
-> > dashboard link:
-> > https://syzkaller.appspot.com/bug?extid=24c12fa8d218ed26011a
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12abc2a3600000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11712c05600000
-> > 
-> > The bug was bisected to:
-> > 
-> > commit e9e006f5fcf2bab59149cb38a48a4817c1b538b4
-> > Author: Mike Christie <mchristi@redhat.com>
-> > Date:   Sun Aug 4 19:10:06 2019 +0000
-> > 
-> >     nbd: fix max number of supported devs
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1226f3c5600000
-> > final crash:    https://syzkaller.appspot.com/x/report.txt?x=1126f3c5600000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1626f3c5600000
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com
-> > Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
-> > 
-> > INFO: task syz-executor390:8778 can't die for more than 143 seconds.
-> > syz-executor390 D27432  8778   8777 0x00004004
-> > Call Trace:
-> >  context_switch kernel/sched/core.c:3384 [inline]
-> >  __schedule+0x828/0x1c20 kernel/sched/core.c:4065
-> >  schedule+0xd9/0x260 kernel/sched/core.c:4132
-> >  schedule_timeout+0x717/0xc50 kernel/time/timer.c:1871
-> >  do_wait_for_common kernel/sched/completion.c:83 [inline]
-> >  __wait_for_common kernel/sched/completion.c:104 [inline]
-> >  wait_for_common kernel/sched/completion.c:115 [inline]
-> >  wait_for_completion+0x29c/0x440 kernel/sched/completion.c:136
-> >  flush_workqueue+0x40f/0x14c0 kernel/workqueue.c:2826
-> >  nbd_start_device_ioctl drivers/block/nbd.c:1272 [inline]
-> >  __nbd_ioctl drivers/block/nbd.c:1347 [inline]
-> >  nbd_ioctl+0xb2e/0xc44 drivers/block/nbd.c:1387
-> >  __blkdev_driver_ioctl block/ioctl.c:304 [inline]
-> >  blkdev_ioctl+0xedb/0x1c20 block/ioctl.c:606
-> >  block_ioctl+0xee/0x130 fs/block_dev.c:1954
-> >  vfs_ioctl fs/ioctl.c:47 [inline]
-> >  file_ioctl fs/ioctl.c:539 [inline]
-> >  do_vfs_ioctl+0xdb6/0x13e0 fs/ioctl.c:726
-> >  ksys_ioctl+0xab/0xd0 fs/ioctl.c:743
-> >  __do_sys_ioctl fs/ioctl.c:750 [inline]
-> >  __se_sys_ioctl fs/ioctl.c:748 [inline]
-> >  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:748
-> >  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x4452d9
-> > Code: Bad RIP value.
-> > RSP: 002b:00007ffde928d288 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> > RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004452d9
-> > RDX: 0000000000000000 RSI: 000000000000ab03 RDI: 0000000000000004
-> > RBP: 0000000000000000 R08: 00000000004025b0 R09: 00000000004025b0
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402520
-> > R13: 00000000004025b0 R14: 0000000000000000 R15: 0000000000000000
-> > INFO: task syz-executor390:8778 blocked for more than 143 seconds.
-> >       Not tainted 5.3.0-next-20190926 #0
-> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > syz-executor390 D27432  8778   8777 0x00004004
-> > Call Trace:
-> >  context_switch kernel/sched/core.c:3384 [inline]
-> >  __schedule+0x828/0x1c20 kernel/sched/core.c:4065
-> >  schedule+0xd9/0x260 kernel/sched/core.c:4132
-> >  schedule_timeout+0x717/0xc50 kernel/time/timer.c:1871
-> >  do_wait_for_common kernel/sched/completion.c:83 [inline]
-> >  __wait_for_common kernel/sched/completion.c:104 [inline]
-> >  wait_for_common kernel/sched/completion.c:115 [inline]
-> >  wait_for_completion+0x29c/0x440 kernel/sched/completion.c:136
-> >  flush_workqueue+0x40f/0x14c0 kernel/workqueue.c:2826
-> >  nbd_start_device_ioctl drivers/block/nbd.c:1272 [inline]
-> >  __nbd_ioctl drivers/block/nbd.c:1347 [inline]
-> >  nbd_ioctl+0xb2e/0xc44 drivers/block/nbd.c:1387
-> >  __blkdev_driver_ioctl block/ioctl.c:304 [inline]
-> >  blkdev_ioctl+0xedb/0x1c20 block/ioctl.c:606
-> >  block_ioctl+0xee/0x130 fs/block_dev.c:1954
-> >  vfs_ioctl fs/ioctl.c:47 [inline]
-> >  file_ioctl fs/ioctl.c:539 [inline]
-> >  do_vfs_ioctl+0xdb6/0x13e0 fs/ioctl.c:726
-> >  ksys_ioctl+0xab/0xd0 fs/ioctl.c:743
-> >  __do_sys_ioctl fs/ioctl.c:750 [inline]
-> >  __se_sys_ioctl fs/ioctl.c:748 [inline]
-> >  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:748
-> >  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x4452d9
-> > Code: Bad RIP value.
-> > RSP: 002b:00007ffde928d288 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> > RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004452d9
-> > RDX: 0000000000000000 RSI: 000000000000ab03 RDI: 0000000000000004
-> > RBP: 0000000000000000 R08: 00000000004025b0 R09: 00000000004025b0
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402520
-> > R13: 00000000004025b0 R14: 0000000000000000 R15: 0000000000000000
-> > 
-> > Showing all locks held in the system:
-> > 1 lock held by khungtaskd/1066:
-> >  #0: ffffffff88faad80 (rcu_read_lock){....}, at:
-> > debug_show_all_locks+0x5f/0x27e kernel/locking/lockdep.c:5337
-> > 2 locks held by kworker/u5:0/1525:
-> >  #0: ffff8880923d0d28 ((wq_completion)knbd0-recv){+.+.}, at:
-> > __write_once_size include/linux/compiler.h:226 [inline]
-> >  #0: ffff8880923d0d28 ((wq_completion)knbd0-recv){+.+.}, at:
-> > arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
-> >  #0: ffff8880923d0d28 ((wq_completion)knbd0-recv){+.+.}, at:
-> > atomic64_set include/asm-generic/atomic-instrumented.h:855 [inline]
-> >  #0: ffff8880923d0d28 ((wq_completion)knbd0-recv){+.+.}, at:
-> > atomic_long_set include/asm-generic/atomic-long.h:40 [inline]
-> >  #0: ffff8880923d0d28 ((wq_completion)knbd0-recv){+.+.}, at:
-> > set_work_data kernel/workqueue.c:620 [inline]
-> >  #0: ffff8880923d0d28 ((wq_completion)knbd0-recv){+.+.}, at:
-> > set_work_pool_and_clear_pending kernel/workqueue.c:647 [inline]
-> >  #0: ffff8880923d0d28 ((wq_completion)knbd0-recv){+.+.}, at:
-> > process_one_work+0x88b/0x1740 kernel/workqueue.c:2240
-> >  #1: ffff8880a63b7dc0 ((work_completion)(&args->work)){+.+.}, at:
-> > process_one_work+0x8c1/0x1740 kernel/workqueue.c:2244
-> > 1 lock held by rsyslogd/8659:
-> > 2 locks held by getty/8749:
-> >  #0: ffff888098c08090 (&tty->ldisc_sem){++++}, at:
-> > ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-> >  #1: ffffc90005f112e0 (&ldata->atomic_read_lock){+.+.}, at:
-> > n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-> > 2 locks held by getty/8750:
-> >  #0: ffff88808f10b090 (&tty->ldisc_sem){++++}, at:
-> > ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-> >  #1: ffffc90005f2d2e0 (&ldata->atomic_read_lock){+.+.}, at:
-> > n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-> > 2 locks held by getty/8751:
-> >  #0: ffff88809a6be090 (&tty->ldisc_sem){++++}, at:
-> > ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-> >  #1: ffffc90005f192e0 (&ldata->atomic_read_lock){+.+.}, at:
-> > n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-> > 2 locks held by getty/8752:
-> >  #0: ffff8880a48af090 (&tty->ldisc_sem){++++}, at:
-> > ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-> >  #1: ffffc90005f352e0 (&ldata->atomic_read_lock){+.+.}, at:
-> > n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-> > 2 locks held by getty/8753:
-> >  #0: ffff88808c599090 (&tty->ldisc_sem){++++}, at:
-> > ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-> >  #1: ffffc90005f212e0 (&ldata->atomic_read_lock){+.+.}, at:
-> > n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-> > 2 locks held by getty/8754:
-> >  #0: ffff88808f1a8090 (&tty->ldisc_sem){++++}, at:
-> > ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-> >  #1: ffffc90005f392e0 (&ldata->atomic_read_lock){+.+.}, at:
-> > n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-> > 2 locks held by getty/8755:
-> >  #0: ffff88809ab33090 (&tty->ldisc_sem){++++}, at:
-> > ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-> >  #1: ffffc90005f012e0 (&ldata->atomic_read_lock){+.+.}, at:
-> > n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-> > 
-> > =============================================
-> > 
-> > NMI backtrace for cpu 1
-> > CPU: 1 PID: 1066 Comm: khungtaskd Not tainted 5.3.0-next-20190926 #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-> >  nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
-> >  nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
-> >  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-> >  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
-> >  check_hung_uninterruptible_tasks kernel/hung_task.c:269 [inline]
-> >  watchdog+0xc99/0x1360 kernel/hung_task.c:353
-> >  kthread+0x361/0x430 kernel/kthread.c:255
-> >  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> > Sending NMI from CPU 1 to CPUs 0:
-> > NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0xe/0x10
-> > arch/x86/include/asm/irqflags.h:60
-> > 
-> > 
-> > ---
-> > This bug is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > 
-> > syzbot will keep track of this bug report. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > For information about bisection process see:
-> > https://goo.gl/tpsmEJ#bisection
-> > syzbot can test patches for this bug, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
-
--- 
-Richard Jones, Virtualization Group, Red Hat http://people.redhat.com/~rjones
-Read my programming and virtualization blog: http://rwmj.wordpress.com
-Fedora Windows cross-compiler. Compile Windows programs, test, and
-build Windows installers. Over 100 libraries supported.
-http://fedoraproject.org/wiki/MinGW
+Rob
