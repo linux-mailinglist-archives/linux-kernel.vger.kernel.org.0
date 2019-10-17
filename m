@@ -2,118 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82A5BDA649
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2F6FDA652
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:21:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408108AbfJQHUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 03:20:20 -0400
-Received: from mga12.intel.com ([192.55.52.136]:33969 "EHLO mga12.intel.com"
+        id S2405068AbfJQHV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 03:21:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:25095 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408044AbfJQHUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 03:20:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2019 00:20:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,306,1566889200"; 
-   d="scan'208";a="186404307"
-Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
-  by orsmga007.jf.intel.com with ESMTP; 17 Oct 2019 00:20:13 -0700
-From:   "Ramuthevar,Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-To:     linux-mtd@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        dwmw2@infradead.org, computersforpeace@gmail.com, richard@nod.at,
-        jwboyer@gmail.com, boris.brezillon@free-electrons.com,
-        cyrille.pitchen@atmel.com, david.oberhollenzer@sigma-star.at,
-        miquel.raynal@bootlin.com, tudor.ambarus@gmail.com,
-        vigneshr@ti.com, andriy.shevchenko@intel.com,
-        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
-        Ramuthevar Vadivel Murugan 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Subject: [PATCH v4 2/2] mtd: spi-nor: cadence-quadspi: Disable the auto-poll for Intel LGM SoC
-Date:   Thu, 17 Oct 2019 15:20:00 +0800
-Message-Id: <20191017072000.48860-3-vadivel.muruganx.ramuthevar@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20191017072000.48860-1-vadivel.muruganx.ramuthevar@linux.intel.com>
-References: <20191017072000.48860-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+        id S1727132AbfJQHV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 03:21:28 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 635F33090FD6;
+        Thu, 17 Oct 2019 07:21:28 +0000 (UTC)
+Received: from [10.36.117.42] (ovpn-117-42.ams2.redhat.com [10.36.117.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7F990600C8;
+        Thu, 17 Oct 2019 07:21:25 +0000 (UTC)
+Subject: Re: [PATCH V2] mm/page_alloc: Add alloc_contig_pages()
+To:     Michal Hocko <mhocko@kernel.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org
+References: <1571223765-10662-1-git-send-email-anshuman.khandual@arm.com>
+ <40b8375c-5291-b477-1519-fd7fa799a67d@redhat.com>
+ <cdcf77a5-e5c9-71ff-811d-ecd1c1e80f00@arm.com>
+ <20191016115119.GA317@dhcp22.suse.cz>
+ <fe8cae46-6bd8-88eb-d3fe-2740bb79ee58@redhat.com>
+ <20191016124149.GB317@dhcp22.suse.cz>
+ <97cadd99-d05e-3174-6532-fe18f0301ba7@arm.com>
+ <e37c16f5-7068-5359-a539-bee58e705122@redhat.com>
+ <c60b9e95-5c6c-fcb2-c8bb-13e7646ba8ea@arm.com>
+ <20191017071129.GB24485@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <bfc3b281-79d1-1d8f-337d-c01acc29ab30@redhat.com>
+Date:   Thu, 17 Oct 2019 09:21:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+MIME-Version: 1.0
+In-Reply-To: <20191017071129.GB24485@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 17 Oct 2019 07:21:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+On 17.10.19 09:11, Michal Hocko wrote:
+> On Thu 17-10-19 10:44:41, Anshuman Khandual wrote:
+> [...]
+>> Does this add-on documentation look okay ? Should we also mention about the
+>> possible reduction in chances of success during pfn block search for the
+>> non-power-of-two cases as the implicit alignment will probably turn out to
+>> be bigger than nr_pages itself ?
+>>
+>>   * Requested nr_pages may or may not be power of two. The search for suitable
+>>   * memory range in a zone happens in nr_pages aligned pfn blocks. But in case
+>>   * when nr_pages is not power of two, an implicitly aligned pfn block search
+>>   * will happen which in turn will impact allocated memory block's alignment.
+>>   * In these cases, the size (i.e nr_pages) and the alignment of the allocated
+>>   * memory will be different. This problem does not exist when nr_pages is power
+>>   * of two where the size and the alignment of the allocated memory will always
+>>   * be nr_pages.
+> 
+> I dunno, it sounds more complicated than really necessary IMHO. Callers
+> shouldn't really be bothered by memory blocks and other really deep
+> implementation details.. Wouldn't be the below sufficient?
+> 
+> The allocated memory is always aligned to a page boundary. If nr_pages
+> is a power of two then the alignement is guaranteed to be to the given
 
-On Intel Lightning Mountain SoCs QSPI controller do not use auto-poll.
-This patch disables auto polling when direct access mode is disabled
+s/alignement/alignment/
 
-Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
----
- drivers/mtd/spi-nor/cadence-quadspi.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+and "the PFN is guaranteed to be aligned to nr_pages" (the address is 
+aligned to nr_pages*PAGE_SIZE)
 
-diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-index 0ad076eaa81b..c2333f0473e3 100644
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -88,6 +88,7 @@ struct cqspi_st {
- 	bool			rclk_en;
- 	u32			trigger_address;
- 	u32			wr_delay;
-+	bool			auto_poll;
- 	struct cqspi_flash_pdata f_pdata[CQSPI_MAX_CHIPSELECT];
- };
- 
-@@ -136,6 +137,8 @@ struct cqspi_driver_platdata {
- #define CQSPI_REG_RD_INSTR_TYPE_DATA_MASK	0x3
- #define CQSPI_REG_RD_INSTR_DUMMY_MASK		0x1F
- 
-+#define CQSPI_REG_WR_COMPLETION_CTRL			0x38
-+#define CQSPI_REG_WR_COMPLETION_DISABLE_AUTO_POLL	BIT(14)
- #define CQSPI_REG_WR_INSTR			0x08
- #define CQSPI_REG_WR_INSTR_OPCODE_LSB		0
- #define CQSPI_REG_WR_INSTR_TYPE_ADDR_LSB	12
-@@ -1175,6 +1178,18 @@ static int cqspi_of_get_pdata(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int cqspi_disable_auto_poll(struct cqspi_st *cqspi)
-+{
-+	void __iomem *reg_base = cqspi->iobase;
-+	unsigned int reg;
-+
-+	reg = readl(reg_base + CQSPI_REG_WR_COMPLETION_CTRL);
-+	reg |= CQSPI_REG_WR_COMPLETION_DISABLE_AUTO_POLL;
-+	writel(reg, reg_base + CQSPI_REG_WR_COMPLETION_CTRL);
-+
-+	return 0;
-+}
-+
- static void cqspi_controller_init(struct cqspi_st *cqspi)
- {
- 	u32 reg;
-@@ -1206,6 +1221,10 @@ static void cqspi_controller_init(struct cqspi_st *cqspi)
- 	reg |= CQSPI_REG_CONFIG_ENB_DIR_ACC_CTRL;
- 	writel(reg, cqspi->iobase + CQSPI_REG_CONFIG);
- 
-+	/* Disable auto-polling */
-+	if (!cqspi->auto_poll)
-+		cqspi_disable_auto_poll(cqspi);
-+
- 	cqspi_controller_enable(cqspi, 1);
- }
- 
-@@ -1421,6 +1440,9 @@ static int cqspi_probe(struct platform_device *pdev)
- 		cqspi->wr_delay = 5 * DIV_ROUND_UP(NSEC_PER_SEC,
- 						   cqspi->master_ref_clk_hz);
- 
-+	if (ddata && (ddata->quirks & CQSPI_DISABLE_DAC_MODE))
-+		cqspi->auto_poll = false;
-+
- 	ret = devm_request_irq(dev, irq, cqspi_irq_handler, 0,
- 			       pdev->name, cqspi);
- 	if (ret) {
+> nr_pages (e.g. 1GB request would be aligned to 1GB).
+> 
+
+I'd probably add "This function will miss allocation opportunities if 
+nr_pages is not a power of two (and the implicit alignment is bogus)."
+
 -- 
-2.11.0
 
+Thanks,
+
+David / dhildenb
