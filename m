@@ -2,69 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF1D6DAAC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 13:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B179DAAC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 13:05:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393417AbfJQLCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 07:02:32 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:52506 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393253AbfJQLCc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 07:02:32 -0400
-Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1iL3Y3-0002YT-Ar; Thu, 17 Oct 2019 12:02:27 +0100
-Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1iL3Y2-00082E-TZ; Thu, 17 Oct 2019 12:02:26 +0100
-From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-To:     linux-kernel@lists.codethink.co.uk
-Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        cluster-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] gfs2: make gfs2_fs_parameters static
-Date:   Thu, 17 Oct 2019 12:02:25 +0100
-Message-Id: <20191017110225.30841-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.23.0
+        id S2393446AbfJQLFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 07:05:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34468 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728464AbfJQLFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 07:05:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A6320B302;
+        Thu, 17 Oct 2019 11:05:17 +0000 (UTC)
+Date:   Thu, 17 Oct 2019 13:05:16 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Pavel Machek <pavel@denx.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 4.19 56/81] kernel/sysctl.c: do not override max_threads
+ provided by userspace
+Message-ID: <20191017110516.GG24485@dhcp22.suse.cz>
+References: <20191016214805.727399379@linuxfoundation.org>
+ <20191016214842.621065901@linuxfoundation.org>
+ <20191017105940.GA5966@amd>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191017105940.GA5966@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The gfs2_fs_parameters is not used outside the unit
-it is declared in, so make it static.
+On Thu 17-10-19 12:59:40, Pavel Machek wrote:
+> Hi!
+> 
+> > From: Michal Hocko <mhocko@suse.com>
+> > 
+> > commit b0f53dbc4bc4c371f38b14c391095a3bb8a0bb40 upstream.
+> > 
+> > Partially revert 16db3d3f1170 ("kernel/sysctl.c: threads-max observe
+> > limits") because the patch is causing a regression to any workload which
+> > needs to override the auto-tuning of the limit provided by kernel.
+> > 
+> > set_max_threads is implementing a boot time guesstimate to provide a
+> > sensible limit of the concurrently running threads so that runaways will
+> > not deplete all the memory.  This is a good thing in general but there
+> > are workloads which might need to increase this limit for an application
+> > to run (reportedly WebSpher MQ is affected) and that is simply not
+> > possible after the mentioned change.  It is also very dubious to
+> > override an admin decision by an estimation that doesn't have any direct
+> > relation to correctness of the kernel operation.
+> > 
+> > Fix this by dropping set_max_threads from sysctl_max_threads so any
+> > value is accepted as long as it fits into MAX_THREADS which is important
+> > to check because allowing more threads could break internal robust futex
+> > restriction.  While at it, do not use MIN_THREADS as the lower boundary
+> > because it is also only a heuristic for automatic estimation and admin
+> > might have a good reason to stop new threads to be created even when
+> > below this limit.
+> 
+> Ok, why not, but I smell followup work could be done:
+> 
+> > @@ -2635,7 +2635,7 @@ int sysctl_max_threads(struct ctl_table
+> >  	if (ret || !write)
+> >  		return ret;
+> >  
+> > -	set_max_threads(threads);
+> > +	max_threads = threads;
+> >  
+> 
+> AFAICT set_max_threads can now become __init.
 
-Fixes the following sparse warning:
+Yes. Care to send a patch?
 
-fs/gfs2/ops_fstype.c:1331:39: warning: symbol 'gfs2_fs_parameters' was not declared. Should it be static?
+> Plus, I don't see any locking here, should this be WRITE_ONCE() at
+> minimum?
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: Bob Peterson <rpeterso@redhat.com>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: cluster-devel@redhat.com
-Cc: linux-kernel@vger.kernel.org
----
- fs/gfs2/ops_fstype.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index 681b44682b0d..ebdef1c5f580 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -1328,7 +1328,7 @@ static const struct fs_parameter_enum gfs2_param_enums[] = {
- 	{}
- };
- 
--const struct fs_parameter_description gfs2_fs_parameters = {
-+static const struct fs_parameter_description gfs2_fs_parameters = {
- 	.name = "gfs2",
- 	.specs = gfs2_param_specs,
- 	.enums = gfs2_param_enums,
+Why would that matter? Do you expect several root processes race to set
+the value?
 -- 
-2.23.0
-
+Michal Hocko
+SUSE Labs
