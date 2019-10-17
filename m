@@ -2,407 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43C67DA579
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 08:22:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95D00DA587
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 08:22:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437985AbfJQGWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 02:22:21 -0400
-Received: from mail-eopbgr800077.outbound.protection.outlook.com ([40.107.80.77]:14896
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2437766AbfJQGWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 02:22:20 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TDLvtw5/79V9v/f+SinjiOPOsYF5Nna6w1V+KMBvPdNEz9e4W8JXxcRdq1/45QDrvVa64aVlCKkGrEuZwvqaqSTBxaGrzVVVzMiXtClHBT/doyX4Grz7x3rjmk8Lhkc62xPe/DO3Yt8VmEkFFTQneRyyMrjxSGNLL/n7GUrvsgCmJhX1eKzpiN0oPDwvPt6pCGrhrEMXUlid+tUEf1o5v9rjCIhvo2NZeZ1D+2TIKFFuFigRiX8liPE/c8FVjCw3bXb1bqlpPrelQYsa45VGr05y7/orKggfzMZtLBC5fehJVf1KcRBWKfC4oV2MkzbwsGLyssaNbN8E8QB/wFX4FA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V0CuAPC7/crThHnovy0j0JxqVT6wkqTovNppIq1SNpM=;
- b=CiGx89YgT1NmLErHuTYLfG2GzwQzyZSkAcm6CCV+enA47NXQARRyxHUlt0vhVuXsxTVxEykXfaaF5XH85RupBRhHpl5UNxTxt55GIJkprNqb1amb40s8luUodZ72YXTsynDMRLyoydzcc6Mm/epPrHYt0vUBeEIvzSNW/YQkto520BUrYU+5BmGB3NaWlltdYHXsE3sd/FletCVodUS0gtYbJGUdR6idXtA6g+YhIbVklc1K2PUVp1JYV3/RzVYXiI1rrOXOK+SA/aZ/OIk/1cemMpoO0DPVT3YVlIhRBJiEWCzvGSJ4RTE39Zh7FVcE3MEJo2wD9Nhd6DOufmnpig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=arm.com smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
+        id S2438071AbfJQGW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 02:22:56 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41906 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729560AbfJQGWz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 02:22:55 -0400
+Received: by mail-lf1-f67.google.com with SMTP id r2so875592lfn.8
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 23:22:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V0CuAPC7/crThHnovy0j0JxqVT6wkqTovNppIq1SNpM=;
- b=KTfEw7678gVjg+cLL0CY8UxJs0PIYXgKldyy97qPI2L9dxYx2nVQAZauwgSWjbTtKO8/8Z88JXmKoqR+wmz1cx7Hxtm0Oo0N9EO1IaF66pO8pnPcAEF5VSDmQwYS23CqtfCQWQTiKNoyyW3cWC8Prh+vtoRZytXIXRCxpNp0WHY=
-Received: from SN4PR0201CA0067.namprd02.prod.outlook.com
- (2603:10b6:803:20::29) by DM6PR02MB5899.namprd02.prod.outlook.com
- (2603:10b6:5:152::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.16; Thu, 17 Oct
- 2019 06:22:15 +0000
-Received: from SN1NAM02FT025.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::203) by SN4PR0201CA0067.outlook.office365.com
- (2603:10b6:803:20::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2347.18 via Frontend
- Transport; Thu, 17 Oct 2019 06:22:14 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; arm.com; dkim=none (message not signed)
- header.d=none;arm.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT025.mail.protection.outlook.com (10.152.72.87) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2367.14
- via Frontend Transport; Thu, 17 Oct 2019 06:22:14 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <manish.narani@xilinx.com>)
-        id 1iKzAs-0004bS-1O; Wed, 16 Oct 2019 23:22:14 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <manish.narani@xilinx.com>)
-        id 1iKzAm-0003mX-US; Wed, 16 Oct 2019 23:22:08 -0700
-Received: from [172.23.64.104] (helo=xhdvnc123.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <mnarani@xilinx.com>)
-        id 1iKzAg-0003kk-AG; Wed, 16 Oct 2019 23:22:02 -0700
-Received: by xhdvnc123.xilinx.com (Postfix, from userid 16987)
-        id 86ECE43A9A; Thu, 17 Oct 2019 11:52:01 +0530 (IST)
-From:   Manish Narani <manish.narani@xilinx.com>
-To:     ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        adrian.hunter@intel.com, michal.simek@xilinx.com,
-        jolly.shah@xilinx.com, rajan.vaja@xilinx.com,
-        nava.manne@xilinx.com, mdf@kernel.org, manish.narani@xilinx.com
-Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        git@xilinx.com
-Subject: [PATCH v3 8/8] mmc: sdhci-of-arasan: Add support for ZynqMP Platform Tap Delays Setup
-Date:   Thu, 17 Oct 2019 11:51:50 +0530
-Message-Id: <1571293310-92563-9-git-send-email-manish.narani@xilinx.com>
-X-Mailer: git-send-email 2.1.1
-In-Reply-To: <1571293310-92563-1-git-send-email-manish.narani@xilinx.com>
-References: <1571293310-92563-1-git-send-email-manish.narani@xilinx.com>
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(346002)(136003)(39860400002)(199004)(189003)(486006)(6266002)(4326008)(107886003)(478600001)(36756003)(103686004)(50466002)(336012)(426003)(50226002)(8936002)(305945005)(44832011)(8676002)(81156014)(81166006)(11346002)(126002)(2616005)(2906002)(446003)(14444005)(476003)(5660300002)(70206006)(42186006)(51416003)(356004)(316002)(16586007)(47776003)(36386004)(70586007)(186003)(26005)(48376002)(6666004)(76176011)(106002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB5899;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Ry24i9PkQNvKLPORFI92b+pTok+uMbLqLEeRrMBf4MQ=;
+        b=A4/JOpzcoLLIKOw/I0ydPCgKBhJKBoHK7y//vL+zmeugX8uIWFZFePqOpZf295SF7g
+         LOVjktlXLBbhWixzIToTnK9YgoIyWxtOFE9lXsOXdYBT66TOajo76XFc5MFvoR0GN+us
+         OuwYzazs0/vl23EaLIeE/94BXJabrMkXBjirqtVNktukJ7l8IpyfMmvyNIiVc9qK+XBy
+         5R6e7aHNMh5pxh9dI9mVL/E1PM79zYaKWn/CfG9/Ef9PIrHTiYKRW5wLClaggVdfH2+8
+         fDSut9xEk7tNC3KrmY8/w2UtKFjFy6Awk3I5gx7WvI8jTWyoorKXQx9zV+bbS0zTLmJJ
+         lVDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Ry24i9PkQNvKLPORFI92b+pTok+uMbLqLEeRrMBf4MQ=;
+        b=oDk6eWyyFUARlKBI9O2Jj+whELvyKdVS/ZKPj9pZPkha3YGd1OGcFb2JrpTCsnW0a/
+         Y3qisR5KryeYpLne1917Pko/f7zYdQrV8ENLPs0+KGGdAP2lPlZJaExLVjpUhG+6Mmsf
+         OltEpKGrQJVxspTL/aiHfMtwIL/SSwkspqGrwm4Bl4diBfYlhSup2qfA9bvEGRMvLMp0
+         2FoMs5nLMDqnOGPrrgHDMigdrFBM1UUk9PcKF953vMyUMYqUCoEYerWRAnWWuMsJSrpZ
+         Z6831kNvnAkLXePXhY9JvO5o0jGMhdgfS4poQHWQF7vcTETyWRw6PJZdCzMh//VFw07A
+         /oWQ==
+X-Gm-Message-State: APjAAAVolbRRAP+opJ0aZ+b0f8Ti8wZuY5Z3cOy065WCctPIESs6Zpkt
+        UFzvNhiOCTijs+P73AAcbSzdorR8aiKCxBDLe3LfZpS6C50=
+X-Google-Smtp-Source: APXvYqwADeHq5XuGYwmOqn+IEKns4QKDXr/k3g7934u4wZg5giRDRAMPzGRCOwaDDG1vwyu/d/q+JqG748ktRIKuvyE=
+X-Received: by 2002:ac2:4566:: with SMTP id k6mr1064918lfm.132.1571293373792;
+ Wed, 16 Oct 2019 23:22:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f7a091de-7f1e-450f-3f09-08d752ca5a32
-X-MS-TrafficTypeDiagnostic: DM6PR02MB5899:
-X-Microsoft-Antispam-PRVS: <DM6PR02MB5899C1FB409505A9695B4619C16D0@DM6PR02MB5899.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:3513;
-X-Forefront-PRVS: 01930B2BA8
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7XEnKkt9juv5SNQjAA2X7JF9Qv2q8xzAwlHaPvVXVFC6rrF9MrHY1Ws2uSNYsgpyM2hI4a22WzSbZ+MDyuo677+2NWoV7qNlwB/lWJHG225b10Gim1mC8WHnNpBjLU2ygD70HbmXiqpFlGxA12zT6wYrXzDh2TyDub4MjrARRVVndadOD0DJIivjCmEYqlMz0NPjXd9gZrGcK1hhbILiYHOyZYu78LPib+V/gvsPUWJA6ZbSBKHZOXp8BNVXEhoKIfDqj8LoWhg9YodYqFCokPACDBbeQEJPdMsRxc8ReUSxPuh4/1jiCY1j9NhLpCto4fOOjIhi2cy9NI+esJ7/7PAw5FF6+JQQXwVNSGkg7xzyDR5kuccjDj9KmM0yJdp4tYFO/YS8PAdt90qRjTFR4pswVM65eZfjYhL1Jbu+Fb0=
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2019 06:22:14.4486
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7a091de-7f1e-450f-3f09-08d752ca5a32
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB5899
+References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 17 Oct 2019 11:52:42 +0530
+Message-ID: <CA+G9fYvwveqUnctZcykmRGea8-5NZmNCt=7SO2ya-U_=smWmQg@mail.gmail.com>
+Subject: Re: [PATCH 4.14 00/65] 4.14.150-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Apart from taps set by auto tuning, ZynqMP platform has feature to set
-the tap values manually. Add support to set tap delay values in HW via
-ZynqMP SoC framework.
+On Thu, 17 Oct 2019 at 03:26, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.14.150 release.
+> There are 65 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri 18 Oct 2019 09:43:41 PM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.14.150-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-Signed-off-by: Manish Narani <manish.narani@xilinx.com>
----
- drivers/mmc/host/sdhci-of-arasan.c | 206 ++++++++++++++++++++++++++++-
- 1 file changed, 204 insertions(+), 2 deletions(-)
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-index 9b2b7b6399b3..45cde17da5a2 100644
---- a/drivers/mmc/host/sdhci-of-arasan.c
-+++ b/drivers/mmc/host/sdhci-of-arasan.c
-@@ -22,6 +22,7 @@
- #include <linux/phy/phy.h>
- #include <linux/regmap.h>
- #include <linux/of.h>
-+#include <linux/firmware/xlnx-zynqmp.h>
- 
- #include "cqhci.h"
- #include "sdhci-pltfm.h"
-@@ -32,6 +33,10 @@
- 
- #define PHY_CLK_TOO_SLOW_HZ		400000
- 
-+/* Default settings for ZynqMP Clock Phases */
-+#define ZYNQMP_ICLK_PHASE {0, 63, 63, 0, 63,  0,   0, 183, 54,  0, 0}
-+#define ZYNQMP_OCLK_PHASE {0, 60, 72, 0, 60, 72, 135, 180, 72, 36, 0}
-+
- /*
-  * On some SoCs the syscon area has a feature where the upper 16-bits of
-  * each 32-bit register act as a write mask for the lower 16-bits.  This allows
-@@ -80,6 +85,7 @@ struct sdhci_arasan_soc_ctl_map {
-  * @clk_phase_in:	Array of Input Clock Phase Delays for all speed modes
-  * @clk_phase_out:	Array of Output Clock Phase Delays for all speed modes
-  * @set_clk_delays:	Function pointer for setting Clock Delays
-+ * @clk_of_data:	Platform specific runtime clock data storage pointer
-  */
- struct sdhci_arasan_clk_data {
- 	struct clk_hw	sdcardclk_hw;
-@@ -89,6 +95,11 @@ struct sdhci_arasan_clk_data {
- 	int		clk_phase_in[MMC_TIMING_MMC_HS400 + 1];
- 	int		clk_phase_out[MMC_TIMING_MMC_HS400 + 1];
- 	void		(*set_clk_delays)(struct sdhci_host *host);
-+	void		*clk_of_data;
-+};
-+
-+struct sdhci_arasan_zynqmp_clk_data {
-+	const struct zynqmp_eemi_ops *eemi_ops;
- };
- 
- /**
-@@ -525,6 +536,10 @@ static const struct of_device_id sdhci_arasan_of_match[] = {
- 		.compatible = "arasan,sdhci-4.9a",
- 		.data = &sdhci_arasan_data,
- 	},
-+	{
-+		.compatible = "xlnx,zynqmp-8.9a",
-+		.data = &sdhci_arasan_data,
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, sdhci_arasan_of_match);
-@@ -583,6 +598,150 @@ static const struct clk_ops arasan_sampleclk_ops = {
- 	.recalc_rate = sdhci_arasan_sampleclk_recalc_rate,
- };
- 
-+/**
-+ * sdhci_zynqmp_sdcardclk_set_phase - Set the SD Output Clock Tap Delays
-+ *
-+ * Set the SD Output Clock Tap Delays for Output path
-+ *
-+ * @hw:			Pointer to the hardware clock structure.
-+ * @degrees		The clock phase shift between 0 - 359.
-+ * Return: 0 on success and error value on error
-+ */
-+static int sdhci_zynqmp_sdcardclk_set_phase(struct clk_hw *hw, int degrees)
-+
-+{
-+	struct sdhci_arasan_clk_data *clk_data =
-+		container_of(hw, struct sdhci_arasan_clk_data, sdcardclk_hw);
-+	struct sdhci_arasan_data *sdhci_arasan =
-+		container_of(clk_data, struct sdhci_arasan_data, clk_data);
-+	struct sdhci_host *host = sdhci_arasan->host;
-+	struct sdhci_arasan_zynqmp_clk_data *zynqmp_clk_data =
-+		clk_data->clk_of_data;
-+	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_clk_data->eemi_ops;
-+	const char *clk_name = clk_hw_get_name(hw);
-+	u32 node_id = !strcmp(clk_name, "clk_out_sd0") ? NODE_SD_0 : NODE_SD_1;
-+	u8 tap_delay, tap_max = 0;
-+	int ret;
-+
-+	/*
-+	 * This is applicable for SDHCI_SPEC_300 and above
-+	 * ZynqMP does not set phase for <=25MHz clock.
-+	 * If degrees is zero, no need to do anything.
-+	 */
-+	if (host->version < SDHCI_SPEC_300 ||
-+	    host->timing == MMC_TIMING_LEGACY ||
-+	    host->timing == MMC_TIMING_UHS_SDR12 || !degrees)
-+		return 0;
-+
-+	switch (host->timing) {
-+	case MMC_TIMING_MMC_HS:
-+	case MMC_TIMING_SD_HS:
-+	case MMC_TIMING_UHS_SDR25:
-+	case MMC_TIMING_UHS_DDR50:
-+	case MMC_TIMING_MMC_DDR52:
-+		/* For 50MHz clock, 30 Taps are available */
-+		tap_max = 30;
-+		break;
-+	case MMC_TIMING_UHS_SDR50:
-+		/* For 100MHz clock, 15 Taps are available */
-+		tap_max = 15;
-+		break;
-+	case MMC_TIMING_UHS_SDR104:
-+	case MMC_TIMING_MMC_HS200:
-+		/* For 200MHz clock, 8 Taps are available */
-+		tap_max = 8;
-+	default:
-+		break;
-+	}
-+
-+	tap_delay = (degrees * tap_max) / 360;
-+
-+	/* Set the Clock Phase */
-+	ret = eemi_ops->ioctl(node_id, IOCTL_SET_SD_TAPDELAY,
-+			      PM_TAPDELAY_OUTPUT, tap_delay, NULL);
-+	if (ret)
-+		pr_err("Error setting Output Tap Delay\n");
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops zynqmp_sdcardclk_ops = {
-+	.recalc_rate = sdhci_arasan_sdcardclk_recalc_rate,
-+	.set_phase = sdhci_zynqmp_sdcardclk_set_phase,
-+};
-+
-+/**
-+ * sdhci_zynqmp_sampleclk_set_phase - Set the SD Input Clock Tap Delays
-+ *
-+ * Set the SD Input Clock Tap Delays for Input path
-+ *
-+ * @hw:			Pointer to the hardware clock structure.
-+ * @degrees		The clock phase shift between 0 - 359.
-+ * Return: 0 on success and error value on error
-+ */
-+static int sdhci_zynqmp_sampleclk_set_phase(struct clk_hw *hw, int degrees)
-+
-+{
-+	struct sdhci_arasan_clk_data *clk_data =
-+		container_of(hw, struct sdhci_arasan_clk_data, sampleclk_hw);
-+	struct sdhci_arasan_data *sdhci_arasan =
-+		container_of(clk_data, struct sdhci_arasan_data, clk_data);
-+	struct sdhci_host *host = sdhci_arasan->host;
-+	struct sdhci_arasan_zynqmp_clk_data *zynqmp_clk_data =
-+		clk_data->clk_of_data;
-+	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_clk_data->eemi_ops;
-+	const char *clk_name = clk_hw_get_name(hw);
-+	u32 node_id = !strcmp(clk_name, "clk_in_sd0") ? NODE_SD_0 : NODE_SD_1;
-+	u8 tap_delay, tap_max = 0;
-+	int ret;
-+
-+	/*
-+	 * This is applicable for SDHCI_SPEC_300 and above
-+	 * ZynqMP does not set phase for <=25MHz clock.
-+	 * If degrees is zero, no need to do anything.
-+	 */
-+	if (host->version < SDHCI_SPEC_300 ||
-+	    host->timing == MMC_TIMING_LEGACY ||
-+	    host->timing == MMC_TIMING_UHS_SDR12 || !degrees)
-+		return 0;
-+
-+	switch (host->timing) {
-+	case MMC_TIMING_MMC_HS:
-+	case MMC_TIMING_SD_HS:
-+	case MMC_TIMING_UHS_SDR25:
-+	case MMC_TIMING_UHS_DDR50:
-+	case MMC_TIMING_MMC_DDR52:
-+		/* For 50MHz clock, 120 Taps are available */
-+		tap_max = 120;
-+		break;
-+	case MMC_TIMING_UHS_SDR50:
-+		/* For 100MHz clock, 60 Taps are available */
-+		tap_max = 60;
-+		break;
-+	case MMC_TIMING_UHS_SDR104:
-+	case MMC_TIMING_MMC_HS200:
-+		/* For 200MHz clock, 30 Taps are available */
-+		tap_max = 30;
-+	default:
-+		break;
-+	}
-+
-+	tap_delay = (degrees * tap_max) / 360;
-+
-+	/* Set the Clock Phase */
-+	ret = eemi_ops->ioctl(node_id, IOCTL_SET_SD_TAPDELAY,
-+			      PM_TAPDELAY_INPUT, tap_delay, NULL);
-+	if (ret)
-+		pr_err("Error setting Input Tap Delay\n");
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops zynqmp_sampleclk_ops = {
-+	.recalc_rate = sdhci_arasan_sampleclk_recalc_rate,
-+	.set_phase = sdhci_zynqmp_sampleclk_set_phase,
-+};
-+
- /**
-  * sdhci_arasan_update_clockmultiplier - Set corecfg_clockmultiplier
-  *
-@@ -708,6 +867,10 @@ static void arasan_dt_read_clk_phase(struct device *dev,
- static void arasan_dt_parse_clk_phases(struct device *dev,
- 				      struct sdhci_arasan_clk_data *clk_data)
- {
-+	int *iclk_phase, *oclk_phase;
-+	u32 mio_bank = 0;
-+	int i;
-+
- 	/*
- 	 * This has been kept as a pointer and is assigned a function here.
- 	 * So that different controller variants can assign their own handling
-@@ -715,6 +878,22 @@ static void arasan_dt_parse_clk_phases(struct device *dev,
- 	 */
- 	clk_data->set_clk_delays = sdhci_arasan_set_clk_delays;
- 
-+	if (of_device_is_compatible(dev->of_node, "xlnx,zynqmp-8.9a")) {
-+		iclk_phase = (int [MMC_TIMING_MMC_HS400 + 1]) ZYNQMP_ICLK_PHASE;
-+		oclk_phase = (int [MMC_TIMING_MMC_HS400 + 1]) ZYNQMP_OCLK_PHASE;
-+
-+		of_property_read_u32(dev->of_node, "xlnx,mio-bank", &mio_bank);
-+		if (mio_bank == 2) {
-+			oclk_phase[MMC_TIMING_UHS_SDR104] = 90;
-+			oclk_phase[MMC_TIMING_MMC_HS200] = 90;
-+		}
-+
-+		for (i = 0; i <= MMC_TIMING_MMC_HS400; i++) {
-+			clk_data->clk_phase_in[i] = iclk_phase[i];
-+			clk_data->clk_phase_out[i] = oclk_phase[i];
-+		}
-+	}
-+
- 	arasan_dt_read_clk_phase(dev, clk_data, MMC_TIMING_LEGACY,
- 				 "clk-phase-legacy");
- 	arasan_dt_read_clk_phase(dev, clk_data, MMC_TIMING_MMC_HS,
-@@ -773,7 +952,10 @@ sdhci_arasan_register_sdcardclk(struct sdhci_arasan_data *sdhci_arasan,
- 	sdcardclk_init.parent_names = &parent_clk_name;
- 	sdcardclk_init.num_parents = 1;
- 	sdcardclk_init.flags = CLK_GET_RATE_NOCACHE;
--	sdcardclk_init.ops = &arasan_sdcardclk_ops;
-+	if (of_device_is_compatible(np, "xlnx,zynqmp-8.9a"))
-+		sdcardclk_init.ops = &zynqmp_sdcardclk_ops;
-+	else
-+		sdcardclk_init.ops = &arasan_sdcardclk_ops;
- 
- 	clk_data->sdcardclk_hw.init = &sdcardclk_init;
- 	clk_data->sdcardclk =
-@@ -822,7 +1004,10 @@ sdhci_arasan_register_sampleclk(struct sdhci_arasan_data *sdhci_arasan,
- 	sampleclk_init.parent_names = &parent_clk_name;
- 	sampleclk_init.num_parents = 1;
- 	sampleclk_init.flags = CLK_GET_RATE_NOCACHE;
--	sampleclk_init.ops = &arasan_sampleclk_ops;
-+	if (of_device_is_compatible(np, "xlnx,zynqmp-8.9a"))
-+		sampleclk_init.ops = &zynqmp_sampleclk_ops;
-+	else
-+		sampleclk_init.ops = &arasan_sampleclk_ops;
- 
- 	clk_data->sampleclk_hw.init = &sampleclk_init;
- 	clk_data->sampleclk =
-@@ -1031,6 +1216,23 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto clk_disable_all;
- 
-+	if (of_device_is_compatible(np, "xlnx,zynqmp-8.9a")) {
-+		struct sdhci_arasan_zynqmp_clk_data *zynqmp_clk_data;
-+		const struct zynqmp_eemi_ops *eemi_ops;
-+
-+		zynqmp_clk_data = devm_kzalloc(&pdev->dev,
-+					       sizeof(*zynqmp_clk_data),
-+					       GFP_KERNEL);
-+		eemi_ops = zynqmp_pm_get_eemi_ops();
-+		if (IS_ERR(eemi_ops)) {
-+			ret = PTR_ERR(eemi_ops);
-+			goto unreg_clk;
-+		}
-+
-+		zynqmp_clk_data->eemi_ops = eemi_ops;
-+		sdhci_arasan->clk_data.clk_of_data = zynqmp_clk_data;
-+	}
-+
- 	arasan_dt_parse_clk_phases(&pdev->dev, &sdhci_arasan->clk_data);
- 
- 	ret = mmc_of_parse(host->mmc);
--- 
-2.17.1
+Summary
+------------------------------------------------------------------------
 
+kernel: 4.14.150-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.14.y
+git commit: 66f69184d7229bdf1ac19b8928747553ca3e5914
+git describe: v4.14.149-66-g66f69184d722
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
+ild/v4.14.149-66-g66f69184d722
+
+
+No regressions (compared to build v4.14.149)
+
+No fixes (compared to build v4.14.149)
+
+
+Ran 23950 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* ltp-fs-tests
+* network-basic-tests
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
