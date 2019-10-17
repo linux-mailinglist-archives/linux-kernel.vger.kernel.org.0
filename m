@@ -2,71 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9535DC40D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 13:38:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 546A4DC426
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 13:44:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407745AbfJRLih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 07:38:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37172 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729803AbfJRLig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 07:38:36 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7899F11A2F;
-        Fri, 18 Oct 2019 11:38:36 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-43.ams2.redhat.com [10.36.116.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D25C5D9D5;
-        Fri, 18 Oct 2019 11:38:33 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 2E9C99DB6; Fri, 18 Oct 2019 13:38:32 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/virtio: print a single line with device features
-Date:   Fri, 18 Oct 2019 13:38:32 +0200
-Message-Id: <20191018113832.5460-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 18 Oct 2019 11:38:36 +0000 (UTC)
+        id S2633420AbfJRLoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 07:44:20 -0400
+Received: from [221.146.236.9] ([221.146.236.9]:51637 "EHLO theworld.email"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389864AbfJRLoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 07:44:20 -0400
+Received: from [52.132.183.92] by 127.0.0.1 id U8RjdRa45CnP; Thu, 17 Oct 2019 15:32:20 -0200
+Message-ID: <388$$wj2739-1tu08w0p6$9$l@dju.nelfj3s.41>
+From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+To:     principal@ezlearnchinese.com
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Date:   Thu, 17 Oct 19 15:32:20 GMT
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+        boundary="D6_1CF04C66_.F1E665"
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/virtio/virtgpu_kms.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
-index 0b3cdb0d83b0..2f5773e43557 100644
---- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-@@ -155,16 +155,15 @@ int virtio_gpu_init(struct drm_device *dev)
- #ifdef __LITTLE_ENDIAN
- 	if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_VIRGL))
- 		vgdev->has_virgl_3d = true;
--	DRM_INFO("virgl 3d acceleration %s\n",
--		 vgdev->has_virgl_3d ? "enabled" : "not supported by host");
--#else
--	DRM_INFO("virgl 3d acceleration not supported by guest\n");
- #endif
- 	if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_EDID)) {
- 		vgdev->has_edid = true;
--		DRM_INFO("EDID support available.\n");
- 	}
- 
-+	DRM_INFO("features: %cvirgl %cedid\n",
-+		 vgdev->has_virgl_3d ? '+' : '-',
-+		 vgdev->has_edid     ? '+' : '-');
-+
- 	ret = virtio_find_vqs(vgdev->vdev, 2, vqs, callbacks, names, NULL);
- 	if (ret) {
- 		DRM_ERROR("failed to find virt queues\n");
--- 
-2.18.1
+--D6_1CF04C66_.F1E665
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
+
+Greetings
+
+My name is Barrister Hans Erich.
+
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
+
+Your full names ---------
+
+
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+
+--D6_1CF04C66_.F1E665--
 
