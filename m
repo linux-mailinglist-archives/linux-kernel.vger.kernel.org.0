@@ -2,127 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7130EDA347
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAC94DA354
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:42:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394411AbfJQBmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 21:42:11 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:56509 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbfJQBmL (ORCPT
+        id S2395269AbfJQBma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 21:42:30 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53368 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393064AbfJQBmM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 21:42:11 -0400
-Received: by mail-io1-f69.google.com with SMTP id a22so833047ioq.23
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 18:42:10 -0700 (PDT)
+        Wed, 16 Oct 2019 21:42:12 -0400
+Received: by mail-wm1-f68.google.com with SMTP id i16so721490wmd.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 18:42:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=4PlnNJoSqbgZGjpswnpRSIhWXTeapV7BXOO12k9Vq4w=;
+        b=sdeKXKb/aDjWkIigJ9vE1zn046iDrva8JV2kXVrA9iFxHRaCEMkHyjQA8glmjRn4hE
+         xO4ZK1LdvP1wYTyc4loyqyt+y5z16YIft820VIgbWfjIIAaefvzQUa0xk/4tc9QrEdNO
+         kW5ai3XSLidpetEqENYU8VL4rhxHd2Ydyq+6CtAQf+4gBahBTSiatGG2xQEaOHkuSp40
+         MCCtSIqkVmpnwivOephy99Jp5L2Dv/bJ5uECFNCJYxEGqPspLOivnDVI1b2tHhlsU6ge
+         jWOkdR+PUQZhcFqIj0J28LLWcYOsIdpZGHJTzpmEvlZOK7/mMAWsQ1Vh0n+ekOqlH5zT
+         2z2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=c+/W7PtNRLYMAumQPSj2+lTREnQ1B5FgENo3ueNmxr0=;
-        b=VmQArxzdz9dv5yvpwjLqZk1NasFvz3vqovJ2HUuPjcfun/Xv5eCEcxcyHLUr0dhW/o
-         GjmL4qFZYWqcUYgp8joKx7Sqj8E2iqMBFZUitgBfcIJM25Ey6s1DoTBbdEnS6Q58QaI7
-         BvIUWBCL0MLZEcbanr7KxkW2Mxm2xT++34D0pN4jQzAXNxXsfgoQ5YIA887tLEsNQVod
-         MC/yljk4P3JcYG5pw2R3bsZkZ8lv7arSgmZpNKLuyn9Oam8yculuRp26XczviOhbXIkI
-         aO0pgFWODowXdGy/iB/JDyuu00kFAghMKoheUzmYr2t+KIaGi9r396/TflB4LJ1GYj3F
-         T3nA==
-X-Gm-Message-State: APjAAAULEtmDnn3czXv7qilqzGF0vSWYTeaYZxLrSHX9Gb4Jajlew0ph
-        KBfPF/9/EK6RT2fN72XhlL7Nj4hP/v1ymd9aDCOzefyp2VS1
-X-Google-Smtp-Source: APXvYqy7CVv/UIN/GUWAS7Syffhmzin1EXRNZnA3epFNO2oJKKVLlSSpze70HYuTSbZUmNzkMFcKy/7TY2q9w6n0/qLIeDJl4Qs9
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=4PlnNJoSqbgZGjpswnpRSIhWXTeapV7BXOO12k9Vq4w=;
+        b=Yl1RtCKnx0jtNWVxc9RZTpKiBidiu3XFVo48snuLGvFfuzJg3rW2Kfuy9g1KYjN8B/
+         K5iS5SZ3aakIj/IApoeAmA8FCGXxtyOg9LwxF6rvfIlBYJ0HogNX9Lr/wru4DlBYLQ8L
+         Z68knycpB+wXw/kE1e1qaDdPPUd/udQsTrFOeW/9VLnaHhp0To1uU57V/SemeCo+FsbT
+         ExoNU+u1aORFwSRsWso7w6ZfwcbPYjenDqAQ/b1Rn8SAaRDc+dyj9WPEbNzZUOVEGp5Q
+         xUI8FO10BJ2GqTDm3+z7mvSu8Hytkzqd8gnpyvVrDB8xmhQ8cbAjI0P2ceMbioK8l/ME
+         yrYg==
+X-Gm-Message-State: APjAAAX3gMd4kSoQQTR2jRwt5368bmsoCfre6wgCRZTmzqEGJ86pah54
+        DLn2p4iJMOG57Zzuo2Cw7UKRHQ==
+X-Google-Smtp-Source: APXvYqwwMXcl73QU1lCZCQOLa/BZ7ghVY1xQRnaXRqyFMV80OaoSpkIQSNBSRUKDBNdQS7YUznNeyw==
+X-Received: by 2002:a7b:c05a:: with SMTP id u26mr500379wmc.128.1571276531039;
+        Wed, 16 Oct 2019 18:42:11 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id x129sm964400wmg.8.2019.10.16.18.42.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Oct 2019 18:42:10 -0700 (PDT)
+Message-ID: <5da7c6f2.1c69fb81.20afa.4518@mx.google.com>
+Date:   Wed, 16 Oct 2019 18:42:10 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-Received: by 2002:a5e:dd4d:: with SMTP id u13mr678477iop.7.1571276530385;
- Wed, 16 Oct 2019 18:42:10 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 18:42:10 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000070102d059511537d@google.com>
-Subject: KASAN: slab-out-of-bounds Read in ld_usb_read (3)
-From:   syzbot <syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, enric.balletbo@collabora.com,
-        gregkh@linuxfoundation.org, johan@kernel.org, kirr@nexedi.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux@roeck-us.net, logang@deltatee.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-4.9.y
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.9.196-93-g8811b6f62880
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
+Subject: Re: [PATCH 4.9 00/92] 4.9.197-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+stable-rc/linux-4.9.y boot: 42 boots: 0 failed, 39 passed with 3 offline (v=
+4.9.196-93-g8811b6f62880)
 
-syzbot found the following crash on:
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.9.y/kernel/v4.9.196-93-g8811b6f62880/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
+/kernel/v4.9.196-93-g8811b6f62880/
 
-HEAD commit:    22be26f7 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=14f6dc5f600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=387eccb7ac68ec5
-dashboard link: https://syzkaller.appspot.com/bug?extid=6fe95b826644f7f12b0b
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102c3227600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a503a0e00000
+Tree: stable-rc
+Branch: linux-4.9.y
+Git Describe: v4.9.196-93-g8811b6f62880
+Git Commit: 8811b6f62880b7a4b6d43be23d9837491ce18ea0
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 36 unique boards, 12 SoC families, 13 builds out of 197
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com
+Offline Platforms:
 
-ldusb 1-1:0.28: Read buffer overflow, -131383859965943 bytes dropped
-==================================================================
-BUG: KASAN: slab-out-of-bounds in _copy_to_user+0x124/0x150  
-lib/usercopy.c:28
-Read of size 102391 at addr ffff8881cfb40008 by task syz-executor372/1737
+arm:
 
-CPU: 0 PID: 1737 Comm: syz-executor372 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description.constprop.0+0x36/0x50 mm/kasan/report.c:374
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:506
-  kasan_report+0xe/0x20 mm/kasan/common.c:634
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x128/0x190 mm/kasan/generic.c:192
-  _copy_to_user+0x124/0x150 lib/usercopy.c:28
-  copy_to_user include/linux/uaccess.h:152 [inline]
-  ld_usb_read+0x329/0x760 drivers/usb/misc/ldusb.c:492
-  __vfs_read+0x76/0x100 fs/read_write.c:425
-  vfs_read+0x1ea/0x430 fs/read_write.c:461
-  ksys_read+0x1e8/0x250 fs/read_write.c:587
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4421d9
-Code: e8 7c e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 bb 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc08eb0888 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 00007ffc08eb0ae0 RCX: 00000000004421d9
-RDX: 0000000000018ff7 RSI: 0000000020000a80 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 000000000000000f R09: 0000000000402eb0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000402eb0 R14: 0000000000000000 R15: 0000000000000000
+    sunxi_defconfig:
+        gcc-8
+            sun5i-r8-chip: 1 offline lab
 
-The buggy address belongs to the page:
-page:ffffea00073ed000 refcount:1 mapcount:0 mapping:0000000000000000  
-index:0x0 compound_mapcount: 0
-flags: 0x200000000010000(head)
-raw: 0200000000010000 dead000000000100 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+    davinci_all_defconfig:
+        gcc-8
+            dm365evm,legacy: 1 offline lab
 
-Memory state around the buggy address:
-  ffff8881cfb55500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8881cfb55580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffff8881cfb55600: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-                    ^
-  ffff8881cfb55680: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-  ffff8881cfb55700: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-==================================================================
-
+    qcom_defconfig:
+        gcc-8
+            qcom-apq8064-cm-qs600: 1 offline lab
 
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+For more info write to <info@kernelci.org>
