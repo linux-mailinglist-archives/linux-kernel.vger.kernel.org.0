@@ -2,88 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5422ADB8C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 23:05:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A60EEDB8CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 23:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437402AbfJQVFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 17:05:54 -0400
-Received: from mga17.intel.com ([192.55.52.151]:40756 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394673AbfJQVFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 17:05:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2019 14:05:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,309,1566889200"; 
-   d="scan'208";a="200508788"
-Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga006.jf.intel.com with ESMTP; 17 Oct 2019 14:05:53 -0700
-Subject: Re: [PATCH 0/4] [RFC] Migrate Pages in lieu of discard
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     Shakeel Butt <shakeelb@google.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jonathan Adams <jwadams@google.com>,
-        "Chen, Tim C" <tim.c.chen@intel.com>
-References: <20191016221148.F9CCD155@viggo.jf.intel.com>
- <CALvZod5wdToX6bx4Bnwx9AgrzY3xkmE0OMH61f88hKxeGX+tvA@mail.gmail.com>
- <496566a6-2581-17f4-a4f2-e5def7f97582@intel.com>
- <CAHbLzkq6cvS4L4DYnr+oyggfXzZTKegfpdNUi_XHA+-67HZYNA@mail.gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <e675c63a-73ae-fc17-32e3-7560b91d229d@intel.com>
-Date:   Thu, 17 Oct 2019 14:05:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2441114AbfJQVJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 17:09:43 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44430 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732368AbfJQVJm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 17:09:42 -0400
+Received: by mail-lf1-f68.google.com with SMTP id q12so2981606lfc.11;
+        Thu, 17 Oct 2019 14:09:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HOFkrgxD7hQMpORsHMPA1Bb0bytoS+eIDnRxl+dcGGk=;
+        b=gEiSFnKkyv/kMZ8TrHPhHZnc/XrKI9vUmKfvTV9OWGEXXypvWYaLn5jBKlpzI08eqB
+         R9RAJ+Yti5Egc8KxNcdaE6eNsOO4UumKxV/q4h8Mvs0x4aFeRVb9+CjOEzCX8pXNUh2T
+         e/ThPX+i2DDzSfUDtnj/nNdH6s/RSbDc1hKw7grbhAGPk3tkHQPPgTs+QIFPnVklDwbL
+         9RqoY7SXBaxLwVqFgN6s1kXluVn1brwvYl4qjSkIwfvj0/sTmRUrKFEyGfiwGU5/Gh6X
+         SIl75AdQYUsXycefrN8D96kbQzfOs7zePICnYnkhyOmkVfate+Hg/f4vO2ZuTwfCeJwK
+         /C7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HOFkrgxD7hQMpORsHMPA1Bb0bytoS+eIDnRxl+dcGGk=;
+        b=Lwbu+WE0Fv2/VY1/g0quQG3GMmPgVLQI/Bm3AlpIXLJGpQCCSTbDY9gwSGAMAu1YUU
+         zqUj3s3vvlnW+N9mrShSEQtZHqx5t0lu/rzS2EH7eN3IDd18M/QVhg3tPhfqyOYpNXp1
+         fzxqz3IzrKjIdgNRiPpVE1k26/aEx8ZNHxLS2b4RGBKmquwYXQ1tJG1CUlSxpBTjLynC
+         h7YODdyw735uo39Jy634zzpP3rjqNo1YZ6aE9EXXtQKpFWYYmeYlLJPWqgvcilRBTSj+
+         6RF+8eH4cq0YsIxy+MDGXo85/RD5FRaNOl9OwtzxQ+SXe5nJ3MfubNEZRIsDw511wxhf
+         GVZQ==
+X-Gm-Message-State: APjAAAXK9B8M/08PPiOeiJz8teiBbFZqc2F30IPth9W5D6sr+N1ZQVJO
+        4CNUWQxpB7tVxRu+rob/742jidgO
+X-Google-Smtp-Source: APXvYqxHDXj6BpIX2gyGyIEnQLfJIrn7KaQ8V30SlJHDxzeh4kjvcoPZ4eJOQW3brVFR/iDnJPB2Xw==
+X-Received: by 2002:a19:148:: with SMTP id 69mr3893055lfb.76.1571346577994;
+        Thu, 17 Oct 2019 14:09:37 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.10.250])
+        by smtp.googlemail.com with ESMTPSA id 25sm1872338lje.58.2019.10.17.14.09.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2019 14:09:37 -0700 (PDT)
+Subject: Re: [PATCH v1 07/17] cpufreq: tegra20: Use generic cpufreq-dt driver
+ (Tegra30 supported now)
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Peter Geis <pgwipeout@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191015211618.20758-1-digetx@gmail.com>
+ <20191015211618.20758-8-digetx@gmail.com>
+ <20191016051802.rrxv56vtvxfm6qqe@vireshk-i7>
+ <13a9ebd6-8dce-0217-d306-defb8eb6fb96@gmail.com>
+ <CAMdYzYoasuEobJLC4RLW_5WCNGnaKtTth0xKov0tUQuDhkX3EA@mail.gmail.com>
+ <b4eca03d-f86c-8e07-e04a-612e02820bd0@gmail.com>
+ <20191017023210.x5vavl542hdkrivw@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f4d6ba51-c2ac-4ddb-5acc-c4825aa6a793@gmail.com>
+Date:   Fri, 18 Oct 2019 00:09:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <CAHbLzkq6cvS4L4DYnr+oyggfXzZTKegfpdNUi_XHA+-67HZYNA@mail.gmail.com>
+In-Reply-To: <20191017023210.x5vavl542hdkrivw@vireshk-i7>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -92,21 +85,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/19 10:20 AM, Yang Shi wrote:
-> On Thu, Oct 17, 2019 at 7:26 AM Dave Hansen <dave.hansen@intel.com> wrote:
->> My expectation (and I haven't confirmed this) is that the any memory use
->> is accounted to the owning cgroup, whether it is DRAM or PMEM.  memcg
->> limit reclaim and global reclaim both end up doing migrations and
->> neither should have a net effect on the counters.
+17.10.2019 05:32, Viresh Kumar пишет:
+> On 16-10-19, 21:19, Dmitry Osipenko wrote:
+>> 16.10.2019 17:58, Peter Geis пишет:
+>>> On Wed, Oct 16, 2019 at 9:29 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>>>
+>>>> 16.10.2019 08:18, Viresh Kumar пишет:
+>>>>> On 16-10-19, 00:16, Dmitry Osipenko wrote:
+>>>>>> Re-parenting to intermediate clock is supported now by the clock driver
+>>>>>> and thus there is no need in a customized CPUFreq driver, all that code
+>>>>>> is common for both Tegra20 and Tegra30. The available CPU freqs are now
+>>>>>> specified in device-tree in a form of OPPs, all users should update their
+>>>>>> device-trees.
+>>>>>>
+>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> ---
+>>>>>>  drivers/cpufreq/Kconfig.arm          |   4 +-
+>>>>>>  drivers/cpufreq/cpufreq-dt-platdev.c |   2 +
+>>>>>>  drivers/cpufreq/tegra20-cpufreq.c    | 236 ++++++---------------------
+>>>>>>  3 files changed, 55 insertions(+), 187 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+>>>>>> index a905796f7f85..2118c45d0acd 100644
+>>>>>> --- a/drivers/cpufreq/Kconfig.arm
+>>>>>> +++ b/drivers/cpufreq/Kconfig.arm
+>>>>>> @@ -301,8 +301,8 @@ config ARM_TANGO_CPUFREQ
+>>>>>>      default y
+>>>>>>
+>>>>>>  config ARM_TEGRA20_CPUFREQ
+>>>>>> -    tristate "Tegra20 CPUFreq support"
+>>>>>> -    depends on ARCH_TEGRA
+>>>>>> +    bool "Tegra20 CPUFreq support"
+>>>>>
+>>>>> Google is currently working on the GKI (generic kernel image) project where they
+>>>>> want to use a single kernel image with modules for all kind of android devices.
+>>>>> And for that they need all such drivers to be built as module. Since this is
+>>>>> already an module, I would ask you to keep it as is instead of moving it to bool
+>>>>> here. Else some google guy will switch it back as module later on.
+>>>>>
+>>>>> LGTM otherwise. Nice work. Thanks.
+>>>>>
+>>>>
+>>>> Okay, I'll keep the modularity in v2.
+>>>>
+>>>> Although, tegra20-cpufreq isn't a driver anymore because now it merely
+>>>> prepares OPP table for the cpufreq-dt driver, which is really a one-shot
+>>>> action that is enough to do during boot and thus modularity is a bit
+>>>> redundant here.
+>>>
+>>> I doubt Google will care much, since Android has moved on to aarch64.
+>>> Do they even support arm32 any more?
+>>
+>> Yes, I don't think there is a real need to care about Google. They won't
+>> use pure upstream and won't care about older hardware any ways.
 > 
-> Yes, your expectation is correct. As long as PMEM is a NUMA node, it
-> is treated as regular memory by memcg. But, I don't think memcg limit
-> reclaim should do migration since limit reclaim is used to reduce
-> memory usage, but migration doesn't reduce usage, it just moves memory
-> from one node to the other.
+> Well, using (almost) pure upstream is the idea I believe. And the thing is they
+> want to use a single multi-platform image which should be as small as possible
+> in size. So it won't have any drivers or platform stuff (if possible) and
+> everything is module.
 > 
-> In my implementation, I just skip migration for memcg limit reclaim,
-> please see: https://lore.kernel.org/linux-mm/1560468577-101178-7-git-send-email-yang.shi@linux.alibaba.com/
+> I am not sure about arm32/64 thing though. And it is okay if you don't want to
+> care about Google right now. That was just some side knowledge I had :)
+> 
 
-Ahh, got it.  That does make sense.  I might have to steal your
-implementation.
+I'll leave the module part as-is for now.
