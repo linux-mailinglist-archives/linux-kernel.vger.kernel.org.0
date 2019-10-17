@@ -2,90 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 662DADB669
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9E33DB67E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:46:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406703AbfJQSip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 14:38:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34238 "EHLO mail.kernel.org"
+        id S2406758AbfJQSqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 14:46:13 -0400
+Received: from mga11.intel.com ([192.55.52.93]:45978 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727766AbfJQSio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:38:44 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB06C2089C;
-        Thu, 17 Oct 2019 18:38:43 +0000 (UTC)
-Date:   Thu, 17 Oct 2019 14:38:41 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] libtraceevent: perf script -g python segfaults
-Message-ID: <20191017143841.317b26b5@gandalf.local.home>
-In-Reply-To: <20191017154205.GC8974@kernel.org>
-References: <20191017154205.GC8974@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2388823AbfJQSqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 14:46:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2019 11:46:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,308,1566889200"; 
+   d="scan'208";a="221477723"
+Received: from oux.sc.intel.com ([10.3.52.57])
+  by fmsmga004.fm.intel.com with ESMTP; 17 Oct 2019 11:46:11 -0700
+From:   Yian Chen <yian.chen@intel.com>
+To:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>
+Cc:     Yian Chen <yian.chen@intel.com>
+Subject: [PATCH v2] iommu/vt-d: Check VT-d RMRR region in BIOS is reported as reserved
+Date:   Thu, 17 Oct 2019 04:39:19 -0700
+Message-Id: <20191017113919.25424-1-yian.chen@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Oct 2019 12:42:05 -0300
-Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
+VT-d RMRR (Reserved Memory Region Reporting) regions are reserved
+for device use only and should not be part of allocable memory pool of OS.
 
-> I'll try and continue later, but if you guys can take a look...
+BIOS e820_table reports complete memory map to OS, including OS usable
+memory ranges and BIOS reserved memory ranges etc.
 
-Does this fix it for you?
+x86 BIOS may not be trusted to include RMRR regions as reserved type
+of memory in its e820 memory map, hence validate every RMRR entry
+with the e820 memory map to make sure the RMRR regions will not be
+used by OS for any other purposes.
 
--- Steve
+ia64 EFI is working fine so implement RMRR validation as a dummy function
 
-diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
-index ad74be1f0e42..227629796e32 100644
---- a/tools/perf/util/trace-event-parse.c
-+++ b/tools/perf/util/trace-event-parse.c
-@@ -193,30 +193,32 @@ int parse_event_file(struct tep_handle *pevent,
- struct tep_event *trace_find_next_event(struct tep_handle *pevent,
- 					struct tep_event *event)
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Yian Chen <yian.chen@intel.com>
+---
+v2:
+- return -EINVAL instead of -EFAULT when there is an error
+---
+ arch/ia64/include/asm/iommu.h |  5 +++++
+ arch/x86/include/asm/iommu.h  | 18 ++++++++++++++++++
+ drivers/iommu/intel-iommu.c   |  8 +++++++-
+ 3 files changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/arch/ia64/include/asm/iommu.h b/arch/ia64/include/asm/iommu.h
+index 7904f591a79b..eb0db20c9d4c 100644
+--- a/arch/ia64/include/asm/iommu.h
++++ b/arch/ia64/include/asm/iommu.h
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_IA64_IOMMU_H
+ #define _ASM_IA64_IOMMU_H 1
+ 
++#include <linux/acpi.h>
++
+ /* 10 seconds */
+ #define DMAR_OPERATION_TIMEOUT (((cycles_t) local_cpu_data->itc_freq)*10)
+ 
+@@ -9,6 +11,9 @@ extern void no_iommu_init(void);
+ #ifdef	CONFIG_INTEL_IOMMU
+ extern int force_iommu, no_iommu;
+ extern int iommu_detected;
++
++static inline int __init
++arch_rmrr_sanity_check(struct acpi_dmar_reserved_memory *rmrr) { return 0; }
+ #else
+ #define no_iommu		(1)
+ #define iommu_detected		(0)
+diff --git a/arch/x86/include/asm/iommu.h b/arch/x86/include/asm/iommu.h
+index b91623d521d9..bf1ed2ddc74b 100644
+--- a/arch/x86/include/asm/iommu.h
++++ b/arch/x86/include/asm/iommu.h
+@@ -2,10 +2,28 @@
+ #ifndef _ASM_X86_IOMMU_H
+ #define _ASM_X86_IOMMU_H
+ 
++#include <linux/acpi.h>
++
++#include <asm/e820/api.h>
++
+ extern int force_iommu, no_iommu;
+ extern int iommu_detected;
+ 
+ /* 10 seconds */
+ #define DMAR_OPERATION_TIMEOUT ((cycles_t) tsc_khz*10*1000)
+ 
++static inline int __init
++arch_rmrr_sanity_check(struct acpi_dmar_reserved_memory *rmrr)
++{
++	u64 start = rmrr->base_address;
++	u64 end = rmrr->end_address + 1;
++
++	if (e820__mapped_all(start, end, E820_TYPE_RESERVED))
++		return 0;
++
++	pr_err(FW_BUG "No firmware reserved region can cover this RMRR [%#018Lx-%#018Lx], contact BIOS vendor for fixes\n",
++	       start, end - 1);
++	return -EINVAL;
++}
++
+ #endif /* _ASM_X86_IOMMU_H */
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 3f974919d3bd..722290014143 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -4306,13 +4306,19 @@ int __init dmar_parse_one_rmrr(struct acpi_dmar_header *header, void *arg)
  {
-+	static struct tep_event **all_events;
- 	static int idx;
- 	int events_count;
--	struct tep_event *all_events;
+ 	struct acpi_dmar_reserved_memory *rmrr;
+ 	struct dmar_rmrr_unit *rmrru;
++	int ret;
++
++	rmrr = (struct acpi_dmar_reserved_memory *)header;
++	ret = arch_rmrr_sanity_check(rmrr);
++	if (ret)
++		return ret;
  
--	all_events = tep_get_first_event(pevent);
- 	events_count = tep_get_events_count(pevent);
- 	if (!pevent || !all_events || events_count < 1)
- 		return NULL;
+ 	rmrru = kzalloc(sizeof(*rmrru), GFP_KERNEL);
+ 	if (!rmrru)
+ 		goto out;
  
- 	if (!event) {
- 		idx = 0;
--		return all_events;
-+		all_events = tep_list_events(pevent, TEP_EVENT_SORT_ID);
-+		if (all_events)
-+			return all_events[0];
-+		return NULL;
- 	}
+ 	rmrru->hdr = header;
+-	rmrr = (struct acpi_dmar_reserved_memory *)header;
++
+ 	rmrru->base_address = rmrr->base_address;
+ 	rmrru->end_address = rmrr->end_address;
  
--	if (idx < events_count && event == (all_events + idx)) {
-+	if (idx < events_count && event == all_events[idx]) {
- 		idx++;
- 		if (idx == events_count)
- 			return NULL;
--		return (all_events + idx);
-+		return all_events[idx];
- 	}
- 
- 	for (idx = 1; idx < events_count; idx++) {
--		if (event == (all_events + (idx - 1)))
--			return (all_events + idx);
-+		if (event == all_events[idx - 1])
-+			return all_events[idx];
- 	}
- 	return NULL;
- }
+-- 
+2.17.1
+
