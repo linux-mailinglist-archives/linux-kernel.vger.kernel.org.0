@@ -2,146 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 710EEDAABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 13:01:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF1D6DAAC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 13:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391741AbfJQLB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 07:01:29 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:52656 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728464AbfJQLB2 (ORCPT
+        id S2393417AbfJQLCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 07:02:32 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:52506 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393253AbfJQLCc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 07:01:28 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iL3X1-0006fC-Ma; Thu, 17 Oct 2019 13:01:23 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 379671C009F;
-        Thu, 17 Oct 2019 13:01:23 +0200 (CEST)
-Date:   Thu, 17 Oct 2019 11:01:23 -0000
-From:   "tip-bot2 for Zhenzhong Duan" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/boot/acpi: Move get_cmdline_acpi_rsdp() under
- #ifdef guard
-Cc:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <1569719633-32164-1-git-send-email-zhenzhong.duan@oracle.com>
-References: <1569719633-32164-1-git-send-email-zhenzhong.duan@oracle.com>
+        Thu, 17 Oct 2019 07:02:32 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iL3Y3-0002YT-Ar; Thu, 17 Oct 2019 12:02:27 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iL3Y2-00082E-TZ; Thu, 17 Oct 2019 12:02:26 +0100
+From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] gfs2: make gfs2_fs_parameters static
+Date:   Thu, 17 Oct 2019 12:02:25 +0100
+Message-Id: <20191017110225.30841-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Message-ID: <157131008302.29376.13454551774742695304.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/urgent branch of tip:
+The gfs2_fs_parameters is not used outside the unit
+it is declared in, so make it static.
 
-Commit-ID:     c83672e12b98de42bc4549d806588fc3955f8935
-Gitweb:        https://git.kernel.org/tip/c83672e12b98de42bc4549d806588fc3955f8935
-Author:        Zhenzhong Duan <zhenzhong.duan@oracle.com>
-AuthorDate:    Sun, 29 Sep 2019 09:13:52 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 17 Oct 2019 12:55:49 +02:00
+Fixes the following sparse warning:
 
-x86/boot/acpi: Move get_cmdline_acpi_rsdp() under #ifdef guard
+fs/gfs2/ops_fstype.c:1331:39: warning: symbol 'gfs2_fs_parameters' was not declared. Should it be static?
 
-When building with "EXTRA_CFLAGS=-Wall" gcc warns:
-
-arch/x86/boot/compressed/acpi.c:29:30: warning: get_cmdline_acpi_rsdp defined but not used [-Wunused-function]
-
-get_cmdline_acpi_rsdp() is only used when CONFIG_RANDOMIZE_BASE and
-CONFIG_MEMORY_HOTREMOVE are both enabled, so any build where one of these
-config options is disabled has this issue.
-
-Move the function under the same ifdef guard as the call site.
-
-[ tglx: Add context to the changelog so it becomes useful ]
-
-Fixes: 41fa1ee9c6d6 ("acpi: Ignore acpi_rsdp kernel param when the kernel has been locked down")
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/1569719633-32164-1-git-send-email-zhenzhong.duan@oracle.com
-
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- arch/x86/boot/compressed/acpi.c | 48 ++++++++++++++++----------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+Cc: Bob Peterson <rpeterso@redhat.com>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: cluster-devel@redhat.com
+Cc: linux-kernel@vger.kernel.org
+---
+ fs/gfs2/ops_fstype.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-index 149795c..25019d4 100644
---- a/arch/x86/boot/compressed/acpi.c
-+++ b/arch/x86/boot/compressed/acpi.c
-@@ -21,30 +21,6 @@
- struct mem_vector immovable_mem[MAX_NUMNODES*2];
+diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+index 681b44682b0d..ebdef1c5f580 100644
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -1328,7 +1328,7 @@ static const struct fs_parameter_enum gfs2_param_enums[] = {
+ 	{}
+ };
  
- /*
-- * Max length of 64-bit hex address string is 19, prefix "0x" + 16 hex
-- * digits, and '\0' for termination.
-- */
--#define MAX_ADDR_LEN 19
--
--static acpi_physical_address get_cmdline_acpi_rsdp(void)
--{
--	acpi_physical_address addr = 0;
--
--#ifdef CONFIG_KEXEC
--	char val[MAX_ADDR_LEN] = { };
--	int ret;
--
--	ret = cmdline_find_option("acpi_rsdp", val, MAX_ADDR_LEN);
--	if (ret < 0)
--		return 0;
--
--	if (kstrtoull(val, 16, &addr))
--		return 0;
--#endif
--	return addr;
--}
--
--/*
-  * Search EFI system tables for RSDP.  If both ACPI_20_TABLE_GUID and
-  * ACPI_TABLE_GUID are found, take the former, which has more features.
-  */
-@@ -298,6 +274,30 @@ acpi_physical_address get_rsdp_addr(void)
- }
- 
- #if defined(CONFIG_RANDOMIZE_BASE) && defined(CONFIG_MEMORY_HOTREMOVE)
-+/*
-+ * Max length of 64-bit hex address string is 19, prefix "0x" + 16 hex
-+ * digits, and '\0' for termination.
-+ */
-+#define MAX_ADDR_LEN 19
-+
-+static acpi_physical_address get_cmdline_acpi_rsdp(void)
-+{
-+	acpi_physical_address addr = 0;
-+
-+#ifdef CONFIG_KEXEC
-+	char val[MAX_ADDR_LEN] = { };
-+	int ret;
-+
-+	ret = cmdline_find_option("acpi_rsdp", val, MAX_ADDR_LEN);
-+	if (ret < 0)
-+		return 0;
-+
-+	if (kstrtoull(val, 16, &addr))
-+		return 0;
-+#endif
-+	return addr;
-+}
-+
- /* Compute SRAT address from RSDP. */
- static unsigned long get_acpi_srat_table(void)
- {
+-const struct fs_parameter_description gfs2_fs_parameters = {
++static const struct fs_parameter_description gfs2_fs_parameters = {
+ 	.name = "gfs2",
+ 	.specs = gfs2_param_specs,
+ 	.enums = gfs2_param_enums,
+-- 
+2.23.0
+
