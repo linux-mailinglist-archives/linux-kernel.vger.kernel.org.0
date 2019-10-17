@@ -2,103 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79BC9DB75A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 21:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 271D1DB787
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 21:31:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407161AbfJQTVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 15:21:07 -0400
-Received: from mga12.intel.com ([192.55.52.136]:22068 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727397AbfJQTVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 15:21:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2019 12:21:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,308,1566889200"; 
-   d="scan'208";a="397690533"
-Received: from marshy.an.intel.com ([10.122.105.159])
-  by fmsmga006.fm.intel.com with ESMTP; 17 Oct 2019 12:21:06 -0700
-From:   richard.gong@linux.intel.com
-To:     dinguyen@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     richard.gong@linux.intel.com, Richard Gong <richard.gong@intel.com>
-Subject: [PATCHv1] arm64: dts: agilex: add service layer, fpga manager and fpga region
-Date:   Thu, 17 Oct 2019 14:34:40 -0500
-Message-Id: <1571340880-18421-1-git-send-email-richard.gong@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S2394400AbfJQTbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 15:31:53 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:41016 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387844AbfJQTbw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 15:31:52 -0400
+Received: from localhost (unknown [IPv6:2603:3023:50c:85e1:5314:1b70:2a53:887e])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8CD2614049CCB;
+        Thu, 17 Oct 2019 12:31:51 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 15:31:50 -0400 (EDT)
+Message-Id: <20191017.153150.1433354673381849692.davem@davemloft.net>
+To:     ben.dooks@codethink.co.uk
+Cc:     linux-kernel@lists.codethink.co.uk, peppe.cavallaro@st.com,
+        alexandre.torgue@st.com, joabreu@synopsys.com,
+        mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: stmmac: fix argument to stmmac_pcs_ctrl_ane()
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20191016082205.26899-1-ben.dooks@codethink.co.uk>
+References: <20191016082205.26899-1-ben.dooks@codethink.co.uk>
+X-Mailer: Mew version 6.8 on Emacs 26.2
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 17 Oct 2019 12:31:52 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Gong <richard.gong@intel.com>
+From: "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+Date: Wed, 16 Oct 2019 09:22:05 +0100
 
-Add service layer, fpga manager and fpga region to the device tree
-on Intel Agilex platform.
+> The stmmac_pcs_ctrl_ane() expects a register address as
+> argument 1, but for some reason the mac_device_info is
+> being passed.
+> 
+> Fix the warning (and possible bug) from sparse:
+> 
+> drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:2613:17: warning: incorrect type in argument 1 (different address spaces)
+> drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:2613:17:    expected void [noderef] <asn:2> *ioaddr
+> drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:2613:17:    got struct mac_device_info *hw
+> 
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-Signed-off-by: Richard Gong <richard.gong@intel.com>
----
- arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 32 +++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-index 36abc25..94090c6 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-@@ -12,6 +12,19 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		service_reserved: svcbuffer@0 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x0 0x0 0x0 0x1000000>;
-+			alignment = <0x1000>;
-+			no-map;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -81,6 +94,13 @@
- 		interrupt-parent = <&intc>;
- 		ranges = <0 0 0 0xffffffff>;
- 
-+		base_fpga_region {
-+			#address-cells = <0x1>;
-+			#size-cells = <0x1>;
-+			compatible = "fpga-region";
-+			fpga-mgr = <&fpga_mgr>;
-+		};
-+
- 		gmac0: ethernet@ff800000 {
- 			compatible = "altr,socfpga-stmmac", "snps,dwmac-3.74a", "snps,dwmac";
- 			reg = <0xff800000 0x2000>;
-@@ -442,5 +462,17 @@
- 
- 			status = "disabled";
- 		};
-+
-+		firmware {
-+			svc {
-+				compatible = "intel,stratix10-svc";
-+				method = "smc";
-+				memory-region = <&service_reserved>;
-+
-+				fpga_mgr: fpga-mgr {
-+					compatible = "intel,stratix10-soc-fpga-mgr";
-+				};
-+			};
-+		};
- 	};
- };
--- 
-2.7.4
-
+Applied, thanks.
