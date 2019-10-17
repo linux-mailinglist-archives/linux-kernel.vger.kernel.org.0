@@ -2,131 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB7C4DB79F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 21:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB377DB7B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 21:40:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394569AbfJQThh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 15:37:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44550 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727148AbfJQThg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 15:37:36 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8261320640;
-        Thu, 17 Oct 2019 19:37:35 +0000 (UTC)
-Date:   Thu, 17 Oct 2019 15:37:33 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] libtraceevent: perf script -g python segfaults
-Message-ID: <20191017153733.630cd5eb@gandalf.local.home>
-In-Reply-To: <20191017192832.GB3600@kernel.org>
-References: <20191017154205.GC8974@kernel.org>
-        <20191017143841.317b26b5@gandalf.local.home>
-        <20191017144114.48e25298@gandalf.local.home>
-        <20191017192832.GB3600@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2439723AbfJQTjp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 15:39:45 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45046 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730180AbfJQTjp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 15:39:45 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iLBcc-0006ez-Se; Thu, 17 Oct 2019 19:39:43 +0000
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     linux-scsi@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [RFC PATCH 1/8] sg_ioctl(): fix copyout handling
+Date:   Thu, 17 Oct 2019 20:39:18 +0100
+Message-Id: <20191017193925.25539-1-viro@ZenIV.linux.org.uk>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191017193659.GA18702@ZenIV.linux.org.uk>
+References: <20191017193659.GA18702@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Oct 2019 16:28:32 -0300
-Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-> Em Thu, Oct 17, 2019 at 02:41:14PM -0400, Steven Rostedt escreveu:
-> > On Thu, 17 Oct 2019 14:38:41 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> >   
-> > >  struct tep_event *trace_find_next_event(struct tep_handle *pevent,
-> > >  					struct tep_event *event)
-> > >  {
-> > > +	static struct tep_event **all_events;
-> > >  	static int idx;
-> > >  	int events_count;
-> > > -	struct tep_event *all_events;  
-> > 
-> > If we are going to use static variables, let's make them all static and
-> > optimize it a little more...  
-> 
-> I'll test it, but can't you have this somewhere else, i.e. at
-> tep_handle perhaps?
-> 
->
+First of all, __put_user() can fail with access_ok() succeeding.
+And access_ok() + __copy_to_user() is spelled copy_to_user()...
 
-Or we can nuke the function entirely, it's a rather silly helper
-anyway. Just do this:
+__put_user() *can* fail with access_ok() succeeding...
 
--- Steve
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ drivers/scsi/sg.c | 43 ++++++++++++++++---------------------------
+ 1 file changed, 16 insertions(+), 27 deletions(-)
 
-
-diff --git a/tools/perf/util/scripting-engines/trace-event-perl.c b/tools/perf/util/scripting-engines/trace-event-perl.c
-index b93f36b887b5..f1d5f564aa46 100644
---- a/tools/perf/util/scripting-engines/trace-event-perl.c
-+++ b/tools/perf/util/scripting-engines/trace-event-perl.c
-@@ -537,10 +537,11 @@ static int perl_stop_script(void)
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index cce757506383..634460421ce4 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -963,26 +963,21 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ 	case SG_GET_LOW_DMA:
+ 		return put_user((int) sdp->device->host->unchecked_isa_dma, ip);
+ 	case SG_GET_SCSI_ID:
+-		if (!access_ok(p, sizeof (sg_scsi_id_t)))
+-			return -EFAULT;
+-		else {
+-			sg_scsi_id_t __user *sg_idp = p;
++		{
++			sg_scsi_id_t v;
  
- static int perl_generate_script(struct tep_handle *pevent, const char *outfile)
- {
-+	int i, not_first, count, nr_events;
-+	struct tep_event **all_events;
- 	struct tep_event *event = NULL;
- 	struct tep_format_field *f;
- 	char fname[PATH_MAX];
--	int not_first, count;
- 	FILE *ofp;
+ 			if (atomic_read(&sdp->detaching))
+ 				return -ENODEV;
+-			__put_user((int) sdp->device->host->host_no,
+-				   &sg_idp->host_no);
+-			__put_user((int) sdp->device->channel,
+-				   &sg_idp->channel);
+-			__put_user((int) sdp->device->id, &sg_idp->scsi_id);
+-			__put_user((int) sdp->device->lun, &sg_idp->lun);
+-			__put_user((int) sdp->device->type, &sg_idp->scsi_type);
+-			__put_user((short) sdp->device->host->cmd_per_lun,
+-				   &sg_idp->h_cmd_per_lun);
+-			__put_user((short) sdp->device->queue_depth,
+-				   &sg_idp->d_queue_depth);
+-			__put_user(0, &sg_idp->unused[0]);
+-			__put_user(0, &sg_idp->unused[1]);
++			memset(&v, 0, sizeof(v));
++			v.host_no = sdp->device->host->host_no;
++			v.channel = sdp->device->channel;
++			v.scsi_id = sdp->device->id;
++			v.lun = sdp->device->lun;
++			v.scsi_type = sdp->device->type;
++			v.h_cmd_per_lun = sdp->device->host->cmd_per_lun;
++			v.d_queue_depth = sdp->device->queue_depth;
++			if (copy_to_user(p, &v, sizeof(sg_scsi_id_t)))
++				return -EFAULT;
+ 			return 0;
+ 		}
+ 	case SG_SET_FORCE_PACK_ID:
+@@ -992,20 +987,16 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ 		sfp->force_packid = val ? 1 : 0;
+ 		return 0;
+ 	case SG_GET_PACK_ID:
+-		if (!access_ok(ip, sizeof (int)))
+-			return -EFAULT;
+ 		read_lock_irqsave(&sfp->rq_list_lock, iflags);
+ 		list_for_each_entry(srp, &sfp->rq_list, entry) {
+ 			if ((1 == srp->done) && (!srp->sg_io_owned)) {
+ 				read_unlock_irqrestore(&sfp->rq_list_lock,
+ 						       iflags);
+-				__put_user(srp->header.pack_id, ip);
+-				return 0;
++				return put_user(srp->header.pack_id, ip);
+ 			}
+ 		}
+ 		read_unlock_irqrestore(&sfp->rq_list_lock, iflags);
+-		__put_user(-1, ip);
+-		return 0;
++		return put_user(-1, ip);
+ 	case SG_GET_NUM_WAITING:
+ 		read_lock_irqsave(&sfp->rq_list_lock, iflags);
+ 		val = 0;
+@@ -1073,9 +1064,7 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ 		val = (sdp->device ? 1 : 0);
+ 		return put_user(val, ip);
+ 	case SG_GET_REQUEST_TABLE:
+-		if (!access_ok(p, SZ_SG_REQ_INFO * SG_MAX_QUEUE))
+-			return -EFAULT;
+-		else {
++		{
+ 			sg_req_info_t *rinfo;
  
- 	sprintf(fname, "%s.pl", outfile);
-@@ -601,8 +602,11 @@ sub print_backtrace\n\
- }\n\n\
- ");
- 
-+	nr_events = tep_get_events_count(pevent);
-+	all_events = tep_list_events(pevent, TEP_EVENT_SORT_ID);
- 
--	while ((event = trace_find_next_event(pevent, event))) {
-+	for (i = 0; all_events && i < nr_events; i++) {
-+		event = all_events[i];
- 		fprintf(ofp, "sub %s::%s\n{\n", event->system, event->name);
- 		fprintf(ofp, "\tmy (");
- 
-diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
-index 87ef16a1b17e..2a148a10d0de 100644
---- a/tools/perf/util/scripting-engines/trace-event-python.c
-+++ b/tools/perf/util/scripting-engines/trace-event-python.c
-@@ -1590,10 +1590,11 @@ static int python_stop_script(void)
- 
- static int python_generate_script(struct tep_handle *pevent, const char *outfile)
- {
-+	int i, not_first, count, nr_events;
-+	struct tep_event **all_events;
- 	struct tep_event *event = NULL;
- 	struct tep_format_field *f;
- 	char fname[PATH_MAX];
--	int not_first, count;
- 	FILE *ofp;
- 
- 	sprintf(fname, "%s.py", outfile);
-@@ -1638,7 +1639,11 @@ static int python_generate_script(struct tep_handle *pevent, const char *outfile
- 	fprintf(ofp, "def trace_end():\n");
- 	fprintf(ofp, "\tprint(\"in trace_end\")\n\n");
- 
--	while ((event = trace_find_next_event(pevent, event))) {
-+	nr_events = tep_get_events_count(pevent);
-+	all_events = tep_list_events(pevent, TEP_EVENT_SORT_ID);
-+
-+	for (i = 0; all_events && i < nr_events; i++) {
-+		event = all_events[i];
- 		fprintf(ofp, "def %s__%s(", event->system, event->name);
- 		fprintf(ofp, "event_name, ");
- 		fprintf(ofp, "context, ");
-
+ 			rinfo = kcalloc(SG_MAX_QUEUE, SZ_SG_REQ_INFO,
+@@ -1085,7 +1074,7 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ 			read_lock_irqsave(&sfp->rq_list_lock, iflags);
+ 			sg_fill_request_table(sfp, rinfo);
+ 			read_unlock_irqrestore(&sfp->rq_list_lock, iflags);
+-			result = __copy_to_user(p, rinfo,
++			result = copy_to_user(p, rinfo,
+ 						SZ_SG_REQ_INFO * SG_MAX_QUEUE);
+ 			result = result ? -EFAULT : 0;
+ 			kfree(rinfo);
+-- 
+2.11.0
 
