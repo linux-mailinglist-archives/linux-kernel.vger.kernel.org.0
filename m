@@ -2,77 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3EA6DFA1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 03:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2FFDDFA26
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 03:32:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730630AbfJVB2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 21:28:47 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56574 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728375AbfJVB2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 21:28:46 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 50F3582028846B661488;
-        Tue, 22 Oct 2019 09:28:43 +0800 (CST)
-Received: from [127.0.0.1] (10.74.191.121) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Tue, 22 Oct 2019
- 09:28:40 +0800
-Subject: Re: [PATCH RFC] net: vlan: reverse 4 bytes of vlan header when
- setting initial MTU
-To:     David Laight <David.Laight@ACULAB.COM>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC:     "dsahern@gmail.com" <dsahern@gmail.com>,
-        "jiri@mellanox.com" <jiri@mellanox.com>,
-        "allison@lohutok.net" <allison@lohutok.net>,
-        "mmanning@vyatta.att-mail.com" <mmanning@vyatta.att-mail.com>,
-        "petrm@mellanox.com" <petrm@mellanox.com>,
-        "dcaratti@redhat.com" <dcaratti@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1571660763-117936-1-git-send-email-linyunsheng@huawei.com>
- <8f07f4aad98e44358b92e1e340df131f@AcuMS.aculab.com>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <710cc020-f411-38ad-a9c4-3f44957645f5@huawei.com>
-Date:   Tue, 22 Oct 2019 09:28:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1730688AbfJVBcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 21:32:36 -0400
+Received: from mail.keramplus.com ([212.3.124.226]:38310 "EHLO
+        trixbox1.localdomain" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727953AbfJVBcf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 21:32:35 -0400
+Received: from Shop01 (trixbox1.localdomain [127.0.0.1])
+        by trixbox1.localdomain (Postfix) with SMTP id 3A951ADD522;
+        Fri, 18 Oct 2019 05:47:35 +0300 (EEST)
+Received: from [188.248.139.43] by Shop01 with ESMTP id FF401C260A5; Thu, 17 Oct 2019 23:42:46 -0400
+Message-ID: <5--j976$mi8572zdn5p45-lx4h6o@ujd5.kn30x4b>
+From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+To:     johncurrie1936@hotmail.co.uk
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Date:   Thu, 17 Oct 19 23:42:46 GMT
+X-Mailer: The Bat! (v1.52f) Business
 MIME-Version: 1.0
-In-Reply-To: <8f07f4aad98e44358b92e1e340df131f@AcuMS.aculab.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.191.121]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/alternative;
+        boundary="959EAA.C7CE."
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/10/21 22:46, David Laight wrote:
-> From: Yunsheng Lin
->> Sent: 21 October 2019 13:26
->> Currently the MTU of vlan netdevice is set to the same MTU
->> of the lower device, which requires the underlying device
->> to handle it as the comment has indicated:
->>
->> 	/* need 4 bytes for extra VLAN header info,
->> 	 * hope the underlying device can handle it.
->> 	 */
->> 	new_dev->mtu = real_dev->mtu;
->>
->> Currently most of the physical netdevs seems to handle above
->> by reversing 2 * VLAN_HLEN for L2 packet len.
-> 
-> s/reverse/reserve/g
 
-Thanks.
+--959EAA.C7CE.
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-> 
-> 
-> .
-> 
+Greetings
+
+My name is Barrister Hans Erich.
+
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
+
+Your full names ---------
+
+
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+
+--959EAA.C7CE.--
 
