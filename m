@@ -2,91 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56507DA762
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 10:28:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E663ADA734
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 10:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439182AbfJQI2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 04:28:22 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41500 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391402AbfJQI2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 04:28:21 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 08DF78AE15FCECDED770;
-        Thu, 17 Oct 2019 16:28:20 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 17 Oct 2019 16:28:18 +0800
-From:   Daode Huang <huangdaode@hisilicon.com>
-To:     <jason@lakedaemon.net>, <andrew@lunn.ch>,
-        <gregory.clement@bootlin.com>, <sebastian.hesselbarth@gmail.com>,
-        <tglx@linutronix.de>, <maz@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <nm@ti.com>, <t-kristo@ti.com>, <ssantosh@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH] irqchip: remove redundant semicolon after while
-Date:   Thu, 17 Oct 2019 16:25:29 +0800
-Message-ID: <1571300729-38822-1-git-send-email-huangdaode@hisilicon.com>
-X-Mailer: git-send-email 2.8.1
+        id S2408237AbfJQIZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 04:25:51 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51732 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390082AbfJQIZv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 04:25:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lwJxn9QBi3wt/6dfD+wqzvEQfXxlMoAjM2J8+Itpyoc=; b=sSSWDSRcexzsb2xf3aHmyAa/I
+        XdhMJr2FL9dMfRcV5eKO/MagVWWOrIvZbGSJXNW0SLqxvIdM/NCDx57wIkYqRp+IXs0tOAEkqbA+Y
+        dy3ngfwqYaQM4xrLHrZuKTZ9wUvSt1RiglPDvEjwSf/08yUBS5CDYqveFN9dbPKgunTc922e5+Fcl
+        hy1YaPnHMu83yHVytxJPSwUk9PG1tjSZpBVOF4ET9J4Qm7TLPsTQL/86ijbvnRz7p5BTqs7UUn6NB
+        1RoH4GNNGwCtlOrRioGrsluOS6klVyndyCFOldqmUOMjl+u7gPgApGNCQpYj0jFPaKdDhSyNdcRLM
+        VUSdGsvxw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iL16J-0003yN-QC; Thu, 17 Oct 2019 08:25:40 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 32BAE304637;
+        Thu, 17 Oct 2019 10:24:42 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7311F200DE9E1; Thu, 17 Oct 2019 10:25:37 +0200 (CEST)
+Date:   Thu, 17 Oct 2019 10:25:37 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Douglas Raillard <douglas.raillard@arm.com>
+Cc:     Patrick Bellasi <patrick.bellasi@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH] sched/fair: util_est: fast ramp-up EWMA on utilization
+ increases
+Message-ID: <20191017082537.GX2328@hirez.programming.kicks-ass.net>
+References: <20190620150555.15717-1-patrick.bellasi@arm.com>
+ <CAKfTPtDTfyBvfwE6_gtjxJoPNS6YGQ7rrLcjg_M-jr=YSc+FNA@mail.gmail.com>
+ <20190628100751.lpcwsouacsi2swkm@e110439-lin>
+ <20190628123800.GS3419@hirez.programming.kicks-ass.net>
+ <20190628140057.7aujh2wsk7wtqib3@e110439-lin>
+ <20190802094725.ploqfarz7fj7vrtp@e110439-lin>
+ <20191014145218.GI2328@hirez.programming.kicks-ass.net>
+ <48adc956-77a4-e293-29d9-cd8b82a40ae8@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <48adc956-77a4-e293-29d9-cd8b82a40ae8@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-check drivers/irqchip with "make coccicheck M=drivers/irqchip/",
-it will report unneeded semicolon like below, just remove them.
+On Mon, Oct 14, 2019 at 05:16:02PM +0100, Douglas Raillard wrote:
 
-drivers/irqchip/irq-zevio.c:54:2-3: Unneeded semicolon
-drivers/irqchip/irq-gic-v3.c:177:2-3: Unneeded semicolon
-drivers/irqchip/irq-gic-v3.c:234:2-3: Unneeded semicolon
+> random idea: Since these things are much easier to understand by looking at a graph
+> of util over time, we may agree on some mailing-list-friendly way to convey graphs.
 
-Signed-off-by: Daode Huang <huangdaode@hisilicon.com>
----
- drivers/irqchip/irq-gic-v3.c | 4 ++--
- drivers/irqchip/irq-zevio.c  | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+I don't think that this patch warrants something like that. It is fairly
+clear what it does.
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 422664a..58518e5 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -174,7 +174,7 @@ static void gic_do_wait_for_rwp(void __iomem *base)
- 		}
- 		cpu_relax();
- 		udelay(1);
--	};
-+	}
- }
- 
- /* Wait for completion of a distributor change */
-@@ -231,7 +231,7 @@ static void gic_enable_redist(bool enable)
- 			break;
- 		cpu_relax();
- 		udelay(1);
--	};
-+	}
- 	if (!count)
- 		pr_err_ratelimited("redistributor failed to %s...\n",
- 				   enable ? "wakeup" : "sleep");
-diff --git a/drivers/irqchip/irq-zevio.c b/drivers/irqchip/irq-zevio.c
-index 5a7efeb..84163f1 100644
---- a/drivers/irqchip/irq-zevio.c
-+++ b/drivers/irqchip/irq-zevio.c
-@@ -51,7 +51,7 @@ static void __exception_irq_entry zevio_handle_irq(struct pt_regs *regs)
- 	while (readl(zevio_irq_io + IO_STATUS)) {
- 		irqnr = readl(zevio_irq_io + IO_CURRENT);
- 		handle_domain_irq(zevio_irq_domain, irqnr, regs);
--	};
-+	}
- }
- 
- static void __init zevio_init_irq_base(void __iomem *base)
--- 
-2.8.1
+For other stuff, maybe.
+
+> For example, a simple CSV with:
+> * before/after delimiters (line of # or =)
+> * graph title
+> * one point per signal transition, so that it can be plotted with gnuplot style "steps" or matplotlib drawstyle='steps-post'
+> * consistent column names:
+>    - time: in seconds (scientific notation for nanoseconds)
+>    - activation: 1 when the task is actually running, 0 otherwise
+>     (so it can be turned into transparent coloured bands like using gnuplot filledcurves, like in [1])
+>    - util: util_avg of the task being talked about
+> 
+> The delimiters allow writing a scripts to render graphs directly out of an mbox file or ML archive URL.
+> This won't solve the issue for the commit message itself, but that may ease the ML discussions.
+
+Something like that could work; mutt can easily pipe emails into
+scripts. OTOH gnuplot also has ASCII output, so one can easily stick
+something like that into email.
 
