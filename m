@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46F68DAD43
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:50:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2BFADAD36
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:50:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390086AbfJQMun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 08:50:43 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:59920 "EHLO huawei.com"
+        id S2439746AbfJQMu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 08:50:29 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4207 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2502626AbfJQMsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:48:31 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B4EFF685EF95C51EF687;
-        Thu, 17 Oct 2019 20:48:29 +0800 (CST)
+        id S2502668AbfJQMsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 08:48:39 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C0D9B979CB2B58CDF78E;
+        Thu, 17 Oct 2019 20:48:34 +0800 (CST)
 Received: from localhost (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
  (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
- 20:48:19 +0800
+ 20:48:26 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <linus.walleij@linaro.org>, <manivannan.sadhasivam@linaro.org>,
         <afaerber@suse.de>, <f.fainelli@gmail.com>, <rjui@broadcom.com>,
@@ -34,9 +34,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <haojian.zhuang@gmail.com>, <wens@csie.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <agross@kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 07/30] pinctrl: ns2: use devm_platform_ioremap_resource() to simplify code
-Date:   Thu, 17 Oct 2019 20:26:17 +0800
-Message-ID: <20191017122640.22976-8-yuehaibing@huawei.com>
+Subject: [PATCH -next 10/30] pinctrl: tegra: use devm_platform_ioremap_resource() to simplify code
+Date:   Thu, 17 Oct 2019 20:26:20 +0800
+Message-ID: <20191017122640.22976-11-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20191017122640.22976-1-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
@@ -54,33 +54,46 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/bcm/pinctrl-ns2-mux.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/pinctrl/tegra/pinctrl-tegra-xusb.c | 4 +---
+ drivers/pinctrl/tegra/pinctrl-tegra.c      | 3 +--
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-index 9fabc45..32f268f 100644
---- a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-+++ b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-@@ -1042,8 +1042,7 @@ static int ns2_pinmux_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, pinctrl);
- 	spin_lock_init(&pinctrl->lock);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
+index f2fa1f7..6f7b376 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
+@@ -873,7 +873,6 @@ int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_xusb_padctl *padctl;
+ 	const struct of_device_id *match;
+-	struct resource *res;
+ 	struct phy *phy;
+ 	int err;
+ 
+@@ -894,8 +893,7 @@ int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev)
+ 	match = of_match_node(tegra_xusb_padctl_of_match, pdev->dev.of_node);
+ 	padctl->soc = match->data;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pinctrl->base0 = devm_ioremap_resource(&pdev->dev, res);
-+	pinctrl->base0 = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pinctrl->base0))
- 		return PTR_ERR(pinctrl->base0);
+-	padctl->regs = devm_ioremap_resource(&pdev->dev, res);
++	padctl->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(padctl->regs))
+ 		return PTR_ERR(padctl->regs);
  
-@@ -1057,8 +1056,7 @@ static int ns2_pinmux_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index e9a7cbb..692d8b3 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -781,8 +781,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
  		return -ENOMEM;
+ 
+ 	for (i = 0; i < pmx->nbanks; i++) {
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
++		pmx->regs[i] = devm_platform_ioremap_resource(pdev, i);
+ 		if (IS_ERR(pmx->regs[i]))
+ 			return PTR_ERR(pmx->regs[i]);
  	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	pinctrl->pinconf_base = devm_ioremap_resource(&pdev->dev, res);
-+	pinctrl->pinconf_base = devm_platform_ioremap_resource(pdev, 2);
- 	if (IS_ERR(pinctrl->pinconf_base))
- 		return PTR_ERR(pinctrl->pinconf_base);
- 
 -- 
 2.7.4
 
