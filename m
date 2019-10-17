@@ -2,92 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55634DAAB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 13:00:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43055DAAB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 12:59:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409279AbfJQK7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 06:59:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60834 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409262AbfJQK7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 06:59:48 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 257CE8AC700;
-        Thu, 17 Oct 2019 10:59:48 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CF74F5D71C;
-        Thu, 17 Oct 2019 10:59:45 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 10/10] libperf: Add pr_err macro
-Date:   Thu, 17 Oct 2019 12:59:18 +0200
-Message-Id: <20191017105918.20873-11-jolsa@kernel.org>
-In-Reply-To: <20191017105918.20873-1-jolsa@kernel.org>
-References: <20191017105918.20873-1-jolsa@kernel.org>
+        id S2409258AbfJQK7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 06:59:46 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41679 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2409238AbfJQK7n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 06:59:43 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 092D6801B4; Thu, 17 Oct 2019 12:59:24 +0200 (CEST)
+Date:   Thu, 17 Oct 2019 12:59:40 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 4.19 56/81] kernel/sysctl.c: do not override max_threads
+ provided by userspace
+Message-ID: <20191017105940.GA5966@amd>
+References: <20191016214805.727399379@linuxfoundation.org>
+ <20191016214842.621065901@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Thu, 17 Oct 2019 10:59:48 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
+Content-Disposition: inline
+In-Reply-To: <20191016214842.621065901@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And missing include for "perf/core.h" header, which provides
-LIBPERF_* debug levels and adding missing pr_err support.
 
-Link: http://lkml.kernel.org/n/tip-sgq5yeyvitp655s2iq3e75ls@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/lib/include/perf/core.h | 1 +
- tools/perf/lib/internal.h          | 3 +++
- 2 files changed, 4 insertions(+)
+--rwEMma7ioTxnRzrJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/perf/lib/include/perf/core.h b/tools/perf/lib/include/perf/core.h
-index 2a80e4b6f819..a3f6d68edad7 100644
---- a/tools/perf/lib/include/perf/core.h
-+++ b/tools/perf/lib/include/perf/core.h
-@@ -9,6 +9,7 @@
- #endif
- 
- enum libperf_print_level {
-+	LIBPERF_ERR,
- 	LIBPERF_WARN,
- 	LIBPERF_INFO,
- 	LIBPERF_DEBUG,
-diff --git a/tools/perf/lib/internal.h b/tools/perf/lib/internal.h
-index 37db745e1502..2c27e158de6b 100644
---- a/tools/perf/lib/internal.h
-+++ b/tools/perf/lib/internal.h
-@@ -2,6 +2,8 @@
- #ifndef __LIBPERF_INTERNAL_H
- #define __LIBPERF_INTERNAL_H
- 
-+#include <perf/core.h>
-+
- void libperf_print(enum libperf_print_level level,
- 		   const char *format, ...)
- 	__attribute__((format(printf, 2, 3)));
-@@ -11,6 +13,7 @@ do {                            \
- 	libperf_print(level, "libperf: " fmt, ##__VA_ARGS__);     \
- } while (0)
- 
-+#define pr_err(fmt, ...)        __pr(LIBPERF_ERR, fmt, ##__VA_ARGS__)
- #define pr_warning(fmt, ...)    __pr(LIBPERF_WARN, fmt, ##__VA_ARGS__)
- #define pr_info(fmt, ...)       __pr(LIBPERF_INFO, fmt, ##__VA_ARGS__)
- #define pr_debug(fmt, ...)      __pr(LIBPERF_DEBUG, fmt, ##__VA_ARGS__)
--- 
-2.21.0
+Hi!
 
+> From: Michal Hocko <mhocko@suse.com>
+>=20
+> commit b0f53dbc4bc4c371f38b14c391095a3bb8a0bb40 upstream.
+>=20
+> Partially revert 16db3d3f1170 ("kernel/sysctl.c: threads-max observe
+> limits") because the patch is causing a regression to any workload which
+> needs to override the auto-tuning of the limit provided by kernel.
+>=20
+> set_max_threads is implementing a boot time guesstimate to provide a
+> sensible limit of the concurrently running threads so that runaways will
+> not deplete all the memory.  This is a good thing in general but there
+> are workloads which might need to increase this limit for an application
+> to run (reportedly WebSpher MQ is affected) and that is simply not
+> possible after the mentioned change.  It is also very dubious to
+> override an admin decision by an estimation that doesn't have any direct
+> relation to correctness of the kernel operation.
+>=20
+> Fix this by dropping set_max_threads from sysctl_max_threads so any
+> value is accepted as long as it fits into MAX_THREADS which is important
+> to check because allowing more threads could break internal robust futex
+> restriction.  While at it, do not use MIN_THREADS as the lower boundary
+> because it is also only a heuristic for automatic estimation and admin
+> might have a good reason to stop new threads to be created even when
+> below this limit.
+
+Ok, why not, but I smell followup work could be done:
+
+> @@ -2635,7 +2635,7 @@ int sysctl_max_threads(struct ctl_table
+>  	if (ret || !write)
+>  		return ret;
+> =20
+> -	set_max_threads(threads);
+> +	max_threads =3D threads;
+> =20
+
+AFAICT set_max_threads can now become __init.
+
+Plus, I don't see any locking here, should this be WRITE_ONCE() at
+minimum?
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--rwEMma7ioTxnRzrJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXahJnAAKCRAw5/Bqldv6
+8nnSAJ93EKfZiFpMOP6vxmg0xv4YDaJHZwCfSSzb0+Qy7cL+rT76+htVDXzStUw=
+=uEos
+-----END PGP SIGNATURE-----
+
+--rwEMma7ioTxnRzrJ--
