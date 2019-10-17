@@ -2,94 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 667B4DA4E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 07:06:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78A09DA501
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 07:12:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406310AbfJQFGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 01:06:50 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53592 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394756AbfJQFGt (ORCPT
+        id S2391151AbfJQFL7 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 17 Oct 2019 01:11:59 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:54251 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732590AbfJQFL7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 01:06:49 -0400
-Received: by mail-wm1-f65.google.com with SMTP id i16so1032287wmd.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 22:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pg/p3AMzyR1Wsfbjwo4TUDBEOFDuNcbzBHUL3mVG5Co=;
-        b=2KerGRiawXAcoyU5jZdb0jN3uqQDas6YiYGKblTYiUv++5sGE29UBHO37R2wOlCCtZ
-         jm1ojMM6n32rM3pie09wLOogX4O0RXkPAqYFEDq6Uwk7xGsNnKtXMEbEaJPyciOPDJND
-         tYsluIbhk8k8oFJfwp/k559K1UhuRvKzW2iAXiMW2xfoTimq2EmUZkDpv5jcd/ESQBsI
-         dyxBBN/Xzn6VbtVb8JwD6msoz9CztW1MENjN5mqpPYYGyNE7MtrEQplHxhir+wpTzWFx
-         ZM60i8qRFCWqArLQvGrg6FS4WWepa6fq1oHCZUmUVEJ3eV01qR5DvKFbf+i+LKU1gQOx
-         qSTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=pg/p3AMzyR1Wsfbjwo4TUDBEOFDuNcbzBHUL3mVG5Co=;
-        b=LbFrY2sYpbF6M7PzehyEwW0RLi8ijfIIIC4FcvNk3nHdV4y1MaAuVeYMRlLnSgOaIb
-         TW+rqG62lNnNuhx6/UsESa+12g7wEm76oYL0KCSzKX36aUXeOkJNgvpPdiC0Ui4kLSNb
-         5wdGefvmKlKm6kXyKn1jI611sw9l+/3WHdli/HHvfjW6W933TMoJ8fgqjmdeI3Cnno69
-         w9430BjCNOZoyXN6zceI28NgwMPaW7tWAKL1+ZQ5UJ+JFpzBkhDMD5XuOc2DHDeksZtS
-         R8fCIgZsBhrpO5W0LzvUI5OjeyU0ByGqAnZV57PlmziCM2k/nXXRrsShQ6vZJH3Jtfgv
-         JO1g==
-X-Gm-Message-State: APjAAAVryq9meYuLAOtMmr42DCB5HnBPvpR/Cb0ldtz/6z3r1er3OOW5
-        5pj+lNJyUhOEelpsNvHw+dBKbRLTmzI=
-X-Google-Smtp-Source: APXvYqwsyi5V+5cR6/K2hgajkrfncw2TMPjLW5hIO9IlryAJhwY0DliIR8XdvOONvx2HmfA/ssyQXg==
-X-Received: by 2002:a7b:ce89:: with SMTP id q9mr1071924wmj.2.1571288806246;
-        Wed, 16 Oct 2019 22:06:46 -0700 (PDT)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id b5sm1010762wmj.18.2019.10.16.22.06.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 16 Oct 2019 22:06:45 -0700 (PDT)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        khilman@baylibre.com, mark.rutland@arm.com, robh+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v3 4/4] ARM64: dts: amlogic: adds crypto hardware node
-Date:   Thu, 17 Oct 2019 05:06:26 +0000
-Message-Id: <1571288786-34601-5-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1571288786-34601-1-git-send-email-clabbe@baylibre.com>
-References: <1571288786-34601-1-git-send-email-clabbe@baylibre.com>
+        Thu, 17 Oct 2019 01:11:59 -0400
+Received: from surfer-172-29-2-69-hotspot.internet-for-guests.com (p2E5701B0.dip0.t-ipconnect.de [46.87.1.176])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 28616CECE2;
+        Thu, 17 Oct 2019 07:20:56 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3594.4.19\))
+Subject: Re: [PATCH v2] Bluetooth: hci_core: fix init for HCI_USER_CHANNEL
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20191017032039.18413-1-mkorpershoek@baylibre.com>
+Date:   Thu, 17 Oct 2019 07:11:57 +0200
+Cc:     Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <0B1D4151-BB95-47A6-B062-686DF7362A6B@holtmann.org>
+References: <474814D3-A97F-48D1-8268-3D200BE60795@holtmann.org>
+ <20191017032039.18413-1-mkorpershoek@baylibre.com>
+To:     Mattijs Korpershoek <mkorpershoek@baylibre.com>
+X-Mailer: Apple Mail (2.3594.4.19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the GXL crypto hardware node for all GXL SoCs.
+Hi Mattijs,
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> During the setup() stage, HCI device drivers expect the chip to
+> acknowledge its setup() completion via vendor specific frames.
+> 
+> If userspace opens() such HCI device in HCI_USER_CHANNEL [1] mode,
+> the vendor specific frames are never tranmitted to the driver, as
+> they are filtered in hci_rx_work().
+> 
+> Allow HCI devices which operate in HCI_USER_CHANNEL mode to receive
+> frames if the HCI device is is HCI_INIT state.
+> 
+> [1] https://www.spinics.net/lists/linux-bluetooth/msg37345.html
+> 
+> Fixes: 23500189d7e0 ("Bluetooth: Introduce new HCI socket channel for user operation")
+> Signed-off-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
+> ---
+> Changelog:
+> v2:
+> * change test logic to transfer packets when in INIT phase
+>  for user channel mode as recommended by Marcel
+> * renamed patch from
+>  "Bluetooth: hci_core: fix init with HCI_QUIRK_NON_PERSISTENT_SETUP"
+> 
+> v1:
+> * https://lkml.org/lkml/2019/10/3/2250
+> 
+> Some more background on the change follows:
+> 
+> The Android bluetooth stack (Bluedroid) also has a HAL implementation
+> which follows Linux's standard rfkill interface [1].
+> 
+> This implementation relies on the HCI_CHANNEL_USER feature to get
+> exclusive access to the underlying bluetooth device.
+> 
+> When testing this along with the btkmtksdio driver, the
+> chip appeared unresponsive when calling the following from userspace:
+> 
+>    struct sockaddr_hci addr;
+>    int fd;
+> 
+>    fd = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
+> 
+>    memset(&addr, 0, sizeof(addr));
+>    addr.hci_family = AF_BLUETOOTH;
+>    addr.hci_dev = 0;
+>    addr.hci_channel = HCI_CHANNEL_USER;
+> 
+>    bind(fd, (struct sockaddr *) &addr, sizeof(addr)); # device hangs
+> 
+> In the case of bluetooth drivers exposing QUIRK_NON_PERSISTENT_SETUP
+> such as btmtksdio, setup() is called each multiple times.
+> In particular, when userspace calls bind(), the setup() is called again
+> and vendor specific commands might be send to re-initialize the chip.
+> 
+> Those commands are filtered out by hci_core in HCI_CHANNEL_USER mode,
+> preventing setup() from completing successfully.
+> 
+> This has been tested on a 4.19 kernel based on Android Common Kernel.
+> It has also been compile tested on bluetooth-next.
+> 
+> [1] https://android.googlesource.com/platform/system/bt/+/refs/heads/master/vendor_libs/linux/interface/
+> 
+> net/bluetooth/hci_core.c | 9 ++++++++-
+> 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index 49ff0a7d0210..ed33d8efaf62 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -36,6 +36,16 @@
- 				phys = <&usb3_phy>, <&usb2_phy0>, <&usb2_phy1>;
- 			};
- 		};
-+
-+		crypto: crypto@c883e000 {
-+			compatible = "amlogic,gxl-crypto";
-+			reg = <0x0 0xc883e000 0x0 0x36>;
-+			interrupts = <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&clkc CLKID_BLKMV>;
-+			clock-names = "blkmv";
-+			status = "okay";
-+		};
- 	};
- };
- 
--- 
-2.21.0
+patch has been applied to bluetooth-next tree.
+
+Regards
+
+Marcel
 
