@@ -2,92 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 111F8DA2D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 02:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 482A2DA2D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 02:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405384AbfJQAt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 20:49:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37304 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403893AbfJQAt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 20:49:56 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC56420872;
-        Thu, 17 Oct 2019 00:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571273396;
-        bh=IYJzNb9unWNMZK55GWXexB0DpsKeOwmGxuFGk3dxhMA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZF1baU1o3y5gSgLWTM6fEbQK9smKG/HjbhMqyqekJ0qvU5Nm6MbJeLUHCSeNh5w3J
-         tg3gDIAsXqpfhuNrM0faCk4eASmCQYMgKcHSZJkC4YFi7z7U1XUCR6tXGkZFgICAao
-         UECGGb/C/2pSDVkEp9eeIi9yxgwjVWUtPiI79YTw=
-Date:   Wed, 16 Oct 2019 17:49:55 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Vlastimil Babka <vbabka@suse.cz>, <mhocko@kernel.org>,
-        <anshuman.khandual@arm.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, Ira Weiny <ira.weiny@intel.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Subject: Re: [PATCH] mm: Unsigned 'nr_pages' always larger than zero
-Message-Id: <20191016174955.300d5fd4968537151d3ad43f@linux-foundation.org>
-In-Reply-To: <5DA6DDE0.6000804@huawei.com>
-References: <1567592763-25282-1-git-send-email-zhongjiang@huawei.com>
-        <5505fa16-117e-8890-0f48-38555a61a036@suse.cz>
-        <20190904114820.42d9c4daf445ded3d0da52ab@linux-foundation.org>
-        <73c49a1b-4f42-c21d-ccd8-2b063cdf1293@nvidia.com>
-        <5DA6DDE0.6000804@huawei.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S2437781AbfJQAu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 20:50:59 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:48336 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437557AbfJQAu7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 20:50:59 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9H0nutG052563;
+        Thu, 17 Oct 2019 00:50:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=By4QC8NvkiZQGCVliZZ/nz8FB4DfbtEFgjcJVI43lG8=;
+ b=iWx1RJok3PcIWBpLh5TcAWNcwZCDeBPQflcfbOiRXQ4q0pyouDBg82QbRHAKfA0Zw2wg
+ qYEJ8dmNuFSTrI6uEGuqJQ64VZ6w0rBwae+e+r+OLwyODkFoVLlymYnYAfcSjxb+7CX3
+ Jm5mz+lNAyXM09KmD9NBmq2eP+1zsYsIHO8wNbsvvW/y/Fx0QH3DZm75AMVmfOnmxBaF
+ i5KFKZdUnpNHsp94/+ptRK3s/9Kzl8bU+tsjlNiJSgeRE5nzaAKqK8iDhHgh5fj14Ca9
+ yZBG2X/QksyRVcSEjOUgz3168j4vFt8fmb+AuuuVk2pBDONw5NIgrwUwr+ahklAUiqHv Ew== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2vk6sqtr7y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 00:50:21 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9H0mf1v010573;
+        Thu, 17 Oct 2019 00:50:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2vp70nw0sk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 00:50:20 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9H0oBDq022601;
+        Thu, 17 Oct 2019 00:50:11 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 17 Oct 2019 00:50:11 +0000
+Subject: Re: [PATCH V2] mm/page_alloc: Add alloc_contig_pages()
+To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-kernel@vger.kernel.org
+References: <1571223765-10662-1-git-send-email-anshuman.khandual@arm.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <0ce85182-e00c-8748-32f7-89c30b3be35b@oracle.com>
+Date:   Wed, 16 Oct 2019 17:50:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
+MIME-Version: 1.0
+In-Reply-To: <1571223765-10662-1-git-send-email-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910170002
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910170002
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Oct 2019 17:07:44 +0800 zhong jiang <zhongjiang@huawei.com> wrote:
-
-> >> --- a/mm/gup.c~a
-> >> +++ a/mm/gup.c
-> >> @@ -1450,6 +1450,7 @@ static long check_and_migrate_cma_pages(
-> >>       bool drain_allow = true;
-> >>       bool migrate_allow = true;
-> >>       LIST_HEAD(cma_page_list);
-> >> +    long ret;
-> >>     check_again:
-> >>       for (i = 0; i < nr_pages;) {
-> >> @@ -1511,17 +1512,18 @@ check_again:
-> >>            * again migrating any new CMA pages which we failed to isolate
-> >>            * earlier.
-> >>            */
-> >> -        nr_pages = __get_user_pages_locked(tsk, mm, start, nr_pages,
-> >> +        ret = __get_user_pages_locked(tsk, mm, start, nr_pages,
-> >>                              pages, vmas, NULL,
-> >>                              gup_flags);
-> >>   -        if ((nr_pages > 0) && migrate_allow) {
-> >> +        nr_pages = ret;
-> >> +        if (ret > 0 && migrate_allow) {
-> >>               drain_allow = true;
-> >>               goto check_again;
-> >>           }
-> >>       }
-> >>   -    return nr_pages;
-> >> +    return ret;
-> >>   }
-> >>   #else
-> >>   static long check_and_migrate_cma_pages(struct task_struct *tsk,
-> >>
-> >
-> > +1 for this approach, please.
-> >
-> >
-> > thanks,
-> Hi,  Andrew
+On 10/16/19 4:02 AM, Anshuman Khandual wrote:
+> HugeTLB helper alloc_gigantic_page() implements fairly generic allocation
+> method where it scans over various zones looking for a large contiguous pfn
+> range before trying to allocate it with alloc_contig_range(). Other than
+> deriving the requested order from 'struct hstate', there is nothing HugeTLB
+> specific in there. This can be made available for general use to allocate
+> contiguous memory which could not have been allocated through the buddy
+> allocator.
 > 
-> I didn't see the fix for the issue in the upstream. Your proposal should be
-> appiled to upstream. Could you appiled the patch or  repost by me ?
+> alloc_gigantic_page() has been split carving out actual allocation method
+> which is then made available via new alloc_contig_pages() helper wrapped
+> under CONFIG_CONTIG_ALLOC. All references to 'gigantic' have been replaced
+> with more generic term 'contig'. Allocated pages here should be freed with
+> free_contig_range() or by calling __free_page() on each allocated page.
 
-Forgotten about it ;)  Please send a patch sometime?
+I had a 'test harness' used when previously working on such an interface.
+It simply provides a user interface to call the allocator with random
+values for nr_pages.  Several tasks are then started doing random allocations
+in parallel.  The new interface is pretty straight forward, but the idea
+was to stress the underlying code.  In fact, it did identify issues with
+isolation which were corrected.
+
+I exercised this new interface in the same way and am happy to report that
+no issues were detected.
+-- 
+Mike Kravetz
