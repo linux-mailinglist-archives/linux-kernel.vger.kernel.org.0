@@ -2,166 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43200DAD35
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:50:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A4A7DAD57
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:51:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502969AbfJQMuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 08:50:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45654 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390200AbfJQMuQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:50:16 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r5so2184812wrm.12
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 05:50:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=ygJUrHeizd9soeqee037mfyqgWGQb7tTFo0uEUNXPNo=;
-        b=GdzCP+qrRx7X03MCzNbH+t4tSOqxx98Bbl77dESsq1pFC2ct6lL0JN8cKoKsxVZguG
-         ZwV2uIlL6I47BjTGEOY5kwsL/1dWBT/IaiKg/ddhW1/5x/bG2GjokGA7FRPyB+oXi0OC
-         H/8Rjpe0J5sX7Bj25vas8rjkO2A7b4GxHeOoW4sTd4x04IaQdGfRM5rW6s10bGDvcnSz
-         o2fmcqY+iV7zUwqVV70QjG5rZe9KbS5z9ln/BwJW/zmwNBVJ52ktgPlLbenoFHR0YG7K
-         K8DzTU5xXgQEs92f3p8V6jGfeO4oSyNogcSJFRayzrbdCWy95pPCuTJtY31Qw2P7k4vE
-         O7Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=ygJUrHeizd9soeqee037mfyqgWGQb7tTFo0uEUNXPNo=;
-        b=RQxWYvcsQ5mX3H60xfxyp2CAYqUSasv+WXfs0YlZcvRGvxK/VP1Jf3NZoebvScPWcH
-         dVxyEsjP5b/W+WoyclCWCXybVbRCg++9QaaLjlflDliOuHtM0GTo7/S5VIGb+AEoO7sv
-         2JUiFSBPQyt9r5072f/7vjdAiRrEiCHxtiTDKN5lZY+tjOnGiiFSO3tmoBYD/JnDRmle
-         n7dnQ8FTCj5ZEmphH3R01NdJJDLdDHp5Vhwd40WCUc6y1EmsYoZ/5WSL9T5Iti+yIIqQ
-         IGnOb8XgTvYyMPbzVVSSJE26VFt1BCQLoO+1rruscoFiMbJzfhzYf1lI2PvY91vysswm
-         f3VA==
-X-Gm-Message-State: APjAAAXKZfaikWQCjbKfYK96LrYlP0I7LQ2n1iXTq/8Snunfk8LploPp
-        BIuPUsL6TFOTa8wXc/KXgnPhkQ==
-X-Google-Smtp-Source: APXvYqzY10mWaWtCCPqEAXcSMAub3xs46hBV9aGzbS+5eDEfN9vTf0Xy9czErg656gVrmD5xr8cEuw==
-X-Received: by 2002:a5d:6651:: with SMTP id f17mr3012347wrw.175.1571316614652;
-        Thu, 17 Oct 2019 05:50:14 -0700 (PDT)
-Received: from [192.168.1.62] (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id h17sm1890100wmb.33.2019.10.17.05.50.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 05:50:14 -0700 (PDT)
-Subject: Re: [PATCH -next 15/30] pinctrl: oxnas: use
- devm_platform_ioremap_resource() to simplify code
-To:     YueHaibing <yuehaibing@huawei.com>, linus.walleij@linaro.org,
-        manivannan.sadhasivam@linaro.org, afaerber@suse.de,
-        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, jesper.nilsson@axis.com,
-        lars.persson@axis.com, ludovic.desroches@microchip.com,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        baruch@tkos.co.il
-Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com,
-        linux-oxnas@groups.io, linux-renesas-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        vz@mleia.com, geert+renesas@glider.be, daniel@zonque.org,
-        haojian.zhuang@gmail.com, wens@csie.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, agross@kernel.org
-References: <20191017122640.22976-1-yuehaibing@huawei.com>
- <20191017122640.22976-16-yuehaibing@huawei.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <2b343ef8-45ac-e7a0-91cc-879980593b27@baylibre.com>
-Date:   Thu, 17 Oct 2019 14:50:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1732055AbfJQMv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 08:51:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726506AbfJQMv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 08:51:27 -0400
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 236C721848;
+        Thu, 17 Oct 2019 12:51:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571316687;
+        bh=sQ+DxCGeQ0mlvpyLnb6FadsDNvc+04AsUqn6blWWlhs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dcSb9ggiRnsWdJzZWetrsxQE3tf92CUwKRmF279d7iYyoX/ufnROXGUEId611zn5Z
+         XodmZEPYum1dM8lqkp1amZwCRyM/C+y3WJM+cgO2Hm43jYddkhAAEyNVz2b2j+588W
+         mNF3xIza28G0eaoa/GNM3l96aCWMF0/zdFsqgz6U=
+Received: by mail-qt1-f178.google.com with SMTP id 3so3400815qta.1;
+        Thu, 17 Oct 2019 05:51:27 -0700 (PDT)
+X-Gm-Message-State: APjAAAXRaOWQwVWNd6EQ3Dbu7+XGpFOBoLkNcYPxv/bbRVOBjuF8mZ9U
+        aPMpr9xjLKrlWinjvNRYXEJjFO2FoAINtvPjMg==
+X-Google-Smtp-Source: APXvYqxeW2IAd2AP8ZW5RbDgGYwFwbonLP6xTHncsjhCwxYv4tAD340Bpzn3T1H3yN6DoLcGfukIvZB8a5TJ6hqbegM=
+X-Received: by 2002:a0c:ed4f:: with SMTP id v15mr3435333qvq.136.1571316686182;
+ Thu, 17 Oct 2019 05:51:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191017122640.22976-16-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191016143142.28854-1-geert+renesas@glider.be>
+ <5da7a675.1c69fb81.a888.0911@mx.google.com> <CAMuHMdXnTOaM+4SUkzpYXNeFbJtaG_kRzFLJRhVPCVNcOUB0qA@mail.gmail.com>
+In-Reply-To: <CAMuHMdXnTOaM+4SUkzpYXNeFbJtaG_kRzFLJRhVPCVNcOUB0qA@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 17 Oct 2019 07:51:15 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL9YPowxntVPax868hi+sN3vgCa2aSSySzjg==--c7aDA@mail.gmail.com>
+Message-ID: <CAL_JsqL9YPowxntVPax868hi+sN3vgCa2aSSySzjg==--c7aDA@mail.gmail.com>
+Subject: Re: [PATCH] of: unittest: Use platform_get_irq_optional() for
+ non-existing interrupt
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/10/2019 14:26, YueHaibing wrote:
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/pinctrl/pinctrl-oxnas.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-oxnas.c b/drivers/pinctrl/pinctrl-oxnas.c
-> index 40dc125..674b7b5 100644
-> --- a/drivers/pinctrl/pinctrl-oxnas.c
-> +++ b/drivers/pinctrl/pinctrl-oxnas.c
-> @@ -1196,7 +1196,6 @@ static int oxnas_gpio_probe(struct platform_device *pdev)
->  	struct oxnas_gpio_bank *bank;
->  	unsigned int id, ngpios;
->  	int irq, ret;
-> -	struct resource *res;
->  	struct gpio_irq_chip *girq;
->  
->  	if (of_parse_phandle_with_fixed_args(np, "gpio-ranges",
-> @@ -1220,8 +1219,7 @@ static int oxnas_gpio_probe(struct platform_device *pdev)
->  
->  	bank = &oxnas_gpio_banks[id];
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	bank->reg_base = devm_ioremap_resource(&pdev->dev, res);
-> +	bank->reg_base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(bank->reg_base))
->  		return PTR_ERR(bank->reg_base);
->  
-> 
+On Thu, Oct 17, 2019 at 1:59 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Stephen,
+>
+> On Thu, Oct 17, 2019 at 1:23 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> > Quoting Geert Uytterhoeven (2019-10-16 07:31:42)
+> > > diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+> > > index 9efae29722588a35..34da22f8b0660989 100644
+> > > --- a/drivers/of/unittest.c
+> > > +++ b/drivers/of/unittest.c
+> > > @@ -1121,7 +1121,7 @@ static void __init of_unittest_platform_populate(void)
+> > >                 np = of_find_node_by_path("/testcase-data/testcase-device2");
+> > >                 pdev = of_find_device_by_node(np);
+> > >                 unittest(pdev, "device 2 creation failed\n");
+> > > -               irq = platform_get_irq(pdev, 0);
+> > > +               irq = platform_get_irq_optional(pdev, 0);
+> > >                 unittest(irq < 0 && irq != -EPROBE_DEFER,
+> >
+> > This is a test to make sure that irq failure doesn't return probe defer.
+> > Do we want to silence the error message that we're expecting to see?
+>
+> I think so.  We're not interested in error messages for expected failures,
+> only in error messages for unittest() failures.
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+The unittests start with a warning that error messages will be seen.
+OTOH, we didn't get a message here before.
+
+Rob
