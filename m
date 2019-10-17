@@ -2,54 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67662DA6F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 10:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27564DA707
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 10:14:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408181AbfJQIKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 04:10:38 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34435 "EHLO
+        id S2392906AbfJQIOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 04:14:43 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57965 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392882AbfJQIKi (ORCPT
+        with ESMTP id S2389530AbfJQIOn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 04:10:38 -0400
+        Thu, 17 Oct 2019 04:14:43 -0400
 Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mfe@pengutronix.de>)
-        id 1iL0rg-0005Vf-3w; Thu, 17 Oct 2019 10:10:32 +0200
+        id 1iL0vR-00060Q-S8; Thu, 17 Oct 2019 10:14:25 +0200
 Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
         (envelope-from <mfe@pengutronix.de>)
-        id 1iL0rd-0005p9-Jl; Thu, 17 Oct 2019 10:10:29 +0200
-Date:   Thu, 17 Oct 2019 10:10:29 +0200
+        id 1iL0vO-0005qG-7s; Thu, 17 Oct 2019 10:14:22 +0200
+Date:   Thu, 17 Oct 2019 10:14:22 +0200
 From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Rui Miguel Silva <rmfrfs@gmail.com>
-Cc:     Chuhong Yuan <hslester96@gmail.com>, devel@driverdev.osuosl.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+To:     Schrempf Frieder <frieder.schrempf@kontron.de>
+Cc:     "krzk@kernel.org" <krzk@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2] media: imx7-mipi-csis: Add a check for
- devm_regulator_get
-Message-ID: <20191017081029.q2czy7y5zlbj4ogr@pengutronix.de>
-References: <20191015135915.6530-1-hslester96@gmail.com>
- <20191016090628.7l5u4ytdqr2jlasg@pengutronix.de>
- <m336fsst40.fsf@gmail.com>
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/10] Add support for more Kontron i.MX6UL/ULL SoMs and
+ boards
+Message-ID: <20191017081422.65m5dtqznsanfftp@pengutronix.de>
+References: <20191016150622.21753-1-frieder.schrempf@kontron.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <m336fsst40.fsf@gmail.com>
+In-Reply-To: <20191016150622.21753-1-frieder.schrempf@kontron.de>
 X-Sent-From: Pengutronix Hildesheim
 X-URL:  http://www.pengutronix.de/
 X-IRC:  #ptxdist @freenode
 X-Accept-Language: de,en
 X-Accept-Content-Type: text/plain
-X-Uptime: 10:04:20 up 152 days, 14:22, 99 users,  load average: 0.12, 0.11,
+X-Uptime: 10:12:59 up 152 days, 14:31, 99 users,  load average: 0.23, 0.11,
  0.05
 User-Agent: NeoMutt/20170113 (1.7.2)
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
@@ -61,81 +69,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rui,
+Hi Frieder,
 
-On 19-10-16 14:43, Rui Miguel Silva wrote:
-> Hi Marco,
-> On Wed 16 Oct 2019 at 10:06, Marco Felsch wrote:
-> > Hi Chuhong,
-> >
-> > On 19-10-15 21:59, Chuhong Yuan wrote:
-> >> devm_regulator_get may return an error but mipi_csis_phy_init misses
-> >> a check for it.
-> >> This may lead to problems when regulator_set_voltage uses the unchecked
-> >> pointer.
-> >> This patch adds a check for devm_regulator_get to avoid potential risk.
-> >>
-> >> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> >> ---
-> >> Changes in v2:
-> >>   - Add a check in mipi_csis_probe for the modified mipi_csis_phy_init.
-> >
-> > Did you miss the check for -EPROBE_DEFER?
-> >
+On 19-10-16 15:06, Schrempf Frieder wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
 > 
-> I think nothing special is really needed to do in case of
-> EPROBE_DEFER, or am I missing something?
-> It just return to probe and probe returns also. I just talked
-> about it because it was not cover in the original code.
+> In order to support more of the i.MX6UL/ULL-based SoMs and boards by
+> Kontron Electronics GmbH, we restructure the devicetrees to share common
+> parts and add new devicetrees for the missing boards.
+> 
+> Currently there are the following SoM flavors:
+>   * N6310: SoM with i.MX6UL-2, 256MB RAM, 256MB SPI NAND
+>   * N6311: SoM with i.MX6UL-2, 512MB RAM, 512MB SPI NAND (new)
+>   * N6411: SoM with i.MX6ULL, 512MB RAM, 512MB SPI NAND (new)
+> 
+> Each of the SoMs also features 1MB SPI NOR and an Ethernet PHY. The carrier
+> board for the evalkit is the same for all SoMs.
+> 
+> Frieder Schrempf (10):
+>   ARM: dts: imx6ul-kontron-n6310: Move common SoM nodes to a separate
+>     file
+>   ARM: dts: Add support for two more Kontron SoMs N6311 and N6411
+>   ARM: dts: imx6ul-kontron-n6310-s: Move common nodes to a separate file
+>   ARM: dts: Add support for two more Kontron evalkit boards 'N6311 S'
+>     and 'N6411 S'
+>   ARM: dts: imx6ul-kontron-n6x1x: Add 'chosen' node with 'stdout-path'
+>   ARM: dts: imx6ul-kontron-n6x1x-s: Specify bus-width for SD card and
+>     eMMC
+>   ARM: dts: imx6ul-kontron-n6x1x-s: Add vbus-supply and overcurrent
+>     polarity to usb nodes
+>   ARM: dts: imx6ul-kontron-n6x1x-s: Remove an obsolete comment and fix
+>     indentation
+>   dt-bindings: arm: fsl: Add more Kontron i.MX6UL/ULL compatibles
+>   MAINTAINERS: Add an entry for Kontron Electronics ARM board support
 
-Yes, your are right... I shouldn't comment on anything I read with one
-eye. Sorry.
+Did you send all patches to same To: and Cc:?
 
 Regards,
   Marco
 
-> ---
-> Cheers,
-> 	Rui
 > 
-> >
-> > Regards,
-> >   Marco
-> >
-> >>
-> >>  drivers/staging/media/imx/imx7-mipi-csis.c | 8 +++++++-
-> >>  1 file changed, 7 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/staging/media/imx/imx7-mipi-csis.c b/drivers/staging/media/imx/imx7-mipi-csis.c
-> >> index 73d8354e618c..e8a6acaa969e 100644
-> >> --- a/drivers/staging/media/imx/imx7-mipi-csis.c
-> >> +++ b/drivers/staging/media/imx/imx7-mipi-csis.c
-> >> @@ -350,6 +350,8 @@ static void mipi_csis_sw_reset(struct csi_state *state)
-> >>  static int mipi_csis_phy_init(struct csi_state *state)
-> >>  {
-> >>  	state->mipi_phy_regulator = devm_regulator_get(state->dev, "phy");
-> >> +	if (IS_ERR(state->mipi_phy_regulator))
-> >> +		return PTR_ERR(state->mipi_phy_regulator);
-> >>
-> >>  	return regulator_set_voltage(state->mipi_phy_regulator, 1000000,
-> >>  				     1000000);
-> >> @@ -966,7 +968,10 @@ static int mipi_csis_probe(struct platform_device *pdev)
-> >>  		return ret;
-> >>  	}
-> >>
-> >> -	mipi_csis_phy_init(state);
-> >> +	ret = mipi_csis_phy_init(state);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >>  	mipi_csis_phy_reset(state);
-> >>
-> >>  	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >> --
-> >> 2.20.1
-> >>
-> >>
-> >>
+>  .../devicetree/bindings/arm/fsl.yaml          |  14 +
+>  MAINTAINERS                                   |   6 +
+>  arch/arm/boot/dts/imx6ul-kontron-n6310-s.dts  | 405 +----------------
+>  .../boot/dts/imx6ul-kontron-n6310-som.dtsi    |  95 +---
+>  arch/arm/boot/dts/imx6ul-kontron-n6311-s.dts  |  16 +
+>  .../boot/dts/imx6ul-kontron-n6311-som.dtsi    |  40 ++
+>  arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi | 422 ++++++++++++++++++
+>  .../dts/imx6ul-kontron-n6x1x-som-common.dtsi  | 129 ++++++
+>  arch/arm/boot/dts/imx6ull-kontron-n6411-s.dts |  16 +
+>  .../boot/dts/imx6ull-kontron-n6411-som.dtsi   |  40 ++
+>  10 files changed, 685 insertions(+), 498 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/imx6ul-kontron-n6311-s.dts
+>  create mode 100644 arch/arm/boot/dts/imx6ul-kontron-n6311-som.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6ull-kontron-n6411-s.dts
+>  create mode 100644 arch/arm/boot/dts/imx6ull-kontron-n6411-som.dtsi
+> 
+> -- 
+> 2.17.1
 > 
 > 
 
