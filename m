@@ -2,118 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF35DB493
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9AE8DB4AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:48:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394652AbfJQRsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 13:48:10 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:39465 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726754AbfJQRsI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 13:48:08 -0400
-Received: by mail-yw1-f68.google.com with SMTP id k127so4282ywc.6
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 10:48:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kEBrFsENgcN61lOs9AAz0c8wQaRYi7TYeszZxNnhUsM=;
-        b=lrnfU3QJ7otQlwWjO4pAUFcP9Ivd0EezGXjOZGgwJsaUn3vMWY0n0vZdhD/O8rwgnW
-         UApMMVA3HxJRbEEWHpuHh0/uNk44uWdYySDwUcdqQQvfvhD5wofSacQxnzvwhxseGzIf
-         a4XbOkOQ44NlrlXWhg65xSFMWVtxejYcxnrU3B5KpA1urKff0jXY2NkxGjGM/2PQscBn
-         /xDJLf4bHORqiVwmDhacdSuBFM4z1p1qGu+MVuNYslsFVPbD9obU6vBFXiJRtwfaEhe4
-         jtdBv+evbrAlruOhvrNIwg7Ycla4ED8hMIZT7SbpueT6yf8HOE6ihSj7UyZxAZ7dhndt
-         u2Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kEBrFsENgcN61lOs9AAz0c8wQaRYi7TYeszZxNnhUsM=;
-        b=Df2kqM1P/tR13t+0PR2meP3uBsoLwWExESwHX/ONsKnl9oZrN68VizA1nixDJivNbq
-         jmT/nYC8emVld8iKfHU/kXNfhUlaWvU+lQSbDLy1KsppJJ3vDwjTb6dql3+rWAoMPH8T
-         ZNb4VkptfJrZ4R8MOa1pSqzVr7Deq4oqE2q0nZDqz1tmBpzmgn/tWE0IHh41nieWe04G
-         hu35kcj/38MdJSWgE/weBH7HGTW1v6mxWK87uucnDQsyNEzIDGslm/wM7l3FNzXTMcR9
-         g/zMrJ0js6Uf7cMEvzhVj4sc5F5sBBL+u+FeohdFhIM0nzifpXYkmnt+9hcSUrNJatHV
-         kj/w==
-X-Gm-Message-State: APjAAAVFyJDLv6m2CZjXpOqvEPvqGSzo1BvfST0RKMpRVpqQ01C1XK1Q
-        fdW32k1vTNYooP/Xmr+sjIA=
-X-Google-Smtp-Source: APXvYqypEkDpkpvJLvwo0RW9wv/cB4PSe6I1y5z0kWxQNb7G9m1qNvmjUZ6BwuTg4EpQgxBhgvkvQQ==
-X-Received: by 2002:a81:6d57:: with SMTP id i84mr3762089ywc.417.1571334487239;
-        Thu, 17 Oct 2019 10:48:07 -0700 (PDT)
-Received: from [192.168.1.62] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
-        by smtp.gmail.com with ESMTPSA id p10sm660977ywc.19.2019.10.17.10.48.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 10:48:06 -0700 (PDT)
-Subject: Re: [PATCH 10/10] of/device: Don't NULLify match table in
- of_match_device() with CONFIG_OF=n
-To:     Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20191004214334.149976-1-swboyd@chromium.org>
- <20191004214334.149976-11-swboyd@chromium.org>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <6ce47827-55e4-dd15-6a05-f25a2f8a8bb7@gmail.com>
-Date:   Thu, 17 Oct 2019 12:47:59 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1730666AbfJQRsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 13:48:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437169AbfJQRsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 13:48:21 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F08422089C;
+        Thu, 17 Oct 2019 17:48:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571334501;
+        bh=v34jWqxmNeAMOoNfEOFlbq2+WSKHjXcMGhvRy6ZMeig=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=M262+xKAyWHA0QeAIq39nDeoMvMpkBRJ6TbbsDN/MDmB4cd9yD90JsNNrxuEY5arz
+         uXHFuLaJGR2Sfw3uBWNd775l1T0L5DfcHX2dKE0HQnIB+FRr8bsvdWlkd5jSlZNEqM
+         AuZS6lW8VkEDJWWEBWlqhsbkz8rROA031xEABvQo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20191004214334.149976-11-swboyd@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191016122343.GM2654@vkoul-mobl>
+References: <20190917091623.3453-1-vkoul@kernel.org> <20190917161000.DAFF3206C2@mail.kernel.org> <20191016122343.GM2654@vkoul-mobl>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc: Add missing clocks in SM8150
+User-Agent: alot/0.8.1
+Date:   Thu, 17 Oct 2019 10:48:20 -0700
+Message-Id: <20191017174820.F08422089C@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/2019 16:43, Stephen Boyd wrote:
-> This effectively reverts 1db73ae39a97 ("of/device: Nullify match table
-> in of_match_device() for CONFIG_OF=n") because that commit makes it more
-> surprising to users of this API that the arguments may never be
-> referenced by any code. This is because the pre-processor will replace
-> the argument with NULL and then the match table will be left unreferenced
-> by any code but the compiler optimizer doesn't know to drop it. This can
-> lead to compilers warning that match tables are unused, when we really
-> want to pass the match table to the API but have the compiler see that
-> it's all inlined and not used and then drop the match table while
-> silencing the warning. We're being too smart here and not giving the
-> compiler the chance to do dead code elimination.
-> 
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
-> 
-> Please ack or pick for immediate merge so the last patch can be merged.
-> 
->  include/linux/of_device.h | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/of_device.h b/include/linux/of_device.h
-> index 8d31e39dd564..3f8ca55bc693 100644
-> --- a/include/linux/of_device.h
-> +++ b/include/linux/of_device.h
-> @@ -93,13 +93,11 @@ static inline int of_device_uevent_modalias(struct device *dev,
->  
->  static inline void of_device_node_put(struct device *dev) { }
->  
-> -static inline const struct of_device_id *__of_match_device(
-> +static inline const struct of_device_id *of_match_device(
->  		const struct of_device_id *matches, const struct device *dev)
->  {
->  	return NULL;
->  }
-> -#define of_match_device(matches, dev)	\
-> -	__of_match_device(of_match_ptr(matches), (dev))
->  
->  static inline struct device_node *of_cpu_device_node_get(int cpu)
->  {
-> 
+Quoting Vinod Koul (2019-10-16 05:23:43)
+> Hi Steve,
+>=20
+> Looks like I missed replying to this one, apologies!
+>=20
+> On 17-09-19, 09:09, Stephen Boyd wrote:
+> > Quoting Vinod Koul (2019-09-17 02:16:23)
+> > > The initial upstreaming of SM8150 GCC driver missed few clock so add
+> > > them up now.
+> > >=20
+> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > > ---
+> >=20
+> > Should have some sort of fixes tag?
+>=20
+> Not really, the drivers to use these clks are not upstream so we dont
+> miss it yet
 
+Ok.
 
-Acked-by: Frank Rowand <frowand.list@gmail.com>
+>=20
+> >=20
+> > >  drivers/clk/qcom/gcc-sm8150.c | 172 ++++++++++++++++++++++++++++++++=
+++
+> > >  1 file changed, 172 insertions(+)
+> > >=20
+> > > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8=
+150.c
+> > > index 12ca2d14797f..13d4d14a5744 100644
+> > > --- a/drivers/clk/qcom/gcc-sm8150.c
+> > > +++ b/drivers/clk/qcom/gcc-sm8150.c
+> > > @@ -1616,6 +1616,38 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk =
+=3D {
+> > >         },
+> > >  };
+> > > =20
+> > > +static struct clk_branch gcc_gpu_gpll0_clk_src =3D {
+> > > +       .halt_check =3D BRANCH_HALT_SKIP,
+> >=20
+> > Why skip?
+>=20
+> I will explore and add comments for that
+>=20
+> > > +       .clkr =3D {
+> > > +               .enable_reg =3D 0x52004,
+> > > +               .enable_mask =3D BIT(15),
+> > > +               .hw.init =3D &(struct clk_init_data){
+> > > +                       .name =3D "gcc_gpu_gpll0_clk_src",
+> > > +                       .parent_hws =3D (const struct clk_hw *[]){
+> > > +                               &gpll0.clkr.hw },
+> > > +                       .num_parents =3D 1,
+> > > +                       .flags =3D CLK_SET_RATE_PARENT,
+> > > +                       .ops =3D &clk_branch2_ops,
+> > > +               },
+> > > +       },
+> > > +};
+> > > +
+> > > +static struct clk_branch gcc_gpu_gpll0_div_clk_src =3D {
+> > > +       .halt_check =3D BRANCH_HALT_SKIP,
+> >=20
+> > Why skip?
+> >=20
+
+Any answer from the explorations?
+
