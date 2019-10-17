@@ -2,101 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E640DA61C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:12:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0FE5DA633
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 09:16:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408009AbfJQHM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 03:12:56 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44213 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407984AbfJQHMt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 03:12:49 -0400
-Received: by mail-wr1-f66.google.com with SMTP id z9so988051wrl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 00:12:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=02ptUi820rtgb1rVywdXHHVh+A6FBo6gb2V5cVn00l4=;
-        b=TMCOuFGslVYaietD3Npaye2HNfQyRxbQihRWW/0tacQLD/VcOtmBgnO21eTt/nyM+f
-         yeNG7TvCKABshRGXDI5Lh5arQn0Rg5ZRQE5owPHB9yWQZLU0viVX5zHNHY4jcFe+saPl
-         pEK3jQ+5P5JVqc9u9OA2ZcUDiIvr6Idfwl7muzVO905/jq7CpQZtc2KBiV37gTLZlydL
-         5IAmyx/D6uHUKZ3xbK1cV/TOSFS+NTjsy/4Bc6bnDTRP8+CHeB5ebrSPm1kfJd5QNGWg
-         +xgi0+y9lDv6DKi1IZOa0kmWI4BW3HjJlvWhPyjjVepYpEb6sis1TRBIgFN/BxVlINeZ
-         bUow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=02ptUi820rtgb1rVywdXHHVh+A6FBo6gb2V5cVn00l4=;
-        b=DU13FDQQSxsgI/UPcKjc5horprCv4eDBNXpCrDKeWZYanUDpM4EvB2t2OC2JhuS1NW
-         xrDKm/xWVRqL6g0O5BO0L3yIi5ATYxXoG3ddMrgPNGEHPYJixppAopQXVBJfWNOySkVc
-         HCyc1olGRL5bQ3iwUqGpumNZmLf4/LW5GyCQWdWvAjH5yh9FxNKaOb/S0rDrHS4Hb6aA
-         6/1LbMJsmilPywJ6Fbdbvgu2P5ucRwhRJop8ALsB9h1Drcc7nYU6Z29/VHY/hqxToSZ4
-         jnONogZ+bKfNTpJehzFrdRwuj8OpgDbEMexLrKkuvkruyQFS8MjBdbO47LyWtxYoAe4i
-         f6dA==
-X-Gm-Message-State: APjAAAXZY/2cd6SU+NCgXK1GmK8tNeckf+Awpb+JHPs7AwM9qXWRaT4P
-        rv4fYhz9AUr/GwePbXNT8Hlx7Q==
-X-Google-Smtp-Source: APXvYqwavR8cAD6sd1m49Q97NupEKTiiZz7QIevjs5S9SSkZYg8tuEDju8swtsi9FLS3lhJYAoVutg==
-X-Received: by 2002:a5d:4a8d:: with SMTP id o13mr1666117wrq.227.1571296367586;
-        Thu, 17 Oct 2019 00:12:47 -0700 (PDT)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id n22sm1156689wmk.19.2019.10.17.00.12.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 00:12:47 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 6/6] MAINTAINERS: update the list of maintained files for max77650
-Date:   Thu, 17 Oct 2019 09:12:34 +0200
-Message-Id: <20191017071234.8719-7-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191017071234.8719-1-brgl@bgdev.pl>
-References: <20191017071234.8719-1-brgl@bgdev.pl>
+        id S2408043AbfJQHQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 03:16:40 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4236 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726208AbfJQHQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 03:16:39 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 928A792B0572A31F7EC2;
+        Thu, 17 Oct 2019 15:16:36 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 17 Oct 2019 15:16:32 +0800
+From:   Daode Huang <huangdaode@hisilicon.com>
+To:     <jason@lakedaemon.net>, <andrew@lunn.ch>,
+        <gregory.clement@bootlin.com>, <sebastian.hesselbarth@gmail.com>,
+        <tglx@linutronix.de>, <maz@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <nm@ti.com>, <t-kristo@ti.com>, <ssantosh@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH] use devm_platform_ioremap_resource() for irqchip drivers
+Date:   Thu, 17 Oct 2019 15:13:43 +0800
+Message-ID: <1571296423-208359-1-git-send-email-huangdaode@hisilicon.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Daode Huang <huangdaode@hislicon.com>
 
-The DT bindings for MAX77650 MFD have now been converted to YAML.
-Update the MAINTAINERS entry for this set of drivers.
+Use the new helper that wraps the calls to platform_get_resource()
+and devm_ioremap_resource() together
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Daode Huang <huangdaode@hislicon.com>
 ---
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-mvebu-icu.c   | 3 +--
+ drivers/irqchip/irq-mvebu-pic.c   | 3 +--
+ drivers/irqchip/irq-stm32-exti.c  | 3 +--
+ drivers/irqchip/irq-ti-sci-inta.c | 3 +--
+ drivers/irqchip/irq-ts4800.c      | 3 +--
+ 5 files changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a69e6db80c79..c05e6fd6aedb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9903,8 +9903,8 @@ MAXIM MAX77650 PMIC MFD DRIVER
- M:	Bartosz Golaszewski <bgolaszewski@baylibre.com>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/*/*max77650.txt
--F:	Documentation/devicetree/bindings/*/max77650*.txt
-+F:	Documentation/devicetree/bindings/*/*max77650.yaml
-+F:	Documentation/devicetree/bindings/*/max77650*.yaml
- F:	include/linux/mfd/max77650.h
- F:	drivers/mfd/max77650.c
- F:	drivers/regulator/max77650-regulator.c
+diff --git a/drivers/irqchip/irq-mvebu-icu.c b/drivers/irqchip/irq-mvebu-icu.c
+index 547045d..ddf9b0d 100644
+--- a/drivers/irqchip/irq-mvebu-icu.c
++++ b/drivers/irqchip/irq-mvebu-icu.c
+@@ -357,8 +357,7 @@ static int mvebu_icu_probe(struct platform_device *pdev)
+ 
+ 	icu->dev = &pdev->dev;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	icu->base = devm_ioremap_resource(&pdev->dev, res);
++	icu->base = devm_platform_ioremap_resource(pdev, res);
+ 	if (IS_ERR(icu->base)) {
+ 		dev_err(&pdev->dev, "Failed to map icu base address.\n");
+ 		return PTR_ERR(icu->base);
+diff --git a/drivers/irqchip/irq-mvebu-pic.c b/drivers/irqchip/irq-mvebu-pic.c
+index eec6395..0c3520d 100644
+--- a/drivers/irqchip/irq-mvebu-pic.c
++++ b/drivers/irqchip/irq-mvebu-pic.c
+@@ -130,8 +130,7 @@ static int mvebu_pic_probe(struct platform_device *pdev)
+ 	if (!pic)
+ 		return -ENOMEM;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	pic->base = devm_ioremap_resource(&pdev->dev, res);
++	pic->base = devm_platform_ioremap_resource(pdev, res);
+ 	if (IS_ERR(pic->base))
+ 		return PTR_ERR(pic->base);
+ 
+diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
+index e00f2fa..7f5500e 100644
+--- a/drivers/irqchip/irq-stm32-exti.c
++++ b/drivers/irqchip/irq-stm32-exti.c
+@@ -849,8 +849,7 @@ static int stm32_exti_probe(struct platform_device *pdev)
+ 	if (!host_data->chips_data)
+ 		return -ENOMEM;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	host_data->base = devm_ioremap_resource(dev, res);
++	host_data->base = devm_platform_ioremap_resource(pdev, res);
+ 	if (IS_ERR(host_data->base)) {
+ 		dev_err(dev, "Unable to map registers\n");
+ 		return PTR_ERR(host_data->base);
+diff --git a/drivers/irqchip/irq-ti-sci-inta.c b/drivers/irqchip/irq-ti-sci-inta.c
+index ef4d625..d2ad3cc 100644
+--- a/drivers/irqchip/irq-ti-sci-inta.c
++++ b/drivers/irqchip/irq-ti-sci-inta.c
+@@ -567,8 +567,7 @@ static int ti_sci_inta_irq_domain_probe(struct platform_device *pdev)
+ 		return PTR_ERR(inta->global_event);
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	inta->base = devm_ioremap_resource(dev, res);
++	inta->base = devm_platform_ioremap_resource(pdev, res);
+ 	if (IS_ERR(inta->base))
+ 		return -ENODEV;
+ 
+diff --git a/drivers/irqchip/irq-ts4800.c b/drivers/irqchip/irq-ts4800.c
+index 2325fb3..f1cefa9 100644
+--- a/drivers/irqchip/irq-ts4800.c
++++ b/drivers/irqchip/irq-ts4800.c
+@@ -101,8 +101,7 @@ static int ts4800_ic_probe(struct platform_device *pdev)
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	data->base = devm_ioremap_resource(&pdev->dev, res);
++	data->base = devm_platform_ioremap_resource(pdev, res);
+ 	if (IS_ERR(data->base))
+ 		return PTR_ERR(data->base);
+ 
 -- 
-2.23.0
+2.8.1
 
