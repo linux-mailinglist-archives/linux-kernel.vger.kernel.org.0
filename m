@@ -2,220 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7F96DAE77
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:31:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9C75DAE84
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 15:35:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387844AbfJQNbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 09:31:49 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44926 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730600AbfJQNbs (ORCPT
+        id S2394646AbfJQNfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 09:35:52 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:32787 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729175AbfJQNfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 09:31:48 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q21so1660678pfn.11;
-        Thu, 17 Oct 2019 06:31:48 -0700 (PDT)
+        Thu, 17 Oct 2019 09:35:52 -0400
+Received: by mail-pl1-f193.google.com with SMTP id d22so1162841pls.0;
+        Thu, 17 Oct 2019 06:35:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=71uoj2yc29GeY1Xak3gbiDlj4sBCXAEhrB5t6JTQI38=;
-        b=WYYEirct5vmYQhA3KbSc0XnVAk90uWlVOlRrknkYBh9IfN3mWq6s9p81I4fgMPf1/a
-         N5U1UGBczLAnKbk05TO4JIqrrpEp88YnqFbKHJsHAj7I4v55SHK+1XV9y6bhlMUmPVKH
-         noy70mkcKcAhSPEO+NKAF/eRLyW2v1lH1jVtK4SP1CVBCRdsGuxcl03sYINDQZwmUR7P
-         E2Pdg8P8qFHC4636xQL74OWPUJtX3891CkPtWyHH1uJXCBXpYdGy9XSh2uPSh/WcjDJx
-         MCRCmzG/3F4EwRdag/OCrs5i5Ju+axTNEJQZdVPj8SaAZnld0+agJcevwCTb1dbQwoLa
-         ATbg==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HRZw0egH7e60E3YrLTW6KLeAvZRaV263GSPwsEpHnaQ=;
+        b=PC7bB0Eu73Z6Uvaxmb6KnYDuSNuM2AN8soCupCW1kBQRAoQuiQ3XMxS58psBUAuNcV
+         /3X00l4GDcqb/gR/pCOa0q9X/ZGHZAe/Q0S0tZR+TXiK3dDaRBKGdMUf5VnO5JuU1vwG
+         9rNQMpsGcI0qA1EA1ytT15vLmbxNi7atUOOXveqw7NP4tPT/LEVreKz/CM/hS8kLubul
+         hvBcWSjmDUCZhG0+lH+oyM7yrZYkbzUBI8/Vv08a+PBpamEuHCyqwE4ulz4V7P4Q9735
+         HVvzenPVYP6Ox+XOfQfDgtG9yBq/ZeJBecofyVlHcYf8FG+TXoP2NgZ+hTnlUd9tIVCK
+         P3Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=71uoj2yc29GeY1Xak3gbiDlj4sBCXAEhrB5t6JTQI38=;
-        b=gfbe/CJfGJDam1b+uaQa55cNZ7Mj2vuocivT4jMCRze8RBeRGSgIHtj2QMiXznWuED
-         N/Q0/lXMuNVMeD7bQVjrBe1LcgHP9V+hFhH7OCZqV+rgDsP8eZdiWk5k7MwUiZ1q+78v
-         HTqy9X7wnX8POtjeBiu73T7AdnMc7TwAso0Cc3QXDidjfGqXrV9MqPPBPeIaNHTqLBFj
-         Q7s4qDR2mwEZVsn4VYwvACElIYQit25nIrkBYRHuSbSTmefaBrAfzQv5fn3llzkp2mHF
-         Yer1My3O20NxDoMFR8pH9reGfX2sk+y/QuMcJexVoUhYwV0kyruaAhXGtVBNu8H1xvoR
-         faNA==
-X-Gm-Message-State: APjAAAVMgFHo+v9mW68oTkamRxqEvyU6OBa42qA9NF9T7WE5K/mfciV1
-        EPCWnyxlVVvSmDaT14sGitRLSR5b
-X-Google-Smtp-Source: APXvYqwkCzg39D6E3HXdCGSejfd6HNsWplmWxSFhlmyOLuTWztuKgI2cctSMGidm0wpV+1lYpWpnWg==
-X-Received: by 2002:a17:90a:da04:: with SMTP id e4mr4417537pjv.33.1571319107104;
-        Thu, 17 Oct 2019 06:31:47 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id o9sm4077093pfp.67.2019.10.17.06.31.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 06:31:46 -0700 (PDT)
-Subject: Re: [PATCH] dt-bindings: watchdog: Convert stm32 watchdog bindings to
- json-schema
-To:     Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc:     "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20191017124159.13869-1-benjamin.gaignard@st.com>
- <63f96a2f-78c0-21ae-781b-e52068f57103@st.com>
- <6597f899-f049-02dc-de59-07a0f23a88b8@st.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HRZw0egH7e60E3YrLTW6KLeAvZRaV263GSPwsEpHnaQ=;
+        b=CqMZYDD8kxVnOslTgzIQbK9m5zmXZDTZ/ma5OmBTRKcTMOvjBCW9EB71o9UrVWmubN
+         XYG8U1Xy7wsmuGcYc+iiBRdxkWnS5uHp9iXUGhiT5R1pvXnzImnIQKpPsPHcrNQTEVaX
+         1n3cbsinCV/lNNlk49dtxUwzIWs5BHTxDhCMEYAeNMIeIqleCX/oJyJdpnCoDW0C7jn1
+         xT9/YFUEx4kY5snAiC7OjnowBKTspSe0HYda7WeFVHG/VDs8f50Mhob3JoV+w9VJp/bz
+         bjsc+4IP14p0P7+N+GCpGmK8zM5dQWaKFAD5xLU6s4VOxyMTbKFs9FzZrHMf7u0kRRYi
+         5CbA==
+X-Gm-Message-State: APjAAAUgEnrZn0VQnT+bIpgNsf/UPPJToZfUEChA7aUiESfokmURsx+6
+        DnS+GdJMfnn8JPa8lyt/en4=
+X-Google-Smtp-Source: APXvYqzKxMWca29yudpmBf6GNcF/KRjzO/VPH35/hY7SFgA8oom/+W+0wulxVNjq5ZegK536zz9QrQ==
+X-Received: by 2002:a17:902:44d:: with SMTP id 71mr4092886ple.195.1571319351587;
+        Thu, 17 Oct 2019 06:35:51 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id p24sm5582476pgc.72.2019.10.17.06.35.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Oct 2019 06:35:51 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 06:35:49 -0700
 From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <d0c1af15-a647-8d80-81c9-fc07b926856c@roeck-us.net>
-Date:   Thu, 17 Oct 2019 06:31:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+To:     Eddie James <eajames@linux.ibm.com>
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, jdelvare@suse.com,
+        mark.rutland@arm.com, robh+dt@kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: Document ibm,cffps compatible
+ string
+Message-ID: <20191017133549.GA23352@roeck-us.net>
+References: <1570648262-25383-1-git-send-email-eajames@linux.ibm.com>
+ <1570648262-25383-2-git-send-email-eajames@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <6597f899-f049-02dc-de59-07a0f23a88b8@st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1570648262-25383-2-git-send-email-eajames@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/19 6:17 AM, Benjamin GAIGNARD wrote:
+On Wed, Oct 09, 2019 at 02:11:01PM -0500, Eddie James wrote:
+> Document this string that indicates that any version of the power supply
+> may be connected. In this case, the driver must detect the version
+> automatically.
 > 
-> On 10/17/19 3:06 PM, Alexandre Torgue wrote:
->> Hi Benjamin
->>
->> On 10/17/19 2:41 PM, Benjamin Gaignard wrote:
->>> Convert the STM32 watchdog binding to DT schema format using json-schema
->>>
->>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
->>> ---
->>>    .../devicetree/bindings/watchdog/st,stm32-iwdg.txt | 26 -----------
->>>    .../bindings/watchdog/st,stm32-iwdg.yaml           | 54
->>> ++++++++++++++++++++++
->>>    2 files changed, 54 insertions(+), 26 deletions(-)
->>>    delete mode 100644
->>> Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
->>>    create mode 100644
->>> Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
->>> b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
->>> deleted file mode 100644
->>> index d8f4430b0a13..000000000000
->>> --- a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
->>> +++ /dev/null
->>> @@ -1,26 +0,0 @@
->>> -STM32 Independent WatchDoG (IWDG)
->>> ----------------------------------
->>> -
->>> -Required properties:
->>> -- compatible: Should be either:
->>> -  - "st,stm32-iwdg"
->>> -  - "st,stm32mp1-iwdg"
->>> -- reg: Physical base address and length of the registers set for the
->>> device
->>> -- clocks: Reference to the clock entry lsi. Additional pclk clock entry
->>> -  is required only for st,stm32mp1-iwdg.
->>> -- clock-names: Name of the clocks used.
->>> -  "lsi" for st,stm32-iwdg
->>> -  "lsi", "pclk" for st,stm32mp1-iwdg
->>> -
->>> -Optional Properties:
->>> -- timeout-sec: Watchdog timeout value in seconds.
->>> -
->>> -Example:
->>> -
->>> -iwdg: watchdog@40003000 {
->>> -    compatible = "st,stm32-iwdg";
->>> -    reg = <0x40003000 0x400>;
->>> -    clocks = <&clk_lsi>;
->>> -    clock-names = "lsi";
->>> -    timeout-sec = <32>;
->>> -};
->>> diff --git
->>> a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml
->>> b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml
->>> new file mode 100644
->>> index 000000000000..edec96d53e6b
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml
->>> @@ -0,0 +1,54 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/watchdog/st,stm32-iwdg.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: STMicroelectronics STM32 Independent WatchDoG (IWDG) bindings
->>> +
->>> +maintainers:
->>> +  - Yannick Fertre <yannick.fertre@st.com>
->>
->> Yannick is still working on this driver ?
-> 
-> That is a good question.
-> 
-> Rob, can we use the STM32 dedicated mailing list address for this
-> mainteners field ?
-> 
-> maintainers:
-> 
-> - linux STM32 <linux-stm32@st-md-mailman.stormreply.com>
-> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 
+Applied.
 
-I'd rather wonder who is going to maintain this secondary distributed
-maintainers list, but I guess that is a different question.
-
+Thanks,
 Guenter
 
-> Regards,
+> ---
+>  Documentation/devicetree/bindings/hwmon/ibm,cffps1.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Benjamin
-> 
->>
->>> +
->>> +allOf:
->>> +  - $ref: "watchdog.yaml#"
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - st,stm32-iwdg
->>> +      - st,stm32mp1-iwdg
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  clocks:
->>> +    items:
->>> +      - description: Low speed clock
->>> +      - description: Optional peripheral clock
->>> +    minItems: 1
->>> +    maxItems: 2
->>> +
->>> +  clock-names:
->>> +    items:
->>> +      enums: [ lsi, pclk ]
->>> +    minItems: 1
->>> +    maxItems: 2
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - clocks
->>> +  - clock-names
->>> +
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/clock/stm32mp1-clks.h>
->>> +    watchdog@5a002000 {
->>> +      compatible = "st,stm32mp1-iwdg";
->>> +      reg = <0x5a002000 0x400>;
->>> +      clocks = <&rcc IWDG2>, <&rcc CK_LSI>;
->>> +      clock-names = "pclk", "lsi";
->>> +      timeout-sec = <32>;
->>> +    };
->>> +
->>> +...
->> >
-
+> diff --git a/Documentation/devicetree/bindings/hwmon/ibm,cffps1.txt b/Documentation/devicetree/bindings/hwmon/ibm,cffps1.txt
+> index 1036f65..d9a2719 100644
+> --- a/Documentation/devicetree/bindings/hwmon/ibm,cffps1.txt
+> +++ b/Documentation/devicetree/bindings/hwmon/ibm,cffps1.txt
+> @@ -5,6 +5,9 @@ Required properties:
+>   - compatible				: Must be one of the following:
+>  						"ibm,cffps1"
+>  						"ibm,cffps2"
+> +						or "ibm,cffps" if the system
+> +						must support any version of the
+> +						power supply
+>   - reg = < I2C bus address >;		: Address of the power supply on the
+>  					  I2C bus.
+>  
