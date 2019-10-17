@@ -2,78 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4942DDB38
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 23:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A244DDB41
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 23:53:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfJSVf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 19 Oct 2019 17:35:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43572 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726136AbfJSVf6 (ORCPT
+        id S1726275AbfJSVwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 17:52:44 -0400
+Received: from mail.keramplus.com ([212.3.124.226]:65432 "EHLO
+        trixbox1.localdomain" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726143AbfJSVwo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 17:35:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gjMV5AwPDVYcHUUO3sw6vsjP2HHaDOfcFlf0JjRbYiw=; b=iRk/D3dE3yFtdYVu6TH9/DPjH
-        M69yxlV4MF0kkMHMm1AHQjQTle4YKS/GbHsUKEzbGdbMxtpIsr1chQtw6BmXF8KE6gB2eXlzYfb/2
-        M3fndCB824a9dNv2mQKh/J+sBbjXHYk/HSdWtMkg9849AUOdWGr5St8zkRAcJ1HJ14IjGkI5XfzVb
-        jlKtknZiiO5feC2QJ6kDFldmGdJp8kOBofXYWndfdgMsOdSbUZO1et4iN8ikG+EBQLRcQFlK64yQK
-        Xp0f/IF670PtZP2AitjCwCToyyb0khzLPBf1YiP088VeUhyJ+qwewbt/3aVWoVRy4NGO1oZ1igJiH
-        YKwD06qTA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iLwOC-0002N3-8t; Sat, 19 Oct 2019 21:35:56 +0000
-Date:   Sat, 19 Oct 2019 14:35:56 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, kernel test robot <rong.a.chen@intel.com>,
-        Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        lkp@lists.01.org
-Subject: Re: [dax] 23c84eb783: fio.write_bw_MBps -61.6% regression
-Message-ID: <20191019213556.GO32665@bombadil.infradead.org>
-References: <20191018082354.GA9296@shao2-debian>
- <20191018094810.GB18593@quack2.suse.cz>
- <CAPcyv4jjfT4xOQTrckEmX0Z_o6MbsmHz-qvCLAGSOPEe3-X0QA@mail.gmail.com>
+        Sat, 19 Oct 2019 17:52:44 -0400
+Received: from Shop01 (trixbox1.localdomain [127.0.0.1])
+        by trixbox1.localdomain (Postfix) with SMTP id CD2BEADC2C4;
+        Fri, 18 Oct 2019 04:36:49 +0300 (EEST)
+Received: from [43.223.226.185] by Shop01 with ESMTP id 40709829 for <alex1308@tyeth.com>; Thu, 17 Oct 2019 21:29:00 -0500
+Message-ID: <7-309lg-$--45f7la0@e0q.an>
+From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+To:     alex1308@tyeth.com
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Date:   Thu, 17 Oct 19 21:29:00 GMT
+X-Mailer: MIME-tools 5.503 (Entity 5.501)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jjfT4xOQTrckEmX0Z_o6MbsmHz-qvCLAGSOPEe3-X0QA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: multipart/alternative;
+        boundary="9823_F.4A.2CFC7_2EDEDD8."
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 04:12:03PM -0700, Dan Williams wrote:
-> I've got several reports of v5.3 performance regressions tracking back
-> to this change. I instrumented the ndctl "dax.sh" unit test to
-> validate that it is getting huge page faults and it always falls back
-> to 4K starting with these commits. It looks like the xa_is_internal()
-> returns true for any DAX_LOCKED entry.
 
-That's not true today, but I do intend to make it true at some point.
-I think we can reclaim three bits from the encoding of a DAX entry,
-allowing us to support three more physical bits on a 32-bit system.
-Clearly that hasn't been a focus so far.
+--9823_F.4A.2CFC7_2EDEDD8.
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-The plan is ...
+Greetings
 
-DAX_LOCKED -> XA_LOCK_ENTRY (xa_mk_internal(something))
+My name is Barrister Hans Erich.
 
-DAX_ZERO_PAGE -> XA_ZERO_ENTRY
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
 
-DAX_EMPTY goes away.  It's only used in combination with DAX_LOCKED, and
-it won't be necessary once DAX_LOCKED has become XA_LOCK_ENTRY.
+Your full names ---------
 
-DAX_PMD essentially stays, but we can encode arbitrary orders using a single
-bit rather than just PTE vs PMD.
 
-We may need to encode a size in DAX_LOCKED, or we may be able to get that
-information from the XArray.  Anyway, this transformation is about tenth
-on my todo list right now, so if someone else wants to take this on ...
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+
+--9823_F.4A.2CFC7_2EDEDD8.--
+
