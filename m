@@ -2,120 +2,434 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3025DAC84
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:43:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 490ECDAC7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 14:42:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406480AbfJQMnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 08:43:05 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45742 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392868AbfJQMnE (ORCPT
+        id S2406407AbfJQMmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 08:42:08 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:47639 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406331AbfJQMmI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:43:04 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r5so2158823wrm.12
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 05:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HGYfQMOQQ/Llw7JM+7jrZqk8jvWFbqivJs1N/X/ktYU=;
-        b=1W6T+By6Fyb2jmC1zIN29lxvN1RfimvyqGZm/IyNd0V+jAhEnMuR3HyZpQgzrmOhLk
-         PVRFTAfV/ZKXqr6U/08O1Ez3u3mVXh5UF45EOmJyN3i4IzE3ozHnHpbxebhjZ94shBvL
-         gHXflbn54dpLGUVRAM6N1AIiKogkN2aPAmJCtXER0fMyKruwAyjCtnCp3Rdk4VX76zV8
-         vxUCyNaqnutYi9qbxamM5qop4YUgQPt/9Tt21OPAYxz34RRWnzsq5SkxwtK6D7YJZOTA
-         WmDUDbMaLCyxAVbKdVFhHQMpTO7XA2cyDMEkk1fNYHBI9fnGNSx8oQhGeCqkQaUCwJaf
-         ML8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HGYfQMOQQ/Llw7JM+7jrZqk8jvWFbqivJs1N/X/ktYU=;
-        b=BHsP6UtNSXG2SM2S3o3FRygrzRkeXsIemKMgjyT8R9wckQYfqHbR1zjOEEQ+Lhfs+V
-         /UqiGG8Rp2x9zB/ue6UTw3FpMnFbgCVtLH4PRSB9FqRXsefxEAnby3KMCGWL7lXAVEoO
-         9F9fSRcaq4dMjHjRuiANpLfyXl0kjUBQoqNOvq8o/xVyq/KMemIGMIoqHivj7HJX9oQP
-         3gxql4yjK2UZAfbyJqnzEHzXgZKlFeIogMJj/RWVsXni/TFZxEzFPccjY1EPxuHdSjlW
-         IooDDmRfhhUN6fWZjl08qkxhMI7Q/CaLbp/FbmOyVms+HDolQwxxnt2MgNCCTr7SNR1Q
-         u1bA==
-X-Gm-Message-State: APjAAAW17O2PVw6DaEI7sLJzBqGCTwZoiY3GodHq5glfgoj5v9S7sCsM
-        DlnmGK38ghi5xk0xiM34VpggzQ==
-X-Google-Smtp-Source: APXvYqxSTrTbdDOJVZ/NSpsLlPLKMh5bomXVvJWF0PlOY6wiEaCsHR6FF/GB5VdIRYS1B4NMgrdXsA==
-X-Received: by 2002:a05:6000:1190:: with SMTP id g16mr2819078wrx.133.1571316182250;
-        Thu, 17 Oct 2019 05:43:02 -0700 (PDT)
-Received: from netronome.com ([2001:982:756:703:d63d:7eff:fe99:ac9d])
-        by smtp.gmail.com with ESMTPSA id k8sm576756wrg.15.2019.10.17.05.43.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Oct 2019 05:43:01 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 14:43:01 +0200
-From:   Simon Horman <simon.horman@netronome.com>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
-        linux-kernel@lists.codethink.co.uk,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RFC: Bluetooth: missed cpu_to_le16 conversion in
- hci_init4_req
-Message-ID: <20191017124300.fktzd27yy2t7gcqx@netronome.com>
-References: <20191016113943.19256-1-ben.dooks@codethink.co.uk>
- <20191016122022.kz4xzx4hzmtuoh5l@netronome.com>
- <BFA3CB11-5FD8-4BD8-9DDA-62707AB84626@holtmann.org>
+        Thu, 17 Oct 2019 08:42:08 -0400
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E9679240005;
+        Thu, 17 Oct 2019 12:41:59 +0000 (UTC)
+Date:   Thu, 17 Oct 2019 14:43:49 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, uli+renesas@fpond.eu, airlied@linux.ie,
+        daniel@ffwll.ch, linux-renesas-soc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/8] drm: rcar-du: Add support for CMM
+Message-ID: <20191017124349.ncay2wc75bwpcd7d@uno.localdomain>
+References: <20191016085548.105703-1-jacopo+renesas@jmondi.org>
+ <20191016085548.105703-4-jacopo+renesas@jmondi.org>
+ <20191016134526.GD5175@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s2atx54st7begqc2"
 Content-Disposition: inline
-In-Reply-To: <BFA3CB11-5FD8-4BD8-9DDA-62707AB84626@holtmann.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191016134526.GD5175@pendragon.ideasonboard.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 08:42:48PM +0200, Marcel Holtmann wrote:
-> Hi Simon,
-> 
-> >> It looks like in hci_init4_req() the request is being
-> >> initialised from cpu-endian data but the packet is specified
-> >> to be little-endian. This causes an warning from sparse due
-> >> to __le16 to u16 conversion.
-> >> 
-> >> Fix this by using cpu_to_le16() on the two fields in the packet.
-> >> 
-> >> net/bluetooth/hci_core.c:845:27: warning: incorrect type in assignment (different base types)
-> >> net/bluetooth/hci_core.c:845:27:    expected restricted __le16 [usertype] tx_len
-> >> net/bluetooth/hci_core.c:845:27:    got unsigned short [usertype] le_max_tx_len
-> >> net/bluetooth/hci_core.c:846:28: warning: incorrect type in assignment (different base types)
-> >> net/bluetooth/hci_core.c:846:28:    expected restricted __le16 [usertype] tx_time
-> >> net/bluetooth/hci_core.c:846:28:    got unsigned short [usertype] le_max_tx_time
-> >> 
-> >> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> >> ---
-> >> Cc: Marcel Holtmann <marcel@holtmann.org>
-> >> Cc: Johan Hedberg <johan.hedberg@gmail.com>
-> >> Cc: "David S. Miller" <davem@davemloft.net>
-> >> Cc: linux-bluetooth@vger.kernel.org
-> >> Cc: netdev@vger.kernel.org
-> >> Cc: linux-kernel@vger.kernel.org
-> >> ---
-> >> net/bluetooth/hci_core.c | 4 ++--
-> >> 1 file changed, 2 insertions(+), 2 deletions(-)
-> >> 
-> >> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> >> index 04bc79359a17..b2559d4bed81 100644
-> >> --- a/net/bluetooth/hci_core.c
-> >> +++ b/net/bluetooth/hci_core.c
-> >> @@ -842,8 +842,8 @@ static int hci_init4_req(struct hci_request *req, unsigned long opt)
-> >> 	if (hdev->le_features[0] & HCI_LE_DATA_LEN_EXT) {
-> >> 		struct hci_cp_le_write_def_data_len cp;
-> >> 
-> >> -		cp.tx_len = hdev->le_max_tx_len;
-> >> -		cp.tx_time = hdev->le_max_tx_time;
-> >> +		cp.tx_len = cpu_to_le16(hdev->le_max_tx_len);
-> >> +		cp.tx_time = cpu_to_le16(hdev->le_max_tx_time);
-> > 
-> > I would suggest that the naming of the le_ fields of struct hci_dev
-> > implies that the values stored in those fields should be little endian
-> > (but those that are more than bone byte wide are not).
-> 
-> the le_ stands for Low Energy and not for Little Endian.
 
-Thanks, in that case I have no objections.
+--s2atx54st7begqc2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Hi Laurent,
+
+On Wed, Oct 16, 2019 at 04:45:26PM +0300, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> Thank you for the patch.
+>
+> On Wed, Oct 16, 2019 at 10:55:43AM +0200, Jacopo Mondi wrote:
+> > Add a driver for the R-Car Display Unit Color Correction Module.
+> >
+> > In most of Gen3 SoCs, each DU output channel is provided with a CMM unit
+> > to perform image enhancement and color correction.
+> >
+> > Add support for CMM through a driver that supports configuration of
+> > the 1-dimensional LUT table. More advanced CMM features will be
+> > implemented on top of this initial one.
+> >
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/gpu/drm/rcar-du/Kconfig    |   7 +
+> >  drivers/gpu/drm/rcar-du/Makefile   |   1 +
+> >  drivers/gpu/drm/rcar-du/rcar_cmm.c | 212 +++++++++++++++++++++++++++++
+> >  drivers/gpu/drm/rcar-du/rcar_cmm.h |  58 ++++++++
+> >  4 files changed, 278 insertions(+)
+> >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.c
+> >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.h
+> >
+> > diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+> > index 1529849e217e..539d232790d1 100644
+> > --- a/drivers/gpu/drm/rcar-du/Kconfig
+> > +++ b/drivers/gpu/drm/rcar-du/Kconfig
+> > @@ -13,6 +13,13 @@ config DRM_RCAR_DU
+> >  	  Choose this option if you have an R-Car chipset.
+> >  	  If M is selected the module will be called rcar-du-drm.
+> >
+> > +config DRM_RCAR_CMM
+> > +	bool "R-Car DU Color Management Module (CMM) Support"
+> > +	depends on DRM && OF
+> > +	depends on DRM_RCAR_DU
+> > +	help
+> > +	  Enable support for R-Car Color Management Module (CMM).
+> > +
+> >  config DRM_RCAR_DW_HDMI
+> >  	tristate "R-Car DU Gen3 HDMI Encoder Support"
+> >  	depends on DRM && OF
+> > diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
+> > index 6c2ed9c46467..4d1187ccc3e5 100644
+> > --- a/drivers/gpu/drm/rcar-du/Makefile
+> > +++ b/drivers/gpu/drm/rcar-du/Makefile
+> > @@ -15,6 +15,7 @@ rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_of.o \
+> >  rcar-du-drm-$(CONFIG_DRM_RCAR_VSP)	+= rcar_du_vsp.o
+> >  rcar-du-drm-$(CONFIG_DRM_RCAR_WRITEBACK) += rcar_du_writeback.o
+> >
+> > +obj-$(CONFIG_DRM_RCAR_CMM)		+= rcar_cmm.o
+> >  obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
+> >  obj-$(CONFIG_DRM_RCAR_DW_HDMI)		+= rcar_dw_hdmi.o
+> >  obj-$(CONFIG_DRM_RCAR_LVDS)		+= rcar_lvds.o
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_cmm.c b/drivers/gpu/drm/rcar-du/rcar_cmm.c
+> > new file mode 100644
+> > index 000000000000..4170626208cf
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_cmm.c
+> > @@ -0,0 +1,212 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * rcar_cmm.c -- R-Car Display Unit Color Management Module
+> > + *
+> > + * Copyright (C) 2019 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > + */
+> > +
+> > +#include <linux/io.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pm_runtime.h>
+> > +
+> > +#include <drm/drm_color_mgmt.h>
+> > +
+> > +#include "rcar_cmm.h"
+> > +
+> > +#define CM2_LUT_CTRL		0x0000
+> > +#define CM2_LUT_CTRL_LUT_EN	BIT(0)
+> > +#define CM2_LUT_TBL_BASE	0x0600
+> > +#define CM2_LUT_TBL(__i)	(CM2_LUT_TBL_BASE + (__i) * 4)
+> > +
+> > +struct rcar_cmm {
+> > +	void __iomem *base;
+> > +
+> > +	/*
+> > +	 * @lut:		1D-LUT state
+> > +	 * @lut.enabled:	1D-LUT enabled flag
+> > +	 */
+> > +	struct {
+> > +		bool enabled;
+> > +	} lut;
+> > +};
+> > +
+> > +static inline int rcar_cmm_read(struct rcar_cmm *rcmm, u32 reg)
+> > +{
+> > +	return ioread32(rcmm->base + reg);
+> > +}
+> > +
+> > +static inline void rcar_cmm_write(struct rcar_cmm *rcmm, u32 reg, u32 data)
+> > +{
+> > +	iowrite32(data, rcmm->base + reg);
+> > +}
+> > +
+> > +/*
+> > + * rcar_cmm_lut_write() - Scale the DRM LUT table entries to hardware precision
+> > + *			  and write to the CMM registers
+> > + * @rcmm: Pointer to the CMM device
+> > + * @drm_lut: Pointer to the DRM LUT table
+> > + */
+> > +static void rcar_cmm_lut_write(struct rcar_cmm *rcmm,
+> > +			       const struct drm_color_lut *drm_lut)
+> > +{
+> > +	unsigned int i;
+> > +
+> > +	for (i = 0; i < CM2_LUT_SIZE; ++i) {
+> > +		u32 entry = drm_color_lut_extract(drm_lut[i].red, 8) << 16
+> > +			  | drm_color_lut_extract(drm_lut[i].green, 8) << 8
+> > +			  | drm_color_lut_extract(drm_lut[i].blue, 8);
+> > +
+> > +		rcar_cmm_write(rcmm, CM2_LUT_TBL(i), entry);
+> > +	}
+> > +}
+> > +
+> > +/*
+> > + * rcar_cmm_setup() - Configure the CMM unit
+> > + * @pdev: The platform device associated with the CMM instance
+> > + * @config: The CMM unit configuration
+> > + *
+> > + * Configure the CMM unit with the given configuration. Currently enabling,
+> > + * disabling and programming of the 1-D LUT unit is supported.
+>
+> Did you miss the comment in the previous version about explaining when
+> rcar_cmm_setup() can be called (basically requiring the CMM to be
+> enabled) ? I can fix this when applying if you tell me what I should
+> write.
+>
+
+No I didn't.
+
+As the DU is the only user of this function, I don't get why we should
+specify here which is the order of the calls, as they are performed by
+the crct driver in the right order already.
+
+Please feel free to add whatever you consider appropriate to this
+comment section when applying.
+
+Thanks
+   j
+
+> > + *
+> > + * TODO: Add support for LUT double buffer operations to avoid updating the
+> > + * LUT table entries while a frame is being displayed.
+> > + */
+> > +int rcar_cmm_setup(struct platform_device *pdev,
+> > +		   const struct rcar_cmm_config *config)
+> > +{
+> > +	struct rcar_cmm *rcmm = platform_get_drvdata(pdev);
+> > +
+> > +	/* Disable LUT if no table is provided. */
+> > +	if (!config->lut.table) {
+> > +		if (rcmm->lut.enabled) {
+> > +			rcar_cmm_write(rcmm, CM2_LUT_CTRL, 0);
+> > +			rcmm->lut.enabled = false;
+> > +		}
+> > +
+> > +		return 0;
+> > +	}
+> > +
+> > +	/* Enable LUT and program the new gamma table values. */
+> > +	if (!rcmm->lut.enabled) {
+> > +		rcar_cmm_write(rcmm, CM2_LUT_CTRL, CM2_LUT_CTRL_LUT_EN);
+> > +		rcmm->lut.enabled = true;
+> > +	}
+> > +
+> > +	rcar_cmm_lut_write(rcmm, config->lut.table);
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(rcar_cmm_setup);
+> > +
+> > +/*
+> > + * rcar_cmm_enable() - Enable the CMM unit
+> > + * @pdev: The platform device associated with the CMM instance
+> > + *
+> > + * When the output of the corresponding DU channel is routed to the CMM unit,
+> > + * the unit shall be enabled before the DU channel is started, and remain
+> > + * enabled until the channel is stopped. The CMM unit shall be disabled with
+> > + * rcar_cmm_disable().
+> > + *
+> > + * Calls to rcar_cmm_enable() and rcar_cmm_disable() are not reference-counted.
+> > + * It is an error to attempt to enable an already enabled CMM unit, or to
+> > + * attempt to disable a disabled unit.
+> > + */
+> > +int rcar_cmm_enable(struct platform_device *pdev)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = pm_runtime_get_sync(&pdev->dev);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(rcar_cmm_enable);
+> > +
+> > +/*
+> > + * rcar_cmm_disable() - Disable the CMM unit
+> > + * @pdev: The platform device associated with the CMM instance
+> > + *
+> > + * See rcar_cmm_enable() for usage information.
+> > + *
+> > + * Disabling the CMM unit disable all the internal processing blocks. The CMM
+> > + * state shall thus be restored with rcar_cmm_setup() when re-enabling the CMM
+> > + * unit after the next rcar_cmm_enable() call.
+> > + */
+> > +void rcar_cmm_disable(struct platform_device *pdev)
+> > +{
+> > +	struct rcar_cmm *rcmm = platform_get_drvdata(pdev);
+> > +
+> > +	rcar_cmm_write(rcmm, CM2_LUT_CTRL, 0);
+> > +	rcmm->lut.enabled = false;
+> > +
+> > +	pm_runtime_put(&pdev->dev);
+> > +}
+> > +EXPORT_SYMBOL_GPL(rcar_cmm_disable);
+> > +
+> > +/*
+> > + * rcar_cmm_init() - Initialize the CMM unit
+> > + * @pdev: The platform device associated with the CMM instance
+> > + *
+> > + * Return: 0 on success, -EPROBE_DEFER if the CMM is not available yet,
+> > + *         -ENODEV if the DRM_RCAR_CMM config option is disabled
+> > + */
+> > +int rcar_cmm_init(struct platform_device *pdev)
+> > +{
+> > +	struct rcar_cmm *rcmm = platform_get_drvdata(pdev);
+> > +
+> > +	if (!rcmm)
+> > +		return -EPROBE_DEFER;
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(rcar_cmm_init);
+> > +
+> > +static int rcar_cmm_probe(struct platform_device *pdev)
+> > +{
+> > +	struct rcar_cmm *rcmm;
+> > +
+> > +	rcmm = devm_kzalloc(&pdev->dev, sizeof(*rcmm), GFP_KERNEL);
+> > +	if (!rcmm)
+> > +		return -ENOMEM;
+> > +	platform_set_drvdata(pdev, rcmm);
+> > +
+> > +	rcmm->base = devm_platform_ioremap_resource(pdev, 0);
+> > +	if (IS_ERR(rcmm->base))
+> > +		return PTR_ERR(rcmm->base);
+> > +
+> > +	pm_runtime_enable(&pdev->dev);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int rcar_cmm_remove(struct platform_device *pdev)
+> > +{
+> > +	pm_runtime_disable(&pdev->dev);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct of_device_id rcar_cmm_of_table[] = {
+> > +	{ .compatible = "renesas,rcar-gen3-cmm", },
+> > +	{ .compatible = "renesas,rcar-gen2-cmm", },
+> > +	{ },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, rcar_cmm_of_table);
+> > +
+> > +static struct platform_driver rcar_cmm_platform_driver = {
+> > +	.probe		= rcar_cmm_probe,
+> > +	.remove		= rcar_cmm_remove,
+> > +	.driver		= {
+> > +		.name	= "rcar-cmm",
+> > +		.of_match_table = rcar_cmm_of_table,
+> > +	},
+> > +};
+> > +
+> > +module_platform_driver(rcar_cmm_platform_driver);
+> > +
+> > +MODULE_AUTHOR("Jacopo Mondi <jacopo+renesas@jmondi.org>");
+> > +MODULE_DESCRIPTION("Renesas R-Car CMM Driver");
+> > +MODULE_LICENSE("GPL v2");
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_cmm.h b/drivers/gpu/drm/rcar-du/rcar_cmm.h
+> > new file mode 100644
+> > index 000000000000..b5f7ec6db04a
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_cmm.h
+> > @@ -0,0 +1,58 @@
+> > +/* SPDX-License-Identifier: GPL-2.0+ */
+> > +/*
+> > + * rcar_cmm.h -- R-Car Display Unit Color Management Module
+> > + *
+> > + * Copyright (C) 2019 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > + */
+> > +
+> > +#ifndef __RCAR_CMM_H__
+> > +#define __RCAR_CMM_H__
+> > +
+> > +#define CM2_LUT_SIZE		256
+> > +
+> > +struct drm_color_lut;
+> > +struct platform_device;
+> > +
+> > +/**
+> > + * struct rcar_cmm_config - CMM configuration
+> > + *
+> > + * @lut:	1D-LUT configuration
+> > + * @lut.table:	1D-LUT table entries. Disable LUT operations when NULL
+> > + */
+> > +struct rcar_cmm_config {
+> > +	struct {
+> > +		struct drm_color_lut *table;
+> > +	} lut;
+> > +};
+> > +
+> > +#if IS_ENABLED(CONFIG_DRM_RCAR_CMM)
+> > +int rcar_cmm_init(struct platform_device *pdev);
+> > +
+> > +int rcar_cmm_enable(struct platform_device *pdev);
+> > +void rcar_cmm_disable(struct platform_device *pdev);
+> > +
+> > +int rcar_cmm_setup(struct platform_device *pdev,
+> > +		   const struct rcar_cmm_config *config);
+> > +#else
+> > +static inline int rcar_cmm_init(struct platform_device *pdev)
+> > +{
+> > +	return -ENODEV;
+> > +}
+> > +
+> > +static inline int rcar_cmm_enable(struct platform_device *pdev)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +static inline void rcar_cmm_disable(struct platform_device *pdev)
+> > +{
+> > +}
+> > +
+> > +static inline int rcar_cmm_setup(struct platform_device *pdev,
+> > +				 const struct rcar_cmm_config *config)
+> > +{
+> > +	return 0;
+> > +}
+> > +#endif /* IS_ENABLED(CONFIG_DRM_RCAR_CMM) */
+> > +
+> > +#endif /* __RCAR_CMM_H__ */
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+
+--s2atx54st7begqc2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl2oYgUACgkQcjQGjxah
+VjwiBQ//eQ3+KakGd43Q45rEyakp7nVinWW6wZfvMBCF+aci17r47cWw8q9AsVT+
+/Hxi4ujAHOdAsMpBT/rUODlSK5beGWk+tmxeTHkTF0J5Xfj8tmduKcXIdONf+k1Y
+eOLK24MXCgAFbG6jSe4XzBewt+5BoSBSQOKpxkosKB1Rrge1aZmnXAvnNd/EHDW1
+ZuHGl803ohm9TQlXtzpilGxr/9o0qmilshgLMLzuuHl8RZQDoY4JiuY4k/p6z0s1
+MsNSxrJyGmVAPEyhs6GdPQPElebOqOKe2/0qBx5WoReP34IWaO4t+tr+8tDMKKHm
+BasPS/92dTu2c41Mg9KD44hmMVfc1OC97Am3vRLfV80dcEbr9d+NAI3Qd70VYIA1
+3X2mKC+2n3dNox6FQVV3XHVIUu3qhQnwPNDZPdOnpzU3fjLOZAqA3IdQEDxY7Rmg
+sOMo0FPiSaBF33P2Eq1lH8mgHmYMtOripC4pZEHHoUeGwVrZ/Hu65FfohjcDXLc3
+NxgzI1TDblBU1K59fjJy019SNk4QXCRNLhKiiJPACBjRsp4CEiLBwLjitbV8EEwU
+5dbM2l3vM2Kq+Skz8SEJtDorqi/ZzntL5g3iZMMT4XPanUJ+siTbER07MS2CluDY
+sx98L6zpiL2QPNgXo2wfNBeN94ZoIWp8rhlMHKv1iRsghBEc/cE=
+=Ad+p
+-----END PGP SIGNATURE-----
+
+--s2atx54st7begqc2--
