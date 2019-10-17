@@ -2,97 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A9B2DB649
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:36:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 449C7DB654
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:37:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438982AbfJQSgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 14:36:02 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33263 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438924AbfJQSgB (ORCPT
+        id S2441348AbfJQShu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 14:37:50 -0400
+Received: from mailoutvs40.siol.net ([185.57.226.231]:37932 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2390864AbfJQSht (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:36:01 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b9so3520070wrs.0;
-        Thu, 17 Oct 2019 11:35:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=L/172PFesHWuvzNopt4c4XlSQQptfEWlNlsUsPCP8v8=;
-        b=UHG/4bLFtFCzmfzkVGc2ImqhRoK5hPPugYe10a7h/AHV34r//c3q8LQl4Uj67cTlbN
-         JoCk/UwGu+U8SRK2B1kbvqi4b1zjVtdw6qbWArTZsOG4XLgW34gTamVTiIoRw5JfAow7
-         o/7y+KYslgzzN/Vs8xkqNYoxXo8S98QVbnQry/NnNc9kdsybo+1TqjbpWc0156S9NjE/
-         QPp2znoHrt5f62rqIbsgH6NkXL6su3ENXfz9DmK8TQPazqy72sTIaisWe50NqX5JsEg6
-         Hfd4PuerKUUD/Pf5A8rdUty3wYr1lW+daPacXsvGVJ3/aOUhHtCLAFGlp46QbmB+a3GN
-         IFjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=L/172PFesHWuvzNopt4c4XlSQQptfEWlNlsUsPCP8v8=;
-        b=HiYL7h45vzGsQQ3790sHprLwSnZM/+wG3N+7iJSNRrO+II9lFf/fWFd5wKAv0bOEvA
-         zPQX+373akAhichskeG3maRRTGb92xUTkN0nrJyq2AyJJczih0YYN5SXY5/sUdWKhHei
-         rMRthONEUu17OT8iXNUlW5Cznt9pt1ZENiiVFIRUt2sAQ6qRPFDF+f1hN6u+nNwpEyvX
-         bxJ/3epNx1FNJ6RKimUy9vQTJvV9GsJGxsUt4HO3kSxOk9T/7Z3CEy6rj6FnmYeraOGO
-         I/wmEK/oghptcEd6BDcwAsHwKh/HlF5oLKQfglP9HghVx9QK99HdU1ZxUl+R0nuDzepm
-         R+aA==
-X-Gm-Message-State: APjAAAWPEaylYRwu4IygTC1S+/BKDsDL21ATcUbm+I9+eLxIcOpLrswD
-        fbjBZaLFA8HF8Bmkd69dj3qDTTDf
-X-Google-Smtp-Source: APXvYqxnhdYQusvYfFeUZHFuap0s7BvTLgqmJZXqKtYnH7Ct6SqR++6A5hhIRnW3QcZVratWlK/KXQ==
-X-Received: by 2002:adf:ee81:: with SMTP id b1mr3923610wro.58.1571337358592;
-        Thu, 17 Oct 2019 11:35:58 -0700 (PDT)
-Received: from [10.230.29.119] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id a14sm2540026wmm.44.2019.10.17.11.35.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2019 11:35:57 -0700 (PDT)
-Subject: Re: [PATCH v1 4/4] net: dsa: add support for Atheros AR9331 build-in
- switch
-To:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Chris Snook <chris.snook@gmail.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jay Cliburn <jcliburn@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Vivien Didelot <vivien.didelot@gmail.com>
-Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org
-References: <20191014061549.3669-1-o.rempel@pengutronix.de>
- <20191014061549.3669-5-o.rempel@pengutronix.de>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <2ad26bdc-e099-ded6-1337-5793aba0958d@gmail.com>
-Date:   Thu, 17 Oct 2019 11:35:48 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        Thu, 17 Oct 2019 14:37:49 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 31B38525415;
+        Thu, 17 Oct 2019 20:37:45 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id OdR0LpAX-qoC; Thu, 17 Oct 2019 20:37:44 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id A0F16525317;
+        Thu, 17 Oct 2019 20:37:44 +0200 (CEST)
+Received: from localhost.localdomain (cpe-86-58-59-25.static.triera.net [86.58.59.25])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPSA id 2584A52524F;
+        Thu, 17 Oct 2019 20:37:44 +0200 (CEST)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     mripard@kernel.org, wens@csie.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: [PATCH v4 0/6] media: Introduce Allwinner H3 deinterlace driver
+Date:   Thu, 17 Oct 2019 20:37:32 +0200
+Message-Id: <20191017183738.68069-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20191014061549.3669-5-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Starting with H3, Allwinner began to include standalone deinterlace
+core in multimedia oriented SoCs. This patch series introduces support
+for it. Note that new SoCs, like H6, have radically different (updated)
+deinterlace core, which will need a new driver.
 
+v4l2-compliance report:
+v4l2-compliance SHA: dece02f862f38d8f866230ca9f1015cb93ddfac4, 32 bits
 
-On 10/13/2019 11:15 PM, Oleksij Rempel wrote:
-> Provide basic support for Atheros AR9331 build-in switch. So far it
-> works as port multiplexer without any hardware offloading support.
+Compliance test for sun8i-di device /dev/video0:
 
-I glanced through the functional parts of the code, and it looks pretty
-straight forward, since there is no offloading done so far, do you plan
-on adding bridge offload eventually if nothing more?
+Driver Info:
+        Driver name      : sun8i-di
+        Card type        : sun8i-di
+        Bus info         : platform:sun8i-di
+        Driver version   : 5.3.0
+        Capabilities     : 0x84208000
+                Video Memory-to-Memory
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x04208000
+                Video Memory-to-Memory
+                Streaming
+                Extended Pix Format
 
-When you submit v2, I would suggest splitting the tagger code from the
-switch driver code, just to make them easier to review.
+Required ioctls:
+        test VIDIOC_QUERYCAP: OK
 
-Thanks!
--- 
-Florian
+Allow for multiple opens:
+        test second /dev/video0 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Total for sun8i-di device /dev/video0: 44, Succeeded: 44, Failed: 0, Warn=
+ings: 0
+
+Please take a look.
+
+Best regards,
+Jernej
+
+Changes from v3:
+- added Maxime's a-b tag
+- moved and fixed Kconfig entry
+- put clk_set_rate_exclusive() and it's counterpart in PM callbacks
+
+Changes from v2:
+- added acked-by and review-by tags
+- fixed schema path in H3 deinterlace binding
+- moved busy check after format args check
+
+Changes from v1:
+- updated Maxime's e-mail in DT binding
+- removed "items" for single item in DT binding
+- implemented power management
+- replaced regmap with direct io access
+- set exclusive clock rate
+- renamed DEINTERLACE_FRM_CTRL_COEF_CTRL to DEINTERLACE_FRM_CTRL_COEF_ACC=
+ESS
+
+Jernej Skrabec (6):
+  dt-bindings: bus: sunxi: Add H3 MBUS compatible
+  clk: sunxi-ng: h3: Export MBUS clock
+  ARM: dts: sunxi: h3/h5: Add MBUS controller node
+  dt-bindings: media: Add Allwinner H3 Deinterlace binding
+  media: sun4i: Add H3 deinterlace driver
+  dts: arm: sun8i: h3: Enable deinterlace unit
+
+ .../bindings/arm/sunxi/sunxi-mbus.txt         |    1 +
+ .../media/allwinner,sun8i-h3-deinterlace.yaml |   75 ++
+ MAINTAINERS                                   |    7 +
+ arch/arm/boot/dts/sun8i-h3.dtsi               |   13 +
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi            |    9 +
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.h           |    4 -
+ drivers/media/platform/Kconfig                |   12 +
+ drivers/media/platform/sunxi/Makefile         |    1 +
+ .../media/platform/sunxi/sun8i-di/Makefile    |    2 +
+ .../media/platform/sunxi/sun8i-di/sun8i-di.c  | 1028 +++++++++++++++++
+ .../media/platform/sunxi/sun8i-di/sun8i-di.h  |  237 ++++
+ include/dt-bindings/clock/sun8i-h3-ccu.h      |    2 +-
+ 12 files changed, 1386 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/allwinner,sun=
+8i-h3-deinterlace.yaml
+ create mode 100644 drivers/media/platform/sunxi/sun8i-di/Makefile
+ create mode 100644 drivers/media/platform/sunxi/sun8i-di/sun8i-di.c
+ create mode 100644 drivers/media/platform/sunxi/sun8i-di/sun8i-di.h
+
+--=20
+2.23.0
+
