@@ -2,232 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D4FCDAA38
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 12:46:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5080DAA42
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 12:48:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408946AbfJQKqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 06:46:44 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35641 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408933AbfJQKqo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 06:46:44 -0400
-Received: by mail-lf1-f67.google.com with SMTP id w6so1501326lfl.2;
-        Thu, 17 Oct 2019 03:46:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2nzwnuvHZxUsW22PYwUywvfUwUVZh8Pwvzu7gDe3XaM=;
-        b=ZujIlOTItl5rdarIem2VENde42C20FOiUR/LdecFJqQOlqpY4dzkumD0PbErcsRgTg
-         YHAf+OnFBn8Pe6ANZ2vyQqlNdugjgtdd7MRN4HYdraFJoDrLpv+Dt9Bu3PxzMu/NOL3B
-         vYTFEEfDbUeCS4WsoCSnIxAFM5hhHZncIDBNCVfiHrUJCiHaz2QsImmwjD8Q97EWml1F
-         8ryjD5C4vB6nKk5emysX0kgZDgjGtsyfq0dVvsGycWpONbbqyz0kh4ADSj5jKPjzdeCz
-         fkzHs10CEYpTfIFDwkGxcWgldQu9yhAJXW/X1Bewf1AAds7hVxACYEKFxYC2b0oNwGfn
-         qJ+Q==
-X-Gm-Message-State: APjAAAVIUFAyIIqzcc3u/9Q+UAy/sqxRkkg/Qz5u3f+JiytNOC1idO/q
-        69EXG+i/JqOaD5ub8srrzX8=
-X-Google-Smtp-Source: APXvYqzsXdV2LA5n9FWMH/DQZnoCjgv8hB3a2Gs+ubQ0bUGDZGyal8FlJ676XgWYVnA6aToGvjzCgQ==
-X-Received: by 2002:a05:6512:142:: with SMTP id m2mr1997771lfo.56.1571309200999;
-        Thu, 17 Oct 2019 03:46:40 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id y135sm2362254lfa.92.2019.10.17.03.46.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 03:46:40 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@kernel.org>)
-        id 1iL3Iw-0007Ru-Qf; Thu, 17 Oct 2019 12:46:51 +0200
-Date:   Thu, 17 Oct 2019 12:46:50 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     syzbot <syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com>
-Cc:     andreyknvl@google.com, enric.balletbo@collabora.com,
-        gregkh@linuxfoundation.org, johan@kernel.org, kirr@nexedi.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux@roeck-us.net, logang@deltatee.com,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: slab-out-of-bounds Read in ld_usb_read (3)
-Message-ID: <20191017104650.GD21827@localhost>
-References: <00000000000070102d059511537d@google.com>
- <20191017102513.GC21827@localhost>
+        id S2408966AbfJQKsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 06:48:35 -0400
+Received: from mail-eopbgr130077.outbound.protection.outlook.com ([40.107.13.77]:28766
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2404935AbfJQKsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 06:48:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hl3sMsX0c+XxnqBP0DW1fAeOGamt9J9H22Xo7e7LUFs=;
+ b=qhS9Cg+ru0VhuqvfEL3cbiVyxjoo3V7/gbh0rRlky/xMKH7SRKflhfsimaVc8+b9Mw/dUEGUi6/qh9U3dxiqiVauVxVeLXwb7dj0c4YYfdotQu5nHbuoedBA8bWog3+wGhws4NB0dP/sOfix72FzphUqY149xmBCiXCwXqLQn9Q=
+Received: from DB6PR0802CA0042.eurprd08.prod.outlook.com (2603:10a6:4:a3::28)
+ by AM5PR0801MB2003.eurprd08.prod.outlook.com (2603:10a6:203:4a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.21; Thu, 17 Oct
+ 2019 10:48:27 +0000
+Received: from VE1EUR03FT052.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e09::202) by DB6PR0802CA0042.outlook.office365.com
+ (2603:10a6:4:a3::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2347.17 via Frontend
+ Transport; Thu, 17 Oct 2019 10:48:26 +0000
+Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
+ header.from=arm.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of arm.com: DNS Timeout)
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ VE1EUR03FT052.mail.protection.outlook.com (10.152.19.173) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2305.15 via Frontend Transport; Thu, 17 Oct 2019 10:48:25 +0000
+Received: ("Tessian outbound 0939a6bab6b1:v33"); Thu, 17 Oct 2019 10:48:20 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 15e5672419524f75
+X-CR-MTA-TID: 64aa7808
+Received: from 2c004cea8bcb.1 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.1.56])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 81EA1DB6-7CE7-4915-9F28-35F5476F86ED.1;
+        Thu, 17 Oct 2019 10:48:14 +0000
+Received: from EUR01-VE1-obe.outbound.protection.outlook.com (mail-ve1eur01lp2056.outbound.protection.outlook.com [104.47.1.56])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 2c004cea8bcb.1
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Thu, 17 Oct 2019 10:48:14 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aUR4N41EDlxfhuMSPv2vrL9EduXW3L8lgACckjDkkgyC0QLarwgvtcUX16un4UItt5TIyRP81ALBzMgzOd2KuDA14YQJ/4Yq0owOvxsdbrKKkMKojiqW9Ova2t+3H7e5cnmfASnP1KB2EtwjJVOF/1mTJeRtW7yAbAqWLMTkofJ+pTPwiby+bdhQqIUYrDuBiW0RXHoRnajgpbU9qsy6R5pI3AoWn3xquXEsp0tgkhjtt8/5Wf1Vz9qwnJ+w7th4XK6OpBQwWpBrTW4oUAV55r4Njc3PBMDftIH0JtXf03gXID14sCoqlxYHBArQU/I3oZDSC8+JYGnrYkCUcxE3CA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hl3sMsX0c+XxnqBP0DW1fAeOGamt9J9H22Xo7e7LUFs=;
+ b=f/JQY9+kHR0LaWY9uGrRmNOiLNLH2Q8lrL7g+wRWZEVHF/NiBqfPivlJXzEqMSmoOWyqf1PQMLvdnFIGWdIsYCbLAMFhzls0j3TzCILYWmROWDqlIEnMsvnFjRVZNJpRwPzLH7W2UfCzMjMZyYcSAciPBarbjWDdso8Re6FR3OFlmYjojds/ejL43+t3uENGZ9XLeDzgSFWiDnMDEWoQrimRWfvtbBhYnn2qYeul9AKfeDeRyDOm/lekBN55/yMp8qc2dzXZk+Nuc50W+NeF2xpnHs86kcWU8eeO+R4fxdx8XW9XfhrzJK2aZEOrrkP7Yi2Nv20Hcue4JqRfAJF5Pw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hl3sMsX0c+XxnqBP0DW1fAeOGamt9J9H22Xo7e7LUFs=;
+ b=qhS9Cg+ru0VhuqvfEL3cbiVyxjoo3V7/gbh0rRlky/xMKH7SRKflhfsimaVc8+b9Mw/dUEGUi6/qh9U3dxiqiVauVxVeLXwb7dj0c4YYfdotQu5nHbuoedBA8bWog3+wGhws4NB0dP/sOfix72FzphUqY149xmBCiXCwXqLQn9Q=
+Received: from AM6PR08MB3829.eurprd08.prod.outlook.com (20.178.89.14) by
+ AM6PR08MB4769.eurprd08.prod.outlook.com (10.255.99.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.17; Thu, 17 Oct 2019 10:48:13 +0000
+Received: from AM6PR08MB3829.eurprd08.prod.outlook.com
+ ([fe80::ce0:f47b:919d:561a]) by AM6PR08MB3829.eurprd08.prod.outlook.com
+ ([fe80::ce0:f47b:919d:561a%5]) with mapi id 15.20.2347.023; Thu, 17 Oct 2019
+ 10:48:13 +0000
+From:   Brian Starkey <Brian.Starkey@arm.com>
+To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+CC:     Mihail Atanassov <Mihail.Atanassov@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Ripard <mripard@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>, Sean Paul <sean@poorly.run>
+Subject: Re: [RFC,3/3] drm/komeda: Allow non-component drm_bridge only
+ endpoints
+Thread-Topic: [RFC,3/3] drm/komeda: Allow non-component drm_bridge only
+ endpoints
+Thread-Index: AQHVhDme1+iX/Utgt0y74txJGijIlKddc0AAgAC0dYCAAFdhgIAAIZ6AgAAHlgA=
+Date:   Thu, 17 Oct 2019 10:48:12 +0000
+Message-ID: <20191017104812.6qpuzoh5bx5i2y3m@DESKTOP-E1NTVVP.localdomain>
+References: <20191004143418.53039-4-mihail.atanassov@arm.com>
+ <20191009055407.GA3082@jamwan02-TSP300> <5390495.Gzyn2rW8Nj@e123338-lin>
+ <20191016162206.u2yo37rtqwou4oep@DESKTOP-E1NTVVP.localdomain>
+ <20191017030752.GA3109@jamwan02-TSP300>
+ <20191017082043.bpiuvfr3r4jngxtu@DESKTOP-E1NTVVP.localdomain>
+ <20191017102055.GA8308@jamwan02-TSP300>
+In-Reply-To: <20191017102055.GA8308@jamwan02-TSP300>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: NeoMutt/20180716-849-147d51-dirty
+x-originating-ip: [217.140.106.52]
+x-clientproxiedby: LO2P265CA0287.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a1::35) To AM6PR08MB3829.eurprd08.prod.outlook.com
+ (2603:10a6:20b:85::14)
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=Brian.Starkey@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-Correlation-Id: b1323b4c-7d4e-4938-2b48-08d752ef898c
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-TrafficTypeDiagnostic: AM6PR08MB4769:|AM6PR08MB4769:|AM5PR0801MB2003:
+x-ms-exchange-transport-forked: True
+X-Microsoft-Antispam-PRVS: <AM5PR0801MB20036203958BBABF010AEEBEF06D0@AM5PR0801MB2003.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:8882;OLM:8882;
+x-forefront-prvs: 01930B2BA8
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(376002)(39860400002)(396003)(366004)(189003)(199004)(6436002)(316002)(76176011)(6486002)(186003)(54906003)(66556008)(66446008)(229853002)(64756008)(66946007)(26005)(66476007)(25786009)(6116002)(52116002)(66066001)(14454004)(478600001)(58126008)(99286004)(3846002)(386003)(6506007)(102836004)(6246003)(9686003)(6512007)(6862004)(14444005)(8676002)(4326008)(71190400001)(86362001)(1076003)(256004)(8936002)(5660300002)(2906002)(71200400001)(6636002)(81156014)(486006)(44832011)(476003)(11346002)(446003)(7736002)(305945005)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR08MB4769;H:AM6PR08MB3829.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: cVQXy2esuDoVcWYLosK3wSNIXonJm13oxjMRTTNEYLIkFiu5JawqJAtmKGYWSJ/a6R2WdUdBYlSj3ZpRtdve0BFmBDm5nYFrBuRkDSshqWsKKT8LcnWPkPMY+eJzxjZe294XunrGUS7/SZZBvJkD4RQlfHjlAuzj+iRbYaS0GjS2713JIA5vzFMS8EWQHB2zsHx1D/EBfMLqKwGU0WSvQLDYnjg4R2YA7tQyYdL1QLPAk3Oph4tLgs7d7L12orfbqzhY8e+Io0h5fcRUVbkHnaVu1d0037iL3UGQsrOh74o6aTwvFgfakNLnaKGOExlwE7isHpSSznloealRVfzX9NeGyrX3veIRlPD8OT03qpVjAtU++w/DcR59wrVY4lGSqm/1sJRGIDa9sYlheHttVBlB/rxuuGJ85xY9aaH1dFc=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <992E23AC5D263B4886484E3F786F8871@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017102513.GC21827@localhost>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB4769
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Brian.Starkey@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT052.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(346002)(376002)(136003)(199004)(189003)(6486002)(6512007)(70586007)(9686003)(70206006)(305945005)(76130400001)(86362001)(50466002)(76176011)(6862004)(5660300002)(7736002)(356004)(1076003)(107886003)(6246003)(316002)(14444005)(99286004)(58126008)(54906003)(4326008)(25786009)(47776003)(8936002)(8746002)(97756001)(81156014)(81166006)(336012)(66066001)(8676002)(26005)(23726003)(102836004)(6116002)(3846002)(46406003)(186003)(486006)(14454004)(2906002)(229853002)(6636002)(26826003)(63350400001)(386003)(446003)(6506007)(476003)(11346002)(126002)(478600001)(22756006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0801MB2003;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: ac3aacb7-a725-4acc-caaa-08d752ef8200
+NoDisclaimer: True
+X-Forefront-PRVS: 01930B2BA8
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /+7fT/24NcnFm+yySqyQwoOJfk6C5d/PdBhTWUq+gReql8JYKSg+EfAfFurCvQlFrx/xGJlU7B6w5rxl0TMVoLB5PRIxpC0UqdRcwrWK//tPt7E4e/BLZeU+7Z3SAqfhCS2na8g7OOTOzYgd40a8HLiKVUc7ui56NTmpDMYdrjRwXVsrxMLOzr8FxOuRLfYvde3YkcvPUjZlHBcTkRnW4ZxUxgz1ITzDc0JnmGMMuHGb7OUdQchaytcYOdNUBz1Wk/RUW9Uilm7qcFmqU7UyyTM9q3tFw43NMh94HddcltxHGkMi5BJnaUPYug3ua9XwvhP5yVsIpNO2Jy50lxBeS42r7YMTf68dG8SPkAKWt3Yrm1ImjULi+XpDF84P29BXi2+7PdZd01mPFXxVj4/9IGhNfbH3J+eNCvoZt9hfGvU=
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2019 10:48:25.3489
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1323b4c-7d4e-4938-2b48-08d752ef898c
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB2003
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 12:25:13PM +0200, Johan Hovold wrote:
-> On Wed, Oct 16, 2019 at 06:42:10PM -0700, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    22be26f7 usb-fuzzer: main usb gadget fuzzer driver
-> > git tree:       https://github.com/google/kasan.git usb-fuzzer
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=14f6dc5f600000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=387eccb7ac68ec5
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=6fe95b826644f7f12b0b
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102c3227600000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a503a0e00000
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com
-> > 
-> > ldusb 1-1:0.28: Read buffer overflow, -131383859965943 bytes dropped
-> 
-> This warning should be using %zu and thus read 18446612689849585673.
-> 
-> Apparently, *actual_buffer holds a kernel address ffff8881cfb42000
-> instead of a transfer length. Possibly a stale value since the buffer is
-> not cleared on allocation.
-> 
-> > ==================================================================
-> > BUG: KASAN: slab-out-of-bounds in _copy_to_user+0x124/0x150  
-> > lib/usercopy.c:28
-> > Read of size 102391 at addr ffff8881cfb40008 by task syz-executor372/1737
-> 
-> And due to missing sanity checks the driver proceeds to access data
-> beyond the ring-buffer entry.
-> 
-> > CPU: 0 PID: 1737 Comm: syz-executor372 Not tainted 5.4.0-rc3+ #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> > Google 01/01/2011
-> > Call Trace:
-> >   __dump_stack lib/dump_stack.c:77 [inline]
-> >   dump_stack+0xca/0x13e lib/dump_stack.c:113
-> >   print_address_description.constprop.0+0x36/0x50 mm/kasan/report.c:374
-> >   __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:506
-> >   kasan_report+0xe/0x20 mm/kasan/common.c:634
-> >   check_memory_region_inline mm/kasan/generic.c:185 [inline]
-> >   check_memory_region+0x128/0x190 mm/kasan/generic.c:192
-> >   _copy_to_user+0x124/0x150 lib/usercopy.c:28
-> >   copy_to_user include/linux/uaccess.h:152 [inline]
-> >   ld_usb_read+0x329/0x760 drivers/usb/misc/ldusb.c:492
-> >   __vfs_read+0x76/0x100 fs/read_write.c:425
-> >   vfs_read+0x1ea/0x430 fs/read_write.c:461
-> >   ksys_read+0x1e8/0x250 fs/read_write.c:587
-> >   do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:290
-> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x4421d9
-> > Code: e8 7c e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-> > ff 0f 83 bb 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> > RSP: 002b:00007ffc08eb0888 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> > RAX: ffffffffffffffda RBX: 00007ffc08eb0ae0 RCX: 00000000004421d9
-> > RDX: 0000000000018ff7 RSI: 0000000020000a80 RDI: 0000000000000004
-> > RBP: 0000000000000000 R08: 000000000000000f R09: 0000000000402eb0
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> > R13: 0000000000402eb0 R14: 0000000000000000 R15: 0000000000000000
-> > 
-> > The buggy address belongs to the page:
-> > page:ffffea00073ed000 refcount:1 mapcount:0 mapping:0000000000000000  
-> > index:0x0 compound_mapcount: 0
-> > flags: 0x200000000010000(head)
-> > raw: 0200000000010000 dead000000000100 dead000000000122 0000000000000000
-> > raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-> > page dumped because: kasan: bad access detected
-> > 
-> > Memory state around the buggy address:
-> >   ffff8881cfb55500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> >   ffff8881cfb55580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > > ffff8881cfb55600: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> >                     ^
-> >   ffff8881cfb55680: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> >   ffff8881cfb55700: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> > ==================================================================
-> 
-> The drivers ring-buffer implementation is broken so this could
-> potentially be a memory-ordering issue (e.g. the entry is read before it
-> has been updated).
+On Thu, Oct 17, 2019 at 10:21:03AM +0000, james qian wang (Arm Technology C=
+hina) wrote:
+> On Thu, Oct 17, 2019 at 08:20:56AM +0000, Brian Starkey wrote:
+> > On Thu, Oct 17, 2019 at 03:07:59AM +0000, james qian wang (Arm Technolo=
+gy China) wrote:
+> > > On Wed, Oct 16, 2019 at 04:22:07PM +0000, Brian Starkey wrote:
+> > > >=20
+> > > > If James is strongly against merging this, maybe we just swap
+> > > > wholesale to bridge? But for me, the pragmatic approach would be th=
+is
+> > > > stop-gap.
+> > > >
+> > >=20
+> > > This is a good idea, and I vote +ULONG_MAX :)
+> > >=20
+> > > and I also checked tda998x driver, it supports bridge. so swap the
+> > > wholesale to brige is perfect. :)
+> > >=20
+> >=20
+> > Well, as Mihail wrote, it's definitely not perfect.
+> >=20
+> > Today, if you rmmod tda998x with the DPU driver still loaded,
+> > everything will be unbound gracefully.
+> >=20
+> > If we swap to bridge, then rmmod'ing tda998x (or any other bridge
+> > driver the DPU is using) with the DPU driver still loaded will result
+> > in a crash.
+>=20
+> I haven't read the bridge code, but seems this is a bug of drm_bridge,
+> since if the bridge is still in using by others, the rmmod should fail
+>=20
 
-Heh, it doesn't even need to race to trigger this; the driver sets
-dev->interrupt_in_done when the URB is killed on disconnect() and read
-happily continues with reading the next entry which was never updated.
+Correct, but there's no fix for that today. You can also take a look
+at the thread linked from Mihail's cover letter.
 
-> Let's try the below.
+> And personally opinion, if the bridge doesn't handle the dependence.
+> for us:
+>=20
+> - add such support to bridge
 
-The below should work, but should be amended so that a blocking read()
-returns after disconnect().
+That would certainly be helpful. I don't know if there's consensus on
+how to do that.
 
-Johan
+>   or
+> - just do the insmod/rmmod in correct order.
+>=20
+> > So, there really are proper benefits to sticking with the component
+> > code for tda998x, which is why I'd like to understand why you're so
+> > against this patch?
+> >
+>=20
+> This change handles two different connectors in komeda internally, compar=
+e
+> with one interface, it increases the complexity, more risk of bug and mor=
+e
+> cost of maintainance.
+>=20
 
-> #syz test: https://github.com/google/kasan.git 22be26f7
-> 
-> From 61c87ec9b1311949e313f633e84aab5c73975078 Mon Sep 17 00:00:00 2001
-> From: Johan Hovold <johan@kernel.org>
-> Date: Thu, 17 Oct 2019 11:53:04 +0200
-> Subject: [PATCH] wip: USB: lsusb: fix ring-buffer locking
-> 
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> ---
->  drivers/usb/misc/ldusb.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/usb/misc/ldusb.c b/drivers/usb/misc/ldusb.c
-> index f3108d85e768..c8d09ac7ade9 100644
-> --- a/drivers/usb/misc/ldusb.c
-> +++ b/drivers/usb/misc/ldusb.c
-> @@ -467,7 +467,7 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
->  
->  	/* wait for data */
->  	spin_lock_irq(&dev->rbsl);
-> -	if (dev->ring_head == dev->ring_tail) {
-> +	while (dev->ring_head == dev->ring_tail) {
->  		dev->interrupt_in_done = 0;
->  		spin_unlock_irq(&dev->rbsl);
->  		if (file->f_flags & O_NONBLOCK) {
-> @@ -477,8 +477,8 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
->  		retval = wait_event_interruptible(dev->read_wait, dev->interrupt_in_done);
->  		if (retval < 0)
->  			goto unlock_exit;
-> -	} else {
-> -		spin_unlock_irq(&dev->rbsl);
-> +
-> +		spin_lock_irq(&dev->rbsl);
->  	}
->  
->  	/* actual_buffer contains actual_length + interrupt_in_buffer */
-> @@ -487,17 +487,19 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
->  	if (bytes_to_read < *actual_buffer)
->  		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
->  			 *actual_buffer-bytes_to_read);
-> +	spin_unlock_irq(&dev->rbsl);
->  
->  	/* copy one interrupt_in_buffer from ring_buffer into userspace */
->  	if (copy_to_user(buffer, actual_buffer+1, bytes_to_read)) {
->  		retval = -EFAULT;
->  		goto unlock_exit;
->  	}
-> -	dev->ring_tail = (dev->ring_tail+1) % ring_buffer_size;
-> -
->  	retval = bytes_to_read;
->  
->  	spin_lock_irq(&dev->rbsl);
-> +
-> +	dev->ring_tail = (dev->ring_tail+1) % ring_buffer_size;
-> +
->  	if (dev->buffer_overflow) {
->  		dev->buffer_overflow = 0;
->  		spin_unlock_irq(&dev->rbsl);
-> @@ -693,12 +695,17 @@ static int ld_usb_probe(struct usb_interface *intf, const struct usb_device_id *
->  		dev_warn(&intf->dev, "Interrupt out endpoint not found (using control endpoint instead)\n");
->  
->  	dev->interrupt_in_endpoint_size = usb_endpoint_maxp(dev->interrupt_in_endpoint);
-> +	dev_info(&intf->dev, "%s - interrupt_in_endpoint_size = %zu\n",
-> +			__func__, dev->interrupt_in_endpoint_size);
->  	dev->ring_buffer =
->  		kmalloc_array(ring_buffer_size,
->  			      sizeof(size_t) + dev->interrupt_in_endpoint_size,
->  			      GFP_KERNEL);
->  	if (!dev->ring_buffer)
->  		goto error;
-> +	dev_info(&intf->dev, "%s - ring_buffer = %px\n", __func__,
-> +			dev->ring_buffer);
-> +
->  	dev->interrupt_in_buffer = kmalloc(dev->interrupt_in_endpoint_size, GFP_KERNEL);
->  	if (!dev->interrupt_in_buffer)
->  		goto error;
+Well, it's only about how to bind the drivers - two different methods
+of binding, not two different connectors. I would argue that carrying
+our out-of-tree patches to support both platforms is a larger
+maintenance burden.
+
+Honestly this looks like a win-win to me. We get the superior approach
+when its supported, and still get to support bridges which are more
+common.
+
+As/when improvements are made to the bridge code we can remove the
+component bits and not lose anything.
+
+> So my suggestion is keeping on one single interface in komeda, no
+> matter it is bridge or component, but I'd like it only one, but not
+> them both in komeda.
+
+If we can put the effort into fixing bridges then I guess that's the
+best approach for everyone :-) Might not be easy though!
+
+-Brian
+
+>=20
+> Thanks
+> James
+>=20
+> > Thanks,
+> > -Brian
