@@ -2,101 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 269A6DA466
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 05:54:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 022A2DA46B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 05:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407431AbfJQDx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 23:53:58 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34954 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728358AbfJQDx6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 23:53:58 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 205so727999pfw.2;
-        Wed, 16 Oct 2019 20:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QItfKQq2XPwc0AsXYWpmXFDLMmDCVDLYtMpQNN+hFHg=;
-        b=K9D62/X6yJcleMO6/fyXNcXiFAraQ0fpcbHPzGkb6S7sWANZW3Yf1d8/UHa8bNOUAt
-         4la/atl/lVodIOnVfL2SB+XFYsqAsVY77dT1LA+eVV4rJZebtDOkBiMkw8NmA2fFDn0D
-         9EyaBysL7p9ihrY2EOZAZcespm+TYDoGak2jELQ6GSOC0Twt3bDlODT4CdNVn1jr17DN
-         6PlP3r36A2Mrw80249GpgGpaYf2dqNXk/I3LXmZ3tFw/Y++SZvLdZaWcKMzYzmS843ji
-         XdQ7XvOHCBTcHTak2PkpcniHdx+HVNc0SzRA0ASDlZ9f9BViCv8rdRWlBVd6c/sKywjO
-         JmDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QItfKQq2XPwc0AsXYWpmXFDLMmDCVDLYtMpQNN+hFHg=;
-        b=f4H7mR+C/RZ2GFF4USBj/quf/W1r83sGSTyl6QW86ojFE5VcJgGtUxoVaWDyGij+qD
-         H3rXsn958H+nMWfdHXCH28JnFYoiCvXAC0LN0XXzYZkptqDmlkz2xoGB7GfEgrdTKgq4
-         wszWHUtkuKBAyAp7jog0ZlrzKFvrypjx37fur/SRlTRNIjrjNxVyWet8UsGNJNUJqQBG
-         ejxPq8cUUxM7trZWCeWxqJcKGZ3NOewkMVnULQB53FbxjCn0oEIhbIezS6EIyjHJhUmW
-         k/CwYeAqOVOBtm40l8Z6Exic9pI1x6+mP+W9aNERd+AuRGYl+SqBdc4vGD33ZqWmGsD4
-         j7rg==
-X-Gm-Message-State: APjAAAUtSnbFArbDE6QRntlGo3+ZkJFhTrEqhNc8nac5tn4JTXo6iG8U
-        FCbtm+uwGjI2uzEuy1d4RCN4yOWx
-X-Google-Smtp-Source: APXvYqyfN3apeFamxGcCM7YLGW6BAsxb7bvpGNGNPZscZuCAbrfF1Y+47hzVTzD9bvBjnH7ubzapQg==
-X-Received: by 2002:a63:b5b:: with SMTP id a27mr1809836pgl.262.1571284436837;
-        Wed, 16 Oct 2019 20:53:56 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id q33sm565448pgm.50.2019.10.16.20.53.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2019 20:53:55 -0700 (PDT)
-Subject: Re: [PATCH net 3/4] net: bcmgenet: soft reset 40nm EPHYs before MAC
- init
-To:     Doug Berger <opendmb@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1571267192-16720-1-git-send-email-opendmb@gmail.com>
- <1571267192-16720-4-git-send-email-opendmb@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <3dbd4dbd-2ea5-e234-0cdc-81f0f3126173@gmail.com>
-Date:   Wed, 16 Oct 2019 20:53:54 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S2407690AbfJQDy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 23:54:58 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44232 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2392243AbfJQDy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 23:54:58 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6627B91EAA8B04B71AA2;
+        Thu, 17 Oct 2019 11:54:56 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
+ 11:54:55 +0800
+Message-ID: <5DA7E60E.4060206@huawei.com>
+Date:   Thu, 17 Oct 2019 11:54:54 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-In-Reply-To: <1571267192-16720-4-git-send-email-opendmb@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To:     Jerome Pouiller <Jerome.Pouiller@silabs.com>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND v2] staging: wfx: fix an undefined reference error
+ when CONFIG_MMC=m
+References: <1570811647-64905-1-git-send-email-zhongjiang@huawei.com> <5DA13F17.6090409@huawei.com> <2927969.oKuMf0pyRb@pc-42> <2864258.2Qbmp6UNZe@pc-42>
+In-Reply-To: <2864258.2Qbmp6UNZe@pc-42>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019/10/14 18:06, Jerome Pouiller wrote:
+> On Monday 14 October 2019 11:53:19 CEST Jérôme Pouiller wrote:
+> [...]
+>> Hello Zhong,
+>>
+>> Now, I see the problem. It happens when CONFIG_MMC=m and CONFIG_WFX=y
+>> (if CONFIG_WFX=m, it works).
+>>
+>> I think the easiest way to solve problem is to disallow CONFIG_WFX=y if 
+>> CONFIG_MMC=m.
+>>
+>> This solution impacts users who want to use SPI bus with configuration:
+>> CONFIG_WFX=y + CONFIG_SPI=y + CONFIG_MMC=m. However, I think this is a
+>> twisted case. So, I think it won't be missed.
+>>
+>> I think that patch below do the right thing:
+>>
+>> -----8<----------8<----------------------8<-----------------
+>>
+>> diff --git i/drivers/staging/wfx/Kconfig w/drivers/staging/wfx/Kconfig
+>> index 9b8a1c7a9e90..833f3b05b6b4 100644
+>> --- i/drivers/staging/wfx/Kconfig
+>> +++ w/drivers/staging/wfx/Kconfig
+>> @@ -1,7 +1,7 @@
+>>  config WFX
+>>         tristate "Silicon Labs wireless chips WF200 and further"
+>>         depends on MAC80211
+>> -       depends on (SPI || MMC)
+>> +       depends on (MMC=m && m) || MMC=y || (SPI && MMC!=m)
+>>         help
+>>           This is a driver for Silicons Labs WFxxx series (WF200 and further)
+>>           chipsets. This chip can be found on SPI or SDIO buses.
+>>
+>>
+>>
+> An alternative (more understandable?):
+>
+> diff --git i/drivers/staging/wfx/Kconfig w/drivers/staging/wfx/Kconfig
+> index 9b8a1c7a9e90..83ee4d0ca8c6 100644
+> --- i/drivers/staging/wfx/Kconfig
+> +++ w/drivers/staging/wfx/Kconfig
+> @@ -1,6 +1,7 @@
+>  config WFX
+>         tristate "Silicon Labs wireless chips WF200 and further"
+>         depends on MAC80211
+> +       depends on MMC || !MMC # do not allow WFX=y if MMC=m
+>         depends on (SPI || MMC)
+>         help
+>           This is a driver for Silicons Labs WFxxx series (WF200 and further)
+>
+>
+Hi,  Jerome
 
+It's better to understandable.
+Could you send the patch or want to repost by me?
 
-On 10/16/2019 4:06 PM, Doug Berger wrote:
-> It turns out that the "Workaround for putting the PHY in IDDQ mode"
-> used by the internal EPHYs on 40nm Set-Top Box chips when powering
-> down puts the interface to the GENET MAC in a state that can cause
-> subsequent MAC resets to be incomplete.
-> 
-> Rather than restore the forced soft reset when powering up internal
-> PHYs, this commit moves the invocation of phy_init_hw earlier in
-> the MAC initialization sequence to just before the MAC reset in the
-> open and resume functions. This allows the interface to be stable
-> and allows the MAC resets to be successful.
-> 
-> The bcmgenet_mii_probe() function is split in two to accommodate
-> this. The new function bcmgenet_mii_connect() handles the first
-> half of the functionality before the MAC initialization, and the
-> bcmgenet_mii_config() function is extended to provide the remaining
-> PHY configuration following the MAC initialization.
-> 
-> Fixes: 484bfa1507bf ("Revert "net: bcmgenet: Software reset EPHY after power on"")
-> Signed-off-by: Doug Berger <opendmb@gmail.com>
+Thanks,
+zhong jiang
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-
-We will have to see how difficult it might be to back port towards
-stable trees of interest, hopefully not too difficult.
--- 
-Florian
