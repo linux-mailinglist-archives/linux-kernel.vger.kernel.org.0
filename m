@@ -2,85 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85924DB65C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 662DADB669
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 20:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441427AbfJQSiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 14:38:04 -0400
-Received: from mailoutvs33.siol.net ([185.57.226.224]:38067 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2441410AbfJQSiC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:38:02 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 1CE4B525415;
-        Thu, 17 Oct 2019 20:37:59 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id UIHukYRoVdRK; Thu, 17 Oct 2019 20:37:58 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id C58B752524F;
-        Thu, 17 Oct 2019 20:37:58 +0200 (CEST)
-Received: from localhost.localdomain (cpe-86-58-59-25.static.triera.net [86.58.59.25])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 71C6852545C;
-        Thu, 17 Oct 2019 20:37:56 +0200 (CEST)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     mripard@kernel.org, wens@csie.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: [PATCH v4 6/6] dts: arm: sun8i: h3: Enable deinterlace unit
-Date:   Thu, 17 Oct 2019 20:37:38 +0200
-Message-Id: <20191017183738.68069-7-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191017183738.68069-1-jernej.skrabec@siol.net>
-References: <20191017183738.68069-1-jernej.skrabec@siol.net>
+        id S2406703AbfJQSip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 14:38:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727766AbfJQSio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 14:38:44 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB06C2089C;
+        Thu, 17 Oct 2019 18:38:43 +0000 (UTC)
+Date:   Thu, 17 Oct 2019 14:38:41 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] libtraceevent: perf script -g python segfaults
+Message-ID: <20191017143841.317b26b5@gandalf.local.home>
+In-Reply-To: <20191017154205.GC8974@kernel.org>
+References: <20191017154205.GC8974@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner H3 SoC contains deinterlace unit, which can be used in
-combination with VPU unit to decode and process interlaced videos.
+On Thu, 17 Oct 2019 12:42:05 -0300
+Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
 
-Add a node for it.
+> I'll try and continue later, but if you guys can take a look...
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- arch/arm/boot/dts/sun8i-h3.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Does this fix it for you?
 
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3=
-.dtsi
-index e37c30e811d3..7a59c57d2114 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -120,6 +120,19 @@
- 	};
-=20
- 	soc {
-+		deinterlace: deinterlace@1400000 {
-+			compatible =3D "allwinner,sun8i-h3-deinterlace";
-+			reg =3D <0x01400000 0x20000>;
-+			clocks =3D <&ccu CLK_BUS_DEINTERLACE>,
-+				 <&ccu CLK_DEINTERLACE>,
-+				 <&ccu CLK_DRAM_DEINTERLACE>;
-+			clock-names =3D "bus", "mod", "ram";
-+			resets =3D <&ccu RST_BUS_DEINTERLACE>;
-+			interrupts =3D <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
-+			interconnects =3D <&mbus 9>;
-+			interconnect-names =3D "dma-mem";
-+		};
-+
- 		syscon: system-control@1c00000 {
- 			compatible =3D "allwinner,sun8i-h3-system-control";
- 			reg =3D <0x01c00000 0x1000>;
---=20
-2.23.0
+-- Steve
 
+diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
+index ad74be1f0e42..227629796e32 100644
+--- a/tools/perf/util/trace-event-parse.c
++++ b/tools/perf/util/trace-event-parse.c
+@@ -193,30 +193,32 @@ int parse_event_file(struct tep_handle *pevent,
+ struct tep_event *trace_find_next_event(struct tep_handle *pevent,
+ 					struct tep_event *event)
+ {
++	static struct tep_event **all_events;
+ 	static int idx;
+ 	int events_count;
+-	struct tep_event *all_events;
+ 
+-	all_events = tep_get_first_event(pevent);
+ 	events_count = tep_get_events_count(pevent);
+ 	if (!pevent || !all_events || events_count < 1)
+ 		return NULL;
+ 
+ 	if (!event) {
+ 		idx = 0;
+-		return all_events;
++		all_events = tep_list_events(pevent, TEP_EVENT_SORT_ID);
++		if (all_events)
++			return all_events[0];
++		return NULL;
+ 	}
+ 
+-	if (idx < events_count && event == (all_events + idx)) {
++	if (idx < events_count && event == all_events[idx]) {
+ 		idx++;
+ 		if (idx == events_count)
+ 			return NULL;
+-		return (all_events + idx);
++		return all_events[idx];
+ 	}
+ 
+ 	for (idx = 1; idx < events_count; idx++) {
+-		if (event == (all_events + (idx - 1)))
+-			return (all_events + idx);
++		if (event == all_events[idx - 1])
++			return all_events[idx];
+ 	}
+ 	return NULL;
+ }
