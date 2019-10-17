@@ -2,122 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36087DA31E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:27:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBB64DA324
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:29:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391249AbfJQB1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 21:27:24 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4194 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727916AbfJQB1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 21:27:24 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 735A76153B773426C5B9;
-        Thu, 17 Oct 2019 09:27:20 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
- 09:27:17 +0800
-Subject: Re: [PATCH -next 00/13] hwrng: use devm_platform_ioremap_resource()
- to simplify code
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        <herbert@gondor.apana.org.au>, <mpm@selenic.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
-        <rjui@broadcom.com>, <sbranden@broadcom.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <eric@anholt.net>,
-        <wahrenst@gmx.net>, <l.stelmach@samsung.com>, <kgene@kernel.org>,
-        <krzk@kernel.org>, <khilman@baylibre.com>, <dsaxena@plexity.net>,
-        <patrice.chotard@st.com>
-References: <20191016104621.26056-1-yuehaibing@huawei.com>
- <2c60b926-1e98-cca0-ec17-6b45f9da404a@gmail.com>
-CC:     <linux-crypto@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linuxppc-dev@lists.ozlabs.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <7c0269b6-cab3-bded-7f9d-76430be89f9c@huawei.com>
-Date:   Thu, 17 Oct 2019 09:27:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
-MIME-Version: 1.0
-In-Reply-To: <2c60b926-1e98-cca0-ec17-6b45f9da404a@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+        id S2391704AbfJQB3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 21:29:21 -0400
+Received: from gate.crashing.org ([63.228.1.57]:49928 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727593AbfJQB3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 21:29:21 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x9H1Sgc9000334;
+        Wed, 16 Oct 2019 20:28:42 -0500
+Message-ID: <3a1176067b745fddfc625bbd142a41913ee3e3a1.camel@kernel.crashing.org>
+Subject: Re: [PATCH v2] ftgmac100: Disable HW checksum generation on AST2500
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Vijay Khemka <vijaykhemka@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Sven Van Asbroeck <TheSven73@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
+        joel@jms.id.au, linux-aspeed@lists.ozlabs.org, sdasari@fb.com
+Date:   Thu, 17 Oct 2019 12:28:41 +1100
+In-Reply-To: <20191011213027.2110008-1-vijaykhemka@fb.com>
+References: <20191011213027.2110008-1-vijaykhemka@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019/10/17 0:44, Florian Fainelli wrote:
-> On 10/16/19 3:46 AM, YueHaibing wrote:
->> devm_platform_ioremap_resource() internally have platform_get_resource()
->> and devm_ioremap_resource() in it. So instead of calling them separately
->> use devm_platform_ioremap_resource() directly.
+On Fri, 2019-10-11 at 14:30 -0700, Vijay Khemka wrote:
+> HW checksum generation is not working for AST2500, specially with
+> IPV6
+> over NCSI. All TCP packets with IPv6 get dropped. By disabling this
+> it works perfectly fine with IPV6. As it works for IPV4 so enabled
+> hw checksum back for IPV4.
 > 
-> Did your coccinelle script not cover
-> drivers/char/hw_random/iproc-rng200.c somehow? Do you mind including it
-> as a separate patch?
+> Verified with IPV6 enabled and can do ssh.
 
-A patch from Markus Elfring has be queued:
+So while this probably works, I don't think this is the right
+approach, at least according to the comments in skbuff.h
 
-commit a68b931932c5574aa5bd459529c766ba577c72b3
-Author: Markus Elfring <elfring@users.sourceforge.net>
-Date:   Wed Sep 18 09:09:22 2019 +0200
+The driver should have handled unsupported csum via SW fallback
+already in ftgmac100_prep_tx_csum()
 
-    hwrng: iproc-rng200 - Use devm_platform_ioremap_resource() in iproc_rng200_probe()
+Can you check why this didn't work for you ?
 
-    Simplify this function implementation by using a known wrapper function.
+Cheers,
+Ben.
 
-    This issue was detected by using the Coccinelle software.
-
-    Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-    Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-    Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-
-
-
-> Thanks
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+> ---
+> Changes since v1:
+>  Enabled IPV4 hw checksum generation as it works for IPV4.
 > 
->>
->> YueHaibing (13):
->>   hwrng: atmel - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: bcm2835 - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: exynos - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: hisi - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: ks-sa - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: meson - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: npcm - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: omap - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: pasemi - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: pic32 - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: st - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: tx4939 - use devm_platform_ioremap_resource() to simplify code
->>   hwrng: xgene - use devm_platform_ioremap_resource() to simplify code
->>
->>  drivers/char/hw_random/atmel-rng.c   | 4 +---
->>  drivers/char/hw_random/bcm2835-rng.c | 5 +----
->>  drivers/char/hw_random/exynos-trng.c | 4 +---
->>  drivers/char/hw_random/hisi-rng.c    | 4 +---
->>  drivers/char/hw_random/ks-sa-rng.c   | 4 +---
->>  drivers/char/hw_random/meson-rng.c   | 4 +---
->>  drivers/char/hw_random/npcm-rng.c    | 4 +---
->>  drivers/char/hw_random/omap-rng.c    | 4 +---
->>  drivers/char/hw_random/pasemi-rng.c  | 4 +---
->>  drivers/char/hw_random/pic32-rng.c   | 4 +---
->>  drivers/char/hw_random/st-rng.c      | 4 +---
->>  drivers/char/hw_random/tx4939-rng.c  | 4 +---
->>  drivers/char/hw_random/xgene-rng.c   | 4 +---
->>  13 files changed, 13 insertions(+), 40 deletions(-)
->>
+>  drivers/net/ethernet/faraday/ftgmac100.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
 > 
-> 
+> diff --git a/drivers/net/ethernet/faraday/ftgmac100.c
+> b/drivers/net/ethernet/faraday/ftgmac100.c
+> index 030fed65393e..0255a28d2958 100644
+> --- a/drivers/net/ethernet/faraday/ftgmac100.c
+> +++ b/drivers/net/ethernet/faraday/ftgmac100.c
+> @@ -1842,8 +1842,19 @@ static int ftgmac100_probe(struct
+> platform_device *pdev)
+>  	/* AST2400  doesn't have working HW checksum generation */
+>  	if (np && (of_device_is_compatible(np, "aspeed,ast2400-mac")))
+>  		netdev->hw_features &= ~NETIF_F_HW_CSUM;
+> +
+> +	/* AST2500 doesn't have working HW checksum generation for IPV6
+> +	 * but it works for IPV4, so disabling hw checksum and enabling
+> +	 * it for only IPV4.
+> +	 */
+> +	if (np && (of_device_is_compatible(np, "aspeed,ast2500-mac")))
+> {
+> +		netdev->hw_features &= ~NETIF_F_HW_CSUM;
+> +		netdev->hw_features |= NETIF_F_IP_CSUM;
+> +	}
+> +
+>  	if (np && of_get_property(np, "no-hw-checksum", NULL))
+> -		netdev->hw_features &= ~(NETIF_F_HW_CSUM |
+> NETIF_F_RXCSUM);
+> +		netdev->hw_features &= ~(NETIF_F_HW_CSUM |
+> NETIF_F_RXCSUM
+> +					 | NETIF_F_IP_CSUM);
+>  	netdev->features |= netdev->hw_features;
+>  
+>  	/* register network device */
 
