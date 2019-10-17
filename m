@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FF7ADB387
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB75DDB371
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 19:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503174AbfJQRin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 13:38:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35992 "EHLO
+        id S2503093AbfJQRiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 13:38:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36328 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503073AbfJQRiD (ORCPT
+        with ESMTP id S2503079AbfJQRiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 13:38:03 -0400
+        Thu, 17 Oct 2019 13:38:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=bnzQn0VGk8xHz69eK/5CBIE5DQC7a3O2W+HZ1/ChbyQ=; b=fCHDMiNzO3RdURiYDiRbBoUi7f
-        3cswLJDvrEmnifYG39WPH0Ut22SVLcJKdc5qb2CPsGbsbID6ACbc9UxvGv3sm4YFUylszUVrNCsd/
-        cd16xrAJqr09/eylCTds+xm9xljshtHg5ODKzq5ngkSFT+PJ9DHSS7v2aDKYngmsyiBGmr3RihO8u
-        4k7/H+GT6irEPAFyl1Qsa5X7cwODtFd1yANlH/dUFnlj8gVaIN9ZAfOzUb7xzYJfRmVhl6iEtinQi
-        8AHk5bCUzxgOVutfSXjMoqVmdxunGTT0j8tmyiK33mYC40ZeiQ5gHGGqtmQveO4wYGwlbq7+93HqU
-        V9JerTIA==;
+        bh=I+Ha505GC7EKQxF2z8v0txeI99YQY2iPA3pVF1omXZ0=; b=AwvVKSdbvrTkq/k6Tq8JtKRvX5
+        oHVTKYctrzTLVNRlR6VyD48kN0iPJjWjUkidTD53lkaKRWMCqU/fj7aQMF8g79JYEJt6udtwoFlHd
+        xHdtDluQ2CAy1MN26uZditri47VR+6Aa0OlebPKn9EJmfWvBWy0LtQ1DmVkiBdhLBWjC/d4U78fPI
+        s2kE9ssSB30T2zZyeKo+ukhDrmL9qXvI40Z724j3mCTroQhu569wdtGfCSGFOOcvOBWnq1qPvwnck
+        wq5me3/ke0yIxh0gpwc3MfC7q+IJRr92dq9MPl7F6/kfXTx9lXKpG7yiaZKvOKC1vxseR2HxPV3mR
+        rcA2igPA==;
 Received: from [2001:4bb8:18c:d7b:c70:4a89:bc61:3] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iL9iq-0007eW-RX; Thu, 17 Oct 2019 17:38:01 +0000
+        id 1iL9it-0007iQ-Aj; Thu, 17 Oct 2019 17:38:03 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         Paul Walmsley <paul.walmsley@sifive.com>
 Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Atish Patra <atish.patra@wdc.com>
-Subject: [PATCH 06/15] riscv: cleanup the default power off implementation
-Date:   Thu, 17 Oct 2019 19:37:34 +0200
-Message-Id: <20191017173743.5430-7-hch@lst.de>
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 07/15] riscv: implement remote sfence.i using IPIs
+Date:   Thu, 17 Oct 2019 19:37:35 +0200
+Message-Id: <20191017173743.5430-8-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191017173743.5430-1-hch@lst.de>
 References: <20191017173743.5430-1-hch@lst.de>
@@ -47,72 +46,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the sbi poweroff to a separate function and file that is only
-compiled if CONFIG_SBI is set.  Provide a new default fallback
-power off that just sits in a wfi loop to save some power.
+The RISC-V ISA only supports flushing the instruction cache for the
+local CPU core.  Currently we always offload the remote TLB flushing to
+the SBI, which then issues an IPI under the hoods.  But with M-mode
+we do not have an SBI so we have to do it ourselves.   IPI to the
+other nodes using the existing kernel helpers instead if we have
+native clint support and thus can IPI directly from the kernel.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Atish Patra <atish.patra@wdc.com>
 ---
- arch/riscv/kernel/Makefile |  1 +
- arch/riscv/kernel/reset.c  |  5 ++---
- arch/riscv/kernel/sbi.c    | 17 +++++++++++++++++
- 3 files changed, 20 insertions(+), 3 deletions(-)
- create mode 100644 arch/riscv/kernel/sbi.c
+ arch/riscv/include/asm/sbi.h |  3 +++
+ arch/riscv/mm/cacheflush.c   | 24 ++++++++++++++++++------
+ 2 files changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index 696020ff72db..d8c35fa93cc6 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -41,5 +41,6 @@ obj-$(CONFIG_DYNAMIC_FTRACE)	+= mcount-dyn.o
- obj-$(CONFIG_PERF_EVENTS)	+= perf_event.o
- obj-$(CONFIG_PERF_EVENTS)	+= perf_callchain.o
- obj-$(CONFIG_HAVE_PERF_REGS)	+= perf_regs.o
-+obj-$(CONFIG_RISCV_SBI)		+= sbi.o
- 
- clean:
-diff --git a/arch/riscv/kernel/reset.c b/arch/riscv/kernel/reset.c
-index d0fe623bfb8f..5e4e69859af1 100644
---- a/arch/riscv/kernel/reset.c
-+++ b/arch/riscv/kernel/reset.c
-@@ -4,12 +4,11 @@
-  */
- 
- #include <linux/reboot.h>
--#include <asm/sbi.h>
- 
- static void default_power_off(void)
+diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+index b167af3e7470..0cb74eccc73f 100644
+--- a/arch/riscv/include/asm/sbi.h
++++ b/arch/riscv/include/asm/sbi.h
+@@ -94,5 +94,8 @@ static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
  {
--	sbi_shutdown();
--	while (1);
-+	while (1)
-+		wait_for_interrupt();
+ 	SBI_CALL_4(SBI_REMOTE_SFENCE_VMA_ASID, hart_mask, start, size, asid);
+ }
++#else /* CONFIG_RISCV_SBI */
++/* stub to for code is only reachable under IS_ENABLED(CONFIG_RISCV_SBI): */
++void sbi_remote_fence_i(const unsigned long *hart_mask);
+ #endif /* CONFIG_RISCV_SBI */
+ #endif /* _ASM_RISCV_SBI_H */
+diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
+index 3f15938dec89..794c9ab256eb 100644
+--- a/arch/riscv/mm/cacheflush.c
++++ b/arch/riscv/mm/cacheflush.c
+@@ -10,9 +10,17 @@
+ 
+ #include <asm/sbi.h>
+ 
++static void ipi_remote_fence_i(void *info)
++{
++	return local_flush_icache_all();
++}
++
+ void flush_icache_all(void)
+ {
+-	sbi_remote_fence_i(NULL);
++	if (IS_ENABLED(CONFIG_RISCV_SBI))
++		sbi_remote_fence_i(NULL);
++	else
++		on_each_cpu(ipi_remote_fence_i, NULL, 1);
  }
  
- void (*pm_power_off)(void) = default_power_off;
-diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
-new file mode 100644
-index 000000000000..f6c7c3e82d28
---- /dev/null
-+++ b/arch/riscv/kernel/sbi.c
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0-only
+ /*
+@@ -28,7 +36,7 @@ void flush_icache_all(void)
+ void flush_icache_mm(struct mm_struct *mm, bool local)
+ {
+ 	unsigned int cpu;
+-	cpumask_t others, hmask, *mask;
++	cpumask_t others, *mask;
+ 
+ 	preempt_disable();
+ 
+@@ -46,10 +54,7 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
+ 	 */
+ 	cpumask_andnot(&others, mm_cpumask(mm), cpumask_of(cpu));
+ 	local |= cpumask_empty(&others);
+-	if (mm != current->active_mm || !local) {
+-		riscv_cpuid_to_hartid_mask(&others, &hmask);
+-		sbi_remote_fence_i(hmask.bits);
+-	} else {
++	if (mm == current->active_mm && local) {
+ 		/*
+ 		 * It's assumed that at least one strongly ordered operation is
+ 		 * performed on this hart between setting a hart's cpumask bit
+@@ -59,6 +64,13 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
+ 		 * with flush_icache_deferred().
+ 		 */
+ 		smp_mb();
++	} else if (IS_ENABLED(CONFIG_RISCV_SBI)) {
++		cpumask_t hartid_mask;
 +
-+#include <linux/init.h>
-+#include <linux/pm.h>
-+#include <asm/sbi.h>
-+
-+static void sbi_power_off(void)
-+{
-+	sbi_shutdown();
-+}
-+
-+static int __init sbi_init(void)
-+{
-+	pm_power_off = sbi_power_off;
-+	return 0;
-+}
-+early_initcall(sbi_init);
++		riscv_cpuid_to_hartid_mask(&others, &hartid_mask);
++		sbi_remote_fence_i(cpumask_bits(&hartid_mask));
++	} else {
++		on_each_cpu_mask(&others, ipi_remote_fence_i, NULL, 1);
+ 	}
+ 
+ 	preempt_enable();
 -- 
 2.20.1
 
