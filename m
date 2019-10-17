@@ -2,93 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF1FEDAFEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83D42DAFF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 16:22:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440247AbfJQOWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 10:22:14 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46311 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394985AbfJQOWN (ORCPT
+        id S2440284AbfJQOWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 10:22:37 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:33261 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437756AbfJQOWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 10:22:13 -0400
-Received: by mail-oi1-f193.google.com with SMTP id k25so2259489oiw.13
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 07:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=dZE3aUjhDAXtd4pi/DbouERAtcyzka+rxI7KAIbcOEG90XUWmoBREHDL41yehhQGx0
-         mnOGBM7nDvGgQoZQSfhjTk2/rTsSH/xoKA3A0R8exVd7LNhgBhsFZ+WKjFN5Ia1jekJK
-         gO4yl+zCwTNOeKeWI1d6X2MhXDW+tJt4CR+AN8h9UVj5BhCNSujN+0S1TTs1/sQh30NT
-         +a3Ee400ftVNRKleXnAiNSZrf7th6mM95zRMXvF5n/vYKGpYRS7F/iU2WNZZ1RmOJl2a
-         gAJ2UeStLZZAnxeMkFvs8e8p/r6cgnXQ0oc1us92M1/HEjCfYrULSV/mjFK91K5Oe1nS
-         Ncrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=cQWXgT7l8K2tmnwRe9sOetpiUFkXQfoPL47Dcac1a25MetRuO3ojFvbpZs2QnGU1wh
-         ARXkNmrxnI4JaSZbEXg3LQ9t+k97CQ7I43cJWeI2mA3vhStU9fX/jp6XHS+fg43SJzss
-         qdLG5rVF239b212Ft+13u5J3dAk6/h5LTvAkPnq2Lyp0PoeBf+adxk8rvyZ0WxAp92Ph
-         LPWQxlT6seAs3DBJa1vPQtig6USajWdfW6OiG4s+dusc1jnURXAXPI0GSsy1eZJZidfd
-         Ie3/nzpV9yW5Y3R72wSbjW3u4ar2pxm0KN2PSVkdfrbgqduLZkqqgfzwuilrKlyBLYlX
-         6Zgg==
-X-Gm-Message-State: APjAAAV8VEidcdAipGCpR01B2yocV3qzhFyZaLFMoUv1fKY6xtdp14CI
-        u6WmTLWBceffs18E9vL5o9jW9fjLJUrnnFdpTac=
-X-Google-Smtp-Source: APXvYqwMnGtb8n3SnzGTsq5O5l96DjfwFi5Y3HL+cpSVAIGCz18CrbUbK9oQESRu39x7+Yr19YU3ui+pijimu3sIuBQ=
-X-Received: by 2002:aca:56d4:: with SMTP id k203mr3324728oib.74.1571322131477;
- Thu, 17 Oct 2019 07:22:11 -0700 (PDT)
+        Thu, 17 Oct 2019 10:22:36 -0400
+Received: from xps13.stephanxp.local (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id E5035200009;
+        Thu, 17 Oct 2019 14:22:32 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     <linux-mtd@lists.infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+Subject: [PATCH] MAINTAINERS: mtd/ubi/ubifs: Remove inactive maintainers
+Date:   Thu, 17 Oct 2019 16:22:29 +0200
+Message-Id: <20191017142229.3853-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Received: by 2002:ac9:3051:0:0:0:0:0 with HTTP; Thu, 17 Oct 2019 07:22:11
- -0700 (PDT)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <moordavis0003@gmail.com>
-Date:   Thu, 17 Oct 2019 16:22:11 +0200
-Message-ID: <CAH26tOHEep6Cf9_KpLXaxDrCbVEGOHL5wn+iSx06EbX2WsMWRA@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo
+Despite their substantial personal investment in the MTD/UBI/UBIFS a
+few years back, David, Brian, Artem and Adrian are not actively
+maintaining the subsystem anymore. We warmly salute them for all the
+work they have achieved and will of course still welcome their
+participation and reviews.
 
-Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8,5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+That said, Marek retired himself a few weeks ago quoting Harald [1]:
 
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: eddywilliam0002gmail.com
+        It matters who has which title and when. Should somebody not
+        be an active maintainer, make sure he's not listed as such.
 
-Vielen Dank im Voraus,
-Mr. Eddy William,
+For this same reason, let’s trim the maintainers list with the
+actually active ones over the past two years.
 
+[1] http://laforge.gnumonks.org/blog/20180307-mchardy-gpl/
 
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ MAINTAINERS | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Hello
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0632422ce9d4..0e5e0736ee55 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10528,8 +10528,6 @@ F:	include/linux/vmalloc.h
+ F:	mm/
+ 
+ MEMORY TECHNOLOGY DEVICES (MTD)
+-M:	David Woodhouse <dwmw2@infradead.org>
+-M:	Brian Norris <computersforpeace@gmail.com>
+ M:	Miquel Raynal <miquel.raynal@bootlin.com>
+ M:	Richard Weinberger <richard@nod.at>
+ M:	Vignesh Raghavendra <vigneshr@ti.com>
+@@ -16579,8 +16577,6 @@ F:	drivers/media/pci/tw686x/
+ 
+ UBI FILE SYSTEM (UBIFS)
+ M:	Richard Weinberger <richard@nod.at>
+-M:	Artem Bityutskiy <dedekind1@gmail.com>
+-M:	Adrian Hunter <adrian.hunter@intel.com>
+ L:	linux-mtd@lists.infradead.org
+ T:	git git://git.infradead.org/ubifs-2.6.git
+ W:	http://www.linux-mtd.infradead.org/doc/ubifs.html
+@@ -16697,7 +16693,6 @@ S:	Maintained
+ F:	drivers/scsi/ufs/ufs-mediatek*
+ 
+ UNSORTED BLOCK IMAGES (UBI)
+-M:	Artem Bityutskiy <dedekind1@gmail.com>
+ M:	Richard Weinberger <richard@nod.at>
+ W:	http://www.linux-mtd.infradead.org/
+ L:	linux-mtd@lists.infradead.org
+-- 
+2.20.1
 
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0002gmail.=
-com
-
-Many thanks in advance,
-Mr.Eddy William,
