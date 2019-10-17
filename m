@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3AC9DA357
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:42:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C59F4DA34B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:42:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388412AbfJQBmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 21:42:37 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:44247 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393545AbfJQBmM (ORCPT
+        id S2404182AbfJQBmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 21:42:14 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:35680 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394851AbfJQBmM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 Oct 2019 21:42:12 -0400
-Received: by mail-io1-f70.google.com with SMTP id y2so951612ioj.11
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 18:42:11 -0700 (PDT)
+Received: by mail-io1-f71.google.com with SMTP id r5so1053534iop.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 18:42:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=GJOFlavh9vKUu9k8A7kEzaRjGKmEaWDqUYR3H4euc74=;
-        b=oeDFbJPQKh3P3siGSi236ildPWsPyugoGW6PlqtapGqqIs/Ytl0+In1DYk4SkBwHMc
-         ubZe6cMIhnFXCwenK9D200ckPkH678+UAi8gqmRFFazPIn6dGIrliwhdvywFmAJrSsdM
-         TrTyhYJP0idNJYk09gWp7KDaBFEReqSyspX3whggkIZHavvqNeNopipFqIYGxL7itP3X
-         l3im/+5m/lc11bJKhSow1fDip//lsB4shk1Kqvy6Yhw84MDcKd5kiK4mdJcM50eZ3tky
-         Eydl97ErWQMuILUIZCYKi3KawxJ8gZ9tZu3t6bCdUg0XyrnEG9hB+FfQORkPM3sTcZZc
-         jtVg==
-X-Gm-Message-State: APjAAAU3K2NQkuV9b/dezRtAu1yylC28067MD/w/m2ftOVBM8Xl3l5Z8
-        yPsu653JTv20o8yMpFzsold4JTIUxkW5rKzPFrZVR2z8ZInZ
-X-Google-Smtp-Source: APXvYqwhOclXRHdlhHgIWR6pZ8bWUQJRQ9cE6BdlxC6r8iRkAd54IF4794FivkVDglXgNJMjwJOjzYhDajTY5Z5wUnmpdUgbesWY
+        bh=pdOKNCOT2iOd0L50ws0JTyqK1/1Fhbj5YOUIjEEtEeY=;
+        b=Z05RsICm9e8WhNirZS5cD/J3YsWAobM8ExGSH0+0zX5FZ53PmIT83I5CewpSLQAa8x
+         /KOzdSqote3ra1RAtzTMlCcZcWvrq+X5VFX7ZWSvwAWN0we3ACVM1R1lMkybmhZidwnq
+         WzAYhpP7L9OGw3hUNnT0DODXblzdiDkTXF4fUonrkdcaymh5f8rT9a/RTIVzbUz953E7
+         vc+evxRsTwhGM45LcVnoQFa5DOp8B4eBxBkVdy/fv2sSrbmsbtOX5dl8dHc6PLcCSchw
+         9LAuzV5lFuGbAHA7uwtCrdY7CRW1L2LkpENnw+SlbNN55/gdRmravrRE3TbfgSSq+6hZ
+         Fiew==
+X-Gm-Message-State: APjAAAU9Dq2bIyh4k+ia4pdJDTRgEUXK5X1VVCN8L1hQE9WZbsTW9QUb
+        TcpQTgrWEUjUaGVr1HJNADAwIAQNYkUXiFDmeeEYVIo+N/um
+X-Google-Smtp-Source: APXvYqxRmR24P4tLC5wLsEg00RDdkwn7cpnlNWTm+TEe/kShLT//SftvZNePTw+Nh4AATG5JiMrDivqjLxZEhJOqaYYkYY/P7gSW
 MIME-Version: 1.0
-X-Received: by 2002:a5d:96cb:: with SMTP id r11mr712794iol.266.1571276531384;
+X-Received: by 2002:a05:6638:3f2:: with SMTP id s18mr958868jaq.91.1571276531630;
  Wed, 16 Oct 2019 18:42:11 -0700 (PDT)
 Date:   Wed, 16 Oct 2019 18:42:11 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007f489b0595115374@google.com>
-Subject: KASAN: use-after-free Read in mnt_warn_timestamp_expiry
-From:   syzbot <syzbot+76a43f2b4d34cfc53548@syzkaller.appspotmail.com>
-To:     akpm@osdl.org, deepa.kernel@gmail.com, hch@infradead.org,
-        jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lkundrak@v3.sk,
-        syzkaller-bugs@googlegroups.com, tklauser@nuerscht.ch,
-        trond.myklebust@fys.uio.no, viro@zeniv.linux.org.uk
+Message-ID: <000000000000830fe50595115344@google.com>
+Subject: WARNING: refcount bug in find_key_to_update
+From:   syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>
+To:     dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,124 +51,69 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    3b1f00ac Merge tag 'for_linus' of git://git.kernel.org/pub..
+HEAD commit:    bc88f85c kthread: make __kthread_queue_delayed_work static
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=137ae2bb600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f0a8b0a0736a2ac1
-dashboard link: https://syzkaller.appspot.com/bug?extid=76a43f2b4d34cfc53548
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10dde730e00000
-
-The bug was bisected to:
-
-commit 452c2779410a03ac0c6be0a8a91c83aa80bdd7e5
-Author: Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Fri Mar 8 20:40:03 2019 +0000
-
-     fs: sysv: Initialize filesystem timestamp ranges
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13c6e2bb600000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=1026e2bb600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17c6e2bb600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1730584b600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e0ac4d9b35046343
+dashboard link: https://syzkaller.appspot.com/bug?extid=6455648abc28dbdd1e7f
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c8adab600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+76a43f2b4d34cfc53548@syzkaller.appspotmail.com
-Fixes: 452c2779410a ("fs: sysv: Initialize filesystem timestamp ranges")
+Reported-by: syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: use-after-free in mnt_warn_timestamp_expiry+0x4a/0x250  
-fs/namespace.c:2471
-Read of size 8 at addr ffff888099937328 by task syz-executor.1/18510
-
-CPU: 0 PID: 18510 Comm: syz-executor.1 Not tainted 5.4.0-rc3+ #0
+------------[ cut here ]------------
+refcount_t: increment on 0; use-after-free.
+WARNING: CPU: 1 PID: 9064 at lib/refcount.c:156 refcount_inc_checked  
+lib/refcount.c:156 [inline]
+WARNING: CPU: 1 PID: 9064 at lib/refcount.c:156  
+refcount_inc_checked+0x61/0x70 lib/refcount.c:154
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 9064 Comm: syz-executor.5 Not tainted 5.4.0-rc3+ #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
-  print_address_description+0x75/0x5c0 mm/kasan/report.c:374
-  __kasan_report+0x14b/0x1c0 mm/kasan/report.c:506
-  kasan_report+0x26/0x50 mm/kasan/common.c:634
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
-  mnt_warn_timestamp_expiry+0x4a/0x250 fs/namespace.c:2471
-  do_new_mount_fc fs/namespace.c:2773 [inline]
-  do_new_mount fs/namespace.c:2825 [inline]
-  do_mount+0x2160/0x2510 fs/namespace.c:3143
-  ksys_mount+0xcc/0x100 fs/namespace.c:3352
-  __do_sys_mount fs/namespace.c:3366 [inline]
-  __se_sys_mount fs/namespace.c:3363 [inline]
-  __x64_sys_mount+0xbf/0xd0 fs/namespace.c:3363
-  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:290
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2e3/0x75c kernel/panic.c:221
+  __warn.cold+0x2f/0x35 kernel/panic.c:582
+  report_bug+0x289/0x300 lib/bug.c:195
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+RIP: 0010:refcount_inc_checked lib/refcount.c:156 [inline]
+RIP: 0010:refcount_inc_checked+0x61/0x70 lib/refcount.c:154
+Code: 1d 58 46 7e 06 31 ff 89 de e8 0b cb 2e fe 84 db 75 dd e8 c2 c9 2e fe  
+48 c7 c7 40 ad e6 87 c6 05 38 46 7e 06 01 e8 67 0c 00 fe <0f> 0b eb c1 90  
+90 90 90 90 90 90 90 90 90 90 55 48 89 e5 41 57 41
+RSP: 0018:ffff888081447c68 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815cb646 RDI: ffffed1010288f7f
+RBP: ffff888081447c78 R08: ffff8880a231a080 R09: ffffed1015d26159
+R10: ffffed1015d26158 R11: ffff8880ae930ac7 R12: ffff8880a4518940
+R13: 0000000000000000 R14: ffff888081447e10 R15: ffff8880a4518c40
+  __key_get include/linux/key.h:281 [inline]
+  find_key_to_update+0x8b/0xc0 security/keys/keyring.c:1127
+  key_create_or_update+0x588/0xbe0 security/keys/key.c:905
+  __do_sys_add_key security/keys/keyctl.c:132 [inline]
+  __se_sys_add_key security/keys/keyctl.c:72 [inline]
+  __x64_sys_add_key+0x2bd/0x4f0 security/keys/keyctl.c:72
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 RIP: 0033:0x459a59
 Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f1f46735c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RSP: 002b:00007f22e3171c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000f8
 RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000459a59
-RDX: 0000000020000a40 RSI: 00000000200005c0 RDI: 0000000000000000
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f1f467366d4
-R13: 00000000004c62a4 R14: 00000000004db438 R15: 00000000ffffffff
-
-Allocated by task 18510:
-  save_stack mm/kasan/common.c:69 [inline]
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc+0x11c/0x1b0 mm/kasan/common.c:510
-  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:518
-  slab_post_alloc_hook mm/slab.h:584 [inline]
-  slab_alloc mm/slab.c:3319 [inline]
-  kmem_cache_alloc+0x1f5/0x2e0 mm/slab.c:3483
-  kmem_cache_zalloc include/linux/slab.h:680 [inline]
-  alloc_vfsmnt+0x27/0x470 fs/namespace.c:177
-  vfs_create_mount+0x87/0x440 fs/namespace.c:940
-  do_new_mount_fc fs/namespace.c:2763 [inline]
-  do_new_mount fs/namespace.c:2825 [inline]
-  do_mount+0x1ee0/0x2510 fs/namespace.c:3143
-  ksys_mount+0xcc/0x100 fs/namespace.c:3352
-  __do_sys_mount fs/namespace.c:3366 [inline]
-  __se_sys_mount fs/namespace.c:3363 [inline]
-  __x64_sys_mount+0xbf/0xd0 fs/namespace.c:3363
-  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 16:
-  save_stack mm/kasan/common.c:69 [inline]
-  set_track mm/kasan/common.c:77 [inline]
-  kasan_set_free_info mm/kasan/common.c:332 [inline]
-  __kasan_slab_free+0x12a/0x1e0 mm/kasan/common.c:471
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
-  __cache_free mm/slab.c:3425 [inline]
-  kmem_cache_free+0x81/0xf0 mm/slab.c:3693
-  free_vfsmnt fs/namespace.c:554 [inline]
-  delayed_free_vfsmnt+0x74/0x80 fs/namespace.c:559
-  __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2157 [inline]
-  rcu_core+0x843/0x1050 kernel/rcu/tree.c:2377
-  rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2386
-  __do_softirq+0x333/0x7c4 arch/x86/include/asm/paravirt.h:766
-
-The buggy address belongs to the object at ffff888099937300
-  which belongs to the cache mnt_cache of size 312
-The buggy address is located 40 bytes inside of
-  312-byte region [ffff888099937300, ffff888099937438)
-The buggy address belongs to the page:
-page:ffffea0002664dc0 refcount:1 mapcount:0 mapping:ffff8880aa5a9a80  
-index:0xffff888099937180
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea000285d4c8 ffffea00026ab308 ffff8880aa5a9a80
-raw: ffff888099937180 ffff888099937000 0000000100000008 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff888099937200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff888099937280: fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc
-> ffff888099937300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                   ^
-  ffff888099937380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff888099937400: fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc
-==================================================================
+RDX: 0000000020000440 RSI: 0000000020000000 RDI: 0000000020000040
+RBP: 000000000075bf20 R08: fffffffffffffffe R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000246 R12: 00007f22e31726d4
+R13: 00000000004bfab8 R14: 00000000004d1ad8 R15: 00000000ffffffff
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
@@ -178,6 +123,5 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this bug, for details see:
 https://goo.gl/tpsmEJ#testing-patches
