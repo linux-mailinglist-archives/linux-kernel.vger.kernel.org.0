@@ -2,180 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52708DA349
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:42:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D41F5DA35B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 03:43:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395041AbfJQBmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 21:42:12 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:44245 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391867AbfJQBmL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 21:42:11 -0400
-Received: by mail-io1-f70.google.com with SMTP id y2so951596ioj.11
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 18:42:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=jiTyUQmHmfXgOJr09FD51IRkXks2IeagzT2fb+X1QIk=;
-        b=EKnqEvVx+5VWlwoZZUXSAFdL7+iZlA58dtkdzrN/H11GW4Je/9yWMVoYQHdKWwBHC/
-         ilVl+ad4peIXFUA9QzzcMlZ0CLO1SS1eR/Uf5x3wTLP3A+hJefzk7Gbn21MIRQE9hTes
-         mn+UyFkOigM1TIILoueKCuXm2xRx3Ke425D63pE7jqyaV6rLhbAF+DJrNdG66XanKS1R
-         jm7cDMGZ75JW+v6StrRxSScf4sazmYgCudf1oODIRXQX+9XMxcs9sOOJxA4bImXo8giv
-         CFkn/gvEpEO1tcU7gXkKy7TDP7XnEC5hLrZSsa3d8HeXFJZ5/l72cDMM/zrl63R4u0y1
-         aYnA==
-X-Gm-Message-State: APjAAAXnDeHjm7NVl1wR3P7toRfUdPyYjkdpyxYVimHdS4DmwQAUWWpz
-        PetaJ1hN7Lvq2MAOUMEQ5cq/gxoYpKGLtlm2JbV+/CLCpTxO
-X-Google-Smtp-Source: APXvYqwsHmPMzRhEnyf0WaydnP38vmtAvfQzabXemisnJK22p8N2/OjCrMW03Q17k6X/ZhB0r6QOsAo87iZVea+kasU3KqSQZ0jk
+        id S2395334AbfJQBnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 21:43:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:8848 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730780AbfJQBnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 21:43:17 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ACAAB51EF3;
+        Thu, 17 Oct 2019 01:43:16 +0000 (UTC)
+Received: from [10.72.12.185] (ovpn-12-185.pek2.redhat.com [10.72.12.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F04551001B36;
+        Thu, 17 Oct 2019 01:42:54 +0000 (UTC)
+Subject: Re: [PATCH V3 0/7] mdev based hardware virtio offloading support
+To:     Stefan Hajnoczi <stefanha@gmail.com>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        cohuck@redhat.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
+        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
+        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com
+References: <20191011081557.28302-1-jasowang@redhat.com>
+ <20191014174946.GC5359@stefanha-x1.localdomain>
+ <6d12ad8f-8137-e07d-d735-da59a326e8ed@redhat.com>
+ <20191015143720.GA13108@stefanha-x1.localdomain>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <ba81e603-cb7d-b152-8fae-97f070a7e460@redhat.com>
+Date:   Thu, 17 Oct 2019 09:42:53 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:5f4c:: with SMTP id t73mr995711ilb.220.1571276531062;
- Wed, 16 Oct 2019 18:42:11 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 18:42:11 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007a638805951153c5@google.com>
-Subject: KMSAN: kernel-usb-infoleak in pcan_usb_wait_rsp
-From:   syzbot <syzbot+863724e7128e14b26732@syzkaller.appspotmail.com>
-To:     glider@google.com, gregkh@linuxfoundation.org,
-        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20191015143720.GA13108@stefanha-x1.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 17 Oct 2019 01:43:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
-
-HEAD commit:    c2453450 kmsan: kcov: prettify the code unpoisoning area->..
-git tree:       https://github.com/google/kmsan.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=11934730e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3684f3c73f43899a
-dashboard link: https://syzkaller.appspot.com/bug?extid=863724e7128e14b26732
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12431287600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1743306b600000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+863724e7128e14b26732@syzkaller.appspotmail.com
-
-usb 1-1: config 0 interface 210 altsetting 0 endpoint 0x1 has an invalid  
-bInterval 0, changing to 7
-usb 1-1: New USB device found, idVendor=0c72, idProduct=000c,  
-bcdDevice=7c.aa
-usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-usb 1-1: config 0 descriptor??
-hub 1-1:0.210: ignoring external hub
-=====================================================
-BUG: KMSAN: kernel-usb-infoleak in kmsan_handle_urb+0x28/0x40  
-mm/kmsan/kmsan_hooks.c:381
-CPU: 0 PID: 2900 Comm: kworker/0:2 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
-  kmsan_report+0x14a/0x2f0 mm/kmsan/kmsan_report.c:109
-  kmsan_internal_check_memory+0x3bb/0x4e0 mm/kmsan/kmsan.c:469
-  kmsan_handle_urb+0x28/0x40 mm/kmsan/kmsan_hooks.c:381
-  usb_submit_urb+0x7ef/0x1f50 drivers/usb/core/urb.c:405
-  usb_start_wait_urb+0x143/0x410 drivers/usb/core/message.c:58
-  usb_bulk_msg+0x811/0x920 drivers/usb/core/message.c:257
-  pcan_usb_send_cmd drivers/net/can/usb/peak_usb/pcan_usb.c:127 [inline]
-  pcan_usb_wait_rsp+0x25c/0x6e0 drivers/net/can/usb/peak_usb/pcan_usb.c:151
-  pcan_usb_get_serial drivers/net/can/usb/peak_usb/pcan_usb.c:310 [inline]
-  pcan_usb_init+0xcc/0x450 drivers/net/can/usb/peak_usb/pcan_usb.c:801
-  peak_usb_create_dev drivers/net/can/usb/peak_usb/pcan_usb_core.c:809  
-[inline]
-  peak_usb_probe+0x1416/0x1b20  
-drivers/net/can/usb/peak_usb/pcan_usb_core.c:907
-  usb_probe_interface+0xd19/0x1310 drivers/usb/core/driver.c:361
-  really_probe+0xd91/0x1f90 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:721
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:828
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:430
-  __device_attach+0x489/0x750 drivers/base/dd.c:894
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:941
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:490
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2201
-  usb_set_configuration+0x309f/0x3710 drivers/usb/core/message.c:2027
-  generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
-  usb_probe_device+0x146/0x200 drivers/usb/core/driver.c:266
-  really_probe+0xd91/0x1f90 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:721
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:828
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:430
-  __device_attach+0x489/0x750 drivers/base/dd.c:894
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:941
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:490
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2201
-  usb_new_device+0x23e5/0x2fb0 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x581d/0x72f0 drivers/usb/core/hub.c:5441
-  process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
-  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
-  kthread+0x4b5/0x4f0 kernel/kthread.c:256
-  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
-
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:150 [inline]
-  kmsan_internal_poison_shadow+0x60/0x110 mm/kmsan/kmsan.c:133
-  kmsan_slab_alloc+0xaa/0x130 mm/kmsan/kmsan_hooks.c:101
-  slab_alloc_node mm/slub.c:2792 [inline]
-  slab_alloc mm/slub.c:2801 [inline]
-  kmem_cache_alloc_trace+0x8c5/0xd20 mm/slub.c:2818
-  kmalloc include/linux/slab.h:556 [inline]
-  peak_usb_create_dev drivers/net/can/usb/peak_usb/pcan_usb_core.c:753  
-[inline]
-  peak_usb_probe+0x544/0x1b20  
-drivers/net/can/usb/peak_usb/pcan_usb_core.c:907
-  usb_probe_interface+0xd19/0x1310 drivers/usb/core/driver.c:361
-  really_probe+0xd91/0x1f90 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:721
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:828
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:430
-  __device_attach+0x489/0x750 drivers/base/dd.c:894
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:941
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:490
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2201
-  usb_set_configuration+0x309f/0x3710 drivers/usb/core/message.c:2027
-  generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
-  usb_probe_device+0x146/0x200 drivers/usb/core/driver.c:266
-  really_probe+0xd91/0x1f90 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:721
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:828
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:430
-  __device_attach+0x489/0x750 drivers/base/dd.c:894
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:941
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:490
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2201
-  usb_new_device+0x23e5/0x2fb0 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x581d/0x72f0 drivers/usb/core/hub.c:5441
-  process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
-  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
-  kthread+0x4b5/0x4f0 kernel/kthread.c:256
-  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
-
-Bytes 2-15 of 16 are uninitialized
-Memory access of size 16 starts at ffff88810fa82fa0
-=====================================================
+On 2019/10/15 下午10:37, Stefan Hajnoczi wrote:
+> On Tue, Oct 15, 2019 at 11:37:17AM +0800, Jason Wang wrote:
+>> On 2019/10/15 上午1:49, Stefan Hajnoczi wrote:
+>>> On Fri, Oct 11, 2019 at 04:15:50PM +0800, Jason Wang wrote:
+>>>> There are hardware that can do virtio datapath offloading while having
+>>>> its own control path. This path tries to implement a mdev based
+>>>> unified API to support using kernel virtio driver to drive those
+>>>> devices. This is done by introducing a new mdev transport for virtio
+>>>> (virtio_mdev) and register itself as a new kind of mdev driver. Then
+>>>> it provides a unified way for kernel virtio driver to talk with mdev
+>>>> device implementation.
+>>>>
+>>>> Though the series only contains kernel driver support, the goal is to
+>>>> make the transport generic enough to support userspace drivers. This
+>>>> means vhost-mdev[1] could be built on top as well by resuing the
+>>>> transport.
+>>>>
+>>>> A sample driver is also implemented which simulate a virito-net
+>>>> loopback ethernet device on top of vringh + workqueue. This could be
+>>>> used as a reference implementation for real hardware driver.
+>>>>
+>>>> Consider mdev framework only support VFIO device and driver right now,
+>>>> this series also extend it to support other types. This is done
+>>>> through introducing class id to the device and pairing it with
+>>>> id_talbe claimed by the driver. On top, this seris also decouple
+>>>> device specific parents ops out of the common ones.
+>>> I was curious so I took a quick look and posted comments.
+>>>
+>>> I guess this driver runs inside the guest since it registers virtio
+>>> devices?
+>>
+>> It could run in either guest or host. But the main focus is to run in the
+>> host then we can use virtio drivers in containers.
+>>
+>>
+>>> If this is used with physical PCI devices that support datapath
+>>> offloading then how are physical devices presented to the guest without
+>>> SR-IOV?
+>>
+>> We will do control path meditation through vhost-mdev[1] and vhost-vfio[2].
+>> Then we will present a full virtio compatible ethernet device for guest.
+>>
+>> SR-IOV is not a must, any mdev device that implements the API defined in
+>> patch 5 can be used by this framework.
+> What I'm trying to understand is: if you want to present a virtio-pci
+> device to the guest (e.g. using vhost-mdev or vhost-vfio), then how is
+> that related to this patch series?
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+This series introduce some infrastructure that would be used by vhost-mdev:
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+1) allow new type of mdev devices/drivers other than vfio (through 
+class_id and device ops)
+
+2) a set of virtio specific callbacks that will be used by both 
+vhost-mdev and virtio-mdev defined in patch 5
+
+Then vhost-mdev can be implemented on top: a new mdev class id but reuse 
+the callback defined in 2. Through this way the parent can provides a 
+single set of callbacks (device ops) for both kernel virtio driver 
+(through virtio-mdev) or userspace virtio driver (through vhost-mdev).
+
+
+>
+> Does this mean this patch series is useful mostly for presenting virtio
+> devices to containers or the host?
+
+
+Patch 6 is mainly for bare metal or container use case, through it could 
+be used in guest as well. Patch 7 is a sample virtio mdev device 
+implementation. Patch 1 - 5 was the infrastructure for implementing 
+types other than vfio, the first user is virito-mdev, then Tiwei's 
+vhost-mdev and Parav's mlx5 mdev.
+
+Thanks
+
+
+>
+> Stefan
