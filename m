@@ -2,104 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F32E5DD541
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 01:17:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81C9BDD537
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 01:12:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731806AbfJRXRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 19:17:52 -0400
-Received: from piie.net ([80.82.223.85]:44834 "EHLO piie.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730058AbfJRXRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 19:17:51 -0400
-X-Greylist: delayed 392 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Oct 2019 19:17:50 EDT
-Received: from localhost (HSI-KBW-078-043-057-186.hsi4.kabel-badenwuerttemberg.de [78.43.57.186])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        by piie.net (Postfix) with ESMTPSA id 96B0D2B6C;
-        Sat, 19 Oct 2019 01:11:21 +0200 (CEST)
-From:   Peter Kaestle <peter@piie.net>
-To:     linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Cc:     Peter Kaestle <peter@piie.net>, Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 2/2] treewide: Rename Peter Feuerer to Peter Kaestle
-Date:   Sat, 19 Oct 2019 00:59:36 +0200
-Message-Id: <20191018225936.131763-2-peter@piie.net>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191018225936.131763-1-peter@piie.net>
-References: <20191018225936.131763-1-peter@piie.net>
+        id S1730146AbfJRXMQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 19:12:16 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34743 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726980AbfJRXMP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 19:12:15 -0400
+Received: by mail-oi1-f194.google.com with SMTP id 83so6624095oii.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 16:12:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LG5mtPGY98QkEsSFwWtnXL/ah69Lb+RuUfP4f3yut5c=;
+        b=iRgnRoiyWhuVYKScQU1EUUBj9SAQggmJSx1lqnfH79UM+KhZWiBFpRGkZPT+FoI24s
+         rNiGuOA4828mM5RiW5KQDGn3B4wIKJk5jigQO8F5uPQlG0DZao8n2WwwlwIIhQ91+kE0
+         yfPK0De6IcJ369t6CxCZI+VLyBrFaxdJl921WLd+mXlj0z2MWnXSPnGbAR8ep/FkW6S/
+         p4eAmO7of8K/7I+JTt+Cd5E3SOdwG5NWsYJdjnmm4pkSkeWva6AQfaSSKrTuGfFSsU3+
+         TIa+g9AlDgKhpeIRpVNgnpWnkGszAVWI3xqtmDHKqlKZPc2FJwNLuKjyy4mRo/vF8a0I
+         NS2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LG5mtPGY98QkEsSFwWtnXL/ah69Lb+RuUfP4f3yut5c=;
+        b=lnfE5NhoDlU4ulU3U+rtCX69oN5jhPuK2iQyXA5ffy1CsiUDkgJyUFYBdTgFzSFgBk
+         Voplez0d+3zm6AJtnEuC/aTCFJE7fN+VLsN1BeVmz16HFWklcljg6ki8+7mOHaJdL+DE
+         D4q/7fBznwwATuHBW8LhjlqsJuKN5LXdDxCd2STh36hnTa/DUcdEueKJXlKZNACjz0s9
+         sMmXSBLqH5/Qo6Of1PCx5o49JI4TPXlpxICj+0oJfH6Vdt7/DdfXvB5y4u6Y4HmXwkES
+         4ydsJGmivchG+WUbBHOxF7NKQ5C9CQhbv0Z1EOqms3cRDFd10Orn/OXwJauvqyx0pr0W
+         Tipg==
+X-Gm-Message-State: APjAAAW5NicF6Bilg9nczcfRm//GXWc4jgOTCb1KSusI+cg37dByOY/E
+        Hjgdu/6xLUkI1+RrjoODzUBaLEjdPJXVd8Nl4d1+W24W
+X-Google-Smtp-Source: APXvYqx+l3J9Z5dyG0kp74OJpHiYKU8uW2txO74LFYJXiLc5NyULMYmNckFHj4n1GLftMrpa3VrQHLpBauE8W8Stuzs=
+X-Received: by 2002:a05:6808:7cd:: with SMTP id f13mr9418587oij.70.1571440334999;
+ Fri, 18 Oct 2019 16:12:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191018082354.GA9296@shao2-debian> <20191018094810.GB18593@quack2.suse.cz>
+In-Reply-To: <20191018094810.GB18593@quack2.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 18 Oct 2019 16:12:03 -0700
+Message-ID: <CAPcyv4jjfT4xOQTrckEmX0Z_o6MbsmHz-qvCLAGSOPEe3-X0QA@mail.gmail.com>
+Subject: Re: [dax] 23c84eb783: fio.write_bw_MBps -61.6% regression
+To:     Jan Kara <jack@suse.cz>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        lkp@lists.01.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-treewide: Rename Peter Feuerer to Peter Kaestle
+On Fri, Oct 18, 2019 at 2:48 AM Jan Kara <jack@suse.cz> wrote:
+>
+> Hello!
+>
+> On Fri 18-10-19 16:23:54, kernel test robot wrote:
+> > FYI, we noticed a -61.6% regression of fio.write_bw_MBps due to commit:
+> >
+> >
+> > commit: 23c84eb7837514e16d79ed6d849b13745e0ce688 ("dax: Fix missed wakeup with PMD faults")
+> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>
+> Thanks for report! Please check whether commit 61c30c98ef17 "dax: Fix
+> missed wakeup in put_unlocked_entry()" influences the throughput. Because
+> without that fix, the identified commit may result in processes sleeping
+> unnecessarily long on entry locks.
 
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andy@infradead.org>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Peter Kaestle <peter@piie.net>
-
----
- MAINTAINERS                     | 2 +-
- drivers/platform/x86/acerhdf.c  | 4 ++--
- drivers/thermal/gov_bang_bang.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0154674cbad3..a907670c5e79 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -295,7 +295,7 @@ S:	Maintained
- F:	drivers/net/ethernet/alteon/acenic*
- 
- ACER ASPIRE ONE TEMPERATURE AND FAN DRIVER
--M:	Peter Feuerer <peter@piie.net>
-+M:	Peter Kaestle <peter@piie.net>
- L:	platform-driver-x86@vger.kernel.org
- W:	http://piie.net/?section=acerhdf
- S:	Maintained
-diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
-index d40f365d8d7a..8cc86f4e3ac1 100644
---- a/drivers/platform/x86/acerhdf.c
-+++ b/drivers/platform/x86/acerhdf.c
-@@ -4,7 +4,7 @@
-  *           of the aspire one netbook, turns on/off the fan
-  *           as soon as the upper/lower threshold is reached.
-  *
-- * (C) 2009 - Peter Feuerer     peter (a) piie.net
-+ * (C) 2009 - Peter Kaestle     peter (a) piie.net
-  *                              http://piie.net
-  *     2009 Borislav Petkov	bp (a) alien8.de
-  *
-@@ -803,7 +803,7 @@ static void __exit acerhdf_exit(void)
- }
- 
- MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Peter Feuerer");
-+MODULE_AUTHOR("Peter Kaestle");
- MODULE_DESCRIPTION("Aspire One temperature and fan driver");
- MODULE_ALIAS("dmi:*:*Acer*:pnAOA*:");
- MODULE_ALIAS("dmi:*:*Acer*:pnAO751h*:");
-diff --git a/drivers/thermal/gov_bang_bang.c b/drivers/thermal/gov_bang_bang.c
-index e0575d29023a..b831fc77cf64 100644
---- a/drivers/thermal/gov_bang_bang.c
-+++ b/drivers/thermal/gov_bang_bang.c
-@@ -2,7 +2,7 @@
- /*
-  *  gov_bang_bang.c - A simple thermal throttling governor using hysteresis
-  *
-- *  Copyright (C) 2014 Peter Feuerer <peter@piie.net>
-+ *  Copyright (C) 2014 Peter Kaestle <peter@piie.net>
-  *
-  *  Based on step_wise.c with following Copyrights:
-  *  Copyright (C) 2012 Intel Corp
--- 
-2.23.0
-
+I've got several reports of v5.3 performance regressions tracking back
+to this change. I instrumented the ndctl "dax.sh" unit test to
+validate that it is getting huge page faults and it always falls back
+to 4K starting with these commits. It looks like the xa_is_internal()
+returns true for any DAX_LOCKED entry.
