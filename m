@@ -2,86 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70346DBDD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 08:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72A93DBDCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 08:43:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504512AbfJRGsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 02:48:12 -0400
-Received: from jake.logic.tuwien.ac.at ([128.130.175.117]:41276 "EHLO
-        jake.logic.tuwien.ac.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbfJRGsM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 02:48:12 -0400
-X-Greylist: delayed 310 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Oct 2019 02:48:11 EDT
-Received: from burischnitzel.preining.info (a-fhn3-09120.noc.ntt-west.nsk.ne.jp [61.198.85.120])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        id S2408991AbfJRGnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 02:43:50 -0400
+Received: from mail12.gandi.net ([217.70.182.73]:41477 "EHLO gandi.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2393594AbfJRGnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 02:43:49 -0400
+X-Greylist: delayed 570 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Oct 2019 02:43:48 EDT
+Received: from diconico07.dev (unknown [IPv6:2001:4b98:beef:a:e921:9c91:35ed:759a])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by jake.logic.tuwien.ac.at (Postfix) with ESMTPSA id ADB87C03F7;
-        Fri, 18 Oct 2019 08:42:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=logic.at; s=dkim;
-        t=1571380979; bh=yXPJe8f9/EMHqnWtnxOaRN7s6KZqxS+PLBVMczjpsx0=;
-        h=Date:From:To:Subject:From;
-        b=S+Cri1OtrooI4HCtVJndn0MgvSFGd5kPOYw9HcBC4ZVrSg25uZ/+O6KP6H4ik8mqx
-         JOnDpnjXQ3nryp3eJcbptOZZxEXWxp8kxGrQ6HmetP6QmaQp1/4gKOTnu7gVmEqeTT
-         Tq5wBZWMhzCYKHV69j4I0JrJ84yrvIg2/wYN52DU=
-Received: by burischnitzel.preining.info (Postfix, from userid 1000)
-        id EEEF66D2658A; Fri, 18 Oct 2019 15:30:22 +0900 (JST)
-Date:   Fri, 18 Oct 2019 15:30:22 +0900
-From:   Norbert Preining <preining@logic.at>
-To:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ilw@linux.intel.com
-Subject: IWL AC 8260, suspect GRP implementation, broken connectivity
-Message-ID: <20191018063022.6bqunomkyqabgljc@burischnitzel.preining.info>
+        by gandi.net (Postfix) with ESMTPSA id A11781602FD;
+        Fri, 18 Oct 2019 06:34:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gandi.net; s=20190808;
+        t=1571380457;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Jpi61/2s16j3fMtRfMj2xF4NuVyqdh4656NY34j9qBw=;
+        b=SPPiFN+nP1KBYsIYmk+vIOht95Cx/oNJm0rrk9zrtSCBbrDaeHT9N6rOdh/dcMYOFYIC9e
+        GMqfRhIz+DG2+i/FP0IUHyBNeWxWHeH2GAt7iSIiIsY10NtgT6ZbbW1NT4VWG1V71ix3x5
+        fFGMVgRdw9v50NGTsTNv6pXL+AddYF2oxvRz5ZX6g3wdFSbZNI/+sudoqkIXG4myGeeVY+
+        ZxXIvpAAHW4hMdiB+fqIU8DkUMGwbd7km1DW81Ke9JidW9LieCaIPAgy3hxTm+IbPQY8tk
+        HwqjI93URS2jntDPKiBZukWPnJs68Aaxb6tw2Tpsshg4Z/+Tc16flbeB9m0zMQ==
+Subject: Re: email as a bona fide git transport
+To:     Willy Tarreau <w@1wt.eu>, Greg KH <greg@kroah.com>,
+        Santiago Torres Arias <santiago@nyu.edu>,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        workflows@vger.kernel.org, Git Mailing List <git@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Wong <e@80x24.org>
+References: <b9fb52b8-8168-6bf0-9a72-1e6c44a281a5@oracle.com>
+ <20191016111009.GE13154@1wt.eu>
+ <20191016144517.giwip4yuaxtcd64g@LykOS.localdomain>
+ <20191017204343.GA1132188@kroah.com> <20191017204532.GA6446@chatter.i7.local>
+ <20191018013029.GA1167832@kroah.com> <20191018015447.GB6446@chatter.i7.local>
+ <20191018025215.GA15777@1wt.eu>
+From:   Nicolas Belouin <nicolas.belouin@gandi.net>
+Message-ID: <4ea21178-0cac-e958-7c69-ad5b4a74e6b5@gandi.net>
+Date:   Fri, 18 Oct 2019 08:34:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191018025215.GA15777@1wt.eu>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear all,
+On 10/18/19 4:52 AM, Willy Tarreau wrote:
+> On Thu, Oct 17, 2019 at 09:54:47PM -0400, Konstantin Ryabitsev wrote:
+>> On Thu, Oct 17, 2019 at 06:30:29PM -0700, Greg KH wrote:
+>>>> It could only possibly work if nobody ever adds their own
+>>>> "Signed-Off-By" or
+>>>> any other bylines. I expect this is a deal-breaker for most maintainers.
+>>> Yeah it is :(
+>>>
+>>> But, if we could just have the signature on the code change, not the
+>>> changelog text, that would help with that issue.
+>> We totally should, and I even mused on how we would do that here:
+>> https://public-inbox.org/git/20190910121324.GA6867@pure.paranoia.local/
+>>
+>> However, since git's PGP signatures are made for the content in the actual
+>> commit record (tree hash, parent, author, commit message, etc), the only way
+>> we could preserve them between the email and the git tree is if we never
+>> modify any of that data. The SOB and other trailers would have to only be
+>> applied to the merge commit, or migrate into commit notes.
+> There's also the possibility to handle this a bit like we do when adding
+> comments before the SOB: a PGP signature would apply to the text *before*
+> it only. We could then have long chains of SOB, PGP, SOB, PGP etc.
+>
+> Willy
 
-(please cc)
+I don't think it can work that easily as the signed content is not just
+the message.
+It would need git to support nesting signatures and to allow amending a
+commit without
+touching the signature and to allow adding one to cover the new content
+and to have a
+way to verify every step.
+Moreover you won't be able to reparent the commit as a maintainer (wich
+I think is
+also a deal-breaker)
 
-linux 5.3.N (currently .7), but also older kernels
-Debian/sid
-Thinkpad X260
-iwlwifi 0000:04:00.0: Detected Intel(R) Dual Band Wireless AC 8260, REV=0x208
-iwlwifi 0000:04:00.0: loaded firmware version 36.8fd77bb3.0 op_mode iwlmvm
+Nicolas
 
-In one particular location I see completely broken connection: dns does
-not work (resolve does not work), ping, ssh breaks down, http breaks
-down, it really sounds like a really weak connection.
-
-The problem is that:
-- the *same* laptop booted into Windows works at high speed connections
-- other computers (2 Mac) around here work without problems
-- mobile also connects without any problem
-
-There are no RX/TX errors whatsoever. I tried reducing MTU, to no
-effect. The only warning I see is
-	TCP: wlp4s0: Driver has suspect GRO implementation, TCP performance may be compromised.
-
-
-wlp4s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1400
-        inet 172.17.1.166  netmask 255.255.0.0  broadcast 172.17.255.255
-        inet6 fe80::fddc:f32e:f9cb:fded  prefixlen 64  scopeid 0x20<link>
-        ether e4:a7:a0:66:6d:f4  txqueuelen 1000  (Ethernet)
-        RX packets 11164  bytes 7459009 (7.1 MiB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 13204  bytes 3062515 (2.9 MiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-I am a bit at loss how to debug this, or better, whether it is possible
-to get back normal connectivity?
-
-Thanks a lot for any pointer
-
-Norbert
-
---
-PREINING Norbert                               http://www.preining.info
-Accelia Inc. + IFMGA ProGuide + TU Wien + JAIST + TeX Live + Debian Dev
-GPG: 0x860CDC13   fp: F7D8 A928 26E3 16A1 9FA0 ACF0 6CAC A448 860C DC13
