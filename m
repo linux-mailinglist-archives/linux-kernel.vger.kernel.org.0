@@ -2,100 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C794DBCA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:10:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60AD5DBC49
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:01:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393196AbfJRFIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:08:23 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45587 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726743AbfJRFIX (ORCPT
+        id S2441973AbfJRFAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:00:24 -0400
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:57008 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2441963AbfJRFAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:08:23 -0400
-Received: by mail-io1-f68.google.com with SMTP id c25so5883240iot.12
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:08:22 -0700 (PDT)
+        Fri, 18 Oct 2019 01:00:22 -0400
+X-Greylist: delayed 300 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Oct 2019 01:00:21 EDT
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 6C39CB5E
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 04:41:57 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4RnzG78ndPZU for <linux-kernel@vger.kernel.org>;
+        Thu, 17 Oct 2019 23:41:57 -0500 (CDT)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 436B6B53
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 23:41:57 -0500 (CDT)
+Received: by mail-io1-f69.google.com with SMTP id w8so6931782iol.20
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 21:41:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=kdaIg1bmKvTuY1siBcuKtqxXXbNP+bO8qDJ8qtoHLrs=;
-        b=alw6W5GQyFhcnDqfvGuR8ILsbtiVCq3gFNSbsc/XVCP/pbXcnDdCPf5Y8lhD+ZGjD3
-         k70D30BaJyuuRDhkvJ+MYnPNjUNkDzOJObYzjLN9WjpGG6uwhVPce/MNyj2Gb3jpNE3N
-         x12yIHzuETRu1nJA+I1boHpOvXikuy3MWOAVWs1ir7esAwfr2HFoVhDI34y1EhvUzbT9
-         P313Uiqsbz9BN595bX4qtsM+rAYBUE7+jnI3adKsIbO3f+d+7d/aVjrY+PTr58X5PRO1
-         dp2o6liHqfUAeu2MWjv+rB5i8j6bNLoTljIC3yYORBqQE44NGIUf6xD6JGxF0pKfbJjr
-         li1g==
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=KZJ0qgGHHAivbnxIOZfhWtlIHuWG04Vj3FxHQ3w/GEE=;
+        b=LNjzhGzWitDO6Aa3bHfiAIwrG2rfKBT+UuuKAqLWwQm9ZoUQBg/dJQlS+sbtMORRxa
+         QLu+0EGyNHvfahcj4E5lZBPcYiQeACpKJETL3bb1hsWZjgcDjONw8wofFojapCsbneaC
+         ULB9gI3Il9/kfr5+o8P39xuoixmebvksqeWje76HFyiQ0g0Br6H8VZykRZcOqRaTNOIG
+         h7qRv1ptesw4P5E4PaW+nlmq9splbvENohVJpFPRat3KB2/gZxXc4o+BG3oGInvbnQJ0
+         lmcGmT4wOWpSiJoR8UlRP3zZYkYoGllHW7vJor/uZZRincMS4LUiDd2Pb6ljf1C34SM8
+         H1dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=kdaIg1bmKvTuY1siBcuKtqxXXbNP+bO8qDJ8qtoHLrs=;
-        b=YcEBX/7IcfyImPd39O3K9fa2hPOGWwvhuNdBmN+eWIe8TKtQcFEQKPXu89Mlg5xcdT
-         e5ARbk42WIGmv7DzvDTmYYVDbmy/9mwl0aygFYSw7f4o5kUF5JpWRQd1rcv3czgDI6zg
-         ePGSCxtGGgiejdid1H3Um81Ql8Tm3CTBLotzcl/vNQKHltAQrCYbDu54ZE/O6tGNfrIr
-         A8SGId1raqAI7u5E8NeGk+TzXDvLU6YjpqS154kTi0qziIacz3YplDqbaY3dsI8SCtPU
-         yS33CJy8ZbjAG6RHUab8Iwm/zCVWbwWkUqEkiYdmoWwptd1lwUzk15xZJVi3r//S+9bi
-         r3TQ==
-X-Gm-Message-State: APjAAAUkCOxhooBu0Vje/5VWULuwshiLIAOdFJ5GZIrQkeaUZMS1p7Ct
-        30CW+8nmCfQ/+C46H3jxsb6R0UqJEBM=
-X-Google-Smtp-Source: APXvYqz+VSmPYFEehv0u4XSaZ4gGq/6ly+snn34TQolYszWZAPowUNkcflBsfouOqC+vsTbwwiqpnQ==
-X-Received: by 2002:a5e:dd41:: with SMTP id u1mr6869403iop.112.1571373570538;
-        Thu, 17 Oct 2019 21:39:30 -0700 (PDT)
-Received: from localhost (67-0-11-246.albq.qwest.net. [67.0.11.246])
-        by smtp.gmail.com with ESMTPSA id 26sm1545703iog.10.2019.10.17.21.39.29
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KZJ0qgGHHAivbnxIOZfhWtlIHuWG04Vj3FxHQ3w/GEE=;
+        b=ZzBelZRRhLDfzrl/EwI+9skcikFzaxCOtXy89Kjrjnq/1XmemmeAq3lDMmWiWSaq8x
+         JcTuN4zDzlXwtgCCpJM2piSQD0RDTyBQxpxegYpDXnMwn0BBX8Owv4Y2GQ2h3x/LeXNN
+         IIr5TZhs8T0/Ew/trbBHq5opGYLyEGwjXkyGsaW5g63j5ek3QICE0AuaCPF9GOjw744a
+         fCHDEeet7L2QmR8U0jzr3d9aLCDf3eWyLnJYidFAnWUWhCMxh23qzoZEsyM3/EbZjFO/
+         u25vNvG08Lc3q5swooa6gR/kMOVZNVq74BBIAzWJtbPTTDom4S7gYjMXgaXEmmTQcC9a
+         kCQg==
+X-Gm-Message-State: APjAAAVkTEaBI43ciI0h8MqjoIo2O4j3CC46gTHItSJyW5hGC1MEUs+n
+        DvIOe4Wjz4fTjf4Nrfb/o316twkBnmcwlVWSK+rv3es7gjPbNBIxll8gA1QuYcGeWx7klPD9G4m
+        NjythhEGHmY8U8FPTXUp/qdx21sKB
+X-Received: by 2002:a92:8941:: with SMTP id n62mr7842855ild.20.1571373716852;
+        Thu, 17 Oct 2019 21:41:56 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyoJ/tH4b5jxVJp8nBGw2QY5zm9BMxuCAeD6/be5zL/8OGhFhhi/R6r6p196AViBR8ZnBWC9Q==
+X-Received: by 2002:a92:8941:: with SMTP id n62mr7842836ild.20.1571373716551;
+        Thu, 17 Oct 2019 21:41:56 -0700 (PDT)
+Received: from bee.dtc.umn.edu (cs-bee-u.cs.umn.edu. [128.101.106.63])
+        by smtp.gmail.com with ESMTPSA id w68sm2042093ili.59.2019.10.17.21.41.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 21:39:30 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 21:39:29 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] riscv: ensure RISC-V C model definitions are passed
- to static analyzers
-In-Reply-To: <20191018040619.o3qb5fyj4qdevwoe@ltop.local>
-Message-ID: <alpine.DEB.2.21.9999.1910172138320.3026@viisi.sifive.com>
-References: <20191018004929.3445-1-paul.walmsley@sifive.com> <20191018004929.3445-5-paul.walmsley@sifive.com> <20191018040619.o3qb5fyj4qdevwoe@ltop.local>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 17 Oct 2019 21:41:55 -0700 (PDT)
+From:   Kangjie Lu <kjlu@umn.edu>
+To:     kjlu@umn.edu
+Cc:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/gma500: fix memory disclosures due to uninitialized bytes
+Date:   Thu, 17 Oct 2019 23:41:50 -0500
+Message-Id: <20191018044150.1899-1-kjlu@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Oct 2019, Luc Van Oostenryck wrote:
+"clock" may be copied to "best_clock". Initializing best_clock
+is not sufficient. The fix initializes clock as well to avoid
+memory disclosures and informaiton leaks.
 
-> On Thu, Oct 17, 2019 at 05:49:25PM -0700, Paul Walmsley wrote:
-> > Static analysis tools such as sparse don't set the RISC-V C model
-> > preprocessor directives such as "__riscv_cmodel_medany", set by the C
-> > compilers.  This causes the static analyzers to evaluate different
-> > preprocessor paths than C compilers would.  Fix this by defining the
-> > appropriate C model macros in the static analyzer command lines.
-> > 
-> > Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> > ---
-> >  arch/riscv/Makefile | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> > index f5e914210245..0247a90bd4d8 100644
-> > --- a/arch/riscv/Makefile
-> > +++ b/arch/riscv/Makefile
-> > @@ -47,9 +47,11 @@ KBUILD_CFLAGS += -DCONFIG_PAGE_OFFSET=$(CONFIG_PAGE_OFFSET)
-> >  
-> >  ifeq ($(CONFIG_CMODEL_MEDLOW),y)
-> >  	KBUILD_CFLAGS += -mcmodel=medlow
-> > +	CHECKFLAGS += -D__riscv_cmodel_medlow
-> >  endif
-> >  ifeq ($(CONFIG_CMODEL_MEDANY),y)
-> >  	KBUILD_CFLAGS += -mcmodel=medany
-> > +	CHECKFLAGS += -D__riscv_cmodel_medany
-> 
-> I can teach sparse about this in the following days.
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+---
+ drivers/gpu/drm/gma500/oaktrail_crtc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-That would be great.  Would you be willing to follow up with me via E-mail 
-or mailing list post when it's fixed?  If so, then in the meantime, I'll 
-just drop this patch.
+diff --git a/drivers/gpu/drm/gma500/oaktrail_crtc.c b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+index 167c10767dd4..900e5499249d 100644
+--- a/drivers/gpu/drm/gma500/oaktrail_crtc.c
++++ b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+@@ -129,6 +129,7 @@ static bool mrst_sdvo_find_best_pll(const struct gma_limit_t *limit,
+ 	s32 freq_error, min_error = 100000;
+ 
+ 	memset(best_clock, 0, sizeof(*best_clock));
++	memset(&clock, 0, sizeof(clock));
+ 
+ 	for (clock.m = limit->m.min; clock.m <= limit->m.max; clock.m++) {
+ 		for (clock.n = limit->n.min; clock.n <= limit->n.max;
+@@ -185,6 +186,7 @@ static bool mrst_lvds_find_best_pll(const struct gma_limit_t *limit,
+ 	int err = target;
+ 
+ 	memset(best_clock, 0, sizeof(*best_clock));
++	memset(&clock, 0, sizeof(clock));
+ 
+ 	for (clock.m = limit->m.min; clock.m <= limit->m.max; clock.m++) {
+ 		for (clock.p1 = limit->p1.min; clock.p1 <= limit->p1.max;
+-- 
+2.17.1
 
-
-- Paul
