@@ -2,109 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9D59DBCFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D66E9DBD19
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391490AbfJRF2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:28:44 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53972 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731644AbfJRF2n (ORCPT
+        id S2439052AbfJRFfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:35:20 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46904 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727399AbfJRFfT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:28:43 -0400
-Received: by mail-wm1-f68.google.com with SMTP id i16so4738789wmd.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:28:42 -0700 (PDT)
+        Fri, 18 Oct 2019 01:35:19 -0400
+Received: by mail-wr1-f66.google.com with SMTP id o18so4726925wrv.13
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:35:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rgI0YB4AiPdp5L4RaTennbKUpcmOoav7alTjyjJ79iU=;
-        b=akYzP0YnEV3LrHKI0x27ywf2tmPVjk5x+F9QSkw4eiudLUi0e5ydkNp+wz57+hk7c/
-         YhLmWqBjsUx4THeIYoeSis2gBMXbrC4+sfWFUa5epCvTglU2oSR/grY3CGsHHrmLFtxG
-         rwXnSf4SBth6z6DcwFfBDU5jMoiArJ4oo0BSlTFSR98OedCI00w/ZPfqZakpcMuulg4s
-         YiYYda+GqmSJ+eZ1c1u/fZq1OUDVSR8roXl71NpIc8YFVna7+hzir80BlG6zWFsLF53h
-         XXRmAiQzlLjrauOR1nqwwgELHsk1xCnUspABX12unK3nwhYsiKYw/0kBlOHyh0keYwkv
-         BmUA==
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=b9R5y98NMKaH6jPS3dt8xcB/piVcBix4tD337dUVV+U=;
+        b=lr3v4oXMaRG5gAZxgoVM3k6FFXgrbPR30EKD0XeOzoTPooPshQgi/yBeZU9Fddzbk0
+         s6eQnTxY+kbK4MsX0PYmszVhgXYLC+DCYcUnrqoolsWhpgNywn7Fq30K70sVNdw91KFk
+         TzaG076OeZ5IpoWli4BM2pL6chZGiBpYUuZyaBgLzmK1BIQu/2+7ifsZCooc8xO/G3WC
+         HUIkK1Ijgg7FL3FTDhnof/SnW+LCZkqMCr433uM3yHy0EC+kGV46R+88Ss4W64/2e9tF
+         KIPKJ4FQWeK3t4KCOZXPCgpnGY7s7MGgGHWdvkCHrHS94RLVUlLFl0L9mZ2QiRFcAf0w
+         ZKHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rgI0YB4AiPdp5L4RaTennbKUpcmOoav7alTjyjJ79iU=;
-        b=q87xPUrTZ1FsEY6Y5Pip/zZlra5WVrm9Yhgc8Uatd2R89AOXiVvpKI4rIgJ5VFoQbO
-         JNr3fbHfn8aR1F3CYPq1zMP/t0GyX14iMMgkMiFzZAISS9jRtrwfRGm2vbnn/mjAGNID
-         Ud/7IPqqQjq4zSab4vr6JgAobrTv4wqwIOmlSNEyEqbC0PnyiNlGbqT4Cf3Z1QSNcQin
-         JryFmRRYNRDTKCTnTG0LISen1cqpnThYcCFpOle8QzpmmHjpIAEpO07F4R08FyOvZG3r
-         DQAXXW49vclnWKO6LjiOmDN03DNvCZ+re5JxC6hSrhKXeIHIuZg8UNMgvCHQQbkzcCFX
-         eV+w==
-X-Gm-Message-State: APjAAAWvdbM4RRAi7sicKddnbWCDaES8tNFVEE9wrECpUKVSPB6+EbD6
-        cDAd6K45ouXp4Hb3JpRqOzCZIg1y
-X-Google-Smtp-Source: APXvYqy7fLnUS08Adl8FRD5tfNheTTY/1vBy5OQA8QcpVIycS6+5kjlmgUNlyCR+iSG4nj4zc2sY3w==
-X-Received: by 2002:a7b:cf0d:: with SMTP id l13mr5601891wmg.47.1571376521764;
-        Thu, 17 Oct 2019 22:28:41 -0700 (PDT)
-Received: from ltop.local ([2a02:a03f:40ac:ce00:f882:d2a3:f943:89a4])
-        by smtp.gmail.com with ESMTPSA id o9sm4346618wrh.46.2019.10.17.22.28.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 22:28:41 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 07:28:40 +0200
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] riscv: init: merge split string literals in
- preprocessor directive
-Message-ID: <20191018052839.efpqhxkqsjoqtdks@ltop.local>
-References: <20191018004929.3445-1-paul.walmsley@sifive.com>
- <20191018004929.3445-4-paul.walmsley@sifive.com>
- <20191018040237.3eyrfrty72r63pkz@ltop.local>
- <alpine.DEB.2.21.9999.1910172127220.3026@viisi.sifive.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b9R5y98NMKaH6jPS3dt8xcB/piVcBix4tD337dUVV+U=;
+        b=aCExtKyIAZVQNjfB71I7/R1ZKMR0+7Ksdm0g2i6fzFc5AtO1H021fQwxjkOeOaoywf
+         UOt1rGcSzAlBokLALDGI5+90ZI5sf3JsKPrykmjBcx4dvBDvMh1VwrS7OByoCpkboFH+
+         UHiwLfo+4s12kgbvx1NbE/PXYKYUWJ/Bp7Oc9/3mEL9YYF6xCi8/MOc3bfe+6Le/Tp0O
+         P6rzy1Wp6jw6ynDW3XiAXzvd7axuSthKAR52hV+jpU78SPT308zwbnn1b0bpNGSe+MGy
+         NhgFwb2mwzNgBpAMQE79gGWrlJh68WtTeft76jlIY3cSPT8XtI+QTpHoHpvtyEVKKb/o
+         pkBA==
+X-Gm-Message-State: APjAAAVovHKV/bM0n8AnKeWoccaKM7qTjupxc8qEmtV3YQX2AidrAziv
+        aLW7YMA9Zq49gAw9MXUrsmlvNsV6YQD3wt2Tiv8nCOvTiNU=
+X-Google-Smtp-Source: APXvYqyTYzEZUIKg7RKPL0BwgYt3EvlXgVLixIK52nT6nnsRms//UwXq52SaF5H9Wk4WR3zS92oAobPbRNX/hWyfNjE=
+X-Received: by 2002:a5d:42c2:: with SMTP id t2mr5328686wrr.251.1571367079285;
+ Thu, 17 Oct 2019 19:51:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.9999.1910172127220.3026@viisi.sifive.com>
-User-Agent: NeoMutt/20180716
+References: <20191017173743.5430-1-hch@lst.de> <20191017173743.5430-3-hch@lst.de>
+In-Reply-To: <20191017173743.5430-3-hch@lst.de>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Fri, 18 Oct 2019 08:21:08 +0530
+Message-ID: <CAAhSdy27==MERM6H1dL4L_vndgSQcwyise=+_ER3kXHxEh9PYw@mail.gmail.com>
+Subject: Re: [PATCH 02/15] riscv: cleanup do_trap_break
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 09:38:18PM -0700, Paul Walmsley wrote:
-> On Fri, 18 Oct 2019, Luc Van Oostenryck wrote:
-> 
-> > On Thu, Oct 17, 2019 at 05:49:24PM -0700, Paul Walmsley wrote:
-> > > sparse complains loudly when string literals associated with
-> > > preprocessor directives are split into multiple, separately quoted
-> > > strings across different lines:
-> > 
-> > ...
-> >  
-> > >  #ifndef __riscv_cmodel_medany
-> > > -#error "setup_vm() is called from head.S before relocate so it should "
-> > > -	"not use absolute addressing."
-> > > +#error "setup_vm() is called from head.S before relocate so it should not use absolute addressing."
-> > >  #endif
-> > 
-> > Using a blacslash should do the trick :
-> > 	#error "blablablablablablablablablablablabla" \
-> > 			"and blablabla again"
-> > Or if need I cn fix Sparse if needed and desiable.
-> 
-> Thanks for the kind offer!
-> 
-> The backslashless syntax is pretty horrible to my eyes.  As far as I can 
-> tell from a brief glance, the instance fixed by this patch was the only 
-> instance of its kind in the kernel.  The existing kernel precedents appear 
-> to be to simply use a single long line.  Example:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/compiler-gcc.h#n3
-> 
-> So, from a kernel point of view, we should just fix this specific 
-> instance.  It doesn't seem worth changing sparse for such a rare case.
-> 
-> On the other hand, gcc seems to support the non-backslashed syntax.  So if 
-> the intention is for sparse to follow the gcc practice, and to be used 
-> beyond the kernel, maybe it's worth aligning sparse to gcc?  Only if 
-> you're bored, I suppose...
+On Thu, Oct 17, 2019 at 11:07 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> If we always compile the get_break_insn_length inline function we can
+> remove the ifdefs and let dead code elimination take care of the warn
+> branch that is now unreadable because the report_bug stub always
+> returns BUG_TRAP_TYPE_BUG.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/riscv/kernel/traps.c | 26 ++++++--------------------
+>  1 file changed, 6 insertions(+), 20 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+> index 1ac75f7d0bff..10a17e545f43 100644
+> --- a/arch/riscv/kernel/traps.c
+> +++ b/arch/riscv/kernel/traps.c
+> @@ -111,7 +111,6 @@ DO_ERROR_INFO(do_trap_ecall_s,
+>  DO_ERROR_INFO(do_trap_ecall_m,
+>         SIGILL, ILL_ILLTRP, "environment call from M-mode");
+>
+> -#ifdef CONFIG_GENERIC_BUG
+>  static inline unsigned long get_break_insn_length(unsigned long pc)
+>  {
+>         bug_insn_t insn;
+> @@ -120,28 +119,15 @@ static inline unsigned long get_break_insn_length(unsigned long pc)
+>                 return 0;
+>         return (((insn & __INSN_LENGTH_MASK) == __INSN_LENGTH_32) ? 4UL : 2UL);
+>  }
+> -#endif /* CONFIG_GENERIC_BUG */
+>
+>  asmlinkage void do_trap_break(struct pt_regs *regs)
+>  {
+> -       if (user_mode(regs)) {
+> -               force_sig_fault(SIGTRAP, TRAP_BRKPT,
+> -                               (void __user *)(regs->sepc));
+> -               return;
+> -       }
+> -#ifdef CONFIG_GENERIC_BUG
+> -       {
+> -               enum bug_trap_type type;
+> -
+> -               type = report_bug(regs->sepc, regs);
+> -               if (type == BUG_TRAP_TYPE_WARN) {
+> -                       regs->sepc += get_break_insn_length(regs->sepc);
+> -                       return;
+> -               }
+> -       }
+> -#endif /* CONFIG_GENERIC_BUG */
+> -
+> -       die(regs, "Kernel BUG");
+> +       if (user_mode(regs))
+> +               force_sig_fault(SIGTRAP, TRAP_BRKPT, (void __user *)regs->sepc);
+> +       else if (report_bug(regs->sepc, regs) == BUG_TRAP_TYPE_WARN)
+> +               regs->sepc += get_break_insn_length(regs->sepc);
+> +       else
+> +               die(regs, "Kernel BUG");
+>  }
+>
+>  #ifdef CONFIG_GENERIC_BUG
+> --
+> 2.20.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-I'll first see what is acceptable for the point of view of the standard
-(and maybe some justifications from GCC).
+LGTM.
 
--- Luc 
+Reviewed-by: Anup Patel <anup@brainfault.org>
+
+Regards,
+Anup
