@@ -2,101 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0675DC86C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:27:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56234DC873
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410503AbfJRP1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 11:27:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56774 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394233AbfJRP1r (ORCPT
+        id S2410508AbfJRP3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 11:29:37 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:48873 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393138AbfJRP3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 11:27:47 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7DA496106C; Fri, 18 Oct 2019 15:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571412466;
-        bh=bZG3L7zXqO4GvOLgoEZUpllZarQ7DPHvX/3FqZ0KPQw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=oy7Z0pRoF1j3FkzYFH7DTJOqJNKHwv6Ak4sgytcpG3WVjaNyw8Uyb/zQ1oLW0ueEa
-         2Fu+3zvWoAf4tjHfk31oFdsSGTfKI+LCgC7x/11sWJuEjKmhxx7p3C0Yq46e713M0h
-         Q3WCf+J/igRsUUWAQGQ0WEOe/+JpnNc0c1NXQHno=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id DA9D960FD2;
-        Fri, 18 Oct 2019 15:27:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571412465;
-        bh=bZG3L7zXqO4GvOLgoEZUpllZarQ7DPHvX/3FqZ0KPQw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Ud1/1TAdWTnt5PC9DJBLOFdAFBQTt3OrSCQ2lV/36mOyu4Q/DFcniZNrMzJN0lJD6
-         gWbZSP8qOkvP9skewKanC9t639IegWEU5bSgeZSW2/XHMqD3oDmmdEvq4iYdVhEUmz
-         F+bo1/SOzlWm6kep8HH577Mz0VWDH1zVcYtnMZkQ=
+        Fri, 18 Oct 2019 11:29:37 -0400
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id A7A76200004;
+        Fri, 18 Oct 2019 15:29:33 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] spi: Fix SPI_CS_HIGH setting when using native and GPIO CS
+Date:   Fri, 18 Oct 2019 17:29:29 +0200
+Message-Id: <20191018152929.3287-1-gregory.clement@bootlin.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 18 Oct 2019 20:57:45 +0530
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Doug Anderson <dianders@chromium.org>,
-        devicetree-owner@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: msm: Add LLCC for SC7180
-In-Reply-To: <5da9cce6.1c69fb81.d3cb2.07d1@mx.google.com>
-References: <cover.1571406041.git.saiprakash.ranjan@codeaurora.org>
- <30f419d1612a3912e323287a96daa2b4fbe3dacd.1571406041.git.saiprakash.ranjan@codeaurora.org>
- <5da9cce6.1c69fb81.d3cb2.07d1@mx.google.com>
-Message-ID: <576b11d1f1fece666e2e8735c3a8657e@codeaurora.org>
-X-Sender: saiprakash.ranjan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-18 20:02, Stephen Boyd wrote:
-> Quoting Sai Prakash Ranjan (2019-10-18 06:57:09)
->> Add LLCC compatible for SC7180 SoC.
->> 
->> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
->> ---
->>  Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> Can you convert this binding to YAML? Would be useful to make sure it's
-> used properly.
-> 
+When improving the CS GPIO support at core level, the SPI_CS_HIGH
+has been enabled for all the CS lines used for a given SPI controller.
 
-Ok will do in next version.
+However, the SPI framework allows to have on the same controller native
+CS and GPIO CS. The native CS may not support the SPI_CS_HIGH, so they
+should not be setup automatically.
 
->> 
->> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt 
->> b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
->> index eaee06b2d8f2..f263aa539d47 100644
->> --- a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
->> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
->> @@ -11,7 +11,9 @@ Properties:
->>  - compatible:
->>         Usage: required
->>         Value type: <string>
->> -       Definition: must be "qcom,sdm845-llcc"
->> +       Definition: must be one of:
->> +                   "qcom,sc7180-llcc",
->> +                   "qcom,sdm845-llcc"
->> 
+With this patch the setting is done only for the CS that will use a
+GPIO as CS
 
+Fixes: f3186dd87669 ("spi: Optionally use GPIO descriptors for CS GPIOs")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ drivers/spi/spi.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 5414a10afd65..1b68acc28c8f 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1880,15 +1880,7 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
+ 		spi->mode |= SPI_3WIRE;
+ 	if (of_property_read_bool(nc, "spi-lsb-first"))
+ 		spi->mode |= SPI_LSB_FIRST;
+-
+-	/*
+-	 * For descriptors associated with the device, polarity inversion is
+-	 * handled in the gpiolib, so all chip selects are "active high" in
+-	 * the logical sense, the gpiolib will invert the line if need be.
+-	 */
+-	if (ctlr->use_gpio_descriptors)
+-		spi->mode |= SPI_CS_HIGH;
+-	else if (of_property_read_bool(nc, "spi-cs-high"))
++	if (of_property_read_bool(nc, "spi-cs-high"))
+ 		spi->mode |= SPI_CS_HIGH;
+ 
+ 	/* Device DUAL/QUAD mode */
+@@ -1952,6 +1944,14 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
+ 	}
+ 	spi->chip_select = value;
+ 
++	/*
++	 * For descriptors associated with the device, polarity inversion is
++	 * handled in the gpiolib, so all gpio chip selects are "active high"
++	 * in the logical sense, the gpiolib will invert the line if need be.
++	 */
++	if ((ctlr->use_gpio_descriptors) && ctlr->cs_gpiods[spi->chip_select])
++		spi->mode |= SPI_CS_HIGH;
++
+ 	/* Device speed */
+ 	rc = of_property_read_u32(nc, "spi-max-frequency", &value);
+ 	if (rc) {
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.23.0
+
