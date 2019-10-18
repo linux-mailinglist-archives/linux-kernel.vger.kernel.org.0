@@ -2,77 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07273DBE95
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BDD7DBEA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:45:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407332AbfJRHoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 03:44:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33520 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727388AbfJRHoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 03:44:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7AA88B1BB;
-        Fri, 18 Oct 2019 07:44:11 +0000 (UTC)
-Date:   Fri, 18 Oct 2019 09:44:11 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        dan.j.williams@intel.com
-Subject: Re: [PATCH 0/4] [RFC] Migrate Pages in lieu of discard
-Message-ID: <20191018074411.GC5017@dhcp22.suse.cz>
-References: <20191016221148.F9CCD155@viggo.jf.intel.com>
+        id S2504530AbfJRHpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 03:45:10 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:57362 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S2404288AbfJRHpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 03:45:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DA8F332;
+        Fri, 18 Oct 2019 00:44:47 -0700 (PDT)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8ED2B3F718;
+        Fri, 18 Oct 2019 00:44:45 -0700 (PDT)
+Subject: Re: [RFC PATCH v3 0/6] sched/cpufreq: Make schedutil energy aware
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Quentin Perret <qperret@google.com>
+Cc:     Douglas Raillard <douglas.raillard@arm.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        qperret@qperret.net, patrick.bellasi@matbug.net, dh.han@samsung.com
+References: <20191011134500.235736-1-douglas.raillard@arm.com>
+ <20191014145315.GZ2311@hirez.programming.kicks-ass.net>
+ <a1ce67d7-62c3-b78b-1d87-23ef4dbc2274@arm.com>
+ <20191017095015.GI2311@hirez.programming.kicks-ass.net>
+ <20191017111116.GA27006@google.com>
+ <20191017141107.GJ2311@hirez.programming.kicks-ass.net>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <2cbde0fe-c10c-0ebb-32ef-2d522986bc89@arm.com>
+Date:   Fri, 18 Oct 2019 09:44:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016221148.F9CCD155@viggo.jf.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191017141107.GJ2311@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 16-10-19 15:11:48, Dave Hansen wrote:
-> We're starting to see systems with more and more kinds of memory such
-> as Intel's implementation of persistent memory.
-> 
-> Let's say you have a system with some DRAM and some persistent memory.
-> Today, once DRAM fills up, reclaim will start and some of the DRAM
-> contents will be thrown out.  Allocations will, at some point, start
-> falling over to the slower persistent memory.
-> 
-> That has two nasty properties.  First, the newer allocations can end
-> up in the slower persistent memory.  Second, reclaimed data in DRAM
-> are just discarded even if there are gobs of space in persistent
-> memory that could be used.
-> 
-> This set implements a solution to these problems.  At the end of the
-> reclaim process in shrink_page_list() just before the last page
-> refcount is dropped, the page is migrated to persistent memory instead
-> of being dropped.
-> 
-> While I've talked about a DRAM/PMEM pairing, this approach would
-> function in any environment where memory tiers exist.
-> 
-> This is not perfect.  It "strands" pages in slower memory and never
-> brings them back to fast DRAM.  Other things need to be built to
-> promote hot pages back to DRAM.
-> 
-> This is part of a larger patch set.  If you want to apply these or
-> play with them, I'd suggest using the tree from here.  It includes
-> autonuma-based hot page promotion back to DRAM:
-> 
-> 	http://lkml.kernel.org/r/c3d6de4d-f7c3-b505-2e64-8ee5f70b2118@intel.com
-> 
-> This is also all based on an upstream mechanism that allows
-> persistent memory to be onlined and used as if it were volatile:
-> 
-> 	http://lkml.kernel.org/r/20190124231441.37A4A305@viggo.jf.intel.com
+On 17/10/2019 16:11, Peter Zijlstra wrote:
+> On Thu, Oct 17, 2019 at 12:11:16PM +0100, Quentin Perret wrote:
 
-How does this compare to
-http://lkml.kernel.org/r/1560468577-101178-1-git-send-email-yang.shi@linux.alibaba.com?
+[...]
 
--- 
-Michal Hocko
-SUSE Labs
+> It only boosts when 'rq->cfs.avg.util' increases while
+> 'rq->cfs.avg.util_est.enqueued' remains unchanged (and util > util_est
+> obv).
+> 
+> This condition can be true for select_task_rq_fair(), because that is
+> ran before we do enqueue_task_fair() (for obvious raisins).
+> 
+>>> I'm still thinking about the exact means you're using to raise C; that
+>>> is, the 'util - util_est' as cost_margin. It hurts my brain still.
+>>
+>> +1 ...
+> 
+> cost_i = capacity_i / power_i ; for the i-th OPP
+
+I get confused by this definition. efficiency=capacity/power but the
+cs->cost value used in em_pd_get_higher_freq() is defined as
+
+cs_cost = cs->power * cpu_max_freq / cs->freq [energy_model.h]
+
+> We then do: 'x = util - util_avg' and use that on the first
+> OPP >= min_freq:
+> 
+> 	cost(x) = cost_j + cost_j * x ; freq_j >= min_freq
+> 	        = cost_j * (1 + x)
+> 
+> And then we find the highest OPP that has:
+> 
+> 	cost_k <= cost(x)
+
+[...]
