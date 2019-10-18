@@ -2,102 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42011DBD38
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:47:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73222DBD44
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:53:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442083AbfJRFro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:47:44 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43676 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727823AbfJRFrn (ORCPT
+        id S2437597AbfJRFxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:53:31 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54030 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391881AbfJRFxb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:47:43 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i32so2708137pgl.10
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:47:43 -0700 (PDT)
+        Fri, 18 Oct 2019 01:53:31 -0400
+Received: by mail-wm1-f67.google.com with SMTP id i16so4783216wmd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:53:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TiE6mrXNG7EqkcZ/U+Q35uelbhpLaDsgu+uQOO85Zos=;
-        b=GT5coTqMgC0RpqXd7gG3yW2ilpPm5cZzvkTxi6FzIbbY4la707DrP5/nepX/YIM/bv
-         GNro45KaBJKsI5YcmWVrWhP6svfuswi+XwUiuyZ7OEekpNi7yQjuK+6jsfJrnmOlkDGS
-         9Dgd2fc4GS5TWS2CSTSqyZCJMhPQrEMqtmMpeWTk3qmIrrIevK9laoksrPssfgcYfFNa
-         TekjbitHqxjwfjC2KyUWsW2pTDXKdvxxZOY29ROPr6m0oQsZSYd96kDGL9GQoj3WGIuR
-         TRITWtWwpnRTHiXrarQOP9xfJFptIyyOQvxXnifzplyJ8r9hDJPMu56oQq6bv/3OVRax
-         oPWw==
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xKBYmqBKnM/fTox+DxH/j6jDg0wBrXkD7WU8TmLcePI=;
+        b=P7b8jX1ijvI/1bRMfMuCiF0DEfoT7NClM6s9cMKR7dPyvouJu3HRaHo0oNEOiIahvW
+         LnPgQ7tzaz6FV2kJQH7KN0daOdPvxM/i8MQyIWUjxhfUwumj9stzNXKAyHHcvFdn4OI/
+         t8qPLUyAZ+NvrqlrlxFWHnMKvbZHDa0pnlb2cgzexpgcQQzLIjqlxum+EFN5TA1U1mcn
+         wjB+Ni93KTrNJB7Ncrk/ysFSdGxHwows7K8UvOp1offJm7vaxd9gggcXKetxJilyGmE5
+         y3s8l4JLTbm8cp5/1FfpR+C9aw1JnFbY61P4A8w45w431ia/nPKYBTcieXjzaowvKALO
+         4JWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TiE6mrXNG7EqkcZ/U+Q35uelbhpLaDsgu+uQOO85Zos=;
-        b=Pugpruge80fpB96uqeMECzU1Ek6RtauFsa+xIx4HBwhgoBB14jKmQX9pxmxLGZfz2W
-         kPhUjIoiaQrfVh9WTY4A2Hn7W+sR/8W8fhPT/6ITmXQ9rPRmkd7K2gUJV8N8GbZERJ6q
-         QPYtqTpGWtmb9jUPS10LPuKKSyFzVcA3CmpT7r4se5jTtZ96aUUlBxJKrGvowcFIg4Xq
-         IXQCkrLNKgJcbQY8vPmDTPtLEwJclTpYjfHTtga+96td8Jz+x4Z41r3EQjLY4BiqA5tv
-         Z0GyYXcPHWxJZH8iabzqWt/2+N2S2R2TXCe7fPAcYsZFVWuqdS5EgZIRo6VfT2Sty9l/
-         U/AQ==
-X-Gm-Message-State: APjAAAUtD9CIis3rrMs2mqG2/Wao7dKcdEGq//UO2anzFUT08by3Mc0A
-        QZRZ79jaQ0qPCZoFOJxOfFWQG60DUKg=
-X-Google-Smtp-Source: APXvYqw0u5pU/YJB1pLyMOrYy32vfv7QWsaj3jE6gcSYufUNISW7CLe9bQeAT3MtxfOTk99PbjIt1g==
-X-Received: by 2002:aa7:96ba:: with SMTP id g26mr4667261pfk.132.1571377662879;
-        Thu, 17 Oct 2019 22:47:42 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id c11sm5741274pfj.114.2019.10.17.22.47.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 22:47:42 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 11:17:40 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nico@fluxnic.net
-Subject: Re: [PATCH v2 2/5] cpufreq: merge arm_big_little and vexpress-spc
-Message-ID: <20191018054740.maqbzbk7secgpc2r@vireshk-i7>
-References: <20191017123508.26130-1-sudeep.holla@arm.com>
- <20191017123508.26130-3-sudeep.holla@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xKBYmqBKnM/fTox+DxH/j6jDg0wBrXkD7WU8TmLcePI=;
+        b=bX/t594LAAupm6OVmcIr2zFI2620J+InaDqVieA8N5uhzlzZYWOr3DlaKbkdPpeMAp
+         1yWhB+zTyeZyguGY4NPxsmYBNnJlgQ8QW/TNX8Qt9xDmj00VTk99zZYGqaCxx3XmxYRO
+         K6sURlAGsykJBHCqxjLklXLDYCaM9apdwsHw7549fZcYPziFRufvU3DfEiSZm1HfHVPg
+         vGlIDiM5EV0yFGgxznyLm31KiTyNZ2idfAezmxZrEwGOATRec/wuGppuvNEzqrCmAWsh
+         Ttyiw99E4DiNtoDEErK/cFyzI7EjP3qVTx6qpqTwuu8KtUPAa3QeJIDpElbojyiJEVvs
+         PLXQ==
+X-Gm-Message-State: APjAAAV+ypQGon2CvU7MKv12dd/+KvzRyDOi4SJZQMYEOwIO9oGfD+T7
+        2+LsDbJN8d9bLPwoiR0OA+SZBRLnFWaqv4CIBSJduOHYmvA=
+X-Google-Smtp-Source: APXvYqw+zZ6m5fPdynWeKKLdxpqE/Ya5xs97ZcCWMTHNwCMgBFStCutZthRzJj95DpqP7ZHXHVJR1o+avys8gdz7thE=
+X-Received: by 2002:a1c:bc07:: with SMTP id m7mr5449292wmf.103.1571367327709;
+ Thu, 17 Oct 2019 19:55:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017123508.26130-3-sudeep.holla@arm.com>
-User-Agent: NeoMutt/20180716-391-311a52
+References: <20191017173743.5430-1-hch@lst.de> <20191017173743.5430-8-hch@lst.de>
+In-Reply-To: <20191017173743.5430-8-hch@lst.de>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Fri, 18 Oct 2019 08:25:17 +0530
+Message-ID: <CAAhSdy2DpOh2FZUUjiYdHf0Oh-j_RJyXv6AvJDg+DNNfSdJSOw@mail.gmail.com>
+Subject: Re: [PATCH 07/15] riscv: implement remote sfence.i using IPIs
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-10-19, 13:35, Sudeep Holla wrote:
-> diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/vexpress-spc-cpufreq.c
-> similarity index 90%
-> rename from drivers/cpufreq/arm_big_little.c
-> rename to drivers/cpufreq/vexpress-spc-cpufreq.c
-> index 7fe52fcddcf1..b7e1aa000c80 100644
-> --- a/drivers/cpufreq/arm_big_little.c
-> +++ b/drivers/cpufreq/vexpress-spc-cpufreq.c
-> @@ -1,20 +1,12 @@
-> +// SPDX-License-Identifier: GPL-2.0
+On Thu, Oct 17, 2019 at 11:08 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> The RISC-V ISA only supports flushing the instruction cache for the
+> local CPU core.  Currently we always offload the remote TLB flushing to
+> the SBI, which then issues an IPI under the hoods.  But with M-mode
+> we do not have an SBI so we have to do it ourselves.   IPI to the
+> other nodes using the existing kernel helpers instead if we have
+> native clint support and thus can IPI directly from the kernel.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/riscv/include/asm/sbi.h |  3 +++
+>  arch/riscv/mm/cacheflush.c   | 24 ++++++++++++++++++------
+>  2 files changed, 21 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> index b167af3e7470..0cb74eccc73f 100644
+> --- a/arch/riscv/include/asm/sbi.h
+> +++ b/arch/riscv/include/asm/sbi.h
+> @@ -94,5 +94,8 @@ static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+>  {
+>         SBI_CALL_4(SBI_REMOTE_SFENCE_VMA_ASID, hart_mask, start, size, asid);
+>  }
+> +#else /* CONFIG_RISCV_SBI */
+> +/* stub to for code is only reachable under IS_ENABLED(CONFIG_RISCV_SBI): */
+> +void sbi_remote_fence_i(const unsigned long *hart_mask);
+>  #endif /* CONFIG_RISCV_SBI */
+>  #endif /* _ASM_RISCV_SBI_H */
+> diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
+> index 3f15938dec89..794c9ab256eb 100644
+> --- a/arch/riscv/mm/cacheflush.c
+> +++ b/arch/riscv/mm/cacheflush.c
+> @@ -10,9 +10,17 @@
+>
+>  #include <asm/sbi.h>
+>
+> +static void ipi_remote_fence_i(void *info)
+> +{
+> +       return local_flush_icache_all();
+> +}
+> +
+>  void flush_icache_all(void)
+>  {
+> -       sbi_remote_fence_i(NULL);
+> +       if (IS_ENABLED(CONFIG_RISCV_SBI))
+> +               sbi_remote_fence_i(NULL);
+> +       else
+> +               on_each_cpu(ipi_remote_fence_i, NULL, 1);
+>  }
+>
 >  /*
-> - * ARM big.LITTLE Platforms CPUFreq support
-> + * Versatile Express SPC CPUFreq Interface driver
->   *
-> - * Copyright (C) 2013 ARM Ltd.
-> - * Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>
-> + * Copyright (C) 2019 ARM Ltd.
+> @@ -28,7 +36,7 @@ void flush_icache_all(void)
+>  void flush_icache_mm(struct mm_struct *mm, bool local)
+>  {
+>         unsigned int cpu;
+> -       cpumask_t others, hmask, *mask;
+> +       cpumask_t others, *mask;
+>
+>         preempt_disable();
+>
+> @@ -46,10 +54,7 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
+>          */
+>         cpumask_andnot(&others, mm_cpumask(mm), cpumask_of(cpu));
+>         local |= cpumask_empty(&others);
+> -       if (mm != current->active_mm || !local) {
+> -               riscv_cpuid_to_hartid_mask(&others, &hmask);
+> -               sbi_remote_fence_i(hmask.bits);
+> -       } else {
+> +       if (mm == current->active_mm && local) {
+>                 /*
+>                  * It's assumed that at least one strongly ordered operation is
+>                  * performed on this hart between setting a hart's cpumask bit
+> @@ -59,6 +64,13 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
+>                  * with flush_icache_deferred().
+>                  */
+>                 smp_mb();
+> +       } else if (IS_ENABLED(CONFIG_RISCV_SBI)) {
+> +               cpumask_t hartid_mask;
+> +
+> +               riscv_cpuid_to_hartid_mask(&others, &hartid_mask);
+> +               sbi_remote_fence_i(cpumask_bits(&hartid_mask));
+> +       } else {
+> +               on_each_cpu_mask(&others, ipi_remote_fence_i, NULL, 1);
+>         }
+>
+>         preempt_enable();
+> --
+> 2.20.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-Should this be 2013-2019 instead ?
+LGTM.
 
-> + * Sudeep Holla <sudeep.holla@arm.com>
->   *
->   * Copyright (C) 2013 Linaro.
->   * Viresh Kumar <viresh.kumar@linaro.org>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - *
-> - * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> - * kind, whether express or implied; without even the implied warranty
-> - * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-> - * GNU General Public License for more details.
->   */
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
--- 
-viresh
+Regards,
+Anup
