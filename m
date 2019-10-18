@@ -2,155 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 112BFDBFE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:30:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FFE4DBFF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:30:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505050AbfJRIaR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 18 Oct 2019 04:30:17 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38866 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406746AbfJRIaR (ORCPT
+        id S2632854AbfJRIat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 04:30:49 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43954 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387458AbfJRIas (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 04:30:17 -0400
-Received: from mail-pl1-f200.google.com ([209.85.214.200])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1iLNeK-0004ML-0u
-        for linux-kernel@vger.kernel.org; Fri, 18 Oct 2019 08:30:16 +0000
-Received: by mail-pl1-f200.google.com with SMTP id j9so3263565plk.21
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 01:30:15 -0700 (PDT)
+        Fri, 18 Oct 2019 04:30:48 -0400
+Received: by mail-ot1-f68.google.com with SMTP id o44so4270955ota.10;
+        Fri, 18 Oct 2019 01:30:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=9HnLyuAc2KszW2sCbnW2TVqDttn2ZhGYOZuSbcGb+Ao=;
-        b=RkogPkFAoa1+KyhX/d1WLOR7Tw4BqNHO7k/RqmlDyYzuKMojgOhoADEC18rj4hMwka
-         17lpHDASnWr0ZFmYf1ayru9v8TP9hcezabIOrkmLloKs4oZjQylvegQiYuCU099F/qxD
-         4I6fuoycAMKekdgrdWwjAcRVjd0/utBsnjlGRrYBu4e+mOqY5hcKSTCKpWsDZ4My6UEp
-         7Rz/Al6S3Oq0sSVwgVHt2jdRuZxN1zigwvFCkx+XjzYgaKD5emxwJtP9WYzU0Zodp0vU
-         omEML8duYO5A1OilPlNprsEQ9lrPrlhvD7JY9V69as+8TAW7oM+obk4ROaAlyTSeTPNh
-         kP9w==
-X-Gm-Message-State: APjAAAU4gwpahY/DrOINpVx13j2uqyuC1wvtKXeBuJ5EuDCiZvhrFb0A
-        APtnARFNzEL5MP65iF6poQ6/Z+wszWeit9xFSdLPYeM5Di7glj7tFqEpetjdC4wD9ug9XQuKCIo
-        mbH4o+gxFDWrte+DAZqc90Nv801C3axuXdSvj0ifgdA==
-X-Received: by 2002:a17:902:aa86:: with SMTP id d6mr8878183plr.268.1571387414555;
-        Fri, 18 Oct 2019 01:30:14 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqx/HstgLPTWdbdqHW8QWIvwRL6LLMXn5En0TaPY+gU76l2aPXRwvWmgbm5PxCa/kgGW3UqDQg==
-X-Received: by 2002:a17:902:aa86:: with SMTP id d6mr8878156plr.268.1571387414189;
-        Fri, 18 Oct 2019 01:30:14 -0700 (PDT)
-Received: from 2001-b011-380f-3c42-80b6-0157-ba58-fc96.dynamic-ip6.hinet.net (2001-b011-380f-3c42-80b6-0157-ba58-fc96.dynamic-ip6.hinet.net. [2001:b011:380f:3c42:80b6:157:ba58:fc96])
-        by smtp.gmail.com with ESMTPSA id f185sm6882160pfb.183.2019.10.18.01.30.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Oct 2019 01:30:13 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601\))
-Subject: Re: [PATCH v6 1/2] PCI: Add a helper to check Power Resource
- Requirements _PR3 existence
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <s5hr23ah3g9.wl-tiwai@suse.de>
-Date:   Fri, 18 Oct 2019 16:30:11 +0800
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <4C18DF4A-FAE8-4762-AF65-F892A4845297@canonical.com>
-References: <20191018073848.14590-1-kai.heng.feng@canonical.com>
- <s5hr23ah3g9.wl-tiwai@suse.de>
-To:     Takashi Iwai <tiwai@suse.de>
-X-Mailer: Apple Mail (2.3601)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sR8LGNWn5ye4HV5wuqrSqbgPTz3HHIYZY265Ose77AA=;
+        b=mjS11S6Tka6V8RX+s4ziVaIcr1kvyGUumQTrbZma3fn2wPGgE0pBNtKt9xFDQlnKpP
+         CGKH6LkBKgzVfDwxOgNSoXJKE3q1UBef5bNQCcAqWPF03lF+dzaNeSUFsTfBb2uugxI0
+         +QXn2hL2jFfPKHnBvSd9qAdVElXOaoz1Wzr7AectiKTR7toHmSoiiaoGYwIbPnVdzAda
+         yG68ySWkckPnF5rDA6RnLJJ6LukuPVuasifKDiR3kvEYXoEMZTw2PasEVsqUYsfFOzBP
+         l3EcQWqiA+kOjz9Szenvy4PGX5Tp/omrEwnSVh7CIMobXLf+bwXF+dokHj7kLnIVyxRp
+         xeRA==
+X-Gm-Message-State: APjAAAU5KqUyI55hMbX6iulgDgNtCz6z7pENPCSYaD/ONut8PlwR9z5z
+        7vUkIgonV5fBo/Zgj+NmlXAZdyldWi0K3X59O2Y=
+X-Google-Smtp-Source: APXvYqyOVj/WbgqsqGcPJx6u9Wa3Z53YLRML1XSQVYeYuPS2CTuwb8VYSp7/X11REuVAr8mknXzeAgjbgzlK6m++50Q=
+X-Received: by 2002:a9d:5a0f:: with SMTP id v15mr6816536oth.266.1571387447135;
+ Fri, 18 Oct 2019 01:30:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <2811202.iOFZ6YHztY@kreacher> <20191016142343.GB5330@bogus>
+ <20191017095725.izchzl7enfylvpf3@vireshk-i7> <20191017095942.GF8978@bogus>
+ <CAJZ5v0ixS8ZS93Fgj8XGUMGcLdAy+Fgwp5z3QirccNSiiwLtDA@mail.gmail.com>
+ <20191018054433.tq2euue675xk4o63@vireshk-i7> <CAJZ5v0hpfvy5iELVRWFA3HS8NoAH0=py0cE+fLaUq2hDReCrnQ@mail.gmail.com>
+ <20191018082745.3zr6tc3yqmbydkrw@vireshk-i7>
+In-Reply-To: <20191018082745.3zr6tc3yqmbydkrw@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 18 Oct 2019 10:30:36 +0200
+Message-ID: <CAJZ5v0gR45YNwqrc8JQ_2qQBnYrxPeCHTnvQtEELD8VpXJrxLA@mail.gmail.com>
+Subject: Re: [RFT][PATCH 0/3] cpufreq / PM: QoS: Introduce frequency QoS and
+ use it in cpufreq
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 18, 2019 at 10:27 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 18-10-19, 10:24, Rafael J. Wysocki wrote:
+> > On Fri, Oct 18, 2019 at 7:44 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > >
+> > > On 17-10-19, 18:34, Rafael J. Wysocki wrote:
+> > > > [BTW, Viresh, it looks like cpufreq_set_policy() should still ensure
+> > > > that the new min is less than the new max, because the QoS doesn't do
+> > > > that.]
+> > >
+> > > The ->verify() callback does that for us I believe.
+> >
+> > It does in practice AFAICS, but in theory it may assume the right
+> > ordering between the min and the max and just test the boundaries, may
+> > it not?
+>
+> I think cpufreq_verify_within_limits() gets called for sure from
+> within ->verify() for all platforms
 
-
-> On Oct 18, 2019, at 16:18, Takashi Iwai <tiwai@suse.de> wrote:
-> 
-> On Fri, 18 Oct 2019 09:38:47 +0200,
-> Kai-Heng Feng wrote:
->> 
->> A driver may want to know the existence of _PR3, to choose different
->> runtime suspend behavior. A user will be add in next patch.
->> 
->> This is mostly the same as nouveau_pr3_present().
->> 
->> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> It's confusing -- this particular change isn't reported by the test
-> bot, but only about the lack of the CONFIG_ACPI ifdef.
-
-Hmm, because the test bot asked to add the tag.
-If it's not appropriate will you drop it? I can also send a v7.
-
-Kai-Heng
-
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->> v6:
->> - Only define the function when CONFIG_ACPI is set.
->> v5:
->> - Add wording suggestion from Bjorn.
->> v4:
->> - Let caller to find its upstream port device.
->> 
->> drivers/pci/pci.c   | 18 ++++++++++++++++++
->> include/linux/pci.h |  2 ++
->> 2 files changed, 20 insertions(+)
->> 
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index e7982af9a5d8..1df99d9e350e 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -5856,6 +5856,24 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
->> 	return 0;
->> }
->> 
->> +#ifdef CONFIG_ACPI
->> +bool pci_pr3_present(struct pci_dev *pdev)
->> +{
->> +	struct acpi_device *adev;
->> +
->> +	if (acpi_disabled)
->> +		return false;
->> +
->> +	adev = ACPI_COMPANION(&pdev->dev);
->> +	if (!adev)
->> +		return false;
->> +
->> +	return adev->power.flags.power_resources &&
->> +		acpi_has_method(adev->handle, "_PR3");
->> +}
->> +EXPORT_SYMBOL_GPL(pci_pr3_present);
->> +#endif
->> +
->> /**
->>  * pci_add_dma_alias - Add a DMA devfn alias for a device
->>  * @dev: the PCI device for which alias is added
->> diff --git a/include/linux/pci.h b/include/linux/pci.h
->> index f9088c89a534..1d15c5d49cdd 100644
->> --- a/include/linux/pci.h
->> +++ b/include/linux/pci.h
->> @@ -2310,9 +2310,11 @@ struct irq_domain *pci_host_bridge_acpi_msi_domain(struct pci_bus *bus);
->> 
->> void
->> pci_msi_register_fwnode_provider(struct fwnode_handle *(*fn)(struct device *));
->> +bool pci_pr3_present(struct pci_dev *pdev);
->> #else
->> static inline struct irq_domain *
->> pci_host_bridge_acpi_msi_domain(struct pci_bus *bus) { return NULL; }
->> +static bool pci_pr3_present(struct pci_dev *pdev) { return false; }
->> #endif
->> 
->> #ifdef CONFIG_EEH
->> -- 
->> 2.17.1
->> 
-
+That's why I mean by "in practice". :-)
