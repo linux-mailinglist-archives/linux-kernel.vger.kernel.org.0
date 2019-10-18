@@ -2,119 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11A3CDC7E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 16:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E70DDC7DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 16:56:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634293AbfJRO4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 10:56:12 -0400
-Received: from mail-vs1-f73.google.com ([209.85.217.73]:44412 "EHLO
-        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2634274AbfJRO4J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 10:56:09 -0400
-Received: by mail-vs1-f73.google.com with SMTP id y14so1481666vsj.11
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 07:56:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=jJrAgqlpvuBPJgHHfjlb9pSf3SBUtlgCGQgAJchUub0=;
-        b=LHGXl+96GCCafj44rx1w4BJ44kfh5N1GeLZ2bZO9vbb8TehuPgLCqRDT6tgJ4/HC6Z
-         vP1zk8gkByuRNp3q6BvGPuKUMCzYm8976r9524jDwGpNYTaMuSp2fHhqnUOqfHLSDqFE
-         NXIvXrIGKNDzwTGcxISGYCkY45j3UWX7LcwksViWNJvCGQ0CaS7I1VfXDgSBxpJBDacx
-         35xu2PpFPvKgFXyL2HbajZvN1H8+IjrlEb+6B6/PJwqXZH70L82WVnDwrCDONN/m1tF6
-         di7ScEMSiX50ewDO67JkdnpVxegqlmMZP+B2y+RC4omWSWUiPzj7nM41a8YLNrcA/QjX
-         Ly3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=jJrAgqlpvuBPJgHHfjlb9pSf3SBUtlgCGQgAJchUub0=;
-        b=VhTduq9TAT1gOzT/xA98+NaJPUcC1O+CvVU3Rl3DUqz7SkXSq4OsissW5Sh0ybznku
-         10dzCDMzRU6qa2HSb7dN5fOsubuzWni/u8xoTccpJ8Sp7ZkDais1Q/V1UYYwFsSqLGOa
-         C7O1sMkFZuRdnNV5sRlxzW37TrL96EOsv5NOrfEitwOm5tJwv/Fqcn3eR5hrN3qyqAKq
-         BbQHAqsUR1guqHHZCbxDXz4dr/8lDHCtl2pmnppfN8Jw+90dLm/t89mL9eiwkpjvhumD
-         6XJWvSv+huSc8XpFfrHbcRw31tafKJNFoZv2rIxoWzkuEQ9YSzlGqY2Pef98iJAkfwu8
-         i58A==
-X-Gm-Message-State: APjAAAUUoVVUFGH6nB4bF7aMHX9q2TkE9vxLQvSp4WM3du40xE0CKk0c
-        qAgUJ2RivYPiGLtKnPlWQ+0Bkf++KXKiYZkg
-X-Google-Smtp-Source: APXvYqxf0a90XEvKlT2nyc5pJGFwuUZnDE9/+BonADLMsdMQI39KMjwdFqt1UFnoTvyMqHue3Zebmva0xsLb7PeY
-X-Received: by 2002:a67:ecd7:: with SMTP id i23mr5742002vsp.83.1571410568129;
- Fri, 18 Oct 2019 07:56:08 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 16:55:57 +0200
-In-Reply-To: <7a9d6e35873d52ec0ab1e6b9827d9299a1f4fb0d.1571409250.git.andreyknvl@google.com>
-Message-Id: <88ef7ea47af847738cb34b6d5b862349d9024cc7.1571409250.git.andreyknvl@google.com>
-Mime-Version: 1.0
-References: <7a9d6e35873d52ec0ab1e6b9827d9299a1f4fb0d.1571409250.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
-Subject: [PATCH 2/2] USB: dummy-hcd: use usb_urb_dir_in instead of usb_pipein
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        "Jacky . Cao @ sony . com" <Jacky.Cao@sony.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S2634268AbfJRO4F convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 18 Oct 2019 10:56:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33136 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727242AbfJRO4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 10:56:05 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 81E618A1C8F;
+        Fri, 18 Oct 2019 14:56:04 +0000 (UTC)
+Received: from x1.home (ovpn-118-102.phx2.redhat.com [10.3.118.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2961860600;
+        Fri, 18 Oct 2019 14:56:04 +0000 (UTC)
+Date:   Fri, 18 Oct 2019 08:56:02 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Ben Luo <luoben@linux.alibaba.com>
+Cc:     aarcange@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfio/type1: remove hugepage checks in
+ is_invalid_reserved_pfn()
+Message-ID: <20191018085602.17f2edbb@x1.home>
+In-Reply-To: <ae787a52-a7ed-f7b8-074f-ab8883037ac0@linux.alibaba.com>
+References: <1d6b7e1c40783f2db4c6cb15bf679a94222ec6a3.1570073993.git.luoben@linux.alibaba.com>
+        <20191003164133.GG13922@redhat.com>
+        <ae787a52-a7ed-f7b8-074f-ab8883037ac0@linux.alibaba.com>
+Organization: Red Hat
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Fri, 18 Oct 2019 14:56:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit fea3409112a9 ("USB: add direction bit to urb->transfer_flags") has
-added a usb_urb_dir_in() helper function that can be used to determine
-the direction of the URB. With that patch USB_DIR_IN control requests with
-wLength == 0 are considered out requests by real USB HCDs. This patch
-changes dummy-hcd to use the usb_urb_dir_in() helper to match that
-behavior.
+On Fri, 18 Oct 2019 14:42:32 +0800
+Ben Luo <luoben@linux.alibaba.com> wrote:
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- drivers/usb/gadget/udc/dummy_hcd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> A friendly reminder :)
+> 
 
-diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/dummy_hcd.c
-index a8f1e5707c14..4c9d1e49d5ed 100644
---- a/drivers/usb/gadget/udc/dummy_hcd.c
-+++ b/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -1321,7 +1321,7 @@ static int dummy_perform_transfer(struct urb *urb, struct dummy_request *req,
- 	u32 this_sg;
- 	bool next_sg;
- 
--	to_host = usb_pipein(urb->pipe);
-+	to_host = usb_urb_dir_in(urb);
- 	rbuf = req->req.buf + req->req.actual;
- 
- 	if (!urb->num_sgs) {
-@@ -1409,7 +1409,7 @@ static int transfer(struct dummy_hcd *dum_hcd, struct urb *urb,
- 
- 		/* FIXME update emulated data toggle too */
- 
--		to_host = usb_pipein(urb->pipe);
-+		to_host = usb_urb_dir_in(urb);
- 		if (unlikely(len == 0))
- 			is_short = 1;
- 		else {
-@@ -1830,7 +1830,7 @@ static void dummy_timer(struct timer_list *t)
- 
- 		/* find the gadget's ep for this request (if configured) */
- 		address = usb_pipeendpoint (urb->pipe);
--		if (usb_pipein(urb->pipe))
-+		if (usb_urb_dir_in(urb))
- 			address |= USB_DIR_IN;
- 		ep = find_endpoint(dum, address);
- 		if (!ep) {
-@@ -2385,7 +2385,7 @@ static inline ssize_t show_urb(char *buf, size_t size, struct urb *urb)
- 			s = "?";
- 			break;
- 		 } s; }),
--		ep, ep ? (usb_pipein(urb->pipe) ? "in" : "out") : "",
-+		ep, ep ? (usb_urb_dir_in(urb) ? "in" : "out") : "",
- 		({ char *s; \
- 		switch (usb_pipetype(urb->pipe)) { \
- 		case PIPE_CONTROL: \
--- 
-2.23.0.866.gb869b98d4c-goog
+Thanks Ben!  I've added this to the vfio next branch for v5.5 with
+Andrea's R-b.  Thanks,
+
+Alex
+
+> 在 2019/10/4 上午12:41, Andrea Arcangeli 写道:
+> > On Thu, Oct 03, 2019 at 11:49:42AM +0800, Ben Luo wrote:  
+> >> Currently, no hugepage split code can transfer the reserved bit
+> >> from head to tail during the split, so checking the head can't make
+> >> a difference in a racing condition with hugepage spliting.
+> >>
+> >> The buddy wouldn't allow a driver to allocate an hugepage if any
+> >> subpage is reserved in the e820 map at boot, if any driver sets the
+> >> reserved bit of head page before mapping the hugepage in userland,
+> >> it needs to set the reserved bit in all subpages to be safe.
+> >>
+> >> Signed-off-by: Ben Luo <luoben@linux.alibaba.com>  
+> > Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
+> >
+> >  
+> >> ---
+> >>   drivers/vfio/vfio_iommu_type1.c | 26 ++++----------------------
+> >>   1 file changed, 4 insertions(+), 22 deletions(-)
+> >>
+> >> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> >> index 054391f..e2019ba 100644
+> >> --- a/drivers/vfio/vfio_iommu_type1.c
+> >> +++ b/drivers/vfio/vfio_iommu_type1.c
+> >> @@ -287,31 +287,13 @@ static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
+> >>    * Some mappings aren't backed by a struct page, for example an mmap'd
+> >>    * MMIO range for our own or another device.  These use a different
+> >>    * pfn conversion and shouldn't be tracked as locked pages.
+> >> + * For compound pages, any driver that sets the reserved bit in head
+> >> + * page needs to set the reserved bit in all subpages to be safe.
+> >>    */
+> >>   static bool is_invalid_reserved_pfn(unsigned long pfn)
+> >>   {
+> >> -	if (pfn_valid(pfn)) {
+> >> -		bool reserved;
+> >> -		struct page *tail = pfn_to_page(pfn);
+> >> -		struct page *head = compound_head(tail);
+> >> -		reserved = !!(PageReserved(head));
+> >> -		if (head != tail) {
+> >> -			/*
+> >> -			 * "head" is not a dangling pointer
+> >> -			 * (compound_head takes care of that)
+> >> -			 * but the hugepage may have been split
+> >> -			 * from under us (and we may not hold a
+> >> -			 * reference count on the head page so it can
+> >> -			 * be reused before we run PageReferenced), so
+> >> -			 * we've to check PageTail before returning
+> >> -			 * what we just read.
+> >> -			 */
+> >> -			smp_rmb();
+> >> -			if (PageTail(tail))
+> >> -				return reserved;
+> >> -		}
+> >> -		return PageReserved(tail);
+> >> -	}
+> >> +	if (pfn_valid(pfn))
+> >> +		return PageReserved(pfn_to_page(pfn));
+> >>   
+> >>   	return true;
+> >>   }
+> >> -- 
+> >> 1.8.3.1
+> >>  
 
