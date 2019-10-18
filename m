@@ -2,296 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 484F3DD7BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 11:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB99DD7F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 12:09:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfJSJon convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 19 Oct 2019 05:44:43 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:40889 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbfJSJom (ORCPT
+        id S1725980AbfJSKJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 06:09:19 -0400
+Received: from sender4-pp-o94.zoho.com ([136.143.188.94]:25470 "EHLO
+        sender4-pp-o94.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725283AbfJSKJT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 05:44:42 -0400
-X-Originating-IP: 91.224.148.103
-Received: from xps13 (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 4C90DE0009;
-        Sat, 19 Oct 2019 09:44:36 +0000 (UTC)
-Date:   Sat, 19 Oct 2019 11:44:34 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 11/46] ARM: pxa: cmx270: use platform device for nand
-Message-ID: <20191019114417.5268f7e4@xps13>
-In-Reply-To: <20191018154201.1276638-11-arnd@arndb.de>
-References: <20191018154052.1276506-1-arnd@arndb.de>
-        <20191018154201.1276638-11-arnd@arndb.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Sat, 19 Oct 2019 06:09:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1571479746; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=VYWEkVUxzQsMvEpvVJp6tvF1x3aj4gwASVCAIC1y9BSAduwHCOgufuaJmdAmxOAtsExv3XemkuC1dEBOnRU+zwfcPCgl861K2YEk7gyokcTqzZB/SWIvG/XHux8Fk0E9hMTQlgYqNV7ivzaGZMq3nlQfFaBQTizDgKBOp7zBdcw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1571479746; h=Cc:Date:From:Message-ID:Subject:To; 
+        bh=dvfTK6kVeJKRxeJGL61f1+aGjYpZxdw1hrHuyx+0Vcs=; 
+        b=GMvKYpo5rvJJg70Et6aU5X1aBDT24Q3h9HGyNhBMBcpBf+1rx2azJtg0mgLtAo8kddxX0XWu72e8VPDhG47gFmfdlxbWTR6a4iE2eiQX30OUdBq77Q5vmwkZrxGmDVbcUGwL3H9kh34wW2MRRCGy2Uzfpoqm+mol3TyfJ7wzIkM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id; 
+  b=TKWoavtXZ8e7ugaswr75mdJSrk8Rv7fFczhyYV8chR7WjhDOKD6lQHLIaFeAf9jRNRVtfzACj0QO
+    +qwghgRI2DNqA8iBVaZ5/nJrBqr5hMIFCG2E8ROeQrsjbaczHhdy  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1571479746;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id; l=128;
+        bh=dvfTK6kVeJKRxeJGL61f1+aGjYpZxdw1hrHuyx+0Vcs=;
+        b=tLNICXL2wdI88TP2i8QjwRS9WNFl9aLUcYWrmryrO/0V9MtgHFExfwbOEoaeglBl
+        md/XjmLYafs9nyFl7xgwtiWFhGAYkCs8gclRkfIPlVQ+fQYY3Qi/xH7R/EMmCAcj6lk
+        1X7OKWwzeTi7sd/ZVy4Zs3DqoN35qxz2axsivewg=
+Received: from localhost.localdomain (171.221.113.199 [171.221.113.199]) by mx.zohomail.com
+        with SMTPS id 1571479745260262.45412969470283; Sat, 19 Oct 2019 03:09:05 -0700 (PDT)
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        paul.burton@mips.com, sboyd@kernel.org, mark.rutland@arm.com,
+        syq@debian.org, mturquette@baylibre.com, paul@crapouillou.net
+Subject: clk: X1000: Add support for the X1000.
+Date:   Sat, 19 Oct 2019 01:50:04 +0800
+Message-Id: <1571421006-12771-1-git-send-email-zhouyanjie@zoho.com>
+X-Mailer: git-send-email 2.7.4
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
-
-Arnd Bergmann <arnd@arndb.de> wrote on Fri, 18 Oct 2019 17:41:26 +0200:
-
-> The driver traditionally hardcodes the MMIO register address and
-> the GPIO numbers from data defined in platform header files.
-> 
-> To make it indepdendent of that, use a memory resource for the
-> registers, and a gpio lookup table to replace the gpio numbers.
-
-Looks good to me besides the typo s/indepdendent/independent/.
-
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-> 
-> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Brian Norris <computersforpeace@gmail.com>
-> Cc: Marek Vasut <marek.vasut@gmail.com>
-> Cc: Vignesh Raghavendra <vigneshr@ti.com>
-> Cc: linux-mtd@lists.infradead.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm/mach-pxa/cm-x270.c        | 25 +++++++++
->  drivers/mtd/nand/raw/cmx270_nand.c | 88 +++++++++++-------------------
->  2 files changed, 56 insertions(+), 57 deletions(-)
-> 
-> diff --git a/arch/arm/mach-pxa/cm-x270.c b/arch/arm/mach-pxa/cm-x270.c
-> index 9baad11314f2..6d80400d8887 100644
-> --- a/arch/arm/mach-pxa/cm-x270.c
-> +++ b/arch/arm/mach-pxa/cm-x270.c
-> @@ -40,6 +40,10 @@
->  #define GPIO19_WLAN_STRAP	(19)
->  #define GPIO102_WLAN_RST	(102)
->  
-> +/* NAND GPIOS */
-> +#define GPIO_NAND_CS		(11)
-> +#define GPIO_NAND_RB		(89)
-> +
->  static unsigned long cmx270_pin_config[] = {
->  	/* AC'97 */
->  	GPIO28_AC97_BITCLK,
-> @@ -403,6 +407,26 @@ static void __init cmx270_init_spi(void)
->  static inline void cmx270_init_spi(void) {}
->  #endif
->  
-> +static struct gpiod_lookup_table cmx270_nand_gpio_table = {
-> +	.dev_id = "cmx270-nand",
-> +	.table = {
-> +		GPIO_LOOKUP("gpio-pxa", GPIO_NAND_CS, "cs", GPIO_ACTIVE_HIGH),
-> +		GPIO_LOOKUP("gpio-pxa", GPIO_NAND_RB, "rb", GPIO_ACTIVE_HIGH),
-> +		{ },
-> +	},
-> +};
-> +
-> +static struct resource cmx270_nand_resources[] __initdata = {
-> +	DEFINE_RES_MEM(PXA_CS1_PHYS, 12),
-> +};
-> +
-> +static void __init cmx270_init_nand(void)
-> +{
-> +	platform_device_register_simple("cmx270-nand", -1,
-> +					cmx270_nand_resources, 1);
-> +	gpiod_add_lookup_table(&cmx270_nand_gpio_table);
-> +}
-> +
->  void __init cmx270_init(void)
->  {
->  	pxa2xx_mfp_config(ARRAY_AND_SIZE(cmx270_pin_config));
-> @@ -416,4 +440,5 @@ void __init cmx270_init(void)
->  	cmx270_init_ohci();
->  	cmx270_init_2700G();
->  	cmx270_init_spi();
-> +	cmx270_init_nand();
->  }
-> diff --git a/drivers/mtd/nand/raw/cmx270_nand.c b/drivers/mtd/nand/raw/cmx270_nand.c
-> index 7af3d0bdcdb8..31cb20858c46 100644
-> --- a/drivers/mtd/nand/raw/cmx270_nand.c
-> +++ b/drivers/mtd/nand/raw/cmx270_nand.c
-> @@ -15,18 +15,17 @@
->  #include <linux/mtd/rawnand.h>
->  #include <linux/mtd/partitions.h>
->  #include <linux/slab.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/module.h>
->  #include <linux/soc/pxa/cpu.h>
-> +#include <linux/platform_device.h>
->  
->  #include <asm/io.h>
->  #include <asm/irq.h>
->  #include <asm/mach-types.h>
->  
-> -#include <mach/addr-map.h>
-> -
-> -#define GPIO_NAND_CS	(11)
-> -#define GPIO_NAND_RB	(89)
-> +static struct gpio_desc *gpiod_nand_cs;
-> +static struct gpio_desc *gpiod_nand_rb;
->  
->  /* MTD structure for CM-X270 board */
->  static struct mtd_info *cmx270_nand_mtd;
-> @@ -70,14 +69,14 @@ static void cmx270_read_buf(struct nand_chip *this, u_char *buf, int len)
->  
->  static inline void nand_cs_on(void)
->  {
-> -	gpio_set_value(GPIO_NAND_CS, 0);
-> +	gpiod_set_value(gpiod_nand_cs, 0);
->  }
->  
->  static void nand_cs_off(void)
->  {
->  	dsb();
->  
-> -	gpio_set_value(GPIO_NAND_CS, 1);
-> +	gpiod_set_value(gpiod_nand_cs, 1);
->  }
->  
->  /*
-> @@ -120,48 +119,41 @@ static int cmx270_device_ready(struct nand_chip *this)
->  {
->  	dsb();
->  
-> -	return (gpio_get_value(GPIO_NAND_RB));
-> +	return (gpiod_get_value(gpiod_nand_rb));
->  }
->  
->  /*
->   * Main initialization routine
->   */
-> -static int __init cmx270_init(void)
-> +static int cmx270_probe(struct platform_device *pdev)
->  {
->  	struct nand_chip *this;
-> +	struct device *dev = &pdev->dev;
->  	int ret;
->  
-> -	if (!(machine_is_armcore() && cpu_is_pxa27x()))
-> -		return -ENODEV;
-> -
-> -	ret = gpio_request(GPIO_NAND_CS, "NAND CS");
-> +	gpiod_nand_cs = devm_gpiod_get(dev, "cs", GPIOD_OUT_HIGH);
-> +	ret = PTR_ERR_OR_ZERO(gpiod_nand_cs);
->  	if (ret) {
->  		pr_warn("CM-X270: failed to request NAND CS gpio\n");
->  		return ret;
->  	}
->  
-> -	gpio_direction_output(GPIO_NAND_CS, 1);
-> -
-> -	ret = gpio_request(GPIO_NAND_RB, "NAND R/B");
-> +	gpiod_nand_rb = devm_gpiod_get(dev, "rb", GPIOD_IN);
-> +	ret = PTR_ERR_OR_ZERO(gpiod_nand_rb);
->  	if (ret) {
->  		pr_warn("CM-X270: failed to request NAND R/B gpio\n");
-> -		goto err_gpio_request;
-> +		return ret;
->  	}
->  
-> -	gpio_direction_input(GPIO_NAND_RB);
-> -
->  	/* Allocate memory for MTD device structure and private data */
-> -	this = kzalloc(sizeof(struct nand_chip), GFP_KERNEL);
-> -	if (!this) {
-> -		ret = -ENOMEM;
-> -		goto err_kzalloc;
-> -	}
-> +	this = devm_kzalloc(dev, sizeof(struct nand_chip), GFP_KERNEL);
-> +	if (!this)
-> +		return -ENOMEM;
->  
-> -	cmx270_nand_io = ioremap(PXA_CS1_PHYS, 12);
-> +	cmx270_nand_io = devm_platform_ioremap_resource(pdev, 0);
->  	if (!cmx270_nand_io) {
->  		pr_debug("Unable to ioremap NAND device\n");
-> -		ret = -EINVAL;
-> -		goto err_ioremap;
-> +		return -EINVAL;
->  	}
->  
->  	cmx270_nand_mtd = nand_to_mtd(this);
-> @@ -189,48 +181,30 @@ static int __init cmx270_init(void)
->  	ret = nand_scan(this, 1);
->  	if (ret) {
->  		pr_notice("No NAND device\n");
-> -		goto err_scan;
-> +		return ret;
->  	}
->  
->  	/* Register the partitions */
-> -	ret = mtd_device_register(cmx270_nand_mtd, partition_info,
-> -				  NUM_PARTITIONS);
-> -	if (ret)
-> -		goto err_scan;
-> -
-> -	/* Return happy */
-> -	return 0;
-> -
-> -err_scan:
-> -	iounmap(cmx270_nand_io);
-> -err_ioremap:
-> -	kfree(this);
-> -err_kzalloc:
-> -	gpio_free(GPIO_NAND_RB);
-> -err_gpio_request:
-> -	gpio_free(GPIO_NAND_CS);
-> -
-> -	return ret;
-> -
-> +	return mtd_device_register(cmx270_nand_mtd, partition_info,
-> +				   NUM_PARTITIONS);
->  }
-> -module_init(cmx270_init);
->  
->  /*
->   * Clean up routine
->   */
-> -static void __exit cmx270_cleanup(void)
-> +static int cmx270_remove(struct platform_device *pdev)
->  {
-> -	/* Release resources, unregister device */
->  	nand_release(mtd_to_nand(cmx270_nand_mtd));
->  
-> -	gpio_free(GPIO_NAND_RB);
-> -	gpio_free(GPIO_NAND_CS);
-> -
-> -	iounmap(cmx270_nand_io);
-> -
-> -	kfree(mtd_to_nand(cmx270_nand_mtd));
-> +	return 0;
->  }
-> -module_exit(cmx270_cleanup);
-> +
-> +static struct platform_driver cmx270_nand_driver = {
-> +	.driver.name = "cmx270-nand",
-> +	.probe = cmx270_probe,
-> +	.remove = cmx270_remove,
-> +};
-> +module_platform_driver(cmx270_nand_driver);
->  
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Mike Rapoport <mike@compulab.co.il>");
+1.Add the clock bindings for X1000 from Ingenic.
+2.Add support for the clocks provided by the CGU in the
+  Ingenic X1000 SoC.
 
 
-
-
-Thanks,
-Miquèl
