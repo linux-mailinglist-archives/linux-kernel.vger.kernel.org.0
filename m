@@ -2,88 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9F39DC494
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83BD7DC49E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:23:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442701AbfJRMVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:21:46 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37076 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387570AbfJRMVp (ORCPT
+        id S2633654AbfJRMW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:22:57 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:39952 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2442702AbfJRMW4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 08:21:45 -0400
-Received: by mail-pg1-f193.google.com with SMTP id p1so3301533pgi.4;
-        Fri, 18 Oct 2019 05:21:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VcukdS+h2wwJ3/U/N/4m0S2AoPCXUWoZLLc3DYniW2I=;
-        b=Q1msBJ3e099t2nSvYex7Z+jTlpopRllh6mguFZOeeE/m7DMYYYL/lcy4zZY7iravmh
-         8j9vf+/tlXDsLORK298oltaRNxfF6CBcQjtLOArMJyzbhA1ZpLrJj+BWFWS0IaN728eQ
-         xsZTBwLn41uMv4KqA9pw3hGXllxMNnqTCEfew/8Ly4k0XbdwWGAsB0ok7BAxw4iljEiI
-         5EfWa71cpcSoM2uC4hAwdkGO+KeoRuRoxAprpIkCUPs+fJsU67Zbd8bT1GGV6QHGEgFe
-         3cHE1udYLTIJQU0ttyl5AdAJ1iPS/qYkGW4cGlDVS7GwZ2hewbDQkTTVImp9LzkWg0TI
-         /4Kw==
-X-Gm-Message-State: APjAAAUsMEl/Ik/gBhxQlSpCpK7vgio3BMcbFr7GADiKQz94GQjNiD+J
-        TJvpz7wziqUL4cdVqnxVlc4=
-X-Google-Smtp-Source: APXvYqx1rmDV8Tbar4XUzXvi4MjLnC0zwf0LcXubUrDJ70/UhX+bBzy1YlAwSw1OAw5siYTwcytnzg==
-X-Received: by 2002:a62:ae06:: with SMTP id q6mr6445843pff.96.1571401304946;
-        Fri, 18 Oct 2019 05:21:44 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id r24sm6749355pfh.69.2019.10.18.05.21.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2019 05:21:43 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 843DE4042C; Fri, 18 Oct 2019 12:21:42 +0000 (UTC)
-Date:   Fri, 18 Oct 2019 12:21:42 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Alan Maguire <alan.maguire@oracle.com>,
-        Matthias Maennich <maennich@google.com>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        catalin.marinas@arm.com, joe.lawrence@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, schowdary@nvidia.com,
-        urezki@gmail.com, andriy.shevchenko@linux.intel.com,
-        changbin.du@intel.com, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Knut Omang <knut.omang@oracle.com>
-Subject: Re: [PATCH v2 linux-kselftest-test 1/3] kunit: allow kunit tests to
- be loaded as a module
-Message-ID: <20191018122142.GC11244@42.do-not-panic.com>
-References: <1570546546-549-1-git-send-email-alan.maguire@oracle.com>
- <1570546546-549-2-git-send-email-alan.maguire@oracle.com>
- <20191008213535.GB186342@google.com>
- <alpine.LRH.2.20.1910091726010.2517@dhcp-10-175-191-127.vpn.oracle.com>
- <CAFd5g46_6McK06XSrX=EZ9AaYYitQzd2CTvPMX+rPymisDq5uQ@mail.gmail.com>
- <alpine.LRH.2.20.1910111105350.21459@dhcp-10-175-191-48.vpn.oracle.com>
- <20191016230116.GA82401@google.com>
- <alpine.LRH.2.20.1910171930410.21739@dhcp-10-175-161-223.vpn.oracle.com>
+        Fri, 18 Oct 2019 08:22:56 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9ICMnuH077834;
+        Fri, 18 Oct 2019 07:22:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571401369;
+        bh=4iYQo7IvLqWbw0SSz1RqLvclFmxicJcx/8FoZq6ZB9I=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=QcUswP8a+bYP/LQW+nLcBQNuD2xO/QjoAUfojpc0YGViLhqK9Buy5N+7cw6OFjO+z
+         I3iTY7XJFVla74ZkSkdxAQNJNUrxQbhDc267smMs2qn8qN3jwrJ1cNpChFnsjrHOYj
+         1KF02I16vlGQm2idI85+CyavUrJdznTeca255buc=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9ICMnMm087532
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Oct 2019 07:22:49 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 18
+ Oct 2019 07:22:49 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 18 Oct 2019 07:22:49 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9ICMlbs095303;
+        Fri, 18 Oct 2019 07:22:47 -0500
+Subject: Re: [PATCH 0/2] Add Support for MMC/SD for J721e-base-board
+To:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <mark.rutland@arm.com>, <nm@ti.com>, <robh+dt@kernel.org>
+References: <20190919153242.29399-1-faiz_abbas@ti.com>
+ <f176e389-d181-8848-2bce-6680232b8fa8@ti.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <b70ec99a-58af-3969-d32d-202f7aaec33a@ti.com>
+Date:   Fri, 18 Oct 2019 15:22:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.20.1910171930410.21739@dhcp-10-175-161-223.vpn.oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <f176e389-d181-8848-2bce-6680232b8fa8@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 07:32:18PM +0100, Alan Maguire wrote:
-> kunit needs a non-exported global kernel symbol 
-> (sysctl_hung_task_timeout_secs).
+On 09/10/2019 12:57, Faiz Abbas wrote:
+> Hi,
+> 
+> On 19/09/19 9:02 PM, Faiz Abbas wrote:
+>> The following are dts patches to add MMC/SD Support on TI's J721e base
+>> board.
+>>
+>> Patches depend on Lokesh's gpio patches[1] and device exclusivity patches[2].
+>>
+>> [1] https://patchwork.kernel.org/cover/11085643/
+>> [2] https://patchwork.kernel.org/cover/11051559/
+>>
+>> Faiz Abbas (2):
+>>    arm64: dts: ti: j721e-main: Add SDHCI nodes
+>>    arm64: dts: ti: j721e-common-proc-board: Add Support for eMMC and SD
+>>      card
+>>
+>>   .../dts/ti/k3-j721e-common-proc-board.dts     | 34 +++++++++++++
+>>   arch/arm64/boot/dts/ti/k3-j721e-main.dtsi     | 50 +++++++++++++++++++
+>>   2 files changed, 84 insertions(+)
+>>
+> 
+> Gentle ping.
 
-Sounds like a perfect use case for the new symbol namespaces [0]. We
-wouldn't want random drivers importing this namespace, but for kunit it
-would seem reasonable.
+Queuing up towards 5.5, thanks.
 
-[0] https://lwn.net/Articles/798254/
-
-  Luis
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
