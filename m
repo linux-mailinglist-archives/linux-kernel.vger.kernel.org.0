@@ -2,65 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A221DC065
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:55:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E2FDC067
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:56:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394801AbfJRIzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 04:55:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39630 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731444AbfJRIza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 04:55:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4BE5BB715;
-        Fri, 18 Oct 2019 08:55:29 +0000 (UTC)
-Date:   Fri, 18 Oct 2019 10:55:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, Qian Cai <cai@lca.pw>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: memory offline infinite loop after soft offline
-Message-ID: <20191018085528.GG5017@dhcp22.suse.cz>
-References: <1570829564.5937.36.camel@lca.pw>
- <20191014083914.GA317@dhcp22.suse.cz>
- <20191017093410.GA19973@hori.linux.bs1.fc.nec.co.jp>
- <20191017100106.GF24485@dhcp22.suse.cz>
- <1571335633.5937.69.camel@lca.pw>
- <20191017182759.GN24485@dhcp22.suse.cz>
- <20191018021906.GA24978@hori.linux.bs1.fc.nec.co.jp>
- <33946728-bdeb-494a-5db8-e279acebca47@redhat.com>
- <20191018082459.GE5017@dhcp22.suse.cz>
- <f065d998-7fa3-ef9a-c2f4-5b9116f5596b@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f065d998-7fa3-ef9a-c2f4-5b9116f5596b@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2409645AbfJRI40 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 04:56:26 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:34108 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731444AbfJRI4Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 04:56:25 -0400
+Received: by mail-qk1-f196.google.com with SMTP id f18so3985594qkm.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 01:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ugnrp2k1zFImPpsw0D6yHUbYeoEMpwYIr1OCnGwoTi0=;
+        b=rm90ugQIlFRTFD3MXHb2shRtEJTxh2AB2m9p3GuCl7KTPQRvTRViHDwpf0aDzOuYL+
+         r54vROHJxUMIMnj1pKiu76h3NwsR4hdCmPxdEluS2pCpKHmEKFVBA3BUYeMVT59T9Dru
+         4r6xSPxGTABKsNBvulDht13i7zwI7gCRy0+epyFksMx5Ww9oqyYkLOuaDw/KnIKOZHQ9
+         AMhpjHqAu5DGpSXDnBc9Ldra8tfgb2PIRp/3o61M/YBcI0b18iXtIhhiv7CwZUF2f6jX
+         0y5hmOelHTDjVkjo5HGRgC0YPMd5wdt5v/I3HcY06hFjAtrJUIiHb7i/E2WEJ4v9pgjr
+         3fGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ugnrp2k1zFImPpsw0D6yHUbYeoEMpwYIr1OCnGwoTi0=;
+        b=OGeeiPD1DNPF8gNGcvFtIJOgk9S0sYC4vhasHKtIOLelDyZ1a7Ktn2gCpPlkEohzMt
+         lFyZ6wQXSA8Ch8BtFzxVI3D4EcQqoWJJ3rkyxnen1jPeV1Thp6ZRe0ZOjKjceYQvpmTm
+         62DaBbtLFEA0S3Fr1oR5oEHyPn2a0Epv94ZxNek51PPqZrgeuE8DEnlz/qFBg3o7hSIw
+         8LNJ+dDGlQMvKyvrem5RUvg1YzkIjWRk9V8ArVXwCJrNTB7EOg2c0gRr8GmX7iRq/PBr
+         bUDUFNelF0dZEifztJfDVvGQ31R1I+dc88L7o42I1JZlpyIvOLh2MFHt4yK32YhkWdfW
+         NHwg==
+X-Gm-Message-State: APjAAAXXHKjBpdx933Q8Ht8bX5vuEgHWckLGglarrk0chrZ1o6ha0/MP
+        5OAehoUZAse6v/UartzyRMKbrA==
+X-Google-Smtp-Source: APXvYqzWMjut/GzjYZr1AgNOOoXv3bfNuFdY/8K8RtGp7Ipc/gDTsb3ra7BkzpJPwclkmzGhTb7nOQ==
+X-Received: by 2002:a05:620a:74b:: with SMTP id i11mr7490306qki.397.1571388984550;
+        Fri, 18 Oct 2019 01:56:24 -0700 (PDT)
+Received: from localhost.localdomain (li937-157.members.linode.com. [45.56.119.157])
+        by smtp.gmail.com with ESMTPSA id a134sm3076571qkc.95.2019.10.18.01.56.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2019 01:56:24 -0700 (PDT)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org
+Cc:     Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v1 1/3] perf tests: Remove needless headers for bp_account
+Date:   Fri, 18 Oct 2019 16:55:29 +0800
+Message-Id: <20191018085531.6348-1-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 18-10-19 10:38:21, David Hildenbrand wrote:
-> On 18.10.19 10:24, Michal Hocko wrote:
-> > On Fri 18-10-19 10:13:36, David Hildenbrand wrote:
-> > [...]
-> > > However, if the compound page spans multiple pageblocks
-> > 
-> > Although hugetlb pages spanning pageblocks are possible this shouldn't
-> > matter in__test_page_isolated_in_pageblock because this function doesn't
-> > really operate on pageblocks as the name suggests.  It is simply
-> > traversing all valid RAM ranges (see walk_system_ram_range).
-> 
-> As long as the hugepages don't span memory blocks/sections, you are right. I
-> have no experience with gigantic pages in this regard.
+A few headers are not needed and were introduced by copying from other
+test file.  This patch removes the needless headers for the breakpoint
+accounting testing.
 
-They can clearly span sections (1GB is larger than 128MB). Why do you
-think it matters actually? walk_system_ram_range walks RAM ranges and no
-allocation should span holes in RAM right?
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ tools/perf/tests/bp_account.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/tools/perf/tests/bp_account.c b/tools/perf/tests/bp_account.c
+index 016bba2c142d..52ff7a462670 100644
+--- a/tools/perf/tests/bp_account.c
++++ b/tools/perf/tests/bp_account.c
+@@ -10,11 +10,7 @@
+ #include <unistd.h>
+ #include <string.h>
+ #include <sys/ioctl.h>
+-#include <time.h>
+ #include <fcntl.h>
+-#include <signal.h>
+-#include <sys/mman.h>
+-#include <linux/compiler.h>
+ #include <linux/hw_breakpoint.h>
+ 
+ #include "tests.h"
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
