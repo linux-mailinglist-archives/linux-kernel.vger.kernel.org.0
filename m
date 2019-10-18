@@ -2,56 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD6E1DC729
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 16:19:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25F03DC71A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 16:17:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634141AbfJROSn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 10:18:43 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35811 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2442841AbfJROSk (ORCPT
+        id S2408400AbfJRORy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 10:17:54 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35071 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732676AbfJRORy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 10:18:40 -0400
-Received: by mail-lf1-f68.google.com with SMTP id w6so4872305lfl.2;
-        Fri, 18 Oct 2019 07:18:39 -0700 (PDT)
+        Fri, 18 Oct 2019 10:17:54 -0400
+Received: by mail-wr1-f66.google.com with SMTP id l10so6050946wrb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 07:17:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fTm5JH2L5agfNTgSt6jIVduSEI+HxSv62N1+6WMd74s=;
+        b=R67W02Lz1HjMvW2zQm++LCIQ21AzasDaKd9lyBCAv1JTy32UMXliPR+K+neuS3KxxR
+         IUeID/8BP/H7qC61bBPYfLeuuDOgQW5c0Zy1VjzZOg8ma8zsEgdQWKWyDTgPXxEFuMo/
+         u89cpWHzeoHBCkfqK4kNCh7bWGZbVn6bQXYwsCT9Pe1VLMF1poeq9qEDdVppr9uRBiQ9
+         SI5F/BQTW2j+V2QP4q/fnGgWM+dHfAoG1MErow6uLKvK35S134x5sL0grP0Jr9pBta62
+         uxcOEkzrKXdQMiimnSkNOCeiq8CyB0i+YwhoP+ex01NdUEh4koGBpt/zSeavD5Bqv7ps
+         kSZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=x5fLSsgcwRkjtr6+BGZpbF35YRXG1jBQ4j2b2IIrKsw=;
-        b=aPOvcs1Nhzc3I1O3HsmpZEpdIyG8y8SG4x9Bi0HLnEdlrWXpq8DdJtUUpMrW2IVWz8
-         2GaqHInlmblecx21nJ5iPkrLuw64mOVNW803gNkn/1D37t4t3/7Rck9xnZjRWdgWQqLy
-         4m59H5dF2c2d+aqOgt7Ted4dDFYeCzBdC9NKc7a68Gf8pgpnkgPOiiOoZF5uXL8ErH5S
-         cVAh8M1qxzKvhFBDO/NcQL1cAqVA+Dg3cY40x44ZZ0mVys9AXl72MIdHHgyB64bW80/T
-         WbzpNgjvK3C4HDL/O8WYJBzE7CXT1u8lvgg7+hak+cxQ+SdrXjw9uWlwOEZsBMgJxpWJ
-         Sqow==
-X-Gm-Message-State: APjAAAX7WT7fx7JNzVg3ELRsc7327P7BOp+wRFZ3ZEK5zfrtwxsE/DOa
-        tf0m6NSTvoyuShH8WFREAZ4=
-X-Google-Smtp-Source: APXvYqwjzLZK3eeD7S7jRV6sdX/7KxZzeRukRCeOaTZmcwv/z19KM/T90ml2KOu3T+i9K4iwNjvqVQ==
-X-Received: by 2002:a05:6512:219:: with SMTP id a25mr6443149lfo.155.1571408318664;
-        Fri, 18 Oct 2019 07:18:38 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id c16sm2632736lfj.8.2019.10.18.07.18.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Oct 2019 07:18:36 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@xi.terra>)
-        id 1iLT5d-0006C9-6I; Fri, 18 Oct 2019 16:18:49 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com
-Subject: [PATCH 1/2] USB: ldusb: fix read info leaks
-Date:   Fri, 18 Oct 2019 16:17:49 +0200
-Message-Id: <20191018141750.23756-2-johan@kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fTm5JH2L5agfNTgSt6jIVduSEI+HxSv62N1+6WMd74s=;
+        b=sshaGm1Ghm1bTqVmfJCxfO4BQKj6y5xAt0GPAhera2yB6RJXC0oVhWfYnIc1KpoXPi
+         VGN8/khLTUNVcIphzHqY1VFgA4fEg9MEOi7xOvfgI/nsebd3ew7vi919IoW/VS15ToU/
+         Fa8lloUdeZkcGBMGNnjg7g+2fBR/7ZHj1R07RZ4PVleivl13RsekQ7GOB9eozfmbiXnl
+         qktH4LMamkLfmHghSu1uUeG0BwtUOhIMjsNjziP1YZ9ifjIlWc9ZlftR5TlSCj0Zcr49
+         EnPEf2niFXY3jAzL+Mg+RSLKeiKMFCBHHFkx2dLk8efLA1KF1vblmEqRgJ3mdXs/Oiyn
+         ymEg==
+X-Gm-Message-State: APjAAAVNIi3wjrtWcUW/G9lZJ+SODVzVZ3L0KUJekZNM7O+pZpqUBAiU
+        CjpxIUxtasz9GTxNtEKKWkmnzQ==
+X-Google-Smtp-Source: APXvYqyXvXy8m4FlfE3Ivxs8/mhlAHKkQr/uz8IZ5NCsVUpgWET0v8kN7+RJAAD51s81jOaWspyCQg==
+X-Received: by 2002:a5d:490e:: with SMTP id x14mr8607219wrq.340.1571408272158;
+        Fri, 18 Oct 2019 07:17:52 -0700 (PDT)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id r13sm7110988wra.74.2019.10.18.07.17.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 18 Oct 2019 07:17:51 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     linux-pm@vger.kernel.org, evgreen@chromium.org,
+        daidavid1@codeaurora.org
+Cc:     vincent.guittot@linaro.org, bjorn.andersson@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Georgi Djakov <georgi.djakov@linaro.org>
+Subject: [PATCH] interconnect: Add locking in icc_set_tag()
+Date:   Fri, 18 Oct 2019 17:17:50 +0300
+Message-Id: <20191018141750.17032-1-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191018141750.23756-1-johan@kernel.org>
-References: <20191018141750.23756-1-johan@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,76 +62,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix broken read implementation, which could be used to trigger slab info
-leaks.
+We must ensure that the tag is not changed while we aggregate the
+requests. Currently the icc_set_tag() is not using any locks and this
+may cause the values to be aggregated incorrectly. Fix this by acquiring
+the icc_lock while we set the tag.
 
-The driver failed to check if the custom ring buffer was still empty
-when waking up after having waited for more data. This would happen on
-every interrupt-in completion, even if no data had been added to the
-ring buffer (e.g. on disconnect events).
-
-Due to missing sanity checks and uninitialised (kmalloced) ring-buffer
-entries, this meant that huge slab info leaks could easily be triggered.
-
-Note that the empty-buffer check after wakeup is enough to fix the info
-leak on disconnect, but let's clear the buffer on allocation and add a
-sanity check to read() to prevent further leaks.
-
-Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Reported-by: syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: 127ab2cc5f19 ("interconnect: Add support for path tags")
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- drivers/usb/misc/ldusb.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ drivers/interconnect/core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/usb/misc/ldusb.c b/drivers/usb/misc/ldusb.c
-index 147c90c2a4e5..94780e14e95d 100644
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -464,7 +464,7 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index e24092558c29..4940c0741d40 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -408,8 +408,12 @@ void icc_set_tag(struct icc_path *path, u32 tag)
+ 	if (!path)
+ 		return;
  
- 	/* wait for data */
- 	spin_lock_irq(&dev->rbsl);
--	if (dev->ring_head == dev->ring_tail) {
-+	while (dev->ring_head == dev->ring_tail) {
- 		dev->interrupt_in_done = 0;
- 		spin_unlock_irq(&dev->rbsl);
- 		if (file->f_flags & O_NONBLOCK) {
-@@ -474,12 +474,17 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
- 		retval = wait_event_interruptible(dev->read_wait, dev->interrupt_in_done);
- 		if (retval < 0)
- 			goto unlock_exit;
--	} else {
--		spin_unlock_irq(&dev->rbsl);
++	mutex_lock(&icc_lock);
 +
-+		spin_lock_irq(&dev->rbsl);
- 	}
-+	spin_unlock_irq(&dev->rbsl);
+ 	for (i = 0; i < path->num_nodes; i++)
+ 		path->reqs[i].tag = tag;
++
++	mutex_unlock(&icc_lock);
+ }
+ EXPORT_SYMBOL_GPL(icc_set_tag);
  
- 	/* actual_buffer contains actual_length + interrupt_in_buffer */
- 	actual_buffer = (size_t *)(dev->ring_buffer + dev->ring_tail * (sizeof(size_t)+dev->interrupt_in_endpoint_size));
-+	if (*actual_buffer > sizeof(size_t) + dev->interrupt_in_endpoint_size) {
-+		retval = -EIO;
-+		goto unlock_exit;
-+	}
- 	bytes_to_read = min(count, *actual_buffer);
- 	if (bytes_to_read < *actual_buffer)
- 		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
-@@ -690,10 +695,9 @@ static int ld_usb_probe(struct usb_interface *intf, const struct usb_device_id *
- 		dev_warn(&intf->dev, "Interrupt out endpoint not found (using control endpoint instead)\n");
- 
- 	dev->interrupt_in_endpoint_size = usb_endpoint_maxp(dev->interrupt_in_endpoint);
--	dev->ring_buffer =
--		kmalloc_array(ring_buffer_size,
--			      sizeof(size_t) + dev->interrupt_in_endpoint_size,
--			      GFP_KERNEL);
-+	dev->ring_buffer = kcalloc(ring_buffer_size,
-+			sizeof(size_t) + dev->interrupt_in_endpoint_size,
-+			GFP_KERNEL);
- 	if (!dev->ring_buffer)
- 		goto error;
- 	dev->interrupt_in_buffer = kmalloc(dev->interrupt_in_endpoint_size, GFP_KERNEL);
--- 
-2.23.0
-
