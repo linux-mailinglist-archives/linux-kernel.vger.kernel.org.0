@@ -2,98 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A74DDC3F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 13:24:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74E84DC3F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 13:26:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442636AbfJRLY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 07:24:29 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53350 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2437774AbfJRLY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 07:24:29 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1599FC736ED91386532A;
-        Fri, 18 Oct 2019 19:24:26 +0800 (CST)
-Received: from [127.0.0.1] (10.177.251.225) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Fri, 18 Oct 2019
- 19:24:16 +0800
-From:   Yunfeng Ye <yeyunfeng@huawei.com>
-Subject: [PATCH V3] arm64: psci: Reduce waiting time for cpu_psci_cpu_kill()
-To:     <catalin.marinas@arm.com>, <will@kernel.org>,
-        <kstewart@linuxfoundation.org>, <sudeep.holla@arm.com>,
-        <gregkh@linuxfoundation.org>, <lorenzo.pieralisi@arm.com>,
-        <tglx@linutronix.de>, <David.Laight@ACULAB.COM>,
-        <ard.biesheuvel@linaro.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
-        <wuyun.wu@huawei.com>,
-        "linfeilong@huawei.com" <linfeilong@huawei.com>
-Message-ID: <433980c7-f246-f741-f00c-fce103a60af7@huawei.com>
-Date:   Fri, 18 Oct 2019 19:24:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2442658AbfJRL0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 07:26:47 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41682 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389257AbfJRL0r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 07:26:47 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9IBQgpP052342;
+        Fri, 18 Oct 2019 06:26:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571398002;
+        bh=SGgYh3SnaZDe4luA7XBqvh2HpjuvgWKDMwr4BQhthWQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=sHgftTDeMeG9jgm2d39Jqa/67L50GluK/v/GytMQAryOgXShPxnErsACEWdW0mIJ4
+         +S4M5gL6GRr2H7wQt/3MjEXcQVAsCZpS49r802pypbRjAHcsn787tI2VMRT8LVdQLI
+         p+LQp1r+BcHdoeRwdMVn2SWMqKIM/N3QLCD28pKE=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9IBQgLG011551
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Oct 2019 06:26:42 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 18
+ Oct 2019 06:26:42 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 18 Oct 2019 06:26:34 -0500
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9IBQd0M047364;
+        Fri, 18 Oct 2019 06:26:40 -0500
+Subject: Re: [RFC] mmc: cqhci: commit descriptors before setting the doorbell
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Harjani Ritesh <riteshh@codeaurora.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+References: <20191014183849.14864-1-faiz_abbas@ti.com>
+ <CAPDyKFqbRNXaNVEACFQkKEymaY=Jm8L65-Ne_LbAmqFUkY1zcw@mail.gmail.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <ceb94a3f-9785-9fc7-b9e5-35435df9b498@ti.com>
+Date:   Fri, 18 Oct 2019 16:57:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <CAPDyKFqbRNXaNVEACFQkKEymaY=Jm8L65-Ne_LbAmqFUkY1zcw@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.251.225]
-X-CFilter-Loop: Reflected
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In a case like suspend-to-disk, a large number of CPU cores need to be
-shut down. At present, the CPU hotplug operation is serialised, and the
-CPU cores can only be shut down one by one. In this process, if PSCI
-affinity_info() does not return LEVEL_OFF quickly, cpu_psci_cpu_kill()
-needs to wait for 10ms. If hundreds of CPU cores need to be shut down,
-it will take a long time.
+Hi Uffe,
 
-Normally, it is no need to wait 10ms in cpu_psci_cpu_kill(). So change
-the wait interval from 10 ms to max 1 ms and use usleep_range() instead
-of msleep() for more accurate schedule.
+On 18/10/19 4:28 PM, Ulf Hansson wrote:
+> On Mon, 14 Oct 2019 at 20:37, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>>
+>> Add a write memory barrier to make sure that descriptors are actually
+>> written to memory before ringing the doorbell.
+>>
+>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> 
+> Applied for fixes and by adding a stable tag, thanks!
+> 
+> BTW, do you have a valid commit that it fixes?
+> 
+You can add:
 
-In addition, reduce the time interval will increase the messages output,
-so remove the "Retry ..." message, instead, put the number of waiting
-times to the sucessful message.
+Fixes: a4080225f51d ("mmc: cqhci: support for command queue enabled host")
 
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
----
-v2 -> v3:
- - update the comment
- - remove the busy-wait logic, modify the loop logic and output message
-
-v1 -> v2:
- - use usleep_range() instead of udelay() after waiting for a while
-
- arch/arm64/kernel/psci.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/kernel/psci.c b/arch/arm64/kernel/psci.c
-index c9f72b2665f1..00b8c0825a08 100644
---- a/arch/arm64/kernel/psci.c
-+++ b/arch/arm64/kernel/psci.c
-@@ -91,15 +91,14 @@ static int cpu_psci_cpu_kill(unsigned int cpu)
- 	 * while it is dying. So, try again a few times.
- 	 */
-
--	for (i = 0; i < 10; i++) {
-+	for (i = 0; i < 100; i++) {
- 		err = psci_ops.affinity_info(cpu_logical_map(cpu), 0);
- 		if (err == PSCI_0_2_AFFINITY_LEVEL_OFF) {
--			pr_info("CPU%d killed.\n", cpu);
-+			pr_info("CPU%d killed by waiting %d loops.\n", cpu, i);
- 			return 0;
- 		}
-
--		msleep(10);
--		pr_info("Retrying again to check for CPU kill\n");
-+		usleep_range(100, 1000);
- 	}
-
- 	pr_warn("CPU%d may not have shut down cleanly (AFFINITY_INFO reports %d)\n",
--- 
-2.7.4.3
-
+Thanks,
+Faiz
