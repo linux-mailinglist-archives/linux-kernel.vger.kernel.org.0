@@ -2,79 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9D17DBCC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:15:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1C8EDBCC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:17:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393563AbfJRFPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:15:45 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49695 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728302AbfJRFPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:15:45 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46vXMg4j4xz9sPW;
-        Fri, 18 Oct 2019 14:58:54 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1571371135;
-        bh=wO2rnQEfFabWDx7yJbQXx/8U/u93yDA+NcdDOwCKOfk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ffgdHLQryZywbPqY1f+qL0vItMTcIWfH9inoGS/Cgrwv2hVMcUYQuAZkGMxibGV7n
-         LVeSKBAK1U5+XYx7KyM9fQjHHhgAIN+qjZcCAputivkKjZ+7kZVuLgOh0PSZJh7iDW
-         rpTuGNfZPzsFDY6msb7gUdqXrZFqmKeL+34b91pcJvd/LQpz1IaGvw/76Xh9xJi/Tq
-         S1zj7zZPYaRK9IfABuc1hZGSQhpCSGSLF80TSm0jdGKuyyclwGYbqa7t4LOrCKXVJJ
-         I4dLZkS9QWz9VfO0TKPKNgpsUVHBpYoLkkgEHS92l5fQLw6u/tqoSalUovNSDud4sa
-         uedJhjQawh7Vw==
-Date:   Fri, 18 Oct 2019 14:58:54 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the block tree
-Message-ID: <20191018145854.26b2c645@canb.auug.org.au>
-In-Reply-To: <5a9bf632-2466-bc73-45d3-104c4bb0245a@kernel.dk>
-References: <20191018115126.6263a3e3@canb.auug.org.au>
-        <5a9bf632-2466-bc73-45d3-104c4bb0245a@kernel.dk>
+        id S2405932AbfJRFR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:17:27 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40223 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728020AbfJRFR1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 01:17:27 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b24so4717986wmj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:17:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GXpwiWbrAU/653GmrWZ4CKDfopVqbQJlCnoRGMU0IXo=;
+        b=HCkne4s8lruvHSjpE5jf0OgLyMhPwrvNwZ3XZUMDJxIAmbTJ7U0e0j5lACmvchXOqb
+         2wIXjnp6mVboS7gpgge2/f0WIp8FzhCfT1YzwjZn2XMChTk+3gX4w/G3wm1ASj5evE2v
+         9KiN6Bd+zRI7o53M1ioDgisIswMb4TuhvO4CAV+HMlcpRWwIq6DGiBu+HsFpiLvXgdyx
+         yyAuvxqH9F6W51uc00HyFnNZGHyf5BfLq8tgaAZ5qX1mMOJQD3r3KIrfjNUUGuKn5IDz
+         wwRkRZtW4RWjuR6lMcdS7SsHtCR7KkOHVEIl/XHnXpbtnpPonSGPxfNxqxg7BH4lcH/l
+         Ympw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GXpwiWbrAU/653GmrWZ4CKDfopVqbQJlCnoRGMU0IXo=;
+        b=G0/jnQmEb05EHvsLil5J+W6LvmN/D4zMM4ySd91IGO6mT/732tQQXP53TO7qupNI6z
+         3tmtjgF9ZLSlvjYT5f85p++6StTg0Udd4EL7Tjk6+v2jHtC7+kjwD+DezDLPKpWne8I4
+         +A0hX/p0Ua8raMte4EMQYbFJ6V5jztdBLlp9AQiYdN48e306aURaAx3Sx6kgD/6qMDGx
+         9UsoJSzJLrPhw8lYQW85qaE3+2wcz1NRLql29dPGEbbx3G/IF4ytTKg0zZBxIR3Xn4F6
+         MFZ+c2Xkcp4N6Az4xmgHCNMY42A6kksOB3Dpi9SSp62sBO/YgWuGzKBVEcLzx6uQrQmY
+         6SFg==
+X-Gm-Message-State: APjAAAWEjEEs3L4jHqE21EcbaO+YBfO6fCSSuaYp6nJzinr4D5u3Aumo
+        l+hm856TkBzolpYQFIex04FKdbtx
+X-Google-Smtp-Source: APXvYqz+4Pinskrf2UCosw5rgRX7f2A0VhKcLk6IxtbU+1p4dOJAsqVStmjoGBzaMqSnB+Zff8cyzQ==
+X-Received: by 2002:a1c:9e07:: with SMTP id h7mr5807160wme.96.1571372104081;
+        Thu, 17 Oct 2019 21:15:04 -0700 (PDT)
+Received: from ltop.local ([2a02:a03f:40ac:ce00:18e1:7d90:ccf5:4489])
+        by smtp.gmail.com with ESMTPSA id x9sm4453820wrq.63.2019.10.17.21.15.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Oct 2019 21:15:03 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 06:15:02 +0200
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/8] riscv: add missing prototypes
+Message-ID: <20191018041501.cuyyhcm23dsihcif@ltop.local>
+References: <20191018004929.3445-1-paul.walmsley@sifive.com>
+ <20191018004929.3445-6-paul.walmsley@sifive.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/1xzrzn7NBgTfyXx4jJy1aoi";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018004929.3445-6-paul.walmsley@sifive.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/1xzrzn7NBgTfyXx4jJy1aoi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Oct 17, 2019 at 05:49:26PM -0700, Paul Walmsley wrote:
+> sparse identifies these missing prototypes when building arch/riscv:
+> 
+> arch/riscv/kernel/cpu.c:149:29: warning: symbol 'cpuinfo_op' was not declared. Should it be static?
+> arch/riscv/kernel/irq.c:27:29: warning: symbol 'do_IRQ' was not declared. Should it be static?
+> arch/riscv/kernel/irq.c:57:13: warning: symbol 'init_IRQ' was not declared. Should it be static?
+> arch/riscv/kernel/syscall_table.c:15:6: warning: symbol 'sys_call_table' was not declared. Should it be static?
+> arch/riscv/kernel/time.c:15:13: warning: symbol 'time_init' was not declared. Should it be static?
+> arch/riscv/kernel/smpboot.c:135:24: warning: symbol 'smp_callin' was not declared. Should it be static?
+> arch/riscv/kernel/smp.c:72:5: warning: symbol 'setup_profiling_timer' was not declared. Should it be static?
+> arch/riscv/mm/init.c:151:7: warning: symbol 'trampoline_pg_dir' was not declared. Should it be static?
+> arch/riscv/mm/init.c:157:7: warning: symbol 'early_pg_dir' was not declared. Should it be static?
+> arch/riscv/kernel/process.c:32:6: warning: symbol 'show_regs' was not declared. Should it be static?
+> arch/riscv/kernel/ptrace.c:151:6: warning: symbol 'do_syscall_trace_enter' was not declared. Should it be static?
+> arch/riscv/kernel/ptrace.c:165:6: warning: symbol 'do_syscall_trace_exit' was not declared. Should it be static?
+> 
+> Fix by adding the missing prototypes to the appropriate header files.
 
-Hi Jens,
-
-On Thu, 17 Oct 2019 18:56:39 -0600 Jens Axboe <axboe@kernel.dk> wrote:
->
-> I'll fix these warnings up, guessing it's 32-bit?
-
-Thanks.  Yeah 32 bit.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/1xzrzn7NBgTfyXx4jJy1aoi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2pOH4ACgkQAVBC80lX
-0GzIPgf9EUVKAAVP/p8nrsw99OavZUJcxgUjuNG5LddAjYFMmtB3S01qu6KT5tL9
-jQBLGr6zlmHUoe6Xz6VUgP5ZS/fKnfXy12HMEeTPXJyYtq3FGiLplaQTn12Ja31i
-OiXeVOS2UAO40rtXB925Sp+WL+drWoJv2dFi27RPNxM8pY6WaqYJgEPTjx3ZZYlS
-WabaTqT56fm6UyMnp6XOrDyDqDAf6iX3pS6rjauL9lyGTcQA8cLP/7o55l7c0JCp
-LqXcGW8w4bWm4XZA3mk3B2ukNvtmcEqppU7LH0ok8IvAwgv+pFWcOo6v7yEZaVJn
-xCcCMX2CRahCF4U79E3R3pCFQsjfmA==
-=169m
------END PGP SIGNATURE-----
-
---Sig_/1xzrzn7NBgTfyXx4jJy1aoi--
+For functions defined in C but used ony in assembly, you can also simply mark
+them as '__visible'  (aka __attribute__((exrernally_visible)) ).
+ 
+Best regards,
+-- Luc
