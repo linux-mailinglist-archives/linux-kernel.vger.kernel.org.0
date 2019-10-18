@@ -2,160 +2,839 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EAF0DC8F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:42:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F55EDC925
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:44:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406045AbfJRPmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 11:42:07 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:30680 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728464AbfJRPmH (ORCPT
+        id S2408980AbfJRPni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 11:43:38 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:59019 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2505204AbfJRPmr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 11:42:07 -0400
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9IFNkim000339;
-        Fri, 18 Oct 2019 08:41:54 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=ZB+SZ0hSnUqrrzFSMfIrHyAwcTK9JWJQlouKjT2H2jg=;
- b=Hj8VtmFdiX5cnSnUdn57A+YHiTNBLvSf2WM4/wfM5ozdgrErgmShGKBaP2EbaVEWh2ku
- Jft/9X/7I9F1Y7jBMyAgC2uHJR7VxPk9zeGl9RLqCEzEwLKNdZsi9CtSZ4Cn3O+7Tw8m
- mOZzlyDdiIQH0AAa8ZYt93BAWac/Zc2/FX4= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2vqeuqgf75-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 18 Oct 2019 08:41:54 -0700
-Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
- prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Fri, 18 Oct 2019 08:41:53 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
- via Frontend Transport; Fri, 18 Oct 2019 08:41:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f1RDzVXPPuG7nnoD8fcm6UxfNtHnAhPJnE4RiKGYJfWu7DEBxQUeVsi/z59E0kFwT+iJ4o6g8RS1stf11DodwPhiuHI3xmNaRLyj6XxdS/in+xDPmC/dlr01nd5yIzLcgCHD6uhQX042pmPAiX2dpzymzjuecsnIwBsZES1zlV9GkF2SRj2Uf2eyG5BI0cPpEfOPOjU2vFNpt2Ssb1fZDKyg0Y4OYxPs8qE5U8X6NSragSO1hhr7niRQoYQMwGSeXhHHCmb6yDNWR9wPU6ZNcwzxJvAhaSeMxuyGrInDP2EvG+IIttUjTglZREftjZ8e7+hdy+cZnOgqhAhf+2qp3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZB+SZ0hSnUqrrzFSMfIrHyAwcTK9JWJQlouKjT2H2jg=;
- b=j2/03vuGC5nWk2JJvt9d9P1CQgmsTCrdDiI2dQQv8VnpVF8SrSznhcNqnI/dcIqUVx4q7nO/R5PHT2wtY8HKjsri1o+QeV2iyagk75KYyztXYSQ/C2a/8ibD7uFCbkxqHbKj0UhceSRnDYSUDZwOP5hnC5VpZNt61dq9RD4Y73bGZ4q8ijg3F3fgIoZTGwt2foo1Py70GIZCKZqJXb9woHE0w67srv14xgG/ekiExThelflC1A53aDstaubGSb3xZVyttF0lKCO+IOSf1exeYs5BMJF85Odpk+m72lY1+GuABLCGGcotOXTp83E1umRNTLkedA2HTxLYsj+nXnGdOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZB+SZ0hSnUqrrzFSMfIrHyAwcTK9JWJQlouKjT2H2jg=;
- b=fpAFlNhBbGDCZxti3WKx1e1QAzQXt16XAx+hpDWCz2WDtiR/BGZaYmHV12496aQCytIe0w99RDqbRLIEBRfhkMDFLlP3omc+7851lxGDPT+g+dRQ09rbksKTYIVmWvFs1IySEykTwVBekn5UYmPoMll7mhxsG0NJwCqVNXPZr8s=
-Received: from BYAPR15MB3479.namprd15.prod.outlook.com (20.179.57.24) by
- BYAPR15MB3448.namprd15.prod.outlook.com (20.179.56.92) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2367.20; Fri, 18 Oct 2019 15:41:52 +0000
-Received: from BYAPR15MB3479.namprd15.prod.outlook.com
- ([fe80::d51c:c256:7d42:ee23]) by BYAPR15MB3479.namprd15.prod.outlook.com
- ([fe80::d51c:c256:7d42:ee23%3]) with mapi id 15.20.2367.019; Fri, 18 Oct 2019
- 15:41:52 +0000
-From:   Rik van Riel <riel@fb.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Song Liu <songliubraving@fb.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
-        Kernel Team <Kernel-team@fb.com>,
-        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "Johannes Weiner" <hannes@cmpxchg.org>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH] mm,thp: recheck each page before collapsing file THP
-Thread-Topic: [PATCH] mm,thp: recheck each page before collapsing file THP
-Thread-Index: AQHVhXJENhkhstl0P0GXabgc+7SHqadgZrUAgAAjgQA=
-Date:   Fri, 18 Oct 2019 15:41:52 +0000
-Message-ID: <137ff527ef842a9f46e32557e911c0f221745d6e.camel@fb.com>
-References: <20191018050832.1251306-1-songliubraving@fb.com>
-         <20191018133444.iif7b33muxmus6lb@box>
-In-Reply-To: <20191018133444.iif7b33muxmus6lb@box>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MN2PR19CA0006.namprd19.prod.outlook.com
- (2603:10b6:208:178::19) To BYAPR15MB3479.namprd15.prod.outlook.com
- (2603:10b6:a03:106::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c091:480::f10d]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3c5ba824-5c28-4df6-831f-08d753e1b28b
-x-ms-traffictypediagnostic: BYAPR15MB3448:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR15MB3448E66FDEA232900D3F2AAAA36C0@BYAPR15MB3448.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 01949FE337
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(376002)(136003)(366004)(346002)(189003)(199004)(66556008)(66476007)(66446008)(6512007)(66946007)(6636002)(64756008)(6246003)(4326008)(86362001)(2906002)(6486002)(6116002)(6436002)(305945005)(7736002)(102836004)(229853002)(6506007)(386003)(256004)(14444005)(36756003)(186003)(52116002)(478600001)(14454004)(76176011)(99286004)(54906003)(71200400001)(71190400001)(316002)(110136005)(11346002)(46003)(486006)(476003)(118296001)(446003)(2616005)(8936002)(81166006)(81156014)(8676002)(25786009)(5660300002)(4001150100001)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3448;H:BYAPR15MB3479.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: rEVohS04Whw1ML1dZmDrFWHIpAXDmgnUz2hoy2ojL9SY57qL/oACuwfQpdS91FV5K2hxD2OMNUaTaYQu+4pa99DVrCynXOOC6SAPwUI34M4yvgJ8Ex543eLqswdODOzT61dpKs7E0hJm6YMVdlOcarreh+XV9Iw5fEC3rwnYv+7Mfsduj65aJzI/lyNd6D22KvK3Bxth4LvBwo1UEPARFEfpnvQgan26A08n874EHZhthXHqSJ+jT12kNdMprv7p++u5Wq04dYR8iZz+m3FRTfwhfMpKq2kE1MUnlqwz/tyVCRQzrSn/iySw/gwP9fEXI5dq5M6nWmD4qolBnsewxR6sS8qkJktHWq00jH7XAt3PpT3Ho40Zz3pVQ9uHHpiPHJRG+MHjVmkgrPxW7g8rNJYFM5mBpubrVd/aZ/Y441i8ou3kDO1Z7LLfua2ruCzW
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6D072232D07F194281C85AC62EF5C9D5@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 18 Oct 2019 11:42:47 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MfpKZ-1ho3KD2KDp-00gG2u; Fri, 18 Oct 2019 17:42:32 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH 37/46] ARM: pxa: move clk register definitions to driver
+Date:   Fri, 18 Oct 2019 17:41:52 +0200
+Message-Id: <20191018154201.1276638-37-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20191018154052.1276506-1-arnd@arndb.de>
+References: <20191018154052.1276506-1-arnd@arndb.de>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c5ba824-5c28-4df6-831f-08d753e1b28b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2019 15:41:52.6387
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: i01yW7YyFMpY1nSMp+OtTA5QpqzkA7OmtVa4TnfWj6tdbACEq3AmgWzo49v0A3qc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3448
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-18_04:2019-10-18,2019-10-18 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0
- lowpriorityscore=0 adultscore=0 mlxlogscore=999 spamscore=0 clxscore=1011
- malwarescore=0 bulkscore=0 suspectscore=0 impostorscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910180141
-X-FB-Internal: deliver
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:G0XCNMmtTFzmjkepfr/wUqOY26OLIWyjx+TI/If/2J6wwGIgtOw
+ hkIq08hivJ2x0TtaQpv2CD5Da69u5gKeqiJOTHk8G4Oip6C0yXGMPkjNppvmntns+7gsu5U
+ NVj368G0fRpy+RpVgCDoEHL5o3CbZ6TR8e6+bOms5OcqPdI9nMsDfnUvR8LGhhVuygKx21b
+ /A9mx9sSWqNXfzLNwjnAA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:u0Ecf6sHzrc=:qx56JJKIeL7h6nk7cFor9D
+ AnsnqJ6s2iQIqLCFgQYHGy7d4+28bk4kGqhcVz46pWPTAMN3qBba9hmKYASxhyeukC9vOnkK8
+ YXT+0aTI2FUXR/FwweacPA/ihIUfzAEnym6Oe13jTwEVcJta5HNB3I/9cUF4E/pJnOYLKzk3X
+ mvbqttSD6AdMAoQ7673GHaCrj7uUHXkmUfn5au5sj9loItJBnlujuvOcJ+JNkXIVxEXtEwObG
+ LxZQLpIi0uL9Rbl9VGs8HYvmRVeDdzcr5pXO2QhzXFs9U2SbXoamAapM68jd+mX6w4wEcH38i
+ QS3UhdDUN1JR7AzVUIsVVSjrrF95U8fHiqXLITpzJB5GKHn7D6iyJfj6HeahPk6e62eSM+Xpb
+ Wc76IFi0arsHNaUV4zL/3jfAl+K0gYt6BOJZgquxy+vP9W+3Qn/JquhkhemALMncYACyiDbVH
+ ImxQZNMy1LN8XiPQTlgyyrCdkhYhPuru1CQk8gTs5kJ3FaKXrWapZr3c6/LkIBCyhPOxjvqlS
+ C7dmxxSJEfkL9Ry5pE2mIESoxcNhGlxU0F0w1ecZ+GpkmCZU56Q7l5YGhGy4raJPevTcVTFZs
+ WH17Pn9PJLlr9ynCv9B4m0wa09drOx22WclAQ7yZWZecKw63wpCvYtVRkm5NCvtd9ku6P7Ean
+ 3HaG3yHUPAHBI4uAIOs/3TbWXo1wfsYbPID44RaLvzoadm8eiJCulI0uBKyBc1OX0xJzwkIt+
+ aGt/KUurQE9S5ZbYXu6OgscOqgx6scsFAtQO9MT7kc40KoxZFC/hcmFHidfHDdNDSjEFrIY2j
+ atk/jWSuvswPGedBZii7pPvqkmLrK1uJDuo/iCYeVt90AugMc6d/gPGspXEQOCcaP8ojIHvtf
+ V8UWgMOpEHE2vEmq0tjw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE5LTEwLTE4IGF0IDE2OjM0ICswMzAwLCBLaXJpbGwgQS4gU2h1dGVtb3Ygd3Jv
-dGU6DQo+IE9uIFRodSwgT2N0IDE3LCAyMDE5IGF0IDEwOjA4OjMyUE0gLTA3MDAsIFNvbmcgTGl1
-IHdyb3RlOg0KPiA+IEluIGNvbGxhcHNlX2ZpbGUoKSwgYWZ0ZXIgbG9ja2luZyB0aGUgcGFnZSwg
-aXQgaXMgbmVjZXNzYXJ5IHRvDQo+ID4gcmVjaGVjaw0KPiA+IHRoYXQgdGhlIHBhZ2UgaXMgdXAt
-dG8tZGF0ZSwgY2xlYW4sIGFuZCBwb2ludGluZyB0byB0aGUgcHJvcGVyDQo+ID4gbWFwcGluZy4N
-Cj4gPiBJZiBhbnkgY2hlY2sgZmFpbHMsIGFib3J0IHRoZSBjb2xsYXBzZS4NCj4gPiANCj4gPiBG
-aXhlczogOTljYjBkYmQ0N2ExICgibW0sdGhwOiBhZGQgcmVhZC1vbmx5IFRIUCBzdXBwb3J0IGZv
-ciAobm9uLQ0KPiA+IHNobWVtKSBGUyIpDQo+ID4gQ2M6IEtpcmlsbCBBLiBTaHV0ZW1vdiA8a2ly
-aWxsLnNodXRlbW92QGxpbnV4LmludGVsLmNvbT4NCj4gPiBDYzogSm9oYW5uZXMgV2VpbmVyIDxo
-YW5uZXNAY21weGNoZy5vcmc+DQo+ID4gQ2M6IEh1Z2ggRGlja2lucyA8aHVnaGRAZ29vZ2xlLmNv
-bT4NCj4gPiBDYzogV2lsbGlhbSBLdWNoYXJza2kgPHdpbGxpYW0ua3VjaGFyc2tpQG9yYWNsZS5j
-b20+DQo+ID4gQ2M6IEFuZHJldyBNb3J0b24gPGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc+DQo+
-ID4gU2lnbmVkLW9mZi1ieTogU29uZyBMaXUgPHNvbmdsaXVicmF2aW5nQGZiLmNvbT4NCj4gPiAt
-LS0NCj4gPiAgbW0va2h1Z2VwYWdlZC5jIHwgOCArKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdl
-ZCwgOCBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL21tL2todWdlcGFnZWQu
-YyBiL21tL2todWdlcGFnZWQuYw0KPiA+IGluZGV4IDBhMWI0YjQ4NGFjNS4uN2RhNDliNjQzYzRk
-IDEwMDY0NA0KPiA+IC0tLSBhL21tL2todWdlcGFnZWQuYw0KPiA+ICsrKyBiL21tL2todWdlcGFn
-ZWQuYw0KPiA+IEBAIC0xNjE5LDYgKzE2MTksMTQgQEAgc3RhdGljIHZvaWQgY29sbGFwc2VfZmls
-ZShzdHJ1Y3QgbW1fc3RydWN0DQo+ID4gKm1tLA0KPiA+ICAJCQkJcmVzdWx0ID0gU0NBTl9QQUdF
-X0xPQ0s7DQo+ID4gIAkJCQlnb3RvIHhhX2xvY2tlZDsNCj4gPiAgCQkJfQ0KPiA+ICsNCj4gPiAr
-CQkJLyogZG91YmxlIGNoZWNrIHRoZSBwYWdlIGlzIGNvcnJlY3QgYW5kIGNsZWFuDQo+ID4gKi8N
-Cj4gPiArCQkJaWYgKHVubGlrZWx5KCFQYWdlVXB0b2RhdGUocGFnZSkpIHx8DQo+ID4gKwkJCSAg
-ICB1bmxpa2VseShQYWdlRGlydHkocGFnZSkpIHx8DQo+ID4gKwkJCSAgICB1bmxpa2VseShwYWdl
-LT5tYXBwaW5nICE9IG1hcHBpbmcpKSB7DQo+ID4gKwkJCQlyZXN1bHQgPSBTQ0FOX0ZBSUw7DQo+
-ID4gKwkJCQlnb3RvIG91dF91bmxvY2s7DQo+ID4gKwkJCX0NCj4gPiAgCQl9DQo+ID4gIA0KPiA+
-ICAJCS8qDQo+IA0KPiBIbS4gQnV0IHdoeSBvbmx5IGZvciAhaXNfc2htZW0/IE9yIEkgcmVhZCBp
-dCB3cm9uZz8NCg0KSXQgbG9va3MgbGlrZSB0aGUgc2htZW0gY29kZSBwYXRoIGhhcyBpdHMgb3du
-IHdheSBvZiBiYWlsaW5nDQpvdXQgd2hlbiBhIHBhZ2UgaXMgIVBhZ2VVcHRvZGF0ZS4gQWxzbywg
-c2htZW0gY2FuIGhhbmRsZSBkaXJ0eQ0KcGFnZXMgZmluZS4NCg0KSG93ZXZlciwgSSBzdXBwb3Nl
-IHRoZSBzaG1lbSBjb2RlIG1pZ2h0IHdhbnQgdG8gY2hlY2sgZm9yIHRydW5jYXRlZA0KcGFnZXMs
-IHdoaWNoIGl0IGRvZXMgbm90IGN1cnJldG5seSBhcHBlYXIgdG8gZG8uIEkgZ3Vlc3MgZG9pbmcN
-CnRoZSB0cnlsb2NrX3BhZ2UgdW5kZXIgdGhlIHhhcnJheSBsb2NrIG1heSBwcm90ZWN0IGFnYWlu
-c3QgdHJ1bmNhdGUsDQpidXQgdGhhdCBpcyBzdWJ0bGUgZW5vdWdoIHRoYXQgYXQgdGhlIHZlcnkg
-bGVhc3QgaXQgc2hvdWxkIGJlDQpkb2N1bWVudGVkLg0KDQoNCg==
+The clock register definitions are now used (almost) exclusively in the
+clk driver, and that relies on no other mach/*.h header files any more.
+
+Remove the dependency on mach/pxa*-regs.h by addressing the registers
+as offsets from a void __iomem * pointer, which is either passed from
+a board file, or (for the moment) ioremapped at boot time from a hardcoded
+address in case of DT (this should be moved into the DT of course).
+
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/mach-pxa/generic.c                  |   7 +-
+ arch/arm/mach-pxa/generic.h                  |   3 -
+ arch/arm/mach-pxa/include/mach/pxa2xx-regs.h |  45 -------
+ arch/arm/mach-pxa/include/mach/pxa3xx-regs.h |  69 -----------
+ arch/arm/mach-pxa/sleep.S                    |   4 +-
+ drivers/clk/pxa/clk-pxa.c                    |   4 +-
+ drivers/clk/pxa/clk-pxa.h                    |   6 +-
+ drivers/clk/pxa/clk-pxa25x.c                 |  18 +--
+ drivers/clk/pxa/clk-pxa27x.c                 |  39 +++---
+ drivers/clk/pxa/clk-pxa3xx.c                 | 120 +++++++++++++++----
+ include/linux/clk/pxa.h                      |   7 ++
+ 11 files changed, 152 insertions(+), 170 deletions(-)
+
+diff --git a/arch/arm/mach-pxa/generic.c b/arch/arm/mach-pxa/generic.c
+index 942af8946a73..dd1755c84665 100644
+--- a/arch/arm/mach-pxa/generic.c
++++ b/arch/arm/mach-pxa/generic.c
+@@ -19,6 +19,7 @@
+ #include <linux/init.h>
+ #include <linux/soc/pxa/cpu.h>
+ #include <linux/soc/pxa/smemc.h>
++#include <linux/clk/pxa.h>
+ 
+ #include <asm/mach/map.h>
+ #include <asm/mach-types.h>
+@@ -48,11 +49,11 @@ void clear_reset_status(unsigned int mask)
+ void __init pxa_timer_init(void)
+ {
+ 	if (cpu_is_pxa25x())
+-		pxa25x_clocks_init();
++		pxa25x_clocks_init(io_p2v(0x41300000));
+ 	if (cpu_is_pxa27x())
+-		pxa27x_clocks_init();
++		pxa27x_clocks_init(io_p2v(0x41300000));
+ 	if (cpu_is_pxa3xx())
+-		pxa3xx_clocks_init();
++		pxa3xx_clocks_init(io_p2v(0x41340000), io_p2v(0x41350000));
+ 	pxa_timer_nodt_init(IRQ_OST0, io_p2v(0x40a00000));
+ }
+ 
+diff --git a/arch/arm/mach-pxa/generic.h b/arch/arm/mach-pxa/generic.h
+index 487eadb0fc2a..7bb1499de4c5 100644
+--- a/arch/arm/mach-pxa/generic.h
++++ b/arch/arm/mach-pxa/generic.h
+@@ -22,19 +22,16 @@ extern void pxa_timer_init(void);
+ #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
+ 
+ #define pxa25x_handle_irq icip_handle_irq
+-extern int __init pxa25x_clocks_init(void);
+ extern void __init pxa25x_init_irq(void);
+ extern void __init pxa25x_map_io(void);
+ extern void __init pxa26x_init_irq(void);
+ 
+ #define pxa27x_handle_irq ichp_handle_irq
+-extern int __init pxa27x_clocks_init(void);
+ extern unsigned	pxa27x_get_clk_frequency_khz(int);
+ extern void __init pxa27x_init_irq(void);
+ extern void __init pxa27x_map_io(void);
+ 
+ #define pxa3xx_handle_irq ichp_handle_irq
+-extern int __init pxa3xx_clocks_init(void);
+ extern void __init pxa3xx_init_irq(void);
+ extern void __init pxa3xx_map_io(void);
+ 
+diff --git a/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h b/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h
+index f68b573ab4a0..0b7eaf6b5813 100644
+--- a/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h
++++ b/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h
+@@ -136,51 +136,6 @@
+ #define CKEN		io_p2v(0x41300004)  /* Clock Enable Register */
+ #define OSCC		io_p2v(0x41300008)  /* Oscillator Configuration Register */
+ 
+-#define CCCR_N_MASK	0x0380	/* Run Mode Frequency to Turbo Mode Frequency Multiplier */
+-#define CCCR_M_MASK	0x0060	/* Memory Frequency to Run Mode Frequency Multiplier */
+-#define CCCR_L_MASK	0x001f	/* Crystal Frequency to Memory Frequency Multiplier */
+-
+-#define CCCR_CPDIS_BIT	(31)
+-#define CCCR_PPDIS_BIT	(30)
+-#define CCCR_LCD_26_BIT	(27)
+-#define CCCR_A_BIT	(25)
+-
+-#define CCSR_N2_MASK	CCCR_N_MASK
+-#define CCSR_M_MASK	CCCR_M_MASK
+-#define CCSR_L_MASK	CCCR_L_MASK
+-#define CCSR_N2_SHIFT	7
+-
+-#define CKEN_AC97CONF   (31)    /* AC97 Controller Configuration */
+-#define CKEN_CAMERA	(24)	/* Camera Interface Clock Enable */
+-#define CKEN_SSP1	(23)	/* SSP1 Unit Clock Enable */
+-#define CKEN_MEMC	(22)	/* Memory Controller Clock Enable */
+-#define CKEN_MEMSTK	(21)	/* Memory Stick Host Controller */
+-#define CKEN_IM		(20)	/* Internal Memory Clock Enable */
+-#define CKEN_KEYPAD	(19)	/* Keypad Interface Clock Enable */
+-#define CKEN_USIM	(18)	/* USIM Unit Clock Enable */
+-#define CKEN_MSL	(17)	/* MSL Unit Clock Enable */
+-#define CKEN_LCD	(16)	/* LCD Unit Clock Enable */
+-#define CKEN_PWRI2C	(15)	/* PWR I2C Unit Clock Enable */
+-#define CKEN_I2C	(14)	/* I2C Unit Clock Enable */
+-#define CKEN_FICP	(13)	/* FICP Unit Clock Enable */
+-#define CKEN_MMC	(12)	/* MMC Unit Clock Enable */
+-#define CKEN_USB	(11)	/* USB Unit Clock Enable */
+-#define CKEN_ASSP	(10)	/* ASSP (SSP3) Clock Enable */
+-#define CKEN_USBHOST	(10)	/* USB Host Unit Clock Enable */
+-#define CKEN_OSTIMER	(9)	/* OS Timer Unit Clock Enable */
+-#define CKEN_NSSP	(9)	/* NSSP (SSP2) Clock Enable */
+-#define CKEN_I2S	(8)	/* I2S Unit Clock Enable */
+-#define CKEN_BTUART	(7)	/* BTUART Unit Clock Enable */
+-#define CKEN_FFUART	(6)	/* FFUART Unit Clock Enable */
+-#define CKEN_STUART	(5)	/* STUART Unit Clock Enable */
+-#define CKEN_HWUART	(4)	/* HWUART Unit Clock Enable */
+-#define CKEN_SSP3	(4)	/* SSP3 Unit Clock Enable */
+-#define CKEN_SSP	(3)	/* SSP Unit Clock Enable */
+-#define CKEN_SSP2	(3)	/* SSP2 Unit Clock Enable */
+-#define CKEN_AC97	(2)	/* AC97 Unit Clock Enable */
+-#define CKEN_PWM1	(1)	/* PWM1 Clock Enable */
+-#define CKEN_PWM0	(0)	/* PWM0 Clock Enable */
+-
+ #define OSCC_OON	(1 << 1)	/* 32.768kHz OON (write-once only bit) */
+ #define OSCC_OOK	(1 << 0)	/* 32.768kHz OOK (read-only bit) */
+ 
+diff --git a/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h b/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h
+index 8eb1ba533e1c..4b11cf81a9e6 100644
+--- a/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h
++++ b/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h
+@@ -131,73 +131,4 @@
+ #define CKENC		__REG(0x41340024)	/* C Clock Enable Register */
+ #define AC97_DIV	__REG(0x41340014)	/* AC97 clock divisor value register */
+ 
+-#define ACCR_XPDIS		(1 << 31)	/* Core PLL Output Disable */
+-#define ACCR_SPDIS		(1 << 30)	/* System PLL Output Disable */
+-#define ACCR_D0CS		(1 << 26)	/* D0 Mode Clock Select */
+-#define ACCR_PCCE		(1 << 11)	/* Power Mode Change Clock Enable */
+-#define ACCR_DDR_D0CS		(1 << 7)	/* DDR SDRAM clock frequency in D0CS (PXA31x only) */
+-
+-#define ACCR_SMCFS_MASK		(0x7 << 23)	/* Static Memory Controller Frequency Select */
+-#define ACCR_SFLFS_MASK		(0x3 << 18)	/* Frequency Select for Internal Memory Controller */
+-#define ACCR_XSPCLK_MASK	(0x3 << 16)	/* Core Frequency during Frequency Change */
+-#define ACCR_HSS_MASK		(0x3 << 14)	/* System Bus-Clock Frequency Select */
+-#define ACCR_DMCFS_MASK		(0x3 << 12)	/* Dynamic Memory Controller Clock Frequency Select */
+-#define ACCR_XN_MASK		(0x7 << 8)	/* Core PLL Turbo-Mode-to-Run-Mode Ratio */
+-#define ACCR_XL_MASK		(0x1f)		/* Core PLL Run-Mode-to-Oscillator Ratio */
+-
+-#define ACCR_SMCFS(x)		(((x) & 0x7) << 23)
+-#define ACCR_SFLFS(x)		(((x) & 0x3) << 18)
+-#define ACCR_XSPCLK(x)		(((x) & 0x3) << 16)
+-#define ACCR_HSS(x)		(((x) & 0x3) << 14)
+-#define ACCR_DMCFS(x)		(((x) & 0x3) << 12)
+-#define ACCR_XN(x)		(((x) & 0x7) << 8)
+-#define ACCR_XL(x)		((x) & 0x1f)
+-
+-/*
+- * Clock Enable Bit
+- */
+-#define CKEN_LCD	1	/* < LCD Clock Enable */
+-#define CKEN_USBH	2	/* < USB host clock enable */
+-#define CKEN_CAMERA	3	/* < Camera interface clock enable */
+-#define CKEN_NAND	4	/* < NAND Flash Controller Clock Enable */
+-#define CKEN_USB2	6	/* < USB 2.0 client clock enable. */
+-#define CKEN_DMC	8	/* < Dynamic Memory Controller clock enable */
+-#define CKEN_SMC	9	/* < Static Memory Controller clock enable */
+-#define CKEN_ISC	10	/* < Internal SRAM Controller clock enable */
+-#define CKEN_BOOT	11	/* < Boot rom clock enable */
+-#define CKEN_MMC1	12	/* < MMC1 Clock enable */
+-#define CKEN_MMC2	13	/* < MMC2 clock enable */
+-#define CKEN_KEYPAD	14	/* < Keypand Controller Clock Enable */
+-#define CKEN_CIR	15	/* < Consumer IR Clock Enable */
+-#define CKEN_USIM0	17	/* < USIM[0] Clock Enable */
+-#define CKEN_USIM1	18	/* < USIM[1] Clock Enable */
+-#define CKEN_TPM	19	/* < TPM clock enable */
+-#define CKEN_UDC	20	/* < UDC clock enable */
+-#define CKEN_BTUART	21	/* < BTUART clock enable */
+-#define CKEN_FFUART	22	/* < FFUART clock enable */
+-#define CKEN_STUART	23	/* < STUART clock enable */
+-#define CKEN_AC97	24	/* < AC97 clock enable */
+-#define CKEN_TOUCH	25	/* < Touch screen Interface Clock Enable */
+-#define CKEN_SSP1	26	/* < SSP1 clock enable */
+-#define CKEN_SSP2	27	/* < SSP2 clock enable */
+-#define CKEN_SSP3	28	/* < SSP3 clock enable */
+-#define CKEN_SSP4	29	/* < SSP4 clock enable */
+-#define CKEN_MSL0	30	/* < MSL0 clock enable */
+-#define CKEN_PWM0	32	/* < PWM[0] clock enable */
+-#define CKEN_PWM1	33	/* < PWM[1] clock enable */
+-#define CKEN_I2C	36	/* < I2C clock enable */
+-#define CKEN_INTC	38	/* < Interrupt controller clock enable */
+-#define CKEN_GPIO	39	/* < GPIO clock enable */
+-#define CKEN_1WIRE	40	/* < 1-wire clock enable */
+-#define CKEN_HSIO2	41	/* < HSIO2 clock enable */
+-#define CKEN_MINI_IM	48	/* < Mini-IM */
+-#define CKEN_MINI_LCD	49	/* < Mini LCD */
+-
+-#define CKEN_MMC3	5	/* < MMC3 Clock Enable */
+-#define CKEN_MVED	43	/* < MVED clock enable */
+-
+-/* Note: GCU clock enable bit differs on PXA300/PXA310 and PXA320 */
+-#define CKEN_PXA300_GCU		42	/* Graphics controller clock enable */
+-#define CKEN_PXA320_GCU		7	/* Graphics controller clock enable */
+-
+ #endif /* __ASM_ARCH_PXA3XX_REGS_H */
+diff --git a/arch/arm/mach-pxa/sleep.S b/arch/arm/mach-pxa/sleep.S
+index 272efeb954f4..ab50fe2cf923 100644
+--- a/arch/arm/mach-pxa/sleep.S
++++ b/arch/arm/mach-pxa/sleep.S
+@@ -18,7 +18,9 @@
+ 
+ #define MDREFR_KDIV	0x200a4000	// all banks
+ #define CCCR_SLEEP	0x00000107	// L=7 2N=2 A=0 PPDIS=0 CPDIS=0
+-
++#define CCCR_N_MASK     0x00000380
++#define CCCR_M_MASK     0x00000060
++#define CCCR_L_MASK     0x0000001f
+ 		.text
+ 
+ #ifdef CONFIG_PXA3xx
+diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
+index 831180360069..03de634efc52 100644
+--- a/drivers/clk/pxa/clk-pxa.c
++++ b/drivers/clk/pxa/clk-pxa.c
+@@ -95,7 +95,8 @@ void __init clkdev_pxa_register(int ckid, const char *con_id,
+ 		clk_register_clkdev(clk, con_id, dev_id);
+ }
+ 
+-int __init clk_pxa_cken_init(const struct desc_clk_cken *clks, int nb_clks)
++int __init clk_pxa_cken_init(const struct desc_clk_cken *clks,
++			     int nb_clks, void __iomem *clk_regs)
+ {
+ 	int i;
+ 	struct pxa_clk *pxa_clk;
+@@ -107,6 +108,7 @@ int __init clk_pxa_cken_init(const struct desc_clk_cken *clks, int nb_clks)
+ 		pxa_clk->lp = clks[i].lp;
+ 		pxa_clk->hp = clks[i].hp;
+ 		pxa_clk->gate = clks[i].gate;
++		pxa_clk->gate.reg = clk_regs + clks[i].cken_reg;
+ 		pxa_clk->gate.lock = &pxa_clk_lock;
+ 		clk = clk_register_composite(NULL, clks[i].name,
+ 					     clks[i].parent_names, 2,
+diff --git a/drivers/clk/pxa/clk-pxa.h b/drivers/clk/pxa/clk-pxa.h
+index d81fbec42004..879c31ced385 100644
+--- a/drivers/clk/pxa/clk-pxa.h
++++ b/drivers/clk/pxa/clk-pxa.h
+@@ -105,6 +105,7 @@
+ struct desc_clk_cken {
+ 	struct clk_hw hw;
+ 	int ckid;
++	int cken_reg;
+ 	const char *name;
+ 	const char *dev_id;
+ 	const char *con_id;
+@@ -119,11 +120,12 @@ struct desc_clk_cken {
+ #define PXA_CKEN(_dev_id, _con_id, _name, parents, _mult_lp, _div_lp,	\
+ 		 _mult_hp, _div_hp, is_lp, _cken_reg, _cken_bit, flag)	\
+ 	{ .ckid = CLK_ ## _name, .name = #_name,			\
++	  .cken_reg = _cken_reg,					\
+ 	  .dev_id = _dev_id, .con_id = _con_id,	.parent_names = parents,\
+ 	  .lp = { .mult = _mult_lp, .div = _div_lp },			\
+ 	  .hp = { .mult = _mult_hp, .div = _div_hp },			\
+ 	  .is_in_low_power = is_lp,					\
+-	  .gate = { .reg = (void __iomem *)_cken_reg, .bit_idx = _cken_bit }, \
++	  .gate = { .bit_idx = _cken_bit }, \
+ 	  .flags = flag,						\
+ 	}
+ #define PXA_CKEN_1RATE(dev_id, con_id, name, parents, cken_reg,		\
+@@ -147,7 +149,7 @@ static inline int dummy_clk_set_parent(struct clk_hw *hw, u8 index)
+ extern void clkdev_pxa_register(int ckid, const char *con_id,
+ 				const char *dev_id, struct clk *clk);
+ extern int clk_pxa_cken_init(const struct desc_clk_cken *clks,
+-			     int nb_clks);
++			     int nb_clks, void __iomem *clk_regs);
+ void clk_pxa_dt_common_init(struct device_node *np);
+ 
+ void pxa2xx_core_turbo_switch(bool on);
+diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
+index 65807f000c6a..d311ecf8520d 100644
+--- a/drivers/clk/pxa/clk-pxa25x.c
++++ b/drivers/clk/pxa/clk-pxa25x.c
+@@ -14,11 +14,11 @@
+ #include <linux/clkdev.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+-#include <mach/pxa2xx-regs.h>
+ #include <linux/soc/pxa/smemc.h>
+ 
+ #include <dt-bindings/clock/pxa-clock.h>
+ #include "clk-pxa.h"
++#include "clk-pxa2xx.h"
+ 
+ #define KHz 1000
+ #define MHz (1000 * 1000)
+@@ -39,6 +39,7 @@ enum {
+ /*
+  * Various clock factors driven by the CCCR register.
+  */
++static void __iomem *clk_regs;
+ 
+ /* Crystal Frequency to Memory Frequency Multiplier (L) */
+ static unsigned char L_clk_mult[32] = { 0, 27, 32, 36, 40, 45, 0, };
+@@ -97,7 +98,7 @@ unsigned int pxa25x_get_clk_frequency_khz(int info)
+ static unsigned long clk_pxa25x_memory_get_rate(struct clk_hw *hw,
+ 						unsigned long parent_rate)
+ {
+-	unsigned long cccr = readl(CCCR);
++	unsigned long cccr = readl(clk_regs + CCCR);
+ 	unsigned int m = M_clk_mult[(cccr >> 5) & 0x03];
+ 
+ 	return parent_rate / m;
+@@ -201,7 +202,7 @@ MUX_OPS(clk_pxa25x_core, "core", CLK_SET_RATE_PARENT);
+ static unsigned long clk_pxa25x_run_get_rate(struct clk_hw *hw,
+ 					     unsigned long parent_rate)
+ {
+-	unsigned long cccr = readl(CCCR);
++	unsigned long cccr = readl(clk_regs + CCCR);
+ 	unsigned int n2 = N2_clk_mult[(cccr >> 7) & 0x07];
+ 
+ 	return (parent_rate / n2) * 2;
+@@ -212,7 +213,7 @@ RATE_RO_OPS(clk_pxa25x_run, "run");
+ static unsigned long clk_pxa25x_cpll_get_rate(struct clk_hw *hw,
+ 	unsigned long parent_rate)
+ {
+-	unsigned long clkcfg, cccr = readl(CCCR);
++	unsigned long clkcfg, cccr = readl(clk_regs + CCCR);
+ 	unsigned int l, m, n2, t;
+ 
+ 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
+@@ -244,7 +245,7 @@ static int clk_pxa25x_cpll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (i >= ARRAY_SIZE(pxa25x_freqs))
+ 		return -EINVAL;
+ 
+-	pxa2xx_cpll_change(&pxa25x_freqs[i], mdrefr_dri, CCCR);
++	pxa2xx_cpll_change(&pxa25x_freqs[i], mdrefr_dri, clk_regs + CCCR);
+ 
+ 	return 0;
+ }
+@@ -321,16 +322,17 @@ static void __init pxa25x_dummy_clocks_init(void)
+ 	}
+ }
+ 
+-int __init pxa25x_clocks_init(void)
++int __init pxa25x_clocks_init(void __iomem *regs)
+ {
++	clk_regs = regs;
+ 	pxa25x_base_clocks_init();
+ 	pxa25x_dummy_clocks_init();
+-	return clk_pxa_cken_init(pxa25x_clocks, ARRAY_SIZE(pxa25x_clocks));
++	return clk_pxa_cken_init(pxa25x_clocks, ARRAY_SIZE(pxa25x_clocks), clk_regs);
+ }
+ 
+ static void __init pxa25x_dt_clocks_init(struct device_node *np)
+ {
+-	pxa25x_clocks_init();
++	pxa25x_clocks_init(ioremap(0x41300000ul, 0x10));
+ 	clk_pxa_dt_common_init(np);
+ }
+ CLK_OF_DECLARE(pxa25x_clks, "marvell,pxa250-core-clocks",
+diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
+index eac67d425bee..4517ee28e7c5 100644
+--- a/drivers/clk/pxa/clk-pxa27x.c
++++ b/drivers/clk/pxa/clk-pxa27x.c
+@@ -7,7 +7,6 @@
+  * Heavily inspired from former arch/arm/mach-pxa/clock.c.
+  */
+ #include <linux/clk-provider.h>
+-#include <mach/pxa2xx-regs.h>
+ #include <linux/io.h>
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
+@@ -16,6 +15,7 @@
+ 
+ #include <dt-bindings/clock/pxa-clock.h>
+ #include "clk-pxa.h"
++#include "clk-pxa2xx.h"
+ 
+ #define KHz 1000
+ #define MHz (1000 * 1000)
+@@ -52,6 +52,8 @@ enum {
+ /* Define the refresh period in mSec for the SDRAM and the number of rows */
+ #define SDRAM_TREF	64	/* standard 64ms SDRAM */
+ 
++static void __iomem *clk_regs;
++
+ static const char * const get_freq_khz[] = {
+ 	"core", "run", "cpll", "memory",
+ 	"system_bus"
+@@ -99,7 +101,7 @@ unsigned int pxa27x_get_clk_frequency_khz(int info)
+ 
+ bool pxa27x_is_ppll_disabled(void)
+ {
+-	unsigned long ccsr = readl(CCSR);
++	unsigned long ccsr = readl(clk_regs + CCSR);
+ 
+ 	return ccsr & (1 << CCCR_PPDIS_BIT);
+ }
+@@ -201,7 +203,7 @@ static unsigned long clk_pxa27x_cpll_get_rate(struct clk_hw *hw,
+ 	unsigned long clkcfg;
+ 	unsigned int t, ht;
+ 	unsigned int l, L, n2, N;
+-	unsigned long ccsr = readl(CCSR);
++	unsigned long ccsr = readl(clk_regs + CCSR);
+ 
+ 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
+ 	t  = clkcfg & (1 << 0);
+@@ -235,7 +237,7 @@ static int clk_pxa27x_cpll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (i >= ARRAY_SIZE(pxa27x_freqs))
+ 		return -EINVAL;
+ 
+-	pxa2xx_cpll_change(&pxa27x_freqs[i], mdrefr_dri, CCCR);
++	pxa2xx_cpll_change(&pxa27x_freqs[i], mdrefr_dri, clk_regs + CCCR);
+ 	return 0;
+ }
+ 
+@@ -246,8 +248,8 @@ static unsigned long clk_pxa27x_lcd_base_get_rate(struct clk_hw *hw,
+ 						  unsigned long parent_rate)
+ {
+ 	unsigned int l, osc_forced;
+-	unsigned long ccsr = readl(CCSR);
+-	unsigned long cccr = readl(CCCR);
++	unsigned long ccsr = readl(clk_regs + CCSR);
++	unsigned long cccr = readl(clk_regs + CCCR);
+ 
+ 	l  = ccsr & CCSR_L_MASK;
+ 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
+@@ -268,7 +270,7 @@ static unsigned long clk_pxa27x_lcd_base_get_rate(struct clk_hw *hw,
+ static u8 clk_pxa27x_lcd_base_get_parent(struct clk_hw *hw)
+ {
+ 	unsigned int osc_forced;
+-	unsigned long ccsr = readl(CCSR);
++	unsigned long ccsr = readl(clk_regs + CCSR);
+ 
+ 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
+ 	if (osc_forced)
+@@ -297,7 +299,7 @@ static u8 clk_pxa27x_core_get_parent(struct clk_hw *hw)
+ {
+ 	unsigned long clkcfg;
+ 	unsigned int t, ht, osc_forced;
+-	unsigned long ccsr = readl(CCSR);
++	unsigned long ccsr = readl(clk_regs + CCSR);
+ 
+ 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
+ 	if (osc_forced)
+@@ -334,7 +336,7 @@ MUX_OPS(clk_pxa27x_core, "core", CLK_SET_RATE_PARENT);
+ static unsigned long clk_pxa27x_run_get_rate(struct clk_hw *hw,
+ 					     unsigned long parent_rate)
+ {
+-	unsigned long ccsr = readl(CCSR);
++	unsigned long ccsr = readl(clk_regs + CCSR);
+ 	unsigned int n2 = (ccsr & CCSR_N2_MASK) >> CCSR_N2_SHIFT;
+ 
+ 	return (parent_rate / n2) * 2;
+@@ -357,7 +359,7 @@ static unsigned long clk_pxa27x_system_bus_get_rate(struct clk_hw *hw,
+ {
+ 	unsigned long clkcfg;
+ 	unsigned int b, osc_forced;
+-	unsigned long ccsr = readl(CCSR);
++	unsigned long ccsr = readl(clk_regs + CCSR);
+ 
+ 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
+ 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
+@@ -374,7 +376,7 @@ static unsigned long clk_pxa27x_system_bus_get_rate(struct clk_hw *hw,
+ static u8 clk_pxa27x_system_bus_get_parent(struct clk_hw *hw)
+ {
+ 	unsigned int osc_forced;
+-	unsigned long ccsr = readl(CCSR);
++	unsigned long ccsr = readl(clk_regs + CCSR);
+ 
+ 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
+ 	if (osc_forced)
+@@ -390,8 +392,8 @@ static unsigned long clk_pxa27x_memory_get_rate(struct clk_hw *hw,
+ 						unsigned long parent_rate)
+ {
+ 	unsigned int a, l, osc_forced;
+-	unsigned long cccr = readl(CCCR);
+-	unsigned long ccsr = readl(CCSR);
++	unsigned long cccr = readl(clk_regs + CCCR);
++	unsigned long ccsr = readl(clk_regs + CCSR);
+ 
+ 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
+ 	a = cccr & (1 << CCCR_A_BIT);
+@@ -409,8 +411,8 @@ static unsigned long clk_pxa27x_memory_get_rate(struct clk_hw *hw,
+ static u8 clk_pxa27x_memory_get_parent(struct clk_hw *hw)
+ {
+ 	unsigned int osc_forced, a;
+-	unsigned long cccr = readl(CCCR);
+-	unsigned long ccsr = readl(CCSR);
++	unsigned long cccr = readl(clk_regs + CCCR);
++	unsigned long ccsr = readl(clk_regs + CCSR);
+ 
+ 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
+ 	a = cccr & (1 << CCCR_A_BIT);
+@@ -464,16 +466,17 @@ static void __init pxa27x_base_clocks_init(void)
+ 	clk_register_clk_pxa27x_lcd_base();
+ }
+ 
+-int __init pxa27x_clocks_init(void)
++int __init pxa27x_clocks_init(void __iomem *regs)
+ {
++	clk_regs = regs;
+ 	pxa27x_base_clocks_init();
+ 	pxa27x_dummy_clocks_init();
+-	return clk_pxa_cken_init(pxa27x_clocks, ARRAY_SIZE(pxa27x_clocks));
++	return clk_pxa_cken_init(pxa27x_clocks, ARRAY_SIZE(pxa27x_clocks), regs);
+ }
+ 
+ static void __init pxa27x_dt_clocks_init(struct device_node *np)
+ {
+-	pxa27x_clocks_init();
++	pxa27x_clocks_init(ioremap(0x41300000ul, 0x10));
+ 	clk_pxa_dt_common_init(np);
+ }
+ CLK_OF_DECLARE(pxa_clks, "marvell,pxa270-clocks", pxa27x_dt_clocks_init);
+diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
+index 08594fc899e2..42958a542662 100644
+--- a/drivers/clk/pxa/clk-pxa3xx.c
++++ b/drivers/clk/pxa/clk-pxa3xx.c
+@@ -17,7 +17,6 @@
+ #include <linux/soc/pxa/cpu.h>
+ #include <linux/soc/pxa/smemc.h>
+ #include <linux/clk/pxa.h>
+-#include <mach/pxa3xx-regs.h>
+ 
+ #include <dt-bindings/clock/pxa-clock.h>
+ #include "clk-pxa.h"
+@@ -25,6 +24,84 @@
+ #define KHz 1000
+ #define MHz (1000 * 1000)
+ 
++#define ACCR			(0x0000)	/* Application Subsystem Clock Configuration Register */
++#define ACSR			(0x0004)	/* Application Subsystem Clock Status Register */
++#define AICSR			(0x0008)	/* Application Subsystem Interrupt Control/Status Register */
++#define CKENA			(0x000C)	/* A Clock Enable Register */
++#define CKENB			(0x0010)	/* B Clock Enable Register */
++#define CKENC			(0x0024)	/* C Clock Enable Register */
++#define AC97_DIV		(0x0014)	/* AC97 clock divisor value register */
++
++#define ACCR_XPDIS		(1 << 31)	/* Core PLL Output Disable */
++#define ACCR_SPDIS		(1 << 30)	/* System PLL Output Disable */
++#define ACCR_D0CS		(1 << 26)	/* D0 Mode Clock Select */
++#define ACCR_PCCE		(1 << 11)	/* Power Mode Change Clock Enable */
++#define ACCR_DDR_D0CS		(1 << 7)	/* DDR SDRAM clock frequency in D0CS (PXA31x only) */
++
++#define ACCR_SMCFS_MASK		(0x7 << 23)	/* Static Memory Controller Frequency Select */
++#define ACCR_SFLFS_MASK		(0x3 << 18)	/* Frequency Select for Internal Memory Controller */
++#define ACCR_XSPCLK_MASK	(0x3 << 16)	/* Core Frequency during Frequency Change */
++#define ACCR_HSS_MASK		(0x3 << 14)	/* System Bus-Clock Frequency Select */
++#define ACCR_DMCFS_MASK		(0x3 << 12)	/* Dynamic Memory Controller Clock Frequency Select */
++#define ACCR_XN_MASK		(0x7 << 8)	/* Core PLL Turbo-Mode-to-Run-Mode Ratio */
++#define ACCR_XL_MASK		(0x1f)		/* Core PLL Run-Mode-to-Oscillator Ratio */
++
++#define ACCR_SMCFS(x)		(((x) & 0x7) << 23)
++#define ACCR_SFLFS(x)		(((x) & 0x3) << 18)
++#define ACCR_XSPCLK(x)		(((x) & 0x3) << 16)
++#define ACCR_HSS(x)		(((x) & 0x3) << 14)
++#define ACCR_DMCFS(x)		(((x) & 0x3) << 12)
++#define ACCR_XN(x)		(((x) & 0x7) << 8)
++#define ACCR_XL(x)		((x) & 0x1f)
++
++/*
++ * Clock Enable Bit
++ */
++#define CKEN_LCD	1	/* < LCD Clock Enable */
++#define CKEN_USBH	2	/* < USB host clock enable */
++#define CKEN_CAMERA	3	/* < Camera interface clock enable */
++#define CKEN_NAND	4	/* < NAND Flash Controller Clock Enable */
++#define CKEN_USB2	6	/* < USB 2.0 client clock enable. */
++#define CKEN_DMC	8	/* < Dynamic Memory Controller clock enable */
++#define CKEN_SMC	9	/* < Static Memory Controller clock enable */
++#define CKEN_ISC	10	/* < Internal SRAM Controller clock enable */
++#define CKEN_BOOT	11	/* < Boot rom clock enable */
++#define CKEN_MMC1	12	/* < MMC1 Clock enable */
++#define CKEN_MMC2	13	/* < MMC2 clock enable */
++#define CKEN_KEYPAD	14	/* < Keypand Controller Clock Enable */
++#define CKEN_CIR	15	/* < Consumer IR Clock Enable */
++#define CKEN_USIM0	17	/* < USIM[0] Clock Enable */
++#define CKEN_USIM1	18	/* < USIM[1] Clock Enable */
++#define CKEN_TPM	19	/* < TPM clock enable */
++#define CKEN_UDC	20	/* < UDC clock enable */
++#define CKEN_BTUART	21	/* < BTUART clock enable */
++#define CKEN_FFUART	22	/* < FFUART clock enable */
++#define CKEN_STUART	23	/* < STUART clock enable */
++#define CKEN_AC97	24	/* < AC97 clock enable */
++#define CKEN_TOUCH	25	/* < Touch screen Interface Clock Enable */
++#define CKEN_SSP1	26	/* < SSP1 clock enable */
++#define CKEN_SSP2	27	/* < SSP2 clock enable */
++#define CKEN_SSP3	28	/* < SSP3 clock enable */
++#define CKEN_SSP4	29	/* < SSP4 clock enable */
++#define CKEN_MSL0	30	/* < MSL0 clock enable */
++#define CKEN_PWM0	32	/* < PWM[0] clock enable */
++#define CKEN_PWM1	33	/* < PWM[1] clock enable */
++#define CKEN_I2C	36	/* < I2C clock enable */
++#define CKEN_INTC	38	/* < Interrupt controller clock enable */
++#define CKEN_GPIO	39	/* < GPIO clock enable */
++#define CKEN_1WIRE	40	/* < 1-wire clock enable */
++#define CKEN_HSIO2	41	/* < HSIO2 clock enable */
++#define CKEN_MINI_IM	48	/* < Mini-IM */
++#define CKEN_MINI_LCD	49	/* < Mini LCD */
++
++#define CKEN_MMC3	5	/* < MMC3 Clock Enable */
++#define CKEN_MVED	43	/* < MVED clock enable */
++
++/* Note: GCU clock enable bit differs on PXA300/PXA310 and PXA320 */
++#define CKEN_PXA300_GCU		42	/* Graphics controller clock enable */
++#define CKEN_PXA320_GCU		7	/* Graphics controller clock enable */
++
++
+ enum {
+ 	PXA_CORE_60Mhz = 0,
+ 	PXA_CORE_RUN,
+@@ -45,6 +122,8 @@ static const char * const get_freq_khz[] = {
+ 	"core", "ring_osc_60mhz", "run", "cpll", "system_bus"
+ };
+ 
++static void __iomem *clk_regs;
++
+ /*
+  * Get the clock frequency as reflected by ACSR and the turbo flag.
+  * We assume these values have been applied via a fcs.
+@@ -80,16 +159,16 @@ unsigned int pxa3xx_get_clk_frequency_khz(int info)
+ 
+ void pxa3xx_clk_update_accr(u32 disable, u32 enable, u32 xclkcfg, u32 mask)
+ {
+-	u32 accr = ACCR;
++	u32 accr = readl(clk_regs + ACCR);
+ 
+ 	accr &= ~disable;
+ 	accr |= enable;
+ 
+-	ACCR = accr;
++	writel(accr, ACCR);
+ 	if (xclkcfg)
+ 		__asm__("mcr p14, 0, %0, c6, c0, 0\n" : : "r"(xclkcfg));
+ 
+-	while ((ACSR & mask) != (accr & mask))
++	while ((readl(clk_regs + ACSR) & mask) != (accr & mask))
+ 		cpu_relax();
+ }
+ 
+@@ -98,7 +177,7 @@ static unsigned long clk_pxa3xx_ac97_get_rate(struct clk_hw *hw,
+ {
+ 	unsigned long ac97_div, rate;
+ 
+-	ac97_div = AC97_DIV;
++	ac97_div = readl(clk_regs + AC97_DIV);
+ 
+ 	/* This may loose precision for some rates but won't for the
+ 	 * standard 24.576MHz.
+@@ -115,7 +194,7 @@ RATE_RO_OPS(clk_pxa3xx_ac97, "ac97");
+ static unsigned long clk_pxa3xx_smemc_get_rate(struct clk_hw *hw,
+ 					      unsigned long parent_rate)
+ {
+-	unsigned long acsr = ACSR;
++	unsigned long acsr = readl(clk_regs + ACSR);
+ 
+ 	return (parent_rate / 48)  * smcfs_mult[(acsr >> 23) & 0x7] /
+ 		pxa3xx_smemc_get_memclkdiv();
+@@ -126,7 +205,7 @@ RATE_RO_OPS(clk_pxa3xx_smemc, "smemc");
+ 
+ static bool pxa3xx_is_ring_osc_forced(void)
+ {
+-	unsigned long acsr = ACSR;
++	unsigned long acsr = readl(clk_regs + ACSR);
+ 
+ 	return acsr & ACCR_D0CS;
+ }
+@@ -138,7 +217,7 @@ PARENTS(pxa3xx_ac97_bus) = { "ring_osc_60mhz", "ac97" };
+ PARENTS(pxa3xx_sbus) = { "ring_osc_60mhz", "system_bus" };
+ PARENTS(pxa3xx_smemcbus) = { "ring_osc_60mhz", "smemc" };
+ 
+-#define CKEN_AB(bit) ((CKEN_ ## bit > 31) ? &CKENB : &CKENA)
++#define CKEN_AB(bit) ((CKEN_ ## bit > 31) ? CKENB : CKENA)
+ #define PXA3XX_CKEN(dev_id, con_id, parents, mult_lp, div_lp, mult_hp,	\
+ 		    div_hp, bit, is_lp, flags)				\
+ 	PXA_CKEN(dev_id, con_id, bit, parents, mult_lp, div_lp,		\
+@@ -206,7 +285,7 @@ static struct desc_clk_cken pxa93x_clocks[] __initdata = {
+ static unsigned long clk_pxa3xx_system_bus_get_rate(struct clk_hw *hw,
+ 					    unsigned long parent_rate)
+ {
+-	unsigned long acsr = ACSR;
++	unsigned long acsr = readl(clk_regs + ACSR);
+ 	unsigned int hss = (acsr >> 14) & 0x3;
+ 
+ 	if (pxa3xx_is_ring_osc_forced())
+@@ -253,7 +332,7 @@ MUX_RO_RATE_RO_OPS(clk_pxa3xx_core, "core");
+ static unsigned long clk_pxa3xx_run_get_rate(struct clk_hw *hw,
+ 					     unsigned long parent_rate)
+ {
+-	unsigned long acsr = ACSR;
++	unsigned long acsr = readl(clk_regs + ACSR);
+ 	unsigned int xn = (acsr & ACCR_XN_MASK) >> 8;
+ 	unsigned int t, xclkcfg;
+ 
+@@ -269,7 +348,7 @@ RATE_RO_OPS(clk_pxa3xx_run, "run");
+ static unsigned long clk_pxa3xx_cpll_get_rate(struct clk_hw *hw,
+ 	unsigned long parent_rate)
+ {
+-	unsigned long acsr = ACSR;
++	unsigned long acsr = readl(clk_regs + ACSR);
+ 	unsigned int xn = (acsr & ACCR_XN_MASK) >> 8;
+ 	unsigned int xl = acsr & ACCR_XL_MASK;
+ 	unsigned int t, xclkcfg;
+@@ -340,7 +419,7 @@ static void __init pxa3xx_dummy_clocks_init(void)
+ 	}
+ }
+ 
+-static void __init pxa3xx_base_clocks_init(void)
++static void __init pxa3xx_base_clocks_init(void __iomem *oscc_reg)
+ {
+ 	struct clk *clk;
+ 
+@@ -350,34 +429,35 @@ static void __init pxa3xx_base_clocks_init(void)
+ 	clk_register_clk_pxa3xx_ac97();
+ 	clk_register_clk_pxa3xx_smemc();
+ 	clk = clk_register_gate(NULL, "CLK_POUT",
+-				"osc_13mhz", 0, OSCC, 11, 0, NULL);
++				"osc_13mhz", 0, oscc_reg, 11, 0, NULL);
+ 	clk_register_clkdev(clk, "CLK_POUT", NULL);
+ 	clkdev_pxa_register(CLK_OSTIMER, "OSTIMER0", NULL,
+ 			    clk_register_fixed_factor(NULL, "os-timer0",
+ 						      "osc_13mhz", 0, 1, 4));
+ }
+ 
+-int __init pxa3xx_clocks_init(void)
++int __init pxa3xx_clocks_init(void __iomem *regs, void __iomem *oscc_reg)
+ {
+ 	int ret;
+ 
+-	pxa3xx_base_clocks_init();
++	clk_regs = regs;
++	pxa3xx_base_clocks_init(oscc_reg);
+ 	pxa3xx_dummy_clocks_init();
+-	ret = clk_pxa_cken_init(pxa3xx_clocks, ARRAY_SIZE(pxa3xx_clocks));
++	ret = clk_pxa_cken_init(pxa3xx_clocks, ARRAY_SIZE(pxa3xx_clocks), regs);
+ 	if (ret)
+ 		return ret;
+ 	if (cpu_is_pxa320())
+ 		return clk_pxa_cken_init(pxa320_clocks,
+-					 ARRAY_SIZE(pxa320_clocks));
++					 ARRAY_SIZE(pxa320_clocks), regs);
+ 	if (cpu_is_pxa300() || cpu_is_pxa310())
+ 		return clk_pxa_cken_init(pxa300_310_clocks,
+-					 ARRAY_SIZE(pxa300_310_clocks));
+-	return clk_pxa_cken_init(pxa93x_clocks, ARRAY_SIZE(pxa93x_clocks));
++					 ARRAY_SIZE(pxa300_310_clocks), regs);
++	return clk_pxa_cken_init(pxa93x_clocks, ARRAY_SIZE(pxa93x_clocks), regs);
+ }
+ 
+ static void __init pxa3xx_dt_clocks_init(struct device_node *np)
+ {
+-	pxa3xx_clocks_init();
++	pxa3xx_clocks_init(ioremap(0x41340000, 0x10), ioremap(0x41350000, 4));
+ 	clk_pxa_dt_common_init(np);
+ }
+ CLK_OF_DECLARE(pxa_clks, "marvell,pxa300-clocks", pxa3xx_dt_clocks_init);
+diff --git a/include/linux/clk/pxa.h b/include/linux/clk/pxa.h
+index e5516c608c99..736b8bb91bd7 100644
+--- a/include/linux/clk/pxa.h
++++ b/include/linux/clk/pxa.h
+@@ -1,5 +1,12 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ 
++#include <linux/compiler.h>
++#include <linux/types.h>
++
++extern int pxa25x_clocks_init(void __iomem *regs);
++extern int pxa27x_clocks_init(void __iomem *regs);
++extern int pxa3xx_clocks_init(void __iomem *regs, void __iomem *oscc_reg);
++
+ #ifdef CONFIG_PXA3xx
+ extern unsigned	pxa3xx_get_clk_frequency_khz(int);
+ extern void pxa3xx_clk_update_accr(u32 disable, u32 enable, u32 xclkcfg, u32 mask);
+-- 
+2.20.0
+
