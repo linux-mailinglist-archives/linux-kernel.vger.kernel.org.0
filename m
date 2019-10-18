@@ -2,33 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8BE0DBC64
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB1E4DBC8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436451AbfJRFEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:04:49 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4675 "EHLO huawei.com"
+        id S2504291AbfJRFGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:06:43 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4275 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728559AbfJRFEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:04:48 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 03951FFE8276CE87A709;
-        Fri, 18 Oct 2019 11:19:31 +0800 (CST)
+        id S2504043AbfJRFFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 01:05:11 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D01C7D78D169807BFF5D;
+        Fri, 18 Oct 2019 11:19:30 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 18 Oct 2019 11:19:23 +0800
+ 14.3.439.0; Fri, 18 Oct 2019 11:19:24 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Petr Mladek <pmladek@suse.com>, <linux-kernel@vger.kernel.org>
 CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Robert Richter" <rric@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        "Andy Shevchenko" <andy@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH v2 07/33] x86: Use pr_warn instead of pr_warning
-Date:   Fri, 18 Oct 2019 11:18:24 +0800
-Message-ID: <20191018031850.48498-7-wangkefeng.wang@huawei.com>
+Subject: [PATCH v2 08/33] acpi: Use pr_warn instead of pr_warning
+Date:   Fri, 18 Oct 2019 11:18:25 +0800
+Message-ID: <20191018031850.48498-8-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018031850.48498-1-wangkefeng.wang@huawei.com>
 References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
@@ -47,477 +44,258 @@ As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
 pr_warning"), removing pr_warning so all logging messages use a
 consistent <prefix>_warn style. Let's do it.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Robert Richter <rric@kernel.org>
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andy@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+Cc: James Morse <james.morse@arm.com>
 Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- arch/x86/kernel/amd_gart_64.c          | 12 ++++----
- arch/x86/kernel/apic/apic.c            | 41 ++++++++++++--------------
- arch/x86/kernel/setup_percpu.c         |  4 +--
- arch/x86/kernel/tboot.c                | 15 +++++-----
- arch/x86/kernel/tsc_sync.c             |  8 ++---
- arch/x86/kernel/umip.c                 |  6 ++--
- arch/x86/mm/kmmio.c                    |  7 ++---
- arch/x86/mm/mmio-mod.c                 |  6 ++--
- arch/x86/mm/numa_emulation.c           |  4 +--
- arch/x86/mm/testmmiotrace.c            |  6 ++--
- arch/x86/oprofile/op_x86_model.h       |  6 ++--
- arch/x86/platform/olpc/olpc-xo15-sci.c |  2 +-
- arch/x86/platform/sfi/sfi.c            |  3 +-
- arch/x86/xen/setup.c                   |  2 +-
- 14 files changed, 57 insertions(+), 65 deletions(-)
+ drivers/acpi/apei/apei-base.c | 36 +++++++++++++++++------------------
+ drivers/acpi/apei/einj.c      |  4 ++--
+ drivers/acpi/apei/erst-dbg.c  |  5 ++---
+ drivers/acpi/apei/ghes.c      | 25 ++++++++++++------------
+ drivers/acpi/apei/hest.c      | 14 +++++++-------
+ drivers/acpi/battery.c        |  2 +-
+ drivers/acpi/resource.c       |  4 ++--
+ 7 files changed, 44 insertions(+), 46 deletions(-)
 
-diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/amd_gart_64.c
-index a6ac3712db8b..4bbccb9d16dc 100644
---- a/arch/x86/kernel/amd_gart_64.c
-+++ b/arch/x86/kernel/amd_gart_64.c
-@@ -510,10 +510,9 @@ static __init unsigned long check_iommu_size(unsigned long aper, u64 aper_size)
- 	iommu_size -= round_up(a, PMD_PAGE_SIZE) - a;
- 
- 	if (iommu_size < 64*1024*1024) {
--		pr_warning(
--			"PCI-DMA: Warning: Small IOMMU %luMB."
-+		pr_warn("PCI-DMA: Warning: Small IOMMU %luMB."
- 			" Consider increasing the AGP aperture in BIOS\n",
--				iommu_size >> 20);
-+			iommu_size >> 20);
- 	}
- 
- 	return iommu_size;
-@@ -665,8 +664,7 @@ static __init int init_amd_gatt(struct agp_kern_info *info)
- 
-  nommu:
- 	/* Should not happen anymore */
--	pr_warning("PCI-DMA: More than 4GB of RAM and no IOMMU\n"
--	       "falling back to iommu=soft.\n");
-+	pr_warn("PCI-DMA: More than 4GB of RAM and no IOMMU - falling back to iommu=soft.\n");
- 	return -1;
- }
- 
-@@ -733,8 +731,8 @@ int __init gart_iommu_init(void)
- 	    !gart_iommu_aperture ||
- 	    (no_agp && init_amd_gatt(&info) < 0)) {
- 		if (max_pfn > MAX_DMA32_PFN) {
--			pr_warning("More than 4GB of memory but GART IOMMU not available.\n");
--			pr_warning("falling back to iommu=soft.\n");
-+			pr_warn("More than 4GB of memory but GART IOMMU not available.\n");
-+			pr_warn("falling back to iommu=soft.\n");
- 		}
- 		return 0;
- 	}
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 9e2dd2b296cd..3570864b8329 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -780,8 +780,8 @@ calibrate_by_pmtimer(long deltapm, long *delta, long *deltatsc)
- 
- 	res = (((u64)deltapm) *  mult) >> 22;
- 	do_div(res, 1000000);
--	pr_warning("APIC calibration not consistent "
--		   "with PM-Timer: %ldms instead of 100ms\n",(long)res);
-+	pr_warn("APIC calibration not consistent "
-+		"with PM-Timer: %ldms instead of 100ms\n", (long)res);
- 
- 	/* Correct the lapic counter value */
- 	res = (((u64)(*delta)) * pm_100ms);
-@@ -977,7 +977,7 @@ static int __init calibrate_APIC_clock(void)
- 	 */
- 	if (lapic_timer_period < (1000000 / HZ)) {
- 		local_irq_enable();
--		pr_warning("APIC frequency too slow, disabling apic timer\n");
-+		pr_warn("APIC frequency too slow, disabling apic timer\n");
- 		return -1;
- 	}
- 
-@@ -1021,7 +1021,7 @@ static int __init calibrate_APIC_clock(void)
- 	local_irq_enable();
- 
- 	if (levt->features & CLOCK_EVT_FEAT_DUMMY) {
--		pr_warning("APIC timer disabled due to verification failure\n");
-+		pr_warn("APIC timer disabled due to verification failure\n");
- 		return -1;
- 	}
- 
-@@ -1095,8 +1095,8 @@ static void local_apic_timer_interrupt(void)
- 	 * spurious.
- 	 */
- 	if (!evt->event_handler) {
--		pr_warning("Spurious LAPIC timer interrupt on cpu %d\n",
--			   smp_processor_id());
-+		pr_warn("Spurious LAPIC timer interrupt on cpu %d\n",
-+			smp_processor_id());
- 		/* Switch it off */
- 		lapic_timer_shutdown(evt);
- 		return;
-@@ -1809,11 +1809,11 @@ static int __init setup_nox2apic(char *str)
- 		int apicid = native_apic_msr_read(APIC_ID);
- 
- 		if (apicid >= 255) {
--			pr_warning("Apicid: %08x, cannot enforce nox2apic\n",
--				   apicid);
-+			pr_warn("Apicid: %08x, cannot enforce nox2apic\n",
-+				apicid);
- 			return 0;
- 		}
--		pr_warning("x2apic already enabled.\n");
-+		pr_warn("x2apic already enabled.\n");
- 		__x2apic_disable();
- 	}
- 	setup_clear_cpu_cap(X86_FEATURE_X2APIC);
-@@ -1981,7 +1981,7 @@ static int __init apic_verify(void)
- 	 */
- 	features = cpuid_edx(1);
- 	if (!(features & (1 << X86_FEATURE_APIC))) {
--		pr_warning("Could not enable APIC!\n");
-+		pr_warn("Could not enable APIC!\n");
- 		return -1;
- 	}
- 	set_cpu_cap(&boot_cpu_data, X86_FEATURE_APIC);
-@@ -2408,9 +2408,8 @@ int generic_processor_info(int apicid, int version)
- 	    disabled_cpu_apicid == apicid) {
- 		int thiscpu = num_processors + disabled_cpus;
- 
--		pr_warning("APIC: Disabling requested cpu."
--			   " Processor %d/0x%x ignored.\n",
--			   thiscpu, apicid);
-+		pr_warn("APIC: Disabling requested cpu."
-+			" Processor %d/0x%x ignored.\n", thiscpu, apicid);
- 
- 		disabled_cpus++;
- 		return -ENODEV;
-@@ -2424,8 +2423,7 @@ int generic_processor_info(int apicid, int version)
- 	    apicid != boot_cpu_physical_apicid) {
- 		int thiscpu = max + disabled_cpus - 1;
- 
--		pr_warning(
--			"APIC: NR_CPUS/possible_cpus limit of %i almost"
-+		pr_warn("APIC: NR_CPUS/possible_cpus limit of %i almost"
- 			" reached. Keeping one slot for boot cpu."
- 			"  Processor %d/0x%x ignored.\n", max, thiscpu, apicid);
- 
-@@ -2436,9 +2434,8 @@ int generic_processor_info(int apicid, int version)
- 	if (num_processors >= nr_cpu_ids) {
- 		int thiscpu = max + disabled_cpus;
- 
--		pr_warning("APIC: NR_CPUS/possible_cpus limit of %i "
--			   "reached. Processor %d/0x%x ignored.\n",
--			   max, thiscpu, apicid);
-+		pr_warn("APIC: NR_CPUS/possible_cpus limit of %i reached. "
-+			"Processor %d/0x%x ignored.\n", max, thiscpu, apicid);
- 
- 		disabled_cpus++;
- 		return -EINVAL;
-@@ -2468,13 +2465,13 @@ int generic_processor_info(int apicid, int version)
- 	 * Validate version
- 	 */
- 	if (version == 0x0) {
--		pr_warning("BIOS bug: APIC version is 0 for CPU %d/0x%x, fixing up to 0x10\n",
--			   cpu, apicid);
-+		pr_warn("BIOS bug: APIC version is 0 for CPU %d/0x%x, fixing up to 0x10\n",
-+			cpu, apicid);
- 		version = 0x10;
- 	}
- 
- 	if (version != boot_cpu_apic_version) {
--		pr_warning("BIOS bug: APIC version mismatch, boot CPU: %x, CPU %d: version %x\n",
-+		pr_warn("BIOS bug: APIC version mismatch, boot CPU: %x, CPU %d: version %x\n",
- 			boot_cpu_apic_version, cpu, version);
- 	}
- 
-@@ -2843,7 +2840,7 @@ static int __init apic_set_verbosity(char *arg)
- 		apic_verbosity = APIC_VERBOSE;
- #ifdef CONFIG_X86_64
- 	else {
--		pr_warning("APIC Verbosity level %s not recognised"
-+		pr_warn("APIC Verbosity level %s not recognised"
- 			" use apic=verbose or apic=debug\n", arg);
+diff --git a/drivers/acpi/apei/apei-base.c b/drivers/acpi/apei/apei-base.c
+index 131c35ee9ed3..1bb2a94f49a3 100644
+--- a/drivers/acpi/apei/apei-base.c
++++ b/drivers/acpi/apei/apei-base.c
+@@ -170,7 +170,7 @@ int __apei_exec_run(struct apei_exec_context *ctx, u8 action,
+ 		if (ip == ctx->ip) {
+ 			if (entry->instruction >= ctx->instructions ||
+ 			    !ctx->ins_table[entry->instruction].run) {
+-				pr_warning(FW_WARN APEI_PFX
++				pr_warn(FW_WARN APEI_PFX
+ 			"Invalid action table, unknown instruction type: %d\n",
+ 					   entry->instruction);
+ 				return -EINVAL;
+@@ -211,7 +211,7 @@ static int apei_exec_for_each_entry(struct apei_exec_context *ctx,
+ 		if (end)
+ 			*end = i;
+ 		if (ins >= ctx->instructions || !ins_table[ins].run) {
+-			pr_warning(FW_WARN APEI_PFX
++			pr_warn(FW_WARN APEI_PFX
+ 			"Invalid action table, unknown instruction type: %d\n",
+ 				   ins);
+ 			return -EINVAL;
+@@ -579,18 +579,18 @@ static int apei_check_gar(struct acpi_generic_address *reg, u64 *paddr,
+ 	space_id = reg->space_id;
+ 	*paddr = get_unaligned(&reg->address);
+ 	if (!*paddr) {
+-		pr_warning(FW_BUG APEI_PFX
+-			   "Invalid physical address in GAR [0x%llx/%u/%u/%u/%u]\n",
+-			   *paddr, bit_width, bit_offset, access_size_code,
+-			   space_id);
++		pr_warn(FW_BUG APEI_PFX
++			"Invalid physical address in GAR [0x%llx/%u/%u/%u/%u]\n",
++			*paddr, bit_width, bit_offset, access_size_code,
++			space_id);
  		return -EINVAL;
  	}
-diff --git a/arch/x86/kernel/setup_percpu.c b/arch/x86/kernel/setup_percpu.c
-index 86663874ef04..e6d7894ad127 100644
---- a/arch/x86/kernel/setup_percpu.c
-+++ b/arch/x86/kernel/setup_percpu.c
-@@ -207,8 +207,8 @@ void __init setup_per_cpu_areas(void)
- 					    pcpu_cpu_distance,
- 					    pcpu_fc_alloc, pcpu_fc_free);
- 		if (rc < 0)
--			pr_warning("%s allocator failed (%d), falling back to page size\n",
--				   pcpu_fc_names[pcpu_chosen_fc], rc);
-+			pr_warn("%s allocator failed (%d), falling back to page size\n",
-+				pcpu_fc_names[pcpu_chosen_fc], rc);
- 	}
- 	if (rc < 0)
- 		rc = pcpu_page_first_chunk(PERCPU_FIRST_CHUNK_RESERVE,
-diff --git a/arch/x86/kernel/tboot.c b/arch/x86/kernel/tboot.c
-index a49fe1dcb47e..4c61f0713832 100644
---- a/arch/x86/kernel/tboot.c
-+++ b/arch/x86/kernel/tboot.c
-@@ -57,7 +57,7 @@ void __init tboot_probe(void)
- 	 */
- 	if (!e820__mapped_any(boot_params.tboot_addr,
- 			     boot_params.tboot_addr, E820_TYPE_RESERVED)) {
--		pr_warning("non-0 tboot_addr but it is not of type E820_TYPE_RESERVED\n");
-+		pr_warn("non-0 tboot_addr but it is not of type E820_TYPE_RESERVED\n");
- 		return;
- 	}
  
-@@ -65,13 +65,12 @@ void __init tboot_probe(void)
- 	set_fixmap(FIX_TBOOT_BASE, boot_params.tboot_addr);
- 	tboot = (struct tboot *)fix_to_virt(FIX_TBOOT_BASE);
- 	if (memcmp(&tboot_uuid, &tboot->uuid, sizeof(tboot->uuid))) {
--		pr_warning("tboot at 0x%llx is invalid\n",
--			   boot_params.tboot_addr);
-+		pr_warn("tboot at 0x%llx is invalid\n", boot_params.tboot_addr);
- 		tboot = NULL;
- 		return;
+ 	if (access_size_code < 1 || access_size_code > 4) {
+-		pr_warning(FW_BUG APEI_PFX
+-			   "Invalid access size code in GAR [0x%llx/%u/%u/%u/%u]\n",
+-			   *paddr, bit_width, bit_offset, access_size_code,
+-			   space_id);
++		pr_warn(FW_BUG APEI_PFX
++			"Invalid access size code in GAR [0x%llx/%u/%u/%u/%u]\n",
++			*paddr, bit_width, bit_offset, access_size_code,
++			space_id);
+ 		return -EINVAL;
  	}
- 	if (tboot->version < 5) {
--		pr_warning("tboot version is invalid: %u\n", tboot->version);
-+		pr_warn("tboot version is invalid: %u\n", tboot->version);
- 		tboot = NULL;
- 		return;
- 	}
-@@ -289,7 +288,7 @@ static int tboot_sleep(u8 sleep_state, u32 pm1a_control, u32 pm1b_control)
+ 	*access_bit_width = 1UL << (access_size_code + 2);
+@@ -604,19 +604,19 @@ static int apei_check_gar(struct acpi_generic_address *reg, u64 *paddr,
+ 		*access_bit_width = 64;
  
- 	if (sleep_state >= ACPI_S_STATE_COUNT ||
- 	    acpi_shutdown_map[sleep_state] == -1) {
--		pr_warning("unsupported sleep state 0x%x\n", sleep_state);
-+		pr_warn("unsupported sleep state 0x%x\n", sleep_state);
- 		return -1;
+ 	if ((bit_width + bit_offset) > *access_bit_width) {
+-		pr_warning(FW_BUG APEI_PFX
+-			   "Invalid bit width + offset in GAR [0x%llx/%u/%u/%u/%u]\n",
+-			   *paddr, bit_width, bit_offset, access_size_code,
+-			   space_id);
++		pr_warn(FW_BUG APEI_PFX
++			"Invalid bit width + offset in GAR [0x%llx/%u/%u/%u/%u]\n",
++			*paddr, bit_width, bit_offset, access_size_code,
++			space_id);
+ 		return -EINVAL;
  	}
  
-@@ -302,7 +301,7 @@ static int tboot_extended_sleep(u8 sleep_state, u32 val_a, u32 val_b)
- 	if (!tboot_enabled())
- 		return 0;
- 
--	pr_warning("tboot is not able to suspend on platforms with reduced hardware sleep (ACPIv5)");
-+	pr_warn("tboot is not able to suspend on platforms with reduced hardware sleep (ACPIv5)");
- 	return -ENODEV;
- }
- 
-@@ -320,7 +319,7 @@ static int tboot_wait_for_aps(int num_aps)
+ 	if (space_id != ACPI_ADR_SPACE_SYSTEM_MEMORY &&
+ 	    space_id != ACPI_ADR_SPACE_SYSTEM_IO) {
+-		pr_warning(FW_BUG APEI_PFX
+-			   "Invalid address space type in GAR [0x%llx/%u/%u/%u/%u]\n",
+-			   *paddr, bit_width, bit_offset, access_size_code,
+-			   space_id);
++		pr_warn(FW_BUG APEI_PFX
++			"Invalid address space type in GAR [0x%llx/%u/%u/%u/%u]\n",
++			*paddr, bit_width, bit_offset, access_size_code,
++			space_id);
+ 		return -EINVAL;
  	}
  
- 	if (timeout)
--		pr_warning("tboot wait for APs timeout\n");
-+		pr_warn("tboot wait for APs timeout\n");
- 
- 	return !(atomic_read((atomic_t *)&tboot->num_in_wfs) == num_aps);
- }
-@@ -516,7 +515,7 @@ int tboot_force_iommu(void)
+diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
+index e430cf4caec2..086373f8ccb1 100644
+--- a/drivers/acpi/apei/einj.c
++++ b/drivers/acpi/apei/einj.c
+@@ -172,7 +172,7 @@ static int einj_get_available_error_type(u32 *type)
+ static int einj_timedout(u64 *t)
+ {
+ 	if ((s64)*t < SPIN_UNIT) {
+-		pr_warning(FW_WARN "Firmware does not respond in time\n");
++		pr_warn(FW_WARN "Firmware does not respond in time\n");
  		return 1;
- 
- 	if (no_iommu || swiotlb || dmar_disabled)
--		pr_warning("Forcing Intel-IOMMU to enabled\n");
-+		pr_warn("Forcing Intel-IOMMU to enabled\n");
- 
- 	dmar_disabled = 0;
- #ifdef CONFIG_SWIOTLB
-diff --git a/arch/x86/kernel/tsc_sync.c b/arch/x86/kernel/tsc_sync.c
-index ec534f978867..b8acf639abd1 100644
---- a/arch/x86/kernel/tsc_sync.c
-+++ b/arch/x86/kernel/tsc_sync.c
-@@ -364,12 +364,12 @@ void check_tsc_sync_source(int cpu)
- 		/* Force it to 0 if random warps brought us here */
- 		atomic_set(&test_runs, 0);
- 
--		pr_warning("TSC synchronization [CPU#%d -> CPU#%d]:\n",
-+		pr_warn("TSC synchronization [CPU#%d -> CPU#%d]:\n",
- 			smp_processor_id(), cpu);
--		pr_warning("Measured %Ld cycles TSC warp between CPUs, "
--			   "turning off TSC clock.\n", max_warp);
-+		pr_warn("Measured %Ld cycles TSC warp between CPUs, "
-+			"turning off TSC clock.\n", max_warp);
- 		if (random_warps)
--			pr_warning("TSC warped randomly between CPUs\n");
-+			pr_warn("TSC warped randomly between CPUs\n");
- 		mark_tsc_unstable("check_tsc_sync_source failed");
+ 	}
+ 	*t -= SPIN_UNIT;
+@@ -312,7 +312,7 @@ static int __einj_error_trigger(u64 trigger_paddr, u32 type,
+ 	}
+ 	rc = einj_check_trigger_header(trigger_tab);
+ 	if (rc) {
+-		pr_warning(FW_BUG "Invalid trigger error action table.\n");
++		pr_warn(FW_BUG "Invalid trigger error action table.\n");
+ 		goto out_rel_header;
  	}
  
-diff --git a/arch/x86/kernel/umip.c b/arch/x86/kernel/umip.c
-index 548fefed71ee..b4a304893189 100644
---- a/arch/x86/kernel/umip.c
-+++ b/arch/x86/kernel/umip.c
-@@ -91,7 +91,7 @@ const char * const umip_insns[5] = {
- 
- #define umip_pr_err(regs, fmt, ...) \
- 	umip_printk(regs, KERN_ERR, fmt, ##__VA_ARGS__)
--#define umip_pr_warning(regs, fmt, ...) \
-+#define umip_pr_warn(regs, fmt, ...) \
- 	umip_printk(regs, KERN_WARNING, fmt,  ##__VA_ARGS__)
- 
- /**
-@@ -380,14 +380,14 @@ bool fixup_umip_exception(struct pt_regs *regs)
- 	if (umip_inst < 0)
- 		return false;
- 
--	umip_pr_warning(regs, "%s instruction cannot be used by applications.\n",
-+	umip_pr_warn(regs, "%s instruction cannot be used by applications.\n",
- 			umip_insns[umip_inst]);
- 
- 	/* Do not emulate (spoof) SLDT or STR. */
- 	if (umip_inst == UMIP_INST_STR || umip_inst == UMIP_INST_SLDT)
- 		return false;
- 
--	umip_pr_warning(regs, "For now, expensive software emulation returns the result.\n");
-+	umip_pr_warn(regs, "For now, expensive software emulation returns the result.\n");
- 
- 	if (emulate_umip_insn(&insn, umip_inst, dummy_data, &dummy_data_size,
- 			      user_64bit_mode(regs)))
-diff --git a/arch/x86/mm/kmmio.c b/arch/x86/mm/kmmio.c
-index 79eb55ce69a9..49d7814b59a9 100644
---- a/arch/x86/mm/kmmio.c
-+++ b/arch/x86/mm/kmmio.c
-@@ -193,8 +193,8 @@ static int arm_kmmio_fault_page(struct kmmio_fault_page *f)
- 	int ret;
- 	WARN_ONCE(f->armed, KERN_ERR pr_fmt("kmmio page already armed.\n"));
- 	if (f->armed) {
--		pr_warning("double-arm: addr 0x%08lx, ref %d, old %d\n",
--			   f->addr, f->count, !!f->old_presence);
-+		pr_warn("double-arm: addr 0x%08lx, ref %d, old %d\n",
-+			f->addr, f->count, !!f->old_presence);
- 	}
- 	ret = clear_page_presence(f, true);
- 	WARN_ONCE(ret < 0, KERN_ERR pr_fmt("arming at 0x%08lx failed.\n"),
-@@ -341,8 +341,7 @@ static int post_kmmio_handler(unsigned long condition, struct pt_regs *regs)
- 		 * something external causing them (f.e. using a debugger while
- 		 * mmio tracing enabled), or erroneous behaviour
- 		 */
--		pr_warning("unexpected debug trap on CPU %d.\n",
--			   smp_processor_id());
-+		pr_warn("unexpected debug trap on CPU %d.\n", smp_processor_id());
+diff --git a/drivers/acpi/apei/erst-dbg.c b/drivers/acpi/apei/erst-dbg.c
+index d0f3a46716e9..c740f0faad39 100644
+--- a/drivers/acpi/apei/erst-dbg.c
++++ b/drivers/acpi/apei/erst-dbg.c
+@@ -118,9 +118,8 @@ static ssize_t erst_dbg_read(struct file *filp, char __user *ubuf,
+ 	if (rc < 0)
+ 		goto out;
+ 	if (len > ERST_DBG_RECORD_LEN_MAX) {
+-		pr_warning(ERST_DBG_PFX
+-			   "Record (ID: 0x%llx) length is too long: %zd\n",
+-			   id, len);
++		pr_warn(ERST_DBG_PFX
++			"Record (ID: 0x%llx) length is too long: %zd\n", id, len);
+ 		rc = -EIO;
  		goto out;
  	}
- 
-diff --git a/arch/x86/mm/mmio-mod.c b/arch/x86/mm/mmio-mod.c
-index b8ef8557d4b3..673de6063345 100644
---- a/arch/x86/mm/mmio-mod.c
-+++ b/arch/x86/mm/mmio-mod.c
-@@ -394,7 +394,7 @@ static void enter_uniprocessor(void)
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 777f6f7122b4..8906c80175e6 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -235,10 +235,10 @@ static struct ghes *ghes_new(struct acpi_hest_generic *generic)
+ 		goto err_unmap_read_ack_addr;
+ 	error_block_length = generic->error_block_length;
+ 	if (error_block_length > GHES_ESTATUS_MAX_SIZE) {
+-		pr_warning(FW_WARN GHES_PFX
+-			   "Error status block length is too long: %u for "
+-			   "generic hardware error source: %d.\n",
+-			   error_block_length, generic->header.source_id);
++		pr_warn(FW_WARN GHES_PFX
++			"Error status block length is too long: %u for "
++			"generic hardware error source: %d.\n",
++			error_block_length, generic->header.source_id);
+ 		error_block_length = GHES_ESTATUS_MAX_SIZE;
  	}
- out:
- 	if (num_online_cpus() > 1)
--		pr_warning("multiple CPUs still online, may miss events.\n");
-+		pr_warn("multiple CPUs still online, may miss events.\n");
- }
+ 	ghes->estatus = kmalloc(error_block_length, GFP_KERNEL);
+@@ -748,8 +748,8 @@ static void ghes_add_timer(struct ghes *ghes)
+ 	unsigned long expire;
  
- static void leave_uniprocessor(void)
-@@ -418,8 +418,8 @@ static void leave_uniprocessor(void)
- static void enter_uniprocessor(void)
- {
- 	if (num_online_cpus() > 1)
--		pr_warning("multiple CPUs are online, may miss events. "
--			   "Suggest booting with maxcpus=1 kernel argument.\n");
-+		pr_warn("multiple CPUs are online, may miss events. "
-+			"Suggest booting with maxcpus=1 kernel argument.\n");
- }
- 
- static void leave_uniprocessor(void)
-diff --git a/arch/x86/mm/numa_emulation.c b/arch/x86/mm/numa_emulation.c
-index abffa0be80da..7f1d2034df1e 100644
---- a/arch/x86/mm/numa_emulation.c
-+++ b/arch/x86/mm/numa_emulation.c
-@@ -438,7 +438,7 @@ void __init numa_emulation(struct numa_meminfo *numa_meminfo, int numa_dist_cnt)
- 		goto no_emu;
- 
- 	if (numa_cleanup_meminfo(&ei) < 0) {
--		pr_warning("NUMA: Warning: constructed meminfo invalid, disabling emulation\n");
-+		pr_warn("NUMA: Warning: constructed meminfo invalid, disabling emulation\n");
- 		goto no_emu;
- 	}
- 
-@@ -449,7 +449,7 @@ void __init numa_emulation(struct numa_meminfo *numa_meminfo, int numa_dist_cnt)
- 		phys = memblock_find_in_range(0, PFN_PHYS(max_pfn_mapped),
- 					      phys_size, PAGE_SIZE);
- 		if (!phys) {
--			pr_warning("NUMA: Warning: can't allocate copy of distance table, disabling emulation\n");
-+			pr_warn("NUMA: Warning: can't allocate copy of distance table, disabling emulation\n");
- 			goto no_emu;
- 		}
- 		memblock_reserve(phys, phys_size);
-diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
-index a8bd952e136d..92153d054d6c 100644
---- a/arch/x86/mm/testmmiotrace.c
-+++ b/arch/x86/mm/testmmiotrace.c
-@@ -127,9 +127,9 @@ static int __init init(void)
- 		return -ENXIO;
- 	}
- 
--	pr_warning("WARNING: mapping %lu kB @ 0x%08lx in PCI address space, "
--		   "and writing 16 kB of rubbish in there.\n",
--		   size >> 10, mmio_address);
-+	pr_warn("WARNING: mapping %lu kB @ 0x%08lx in PCI address space, "
-+		"and writing 16 kB of rubbish in there.\n",
-+		size >> 10, mmio_address);
- 	do_test(size);
- 	do_test_bulk_ioremapping();
- 	pr_info("All done.\n");
-diff --git a/arch/x86/oprofile/op_x86_model.h b/arch/x86/oprofile/op_x86_model.h
-index 71e8a67337e2..276cf79b5d24 100644
---- a/arch/x86/oprofile/op_x86_model.h
-+++ b/arch/x86/oprofile/op_x86_model.h
-@@ -67,13 +67,13 @@ static inline void op_x86_warn_in_use(int counter)
- 	 * cannot be monitored by any other counter, contact your
- 	 * hardware or BIOS vendor.
- 	 */
--	pr_warning("oprofile: counter #%d on cpu #%d may already be used\n",
--		   counter, smp_processor_id());
-+	pr_warn("oprofile: counter #%d on cpu #%d may already be used\n",
-+		counter, smp_processor_id());
- }
- 
- static inline void op_x86_warn_reserved(int counter)
- {
--	pr_warning("oprofile: counter #%d is already reserved\n", counter);
-+	pr_warn("oprofile: counter #%d is already reserved\n", counter);
- }
- 
- extern u64 op_x86_get_ctrl(struct op_x86_model_spec const *model,
-diff --git a/arch/x86/platform/olpc/olpc-xo15-sci.c b/arch/x86/platform/olpc/olpc-xo15-sci.c
-index 6d193bb36021..089413cd944e 100644
---- a/arch/x86/platform/olpc/olpc-xo15-sci.c
-+++ b/arch/x86/platform/olpc/olpc-xo15-sci.c
-@@ -39,7 +39,7 @@ static int set_lid_wake_behavior(bool wake_on_close)
- 
- 	status = acpi_execute_simple_method(NULL, "\\_SB.PCI0.LID.LIDW", wake_on_close);
- 	if (ACPI_FAILURE(status)) {
--		pr_warning(PFX "failed to set lid behavior\n");
-+		pr_warn(PFX "failed to set lid behavior\n");
- 		return 1;
- 	}
- 
-diff --git a/arch/x86/platform/sfi/sfi.c b/arch/x86/platform/sfi/sfi.c
-index bf6016f8db4e..6259563760f9 100644
---- a/arch/x86/platform/sfi/sfi.c
-+++ b/arch/x86/platform/sfi/sfi.c
-@@ -26,8 +26,7 @@ static unsigned long sfi_lapic_addr __initdata = APIC_DEFAULT_PHYS_BASE;
- static void __init mp_sfi_register_lapic(u8 id)
- {
- 	if (MAX_LOCAL_APIC - id <= 0) {
--		pr_warning("Processor #%d invalid (max %d)\n",
--			id, MAX_LOCAL_APIC);
-+		pr_warn("Processor #%d invalid (max %d)\n", id, MAX_LOCAL_APIC);
+ 	if (!g->notify.poll_interval) {
+-		pr_warning(FW_WARN GHES_PFX "Poll interval is 0 for generic hardware error source: %d, disabled.\n",
+-			   g->header.source_id);
++		pr_warn(FW_WARN GHES_PFX "Poll interval is 0 for generic hardware error source: %d, disabled.\n",
++			g->header.source_id);
  		return;
  	}
+ 	expire = jiffies + msecs_to_jiffies(g->notify.poll_interval);
+@@ -1155,21 +1155,20 @@ static int ghes_probe(struct platform_device *ghes_dev)
+ 		}
+ 		break;
+ 	case ACPI_HEST_NOTIFY_LOCAL:
+-		pr_warning(GHES_PFX "Generic hardware error source: %d notified via local interrupt is not supported!\n",
+-			   generic->header.source_id);
++		pr_warn(GHES_PFX "Generic hardware error source: %d notified via local interrupt is not supported!\n",
++			generic->header.source_id);
+ 		goto err;
+ 	default:
+-		pr_warning(FW_WARN GHES_PFX "Unknown notification type: %u for generic hardware error source: %d\n",
+-			   generic->notify.type, generic->header.source_id);
++		pr_warn(FW_WARN GHES_PFX "Unknown notification type: %u for generic hardware error source: %d\n",
++			generic->notify.type, generic->header.source_id);
+ 		goto err;
+ 	}
  
-diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
-index 548d1e0a5ba1..33b0e20df7fc 100644
---- a/arch/x86/xen/setup.c
-+++ b/arch/x86/xen/setup.c
-@@ -412,7 +412,7 @@ static unsigned long __init xen_set_identity_and_remap_chunk(
+ 	rc = -EIO;
+ 	if (generic->error_block_length <
+ 	    sizeof(struct acpi_hest_generic_status)) {
+-		pr_warning(FW_BUG GHES_PFX "Invalid error block length: %u for generic hardware error source: %d\n",
+-			   generic->error_block_length,
+-			   generic->header.source_id);
++		pr_warn(FW_BUG GHES_PFX "Invalid error block length: %u for generic hardware error source: %d\n",
++			generic->error_block_length, generic->header.source_id);
+ 		goto err;
+ 	}
+ 	ghes = ghes_new(generic);
+diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
+index 267bdbf6a7bf..822402480f7d 100644
+--- a/drivers/acpi/apei/hest.c
++++ b/drivers/acpi/apei/hest.c
+@@ -92,15 +92,15 @@ int apei_hest_parse(apei_hest_func_t func, void *data)
+ 	for (i = 0; i < hest_tab->error_source_count; i++) {
+ 		len = hest_esrc_len(hest_hdr);
+ 		if (!len) {
+-			pr_warning(FW_WARN HEST_PFX
+-				   "Unknown or unused hardware error source "
+-				   "type: %d for hardware error source: %d.\n",
+-				   hest_hdr->type, hest_hdr->source_id);
++			pr_warn(FW_WARN HEST_PFX
++				"Unknown or unused hardware error source "
++				"type: %d for hardware error source: %d.\n",
++				hest_hdr->type, hest_hdr->source_id);
+ 			return -EINVAL;
+ 		}
+ 		if ((void *)hest_hdr + len >
+ 		    (void *)hest_tab + hest_tab->header.length) {
+-			pr_warning(FW_BUG HEST_PFX
++			pr_warn(FW_BUG HEST_PFX
+ 		"Table contents overflow for hardware error source: %d.\n",
+ 				hest_hdr->source_id);
+ 			return -EINVAL;
+@@ -164,8 +164,8 @@ static int __init hest_parse_ghes(struct acpi_hest_header *hest_hdr, void *data)
+ 		ghes_dev = ghes_arr->ghes_devs[i];
+ 		hdr = *(struct acpi_hest_header **)ghes_dev->dev.platform_data;
+ 		if (hdr->source_id == hest_hdr->source_id) {
+-			pr_warning(FW_WARN HEST_PFX "Duplicated hardware error source ID: %d.\n",
+-				   hdr->source_id);
++			pr_warn(FW_WARN HEST_PFX "Duplicated hardware error source ID: %d.\n",
++				hdr->source_id);
+ 			return -EIO;
+ 		}
+ 	}
+diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+index 558fedf8a7a1..8f0e0c8d8c3d 100644
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -1176,7 +1176,7 @@ static const struct file_operations acpi_battery_alarm_fops = {
  
- 		remap_range_size = xen_find_pfn_range(&remap_pfn);
- 		if (!remap_range_size) {
--			pr_warning("Unable to find available pfn range, not remapping identity pages\n");
-+			pr_warn("Unable to find available pfn range, not remapping identity pages\n");
- 			xen_set_identity_and_release_chunk(cur_pfn,
- 						cur_pfn + left, nr_pages);
- 			break;
+ static int acpi_battery_add_fs(struct acpi_device *device)
+ {
+-	pr_warning(PREFIX "Deprecated procfs I/F for battery is loaded, please retry with CONFIG_ACPI_PROCFS_POWER cleared\n");
++	pr_warn(PREFIX "Deprecated procfs I/F for battery is loaded, please retry with CONFIG_ACPI_PROCFS_POWER cleared\n");
+ 	if (!acpi_device_dir(device)) {
+ 		acpi_device_dir(device) = proc_mkdir(acpi_device_bid(device),
+ 						     acpi_battery_dir);
+diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
+index 2a3e392751e0..3b4448972374 100644
+--- a/drivers/acpi/resource.c
++++ b/drivers/acpi/resource.c
+@@ -413,8 +413,8 @@ static void acpi_dev_get_irqresource(struct resource *res, u32 gsi,
+ 		u8 pol = p ? ACPI_ACTIVE_LOW : ACPI_ACTIVE_HIGH;
+ 
+ 		if (triggering != trig || polarity != pol) {
+-			pr_warning("ACPI: IRQ %d override to %s, %s\n", gsi,
+-				   t ? "level" : "edge", p ? "low" : "high");
++			pr_warn("ACPI: IRQ %d override to %s, %s\n", gsi,
++				t ? "level" : "edge", p ? "low" : "high");
+ 			triggering = trig;
+ 			polarity = pol;
+ 		}
 -- 
 2.20.1
 
