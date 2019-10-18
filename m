@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19973DD38E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:19:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B64F3DD38B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404180AbfJRWS2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:18:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39498 "EHLO mail.kernel.org"
+        id S2404133AbfJRWSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:18:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732709AbfJRWHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:07:19 -0400
+        id S1732783AbfJRWHW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:07:22 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C1572245A;
-        Fri, 18 Oct 2019 22:07:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C6FE22468;
+        Fri, 18 Oct 2019 22:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436439;
-        bh=4yf0xY+siayprstSH7pJ9lhW841VNU30MNrW/1kjx+c=;
+        s=default; t=1571436442;
+        bh=LcmmwqOfby9yq1vOo2ElJ9bV8e0u3vySwHKazDJYZaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i/rh2mtDREerSrS3peKVEZlluwtER3OUv/EIAySS5oGZfOz1RIDN/wi1Gvlufo859
-         wPl0aRVmqUx5xaatUdJpePAjalQOtTzVIzNeSXTDWAR3ga2srEQXlwbB3hwwfGX+ts
-         nBIDgKvXujbX0HeGatNKueBptBh4fclwo7z7TEVU=
+        b=03OWUfts0jtgENXlBSm8HjT9W+DFjj26wfLt/U8qJ61K4XGpUYxBMzpnN+Fz5nNy5
+         FHRrenS/W50bIrWlHbZCbxmrTQ56oUHhWJ/19/R7J9XZ9jFNuNxy89DmaXCHNKwu+S
+         wct1erkcy9QSv95fQmGoxC5vgN2xEvxyKl+aWR60=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Matthias Maennich <maennich@google.com>,
-        Jessica Yu <jeyu@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-kbuild@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 077/100] kbuild: fix build error of 'make nsdeps' in clean tree
-Date:   Fri, 18 Oct 2019 18:05:02 -0400
-Message-Id: <20191018220525.9042-77-sashal@kernel.org>
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        James Dingwall <james@dingwall.me.uk>,
+        Juergen Gross <jgross@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-doc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 079/100] x86/xen: Return from panic notifier
+Date:   Fri, 18 Oct 2019 18:05:04 -0400
+Message-Id: <20191018220525.9042-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
 References: <20191018220525.9042-1-sashal@kernel.org>
@@ -44,43 +44,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-[ Upstream commit d85103ac78a6d8573b21348b36f4cca2e1839a31 ]
+[ Upstream commit c6875f3aacf2a5a913205accddabf0bfb75cac76 ]
 
-Running 'make nsdeps' in a clean source tree fails as follows:
+Currently execution of panic() continues until Xen's panic notifier
+(xen_panic_event()) is called at which point we make a hypercall that
+never returns.
 
-$ make -s clean; make -s defconfig; make nsdeps
-   [ snip ]
-awk: fatal: cannot open file `init/modules.order' for reading (No such file or directory)
-make: *** [Makefile;1307: modules.order] Error 2
-make: *** Deleting file 'modules.order'
-make: *** Waiting for unfinished jobs....
+This means that any notifier that is supposed to be called later as
+well as significant part of panic() code (such as pstore writes from
+kmsg_dump()) is never executed.
 
-The cause of the error is 'make nsdeps' does not build modules at all.
-Set KBUILD_MODULES to fix it.
+There is no reason for xen_panic_event() to be this last point in
+execution since panic()'s emergency_restart() will call into
+xen_emergency_restart() from where we can perform our hypercall.
 
-Reviewed-by: Matthias Maennich <maennich@google.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Nevertheless, we will provide xen_legacy_crash boot option that will
+preserve original behavior during crash. This option could be used,
+for example, if running kernel dumper (which happens after panic
+notifiers) is undesirable.
+
+Reported-by: James Dingwall <james@dingwall.me.uk>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../admin-guide/kernel-parameters.txt         |  4 +++
+ arch/x86/xen/enlighten.c                      | 28 +++++++++++++++++--
+ 2 files changed, 29 insertions(+), 3 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 4d29c7370b464..80f169534c4a7 100644
---- a/Makefile
-+++ b/Makefile
-@@ -566,7 +566,7 @@ endif
- # in addition to whatever we do anyway.
- # Just "make" or "make all" shall build modules as well
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 16607b178b474..a855f83defa6c 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5117,6 +5117,10 @@
+ 				the unplug protocol
+ 			never -- do not unplug even if version check succeeds
  
--ifneq ($(filter all _all modules,$(MAKECMDGOALS)),)
-+ifneq ($(filter all _all modules nsdeps,$(MAKECMDGOALS)),)
-   KBUILD_MODULES := 1
- endif
++	xen_legacy_crash	[X86,XEN]
++			Crash from Xen panic notifier, without executing late
++			panic() code such as dumping handler.
++
+ 	xen_nopvspin	[X86,XEN]
+ 			Disables the ticketlock slowpath using Xen PV
+ 			optimizations.
+diff --git a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
+index c6c7c9b7b5c19..2483ff345bbcd 100644
+--- a/arch/x86/xen/enlighten.c
++++ b/arch/x86/xen/enlighten.c
+@@ -266,19 +266,41 @@ void xen_reboot(int reason)
+ 		BUG();
+ }
  
++static int reboot_reason = SHUTDOWN_reboot;
++static bool xen_legacy_crash;
+ void xen_emergency_restart(void)
+ {
+-	xen_reboot(SHUTDOWN_reboot);
++	xen_reboot(reboot_reason);
+ }
+ 
+ static int
+ xen_panic_event(struct notifier_block *this, unsigned long event, void *ptr)
+ {
+-	if (!kexec_crash_loaded())
+-		xen_reboot(SHUTDOWN_crash);
++	if (!kexec_crash_loaded()) {
++		if (xen_legacy_crash)
++			xen_reboot(SHUTDOWN_crash);
++
++		reboot_reason = SHUTDOWN_crash;
++
++		/*
++		 * If panic_timeout==0 then we are supposed to wait forever.
++		 * However, to preserve original dom0 behavior we have to drop
++		 * into hypervisor. (domU behavior is controlled by its
++		 * config file)
++		 */
++		if (panic_timeout == 0)
++			panic_timeout = -1;
++	}
+ 	return NOTIFY_DONE;
+ }
+ 
++static int __init parse_xen_legacy_crash(char *arg)
++{
++	xen_legacy_crash = true;
++	return 0;
++}
++early_param("xen_legacy_crash", parse_xen_legacy_crash);
++
+ static struct notifier_block xen_panic_block = {
+ 	.notifier_call = xen_panic_event,
+ 	.priority = INT_MIN
 -- 
 2.20.1
 
