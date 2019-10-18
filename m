@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14050DC48D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:16:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9798DC48C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:15:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442695AbfJRMQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:16:00 -0400
-Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:59912 "EHLO
+        id S2442630AbfJRMPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:15:52 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:59916 "EHLO
         smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2408073AbfJRMPu (ORCPT
+        by vger.kernel.org with ESMTP id S2442523AbfJRMPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Oct 2019 08:15:50 -0400
 Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id E2CB6C0488;
-        Fri, 18 Oct 2019 12:15:49 +0000 (UTC)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 6FECDC09CA;
+        Fri, 18 Oct 2019 12:15:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1571400950; bh=9bNHRLE5N78H1xT78BVFMS/DIn9uGRWP5TXcJX4sEgI=;
+        t=1571400950; bh=AIGwTQLYhX+M2s0W3a/AMO9FziLVCQioUIaBsq9d96A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cWZ5LNFZzJRboEUikg+T6P0uEr5Rpao9ocdZua/0Zfebkhj9mpj5xS5Txk2mVHqjS
-         jI1nJIh9+5pa1pgSkPesrAsJGvB06qCy3YAoRyyR/x/7oxohA/22zfDGkPwb3fC4Ua
-         4l0MsctXKIKqkll97ZELw0acr7I9guJ4KJhe3CeuacxgVbDH05v1kSClbD7RXoExet
-         r0zX+/WAEdShsQfoyHsaaHGoWaUijwCwHqEoaYHwZN8jqNZYLAWwEJXDRSaVuUdYlv
-         ePCQs6z+5TXCBhf0lyLJcDi31E2BFGJcxATSubkBFTL1LGxbSY+uyPjbEXr3dXU4Ly
-         uyL1IDKbclidQ==
+        b=Rt1bniV3LejIVIV7NJQxKdQWHdcXTBqriWJY6ykguvGIxpmTBn2tpVk5ahEfPDEGj
+         a/P4a+fk2h9RQZwUM2xWBwb5Qb9cXkopU5LH66Wh4KpZ29oHiLOc9PtMghrP0ZU49m
+         DACGWA1X/zayTWRshs5pbJPI0PfzSmrS3mDjWjK5O7ivutKMDj4SYq4vXNNt6qVXef
+         0KLkyaRihmm2WbVMXWNZnPDRJb1wqTH0NSZbmkSIkJZWDlfScEbs2BOn5mJFTsT+zG
+         jguDKuAQbzF6kPue0aiUAx3rDjxRqRils5ZjfL5GRFnjkUtsHApTKKPp5p1QcqqBgR
+         cHuU+L6weoT3w==
 Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.73])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 51016A0065;
+        by mailhost.synopsys.com (Postfix) with ESMTP id CC852A0069;
         Fri, 18 Oct 2019 12:15:48 +0000 (UTC)
 From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 To:     linux-snps-arc@lists.infradead.org,
@@ -35,9 +35,9 @@ To:     linux-snps-arc@lists.infradead.org,
 Cc:     linux-kernel@vger.kernel.org,
         Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [RFC 2/6] ARC: HAPS: cleanup defconfigs from unused IO-related options
-Date:   Fri, 18 Oct 2019 15:15:41 +0300
-Message-Id: <20191018121545.8907-3-Eugeniy.Paltsev@synopsys.com>
+Subject: [RFC 3/6] ARC: HAPS: use same UART configuration everywhere
+Date:   Fri, 18 Oct 2019 15:15:42 +0300
+Message-Id: <20191018121545.8907-4-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191018121545.8907-1-Eugeniy.Paltsev@synopsys.com>
 References: <20191018121545.8907-1-Eugeniy.Paltsev@synopsys.com>
@@ -48,69 +48,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't have any peripherals on HAPS which may require FB or
-input_devices support. So get rid of them.
+For some reason we use ns8250 UART compatible on UP HAPS
+configuration and ns16550a (which is ns8250 with FIFO support)
+on SMP HAPS configuration.
+Given that we have same UART IP with same IP configuration
+on both HAPS configuration use ns16550a compatible everywhere.
 
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
- arch/arc/configs/haps_hs_defconfig     | 9 +++------
- arch/arc/configs/haps_hs_smp_defconfig | 9 +++------
- 2 files changed, 6 insertions(+), 12 deletions(-)
+ arch/arc/boot/dts/haps_hs.dts     | 2 +-
+ arch/arc/boot/dts/haps_hs_idu.dts | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/arc/configs/haps_hs_defconfig b/arch/arc/configs/haps_hs_defconfig
-index e22f40612089..33b7a402b6bd 100644
---- a/arch/arc/configs/haps_hs_defconfig
-+++ b/arch/arc/configs/haps_hs_defconfig
-@@ -48,9 +48,9 @@ CONFIG_VIRTIO_NET=y
- # CONFIG_NET_VENDOR_WIZNET is not set
- # CONFIG_WLAN is not set
- CONFIG_INPUT_EVDEV=y
--CONFIG_MOUSE_PS2_TOUCHKIT=y
--# CONFIG_SERIO_SERPORT is not set
--CONFIG_SERIO_ARC_PS2=y
-+# CONFIG_INPUT_KEYBOARD is not set
-+# CONFIG_INPUT_MOUSE is not set
-+# CONFIG_SERIO is not set
- # CONFIG_LEGACY_PTYS is not set
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
-@@ -60,9 +60,6 @@ CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_OF_PLATFORM=y
- # CONFIG_HW_RANDOM is not set
- # CONFIG_HWMON is not set
--CONFIG_FB=y
--CONFIG_FRAMEBUFFER_CONSOLE=y
--CONFIG_LOGO=y
- # CONFIG_HID is not set
- # CONFIG_USB_SUPPORT is not set
- CONFIG_VIRTIO_MMIO=y
-diff --git a/arch/arc/configs/haps_hs_smp_defconfig b/arch/arc/configs/haps_hs_smp_defconfig
-index ff4fcd7640a4..5586511a00bf 100644
---- a/arch/arc/configs/haps_hs_smp_defconfig
-+++ b/arch/arc/configs/haps_hs_smp_defconfig
-@@ -49,9 +49,9 @@ CONFIG_NETDEVICES=y
- # CONFIG_NET_VENDOR_WIZNET is not set
- # CONFIG_WLAN is not set
- CONFIG_INPUT_EVDEV=y
--CONFIG_MOUSE_PS2_TOUCHKIT=y
--# CONFIG_SERIO_SERPORT is not set
--CONFIG_SERIO_ARC_PS2=y
-+# CONFIG_INPUT_KEYBOARD is not set
-+# CONFIG_INPUT_MOUSE is not set
-+# CONFIG_SERIO is not set
- # CONFIG_LEGACY_PTYS is not set
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
-@@ -61,9 +61,6 @@ CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_OF_PLATFORM=y
- # CONFIG_HW_RANDOM is not set
- # CONFIG_HWMON is not set
--CONFIG_FB=y
--CONFIG_FRAMEBUFFER_CONSOLE=y
--CONFIG_LOGO=y
- # CONFIG_HID is not set
- # CONFIG_USB_SUPPORT is not set
- # CONFIG_IOMMU_SUPPORT is not set
+diff --git a/arch/arc/boot/dts/haps_hs.dts b/arch/arc/boot/dts/haps_hs.dts
+index 44bc522fdec8..11fad2f79056 100644
+--- a/arch/arc/boot/dts/haps_hs.dts
++++ b/arch/arc/boot/dts/haps_hs.dts
+@@ -47,7 +47,7 @@
+ 		};
+ 
+ 		uart0: serial@f0000000 {
+-			compatible = "ns8250";
++			compatible = "ns16550a";
+ 			reg = <0xf0000000 0x2000>;
+ 			interrupts = <24>;
+ 			clock-frequency = <50000000>;
+diff --git a/arch/arc/boot/dts/haps_hs_idu.dts b/arch/arc/boot/dts/haps_hs_idu.dts
+index 4d6971cf5f9f..738c76cd07b3 100644
+--- a/arch/arc/boot/dts/haps_hs_idu.dts
++++ b/arch/arc/boot/dts/haps_hs_idu.dts
+@@ -54,7 +54,6 @@
+ 		};
+ 
+ 		uart0: serial@f0000000 {
+-			/* compatible = "ns8250"; Doesn't use FIFOs */
+ 			compatible = "ns16550a";
+ 			reg = <0xf0000000 0x2000>;
+ 			interrupt-parent = <&idu_intc>;
 -- 
 2.21.0
 
