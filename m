@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 946A9DC607
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95812DC60B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:29:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410335AbfJRN1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 09:27:01 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:56134 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2410292AbfJRN1A (ORCPT
+        id S2634100AbfJRN1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 09:27:16 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45104 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410324AbfJRN1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Oct 2019 09:27:00 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a6so6169546wma.5
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 06:26:57 -0700 (PDT)
+Received: by mail-wr1-f65.google.com with SMTP id q13so1296910wrs.12
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 06:26:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=U+L99VOS6caLFt+CoaTBRiqHtekpuXrbr4pGYmwWDiE=;
-        b=YexuFZ4fjlY6AevXkLYwKDu06ECkTRx8vSIFlXx6hDq+1v+NVL84yLK2F9YZbhhFxG
-         FXfR5Ko8czlD+FeLKLYoY9Ve/rxWNtsqruSpX0mZBJMXp9pe1oiSc8KPR6wy2SJCuJCH
-         wQxXCJh4t7J5njM9BWDMVuGFItJGfZd7xOiUmzwaRnnw9UqkPPJJw8lqPBXbLmzoAlZw
-         AQvBqx+pW3YfnOkARBIxpcZCNQfSq6co36YadtT5BFN09zMaMkqojXMIQRX+Lboka8Fw
-         mfBRYyX6DfVIUqkxTx/bmo/08rM/gz1lGdpa9xv2YPg0j1ANnF0zUAWThZIhrYkXklhH
-         UIcw==
+        bh=+8jnwsi/OmvMHtm1PwUS69bLbdlbxHcNftrW5yRwhLg=;
+        b=FjJZTlYA8PpPgWv6KZYWHaxO2XAZZBU9r+ZOPZQwTUDI0H8meXrJbKqMRqJpbPJ1VI
+         iZcv2qeW2BZ4CM3PAxjJUZSdAQnB2vrBsZZsqiAeqCOFvDDLe5aKyhxztqq0WGmaV7Ki
+         F1/solils4dofYwDL1hPx5ZcpkayypL3pbIBN2bJhqV3sn9rlHxyBERi8i27egDPh25y
+         d0V54tpUCmEeafhIzyX025Xpb/vvRzFMsYWgs5mDo02hfJXjUR1mGo963Qz5zFVp143U
+         2XZguQgVtZZUWRUemHyMQs1EyHMN4aq080amxvz42hv017cexxLGEt71iKZdTvAaec1c
+         OXWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=U+L99VOS6caLFt+CoaTBRiqHtekpuXrbr4pGYmwWDiE=;
-        b=JDt6yMQ0j4UONOwZqL384Ghcm3lD+Pqk80jn315ymPy5ZyWBo1laG2IEhJ5f7BqL73
-         I9oXSNlrujML96/dJEZxBOOU3DmvnWY9vWOdpF5e3heMeSYXSZw7hcwTGYP6cDMjdNBs
-         AP3OEyRCD5b7MpyxVoXHHFEaYZsA4quzSVHClNKe4d4B//uktrKAwJ8AWVhW08Pxkimz
-         yIIvdo996axB0ljEtl1R8fVGQ6W0zwZmhA4YuRCYDumOTSaAn203lDcCsnPWWZUr1/M/
-         7h9Oz49wFEb4DgO2qoPu0NrXz0LrcxmPRWTkCks+Mb5PkFIZ1w3hHCo5BWTnlKrPhUqR
-         M6fQ==
-X-Gm-Message-State: APjAAAWwHni/5VdNRGm07BZPxZd6fCrHrTvHNfzT8bTIws4eDKD3S3QG
-        18vrHSyePVD1r0wmEu6MmrI30j9W+Dk=
-X-Google-Smtp-Source: APXvYqzPtB3AW8f2LEc+55f4M+WMCvGt7WbJ/ZZAOK7l7n15Yxj8EdUjmEDMBE4vjb/D2/fLlINlOQ==
-X-Received: by 2002:a05:600c:23cc:: with SMTP id p12mr3592277wmb.163.1571405216635;
-        Fri, 18 Oct 2019 06:26:56 -0700 (PDT)
+        bh=+8jnwsi/OmvMHtm1PwUS69bLbdlbxHcNftrW5yRwhLg=;
+        b=jymF2IL14LatddNJKQ4krIoEoksE7e/5tUNG28Sswzh/15xoNQq8jyOWB7mom/P/D7
+         Owl2TJziWUfl3lWyzJFJIlXwvBnu+F1hIx7OgoWF90x1BUQ/ZU+MmrM6n13sOWyu0tKU
+         brL2h5F626i9Aqaqftr1ZvwHNHnxYQAsp9Ot0s1UcTUXvAmEwkM1KfH9SDJ5y+QI3dm5
+         qlUp0qiFtNrvOAAOp30MO3OBeR24UvSmGAQAdf5eXLc35rjd/TXe69+HVGuzcU2tpVhn
+         RPQsx3gNLLdX/r1gvEZbbzXnqduf0j/xWexMWWbnqJrD8/3HsKxs7hIT5w7tikTSE6+4
+         OA0A==
+X-Gm-Message-State: APjAAAWvaxSoB5GmpLKEDktyak4EN5Bkf/X36POe8iIMqezEPbDdIlka
+        7d8viuKlMA+p84l86MbcxGnsv+Rs/hY=
+X-Google-Smtp-Source: APXvYqxXrrHIdDh0Icvrbb1WQr8q7oQe2P8dJ9X/UyhDatG+2U7ol/SbKASbzKkwAk5mtb9z1VXMkg==
+X-Received: by 2002:a5d:408f:: with SMTP id o15mr7115548wrp.139.1571405218501;
+        Fri, 18 Oct 2019 06:26:58 -0700 (PDT)
 Received: from localhost.localdomain (91-160-61-128.subs.proxad.net. [91.160.61.128])
-        by smtp.gmail.com with ESMTPSA id p15sm5870123wrs.94.2019.10.18.06.26.54
+        by smtp.gmail.com with ESMTPSA id p15sm5870123wrs.94.2019.10.18.06.26.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 18 Oct 2019 06:26:55 -0700 (PDT)
+        Fri, 18 Oct 2019 06:26:57 -0700 (PDT)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
         peterz@infradead.org
@@ -52,9 +52,9 @@ Cc:     pauld@redhat.com, valentin.schneider@arm.com,
         dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
         hdanton@sina.com, parth@linux.ibm.com, riel@surriel.com,
         Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v4 07/11] sched/fair: evenly spread tasks when not overloaded
-Date:   Fri, 18 Oct 2019 15:26:34 +0200
-Message-Id: <1571405198-27570-8-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH v4 08/11] sched/fair: use utilization to select misfit task
+Date:   Fri, 18 Oct 2019 15:26:35 +0200
+Message-Id: <1571405198-27570-9-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
 References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
@@ -63,65 +63,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When there is only 1 cpu per group, using the idle cpus to evenly spread
-tasks doesn't make sense and nr_running is a better metrics.
+utilization is used to detect a misfit task but the load is then used to
+select the task on the CPU which can lead to select a small task with
+high weight instead of the task that triggered the misfit migration.
+
+Check that task can't fit the CPU's capacity when selecting the misfit
+task instead of using the load.
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+Acked-by: Valentin Schneider <valentin.schneider@arm.com>
 ---
- kernel/sched/fair.c | 40 ++++++++++++++++++++++++++++------------
- 1 file changed, 28 insertions(+), 12 deletions(-)
+ kernel/sched/fair.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9ac2264..9b8e20d 100644
+index 9b8e20d..670856d 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8601,18 +8601,34 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 	    busiest->sum_nr_running > local->sum_nr_running + 1)
- 		goto force_balance;
+@@ -7418,13 +7418,8 @@ static int detach_tasks(struct lb_env *env)
+ 			break;
  
--	if (busiest->group_type != group_overloaded &&
--	     (env->idle == CPU_NOT_IDLE ||
--	      local->idle_cpus <= (busiest->idle_cpus + 1)))
--		/*
--		 * If the busiest group is not overloaded
--		 * and there is no imbalance between this and busiest group
--		 * wrt idle CPUs, it is balanced. The imbalance
--		 * becomes significant if the diff is greater than 1 otherwise
--		 * we might end up to just move the imbalance on another
--		 * group.
--		 */
--		goto out_balanced;
-+	if (busiest->group_type != group_overloaded) {
-+		if (env->idle == CPU_NOT_IDLE)
-+			/*
-+			 * If the busiest group is not overloaded (and as a
-+			 * result the local one too) but this cpu is already
-+			 * busy, let another idle cpu try to pull task.
-+			 */
-+			goto out_balanced;
-+
-+		if (busiest->group_weight > 1 &&
-+		    local->idle_cpus <= (busiest->idle_cpus + 1))
-+			/*
-+			 * If the busiest group is not overloaded
-+			 * and there is no imbalance between this and busiest
-+			 * group wrt idle CPUs, it is balanced. The imbalance
-+			 * becomes significant if the diff is greater than 1
-+			 * otherwise we might end up to just move the imbalance
-+			 * on another group. Of course this applies only if
-+			 * there is more than 1 CPU per group.
-+			 */
-+			goto out_balanced;
-+
-+		if (busiest->sum_h_nr_running == 1)
-+			/*
-+			 * busiest doesn't have any tasks waiting to run
-+			 */
-+			goto out_balanced;
-+	}
+ 		case migrate_misfit:
+-			load = task_h_load(p);
+-
+-			/*
+-			 * load of misfit task might decrease a bit since it has
+-			 * been recorded. Be conservative in the condition.
+-			 */
+-			if (load / 2 < env->imbalance)
++			/* This is not a misfit task */
++			if (task_fits_capacity(p, capacity_of(env->src_cpu)))
+ 				goto next;
  
- force_balance:
- 	/* Looks like there is an imbalance. Compute it */
+ 			env->imbalance = 0;
+@@ -8368,7 +8363,7 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 	if (busiest->group_type == group_misfit_task) {
+ 		/* Set imbalance to allow misfit task to be balanced. */
+ 		env->migration_type = migrate_misfit;
+-		env->imbalance = busiest->group_misfit_task_load;
++		env->imbalance = 1;
+ 		return;
+ 	}
+ 
 -- 
 2.7.4
 
