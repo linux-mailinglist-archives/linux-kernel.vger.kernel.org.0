@@ -2,127 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA113DC463
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E37BDC470
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:10:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410000AbfJRMHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:07:36 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36532 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407893AbfJRMHg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 08:07:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ld3ezfhAeRAVMvme4hYBgPVlITvE7jdd02JDmyHHw5E=; b=K4yx40Wue8PpFsluPTTZOLS/Z
-        o1YGDCxVGg8GF6+6OKbofSckHJprqRpAv97h1IraU011eeT3rolFn6XjXvSlbtGJAp9jULVKr5dFM
-        vksiGf6Giu7IthRFtNmHcePYWYiP5DqpjF3XHOav5VEHL5/UiTzEPeYI6DtuGsLkDFUI2axD8UOd9
-        a0Wsnl/hiRSu9AT+EM1UE55J6RVwrb0cgmTz28F12QvyywuUV315ldsmXLwfONk1cXg76pJJKHLEs
-        1UxLWBcxwcv402iGXRGgRQoTYqMgNKYvCqrbwxAVC75iZXad0Ckb7VMbzIa+uo7QsxOgoE+viBoQU
-        QM6AF/EOQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iLR2Q-0003jS-TS; Fri, 18 Oct 2019 12:07:23 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 89523301124;
-        Fri, 18 Oct 2019 14:06:23 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4E0A9200DE9E2; Fri, 18 Oct 2019 14:07:19 +0200 (CEST)
-Date:   Fri, 18 Oct 2019 14:07:19 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Douglas Raillard <douglas.raillard@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        mingo@redhat.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, qperret@google.com,
-        patrick.bellasi@matbug.net, dh.han@samsung.com
-Subject: Re: [RFC PATCH v3 0/6] sched/cpufreq: Make schedutil energy aware
-Message-ID: <20191018120719.GH2328@hirez.programming.kicks-ass.net>
-References: <20191011134500.235736-1-douglas.raillard@arm.com>
- <20191014145315.GZ2311@hirez.programming.kicks-ass.net>
- <a1ce67d7-62c3-b78b-1d87-23ef4dbc2274@arm.com>
- <20191017095015.GI2311@hirez.programming.kicks-ass.net>
- <7edb1b73-54e7-5729-db5d-6b3b1b616064@arm.com>
- <20191017190708.GF22902@worktop.programming.kicks-ass.net>
- <0b807cb3-6a88-1138-dc66-9a32d9bba7ea@arm.com>
+        id S2410010AbfJRMKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:10:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43260 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2403940AbfJRMKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 08:10:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 139B5B4D1;
+        Fri, 18 Oct 2019 12:10:00 +0000 (UTC)
+Subject: Re: [PATCH -next] btrfs: Make init_tree_roots static
+To:     YueHaibing <yuehaibing@huawei.com>, clm@fb.com,
+        josef@toxicpanda.com, dsterba@suse.com
+Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191018120604.29508-1-yuehaibing@huawei.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <bab47b8e-d35f-a769-a703-4dcfe1a17980@suse.com>
+Date:   Fri, 18 Oct 2019 15:09:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b807cb3-6a88-1138-dc66-9a32d9bba7ea@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191018120604.29508-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 12:46:25PM +0100, Douglas Raillard wrote:
 
-> > What I don't see is how that that difference makes sense as input to:
-> > 
-> >    cost(x) : (1 + x) * cost_j
+
+On 18.10.19 г. 15:06 ч., YueHaibing wrote:
+> Fix sparse warning:
 > 
-> The actual input is:
-> x = (EM_COST_MARGIN_SCALE/SCHED_CAPACITY_SCALE) * (util - util_est)
+> fs/btrfs/disk-io.c:2534:12: warning:
+>  symbol 'init_tree_roots' was not declared. Should it be static?
 > 
-> Since EM_COST_MARGIN_SCALE == SCHED_CAPACITY_SCALE == 1024, this factor of 1
-> is not directly reflected in the code but is important for units
-> consistency.
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-But completely irrelevant for the actual math and conceptual
-understanding. Just because computers suck at real numbers, and floats
-are expensive, doesn't mean we have to burden ourselves with fixed point
-when writing equations.
+Huhz, I thought I had added static... Anyway this could be folded in the
+original patch. Thanks for the report.
 
-Also, as a physicist I'm prone to normalizing everything to 1, because
-that's lazy.
-
-> > I suppose that limits the additional OPP to twice the previously
-> > selected cost / efficiency (see the confusion from that other email).
-> > But given that efficency drops (or costs rise) for higher OPPs that
-> > still doesn't really make sense..
-
-> Yes, this current limit to +100% freq boosting is somehow arbitrary and
-> could probably benefit from being tunable in some way (Kconfig option
-> maybe). When (margin > 0), we end up selecting an OPP that has a higher cost
-> than the one strictly required, which is expected. The goal is to speed
-> things up at the expense of more power consumed to achieve the same work,
-> hence at a lower efficiency (== higher cost).
-
-No, no Kconfig knobs.
-
-> That's the main reason why this boosting apply a margin on the cost of the
-> selected OPP rather than just inflating the util. This allows controlling
-> directly how much more power (battery life) we are going to spend to achieve
-> some work that we know could be achieved with less power.
-
-But you're not; the margin is relative to the OPP, it is not absolute.
-
-Or rather, the only actual limit is in relation to the max OPP. So you
-have very little actual control over how much more energy you're
-spending.
-
-> > So while I agree that 2) is a reasonable signal to work from, everything
-> > that comes after is still much confusing me.
-
-> "When applying these boosting rules on the runqueue util signals ...":
-> Assuming the set of enqueued tasks stays the same between 2 observations
-> from schedutil, if we see the rq util_avg increase above its
-> util_est.enqueued, that means that at least one task had its util_avg go
-> above util_est.enqueued. We might miss some boosting opportunities if some
-> (util - util_est) compensates:
-> TASK_1(util - util_est) = - TASK_2(util - util_est)
-> but working on the aggregated value is much easier in schedutil, to avoid
-> crawling the list of entities.
-
-That still does not explain why 'util - util_est', when >0, makes for a
-sensible input into an OPP relative function.
-
-I agree that 'util - util_est', when >0, indicates utilization is
-increasing (for the aperiodic blah blah blah). But after that I'm still
-confused.
+> ---
+>  fs/btrfs/disk-io.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> index d078276..cb187f5 100644
+> --- a/fs/btrfs/disk-io.c
+> +++ b/fs/btrfs/disk-io.c
+> @@ -2531,7 +2531,7 @@ static int btrfs_validate_write_super(struct btrfs_fs_info *fs_info,
+>  	return ret;
+>  }
+>  
+> -int __cold init_tree_roots(struct btrfs_fs_info *fs_info)
+> +static int __cold init_tree_roots(struct btrfs_fs_info *fs_info)
+>  {
+>  	int backup_index = find_newest_super_backup(fs_info);
+>  	struct btrfs_super_block *sb = fs_info->super_copy;
+> 
