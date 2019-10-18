@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A9EDC246
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4074EDC248
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633354AbfJRKNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:13:32 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:60828 "EHLO foss.arm.com"
+        id S2633376AbfJRKNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:13:37 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:60866 "EHLO foss.arm.com"
         rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S2633333AbfJRKNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:13:30 -0400
+        id S2633333AbfJRKNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 06:13:34 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD7194A7;
-        Fri, 18 Oct 2019 03:13:06 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9932A4AC;
+        Fri, 18 Oct 2019 03:13:09 -0700 (PDT)
 Received: from e112269-lin.cambridge.arm.com (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D2BF23F6C4;
-        Fri, 18 Oct 2019 03:13:03 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4B3C3F6C4;
+        Fri, 18 Oct 2019 03:13:06 -0700 (PDT)
 From:   Steven Price <steven.price@arm.com>
 To:     linux-mm@kvack.org
 Cc:     Steven Price <steven.price@arm.com>,
@@ -36,11 +36,10 @@ Cc:     Steven Price <steven.price@arm.com>,
         Mark Rutland <Mark.Rutland@arm.com>,
         "Liang, Kan" <kan.liang@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org
-Subject: [PATCH v12 02/22] arc: mm: Add p?d_leaf() definitions
-Date:   Fri, 18 Oct 2019 11:12:28 +0100
-Message-Id: <20191018101248.33727-3-steven.price@arm.com>
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v12 03/22] arm: mm: Add p?d_leaf() definitions
+Date:   Fri, 18 Oct 2019 11:12:29 +0100
+Message-Id: <20191018101248.33727-4-steven.price@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018101248.33727-1-steven.price@arm.com>
 References: <20191018101248.33727-1-steven.price@arm.com>
@@ -53,31 +52,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 walk_page_range() is going to be allowed to walk page tables other than
 those of user space. For this it needs to know when it has reached a
-'leaf' entry in the page tables. This information will be provided by the
+'leaf' entry in the page tables. This information is provided by the
 p?d_leaf() functions/macros.
 
-For arc, we only have two levels, so only pmd_leaf() is needed.
+For arm pmd_large() already exists and does what we want. So simply
+provide the generic pmd_leaf() name.
 
-CC: Vineet Gupta <vgupta@synopsys.com>
-CC: linux-snps-arc@lists.infradead.org
-Acked-by: Vineet Gupta <vgupta@synopsys.com>
+CC: Russell King <linux@armlinux.org.uk>
+CC: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Steven Price <steven.price@arm.com>
 ---
- arch/arc/include/asm/pgtable.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/include/asm/pgtable-2level.h | 1 +
+ arch/arm/include/asm/pgtable-3level.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/arc/include/asm/pgtable.h b/arch/arc/include/asm/pgtable.h
-index 7addd0301c51..5ec798e50836 100644
---- a/arch/arc/include/asm/pgtable.h
-+++ b/arch/arc/include/asm/pgtable.h
-@@ -274,6 +274,7 @@ static inline void pmd_set(pmd_t *pmdp, pte_t *ptep)
- #define pmd_none(x)			(!pmd_val(x))
- #define	pmd_bad(x)			((pmd_val(x) & ~PAGE_MASK))
- #define pmd_present(x)			(pmd_val(x))
-+#define pmd_leaf(x)			(pmd_val(pmd) & _PAGE_HW_SZ)
- #define pmd_clear(xp)			do { pmd_val(*(xp)) = 0; } while (0)
+diff --git a/arch/arm/include/asm/pgtable-2level.h b/arch/arm/include/asm/pgtable-2level.h
+index 51beec41d48c..0d3ea35c97fe 100644
+--- a/arch/arm/include/asm/pgtable-2level.h
++++ b/arch/arm/include/asm/pgtable-2level.h
+@@ -189,6 +189,7 @@ static inline pmd_t *pmd_offset(pud_t *pud, unsigned long addr)
+ }
  
- #define pte_page(pte)		pfn_to_page(pte_pfn(pte))
+ #define pmd_large(pmd)		(pmd_val(pmd) & 2)
++#define pmd_leaf(pmd)		(pmd_val(pmd) & 2)
+ #define pmd_bad(pmd)		(pmd_val(pmd) & 2)
+ #define pmd_present(pmd)	(pmd_val(pmd))
+ 
+diff --git a/arch/arm/include/asm/pgtable-3level.h b/arch/arm/include/asm/pgtable-3level.h
+index 5b18295021a0..ad55ab068dbf 100644
+--- a/arch/arm/include/asm/pgtable-3level.h
++++ b/arch/arm/include/asm/pgtable-3level.h
+@@ -134,6 +134,7 @@
+ #define pmd_sect(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
+ 						 PMD_TYPE_SECT)
+ #define pmd_large(pmd)		pmd_sect(pmd)
++#define pmd_leaf(pmd)		pmd_sect(pmd)
+ 
+ #define pud_clear(pudp)			\
+ 	do {				\
 -- 
 2.20.1
 
