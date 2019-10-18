@@ -2,209 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8049DDBD34
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FAA9DBD22
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:41:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442067AbfJRFp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:45:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36114 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395438AbfJRFp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:45:58 -0400
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 230FF222C4
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 03:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571368557;
-        bh=K46fsWJT9D1+AWm1pFeodlhdrS+ZbXUEAbNO4PFZkos=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oTk5HgZmwR/m3wWFVjN0KjiPWR/TopaLT9qTgWXL9wW6f4HyU2Ru7fOkIaS+WP83p
-         qAG1jdt3JcCPAzCQ0eKiUsGT2bV0SL7IyHy3GhvBhIppZcT7J7JJJNHdlGmaoSb5G5
-         qqdTpYOtr548j/39GmCspcO0VcOsTbEWt/M5AY4E=
-Received: by mail-wr1-f52.google.com with SMTP id o18so4509277wrv.13
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 20:15:57 -0700 (PDT)
-X-Gm-Message-State: APjAAAXNSkXs8VFjbWFRi4QYRaDu+9FNkateg3YZcFSvIqIF3lKJiLrO
-        l5/LmAIWePNiRPgIlzlOArVRIZKVnMi8rrAcZbj48w==
-X-Google-Smtp-Source: APXvYqxPYR0Xs4HvDX2a+NswkyKwNd/iYC0Fr2w0Px08DQM8gg5+S0IoMNHgotc3I2NumCMSrh9L0RMVQajKYML6/MY=
-X-Received: by 2002:a5d:56c4:: with SMTP id m4mr5409453wrw.195.1571368555553;
- Thu, 17 Oct 2019 20:15:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <1571367619-13573-1-git-send-email-chenhc@lemote.com>
-In-Reply-To: <1571367619-13573-1-git-send-email-chenhc@lemote.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 17 Oct 2019 20:15:44 -0700
-X-Gmail-Original-Message-ID: <CALCETrWXRgkQOJGRqa_sOLAG2zhjsEX6b86T2VTsNYN9ECRrtA@mail.gmail.com>
-Message-ID: <CALCETrWXRgkQOJGRqa_sOLAG2zhjsEX6b86T2VTsNYN9ECRrtA@mail.gmail.com>
-Subject: Re: [PATCH] lib/vdso: Use __arch_use_vsyscall() to indicate fallback
-To:     Huacai Chen <chenhc@lemote.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        chenhuacai@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+        id S2442005AbfJRFlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:41:20 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:31112 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389961AbfJRFlU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 01:41:20 -0400
+X-UUID: 2be832a9497145dbb013a68753705429-20191018
+X-UUID: 2be832a9497145dbb013a68753705429-20191018
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <neal.liu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1470944434; Fri, 18 Oct 2019 13:41:14 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 18 Oct 2019 13:41:11 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 18 Oct 2019 13:41:11 +0800
+Message-ID: <1571377272.11955.6.camel@mtkswgap22>
+Subject: Re: [PATCH v4 2/3] dt-bindings: rng: add bindings for MediaTek
+ ARMv8 SoCs
+From:   Neal Liu <neal.liu@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        wsd_upstream <wsd_upstream@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Crystal Guo =?UTF-8?Q?=28=E9=83=AD=E6=99=B6=29?= 
+        <Crystal.Guo@mediatek.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Neal Liu <neal.liu@mediatek.com>
+Date:   Fri, 18 Oct 2019 13:41:12 +0800
+In-Reply-To: <1570024070.4002.1.camel@mtkswgap22>
+References: <1561361052-13072-1-git-send-email-neal.liu@mediatek.com>
+         <1561361052-13072-3-git-send-email-neal.liu@mediatek.com>
+         <20190722171320.GA9806@bogus> <1563848465.31451.4.camel@mtkswgap22>
+         <CAL_Jsq+SRhd=-5O2G_CMfJX9Z188kvA05MQOXaU1J8iExwUixQ@mail.gmail.com>
+         <1568771054.21700.7.camel@mtkswgap22> <1570024070.4002.1.camel@mtkswgap22>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 7:57 PM Huacai Chen <chenhc@lemote.com> wrote:
->
-> In do_hres(), we currently use whether the return value of __arch_get_
-> hw_counter() is negtive to indicate fallback, but this is not a good
-> idea. Because:
->
-> 1, ARM64 returns ULL_MAX but MIPS returns 0 when clock_mode is invalid;
-> 2, For a 64bit counter, a "negtive" value of counter is actually valid.
+On Wed, 2019-10-02 at 21:47 +0800, Neal Liu wrote:
+> Dear Rob,
+> 
+> Just a gentle ping.
+> 
+> Neal
+> 
+> On Wed, 2019-09-18 at 09:44 +0800, Neal Liu wrote:
+> > On Tue, 2019-07-23 at 22:35 +0800, Rob Herring wrote:
+> > > On Mon, Jul 22, 2019 at 8:21 PM Neal Liu <neal.liu@mediatek.com> wrote:
+> > > >
+> > > 
+> > > Please don't top post to lists.
+> > > 
+> > > > Dear Rob,
+> > > >         You can check my driver for detail:
+> > > >         http://patchwork.kernel.org/patch/11012475/ or patchset 3/3
+> > > 
+> > > I could, or you could just answer my question.
+> > > 
+> > > >
+> > > >         This driver is registered as hardware random number generator, and
+> > > > combines with rng-core.
+> > > >         We want to add one rng hw based on the dts. Is this proper or do you
+> > > > have other suggestion to meet this requirement?
+> > > 
+> > > It depends. There doesn't appear to be any resource configuration, so
+> > > why does it need to be in DT. DT is not the only way instantiate
+> > > drivers.
+> > > 
+> > > Rob
+> > > 
+> > 
+> > We would like to consult more about this patch.
+> > We cannot figure out what method should be used instead of DT.
+> > The interface to access firmware is "smc" and firmware function only
+> > exists on certain platforms.
+> > Some DT has similar way, like:
+> > http://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts#L470
+> > 
+> > 	firmware {
+> > 		optee {
+> > 			compatible = "linaro,optee-tz";
+> > 			method = "smc";
+> > 		};
+> > 	};
+> > 
+> > Is there any way to instantiate driver on certain platforms without DT?
+> > Could you give us some examples?
+> > Thanks
+> > 
+> > > >
+> > > >         Thanks
+> > > >
+> > > >
+> > > > On Tue, 2019-07-23 at 01:13 +0800, Rob Herring wrote:
+> > > > > On Mon, Jun 24, 2019 at 03:24:11PM +0800, Neal Liu wrote:
+> > > > > > Document the binding used by the MediaTek ARMv8 SoCs random
+> > > > > > number generator with TrustZone enabled.
+> > > > > >
+> > > > > > Signed-off-by: Neal Liu <neal.liu@mediatek.com>
+> > > > > > ---
+> > > > > >  .../devicetree/bindings/rng/mtk-sec-rng.txt        |   10 ++++++++++
+> > > > > >  1 file changed, 10 insertions(+)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/rng/mtk-sec-rng.txt
+> > > > > >
+> > > > > > diff --git a/Documentation/devicetree/bindings/rng/mtk-sec-rng.txt b/Documentation/devicetree/bindings/rng/mtk-sec-rng.txt
+> > > > > > new file mode 100644
+> > > > > > index 0000000..c04ce15
+> > > > > > --- /dev/null
+> > > > > > +++ b/Documentation/devicetree/bindings/rng/mtk-sec-rng.txt
+> > > > > > @@ -0,0 +1,10 @@
+> > > > > > +MediaTek random number generator with TrustZone enabled
+> > > > > > +
+> > > > > > +Required properties:
+> > > > > > +- compatible : Should be "mediatek,mtk-sec-rng"
+> > > > >
+> > > > > What's the interface to access this?
+> > > > >
+> > > > > A node with a 'compatible' and nothing else is a sign of something that
+> > > > > a parent device should instantiate and doesn't need to be in DT. IOW,
+> > > > > what do complete bindings for firmware functions look like?
+> > > > >
 
-s/negtive/negative
+We would like to revise our DT node as below:
 
-What's the actual bug?  Is it that MIPS is returning 0 but the check
-is < 0?  Sounds like MIPS should get fixed.
+firmware {
+	hwrng {
+		compatible = "mediatek,mtk-sec-rng";
+		method = "smc";
+	};
+};
 
->
-> To solve this problem, we use U64_MAX as the only "invalid" return
-> value -- this is still not fully correct, but has no problem in most
-> cases.
+And dt-bindings path would be changed because it's base on ARM TrustZone
+Firmware.
+From "Documentation/devicetree/bindings/rng/mtk-sec-rng.txt"
+To
+"Documentation/devicetree/bindings/arm/firmware/mediatek,mtk-sec-rng.txt"
 
-I'm sort of okay with that, but...
+We found some similar examples which also provide an interface to trap
+to Secure State through SMC instruction.
+Example 1: Documentation/devicetree/bindings/arm/firmware/xxx.txt
+Example 2: Documentation/devicetree/bindings/arm/psci.txt
 
-> Moreover, all vdso time-related functions should rely on the
-> return value of __arch_use_vsyscall(), because update_vdso_data() and
-> update_vsyscall_tz() also rely on it. So, in the core functions of
-> __cvdso_gettimeofday(), __cvdso_clock_gettime() and __cvdso_clock_
-> getres(), if __arch_use_vsyscall() returns false, we use the fallback
-> functions directly.
+Is that okay for you?
 
-__arch_use_vsyscall() is not currently intended for use in the vDSO at all.
+Neal
 
->
-> Fixes: 00b26474c2f1613d7ab894c5 ("lib/vdso: Provide generic VDSO implementation")
-> Cc: stable@vger.kernel.org
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Paul Burton <paul.burton@mips.com>
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Huacai Chen <chenhc@lemote.com>
-> ---
->  arch/arm64/include/asm/vdso/vsyscall.h |  2 +-
->  arch/mips/include/asm/vdso/vsyscall.h  |  2 +-
->  include/asm-generic/vdso/vsyscall.h    |  2 +-
->  lib/vdso/gettimeofday.c                | 12 +++++++++++-
->  4 files changed, 14 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm64/include/asm/vdso/vsyscall.h b/arch/arm64/include/asm/vdso/vsyscall.h
-> index 0c731bf..406e6de 100644
-> --- a/arch/arm64/include/asm/vdso/vsyscall.h
-> +++ b/arch/arm64/include/asm/vdso/vsyscall.h
-> @@ -31,7 +31,7 @@ int __arm64_get_clock_mode(struct timekeeper *tk)
->  #define __arch_get_clock_mode __arm64_get_clock_mode
->
->  static __always_inline
-> -int __arm64_use_vsyscall(struct vdso_data *vdata)
-> +int __arm64_use_vsyscall(const struct vdso_data *vdata)
->  {
->         return !vdata[CS_HRES_COARSE].clock_mode;
->  }
-> diff --git a/arch/mips/include/asm/vdso/vsyscall.h b/arch/mips/include/asm/vdso/vsyscall.h
-> index 1953147..8b10dd7 100644
-> --- a/arch/mips/include/asm/vdso/vsyscall.h
-> +++ b/arch/mips/include/asm/vdso/vsyscall.h
-> @@ -29,7 +29,7 @@ int __mips_get_clock_mode(struct timekeeper *tk)
->  #define __arch_get_clock_mode __mips_get_clock_mode
->
->  static __always_inline
-> -int __mips_use_vsyscall(struct vdso_data *vdata)
-> +int __mips_use_vsyscall(const struct vdso_data *vdata)
->  {
->         return (vdata[CS_HRES_COARSE].clock_mode != VDSO_CLOCK_NONE);
->  }
-> diff --git a/include/asm-generic/vdso/vsyscall.h b/include/asm-generic/vdso/vsyscall.h
-> index e94b1978..ac05a625 100644
-> --- a/include/asm-generic/vdso/vsyscall.h
-> +++ b/include/asm-generic/vdso/vsyscall.h
-> @@ -26,7 +26,7 @@ static __always_inline int __arch_get_clock_mode(struct timekeeper *tk)
->  #endif /* __arch_get_clock_mode */
->
->  #ifndef __arch_use_vsyscall
-> -static __always_inline int __arch_use_vsyscall(struct vdso_data *vdata)
-> +static __always_inline int __arch_use_vsyscall(const struct vdso_data *vdata)
->  {
->         return 1;
->  }
-> diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-> index e630e7f..4ad062e 100644
-> --- a/lib/vdso/gettimeofday.c
-> +++ b/lib/vdso/gettimeofday.c
-> @@ -9,6 +9,7 @@
->  #include <linux/hrtimer_defs.h>
->  #include <vdso/datapage.h>
->  #include <vdso/helpers.h>
-> +#include <vdso/vsyscall.h>
->
->  /*
->   * The generic vDSO implementation requires that gettimeofday.h
-> @@ -50,7 +51,7 @@ static int do_hres(const struct vdso_data *vd, clockid_t clk,
->                 cycles = __arch_get_hw_counter(vd->clock_mode);
->                 ns = vdso_ts->nsec;
->                 last = vd->cycle_last;
-> -               if (unlikely((s64)cycles < 0))
-> +               if (unlikely(cycles == U64_MAX))
->                         return -1;
+> > > > > > +
+> > > > > > +Example:
+> > > > > > +
+> > > > > > +hwrng: hwrng {
+> > > > > > +   compatible = "mediatek,mtk-sec-rng";
+> > > > > > +}
+> > > > > > --
+> > > > > > 1.7.9.5
+> > > > > >
+> > > > >
+> > > > > _______________________________________________
+> > > > > Linux-mediatek mailing list
+> > > > > Linux-mediatek@lists.infradead.org
+> > > > > http://lists.infradead.org/mailman/listinfo/linux-mediatek
+> > > >
+> > > >
+> > 
+> 
 
-I would actually prefer:
 
-if (unlikely(cycles < last))
-
-or perhaps:
-
-if (unlikely((s64)(cycles-last) < 0))
-
-which would have the nice side effect of getting rid of the annoying
-x86 special case in vdso_calc_delta().  The former version is
-compatible with U64_MAX, whereas the latter version would need the
-error case to return last-1 or similar.  The benefit of the latter
-version is that it can survive wrap-around.
-
->
->                 ns += vdso_calc_delta(cycles, last, vd->mask, vd->mult);
-> @@ -91,6 +92,9 @@ __cvdso_clock_gettime_common(clockid_t clock, struct __kernel_timespec *ts)
->         if (unlikely((u32) clock >= MAX_CLOCKS))
->                 return -1;
->
-> +       if (!__arch_use_vsyscall(vd))
-> +               return -1;
-> +
-
-NAK.  I don't think this is helpful or correct.  It doesn't appear to
-do anything valid, and it's racy.
-
->         /*
->          * Convert the clockid to a bitmask and use it to check which
->          * clocks are handled in the VDSO directly.
-> @@ -145,6 +149,9 @@ __cvdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
->  {
->         const struct vdso_data *vd = __arch_get_vdso_data();
->
-> +       if (!__arch_use_vsyscall(vd))
-> +               return gettimeofday_fallback(tv, tz);
-> +
-
-Ditto.
-
->         if (likely(tv != NULL)) {
->                 struct __kernel_timespec ts;
->
-> @@ -189,6 +196,9 @@ int __cvdso_clock_getres_common(clockid_t clock, struct __kernel_timespec *res)
->         if (unlikely((u32) clock >= MAX_CLOCKS))
->                 return -1;
->
-> +       if (!__arch_use_vsyscall(vd))
-> +               return -1;
-> +
-
-Ditto.
