@@ -2,92 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1737ADBADD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 02:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A19DBAE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 02:33:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406997AbfJRA2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 20:28:42 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:55036 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405004AbfJRA2i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 20:28:38 -0400
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9I0ONdI002666
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 17:28:37 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=nOordKf0fXrBOx3atNeexqICGFlyz2QswU+/WEJB+fI=;
- b=nOPSo1zXMejNXJGruS+xfNy2y5DMPVIkm6EgjUJLxYYrEaUVkBZdJGBvI0lH9sx+Aedg
- 2G0IwK4Hp6dG1blN+aaItGOaMr7Z78gxUdLMTz0wRrXJOD/SiPmfiSEQ3C2g+bekJ96z
- LHQcjig3SdvhFz0LK9Ouay+sqePa5xesJhc= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2vq2nkr1pf-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 17:28:37 -0700
-Received: from 2401:db00:30:6012:face:0:17:0 (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Thu, 17 Oct 2019 17:28:36 -0700
-Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 2382218CE8493; Thu, 17 Oct 2019 17:28:34 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Roman Gushchin <guro@fb.com>
-Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
-To:     <linux-mm@kvack.org>
-CC:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Waiman Long <longman@redhat.com>,
-        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH 16/16] mm: slab: remove redundant check in memcg_accumulate_slabinfo()
-Date:   Thu, 17 Oct 2019 17:28:20 -0700
-Message-ID: <20191018002820.307763-17-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191018002820.307763-1-guro@fb.com>
-References: <20191018002820.307763-1-guro@fb.com>
-X-FB-Internal: Safe
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-17_07:2019-10-17,2019-10-17 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=705
- spamscore=0 clxscore=1015 suspectscore=1 bulkscore=0 impostorscore=0
- mlxscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910180001
-X-FB-Internal: deliver
+        id S2392856AbfJRAdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 20:33:32 -0400
+Received: from gate.crashing.org ([63.228.1.57]:47116 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728419AbfJRAdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Oct 2019 20:33:32 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x9I0Wvrx022950;
+        Thu, 17 Oct 2019 19:32:58 -0500
+Message-ID: <f6d5cb45a9aa167533135c5b218b45b1d210d31a.camel@kernel.crashing.org>
+Subject: Re: [PATCH v2] ftgmac100: Disable HW checksum generation on AST2500
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Vijay Khemka <vijaykhemka@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Sven Van Asbroeck <TheSven73@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
+        "joel@jms.id.au" <joel@jms.id.au>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        Sai Dasari <sdasari@fb.com>
+Date:   Fri, 18 Oct 2019 11:32:57 +1100
+In-Reply-To: <9AA81274-01F2-4803-8905-26F0521486CE@fb.com>
+References: <20191011213027.2110008-1-vijaykhemka@fb.com>
+         <3a1176067b745fddfc625bbd142a41913ee3e3a1.camel@kernel.crashing.org>
+         <0C0BC813-5A84-403F-9C48-9447AAABD867@fb.com>
+         <071cf1eeefcbfc14633a13bc2d15ad7392987a88.camel@kernel.crashing.org>
+         <9AA81274-01F2-4803-8905-26F0521486CE@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-memcg_accumulate_slabinfo() is never called with a non-root
-kmem_cache as a first argument, so the is_root_cache(s) check
-is redundant and can be removed without any functional change.
+On Fri, 2019-10-18 at 00:06 +0000, Vijay Khemka wrote:
+> 
+>     > This is not a matter of unsupported csum, it is broken hw csum. 
+>     > That's why we disable hw checksum. My guess is once we disable
+>     > Hw checksum, it will use sw checksum. So I am just disabling hw 
+>     > Checksum.
+>     
+>     I don't understand what you are saying. You reported a problem with
+>     IPV6 checksums generation. The HW doesn't support it. What's "not a
+>     matter of unsupported csum" ?
+>     
+>     Your patch uses a *deprecated* bit to tell the network stack to only do
+>     HW checksum generation on IPV4.
+>     
+>     This bit is deprecated for a reason, again, see skbuff.h. The right
+>     approach, *which the driver already does*, is to tell the stack that we
+>     support HW checksuming using NETIF_F_HW_CSUM, and then, in the transmit
+>     handler, to call skb_checksum_help() to have the SW calculate the
+>     checksum if it's not a supported type.
+> 
+> My understanding was when we enable NETIF_F_HW_CSUM means network 
+> stack enables HW checksum and doesn't calculate SW checksum. But as per
+> this supported types HW checksum are used only for IPV4 and not for IPV6 even
+> though driver enabled NETIF_F_HW_CSUM. For IPV6 it is always a SW generated
+> checksum, please correct me here.
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
----
- mm/slab_common.c | 3 ---
- 1 file changed, 3 deletions(-)
+Have you actually read the comments in skbuff.h that I pointed you to ?
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 3dcd90ba7525..1c10c94343f6 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1105,9 +1105,6 @@ memcg_accumulate_slabinfo(struct kmem_cache *s, struct slabinfo *info)
- 	struct kmem_cache *c;
- 	struct slabinfo sinfo;
- 
--	if (!is_root_cache(s))
--		return;
--
- 	c = memcg_cache(s);
- 	if (c) {
- 		memset(&sinfo, 0, sizeof(sinfo));
--- 
-2.21.0
+And the rest of my email for that matter ?
+
+>     This is exactly what ftgmac100_prep_tx_csum() does. It only enables HW
+>     checksum generation on supported types and uses skb_checksum_help()
+>     otherwise, supported types being protocol ETH_P_IP and IP protocol
+>     being raw IP, TCP and UDP.
+> 
+>     
+>     So this *should* have fallen back to SW for IPV6. So either something
+>     in my code there is making an incorrect assumption, or something is
+>     broken in skb_checksum_help() for IPV6 (which I somewhat doubt) or
+>     something else I can't think of, but setting a *deprecated* flag is
+>     definitely not the right answer, neither is completely disabling HW
+>     checksumming.
+>     
+>     So can you investigate what's going on a bit more closely please ? I
+>     can try myself, though I have very little experience with IPV6 and
+>     probably won't have time before next week.
+>     
+>     Cheers,
+>     Ben.
+>     
+>     >     The driver should have handled unsupported csum via SW fallback
+>     >     already in ftgmac100_prep_tx_csum()
+>     >     
+>     >     Can you check why this didn't work for you ?
+>     >     
+>     >     Cheers,
+>     >     Ben.
+>     >     
+>     >     > Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+>     >     > ---
+>     >     > Changes since v1:
+>     >     >  Enabled IPV4 hw checksum generation as it works for IPV4.
+>     >     > 
+>     >     >  drivers/net/ethernet/faraday/ftgmac100.c | 13 ++++++++++++-
+>     >     >  1 file changed, 12 insertions(+), 1 deletion(-)
+>     >     > 
+>     >     > diff --git a/drivers/net/ethernet/faraday/ftgmac100.c
+>     >     > b/drivers/net/ethernet/faraday/ftgmac100.c
+>     >     > index 030fed65393e..0255a28d2958 100644
+>     >     > --- a/drivers/net/ethernet/faraday/ftgmac100.c
+>     >     > +++ b/drivers/net/ethernet/faraday/ftgmac100.c
+>     >     > @@ -1842,8 +1842,19 @@ static int ftgmac100_probe(struct
+>     >     > platform_device *pdev)
+>     >     >  	/* AST2400  doesn't have working HW checksum generation */
+>     >     >  	if (np && (of_device_is_compatible(np, "aspeed,ast2400-mac")))
+>     >     >  		netdev->hw_features &= ~NETIF_F_HW_CSUM;
+>     >     > +
+>     >     > +	/* AST2500 doesn't have working HW checksum generation for IPV6
+>     >     > +	 * but it works for IPV4, so disabling hw checksum and enabling
+>     >     > +	 * it for only IPV4.
+>     >     > +	 */
+>     >     > +	if (np && (of_device_is_compatible(np, "aspeed,ast2500-mac")))
+>     >     > {
+>     >     > +		netdev->hw_features &= ~NETIF_F_HW_CSUM;
+>     >     > +		netdev->hw_features |= NETIF_F_IP_CSUM;
+>     >     > +	}
+>     >     > +
+>     >     >  	if (np && of_get_property(np, "no-hw-checksum", NULL))
+>     >     > -		netdev->hw_features &= ~(NETIF_F_HW_CSUM |
+>     >     > NETIF_F_RXCSUM);
+>     >     > +		netdev->hw_features &= ~(NETIF_F_HW_CSUM |
+>     >     > NETIF_F_RXCSUM
+>     >     > +					 | NETIF_F_IP_CSUM);
+>     >     >  	netdev->features |= netdev->hw_features;
+>     >     >  
+>     >     >  	/* register network device */
+>     >     
+>     >     
+>     > 
+>     
+>     
+> 
 
