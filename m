@@ -2,47 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84DE4DCB79
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:34:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 007E9DCB34
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:33:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502818AbfJRQc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 12:32:58 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57774 "EHLO
+        id S2443018AbfJRQbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 12:31:13 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57732 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439985AbfJRQa6 (ORCPT
+        with ESMTP id S2439900AbfJRQav (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 12:30:58 -0400
+        Fri, 18 Oct 2019 12:30:51 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iLV9A-0002wl-Cw; Fri, 18 Oct 2019 18:30:36 +0200
+        id 1iLV9H-00032Z-Jl; Fri, 18 Oct 2019 18:30:43 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3EF201C04CF;
-        Fri, 18 Oct 2019 18:30:32 +0200 (CEST)
-Date:   Fri, 18 Oct 2019 16:30:32 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 175DF1C04D5;
+        Fri, 18 Oct 2019 18:30:34 +0200 (CEST)
+Date:   Fri, 18 Oct 2019 16:30:33 -0000
 From:   "tip-bot2 for Jiri Slaby" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86/asm: Annotate aliases
+Subject: [tip: x86/asm] x86/asm: Annotate relocate_kernel_{32,64}.c
 Cc:     Jiri Slaby <jslaby@suse.cz>, Borislav Petkov <bp@suse.de>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Enrico Weigelt <info@metux.net>,
         "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
         "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86-ml" <x86@kernel.org>, xen-devel@lists.xenproject.org,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191011115108.12392-10-jslaby@suse.cz>
-References: <20191011115108.12392-10-jslaby@suse.cz>
+        linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <20191011115108.12392-4-jslaby@suse.cz>
+References: <20191011115108.12392-4-jslaby@suse.cz>
 MIME-Version: 1.0
-Message-ID: <157141623204.29376.8488182129639228430.tip-bot2@tip-bot2>
+Message-ID: <157141623386.29376.15307122503000886721.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -58,153 +53,159 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/asm branch of tip:
 
-Commit-ID:     e9b9d020c4873d5e90d9986cfd137afbafbc5bfa
-Gitweb:        https://git.kernel.org/tip/e9b9d020c4873d5e90d9986cfd137afbafbc5bfa
+Commit-ID:     6ec2a968247e51535e08dbbbfc8f53c95a48cde0
+Gitweb:        https://git.kernel.org/tip/6ec2a968247e51535e08dbbbfc8f53c95a48cde0
 Author:        Jiri Slaby <jslaby@suse.cz>
-AuthorDate:    Fri, 11 Oct 2019 13:50:49 +02:00
+AuthorDate:    Fri, 11 Oct 2019 13:50:43 +02:00
 Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Fri, 18 Oct 2019 10:38:23 +02:00
+CommitterDate: Fri, 18 Oct 2019 09:53:19 +02:00
 
-x86/asm: Annotate aliases
+x86/asm: Annotate relocate_kernel_{32,64}.c
 
-_key_expansion_128 is an alias to _key_expansion_256a, __memcpy to
-memcpy, xen_syscall32_target to xen_sysenter_target, and so on. Annotate
-them all using the new SYM_FUNC_START_ALIAS, SYM_FUNC_START_LOCAL_ALIAS,
-and SYM_FUNC_END_ALIAS. This will make the tools generating the
-debuginfo happy as it avoids nesting and double symbols.
+There are functions in relocate_kernel_{32,64}.c which are not
+annotated. This makes automatic annotations on them rather hard. So
+annotate all the functions now.
+
+Note that these are not C-like functions, so FUNC is not used. Instead
+CODE markers are used. Also the functions are not aligned, so the
+NOALIGN versions are used:
+
+- SYM_CODE_START_NOALIGN
+- SYM_CODE_START_LOCAL_NOALIGN
+- SYM_CODE_END
+
+The result is:
+  0000   108 NOTYPE  GLOBAL DEFAULT    1 relocate_kernel
+  006c   165 NOTYPE  LOCAL  DEFAULT    1 identity_mapped
+  0146   127 NOTYPE  LOCAL  DEFAULT    1 swap_pages
+  0111    53 NOTYPE  LOCAL  DEFAULT    1 virtual_mapped
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Juergen Gross <jgross@suse.com> [xen parts]
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Alexios Zavras <alexios.zavras@intel.com>
+Cc: Allison Randal <allison@lohutok.net>
+Cc: Enrico Weigelt <info@metux.net>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: linux-arch@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: x86-ml <x86@kernel.org>
-Cc: xen-devel@lists.xenproject.org
-Link: https://lkml.kernel.org/r/20191011115108.12392-10-jslaby@suse.cz
+Link: https://lkml.kernel.org/r/20191011115108.12392-4-jslaby@suse.cz
 ---
- arch/x86/crypto/aesni-intel_asm.S | 5 ++---
- arch/x86/lib/memcpy_64.S          | 4 ++--
- arch/x86/lib/memmove_64.S         | 4 ++--
- arch/x86/lib/memset_64.S          | 4 ++--
- arch/x86/xen/xen-asm_64.S         | 4 ++--
- 5 files changed, 10 insertions(+), 11 deletions(-)
+ arch/x86/kernel/relocate_kernel_32.S | 13 ++++++++-----
+ arch/x86/kernel/relocate_kernel_64.S | 13 ++++++++-----
+ 2 files changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/crypto/aesni-intel_asm.S b/arch/x86/crypto/aesni-intel_asm.S
-index e0a5fb4..9d8d5f2 100644
---- a/arch/x86/crypto/aesni-intel_asm.S
-+++ b/arch/x86/crypto/aesni-intel_asm.S
-@@ -1757,8 +1757,7 @@ ENDPROC(aesni_gcm_finalize)
- #endif
+diff --git a/arch/x86/kernel/relocate_kernel_32.S b/arch/x86/kernel/relocate_kernel_32.S
+index ee26df0..94b3388 100644
+--- a/arch/x86/kernel/relocate_kernel_32.S
++++ b/arch/x86/kernel/relocate_kernel_32.S
+@@ -35,8 +35,7 @@
+ #define CP_PA_BACKUP_PAGES_MAP	DATA(0x1c)
  
+ 	.text
+-	.globl relocate_kernel
+-relocate_kernel:
++SYM_CODE_START_NOALIGN(relocate_kernel)
+ 	/* Save the CPU context, used for jumping back */
  
--.align 4
--_key_expansion_128:
-+SYM_FUNC_START_LOCAL_ALIAS(_key_expansion_128)
- SYM_FUNC_START_LOCAL(_key_expansion_256a)
- 	pshufd $0b11111111, %xmm1, %xmm1
- 	shufps $0b00010000, %xmm0, %xmm4
-@@ -1769,8 +1768,8 @@ SYM_FUNC_START_LOCAL(_key_expansion_256a)
- 	movaps %xmm0, (TKEYP)
- 	add $0x10, TKEYP
+ 	pushl	%ebx
+@@ -93,8 +92,9 @@ relocate_kernel:
+ 	addl    $(identity_mapped - relocate_kernel), %eax
+ 	pushl   %eax
  	ret
--ENDPROC(_key_expansion_128)
- SYM_FUNC_END(_key_expansion_256a)
-+SYM_FUNC_END_ALIAS(_key_expansion_128)
++SYM_CODE_END(relocate_kernel)
  
- SYM_FUNC_START_LOCAL(_key_expansion_192a)
- 	pshufd $0b01010101, %xmm1, %xmm1
-diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
-index 9274866..57a6426 100644
---- a/arch/x86/lib/memcpy_64.S
-+++ b/arch/x86/lib/memcpy_64.S
-@@ -28,7 +28,7 @@
-  * Output:
-  * rax original destination
-  */
--ENTRY(__memcpy)
-+SYM_FUNC_START_ALIAS(__memcpy)
- ENTRY(memcpy)
- 	ALTERNATIVE_2 "jmp memcpy_orig", "", X86_FEATURE_REP_GOOD, \
- 		      "jmp memcpy_erms", X86_FEATURE_ERMS
-@@ -42,7 +42,7 @@ ENTRY(memcpy)
- 	rep movsb
+-identity_mapped:
++SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	/* set return address to 0 if not preserving context */
+ 	pushl	$0
+ 	/* store the start address on the stack */
+@@ -191,8 +191,9 @@ identity_mapped:
+ 	addl	$(virtual_mapped - relocate_kernel), %eax
+ 	pushl	%eax
  	ret
- ENDPROC(memcpy)
--ENDPROC(__memcpy)
-+SYM_FUNC_END_ALIAS(__memcpy)
- EXPORT_SYMBOL(memcpy)
- EXPORT_SYMBOL(__memcpy)
++SYM_CODE_END(identity_mapped)
  
-diff --git a/arch/x86/lib/memmove_64.S b/arch/x86/lib/memmove_64.S
-index bbec69d..50c1648 100644
---- a/arch/x86/lib/memmove_64.S
-+++ b/arch/x86/lib/memmove_64.S
-@@ -26,7 +26,7 @@
-  */
- .weak memmove
+-virtual_mapped:
++SYM_CODE_START_LOCAL_NOALIGN(virtual_mapped)
+ 	movl	CR4(%edi), %eax
+ 	movl	%eax, %cr4
+ 	movl	CR3(%edi), %eax
+@@ -208,9 +209,10 @@ virtual_mapped:
+ 	popl	%esi
+ 	popl	%ebx
+ 	ret
++SYM_CODE_END(virtual_mapped)
  
--ENTRY(memmove)
-+SYM_FUNC_START_ALIAS(memmove)
- ENTRY(__memmove)
+ 	/* Do the copies */
+-swap_pages:
++SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
+ 	movl	8(%esp), %edx
+ 	movl	4(%esp), %ecx
+ 	pushl	%ebp
+@@ -270,6 +272,7 @@ swap_pages:
+ 	popl	%ebx
+ 	popl	%ebp
+ 	ret
++SYM_CODE_END(swap_pages)
  
- 	/* Handle more 32 bytes in loop */
-@@ -208,6 +208,6 @@ ENTRY(__memmove)
- 13:
- 	retq
- ENDPROC(__memmove)
--ENDPROC(memmove)
-+SYM_FUNC_END_ALIAS(memmove)
- EXPORT_SYMBOL(__memmove)
- EXPORT_SYMBOL(memmove)
-diff --git a/arch/x86/lib/memset_64.S b/arch/x86/lib/memset_64.S
-index 9bc861c..927ac44 100644
---- a/arch/x86/lib/memset_64.S
-+++ b/arch/x86/lib/memset_64.S
-@@ -19,7 +19,7 @@
-  *
-  * rax   original destination
-  */
--ENTRY(memset)
-+SYM_FUNC_START_ALIAS(memset)
- ENTRY(__memset)
+ 	.globl kexec_control_code_size
+ .set kexec_control_code_size, . - relocate_kernel
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index c51ccff..ef3ba99 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -38,8 +38,7 @@
+ 	.text
+ 	.align PAGE_SIZE
+ 	.code64
+-	.globl relocate_kernel
+-relocate_kernel:
++SYM_CODE_START_NOALIGN(relocate_kernel)
  	/*
- 	 * Some CPUs support enhanced REP MOVSB/STOSB feature. It is recommended
-@@ -43,8 +43,8 @@ ENTRY(__memset)
- 	rep stosb
- 	movq %r9,%rax
+ 	 * %rdi indirection_page
+ 	 * %rsi page_list
+@@ -103,8 +102,9 @@ relocate_kernel:
+ 	addq	$(identity_mapped - relocate_kernel), %r8
+ 	pushq	%r8
  	ret
--ENDPROC(memset)
- ENDPROC(__memset)
-+SYM_FUNC_END_ALIAS(memset)
- EXPORT_SYMBOL(memset)
- EXPORT_SYMBOL(__memset)
++SYM_CODE_END(relocate_kernel)
  
-diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
-index ebf610b..45c1249 100644
---- a/arch/x86/xen/xen-asm_64.S
-+++ b/arch/x86/xen/xen-asm_64.S
-@@ -167,13 +167,13 @@ ENDPROC(xen_sysenter_target)
+-identity_mapped:
++SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	/* set return address to 0 if not preserving context */
+ 	pushq	$0
+ 	/* store the start address on the stack */
+@@ -209,8 +209,9 @@ identity_mapped:
+ 	movq	$virtual_mapped, %rax
+ 	pushq	%rax
+ 	ret
++SYM_CODE_END(identity_mapped)
  
- #else /* !CONFIG_IA32_EMULATION */
+-virtual_mapped:
++SYM_CODE_START_LOCAL_NOALIGN(virtual_mapped)
+ 	movq	RSP(%r8), %rsp
+ 	movq	CR4(%r8), %rax
+ 	movq	%rax, %cr4
+@@ -228,9 +229,10 @@ virtual_mapped:
+ 	popq	%rbp
+ 	popq	%rbx
+ 	ret
++SYM_CODE_END(virtual_mapped)
  
--ENTRY(xen_syscall32_target)
-+SYM_FUNC_START_ALIAS(xen_syscall32_target)
- ENTRY(xen_sysenter_target)
- 	lea 16(%rsp), %rsp	/* strip %rcx, %r11 */
- 	mov $-ENOSYS, %rax
- 	pushq $0
- 	jmp hypercall_iret
--ENDPROC(xen_syscall32_target)
- ENDPROC(xen_sysenter_target)
-+SYM_FUNC_END_ALIAS(xen_syscall32_target)
+ 	/* Do the copies */
+-swap_pages:
++SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
+ 	movq	%rdi, %rcx 	/* Put the page_list in %rcx */
+ 	xorl	%edi, %edi
+ 	xorl	%esi, %esi
+@@ -283,6 +285,7 @@ swap_pages:
+ 	jmp	0b
+ 3:
+ 	ret
++SYM_CODE_END(swap_pages)
  
- #endif	/* CONFIG_IA32_EMULATION */
+ 	.globl kexec_control_code_size
+ .set kexec_control_code_size, . - relocate_kernel
