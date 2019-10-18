@@ -2,125 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC678DBD6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 08:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FA3DDBD6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 08:01:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392198AbfJRGAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 02:00:50 -0400
-Received: from ozlabs.org ([203.11.71.1]:39977 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731843AbfJRGAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 02:00:50 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46vb4F5mbcz9sP6;
-        Fri, 18 Oct 2019 17:00:45 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1571378446;
-        bh=60ewmAB7QXvwdlwLfmq4cIwU3Hc9aFogqwrAB0oeu0A=;
-        h=Date:From:To:Cc:Subject:From;
-        b=oncUhKrCB9ZHOX2bHPNHKNF44fZV2hVYuQlKlrXfxa2QpfhcmhPeBFRIkQGiH8tDz
-         fTkLEIXbfh3DmeJvyV+GvhN6mOVYWciqqaODZ4DxsC77kpeuUXWYWK0AruO9MrkSyZ
-         My0dYmrOo+up0uEbDKTMG+cBi7rmcEokYfX06OA9kiAxY6JjxvwE99cA2KyUt7YQ4o
-         NxZSM101+pixRiUJUIZhHekiiosmkteJmWsto8WqHdW1la4Sd3fBahg5ixRyrT0lti
-         4W33f6088I5OGkpXes82f9wDwZYKVucsVMiyBS8cNtD3wxfrfvzt0K3nFM6FWsFZXl
-         hORJfFnqTRH4A==
-Date:   Fri, 18 Oct 2019 17:00:45 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Petr Mladek <pmladek@suse.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Changbin Du <changbin.du@gmail.com>
-Subject: linux-next: manual merge of the akpm-current tree with the printk
- tree
-Message-ID: <20191018170045.1c2b624e@canb.auug.org.au>
+        id S2504159AbfJRGBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 02:01:33 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:55498 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S2390743AbfJRGBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 02:01:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6036832D;
+        Thu, 17 Oct 2019 23:01:07 -0700 (PDT)
+Received: from e107533-lin.cambridge.arm.com (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 28B6F3F68E;
+        Thu, 17 Oct 2019 23:03:51 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 07:00:54 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nico@fluxnic.net
+Subject: Re: [PATCH v2 4/5] cpufreq: vexpress-spc: remove lots of debug
+ messages
+Message-ID: <20191018060054.GE31836@e107533-lin.cambridge.arm.com>
+References: <20191017123508.26130-1-sudeep.holla@arm.com>
+ <20191017123508.26130-5-sudeep.holla@arm.com>
+ <20191018055720.za3a5zeqdzcupc4h@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/XFRzzwHgo9hLnYc=8qy9BXX";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018055720.za3a5zeqdzcupc4h@vireshk-i7>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/XFRzzwHgo9hLnYc=8qy9BXX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Oct 18, 2019 at 11:27:20AM +0530, Viresh Kumar wrote:
+> On 17-10-19, 13:35, Sudeep Holla wrote:
+> > This driver have been used and tested for year now and the extensive
+> > debug/log messages in the driver are not really required anymore.
+> > Get rid of those unnecessary log messages.
+> > 
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > ---
+> >  drivers/cpufreq/vexpress-spc-cpufreq.c | 72 +++++---------------------
+> >  1 file changed, 13 insertions(+), 59 deletions(-)
+> > 
+> > diff --git a/drivers/cpufreq/vexpress-spc-cpufreq.c b/drivers/cpufreq/vexpress-spc-cpufreq.c
+> >  static void put_cluster_clk_and_freq_table(struct device *cpu_dev,
+> > @@ -324,11 +296,9 @@ static void put_cluster_clk_and_freq_table(struct device *cpu_dev,
+> >  
+> >  	for_each_present_cpu(i) {
+> >  		struct device *cdev = get_cpu_device(i);
+> > -		if (!cdev) {
+> > -			pr_err("%s: failed to get cpu%d device\n", __func__, i);
+> > -			return;
+> > -		}
+> >  
+> > +		if (!cdev)
+> > +			return;
+> 
+> We had a blank line after this, which isn't there in your version
+> anymore. Please keep that here and few more places below.
+>
 
-Hi all,
+Ah, this one is spurious change when doing in bulk not intended. I will
+add back the blank line.
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+--
+Regards,
+Sudeep
 
-  lib/Kconfig.debug
-
-between commit:
-
-  57f5677e535b ("printf: add support for printing symbolic error names")
-
-from the printk tree and patch:
-
-  "kernel-hacking: move DEBUG_BUGVERBOSE to 'printk and dmesg options'"
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc lib/Kconfig.debug
-index 045ef7caeb49,83bb867fcb6f..000000000000
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@@ -164,15 -164,15 +164,24 @@@ config DYNAMIC_DEBU
-  	  See Documentation/admin-guide/dynamic-debug-howto.rst for additional
-  	  information.
- =20
- +config SYMBOLIC_ERRNAME
- +	bool "Support symbolic error names in printf"
- +	default y if PRINTK
- +	help
- +	  If you say Y here, the kernel's printf implementation will
- +	  be able to print symbolic error names such as ENOSPC instead
- +	  of the number 28. It makes the kernel image slightly larger
- +	  (about 3KB), but can make the kernel logs easier to read.
- +
-+ config DEBUG_BUGVERBOSE
-+ 	bool "Verbose BUG() reporting (adds 70K)" if DEBUG_KERNEL && EXPERT
-+ 	depends on BUG && (GENERIC_BUG || HAVE_DEBUG_BUGVERBOSE)
-+ 	default y
-+ 	help
-+ 	  Say Y here to make BUG() panics output the file name and line number
-+ 	  of the BUG call as well as the EIP and oops trace.  This aids
-+ 	  debugging but costs about 70-100K of memory.
-+=20
-  endmenu # "printk and dmesg options"
- =20
-  menu "Compile-time checks and compiler options"
-
---Sig_/XFRzzwHgo9hLnYc=8qy9BXX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2pVQ0ACgkQAVBC80lX
-0GxuXwf7BRclE8NsqVQsrAt9NxPkN85pOOcsqvrE6N4MfH0drgiZJOpSMLvuRSru
-PBwST03aMk5wXhsjILNOHr+9NkuUJnHlrTXaLyqMAuEwm2FhHH6Vk/hzPDPIkKL0
-6XUkx4P0mirfiyQSGZjL9zXrgtej+Ov7NNWtEDatbdMt1YoRBLMTbLGnhM+Q7r2P
-+aZtQvS2tPx8SqOdzpPCbonfNtrIivTl427/4rVnSEEuvaTDEksG69YStUbW9CyN
-A4MUik3lOfWJVVEfDLswa2WbHbmGtekskKFEOLQoKKGtRUGfuTPfgS1CLEux36+P
-9c6ImOpPL8CBprzp1HXBfc6AJzZxHQ==
-=x/VE
------END PGP SIGNATURE-----
-
---Sig_/XFRzzwHgo9hLnYc=8qy9BXX--
