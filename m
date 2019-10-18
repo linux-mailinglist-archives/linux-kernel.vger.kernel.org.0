@@ -2,74 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D215DBEE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29472DBEF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:52:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504915AbfJRHw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 03:52:28 -0400
-Received: from zaovasilisa.ru ([88.200.194.99]:46823 "EHLO usrv.lan"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2504820AbfJRHwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 03:52:15 -0400
-X-Greylist: delayed 39671 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Oct 2019 03:51:51 EDT
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-        by usrv.lan (Postfix) with SMTP id CC3F818647F;
-        Thu, 17 Oct 2019 17:04:03 +0400 (MSD)
-Received: from [72.215.151.127] by 127.0.0.1 with ESMTP id 72A686FDC7F; Thu, 17 Oct 2019 18:59:02 +0600
-Message-ID: <735ui-$$-55e3--c$i$-l0-18w85$-6@8d6h1006syk>
-From:   "Mr Ekrem Bayraktar" <dave@dbsoundfactory.com>
-Reply-To: "Mr Ekrem Bayraktar" <dave@dbsoundfactory.com>
-To:     links@q.vu
-Subject: MOTHERLESS CHILDREN IN YOUR CITY !!
-Date:   Thu, 17 Oct 19 18:59:02 GMT
-X-Mailer: AOL 7.0 for Windows US sub 118
-MIME-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="EFA7_FB09FAD2"
-X-Priority: 3
-X-MSMail-Priority: Normal
+        id S2504784AbfJRHvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 03:51:36 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34292 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2504755AbfJRHvd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 03:51:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=udiFsuLSecJae2KLXB64oscu+ISQzu6uTxUGRr5+ReQ=; b=opuzBLM/M/L/juv0irN0Z1SZD
+        F7xfF+Csenygl6CZaMS9BtSSDz+sjkMSpFUVTU2BHc4kkUPUyyQ79jcn1r32g0IBZ/LbV4Jd6kF8q
+        YC0ZPF5dZbwYD2xD6k92KknYTomExi4Zf16uZvkJgJEQc09UrKwJzxVSDVCSp4HTxM2juK6EsMZGl
+        dVYcdBN3Am7J3vfpoImLOMqWs9D5144/V0sr+YaUSPdcJE1gaIwiaPLqOUuBnW0B79oPgXviefS5x
+        OBO1b3ZI1w4WOhwkDO0BSwt1oxzKIvtd0r5OLL3UaGYJkGTkLl1whAe7y1+axP9oD8nMM+y7ScEG0
+        9OITnCKtA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iLN2b-0007mg-2T; Fri, 18 Oct 2019 07:51:17 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8A081301245;
+        Fri, 18 Oct 2019 09:50:19 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 327962B17810C; Fri, 18 Oct 2019 09:51:15 +0200 (CEST)
+Message-Id: <20191018073525.768931536@infradead.org>
+User-Agent: quilt/0.65
+Date:   Fri, 18 Oct 2019 09:35:25 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     x86@kernel.org
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        rostedt@goodmis.org, mhiramat@kernel.org, bristot@redhat.com,
+        jbaron@akamai.com, torvalds@linux-foundation.org,
+        tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
+        hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
+        jpoimboe@redhat.com, jeyu@kernel.org
+Subject: [PATCH v4 00/16] Rewrite x86/ftrace to use text_poke (and more)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Ftrace was one of the last W^X violators (and KLP it seems). These here patches
+move it over to the generic text_poke() interface and thereby get rid of this
+oddity.
 
---EFA7_FB09FAD2
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+The first 6 or so patches are more or less the same as in v3, except it has the
+bugs fixed that Steve found:
 
-Dear Sir / Madam
+ - boot time function tracing works
+ - module loading with function tracing works
 
+Then there's 10 new patches, that go all over the place, mostly inspired by
+staring at code touched by the first 6. That is, there's further ftrace and
+kprobes cleanups, as well fixes for various issues.
 
+In the end, it will have removed the horrible set_all_modules_text_*()
+interface and reduced the ftrace module loading to a single callback (again).
 
-Since ever we left your country back to Canada , we have gotten Government=
- approval and we have been busying planning for the less privilege Childre=
-n projects.
-
-We are planning to release first batch of the funds $2,990,000.00 within 1=
-4 days for building an estate for motherless children in your city.
-
-I want you to use my mother;s company name to register this charity projec=
-t in your country after receiving the project funds.
-
-It must be registered as { Bayraktar Group Homeless Children Ltd }.
-
-
-Can you handle and supervise this big project ?
-Can you manager all the workers as a senior supervisor ?
-We want to be sure you can handle it before we proceed with this project.
-
-
-Please call me if you want to hear from us + 1-917 580 4919.
-Please can you manage such project please Kindly reply for further details=
-.
-
-Your full names-----------
-
-
-
-Ekrem Bayraktar.
-Bayraktar Shipping Group
-
---EFA7_FB09FAD2--
+The ARM patch is compiled only, I would be much obliged if someone could test
+that.
 
