@@ -2,125 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3F81DC4A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54AE8DC4D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:27:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442773AbfJRMX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:23:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40208 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408123AbfJRMX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 08:23:56 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 47EAA307C656;
-        Fri, 18 Oct 2019 12:23:56 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-43.ams2.redhat.com [10.36.116.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6200060BF1;
-        Fri, 18 Oct 2019 12:23:53 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 5739616E08; Fri, 18 Oct 2019 14:23:52 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/virtio: move byteorder handling into virtio_gpu_cmd_transfer_to_host_2d function
-Date:   Fri, 18 Oct 2019 14:23:52 +0200
-Message-Id: <20191018122352.17019-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 18 Oct 2019 12:23:56 +0000 (UTC)
+        id S2633892AbfJRM1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:27:13 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:48392 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392707AbfJRMZ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 08:25:59 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9ICPti9066211;
+        Fri, 18 Oct 2019 07:25:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571401555;
+        bh=WYbItaF+PhoT25Xi4tBJupjh3c8kvM30RcC17GuTSik=;
+        h=From:To:CC:Subject:Date;
+        b=f+ks6zQgX+efJr2uq/08DLlF1zblCnTii1x2O8L4NmLr3q5pbTAJoFbLjdfLKmdph
+         5M4yr9gs1bzN10i9tPSuyf7jwAWLF4JgsUNAKJhcOtLvMc3HMxPmeIvmYJilqDiK+a
+         OW3lhrQi3kGvbYgvyuiCDUFiYtZ7e0bbU3H6zS/U=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9ICPtYF053618
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Oct 2019 07:25:55 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 18
+ Oct 2019 07:25:46 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 18 Oct 2019 07:25:46 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9ICPshL073298;
+        Fri, 18 Oct 2019 07:25:54 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v14 00/19] MultiColor Framework v14
+Date:   Fri, 18 Oct 2019 07:25:02 -0500
+Message-ID: <20191018122521.6757-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Be consistent with the rest of the code base.
+Hello
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/virtio/virtgpu_drv.h   |  4 ++--
- drivers/gpu/drm/virtio/virtgpu_plane.c | 12 ++++++------
- drivers/gpu/drm/virtio/virtgpu_vq.c    | 12 ++++++------
- 3 files changed, 14 insertions(+), 14 deletions(-)
+Changes made from v13:
+https://lore.kernel.org/patchwork/project/lkml/list/?series=414566
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index 314e02f94d9c..0b56ba005e25 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -267,8 +267,8 @@ void virtio_gpu_cmd_unref_resource(struct virtio_gpu_device *vgdev,
- 				   uint32_t resource_id);
- void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
- 					uint64_t offset,
--					__le32 width, __le32 height,
--					__le32 x, __le32 y,
-+					uint32_t width, uint32_t height,
-+					uint32_t x, uint32_t y,
- 					struct virtio_gpu_object_array *objs,
- 					struct virtio_gpu_fence *fence);
- void virtio_gpu_cmd_resource_flush(struct virtio_gpu_device *vgdev,
-diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
-index f4b7360282ce..390524143139 100644
---- a/drivers/gpu/drm/virtio/virtgpu_plane.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
-@@ -132,10 +132,10 @@ static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
- 			virtio_gpu_array_add_obj(objs, vgfb->base.obj[0]);
- 			virtio_gpu_cmd_transfer_to_host_2d
- 				(vgdev, 0,
--				 cpu_to_le32(plane->state->src_w >> 16),
--				 cpu_to_le32(plane->state->src_h >> 16),
--				 cpu_to_le32(plane->state->src_x >> 16),
--				 cpu_to_le32(plane->state->src_y >> 16),
-+				 plane->state->src_w >> 16,
-+				 plane->state->src_h >> 16,
-+				 plane->state->src_x >> 16,
-+				 plane->state->src_y >> 16,
- 				 objs, NULL);
- 		}
- 	} else {
-@@ -234,8 +234,8 @@ static void virtio_gpu_cursor_plane_update(struct drm_plane *plane,
- 		virtio_gpu_array_add_obj(objs, vgfb->base.obj[0]);
- 		virtio_gpu_cmd_transfer_to_host_2d
- 			(vgdev, 0,
--			 cpu_to_le32(plane->state->crtc_w),
--			 cpu_to_le32(plane->state->crtc_h),
-+			 plane->state->crtc_w,
-+			 plane->state->crtc_h,
- 			 0, 0, objs, vgfb->fence);
- 		dma_fence_wait(&vgfb->fence->f, true);
- 		dma_fence_put(&vgfb->fence->f);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 80176f379ad5..74ad3bc3ebe8 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -549,8 +549,8 @@ void virtio_gpu_cmd_resource_flush(struct virtio_gpu_device *vgdev,
- 
- void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
- 					uint64_t offset,
--					__le32 width, __le32 height,
--					__le32 x, __le32 y,
-+					uint32_t width, uint32_t height,
-+					uint32_t x, uint32_t y,
- 					struct virtio_gpu_object_array *objs,
- 					struct virtio_gpu_fence *fence)
- {
-@@ -571,10 +571,10 @@ void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
- 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D);
- 	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
- 	cmd_p->offset = cpu_to_le64(offset);
--	cmd_p->r.width = width;
--	cmd_p->r.height = height;
--	cmd_p->r.x = x;
--	cmd_p->r.y = y;
-+	cmd_p->r.width = cpu_to_le32(width);
-+	cmd_p->r.height = cpu_to_le32(height);
-+	cmd_p->r.x = cpu_to_le32(x);
-+	cmd_p->r.y = cpu_to_le32(y);
- 
- 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, &cmd_p->hdr, fence);
- }
+Added 1 patch for removing extern from lp55xx-common header
+
+MC Class:
+Updated documentation to include statement on keeping max_intensity consistent
+across all clustered LEDs.
+
+LP55xx:
+Renamed color_component to color_components
+ifdef out multicolor class code when CONFIG_MULTI_COLOR is not selected
+Removed devm_*_unregister code from LP55xx/21/23 and LP8501
+
+n900:
+Fixed commit message
+
+Dan
+
+Dan Murphy (19):
+  dt: bindings: Add multicolor class dt bindings documention
+  dt-bindings: leds: Add multicolor ID to the color ID list
+  leds: Add multicolor ID to the color ID list
+  leds: multicolor: Introduce a multicolor class definition
+  dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
+  leds: lp50xx: Add the LP50XX family of the RGB LED driver
+  dt: bindings: lp55xx: Be consistent in the document with LED acronym
+  dt: bindings: lp55xx: Update binding for Multicolor Framework
+  ARM: dts: n900: Add reg property to the LP5523 channel node
+  ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
+  ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
+  leds: lp55xx: Convert LED class registration to devm_*
+  leds: lp55xx: Add multicolor framework support to lp55xx
+  leds: lp5523: Update the lp5523 code to add multicolor brightness
+    function
+  leds: lp5521: Add multicolor framework multicolor brightness support
+  leds: lp55xx: Fix checkpatch file permissions issues
+  leds: lp5523: Fix checkpatch issues in the code
+  dt: bindings: Update lp55xx binding to recommended LED naming
+  leds: lp55xx-common: Remove extern from lp55xx-common header
+
+ .../ABI/testing/sysfs-class-led-multicolor    |  36 +
+ .../bindings/leds/leds-class-multicolor.txt   |  98 +++
+ .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++
+ .../devicetree/bindings/leds/leds-lp55xx.txt  | 163 +++-
+ Documentation/leds/index.rst                  |   1 +
+ Documentation/leds/leds-class-multicolor.rst  |  96 +++
+ arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
+ arch/arm/boot/dts/omap3-n900.dts              |  29 +-
+ arch/arm/boot/dts/ste-href.dtsi               |  22 +-
+ drivers/leds/Kconfig                          |  22 +
+ drivers/leds/Makefile                         |   2 +
+ drivers/leds/led-class-multicolor.c           | 271 ++++++
+ drivers/leds/led-core.c                       |   1 +
+ drivers/leds/leds-lp50xx.c                    | 799 ++++++++++++++++++
+ drivers/leds/leds-lp5521.c                    |  29 +-
+ drivers/leds/leds-lp5523.c                    |  48 +-
+ drivers/leds/leds-lp55xx-common.c             | 220 +++--
+ drivers/leds/leds-lp55xx-common.h             |  35 +-
+ drivers/leds/leds-lp8501.c                    |   9 +-
+ include/dt-bindings/leds/common.h             |   3 +-
+ include/linux/led-class-multicolor.h          |  97 +++
+ include/linux/platform_data/leds-lp55xx.h     |   7 +
+ 22 files changed, 2008 insertions(+), 142 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+ create mode 100644 Documentation/leds/leds-class-multicolor.rst
+ create mode 100644 drivers/leds/led-class-multicolor.c
+ create mode 100644 drivers/leds/leds-lp50xx.c
+ create mode 100644 include/linux/led-class-multicolor.h
+
 -- 
-2.18.1
+2.22.0.214.g8dca754b1e
 
