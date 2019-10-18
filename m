@@ -2,93 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7454CDBC9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C794DBCA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:10:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409609AbfJRFHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:07:41 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46186 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405806AbfJRFHi (ORCPT
+        id S2393196AbfJRFIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:08:23 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45587 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726743AbfJRFIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:07:38 -0400
-Received: by mail-qt1-f193.google.com with SMTP id u22so7297469qtq.13
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:07:37 -0700 (PDT)
+        Fri, 18 Oct 2019 01:08:23 -0400
+Received: by mail-io1-f68.google.com with SMTP id c25so5883240iot.12
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BZNeQBeDGAyLMoRdSAbVO0kzqdA4HOw3dFZcIwAbSRY=;
-        b=bAJAZ7tswXf0oXbHqjYQDAMHA3fSiDLD+u26iHQS3x7Py/AcVrPNdS1oryA/TMrWe1
-         C9PD+y8lawPz88eAyR5kk9Ml2o0a2TFQNKQxu5nv0Wko1NLrNPGhbDP2SiubBiHlhq0v
-         1/91vfMvcO6zUodpEcXtTf8sait3hj8kvN3nmEjjbwNbCByc65QH7tQoCwZ/LtTheEIu
-         JSQoVll7PmAV+02dufnMm9xRZK1sROHW51Meb3G071rNEmxfzM4+2ywSAAVe158ND1G1
-         S0cq0spmyRYEcz+YmtAujZEgme/2JwqP/4M5ouQeOV35ynsE5W8NRjmV3HAGu0kn5htQ
-         A4Gw==
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=kdaIg1bmKvTuY1siBcuKtqxXXbNP+bO8qDJ8qtoHLrs=;
+        b=alw6W5GQyFhcnDqfvGuR8ILsbtiVCq3gFNSbsc/XVCP/pbXcnDdCPf5Y8lhD+ZGjD3
+         k70D30BaJyuuRDhkvJ+MYnPNjUNkDzOJObYzjLN9WjpGG6uwhVPce/MNyj2Gb3jpNE3N
+         x12yIHzuETRu1nJA+I1boHpOvXikuy3MWOAVWs1ir7esAwfr2HFoVhDI34y1EhvUzbT9
+         P313Uiqsbz9BN595bX4qtsM+rAYBUE7+jnI3adKsIbO3f+d+7d/aVjrY+PTr58X5PRO1
+         dp2o6liHqfUAeu2MWjv+rB5i8j6bNLoTljIC3yYORBqQE44NGIUf6xD6JGxF0pKfbJjr
+         li1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BZNeQBeDGAyLMoRdSAbVO0kzqdA4HOw3dFZcIwAbSRY=;
-        b=JAM7FC45Oab5yge2AiY8kUntMsc3cTMdnybx/hX3p5TGWGq5O7OuL/yo9YfMEqpgS+
-         Z0Xs4512cCKhDwh6a37aqQ3p1bsui+yrTgDWusw5ckjFa4h0vT8dyBPP3fBWoWN55Ake
-         VnUHsZw/wx3q3Ohh+Lu/wSDpAXVhcmjFDMqkZZKzs0f/X89YKpWV7EbVV/5j/xKA6l8O
-         7hhTzcjL5u5rf7a5FXYHlpQdHbUsUQRHgLW7F/ALZSgZtPJwcoADt0F6sQIr58QspBqy
-         U55SRSGsMf88WphTLJe64fP1ystyn3HDS8jnqskAPAaETFrKd6Tw5dXjuntpy2Fnlor/
-         HCag==
-X-Gm-Message-State: APjAAAUKZojKRHn6fEfBSUURciuFuKzxsS7lrPqxJ9B0Xhsoo8W3VqkP
-        I/diyL7sjFoVUG+4xV5+yvjSlvuKjfE=
-X-Google-Smtp-Source: APXvYqydfwa25JKZYYeWbwxFsqUZQ8NzYboAYSS65MWiR5DAcXqWJJZyILycxPAp3epGgyJMNw3bqA==
-X-Received: by 2002:a63:1b59:: with SMTP id b25mr8029273pgm.267.1571373538882;
-        Thu, 17 Oct 2019 21:38:58 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id f185sm5139382pfb.183.2019.10.17.21.38.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 21:38:57 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 10:08:56 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] cpufreq: powernv: fix stack bloat and NR_CPUS limitation
-Message-ID: <20191018043856.srvgft6jhqw62bx3@vireshk-i7>
-References: <20191018000431.1675281-1-jhubbard@nvidia.com>
- <20191018042715.f76bawmoyk66isap@vireshk-i7>
- <c3f16019-5724-a181-8068-8dda60fb67fa@nvidia.com>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=kdaIg1bmKvTuY1siBcuKtqxXXbNP+bO8qDJ8qtoHLrs=;
+        b=YcEBX/7IcfyImPd39O3K9fa2hPOGWwvhuNdBmN+eWIe8TKtQcFEQKPXu89Mlg5xcdT
+         e5ARbk42WIGmv7DzvDTmYYVDbmy/9mwl0aygFYSw7f4o5kUF5JpWRQd1rcv3czgDI6zg
+         ePGSCxtGGgiejdid1H3Um81Ql8Tm3CTBLotzcl/vNQKHltAQrCYbDu54ZE/O6tGNfrIr
+         A8SGId1raqAI7u5E8NeGk+TzXDvLU6YjpqS154kTi0qziIacz3YplDqbaY3dsI8SCtPU
+         yS33CJy8ZbjAG6RHUab8Iwm/zCVWbwWkUqEkiYdmoWwptd1lwUzk15xZJVi3r//S+9bi
+         r3TQ==
+X-Gm-Message-State: APjAAAUkCOxhooBu0Vje/5VWULuwshiLIAOdFJ5GZIrQkeaUZMS1p7Ct
+        30CW+8nmCfQ/+C46H3jxsb6R0UqJEBM=
+X-Google-Smtp-Source: APXvYqz+VSmPYFEehv0u4XSaZ4gGq/6ly+snn34TQolYszWZAPowUNkcflBsfouOqC+vsTbwwiqpnQ==
+X-Received: by 2002:a5e:dd41:: with SMTP id u1mr6869403iop.112.1571373570538;
+        Thu, 17 Oct 2019 21:39:30 -0700 (PDT)
+Received: from localhost (67-0-11-246.albq.qwest.net. [67.0.11.246])
+        by smtp.gmail.com with ESMTPSA id 26sm1545703iog.10.2019.10.17.21.39.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2019 21:39:30 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 21:39:29 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] riscv: ensure RISC-V C model definitions are passed
+ to static analyzers
+In-Reply-To: <20191018040619.o3qb5fyj4qdevwoe@ltop.local>
+Message-ID: <alpine.DEB.2.21.9999.1910172138320.3026@viisi.sifive.com>
+References: <20191018004929.3445-1-paul.walmsley@sifive.com> <20191018004929.3445-5-paul.walmsley@sifive.com> <20191018040619.o3qb5fyj4qdevwoe@ltop.local>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3f16019-5724-a181-8068-8dda60fb67fa@nvidia.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-10-19, 21:34, John Hubbard wrote:
-> On 10/17/19 9:27 PM, Viresh Kumar wrote:
-> > On 17-10-19, 17:04, John Hubbard wrote:
-> >> The following build warning occurred on powerpc 64-bit builds:
-> >>
-> >> drivers/cpufreq/powernv-cpufreq.c: In function 'init_chip_info':
-> >> drivers/cpufreq/powernv-cpufreq.c:1070:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+On Fri, 18 Oct 2019, Luc Van Oostenryck wrote:
+
+> On Thu, Oct 17, 2019 at 05:49:25PM -0700, Paul Walmsley wrote:
+> > Static analysis tools such as sparse don't set the RISC-V C model
+> > preprocessor directives such as "__riscv_cmodel_medany", set by the C
+> > compilers.  This causes the static analyzers to evaluate different
+> > preprocessor paths than C compilers would.  Fix this by defining the
+> > appropriate C model macros in the static analyzer command lines.
 > > 
-> > How come we are catching this warning after 4 years ?
+> > Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> > ---
+> >  arch/riscv/Makefile | 2 ++
+> >  1 file changed, 2 insertions(+)
 > > 
+> > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> > index f5e914210245..0247a90bd4d8 100644
+> > --- a/arch/riscv/Makefile
+> > +++ b/arch/riscv/Makefile
+> > @@ -47,9 +47,11 @@ KBUILD_CFLAGS += -DCONFIG_PAGE_OFFSET=$(CONFIG_PAGE_OFFSET)
+> >  
+> >  ifeq ($(CONFIG_CMODEL_MEDLOW),y)
+> >  	KBUILD_CFLAGS += -mcmodel=medlow
+> > +	CHECKFLAGS += -D__riscv_cmodel_medlow
+> >  endif
+> >  ifeq ($(CONFIG_CMODEL_MEDANY),y)
+> >  	KBUILD_CFLAGS += -mcmodel=medany
+> > +	CHECKFLAGS += -D__riscv_cmodel_medany
 > 
-> Newer compilers. And btw, I don't spend a lot of time in powerpc
-> code, so I just recently ran this, and I guess everyone has been on less
-> new compilers so far, it seems.
-> 
-> I used a gcc 8.1 cross compiler in this case:
+> I can teach sparse about this in the following days.
 
-Hmm, okay.
+That would be great.  Would you be willing to follow up with me via E-mail 
+or mailing list post when it's fixed?  If so, then in the meantime, I'll 
+just drop this patch.
 
-I hope you haven't missed my actual review comments on your patch,
-just wanted to make sure we don't end up waiting for each other
-indefinitely here :)
 
--- 
-viresh
+- Paul
