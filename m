@@ -2,107 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAEBBDBCA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:10:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A384DBC6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395047AbfJRFI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:08:26 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39276 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbfJRFIX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:08:23 -0400
-Received: by mail-pf1-f194.google.com with SMTP id v4so3089320pff.6
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:08:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zENMsCD8dx7TXInXG1c8zW/Hg/QaJI92iPuy+e/kV6E=;
-        b=W/SfQlwIceHYRgJXK7o3/l/lkWGdnSVrFfem2LS5AoOoZT7g6Q6t6pDrBEZ9+07t+M
-         +Ti1hPL13mqCsIyQKq/AFE6C6lU+7LWFud86PSQDcCzlLOF/AJU7QWZGHjpr9KoU6M49
-         nF6/6KbZeepbruq+UcDfkmHak9ysobHGjX46g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zENMsCD8dx7TXInXG1c8zW/Hg/QaJI92iPuy+e/kV6E=;
-        b=TwSgpc/6cXpIZRtMSJYOJ2hkvC9ztjhh9SLIdFMKerOgc+NBSWUTnQAYtHIRZg74Rw
-         YPFSkMTdcVQW2obThx8KO+ACXW6HJcRUJLWGIqGpnUS8pIxrij7j3AgmbvJP3udF8zsk
-         ofbZ3OxC3YzsGODyacnTxy0ttYk5xocQzMuQij7q1BbQ+0psRM8TP4LDQ0+id4XCU+pa
-         wFfqTkR8MCbRUxk3k/ztBUxbRs9PywK5DDFxBCbLyUhjdRbcfJki4rz+4xlOyXfq6j4Q
-         V/8P0u2wDU/HVhxblOttTm5fgE3tXtkQqa8Zh9jGPFBYts+FDlJoa9noLQXnOsOHOanY
-         9lMg==
-X-Gm-Message-State: APjAAAWTNFxsSu4QtFDz1ghsrKdj2BcjQruEFF5IDGuQWI+7cu2Zm6KP
-        ty/Cqp/1JozBi5lzBYvRsaOb8NiZcbTR5xtMb9kuTSSQ9xM=
-X-Google-Smtp-Source: APXvYqwbU0rnTOMgSlBPq6asT4KTn47yVp25SmbpyYC2P+M0FWHZyEbDR4vduuE8vfeSHRbH2LfGtdyPTN5PaOcgFL4=
-X-Received: by 2002:a63:2049:: with SMTP id r9mr7827967pgm.257.1571368471920;
- Thu, 17 Oct 2019 20:14:31 -0700 (PDT)
+        id S2504041AbfJRFFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:05:09 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4271 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2504028AbfJRFFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 01:05:08 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B0BA9FCB2A145DE35F4D;
+        Fri, 18 Oct 2019 11:19:25 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 18 Oct 2019 11:19:19 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Petr Mladek <pmladek@suse.com>, <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [PATCH v2 01/33] alpha: Use pr_warn instead of pr_warning
+Date:   Fri, 18 Oct 2019 11:18:18 +0800
+Message-ID: <20191018031850.48498-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
+References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
 MIME-Version: 1.0
-References: <20191005101444.146554-1-ikjn@chromium.org>
-In-Reply-To: <20191005101444.146554-1-ikjn@chromium.org>
-From:   Ikjoon Jang <ikjn@chromium.org>
-Date:   Fri, 18 Oct 2019 11:14:21 +0800
-Message-ID: <CAATdQgBRiNpwgy403jThUbgxSZA-Z8bYCQnc_rVB+nu4LwtMrA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] HID: google: Add of_match table to Whiskers switch device.
-To:     jikos@kernel.org, Dmitry Torokhov <dtor@chromium.org>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Enrico Granata <egranata@google.com>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A gentle ping on adding DT binding for Hammer (2/2).
+As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
+pr_warning"), removing pr_warning so all logging messages use a
+consistent <prefix>_warn style. Let's do it.
 
-On Sat, Oct 5, 2019 at 6:14 PM Ikjoon Jang <ikjn@chromium.org> wrote:
->
-> Add a device tree match table.
->
-> Change-Id: Iaee68311073cefa4b99cde182bd37d1a67c94ea6
-> Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
-> ---
->  drivers/hid/hid-google-hammer.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/drivers/hid/hid-google-hammer.c b/drivers/hid/hid-google-hammer.c
-> index 31e4a39946f5..bf2b6c6c9787 100644
-> --- a/drivers/hid/hid-google-hammer.c
-> +++ b/drivers/hid/hid-google-hammer.c
-> @@ -17,6 +17,7 @@
->  #include <linux/hid.h>
->  #include <linux/leds.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
->  #include <linux/platform_device.h>
-> @@ -272,12 +273,21 @@ static const struct acpi_device_id cbas_ec_acpi_ids[] = {
->  };
->  MODULE_DEVICE_TABLE(acpi, cbas_ec_acpi_ids);
->
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id cbas_ec_of_match[] = {
-> +       { .compatible = "google,cros-cbas" },
-> +       { },
-> +};
-> +MODULE_DEVICE_TABLE(of, cbas_ec_of_match);
-> +#endif
-> +
->  static struct platform_driver cbas_ec_driver = {
->         .probe = cbas_ec_probe,
->         .remove = cbas_ec_remove,
->         .driver = {
->                 .name = "cbas_ec",
->                 .acpi_match_table = ACPI_PTR(cbas_ec_acpi_ids),
-> +               .of_match_table = of_match_ptr(cbas_ec_of_match),
->                 .pm = &cbas_ec_pm_ops,
->         },
->  };
-> --
-> 2.23.0.581.g78d2f28ef7-goog
->
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ arch/alpha/kernel/perf_event.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/alpha/kernel/perf_event.c b/arch/alpha/kernel/perf_event.c
+index 4341ccf5c0c4..e7a59d927d78 100644
+--- a/arch/alpha/kernel/perf_event.c
++++ b/arch/alpha/kernel/perf_event.c
+@@ -824,7 +824,7 @@ static void alpha_perf_event_irq_handler(unsigned long la_ptr,
+ 	if (unlikely(la_ptr >= alpha_pmu->num_pmcs)) {
+ 		/* This should never occur! */
+ 		irq_err_count++;
+-		pr_warning("PMI: silly index %ld\n", la_ptr);
++		pr_warn("PMI: silly index %ld\n", la_ptr);
+ 		wrperfmon(PERFMON_CMD_ENABLE, cpuc->idx_mask);
+ 		return;
+ 	}
+@@ -847,7 +847,7 @@ static void alpha_perf_event_irq_handler(unsigned long la_ptr,
+ 	if (unlikely(!event)) {
+ 		/* This should never occur! */
+ 		irq_err_count++;
+-		pr_warning("PMI: No event at index %d!\n", idx);
++		pr_warn("PMI: No event at index %d!\n", idx);
+ 		wrperfmon(PERFMON_CMD_ENABLE, cpuc->idx_mask);
+ 		return;
+ 	}
+-- 
+2.20.1
+
