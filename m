@@ -2,236 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E7CEDC185
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D3B7DC187
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:41:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633135AbfJRJk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 05:40:28 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59231 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2442382AbfJRJjo (ORCPT
+        id S2407720AbfJRJk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 05:40:56 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33800 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389165AbfJRJky (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 05:39:44 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1iLOjQ-0006Z8-Ty; Fri, 18 Oct 2019 11:39:36 +0200
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1iLOjN-0007gy-Hg; Fri, 18 Oct 2019 11:39:33 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Andrew Lunn <andrew@lunn.ch>, Chris Snook <chris.snook@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jay Cliburn <jcliburn@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Vivien Didelot <vivien.didelot@gmail.com>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org, Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v2 3/5] MIPS: ath79: ar9331: add ar9331-switch node
-Date:   Fri, 18 Oct 2019 11:39:27 +0200
-Message-Id: <20191018093929.19299-4-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191018093929.19299-1-o.rempel@pengutronix.de>
-References: <20191018093929.19299-1-o.rempel@pengutronix.de>
+        Fri, 18 Oct 2019 05:40:54 -0400
+Received: by mail-lj1-f196.google.com with SMTP id j19so5548495lja.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 02:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bOJNlT4L8Idf/nqVi29AwDYXYOoGHJN4nbyrREFiJ6U=;
+        b=SFV9uWz5WebpMzn33pswNWj6JSRk6BEr1PEK0IlJcC7ygoWmlQSQYhnxzAB3IctjHL
+         XcaWKdYSPSPoOoq5IyfoV4mBHCQQxnhdF35/DnjEudWa0yzVIFMIR4GMFDIVob/8Qzdo
+         zlISixM7a4MMJEySdeso6HOSNQSIGHSsM+qr3gwnF1TRh15SygSrDW1brP3wUXRnWur7
+         7zKxfN6tAoZ6NhLZ1TndNsvtDr6NEarQ3bwnNTjpiGr5fafJB63CrqByyHpuBvJ3L/4m
+         RRrVFMKH/sSM3/I/jt2z9SKwLSiRhXDP+m+30BTnI18jC1QLya8YmYPVm6fD1fX7Aazg
+         nRPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bOJNlT4L8Idf/nqVi29AwDYXYOoGHJN4nbyrREFiJ6U=;
+        b=EA2IRrLd69ZfyvT4eTXIcqaz1mPH5FjlYFMSPBLV/gaOjvbk91RvxN3ABKzuiLkxoU
+         We3J6TCqeED/ysN9MFz5xDtCWoeviYrqK0i8kksqXKD2GOUc/M20snjwV27rrS3SWV5G
+         yKvW/Y14gL69msTjRq2CX04D7JiKzweZ/cW3/IZ4wCYznNhXMtSeNpWJfzzkfC580FCh
+         1HD2F4jli1PLbpAtW+cNTTA5k6OBjh+wnuk5dVKdpcte8bppYQvpnhPZ14BYmc5lBxHe
+         WSxxawNeY23k0/FFbsp9ORwBx6FbjvIBT8kToUISHFgdlWoQYbbc9p//xBQoi/m788MF
+         GPNQ==
+X-Gm-Message-State: APjAAAW1fQ44jG0ilL289P4V4xlX5U+yUVPVGw3JjdZpiQnfHRtHD1S4
+        s4vIPB0Fh8SvwRosnMmVSLs=
+X-Google-Smtp-Source: APXvYqywCB2VCpIQP/0RrUdWYoZ85jhgAxhGeaxxBV3j7fl5o3jrM7p6x5FjRDAVLLSPreDBiJCH/A==
+X-Received: by 2002:a2e:9ec2:: with SMTP id h2mr4840327ljk.85.1571391652638;
+        Fri, 18 Oct 2019 02:40:52 -0700 (PDT)
+Received: from pc636 ([37.139.158.167])
+        by smtp.gmail.com with ESMTPSA id p18sm2699719lfh.24.2019.10.18.02.40.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2019 02:40:51 -0700 (PDT)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date:   Fri, 18 Oct 2019 11:40:49 +0200
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Wagner <dwagner@suse.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3 2/3] mm/vmalloc: respect passed gfp_mask when do
+ preloading
+Message-ID: <20191018094049.GB8744@pc636>
+References: <20191016095438.12391-1-urezki@gmail.com>
+ <20191016095438.12391-2-urezki@gmail.com>
+ <20191016110604.GT317@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016110604.GT317@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add switch node supported by dsa ar9331 driver.
+> > alloc_vmap_area() is given a gfp_mask for the page allocator.
+> > Let's respect that mask and consider it even in the case when
+> > doing regular CPU preloading, i.e. where a context can sleep.
+> 
+> This is explaining what but it doesn't say why. I would go with
+> "
+> Allocation functions should comply with the given gfp_mask as much as
+> possible. The preallocation code in alloc_vmap_area doesn't follow that
+> pattern and it is using a hardcoded GFP_KERNEL. Although this doesn't
+> really make much difference because vmalloc is not GFP_NOWAIT compliant
+> in general (e.g. page table allocations are GFP_KERNEL) there is no
+> reason to spread that bad habit and it is good to fix the antipattern.
+> "
+I can go with that, agree. I am not sure if i need to update the patch
+and send v4. Or maybe Andrew can directly update it in his tree.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/mips/boot/dts/qca/ar9331.dtsi           | 127 ++++++++++++++++++-
- arch/mips/boot/dts/qca/ar9331_dpt_module.dts |  13 ++
- 2 files changed, 139 insertions(+), 1 deletion(-)
+Andrew, should i send or can update?
 
-diff --git a/arch/mips/boot/dts/qca/ar9331.dtsi b/arch/mips/boot/dts/qca/ar9331.dtsi
-index e0f409dd6acf..84a177c0d053 100644
---- a/arch/mips/boot/dts/qca/ar9331.dtsi
-+++ b/arch/mips/boot/dts/qca/ar9331.dtsi
-@@ -158,6 +158,9 @@
- 			clocks = <&pll ATH79_CLK_AHB>, <&pll ATH79_CLK_AHB>;
- 			clock-names = "eth", "mdio";
- 
-+			phy-mode = "mii";
-+			phy-handle = <&phy_port4>;
-+
- 			status = "disabled";
- 		};
- 
-@@ -165,13 +168,135 @@
- 			compatible = "qca,ar9330-eth";
- 			reg = <0x1a000000 0x200>;
- 			interrupts = <5>;
--
- 			resets = <&rst 13>, <&rst 23>;
- 			reset-names = "mac", "mdio";
- 			clocks = <&pll ATH79_CLK_AHB>, <&pll ATH79_CLK_AHB>;
- 			clock-names = "eth", "mdio";
- 
-+			phy-mode = "gmii";
-+
- 			status = "disabled";
-+
-+			fixed-link {
-+				speed = <1000>;
-+				full-duplex;
-+			};
-+
-+			mdio {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				switch10: switch@10 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					compatible = "qca,ar9331-switch";
-+					reg = <0x10>;
-+					resets = <&rst 8>;
-+					reset-names = "switch";
-+
-+					interrupt-parent = <&miscintc>;
-+					interrupts = <12>;
-+
-+					interrupt-controller;
-+					#interrupt-cells = <1>;
-+
-+					ports {
-+						#address-cells = <1>;
-+						#size-cells = <0>;
-+
-+						switch_port0: port@0 {
-+							reg = <0x0>;
-+							label = "cpu";
-+							ethernet = <&eth1>;
-+
-+							phy-mode = "gmii";
-+
-+							fixed-link {
-+								speed = <1000>;
-+								full-duplex;
-+							};
-+						};
-+
-+						switch_port1: port@1 {
-+							reg = <0x1>;
-+							phy-handle = <&phy_port0>;
-+							phy-mode = "internal";
-+
-+							status = "disabled";
-+						};
-+
-+						switch_port2: port@2 {
-+							reg = <0x2>;
-+							phy-handle = <&phy_port1>;
-+							phy-mode = "internal";
-+
-+							status = "disabled";
-+						};
-+
-+						switch_port3: port@3 {
-+							reg = <0x3>;
-+							phy-handle = <&phy_port2>;
-+							phy-mode = "internal";
-+
-+							status = "disabled";
-+						};
-+
-+						switch_port4: port@4 {
-+							reg = <0x4>;
-+							phy-handle = <&phy_port3>;
-+							phy-mode = "internal";
-+
-+							status = "disabled";
-+						};
-+
-+						switch_port5: port@5 {
-+							reg = <0x5>;
-+							phy-handle = <&phy_port4>;
-+							phy-mode = "internal";
-+
-+							status = "disabled";
-+						};
-+					};
-+
-+					mdio {
-+						#address-cells = <1>;
-+						#size-cells = <0>;
-+
-+						interrupt-parent = <&switch10>;
-+
-+						phy_port0: phy@0 {
-+							reg = <0x0>;
-+							interrupts = <0>;
-+							status = "disabled";
-+						};
-+
-+						phy_port1: phy@1 {
-+							reg = <0x1>;
-+							interrupts = <0>;
-+							status = "disabled";
-+						};
-+
-+						phy_port2: phy@2 {
-+							reg = <0x2>;
-+							interrupts = <0>;
-+							status = "disabled";
-+						};
-+
-+						phy_port3: phy@3 {
-+							reg = <0x3>;
-+							interrupts = <0>;
-+							status = "disabled";
-+						};
-+
-+						phy_port4: phy@4 {
-+							reg = <0x4>;
-+							interrupts = <0>;
-+							status = "disabled";
-+						};
-+					};
-+				};
-+			};
- 		};
- 
- 		usb: usb@1b000100 {
-diff --git a/arch/mips/boot/dts/qca/ar9331_dpt_module.dts b/arch/mips/boot/dts/qca/ar9331_dpt_module.dts
-index 77bab823eb3b..0f2b20044834 100644
---- a/arch/mips/boot/dts/qca/ar9331_dpt_module.dts
-+++ b/arch/mips/boot/dts/qca/ar9331_dpt_module.dts
-@@ -84,3 +84,16 @@
- &eth1 {
- 	status = "okay";
- };
-+
-+&switch_port1 {
-+	label = "lan0";
-+	status = "okay";
-+};
-+
-+&phy_port0 {
-+	status = "okay";
-+};
-+
-+&phy_port4 {
-+	status = "okay";
-+};
--- 
-2.23.0
+Thank you in advance!
 
+--
+Vlad Rezki
