@@ -2,141 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7598DBF95
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:13:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4096EDBF99
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:15:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395523AbfJRINj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 04:13:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37656 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732147AbfJRINj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 04:13:39 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EC35C10CC1E6;
-        Fri, 18 Oct 2019 08:13:38 +0000 (UTC)
-Received: from [10.36.118.57] (unknown [10.36.118.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F0A85C1B5;
-        Fri, 18 Oct 2019 08:13:37 +0000 (UTC)
-Subject: Re: memory offline infinite loop after soft offline
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Michal Hocko <mhocko@kernel.org>, Qian Cai <cai@lca.pw>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-References: <1570829564.5937.36.camel@lca.pw>
- <20191014083914.GA317@dhcp22.suse.cz>
- <20191017093410.GA19973@hori.linux.bs1.fc.nec.co.jp>
- <20191017100106.GF24485@dhcp22.suse.cz> <1571335633.5937.69.camel@lca.pw>
- <20191017182759.GN24485@dhcp22.suse.cz>
- <20191018021906.GA24978@hori.linux.bs1.fc.nec.co.jp>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <33946728-bdeb-494a-5db8-e279acebca47@redhat.com>
-Date:   Fri, 18 Oct 2019 10:13:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S2437720AbfJRIPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 04:15:20 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35040 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731008AbfJRIPU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 04:15:20 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 205so3399820pfw.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 01:15:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uiSq7qeFYNBf+B+hvyqTL3DKogK+/9GgP2nnW/iTdJQ=;
+        b=m8ChvJlMrxPv5W8hkfPBg5heCY/fbqHBiTpBTRP3b/WNHPtpzvGVHF5e5f+wCXWtss
+         rZ1oxTtWrm/r15UOlkNpO/Yqi/nCcSaE2vTYRRFdUC8JUJ41R/RMgiFAjcLWBCqEbW9q
+         qS42/w5YDBEf/LJhPrwB2VBrQ+9h14+tjCMHcLSDVYDQMqSL3UgXqMMyZBs1qlykOUsc
+         lfTRNrLm4lw9MuG7v0032yGm+EBoRPQKCtWlZl/hGfg239A/o9eQM3nFqAWK6hikKnEL
+         KTnTPx67BNmIYewuXrz8Ersk3DU4QMpbXM+tbPjrxcAJOQ5BmYx9UzQ+ggM0VZHREvj3
+         TC4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uiSq7qeFYNBf+B+hvyqTL3DKogK+/9GgP2nnW/iTdJQ=;
+        b=Wo1Qnzf45rIVzOA9Ln9OAUexkYpU2VOE1x76LWZLnlXo9xehWB50cwCTBG/BDRFqLV
+         3j4J0TI01HqEqm+T8dSMtmy7iNTFKiAXtvDrFgpbXSInMf1xTVKRZg/KkNU3hfeeUmBc
+         eRtyjqMxwa22KKzCuJi+npUseYz9RDvNSOIoXljz/ba/cna1c/Y4ZHxCFQgyVF2hHQw2
+         Q7PcT71HBX6NAJAWJ5JcVxXiWZeKYq86ISjk0iz3hrTGW9OwHT+RMWr5DWdAAdF76180
+         jc4SKqxXSfoYp7QlWXbTvqe+16vM0ZGga6JKzNemGih+N7t99EqvGAgn0xoOqa+EO014
+         pklw==
+X-Gm-Message-State: APjAAAXFKvp78h/bfQXGH1Llc6LAEoypXJqj0bjBI6Kk7IZY+g2hCUuz
+        kdiUOV0EUXEmnfNw1jXmW5c=
+X-Google-Smtp-Source: APXvYqyaREvbxLHrPizSXgFUs5I1CvDkE+rdYjdtx6uTUnVXZOAzUbbFx63V9/unDy0Pp9RTOGw4Kw==
+X-Received: by 2002:aa7:9472:: with SMTP id t18mr5105603pfq.261.1571386519409;
+        Fri, 18 Oct 2019 01:15:19 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id z12sm5688656pfj.41.2019.10.18.01.15.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2019 01:15:18 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] ASoC: tlv320aic32x4: add a check for devm_clk_get
+Date:   Fri, 18 Oct 2019 16:14:49 +0800
+Message-Id: <20191018081448.8486-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191018021906.GA24978@hori.linux.bs1.fc.nec.co.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Fri, 18 Oct 2019 08:13:39 +0000 (UTC)
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.10.19 04:19, Naoya Horiguchi wrote:
-> On Thu, Oct 17, 2019 at 08:27:59PM +0200, Michal Hocko wrote:
->> On Thu 17-10-19 14:07:13, Qian Cai wrote:
->>> On Thu, 2019-10-17 at 12:01 +0200, Michal Hocko wrote:
->>>> On Thu 17-10-19 09:34:10, Naoya Horiguchi wrote:
->>>>> On Mon, Oct 14, 2019 at 10:39:14AM +0200, Michal Hocko wrote:
->>>>
->>>> [...]
->>>>>> diff --git a/mm/page_isolation.c b/mm/page_isolation.c
->>>>>> index 89c19c0feadb..5fb3fee16fde 100644
->>>>>> --- a/mm/page_isolation.c
->>>>>> +++ b/mm/page_isolation.c
->>>>>> @@ -274,7 +274,7 @@ __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
->>>>>>   			 * simple way to verify that as VM_BUG_ON(), though.
->>>>>>   			 */
->>>>>>   			pfn += 1 << page_order(page);
->>>>>> -		else if (skip_hwpoisoned_pages && PageHWPoison(page))
->>>>>> +		else if (skip_hwpoisoned_pages && PageHWPoison(compound_head(page)))
->>>>>>   			/* A HWPoisoned page cannot be also PageBuddy */
->>>>>>   			pfn++;
->>>>>>   		else
->>>>>
->>>>> This fix looks good to me. The original code only addresses hwpoisoned 4kB-page,
->>>>> we seem to have this issue since the following commit,
->>>>
->>>> Thanks a lot for double checking Naoya!
->>>>   
->>>>>    commit b023f46813cde6e3b8a8c24f432ff9c1fd8e9a64
->>>>>    Author: Wen Congyang <wency@cn.fujitsu.com>
->>>>>    Date:   Tue Dec 11 16:00:45 2012 -0800
->>>>>    
->>>>>        memory-hotplug: skip HWPoisoned page when offlining pages
->>>>>
->>>>> and extension of LTP coverage finally discovered this.
->>>>
->>>> Qian, could you give the patch some testing?
->>>
->>> Unfortunately, this does not solve the problem. It looks to me that in
->>> soft_offline_huge_page(), set_hwpoison_free_buddy_page() will only set
->>> PG_hwpoison for buddy pages, so the even the compound_head() has no PG_hwpoison
->>> set.
->>>
->>> 		if (PageBuddy(page_head) && page_order(page_head) >= order) {
->>> 			if (!TestSetPageHWPoison(page))
->>> 				hwpoisoned = true;
->>
->> This is more than unexpected. How are we supposed to find out that the
->> page is poisoned? Any idea Naoya?
-> 
-> # sorry for my poor review...
-> 
-> We set PG_hwpoison bit only on the head page for hugetlb, that's because
-> we handle multiple pages as a single one for hugetlb. So it's enough
-> to check isolation only on the head page.  Simply skipping pfn cursor to
-> the page after the hugepage should avoid the infinite loop:
-> 
->    @@ -274,9 +274,13 @@ __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
->     			 * simple way to verify that as VM_BUG_ON(), though.
->     			 */
->     			pfn += 1 << page_order(page);
->    -		else if (skip_hwpoisoned_pages && PageHWPoison(page))
->    -			/* A HWPoisoned page cannot be also PageBuddy */
->    -			pfn++;
->    +		else if (skip_hwpoisoned_pages && PageHWPoison(compound_head(page)))
->    +			/*
->    +			 * A HWPoisoned page cannot be also PageBuddy.
->    +			 * PG_hwpoison could be set only on the head page in
->    +			 * hugetlb case, so no need to check tail pages.
->    +			 */
->    +			pfn += 1 << compound_order(page);
->     		else
->     			break;
->     	}
-> 
-> Qian, could you please try this?
+aic32x4_set_dai_sysclk misses a check for devm_clk_get and may miss the
+failure.
+Add a check to fix it.
 
-That should result in the same behavior if I'm not wrong.
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ sound/soc/codecs/tlv320aic32x4.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-a) Checking the head, skipping over the tail
-b) Checking for every tail the head
-
-However, if the compound page spans multiple pageblocks, I am not sure 
-if your change is correct. (if you don't start at the compoound head - 
-when page != compoound_head(page), you would still jump 1 << 
-compound_order(page))
-
+diff --git a/sound/soc/codecs/tlv320aic32x4.c b/sound/soc/codecs/tlv320aic32x4.c
+index 68165de1c8de..b4e9a6c73f90 100644
+--- a/sound/soc/codecs/tlv320aic32x4.c
++++ b/sound/soc/codecs/tlv320aic32x4.c
+@@ -573,6 +573,9 @@ static int aic32x4_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 	struct clk *pll;
+ 
+ 	pll = devm_clk_get(component->dev, "pll");
++	if (IS_ERR(pll))
++		return PTR_ERR(pll);
++
+ 	mclk = clk_get_parent(pll);
+ 
+ 	return clk_set_rate(mclk, freq);
 -- 
+2.20.1
 
-Thanks,
-
-David / dhildenb
