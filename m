@@ -2,157 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8438EDC352
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58F05DC33B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:58:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633398AbfJRK7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:59:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55788 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392257AbfJRK7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:59:21 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3DBB3CA377;
-        Fri, 18 Oct 2019 10:59:20 +0000 (UTC)
-Received: from [10.72.12.59] (ovpn-12-59.pek2.redhat.com [10.72.12.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 87CDC60852;
-        Fri, 18 Oct 2019 10:57:30 +0000 (UTC)
-Subject: Re: [PATCH V4 4/6] mdev: introduce virtio device and its device ops
-To:     Tiwei Bie <tiwei.bie@intel.com>
-Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        alex.williamson@redhat.com, mst@redhat.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        cohuck@redhat.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
-        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
-        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
-        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
-        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
-        stefanha@redhat.com
-References: <20191017104836.32464-1-jasowang@redhat.com>
- <20191017104836.32464-5-jasowang@redhat.com> <20191018094655.GA4200@___>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <a2a8e447-c778-59db-071a-ffa348a69bb8@redhat.com>
-Date:   Fri, 18 Oct 2019 18:57:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2407490AbfJRK6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:58:48 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39219 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727872AbfJRK6s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 06:58:48 -0400
+Received: by mail-vs1-f68.google.com with SMTP id y129so3729682vsc.6
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 03:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Rio9HHOlkvh+lIpCQASjDvFu34ch6yz1YASODTUfN2A=;
+        b=x+ivwMa1fuOo73+TkPEdt11VJpA5s5IaNM4sh0A4umv+Kpq/SIrNSspl+Tx6BxkHYY
+         RGSVUmvMZ49HKAPY82E2W2EXufUFG0ArEJgsKO2irYjk/IFl7cZriGK8qRvmlpM5DiI4
+         cW4RyJmj6uE0YSjjvo3dcX10dzCulzvu3Wdu8JdDMZA8ZyqvmS1gBcQtAT6sZMSEGUxe
+         b3hhe8+ibWVBQRUWstv/Fvg1kRt6EKrLFHH+vqY7nvhAYcBSj/NDyg1zXhKZySE4005U
+         /Gbap+Mi81K6+uIXOrxUfYlABOUqEqwZBfS0dsqwISFWanRaHb3jm1VdybIarZTQFU0m
+         4jfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Rio9HHOlkvh+lIpCQASjDvFu34ch6yz1YASODTUfN2A=;
+        b=q5XePrw2jIj0J/5NQ7JfG0It/pmUj+IYzJKY3uhREUK7IGHagKXtwFRVY1yNrq3wxQ
+         oAB0aS6yKKeYv740Q7rDBGU7VvJAwciB5u4JGX81zsqV/mGfVY2IfpXFxg3uU8M26386
+         D/AShUv8XWJUNLAsI9JsToClwJpmJ+LU5WNfH1eFskIpXZcvo4r+56lAQqiA7vyB9T18
+         ujzOwrJoDpdjhCFbTefa9ekmR6i8ZxoFVoLAb0LnaPs5i/xBD1n/4x8J0vXHWrdwQl8I
+         OX3wgklpaA5JDv2qDsgA98gR6e1X44iOcDv558+MgVNuwWTYtX0C2PPbHM6Z2J+Pe4vZ
+         vS5Q==
+X-Gm-Message-State: APjAAAVRrsb3qlPjyb6grf4Tkpb5+A2HhTe6B/lgkoP+POpQ7E9e0K+r
+        UM7t579TW0V7ZND/DnmETHT5svfS4l11RR8vk2C22Q==
+X-Google-Smtp-Source: APXvYqwRBr47REEzkA0e8ZYJ3EAkV4RqwFlssr91UqI3z8UAFs6Fwd6iaf/97SDUNB8MbcQd5ZnSNa99yYm/Z5IUQR4=
+X-Received: by 2002:a67:cf05:: with SMTP id y5mr5230380vsl.34.1571396327014;
+ Fri, 18 Oct 2019 03:58:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191018094655.GA4200@___>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 18 Oct 2019 10:59:20 +0000 (UTC)
+References: <4d269f30b1122487a2b5c8b48e24f78f2b75a509.1570537903.git.nicolas.ferre@microchip.com>
+In-Reply-To: <4d269f30b1122487a2b5c8b48e24f78f2b75a509.1570537903.git.nicolas.ferre@microchip.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 18 Oct 2019 12:58:10 +0200
+Message-ID: <CAPDyKFqcOKhqza=Gbjbwim1no2_NBLEzrq6JRoK_7U9hGXL5Xg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: sdhci-of-at91: add the
+ microchip,sdcal-inverted property
+To:     Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2019/10/18 下午5:46, Tiwei Bie wrote:
-> On Thu, Oct 17, 2019 at 06:48:34PM +0800, Jason Wang wrote:
->> + * @get_vq_state:		Get the state for a virtqueue
->> + *				@mdev: mediated device
->> + *				@idx: virtqueue index
->> + *				Returns virtqueue state (last_avail_idx)
->> + * @get_vq_align:		Get the virtqueue align requirement
->> + *				for the device
->> + *				@mdev: mediated device
->> + *				Returns virtqueue algin requirement
->> + * @get_features:		Get virtio features supported by the device
->> + *				@mdev: mediated device
->> + *				Returns the virtio features support by the
->> + *				device
->> + * @get_features:		Set virtio features supported by the driver
-> s/get_features/set_features/
-
-
-Will fix.
-
-
+On Tue, 8 Oct 2019 at 14:34, Nicolas Ferre <nicolas.ferre@microchip.com> wrote:
 >
->> + *				configration space
->> + * @get_mdev_features:		Get the feature of virtio mdev device
->> + *				@mdev: mediated device
->> + *				Returns the mdev features (API) support by
->> + *				the device.
->> + * @get_generation:		Get device generaton
->> + *				@mdev: mediated device
->> + *				Returns u32: device generation
->> + */
->> +struct virtio_mdev_device_ops {
->> +	/* Virtqueue ops */
->> +	int (*set_vq_address)(struct mdev_device *mdev,
->> +			      u16 idx, u64 desc_area, u64 driver_area,
->> +			      u64 device_area);
->> +	void (*set_vq_num)(struct mdev_device *mdev, u16 idx, u32 num);
->> +	void (*kick_vq)(struct mdev_device *mdev, u16 idx);
->> +	void (*set_vq_cb)(struct mdev_device *mdev, u16 idx,
->> +			  struct virtio_mdev_callback *cb);
->> +	void (*set_vq_ready)(struct mdev_device *mdev, u16 idx, bool ready);
->> +	bool (*get_vq_ready)(struct mdev_device *mdev, u16 idx);
->> +	int (*set_vq_state)(struct mdev_device *mdev, u16 idx, u64 state);
->> +	u64 (*get_vq_state)(struct mdev_device *mdev, u16 idx);
->> +
->> +	/* Device ops */
->> +	u16 (*get_vq_align)(struct mdev_device *mdev);
->> +	u64 (*get_features)(struct mdev_device *mdev);
->> +	int (*set_features)(struct mdev_device *mdev, u64 features);
->> +	void (*set_config_cb)(struct mdev_device *mdev,
->> +			      struct virtio_mdev_callback *cb);
->> +	u16 (*get_vq_num_max)(struct mdev_device *mdev);
->> +	u32 (*get_device_id)(struct mdev_device *mdev);
->> +	u32 (*get_vendor_id)(struct mdev_device *mdev);
->> +	u8 (*get_status)(struct mdev_device *mdev);
->> +	void (*set_status)(struct mdev_device *mdev, u8 status);
->> +	void (*get_config)(struct mdev_device *mdev, unsigned int offset,
->> +			   void *buf, unsigned int len);
->> +	void (*set_config)(struct mdev_device *mdev, unsigned int offset,
->> +			   const void *buf, unsigned int len);
->> +	u64 (*get_mdev_features)(struct mdev_device *mdev);
-> Do we need a .set_mdev_features method as well?
-
-
-Good question. To me I think we may document that the API provides 
-backward compatibility, so there's no need for set_mdev_features. Or is 
-there any other chance that we need that?
-
-
+> Add the specific microchip,sdcal-inverted property to at91 sdhci
+> device binding.
+> This optional property describes how the SoC SDCAL pin is connected.
+> It could be handled at SiP, SoM or board level.
 >
-> It's not very clear what does mdev_features mean.
-> Does it mean the vhost backend features?
+> This property read by at91 sdhci driver will allow to put in place a
+> software workaround that would reduce power consumption.
 >
-> https://github.com/torvalds/linux/blob/0e2adab6cf285c41e825b6c74a3aa61324d1132c/include/uapi/linux/vhost.h#L93-L94
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+
+Applied for next, thanks!
+
+Kind regards
+Uffe
 
 
-Something like this, it's kind of the version of the API, except for the 
-_F_VERSION_1, the first user should be _F_LOG_ALL. I will add more docs 
-for this API.
-
-Thanks
-
-
+> ---
+>  Documentation/devicetree/bindings/mmc/sdhci-atmel.txt | 5 +++++
+>  1 file changed, 5 insertions(+)
 >
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+> index 1b662d7171a0..503c6dbac1b2 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+> @@ -9,6 +9,11 @@ Required properties:
+>  - clocks:              Phandlers to the clocks.
+>  - clock-names:         Must be "hclock", "multclk", "baseclk";
 >
->> +	u32 (*get_generation)(struct mdev_device *mdev);
->> +};
->> +
->> +void mdev_set_virtio_ops(struct mdev_device *mdev,
->> +			 const struct virtio_mdev_device_ops *virtio_ops);
->> +
->> +#endif
->> -- 
->> 2.19.1
->>
+> +Optional properties:
+> +- microchip,sdcal-inverted: when present, polarity on the SDCAL SoC pin is
+> +  inverted. The default polarity for this signal is described in the datasheet.
+> +  For instance on SAMA5D2, the pin is usually tied to the GND with a resistor
+> +  and a capacitor (see "SDMMC I/O Calibration" chapter).
+>
+>  Example:
+>
+> --
+> 2.17.1
+>
