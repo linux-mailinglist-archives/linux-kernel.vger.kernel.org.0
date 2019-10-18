@@ -2,100 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF3E0DBCC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:15:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67872DBCC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:16:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393130AbfJRFPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:15:17 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33026 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727606AbfJRFPR (ORCPT
+        id S2405326AbfJRFPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:15:53 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42407 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393761AbfJRFPx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:15:17 -0400
-Received: by mail-pl1-f194.google.com with SMTP id d22so2281934pls.0;
-        Thu, 17 Oct 2019 22:15:16 -0700 (PDT)
+        Fri, 18 Oct 2019 01:15:53 -0400
+Received: by mail-qt1-f194.google.com with SMTP id w14so7342012qto.9;
+        Thu, 17 Oct 2019 22:15:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eKCQEHJp+Bmk1+KxL2VW8ZVDs0l76/RRTSEB8GtoKzU=;
-        b=VNYmFpR+1svH3RklJ/ni4HOgMNYHl7MHEGV9c2RKjwcUsmhFCVwHCd8Lx6MtsoWVte
-         Git34f+i7ciXxxGu+izTqbWE5AxM6LMpwlAhUfDPh5Ki/fqj5/ZAurq5nX/8wqfZhuFx
-         GBzv2FpY+5gkaZoq5UJ8rNnF0b/TofDQ5Xp+lVHw+QBbI4lHwpdkGPzJRzkYMlkplsMf
-         Y5avb3hUqFh/XcCy5y/7Od4OeVLbiQf0WVuUB99THxpC4P/ofAiEkA2ITlSHT/5P5m5f
-         PI3HN+DbW9qrtCpPtPv5uvbqXLG3l3RaWsKUTdL6qDdCg2lddyuwlw/FuZ7C1SP5rVLF
-         TcLQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sV/yp4uqHU1crLu9pC0wLbsbQ7Aq/erC7q2I15YJ9GM=;
+        b=t5Dq1zRK0HLlkQxAprLociv5KSGzvgFz+5sPaKre1VcMY33wWTuuneFzSnYSUoCu2G
+         sXPNrKasrO90Ig5aBHRbAj5LQcWe6qrI+EVW2k+04kkKYwxWEbi+vD4n0XLmucqYRfut
+         Rlv5UsbxiKkf6hDD2sgShaR1AJJzUM7YVS6vxLlKVXmjzXDLOCZRDGhoeO7fwLoSnSHo
+         i58k0ACK1WM5uVXTQYuKBkaL2doDCWknHAbRJfdL+wNSlOQl3TDy6hSWOCNfoGi0NlV9
+         PM8XaP6N2aWa20iczB0fWWD15XT5YFgxBHLdPN2LiXm6uBTJ/pf0YWWQ60ssjMI38erb
+         Tdxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eKCQEHJp+Bmk1+KxL2VW8ZVDs0l76/RRTSEB8GtoKzU=;
-        b=EensbI4iBJApQ4yw/zv+51REzkZBDCIJK58ob+gndfNt9nNldO/g2RI45wefzbksa7
-         cAHdMxA/egvYhxe9knHfZOj3rPUdAvzv398GIk2jbS6vxILtGWBQPGNtirmXqq9IHdtk
-         aZnvA0I2C/8duBwXWtBd32GBOWKwzn8AaPCoIyrwCSn9evWsdFiiiyEMTe2LyOXz/kAE
-         w1ZZpDrfrFoCHMzW0F7P64KqqQ4KgIbDkJHiqyBBZSoWY0q50q6sRhRklLKmW2LfMV+1
-         r738Lgcf3sG8ADgJKWluBIbz1o5+8QGRXF+k13xAH67jy5oWgMgwPObQvapS1SF7FlMb
-         ZnVA==
-X-Gm-Message-State: APjAAAVJSQtleqkG2TqaZNQXvJW6xhIXh6KytDa6DUmjtD3CVs1aENNt
-        uEqL2Df2qsKcx0HG0W/wraMuKN9w
-X-Google-Smtp-Source: APXvYqzBaCznyjQSXNVi7TS0i1yrqWYhhCfDRmQilWmU7AcgFxRttRhzngCZrFJD7BNJlUiiRY2BpA==
-X-Received: by 2002:a17:902:a50a:: with SMTP id s10mr2720061plq.59.1571372661919;
-        Thu, 17 Oct 2019 21:24:21 -0700 (PDT)
-Received: from ast-mbp ([2620:10d:c090:180::cfd0])
-        by smtp.gmail.com with ESMTPSA id v35sm4253093pgn.89.2019.10.17.21.24.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 21:24:21 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 21:24:19 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        bpf@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH v2 31/33] tools lib bpf: Renaming pr_warning to pr_warn
-Message-ID: <20191018042416.r4fffxzbxb3u4csg@ast-mbp>
-References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
- <20191018031850.48498-1-wangkefeng.wang@huawei.com>
- <20191018031850.48498-31-wangkefeng.wang@huawei.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sV/yp4uqHU1crLu9pC0wLbsbQ7Aq/erC7q2I15YJ9GM=;
+        b=YjqRsgvlkfIDn70uYvRzKRyLzmMd8EsgKeQIh9yBVfQBoQpwdEYXog5kOlFkIDMSGI
+         qExO6P/JST2JeIhlBfbh+il9a1VyQUusbo/PPjXOplArZlfMWpvmKaI7jAeaoC1yh+rv
+         B93YIuWqirUD/WHPXBTk8zqpLF8DQL4rdZePxLgpSq61Q0AwRm3okfaDceXycxEWEtaP
+         SiodGEXtnTIRCp+73WsR53g71zeCEutKPKkHkd4c4YGx2qqd7dK/emCOucOXZtBOidwi
+         iPCtadsQSsj8Vv4T2VC3fN4JA5cKYzkycU6J19JJwYg2p5aOVcb0IQbwIy6fwrbMnGYi
+         Zu6g==
+X-Gm-Message-State: APjAAAXTwj/N2X14pbhHtNyiAup3Kk+p13MHxNbMveaAteZUtN9eL8jy
+        /KxGxvUWb2KT0yKs88eyh+OBmFLboDE=
+X-Google-Smtp-Source: APXvYqxwS4OmMdWzpIhS4OUmUBQs2MuOcVZMwEf0txmixcAcQSmOHd0XKjQ7cnDjYeLGBLad/wtInA==
+X-Received: by 2002:a65:5603:: with SMTP id l3mr8009046pgs.56.1571373940009;
+        Thu, 17 Oct 2019 21:45:40 -0700 (PDT)
+Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
+        by smtp.gmail.com with ESMTPSA id b3sm3696445pjp.13.2019.10.17.21.45.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2019 21:45:38 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-input@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        Sam Bazely <sambazley@fastmail.com>,
+        "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
+        Austin Palmer <austinp@valvesoftware.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] Logitech G920 fixes
+Date:   Thu, 17 Oct 2019 21:45:14 -0700
+Message-Id: <20191018044517.6430-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018031850.48498-31-wangkefeng.wang@huawei.com>
-User-Agent: NeoMutt/20180223
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 11:18:48AM +0800, Kefeng Wang wrote:
-> For kernel logging macro, pr_warning is completely removed and
-> replaced by pr_warn, using pr_warn in tools lib bpf for symmetry
-> to kernel logging macro, then we could drop pr_warning in the
-> whole linux code.
-> 
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Cc: Martin KaFai Lau <kafai@fb.com>
-> Cc: Song Liu <songliubraving@fb.com>
-> Cc: Yonghong Song <yhs@fb.com>
-> Cc: bpf@vger.kernel.org
-> Acked-by: Andrii Nakryiko <andriin@fb.com>
-> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> ---
->  tools/lib/bpf/btf.c             |  56 +--
->  tools/lib/bpf/btf_dump.c        |  18 +-
->  tools/lib/bpf/libbpf.c          | 679 ++++++++++++++++----------------
->  tools/lib/bpf/libbpf_internal.h |   8 +-
->  tools/lib/bpf/xsk.c             |   4 +-
->  5 files changed, 379 insertions(+), 386 deletions(-)
+Everyone:
 
-Nack.
-I prefer this type of renaming to go via bpf tree.
-It's not a kernel patch. It's touching user space library
-which is under heavy development.
-Doing any other way will cause a ton of conflicts.
+This series contains patches to fix a couple of regressions in G920
+wheel support by hid-logitech-hidpp driver. Without the patches the
+wheel remains stuck in autocentering mode ("resisting" any attempt to
+trun) as well as missing support for any FF action.
+
+Thanks,
+Andrey Smirnov
+
+Changes since [v2]:
+
+     - Fixes a buggy validity check "HID: logitech-hidpp: rework
+       device validation" as pointed out by Benjamin Tissoires
+
+     - Marked "HID: logitech-hidpp: do all FF cleanup in
+       hidpp_ff_destroy()" as 5.2+ for stable
+
+Changes since [v1]:
+
+     - "HID: logitech-hidpp: split g920_get_config()" is changed to
+       not rely on devres and be a self contained patch
+
+     - Quirk driven behaviour of "HID: logitech-hidpp: add G920 device
+       validation quirk" is replaced with generic validation algorithm
+       of "HID: logitech-hidpp: rework device validation"
+
+     - Fix for a poteintial race condition is added in
+       "HID: logitech-hidpp: do all FF cleanup in hidpp_ff_destroy()"
+       as per suggestion by Benjamin Tissoires
+
+     - Collected Tested-by from Sam Bazely for "HID: logitech-hidpp:
+       split g920_get_config()" since that patch didn't change
+       significantly since [v1]
+
+     - Specified stable kernel versions I think the patches should
+       apply to (hopefully I got that right)
+
+[v2] lore.kernel.org/lkml/20191016182935.5616-1-andrew.smirnov@gmail.com
+[v1] lore.kernel.org/lkml/20191007051240.4410-1-andrew.smirnov@gmail.com
+
+Andrey Smirnov (3):
+  HID: logitech-hidpp: split g920_get_config()
+  HID: logitech-hidpp: rework device validation
+  HID: logitech-hidpp: do all FF cleanup in hidpp_ff_destroy()
+
+ drivers/hid/hid-logitech-hidpp.c | 237 +++++++++++++++++--------------
+ 1 file changed, 131 insertions(+), 106 deletions(-)
+
+-- 
+2.21.0
 
