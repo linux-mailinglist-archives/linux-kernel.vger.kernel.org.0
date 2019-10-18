@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2410DD3C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:21:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3287DD3CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:21:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732119AbfJRWGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:06:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38712 "EHLO mail.kernel.org"
+        id S2393866AbfJRWUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:20:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731464AbfJRWGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:06:42 -0400
+        id S1732044AbfJRWGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:06:50 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D4DF20679;
-        Fri, 18 Oct 2019 22:06:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF7A2222D2;
+        Fri, 18 Oct 2019 22:06:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436402;
-        bh=A1CC+d9DZVVwc+jQwceLaceB74uPRg43Vtk7GxRaMSs=;
+        s=default; t=1571436410;
+        bh=PYVlkSe364IsMEE5iJc7n0T9JVHw1//hqeU7d9B3O7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hZ/+J5ZO6BMVIrW2l0gqDRlx0rOPAKpmj6lULZYQ2Czsw3JfZ8kScit8gVAvu/YsK
-         sQZW6eODt4Sy2IIBL0xaf3zkeXqLaZ9RA2lCr80S2H0BuzdieTcvHxLSjEzkxpAaCK
-         ClHhGfjJP7UK4NlTv7w5ytndor+C+QcrWTsVnGjM=
+        b=vdavSRDmwwwlUcN7tRP/KbONuVnJHUbuseQ+2TF76ECeOFI7ggsyngNdjr5vNAz/5
+         zE1S5gzcU2Yby/8AxCPTHoB3CzQox9xXRqdMRLx3v62wKoUZq7ogeMKC3k4j1lNUSx
+         EBGVb/iv2Fnoyyy9qfYF52fsru7/elmX+j3RazqE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pascal Bouwmann <bouwmann@tau-tec.de>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 051/100] iio: fix center temperature of bmc150-accel-core
-Date:   Fri, 18 Oct 2019 18:04:36 -0400
-Message-Id: <20191018220525.9042-51-sashal@kernel.org>
+Cc:     Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 056/100] perf jevents: Fix period for Intel fixed counters
+Date:   Fri, 18 Oct 2019 18:04:41 -0400
+Message-Id: <20191018220525.9042-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
 References: <20191018220525.9042-1-sashal@kernel.org>
@@ -43,37 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pascal Bouwmann <bouwmann@tau-tec.de>
+From: Andi Kleen <ak@linux.intel.com>
 
-[ Upstream commit 6c59a962e081df6d8fe43325bbfabec57e0d4751 ]
+[ Upstream commit 6bdfd9f118bd59cf0f85d3bf4b72b586adea17c1 ]
 
-The center temperature of the supported devices stored in the constant
-BMC150_ACCEL_TEMP_CENTER_VAL is not 24 degrees but 23 degrees.
+The Intel fixed counters use a special table to override the JSON
+information.
 
-It seems that some datasheets were inconsistent on this value leading
-to the error.  For most usecases will only make minor difference so
-not queued for stable.
+During this override the period information from the JSON file got
+dropped, which results in inst_retired.any and similar running with
+frequency mode instead of a period.
 
-Signed-off-by: Pascal Bouwmann <bouwmann@tau-tec.de>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Just specify the expected period in the table.
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Link: http://lore.kernel.org/lkml/20190927233546.11533-2-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/accel/bmc150-accel-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/pmu-events/jevents.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
-index 383c802eb5b86..cb8c98a440109 100644
---- a/drivers/iio/accel/bmc150-accel-core.c
-+++ b/drivers/iio/accel/bmc150-accel-core.c
-@@ -125,7 +125,7 @@
- #define BMC150_ACCEL_SLEEP_1_SEC		0x0F
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index 6b36b71106695..6cd9623ebc93b 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -446,12 +446,12 @@ static struct fixed {
+ 	const char *name;
+ 	const char *event;
+ } fixed[] = {
+-	{ "inst_retired.any", "event=0xc0" },
+-	{ "inst_retired.any_p", "event=0xc0" },
+-	{ "cpu_clk_unhalted.ref", "event=0x0,umask=0x03" },
+-	{ "cpu_clk_unhalted.thread", "event=0x3c" },
+-	{ "cpu_clk_unhalted.core", "event=0x3c" },
+-	{ "cpu_clk_unhalted.thread_any", "event=0x3c,any=1" },
++	{ "inst_retired.any", "event=0xc0,period=2000003" },
++	{ "inst_retired.any_p", "event=0xc0,period=2000003" },
++	{ "cpu_clk_unhalted.ref", "event=0x0,umask=0x03,period=2000003" },
++	{ "cpu_clk_unhalted.thread", "event=0x3c,period=2000003" },
++	{ "cpu_clk_unhalted.core", "event=0x3c,period=2000003" },
++	{ "cpu_clk_unhalted.thread_any", "event=0x3c,any=1,period=2000003" },
+ 	{ NULL, NULL},
+ };
  
- #define BMC150_ACCEL_REG_TEMP			0x08
--#define BMC150_ACCEL_TEMP_CENTER_VAL		24
-+#define BMC150_ACCEL_TEMP_CENTER_VAL		23
- 
- #define BMC150_ACCEL_AXIS_TO_REG(axis)	(BMC150_ACCEL_REG_XOUT_L + (axis * 2))
- #define BMC150_AUTO_SUSPEND_DELAY_MS		2000
 -- 
 2.20.1
 
