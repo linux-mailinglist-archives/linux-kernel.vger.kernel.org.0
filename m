@@ -2,103 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDEDCDC25B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:14:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25F30DC241
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:13:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633543AbfJRKOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:14:33 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:33146 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S2633501AbfJRKO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:14:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BD66A64;
-        Fri, 18 Oct 2019 03:14:05 -0700 (PDT)
-Received: from e112269-lin.cambridge.arm.com (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A70733F6C4;
-        Fri, 18 Oct 2019 03:14:02 -0700 (PDT)
-From:   Steven Price <steven.price@arm.com>
-To:     linux-mm@kvack.org
-Cc:     Steven Price <steven.price@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v12 22/22] arm64: mm: Display non-present entries in ptdump
-Date:   Fri, 18 Oct 2019 11:12:48 +0100
-Message-Id: <20191018101248.33727-23-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191018101248.33727-1-steven.price@arm.com>
-References: <20191018101248.33727-1-steven.price@arm.com>
+        id S2633305AbfJRKM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:12:58 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41123 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387545AbfJRKM6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 06:12:58 -0400
+Received: from 79.184.255.51.ipv4.supernova.orange.pl (79.184.255.51) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id 49e72b95e28af242; Fri, 18 Oct 2019 12:12:54 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     "Yin, Fengwei" <fengwei.yin@intel.com>
+Cc:     David Laight <David.Laight@aculab.com>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ACPI / processor_idle: use ndelay instead of io port access for wait
+Date:   Fri, 18 Oct 2019 12:12:54 +0200
+Message-ID: <2566427.rT6C98KLSe@kreacher>
+In-Reply-To: <2b3ce9e9-e805-1b8d-86c3-c8f498a4d3dd@intel.com>
+References: <20191015080404.6013-1-fengwei.yin@intel.com> <c9f3f4f93bb946f790fce4709253b359@AcuMS.aculab.com> <2b3ce9e9-e805-1b8d-86c3-c8f498a4d3dd@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously the /sys/kernel/debug/kernel_page_tables file would only show
-lines for entries present in the page tables. However it is useful to
-also show non-present entries as this makes the size and level of the
-holes more visible. This aligns the behaviour with x86 which also shows
-holes.
+On Wednesday, October 16, 2019 7:56:17 AM CEST Yin, Fengwei wrote:
+> Hi David,
+> 
+> On 10/15/2019 7:48 PM, David Laight wrote:
+> > From: Yin Fengwei
+> >> Sent: 15 October 2019 09:04
+> >> In function acpi_idle_do_entry(), an ioport access is used for dummy
+> >> wait to guarantee hardware behavior. But it could trigger unnecessary
+> >> vmexit in virtualization environment.
+> >>
+> >> If we run linux as guest and export all available native C state to
+> >> guest, we did see many PM timer access triggered VMexit when guest
+> >> enter deeper C state in our environment (We used ACRN hypervisor
+> >> instead of kvm or xen which has PM timer emulated and exports all
+> >> native C state to guest).
+> >>
+> >> According to the original comments of this part of code, io port
+> >> access is only for dummy wait. We could use busy wait instead of io
+> >> port access to guarantee hardware behavior and avoid unnecessary
+> >> VMexit.
+> > 
+> > You need some hard synchronisation instruction(s) after the inb()
+> > and before any kind of delay to ensure your delay code is executed
+> > after the inb() completes.
+> > 
+> > I'm pretty sure that inb() is only synchronised with memory reads.
+> Thanks a lot for the comments.
+> 
+> I didn't find the common serializing instructions API in kernel (only
+> memory  barrier which is used to make sure of memory access). For Intel
+> x86, cpuid could be used as serializing instruction. But it's not
+> suitable for common code here. Do you have any suggestion?
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- arch/arm64/mm/dump.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+In the virt guest case you don't need to worry at all AFAICS, because the inb()
+itself will trap to the HV.
 
-diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
-index 9d9b740a86d2..3203dd8e6d0a 100644
---- a/arch/arm64/mm/dump.c
-+++ b/arch/arm64/mm/dump.c
-@@ -269,21 +269,22 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 		if (st->current_prot) {
- 			note_prot_uxn(st, addr);
- 			note_prot_wx(st, addr);
--			pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
-+		}
-+
-+		pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
- 				   st->start_address, addr);
- 
--			delta = (addr - st->start_address) >> 10;
--			while (!(delta & 1023) && unit[1]) {
--				delta >>= 10;
--				unit++;
--			}
--			pt_dump_seq_printf(st->seq, "%9lu%c %s", delta, *unit,
--				   pg_level[st->level].name);
--			if (pg_level[st->level].bits)
--				dump_prot(st, pg_level[st->level].bits,
--					  pg_level[st->level].num);
--			pt_dump_seq_puts(st->seq, "\n");
-+		delta = (addr - st->start_address) >> 10;
-+		while (!(delta & 1023) && unit[1]) {
-+			delta >>= 10;
-+			unit++;
- 		}
-+		pt_dump_seq_printf(st->seq, "%9lu%c %s", delta, *unit,
-+				   pg_level[st->level].name);
-+		if (st->current_prot && pg_level[st->level].bits)
-+			dump_prot(st, pg_level[st->level].bits,
-+				  pg_level[st->level].num);
-+		pt_dump_seq_puts(st->seq, "\n");
- 
- 		if (addr >= st->marker[1].start_address) {
- 			st->marker++;
--- 
-2.20.1
+> > 
+> > ...
+> >> +	/* profiling the time used for dummy wait op */
+> >> +	ktime_get_real_ts64(&ts0);
+> >> +	inl(acpi_gbl_FADT.xpm_timer_block.address);
+> >> +	ktime_get_real_ts64(&ts1);
+
+You may as well use ktime_get() for this, as it's almost the same code as
+ktime_get_real_ts64() AFAICS, only simpler.
+
+Plus, static vars need not be initialized to 0.
+
+> > 
+> > That could be dominated by the cost of ktime_get_real_ts64().
+> > It also need synchronising instructions.
+> I did some testing. ktime_get_real_ts64() takes much less time than io
+> port access.
+> 
+> The test code is like:
+> 1.
+> 	local_irq_save(flag);
+> 	ktime_get_real_ts64(&ts0);
+> 	inl(acpi_gbl_FADT.xpm_timer_block.address);
+> 	ktime_get_real_ts64(&ts1);
+> 	local_irq_restore(flag);
+> 
+> 2.
+> 	local_irq_save(flag);
+> 	ktime_get_real_ts64(&ts0);
+> 	ktime_get_real_ts64(&ts1);
+> 	local_irq_restore(flag);
+> 
+> The delta in 1 is about 500000ns. And delta in 2 is about
+> 2000ns. The date is gotten on Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz.
+> So I suppose the impact of ktime_get_real_ts64 is small.
+
+You may not be hitting the worst case for ktime_get_real_ts64(), though.
+
+I wonder if special casing the virt guest would be a better approach.
+
+Then, you could leave the code as is for non-virt and I'm not sure if the
+delay is needed in the virt guest case at all.
+
+So maybe do something like "if not in a virt guest, do the dummy inl()"
+and that would be it?
+
+
 
