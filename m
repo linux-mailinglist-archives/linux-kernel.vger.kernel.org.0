@@ -2,51 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6DF1DCB62
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9297BDCB8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:34:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634345AbfJRQci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 12:32:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44612 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392259AbfJRQc1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 12:32:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=c+Y4hXBrATeNY/3cK81vXDxv8+6uxZrDXzoHPDjQStk=; b=G6xE3Ft2lhAFumpDeSWw0MUnh
-        woneqZpDH0FD1kPmuRoyk8/n/08m8ja6QA2dW5guNsFR0vdbpVZ1mdFk9X3P9xSpG/vsg6KoFdeCl
-        BU38bF1RDrYoqhA0hEJp6HStAZLoR+MPLno3uwCsiY1OYOsO6Z/RhEznGqavDAa7udcG2oHeYt+M3
-        94K+2mWnUJ2dRPizTd/qlpwpRGxjBhH5aw4TjQV1Y6lpItqX9uoWNGyxDjQJ3TH4y12NNovcLkTS0
-        k4YHfYXHjVTO5pQyIsDvZZo71JuszSrH6FswOoydRo3VQW459UP1pIldjlOMnsnDPlgKUQYcdZw53
-        78JNC/aEg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iLVAs-0000wA-8s; Fri, 18 Oct 2019 16:32:22 +0000
-Date:   Fri, 18 Oct 2019 09:32:22 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Philippe Liard <pliard@google.com>
-Cc:     phillip@squashfs.org.uk, linux-kernel@vger.kernel.org,
-        groeck@chromium.org
-Subject: Re: [PATCH] squashfs: Migrate from ll_rw_block usage to BIO
-Message-ID: <20191018163222.GA32033@infradead.org>
-References: <20191018010846.186484-1-pliard@google.com>
+        id S2439901AbfJRQd3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 12:33:29 -0400
+Received: from mga06.intel.com ([134.134.136.31]:14218 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405782AbfJRQd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 12:33:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2019 09:33:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,312,1566889200"; 
+   d="scan'208";a="199757212"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by orsmga003.jf.intel.com with ESMTP; 18 Oct 2019 09:33:11 -0700
+Date:   Fri, 18 Oct 2019 09:33:10 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Thomas =?iso-8859-1?Q?Hellstr=F6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        clang-built-linux@googlegroups.com,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        Borislav Petkov <bp@suse.de>
+Subject: Re: [PATCH 1/2] x86/cpu/vmware: Use the full form of INL in
+ VMWARE_HYPERCALL
+Message-ID: <20191018163310.GB26319@linux.intel.com>
+References: <20191018134052.3023-1-thomas_os@shipmail.org>
+ <20191018134052.3023-2-thomas_os@shipmail.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191018010846.186484-1-pliard@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191018134052.3023-2-thomas_os@shipmail.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I don't see why you still need buffer_heads at all.  Basically
-if you replace each of your allocated buffer heads with a
-simple page allocation the code will be much simpler (this version
-adds more than 100 lines of code!) and probaby still a bit faster
-as you don't need the squashfs_bio_request allocation either.
+On Fri, Oct 18, 2019 at 03:40:51PM +0200, Thomas Hellström (VMware) wrote:
+> From: Thomas Hellstrom <thellstrom@vmware.com>
+> 
+> LLVM's assembler doesn't accept the short form INL instruction:
+> 
+>   inl (%%dx)
+> 
+> but instead insists on the output register to be explicitly specified.
+> 
+> This was previously fixed for the VMWARE_PORT macro. Fix it also for
+> the VMWARE_HYPERCALL macro.
+> 
+> Fixes: b4dd4f6e3648 ("Add a header file for hypercall definitions")
+> Suggested-by: Sami Tolvanen <samitolvanen@google.com>
+> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+> Cc: clang-built-linux@googlegroups.com
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: x86-ml <x86@kernel.org>
+> Cc: Borislav Petkov <bp@suse.de>
+> ---
+>  arch/x86/include/asm/vmware.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
+> index e00c9e875933..f5fbe3778aef 100644
+> --- a/arch/x86/include/asm/vmware.h
+> +++ b/arch/x86/include/asm/vmware.h
+> @@ -29,7 +29,8 @@
+>  
+>  /* The low bandwidth call. The low word of edx is presumed clear. */
+>  #define VMWARE_HYPERCALL						\
+> -	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT ", %%dx; inl (%%dx)", \
+> +	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT			\
+> +		      ", %%dx; inl (%%dx), %%eax",			\
+
+Why wrap in the middle of movw?  Wrapping between instructions or letting
+the line poke out is more readable IMO, e.g.
+
+	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT ", %%dx; "	\
+		      "inl (%%dx), %%eax",				\
+
+or
+
+	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT ", %%dx; inl (%%dx), %%eax", \
+
+>  		      "vmcall", X86_FEATURE_VMCALL,			\
+>  		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
+>  
+> -- 
+> 2.21.0
+> 
