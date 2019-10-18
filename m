@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 770FFDBC6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95CC0DBC84
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504081AbfJRFFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:05:15 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4717 "EHLO huawei.com"
+        id S2504248AbfJRFG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:06:26 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4715 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2504058AbfJRFFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:05:14 -0400
+        id S2504052AbfJRFFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 01:05:12 -0400
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id EB375B02C356D3B56BA6;
+        by Forcepoint Email with ESMTP id E679C262FEA366362BE1;
         Fri, 18 Oct 2019 11:19:35 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
@@ -20,11 +20,12 @@ Received: from localhost.localdomain.localdomain (10.175.113.25) by
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Petr Mladek <pmladek@suse.com>, <linux-kernel@vger.kernel.org>
 CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH v2 14/33] idsn: Use pr_warn instead of pr_warning
-Date:   Fri, 18 Oct 2019 11:18:31 +0800
-Message-ID: <20191018031850.48498-14-wangkefeng.wang@huawei.com>
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        <linuxppc-dev@lists.ozlabs.org>,
+        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>
+Subject: [PATCH v2 15/33] macintosh: Use pr_warn instead of pr_warning
+Date:   Fri, 18 Oct 2019 11:18:32 +0800
+Message-ID: <20191018031850.48498-15-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018031850.48498-1-wangkefeng.wang@huawei.com>
 References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
@@ -43,262 +44,135 @@ As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
 pr_warning"), removing pr_warning so all logging messages use a
 consistent <prefix>_warn style. Let's do it.
 
-Cc: Karsten Keil <isdn@linux-pingi.de>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: linuxppc-dev@lists.ozlabs.org
 Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- drivers/isdn/hardware/mISDN/avmfritz.c  | 16 ++++++++--------
- drivers/isdn/hardware/mISDN/hfcmulti.c  |  8 ++++----
- drivers/isdn/hardware/mISDN/hfcpci.c    |  3 +--
- drivers/isdn/hardware/mISDN/hfcsusb.c   |  4 ++--
- drivers/isdn/hardware/mISDN/mISDNipac.c |  4 ++--
- drivers/isdn/hardware/mISDN/mISDNisar.c | 10 +++++-----
- drivers/isdn/hardware/mISDN/netjet.c    |  8 ++++----
- drivers/isdn/hardware/mISDN/w6692.c     | 12 ++++++------
- drivers/isdn/mISDN/hwchannel.c          |  7 +++----
- 9 files changed, 35 insertions(+), 37 deletions(-)
+ drivers/macintosh/windfarm_fcu_controls.c |  4 +---
+ drivers/macintosh/windfarm_lm87_sensor.c  |  4 ++--
+ drivers/macintosh/windfarm_pm72.c         | 22 +++++++++++-----------
+ drivers/macintosh/windfarm_rm31.c         |  6 +++---
+ 4 files changed, 17 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/isdn/hardware/mISDN/avmfritz.c b/drivers/isdn/hardware/mISDN/avmfritz.c
-index 1137dd152b5c..ecc1ef6c386d 100644
---- a/drivers/isdn/hardware/mISDN/avmfritz.c
-+++ b/drivers/isdn/hardware/mISDN/avmfritz.c
-@@ -402,8 +402,8 @@ hdlc_empty_fifo(struct bchannel *bch, int count)
- 	} else {
- 		cnt = bchannel_get_rxbuf(bch, count);
- 		if (cnt < 0) {
--			pr_warning("%s.B%d: No bufferspace for %d bytes\n",
--				   fc->name, bch->nr, count);
-+			pr_warn("%s.B%d: No bufferspace for %d bytes\n",
-+				fc->name, bch->nr, count);
- 			return;
- 		}
- 		p = skb_put(bch->rx_skb, count);
-@@ -538,8 +538,8 @@ HDLC_irq(struct bchannel *bch, u32 stat)
- 	}
- 	if (stat & HDLC_INT_RPR) {
- 		if (stat & HDLC_STAT_RDO) {
--			pr_warning("%s: ch%d stat %x RDO\n",
--				   fc->name, bch->nr, stat);
-+			pr_warn("%s: ch%d stat %x RDO\n",
-+				fc->name, bch->nr, stat);
- 			hdlc->ctrl.sr.xml = 0;
- 			hdlc->ctrl.sr.cmd |= HDLC_CMD_RRS;
- 			write_ctrl(bch, 1);
-@@ -561,8 +561,8 @@ HDLC_irq(struct bchannel *bch, u32 stat)
- 				    HDLC_STAT_CRCVFR) {
- 					recv_Bchannel(bch, 0, false);
- 				} else {
--					pr_warning("%s: got invalid frame\n",
--						   fc->name);
-+					pr_warn("%s: got invalid frame\n",
-+						fc->name);
- 					skb_trim(bch->rx_skb, 0);
- 				}
+diff --git a/drivers/macintosh/windfarm_fcu_controls.c b/drivers/macintosh/windfarm_fcu_controls.c
+index 3c971297b6dc..67daeec94b44 100644
+--- a/drivers/macintosh/windfarm_fcu_controls.c
++++ b/drivers/macintosh/windfarm_fcu_controls.c
+@@ -468,9 +468,7 @@ static void wf_fcu_lookup_fans(struct wf_fcu_priv *pv)
+ 			else
+ 				id = ((*reg) - 0x30) / 2;
+ 			if (id > 7) {
+-				pr_warning("wf_fcu: Can't parse "
+-				       "fan ID in device-tree for %pOF\n",
+-					   np);
++				pr_warn("wf_fcu: Can't parse fan ID in device-tree for %pOF\n", np);
+ 				break;
  			}
-@@ -574,8 +574,8 @@ HDLC_irq(struct bchannel *bch, u32 stat)
- 		 * restart transmitting the whole frame on HDLC
- 		 * in transparent mode we send the next data
- 		 */
--		pr_warning("%s: ch%d stat %x XDU %s\n", fc->name, bch->nr,
--			   stat, bch->tx_skb ? "tx_skb" : "no tx_skb");
-+		pr_warn("%s: ch%d stat %x XDU %s\n", fc->name, bch->nr,
-+			stat, bch->tx_skb ? "tx_skb" : "no tx_skb");
- 		if (bch->tx_skb && bch->tx_skb->len) {
- 			if (!test_bit(FLG_TRANSPARENT, &bch->Flags))
- 				bch->tx_idx = 0;
-diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
-index 86669ec8b977..7013a3f08429 100644
---- a/drivers/isdn/hardware/mISDN/hfcmulti.c
-+++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
-@@ -2248,8 +2248,8 @@ hfcmulti_rx(struct hfc_multi *hc, int ch)
- 	if (bch) {
- 		maxlen = bchannel_get_rxbuf(bch, Zsize);
- 		if (maxlen < 0) {
--			pr_warning("card%d.B%d: No bufferspace for %d bytes\n",
--				   hc->id + 1, bch->nr, Zsize);
-+			pr_warn("card%d.B%d: No bufferspace for %d bytes\n",
-+				hc->id + 1, bch->nr, Zsize);
- 			return;
+ 			wf_fcu_add_fan(pv, name, type, id);
+diff --git a/drivers/macintosh/windfarm_lm87_sensor.c b/drivers/macintosh/windfarm_lm87_sensor.c
+index e44525b19071..b03a33b803b7 100644
+--- a/drivers/macintosh/windfarm_lm87_sensor.c
++++ b/drivers/macintosh/windfarm_lm87_sensor.c
+@@ -124,8 +124,8 @@ static int wf_lm87_probe(struct i2c_client *client,
  		}
- 		sp = &bch->rx_skb;
-@@ -2260,8 +2260,8 @@ hfcmulti_rx(struct hfc_multi *hc, int ch)
- 		if (*sp == NULL) {
- 			*sp = mI_alloc_skb(maxlen, GFP_ATOMIC);
- 			if (*sp == NULL) {
--				pr_warning("card%d: No mem for dch rx_skb\n",
--					   hc->id + 1);
-+				pr_warn("card%d: No mem for dch rx_skb\n",
-+					hc->id + 1);
- 				return;
- 			}
- 		}
-diff --git a/drivers/isdn/hardware/mISDN/hfcpci.c b/drivers/isdn/hardware/mISDN/hfcpci.c
-index 2330a7d24267..abdf787c1a71 100644
---- a/drivers/isdn/hardware/mISDN/hfcpci.c
-+++ b/drivers/isdn/hardware/mISDN/hfcpci.c
-@@ -566,8 +566,7 @@ hfcpci_empty_fifo_trans(struct bchannel *bch, struct bzfifo *rxbz,
  	}
- 	maxlen = bchannel_get_rxbuf(bch, fcnt_rx);
- 	if (maxlen < 0) {
--		pr_warning("B%d: No bufferspace for %d bytes\n",
--			   bch->nr, fcnt_rx);
-+		pr_warn("B%d: No bufferspace for %d bytes\n", bch->nr, fcnt_rx);
- 	} else {
- 		ptr = skb_put(bch->rx_skb, fcnt_rx);
- 		if (le16_to_cpu(*z2r) + fcnt_rx <= B_FIFO_SIZE + B_SUB_VAL)
-diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
-index 008a74a1ed44..621364bb6b12 100644
---- a/drivers/isdn/hardware/mISDN/hfcsusb.c
-+++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
-@@ -841,8 +841,8 @@ hfcsusb_rx_frame(struct usb_fifo *fifo, __u8 *data, unsigned int len,
- 		if (maxlen < 0) {
- 			if (rx_skb)
- 				skb_trim(rx_skb, 0);
--			pr_warning("%s.B%d: No bufferspace for %d bytes\n",
--				   hw->name, fifo->bch->nr, len);
-+			pr_warn("%s.B%d: No bufferspace for %d bytes\n",
-+				hw->name, fifo->bch->nr, len);
- 			spin_unlock_irqrestore(&hw->lock, flags);
- 			return;
- 		}
-diff --git a/drivers/isdn/hardware/mISDN/mISDNipac.c b/drivers/isdn/hardware/mISDN/mISDNipac.c
-index bca880213e91..ec475087fbf9 100644
---- a/drivers/isdn/hardware/mISDN/mISDNipac.c
-+++ b/drivers/isdn/hardware/mISDN/mISDNipac.c
-@@ -936,8 +936,8 @@ hscx_empty_fifo(struct hscx_hw *hscx, u8 count)
- 		hscx_cmdr(hscx, 0x80); /* RMC */
- 		if (hscx->bch.rx_skb)
- 			skb_trim(hscx->bch.rx_skb, 0);
--		pr_warning("%s.B%d: No bufferspace for %d bytes\n",
--			   hscx->ip->name, hscx->bch.nr, count);
-+		pr_warn("%s.B%d: No bufferspace for %d bytes\n",
-+			hscx->ip->name, hscx->bch.nr, count);
- 		return;
+ 	if (!name) {
+-		pr_warning("wf_lm87: Unsupported sensor %pOF\n",
+-			   client->dev.of_node);
++		pr_warn("wf_lm87: Unsupported sensor %pOF\n",
++			client->dev.of_node);
+ 		return -ENODEV;
  	}
- 	p = skb_put(hscx->bch.rx_skb, count);
-diff --git a/drivers/isdn/hardware/mISDN/mISDNisar.c b/drivers/isdn/hardware/mISDN/mISDNisar.c
-index 4a3e748a1c26..096d8c5e5df9 100644
---- a/drivers/isdn/hardware/mISDN/mISDNisar.c
-+++ b/drivers/isdn/hardware/mISDN/mISDNisar.c
-@@ -222,7 +222,7 @@ load_firmware(struct isar_hw *isar, const u8 *buf, int size)
- 			goto reterror;
- 		}
- 		if (!poll_mbox(isar, 1000)) {
--			pr_warning("ISAR poll_mbox dkey failed\n");
-+			pr_warn("ISAR poll_mbox dkey failed\n");
- 			ret = -ETIME;
- 			goto reterror;
- 		}
-@@ -432,8 +432,8 @@ isar_rcv_frame(struct isar_ch *ch)
- 	case ISDN_P_B_MODEM_ASYNC:
- 		maxlen = bchannel_get_rxbuf(&ch->bch, ch->is->clsb);
- 		if (maxlen < 0) {
--			pr_warning("%s.B%d: No bufferspace for %d bytes\n",
--				   ch->is->name, ch->bch.nr, ch->is->clsb);
-+			pr_warn("%s.B%d: No bufferspace for %d bytes\n",
-+				ch->is->name, ch->bch.nr, ch->is->clsb);
- 			ch->is->write_reg(ch->is->hw, ISAR_IIA, 0);
+ 
+diff --git a/drivers/macintosh/windfarm_pm72.c b/drivers/macintosh/windfarm_pm72.c
+index c5da0fc24884..e81746b87cff 100644
+--- a/drivers/macintosh/windfarm_pm72.c
++++ b/drivers/macintosh/windfarm_pm72.c
+@@ -285,8 +285,8 @@ static void cpu_fans_tick_split(void)
+ 		/* Apply result directly to exhaust fan */
+ 		err = wf_control_set(cpu_rear_fans[cpu], sp->target);
+ 		if (err) {
+-			pr_warning("wf_pm72: Fan %s reports error %d\n",
+-			       cpu_rear_fans[cpu]->name, err);
++			pr_warn("wf_pm72: Fan %s reports error %d\n",
++				cpu_rear_fans[cpu]->name, err);
+ 			failure_state |= FAILURE_FAN;
  			break;
  		}
-@@ -443,8 +443,8 @@ isar_rcv_frame(struct isar_ch *ch)
- 	case ISDN_P_B_HDLC:
- 		maxlen = bchannel_get_rxbuf(&ch->bch, ch->is->clsb);
- 		if (maxlen < 0) {
--			pr_warning("%s.B%d: No bufferspace for %d bytes\n",
--				   ch->is->name, ch->bch.nr, ch->is->clsb);
-+			pr_warn("%s.B%d: No bufferspace for %d bytes\n",
-+				ch->is->name, ch->bch.nr, ch->is->clsb);
- 			ch->is->write_reg(ch->is->hw, ISAR_IIA, 0);
+@@ -296,8 +296,8 @@ static void cpu_fans_tick_split(void)
+ 		DBG_LOTS("  CPU%d: intake = %d RPM\n", cpu, intake);
+ 		err = wf_control_set(cpu_front_fans[cpu], intake);
+ 		if (err) {
+-			pr_warning("wf_pm72: Fan %s reports error %d\n",
+-			       cpu_front_fans[cpu]->name, err);
++			pr_warn("wf_pm72: Fan %s reports error %d\n",
++				cpu_front_fans[cpu]->name, err);
+ 			failure_state |= FAILURE_FAN;
  			break;
  		}
-diff --git a/drivers/isdn/hardware/mISDN/netjet.c b/drivers/isdn/hardware/mISDN/netjet.c
-index 61caa7e50b9a..6aae97e827b7 100644
---- a/drivers/isdn/hardware/mISDN/netjet.c
-+++ b/drivers/isdn/hardware/mISDN/netjet.c
-@@ -380,8 +380,8 @@ read_dma(struct tiger_ch *bc, u32 idx, int cnt)
- 	stat = bchannel_get_rxbuf(&bc->bch, cnt);
- 	/* only transparent use the count here, HDLC overun is detected later */
- 	if (stat == -ENOMEM) {
--		pr_warning("%s.B%d: No memory for %d bytes\n",
--			   card->name, bc->bch.nr, cnt);
-+		pr_warn("%s.B%d: No memory for %d bytes\n",
-+			card->name, bc->bch.nr, cnt);
- 		return;
- 	}
- 	if (test_bit(FLG_TRANSPARENT, &bc->bch.Flags))
-@@ -420,8 +420,8 @@ read_dma(struct tiger_ch *bc, u32 idx, int cnt)
- 			recv_Bchannel(&bc->bch, 0, false);
- 			stat = bchannel_get_rxbuf(&bc->bch, bc->bch.maxlen);
- 			if (stat < 0) {
--				pr_warning("%s.B%d: No memory for %d bytes\n",
--					   card->name, bc->bch.nr, cnt);
-+				pr_warn("%s.B%d: No memory for %d bytes\n",
-+					card->name, bc->bch.nr, cnt);
- 				return;
- 			}
- 		} else if (stat == -HDLC_CRC_ERROR) {
-diff --git a/drivers/isdn/hardware/mISDN/w6692.c b/drivers/isdn/hardware/mISDN/w6692.c
-index bad55fdacd36..f3b8db7b48fe 100644
---- a/drivers/isdn/hardware/mISDN/w6692.c
-+++ b/drivers/isdn/hardware/mISDN/w6692.c
-@@ -466,8 +466,8 @@ W6692_empty_Bfifo(struct w6692_ch *wch, int count)
- 		WriteW6692B(wch, W_B_CMDR, W_B_CMDR_RACK | W_B_CMDR_RACT);
- 		if (wch->bch.rx_skb)
- 			skb_trim(wch->bch.rx_skb, 0);
--		pr_warning("%s.B%d: No bufferspace for %d bytes\n",
--			   card->name, wch->bch.nr, count);
-+		pr_warn("%s.B%d: No bufferspace for %d bytes\n",
-+			card->name, wch->bch.nr, count);
- 		return;
- 	}
- 	ptr = skb_put(wch->bch.rx_skb, count);
-@@ -729,8 +729,8 @@ W6692B_interrupt(struct w6692_hw *card, int ch)
- 				 wch->bch.nr, star);
+@@ -367,22 +367,22 @@ static void cpu_fans_tick_combined(void)
+ 	for (cpu = 0; cpu < nr_chips; cpu++) {
+ 		err = wf_control_set(cpu_rear_fans[cpu], sp->target);
+ 		if (err) {
+-			pr_warning("wf_pm72: Fan %s reports error %d\n",
+-				   cpu_rear_fans[cpu]->name, err);
++			pr_warn("wf_pm72: Fan %s reports error %d\n",
++				cpu_rear_fans[cpu]->name, err);
+ 			failure_state |= FAILURE_FAN;
  		}
- 		if (star & W_B_STAR_XDOW) {
--			pr_warning("%s: B%d XDOW proto=%x\n", card->name,
--				   wch->bch.nr, wch->bch.state);
-+			pr_warn("%s: B%d XDOW proto=%x\n", card->name,
-+				wch->bch.nr, wch->bch.state);
- #ifdef ERROR_STATISTIC
- 			wch->bch.err_xdu++;
- #endif
-@@ -747,8 +747,8 @@ W6692B_interrupt(struct w6692_hw *card, int ch)
- 			return; /* handle XDOW only once */
+ 		err = wf_control_set(cpu_front_fans[cpu], intake);
+ 		if (err) {
+-			pr_warning("wf_pm72: Fan %s reports error %d\n",
+-				   cpu_front_fans[cpu]->name, err);
++			pr_warn("wf_pm72: Fan %s reports error %d\n",
++				cpu_front_fans[cpu]->name, err);
+ 			failure_state |= FAILURE_FAN;
+ 		}
+ 		err = 0;
+ 		if (cpu_pumps[cpu])
+ 			err = wf_control_set(cpu_pumps[cpu], pump);
+ 		if (err) {
+-			pr_warning("wf_pm72: Pump %s reports error %d\n",
+-				   cpu_pumps[cpu]->name, err);
++			pr_warn("wf_pm72: Pump %s reports error %d\n",
++				cpu_pumps[cpu]->name, err);
+ 			failure_state |= FAILURE_FAN;
+ 		}
  	}
- 	if (stat & W_B_EXI_XDUN) {
--		pr_warning("%s: B%d XDUN proto=%x\n", card->name,
--			   wch->bch.nr, wch->bch.state);
-+		pr_warn("%s: B%d XDUN proto=%x\n", card->name,
-+			wch->bch.nr, wch->bch.state);
- #ifdef ERROR_STATISTIC
- 		wch->bch.err_xdu++;
- #endif
-diff --git a/drivers/isdn/mISDN/hwchannel.c b/drivers/isdn/mISDN/hwchannel.c
-index f378173bcf6f..8c93af06ed02 100644
---- a/drivers/isdn/mISDN/hwchannel.c
-+++ b/drivers/isdn/mISDN/hwchannel.c
-@@ -474,8 +474,8 @@ bchannel_get_rxbuf(struct bchannel *bch, int reqlen)
- 	if (bch->rx_skb) {
- 		len = skb_tailroom(bch->rx_skb);
- 		if (len < reqlen) {
--			pr_warning("B%d no space for %d (only %d) bytes\n",
--				   bch->nr, reqlen, len);
-+			pr_warn("B%d no space for %d (only %d) bytes\n",
-+				bch->nr, reqlen, len);
- 			if (test_bit(FLG_TRANSPARENT, &bch->Flags)) {
- 				/* send what we have now and try a new buffer */
- 				recv_Bchannel(bch, 0, true);
-@@ -508,8 +508,7 @@ bchannel_get_rxbuf(struct bchannel *bch, int reqlen)
- 	}
- 	bch->rx_skb = mI_alloc_skb(len, GFP_ATOMIC);
- 	if (!bch->rx_skb) {
--		pr_warning("B%d receive no memory for %d bytes\n",
--			   bch->nr, len);
-+		pr_warn("B%d receive no memory for %d bytes\n", bch->nr, len);
- 		len = -ENOMEM;
- 	}
- 	return len;
+@@ -561,7 +561,7 @@ static void drives_fan_tick(void)
+ 
+ 	err = wf_sensor_get(drives_temp, &temp);
+ 	if (err) {
+-		pr_warning("wf_pm72: drive bay temp sensor error %d\n", err);
++		pr_warn("wf_pm72: drive bay temp sensor error %d\n", err);
+ 		failure_state |= FAILURE_SENSOR;
+ 		wf_control_set_max(drives_fan);
+ 		return;
+diff --git a/drivers/macintosh/windfarm_rm31.c b/drivers/macintosh/windfarm_rm31.c
+index 8456eb67184b..7acd1684c451 100644
+--- a/drivers/macintosh/windfarm_rm31.c
++++ b/drivers/macintosh/windfarm_rm31.c
+@@ -281,8 +281,8 @@ static void cpu_fans_tick(void)
+ 		for (i = 0; i < 3; i++) {
+ 			err = wf_control_set(cpu_fans[cpu][i], speed);
+ 			if (err) {
+-				pr_warning("wf_rm31: Fan %s reports error %d\n",
+-					   cpu_fans[cpu][i]->name, err);
++				pr_warn("wf_rm31: Fan %s reports error %d\n",
++					cpu_fans[cpu][i]->name, err);
+ 				failure_state |= FAILURE_FAN;
+ 			}
+ 		}
+@@ -465,7 +465,7 @@ static void slots_fan_tick(void)
+ 
+ 	err = wf_sensor_get(slots_temp, &temp);
+ 	if (err) {
+-		pr_warning("wf_rm31: slots temp sensor error %d\n", err);
++		pr_warn("wf_rm31: slots temp sensor error %d\n", err);
+ 		failure_state |= FAILURE_SENSOR;
+ 		wf_control_set_max(slots_fan);
+ 		return;
 -- 
 2.20.1
 
