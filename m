@@ -2,259 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48D73DC547
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B794DC551
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:49:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633934AbfJRMrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:47:20 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4734 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2633907AbfJRMrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 08:47:20 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E6B4EFB0A86FFA338901;
-        Fri, 18 Oct 2019 20:47:17 +0800 (CST)
-Received: from localhost (10.202.226.61) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Fri, 18 Oct 2019
- 20:47:10 +0800
-Date:   Fri, 18 Oct 2019 13:46:56 +0100
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-CC:     <linux-mm@kvack.org>, <linux-acpi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <x86@kernel.org>,
-        Keith Busch <keith.busch@intel.com>, <jglisse@redhat.com>,
-        <linuxarm@huawei.com>, Andrew Morton <akpm@linux-foundation.org>,
-        "Dan Williams" <dan.j.williams@intel.com>
-Subject: Re: [PATCH V5 1/4] ACPI: Support Generic Initiator only domains
-Message-ID: <20191018134656.00000f70@huawei.com>
-In-Reply-To: <1895971.7mY3IlW731@kreacher>
-References: <20191004114330.104746-1-Jonathan.Cameron@huawei.com>
-        <20191004114330.104746-2-Jonathan.Cameron@huawei.com>
-        <1895971.7mY3IlW731@kreacher>
-Organization: Huawei
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S2633958AbfJRMs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:48:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56769 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2633907AbfJRMsY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 08:48:24 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iLRfu-00075o-4O; Fri, 18 Oct 2019 14:48:10 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A5A981C009C;
+        Fri, 18 Oct 2019 14:48:09 +0200 (CEST)
+Date:   Fri, 18 Oct 2019 12:48:09 -0000
+From:   "tip-bot2 for Yunfeng Ye" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/ring_buffer: Matching the memory allocate and
+ free, in rb_alloc()
+Cc:     Yunfeng Ye <yeyunfeng@huawei.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>, <jolsa@redhat.co>,
+        <acme@kernel.org>, <mingo@redhat.com>, <mark.rutland@arm.com>,
+        <namhyung@kernel.org>, <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <575c7e8c-90c7-4e3a-b41d-f894d8cdbd7f@huawei.com>
+References: <575c7e8c-90c7-4e3a-b41d-f894d8cdbd7f@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Message-ID: <157140288949.29376.10061367480857136332.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.61]
-X-CFilter-Loop: Reflected
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Oct 2019 12:18:33 +0200
-"Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
+The following commit has been merged into the perf/core branch of tip:
 
-> On Friday, October 4, 2019 1:43:27 PM CEST Jonathan Cameron wrote:
-> > Generic Initiators are a new ACPI concept that allows for the
-> > description of proximity domains that contain a device which
-> > performs memory access (such as a network card) but neither
-> > host CPU nor Memory.
-> > 
-> > This patch has the parsing code and provides the infrastructure
-> > for an architecture to associate these new domains with their
-> > nearest memory processing node.
-> > 
-> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>  
-> 
-> This depends on the series from Dan at:
-> 
-> https://lore.kernel.org/linux-acpi/CAPcyv4gBSX58CWH4HZ28w0_cZRzJrhgdEFHa2g8KDqyv8aFqZQ@mail.gmail.com/T/#m1acce3ae8f29f680c0d95fd1e840e703949fbc48
-> 
-Hi Rafael,
+Commit-ID:     d7e78706e43107fa269fe34b1a69e653f5ec9f2c
+Gitweb:        https://git.kernel.org/tip/d7e78706e43107fa269fe34b1a69e653f5ec9f2c
+Author:        Yunfeng Ye <yeyunfeng@huawei.com>
+AuthorDate:    Mon, 14 Oct 2019 16:15:57 +08:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Thu, 17 Oct 2019 21:31:55 +02:00
 
-Yes. Cover letter mentions it was rebased on v4 of that series.
+perf/ring_buffer: Matching the memory allocate and free, in rb_alloc()
 
-> AFAICS, so please respin when that one hits the Linus' tree.
+Currently perf_mmap_alloc_page() is used to allocate memory in
+rb_alloc(), but using free_page() to free memory in the failure path.
 
-Sure, though that pushes it out another cycle and it's beginning to
-get a bit silly (just rebases since April).
+It's better to use perf_mmap_free_page() instead.
 
-I guess it can't be helped given the series hits several trees.
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <jolsa@redhat.co>
+Cc: <acme@kernel.org>
+Cc: <mingo@redhat.com>
+Cc: <mark.rutland@arm.com>
+Cc: <namhyung@kernel.org>
+Cc: <alexander.shishkin@linux.intel.com>
+Link: https://lkml.kernel.org/r/575c7e8c-90c7-4e3a-b41d-f894d8cdbd7f@huawei.com
+---
+ kernel/events/ring_buffer.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Note that this version applies completely clean on top of V7 of
-Dan's SPM/hmem set applied to the tip tree (which I assume is the
-route that will take).  Hence, unless something else changes, the
-respin will be identical to this version.
-
-Thanks,
-
-Jonathan
-
-> 
-> > ---
-> >  drivers/acpi/numa/srat.c       | 62 +++++++++++++++++++++++++++++++++-
-> >  drivers/base/node.c            |  3 ++
-> >  include/asm-generic/topology.h |  3 ++
-> >  include/linux/nodemask.h       |  1 +
-> >  include/linux/topology.h       |  7 ++++
-> >  5 files changed, 75 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-> > index eadbf90e65d1..fe34315a9234 100644
-> > --- a/drivers/acpi/numa/srat.c
-> > +++ b/drivers/acpi/numa/srat.c
-> > @@ -170,6 +170,38 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
-> >  		}
-> >  		break;
-> >  
-> > +	case ACPI_SRAT_TYPE_GENERIC_AFFINITY:
-> > +	{
-> > +		struct acpi_srat_generic_affinity *p =
-> > +			(struct acpi_srat_generic_affinity *)header;
-> > +		char name[9] = {};
-> > +
-> > +		if (p->device_handle_type == 0) {
-> > +			/*
-> > +			 * For pci devices this may be the only place they
-> > +			 * are assigned a proximity domain
-> > +			 */
-> > +			pr_debug("SRAT Generic Initiator(Seg:%u BDF:%u) in proximity domain %d %s\n",
-> > +				 *(u16 *)(&p->device_handle[0]),
-> > +				 *(u16 *)(&p->device_handle[2]),
-> > +				 p->proximity_domain,
-> > +				 (p->flags & ACPI_SRAT_GENERIC_AFFINITY_ENABLED) ?
-> > +				"enabled" : "disabled");
-> > +		} else {
-> > +			/*
-> > +			 * In this case we can rely on the device having a
-> > +			 * proximity domain reference
-> > +			 */
-> > +			memcpy(name, p->device_handle, 8);
-> > +			pr_info("SRAT Generic Initiator(HID=%.8s UID=%.4s) in proximity domain %d %s\n",
-> > +				(char *)(&p->device_handle[0]),
-> > +				(char *)(&p->device_handle[8]),
-> > +				p->proximity_domain,
-> > +				(p->flags & ACPI_SRAT_GENERIC_AFFINITY_ENABLED) ?
-> > +				"enabled" : "disabled");
-> > +		}
-> > +	}
-> > +	break;
-> >  	default:
-> >  		pr_warn("Found unsupported SRAT entry (type = 0x%x)\n",
-> >  			header->type);
-> > @@ -378,6 +410,32 @@ acpi_parse_gicc_affinity(union acpi_subtable_headers *header,
-> >  	return 0;
-> >  }
-> >  
-> > +static int __init
-> > +acpi_parse_gi_affinity(union acpi_subtable_headers *header,
-> > +		       const unsigned long end)
-> > +{
-> > +	struct acpi_srat_generic_affinity *gi_affinity;
-> > +	int node;
-> > +
-> > +	gi_affinity = (struct acpi_srat_generic_affinity *)header;
-> > +	if (!gi_affinity)
-> > +		return -EINVAL;
-> > +	acpi_table_print_srat_entry(&header->common);
-> > +
-> > +	if (!(gi_affinity->flags & ACPI_SRAT_GENERIC_AFFINITY_ENABLED))
-> > +		return -EINVAL;
-> > +
-> > +	node = acpi_map_pxm_to_node(gi_affinity->proximity_domain);
-> > +	if (node == NUMA_NO_NODE || node >= MAX_NUMNODES) {
-> > +		pr_err("SRAT: Too many proximity domains.\n");
-> > +		return -EINVAL;
-> > +	}
-> > +	node_set(node, numa_nodes_parsed);
-> > +	node_set_state(node, N_GENERIC_INITIATOR);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int __initdata parsed_numa_memblks;
-> >  
-> >  static int __init
-> > @@ -433,7 +491,7 @@ int __init acpi_numa_init(void)
-> >  
-> >  	/* SRAT: System Resource Affinity Table */
-> >  	if (!acpi_table_parse(ACPI_SIG_SRAT, acpi_parse_srat)) {
-> > -		struct acpi_subtable_proc srat_proc[3];
-> > +		struct acpi_subtable_proc srat_proc[4];
-> >  
-> >  		memset(srat_proc, 0, sizeof(srat_proc));
-> >  		srat_proc[0].id = ACPI_SRAT_TYPE_CPU_AFFINITY;
-> > @@ -442,6 +500,8 @@ int __init acpi_numa_init(void)
-> >  		srat_proc[1].handler = acpi_parse_x2apic_affinity;
-> >  		srat_proc[2].id = ACPI_SRAT_TYPE_GICC_AFFINITY;
-> >  		srat_proc[2].handler = acpi_parse_gicc_affinity;
-> > +		srat_proc[3].id = ACPI_SRAT_TYPE_GENERIC_AFFINITY;
-> > +		srat_proc[3].handler = acpi_parse_gi_affinity;
-> >  
-> >  		acpi_table_parse_entries_array(ACPI_SIG_SRAT,
-> >  					sizeof(struct acpi_table_srat),
-> > diff --git a/drivers/base/node.c b/drivers/base/node.c
-> > index 296546ffed6c..e5863baa8cb6 100644
-> > --- a/drivers/base/node.c
-> > +++ b/drivers/base/node.c
-> > @@ -977,6 +977,8 @@ static struct node_attr node_state_attr[] = {
-> >  #endif
-> >  	[N_MEMORY] = _NODE_ATTR(has_memory, N_MEMORY),
-> >  	[N_CPU] = _NODE_ATTR(has_cpu, N_CPU),
-> > +	[N_GENERIC_INITIATOR] = _NODE_ATTR(has_generic_initiator,
-> > +					   N_GENERIC_INITIATOR),
-> >  };
-> >  
-> >  static struct attribute *node_state_attrs[] = {
-> > @@ -988,6 +990,7 @@ static struct attribute *node_state_attrs[] = {
-> >  #endif
-> >  	&node_state_attr[N_MEMORY].attr.attr,
-> >  	&node_state_attr[N_CPU].attr.attr,
-> > +	&node_state_attr[N_GENERIC_INITIATOR].attr.attr,
-> >  	NULL
-> >  };
-> >  
-> > diff --git a/include/asm-generic/topology.h b/include/asm-generic/topology.h
-> > index 238873739550..54d0b4176a45 100644
-> > --- a/include/asm-generic/topology.h
-> > +++ b/include/asm-generic/topology.h
-> > @@ -71,6 +71,9 @@
-> >  #ifndef set_cpu_numa_mem
-> >  #define set_cpu_numa_mem(cpu, node)
-> >  #endif
-> > +#ifndef set_gi_numa_mem
-> > +#define set_gi_numa_mem(gi, node)
-> > +#endif
-> >  
-> >  #endif	/* !CONFIG_NUMA || !CONFIG_HAVE_MEMORYLESS_NODES */
-> >  
-> > diff --git a/include/linux/nodemask.h b/include/linux/nodemask.h
-> > index 27e7fa36f707..1aebf766fb52 100644
-> > --- a/include/linux/nodemask.h
-> > +++ b/include/linux/nodemask.h
-> > @@ -399,6 +399,7 @@ enum node_states {
-> >  #endif
-> >  	N_MEMORY,		/* The node has memory(regular, high, movable) */
-> >  	N_CPU,		/* The node has one or more cpus */
-> > +	N_GENERIC_INITIATOR,	/* The node is a GI only node */
-> >  	NR_NODE_STATES
-> >  };
-> >  
-> > diff --git a/include/linux/topology.h b/include/linux/topology.h
-> > index eb2fe6edd73c..05ccf011e489 100644
-> > --- a/include/linux/topology.h
-> > +++ b/include/linux/topology.h
-> > @@ -140,6 +140,13 @@ static inline void set_numa_mem(int node)
-> >  }
-> >  #endif
-> >  
-> > +#ifndef set_gi_numa_mem
-> > +static inline void set_gi_numa_mem(int gi, int node)
-> > +{
-> > +	_node_numa_mem_[gi] = node;
-> > +}
-> > +#endif
-> > +
-> >  #ifndef node_to_mem_node
-> >  static inline int node_to_mem_node(int node)
-> >  {
-> >   
-> 
-> 
-> 
-> 
-
-
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index abc145c..246c83a 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -754,6 +754,14 @@ static void *perf_mmap_alloc_page(int cpu)
+ 	return page_address(page);
+ }
+ 
++static void perf_mmap_free_page(void *addr)
++{
++	struct page *page = virt_to_page(addr);
++
++	page->mapping = NULL;
++	__free_page(page);
++}
++
+ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+ {
+ 	struct ring_buffer *rb;
+@@ -788,9 +796,9 @@ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+ 
+ fail_data_pages:
+ 	for (i--; i >= 0; i--)
+-		free_page((unsigned long)rb->data_pages[i]);
++		perf_mmap_free_page(rb->data_pages[i]);
+ 
+-	free_page((unsigned long)rb->user_page);
++	perf_mmap_free_page(rb->user_page);
+ 
+ fail_user_page:
+ 	kfree(rb);
+@@ -799,14 +807,6 @@ fail:
+ 	return NULL;
+ }
+ 
+-static void perf_mmap_free_page(void *addr)
+-{
+-	struct page *page = virt_to_page(addr);
+-
+-	page->mapping = NULL;
+-	__free_page(page);
+-}
+-
+ void rb_free(struct ring_buffer *rb)
+ {
+ 	int i;
