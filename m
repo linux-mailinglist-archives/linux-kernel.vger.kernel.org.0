@@ -2,160 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B991ADBDE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 08:53:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E2BDDBDE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 08:55:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504516AbfJRGxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 02:53:51 -0400
-Received: from jake.logic.tuwien.ac.at ([128.130.175.117]:41378 "EHLO
-        jake.logic.tuwien.ac.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504372AbfJRGxv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 02:53:51 -0400
-Received: from burischnitzel.preining.info (om126208246007.22.openmobile.ne.jp [126.208.246.7])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by jake.logic.tuwien.ac.at (Postfix) with ESMTPSA id 064E5C03F7;
-        Fri, 18 Oct 2019 08:53:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=logic.at; s=dkim;
-        t=1571381625; bh=yXPJe8f9/EMHqnWtnxOaRN7s6KZqxS+PLBVMczjpsx0=;
-        h=Resent-From:Resent-Date:Resent-To:Date:From:To:Subject:From;
-        b=ZOa2bWnsiOX4TxQi3PJ+tnloy0lnRZnCOl5Ul5O60Y7NduMsHeHUnFd35wsT1QLCS
-         CQ+6sDU55Qondd/VTH9Nn+M+AOis/F1ehPWn1Ca8/oU3Z1LsmnSnAvPUT0m2ta1lcN
-         nQb9ePsFiKZoUlt1c79RBENYYV61hNF7NDvc4yZo=
-Received: by burischnitzel.preining.info (Postfix, from userid 1000)
-        id ACF2F6D268DA; Fri, 18 Oct 2019 15:53:39 +0900 (JST)
-Received: from orsmga101.jf.intel.com ([10.7.208.22])
-  by orsmga001-1.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2019 23:43:06 -0700
-Received-SPF: None (mtab.intel.com: no sender authenticity
-  information available from domain of preining@logic.at)
-  identity=pra; client-ip=128.130.175.117;
-  receiver=mtab.intel.com; envelope-from="preining@logic.at";
-  x-sender="preining@logic.at"; x-conformance=sidf_compatible
-Received-SPF: Pass (mtab.intel.com: domain of preining@logic.at
-  designates 128.130.175.117 as permitted sender)
-  identity=mailfrom; client-ip=128.130.175.117;
-  receiver=mtab.intel.com; envelope-from="preining@logic.at";
-  x-sender="preining@logic.at"; x-conformance=sidf_compatible;
-  x-record-type="v=spf1"
-Received-SPF: None (mtab.intel.com: no sender authenticity
-  information available from domain of
-  postmaster@jake.logic.tuwien.ac.at) identity=helo;
-  client-ip=128.130.175.117; receiver=mtab.intel.com;
-  envelope-from="preining@logic.at";
-  x-sender="postmaster@jake.logic.tuwien.ac.at";
-  x-conformance=sidf_compatible
-Authentication-Results: mtab.intel.com; spf=None smtp.pra=preining@logic.at; spf=Pass smtp.mailfrom=preining@logic.at; spf=None smtp.helo=postmaster@jake.logic.tuwien.ac.at; dkim=pass (signature verified) header.i=@logic.at; dmarc=pass (p=none dis=none) d=logic.at
-IronPort-PHdr: =?us-ascii?q?9a23=3ALpZP4RQJKelxoul1Es6dQl8KDtpsv+yvbD5Q0YIu?=
- =?us-ascii?q?jvd0So/mwa6yZxGN2/xhgRfzUJnB7Loc0qyK6vumBjxLsMnJmUtBWaQEbwUCh8?=
- =?us-ascii?q?QSkl5oK+++Imq/EsTXaTcnFt9JTl5v8iLzG0FUHMHjew+a+SXqvnYdFRrlKAV6?=
- =?us-ascii?q?OPn+FJLMgMSrzeCy/IDYbxlViDanbr5+MRu7oR/Tu8QVjodvLqQ8wQbVr3VVfO?=
- =?us-ascii?q?hb2XlmLk+JkRbm4cew8p9j8yBOtP8k6sVNT6b0cbkmQLJBFDgpPHw768PttRnY?=
- =?us-ascii?q?UAuA/WAcXXkMkhpJGAfK8hf3VYrsvyTgt+p93C6aPdDqTb0xRD+v4btnRAPuhS?=
- =?us-ascii?q?waMTMy7WPZhdFqjK9DrhyvpwJxzZPXbo6aKPVxY63ScMgGRWZdQspdSzBND5mi?=
- =?us-ascii?q?Y4YJEuEPPfxYr474p1YWtRW+AhOsC/jxxT9Smn/9wLc00/4/HgHH2gwgHtQOsH?=
- =?us-ascii?q?vJp9jyLKcSS/66zKjOzTXCafNW1izw6IzPchAuoPGDQah8ftDNyUQ2EQ7Ok1ue?=
- =?us-ascii?q?qYvgPzyP1+QNtXCW7/J6Ve2xim4nrQBxoj6gxss2i4nJgIwVylfC+C5kw4g1Pc?=
- =?us-ascii?q?W1RFNlbdOnCpdcqi+XO5dsTs8/QWxluDw2xqAbtZO5ZCQHyYkrywTCZ/GDcIWE?=
- =?us-ascii?q?+BHuWeaLLTtlmn5pZLSyjAuo/0e60O3zTMy03U5KriVbltnMsWgA1x7J5ciEVP?=
- =?us-ascii?q?Rx5EOh2TGA1wDS9u5IO1w0lbfVKp4g3LEwkIAfvl7fESPsgkr2kLeadkQi+ue2?=
- =?us-ascii?q?9+TqeqjqqoGfOoNulw3zPLgiltaiDek6MgUCRXWX9fm+2bH7+E32WrRKjvk4kq?=
- =?us-ascii?q?nDt5DaINwWprajAwBL04Yj7Re/DzGp0NkDmXkHK11FeBObgITzIV7OPOj0De2j?=
- =?us-ascii?q?jFS0jDdr2/fGM6XgApXJIHnOi7Phfbd7605Bxws/19Ff55RICr4fJPL/QFP+tN?=
- =?us-ascii?q?vdDkxxDwvhx+fhFcU4yYIEVGaCGbSxLqzfqxmL6/gpLu3KY5Ua/H75Kv4497vt?=
- =?us-ascii?q?gGU/lFs1Y6akx90UZWq+E/AgJF+WJTLthsgpFWYMoxp4Ter2hVnEWjlWNFioWK?=
- =?us-ascii?q?dpwDYhAo+8Ec/7XI2shr2H02/vBodbZ2ZHDF+kFXDndo7CUutaO3HaGdNojjFR?=
- =?us-ascii?q?DevpcIQmzxz77FanmYoiFfLd/2gjjbym1NVx4LeOxxM79jEyC8OS0mrLU3xrn2?=
- =?us-ascii?q?4OATY9mqlj8xQkmwWzlJNgivkdLuR9ovZAUwM0L5nZlrQoD9f9WwmHd8vbEQ/6?=
- =?us-ascii?q?EOXjOik4S5cK+/FLe1x0Qo3wihfM3iHsCqNHz7E=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0BFAACiXaldl3WvgoBkHAEBAQEBBwEBE?=
- =?us-ascii?q?QEEBAEBgWkFAQELAYMLVDIqjSiYCYFOh0oUgWcJAQEBAQEBAQEBCB8QAQGHSRw?=
- =?us-ascii?q?HAQQyBw4CDAEBAQMBAQECAQIDBAETAQEBAQEIFgaFXQyCOiKDMAYBARMSEzsTI?=
- =?us-ascii?q?R0dARSDNAGCdgEFsXKCfQEBBYc7CYE0AYo6gWuBf4VlgwiGJJZ2lmCBRmeCMow?=
- =?us-ascii?q?OhlgngjuHUYN3i0eKYoNQmWiBWQmCAU04gycJRxAUgVAJAwwCCYIHhCKICTIzk?=
- =?us-ascii?q?XwBAQ?=
-X-IPAS-Result: =?us-ascii?q?A0BFAACiXaldl3WvgoBkHAEBAQEBBwEBEQEEBAEBgWkFAQE?=
- =?us-ascii?q?LAYMLVDIqjSiYCYFOh0oUgWcJAQEBAQEBAQEBCB8QAQGHSRwHAQQyBw4CDAEBA?=
- =?us-ascii?q?QMBAQECAQIDBAETAQEBAQEIFgaFXQyCOiKDMAYBARMSEzsTIR0dARSDNAGCdgE?=
- =?us-ascii?q?FsXKCfQEBBYc7CYE0AYo6gWuBf4VlgwiGJJZ2lmCBRmeCMowOhlgngjuHUYN3i?=
- =?us-ascii?q?0eKYoNQmWiBWQmCAU04gycJRxAUgVAJAwwCCYIHhCKICTIzkXwBAQ?=
-X-IronPort-AV: E=Sophos;i="5.67,310,1566889200"; 
-   d="scan'208";a="90706374"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from jake.logic.tuwien.ac.at ([128.130.175.117])
-  by mtab.intel.com with ESMTP; 17 Oct 2019 23:43:03 -0700
-Received: from burischnitzel.preining.info (a-fhn3-09120.noc.ntt-west.nsk.ne.jp [61.198.85.120])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by jake.logic.tuwien.ac.at (Postfix) with ESMTPSA id ADB87C03F7;
-        Fri, 18 Oct 2019 08:42:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=logic.at; s=dkim;
-        t=1571380979; bh=yXPJe8f9/EMHqnWtnxOaRN7s6KZqxS+PLBVMczjpsx0=;
-        h=Date:From:To:Subject:From;
-        b=S+Cri1OtrooI4HCtVJndn0MgvSFGd5kPOYw9HcBC4ZVrSg25uZ/+O6KP6H4ik8mqx
-         JOnDpnjXQ3nryp3eJcbptOZZxEXWxp8kxGrQ6HmetP6QmaQp1/4gKOTnu7gVmEqeTT
-         Tq5wBZWMhzCYKHV69j4I0JrJ84yrvIg2/wYN52DU=
-Received: by burischnitzel.preining.info (Postfix, from userid 1000)
-        id EEEF66D2658A; Fri, 18 Oct 2019 15:30:22 +0900 (JST)
-Date:   Fri, 18 Oct 2019 15:30:22 +0900
-From:   Norbert Preining <preining@logic.at>
-To:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ilw@linux.intel.com
-Subject: IWL AC 8260, suspect GRP implementation, broken connectivity
-Message-ID: <20191018063022.6bqunomkyqabgljc@burischnitzel.preining.info>
+        id S2504531AbfJRGzj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 02:55:39 -0400
+Received: from mail-eopbgr700061.outbound.protection.outlook.com ([40.107.70.61]:30944
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2504371AbfJRGzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 02:55:38 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QCHbjngCPcDIrbSOgPvX9pOytBcvA0uZPcd7syP8kUBVfucBcS3z9gaGjumnfvFbrYw7aAffABUZiIdwfO5cbHOBTZctf7ce8LNFB8zoh3fVKJczzdpZ6spF2TCXMh/CeCFyjnxRjK/jE5JiMLx928Wgzax1EK53CLbPbHukATJX2sp5/D9iWenjurE2Y8DUAgHQWfRWbowgstrqFqS+UKafE7eCZFvA8/IyAVha9QRWHPl2KiX8htew8B30mFoDAcXoh9FoU1psXQfMEz5FtxnBcSBjFvdbBOJtJE+gZLqDHLFAudXq4BM27hezwW8Rmh9W9FCQNstFNRigZyr46w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xO1G94WDG+asGTLvtKONPCA/vXBzNm8of9S3xLiQpsQ=;
+ b=YXTzQblSqV7UKDw22Nc8v1UkSDn1HLfnQGSveju9PCxz7htVMsu39Wb+35wptOuaW9sW7XTW+Bgdvtp00exRKyHqPUjnfdQ7WmNwpA2xUqjNjspgdZev7hqV6kAY7GlDwA7eOT9T150FrVH4hLM/wWpOHIjT5roZtO81E7a26dBbEBg9BhPqyhnNa10/hEZqnbGo8MhZ4d7UUrWhFQB6UmvvTJhKqZVheBBeRWV+V/XHFb+thOFve/8qr5TmY0s1BswIe23GKGarYtB9SUT6GJg33QdTqCDQFR4lxQXZYtGRjAEHmX/mnn8hMiuKXLo8NC/AuJXteEIkPJTMvMctTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=davemloft.net smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xO1G94WDG+asGTLvtKONPCA/vXBzNm8of9S3xLiQpsQ=;
+ b=ZhSs/Sc9bTXZm7t4qsZmBzQYP1QPLTgMXVoRTFKSGr+2xGTVpH1K64bMmGo1xg0xaIBHm+YPx6Fzp7GN/KAZnNw3cqhZcybtXmcKlpwfx2UBzp1FHPOyMePhjPfhNAA5hQhOE6im3pf26GmSR/O/gWyo+EP436sfD56fxoX6+xE=
+Received: from SN6PR02CA0010.namprd02.prod.outlook.com (2603:10b6:805:a2::23)
+ by MN2PR02MB6864.namprd02.prod.outlook.com (2603:10b6:208:1d3::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.23; Fri, 18 Oct
+ 2019 06:54:55 +0000
+Received: from SN1NAM02FT017.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::208) by SN6PR02CA0010.outlook.office365.com
+ (2603:10b6:805:a2::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.24 via Frontend
+ Transport; Fri, 18 Oct 2019 06:54:55 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; davemloft.net; dkim=none (message not signed)
+ header.d=none;davemloft.net; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT017.mail.protection.outlook.com (10.152.72.115) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2367.14
+ via Frontend Transport; Fri, 18 Oct 2019 06:54:55 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <radhey.shyam.pandey@xilinx.com>)
+        id 1iLMA2-0005hV-NB; Thu, 17 Oct 2019 23:54:54 -0700
+Received: from localhost ([127.0.0.1] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <radhey.shyam.pandey@xilinx.com>)
+        id 1iLM9x-0006T4-Hl; Thu, 17 Oct 2019 23:54:49 -0700
+Received: from [10.140.184.180] (helo=ubuntu)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <radheys@ubuntu>)
+        id 1iLM9w-0006Sv-Ud; Thu, 17 Oct 2019 23:54:49 -0700
+Received: by ubuntu (Postfix, from userid 13245)
+        id 2BDC410104C; Fri, 18 Oct 2019 12:24:47 +0530 (IST)
+From:   Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+To:     davem@davemloft.net, netdev@vger.kernel.org
+Cc:     michal.simek@xilinx.com, anirudha.sarangi@xilinx.com,
+        john.linn@xilinx.com, mchehab+samsung@kernel.org,
+        gregkh@linuxfoundation.org, nicolas.ferre@microchip.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Subject: [PATCH net-next] net: axienet: In kconfig add ARM64 as supported platform
+Date:   Fri, 18 Oct 2019 12:24:46 +0530
+Message-Id: <1571381686-13045-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-Result: No--1.901-7.0-31-1
+X-imss-scan-details: No--1.901-7.0-31-1;No--1.901-5.0-31-1
+X-TM-AS-User-Approved-Sender: No;No
+X-TM-AS-Result-Xfilter: Match text exemption rules:No
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(376002)(136003)(39860400002)(189003)(199004)(4326008)(6266002)(2906002)(107886003)(36756003)(186003)(316002)(50226002)(42186006)(106002)(16586007)(51416003)(478600001)(8936002)(81156014)(81166006)(70206006)(356004)(70586007)(48376002)(126002)(50466002)(476003)(8676002)(486006)(5660300002)(305945005)(426003)(336012)(103686004)(26005)(2616005)(47776003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR02MB6864;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 34963280-717c-4847-9b9b-08d753981535
+X-MS-TrafficTypeDiagnostic: MN2PR02MB6864:
+X-Microsoft-Antispam-PRVS: <MN2PR02MB68642FEA057375321FD0E2CAC76C0@MN2PR02MB6864.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-Forefront-PRVS: 01949FE337
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: srglYuf6HLks9xz+RbADIlAVUE3FGiH5eNBMzbR0QHMEaMmTcEBHgUfL++v7MCBdJki08LBx3cnAqOxK+vSM1Dzhm6UzRZzhb+v4kc4lRcxImIUBG/rd3WO5C61gMKEfMs32kHxGJOfAHfSU18mCdldTnF9xrulKMTMhx2WKuKjEzt4zm2rCotGxX4RN/6pgFDM8eOOEYdNUha63VLxXFz7nRnTuCl/Zra9T3anWj6gU13DPewmMlar5Y2aGFLRBe/w1CvvgNjgPM6FMS7AVWpjN9kptUkocHIL9kNCdghx+n9uRiNZVEMNbRh44uFKPf+mt7/C/1QpUKt04PTxSFL8WPjJDPJLXW2u81hzX9/aOzKN75wqE2zPUdi0jbPo/cLnf9k1pyVG9ON1QPfmnIdCbdtFyuYTlfXY5lhZOTEM=
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2019 06:54:55.1042
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34963280-717c-4847-9b9b-08d753981535
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB6864
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear all,
+xilinx axi_emac driver is supported on ZynqMP UltraScale platform(ARM64).
+So enable it in kconfig. Basic sanity testing is done on zu+ mpsoc zcu102
+evaluation board.
 
-(please cc)
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+---
+ drivers/net/ethernet/xilinx/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-linux 5.3.N (currently .7), but also older kernels
-Debian/sid
-Thinkpad X260
-iwlwifi 0000:04:00.0: Detected Intel(R) Dual Band Wireless AC 8260, REV=0x208
-iwlwifi 0000:04:00.0: loaded firmware version 36.8fd77bb3.0 op_mode iwlmvm
+diff --git a/drivers/net/ethernet/xilinx/Kconfig b/drivers/net/ethernet/xilinx/Kconfig
+index 8d994ce..a616bdc 100644
+--- a/drivers/net/ethernet/xilinx/Kconfig
++++ b/drivers/net/ethernet/xilinx/Kconfig
+@@ -6,7 +6,7 @@
+ config NET_VENDOR_XILINX
+ 	bool "Xilinx devices"
+ 	default y
+-	depends on PPC || PPC32 || MICROBLAZE || ARCH_ZYNQ || MIPS || X86 || ARM || COMPILE_TEST
++	depends on PPC || PPC32 || MICROBLAZE || ARCH_ZYNQ || MIPS || X86 || ARM || ARM64 || COMPILE_TEST
+ 	---help---
+ 	  If you have a network (Ethernet) card belonging to this class, say Y.
+ 
+@@ -26,11 +26,11 @@ config XILINX_EMACLITE
+ 
+ config XILINX_AXI_EMAC
+ 	tristate "Xilinx 10/100/1000 AXI Ethernet support"
+-	depends on MICROBLAZE || X86 || ARM || COMPILE_TEST
++	depends on MICROBLAZE || X86 || ARM || ARM64 || COMPILE_TEST
+ 	select PHYLINK
+ 	---help---
+ 	  This driver supports the 10/100/1000 Ethernet from Xilinx for the
+-	  AXI bus interface used in Xilinx Virtex FPGAs.
++	  AXI bus interface used in Xilinx Virtex FPGAs and Soc's.
+ 
+ config XILINX_LL_TEMAC
+ 	tristate "Xilinx LL TEMAC (LocalLink Tri-mode Ethernet MAC) driver"
+-- 
+2.7.4
 
-In one particular location I see completely broken connection: dns does
-not work (resolve does not work), ping, ssh breaks down, http breaks
-down, it really sounds like a really weak connection.
-
-The problem is that:
-- the *same* laptop booted into Windows works at high speed connections
-- other computers (2 Mac) around here work without problems
-- mobile also connects without any problem
-
-There are no RX/TX errors whatsoever. I tried reducing MTU, to no
-effect. The only warning I see is
-	TCP: wlp4s0: Driver has suspect GRO implementation, TCP performance may be compromised.
-
-
-wlp4s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1400
-        inet 172.17.1.166  netmask 255.255.0.0  broadcast 172.17.255.255
-        inet6 fe80::fddc:f32e:f9cb:fded  prefixlen 64  scopeid 0x20<link>
-        ether e4:a7:a0:66:6d:f4  txqueuelen 1000  (Ethernet)
-        RX packets 11164  bytes 7459009 (7.1 MiB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 13204  bytes 3062515 (2.9 MiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-I am a bit at loss how to debug this, or better, whether it is possible
-to get back normal connectivity?
-
-Thanks a lot for any pointer
-
-Norbert
-
---
-PREINING Norbert                               http://www.preining.info
-Accelia Inc. + IFMGA ProGuide + TU Wien + JAIST + TeX Live + Debian Dev
-GPG: 0x860CDC13   fp: F7D8 A928 26E3 16A1 9FA0 ACF0 6CAC A448 860C DC13
