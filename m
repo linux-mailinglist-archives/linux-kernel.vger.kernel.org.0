@@ -2,99 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17DB4DC07B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:02:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B1D4DC086
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:06:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633022AbfJRJCy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 05:02:54 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56120 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437687AbfJRJCx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 05:02:53 -0400
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iLO9f-0002Y0-4q; Fri, 18 Oct 2019 11:02:39 +0200
-Date:   Fri, 18 Oct 2019 11:02:37 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, kvm@vger.kernel.org
-Subject: Re: [RFD] x86/split_lock: Request to Intel
-In-Reply-To: <5da90713-9a0d-6466-64f7-db435ba07dbe@intel.com>
-Message-ID: <alpine.DEB.2.21.1910181100000.1869@nanos.tec.linutronix.de>
-References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com> <1560897679-228028-10-git-send-email-fenghua.yu@intel.com> <alpine.DEB.2.21.1906262209590.32342@nanos.tec.linutronix.de> <20190626203637.GC245468@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1906262338220.32342@nanos.tec.linutronix.de> <20190925180931.GG31852@linux.intel.com> <3ec328dc-2763-9da5-28d6-e28970262c58@redhat.com> <alpine.DEB.2.21.1910161142560.2046@nanos.tec.linutronix.de> <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com>
- <c3ff2fb3-4380-fb07-1fa3-15896a09e748@intel.com> <d30652bb-89fa-671a-5691-e2c76af231d0@redhat.com> <8808c9ac-0906-5eec-a31f-27cbec778f9c@intel.com> <alpine.DEB.2.21.1910161519260.2046@nanos.tec.linutronix.de> <ba2c0aab-1d7c-5cfd-0054-ac2c266c1df3@redhat.com>
- <alpine.DEB.2.21.1910171322530.1824@nanos.tec.linutronix.de> <5da90713-9a0d-6466-64f7-db435ba07dbe@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S2633026AbfJRJGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 05:06:07 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:53488 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727741AbfJRJGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 05:06:07 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7138B24653149FBE9F7C;
+        Fri, 18 Oct 2019 17:06:04 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Fri, 18 Oct 2019
+ 17:05:54 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <rostedt@goodmis.org>, <mingo@redhat.com>, <ast@kernel.org>,
+        <daniel@iogearbox.net>, <kafai@fb.com>, <songliubraving@fb.com>,
+        <yhs@fb.com>, <andriin@fb.com>
+CC:     <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH bpf-next] bpf: Fix build error without CONFIG_NET
+Date:   Fri, 18 Oct 2019 17:03:44 +0800
+Message-ID: <20191018090344.26936-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Oct 2019, Xiaoyao Li wrote:
-> On 10/17/2019 8:29 PM, Thomas Gleixner wrote:
-> > The more I look at this trainwreck, the less interested I am in merging any
-> > of this at all.
-> > 
-> > The fact that it took Intel more than a year to figure out that the MSR is
-> > per core and not per thread is yet another proof that this industry just
-> > works by pure chance.
-> > 
-> 
-> Whether it's per-core or per-thread doesn't affect much how we implement for
-> host/native.
+If CONFIG_NET is n, building fails:
 
-How useful.
+kernel/trace/bpf_trace.o: In function `raw_tp_prog_func_proto':
+bpf_trace.c:(.text+0x1a34): undefined reference to `bpf_skb_output_proto'
 
-> And also, no matter it's per-core or per-thread, we always can do something in
-> VIRT.
+Wrap it into a #ifdef to fix this.
 
-It matters a lot. If it would be per thread then we would not have this
-discussion at all.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: a7658e1a4164 ("bpf: Check types of arguments passed into helpers")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ kernel/trace/bpf_trace.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> Maybe what matters is below.
-> 
-> > Seriously, this makes only sense when it's by default enabled and not
-> > rendered useless by VIRT. Otherwise we never get any reports and none of
-> > the issues are going to be fixed.
-> > 
-> 
-> For VIRT, it doesn't want old guest to be killed due to #AC. But for native,
-> it doesn't want VIRT to disable the #AC detection
-> 
-> I think it's just about the default behavior that whether to disable the
-> host's #AC detection or kill the guest (SIGBUS or something else) once there
-> is an split-lock #AC in guest.
-> 
-> So we can provide CONFIG option to set the default behavior and module
-> parameter to let KVM set/change the default behavior.
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 52f7e9d..c324089 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1055,8 +1055,10 @@ raw_tp_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 	switch (func_id) {
+ 	case BPF_FUNC_perf_event_output:
+ 		return &bpf_perf_event_output_proto_raw_tp;
++#ifdef CONFIG_NET
+ 	case BPF_FUNC_skb_output:
+ 		return &bpf_skb_output_proto;
++#endif
+ 	case BPF_FUNC_get_stackid:
+ 		return &bpf_get_stackid_proto_raw_tp;
+ 	case BPF_FUNC_get_stack:
+-- 
+2.7.4
 
-Care to read through the whole discussion and figure out WHY it's not that
-simple?
 
-Thanks,
-
-	tglx
