@@ -2,223 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D632DDCDF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:29:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C2E7DCDF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:29:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505599AbfJRS3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 14:29:37 -0400
-Received: from mail-qt1-f173.google.com ([209.85.160.173]:35226 "EHLO
-        mail-qt1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502485AbfJRS3g (ORCPT
+        id S2505730AbfJRS3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 14:29:54 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53816 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2505612AbfJRS3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 14:29:36 -0400
-Received: by mail-qt1-f173.google.com with SMTP id m15so10510105qtq.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 11:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ka1jde4meHyxobWU4esILBOv5JEOtUjz6qkwUWVqweM=;
-        b=Qgj6QTI//JtzBjEw4ZWi4StC9S7tbLBWy2TH0BGjzLGRunn+mD60OHqCNIF18bQu1P
-         Pufp12x51hM9wWoBwgc9V9Lz+qFWCWfsCSFTA96wEPypA26nLBYFMyHC8chYrGCDdDCP
-         Pdolyenf36XjuyISmDaPY6Pa0NB3k0xKT6UqkaMad8vIl84dAuRkE0TywYt1B2vQDK1m
-         RH6zaWbPvXEnbzJ7NfOXpGWD9z3I92aaE89qD3c+rcKSLMA/mCCr+cwefIouRGGtZTs8
-         rvGDSMetv4gzEtgmtcbxa6EpoT12WsP/MG6qbVtLSGVOV9uKwetPX8ISZye+Gp3Rimo1
-         9fLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ka1jde4meHyxobWU4esILBOv5JEOtUjz6qkwUWVqweM=;
-        b=AI4byzQY3qBvGjmFcMyqQPSQNCm9uolQvuFad0O63bLLBddub1ia52oQ7XGKS5hrUV
-         pJ90BMevCnJaKEiON9m6OfJ5wz15jikBxXaN2Fl8LncUuqgIaf8RPN9YcSr6huwdw8xs
-         NHnhVLg1/m4nP+/bzU/cAWBoXVdAlpVh6tHgjIxWl53uYXliMnaz9RknQEWeSxjLRfdj
-         c/IZDpg2NisZucCmDnLnWV79W/kGbNGFOUmllJvP3njjJ1qIN4fWbouFZdRUBBZIfrcv
-         xd4ILQzHYBPzFeKJ8ZbYg4NXaRyM5plTj7wv1BiD1kCQjakFQrPJWam0lGzBvhf3vajV
-         cbvA==
-X-Gm-Message-State: APjAAAWX3Yn7qBU0sAWYIFb4jS8TG+NM3nd4xE+E35V8O1kWOvsjEHeU
-        GSDXWHGtF3gKFVfrWLOU4rHOM9lOw4E=
-X-Google-Smtp-Source: APXvYqzqjsWRa5qxWt9U0lAfYjxBbdSmGUCJRFQR5YOV5CURR4WlFQYentEbjzqlqVHUmvyF+VdqZw==
-X-Received: by 2002:a0c:8522:: with SMTP id n31mr11284330qva.161.1571423375639;
-        Fri, 18 Oct 2019 11:29:35 -0700 (PDT)
-Received: from quaco.ghostprotocols.net (179-240-170-47.3g.claro.net.br. [179.240.170.47])
-        by smtp.gmail.com with ESMTPSA id n42sm4843784qta.31.2019.10.18.11.29.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2019 11:29:34 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 3E1704DD66; Fri, 18 Oct 2019 15:29:31 -0300 (-03)
-Date:   Fri, 18 Oct 2019 15:29:31 -0300
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Kan Liang <kan.liang@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ian Rogers <irogers@google.com>,
-        Stephane Eranian <eranian@google.com>,
-        Song Liu <songliubraving@fb.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: Re: [PATCHv3 00/10] libperf: Add sampling interface (leftover)
-Message-ID: <20191018182931.GG1797@kernel.org>
-References: <20191017105918.20873-1-jolsa@kernel.org>
+        Fri, 18 Oct 2019 14:29:53 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9IIJfYu123323;
+        Fri, 18 Oct 2019 18:29:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=hXYMrEGZzwQiBxefoyJmePRgdYQb4j68CrcBDe3IDzc=;
+ b=irU81VrR8BTGLN/APpFS6rFQslAg28wtt7vglzPr5k/IKawaYwfKfMh34HxiwPz94aoh
+ XkCrBIM6l4o4QjmnbYgatJPl9bbrrDynx6tk907cdw9lLeGXLPqyuCZgbJhAEvCBpPke
+ X60aYbk4UpEn1GcAyAmX4zkVlK24V2SpQZJ6lGfxzBoYfalMg5zpMwHPiEQxhGMJuAkx
+ Z7mIO8Vd6FOOZTsGsnadC2Caw0gqOghhxhwqLPFKnJSC7t7Vgt6+uxI2G+QlDN22e6Ut
+ 95//l/QYvn0FoSNHiU51RjTB+gcIO15O7gNImniu7VxLDO6OvvNJlSG4SRIXTwW2AqRx XQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2vq0q45hj1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Oct 2019 18:29:45 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9IIN4Gd145695;
+        Fri, 18 Oct 2019 18:29:44 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2vq0ewyd9b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Oct 2019 18:29:44 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9IITfS8021199;
+        Fri, 18 Oct 2019 18:29:41 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 18 Oct 2019 18:29:41 +0000
+Subject: Re: [PATCH] hugetlb: Add nohugepages parameter to prevent hugepages
+ creation
+To:     "Guilherme G. Piccoli" <guilherme@gpiccoli.net>,
+        Michal Hocko <mhocko@kernel.org>, Qian Cai <cai@lca.pw>
+Cc:     Guilherme Piccoli <gpiccoli@canonical.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Jay Vosburgh <jay.vosburgh@canonical.com>,
+        "Guilherme G. Piccoli" <kernel@gpiccoli.net>
+References: <CAHD1Q_ynd6f2Jc54k1D9JjmtD6tGhkDcAHRzd5nZt5LUdQTvaw@mail.gmail.com>
+ <4641B95A-6DD8-4E8A-AD53-06E7B72D956C@lca.pw>
+ <CAHD1Q_x+m0ZT_xfLV3j6ma3Cc88fk9KnoS4yytS=PHBvJN7nnQ@mail.gmail.com>
+ <20191015121803.GB24932@dhcp22.suse.cz>
+ <b6617b4b-bcab-3b40-7d46-46a5d9682856@gpiccoli.net>
+ <20191015140508.GJ317@dhcp22.suse.cz>
+ <2d593c95-3c69-8f50-17ff-223bd607caf1@gpiccoli.net>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <2df9c30d-b1e0-648e-93ba-85c78fbcbd0e@oracle.com>
+Date:   Fri, 18 Oct 2019 11:29:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017105918.20873-1-jolsa@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <2d593c95-3c69-8f50-17ff-223bd607caf1@gpiccoli.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9414 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=27 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910180165
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9414 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=27 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910180165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Oct 17, 2019 at 12:59:08PM +0200, Jiri Olsa escreveu:
-> hi,
-> sending changes for exporting basic sampling interface
-> in libperf. It's now possible to use following code in
-> applications via libperf:
- 
+On 10/15/19 7:09 AM, Guilherme G. Piccoli wrote:
+> 
+> 
+> On 10/15/19 11:05 AM, Michal Hocko wrote:
+>> On Tue 15-10-19 10:58:36, Guilherme G. Piccoli wrote:
+>>> On 10/15/19 9:18 AM, Michal Hocko wrote:
+>>>> I do agree with Qian Cai here. Kdump kernel requires a very tailored
+>>>> environment considering it is running in a very restricted
+>>>> configuration. The hugetlb pre-allocation sounds like a tooling problem
+>>>> and should be fixed at that layer.
+>>>>
+>>>
+>>> Hi Michal, thanks for your response. Can you suggest me a current way of
+>>> preventing hugepages for being created, using userspace? The goal for this
+>>> patch is exactly this, introduce such a way.
+>>
+>> Simply restrict the environment to not allocate any hugepages? Kdump
+>> already controls the kernel command line and it also starts only a very
+>> minimal subset of services. So who is allocating those hugepages?
+>> sysctls should be already excluded by default as Qian mentioned.
+>>
+> 
+> 
+> OK, thanks Michal and Qian, I'll try to make things work from kdump perspective. The trick part is exactly preventing the sysctl to get applied heh
+> 
 
-Thanks, applied.
+Please do let us know if this can be done in tooling.
 
-- Arnaldo
-> --- (example is without error checks for simplicity)
-> 
->   struct perf_event_attr attr = {
->           .type             = PERF_TYPE_TRACEPOINT,
->           .sample_period    = 1,
->           .wakeup_watermark = 1,
->           .disabled         = 1,
->   };
->   /* ... setup attr */
-> 
->   cpus = perf_cpu_map__new(NULL);
-> 
->   evlist = perf_evlist__new();
->   evsel  = perf_evsel__new(&attr);
->   perf_evlist__add(evlist, evsel);
-> 
->   perf_evlist__set_maps(evlist, cpus, NULL);
-> 
->   err = perf_evlist__open(evlist);
->   err = perf_evlist__mmap(evlist, 4);
-> 
->   err = perf_evlist__enable(evlist);
-> 
->   /* ... monitored area, plus all the other cpus */
-> 
->   err = perf_evlist__disable(evlist);
-> 
->   perf_evlist__for_each_mmap(evlist, map) {
->           if (perf_mmap__read_init(map) < 0)
->                   continue;
-> 
->           while ((event = perf_mmap__read_event(map)) != NULL) {
->                   perf_mmap__consume(map);
->           }
-> 
->           perf_mmap__read_done(map);
->   }
-> 
->   perf_evlist__delete(evlist);
->   perf_cpu_map__put(cpus);
-> 
-> --- (end)
-> 
-> Nothing is carved in stone so far, the interface is exported
-> as is available in perf now and we can change it as we want.
-> 
-> New tests are added in test-evlist.c to do thread and cpu based
-> sampling.
-> 
-> All the functionality should not change, however there's considerable
-> mmap code rewrite.
-> 
-> Now we have perf_evlist__mmap_ops called by both perf and libperf
-> mmaps functions with specific 'struct perf_evlist_mmap_ops'
-> callbacks:
-> 
->   - get  - to get mmap object, both libperf and perf use different
->            objects, because perf needs to carry more data for aio,
->            compression and auxtrace
->   - mmap - to actually mmap the object, it's simple mmap for libperf,
->            but more work for perf wrt aio, compression and auxtrace
->   - idx  - callback to get current IDs, used only in perf for auxtrace
->            setup
-> 
-> 
-> It would be great if guys could run your usual workloads to see if all
-> is fine.. so far so good in my tests ;-)
-> 
-> 
-> It's also available in here:
->   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
->   perf/lib
-> 
-> v3 changes:
->   - changed mmap0 and mmap_ovw0 to mmap_first and mmap_ovw_first
->   - rebased to latest perf/core
->   - portion of patches already taken
-> 
-> v2 changes:
->   - rebased to latest perf/core
->   - portion of patches already taken
->   - explained mmap refcnt management in following patch changelog:
->     libperf: Centralize map refcnt setting
-> 
-> thanks,
-> jirka
-> 
-> 
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Stephane Eranian <eranian@google.com>
-> Cc: Song Liu <songliubraving@fb.com>
-> Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> ---
-> Jiri Olsa (10):
->       libperf: Add perf_evlist__for_each_mmap function
->       libperf: Move mmap allocation to perf_evlist__mmap_ops::get
->       libperf: Move mask setup to perf_evlist__mmap_ops function
->       libperf: Link static tests with libapi.a
->       libperf: Add _GNU_SOURCE define to compilation
->       libperf: Add tests_mmap_thread test
->       libperf: Add tests_mmap_cpus test
->       libperf: Keep count of failed tests
->       libperf: Do not export perf_evsel__init/perf_evlist__init
->       libperf: Add pr_err macro
-> 
->  tools/perf/lib/Makefile                  |   2 ++
->  tools/perf/lib/evlist.c                  |  71 ++++++++++++++++++++++++++++++++++++++---------------
->  tools/perf/lib/include/internal/evlist.h |   3 +++
->  tools/perf/lib/include/internal/evsel.h  |   1 +
->  tools/perf/lib/include/internal/mmap.h   |   5 ++--
->  tools/perf/lib/include/internal/tests.h  |  20 ++++++++++++---
->  tools/perf/lib/include/perf/core.h       |   1 +
->  tools/perf/lib/include/perf/evlist.h     |  10 +++++++-
->  tools/perf/lib/include/perf/evsel.h      |   2 --
->  tools/perf/lib/internal.h                |   3 +++
->  tools/perf/lib/libperf.map               |   3 +--
->  tools/perf/lib/mmap.c                    |   6 +++--
->  tools/perf/lib/tests/Makefile            |   8 +++---
->  tools/perf/lib/tests/test-cpumap.c       |   2 +-
->  tools/perf/lib/tests/test-evlist.c       | 218 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
->  tools/perf/lib/tests/test-evsel.c        |   2 +-
->  tools/perf/lib/tests/test-threadmap.c    |   2 +-
->  tools/perf/util/evlist.c                 |  29 +++++++++-------------
->  18 files changed, 333 insertions(+), 55 deletions(-)
-
+I am not opposed to the approach taken in your v2 patch as it essentially
+uses the hugepages_supported() functionality that exists today.  However,
+it seems that other distros have ways around this issue.  As such, I would
+prefer if the issue was addressed in the tooling.
 -- 
-
-- Arnaldo
+Mike Kravetz
