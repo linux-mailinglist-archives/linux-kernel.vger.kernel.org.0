@@ -2,153 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BED2DC2DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 327D8DC2E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408270AbfJRKhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:37:54 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:63623 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729479AbfJRKhy (ORCPT
+        id S2439145AbfJRKim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:38:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43556 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408284AbfJRKiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:37:54 -0400
-Received: from 79.184.255.51.ipv4.supernova.orange.pl (79.184.255.51) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 5ce72a354f88eae6; Fri, 18 Oct 2019 12:37:51 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cpufreq: flush any pending policy update work scheduled before freeing
-Date:   Fri, 18 Oct 2019 12:37:51 +0200
-Message-ID: <4881906.zjS51fuFuv@kreacher>
-In-Reply-To: <20191018101924.GA25540@bogus>
-References: <20191017163503.30791-1-sudeep.holla@arm.com> <20191018060247.g5asfuh3kncoj7kl@vireshk-i7> <20191018101924.GA25540@bogus>
+        Fri, 18 Oct 2019 06:38:23 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4393A612F6; Fri, 18 Oct 2019 10:38:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571395102;
+        bh=DDzea6D+szQ9vq8iio9ZbHXTx9y94I7ALFnpAw8tZ/Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Yms85Xbu2q9tQbXVKsZUqDHJR6CzSTqesztydnB1bfmQEXszanTjxHPOSm+BwmBT8
+         JR9mtoSLxc4VwK+upe5/KWrt3tH0qhfEdev/iJQLnqnRffjlU4D2ql72FkI/av+iRt
+         CTP5btPKVKVCBhN107zfobsvCYpOSzjvk2V3J12k=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 01224612E2;
+        Fri, 18 Oct 2019 10:38:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571395099;
+        bh=DDzea6D+szQ9vq8iio9ZbHXTx9y94I7ALFnpAw8tZ/Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cF+N8Uwkb5NwlB/zkGAHv6ZvarrVhig1upqcadwyDtotmcpP9jl2eYWdHJ50+zChi
+         AhsA7dqi8S9Km3a0tAeZNjst7Qszf4i6CW3H0q13fiURPAkK267mG89KFAtRNpvhiH
+         WLjH3BvVBn4OQzVaDVPhv3VzJdq2XBioXEdEs7O4=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 18 Oct 2019 16:08:18 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Alex Elder <elder@linaro.org>,
+        linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm remoteproc dependencies
+In-Reply-To: <20191009001442.15719-1-bjorn.andersson@linaro.org>
+References: <20191009001442.15719-1-bjorn.andersson@linaro.org>
+Message-ID: <95a80ff0e89a568d223fab6eb1f9362a@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, October 18, 2019 12:19:24 PM CEST Sudeep Holla wrote:
-> On Fri, Oct 18, 2019 at 11:32:47AM +0530, Viresh Kumar wrote:
-> > On 18-10-19, 06:55, Sudeep Holla wrote:
-> > > On Thu, Oct 17, 2019 at 11:26:54PM +0200, Rafael J. Wysocki wrote:
-> > > > On Thu, Oct 17, 2019 at 9:36 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > > > >
-> > > > > On Thu, Oct 17, 2019 at 6:35 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> > > > > >
-> > > > > > dev_pm_qos_remove_request ends calling {max,min}_freq_req QoS notifiers
-> > > > > > which schedule policy update work. It may end up racing with the freeing
-> > > > > > the policy and unregistering the driver.
-> > > > > >
-> > > > > > One possible race is as below where the cpufreq_driver is unregistered
-> > > > > > but the scheduled work gets executed at later stage when cpufreq_driver
-> > > > > > is NULL(i.e. after freeing the policy and driver)
-> > > > > >
-> > > > > > Unable to handle kernel NULL pointer dereference at virtual address 0000001c
-> > > > > > pgd = (ptrval)
-> > > > > > [0000001c] *pgd=80000080204003, *pmd=00000000
-> > > > > > Internal error: Oops: 206 [#1] SMP THUMB2
-> > > > > > Modules linked in:
-> > > > > > CPU: 0 PID: 34 Comm: kworker/0:1 Not tainted 5.4.0-rc3-00006-g67f5a8081a4b #86
-> > > > > > Hardware name: ARM-Versatile Express
-> > > > > > Workqueue: events handle_update
-> > > > > > PC is at cpufreq_set_policy+0x58/0x228
-> > > > > > LR is at dev_pm_qos_read_value+0x77/0xac
-> > > > > > Control: 70c5387d  Table: 80203000  DAC: fffffffd
-> > > > > > Process kworker/0:1 (pid: 34, stack limit = 0x(ptrval))
-> > > > > >         (cpufreq_set_policy) from (refresh_frequency_limits.part.24+0x37/0x48)
-> > > > > >         (refresh_frequency_limits.part.24) from (handle_update+0x2f/0x38)
-> > > > > >         (handle_update) from (process_one_work+0x16d/0x3cc)
-> > > > > >         (process_one_work) from (worker_thread+0xff/0x414)
-> > > > > >         (worker_thread) from (kthread+0xff/0x100)
-> > > > > >         (kthread) from (ret_from_fork+0x11/0x28)
-> > > > > >
-> > > > > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > > > > > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > > > > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > > > > ---
-> > > > > >  drivers/cpufreq/cpufreq.c | 3 +++
-> > > > > >  1 file changed, 3 insertions(+)
-> > > > > >
-> > > > > > Hi Rafael, Viresh,
-> > > > > >
-> > > > > > This fixed the boot issue I reported[1] on TC2 with bL switcher enabled.
-> > > > > > I have based this patch on -rc3 and not on top of your patches. This
-> > > > > > only fixes the boot issue but I hit the other crashes while continuously
-> > > > > > switching on and off the bL switcher that register/unregister the driver
-> > > > > > Your patch series fixes them. I can based this on top of those if you
-> > > > > > prefer.
-> > > > > >
-> > > > > > Regards,
-> > > > > > Sudeep
-> > > > > >
-> > > > > > [1] https://lore.kernel.org/linux-pm/20191015155735.GA29105@bogus/
-> > > > > >
-> > > > > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > > > > > index c52d6fa32aac..b703c29a84be 100644
-> > > > > > --- a/drivers/cpufreq/cpufreq.c
-> > > > > > +++ b/drivers/cpufreq/cpufreq.c
-> > > > > > @@ -1278,6 +1278,9 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
-> > > > > >         }
-> > > > > >
-> > > > > >         dev_pm_qos_remove_request(policy->min_freq_req);
-> > > > > > +       /* flush the pending policy->update work before freeing the policy */
-> > > > > > +       if (work_pending(&policy->update))
-> > > > >
-> > > > > Isn't this racy?
-> > > > >
-> > > > > It still may be running if the pending bit is clear and we still need
-> > > > > to wait for it then, don't we?
-> > > > >
-> > > > > Why don't you do an unconditional flush_work() here?
-> > > > 
-> > > > You may as well do a cancel_work_sync() here, because whether or not
-> > > > the last update of the policy happens before it goes away is a matter
-> > > > of timing in any case
-> > > 
-> > > In fact that's the first thing I tried to fix the issue I was seeing.
-> > > But I then thought it would be better to complete the update as the PM
-> > > QoS were getting updated back to DEFAULT values for the device. Even
-> > > this works.
-> > > 
-> > > What is your preference ? flush_work or cancel_work_sync ? I will
-> > > update accordingly. I may need to do some more testing with
-> > > cancel_work_sync as I just checked that quickly to confirm the race.
-> > 
-> > As I said in the other email, this work didn't come as a result of
-> > removal of the qos request from cpufreq core and so must have come
-> > from other thermal or similar events.
+On 2019-10-09 05:44, Bjorn Andersson wrote:
+> Enable the the power domains, reset controllers and remote block device
+> memory access drivers necessary to boot the Audio, Compute and Modem
+> DSPs on Qualcomm SDM845.
 > 
-> I don't think so. For sure not because of any thermal events. I didn't
-> have log handy and hence had to wait till I was next to hardware.
+> None of the power domains are system critical, but needs to be builtin
+> as the driver core prohibits probe deferal past late initcall.
 > 
-> This is log:
->  cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request max before
->  cpufreq: cpufreq_notifier_max: schedule_work(&policy->update)
->  cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request max after
->  cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request min before
->  cpufreq: cpufreq_notifier_min: schedule_work(&policy->update)
->  cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request min after
->  cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request max before
->  cpufreq: cpufreq_notifier_max: schedule_work(&policy->update)
->  cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request max after
->  cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request min before
->  cpufreq: cpufreq_notifier_min: schedule_work(&policy->update)
->  cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request min after
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+
+> ---
+>  arch/arm64/configs/defconfig | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> So if I move the call above, it still crashes as the work is getting
-> scheduled later.
+> diff --git a/arch/arm64/configs/defconfig 
+> b/arch/arm64/configs/defconfig
+> index c9a867ac32d4..42f042ba1039 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -732,10 +732,13 @@ CONFIG_RPMSG_QCOM_GLINK_SMEM=m
+>  CONFIG_RPMSG_QCOM_SMD=y
+>  CONFIG_RASPBERRYPI_POWER=y
+>  CONFIG_IMX_SCU_SOC=y
+> +CONFIG_QCOM_AOSS_QMP=y
+>  CONFIG_QCOM_COMMAND_DB=y
+>  CONFIG_QCOM_GENI_SE=y
+>  CONFIG_QCOM_GLINK_SSR=m
+> +CONFIG_QCOM_RMTFS_MEM=m
+>  CONFIG_QCOM_RPMH=y
+> +CONFIG_QCOM_RPMHPD=y
+>  CONFIG_QCOM_SMEM=y
+>  CONFIG_QCOM_SMD_RPM=y
+>  CONFIG_QCOM_SMP2P=y
+> @@ -780,6 +783,8 @@ CONFIG_PWM_ROCKCHIP=y
+>  CONFIG_PWM_SAMSUNG=y
+>  CONFIG_PWM_SUN4I=m
+>  CONFIG_PWM_TEGRA=m
+> +CONFIG_RESET_QCOM_AOSS=y
 
-OK, please cancel the work after dropping the last request.
+I should probably fix this ^^
 
-We still need to understand what is going on here, but the crash needs to be
-prevented from occurring in the first place IMO.
+> +CONFIG_RESET_QCOM_PDC=m
+>  CONFIG_RESET_TI_SCI=y
+>  CONFIG_PHY_XGENE=y
+>  CONFIG_PHY_SUN4I_USB=y
 
-
-
+-- 
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
