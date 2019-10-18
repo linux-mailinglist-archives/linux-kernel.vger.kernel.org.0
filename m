@@ -2,63 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FD09DBF98
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:15:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9820DBF9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:15:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404148AbfJRIPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 04:15:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38605 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731008AbfJRIPN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 04:15:13 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iLNPg-000278-RW; Fri, 18 Oct 2019 08:15:08 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amdgpu/psp: fix spelling mistake "initliaze" -> "initialize"
-Date:   Fri, 18 Oct 2019 09:15:08 +0100
-Message-Id: <20191018081508.11028-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S2442166AbfJRIPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 04:15:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37524 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731008AbfJRIPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 04:15:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 21B5CB1A4;
+        Fri, 18 Oct 2019 08:15:27 +0000 (UTC)
+Date:   Fri, 18 Oct 2019 10:15:24 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        virtualization@lists.linux-foundation.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Juergen Gross <jgross@suse.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pingfan Liu <kernelfans@gmail.com>, Qian Cai <cai@lca.pw>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Wei Yang <richardw.yang@linux.intel.com>,
+        Alexander Potapenko <glider@google.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Yu Zhao <yuzhao@google.com>, Minchan Kim <minchan@kernel.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: Re: [PATCH RFC v3 6/9] mm: Allow to offline PageOffline() pages with
+ a reference count of 0
+Message-ID: <20191018081524.GD5017@dhcp22.suse.cz>
+References: <20190919142228.5483-1-david@redhat.com>
+ <20190919142228.5483-7-david@redhat.com>
+ <20191016114321.GX317@dhcp22.suse.cz>
+ <36fef317-78e3-0500-43ba-f537f9a6fea4@redhat.com>
+ <20191016140350.GD317@dhcp22.suse.cz>
+ <7c7bef01-f904-904a-b0a7-f7b514b8bda8@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c7bef01-f904-904a-b0a7-f7b514b8bda8@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed 16-10-19 16:14:52, David Hildenbrand wrote:
+> On 16.10.19 16:03, Michal Hocko wrote:
+[...]
+> > But why cannot you keep the reference count at 1 (do get_page when
+> > offlining the page)? In other words as long as the driver knows the page
+> > has been returned to the host then it has ref count at 1. Once the page
+> > is returned to the guest for whatever reason it can free it to the
+> > system by clearing the offline state and put_page.
+> 
+> I think I explained how the reference count of 1 is problematic when wanting
+> to offline the memory. After all that's the problem I try to solve: Keep
+> PG_offline set until the memory is offline and make sure nobody will touch
+> the page.
 
-There is a spelling mistake in a DRM_ERROR error message. Fix it.
+Please bear with me but I still believe that elevated reference count
+has some merits. I do understand that you maintain your metadata to
+recognize that the memory handed over to the hypervisor will not
+magically appear after onlining. But I believe that you can achieve
+the same with an elevated reference count and have a more robust design
+as well.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Let's say that you still keep a reference to your offlined pages and
+mark them offlined. That should make sure that no consumer of the
+pfn_to_online_page will touch the page's content nor the state. Now
+admin might want to offline/hotremove the whole memory block via sysfs.
+An elevated reference count would prevent offlining to finish. And I
+believe this is a good thing because the owner of the offline page might
+still need to do something to "untrack" that page. We have an interface
+for that - MEM_GOING_OFFLINE notification. This sounds like a good place
+for the driver to decide whether it is safe to let the page go or not.
+If you can let the page go then just drop the reference count. The page
+is isolated already by that time. If you cannot let it go for whatever
+reason you can fail the offlining.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-index b996b5bc5804..fd7a73f4fa70 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-@@ -90,7 +90,7 @@ static int psp_sw_init(void *handle)
- 
- 	ret = psp_mem_training_init(psp);
- 	if (ret) {
--		DRM_ERROR("Failed to initliaze memory training!\n");
-+		DRM_ERROR("Failed to initialize memory training!\n");
- 		return ret;
- 	}
- 	ret = psp_mem_training(psp, PSP_MEM_TRAIN_COLD_BOOT);
+An advantage is that the driver has the full control over offlining and
+also you do not really have to track a new online request to do the
+right thing.
+
+Or do I still see it too simplistically and the notifier is not a good
+place to handle the reference count?
 -- 
-2.20.1
-
+Michal Hocko
+SUSE Labs
