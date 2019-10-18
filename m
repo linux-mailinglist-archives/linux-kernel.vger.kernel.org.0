@@ -2,111 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77D2DDC3AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 13:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69BF6DC3B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 13:11:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409916AbfJRLKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 07:10:34 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:35376 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S2406077AbfJRLKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 07:10:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2DAFB42;
-        Fri, 18 Oct 2019 04:10:08 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE7F03F6C4;
-        Fri, 18 Oct 2019 04:10:05 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 12:10:03 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arch@vger.kernel.org, Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Florian Weimer <fweimer@redhat.com>,
-        linux-kernel@vger.kernel.org, Sudakshina Das <sudi.das@arm.com>
-Subject: Re: [PATCH v2 05/12] arm64: Basic Branch Target Identification
- support
-Message-ID: <20191018111003.GC27759@lakrids.cambridge.arm.com>
-References: <1570733080-21015-1-git-send-email-Dave.Martin@arm.com>
- <1570733080-21015-6-git-send-email-Dave.Martin@arm.com>
- <20191011151028.GE33537@lakrids.cambridge.arm.com>
- <20191011172013.GQ27757@arm.com>
+        id S2409956AbfJRLLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 07:11:38 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:58120 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2409922AbfJRLLg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 07:11:36 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 77C90C038C;
+        Fri, 18 Oct 2019 11:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1571397096; bh=e8yggv0btZRuFr6l3qUhzUGs2B07uTUAhsF6E9pwFQ0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JAfzKRqJN/knBHIhtODeGolVsw1cKqnMa1YJSUxdFInIDBEhcjf2RnOv3fPheaafQ
+         104PIuQEajrdUI4Ubn2r10ogn+aNYlNbCqbTX3aEVflgU/lqwcs5rhk9pGIvM+by3J
+         6wcEi7pao5nwpINOCkjQJNfjn2eew+f3yCgwRRjLV/HvQCxoX579aNdElExrV4ReTk
+         NJmxVcAQbpx9tHMHl2JSuSO1F/AnL6BZdlJmVY5dhQpp4FVcWt1RyUh+nVel35VdeI
+         qn4zRKRuHQjm3JeZrhmwC3vJ5DiEFVokTf88garIOFubFPfPwdM6H5FxC+mQdqkQXx
+         4ca00S6sIV5lA==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.73])
+        by mailhost.synopsys.com (Postfix) with ESMTP id EAF6AA005C;
+        Fri, 18 Oct 2019 11:11:28 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH 0/2] ARC: [plat-hsdk]: enable on-board SPI peripherals
+Date:   Fri, 18 Oct 2019 14:11:24 +0300
+Message-Id: <20191018111126.5246-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011172013.GQ27757@arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 06:20:15PM +0100, Dave Martin wrote:
-> On Fri, Oct 11, 2019 at 04:10:29PM +0100, Mark Rutland wrote:
-> > On Thu, Oct 10, 2019 at 07:44:33PM +0100, Dave Martin wrote:
-> > > +#define arch_calc_vm_prot_bits(prot, pkey) arm64_calc_vm_prot_bits(prot)
-> > > +static inline unsigned long arm64_calc_vm_prot_bits(unsigned long prot)
-> > > +{
-> > > +	if (system_supports_bti() && (prot & PROT_BTI))
-> > > +		return VM_ARM64_BTI;
-> > > +
-> > > +	return 0;
-> > > +}
-> > 
-> > Can we call this arch_calc_vm_prot_bits() directly, with all the
-> > arguments:
-> > 
-> > static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
-> > 						   unsigned long pkey)
-> > {
-> > 	...
-> > }
-> > #define arch_calc_vm_prot_bits arch_calc_vm_prot_bits
-> > 
-> > ... as that makes it a bit easier to match definition with use, and just
-> > definign the name makes it a bit clearer that that's probably for the
-> > benefit of some ifdeffery.
-> > 
-> > Likewise for the other functions here.
-> > 
-> > > +#define arch_vm_get_page_prot(vm_flags) arm64_vm_get_page_prot(vm_flags)
-> > > +static inline pgprot_t arm64_vm_get_page_prot(unsigned long vm_flags)
-> > > +{
-> > > +	return (vm_flags & VM_ARM64_BTI) ? __pgprot(PTE_GP) : __pgprot(0);
-> > > +}
-> > > +
-> > > +#define arch_validate_prot(prot, addr) arm64_validate_prot(prot, addr)
-> > > +static inline int arm64_validate_prot(unsigned long prot, unsigned long addr)
-> 
-> Can do, though it looks like a used sparc as a template, and that has a
-> sparc_ prefix.
-> 
-> powerpc uses the generic name, as does x86 ... in its UAPI headers.
-> Odd.
-> 
-> I can change the names here, though I'm not sure it adds a lot of value.
-> 
-> If you feel strongly I can do it.
+HSDK board has SPI flash IC and SPI ADC IC. As all SPI-related
+blocking changes/fixes are finally applied we can enable them.
 
-I'd really prefer it because it minimizes surprises, and makes it much
-easier to hop around the codebase and find the thing you're looking for.
+Eugeniy Paltsev (2):
+  ARC: [plat-hsdk]: Enable on-board SPI NOR flash IC
+  ARC: [plat-hsdk]: Enable on-boardi SPI ADC IC
 
-I'll reply on the other issue in a separate reply.
+ arch/arc/boot/dts/hsdk.dts      | 23 +++++++++++++++++++++++
+ arch/arc/configs/hsdk_defconfig |  6 ++++++
+ 2 files changed, 29 insertions(+)
 
-Thanks,
-Mark.
+-- 
+2.21.0
+
