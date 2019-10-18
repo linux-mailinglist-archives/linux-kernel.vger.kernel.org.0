@@ -2,102 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CB27DBC9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15D7FDBCA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:10:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504366AbfJRFHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:07:18 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34371 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504025AbfJRFHQ (ORCPT
+        id S2441997AbfJRFIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:08:43 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40770 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726417AbfJRFIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:07:16 -0400
-Received: by mail-pl1-f193.google.com with SMTP id k7so2270445pll.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:07:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BN38U1tWSQycIwUtKvgVS41nw2Y5xmAR6qADXcgIN/E=;
-        b=Or1S1NJBS21mZ3T0kRuw3+pg9/9vA19tlOBKzPCu+VJOzUGorap9nhyIFOs7X2qgrg
-         zvJDJQwIS1BW+6v7Hpb7lsxv4M+N1QE5YfJhC/1Fj5/SMhEmHI+miSmHuYfJPzUy6eFa
-         GC0iDI+pBneF36jZra4sKjv7DLrI/2YleI/qLkqhHXu5iCL7IzKssn9od150fmLSzfsz
-         LCOOYySKfikf3B2ZqQcd/I/6X7u97Zel3TIjOM8ZSAJdp2jpXC24fyV1GimkEn+jQcpD
-         jBnPpOKMTIiYCrVbDyuUNr2v1+bDc60g12qFOhDG8ORiKRo/fqfAbqCIaTrPDAbvhTUO
-         GGdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BN38U1tWSQycIwUtKvgVS41nw2Y5xmAR6qADXcgIN/E=;
-        b=as3mvW1Jlod6/UAwJdphflMMFR7ACMitXMFsutiQLXZ6K28wkX5Ebs7liDv8Fw5hKM
-         /xzr5X7HLk+kwv49spYtKDYiTe+DAJGlFSUCbbg7qICGqPlKInADTOdK7zeNZhqdNJGm
-         k0rh1FKvsi11baWDNqr+eCSW+nzeTCDV0RS6m71UDkFe9o5S8kOrHR6TftHK7UjB4YIB
-         wzyHiklPgkDXJFqCX01AX0ycnCWO/4vHrN47Hdg4JD4w+qSm/6YjYdvE99yI2/8rtciJ
-         Qn3nnn5J7Yt8XrUzvOb8q+plhnSH2+/yXwVm7zfoNDh7fXjYNgSjjB65jDNSvlQQJDWY
-         fqCQ==
-X-Gm-Message-State: APjAAAVGFj6d5RPss65HyYYcB/XecK9cUsCFUAzRPs1qtAvdv/gFEa0m
-        I5mOSeBNOOR81O2aYy3sCxdzeGgf3cQ=
-X-Google-Smtp-Source: APXvYqzkRC1EwPpxmXJHKXXdNdXNMqjA0MEl0CEAzz/4I6yX9UtNA1XEwdpB6tAX43Fk+9Ejz7Ry3Q==
-X-Received: by 2002:a17:902:904b:: with SMTP id w11mr7882591plz.182.1571375235738;
-        Thu, 17 Oct 2019 22:07:15 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id 74sm4821485pfy.78.2019.10.17.22.07.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 22:07:14 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 10:37:12 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Preeti U Murthy <preeti@linux.vnet.ibm.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2] cpufreq: powernv: fix stack bloat and NR_CPUS
- limitation
-Message-ID: <20191018050712.qr2axffmbms5h4xb@vireshk-i7>
-References: <20191018045539.3765565-1-jhubbard@nvidia.com>
+        Fri, 18 Oct 2019 01:08:42 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9I58ZPZ001251
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:08:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=z9MSPK39uBz8e7F9RtpOEmvL2JBZ9AR2BPSiBxoNbc0=;
+ b=BYLI6YFR7zrjZcXkkXRcAYu4kLp0WDg5Y5hjPmon+rMbqVVs2yk3HgJPD5qujIw+nkOR
+ lrdKE9ShYOc32meSBOlsFsPV3jUF9C4jdv/Vxx3I+Ub85Wvm8IOIYxhLy7L8ORdAAfrI
+ Xy5gimLIE+FEoix/byX+P16nbhug6LkPaeE= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2vpj8rwd5r-12
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:08:41 -0700
+Received: from 2401:db00:2050:5076:face:0:7:0 (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 17 Oct 2019 22:08:38 -0700
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id 1100F62E3675; Thu, 17 Oct 2019 22:08:37 -0700 (PDT)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <akpm@linux-foundation.org>
+CC:     <matthew.wilcox@oracle.com>, <kernel-team@fb.com>,
+        <william.kucharski@oracle.com>, <kirill.shutemov@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Hugh Dickins <hughd@google.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH] mm,thp: recheck each page before collapsing file THP
+Date:   Thu, 17 Oct 2019 22:08:32 -0700
+Message-ID: <20191018050832.1251306-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018045539.3765565-1-jhubbard@nvidia.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-18_01:2019-10-17,2019-10-18 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=866
+ clxscore=1015 spamscore=0 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0
+ mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910180048
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-10-19, 21:55, John Hubbard wrote:
-> The following build warning occurred on powerpc 64-bit builds:
-> 
-> drivers/cpufreq/powernv-cpufreq.c: In function 'init_chip_info':
-> drivers/cpufreq/powernv-cpufreq.c:1070:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-> 
-> This is due to putting 1024 bytes on the stack:
-> 
->     unsigned int chip[256];
-> 
-> ...and while looking at this, it also has a bug: it fails with a stack
-> overrun, if CONFIG_NR_CPUS > 256.
-> 
-> Fix both problems by dynamically allocating based on CONFIG_NR_CPUS.
-> 
-> Fixes: 053819e0bf840 ("cpufreq: powernv: Handle throttling due to Pmax capping at chip level")
-> Cc: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-> Cc: Preeti U Murthy <preeti@linux.vnet.ibm.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-> Cc: linux-pm@vger.kernel.org
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
-> 
-> Changes since v1: includes Viresh's review commit fixes.
-> 
->  drivers/cpufreq/powernv-cpufreq.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
+In collapse_file(), after locking the page, it is necessary to recheck
+that the page is up-to-date, clean, and pointing to the proper mapping.
+If any check fails, abort the collapse.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Fixes: 99cb0dbd47a1 ("mm,thp: add read-only THP support for (non-shmem) FS")
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: William Kucharski <william.kucharski@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ mm/khugepaged.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 0a1b4b484ac5..7da49b643c4d 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1619,6 +1619,14 @@ static void collapse_file(struct mm_struct *mm,
+ 				result = SCAN_PAGE_LOCK;
+ 				goto xa_locked;
+ 			}
++
++			/* double check the page is correct and clean */
++			if (unlikely(!PageUptodate(page)) ||
++			    unlikely(PageDirty(page)) ||
++			    unlikely(page->mapping != mapping)) {
++				result = SCAN_FAIL;
++				goto out_unlock;
++			}
+ 		}
+ 
+ 		/*
 -- 
-viresh
+2.17.1
+
