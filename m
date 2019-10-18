@@ -2,430 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 244D6DCA90
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:12:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05547DCA92
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:12:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442996AbfJRQLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 12:11:39 -0400
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:54893 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2442977AbfJRQLg (ORCPT
+        id S2502717AbfJRQLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 12:11:50 -0400
+Received: from mx0a-00256a01.pphosted.com ([148.163.150.240]:51600 "EHLO
+        mx0b-00256a01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2502624AbfJRQL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 12:11:36 -0400
-Received: by mail-pg1-f201.google.com with SMTP id b26so4573339pgn.21
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 09:11:36 -0700 (PDT)
+        Fri, 18 Oct 2019 12:11:26 -0400
+Received: from pps.filterd (m0094546.ppops.net [127.0.0.1])
+        by mx0b-00256a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9IG6qID035537
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 12:11:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nyu.edu; h=date : from : to :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=20180315; bh=lHM5I0HSXYkBgOqGtJf0Eu9mn/sHMvw0BcNA/VVfY04=;
+ b=qDCRW8Qns0HUszZeOSiA3P+nO6wO4BkzjDlzfFXHxUZYPp0Kb4Z4aGNJnw4K7B7gQ0lK
+ pQ0p10br548ocPyt/Kw4gFxjeps52+U61pM1hpRIl8XoRFVuwxE9OmlTV0z2Eg1c/alJ
+ Hmk85OHQfHQU9wCZ4QwYKieVLZByXr1sKRdoNqlnftB7ZZmIJF0yh4ClcpAizfgtaEqk
+ 3/MMw3W7rJihlf/gauhvfSoikko8ZGQ+MsmO3Hm+OlUhmVt3hbGbeqtE6XpFfIHEEhC7
+ Ej9RZALRhiLZhd3HcRyulhUEEdUWS0AJx71lGi9z+HgPpWmS0w+dnjTUQrZacgf8Xviz 2Q== 
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+        by mx0b-00256a01.pphosted.com with ESMTP id 2vq7yk7yc3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 12:11:25 -0400
+Received: by mail-qk1-f198.google.com with SMTP id m28so5574560qkm.10
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 09:11:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=UZX+R+9PK3foZtlSwTu2VkSnILWNlGOO043crMQhF3g=;
-        b=VFUqOFiJsw8yc592kxs4Pzo8P9U3Yx2XXWMNC7PhZfttZQ8Ysek8zr7CFrwKpxtycK
-         ZmZk4WQwp1Ff3sMikiVcyerUQ7jLUUQHZZkhPeKvRie7cy5ipT4kvIsI8wO7Arzad4mG
-         kQQJa3PoyhF1+jm9kkeVnk8yAj+xrtkYOG0tJLjfvzZpEj/hPf4D+JaWRoWhIztHQSu+
-         cCCspxnPdj3yKndmUXGahGhEjgw/s6GFXutDpjW30JdSsMACtJBEJ+im3u65G8KxK8lE
-         tACfPxFPIIlv+s5hLPV/kM6CGeFj67hWREsy2WvQdaBFdsDuFIj9+E/B6iiJdgplf9tE
-         PfBQ==
+        d=nyu-edu.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=lHM5I0HSXYkBgOqGtJf0Eu9mn/sHMvw0BcNA/VVfY04=;
+        b=mh2MnBcQzL97cXsZ8di63e639C45jvmMREFZJd2yyV3W3WJPubQeLKV61Zl92y0q1X
+         TULFo5wAWmtpaKdNW2rB7EVXp3Yvc3DleI+sZs7E/OQ2i8OzCe9HsBPKQmjNf25g2IYB
+         6Kw/PXWzGckx5a8Rm99vw7MaG6nZhbvLN+yubZ3UsqtiQG9z8JfnV2IUKAPzTBR4Lmqz
+         r8eXk3s+ldrvgpz35corD73KJS6Ia3pLCFP1OmJdDAy7Ic4MzBli87OowZmcXzipl6xp
+         opX0fBJvJQPwOv7dLrbnTFXyQV81QhpbHXoc3sY3RdstvNz58EtxdotqjV/hxxZ5Vtur
+         RKag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=UZX+R+9PK3foZtlSwTu2VkSnILWNlGOO043crMQhF3g=;
-        b=QjFNixzbLX44eLHKudCX4llYu6fOa84PdzhdO3hj9b79at0oylTr1M7pUOXM/E0gzF
-         4zWag/pSUjJSd8bqCVmMm3QIL8iFx02dLcEVczjfWG80rruxQvhTAP4o8KShieQgLcHy
-         EJ0K39i/2Wki9YZPtO0/rYriPcdo1Hb8YQwmDn1x+utSfugP9hJa2sjh+lN6VnhXWjGR
-         Mh+8Ycgij6lx44lHUh4Cqo7l+XNpsfI7oY2a8zmeQKWaBwAw/l4I++IYZC+8SLLb+Red
-         9S1vfU2yIu7LB8WBeAqb1XHg3PpwaXiQLCHxuLRbZkOFkxY1AEBXVlpQhkLyEjt5cjeq
-         QuFw==
-X-Gm-Message-State: APjAAAVYGZV30HTfJsi86Aiu9NhcQODfpBYWmWx41Nx9Vv77KCZQjiUq
-        bs3S63QWoURRHZcwfjouxdaoV3vRXgpfdjDiDjY=
-X-Google-Smtp-Source: APXvYqzU5WSssPnVWIErUHwAgG3tKsgH9pwSKJwO1rvzO9stV/umbZ2JJfPFKvz1OfXlaF98CrqrDDplhH1eiJnUwBE=
-X-Received: by 2002:a63:78cc:: with SMTP id t195mr10900935pgc.304.1571415095479;
- Fri, 18 Oct 2019 09:11:35 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 09:10:33 -0700
-In-Reply-To: <20191018161033.261971-1-samitolvanen@google.com>
-Message-Id: <20191018161033.261971-19-samitolvanen@google.com>
-Mime-Version: 1.0
-References: <20191018161033.261971-1-samitolvanen@google.com>
-X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
-Subject: [PATCH 18/18] arm64: implement Shadow Call Stack
-From:   Sami Tolvanen <samitolvanen@google.com>
-To:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lHM5I0HSXYkBgOqGtJf0Eu9mn/sHMvw0BcNA/VVfY04=;
+        b=lCGz1kbT1vTJmRE6ng2j1pFeXAqYFEcHmapUPu6H9lpBOu+8VIkMQV5bpgRywPmeFr
+         Fqe9DJCxsw6O16g4tmZC17oTyKKPaNn1ARhPqnhLYapTSx6gxJ2tDLYgPhDSH4PgmurZ
+         jORQAR7Z0vEfRqEaI4U/0VOFZ9zf9vPP/tfAIDalRX8vhIIAEvKQubSJlGlKMwHWqghU
+         JsuwceAHQlKLPzW3aLtqymUaSicw7Gy+1TDMbZ6cVbA8Rlc8AFCMnsmdvdJPM1Rh70di
+         hKz6/QE1noRCK01ZWaBTeo31CbVjvO9w7SRnFR4jYCECVplBlld/8VDcGzEzFEwFw/PZ
+         kmyA==
+X-Gm-Message-State: APjAAAUr1sMkkUjAfcMzyFB3TRxdhT0Fv3wW+Z+cstDh7x6wgS1au+YJ
+        qIlN63JL6z0j80BNlbvo0Xkh3Gu6J0GSac01OtyV23kiEY751DaOTAi3nOHFE+4x60xG05KIBl7
+        bmwJdGEbBq1k9rAOlPyRT4Qc=
+X-Received: by 2002:a0c:fd63:: with SMTP id k3mr10484620qvs.185.1571415083967;
+        Fri, 18 Oct 2019 09:11:23 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqw9oseEn9vueF+r2BvG0eNlqZ8HAgBLbGeWx2SxOoEkwS2LgxoYX5R4GCU2LZuVLBZfQZc5bQ==
+X-Received: by 2002:a0c:fd63:: with SMTP id k3mr10484594qvs.185.1571415083693;
+        Fri, 18 Oct 2019 09:11:23 -0700 (PDT)
+Received: from LykOS.localdomain (216-165-95-130.natpool.nyu.edu. [216.165.95.130])
+        by smtp.gmail.com with ESMTPSA id q200sm3073239qke.114.2019.10.18.09.11.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2019 09:11:23 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 12:11:22 -0400
+From:   Santiago Torres Arias <santiago@nyu.edu>
+To:     Vegard Nossum <vegard.nossum@oracle.com>, Willy Tarreau <w@1wt.eu>,
+        workflows@vger.kernel.org, Git Mailing List <git@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Wong <e@80x24.org>
+Subject: Re: email as a bona fide git transport
+Message-ID: <20191018161121.6qe5kkweh4u77gvn@LykOS.localdomain>
+References: <b9fb52b8-8168-6bf0-9a72-1e6c44a281a5@oracle.com>
+ <20191016111009.GE13154@1wt.eu>
+ <20191016144517.giwip4yuaxtcd64g@LykOS.localdomain>
+ <56664222-6c29-09dc-ef78-7b380b113c4a@oracle.com>
+ <20191018155408.dk4tsjrne42ufpvv@LykOS.localdomain>
+ <20191018160343.GB25456@chatter.i7.local>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5dbczkamho4hvge3"
+Content-Disposition: inline
+In-Reply-To: <20191018160343.GB25456@chatter.i7.local>
+X-Orig-IP: 209.85.222.198
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ mlxlogscore=999 spamscore=0 priorityscore=1501 malwarescore=0
+ suspectscore=7 phishscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910180146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change implements shadow stack switching, initial SCS set-up,
-and interrupt shadow stacks for arm64.
 
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
----
- arch/arm64/Kconfig                   |  1 +
- arch/arm64/include/asm/scs.h         | 60 ++++++++++++++++++++++++++++
- arch/arm64/include/asm/stacktrace.h  |  4 ++
- arch/arm64/include/asm/thread_info.h |  3 ++
- arch/arm64/kernel/Makefile           |  1 +
- arch/arm64/kernel/asm-offsets.c      |  3 ++
- arch/arm64/kernel/entry.S            | 23 +++++++++++
- arch/arm64/kernel/head.S             |  9 +++++
- arch/arm64/kernel/irq.c              |  2 +
- arch/arm64/kernel/process.c          |  3 ++
- arch/arm64/kernel/scs.c              | 39 ++++++++++++++++++
- arch/arm64/kernel/smp.c              |  4 ++
- 12 files changed, 152 insertions(+)
- create mode 100644 arch/arm64/include/asm/scs.h
- create mode 100644 arch/arm64/kernel/scs.c
+--5dbczkamho4hvge3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 3f047afb982c..9bf179db5da9 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -66,6 +66,7 @@ config ARM64
- 	select ARCH_USE_QUEUED_RWLOCKS
- 	select ARCH_USE_QUEUED_SPINLOCKS
- 	select ARCH_SUPPORTS_MEMORY_FAILURE
-+	select ARCH_SUPPORTS_SHADOW_CALL_STACK
- 	select ARCH_SUPPORTS_ATOMIC_RMW
- 	select ARCH_SUPPORTS_INT128 if GCC_VERSION >= 50000 || CC_IS_CLANG
- 	select ARCH_SUPPORTS_NUMA_BALANCING
-diff --git a/arch/arm64/include/asm/scs.h b/arch/arm64/include/asm/scs.h
-new file mode 100644
-index 000000000000..14ba192dc6f0
---- /dev/null
-+++ b/arch/arm64/include/asm/scs.h
-@@ -0,0 +1,60 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_SCS_H
-+#define _ASM_SCS_H
-+
-+#ifndef __ASSEMBLY__
-+
-+#include <linux/scs.h>
-+
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+
-+extern void scs_init_irq(void);
-+
-+static inline void scs_save(struct task_struct *tsk)
-+{
-+	void *s;
-+
-+	asm volatile("mov %0, x18" : "=r" (s));
-+	task_set_scs(tsk, s);
-+}
-+
-+static inline void scs_load(struct task_struct *tsk)
-+{
-+	asm volatile("mov x18, %0" : : "r" (task_scs(tsk)));
-+	task_set_scs(tsk, NULL);
-+}
-+
-+static inline void scs_thread_switch(struct task_struct *prev,
-+				     struct task_struct *next)
-+{
-+	scs_save(prev);
-+	scs_load(next);
-+
-+	if (unlikely(scs_corrupted(prev)))
-+		panic("corrupted shadow stack detected inside scheduler\n");
-+}
-+
-+#else /* CONFIG_SHADOW_CALL_STACK */
-+
-+static inline void scs_init_irq(void)
-+{
-+}
-+
-+static inline void scs_save(struct task_struct *tsk)
-+{
-+}
-+
-+static inline void scs_load(struct task_struct *tsk)
-+{
-+}
-+
-+static inline void scs_thread_switch(struct task_struct *prev,
-+				     struct task_struct *next)
-+{
-+}
-+
-+#endif /* CONFIG_SHADOW_CALL_STACK */
-+
-+#endif /* __ASSEMBLY __ */
-+
-+#endif /* _ASM_SCS_H */
-diff --git a/arch/arm64/include/asm/stacktrace.h b/arch/arm64/include/asm/stacktrace.h
-index 4d9b1f48dc39..b6cf32fb4efe 100644
---- a/arch/arm64/include/asm/stacktrace.h
-+++ b/arch/arm64/include/asm/stacktrace.h
-@@ -68,6 +68,10 @@ extern void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk);
- 
- DECLARE_PER_CPU(unsigned long *, irq_stack_ptr);
- 
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+DECLARE_PER_CPU(unsigned long *, irq_shadow_call_stack_ptr);
-+#endif
-+
- static inline bool on_irq_stack(unsigned long sp,
- 				struct stack_info *info)
- {
-diff --git a/arch/arm64/include/asm/thread_info.h b/arch/arm64/include/asm/thread_info.h
-index f0cec4160136..8c73764b9ed2 100644
---- a/arch/arm64/include/asm/thread_info.h
-+++ b/arch/arm64/include/asm/thread_info.h
-@@ -41,6 +41,9 @@ struct thread_info {
- #endif
- 		} preempt;
- 	};
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+	void			*shadow_call_stack;
-+#endif
- };
- 
- #define thread_saved_pc(tsk)	\
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index 478491f07b4f..b3995329d9e5 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -63,6 +63,7 @@ obj-$(CONFIG_CRASH_CORE)		+= crash_core.o
- obj-$(CONFIG_ARM_SDE_INTERFACE)		+= sdei.o
- obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
- obj-$(CONFIG_ARM64_PTR_AUTH)		+= pointer_auth.o
-+obj-$(CONFIG_SHADOW_CALL_STACK)		+= scs.o
- 
- obj-y					+= vdso/ probes/
- obj-$(CONFIG_COMPAT_VDSO)		+= vdso32/
-diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-index 214685760e1c..f6762b9ae1e1 100644
---- a/arch/arm64/kernel/asm-offsets.c
-+++ b/arch/arm64/kernel/asm-offsets.c
-@@ -33,6 +33,9 @@ int main(void)
-   DEFINE(TSK_TI_ADDR_LIMIT,	offsetof(struct task_struct, thread_info.addr_limit));
- #ifdef CONFIG_ARM64_SW_TTBR0_PAN
-   DEFINE(TSK_TI_TTBR0,		offsetof(struct task_struct, thread_info.ttbr0));
-+#endif
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+  DEFINE(TSK_TI_SCS,		offsetof(struct task_struct, thread_info.shadow_call_stack));
- #endif
-   DEFINE(TSK_STACK,		offsetof(struct task_struct, stack));
- #ifdef CONFIG_STACKPROTECTOR
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index cf3bd2976e57..ca49938b99d0 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -172,6 +172,10 @@ alternative_cb_end
- 
- 	apply_ssbd 1, x22, x23
- 
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+	ldr	x18, [tsk, #TSK_TI_SCS]		// Restore shadow call stack
-+	str	xzr, [tsk, #TSK_TI_SCS]
-+#endif
- 	.else
- 	add	x21, sp, #S_FRAME_SIZE
- 	get_current_task tsk
-@@ -278,6 +282,12 @@ alternative_else_nop_endif
- 	ct_user_enter
- 	.endif
- 
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+	.if	\el == 0
-+	str	x18, [tsk, #TSK_TI_SCS]		// Save shadow call stack
-+	.endif
-+#endif
-+
- #ifdef CONFIG_ARM64_SW_TTBR0_PAN
- 	/*
- 	 * Restore access to TTBR0_EL1. If returning to EL0, no need for SPSR
-@@ -383,6 +393,9 @@ alternative_insn eret, nop, ARM64_UNMAP_KERNEL_AT_EL0
- 
- 	.macro	irq_stack_entry
- 	mov	x19, sp			// preserve the original sp
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+	mov	x20, x18		// preserve the original shadow stack
-+#endif
- 
- 	/*
- 	 * Compare sp with the base of the task stack.
-@@ -400,6 +413,12 @@ alternative_insn eret, nop, ARM64_UNMAP_KERNEL_AT_EL0
- 
- 	/* switch to the irq stack */
- 	mov	sp, x26
-+
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+	/* also switch to the irq shadow stack */
-+	ldr_this_cpu x18, irq_shadow_call_stack_ptr, x26
-+#endif
-+
- 9998:
- 	.endm
- 
-@@ -409,6 +428,10 @@ alternative_insn eret, nop, ARM64_UNMAP_KERNEL_AT_EL0
- 	 */
- 	.macro	irq_stack_exit
- 	mov	sp, x19
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+	/* x20 is also preserved */
-+	mov	x18, x20
-+#endif
- 	.endm
- 
- /* GPRs used by entry code */
-diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-index 989b1944cb71..2be977c6496f 100644
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -27,6 +27,7 @@
- #include <asm/pgtable-hwdef.h>
- #include <asm/pgtable.h>
- #include <asm/page.h>
-+#include <asm/scs.h>
- #include <asm/smp.h>
- #include <asm/sysreg.h>
- #include <asm/thread_info.h>
-@@ -424,6 +425,10 @@ __primary_switched:
- 	stp	xzr, x30, [sp, #-16]!
- 	mov	x29, sp
- 
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+	adr_l	x18, init_shadow_call_stack	// Set shadow call stack
-+#endif
-+
- 	str_l	x21, __fdt_pointer, x5		// Save FDT pointer
- 
- 	ldr_l	x4, kimage_vaddr		// Save the offset between
-@@ -731,6 +736,10 @@ __secondary_switched:
- 	ldr	x2, [x0, #CPU_BOOT_TASK]
- 	cbz	x2, __secondary_too_slow
- 	msr	sp_el0, x2
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+	ldr	x18, [x2, #TSK_TI_SCS]		// Set shadow call stack
-+	str	xzr, [x2, #TSK_TI_SCS]
-+#endif
- 	mov	x29, #0
- 	mov	x30, #0
- 	b	secondary_start_kernel
-diff --git a/arch/arm64/kernel/irq.c b/arch/arm64/kernel/irq.c
-index 04a327ccf84d..fe0ca522ff60 100644
---- a/arch/arm64/kernel/irq.c
-+++ b/arch/arm64/kernel/irq.c
-@@ -21,6 +21,7 @@
- #include <linux/vmalloc.h>
- #include <asm/daifflags.h>
- #include <asm/vmap_stack.h>
-+#include <asm/scs.h>
- 
- unsigned long irq_err_count;
- 
-@@ -63,6 +64,7 @@ static void init_irq_stacks(void)
- void __init init_IRQ(void)
- {
- 	init_irq_stacks();
-+	scs_init_irq();
- 	irqchip_init();
- 	if (!handle_arch_irq)
- 		panic("No interrupt controller found.");
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index 71f788cd2b18..4490632047d6 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -52,6 +52,7 @@
- #include <asm/mmu_context.h>
- #include <asm/processor.h>
- #include <asm/pointer_auth.h>
-+#include <asm/scs.h>
- #include <asm/stacktrace.h>
- 
- #if defined(CONFIG_STACKPROTECTOR) && !defined(CONFIG_STACKPROTECTOR_PER_TASK)
-@@ -508,6 +509,8 @@ __notrace_funcgraph struct task_struct *__switch_to(struct task_struct *prev,
- 	ptrauth_thread_switch(next);
- 	ssbs_thread_switch(next);
- 
-+	scs_thread_switch(prev, next);
-+
- 	/*
- 	 * Complete any pending TLB or cache maintenance on this CPU in case
- 	 * the thread migrates to a different CPU.
-diff --git a/arch/arm64/kernel/scs.c b/arch/arm64/kernel/scs.c
-new file mode 100644
-index 000000000000..6f255072c9a9
---- /dev/null
-+++ b/arch/arm64/kernel/scs.c
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Shadow Call Stack support.
-+ *
-+ * Copyright (C) 2019 Google LLC
-+ */
-+
-+#include <linux/percpu.h>
-+#include <linux/vmalloc.h>
-+#include <asm/scs.h>
-+
-+DEFINE_PER_CPU(unsigned long *, irq_shadow_call_stack_ptr);
-+
-+#ifndef CONFIG_SHADOW_CALL_STACK_VMAP
-+DEFINE_PER_CPU(unsigned long [SCS_SIZE/sizeof(long)], irq_shadow_call_stack)
-+	__aligned(SCS_SIZE);
-+#endif
-+
-+void scs_init_irq(void)
-+{
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu) {
-+#ifdef CONFIG_SHADOW_CALL_STACK_VMAP
-+		unsigned long *p;
-+
-+		p = __vmalloc_node_range(SCS_SIZE, SCS_SIZE,
-+					 VMALLOC_START, VMALLOC_END,
-+					 SCS_GFP, PAGE_KERNEL,
-+					 0, cpu_to_node(cpu),
-+					 __builtin_return_address(0));
-+
-+		per_cpu(irq_shadow_call_stack_ptr, cpu) = p;
-+#else
-+		per_cpu(irq_shadow_call_stack_ptr, cpu) =
-+			per_cpu(irq_shadow_call_stack, cpu);
-+#endif /* CONFIG_SHADOW_CALL_STACK_VMAP */
-+	}
-+}
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index dc9fe879c279..cc1938a585d2 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -44,6 +44,7 @@
- #include <asm/pgtable.h>
- #include <asm/pgalloc.h>
- #include <asm/processor.h>
-+#include <asm/scs.h>
- #include <asm/smp_plat.h>
- #include <asm/sections.h>
- #include <asm/tlbflush.h>
-@@ -357,6 +358,9 @@ void cpu_die(void)
- {
- 	unsigned int cpu = smp_processor_id();
- 
-+	/* Save the shadow stack pointer before exiting the idle task */
-+	scs_save(current);
-+
- 	idle_task_exit();
- 
- 	local_daif_mask();
--- 
-2.23.0.866.gb869b98d4c-goog
+On Fri, Oct 18, 2019 at 12:03:43PM -0400, Konstantin Ryabitsev wrote:
+> On Fri, Oct 18, 2019 at 11:54:09AM -0400, Santiago Torres Arias wrote:
+> > > Seeing how large this signature is, I have to admit that I am partial=
+ to
+> > > Konstantin's suggestion of using minisign. This seems like something
+> > > that could be added to git as an alternative to gpg without too much
+> > > trouble, I think.
+> >=20
+> > I wonder how big the pgp payload would be with ed25519 as the underlying
+> > algorithm. AFAICT, the payload of a minisign signature vs a signature
+> > packet have almost the same fields...
+>=20
+> It's smaller, but it's not a one-liner. Here's a comparison using ED25519
+> keys of the same length:
+>=20
+> minisign:
+>=20
+> RWQ4kF9UdFgeSt3LqnS3WnrLlx2EnuIFW7euw5JnLUHY/79ipftmj7A2ug7FiR2WmnFNoSacW=
+r7llBuyInVmRL/VRovj1LFtvA0=3D
+>=20
+> pgp:
+>=20
+> -----BEGIN PGP SIGNATURE-----
+>=20
+> iHUEARYIAB0WIQR2vl2yUnHhSB5njDW2xBzjVmSZbAUCXaniFAAKCRC2xBzjVmSZ
+> bHA5AP46sSPFJfL2tbXwswvj0v2DjLAQ9doxl9bfj9iPZu+3qwEAw5qAMbjw9teL
+> L7+NbJ0WVniDWTgt+5ruQ2V9vyfYxAc=3D
+> =3DB/St
 
+Yeah, the discrepancy mostly comes from pgp embedding a timestamp and a
+longer keyid (+a full keyid fingerprint in pgp 2.1+). Minisign keyids
+are 8 random bytes, apparently.
+
+It doesn't seem like an amazing win in terms of succintness, imvho...
+
+Cheers!
+-Santiago.
+
+--5dbczkamho4hvge3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkDurc2QOttZVM+/zRo8SLOgWIpUFAl2p5CkACgkQRo8SLOgW
+IpVFkg/+IC6+ElikT3WhkNyWtIvmLoqVxdpvuKUNADxO0zmUg1m+jzaAktuAwjP8
+Sn3jXRIT5vBXy8i8T+dyF37Qxovha3FAx03UepPZwNA+mqB/PCIq5l+lC+hMjOUd
+xf0cjRhzb7bg3TTn4tTvTq4wrLNNOgAsoU+JKuM4vLdz0BI6xHKjEDmEeyPa8Ez/
+l16V2/qpiQjhL85KVCdZzHkNnXdAw1lSd/Wd/BH6n/fFL6Ng17JG0fLyBVMjKdn7
+I5tChT/sEgoEqpY51YeX8oNhbEMK4b14Id/u/JBNOL+NX/+OkVoklMGgvKW5TiWj
+/INAR786NEIRoFHGM+61tDWFJl4t1SoTpf8eFNEhrOeJyIcnXSB7FPXuBB1uD+++
+iEbyJtuUFdLi0iVbJgv1rBxZNIc3DTWIfA0outUn5Y5NSgeXGBNhTMNHE5QsqHDF
+/3OLDm+5jGMeN9iePb7Cbb/oxt118c4LUVShrN67LmwOQ0cSl353Ct5sXFXe3f59
+mHKxM1+F94viKVIPLdi2Yz99lH9FZ5NPyskRAP0yZEDeu+bPyGkdn+2PaiDxGFOx
+1XcoI5wMjQ+eR3eftjufbWIUm4C/jtxG978nBaXN8yf00omWDccI3+fodCXDE5Mj
+RCnJ8qi3/SUOs2OCcSQaWxB3PmiUuPDP+OP5evNuJYXuAU5OtGA=
+=MEhz
+-----END PGP SIGNATURE-----
+
+--5dbczkamho4hvge3--
