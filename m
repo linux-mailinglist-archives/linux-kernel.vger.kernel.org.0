@@ -2,111 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B719EDC397
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 13:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3F6BDC39F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 13:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404865AbfJRLFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 07:05:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48962 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390762AbfJRLFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 07:05:12 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 51730307B194;
-        Fri, 18 Oct 2019 11:05:12 +0000 (UTC)
-Received: from [10.36.118.23] (unknown [10.36.118.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F367A19C77;
-        Fri, 18 Oct 2019 11:05:10 +0000 (UTC)
-Subject: Re: memory offline infinite loop after soft offline
-From:   David Hildenbrand <david@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, Qian Cai <cai@lca.pw>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-References: <1570829564.5937.36.camel@lca.pw>
- <20191014083914.GA317@dhcp22.suse.cz>
- <20191017093410.GA19973@hori.linux.bs1.fc.nec.co.jp>
- <20191017100106.GF24485@dhcp22.suse.cz> <1571335633.5937.69.camel@lca.pw>
- <20191017182759.GN24485@dhcp22.suse.cz>
- <20191018021906.GA24978@hori.linux.bs1.fc.nec.co.jp>
- <33946728-bdeb-494a-5db8-e279acebca47@redhat.com>
- <20191018082459.GE5017@dhcp22.suse.cz>
- <f065d998-7fa3-ef9a-c2f4-5b9116f5596b@redhat.com>
- <20191018085528.GG5017@dhcp22.suse.cz>
- <3ac0ad7a-7dd2-c851-858d-2986fa8d44b6@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <85f944c7-62b8-0784-2f1f-e762b974d317@redhat.com>
-Date:   Fri, 18 Oct 2019 13:05:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S2409902AbfJRLGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 07:06:24 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:35262 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S2390993AbfJRLGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 07:06:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 088B6ABB;
+        Fri, 18 Oct 2019 04:05:57 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23BDC3F6C4;
+        Fri, 18 Oct 2019 04:05:54 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 12:05:52 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        linux-arch@vger.kernel.org, Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Florian Weimer <fweimer@redhat.com>,
+        linux-kernel@vger.kernel.org, Sudakshina Das <sudi.das@arm.com>
+Subject: Re: [PATCH v2 05/12] arm64: Basic Branch Target Identification
+ support
+Message-ID: <20191018110551.GB27759@lakrids.cambridge.arm.com>
+References: <1570733080-21015-1-git-send-email-Dave.Martin@arm.com>
+ <1570733080-21015-6-git-send-email-Dave.Martin@arm.com>
+ <20191011151028.GE33537@lakrids.cambridge.arm.com>
+ <4e09ca54-f353-9448-64ed-4ba1e38c6ebc@linaro.org>
+ <20191011153225.GL27757@arm.com>
+ <20191011154043.GG33537@lakrids.cambridge.arm.com>
+ <20191011154444.GN27757@arm.com>
+ <20191011160113.GO27757@arm.com>
+ <20191011164159.GP27757@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <3ac0ad7a-7dd2-c851-858d-2986fa8d44b6@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 18 Oct 2019 11:05:12 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191011164159.GP27757@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.10.19 13:00, David Hildenbrand wrote:
-> On 18.10.19 10:55, Michal Hocko wrote:
->> On Fri 18-10-19 10:38:21, David Hildenbrand wrote:
->>> On 18.10.19 10:24, Michal Hocko wrote:
->>>> On Fri 18-10-19 10:13:36, David Hildenbrand wrote:
->>>> [...]
->>>>> However, if the compound page spans multiple pageblocks
->>>>
->>>> Although hugetlb pages spanning pageblocks are possible this shouldn't
->>>> matter in__test_page_isolated_in_pageblock because this function doesn't
->>>> really operate on pageblocks as the name suggests.  It is simply
->>>> traversing all valid RAM ranges (see walk_system_ram_range).
->>>
->>> As long as the hugepages don't span memory blocks/sections, you are right. I
->>> have no experience with gigantic pages in this regard.
->>
->> They can clearly span sections (1GB is larger than 128MB). Why do you
->> think it matters actually? walk_system_ram_range walks RAM ranges and no
->> allocation should span holes in RAM right?
->>
+On Fri, Oct 11, 2019 at 05:42:00PM +0100, Dave Martin wrote:
+> On Fri, Oct 11, 2019 at 05:01:13PM +0100, Dave Martin wrote:
+> > On Fri, Oct 11, 2019 at 04:44:45PM +0100, Dave Martin wrote:
+> > > On Fri, Oct 11, 2019 at 04:40:43PM +0100, Mark Rutland wrote:
+> > > > On Fri, Oct 11, 2019 at 04:32:26PM +0100, Dave Martin wrote:
+> > > > > On Fri, Oct 11, 2019 at 11:25:33AM -0400, Richard Henderson wrote:
+> > > > > > On 10/11/19 11:10 AM, Mark Rutland wrote:
+> > > > > > > On Thu, Oct 10, 2019 at 07:44:33PM +0100, Dave Martin wrote:
+> > > > > > >> @@ -730,6 +730,11 @@ static void setup_return
+> > > > > > >>  	regs->regs[29] = (unsigned long)&user->next_frame->fp;
+> > > > > > >>  	regs->pc = (unsigned long)ka->sa.sa_handler;
+> > > > > > >>  
+> > > > > > >> +	if (system_supports_bti()) {
+> > > > > > >> +		regs->pstate &= ~PSR_BTYPE_MASK;
+> > > > > > >> +		regs->pstate |= PSR_BTYPE_CALL;
+> > > > > > >> +	}
+> > > > > > >> +
+> > > > > > > 
+> > > > > > > I think we might need a comment as to what we're trying to ensure here.
+> > > > > > > 
+> > > > > > > I was under the (perhaps mistaken) impression that we'd generate a
+> > > > > > > pristine pstate for a signal handler, and it's not clear to me that we
+> > > > > > > must ensure the first instruction is a target instruction.
+> > > > > > 
+> > > > > > I think it makes sense to treat entry into a signal handler as a call.  Code
+> > > > > > that has been compiled for BTI, and whose page has been marked with PROT_BTI,
+> > > > > > will already have the pauth/bti markup at the beginning of the signal handler
+> > > > > > function; we might as well verify that.
+> > > > > > 
+> > > > > > Otherwise sigaction becomes a hole by which an attacker can force execution to
+> > > > > > start at any arbitrary address.
+> > > > > 
+> > > > > Ack, that's the intended rationale -- I also outlined this in the commit
+> > > > > message.
+> > > > 
+> > > > Ah, sorry. I evidently did not read that thoroughly enough.
+> > > > 
+> > > > > Does this sound reasonable?
+> > > > > 
+> > > > > 
+> > > > > Either way, I feel we should do this: any function in a PROT_BTI page
+> > > > > should have a suitable landing pad.  There's no reason I can see why
+> > > > > a protection given to any other callback function should be omitted
+> > > > > for a signal handler.
+> > > > > 
+> > > > > Note, if the signal handler isn't in a PROT_BTI page then overriding
+> > > > > BTYPE here will not trigger a Branch Target exception.
+> > > > > 
+> > > > > I'm happy to drop a brief comment into the code also, once we're
+> > > > > agreed on what the code should be doing.
+> > > > 
+> > > > So long as there's a comment as to why, I have no strong feelings here.
+> > > > :)
+> > > 
+> > > OK, I think it's worth a brief comment in the code either way, so I'll
+> > > add something.
+> > 
+> > Hmm, come to think of it we do need special logic for a particular case
+> > here:
+> > 
+> > If we are delivering a SIGILL here and the SIGILL handler was registered
+> > with SA_NODEFER then we will get into a spin, repeatedly delivering
+> > the BTI-triggered SIGILL to the same (bad) entry point.
+> > 
+> > Without SA_NODEFER, the SIGILL becomes fatal, which is the desired
+> > behaviour, but we'll need to catch this recursion explicitly.
+> > 
+> > 
+> > It's similar to the special force_sigsegv() case in
+> > linux/kernel/signal.c...
+> > 
+> > Thoughts?
 > 
-> Let's explore what I was thinking. If we can agree that any compound
-> page is always aligned to its size , then what I tell here is not
-> applicable. I know it is true for gigantic pages.
+> On second thought, maybe we don't need to do anything special.
 > 
-> Some extreme example to clarify
+> A SIGSEGV handler registered with (SA_NODEFER & ~SA_RESETHAND) and that
+> dereferences a duff address would spin similarly.
 > 
-> [ memory block 0 (128MB) ][ memory block 1 (128MB) ]
->                 [ compound page (128MB)  ]
-> 
-> If you would offline memory block 1, and you detect PG_offline on the
+> This SIGILL case doesn't really seem different.  Either way it's a
+> livelock of the user task that doesn't compromise the kernel.  There
+> are plenty of ways for such a livelock to happen.
 
-s/PG_offline/PG_hwpoison/ :)
-
-> first page of that memory block (PageHWPoison(compound_head(page))), you
-> would jump over the whole memory block (pfn += 1 <<
-> compound_order(page)), leaving 64MB of the memory block unchecked.
-> 
-> Again, if any compound page has the alignment restrictions (PFN of head
-> aligned to 1 << compound_order(page)), this is not possible.
-> 
-> 
-> If it is, however, possible, the "clean" thing would be to only jump
-> over the remaining part of the compound page, e.g., something like
-> 
-> pfn += (1 << compound_order(page)) - (page - compound_head(page)));
-> 
-> 
-> 
-
-
--- 
+That sounds reasonable to me.
 
 Thanks,
-
-David / dhildenb
+Mark.
