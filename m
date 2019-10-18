@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29472DBEF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:52:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CF26DBECF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:51:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504784AbfJRHvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 03:51:36 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34292 "EHLO
+        id S2407504AbfJRHvt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 03:51:49 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34334 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504755AbfJRHvd (ORCPT
+        with ESMTP id S2504783AbfJRHvi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 03:51:33 -0400
+        Fri, 18 Oct 2019 03:51:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Subject:Cc:To:From:Date:Message-Id:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=udiFsuLSecJae2KLXB64oscu+ISQzu6uTxUGRr5+ReQ=; b=opuzBLM/M/L/juv0irN0Z1SZD
-        F7xfF+Csenygl6CZaMS9BtSSDz+sjkMSpFUVTU2BHc4kkUPUyyQ79jcn1r32g0IBZ/LbV4Jd6kF8q
-        YC0ZPF5dZbwYD2xD6k92KknYTomExi4Zf16uZvkJgJEQc09UrKwJzxVSDVCSp4HTxM2juK6EsMZGl
-        dVYcdBN3Am7J3vfpoImLOMqWs9D5144/V0sr+YaUSPdcJE1gaIwiaPLqOUuBnW0B79oPgXviefS5x
-        OBO1b3ZI1w4WOhwkDO0BSwt1oxzKIvtd0r5OLL3UaGYJkGTkLl1whAe7y1+axP9oD8nMM+y7ScEG0
-        9OITnCKtA==;
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=+Fcin9x9GWOczr3TXrlNp3fOSPeezHLsNh1lA/bvfzA=; b=2dUpGDjrY+6umdeFv4RNbibkWg
+        tsyArvgmP2ivaP/Ymq4odYKYia6lFHYUoQiXkGoi6pOglMzZwuobMKCMFf49lP3AmIpOysFa0wUeR
+        we4WdXUIbNmtdjsE82PJoLDGd6iqS3Xdiq1yPTLOd1Z+yY8ca+YtPgW1Tymv/JCAmFzxi+6r9uTnq
+        aNQxuxpncCWzJ5Y12rsrgi8ZAIrTxlOR3LtZJnubwDJcPimVRPkfihiSaNAs7jruWZLfoDaOo2Jxz
+        i3F44L6eHjqdOTo4L1BWGFWfjYmrXf8QDSGWzJ/Tj3FhwLO+9KUCtYJKWNGiRRO2dgDd2redHjkrY
+        GVrTyZvA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iLN2b-0007mg-2T; Fri, 18 Oct 2019 07:51:17 +0000
+        id 1iLN2c-0007mt-Jf; Fri, 18 Oct 2019 07:51:18 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8A081301245;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8F661305E42;
         Fri, 18 Oct 2019 09:50:19 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 327962B17810C; Fri, 18 Oct 2019 09:51:15 +0200 (CEST)
-Message-Id: <20191018073525.768931536@infradead.org>
+        id 362882B17810B; Fri, 18 Oct 2019 09:51:15 +0200 (CEST)
+Message-Id: <20191018074633.998168044@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 18 Oct 2019 09:35:25 +0200
+Date:   Fri, 18 Oct 2019 09:35:26 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
@@ -45,29 +45,361 @@ Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
         hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
         jpoimboe@redhat.com, jeyu@kernel.org
-Subject: [PATCH v4 00/16] Rewrite x86/ftrace to use text_poke (and more)
+Subject: [PATCH v4 01/16] x86/alternatives: Teach text_poke_bp() to emulate instructions
+References: <20191018073525.768931536@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ftrace was one of the last W^X violators (and KLP it seems). These here patches
-move it over to the generic text_poke() interface and thereby get rid of this
-oddity.
+In preparation for static_call and variable size jump_label support,
+teach text_poke_bp() to emulate instructions, namely:
 
-The first 6 or so patches are more or less the same as in v3, except it has the
-bugs fixed that Steve found:
+  JMP32, JMP8, CALL, NOP2, NOP_ATOMIC5, INT3
 
- - boot time function tracing works
- - module loading with function tracing works
+The current text_poke_bp() takes a @handler argument which is used as
+a jump target when the temporary INT3 is hit by a different CPU.
 
-Then there's 10 new patches, that go all over the place, mostly inspired by
-staring at code touched by the first 6. That is, there's further ftrace and
-kprobes cleanups, as well fixes for various issues.
+When patching CALL instructions, this doesn't work because we'd miss
+the PUSH of the return address. Instead, teach poke_int3_handler() to
+emulate an instruction, typically the instruction we're patching in.
 
-In the end, it will have removed the horrible set_all_modules_text_*()
-interface and reduced the ftrace module loading to a single callback (again).
+This fits almost all text_poke_bp() users, except
+arch_unoptimize_kprobe() which restores random text, and for that site
+we have to build an explicit emulate instruction.
 
-The ARM patch is compiled only, I would be much obliged if someone could test
-that.
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+---
+ arch/x86/include/asm/text-patching.h |   24 ++++--
+ arch/x86/kernel/alternative.c        |  132 ++++++++++++++++++++++++++---------
+ arch/x86/kernel/jump_label.c         |    9 --
+ arch/x86/kernel/kprobes/opt.c        |   11 ++
+ 4 files changed, 130 insertions(+), 46 deletions(-)
+
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -26,10 +26,11 @@ static inline void apply_paravirt(struct
+ #define POKE_MAX_OPCODE_SIZE	5
+ 
+ struct text_poke_loc {
+-	void *detour;
+ 	void *addr;
+-	size_t len;
+-	const char opcode[POKE_MAX_OPCODE_SIZE];
++	int len;
++	s32 rel32;
++	u8 opcode;
++	const u8 text[POKE_MAX_OPCODE_SIZE];
+ };
+ 
+ extern void text_poke_early(void *addr, const void *opcode, size_t len);
+@@ -51,8 +52,10 @@ extern void text_poke_early(void *addr,
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
+ extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+-extern void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
++extern void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate);
+ extern void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries);
++extern void text_poke_loc_init(struct text_poke_loc *tp, void *addr,
++			       const void *opcode, size_t len, const void *emulate);
+ extern int after_bootmem;
+ extern __ro_after_init struct mm_struct *poking_mm;
+ extern __ro_after_init unsigned long poking_addr;
+@@ -63,8 +66,17 @@ static inline void int3_emulate_jmp(stru
+ 	regs->ip = ip;
+ }
+ 
+-#define INT3_INSN_SIZE 1
+-#define CALL_INSN_SIZE 5
++#define INT3_INSN_SIZE		1
++#define INT3_INSN_OPCODE	0xCC
++
++#define CALL_INSN_SIZE		5
++#define CALL_INSN_OPCODE	0xE8
++
++#define JMP32_INSN_SIZE		5
++#define JMP32_INSN_OPCODE	0xE9
++
++#define JMP8_INSN_SIZE		2
++#define JMP8_INSN_OPCODE	0xEB
+ 
+ static inline void int3_emulate_push(struct pt_regs *regs, unsigned long val)
+ {
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -956,16 +956,15 @@ NOKPROBE_SYMBOL(patch_cmp);
+ int poke_int3_handler(struct pt_regs *regs)
+ {
+ 	struct text_poke_loc *tp;
+-	unsigned char int3 = 0xcc;
+ 	void *ip;
+ 
+ 	/*
+ 	 * Having observed our INT3 instruction, we now must observe
+ 	 * bp_patching.nr_entries.
+ 	 *
+-	 * 	nr_entries != 0			INT3
+-	 * 	WMB				RMB
+-	 * 	write INT3			if (nr_entries)
++	 *	nr_entries != 0			INT3
++	 *	WMB				RMB
++	 *	write INT3			if (nr_entries)
+ 	 *
+ 	 * Idem for other elements in bp_patching.
+ 	 */
+@@ -978,9 +977,9 @@ int poke_int3_handler(struct pt_regs *re
+ 		return 0;
+ 
+ 	/*
+-	 * Discount the sizeof(int3). See text_poke_bp_batch().
++	 * Discount the INT3. See text_poke_bp_batch().
+ 	 */
+-	ip = (void *) regs->ip - sizeof(int3);
++	ip = (void *) regs->ip - INT3_INSN_SIZE;
+ 
+ 	/*
+ 	 * Skip the binary search if there is a single member in the vector.
+@@ -997,8 +996,28 @@ int poke_int3_handler(struct pt_regs *re
+ 			return 0;
+ 	}
+ 
+-	/* set up the specified breakpoint detour */
+-	regs->ip = (unsigned long) tp->detour;
++	ip += tp->len;
++
++	switch (tp->opcode) {
++	case INT3_INSN_OPCODE:
++		/*
++		 * Someone poked an explicit INT3, they'll want to handle it,
++		 * do not consume.
++		 */
++		return 0;
++
++	case CALL_INSN_OPCODE:
++		int3_emulate_call(regs, (long)ip + tp->rel32);
++		break;
++
++	case JMP32_INSN_OPCODE:
++	case JMP8_INSN_OPCODE:
++		int3_emulate_jmp(regs, (long)ip + tp->rel32);
++		break;
++
++	default:
++		BUG();
++	}
+ 
+ 	return 1;
+ }
+@@ -1014,7 +1033,7 @@ NOKPROBE_SYMBOL(poke_int3_handler);
+  * synchronization using int3 breakpoint.
+  *
+  * The way it is done:
+- * 	- For each entry in the vector:
++ *	- For each entry in the vector:
+  *		- add a int3 trap to the address that will be patched
+  *	- sync cores
+  *	- For each entry in the vector:
+@@ -1027,9 +1046,9 @@ NOKPROBE_SYMBOL(poke_int3_handler);
+  */
+ void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries)
+ {
+-	int patched_all_but_first = 0;
+-	unsigned char int3 = 0xcc;
++	unsigned char int3 = INT3_INSN_OPCODE;
+ 	unsigned int i;
++	int do_sync;
+ 
+ 	lockdep_assert_held(&text_mutex);
+ 
+@@ -1053,16 +1072,16 @@ void text_poke_bp_batch(struct text_poke
+ 	/*
+ 	 * Second step: update all but the first byte of the patched range.
+ 	 */
+-	for (i = 0; i < nr_entries; i++) {
++	for (do_sync = 0, i = 0; i < nr_entries; i++) {
+ 		if (tp[i].len - sizeof(int3) > 0) {
+ 			text_poke((char *)tp[i].addr + sizeof(int3),
+-				  (const char *)tp[i].opcode + sizeof(int3),
++				  (const char *)tp[i].text + sizeof(int3),
+ 				  tp[i].len - sizeof(int3));
+-			patched_all_but_first++;
++			do_sync++;
+ 		}
+ 	}
+ 
+-	if (patched_all_but_first) {
++	if (do_sync) {
+ 		/*
+ 		 * According to Intel, this core syncing is very likely
+ 		 * not necessary and we'd be safe even without it. But
+@@ -1075,10 +1094,17 @@ void text_poke_bp_batch(struct text_poke
+ 	 * Third step: replace the first byte (int3) by the first byte of
+ 	 * replacing opcode.
+ 	 */
+-	for (i = 0; i < nr_entries; i++)
+-		text_poke(tp[i].addr, tp[i].opcode, sizeof(int3));
++	for (do_sync = 0, i = 0; i < nr_entries; i++) {
++		if (tp[i].text[0] == INT3_INSN_OPCODE)
++			continue;
++
++		text_poke(tp[i].addr, tp[i].text, sizeof(int3));
++		do_sync++;
++	}
++
++	if (do_sync)
++		on_each_cpu(do_sync_core, NULL, 1);
+ 
+-	on_each_cpu(do_sync_core, NULL, 1);
+ 	/*
+ 	 * sync_core() implies an smp_mb() and orders this store against
+ 	 * the writing of the new instruction.
+@@ -1087,6 +1113,60 @@ void text_poke_bp_batch(struct text_poke
+ 	bp_patching.nr_entries = 0;
+ }
+ 
++void text_poke_loc_init(struct text_poke_loc *tp, void *addr,
++			const void *opcode, size_t len, const void *emulate)
++{
++	struct insn insn;
++
++	if (!opcode)
++		opcode = (void *)tp->text;
++	else
++		memcpy((void *)tp->text, opcode, len);
++
++	if (!emulate)
++		emulate = opcode;
++
++	kernel_insn_init(&insn, emulate, MAX_INSN_SIZE);
++	insn_get_length(&insn);
++
++	BUG_ON(!insn_complete(&insn));
++	BUG_ON(len != insn.length);
++
++	tp->addr = addr;
++	tp->len = len;
++	tp->opcode = insn.opcode.bytes[0];
++
++	switch (tp->opcode) {
++	case INT3_INSN_OPCODE:
++		break;
++
++	case CALL_INSN_OPCODE:
++	case JMP32_INSN_OPCODE:
++	case JMP8_INSN_OPCODE:
++		tp->rel32 = insn.immediate.value;
++		break;
++
++	default: /* assume NOP */
++		switch (len) {
++		case 2: /* NOP2 -- emulate as JMP8+0 */
++			BUG_ON(memcmp(emulate, ideal_nops[len], len));
++			tp->opcode = JMP8_INSN_OPCODE;
++			tp->rel32 = 0;
++			break;
++
++		case 5: /* NOP5 -- emulate as JMP32+0 */
++			BUG_ON(memcmp(emulate, ideal_nops[NOP_ATOMIC5], len));
++			tp->opcode = JMP32_INSN_OPCODE;
++			tp->rel32 = 0;
++			break;
++
++		default: /* unknown instruction */
++			BUG();
++		}
++		break;
++	}
++}
++
+ /**
+  * text_poke_bp() -- update instructions on live kernel on SMP
+  * @addr:	address to patch
+@@ -1098,20 +1178,10 @@ void text_poke_bp_batch(struct text_poke
+  * dynamically allocated memory. This function should be used when it is
+  * not possible to allocate memory.
+  */
+-void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
++void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate)
+ {
+-	struct text_poke_loc tp = {
+-		.detour = handler,
+-		.addr = addr,
+-		.len = len,
+-	};
+-
+-	if (len > POKE_MAX_OPCODE_SIZE) {
+-		WARN_ONCE(1, "len is larger than %d\n", POKE_MAX_OPCODE_SIZE);
+-		return;
+-	}
+-
+-	memcpy((void *)tp.opcode, opcode, len);
++	struct text_poke_loc tp;
+ 
++	text_poke_loc_init(&tp, addr, opcode, len, emulate);
+ 	text_poke_bp_batch(&tp, 1);
+ }
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -89,8 +89,7 @@ static void __ref __jump_label_transform
+ 		return;
+ 	}
+ 
+-	text_poke_bp((void *)jump_entry_code(entry), &code, JUMP_LABEL_NOP_SIZE,
+-		     (void *)jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
++	text_poke_bp((void *)jump_entry_code(entry), &code, JUMP_LABEL_NOP_SIZE, NULL);
+ }
+ 
+ void arch_jump_label_transform(struct jump_entry *entry,
+@@ -147,11 +146,9 @@ bool arch_jump_label_transform_queue(str
+ 	}
+ 
+ 	__jump_label_set_jump_code(entry, type,
+-				   (union jump_code_union *) &tp->opcode, 0);
++				   (union jump_code_union *)&tp->text, 0);
+ 
+-	tp->addr = entry_code;
+-	tp->detour = entry_code + JUMP_LABEL_NOP_SIZE;
+-	tp->len = JUMP_LABEL_NOP_SIZE;
++	text_poke_loc_init(tp, entry_code, NULL, JUMP_LABEL_NOP_SIZE, NULL);
+ 
+ 	tp_vec_nr++;
+ 
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -437,8 +437,7 @@ void arch_optimize_kprobes(struct list_h
+ 		insn_buff[0] = RELATIVEJUMP_OPCODE;
+ 		*(s32 *)(&insn_buff[1]) = rel;
+ 
+-		text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE,
+-			     op->optinsn.insn);
++		text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE, NULL);
+ 
+ 		list_del_init(&op->list);
+ 	}
+@@ -448,12 +447,18 @@ void arch_optimize_kprobes(struct list_h
+ void arch_unoptimize_kprobe(struct optimized_kprobe *op)
+ {
+ 	u8 insn_buff[RELATIVEJUMP_SIZE];
++	u8 emulate_buff[RELATIVEJUMP_SIZE];
+ 
+ 	/* Set int3 to first byte for kprobes */
+ 	insn_buff[0] = BREAKPOINT_INSTRUCTION;
+ 	memcpy(insn_buff + 1, op->optinsn.copied_insn, RELATIVE_ADDR_SIZE);
++
++	emulate_buff[0] = RELATIVEJUMP_OPCODE;
++	*(s32 *)(&emulate_buff[1]) = (s32)((long)op->optinsn.insn -
++			((long)op->kp.addr + RELATIVEJUMP_SIZE));
++
+ 	text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE,
+-		     op->optinsn.insn);
++		     emulate_buff);
+ }
+ 
+ /*
+
 
