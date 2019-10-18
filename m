@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F208DC966
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F830DC8FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:44:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408864AbfJRPmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 11:42:24 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:55249 "EHLO
+        id S2439667AbfJRPma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 11:42:30 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:33891 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728464AbfJRPmX (ORCPT
+        with ESMTP id S2405757AbfJRPmY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 11:42:23 -0400
+        Fri, 18 Oct 2019 11:42:24 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MMGVE-1iefOy3vpW-00JN2x; Fri, 18 Oct 2019 17:42:15 +0200
+ 1N4yyQ-1hw0zj14Bo-010v3h; Fri, 18 Oct 2019 17:42:15 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Daniel Mack <daniel@zonque.org>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
@@ -22,80 +22,75 @@ To:     Daniel Mack <daniel@zonque.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 01/46] ARM: pxa: split mach/generic.h
-Date:   Fri, 18 Oct 2019 17:41:16 +0200
-Message-Id: <20191018154201.1276638-1-arnd@arndb.de>
+Subject: [PATCH 02/46] ARM: pxa: make mainstone.h private
+Date:   Fri, 18 Oct 2019 17:41:17 +0200
+Message-Id: <20191018154201.1276638-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191018154052.1276506-1-arnd@arndb.de>
 References: <20191018154052.1276506-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:iVpqPa86ze0iu6OOhejjP0amJ+TBDw2xGngL1judoPmHRjZqhrN
- Q8EV0/l37SyeJE75D3N0sPgmWDWfWo3kfjx4Em1fWmC+AqabmnYF6cwMs7AEN7c0tR/Z5mh
- 8hLOuC4xixrHLW0YeCu/YYym6BIPrIMwr7Df6OMgqkBrdWo/qM7oNnqRHAo4wN3I/zLbZ7L
- GlXM6ZyWBP6LsF4XfIoUQ==
+X-Provags-ID: V03:K1:Udhcyk5JTS+ruoRMUBkQ73+mMSZy0d6F8odqYEMh7EWVHlDFzur
+ YAEHqgrq+6iEyuzDWfYlOEdN39pwhvaBUi+HBb9kxUqrvfJlTjXn855pEb+7YSKgIprottH
+ MbhG5NkvUIaQ0ECtq/JAjNi+AVRlCOLCRx/ZN6koBpNCOTmwQ3P79YeKdno98qrVG5s8Yi6
+ Y3HbEZGQiC3QS33gy/aTw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:zZptb6vq8zo=:s2X4MeHnHk9Lnsa8+6HPrv
- 5iWkf8Ogxx4F2D5bQeqlIN8hnoKsIoke3kROPXtoWwAsgN/Mvgphi7O/1KVM62gqsVXB4uBUq
- QScfAuVc2CZ8xiei7BMhcnHUazOJG3tNXI+l3CA23fFXlmrtEoGJFSw7F3afJCgl54UtHmx1Y
- /QZwSwoVo+zjXlpLxNICYSt6n12AlFt7HVgkbM+cjj/vAyBXQ/MlU7ZKro7bzSGMnFdRoMZ6X
- S7KUITNX7C/e0OKxkdy1AvOGTsASKLORorjb813zTf7ZirNfGUVdVB8LFP4Oifzxsbdl0wlS2
- tp2deM99n2HYbQGZgO1zR++T4iQF1CEDbEIEXWgOZSAA7lkPX1Tbf26l/N81xs+t7hNSVG4TJ
- piwFW1fo+7M2TZTvATuN0iDJKraGYum+IezXddTa6eU9/peK9Fkz/fJ9K6qUxoqNXwU7/pjBM
- oGtM+XLr4s1dng303bjLH5TV8ajpR7SjpVzxKjsQ6AvXTtShp7HwFRuVKp+dzBFR0PH3APhrl
- Cpcj12H0cm7Vtxd0vSgQ7e/DMMPkvB4+EDK4hbt25MW/1D8kmbtYRfk9GLIYY9Ta9YeRnmRNp
- EuOovsX75bzAy/WY4EoF74EwXpdl2c7uiin15oWo4LEt9InZk6pmuik6LXXy497IMjsqj40mY
- zlsta6/sLUIXNSauSAtsxfxGLDT8OuDI2WCpjkqz+6KfWEFuo5zL+fg98GPi9rZ1f3TXecJSk
- iXuMvRUEQWgcI/3gT54guvIEuitSDyehDWK8KwzHQApnkVzUZ3+7Bk7RiVdIo5+nbAtyviXKg
- tDd30zvyCrWdDSoLe8op6L0RmbI5nySrkijI9JvuFREP81peEn3MoVcf/mfB027BdZBk1QpYk
- nNMQ503PoGBx79gW3/zQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:w/pvqB/8ZjQ=:HM9Y+saKdz/Ra2pTCD68uI
+ ez8gWpTbJGikKnT+7vjNu9KlZgCm57FRFctO5LdaDPs/nfVNYJNQpv7I48UW+xU1bdTTiCGSL
+ mFjuUrBG0wfWKCNSuywhTdM6U8rNyteawBB0kUjCJCmYTfosBm1iXOEYa4ETxDLT6z557dg+g
+ oLO6yuYuJNWtH6sytz0F9v1JvwrhodqorHtNdsqVeH8RHGTkjGP7krcBCsok9WFVttCRsX1mC
+ gjaLi2849Qu9qm/F9H7yWcqfP4iW1axKXxS7q1E1zKAxPdfO+pT0H6xKae62ZvnFU6wCIQQb8
+ bbEd9cgwOoH8fWDKWFdtAwEt1rwwW0RBGyOCtIhDiUpYvOSNOR/lh5mWAQDc42rndghO/ocLc
+ hErANl15R+1R+4kNCIQOcSa4YGZbDXhd6Xb8ocWo53R3S0yINI9lHY6NZ8xId9Xum+2I8NK/C
+ DlZj6hiZ9bWV6NP4w9b6XfqYLlNNuYNMGWG3t0U45GN36HGJAa6HoxfMm144/sflj/wYW7r3S
+ TrFjNe451sLWiNeY1NzlJxUUf9TQMPcjPIjtjfUnPKDIT0xNxz9TE4snvpy0cDh7Fr863oKqd
+ w9YmLnRJhTf2ldm3UMtodbPAcivqYyW2fje4RkW1HT2u8ipb2JzMJQSzdoku4KKysXxlBg46f
+ A23w7eririCR+9cZllRIEIMUHtOHYAHIbGC+dVwjPBGLvV5mxeXYNDJXODUL4exuOiSPsTCyp
+ 8xG2F809Az1b8mmfrswFOqZofNtU0ZKWSMcR0hyWyuR9FWJjpEu+I7AIJnD/iIp8W1J4DUWNr
+ dcIObRIUANNlFD5FFVkIzNXzCfFep8CNEMJEahXFxTZ3HOr7Fu0FO+zgCIx9Ho2YG9lyfT9ny
+ iTsG2Rj0l1hzZUzZhrEA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Only one declaration from this header is actually used in drivers,
-so move that one into the global location and leave everything else
-private.
+No driver includes this any more, so don't expose it globally.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-pxa/generic.h              | 6 +-----
- arch/arm/mach-pxa/include/mach/generic.h | 6 +++++-
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/mach-pxa/mainstone.c                    | 2 +-
+ arch/arm/mach-pxa/{include/mach => }/mainstone.h | 2 --
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+ rename arch/arm/mach-pxa/{include/mach => }/mainstone.h (99%)
 
-diff --git a/arch/arm/mach-pxa/generic.h b/arch/arm/mach-pxa/generic.h
-index 3b7873f8e1f8..67925d3ea026 100644
---- a/arch/arm/mach-pxa/generic.h
-+++ b/arch/arm/mach-pxa/generic.h
-@@ -7,6 +7,7 @@
-  */
+diff --git a/arch/arm/mach-pxa/mainstone.c b/arch/arm/mach-pxa/mainstone.c
+index 1b7882920164..ef79417ca001 100644
+--- a/arch/arm/mach-pxa/mainstone.c
++++ b/arch/arm/mach-pxa/mainstone.c
+@@ -45,7 +45,7 @@
+ #include <asm/mach/flash.h>
  
- #include <linux/reboot.h>
-+#include <mach/generic.h>
- 
- struct irq_data;
- 
-@@ -71,8 +72,3 @@ extern unsigned pxa25x_get_clk_frequency_khz(int);
- #define pxa27x_get_clk_frequency_khz(x)		(0)
- #endif
- 
--#ifdef CONFIG_PXA3xx
--extern unsigned	pxa3xx_get_clk_frequency_khz(int);
--#else
--#define pxa3xx_get_clk_frequency_khz(x)		(0)
--#endif
-diff --git a/arch/arm/mach-pxa/include/mach/generic.h b/arch/arm/mach-pxa/include/mach/generic.h
-index 665542e0c9e2..613f6a299d0d 100644
---- a/arch/arm/mach-pxa/include/mach/generic.h
-+++ b/arch/arm/mach-pxa/include/mach/generic.h
-@@ -1 +1,5 @@
--#include "../../generic.h"
-+#ifdef CONFIG_PXA3xx
-+extern unsigned	pxa3xx_get_clk_frequency_khz(int);
-+#else
-+#define pxa3xx_get_clk_frequency_khz(x)		(0)
-+#endif
+ #include "pxa27x.h"
+-#include <mach/mainstone.h>
++#include "mainstone.h"
+ #include <mach/audio.h>
+ #include <linux/platform_data/video-pxafb.h>
+ #include <linux/platform_data/mmc-pxamci.h>
+diff --git a/arch/arm/mach-pxa/include/mach/mainstone.h b/arch/arm/mach-pxa/mainstone.h
+similarity index 99%
+rename from arch/arm/mach-pxa/include/mach/mainstone.h
+rename to arch/arm/mach-pxa/mainstone.h
+index 1698f2ffd7c7..ba003742e003 100644
+--- a/arch/arm/mach-pxa/include/mach/mainstone.h
++++ b/arch/arm/mach-pxa/mainstone.h
+@@ -1,7 +1,5 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- *  arch/arm/mach-pxa/include/mach/mainstone.h
+- *
+  *  Author:	Nicolas Pitre
+  *  Created:	Nov 14, 2002
+  *  Copyright:	MontaVista Software Inc.
 -- 
 2.20.0
 
