@@ -2,195 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21571DBA9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 02:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACFF8DBAE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 02:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503940AbfJRAUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 20:20:22 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39518 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503895AbfJRAUO (ORCPT
+        id S2503839AbfJRA3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 20:29:22 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:39698 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406927AbfJRA2l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 20:20:14 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r3so4278746wrj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 17:20:11 -0700 (PDT)
+        Thu, 17 Oct 2019 20:28:41 -0400
+Received: by mail-pg1-f202.google.com with SMTP id m20so3021626pgv.6
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 17:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GWhC+phGxk4cJHdVi7LihKAUgiJg2uxQnJKT5r5d7UQ=;
-        b=HPGmM9E1W83HgllFgk9pMxwjTYsbQzRckZu/VM7VC6LPNi3RBrdhW9K14HGxL475w1
-         d0kQDj9AIH8llEjBFu7TFoOAshhxYE4kNT1ChG4+rGoOzGTv0wJLd7p36TSfhj8aDL+c
-         /LOXysFNnyYWAGvIRUmU03yEpJzLEK3fka2jYJUOCxrXby2XDCz+xCWjn2pbJtxKdR7i
-         BFLd9g8hwRRxbfwgABRAxB2pBvvLfZXddf828UpwkihvSpHjUxBrMUHeCmjwznUuDu/E
-         /DNMBlvdTWff29L98NL+8nrhAdM/Kn6YgZcJ/iX7jRij8f4q4UbvQoSaLotW0wW71Onw
-         xqiw==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=j+5h8tQfMwxRzPWa0YsZn6CHewLhXavyhIU1GNL2cCg=;
+        b=wWvUFiMDL+FpAEBvOeSh92Ok6NrnP0bMly0DvcbnIEwAXgGMsFpdxjlNZIkHJTYYBa
+         RRx649P7sqiPze6DlRwJOUwwuFezLRxr6AueTJGVgGsRuHZqUR62pVBaDH5dw3oVDwJF
+         cqz06TfsdUQqKYWYzqCu1qGrSGJTcxPYv4FciDQIqqO3PIW4m2UzT+g4IwApY3LkDK0H
+         UzSRCzIapr1rLvg4twVJwpwLGQFu0MzEemzo/jZzvekhF3dWx3g2K2T5lXemO6XXF183
+         DSve4IVI9m4PDbMg8OfAlO424FgA0MXzf8aoQb3/3dDlHQPqUPbovQfJUZyE+fNef8pE
+         aqeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GWhC+phGxk4cJHdVi7LihKAUgiJg2uxQnJKT5r5d7UQ=;
-        b=AjPpf10qw96UzQekJpjXjDiDfQJvgvFs6KUD7vcSKryahMzHvicq5auWIxiTJvEeuc
-         l6uzY3zY+YwYJ+UihLz/3MC9RqEco8wgtZIyl7nLm+E15VrLQzbOKlrOlS3LUrS19Okm
-         eyWkVFjM8A2a00kBt5qQ53L9q+I83lZ1FQkmMgLllOWlV6E4vOUAjnEZtY97XFWYJ0TR
-         VtPlngQkSWZp858E1xAbLJ7fS95YqHhpRx4jPitTX0FyFVTxG0jbGeSj0BoPMp7eAxqT
-         W2jj3URuiFRTob1JZIv6JG1/IPEAwRJkGjweC4EqLcEjxJO01HnTTppUP8xKgp+Q8Tet
-         64Og==
-X-Gm-Message-State: APjAAAUjQto5KwjuCFMY+7yh5Aquff9Pt6eV1ab+QTzx3DwR9OvGhCRF
-        aGBXViqYljhQ8tkq/NVPNfwuyA==
-X-Google-Smtp-Source: APXvYqybeC8LSQnjicpCNQ8RT3mFa3CNGEJdoMQYNaY4Zxg6lBhzZLJJ1+8IBmV+nqcQqJ8s/WD1Lg==
-X-Received: by 2002:adf:f145:: with SMTP id y5mr5032576wro.330.1571358010901;
-        Thu, 17 Oct 2019 17:20:10 -0700 (PDT)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id z189sm4851248wmc.25.2019.10.17.17.20.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 17:20:10 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     robh@kernel.org, broonie@kernel.org, linus.walleij@linaro.org,
-        lee.jones@linaro.org
-Cc:     vinod.koul@linaro.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        spapothi@codeaurora.org, bgoswami@codeaurora.org,
-        linux-gpio@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 11/11] ASoC: qcom: sdm845: add support to DB845c and Lenovo Yoga
-Date:   Fri, 18 Oct 2019 01:18:49 +0100
-Message-Id: <20191018001849.27205-12-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191018001849.27205-1-srinivas.kandagatla@linaro.org>
-References: <20191018001849.27205-1-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=j+5h8tQfMwxRzPWa0YsZn6CHewLhXavyhIU1GNL2cCg=;
+        b=S3e+uEg95ajtwW76FKX+2LqAPGDrEBxh3YkwKr2gpOirVzvD0FZa7LECl1i/XEnR+3
+         GirzjtfiWjEoW9yUu8fVFZT3u4XYXfnikrmveSdATOtpJam83LqzFCetEVyA9+TcoLqU
+         8RvKQKBf8OeIgcoQHr3MHucLadm2DTdpy50+1MldQ3FIPvBpB+PsbYEFjFrQvKjaSs8f
+         26RMtYtxSs99WlPL5EhkIELW2Eyb9YtHJMbrXCMKKH/ASSRgbPLVZg8oNeIY+3cBvqa5
+         YzyqWalEu6vjH7u6iw3C8Gu+Fayqyt1WQyNXxhBnvc3WrJasc87b4kp1miACKuu4SZyn
+         O5BA==
+X-Gm-Message-State: APjAAAWBPWiSmSUI4T+Mx3GBR/w8a+XAO72kObBHHdo0NXD5Gy0IH8y+
+        1mg9UmYn+IGVIvA8RIDGPQ7eBevZW/FOUPhC8lysEJt2e3l88330Z5YvF7BaKJ0rqXheLfwnWgL
+        EfJZsPg2eIFhK3eMWGQeuUa+ujAx9+t+UPHAlu4toXjfWi49EmG9lE/bULVGyZtZiXQqh5Ika
+X-Google-Smtp-Source: APXvYqwu1mc92nD1BJySLwigscmIoAcEQnImRqxXgGASAaAf5eB9ASrZf51xyyOQBtOzwJXz7u15Vnj3MRI+
+X-Received: by 2002:a63:131b:: with SMTP id i27mr6927200pgl.209.1571358518957;
+ Thu, 17 Oct 2019 17:28:38 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 17:27:46 -0700
+Message-Id: <20191018002746.149200-1-eranian@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
+Subject: [PATCH] perf/core: fix multiplexing event scheduling issue
+From:   Stephane Eranian <eranian@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@elte.hu, acme@redhat.com,
+        jolsa@redhat.com, kan.liang@intel.com, songliubraving@fb.com,
+        irogers@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support to Lenovo Yoga c630 compatible strings
-and related setup to the sound machine driver.
+This patch complements the following commit:
+7fa343b7fdc4 ("perf/core: Fix corner case in perf_rotate_context()")
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+The fix from Song addresses the consequences of the problem but
+not the cause. This patch fixes the causes and can sit on top of
+Song's patch.
+
+This patch fixes a scheduling problem in the core functions of
+perf_events. Under certain conditions, some events would not be
+scheduled even though many counters would be available. This
+is related to multiplexing and is architecture agnostic and
+PMU agnostic (i.e., core or uncore).
+
+This problem can easily be reproduced when you have two perf
+stat sessions. The first session does not cause multiplexing,
+let's say it is measuring 1 event, E1. While it is measuring,
+a second session starts and causes multiplexing. Let's say it
+adds 6 events, B1-B6. Now, 7 events compete and are multiplexed.
+When the second session terminates, all 6 (B1-B6) events are
+removed. Normally, you'd expect the E1 event to continue to run
+with no multiplexing. However, the problem is that depending on
+the state Of E1 when B1-B6 are removed, it may never be scheduled
+again. If E1 was inactive at the time of removal, despite the
+multiplexing hrtimer still firing, it will not find any active
+events and will not try to reschedule. This is what Song's patch
+fixes. It forces the multiplexing code to consider non-active events.
+However, the cause is not addressed. The kernel should not rely on
+the multiplexing hrtimer to unblock inactive events. That timer
+can have abitrary duration in the milliseconds. Until the timer
+fires, counters are available, but no measurable events are using
+them. We do not want to introduce blind spots of arbitrary durations.
+
+This patch addresses the cause of the problem, by checking that,
+when an event is disabled or removed and the context was multiplexing
+events, inactive events gets immediately a chance to be scheduled by
+calling ctx_resched(). The rescheduling is done on  event of equal
+or lower priority types.  With that in place, as soon as a counter
+is freed, schedulable inactive events may run, thereby eliminating
+a blind spot.
+
+This can be illustrated as follows using Skylake uncore CHA here:
+
+$ perf stat --no-merge -a -I 1000 -C 28 -e uncore_cha_0/event=0x0/
+    42.007856531      2,000,291,322      uncore_cha_0/event=0x0/
+    43.008062166      2,000,399,526      uncore_cha_0/event=0x0/
+    44.008293244      2,000,473,720      uncore_cha_0/event=0x0/
+    45.008501847      2,000,423,420      uncore_cha_0/event=0x0/
+    46.008706558      2,000,411,132      uncore_cha_0/event=0x0/
+    47.008928543      2,000,441,660      uncore_cha_0/event=0x0/
+
+Adding second sessiont with 4 events for 4s
+
+$ perf stat -a -I 1000 -C 28 --no-merge -e uncore_cha_0/event=0x0/,uncore_cha_0/event=0x0/,uncore_cha_0/event=0x0/,uncore_cha_0/event=0x0/ sleep 4
+    48.009114643      1,983,129,830      uncore_cha_0/event=0x0/                                       (99.71%)
+    49.009279616      1,976,067,751      uncore_cha_0/event=0x0/                                       (99.30%)
+    50.009428660      1,974,448,006      uncore_cha_0/event=0x0/                                       (98.92%)
+    51.009524309      1,973,083,237      uncore_cha_0/event=0x0/                                       (98.55%)
+    52.009673467      1,972,097,678      uncore_cha_0/event=0x0/                                       (97.11%)
+
+End of 4s, second session is removed. But the first event does not schedule and never will
+unless new events force multiplexing again.
+
+    53.009815999      <not counted>      uncore_cha_0/event=0x0/                                       (95.28%)
+    54.009961809      <not counted>      uncore_cha_0/event=0x0/                                       (93.52%)
+    55.010110972      <not counted>      uncore_cha_0/event=0x0/                                       (91.82%)
+    56.010217579      <not counted>      uncore_cha_0/event=0x0/                                       (90.18%)
+
+Signed-off-by: Stephane Eranian <eranian@google.com>
 ---
- sound/soc/qcom/sdm845.c | 71 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 70 insertions(+), 1 deletion(-)
+ kernel/events/core.c | 67 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
-diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-index 28f3cef696e6..1ed570c19628 100644
---- a/sound/soc/qcom/sdm845.c
-+++ b/sound/soc/qcom/sdm845.c
-@@ -24,6 +24,9 @@
- #define RIGHT_SPK_TDM_TX_MASK   0xC0
- #define SPK_TDM_RX_MASK         0x03
- #define NUM_TDM_SLOTS           8
-+#define SLIM_MAX_TX_PORTS 16
-+#define SLIM_MAX_RX_PORTS 16
-+#define WCD934X_DEFAULT_MCLK_RATE	9600000
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 9ec0b0bfddbd..578587246ffb 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2140,6 +2140,10 @@ group_sched_out(struct perf_event *group_event,
  
- struct sdm845_snd_data {
- 	struct snd_soc_jack jack;
-@@ -36,6 +39,39 @@ struct sdm845_snd_data {
+ #define DETACH_GROUP	0x01UL
  
- static unsigned int tdm_slot_offset[8] = {0, 4, 8, 12, 16, 20, 24, 28};
- 
-+static int sdm845_slim_snd_hw_params(struct snd_pcm_substream *substream,
-+				     struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai_link *dai_link = rtd->dai_link;
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+	u32 rx_ch[SLIM_MAX_RX_PORTS], tx_ch[SLIM_MAX_TX_PORTS];
-+	u32 rx_ch_cnt = 0, tx_ch_cnt = 0;
-+	int ret = 0, i;
++static void ctx_resched(struct perf_cpu_context *cpuctx,
++			struct perf_event_context *task_ctx,
++			enum event_type_t event_type);
 +
-+	for (i = 0 ; i < dai_link->num_codecs; i++) {
-+		ret = snd_soc_dai_get_channel_map(rtd->codec_dais[i],
-+				&tx_ch_cnt, tx_ch, &rx_ch_cnt, rx_ch);
-+
-+		if (ret != 0 && ret != -ENOTSUPP) {
-+			pr_err("failed to get codec chan map, err:%d\n", ret);
-+			return ret;
-+		} else if (ret == -ENOTSUPP) {
-+			/* Ignore unsupported */
-+			continue;
-+		}
-+
-+		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+			ret = snd_soc_dai_set_channel_map(cpu_dai, 0, NULL,
-+							  rx_ch_cnt, rx_ch);
-+		else
-+			ret = snd_soc_dai_set_channel_map(cpu_dai, tx_ch_cnt,
-+							  tx_ch, 0, NULL);
-+	}
-+
-+	return 0;
-+}
-+
- static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
- 					struct snd_pcm_hw_params *params)
+ /*
+  * Cross CPU call to remove a performance event
+  *
+@@ -2153,6 +2157,7 @@ __perf_remove_from_context(struct perf_event *event,
+ 			   void *info)
  {
-@@ -151,6 +187,9 @@ static int sdm845_snd_hw_params(struct snd_pcm_substream *substream,
- 	case QUATERNARY_TDM_TX_0:
- 		ret = sdm845_tdm_snd_hw_params(substream, params);
- 		break;
-+	case SLIMBUS_0_RX...SLIMBUS_6_TX:
-+		ret = sdm845_slim_snd_hw_params(substream, params);
-+		break;
- 	default:
- 		pr_err("%s: invalid dai id 0x%x\n", __func__, cpu_dai->id);
- 		break;
-@@ -173,7 +212,20 @@ static int sdm845_dai_init(struct snd_soc_pcm_runtime *rtd)
- 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
- 	struct sdm845_snd_data *pdata = snd_soc_card_get_drvdata(card);
- 	struct snd_jack *jack;
--	int rval;
-+	struct snd_soc_dai_link *dai_link = rtd->dai_link;
-+	/*
-+	 * Codec SLIMBUS configuration
-+	 * RX1, RX2, RX3, RX4, RX5, RX6, RX7, RX8, RX9, RX10, RX11, RX12, RX13
-+	 * TX1, TX2, TX3, TX4, TX5, TX6, TX7, TX8, TX9, TX10, TX11, TX12, TX13
-+	 * TX14, TX15, TX16
-+	 */
-+	unsigned int rx_ch[SLIM_MAX_RX_PORTS] = {144, 145, 146, 147, 148, 149,
-+					150, 151, 152, 153, 154, 155, 156};
-+	unsigned int tx_ch[SLIM_MAX_TX_PORTS] = {128, 129, 130, 131, 132, 133,
-+					    134, 135, 136, 137, 138, 139,
-+					    140, 141, 142, 143};
-+	int rval, i;
-+
+ 	unsigned long flags = (unsigned long)info;
++	int was_necessary = ctx->rotate_necessary;
  
- 	if (!pdata->jack_setup) {
- 		rval = snd_soc_card_jack_new(card, "Headset Jack",
-@@ -211,6 +263,21 @@ static int sdm845_dai_init(struct snd_soc_pcm_runtime *rtd)
- 			return rval;
+ 	if (ctx->is_active & EVENT_TIME) {
+ 		update_context_time(ctx);
+@@ -2171,6 +2176,37 @@ __perf_remove_from_context(struct perf_event *event,
+ 			cpuctx->task_ctx = NULL;
  		}
- 		break;
-+	case SLIMBUS_0_RX...SLIMBUS_6_TX:
-+		for (i = 0 ; i < dai_link->num_codecs; i++) {
-+			rval = snd_soc_dai_set_channel_map(rtd->codec_dais[i],
-+							  ARRAY_SIZE(tx_ch),
-+							  tx_ch,
-+							  ARRAY_SIZE(rx_ch),
-+							  rx_ch);
-+			if (rval != 0 && rval != -ENOTSUPP)
-+				return rval;
-+
-+			snd_soc_dai_set_sysclk(rtd->codec_dais[i], 0,
-+					       WCD934X_DEFAULT_MCLK_RATE,
-+					       SNDRV_PCM_STREAM_PLAYBACK);
-+		}
-+		break;
- 	default:
- 		break;
  	}
-@@ -451,6 +518,8 @@ static int sdm845_snd_platform_remove(struct platform_device *pdev)
++
++	/*
++	 * sanity check that event_sched_out() does not and will not
++	 * change the state of ctx->rotate_necessary
++	 */
++	WARN_ON(was_necessary != event->ctx->rotate_necessary);
++	/*
++	 * if we remove an event AND we were multiplexing then, that means
++	 * we had more events than we have counters for, and thus, at least,
++	 * one event was in INACTIVE state. Now, that we removed an event,
++	 * we need to resched to give a chance to all events to get scheduled,
++	 * otherwise some may get stuck.
++	 *
++	 * By the time this function is called the event is usually in the OFF
++	 * state.
++	 * Note that this is not a duplicate of the same code in _perf_event_disable()
++	 * because the call path are different. Some events may be simply disabled
++	 * others removed. There is a way to get removed and not be disabled first.
++	 */
++	if (ctx->rotate_necessary && ctx->nr_events) {
++		int type = get_event_type(event);
++		/*
++		 * In case we removed a pinned event, then we need to
++		 * resched for both pinned and flexible events. The
++		 * opposite is not true. A pinned event can never be
++		 * inactive due to multiplexing.
++		 */
++		if (type & EVENT_PINNED)
++			type |= EVENT_FLEXIBLE;
++		ctx_resched(cpuctx, cpuctx->task_ctx, type);
++	}
+ }
  
- static const struct of_device_id sdm845_snd_device_id[]  = {
- 	{ .compatible = "qcom,sdm845-sndcard" },
-+	{ .compatible = "qcom,db845c-sndcard" },
-+	{ .compatible = "lenovo,yoga-c630-sndcard" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, sdm845_snd_device_id);
+ /*
+@@ -2218,6 +2254,8 @@ static void __perf_event_disable(struct perf_event *event,
+ 				 struct perf_event_context *ctx,
+ 				 void *info)
+ {
++	int was_necessary = ctx->rotate_necessary;
++
+ 	if (event->state < PERF_EVENT_STATE_INACTIVE)
+ 		return;
+ 
+@@ -2232,6 +2270,35 @@ static void __perf_event_disable(struct perf_event *event,
+ 		event_sched_out(event, cpuctx, ctx);
+ 
+ 	perf_event_set_state(event, PERF_EVENT_STATE_OFF);
++	/*
++	 * sanity check that event_sched_out() does not and will not
++	 * change the state of ctx->rotate_necessary
++	 */
++	WARN_ON_ONCE(was_necessary != event->ctx->rotate_necessary);
++
++	/*
++	 * if we disable an event AND we were multiplexing then, that means
++	 * we had more events than we have counters for, and thus, at least,
++	 * one event was in INACTIVE state. Now, that we disabled an event,
++	 * we need to resched to give a chance to all events to be scheduled,
++	 * otherwise some may get stuck.
++	 *
++	 * Note that this is not a duplicate of the same code in
++	 * __perf_remove_from_context()
++	 * because events can be disabled without being removed.
++	 */
++	if (ctx->rotate_necessary && ctx->nr_events) {
++		int type = get_event_type(event);
++		/*
++		 * In case we removed a pinned event, then we need to
++		 * resched for both pinned and flexible events. The
++		 * opposite is not true. A pinned event can never be
++		 * inactive due to multiplexing.
++		 */
++		if (type & EVENT_PINNED)
++			type |= EVENT_FLEXIBLE;
++		ctx_resched(cpuctx, cpuctx->task_ctx, type);
++	}
+ }
+ 
+ /*
 -- 
-2.21.0
+2.23.0.866.gb869b98d4c-goog
 
