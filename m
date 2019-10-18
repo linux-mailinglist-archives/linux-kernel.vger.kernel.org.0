@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E10ADDD4B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:28:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 920D5DD4AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:27:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406126AbfJRW0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:26:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35898 "EHLO mail.kernel.org"
+        id S1728056AbfJRWEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:04:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727924AbfJRWEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:04:15 -0400
+        id S1727868AbfJRWER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:04:17 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7033120679;
-        Fri, 18 Oct 2019 22:04:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5D97222C9;
+        Fri, 18 Oct 2019 22:04:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436255;
-        bh=ZN/G0DCHvmoMD9ezTpP+BUSAzatO5A2Gky/EnJq3BiM=;
+        s=default; t=1571436257;
+        bh=/TiINZmJsoedbiu+tJ48La03mc4J9pQ/MseuO/2nh5w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hsWxSdDwK+PvFfE1qh/kwbekwpXPI1ClrhtTEgiBzB/3MTFMm5FA/d/jSR5pdPTCz
-         VGyNQQTsOh3hJKQalifA3Qd3HzxLeH+eoBLvlO/2Q/36+RIZtiG4gmfjvgWXoP+lXD
-         Z8UCLEpaufK3MabXh2vaa67h4vn5kwfo6eHRquJU=
+        b=pSMEdOLSqBDzj53vkaNzhLdV8AJnoqwJswIdkaxQVt1TdwPdtF9rJkdESBuaUfDyM
+         JIu73blPGNgwaQdZ74meNukhYD0M+QYZuU3jdv/+NHkZdaA0yQEqEBH047XbELmyNF
+         l3rCAWEjn/4W/0IfNAqvTFNO8VPyfbnxMPkLA+Ec=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 38/89] RDMA/mlx5: Order num_pending_prefetch properly with synchronize_srcu
-Date:   Fri, 18 Oct 2019 18:02:33 -0400
-Message-Id: <20191018220324.8165-38-sashal@kernel.org>
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 40/89] gpio: max77620: Use correct unit for debounce times
+Date:   Fri, 18 Oct 2019 18:02:35 -0400
+Message-Id: <20191018220324.8165-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220324.8165-1-sashal@kernel.org>
 References: <20191018220324.8165-1-sashal@kernel.org>
@@ -43,61 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit aa116b810ac9077a263ed8679fb4d595f180e0eb ]
+[ Upstream commit fffa6af94894126994a7600c6f6f09b892e89fa9 ]
 
-During destroy setting live = 0 and then synchronize_srcu() prevents
-num_pending_prefetch from incrementing, and also, ensures that all work
-holding that count is queued on the WQ. Testing before causes races of the
-form:
+The gpiod_set_debounce() function takes the debounce time in
+microseconds. Adjust the switch/case values in the MAX77620 GPIO to use
+the correct unit.
 
-    CPU0                                         CPU1
-  dereg_mr()
-                                          mlx5_ib_advise_mr_prefetch()
-            				   srcu_read_lock()
-                                            num_pending_prefetch_inc()
-					      if (!live)
-   live = 0
-   atomic_read() == 0
-     // skip flush_workqueue()
-                                              atomic_inc()
- 					      queue_work();
-            				   srcu_read_unlock()
-   WARN_ON(atomic_read())  // Fails
-
-Swap the order so that the synchronize_srcu() prevents this.
-
-Fixes: a6bc3875f176 ("IB/mlx5: Protect against prefetch of invalid MR")
-Link: https://lore.kernel.org/r/20191001153821.23621-5-jgg@ziepe.ca
-Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Link: https://lore.kernel.org/r/20191002122825.3948322-1-thierry.reding@gmail.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx5/mr.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-max77620.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
-index c4ba8838d2c46..96c8a6835592d 100644
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -1591,13 +1591,14 @@ static void dereg_mr(struct mlx5_ib_dev *dev, struct mlx5_ib_mr *mr)
- 		 */
- 		mr->live = 0;
- 
-+		/* Wait for all running page-fault handlers to finish. */
-+		synchronize_srcu(&dev->mr_srcu);
-+
- 		/* dequeue pending prefetch requests for the mr */
- 		if (atomic_read(&mr->num_pending_prefetch))
- 			flush_workqueue(system_unbound_wq);
- 		WARN_ON(atomic_read(&mr->num_pending_prefetch));
- 
--		/* Wait for all running page-fault handlers to finish. */
--		synchronize_srcu(&dev->mr_srcu);
- 		/* Destroy all page mappings */
- 		if (umem_odp->page_list)
- 			mlx5_ib_invalidate_range(umem_odp,
+diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+index b7d89e30131e2..06e8caaafa811 100644
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -192,13 +192,13 @@ static int max77620_gpio_set_debounce(struct max77620_gpio *mgpio,
+ 	case 0:
+ 		val = MAX77620_CNFG_GPIO_DBNC_None;
+ 		break;
+-	case 1 ... 8:
++	case 1000 ... 8000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_8ms;
+ 		break;
+-	case 9 ... 16:
++	case 9000 ... 16000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_16ms;
+ 		break;
+-	case 17 ... 32:
++	case 17000 ... 32000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_32ms;
+ 		break;
+ 	default:
 -- 
 2.20.1
 
