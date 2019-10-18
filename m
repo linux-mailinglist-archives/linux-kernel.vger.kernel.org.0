@@ -2,117 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC4B7DBCD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:20:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04CA2DBCD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:23:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407629AbfJRFUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:20:44 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:34905 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726533AbfJRFUo (ORCPT
+        id S2438069AbfJRFX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:23:29 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39661 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407641AbfJRFX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:20:44 -0400
-Received: by mail-yw1-f66.google.com with SMTP id r134so1754021ywg.2;
-        Thu, 17 Oct 2019 22:20:42 -0700 (PDT)
+        Fri, 18 Oct 2019 01:23:29 -0400
+Received: by mail-pg1-f193.google.com with SMTP id p12so2689173pgn.6
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:23:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xsX/qftxhkazt9hFT8dF57W5m8I435Z6GlII9cy+ECY=;
-        b=LB2/6gRPtiwyOpmLwPi7yLfXzO/o74TSfvJfCt2GXYIAZXk8+Pf8VSZlmSRym9BhXU
-         U5be31A1gQfNPmpGHHuUtf9B7X3L9QIQN6VdP1M/ufmL7MCuXFikuhLTDWjzGAhBq3V8
-         mXga5/iHEYkl2fY5yH5MoccwlTwfjuJP2JeTKpSPLCsJWiY1E0UuEl7vL8htolCtAIVi
-         yXEq15oEn0F6yyhSH+A8h2la3ySKUlKrFxDil1lNU2ahbL8u0jqtpXCEh0tEDer8H7nd
-         6Y+CxLkBrQxqbAUGA7BoVFLcXfWMW90K61E+pYHK+otV2dkI5Yr3+lyuIc5InASL/zeV
-         eXNg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=DXKps7/0UTC6N/waL44YFVSLkuti5RrXPqcBWv8KQbQ=;
+        b=gamFheCDtldh8w0DIQwjkJQvPpQ8fVyjLzcl2Bnce55vZageN2p4ZFmfA77Hrfg3vi
+         IIuX81DfKF1sY9uChHRvpH+LqRDY4esOj4H4NmjK1xqGdgAvDKplrYujdUncFZabA2W7
+         CV1YHJWuWyoVtELxZ+dxIj4b75l46weQlcnVMPvJNBT1EqPmylnAAz7N4pHj5+/DR+eV
+         US8Ysm9QoAyka+OTUptCBv9qihjrUN/x/S2a+Rv0ri00g9uAUwkhQF4mXumMLqQysELt
+         sHbZk+4eFpXIimqCgWN0A5mLvPcTbg6LSUuyWtJHJwvTQ2CHEklWcly6eFL1SaJ9Vqsw
+         MCcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xsX/qftxhkazt9hFT8dF57W5m8I435Z6GlII9cy+ECY=;
-        b=Pc7sZ+eKVMeKVtKXPQ6MLqpWQ7ObGArYB2GM3WGC6+HDkiHFxj7fUrATgEMC7xK9am
-         xNPiPfApJQIzgAcW/jyVW5qI3mRvJtHeoOaROMvmYrMSpVjsJXf5wi0gaW8rNpSLxNY5
-         eNYty7GzceupC+zNUwFZOIhrH6i8V+RZ7Mn16/8msnoYC4fQQ+dA202tArCq1mswoWW0
-         YuE5KTJC69rWi9Dc7k5eHtO50MQeakH223gUGomUxxPShgWyVtxwgDaHiHe5ujbVyZ64
-         M/8SuYUv1VkYVd13RAwEf0MdGlgPpMTRmCpfVPpGdBZ17nrGwsI9l87QnmAh3T1TZe+7
-         VwUQ==
-X-Gm-Message-State: APjAAAUwavxPiGzLeI1FOMGgWuxgZW/I7wM0lzcwemiwyEqGM69OJdZ+
-        YOrNxB38F6JICXoABI5Ab+9G8fvA+Ajn8M7bAco=
-X-Google-Smtp-Source: APXvYqxwvxHZjKJg/YnuStSLc4n0H5LSqtfMOTfh+SFjPsB+sGtqQKsOlHWmrzk0Hkx+oX8i4/YwLHRT6gmxcwX16E8=
-X-Received: by 2002:a0d:d605:: with SMTP id y5mr5180535ywd.13.1571372506022;
- Thu, 17 Oct 2019 21:21:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <1571218608-15933-1-git-send-email-gkulkarni@marvell.com>
- <1571218608-15933-3-git-send-email-gkulkarni@marvell.com> <b8e1a637-faf4-4567-7d3e-a4f13dfa1cf0@huawei.com>
- <CAKTKpr4QoTDjbSxO4CvSH2sNvmrTJKjxi+RZH4mYfyDaaN96Sw@mail.gmail.com> <20191017154750.jgn6e3465qrsu53e@willie-the-truck>
-In-Reply-To: <20191017154750.jgn6e3465qrsu53e@willie-the-truck>
-From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date:   Fri, 18 Oct 2019 09:51:34 +0530
-Message-ID: <CAKTKpr5ntp5X6Lvp=rKT_F1E1ftdqtjSWTgpEOqEwaDMH2kc1w@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] drivers/perf: Add CCPI2 PMU support in ThunderX2
- UNCORE driver.
-To:     Will Deacon <will@kernel.org>
-Cc:     John Garry <john.garry@huawei.com>,
-        Ganapatrao Prabhakerrao Kulkarni <gkulkarni@marvell.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        Jan Glauber <jglauber@marvell.com>,
-        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Zhangshaokun <zhangshaokun@hisilicon.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DXKps7/0UTC6N/waL44YFVSLkuti5RrXPqcBWv8KQbQ=;
+        b=L5qKJzWsJqXkprxxieh+2sgU9gpxaRFx86RGjvSnlYXSXuaqbEawT+DQAPyrD8gYdK
+         6VFOfUC+zuGb+3U1Bnfvb9gUmvqfde54mz6oFqHeUUmUKOyRNfvFkW+P80BbWLyVIEz/
+         fTR2HuasoUGIy5mJWfhnR8QhLAqOIdTmVZr8kRZrdoLA2yRFqIDFZ0vJ7oChHdnwXdtg
+         iX4NjZ3XRCwdC5awovYlQ8FEePhS6yBh6yAraW/I9QXxwCvXEqw5G1ecy9PYZA6/i9MZ
+         jENUbJ7ZSYaOOvTA2Yo6wGFd2JpgabUJts/tHuXarhLY8QABYGC+/nwdcNjSOZg7vSp/
+         bXHg==
+X-Gm-Message-State: APjAAAWwPjHZIfEXnnzUHXvJog+k6tSFYIytpbGwgbBR3iQfy8ux2ry3
+        O1ghhKkofXKrRl0ARmnW0K4iH51fmr0=
+X-Google-Smtp-Source: APXvYqyqi7P3EgkAazgQczeDmVqJ1d/iYzFd3A4qEMOl6Sl00Jl2WrFk363AGlQfVaxWSAIHUHH7pA==
+X-Received: by 2002:a65:564b:: with SMTP id m11mr3970970pgs.133.1571376207362;
+        Thu, 17 Oct 2019 22:23:27 -0700 (PDT)
+Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
+        by smtp.gmail.com with ESMTPSA id g202sm4729336pfb.155.2019.10.17.22.23.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2019 22:23:26 -0700 (PDT)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Vincent Donnefort <Vincent.Donnefort@arm.com>,
+        Sudipto Paul <Sudipto.Paul@arm.com>,
+        "Andrew F . Davis" <afd@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Hridya Valsaraju <hridya@google.com>,
+        Hillf Danton <hdanton@sina.com>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH v12 0/5] DMA-BUF Heaps (destaging ION)
+Date:   Fri, 18 Oct 2019 05:23:18 +0000
+Message-Id: <20191018052323.21659-1-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+Andrew brought up a reasonable concern with the CMA heap
+enumeration in the previous patch set, and I had a few other
+minor cleanups to add, so here is yet another pass at the
+dma-buf heaps patchset Andrew and I have been working on which
+tries to destage a fair chunk of ION functionality.
 
-On Thu, Oct 17, 2019 at 9:17 PM Will Deacon <will@kernel.org> wrote:
->
-> On Thu, Oct 17, 2019 at 12:38:51PM +0530, Ganapatrao Kulkarni wrote:
-> > On Wed, Oct 16, 2019 at 7:01 PM John Garry <john.garry@huawei.com> wrote:
-> > > > +TX2_EVENT_ATTR(req_pktsent, CCPI2_EVENT_REQ_PKT_SENT);
-> > > > +TX2_EVENT_ATTR(snoop_pktsent, CCPI2_EVENT_SNOOP_PKT_SENT);
-> > > > +TX2_EVENT_ATTR(data_pktsent, CCPI2_EVENT_DATA_PKT_SENT);
-> > > > +TX2_EVENT_ATTR(gic_pktsent, CCPI2_EVENT_GIC_PKT_SENT);
-> > > > +
-> > > > +static struct attribute *ccpi2_pmu_events_attrs[] = {
-> > > > +     &tx2_pmu_event_attr_req_pktsent.attr.attr,
-> > > > +     &tx2_pmu_event_attr_snoop_pktsent.attr.attr,
-> > > > +     &tx2_pmu_event_attr_data_pktsent.attr.attr,
-> > > > +     &tx2_pmu_event_attr_gic_pktsent.attr.attr,
-> > > > +     NULL,
-> > > > +};
-> > >
-> > > Hi Ganapatrao,
-> > >
-> > > Have you considered adding these as uncore pmu-events in the perf tool?
-> > >
-> > At the moment no, since the number of events exposed/listed are very few.
->
-> Then sounds like a perfect time to nip it in the bud before the list grows
-> ;)
+The patchset implements per-heap devices which can be opened
+directly and then an ioctl is used to allocate a dmabuf from the
+heap.
 
-I had internal discussion with architecture team, they have confirmed
-that, these are the only published events and no plan to add new.
-However, If any such request comes from HW team in future, i will add
-them to JSON files.
+The interface is similar, but much simpler then IONs, only
+providing an ALLOC ioctl.
 
-I have incorporate all your previous comments, Can you please Ack and
-queue it to 5.5?
+Also, I've provided relatively simple system and cma heaps.
 
->
-> If you can manage with these things in userspace, then I agree with John
-> that it would be preferential to do it that way. It also offers more
-> flexibility if we get the metricgroup stuff working properly (I think it's
-> buggered for big/little atm).
->
-> Will
+I've booted and tested these patches with AOSP on the HiKey960
+using the kernel tree here:
+  https://git.linaro.org/people/john.stultz/android-dev.git/log/?h=dev/dma-buf-heap
 
-Thanks,
-Ganapat
+And the userspace changes here:
+  https://android-review.googlesource.com/c/device/linaro/hikey/+/909436
+
+Compared to ION, this patchset is missing the system-contig,
+carveout and chunk heaps, as I don't have a device that uses
+those, so I'm unable to do much useful validation there.
+Additionally we have no upstream users of chunk or carveout,
+and the system-contig has been deprecated in the common/andoid-*
+kernels, so this should be ok.
+
+I've also removed the stats accounting, since any such
+accounting should be implemented by dma-buf core or the heaps
+themselves.
+
+New in v12:
+* To address Andrew's concern about adding all CMA areas, the
+  CMA heap only adds the default CMA region for now.
+* Minor cleanups and prep for loading heaps from modules
+* I have patches to add other specified CMA regions, as well as
+  loading heaps from modules in my WIP tree, which I will submit
+  once this set is queued, here:
+    https://git.linaro.org/people/john.stultz/android-dev.git/log/?h=dev/dma-buf-heap-WIP
+
+thanks
+-john
+
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Liam Mark <lmark@codeaurora.org>
+Cc: Pratik Patel <pratikp@codeaurora.org>
+Cc: Brian Starkey <Brian.Starkey@arm.com>
+Cc: Vincent Donnefort <Vincent.Donnefort@arm.com>
+Cc: Sudipto Paul <Sudipto.Paul@arm.com>
+Cc: Andrew F. Davis <afd@ti.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Chenbo Feng <fengc@google.com>
+Cc: Alistair Strachan <astrachan@google.com>
+Cc: Hridya Valsaraju <hridya@google.com>
+Cc: Hillf Danton <hdanton@sina.com>
+Cc: dri-devel@lists.freedesktop.org
+
+Andrew F. Davis (1):
+  dma-buf: Add dma-buf heaps framework
+
+John Stultz (4):
+  dma-buf: heaps: Add heap helpers
+  dma-buf: heaps: Add system heap to dmabuf heaps
+  dma-buf: heaps: Add CMA heap to dmabuf heaps
+  kselftests: Add dma-heap test
+
+ MAINTAINERS                                   |  18 ++
+ drivers/dma-buf/Kconfig                       |  11 +
+ drivers/dma-buf/Makefile                      |   2 +
+ drivers/dma-buf/dma-heap.c                    | 271 ++++++++++++++++++
+ drivers/dma-buf/heaps/Kconfig                 |  14 +
+ drivers/dma-buf/heaps/Makefile                |   4 +
+ drivers/dma-buf/heaps/cma_heap.c              | 178 ++++++++++++
+ drivers/dma-buf/heaps/heap-helpers.c          | 270 +++++++++++++++++
+ drivers/dma-buf/heaps/heap-helpers.h          |  55 ++++
+ drivers/dma-buf/heaps/system_heap.c           | 124 ++++++++
+ include/linux/dma-heap.h                      |  59 ++++
+ include/uapi/linux/dma-heap.h                 |  55 ++++
+ tools/testing/selftests/dmabuf-heaps/Makefile |   9 +
+ .../selftests/dmabuf-heaps/dmabuf-heap.c      | 238 +++++++++++++++
+ 14 files changed, 1308 insertions(+)
+ create mode 100644 drivers/dma-buf/dma-heap.c
+ create mode 100644 drivers/dma-buf/heaps/Kconfig
+ create mode 100644 drivers/dma-buf/heaps/Makefile
+ create mode 100644 drivers/dma-buf/heaps/cma_heap.c
+ create mode 100644 drivers/dma-buf/heaps/heap-helpers.c
+ create mode 100644 drivers/dma-buf/heaps/heap-helpers.h
+ create mode 100644 drivers/dma-buf/heaps/system_heap.c
+ create mode 100644 include/linux/dma-heap.h
+ create mode 100644 include/uapi/linux/dma-heap.h
+ create mode 100644 tools/testing/selftests/dmabuf-heaps/Makefile
+ create mode 100644 tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
+
+-- 
+2.17.1
+
