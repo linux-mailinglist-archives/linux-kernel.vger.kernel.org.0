@@ -2,101 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD57BDBC0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:55:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51D14DBC2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441937AbfJREyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 00:54:52 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41098 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbfJREyu (ORCPT
+        id S2409545AbfJRE4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 00:56:50 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:57887 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389158AbfJRE4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 00:54:50 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p4so4671372wrm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 21:54:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uXjggwOtvkgB5eV9xeSX/TZ7+sMFrMeqr0FsgRhuxC4=;
-        b=FZdI3WTN1JpyxqNX9qKx6j7oKXltRzF7eu/3fsDtV8Q0rGY4p2sdyPkZvg52PdRhwp
-         nOoYqpsDZfw3KHrEriiEWxtKLQ6SAUYGa6kYI1tATZYEZ3hzOI+WXtHP/CB6zd4WJ4HJ
-         vRn/kGXuABtsrVg5ZXxWTNy8obNRd/iww/MvIFMVnAo28n8lJYxKzDp4+zmyCzmMuQP+
-         pWWUt9GgpqDmlfHogG+D/XPyA+AEbgQh7P9KowsPlgMvgSZrT7iy+SVkpM7GH88OlEIj
-         tZ4JvzKrilqUg90OKGtRaw4POhDnWkV54zEIa2urVGdcGWwhmxLNz6vEE7E4qZ8nGCnF
-         ZTIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uXjggwOtvkgB5eV9xeSX/TZ7+sMFrMeqr0FsgRhuxC4=;
-        b=LyVi1dNIt3FCa8TZ38uQy+RUGqDKiT5zbdzphnyTKnwtX9lqlP9LD/TP75FkqKEogC
-         qyJlb/VzQMRmoowPrr/1OISAtVPEyfqclvrvYVpZ3UhxHERN9oTpkmIwWqJkU/ZqCXPI
-         DQtK9eoRocNrRZ83zI2EmVrDHBQV6yPLtAsjZJ9vHTwV3YDuQ67CicIDRLJziXjstoUF
-         KpDQxFPn04pV7bNRDhAcnJgOpx068nnjnlNjs0dfDVZcXQGidk04m1vACcdffqwLRhxg
-         2yWdJa4Z1zm5Tpu4g9J1BwqBF6JQE4LBvlGC3hXkSG1pg+2wWPSprc4MztGmxluzJjWC
-         iqoQ==
-X-Gm-Message-State: APjAAAX9O6IbuiTwbritD57BM/EAcICW2DS/JGdzSLP6dYfMXMu1z1sU
-        r44C671gP5FO5i3s6ZgBYUZmoaFYcJHKEatH6rsMMLMtuGY=
-X-Google-Smtp-Source: APXvYqyGZBSBmdnpbSyKqAjMKY3orVEVODID0lIDRyhOu7Qpdrc2lXpNSEbak9okkymWeGoHNgl/Tw/6sWy5rzTlR0w=
-X-Received: by 2002:adf:f145:: with SMTP id y5mr5433738wro.330.1571368024826;
- Thu, 17 Oct 2019 20:07:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191017173743.5430-1-hch@lst.de> <20191017173743.5430-16-hch@lst.de>
-In-Reply-To: <20191017173743.5430-16-hch@lst.de>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Fri, 18 Oct 2019 08:36:54 +0530
-Message-ID: <CAAhSdy2=WnkJV8ANW2v5s2ckDmTEZUuzegQm41-ZaEY==f1Jng@mail.gmail.com>
-Subject: Re: [PATCH 15/15] riscv: disable the EFI PECOFF header for M-mode
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+        Fri, 18 Oct 2019 00:56:49 -0400
+X-UUID: 456865fc1cb443a58d46027694256ed7-20191018
+X-UUID: 456865fc1cb443a58d46027694256ed7-20191018
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <min.guo@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 421628261; Fri, 18 Oct 2019 11:41:25 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
+ (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 18 Oct
+ 2019 11:41:19 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 18 Oct 2019 11:41:18 +0800
+Message-ID: <1571370080.28949.5.camel@mhfsdcap03>
+Subject: Re: [PATCH RESEND v7 1/6] dt-bindings: usb: musb: Add support for
+ MediaTek musb controller
+From:   Min Guo <min.guo@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <tony@atomide.com>,
+        <hdegoede@redhat.com>
+Date:   Fri, 18 Oct 2019 11:41:20 +0800
+In-Reply-To: <20191017140841.GA20279@bogus>
+References: <20191017082554.27953-1-min.guo@mediatek.com>
+         <20191017082554.27953-2-min.guo@mediatek.com>
+         <20191017140841.GA20279@bogus>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: CB98BBEA4BB874D3A0D88CACED1C5CC76A62CDA4161EE13A5117F18AFA2C7BDE2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 11:08 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> No point in bloating the kernel image with a bootloader header if
-> we run bare metal.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/riscv/kernel/head.S | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-> index 71efbba25ed5..dc21e409cc49 100644
-> --- a/arch/riscv/kernel/head.S
-> +++ b/arch/riscv/kernel/head.S
-> @@ -16,6 +16,7 @@
->
->  __INIT
->  ENTRY(_start)
-> +#ifndef CONFIG_RISCV_M_MODE
->         /*
->          * Image header expected by Linux boot-loaders. The image header data
->          * structure is described in asm/image.h.
-> @@ -47,6 +48,7 @@ ENTRY(_start)
->
->  .global _start_kernel
->  _start_kernel:
-> +#endif /* CONFIG_RISCV_M_MODE */
->         /* Mask all interrupts */
->         csrw CSR_XIE, zero
->         csrw CSR_XIP, zero
-> --
-> 2.20.1
->
+On Thu, 2019-10-17 at 09:08 -0500, Rob Herring wrote:
+> On Thu, 17 Oct 2019 16:25:49 +0800, <min.guo@mediatek.com> wrote:
+> > From: Min Guo <min.guo@mediatek.com>
+> > 
+> > This adds support for MediaTek musb controller in
+> > host, peripheral and otg mode.
+> > 
+> > Signed-off-by: Min Guo <min.guo@mediatek.com>
+> > ---
+> > changes in v7:
+> > 1. Modify compatible as
+> > - compatible : should be one of:
+> >                "mediatek,mt2701-musb"
+> >                ...
+> >                followed by "mediatek,mtk-musb"
+> > 2. Change usb connector child node compatible as "gpio-usb-b-connector" 
+> > 
+> > changes in v6:
+> > 1. Modify usb connector child node
+> > 
+> > changes in v5:
+> > suggested by Rob:
+> > 1. Modify compatible as 
+> > - compatible : should be one of:
+> >                "mediatek,mt-2701"
+> >                ...
+> >                followed by "mediatek,mtk-musb"
+> > 2. Add usb connector child node
+> > 
+> > changes in v4:
+> > suggested by Sergei:
+> > 1. String alignment
+> > 
+> > changes in v3:
+> > 1. no changes
+> > 
+> > changes in v2:
+> > suggested by Bin:
+> > 1. Modify DRC to DRD
+> > suggested by Rob:
+> > 2. Drop the "<soc-model>-musb" in compatible
+> > 3. Remove phy-names
+> > 4. Add space after comma in clock-names
+> > ---
+> >  .../devicetree/bindings/usb/mediatek,musb.txt      | 55 ++++++++++++++++++++++
+> >  1 file changed, 55 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/usb/mediatek,musb.txt
+> > 
+> 
+> Please add Acked-by/Reviewed-by tags when posting new versions. However,
+> there's no need to repost patches *only* to add the tags. The upstream
+> maintainer will do that for acks received on the version they apply.
 
-LGTM.
+> If a tag was not added on purpose, please state why and what changed.
+OK,thanks. I will add Acked-by/Reviewed-by tags in the next version.
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
 
-Regards,
-Anup
