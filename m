@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 339E7DD360
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4E4DDD35B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:17:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393461AbfJRWRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:17:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40060 "EHLO mail.kernel.org"
+        id S2393414AbfJRWRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:17:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733130AbfJRWHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:07:42 -0400
+        id S1733187AbfJRWHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:07:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58C9422459;
-        Fri, 18 Oct 2019 22:07:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B6012245B;
+        Fri, 18 Oct 2019 22:07:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436461;
-        bh=Qub5CEkr6aC2c/38E5LFoS50v86FJa3heXtwmdN1C9U=;
+        s=default; t=1571436464;
+        bh=IEy/Uf64WWx5r28Ky/7zeFyYJNzL1e4yhFukKOfLYi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XHp/TqdcjdYUIuKOJPJl5wm8FrxAvG+iEL0CVGdY0GaIX/cl+/FvvpLQCqN1R2cjo
-         TLjd+p1OxSuqsFtta0KD82GviH5QB74e5s1Y4sCyAEaPIbR+6qshEjxLi6pK0IqGDR
-         iJOwwVMsl4fqhz/iM9Qe/+O563xrdCN+gPAFmQEI=
+        b=oe/JhJruu/XhSoVz4MCVMQBQUWrwy5FHjgSBmBO/8OEtQi4kQVDsOn1IAtvocdGXd
+         Lak4E1ixywb/3CaXJlJteUJGWYNf0dhXeXsRYicqsLcqZTk4gee2fMesfHp2zhojpV
+         1FTvG1cZKFU/dxWc7ueaHTy3fUbYwAA9j1SD2dUs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     David Frey <dpfrey@gmail.com>,
-        Andreas Dannenberg <dannenberg@ti.com>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 092/100] iio: light: opt3001: fix mutex unlock race
-Date:   Fri, 18 Oct 2019 18:05:17 -0400
-Message-Id: <20191018220525.9042-92-sashal@kernel.org>
+Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>, linux-mips@linux-mips.org
+Subject: [PATCH AUTOSEL 4.19 094/100] MIPS: fw: sni: Fix out of bounds init of o32 stack
+Date:   Fri, 18 Oct 2019 18:05:19 -0400
+Message-Id: <20191018220525.9042-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
 References: <20191018220525.9042-1-sashal@kernel.org>
@@ -44,58 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Frey <dpfrey@gmail.com>
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
-[ Upstream commit 82f3015635249a8c8c45bac303fd84905066f04f ]
+[ Upstream commit efcb529694c3b707dc0471b312944337ba16e4dd ]
 
-When an end-of-conversion interrupt is received after performing a
-single-shot reading of the light sensor, the driver was waking up the
-result ready queue before checking opt->ok_to_ignore_lock to determine
-if it should unlock the mutex. The problem occurred in the case where
-the other thread woke up and changed the value of opt->ok_to_ignore_lock
-to false prior to the interrupt thread performing its read of the
-variable. In this case, the mutex would be unlocked twice.
+Use ARRAY_SIZE to caluculate the top of the o32 stack.
 
-Signed-off-by: David Frey <dpfrey@gmail.com>
-Reviewed-by: Andreas Dannenberg <dannenberg@ti.com>
-Fixes: 94a9b7b1809f ("iio: light: add support for TI's opt3001 light sensor")
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/light/opt3001.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/mips/fw/sni/sniprom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/light/opt3001.c b/drivers/iio/light/opt3001.c
-index 54d88b60e3035..f9d13e4ec1083 100644
---- a/drivers/iio/light/opt3001.c
-+++ b/drivers/iio/light/opt3001.c
-@@ -694,6 +694,7 @@ static irqreturn_t opt3001_irq(int irq, void *_iio)
- 	struct iio_dev *iio = _iio;
- 	struct opt3001 *opt = iio_priv(iio);
- 	int ret;
-+	bool wake_result_ready_queue = false;
+diff --git a/arch/mips/fw/sni/sniprom.c b/arch/mips/fw/sni/sniprom.c
+index 8772617b64cef..80112f2298b68 100644
+--- a/arch/mips/fw/sni/sniprom.c
++++ b/arch/mips/fw/sni/sniprom.c
+@@ -43,7 +43,7 @@
  
- 	if (!opt->ok_to_ignore_lock)
- 		mutex_lock(&opt->lock);
-@@ -728,13 +729,16 @@ static irqreturn_t opt3001_irq(int irq, void *_iio)
- 		}
- 		opt->result = ret;
- 		opt->result_ready = true;
--		wake_up(&opt->result_ready_queue);
-+		wake_result_ready_queue = true;
- 	}
+ /* O32 stack has to be 8-byte aligned. */
+ static u64 o32_stk[4096];
+-#define O32_STK	  &o32_stk[sizeof(o32_stk)]
++#define O32_STK	  (&o32_stk[ARRAY_SIZE(o32_stk)])
  
- out:
- 	if (!opt->ok_to_ignore_lock)
- 		mutex_unlock(&opt->lock);
- 
-+	if (wake_result_ready_queue)
-+		wake_up(&opt->result_ready_queue);
-+
- 	return IRQ_HANDLED;
- }
- 
+ #define __PROM_O32(fun, arg) fun arg __asm__(#fun); \
+ 				     __asm__(#fun " = call_o32")
 -- 
 2.20.1
 
