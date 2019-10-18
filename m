@@ -2,114 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B75ADDBC3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 978E0DBC1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:55:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439278AbfJRE6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 00:58:46 -0400
-Received: from condef-10.nifty.com ([202.248.20.75]:37434 "EHLO
-        condef-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436473AbfJRE6p (ORCPT
+        id S2409223AbfJREzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 00:55:47 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:2690 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392808AbfJREzq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 00:58:45 -0400
-Received: from conuserg-12.nifty.com ([10.126.8.75])by condef-10.nifty.com with ESMTP id x9I4pfCF007484;
-        Fri, 18 Oct 2019 13:51:41 +0900
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x9I4otrw003608;
-        Fri, 18 Oct 2019 13:50:55 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x9I4otrw003608
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1571374256;
-        bh=g3k4SKCLKg1HVJs8XOHlrlk6IW7BWaci6zok4NIZI/U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iNxk/lYCnVuVic2I0bv+2ctP+0/Cm+8G76ozpRQGCQO5g3XRzPr9TkHwF8BSKrkYm
-         g8P3uXWpjYBkOP6HvzlkeiDwU86Q3B19HJxlDXpFWjYdzInL18bqPT7t5IeX+R6pEJ
-         1O49UlTxg+iTTDj0uP2oZ9xjxGwdYo9ADAiYE56NHaXfHAeXZnbIT6IuJE9lnM/gT7
-         bOYH8fvd8jtQGvq4ho4m2MwNw4fKFOpZhk/PVXSuheZUkR+apM7kHj0+rOISyLGSa1
-         AgKsq5asjwO/Jt7P1df5y2gGOisFbv8ZmvhtXTh1jVsZ5Im53Xdzpfc4rFR2lNLk6x
-         kU6JqV2Ohvjig==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-spdx@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] export,module: add SPDX GPL-2.0 license identifier to headers with no license
-Date:   Fri, 18 Oct 2019 13:50:53 +0900
-Message-Id: <20191018045053.8424-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 18 Oct 2019 00:55:46 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5da945d60000>; Thu, 17 Oct 2019 21:55:50 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 17 Oct 2019 21:55:45 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 17 Oct 2019 21:55:45 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 18 Oct
+ 2019 04:55:45 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 18 Oct 2019 04:55:45 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5da945d10003>; Thu, 17 Oct 2019 21:55:45 -0700
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Preeti U Murthy <preeti@linux.vnet.ibm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        <linux-pm@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
+Subject: [PATCH v2] cpufreq: powernv: fix stack bloat and NR_CPUS limitation
+Date:   Thu, 17 Oct 2019 21:55:39 -0700
+Message-ID: <20191018045539.3765565-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1571374550; bh=df18Gs5j3cwrHl5PwObGl2FSzw7tZwBe+5B9upV/qmU=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+         Content-Type;
+        b=WlTqEoi5Gs0evA3sLhhGZhfcxwx3m/vSQElv4bqkxcVwKpJJr19qDRntWBEMKxukr
+         pvDQ8O0f8J0Y0ueNopFf/SiMkUxcKJWUMbyucxzHNsumK+iBvAMwN6k1LFlyMgKhuK
+         QMB93N+E2Rz3FittCdYokclkYTAA7YRoW0o6AkQhwCI8n6HZADPwqGZSl55kv/oQN7
+         /7avi+Xqhrt8s/39ZIs70NEca9ePo3eccO4OhblbWS3XWTaSNG6KO1GAZa0A52UTRO
+         hU0PkUcGepqdlRb1NlIKtyGwVnfJiWQWKNqFRQBisPvefqIsZNaxio6Y6pAl9kPvTf
+         /92RK4C9M0l3Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit b24413180f56 ("License cleanup: add SPDX GPL-2.0 license
-identifier to files with no license") took care of a lot of files
-without any license information.
+The following build warning occurred on powerpc 64-bit builds:
 
-These headers were not processed by the tool perhaps because they
-contain "GPL" in the code.
+drivers/cpufreq/powernv-cpufreq.c: In function 'init_chip_info':
+drivers/cpufreq/powernv-cpufreq.c:1070:1: warning: the frame size of 1040 b=
+ytes is larger than 1024 bytes [-Wframe-larger-than=3D]
 
-I do not see any license boilerplate in them, so they fall back to
-GPL version 2 only, which is the project default.
+This is due to putting 1024 bytes on the stack:
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+    unsigned int chip[256];
+
+...and while looking at this, it also has a bug: it fails with a stack
+overrun, if CONFIG_NR_CPUS > 256.
+
+Fix both problems by dynamically allocating based on CONFIG_NR_CPUS.
+
+Fixes: 053819e0bf840 ("cpufreq: powernv: Handle throttling due to Pmax capp=
+ing at chip level")
+Cc: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Cc: Preeti U Murthy <preeti@linux.vnet.ibm.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+Cc: linux-pm@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
 
- include/asm-generic/export.h | 1 +
- include/linux/export.h       | 1 +
- include/linux/license.h      | 1 +
- include/linux/module.h       | 7 +++++--
- 4 files changed, 8 insertions(+), 2 deletions(-)
+Changes since v1: includes Viresh's review commit fixes.
 
-diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
-index a3983e2ce0fd..afddc5442e92 100644
---- a/include/asm-generic/export.h
-+++ b/include/asm-generic/export.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
- #ifndef __ASM_GENERIC_EXPORT_H
- #define __ASM_GENERIC_EXPORT_H
- 
-diff --git a/include/linux/export.h b/include/linux/export.h
-index 621158ecd2e2..f86ba7b11c1f 100644
---- a/include/linux/export.h
-+++ b/include/linux/export.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
- #ifndef _LINUX_EXPORT_H
- #define _LINUX_EXPORT_H
- 
-diff --git a/include/linux/license.h b/include/linux/license.h
-index decdbf43cb5c..7cce390f120b 100644
---- a/include/linux/license.h
-+++ b/include/linux/license.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
- #ifndef __LICENSE_H
- #define __LICENSE_H
- 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 6d20895e7739..bd165ba68617 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -1,11 +1,14 @@
--#ifndef _LINUX_MODULE_H
--#define _LINUX_MODULE_H
-+/* SPDX-License-Identifier: GPL-2.0-only */
- /*
-  * Dynamic loading of modules into the kernel.
-  *
-  * Rewritten by Richard Henderson <rth@tamu.edu> Dec 1996
-  * Rewritten again by Rusty Russell, 2002
-  */
+ drivers/cpufreq/powernv-cpufreq.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cp=
+ufreq.c
+index 6061850e59c9..5b2e968cb5ea 100644
+--- a/drivers/cpufreq/powernv-cpufreq.c
++++ b/drivers/cpufreq/powernv-cpufreq.c
+@@ -1041,9 +1041,14 @@ static struct cpufreq_driver powernv_cpufreq_driver =
+=3D {
+=20
+ static int init_chip_info(void)
+ {
+-	unsigned int chip[256];
++	unsigned int *chip;
+ 	unsigned int cpu, i;
+ 	unsigned int prev_chip_id =3D UINT_MAX;
++	int ret =3D 0;
 +
-+#ifndef _LINUX_MODULE_H
-+#define _LINUX_MODULE_H
-+
- #include <linux/list.h>
- #include <linux/stat.h>
- #include <linux/compiler.h>
--- 
-2.17.1
++	chip =3D kcalloc(CONFIG_NR_CPUS, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
+=20
+ 	for_each_possible_cpu(cpu) {
+ 		unsigned int id =3D cpu_to_chip_id(cpu);
+@@ -1055,8 +1060,10 @@ static int init_chip_info(void)
+ 	}
+=20
+ 	chips =3D kcalloc(nr_chips, sizeof(struct chip), GFP_KERNEL);
+-	if (!chips)
+-		return -ENOMEM;
++	if (!chips) {
++		ret =3D -ENOMEM;
++		goto free_and_return;
++	}
+=20
+ 	for (i =3D 0; i < nr_chips; i++) {
+ 		chips[i].id =3D chip[i];
+@@ -1066,7 +1073,9 @@ static int init_chip_info(void)
+ 			per_cpu(chip_info, cpu) =3D  &chips[i];
+ 	}
+=20
+-	return 0;
++free_and_return:
++	kfree(chip);
++	return ret;
+ }
+=20
+ static inline void clean_chip_info(void)
+--=20
+2.23.0
 
