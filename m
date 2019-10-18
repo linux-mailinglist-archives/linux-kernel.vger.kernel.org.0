@@ -2,134 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9A53DC657
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:41:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61EDEDC65A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:41:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410411AbfJRNkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 09:40:51 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:39666 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1728150AbfJRNkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 09:40:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6CC1EC0;
-        Fri, 18 Oct 2019 06:40:30 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C9A73F6C4;
-        Fri, 18 Oct 2019 06:40:27 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 14:40:25 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Dave Kleikamp <shaggy@linux.vnet.ibm.com>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arch@vger.kernel.org, Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Florian Weimer <fweimer@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sudakshina Das <sudi.das@arm.com>
-Subject: Re: [PATCH v2 05/12] arm64: Basic Branch Target Identification
- support
-Message-ID: <20191018134024.GE27757@arm.com>
-References: <1570733080-21015-1-git-send-email-Dave.Martin@arm.com>
- <1570733080-21015-6-git-send-email-Dave.Martin@arm.com>
- <20191011151028.GE33537@lakrids.cambridge.arm.com>
- <20191011172013.GQ27757@arm.com>
- <20191018111603.GD27759@lakrids.cambridge.arm.com>
+        id S2439523AbfJRNlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 09:41:10 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:37454 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392320AbfJRNlK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 09:41:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id CF66C3F867;
+        Fri, 18 Oct 2019 15:41:07 +0200 (CEST)
+Authentication-Results: ste-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=SsF4ZbqW;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=shipmail.org
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id TOTufyBBa0V2; Fri, 18 Oct 2019 15:41:04 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 45F6F3F7F6;
+        Fri, 18 Oct 2019 15:41:04 +0200 (CEST)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id C66A6360591;
+        Fri, 18 Oct 2019 15:41:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1571406063; bh=gGaWHO4KvUf91pQm6umckHTl12QmRAuYU6HJ9fAM6fU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SsF4ZbqWje6RizrLxTyQMT92ptjr6gRwqIXdD9hUUFujuA41PVa7zh4zPIxM68BbK
+         EZwfg2h+hTRdzj0I+1OTyCWw5BXC88tbzLuZgIRG26EmlcH1Ipt1tu7/noxLZWwRC2
+         6v7jR+JeYLC0c+7GUGJyv7lkLKFGw5X1/fbqnE/o=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Thomas Hellstrom <thellstrom@vmware.com>
+Subject: [PATCH 0/2] x86/cpu/vmware: Fixes for 5.4
+Date:   Fri, 18 Oct 2019 15:40:50 +0200
+Message-Id: <20191018134052.3023-1-thomas_os@shipmail.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018111603.GD27759@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 12:16:03PM +0100, Mark Rutland wrote:
-> [adding mm folk]
-> 
-> On Fri, Oct 11, 2019 at 06:20:15PM +0100, Dave Martin wrote:
-> > On Fri, Oct 11, 2019 at 04:10:29PM +0100, Mark Rutland wrote:
-> > > On Thu, Oct 10, 2019 at 07:44:33PM +0100, Dave Martin wrote:
-> > > > +#define arch_validate_prot(prot, addr) arm64_validate_prot(prot, addr)
-> > > > +static inline int arm64_validate_prot(unsigned long prot, unsigned long addr)
-> > > > +{
-> > > > +	unsigned long supported = PROT_READ | PROT_WRITE | PROT_EXEC | PROT_SEM;
-> > > > +
-> > > > +	if (system_supports_bti())
-> > > > +		supported |= PROT_BTI;
-> > > > +
-> > > > +	return (prot & ~supported) == 0;
-> > > > +}
-> > > 
-> > > If we have this check, can we ever get into arm64_calc_vm_prot_bits()
-> > > with PROT_BIT but !system_supports_bti()?
-> > > 
-> > > ... or can that become:
-> > > 
-> > > 	return (prot & PROT_BTI) ? VM_ARM64_BTI : 0;
-> > 
-> > We can reach this via mmap() and friends IIUC.
-> > 
-> > Since this function only gets called once-ish per vma I have a weak
-> > preference for keeping the check here to avoid code fragility.
-> > 
-> > 
-> > It does feel like arch_validate_prot() is supposed to be a generic gate
-> > for prot flags coming into the kernel via any route though, but only the
-> > mprotect() path actually uses it.
-> > 
-> > This function originally landed in v2.6.27 as part of the powerpc strong
-> > access ordering support (PROT_SAO):
-> > 
-> > b845f313d78e ("mm: Allow architectures to define additional protection bits")
-> > ef3d3246a0d0 ("powerpc/mm: Add Strong Access Ordering support")
-> > 
-> > where the mmap() path uses arch_calc_vm_prot_bits() without
-> > arch_validate_prot(), just as in the current code.  powerpc's original
-> > arch_calc_vm_prot_bits() does no obvious policing.
-> > 
-> > This might be a bug.  I can draft a patch to add it for the mmap() path
-> > for people to comment on ... I can't figure out yet whether or not the
-> > difference is intentional or there's some subtlety that I'm missed.
-> 
-> From reading those two commit messages, it looks like this was an
-> oversight. I'd expect that we should apply this check for any
-> user-provided prot (i.e. it should apply to both mprotect and mmap).
-> 
-> Ben, Andrew, does that make sense to you?
-> 
-> ... or was there some reason to only do this for mprotect?
-> 
-> Thanks,
-> Mark.
+From: Thomas Hellstrom <thellstrom@vmware.com>
 
-For now, I'll drop a comment under the tearoff noting this outstanding
-question.
+Two fixes for recently introduced regressions:
 
-The resulting behaviour is slightly odd, but doesn't seem unsafe, and
-we can of course tidy it up later.  I think the risk of userspace
-becoming dependent on randomly passing PROT_BTI to mprotect() even
-when unsupported is low.
+Patch 1 is more or less idential to a previous patch fixing the VMW_PORT
+macro on LLVM's assembler. However, that patch left out the VMW_HYPERCALL
+macro (probably not configured for use), so let's fix that also.
 
-[...]
-
-Cheers
----Dave
+Patch 2 fixes another VMW_PORT run-time regression at platform detection
+time
