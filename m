@@ -2,156 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEB55DC2A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 806EADC24F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:14:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408103AbfJRKTy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:19:54 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:33568 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S2387890AbfJRKTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:19:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1B0BAB6;
-        Fri, 18 Oct 2019 03:19:31 -0700 (PDT)
-Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4C6C3F6C4;
-        Fri, 18 Oct 2019 03:19:30 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 11:19:24 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cpufreq: flush any pending policy update work scheduled
- before freeing
-Message-ID: <20191018101924.GA25540@bogus>
-References: <20191017163503.30791-1-sudeep.holla@arm.com>
- <CAJZ5v0gTpK0cJhsWGVvs-=Sbgcia0jz2j5QNYRL+1wOz=2xkJQ@mail.gmail.com>
- <CAJZ5v0h0ioEZqLuaW1jz_8jRuGYZLQS3fbpv9ctyV9ucXb1WiA@mail.gmail.com>
- <20191018055533.GC31836@e107533-lin.cambridge.arm.com>
- <20191018060247.g5asfuh3kncoj7kl@vireshk-i7>
+        id S2633428AbfJRKN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:13:58 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4688 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2633402AbfJRKN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 06:13:56 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id EE449446BAD95BC5B566;
+        Fri, 18 Oct 2019 18:13:53 +0800 (CST)
+Received: from RH5885H-V3.huawei.com (10.90.53.225) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 18 Oct 2019 18:13:46 +0800
+From:   Chen Wandun <chenwandun@huawei.com>
+To:     <igor.russkikh@aquantia.com>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <chenwandun@huawei.com>
+Subject: [PATCH v2] net: aquantia: add an error handling in aq_nic_set_multicast_list
+Date:   Fri, 18 Oct 2019 18:20:37 +0800
+Message-ID: <1571394037-19978-1-git-send-email-chenwandun@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018060247.g5asfuh3kncoj7kl@vireshk-i7>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 11:32:47AM +0530, Viresh Kumar wrote:
-> On 18-10-19, 06:55, Sudeep Holla wrote:
-> > On Thu, Oct 17, 2019 at 11:26:54PM +0200, Rafael J. Wysocki wrote:
-> > > On Thu, Oct 17, 2019 at 9:36 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > > >
-> > > > On Thu, Oct 17, 2019 at 6:35 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> > > > >
-> > > > > dev_pm_qos_remove_request ends calling {max,min}_freq_req QoS notifiers
-> > > > > which schedule policy update work. It may end up racing with the freeing
-> > > > > the policy and unregistering the driver.
-> > > > >
-> > > > > One possible race is as below where the cpufreq_driver is unregistered
-> > > > > but the scheduled work gets executed at later stage when cpufreq_driver
-> > > > > is NULL(i.e. after freeing the policy and driver)
-> > > > >
-> > > > > Unable to handle kernel NULL pointer dereference at virtual address 0000001c
-> > > > > pgd = (ptrval)
-> > > > > [0000001c] *pgd=80000080204003, *pmd=00000000
-> > > > > Internal error: Oops: 206 [#1] SMP THUMB2
-> > > > > Modules linked in:
-> > > > > CPU: 0 PID: 34 Comm: kworker/0:1 Not tainted 5.4.0-rc3-00006-g67f5a8081a4b #86
-> > > > > Hardware name: ARM-Versatile Express
-> > > > > Workqueue: events handle_update
-> > > > > PC is at cpufreq_set_policy+0x58/0x228
-> > > > > LR is at dev_pm_qos_read_value+0x77/0xac
-> > > > > Control: 70c5387d  Table: 80203000  DAC: fffffffd
-> > > > > Process kworker/0:1 (pid: 34, stack limit = 0x(ptrval))
-> > > > >         (cpufreq_set_policy) from (refresh_frequency_limits.part.24+0x37/0x48)
-> > > > >         (refresh_frequency_limits.part.24) from (handle_update+0x2f/0x38)
-> > > > >         (handle_update) from (process_one_work+0x16d/0x3cc)
-> > > > >         (process_one_work) from (worker_thread+0xff/0x414)
-> > > > >         (worker_thread) from (kthread+0xff/0x100)
-> > > > >         (kthread) from (ret_from_fork+0x11/0x28)
-> > > > >
-> > > > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > > > > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > > > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > > > ---
-> > > > >  drivers/cpufreq/cpufreq.c | 3 +++
-> > > > >  1 file changed, 3 insertions(+)
-> > > > >
-> > > > > Hi Rafael, Viresh,
-> > > > >
-> > > > > This fixed the boot issue I reported[1] on TC2 with bL switcher enabled.
-> > > > > I have based this patch on -rc3 and not on top of your patches. This
-> > > > > only fixes the boot issue but I hit the other crashes while continuously
-> > > > > switching on and off the bL switcher that register/unregister the driver
-> > > > > Your patch series fixes them. I can based this on top of those if you
-> > > > > prefer.
-> > > > >
-> > > > > Regards,
-> > > > > Sudeep
-> > > > >
-> > > > > [1] https://lore.kernel.org/linux-pm/20191015155735.GA29105@bogus/
-> > > > >
-> > > > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > > > > index c52d6fa32aac..b703c29a84be 100644
-> > > > > --- a/drivers/cpufreq/cpufreq.c
-> > > > > +++ b/drivers/cpufreq/cpufreq.c
-> > > > > @@ -1278,6 +1278,9 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
-> > > > >         }
-> > > > >
-> > > > >         dev_pm_qos_remove_request(policy->min_freq_req);
-> > > > > +       /* flush the pending policy->update work before freeing the policy */
-> > > > > +       if (work_pending(&policy->update))
-> > > >
-> > > > Isn't this racy?
-> > > >
-> > > > It still may be running if the pending bit is clear and we still need
-> > > > to wait for it then, don't we?
-> > > >
-> > > > Why don't you do an unconditional flush_work() here?
-> > > 
-> > > You may as well do a cancel_work_sync() here, because whether or not
-> > > the last update of the policy happens before it goes away is a matter
-> > > of timing in any case
-> > 
-> > In fact that's the first thing I tried to fix the issue I was seeing.
-> > But I then thought it would be better to complete the update as the PM
-> > QoS were getting updated back to DEFAULT values for the device. Even
-> > this works.
-> > 
-> > What is your preference ? flush_work or cancel_work_sync ? I will
-> > update accordingly. I may need to do some more testing with
-> > cancel_work_sync as I just checked that quickly to confirm the race.
-> 
-> As I said in the other email, this work didn't come as a result of
-> removal of the qos request from cpufreq core and so must have come
-> from other thermal or similar events.
+From: Chenwandun <chenwandun@huawei.com>
 
-I don't think so. For sure not because of any thermal events. I didn't
-have log handy and hence had to wait till I was next to hardware.
+add an error handling in aq_nic_set_multicast_list, it may not
+work when hw_multicast_list_set error; and at the same time
+it will remove gcc Wunused-but-set-variable warning.
 
-This is log:
- cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request max before
- cpufreq: cpufreq_notifier_max: schedule_work(&policy->update)
- cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request max after
- cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request min before
- cpufreq: cpufreq_notifier_min: schedule_work(&policy->update)
- cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request min after
- cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request max before
- cpufreq: cpufreq_notifier_max: schedule_work(&policy->update)
- cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request max after
- cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request min before
- cpufreq: cpufreq_notifier_min: schedule_work(&policy->update)
- cpufreq: cpufreq_policy_free: dev_pm_qos_remove_request min after
+Signed-off-by: Chenwandun <chenwandun@huawei.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/aq_nic.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-So if I move the call above, it still crashes as the work is getting
-scheduled later.
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+index 2a18439..137c1de 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+@@ -664,6 +664,8 @@ int aq_nic_set_multicast_list(struct aq_nic_s *self, struct net_device *ndev)
+ 		err = hw_ops->hw_multicast_list_set(self->aq_hw,
+ 						    self->mc_list.ar,
+ 						    self->mc_list.count);
++		if (err < 0)
++			return err;
+ 	}
+ 	return aq_nic_set_packet_filter(self, packet_filter);
+ }
+-- 
+2.7.4
 
---
-Regards,
-Sudeep
