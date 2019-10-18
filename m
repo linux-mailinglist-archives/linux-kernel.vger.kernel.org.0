@@ -2,229 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DE86DC936
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:44:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E74CEDC97A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505435AbfJRPod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 11:44:33 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:56099 "EHLO
+        id S2409026AbfJRPpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 11:45:04 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:53631 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505169AbfJRPml (ORCPT
+        with ESMTP id S2505150AbfJRPmj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 11:42:41 -0400
+        Fri, 18 Oct 2019 11:42:39 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1M7JrG-1iOl7h3IKK-007k2b; Fri, 18 Oct 2019 17:42:29 +0200
+ 1MKbXu-1ibuFm0USC-00L1jl; Fri, 18 Oct 2019 17:42:30 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Daniel Mack <daniel@zonque.org>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
         Robert Jarzmik <robert.jarzmik@free.fr>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: [PATCH 29/46] Input: touchscreen: use wrapper for pxa2xx ac97 registers
-Date:   Fri, 18 Oct 2019 17:41:44 +0200
-Message-Id: <20191018154201.1276638-29-arnd@arndb.de>
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH 30/46] SoC: pxa: use pdev resource for FIFO regs
+Date:   Fri, 18 Oct 2019 17:41:45 +0200
+Message-Id: <20191018154201.1276638-30-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191018154052.1276506-1-arnd@arndb.de>
 References: <20191018154052.1276506-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:MK8JfTnTg0lPFTWmTXYVConFc6n0BBIQ8G+iv99wHsjwJ8GpckN
- WfS0UdxIaZu/fxc1H/6LNUOHWpL2xSEFPQ6W03NM1LBrLN0j3TAEBNOHC9Ak+SZFqB5Np5P
- cBv2685GglbI1t+P7kdvgbtFLL2aNQrwh/zUXcMSx23AYaxPMjFkmPfUeQEIBlSR8jJStci
- PJterFpo7iLKTqstnNT4Q==
+X-Provags-ID: V03:K1:JnyiR7rxqnAnO9BolIMCAtr756n0YCtxDEUDXWA0qY34R6AhKmw
+ JIS6nus6XOfzi/0EFukEBpCihUFcq4KDlzoAh3G+v5xAoBL+UjfTnccuvUl2RbRgXj1CrWl
+ S72O66Yd0/wThsj3sCDsF7yvfEq6ML3/xAJUucEGi/0xa3Pd5QkcWl7ryGzRO53qiiI072v
+ Yx76SnTUIfT8I6fDNL54Q==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:GJMqnt/pGVA=:EKxLIgmzbmMu61TQSTosuf
- gnVEJX0ztxVdyO4z7UFQ2x/wfcms3eF5wz06LFuo1kgZhPHx0v9J3kUVmEbt/IFOZHFMcTrzV
- qxC7UEJMWIoxlDcv6rkIjvr1xYK4eJ8HIaD0Mvh0V3trgZaVQdjJOftHvkgAQ/rFUjEyqmjrn
- l3zaJN9jvJcbxjPkZIDS1SKiqgdQ6FQAQY4+s1qHIJ5fW5yLZ/bCzxn8M3cfKIIMcuFO1x0Em
- 9F74udBauIflN4XgL/mxj8HGSI2srkKNrDdfO/rmrA+FPUr1ERAVhAzhqxOglKChpDdqPi7kV
- J+AqwsBF1idqsMZ7cApARQJl2Bz07q2+Cqql6vcV4A7x5oGw+y2nO5/mMrBgoyXqNjsyeZPde
- VuRWY/PFkcCDyLjfFjCZESP9ggl9st3BNn5kEwRz8VS+PElmOelJfyxZyKWsGFDfy56jmYE1d
- pCZG4geuaF7c+LEd08mmWO8rvfr2aOBFjSgPsw63Lg08tWx4OtK7miLsohhN+jIs7petifzUt
- OgqjwpfdZgh8JM/+ztp1y1zGQzsS0nUyGyjud91BA0Sx4f2vD/qUToiGpv/dEC/YOB95uu4yq
- i4BOkEYfAu1q0mgvm8uSrbTtiMMVXtibbi5CiTwm0WVxGgrlUVkUAdqyit+bYTVAyh0MuFvxK
- B3x6QLwtp8rHSJO3LDDC8F+i3Yfpzb3w3HswLBcyyMHlHA7YhedHARB0+T4OnQp5O4dIEUz/+
- lR/iB+chX7WlzQIkNTGRS739Zf/oUV7ixTwduxprShyU+CkUtPqmazK6GhRpwxI/qkICcmnce
- QUfTdBWtkKyuIaknQt8IYi+FxwID9nB/IoSMUxX0rNUI5GE/bMQ0Sc8mS0MLhXyBx8t92xXTs
- DkSH6kM4PoyPDWgHlHsw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:KidX8pZMFC8=:XCbuwKMNPuxxsgY+EWmE+8
+ NYw8+N0UXRTkGdvBirUjzDp7wzwI42Dt0xuGG89pqCJhqIVDCgGakQLQ4M2x94cX5hG/APMrE
+ lAh28BAwA5DMsfIqaUdOrngo8N6sSRtIUrJb18qIcpj9Jc+BrfSGgmR7bP+ln6421gg/bp4HS
+ bIN92XgUWekVG+OBarxbvtNZqb3SIkBQP4bS2vtTT2QrssuiLEH3i3PafxFwP/u2njPLVHsZl
+ 7EwBCSJl9D5bqrAtdex6beRJLEeAPoXijoSmza/gOTBOpC9b9toPErH/fbHSoND6LWHJCnuPE
+ +BhiDBEhgSqh0i8awtuhArhp1eBLUiWXwK3WV+ShQYjnbPUz9OupLUfbqNxiYc2IKWwl6SbsH
+ tCRJERTbqeeFt4lS0k1wAWzm+zqp3tbQM6yhUBkikrIXdlT/416v+fZGBzIMp9bf5wu7yEvie
+ hJnFHnJQ3szUkvEYbq+1fxyKmnec1ot16eGfsp941nVS3MefWLTMRsgFcjmhi+S4S+o+p3eYW
+ BT+VPjAAEhgO6wsDdwK+rBNLDZC0DzyxteiVS7XS+R7cbUH2+ml/dN4kwoRwhb2NELsOj+qze
+ dgdOVAK2CZzBW7MEZwv+ocrHLJ8QUnQBfq0z7OtCPd2fNNxr6F2SxYqxWOjxhHu6fq6+a7ea9
+ EkNbWd7RigP1QwXwzVp8JLFKkhnY+Stlt3dkOqIvTjFCh6QT4+POSWUzu/Ln2ZQye3SjCJdVS
+ Yec/pO/nUFBLF4Bhc+8KxIuswH6KaqKLsvEFqfmDF5pRYrsbFu44jnKFXnZzLTMYPGZ4ESZ1o
+ 7M6DYIQUZPaiO93OUq48eqrc9fnopwPT1AhWiBrjNtQOeUGLUt6BQI9JTEoEKi3Te5SgTIbd2
+ xTEXU2HDMa+Fro1lEUzw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid a dependency on the pxa platform header files with
-hardcoded registers, change the driver to call a wrapper
-in the pxa2xx-ac97-lib that encapsulates all the other
-ac97 stuff.
+The driver currently takes the hardwired FIFO address from
+a header file that we want to eliminate. Change it to use
+the mmio resource instead and stop including the heare.
 
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
 Cc: alsa-devel@alsa-project.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/input/touchscreen/Kconfig            |  2 ++
- drivers/input/touchscreen/mainstone-wm97xx.c | 16 ++++++++--------
- drivers/input/touchscreen/zylonite-wm97xx.c  | 12 ++++++------
- include/sound/pxa2xx-lib.h                   |  4 ++++
- sound/arm/pxa2xx-ac97-lib.c                  | 12 ++++++++++++
- 5 files changed, 32 insertions(+), 14 deletions(-)
+ sound/soc/pxa/pxa2xx-ac97.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 46ad9090493b..c60199550d89 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -848,6 +848,7 @@ config TOUCHSCREEN_WM9713
- config TOUCHSCREEN_WM97XX_MAINSTONE
- 	tristate "WM97xx Mainstone/Palm accelerated touch"
- 	depends on TOUCHSCREEN_WM97XX && ARCH_PXA
-+	depends on SND_PXA2XX_LIB_AC97
- 	help
- 	  Say Y here for support for streaming mode with WM97xx touchscreens
- 	  on Mainstone, Palm Tungsten T5, TX and LifeDrive systems.
-@@ -860,6 +861,7 @@ config TOUCHSCREEN_WM97XX_MAINSTONE
- config TOUCHSCREEN_WM97XX_ZYLONITE
- 	tristate "Zylonite accelerated touch"
- 	depends on TOUCHSCREEN_WM97XX && MACH_ZYLONITE
-+	depends on SND_PXA2XX_LIB_AC97
- 	select TOUCHSCREEN_WM9713
- 	help
- 	  Say Y here for support for streaming mode with the touchscreen
-diff --git a/drivers/input/touchscreen/mainstone-wm97xx.c b/drivers/input/touchscreen/mainstone-wm97xx.c
-index 940d3c92b1f8..8f6fe68f1f99 100644
---- a/drivers/input/touchscreen/mainstone-wm97xx.c
-+++ b/drivers/input/touchscreen/mainstone-wm97xx.c
-@@ -28,7 +28,7 @@
- #include <linux/soc/pxa/cpu.h>
- #include <linux/wm97xx.h>
+diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
+index 2138106fed23..4fd97c50aa2c 100644
+--- a/sound/soc/pxa/pxa2xx-ac97.c
++++ b/sound/soc/pxa/pxa2xx-ac97.c
+@@ -21,10 +21,12 @@
+ #include <sound/pxa2xx-lib.h>
+ #include <sound/dmaengine_pcm.h>
  
+-#include <mach/pxa-regs.h>
 -#include <mach/regs-ac97.h>
-+#include <sound/pxa2xx-lib.h>
+ #include <linux/platform_data/asoc-pxa.h>
  
- #include <asm/mach-types.h>
++#define PCDR	0x0040  /* PCM FIFO Data Register */
++#define MODR	0x0140  /* Modem FIFO Data Register */
++#define MCDR	0x0060  /* Mic-in FIFO Data Register */
++
+ static void pxa2xx_ac97_warm_reset(struct ac97_controller *adrv)
+ {
+ 	pxa2xx_ac97_try_warm_reset();
+@@ -59,35 +61,30 @@ static struct ac97_controller_ops pxa2xx_ac97_ops = {
+ };
  
-@@ -104,11 +104,11 @@ static void wm97xx_acc_pen_up(struct wm97xx *wm)
- 	msleep(1);
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_stereo_in = {
+-	.addr		= __PREG(PCDR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
+ 	.chan_name	= "pcm_pcm_stereo_in",
+ 	.maxburst	= 32,
+ };
  
- 	if (cpu_is_pxa27x()) {
--		while (MISR & (1 << 2))
--			MODR;
-+		while (pxa2xx_ac97_read_misr() & (1 << 2))
-+			pxa2xx_ac97_read_modr();
- 	} else if (cpu_is_pxa3xx()) {
- 		for (count = 0; count < 16; count++)
--			MODR;
-+			pxa2xx_ac97_read_modr();
- 	}
- }
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_stereo_out = {
+-	.addr		= __PREG(PCDR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
+ 	.chan_name	= "pcm_pcm_stereo_out",
+ 	.maxburst	= 32,
+ };
  
-@@ -130,7 +130,7 @@ static int wm97xx_acc_pen_down(struct wm97xx *wm)
- 		return RC_PENUP;
- 	}
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_aux_mono_out = {
+-	.addr		= __PREG(MODR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
+ 	.chan_name	= "pcm_aux_mono_out",
+ 	.maxburst	= 16,
+ };
  
--	x = MODR;
-+	x = pxa2xx_ac97_read_modr();
- 	if (x == last) {
- 		tries++;
- 		return RC_AGAIN;
-@@ -138,10 +138,10 @@ static int wm97xx_acc_pen_down(struct wm97xx *wm)
- 	last = x;
- 	do {
- 		if (reads)
--			x = MODR;
--		y = MODR;
-+			x = pxa2xx_ac97_read_modr();
-+		y = pxa2xx_ac97_read_modr();
- 		if (pressure)
--			p = MODR;
-+			p = pxa2xx_ac97_read_modr();
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_aux_mono_in = {
+-	.addr		= __PREG(MODR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
+ 	.chan_name	= "pcm_aux_mono_in",
+ 	.maxburst	= 16,
+ };
  
- 		dev_dbg(wm->dev, "Raw coordinates: x=%x, y=%x, p=%x\n",
- 			x, y, p);
-diff --git a/drivers/input/touchscreen/zylonite-wm97xx.c b/drivers/input/touchscreen/zylonite-wm97xx.c
-index cabdd6e3c6f8..ed7eae638713 100644
---- a/drivers/input/touchscreen/zylonite-wm97xx.c
-+++ b/drivers/input/touchscreen/zylonite-wm97xx.c
-@@ -24,7 +24,7 @@
- #include <linux/soc/pxa/cpu.h>
- #include <linux/wm97xx.h>
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_mic_mono_in = {
+-	.addr		= __PREG(MCDR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
+ 	.chan_name	= "pcm_aux_mic_mono",
+ 	.maxburst	= 16,
+@@ -225,6 +222,7 @@ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
+ 	int ret;
+ 	struct ac97_controller *ctrl;
+ 	pxa2xx_audio_ops_t *pdata = pdev->dev.platform_data;
++	struct resource *regs;
+ 	void **codecs_pdata;
  
--#include <mach/regs-ac97.h>
-+#include <sound/pxa2xx-lib.h>
- 
- struct continuous {
- 	u16 id;    /* codec id */
-@@ -79,7 +79,7 @@ static void wm97xx_acc_pen_up(struct wm97xx *wm)
- 	msleep(1);
- 
- 	for (i = 0; i < 16; i++)
--		MODR;
-+		pxa2xx_ac97_read_modr();
- }
- 
- static int wm97xx_acc_pen_down(struct wm97xx *wm)
-@@ -100,7 +100,7 @@ static int wm97xx_acc_pen_down(struct wm97xx *wm)
- 		return RC_PENUP;
+ 	if (pdev->id != -1) {
+@@ -232,6 +230,16 @@ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
+ 		return -ENXIO;
  	}
  
--	x = MODR;
-+	x = pxa2xx_ac97_read_modr();
- 	if (x == last) {
- 		tries++;
- 		return RC_AGAIN;
-@@ -108,10 +108,10 @@ static int wm97xx_acc_pen_down(struct wm97xx *wm)
- 	last = x;
- 	do {
- 		if (reads)
--			x = MODR;
--		y = MODR;
-+			x = pxa2xx_ac97_read_modr();
-+		y = pxa2xx_ac97_read_modr();
- 		if (pressure)
--			p = MODR;
-+			p = pxa2xx_ac97_read_modr();
- 
- 		dev_dbg(wm->dev, "Raw coordinates: x=%x, y=%x, p=%x\n",
- 			x, y, p);
-diff --git a/include/sound/pxa2xx-lib.h b/include/sound/pxa2xx-lib.h
-index 6758fc12fa84..79c32a8f4c91 100644
---- a/include/sound/pxa2xx-lib.h
-+++ b/include/sound/pxa2xx-lib.h
-@@ -41,4 +41,8 @@ extern int pxa2xx_ac97_hw_resume(void);
- extern int pxa2xx_ac97_hw_probe(struct platform_device *dev);
- extern void pxa2xx_ac97_hw_remove(struct platform_device *dev);
- 
-+/* modem registers, used by touchscreen driver */
-+u32 pxa2xx_ac97_read_modr(void);
-+u32 pxa2xx_ac97_read_misr(void);
++	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!regs)
++		return -ENXIO;
 +
- #endif
-diff --git a/sound/arm/pxa2xx-ac97-lib.c b/sound/arm/pxa2xx-ac97-lib.c
-index 8c79d224f03b..572b73d73762 100644
---- a/sound/arm/pxa2xx-ac97-lib.c
-+++ b/sound/arm/pxa2xx-ac97-lib.c
-@@ -428,6 +428,18 @@ void pxa2xx_ac97_hw_remove(struct platform_device *dev)
- }
- EXPORT_SYMBOL_GPL(pxa2xx_ac97_hw_remove);
- 
-+u32 pxa2xx_ac97_read_modr(void)
-+{
-+	return MODR;
-+}
-+EXPORT_SYMBOL_GPL(pxa2xx_ac97_read_modr);
++	pxa2xx_ac97_pcm_stereo_in.addr = regs->start + PCDR;
++	pxa2xx_ac97_pcm_stereo_out.addr = regs->start + PCDR;
++	pxa2xx_ac97_pcm_aux_mono_out.addr = regs->start + MODR;
++	pxa2xx_ac97_pcm_aux_mono_in.addr = regs->start + MODR;
++	pxa2xx_ac97_pcm_mic_mono_in.addr = regs->start + MCDR;
 +
-+u32 pxa2xx_ac97_read_misr(void)
-+{
-+	return MISR;
-+}
-+EXPORT_SYMBOL_GPL(pxa2xx_ac97_read_misr);
-+
- MODULE_AUTHOR("Nicolas Pitre");
- MODULE_DESCRIPTION("Intel/Marvell PXA sound library");
- MODULE_LICENSE("GPL");
+ 	ret = pxa2xx_ac97_hw_probe(pdev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "PXA2xx AC97 hw probe error (%d)\n", ret);
 -- 
 2.20.0
 
