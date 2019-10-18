@@ -2,135 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEE31DBE53
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:31:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1217DBE63
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:32:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504628AbfJRHbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 03:31:09 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36638 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394031AbfJRHbI (ORCPT
+        id S2504652AbfJRHcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 03:32:19 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:38776 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394031AbfJRHcT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 03:31:08 -0400
-Received: by mail-ot1-f66.google.com with SMTP id 67so4178483oto.3;
-        Fri, 18 Oct 2019 00:31:06 -0700 (PDT)
+        Fri, 18 Oct 2019 03:32:19 -0400
+Received: by mail-oi1-f193.google.com with SMTP id d140so107680oib.5;
+        Fri, 18 Oct 2019 00:32:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=1vcvhB5CLF/+MeUyHDDl7fZL+tAXhkabxwY8RzqlUc4=;
-        b=K7Yt9YoviXa1EKl7IKMUxzV7fJKccYRkl/f/zlrsDAxPX7Y9NmcboBMaiUIBkisj6s
-         K/0rvmrdS4ruOkQk5Hdy5r6QgqM1ptvNEsMgEXyzH8j6K0hnmphrD4eoFVYR+YrhhTji
-         sv+lhgqy6QZRgZD9UXmKb0NmFnA2KEJsRyI8XTEnOKaVxHXC04Fd1wRItkbgJivTsSzv
-         WEjfcgaPLmReo38CmBMZ/lqF/gNrP8OH1ATnQNrGFeXk1zTfNbGS0Z139E6RYM4lQPHa
-         YGrHDrKdq3kF/mSl878GMtb0SEYzxy5WW3bYfpCTb0nm0HnvYBXtXxIRewJLiRbL9mf0
-         r1zg==
-X-Gm-Message-State: APjAAAUdHG9sRGDmTM/26149dvkFYcNaNyzvjXWe3Xz+3DsVdopC+4VX
-        Fd9KC55bUts+HuDpW7qo55LwNuOur/drHhczNuw=
-X-Google-Smtp-Source: APXvYqz5ZTzm2szPG0oqRjP0bYm68wI5cC2zWPx8OuV5blCVSPhZgU0siPaT+bnCFclqt0wG9CC25EAYDHrDP1i11C0=
-X-Received: by 2002:a9d:70d0:: with SMTP id w16mr6117171otj.107.1571383865678;
- Fri, 18 Oct 2019 00:31:05 -0700 (PDT)
+        bh=z4xqOeM1YeUE2INYqT11uITzrVuWoTUfm8bOzhEZ/mY=;
+        b=jJRqrneVn/Onz2K3aMMimxKiRNo5MGjJybA0dseLJ9k6lxteJX8nFqCxQSyGNwIyNQ
+         UaP1KkDLAvJfWzCsg82vLJD+Ztb7A56lx70k81SlmexQB3qKtbf5Yv2rBJVgYIH76Thg
+         yioGVR9ALfE+R0HcAlZXGFSX+vV6pEShZocCZ5RqL6Y4R/9kwi1vQirWByIpQRyMz0Ld
+         i9epHPvcWTtpvLlZMd0Q51GxhTHfBq4dMD77CFzU24TpQjitRUB/E0zKGc4A+iP6iET5
+         yw4MkF8OWOmXk1kQ+6t0K53ZjvuooK3hWy3IndFl7b1MvSKIXygdaJYampxUuE4xqRug
+         QSNA==
+X-Gm-Message-State: APjAAAVaswvPjw8hOtt4to2I+/MlsVdj59dtI0e2ri/L3Tjy/d0y205X
+        J88XYBjhcHMFucTw8t5NEuryBilLbMdcI7mxh5M=
+X-Google-Smtp-Source: APXvYqxdFvDgt95Tzyq9b603RSO/NBOLxoNSFfckU1680dG9VNFBUqPiu4wuKPbLwLUdPqYpW/PzUKRy+W8ijyGu4/0=
+X-Received: by 2002:aca:5885:: with SMTP id m127mr7009246oib.110.1571383937445;
+ Fri, 18 Oct 2019 00:32:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191017174554.29840-1-hch@lst.de> <20191017174554.29840-14-hch@lst.de>
-In-Reply-To: <20191017174554.29840-14-hch@lst.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Oct 2019 09:30:54 +0200
-Message-ID: <CAMuHMdWaQ15j7fQ9-8XKgrSwgf96nT=yY+FCPWPxoPC9LGqvbQ@mail.gmail.com>
-Subject: Re: [PATCH 13/21] m68k: rename __iounmap and mark it static
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, linux-mips@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Openrisc <openrisc@lists.librecores.org>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        nios2-dev@lists.rocketboards.org, linux-riscv@lists.infradead.org,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20191017163503.30791-1-sudeep.holla@arm.com> <CAJZ5v0gTpK0cJhsWGVvs-=Sbgcia0jz2j5QNYRL+1wOz=2xkJQ@mail.gmail.com>
+ <CAJZ5v0h0ioEZqLuaW1jz_8jRuGYZLQS3fbpv9ctyV9ucXb1WiA@mail.gmail.com>
+ <20191018055533.GC31836@e107533-lin.cambridge.arm.com> <20191018060247.g5asfuh3kncoj7kl@vireshk-i7>
+In-Reply-To: <20191018060247.g5asfuh3kncoj7kl@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 18 Oct 2019 09:32:06 +0200
+Message-ID: <CAJZ5v0h0vY9OBYg-_pR-hu_TJkE0odf5Nnd8qnJc17+8NQo=7w@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: flush any pending policy update work scheduled
+ before freeing
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
-
-On Thu, Oct 17, 2019 at 7:53 PM Christoph Hellwig <hch@lst.de> wrote:
-> m68k uses __iounmap as the name for an internal helper that is only
-> used for some CPU types.  Mark it static and give it a better name.
+On Fri, Oct 18, 2019 at 8:02 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Thanks for your patch!
-
-> --- a/arch/m68k/mm/kmap.c
-> +++ b/arch/m68k/mm/kmap.c
-> @@ -52,6 +52,7 @@ static inline void free_io_area(void *addr)
+> On 18-10-19, 06:55, Sudeep Holla wrote:
+> > On Thu, Oct 17, 2019 at 11:26:54PM +0200, Rafael J. Wysocki wrote:
+> > > On Thu, Oct 17, 2019 at 9:36 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > >
+> > > > On Thu, Oct 17, 2019 at 6:35 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
+> > > > >
+> > > > > dev_pm_qos_remove_request ends calling {max,min}_freq_req QoS notifiers
+> > > > > which schedule policy update work. It may end up racing with the freeing
+> > > > > the policy and unregistering the driver.
+> > > > >
+> > > > > One possible race is as below where the cpufreq_driver is unregistered
+> > > > > but the scheduled work gets executed at later stage when cpufreq_driver
+> > > > > is NULL(i.e. after freeing the policy and driver)
+> > > > >
+> > > > > Unable to handle kernel NULL pointer dereference at virtual address 0000001c
+> > > > > pgd = (ptrval)
+> > > > > [0000001c] *pgd=80000080204003, *pmd=00000000
+> > > > > Internal error: Oops: 206 [#1] SMP THUMB2
+> > > > > Modules linked in:
+> > > > > CPU: 0 PID: 34 Comm: kworker/0:1 Not tainted 5.4.0-rc3-00006-g67f5a8081a4b #86
+> > > > > Hardware name: ARM-Versatile Express
+> > > > > Workqueue: events handle_update
+> > > > > PC is at cpufreq_set_policy+0x58/0x228
+> > > > > LR is at dev_pm_qos_read_value+0x77/0xac
+> > > > > Control: 70c5387d  Table: 80203000  DAC: fffffffd
+> > > > > Process kworker/0:1 (pid: 34, stack limit = 0x(ptrval))
+> > > > >         (cpufreq_set_policy) from (refresh_frequency_limits.part.24+0x37/0x48)
+> > > > >         (refresh_frequency_limits.part.24) from (handle_update+0x2f/0x38)
+> > > > >         (handle_update) from (process_one_work+0x16d/0x3cc)
+> > > > >         (process_one_work) from (worker_thread+0xff/0x414)
+> > > > >         (worker_thread) from (kthread+0xff/0x100)
+> > > > >         (kthread) from (ret_from_fork+0x11/0x28)
+> > > > >
+> > > > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > > > > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > > > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > > > ---
+> > > > >  drivers/cpufreq/cpufreq.c | 3 +++
+> > > > >  1 file changed, 3 insertions(+)
+> > > > >
+> > > > > Hi Rafael, Viresh,
+> > > > >
+> > > > > This fixed the boot issue I reported[1] on TC2 with bL switcher enabled.
+> > > > > I have based this patch on -rc3 and not on top of your patches. This
+> > > > > only fixes the boot issue but I hit the other crashes while continuously
+> > > > > switching on and off the bL switcher that register/unregister the driver
+> > > > > Your patch series fixes them. I can based this on top of those if you
+> > > > > prefer.
+> > > > >
+> > > > > Regards,
+> > > > > Sudeep
+> > > > >
+> > > > > [1] https://lore.kernel.org/linux-pm/20191015155735.GA29105@bogus/
+> > > > >
+> > > > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > > > > index c52d6fa32aac..b703c29a84be 100644
+> > > > > --- a/drivers/cpufreq/cpufreq.c
+> > > > > +++ b/drivers/cpufreq/cpufreq.c
+> > > > > @@ -1278,6 +1278,9 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
+> > > > >         }
+> > > > >
+> > > > >         dev_pm_qos_remove_request(policy->min_freq_req);
+> > > > > +       /* flush the pending policy->update work before freeing the policy */
+> > > > > +       if (work_pending(&policy->update))
+> > > >
+> > > > Isn't this racy?
+> > > >
+> > > > It still may be running if the pending bit is clear and we still need
+> > > > to wait for it then, don't we?
+> > > >
+> > > > Why don't you do an unconditional flush_work() here?
+> > >
+> > > You may as well do a cancel_work_sync() here, because whether or not
+> > > the last update of the policy happens before it goes away is a matter
+> > > of timing in any case
+> >
+> > In fact that's the first thing I tried to fix the issue I was seeing.
+> > But I then thought it would be better to complete the update as the PM
+> > QoS were getting updated back to DEFAULT values for the device. Even
+> > this works.
+> >
+> > What is your preference ? flush_work or cancel_work_sync ? I will
+> > update accordingly. I may need to do some more testing with
+> > cancel_work_sync as I just checked that quickly to confirm the race.
 >
->  #define IO_SIZE                (256*1024)
->
-> +static void __free_io_area(void *addr, unsigned long size);
->  static struct vm_struct *iolist;
->
->  static struct vm_struct *get_io_area(unsigned long size)
-> @@ -90,7 +91,7 @@ static inline void free_io_area(void *addr)
->                 if (tmp->addr == addr) {
->                         *p = tmp->next;
->                         /* remove gap added in get_io_area() */
-> -                       __iounmap(tmp->addr, tmp->size - IO_SIZE);
-> +                       __free_io_area(tmp->addr, tmp->size - IO_SIZE);
->                         kfree(tmp);
->                         return;
->                 }
-> @@ -249,12 +250,13 @@ void iounmap(void __iomem *addr)
->  }
->  EXPORT_SYMBOL(iounmap);
->
-> +#ifndef CPU_M68040_OR_M68060_ONLY
+> As I said in the other email, this work didn't come as a result of
+> removal of the qos request from cpufreq core and so must have come
+> from other thermal or similar events. In that case maybe doing
+> flush_work() is better before we remove the cpufreq driver. Though
+> Rafael's timing related comment makes sense as well, but now that we
+> have received the work before policy is removed, I will rather
+> complete the work and quit.
 
-Can you please move this block up, instead of adding more #ifdef cluttery?
-That would also remove the need for a forward declaration.
-
->  /*
-> - * __iounmap unmaps nearly everything, so be careful
-> + * __free_io_area unmaps nearly everything, so be careful
->   * Currently it doesn't free pointer/page tables anymore but this
->   * wasn't used anyway and might be added later.
->   */
-> -void __iounmap(void *addr, unsigned long size)
-> +static void __free_io_area(void *addr, unsigned long size)
->  {
->         unsigned long virtaddr = (unsigned long)addr;
->         pgd_t *pgd_dir;
-> @@ -297,6 +299,7 @@ void __iounmap(void *addr, unsigned long size)
->
->         flush_tlb_all();
->  }
-> +#endif /* CPU_M68040_OR_M68060_ONLY */
->
->  /*
->   * Set new cache mode for some kernel address space.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Well, the policy is going away, so the governor has been stopped for
+it already.  Even if the limit is updated, it will not be used anyway,
+so why bother with updating it?
