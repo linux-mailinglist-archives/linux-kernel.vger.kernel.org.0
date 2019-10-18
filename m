@@ -2,57 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6380DC6A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BA75DC67A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:50:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505070AbfJRNzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 09:55:13 -0400
-Received: from [221.146.236.9] ([221.146.236.9]:37486 "EHLO theworld.email"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727349AbfJRNzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 09:55:13 -0400
-Received: from [221.214.193.114] by 127.0.0.1; Thu, 17 Oct 2019 19:45:09 +0300
-Message-ID: <t---70587jl3s-501$e3@gmqqf.3p>
-From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
-Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
-To:     jeff@severus.org
-Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
-Date:   Thu, 17 Oct 19 19:45:09 GMT
+        id S2405743AbfJRNu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 09:50:28 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:54940 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731183AbfJRNu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 09:50:27 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 27700FB04;
+        Fri, 18 Oct 2019 15:50:24 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id TA8MpUsK2edw; Fri, 18 Oct 2019 15:50:23 +0200 (CEST)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id B98DB49A41; Fri, 18 Oct 2019 15:50:22 +0200 (CEST)
+Date:   Fri, 18 Oct 2019 15:50:22 +0200
+From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To:     "To : Lucas Stach" <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Carlo Caione <ccaione@baylibre.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: etnaviv: Add #cooling-cells
+Message-ID: <20191018135022.GA6728@bogon.m.sigxcpu.org>
+References: <cover.1568255903.git.agx@sigxcpu.org>
+ <6e9d761598b2361532146f43161fd05f3eee6545.1568255903.git.agx@sigxcpu.org>
 MIME-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="73_DC..49._0C4E.FB1A_B"
-X-Priority: 3
-X-MSMail-Priority: Normal
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6e9d761598b2361532146f43161fd05f3eee6545.1568255903.git.agx@sigxcpu.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+On Wed, Sep 11, 2019 at 07:40:36PM -0700, Guido Günther wrote:
+> Add #cooling-cells for when the gpu acts as a cooling device.
+> 
+> Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> ---
+>  .../devicetree/bindings/display/etnaviv/etnaviv-drm.txt          | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt b/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
+> index 8def11b16a24..640592e8ab2e 100644
+> --- a/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
+> @@ -21,6 +21,7 @@ Required properties:
+>  Optional properties:
+>  - power-domains: a power domain consumer specifier according to
+>    Documentation/devicetree/bindings/power/power_domain.txt
+> +- #cooling-cells: : If used as a cooling device, must be <2>
 
---73_DC..49._0C4E.FB1A_B
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+The other patch of the series made it into linux-next already but this
+documentation fixup didn't. Anything i can do to get this applied as
+well so documentation stays in sync?
+Cheers,
+ -- Guido
 
-Greetings
-
-My name is Barrister Hans Erich.
-
-I have a client who is interested to invest in your country, she is a well=
- known politician in her country and deserve a lucrative investment partne=
-rship with you outside her country without any delay   Please can you mana=
-ge such investment please Kindly reply for further details.
-
-Your full names ---------
-
-
-Your urgent response will be appreciated
-
-Thank you and God bless you.
-
-Barrister Hans Erich
-
-Yours sincerely,
-Barrister Hans Erich
-
---73_DC..49._0C4E.FB1A_B--
-
+>  
+>  example:
+>  
+> -- 
+> 2.23.0.rc1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
