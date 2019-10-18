@@ -2,129 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF630DC066
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A5F0DC073
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:01:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409633AbfJRI4E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 04:56:04 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57570 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731444AbfJRI4D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 04:56:03 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191018085601euoutp014aa2d2d6b16a3cabe3ebbf649fda5387~Ose9hpK4n1661716617euoutp01N
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 08:56:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191018085601euoutp014aa2d2d6b16a3cabe3ebbf649fda5387~Ose9hpK4n1661716617euoutp01N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1571388961;
-        bh=q3xlbm1BY1W0K5WQh9byPKRVfevefn4Z2BQqp8kg1pc=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=IYixdh9Qr72oEwwu39eJW/pmsoetNyvudIbcMdJ2yIQEIGMjBM1akNE3G8N/Docwr
-         s2++zOZIcgU3XqCUJ+gLx3jeoguX7psGnTaLU/YQdUrdOkxrvYVMXGIpVgHUyQnlSo
-         CPielhJ3Qm3Clav/eo1UfZaFbCuYIBrxG210Z414=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191018085601eucas1p1627e3454057f0fb608eb0c3b4f5de391~Ose9TwDeG2450824508eucas1p1y;
-        Fri, 18 Oct 2019 08:56:01 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 4E.54.04469.12E79AD5; Fri, 18
-        Oct 2019 09:56:01 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191018085601eucas1p2551a8254a4f6a9aaa0776f69d582ca80~Ose9ATwUq2612526125eucas1p2z;
-        Fri, 18 Oct 2019 08:56:01 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191018085601eusmtrp2896e58267ab860b9349aa36512494d0e~Ose8-ojnk1671616716eusmtrp2g;
-        Fri, 18 Oct 2019 08:56:01 +0000 (GMT)
-X-AuditID: cbfec7f2-54fff70000001175-c6-5da97e215e02
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 3F.81.04166.02E79AD5; Fri, 18
-        Oct 2019 09:56:01 +0100 (BST)
-Received: from [106.120.51.75] (unknown [106.120.51.75]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191018085600eusmtip255efb5c390c2eb11a25b0f648f4e5f71~Ose8lv-3l1114711147eusmtip2R;
-        Fri, 18 Oct 2019 08:56:00 +0000 (GMT)
-Subject: Re: [PATCH v2 28/33] ASoC: samsung: Use pr_warn instead of
- pr_warning
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <821f1fbf-8719-e0dc-d6d6-067376209243@samsung.com>
-Date:   Fri, 18 Oct 2019 10:55:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        id S2442266AbfJRJBf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 05:01:35 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:58958 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S2442255AbfJRJBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 05:01:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B6653E8;
+        Fri, 18 Oct 2019 02:01:07 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D87763F718;
+        Fri, 18 Oct 2019 02:01:05 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 10:01:03 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Jeremy Linton <jeremy.linton@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        rnayak@codeaurora.org, suzuki.poulose@arm.com,
+        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        linux-arm-msm@vger.kernel.org, andrew.murray@arm.com,
+        will@kernel.org, Dave.Martin@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: Relax CPU features sanity checking on heterogeneous architectures
+Message-ID: <20191018090103.GC19734@arrakis.emea.arm.com>
+References: <b3606e76af42f7ecf65b1bfc2a5ed30a@codeaurora.org>
+ <20191011105010.GA29364@lakrids.cambridge.arm.com>
+ <20191011143343.541da66c@why>
+ <20191011135431.GB33537@lakrids.cambridge.arm.com>
+ <aee2d915-3801-cc35-2a37-0c7d0ad7488e@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20191018031850.48498-28-wangkefeng.wang@huawei.com>
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUhTYRTGe3fv3b0bza5T82BRNBT68mMgMbIkoWTgHxkFfZrd8qKSTtl1
-        pglmZqJmpinYhpVS6jYSzYafUDlNU8vlJJFETCYi0krnLETU2q6V//3Oe55znvPAS2HSVsKP
-        SlSlsWoVkyQTivGW3mVL4J5sQ0yIbn67wmJpIhUjHVVCRWHHA0KxblsiFMN6p0DRsGgjFU2/
-        GpDi9uIkOkYp23UTpDKvx04om42FQuVre51QWWIyImWj6TOuXGzeFU1eEB+JY5MS01l1cPgV
-        cUJNSTeWaiYyama/YDloGC9CIgroUFjTDgmKkJiS0noE63XfCL5wIrCWF5F8sYigdcrxb6Qu
-        /z3GN+oRzDkcGyN2BGXGFVSEKMqLjoYKU6gLvemDUNOtcUkw+q4Apt5oSdciIS2H++9KkIsl
-        dDiMz+e6DXA6AGyfKt1rfOhzMLjE8BJP6NdOuyUiOgL655xuxmhfyHUaCJ53Q6u9CnONAj1A
-        gi2RP/k42FZtGM9eMNdnInneCevtT93pgb6DoLhznOSLUgSTfdWIV4VBd98w4VqK0fugsSOY
-        f46AZfOqgPfygDG7J3+CBzxsqdw4QQIF+VJe7Q8rxkoBz35wb3odL0Uy3aZguk1hdJvC6P77
-        ViPciHxZDZccz3JyFXsjiGOSOY0qPuhaSnIz+vOdBtf6HG1oyXrVjGgKybZK2qL1MVKCSecy
-        k80IKEzmLTkdZoiRSuKYzJusOiVWrUliOTPaQeEyX0nWlq8XpXQ8k8ZeZ9lUVv23K6BEfjno
-        cua2wJmj/amPnof4d6mKL5WKPg58GDVPjJ48LFe/omr1xZ2RhhnRgd6msdoAU85CxfnZrNLq
-        yH52Pq9g9dAPg2esjzGqs+Ztz6kqS8bQzzQt7vvibPn3hDNWa/7YcmGUUMA8Eb2sFoSdyPXe
-        uzBYhi+dFjeNZN+qn3/ctSJ6FiTDuQRGvh9Tc8xvfrQyTkoDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xe7qKdStjDS6uZ7I4f34Du8XlXXPY
-        LDp39bNa/H/8ldXi4oovTBZrPz9mt9jwfS2jRePn+4wOHB47Z91l92g58pbVY9OqTjaPfW+X
-        sXn0bVnF6LF+y1UWj8+b5ALYo/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV
-        9O1sUlJzMstSi/TtEvQyFvYdZi44xFqx8MUt5gbGiyxdjJwcEgImEsvaTjB3MXJxCAksZZRY
-        f/Q7excjB1BCSmJ+ixJEjbDEn2tdbBA1rxklNq1YyAiSEBbwk5h1bQUrSL2IgI7EwsOlIDXM
-        Aq1MEg+fnGWHaGhgknjW8BqsgU3AUKL3aB+YzStgJ3H7QxPYFSwCqhKPL0wHi4sKREg8334D
-        qkZQ4uTMJ2A1nAKOEidffQGzmQXUJf7Mu8QMYYtLNH1ZyQphy0tsfzuHeQKj0Cwk7bOQtMxC
-        0jILScsCRpZVjCKppcW56bnFhnrFibnFpXnpesn5uZsYgTG57djPzTsYL20MPsQowMGoxMO7
-        I2BFrBBrYllxZe4hRgkOZiUR3mDrlbFCvCmJlVWpRfnxRaU5qcWHGE2BnpvILCWanA9MF3kl
-        8YamhuYWlobmxubGZhZK4rwdAgdjhATSE0tSs1NTC1KLYPqYODilGhibHWJ/N4U84v5TMo/b
-        4ZZDiT/P+qzNcnHzb/1d1nejr+INQ7/W088xico73gSrXVneW7R2nU/EPu99yhzn8pyy1p3f
-        1StjcyLTZIdu7LVvs3r+Le78mS1eoD9xsXRwUAp7tcvmnZ/f8uec376rUyT5z89Dtp+2zytr
-        Xvnph/P5c1tO1WU63r2mxFKckWioxVxUnAgA7qWudd8CAAA=
-X-CMS-MailID: 20191018085601eucas1p2551a8254a4f6a9aaa0776f69d582ca80
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191018031948epcas5p42a9c51ef72e83ba6c39dba80c9220d13
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191018031948epcas5p42a9c51ef72e83ba6c39dba80c9220d13
-References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
-        <20191018031850.48498-1-wangkefeng.wang@huawei.com>
-        <CGME20191018031948epcas5p42a9c51ef72e83ba6c39dba80c9220d13@epcas5p4.samsung.com>
-        <20191018031850.48498-28-wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aee2d915-3801-cc35-2a37-0c7d0ad7488e@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/19 05:18, Kefeng Wang wrote:
-> As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
-> pr_warning"), removing pr_warning so all logging messages use a
-> consistent <prefix>_warn style. Let's do it.
+On Thu, Oct 17, 2019 at 04:39:23PM -0500, Jeremy Linton wrote:
+> On 10/11/19 8:54 AM, Mark Rutland wrote:
+> > On Fri, Oct 11, 2019 at 02:33:43PM +0100, Marc Zyngier wrote:
+> > > On Fri, 11 Oct 2019 11:50:11 +0100
+> > > Mark Rutland <mark.rutland@arm.com> wrote:
+> > > > On Fri, Oct 11, 2019 at 11:19:00AM +0530, Sai Prakash Ranjan wrote:
+> > > > > On latest QCOM SoCs like SM8150 and SC7180 with big.LITTLE arch, below
+> > > > > warnings are observed during bootup of big cpu cores.
+> > > > 
+> > > > For reference, which CPUs are in those SoCs?
+> > > > 
+> > > > > SM8150:
+> > > > > 
+> > > > > [    0.271177] CPU features: SANITY CHECK: Unexpected variation in
+> > > > > SYS_ID_AA64PFR0_EL1. Boot CPU: 0x00000011112222, CPU4: 0x00000011111112
+> > > > 
+> > > > The differing fields are EL3, EL2, and EL1: the boot CPU supports
+> > > > AArch64 and AArch32 at those exception levels, while the secondary only
+> > > > supports AArch64.
+> > > > 
+> > > > Do we handle this variation in KVM?
+> > > 
+> > > We do, at least at vcpu creation time (see kvm_reset_vcpu). But if one
+> > > of the !AArch32 CPU comes in late in the game (after we've started a
+> > > guest), all bets are off (we'll schedule the 32bit guest on that CPU,
+> > > enter the guest, immediately take an Illegal Exception Return, and
+> > > return to userspace with KVM_EXIT_FAIL_ENTRY).
+> > 
+> > Ouch. We certainly can't remove the warning untill we deal with that
+> > somehow, then.
+
+Luckily, qemu refuses to start a guest on two different CPU types.
+
+> > > Not sure we could do better, given the HW. My preference would be to
+> > > fail these CPUs if they aren't present at boot time.
+
+That's my preference as well.
+
+> > I agree; I think we need logic to check the ID register fields against
+> > their EXACT, {LOWER,HIGHER}_SAFE, etc rules regardless of whether we
+> > have an associated cap. That can then abort a late onlining of a CPU
+> > which violates those rules w.r.t. the finalised system value.
 > 
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Sangbeom Kim <sbkim73@samsung.com>
+> Except one of the cases is the user who doesn't care about aarch32 @ el2/1
+> and just wants to add another core to their 64-bit "clean" OS.
+> 
+> So my $.02 is the online should only fail if someone has actually started a
+> 32-bit guest on the machine.
 
-> Cc: Jaroslav Kysela <perex@perex.cz>
-> Cc: Takashi Iwai <tiwai@suse.com>
-> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+I don't really think it's worth the hassle. This could even be racy
+(32-bit guest starting at the same time with a CPU being onlined), so it
+needs extra care.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+If you have such platform, just make sure that you don't have
+incompatible CPUs coming up late (during boot it should be fine).
 
-However you need to send this patch to the maintainer directly
-(Mark Brown <broonie@kernel.org>).
+> > I suspect that we may want to split the notion of
+> > safe-for-{user,kernel-guest} in the feature tables, as if nothing else
+> > it will force us to consider those cases separately when adding new
+> > stuff.
+> 
+> As i'm sure everyone knows, this is all going to happen again with el0
+> support. I wonder if some of this more "advanced" functionality should be
+> buried behind EXPERT. At least on ACPI its possible to tell at early boot if
+> the machine is heterogeneous (not necessarily in which ways) and just
+> automatically sanitize away 32-bit support and some of the stickier things
+> when a heterogeneous machine is detected.
+
+We should improve (remove) the warnings for things we know the kernel
+can handled during boot. For example, 32-bit not available on all CPUs
+during boot should be fine as we just disable the feature. However, late
+onlining of a CPU that does not support the already advertised features
+should be blocked.
 
 -- 
-Thanks,
-Sylwester
+Catalin
