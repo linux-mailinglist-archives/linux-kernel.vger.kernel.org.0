@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F830DC8FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBA50DC8F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:42:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439667AbfJRPma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 11:42:30 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:33891 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405757AbfJRPmY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2408885AbfJRPmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 18 Oct 2019 11:42:24 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:57303 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405905AbfJRPmX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 11:42:23 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N4yyQ-1hw0zj14Bo-010v3h; Fri, 18 Oct 2019 17:42:15 +0200
+ 1MEmEf-1iFAs82Qix-00GEsw; Fri, 18 Oct 2019 17:42:15 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Daniel Mack <daniel@zonque.org>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
@@ -22,75 +22,79 @@ To:     Daniel Mack <daniel@zonque.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 02/46] ARM: pxa: make mainstone.h private
-Date:   Fri, 18 Oct 2019 17:41:17 +0200
-Message-Id: <20191018154201.1276638-2-arnd@arndb.de>
+Subject: [PATCH 03/46] ARM: pxa: make mach/regs-uart.h private
+Date:   Fri, 18 Oct 2019 17:41:18 +0200
+Message-Id: <20191018154201.1276638-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191018154052.1276506-1-arnd@arndb.de>
 References: <20191018154052.1276506-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Udhcyk5JTS+ruoRMUBkQ73+mMSZy0d6F8odqYEMh7EWVHlDFzur
- YAEHqgrq+6iEyuzDWfYlOEdN39pwhvaBUi+HBb9kxUqrvfJlTjXn855pEb+7YSKgIprottH
- MbhG5NkvUIaQ0ECtq/JAjNi+AVRlCOLCRx/ZN6koBpNCOTmwQ3P79YeKdno98qrVG5s8Yi6
- Y3HbEZGQiC3QS33gy/aTw==
+X-Provags-ID: V03:K1:VWwIzXDORj0a17r+gbKmSAymG/HQiOvLGrDQVrBqqaWyL+kaOFg
+ kz/BJmNkZLMkdXDKomnkUST9RFEVbMmw6Eueu5P+bdIyhmsH0wU6iN0HDnZJnnUUQ+CulUt
+ cr9pOSXAqqpiwZVxzmTr09E0aSD/9to7NowPy3VMmmzQYJr6fKEAh49hfq2lNpA5IE72OEh
+ ac2JWwNOlJTux1MJ4zDZA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:w/pvqB/8ZjQ=:HM9Y+saKdz/Ra2pTCD68uI
- ez8gWpTbJGikKnT+7vjNu9KlZgCm57FRFctO5LdaDPs/nfVNYJNQpv7I48UW+xU1bdTTiCGSL
- mFjuUrBG0wfWKCNSuywhTdM6U8rNyteawBB0kUjCJCmYTfosBm1iXOEYa4ETxDLT6z557dg+g
- oLO6yuYuJNWtH6sytz0F9v1JvwrhodqorHtNdsqVeH8RHGTkjGP7krcBCsok9WFVttCRsX1mC
- gjaLi2849Qu9qm/F9H7yWcqfP4iW1axKXxS7q1E1zKAxPdfO+pT0H6xKae62ZvnFU6wCIQQb8
- bbEd9cgwOoH8fWDKWFdtAwEt1rwwW0RBGyOCtIhDiUpYvOSNOR/lh5mWAQDc42rndghO/ocLc
- hErANl15R+1R+4kNCIQOcSa4YGZbDXhd6Xb8ocWo53R3S0yINI9lHY6NZ8xId9Xum+2I8NK/C
- DlZj6hiZ9bWV6NP4w9b6XfqYLlNNuYNMGWG3t0U45GN36HGJAa6HoxfMm144/sflj/wYW7r3S
- TrFjNe451sLWiNeY1NzlJxUUf9TQMPcjPIjtjfUnPKDIT0xNxz9TE4snvpy0cDh7Fr863oKqd
- w9YmLnRJhTf2ldm3UMtodbPAcivqYyW2fje4RkW1HT2u8ipb2JzMJQSzdoku4KKysXxlBg46f
- A23w7eririCR+9cZllRIEIMUHtOHYAHIbGC+dVwjPBGLvV5mxeXYNDJXODUL4exuOiSPsTCyp
- 8xG2F809Az1b8mmfrswFOqZofNtU0ZKWSMcR0hyWyuR9FWJjpEu+I7AIJnD/iIp8W1J4DUWNr
- dcIObRIUANNlFD5FFVkIzNXzCfFep8CNEMJEahXFxTZ3HOr7Fu0FO+zgCIx9Ho2YG9lyfT9ny
- iTsG2Rj0l1hzZUzZhrEA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/9qNABDzT9Q=:/tbjJ7gi4/f1W3oXPMyS65
+ t2hHmsMewJ1IVUSpoCtphMBiTAfDZ5k6gRVR7IEp9xJKuUZBACPp6kJdUhqLqh88JQD/a2gtg
+ iz1qnCzCXWtRnbb+qDkp/QeXI6JcZfCpQpdj9P/5JeMSghhR8faRhlm8R63L3iasM4I/sV3FZ
+ ZlQOG/ushFXRsWFFTlQlMl/QHfQYaUVFndu9gGGoOXZwTXyGxGr1KGGBIh6rw3g8iwvy897ar
+ oPGsZOwKoPl/JHwGAVyyYH3fQnhEEQQ+sv0EUARnv2NzQ0ouafuzb5LZfSBwmGQp3p0MvERXm
+ EgE6olH+Hw3smPyjR9Uf32YAg1v9W+JpAAHu6vkIb2DB8J9Zq+B18dQuBG92Mc3N3o3ekDzJf
+ r/jvQu97uAeniUDlMwYAc48KbAq91fyjyizPo37FhMvXb4zFIKN7iab6eEOJY6NFaQxgwzZex
+ nkTJ8dnUvJszqUF9gxUadvFEsa/XE+6FZDPsLRtLg1BEeXxNQ65/bV7J7KCZstM4OrkNO249Q
+ ILOiKPYADMqu8UeTCSeWXKbuOScVVA0YDYUXZo9j1YNfmH1IWmJ5kwYPZtGDotdf+rtn+6k2G
+ tix2SNmbuVnrrdWN9HSFVDdCMNGOPuqHu7iVd0BUWYk90uk0YyKs9bt1inwPi2DAy84y4lmJB
+ dJCqWR89UrPxF2LD2SZGT8KipgcqMJFA0CW0vnNX7LWYYhPVQvmmVjRYfpdppqSPxJq8C5mPO
+ MMfyKDCdIHggXOXafhxAja4preDaRQH0t9+ZItblLfGeIROXMtwfNxbCiPRth6zfLqZdpDiZg
+ U9HQ0aoRePdmEHETkgA0aHmLwSq6A+wxCeejah1G1lm5fZ557Tv49Xb2h8T7tb9LrV+aVfN2I
+ GokFR5JCL4Z6vWXFvfTw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No driver includes this any more, so don't expose it globally.
+This is not used by any drivers, so make it private to the
+platform.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-pxa/mainstone.c                    | 2 +-
- arch/arm/mach-pxa/{include/mach => }/mainstone.h | 2 --
- 2 files changed, 1 insertion(+), 3 deletions(-)
- rename arch/arm/mach-pxa/{include/mach => }/mainstone.h (99%)
+ arch/arm/mach-pxa/{include/mach => }/regs-uart.h | 0
+ arch/arm/mach-pxa/viper.c                        | 2 +-
+ arch/arm/mach-pxa/zeus.c                         | 2 +-
+ 3 files changed, 2 insertions(+), 2 deletions(-)
+ rename arch/arm/mach-pxa/{include/mach => }/regs-uart.h (100%)
 
-diff --git a/arch/arm/mach-pxa/mainstone.c b/arch/arm/mach-pxa/mainstone.c
-index 1b7882920164..ef79417ca001 100644
---- a/arch/arm/mach-pxa/mainstone.c
-+++ b/arch/arm/mach-pxa/mainstone.c
-@@ -45,7 +45,7 @@
- #include <asm/mach/flash.h>
- 
- #include "pxa27x.h"
--#include <mach/mainstone.h>
-+#include "mainstone.h"
+diff --git a/arch/arm/mach-pxa/include/mach/regs-uart.h b/arch/arm/mach-pxa/regs-uart.h
+similarity index 100%
+rename from arch/arm/mach-pxa/include/mach/regs-uart.h
+rename to arch/arm/mach-pxa/regs-uart.h
+diff --git a/arch/arm/mach-pxa/viper.c b/arch/arm/mach-pxa/viper.c
+index c06031da6676..16f33e576902 100644
+--- a/arch/arm/mach-pxa/viper.c
++++ b/arch/arm/mach-pxa/viper.c
+@@ -48,7 +48,7 @@
+ #include "pxa25x.h"
  #include <mach/audio.h>
  #include <linux/platform_data/video-pxafb.h>
+-#include <mach/regs-uart.h>
++#include "regs-uart.h"
+ #include <linux/platform_data/pcmcia-pxa2xx_viper.h>
+ #include "viper.h"
+ 
+diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
+index da113c8eefbf..239faff71a1f 100644
+--- a/arch/arm/mach-pxa/zeus.c
++++ b/arch/arm/mach-pxa/zeus.c
+@@ -39,7 +39,7 @@
+ 
+ #include "pxa27x.h"
+ #include "devices.h"
+-#include <mach/regs-uart.h>
++#include "regs-uart.h"
+ #include <linux/platform_data/usb-ohci-pxa27x.h>
  #include <linux/platform_data/mmc-pxamci.h>
-diff --git a/arch/arm/mach-pxa/include/mach/mainstone.h b/arch/arm/mach-pxa/mainstone.h
-similarity index 99%
-rename from arch/arm/mach-pxa/include/mach/mainstone.h
-rename to arch/arm/mach-pxa/mainstone.h
-index 1698f2ffd7c7..ba003742e003 100644
---- a/arch/arm/mach-pxa/include/mach/mainstone.h
-+++ b/arch/arm/mach-pxa/mainstone.h
-@@ -1,7 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- *  arch/arm/mach-pxa/include/mach/mainstone.h
-- *
-  *  Author:	Nicolas Pitre
-  *  Created:	Nov 14, 2002
-  *  Copyright:	MontaVista Software Inc.
+ #include "pxa27x-udc.h"
 -- 
 2.20.0
 
