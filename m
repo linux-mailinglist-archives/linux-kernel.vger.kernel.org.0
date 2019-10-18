@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61EDEDD365
+	by mail.lfdr.de (Postfix) with ESMTP id D053EDD366
 	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:19:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732380AbfJRWHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:07:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38926 "EHLO mail.kernel.org"
+        id S1732422AbfJRWHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:07:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732082AbfJRWGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:06:52 -0400
+        id S1732127AbfJRWGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:06:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 472DD222C2;
-        Fri, 18 Oct 2019 22:06:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31F502245D;
+        Fri, 18 Oct 2019 22:06:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436412;
-        bh=OpdQKWgkWEMQGNYgDw5UyjWUZH61gprm3YzQN2Eh7jA=;
+        s=default; t=1571436415;
+        bh=FxnXi6ieQJiByUUrfBmm0/Y9UkyehQruV0wZx9VOxbc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hrUD426vDf4BUBO/uj0EOKaqeBGjdrSHyPZ5fXCcZtUxy2D6SlKccdAVWXYKGxSJN
-         PRQFucowvGNxgerNWrVKUWaaqWSdAWCyJZBCtbCWhO8JQFdCd+GQmz+h3FEFrEXU2o
-         uLzJK7icnMvi3YQyg1ZjKKEF4jyNxb6XZLs9JM68=
+        b=u8fm2q1Ykhj9xMqkT2LTIW3oWMy9VTdIK6Klv4OJ/oRF9dUnW4OOW4HY+3UOA6dok
+         8Phvde1pbv7Bp39AU/ygQoqlCdwbGCcuc/oJsAn3fDatJPSnOZl6hmeoE7/WZCUBpY
+         RNQwdI2CktVgFSBk/DYi9RE2W4hYnyUISbbL0yfc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
         Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 057/100] perf tools: Propagate get_cpuid() error
-Date:   Fri, 18 Oct 2019 18:04:42 -0400
-Message-Id: <20191018220525.9042-57-sashal@kernel.org>
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 059/100] perf annotate: Fix the signedness of failure returns
+Date:   Fri, 18 Oct 2019 18:04:44 -0400
+Message-Id: <20191018220525.9042-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
 References: <20191018220525.9042-1-sashal@kernel.org>
@@ -47,134 +50,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit f67001a4a08eb124197ed4376941e1da9cf94b42 ]
+[ Upstream commit 28f4417c3333940b242af03d90214f713bbef232 ]
 
-For consistency, propagate the exact cause for get_cpuid() to have
-failed.
+Callers of symbol__annotate() expect a errno value or some other
+extended error value range in symbol__strerror_disassemble() to
+convert to a proper error string, fix it when propagating a failure to
+find the arch specific annotation routines via arch__find(arch_name).
 
+Reported-by: Russell King - ARM Linux admin <linux@armlinux.org.uk>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-9ig269f7ktnhh99g4l15vpu2@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+Cc: Will Deacon <will@kernel.org>
+Link: https://lkml.kernel.org/n/tip-o0k6dw7cas0vvmjjvgsyvu1i@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/powerpc/util/header.c | 3 ++-
- tools/perf/arch/s390/util/header.c    | 9 +++++----
- tools/perf/arch/x86/util/header.c     | 3 ++-
- tools/perf/builtin-kvm.c              | 7 ++++---
- 4 files changed, 13 insertions(+), 9 deletions(-)
+ tools/perf/util/annotate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/arch/powerpc/util/header.c b/tools/perf/arch/powerpc/util/header.c
-index 0b242664f5ea7..e46be9ef5a688 100644
---- a/tools/perf/arch/powerpc/util/header.c
-+++ b/tools/perf/arch/powerpc/util/header.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <sys/types.h>
-+#include <errno.h>
- #include <unistd.h>
- #include <stdio.h>
- #include <stdlib.h>
-@@ -31,7 +32,7 @@ get_cpuid(char *buffer, size_t sz)
- 		buffer[nb-1] = '\0';
- 		return 0;
- 	}
--	return -1;
-+	return ENOBUFS;
- }
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 4ef62bcdc80f0..b4946ef48b621 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -1875,7 +1875,7 @@ int symbol__annotate(struct symbol *sym, struct map *map,
  
- char *
-diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
-index 163b92f339980..cc72554c362a1 100644
---- a/tools/perf/arch/s390/util/header.c
-+++ b/tools/perf/arch/s390/util/header.c
-@@ -11,6 +11,7 @@
-  */
+ 	args.arch = arch = arch__find(arch_name);
+ 	if (arch == NULL)
+-		return -ENOTSUP;
++		return ENOTSUP;
  
- #include <sys/types.h>
-+#include <errno.h>
- #include <unistd.h>
- #include <stdio.h>
- #include <string.h>
-@@ -56,7 +57,7 @@ int get_cpuid(char *buffer, size_t sz)
- 
- 	sysinfo = fopen(SYSINFO, "r");
- 	if (sysinfo == NULL)
--		return -1;
-+		return errno;
- 
- 	while ((read = getline(&line, &line_sz, sysinfo)) != -1) {
- 		if (!strncmp(line, SYSINFO_MANU, strlen(SYSINFO_MANU))) {
-@@ -91,7 +92,7 @@ int get_cpuid(char *buffer, size_t sz)
- 
- 	/* Missing manufacturer, type or model information should not happen */
- 	if (!manufacturer[0] || !type[0] || !model[0])
--		return -1;
-+		return EINVAL;
- 
- 	/*
- 	 * Scan /proc/service_levels and return the CPU-MF counter facility
-@@ -135,14 +136,14 @@ int get_cpuid(char *buffer, size_t sz)
- 	else
- 		nbytes = snprintf(buffer, sz, "%s,%s,%s", manufacturer, type,
- 				  model);
--	return (nbytes >= sz) ? -1 : 0;
-+	return (nbytes >= sz) ? ENOBUFS : 0;
- }
- 
- char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
- {
- 	char *buf = malloc(128);
- 
--	if (buf && get_cpuid(buf, 128) < 0)
-+	if (buf && get_cpuid(buf, 128))
- 		zfree(&buf);
- 	return buf;
- }
-diff --git a/tools/perf/arch/x86/util/header.c b/tools/perf/arch/x86/util/header.c
-index fb0d71afee8bb..2a5daec6fb8b0 100644
---- a/tools/perf/arch/x86/util/header.c
-+++ b/tools/perf/arch/x86/util/header.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <sys/types.h>
-+#include <errno.h>
- #include <unistd.h>
- #include <stdio.h>
- #include <stdlib.h>
-@@ -56,7 +57,7 @@ __get_cpuid(char *buffer, size_t sz, const char *fmt)
- 		buffer[nb-1] = '\0';
- 		return 0;
- 	}
--	return -1;
-+	return ENOBUFS;
- }
- 
- int
-diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-index 2b1ef704169f2..952e2228f6c60 100644
---- a/tools/perf/builtin-kvm.c
-+++ b/tools/perf/builtin-kvm.c
-@@ -699,14 +699,15 @@ static int process_sample_event(struct perf_tool *tool,
- 
- static int cpu_isa_config(struct perf_kvm_stat *kvm)
- {
--	char buf[64], *cpuid;
-+	char buf[128], *cpuid;
- 	int err;
- 
- 	if (kvm->live) {
- 		err = get_cpuid(buf, sizeof(buf));
- 		if (err != 0) {
--			pr_err("Failed to look up CPU type\n");
--			return err;
-+			pr_err("Failed to look up CPU type: %s\n",
-+			       str_error_r(err, buf, sizeof(buf)));
-+			return -err;
- 		}
- 		cpuid = buf;
- 	} else
+ 	if (parch)
+ 		*parch = arch;
 -- 
 2.20.1
 
