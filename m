@@ -2,202 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D16DBAD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 02:28:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3FC1DBADF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 02:29:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404577AbfJRA21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 20:28:27 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37677 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728495AbfJRA20 (ORCPT
+        id S2407082AbfJRA2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 20:28:46 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:31506 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404597AbfJRA2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 20:28:26 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p14so4293298wro.4
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 17:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0/AgeDaGZGO42j9ebgYZTy9x0zQEtmqzx5blEqfMmss=;
-        b=YQECsyjC+nZoz0FH5ycVzM1x1VsIw6Xjvlh+ckNwEI22KmLb2sCThylJRTklDdmoWL
-         +zOixiGEbNb4ZBWygHLJgPtMgni+IIF9PJSR6t/OKDnW7SJpQGYaE1xp6m8nK2yaifx4
-         Kio2psPQFS3eYvCRqC0hjTXXTjfUmqYBRWjV/MoTBVFTPVuDvNAVhDU4nu4yCwaf8xxP
-         rAZqkeeYJduhFa+sYWRO/47kJ6zHxhXDTRv7QL3RnHuvqDxQqesQ+dFfpme9Zr/JcR5y
-         02jCJpw3C0ZD+sIXuvBXffhGIwv/ReUbnxIfyIpao5yG/GJHMCA5AzyzXwLt71GrvWQi
-         OFWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0/AgeDaGZGO42j9ebgYZTy9x0zQEtmqzx5blEqfMmss=;
-        b=QSmi8sgqSTU06e/ssPsNpayJX/kc2DgJoeCWjlrg2Sk8whjl3lfAUDrePBrNwGm60m
-         8cW8k1ahPPQAouaQ0ABvVJbi6KL90FdaQ5aGAnvVQ3R7vUH/lbTtDWmD3a2i7eu2pVoo
-         OCleaBsr+bAfQi4+mi1MPAq1Ih8MfxF8d1IvSuCg9qBIRK96keUxRkM9bBlIRt12A2PM
-         MyJa5JG/BmVhAxG3nrbqiT2wJ+tPZz5oDjrM59guZmjcEcTQ9Cnr1DHLjjaWPUpPpy9C
-         NMoSsKFgKX/IO8GvsIV7p9z5l7qENlWREAdOYldv6VoX/MXHAWqXNIAcZL94t6TfMxzD
-         yAbQ==
-X-Gm-Message-State: APjAAAXUR7iZnZnDgxS/Gz42wrJzYEFTTVmwnPjzTxpbmhezjQ5d3B93
-        JdP6s9EIVYZeKmv8CCF8JPE=
-X-Google-Smtp-Source: APXvYqzoTU83NO/IoYd1Z3a6cY6xZumEXr92tQ3sJy3NJCFRY7sFzgYEbpbPEYEaNmOPWN+BO9B/kQ==
-X-Received: by 2002:adf:f24c:: with SMTP id b12mr5647700wrp.82.1571358504903;
-        Thu, 17 Oct 2019 17:28:24 -0700 (PDT)
-Received: from localhost.localdomain ([104.238.174.53])
-        by smtp.gmail.com with ESMTPSA id p10sm4437649wrx.2.2019.10.17.17.28.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 17:28:23 -0700 (PDT)
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH v5 2/2] perf: add support for logging debug messages to file
-Date:   Fri, 18 Oct 2019 08:27:57 +0800
-Message-Id: <20191018002757.4112-3-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191018002757.4112-1-changbin.du@gmail.com>
-References: <20191018002757.4112-1-changbin.du@gmail.com>
+        Thu, 17 Oct 2019 20:28:39 -0400
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9I0OMlL002611
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 17:28:37 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=KJuj2h5kFIqlCHoCvQvjqiWCfrs/97lam01HAjo1aEw=;
+ b=CFfepWBvGdpsFUDe41TogfLEmZAf1kl2XC4kRgXIQs9tCCxYd4uIIbp+4m53PsuDuGVr
+ AoL90gLOVYjjZK9i6SJqNV2vdEjdyPxqA6zNusQQYOLbgQMlRTapXHRJbY8BYVtCcSLr
+ 35sxFJcuVYf0bmK1R9Ngj8+sebUOPbIoNvw= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2vq2nkr1pg-6
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 17:28:37 -0700
+Received: from 2401:db00:30:600c:face:0:39:0 (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 17 Oct 2019 17:28:35 -0700
+Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
+        id E0DD718CE8474; Thu, 17 Oct 2019 17:28:33 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Roman Gushchin <guro@fb.com>
+Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
+To:     <linux-mm@kvack.org>
+CC:     Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Waiman Long <longman@redhat.com>,
+        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH 00/16] The new slab memory controller
+Date:   Thu, 17 Oct 2019 17:28:04 -0700
+Message-ID: <20191018002820.307763-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-17_07:2019-10-17,2019-10-17 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=999
+ spamscore=0 clxscore=1015 suspectscore=0 bulkscore=0 impostorscore=0
+ mlxscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910180001
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When in TUI mode, it is impossible to show all the debug messages to
-console. This make it hard to debug perf issues using debug messages.
-This patch adds support for logging debug messages to file to resolve
-this problem.
+The existing slab memory controller is based on the idea of replicating
+slab allocator internals for each memory cgroup. This approach promises
+a low memory overhead (one pointer per page), and isn't adding too much
+code on hot allocation and release paths. But is has a very serious flaw:
+it leads to a low slab utilization.
 
-The usage is:
-perf -debug verbose=2,file=~/perf.log COMMAND
+Using a drgn* script I've got an estimation of slab utilization on
+a number of machines running different production workloads. In most
+cases it was between 45% and 65%, and the best number I've seen was
+around 85%. Turning kmem accounting off brings it to high 90s. Also
+it brings back 30-50% of slab memory. It means that the real price
+of the existing slab memory controller is way bigger than a pointer
+per page.
 
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
+The real reason why the existing design leads to a low slab utilization
+is simple: slab pages are used exclusively by one memory cgroup.
+If there are only few allocations of certain size made by a cgroup,
+or if some active objects (e.g. dentries) are left after the cgroup is
+deleted, or the cgroup contains a single-threaded application which is
+barely allocating any kernel objects, but does it every time on a new CPU:
+in all these cases the resulting slab utilization is very low.
+If kmem accounting is off, the kernel is able to use free space
+on slab pages for other allocations.
 
----
-v5: doc default log path.
-v4: fix another segfault.
-v3: fix a segfault issue.
----
- tools/perf/Documentation/perf.txt | 16 ++++++-----
- tools/perf/util/debug.c           | 44 ++++++++++++++++++++++++++++---
- 2 files changed, 50 insertions(+), 10 deletions(-)
+Arguably it wasn't an issue back to days when the kmem controller was
+introduced and was an opt-in feature, which had to be turned on
+individually for each memory cgroup. But now it's turned on by default
+on both cgroup v1 and v2. And modern systemd-based systems tend to
+create a large number of cgroups.
 
-diff --git a/tools/perf/Documentation/perf.txt b/tools/perf/Documentation/perf.txt
-index c05a94b2488e..48376be3c97a 100644
---- a/tools/perf/Documentation/perf.txt
-+++ b/tools/perf/Documentation/perf.txt
-@@ -16,14 +16,18 @@ OPTIONS
- 	Setup debug variable (see list below) in value
- 	range (0, 10). Use like:
- 	  --debug verbose   # sets verbose = 1
--	  --debug verbose=2 # sets verbose = 2
-+	  --debug verbose=2,file=~/perf.log
-+	                    # sets verbose = 2 and save log to file
- 
- 	List of debug variables allowed to set:
--	  verbose=level		- general debug messages
--	  ordered-events=level	- ordered events object debug messages
--	  data-convert=level	- data convert command debug messages
--	  stderr		- write debug output (option -v) to stderr
--				  in browser mode
-+	  verbose=level         - general debug messages
-+	  ordered-events=level  - ordered events object debug messages
-+	  data-convert=level    - data convert command debug messages
-+	  stderr                - write debug output (option -v) to stderr
-+	                          in browser mode
-+	  file[=path]           - write debug output to log file, default
-+	                          'perf.log' (stderr and file options are
-+	                          exclusive)
- 
- --buildid-dir::
- 	Setup buildid cache directory. It has higher priority than
-diff --git a/tools/perf/util/debug.c b/tools/perf/util/debug.c
-index df82ad9cd16d..5cc2479d63ea 100644
---- a/tools/perf/util/debug.c
-+++ b/tools/perf/util/debug.c
-@@ -6,6 +6,7 @@
- #include <stdarg.h>
- #include <stdio.h>
- #include <stdlib.h>
-+#include <errno.h>
- #include <sys/wait.h>
- #include <api/debug.h>
- #include <linux/kernel.h>
-@@ -26,7 +27,7 @@
- int verbose;
- bool dump_trace = false, quiet = false;
- int debug_ordered_events;
--static bool redirect_to_stderr;
-+static FILE *log_file;
- int debug_data_convert;
- 
- int veprintf(int level, int var, const char *fmt, va_list args)
-@@ -34,8 +35,10 @@ int veprintf(int level, int var, const char *fmt, va_list args)
- 	int ret = 0;
- 
- 	if (var >= level) {
--		if (use_browser >= 1 && !redirect_to_stderr)
-+		if (use_browser >= 1 && !log_file)
- 			ui_helpline__vshow(fmt, args);
-+		else if (log_file)
-+			ret = vfprintf(log_file, fmt, args);
- 		else
- 			ret = vfprintf(stderr, fmt, args);
- 	}
-@@ -197,6 +200,24 @@ static int str2loglevel(const char *vstr)
- 	return v;
- }
- 
-+static void flush_log(void)
-+{
-+	if (log_file)
-+		fflush(log_file);
-+}
-+
-+static void set_log_output(FILE *f)
-+{
-+	if (f == log_file)
-+		return;
-+
-+	if (log_file && log_file != stderr)
-+		fclose(log_file);
-+
-+	log_file = f;
-+	atexit(flush_log);
-+}
-+
- int perf_debug_option(const char *str)
- {
- 	char *sep, *vstr;
-@@ -218,8 +239,23 @@ int perf_debug_option(const char *str)
- 		else if (!strcmp(opt, "data-convert"))
- 			debug_data_convert = str2loglevel(vstr);
- 		else if (!strcmp(opt, "stderr"))
--			redirect_to_stderr = true;
--		else {
-+			set_log_output(stderr);
-+		else if (!strcmp(opt, "file")) {
-+			FILE *f;
-+
-+			if (!vstr)
-+				vstr = (char *)"perf.log";
-+
-+			f = fopen(vstr, "a");
-+			if (!f) {
-+				pr_err("Can not create log file: %s\n",
-+				       strerror(errno));
-+				free(dstr);
-+				return -1;
-+			}
-+			fprintf(f, "\n===========perf log===========\n");
-+			set_log_output(f);
-+		} else {
- 			fprintf(stderr, "unkown debug option '%s'\n", opt);
- 			free(dstr);
- 			return -1;
+This patchset provides a new implementation of the slab memory controller,
+which aims to reach a much better slab utilization by sharing slab pages
+between multiple memory cgroups. Below is the short description of the new
+design (more details in commit messages).
+
+Accounting is performed per-object instead of per-page. Slab-related
+vmstat counters are converted to bytes. Charging is performed on page-basis,
+with rounding up and remembering leftovers.
+
+Memcg ownership data is stored in a per-slab-page vector: for each slab page
+a vector of corresponding size is allocated. To keep slab memory reparenting
+working, instead of saving a pointer to the memory cgroup directly an
+intermediate object is used. It's simply a pointer to a memcg (which can be
+easily changed to the parent) with a built-in reference counter. This scheme
+allows to reparent all allocated objects without walking them over and changing
+memcg pointer to the parent.
+
+Instead of creating an individual set of kmem_caches for each memory cgroup,
+two global sets are used: the root set for non-accounted and root-cgroup
+allocations and the second set for all other allocations. This allows to
+simplify the lifetime management of individual kmem_caches: they are destroyed
+with root counterparts. It allows to remove a good amount of code and make
+things generally simpler.
+
+The patchset contains a couple of semi-independent parts, which can find their
+usage outside of the slab memory controller too:
+1) subpage charging API, which can be used in the future for accounting of
+   other non-page-sized objects, e.g. percpu allocations.
+2) mem_cgroup_ptr API (refcounted pointers to a memcg, can be reused
+   for the efficient reparenting of other objects, e.g. pagecache.
+
+The patchset has been tested on a number of different workloads in our
+production. In all cases, it saved hefty amounts of memory:
+1) web frontend, 650-700 Mb, ~42% of slab memory
+2) database cache, 750-800 Mb, ~35% of slab memory
+3) dns server, 700 Mb, ~36% of slab memory
+
+(These numbers were received used a backport of this patchset to the kernel
+version used in fb production. But similar numbers can be obtained on
+a vanilla kernel. If used on a modern systemd-based distributive,
+e.g. Fedora 30, the patched kernel shows the same order of slab memory
+savings just after system start).
+
+So far I haven't found any regression on all tested workloads, but
+potential CPU regression caused by more precise accounting is a concern.
+
+Obviously the amount of saved memory depend on the number of memory cgroups,
+uptime and specific workloads, but overall it feels like the new controller
+saves 30-40% of slab memory, sometimes more. Additionally, it should lead
+to a lower memory fragmentation, just because of a smaller number of
+non-movable pages and also because there is no more need to move all
+slab objects to a new set of pages when a workload is restarted in a new
+memory cgroup.
+
+* https://github.com/osandov/drgn
+
+
+v1:
+  1) fixed a bug in zoneinfo_show_print()
+  2) added some comments to the subpage charging API, a minor fix
+  3) separated memory.kmem.slabinfo deprecation into a separate patch,
+     provided a drgn-based replacement
+  4) rebased on top of the current mm tree
+
+RFC:
+  https://lwn.net/Articles/798605/
+
+
+Roman Gushchin (16):
+  mm: memcg: introduce mem_cgroup_ptr
+  mm: vmstat: use s32 for vm_node_stat_diff in struct per_cpu_nodestat
+  mm: vmstat: convert slab vmstat counter to bytes
+  mm: memcg/slab: allocate space for memcg ownership data for non-root
+    slabs
+  mm: slub: implement SLUB version of obj_to_index()
+  mm: memcg/slab: save memcg ownership data for non-root slab objects
+  mm: memcg: move memcg_kmem_bypass() to memcontrol.h
+  mm: memcg: introduce __mod_lruvec_memcg_state()
+  mm: memcg/slab: charge individual slab objects instead of pages
+  mm: memcg: move get_mem_cgroup_from_current() to memcontrol.h
+  mm: memcg/slab: replace memcg_from_slab_page() with
+    memcg_from_slab_obj()
+  tools/cgroup: add slabinfo.py tool
+  mm: memcg/slab: deprecate memory.kmem.slabinfo
+  mm: memcg/slab: use one set of kmem_caches for all memory cgroups
+  tools/cgroup: make slabinfo.py compatible with new slab controller
+  mm: slab: remove redundant check in memcg_accumulate_slabinfo()
+
+ drivers/base/node.c        |  14 +-
+ fs/proc/meminfo.c          |   4 +-
+ include/linux/memcontrol.h |  98 +++++++-
+ include/linux/mm_types.h   |   5 +-
+ include/linux/mmzone.h     |  12 +-
+ include/linux/slab.h       |   3 +-
+ include/linux/slub_def.h   |   9 +
+ include/linux/vmstat.h     |   8 +
+ kernel/power/snapshot.c    |   2 +-
+ mm/list_lru.c              |  12 +-
+ mm/memcontrol.c            | 302 ++++++++++++-------------
+ mm/oom_kill.c              |   2 +-
+ mm/page_alloc.c            |   8 +-
+ mm/slab.c                  |  37 ++-
+ mm/slab.h                  | 300 ++++++++++++------------
+ mm/slab_common.c           | 452 ++++---------------------------------
+ mm/slob.c                  |  12 +-
+ mm/slub.c                  |  63 ++----
+ mm/vmscan.c                |   3 +-
+ mm/vmstat.c                |  37 ++-
+ mm/workingset.c            |   6 +-
+ tools/cgroup/slabinfo.py   | 250 ++++++++++++++++++++
+ 22 files changed, 816 insertions(+), 823 deletions(-)
+ create mode 100755 tools/cgroup/slabinfo.py
+
 -- 
-2.20.1
+2.21.0
 
