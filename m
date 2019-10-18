@@ -2,97 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61799DBC20
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:55:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4672EDBC0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:55:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409529AbfJREz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 00:55:56 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:33282 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392808AbfJREzz (ORCPT
+        id S2441947AbfJREyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 00:54:54 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35296 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2441927AbfJREyv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 00:55:55 -0400
-Received: by mail-io1-f68.google.com with SMTP id z19so5947178ior.0;
-        Thu, 17 Oct 2019 21:55:54 -0700 (PDT)
+        Fri, 18 Oct 2019 00:54:51 -0400
+Received: by mail-pl1-f195.google.com with SMTP id c3so2250244plo.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 21:54:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3ehKOW/N+FTLF+YoAGhVTdIuexN5qbQUY1mLWAZQXhU=;
-        b=Rn0xH2r9CfVldbfAXR7dSTkpYMinTskC7GYU6kajDgPXiOplHYv2cNAhOEVnSzJXDA
-         F3tzNodRaDbkqwWcXSYR2sBad8nlbqIlHcGBnB+uCNHls3MTX3mA0oU/RXvbUx1L8Xmk
-         kSQ0C21flTDCxiO8tBAPxNTZA5f+DMilVkHmkvdvZREOnlxyec446GobkM2/Xtoc0gTK
-         L4dK+WyJLJ8f8o1TvjoqJI/DS3CtErgMAPfo8SFJtWOzlCHUhnHjK+ZBut9abgqMVCaC
-         HJalSa+BV8SiaTeRYOLhIms9VBsLmkRN1h+4aGwm5Xw85RU6GjRi+L+aC3CWcPmWlTJC
-         viAw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tfGt3fWr1kwumbPQFxe11qp25uq0tySIsvg724aDQmA=;
+        b=KGFuI8CR3x3LxE3B6tHHY82iaAVS9aFWFJQHPc+YDlC6ws2OgEqL2mZavAKH21Hx+N
+         urFDi/fRju5x2WB1BQ8XO1R+jhVlMWSksN/B4/UY9zRT3GTIcsTPoK6OGJbzVh6MkCSn
+         dWSfodppq81ggRbPJUAJlDxbG0cLFaVUy8WsN3qlimvn6ycSFTD5JwLQ3CNuPKBMSrph
+         vIPwi1Lc8Bs1jCYz0FoGNy+3P+Dc3DVtB/zJtA5q6eF7nIiOnVVVaayioIwtLC7GhW5g
+         EoIGr7xKR0+i4AplYvDAQaua3auhBQQw/9I4V00lXjVImKCm2cQvEpKgzvUDqgTf6iup
+         /P7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3ehKOW/N+FTLF+YoAGhVTdIuexN5qbQUY1mLWAZQXhU=;
-        b=l43R3y3d8YA++QGShbVbLt5YJ3NLpltk0UDWF7MbiKuMlN/4MkwSB0F4tnyKKNICMM
-         YF1ollKBKNtvbIUMJ5SEJUFUbj6pHLPYJ6Wi86bLBR7/e+M3TKx/D0GIOLboILfCsB3S
-         h9v+skFZ7GHw/pil7BEsIqtfSfKtJGY82aGWbAwKM78vgCvewIE5l4lb6f9xq8D2u8V1
-         zBi4TEIXotRtrAEkeYiQeSvU6Da6qBO6SsoI08Eb16zAlqGiU9i1VdbfNahf4oNJaPlm
-         Yp/d7GavStWllhZmQ+KBE6RfKXgbjBi/a5rLsGQz1FuRMJCXBBjxc5IRepxcR4lrvKlF
-         cmHg==
-X-Gm-Message-State: APjAAAXVKNk0BTtr+ncuDIdtdwrTS2gmV7oFiyUEQJU4+UCzTNwyHDG/
-        JWqPAi5n4Fgxp59lqvYUA0BP60jm/AcCUKGHvCQ9Iagx
-X-Google-Smtp-Source: APXvYqxgS5ct0v8h7EZnQaxNd7n2Gy9Yn06F3wrKDNTFF1bjL6NRVgvhUFG8RaKqVn3zR8oyEpdCL+wHTr4gIP47/3Y=
-X-Received: by 2002:a5e:db46:: with SMTP id r6mr4668633iop.287.1571372761181;
- Thu, 17 Oct 2019 21:26:01 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tfGt3fWr1kwumbPQFxe11qp25uq0tySIsvg724aDQmA=;
+        b=aHJADbX+/UubDkUj2ftYSyfYjSaUl6ExFTgh+ucRUdrSxmJGDQuPrJUyouwsIlMzIU
+         eNav8C/EPCds2KanKvC8CkyOWAGHS7RkooLp8DxIx4ocBu3EZFjI328UiTheQ+u66hCh
+         gieQHMSS27AP55NOrLWLCsQxMkVcS4kPD49zqB3WitMZi/IB6v7V+RDKHFXcG/QOkrgi
+         FZgLC62dPxUoeesyBY8BNTTQ12PJJRqSc1Ns2G+1+4Vx4Ay3OhbahjWtPIi45dMbhejg
+         UTzkiwEggoD9PzqhJJqq49vHymJvGq+LMk5EoZxiujwi6ZvTgWJ3WSYhLYVGH1n7jJxy
+         ivvw==
+X-Gm-Message-State: APjAAAWvKQYlAndcKlANklyq4MKZL5DQzI5oVHsOE8CsqtSMfwKLSAM4
+        mbw+9Ort6CQTPw7kz2+DHrfAXW+pw/Y=
+X-Google-Smtp-Source: APXvYqxXUTl/qqRC2TrizgbN8R5z7HfGkcGAOE67XLCu4N491ssVlmnv2H4qbY7PTZNpiYtxuCM64Q==
+X-Received: by 2002:aa7:93de:: with SMTP id y30mr4189899pff.98.1571373029465;
+        Thu, 17 Oct 2019 21:30:29 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id i184sm4192692pge.5.2019.10.17.21.30.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Oct 2019 21:30:28 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 10:00:26 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Kamil Konieczny <k.konieczny@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] opp: core: Revert "add regulators enable and disable"
+Message-ID: <20191018043026.xm7a6emczm6w7bck@vireshk-i7>
+References: <CGME20191017102843eucas1p164993b3644d006481fb041e36175eebe@eucas1p1.samsung.com>
+ <20191017102758.8104-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-References: <20191016182935.5616-4-andrew.smirnov@gmail.com> <20191017143149.449AA21D7C@mail.kernel.org>
-In-Reply-To: <20191017143149.449AA21D7C@mail.kernel.org>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Thu, 17 Oct 2019 21:25:49 -0700
-Message-ID: <CAHQ1cqHF+3S1xYCVs19U7Hr+SjMp+z3QhW-KsKDSa00VMGN8FA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] HID: logitech-hidpp: do all FF cleanup in hidpp_ff_destroy()
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        Austin Palmer <austinp@valvesoftware.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191017102758.8104-1-m.szyprowski@samsung.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 7:31 AM Sasha Levin <sashal@kernel.org> wrote:
->
-> Hi,
->
-> [This is an automated email]
->
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: ff21a635dd1a9 HID: logitech-hidpp: Force feedback support for the Logitech G920.
->
-> The bot has tested the following trees: v5.3.6, v4.19.79, v4.14.149, v4.9.196.
->
-> v5.3.6: Build OK!
-> v4.19.79: Failed to apply! Possible dependencies:
->     91cf9a98ae412 ("HID: logitech-hidpp: make .probe usbhid capable")
->
-> v4.14.149: Failed to apply! Possible dependencies:
->     91cf9a98ae412 ("HID: logitech-hidpp: make .probe usbhid capable")
->
-> v4.9.196: Failed to apply! Possible dependencies:
->     6bd4e65d521f9 ("HID: logitech-hidpp: remove HIDPP_QUIRK_CONNECT_EVENTS")
->     91cf9a98ae412 ("HID: logitech-hidpp: make .probe usbhid capable")
->     a4bf6153b3177 ("HID: logitech-hidpp: add a sysfs file to tell we support power_supply")
->
->
-> NOTE: The patch will not be queued to stable trees until it is upstream.
->
-> How should we proceed with this patch?
+On 17-10-19, 12:27, Marek Szyprowski wrote:
+> All the drivers, which use the OPP framework control regulators, which
+> are already enabled. Typically those regulators are also system critical,
+> due to providing power to CPU core or system buses. It turned out that
+> there are cases, where calling regulator_enable() on such boot-enabled
+> regulator has side-effects and might change its initial voltage due to
+> performing initial voltage balancing without all restrictions from the
+> consumers. Until this issue becomes finally solved in regulator core,
+> avoid calling regulator_enable()/disable() from the OPP framework.
+> 
+> This reverts commit 7f93ff73f7c8c8bfa6be33bcc16470b0b44682aa.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> This is a follow-up from the following discussion:
+> https://lkml.org/lkml/2019/10/9/541
 
-Looks like I'd have to mark this one as 5.2+ as well. Please disregard
-this series in favor of v3 that will be sent out shortly.
+I suppose this must go the v5.4-rcs, right ?
 
-Thanks,
-Andrey Smirnov
+-- 
+viresh
