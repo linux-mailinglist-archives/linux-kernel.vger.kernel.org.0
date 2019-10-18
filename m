@@ -2,112 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA064DCD1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 19:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55388DCD23
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 19:56:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505588AbfJRRzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 13:55:50 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33196 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502168AbfJRRzt (ORCPT
+        id S2505612AbfJRR4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 13:56:25 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58599 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2505601AbfJRR4X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 13:55:49 -0400
-Received: by mail-qt1-f195.google.com with SMTP id r5so10365614qtd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 10:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=v3/vLt+EKWeioKc4tQmvCoMElLXCr/itRZz1QkYPGMs=;
-        b=CQjd0ez7ZIKksXNcfJCbd/BV6+q60FHKiEhFCnfNIAmnGQ4CaB28vz6agnn55L7RNb
-         OF/yjE9oqgSoP0UE8uXYwPZEMt+cUppi2exiZAT5SsSFKDemICmP2CsJHDPPBtZ9E6KX
-         gsKYMHNn3C16hfs3sqrKV28vA95P/wVEdnY+lnd/9r3CxIMKuozyHQdj2lXckSBzvqfG
-         +mekiEKMdQWyhKrLBtQFRXa6nX+OrsdHgnty+fzIt5t46pNtaRpGMTbiUjhyIPZHoRL+
-         PvVtBDJFGO/nPeJaLBj13rWaH6gixGOK/7PHQIhMOQQxQ9m9qu87EdlGD9/TdnXnh6MS
-         IesA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v3/vLt+EKWeioKc4tQmvCoMElLXCr/itRZz1QkYPGMs=;
-        b=mtDHQqk2Qe9U3wd5hHfyck0B0ujv/AgaN05B4iqE7HN1QwOpQFouT9uaOsZ5d9mofz
-         s8y2MJhKym496EGOgivAYSv1heiXG7ckcQgj0seIB/jrUN5aQH+ryCsABvYauyZ+9qYu
-         uecKkURp+pdT3cI30zsMGtSkfJOBvHziVsWcBAIDaOzeif8xhbSg0uiYMBi3dGTmdi5V
-         AsAkvXoLMDOptGf5DrEHvytvhiPl68nJY6p98alw6JXNFUHJdpTxSiCXQMiebxA4p3zm
-         HokHPhQPQpAJpR0KEWc7pV8M2jz7DW5WlJMgdFMMNJ0tS5q+hJsgAeJnbeWruFoaeitV
-         J1eA==
-X-Gm-Message-State: APjAAAVT3v6OH7Z7BApwMFy8Tb1u8hkGoEiinglTVj6XyD+/dtVzlUaG
-        DAfDyufzpPZedP67pu5yIBo=
-X-Google-Smtp-Source: APXvYqwnyiTvQk/p8Geuba9pxGmWxDiCiVvefnbXVy2Gi/Sajdhi3bSP6ghlzKPtoSxFYXgiEJhBdA==
-X-Received: by 2002:a05:6214:801:: with SMTP id df1mr7170086qvb.54.1571421347113;
-        Fri, 18 Oct 2019 10:55:47 -0700 (PDT)
-Received: from quaco.ghostprotocols.net (179-240-170-47.3g.claro.net.br. [179.240.170.47])
-        by smtp.gmail.com with ESMTPSA id d23sm3341360qkc.127.2019.10.18.10.55.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2019 10:55:46 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 3EE894DD66; Fri, 18 Oct 2019 14:55:42 -0300 (-03)
-Date:   Fri, 18 Oct 2019 14:55:42 -0300
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] perf tests: Remove needless headers for bp_account
-Message-ID: <20191018175542.GA1797@kernel.org>
-References: <20191018085531.6348-1-leo.yan@linaro.org>
+        Fri, 18 Oct 2019 13:56:23 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1iLWTo-00062R-Up; Fri, 18 Oct 2019 19:56:00 +0200
+Message-ID: <07f370bfd62425c5472c1e423ae0b21b0789e5f5.camel@pengutronix.de>
+Subject: Re: [PATCH v2 2/2] dt-bindings: etnaviv: Add #cooling-cells
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Carlo Caione <ccaione@baylibre.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Fri, 18 Oct 2019 19:55:56 +0200
+In-Reply-To: <20191018135022.GA6728@bogon.m.sigxcpu.org>
+References: <cover.1568255903.git.agx@sigxcpu.org>
+         <6e9d761598b2361532146f43161fd05f3eee6545.1568255903.git.agx@sigxcpu.org>
+         <20191018135022.GA6728@bogon.m.sigxcpu.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018085531.6348-1-leo.yan@linaro.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Oct 18, 2019 at 04:55:29PM +0800, Leo Yan escreveu:
-> A few headers are not needed and were introduced by copying from other
-> test file.  This patch removes the needless headers for the breakpoint
-> accounting testing.
-
-Thanks, applied.
- 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  tools/perf/tests/bp_account.c | 4 ----
->  1 file changed, 4 deletions(-)
+On Fr, 2019-10-18 at 15:50 +0200, Guido Günther wrote:
+> Hi,
+> On Wed, Sep 11, 2019 at 07:40:36PM -0700, Guido Günther wrote:
+> > Add #cooling-cells for when the gpu acts as a cooling device.
+> > 
+> > Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> > ---
+> >  .../devicetree/bindings/display/etnaviv/etnaviv-drm.txt          | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt b/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
+> > index 8def11b16a24..640592e8ab2e 100644
+> > --- a/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
+> > +++ b/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
+> > @@ -21,6 +21,7 @@ Required properties:
+> >  Optional properties:
+> >  - power-domains: a power domain consumer specifier according to
+> >    Documentation/devicetree/bindings/power/power_domain.txt
+> > +- #cooling-cells: : If used as a cooling device, must be <2>
 > 
-> diff --git a/tools/perf/tests/bp_account.c b/tools/perf/tests/bp_account.c
-> index 016bba2c142d..52ff7a462670 100644
-> --- a/tools/perf/tests/bp_account.c
-> +++ b/tools/perf/tests/bp_account.c
-> @@ -10,11 +10,7 @@
->  #include <unistd.h>
->  #include <string.h>
->  #include <sys/ioctl.h>
-> -#include <time.h>
->  #include <fcntl.h>
-> -#include <signal.h>
-> -#include <sys/mman.h>
-> -#include <linux/compiler.h>
->  #include <linux/hw_breakpoint.h>
->  
->  #include "tests.h"
-> -- 
-> 2.17.1
+> The other patch of the series made it into linux-next already but this
+> documentation fixup didn't. Anything i can do to get this applied as
+> well so documentation stays in sync?
 
--- 
+I've applied and pushed this to my etnaviv/next branch just now, so it
+should show up in linux-next pretty soon.
 
-- Arnaldo
+Regards,
+Lucas
+
