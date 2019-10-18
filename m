@@ -2,126 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9055DC727
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 16:19:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A25FDDC71E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 16:18:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633996AbfJROSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 10:18:42 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44840 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732676AbfJROSk (ORCPT
+        id S2410018AbfJROSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 10:18:03 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:48644 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732676AbfJROSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 10:18:40 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m13so6385824ljj.11;
-        Fri, 18 Oct 2019 07:18:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lK62GsaMPQOlyqa+AeKYuWxGPH9VRYmA+fAbIM8QXgg=;
-        b=UNMMwzrk7l/zo+MYQg8qxs0W8w+SoRYxOpfAT493SwFYcLSyACYWSDQzxjiBRSt8qY
-         +pE7IXhgGFUrN4fDEna2IW7CNxmz0fDwt/wWx5Qzd0F9vV3aRlzZxvsiwdX64RCIJtr9
-         a5C6G+zhvFNIwoWvEM5T9CJTVHErlTSMQaXFaCCLWgHRlupg8vKwSZ7ViDXEFzkLDIeO
-         9HoExPgMa2Zq0Yj/bjsb/gz3B6yyyWQVnh8REXnSKx4TsQNZoMGVthhC86MKvUwFucCR
-         LbK6S4wwszjpPyzvQpXDI40x3K7lXVMzFj5cYvwIv8uI3Q+y0CsRlw9Zs0FJ2shBAX+G
-         voKw==
-X-Gm-Message-State: APjAAAW6Z05oqDPCmq7ml0vfN7g3hMGhP+EU82gcy3D+ZsKUPSNrfwbu
-        kYDEfiCK2L08AqKaMVjHAfI=
-X-Google-Smtp-Source: APXvYqyT+4O2YoCKFj1gH2GwxW0feEY6wE3RN9nro6b0WUC13Xddq6uNuukLGSswJDT8hLZUJpCl6Q==
-X-Received: by 2002:a2e:86cd:: with SMTP id n13mr6579303ljj.252.1571408318149;
-        Fri, 18 Oct 2019 07:18:38 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id z26sm2202097lji.79.2019.10.18.07.18.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Oct 2019 07:18:36 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@xi.terra>)
-        id 1iLT5d-0006CE-9Q; Fri, 18 Oct 2019 16:18:49 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>,
-        stable <stable@vger.kernel.org>
-Subject: [PATCH RFC 2/2] USB: ldusb: fix ring-buffer locking
-Date:   Fri, 18 Oct 2019 16:17:50 +0200
-Message-Id: <20191018141750.23756-3-johan@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191018141750.23756-1-johan@kernel.org>
-References: <20191018141750.23756-1-johan@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 18 Oct 2019 10:18:03 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9IEEZK7112162;
+        Fri, 18 Oct 2019 14:18:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : content-type :
+ content-transfer-encoding : mime-version : date : subject : message-id :
+ to; s=corp-2019-08-05; bh=hBAKAUIK63rJcT7dO4ageGdosxnTtI2CaSQBixHJS1A=;
+ b=cggYGqecYhiKNii2UAtMfjNNwn/ZxAtnbmaLmSmDq5ILU+MyxbDGvGKdNdXSEZHWBjx4
+ tEx7EDDfCwj+fTNIC3AcDObybFspm3KLsOvmhbG98ZerhCGHsEDFeaTGpGZEd7lesSim
+ avQO1pDPSbmjNjXsk9gP/+2OwDDDASBE3ntPhDWlrbDVOrUtlRCPIDi9xHmeYTJMo2A5
+ DdKBYGVcw1bmNEopXbyu+VElEPkldHNlEBpC6cGyKywoaItLAOi4ZgY/f1uqqwoVU8wa
+ Gq6kFZ5thJ7V68YFjUdtkIb0qz9EGoCBZfdbGHi7xs3NP0PfhRhBpyKB4fYPKiuQK7Z0 Wg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2vq0q447r6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Oct 2019 14:18:00 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9IEHq3T193932;
+        Fri, 18 Oct 2019 14:18:00 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2vq0dxwv4v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Oct 2019 14:17:59 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9IEHwZt026820;
+        Fri, 18 Oct 2019 14:17:58 GMT
+Received: from dhcp-10-154-168-69.vpn.oracle.com (/10.154.168.69)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 18 Oct 2019 14:17:58 +0000
+From:   John Donnelly <john.p.donnelly@oracle.com>
+Content-Type: text/plain;
+        charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Date:   Fri, 18 Oct 2019 09:17:57 -0500
+Subject: [PATCH] iommu/vt-d: Fix panic after kexec -p for kdump
+Message-Id: <4E962E33-4B15-4407-9FF0-3705229D8881@oracle.com>
+To:     linux-kernel@vger.kernel.org
+X-Mailer: Apple Mail (2.3445.9.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9414 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=5 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=744
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910180134
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9414 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=5 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=821 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910180133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The custom ring-buffer implementation was merged without any locking
-whatsoever, but a spinlock was later added by commit 9d33efd9a791
-("USB: ldusb bugfix").
+This cures a panic on restart after a kexec -p  operation on 5.3 and 5.4 =
+kernels.
 
-The lock did not cover the loads from the ring-buffer-entry after
-determining the buffer was non-empty, nor the update of the tail index
-once the entry had been processed. The former could lead to stale data
-being returned, while the latter could lead to memory corruption on
-sufficiently weakly ordered architectures.
+The underlying state of the iommu registers (iommu->flags &
+VTD_FLAG_TRANS_PRE_ENABLED) on a restart results in a domain being =
+marked as
+"DEFER_DEVICE_DOMAIN_INFO" that produces an Oops in identity_mapping().
 
-Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
-Fixes: 9d33efd9a791 ("USB: ldusb bugfix")
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Signed-off-by: Johan Hovold <johan@kernel.org>
+[   43.654737] BUG: kernel NULL pointer dereference, address:
+0000000000000056
+[   43.655720] #PF: supervisor read access in kernel mode
+[   43.655720] #PF: error_code(0x0000) - not-present page
+[   43.655720] PGD 0 P4D 0
+[   43.655720] Oops: 0000 [#1] SMP PTI
+[   43.655720] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+5.3.2-1940.el8uek.x86_64 #1
+[   43.655720] Hardware name: Oracle Corporation ORACLE SERVER
+X5-2/ASM,MOTHERBOARD,1U, BIOS 30140300 09/20/2018
+[   43.655720] RIP: 0010:iommu_need_mapping+0x29/0xd0
+[   43.655720] Code: 00 0f 1f 44 00 00 48 8b 97 70 02 00 00 48 83 fa ff
+74 53 48 8d 4a ff b8 01 00 00 00 48 83 f9 fd 76 01 c3 48 8b 35 7f 58 e0
+01 <48> 39 72 58 75 f2 55 48 89 e5 41 54 53 48 8b 87 28 02 00 00 4c 8b
+[   43.655720] RSP: 0018:ffffc9000001b9b0 EFLAGS: 00010246
+[   43.655720] RAX: 0000000000000001 RBX: 0000000000001000 RCX:
+fffffffffffffffd
+[   43.655720] RDX: fffffffffffffffe RSI: ffff8880719b8000 RDI:
+ffff8880477460b0
+[   43.655720] RBP: ffffc9000001b9e8 R08: 0000000000000000 R09:
+ffff888047c01700
+[   43.655720] R10: 00002194036fc692 R11: 0000000000000000 R12:
+0000000000000000
+[   43.655720] R13: ffff8880477460b0 R14: 0000000000000cc0 R15:
+ffff888072d2b558
+[   43.655720] FS:  0000000000000000(0000) GS:ffff888071c00000(0000)
+knlGS:0000000000000000
+[   43.655720] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   43.655720] CR2: 0000000000000056 CR3: 000000007440a002 CR4:
+00000000001606b0
+[   43.655720] Call Trace:
+[   43.655720]  ? intel_alloc_coherent+0x2a/0x180
+[   43.655720]  ? __schedule+0x2c2/0x650
+[   43.655720]  dma_alloc_attrs+0x8c/0xd0
+[   43.655720]  dma_pool_alloc+0xdf/0x200
+[   43.655720]  ehci_qh_alloc+0x58/0x130
+[   43.655720]  ehci_setup+0x287/0x7ba
+[   43.655720]  ? _dev_info+0x6c/0x83
+[   43.655720]  ehci_pci_setup+0x91/0x436
+[   43.655720]  usb_add_hcd.cold.48+0x1d4/0x754
+[   43.655720]  usb_hcd_pci_probe+0x2bc/0x3f0
+[   43.655720]  ehci_pci_probe+0x39/0x40
+[   43.655720]  local_pci_probe+0x47/0x80
+[   43.655720]  pci_device_probe+0xff/0x1b0
+[   43.655720]  really_probe+0xf5/0x3a0
+[   43.655720]  driver_probe_device+0xbb/0x100
+[   43.655720]  device_driver_attach+0x58/0x60
+[   43.655720]  __driver_attach+0x8f/0x150
+[   43.655720]  ? device_driver_attach+0x60/0x60
+[   43.655720]  bus_for_each_dev+0x74/0xb0
+[   43.655720]  driver_attach+0x1e/0x20
+[   43.655720]  bus_add_driver+0x151/0x1f0
+[   43.655720]  ? ehci_hcd_init+0xb2/0xb2
+[   43.655720]  ? do_early_param+0x95/0x95
+[   43.655720]  driver_register+0x70/0xc0
+[   43.655720]  ? ehci_hcd_init+0xb2/0xb2
+[   43.655720]  __pci_register_driver+0x57/0x60
+[   43.655720]  ehci_pci_init+0x6a/0x6c
+[   43.655720]  do_one_initcall+0x4a/0x1fa
+[   43.655720]  ? do_early_param+0x95/0x95
+[   43.655720]  kernel_init_freeable+0x1bd/0x262
+[   43.655720]  ? rest_init+0xb0/0xb0
+[   43.655720]  kernel_init+0xe/0x110
+[   43.655720]  ret_from_fork+0x24/0x50
+
+Signed-off-by: John Donnelly <john.p.donnelly@oracle.com>
 ---
- drivers/usb/misc/ldusb.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+drivers/iommu/intel-iommu.c | 2 +-
+1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/misc/ldusb.c b/drivers/usb/misc/ldusb.c
-index 94780e14e95d..c6cf2fa6cf4c 100644
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -477,11 +477,11 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
- 
- 		spin_lock_irq(&dev->rbsl);
- 	}
--	spin_unlock_irq(&dev->rbsl);
- 
- 	/* actual_buffer contains actual_length + interrupt_in_buffer */
- 	actual_buffer = (size_t *)(dev->ring_buffer + dev->ring_tail * (sizeof(size_t)+dev->interrupt_in_endpoint_size));
- 	if (*actual_buffer > sizeof(size_t) + dev->interrupt_in_endpoint_size) {
-+		spin_unlock_irq(&dev->rbsl);
- 		retval = -EIO;
- 		goto unlock_exit;
- 	}
-@@ -489,17 +489,26 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
- 	if (bytes_to_read < *actual_buffer)
- 		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
- 			 *actual_buffer-bytes_to_read);
-+	spin_unlock_irq(&dev->rbsl);
-+
-+	/*
-+	 * Pairs with spin_unlock_irqrestore() in
-+	 * ld_usb_interrupt_in_callback() and makes sure the ring-buffer entry
-+	 * has been updated before copy_to_user().
-+	 */
-+	smp_rmb();
- 
- 	/* copy one interrupt_in_buffer from ring_buffer into userspace */
- 	if (copy_to_user(buffer, actual_buffer+1, bytes_to_read)) {
- 		retval = -EFAULT;
- 		goto unlock_exit;
- 	}
--	dev->ring_tail = (dev->ring_tail+1) % ring_buffer_size;
--
- 	retval = bytes_to_read;
- 
- 	spin_lock_irq(&dev->rbsl);
-+
-+	dev->ring_tail = (dev->ring_tail + 1) % ring_buffer_size;
-+
- 	if (dev->buffer_overflow) {
- 		dev->buffer_overflow = 0;
- 		spin_unlock_irq(&dev->rbsl);
--- 
-2.23.0
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index c4e0e4a9ee9e..f83a9a302f8e 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2783,7 +2783,7 @@ static int identity_mapping(struct device *dev)
+	struct device_domain_info *info;
 
+	info =3D dev->archdata.iommu;
+-	if (info && info !=3D DUMMY_DEVICE_DOMAIN_INFO)
++	if (info && info !=3D DUMMY_DEVICE_DOMAIN_INFO && info !=3D =
+DEFER_DEVICE_DOMAIN_INFO)
+		return (info->domain =3D=3D si_domain);
+
+	return 0;
+--=20
+2.20.1=
