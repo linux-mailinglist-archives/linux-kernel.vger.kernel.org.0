@@ -2,130 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A88DBC7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAEBBDBCA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:10:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504225AbfJRFF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:05:56 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55093 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391511AbfJRFFy (ORCPT
+        id S2395047AbfJRFI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:08:26 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39276 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbfJRFIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:05:54 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p7so4696427wmp.4
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:05:53 -0700 (PDT)
+        Fri, 18 Oct 2019 01:08:23 -0400
+Received: by mail-pf1-f194.google.com with SMTP id v4so3089320pff.6
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=w0COLG3bzK0o6jYLfbxydoFv6NkgXFj1ig3oopc83YI=;
-        b=e+okOhtzP6+13ZVb52oUedSHNdXUvAj+AaZgTFlk49vnQCzXFWXRCp9LgLioHHfXd8
-         P0+MALJgEg5o7L5bPbaStznc4116PcXBbQ4NkJPUE9uzUlYWAoX3j0Zd3SxFoaEwRDlY
-         /2/myoHstRdz1soYjTJxepkrx+jWOHP8oQbO6rxJWdSA/hgTHt6qQEQRbZr9o4iHGci2
-         RYqKDsnIRRBm+lSwMsEDA8DLEcdoDIUTzVuQTGQI8+aFconpNYREGVcZqXfgOXPLdMuV
-         /lnMuNyyTT4C4UK/2V6PLZ57g0/mS5ZC6y9K9caJ5eyIc7+HuQdgcWfupFikyGTHtclB
-         +L6g==
+        bh=zENMsCD8dx7TXInXG1c8zW/Hg/QaJI92iPuy+e/kV6E=;
+        b=W/SfQlwIceHYRgJXK7o3/l/lkWGdnSVrFfem2LS5AoOoZT7g6Q6t6pDrBEZ9+07t+M
+         +Ti1hPL13mqCsIyQKq/AFE6C6lU+7LWFud86PSQDcCzlLOF/AJU7QWZGHjpr9KoU6M49
+         nF6/6KbZeepbruq+UcDfkmHak9ysobHGjX46g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=w0COLG3bzK0o6jYLfbxydoFv6NkgXFj1ig3oopc83YI=;
-        b=MDCTtiUMUXUzKaX8eEDIPSeEzWs5VbHgi2w6DrZEAv/LUxWwm6Ct6WLgOnFNBe7UG4
-         nyTawtbfPOGeEWLUAWyT0FB+fA0t//GFCC6I+GN1Ggc0kulBVFX38Vwk38p/B8nYwvfp
-         QCRN41dre/s6m0iagnwSvDA9G9qW8LCl1O1vJjcpqYUZV57VYYUt9SIMczA0KOwZoZQG
-         tr2lDorURienPFHAwtiRjlqo2l5pwsF48knR9nj11IY+JvB0V1baGKGDt9YdmXNtWJT1
-         Qcrg3FqEVIvhMpltAwIKYDYoGI/RvdFWBNQc/g5IwkdksWVsa+9IAWA86XisnbKRLnov
-         RPLw==
-X-Gm-Message-State: APjAAAUk9TWbzyy48jNcBZPCa/1FosTFFgoKSja4EMqUTgwnX8599VIW
-        /AwmDYSHLAejrZzM8bp3vv3V1yRnBvgZehzzh+A5BzeL
-X-Google-Smtp-Source: APXvYqyaR6UdSsHoyTJfsRK0dDrdvlBOrSURqeguij/ZiiwiHZQ6f3cnRfyt6TgwuU56l7HPTB9yMUbOtPbu8y2CrzQ=
-X-Received: by 2002:a7b:c775:: with SMTP id x21mr5632921wmk.52.1571368385118;
- Thu, 17 Oct 2019 20:13:05 -0700 (PDT)
+        bh=zENMsCD8dx7TXInXG1c8zW/Hg/QaJI92iPuy+e/kV6E=;
+        b=TwSgpc/6cXpIZRtMSJYOJ2hkvC9ztjhh9SLIdFMKerOgc+NBSWUTnQAYtHIRZg74Rw
+         YPFSkMTdcVQW2obThx8KO+ACXW6HJcRUJLWGIqGpnUS8pIxrij7j3AgmbvJP3udF8zsk
+         ofbZ3OxC3YzsGODyacnTxy0ttYk5xocQzMuQij7q1BbQ+0psRM8TP4LDQ0+id4XCU+pa
+         wFfqTkR8MCbRUxk3k/ztBUxbRs9PywK5DDFxBCbLyUhjdRbcfJki4rz+4xlOyXfq6j4Q
+         V/8P0u2wDU/HVhxblOttTm5fgE3tXtkQqa8Zh9jGPFBYts+FDlJoa9noLQXnOsOHOanY
+         9lMg==
+X-Gm-Message-State: APjAAAWTNFxsSu4QtFDz1ghsrKdj2BcjQruEFF5IDGuQWI+7cu2Zm6KP
+        ty/Cqp/1JozBi5lzBYvRsaOb8NiZcbTR5xtMb9kuTSSQ9xM=
+X-Google-Smtp-Source: APXvYqwbU0rnTOMgSlBPq6asT4KTn47yVp25SmbpyYC2P+M0FWHZyEbDR4vduuE8vfeSHRbH2LfGtdyPTN5PaOcgFL4=
+X-Received: by 2002:a63:2049:: with SMTP id r9mr7827967pgm.257.1571368471920;
+ Thu, 17 Oct 2019 20:14:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191018004929.3445-1-paul.walmsley@sifive.com>
-In-Reply-To: <20191018004929.3445-1-paul.walmsley@sifive.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Fri, 18 Oct 2019 08:42:54 +0530
-Message-ID: <CAAhSdy2nX2LwEEAZuMtW_ByGTkHO6KaUEvVxRnba_ENEjmFayQ@mail.gmail.com>
-Subject: Re: [PATCH 0/8] riscv: resolve most warnings from sparse
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+References: <20191005101444.146554-1-ikjn@chromium.org>
+In-Reply-To: <20191005101444.146554-1-ikjn@chromium.org>
+From:   Ikjoon Jang <ikjn@chromium.org>
+Date:   Fri, 18 Oct 2019 11:14:21 +0800
+Message-ID: <CAATdQgBRiNpwgy403jThUbgxSZA-Z8bYCQnc_rVB+nu4LwtMrA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] HID: google: Add of_match table to Whiskers switch device.
+To:     jikos@kernel.org, Dmitry Torokhov <dtor@chromium.org>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Enrico Granata <egranata@google.com>,
+        Nicolas Boichat <drinkcat@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 6:19 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
->
-> Resolve most warnings from the 'sparse' static analysis tool for the
-> arch/riscv codebase.  This makes life easier for us as maintainers,
-> and makes it easier for developers to use static analysis tools on
-> their own changes.
->
-> This patch series incorporates some changes based on feedback from
-> Christoph Hellwig <hch@lst.de>.
->
-> Applies on the current riscv fixes branch that is based on v5.4-rc3.
+A gentle ping on adding DT binding for Hammer (2/2).
 
-This series certainly conflict's with Christoph's NOMMU series so
-please rebase it on NOMMU series.
-
-Regards,
-Anup
-
+On Sat, Oct 5, 2019 at 6:14 PM Ikjoon Jang <ikjn@chromium.org> wrote:
 >
+> Add a device tree match table.
 >
-> - Paul
+> Change-Id: Iaee68311073cefa4b99cde182bd37d1a67c94ea6
+> Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
+> ---
+>  drivers/hid/hid-google-hammer.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 >
+> diff --git a/drivers/hid/hid-google-hammer.c b/drivers/hid/hid-google-hammer.c
+> index 31e4a39946f5..bf2b6c6c9787 100644
+> --- a/drivers/hid/hid-google-hammer.c
+> +++ b/drivers/hid/hid-google-hammer.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/hid.h>
+>  #include <linux/leds.h>
+>  #include <linux/module.h>
+> +#include <linux/of.h>
+>  #include <linux/platform_data/cros_ec_commands.h>
+>  #include <linux/platform_data/cros_ec_proto.h>
+>  #include <linux/platform_device.h>
+> @@ -272,12 +273,21 @@ static const struct acpi_device_id cbas_ec_acpi_ids[] = {
+>  };
+>  MODULE_DEVICE_TABLE(acpi, cbas_ec_acpi_ids);
 >
-> Paul Walmsley (8):
->   riscv: add prototypes for assembly language functions from entry.S
->   riscv: add prototypes for assembly language functions from head.S
->   riscv: init: merge split string literals in preprocessor directive
->   riscv: ensure RISC-V C model definitions are passed to static
->     analyzers
->   riscv: add missing prototypes
->   riscv: mark some code and data as file-static
->   riscv: add missing header file includes
->   riscv: fp: add missing __user pointer annotations
->
-> Kernel object size difference:
->    text    data     bss     dec     hex filename
-> 6664206 2136568  312608 9113382  8b0f26 vmlinux.orig
-> 6664186 2136552  312608 9113346  8b0f02 vmlinux.patched
->
->  arch/riscv/Makefile                 |  2 ++
->  arch/riscv/include/asm/irq.h        |  6 ++++++
->  arch/riscv/include/asm/pgtable.h    |  2 ++
->  arch/riscv/include/asm/processor.h  |  4 ++++
->  arch/riscv/include/asm/ptrace.h     |  4 ++++
->  arch/riscv/include/asm/smp.h        |  2 ++
->  arch/riscv/include/asm/switch_to.h  |  1 +
->  arch/riscv/kernel/cpufeature.c      |  1 +
->  arch/riscv/kernel/entry.h           | 29 +++++++++++++++++++++++++++++
->  arch/riscv/kernel/head.h            | 21 +++++++++++++++++++++
->  arch/riscv/kernel/module-sections.c |  1 +
->  arch/riscv/kernel/process.c         |  2 ++
->  arch/riscv/kernel/reset.c           |  1 +
->  arch/riscv/kernel/setup.c           |  2 ++
->  arch/riscv/kernel/signal.c          |  6 ++++--
->  arch/riscv/kernel/smp.c             |  2 ++
->  arch/riscv/kernel/smpboot.c         |  3 +++
->  arch/riscv/kernel/stacktrace.c      |  6 ++++--
->  arch/riscv/kernel/syscall_table.c   |  1 +
->  arch/riscv/kernel/time.c            |  1 +
->  arch/riscv/kernel/traps.c           |  2 ++
->  arch/riscv/kernel/vdso.c            |  3 ++-
->  arch/riscv/mm/context.c             |  1 +
->  arch/riscv/mm/fault.c               |  2 ++
->  arch/riscv/mm/init.c                | 17 ++++++++++-------
->  arch/riscv/mm/sifive_l2_cache.c     |  2 +-
->  26 files changed, 111 insertions(+), 13 deletions(-)
->  create mode 100644 arch/riscv/kernel/entry.h
->  create mode 100644 arch/riscv/kernel/head.h
->
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id cbas_ec_of_match[] = {
+> +       { .compatible = "google,cros-cbas" },
+> +       { },
+> +};
+> +MODULE_DEVICE_TABLE(of, cbas_ec_of_match);
+> +#endif
+> +
+>  static struct platform_driver cbas_ec_driver = {
+>         .probe = cbas_ec_probe,
+>         .remove = cbas_ec_remove,
+>         .driver = {
+>                 .name = "cbas_ec",
+>                 .acpi_match_table = ACPI_PTR(cbas_ec_acpi_ids),
+> +               .of_match_table = of_match_ptr(cbas_ec_of_match),
+>                 .pm = &cbas_ec_pm_ops,
+>         },
+>  };
 > --
-> 2.23.0
+> 2.23.0.581.g78d2f28ef7-goog
 >
