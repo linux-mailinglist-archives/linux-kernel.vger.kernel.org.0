@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA3EDDBAFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 02:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99149DBB01
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 02:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408818AbfJRAt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 20:49:59 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:35449 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407271AbfJRAt6 (ORCPT
+        id S2409111AbfJRAuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 20:50:04 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:34737 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408807AbfJRAt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 20:49:58 -0400
-Received: by mail-il1-f193.google.com with SMTP id j9so3959652ilr.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 17:49:57 -0700 (PDT)
+        Thu, 17 Oct 2019 20:49:59 -0400
+Received: by mail-io1-f65.google.com with SMTP id q1so5428392ion.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 17:49:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JYeo0xAdWe0VE7AGn4vUOp9/RKxdCHKwx1Hu2VD3ZFI=;
-        b=e7FqzvY5kEG/Xv9dIUQ1oCTbqcLEHSai2TGkF9G5GOVHJOR/JRSwHHyKyxE9Y+S1Uq
-         Hb8dlvw9i96xctpHBYqQBqf2k8TItk5GeFtah91bVmtekmsMQyuy9hvZ1tzGZWmJ7Q3R
-         GEgHJm5NtXAKDGR/rADOJZgrY8yLRaSwrpHj7qmYP1C9npIOGGSsJ+sEx/8+SF3AxHF1
-         zj95h/38bh57/dIL1N0pBQ8+GEsb3385SjPqW4Z2u+/mmYHQM1sgPI/92NHMZR+yr4pf
-         eRB3BIF3i8o0joYNAcCb+1rjlG2oHRXmv5wiiqOCHq94DPnpSd9btuAuXXXApfSK7fB1
-         Y/fg==
+        bh=D3NziRvdn2+kK8Uw4QbU0HMH6O8cLDFVZEbh6XeL1sY=;
+        b=Gok8T07uC2ipQ9VW5tYHspu6O8Wr0bh0vwo7z2IyRedQR3a3/vHXyFTsGLJAPLpfZ1
+         wBhDjSO+NWrKT46+f8dUbZbI3wJnelJVVeW0NA+247qCyD6FSmfFvIg2veaQA9/jHn6I
+         8M+90gxuHpFKbAaTiSLU/A1WYYg4Rjg6oyBjjkYjI64TpxgkqGAmLP/7Cffv1oM/rBup
+         NfeaHsqQYNp/pWyltRpgDB7cozD/ZuWAEjzWNQcA/WGlft7b9DX/bp+60e12xjmzDJfH
+         DWpPtj9gENrn4L4jVTu7g934zaXTN3+znVdX5JNCoHGxB+kL+PVSzHO9b4kbSHRQiFIr
+         dgKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JYeo0xAdWe0VE7AGn4vUOp9/RKxdCHKwx1Hu2VD3ZFI=;
-        b=uVMNU0Kc8HLyzsV+LVb71a3tYy72XkzlFA1KYcftWHaPPn53ydYP7n4L0zQPPDtTss
-         ypeBIzU8nPJxxK+BoKy6sH4w9JxX5OUc41z45AL6rMg6irZT8tLiBJTb+LJ+eTunrEt7
-         IyPp5zlH7I84qSLV7SYjK0jyV72Dz9hzvRBbRlLhw3hnoBgJLMLAleF6pgOitgV+4y9a
-         AKHHvesJ2FNto1UbPm76DdfSBNCoHeU2dLI59xlmhl0Zmf7FNQFJf0x1juIflRHmmu+9
-         COKLoYR5S3Nm7HLEWiC5drYBBGPXLAIvdoTyALANVUJQ35aYXe4gAZ26SfV86gAQLlh3
-         OnGw==
-X-Gm-Message-State: APjAAAWNT9EZ9qXydv4j2cm3pWukLZl38SaV/eZ0FzGeXeFlG3jFbOBu
-        C8qaetuH+mmWqc2wQiO2Oz52VSf3hNo=
-X-Google-Smtp-Source: APXvYqyQCKT5vl5G9xMEmMO1JlNfzDH207v1XKhgNJtHaIqaSHj8HG+prF2g3ggA3i8umXodoDGJGA==
-X-Received: by 2002:a92:9f8c:: with SMTP id z12mr7348576ilk.111.1571359797398;
-        Thu, 17 Oct 2019 17:49:57 -0700 (PDT)
+        bh=D3NziRvdn2+kK8Uw4QbU0HMH6O8cLDFVZEbh6XeL1sY=;
+        b=QN9AOZMsIRHQ1gEMpeXvFN2CNY1jzILqi0VDf3+nsoN9Xx3g7OqTEGmWfjD6ZVozEY
+         ZzUkVrz03NtfDSXEAc3zAej3dyUeAVZwjv08cYv57bsWCl76IsZHaEoWEhPNC9Us1wCh
+         SJ0wIycKfFJALomD60ZaGsx8YyZK3LF8/pMRgkuxgDO/ZrnhP7eo7RFdC0C7LRgIVLEG
+         sw9w06w5GJLGUvydGYNEO+qniMu4F5NFb71/4zrCwKLHRMv6qRhfZORTDwO/UfmZZt4g
+         Maf7Lf5n/byRViwCUmvzKzVaykfwbDZ+V2KJYOqrdpvTu+w47p8TpMM+mHkw5fOePLhI
+         U1fw==
+X-Gm-Message-State: APjAAAUVMtAujMGrsqxRfmO4Hln7D8txRBie3ohHEYzGxnC+vqW/Lh+0
+        N4mDBS539KUmL2CruNp/8D4V2xXl+TU=
+X-Google-Smtp-Source: APXvYqxsnRrt2A3w8IXl4OSNAXOcY/yyDjv4iYOG/mSDmoknP6Xks90gq+mT3OQHegaNfv+sOT2Vsw==
+X-Received: by 2002:a05:6602:119:: with SMTP id s25mr6015773iot.111.1571359798798;
+        Thu, 17 Oct 2019 17:49:58 -0700 (PDT)
 Received: from viisi.Home ([64.62.168.194])
-        by smtp.gmail.com with ESMTPSA id z20sm1493891iof.38.2019.10.17.17.49.56
+        by smtp.gmail.com with ESMTPSA id z20sm1493891iof.38.2019.10.17.17.49.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 17:49:57 -0700 (PDT)
+        Thu, 17 Oct 2019 17:49:58 -0700 (PDT)
 From:   Paul Walmsley <paul.walmsley@sifive.com>
 To:     linux-riscv@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 6/8] riscv: mark some code and data as file-static
-Date:   Thu, 17 Oct 2019 17:49:27 -0700
-Message-Id: <20191018004929.3445-7-paul.walmsley@sifive.com>
+Subject: [PATCH 7/8] riscv: add missing header file includes
+Date:   Thu, 17 Oct 2019 17:49:28 -0700
+Message-Id: <20191018004929.3445-8-paul.walmsley@sifive.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191018004929.3445-1-paul.walmsley@sifive.com>
 References: <20191018004929.3445-1-paul.walmsley@sifive.com>
@@ -61,115 +61,199 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several functions and arrays which are only used in the files in which
-they are declared are missing "static" qualifiers.  Warnings for these
-symbols are reported by sparse:
+sparse identifies several missing prototypes caused by missing
+preprocessor include directives:
 
-arch/riscv/kernel/stacktrace.c:22:14: warning: symbol 'walk_stackframe' was not declared. Should it be static?
-arch/riscv/kernel/vdso.c:28:18: warning: symbol 'vdso_data' was not declared. Should it be static?
-arch/riscv/mm/init.c:42:6: warning: symbol 'setup_zero_page' was not declared. Should it be static?
-arch/riscv/mm/init.c:152:7: warning: symbol 'fixmap_pte' was not declared. Should it be static?
-arch/riscv/mm/init.c:211:7: warning: symbol 'trampoline_pmd' was not declared. Should it be static?
-arch/riscv/mm/init.c:212:7: warning: symbol 'fixmap_pmd' was not declared. Should it be static?
-arch/riscv/mm/init.c:219:7: warning: symbol 'early_pmd' was not declared. Should it be static?
-arch/riscv/mm/sifive_l2_cache.c:145:12: warning: symbol 'sifive_l2_init' was not declared. Should it be static?
+arch/riscv/kernel/cpufeature.c:16:6: warning: symbol 'has_fpu' was not declared. Should it be static?
+arch/riscv/kernel/process.c:26:6: warning: symbol 'arch_cpu_idle' was not declared. Should it be static?
+arch/riscv/kernel/process.c:93:5: warning: symbol 'arch_dup_task_struct' was not declared. Should it be static?
+arch/riscv/kernel/reset.c:15:6: warning: symbol 'pm_power_off' was not declared. Should it be static?
+arch/riscv/kernel/syscall_table.c:15:6: warning: symbol 'sys_call_table' was not declared. Should it be static?
+arch/riscv/kernel/time.c:14:13: warning: symbol 'time_init' was not declared. Should it be static?
+arch/riscv/kernel/vdso.c:54:5: warning: symbol 'arch_setup_additional_pages' was not declared. Should it be static?
+arch/riscv/kernel/smpboot.c:134:24: warning: symbol 'smp_callin' was not declared. Should it be static?
+arch/riscv/kernel/smp.c:64:6: warning: symbol 'arch_match_cpu_phys_id' was not declared. Should it be static?
+arch/riscv/kernel/smp.c:70:5: warning: symbol 'setup_profiling_timer' was not declared. Should it be static?
+arch/riscv/kernel/module-sections.c:89:5: warning: symbol 'module_frob_arch_sections' was not declared. Should it be static?
+arch/riscv/mm/context.c:42:6: warning: symbol 'switch_mm' was not declared. Should it be static?
 
-Resolve these warnings by marking them as static.
+Fix by including the appropriate header files in the appropriate
+source files.
+
+This patch should have no functional impact.
 
 Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
 ---
- arch/riscv/kernel/stacktrace.c  |  6 ++++--
- arch/riscv/kernel/vdso.c        |  2 +-
- arch/riscv/mm/init.c            | 12 +++++++-----
- arch/riscv/mm/sifive_l2_cache.c |  2 +-
- 4 files changed, 13 insertions(+), 9 deletions(-)
+ arch/riscv/include/asm/irq.h        | 3 +++
+ arch/riscv/include/asm/switch_to.h  | 1 +
+ arch/riscv/kernel/cpufeature.c      | 1 +
+ arch/riscv/kernel/module-sections.c | 1 +
+ arch/riscv/kernel/process.c         | 2 ++
+ arch/riscv/kernel/reset.c           | 1 +
+ arch/riscv/kernel/smp.c             | 2 ++
+ arch/riscv/kernel/smpboot.c         | 1 +
+ arch/riscv/kernel/syscall_table.c   | 1 +
+ arch/riscv/kernel/time.c            | 1 +
+ arch/riscv/kernel/vdso.c            | 1 +
+ arch/riscv/mm/context.c             | 1 +
+ 12 files changed, 16 insertions(+)
 
-diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
-index 0940681d2f68..fd908baed51c 100644
---- a/arch/riscv/kernel/stacktrace.c
-+++ b/arch/riscv/kernel/stacktrace.c
-@@ -19,8 +19,10 @@ struct stackframe {
- 	unsigned long ra;
- };
+diff --git a/arch/riscv/include/asm/irq.h b/arch/riscv/include/asm/irq.h
+index 589e2d9fb2a6..f0e9df6e6049 100644
+--- a/arch/riscv/include/asm/irq.h
++++ b/arch/riscv/include/asm/irq.h
+@@ -7,6 +7,9 @@
+ #ifndef _ASM_RISCV_IRQ_H
+ #define _ASM_RISCV_IRQ_H
  
--void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs,
--			     bool (*fn)(unsigned long, void *), void *arg)
-+static void notrace walk_stackframe(struct task_struct *task,
-+				    struct pt_regs *regs,
-+				    bool (*fn)(unsigned long, void *),
-+				    void *arg)
++#include <linux/interrupt.h>
++#include <linux/linkage.h>
++
+ #define NR_IRQS         0
+ 
+ void riscv_timer_interrupt(void);
+diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
+index f0227bdce0f0..ee4f0ac62c9d 100644
+--- a/arch/riscv/include/asm/switch_to.h
++++ b/arch/riscv/include/asm/switch_to.h
+@@ -6,6 +6,7 @@
+ #ifndef _ASM_RISCV_SWITCH_TO_H
+ #define _ASM_RISCV_SWITCH_TO_H
+ 
++#include <linux/sched/task_stack.h>
+ #include <asm/processor.h>
+ #include <asm/ptrace.h>
+ #include <asm/csr.h>
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index b1ade9a49347..a5ad00043104 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -10,6 +10,7 @@
+ #include <asm/processor.h>
+ #include <asm/hwcap.h>
+ #include <asm/smp.h>
++#include <asm/switch_to.h>
+ 
+ unsigned long elf_hwcap __read_mostly;
+ #ifdef CONFIG_FPU
+diff --git a/arch/riscv/kernel/module-sections.c b/arch/riscv/kernel/module-sections.c
+index c9ae48333114..e264e59e596e 100644
+--- a/arch/riscv/kernel/module-sections.c
++++ b/arch/riscv/kernel/module-sections.c
+@@ -8,6 +8,7 @@
+ #include <linux/elf.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/moduleloader.h>
+ 
+ unsigned long module_emit_got_entry(struct module *mod, unsigned long val)
  {
- 	unsigned long fp, sp, pc;
+diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+index fb3a082362eb..85e3c39bb60b 100644
+--- a/arch/riscv/kernel/process.c
++++ b/arch/riscv/kernel/process.c
+@@ -7,6 +7,7 @@
+  * Copyright (C) 2017 SiFive
+  */
  
++#include <linux/cpu.h>
+ #include <linux/kernel.h>
+ #include <linux/sched.h>
+ #include <linux/sched/task_stack.h>
+@@ -19,6 +20,7 @@
+ #include <asm/csr.h>
+ #include <asm/string.h>
+ #include <asm/switch_to.h>
++#include <asm/thread_info.h>
+ 
+ extern asmlinkage void ret_from_fork(void);
+ extern asmlinkage void ret_from_kernel_thread(void);
+diff --git a/arch/riscv/kernel/reset.c b/arch/riscv/kernel/reset.c
+index d0fe623bfb8f..aa56bb135ec4 100644
+--- a/arch/riscv/kernel/reset.c
++++ b/arch/riscv/kernel/reset.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/reboot.h>
++#include <linux/pm.h>
+ #include <asm/sbi.h>
+ 
+ static void default_power_off(void)
+diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+index b18cd6c8e8fb..5c9ec78422c2 100644
+--- a/arch/riscv/kernel/smp.c
++++ b/arch/riscv/kernel/smp.c
+@@ -8,7 +8,9 @@
+  * Copyright (C) 2017 SiFive
+  */
+ 
++#include <linux/cpu.h>
+ #include <linux/interrupt.h>
++#include <linux/profile.h>
+ #include <linux/smp.h>
+ #include <linux/sched.h>
+ #include <linux/seq_file.h>
+diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+index 59fa59e013d4..ec0be2f6a2e8 100644
+--- a/arch/riscv/kernel/smpboot.c
++++ b/arch/riscv/kernel/smpboot.c
+@@ -29,6 +29,7 @@
+ #include <asm/tlbflush.h>
+ #include <asm/sections.h>
+ #include <asm/sbi.h>
++#include <asm/smp.h>
+ 
+ #include "head.h"
+ 
+diff --git a/arch/riscv/kernel/syscall_table.c b/arch/riscv/kernel/syscall_table.c
+index e5dd52d8f633..f1ead9df96ca 100644
+--- a/arch/riscv/kernel/syscall_table.c
++++ b/arch/riscv/kernel/syscall_table.c
+@@ -8,6 +8,7 @@
+ #include <linux/syscalls.h>
+ #include <asm-generic/syscalls.h>
+ #include <asm/vdso.h>
++#include <asm/syscall.h>
+ 
+ #undef __SYSCALL
+ #define __SYSCALL(nr, call)	[nr] = (call),
+diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
+index 9dd1f2e64db1..6a53c02e9c73 100644
+--- a/arch/riscv/kernel/time.c
++++ b/arch/riscv/kernel/time.c
+@@ -7,6 +7,7 @@
+ #include <linux/clocksource.h>
+ #include <linux/delay.h>
+ #include <asm/sbi.h>
++#include <asm/processor.h>
+ 
+ unsigned long riscv_timebase;
+ EXPORT_SYMBOL_GPL(riscv_timebase);
 diff --git a/arch/riscv/kernel/vdso.c b/arch/riscv/kernel/vdso.c
-index c9c21e0d5641..e24fccab8185 100644
+index e24fccab8185..484d95a70907 100644
 --- a/arch/riscv/kernel/vdso.c
 +++ b/arch/riscv/kernel/vdso.c
-@@ -25,7 +25,7 @@ static union {
- 	struct vdso_data	data;
- 	u8			page[PAGE_SIZE];
- } vdso_data_store __page_aligned_data;
--struct vdso_data *vdso_data = &vdso_data_store.data;
-+static struct vdso_data *vdso_data = &vdso_data_store.data;
+@@ -6,6 +6,7 @@
+  * Copyright (C) 2015 Regents of the University of California
+  */
  
- static int __init vdso_init(void)
- {
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index fe68e94ea946..79cfb35f1e0e 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -40,7 +40,7 @@ static void __init zone_sizes_init(void)
- 	free_area_init_nodes(max_zone_pfns);
- }
++#include <linux/elf.h>
+ #include <linux/mm.h>
+ #include <linux/slab.h>
+ #include <linux/binfmts.h>
+diff --git a/arch/riscv/mm/context.c b/arch/riscv/mm/context.c
+index beeb5d7f92ea..ca66d44156b6 100644
+--- a/arch/riscv/mm/context.c
++++ b/arch/riscv/mm/context.c
+@@ -7,6 +7,7 @@
+ #include <linux/mm.h>
+ #include <asm/tlbflush.h>
+ #include <asm/cacheflush.h>
++#include <asm/mmu_context.h>
  
--void setup_zero_page(void)
-+static void setup_zero_page(void)
- {
- 	memset((void *)empty_zero_page, 0, PAGE_SIZE);
- }
-@@ -150,7 +150,7 @@ EXPORT_SYMBOL(pfn_base);
- void *dtb_early_va;
- pgd_t swapper_pg_dir[PTRS_PER_PGD] __page_aligned_bss;
- pgd_t trampoline_pg_dir[PTRS_PER_PGD] __page_aligned_bss;
--pte_t fixmap_pte[PTRS_PER_PTE] __page_aligned_bss;
-+static pte_t fixmap_pte[PTRS_PER_PTE] __page_aligned_bss;
- static bool mmu_enabled;
- 
- #define MAX_EARLY_MAPPING_SIZE	SZ_128M
-@@ -209,15 +209,17 @@ static void __init create_pte_mapping(pte_t *ptep,
- 
- #ifndef __PAGETABLE_PMD_FOLDED
- 
--pmd_t trampoline_pmd[PTRS_PER_PMD] __page_aligned_bss;
--pmd_t fixmap_pmd[PTRS_PER_PMD] __page_aligned_bss;
-+static pmd_t trampoline_pmd[PTRS_PER_PMD] __page_aligned_bss;
-+static pmd_t fixmap_pmd[PTRS_PER_PMD] __page_aligned_bss;
- 
- #if MAX_EARLY_MAPPING_SIZE < PGDIR_SIZE
- #define NUM_EARLY_PMDS		1UL
- #else
- #define NUM_EARLY_PMDS		(1UL + MAX_EARLY_MAPPING_SIZE / PGDIR_SIZE)
- #endif
--pmd_t early_pmd[PTRS_PER_PMD * NUM_EARLY_PMDS] __initdata __aligned(PAGE_SIZE);
-+
-+#define NUM_EARLY_PMDS_PTRS	(PTRS_PER_PMD * NUM_EARLY_PMDS)
-+static pmd_t early_pmd[NUM_EARLY_PMDS_PTRS] __initdata __aligned(PAGE_SIZE);
- 
- static pmd_t *__init get_pmd_virt(phys_addr_t pa)
- {
-diff --git a/arch/riscv/mm/sifive_l2_cache.c b/arch/riscv/mm/sifive_l2_cache.c
-index 2e637ad71c05..a9ffff3277c7 100644
---- a/arch/riscv/mm/sifive_l2_cache.c
-+++ b/arch/riscv/mm/sifive_l2_cache.c
-@@ -142,7 +142,7 @@ static irqreturn_t l2_int_handler(int irq, void *device)
- 	return IRQ_HANDLED;
- }
- 
--int __init sifive_l2_init(void)
-+static int __init sifive_l2_init(void)
- {
- 	struct device_node *np;
- 	struct resource res;
+ /*
+  * When necessary, performs a deferred icache flush for the given MM context,
 -- 
 2.23.0
 
