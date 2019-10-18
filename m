@@ -2,43 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8A3ADD462
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF271DD47A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:25:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729030AbfJRWFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:05:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36640 "EHLO mail.kernel.org"
+        id S2394559AbfJRWYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:24:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728893AbfJRWEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:04:53 -0400
+        id S1728947AbfJRWE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:04:57 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F704222D2;
-        Fri, 18 Oct 2019 22:04:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB7E02245A;
+        Fri, 18 Oct 2019 22:04:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436293;
-        bh=XeLQE1nbW8RszEs7Xij3l9Nh8vroHAGeSjIWSQUhe2Q=;
+        s=default; t=1571436296;
+        bh=M2HzMP+l+Weo8FPbty/bQt2z8x2v4tAHox0FIemkwwE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AQoaisWbmcf37CKqpHdomwic7Id6e776ztkRayMkuEkxY5DrghVmrsPOwueSj8csF
-         zz6IMg2PWAgW94Ayw2xLMk9rbfiHEJ3xqogH8LPX+MmcLfAX0QmxtJQht2HmuWpAdI
-         LcxC5f9nreXwRxSgSdptgxE41BbHzFIvgdzfx/+w=
+        b=rNw6x9AZfiqn74/FDK4j/YtZpihauN+e0ozH2BJohw0gq2RwxpLked+47uzHi6nht
+         9hgpyJnY10xYtsbMUhkdaDMONdGxga6XN+/iGY0iH1Wozb+5afXD+jk+1rWFh0uSgz
+         +HQWVMDZDakqftpSSVCZnV0Bu3vt7/zwDaitYf08=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Song Liu <songliubraving@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>, kernel-team@fb.com,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 66/89] perf/core: Fix corner case in perf_rotate_context()
-Date:   Fri, 18 Oct 2019 18:03:01 -0400
-Message-Id: <20191018220324.8165-66-sashal@kernel.org>
+Cc:     Nirmoy Das <nirmoy.das@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.3 68/89] drm/amdgpu: fix memory leak
+Date:   Fri, 18 Oct 2019 18:03:03 -0400
+Message-Id: <20191018220324.8165-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220324.8165-1-sashal@kernel.org>
 References: <20191018220324.8165-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -47,101 +46,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Song Liu <songliubraving@fb.com>
+From: Nirmoy Das <nirmoy.das@amd.com>
 
-[ Upstream commit 7fa343b7fdc4f351de4e3f28d5c285937dd1f42f ]
+[ Upstream commit 083164dbdb17c5ea4ad92c1782b59c9d75567790 ]
 
-In perf_rotate_context(), when the first cpu flexible event fail to
-schedule, cpu_rotate is 1, while cpu_event is NULL. Since cpu_event is
-NULL, perf_rotate_context will _NOT_ call cpu_ctx_sched_out(), thus
-cpuctx->ctx.is_active will have EVENT_FLEXIBLE set. Then, the next
-perf_event_sched_in() will skip all cpu flexible events because of the
-EVENT_FLEXIBLE bit.
+cleanup error handling code and make sure temporary info array
+with the handles are freed by amdgpu_bo_list_put() on
+idr_replace()'s failure.
 
-In the next call of perf_rotate_context(), cpu_rotate stays 1, and
-cpu_event stays NULL, so this process repeats. The end result is, flexible
-events on this cpu will not be scheduled (until another event being added
-to the cpuctx).
-
-Here is an easy repro of this issue. On Intel CPUs, where ref-cycles
-could only use one counter, run one pinned event for ref-cycles, one
-flexible event for ref-cycles, and one flexible event for cycles. The
-flexible ref-cycles is never scheduled, which is expected. However,
-because of this issue, the cycles event is never scheduled either.
-
- $ perf stat -e ref-cycles:D,ref-cycles,cycles -C 5 -I 1000
-
-           time             counts unit events
-    1.000152973         15,412,480      ref-cycles:D
-    1.000152973      <not counted>      ref-cycles     (0.00%)
-    1.000152973      <not counted>      cycles         (0.00%)
-    2.000486957         18,263,120      ref-cycles:D
-    2.000486957      <not counted>      ref-cycles     (0.00%)
-    2.000486957      <not counted>      cycles         (0.00%)
-
-To fix this, when the flexible_active list is empty, try rotate the
-first event in the flexible_groups. Also, rename ctx_first_active() to
-ctx_event_to_rotate(), which is more accurate.
-
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <kernel-team@fb.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 8d5bce0c37fa ("perf/core: Optimize perf_rotate_context() event scheduling")
-Link: https://lkml.kernel.org/r/20191008165949.920548-1-songliubraving@fb.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Nirmoy Das <nirmoy.das@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index a0120bdbce177..32c54a761ad02 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -3694,11 +3694,23 @@ static void rotate_ctx(struct perf_event_context *ctx, struct perf_event *event)
- 	perf_event_groups_insert(&ctx->flexible_groups, event);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
+index 7bcf86c619995..61e38e43ad1d5 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
+@@ -270,7 +270,7 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
+ 
+ 	r = amdgpu_bo_create_list_entry_array(&args->in, &info);
+ 	if (r)
+-		goto error_free;
++		return r;
+ 
+ 	switch (args->in.operation) {
+ 	case AMDGPU_BO_LIST_OP_CREATE:
+@@ -283,8 +283,7 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
+ 		r = idr_alloc(&fpriv->bo_list_handles, list, 1, 0, GFP_KERNEL);
+ 		mutex_unlock(&fpriv->bo_list_lock);
+ 		if (r < 0) {
+-			amdgpu_bo_list_put(list);
+-			return r;
++			goto error_put_list;
+ 		}
+ 
+ 		handle = r;
+@@ -306,9 +305,8 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
+ 		mutex_unlock(&fpriv->bo_list_lock);
+ 
+ 		if (IS_ERR(old)) {
+-			amdgpu_bo_list_put(list);
+ 			r = PTR_ERR(old);
+-			goto error_free;
++			goto error_put_list;
+ 		}
+ 
+ 		amdgpu_bo_list_put(old);
+@@ -325,8 +323,10 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
+ 
+ 	return 0;
+ 
++error_put_list:
++	amdgpu_bo_list_put(list);
++
+ error_free:
+-	if (info)
+-		kvfree(info);
++	kvfree(info);
+ 	return r;
  }
- 
-+/* pick an event from the flexible_groups to rotate */
- static inline struct perf_event *
--ctx_first_active(struct perf_event_context *ctx)
-+ctx_event_to_rotate(struct perf_event_context *ctx)
- {
--	return list_first_entry_or_null(&ctx->flexible_active,
--					struct perf_event, active_list);
-+	struct perf_event *event;
-+
-+	/* pick the first active flexible event */
-+	event = list_first_entry_or_null(&ctx->flexible_active,
-+					 struct perf_event, active_list);
-+
-+	/* if no active flexible event, pick the first event */
-+	if (!event) {
-+		event = rb_entry_safe(rb_first(&ctx->flexible_groups.tree),
-+				      typeof(*event), group_node);
-+	}
-+
-+	return event;
- }
- 
- static bool perf_rotate_context(struct perf_cpu_context *cpuctx)
-@@ -3723,9 +3735,9 @@ static bool perf_rotate_context(struct perf_cpu_context *cpuctx)
- 	perf_pmu_disable(cpuctx->ctx.pmu);
- 
- 	if (task_rotate)
--		task_event = ctx_first_active(task_ctx);
-+		task_event = ctx_event_to_rotate(task_ctx);
- 	if (cpu_rotate)
--		cpu_event = ctx_first_active(&cpuctx->ctx);
-+		cpu_event = ctx_event_to_rotate(&cpuctx->ctx);
- 
- 	/*
- 	 * As per the order given at ctx_resched() first 'pop' task flexible
 -- 
 2.20.1
 
