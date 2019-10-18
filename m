@@ -2,92 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4672EDBC0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:55:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED09FDBC27
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:59:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441947AbfJREyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 00:54:54 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35296 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2441927AbfJREyv (ORCPT
+        id S2407286AbfJRE4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 00:56:41 -0400
+Received: from condef-04.nifty.com ([202.248.20.69]:50603 "EHLO
+        condef-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389158AbfJRE4k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 00:54:51 -0400
-Received: by mail-pl1-f195.google.com with SMTP id c3so2250244plo.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 21:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tfGt3fWr1kwumbPQFxe11qp25uq0tySIsvg724aDQmA=;
-        b=KGFuI8CR3x3LxE3B6tHHY82iaAVS9aFWFJQHPc+YDlC6ws2OgEqL2mZavAKH21Hx+N
-         urFDi/fRju5x2WB1BQ8XO1R+jhVlMWSksN/B4/UY9zRT3GTIcsTPoK6OGJbzVh6MkCSn
-         dWSfodppq81ggRbPJUAJlDxbG0cLFaVUy8WsN3qlimvn6ycSFTD5JwLQ3CNuPKBMSrph
-         vIPwi1Lc8Bs1jCYz0FoGNy+3P+Dc3DVtB/zJtA5q6eF7nIiOnVVVaayioIwtLC7GhW5g
-         EoIGr7xKR0+i4AplYvDAQaua3auhBQQw/9I4V00lXjVImKCm2cQvEpKgzvUDqgTf6iup
-         /P7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tfGt3fWr1kwumbPQFxe11qp25uq0tySIsvg724aDQmA=;
-        b=aHJADbX+/UubDkUj2ftYSyfYjSaUl6ExFTgh+ucRUdrSxmJGDQuPrJUyouwsIlMzIU
-         eNav8C/EPCds2KanKvC8CkyOWAGHS7RkooLp8DxIx4ocBu3EZFjI328UiTheQ+u66hCh
-         gieQHMSS27AP55NOrLWLCsQxMkVcS4kPD49zqB3WitMZi/IB6v7V+RDKHFXcG/QOkrgi
-         FZgLC62dPxUoeesyBY8BNTTQ12PJJRqSc1Ns2G+1+4Vx4Ay3OhbahjWtPIi45dMbhejg
-         UTzkiwEggoD9PzqhJJqq49vHymJvGq+LMk5EoZxiujwi6ZvTgWJ3WSYhLYVGH1n7jJxy
-         ivvw==
-X-Gm-Message-State: APjAAAWvKQYlAndcKlANklyq4MKZL5DQzI5oVHsOE8CsqtSMfwKLSAM4
-        mbw+9Ort6CQTPw7kz2+DHrfAXW+pw/Y=
-X-Google-Smtp-Source: APXvYqxXUTl/qqRC2TrizgbN8R5z7HfGkcGAOE67XLCu4N491ssVlmnv2H4qbY7PTZNpiYtxuCM64Q==
-X-Received: by 2002:aa7:93de:: with SMTP id y30mr4189899pff.98.1571373029465;
-        Thu, 17 Oct 2019 21:30:29 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id i184sm4192692pge.5.2019.10.17.21.30.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 21:30:28 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 10:00:26 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Kamil Konieczny <k.konieczny@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] opp: core: Revert "add regulators enable and disable"
-Message-ID: <20191018043026.xm7a6emczm6w7bck@vireshk-i7>
-References: <CGME20191017102843eucas1p164993b3644d006481fb041e36175eebe@eucas1p1.samsung.com>
- <20191017102758.8104-1-m.szyprowski@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017102758.8104-1-m.szyprowski@samsung.com>
-User-Agent: NeoMutt/20180716-391-311a52
+        Fri, 18 Oct 2019 00:56:40 -0400
+Received: from conuserg-10.nifty.com ([10.126.8.73])by condef-04.nifty.com with ESMTP id x9I4WAKv004997;
+        Fri, 18 Oct 2019 13:32:11 +0900
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x9I4Vnxp019790;
+        Fri, 18 Oct 2019 13:31:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x9I4Vnxp019790
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1571373111;
+        bh=Yyl1cS1eYVt+sVWWGmNXm8/lysOK1IQALljWjASqSwg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Mvf2/0meUo3qXcLS0yRxbLFLzQ+erxo70YfKJZmlA25fJDuP2VseTcvr9gJKHMupY
+         QqSYjcZb2Fyu8qj6leuy+QIphDCaA5hnLxTZzZJ3/DshvKu2ahgdDY/Zkl123ZgE/K
+         5AUFrRD51GbkMkU+poOBcA4Qm4BfzNctOY0AbDj6H8syd2hF2zP0Ah/Q7wKS0CyXrW
+         NVsez3NL1L8tWcK5/FgfHqgEMsMVS9/LuI8lg0vtgKQAHW0WGswp7H5+gza4Xy0w6v
+         DOMl4b1Og+CeoxULFShX2rsVw1pAoTBYLrZXYawP9qrhMYwLI+kqMeNd5jFVoL+wd9
+         wMd1OJtAp+xww==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+Subject: [PATCH 2/2] asm-generic/export.h: remove unneeded __kcrctab_* symbols
+Date:   Fri, 18 Oct 2019 13:31:48 +0900
+Message-Id: <20191018043148.6285-2-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191018043148.6285-1-yamada.masahiro@socionext.com>
+References: <20191018043148.6285-1-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-10-19, 12:27, Marek Szyprowski wrote:
-> All the drivers, which use the OPP framework control regulators, which
-> are already enabled. Typically those regulators are also system critical,
-> due to providing power to CPU core or system buses. It turned out that
-> there are cases, where calling regulator_enable() on such boot-enabled
-> regulator has side-effects and might change its initial voltage due to
-> performing initial voltage balancing without all restrictions from the
-> consumers. Until this issue becomes finally solved in regulator core,
-> avoid calling regulator_enable()/disable() from the OPP framework.
-> 
-> This reverts commit 7f93ff73f7c8c8bfa6be33bcc16470b0b44682aa.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> This is a follow-up from the following discussion:
-> https://lkml.org/lkml/2019/10/9/541
+EXPORT_SYMBOL from assembly code produces an unused symbol __kcrctab_*.
 
-I suppose this must go the v5.4-rcs, right ?
+kcrctab is used as a section name (prefixed with three underscores),
+but never used as a symbol.
 
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ include/asm-generic/export.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
+index 80ef2dc0c8be..a3983e2ce0fd 100644
+--- a/include/asm-generic/export.h
++++ b/include/asm-generic/export.h
+@@ -43,7 +43,6 @@ __kstrtab_\name:
+ #ifdef CONFIG_MODVERSIONS
+ 	.section ___kcrctab\sec+\name,"a"
+ 	.balign KCRC_ALIGN
+-__kcrctab_\name:
+ #if defined(CONFIG_MODULE_REL_CRCS)
+ 	.long __crc_\name - .
+ #else
 -- 
-viresh
+2.17.1
+
