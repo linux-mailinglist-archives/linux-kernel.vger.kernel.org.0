@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16BE8DD1C5
+	by mail.lfdr.de (Postfix) with ESMTP id 8F46BDD1C6
 	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:06:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729979AbfJRWFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:05:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37508 "EHLO mail.kernel.org"
+        id S1730049AbfJRWFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:05:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729866AbfJRWFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:05:35 -0400
+        id S1729866AbfJRWFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:05:41 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F832222C6;
-        Fri, 18 Oct 2019 22:05:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F329120679;
+        Fri, 18 Oct 2019 22:05:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436335;
-        bh=zVWc36t1YQ5i5dLYsdN3Ycb+XDGeIMymeTrjmDPd9qc=;
+        s=default; t=1571436340;
+        bh=NwcaHzqZ1lU4FzfoWU8IZZNT9FuebeODGEm+5dugqd8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KotNSeiVwdL1tKPDukF8dL37DjA+exJpTmBPibNkp2qctkNj97vihqPOTfZ3QPkhe
-         ij0u3PK8sxcgSWGBDG/pFjsrwnJsp3fP67JtgwyUsZz+yFKRA/juJPw/7KAUMdXlDh
-         /ADhEs00sYwilzbdT8b0EB+LGrgsQlHOmYQq7bpk=
+        b=YjeSLN4/RS+CMMuiIPDfZ04XKToxDXCgaBxWapyiwA/mYTutYHJGH0cG/nakZ65Er
+         /NeWSoW0oeGjpoBT8kt9iqqLdZRzZn2D9s+LXx0oIV3sahWNumwFReaVElwMT9Wd8e
+         vJ/+I9E2ygLRiH2oZS5AGlL6jwLc5dqDi0IP5BNI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 006/100] f2fs: fix to recover inode's i_gc_failures during POR
-Date:   Fri, 18 Oct 2019 18:03:51 -0400
-Message-Id: <20191018220525.9042-6-sashal@kernel.org>
+Cc:     Julian Sax <jsbc@gmx.de>, Tim Aldridge <taldridge@mac.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>,
+        linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 008/100] HID: i2c-hid: add Direkt-Tek DTLAPY133-1 to descriptor override
+Date:   Fri, 18 Oct 2019 18:03:53 -0400
+Message-Id: <20191018220525.9042-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
 References: <20191018220525.9042-1-sashal@kernel.org>
@@ -43,34 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Julian Sax <jsbc@gmx.de>
 
-[ Upstream commit 7de36cf3e4087207f42a88992f8cb615a1bd902e ]
+[ Upstream commit 399474e4c1100bca264ed14fa3ad0d68fab484d8 ]
 
-inode.i_gc_failures is used to indicate that skip count of migrating
-on blocks of inode, we should guarantee it can be recovered in sudden
-power-off case.
+This device uses the SIPODEV SP1064 touchpad, which does not
+supply descriptors, so it has to be added to the override list.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Reported-by: Tim Aldridge <taldridge@mac.com>
+Signed-off-by: Julian Sax <jsbc@gmx.de>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/recovery.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 0b224f4a4a656..281ba46b5b359 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -226,6 +226,8 @@ static void recover_inode(struct inode *inode, struct page *page)
- 
- 	F2FS_I(inode)->i_advise = raw->i_advise;
- 	F2FS_I(inode)->i_flags = le32_to_cpu(raw->i_flags);
-+	F2FS_I(inode)->i_gc_failures[GC_FAILURE_PIN] =
-+				le16_to_cpu(raw->i_gc_failures);
- 
- 	recover_inline_flags(inode, raw);
- 
+diff --git a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+index cac262a912c12..89f2976f9c534 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
++++ b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+@@ -330,6 +330,14 @@ static const struct dmi_system_id i2c_hid_dmi_desc_override_table[] = {
+ 		},
+ 		.driver_data = (void *)&sipodev_desc
+ 	},
++	{
++		.ident = "Direkt-Tek DTLAPY133-1",
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Direkt-Tek"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "DTLAPY133-1"),
++		},
++		.driver_data = (void *)&sipodev_desc
++	},
+ 	{
+ 		.ident = "Mediacom Flexbook Edge 11",
+ 		.matches = {
 -- 
 2.20.1
 
