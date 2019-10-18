@@ -2,63 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CD11DC26E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:15:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31520DC272
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:15:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442459AbfJRKPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:15:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405197AbfJRKPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:15:13 -0400
-Received: from localhost (unknown [209.136.236.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4DD2222C3;
-        Fri, 18 Oct 2019 10:15:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571393713;
-        bh=0w1nWKVTncaR1KMNvi/d1vuu7AgxloRlEXtR81GmvEs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kUigrHvWxaPf7GV+6RONd0dnt+cseGtoO4i/RW659+2HuH0w2NmRo2BJGN9JJnfAy
-         myGJaooD7KyACrXSujzvTnSpDKoWV+oqhqtpcwNdthp6HxmLvSoITs9KE229pNMHvy
-         Cw8Ep3QOhaja2RoVGykeI8tAMJPwrVVCdCJm/xHk=
-Date:   Fri, 18 Oct 2019 03:15:10 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        linux-spdx@vger.kernel.org
-Subject: Re: [PATCH] export,module: add SPDX GPL-2.0 license identifier to
- headers with no license
-Message-ID: <20191018101510.GA1172290@kroah.com>
-References: <20191018045053.8424-1-yamada.masahiro@socionext.com>
+        id S2442492AbfJRKP2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:15:28 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53440 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389149AbfJRKP2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 06:15:28 -0400
+Received: from 79.184.255.51.ipv4.supernova.orange.pl (79.184.255.51) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id 07025921cfe5987f; Fri, 18 Oct 2019 12:15:26 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PNP: fix unintended sign extension on left shifts
+Date:   Fri, 18 Oct 2019 12:15:26 +0200
+Message-ID: <7928372.mU7jdBj7dM@kreacher>
+In-Reply-To: <20191014131608.31335-1-colin.king@canonical.com>
+References: <20191014131608.31335-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018045053.8424-1-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 01:50:53PM +0900, Masahiro Yamada wrote:
-> Commit b24413180f56 ("License cleanup: add SPDX GPL-2.0 license
-> identifier to files with no license") took care of a lot of files
-> without any license information.
+On Monday, October 14, 2019 3:16:08 PM CEST Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> These headers were not processed by the tool perhaps because they
-> contain "GPL" in the code.
+> Shifting a u8 left will cause the value to be promoted to an integer. If
+> the top bit of the u8 is set then the following conversion to a 64 bit
+> resource_size_t will sign extend the value causing the upper 32 bits
+> to be set in the result.
 > 
-> I do not see any license boilerplate in them, so they fall back to
-> GPL version 2 only, which is the project default.
+> Fix this by casting the u8 value to a resource_size_t before the shift.
+> Original commit is pre-git history.
 > 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/pnp/isapnp/core.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pnp/isapnp/core.c b/drivers/pnp/isapnp/core.c
+> index 179b737280e1..c947b1673041 100644
+> --- a/drivers/pnp/isapnp/core.c
+> +++ b/drivers/pnp/isapnp/core.c
+> @@ -511,10 +511,14 @@ static void __init isapnp_parse_mem32_resource(struct pnp_dev *dev,
+>  	unsigned char flags;
+>  
+>  	isapnp_peek(tmp, size);
+> -	min = (tmp[4] << 24) | (tmp[3] << 16) | (tmp[2] << 8) | tmp[1];
+> -	max = (tmp[8] << 24) | (tmp[7] << 16) | (tmp[6] << 8) | tmp[5];
+> -	align = (tmp[12] << 24) | (tmp[11] << 16) | (tmp[10] << 8) | tmp[9];
+> -	len = (tmp[16] << 24) | (tmp[15] << 16) | (tmp[14] << 8) | tmp[13];
+> +	min = ((resource_size_t)tmp[4] << 24) | (tmp[3] << 16) |
+> +              (tmp[2] << 8) | tmp[1];
+> +	max = ((resource_size_t)tmp[8] << 24) | (tmp[7] << 16) |
+> +              (tmp[6] << 8) | tmp[5];
+> +	align = ((resource_size_t)tmp[12] << 24) | (tmp[11] << 16) |
+> +              (tmp[10] << 8) | tmp[9];
+> +	len = ((resource_size_t)tmp[16] << 24) | (tmp[15] << 16) |
+> +              (tmp[14] << 8) | tmp[13];
+>  	flags = tmp[0];
+>  	pnp_register_mem_resource(dev, option_flags,
+>  				  min, max, align, len, flags);
+> @@ -532,8 +536,10 @@ static void __init isapnp_parse_fixed_mem32_resource(struct pnp_dev *dev,
+>  	unsigned char flags;
+>  
+>  	isapnp_peek(tmp, size);
+> -	base = (tmp[4] << 24) | (tmp[3] << 16) | (tmp[2] << 8) | tmp[1];
+> -	len = (tmp[8] << 24) | (tmp[7] << 16) | (tmp[6] << 8) | tmp[5];
+> +	base = ((resource_size_t)tmp[4] << 24) | (tmp[3] << 16) |
+> +	       (tmp[2] << 8) | tmp[1];
+> +	len = ((resource_size_t)tmp[8] << 24) | (tmp[7] << 16) |
+> +              (tmp[6] << 8) | tmp[5];
+>  	flags = tmp[0];
+>  	pnp_register_mem_resource(dev, option_flags, base, base, 0, len, flags);
+>  }
+> 
 
-Ah, nice catch!
+Can you please respin this with a CC to linux-acpi?
 
-I'll queue this up to my spdx tree if no one objects.
 
-thanks,
 
-greg k-h
+
