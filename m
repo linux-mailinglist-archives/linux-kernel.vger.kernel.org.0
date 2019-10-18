@@ -2,138 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 438BDDCB43
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2E7DCB48
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:33:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394076AbfJRQbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 12:31:40 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:39785 "EHLO
+        id S2502687AbfJRQcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 12:32:01 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:49051 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2443020AbfJRQbO (ORCPT
+        with ESMTP id S2443067AbfJRQb3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 12:31:14 -0400
+        Fri, 18 Oct 2019 12:31:29 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MK3mS-1icTm63Lji-00LXiw; Fri, 18 Oct 2019 18:31:00 +0200
+ 1MD9CZ-1iCOUA3OaX-0098KX; Fri, 18 Oct 2019 18:31:11 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Subject: [PATCH 3/6] ARM: ep93xx: make mach/ep93xx-regs.h local
-Date:   Fri, 18 Oct 2019 18:29:16 +0200
-Message-Id: <20191018163047.1284736-3-arnd@arndb.de>
+        Andrew Lunn <andrew@lunn.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>
+Subject: [PATCH 4/6] ARM: dove: multiplatform support
+Date:   Fri, 18 Oct 2019 18:29:17 +0200
+Message-Id: <20191018163047.1284736-4-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191018163047.1284736-1-arnd@arndb.de>
 References: <20191018163047.1284736-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Tlr/kGU2mrcS/i0RZ/FxB2SYCWQT8PnsZqB5BcF7KAjcRmXLUoF
- F9tlGC+3wNa5O5ykqO5dAN2TDQM0ig59FE1SOufdFwBDz5f7Eln7CUeDvq9Y5oe8gDIq3g6
- 0fDwY3z/aNnIGAGFB9uIwbx/4hf4Sc2khW/mncHRod8MA9YGAGM5IP+7H767jo4JR3PB0F4
- 8sIvE5utwNvgPaEv9jxSw==
+X-Provags-ID: V03:K1:M3I2DW7r5TJ/06Lx5PzMeSxL6W+oXKIaGMwGkheKqNMkt6Fvu9+
+ +jsJ/Y9OXXK/+aMVcvhgR5qG4mTvR2gi3dp63SrwFlH9KG5wW+jb0RYbDRsHgq4MzHfW7Ls
+ /o0TnPxRohuA/s4lW6+TR3IPiiHKPAF4oIhu10P4P0CSXCWKTmBUO7Myb1HRWUFlWxbrL3d
+ EHKdS5+FTVd1233hLmhEw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+IHzhn3/5XI=:3+rOIP+88JYxotOIBrvwLn
- epLEJlm/bm1m6smJnYwY6LsWyjAWKtgnQ9SOQ1u1kLeWB4lVdkM1zyfETbpfqKTI3gtUQGb31
- 7qvGQHo1ULmo3Kcwtgr/UMu/gNteiLmFh/FAjMCsWYbuv2y/FHnMPcmxDE6i4Wcg8hG6AHe5D
- auu0neWcvGuz5x6a4Pm6qHdFAELbHITngSBERzCYCkXBslEu1GcriGPbjubkt1nSMubPeOotQ
- /wUVDcOCmjJW8SlkBXiyaq7FBonl9BJUiwHHae6BrNzbwIJ0Z0WBywyTwqa7KzCAAZ9uZAGeY
- Rwn8hCH/JxbigA6n0Mu3WItmFLp4q9G6BXZFOggU1gFZg8kQB2B9e040Vk1B9axLzdu4NCGas
- NwPyzWqBGQd/SKn+S5jj4N5o41KkOk6HIJHLo/8uowM6eNHLCoX9iCZtfV+JbcCGLUPB0gva+
- etKp0YR9PCqjM3XjNiEwG9GysIP3HwQhZsQXRevLaqxtKPPh4QMkiw8tSoBMcPmFg6LYA5TTP
- dUWZOa/RvaL0rWzwdkgHOKi1sQmPotgs/y1WT5TI6uFHbFcFa3gNH9xhbDn1Wh/6uGx30cnbJ
- BgSlkjCou75M88kQbYGA1AOFWlIjW61hwm3jgPyWDon5z9bSGabmFB3DpHvFyOk+/oVw0dmrT
- NiD4hjy1o/Qsl5x7GWyNtJielZuoTj0gA3hSqaSdbQ0bpTbj9WMm6VpfNIE0qO5Rxvpx/ORgk
- jiM+56LMmAnxwY+UHxwG2so4GiG7WoNonQZSjUZj4BolzLlCXquFNDA/GgN/HVDSEpGMNU5Xx
- dtZtdH5FQp92SsdBIp11mJF5v0aPISl62FxZ6rx1yWCCNbdxZHOGiBHJ4XhoW5OgL0wlUtbx8
- gHaq77S5t+W3wz9jnl3w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8HsTmMg+yes=:382w6h36jb3cNFKBxl/7qa
+ gpSUI0FlbKKoZGlVJF5UA0IzpzZETaUYuzyMssa/uR8tU0HcK3e3F5PpEVxt7TP2Y0xSOO9eN
+ 6hIvppxprHjJ1HFUar3vbYBOTXmNu8GrGRzvVJhBAjcJ6Kw1gMecBLkLSchiL24WUFICAO03d
+ K/FOkHTg9qHyPPY0yTtz50zV2kwny9xhVXCXYyseyJpfi+BR7PUvlcod8lhJ3TKNFFQiPrhrS
+ /iLD5jZL3UxcXlD/f+Mr12pLl7hQ6Mw79KESJFd2h7x0tMgVQq8pYh1P6rA2VyOMDLLM2cap/
+ ErlaVRzHHQ/rfWB4f8iZmxrIhY3+zjlJEyOdw7cUi5d+zIwchvJ+PxI+7X2NYSZu+31UZQ/q2
+ 39Vps7r5TInKj2/F9/SBf7pegYvub03qovawoJKB6yqAVwW4AwgpeysnEQqo6qcYpRo5NPifD
+ hFMFFxodFcAtZ/jHOEBuSuNt3ebQOqxD9BxuoEDxz2tcPDFq3IOxRPuISIkEHabOLjZjiW9cy
+ zhqAQdS9urx21CW+9joKz6LAjdXKa8XcVlCX0a0whHSfP1If+Se6oDjNHg+TZ2bjl6AedS9SL
+ IO1h2vmaJV/z3GGARmEYangkjc2774B1WGCGWofqaoYcKcojxHug+V7WIb3xUzT21a4THx3F+
+ 8QaapxWTZeNo27pWQTQuQB2oJpzoOHOOtNWr3tmUAkJ9WMbq9yih2vN0NzWisysBsgVM7/TrY
+ PpQbuf/lcs2t6jSGWdxRy9IRYlHkNR6kKHo2dGPzhY2KKp3pWr1HFl7Ea5k1G+GhKZidUVWuk
+ 4yHfks21UVVky4Tj0DYgal7h4cfxD6Scp+NH6c/tC34sIu8g5sa6jgjxw/ssJ9cppuzy60cmy
+ CeTS/ran5OCu1RRYoPDA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nothing relies on it outside of arch/arm/mach-ep93xx/, so just move
-it there.
+The dove platform is now ready to be enabled for multiplatform
+support, this patch does the switch over by modifying the Kconfig file,
+the defconfig and removing the last mach/*.h header that becomes obsolete
+with this.
 
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+This work was originally done in 2015 as all the ARMv7 machiens
+gove moved over to multiplatform builds, but at the time it conflicted
+with some patches that Russell was trying to upstream, so we
+left it at that.
+
+I hope that there is no longer a need to keep dove separate from the
+rest, so we can either add it to the other ARMv7 platforms, or just
+replace it with the DT based platform code for the same hardware
+in mach-mvebu and remove mach-dove entirely.
+
+Acked-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-ep93xx/crunch-bits.S                    | 2 +-
- arch/arm/mach-ep93xx/{include/mach => }/ep93xx-regs.h | 4 ----
- arch/arm/mach-ep93xx/gpio-ep93xx.h                    | 2 +-
- arch/arm/mach-ep93xx/include/mach/uncompress.h        | 1 -
- arch/arm/mach-ep93xx/soc.h                            | 2 +-
- 5 files changed, 3 insertions(+), 8 deletions(-)
- rename arch/arm/mach-ep93xx/{include/mach => }/ep93xx-regs.h (94%)
+ arch/arm/Kconfig                             | 16 ---------
+ arch/arm/configs/dove_defconfig              |  2 ++
+ arch/arm/mach-dove/Kconfig                   | 16 ++++++---
+ arch/arm/mach-dove/Makefile                  |  2 ++
+ arch/arm/mach-dove/include/mach/uncompress.h | 34 --------------------
+ 5 files changed, 16 insertions(+), 54 deletions(-)
+ delete mode 100644 arch/arm/mach-dove/include/mach/uncompress.h
 
-diff --git a/arch/arm/mach-ep93xx/crunch-bits.S b/arch/arm/mach-ep93xx/crunch-bits.S
-index fb2dbf76f09e..e6dd08538bb9 100644
---- a/arch/arm/mach-ep93xx/crunch-bits.S
-+++ b/arch/arm/mach-ep93xx/crunch-bits.S
-@@ -14,7 +14,7 @@
- #include <asm/thread_info.h>
- #include <asm/asm-offsets.h>
- #include <asm/assembler.h>
--#include <mach/ep93xx-regs.h>
-+#include "ep93xx-regs.h"
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index cca3d240a01e..eb019bc7a370 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -415,22 +415,6 @@ config ARCH_IXP4XX
+ 	help
+ 	  Support for Intel's IXP4XX (XScale) family of processors.
  
- /*
-  * We can't use hex constants here due to a bug in gas.
-diff --git a/arch/arm/mach-ep93xx/include/mach/ep93xx-regs.h b/arch/arm/mach-ep93xx/ep93xx-regs.h
-similarity index 94%
-rename from arch/arm/mach-ep93xx/include/mach/ep93xx-regs.h
-rename to arch/arm/mach-ep93xx/ep93xx-regs.h
-index 6839ea032e58..8fa3646de0a4 100644
---- a/arch/arm/mach-ep93xx/include/mach/ep93xx-regs.h
-+++ b/arch/arm/mach-ep93xx/ep93xx-regs.h
-@@ -1,8 +1,4 @@
- /* SPDX-License-Identifier: GPL-2.0 */
+-config ARCH_DOVE
+-	bool "Marvell Dove"
+-	select CPU_PJ4
+-	select GENERIC_CLOCKEVENTS
+-	select GENERIC_IRQ_MULTI_HANDLER
+-	select GPIOLIB
+-	select HAVE_PCI
+-	select MVEBU_MBUS
+-	select PINCTRL
+-	select PINCTRL_DOVE
+-	select PLAT_ORION_LEGACY
+-	select SPARSE_IRQ
+-	select PM_GENERIC_DOMAINS if PM
+-	help
+-	  Support for the Marvell Dove SoC 88AP510
+-
+ config ARCH_PXA
+ 	bool "PXA2xx/PXA3xx-based"
+ 	depends on MMU
+diff --git a/arch/arm/configs/dove_defconfig b/arch/arm/configs/dove_defconfig
+index e70c997d5f4c..1ced32deac75 100644
+--- a/arch/arm/configs/dove_defconfig
++++ b/arch/arm/configs/dove_defconfig
+@@ -8,6 +8,8 @@ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ # CONFIG_BLK_DEV_BSG is not set
+ CONFIG_PARTITION_ADVANCED=y
++# CONFIG_ARCH_MULTI_V6 is not set
++CONFIG_ARCH_MULTI_V7=y
+ CONFIG_ARCH_DOVE=y
+ CONFIG_MACH_DOVE_DB=y
+ CONFIG_MACH_CM_A510=y
+diff --git a/arch/arm/mach-dove/Kconfig b/arch/arm/mach-dove/Kconfig
+index 7747fe64420a..c30c69c664ea 100644
+--- a/arch/arm/mach-dove/Kconfig
++++ b/arch/arm/mach-dove/Kconfig
+@@ -1,7 +1,17 @@
+ # SPDX-License-Identifier: GPL-2.0
+-if ARCH_DOVE
++menuconfig ARCH_DOVE
++	bool "Marvell Dove" if ARCH_MULTI_V7
++	select CPU_PJ4
++	select GPIOLIB
++	select MVEBU_MBUS
++	select PINCTRL
++	select PINCTRL_DOVE
++	select PLAT_ORION_LEGACY
++	select PM_GENERIC_DOMAINS if PM
++	help
++	  Support for the Marvell Dove SoC 88AP510
+ 
+-menu "Marvell Dove Implementations"
++if ARCH_DOVE
+ 
+ config DOVE_LEGACY
+ 	bool
+@@ -21,6 +31,4 @@ config MACH_CM_A510
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  CompuLab CM-A510 Board.
+ 
+-endmenu
+-
+ endif
+diff --git a/arch/arm/mach-dove/Makefile b/arch/arm/mach-dove/Makefile
+index cdf163cab738..e83f6492834d 100644
+--- a/arch/arm/mach-dove/Makefile
++++ b/arch/arm/mach-dove/Makefile
+@@ -1,4 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
++ccflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/arch/arm/plat-orion/include
++
+ obj-y				+= common.o
+ obj-$(CONFIG_DOVE_LEGACY)	+= irq.o mpp.o
+ obj-$(CONFIG_PCI)		+= pcie.o
+diff --git a/arch/arm/mach-dove/include/mach/uncompress.h b/arch/arm/mach-dove/include/mach/uncompress.h
+deleted file mode 100644
+index 7a4bd8838036..000000000000
+--- a/arch/arm/mach-dove/include/mach/uncompress.h
++++ /dev/null
+@@ -1,34 +0,0 @@
 -/*
-- * arch/arm/mach-ep93xx/include/mach/ep93xx-regs.h
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
 - */
 -
- #ifndef __ASM_ARCH_EP93XX_REGS_H
- #define __ASM_ARCH_EP93XX_REGS_H
- 
-diff --git a/arch/arm/mach-ep93xx/gpio-ep93xx.h b/arch/arm/mach-ep93xx/gpio-ep93xx.h
-index 242af4a401ea..7b46eb7e5507 100644
---- a/arch/arm/mach-ep93xx/gpio-ep93xx.h
-+++ b/arch/arm/mach-ep93xx/gpio-ep93xx.h
-@@ -4,7 +4,7 @@
- #ifndef __GPIO_EP93XX_H
- #define __GPIO_EP93XX_H
- 
--#include <mach/ep93xx-regs.h>
-+#include "ep93xx-regs.h"
- 
- #define EP93XX_GPIO_PHYS_BASE		EP93XX_APB_PHYS(0x00040000)
- #define EP93XX_GPIO_BASE		EP93XX_APB_IOMEM(0x00040000)
-diff --git a/arch/arm/mach-ep93xx/include/mach/uncompress.h b/arch/arm/mach-ep93xx/include/mach/uncompress.h
-index b3ec1db988db..e20bcab702b2 100644
---- a/arch/arm/mach-ep93xx/include/mach/uncompress.h
-+++ b/arch/arm/mach-ep93xx/include/mach/uncompress.h
-@@ -5,7 +5,6 @@
-  * Copyright (C) 2006 Lennert Buytenhek <buytenh@wantstofly.org>
-  */
- 
--#include <mach/ep93xx-regs.h>
- #include <asm/mach-types.h>
- 
- static unsigned char __raw_readb(unsigned int ptr)
-diff --git a/arch/arm/mach-ep93xx/soc.h b/arch/arm/mach-ep93xx/soc.h
-index 770743bbaf80..670884ba754e 100644
---- a/arch/arm/mach-ep93xx/soc.h
-+++ b/arch/arm/mach-ep93xx/soc.h
-@@ -9,7 +9,7 @@
- #ifndef _EP93XX_SOC_H
- #define _EP93XX_SOC_H
- 
--#include <mach/ep93xx-regs.h>
-+#include "ep93xx-regs.h"
- #include "irqs.h"
- 
- /*
+-#define UART0_PHYS_BASE (0xf1000000 + 0x12000)
+-
+-#define UART_THR ((volatile unsigned char *)(UART0_PHYS_BASE + 0x0))
+-#define UART_LSR ((volatile unsigned char *)(UART0_PHYS_BASE + 0x14))
+-
+-#define LSR_THRE	0x20
+-
+-static void putc(const char c)
+-{
+-	int i;
+-
+-	for (i = 0; i < 0x1000; i++) {
+-		/* Transmit fifo not full? */
+-		if (*UART_LSR & LSR_THRE)
+-			break;
+-	}
+-
+-	*UART_THR = c;
+-}
+-
+-static void flush(void)
+-{
+-}
+-
+-/*
+- * nothing to do
+- */
+-#define arch_decomp_setup()
 -- 
 2.20.0
 
