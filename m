@@ -2,90 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64208DCE94
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:47:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BA09DCEA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634569AbfJRSrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 14:47:02 -0400
-Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.175]:28982 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502809AbfJRSqw (ORCPT
+        id S2634596AbfJRSsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 14:48:20 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33059 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2634584AbfJRSsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 14:46:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1571424409;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=xz95XaDLnnSMdaKFjAvNeNi9Kf9q1CPGUe86Ptqg0XY=;
-        b=sx1ydCMlUhHff+LUz7Ah73qaA7PTdbk/ecbB5IQZzebyvcaHVuAnHqd1r+wh5HoOZd
-        AEPPutSqGzR+ZfbGdPB8E4teQXCB1zM4L3rYLiXFZo8jrMUfXpJ9hzNqPfGDUjkOVt6t
-        56AcdPUq+MwP9ynhi4dYh9F6uPYXzVAGpdwjE6F0WzXu8zR7DZVGSftpTuhpDUj/4CNw
-        fKx0KnSXPmppUxkY3/Q8Drs83h3W+OBxlO1vMHa6ZieOV9PuAEeJFpEzHJT6DBbTPy6P
-        ERdK34d1Nk8wnvi/Xo2KfjHhY4YDYHLywgQ7HBUBCwXoGdhMXk8bfsLIRSqRlKzcl1uo
-        zoEQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1mfYzBGHXH6F3CFF60="
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 44.28.1 DYNA|AUTH)
-        with ESMTPSA id R0b2a8v9IIkYDLI
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 18 Oct 2019 20:46:34 +0200 (CEST)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH 7/7] ARM: DTS: omap5: add sgx gpu child node
-Date:   Fri, 18 Oct 2019 20:46:30 +0200
-Message-Id: <790e680db41f12c5962a5ed4ffe468615afe9716.1571424390.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <cover.1571424390.git.hns@goldelico.com>
-References: <cover.1571424390.git.hns@goldelico.com>
+        Fri, 18 Oct 2019 14:48:19 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q10so4433010pfl.0;
+        Fri, 18 Oct 2019 11:48:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GhekFAP9STOj7Nck5xlc736VlW5iBvMLqnVMOxCxKvk=;
+        b=nq7ifkSWIToa5I6g+4rLSg8PHDlLTw6sVriPzMqwLyL1U5F8+028XAzlRa/udM37u2
+         IhA0UyYp6F+7ywfOdfaNWxQCMTMOWuL8HtxDQEhuCxw2TfjeU/1gdW7t93bK+VDfAcTg
+         pfo6iiwkuaTPalYjOaazTni3qU5XLRdsfiyDPqItneeA0bQXnbaHtFuw8iRGNjF39B4W
+         lt5QbWDbHM+8WrHSoEaeDZEsnNjlqC5r2UARp1vfD9y8vj6/yXwpuuBlqOTTfDzBXDs9
+         +FfX0SLtOMSWhq1Ah85J0QQWGmRg77zVUbZGDPG1IKY0ugY8WtqD7mvAONygnf9oMrZb
+         NTTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GhekFAP9STOj7Nck5xlc736VlW5iBvMLqnVMOxCxKvk=;
+        b=WT39LAVeVDYkaZzBN+leNcOM+/EUZNhZgolBo1DTzveRAfusSAv2OT8cPilHv63O2Z
+         fbt47K9vKtahZ3l4aOEKdfK744qoK5xVu33E6VQH2R0TTjKiWyfn38hISlHwl3ddj8j3
+         p2h0vnN7W3k80WIYHJapHal7hsGOKSO1Y532yqbj/dufCmCdkHjdDxCfArV3wEwKFOb0
+         RIZo8iwFObFDKHdjE53KZddYM9WhpVBI8kOqR8BgYIF8vFehRV8z4b4aBLjOZEAoFREL
+         zIPDWxJ9MPu307WgzEh8fYvBQTKRgIzhkOlQ9kLdf1STA/6tAwpdGl87QSKlCXAqJqXA
+         TOPQ==
+X-Gm-Message-State: APjAAAWu32/xOh4fFSqMwpHLpJJF2UeOuneuBtIcBGc7Ja6xO9eKuwo+
+        1lrl4qIbp61LlwFE/ftYc30=
+X-Google-Smtp-Source: APXvYqwsgKLXB40xjU+zPd0jglpCieWEDSonZkG9+b++J833wiGysvtehr/Wkf0Gua652wYqwRTXxQ==
+X-Received: by 2002:a63:1511:: with SMTP id v17mr11529604pgl.34.1571424498309;
+        Fri, 18 Oct 2019 11:48:18 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id u5sm8212572pfl.25.2019.10.18.11.48.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2019 11:48:17 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 11:48:15 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-input@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH 29/46] Input: touchscreen: use wrapper for pxa2xx ac97
+ registers
+Message-ID: <20191018184815.GP35946@dtor-ws>
+References: <20191018154052.1276506-1-arnd@arndb.de>
+ <20191018154201.1276638-29-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018154201.1276638-29-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-and add timer and interrupt.
+On Fri, Oct 18, 2019 at 05:41:44PM +0200, Arnd Bergmann wrote:
+> To avoid a dependency on the pxa platform header files with
+> hardcoded registers, change the driver to call a wrapper
+> in the pxa2xx-ac97-lib that encapsulates all the other
+> ac97 stuff.
 
-Teste on Pyra-Handheld.
+Not supper happy about adding module dependencies. Can we include
+mach/regs-ac97.h from include/sound/pxa2xx-lib.h and use static inlines?
+Someone needs to include mach/regs-ac97.h in the end...
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- arch/arm/boot/dts/omap5.dtsi | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Or there is something later in the series that needs it?
 
-diff --git a/arch/arm/boot/dts/omap5.dtsi b/arch/arm/boot/dts/omap5.dtsi
-index 1fb7937638f0..041a05b1cc4d 100644
---- a/arch/arm/boot/dts/omap5.dtsi
-+++ b/arch/arm/boot/dts/omap5.dtsi
-@@ -274,10 +274,14 @@
- 			#size-cells = <1>;
- 			ranges = <0 0x56000000 0x2000000>;
- 
--			/*
--			 * Closed source PowerVR driver, no child device
--			 * binding or driver in mainline
--			 */
-+			sgx: sgx@0 {
-+				compatible = "img,sgx544-116", "img,sgx544", "ti,omap-omap5-sgx544-116";
-+				reg = <0x0 0x10000>;
-+				reg-names = "sgx";
-+				interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+				timer = <&timer11>;
-+				img,cores = <2>;
-+			};
- 		};
- 
- 		dss: dss@58000000 {
+Thanks.
+
 -- 
-2.19.1
-
+Dmitry
