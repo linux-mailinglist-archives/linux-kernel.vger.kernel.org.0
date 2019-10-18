@@ -2,59 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 372E2DC1C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:50:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2756DC1CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:51:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442326AbfJRJuk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 05:50:40 -0400
-Received: from 8bytes.org ([81.169.241.247]:48002 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730808AbfJRJuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 05:50:40 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 74B54300; Fri, 18 Oct 2019 11:50:38 +0200 (CEST)
-Date:   Fri, 18 Oct 2019 11:50:37 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/vt-d: Return the correct dma mask when we are
- bypassing the IOMMU
-Message-ID: <20191018095036.GB4670@8bytes.org>
-References: <20191008143357.GA599223@rani.riverdale.lan>
- <85123533-2e9c-af73-3014-782dd6f925cb@linux.intel.com>
- <20191016191551.GA2692557@rani>
- <20191017070847.GA15037@lst.de>
+        id S2633072AbfJRJvu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 05:51:50 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46082 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730808AbfJRJvt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 05:51:49 -0400
+Received: by mail-pg1-f196.google.com with SMTP id e15so3056434pgu.13
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 02:51:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=B1DJCyKm+S5XN5LjovT0twn7TgHW8lL5z4RVqMp1tlM=;
+        b=V/FFYf/OuXCokyuYNICYTsOvDfHT2yoEM0xGfhHD0pEItrFk646z79oIUBDZPOYTBf
+         FYFIA4K2n4IkuiyRgvs8Kui0DycUEheMtqBVWIiWlBZrHByWyG2UXLJPiJi+Ayh+6lO1
+         YGgpnYDX21HkyArYX8kEhSlQqrotkzPmxk8jaLmd4ts2Wiepepys9WI+wNNnSvlilEAR
+         QfkMNGklic/SUXOnvSmRPYpNpg4f1wVdIX87t22MfotD4805dB5R+QQ4PrRMB6gxULiC
+         NMFMhmB5X1M1rzOoumdzXMuTjCdq18bYFHsORPSOt3Qgvfj7z+8H+4wULIo3HFoo0Wcl
+         KjFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B1DJCyKm+S5XN5LjovT0twn7TgHW8lL5z4RVqMp1tlM=;
+        b=IMvtBWly3da7SpHNNqejtWVZCeYB34Ql2X77AUIobNl6vZnPumt33iW2gHkG6DeMh2
+         xEnYKPw/h7KOCyPPvdzA4ukxuIltcndG3M14mnjHiMHNjJiGvLRAL4fKTAsMraKMo/NE
+         nYLpywaGmbgt40W1M1FYShak91WxgdV185KCE7BLuZMNLgF96inyMRQCvL0tHUaN8ph/
+         GC+/JXqx/h46rxqdHDGLwvwSgXG4xBnaUTBlg5QcvxRq+PjY3ArF2qxlzww2ONptjOQx
+         JkbqLvWhJqOj+6IHydz6mhGd3xxGKTiS94V4/gwYTtGCSsAe3Nzb6wQMd+Om62Rj7Pd7
+         h+/Q==
+X-Gm-Message-State: APjAAAVf/04/XdIsP2qN+tYqmCMzOEsoTXPHmxUMtBW8xhQ2jwUkgm8H
+        eSB/bbHh5uLiPICYalbZPJPlEw==
+X-Google-Smtp-Source: APXvYqyNFkRvnZmGknv26Wp3KPaMZo7qL0J/v5oMpgC4CJHep/qjBswXaNrsjN566/STEj+4OQukbA==
+X-Received: by 2002:a62:cf45:: with SMTP id b66mr5530793pfg.150.1571392308876;
+        Fri, 18 Oct 2019 02:51:48 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id a13sm6722689pfg.10.2019.10.18.02.51.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Oct 2019 02:51:48 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 15:21:45 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        daniel.lezcano@linaro.org, sudeep.holla@arm.com,
+        bjorn.andersson@linaro.org, edubezval@gmail.com, agross@kernel.org,
+        tdas@codeaurora.org, swboyd@chromium.org, ilina@codeaurora.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Ben Segall <bsegall@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 6/6] cpufreq: qcom-hw: Move driver initialisation
+ earlier
+Message-ID: <20191018095145.tdlozkz7qlb5z4r3@vireshk-i7>
+References: <cover.1571387352.git.amit.kucheria@linaro.org>
+ <3d367762ba72fa1cbd6391dc55d94b3284f6c00c.1571387352.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191017070847.GA15037@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3d367762ba72fa1cbd6391dc55d94b3284f6c00c.1571387352.git.amit.kucheria@linaro.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 09:08:47AM +0200, Christoph Hellwig wrote:
-> On Wed, Oct 16, 2019 at 03:15:52PM -0400, Arvind Sankar wrote:
-> > > > Reported-by: Arvind Sankar <nivedita@alum.mit.edu>
-> > > > Tested-by: Arvind Sankar <nivedita@alum.mit.edu>
-> > > > Originally-by: Christoph Hellwig <hch@lst.de>
-> > > > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > > > Fixed-by: Arvind Sankar <nivedita@alum.mit.edu>
-> > > > Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-> > > 
-> > > This patch looks good to me.
-> > > 
-> > > Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> > > 
-> > 
-> > Hi Christoph, will you be taking this through your dma-mapping branch?
+On 18-10-19, 14:22, Amit Kucheria wrote:
+> Allow qcom-hw driver to initialise right after the cpufreq and thermal
+> subsystems are initialised in core_initcall so we get earlier access to
+> thermal mitigation.
 > 
-> Given this is a patch to intel-iommu I expect Joerg to pick it up.
-> But if he is fine with that I can also queue it up instead.
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Acked-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/cpufreq/qcom-cpufreq-hw.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+> index a9ae2f84a4efc..fc92a8842e252 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-hw.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> @@ -334,7 +334,7 @@ static int __init qcom_cpufreq_hw_init(void)
+>  {
+>  	return platform_driver_register(&qcom_cpufreq_hw_driver);
+>  }
+> -device_initcall(qcom_cpufreq_hw_init);
+> +postcore_initcall(qcom_cpufreq_hw_init);
+>  
+>  static void __exit qcom_cpufreq_hw_exit(void)
+>  {
 
-Fine with me.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Acked-by: Joerg Roedel <jroedel@suse.de>
+-- 
+viresh
