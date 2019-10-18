@@ -2,79 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAAE1DD16D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 23:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 899E4DD171
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 23:56:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbfJRVzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 17:55:53 -0400
-Received: from mga07.intel.com ([134.134.136.100]:20350 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725806AbfJRVzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 17:55:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2019 14:55:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,313,1566889200"; 
-   d="scan'208";a="371587819"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga005.jf.intel.com with ESMTP; 18 Oct 2019 14:55:52 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 1ABF5300481; Fri, 18 Oct 2019 14:55:52 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 14:55:52 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Lars Poeschel <poeschel@lemonage.de>,
-        Vadim Bendebury <vbendeb@chromium.org>,
-        Willy Tarreau <willy@haproxy.com>,
-        Ksenija Stanojevic <ksenija.stanojevic@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 1/3] auxdisplay: Make charlcd.[ch] more general
-Message-ID: <20191018215552.GX9933@tassilo.jf.intel.com>
-References: <20191016082430.5955-1-poeschel@lemonage.de>
- <CANiq72=uXWpEWHixM+wwyxZfzQ41WYvQsoV8B3+JLRharDjC0w@mail.gmail.com>
- <20191017080741.GA17556@lem-wkst-02.lemonage>
- <CANiq72m0V5CBxp97Q4h70Gup1DCoZj4ZFa6VWQLk0jyurxeztQ@mail.gmail.com>
- <5348febc85ad3460f4e06ff11bf58ec70f6b3a48.camel@perches.com>
+        id S1726374AbfJRV4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 17:56:45 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34509 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfJRV4o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 17:56:44 -0400
+Received: by mail-wr1-f68.google.com with SMTP id t16so2576035wrr.1;
+        Fri, 18 Oct 2019 14:56:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NNT4s+96n0HtKra+JkkijNCDNZR67HLwPEp4ZkBnTZc=;
+        b=fHxVZBpH5RPdwhSk6TZqDGXwcSweopwEOfg5u8oQZ73QhsXzDcUu/rYeyMD29geE54
+         RiY4PeYq8OoZ1t//Plcj8uNVrS8lxcxejrnFeYW2P6yvHIK4DRQMBiUCj/Id7+3qr+Wc
+         4OkJLqzURD7uzl5l+BVdHJB74hVCULzH0wqNVrXAfhiImmdgS0Q5VGRenySPabnsKhST
+         m8y8GSc6iLcRC2hR1gqGXXdq72zYBHjjbtb5mrJZP7OWTZFpq8P7KZLMXGHv0fx0GFRq
+         w2adN0mrkpimsLgt0GvAHwFXBed93rUB1Fzr49yVZ0oW1SDYxuzonbfV0SFt/vAKFvUQ
+         ok/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=NNT4s+96n0HtKra+JkkijNCDNZR67HLwPEp4ZkBnTZc=;
+        b=kuWa21GtE9Zg15GEo/cuB+GpsJgnugHzm+VzjPDatTVJ6gfR7cZ9cf5NvkRTuMGzA5
+         N5V9IIxNr2d8bv73kDHgOX5fIr2axaPz2MDbZ+ames0d9JyQ9Lt6cbu75DmqqFHn+1pr
+         QVVsWpYfv/kZ6BvUTNnOwQT6ICYFp3hbSR2NFzFjVcAO6sYbHjdEwa99qREyY1xF+h9/
+         jyBudk/sXf8rr05zPPA+d1NscMQ+OA6iaQX6xlBa1ngWYPESiMLHauA287HXJO9xVRC0
+         tlCnlZPWwnNPsrVrPUK9DMAtrsm7+16es4rJlahtbXOK5CXoE9vRbLtW90LMQLyA94xR
+         VIoQ==
+X-Gm-Message-State: APjAAAXnAj1yRX6M3Gkc1fvFkC7fkcSibV4au6zzXX2EOlKgfd7X+lkO
+        0x4JXEThFfPf7gZr1+QmMOlRq3UI
+X-Google-Smtp-Source: APXvYqxZxRYEmZsPWUE1AxKD1UmLmy/7X8JnSw1PQGYkZP3PIeeIO+tBjnGjG3HS+eSrjDkIEt5CVg==
+X-Received: by 2002:adf:e441:: with SMTP id t1mr3929173wrm.395.1571435800113;
+        Fri, 18 Oct 2019 14:56:40 -0700 (PDT)
+Received: from [192.168.1.19] (chp168.neoplus.adsl.tpnet.pl. [83.31.13.168])
+        by smtp.gmail.com with ESMTPSA id a17sm2665775wmb.8.2019.10.18.14.56.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Oct 2019 14:56:39 -0700 (PDT)
+Subject: Re: [PATCH v14 13/19] leds: lp55xx: Add multicolor framework support
+ to lp55xx
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+To:     Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191018122521.6757-1-dmurphy@ti.com>
+ <20191018122521.6757-14-dmurphy@ti.com>
+ <a24832d9-1c3d-b3ea-4326-2ef4937d5a59@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c9a704d4-b411-59f1-02bf-3ea7b219c4b4@gmail.com>
+Date:   Fri, 18 Oct 2019 23:56:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5348febc85ad3460f4e06ff11bf58ec70f6b3a48.camel@perches.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <a24832d9-1c3d-b3ea-4326-2ef4937d5a59@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 08:33:26AM -0700, Joe Perches wrote:
-> On Fri, 2019-10-18 at 17:08 +0200, Miguel Ojeda wrote:
-> > On Thu, Oct 17, 2019 at 10:07 AM Lars Poeschel <poeschel@lemonage.de> wrote:
-> []
-> > > Oh by the way: Do you know what I can do to make checkpatch happy with
-> > > its describing of the config symbol ? I tried writing a help paragraph
-> > > for the config symbols in Kconfig, but that did not help.
-> > 
-> > CC'ing Joe.
-> 
-> add
-> 	--ignore=CONFIG_DESCRIPTION
-> or
-> 	--min-conf-desc-length=1 (default is 4)
-> 
-> to the checkpatch command line, or just ignore it.
-> 
-> AK: I guess there's still some debate as to the proper
-> minimum length of a Kconfig help section paragraph.
 
-I still think four lines is a good minimum
+On 10/18/19 11:48 PM, Jacek Anaszewski wrote:
+> Dan,
++		ret = lp5xx_parse_channel_child(child, cfg, i);
+> 
+> I went into details of this parsing and finally came up with
+> the code which is a bit greater in size, but IMHO cleaner.
+> Note changes in variable naming. It is not even compile-tested.
+> 
+> static int lp55xx_parse_common_child(struct device_node *np,
+>                                     struct lp55xx_led_config *cfg,
+>                                     int led_number, int *chan_nr)
+> {
+>         int ret;
+> 
+>         of_property_read_string(np, "chan-name",
+>                                 &cfg[led_number].name);
+>         of_property_read_u8(np, "led-cur",
+>                             &cfg[led_number].led_current);
+>         of_property_read_u8(np, "max-cur",
+>                             &cfg[led_number].max_current);
+> 
+>         ret = of_property_read_u32(np, "reg", chan_nr);
+>         if (ret)
+>                 return ret;
+> 
+>         if (chan_nr < 0 || chan_nr > cfg->max_chan_nr) /* side note: new
+> max_chan_nr property needed in cfg */
+>                 return -EINVAL;
+> 
+>         return 0;
+> }
+> 
+> static int lp55xx_parse_mutli_led_child(struct device_node *np,
+>                                         struct lp55xx_led_config *cfg,
+>                                         int child_number,
+>                                         int color_number)
+> {
+>         int chan_nr, color_id;
+> 
+>         ret = lp55xx_parse_common_child(child, cfg, child_number,
+> color_number,
+>                                         &chan_nr);
+>         if (ret)
+>                 return ret;
+> 
+>         ret = of_property_read_u32(child, "color", &color_id);
+>         if (ret)
+>                return ret;
+> 
+>         cfg[child_number].color_components[color_number].color_id =
+> color_id;
+>         cfg[child_number].color_components[color_number].output_num =
+> chan_nr;
+>         set_bit(color_id, &cfg[child_number].available_colors);
+> 
+>         return 0;
+> }
+> 
+> staitc int lp55xx_parse_mutli_led(struct device_node *np,
+>                                   struct lp55xx_led_config *cfg,
+>                                   int child_number)
+> {
+>         struct device_node *child;
+>         int num_colors = 0, i = 0;
 
-If it's not worth writing 4 lines for, perhaps the Kconfig
-symbol is not needed at all?
+s/, i = 0//
 
--Andi
+> 
+>         for_each_child_of_node(np, child) {
+>                 ret = lp55xx_parse_mutli_led_child(child, cfg, num_colors,
+>                                                    child_number, i))
+
+Replace above call with below:
+
+ret = lp55xx_parse_mutli_led_child(child, cfg, child_number, num_colors);
+
+>                 if (ret)
+>                         return ret;
+>                 num_colors++;
+>         }
+> }
+> 
+> static int lp5xx_parse_logical_led(struct device_node *np,
+>                                    struct lp55xx_led_config *cfg,
+>                                    int child_number)
+> {
+>         int led_color, ret;
+> 
+>         cfg[child_number].default_trigger =
+>                 of_get_property(np, "linux,default-trigger", NULL);
+> 
+>         ret = of_property_read_u32(np, "color", &led_color);
+> 
+>         if (ret) {
+>                 int chan_nr;
+>                 ret =  lp55xx_parse_common_child(np, cfg, child_number,
+>                                                  &chan_nr);
+>                 if (ret < 0)
+>                        return ret;
+>                 cfg[child_number].chan_nr = chan_nr;
+>         } else if (led_color == LED_COLOR_ID_MULTI) {
+>                 return lp55xx_parse_mutli_led(np, cfg, child_number);
+>         } else
+>                 return ret;
+> 
+>         return 0;
+> }
+> 
+> 
+> for_each_child_of_node(np, child) {
+>         ret = lp55xx_parse_logical_led(child, cfg, i);
+>         if (ret)
+>                 return ERR_PTR(-EINVAL);
+>         i++;
+> }
+> 
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
