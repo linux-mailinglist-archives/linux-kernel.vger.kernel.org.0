@@ -2,103 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1445DBC4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:01:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7454CDBC9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:10:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441992AbfJRFAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:00:38 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41032 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727627AbfJRFAh (ORCPT
+        id S2409609AbfJRFHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:07:41 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46186 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405806AbfJRFHi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:00:37 -0400
-Received: by mail-io1-f65.google.com with SMTP id n26so5885829ioj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:00:36 -0700 (PDT)
+        Fri, 18 Oct 2019 01:07:38 -0400
+Received: by mail-qt1-f193.google.com with SMTP id u22so7297469qtq.13
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:07:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Ar03SN8ojdCPgdDDnhBr1SKZnLdM9cLb9Yk7E1pUhvA=;
-        b=HWO1Og9hde/TMA3RyAXmPzOZqdhjb5gLcg2VdZkxBTWSAXVnVEHtmfUEZ9Bdly/5Pj
-         zUkp/siL3Z0sOwANXcY9TGdwcTIzYUymEUTEU5H0I1Am5BoqlQo0OLsDJGzB77MM8N8C
-         Hmhp9f2ap3GaScWS15oXAGTsnLgOK1ldfs73dPBEWXcUdizem3nAcwjd5oJfiNgygKQG
-         iCwbs/OLUDnLvmaDsIp0/+OXeV1rAq+wHHvKKm8qhbNm+O996t7m7xzDEgBHD4e//0LM
-         5v5kEu60irubA+e/vdEIosEV4qfWiihBbyd1ClO2GgDjBojWmczJzJHzjx1OPqxvtykj
-         rNyQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BZNeQBeDGAyLMoRdSAbVO0kzqdA4HOw3dFZcIwAbSRY=;
+        b=bAJAZ7tswXf0oXbHqjYQDAMHA3fSiDLD+u26iHQS3x7Py/AcVrPNdS1oryA/TMrWe1
+         C9PD+y8lawPz88eAyR5kk9Ml2o0a2TFQNKQxu5nv0Wko1NLrNPGhbDP2SiubBiHlhq0v
+         1/91vfMvcO6zUodpEcXtTf8sait3hj8kvN3nmEjjbwNbCByc65QH7tQoCwZ/LtTheEIu
+         JSQoVll7PmAV+02dufnMm9xRZK1sROHW51Meb3G071rNEmxfzM4+2ywSAAVe158ND1G1
+         S0cq0spmyRYEcz+YmtAujZEgme/2JwqP/4M5ouQeOV35ynsE5W8NRjmV3HAGu0kn5htQ
+         A4Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Ar03SN8ojdCPgdDDnhBr1SKZnLdM9cLb9Yk7E1pUhvA=;
-        b=Bl8PHzaSAVTHxjTTT+xyPH5rVmopCQD2oWBi3nEZhmD6y2QlImNyxnH7apTOE+Ev4O
-         XYVkIb2QH0NANGU/cCeeaGbOuCBX0bNhr1jnJ7kEFq51gFGWCLK4irPN3ahpPX1Dn9cc
-         CsX5DJtqSs6VRylwFcoHNfH2YB0llFJRGHDMo54PFyDs8L3bvpSZcuoLyLL1Lf1FwUQw
-         Byz1fc/HAvLvqaOw179KZX4pzPKXfRX7BqlWf490XpisqR++em2ZWVTb7Ro9ebmYN9IS
-         wLmabZDtCy0RDeQ/PJbEU3JvYD+ukcebNGf/IXc4ubVMf6iFTzmvRtvZqjq/DyHb6H3F
-         K4wg==
-X-Gm-Message-State: APjAAAWG81OWEl1kYT9RAm/k07eGIlajMfmKVD7xZnBszF0rurmUTyXn
-        g34lcD1juFbdWQP1WYVZ5Rn5dorL/tE=
-X-Google-Smtp-Source: APXvYqySaMUMX6+h6cD/AKKX0qnuUY0VtV4hMOq6tJB5V4tLWwii7PNoFEbMhirlF6g4QwMw2BBzzA==
-X-Received: by 2002:a5e:da45:: with SMTP id o5mr3854840iop.177.1571373500501;
-        Thu, 17 Oct 2019 21:38:20 -0700 (PDT)
-Received: from localhost (67-0-11-246.albq.qwest.net. [67.0.11.246])
-        by smtp.gmail.com with ESMTPSA id y23sm1544228iob.28.2019.10.17.21.38.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 21:38:19 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 21:38:18 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] riscv: init: merge split string literals in preprocessor
- directive
-In-Reply-To: <20191018040237.3eyrfrty72r63pkz@ltop.local>
-Message-ID: <alpine.DEB.2.21.9999.1910172127220.3026@viisi.sifive.com>
-References: <20191018004929.3445-1-paul.walmsley@sifive.com> <20191018004929.3445-4-paul.walmsley@sifive.com> <20191018040237.3eyrfrty72r63pkz@ltop.local>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BZNeQBeDGAyLMoRdSAbVO0kzqdA4HOw3dFZcIwAbSRY=;
+        b=JAM7FC45Oab5yge2AiY8kUntMsc3cTMdnybx/hX3p5TGWGq5O7OuL/yo9YfMEqpgS+
+         Z0Xs4512cCKhDwh6a37aqQ3p1bsui+yrTgDWusw5ckjFa4h0vT8dyBPP3fBWoWN55Ake
+         VnUHsZw/wx3q3Ohh+Lu/wSDpAXVhcmjFDMqkZZKzs0f/X89YKpWV7EbVV/5j/xKA6l8O
+         7hhTzcjL5u5rf7a5FXYHlpQdHbUsUQRHgLW7F/ALZSgZtPJwcoADt0F6sQIr58QspBqy
+         U55SRSGsMf88WphTLJe64fP1ystyn3HDS8jnqskAPAaETFrKd6Tw5dXjuntpy2Fnlor/
+         HCag==
+X-Gm-Message-State: APjAAAUKZojKRHn6fEfBSUURciuFuKzxsS7lrPqxJ9B0Xhsoo8W3VqkP
+        I/diyL7sjFoVUG+4xV5+yvjSlvuKjfE=
+X-Google-Smtp-Source: APXvYqydfwa25JKZYYeWbwxFsqUZQ8NzYboAYSS65MWiR5DAcXqWJJZyILycxPAp3epGgyJMNw3bqA==
+X-Received: by 2002:a63:1b59:: with SMTP id b25mr8029273pgm.267.1571373538882;
+        Thu, 17 Oct 2019 21:38:58 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id f185sm5139382pfb.183.2019.10.17.21.38.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Oct 2019 21:38:57 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 10:08:56 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] cpufreq: powernv: fix stack bloat and NR_CPUS limitation
+Message-ID: <20191018043856.srvgft6jhqw62bx3@vireshk-i7>
+References: <20191018000431.1675281-1-jhubbard@nvidia.com>
+ <20191018042715.f76bawmoyk66isap@vireshk-i7>
+ <c3f16019-5724-a181-8068-8dda60fb67fa@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c3f16019-5724-a181-8068-8dda60fb67fa@nvidia.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Oct 2019, Luc Van Oostenryck wrote:
-
-> On Thu, Oct 17, 2019 at 05:49:24PM -0700, Paul Walmsley wrote:
-> > sparse complains loudly when string literals associated with
-> > preprocessor directives are split into multiple, separately quoted
-> > strings across different lines:
+On 17-10-19, 21:34, John Hubbard wrote:
+> On 10/17/19 9:27 PM, Viresh Kumar wrote:
+> > On 17-10-19, 17:04, John Hubbard wrote:
+> >> The following build warning occurred on powerpc 64-bit builds:
+> >>
+> >> drivers/cpufreq/powernv-cpufreq.c: In function 'init_chip_info':
+> >> drivers/cpufreq/powernv-cpufreq.c:1070:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+> > 
+> > How come we are catching this warning after 4 years ?
+> > 
 > 
-> ...
->  
-> >  #ifndef __riscv_cmodel_medany
-> > -#error "setup_vm() is called from head.S before relocate so it should "
-> > -	"not use absolute addressing."
-> > +#error "setup_vm() is called from head.S before relocate so it should not use absolute addressing."
-> >  #endif
+> Newer compilers. And btw, I don't spend a lot of time in powerpc
+> code, so I just recently ran this, and I guess everyone has been on less
+> new compilers so far, it seems.
 > 
-> Using a blacslash should do the trick :
-> 	#error "blablablablablablablablablablablabla" \
-> 			"and blablabla again"
-> Or if need I cn fix Sparse if needed and desiable.
+> I used a gcc 8.1 cross compiler in this case:
 
-Thanks for the kind offer!
+Hmm, okay.
 
-The backslashless syntax is pretty horrible to my eyes.  As far as I can 
-tell from a brief glance, the instance fixed by this patch was the only 
-instance of its kind in the kernel.  The existing kernel precedents appear 
-to be to simply use a single long line.  Example:
+I hope you haven't missed my actual review comments on your patch,
+just wanted to make sure we don't end up waiting for each other
+indefinitely here :)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/compiler-gcc.h#n3
-
-So, from a kernel point of view, we should just fix this specific 
-instance.  It doesn't seem worth changing sparse for such a rare case.
-
-On the other hand, gcc seems to support the non-backslashed syntax.  So if 
-the intention is for sparse to follow the gcc practice, and to be used 
-beyond the kernel, maybe it's worth aligning sparse to gcc?  Only if 
-you're bored, I suppose...
-
-
-- Paul
+-- 
+viresh
