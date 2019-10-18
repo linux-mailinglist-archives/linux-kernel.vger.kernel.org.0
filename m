@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF1BDBCFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF9EEDBCD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:20:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391330AbfJRF1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:27:35 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35202 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbfJRF1e (ORCPT
+        id S2407569AbfJRFUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:20:20 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36992 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726533AbfJRFUT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:27:34 -0400
-Received: by mail-wm1-f67.google.com with SMTP id n124so1047857wmf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:27:32 -0700 (PDT)
+        Fri, 18 Oct 2019 01:20:19 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p14so4737600wro.4
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:20:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=I5uiLwmoQ+UosJLYhlwMFvtZSM4kU7jPQZOvk7J0zfE=;
-        b=XOKhHh0naS5QNQVOxy3d8B/YfNidBHYJz3f1c7FjVlmosH5Qz36FN+IV9Ca20+vpCk
-         Zkq22eYC6P2UKvSostC7Y69bl9ecqj9HwulutQKBKivrHtMd4ZiWIPxTs39U/rNghF+p
-         cFdAI2F43Bl0FH9rkUx14qGaH0MAK05tdg2lPLn6M3DhWVk+V1QD23LVJoJpwuOyBbYZ
-         VgAfmi08rDRpjl9Wz48HrY7fVRXd4LK3/8qbFc5kHWRu0vusRAoLBreiVNvBOQfUHdkC
-         7JrRzXfe7Qz1CiONoX7vuUMOGtPSKvWW4/QQNEujMAnhDy68QKy2RtBCpm7av87tRvy8
-         sVDQ==
+        bh=4IN8nkOuZaw4qMQqgoM+lr6oMWm+8vooDBY/2Fj6u8A=;
+        b=cm6uu8LpVpbMuL7DTMw6/Q94OH+JJ/d/EbywAS5toHgB/ZqGU2lf3f/Y7MvvSD8lq0
+         zNa9dTRgHlPFKlPi86zmTIIkzEww9tHfPahEgiexjHmiad5TCjHzyaOZqtatTvUT+Hpd
+         3gK91DBP38CMpuk5/U6gqYK7VIe9sq2MO2Iu5sNIR1MhEQOVzhbghc+gB1RZPw8AFrqx
+         imhGyqmHueePDv38KOcLpANTNfPnCBMsQY3LwE8BQktBZ9vBz/ffbZuew4YQAZ5/+IG3
+         trx2cV7+nnnj9WZC90wmQxPUY+Xz3PEerkymbiEcJxxiop6/tPvpOhwfFgKfL54zUZzk
+         ig2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=I5uiLwmoQ+UosJLYhlwMFvtZSM4kU7jPQZOvk7J0zfE=;
-        b=ZrrU4kRNbQxBQlMZJ+t5NYxLrqNME/ScaEyLEYhmqYzLrOVFBC7DUgrusslCaWKxXa
-         lqJbEaPkrz/FmzEH8x4stF2Vq7fzaWI2Mn4m702Scow9621SOxxBnyK/bozK7legyb0K
-         +tCewwsmocnxTlfDoN6mpbzQkKfRnl//Yu6cTvx681g64r4EByXI/6hTCfATle602m8f
-         6/IPTMTgloAj3DG7+7zIDrBM1zEmEos6FwGlR8yGtX7WcB51fPJXWPyNUmgbeemgoONF
-         LN50J2UcFCRsHJ1/+J7tCPvEqqR7nwpBgNKdZDIgPdLyrvRWUqgEQ9g5nWhVcVIX1yb2
-         kFfQ==
-X-Gm-Message-State: APjAAAUd5SVWNJR2VkR3SkYRLJZ5bVkDkIMj2MlMyauPQ7pI6DGh0pOG
-        4iiCOWvlHL26oYPjnqYVPp8HB7ZQ7xvyfkWlSQ24l2ba4ms=
-X-Google-Smtp-Source: APXvYqwC5hCKaaCeEYsTe212j8USkNkltAjC/8925IVABeGi2fd2K3HeULgMknEhDTcF08C2TR11ZJ5PE+DAjdDdEPY=
-X-Received: by 2002:a05:600c:214f:: with SMTP id v15mr5241260wml.177.1571367162336;
- Thu, 17 Oct 2019 19:52:42 -0700 (PDT)
+        bh=4IN8nkOuZaw4qMQqgoM+lr6oMWm+8vooDBY/2Fj6u8A=;
+        b=ubJClb8NuJHd5C7r0kVLBuN4HwmTqYBecSsCOve8Fd0oiT74A6ovwJKpoAvmi5/nqv
+         kMtKowlLN2aWlOdgbpdYwEvhiJGrSHHXmUCRDFi/1RJjjTLnW9SBnA3A+IW4H1vCZ+Le
+         5RJp0h4kDFd2yHReAlp8gxUO0jhz8In5qsT0ybzRahg6qR3bfOBZ0O08iuoXekJjNQRe
+         shvWtMlxkCJhEimWNAZInfVfQ3nvxvzAT81cx575UrPBHbWj7kpF6jdwjqPmjwQuJdP4
+         NCR2O3VKJqxrTjkJzSDo93Mx5dJOJjHxFyQPepQLJwqe2cxuDOl23S6lb20YIF/Ter9a
+         SQnQ==
+X-Gm-Message-State: APjAAAUCaInQfdRKYMU+N1xvkG2Q4jMrdjyQR69NMCi1r4nE2c1ju2Nq
+        HyXz6bH9p+fx8/u1P6o+1ZhjMEf0WNcABc0cUQdjUxvSTUg=
+X-Google-Smtp-Source: APXvYqxZtU4Zdishzaj1EdrbSwuCs4hJmh3Nm9boGXA21TSzBjIiq3CCeMGIKdggwniwp7AwhXHQUGRPWxdMMSIGcIQ=
+X-Received: by 2002:adf:f145:: with SMTP id y5mr5400621wro.330.1571367191529;
+ Thu, 17 Oct 2019 19:53:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191017173743.5430-1-hch@lst.de> <20191017173743.5430-5-hch@lst.de>
-In-Reply-To: <20191017173743.5430-5-hch@lst.de>
+References: <20191017173743.5430-1-hch@lst.de> <20191017173743.5430-6-hch@lst.de>
+In-Reply-To: <20191017173743.5430-6-hch@lst.de>
 From:   Anup Patel <anup@brainfault.org>
-Date:   Fri, 18 Oct 2019 08:22:31 +0530
-Message-ID: <CAAhSdy1VcrYNXW1b1QmA377i8aa1kQ=3pLPoVwuTv-gRYLHB1w@mail.gmail.com>
-Subject: Re: [PATCH 04/15] riscv: don't allow selecting SBI based drivers for M-mode
+Date:   Fri, 18 Oct 2019 08:23:00 +0530
+Message-ID: <CAAhSdy3MjGvPuAtsfdtbxe9N8LG3FYjQh=6rLpUqx7r73nNiWw@mail.gmail.com>
+Subject: Re: [PATCH 05/15] riscv: poison SBI calls for M-mode
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Palmer Dabbelt <palmer@sifive.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
@@ -60,65 +60,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 11:07 PM Christoph Hellwig <hch@lst.de> wrote:
+On Thu, Oct 17, 2019 at 11:08 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> From: Damien Le Moal <damien.lemoal@wdc.com>
+> There is no SBI when we run in M-mode, so fail the compile for any code
+> trying to use SBI calls.
 >
-> When running in M-mode we can't use SBI based drivers.  Add a new
-> CONFIG_RISCV_SBI that drivers that do SBI calls can depend on
-> instead.
->
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  arch/riscv/Kconfig         | 6 ++++++
->  drivers/tty/hvc/Kconfig    | 2 +-
->  drivers/tty/serial/Kconfig | 2 +-
->  3 files changed, 8 insertions(+), 2 deletions(-)
+>  arch/riscv/include/asm/sbi.h | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 >
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 86b7e8b0471c..b85492c42ccb 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -76,6 +76,12 @@ config ARCH_MMAP_RND_BITS_MAX
->  config RISCV_M_MODE
->         bool
+> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> index 21134b3ef404..b167af3e7470 100644
+> --- a/arch/riscv/include/asm/sbi.h
+> +++ b/arch/riscv/include/asm/sbi.h
+> @@ -8,6 +8,7 @@
 >
-> +# set if we are running in S-mode and can use SBI calls
-> +config RISCV_SBI
-> +       bool
-> +       depends on !RISCV_M_MODE
-> +       default y
-> +
->  config MMU
->         def_bool y
+>  #include <linux/types.h>
 >
-> diff --git a/drivers/tty/hvc/Kconfig b/drivers/tty/hvc/Kconfig
-> index 4d22b911111f..4487a6b9acc8 100644
-> --- a/drivers/tty/hvc/Kconfig
-> +++ b/drivers/tty/hvc/Kconfig
-> @@ -89,7 +89,7 @@ config HVC_DCC
->
->  config HVC_RISCV_SBI
->         bool "RISC-V SBI console support"
-> -       depends on RISCV
-> +       depends on RISCV_SBI
->         select HVC_DRIVER
->         help
->           This enables support for console output via RISC-V SBI calls, which
-> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-> index 67a9eb3f94ce..540142c5b7b3 100644
-> --- a/drivers/tty/serial/Kconfig
-> +++ b/drivers/tty/serial/Kconfig
-> @@ -88,7 +88,7 @@ config SERIAL_EARLYCON_ARM_SEMIHOST
->
->  config SERIAL_EARLYCON_RISCV_SBI
->         bool "Early console using RISC-V SBI"
-> -       depends on RISCV
-> +       depends on RISCV_SBI
->         select SERIAL_CORE
->         select SERIAL_CORE_CONSOLE
->         select SERIAL_EARLYCON
+> +#ifdef CONFIG_RISCV_SBI
+>  #define SBI_SET_TIMER 0
+>  #define SBI_CONSOLE_PUTCHAR 1
+>  #define SBI_CONSOLE_GETCHAR 2
+> @@ -93,5 +94,5 @@ static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+>  {
+>         SBI_CALL_4(SBI_REMOTE_SFENCE_VMA_ASID, hart_mask, start, size, asid);
+>  }
+> -
+> -#endif
+> +#endif /* CONFIG_RISCV_SBI */
+> +#endif /* _ASM_RISCV_SBI_H */
 > --
 > 2.20.1
 >
