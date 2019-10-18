@@ -2,149 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3141FDC043
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:52:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02BDDDC04E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:52:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438827AbfJRIwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 04:52:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37206 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390341AbfJRIwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 04:52:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EE43CB58A;
-        Fri, 18 Oct 2019 08:52:02 +0000 (UTC)
-Message-ID: <c0fe3d2189130449a2de64b5a0ed4b3325a7602e.camel@suse.de>
-Subject: Re: [PATCH] x86/PCI: sta2x11: use default DMA address translation
- ops
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     rubini@gnudd.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Date:   Fri, 18 Oct 2019 10:51:58 +0200
-In-Reply-To: <20191017224120.GA68948@google.com>
-References: <20191017224120.GA68948@google.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-D/Da0HTt+jTkSHPetqZA"
-User-Agent: Evolution 3.32.4 
-MIME-Version: 1.0
+        id S2632961AbfJRIwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 04:52:21 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35713 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2442246AbfJRIwT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 04:52:19 -0400
+Received: by mail-pl1-f196.google.com with SMTP id c3so2534234plo.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 01:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=OV9GCJs4s7auzZpPSYG5QvReU/tq3thTyE+8LoeVN7Y=;
+        b=dmfM6j4ABh73a19Lql/07zj2f/0Iwn3aie8/jiCr1K6Vb5Ytac72LE/hl62BYZwskf
+         QBwjojv+SJ1y1JjFxvkRx0+t3VRWbQXLB4bs1jv9Bgr6T1w7haFGcRELPXqQh8cLsO9Q
+         o/LW/pGLKqF1eb3h0BDTea7w3frkGKdGJ1fc8F3C3UyetgUMZBobiCcynMF0g6pUJd5+
+         uelEYgHFlec1Kc0m2bSBsZ/9BmMTMOFHR35jIjaxBSH3+KO1kKE1rm8v1Y4A9HPOZB5N
+         6u8HtAVKYO42M0csV83e7fwx0jGrnSAMPeHvLPR8wH6PomL1eIVbxOHmIwYfaHBw2nhj
+         +fxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=OV9GCJs4s7auzZpPSYG5QvReU/tq3thTyE+8LoeVN7Y=;
+        b=RUwcITMeQMqsrKuGmGANKy2bkEEUmyiuJbbE0MEXnRlxX2Z6XOwFNb8CnU50nW6Cqu
+         sdmLa9yhTBGBgft88whyNtc6NI0J17Fc0/AKPg3XOTeQ36WpTziYcnAdI9R7xvAZFbOK
+         d0G/TUhuVQU58hL7d2YQxBdTMy6A4nyD7CzmS17j493+LeR8+pqTKmLP6n1QiJRXS/Xe
+         OkTQq4n8J/9e5x7ws9tqCr0jiWyaU2te7kTO76SHDrPEMjEE2DRBX3sHbhpzPnWBrnII
+         8+tQa7VY7wyue+W8MAe60rIqTSQudVuiZAhOn6jeyWncymm368yRlh3QMhHiyxiYzw7F
+         2sfA==
+X-Gm-Message-State: APjAAAUNkeYKTQMrjDmkLTqggRnCnv5zU33R4elU0cDPAGztXYzT1m3n
+        rb1YUaeDySiIx6TV3la1KUDVv3u2MhHh7g==
+X-Google-Smtp-Source: APXvYqxSXKnzx+2EEFL8oM5GrGOtshkcJz4Aom/KrgOWjvBC/g0YvXv1JagKhBDGg1PhBCmj3qhHyQ==
+X-Received: by 2002:a17:902:8505:: with SMTP id bj5mr8309860plb.296.1571388738714;
+        Fri, 18 Oct 2019 01:52:18 -0700 (PDT)
+Received: from localhost ([49.248.178.134])
+        by smtp.gmail.com with ESMTPSA id x5sm5246107pfi.32.2019.10.18.01.52.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Oct 2019 01:52:18 -0700 (PDT)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        daniel.lezcano@linaro.org, viresh.kumar@linaro.org,
+        sudeep.holla@arm.com, bjorn.andersson@linaro.org,
+        edubezval@gmail.com, agross@kernel.org, tdas@codeaurora.org,
+        swboyd@chromium.org, ilina@codeaurora.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Ben Segall <bsegall@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>
+Cc:     linux-pm@vger.kernel.org
+Subject: [PATCH v4 2/6] thermal: Initialize thermal subsystem earlier
+Date:   Fri, 18 Oct 2019 14:21:59 +0530
+Message-Id: <511b47ab70f6be4ba0f2d7f69217ee593a0bcfd8.1571387352.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1571387352.git.amit.kucheria@linaro.org>
+References: <cover.1571387352.git.amit.kucheria@linaro.org>
+In-Reply-To: <cover.1571387352.git.amit.kucheria@linaro.org>
+References: <cover.1571387352.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Now that the thermal framework is built-in, in order to facilitate
+thermal mitigation as early as possible in the boot cycle, move the
+thermal framework initialization to core_initcall.
 
---=-D/Da0HTt+jTkSHPetqZA
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/thermal/thermal_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi Bjorn,
-thanks for having a look at it.
-
-On Thu, 2019-10-17 at 17:41 -0500, Bjorn Helgaas wrote:
-> Hi Nicolas,
->=20
-> I'm hoping Christoph will chime in and one of the x86 guys will merge
-> this, since I'm not a DMA expert.  Trivial comments/questions below.
->=20
-> On Wed, Oct 16, 2019 at 06:51:37PM +0200, Nicolas Saenz Julienne wrote:
-> > The devices found behind this PCIe chip have unusual DMA mapping
-> > constraints as there is an AMBA interconnect placed in between them and
-> > the different PCI endpoints. The offset between physical memory
-> > addresses and AMBA's view is provided by reading a PCI config register,
-> > which is saved and used whenever DMA mapping is needed.
-> >=20
-> > It turns out that this DMA setup can be represented by properly setting
-> > 'dma_pfn_offset', 'dma_bus_mask' and 'dma_mask' during the PCI device
-> > enable fixup. And ultimately allows us to get rid of this device's
-> > custom DMA functions.
-> >=20
-> > Aside from the code deletion and DMA setup, sta2x11_pdev_to_mapping() i=
-s
-> > moved to avoid warnings whenever CONFIG_PM is not enabled.
-> >=20
-> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> > -	pci_read_config_dword(pdev, AHB_BASE(0), &map->amba_base);
-> > +
-> > +	pci_read_config_dword(pdev, AHB_BASE(0), &amba_base);
-> > +	dev->dma_pfn_offset =3D PFN_DOWN(-amba_base);
-> > +	dev->bus_dma_mask =3D amba_base + STA2X11_AMBA_SIZE - 1;
->=20
-> I think of a mask as typically being one less than a power of two, but
-> that's not the case here, e.g., STA2X11_AMBA_SIZE - 1 =3D=3D 0x1fffffff
-> (512MB-1), so if amba_size is 1G, the mask will be 0x5fffffff.
->=20
-> Just double-checking to be sure that's what you intend.
-
-Yes I'm aware of it.
-
-I know it's counter-intuitive name wise but dma-direct uses it more like a =
-top
-address than a mask (see for example 'dma_capable()' in dma-direct.h). Ther=
-e is
-at least another driver using 'dev->bus_dma_mask' as such (see
-arch/powerpc/sysdev/fsl_pci.c).
-
-That said, I agree it something Christoph should ratify for this to get mer=
-ged.
-
-> > +	pci_set_consistent_dma_mask(pdev, amba_base + STA2X11_AMBA_SIZE - 1);
-> > +	pci_set_dma_mask(pdev, amba_base + STA2X11_AMBA_SIZE - 1);
->=20
-> Maybe add a local variable instead of repeating the "amba_base + ..."
-> expression three times?
-
-Noted.
-
-> >  	/* Configure AHB mapping */
-> >  	pci_write_config_dword(pdev, AHB_PEXLBASE(0), 0);
-> > @@ -252,14 +156,25 @@ static void sta2x11_map_ep(struct pci_dev *pdev)
-> >  		pci_write_config_dword(pdev, AHB_CRW(i), 0);
-> > =20
-> >  	dev_info(&pdev->dev,
-> > -		 "sta2x11: Map EP %i: AMBA address %#8x-%#8x\n",
-> > -		 sta2x11_pdev_to_ep(pdev),  map->amba_base,
-> > -		 map->amba_base + STA2X11_AMBA_SIZE - 1);
-> > +		 "sta2x11: Map EP %i: AMBA address %#8x-%#8llx\n",
-> > +		 sta2x11_pdev_to_ep(pdev), amba_base, dev->bus_dma_mask);
->=20
-> This would read better as
->=20
->   amba_base, amba_base + STA2X11_AMBA_SIZE - 1
->=20
-> I know that's the same dev->bus_dma_mask, but a "mask" is not the
-> obvious name for the end of a range.
-
-Ok.
-
-I just got a notification from my mail server that it failed to deliver the
-mail to Christoph, it seems I misspelled it.
-
-I'll fix all this and send a v2.
-
-Regards,
-Nicolas
-
-
---=-D/Da0HTt+jTkSHPetqZA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl2pfS8ACgkQlfZmHno8
-x/4BlggAjXVad2D9BpeA/AXkKKdJTH3wSyCFD3j0jU4OWOxaxDTJo1RUC/cs+lZI
-mTpxt6/DvoMX/c771nFhDITH1Pld8C9gQxZ9gi6rs0JfhdiX94tql1pCbAxs1OXL
-4nMhsotG6DR0nodVoT3xU5A86NfQoR3MqrNeIG849yskFjpSDvjoQdf1uVM2qc5l
-9wWuniwT1NQ0FaddVpPJdxPI+pe4J0VFVnJpTYw5T2OKk84dEVKdRyIby+ydVUwQ
-quaTw3ko1X1cAH1fXyaUpaC4zzB7MBZ9AqQJFQbjHlM3JjGmRfoZnKBBAftm2+JX
-WJ5EhUljkQ6UFy9hDrcY8IqS4Oe1dg==
-=vTJy
------END PGP SIGNATURE-----
-
---=-D/Da0HTt+jTkSHPetqZA--
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index cced0638b686f..69fcd54f8a83e 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -1537,4 +1537,4 @@ static int __init thermal_init(void)
+ 	mutex_destroy(&poweroff_lock);
+ 	return result;
+ }
+-fs_initcall(thermal_init);
++core_initcall(thermal_init);
+-- 
+2.17.1
 
