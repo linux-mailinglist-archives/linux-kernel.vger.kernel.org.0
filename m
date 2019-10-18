@@ -2,75 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE390DCF8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 21:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79789DCF96
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 21:50:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440218AbfJRTtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 15:49:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59516 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730242AbfJRTtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 15:49:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6C50DAFF9;
-        Fri, 18 Oct 2019 19:48:58 +0000 (UTC)
-Date:   Fri, 18 Oct 2019 21:48:56 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     tip-bot2 for Jiri Slaby <tip-bot2@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        linux-arch@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
-Subject: Re: [tip: x86/asm] x86/asm/ftrace: Mark function_hook as function
-Message-ID: <20191018194856.GC20368@zn.tnic>
-References: <20191011115108.12392-22-jslaby@suse.cz>
- <157141622788.29376.4016565749507481510.tip-bot2@tip-bot2>
- <20191018124800.0a7006bb@gandalf.local.home>
- <20191018124956.764ac42e@gandalf.local.home>
- <20191018171354.GB20368@zn.tnic>
- <20191018133735.77e90e36@gandalf.local.home>
+        id S2440287AbfJRTuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 15:50:51 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49954 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730242AbfJRTuu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 15:50:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5W2MZ6xOjT3rUmNYohhNKwwhH+vTrvp3RdgWLAsapxU=; b=B9aHtsFqHcDxVJCQRjc78gGyf
+        UGwcbGcDV30yNqjArxM6/YO6cPJcHJ2paHdLXtcUqrCjKyibY124mVSNDlztlzCLbuZvCcvGd7bW1
+        FEwcBkvqhJ9eQ7WJ7sGvQ1O978SsnqGXmIAMa+sjL5hlFbplXeAobCXfOmetiWX7T3xqk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iLYGs-0004XJ-F9; Fri, 18 Oct 2019 19:50:46 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id E6D372741DEA; Fri, 18 Oct 2019 20:50:45 +0100 (BST)
+Date:   Fri, 18 Oct 2019 20:50:45 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, linux-iio@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Clean-up regulator '-supply' schemas
+Message-ID: <20191018195045.GG4828@sirena.co.uk>
+References: <20191011190231.9779-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="BzCohdixPhurzSK4"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191018133735.77e90e36@gandalf.local.home>
+In-Reply-To: <20191011190231.9779-1-robh@kernel.org>
+X-Cookie: Smear the road with a runner!!
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 01:37:35PM -0400, Steven Rostedt wrote:
-> It just needs to be visible by modules and what not, otherwise linking
-> will fail.
 
-And I assume all of them?
+--BzCohdixPhurzSK4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> The #define was because we use to support mcount or __fentry__, now we
-> just support __fentry__, and function_hook describes it better ;-)
+On Fri, Oct 11, 2019 at 02:02:31PM -0500, Rob Herring wrote:
+> Regulator '*-supply' properties are always a single phandle, so
+> 'maxItems: 1' or a $ref is not necessary. All that's needed is either
+> 'true' or an optional 'description'. Following this clean-up, the
+> meta-schema will enforce this pattern.
 
-Well sorry but gcc documentation talks about __fentry__. I'd keep the
-same name to avoid confusion and explain above it what it is. Much
-better.
+Acked-by: Mark Brown <broonie@kernel.org>
 
-> Heh, I guess we could, which would probably be quite a long comment as
-> it's the key behind ftrace itself.
+--BzCohdixPhurzSK4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Well, you can explain with a couple of sentences what it is and
-then point at the bigger document explaining ftrace. Provided, Mr.
-Rostedt, you'll stop doing talks and finally sit down and write that
-documentation!
+-----BEGIN PGP SIGNATURE-----
 
-:-P
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2qF5UACgkQJNaLcl1U
+h9Du1Af+NWqdLU69yR6U/BWWRm08fd7klsWRrk2gHbJrdNnxMkHrmzuAZI/Gi6de
+janR9xwD+hN52sz7oRmPOP9dcUazmbEmLi0KH6OhLNoiHgKlmp2BbTlKbcj4pzza
+nqBAdr1w0fMhaYp1UalQIwZK/5x6k5a9nA/NeMlIsEfgsTxFGTweMPoB+xHtss5m
+30RuaeOxfcXPPByIYpc21X9mAngtSCUKkcm8E51mtl5oQlKzTA6S1MwAeSThJXKD
+NqZUGWgIxbeQILNbvlluEvikoYYcnpZ+pKMhe533fqJZtViYd9BStL52h8MUcYJ5
+Z+BxfShFXYmVxbTC6fR4jgTqffoqww==
+=TAPa
+-----END PGP SIGNATURE-----
 
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
+--BzCohdixPhurzSK4--
