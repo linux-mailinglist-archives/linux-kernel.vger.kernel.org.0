@@ -2,29 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74098DBC73
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1872DBC77
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504139AbfJRFFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:05:33 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57462 "EHLO huawei.com"
+        id S2504171AbfJRFFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:05:39 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57424 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2407457AbfJRFFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:05:31 -0400
+        id S2407460AbfJRFFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 01:05:32 -0400
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id F098CE0C71236F8EC9DD;
-        Fri, 18 Oct 2019 11:19:45 +0800 (CST)
+        by Forcepoint Email with ESMTP id 0E99AE0AF947A235E1AF;
+        Fri, 18 Oct 2019 11:19:46 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 18 Oct 2019 11:19:35 +0800
+ 14.3.439.0; Fri, 18 Oct 2019 11:19:36 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Petr Mladek <pmladek@suse.com>, <linux-kernel@vger.kernel.org>
 CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH v2 27/33] lib: cpu_rmap: Use pr_warn instead of pr_warning
-Date:   Fri, 18 Oct 2019 11:18:44 +0800
-Message-ID: <20191018031850.48498-27-wangkefeng.wang@huawei.com>
+Subject: [PATCH v2 28/33] ASoC: samsung: Use pr_warn instead of pr_warning
+Date:   Fri, 18 Oct 2019 11:18:45 +0800
+Message-ID: <20191018031850.48498-28-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018031850.48498-1-wangkefeng.wang@huawei.com>
 References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
@@ -43,26 +47,38 @@ As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
 pr_warning"), removing pr_warning so all logging messages use a
 consistent <prefix>_warn style. Let's do it.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
 Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- lib/cpu_rmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/samsung/s3c-i2s-v2.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/lib/cpu_rmap.c b/lib/cpu_rmap.c
-index 075f3788bbe4..f08d9c56f712 100644
---- a/lib/cpu_rmap.c
-+++ b/lib/cpu_rmap.c
-@@ -255,7 +255,7 @@ irq_cpu_rmap_notify(struct irq_affinity_notify *notify, const cpumask_t *mask)
+diff --git a/sound/soc/samsung/s3c-i2s-v2.c b/sound/soc/samsung/s3c-i2s-v2.c
+index 7e196b599be1..593be1b668d6 100644
+--- a/sound/soc/samsung/s3c-i2s-v2.c
++++ b/sound/soc/samsung/s3c-i2s-v2.c
+@@ -672,13 +672,13 @@ static int s3c2412_i2s_suspend(struct snd_soc_dai *dai)
+ 		iismod = readl(i2s->regs + S3C2412_IISMOD);
  
- 	rc = cpu_rmap_update(glue->rmap, glue->index, mask);
- 	if (rc)
--		pr_warning("irq_cpu_rmap_notify: update failed: %d\n", rc);
-+		pr_warn("irq_cpu_rmap_notify: update failed: %d\n", rc);
- }
+ 		if (iismod & S3C2412_IISCON_RXDMA_ACTIVE)
+-			pr_warning("%s: RXDMA active?\n", __func__);
++			pr_warn("%s: RXDMA active?\n", __func__);
  
- /**
+ 		if (iismod & S3C2412_IISCON_TXDMA_ACTIVE)
+-			pr_warning("%s: TXDMA active?\n", __func__);
++			pr_warn("%s: TXDMA active?\n", __func__);
+ 
+ 		if (iismod & S3C2412_IISCON_IIS_ACTIVE)
+-			pr_warning("%s: IIS active\n", __func__);
++			pr_warn("%s: IIS active\n", __func__);
+ 	}
+ 
+ 	return 0;
 -- 
 2.20.1
 
