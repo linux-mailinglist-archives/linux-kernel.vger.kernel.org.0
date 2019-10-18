@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CA64DC5FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD4ADC606
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:29:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410301AbfJRN0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 09:26:53 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44529 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728429AbfJRN0u (ORCPT
+        id S2410322AbfJRN06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 09:26:58 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40142 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410292AbfJRN0w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 09:26:50 -0400
-Received: by mail-wr1-f66.google.com with SMTP id z9so6250903wrl.11
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 06:26:48 -0700 (PDT)
+        Fri, 18 Oct 2019 09:26:52 -0400
+Received: by mail-wr1-f67.google.com with SMTP id o28so6271773wro.7
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 06:26:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NQ/eLJSNkXW8LLvqvhxjiDQg9h5mHrnthUFHJ+Kv0ak=;
-        b=xLuEtlbmH+Nznuz5yb+VUq02dwTDaV1iJR9HpM9SMb+dWkPSwWtUAsSrD6IQiwLF3e
-         7q0/3FbOoEktY3dlzDqBeX/UeryUQb+IMGdhl5AxF2kfpiyVADAYak3J/CefUoQY3ibD
-         2oE3NL5Ab/hC5PBAwckf38DxtLA8Hcia5Kb5d9dtG4AWbuYWEmuqTDwR1YWM/cmm0OVW
-         RmRvyHjfLJ+i8ndw8RtMy4T5YDhllFoIr5K/PedxIX3F+BL5QXelO87E2OrWgqauTTRn
-         YXt0/voFH6DelLCfHpuCdz5wuPe6HfC1c3crCfbgoAsh2dZYqesUCBoSHFDrzjb48Pap
-         rwtg==
+        bh=UTQ1SciiKePYzOmVVy3DyjwjaDHHkwpywXBi+0rOpxQ=;
+        b=QXR90jeKm05HUBMzUKPG93fbL6a4P5nHC1TJmpDv528sLkrBIwVZKNq/OQC/K458Un
+         uxBioUPxoSm+VwhN1IfQqkhRs1DOxdr/UebBO3l/UFi9v7LXNo6GekREPyB1pb/Zh5Cv
+         eFW37PbpACZ7F5kImbRvXv6cTZmJzDoAky6U6fldf2YL5q3PGATsrrl7vxJ5sc8zKpMd
+         WIXzgJOUQKhM2ulfj7pLDF6EUyR7yUlqAixaeQlTGEJ0be3DN5tfe7KQpMppOlVIh+Aa
+         NH8L4R9xNW/tlOQe4kWK0g9AIOdRmYuMp2i501s9eVH9ygXAHpFesaH0yzlhQ2hhZeeC
+         bgyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=NQ/eLJSNkXW8LLvqvhxjiDQg9h5mHrnthUFHJ+Kv0ak=;
-        b=MYNY69sI8GYNQIoDGFgyLKItwdgNLCKaeDeAHRQ9qU5bgs2Xzak5BlnhR7Z0aXfciP
-         BDlzsjV+dfzzBa23O8xMgEbPOlylt5RvmVCr3/U0lw/hjGhFSwUkl0S7MbrAsu5QtQQv
-         4JK4Vqj7ZIB62j0nNahoO8loBt5XjLX5jl806SusvtIJVzUuBmTXz0PaqDgKavAquOcU
-         FAP4btrl/IPtS8/jQxtFbGdB5/Pu8obgwKednFUr+zL/1u4gruqclQ5vbS7dPA429wpT
-         +c7is4LT5WiqL+uxUPzxXexhMG15ryuKiUpL6ULQy3a37qWKzYf+k0gmpuAE60oFp19t
-         +gMw==
-X-Gm-Message-State: APjAAAUfQEhYfOqBJIXsMOpFEOfGl5TyjmPx5jHaG6N8r4fh6T9xRgRJ
-        e3Z/qCQn0g4ZmMfFEvwRq4ysrHuIsw4=
-X-Google-Smtp-Source: APXvYqztiLq4IjS8IXnaU1MLL8M6e7eIC2QwSM9t8rU+npk+xJ1FfwHfLbxrFn3JEcGpjDyp7egg2A==
-X-Received: by 2002:adf:f152:: with SMTP id y18mr8106740wro.285.1571405207340;
-        Fri, 18 Oct 2019 06:26:47 -0700 (PDT)
+        bh=UTQ1SciiKePYzOmVVy3DyjwjaDHHkwpywXBi+0rOpxQ=;
+        b=sbO7TkMGJ7OrIhvKF6K29sdZrhV7ql0IsaOLajX0vAAPQl+vzNo0Vt9EH5Qw4ze5iW
+         Cw/ojyLpaZDi6/NB0qdRwehM0nlBigMdrq2Q0tZvDqGm3i9X24C8zKAx+UM8o0XeHhE0
+         hMy35GcSR85h7ogopZHNAvXkB0V1V8oQDpylhsDfMJEc4f2W4xkwhBUkD7GDXGUth2ED
+         D0nZ86pd7B4nRXQd9ElobbJC8qn7qLDQD885VuL+KNIq41o1wPZN3uqikJLu7q7YNk8F
+         bnreuN1An0jWlLtGNlzpVzE5MoFC/ed3rARbw8HbvKZ8FDkk9LcoahdrbKjlEIT/NUC8
+         aWlg==
+X-Gm-Message-State: APjAAAUrP9wx+/l4e5+UektKAadOONhDSfax5YZBaSht5hzYfsi2hGML
+        d87iU1L0ZwsYZJ7oEs363cbUuR3x9fE=
+X-Google-Smtp-Source: APXvYqxo+MtVI/lsHpeiSttcjSaRZwcdkXGN/FpRh8CeUyoohUsu8hpBiOjlvBtdC/SqamvZ6jQqgw==
+X-Received: by 2002:adf:de85:: with SMTP id w5mr7613678wrl.278.1571405209399;
+        Fri, 18 Oct 2019 06:26:49 -0700 (PDT)
 Received: from localhost.localdomain (91-160-61-128.subs.proxad.net. [91.160.61.128])
-        by smtp.gmail.com with ESMTPSA id p15sm5870123wrs.94.2019.10.18.06.26.45
+        by smtp.gmail.com with ESMTPSA id p15sm5870123wrs.94.2019.10.18.06.26.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 18 Oct 2019 06:26:45 -0700 (PDT)
+        Fri, 18 Oct 2019 06:26:48 -0700 (PDT)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
         peterz@infradead.org
@@ -52,9 +52,9 @@ Cc:     pauld@redhat.com, valentin.schneider@arm.com,
         dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
         hdanton@sina.com, parth@linux.ibm.com, riel@surriel.com,
         Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v4 02/11] sched/fair: rename sum_nr_running to sum_h_nr_running
-Date:   Fri, 18 Oct 2019 15:26:29 +0200
-Message-Id: <1571405198-27570-3-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH v4 03/11] sched/fair: remove meaningless imbalance calculation
+Date:   Fri, 18 Oct 2019 15:26:30 +0200
+Message-Id: <1571405198-27570-4-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
 References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
@@ -63,154 +63,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename sum_nr_running to sum_h_nr_running because it effectively tracks
-cfs->h_nr_running so we can use sum_nr_running to track rq->nr_running
-when needed.
-
-There is no functional changes.
+clean up load_balance and remove meaningless calculation and fields before
+adding new algorithm.
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 Acked-by: Rik van Riel <riel@surriel.com>
-Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
 ---
- kernel/sched/fair.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ kernel/sched/fair.c | 105 +---------------------------------------------------
+ 1 file changed, 1 insertion(+), 104 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 617145c..9a2aceb 100644
+index 9a2aceb..e004841 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7670,7 +7670,7 @@ struct sg_lb_stats {
- 	unsigned long load_per_task;
+@@ -5390,18 +5390,6 @@ static unsigned long capacity_of(int cpu)
+ 	return cpu_rq(cpu)->cpu_capacity;
+ }
+ 
+-static unsigned long cpu_avg_load_per_task(int cpu)
+-{
+-	struct rq *rq = cpu_rq(cpu);
+-	unsigned long nr_running = READ_ONCE(rq->cfs.h_nr_running);
+-	unsigned long load_avg = cpu_runnable_load(rq);
+-
+-	if (nr_running)
+-		return load_avg / nr_running;
+-
+-	return 0;
+-}
+-
+ static void record_wakee(struct task_struct *p)
+ {
+ 	/*
+@@ -7667,7 +7655,6 @@ static unsigned long task_h_load(struct task_struct *p)
+ struct sg_lb_stats {
+ 	unsigned long avg_load; /*Avg load across the CPUs of the group */
+ 	unsigned long group_load; /* Total load over the CPUs of the group */
+-	unsigned long load_per_task;
  	unsigned long group_capacity;
  	unsigned long group_util; /* Total utilization of the group */
--	unsigned int sum_nr_running; /* Nr tasks running in the group */
-+	unsigned int sum_h_nr_running; /* Nr of CFS tasks running in the group */
- 	unsigned int idle_cpus;
- 	unsigned int group_weight;
- 	enum group_type group_type;
-@@ -7715,7 +7715,7 @@ static inline void init_sd_lb_stats(struct sd_lb_stats *sds)
- 		.total_capacity = 0UL,
- 		.busiest_stat = {
- 			.avg_load = 0UL,
--			.sum_nr_running = 0,
-+			.sum_h_nr_running = 0,
- 			.group_type = group_other,
- 		},
- 	};
-@@ -7906,7 +7906,7 @@ static inline int sg_imbalanced(struct sched_group *group)
- static inline bool
- group_has_capacity(struct lb_env *env, struct sg_lb_stats *sgs)
- {
--	if (sgs->sum_nr_running < sgs->group_weight)
-+	if (sgs->sum_h_nr_running < sgs->group_weight)
- 		return true;
- 
- 	if ((sgs->group_capacity * 100) >
-@@ -7927,7 +7927,7 @@ group_has_capacity(struct lb_env *env, struct sg_lb_stats *sgs)
- static inline bool
- group_is_overloaded(struct lb_env *env, struct sg_lb_stats *sgs)
- {
--	if (sgs->sum_nr_running <= sgs->group_weight)
-+	if (sgs->sum_h_nr_running <= sgs->group_weight)
- 		return false;
- 
- 	if ((sgs->group_capacity * 100) <
-@@ -8019,7 +8019,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 
- 		sgs->group_load += cpu_runnable_load(rq);
- 		sgs->group_util += cpu_util(i);
--		sgs->sum_nr_running += rq->cfs.h_nr_running;
-+		sgs->sum_h_nr_running += rq->cfs.h_nr_running;
- 
- 		nr_running = rq->nr_running;
- 		if (nr_running > 1)
-@@ -8049,8 +8049,8 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 	unsigned int sum_h_nr_running; /* Nr of CFS tasks running in the group */
+@@ -8049,9 +8036,6 @@ static inline void update_sg_lb_stats(struct lb_env *env,
  	sgs->group_capacity = group->sgc->capacity;
  	sgs->avg_load = (sgs->group_load*SCHED_CAPACITY_SCALE) / sgs->group_capacity;
  
--	if (sgs->sum_nr_running)
--		sgs->load_per_task = sgs->group_load / sgs->sum_nr_running;
-+	if (sgs->sum_h_nr_running)
-+		sgs->load_per_task = sgs->group_load / sgs->sum_h_nr_running;
- 
+-	if (sgs->sum_h_nr_running)
+-		sgs->load_per_task = sgs->group_load / sgs->sum_h_nr_running;
+-
  	sgs->group_weight = group->group_weight;
  
-@@ -8107,7 +8107,7 @@ static bool update_sd_pick_busiest(struct lb_env *env,
- 	 * capable CPUs may harm throughput. Maximize throughput,
- 	 * power/energy consequences are not considered.
- 	 */
--	if (sgs->sum_nr_running <= sgs->group_weight &&
-+	if (sgs->sum_h_nr_running <= sgs->group_weight &&
- 	    group_smaller_min_cpu_capacity(sds->local, sg))
- 		return false;
- 
-@@ -8138,7 +8138,7 @@ static bool update_sd_pick_busiest(struct lb_env *env,
- 	 * perform better since they share less core resources.  Hence when we
- 	 * have idle threads, we want them to be the higher ones.
- 	 */
--	if (sgs->sum_nr_running &&
-+	if (sgs->sum_h_nr_running &&
- 	    sched_asym_prefer(env->dst_cpu, sg->asym_prefer_cpu)) {
- 		sgs->group_asym_packing = 1;
- 		if (!sds->busiest)
-@@ -8156,9 +8156,9 @@ static bool update_sd_pick_busiest(struct lb_env *env,
- #ifdef CONFIG_NUMA_BALANCING
- static inline enum fbq_type fbq_classify_group(struct sg_lb_stats *sgs)
- {
--	if (sgs->sum_nr_running > sgs->nr_numa_running)
-+	if (sgs->sum_h_nr_running > sgs->nr_numa_running)
- 		return regular;
--	if (sgs->sum_nr_running > sgs->nr_preferred_running)
-+	if (sgs->sum_h_nr_running > sgs->nr_preferred_running)
- 		return remote;
- 	return all;
+ 	sgs->group_no_capacity = group_is_overloaded(env, sgs);
+@@ -8282,76 +8266,6 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
  }
-@@ -8233,7 +8233,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
- 		 */
- 		if (prefer_sibling && sds->local &&
- 		    group_has_capacity(env, local) &&
--		    (sgs->sum_nr_running > local->sum_nr_running + 1)) {
-+		    (sgs->sum_h_nr_running > local->sum_h_nr_running + 1)) {
- 			sgs->group_no_capacity = 1;
- 			sgs->group_type = group_classify(sg, sgs);
- 		}
-@@ -8245,7 +8245,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
  
- next_group:
- 		/* Now, start updating sd_lb_stats */
--		sds->total_running += sgs->sum_nr_running;
-+		sds->total_running += sgs->sum_h_nr_running;
- 		sds->total_load += sgs->group_load;
- 		sds->total_capacity += sgs->group_capacity;
+ /**
+- * fix_small_imbalance - Calculate the minor imbalance that exists
+- *			amongst the groups of a sched_domain, during
+- *			load balancing.
+- * @env: The load balancing environment.
+- * @sds: Statistics of the sched_domain whose imbalance is to be calculated.
+- */
+-static inline
+-void fix_small_imbalance(struct lb_env *env, struct sd_lb_stats *sds)
+-{
+-	unsigned long tmp, capa_now = 0, capa_move = 0;
+-	unsigned int imbn = 2;
+-	unsigned long scaled_busy_load_per_task;
+-	struct sg_lb_stats *local, *busiest;
+-
+-	local = &sds->local_stat;
+-	busiest = &sds->busiest_stat;
+-
+-	if (!local->sum_h_nr_running)
+-		local->load_per_task = cpu_avg_load_per_task(env->dst_cpu);
+-	else if (busiest->load_per_task > local->load_per_task)
+-		imbn = 1;
+-
+-	scaled_busy_load_per_task =
+-		(busiest->load_per_task * SCHED_CAPACITY_SCALE) /
+-		busiest->group_capacity;
+-
+-	if (busiest->avg_load + scaled_busy_load_per_task >=
+-	    local->avg_load + (scaled_busy_load_per_task * imbn)) {
+-		env->imbalance = busiest->load_per_task;
+-		return;
+-	}
+-
+-	/*
+-	 * OK, we don't have enough imbalance to justify moving tasks,
+-	 * however we may be able to increase total CPU capacity used by
+-	 * moving them.
+-	 */
+-
+-	capa_now += busiest->group_capacity *
+-			min(busiest->load_per_task, busiest->avg_load);
+-	capa_now += local->group_capacity *
+-			min(local->load_per_task, local->avg_load);
+-	capa_now /= SCHED_CAPACITY_SCALE;
+-
+-	/* Amount of load we'd subtract */
+-	if (busiest->avg_load > scaled_busy_load_per_task) {
+-		capa_move += busiest->group_capacity *
+-			    min(busiest->load_per_task,
+-				busiest->avg_load - scaled_busy_load_per_task);
+-	}
+-
+-	/* Amount of load we'd add */
+-	if (busiest->avg_load * busiest->group_capacity <
+-	    busiest->load_per_task * SCHED_CAPACITY_SCALE) {
+-		tmp = (busiest->avg_load * busiest->group_capacity) /
+-		      local->group_capacity;
+-	} else {
+-		tmp = (busiest->load_per_task * SCHED_CAPACITY_SCALE) /
+-		      local->group_capacity;
+-	}
+-	capa_move += local->group_capacity *
+-		    min(local->load_per_task, local->avg_load + tmp);
+-	capa_move /= SCHED_CAPACITY_SCALE;
+-
+-	/* Move if we gain throughput */
+-	if (capa_move > capa_now)
+-		env->imbalance = busiest->load_per_task;
+-}
+-
+-/**
+  * calculate_imbalance - Calculate the amount of imbalance present within the
+  *			 groups of a given sched_domain during load balance.
+  * @env: load balance environment
+@@ -8370,15 +8284,6 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 		return;
+ 	}
  
-@@ -8299,7 +8299,7 @@ void fix_small_imbalance(struct lb_env *env, struct sd_lb_stats *sds)
- 	local = &sds->local_stat;
- 	busiest = &sds->busiest_stat;
+-	if (busiest->group_type == group_imbalanced) {
+-		/*
+-		 * In the group_imb case we cannot rely on group-wide averages
+-		 * to ensure CPU-load equilibrium, look at wider averages. XXX
+-		 */
+-		busiest->load_per_task =
+-			min(busiest->load_per_task, sds->avg_load);
+-	}
+-
+ 	/*
+ 	 * Avg load of busiest sg can be less and avg load of local sg can
+ 	 * be greater than avg load across all sgs of sd because avg load
+@@ -8389,7 +8294,7 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 	    (busiest->avg_load <= sds->avg_load ||
+ 	     local->avg_load >= sds->avg_load)) {
+ 		env->imbalance = 0;
+-		return fix_small_imbalance(env, sds);
++		return;
+ 	}
  
--	if (!local->sum_nr_running)
-+	if (!local->sum_h_nr_running)
- 		local->load_per_task = cpu_avg_load_per_task(env->dst_cpu);
- 	else if (busiest->load_per_task > local->load_per_task)
- 		imbn = 1;
-@@ -8397,7 +8397,7 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 	 */
- 	if (busiest->group_type == group_overloaded &&
- 	    local->group_type   == group_overloaded) {
--		load_above_capacity = busiest->sum_nr_running * SCHED_CAPACITY_SCALE;
-+		load_above_capacity = busiest->sum_h_nr_running * SCHED_CAPACITY_SCALE;
- 		if (load_above_capacity > busiest->group_capacity) {
- 			load_above_capacity -= busiest->group_capacity;
- 			load_above_capacity *= scale_load_down(NICE_0_LOAD);
-@@ -8478,7 +8478,7 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 		goto force_balance;
+ 	/*
+@@ -8427,14 +8332,6 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 				       busiest->group_misfit_task_load);
+ 	}
  
- 	/* There is no busy sibling group to pull tasks from */
--	if (!sds.busiest || busiest->sum_nr_running == 0)
-+	if (!sds.busiest || busiest->sum_h_nr_running == 0)
- 		goto out_balanced;
+-	/*
+-	 * if *imbalance is less than the average load per runnable task
+-	 * there is no guarantee that any tasks will be moved so we'll have
+-	 * a think about bumping its value to force at least one task to be
+-	 * moved
+-	 */
+-	if (env->imbalance < busiest->load_per_task)
+-		return fix_small_imbalance(env, sds);
+ }
  
- 	/* XXX broken for overlapping NUMA groups */
+ /******* find_busiest_group() helpers end here *********************/
 -- 
 2.7.4
 
