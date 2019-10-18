@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26BC9DBC83
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DF85DBC8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409289AbfJRFGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:06:21 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4714 "EHLO huawei.com"
+        id S2409583AbfJRFGw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:06:52 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4277 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2504056AbfJRFFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:05:13 -0400
+        id S2504040AbfJRFFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 01:05:10 -0400
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E250AB81BB81F92950E1;
+        by Forcepoint Email with ESMTP id D57BEC9E5BD47FC4FF36;
         Fri, 18 Oct 2019 11:19:35 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
@@ -20,12 +20,11 @@ Received: from localhost.localdomain.localdomain (10.175.113.25) by
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Petr Mladek <pmladek@suse.com>, <linux-kernel@vger.kernel.org>
 CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>
-Subject: [PATCH v2 16/33] of: Use pr_warn instead of pr_warning
-Date:   Fri, 18 Oct 2019 11:18:33 +0800
-Message-ID: <20191018031850.48498-16-wangkefeng.wang@huawei.com>
+        Robert Richter <rric@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [PATCH v2 17/33] oprofile: Use pr_warn instead of pr_warning
+Date:   Fri, 18 Oct 2019 11:18:34 +0800
+Message-ID: <20191018031850.48498-17-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018031850.48498-1-wangkefeng.wang@huawei.com>
 References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
@@ -44,63 +43,40 @@ As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
 pr_warning"), removing pr_warning so all logging messages use a
 consistent <prefix>_warn style. Let's do it.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Robert Richter <rric@kernel.org>
+Acked-by: Robert Richter <rric@kernel.org>
 Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- drivers/of/fdt.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/oprofile/oprofile_perf.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index d01d834b26b0..2cdf64d2456f 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -412,8 +412,8 @@ void *__unflatten_device_tree(const void *blob,
- 	/* Second pass, do actual unflattening */
- 	unflatten_dt_nodes(blob, mem, dad, mynodes);
- 	if (be32_to_cpup(mem + size) != 0xdeadbeef)
--		pr_warning("End of tree marker overwritten: %08x\n",
--			   be32_to_cpup(mem + size));
-+		pr_warn("End of tree marker overwritten: %08x\n",
-+			be32_to_cpup(mem + size));
+diff --git a/drivers/oprofile/oprofile_perf.c b/drivers/oprofile/oprofile_perf.c
+index 4b150a754890..98a63a5f8763 100644
+--- a/drivers/oprofile/oprofile_perf.c
++++ b/drivers/oprofile/oprofile_perf.c
+@@ -46,8 +46,8 @@ static void op_overflow_handler(struct perf_event *event,
+ 	if (id != num_counters)
+ 		oprofile_add_sample(regs, id);
+ 	else
+-		pr_warning("oprofile: ignoring spurious overflow "
+-				"on cpu %u\n", cpu);
++		pr_warn("oprofile: ignoring spurious overflow on cpu %u\n",
++			cpu);
+ }
  
- 	if (detached && mynodes) {
- 		of_node_set_flag(*mynodes, OF_DETACHED);
-@@ -1120,25 +1120,25 @@ void __init __weak early_init_dt_add_memory_arch(u64 base, u64 size)
- 	size &= PAGE_MASK;
+ /*
+@@ -88,8 +88,8 @@ static int op_create_counter(int cpu, int event)
  
- 	if (base > MAX_MEMBLOCK_ADDR) {
--		pr_warning("Ignoring memory block 0x%llx - 0x%llx\n",
--				base, base + size);
-+		pr_warn("Ignoring memory block 0x%llx - 0x%llx\n",
-+			base, base + size);
- 		return;
+ 	if (pevent->state != PERF_EVENT_STATE_ACTIVE) {
+ 		perf_event_release_kernel(pevent);
+-		pr_warning("oprofile: failed to enable event %d "
+-				"on CPU %d\n", event, cpu);
++		pr_warn("oprofile: failed to enable event %d on CPU %d\n",
++			event, cpu);
+ 		return -EBUSY;
  	}
  
- 	if (base + size - 1 > MAX_MEMBLOCK_ADDR) {
--		pr_warning("Ignoring memory range 0x%llx - 0x%llx\n",
--				((u64)MAX_MEMBLOCK_ADDR) + 1, base + size);
-+		pr_warn("Ignoring memory range 0x%llx - 0x%llx\n",
-+			((u64)MAX_MEMBLOCK_ADDR) + 1, base + size);
- 		size = MAX_MEMBLOCK_ADDR - base + 1;
- 	}
- 
- 	if (base + size < phys_offset) {
--		pr_warning("Ignoring memory block 0x%llx - 0x%llx\n",
--			   base, base + size);
-+		pr_warn("Ignoring memory block 0x%llx - 0x%llx\n",
-+			base, base + size);
- 		return;
- 	}
- 	if (base < phys_offset) {
--		pr_warning("Ignoring memory range 0x%llx - 0x%llx\n",
--			   base, phys_offset);
-+		pr_warn("Ignoring memory range 0x%llx - 0x%llx\n",
-+			base, phys_offset);
- 		size -= phys_offset - base;
- 		base = phys_offset;
- 	}
 -- 
 2.20.1
 
