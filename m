@@ -2,85 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7DC0DC33C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:58:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9825DC348
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:59:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439154AbfJRK6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:58:50 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:34856 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1728576AbfJRK6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:58:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1EB6AB6;
-        Fri, 18 Oct 2019 03:58:25 -0700 (PDT)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2E8C33F6C4;
-        Fri, 18 Oct 2019 03:58:25 -0700 (PDT)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] cpufreq: cancel any pending policy update work scheduled before freeing
-Date:   Fri, 18 Oct 2019 11:58:15 +0100
-Message-Id: <20191018105815.5714-1-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
+        id S2442507AbfJRK7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:59:05 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:44860 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2442497AbfJRK7F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 06:59:05 -0400
+Received: by mail-vs1-f67.google.com with SMTP id w195so3717463vsw.11
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 03:59:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Tni646pGbvRi6tG884NgqaXPsDZfvRsu3le+zg6U7NY=;
+        b=VfrWEc+UPGhpJH5fu/FNXtKAqp0bXqeDPFACowzEefNZ5zLtQzHkw+xZos8Ay7Bheo
+         3yR1EtxX5qGKRdGcvw/rBZxrrbWc/uABpPzYGgPes0QHryGGXhlQ6B71AXvDDl9h30AT
+         B9IG/QNY+xQJO+ADY8LsAiZa/Xn04u3HZSlwKq3j0McxeoD9RyST3TRSxjAblSOhow6m
+         54nACDW5Ag/W/7qvH26U7wz5pdzpH8oYrKUup98DqvksL8PdIITSWOt8b4uaWHTWMJgF
+         gghDxGv5iPBJTNxv7k9vq89C6JKGckPAW6V9f7YmcUK6XJzhv3NrucPcQbeQg+a7NKUa
+         5AqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Tni646pGbvRi6tG884NgqaXPsDZfvRsu3le+zg6U7NY=;
+        b=SRKk+TSYauViUa8fk8nM0xnc0Z2heH/nWFMbhWhhBfQG57kglohYJSyY7Wy/hNZsPb
+         Hdbylpk58GCTfDHpb7GhggbwEokGcy57zF1VpUr9Ta1sPh26MtdTjmORkrJtK0gOZjRz
+         aERN5sOXDxug7bcqHaINYlxW72f0M6p5ctiAyu5ck9R6/RiZOxgCfuD7OPYCvUN8oZNi
+         MEMCWg8b2wwudblCpnsE/wssevxDvavTZtzh4ajy5RRPAzMtnsi7XnSKoe0Sa8P5ewbL
+         Xwd3dn0m8OzRWdRqEBk2Sq/OiwbyoPWBAJ2h8LBKE1RwzjnOmwbQxp+Wk4Qq0CHBQ1QD
+         xsyg==
+X-Gm-Message-State: APjAAAXGloVt9CU5Rj6jld4t+lUwc87m0lLOVWnX3QgYm49jWDSSI8Ru
+        exR07EdDs8+uFAwuGU5nArGjj8ObtjT7y06+fyMnpg==
+X-Google-Smtp-Source: APXvYqwT9HIEtXhd36+Y0n3RLEWWZSoIkbijxLPnhyiL+bV3YQ//L1TyRMcHOhW3o0/UChzraPW1Awf2Y7Mq/QFe09k=
+X-Received: by 2002:a67:ad0e:: with SMTP id t14mr4277823vsl.35.1571396342758;
+ Fri, 18 Oct 2019 03:59:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191010105230.16736-1-faiz_abbas@ti.com>
+In-Reply-To: <20191010105230.16736-1-faiz_abbas@ti.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 18 Oct 2019 12:58:26 +0200
+Message-ID: <CAPDyKFo=00NzUUs45bokScp2XUBRaEEvtr4PHWVSXk3x7zV3iQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-omap: Fix Tuning procedure for temperatures < -20C
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, Kishon <kishon@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Schedules policy update work may end up racing with the freeing of the
-policy and unregistering the driver.
+On Thu, 10 Oct 2019 at 12:51, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>
+> According to the App note[1] detailing the tuning algorithm, for
+> temperatures < -20C, the initial tuning value should be min(largest
+> value in LPW - 24, ceil(13/16 ratio of LPW)). The largest value in
+> LPW is (max_window + 4 * (max_len - 1)) and not (max_window + 4 * max_len)
+> itself. Fix this implementation.
+>
+> [1] http://www.ti.com/lit/an/spraca9b/spraca9b.pdf
+>
+> Fixes: 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
+> SDR104/HS200 tuning failures (i929)")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 
-One possible race is as below where the cpufreq_driver is unregistered
-but the scheduled work gets executed at later stage when cpufreq_driver
-is NULL(i.e. after freeing the policy and driver)
+Applied for fixes, thanks!
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000001c
-pgd = (ptrval)
-[0000001c] *pgd=80000080204003, *pmd=00000000
-Internal error: Oops: 206 [#1] SMP THUMB2
-Modules linked in:
-CPU: 0 PID: 34 Comm: kworker/0:1 Not tainted 5.4.0-rc3-00006-g67f5a8081a4b #86
-Hardware name: ARM-Versatile Express
-Workqueue: events handle_update
-PC is at cpufreq_set_policy+0x58/0x228
-LR is at dev_pm_qos_read_value+0x77/0xac
-Control: 70c5387d  Table: 80203000  DAC: fffffffd
-Process kworker/0:1 (pid: 34, stack limit = 0x(ptrval))
-	(cpufreq_set_policy) from (refresh_frequency_limits.part.24+0x37/0x48)
-	(refresh_frequency_limits.part.24) from (handle_update+0x2f/0x38)
-	(handle_update) from (process_one_work+0x16d/0x3cc)
-	(process_one_work) from (worker_thread+0xff/0x414)
-	(worker_thread) from (kthread+0xff/0x100)
-	(kthread) from (ret_from_fork+0x11/0x28)
+Kind regards
+Uffe
 
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/cpufreq/cpufreq.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-v1->v2:
-	- Dropped check for work_pending as it can still be racy
-	- Changed from flush_work to cancel_work_sync
-
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index e93cba29fbb2..8ad9c2859841 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1279,6 +1279,8 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
- 	}
-
- 	dev_pm_qos_remove_request(policy->min_freq_req);
-+	/* cancel any pending policy->update work before freeing the policy */
-+	cancel_work_sync(&policy->update);
- 	kfree(policy->min_freq_req);
-
- 	cpufreq_policy_put_kobj(policy);
---
-2.17.1
-
+> ---
+>  drivers/mmc/host/sdhci-omap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+> index 41c2677c587f..083e7e053c95 100644
+> --- a/drivers/mmc/host/sdhci-omap.c
+> +++ b/drivers/mmc/host/sdhci-omap.c
+> @@ -372,7 +372,7 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>          * on temperature
+>          */
+>         if (temperature < -20000)
+> -               phase_delay = min(max_window + 4 * max_len - 24,
+> +               phase_delay = min(max_window + 4 * (max_len - 1) - 24,
+>                                   max_window +
+>                                   DIV_ROUND_UP(13 * max_len, 16) * 4);
+>         else if (temperature < 20000)
+> --
+> 2.19.2
+>
