@@ -2,265 +2,465 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADA10DC38F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 13:02:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 666B7DC389
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 13:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409873AbfJRLBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 07:01:40 -0400
-Received: from mail-eopbgr20072.outbound.protection.outlook.com ([40.107.2.72]:63713
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390315AbfJRLBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 07:01:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4pzusbNj7NuLcs6S/MEsIssznSoIGv9jIXqpEYts4Lg=;
- b=Bxc1Pa+FkrcA6WfZpYSNuLW4YgMGVdaGrhnv6nSspIZpaKzwse6CSgpGKeIln85JNm8wiYJBQXKpIFfkDvo+WyntpfHzZWDPadhe+Eik8TfRjWgW0DLEmoj3meVNQqgHjV7OCDiyJMhtCIS2uIfkv1OppkjGrAs3aJAfjF///YU=
-Received: from VI1PR0801CA0083.eurprd08.prod.outlook.com
- (2603:10a6:800:7d::27) by AM4PR0802MB2227.eurprd08.prod.outlook.com
- (2603:10a6:200:5e::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.19; Fri, 18 Oct
- 2019 11:01:33 +0000
-Received: from AM5EUR03FT058.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e08::206) by VI1PR0801CA0083.outlook.office365.com
- (2603:10a6:800:7d::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2367.20 via Frontend
- Transport; Fri, 18 Oct 2019 11:01:32 +0000
-Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
- header.from=arm.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of arm.com: DNS Timeout)
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AM5EUR03FT058.mail.protection.outlook.com (10.152.17.48) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.15 via Frontend Transport; Fri, 18 Oct 2019 11:01:30 +0000
-Received: ("Tessian outbound 851a1162fca7:v33"); Fri, 18 Oct 2019 11:01:21 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: a1a28f31e63a18ae
-X-CR-MTA-TID: 64aa7808
-Received: from a8bae19f48b7.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.12.54])
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 27147B68-3D26-477E-98FD-58D3D7925E70.1;
-        Fri, 18 Oct 2019 11:01:14 +0000
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04lp2054.outbound.protection.outlook.com [104.47.12.54])
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id a8bae19f48b7.2
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Fri, 18 Oct 2019 11:01:14 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TskExcp+oRkqUSOjF8oczvBP7BSVzCAH2EtfR+os99ZgIeFIglhI7v6txAr2bqAogaQ1hq7+IFrv3yo9k5/65eYube4k+mEmVB0nXafLomH7TU/HER5yfLPI+paMdo5H5nh1yA8lQYcElwzU5nIf6RNqZzQlxC+95HToPmTmHFwpC7jrghp1gOSIvUmJAC4PikqO50IBs5+Qqb8v3blthmroiwGHVxZCs6atD1AwAzr4s2aRy8+9DxMCoLX6fBgDq0rl7WDCg1jR5KYlipjHsssqZWbU7nbur+ES7GZEkbe/i1KvQk+iUfCGviMz1HpDZZFLG0Pnf5EPPQNziMQwNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4pzusbNj7NuLcs6S/MEsIssznSoIGv9jIXqpEYts4Lg=;
- b=Jmlq9R3EUifg7biK1NhPftZRR4Y3lOIcy43/PWcqtfhmd+jUw63kc+26A9ZLW0nWdqjnyIZKZ48QOU9fcFBThtyO4B9jB794kOjXZpFg++cYD2QY1dtY47eGWa0dlpf6w2igCkBHlnGK59u2AFNxhNtpLr6GcTh925YxJ9kBW8btbvsyBM1sd3wcTIbe6zMi4dCtb/BUI5dAqXT01EnjuQ5XSZTSOWmzlcpHNJwDQWWDb0uxO9Qn+A12d2JnfdcD8Vcog3/+Hk3eqLC9bhC3+o/wyYwi5VzOtkWlFddhIbZK/F5JiRSTZ/fnhhky3j8iqNTnWgUpV94oC0LAv7BYfA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4pzusbNj7NuLcs6S/MEsIssznSoIGv9jIXqpEYts4Lg=;
- b=Bxc1Pa+FkrcA6WfZpYSNuLW4YgMGVdaGrhnv6nSspIZpaKzwse6CSgpGKeIln85JNm8wiYJBQXKpIFfkDvo+WyntpfHzZWDPadhe+Eik8TfRjWgW0DLEmoj3meVNQqgHjV7OCDiyJMhtCIS2uIfkv1OppkjGrAs3aJAfjF///YU=
-Received: from VI1PR08MB4078.eurprd08.prod.outlook.com (20.178.127.92) by
- VI1PR08MB3888.eurprd08.prod.outlook.com (20.178.80.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.17; Fri, 18 Oct 2019 11:01:13 +0000
-Received: from VI1PR08MB4078.eurprd08.prod.outlook.com
- ([fe80::7d25:d1f2:e3eb:868b]) by VI1PR08MB4078.eurprd08.prod.outlook.com
- ([fe80::7d25:d1f2:e3eb:868b%6]) with mapi id 15.20.2347.024; Fri, 18 Oct 2019
- 11:01:13 +0000
-From:   Mihail Atanassov <Mihail.Atanassov@arm.com>
-To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-CC:     Brian Starkey <Brian.Starkey@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Ripard <mripard@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>, Sean Paul <sean@poorly.run>
-Subject: Re: [RFC,3/3] drm/komeda: Allow non-component drm_bridge only
- endpoints
-Thread-Topic: [RFC,3/3] drm/komeda: Allow non-component drm_bridge only
- endpoints
-Thread-Index: AQHVfmYCVHmeR23TD0SRvLooFH2IJKddhx2A///3y4CAALR0gIAAV3AAgAAhkICAAAeWAIABTLOAgABJQoA=
-Date:   Fri, 18 Oct 2019 11:01:12 +0000
-Message-ID: <1762076.f1XlaKvzUH@e123338-lin>
-References: <20191004143418.53039-4-mihail.atanassov@arm.com>
- <20191017104812.6qpuzoh5bx5i2y3m@DESKTOP-E1NTVVP.localdomain>
- <20191018063851.GA18702@jamwan02-TSP300>
-In-Reply-To: <20191018063851.GA18702@jamwan02-TSP300>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [217.140.106.51]
-x-clientproxiedby: LO2P265CA0355.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:d::31) To VI1PR08MB4078.eurprd08.prod.outlook.com
- (2603:10a6:803:e5::28)
-Authentication-Results-Original: spf=none (sender IP is )
- smtp.mailfrom=Mihail.Atanassov@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-Correlation-Id: d1005342-65fa-4393-0474-08d753ba8820
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-TrafficTypeDiagnostic: VI1PR08MB3888:|VI1PR08MB3888:|AM4PR0802MB2227:
-x-ms-exchange-transport-forked: True
-X-Microsoft-Antispam-PRVS: <AM4PR0802MB2227C9B1496E4C3D1F537CDF8F6C0@AM4PR0802MB2227.eurprd08.prod.outlook.com>
-x-checkrecipientrouted: true
-x-ms-oob-tlc-oobclassifiers: OLM:8273;OLM:8273;
-x-forefront-prvs: 01949FE337
-X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(136003)(396003)(366004)(39860400002)(346002)(376002)(189003)(199004)(54906003)(229853002)(316002)(14454004)(2906002)(76176011)(4326008)(186003)(478600001)(6506007)(386003)(52116002)(6436002)(6486002)(6862004)(9686003)(71200400001)(71190400001)(6512007)(3846002)(6116002)(25786009)(486006)(11346002)(446003)(99286004)(476003)(256004)(14444005)(5660300002)(6636002)(33716001)(305945005)(66946007)(66476007)(66556008)(64756008)(66446008)(81156014)(81166006)(7736002)(8936002)(8676002)(6246003)(102836004)(26005)(66066001)(86362001)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3888;H:VI1PR08MB4078.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: 2EKjCu1Hc8wnpZMlIlY9l84S1yVNK6dZ3rVjrFRBfgwVN60At6EJY3rJXmBsu2lH7Q7fmyV+XPx0dtd5AmvI0a01jOY5qldEdGRN6Uxpx6UhTAIhzZNx1PYcMJuGI1++INRho1Rw/88ZcYRvCF51FsbIva2/5VsPU5WwwLEzk8cRH3fDPCJXiLDOHc6tzYIl6qXaT8wIWEcMmX/xIz46rXUwr6bLYxFZTKRtSpGto2Y894o1ymqgE1ywMy+O5koLVlRH1KICh89TLosfsnP4GeXatVva2eBO8hnQgXPQnBnfBZcuQG7opc4fRIrnj7BFwXqpmKRmgiNsvYoh9M2mYP/CPeQYIb4YshjE5VfVicKBuS745j0QouAantOsYPzChkVK2M6+akmiWM9fhAyjiL8k4iIsFYAAvxqxtIzft2k=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <AF04E6F538BF7742924B072225422630@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S2409815AbfJRLB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 07:01:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37198 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2439248AbfJRLBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 07:01:17 -0400
+Received: from localhost (unknown [209.136.236.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D60562064B;
+        Fri, 18 Oct 2019 11:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571396476;
+        bh=5aGFwVfXczKIvTE5QOUVz6cJuc5DaNKNF0ZHMfxptl8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=vBvmsv3GrR1nl4Bu39WD91z1M032mfHmje5UrrgqInoFL18BYTGJRykL1coPpcMUv
+         i+acdpbDwH4comsXqa4k22jjKIKEwD7STI0Fh5a8AHJU4aGJg5JyMHzqIIzZQQ7w3X
+         VA9MojZPu2CpfwPUby3JKl2lPCG/gPNL6hPzXp/E=
+Date:   Fri, 18 Oct 2019 04:01:14 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 5.3.7
+Message-ID: <20191018110114.GA1176597@kroah.com>
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3888
-Original-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Mihail.Atanassov@arm.com; 
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM5EUR03FT058.eop-EUR03.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(7916004)(4636009)(376002)(346002)(39860400002)(396003)(136003)(199004)(189003)(356004)(81156014)(8936002)(8746002)(8676002)(81166006)(305945005)(7736002)(54906003)(23726003)(478600001)(26826003)(14454004)(6116002)(3846002)(70206006)(70586007)(14444005)(4326008)(25786009)(6636002)(6246003)(107886003)(9686003)(6512007)(6862004)(76130400001)(6486002)(229853002)(63350400001)(102836004)(99286004)(76176011)(5660300002)(26005)(336012)(66066001)(186003)(486006)(386003)(6506007)(47776003)(476003)(126002)(11346002)(446003)(36906005)(22756006)(2906002)(86362001)(97756001)(316002)(46406003)(33716001)(50466002)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0802MB2227;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: b5c247a0-2418-4560-df7f-08d753ba7d4e
-NoDisclaimer: True
-X-Forefront-PRVS: 01949FE337
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: /aRyyY2IqAE20ol3n3Nydq/InrFWF6mEUvD1nQ+y3zErDxBy/0f7jFqE0bBriit1ZA4jUelwfnv8M3gcmj6jsyG3ZrjpbrTS9u5Bk4P/t6+452fy7I9Aw+EehkDqCcB3KxVyNrlpw3sDQOBw1w6H/7/DGedoUpj5ME1Si9GpdTRIn3Prh4g3d0m8D22qCz+0dQtAHbbCjs/zBGqPhbwlXvws70E5SmgCWuIeqx+oPkSq2IX+JXd0BGHMpL5w0OEavNGzcMfGif7aVBdBgh0AFBp+E5aPLGfCDvdfgbkywc3bdD6EVnV2epC1TdEo/NqIVpBE6tSLPliIHeDpAhiCDvU+vz3YUrQObJ0RkAJnBLNc6DKCy1kK2I1IcJl51uMnwy70SfZpqWr/hsPkbkmLc5T2cELeMql9fFUHkeOfu+U=
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2019 11:01:30.8155
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1005342-65fa-4393-0474-08d753ba8820
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0802MB2227
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
+Content-Disposition: inline
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, 18 October 2019 07:38:59 BST james qian wang (Arm Technology Chi=
-na) wrote:
-> On Thu, Oct 17, 2019 at 10:48:12AM +0000, Brian Starkey wrote:
-> > On Thu, Oct 17, 2019 at 10:21:03AM +0000, james qian wang (Arm Technolo=
-gy China) wrote:
-> > > On Thu, Oct 17, 2019 at 08:20:56AM +0000, Brian Starkey wrote:
-> > > > On Thu, Oct 17, 2019 at 03:07:59AM +0000, james qian wang (Arm Tech=
-nology China) wrote:
-> > > > > On Wed, Oct 16, 2019 at 04:22:07PM +0000, Brian Starkey wrote:
-> > > > > >=20
-> > > > > > If James is strongly against merging this, maybe we just swap
-> > > > > > wholesale to bridge? But for me, the pragmatic approach would b=
-e this
-> > > > > > stop-gap.
-> > > > > >
-> > > > >=20
-> > > > > This is a good idea, and I vote +ULONG_MAX :)
-> > > > >=20
-> > > > > and I also checked tda998x driver, it supports bridge. so swap th=
-e
-> > > > > wholesale to brige is perfect. :)
-> > > > >=20
-> > > >=20
-> > > > Well, as Mihail wrote, it's definitely not perfect.
-> > > >=20
-> > > > Today, if you rmmod tda998x with the DPU driver still loaded,
-> > > > everything will be unbound gracefully.
-> > > >=20
-> > > > If we swap to bridge, then rmmod'ing tda998x (or any other bridge
-> > > > driver the DPU is using) with the DPU driver still loaded will resu=
-lt
-> > > > in a crash.
-> > >=20
-> > > I haven't read the bridge code, but seems this is a bug of drm_bridge=
-,
-> > > since if the bridge is still in using by others, the rmmod should fai=
-l
-> > >=20
-> >=20
-> > Correct, but there's no fix for that today. You can also take a look
-> > at the thread linked from Mihail's cover letter.
-> >=20
-> > > And personally opinion, if the bridge doesn't handle the dependence.
-> > > for us:
-> > >=20
-> > > - add such support to bridge
-> >=20
-> > That would certainly be helpful. I don't know if there's consensus on
-> > how to do that.
-> >=20
-> > >   or
-> > > - just do the insmod/rmmod in correct order.
-> > >=20
-> > > > So, there really are proper benefits to sticking with the component
-> > > > code for tda998x, which is why I'd like to understand why you're so
-> > > > against this patch?
-> > > >
-> > >=20
-> > > This change handles two different connectors in komeda internally, co=
-mpare
-> > > with one interface, it increases the complexity, more risk of bug and=
- more
-> > > cost of maintainance.
-> > >=20
-> >=20
-> > Well, it's only about how to bind the drivers - two different methods
-> > of binding, not two different connectors. I would argue that carrying
-> > our out-of-tree patches to support both platforms is a larger
-> > maintenance burden.
-> >=20
-> > Honestly this looks like a win-win to me. We get the superior approach
-> > when its supported, and still get to support bridges which are more
-> > common.
-> >
->=20
-> My consideration is: if we support both link methods, we may suffering
->=20
-> - 1. bridge reference cnt problem
-> - 2. maintance two link methods.
->=20
-> the 1) seems unavoidable, so swap all to bridage at least can avoid
-> the pain of 2). that's why I thought your idea "swap all to bridage"
-> is good.
->=20
-> Thanks
-> James.
->=20
 
-Just to make sure my understanding is clear: If I respin the patch to
-only use the drm_bridge i/f, you'd be happier with it and we can get it
-merged?
+--pWyiEgJYm5f9v55/
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > As/when improvements are made to the bridge code we can remove the
-> > component bits and not lose anything.
-> >=20
-> > > So my suggestion is keeping on one single interface in komeda, no
-> > > matter it is bridge or component, but I'd like it only one, but not
-> > > them both in komeda.
-> >=20
-> > If we can put the effort into fixing bridges then I guess that's the
-> > best approach for everyone :-) Might not be easy though!
-> >=20
-> > -Brian
-> >=20
-> > >=20
-> > > Thanks
-> > > James
-> > >=20
-> > > > Thanks,
-> > > > -Brian
->=20
+I'm announcing the release of the 5.3.7 kernel.
+
+All users of the 5.3 kernel series must upgrade.
+
+The updated 5.3.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-5.3.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Ds=
+ummary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Documentation/usb/rio.rst                                   |  109 --
+ MAINTAINERS                                                 |    7=20
+ Makefile                                                    |    2=20
+ arch/arm/configs/badge4_defconfig                           |    1=20
+ arch/arm/configs/corgi_defconfig                            |    1=20
+ arch/arm/configs/pxa_defconfig                              |    1=20
+ arch/arm/configs/s3c2410_defconfig                          |    1=20
+ arch/arm/configs/spitz_defconfig                            |    1=20
+ arch/arm64/kernel/process.c                                 |   32=20
+ arch/arm64/kernel/topology.c                                |   19=20
+ arch/mips/configs/mtx1_defconfig                            |    1=20
+ arch/mips/configs/rm200_defconfig                           |    1=20
+ arch/mips/include/uapi/asm/hwcap.h                          |   11=20
+ arch/mips/kernel/cpu-probe.c                                |   33=20
+ arch/mips/loongson64/Platform                               |    4=20
+ arch/mips/vdso/Makefile                                     |    1=20
+ arch/x86/include/asm/mwait.h                                |    2=20
+ arch/x86/lib/delay.c                                        |    4=20
+ block/blk-rq-qos.c                                          |   14=20
+ block/blk-rq-qos.h                                          |    4=20
+ block/blk-wbt.c                                             |    6=20
+ drivers/acpi/pptt.c                                         |   52 +
+ drivers/firmware/efi/efi.c                                  |    3=20
+ drivers/firmware/efi/tpm.c                                  |   26=20
+ drivers/firmware/google/vpd_decode.c                        |    2=20
+ drivers/gpio/gpio-eic-sprd.c                                |    7=20
+ drivers/gpio/gpiolib.c                                      |   29=20
+ drivers/gpu/drm/i915/display/intel_display.c                |   15=20
+ drivers/gpu/drm/i915/gem/i915_gem_mman.c                    |    6=20
+ drivers/gpu/drm/i915/gem/i915_gem_pm.c                      |    3=20
+ drivers/gpu/drm/i915/gt/intel_workarounds.c                 |    3=20
+ drivers/gpu/drm/i915/i915_drv.c                             |    5=20
+ drivers/gpu/drm/i915/selftests/i915_gem.c                   |    6=20
+ drivers/gpu/drm/msm/msm_gem.c                               |    4=20
+ drivers/iio/accel/adxl372.c                                 |   22=20
+ drivers/iio/adc/ad799x.c                                    |    4=20
+ drivers/iio/adc/axp288_adc.c                                |   32=20
+ drivers/iio/adc/hx711.c                                     |   10=20
+ drivers/iio/adc/stm32-adc-core.c                            |   70 -
+ drivers/iio/adc/stm32-adc-core.h                            |  137 ++
+ drivers/iio/adc/stm32-adc.c                                 |  109 --
+ drivers/iio/light/opt3001.c                                 |    6=20
+ drivers/iio/light/vcnl4000.c                                |   14=20
+ drivers/infiniband/core/security.c                          |    2=20
+ drivers/infiniband/hw/vmw_pvrdma/pvrdma_srq.c               |    2=20
+ drivers/media/usb/stkwebcam/stk-webcam.c                    |    3=20
+ drivers/misc/mei/bus-fixup.c                                |   14=20
+ drivers/misc/mei/hw-me-regs.h                               |    3=20
+ drivers/misc/mei/hw-me.c                                    |   21=20
+ drivers/misc/mei/hw-me.h                                    |    8=20
+ drivers/misc/mei/mei_dev.h                                  |    4=20
+ drivers/misc/mei/pci-me.c                                   |   13=20
+ drivers/mtd/nand/raw/au1550nd.c                             |    5=20
+ drivers/staging/fbtft/Kconfig                               |    2=20
+ drivers/staging/fbtft/fbtft-core.c                          |    7=20
+ drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c      |    2=20
+ drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c   |    4=20
+ drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c |    1=20
+ drivers/staging/vt6655/device_main.c                        |    4=20
+ drivers/tty/serial/uartlite.c                               |    3=20
+ drivers/tty/serial/xilinx_uartps.c                          |    8=20
+ drivers/usb/class/usblp.c                                   |    8=20
+ drivers/usb/gadget/udc/dummy_hcd.c                          |    3=20
+ drivers/usb/host/xhci-ring.c                                |    4=20
+ drivers/usb/host/xhci.c                                     |   78 +
+ drivers/usb/image/microtek.c                                |    4=20
+ drivers/usb/misc/Kconfig                                    |   10=20
+ drivers/usb/misc/Makefile                                   |    1=20
+ drivers/usb/misc/adutux.c                                   |   24=20
+ drivers/usb/misc/chaoskey.c                                 |    5=20
+ drivers/usb/misc/iowarrior.c                                |   16=20
+ drivers/usb/misc/ldusb.c                                    |   24=20
+ drivers/usb/misc/legousbtower.c                             |   58 -
+ drivers/usb/misc/rio500.c                                   |  561 -------=
+-----
+ drivers/usb/misc/rio500_usb.h                               |   20=20
+ drivers/usb/misc/usblcd.c                                   |   33=20
+ drivers/usb/misc/yurex.c                                    |   18=20
+ drivers/usb/renesas_usbhs/common.h                          |    1=20
+ drivers/usb/renesas_usbhs/fifo.c                            |    2=20
+ drivers/usb/renesas_usbhs/fifo.h                            |    1=20
+ drivers/usb/renesas_usbhs/mod_gadget.c                      |   18=20
+ drivers/usb/renesas_usbhs/pipe.c                            |   15=20
+ drivers/usb/renesas_usbhs/pipe.h                            |    1=20
+ drivers/usb/serial/ftdi_sio.c                               |    3=20
+ drivers/usb/serial/ftdi_sio_ids.h                           |    9=20
+ drivers/usb/serial/keyspan.c                                |    4=20
+ drivers/usb/serial/option.c                                 |   11=20
+ drivers/usb/serial/usb-serial.c                             |    5=20
+ drivers/usb/typec/tcpm/tcpm.c                               |   14=20
+ drivers/usb/typec/ucsi/displayport.c                        |    2=20
+ drivers/usb/typec/ucsi/ucsi_ccg.c                           |   42=20
+ drivers/usb/usb-skeleton.c                                  |   15=20
+ fs/btrfs/file.c                                             |   13=20
+ fs/btrfs/inode.c                                            |    3=20
+ fs/btrfs/ref-verify.c                                       |    2=20
+ fs/btrfs/relocation.c                                       |    9=20
+ fs/btrfs/tree-log.c                                         |   36=20
+ fs/btrfs/volumes.c                                          |    6=20
+ fs/cifs/dir.c                                               |    8=20
+ fs/cifs/file.c                                              |   33=20
+ fs/cifs/inode.c                                             |    4=20
+ fs/io_uring.c                                               |    3=20
+ fs/libfs.c                                                  |  134 +-
+ fs/nfs/direct.c                                             |   78 -
+ include/linux/acpi.h                                        |    5=20
+ include/linux/hwmon.h                                       |    2=20
+ include/linux/tpm_eventlog.h                                |   16=20
+ kernel/fork.c                                               |    4=20
+ kernel/panic.c                                              |    1=20
+ kernel/trace/ftrace.c                                       |   27=20
+ kernel/trace/trace.c                                        |   17=20
+ kernel/trace/trace_hwlat.c                                  |    4=20
+ mm/page_alloc.c                                             |    8=20
+ mm/vmpressure.c                                             |   20=20
+ mm/z3fold.c                                                 |   10=20
+ security/selinux/ss/services.c                              |    9=20
+ tools/perf/util/jitdump.c                                   |    6=20
+ tools/perf/util/llvm-utils.c                                |    6=20
+ 118 files changed, 1115 insertions(+), 1285 deletions(-)
+
+Adit Ranadive (1):
+      RDMA/vmw_pvrdma: Free SRQ only once
+
+Al Viro (1):
+      Fix the locking in dcache_readdir() and friends
+
+Alan Stern (1):
+      USB: yurex: Don't retry on unexpected errors
+
+Alexander Usyskin (1):
+      mei: avoid FW version request on Ibex Peak and earlier
+
+Andreas Klinger (1):
+      iio: adc: hx711: fix bug in sampling of data
+
+Ard Biesheuvel (1):
+      efivar/ssdt: Don't iterate over EFI vars if no SSDT override was spec=
+ified
+
+Bartosz Golaszewski (1):
+      gpiolib: don't clear FLAG_IS_OUT when emulating open-drain/open-source
+
+Bastien Nocera (1):
+      USB: rio500: Remove Rio 500 kernel driver
+
+Beni Mahler (1):
+      USB: serial: ftdi_sio: add device IDs for Sienna and Echelon PL-20
+
+Bill Kuzeja (1):
+      xhci: Prevent deadlock when xhci adapter breaks during init
+
+Brian Norris (1):
+      firmware: google: increment VPD key_len properly
+
+Bruce Chen (1):
+      gpio: eic: sprd: Fix the incorrect EIC offset when toggling
+
+Chris Wilson (2):
+      drm/i915: Perform GGTT restore much earlier during resume
+      drm/i915: Mark contents as dirty on a write fault
+
+Colin Ian King (1):
+      efi/tpm: Fix sanity check of unsigned tbl_size being less than zero
+
+Dan Carpenter (2):
+      usb: typec: tcpm: usb: typec: tcpm: Fix a signedness bug in tcpm_fw_g=
+et_caps()
+      mm/vmpressure.c: fix a signedness bug in vmpressure_register_event()
+
+Daniele Palmas (1):
+      USB: serial: option: add Telit FN980 compositions
+
+Dave Wysochanski (1):
+      cifs: use cifsInodeInfo->open_file_lock while iterating to avoid a pa=
+nic
+
+David Frey (1):
+      iio: light: opt3001: fix mutex unlock race
+
+Denis Efremov (1):
+      staging: rtl8188eu: fix HighestRate check in odm_ARFBRefresh_8188E()
+
+Fabrice Gasnier (2):
+      iio: adc: stm32-adc: move registers definitions
+      iio: adc: stm32-adc: fix a race when using several adcs with dma and =
+irq
+
+Filipe Manana (1):
+      Btrfs: fix memory leak due to concurrent append writes with fiemap
+
+Greg Kroah-Hartman (1):
+      Linux 5.3.7
+
+Hans de Goede (1):
+      iio: adc: axp288: Override TS pin bias current for some models
+
+Harshad Shirwadkar (1):
+      blk-wbt: fix performance regression in wbt scale_up/scale_down
+
+Heikki Krogerus (2):
+      usb: typec: ucsi: ccg: Remove run_isr flag
+      usb: typec: ucsi: displayport: Fix for the mode entering routine
+
+Ian Rogers (1):
+      perf llvm: Don't access out-of-scope array
+
+Jacky.Cao@sony.com (1):
+      USB: dummy-hcd: fix power budget for SuperSpeed mode
+
+Jan Schmidt (1):
+      xhci: Check all endpoints for LPM timeout
+
+Janakarajan Natarajan (1):
+      x86/asm: Fix MWAITX C-state hint value
+
+Jens Axboe (1):
+      io_uring: only flush workqueues on fileset removal
+
+Jeremy Linton (2):
+      ACPI/PPTT: Add support for ACPI 6.3 thread flag
+      arm64: topology: Use PPTT to determine if PE is a thread
+
+Jerry Snitselaar (1):
+      efi/tpm: Only set 'efi_tpm_final_log_size' after successful event log=
+ parsing
+
+Jiaxun Yang (1):
+      MIPS: elf_hwcap: Export userspace ASEs
+
+Johan Hovold (22):
+      USB: yurex: fix NULL-derefs on disconnect
+      USB: usb-skeleton: fix runtime PM after driver unbind
+      USB: usb-skeleton: fix NULL-deref on disconnect
+      USB: adutux: fix use-after-free on disconnect
+      USB: adutux: fix NULL-derefs on disconnect
+      USB: adutux: fix use-after-free on release
+      USB: iowarrior: fix use-after-free on disconnect
+      USB: iowarrior: fix use-after-free on release
+      USB: iowarrior: fix use-after-free after driver unbind
+      USB: usblp: fix runtime PM after driver unbind
+      USB: chaoskey: fix use-after-free on release
+      USB: ldusb: fix NULL-derefs on driver unbind
+      USB: serial: keyspan: fix NULL-derefs on open() and write()
+      USB: serial: fix runtime PM after driver unbind
+      USB: usblcd: fix I/O after disconnect
+      USB: microtek: fix info-leak at probe
+      USB: legousbtower: fix slab info leak at probe
+      USB: legousbtower: fix deadlock on disconnect
+      USB: legousbtower: fix potential NULL-deref on disconnect
+      USB: legousbtower: fix open after failed reset request
+      USB: legousbtower: fix use-after-free on release
+      media: stkwebcam: fix runtime PM after driver unbind
+
+Josef Bacik (3):
+      btrfs: allocate new inode in NOFS context
+      btrfs: fix incorrect updating of log root tree
+      btrfs: fix uninitialized ret in ref-verify
+
+Kai-Heng Feng (1):
+      xhci: Increase STS_SAVE timeout in xhci_suspend()
+
+Kenneth Graunke (1):
+      drm/i915: Whitelist COMMON_SLICE_CHICKEN2
+
+Marco Felsch (4):
+      iio: adc: ad799x: fix probe error handling
+      iio: light: add missing vcnl4040 of_compatible
+      gpio: fix getting nonexclusive gpiods from DT
+      iio: light: fix vcnl4000 devicetree hooks
+
+Masayoshi Mizuma (1):
+      arm64/sve: Fix wrong free for task->thread.sve_state
+
+Mathias Nyman (4):
+      xhci: Fix false warning message about wrong bounce buffer write length
+      xhci: Prevent device initiated U1/U2 link pm if exit latency is too l=
+ong
+      xhci: Fix USB 3.1 capability detection on early xHCI 1.1 spec based h=
+osts
+      xhci: Fix NULL pointer dereference in xhci_clear_tt_buffer_complete()
+
+Michal Hocko (1):
+      kernel/sysctl.c: do not override max_threads provided by userspace
+
+Michal Simek (1):
+      serial: uartps: Fix uartps_major handling
+
+Mohamad Heib (1):
+      IB/core: Fix wrong iterating on ports
+
+Navid Emamdoost (2):
+      Staging: fbtft: fix memory leak in fbtft_framebuffer_alloc
+      staging: vt6655: Fix memory leak in vt6655_probe
+
+Noralf Tr=F8nnes (1):
+      staging/fbtft: Depend on OF
+
+Nuno S=E1 (1):
+      hwmon: Fix HWMON_P_MIN_ALARM mask
+
+Ondrej Mosnacek (1):
+      selinux: fix context string corruption in convert_context()
+
+Paul Burton (2):
+      MIPS: Disable Loongson MMI instructions for kernel build
+      mtd: rawnand: au1550nd: Fix au_read_buf16() prototype
+
+Pavel Shilovsky (3):
+      CIFS: Gracefully handle QueryInfo errors during open
+      CIFS: Force revalidate inode when dentry is stale
+      CIFS: Force reval dentry if LOOKUP_REVAL flag is set
+
+Peter Jones (2):
+      efi/tpm: Don't access event->count when it isn't mapped
+      efi/tpm: Don't traverse an event log with no events
+
+Qian Cai (1):
+      mm/page_alloc.c: fix a crash in free_pages_prepare()
+
+Qu Wenruo (1):
+      btrfs: relocation: fix use-after-free on dead relocation roots
+
+Randy Dunlap (1):
+      serial: uartlite: fix exit path null pointer
+
+Reinhard Speyerer (1):
+      USB: serial: option: add support for Cinterion CLS8 devices
+
+Rick Tseng (1):
+      usb: xhci: wait for CNR controller not ready bit in xhci resume
+
+Rob Clark (1):
+      drm/msm: Use the correct dma_sync calls harder
+
+Srivatsa S. Bhat (VMware) (2):
+      tracing/hwlat: Report total time spent in all NMIs during the sample
+      tracing/hwlat: Don't ignore outer-loop duration when calculating max_=
+latency
+
+Stefan Popa (3):
+      iio: accel: adxl372: Fix/remove limitation for FIFO samples
+      iio: accel: adxl372: Fix push to buffers lost samples
+      iio: accel: adxl372: Perform a reset at start up
+
+Steve MacLean (1):
+      perf inject jit: Fix JIT_CODE_MOVE filename
+
+Steven Rostedt (VMware) (2):
+      ftrace: Get a reference counter for the trace_array on filter files
+      tracing: Get trace_array reference for available_tracers files
+
+Takashi Iwai (1):
+      staging: bcm2835-audio: Fix draining behavior regression
+
+Tomas Winkler (1):
+      mei: me: add comet point (lake) LP device ids
+
+Trond Myklebust (1):
+      NFS: Fix O_DIRECT accounting of number of bytes read/written
+
+Ville Syrj=E4l=E4 (1):
+      drm/i915: Bump skl+ max plane width to 5k for linear/x-tiled
+
+Vitaly Wool (1):
+      mm/z3fold.c: claim page in the beginning of free
+
+Will Deacon (1):
+      panic: ensure preemption is disabled during panic()
+
+Yoshihiro Shimoda (2):
+      usb: renesas_usbhs: gadget: Do not discard queues in usb_ep_set_{halt=
+,wedge}()
+      usb: renesas_usbhs: gadget: Fix usb_ep_set_{halt,wedge}() behavior
+
+Zygo Blaxell (1):
+      btrfs: fix balance convert to single on 32-bit host CPUs
 
 
---=20
-Mihail
+--pWyiEgJYm5f9v55/
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAl2pm3oACgkQONu9yGCS
+aT6VWg//X6RZYGUf3vSgujEDIJteBEl0/jqijLtmRQV/3geieK1hLMQcIb/F8b9q
+JTWvZtxnNpxstC0JYgcfUMLsAGY4owhBi0mVsfSTcFEmXLnE43babEru4JP1Rqwv
+bs6lCAbN0j9xWimHIt6ozHSJU0v/HEAA9RZChK2ihoq3KQdTfUK0CPjJUQPuscNS
+wOQmF9oJrlEXn56wcxdJmJjJsXNSEYW5aKBnixcKbjXh3PqEVwlTKFcxWfCVNyF6
+mkk8I6E3cO7njosACnNuZqP9+d3PMggxSgAPlhAMV0dRM2Pos6NHSmLCr6YgeotA
+AThjYcKqoFzEAMWOlNIeaeOGubUK+aj2zJbZxd+SBAiWSa0JXC7+usmUZe2q7/2t
+Xc4h8hd8zHo94UrOSNugNtJmNXAQBcPiRQoItWWXigcF2MzBk3suwcoU+P62ugNq
+CDzCt2J42Brj2j18l0UMY4ulM3hNVu4gQ4I0mw33/dyl6vhasMU8ZcEuKvaPk0KY
+KM8G1rbq4iCjn0eWQ5h7nKpXWR5SgCVNDTMbiLw3hWKCyCxiTJSykeO0o1uFGSNm
+3PN4M+Azd1VeMZFfaj+ip/9RtLOnMCqJXXcqsdprSW8aA06K0lY6jH9oq+C6Oxdd
+3c5NZDZ6hcvBCy90QSXaPkRlQx5WGwCPy7Z9pj0oRGzbTf39gIs=
+=PzqS
+-----END PGP SIGNATURE-----
 
+--pWyiEgJYm5f9v55/--
