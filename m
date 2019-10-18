@@ -2,143 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 893BDDC48F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 289C6DC49A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:22:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442698AbfJRMSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:18:54 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35164 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404901AbfJRMSx (ORCPT
+        id S2442728AbfJRMWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:22:13 -0400
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:36970 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2442699AbfJRMWM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 08:18:53 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 205so3794116pfw.2;
-        Fri, 18 Oct 2019 05:18:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=HzCZCqhtcM0Kfq8LNIg6bDch5I26sRahsuifFN7TYPc=;
-        b=XI4Eol7+vM1fw1yJ7XIlo3J6yhr0alZ5AU0dkW2JmZM5jUfbwiOLF2f2zvTYEZ3O/C
-         djzH7maJ8aX6nR0nWjX+BsqvMOkaKxf/6xFrZ/lLRdGk9762fY9J4hjdkK2CMU9fs8uu
-         4syPzasDLwLDbKXxXYa2iRZWU8H5y+96FAbYyEZRZnH9RO/DCOG3lYL4gSgZcRTyJ4Uw
-         qKI0MQSQQmGf1gdSEzlcjD2IT1ZxaUvlWuOPYdIt/verp4P71rbJ1k7WH9LtGx8gLL9j
-         UYfSRq4UacEDpy+ZQv3Z23f2bobes4LnaxpND1Dnlyr0UMelYxDHLy6einArjiAIcDXk
-         RiqA==
-X-Gm-Message-State: APjAAAVQkqoRF79s/yZ+LzhYxgP5oSY5VzS+nA2SMqBNdGVf7u1sHtVN
-        i07zhTmmIEyeN1jsIY7IqTQ=
-X-Google-Smtp-Source: APXvYqxorxs0xmFs5umyAcxgYNWtmIzh52uV76BA/wm3EQofGTbViY97Mp2XNKsNiq9DJj45LtYcag==
-X-Received: by 2002:a65:66c4:: with SMTP id c4mr10015575pgw.42.1571401132663;
-        Fri, 18 Oct 2019 05:18:52 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id x72sm7862284pfc.89.2019.10.18.05.18.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2019 05:18:49 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 4F9574042C; Fri, 18 Oct 2019 12:18:48 +0000 (UTC)
-Date:   Fri, 18 Oct 2019 12:18:48 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Matthias Maennich <maennich@google.com>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: Module loading problem since 5.3
-Message-ID: <20191018121848.GB11244@42.do-not-panic.com>
-References: <20191014085235.GW16384@42.do-not-panic.com>
- <20191014144440.GG35313@google.com>
- <20191016125030.GH16384@42.do-not-panic.com>
- <20191016133710.GB35139@google.com>
+        Fri, 18 Oct 2019 08:22:12 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 5975EC04D7;
+        Fri, 18 Oct 2019 12:15:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1571400951; bh=oQQShnjm5R0MR/xjv312sQ6gQ7J+z4O6hvMy/a53QQ0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Evvf5DHGG7VfVLWRKmvc8rRiZVi3Qxi7atXeNgJ54Nl/mqE4NqWeq8GWpaKNh2tsy
+         BmolhZsh4uSf1pTIQFm1TkXsBY79ZAaeeAvlWY2hU2W11GkF9EdS12yot+l+NNfOUN
+         A7ZmrLEKK9A3BAJxy2FWcA+FQqNU29zCRaNpRClzANrBwJSUd8Cv/BBLKQz17L5VAY
+         HA4w2K/DtimhvZt1LB5fJIDzlLeTbcMqCpt6eYkyznpISkCDrNut+uuFoanr+I0+cf
+         uJ4tKECNqKNpGeEM1uDUQNMMLpLTv8fxkopmSkISUD/fceknO7B1pjNcCOWm+FK5Zw
+         oZroCuxRoVOvQ==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.73])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 542A1A006D;
+        Fri, 18 Oct 2019 12:15:49 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [RFC 4/6] ARC: HAPS: add HIGHMEM memory zone to DTS
+Date:   Fri, 18 Oct 2019 15:15:43 +0300
+Message-Id: <20191018121545.8907-5-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191018121545.8907-1-Eugeniy.Paltsev@synopsys.com>
+References: <20191018121545.8907-1-Eugeniy.Paltsev@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191016133710.GB35139@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 02:37:10PM +0100, Matthias Maennich wrote:
-> On Wed, Oct 16, 2019 at 12:50:30PM +0000, Luis Chamberlain wrote:
-> > On Mon, Oct 14, 2019 at 03:44:40PM +0100, Matthias Maennich wrote:
-> > > Hi Luis!
-> > > 
-> > > On Mon, Oct 14, 2019 at 08:52:35AM +0000, Luis Chamberlain wrote:
-> > > > On Fri, Oct 11, 2019 at 09:26:05PM +0200, Heiner Kallweit wrote:
-> > > > > On 10.10.2019 19:15, Luis Chamberlain wrote:
-> > > > > >
-> > > > > >
-> > > > > > On Thu, Oct 10, 2019, 6:50 PM Heiner Kallweit <hkallweit1@gmail.com <mailto:hkallweit1@gmail.com>> wrote:
-> > > > > >
-> > > > > >        MODULE_SOFTDEP("pre: realtek")
-> > > > > >
-> > > > > >     Are you aware of any current issues with module loading
-> > > > > >     that could cause this problem?
-> > > > > >
-> > > > > >
-> > > > > > Nope. But then again I was not aware of MODULE_SOFTDEP(). I'd encourage an extension to lib/kmod.c or something similar which stress tests this. One way that comes to mind to test this is to allow a new tests case which loads two drives which co depend on each other using this macro. That'll surely blow things up fast. That is, the current kmod tests uses request_module() or get_fs_type(), you'd want a new test case with this added using then two new dummy test drivers with the macro dependency.
-> > > > > >
-> > > > > > If you want to resolve this using a more tested path, you could have request_module() be used as that is currently tested. Perhaps a test patch for that can rule out if it's the macro magic which is the issue.
-> > > > > >
-> > > > > >   Luis
-> > > > >
-> > > > > Maybe issue is related to a bug in introduction of symbol namespaces, see here:
-> > > > > https://lkml.org/lkml/2019/10/11/659
-> > > >
-> > > > Can you have your user with issues either revert 8651ec01daed or apply the fixes
-> > > > mentioned by Matthias to see if that was the issue?
-> > > >
-> > > > Matthias what module did you run into which let you run into the issue
-> > > > with depmod? I ask as I think it would be wise for us to add a test case
-> > > > using lib/test_kmod.c and tools/testing/selftests/kmod/kmod.sh for the
-> > > > regression you detected.
-> > > 
-> > > The depmod warning can be reproduced when using a symbol that is built
-> > > into vmlinux and used from a module. E.g. with CONFIG_USB_STORAGE=y and
-> > > CONFIG_USB_UAS=m, the symbol `usb_stor_adjust_quirks` is built in with
-> > > namespace USB_STORAGE and depmod stumbles upon this emitting the
-> > > following warning (e.g. during make modules_install).
-> > > 
-> > >  depmod: WARNING: [...]/uas.ko needs unknown symbol usb_stor_adjust_quirks
-> > > 
-> > > As there is another (less intrusive) way of implementing the namespace
-> > > feature, I posted a patch series [1] on last Thursday that should
-> > > mitigate the issue as the ksymtab entries depmod eventually relies on
-> > > are no longer carrying the namespace in their names.
-> > > 
-> > > Cheers,
-> > > Matthias
-> > > 
-> > > [1] https://lore.kernel.org/lkml/20191010151443.7399-1-maennich@google.com/
-> > 
-> > Yes but kmalloc() is built-in, and used by *all* drivers compiled as
-> > modules, so why was that an issue?
-> 
-> I believe you meant, "why was that *not* an issue?".
+This is required as a preparation of merging nSIM and HASP
+defonfig and device tree.
 
-Right.
+As we have HIGHMEM disabled in both HAPS and nSIM defconfigs
+this doesn't lead to any functional change.
 
-> In ksymtab, namespaced symbols had the format
-> 
->  __ksymtab_<NAMESPACE>.<symbol>
-> 
-> while symbols without namespace would still use the old format
-> 
->  __ksymtab_<symbol>
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+ arch/arc/boot/dts/haps_hs.dts | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-Ah, I didn't see the symbol namespace patches, good stuff!
+diff --git a/arch/arc/boot/dts/haps_hs.dts b/arch/arc/boot/dts/haps_hs.dts
+index 11fad2f79056..60d578e2781f 100644
+--- a/arch/arc/boot/dts/haps_hs.dts
++++ b/arch/arc/boot/dts/haps_hs.dts
+@@ -9,13 +9,15 @@
+ / {
+ 	model = "snps,zebu_hs";
+ 	compatible = "snps,zebu_hs";
+-	#address-cells = <1>;
+-	#size-cells = <1>;
++	#address-cells = <2>;
++	#size-cells = <2>;
+ 	interrupt-parent = <&core_intc>;
+ 
+ 	memory {
+ 		device_type = "memory";
+-		reg = <0x80000000 0x20000000>;	/* 512 */
++		/* CONFIG_LINUX_RAM_BASE needs to match low mem start */
++		reg = <0x0 0x80000000 0x0 0x20000000	/* 512 MB low mem */
++		       0x1 0x00000000 0x0 0x40000000>;	/* 1 GB highmem */
+ 	};
+ 
+ 	chosen {
+@@ -31,8 +33,9 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 
+-		/* child and parent address space 1:1 mapped */
+-		ranges;
++		/* only perip space at end of low mem accessible
++			  bus addr,  parent bus addr, size    */
++		ranges = <0x80000000 0x0 0x80000000 0x80000000>;
+ 
+ 		core_clk: core_clk {
+ 			#clock-cells = <0>;
+-- 
+2.21.0
 
-> These are also the names that are extracted into System.map (using
-> scripts/mksysmap). Depmod is reading the System.map and for symbols used
-> by modules that are in a namespace, it would not find a match as it does
-> not understand the namespace notation. Depmod would still not emit a
-> warning for symbols without namespace as their format did not change.
-
-Can we have a test case for this to ensure we don't regress on this
-again? Or put another way, what test cases were implemented for symbol
-namespaces?
-
-  Luis
