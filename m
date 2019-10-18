@@ -2,91 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4709DBC4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:01:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82845DBC6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441961AbfJRFA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:00:27 -0400
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:49588 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2441967AbfJRFAY (ORCPT
+        id S2504057AbfJRFFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:05:12 -0400
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:42224 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2504037AbfJRFFK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:00:24 -0400
+        Fri, 18 Oct 2019 01:05:10 -0400
 Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 3F21DCA7
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 04:53:12 +0000 (UTC)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 1C357CBD
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 04:58:07 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id jTgX8G42rgdX for <linux-kernel@vger.kernel.org>;
-        Thu, 17 Oct 2019 23:53:12 -0500 (CDT)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+Received: from mta-p8.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8X8NkepSQaWy for <linux-kernel@vger.kernel.org>;
+        Thu, 17 Oct 2019 23:58:07 -0500 (CDT)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
         (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 1780BC9D
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 23:53:12 -0500 (CDT)
-Received: by mail-io1-f69.google.com with SMTP id t15so3082735ios.13
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 21:53:12 -0700 (PDT)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id E9125C97
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 23:58:06 -0500 (CDT)
+Received: by mail-io1-f70.google.com with SMTP id a22so6882040ioq.23
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 21:58:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=PiAvGPBAd5r/3XyVj4aUHP7AUeXoHl9s9vGj/rL2vBE=;
-        b=SSAw+mF6f+5B+nirGSGu/AIgxkBVez4C2mLwuOn2tdvSW6D2qgygO+CJhg/4C5A4UY
-         xWLJlB3gN5EseI5nGlOxXzBh17l243fYEsLjpBwMlbcyftv/av5pE+ARJqX4V6h3fEVb
-         apUsF/OH+V+/oXLedtF3gnfl3I+r5VDk4FJpUI4VC2joMHaMKxpbl+T4BOTeZ1qvYq3J
-         9sgaWLiyFSDyQPKt8y46jMtH/uo8saK+v/LqHHNuPDs3YPlY8kVkUpk3MQfwTOR5HcIa
-         Tx4igdKciSEATWOcEVUnHHCFtyOgsKlDcT64tagQdJdLbSr4LvX88ddY8tEER3peRXg/
-         7pGQ==
+        bh=DvCdMzTpfcgTdM5FNIL3SmoCatqgS5bfknocDxp/cjQ=;
+        b=I3KLTDHTGjfBbu0VTQnqOAqkus9ZWIle+c83vxb65BuPr+SnL0WXvRA0zgd9pSbhZY
+         /jWnlNxJKkwZFARVmcNBBMBPS2G6RcmJNJL8kMRNIoxE6AK8gOXt3Mi8mrBZAwdhPK7s
+         clBOJbFg40XKT+cjSUutDThqhI5tnTWaTsnwPiyDi/vNGAMdzvyyNJ6jml0YAqxekaOE
+         2Rjt7GWqH26CUYDPcBS0QReinF6ejqKrB5o2tECtDc5yQOsFxdQbzomV8cfMG8ZVUbXv
+         BdCPdThNmHEamWpFrHf1n7Hu9+Fupw2xuTj1R0Ffpto77qLteWEIqilNOLD0uaigZ1SQ
+         AGHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=PiAvGPBAd5r/3XyVj4aUHP7AUeXoHl9s9vGj/rL2vBE=;
-        b=XVu6bd+BzwYlzmnlYnYjptQlS+QLMFa5AgT93c/WFChkluGBlr4Gu8q/FyTGUdjUrR
-         PfRHEM5QMkqZIdwgprQXZm2WG1hlZuM7u9uBA78Kjszunxd3ECZIpG/twElwuQKkZmmT
-         FAj3mn3bjL1Wl8oQxie7W5RrnTxvtmLoCzlnEtnfHzT4OfEgtmqAFo3TcPV6rn0Cvphw
-         2OPLeHdseEmChSNsuv+jvCSx+vJWGIzbal+qjOSXKW8Yyh74W2pISNN714nTU52Rw9MF
-         4l6aA1Eselz6yBVCR3fWC5VZfqWsmdkgSVwfHk5RZuKh91l3/1bOyeNDMtREUvRU/uJ7
-         9vYA==
-X-Gm-Message-State: APjAAAVKgwqC2KBT0Qqg0KdXdpWiyNT0UTPKq6fh2qXLnbOc/Qv4snRl
-        R0fx2GFgWHOCiHO1FzU+l0IrlRekpyGadFO18U73Le7/RnrSbAXI/A/jYUdF3xx2T+9g3Dal7uq
-        46dogT/TKb/0LNkZv2bKoq1kq0TaJ
-X-Received: by 2002:a92:48cf:: with SMTP id j76mr7837586ilg.246.1571374391564;
-        Thu, 17 Oct 2019 21:53:11 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyC/JNn6/bb1kk/U+cLwblGbXmpbY/tAAsujMTaZdpNNs4/lNdEfWgzh72OP1sSvTEK7SUrdw==
-X-Received: by 2002:a92:48cf:: with SMTP id j76mr7837569ilg.246.1571374391314;
-        Thu, 17 Oct 2019 21:53:11 -0700 (PDT)
+        bh=DvCdMzTpfcgTdM5FNIL3SmoCatqgS5bfknocDxp/cjQ=;
+        b=baa80CCDdJJVFwPNPYYkxEMyiFqtplLXk8USss1J94usonkMUYZi/TX1U8rc448RAh
+         z9pAqY+FM1eyEuwSmRy4aE1ovCk+Ru/wDe8YSzW9miLX7oCTcAkTkLkIuTk2PVTDddgH
+         kDBmlCBFlP267a2peovm5f1xaODZs5iyWWiMFTPlcMhpHSaYLnqYUoIydcsn2ImuAAWU
+         yv7Hgv3hCcZ8GAqmyYybEGf6HnwBEDMMx6jyuGrb0Tmp5swyDAc531b4dOFYoaGGOvGo
+         iGpZDX7SLIfIPMbwZAaKWQYZpYvZw32ZSkLQO9I8QRYxTcsk42Z+AY16w4rkfk441ut4
+         QAWA==
+X-Gm-Message-State: APjAAAXrDbFQehu0+dY/WGCzP64S8xnvRXAsXOu/i/+ACyqramS5uwZU
+        Ti6jGPGGZI8+1dl+DJBzbA9c38K5Cso4jogXdvPbQy0z9HQ6jB06dN29ZDDXkBfwaegBxikpV7j
+        NDJ7ThbLY3mRS31geca3NAuzi/V9T
+X-Received: by 2002:a6b:e401:: with SMTP id u1mr6900815iog.1.1571374686575;
+        Thu, 17 Oct 2019 21:58:06 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwK5CXIQFUEytsTQuW9pdgHMGv2efU6PTSg8JPovkgAAk1DVOm6KhHkLb7Z8PtjN5RTRM3UfQ==
+X-Received: by 2002:a6b:e401:: with SMTP id u1mr6900805iog.1.1571374686323;
+        Thu, 17 Oct 2019 21:58:06 -0700 (PDT)
 Received: from bee.dtc.umn.edu (cs-bee-u.cs.umn.edu. [128.101.106.63])
-        by smtp.gmail.com with ESMTPSA id 197sm1639719ioc.78.2019.10.17.21.53.09
+        by smtp.gmail.com with ESMTPSA id v17sm1688965ilg.1.2019.10.17.21.58.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 21:53:10 -0700 (PDT)
+        Thu, 17 Oct 2019 21:58:05 -0700 (PDT)
 From:   Kangjie Lu <kjlu@umn.edu>
 To:     kjlu@umn.edu
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] net/lib80211: scrubbing the buffer for key
-Date:   Thu, 17 Oct 2019 23:53:05 -0500
-Message-Id: <20191018045305.8108-1-kjlu@umn.edu>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8192e: initializing the wep buffer
+Date:   Thu, 17 Oct 2019 23:57:58 -0500
+Message-Id: <20191018045800.10909-1-kjlu@umn.edu>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "key" is not scrubbed. As what peer modules do, the fixes zeros
-out the key buffer.
+The "wep" buffer is not initialized. To avoid memory disclosures,
+the fix initializes it, as peer functions like rtllib_ccmp_set_key
+do.
 
 Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 ---
- net/wireless/lib80211_crypt_wep.c | 1 +
+ drivers/staging/rtl8192e/rtllib_crypt_wep.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/net/wireless/lib80211_crypt_wep.c b/net/wireless/lib80211_crypt_wep.c
-index dafc6f3571db..08e511aaa1ff 100644
---- a/net/wireless/lib80211_crypt_wep.c
-+++ b/net/wireless/lib80211_crypt_wep.c
-@@ -202,6 +202,7 @@ static int lib80211_wep_set_key(void *key, int len, u8 * seq, void *priv)
+diff --git a/drivers/staging/rtl8192e/rtllib_crypt_wep.c b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
+index b1ea650036d2..0931777ed157 100644
+--- a/drivers/staging/rtl8192e/rtllib_crypt_wep.c
++++ b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
+@@ -232,6 +232,7 @@ static int prism2_wep_set_key(void *key, int len, u8 *seq, void *priv)
  	if (len < 0 || len > WEP_KEY_LEN)
  		return -1;
  
