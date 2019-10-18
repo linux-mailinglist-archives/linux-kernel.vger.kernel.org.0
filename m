@@ -2,63 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE40DBF3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76088DBF43
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:02:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437610AbfJRICb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 04:02:31 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:37276 "EHLO fornost.hmeau.com"
+        id S2442129AbfJRICq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 04:02:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729376AbfJRICb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 04:02:31 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1iLNDN-0001qE-70; Fri, 18 Oct 2019 19:02:26 +1100
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 18 Oct 2019 19:02:25 +1100
-Date:   Fri, 18 Oct 2019 19:02:25 +1100
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Ben Dooks <ben.dooks@codethink.co.uk>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        davem@davemloft.net, linux-kernel@lists.codethink.co.uk
-Subject: Re: [PATCH] crypto: jitter - add header to fix buildwarnings
-Message-ID: <20191018080225.GB25128@gondor.apana.org.au>
-References: <20191009091256.12896-1-ben.dooks@codethink.co.uk>
+        id S1729376AbfJRICq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 04:02:46 -0400
+Received: from localhost (unknown [106.200.243.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B98542089C;
+        Fri, 18 Oct 2019 08:02:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571385765;
+        bh=Ntm+G7UaaAAt6/MZrn+mvHAfZaYTK61Q3hCldEAMCXE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HYDITSsAr18ZLEicyiGmnMITuZH5dimDuhrDrGRJnQmx5Jv6clGFtsQhOoI1zbNyX
+         kSuaR1+xdgzJ1edTxqgrCvY1Iq1Uc/7mpsW73fxzWz2Q+k7KI//k9MvcjDKrgIVeMy
+         DehetQMb+tjGg4ayL4sArL33nJXRrJ8QcudHohec=
+Date:   Fri, 18 Oct 2019 13:32:41 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     jassisinghbrar@gmail.com
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, masami.hiramatsu@linaro.org,
+        orito.takao@socionext.com, Jassi Brar <jaswinder.singh@linaro.org>
+Subject: Re: [PATCH v3 0/2] Add support for AXI DMA controller on Milbeaut
+ series
+Message-ID: <20191018080241.GQ2654@vkoul-mobl>
+References: <20191015033116.14580-1-jassisinghbrar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191009091256.12896-1-ben.dooks@codethink.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191015033116.14580-1-jassisinghbrar@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 10:12:56AM +0100, Ben Dooks wrote:
-> Fix the following build warnings by adding a header for
-> the definitions shared between jitterentropy.c and
-> jitterentropy-kcapi.c. Fixes the following:
+On 14-10-19, 22:31, jassisinghbrar@gmail.com wrote:
+> From: Jassi Brar <jaswinder.singh@linaro.org>
 > 
-> crypto/jitterentropy.c:445:5: warning: symbol 'jent_read_entropy' was not declared. Should it be static?
-> crypto/jitterentropy.c:475:18: warning: symbol 'jent_entropy_collector_alloc' was not declared. Should it be static?
-> crypto/jitterentropy.c:509:6: warning: symbol 'jent_entropy_collector_free' was not declared. Should it be static?
-> crypto/jitterentropy.c:516:5: warning: symbol 'jent_entropy_init' was not declared. Should it be static?
-> crypto/jitterentropy-kcapi.c:59:6: warning: symbol 'jent_zalloc' was not declared. Should it be static?
-> crypto/jitterentropy-kcapi.c:64:6: warning: symbol 'jent_zfree' was not declared. Should it be static?
-> crypto/jitterentropy-kcapi.c:69:5: warning: symbol 'jent_fips_enabled' was not declared. Should it be static?
-> crypto/jitterentropy-kcapi.c:74:6: warning: symbol 'jent_panic' was not declared. Should it be static?
-> crypto/jitterentropy-kcapi.c:79:6: warning: symbol 'jent_memcpy' was not declared. Should it be static?
-> crypto/jitterentropy-kcapi.c:93:6: warning: symbol 'jent_get_nstime' was not declared. Should it be static?
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
->  crypto/jitterentropy-kcapi.c |  8 +-------
->  crypto/jitterentropy.c       |  7 +------
->  crypto/jitterentropy.h       | 17 +++++++++++++++++
->  3 files changed, 19 insertions(+), 13 deletions(-)
->  create mode 100644 crypto/jitterentropy.h
+> The following series adds AXI DMA (XDMAC) controller support on Milbeaut series.
+> This controller is capable of only Mem<->MEM transfers. Number of channels is
+> configurable {2,4,8}
 
-Patch applied.  Thanks.
+Applied, thanks
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+~Vinod
