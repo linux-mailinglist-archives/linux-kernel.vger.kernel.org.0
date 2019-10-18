@@ -2,98 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CA06DDFA2
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 19:00:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 914D4DDFAE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 19:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfJTRAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 13:00:53 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:45227 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726504AbfJTRAw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 13:00:52 -0400
-Received: by mail-vs1-f66.google.com with SMTP id e19so7309836vsb.12;
-        Sun, 20 Oct 2019 10:00:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=Z3rFbdU+SplPcjhPOqnh6Ex901p18xA+QjA1SeUaWkw=;
-        b=LqpjWLD8LLWxBJgS4hvN2oCSEiU5rjiaPgS+Dzz8QcV2skMzKalLhWugfPSCZYlugw
-         9B4RIMV3npSVJ7O/DXNuErQT2KlGOcBxmnDfX/Fsi/3r2J/jkekCmsdFMB1GhAwl69xa
-         bVvr3nobbXQ5A2f49tCEO9Eiqbu8XIKbBfHgIR/TZ/3A/vZheBpk3eObUrgSOOkN/Gaj
-         jNJ6I31J8AzzayGDeOaRYg7jpEhJlVKer1Actg1Q9aZW7BDspap01pZcqklx5OePC8RY
-         tRF2v62tLIdfZey4bg7eAVw6xcv+VHfwoQy8SrruzC5UK3s7yNB2bAo1ZB0eAbTnq0cn
-         krdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Z3rFbdU+SplPcjhPOqnh6Ex901p18xA+QjA1SeUaWkw=;
-        b=Ir4r3DXwCbQa+q22D17GiAz8qttr+1gBhN7lbs9aqVjmWCzYLo1JoGXN77KKjZJ+HT
-         5IkY0gAPlP3dXtMTI4N2ve4Ug8fJqR0uQKnl5Rx7dcxpdJ4nvoj+B8A+NZ72h07k3eLl
-         nB+NebHikt9Irf4QAuStt++VWCnuIxVWLnhyQgktYrvygKc3EpGAjK7yXxD2ih704mzB
-         0M8zQvcku540I79QxP7xU2Gax2VIKN1xrsFqUyTAzTW9Et96C7EExP4mE+ec9u1/Z064
-         TKt2FImLjy14HBIOKpu04IHzh4wlnIgUjt3bIUa6VJjmcq3H93+3sM5GVAlTLMSdKDZr
-         ovsg==
-X-Gm-Message-State: APjAAAWpYJWNy2h1ES3hsoY/ZxicYrXB6WisOx7qhfl/60wPBD/ElyQE
-        KtSqCf24ZEw+rzb2+yrSQw==
-X-Google-Smtp-Source: APXvYqyrs6R30s8uibpzuM+64Scem0970K4MY9fjtJ05Zk0lFUy1F+qOyu6EY9rlWKrHNWV80Hct2w==
-X-Received: by 2002:a67:e3da:: with SMTP id k26mr10838781vsm.81.1571590850153;
-        Sun, 20 Oct 2019 10:00:50 -0700 (PDT)
-Received: from localhost.localdomain ([2601:901:202:18cc:820:670:dd1:f572])
-        by smtp.gmail.com with ESMTPSA id n126sm612962vke.51.2019.10.20.10.00.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2019 10:00:49 -0700 (PDT)
-From:   Ayman Bagabas <ayman.bagabas@gmail.com>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ayman Bagabas <ayman.bagabas@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>, Mattias Jacobsson <2pi@mok.nu>,
-        kbuild test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] platform/x86: huawei-wmi: Remove unnecessary battery mutex
-Date:   Sun, 20 Oct 2019 13:00:09 -0400
-Message-Id: <20191020170020.26251-3-ayman.bagabas@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191020170020.26251-1-ayman.bagabas@gmail.com>
-References: <20191020170020.26251-1-ayman.bagabas@gmail.com>
+        id S1726664AbfJTRRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 13:17:17 -0400
+Received: from [185.116.42.18] ([185.116.42.18]:50424 "EHLO swnlsrv_1"
+        rhost-flags-FAIL-FAIL-FAIL-FAIL) by vger.kernel.org with ESMTP
+        id S1726556AbfJTRRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 13:17:17 -0400
+Received: from Shop01 (localhost [127.0.0.1])
+        by swnlsrv_1 (Postfix) with SMTP id B566DCA6C37;
+        Sat, 19 Oct 2019 01:06:23 +0200 (CEST)
+Received: from (HELO t3op1b9) [84.210.123.63] by Shop01 with ESMTP id 97970314; Fri, 18 Oct 2019 22:59:40 +0000
+Message-ID: <a51a1gsrb$by--z7c0m5-qg@cf7z982.9t6>
+From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+To:     abuse@net.edu.cn
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Date:   Fri, 18 Oct 19 22:59:40 GMT
+X-Mailer: Microsoft Outlook Express 5.50.4522.1200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/alternative;
+        boundary="_E8EECE_.7__B4FE203A"
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-battery_lock mutex is never used and not needed.
 
-Fixes: 355a070b09ab ("platform/x86: huawei-wmi: Add battery charging thresholds")
-Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
----
- drivers/platform/x86/huawei-wmi.c | 2 --
- 1 file changed, 2 deletions(-)
+--_E8EECE_.7__B4FE203A
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
-index 7373a65a61d3..a2d846c4a7ee 100644
---- a/drivers/platform/x86/huawei-wmi.c
-+++ b/drivers/platform/x86/huawei-wmi.c
-@@ -67,7 +67,6 @@ struct huawei_wmi {
- 	struct led_classdev cdev;
- 	struct device *dev;
- 
--	struct mutex battery_lock;
- 	struct mutex wmi_lock;
- };
- 
-@@ -807,7 +806,6 @@ static int huawei_wmi_probe(struct platform_device *pdev)
- 
- 	if (wmi_has_guid(HWMI_METHOD_GUID)) {
- 		mutex_init(&huawei_wmi->wmi_lock);
--		mutex_init(&huawei_wmi->battery_lock);
- 
- 		huawei_wmi_leds_setup(&pdev->dev);
- 		huawei_wmi_fn_lock_setup(&pdev->dev);
--- 
-2.21.0
+Greetings
+
+My name is Barrister Hans Erich.
+
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
+
+Your full names ---------
+
+
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+
+--_E8EECE_.7__B4FE203A--
 
