@@ -2,86 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23DB8DC577
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1D18DC581
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:54:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410114AbfJRMxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:53:04 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40562 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2410083AbfJRMwz (ORCPT
+        id S2410128AbfJRMyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:54:54 -0400
+Received: from outbound-smtp02.blacknight.com ([81.17.249.8]:49182 "EHLO
+        outbound-smtp02.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727993AbfJRMyy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 08:52:55 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 7so6107221ljw.7
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 05:52:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lfRyiPOJ+tpAygOEKq/virXF46WU8l1j3zrd6+53ses=;
-        b=O+2twWxd5ixrCSJsM3mqFuz2a0vonUX7o4geTRlccuwfBNBIkK0S/WNPoTXAT/ExaF
-         dkMsazXfL3MDmLS9//NfORvVoX4k5KWgn3R2GUa5kvsosQWeE4yx/GCfDaOYnuEKShPx
-         NZ8VzHB+aadfG9OCrBQ/8mnicW9eKOfG/sQjI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lfRyiPOJ+tpAygOEKq/virXF46WU8l1j3zrd6+53ses=;
-        b=CM7E/Nxagm4qr1tej1xqAr8F6XX9t67pUkNrtH+XsDOV0l3+TtAtA81jFQIHUOqmhF
-         nV0PWd/+A9fXqDhJ5dsG897INInZRYmqaMwpC8FsSBcf6e4xHZsS8bC8oXAJfJdgen3m
-         Af2fM/M7i8EHsTy6ENGJSrU/dOx+rA+Q5N1fVZZdx1edxxRAqC70oQhmh20Ig+oBWWVe
-         llcl6G+zSCK9po9kt9CWIpk0WLfsqx6ufpzcpZS4KgEN2Q7PFNHfu4TWLYIdGx8b14O/
-         EoRLa6YYvouIPvzVqodKyLTpcxMoM0mGgB+q3jKztn+xsFORD9F/ojqAVYA04fXYsrHL
-         +kNw==
-X-Gm-Message-State: APjAAAXGBeKgVh/+XFKOW0Sv3MnROpj67NNHNI88fI7KUvCrsEZA9AcW
-        1ZC2N9Ytr8gGxZdbhRw16Q/zMA==
-X-Google-Smtp-Source: APXvYqxgLZsNIbhizhuYW69HOITY4WDfzxrxJeyVBTBM/JEr7MEt70x5TT22MnwDFNbFNwCyBKK2cw==
-X-Received: by 2002:a2e:b00c:: with SMTP id y12mr6149308ljk.113.1571403173688;
-        Fri, 18 Oct 2019 05:52:53 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id m17sm7454792lje.0.2019.10.18.05.52.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2019 05:52:53 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] soc/fsl/qe/qe.h: remove include of asm/cpm.h
-Date:   Fri, 18 Oct 2019 14:52:34 +0200
-Message-Id: <20191018125234.21825-8-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
-References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
+        Fri, 18 Oct 2019 08:54:54 -0400
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp02.blacknight.com (Postfix) with ESMTPS id DE62698C34
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 13:54:51 +0100 (IST)
+Received: (qmail 7074 invoked from network); 18 Oct 2019 12:54:51 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.19.210])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 18 Oct 2019 12:54:51 -0000
+Date:   Fri, 18 Oct 2019 13:54:49 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Matt Fleming <matt@codeblueprint.co.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] Recalculate per-cpu page allocator batch and high
+ limits after deferred meminit
+Message-ID: <20191018125449.GJ3321@techsingularity.net>
+References: <20191018105606.3249-1-mgorman@techsingularity.net>
+ <20191018115849.GH4065@codeblueprint.co.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20191018115849.GH4065@codeblueprint.co.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-asm/cpm.h only exists on PPC, so this prevents use of this header on
-other platforms. Drivers that need asm/cpm.h (and are thus inherently
-PPC-specific) must include that explicitly.
+On Fri, Oct 18, 2019 at 12:58:49PM +0100, Matt Fleming wrote:
+> On Fri, 18 Oct, at 11:56:03AM, Mel Gorman wrote:
+> > A private report stated that system CPU usage was excessive on an AMD
+> > EPYC 2 machine while building kernels with much longer build times than
+> > expected. The issue is partially explained by high zone lock contention
+> > due to the per-cpu page allocator batch and high limits being calculated
+> > incorrectly. This series addresses a large chunk of the problem. Patch 1
+> > is mostly cosmetic but prepares for patch 2 which is the real fix. Patch
+> > 3 is definiely cosmetic but was noticed while implementing the fix. Proper
+> > details are in the changelog for patch 2.
+> > 
+> >  include/linux/mm.h |  3 ---
+> >  mm/internal.h      |  3 +++
+> >  mm/page_alloc.c    | 33 ++++++++++++++++++++-------------
+> >  3 files changed, 23 insertions(+), 16 deletions(-)
+> 
+> Just to confirm, these patches don't fix the issue we're seeing on the
+> EPYC 2 machines, but they do return the batch sizes to sensible values.
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- include/soc/fsl/qe/qe.h | 1 -
- 1 file changed, 1 deletion(-)
+To be clear, does the patch a) fix *some* of the issue and there is
+something else also going on that needs to be chased down or b) has no
+impact on build time or system CPU usage on your machine?
 
-diff --git a/include/soc/fsl/qe/qe.h b/include/soc/fsl/qe/qe.h
-index c1036d16ed03..3768c226490e 100644
---- a/include/soc/fsl/qe/qe.h
-+++ b/include/soc/fsl/qe/qe.h
-@@ -17,7 +17,6 @@
- #include <linux/spinlock.h>
- #include <linux/errno.h>
- #include <linux/err.h>
--#include <asm/cpm.h>
- #include <soc/fsl/qe/immap_qe.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
 -- 
-2.20.1
-
+Mel Gorman
+SUSE Labs
