@@ -2,55 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10CC9DC9B6
+	by mail.lfdr.de (Postfix) with ESMTP id 7EEBADC9B7
 	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:50:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409255AbfJRPuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2439672AbfJRPuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 11:50:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45736 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2409246AbfJRPuM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Oct 2019 11:50:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42212 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391515AbfJRPuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 11:50:06 -0400
-Subject: Re: [GIT PULL] ACPI fixes for v5.4-rc4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571413805;
-        bh=2a/Xg4OpHPTqx8cCt3EyKzP3kIwmvW4xg9TiZyeYqoY=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=SGUzLSHhn0zKImi2WN7oXgV7RSUW8/VyzzwqgOWnXcpNojsxGJAWKFcQSbHmlFEEA
-         tpOQMFb04nwchkQGxUJQxppIUQo3grYZhiC6tr3J6mVtBrZSgoWR5XFr3CdgxWDYwI
-         bGHCpkn41M9bcWHFgFStLqoZDVnNfYDMyMCmTQmU=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0gG82GLvm45hvwuZGVVhD4cSLpOREaK6Y-QwYs-ymstqA@mail.gmail.com>
-References: <CAJZ5v0gG82GLvm45hvwuZGVVhD4cSLpOREaK6Y-QwYs-ymstqA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0gG82GLvm45hvwuZGVVhD4cSLpOREaK6Y-QwYs-ymstqA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
- acpi-5.4-rc4
-X-PR-Tracked-Commit-Id: ffba17bb335d6598de613791f8997a5774455068
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: adca4ce32f4aebe65d817901cf27ede58fa2d143
-Message-Id: <157141380578.28894.12338281025124214125.pr-tracker-bot@kernel.org>
-Date:   Fri, 18 Oct 2019 15:50:05 +0000
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=DXFYvi/mRPvmE4yI6kFdB8och
+        h8hVdKyXImuxjWbGQL41J/TV6xcOTCCRuKvs8qetlarRH/VRd3WibFFWcwrjdNo+qd3CB6FTtfdyF
+        SZ08ED5Dhw1QfO+ueOHRZy8nZ9W9LfAR5iB4d4N4XhmFhuAl1JpAxc85oI7731WXd83L/b/USBKp8
+        AL49bqb9HQszgwONGH4zaKSheT4txWZ9UjJ0HrGy3nS8BI1h36GJa+8nexDSK5iPpa2HPE35bVhUv
+        s/XCRmLllWGrw2RvqdcZ3TucbnkudoCND7Qn+y0FD92T+dY5G/k52pxMRsgHmTd3NoqakYJrFoXmq
+        pdg18Qv8w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iLUW3-0007N7-Hc; Fri, 18 Oct 2019 15:50:11 +0000
+Date:   Fri, 18 Oct 2019 08:50:11 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: Re: [PATCH v3 3/8] riscv: init: merge split string literals in
+ preprocessor directive
+Message-ID: <20191018155011.GA25386@infradead.org>
+References: <20191018080841.26712-1-paul.walmsley@sifive.com>
+ <20191018080841.26712-4-paul.walmsley@sifive.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018080841.26712-4-paul.walmsley@sifive.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 18 Oct 2019 11:18:44 +0200:
+Looks good,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-5.4-rc4
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/adca4ce32f4aebe65d817901cf27ede58fa2d143
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Reviewed-by: Christoph Hellwig <hch@lst.de>
