@@ -2,92 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D67DDC1AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77878DC1B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:49:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406497AbfJRJs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 05:48:57 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:60118 "EHLO foss.arm.com"
+        id S2407747AbfJRJtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 05:49:33 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:60164 "EHLO foss.arm.com"
         rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S2404264AbfJRJs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 05:48:57 -0400
+        id S2391488AbfJRJtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 05:49:33 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93D4A3E8;
-        Fri, 18 Oct 2019 02:48:30 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD0C23F6C4;
-        Fri, 18 Oct 2019 02:48:27 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 10:48:25 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-        will@kernel.org, mark.rutland@arm.com, david@redhat.com,
-        cai@lca.pw, logang@deltatee.com, cpandya@codeaurora.org,
-        arunks@codeaurora.org, dan.j.williams@intel.com,
-        mgorman@techsingularity.net, osalvador@suse.de,
-        ard.biesheuvel@arm.com, steve.capper@arm.com, broonie@kernel.org,
-        valentin.schneider@arm.com, Robin.Murphy@arm.com,
-        steven.price@arm.com, suzuki.poulose@arm.com, ira.weiny@intel.com,
-        James Morse <james.morse@arm.com>
-Subject: Re: [PATCH V9 2/2] arm64/mm: Enable memory hot remove
-Message-ID: <20191018094825.GD19734@arrakis.emea.arm.com>
-References: <1570609308-15697-1-git-send-email-anshuman.khandual@arm.com>
- <1570609308-15697-3-git-send-email-anshuman.khandual@arm.com>
- <20191010113433.GI28269@mbp>
- <f51cdb20-ddc4-4fb7-6c45-791d2e1e690c@arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1790492;
+        Fri, 18 Oct 2019 02:49:08 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C26FD3F6C4;
+        Fri, 18 Oct 2019 02:49:08 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 81002682189; Fri, 18 Oct 2019 10:49:07 +0100 (BST)
+Date:   Fri, 18 Oct 2019 10:49:07 +0100
+From:   Liviu Dudau <liviu.dudau@arm.com>
+To:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+Cc:     linux-kernel@lists.codethink.co.uk,
+        Brian Starkey <brian.starkey@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, malidp@foss.arm.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/arm: make undeclared items static
+Message-ID: <20191018094907.66ghzs3qiyelibzh@e110455-lin.cambridge.arm.com>
+References: <20191017111756.12861-1-ben.dooks@codethink.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f51cdb20-ddc4-4fb7-6c45-791d2e1e690c@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191017111756.12861-1-ben.dooks@codethink.co.uk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 08:26:32AM +0530, Anshuman Khandual wrote:
-> On 10/10/2019 05:04 PM, Catalin Marinas wrote:
-> > Mark Rutland mentioned at some point that, as a preparatory patch to
-> > this series, we'd need to make sure we don't hot-remove memory already
-> > given to the kernel at boot. Any plans here?
+On Thu, Oct 17, 2019 at 12:17:55PM +0100, Ben Dooks (Codethink) wrote:
+> Make the following items static to avoid clashes with
+> other parts of the kernel (dev_attr_core_id) or just
+> silence the following sparse warning:
 > 
-> Hmm, this series just enables platform memory hot remove as required from
-> generic memory hotplug framework. The path here is triggered either from
-> remove_memory() or __remove_memory() which takes physical memory range
-> arguments like (nid, start, size) and do the needful. arch_remove_memory()
-> should never be required to test given memory range for anything including
-> being part of the boot memory.
-
-Assuming arch_remove_memory() doesn't (cannot) check, is there a risk on
-arm64 that, for example, one removes memory available at boot and then
-kexecs a new kernel? Does the kexec tool present the new kernel with the
-original memory map?
-
-I can see x86 has CONFIG_FIRMWARE_MEMMAP suggesting that it is used by
-kexec. try_remove_memory() calls firmware_map_remove() so maybe they
-solve this problem differently.
-
-Correspondingly, after an arch_add_memory(), do we want a kexec kernel
-to access it? x86 seems to use the firmware_map_add_hotplug() mechanism.
-
-Adding James as well for additional comments on kexec scenarios.
-
-> IIUC boot memory added to system with memblock_add() lose all it's identity
-> after the system is up and running. In order to reject any attempt to hot
-> remove boot memory, platform needs to remember all those memory that came
-> early in the boot and then scan through it during arch_remove_memory().
+> drivers/gpu/drm/arm/malidp_drv.c:371:24: warning: symbol 'malidp_fb_create' was not declared. Should it be static?
+> drivers/gpu/drm/arm/malidp_drv.c:494:6: warning: symbol 'malidp_error_stats_dump' was not declared. Should it be static?
+> drivers/gpu/drm/arm/malidp_drv.c:668:1: warning: symbol 'dev_attr_core_id' was not declared. Should it be static?
 > 
-> Ideally, it is the responsibility of [_]remove_memory() callers like ACPI
-> driver, DAX etc to make sure they never attempt to hot remove a memory
-> range, which never got hot added by them in the first place. Also, unlike
-> /sys/devices/system/memory/probe there is no 'unprobe' interface where the
-> user can just trigger boot memory removal. Hence, unless there is a bug in
-> ACPI, DAX or other callers, there should never be any attempt to hot remove
-> boot memory in the first place.
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-That's fine if these callers give such guarantees. I just want to make
-sure someone checked all the possible scenarios for memory hot-remove.
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+
+Thanks for the patch! As a side note: the dim tool that we use in the DRM subsystem
+flags your S-o-b as being different from author, due to "(Codethink)" addition in the
+email name.
+
+Best regards,
+Liviu
+
+> ---
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Brian Starkey <brian.starkey@arm.com>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: malidp@foss.arm.com
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> .. (open list)
+> ---
+>  drivers/gpu/drm/arm/malidp_drv.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+> index 333b88a5efb0..18ca43c9cef4 100644
+> --- a/drivers/gpu/drm/arm/malidp_drv.c
+> +++ b/drivers/gpu/drm/arm/malidp_drv.c
+> @@ -368,7 +368,7 @@ malidp_verify_afbc_framebuffer(struct drm_device *dev, struct drm_file *file,
+>  	return false;
+>  }
+>  
+> -struct drm_framebuffer *
+> +static struct drm_framebuffer *
+>  malidp_fb_create(struct drm_device *dev, struct drm_file *file,
+>  		 const struct drm_mode_fb_cmd2 *mode_cmd)
+>  {
+> @@ -491,9 +491,9 @@ void malidp_error(struct malidp_drm *malidp,
+>  	spin_unlock_irqrestore(&malidp->errors_lock, irqflags);
+>  }
+>  
+> -void malidp_error_stats_dump(const char *prefix,
+> -			     struct malidp_error_stats error_stats,
+> -			     struct seq_file *m)
+> +static void malidp_error_stats_dump(const char *prefix,
+> +				    struct malidp_error_stats error_stats,
+> +				    struct seq_file *m)
+>  {
+>  	seq_printf(m, "[%s] num_errors : %d\n", prefix,
+>  		   error_stats.num_errors);
+> @@ -665,7 +665,7 @@ static ssize_t core_id_show(struct device *dev, struct device_attribute *attr,
+>  	return snprintf(buf, PAGE_SIZE, "%08x\n", malidp->core_id);
+>  }
+>  
+> -DEVICE_ATTR_RO(core_id);
+> +static DEVICE_ATTR_RO(core_id);
+>  
+>  static int malidp_init_sysfs(struct device *dev)
+>  {
+> -- 
+> 2.23.0
+> 
 
 -- 
-Catalin
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
