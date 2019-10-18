@@ -2,121 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E2D2DC4C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:26:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EAF2DC4DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633820AbfJRM0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:26:39 -0400
-Received: from mga06.intel.com ([134.134.136.31]:61121 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2633694AbfJRM0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 08:26:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2019 05:26:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,311,1566889200"; 
-   d="scan'208";a="186812318"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by orsmga007.jf.intel.com with ESMTP; 18 Oct 2019 05:26:36 -0700
-Message-ID: <c2ce4ef128aad84616b2dc21f6230ad4db12194b.camel@linux.intel.com>
-Subject: Re: [PATCH 1/2] x86, mce, therm_throt: Optimize logging of thermal
- throttle messages
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "bberg@redhat.com" <bberg@redhat.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "ckellner@redhat.com" <ckellner@redhat.com>
-Date:   Fri, 18 Oct 2019 05:26:36 -0700
-In-Reply-To: <20191017214445.GG14441@zn.tnic>
-References: <2c2b65c23be3064504566c5f621c1f37bf7e7326.camel@redhat.com>
-         <20191014212101.25719-1-srinivas.pandruvada@linux.intel.com>
-         <20191015084833.GD2311@hirez.programming.kicks-ass.net>
-         <f481b4ab6dfebbc0637c843e5f1cd4ddfd4bd60b.camel@linux.intel.com>
-         <20191016081405.GO2328@hirez.programming.kicks-ass.net>
-         <20191016140001.GF1138@zn.tnic>
-         <3908561D78D1C84285E8C5FCA982C28F7F4A57D0@ORSMSX115.amr.corp.intel.com>
-         <20191017214445.GG14441@zn.tnic>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S2407905AbfJRM3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:29:00 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40239 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389585AbfJRM3A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 08:29:00 -0400
+Received: by mail-wr1-f67.google.com with SMTP id o28so6064538wro.7
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 05:28:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=yVZsL1k6xiwxuV3Dn1WgaEOAdbpoPkfatJaTm2/Mp3w=;
+        b=nJzaiiNURnwmCDzi+HEDjAoCrZm2BiaHVd4DbjtibweAWdBba7y8Cm5Cul1GhvS884
+         b9Z3DWTZI36Wslys6q1QlPw4r9V+tUfrUVdoszjEWrajnwwOWFegyFTKWXDROe7lRL2l
+         zUMF+Dv6XlZvr1G6c8vnGIgtSQ8QSXY94A6vAdt5kBNKUlAq+PFSWVrzeMQFazNuw4V+
+         mAob2CIzkAm8Orq/2RYhFQ8y0hMXHRHrWS1q24L5UpsH+Uwvx5FjchpwkYNt1AdffcRU
+         QH2/nuCdP5UU8SxmV2LtpfD2NJSpo22IPRoMKpoywjR3Iw9mOlE8wmeh/rzvokYeRvpK
+         Mwcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yVZsL1k6xiwxuV3Dn1WgaEOAdbpoPkfatJaTm2/Mp3w=;
+        b=XbUeNoMzz1hT0vo0RVp5AydjiHOf1TMlVmEwxSP6zmgoKoqopmHBfwe8Vn6RlQoKTz
+         a7HWGxoX2bIofLUbX9myV009s1FrUw6b2haAr7bbwlYR/Re7E4oKvEnwuV9oLKBIgWTQ
+         FuburokgVHOLAjrDVO7tnjl9W/WscF70Om1vRN9W9LFFZPzJf14pLTiHgAddOeyZQ88A
+         TKiAHDYOJd0RwPuwmPGgGecNmLOgZ/ciKodH3MhViSCMGvXruf3YxCNExOkU33292UMi
+         y9I6hiHqVXuCRL/gLvsovneTYYaZfVwURcKcaqdW+sUVV78ZvIjslxUfDhXdB04BvROK
+         BWlQ==
+X-Gm-Message-State: APjAAAWfBa3wl2H2m4kKaQ3i/Ax2I8FtQRiGOUEYgu3lCCUTwPedH8I7
+        nUprBKFsEPd17U5nCnslHmaHZA==
+X-Google-Smtp-Source: APXvYqyGTv4W7YZ+dBPzILPhJC0MpqlESvgAkV0FwdTo8BGAUnbZ+ATDcZpR+y3qVcTvWL0yH7hg9A==
+X-Received: by 2002:a5d:6992:: with SMTP id g18mr8044446wru.237.1571401737135;
+        Fri, 18 Oct 2019 05:28:57 -0700 (PDT)
+Received: from localhost.localdomain ([95.149.164.47])
+        by smtp.gmail.com with ESMTPSA id e3sm5033820wme.39.2019.10.18.05.28.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2019 05:28:56 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     broonie@kernel.org, linus.walleij@linaro.org,
+        daniel.thompson@linaro.org, arnd@arndb.de
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        baohua@kernel.org, stephan@gerhold.net,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 0/2] mfd: mfd-core: Honour disabled devices 
+Date:   Fri, 18 Oct 2019 13:26:45 +0100
+Message-Id: <20191018122647.3849-1-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-10-17 at 23:44 +0200, Borislav Petkov wrote:
-> On Thu, Oct 17, 2019 at 09:31:30PM +0000, Luck, Tony wrote:
-> > That sounds like the right short term action.
-> > 
-> > Depending on what we end up with from Srinivas ... we may want
-> > to reconsider the severity.  The basic premise of Srinivas' patch
-> > is to avoid printing anything for short excursions above
-> > temperature
-> > threshold. But the effect of that is that when we find the
-> > core/package
-> > staying above temperature for an extended period of time, we are
-> > in a serious situation where some action may be needed. E.g.
-> > move the laptop off the soft surface that is blocking the air
-> > vents.
-> 
-> I don't think having a critical severity message is nearly enough.
-> There are cases where the users simply won't see that message, no
-> shell
-> opened, nothing scanning dmesg, nothing pops up on the desktop to
-> show
-> KERN_CRIT messages, etc.
-> 
-> If we really wanna handle this case then we must be much more
-> reliable:
-> 
-> * we throttle the machine from within the kernel - whatever that may
-> mean
-There are actions associated with the high temperature using acpi
-thermal subsystems. The problem with associating with this warning
-directly is that,  this threhold temperature is set to too low in some
-recent laptops at power up.
+This set ensures that devices set to 'disabled' in DT are not registered.
 
-Server/desktops generally rely on the embedded controller for FAN
-control, which  kernel have no control. For them this warning helps to
-either bring in additional cooling or fix existing cooling.
+It comes about after 2 seperate reports.
 
-If something needs to force throttle from kernel, then we should use
-some offset from the max temperature (aka TJMax), instead of this
-warning threshold. Then we can use idle injection or change duty cycle
-of CPU clocks.
+ https://www.spinics.net/lists/arm-kernel/msg366309.html
+ https://lkml.org/lkml/2019/8/22/1350
 
-Thanks,
-Srinivas
+Lee Jones (2):
+  mfd: mfd-core: Allocate reference counting memory directly to the
+    platform device
+  mfd: mfd-core: Honour Device Tree's request to disable a child-device
 
-> * if that doesn't help, we stop scheduling !root tasks
-> * if that doesn't help, we halt
-> * ...
-> 
-> These are purely hypothetical things to do but I'm pointing them out
-> as
-> an example that in a high temperature situation we should be actively
-> doing something and not wait for the user to do that.
-> 
-> Come to think of it, one can apply the same type of logic here and
-> split
-> the temp severity into action-required events and action-optional
-> events
-> and then depending on the type, we do things.
-> 
-> Now what those things are, should be determined by the severity of
-> the
-> events. Which would mean, we'd need to know how severe those events
-> are.
-> And since this is left in the hands of the OEMs, good luck to us. ;-\
-> 
+ drivers/mfd/mfd-core.c | 47 +++++++++++++++++++++---------------------
+ 1 file changed, 23 insertions(+), 24 deletions(-)
+
+-- 
+2.17.1
 
