@@ -2,139 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45305DBD5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:58:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06ACCDBD4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:55:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406931AbfJRF6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:58:03 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:45913 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392149AbfJRF6D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:58:03 -0400
-Received: by mail-qk1-f196.google.com with SMTP id z67so4234009qkb.12
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8aspMadhLtLdwap/HY8pYXIpI/022GVepCK2sUy5Jo4=;
-        b=Qz9YB1cp2Zg6eSsNCQvAw6Xl7TdE+kvgwqY9mVMHfLFdjXB02ass8EAgL5EVNdqguV
-         oidctHw4mrvIPU8WCuzS+lKh4XCCv8TRwm6eyjKrm8zPZEfkMLCUib6g57hPc6TISL0R
-         RYuybrnZ7s4TaWGAE/9ruSfal9/1BdXMvE0DM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8aspMadhLtLdwap/HY8pYXIpI/022GVepCK2sUy5Jo4=;
-        b=R/Oty0jT2ClvnlAJSq/+35JrPmzdo7PmXeLeCCFsiiwRb2rr0PiZduQ9tqcBVAe/MF
-         SyqoDO2kBZNHAn88BrcovlUUUhBNIUtPYRc02MoOv9Q0HpZgYEgDqh2aSyRP6iFKzWrT
-         TzPAZzH9VsEP0ESKGJ4V6mm0i/VOH7ZwswtDSwXCj1NnaYPSuKQUZnBSue7xEJsi8Lhl
-         sEyfqY53lGQsbuf4CVKgpPJYf+BNtj0COhBajBm8I65WF36N7YvFx+wQGIwrR8v0j7PR
-         OUGVV43s0bJAnUZsuHMUIrLu9ohIZltcR6LVUZCjEKjKmP5SipHIX4AN4dwpVpTzXCJu
-         T0aA==
-X-Gm-Message-State: APjAAAUWqUbL8GDzHsFSbyDQtfezocmNWdaHU+DJ8sgZunN2KWCNaeY/
-        XZQlJfYr0Qr+4NWFZ69opPnAx7PzrFg=
-X-Google-Smtp-Source: APXvYqyIjBpcpB6jq882+x2E0wMS8eqwRG+Ez9krlw9zYDkWZLZGBG5mbl4ueLkU6hZ81m8ARLBvLg==
-X-Received: by 2002:a37:6f06:: with SMTP id k6mr6673631qkc.143.1571367608944;
-        Thu, 17 Oct 2019 20:00:08 -0700 (PDT)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com. [209.85.222.174])
-        by smtp.gmail.com with ESMTPSA id n17sm2402624qke.103.2019.10.17.20.00.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2019 20:00:07 -0700 (PDT)
-Received: by mail-qk1-f174.google.com with SMTP id u22so3961864qkk.11
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 20:00:07 -0700 (PDT)
-X-Received: by 2002:ae9:f30c:: with SMTP id p12mr6409294qkg.159.1571367606688;
- Thu, 17 Oct 2019 20:00:06 -0700 (PDT)
+        id S2442114AbfJRFzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:55:45 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:33079 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727328AbfJRFzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 01:55:45 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46vWf14WFZz9sPT;
+        Fri, 18 Oct 2019 14:26:17 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1571369177;
+        bh=LSaUNMP7pnfYM7NL4rX9VS3spsS5UxsGD+1eIpJRbAU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Fiuq6pmJNDPw70DmQfmh2lS5IqNMTYsUJ7tiSNsomOhJ9EteaZB+05I0NCIw4kc4Q
+         A9eaT5Cd8JaGnkmZ7UnE1kwcx/fYnDKZUvntXq6/e3x9dU1GnBcxYbVt9vaG3k6B7B
+         /NQeBJogCcJ8vIvcDzazH2alliQmHqZsKw28tagAxb33q0/HEkJmY2rGRiHQhN8Cn7
+         uI+/q/u78q9lSVs4YDe7uS3WFXZxIwWD2ABGiJMsWRBrbS5oCF69EO+f157mResYbV
+         /bLwSq4IKnLfz2/vdtqnxbA27NRK5paoCJ4Zj4z0MV8DwsbGHyTAfRctsYYJKZloNI
+         aLFsoYTmi6v7A==
+Date:   Fri, 18 Oct 2019 14:26:16 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
+Subject: linux-next: manual merge of the char-misc tree with the
+ char-misc.current tree
+Message-ID: <20191018142616.7d6a7594@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20191009085116.199922-1-tientzu@chromium.org> <238f01ec4b49fee4c0d08a0b8da7e95f@codeaurora.org>
- <74740c0ff64a6a658da2a44a9f9b7ac5@codeaurora.org>
-In-Reply-To: <74740c0ff64a6a658da2a44a9f9b7ac5@codeaurora.org>
-From:   Claire Chang <tientzu@chromium.org>
-Date:   Fri, 18 Oct 2019 10:59:54 +0800
-X-Gmail-Original-Message-ID: <CALiNf2_EcJxxTYd52UVyaJ-Q82YPM5MKTPBmMNUrBZryEShwqw@mail.gmail.com>
-Message-ID: <CALiNf2_EcJxxTYd52UVyaJ-Q82YPM5MKTPBmMNUrBZryEShwqw@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_qca: fix in-band sleep enablement
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     Harish Bandi <c-hbandi@codeaurora.org>, marcel@holtmann.org,
-        johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Rocky Liao <rjliao@codeaurora.org>, rongchi@codeaurora.org,
-        linux-bluetooth-owner@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_//fNTAc+56kkJlp6+Fz8MD7g";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balakrishna,
+--Sig_//fNTAc+56kkJlp6+Fz8MD7g
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for the late reply. I was on vacation for the past few days.
-The chipset we use is QCA6174A-3 and rjliao has already confirmed that
-IBS won't work without RAM fw downloaded.
-Please ignore this change.
+Hi all,
 
-Thanks,
-Claire
+Today's linux-next merge of the char-misc tree got a conflict in:
 
+  drivers/android/binder.c
 
-On Fri, Oct 11, 2019 at 3:21 PM Balakrishna Godavarthi
-<bgodavar@codeaurora.org> wrote:
->
-> Hi Claire,
->
-> This change will not work  as we need fw files to be loaded tofor IBS to
-> active.
-> may i know on which chipset you have this issue of IBS active even with
-> out fw download.
->
-> On 2019-10-11 12:31, Harish Bandi wrote:
-> > ++ Balakrishna
-> >
-> > On 2019-10-09 14:21, Claire Chang wrote:
-> >> Enabling in-band sleep when there is no patch/nvm-config found and
-> >> bluetooth is running with the original fw/config.
-> >>
-> >> Fixes: ba8f35979002 ("Bluetooth: hci_qca: Avoid setup failure on
-> >> missing rampatch")
-> >> Fixes: 7dc5fe0814c3 ("Bluetooth: hci_qca: Avoid missing rampatch
-> >> failure with userspace fw loader")
-> >> Signed-off-by: Claire Chang <tientzu@chromium.org>
-> >> ---
-> >>  drivers/bluetooth/hci_qca.c | 11 +++++++----
-> >>  1 file changed, 7 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> >> index e3164c200eac..367eef893a11 100644
-> >> --- a/drivers/bluetooth/hci_qca.c
-> >> +++ b/drivers/bluetooth/hci_qca.c
-> >> @@ -1291,10 +1291,8 @@ static int qca_setup(struct hci_uart *hu)
-> >>      /* Setup patch / NVM configurations */
-> >>      ret = qca_uart_setup(hdev, qca_baudrate, soc_type, soc_ver,
-> >>                      firmware_name);
-> >> -    if (!ret) {
-> >> -            set_bit(QCA_IBS_ENABLED, &qca->flags);
-> >> -            qca_debugfs_init(hdev);
-> >> -    } else if (ret == -ENOENT) {
-> >> +
-> >> +    if (ret == -ENOENT) {
-> >>              /* No patch/nvm-config found, run with original fw/config */
-> >>              ret = 0;
-> >>      } else if (ret == -EAGAIN) {
-> >> @@ -1305,6 +1303,11 @@ static int qca_setup(struct hci_uart *hu)
-> >>              ret = 0;
-> >>      }
-> >>
-> >> +    if (!ret) {
-> >> +            set_bit(QCA_IBS_ENABLED, &qca->flags);
-> >> +            qca_debugfs_init(hdev);
-> >> +    }
-> >> +
-> >>      /* Setup bdaddr */
-> >>      if (qca_is_wcn399x(soc_type))
-> >>              hu->hdev->set_bdaddr = qca_set_bdaddr;
->
-> --
-> Regards
-> Balakrishna.
+between commit:
+
+  45d02f79b539 ("binder: Don't modify VMA bounds in ->mmap handler")
+
+from the char-misc.current tree and commit:
+
+  990be7476485 ("binder: Use common definition of SZ_1K")
+
+from the char-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/android/binder.c
+index 265d9dd46a5e,bef788058bc3..000000000000
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@@ -92,11 -93,10 +93,6 @@@ static atomic_t binder_last_id
+  static int proc_show(struct seq_file *m, void *unused);
+  DEFINE_SHOW_ATTRIBUTE(proc);
+ =20
+- /* This is only defined in include/asm-arm/sizes.h */
+- #ifndef SZ_1K
+- #define SZ_1K                               0x400
+ -#ifndef SZ_4M
+ -#define SZ_4M                               0x400000
+--#endif
+--
+  #define FORBIDDEN_MMAP_FLAGS                (VM_WRITE)
+ =20
+  enum {
+
+--Sig_//fNTAc+56kkJlp6+Fz8MD7g
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2pMNgACgkQAVBC80lX
+0Gzb1gf+NKRFba6srcE9XRTMBMWZnLV7d7kB0oHL70Yrkqxb2HSgyRdIQt9dOAtg
+6p6JPdW2V9SCVBIPQZ5JdYd4+qs5xzUsxk2jDv+Y8ia10L90RKS5OG2W7zk0OUan
+Cs86YjFMt1npqRHqlSsX8h9Zs/uOyoi3oSI1wFCUCrnNIDP5p64nz1t8lwovtBVk
+i6HTWhRZt7QNPKXdUJmYbHP4fypZ13nfgy6UqJRw5yRD2rDQWCkQSWKBvd3L0hce
+54LYkHr+UJ0U3OMkZp+1UflFr3za1JULhMw8gO5DOqsnm4p91cr8yYxlO1HLLoaO
+SI+1a8tvooBrIsvFEzfggwRODpSwUw==
+=Hofj
+-----END PGP SIGNATURE-----
+
+--Sig_//fNTAc+56kkJlp6+Fz8MD7g--
