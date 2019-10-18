@@ -2,118 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3185DD0A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 22:52:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 121B2DD0B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 22:56:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437363AbfJRUwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 16:52:10 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45310 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728567AbfJRUwJ (ORCPT
+        id S2502079AbfJRU4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 16:56:47 -0400
+Received: from mail-ua1-f74.google.com ([209.85.222.74]:47445 "EHLO
+        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388245AbfJRU4q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 16:52:09 -0400
-Received: by mail-wr1-f65.google.com with SMTP id q13so2609302wrs.12
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 13:52:06 -0700 (PDT)
+        Fri, 18 Oct 2019 16:56:46 -0400
+Received: by mail-ua1-f74.google.com with SMTP id 4so1013011uay.14
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 13:56:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=uGEXsE8/NXoRF+D14w+boPYF50JZvz72YuC6YAN3OA0=;
-        b=IBXlhzy0RGoAwB2ojEYPz7abKSVVtIzYBJwWK4c2HgNYuYnc1H23Y0feBGiRroGP5j
-         JubIc4JzQMtDXZ7uQ2jlmTdmFKQ4Bt4Hz0G5tO902wI3BGWJDjMXjHQyCP4UQrcIkQmy
-         OLOi1qgwk8pQzNaoyvNk5TUdcbynJpX0xd/4U=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=pFSHWfsa4OYLf86WgPeUBVlVGsm2bxueW/eIsJSwKiQ=;
+        b=ZxRofBTLLxqPyCT9Ejy040W4kNnnOcsZi+MYGlj8YmtDrP9euwn9536tbUMP5I5E9E
+         F0qx7pSkCzwWzszOhh0BzfZEdDFhioSEIQsOAfXYzm67ai6YT5MHVUIh3otszhFmuwXm
+         g3AqXIn7dagWoecDRZTNGWVxcocTUDUSU3HbY4V/ColcRzFd3jctb+BIV4Gt/lHRqXVg
+         Ru7ba3cotGuss8tpCcF2Gt34tcszr8ssTjjdaM3cj+weEdMzb/JIGkO2ToQDLHGjH4iL
+         qE9H6KIJiORtyryH1SHjaK45+zN7i1fJGvekzSHyy3Gdl62cIuKAlqcUdWw0l7TCTYVj
+         YKmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uGEXsE8/NXoRF+D14w+boPYF50JZvz72YuC6YAN3OA0=;
-        b=b/wh1659mqRBQA+0y+TNKynVsCp0gin3xMAveIZ87+sGvRsfKyqNPrn3UcDtsLLiDa
-         djG0bb+8UV6ylBC3gT5AjzOIOjCD0QlWo5+qO3Sb6/2aHoTmJcrN53F5bky0hg4gqYNx
-         3PGtoQX58AMgCT5d5Cu/LPB8Qh3tzVzatPqrNUdyLphJ66CogGNz5txcU6A2aMhT5Sgd
-         Xa+RHw7bX24wNG/RuEP/GSr1RXHO+5YkVStr4hFs+aGVqD1W24rAvmdEDPiBcIRMuIYY
-         rawH5p7lg2/KbeyoXN6hmYiYLvgXT7mf3vHdCZMeZGHE/2t1rYfitt+6lcONtsMixn59
-         XfGg==
-X-Gm-Message-State: APjAAAVWMgQ9ffKdxvYNB6CceXvLfg6ytI6G+i3RC+opWX5BCoSsrwI8
-        +x2PHygZ/cJfkR+IyQrj/9t5sA==
-X-Google-Smtp-Source: APXvYqz0kY5/OxYYxhR/1u58qGdFKWyMZCctPVLRK43Po/wT6eyex+6FLmeTJjDYNDpKlXaZ7a7AbA==
-X-Received: by 2002:adf:9101:: with SMTP id j1mr8966445wrj.71.1571431925821;
-        Fri, 18 Oct 2019 13:52:05 -0700 (PDT)
-Received: from [192.168.1.149] (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
-        by smtp.gmail.com with ESMTPSA id n15sm8053302wrw.47.2019.10.18.13.52.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Oct 2019 13:52:05 -0700 (PDT)
-Subject: Re: [PATCH 0/7] towards QE support on ARM
-To:     Leo Li <leoyang.li@nxp.com>, Qiang Zhao <qiang.zhao@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Timur Tabi <timur@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
- <VE1PR04MB6687DA0268FAF03D3E77A23B8F6C0@VE1PR04MB6687.eurprd04.prod.outlook.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <e02fa027-9c78-3272-d2d7-7ad2b0ed3ab0@rasmusvillemoes.dk>
-Date:   Fri, 18 Oct 2019 22:52:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <VE1PR04MB6687DA0268FAF03D3E77A23B8F6C0@VE1PR04MB6687.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=pFSHWfsa4OYLf86WgPeUBVlVGsm2bxueW/eIsJSwKiQ=;
+        b=PPIslm/QGimVHVJT74TOhrW8IdFeIWyKdiQZz45dXzxzyo71e5Yb/zLvpfIOEPQPBG
+         ETB4UOnUTPPsfBQ8e0TA2z14KRpLQ+pdMUwtvuHO4SY1fzSDH2glFSJToagNvm0Kft8v
+         FyLEXLD4t4L45hnEtFuvIGN5F0ywri2hwSWYwO7BboV8bRuFiwNWrJHdORbj4njnxoo9
+         cliEN4y81tAbCK9mJ6PxRyg8qcevxfd9amwEFfVWH3FJ3yXg1jeji024jrx/fP+FmxX+
+         nYFSJJL9xnc8SNrWSadhOXVksxINNn1DXK4/sEWsBvZAJdjYV9uVrnUlFPS8rO6qku8I
+         ZuWQ==
+X-Gm-Message-State: APjAAAXKbqKv+XdSf3PQYubQRZ/05l2BhqSCKvKuPGZo/AbA9qAUqGCH
+        nma2rO1wFG/W5ZYNMHJsRRKkbEsMYA==
+X-Google-Smtp-Source: APXvYqw3YHqNer9uDRETXpkMeSewm1GG1VHr/SMOl/zfhsvRorqD8QIY7Bi+m+OskYEEZDdwy6ZMEtTZhw==
+X-Received: by 2002:ac5:cb62:: with SMTP id l2mr6580899vkn.32.1571432203606;
+ Fri, 18 Oct 2019 13:56:43 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 22:56:29 +0200
+Message-Id: <20191018205631.248274-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
+Subject: [PATCH 1/3] binder: Fix race between mmap() and binder_alloc_print_pages()
+From:   Jann Horn <jannh@google.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <christian@brauner.io>, jannh@google.com
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/10/2019 22.16, Leo Li wrote:
-> 
->>
->> There have been several attempts in the past few years to allow building the
->> QUICC engine drivers for platforms other than PPC. This is (the beginning of)
->> yet another attempt. I hope I can get someone to pick up these relatively
->> trivial patches (I _think_ they shouldn't change functionality at all), and then
->> I'll continue slowly working towards removing the PPC32 dependency for
->> CONFIG_QUICC_ENGINE.
-> 
-> Hi Rasmus,
-> 
-> I don't fully understand the motivation of this work.  As far as I know the QUICC ENGINE is only used on PowerPC based SoCs. 
+binder_alloc_print_pages() iterates over
+alloc->pages[0..alloc->buffer_size-1] under alloc->mutex.
+binder_alloc_mmap_handler() writes alloc->pages and alloc->buffer_size
+without holding that lock, and even writes them before the last bailout
+point.
 
-Hm, you're not the Leo Li that participated in this thread
-<https://lore.kernel.org/lkml/AM3PR04MB11857AE8D2B0BE56121B97D391C90@AM3PR04MB1185.eurprd04.prod.outlook.com/T/#u>?
+Unfortunately we can't take the alloc->mutex in the ->mmap() handler
+because mmap_sem can be taken while alloc->mutex is held.
+So instead, we have to locklessly check whether the binder_alloc has been
+fully initialized with binder_alloc_get_vma(), like in
+binder_alloc_new_buf_locked().
 
+Fixes: 8ef4665aa129 ("android: binder: Add page usage in binder stats")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ drivers/android/binder_alloc.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
- Can you give an example on how is it used on ARM system?
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index eb76a823fbb2..21952dfa147d 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -841,14 +841,20 @@ void binder_alloc_print_pages(struct seq_file *m,
+ 	int free = 0;
+ 
+ 	mutex_lock(&alloc->mutex);
+-	for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
+-		page = &alloc->pages[i];
+-		if (!page->page_ptr)
+-			free++;
+-		else if (list_empty(&page->lru))
+-			active++;
+-		else
+-			lru++;
++	/*
++	 * Make sure the binder_alloc is fully initialized, otherwise we might
++	 * read inconsistent state.
++	 */
++	if (binder_alloc_get_vma(alloc) != NULL) {
++		for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
++			page = &alloc->pages[i];
++			if (!page->page_ptr)
++				free++;
++			else if (list_empty(&page->lru))
++				active++;
++			else
++				lru++;
++		}
+ 	}
+ 	mutex_unlock(&alloc->mutex);
+ 	seq_printf(m, "  pages: %d:%d:%d\n", active, lru, free);
+-- 
+2.23.0.866.gb869b98d4c-goog
 
-LS1021A, for example, which is the one I'm aiming for getting fully
-supported in mainline.
-<https://www.nxp.com/products/processors-and-microcontrollers/arm-processors/layerscape-communication-process/qoriq-layerscape-1021a-dual-core-communications-processor-with-lcd-controller:LS1021A>
-
-The forks at https://github.com/qoriq-open-source/linux.git have various
-degrees of support (grep for commits saying stuff like "remove PPCisms"
-- some versions can be found on
-<https://lore.kernel.org/lkml/?q=remove+ppcisms>). Our current kernel is
-based on commits from the now-vanished 4.1 branch, and unfortunately at
-least the 4.14 branch (LSDK-18.06-V4.14) trivially doesn't build on ARM,
-despite the PPC32 dependency having been removed from CONFIG_QUICC_ENGINE.
-
->>
->> Tested on an MPC8309-derived board.
-> 
-> MPC8309 is also PPC based.
-
-True, of course. This is just some first few steps, and I'm not claiming
-that this is sufficient to make the QE drivers build on ARM yet. But I
-have a customer with both mpc8309-based and ls1021a-based platforms, and
-they want to run the same, as-close-to-mainline-as-possible, kernel on
-both. So I will take a piecemeal approach, and try to make sure I don't
-break the ppc boards in the process (just building and booting one board
-is of course not sufficient, but better than nothing). Once I get to
-actually build some of the QE drivers for ARM, I'll of course also test
-them.
-
-Rasmus
