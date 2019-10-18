@@ -2,73 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED09FDBC27
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82B86DBC14
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:55:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407286AbfJRE4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 00:56:41 -0400
-Received: from condef-04.nifty.com ([202.248.20.69]:50603 "EHLO
-        condef-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389158AbfJRE4k (ORCPT
+        id S2441962AbfJREzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 00:55:10 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14945 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbfJREzE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 00:56:40 -0400
-Received: from conuserg-10.nifty.com ([10.126.8.73])by condef-04.nifty.com with ESMTP id x9I4WAKv004997;
-        Fri, 18 Oct 2019 13:32:11 +0900
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x9I4Vnxp019790;
-        Fri, 18 Oct 2019 13:31:50 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x9I4Vnxp019790
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1571373111;
-        bh=Yyl1cS1eYVt+sVWWGmNXm8/lysOK1IQALljWjASqSwg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mvf2/0meUo3qXcLS0yRxbLFLzQ+erxo70YfKJZmlA25fJDuP2VseTcvr9gJKHMupY
-         QqSYjcZb2Fyu8qj6leuy+QIphDCaA5hnLxTZzZJ3/DshvKu2ahgdDY/Zkl123ZgE/K
-         5AUFrRD51GbkMkU+poOBcA4Qm4BfzNctOY0AbDj6H8syd2hF2zP0Ah/Q7wKS0CyXrW
-         NVsez3NL1L8tWcK5/FgfHqgEMsMVS9/LuI8lg0vtgKQAHW0WGswp7H5+gza4Xy0w6v
-         DOMl4b1Og+CeoxULFShX2rsVw1pAoTBYLrZXYawP9qrhMYwLI+kqMeNd5jFVoL+wd9
-         wMd1OJtAp+xww==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
-Subject: [PATCH 2/2] asm-generic/export.h: remove unneeded __kcrctab_* symbols
-Date:   Fri, 18 Oct 2019 13:31:48 +0900
-Message-Id: <20191018043148.6285-2-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191018043148.6285-1-yamada.masahiro@socionext.com>
-References: <20191018043148.6285-1-yamada.masahiro@socionext.com>
+        Fri, 18 Oct 2019 00:55:04 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5da940f00000>; Thu, 17 Oct 2019 21:34:56 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 17 Oct 2019 21:34:45 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 17 Oct 2019 21:34:45 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 18 Oct
+ 2019 04:34:45 +0000
+Received: from [10.110.48.28] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 18 Oct
+ 2019 04:34:44 +0000
+Subject: Re: [PATCH] cpufreq: powernv: fix stack bloat and NR_CPUS limitation
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Preeti U Murthy <preeti@linux.vnet.ibm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        <linux-pm@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
+References: <20191018000431.1675281-1-jhubbard@nvidia.com>
+ <20191018042715.f76bawmoyk66isap@vireshk-i7>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <c3f16019-5724-a181-8068-8dda60fb67fa@nvidia.com>
+Date:   Thu, 17 Oct 2019 21:34:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191018042715.f76bawmoyk66isap@vireshk-i7>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1571373296; bh=Rx+GgSz5ZaCKM6ZVWjMWxWP6l9wESsNJ8Pg+CRriU3k=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=WlTTFGi+AW1cpVxLjrs3k8ct7IRcSwLMlcB1VoUvIgOvhpy0sZ7jLoFWyB5BHgNiM
+         5wp7xLBwKA2KvbE5a57Ovnr0pgIO1B8wmxe5lOcpdzaChYnL4yshjN+bKWPDZdELEC
+         y6g/otss4TxpEUxCddKfKfsIKq9efIPvw/Ac+RMdtQhpc7m5ha1SBpohR3cgEmKNp7
+         RSvUEvFKLYIpfE+ObXISnyRzueh0vip+XorSEzzaVDrk2ubY10iIZQI7BXD/nQEtKB
+         39GaFWZiltzh212WsM6Vk3/Qk4IZx+C+j1KSICJbrQZpJkhSU2WFJBOUBlfAgnglt9
+         jNdFGP9PTB6PA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-EXPORT_SYMBOL from assembly code produces an unused symbol __kcrctab_*.
+On 10/17/19 9:27 PM, Viresh Kumar wrote:
+> On 17-10-19, 17:04, John Hubbard wrote:
+>> The following build warning occurred on powerpc 64-bit builds:
+>>
+>> drivers/cpufreq/powernv-cpufreq.c: In function 'init_chip_info':
+>> drivers/cpufreq/powernv-cpufreq.c:1070:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+> 
+> How come we are catching this warning after 4 years ?
+> 
 
-kcrctab is used as a section name (prefixed with three underscores),
-but never used as a symbol.
+Newer compilers. And btw, I don't spend a lot of time in powerpc
+code, so I just recently ran this, and I guess everyone has been on less
+new compilers so far, it seems.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+I used a gcc 8.1 cross compiler in this case:
 
- include/asm-generic/export.h | 1 -
- 1 file changed, 1 deletion(-)
+$ $ /blue_exp/kernel/cross-compilers/powerpc64/gcc-8.1.0-nolibc/powerpc64-linux/bin/powerpc64-linux-gcc -v
+Using built-in specs.
+COLLECT_GCC=/blue_exp/kernel/cross-compilers/powerpc64/gcc-8.1.0-nolibc/powerpc64-linux/bin/powerpc64-linux-gcc
+COLLECT_LTO_WRAPPER=/home/jhubbard/blue_exp/kernel/cross-compilers/powerpc64/gcc-8.1.0-nolibc/powerpc64-linux/bin/../libexec/gcc/powerpc64-linux/8.1.0/lto-wrapper
+Target: powerpc64-linux
+Configured with: /home/arnd/git/gcc/configure --target=powerpc64-linux --enable-targets=all --prefix=/home/arnd/cross/x86_64/gcc-8.1.0-nolibc/powerpc64-linux --enable-languages=c --without-headers --disable-bootstrap --disable-nls --disable-threads --disable-shared --disable-libmudflap --disable-libssp --disable-libgomp --disable-decimal-float --disable-libquadmath --disable-libatomic --disable-libcc1 --disable-libmpx --enable-checking=release
+Thread model: single
+gcc version 8.1.0 (GCC) 
 
-diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
-index 80ef2dc0c8be..a3983e2ce0fd 100644
---- a/include/asm-generic/export.h
-+++ b/include/asm-generic/export.h
-@@ -43,7 +43,6 @@ __kstrtab_\name:
- #ifdef CONFIG_MODVERSIONS
- 	.section ___kcrctab\sec+\name,"a"
- 	.balign KCRC_ALIGN
--__kcrctab_\name:
- #if defined(CONFIG_MODULE_REL_CRCS)
- 	.long __crc_\name - .
- #else
--- 
-2.17.1
+
+
+thanks,
+
+John Hubbard
+NVIDIA
 
