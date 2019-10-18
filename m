@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CF47DD426
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DB77DD408
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:22:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394334AbfJRWWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:22:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37904 "EHLO mail.kernel.org"
+        id S1730746AbfJRWGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:06:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730474AbfJRWF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:05:56 -0400
+        id S1730287AbfJRWGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:06:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 315DC20679;
-        Fri, 18 Oct 2019 22:05:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AC71205F4;
+        Fri, 18 Oct 2019 22:06:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436355;
-        bh=DNsavMn9AsrBUB0Q82v+6fzdVdaj+YGTYgPJXT7NkOY=;
+        s=default; t=1571436363;
+        bh=A+nXIhWOh/hn+hSxK3tP54icEmodpvMjam53PuBkrA4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ToRknfFaDN8qFJlOfPaWFGHmlxojdaylXqnpgOgYqgg2FohK89XYt5BPFqfe5LoqT
-         rAwKcpNkW2ywa79sxsCPQhfSH3UmviXgPmCP+qpbW0wff/k3xgIHCDEek7IAtRf+1P
-         srNslYM/gQCkDUTWKPA5MVpA4WXXXBHXX0HMIWjc=
+        b=MI+tbiTdsoRX+ycBpVxs92MWoCr2Abb1yYbZZ4GQrJwNJ9C72w4vWfCW4VYPDMvXt
+         jrhGfwdZcVUdFPyGZNJRClb/5ylyB4pwKU336LFBP7TaFsRl9hGxOQV/6zlMkUhRwX
+         HH2GnW7q13Ka5wqzBhs3Ho+ULxOIzJKw4tg3D5V4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Rene Wagner <redhatbugzilla@callerid.de>,
         Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>,
         linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 017/100] HID: i2c-hid: Disable runtime PM for LG touchscreen
-Date:   Fri, 18 Oct 2019 18:04:02 -0400
-Message-Id: <20191018220525.9042-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 019/100] HID: i2c-hid: Add Odys Winbook 13 to descriptor override
+Date:   Fri, 18 Oct 2019 18:04:04 -0400
+Message-Id: <20191018220525.9042-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
 References: <20191018220525.9042-1-sashal@kernel.org>
@@ -43,57 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 86c31524b27c7e686841dd4a79eda95cfd989f16 ]
+[ Upstream commit f8f807441eefddc3c6d8a378421f0ede6361d565 ]
 
-LG touchscreen (1fd2:8001) stops working after reboot:
-[ 4.859153] i2c_hid i2c-SAPS2101:00: i2c_hid_get_input: incomplete report (64/66)
-[ 4.936070] i2c_hid i2c-SAPS2101:00: i2c_hid_get_input: incomplete report (64/66)
-[ 9.948224] i2c_hid i2c-SAPS2101:00: failed to reset device.
+The Odys Winbook 13 uses a SIPODEV SP1064 touchpad, which does not
+supply descriptors, add this to the DMI descriptor override list, fixing
+the touchpad not working.
 
-The device in question stops working after receives SLEEP, ON, SLEEP
-commands in a short period. The scenario is like this:
-- Once the desktop session closes, it also closed the hid device, so the
-device gets runtime suspended and receives a SLEEP command.
-- Before calling shutdown callback, it gets runtime resumed and received
-an ON command.
-- In the shutdown callback, it receives another SLEEP command.
-
-I failed to find a reliable interval between ON/SLEEP commands that can
-make it work, so let's simply disable runtime PM for the device.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1526312
+Reported-by: Rene Wagner <redhatbugzilla@callerid.de>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-ids.h              | 1 +
- drivers/hid/i2c-hid/i2c-hid-core.c | 2 ++
- 2 files changed, 3 insertions(+)
+ drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 0eeb273fb73d2..6b33117ca60e5 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -713,6 +713,7 @@
- #define USB_VENDOR_ID_LG		0x1fd2
- #define USB_DEVICE_ID_LG_MULTITOUCH	0x0064
- #define USB_DEVICE_ID_LG_MELFAS_MT	0x6007
-+#define I2C_DEVICE_ID_LG_8001		0x8001
- 
- #define USB_VENDOR_ID_LOGITECH		0x046d
- #define USB_DEVICE_ID_LOGITECH_AUDIOHUB 0x0a0e
-diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-index 3cde7c1b9c33c..8555ce7e737b3 100644
---- a/drivers/hid/i2c-hid/i2c-hid-core.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-@@ -177,6 +177,8 @@ static const struct i2c_hid_quirks {
- 		I2C_HID_QUIRK_NO_RUNTIME_PM },
- 	{ I2C_VENDOR_ID_RAYDIUM, I2C_PRODUCT_ID_RAYDIUM_4B33,
- 		I2C_HID_QUIRK_DELAY_AFTER_SLEEP },
-+	{ USB_VENDOR_ID_LG, I2C_DEVICE_ID_LG_8001,
-+		I2C_HID_QUIRK_NO_RUNTIME_PM },
- 	{ 0, 0 }
+diff --git a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+index 89f2976f9c534..fd1b6eea6d2fd 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
++++ b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+@@ -346,6 +346,14 @@ static const struct dmi_system_id i2c_hid_dmi_desc_override_table[] = {
+ 		},
+ 		.driver_data = (void *)&sipodev_desc
+ 	},
++	{
++		.ident = "Odys Winbook 13",
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AXDIA International GmbH"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "WINBOOK 13"),
++		},
++		.driver_data = (void *)&sipodev_desc
++	},
+ 	{ }	/* Terminate list */
  };
  
 -- 
