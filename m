@@ -2,123 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77878DC1B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:49:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 172F2DC1D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:52:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407747AbfJRJtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 05:49:33 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:60164 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S2391488AbfJRJtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 05:49:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1790492;
-        Fri, 18 Oct 2019 02:49:08 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C26FD3F6C4;
-        Fri, 18 Oct 2019 02:49:08 -0700 (PDT)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 81002682189; Fri, 18 Oct 2019 10:49:07 +0100 (BST)
-Date:   Fri, 18 Oct 2019 10:49:07 +0100
-From:   Liviu Dudau <liviu.dudau@arm.com>
-To:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-Cc:     linux-kernel@lists.codethink.co.uk,
-        Brian Starkey <brian.starkey@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, malidp@foss.arm.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/arm: make undeclared items static
-Message-ID: <20191018094907.66ghzs3qiyelibzh@e110455-lin.cambridge.arm.com>
-References: <20191017111756.12861-1-ben.dooks@codethink.co.uk>
+        id S2633156AbfJRJwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 05:52:25 -0400
+Received: from mga17.intel.com ([192.55.52.151]:35375 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404657AbfJRJwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 05:52:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2019 02:52:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,311,1566889200"; 
+   d="scan'208";a="221689663"
+Received: from lxy-clx-4s.sh.intel.com ([10.239.43.57])
+  by fmsmga004.fm.intel.com with ESMTP; 18 Oct 2019 02:52:23 -0700
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] KVM: VMX: Some refactor of VMX vmcs and msr bitmap
+Date:   Fri, 18 Oct 2019 17:37:20 +0800
+Message-Id: <20191018093723.102471-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191017111756.12861-1-ben.dooks@codethink.co.uk>
-User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 12:17:55PM +0100, Ben Dooks (Codethink) wrote:
-> Make the following items static to avoid clashes with
-> other parts of the kernel (dev_attr_core_id) or just
-> silence the following sparse warning:
-> 
-> drivers/gpu/drm/arm/malidp_drv.c:371:24: warning: symbol 'malidp_fb_create' was not declared. Should it be static?
-> drivers/gpu/drm/arm/malidp_drv.c:494:6: warning: symbol 'malidp_error_stats_dump' was not declared. Should it be static?
-> drivers/gpu/drm/arm/malidp_drv.c:668:1: warning: symbol 'dev_attr_core_id' was not declared. Should it be static?
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Remove the vcpu creation refactor and FPU allocation cleanup from v1, since
+I need more time to invest Sean's suggestion.
 
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+This series add one patch to move the vmcs reset from vcpu_reset, based on
+Krish's suggestion.
 
-Thanks for the patch! As a side note: the dim tool that we use in the DRM subsystem
-flags your S-o-b as being different from author, due to "(Codethink)" addition in the
-email name.
+Xiaoyao Li (3):
+  KVM: VMX: Move vmcs related resetting out of vmx_vcpu_reset()
+  KVM: VMX: Rename {vmx,nested_vmx}_vcpu_setup() and minor cleanup
+  KVM: VMX: Some minor refactor of MSR bitmap
 
-Best regards,
-Liviu
-
-> ---
-> Cc: Liviu Dudau <liviu.dudau@arm.com>
-> Cc: Brian Starkey <brian.starkey@arm.com>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: malidp@foss.arm.com
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> .. (open list)
-> ---
->  drivers/gpu/drm/arm/malidp_drv.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-> index 333b88a5efb0..18ca43c9cef4 100644
-> --- a/drivers/gpu/drm/arm/malidp_drv.c
-> +++ b/drivers/gpu/drm/arm/malidp_drv.c
-> @@ -368,7 +368,7 @@ malidp_verify_afbc_framebuffer(struct drm_device *dev, struct drm_file *file,
->  	return false;
->  }
->  
-> -struct drm_framebuffer *
-> +static struct drm_framebuffer *
->  malidp_fb_create(struct drm_device *dev, struct drm_file *file,
->  		 const struct drm_mode_fb_cmd2 *mode_cmd)
->  {
-> @@ -491,9 +491,9 @@ void malidp_error(struct malidp_drm *malidp,
->  	spin_unlock_irqrestore(&malidp->errors_lock, irqflags);
->  }
->  
-> -void malidp_error_stats_dump(const char *prefix,
-> -			     struct malidp_error_stats error_stats,
-> -			     struct seq_file *m)
-> +static void malidp_error_stats_dump(const char *prefix,
-> +				    struct malidp_error_stats error_stats,
-> +				    struct seq_file *m)
->  {
->  	seq_printf(m, "[%s] num_errors : %d\n", prefix,
->  		   error_stats.num_errors);
-> @@ -665,7 +665,7 @@ static ssize_t core_id_show(struct device *dev, struct device_attribute *attr,
->  	return snprintf(buf, PAGE_SIZE, "%08x\n", malidp->core_id);
->  }
->  
-> -DEVICE_ATTR_RO(core_id);
-> +static DEVICE_ATTR_RO(core_id);
->  
->  static int malidp_init_sysfs(struct device *dev)
->  {
-> -- 
-> 2.23.0
-> 
+ arch/x86/kvm/vmx/nested.c |   2 +-
+ arch/x86/kvm/vmx/nested.h |   2 +-
+ arch/x86/kvm/vmx/vmx.c    | 173 ++++++++++++++++++++------------------
+ 3 files changed, 91 insertions(+), 86 deletions(-)
 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+2.19.1
+
