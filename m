@@ -2,62 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06F7EDD282
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:13:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCC71DD3AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391338AbfJRWLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:11:50 -0400
-Received: from mail.keramplus.com ([212.3.124.226]:24721 "EHLO
-        trixbox1.localdomain" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2391280AbfJRWLs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:11:48 -0400
-Received: from 127.0.0.1 (trixbox1.localdomain [127.0.0.1])
-        by trixbox1.localdomain (Postfix) with SMTP id 0336EADAE64;
-        Fri, 18 Oct 2019 03:10:58 +0300 (EEST)
-Received: from (HELO 2g5yc0) [208.133.150.2] by 127.0.0.1 with ESMTP id 731FF67DE6E; Fri, 18 Oct 2019 00:08:02 -0100
-Message-ID: <4753o7y$1823s-fk5$7kx@2q8.5v65cp>
-From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
-Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
-To:     baijie107250@sina.con
-Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
-Date:   Fri, 18 Oct 19 00:08:02 GMT
-X-Mailer: MIME-tools 5.503 (Entity 5.501)
+        id S1732179AbfJRWG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:06:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38722 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731935AbfJRWGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:06:44 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C67A1222C2;
+        Fri, 18 Oct 2019 22:06:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571436404;
+        bh=zR7PEpWo1SHxfPoogzU2Cy0kOuipPdgvp9JuFhSZZqo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XkJ+N6qv1OUTZ7A3VnJcZhgXTbDAxXDKiTLUPrv9vmgiBUdb9d4XWyE0qYfgYNzPM
+         RLNWAn9ovrcsAONns4AgeqzXo0+BislKncbS9LGhRTX8O//bNAsxOrNyZuxbcHEKTM
+         eUqSIUXbYPfyds4XCnRvfK91pNo4n+NNYTcqK8UA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Ian Rogers <irogers@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 052/100] libsubcmd: Make _FORTIFY_SOURCE defines dependent on the feature
+Date:   Fri, 18 Oct 2019 18:04:37 -0400
+Message-Id: <20191018220525.9042-52-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
+References: <20191018220525.9042-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="79483_51D9CC.70B3.0DCFF_"
-X-Priority: 3
-X-MSMail-Priority: Normal
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Ian Rogers <irogers@google.com>
 
---79483_51D9CC.70B3.0DCFF_
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 4b0b2b096da9d296e0e5668cdfba8613bd6f5bc8 ]
 
-Greetings
+Unconditionally defining _FORTIFY_SOURCE can break tools that don't work
+with it, such as memory sanitizers:
 
-My name is Barrister Hans Erich.
+  https://github.com/google/sanitizers/wiki/AddressSanitizer#faq
 
-I have a client who is interested to invest in your country, she is a well=
- known politician in her country and deserve a lucrative investment partne=
-rship with you outside her country without any delay   Please can you mana=
-ge such investment please Kindly reply for further details.
+Fixes: 4b6ab94eabe4 ("perf subcmd: Create subcmd library")
+Signed-off-by: Ian Rogers <irogers@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lore.kernel.org/lkml/20190925195924.152834-1-irogers@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/lib/subcmd/Makefile | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Your full names ---------
-
-
-Your urgent response will be appreciated
-
-Thank you and God bless you.
-
-Barrister Hans Erich
-
-Yours sincerely,
-Barrister Hans Erich
-
---79483_51D9CC.70B3.0DCFF_--
+diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
+index ed61fb3a46c08..5b2cd5e58df09 100644
+--- a/tools/lib/subcmd/Makefile
++++ b/tools/lib/subcmd/Makefile
+@@ -20,7 +20,13 @@ MAKEFLAGS += --no-print-directory
+ LIBFILE = $(OUTPUT)libsubcmd.a
+ 
+ CFLAGS := $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
+-CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fPIC
++CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 -fPIC
++
++ifeq ($(DEBUG),0)
++  ifeq ($(feature-fortify-source), 1)
++    CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
++  endif
++endif
+ 
+ ifeq ($(CC_NO_CLANG), 0)
+   CFLAGS += -O3
+-- 
+2.20.1
 
