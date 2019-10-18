@@ -2,79 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F1D6DC325
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C7FFDC32D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:56:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408458AbfJRK4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:56:21 -0400
-Received: from outbound-smtp35.blacknight.com ([46.22.139.218]:42113 "EHLO
-        outbound-smtp35.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2408080AbfJRK4K (ORCPT
+        id S2409668AbfJRK4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:56:53 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:44758 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404484AbfJRK4w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:56:10 -0400
-Received: from mail.blacknight.com (unknown [81.17.254.16])
-        by outbound-smtp35.blacknight.com (Postfix) with ESMTPS id 0DCC212B0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 11:56:09 +0100 (IST)
-Received: (qmail 30826 invoked from network); 18 Oct 2019 10:56:08 -0000
-Received: from unknown (HELO stampy.112glenside.lan) (mgorman@techsingularity.net@[84.203.19.210])
-  by 81.17.254.9 with ESMTPA; 18 Oct 2019 10:56:08 -0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Borislav Petkov <bp@alien8.de>, Linux-MM <linux-mm@kvack.org>,
+        Fri, 18 Oct 2019 06:56:52 -0400
+Received: by mail-ua1-f68.google.com with SMTP id n2so1577641ual.11
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 03:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QY7lFyrHaU8+oA6DvMJgP3Iv+qTUAFJEzk1GXAvtrx4=;
+        b=HWwssPuPT5PifwSCD5NhcePRn2f+ZzbP6zPPhLLPIw3Ba+ZwsY64t93AV6ZDoVRf+P
+         GtEcP6AxKbDhZb4aeAXhFJ7LKwzQy18X9mLZzFjg3l69TZM656yqgPbVJe1ph0apblOH
+         zpiHBA9MxyOptlT/ckRWBqs5RnQS0ZwMk32fBgNNHtl1egCvgygXRKzP6q9FYY7GgH4j
+         IX3HP7sAZxr/FF+mPkYQ0A12D/gQTFKYnOU0ckK1PLfd2gCx2OBeFOMah5fjPMGgeYQX
+         s0CdcKW3PYDu6Y1SJvqyv1FCph7SFawKTy3IaAPV+spKaEG5gmDGe/DWTffb4AK+u2zd
+         4lyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QY7lFyrHaU8+oA6DvMJgP3Iv+qTUAFJEzk1GXAvtrx4=;
+        b=sNWNT5bfhQO4daSEmlaizc00YsJNwhXvD8zGHWqwECYsh0UgwyRoYM9MztZWdST2oc
+         ZdXJciAt38CHWeAdnGVzN81tGJCb8at01pvDJqkro4RB9+qkKBPQ4Kq91yp4CxmekqPM
+         yIvIcpAqpNqR+WEsdRTvbqu0gzRnCpZBNWMyUQyoSu0wkIa4PsMrcyFzppoXmK/VHhh/
+         qaNQYUPm5eckQFZk0pa6HnmAV71KaMngKQ9TqChy4FWujurrltVIlDjh5K48bXle+8fP
+         TPqJUm8Jlz2sSYfftJHuo8liAWv28Ef+jj99MYlKB1F0Qsw5vHQtB1obmtVOKNeadr5d
+         NLOQ==
+X-Gm-Message-State: APjAAAXCBCP9X9+5BMDiqfKsRKbMb19mramOxeAnPvTczJ++Fgaz5jV7
+        ohKm3dvjQF5p75T5PGcrpQO4mauspObf4tjKhU3iEQ==
+X-Google-Smtp-Source: APXvYqz/SShoa3XTS8voTIAQNQnZDjh0ea7364t7jbf47xMWfss+qljtsOER3sxNNKKBAIJ9tpVLe1gvmh+l/LbdV7A=
+X-Received: by 2002:ab0:310f:: with SMTP id e15mr5136065ual.19.1571396211823;
+ Fri, 18 Oct 2019 03:56:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191011103340.26749-1-ludovic.desroches@microchip.com>
+In-Reply-To: <20191011103340.26749-1-ludovic.desroches@microchip.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 18 Oct 2019 12:56:14 +0200
+Message-ID: <CAPDyKFqxfBG-CDd_O9d8X89GZmNFXh=CoFE2QqptgtLtOU5=_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: sdhci-of-at91: new compatible string
+ and update properties
+To:     Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 3/3] mm, pcpu: Make zone pcp updates and reset internal to the mm
-Date:   Fri, 18 Oct 2019 11:56:06 +0100
-Message-Id: <20191018105606.3249-4-mgorman@techsingularity.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191018105606.3249-1-mgorman@techsingularity.net>
-References: <20191018105606.3249-1-mgorman@techsingularity.net>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        claudiu.beznea@microchip.com, Eugen.Hristev@microchip.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory hotplug needs to be able to reset and reinit the pcpu allocator
-batch and high limits but this action is internal to the VM. Move
-the declaration to internal.h
+On Fri, 11 Oct 2019 at 12:33, Ludovic Desroches
+<ludovic.desroches@microchip.com> wrote:
+>
+> There is a new compatible string for the SAM9X60 sdhci device. It involves
+> an update of the properties about the clocks stuff.
+>
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- include/linux/mm.h | 3 ---
- mm/internal.h      | 3 +++
- 2 files changed, 3 insertions(+), 3 deletions(-)
+This doesn't apply any more, can you please re-spin it?
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index cc292273e6ba..22d6104f2341 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2219,9 +2219,6 @@ void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...);
- 
- extern void setup_per_cpu_pageset(void);
- 
--extern void zone_pcp_update(struct zone *zone);
--extern void zone_pcp_reset(struct zone *zone);
--
- /* page_alloc.c */
- extern int min_free_kbytes;
- extern int watermark_boost_factor;
-diff --git a/mm/internal.h b/mm/internal.h
-index 0d5f720c75ab..0a3d41c7b3c5 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -165,6 +165,9 @@ extern void post_alloc_hook(struct page *page, unsigned int order,
- 					gfp_t gfp_flags);
- extern int user_min_free_kbytes;
- 
-+extern void zone_pcp_update(struct zone *zone);
-+extern void zone_pcp_reset(struct zone *zone);
-+
- #if defined CONFIG_COMPACTION || defined CONFIG_CMA
- 
- /*
--- 
-2.16.4
+Kind regards
+Uffe
 
+
+> ---
+>
+> Changes:
+> - v2: remove the extra example and fix node label
+>
+> This patch conflicts with Nicolas' one: "dt-bindings: sdhci-of-at91: add
+> the microchip,sdcal-inverted property". Let me know which one has to be
+> rebased or you can handle it.
+>
+> Ludovic
+>
+>
+>  .../devicetree/bindings/mmc/sdhci-atmel.txt       | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+> index 1b662d7171a0..5d541ad4d4eb 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+> @@ -5,17 +5,26 @@ Documentation/devicetree/bindings/mmc/mmc.txt and the properties used by the
+>  sdhci-of-at91 driver.
+>
+>  Required properties:
+> -- compatible:          Must be "atmel,sama5d2-sdhci".
+> +- compatible:          Must be "atmel,sama5d2-sdhci" or "microchip,sam9x60-sdhci".
+>  - clocks:              Phandlers to the clocks.
+> -- clock-names:         Must be "hclock", "multclk", "baseclk";
+> +- clock-names:         Must be "hclock", "multclk", "baseclk" for
+> +                       "atmel,sama5d2-sdhci".
+> +                       Must be "hclock", "multclk" for "microchip,sam9x60-sdhci".
+> +
+> +Optional properties:
+> +- assigned-clocks:     The same with "multclk".
+> +- assigned-clock-rates The rate of "multclk" in order to not rely on the
+> +                       gck configuration set by previous components.
+>
+>
+>  Example:
+>
+> -sdmmc0: sdio-host@a0000000 {
+> +mmc0: sdio-host@a0000000 {
+>         compatible = "atmel,sama5d2-sdhci";
+>         reg = <0xa0000000 0x300>;
+>         interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
+>         clocks = <&sdmmc0_hclk>, <&sdmmc0_gclk>, <&main>;
+>         clock-names = "hclock", "multclk", "baseclk";
+> +       assigned-clocks = <&sdmmc0_gclk>;
+> +       assigned-clock-rates = <480000000>;
+>  };
+> --
+> 2.23.0
+>
