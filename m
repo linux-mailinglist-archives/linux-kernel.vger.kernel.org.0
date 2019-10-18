@@ -2,104 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3ECBDC557
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AABC7DC562
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633996AbfJRMsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:48:38 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56792 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2633907AbfJRMsd (ORCPT
+        id S2634044AbfJRMtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:49:17 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:57916 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2634008AbfJRMtP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 08:48:33 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iLRg3-00078X-N5; Fri, 18 Oct 2019 14:48:19 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 477681C009C;
-        Fri, 18 Oct 2019 14:48:19 +0200 (CEST)
-Date:   Fri, 18 Oct 2019 12:48:19 -0000
-From:   "tip-bot2 for Masami Hiramatsu" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/asm: Allow to pass macros to __ASM_FORM()
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Juergen Gross <jgross@suse.com>, x86@kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Borislav Petkov <bp@alien8.de>, xen-devel@lists.xenproject.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Fri, 18 Oct 2019 08:49:15 -0400
+Received: from [167.98.27.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iLRgs-0001mQ-3j; Fri, 18 Oct 2019 13:49:10 +0100
+Message-ID: <1984049ff0e359801401fbbcbdbc21ee0a64c1a9.camel@codethink.co.uk>
+Subject: Re: [Y2038] [PATCH v6 31/43] compat_ioctl: move WDIOC handling into
+ wdt drivers
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Arnd Bergmann <arnd@arndb.de>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <156777562873.25081.2288083344657460959.stgit@devnote2>
-References: <156777562873.25081.2288083344657460959.stgit@devnote2>
+Date:   Fri, 18 Oct 2019 13:49:09 +0100
+In-Reply-To: <20191009191044.308087-32-arnd@arndb.de>
+References: <20191009190853.245077-1-arnd@arndb.de>
+         <20191009191044.308087-32-arnd@arndb.de>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Message-ID: <157140289913.29376.11199090886356756663.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/core branch of tip:
+On Wed, 2019-10-09 at 21:10 +0200, Arnd Bergmann wrote:
+> All watchdog drivers implement the same set of ioctl commands, and
+> fortunately all of them are compatible between 32-bit and 64-bit
+> architectures.
+> 
+> Modern drivers always go through drivers/watchdog/wdt.c as an abstraction
+> layer, but older ones implement their own file_operations on a character
+> device for this.
+> 
+> Move the handling from fs/compat_ioctl.c into the individual drivers.
+> 
+> Note that most of the legacy drivers will never be used on 64-bit
+> hardware, because they are for an old 32-bit SoC implementation, but
+> doing them all at once is safer than trying to guess which ones do
+> or do not need the compat_ioctl handling.
+> 
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/powerpc/platforms/52xx/mpc52xx_gpt.c |  1 +
+>  arch/um/drivers/harddog_kern.c            |  1 +
+>  drivers/char/ipmi/ipmi_watchdog.c         |  1 +
+>  drivers/hwmon/fschmd.c                    |  1 +
+>  drivers/rtc/rtc-ds1374.c                  |  1 +
+[...]
 
-Commit-ID:     f7919fd943abf0c77aed4441ea9897a323d132f5
-Gitweb:        https://git.kernel.org/tip/f7919fd943abf0c77aed4441ea9897a323d132f5
-Author:        Masami Hiramatsu <mhiramat@kernel.org>
-AuthorDate:    Fri, 06 Sep 2019 22:13:48 +09:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 17 Oct 2019 21:31:57 +02:00
+It Looks like you missed a couple:
 
-x86/asm: Allow to pass macros to __ASM_FORM()
+drivers/rtc/rtc-m41t80.c
+drivers/watchdog/kempld_wdt.c
 
-Use __stringify() at __ASM_FORM() so that user can pass
-code including macros to __ASM_FORM().
+Ben.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: x86@kernel.org
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: xen-devel@lists.xenproject.org
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/156777562873.25081.2288083344657460959.stgit@devnote2
----
- arch/x86/include/asm/asm.h | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
 
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index 3ff577c..1b563f9 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -7,9 +7,11 @@
- # define __ASM_FORM_RAW(x)     x
- # define __ASM_FORM_COMMA(x) x,
- #else
--# define __ASM_FORM(x)	" " #x " "
--# define __ASM_FORM_RAW(x)     #x
--# define __ASM_FORM_COMMA(x) " " #x ","
-+#include <linux/stringify.h>
-+
-+# define __ASM_FORM(x)	" " __stringify(x) " "
-+# define __ASM_FORM_RAW(x)     __stringify(x)
-+# define __ASM_FORM_COMMA(x) " " __stringify(x) ","
- #endif
- 
- #ifndef __x86_64__
