@@ -2,126 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC96CDC659
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED5BFDC663
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:43:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410422AbfJRNlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 09:41:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40414 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728150AbfJRNlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 09:41:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0FBAFB1D4;
-        Fri, 18 Oct 2019 13:41:00 +0000 (UTC)
-Date:   Fri, 18 Oct 2019 15:40:58 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Miroslav Benes <mbenes@suse.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
-Message-ID: <20191018134058.7zyls4746wpa7jy5@pathway.suse.cz>
-References: <20191015135634.GK2328@hirez.programming.kicks-ass.net>
- <alpine.LSU.2.21.1910151611000.13169@pobox.suse.cz>
- <88bab814-ea24-ece9-2bc0-7a1e10a62f12@redhat.com>
- <20191015153120.GA21580@linux-8ccs>
- <7e9c7dd1-809e-f130-26a3-3d3328477437@redhat.com>
- <20191015182705.1aeec284@gandalf.local.home>
- <20191016074951.GM2328@hirez.programming.kicks-ass.net>
- <alpine.LSU.2.21.1910161216100.7750@pobox.suse.cz>
- <alpine.LSU.2.21.1910161521010.7750@pobox.suse.cz>
- <20191018130342.GA4625@linux-8ccs>
+        id S2410430AbfJRNnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 09:43:22 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42035 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392518AbfJRNnW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 09:43:22 -0400
+Received: by mail-io1-f68.google.com with SMTP id r15so3776295iod.9
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 06:43:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=4BJhDQT7bb0XyLYRH+w99WIMS1rWkr4XyiHocm61xTI=;
+        b=qSJzvGM2ovHp+74y39YfX0ulbAo+aE4QzTq1Lldci3PiByz96SFGiFU1qTXIDtP5t4
+         hhtgcay2t6Gjz3H1x1JASuoyW86Z5L7QIJUvlbCt9RPnecBYMrSng/Mo3LkmwNBQHjo8
+         LQhVxM6qV0EndQ4Vkk7C+WzWtPHHCV3TFAhtyAbsjbI7LSoZosTUc/nKzb/SvXflfNd1
+         jSZYXs9c5dR0bpRyXMfTwLaRO/bfYLVkdW70+/hTPof/ATka3d1drXTXB6pStzUvwoit
+         kvVxLkUC18ZSZcyBmr6/pWFfCjL8dt1GbhxmP29NGcRcEsQwsJjJtJYtrPwRupobdNp5
+         eVDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=4BJhDQT7bb0XyLYRH+w99WIMS1rWkr4XyiHocm61xTI=;
+        b=HyZkKhudeUHFDNbj2Wd/X3Sm1NVjc7L62L11THLX121HZ21SoKsBOkL7UU5wXD2wug
+         PyOMVjLQ0f4pnCNo0fGYuOkfXTi8Kd9QBZiLcnaLCXckdFlsc1suherYPh9JVJG26CT4
+         yKgrLPyeVuPoRoh3zyMpOdXSw6jQD2yl53wlj2GVWz+L7lM0jCKgsj179jYMiKDuLV8v
+         I/ROhEb/nPdJma3vJDgW/RqxcExS70jk/Ta9qYNUJdQUnftnZl4UuQEiBQdZ9H3A5uio
+         7Io/ygqYDlI+V8vFYT4oF+uK95J+cSlJ+fl/VPCXoAAOlwhUgHRKKFuy8o562zK6gN7T
+         oXkw==
+X-Gm-Message-State: APjAAAX25bMHuuJWHcqNFyUGYMUUACuqCrA9VRGDoHQD6d196QP+rdLo
+        qc9uQQVUCXJj2aZnw5kdMIO+KMcarpykes93WtY=
+X-Google-Smtp-Source: APXvYqxC88Xf8F3iOoyw16Vlkdr5QAqVNtnDNFe3+RGAYI6g56jvBWhiYqngbGtKTQfsEjEXWSay8+lSPDwN3hA8hN0=
+X-Received: by 2002:a6b:a18:: with SMTP id z24mr3614519ioi.251.1571406201390;
+ Fri, 18 Oct 2019 06:43:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018130342.GA4625@linux-8ccs>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Received: by 2002:a92:d90a:0:0:0:0:0 with HTTP; Fri, 18 Oct 2019 06:43:20
+ -0700 (PDT)
+Reply-To: mrskaringrossmannk@gmail.com
+From:   =?UTF-8?Q?Karin_Gro=C3=9Fmann?= <ktoth0892@gmail.com>
+Date:   Fri, 18 Oct 2019 13:43:20 +0000
+Message-ID: <CACCLUV7kni2zs+NoVKrxs__c3_RYR7Szg+FYxt7SFiBZ27dDOg@mail.gmail.com>
+Subject: Hi dear,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2019-10-18 15:03:42, Jessica Yu wrote:
-> +++ Miroslav Benes [16/10/19 15:29 +0200]:
-> > On Wed, 16 Oct 2019, Miroslav Benes wrote:
-> > Thinking about it more... crazy idea. I think we could leverage these new
-> > ELF .text per vmlinux/module sections for the reinvention I was talking
-> > about. If we teach module loader to relocate (and apply alternatives and
-> > so on, everything in arch-specific module_finalize()) not the whole module
-> > in case of live patch modules, but separate ELF .text sections, it could
-> > solve the issue with late module patching we have. It is a variation on
-> > Steven's idea. When live patch module is loaded, only its section for
-> > present modules would be processed. Then whenever a to-be-patched module
-> > is loaded, its .text section in all present patch module would be
-> > processed.
-> > 
-> > The upside is that almost no work would be required on patch modules
-> > creation side. The downside is that klp_modinfo must stay. Module loader
-> > needs to be hacked a lot in both cases. So it remains to be seen which
-> > idea is easier to implement.
-> > 
-> > Jessica, do you think it would be feasible?
-> 
-> I think that does sound feasible. I'm trying to visualize how that
-> would look. I guess there would need to be various livepatching hooks
-> called during the different stages (apply_relocate_add(),
-> module_finalize(), module_enable_ro/x()).
-> 
-> So maybe something like the following?
-> 
-> When a livepatch module loads:
->    apply_relocate_add()
->        klp hook: apply .klp.rela.$objname relocations *only* for
->        already loaded modules
->    module_finalize()
->        klp hook: apply .klp.arch.$objname changes for already loaded modules
->    module_enable_ro()
->        klp hook: only enable ro/x for .klp.text.$objname for already
->        loaded modules
+Hi dear,
 
-Just for record. We should also set ro for the not-yet used
-.klp.text.$objname at this stage so that it can't be modified
-easily "by accident".
+I'm Mrs Karin Gro=C3=9Fmann, please i wish to have a communication with you=
+.
 
+I am waiting for your answer, mrskaringrossmannk@gmail.com
 
-> When a to-be-patched module loads:
->    apply_relocate_add()
->        klp hook: for each patch module that patches the coming
->        module, apply .klp.rela.$objname relocations for this object
->    module_finalize()
->        klp hook: for each patch module that patches the coming
->        module, apply .klp.arch.$objname changes for this object
->    module_enable_ro()
->        klp hook: for each patch module, apply ro/x permissions for
->        .klp.text.$objname for this object
-> 
-> Then, in klp_module_coming, we only need to do the callbacks and
-> enable the patch, and get rid of the module_disable_ro->apply
-> relocs->module_enable_ro block.
-> 
-> Does that sound like what you had in mind or am I totally off?
-
-Makes sense to me.
-
-Well, I wonder if it is really any better from what we have now.
-We would still need special delayed handling for the module-specific
-elf sections. Also we still would not need to clear the modifications
-in these sections when the livepatched object gets unloaded.
-
-I am afraid that the real difference might come when we split
-the livepatch into per-livepatched object modules. This would
-move the complexity to another parts of the code ;-) I am
-unable to say what approach is easier and more safe to maintain
-at the moment.
-
-Best Regards,
-Petr
+Mrs Karin Gro=C3=9Fmann.
