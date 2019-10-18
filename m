@@ -2,97 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FA1EDBC69
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CB27DBC9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:10:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504024AbfJRFFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:05:07 -0400
-Received: from mta-p7.oit.umn.edu ([134.84.196.207]:44602 "EHLO
-        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728559AbfJRFFF (ORCPT
+        id S2504366AbfJRFHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:07:18 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34371 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2504025AbfJRFHQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:05:05 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p7.oit.umn.edu (Postfix) with ESMTP id D06CD95B
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 05:05:03 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p7.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id L1pkCpYUycTG for <linux-kernel@vger.kernel.org>;
-        Fri, 18 Oct 2019 00:05:03 -0500 (CDT)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id A9A0D721
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 00:05:03 -0500 (CDT)
-Received: by mail-io1-f70.google.com with SMTP id m25so7035567ioo.8
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:05:03 -0700 (PDT)
+        Fri, 18 Oct 2019 01:07:16 -0400
+Received: by mail-pl1-f193.google.com with SMTP id k7so2270445pll.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:07:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=o6wi6lKR6QURG+vpCxfFe9q90HMrVgGmLRD3CJAHTaw=;
-        b=cffg/fV/nPBsZK3w8HGcdzvxiuSEiuaqoFXjaiyGiRjOa2rbjBk/3dGaLQnkMjM/sI
-         Hj6IhVKYvBwe1m5jdEajDeBVW0shdkBG/so63tr7vQHIrMq1/3uOsnPAu/OfXyZQgjuX
-         sZFqk6QXAIkzNfQLp5nouVu/1y61ZNcEBelaql5SG8Qs1fnC+kQljBPsM5nTMoBDWEwB
-         SvUOBIIYdseqV/r5BHg92eijOP4A2oGTI2sP4f6xPZ9evChaU/LtaA1PSuJSMtvZIIvP
-         HdxwuAmOaEpFQ65rJX5sb9B88vb+HzyJEGIJsKJVkxe5AvjzJyHvOJ9thghjm0bk9luz
-         Aqtw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BN38U1tWSQycIwUtKvgVS41nw2Y5xmAR6qADXcgIN/E=;
+        b=Or1S1NJBS21mZ3T0kRuw3+pg9/9vA19tlOBKzPCu+VJOzUGorap9nhyIFOs7X2qgrg
+         zvJDJQwIS1BW+6v7Hpb7lsxv4M+N1QE5YfJhC/1Fj5/SMhEmHI+miSmHuYfJPzUy6eFa
+         GC0iDI+pBneF36jZra4sKjv7DLrI/2YleI/qLkqhHXu5iCL7IzKssn9od150fmLSzfsz
+         LCOOYySKfikf3B2ZqQcd/I/6X7u97Zel3TIjOM8ZSAJdp2jpXC24fyV1GimkEn+jQcpD
+         jBnPpOKMTIiYCrVbDyuUNr2v1+bDc60g12qFOhDG8ORiKRo/fqfAbqCIaTrPDAbvhTUO
+         GGdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=o6wi6lKR6QURG+vpCxfFe9q90HMrVgGmLRD3CJAHTaw=;
-        b=j4OFh+9sE6vSFFEvF6BxhVo/F7PRuvg3/aB1R6gZvGMZfbSgtGK6+R8MKnapXcRsN/
-         V51VgkERwIGSTECztZP9dDCLo7KZr/SK4wAZPGLDtvonO33QRO7yMPMOy4jb4I9cnhlm
-         AUEwRjkecrmqP6qHnmihQ/g9DiSjEtojV99HaZEKHga53prD+M6Jo0ifU4BtmIfRfgXV
-         dqLxHgq6H7mEOaoeilC4fsqBYn5P18oSxY7A90bTIu+++UaAv4audMt8dNrezQAAI+OK
-         gwC3gxpByiBglWjGLCBpg5J5sPHrF5DVUndYS1/0JYvfr1nheJ7gNfCbKBOLuCM1jDm+
-         hxkg==
-X-Gm-Message-State: APjAAAUI8rr9uJbK25JWO70gc+bWgILQ39M/q2BC98E9fx2d56f4pgFp
-        enpjVEC2oEqDgoL0iJyNEp3n9Lwc7eTqOJ57pYIxMmZn5AJuBKw0qL2SqnTPELA5lcl97A5lAme
-        ItDi7/7vdkeGNjdl/efRsq/TF/NSp
-X-Received: by 2002:a6b:144f:: with SMTP id 76mr6838364iou.51.1571375103257;
-        Thu, 17 Oct 2019 22:05:03 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzm6jnrRw2AGNq6LEQ59zd7K6mheF9Scz8nOpmEeh0/5sAj63ZAs7O9VGtINjnJyH5a1/P33Q==
-X-Received: by 2002:a6b:144f:: with SMTP id 76mr6838341iou.51.1571375102964;
-        Thu, 17 Oct 2019 22:05:02 -0700 (PDT)
-Received: from bee.dtc.umn.edu (cs-bee-u.cs.umn.edu. [128.101.106.63])
-        by smtp.gmail.com with ESMTPSA id i4sm1400916iop.6.2019.10.17.22.05.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 22:05:02 -0700 (PDT)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: hash - initializing memory buffer for keys
-Date:   Fri, 18 Oct 2019 00:04:56 -0500
-Message-Id: <20191018050457.13809-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BN38U1tWSQycIwUtKvgVS41nw2Y5xmAR6qADXcgIN/E=;
+        b=as3mvW1Jlod6/UAwJdphflMMFR7ACMitXMFsutiQLXZ6K28wkX5Ebs7liDv8Fw5hKM
+         /xzr5X7HLk+kwv49spYtKDYiTe+DAJGlFSUCbbg7qICGqPlKInADTOdK7zeNZhqdNJGm
+         k0rh1FKvsi11baWDNqr+eCSW+nzeTCDV0RS6m71UDkFe9o5S8kOrHR6TftHK7UjB4YIB
+         wzyHiklPgkDXJFqCX01AX0ycnCWO/4vHrN47Hdg4JD4w+qSm/6YjYdvE99yI2/8rtciJ
+         Qn3nnn5J7Yt8XrUzvOb8q+plhnSH2+/yXwVm7zfoNDh7fXjYNgSjjB65jDNSvlQQJDWY
+         fqCQ==
+X-Gm-Message-State: APjAAAVGFj6d5RPss65HyYYcB/XecK9cUsCFUAzRPs1qtAvdv/gFEa0m
+        I5mOSeBNOOR81O2aYy3sCxdzeGgf3cQ=
+X-Google-Smtp-Source: APXvYqzkRC1EwPpxmXJHKXXdNdXNMqjA0MEl0CEAzz/4I6yX9UtNA1XEwdpB6tAX43Fk+9Ejz7Ry3Q==
+X-Received: by 2002:a17:902:904b:: with SMTP id w11mr7882591plz.182.1571375235738;
+        Thu, 17 Oct 2019 22:07:15 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id 74sm4821485pfy.78.2019.10.17.22.07.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Oct 2019 22:07:14 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 10:37:12 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Preeti U Murthy <preeti@linux.vnet.ibm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2] cpufreq: powernv: fix stack bloat and NR_CPUS
+ limitation
+Message-ID: <20191018050712.qr2axffmbms5h4xb@vireshk-i7>
+References: <20191018045539.3765565-1-jhubbard@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018045539.3765565-1-jhubbard@nvidia.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"ctx" is uninitialized. To avoid undefined behaviors or memory
-disclosures, we better initialize it.
+On 17-10-19, 21:55, John Hubbard wrote:
+> The following build warning occurred on powerpc 64-bit builds:
+> 
+> drivers/cpufreq/powernv-cpufreq.c: In function 'init_chip_info':
+> drivers/cpufreq/powernv-cpufreq.c:1070:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+> 
+> This is due to putting 1024 bytes on the stack:
+> 
+>     unsigned int chip[256];
+> 
+> ...and while looking at this, it also has a bug: it fails with a stack
+> overrun, if CONFIG_NR_CPUS > 256.
+> 
+> Fix both problems by dynamically allocating based on CONFIG_NR_CPUS.
+> 
+> Fixes: 053819e0bf840 ("cpufreq: powernv: Handle throttling due to Pmax capping at chip level")
+> Cc: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+> Cc: Preeti U Murthy <preeti@linux.vnet.ibm.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+> Cc: linux-pm@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+> 
+> Changes since v1: includes Viresh's review commit fixes.
+> 
+>  drivers/cpufreq/powernv-cpufreq.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- crypto/algif_hash.c | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
-index 178f4cd75ef1..129a124e5056 100644
---- a/crypto/algif_hash.c
-+++ b/crypto/algif_hash.c
-@@ -433,6 +433,7 @@ static int hash_accept_parent_nokey(void *private, struct sock *sk)
- 	ctx = sock_kmalloc(sk, len, GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
-+	memset(ctx, 0, len);
- 
- 	ctx->result = NULL;
- 	ctx->len = len;
 -- 
-2.17.1
-
+viresh
