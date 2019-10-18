@@ -2,41 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCC71DD3AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E655DDD364
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:19:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732179AbfJRWG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:06:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38722 "EHLO mail.kernel.org"
+        id S1732355AbfJRWHE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:07:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731935AbfJRWGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:06:44 -0400
+        id S1732038AbfJRWGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:06:49 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C67A1222C2;
-        Fri, 18 Oct 2019 22:06:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8187F222C2;
+        Fri, 18 Oct 2019 22:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436404;
-        bh=zR7PEpWo1SHxfPoogzU2Cy0kOuipPdgvp9JuFhSZZqo=;
+        s=default; t=1571436409;
+        bh=VxPe53bJmI0+m8+ilMm7PTOAeAZoj1mvrbS4fD+q3hc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XkJ+N6qv1OUTZ7A3VnJcZhgXTbDAxXDKiTLUPrv9vmgiBUdb9d4XWyE0qYfgYNzPM
-         RLNWAn9ovrcsAONns4AgeqzXo0+BislKncbS9LGhRTX8O//bNAsxOrNyZuxbcHEKTM
-         eUqSIUXbYPfyds4XCnRvfK91pNo4n+NNYTcqK8UA=
+        b=ag/Yex79jgize5LTBc9wnXyLt/Dd68OpfTOw+T9Srtu23E8maAswZHVDM3Ezlh8Gq
+         pYCNp6J5JZ85HDDIr0/MfLld3hl5PQ0vdXk+rB6+kw2ROuG0X6M4UQ9rSEV8vKn2qh
+         Mg6pqOwqacvryImbA5prYT3qabNmFctLMavgFCMk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ian Rogers <irogers@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
+Cc:     Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 052/100] libsubcmd: Make _FORTIFY_SOURCE defines dependent on the feature
-Date:   Fri, 18 Oct 2019 18:04:37 -0400
-Message-Id: <20191018220525.9042-52-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 055/100] perf script brstackinsn: Fix recovery from LBR/binary mismatch
+Date:   Fri, 18 Oct 2019 18:04:40 -0400
+Message-Id: <20191018220525.9042-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
 References: <20191018220525.9042-1-sashal@kernel.org>
@@ -49,50 +43,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Rogers <irogers@google.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-[ Upstream commit 4b0b2b096da9d296e0e5668cdfba8613bd6f5bc8 ]
+[ Upstream commit e98df280bc2a499fd41d7f9e2d6733884de69902 ]
 
-Unconditionally defining _FORTIFY_SOURCE can break tools that don't work
-with it, such as memory sanitizers:
+When the LBR data and the instructions in a binary do not match the loop
+printing instructions could get confused and print a long stream of
+bogus <bad> instructions.
 
-  https://github.com/google/sanitizers/wiki/AddressSanitizer#faq
+The problem was that if the instruction decoder cannot decode an
+instruction it ilen wasn't initialized, so the loop going through the
+basic block would continue with the previous value.
 
-Fixes: 4b6ab94eabe4 ("perf subcmd: Create subcmd library")
-Signed-off-by: Ian Rogers <irogers@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lore.kernel.org/lkml/20190925195924.152834-1-irogers@google.com
+Harden the code to avoid such problems:
+
+- Make sure ilen is always freshly initialized and is 0 for bad
+  instructions.
+
+- Do not overrun the code buffer while printing instructions
+
+- Print a warning message if the final jump is not on an instruction
+  boundary.
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Link: http://lore.kernel.org/lkml/20190927233546.11533-1-andi@firstfloor.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/subcmd/Makefile | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ tools/perf/builtin-script.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
-index ed61fb3a46c08..5b2cd5e58df09 100644
---- a/tools/lib/subcmd/Makefile
-+++ b/tools/lib/subcmd/Makefile
-@@ -20,7 +20,13 @@ MAKEFLAGS += --no-print-directory
- LIBFILE = $(OUTPUT)libsubcmd.a
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 53c11fc0855ee..d20f851796c52 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -1021,7 +1021,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 			continue;
  
- CFLAGS := $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
--CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fPIC
-+CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 -fPIC
-+
-+ifeq ($(DEBUG),0)
-+  ifeq ($(feature-fortify-source), 1)
-+    CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
-+  endif
-+endif
+ 		insn = 0;
+-		for (off = 0;; off += ilen) {
++		for (off = 0; off < (unsigned)len; off += ilen) {
+ 			uint64_t ip = start + off;
  
- ifeq ($(CC_NO_CLANG), 0)
-   CFLAGS += -O3
+ 			printed += ip__fprintf_sym(ip, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
+@@ -1029,6 +1029,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp);
+ 				break;
+ 			} else {
++				ilen = 0;
+ 				printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", ip,
+ 						   dump_insn(&x, ip, buffer + off, len - off, &ilen));
+ 				if (ilen == 0)
+@@ -1036,6 +1037,8 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 				insn++;
+ 			}
+ 		}
++		if (off != (unsigned)len)
++			printed += fprintf(fp, "\tmismatch of LBR data and executable\n");
+ 	}
+ 
+ 	/*
+@@ -1066,6 +1069,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 		goto out;
+ 	}
+ 	for (off = 0; off <= end - start; off += ilen) {
++		ilen = 0;
+ 		printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", start + off,
+ 				   dump_insn(&x, start + off, buffer + off, len - off, &ilen));
+ 		if (ilen == 0)
 -- 
 2.20.1
 
