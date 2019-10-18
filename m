@@ -2,70 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3827DC018
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:38:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7729DDC01E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407487AbfJRIiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 04:38:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52764 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405150AbfJRIiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 04:38:23 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A1C20306A21B;
-        Fri, 18 Oct 2019 08:38:23 +0000 (UTC)
-Received: from [10.36.118.57] (unknown [10.36.118.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 526C15D713;
-        Fri, 18 Oct 2019 08:38:22 +0000 (UTC)
-Subject: Re: memory offline infinite loop after soft offline
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, Qian Cai <cai@lca.pw>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-References: <1570829564.5937.36.camel@lca.pw>
- <20191014083914.GA317@dhcp22.suse.cz>
- <20191017093410.GA19973@hori.linux.bs1.fc.nec.co.jp>
- <20191017100106.GF24485@dhcp22.suse.cz> <1571335633.5937.69.camel@lca.pw>
- <20191017182759.GN24485@dhcp22.suse.cz>
- <20191018021906.GA24978@hori.linux.bs1.fc.nec.co.jp>
- <33946728-bdeb-494a-5db8-e279acebca47@redhat.com>
- <20191018082459.GE5017@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <f065d998-7fa3-ef9a-c2f4-5b9116f5596b@redhat.com>
-Date:   Fri, 18 Oct 2019 10:38:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <20191018082459.GE5017@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 18 Oct 2019 08:38:23 +0000 (UTC)
+        id S2504951AbfJRIi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 04:38:57 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:11276 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727903AbfJRIi4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 04:38:56 -0400
+X-IronPort-AV: E=Sophos;i="5.67,311,1566831600"; 
+   d="scan'208";a="29424813"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 18 Oct 2019 17:38:53 +0900
+Received: from localhost.localdomain (unknown [10.166.17.210])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 62E564004BD5;
+        Fri, 18 Oct 2019 17:38:53 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] dt-bindings: phy: renesas: usb2-phy: convert bindings to json-schema
+Date:   Fri, 18 Oct 2019 17:38:53 +0900
+Message-Id: <1571387933-23397-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.10.19 10:24, Michal Hocko wrote:
-> On Fri 18-10-19 10:13:36, David Hildenbrand wrote:
-> [...]
->> However, if the compound page spans multiple pageblocks
-> 
-> Although hugetlb pages spanning pageblocks are possible this shouldn't
-> matter in__test_page_isolated_in_pageblock because this function doesn't
-> really operate on pageblocks as the name suggests.  It is simply
-> traversing all valid RAM ranges (see walk_system_ram_range).
+Convert Renesas R-Car generation 3 USB 2.0 PHY bindings documentation
+to json-schema.
 
-As long as the hugepages don't span memory blocks/sections, you are 
-right. I have no experience with gigantic pages in this regard.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  70 --------------
+ .../devicetree/bindings/phy/renesas,usb2-phy.yaml  | 106 +++++++++++++++++++++
+ 2 files changed, 106 insertions(+), 70 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
 
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+deleted file mode 100644
+index 7734b21..00000000
+--- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
++++ /dev/null
+@@ -1,70 +0,0 @@
+-* Renesas R-Car generation 3 USB 2.0 PHY
+-
+-This file provides information on what the device node for the R-Car generation
+-3, RZ/G1C, RZ/G2 and RZ/A2 USB 2.0 PHY contain.
+-
+-Required properties:
+-- compatible: "renesas,usb2-phy-r7s9210" if the device is a part of an R7S9210
+-	      SoC.
+-	      "renesas,usb2-phy-r8a77470" if the device is a part of an R8A77470
+-	      SoC.
+-	      "renesas,usb2-phy-r8a774a1" if the device is a part of an R8A774A1
+-	      SoC.
+-	      "renesas,usb2-phy-r8a774b1" if the device is a part of an R8A774B1
+-	      SoC.
+-	      "renesas,usb2-phy-r8a774c0" if the device is a part of an R8A774C0
+-	      SoC.
+-	      "renesas,usb2-phy-r8a7795" if the device is a part of an R8A7795
+-	      SoC.
+-	      "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
+-	      SoC.
+-	      "renesas,usb2-phy-r8a77965" if the device is a part of an
+-	      R8A77965 SoC.
+-	      "renesas,usb2-phy-r8a77990" if the device is a part of an
+-	      R8A77990 SoC.
+-	      "renesas,usb2-phy-r8a77995" if the device is a part of an
+-	      R8A77995 SoC.
+-	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3, RZ/G2 or
+-	      RZ/A2 compatible device.
+-
+-	      When compatible with the generic version, nodes must list the
+-	      SoC-specific version corresponding to the platform first
+-	      followed by the generic version.
+-
+-- reg: offset and length of the partial USB 2.0 Host register block.
+-- clocks: clock phandle and specifier pair(s).
+-- #phy-cells: see phy-bindings.txt in the same directory, must be <1> (and
+-	      using <0> is deprecated).
+-
+-The phandle's argument in the PHY specifier is the INT_STATUS bit of controller:
+-- 1 = USBH_INTA (OHCI)
+-- 2 = USBH_INTB (EHCI)
+-- 3 = UCOM_INT (OTG and BC)
+-
+-Optional properties:
+-To use a USB channel where USB 2.0 Host and HSUSB (USB 2.0 Peripheral) are
+-combined, the device tree node should set interrupt properties to use the
+-channel as USB OTG:
+-- interrupts: interrupt specifier for the PHY.
+-- vbus-supply: Phandle to a regulator that provides power to the VBUS. This
+-	       regulator will be managed during the PHY power on/off sequence.
+-- renesas,no-otg-pins: boolean, specify when a board does not provide proper
+-		       otg pins.
+-- dr_mode: string, indicates the working mode for the PHY. Can be "host",
+-           "peripheral", or "otg". Should be set if otg controller is not used.
+-
+-
+-Example (R-Car H3):
+-
+-	usb-phy@ee080200 {
+-		compatible = "renesas,usb2-phy-r8a7795", "renesas,rcar-gen3-usb2-phy";
+-		reg = <0 0xee080200 0 0x700>;
+-		interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&cpg CPG_MOD 703>;
+-	};
+-
+-	usb-phy@ee0a0200 {
+-		compatible = "renesas,usb2-phy-r8a7795", "renesas,rcar-gen3-usb2-phy";
+-		reg = <0 0xee0a0200 0 0x700>;
+-		clocks = <&cpg CPG_MOD 702>;
+-	};
+diff --git a/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+new file mode 100644
+index 00000000..0f109c2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+@@ -0,0 +1,106 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/renesas,usb2-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas R-Car generation 3 USB 2.0 PHY
++
++maintainers:
++  - Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - renesas,usb2-phy-r8a77470 # RZ/G1C
++      - items:
++          - enum:
++              - renesas,usb2-phy-r7s9210  # RZ/A2
++              - renesas,usb2-phy-r8a774a1 # RZ/G2M
++              - renesas,usb2-phy-r8a774b1 # RZ/G2N
++              - renesas,usb2-phy-r8a774c0 # RZ/G2E
++              - renesas,usb2-phy-r8a7795  # R-Car H3
++              - renesas,usb2-phy-r8a7796  # R-Car M3-W
++              - renesas,usb2-phy-r8a77965 # R-Car M3-N
++              - renesas,usb2-phy-r8a77990 # R-Car E3
++              - renesas,usb2-phy-r8a77995 # R-Car D3
++          - const: renesas,rcar-gen3-usb2-phy
++
++  reg:
++    # base address and length of the registers block for the PHY.
++    maxItems: 1
++
++  clocks:
++    # clock phandle and specifier pair(s).
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    # for RZ/A2
++    minItems: 1
++    maxItems: 2
++    items:
++      - const: fck
++      - const: usb_x1
++
++  '#phy-cells':
++    # see phy-bindings.txt in the same directory
++    enum: [0, 1]  # and 0 is deprecated.
++
++  interrupts:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    minItems: 1
++    maxItems: 2
++
++  vbus-supply:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: |
++      Phandle to a regulator that provides power to the VBUS. This regulator
++      will be managed during the PHY power on/off sequence.
++
++  renesas,no-otg-pins:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description: |
++      specify when a board does not provide proper otg pins.
++
++  dr_mode:
++    $ref: /schemas/types.yaml#/definitions/string
++    description: |
++      indicates the working mode for the PHY. Can be "host", "peripheral", or
++      "otg". Should be set if otg controller is not used.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#phy-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/power/r8a7795-sysc.h>
++
++    usb-phy@ee080200 {
++        compatible = "renesas,usb2-phy-r8a7795", "renesas,rcar-gen3-usb2-phy";
++        reg = <0 0xee080200 0 0x700>;
++        interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&cpg CPG_MOD 703>;
++        #phy-cells = <1>;
++    };
++
++    usb-phy@ee0a0200 {
++        compatible = "renesas,usb2-phy-r8a7795", "renesas,rcar-gen3-usb2-phy";
++        reg = <0 0xee0a0200 0 0x700>;
++        clocks = <&cpg CPG_MOD 702>;
++        #phy-cells = <1>;
++    };
 -- 
+2.7.4
 
-Thanks,
-
-David / dhildenb
