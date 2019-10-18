@@ -2,120 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 327D8DC2E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EDACDC2F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:39:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439145AbfJRKim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:38:42 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43556 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408284AbfJRKiX (ORCPT
+        id S2442480AbfJRKje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:39:34 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38284 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439353AbfJRKjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:38:23 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4393A612F6; Fri, 18 Oct 2019 10:38:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571395102;
-        bh=DDzea6D+szQ9vq8iio9ZbHXTx9y94I7ALFnpAw8tZ/Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Yms85Xbu2q9tQbXVKsZUqDHJR6CzSTqesztydnB1bfmQEXszanTjxHPOSm+BwmBT8
-         JR9mtoSLxc4VwK+upe5/KWrt3tH0qhfEdev/iJQLnqnRffjlU4D2ql72FkI/av+iRt
-         CTP5btPKVKVCBhN107zfobsvCYpOSzjvk2V3J12k=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 01224612E2;
-        Fri, 18 Oct 2019 10:38:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571395099;
-        bh=DDzea6D+szQ9vq8iio9ZbHXTx9y94I7ALFnpAw8tZ/Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cF+N8Uwkb5NwlB/zkGAHv6ZvarrVhig1upqcadwyDtotmcpP9jl2eYWdHJ50+zChi
-         AhsA7dqi8S9Km3a0tAeZNjst7Qszf4i6CW3H0q13fiURPAkK267mG89KFAtRNpvhiH
-         WLjH3BvVBn4OQzVaDVPhv3VzJdq2XBioXEdEs7O4=
+        Fri, 18 Oct 2019 06:39:20 -0400
+Received: by mail-ed1-f66.google.com with SMTP id l21so4186437edr.5;
+        Fri, 18 Oct 2019 03:39:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TdGZ/O1UBefa0/Aw3vNnx5zYKetp+so1lp2xpas4umw=;
+        b=mEHKyOoTqwmR0aTE5OFLDghsTCB1Biaiy9UW26U9qCuaq2iKlynp+5R60NwG2zQoA+
+         eQ1yHJYUuhWt6BYmxywdlbb3UKjpI6eNc2EskkhrTvpzSzq8QgmVafMzyay88Cuzewkt
+         xWg6HLQqtUDtm1UD+ZxdHdTEJbrL8HuAbvCaT+9u4eiWMq7DDyYHt/CQzpUF6JeHDhru
+         oNFOoPhIKHkPPOokpuk8cTKvKlEvCzb7PvbFFKcgK0qZUpBWyB8LIoK2fKEzI5z2ptoN
+         8xRZ0AvKeQKyNA86QSGbipvZjS/4BwpaqwF0fZEUYo8/eVoaC5Uk6aomkkaquXT44XS7
+         wU/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TdGZ/O1UBefa0/Aw3vNnx5zYKetp+so1lp2xpas4umw=;
+        b=E5XtPnS5E1JSFNfHmT1QdFgsHiz708/8WcPprOYDUTFi0XvJn0mh7BITQXqkKw/VEH
+         JCk8eabTo7jktWdg8sOo+yjxuhV57YQzOlXX6wDlMoCdDzp/YjLowr7VXd59Sad+vfZp
+         UCLfHr4liBMcjPnrEX6pC9cZQjzZcRLfaAINNu60n+LkSwrYP+4x33WWhfILgNiuhYvt
+         fJPqExbLfM46vLdbW4+QP+BYQ6KvRGC70w3h2krpo9IcGay5WdX1STSp074G/H3x2GZW
+         J/elBVAsqCKC8ccQwnBYsE7/zlocNxe7vFBSB/odFTLZHVEd3RM0xm4OkZw3DG5/JadK
+         o0rg==
+X-Gm-Message-State: APjAAAWOojnQJWofqPaXOxGeplNW+QAzD1EOTymCqnroIHYvLyID8AzV
+        XNLP5a3SEKlViP0i0GghIv4O2657E3uqjaua7x4=
+X-Google-Smtp-Source: APXvYqxnhNJ1p2Qw24cDRg7N1pWEV2tiucdyj8NEuD+nENTq7YS/DvNr7sw2b18boMqr51gNammWqfUI3G6dIFr7HYc=
+X-Received: by 2002:a17:906:8313:: with SMTP id j19mr8131952ejx.196.1571395159085;
+ Fri, 18 Oct 2019 03:39:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 18 Oct 2019 16:08:18 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Maxime Ripard <mripard@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Alex Elder <elder@linaro.org>,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm remoteproc dependencies
-In-Reply-To: <20191009001442.15719-1-bjorn.andersson@linaro.org>
-References: <20191009001442.15719-1-bjorn.andersson@linaro.org>
-Message-ID: <95a80ff0e89a568d223fab6eb1f9362a@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20191017025058.31528-1-hslester96@gmail.com> <CAHp75Vd2SMERjtvNumxAF1HSp8GSThmcyx96zkFzUXKwnD5d2Q@mail.gmail.com>
+In-Reply-To: <CAHp75Vd2SMERjtvNumxAF1HSp8GSThmcyx96zkFzUXKwnD5d2Q@mail.gmail.com>
+From:   Chuhong Yuan <hslester96@gmail.com>
+Date:   Fri, 18 Oct 2019 18:39:08 +0800
+Message-ID: <CANhBUQ2yxGbjk_DgXbip=TPT=evzA5naoJSY9t1_Ep47e9oupw@mail.gmail.com>
+Subject: Re: [PATCH] spi: pxa2xx: Add missed security checks
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-09 05:44, Bjorn Andersson wrote:
-> Enable the the power domains, reset controllers and remote block device
-> memory access drivers necessary to boot the Audio, Compute and Modem
-> DSPs on Qualcomm SDM845.
-> 
-> None of the power domains are system critical, but needs to be builtin
-> as the driver core prohibits probe deferal past late initcall.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On Fri, Oct 18, 2019 at 5:35 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Fri, Oct 18, 2019 at 8:59 AM Chuhong Yuan <hslester96@gmail.com> wrote:
+> >
+> > pxa2xx_spi_init_pdata misses checks for devm_clk_get and
+> > platform_get_irq.
+> > Add checks for them to fix the bugs.
+> >
+> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> > ---
+> >  drivers/spi/spi-pxa2xx.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
+> > index bb6a14d1ab0f..2e73d75a6ac5 100644
+> > --- a/drivers/spi/spi-pxa2xx.c
+> > +++ b/drivers/spi/spi-pxa2xx.c
+> > @@ -1565,7 +1565,13 @@ pxa2xx_spi_init_pdata(struct platform_device *pdev)
+> >  #endif
+> >
+> >         ssp->clk = devm_clk_get(&pdev->dev, NULL);
+> > +       if (IS_ERR(ssp->clk))
+> > +               return NULL;
+> > +
+> >         ssp->irq = platform_get_irq(pdev, 0);
+> > +       if (ssp->irq < 0)
+> > +               return NULL;
+>
+> I'm not sure they are mandatory for all platforms.
+> To be on the safe side, you simple need to add _optional() to the both
+> call along with above change.
+>
 
-Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+As I know, this is the only one in spi which does not have a check for
+devm_clk_get.
+Even if add _optional(), they still may return errors and need security checks.
 
-> ---
->  arch/arm64/configs/defconfig | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig 
-> b/arch/arm64/configs/defconfig
-> index c9a867ac32d4..42f042ba1039 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -732,10 +732,13 @@ CONFIG_RPMSG_QCOM_GLINK_SMEM=m
->  CONFIG_RPMSG_QCOM_SMD=y
->  CONFIG_RASPBERRYPI_POWER=y
->  CONFIG_IMX_SCU_SOC=y
-> +CONFIG_QCOM_AOSS_QMP=y
->  CONFIG_QCOM_COMMAND_DB=y
->  CONFIG_QCOM_GENI_SE=y
->  CONFIG_QCOM_GLINK_SSR=m
-> +CONFIG_QCOM_RMTFS_MEM=m
->  CONFIG_QCOM_RPMH=y
-> +CONFIG_QCOM_RPMHPD=y
->  CONFIG_QCOM_SMEM=y
->  CONFIG_QCOM_SMD_RPM=y
->  CONFIG_QCOM_SMP2P=y
-> @@ -780,6 +783,8 @@ CONFIG_PWM_ROCKCHIP=y
->  CONFIG_PWM_SAMSUNG=y
->  CONFIG_PWM_SUN4I=m
->  CONFIG_PWM_TEGRA=m
-> +CONFIG_RESET_QCOM_AOSS=y
-
-I should probably fix this ^^
-
-> +CONFIG_RESET_QCOM_PDC=m
->  CONFIG_RESET_TI_SCI=y
->  CONFIG_PHY_XGENE=y
->  CONFIG_PHY_SUN4I_USB=y
-
--- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+> --
+> With Best Regards,
+> Andy Shevchenko
