@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55954DC483
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:15:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14050DC48D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:16:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439154AbfJRMPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:15:50 -0400
-Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:59906 "EHLO
+        id S2442695AbfJRMQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:16:00 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:59912 "EHLO
         smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2407755AbfJRMPu (ORCPT
+        by vger.kernel.org with ESMTP id S2408073AbfJRMPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Oct 2019 08:15:50 -0400
 Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 69EE7C0487;
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id E2CB6C0488;
         Fri, 18 Oct 2019 12:15:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1571400949; bh=LQws0XDePKuYxDhGl5Z9JpYBoC+dxlMjJSLjwbVEPoc=;
+        t=1571400950; bh=9bNHRLE5N78H1xT78BVFMS/DIn9uGRWP5TXcJX4sEgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZJYIWtjZM3i3blWVXR37AgPSWuKSJfla2JiZKddia8WqbTgS87QmuKBaAYihsxGPL
-         pZ2EFyqmzAwMyWixIf9UH4GiD0fmDuhXACfTkqLhGAslkQk8o/Eq7R8WvNiWu9ooup
-         UbLvxf/7tW/BaMtjByPypL30fC5g0MkbYb+7L3uZ83v+xmyb8l0Uz7ysPjmMyIP6+N
-         iIFsgM9fuI/0g3Vzo67ukEYK/iH711LFGzL8wBgupR6I7xKMFTHoDHhl7SZ24avhu7
-         V26e9XSnNzV8v0ZdTvZQWZbXX1PUwwqEkATLW1XgMffPV3xeBMFvZlbUO6MeEsAAfp
-         dgwKO/4OXXVww==
+        b=cWZ5LNFZzJRboEUikg+T6P0uEr5Rpao9ocdZua/0Zfebkhj9mpj5xS5Txk2mVHqjS
+         jI1nJIh9+5pa1pgSkPesrAsJGvB06qCy3YAoRyyR/x/7oxohA/22zfDGkPwb3fC4Ua
+         4l0MsctXKIKqkll97ZELw0acr7I9guJ4KJhe3CeuacxgVbDH05v1kSClbD7RXoExet
+         r0zX+/WAEdShsQfoyHsaaHGoWaUijwCwHqEoaYHwZN8jqNZYLAWwEJXDRSaVuUdYlv
+         ePCQs6z+5TXCBhf0lyLJcDi31E2BFGJcxATSubkBFTL1LGxbSY+uyPjbEXr3dXU4Ly
+         uyL1IDKbclidQ==
 Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.73])
-        by mailhost.synopsys.com (Postfix) with ESMTP id C9513A0061;
-        Fri, 18 Oct 2019 12:15:47 +0000 (UTC)
+        by mailhost.synopsys.com (Postfix) with ESMTP id 51016A0065;
+        Fri, 18 Oct 2019 12:15:48 +0000 (UTC)
 From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 To:     linux-snps-arc@lists.infradead.org,
         Vineet Gupta <Vineet.Gupta1@synopsys.com>
 Cc:     linux-kernel@vger.kernel.org,
         Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [RFC 1/6] ARC: regenerate nSIM and HAPS defconfigs
-Date:   Fri, 18 Oct 2019 15:15:40 +0300
-Message-Id: <20191018121545.8907-2-Eugeniy.Paltsev@synopsys.com>
+Subject: [RFC 2/6] ARC: HAPS: cleanup defconfigs from unused IO-related options
+Date:   Fri, 18 Oct 2019 15:15:41 +0300
+Message-Id: <20191018121545.8907-3-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191018121545.8907-1-Eugeniy.Paltsev@synopsys.com>
 References: <20191018121545.8907-1-Eugeniy.Paltsev@synopsys.com>
@@ -48,173 +48,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No functional change intended.
+We don't have any peripherals on HAPS which may require FB or
+input_devices support. So get rid of them.
 
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
- arch/arc/configs/haps_hs_defconfig     | 10 ++--------
- arch/arc/configs/haps_hs_smp_defconfig | 12 +++---------
- arch/arc/configs/nsim_hs_defconfig     |  8 ++------
- arch/arc/configs/nsim_hs_smp_defconfig | 10 +++-------
- 4 files changed, 10 insertions(+), 30 deletions(-)
+ arch/arc/configs/haps_hs_defconfig     | 9 +++------
+ arch/arc/configs/haps_hs_smp_defconfig | 9 +++------
+ 2 files changed, 6 insertions(+), 12 deletions(-)
 
 diff --git a/arch/arc/configs/haps_hs_defconfig b/arch/arc/configs/haps_hs_defconfig
-index 47ff8a97e42d..e22f40612089 100644
+index e22f40612089..33b7a402b6bd 100644
 --- a/arch/arc/configs/haps_hs_defconfig
 +++ b/arch/arc/configs/haps_hs_defconfig
-@@ -4,6 +4,7 @@ CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
- CONFIG_NO_HZ_IDLE=y
- CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_PREEMPT=y
- CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
- CONFIG_NAMESPACES=y
-@@ -15,13 +16,9 @@ CONFIG_EXPERT=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_COMPAT_BRK is not set
- CONFIG_SLAB=y
-+CONFIG_ARC_BUILTIN_DTB_NAME="haps_hs"
- CONFIG_MODULES=y
- # CONFIG_BLK_DEV_BSG is not set
--# CONFIG_IOSCHED_DEADLINE is not set
--# CONFIG_IOSCHED_CFQ is not set
--CONFIG_ISA_ARCV2=y
--CONFIG_ARC_BUILTIN_DTB_NAME="haps_hs"
--CONFIG_PREEMPT=y
- # CONFIG_COMPACTION is not set
- CONFIG_NET=y
- CONFIG_PACKET=y
-@@ -30,9 +27,6 @@ CONFIG_UNIX=y
- CONFIG_UNIX_DIAG=y
- CONFIG_NET_KEY=y
- CONFIG_INET=y
--# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
--# CONFIG_INET_XFRM_MODE_TUNNEL is not set
--# CONFIG_INET_XFRM_MODE_BEET is not set
- # CONFIG_IPV6 is not set
- # CONFIG_WIRELESS is not set
- CONFIG_DEVTMPFS=y
+@@ -48,9 +48,9 @@ CONFIG_VIRTIO_NET=y
+ # CONFIG_NET_VENDOR_WIZNET is not set
+ # CONFIG_WLAN is not set
+ CONFIG_INPUT_EVDEV=y
+-CONFIG_MOUSE_PS2_TOUCHKIT=y
+-# CONFIG_SERIO_SERPORT is not set
+-CONFIG_SERIO_ARC_PS2=y
++# CONFIG_INPUT_KEYBOARD is not set
++# CONFIG_INPUT_MOUSE is not set
++# CONFIG_SERIO is not set
+ # CONFIG_LEGACY_PTYS is not set
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_8250_CONSOLE=y
+@@ -60,9 +60,6 @@ CONFIG_SERIAL_8250_DW=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ # CONFIG_HW_RANDOM is not set
+ # CONFIG_HWMON is not set
+-CONFIG_FB=y
+-CONFIG_FRAMEBUFFER_CONSOLE=y
+-CONFIG_LOGO=y
+ # CONFIG_HID is not set
+ # CONFIG_USB_SUPPORT is not set
+ CONFIG_VIRTIO_MMIO=y
 diff --git a/arch/arc/configs/haps_hs_smp_defconfig b/arch/arc/configs/haps_hs_smp_defconfig
-index 9685fd5f57a4..ff4fcd7640a4 100644
+index ff4fcd7640a4..5586511a00bf 100644
 --- a/arch/arc/configs/haps_hs_smp_defconfig
 +++ b/arch/arc/configs/haps_hs_smp_defconfig
-@@ -4,6 +4,7 @@ CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
- CONFIG_NO_HZ_IDLE=y
- CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_PREEMPT=y
- CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
- CONFIG_NAMESPACES=y
-@@ -16,15 +17,11 @@ CONFIG_PERF_EVENTS=y
- # CONFIG_VM_EVENT_COUNTERS is not set
- # CONFIG_COMPAT_BRK is not set
- CONFIG_SLAB=y
-+CONFIG_SMP=y
-+CONFIG_ARC_BUILTIN_DTB_NAME="haps_hs_idu"
- CONFIG_KPROBES=y
- CONFIG_MODULES=y
- # CONFIG_BLK_DEV_BSG is not set
--# CONFIG_IOSCHED_DEADLINE is not set
--# CONFIG_IOSCHED_CFQ is not set
--CONFIG_ISA_ARCV2=y
--CONFIG_SMP=y
--CONFIG_ARC_BUILTIN_DTB_NAME="haps_hs_idu"
--CONFIG_PREEMPT=y
- # CONFIG_COMPACTION is not set
- CONFIG_NET=y
- CONFIG_PACKET=y
-@@ -33,9 +30,6 @@ CONFIG_UNIX=y
- CONFIG_UNIX_DIAG=y
- CONFIG_NET_KEY=y
- CONFIG_INET=y
--# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
--# CONFIG_INET_XFRM_MODE_TUNNEL is not set
--# CONFIG_INET_XFRM_MODE_BEET is not set
- # CONFIG_IPV6 is not set
- # CONFIG_WIRELESS is not set
- CONFIG_DEVTMPFS=y
-diff --git a/arch/arc/configs/nsim_hs_defconfig b/arch/arc/configs/nsim_hs_defconfig
-index bab3dd255841..60ad81769565 100644
---- a/arch/arc/configs/nsim_hs_defconfig
-+++ b/arch/arc/configs/nsim_hs_defconfig
-@@ -4,6 +4,7 @@ CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
- CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_PREEMPT=y
- CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
- CONFIG_NAMESPACES=y
-@@ -16,17 +17,13 @@ CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_SLUB_DEBUG is not set
- # CONFIG_COMPAT_BRK is not set
-+CONFIG_ARC_BUILTIN_DTB_NAME="nsim_hs"
- CONFIG_KPROBES=y
- CONFIG_MODULES=y
- CONFIG_MODULE_FORCE_LOAD=y
- CONFIG_MODULE_UNLOAD=y
- CONFIG_MODULE_FORCE_UNLOAD=y
- # CONFIG_BLK_DEV_BSG is not set
--# CONFIG_IOSCHED_DEADLINE is not set
--# CONFIG_IOSCHED_CFQ is not set
--CONFIG_ISA_ARCV2=y
--CONFIG_ARC_BUILTIN_DTB_NAME="nsim_hs"
--CONFIG_PREEMPT=y
- # CONFIG_COMPACTION is not set
- CONFIG_NET=y
- CONFIG_PACKET=y
-@@ -39,7 +36,6 @@ CONFIG_DEVTMPFS=y
- # CONFIG_STANDALONE is not set
- # CONFIG_PREVENT_FIRMWARE_BUILD is not set
- # CONFIG_BLK_DEV is not set
--# CONFIG_INPUT_MOUSEDEV_PSAUX is not set
- # CONFIG_INPUT_KEYBOARD is not set
- # CONFIG_INPUT_MOUSE is not set
- # CONFIG_SERIO is not set
-diff --git a/arch/arc/configs/nsim_hs_smp_defconfig b/arch/arc/configs/nsim_hs_smp_defconfig
-index 90d2d50fb8dc..c7a29adfc147 100644
---- a/arch/arc/configs/nsim_hs_smp_defconfig
-+++ b/arch/arc/configs/nsim_hs_smp_defconfig
-@@ -2,6 +2,7 @@
- # CONFIG_SWAP is not set
- # CONFIG_CROSS_MEMORY_ATTACH is not set
- CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_PREEMPT=y
- CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
- CONFIG_NAMESPACES=y
-@@ -14,18 +15,14 @@ CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_SLUB_DEBUG is not set
- # CONFIG_COMPAT_BRK is not set
-+CONFIG_SMP=y
-+CONFIG_ARC_BUILTIN_DTB_NAME="nsim_hs_idu"
- CONFIG_KPROBES=y
- CONFIG_MODULES=y
- CONFIG_MODULE_FORCE_LOAD=y
- CONFIG_MODULE_UNLOAD=y
- CONFIG_MODULE_FORCE_UNLOAD=y
- # CONFIG_BLK_DEV_BSG is not set
--# CONFIG_IOSCHED_DEADLINE is not set
--# CONFIG_IOSCHED_CFQ is not set
--CONFIG_ISA_ARCV2=y
--CONFIG_SMP=y
--CONFIG_ARC_BUILTIN_DTB_NAME="nsim_hs_idu"
--CONFIG_PREEMPT=y
- # CONFIG_COMPACTION is not set
- CONFIG_NET=y
- CONFIG_PACKET=y
-@@ -38,7 +35,6 @@ CONFIG_DEVTMPFS=y
- # CONFIG_STANDALONE is not set
- # CONFIG_PREVENT_FIRMWARE_BUILD is not set
- # CONFIG_BLK_DEV is not set
--# CONFIG_INPUT_MOUSEDEV_PSAUX is not set
- # CONFIG_INPUT_KEYBOARD is not set
- # CONFIG_INPUT_MOUSE is not set
- # CONFIG_SERIO is not set
+@@ -49,9 +49,9 @@ CONFIG_NETDEVICES=y
+ # CONFIG_NET_VENDOR_WIZNET is not set
+ # CONFIG_WLAN is not set
+ CONFIG_INPUT_EVDEV=y
+-CONFIG_MOUSE_PS2_TOUCHKIT=y
+-# CONFIG_SERIO_SERPORT is not set
+-CONFIG_SERIO_ARC_PS2=y
++# CONFIG_INPUT_KEYBOARD is not set
++# CONFIG_INPUT_MOUSE is not set
++# CONFIG_SERIO is not set
+ # CONFIG_LEGACY_PTYS is not set
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_8250_CONSOLE=y
+@@ -61,9 +61,6 @@ CONFIG_SERIAL_8250_DW=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ # CONFIG_HW_RANDOM is not set
+ # CONFIG_HWMON is not set
+-CONFIG_FB=y
+-CONFIG_FRAMEBUFFER_CONSOLE=y
+-CONFIG_LOGO=y
+ # CONFIG_HID is not set
+ # CONFIG_USB_SUPPORT is not set
+ # CONFIG_IOMMU_SUPPORT is not set
 -- 
 2.21.0
 
