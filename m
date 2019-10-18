@@ -2,136 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 655CEDBEE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44CC4DBF04
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:54:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504929AbfJRHwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 03:52:33 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38410 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504820AbfJRHwb (ORCPT
+        id S2393105AbfJRHxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 03:53:35 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33988 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389483AbfJRHxe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 03:52:31 -0400
-Received: by mail-pf1-f196.google.com with SMTP id h195so3355368pfe.5
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 00:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0pJmJ81GxYw9u8IJm7SVtdF3GPmYHg5dQZCWkgXLGIU=;
-        b=Q8OAMr9nHevdo+0lJFuF2HiKvfAJZVyax2lvF7NnqCvyVkjY04OtE6FlMWTxNcuFLZ
-         wXFbUyzsXn27m08iQG1ffRg5P3+maP3h4obxTtV0KhYvEUSvZdQ/q6OxNM6hq2xia6Bb
-         R2iG2WEu5PgxfTj/30FnaoQsi5i1nQI6hBKMimBkGwg5J0CRxtKfEHmFZxU2wHU5LLtN
-         585ci5FLUSTq9ZZEckAjKw1bFLqI2iUlI6DnuFFp5UfRX0J4QamJTYZtFdDl1EWPHxb0
-         xF5Cdqogg9gth5WjfqUsm37pwyeBz37o4z6SU7to4eh+hp4NK5C7PrfaE2+bVvoIxuuH
-         PxUg==
+        Fri, 18 Oct 2019 03:53:34 -0400
+Received: by mail-oi1-f196.google.com with SMTP id 83so4487826oii.1;
+        Fri, 18 Oct 2019 00:53:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0pJmJ81GxYw9u8IJm7SVtdF3GPmYHg5dQZCWkgXLGIU=;
-        b=k8U2pyYzpAG4XQ7Nd5YqwVWmS2q5bWPFWBgidd/b3SQdWBWa3+uo7Nn28lvFi4cD7H
-         bVvPkj9YswjHyUlsVGRXIgcjD+DN5EbCfhsW7tTfwKPPlSwKw04aD4uUeAT5MuzkfAX8
-         QkypPrPbGUGKmQteJG6MX+5XlSaKlbrA7DBRznPbjS0TjoGZV1h4S/zLbsXDPrLlxQ0j
-         ecTYkDcyAdkAL34iXiPysHE11b+O4SEUHOD3RYW2JojGp0ZedQuJWIBQD7h9vkqqaMXf
-         0ISkqfQQaNsMKUqkZei+4TG+9/5WrQL+M1ug/HhUXqerjxLDB1Us62c6imbTIz1sS3jG
-         htag==
-X-Gm-Message-State: APjAAAX5Vedxh3j8cAmJiSCZ6vTNEuu/jrcYsopygZtVxv4K+WTJbe6L
-        LRj7400aMU6eJ2apQb5fK+xR8EA/Z+vssTOFRE8=
-X-Google-Smtp-Source: APXvYqx/jvH8yxn34bDc/vIukWC/QMLPnsascOkXaCYKgaMMWM+qJLzkwl4J/dOag4my3exXSRVo0yyXMbmi5N2Vdso=
-X-Received: by 2002:a62:e206:: with SMTP id a6mr5108202pfi.64.1571385150303;
- Fri, 18 Oct 2019 00:52:30 -0700 (PDT)
+        bh=FGwGKswYlm8qaeis0iFsbVhgq2LVEVHU2LaBuG3PciM=;
+        b=JsZNJh6vTCjw3zMeEHoU+HmixoCOencWP1LRftDwpjltuTTfB2Cj/+B0Vte/WdnaYy
+         V513eEm7+/QJX2DWGu0wK+Zzjxzwb5nJULtRc0LBtxN//Ve23u8wxqCsXLQaZXT/5SL6
+         +jqyesZB7Ye8UjlACZbpcrJ48ax6aDAswlSCtaqzJP875MPvNbRH6CwdiJe8atc9QQLS
+         SM1YPtZU/iSZANfUB7fDoFmXdv0uU2UIRjKzftfmVdPOJkCu31ER4Y+VxedjgpLsc8AR
+         MDShdlURhupscRvastRrgBY7wRgilhMk7iXKwTGVQY19rHEUZL18TJ8Kck6lmZBn2hGp
+         vkMg==
+X-Gm-Message-State: APjAAAVsYzXUfIoeY2LxFBgPyg5gHNma6EI8NeAVceObAd2CAutuFGAH
+        IyEuzGkTX0c0od21SUOMIvAkP9WiELnTK4eVpVQ=
+X-Google-Smtp-Source: APXvYqxUo39R22IVM2V43Dq/N/66E03d1vqWWeDpxTi6q71S7C/QviIVZAi9rhlCbAdM1SF/aj03YJgVhwxln/mK+R8=
+X-Received: by 2002:a05:6808:917:: with SMTP id w23mr6558466oih.68.1571385213609;
+ Fri, 18 Oct 2019 00:53:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
- <20191018031850.48498-1-wangkefeng.wang@huawei.com> <20191018031850.48498-20-wangkefeng.wang@huawei.com>
-In-Reply-To: <20191018031850.48498-20-wangkefeng.wang@huawei.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 18 Oct 2019 10:52:19 +0300
-Message-ID: <CAHp75VdL8+_nd1-H=q92qxscSYc8ovMRxrC0w19=Fw320y+oSw@mail.gmail.com>
-Subject: Re: [PATCH v2 20/33] platform/x86: intel_oaktrail: Use pr_warn
- instead of pr_warning
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+References: <20191017163503.30791-1-sudeep.holla@arm.com> <20191018053844.s2fbk2le6uz3chk6@vireshk-i7>
+In-Reply-To: <20191018053844.s2fbk2le6uz3chk6@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 18 Oct 2019 09:53:22 +0200
+Message-ID: <CAJZ5v0hhFtKddeoSQwM6XGeeztgfcatG_cry5-bKEO=8EzGR1g@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: flush any pending policy update work scheduled
+ before freeing
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 6:19 AM Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
+On Fri, Oct 18, 2019 at 7:38 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
 >
-> As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
-> pr_warning"), removing pr_warning so all logging messages use a
-> consistent <prefix>_warn style. Let's do it.
+> On 17-10-19, 17:35, Sudeep Holla wrote:
+> > dev_pm_qos_remove_request ends calling {max,min}_freq_req QoS notifiers
+> > which schedule policy update work.
+>
+> I don't think that's correct. We remove the notifiers first and then
+> only remove the requests. Though it is possible due to the other bug
+> we are discussing where the notifier doesn't really get removed from
+> the right CPU, but even that patch didn't fix your issue.
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Right, that async update comes from somewhere else.
 
-> Cc: Corentin Chary <corentin.chary@gmail.com>
-> Cc: Darren Hart <dvhart@infradead.org>
-> Cc: Andy Shevchenko <andy@infradead.org>
-> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> ---
->  drivers/platform/x86/intel_oaktrail.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+> Looks like we are still missing something ?
 >
-> diff --git a/drivers/platform/x86/intel_oaktrail.c b/drivers/platform/x86/intel_oaktrail.c
-> index 3c0438ba385e..1a09a75bd16d 100644
-> --- a/drivers/platform/x86/intel_oaktrail.c
-> +++ b/drivers/platform/x86/intel_oaktrail.c
-> @@ -243,7 +243,7 @@ static int oaktrail_backlight_init(void)
+> > It may end up racing with the freeing
+> > the policy and unregistering the driver.
+> >
+> > One possible race is as below where the cpufreq_driver is unregistered
+> > but the scheduled work gets executed at later stage when cpufreq_driver
+> > is NULL(i.e. after freeing the policy and driver)
+> >
+> > Unable to handle kernel NULL pointer dereference at virtual address 0000001c
+> > pgd = (ptrval)
+> > [0000001c] *pgd=80000080204003, *pmd=00000000
+> > Internal error: Oops: 206 [#1] SMP THUMB2
+> > Modules linked in:
+> > CPU: 0 PID: 34 Comm: kworker/0:1 Not tainted 5.4.0-rc3-00006-g67f5a8081a4b #86
+> > Hardware name: ARM-Versatile Express
+> > Workqueue: events handle_update
+> > PC is at cpufreq_set_policy+0x58/0x228
+> > LR is at dev_pm_qos_read_value+0x77/0xac
+> > Control: 70c5387d  Table: 80203000  DAC: fffffffd
+> > Process kworker/0:1 (pid: 34, stack limit = 0x(ptrval))
+> >       (cpufreq_set_policy) from (refresh_frequency_limits.part.24+0x37/0x48)
+> >       (refresh_frequency_limits.part.24) from (handle_update+0x2f/0x38)
+> >       (handle_update) from (process_one_work+0x16d/0x3cc)
+> >       (process_one_work) from (worker_thread+0xff/0x414)
+> >       (worker_thread) from (kthread+0xff/0x100)
+> >       (kthread) from (ret_from_fork+0x11/0x28)
+> >
+> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > ---
+> >  drivers/cpufreq/cpufreq.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > Hi Rafael, Viresh,
+> >
+> > This fixed the boot issue I reported[1] on TC2 with bL switcher enabled.
+> > I have based this patch on -rc3 and not on top of your patches. This
+> > only fixes the boot issue but I hit the other crashes while continuously
+> > switching on and off the bL switcher that register/unregister the driver
+> > Your patch series fixes them. I can based this on top of those if you
+> > prefer.
+> >
+> > Regards,
+> > Sudeep
+> >
+> > [1] https://lore.kernel.org/linux-pm/20191015155735.GA29105@bogus/
+> >
+> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > index c52d6fa32aac..b703c29a84be 100644
+> > --- a/drivers/cpufreq/cpufreq.c
+> > +++ b/drivers/cpufreq/cpufreq.c
+> > @@ -1278,6 +1278,9 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
+> >       }
+> >
+> >       dev_pm_qos_remove_request(policy->min_freq_req);
+> > +     /* flush the pending policy->update work before freeing the policy */
+> > +     if (work_pending(&policy->update))
+> > +             flush_work(&policy->update);
 >
->         if (IS_ERR(bd)) {
->                 oaktrail_bl_device = NULL;
-> -               pr_warning("Unable to register backlight device\n");
-> +               pr_warn("Unable to register backlight device\n");
->                 return PTR_ERR(bd);
->         }
+> This diff surely makes sense even without the QoS stuff, this race can
+> still happen, very unlikely though.
 >
-> @@ -313,20 +313,20 @@ static int __init oaktrail_init(void)
+> And yes, you must use the other variant that Rafael suggested, we are
+> already doing similar thing in a bunch of cpufreq governors :)
 >
->         ret = platform_driver_register(&oaktrail_driver);
->         if (ret) {
-> -               pr_warning("Unable to register platform driver\n");
-> +               pr_warn("Unable to register platform driver\n");
->                 goto err_driver_reg;
->         }
->
->         oaktrail_device = platform_device_alloc(DRIVER_NAME, -1);
->         if (!oaktrail_device) {
-> -               pr_warning("Unable to allocate platform device\n");
-> +               pr_warn("Unable to allocate platform device\n");
->                 ret = -ENOMEM;
->                 goto err_device_alloc;
->         }
->
->         ret = platform_device_add(oaktrail_device);
->         if (ret) {
-> -               pr_warning("Unable to add platform device\n");
-> +               pr_warn("Unable to add platform device\n");
->                 goto err_device_add;
->         }
->
-> @@ -338,7 +338,7 @@ static int __init oaktrail_init(void)
->
->         ret = oaktrail_rfkill_init();
->         if (ret) {
-> -               pr_warning("Setup rfkill failed\n");
-> +               pr_warn("Setup rfkill failed\n");
->                 goto err_rfkill;
->         }
->
-> --
-> 2.20.1
->
+> And I will probably add this after calling
+> dev_pm_qos_remove_notifier() for the MAX policy as this doesn't and
+> shouldn't depend on removing the qos request.
 
+Good point.
 
--- 
-With Best Regards,
-Andy Shevchenko
+This is after taking the last CPU in the policy offline, so
+policy->update cannot be scheduled from anywhere at this point.
+
+> >       kfree(policy->min_freq_req);
+> >
+> >       cpufreq_policy_put_kobj(policy);
+> > --
