@@ -2,120 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED236DD0BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 22:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF5E6DD0B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 22:56:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2506112AbfJRU4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 16:56:55 -0400
-Received: from mail-wm1-f74.google.com ([209.85.128.74]:38505 "EHLO
-        mail-wm1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388245AbfJRU4x (ORCPT
+        id S2439665AbfJRU4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 16:56:41 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38509 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388245AbfJRU4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 16:56:53 -0400
-Received: by mail-wm1-f74.google.com with SMTP id n3so3297635wmf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 13:56:51 -0700 (PDT)
+        Fri, 18 Oct 2019 16:56:41 -0400
+Received: by mail-pl1-f196.google.com with SMTP id w8so3416099plq.5;
+        Fri, 18 Oct 2019 13:56:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=2yGsXMIwSm/Oms9K6hm98bhT5jbYAusnTPbiHrrYad0=;
-        b=ib8rONFiSdw0BDSG+fxUDZtXMMwPngNeUEA6AjlPYGXaxYKaIGNXfGuedTpaJhacz3
-         gWcNXXKa7OPTQXI0awBSIQLQc2NnAlHK3JYKKA1ClYrxoNCNyrmKk6CfE2ZGKCGUWQYg
-         x3DQ8eg/T78rQFgfpTotHKHcF+p3HTsr7LwQEfk/a9hmFpyPgSrn4G5HQa8ks8I64jXy
-         HEl7wNLMJRNSNi3tN/jIklfJzsAEm1bkWGLbGuKP/qS63rAhQSJr/NKULm1MnFcUHEIu
-         SorZARfImxD2SAWZcXHZfp4F76N/wiZdxPenIfXHj4Sqs9iZy4j8D9flN7sigoLW05PH
-         6zXA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1Bh90+9APPDZOx6f6esXItoQjc1PkixlnP0eFA/mCVI=;
+        b=W+dMBzk49oCPLVcN0Df1VUZxAhD15QLK/ZabCx9yBy1+FPb3JP84hKqdtYXVPSRrWt
+         pdj3RUEtS3Gb4CtqXSJ8YEg37O5BrmWvR3BvcbiUIXWS0qnOqikoFddBjPKkjzps7y33
+         YlT3chJfwVjXFs6aQnvGcT2oOLjhbxIm/BF3m5ZQCYUuF8Q+jIg0GLu0kAht7LkSykc+
+         lP1MKdJiNbiqp15eC89qh1P7s5MVV86Vhq3agr+bkvt8nzhr21D6P8EHNbXS8lZKc/QF
+         ZmgK9/ofNp1XU/E5HBaSS3kzxCwP0jEb32iMXKoFVQo7GccV5vLcyB8AfUoCZ91JJ2+N
+         2tpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=2yGsXMIwSm/Oms9K6hm98bhT5jbYAusnTPbiHrrYad0=;
-        b=aYc0CaYdyqqZnVLI2USMjWHAEv+qAKy/ba3siPDUPHwapIXC9WwPoBIWsdHbFJLoPe
-         vewi85bHjD7Nb9nvZuEbCY7q3WTZbkSuElLdWFmuMHydqinDEsMV/M0f692SN9TEHgMG
-         dRB0XQj/GoejKJCeWb45BxCVfqRcTJSpvn1H8ajJRSYe9QNKmkmmcnvnrqGPjc1BbVoU
-         egLEASVQwMnv0r3c8vcCJDwuE0IoxnRvTV5kyV+5go2aKXlr5N8XWG5yGwsRzcOXjilY
-         ECftFRNB0JNVuVB/d15GDtU1vpB8vwjzlzkxOEo/3RHIDP33wsQdsc6q4oDAVDYgOGlR
-         7gmw==
-X-Gm-Message-State: APjAAAViudug+lY3yIfLz3OiY0LAfkApvosrpC+hl6+h9UGLuKM2j5qS
-        ZeMtz+3MVQEvJ4x4tBwTDZFvKBsItg==
-X-Google-Smtp-Source: APXvYqwm/CSefU1WSdV1bcQP44CWNwDtbRYPxtlsoSCbHb/sBn682/brX+Qi6nmw4KJj+tq8Ei8AzOxerQ==
-X-Received: by 2002:adf:e38a:: with SMTP id e10mr9805449wrm.348.1571432210347;
- Fri, 18 Oct 2019 13:56:50 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 22:56:31 +0200
-In-Reply-To: <20191018205631.248274-1-jannh@google.com>
-Message-Id: <20191018205631.248274-3-jannh@google.com>
-Mime-Version: 1.0
-References: <20191018205631.248274-1-jannh@google.com>
-X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
-Subject: [PATCH 3/3] binder: Handle start==NULL in binder_update_page_range()
-From:   Jann Horn <jannh@google.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>, jannh@google.com
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1Bh90+9APPDZOx6f6esXItoQjc1PkixlnP0eFA/mCVI=;
+        b=gI2NYwTr1CiHGzEeciTBlQjsPdASEbT8Ss9xOsYaHCOiFGLan3A3DoP4eus4xBVUvH
+         1fBcFlGIWYIaZgERjBMFss9VpBwsjMCwNFB0VFwRABywEFC6Fo98tGiXZfFJdzSCnkwg
+         N7GL+tWaZ7zBy/72VPw8fptmxypzvi3/YgpDgBXNRUSlLGBZ3ADdAsY6ogDeSO5yaIUx
+         CHuJtHfx+7G93Z/QSwvTa9kf9PABVmgyRNxAwCPnhm9tlFRs0fog3BecTM+azShbHnyO
+         ePs8LKVOkuySsfDfzQYc25aJz9wESBsRjEAQXJW6mi+lphN8MwybsQB6Cf1GlVAZq6Ki
+         S1nw==
+X-Gm-Message-State: APjAAAXGI6bzXxket1x9jYJJz5STrAMGr2Wawfj87nI+XUaDoHZBqwJB
+        VNEv4WsRMNGkFuCWVPKNC54=
+X-Google-Smtp-Source: APXvYqyZ16Yr+AO5Q5vWtUkZnIl11OBN3oIFY905K5S4POMVBw8yw+OOwSQTYvbT7scAoyBK9HLWXw==
+X-Received: by 2002:a17:902:8b83:: with SMTP id ay3mr11787876plb.269.1571432199889;
+        Fri, 18 Oct 2019 13:56:39 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id s97sm9325439pjc.4.2019.10.18.13.56.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2019 13:56:39 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 13:56:37 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Jakub Ladman <ladmanj@volny.cz>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH][RESEND] New driver for TLV493D-A1B6 I2C chip, input and
+ hwmon class device.
+Message-ID: <20191018205637.GS35946@dtor-ws>
+References: <966f09b8-0936-6d90-2ec8-bcb1b94c81aa@volny.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <966f09b8-0936-6d90-2ec8-bcb1b94c81aa@volny.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The old loop wouldn't stop when reaching `start` if `start==NULL`, instead
-continuing backwards to index -1 and crashing.
+Hi Jakub,
 
-Luckily you need to be highly privileged to map things at NULL, so it's not
-a big problem.
+On Fri, Oct 18, 2019 at 10:10:19PM +0200, Jakub Ladman wrote:
+> Dear maintainers.
+> 
+> As a linux-patch newbie i made some mistakes in my first attempt to send
+> this patch.
+> This patch contains a new driver for i2c connected chip, Infineon
+> TLV493D-A1B6.
+> The chip is 3D hall-effect sensor with thermometer.
+> 
+> This particular driver senses magnetic field rotation in X/Y plane with 1
+> degree resolution and +/- 1 degree error.
+> 
+> Input device is created for the angle sensing part.
+> Hwmon device is created for the thermometer part.
+> 
+> Input device axis must be configured by device-tree. There are also optional
+> parameters regarding absolute/relative mode switching, minimum step in
+> relative mode, filtering and thermometer calibration.
+> 
+> We are using that device as high reliability rotary encoder.
 
-Fix it by adjusting the loop so that the loop variable is always in bounds.
+I wonder if IIO subsystem that support s magnetometers and temperature
+sensors would not be a better hone for this.
 
-This patch is deliberately minimal to simplify backporting, but IMO this
-function could use a refactor. The jump labels in the second loop body are
-horrible (the error gotos should be jumping to free_range instead), and
-both loops would look nicer if they just iterated upwards through indices.
-And the up_read()+mmput() shouldn't be duplicated like that.
+CC-ing Jonathan.
 
-Cc: stable@vger.kernel.org
-Fixes: 457b9a6f09f0 ("Staging: android: add binder driver")
-Signed-off-by: Jann Horn <jannh@google.com>
----
- drivers/android/binder_alloc.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Also, your mailer mangled your patch pretty badly, please consider using
+git send-email next time.
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 539385634151..7067d5542a82 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -277,8 +277,7 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
- 	return 0;
- 
- free_range:
--	for (page_addr = end - PAGE_SIZE; page_addr >= start;
--	     page_addr -= PAGE_SIZE) {
-+	for (page_addr = end - PAGE_SIZE; 1; page_addr -= PAGE_SIZE) {
- 		bool ret;
- 		size_t index;
- 
-@@ -291,6 +290,8 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
- 		WARN_ON(!ret);
- 
- 		trace_binder_free_lru_end(alloc, index);
-+		if (page_addr == start)
-+			break;
- 		continue;
- 
- err_vm_insert_page_failed:
-@@ -298,7 +299,8 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
- 		page->page_ptr = NULL;
- err_alloc_page_failed:
- err_page_ptr_cleared:
--		;
-+		if (page_addr == start)
-+			break;
- 	}
- err_no_vma:
- 	if (mm) {
+Thanks.
+
 -- 
-2.23.0.866.gb869b98d4c-goog
-
+Dmitry
