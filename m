@@ -2,48 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D83BDCD5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:07:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAE91DCD78
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:08:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505778AbfJRSHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 14:07:30 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45486 "EHLO
+        id S2505818AbfJRSIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 14:08:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45252 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2634467AbfJRSHW (ORCPT
+        with ESMTP id S2505748AbfJRSHP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 14:07:22 -0400
+        Fri, 18 Oct 2019 14:07:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=djFLKeCvPYC1JI92wnKGfQBYAzanIKZZLgVKtsjqlsM=; b=hjAvJWo86YgT
-        YloZHOX/P9PXV5w7GM4QznPW9FfFp8TN4tma8sqPWc6YUDmdTEBIXkqAvpFAeJbYV4KdFWyd8lI5z
-        NfE+vYFsMl/6cqI6GQRHR36pqObYoO3MxIhgvJ0/9gwdo2nmOIIKBpbKp52QAKO3GF/BrEPiPnNND
-        8u55M=;
+        List-Archive; bh=IjM9rnCciu37JcXYzH1B1qjM5RpdtJn2Wft3KUK1jtg=; b=EFjwdPRvTLSf
+        Py+AirepyhxYi4o3ssxIZZCC/VGIIaIAmq1xuoUV2AkxWt9YKgVnUEg15pd8YnvyBZsuzU5edw7Zu
+        +KOvhJTIuCKV//WvqDGK26GbAjLEUkDAhLLpr8jgJfMa/h1EgAS8+qG5kOry/BjtEWDvVVP/pgl4A
+        fkeIw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iLWea-0004Gu-25; Fri, 18 Oct 2019 18:07:08 +0000
+        id 1iLWea-0004Gw-7M; Fri, 18 Oct 2019 18:07:08 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 8A5912741DEA; Fri, 18 Oct 2019 19:07:07 +0100 (BST)
+        id BB5532743259; Fri, 18 Oct 2019 19:07:07 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Mans Rullgard <mans@mansr.com>
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>
 Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-spi@vger.kernel.org,
         Ludovic Desroches <ludovic.desroches@microchip.com>,
         Mark Brown <broonie@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@atmel.com>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Applied "spi: atmel: fix handling of cs_change set on non-last xfer" to the spi tree
-In-Reply-To: <20191018153504.4249-1-gregory.clement@bootlin.com>
+Subject: Applied "spi: atmel: Improve CS0 case support on AT91RM9200" to the spi tree
+In-Reply-To: <20191017141846.7523-8-gregory.clement@bootlin.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191018180707.8A5912741DEA@ypsilon.sirena.org.uk>
+Message-Id: <20191018180707.BB5532743259@ypsilon.sirena.org.uk>
 Date:   Fri, 18 Oct 2019 19:07:07 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,11 +50,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: atmel: fix handling of cs_change set on non-last xfer
+   spi: atmel: Improve CS0 case support on AT91RM9200
 
 has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -77,65 +75,63 @@ to this mail.
 Thanks,
 Mark
 
-From fed8d8c7a6dc2a76d7764842853d81c770b0788e Mon Sep 17 00:00:00 2001
-From: Mans Rullgard <mans@mansr.com>
-Date: Fri, 18 Oct 2019 17:35:04 +0200
-Subject: [PATCH] spi: atmel: fix handling of cs_change set on non-last xfer
+From 9c86f12a36479dec06df3e4a4f31cecf8eba0222 Mon Sep 17 00:00:00 2001
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Date: Thu, 17 Oct 2019 16:18:46 +0200
+Subject: [PATCH] spi: atmel: Improve CS0 case support on AT91RM9200
 
-The driver does the wrong thing when cs_change is set on a non-last
-xfer in a message.  When cs_change is set, the driver deactivates the
-CS and leaves it off until a later xfer again has cs_change set whereas
-it should be briefly toggling CS off and on again.
+Thanks to the recent change in this driver, it is now possible to
+prevent using the CS0 with GPIO during setup. It then allows to remove
+the special handling of this case in the cs_activate() and
+cs_deactivate() functions.
 
-This patch brings the behaviour of the driver back in line with the
-documentation and common sense.  The delay of 10 us is the same as is
-used by the default spi_transfer_one_message() function in spi.c.
-[gregory: rebased on for-5.5 from spi tree]
-Fixes: 8090d6d1a415 ("spi: atmel: Refactor spi-atmel to use SPI framework queue")
-Signed-off-by: Mans Rullgard <mans@mansr.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Link: https://lore.kernel.org/r/20191018153504.4249-1-gregory.clement@bootlin.com
+Link: https://lore.kernel.org/r/20191017141846.7523-8-gregory.clement@bootlin.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-atmel.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/spi/spi-atmel.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
-index acf318e7330c..2f8c79ce05c8 100644
+index ac5e2ddf9e1b..d88e2aa64839 100644
 --- a/drivers/spi/spi-atmel.c
 +++ b/drivers/spi/spi-atmel.c
-@@ -302,7 +302,6 @@ struct atmel_spi {
- 	bool			use_cs_gpios;
+@@ -371,7 +371,7 @@ static void cs_activate(struct atmel_spi *as, struct spi_device *spi)
  
- 	bool			keep_cs;
--	bool			cs_active;
- 
- 	u32			fifo_size;
- };
-@@ -1376,11 +1375,9 @@ static int atmel_spi_one_transfer(struct spi_master *master,
- 				 &msg->transfers)) {
- 			as->keep_cs = true;
- 		} else {
--			as->cs_active = !as->cs_active;
--			if (as->cs_active)
--				cs_activate(as, msg->spi);
--			else
--				cs_deactivate(as, msg->spi);
-+			cs_deactivate(as, msg->spi);
-+			udelay(10);
-+			cs_activate(as, msg->spi);
- 		}
+ 		mr = spi_readl(as, MR);
+ 		mr = SPI_BFINS(PCS, ~(1 << chip_select), mr);
+-		if (spi->cs_gpiod && spi->chip_select != 0)
++		if (spi->cs_gpiod)
+ 			gpiod_set_value(spi->cs_gpiod, 1);
+ 		spi_writel(as, MR, mr);
  	}
+@@ -402,7 +402,7 @@ static void cs_deactivate(struct atmel_spi *as, struct spi_device *spi)
  
-@@ -1403,7 +1400,6 @@ static int atmel_spi_transfer_one_message(struct spi_master *master,
- 	atmel_spi_lock(as);
- 	cs_activate(as, spi);
+ 	if (!spi->cs_gpiod)
+ 		spi_writel(as, CR, SPI_BIT(LASTXFER));
+-	else if (atmel_spi_is_v2(as) || spi->chip_select != 0)
++	else
+ 		gpiod_set_value(spi->cs_gpiod, 0);
+ }
  
--	as->cs_active = true;
- 	as->keep_cs = false;
+@@ -1193,7 +1193,16 @@ static void initialize_native_cs_for_gpio(struct atmel_spi *as)
+ 	if (!master->cs_gpiods)
+ 		return; /* No CS GPIO */
  
- 	msg->status = 0;
+-	for (i = 0; i < 4; i++)
++	/*
++	 * On the first version of the controller (AT91RM9200), CS0
++	 * can't be used associated with GPIO
++	 */
++	if (atmel_spi_is_v2(as))
++		i = 0;
++	else
++		i = 1;
++
++	for (; i < 4; i++)
+ 		if (master->cs_gpiods[i])
+ 			as->native_cs_free |= BIT(i);
+ 
 -- 
 2.20.1
 
