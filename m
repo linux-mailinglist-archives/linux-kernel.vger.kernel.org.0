@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4E4DDD35B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:17:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19A1FDD357
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:17:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393414AbfJRWRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:17:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40092 "EHLO mail.kernel.org"
+        id S2393364AbfJRWRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:17:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733187AbfJRWHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:07:44 -0400
+        id S1733212AbfJRWHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:07:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B6012245B;
-        Fri, 18 Oct 2019 22:07:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC8F422459;
+        Fri, 18 Oct 2019 22:07:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436464;
-        bh=IEy/Uf64WWx5r28Ky/7zeFyYJNzL1e4yhFukKOfLYi8=;
+        s=default; t=1571436466;
+        bh=OxJUN0GrULCx4YrxlFaDCHBM54iQLptJdAzFRmA69q8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oe/JhJruu/XhSoVz4MCVMQBQUWrwy5FHjgSBmBO/8OEtQi4kQVDsOn1IAtvocdGXd
-         Lak4E1ixywb/3CaXJlJteUJGWYNf0dhXeXsRYicqsLcqZTk4gee2fMesfHp2zhojpV
-         1FTvG1cZKFU/dxWc7ueaHTy3fUbYwAA9j1SD2dUs=
+        b=W1O7+QvaHKb4knug6yzYqR/WtF+fzaFajLaFG+xdrdo/IbU/ofFY04maW3S9YxMA7
+         jN6sOaSgWs2qvo12GinJ5hHo+J19FVPdv756MX9jfVwF5BFMoMdD6xgnU5vazdd7Pr
+         xHGm4I0Erl1Z3YGstxGS4Y2FKU8J5ALEIFhefSsA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>, linux-mips@linux-mips.org
-Subject: [PATCH AUTOSEL 4.19 094/100] MIPS: fw: sni: Fix out of bounds init of o32 stack
-Date:   Fri, 18 Oct 2019 18:05:19 -0400
-Message-Id: <20191018220525.9042-94-sashal@kernel.org>
+Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 096/100] virt: vbox: fix memory leak in hgcm_call_preprocess_linaddr
+Date:   Fri, 18 Oct 2019 18:05:21 -0400
+Message-Id: <20191018220525.9042-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
 References: <20191018220525.9042-1-sashal@kernel.org>
@@ -45,36 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit efcb529694c3b707dc0471b312944337ba16e4dd ]
+[ Upstream commit e0b0cb9388642c104838fac100a4af32745621e2 ]
 
-Use ARRAY_SIZE to caluculate the top of the o32 stack.
+In hgcm_call_preprocess_linaddr memory is allocated for bounce_buf but
+is not released if copy_form_user fails. In order to prevent memory leak
+in case of failure, the assignment to bounce_buf_ret is moved before the
+error check. This way the allocated bounce_buf will be released by the
+caller.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Fixes: 579db9d45cb4 ("virt: Add vboxguest VMMDEV communication code")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://lore.kernel.org/r/20190930204223.3660-1-navid.emamdoost@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/fw/sni/sniprom.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/virt/vboxguest/vboxguest_utils.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/fw/sni/sniprom.c b/arch/mips/fw/sni/sniprom.c
-index 8772617b64cef..80112f2298b68 100644
---- a/arch/mips/fw/sni/sniprom.c
-+++ b/arch/mips/fw/sni/sniprom.c
-@@ -43,7 +43,7 @@
+diff --git a/drivers/virt/vboxguest/vboxguest_utils.c b/drivers/virt/vboxguest/vboxguest_utils.c
+index bf4474214b4d3..92091006589a9 100644
+--- a/drivers/virt/vboxguest/vboxguest_utils.c
++++ b/drivers/virt/vboxguest/vboxguest_utils.c
+@@ -217,6 +217,8 @@ static int hgcm_call_preprocess_linaddr(
+ 	if (!bounce_buf)
+ 		return -ENOMEM;
  
- /* O32 stack has to be 8-byte aligned. */
- static u64 o32_stk[4096];
--#define O32_STK	  &o32_stk[sizeof(o32_stk)]
-+#define O32_STK	  (&o32_stk[ARRAY_SIZE(o32_stk)])
++	*bounce_buf_ret = bounce_buf;
++
+ 	if (copy_in) {
+ 		ret = copy_from_user(bounce_buf, (void __user *)buf, len);
+ 		if (ret)
+@@ -225,7 +227,6 @@ static int hgcm_call_preprocess_linaddr(
+ 		memset(bounce_buf, 0, len);
+ 	}
  
- #define __PROM_O32(fun, arg) fun arg __asm__(#fun); \
- 				     __asm__(#fun " = call_o32")
+-	*bounce_buf_ret = bounce_buf;
+ 	hgcm_call_add_pagelist_size(bounce_buf, len, extra);
+ 	return 0;
+ }
 -- 
 2.20.1
 
