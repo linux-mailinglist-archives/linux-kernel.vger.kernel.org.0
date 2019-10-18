@@ -2,205 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6169FDC1D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:52:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 184CFDC1C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:51:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633201AbfJRJwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 05:52:34 -0400
-Received: from mga17.intel.com ([192.55.52.151]:35375 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2633188AbfJRJwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 05:52:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2019 02:52:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,311,1566889200"; 
-   d="scan'208";a="221689702"
-Received: from lxy-clx-4s.sh.intel.com ([10.239.43.57])
-  by fmsmga004.fm.intel.com with ESMTP; 18 Oct 2019 02:52:29 -0700
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
+        id S2442378AbfJRJvK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 05:51:10 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:60222 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1730808AbfJRJvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 05:51:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3540A492;
+        Fri, 18 Oct 2019 02:50:45 -0700 (PDT)
+Received: from [192.168.1.123] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 235593F6C4;
+        Fri, 18 Oct 2019 02:50:43 -0700 (PDT)
+Subject: Re: [PATCH] iommu/amd: Pass gfp flags to iommu_map_page() in
+ amd_iommu_map()
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
         Joerg Roedel <joro@8bytes.org>
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org,
+Cc:     iommu@lists.linux-foundation.org, Joerg Roedel <jroedel@suse.de>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] KVM: VMX: Some minor refactor of MSR bitmap
-Date:   Fri, 18 Oct 2019 17:37:23 +0800
-Message-Id: <20191018093723.102471-4-xiaoyao.li@intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20191018093723.102471-1-xiaoyao.li@intel.com>
-References: <20191018093723.102471-1-xiaoyao.li@intel.com>
+References: <20191018090736.18819-1-joro@8bytes.org>
+ <20191018092750.GK21344@kadam>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <31ba66a3-2435-2fb1-3fc6-782a2f583bf2@arm.com>
+Date:   Fri, 18 Oct 2019 10:50:34 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191018092750.GK21344@kadam>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the MSR bitmap capability check from vmx_disable_intercept_for_msr()
-and vmx_enable_intercept_for_msr(), so that we can do the check far
-early before we really want to touch the bitmap.
+On 2019-10-18 10:27 am, Dan Carpenter wrote:
+> Did you get a chance to look at iommu_dma_alloc_remap() as well?
+> 
+> drivers/iommu/dma-iommu.c
+>     584  static void *iommu_dma_alloc_remap(struct device *dev, size_t size,
+>     585                  dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
+>                                                  ^^^^^^^^^
+>     586  {
+>     587          struct iommu_domain *domain = iommu_get_dma_domain(dev);
+>     588          struct iommu_dma_cookie *cookie = domain->iova_cookie;
+>     589          struct iova_domain *iovad = &cookie->iovad;
+>     590          bool coherent = dev_is_dma_coherent(dev);
+>     591          int ioprot = dma_info_to_prot(DMA_BIDIRECTIONAL, coherent, attrs);
+>     592          pgprot_t prot = dma_pgprot(dev, PAGE_KERNEL, attrs);
+>     593          unsigned int count, min_size, alloc_sizes = domain->pgsize_bitmap;
+>     594          struct page **pages;
+>     595          struct sg_table sgt;
+>     596          dma_addr_t iova;
+>     597          void *vaddr;
+>     598
+>     599          *dma_handle = DMA_MAPPING_ERROR;
+>     600
+>     601          if (unlikely(iommu_dma_deferred_attach(dev, domain)))
+>     602                  return NULL;
+>     603
+>     604          min_size = alloc_sizes & -alloc_sizes;
+>     605          if (min_size < PAGE_SIZE) {
+>     606                  min_size = PAGE_SIZE;
+>     607                  alloc_sizes |= PAGE_SIZE;
+>     608          } else {
+>     609                  size = ALIGN(size, min_size);
+>     610          }
+>     611          if (attrs & DMA_ATTR_ALLOC_SINGLE_PAGES)
+>     612                  alloc_sizes = min_size;
+>     613
+>     614          count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+>     615          pages = __iommu_dma_alloc_pages(dev, count, alloc_sizes >> PAGE_SHIFT,
+>     616                                          gfp);
+>     617          if (!pages)
+>     618                  return NULL;
+>     619
+>     620          size = iova_align(iovad, size);
+>     621          iova = iommu_dma_alloc_iova(domain, size, dev->coherent_dma_mask, dev);
+>     622          if (!iova)
+>     623                  goto out_free_pages;
+>     624
+>     625          if (sg_alloc_table_from_pages(&sgt, pages, count, 0, size, GFP_KERNEL))
+>                                                                             ^^^^^^^^^^
+> gfp here instead of GFP_KERNEL?
 
-Also, we can move the common MSR not-intercept setup to where msr bitmap
-is actually used.
+This is, from what I remember, intentional - it's a temporary allocation 
+which doesn't need to have the same restrictions as the actual buffer 
+being allocated (e.g. GFP_DMA32 etc.). We don't need to worry about 
+GFP_ATOMIC since the whole thing is only ever called in sleeping contexts.
 
-Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
----
-Changes in v2:
-  - Remove the check of cpu_has_vmx_msr_bitmap() from
-    vmx_{disable,enable}_intercept_for_msr (Krish)
----
- arch/x86/kvm/vmx/vmx.c | 65 +++++++++++++++++++++---------------------
- 1 file changed, 33 insertions(+), 32 deletions(-)
+Robin.
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index b083316a598d..017689d0144e 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -343,8 +343,8 @@ module_param_cb(vmentry_l1d_flush, &vmentry_l1d_flush_ops, NULL, 0644);
- 
- static bool guest_state_valid(struct kvm_vcpu *vcpu);
- static u32 vmx_segment_access_rights(struct kvm_segment *var);
--static __always_inline void vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
--							  u32 msr, int type);
-+static __always_inline void vmx_set_intercept_for_msr(unsigned long *msr_bitmap,
-+		u32 msr, int type, bool value);
- 
- void vmx_vmexit(void);
- 
-@@ -2000,9 +2000,9 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		 * in the merging. We update the vmcs01 here for L1 as well
- 		 * since it will end up touching the MSR anyway now.
- 		 */
--		vmx_disable_intercept_for_msr(vmx->vmcs01.msr_bitmap,
--					      MSR_IA32_SPEC_CTRL,
--					      MSR_TYPE_RW);
-+		vmx_set_intercept_for_msr(vmx->vmcs01.msr_bitmap,
-+					  MSR_IA32_SPEC_CTRL,
-+					  MSR_TYPE_RW, false);
- 		break;
- 	case MSR_IA32_PRED_CMD:
- 		if (!msr_info->host_initiated &&
-@@ -2028,8 +2028,9 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		 * vmcs02.msr_bitmap here since it gets completely overwritten
- 		 * in the merging.
- 		 */
--		vmx_disable_intercept_for_msr(vmx->vmcs01.msr_bitmap, MSR_IA32_PRED_CMD,
--					      MSR_TYPE_W);
-+		vmx_set_intercept_for_msr(vmx->vmcs01.msr_bitmap,
-+					  MSR_IA32_PRED_CMD,
-+					  MSR_TYPE_W, false);
- 		break;
- 	case MSR_IA32_CR_PAT:
- 		if (!kvm_pat_valid(data))
-@@ -3599,9 +3600,6 @@ static __always_inline void vmx_disable_intercept_for_msr(unsigned long *msr_bit
- {
- 	int f = sizeof(unsigned long);
- 
--	if (!cpu_has_vmx_msr_bitmap())
--		return;
--
- 	if (static_branch_unlikely(&enable_evmcs))
- 		evmcs_touch_msr_bitmap();
- 
-@@ -3637,9 +3635,6 @@ static __always_inline void vmx_enable_intercept_for_msr(unsigned long *msr_bitm
- {
- 	int f = sizeof(unsigned long);
- 
--	if (!cpu_has_vmx_msr_bitmap())
--		return;
--
- 	if (static_branch_unlikely(&enable_evmcs))
- 		evmcs_touch_msr_bitmap();
- 
-@@ -3673,6 +3668,9 @@ static __always_inline void vmx_enable_intercept_for_msr(unsigned long *msr_bitm
- static __always_inline void vmx_set_intercept_for_msr(unsigned long *msr_bitmap,
- 			     			      u32 msr, int type, bool value)
- {
-+	if (!cpu_has_vmx_msr_bitmap())
-+		return;
-+
- 	if (value)
- 		vmx_enable_intercept_for_msr(msr_bitmap, msr, type);
- 	else
-@@ -4163,11 +4161,30 @@ static void ept_set_mmio_spte_mask(void)
- 
- static void vmx_vmcs_setup(struct vcpu_vmx *vmx)
- {
-+	unsigned long *msr_bitmap;
-+
- 	if (nested)
- 		nested_vmx_vmcs_setup();
- 
--	if (cpu_has_vmx_msr_bitmap())
-+	if (cpu_has_vmx_msr_bitmap()) {
-+		msr_bitmap = vmx->vmcs01.msr_bitmap;
-+		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_TSC, MSR_TYPE_R);
-+		vmx_disable_intercept_for_msr(msr_bitmap, MSR_FS_BASE, MSR_TYPE_RW);
-+		vmx_disable_intercept_for_msr(msr_bitmap, MSR_GS_BASE, MSR_TYPE_RW);
-+		vmx_disable_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW);
-+		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
-+		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);
-+		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);
-+		if (kvm_cstate_in_guest(vmx->vcpu.kvm)) {
-+			vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C1_RES, MSR_TYPE_R);
-+			vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C3_RESIDENCY, MSR_TYPE_R);
-+			vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C6_RESIDENCY, MSR_TYPE_R);
-+			vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C7_RESIDENCY, MSR_TYPE_R);
-+		}
-+
- 		vmcs_write64(MSR_BITMAP, __pa(vmx->vmcs01.msr_bitmap));
-+	}
-+	vmx->msr_bitmap_mode = 0;
- 
- 	vmcs_write64(VMCS_LINK_POINTER, -1ull); /* 22.3.1.5 */
- 
-@@ -6074,7 +6091,8 @@ void vmx_set_virtual_apic_mode(struct kvm_vcpu *vcpu)
- 	}
- 	secondary_exec_controls_set(vmx, sec_exec_control);
- 
--	vmx_update_msr_bitmap(vcpu);
-+	if (cpu_has_vmx_msr_bitmap())
-+		vmx_update_msr_bitmap(vcpu);
- }
- 
- static void vmx_set_apic_access_page_addr(struct kvm_vcpu *vcpu, hpa_t hpa)
-@@ -6688,7 +6706,6 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
- {
- 	int err;
- 	struct vcpu_vmx *vmx;
--	unsigned long *msr_bitmap;
- 	int i, cpu;
- 
- 	BUILD_BUG_ON_MSG(offsetof(struct vcpu_vmx, vcpu) != 0,
-@@ -6745,22 +6762,6 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
- 	if (err < 0)
- 		goto free_msrs;
- 
--	msr_bitmap = vmx->vmcs01.msr_bitmap;
--	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_TSC, MSR_TYPE_R);
--	vmx_disable_intercept_for_msr(msr_bitmap, MSR_FS_BASE, MSR_TYPE_RW);
--	vmx_disable_intercept_for_msr(msr_bitmap, MSR_GS_BASE, MSR_TYPE_RW);
--	vmx_disable_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW);
--	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
--	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);
--	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);
--	if (kvm_cstate_in_guest(kvm)) {
--		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C1_RES, MSR_TYPE_R);
--		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C3_RESIDENCY, MSR_TYPE_R);
--		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C6_RESIDENCY, MSR_TYPE_R);
--		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C7_RESIDENCY, MSR_TYPE_R);
--	}
--	vmx->msr_bitmap_mode = 0;
--
- 	vmx->loaded_vmcs = &vmx->vmcs01;
- 	cpu = get_cpu();
- 	vmx_vcpu_load(&vmx->vcpu, cpu);
--- 
-2.19.1
-
+> 
+>     626                  goto out_free_iova;
+>     627
+>     628          if (!(ioprot & IOMMU_CACHE)) {
+> 
+> regards,
+> dan carpenter
+> 
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> 
