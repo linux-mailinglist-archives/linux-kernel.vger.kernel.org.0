@@ -2,62 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CAE9DCDEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C07BDCDF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:29:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502949AbfJRS1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 14:27:06 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46602 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502485AbfJRS1G (ORCPT
+        id S2505684AbfJRS3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 14:29:43 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35168 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2505612AbfJRS3l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 14:27:06 -0400
-Received: by mail-wr1-f66.google.com with SMTP id o18so7219481wrv.13
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 11:27:05 -0700 (PDT)
+        Fri, 18 Oct 2019 14:29:41 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l10so6847744wrb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 11:29:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lO2StNiS2UHCj8+9SsvqSbVKFte3Dujsk2JYdGhstd0=;
-        b=mCSqmO2XSWm/BFp+YC0O5sy6vJ4J9PotAhn5xpwkgbLUAOKLOjfiuMwaNP4IM5w77D
-         1S15TG8+HjOpw2soOliWnJE23GXyYl2TXYvWNZArL9GbV9beblrMKFHKZdicosRbE4fq
-         yp47axUjsA6baFIHyOPPi3/rWce8BrLV6v0ZzfuMzwDU7prEK6y90itiERMCUMZV/lMu
-         m9sJHdbbrS7aaHwvAfm2Uk4/Y36IHrBd+TkMqVp8Kgr9XjSui6C2usRZeEb1khK3depA
-         U8LSiLkppE1IwqCCKIY5Nt4HDOBkjfuqMc4CQnwdfb+Grr1qOSqeYO3yF2hjUZY/LLGH
-         TFjg==
+         :cc:content-transfer-encoding;
+        bh=jM3mqQowcnIqqAadMg1JP7jXhgCphy4yRtthUQq8/D4=;
+        b=ncPaBbJZs3QwmaWC8n5a/tYGtGsYFjLWRdunAcoo3rSjcSu4BXW26U7bkskK8OO6TP
+         3FD7LHPbHqupw4LRalLiBKjaIbQtF7l7QQpAYNOXezS6l5cwIuHZqRFfCNF2PM5/d5Gg
+         JDiVQWIYpUd8YD3+ZjOvMzMw80MGmCjEj2WwT/Sk8TZwXwReqB8P/yqQir49rSVFj1O4
+         T7cT2gpJsEYZcVXPV7R6V2ge1IxIVLQa4CTo55YCIM9PxFZW/4QOb3vPQKHujHyFG3Td
+         mkW5GC6NJbJTjQBVCRIkJvb8/VxTcsr6+/dh7ax5gBifEzn2gwxJtliOQNSaqqmAdhVY
+         niuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lO2StNiS2UHCj8+9SsvqSbVKFte3Dujsk2JYdGhstd0=;
-        b=Yfj/kkZXH4tIxu8rwwx1aSnupf38Rl/6Jy4p73fybz7jTtxE9x4KyAaT0MWJqM1iXj
-         BsJ5DhUXiKHCs1+xoktxYCcq29L6HlPmqDTL6aQ/Vc9P3qXGF28gsAw1UcExSGjvXXiX
-         YbCjGEiGNdl+3EtZ5DO0lvqw//5UOsriHrlpszeZRHEPaXhHUmAXWN2M4Dm+6c2Q4avt
-         Jc/TrzVpI5pKwYUFt0uyqB02G9XLfdDczNJbVDqISZWg/e+Xk/1LqFpEycgliTIfP1EA
-         DV0/NIigViaDCB5T8f4lBop3H9H4Np0Yn3kp3LWZsntJPiT8a+Rvxwm5mOtP4iPHxuZB
-         T6Sw==
-X-Gm-Message-State: APjAAAU3/dJAjlzTBxCkOr/Er7f8C9QZrefbOlOdWhzRU1794p1IN35v
-        QgIOc1ku+ZoZJ3GxCbPYOhHZBBqhwlmYub7WuQO5pg==
-X-Google-Smtp-Source: APXvYqy02V7JvYjspbL2KqGV67KwG+Nwl8JcMdFE4sjvajWRC5F41fOItfkNZW2vQ9MumjE8aMqtnrumrcIePCpePlw=
-X-Received: by 2002:adf:fb0b:: with SMTP id c11mr9338121wrr.50.1571423224434;
- Fri, 18 Oct 2019 11:27:04 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jM3mqQowcnIqqAadMg1JP7jXhgCphy4yRtthUQq8/D4=;
+        b=kA8Urr3dfvQnRRj9u6QBehZ5bCZq2nsuVUQ6hW15yuR4bVRwqgazOWtfellEjluE9f
+         YjA4sTzuaI8TbpI6IQfU/XBEUcRzc3c1H94p5ztNVgdV5ZZDBGV3SM9HE199gr6nffzJ
+         9MqL1mu4wwNCfNY0tqnrDQhy11d1gEx6H3jqwB7iKu6o8ojI/jca92YVYG1fDf125UiO
+         kPPkwcGO6gJHWhVncNNZgff75ExK/G2+Eb0JqGvt9rYYY3aBVplPkoqM0oBY9iRg1cvh
+         r7wqhc6XuGGayXfF+dxY4rHuErJAjoFIrWYXjk5M7ktfmMZHHb9XPaTTZzD+EY2vFLv3
+         Wl2w==
+X-Gm-Message-State: APjAAAVMHt+q0Mnx2FdIB7C3HejsIObm1/AbBX1Td10+89km8+1hqaSd
+        cHVB+r+P7PsdBI10BkLUoHkrjZ++OprkIKZsqbropQ==
+X-Google-Smtp-Source: APXvYqw/ORDV9l2s2JvayF6Hp3+kzOGkiFz+Fg9YoEW0w523xapkapxxJarA+A63lfzlD4kH1X5LWJXwoVh3S7Lti20=
+X-Received: by 2002:a5d:55ce:: with SMTP id i14mr8818316wrw.169.1571423380050;
+ Fri, 18 Oct 2019 11:29:40 -0700 (PDT)
 MIME-Version: 1.0
 References: <20191018052323.21659-1-john.stultz@linaro.org>
- <20191018052323.21659-2-john.stultz@linaro.org> <20191018111832.o7wx3x54jm3ic6cq@DESKTOP-E1NTVVP.localdomain>
-In-Reply-To: <20191018111832.o7wx3x54jm3ic6cq@DESKTOP-E1NTVVP.localdomain>
+ <20191018052323.21659-5-john.stultz@linaro.org> <20191018112124.grjgqrn3ckuc7n4v@DESKTOP-E1NTVVP.localdomain>
+ <CA+M3ks6KqqXCfqA6VDKnQOsvFLQfaGrUnA+eesnyzMRniFB00A@mail.gmail.com>
+In-Reply-To: <CA+M3ks6KqqXCfqA6VDKnQOsvFLQfaGrUnA+eesnyzMRniFB00A@mail.gmail.com>
 From:   John Stultz <john.stultz@linaro.org>
-Date:   Fri, 18 Oct 2019 11:26:52 -0700
-Message-ID: <CALAqxLUVLP0ujB0SHyWHMncRMHkBvVj1+CpBgGUD8Xg3RexQ8w@mail.gmail.com>
-Subject: Re: [PATCH v12 1/5] dma-buf: Add dma-buf heaps framework
-To:     Brian Starkey <Brian.Starkey@arm.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        "Andrew F. Davis" <afd@ti.com>, Laura Abbott <labbott@redhat.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+Date:   Fri, 18 Oct 2019 11:29:29 -0700
+Message-ID: <CALAqxLXwo=Pwi7BUXNzpk3-aqm1j+O9ZTi4NpYWdc2eYVK7t1w@mail.gmail.com>
+Subject: Re: [PATCH v12 4/5] dma-buf: heaps: Add CMA heap to dmabuf heaps
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     Brian Starkey <Brian.Starkey@arm.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
         Liam Mark <lmark@codeaurora.org>,
         Pratik Patel <pratikp@codeaurora.org>,
         Vincent Donnefort <Vincent.Donnefort@arm.com>,
         Sudipto Paul <Sudipto.Paul@arm.com>,
+        "Andrew F . Davis" <afd@ti.com>,
         Christoph Hellwig <hch@infradead.org>,
         Chenbo Feng <fengc@google.com>,
         Alistair Strachan <astrachan@google.com>,
@@ -66,35 +68,37 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         nd <nd@arm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 4:18 AM Brian Starkey <Brian.Starkey@arm.com> wrote:
-> On Fri, Oct 18, 2019 at 05:23:19AM +0000, John Stultz wrote:
+On Fri, Oct 18, 2019 at 5:04 AM Benjamin Gaignard
+<benjamin.gaignard@linaro.org> wrote:
+> Le ven. 18 oct. 2019 =C3=A0 13:21, Brian Starkey <Brian.Starkey@arm.com> =
+a =C3=A9crit :
+> >
+> > On Fri, Oct 18, 2019 at 05:23:22AM +0000, John Stultz wrote:
+> > > This adds a CMA heap, which allows userspace to allocate
+> > > a dma-buf of contiguous memory out of a CMA region.
+> > >
+> > > This code is an evolution of the Android ION implementation, so
+> > > thanks to its original author and maintainters:
+> > >   Benjamin Gaignard, Laura Abbott, and others!
+> > >
+> > > NOTE: This patch only adds the default CMA heap. We will enable
+> > > selectively adding other CMA memory regions to the dmabuf heaps
+> > > interface with a later patch (which requires a dt binding)
 >
-> As in v3:
->
->  * Avoid EXPORT_SYMBOL until we finalize modules (suggested by
->    Brian)
+> Maybe we can use "no-map" DT property to trigger that. If set do not expo=
+se the
+> cma heap.
 
-Heh. I guess it has been awhile.  :)
-
-> Did something change in that regard? I still think letting modules
-> register heaps without a way to remove them is a recipe for issues.
-
-So yea, in recent months, work around Android with their GKI effort
-has made it necessary for ION heaps to be loadable from modules. I had
-some patches in WIP tree to enable this, and in the rework I did
-yesterday for the CMA module trivially collided with parts, and
-forgetting the discussion back in v3, I figured I'd just fold those
-bits in before I resubmitted for v12.
-
-If it's an issue, I can pull it out, but I'm going to be submitting
-module enablement for review as soon as the core bits are queued, as
-its going to be important to support for Android to switch to this
-from ION.
+I don't think that's a good plan. See my WIP tree for the approach I'm plan=
+ning:
+  https://git.linaro.org/people/john.stultz/android-dev.git/log/?h=3Ddev/dm=
+a-buf-heap-WIP
 
 thanks
 -john
