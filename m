@@ -2,102 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B4A3DBE75
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:36:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19BB2DBE84
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:38:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439311AbfJRHgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 03:36:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60296 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727388AbfJRHgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 03:36:00 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 148FC3071D99;
-        Fri, 18 Oct 2019 07:36:00 +0000 (UTC)
-Received: from [10.72.12.183] (ovpn-12-183.pek2.redhat.com [10.72.12.183])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 249DB5D712;
-        Fri, 18 Oct 2019 07:35:37 +0000 (UTC)
-Subject: Re: [PATCH V4 4/6] mdev: introduce virtio device and its device ops
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        mst@redhat.com, tiwei.bie@intel.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        cohuck@redhat.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
-        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
-        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
-        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
-        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
-        stefanha@redhat.com
-References: <20191017104836.32464-1-jasowang@redhat.com>
- <20191017104836.32464-5-jasowang@redhat.com>
- <20191017115329.47d4a165@x1.home>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <24a96fca-926d-38ee-4dab-5f3715ef1433@redhat.com>
-Date:   Fri, 18 Oct 2019 15:35:34 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2404584AbfJRHil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 03:38:41 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40659 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728801AbfJRHil (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 03:38:41 -0400
+Received: by mail-wr1-f65.google.com with SMTP id o28so5066686wro.7
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 00:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=dSeQpsX1lWyhJjjqgCnSOVYN/QoRMRw+pYlbFd08lMw=;
+        b=hz3XrSB+KBpqUPLDKyw2Jxr41b1CEp+1/qVyRxUWVhXQ2yO3pcwZzRTc/RmcOuftAe
+         JDBdUygHnnCUA5eOUl15iri/Q+pJwjNj8QpABl/LDSDeAgJpmMZHz+yGbcIXyfe2T2rZ
+         FdvN77qt6r5RmRuiTi8yBUPRt0a5xjswyuHdWiBKGCTG+oN1++x4EHZ0rAVV+SFC9hs6
+         UDxdd63AtrdBw+WdHn1Vt/5QnsArLFY/nkfXoHP1FgeOnU37SLfzYzzzlHSa1ZHOSYSi
+         ztfjgTFwRkHM3MohnmPFb+9aAdSDakwj2NKY9LhRrbQ4q9QibxP+9iEtqyGG4Bho2xcJ
+         y52g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=dSeQpsX1lWyhJjjqgCnSOVYN/QoRMRw+pYlbFd08lMw=;
+        b=SsoIClYyKSWzu15hqZbfhqlwRfPTb86RPfX+CRd61O7+LWTWS3xO0JyMaWUkcHiJKE
+         +Pd1yI0OUHL/en7F8AouXCYh8tbumPaWrhRUWiOhIphse0018qiv8hf+k7Rfk44bsPoh
+         BflgZSrKZC09fF12tXZoWHtd/cPmdFlFfy0JocAiHJXSUHYo0M6GrkBj/2xIvUPmwotH
+         i+pJMsBa//U43vb8QCdgWDjQbRJdbnrbvyJDJD8R/pebyvIEqZyCLYOmdHk4V6/T+fI5
+         xUNCZOiamQ+cYTGWpSshCqkhtRDyUXRLWvJx9zIW6uA8aKoOtJocIU1liglNRLBZpEEx
+         ZfjA==
+X-Gm-Message-State: APjAAAV+B1LCRorssuR7wPNIIVIIo4/ONoFS6DIcoRL5zFeNNjgADIkP
+        dtZ6sCxOuAPTIxnQ9+Z0GfwxKA==
+X-Google-Smtp-Source: APXvYqyMG++9BlE+2Kvq0zYfc9v90AGN3ajctmqk/j3JHgJFv9ZF19h9kZYjj54VOjc0kFu8V8CcXg==
+X-Received: by 2002:adf:ed84:: with SMTP id c4mr6235302wro.333.1571384317887;
+        Fri, 18 Oct 2019 00:38:37 -0700 (PDT)
+Received: from dell ([95.149.164.47])
+        by smtp.gmail.com with ESMTPSA id 36sm5585697wrp.30.2019.10.18.00.38.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Oct 2019 00:38:37 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 08:38:35 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH 29/34] backlight/jornada720: Use CONFIG_PREEMPTION
+Message-ID: <20191018073835.GU4365@dell>
+References: <20191015191821.11479-1-bigeasy@linutronix.de>
+ <20191015191821.11479-30-bigeasy@linutronix.de>
+ <20191017113707.lsjwlhi6b4ittcpe@holly.lan>
+ <20191017132324.GP4365@dell>
+ <20191017132846.ojsh27celyl76dlx@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20191017115329.47d4a165@x1.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 18 Oct 2019 07:36:00 +0000 (UTC)
+In-Reply-To: <20191017132846.ojsh27celyl76dlx@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 17 Oct 2019, Sebastian Andrzej Siewior wrote:
 
-On 2019/10/18 上午1:53, Alex Williamson wrote:
-> On Thu, 17 Oct 2019 18:48:34 +0800
-> Jason Wang<jasowang@redhat.com>  wrote:
->
->> This patch implements basic support for mdev driver that supports
->> virtio transport for kernel virtio driver.
->>
->> Signed-off-by: Jason Wang<jasowang@redhat.com>
->> ---
->>   drivers/vfio/mdev/mdev_core.c |  12 +++
->>   include/linux/mdev.h          |   4 +
->>   include/linux/virtio_mdev.h   | 151 ++++++++++++++++++++++++++++++++++
->>   3 files changed, 167 insertions(+)
->>   create mode 100644 include/linux/virtio_mdev.h
->>
->> diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
->> index d0f3113c8071..5834f6b7c7a5 100644
->> --- a/drivers/vfio/mdev/mdev_core.c
->> +++ b/drivers/vfio/mdev/mdev_core.c
->> @@ -57,6 +57,18 @@ void mdev_set_vfio_ops(struct mdev_device *mdev,
->>   }
->>   EXPORT_SYMBOL(mdev_set_vfio_ops);
->>   
->> +/* Specify the virtio device ops for the mdev device, this
->> + * must be called during create() callback for virtio mdev device.
->> + */
->> +void mdev_set_virtio_ops(struct mdev_device *mdev,
->> +			 const struct virtio_mdev_device_ops *virtio_ops)
->> +{
->> +	BUG_ON(mdev->class_id);
-> Nit, this one is a BUG_ON, but the vfio one is a WARN_ON.  Thanks,
->
-> Alex
+> On 2019-10-17 14:23:24 [+0100], Lee Jones wrote:
+> > So what are the OP's expectations in that regard?  I see this is a
+> > large set and I am only privy to this patch, thus lack wider
+> > visibility.  Does this patch depend on others, or is it independent?
+> > I'm happy to take it, but wish to avoid bisectability issues in the
+> > next release kernel.
+> 
+> It is independent, you can apply it to your -next branch. All
+> dependencies are merged.
+> 
+> Sebastian
 
+Wonderful.  Thanks for the info.
 
-Let me fix in next version.
-
-Thanks
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
