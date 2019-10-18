@@ -2,158 +2,274 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05547DCA92
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02CCFDCAA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:14:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502717AbfJRQLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 12:11:50 -0400
-Received: from mx0a-00256a01.pphosted.com ([148.163.150.240]:51600 "EHLO
-        mx0b-00256a01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2502624AbfJRQL0 (ORCPT
+        id S2387714AbfJRQOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 12:14:16 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36100 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732159AbfJRQOQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 12:11:26 -0400
-Received: from pps.filterd (m0094546.ppops.net [127.0.0.1])
-        by mx0b-00256a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9IG6qID035537
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 12:11:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nyu.edu; h=date : from : to :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=20180315; bh=lHM5I0HSXYkBgOqGtJf0Eu9mn/sHMvw0BcNA/VVfY04=;
- b=qDCRW8Qns0HUszZeOSiA3P+nO6wO4BkzjDlzfFXHxUZYPp0Kb4Z4aGNJnw4K7B7gQ0lK
- pQ0p10br548ocPyt/Kw4gFxjeps52+U61pM1hpRIl8XoRFVuwxE9OmlTV0z2Eg1c/alJ
- Hmk85OHQfHQU9wCZ4QwYKieVLZByXr1sKRdoNqlnftB7ZZmIJF0yh4ClcpAizfgtaEqk
- 3/MMw3W7rJihlf/gauhvfSoikko8ZGQ+MsmO3Hm+OlUhmVt3hbGbeqtE6XpFfIHEEhC7
- Ej9RZALRhiLZhd3HcRyulhUEEdUWS0AJx71lGi9z+HgPpWmS0w+dnjTUQrZacgf8Xviz 2Q== 
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-        by mx0b-00256a01.pphosted.com with ESMTP id 2vq7yk7yc3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 12:11:25 -0400
-Received: by mail-qk1-f198.google.com with SMTP id m28so5574560qkm.10
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 09:11:25 -0700 (PDT)
+        Fri, 18 Oct 2019 12:14:16 -0400
+Received: by mail-wr1-f65.google.com with SMTP id w18so6328468wrt.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 09:14:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nyu-edu.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lHM5I0HSXYkBgOqGtJf0Eu9mn/sHMvw0BcNA/VVfY04=;
-        b=mh2MnBcQzL97cXsZ8di63e639C45jvmMREFZJd2yyV3W3WJPubQeLKV61Zl92y0q1X
-         TULFo5wAWmtpaKdNW2rB7EVXp3Yvc3DleI+sZs7E/OQ2i8OzCe9HsBPKQmjNf25g2IYB
-         6Kw/PXWzGckx5a8Rm99vw7MaG6nZhbvLN+yubZ3UsqtiQG9z8JfnV2IUKAPzTBR4Lmqz
-         r8eXk3s+ldrvgpz35corD73KJS6Ia3pLCFP1OmJdDAy7Ic4MzBli87OowZmcXzipl6xp
-         opX0fBJvJQPwOv7dLrbnTFXyQV81QhpbHXoc3sY3RdstvNz58EtxdotqjV/hxxZ5Vtur
-         RKag==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:subject:in-reply-to:date:message-id
+         :mime-version;
+        bh=0Cv5HxbYsKs88qKdDqqwy2GcVJ7JGGNauSIpovXmWjE=;
+        b=gZNchhaduGtAYNPyOyjo0Q/R9PH//aDDplRrAmvdTTPx0Kmxn8NFK+7uAx8JKgIEeX
+         CmgKuBT7wpTX5XgrppkFVgSvyCiZu9C7R70WHNEiHuYGIAt+FX3H7nG5/jkh44Rz1OeZ
+         +Oo06tmY7t+R2wCBMZC5VxXtyEFPzndgMtS0AaJNXfn7Z92k0ZvHBesNFCCpAyIBKLGr
+         S2lLW1EaKwt8i9PnSNjyZo3zC4zUjbt3z3L0mrfzR6prmno+8o5h44MIVZcom3MjiDPJ
+         giuQ9ZZ5Bvd2l9TyhJ2tWXibsW3ZYIKbYwAhsEv/jwRDgeS+z2dmIppYCe9Hu/GeFRL3
+         hzoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lHM5I0HSXYkBgOqGtJf0Eu9mn/sHMvw0BcNA/VVfY04=;
-        b=lCGz1kbT1vTJmRE6ng2j1pFeXAqYFEcHmapUPu6H9lpBOu+8VIkMQV5bpgRywPmeFr
-         Fqe9DJCxsw6O16g4tmZC17oTyKKPaNn1ARhPqnhLYapTSx6gxJ2tDLYgPhDSH4PgmurZ
-         jORQAR7Z0vEfRqEaI4U/0VOFZ9zf9vPP/tfAIDalRX8vhIIAEvKQubSJlGlKMwHWqghU
-         JsuwceAHQlKLPzW3aLtqymUaSicw7Gy+1TDMbZ6cVbA8Rlc8AFCMnsmdvdJPM1Rh70di
-         hKz6/QE1noRCK01ZWaBTeo31CbVjvO9w7SRnFR4jYCECVplBlld/8VDcGzEzFEwFw/PZ
-         kmyA==
-X-Gm-Message-State: APjAAAUr1sMkkUjAfcMzyFB3TRxdhT0Fv3wW+Z+cstDh7x6wgS1au+YJ
-        qIlN63JL6z0j80BNlbvo0Xkh3Gu6J0GSac01OtyV23kiEY751DaOTAi3nOHFE+4x60xG05KIBl7
-        bmwJdGEbBq1k9rAOlPyRT4Qc=
-X-Received: by 2002:a0c:fd63:: with SMTP id k3mr10484620qvs.185.1571415083967;
-        Fri, 18 Oct 2019 09:11:23 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqw9oseEn9vueF+r2BvG0eNlqZ8HAgBLbGeWx2SxOoEkwS2LgxoYX5R4GCU2LZuVLBZfQZc5bQ==
-X-Received: by 2002:a0c:fd63:: with SMTP id k3mr10484594qvs.185.1571415083693;
-        Fri, 18 Oct 2019 09:11:23 -0700 (PDT)
-Received: from LykOS.localdomain (216-165-95-130.natpool.nyu.edu. [216.165.95.130])
-        by smtp.gmail.com with ESMTPSA id q200sm3073239qke.114.2019.10.18.09.11.22
+        h=x-gm-message-state:references:user-agent:from:to:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=0Cv5HxbYsKs88qKdDqqwy2GcVJ7JGGNauSIpovXmWjE=;
+        b=DMZDSnhyYFOI/gszdWLmiK4ePdKUWImejpmk6CL6koJOyVMjNnJL8UAS8nWQ2dM/6k
+         /YP+TMKV/2Zq0V2B38PbuSavRPvL6Qrdfm9Q6DLSJM34ulexGoBgSnZ4grwJlEQYx5OV
+         HSII4lPSzfGHnyf0NiLnOOrgT2sx7G5/ask+NH5Zc/Opim0rQVWYNVnCp+KKTAKkVLgb
+         4/yXRC14xK8r0nBy/kD2EwZhE2x1KN3gdn4fT2zsMtcUn0p3RpvIcvhaT2SQP7S28H6o
+         f9TXaHFPEWcFbcRf4c7OEHpz/JgCoTngQt+yoYQtAAu2fh9Xa/fW5lZGwmkfKLSXJuBD
+         SXQA==
+X-Gm-Message-State: APjAAAV/7uzNS3q7rrEb7yhEpbUFsyxDUVPLTbQr+k99Q8vv6TjU4l8P
+        +4awYimMbQKrex3FEitWhC/e9A==
+X-Google-Smtp-Source: APXvYqxahX2Eo67G58sg7nvdDRQg5C58GloUqLjP/ZxQkAa40VhAeVwwcIp6pZ/sy3jdITFMe4NWDg==
+X-Received: by 2002:adf:df05:: with SMTP id y5mr9222772wrl.84.1571415253811;
+        Fri, 18 Oct 2019 09:14:13 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id a204sm7706251wmh.21.2019.10.18.09.14.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2019 09:11:23 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 12:11:22 -0400
-From:   Santiago Torres Arias <santiago@nyu.edu>
-To:     Vegard Nossum <vegard.nossum@oracle.com>, Willy Tarreau <w@1wt.eu>,
-        workflows@vger.kernel.org, Git Mailing List <git@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Wong <e@80x24.org>
-Subject: Re: email as a bona fide git transport
-Message-ID: <20191018161121.6qe5kkweh4u77gvn@LykOS.localdomain>
-References: <b9fb52b8-8168-6bf0-9a72-1e6c44a281a5@oracle.com>
- <20191016111009.GE13154@1wt.eu>
- <20191016144517.giwip4yuaxtcd64g@LykOS.localdomain>
- <56664222-6c29-09dc-ef78-7b380b113c4a@oracle.com>
- <20191018155408.dk4tsjrne42ufpvv@LykOS.localdomain>
- <20191018160343.GB25456@chatter.i7.local>
+        Fri, 18 Oct 2019 09:14:12 -0700 (PDT)
+References: <1571393152-3698-1-git-send-email-christianshewitt@gmail.com>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Christian Hewitt <christianshewitt@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: meson: khadas-vim3l: enable audio
+In-reply-to: <1571393152-3698-1-git-send-email-christianshewitt@gmail.com>
+Date:   Fri, 18 Oct 2019 18:14:11 +0200
+Message-ID: <1jd0euf2uk.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5dbczkamho4hvge3"
-Content-Disposition: inline
-In-Reply-To: <20191018160343.GB25456@chatter.i7.local>
-X-Orig-IP: 209.85.222.198
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- mlxlogscore=999 spamscore=0 priorityscore=1501 malwarescore=0
- suspectscore=7 phishscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910180146
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---5dbczkamho4hvge3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri 18 Oct 2019 at 12:05, Christian Hewitt <christianshewitt@gmail.com> wrote:
 
-On Fri, Oct 18, 2019 at 12:03:43PM -0400, Konstantin Ryabitsev wrote:
-> On Fri, Oct 18, 2019 at 11:54:09AM -0400, Santiago Torres Arias wrote:
-> > > Seeing how large this signature is, I have to admit that I am partial=
- to
-> > > Konstantin's suggestion of using minisign. This seems like something
-> > > that could be added to git as an alternative to gpg without too much
-> > > trouble, I think.
-> >=20
-> > I wonder how big the pgp payload would be with ed25519 as the underlying
-> > algorithm. AFAICT, the payload of a minisign signature vs a signature
-> > packet have almost the same fields...
->=20
-> It's smaller, but it's not a one-liner. Here's a comparison using ED25519
-> keys of the same length:
->=20
-> minisign:
->=20
-> RWQ4kF9UdFgeSt3LqnS3WnrLlx2EnuIFW7euw5JnLUHY/79ipftmj7A2ug7FiR2WmnFNoSacW=
-r7llBuyInVmRL/VRovj1LFtvA0=3D
->=20
-> pgp:
->=20
-> -----BEGIN PGP SIGNATURE-----
->=20
-> iHUEARYIAB0WIQR2vl2yUnHhSB5njDW2xBzjVmSZbAUCXaniFAAKCRC2xBzjVmSZ
-> bHA5AP46sSPFJfL2tbXwswvj0v2DjLAQ9doxl9bfj9iPZu+3qwEAw5qAMbjw9teL
-> L7+NbJ0WVniDWTgt+5ruQ2V9vyfYxAc=3D
-> =3DB/St
+> Add and enable the audio nodes on the VIM3L. This is based on the recent
+> submission for the SEI610 device [1] and the existing VIM3 dts.
+>
+> [1] https://patchwork.kernel.org/patch/11180785/
+>
+> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+> ---
+>  .../boot/dts/amlogic/meson-sm1-khadas-vim3l.dts    | 147 +++++++++++++++++++++
+>  1 file changed, 147 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
+> index dbbf29a..d07f0cf 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
+> @@ -8,6 +8,7 @@
+>  
+>  #include "meson-sm1.dtsi"
+>  #include "meson-khadas-vim3.dtsi"
+> +#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
+>  
+>  / {
+>  	compatible = "khadas,vim3l", "amlogic,sm1";
+> @@ -31,6 +32,86 @@
+>  		regulator-boot-on;
+>  		regulator-always-on;
+>  	};
+> +
+> +	sound {
+> +		compatible = "amlogic,axg-sound-card";
+> +		model = "SM1-KHADAS-VIM3L";
+> +		audio-aux-devs = <&tdmout_a>, <&tdmout_b>,
+> +				 <&tdmin_a>, <&tdmin_b>;
+> +		audio-routing = "TDMOUT_A IN 0", "FRDDR_A OUT 0",
+> +				"TDMOUT_A IN 1", "FRDDR_B OUT 0",
+> +				"TDMOUT_A IN 2", "FRDDR_C OUT 0",
+> +				"TDM_A Playback", "TDMOUT_A OUT",
 
-Yeah, the discrepancy mostly comes from pgp embedding a timestamp and a
-longer keyid (+a full keyid fingerprint in pgp 2.1+). Minisign keyids
-are 8 random bytes, apparently.
+The route above are useless since you are not using TDM A in this card
 
-It doesn't seem like an amazing win in terms of succintness, imvho...
+> +				"TDMOUT_B IN 0", "FRDDR_A OUT 1",
+> +				"TDMOUT_B IN 1", "FRDDR_B OUT 1",
+> +				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+> +				"TDM_B Playback", "TDMOUT_B OUT";
+> +
+> +		assigned-clocks = <&clkc CLKID_MPLL2>,
+> +				  <&clkc CLKID_MPLL0>,
+> +				  <&clkc CLKID_MPLL1>;
+> +		assigned-clock-parents = <0>, <0>, <0>;
+> +		assigned-clock-rates = <294912000>,
+> +				       <270950400>,
+> +				       <393216000>;
+> +		status = "okay";
+> +
+> +		dai-link-0 {
+> +			sound-dai = <&frddr_a>;
+> +		};
+> +
+> +		dai-link-1 {
+> +			sound-dai = <&frddr_b>;
+> +		};
+> +
+> +		dai-link-2 {
+> +			sound-dai = <&frddr_c>;
+> +		};
 
-Cheers!
--Santiago.
+You have only one output, so one FRDDR is enough.
+So either enable a put just one, or put them all (including FRDDR D)
 
---5dbczkamho4hvge3
-Content-Type: application/pgp-signature; name="signature.asc"
+> +
+> +		dai-link-3 {
+> +			sound-dai = <&toddr_a>;
+> +		};
+> +
+> +		dai-link-4 {
+> +			sound-dai = <&toddr_b>;
+> +		};
+> +
+> +		dai-link-5 {
+> +			sound-dai = <&toddr_c>;
+> +		};
 
------BEGIN PGP SIGNATURE-----
+There is no capture Backend, to the TODDR are useless
 
-iQIzBAEBCAAdFiEEkDurc2QOttZVM+/zRo8SLOgWIpUFAl2p5CkACgkQRo8SLOgW
-IpVFkg/+IC6+ElikT3WhkNyWtIvmLoqVxdpvuKUNADxO0zmUg1m+jzaAktuAwjP8
-Sn3jXRIT5vBXy8i8T+dyF37Qxovha3FAx03UepPZwNA+mqB/PCIq5l+lC+hMjOUd
-xf0cjRhzb7bg3TTn4tTvTq4wrLNNOgAsoU+JKuM4vLdz0BI6xHKjEDmEeyPa8Ez/
-l16V2/qpiQjhL85KVCdZzHkNnXdAw1lSd/Wd/BH6n/fFL6Ng17JG0fLyBVMjKdn7
-I5tChT/sEgoEqpY51YeX8oNhbEMK4b14Id/u/JBNOL+NX/+OkVoklMGgvKW5TiWj
-/INAR786NEIRoFHGM+61tDWFJl4t1SoTpf8eFNEhrOeJyIcnXSB7FPXuBB1uD+++
-iEbyJtuUFdLi0iVbJgv1rBxZNIc3DTWIfA0outUn5Y5NSgeXGBNhTMNHE5QsqHDF
-/3OLDm+5jGMeN9iePb7Cbb/oxt118c4LUVShrN67LmwOQ0cSl353Ct5sXFXe3f59
-mHKxM1+F94viKVIPLdi2Yz99lH9FZ5NPyskRAP0yZEDeu+bPyGkdn+2PaiDxGFOx
-1XcoI5wMjQ+eR3eftjufbWIUm4C/jtxG978nBaXN8yf00omWDccI3+fodCXDE5Mj
-RCnJ8qi3/SUOs2OCcSQaWxB3PmiUuPDP+OP5evNuJYXuAU5OtGA=
-=MEhz
------END PGP SIGNATURE-----
+> +
+> +		/* 8ch hdmi interface */
+> +		dai-link-6 {
+> +			sound-dai = <&tdmif_b>;
 
---5dbczkamho4hvge3--
+Any particular reason for using TDM B interface ? What is khadas doing
+in there own code ?
+
+> +			dai-format = "i2s";
+> +			dai-tdm-slot-tx-mask-0 = <1 1>;
+> +			dai-tdm-slot-tx-mask-1 = <1 1>;
+> +			dai-tdm-slot-tx-mask-2 = <1 1>;
+> +			dai-tdm-slot-tx-mask-3 = <1 1>;
+> +			mclk-fs = <256>;
+> +
+> +			codec {
+> +				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_B>;
+> +			};
+> +		};
+> +
+> +		/* hdmi glue */
+> +		dai-link-7 {
+> +			sound-dai = <&tohdmitx TOHDMITX_I2S_OUT>;
+> +
+> +			codec {
+> +				sound-dai = <&hdmi_tx>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&arb {
+> +	status = "okay";
+> +};
+> +
+> +&clkc_audio {
+> +	status = "okay";
+>  };
+>  
+>  &cpu0 {
+> @@ -61,6 +142,24 @@
+>  	clock-latency = <50000>;
+>  };
+>  
+> +&frddr_a {
+> +	status = "okay";
+> +};
+> +
+> +&frddr_b {
+> +	status = "okay";
+> +};
+> +
+> +&frddr_c {
+> +	status = "okay";
+> +};
+> +
+> +&pdm {
+> +	pinctrl-0 = <&pdm_din0_z_pins>, <&pdm_dclk_z_pins>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +};
+
+Why do you enable PDM ? does this board provide some digital mics ?
+There is no links using PDM in your card. Please clarify
+
+> +
+>  &pwm_AO_cd {
+>  	pinctrl-0 = <&pwm_ao_d_e_pins>;
+>  	pinctrl-names = "default";
+> @@ -93,3 +192,51 @@
+>  	phy-names = "usb2-phy0", "usb2-phy1";
+>  };
+>   */
+> +
+> +&tdmif_a {
+> +	pinctrl-0 = <&tdm_a_dout0_pins>, <&tdm_a_fs_pins>, <&tdm_a_sclk_pins>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +
+> +	assigned-clocks = <&clkc_audio AUD_CLKID_TDM_SCLK_PAD0>,
+> +			  <&clkc_audio AUD_CLKID_TDM_LRCLK_PAD0>;
+> +	assigned-clock-parents = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
+> +				 <&clkc_audio AUD_CLKID_MST_A_LRCLK>;
+> +	assigned-clock-rates = <0>, <0>;
+> +};
+> +
+> +&tdmif_b {
+> +	status = "okay";
+> +};
+> +
+> +&tdmin_a {
+> +	status = "okay";
+> +};
+> +
+> +&tdmin_b {
+> +	status = "okay";
+> +};
+> +
+> +&tdmout_a {
+> +	status = "okay";
+> +};
+> +
+> +&tdmout_b {
+> +	status = "okay";
+> +};
+> +
+> +&toddr_a {
+> +	status = "okay";
+> +};
+> +
+> +&toddr_b {
+> +	status = "okay";
+> +};
+> +
+> +&toddr_c {
+> +	status = "okay";
+> +};
+> +
+> +&tohdmitx {
+> +	status = "okay";
+> +};
+
