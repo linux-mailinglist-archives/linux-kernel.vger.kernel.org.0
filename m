@@ -2,145 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 824CEDC2EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D109BDC2F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:40:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442326AbfJRKjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:39:25 -0400
-Received: from mga18.intel.com ([134.134.136.126]:53275 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439341AbfJRKjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:39:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2019 03:39:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,311,1566889200"; 
-   d="scan'208";a="202665862"
-Received: from fyin-mobl.ccr.corp.intel.com (HELO [10.239.205.42]) ([10.239.205.42])
-  by FMSMGA003.fm.intel.com with ESMTP; 18 Oct 2019 03:39:17 -0700
-Subject: Re: [PATCH v2] ACPI / processor_idle: use ndelay instead of io port
- access for wait
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     David Laight <David.Laight@aculab.com>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20191015080404.6013-1-fengwei.yin@intel.com>
- <c9f3f4f93bb946f790fce4709253b359@AcuMS.aculab.com>
- <2b3ce9e9-e805-1b8d-86c3-c8f498a4d3dd@intel.com>
- <2566427.rT6C98KLSe@kreacher>
-From:   "Yin, Fengwei" <fengwei.yin@intel.com>
-Message-ID: <c77ee452-ae82-db56-723c-f26b006b6a18@intel.com>
-Date:   Fri, 18 Oct 2019 18:39:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2408393AbfJRKkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:40:03 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55148 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404276AbfJRKkC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 06:40:02 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p7so5652660wmp.4;
+        Fri, 18 Oct 2019 03:40:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8cE9YDTfQtBVk2+sSkxkP+PZ5kDH44m1/DG3//iG44o=;
+        b=OYNjgMNpsPRROwdjGNNiBj0Bqep2u1crh/BSRjgix0UHWSgr2fJ1L8bKKGc3d7jpnj
+         Z+dKBQ14uBKmx18drOTZjlpaB33QatRZaujs5ngCsJ9kkGOryUYi2MRCr27Zmr6NrOKf
+         QS30UtWmvwHeWpeEIFTzYSu5rtcjJmKh1SoqMhO/t9mcb1kXPtRulK3kLs8j34R6YOuc
+         PgiaPkKdNiWbnHnGJfvO/hhDOdd4Jj9S50muTOo3oVJG+Y964TAFXW3TDtGqX9lZjxgI
+         l3mk4+JiWZwKROo6Kp+cOIP7WznJETPuABiCsJNCaUCjJ7//Zb/9qrBxxgUNb/tDnLZq
+         z5Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8cE9YDTfQtBVk2+sSkxkP+PZ5kDH44m1/DG3//iG44o=;
+        b=qMmnIHABpoqiEDo34m17U0QbaYJ387f8ZY18GEiRrmWMEgRMfVPFeF0KIvgJ6zJlQb
+         BL0gaI6KlAsMLeESKbXDI7kiCVZq3+dLYJYNJEeYS8mK/CdSJ9zp7z1Gvmnfpi8qBTyw
+         adxnae2zYVUo3I8NsnSS1H0XEJHIYWFalyulla7yC1Sl7/sdCLN6chFeGsgkPGwcLlYT
+         hnntxGduC1ffD8QQzdffanrYrhY9lb0l0zzu7c9QCTvGJxJJMjYTGeP6F4GqScq1voUf
+         v7w78pwuJhoGvcLRiErbS4e1AOzqv1h2zAngoHHoDIolEs9T6wH/62+j0ORrrBqGBSuw
+         pZHA==
+X-Gm-Message-State: APjAAAVIgIBlg1IljbKEPN8BqwdzBGEC0wj4Y+bxgWbBgkZIiphGV1I3
+        /XcooBprHKJ+LmQnqDn32Tg=
+X-Google-Smtp-Source: APXvYqyDnHioWi04o934RHn2Z8GlYtnNljWkCs5aIV6oDWEoR7Yn8cnG3grrkQrQEqWxnGMD91wneA==
+X-Received: by 2002:a05:600c:40f:: with SMTP id q15mr6944692wmb.30.1571395199943;
+        Fri, 18 Oct 2019 03:39:59 -0700 (PDT)
+Received: from andrea.guest.corp.microsoft.com ([2a01:110:8012:1012:2d5e:8dac:e57c:2507])
+        by smtp.gmail.com with ESMTPSA id p12sm5651757wrm.62.2019.10.18.03.39.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2019 03:39:59 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 12:39:52 +0200
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        sashal@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        mikelley@microsoft.com, wei.liu@kernel.org,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] x86/hyperv: Fix build error while CONFIG_PARAVIRT=n
+Message-ID: <20191018103952.GA29828@andrea.guest.corp.microsoft.com>
+References: <20191018082921.28164-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <2566427.rT6C98KLSe@kreacher>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018082921.28164-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/2019 6:12 PM, Rafael J. Wysocki wrote:
-> On Wednesday, October 16, 2019 7:56:17 AM CEST Yin, Fengwei wrote:
->> Hi David,
->>
->> On 10/15/2019 7:48 PM, David Laight wrote:
->>> From: Yin Fengwei
->>>> Sent: 15 October 2019 09:04
->>>> In function acpi_idle_do_entry(), an ioport access is used for dummy
->>>> wait to guarantee hardware behavior. But it could trigger unnecessary
->>>> vmexit in virtualization environment.
->>>>
->>>> If we run linux as guest and export all available native C state to
->>>> guest, we did see many PM timer access triggered VMexit when guest
->>>> enter deeper C state in our environment (We used ACRN hypervisor
->>>> instead of kvm or xen which has PM timer emulated and exports all
->>>> native C state to guest).
->>>>
->>>> According to the original comments of this part of code, io port
->>>> access is only for dummy wait. We could use busy wait instead of io
->>>> port access to guarantee hardware behavior and avoid unnecessary
->>>> VMexit.
->>>
->>> You need some hard synchronisation instruction(s) after the inb()
->>> and before any kind of delay to ensure your delay code is executed
->>> after the inb() completes.
->>>
->>> I'm pretty sure that inb() is only synchronised with memory reads.
->> Thanks a lot for the comments.
->>
->> I didn't find the common serializing instructions API in kernel (only
->> memory  barrier which is used to make sure of memory access). For Intel
->> x86, cpuid could be used as serializing instruction. But it's not
->> suitable for common code here. Do you have any suggestion?
+On Fri, Oct 18, 2019 at 04:29:21PM +0800, YueHaibing wrote:
+> while CONFIG_PARAVIRT=n, building fails:
 > 
-> In the virt guest case you don't need to worry at all AFAICS, because the inb()
-> itself will trap to the HV.
-This is not always valid. If the physical cpu is totally owned by guest 
-(not shared with other guest), it's possible we passthru the C state
-port to guest. In that case, inb() which trigger C state transaction
-doesn't trap to the HV.
+> arch/x86/kernel/cpu/mshyperv.c: In function ms_hyperv_init_platform:
+> arch/x86/kernel/cpu/mshyperv.c:219:2: error: pv_info undeclared (first use in this function); did you mean pr_info?
+>   pv_info.name = "Hyper-V";
+>   ^~~~~~~
+
+Ouch, sorry for this...
+
 
 > 
->>>
->>> ...
->>>> +	/* profiling the time used for dummy wait op */
->>>> +	ktime_get_real_ts64(&ts0);
->>>> +	inl(acpi_gbl_FADT.xpm_timer_block.address);
->>>> +	ktime_get_real_ts64(&ts1);
+> Wrap it into a #ifdef to fix this.
 > 
-> You may as well use ktime_get() for this, as it's almost the same code as
-> ktime_get_real_ts64() AFAICS, only simpler.
-> 
-> Plus, static vars need not be initialized to 0.
-Thanks for pointing this out. Will update the patch accordingly.
+> Fixes: 628270ef628a ("x86/hyperv: Set pv_info.name to "Hyper-V"")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-> 
->>>
->>> That could be dominated by the cost of ktime_get_real_ts64().
->>> It also need synchronising instructions.
->> I did some testing. ktime_get_real_ts64() takes much less time than io
->> port access.
->>
->> The test code is like:
->> 1.
->> 	local_irq_save(flag);
->> 	ktime_get_real_ts64(&ts0);
->> 	inl(acpi_gbl_FADT.xpm_timer_block.address);
->> 	ktime_get_real_ts64(&ts1);
->> 	local_irq_restore(flag);
->>
->> 2.
->> 	local_irq_save(flag);
->> 	ktime_get_real_ts64(&ts0);
->> 	ktime_get_real_ts64(&ts1);
->> 	local_irq_restore(flag);
->>
->> The delta in 1 is about 500000ns. And delta in 2 is about
->> 2000ns. The date is gotten on Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz.
->> So I suppose the impact of ktime_get_real_ts64 is small.
-> 
-> You may not be hitting the worst case for ktime_get_real_ts64(), though.
-> 
-> I wonder if special casing the virt guest would be a better approach.
-> 
-> Then, you could leave the code as is for non-virt and I'm not sure if the
-> delay is needed in the virt guest case at all.
-> 
-> So maybe do something like "if not in a virt guest, do the dummy inl()"
-> and that would be it?
-Yes. This is better. Which we could control the impact to non-virt env.
+Reviewed-by: Andrea Parri <parri.andrea@gmail.com>
 
-Regards
-Yin, Fengwei
+Thanks,
+  Andrea
 
-> 
-> 
-> 
 
+> ---
+>  arch/x86/kernel/cpu/mshyperv.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+> index e7f0776..c656d92 100644
+> --- a/arch/x86/kernel/cpu/mshyperv.c
+> +++ b/arch/x86/kernel/cpu/mshyperv.c
+> @@ -216,7 +216,9 @@ static void __init ms_hyperv_init_platform(void)
+>  	int hv_host_info_ecx;
+>  	int hv_host_info_edx;
+>  
+> +#ifdef CONFIG_PARAVIRT
+>  	pv_info.name = "Hyper-V";
+> +#endif
+>  
+>  	/*
+>  	 * Extract the features and hints
+> -- 
+> 2.7.4
+> 
+> 
