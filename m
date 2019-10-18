@@ -2,105 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25216DCBD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:48:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3F62DCBDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:49:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502144AbfJRQsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 12:48:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728368AbfJRQsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 12:48:04 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07E4B20854;
-        Fri, 18 Oct 2019 16:48:01 +0000 (UTC)
-Date:   Fri, 18 Oct 2019 12:48:00 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "tip-bot2 for Jiri Slaby" <tip-bot2@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>, Borislav Petkov <bp@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        linux-arch@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [tip: x86/asm] x86/asm/ftrace: Mark function_hook as function
-Message-ID: <20191018124800.0a7006bb@gandalf.local.home>
-In-Reply-To: <157141622788.29376.4016565749507481510.tip-bot2@tip-bot2>
-References: <20191011115108.12392-22-jslaby@suse.cz>
-        <157141622788.29376.4016565749507481510.tip-bot2@tip-bot2>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2502302AbfJRQtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 12:49:06 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34313 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502179AbfJRQtG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 12:49:06 -0400
+Received: by mail-pl1-f193.google.com with SMTP id k7so3132920pll.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 09:49:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=v+xlH4n34GpIF8eBLaea0CeqXTV/EF6VBM7h/r2d6pw=;
+        b=De5hTX3JBN8Q7ACyfo1u7clSDEwrCzdRy5Xr7tZu8/ZEeYl2SDXKBq4FZZE8ONBzRk
+         tcHVTQhRFPYHeu0d0KYiDxfy3e598jTbMP8P+/D3K0XMBANSO28aweiVBVROm35frY39
+         7giwoc/mPVGMlgwGf30B9JImNpcjDajzm1X/6QzVlEX2sSg+lCxyXjSgWDkk5YPCwGp1
+         uLDTfR1vR5mG8EmKPbKIg282L12cq9MLmC20Srn8H78b6g5Qejh8GAyqu4Ovg/iIOzqj
+         c5GHP7ZizTZX3/pxkTgAnEddZN6iBSO0AUuRd9xspOBOTo/jeNFSCsBF+BiNmex6gBF+
+         tXFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=v+xlH4n34GpIF8eBLaea0CeqXTV/EF6VBM7h/r2d6pw=;
+        b=GuTE6avwkT9VPlPSgvlAUCVduJRXZb8W3hyloRO6O4G9xcgNdQTd7kyopJz1V/ifeF
+         tjyILT9N0eDw9npyTmHVFXm9v9m30jydLlamEm0GmzdrDNn++xh2vvLUx39foNTnxdkd
+         7upMrXqSYE5/Ncm8f31h8B14CWDmdKc7fy764CynP1ZMzXw0HeR0ff/Kafw5uFnaerrO
+         reo7p5A1G5atyReAviE4PwiK0l2fdmXT6npPsb1U2j6fFC4M+uQfqvBhVGb29bhH4lyf
+         puxAxNnX+qkogV/82btUelHYMAZeZmCod/EtR557eTLswwzqoGCSjbP1TsNHrSOIZdEN
+         tkYw==
+X-Gm-Message-State: APjAAAWoIVmJ1E8oxYJ8Mj0A7EjlPjCH1nW/xTRIRn8c1Q0MpTDFH18b
+        K0rpLyp0bfw/ez0RcwINhXprFw==
+X-Google-Smtp-Source: APXvYqxcNsgzf2s/TfKOdaEkn8qjpyFxXzFsL7/C6GIu4VsQgmDpxPUNU6tXa+mQfuPC/9jtCWUQ8g==
+X-Received: by 2002:a17:902:d915:: with SMTP id c21mr3169206plz.264.1571417345139;
+        Fri, 18 Oct 2019 09:49:05 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id v19sm7239550pff.46.2019.10.18.09.49.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2019 09:49:04 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 09:49:01 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     linux-pm@vger.kernel.org, evgreen@chromium.org,
+        daidavid1@codeaurora.org, vincent.guittot@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] interconnect: Add locking in icc_set_tag()
+Message-ID: <20191018164901.GC1669@tuxbook-pro>
+References: <20191018141750.17032-1-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018141750.17032-1-georgi.djakov@linaro.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Oct 2019 16:30:27 -0000
-"tip-bot2 for Jiri Slaby" <tip-bot2@linutronix.de> wrote:
+On Fri 18 Oct 07:17 PDT 2019, Georgi Djakov wrote:
 
-> The following commit has been merged into the x86/asm branch of tip:
+> We must ensure that the tag is not changed while we aggregate the
+> requests. Currently the icc_set_tag() is not using any locks and this
+> may cause the values to be aggregated incorrectly. Fix this by acquiring
+> the icc_lock while we set the tag.
 > 
-> Commit-ID:     f13ad88a984e8090226a8f62d75e87b770eefdf4
-> Gitweb:        https://git.kernel.org/tip/f13ad88a984e8090226a8f62d75e87b770eefdf4
-> Author:        Jiri Slaby <jslaby@suse.cz>
-> AuthorDate:    Fri, 11 Oct 2019 13:51:01 +02:00
-> Committer:     Borislav Petkov <bp@suse.de>
-> CommitterDate: Fri, 18 Oct 2019 11:35:41 +02:00
+> Fixes: 127ab2cc5f19 ("interconnect: Add support for path tags")
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 
-I just noticed this (sorry missed the original patch).
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-> 
-> x86/asm/ftrace: Mark function_hook as function
-> 
-> Relabel function_hook to be marked really as a function. It is called
-> from C and has the same expectations towards the stack etc.
-
-This is wrong, function_hook is never called from C. It's called via
-fentry (use to be mcount), and does not have the same semantics as a C
-function. In fact, that's why it exists in assembly. Because it has to
-save and restore registers to make it possible to call a C function!
-
--- Steve
-
-
-> 
-> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: linux-arch@vger.kernel.org
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: x86-ml <x86@kernel.org>
-> Link: https://lkml.kernel.org/r/20191011115108.12392-22-jslaby@suse.cz
 > ---
->  arch/x86/kernel/ftrace_32.S | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/interconnect/core.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> diff --git a/arch/x86/kernel/ftrace_32.S b/arch/x86/kernel/ftrace_32.S
-> index e0061dc..219be13 100644
-> --- a/arch/x86/kernel/ftrace_32.S
-> +++ b/arch/x86/kernel/ftrace_32.S
-> @@ -21,9 +21,9 @@ EXPORT_SYMBOL(__fentry__)
->  # define MCOUNT_FRAME			0	/* using frame = false */
->  #endif
+> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+> index e24092558c29..4940c0741d40 100644
+> --- a/drivers/interconnect/core.c
+> +++ b/drivers/interconnect/core.c
+> @@ -408,8 +408,12 @@ void icc_set_tag(struct icc_path *path, u32 tag)
+>  	if (!path)
+>  		return;
 >  
-> -ENTRY(function_hook)
-> +SYM_FUNC_START(function_hook)
->  	ret
-> -END(function_hook)
-> +SYM_FUNC_END(function_hook)
+> +	mutex_lock(&icc_lock);
+> +
+>  	for (i = 0; i < path->num_nodes; i++)
+>  		path->reqs[i].tag = tag;
+> +
+> +	mutex_unlock(&icc_lock);
+>  }
+>  EXPORT_SYMBOL_GPL(icc_set_tag);
 >  
->  ENTRY(ftrace_caller)
->  
-
