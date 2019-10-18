@@ -2,102 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC44ADBC2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B75ADDBC3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 06:59:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409550AbfJRE5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 00:57:00 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44075 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731903AbfJRE47 (ORCPT
+        id S2439278AbfJRE6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 00:58:46 -0400
+Received: from condef-10.nifty.com ([202.248.20.75]:37434 "EHLO
+        condef-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436473AbfJRE6p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 00:56:59 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e10so2636354pgd.11
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 21:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4JOjG0QUc189P6/WaRSOoK29dlyby423TPDBlUfjjUI=;
-        b=Lziqmfp58ruDPDlAnaXX9i3ImvrJ8f7RhL0uRY6ovTLudo2mORUTvpbSWzM8/XTFPO
-         dFk8WHRs3OF1tEwWHvb5wuKYHlZxMfAclM17/kR0QbxAuHs7cADgAJjT9R1tHPgjrTnM
-         xjiO0KIFnQ7x6SlBm+hzBJRqmoyBnMOnImt+wR3FFhuS3wSEn1dLHiMzmktM4NPZVdRN
-         WbHdFR3JDDRHZdjoaQCCVz0Dk1C3wyUMSqNmcQKVoe8DL4xYTP5PfAInbys6MErXbD63
-         XO4rlKOJ4DA9Rc1pmJIHasULYT7aZfsuszsQdsQl1QMr6HTEFVABmCyYEKW7g+GaCzgO
-         pYOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4JOjG0QUc189P6/WaRSOoK29dlyby423TPDBlUfjjUI=;
-        b=c1Q132Naw+YwgoyPUnLq/o7TGo6JHwAax5Vr5WhynfHeAXLGwM2Z9UiGGePNmVyLtQ
-         +jZevlX+MM1FuI+tpTQeMoPgy4JfvuWcsDIaL1RGZgBOpRrX1ScFfVqe0svwbb6dUnMo
-         rT6W9yCGEcbRUwNeWYaQb5YKEVeKS9H7Ws7d6UVbV0Kuuq7YfvnvGRbxnxf5k2laYndV
-         E97hCcG841+WFR17RFbwECEweDPPyYQ18IQFMQwfd8ALanRl04rHzqDWwEI41JAdjkkM
-         +3D6AMic81zDtroRHCEaEqBKwSyCy3fA0l2/7NmoWk8BF20sr+zUZGsONcm9in8x0ByA
-         8vnw==
-X-Gm-Message-State: APjAAAXXwru0BD+6PjqI/8fVjP5TJ4V16G/6QNhR2iL7S4fHOiI7Sszc
-        s5PFUDv9QTJ7hjolHqn8BwbdN2QPWFE=
-X-Google-Smtp-Source: APXvYqyuPtcqnmg+CxjS4b/CVJ38AAAsq1UNlBTr0YiXF/SJVY0vvLvaK1ceDkGa1t8Y8jOOs66R6w==
-X-Received: by 2002:a63:3d41:: with SMTP id k62mr7844596pga.129.1571374241418;
-        Thu, 17 Oct 2019 21:50:41 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id q2sm8125639pfg.144.2019.10.17.21.50.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 21:50:40 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 10:20:38 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] cpufreq: powernv: fix stack bloat and NR_CPUS limitation
-Message-ID: <20191018045038.cytb46msqzmu4age@vireshk-i7>
-References: <20191018000431.1675281-1-jhubbard@nvidia.com>
- <20191018042715.f76bawmoyk66isap@vireshk-i7>
- <c3f16019-5724-a181-8068-8dda60fb67fa@nvidia.com>
- <20191018043856.srvgft6jhqw62bx3@vireshk-i7>
- <a4a1467f-2c92-34f2-a8bf-718feaa17da7@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a4a1467f-2c92-34f2-a8bf-718feaa17da7@nvidia.com>
-User-Agent: NeoMutt/20180716-391-311a52
+        Fri, 18 Oct 2019 00:58:45 -0400
+Received: from conuserg-12.nifty.com ([10.126.8.75])by condef-10.nifty.com with ESMTP id x9I4pfCF007484;
+        Fri, 18 Oct 2019 13:51:41 +0900
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x9I4otrw003608;
+        Fri, 18 Oct 2019 13:50:55 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x9I4otrw003608
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1571374256;
+        bh=g3k4SKCLKg1HVJs8XOHlrlk6IW7BWaci6zok4NIZI/U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iNxk/lYCnVuVic2I0bv+2ctP+0/Cm+8G76ozpRQGCQO5g3XRzPr9TkHwF8BSKrkYm
+         g8P3uXWpjYBkOP6HvzlkeiDwU86Q3B19HJxlDXpFWjYdzInL18bqPT7t5IeX+R6pEJ
+         1O49UlTxg+iTTDj0uP2oZ9xjxGwdYo9ADAiYE56NHaXfHAeXZnbIT6IuJE9lnM/gT7
+         bOYH8fvd8jtQGvq4ho4m2MwNw4fKFOpZhk/PVXSuheZUkR+apM7kHj0+rOISyLGSa1
+         AgKsq5asjwO/Jt7P1df5y2gGOisFbv8ZmvhtXTh1jVsZ5Im53Xdzpfc4rFR2lNLk6x
+         kU6JqV2Ohvjig==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-spdx@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] export,module: add SPDX GPL-2.0 license identifier to headers with no license
+Date:   Fri, 18 Oct 2019 13:50:53 +0900
+Message-Id: <20191018045053.8424-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-10-19, 21:41, John Hubbard wrote:
-> On 10/17/19 9:38 PM, Viresh Kumar wrote:
-> > On 17-10-19, 21:34, John Hubbard wrote:
-> >> On 10/17/19 9:27 PM, Viresh Kumar wrote:
-> >>> On 17-10-19, 17:04, John Hubbard wrote:
-> >>>> The following build warning occurred on powerpc 64-bit builds:
-> >>>>
-> >>>> drivers/cpufreq/powernv-cpufreq.c: In function 'init_chip_info':
-> >>>> drivers/cpufreq/powernv-cpufreq.c:1070:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-> >>>
-> >>> How come we are catching this warning after 4 years ?
-> >>>
-> >>
-> >> Newer compilers. And btw, I don't spend a lot of time in powerpc
-> >> code, so I just recently ran this, and I guess everyone has been on less
-> >> new compilers so far, it seems.
-> >>
-> >> I used a gcc 8.1 cross compiler in this case:
-> > 
-> > Hmm, okay.
-> > 
-> > I hope you haven't missed my actual review comments on your patch,
-> > just wanted to make sure we don't end up waiting for each other
-> > indefinitely here :)
-> > 
-> 
-> Ha, I did overlook those. It's late around here, I guess. :)
+Commit b24413180f56 ("License cleanup: add SPDX GPL-2.0 license
+identifier to files with no license") took care of a lot of files
+without any license information.
 
-Good that I reminded you then :)
+These headers were not processed by the tool perhaps because they
+contain "GPL" in the code.
 
+I do not see any license boilerplate in them, so they fall back to
+GPL version 2 only, which is the project default.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ include/asm-generic/export.h | 1 +
+ include/linux/export.h       | 1 +
+ include/linux/license.h      | 1 +
+ include/linux/module.h       | 7 +++++--
+ 4 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
+index a3983e2ce0fd..afddc5442e92 100644
+--- a/include/asm-generic/export.h
++++ b/include/asm-generic/export.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
+ #ifndef __ASM_GENERIC_EXPORT_H
+ #define __ASM_GENERIC_EXPORT_H
+ 
+diff --git a/include/linux/export.h b/include/linux/export.h
+index 621158ecd2e2..f86ba7b11c1f 100644
+--- a/include/linux/export.h
++++ b/include/linux/export.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
+ #ifndef _LINUX_EXPORT_H
+ #define _LINUX_EXPORT_H
+ 
+diff --git a/include/linux/license.h b/include/linux/license.h
+index decdbf43cb5c..7cce390f120b 100644
+--- a/include/linux/license.h
++++ b/include/linux/license.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
+ #ifndef __LICENSE_H
+ #define __LICENSE_H
+ 
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 6d20895e7739..bd165ba68617 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -1,11 +1,14 @@
+-#ifndef _LINUX_MODULE_H
+-#define _LINUX_MODULE_H
++/* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+  * Dynamic loading of modules into the kernel.
+  *
+  * Rewritten by Richard Henderson <rth@tamu.edu> Dec 1996
+  * Rewritten again by Rusty Russell, 2002
+  */
++
++#ifndef _LINUX_MODULE_H
++#define _LINUX_MODULE_H
++
+ #include <linux/list.h>
+ #include <linux/stat.h>
+ #include <linux/compiler.h>
 -- 
-viresh
+2.17.1
+
