@@ -2,43 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 703C7DC48A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:15:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55954DC483
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:15:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437719AbfJRMPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2439154AbfJRMPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 18 Oct 2019 08:15:50 -0400
-Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:59904 "EHLO
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:59906 "EHLO
         smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404779AbfJRMPu (ORCPT
+        by vger.kernel.org with ESMTP id S2407755AbfJRMPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Oct 2019 08:15:50 -0400
 Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 5563EC0486;
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 69EE7C0487;
         Fri, 18 Oct 2019 12:15:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1571400949; bh=MLntUWtCsDMCgvrL+syluij6prsYtWtRidiu09Gql1w=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jjNSEo72GxPyztjmnCOdK8NwMPj1HdO7+ykTHQn1WwIPE3nGVid6NEHUJg9EyDnDf
-         yCXU2Oa5Ns065utjP4SczgKgbHAUauP7XuWfigj1lLWTBq5pfo2BYbOspx05GgW89d
-         vYMiPwzoGmDmEsFW1+K55dNgPA2wy20YMl6G1UEL/k2MmM0NwqwbWlr0rBDb13MsRE
-         knNqTEqhCcx9eDY51+LWQsiG/oOBs1E1cKnjDb4bLlxA6iLXZta8BuVX4+n28/GOw+
-         rOri8CFtnV+bmtFr4wrpUGusn4x7xKokIOG0CUzXvOzIFLvlU+dKAtaX34Tcfx38s9
-         x6/8QtI5Mg0fA==
+        t=1571400949; bh=LQws0XDePKuYxDhGl5Z9JpYBoC+dxlMjJSLjwbVEPoc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZJYIWtjZM3i3blWVXR37AgPSWuKSJfla2JiZKddia8WqbTgS87QmuKBaAYihsxGPL
+         pZ2EFyqmzAwMyWixIf9UH4GiD0fmDuhXACfTkqLhGAslkQk8o/Eq7R8WvNiWu9ooup
+         UbLvxf/7tW/BaMtjByPypL30fC5g0MkbYb+7L3uZ83v+xmyb8l0Uz7ysPjmMyIP6+N
+         iIFsgM9fuI/0g3Vzo67ukEYK/iH711LFGzL8wBgupR6I7xKMFTHoDHhl7SZ24avhu7
+         V26e9XSnNzV8v0ZdTvZQWZbXX1PUwwqEkATLW1XgMffPV3xeBMFvZlbUO6MeEsAAfp
+         dgwKO/4OXXVww==
 Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.73])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 34EBFA005C;
-        Fri, 18 Oct 2019 12:15:46 +0000 (UTC)
+        by mailhost.synopsys.com (Postfix) with ESMTP id C9513A0061;
+        Fri, 18 Oct 2019 12:15:47 +0000 (UTC)
 From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 To:     linux-snps-arc@lists.infradead.org,
         Vineet Gupta <Vineet.Gupta1@synopsys.com>
 Cc:     linux-kernel@vger.kernel.org,
         Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [RFC 0/6] ARC: merge HAPS-HS with nSIM-HS configs
-Date:   Fri, 18 Oct 2019 15:15:39 +0300
-Message-Id: <20191018121545.8907-1-Eugeniy.Paltsev@synopsys.com>
+Subject: [RFC 1/6] ARC: regenerate nSIM and HAPS defconfigs
+Date:   Fri, 18 Oct 2019 15:15:40 +0300
+Message-Id: <20191018121545.8907-2-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191018121545.8907-1-Eugeniy.Paltsev@synopsys.com>
+References: <20191018121545.8907-1-Eugeniy.Paltsev@synopsys.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,38 +48,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Starting from nSIM 2019.06 is possible to use DW UART
-instead of ARC UART. That allows us to merge
-"nsim_hs" with "haps_hs" and "nsim_hs_smp" with "haps_hs_smp"
-mith some minor changes.
+No functional change intended.
 
-We eliminate nsim_hs_defconfig and nsim_hs_smp_defconfig
-and leave haps_hs_defconfig and haps_hs_smp_defconfig
-which can be used on HAPS / nSIM / ZEBU / QEMU platforms
-without additionall changes in Linux kernel.
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+ arch/arc/configs/haps_hs_defconfig     | 10 ++--------
+ arch/arc/configs/haps_hs_smp_defconfig | 12 +++---------
+ arch/arc/configs/nsim_hs_defconfig     |  8 ++------
+ arch/arc/configs/nsim_hs_smp_defconfig | 10 +++-------
+ 4 files changed, 10 insertions(+), 30 deletions(-)
 
-Eugeniy Paltsev (6):
-  ARC: regenerate nSIM and HAPS defconfigs
-  ARC: HAPS: cleanup defconfigs from unused IO-related options
-  ARC: HAPS: use same UART configuration everywhere
-  ARC: HAPS: add HIGHMEM memory zone to DTS
-  ARC: HAPS: cleanup defconfigs from unused ETH drivers
-  ARC: merge HAPS-HS with nSIM-HS configs
-
- arch/arc/boot/dts/haps_hs.dts          | 15 +++---
- arch/arc/boot/dts/haps_hs_idu.dts      |  1 -
- arch/arc/boot/dts/nsim_hs.dts          | 67 --------------------------
- arch/arc/boot/dts/nsim_hs_idu.dts      | 65 -------------------------
- arch/arc/configs/haps_hs_defconfig     | 30 +++---------
- arch/arc/configs/haps_hs_smp_defconfig | 32 +++---------
- arch/arc/configs/nsim_hs_defconfig     | 60 -----------------------
- arch/arc/configs/nsim_hs_smp_defconfig | 58 ----------------------
- arch/arc/plat-sim/platform.c           |  1 -
- 9 files changed, 22 insertions(+), 307 deletions(-)
- delete mode 100644 arch/arc/boot/dts/nsim_hs.dts
- delete mode 100644 arch/arc/boot/dts/nsim_hs_idu.dts
- delete mode 100644 arch/arc/configs/nsim_hs_defconfig
- delete mode 100644 arch/arc/configs/nsim_hs_smp_defconfig
-
+diff --git a/arch/arc/configs/haps_hs_defconfig b/arch/arc/configs/haps_hs_defconfig
+index 47ff8a97e42d..e22f40612089 100644
+--- a/arch/arc/configs/haps_hs_defconfig
++++ b/arch/arc/configs/haps_hs_defconfig
+@@ -4,6 +4,7 @@ CONFIG_POSIX_MQUEUE=y
+ # CONFIG_CROSS_MEMORY_ATTACH is not set
+ CONFIG_NO_HZ_IDLE=y
+ CONFIG_HIGH_RES_TIMERS=y
++CONFIG_PREEMPT=y
+ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
+ CONFIG_NAMESPACES=y
+@@ -15,13 +16,9 @@ CONFIG_EXPERT=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_COMPAT_BRK is not set
+ CONFIG_SLAB=y
++CONFIG_ARC_BUILTIN_DTB_NAME="haps_hs"
+ CONFIG_MODULES=y
+ # CONFIG_BLK_DEV_BSG is not set
+-# CONFIG_IOSCHED_DEADLINE is not set
+-# CONFIG_IOSCHED_CFQ is not set
+-CONFIG_ISA_ARCV2=y
+-CONFIG_ARC_BUILTIN_DTB_NAME="haps_hs"
+-CONFIG_PREEMPT=y
+ # CONFIG_COMPACTION is not set
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+@@ -30,9 +27,6 @@ CONFIG_UNIX=y
+ CONFIG_UNIX_DIAG=y
+ CONFIG_NET_KEY=y
+ CONFIG_INET=y
+-# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
+-# CONFIG_INET_XFRM_MODE_TUNNEL is not set
+-# CONFIG_INET_XFRM_MODE_BEET is not set
+ # CONFIG_IPV6 is not set
+ # CONFIG_WIRELESS is not set
+ CONFIG_DEVTMPFS=y
+diff --git a/arch/arc/configs/haps_hs_smp_defconfig b/arch/arc/configs/haps_hs_smp_defconfig
+index 9685fd5f57a4..ff4fcd7640a4 100644
+--- a/arch/arc/configs/haps_hs_smp_defconfig
++++ b/arch/arc/configs/haps_hs_smp_defconfig
+@@ -4,6 +4,7 @@ CONFIG_POSIX_MQUEUE=y
+ # CONFIG_CROSS_MEMORY_ATTACH is not set
+ CONFIG_NO_HZ_IDLE=y
+ CONFIG_HIGH_RES_TIMERS=y
++CONFIG_PREEMPT=y
+ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
+ CONFIG_NAMESPACES=y
+@@ -16,15 +17,11 @@ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+ # CONFIG_COMPAT_BRK is not set
+ CONFIG_SLAB=y
++CONFIG_SMP=y
++CONFIG_ARC_BUILTIN_DTB_NAME="haps_hs_idu"
+ CONFIG_KPROBES=y
+ CONFIG_MODULES=y
+ # CONFIG_BLK_DEV_BSG is not set
+-# CONFIG_IOSCHED_DEADLINE is not set
+-# CONFIG_IOSCHED_CFQ is not set
+-CONFIG_ISA_ARCV2=y
+-CONFIG_SMP=y
+-CONFIG_ARC_BUILTIN_DTB_NAME="haps_hs_idu"
+-CONFIG_PREEMPT=y
+ # CONFIG_COMPACTION is not set
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+@@ -33,9 +30,6 @@ CONFIG_UNIX=y
+ CONFIG_UNIX_DIAG=y
+ CONFIG_NET_KEY=y
+ CONFIG_INET=y
+-# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
+-# CONFIG_INET_XFRM_MODE_TUNNEL is not set
+-# CONFIG_INET_XFRM_MODE_BEET is not set
+ # CONFIG_IPV6 is not set
+ # CONFIG_WIRELESS is not set
+ CONFIG_DEVTMPFS=y
+diff --git a/arch/arc/configs/nsim_hs_defconfig b/arch/arc/configs/nsim_hs_defconfig
+index bab3dd255841..60ad81769565 100644
+--- a/arch/arc/configs/nsim_hs_defconfig
++++ b/arch/arc/configs/nsim_hs_defconfig
+@@ -4,6 +4,7 @@ CONFIG_SYSVIPC=y
+ CONFIG_POSIX_MQUEUE=y
+ # CONFIG_CROSS_MEMORY_ATTACH is not set
+ CONFIG_HIGH_RES_TIMERS=y
++CONFIG_PREEMPT=y
+ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
+ CONFIG_NAMESPACES=y
+@@ -16,17 +17,13 @@ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_SLUB_DEBUG is not set
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_ARC_BUILTIN_DTB_NAME="nsim_hs"
+ CONFIG_KPROBES=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_FORCE_LOAD=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_MODULE_FORCE_UNLOAD=y
+ # CONFIG_BLK_DEV_BSG is not set
+-# CONFIG_IOSCHED_DEADLINE is not set
+-# CONFIG_IOSCHED_CFQ is not set
+-CONFIG_ISA_ARCV2=y
+-CONFIG_ARC_BUILTIN_DTB_NAME="nsim_hs"
+-CONFIG_PREEMPT=y
+ # CONFIG_COMPACTION is not set
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+@@ -39,7 +36,6 @@ CONFIG_DEVTMPFS=y
+ # CONFIG_STANDALONE is not set
+ # CONFIG_PREVENT_FIRMWARE_BUILD is not set
+ # CONFIG_BLK_DEV is not set
+-# CONFIG_INPUT_MOUSEDEV_PSAUX is not set
+ # CONFIG_INPUT_KEYBOARD is not set
+ # CONFIG_INPUT_MOUSE is not set
+ # CONFIG_SERIO is not set
+diff --git a/arch/arc/configs/nsim_hs_smp_defconfig b/arch/arc/configs/nsim_hs_smp_defconfig
+index 90d2d50fb8dc..c7a29adfc147 100644
+--- a/arch/arc/configs/nsim_hs_smp_defconfig
++++ b/arch/arc/configs/nsim_hs_smp_defconfig
+@@ -2,6 +2,7 @@
+ # CONFIG_SWAP is not set
+ # CONFIG_CROSS_MEMORY_ATTACH is not set
+ CONFIG_HIGH_RES_TIMERS=y
++CONFIG_PREEMPT=y
+ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
+ CONFIG_NAMESPACES=y
+@@ -14,18 +15,14 @@ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_SLUB_DEBUG is not set
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_SMP=y
++CONFIG_ARC_BUILTIN_DTB_NAME="nsim_hs_idu"
+ CONFIG_KPROBES=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_FORCE_LOAD=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_MODULE_FORCE_UNLOAD=y
+ # CONFIG_BLK_DEV_BSG is not set
+-# CONFIG_IOSCHED_DEADLINE is not set
+-# CONFIG_IOSCHED_CFQ is not set
+-CONFIG_ISA_ARCV2=y
+-CONFIG_SMP=y
+-CONFIG_ARC_BUILTIN_DTB_NAME="nsim_hs_idu"
+-CONFIG_PREEMPT=y
+ # CONFIG_COMPACTION is not set
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+@@ -38,7 +35,6 @@ CONFIG_DEVTMPFS=y
+ # CONFIG_STANDALONE is not set
+ # CONFIG_PREVENT_FIRMWARE_BUILD is not set
+ # CONFIG_BLK_DEV is not set
+-# CONFIG_INPUT_MOUSEDEV_PSAUX is not set
+ # CONFIG_INPUT_KEYBOARD is not set
+ # CONFIG_INPUT_MOUSE is not set
+ # CONFIG_SERIO is not set
 -- 
 2.21.0
+
