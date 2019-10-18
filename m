@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13BE7DBC7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F2CEDBC67
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:05:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504206AbfJRFFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:05:48 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4676 "EHLO huawei.com"
+        id S2504009AbfJRFFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:05:04 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:54304 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2504179AbfJRFFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:05:46 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1B2C4F3D3A5D72241BD7;
-        Fri, 18 Oct 2019 11:19:41 +0800 (CST)
+        id S2503979AbfJRFFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 01:05:04 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id F1BE8DCDEFF3CAD5009F;
+        Fri, 18 Oct 2019 11:19:40 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 18 Oct 2019 11:19:30 +0800
+ 14.3.439.0; Fri, 18 Oct 2019 11:19:31 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Petr Mladek <pmladek@suse.com>, <linux-kernel@vger.kernel.org>
 CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
@@ -25,9 +25,9 @@ CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
         "Andy Shevchenko" <andy@infradead.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH v2 19/33] platform/x86: asus-laptop: Use pr_warn instead of pr_warning
-Date:   Fri, 18 Oct 2019 11:18:36 +0800
-Message-ID: <20191018031850.48498-19-wangkefeng.wang@huawei.com>
+Subject: [PATCH v2 20/33] platform/x86: intel_oaktrail: Use pr_warn instead of pr_warning
+Date:   Fri, 18 Oct 2019 11:18:37 +0800
+Message-ID: <20191018031850.48498-20-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018031850.48498-1-wangkefeng.wang@huawei.com>
 References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
@@ -53,22 +53,55 @@ Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
 Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- drivers/platform/x86/asus-laptop.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/intel_oaktrail.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/platform/x86/asus-laptop.c b/drivers/platform/x86/asus-laptop.c
-index fc6446209854..a666fbc2e73b 100644
---- a/drivers/platform/x86/asus-laptop.c
-+++ b/drivers/platform/x86/asus-laptop.c
-@@ -1148,7 +1148,7 @@ static void asus_als_switch(struct asus_laptop *asus, int value)
- 		ret = write_acpi_int(asus->handle, METHOD_ALS_CONTROL, value);
- 	}
- 	if (ret)
--		pr_warning("Error setting light sensor switch\n");
-+		pr_warn("Error setting light sensor switch\n");
+diff --git a/drivers/platform/x86/intel_oaktrail.c b/drivers/platform/x86/intel_oaktrail.c
+index 3c0438ba385e..1a09a75bd16d 100644
+--- a/drivers/platform/x86/intel_oaktrail.c
++++ b/drivers/platform/x86/intel_oaktrail.c
+@@ -243,7 +243,7 @@ static int oaktrail_backlight_init(void)
  
- 	asus->light_switch = value;
- }
+ 	if (IS_ERR(bd)) {
+ 		oaktrail_bl_device = NULL;
+-		pr_warning("Unable to register backlight device\n");
++		pr_warn("Unable to register backlight device\n");
+ 		return PTR_ERR(bd);
+ 	}
+ 
+@@ -313,20 +313,20 @@ static int __init oaktrail_init(void)
+ 
+ 	ret = platform_driver_register(&oaktrail_driver);
+ 	if (ret) {
+-		pr_warning("Unable to register platform driver\n");
++		pr_warn("Unable to register platform driver\n");
+ 		goto err_driver_reg;
+ 	}
+ 
+ 	oaktrail_device = platform_device_alloc(DRIVER_NAME, -1);
+ 	if (!oaktrail_device) {
+-		pr_warning("Unable to allocate platform device\n");
++		pr_warn("Unable to allocate platform device\n");
+ 		ret = -ENOMEM;
+ 		goto err_device_alloc;
+ 	}
+ 
+ 	ret = platform_device_add(oaktrail_device);
+ 	if (ret) {
+-		pr_warning("Unable to add platform device\n");
++		pr_warn("Unable to add platform device\n");
+ 		goto err_device_add;
+ 	}
+ 
+@@ -338,7 +338,7 @@ static int __init oaktrail_init(void)
+ 
+ 	ret = oaktrail_rfkill_init();
+ 	if (ret) {
+-		pr_warning("Setup rfkill failed\n");
++		pr_warn("Setup rfkill failed\n");
+ 		goto err_rfkill;
+ 	}
+ 
 -- 
 2.20.1
 
