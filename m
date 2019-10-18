@@ -2,97 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82845DBC6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19B8ADBC46
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504057AbfJRFFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:05:12 -0400
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:42224 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504037AbfJRFFK (ORCPT
+        id S2441949AbfJRFAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:00:19 -0400
+Received: from mail-pg1-f176.google.com ([209.85.215.176]:41558 "EHLO
+        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbfJRFAT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:05:10 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 1C357CBD
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 04:58:07 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 8X8NkepSQaWy for <linux-kernel@vger.kernel.org>;
-        Thu, 17 Oct 2019 23:58:07 -0500 (CDT)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id E9125C97
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 23:58:06 -0500 (CDT)
-Received: by mail-io1-f70.google.com with SMTP id a22so6882040ioq.23
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 21:58:06 -0700 (PDT)
+        Fri, 18 Oct 2019 01:00:19 -0400
+Received: by mail-pg1-f176.google.com with SMTP id t3so2649322pga.8;
+        Thu, 17 Oct 2019 22:00:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=DvCdMzTpfcgTdM5FNIL3SmoCatqgS5bfknocDxp/cjQ=;
-        b=I3KLTDHTGjfBbu0VTQnqOAqkus9ZWIle+c83vxb65BuPr+SnL0WXvRA0zgd9pSbhZY
-         /jWnlNxJKkwZFARVmcNBBMBPS2G6RcmJNJL8kMRNIoxE6AK8gOXt3Mi8mrBZAwdhPK7s
-         clBOJbFg40XKT+cjSUutDThqhI5tnTWaTsnwPiyDi/vNGAMdzvyyNJ6jml0YAqxekaOE
-         2Rjt7GWqH26CUYDPcBS0QReinF6ejqKrB5o2tECtDc5yQOsFxdQbzomV8cfMG8ZVUbXv
-         BdCPdThNmHEamWpFrHf1n7Hu9+Fupw2xuTj1R0Ffpto77qLteWEIqilNOLD0uaigZ1SQ
-         AGHg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hkRzongkuOUe83ChWkL44NvN9Te54QbJ4HXExHzR2dY=;
+        b=jatNbz0IMlnkkWt3Xg1ggLGyaO+fIaHEXiyAghJ3oj3XGcTM6ib5fXHRjNOMzSfc4i
+         vCGp5w1Z+JLotu0IymLr1p0tRWNP7CE0HJgfQHkCoZlqf1NltbKigkHVou6QPc5+xzcG
+         Ww7lLxU48nRRFiQuTCC1TPVDsWKgpHK0/dVgJrMSojuoJrL5UpXHuK31cxiPqs1gQSJS
+         vyxwxHLJ3L3U3jWa10U+hHtsRIlCqeD4B0R6bWzLub+bEXq28Ws5rcGM/JIM9JVLxmQw
+         BlqDV8QwxTIGdGa42EtKB6wDuHg84K2VTcc4AcfkL5/cjszzprioS+kQ2JoyiJeHb3Bi
+         ut3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DvCdMzTpfcgTdM5FNIL3SmoCatqgS5bfknocDxp/cjQ=;
-        b=baa80CCDdJJVFwPNPYYkxEMyiFqtplLXk8USss1J94usonkMUYZi/TX1U8rc448RAh
-         z9pAqY+FM1eyEuwSmRy4aE1ovCk+Ru/wDe8YSzW9miLX7oCTcAkTkLkIuTk2PVTDddgH
-         kDBmlCBFlP267a2peovm5f1xaODZs5iyWWiMFTPlcMhpHSaYLnqYUoIydcsn2ImuAAWU
-         yv7Hgv3hCcZ8GAqmyYybEGf6HnwBEDMMx6jyuGrb0Tmp5swyDAc531b4dOFYoaGGOvGo
-         iGpZDX7SLIfIPMbwZAaKWQYZpYvZw32ZSkLQO9I8QRYxTcsk42Z+AY16w4rkfk441ut4
-         QAWA==
-X-Gm-Message-State: APjAAAXrDbFQehu0+dY/WGCzP64S8xnvRXAsXOu/i/+ACyqramS5uwZU
-        Ti6jGPGGZI8+1dl+DJBzbA9c38K5Cso4jogXdvPbQy0z9HQ6jB06dN29ZDDXkBfwaegBxikpV7j
-        NDJ7ThbLY3mRS31geca3NAuzi/V9T
-X-Received: by 2002:a6b:e401:: with SMTP id u1mr6900815iog.1.1571374686575;
-        Thu, 17 Oct 2019 21:58:06 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwK5CXIQFUEytsTQuW9pdgHMGv2efU6PTSg8JPovkgAAk1DVOm6KhHkLb7Z8PtjN5RTRM3UfQ==
-X-Received: by 2002:a6b:e401:: with SMTP id u1mr6900805iog.1.1571374686323;
-        Thu, 17 Oct 2019 21:58:06 -0700 (PDT)
-Received: from bee.dtc.umn.edu (cs-bee-u.cs.umn.edu. [128.101.106.63])
-        by smtp.gmail.com with ESMTPSA id v17sm1688965ilg.1.2019.10.17.21.58.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 21:58:05 -0700 (PDT)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8192e: initializing the wep buffer
-Date:   Thu, 17 Oct 2019 23:57:58 -0500
-Message-Id: <20191018045800.10909-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hkRzongkuOUe83ChWkL44NvN9Te54QbJ4HXExHzR2dY=;
+        b=ZB6qLK+Rj3bFNulOGUkke6WTqYS7bmQStwEE+tqQgTkK1afgpTYhXx+/zb5bHdk390
+         KUpxi6j0Zc4R+dAN45RmugCVQR7eiyQ3gIlFsNmZq/Zi9PTMhCrQ7S+Vf0s5CI/aotul
+         FIbnZH4BpSbiLMfsI7cSsd4Wn8V4GD4ONsLyreXMy6aGwoVxWxiOuoJ37RF9gOhry9HM
+         OFhGL8688mjjXObw4eVE8y3EVVIuH9d45nr7O2Sv2bSbCfVXPo6tr7jqf035VxX9gn8L
+         JMDL2FdfPz9kFyIq8hzr48Sm3d+UZbVI0oVg5mZ2LAuiyj2uuB6knmCM/jXk2Z68mpOK
+         fj6Q==
+X-Gm-Message-State: APjAAAUvc6jVZUI1Tj19a53uFDv81RcXMiLWsbGfnbBdNXxMQ+T1nzm9
+        /1Kaq7sb1xnr5VjTPpHS2z0=
+X-Google-Smtp-Source: APXvYqwaO3NXr1IrOUdk7COhtE8etBUdbbxwgbUaqCWe2dBM2NF7UNRJQNPJdNWWjJt44Zo+wGuoMQ==
+X-Received: by 2002:aa7:8691:: with SMTP id d17mr4373530pfo.218.1571374818508;
+        Thu, 17 Oct 2019 22:00:18 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:180::cfd0])
+        by smtp.gmail.com with ESMTPSA id r24sm4564056pfh.69.2019.10.17.22.00.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Oct 2019 22:00:17 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 22:00:15 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the net-next tree
+Message-ID: <20191018050013.sle55bwea5kxovej@ast-mbp>
+References: <20191018133139.30c88807@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018133139.30c88807@canb.auug.org.au>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "wep" buffer is not initialized. To avoid memory disclosures,
-the fix initializes it, as peer functions like rtllib_ccmp_set_key
-do.
+On Fri, Oct 18, 2019 at 01:31:39PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in:
+> 
+>   samples/bpf/Makefile
+> 
+> between commit:
+> 
+>   1d97c6c2511f ("samples/bpf: Base target programs rules on Makefile.target")
+> 
+> from the net-next tree and commit:
+> 
+>   fce9501aec6b ("samples/bpf: fix build by setting HAVE_ATTR_TEST to zero")
+> 
+> from the tip tree.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/staging/rtl8192e/rtllib_crypt_wep.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_wep.c b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-index b1ea650036d2..0931777ed157 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-@@ -232,6 +232,7 @@ static int prism2_wep_set_key(void *key, int len, u8 *seq, void *priv)
- 	if (len < 0 || len > WEP_KEY_LEN)
- 		return -1;
- 
-+	memset(wep, 0, sizeof(*wep));
- 	memcpy(wep->key, key, len);
- 	wep->key_len = len;
- 
--- 
-2.17.1
+Argh.
+Can tip folks revert the patch and let it go the normal route via bpf trees?
+There was no good reason in creating such conflicts.
 
