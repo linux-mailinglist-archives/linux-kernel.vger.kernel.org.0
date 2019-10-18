@@ -2,92 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CCE7DD0E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 23:12:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EDADDD0E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 23:12:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2506123AbfJRVMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 17:12:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52054 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394095AbfJRVMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 17:12:14 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 444D32089C;
-        Fri, 18 Oct 2019 21:12:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571433134;
-        bh=nWv0pT1v8ileCG/uTO1XI4TI/P//OjNODZ+LjyV8Pnk=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=g0MrlMp1cPSmyMilQM/x8aUF2msz5Kh9rffAd7IdbaMnxc3U+UbXjiLIo+wxDNa0G
-         xpMfhYlByJM55jASjiX64wuV127c/ULYwYDlRTFP9+X2hahQKxZgk7+J+jKsveSc+Y
-         u2SyLbvDNl6nIL8wIhnBcA04FCEZI81l3hYDDUXs=
-Content-Type: text/plain; charset="utf-8"
+        id S2634605AbfJRVM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 17:12:28 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:36542 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394095AbfJRVM2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 17:12:28 -0400
+Received: by mail-il1-f194.google.com with SMTP id z2so6799320ilb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 14:12:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3bTakgz7LEZbnsJ6SfGZfkJdZLXTmdE5E7CAN0l9zGs=;
+        b=OYrB4dw9gOsYCWo4syH/MFfrRmj7gjPcUk56pQPkSYzcnoehqVtqgxGyue5h2rJ/5q
+         UrUGacNmUXkYVIz3VhI47mM5wM07gcYNzepR6WUplr9/++Xxel4iALzGaABMJyBOdA/z
+         Siyyis/hQS0PCFgZjFpboDCeHAytZqXKyaK6qhr/kN72KeoU92BwxX6J1asfNIGfZ9oV
+         vOyGL10KFrWxezdDaSPw7lcTMXKu90Mif3b4fxuiZt84YXbduxPV8cplAzOLJekLBjPQ
+         bweDKonrJrnCjJxRUC9YKAH7VMD7pu77W+N5X93Mdhq2F8J3uXx4x8poH3sCyQ6J/O7v
+         M/XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3bTakgz7LEZbnsJ6SfGZfkJdZLXTmdE5E7CAN0l9zGs=;
+        b=lHFY4sks8xJIe8LJEPUeC90NA+Se2dGupf0LWEP9TOq8TBVarkDwZlVAXDNcw8O36e
+         7rVi5NP6YwUNNkKoCX2wiFdHCKne03+upUbn8sX+KMceLsU3UQH+3a5wUBjMZDfBGq5a
+         PaBBe6O8ZzFG3VAsmM19oRBaoaa2ez+2euYFw51m5EgsoFebI2P4Fl2aFP41m3VYwncQ
+         bHAUGuAuBS4b5r1ikzE4xBAbX2FymEsUElfNmfmA4jH8vjShdK8/1Gy/Pg54vJrCWKkv
+         kZoO8WEBVCVTkDTlRRcDrzy5Ixd6B1++sObg1LCc+6unyLfwTx262auIPKpmxW3O6JsS
+         GoDw==
+X-Gm-Message-State: APjAAAX9Nfb4Xq0CTZErwk1zbsRk26HVmFaFwvEl11xW5ecmwzkOTmaI
+        cQPXMFoDIxl1fiui4fYtyyXnX0Ao1L7ovimVrFxuLw==
+X-Google-Smtp-Source: APXvYqx4nWj+eAEbk35IMVkYUmMOK2BiEKPGwuO4Ri0S0ybvpc8yNzjzRZFXSETBp1i0VPTzCgZ1Kms4ugQwQcdPBaI=
+X-Received: by 2002:a92:475a:: with SMTP id u87mr12844914ila.26.1571433147021;
+ Fri, 18 Oct 2019 14:12:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2700308706c0d46ca06eeb973079a1f18bf553dd.1571390916.git.viresh.kumar@linaro.org>
-References: <2700308706c0d46ca06eeb973079a1f18bf553dd.1571390916.git.viresh.kumar@linaro.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Nishanth Menon <nm@ti.com>, Viresh Kumar <viresh.kumar@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] opp: Reinitialize the list_kref before adding the static OPPs again
-User-Agent: alot/0.8.1
-Date:   Fri, 18 Oct 2019 14:12:13 -0700
-Message-Id: <20191018211214.444D32089C@mail.kernel.org>
+References: <1501554327-3608-1-git-send-email-wanpeng.li@hotmail.com>
+ <20170803134636.GG32403@flask> <CANRm+Cw9+zBrk24MZo5YSw4j2KxyRsuk+dh8QNT9q0orVo7egA@mail.gmail.com>
+In-Reply-To: <CANRm+Cw9+zBrk24MZo5YSw4j2KxyRsuk+dh8QNT9q0orVo7egA@mail.gmail.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Fri, 18 Oct 2019 14:12:15 -0700
+Message-ID: <CALMp9eTrhnWJpROGiCuR4TDHzW+CqRpBm4YV5hXQEdAbPN-fzw@mail.gmail.com>
+Subject: Re: [PATCH v2] KVM: nVMX: Fix attempting to emulate "Acknowledge
+ interrupt on exit" when there is no interrupt which L1 requires to inject to L2
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        Dan Cross <dcross@google.com>, Marc Orr <marcorr@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Viresh Kumar (2019-10-18 02:28:41)
-> The list_kref reaches a count of 0 when all the static OPPs are removed,
-> for example when dev_pm_opp_of_cpumask_remove_table() is called, though
-> the actual OPP table may not get freed as it may still be referenced by
-> other parts of the kernel, like from a call to
-> dev_pm_opp_set_supported_hw(). And if we call
-> dev_pm_opp_of_cpumask_add_table() again at this point, we must
-> reinitialize the list_kref otherwise the kernel will hit a WARN() in
-> kref infrastructure for incrementing a kref with value 0.
->=20
-> Fixes: 11e1a1648298 ("opp: Don't decrement uninitialized list_kref")
-> Reported-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/opp/of.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-> index 6dc41faf74b5..1cbb58240b80 100644
-> --- a/drivers/opp/of.c
-> +++ b/drivers/opp/of.c
-> @@ -663,6 +663,13 @@ static int _of_add_opp_table_v2(struct device *dev, =
-struct opp_table *opp_table)
->                 return 0;
->         }
-> =20
-> +       /*
-> +        * Re-initialize list_kref every time we add static OPPs to the O=
-PP
-> +        * table as the reference count may be 0 after the last tie stati=
-c OPPs
+On Thu, Aug 3, 2017 at 6:23 PM Wanpeng Li <kernellwp@gmail.com> wrote:
 
-s/tie/time/
+> Thanks Radim. :) In addition, I will think more about it and figure
+> out a finial solution.
 
-> +        * were removed.
-> +        */
-> +       kref_init(&opp_table->list_kref);
+Have you had any thoughts on a final solution? We're seeing incorrect
+behavior with an L1 hypervisor running under qemu with "-machine
+q35,kernel-irqchip=split", and I believe this may be the cause.
 
-It seems racy. Why are we doing this vs. making an entirely new and
-different OPP structure? Or why is the count reaching 0 when something
-is obviously still referencing it?
-
-> +
->         /* We have opp-table node now, iterate over it and add OPPs */
->         for_each_available_child_of_node(opp_table->np, np) {
->                 opp =3D _opp_add_static_v2(opp_table, dev, np);
+In particular, VMCS12 has ACK_INTERRUPT_ON_EXIT set, but L1 is seeing
+an L2 exit for "external interrupt" with the VMCS12 VM-exit
+interruption information cleared to 0.
