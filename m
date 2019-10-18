@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCF6DCA91
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:12:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE81ADCA8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:12:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2443006AbfJRQLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 12:11:47 -0400
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:36963 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502621AbfJRQL0 (ORCPT
+        id S2502674AbfJRQLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 12:11:30 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:44697 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502587AbfJRQL2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 12:11:26 -0400
-Received: by mail-pf1-f201.google.com with SMTP id p2so4979962pff.4
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 09:11:26 -0700 (PDT)
+        Fri, 18 Oct 2019 12:11:28 -0400
+Received: by mail-pg1-f201.google.com with SMTP id z7so4583687pgk.11
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 09:11:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=OMV7GU+CS755gzThihulnjNw1pxqVtHrVsdKKTavPQY=;
-        b=FGaZKiG+Ux25snyrOJrBiRd7RwQxjjLhUDr+StQE9m6QImfqUDq6yp6j+8Toagonr0
-         9TtbMLb3ay20pI9YbGG7nJzzM0vR4AyRpchI4t/ZYgICefWGJVsG/b/aJxIHIw5w9UV3
-         EIJDiPWiyVwP1F234VZ4D2+fA00WZK8lZRp8IvN7MdZJh8XNzU3kgbsv5o54oZ+iiZsI
-         KghuQJd7vpAsaqImv6J86r3heyO3yrp6I8mcuRhzR5+TbYZJ39FxxZRefwS+iHZszAKS
-         nursS3e3ycHoRmOFQHS1v/YDrqGB9JFjdDc8idnF+2J0IDA0s0+5SNkcUWwuinwq2OFT
-         V+bg==
+        bh=kAZH5b29Q7ARe7ApEbNubNt6T6v1C763yQTiGjc3PQk=;
+        b=MU3xv8ySUWa8q2gpjX+qFLOwCKhVBxOWHnEJ3R9sBKpRssnEcrJMlv2k41DcBabefp
+         YGOIRyOHtuLqhQjP/H6UeJPJ31HbWh9EpsVg0P4HVVdbNapzd4whA6CQO0jcE6HFqrZI
+         pgFlyp8aklTxhdiWcaDBLc5CpmFKJZswMRP/d6udWasrZrb61oeIxbFInJG3ZOTF4sVk
+         8JrRWRNQEQR/efYLvQF070upFjEKFVFMcnO8HN9mWGmqJ5+afIdNL+vr/Zp/pbDcSsCQ
+         e4yhuM2R8kT/imgzLMvhUd7v/AWzMuvSo0KChcal0UxqcYxBSXGTsqlDEDweUlIG3qti
+         24Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=OMV7GU+CS755gzThihulnjNw1pxqVtHrVsdKKTavPQY=;
-        b=fNWj7cV/ZI0dkj13cb8ltsPxFvmU+WkaLyDP2xqJFt858Ir21209aOh4czi77mHK+z
-         954dFCVq7n5pWldVdeK8MiPlp3UmAqw9hNQwF0oJJwGpXsYihglxDAvzgoMR2W7GwgJD
-         pk1lGQpbMnJHl6X5O8ejzzT3QH/JExNJ+fySjrfxvnFs6pcj+WTThc6pG8hlQ4Apf+Sp
-         MPOTQYEHjgSsJOvAJnVlY1Y3RqqmzJFeAv4M0f/jDqON4VWQyzT0wlL/HeDWAejV/BtF
-         EvuLOs7ZvEVsvGBIM/tNUqeea9WVjG05R4mLYz/siB4hLov9T2uzsBCB/anf7rMw4x15
-         KH0Q==
-X-Gm-Message-State: APjAAAUcu1WrVn7h4rJm8ZYo3Hnb5gYdZXZPQrgwIr9V1PO4cCNtA+1r
-        OB6yXrNvCYxbWR0qrLyvdo9VWlUv1UfpWHn5aGc=
-X-Google-Smtp-Source: APXvYqycxw3zlWpqg/6yGEhb7CgOxW1rmJc0Y43aPOFAV6KRrpZHK92ZxBUvHsBpIOsv4SiMThIv0qzjvIsHF4JRnyI=
-X-Received: by 2002:a63:1904:: with SMTP id z4mr11066720pgl.413.1571415085386;
- Fri, 18 Oct 2019 09:11:25 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 09:10:29 -0700
+        bh=kAZH5b29Q7ARe7ApEbNubNt6T6v1C763yQTiGjc3PQk=;
+        b=Jch4J1Rpsk1l2Ab6xssJ+EfaFuxlOdOKkjENjVAz3LI4pcYt2mF4nRtmPMj1HqeyFw
+         uigbI5U+YhLn94fkJH8Jvz7ovO/0VglWS6G3npnpN1gcsiCTvu1780N0ohfUkDR1TAZe
+         d8iz+YGwnh0IOpmYqR20pALb5KxJdnqP3ABeU5S1Vu5FhCiZaRuYcAoR6xXzVtK6ffyT
+         xdYyXfrMYzzGkjm/uzMXXzZ3wVXbIYOuAy/I1QK/mk/ieKu0ojLBrkJ2/2+JWDXxC9CO
+         h3UQtCrO6u5eThiKtOtgJgdduOGvNdvuyzvIojnHfE+JHdHkbKh4ChZgy3lcghzlbVRp
+         M2Hg==
+X-Gm-Message-State: APjAAAVkXO5UqS1QodY5xEyLua1FGjFzNQiyG8DaEj/e7Gi8E50UW7Ff
+        JzZ6h2NV0/DeOTctIpdhHK7w3nQr6b0L7HkxZAk=
+X-Google-Smtp-Source: APXvYqxrZ7wEgagooCPTAQmdCRYdis4uNkIIYm64oppMcYVDpcyhHuDu43I31sdZRydHODqHUlaqbmkndVluNi8asAA=
+X-Received: by 2002:a63:ff08:: with SMTP id k8mr10900425pgi.8.1571415087691;
+ Fri, 18 Oct 2019 09:11:27 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 09:10:30 -0700
 In-Reply-To: <20191018161033.261971-1-samitolvanen@google.com>
-Message-Id: <20191018161033.261971-15-samitolvanen@google.com>
+Message-Id: <20191018161033.261971-16-samitolvanen@google.com>
 Mime-Version: 1.0
 References: <20191018161033.261971-1-samitolvanen@google.com>
 X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
-Subject: [PATCH 14/18] arm64: efi: restore x18 if it was corrupted
+Subject: [PATCH 15/18] arm64: vdso: disable Shadow Call Stack
 From:   Sami Tolvanen <samitolvanen@google.com>
 To:     Will Deacon <will@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -68,30 +68,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we detect a corrupted x18 and SCS is enabled, restore the register
-before jumping back to instrumented code.
-
 Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 ---
- arch/arm64/kernel/efi-rt-wrapper.S | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/vdso/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/efi-rt-wrapper.S b/arch/arm64/kernel/efi-rt-wrapper.S
-index 3fc71106cb2b..945744f16086 100644
---- a/arch/arm64/kernel/efi-rt-wrapper.S
-+++ b/arch/arm64/kernel/efi-rt-wrapper.S
-@@ -34,5 +34,10 @@ ENTRY(__efi_rt_asm_wrapper)
- 	ldp	x29, x30, [sp], #32
- 	b.ne	0f
- 	ret
--0:	b	efi_handle_corrupted_x18	// tail call
-+0:
-+#ifdef CONFIG_SHADOW_CALL_STACK
-+	/* Restore x18 before returning to instrumented code. */
-+	mov	x18, x2
-+#endif
-+	b	efi_handle_corrupted_x18	// tail call
- ENDPROC(__efi_rt_asm_wrapper)
+diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
+index dd2514bb1511..b23c963dd8df 100644
+--- a/arch/arm64/kernel/vdso/Makefile
++++ b/arch/arm64/kernel/vdso/Makefile
+@@ -19,7 +19,7 @@ obj-vdso := $(addprefix $(obj)/, $(obj-vdso))
+ 
+ ldflags-y := -shared -nostdlib -soname=linux-vdso.so.1 --hash-style=sysv \
+ 		--build-id -n -T
+-
++ccflags-y += $(DISABLE_SCS)
+ ccflags-y := -fno-common -fno-builtin -fno-stack-protector -ffixed-x18
+ ccflags-y += -DDISABLE_BRANCH_PROFILING
+ 
 -- 
 2.23.0.866.gb869b98d4c-goog
 
