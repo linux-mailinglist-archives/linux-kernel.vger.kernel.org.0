@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 729F3DBCF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:26:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D5D1DBD06
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:29:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390061AbfJRF0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:26:55 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33997 "EHLO
+        id S2395211AbfJRF3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:29:21 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44296 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbfJRF0z (ORCPT
+        with ESMTP id S2393371AbfJRF3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:26:55 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j11so4766438wrp.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:26:53 -0700 (PDT)
+        Fri, 18 Oct 2019 01:29:20 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z9so4722353wrl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:29:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=h73TqF5SoJ6GAIIKRG22eugF7D1cochNYSQVPWgygxk=;
-        b=oT+ec34QQePEIN8AhUZGIGxnIWGt8bBJbEIgZPVeAawhIgHnNshdKFCxck2vhENTAr
-         vbr2hWswQdFMhAFRLwWwvlEls+zsASyOIedKdO/I9WSbxqBIry0+LhvKUULxL+e/Tfuz
-         l3dWDY9QlsHdcrJNMVeJkWCVuDUbu+n8Czh+/KZivTKW0pF0qJx3p44zF7ZYc0Fffiuk
-         zj7uOIb5BcqssmkN44Hmde4nPeNCu0KnzWItOzKgfqz8/ZS4wDzatknooeMs8PcbDJ64
-         kiawb0PA8ePO9j31VtLaA2f16BXSL76nj/kQw8d3ySbGRDO9iKoGDTyuE85HmlXupXdt
-         f/rQ==
+        bh=1L7f/uGvROZCVtz1Hvo5nsOEYV/tzFdc7Jvsq90u0ec=;
+        b=iVxQpCnYqNXc4Cij1up0Y1wu0M6UegLV1122D9YlF8s9T2CDAYVt1sC9yaAZtO+IXa
+         2DQxUapTjWzwHwSN/u70Xw8pbrnPcLYlice8p0PbOlMUIVXKl7eCZJxosYm8gz/41SyY
+         qRKUtYfv9DTZHhE/hjTH3xJl6jWx3RjDZYlKHdPCy0/FJYmnmMq5YSOdultPUTvZuF+2
+         2l3Y9KB4MrVL3Mgp+wy3fbOPNqGQt0/UiTyJdKQYs1yNC2PbeTXLOTK59Pkgou1rtR2d
+         tBBjbvQmRJxtcj6wp52J2zr1QHOqrbSfOua8Ivs6yTu+iYgTKsn0NUstWAz/qysDqT/G
+         KUpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=h73TqF5SoJ6GAIIKRG22eugF7D1cochNYSQVPWgygxk=;
-        b=oiCHXoaIQN6pIBFXx+hdmM3FjK+JGYoGu3AEm6HZGbams/9eiD8/FmFwhfmccbiasB
-         oWGUowsB+kgmkSevT/PX8dbhxsRDVHrgCm2cM0CssloOnyjR6REAWBMZngLN8Be4pxcq
-         9O0dqDGt28EA2yLOwg0e6xa2b5Dhly5wGFAmb7GjFnBVDbUAXfftmxAFw4I1dWEoMfak
-         ZuAW8ehbqI5iC8RA2AlwqKcVOojPXaA0ZlxgNpAfHX3UldD44Xne2Rt57nngU8Ixz07O
-         Jerk2uBoH5adLQ2/wXU7VFlb+NevPKqX2Vng0f95U7us+k+haZ0r9wLLGctBCRkAgpqq
-         S/Ew==
-X-Gm-Message-State: APjAAAUZiUbELsga3ninKMZtdjlIfPVQmyDCt6oOUKqWm8Wi0/diAAJU
-        L2mdyNyJ0jOMl4LmKgFhDInb46CPDGDASECz7B0eY63RAfQ=
-X-Google-Smtp-Source: APXvYqzKRMy1STi+JQe3ZerDLgemp6MoY0u4gJnfJOMrrFsiaL70l/OsymsbOB47n6U96qOe+1clLwmxcheZ4TNEnKk=
-X-Received: by 2002:adf:a109:: with SMTP id o9mr5299771wro.96.1571367250161;
- Thu, 17 Oct 2019 19:54:10 -0700 (PDT)
+        bh=1L7f/uGvROZCVtz1Hvo5nsOEYV/tzFdc7Jvsq90u0ec=;
+        b=U0d2D51ivrhGXO9+uyAdtEu3yoJQ2f/Wkjo7IYuGE+XlF7o48oCe/aWLd4gLBdeavM
+         N/SCu92JwIvsvmsWq39VH4ZsWzotR2wyg4MHLo2tafnk0P/ljGVrdNc7RzYMobvF9Fkm
+         U+7bY6noP/efmz3OAYcSxwts69756jDMYN1wHJirX8VV5tE6mCNGNZfn7o73z7erQ7vu
+         xSlD/vkZCqciQU0PauMVWhXz5xaXqy98dyXCWnlFnc5m1GIjOEGvpJlxG+EfPMwx8lIj
+         Wsp6pLvJ9CqxM0S8vFY4rwouBlRnQC/jkwex8sUG8cRw9JZ912w6ZxoIqPc4nYTjnjPj
+         x+aw==
+X-Gm-Message-State: APjAAAUzZWihTBrEbU0XBRV+z7GzB3AaYB0S0Ymlza2qfuwlKW850Sqo
+        fHPwOxiBkzDMTs91ZFrDdiVQRxi5JRnXD5qG5427tY6p9Bg=
+X-Google-Smtp-Source: APXvYqxzmddrHUI9HqFZ9O/ss44G8uvOHzcgCjU4n2xlXZo3KwPjpnG8lAZNMu2zdDfMWUcl2LR7kj0WtZ4S9n7osVQ=
+X-Received: by 2002:a5d:42c2:: with SMTP id t2mr5350499wrr.251.1571367672210;
+ Thu, 17 Oct 2019 20:01:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191017173743.5430-1-hch@lst.de> <20191017173743.5430-7-hch@lst.de>
-In-Reply-To: <20191017173743.5430-7-hch@lst.de>
+References: <20191017173743.5430-1-hch@lst.de> <20191017173743.5430-11-hch@lst.de>
+In-Reply-To: <20191017173743.5430-11-hch@lst.de>
 From:   Anup Patel <anup@brainfault.org>
-Date:   Fri, 18 Oct 2019 08:23:59 +0530
-Message-ID: <CAAhSdy1DotXOmo472pXDmRny1Zt11eSH4soG_tYaAALrYzVgBw@mail.gmail.com>
-Subject: Re: [PATCH 06/15] riscv: cleanup the default power off implementation
+Date:   Fri, 18 Oct 2019 08:31:01 +0530
+Message-ID: <CAAhSdy2Sb+aizuNtKvindH1yowey-_uvJw9jGf=QGAgPMJsDWw@mail.gmail.com>
+Subject: Re: [PATCH 10/15] riscv: read the hart ID from mhartid on boot
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Palmer Dabbelt <palmer@sifive.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Atish Patra <atish.patra@wdc.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
         linux-riscv <linux-riscv@lists.infradead.org>,
         "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -63,72 +63,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Oct 17, 2019 at 11:08 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> Move the sbi poweroff to a separate function and file that is only
-> compiled if CONFIG_SBI is set.  Provide a new default fallback
-> power off that just sits in a wfi loop to save some power.
+> From: Damien Le Moal <Damien.LeMoal@wdc.com>
 >
+> When in M-Mode, we can use the mhartid CSR to get the ID of the running
+> HART. Doing so, direct M-Mode boot without firmware is possible.
+>
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > Reviewed-by: Atish Patra <atish.patra@wdc.com>
 > ---
->  arch/riscv/kernel/Makefile |  1 +
->  arch/riscv/kernel/reset.c  |  5 ++---
->  arch/riscv/kernel/sbi.c    | 17 +++++++++++++++++
->  3 files changed, 20 insertions(+), 3 deletions(-)
->  create mode 100644 arch/riscv/kernel/sbi.c
+>  arch/riscv/include/asm/csr.h | 1 +
+>  arch/riscv/kernel/head.S     | 8 ++++++++
+>  2 files changed, 9 insertions(+)
 >
-> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-> index 696020ff72db..d8c35fa93cc6 100644
-> --- a/arch/riscv/kernel/Makefile
-> +++ b/arch/riscv/kernel/Makefile
-> @@ -41,5 +41,6 @@ obj-$(CONFIG_DYNAMIC_FTRACE)  += mcount-dyn.o
->  obj-$(CONFIG_PERF_EVENTS)      += perf_event.o
->  obj-$(CONFIG_PERF_EVENTS)      += perf_callchain.o
->  obj-$(CONFIG_HAVE_PERF_REGS)   += perf_regs.o
-> +obj-$(CONFIG_RISCV_SBI)                += sbi.o
+> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+> index 0dae5c361f29..d0b5113e1a54 100644
+> --- a/arch/riscv/include/asm/csr.h
+> +++ b/arch/riscv/include/asm/csr.h
+> @@ -81,6 +81,7 @@
+>  #define SIE_SEIE               (_AC(0x1, UL) << IRQ_S_EXT)
 >
->  clean:
-> diff --git a/arch/riscv/kernel/reset.c b/arch/riscv/kernel/reset.c
-> index d0fe623bfb8f..5e4e69859af1 100644
-> --- a/arch/riscv/kernel/reset.c
-> +++ b/arch/riscv/kernel/reset.c
-> @@ -4,12 +4,11 @@
->   */
+>  /* symbolic CSR names: */
+> +#define CSR_MHARTID            0xf14
+>  #define CSR_MSTATUS            0x300
+>  #define CSR_MIE                        0x304
+>  #define CSR_MTVEC              0x305
+> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+> index 679e63d29edb..583784cb3a32 100644
+> --- a/arch/riscv/kernel/head.S
+> +++ b/arch/riscv/kernel/head.S
+> @@ -50,6 +50,14 @@ _start_kernel:
+>         csrw CSR_XIE, zero
+>         csrw CSR_XIP, zero
 >
->  #include <linux/reboot.h>
-> -#include <asm/sbi.h>
->
->  static void default_power_off(void)
->  {
-> -       sbi_shutdown();
-> -       while (1);
-> +       while (1)
-> +               wait_for_interrupt();
->  }
->
->  void (*pm_power_off)(void) = default_power_off;
-> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
-> new file mode 100644
-> index 000000000000..f6c7c3e82d28
-> --- /dev/null
-> +++ b/arch/riscv/kernel/sbi.c
-> @@ -0,0 +1,17 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
+> +#ifdef CONFIG_RISCV_M_MODE
+> +       /*
+> +        * The hartid in a0 is expected later on, and we have no firmware
+> +        * to hand it to us.
+> +        */
+> +       csrr a0, CSR_MHARTID
+> +#endif
 > +
-> +#include <linux/init.h>
-> +#include <linux/pm.h>
-> +#include <asm/sbi.h>
-> +
-> +static void sbi_power_off(void)
-> +{
-> +       sbi_shutdown();
-> +}
-> +
-> +static int __init sbi_init(void)
-> +{
-> +       pm_power_off = sbi_power_off;
-> +       return 0;
-> +}
-> +early_initcall(sbi_init);
+>         /* Load the global pointer */
+>  .option push
+>  .option norelax
 > --
 > 2.20.1
 >
