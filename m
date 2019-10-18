@@ -2,87 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1C8EDBCC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:17:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF3E0DBCC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405932AbfJRFR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:17:27 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40223 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728020AbfJRFR1 (ORCPT
+        id S2393130AbfJRFPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:15:17 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33026 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727606AbfJRFPR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:17:27 -0400
-Received: by mail-wm1-f65.google.com with SMTP id b24so4717986wmj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:17:24 -0700 (PDT)
+        Fri, 18 Oct 2019 01:15:17 -0400
+Received: by mail-pl1-f194.google.com with SMTP id d22so2281934pls.0;
+        Thu, 17 Oct 2019 22:15:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=GXpwiWbrAU/653GmrWZ4CKDfopVqbQJlCnoRGMU0IXo=;
-        b=HCkne4s8lruvHSjpE5jf0OgLyMhPwrvNwZ3XZUMDJxIAmbTJ7U0e0j5lACmvchXOqb
-         2wIXjnp6mVboS7gpgge2/f0WIp8FzhCfT1YzwjZn2XMChTk+3gX4w/G3wm1ASj5evE2v
-         9KiN6Bd+zRI7o53M1ioDgisIswMb4TuhvO4CAV+HMlcpRWwIq6DGiBu+HsFpiLvXgdyx
-         yyAuvxqH9F6W51uc00HyFnNZGHyf5BfLq8tgaAZ5qX1mMOJQD3r3KIrfjNUUGuKn5IDz
-         wwRkRZtW4RWjuR6lMcdS7SsHtCR7KkOHVEIl/XHnXpbtnpPonSGPxfNxqxg7BH4lcH/l
-         Ympw==
+        bh=eKCQEHJp+Bmk1+KxL2VW8ZVDs0l76/RRTSEB8GtoKzU=;
+        b=VNYmFpR+1svH3RklJ/ni4HOgMNYHl7MHEGV9c2RKjwcUsmhFCVwHCd8Lx6MtsoWVte
+         Git34f+i7ciXxxGu+izTqbWE5AxM6LMpwlAhUfDPh5Ki/fqj5/ZAurq5nX/8wqfZhuFx
+         GBzv2FpY+5gkaZoq5UJ8rNnF0b/TofDQ5Xp+lVHw+QBbI4lHwpdkGPzJRzkYMlkplsMf
+         Y5avb3hUqFh/XcCy5y/7Od4OeVLbiQf0WVuUB99THxpC4P/ofAiEkA2ITlSHT/5P5m5f
+         PI3HN+DbW9qrtCpPtPv5uvbqXLG3l3RaWsKUTdL6qDdCg2lddyuwlw/FuZ7C1SP5rVLF
+         TcLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GXpwiWbrAU/653GmrWZ4CKDfopVqbQJlCnoRGMU0IXo=;
-        b=G0/jnQmEb05EHvsLil5J+W6LvmN/D4zMM4ySd91IGO6mT/732tQQXP53TO7qupNI6z
-         3tmtjgF9ZLSlvjYT5f85p++6StTg0Udd4EL7Tjk6+v2jHtC7+kjwD+DezDLPKpWne8I4
-         +A0hX/p0Ua8raMte4EMQYbFJ6V5jztdBLlp9AQiYdN48e306aURaAx3Sx6kgD/6qMDGx
-         9UsoJSzJLrPhw8lYQW85qaE3+2wcz1NRLql29dPGEbbx3G/IF4ytTKg0zZBxIR3Xn4F6
-         MFZ+c2Xkcp4N6Az4xmgHCNMY42A6kksOB3Dpi9SSp62sBO/YgWuGzKBVEcLzx6uQrQmY
-         6SFg==
-X-Gm-Message-State: APjAAAWEjEEs3L4jHqE21EcbaO+YBfO6fCSSuaYp6nJzinr4D5u3Aumo
-        l+hm856TkBzolpYQFIex04FKdbtx
-X-Google-Smtp-Source: APXvYqz+4Pinskrf2UCosw5rgRX7f2A0VhKcLk6IxtbU+1p4dOJAsqVStmjoGBzaMqSnB+Zff8cyzQ==
-X-Received: by 2002:a1c:9e07:: with SMTP id h7mr5807160wme.96.1571372104081;
-        Thu, 17 Oct 2019 21:15:04 -0700 (PDT)
-Received: from ltop.local ([2a02:a03f:40ac:ce00:18e1:7d90:ccf5:4489])
-        by smtp.gmail.com with ESMTPSA id x9sm4453820wrq.63.2019.10.17.21.15.03
+        bh=eKCQEHJp+Bmk1+KxL2VW8ZVDs0l76/RRTSEB8GtoKzU=;
+        b=EensbI4iBJApQ4yw/zv+51REzkZBDCIJK58ob+gndfNt9nNldO/g2RI45wefzbksa7
+         cAHdMxA/egvYhxe9knHfZOj3rPUdAvzv398GIk2jbS6vxILtGWBQPGNtirmXqq9IHdtk
+         aZnvA0I2C/8duBwXWtBd32GBOWKwzn8AaPCoIyrwCSn9evWsdFiiiyEMTe2LyOXz/kAE
+         w1ZZpDrfrFoCHMzW0F7P64KqqQ4KgIbDkJHiqyBBZSoWY0q50q6sRhRklLKmW2LfMV+1
+         r738Lgcf3sG8ADgJKWluBIbz1o5+8QGRXF+k13xAH67jy5oWgMgwPObQvapS1SF7FlMb
+         ZnVA==
+X-Gm-Message-State: APjAAAVJSQtleqkG2TqaZNQXvJW6xhIXh6KytDa6DUmjtD3CVs1aENNt
+        uEqL2Df2qsKcx0HG0W/wraMuKN9w
+X-Google-Smtp-Source: APXvYqzBaCznyjQSXNVi7TS0i1yrqWYhhCfDRmQilWmU7AcgFxRttRhzngCZrFJD7BNJlUiiRY2BpA==
+X-Received: by 2002:a17:902:a50a:: with SMTP id s10mr2720061plq.59.1571372661919;
+        Thu, 17 Oct 2019 21:24:21 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:180::cfd0])
+        by smtp.gmail.com with ESMTPSA id v35sm4253093pgn.89.2019.10.17.21.24.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 21:15:03 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 06:15:02 +0200
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/8] riscv: add missing prototypes
-Message-ID: <20191018041501.cuyyhcm23dsihcif@ltop.local>
-References: <20191018004929.3445-1-paul.walmsley@sifive.com>
- <20191018004929.3445-6-paul.walmsley@sifive.com>
+        Thu, 17 Oct 2019 21:24:21 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 21:24:19 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        bpf@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH v2 31/33] tools lib bpf: Renaming pr_warning to pr_warn
+Message-ID: <20191018042416.r4fffxzbxb3u4csg@ast-mbp>
+References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
+ <20191018031850.48498-1-wangkefeng.wang@huawei.com>
+ <20191018031850.48498-31-wangkefeng.wang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191018004929.3445-6-paul.walmsley@sifive.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191018031850.48498-31-wangkefeng.wang@huawei.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 05:49:26PM -0700, Paul Walmsley wrote:
-> sparse identifies these missing prototypes when building arch/riscv:
+On Fri, Oct 18, 2019 at 11:18:48AM +0800, Kefeng Wang wrote:
+> For kernel logging macro, pr_warning is completely removed and
+> replaced by pr_warn, using pr_warn in tools lib bpf for symmetry
+> to kernel logging macro, then we could drop pr_warning in the
+> whole linux code.
 > 
-> arch/riscv/kernel/cpu.c:149:29: warning: symbol 'cpuinfo_op' was not declared. Should it be static?
-> arch/riscv/kernel/irq.c:27:29: warning: symbol 'do_IRQ' was not declared. Should it be static?
-> arch/riscv/kernel/irq.c:57:13: warning: symbol 'init_IRQ' was not declared. Should it be static?
-> arch/riscv/kernel/syscall_table.c:15:6: warning: symbol 'sys_call_table' was not declared. Should it be static?
-> arch/riscv/kernel/time.c:15:13: warning: symbol 'time_init' was not declared. Should it be static?
-> arch/riscv/kernel/smpboot.c:135:24: warning: symbol 'smp_callin' was not declared. Should it be static?
-> arch/riscv/kernel/smp.c:72:5: warning: symbol 'setup_profiling_timer' was not declared. Should it be static?
-> arch/riscv/mm/init.c:151:7: warning: symbol 'trampoline_pg_dir' was not declared. Should it be static?
-> arch/riscv/mm/init.c:157:7: warning: symbol 'early_pg_dir' was not declared. Should it be static?
-> arch/riscv/kernel/process.c:32:6: warning: symbol 'show_regs' was not declared. Should it be static?
-> arch/riscv/kernel/ptrace.c:151:6: warning: symbol 'do_syscall_trace_enter' was not declared. Should it be static?
-> arch/riscv/kernel/ptrace.c:165:6: warning: symbol 'do_syscall_trace_exit' was not declared. Should it be static?
-> 
-> Fix by adding the missing prototypes to the appropriate header files.
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Martin KaFai Lau <kafai@fb.com>
+> Cc: Song Liu <songliubraving@fb.com>
+> Cc: Yonghong Song <yhs@fb.com>
+> Cc: bpf@vger.kernel.org
+> Acked-by: Andrii Nakryiko <andriin@fb.com>
+> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> ---
+>  tools/lib/bpf/btf.c             |  56 +--
+>  tools/lib/bpf/btf_dump.c        |  18 +-
+>  tools/lib/bpf/libbpf.c          | 679 ++++++++++++++++----------------
+>  tools/lib/bpf/libbpf_internal.h |   8 +-
+>  tools/lib/bpf/xsk.c             |   4 +-
+>  5 files changed, 379 insertions(+), 386 deletions(-)
 
-For functions defined in C but used ony in assembly, you can also simply mark
-them as '__visible'  (aka __attribute__((exrernally_visible)) ).
- 
-Best regards,
--- Luc
+Nack.
+I prefer this type of renaming to go via bpf tree.
+It's not a kernel patch. It's touching user space library
+which is under heavy development.
+Doing any other way will cause a ton of conflicts.
+
