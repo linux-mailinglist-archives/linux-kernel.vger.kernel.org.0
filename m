@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AF98DD48D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:26:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD29ADD459
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:25:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405857AbfJRWZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:25:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36258 "EHLO mail.kernel.org"
+        id S1728582AbfJRWEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:04:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728314AbfJRWEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:04:33 -0400
+        id S1728366AbfJRWEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:04:34 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F3A6222CC;
-        Fri, 18 Oct 2019 22:04:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF6E1222D1;
+        Fri, 18 Oct 2019 22:04:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436273;
-        bh=d/6zc+tZJQ0l59lFjH5IKUXNkBz2OQ9GKqznhzOEnoA=;
+        s=default; t=1571436274;
+        bh=ApFT2yRZPjE5kYFWb07gNAkCn4f1C3IPuAu8B/kloaw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XV6zvPvZKq2mDapBa8Eg5nDYTtjfwT3evZnCkwNwOxRlgKsjY4XDWpyGPeCjIkcRG
-         /uyTqfhvej73GzkelNEFeX0NNyW2WcPUGGL+ipr17BmtX/aX1MVdQBtXf4TsnFgxpf
-         9lkK3zIHpqBEl5nkGlyGlWNIOzhO1i7Pj9qR2V+E=
+        b=CLaazqccVC1w9LktKM01EE9p/yydtlC58IRMscYSVrbK15O9iQ2BRuH0y+1aXRJWT
+         eo8fPvVRSgDf7xT7KrXDT+uIZFLaLx4UbkXJsZyzXkZb5lU4eEt5BoJfw8Jl7MAWkU
+         9naslxYnrZZlgKuEhWBJdevxKFQ5/t35/icvlhPM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Vincent Chen <vincent.chen@sifive.com>,
         Christoph Hellwig <hch@lst.de>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 52/89] riscv: avoid kernel hangs when trapped in BUG()
-Date:   Fri, 18 Oct 2019 18:02:47 -0400
-Message-Id: <20191018220324.8165-52-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 53/89] riscv: avoid sending a SIGTRAP to a user thread trapped in WARN()
+Date:   Fri, 18 Oct 2019 18:02:48 -0400
+Message-Id: <20191018220324.8165-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220324.8165-1-sashal@kernel.org>
 References: <20191018220324.8165-1-sashal@kernel.org>
@@ -46,54 +46,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vincent Chen <vincent.chen@sifive.com>
 
-[ Upstream commit 8b04825ed205da38754f86f4c07ea8600d8c2a65 ]
+[ Upstream commit e0c0fc18f10d5080cddde0e81505fd3e952c20c4 ]
 
-When the CONFIG_GENERIC_BUG is disabled by disabling CONFIG_BUG, if a
-kernel thread is trapped by BUG(), the whole system will be in the
-loop that infinitely handles the ebreak exception instead of entering the
-die function. To fix this problem, the do_trap_break() will always call
-the die() to deal with the break exception as the type of break is
-BUG_TRAP_TYPE_BUG.
+On RISC-V, when the kernel runs code on behalf of a user thread, and the
+kernel executes a WARN() or WARN_ON(), the user thread will be sent
+a bogus SIGTRAP.  Fix the RISC-V kernel code to not send a SIGTRAP when
+a WARN()/WARN_ON() is executed.
 
 Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
+[paul.walmsley@sifive.com: fixed subject]
 Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/riscv/kernel/traps.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/riscv/kernel/traps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index 424eb72d56b10..055a937aca70a 100644
+index 055a937aca70a..82f42a55451eb 100644
 --- a/arch/riscv/kernel/traps.c
 +++ b/arch/riscv/kernel/traps.c
-@@ -124,23 +124,23 @@ static inline unsigned long get_break_insn_length(unsigned long pc)
- 
- asmlinkage void do_trap_break(struct pt_regs *regs)
- {
--#ifdef CONFIG_GENERIC_BUG
- 	if (!user_mode(regs)) {
- 		enum bug_trap_type type;
- 
- 		type = report_bug(regs->sepc, regs);
- 		switch (type) {
-+#ifdef CONFIG_GENERIC_BUG
- 		case BUG_TRAP_TYPE_NONE:
+@@ -134,7 +134,7 @@ asmlinkage void do_trap_break(struct pt_regs *regs)
  			break;
  		case BUG_TRAP_TYPE_WARN:
  			regs->sepc += get_break_insn_length(regs->sepc);
- 			break;
+-			break;
++			return;
  		case BUG_TRAP_TYPE_BUG:
-+#endif /* CONFIG_GENERIC_BUG */
-+		default:
- 			die(regs, "Kernel BUG");
- 		}
- 	}
--#endif /* CONFIG_GENERIC_BUG */
--
- 	force_sig_fault(SIGTRAP, TRAP_BRKPT, (void __user *)(regs->sepc));
- }
- 
+ #endif /* CONFIG_GENERIC_BUG */
+ 		default:
 -- 
 2.20.1
 
