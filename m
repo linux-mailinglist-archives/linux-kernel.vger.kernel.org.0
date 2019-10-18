@@ -2,86 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F281DDD526
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68BB4DD542
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 01:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfJRW7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:59:10 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40485 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726988AbfJRW7K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:59:10 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 7so7749286ljw.7
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 15:59:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=56iSMhhG7ekX9RZHanfAlc6yl43r/bP0XtTomC1do6A=;
-        b=H8MiVGBa8DC99Jm+KUzGtf63KZiFijjH3Wq+PjqfMj7UP9c8xGvRhotOUMDvCfXeRb
-         J8Vrtx/OsrcSiLpO/uGz3LA24NRi3Y6KkDK0nDrELSzvsqbbRU03atpeCOYb2E7zh4pc
-         Avso8P6lnTiOWgAzrdtzj++kUr217s9IQ9UMs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=56iSMhhG7ekX9RZHanfAlc6yl43r/bP0XtTomC1do6A=;
-        b=CgNnw3MAg06y13kItkKQCf8E61xqiQyNy6hJtHx+9PnXQuF/1Fjaip2EzyUhEdc18z
-         dKoqQS/B8Ycza1kbwcThut0pKD0fKX+7/TFoPZL2lKQlOFMPiwY37MwmBa+mceppzuRi
-         r7B3VWGBbuGCqgGFMixKNRHyjuzKhOm5N+ojd4PB8YxFimz/b7X+iACi248rVwUCdga7
-         AyN8+S54w7jP/CBiZ9Aj68M0KZNe5ikmQDdMT6v6Ei0MK90HhmsAd/s9z2RrrmlFXaW3
-         ID8WFq61BlPifX2YODyMjM17lB5ChM9HnjTL7h1WK5/mGjWnosBomQvOEgeppCorZ7l/
-         aUQw==
-X-Gm-Message-State: APjAAAWKMAjalhU9bLJ1xxFpoeg5vr9dOMeUvNr8mmoLgKxf4/IF06tP
-        DBn2G9LUCyoWATIqhMb0Oa5v+m/J+5Y=
-X-Google-Smtp-Source: APXvYqz/7pDAkvKT00Hg1VVPOab4amtzvlH/Ssv7awnYPyWgkwIgDobhmiBJ1mAsYl7J0L/ErmcWfQ==
-X-Received: by 2002:a2e:658f:: with SMTP id e15mr7707565ljf.254.1571439547777;
-        Fri, 18 Oct 2019 15:59:07 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id t27sm4136279lfl.54.2019.10.18.15.59.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2019 15:59:07 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id q28so2585090lfa.5
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 15:59:06 -0700 (PDT)
-X-Received: by 2002:a19:5504:: with SMTP id n4mr7567834lfe.106.1571439546567;
- Fri, 18 Oct 2019 15:59:06 -0700 (PDT)
+        id S1732066AbfJRXRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 19:17:52 -0400
+Received: from piie.net ([80.82.223.85]:44836 "EHLO piie.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730239AbfJRXRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 19:17:51 -0400
+Received: from localhost (HSI-KBW-078-043-057-186.hsi4.kabel-badenwuerttemberg.de [78.43.57.186])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        by piie.net (Postfix) with ESMTPSA id CAB8A161D;
+        Sat, 19 Oct 2019 01:11:10 +0200 (CEST)
+From:   Peter Kaestle <peter@piie.net>
+To:     linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Cc:     Peter Feuerer <peter@piie.net>, Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Subject: [PATCH 1/2] platform/x86: Adding support for Acer Aspire 7551
+Date:   Sat, 19 Oct 2019 00:59:35 +0200
+Message-Id: <20191018225936.131763-1-peter@piie.net>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <20191018203704.GC31027@cork> <20191018204220.GD31027@cork>
-In-Reply-To: <20191018204220.GD31027@cork>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 18 Oct 2019 18:58:50 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wip91atX54zCEo5_OwEjyCkOb7_OUvn8P7o_39tMJSe7A@mail.gmail.com>
-Message-ID: <CAHk-=wip91atX54zCEo5_OwEjyCkOb7_OUvn8P7o_39tMJSe7A@mail.gmail.com>
-Subject: Re: [PATCH] random: make try_to_generate_entropy() more robust
-To:     =?UTF-8?Q?J=C3=B6rn_Engel?= <joern@purestorage.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 4:42 PM J=C3=B6rn Engel <joern@purestorage.com> wro=
-te:
->
-> Sorry for coming late to the discussion.  I generally like the approach
-> in try_to_generate_entropy(), but I think we can do a little better
-> still.  Would something like this work?
+From: Peter Feuerer <peter@piie.net>
 
-Hmm. I'm not convinced that the register set is all that random in
-general if you have attackers (or - in the absence of an attack - if
-it hits in the idle loop a lot), but I do like it for this particular
-use where we have that timeout while doing entropy work.
+platform/x86: Adding support for Acer Aspire 7551
 
-So I think this is potentially a good way to at least improve on the
-situation when there is no TSC. Which would remove one worry about
-getrandom() on other platforms than the usual development ones.
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Andy Shevchenko <andy@infradead.org>
+Signed-off-by: Peter Feuerer <peter@piie.net>
 
-I'm on a plane at 38,933 ft right now according to the flight tracker,
-and about to lose internet access again, but I like it and will take
-another look when I'm on the ground and at a hotel.
+---
+ drivers/platform/x86/acerhdf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-              Linus
+diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
+index 5ea8da5f0f70..d40f365d8d7a 100644
+--- a/drivers/platform/x86/acerhdf.c
++++ b/drivers/platform/x86/acerhdf.c
+@@ -224,6 +224,8 @@ static const struct bios_settings bios_tbl[] __initconst = {
+ 	{"Acer", "Aspire 5739G", "V1.3311", 0x55, 0x58, {0x20, 0x00}, 0},
+ 	/* Acer TravelMate 7730 */
+ 	{"Acer", "TravelMate 7730G", "v0.3509", 0x55, 0x58, {0xaf, 0x00}, 0},
++	/* Acer Aspire 7551 */
++	{"Acer", "Aspire 7551", "V1.18", 0x93, 0xa8, {0x14, 0x04}, 1},
+ 	/* Acer TravelMate TM8573T */
+ 	{"Acer", "TM8573T", "V1.13", 0x93, 0xa8, {0x14, 0x04}, 1},
+ 	/* Gateway */
+@@ -815,6 +817,7 @@ MODULE_ALIAS("dmi:*:*Acer*:pnAspire*5739G:");
+ MODULE_ALIAS("dmi:*:*Acer*:pnAspire*One*753:");
+ MODULE_ALIAS("dmi:*:*Acer*:pnAspire*5315:");
+ MODULE_ALIAS("dmi:*:*Acer*:TravelMate*7730G:");
++MODULE_ALIAS("dmi:*:*Acer*:pnAspire*7551:");
+ MODULE_ALIAS("dmi:*:*Acer*:TM8573T:");
+ MODULE_ALIAS("dmi:*:*Gateway*:pnAOA*:");
+ MODULE_ALIAS("dmi:*:*Gateway*:pnLT31*:");
+-- 
+2.23.0
+
