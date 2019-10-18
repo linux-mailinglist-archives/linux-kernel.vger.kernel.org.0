@@ -2,162 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73222DBD44
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45305DBD5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:58:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437597AbfJRFxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:53:31 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54030 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391881AbfJRFxb (ORCPT
+        id S2406931AbfJRF6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:58:03 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45913 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392149AbfJRF6D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:53:31 -0400
-Received: by mail-wm1-f67.google.com with SMTP id i16so4783216wmd.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:53:29 -0700 (PDT)
+        Fri, 18 Oct 2019 01:58:03 -0400
+Received: by mail-qk1-f196.google.com with SMTP id z67so4234009qkb.12
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:58:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xKBYmqBKnM/fTox+DxH/j6jDg0wBrXkD7WU8TmLcePI=;
-        b=P7b8jX1ijvI/1bRMfMuCiF0DEfoT7NClM6s9cMKR7dPyvouJu3HRaHo0oNEOiIahvW
-         LnPgQ7tzaz6FV2kJQH7KN0daOdPvxM/i8MQyIWUjxhfUwumj9stzNXKAyHHcvFdn4OI/
-         t8qPLUyAZ+NvrqlrlxFWHnMKvbZHDa0pnlb2cgzexpgcQQzLIjqlxum+EFN5TA1U1mcn
-         wjB+Ni93KTrNJB7Ncrk/ysFSdGxHwows7K8UvOp1offJm7vaxd9gggcXKetxJilyGmE5
-         y3s8l4JLTbm8cp5/1FfpR+C9aw1JnFbY61P4A8w45w431ia/nPKYBTcieXjzaowvKALO
-         4JWg==
+        bh=8aspMadhLtLdwap/HY8pYXIpI/022GVepCK2sUy5Jo4=;
+        b=Qz9YB1cp2Zg6eSsNCQvAw6Xl7TdE+kvgwqY9mVMHfLFdjXB02ass8EAgL5EVNdqguV
+         oidctHw4mrvIPU8WCuzS+lKh4XCCv8TRwm6eyjKrm8zPZEfkMLCUib6g57hPc6TISL0R
+         RYuybrnZ7s4TaWGAE/9ruSfal9/1BdXMvE0DM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xKBYmqBKnM/fTox+DxH/j6jDg0wBrXkD7WU8TmLcePI=;
-        b=bX/t594LAAupm6OVmcIr2zFI2620J+InaDqVieA8N5uhzlzZYWOr3DlaKbkdPpeMAp
-         1yWhB+zTyeZyguGY4NPxsmYBNnJlgQ8QW/TNX8Qt9xDmj00VTk99zZYGqaCxx3XmxYRO
-         K6sURlAGsykJBHCqxjLklXLDYCaM9apdwsHw7549fZcYPziFRufvU3DfEiSZm1HfHVPg
-         vGlIDiM5EV0yFGgxznyLm31KiTyNZ2idfAezmxZrEwGOATRec/wuGppuvNEzqrCmAWsh
-         Ttyiw99E4DiNtoDEErK/cFyzI7EjP3qVTx6qpqTwuu8KtUPAa3QeJIDpElbojyiJEVvs
-         PLXQ==
-X-Gm-Message-State: APjAAAV+ypQGon2CvU7MKv12dd/+KvzRyDOi4SJZQMYEOwIO9oGfD+T7
-        2+LsDbJN8d9bLPwoiR0OA+SZBRLnFWaqv4CIBSJduOHYmvA=
-X-Google-Smtp-Source: APXvYqw+zZ6m5fPdynWeKKLdxpqE/Ya5xs97ZcCWMTHNwCMgBFStCutZthRzJj95DpqP7ZHXHVJR1o+avys8gdz7thE=
-X-Received: by 2002:a1c:bc07:: with SMTP id m7mr5449292wmf.103.1571367327709;
- Thu, 17 Oct 2019 19:55:27 -0700 (PDT)
+        bh=8aspMadhLtLdwap/HY8pYXIpI/022GVepCK2sUy5Jo4=;
+        b=R/Oty0jT2ClvnlAJSq/+35JrPmzdo7PmXeLeCCFsiiwRb2rr0PiZduQ9tqcBVAe/MF
+         SyqoDO2kBZNHAn88BrcovlUUUhBNIUtPYRc02MoOv9Q0HpZgYEgDqh2aSyRP6iFKzWrT
+         TzPAZzH9VsEP0ESKGJ4V6mm0i/VOH7ZwswtDSwXCj1NnaYPSuKQUZnBSue7xEJsi8Lhl
+         sEyfqY53lGQsbuf4CVKgpPJYf+BNtj0COhBajBm8I65WF36N7YvFx+wQGIwrR8v0j7PR
+         OUGVV43s0bJAnUZsuHMUIrLu9ohIZltcR6LVUZCjEKjKmP5SipHIX4AN4dwpVpTzXCJu
+         T0aA==
+X-Gm-Message-State: APjAAAUWqUbL8GDzHsFSbyDQtfezocmNWdaHU+DJ8sgZunN2KWCNaeY/
+        XZQlJfYr0Qr+4NWFZ69opPnAx7PzrFg=
+X-Google-Smtp-Source: APXvYqyIjBpcpB6jq882+x2E0wMS8eqwRG+Ez9krlw9zYDkWZLZGBG5mbl4ueLkU6hZ81m8ARLBvLg==
+X-Received: by 2002:a37:6f06:: with SMTP id k6mr6673631qkc.143.1571367608944;
+        Thu, 17 Oct 2019 20:00:08 -0700 (PDT)
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com. [209.85.222.174])
+        by smtp.gmail.com with ESMTPSA id n17sm2402624qke.103.2019.10.17.20.00.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2019 20:00:07 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id u22so3961864qkk.11
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 20:00:07 -0700 (PDT)
+X-Received: by 2002:ae9:f30c:: with SMTP id p12mr6409294qkg.159.1571367606688;
+ Thu, 17 Oct 2019 20:00:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191017173743.5430-1-hch@lst.de> <20191017173743.5430-8-hch@lst.de>
-In-Reply-To: <20191017173743.5430-8-hch@lst.de>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Fri, 18 Oct 2019 08:25:17 +0530
-Message-ID: <CAAhSdy2DpOh2FZUUjiYdHf0Oh-j_RJyXv6AvJDg+DNNfSdJSOw@mail.gmail.com>
-Subject: Re: [PATCH 07/15] riscv: implement remote sfence.i using IPIs
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+References: <20191009085116.199922-1-tientzu@chromium.org> <238f01ec4b49fee4c0d08a0b8da7e95f@codeaurora.org>
+ <74740c0ff64a6a658da2a44a9f9b7ac5@codeaurora.org>
+In-Reply-To: <74740c0ff64a6a658da2a44a9f9b7ac5@codeaurora.org>
+From:   Claire Chang <tientzu@chromium.org>
+Date:   Fri, 18 Oct 2019 10:59:54 +0800
+X-Gmail-Original-Message-ID: <CALiNf2_EcJxxTYd52UVyaJ-Q82YPM5MKTPBmMNUrBZryEShwqw@mail.gmail.com>
+Message-ID: <CALiNf2_EcJxxTYd52UVyaJ-Q82YPM5MKTPBmMNUrBZryEShwqw@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: hci_qca: fix in-band sleep enablement
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     Harish Bandi <c-hbandi@codeaurora.org>, marcel@holtmann.org,
+        johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Rocky Liao <rjliao@codeaurora.org>, rongchi@codeaurora.org,
+        linux-bluetooth-owner@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 11:08 PM Christoph Hellwig <hch@lst.de> wrote:
+Hi Balakrishna,
+
+Sorry for the late reply. I was on vacation for the past few days.
+The chipset we use is QCA6174A-3 and rjliao has already confirmed that
+IBS won't work without RAM fw downloaded.
+Please ignore this change.
+
+Thanks,
+Claire
+
+
+On Fri, Oct 11, 2019 at 3:21 PM Balakrishna Godavarthi
+<bgodavar@codeaurora.org> wrote:
 >
-> The RISC-V ISA only supports flushing the instruction cache for the
-> local CPU core.  Currently we always offload the remote TLB flushing to
-> the SBI, which then issues an IPI under the hoods.  But with M-mode
-> we do not have an SBI so we have to do it ourselves.   IPI to the
-> other nodes using the existing kernel helpers instead if we have
-> native clint support and thus can IPI directly from the kernel.
+> Hi Claire,
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/riscv/include/asm/sbi.h |  3 +++
->  arch/riscv/mm/cacheflush.c   | 24 ++++++++++++++++++------
->  2 files changed, 21 insertions(+), 6 deletions(-)
+> This change will not work  as we need fw files to be loaded tofor IBS to
+> active.
+> may i know on which chipset you have this issue of IBS active even with
+> out fw download.
 >
-> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-> index b167af3e7470..0cb74eccc73f 100644
-> --- a/arch/riscv/include/asm/sbi.h
-> +++ b/arch/riscv/include/asm/sbi.h
-> @@ -94,5 +94,8 @@ static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
->  {
->         SBI_CALL_4(SBI_REMOTE_SFENCE_VMA_ASID, hart_mask, start, size, asid);
->  }
-> +#else /* CONFIG_RISCV_SBI */
-> +/* stub to for code is only reachable under IS_ENABLED(CONFIG_RISCV_SBI): */
-> +void sbi_remote_fence_i(const unsigned long *hart_mask);
->  #endif /* CONFIG_RISCV_SBI */
->  #endif /* _ASM_RISCV_SBI_H */
-> diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
-> index 3f15938dec89..794c9ab256eb 100644
-> --- a/arch/riscv/mm/cacheflush.c
-> +++ b/arch/riscv/mm/cacheflush.c
-> @@ -10,9 +10,17 @@
+> On 2019-10-11 12:31, Harish Bandi wrote:
+> > ++ Balakrishna
+> >
+> > On 2019-10-09 14:21, Claire Chang wrote:
+> >> Enabling in-band sleep when there is no patch/nvm-config found and
+> >> bluetooth is running with the original fw/config.
+> >>
+> >> Fixes: ba8f35979002 ("Bluetooth: hci_qca: Avoid setup failure on
+> >> missing rampatch")
+> >> Fixes: 7dc5fe0814c3 ("Bluetooth: hci_qca: Avoid missing rampatch
+> >> failure with userspace fw loader")
+> >> Signed-off-by: Claire Chang <tientzu@chromium.org>
+> >> ---
+> >>  drivers/bluetooth/hci_qca.c | 11 +++++++----
+> >>  1 file changed, 7 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> >> index e3164c200eac..367eef893a11 100644
+> >> --- a/drivers/bluetooth/hci_qca.c
+> >> +++ b/drivers/bluetooth/hci_qca.c
+> >> @@ -1291,10 +1291,8 @@ static int qca_setup(struct hci_uart *hu)
+> >>      /* Setup patch / NVM configurations */
+> >>      ret = qca_uart_setup(hdev, qca_baudrate, soc_type, soc_ver,
+> >>                      firmware_name);
+> >> -    if (!ret) {
+> >> -            set_bit(QCA_IBS_ENABLED, &qca->flags);
+> >> -            qca_debugfs_init(hdev);
+> >> -    } else if (ret == -ENOENT) {
+> >> +
+> >> +    if (ret == -ENOENT) {
+> >>              /* No patch/nvm-config found, run with original fw/config */
+> >>              ret = 0;
+> >>      } else if (ret == -EAGAIN) {
+> >> @@ -1305,6 +1303,11 @@ static int qca_setup(struct hci_uart *hu)
+> >>              ret = 0;
+> >>      }
+> >>
+> >> +    if (!ret) {
+> >> +            set_bit(QCA_IBS_ENABLED, &qca->flags);
+> >> +            qca_debugfs_init(hdev);
+> >> +    }
+> >> +
+> >>      /* Setup bdaddr */
+> >>      if (qca_is_wcn399x(soc_type))
+> >>              hu->hdev->set_bdaddr = qca_set_bdaddr;
 >
->  #include <asm/sbi.h>
->
-> +static void ipi_remote_fence_i(void *info)
-> +{
-> +       return local_flush_icache_all();
-> +}
-> +
->  void flush_icache_all(void)
->  {
-> -       sbi_remote_fence_i(NULL);
-> +       if (IS_ENABLED(CONFIG_RISCV_SBI))
-> +               sbi_remote_fence_i(NULL);
-> +       else
-> +               on_each_cpu(ipi_remote_fence_i, NULL, 1);
->  }
->
->  /*
-> @@ -28,7 +36,7 @@ void flush_icache_all(void)
->  void flush_icache_mm(struct mm_struct *mm, bool local)
->  {
->         unsigned int cpu;
-> -       cpumask_t others, hmask, *mask;
-> +       cpumask_t others, *mask;
->
->         preempt_disable();
->
-> @@ -46,10 +54,7 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
->          */
->         cpumask_andnot(&others, mm_cpumask(mm), cpumask_of(cpu));
->         local |= cpumask_empty(&others);
-> -       if (mm != current->active_mm || !local) {
-> -               riscv_cpuid_to_hartid_mask(&others, &hmask);
-> -               sbi_remote_fence_i(hmask.bits);
-> -       } else {
-> +       if (mm == current->active_mm && local) {
->                 /*
->                  * It's assumed that at least one strongly ordered operation is
->                  * performed on this hart between setting a hart's cpumask bit
-> @@ -59,6 +64,13 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
->                  * with flush_icache_deferred().
->                  */
->                 smp_mb();
-> +       } else if (IS_ENABLED(CONFIG_RISCV_SBI)) {
-> +               cpumask_t hartid_mask;
-> +
-> +               riscv_cpuid_to_hartid_mask(&others, &hartid_mask);
-> +               sbi_remote_fence_i(cpumask_bits(&hartid_mask));
-> +       } else {
-> +               on_each_cpu_mask(&others, ipi_remote_fence_i, NULL, 1);
->         }
->
->         preempt_enable();
 > --
-> 2.20.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
-
-LGTM.
-
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Regards,
-Anup
+> Regards
+> Balakrishna.
