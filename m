@@ -2,256 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0E47DBF01
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3E6DDBEBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 09:51:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504961AbfJRHwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 03:52:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42940 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504748AbfJRHv3 (ORCPT
+        id S2504707AbfJRHvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 03:51:03 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38779 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2504530AbfJRHvD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 03:51:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=AnrAvBi79y4TItSeXuQcpTaE9C1hPCQEL0V9rsZVf4w=; b=rrG58SLfMRbbHWqLd8oOKuK6Me
-        1qdN5KGaano3RfiEWEK/E6VOum+kaL5Tupbh1BwC8v+yTM9R0zkroz6KFOXU5I+SIDpPXdeTkYqPr
-        CYq/WUIt3bTErfGatQC2FBtVxHbqOizUrLeeDzfkquerfR9Bz2SR04bO+mdDp7+GhBID/ZBjtx+z3
-        hTqOTAI8zrZga0dscqQFJ42RYktw1TVN7DjGyUJTvwZm83c7LLwPHcgE/HGGCMMYBkSvTDDO5wqAz
-        56XFOLbUPxv7w1r0+fE75YQr2i9FOU8Zr6VsAwzO9h7reTA0iSCSkY51u1BCWlsDAArOdlvbE3I8l
-        V9/butEQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iLN2h-0001Sc-6H; Fri, 18 Oct 2019 07:51:23 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 29AC3301245;
-        Fri, 18 Oct 2019 09:50:25 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 7126D2B17811C; Fri, 18 Oct 2019 09:51:15 +0200 (CEST)
-Message-Id: <20191018074634.858645375@infradead.org>
-User-Agent: quilt/0.65
-Date:   Fri, 18 Oct 2019 09:35:41 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     x86@kernel.org
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org, mhiramat@kernel.org, bristot@redhat.com,
-        jbaron@akamai.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
-        hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
-        jpoimboe@redhat.com, jeyu@kernel.org
-Subject: [PATCH v4 16/16] ftrace: Merge ftrace_module_{init,enable}()
-References: <20191018073525.768931536@infradead.org>
+        Fri, 18 Oct 2019 03:51:03 -0400
+Received: by mail-wr1-f68.google.com with SMTP id o15so4679091wru.5
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 00:51:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fM8b15WIQPLm6gJ8nUY/1hpjjf4QWro/MmV8xFN9zZg=;
+        b=l3Rtf2YaDcnhqcYIac502Y6vhF6tmfGOqiAvN0tOqRaiXcGmeaWFzVBq0KxmtYW0pl
+         tjP+okI9vW/AfAbBKGa4Fi4N2sXPAsYSct2k+7kBbp+B6UdCkuyCPtuMyAAHVLvl+lBI
+         irVWh359lC7QQP4jprQSdsKNfxJ8c+vrMKu+tbnEu3iez5trFLKkOOWxSBpLzzNqDXuX
+         7zubQUIElPgvwVprzYYPbKiaa2TpeupW3P+YcZD6PoO+4YHe5prRDO0heFx09e3SfRJC
+         h9QaMd2VHT4gQoGkf9BqkcIj5j5JOyQgRf7KuA203aUZrd6EllCvjaVrBGQkKppACWXH
+         12Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fM8b15WIQPLm6gJ8nUY/1hpjjf4QWro/MmV8xFN9zZg=;
+        b=h7jBE3VhEQW+6rJQ/xdFYsljV7Jq//xG77uxIoqFUeS5e7yhvFFnfmOmdCiYrbspDV
+         KD8uGW3Dfd3kWvVKLMPNIAhX07fXy5fC4okuIHNo7oZbmB6FmQ1xw6b5cCzE2K1Xw3Dj
+         0MvuCzM2rAT6ckxEgnOdjX6MK90sdE8P2mAQNA4BSH0BwgBMvkScLH1PWzOkyCAN76Hw
+         BmOuwY2FwGhltd5lu8E3HXtLzXb+JLc0nUNFu4Z95ZGfx0/qqlM078/C/xJ1bQ8C27x2
+         I0itkZVAXCQTNVD4AYHRFm8Le2E4bc5sScschFs6ZRPuFgMAA4nmaqU8eH5V6qEKxn29
+         XpVA==
+X-Gm-Message-State: APjAAAUTJOuA9LyPh4hri/YPIv7V2SBTxQPw8TR80ekAPORpDXnkJ8Gl
+        Ie7YIubwHY0/FF71yVFeLhCzsjTNHNAU6adopEWj5A==
+X-Google-Smtp-Source: APXvYqwku8nt+MuAp1XiPYKGAIOaqnVm6JsBbUb/b9RmMmXJil36H+o1ul75jyBq7sk1LCp/3vysGh2vqJeRYWoDVRA=
+X-Received: by 2002:adf:d08d:: with SMTP id y13mr6266832wrh.138.1571385059925;
+ Fri, 18 Oct 2019 00:50:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20191007145909.29979-1-mjourdan@baylibre.com> <8563127e-fe2c-a633-556b-8a883cebb171@xs4all.nl>
+ <977c48e8-8275-c96a-688b-ccfbb873eb79@baylibre.com> <65a88bfc-d82b-1487-7983-507149b11673@xs4all.nl>
+ <acef4f1e-0b59-30f5-f31f-9fc22f393072@baylibre.com> <fb6edb95-069e-abeb-416e-2327da0a87ab@xs4all.nl>
+In-Reply-To: <fb6edb95-069e-abeb-416e-2327da0a87ab@xs4all.nl>
+From:   Maxime Jourdan <mjourdan@baylibre.com>
+Date:   Fri, 18 Oct 2019 09:50:49 +0200
+Message-ID: <CAMO6nazotuiZQROoA4+b8tHZ-qpR4TS1RZWV6=fyPVCdsxz1Zg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] media: meson: vdec: Add compliant H264 support
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because of how some architectures used set_all_modules_text_*() there
-was a dependency between the module state and its memory protection
-state. This then required ftrace to be split into two functions, see
-commit:
+On Wed, Oct 9, 2019 at 2:01 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> On 10/8/19 3:40 PM, Maxime Jourdan wrote:
+> > On 07/10/2019 18:39, Hans Verkuil wrote:
+> >> On 10/7/19 6:24 PM, Maxime Jourdan wrote:
+> >>> On 07/10/2019 17:12, Hans Verkuil wrote:
+> >>>> On 10/7/19 4:59 PM, Maxime Jourdan wrote:
+> >>>>> Hello,
+> >>>>>
+> >>>>> This patch series aims to bring H.264 support as well as compliance update
+> >>>>> to the amlogic stateful video decoder driver.
+> >>>>>
+> >>>>> There is 1 issue that remains currently:
+> >>>>>
+> >>>>>    - The following codepath had to be commented out from v4l2-compliance as
+> >>>>> it led to stalling:
+> >>>>>
+> >>>>> if (node->codec_mask & STATEFUL_DECODER) {
+> >>>>>      struct v4l2_decoder_cmd cmd;
+> >>>>>      buffer buf_cap(m2m_q);
+> >>>>>
+> >>>>>      memset(&cmd, 0, sizeof(cmd));
+> >>>>>      cmd.cmd = V4L2_DEC_CMD_STOP;
+> >>>>>
+> >>>>>      /* No buffers are queued, call STREAMON, then STOP */
+> >>>>>      fail_on_test(node->streamon(q.g_type()));
+> >>>>>      fail_on_test(node->streamon(m2m_q.g_type()));
+> >>>>>      fail_on_test(doioctl(node, VIDIOC_DECODER_CMD, &cmd));
+> >>>>>
+> >>>>>      fail_on_test(buf_cap.querybuf(node, 0));
+> >>>>>      fail_on_test(buf_cap.qbuf(node));
+> >>>>>      fail_on_test(buf_cap.dqbuf(node));
+> >>>>>      fail_on_test(!(buf_cap.g_flags() & V4L2_BUF_FLAG_LAST));
+> >>>>>      for (unsigned p = 0; p < buf_cap.g_num_planes(); p++)
+> >>>>>          fail_on_test(buf_cap.g_bytesused(p));
+> >>>>>      fail_on_test(node->streamoff(q.g_type()));
+> >>>>>      fail_on_test(node->streamoff(m2m_q.g_type()));
+> >>>>>
+> >>>>>      /* Call STREAMON, queue one CAPTURE buffer, then STOP */
+> >>>>>      fail_on_test(node->streamon(q.g_type()));
+> >>>>>      fail_on_test(node->streamon(m2m_q.g_type()));
+> >>>>>      fail_on_test(buf_cap.querybuf(node, 0));
+> >>>>>      fail_on_test(buf_cap.qbuf(node));
+> >>>>>      fail_on_test(doioctl(node, VIDIOC_DECODER_CMD, &cmd));
+> >>>>>
+> >>>>>      fail_on_test(buf_cap.dqbuf(node));
+> >>>>>      fail_on_test(!(buf_cap.g_flags() & V4L2_BUF_FLAG_LAST));
+> >>>>>      for (unsigned p = 0; p < buf_cap.g_num_planes(); p++)
+> >>>>>          fail_on_test(buf_cap.g_bytesused(p));
+> >>>>>      fail_on_test(node->streamoff(q.g_type()));
+> >>>>>      fail_on_test(node->streamoff(m2m_q.g_type()));
+> >>>>> }
+> >>>>>
+> >>>>> The reason for this is because the driver has a limitation where all
+> >>>>> capturebuffers must be queued to the driver before STREAMON is effective.
+> >>>>> The firmware needs to know in advance what all the buffers are before
+> >>>>> starting to decode.
+> >>>>> This limitation is enforced via q->min_buffers_needed.
+> >>>>> As such, in this compliance codepath, STREAMON is never actually called
+> >>>>> driver-side and there is a stall on fail_on_test(buf_cap.dqbuf(node));
+> >>>>
+> >>>> That's interesting. I will have to look more closely at this.
+>
+> This requires a helper function in videobuf2-v4l2.c.
+>
+> In vdec_decoder_cmd you would need code like this:
+>
+>         if (!vb2_start_streaming_called(&capture_queue)) {
+>                 vb2_dequeue_empty_last_buf(&capture_queue);
+>                 return 0;
+>         }
+>
+> The vb2_dequeue_empty_last_buf (function name can probably be improved upon!)
+> does nothing if no capture buffers were queued, otherwise it takes the first
+> buffer, sets the LAST flag and sets bytesused to 0 and marks it as DONE.
+>
+> The driver cannot do this directly, since the buffers were never queued to the
+> driver and are owned by vb2.
+>
+> This is something that needs to be done for any codec driver that sets
+> min_buffers_needed to a value > 1.
+>
+> The vb2 function would look something like this:
+>
+> void vb2_dqbuf_empty_last_buf(struct vb2_queue *q)
+> {
+>         struct vb2_buffer *vb;
+>         struct vb2_v4l2_buffer *vbuf;
+>         unsigned int i;
+>
+>         if (WARN_ON(q->is_output))
+>                 return;
+>         if (list_empty(&q->queued_list))
+>                 return;
+>         vb = list_first_entry(&q->queued_list, struct vb2_buffer, queued_entry);
+>         list_del(&vb->queued_entry);
+>         for (i = 0; i < vb->num_planes; i++)
+>                 vb2_set_plane_payload(vb, i, 0)
+>         vbuf = to_vb2_v4l2_buffer(vb);
+>         vbuf->flags |= V4L2_BUF_FLAG_LAST;
+>         vb2_buffer_done(vb, VB2_BUF_STATE_DONE);
+> }
+> EXPORT_SYMBOL_GPL(vb2_dqbuf_empty_last_buf);
+>
+> Neither compiled, nor tested, and I think this should be in v4l2-mem2mem.c instead of
+> in videobuf2-v4l2.c since this is very m2m specific.
+>
+> So see this as a suggestion :-)
+>
+> Anyway, the key take-away from this is that userspace does not know if your driver
+> behaves the way it does, so STOP should still produce a sane expected result.
+>
+> Which in this is just a single empty capture buffer marked LAST.
 
-  a949ae560a51 ("ftrace/module: Hardcode ftrace_module_init() call into load_module()")
+Thanks, this makes sense. It doesn't quite fit the current usage
+unfortunately as the test in v4l2-compliance goes like this:
 
-Now that set_all_modules_text_*() is dead and burried, this is no
-longer relevant and we can merge the ftrace_module hooks again.
+fail_on_test(doioctl(node, VIDIOC_DECODER_CMD, &cmd));
+fail_on_test(buf_cap.querybuf(node, 0));
+fail_on_test(buf_cap.qbuf(node));
+fail_on_test(buf_cap.dqbuf(node));
+fail_on_test(!(buf_cap.g_flags() & V4L2_BUF_FLAG_LAST));
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
----
- include/linux/ftrace.h |    2 
- kernel/module.c        |    3 -
- kernel/trace/ftrace.c  |  124 +++++++++++++++++++------------------------------
- 3 files changed, 49 insertions(+), 80 deletions(-)
+Since the buffer is queued after issuing the stop cmd, it is not
+possible to flag it as DONE in vdec_decoder_cmd.
 
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -579,7 +579,6 @@ static inline int ftrace_modify_call(str
- extern int ftrace_arch_read_dyn_info(char *buf, int size);
- 
- extern int skip_trace(unsigned long ip);
--extern void ftrace_module_init(struct module *mod);
- extern void ftrace_module_enable(struct module *mod);
- extern void ftrace_release_mod(struct module *mod);
- 
-@@ -590,7 +589,6 @@ static inline int skip_trace(unsigned lo
- static inline int ftrace_force_update(void) { return 0; }
- static inline void ftrace_disable_daemon(void) { }
- static inline void ftrace_enable_daemon(void) { }
--static inline void ftrace_module_init(struct module *mod) { }
- static inline void ftrace_module_enable(struct module *mod) { }
- static inline void ftrace_release_mod(struct module *mod) { }
- static inline int ftrace_text_reserved(const void *start, const void *end)
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -3836,9 +3836,6 @@ static int load_module(struct load_info
- 
- 	dynamic_debug_setup(mod, info->debug, info->num_debug);
- 
--	/* Ftrace init must be called in the MODULE_STATE_UNFORMED state */
--	ftrace_module_init(mod);
--
- 	/* Finally it's fully formed, ready to start executing. */
- 	err = complete_formation(mod, info);
- 	if (err)
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5564,6 +5564,8 @@ static int ftrace_cmp_ips(const void *a,
- 	return 0;
- }
- 
-+static int referenced_filters(struct dyn_ftrace *rec);
-+
- static int ftrace_process_locs(struct module *mod,
- 			       unsigned long *start,
- 			       unsigned long *end)
-@@ -5656,6 +5658,49 @@ static int ftrace_process_locs(struct mo
- 	ftrace_update_code(mod, start_pg);
- 	if (!mod)
- 		local_irq_restore(flags);
-+
-+#ifdef CONFIG_MODULES
-+	if (ftrace_disabled || !mod)
-+		goto out_loop;
-+
-+	do_for_each_ftrace_rec(pg, rec) {
-+		int cnt;
-+		/*
-+		 * do_for_each_ftrace_rec() is a double loop.
-+		 * module text shares the pg. If a record is
-+		 * not part of this module, then skip this pg,
-+		 * which the "break" will do.
-+		 */
-+		if (!within_module_core(rec->ip, mod) &&
-+		    !within_module_init(rec->ip, mod))
-+			break;
-+
-+		cnt = 0;
-+
-+		/*
-+		 * When adding a module, we need to check if tracers are
-+		 * currently enabled and if they are, and can trace this record,
-+		 * we need to enable the module functions as well as update the
-+		 * reference counts for those function records.
-+		 */
-+		if (ftrace_start_up)
-+			cnt += referenced_filters(rec);
-+
-+		/* This clears FTRACE_FL_DISABLED */
-+		rec->flags = cnt;
-+
-+		if (ftrace_start_up && cnt) {
-+			int failed = __ftrace_replace_code(rec, 1);
-+			if (failed) {
-+				ftrace_bug(failed, rec);
-+				goto out_loop;
-+			}
-+		}
-+
-+	} while_for_each_ftrace_rec();
-+
-+ out_loop:
-+#endif
- 	ret = 0;
-  out:
- 	mutex_unlock(&ftrace_lock);
-@@ -5823,85 +5868,14 @@ void ftrace_release_mod(struct module *m
- 
- void ftrace_module_enable(struct module *mod)
- {
--	struct dyn_ftrace *rec;
--	struct ftrace_page *pg;
--
--	mutex_lock(&ftrace_lock);
--
--	if (ftrace_disabled)
--		goto out_unlock;
--
--	/*
--	 * If the tracing is enabled, go ahead and enable the record.
--	 *
--	 * The reason not to enable the record immediately is the
--	 * inherent check of ftrace_make_nop/ftrace_make_call for
--	 * correct previous instructions.  Making first the NOP
--	 * conversion puts the module to the correct state, thus
--	 * passing the ftrace_make_call check.
--	 *
--	 * We also delay this to after the module code already set the
--	 * text to read-only, as we now need to set it back to read-write
--	 * so that we can modify the text.
--	 */
--	if (ftrace_start_up)
--		ftrace_arch_code_modify_prepare();
--
--	do_for_each_ftrace_rec(pg, rec) {
--		int cnt;
--		/*
--		 * do_for_each_ftrace_rec() is a double loop.
--		 * module text shares the pg. If a record is
--		 * not part of this module, then skip this pg,
--		 * which the "break" will do.
--		 */
--		if (!within_module_core(rec->ip, mod) &&
--		    !within_module_init(rec->ip, mod))
--			break;
--
--		cnt = 0;
--
--		/*
--		 * When adding a module, we need to check if tracers are
--		 * currently enabled and if they are, and can trace this record,
--		 * we need to enable the module functions as well as update the
--		 * reference counts for those function records.
--		 */
--		if (ftrace_start_up)
--			cnt += referenced_filters(rec);
--
--		/* This clears FTRACE_FL_DISABLED */
--		rec->flags = cnt;
--
--		if (ftrace_start_up && cnt) {
--			int failed = __ftrace_replace_code(rec, 1);
--			if (failed) {
--				ftrace_bug(failed, rec);
--				goto out_loop;
--			}
--		}
--
--	} while_for_each_ftrace_rec();
--
-- out_loop:
--	if (ftrace_start_up)
--		ftrace_arch_code_modify_post_process();
--
-- out_unlock:
--	mutex_unlock(&ftrace_lock);
-+	if (!(ftrace_disabled || !mod->num_ftrace_callsites)) {
-+		ftrace_process_locs(mod, mod->ftrace_callsites,
-+				    mod->ftrace_callsites + mod->num_ftrace_callsites);
-+	}
- 
- 	process_cached_mods(mod->name);
- }
- 
--void ftrace_module_init(struct module *mod)
--{
--	if (ftrace_disabled || !mod->num_ftrace_callsites)
--		return;
--
--	ftrace_process_locs(mod, mod->ftrace_callsites,
--			    mod->ftrace_callsites + mod->num_ftrace_callsites);
--}
--
- static void save_ftrace_mod_rec(struct ftrace_mod_map *mod_map,
- 				struct dyn_ftrace *rec)
- {
+A solution would be to hijack vidioc_qbuf and flag the buffer if a
+stop has been issued previously and the capture queue is not
+streaming. Would that be okay ?
 
+Maxime
 
+>
+> Regards,
+>
+>         Hans
