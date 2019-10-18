@@ -2,40 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8479EDD4E6
+	by mail.lfdr.de (Postfix) with ESMTP id 1B230DD4E5
 	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfJRWDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:03:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34898 "EHLO mail.kernel.org"
+        id S1727090AbfJRWDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:03:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726604AbfJRWDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:03:32 -0400
+        id S1726934AbfJRWDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:03:34 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BE9E222C3;
-        Fri, 18 Oct 2019 22:03:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFB5B222C2;
+        Fri, 18 Oct 2019 22:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436211;
-        bh=sn9PuHWrsSWJy+qnRz1rl2QGZbrjTOyXUksthEqa3vc=;
+        s=default; t=1571436213;
+        bh=qvZy1e6ZELCo1IUUHbk2bgjAD4hfRU/4u/aLXq5lOzM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V3Q++5d3RIO2CxnI0KLZPfnpCrLn3EVxGXhioX1d0rOpi5WGSvggahZG4dVKaoo7C
-         5j9N5FBlv5XZEFjmArAS8BeWP8aEby9EsNgUBQPtAiIDE8ncT9GXWt5K5Dz6528K9Q
-         tsn6M8R503BpRujk8yKmfX9w2Wxe0eqASXdmqOzw=
+        b=JyOhKdgDxMQ+9VRgAO+CEXmldp9XGcDXUYM5gucXsvEubiVwTKUsYyzUzeFPW4wNE
+         ntctcn8gea9M0DkYysmZKkSBt8zTagX9Sgkg2W/oEQDBNXicnjiJcmiTZfa/WBnGBl
+         9ae2D0nYB4kfT3qXIPbcW9N+3hdo0337UsZcqbjk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ian Rogers <irogers@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     Steve MacLean <Steve.MacLean@microsoft.com>,
+        Steve MacLean <Steve.MacLean@Microsoft.com>,
+        Brian Robbins <brianrob@microsoft.com>,
+        Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
+        John Keeping <john@metanate.com>,
+        John Salem <josalem@microsoft.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
         Stephane Eranian <eranian@google.com>,
-        Wang Nan <wangnan0@huawei.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 04/89] perf tests: Avoid raising SEGV using an obvious NULL dereference
-Date:   Fri, 18 Oct 2019 18:01:59 -0400
-Message-Id: <20191018220324.8165-4-sashal@kernel.org>
+        Tom McDonald <thomas.mcdonald@microsoft.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 05/89] perf map: Fix overlapped map handling
+Date:   Fri, 18 Oct 2019 18:02:00 -0400
+Message-Id: <20191018220324.8165-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220324.8165-1-sashal@kernel.org>
 References: <20191018220324.8165-1-sashal@kernel.org>
@@ -48,88 +59,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Rogers <irogers@google.com>
+From: Steve MacLean <Steve.MacLean@microsoft.com>
 
-[ Upstream commit e3e2cf3d5b1fe800b032e14c0fdcd9a6fb20cf3b ]
+[ Upstream commit ee212d6ea20887c0ef352be8563ca13dbf965906 ]
 
-An optimized build such as:
+Whenever an mmap/mmap2 event occurs, the map tree must be updated to add a new
+entry. If a new map overlaps a previous map, the overlapped section of the
+previous map is effectively unmapped, but the non-overlapping sections are
+still valid.
 
-  make -C tools/perf CLANG=1 CC=clang EXTRA_CFLAGS="-O3
+maps__fixup_overlappings() is responsible for creating any new map entries from
+the previously overlapped map. It optionally creates a before and an after map.
 
-will turn the dereference operation into a ud2 instruction, raising a
-SIGILL rather than a SIGSEGV. Use raise(..) for correctness and clarity.
+When creating the after map the existing code failed to adjust the map.pgoff.
+This meant the new after map would incorrectly calculate the file offset
+for the ip. This results in incorrect symbol name resolution for any ip in the
+after region.
 
-Similar issues were addressed in Numfor Mbiziwo-Tiapo's patch:
+Make maps__fixup_overlappings() correctly populate map.pgoff.
 
-  https://lkml.org/lkml/2019/7/8/1234
+Add an assert that new mapping matches old mapping at the beginning of
+the after map.
 
-Committer testing:
+Committer-testing:
+
+Validated correct parsing of libcoreclr.so symbols from .NET Core 3.0 preview9
+(which didn't strip symbols).
+
+Preparation:
+
+  ~/dotnet3.0-preview9/dotnet new webapi -o perfSymbol
+  cd perfSymbol
+  ~/dotnet3.0-preview9/dotnet publish
+  perf record ~/dotnet3.0-preview9/dotnet \
+      bin/Debug/netcoreapp3.0/publish/perfSymbol.dll
+  ^C
 
 Before:
 
-  [root@quaco ~]# perf test hooks
-  55: perf hooks                                            : Ok
-  [root@quaco ~]# perf test -v hooks
-  55: perf hooks                                            :
-  --- start ---
-  test child forked, pid 17092
-  SIGSEGV is observed as expected, try to recover.
-  Fatal error (SEGFAULT) in perf hook 'test'
-  test child finished with 0
-  ---- end ----
-  perf hooks: Ok
-  [root@quaco ~]#
+  perf script --show-mmap-events 2>&1 | grep -e MMAP -e unknown |\
+     grep libcoreclr.so | head -n 4
+        dotnet  1907 373352.698780: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615726000(0x768000) @ 0 08:02 5510620 765057155]: \
+            r-xp .../3.0.0-preview9-19423-09/libcoreclr.so
+        dotnet  1907 373352.701091: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615974000(0x1000) @ 0x24e000 08:02 5510620 765057155]: \
+            rwxp .../3.0.0-preview9-19423-09/libcoreclr.so
+        dotnet  1907 373352.701241: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615c42000(0x1000) @ 0x51c000 08:02 5510620 765057155]: \
+            rwxp .../3.0.0-preview9-19423-09/libcoreclr.so
+        dotnet  1907 373352.705249:     250000 cpu-clock: \
+             7fe6159a1f99 [unknown] \
+             (.../3.0.0-preview9-19423-09/libcoreclr.so)
 
 After:
 
-  [root@quaco ~]# perf test hooks
-  55: perf hooks                                            : Ok
-  [root@quaco ~]# perf test -v hooks
-  55: perf hooks                                            :
-  --- start ---
-  test child forked, pid 17909
-  SIGSEGV is observed as expected, try to recover.
-  Fatal error (SEGFAULT) in perf hook 'test'
-  test child finished with 0
-  ---- end ----
-  perf hooks: Ok
-  [root@quaco ~]#
+  perf script --show-mmap-events 2>&1 | grep -e MMAP -e unknown |\
+     grep libcoreclr.so | head -n 4
+        dotnet  1907 373352.698780: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615726000(0x768000) @ 0 08:02 5510620 765057155]: \
+            r-xp .../3.0.0-preview9-19423-09/libcoreclr.so
+        dotnet  1907 373352.701091: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615974000(0x1000) @ 0x24e000 08:02 5510620 765057155]: \
+            rwxp .../3.0.0-preview9-19423-09/libcoreclr.so
+        dotnet  1907 373352.701241: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615c42000(0x1000) @ 0x51c000 08:02 5510620 765057155]: \
+            rwxp .../3.0.0-preview9-19423-09/libcoreclr.so
 
-Fixes: a074865e60ed ("perf tools: Introduce perf hooks")
-Signed-off-by: Ian Rogers <irogers@google.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+All the [unknown] symbols were resolved.
+
+Signed-off-by: Steve MacLean <Steve.MacLean@Microsoft.com>
+Tested-by: Brian Robbins <brianrob@microsoft.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+Cc: John Keeping <john@metanate.com>
+Cc: John Salem <josalem@microsoft.com>
+Cc: Leo Yan <leo.yan@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
 Cc: Stephane Eranian <eranian@google.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lore.kernel.org/lkml/20190925195924.152834-2-irogers@google.com
+Cc: Tom McDonald <thomas.mcdonald@microsoft.com>
+Link: http://lore.kernel.org/lkml/BN8PR21MB136270949F22A6A02335C238F7800@BN8PR21MB1362.namprd21.prod.outlook.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/perf-hooks.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ tools/perf/util/map.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/tests/perf-hooks.c b/tools/perf/tests/perf-hooks.c
-index a693bcf017ea2..44c16fd11bf6e 100644
---- a/tools/perf/tests/perf-hooks.c
-+++ b/tools/perf/tests/perf-hooks.c
-@@ -20,12 +20,11 @@ static void sigsegv_handler(int sig __maybe_unused)
- static void the_hook(void *_hook_flags)
- {
- 	int *hook_flags = _hook_flags;
--	int *p = NULL;
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 7666206d06fa7..f18113581cf03 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "symbol.h"
++#include <assert.h>
+ #include <errno.h>
+ #include <inttypes.h>
+ #include <limits.h>
+@@ -847,6 +848,8 @@ static int maps__fixup_overlappings(struct maps *maps, struct map *map, FILE *fp
+ 			}
  
- 	*hook_flags = 1234;
- 
- 	/* Generate a segfault, test perf_hooks__recover */
--	*p = 0;
-+	raise(SIGSEGV);
- }
- 
- int test__perf_hooks(struct test *test __maybe_unused, int subtest __maybe_unused)
+ 			after->start = map->end;
++			after->pgoff += map->end - pos->start;
++			assert(pos->map_ip(pos, map->end) == after->map_ip(after, map->end));
+ 			__map_groups__insert(pos->groups, after);
+ 			if (verbose >= 2 && !use_browser)
+ 				map__fprintf(after, fp);
 -- 
 2.20.1
 
