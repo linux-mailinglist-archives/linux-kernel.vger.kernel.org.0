@@ -2,279 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80CD5DC0FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C61E9DC104
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:32:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2632829AbfJRJcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 05:32:12 -0400
-Received: from mail-wm1-f73.google.com ([209.85.128.73]:59548 "EHLO
-        mail-wm1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2409780AbfJRJcK (ORCPT
+        id S2409806AbfJRJcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 05:32:54 -0400
+Received: from mail-sh.amlogic.com ([58.32.228.43]:32069 "EHLO
+        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2409791AbfJRJcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 05:32:10 -0400
-Received: by mail-wm1-f73.google.com with SMTP id c188so2060843wmd.9
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 02:32:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=EOYWaebnqr4bdUqKvgBWQLBw0XpiuWDYFAjzzlBAHXY=;
-        b=VgaN/EjjJ85pJq5V+xPnf3AOGr/QfT1iM0/jlK0dSJoItGhBWsWhzIFcqEY/u0i/9x
-         awSAtQHqMl/iOBnMdxMfMKgVXKC/m39wwV57T8tUa/Es6L/K/e08chH6nPqxD/IZaY7M
-         mUp9ZOsrrK4QM/Lm5vQMczb5WL5D+ZXERDhcgM1qjd5Y0KArxl4vQoESEav579SLCNNy
-         F2To6rGvBRx0ubGt1TRtBhVi5/nmS1ih67ezlMrw8YMmzoazbOjeYERv3NZwgKG1fkki
-         sPjlOsyHG9egqd8X820ueQzBSmb8hJbrII0K2jaPaapTbstXVdtnCk7+wKOh9jgj6nFH
-         hg8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=EOYWaebnqr4bdUqKvgBWQLBw0XpiuWDYFAjzzlBAHXY=;
-        b=qHYq5qwd8+OIu92TD2x+KBu+ZF3qpF58sAkR6uMmnU63FIjp6z9EYf37+Ief+nPJ9w
-         1YRddnZsAapG9ZbhtCizA6pLohn75rb7NphETqlHd2z1VGgYpjjXJZDQU32Ig57z0MXI
-         NuXQBVvx4is2p9A6oz07Wh5a0lLQJLBzvALyaXtlRn3iWrjZIfUN6libf5Y2LL1Hqded
-         rLCdtrm6409rxmiBEZDtMyfs40Ag0tj/wTvQs7p6EhuvtE8yC536/9ppmd6pErpsT6OC
-         ViPEgjZlaLT/n9hhMQN3nq9QAV25hwd3jQ7xGIbgMC1pB7la3HYpfrCJ8KzxM/ZDjRJw
-         Yk4A==
-X-Gm-Message-State: APjAAAWPZudu/jNNGIN7WNTYvTAj28rJbR9axPSeanm62E4vkmfo0D5y
-        LeHlxeePmp/gXLauhepRuPcv2TIHk5kLAQs+DLxx+R2092P7q2CC8ekqyXDny7EMBSRGhigfgHh
-        Qb3IDq4LUDNu0RAmM3l7We0MfdT8X/Kfkh+W2aFGeFRFJXv4jsEjcPB2/gLoWSVXLKqxhNUvvcD
-        c=
-X-Google-Smtp-Source: APXvYqzV1MEOz6axUddoEVlXVgpVxUdOImVrI2s3/ru+G9PNxije8sd8fJb3N8JtJ6Z6C2Ks4dOOxo6KZfdllw==
-X-Received: by 2002:adf:ed02:: with SMTP id a2mr6764291wro.11.1571391127786;
- Fri, 18 Oct 2019 02:32:07 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 10:31:43 +0100
-In-Reply-To: <20191018093143.15997-1-maennich@google.com>
-Message-Id: <20191018093143.15997-5-maennich@google.com>
-Mime-Version: 1.0
-References: <20191010151443.7399-1-maennich@google.com> <20191018093143.15997-1-maennich@google.com>
-X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
-Subject: [PATCH v2 4/4] export: avoid code duplication in include/linux/export.h
-From:   Matthias Maennich <maennich@google.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com, maennich@google.com,
-        Jessica Yu <jeyu@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Martijn Coenen <maco@android.com>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Shaun Ruffell <sruffell@sruffell.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will@kernel.org>, linux-kbuild@vger.kernel.org,
-        linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 18 Oct 2019 05:32:53 -0400
+Received: from droid13.amlogic.com (116.236.93.172) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.1591.10; Fri, 18 Oct 2019
+ 17:33:00 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>
+CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>
+Subject: [PATCH RESEND v3 0/4] arm64: meson: add support for A1 Power Domains
+Date:   Fri, 18 Oct 2019 17:32:43 +0800
+Message-ID: <1571391167-79679-1-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [116.236.93.172]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+This patchset introduces a "Secure Power Doamin Controller". In A1/C1, power
+controller registers such as PWRCTRL_FOCRSTN, PWRCTRL_PWR_OFF, PWRCTRL_MEM_PD
+and PWRCTRL_ISO_EN, are in the secure domain, and should be accessed from ATF
+by smc.
 
-include/linux/export.h has lots of code duplication between
-EXPORT_SYMBOL and EXPORT_SYMBOL_NS.
 
-To improve the maintainability and readability, unify the
-implementation.
+Changes since v1 at [1]:
+- update domain id
+- include dt-bindings in dts
 
-When the symbol has no namespace, pass the empty string "" to
-the 'ns' parameter.
+Changes since v1 at [0]:
+- use APIs from sm driver
+- rename pwrc_secure_get_power as Kevin suggested
+- add comments for always on domains
+- replace arch_initcall_sync with builtin_platform_driver
+- fix coding style
 
-The drawback of this change is, it grows the code size.
-When the symbol has no namespace, sym->namespace was previously
-NULL, but it is now an empty string "". So, it increases 1 byte
-for every no namespace EXPORT_SYMBOL.
+[0]  https://lore.kernel.org/linux-amlogic/1568895064-4116-1-git-send-email-jianxin.pan@amlogic.com
+[1]  https://lore.kernel.org/linux-amlogic/1570695678-42623-1-git-send-email-jianxin.pan@amlogic.com
 
-A typical kernel configuration has 10K exported symbols, so it
-increases 10KB in rough estimation.
+Jianxin Pan (4):
+  dt-bindings: power: add Amlogic secure power domains bindings
+  firmware: meson_sm: Add secure power domain support
+  soc: amlogic: Add support for Secure power domains controller
+  arm64: dts: meson: a1: add secure power domain controller
 
-I did not come up with a good idea to refactor it without increasing
-the code size.
+ .../bindings/power/amlogic,meson-sec-pwrc.yaml     |  42 +++++
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi          |   8 +
+ drivers/firmware/meson/meson_sm.c                  |   2 +
+ drivers/soc/amlogic/Kconfig                        |  13 ++
+ drivers/soc/amlogic/Makefile                       |   1 +
+ drivers/soc/amlogic/meson-secure-pwrc.c            | 204 +++++++++++++++++++++
+ include/dt-bindings/power/meson-a1-power.h         |  32 ++++
+ include/linux/firmware/meson/meson_sm.h            |   2 +
+ 8 files changed, 304 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+ create mode 100644 drivers/soc/amlogic/meson-secure-pwrc.c
+ create mode 100644 include/dt-bindings/power/meson-a1-power.h
 
-I am not sure how big a deal it is, but at least include/linux/export.h
-looks nicer.
-
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-[maennich: rebase on top of 3 fixes for the namespace feature]
-Signed-off-by: Matthias Maennich <maennich@google.com>
----
- include/linux/export.h | 91 +++++++++++++-----------------------------
- kernel/module.c        |  2 +-
- 2 files changed, 29 insertions(+), 64 deletions(-)
-
-diff --git a/include/linux/export.h b/include/linux/export.h
-index 941d075f03d6..201262793369 100644
---- a/include/linux/export.h
-+++ b/include/linux/export.h
-@@ -46,7 +46,7 @@ extern struct module __this_module;
-  * absolute relocations that require runtime processing on relocatable
-  * kernels.
-  */
--#define __KSYMTAB_ENTRY_NS(sym, sec)					\
-+#define __KSYMTAB_ENTRY(sym, sec)					\
- 	__ADDRESSABLE(sym)						\
- 	asm("	.section \"___ksymtab" sec "+" #sym "\", \"a\"	\n"	\
- 	    "	.balign	4					\n"	\
-@@ -56,33 +56,17 @@ extern struct module __this_module;
- 	    "	.long	__kstrtabns_" #sym "- .			\n"	\
- 	    "	.previous					\n")
- 
--#define __KSYMTAB_ENTRY(sym, sec)					\
--	__ADDRESSABLE(sym)						\
--	asm("	.section \"___ksymtab" sec "+" #sym "\", \"a\"	\n"	\
--	    "	.balign 4					\n"	\
--	    "__ksymtab_" #sym ":				\n"	\
--	    "	.long	" #sym "- .				\n"	\
--	    "	.long	__kstrtab_" #sym "- .			\n"	\
--	    "	.long	0					\n"	\
--	    "	.previous					\n")
--
- struct kernel_symbol {
- 	int value_offset;
- 	int name_offset;
- 	int namespace_offset;
- };
- #else
--#define __KSYMTAB_ENTRY_NS(sym, sec)					\
--	static const struct kernel_symbol __ksymtab_##sym		\
--	__attribute__((section("___ksymtab" sec "+" #sym), used))	\
--	__aligned(sizeof(void *))					\
--	= { (unsigned long)&sym, __kstrtab_##sym, __kstrtabns_##sym }
--
- #define __KSYMTAB_ENTRY(sym, sec)					\
- 	static const struct kernel_symbol __ksymtab_##sym		\
- 	__attribute__((section("___ksymtab" sec "+" #sym), used))	\
- 	__aligned(sizeof(void *))					\
--	= { (unsigned long)&sym, __kstrtab_##sym, NULL }
-+	= { (unsigned long)&sym, __kstrtab_##sym, __kstrtabns_##sym }
- 
- struct kernel_symbol {
- 	unsigned long value;
-@@ -93,28 +77,20 @@ struct kernel_symbol {
- 
- #ifdef __GENKSYMS__
- 
--#define ___EXPORT_SYMBOL(sym,sec)	__GENKSYMS_EXPORT_SYMBOL(sym)
--#define ___EXPORT_SYMBOL_NS(sym,sec,ns)	__GENKSYMS_EXPORT_SYMBOL(sym)
-+#define ___EXPORT_SYMBOL(sym, sec, ns)	__GENKSYMS_EXPORT_SYMBOL(sym)
- 
- #else
- 
--#define ___export_symbol_common(sym, sec)				\
-+/* For every exported symbol, place a struct in the __ksymtab section */
-+#define ___EXPORT_SYMBOL(sym, sec, ns)					\
- 	extern typeof(sym) sym;						\
- 	__CRC_SYMBOL(sym, sec);						\
- 	static const char __kstrtab_##sym[]				\
- 	__attribute__((section("__ksymtab_strings"), used, aligned(1)))	\
--	= #sym								\
--
--/* For every exported symbol, place a struct in the __ksymtab section */
--#define ___EXPORT_SYMBOL_NS(sym, sec, ns)				\
--	___export_symbol_common(sym, sec);				\
-+	= #sym;								\
- 	static const char __kstrtabns_##sym[]				\
- 	__attribute__((section("__ksymtab_strings"), used, aligned(1)))	\
--	= #ns;								\
--	__KSYMTAB_ENTRY_NS(sym, sec)
--
--#define ___EXPORT_SYMBOL(sym, sec)					\
--	___export_symbol_common(sym, sec);				\
-+	= ns;								\
- 	__KSYMTAB_ENTRY(sym, sec)
- 
- #endif
-@@ -126,8 +102,7 @@ struct kernel_symbol {
-  * be reused in other execution contexts such as the UEFI stub or the
-  * decompressor.
-  */
--#define __EXPORT_SYMBOL_NS(sym, sec, ns)
--#define __EXPORT_SYMBOL(sym, sec)
-+#define __EXPORT_SYMBOL(sym, sec, ns)
- 
- #elif defined(CONFIG_TRIM_UNUSED_KSYMS)
- 
-@@ -143,48 +118,38 @@ struct kernel_symbol {
- #define __ksym_marker(sym)	\
- 	static int __ksym_marker_##sym[0] __section(".discard.ksym") __used
- 
--#define __EXPORT_SYMBOL(sym, sec)				\
--	__ksym_marker(sym);					\
--	__cond_export_sym(sym, sec, __is_defined(__KSYM_##sym))
--#define __cond_export_sym(sym, sec, conf)			\
--	___cond_export_sym(sym, sec, conf)
--#define ___cond_export_sym(sym, sec, enabled)			\
--	__cond_export_sym_##enabled(sym, sec)
--#define __cond_export_sym_1(sym, sec) ___EXPORT_SYMBOL(sym, sec)
--#define __cond_export_sym_0(sym, sec) /* nothing */
--
--#define __EXPORT_SYMBOL_NS(sym, sec, ns)				\
-+#define __EXPORT_SYMBOL(sym, sec, ns)					\
- 	__ksym_marker(sym);						\
--	__cond_export_ns_sym(sym, sec, ns, __is_defined(__KSYM_##sym))
--#define __cond_export_ns_sym(sym, sec, ns, conf)			\
--	___cond_export_ns_sym(sym, sec, ns, conf)
--#define ___cond_export_ns_sym(sym, sec, ns, enabled)			\
--	__cond_export_ns_sym_##enabled(sym, sec, ns)
--#define __cond_export_ns_sym_1(sym, sec, ns) ___EXPORT_SYMBOL_NS(sym, sec, ns)
--#define __cond_export_ns_sym_0(sym, sec, ns) /* nothing */
-+	__cond_export_sym(sym, sec, ns, __is_defined(__KSYM_##sym))
-+#define __cond_export_sym(sym, sec, ns, conf)				\
-+	___cond_export_sym(sym, sec, ns, conf)
-+#define ___cond_export_sym(sym, sec, ns, enabled)			\
-+	__cond_export_sym_##enabled(sym, sec, ns)
-+#define __cond_export_sym_1(sym, sec, ns) ___EXPORT_SYMBOL(sym, sec, ns)
-+#define __cond_export_sym_0(sym, sec, ns) /* nothing */
- 
- #else
- 
--#define __EXPORT_SYMBOL_NS(sym,sec,ns)	___EXPORT_SYMBOL_NS(sym,sec,ns)
--#define __EXPORT_SYMBOL(sym,sec)	___EXPORT_SYMBOL(sym,sec)
-+#define __EXPORT_SYMBOL(sym, sec, ns)	___EXPORT_SYMBOL(sym, sec, ns)
- 
- #endif /* CONFIG_MODULES */
- 
- #ifdef DEFAULT_SYMBOL_NAMESPACE
--#undef __EXPORT_SYMBOL
--#define __EXPORT_SYMBOL(sym, sec)				\
--	__EXPORT_SYMBOL_NS(sym, sec, DEFAULT_SYMBOL_NAMESPACE)
-+#include <linux/stringify.h>
-+#define _EXPORT_SYMBOL(sym, sec)	__EXPORT_SYMBOL(sym, sec, __stringify(DEFAULT_SYMBOL_NAMESPACE))
-+#else
-+#define _EXPORT_SYMBOL(sym, sec)	__EXPORT_SYMBOL(sym, sec, "")
- #endif
- 
--#define EXPORT_SYMBOL(sym)		__EXPORT_SYMBOL(sym, "")
--#define EXPORT_SYMBOL_GPL(sym)		__EXPORT_SYMBOL(sym, "_gpl")
--#define EXPORT_SYMBOL_GPL_FUTURE(sym)	__EXPORT_SYMBOL(sym, "_gpl_future")
--#define EXPORT_SYMBOL_NS(sym, ns)	__EXPORT_SYMBOL_NS(sym, "", ns)
--#define EXPORT_SYMBOL_NS_GPL(sym, ns)	__EXPORT_SYMBOL_NS(sym, "_gpl", ns)
-+#define EXPORT_SYMBOL(sym)		_EXPORT_SYMBOL(sym, "")
-+#define EXPORT_SYMBOL_GPL(sym)		_EXPORT_SYMBOL(sym, "_gpl")
-+#define EXPORT_SYMBOL_GPL_FUTURE(sym)	_EXPORT_SYMBOL(sym, "_gpl_future")
-+#define EXPORT_SYMBOL_NS(sym, ns)	__EXPORT_SYMBOL(sym, "", #ns)
-+#define EXPORT_SYMBOL_NS_GPL(sym, ns)	__EXPORT_SYMBOL(sym, "_gpl", #ns)
- 
- #ifdef CONFIG_UNUSED_SYMBOLS
--#define EXPORT_UNUSED_SYMBOL(sym)	__EXPORT_SYMBOL(sym, "_unused")
--#define EXPORT_UNUSED_SYMBOL_GPL(sym)	__EXPORT_SYMBOL(sym, "_unused_gpl")
-+#define EXPORT_UNUSED_SYMBOL(sym)	_EXPORT_SYMBOL(sym, "_unused")
-+#define EXPORT_UNUSED_SYMBOL_GPL(sym)	_EXPORT_SYMBOL(sym, "_unused_gpl")
- #else
- #define EXPORT_UNUSED_SYMBOL(sym)
- #define EXPORT_UNUSED_SYMBOL_GPL(sym)
-diff --git a/kernel/module.c b/kernel/module.c
-index ff2d7359a418..26c13173da3d 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1400,7 +1400,7 @@ static int verify_namespace_is_imported(const struct load_info *info,
- 	char *imported_namespace;
- 
- 	namespace = kernel_symbol_namespace(sym);
--	if (namespace) {
-+	if (namespace && namespace[0]) {
- 		imported_namespace = get_modinfo(info, "import_ns");
- 		while (imported_namespace) {
- 			if (strcmp(namespace, imported_namespace) == 0)
 -- 
-2.23.0.866.gb869b98d4c-goog
+2.7.4
 
