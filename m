@@ -2,103 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5491DBF7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94E95DBF8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 10:11:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505018AbfJRIJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 04:09:03 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:39040 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504985AbfJRIJB (ORCPT
+        id S2391890AbfJRILv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 04:11:51 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:36882 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727918AbfJRILv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 04:09:01 -0400
-Received: by mail-io1-f68.google.com with SMTP id a1so6378781ioc.6
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 01:09:00 -0700 (PDT)
+        Fri, 18 Oct 2019 04:11:51 -0400
+Received: by mail-yb1-f195.google.com with SMTP id z125so1569955ybc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 01:11:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/rqN9u0/2+ao+d3JFwKTj45TNXeBg3DCl+L7bcDO5L0=;
-        b=AgRnIqMPI9/c78JU0tZ2ukpZmzDiY3JwBESuXLef+ZlyuwPVl0hWk/I4aTbZ37Yz2t
-         wBXespQ6ClJkWurhzK8+z7L3vufj/oD3RDQaBgd+c/seJgwQQwIKdHefZrlyFJm1PCaP
-         D8yAK7khexd85MvufOeWx+kF8/B+8jToNlCiBDxueaWGhck1V9xJ4TPeI5auXeWOPr7D
-         /bsc8iL44mCKAVSzpqLdIvfiQe2wwwpzVWof8Jj3K1Dqhnqb2ZcckbrUGMk0ZRnFupa8
-         GN/mgsOHEg6SeW83zbui+yitvxqgYKaHLceFXsigsvd3STC1fivnrdZuoJgP1eEir9aV
-         7k8w==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gbrbICubD3bXmWnYbOIskkXx4MwqbmP9fw85/ZSp3Ck=;
+        b=aIOtObIDPdGwv7gk6cVYXSD+b7Yu7fjEezPclytEOVEnidkTqz45CNM/rjgEbn3n2Z
+         PlFokea7ndfCUjN77HVdAXcDxcD5PlVPDILTeWKn2L65QHvKY5dBrl1/38VUQNn133y5
+         J136qxDJcwpF4RkBMisALmKLHRm5SeXnUgD63kM/HWijSQXrt04h9xFBRW8hITaU5CaN
+         NbORJ5V4HRCKYIDet8v49ZOu+zQPIwFYKFMC9srlJ0zQzdA3xLtzqgw9GgKkC7VXiOah
+         elBa5z0y2Rljjdvm5511XrHapDcWom9TATNBKypSVXFSh+OIzuYlcZBQHBSmeOIcL+Hd
+         KLyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/rqN9u0/2+ao+d3JFwKTj45TNXeBg3DCl+L7bcDO5L0=;
-        b=iPqhCqpDg81SAHa8/xPYV1buvSOIA5hLCVHvUYb4oEmA0zWZGlaww/bCAUTZDTZ+ry
-         /IvrOT9enkeqby910aDzqRycqukgREa33CLuXDrFMbnmCXjMXynhohErgkE21uYZrezx
-         QwsG1U/zcnIDwSrg3MbhiLQSg5IIVhDkI+Xswwr7B2DEq1tqbOX6Euw4X+nPCcX1vQsG
-         zIuUO4NuxVqGtl9cMuY+JAIonySEIQUYaKzKKdnkPgyGqGKOFdI1phzDcK+xbwD6Y9vy
-         WmaBrlyrHU/D9vtD+GUymMZ4U43eT1BIpU6eUJIx1mz/nfaB04U3TQA9Hv1Q2GqcDL2B
-         q6mA==
-X-Gm-Message-State: APjAAAVp/qS/T0jnyItMuYXbYe/bp3v4ACvc4c4/VeMXhdf6AGl5qWSA
-        8QYhB7X+E0Q2MlT4bLm9Jhfq4A==
-X-Google-Smtp-Source: APXvYqxG7epqlIJRSyy/8bM9quGUJjMyJ24lYOlQwYCPAW5aHjJzro/76ki7t3mpduRVDdN14r7s+g==
-X-Received: by 2002:a6b:5a09:: with SMTP id o9mr7397346iob.241.1571386140466;
-        Fri, 18 Oct 2019 01:09:00 -0700 (PDT)
-Received: from viisi.Home ([64.62.168.194])
-        by smtp.gmail.com with ESMTPSA id z86sm2121026ilf.73.2019.10.18.01.08.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2019 01:09:00 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-To:     linux-riscv@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: [PATCH v3 8/8] riscv: for C functions called only from assembly, mark with __visible
-Date:   Fri, 18 Oct 2019 01:08:41 -0700
-Message-Id: <20191018080841.26712-9-paul.walmsley@sifive.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191018080841.26712-1-paul.walmsley@sifive.com>
-References: <20191018080841.26712-1-paul.walmsley@sifive.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gbrbICubD3bXmWnYbOIskkXx4MwqbmP9fw85/ZSp3Ck=;
+        b=g5pitVomjm+GIou/xQAPLbJ17UIq1+mq2o+X7fHh2H9kXLhBevL+4RW6aY/B+FKhD6
+         38PUha2uwJnenl7u3e7PUi9VjWE5lsUJSRsCwVIe6/pfwqqijTXT4zuTYCdQ37BBWvP4
+         /76mla1f1PCXB8ePF7h3vP50gDp7QbgrYMCt64w0NxrINMBpupIAk/k1vlqZVmYd8w4m
+         VWmC98hEAvTYMgegxXZfggoVIyMTsF+8XM6/NuuaEl8U1PeQ7kTKMNz9wEKQTww8deie
+         7kr5vrpk4vsV8Oqxy8Y9YvpVVRhcLueRqXJdTBnwa2fjTQh2OG8v+llenVnW/5gOV8SH
+         SYqw==
+X-Gm-Message-State: APjAAAUdUNjWzf0ixO1J+r681zMnBI7z+Xq3/SjZekpDtd4NioKDgp+K
+        dhG8DtpLafqHZmvjEOakzbPnPQBFXR8Oc+ukd0q7VQ==
+X-Google-Smtp-Source: APXvYqxZ/JO+9feTE8in8AGq6r+hWQLtoKEIYK/DQzc8axjX00AoR+nxgxd+YoEz0nrAin1oK1HUKE6oml8LaZyK1dc=
+X-Received: by 2002:a25:e5c2:: with SMTP id c185mr5195789ybh.332.1571386309974;
+ Fri, 18 Oct 2019 01:11:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191016221148.F9CCD155@viggo.jf.intel.com> <CABCjUKDWRJO9s68qhKQGXzrW39KqfZzZhoOX0HgDcnv-RxJZPw@mail.gmail.com>
+ <85512332-d9d4-6a72-0b42-a8523abc1b5f@intel.com>
+In-Reply-To: <85512332-d9d4-6a72-0b42-a8523abc1b5f@intel.com>
+From:   Suleiman Souhlal <suleiman@google.com>
+Date:   Fri, 18 Oct 2019 17:11:38 +0900
+Message-ID: <CABCjUKDa+AQLrXf1h2QPqDqVePQoL_mJo4uUiOZss2vmeGoN5g@mail.gmail.com>
+Subject: Re: [PATCH 0/4] [RFC] Migrate Pages in lieu of discard
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, dan.j.williams@intel.com,
+        Shakeel Butt <shakeelb@google.com>,
+        Jonathan Adams <jwadams@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather than adding prototypes for C functions called only by assembly
-code, mark them as __visible.  This avoids adding prototypes that will
-never be used by the callers.  Resolves the following sparse warnings:
+On Fri, Oct 18, 2019 at 1:32 AM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 10/17/19 9:01 AM, Suleiman Souhlal wrote:
+> > One problem that came up is that if you get into direct reclaim,
+> > because persistent memory can have pretty low write throughput, you
+> > can end up stalling users for a pretty long time while migrating
+> > pages.
+>
+> Basically, you're saying that memory load spikes turn into latency spikes?
 
-arch/riscv/kernel/ptrace.c:151:6: warning: symbol 'do_syscall_trace_enter' was not declared. Should it be static?
-arch/riscv/kernel/ptrace.c:175:6: warning: symbol 'do_syscall_trace_exit' was not declared. Should it be static?
+Yes, exactly.
 
-Based on a suggestion from Luc Van Oostenryck.
+> FWIW, we have been benchmarking this sucker with benchmarks that claim
+> to care about latency.  In general, compared to DRAM, we do see worse
+> latency, but nothing catastrophic yet.  I'd be interested if you have
+> any workloads that act as reasonable proxies for your latency requirements.
 
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
----
- arch/riscv/kernel/ptrace.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Sorry, I don't know of any specific workloads I can share. :-(
+Maybe Jonathan or Shakeel have something more.
 
-diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
-index 63e47c9f85f0..0f84628b9385 100644
---- a/arch/riscv/kernel/ptrace.c
-+++ b/arch/riscv/kernel/ptrace.c
-@@ -148,7 +148,7 @@ long arch_ptrace(struct task_struct *child, long request,
-  * Allows PTRACE_SYSCALL to work.  These are called from entry.S in
-  * {handle,ret_from}_syscall.
-  */
--void do_syscall_trace_enter(struct pt_regs *regs)
-+__visible void do_syscall_trace_enter(struct pt_regs *regs)
- {
- 	if (test_thread_flag(TIF_SYSCALL_TRACE))
- 		if (tracehook_report_syscall_entry(regs))
-@@ -172,7 +172,7 @@ void do_syscall_trace_enter(struct pt_regs *regs)
- 	audit_syscall_entry(regs->a7, regs->a0, regs->a1, regs->a2, regs->a3);
- }
- 
--void do_syscall_trace_exit(struct pt_regs *regs)
-+__visible void do_syscall_trace_exit(struct pt_regs *regs)
- {
- 	audit_syscall_exit(regs);
- 
--- 
-2.23.0
+I realize it's not very useful without giving specific examples, but
+even disregarding persistent memory, we've had latency issues with
+direct reclaim when using zswap. It's been such a problem that we're
+conducting experiments with not doing zswap compression in direct
+reclaim (but still doing it proactively).
+The low write throughput of persistent memory would make this worse.
 
+I think the case where we're most likely to run into this is when the
+machine is close to OOM situation and we end up thrashing rather than
+OOM killing.
+
+Somewhat related, I noticed that this patch series ratelimits
+migrations from persistent memory to DRAM, but it might also make
+sense to ratelimit migrations from DRAM to persistent memory. If all
+the write bandwidth is taken by migrations, there might not be any
+more available for applications accessing pages in persistent memory,
+resulting in higher latency.
+
+
+Another issue we ran into, that I think might also apply to this patch
+series, is that because kernel memory can't be allocated on persistent
+memory, it's possible for all of DRAM to get filled by user memory and
+have kernel allocations fail even though there is still a lot of free
+persistent memory. This is easy to trigger, just start an application
+that is bigger than DRAM.
+To mitigate that, we introduced a new watermark for DRAM zones above
+which user memory can't be allocated, to leave some space for kernel
+allocations.
+
+-- Suleiman
