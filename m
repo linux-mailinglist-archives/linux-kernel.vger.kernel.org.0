@@ -2,160 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37299DBC59
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA2BDBC5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:05:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503547AbfJRFDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:03:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35342 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbfJRFDL (ORCPT
+        id S2503770AbfJRFDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:03:36 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15260 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728559AbfJRFDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:03:11 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3235D611B5; Fri, 18 Oct 2019 05:03:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571374990;
-        bh=xkwmYNFg1uTAlzxvBXAlwxTv5Amb5w9CFHuhTI/GUFA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=A3o4N4A+ThwRlG0WSfKtqT+hdLXEqISvjODSLiJHe4LxZGoNQBMc5MIXYw7MF9EVC
-         js9ZQULfDl1XODGzDcP3gvCoVYqwRJaQTvhXuwkCjDGdTQsEZSUQHGcMl+bFYCjy70
-         fxfT6dIU4Pxvz6drxmEw7n86GORXOvEzbRMQxVkc=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id F337560614;
-        Fri, 18 Oct 2019 05:03:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571374989;
-        bh=xkwmYNFg1uTAlzxvBXAlwxTv5Amb5w9CFHuhTI/GUFA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TRC7FdhxqcvRaLT3Z2cDlrb+g+4pDGxEVYxnLUuUgZoPoO/wtPLN9gVyReShp55gi
-         xZfl6WnVEscRs/4rMCP9o3Hi44mrwgtKDlPFI1iIAUnFJrl48mgT1qNXIlpGaBK86l
-         7u9NU5BBQd7q9vlZZZkKwbJac2wZrnyGnJTpDrlA=
+        Fri, 18 Oct 2019 01:03:35 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5da947b00000>; Thu, 17 Oct 2019 22:03:44 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 17 Oct 2019 22:03:33 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 17 Oct 2019 22:03:33 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 18 Oct
+ 2019 05:03:32 +0000
+Received: from [10.110.48.28] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 18 Oct
+ 2019 05:03:32 +0000
+Subject: Re: [PATCH V3] mm/page_alloc: Add alloc_contig_pages()
+To:     Anshuman Khandual <anshuman.khandual@arm.com>, <linux-mm@kvack.org>
+CC:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        "Dan Williams" <dan.j.williams@intel.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "David Hildenbrand" <david@redhat.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1571300646-32240-1-git-send-email-anshuman.khandual@arm.com>
+ <d0b4a92b-825f-7b2f-4624-c76f218f064e@nvidia.com>
+ <1b173827-b08c-b294-bf86-22228bdfd542@arm.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <0709de85-05f4-2a9d-e346-bd15b10e5a1a@nvidia.com>
+Date:   Thu, 17 Oct 2019 22:03:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <1b173827-b08c-b294-bf86-22228bdfd542@arm.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 18 Oct 2019 10:33:08 +0530
-From:   kgunda@codeaurora.org
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
-        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
-        daniel.thompson@linaro.org, jacek.anaszewski@gmail.com,
-        pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH V7 6/6] backlight: qcom-wled: Add auto string detection
- logic
-In-Reply-To: <20191017133024.GQ4365@dell>
-References: <1571220826-7740-1-git-send-email-kgunda@codeaurora.org>
- <1571220826-7740-7-git-send-email-kgunda@codeaurora.org>
- <20191017122653.GO4365@dell>
- <689831a9d7561f51cdb7ea0a1760d472@codeaurora.org>
- <20191017133024.GQ4365@dell>
-Message-ID: <1b21d0a80847173c4a1ee1943f974bda@codeaurora.org>
-X-Sender: kgunda@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1571375024; bh=l9NeihTw+1J1q2KFR+RjBhrVlNmj7LH0R3G4vYYzIeE=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=NCS4oSsVw6TmBPrs2DfZG3k3N7U9hdA8LAzF5SGSsK8PZkOuG2zAnlVxFzthpzQ78
+         XcFGdXGcwWNLWCqhBjQJJ+2QRc2g8Y7spLYTvDMbbMjDuCRAu0WDfqbKYRRI78M8fC
+         Tr7I5EcIwNX2s1B867KBxgjeMUZPy0cE9KCJ3ZuvEaJcIjaNvdx1KUJ4uj7/KOm1yz
+         tmem2e2Ec6BEWM3aXSgSPnT0PmP60NOdvOnnb/vt/IEYOjobE4ZPGZFFx7Te9MK4Fv
+         0qgIGmsYAiMiRRcIHnnFYROWO72OEPTYTf8oZhbSRe/r8dZCryl3SOciK/wXLqWaZX
+         +A9TeWJ7ccegQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-17 19:00, Lee Jones wrote:
-> On Thu, 17 Oct 2019, kgunda@codeaurora.org wrote:
+On 10/17/19 8:28 PM, Anshuman Khandual wrote:
+> On 10/18/2019 02:44 AM, John Hubbard wrote:
+>> On 10/17/19 1:24 AM, Anshuman Khandual wrote:
+... 
+> Yeah, it is bit non-trivial because v5 of the pgtable tests are still
+> on the latest linux-next (20191015 or 20191017). You will need to
+> revert the following patches.
 > 
->> On 2019-10-17 17:56, Lee Jones wrote:
->> > On Wed, 16 Oct 2019, Kiran Gunda wrote:
->> >
->> > > The auto string detection algorithm checks if the current WLED
->> > > sink configuration is valid. It tries enabling every sink and
->> > > checks if the OVP fault is observed. Based on this information
->> > > it detects and enables the valid sink configuration.
->> > > Auto calibration will be triggered when the OVP fault interrupts
->> > > are seen frequently thereby it tries to fix the sink configuration.
->> > >
->> > > The auto-detection also kicks in when the connected LED string
->> > > of the display-backlight malfunctions (because of damage) and
->> > > requires the damaged string to be turned off to prevent the
->> > > complete panel and/or board from being damaged.
->> > >
->> > > Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
->> > > ---
->> > >  drivers/video/backlight/qcom-wled.c | 410
->> > > +++++++++++++++++++++++++++++++++++-
->> > >  1 file changed, 404 insertions(+), 6 deletions(-)
->> > >
->> > > diff --git a/drivers/video/backlight/qcom-wled.c
->> > > b/drivers/video/backlight/qcom-wled.c
->> > > index b5b125c..ff7c409 100644
->> > > --- a/drivers/video/backlight/qcom-wled.c
->> > > +++ b/drivers/video/backlight/qcom-wled.c
+> 1. mm/hugetlb: make alloc_gigantic_page() available for general use
+> 2. mm/debug: add tests validating architecture page table helpers
+> 3. mm-debug-add-tests-validating-architecture-page-table-helpers-fix
 > 
-> [...]
+> and apply the following patch (https://patchwork.kernel.org/patch/11190213/)
 > 
->> > > +		if (int_sts & WLED3_CTRL_REG_OVP_FAULT_STATUS)
->> > > +			dev_dbg(wled->dev, "WLED OVP fault detected with SINK %d\n",
->> > > +				i + 1);
->> >
->> > I haven't reviewed the whole patch, but this caught my eye.
->> >
->> > I think this should be upgraded to dev_warn().
->> >
->> Thought of keeping these messages silent, Because the string 
->> configuration
->> will be corrected in this
->> and informing it at end of the auto string detection.
+> 1. hugetlbfs: don't access uninitialized memmaps in pfn_range_valid_gigantic()
 > 
-> [...]
+> After which this particular patch here will apply cleanly. Hope this helps.
 > 
->> > > +	} else {
->> > > +		dev_warn(wled->dev, "New WLED string configuration found %x\n",
->> > > +			 sink_valid);
->> >
->> > Why would the user care about this?  Is it not normal?
->> >
->> Actually, it comes here if the user provided string configuration in 
->> the
->> device tree is in-correct.
->> That's why just informing the user about the right string 
->> configuration,
->> after the auto string detection.
-> 
-> Then I think we need to be more forthcoming.  Tell the user the
-> configuration is incorrect and what you've done to rectify it.
-> 
-> "XXX is not a valid configuration - using YYY instead"
-> 
-Sure. Will update it in the next series.
-> [...]
-> 
->> > > +static int wled_configure_ovp_irq(struct wled *wled,
->> > > +				  struct platform_device *pdev)
->> > > +{
->> > > +	int rc;
->> > > +	u32 val;
->> > > +
->> > > +	wled->ovp_irq = platform_get_irq_byname(pdev, "ovp");
->> > > +	if (wled->ovp_irq < 0) {
->> > > +		dev_dbg(&pdev->dev, "ovp irq is not used\n");
->> >
->> > I assume this is optional.  What happens if no IRQ is provided?
->> >
->> Here OVP IRQ is used to detect the wrong string detection. If it is 
->> not
->> provided the auto string detection logic won't work.
-> 
-> "OVP IRQ not found - disabling automatic string detection"
-> 
-Sure. Will update it in the next series.
->> > If, for instance, polling mode is enabled, maybe something like this
->> > would be better?
->> >
->> >       dev_warn(&pdev->dev, "No IRQ found, falling back to polling
->> > mode\n");
+
+Yes, that helps, I wouldn't have worked that out on my own. :)
+
+I'm not sure if I'll have anything to add, but I do want to take a peek,
+so I can try to keep up with how huge pages are evolving.
+
+thanks,
+
+John Hubbard
+NVIDIA
