@@ -2,100 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13CB1DBA6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 02:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B838DBA72
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 02:08:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441847AbfJRAHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 17 Oct 2019 20:07:43 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33726 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438763AbfJRAHR (ORCPT
+        id S2503797AbfJRAIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 17 Oct 2019 20:08:39 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59458 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438886AbfJRAIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Oct 2019 20:07:17 -0400
-Received: by mail-lf1-f67.google.com with SMTP id y127so3278717lfc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 17:07:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k57WvexPDzWhZ12Of1tOHrp0702fGU2Gj8454jm70nc=;
-        b=Ad9lRUGdbedhRZCYVLx3Ld+8Vb8YQ9pzptyJsMjKTj+qGH2s9TQhwWB0mAQQldc0zz
-         Aoi1l0RHkbkMBHPFuO2iD4GUS7g6GpvYJF/+rvwqsR0GYO+ZbU8VOsL8jTdkgih+e7SN
-         rxkRVhOwYaejpJHeojcMBN63yYEk4IJMz+9ns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k57WvexPDzWhZ12Of1tOHrp0702fGU2Gj8454jm70nc=;
-        b=NabRjjS/35dd+RwQGOq1Ka+McS8+nGKyH43PxydqD54NeB0XfaoDKg0fLUsDHRCFwM
-         Gg+mEeiybezejfEgCHqCu25WnVYkoWjCC41ugJsBOVgXh3Jo9YHEz1Uk+S7YMEm6HlwV
-         j3eArHVXwi56ZpV3ItHdAzavEawt4+zK3DFBk5xqPDQ3BKBpswiO2jCwr1rDXGRRP9SU
-         /rjVWkWl9GrAQ+cpsAtj1GXgnXA30rEU8aFSIkHODo9bz+4DbU90BTV37m0kMfdp5808
-         dRbbInZcSIpYg42EE8CgfbU7aS3gkDkuq7hq90LlC/lyygNxn7yRSVHt2MsyRUlEe7VJ
-         rtPg==
-X-Gm-Message-State: APjAAAWtvi6E0girlzyvYMAkdnKNa91DiGolaK+Fur2XSZxVZnY0LnRn
-        kEV9fvXo9dqq5LmaSLiU3mNlf9AfhZw=
-X-Google-Smtp-Source: APXvYqxv6NeA8IQCHpqsgBi5PWcxlHqHDJj8u93ooBhQHB1Hm7LHf6zkSKC9kHtgYDFxjHVtSD+1Tg==
-X-Received: by 2002:ac2:4283:: with SMTP id m3mr4082323lfh.41.1571357232162;
-        Thu, 17 Oct 2019 17:07:12 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id q24sm1984730lfa.94.2019.10.17.17.07.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2019 17:07:10 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id t8so3228644lfc.13
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 17:07:10 -0700 (PDT)
-X-Received: by 2002:ac2:43a8:: with SMTP id t8mr4026546lfl.134.1571357230358;
- Thu, 17 Oct 2019 17:07:10 -0700 (PDT)
+        Thu, 17 Oct 2019 20:08:37 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9I050fh024871;
+        Fri, 18 Oct 2019 00:08:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=HqJmjZeEPYQc4b+zatsyRP/aFQKXc1pGuXSI4rzI+RM=;
+ b=bqC9SYp1Q13qSbHd5NIYepo5THNptc+6Vci6usz68tvsToKUJMQKMDUK28VufIRJl2pN
+ /soAfQBuy++7bHUJ6yCxAO5vfcPjcoVnsgV1ZdnoAivKFEeN0ls9bli8GJTjjimQgBTS
+ 9GsOMgQid7bwlydfrcfr+yFUgOoyrH+Y3KXPnrVqo9+kbm9tcCV1j2rzkcUN89N1w0H0
+ euo0fev1ma1udu6zcK4smSL2HgIKnDZEnsXxT270uKFYSqwoXx/pW28m2QRtCp4aAWaX
+ cCIIvHtnUobDvy8UbV/1VvQOemrda4kR6ItwwjJn9D4GWB9BLQt2t5e4dHkeCcHKU8cb Pw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2vq0q40cq9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Oct 2019 00:08:25 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9I08Gpq109303;
+        Fri, 18 Oct 2019 00:08:24 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2vq0dwpea7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Oct 2019 00:08:24 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9I08MmN016450;
+        Fri, 18 Oct 2019 00:08:22 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 18 Oct 2019 00:08:22 +0000
+Subject: Re: [PATCH] hugetlbfs: fix error handling in init_hugetlbfs_fs()
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191017103822.8610-1-cgxu519@mykernel.net>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <ccfddf19-630f-ad38-68b3-16003e740113@oracle.com>
+Date:   Thu, 17 Oct 2019 17:08:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-References: <20191017234348.wcbbo2njexn7ixpk@willie-the-truck>
-In-Reply-To: <20191017234348.wcbbo2njexn7ixpk@willie-the-truck>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 17 Oct 2019 17:06:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjPZYxiTs3F0Vbrd3kRizJGq-rQ_jqH1+8XR9Ai_kBoXg@mail.gmail.com>
-Message-ID: <CAHk-=wjPZYxiTs3F0Vbrd3kRizJGq-rQ_jqH1+8XR9Ai_kBoXg@mail.gmail.com>
-Subject: Re: [GIT PULL] arm64: Fixes for -rc4
-To:     Will Deacon <will@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM Kernel Mailing List 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191017103822.8610-1-cgxu519@mykernel.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9413 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910180000
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9413 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910170214
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 4:43 PM Will Deacon <will@kernel.org> wrote:
->
-> Note that the workaround code ended up being based on -rc2, so I had a
-> bit of a faff trying to generate the right diffstat for this pull request
-> after merging that branch into our fixes branch based on -rc1. In the end
-> I had to emulate the pull locally because I couldn't figure out how to
-> drive request-pull correctly despite the shortlog being correct. I'd love
-> to know what I should've done instead.
+Cc: David
+On 10/17/19 3:38 AM, Chengguang Xu wrote:
+> In order to avoid using incorrect mnt, we should set
+> mnt to NULL when we get error from mount_one_hugetlbfs().
+> 
+> Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+> ---
+>  fs/hugetlbfs/inode.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+> index a478df035651..427d845e7706 100644
+> --- a/fs/hugetlbfs/inode.c
+> +++ b/fs/hugetlbfs/inode.c
+> @@ -1470,9 +1470,12 @@ static int __init init_hugetlbfs_fs(void)
+>  	i = 0;
+>  	for_each_hstate(h) {
+>  		mnt = mount_one_hugetlbfs(h);
+> -		if (IS_ERR(mnt) && i == 0) {
+> -			error = PTR_ERR(mnt);
+> -			goto out;
+> +		if (IS_ERR(mnt)) {
+> +			if (i == 0) {
+> +				error = PTR_ERR(mnt);
+> +				goto out;
+> +			}
+> +			mnt = NULL;
+>  		}
+>  		hugetlbfs_vfsmount[i] = mnt;
+>  		i++;
 
-You did the right thing.
+Thanks!
 
-When there are multiple merge bases, a regular "git diff" doesn't work
-since it's fundamentally about two end-points (well, it _can_ work
-almost by mistake, but doesn't work in the general case). So the only
-way to get a "proper" diff is to do a merge and then diff the result.
+That should be fixed.  It was introduced with commit 32021982a324 ("hugetlbfs:
+Convert to fs_context").  
 
-That said, I also accept the output of "git diff" which will then have
-a lot of noise from all the _other_ work done between the two merge
-bases. I can figure out what happened, and do my own two-endpoint diff
-and see what happened, and still se that "yes, that's what the pull
-request meant, and that's why the diffstat is garbage".
+That commit also changed the condition for which init_hugetlbfs_fs() would
+'error' and remove the inode cache.  Previously, it would do that if there
+was an error creating a mount for the default_hstate_idx hstate.  It now does
+that for the '0' hstate, and 0 is not always equal to default_hstate_idx.
 
-What you did is the "good quality" pull request, though.
+David was that intentional or an oversight?  I can fix up, just wanted to
+make sure there was not some reason for the change.
 
-In general, people who aren't doing fancy things with git should never
-get to the "multiple merge bases" situation, and then the regular pull
-request logic works fine.
-
-And people likme you who are doing multiple branches and know what
-they are doing are also able to them handle the "uhhuh, I need to do a
-merge to get a good diffstat" situation.
-
-            Linus
+-- 
+Mike Kravetz
