@@ -2,84 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EED3DC0E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:29:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5B2DDC10D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 11:33:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409734AbfJRJ3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 05:29:37 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38147 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728723AbfJRJ3g (ORCPT
+        id S2409832AbfJRJdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 05:33:08 -0400
+Received: from mail.keramplus.com ([212.3.124.226]:15605 "EHLO
+        trixbox1.localdomain" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2632976AbfJRJdA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 05:29:36 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w3so3046517pgt.5
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 02:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=g0wJcF0+MU8onT4dQlcS5SYf3gjezQhPtNmK0I7nY6I=;
-        b=AC2Lkt+54mTJ8oA7oUAFoCNuCudKUP69OuYq8gUduwPZydK3rvBO//TtYfOpIs7xw9
-         rWyccryi7QP4SA2CgY8TDSk1BJx2ZDZKA1bx4OeOhUxBFo+ur3JbMEMrMHIw4o7PA28X
-         vNtSql73UXPGvwZeNeYcyDBKU++Hduf0kh6uajhB0cgItaFqHMwHBP7fiEMxkcEpYPyM
-         D4OgKxg7+leENuo/IGr+b85l2vhbRPT0HESQSADQbHmG53Rr1pkIjypouOU/ItHz+eAi
-         UeP/TVHfsLAwAfgj/psAMseWVV5z4y0kxrQfA4LOipxDtAGpfAh0jckWOaaRYRhLM7px
-         eVFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=g0wJcF0+MU8onT4dQlcS5SYf3gjezQhPtNmK0I7nY6I=;
-        b=dvRpIKrLDkVVf9z0zTzsPRX9jx03CgSNxMrAQI3iPRWHlGJnbnQ2jMpR4Gau2kpy8c
-         NFplNsbxX08e04VFzPPsIYx9+kft/aCwlmWHSj2P2Qe8IKE7qXgZhoi96IBUgKer+ccR
-         DDuL8NhPHmFrNFq0qfecu1eOVXAhtPuP+BIkvKdomZpdvq2Gu8WGNy1T4rc8k0dSPLLv
-         +7DMRcOgyChSkE7fh9ntGjahX1ydQ8+9+bUlt4/i0Fhs9uiN8Ineyp24GlDSiUTIaEil
-         4SW/2C0eW5EKwyTla8fB/beZAkhn+QksjSPWxENWBRZApCxjwJqmoJkQc5OuNyAyrQlG
-         xu+Q==
-X-Gm-Message-State: APjAAAVZ4yZoliWcfbtcU4Oykkq4Qmp7eAXiWFrcdgTFdrzV6gHcRg5J
-        Y2aDNdQN1fS3Xdez3F8z4JuJew==
-X-Google-Smtp-Source: APXvYqzdCKqUCleUtrRntSSQeapM3vme2IX5RXZxIKneWH/lOi7AQ4zNoe3fUN+iPFYS2lkzBOzWYQ==
-X-Received: by 2002:a63:5a59:: with SMTP id k25mr9044265pgm.171.1571390975933;
-        Fri, 18 Oct 2019 02:29:35 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id r185sm5809366pfr.68.2019.10.18.02.29.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Oct 2019 02:29:35 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 14:59:33 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [RFT][PATCH 2/3] cpufreq: Use per-policy frequency QoS
-Message-ID: <20191018092933.2i7dpr35wkxemgby@vireshk-i7>
-References: <2811202.iOFZ6YHztY@kreacher>
- <20154332.AJkCBzCetj@kreacher>
- <1707f018-fc6b-0122-17e0-635340daa4ef@gmail.com>
- <d88fc9b4-24af-6081-96e4-5a0b93c59d43@gmail.com>
+        Fri, 18 Oct 2019 05:33:00 -0400
+X-Greylist: delayed 15627 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Oct 2019 05:32:59 EDT
+Received: from 127.0.0.1 (trixbox1.localdomain [127.0.0.1])
+        by trixbox1.localdomain (Postfix) with SMTP id E8CF1AD91B4;
+        Fri, 18 Oct 2019 00:28:49 +0300 (EEST)
+Received: from [97.89.242.122] by 127.0.0.1 id <1518416-82723>; Fri, 18 Oct 2019 04:25:06 +0600
+Message-ID: <0gq8$76$vq$3nwc$o4-dhf@ac0q5b.ziv64>
+From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+To:     86-20-611027785huang1982225@163.com
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Date:   Fri, 18 Oct 19 04:25:06 GMT
+X-Mailer: eGroups Message Poster
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d88fc9b4-24af-6081-96e4-5a0b93c59d43@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: multipart/alternative;
+        boundary="55.4EA_AE_124_DB_"
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-10-19, 00:29, Dmitry Osipenko wrote:
-> Viresh, the warning is actually triggered by this line:
-> 
-> https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/opp/of.c#L664
-> 
-> So it looks like the cpufreq-dt driver removal drops
-> opp_table->list_kref more times than it should be. I may try to take a
-> closer look at it later on, please let me know if you have any suggestions.
 
-I was able to reproduce it and have sent a fix and cc'd you on it.
-Please give it a try.
+--55.4EA_AE_124_DB_
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
--- 
-viresh
+Greetings
+
+My name is Barrister Hans Erich.
+
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
+
+Your full names ---------
+
+
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+
+--55.4EA_AE_124_DB_--
+
