@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E5DBDBC6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13BE7DBC7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504102AbfJRFFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:05:22 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4716 "EHLO huawei.com"
+        id S2504206AbfJRFFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:05:48 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4676 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2504067AbfJRFFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:05:16 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id F058548E55D88299AD07;
-        Fri, 18 Oct 2019 11:19:35 +0800 (CST)
+        id S2504179AbfJRFFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 01:05:46 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1B2C4F3D3A5D72241BD7;
+        Fri, 18 Oct 2019 11:19:41 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 18 Oct 2019 11:19:29 +0800
+ 14.3.439.0; Fri, 18 Oct 2019 11:19:30 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Petr Mladek <pmladek@suse.com>, <linux-kernel@vger.kernel.org>
 CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
@@ -25,9 +25,9 @@ CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
         "Andy Shevchenko" <andy@infradead.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH v2 18/33] platform/x86: eeepc-laptop: Use pr_warn instead of pr_warning
-Date:   Fri, 18 Oct 2019 11:18:35 +0800
-Message-ID: <20191018031850.48498-18-wangkefeng.wang@huawei.com>
+Subject: [PATCH v2 19/33] platform/x86: asus-laptop: Use pr_warn instead of pr_warning
+Date:   Fri, 18 Oct 2019 11:18:36 +0800
+Message-ID: <20191018031850.48498-19-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018031850.48498-1-wangkefeng.wang@huawei.com>
 References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
@@ -53,22 +53,22 @@ Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
 Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- drivers/platform/x86/eeepc-laptop.c | 2 +-
+ drivers/platform/x86/asus-laptop.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/eeepc-laptop.c b/drivers/platform/x86/eeepc-laptop.c
-index f3f74a9c109e..776868d5e458 100644
---- a/drivers/platform/x86/eeepc-laptop.c
-+++ b/drivers/platform/x86/eeepc-laptop.c
-@@ -578,7 +578,7 @@ static void eeepc_rfkill_hotplug(struct eeepc_laptop *eeepc, acpi_handle handle)
- 
- 	port = acpi_get_pci_dev(handle);
- 	if (!port) {
--		pr_warning("Unable to find port\n");
-+		pr_warn("Unable to find port\n");
- 		goto out_unlock;
+diff --git a/drivers/platform/x86/asus-laptop.c b/drivers/platform/x86/asus-laptop.c
+index fc6446209854..a666fbc2e73b 100644
+--- a/drivers/platform/x86/asus-laptop.c
++++ b/drivers/platform/x86/asus-laptop.c
+@@ -1148,7 +1148,7 @@ static void asus_als_switch(struct asus_laptop *asus, int value)
+ 		ret = write_acpi_int(asus->handle, METHOD_ALS_CONTROL, value);
  	}
+ 	if (ret)
+-		pr_warning("Error setting light sensor switch\n");
++		pr_warn("Error setting light sensor switch\n");
  
+ 	asus->light_switch = value;
+ }
 -- 
 2.20.1
 
