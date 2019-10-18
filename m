@@ -2,90 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33DE3DCE7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:42:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D27CDCE81
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392273AbfJRSl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 14:41:58 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:40686 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728350AbfJRSl6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 14:41:58 -0400
-Received: by mail-il1-f194.google.com with SMTP id o16so6447713ilq.7;
-        Fri, 18 Oct 2019 11:41:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tJXKGhc1AW/l0WKj0IcIOpG/c9m//aZTCOArzVW/AZw=;
-        b=s/JGYncSzqI2bGxfMPGTrEU6YMN+uue1Pn3GVsKkV6CewWE7VwswNVssbghypg2B5r
-         O4iy4KgD9IPaIpFP1Uuji4WcIqDJT35onsmfK/8ZfnRxgjJsluFIvQAdyj05RUO4yYWn
-         H7HjIFAhkdyk24buc2FvoJdcOydo3D7fY/UyXBLwK5FpIvTu7RbaQzEn9jIHuObUYlp2
-         oK487cyGVr2lFBqaJ2ttjFXOGKB7R4lDPOvMCsTCGzqExsRoh+Oo5Uh+Qmlt68zO8QeV
-         YbgbC6FAgo6rUOqcP+bIWbmOMvA5jnoaldwbwttz2cDmoOkgNNZ/3xmBk/6q7AYUJ5uy
-         PLNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tJXKGhc1AW/l0WKj0IcIOpG/c9m//aZTCOArzVW/AZw=;
-        b=NVlGuxJfvM/8PuMo3ediHtIIALkbs332SdT1EMjA37bc3Nuc7vdCM893mKCU7R61Ck
-         aP+bpgG7pmJxAqYRQMN1QiuIFK49KigTQLrLCmr+ZLHoGCCeAUb5CTKwa4C/T6gA81Hn
-         QRKCcKYuowBEFXx7dJmln/crAHAwQYV7Ciaru3iks7KeP9iOWFGf2ZAF9nm3bWMs/JCg
-         DZFqaAaPo12Gx8wwCDGIoXq5zlQqMNiqjM+guMQFlZY7KIAA4pnBgNYh0VA6BExns3hf
-         g0p3kvrRfZSyMSwdXqjb/KN/+XIcOb4Jnim8U5E8BdX8hB4kC8+IaOZh9BGy167yjFkP
-         1c0w==
-X-Gm-Message-State: APjAAAVReqOq3wtIE6nQ51lGMW9GDaMCjgDEg/WcKvTC5/LeBOvm4W8K
-        GRBSs7Uta27KZpIDA4otBtKNwqPj5g3p9cOnz9w=
-X-Google-Smtp-Source: APXvYqzVGnrRdxkCssJMUgVLUGTgfJ2Oe03f70oC9SJo+hLMFSxkpBPACOQ7WecE05oJWVeLVBFKMSyBLSuR6dgWN3A=
-X-Received: by 2002:a92:b682:: with SMTP id m2mr11544098ill.64.1571424117434;
- Fri, 18 Oct 2019 11:41:57 -0700 (PDT)
+        id S2439694AbfJRSnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 14:43:07 -0400
+Received: from mout.web.de ([212.227.15.14]:38727 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725797AbfJRSnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 14:43:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1571424151;
+        bh=3XlpwwfyFUPCrNlUnQN8tBuu96IXkr2MOifQo4K3Fq0=;
+        h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
+        b=O0bruNvHav/pX6UpO6wfVfODiUQQHdvT/M3itgRIjQOFiGlow/zVBD+4snB8bUI3D
+         iDr38TgbOAM67G6X0jfMxprucHt+6Qpm4LXYgrlgFpJVgOOMxTUXsnCxcGfaYQIWi2
+         mdZRBUGop3hPMyhBPUrcQ0ZiS8qt/EyGBKAwgE7g=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.48.164.145]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LnBPR-1hq4Kp3XXp-00hQac; Fri, 18
+ Oct 2019 20:42:31 +0200
+To:     linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Stephen Boyd <sboyd@kernel.org>, Ray Jui <rjui@broadcom.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: clk: bcm2835: Checking a clk_register() call in bcm2835_clk_probe()
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
+ +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
+ mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
+ lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
+ YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
+ GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
+ rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
+ 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
+ jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
+ BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
+ cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
+ Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
+ g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
+ OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
+ CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
+ LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
+ sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
+ kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
+ i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
+ g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
+ q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
+ NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
+ nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
+ 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
+ 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
+ wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
+ riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
+ DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
+ fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
+ 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
+ xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
+ qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
+ Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
+ Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
+ +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
+ hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
+ /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
+ tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
+ qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
+ Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
+ x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
+ pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>
+Message-ID: <522fb1f3-d710-2f86-60b1-4224b8d3d17a@web.de>
+Date:   Fri, 18 Oct 2019 20:42:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-References: <20191015141945.16067-1-ben.dooks@codethink.co.uk>
-In-Reply-To: <20191015141945.16067-1-ben.dooks@codethink.co.uk>
-From:   Sylvain Lemieux <slemieux.tyco@gmail.com>
-Date:   Fri, 18 Oct 2019 14:41:46 -0400
-Message-ID: <CA+rxa6q3M_o9E95-W5DrtNkzhuuVRBjS74U_TQKLCOde+nG0vw@mail.gmail.com>
-Subject: Re: [PATCH] usb: ohci-nxp: fix use of integer as pointer
-To:     Ben Dooks <ben.dooks@codethink.co.uk>
-Cc:     linux-kernel@lists.codethink.co.uk,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8zHFo6yOHoRzs5oRjgK0OaN8M9FbXbA2uMsZXQx/LttjWit8QAN
+ esaNHPsAWV+VYWEoy9WyVLZ14Dlcra8kgzqzGfem6OnfOPg4Umo2wjdQIbd9/KhHGbPqs+F
+ FT2pVebN5n/6L/+eX0CBtuSGkiYTvOgkAbwQ+hQgx5pTqgEAoj5aVvNte1TE34V1NrZY8+a
+ jR+V6P9IXv2ZVHpn0AduQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:W7TcqGjBJ3U=:/oILMtZe5WoS/He1OVv+3Y
+ UHMlOJhseoVhWSQPzeGVQEnNuYj2oU8ubINnPmdmCqeiTHuZLKs03YVp7DiYK/28bVGlNW52T
+ Oawoe6ooQ91MCyzKs7F144F/jIQEP0qsWWHzQNMUmTZmFeqwGyYugcMVH8RyU1nOkoSZqOD7U
+ zF41Zgy6fmI48QKvN2HQ3NQSmnyVbrx5QrfR9mOL9awarxkjcORHHLRZRIW1TbXL11fyqWRjR
+ Veh533EaJdrffv3HKQc6sP94g3x5aOrVzns4vRJGy5SLpcNkb3mWaOajsqnplKU0X67BOXqd/
+ ubzdOsmXKkI7rvB/buOThIDsmT4p0h5BSSprWek457joFJHGc37uOjyCqEP6jn7nA3Wq4wZ3l
+ KTtJzNDghxHLmWVTS6Zz1mr76iJpdL04c/ybLgwG5q2BoAWva53exo+2cdgQgWrkXXPRfcVoD
+ Vq2raBEB1GQZAhMVsYzlJHhcsqbX005uz5ZgFc7XfYCB8Eh5fVmIRppNxm6I4kouJC0HMvgk9
+ 9xVUt3b+CP5xQkvPdLeEXjqr5J9aQ9GZEr7aCPipceUrevBS5tzgZIO2V0ycDR+gMP+m6DSyw
+ u8fGxW8jLIdYCb12gXhSyk31G7WSws5wc1n/NZZElByXupgHA2uvB+HN18evh8IdmPSVXFu76
+ p8Va6QH8hqC1F4WJjruv9cYj43qI2gkgTqkhGucUFmh179UVbaRzzh+65qYFY/LEW1yShIx13
+ C/jc/9ewr2ZjVIt8GmjubdXKPmpcMMka2oymEx+bGW28KbaBveZVhjkeXy04DeLURwkjb7E4s
+ bG3++qSCBhzNn8Uk2Ya3cuk1zwd+5CIATWOFKGRu/ScJry83p/DQqK3xp5FZKDNd3Ae1qxtfM
+ lu0LixEyFtP7iWw9ZAewMkkicRwvpkCSc011/6VHV+tfPcXMsxWnoohQL0oGzABMTM8tVxMhi
+ 8UmVHjn30bn0L6/gJirfyFPoysSFdaoqtB68rYw+cJEslQSWSu6+XNq6Pt1hh6g9aXnooXmnn
+ LQSUDnma/FExSM7f9MUC5467jkgg+2Xry7KJKfXO9cFuPlAXw4m7WVBUMacJOAI1vxtf3s/Ow
+ xJDsEaGwsTcWr1NU0X4xnddJkZLNwrsigg+pEQL2LDvokIYWuPIJSpyEHaqaIVonYc2oqzpLs
+ ctxm3M4DgamlimHJ+KPpgjgXavcQzjemjfbNgnnMljLxZyj8CfwbguObTUl9yLvaRXHucodLv
+ 4egak6d4bB/Tja+Mi6tdWWIVOk/jRaN3ELVSDr7mV6gb/poPnXstH5iNAe0U=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 10:19 AM Ben Dooks <ben.dooks@codethink.co.uk> wrote:
->
-> The hcd pointer in ohci_hcd_nxp_probe() is
-> being initialised with a 0, so fix to NULL to
-> avoid the following sparse warning:
->
-> drivers/usb/host/ohci-nxp.c:153:31: warning: Using plain integer as NULL pointer
->
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
-[...]
+Hello,
 
-> --- a/drivers/usb/host/ohci-nxp.c
-> +++ b/drivers/usb/host/ohci-nxp.c
-> @@ -150,7 +150,7 @@ static void ohci_nxp_stop_hc(void)
->
->  static int ohci_hcd_nxp_probe(struct platform_device *pdev)
->  {
-> -       struct usb_hcd *hcd = 0;
-> +       struct usb_hcd *hcd = NULL;
->         const struct hc_driver *driver = &ohci_nxp_hc_driver;
->         struct resource *res;
->         int ret = 0, irq;
-> --
-> 2.23.0
->
-Acked-by: Sylvain Lemieux <slemieux.tyco@gmail.com>
+I tried another script for the semantic patch language out.
+This source code analysis approach points out that the implementation
+of the function =E2=80=9Cbcm2835_clk_probe=E2=80=9D contains still
+an unchecked call of the member function =E2=80=9Cclk_register=E2=80=9D.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dr=
+ivers/clk/bcm/clk-bcm2835.c?id=3D7571438a4868e7cb09d698ab52e54f9722020eef#=
+n2243
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/bcm/clk-bcm28=
+35.c#L2243
+
+How do you think about to improve it?
+
+* Which error code would you like to return for a failed
+  clock registration at this place?
+
+* Will it be needed to delete any information about clocks
+  as exception handling?
+
+Regards,
+Markus
