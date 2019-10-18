@@ -2,309 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48569DC90F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:44:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9338FDC935
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:44:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505291AbfJRPm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 11:42:57 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:60005 "EHLO
+        id S2505425AbfJRPoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 11:44:30 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:43807 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505242AbfJRPmw (ORCPT
+        with ESMTP id S2408933AbfJRPml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 11:42:52 -0400
+        Fri, 18 Oct 2019 11:42:41 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MuDTn-1i2IO339BN-00udfc; Fri, 18 Oct 2019 17:42:30 +0200
+ 1McY4R-1hklXG0AYf-00cyGG; Fri, 18 Oct 2019 17:42:31 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Daniel Mack <daniel@zonque.org>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
         Robert Jarzmik <robert.jarzmik@free.fr>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 32/46] ASoC: pxa: i2s: use normal MMIO accessors
-Date:   Fri, 18 Oct 2019 17:41:47 +0200
-Message-Id: <20191018154201.1276638-32-arnd@arndb.de>
+        Arnd Bergmann <arnd@arndb.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: [PATCH 33/46] ARM: pxa: pcmcia: move smemc configuration back to arch
+Date:   Fri, 18 Oct 2019 17:41:48 +0200
+Message-Id: <20191018154201.1276638-33-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191018154052.1276506-1-arnd@arndb.de>
 References: <20191018154052.1276506-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:8pRWu6uq3fnLWNVhGe9IAYwemFoTZzOIze0Vmw1zkUgUiQnLpI5
- eIx7dzPS2Qs7fTLTifKNCpiF8RKl1kGiXQiuxkHWV7/jDQkQgAnLXq1bIiYmuSMpjTAK4Cw
- RI7vCXdLXzmkmE9GmYctuOGrW/ya7Rz/ccyviA4P4oZkjECEXFpFoldLE8cg2yIuCbauDaF
- b52AsuD0YkBcOV1XdvW0g==
+X-Provags-ID: V03:K1:DxmH2LbQts0InxyxX242/6orRSxw7B2eJs5alq6ovf8VEIfUb1e
+ UZLkuu4zbqGUYzh8bXbjGhPHAuE7IWtUvRkJsrYOTVyLkPFu+sN0iZ2AYJ/Ruy1xBpMoODO
+ MBAK6lOCRMRdG9ct64YHJgEe2ug8h0m0Q+xUS7VsuovBC7AW5Y+9RMMeZghwwjY0/Q8oqSj
+ /MgezRfvSGUpKTEVFylnA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:UBfa0LjafV8=:kBVm4ETxav94hZpT19bZy3
- bCqjAF9BFrLzfVfrwGV7NX/T8auFywunvMfIXXCb9Hj+6KXp54Y90AsuaOG/gbb3bh22kk7k4
- LLqLP+axjAtb9AlL/t1vWdm736EJ04dOuJ8NulKtHo2ysxJ6dq+yzoYVap7MZxRaRG8xqv53i
- AbL69FOs7t+Oc9yv81w9gytXZYbRGbhYR4ZR6mJptz3dQRjpIm2K6EMggH7cYGkxYiYFsyS9I
- qQ5bkM0iAnMo7+PgNdxGNzwjqcwCGSot/KPTiH7nh8QIsGnH8IRWpmLeuqkv8yD2/LWIXJOJQ
- 3cYIeOxdUGOx/iPd/tLGpxXx2F6yzsAiqhV8NxNH6NzXLNjXB4OKlW4OiadYWAeVbIo6zvGlb
- +KJC1YtO62C/gKlE8a2NbuArZKkb0oHR9W+hNRSafgabg/3hatsA/2ZurHSUJNVVwjmL98Rjx
- h6oYSZwao4nX3egTjWjVoTLINbT9nFyD6NhxePP2WT5OW2QeKXkNGF2rsGpdzWv+dvfMJwMDy
- LXCLO1fePkO7qTNpUzOu/9yrovImluESl7G635nnadJfg50gU9ejwQqUrZ3pN3BTd1rF5pdkh
- JkTjia++LS2yhbwwRU0WuHtwrIsvcIko+6CvYRSGo5dHOtheRa2AdOmpAG6+F3fBoiYtkjiGq
- a9R8i+3wy0GaV1bTTdPg1g9jBxVcHt3775vbMJH8UtJqbUiFduDmkX+l8Fw+bE8VYv2DaPpGC
- hbeuK8QaScUdXsLhNHwQZfKGl0f+58rutiK0jf6N9Po+UAJO3Vc7713PYWoQgEz5SzfMm4KXm
- uxTSqCwtakTUlr1dmTJHtK1fWgBagpRKr8IjddidncIf9Flpi/LkqvalTwSBmHme5VK2WDZ3k
- MH/FvIU5Jq8FJW7pSxSA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WrnuPQtaRkI=:aNhI30tV/l0Fs9GdIHOfm4
+ aPUOAjUVBVlceAwKIXu+nBeC8AIogNOMtkD4dqJrK7mcOXxk3t2B4recC/1NoWOBNPNb6fU7F
+ iHMMov6kqXJRMwgk+s5sTJHamgOpl9Slb8AVU8RYDhinl2aJhMnOZB3aj1lEAFyrIUo/kVEql
+ 3ZxoTy0miU0x7DIzze0QdufvwMjRu8s0eM4lzOUYamFB916hPXszevUVUJi512EoYRtiKBc7z
+ y7hq1jDkjNIefOSgqhnYtrdZfPLFC2qibIB1X91n79UhW5ihdqIP0kPZ9qBdCDyJSn7b/a5Qy
+ hDjels/uHN9r9hyyfCNgGQHf8+pILYGL/uPTzjqQgHPg4RHJHGVe3CG3OfMdqMLqk2UNfgRCs
+ 3WN7p6O2rmSTRRbmBsxv9075NFdAJ1RjaUZZzCfTW8GeZCB7RBQ1WLeBC882w30bLnw1D/Z1x
+ Xt2vt60+QICZZQPcu+InljDyGfql8R5CSr3yPunmfi6qMGuFsYDTuzEpX/Q33VyOArXpRyqZE
+ YDCwHsak6Mc0u0rrxrkrzqFSWFGgnnmT9NhJcHcxaZqI/R8WcTwwhnN2FvyA3vXLRO/8DUJsq
+ h4OPpRqdYQ1J1JzM/CvlQBAOnIJCBXDDYaz/QjBZ8JlZ9BRMYQjOQ69Id4Ur4qyuD+JyyPnlM
+ KyxNE/Yqa2rvR0E9kG+Nzs/prbwLE7EtJmUve3hzZbb372ZlL9mTgTbLNiDQr6AzkSh2mIxC/
+ cfbaVecWYcueyFCyx51RICqmkShMQ+PcXca+l3NPgqAuzPn3Lhu9I8LrzmeqEDqlxEAG11q4L
+ AUpM+3gq+PV6jTOYiFZiPfikTyM2nFfmMuQqZn4kDmh5Us4pjCOzVMg9BzlsjdTPBZ9/crWaz
+ dy7PM9mSbfkIJZpPSM8Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid dereferencing hardwired constant pointers from a global header
-file, change the driver to use devm_platform_ioremap_resource for getting
-an __iomem pointer, and then using readl/writel on that.
+Rather than poking at the smemc registers directly from the
+pcmcia/pxa2xx_base driver, move those bits into machine file
+to have a cleaner interface.
 
-Each pointer dereference gets changed by a search&replace, which leads
-to a few overlong lines, but seems less risky than trying to clean up
-the code at the same time.
-
-Cc: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- sound/soc/pxa/pxa2xx-i2s.c | 110 +++++++++++++++++++++----------------
- 1 file changed, 62 insertions(+), 48 deletions(-)
+ arch/arm/mach-pxa/generic.c   | 29 ++++++++++++++++++++++
+ drivers/pcmcia/pxa2xx_base.c  | 46 ++++++++++++-----------------------
+ include/linux/soc/pxa/smemc.h | 10 ++++++++
+ 3 files changed, 55 insertions(+), 30 deletions(-)
+ create mode 100644 include/linux/soc/pxa/smemc.h
 
-diff --git a/sound/soc/pxa/pxa2xx-i2s.c b/sound/soc/pxa/pxa2xx-i2s.c
-index 583b2de897c7..e7ded1d7de9a 100644
---- a/sound/soc/pxa/pxa2xx-i2s.c
-+++ b/sound/soc/pxa/pxa2xx-i2s.c
-@@ -21,7 +21,6 @@
- #include <sound/pxa2xx-lib.h>
- #include <sound/dmaengine_pcm.h>
+diff --git a/arch/arm/mach-pxa/generic.c b/arch/arm/mach-pxa/generic.c
+index f9083c4f0aea..fe1d55d328e5 100644
+--- a/arch/arm/mach-pxa/generic.c
++++ b/arch/arm/mach-pxa/generic.c
+@@ -70,6 +70,35 @@ unsigned int get_clk_frequency_khz(int info)
+ }
+ EXPORT_SYMBOL(get_clk_frequency_khz);
  
--#include <mach/pxa-regs.h>
- #include <linux/platform_data/asoc-pxa.h>
- 
- #include "pxa2xx-i2s.h"
-@@ -29,13 +28,13 @@
++void pxa_smemc_set_pcmcia_timing(int sock, u32 mcmem, u32 mcatt, u32 mcio)
++{
++	__raw_writel(mcmem, MCMEM(sock));
++	__raw_writel(mcatt, MCATT(sock));
++	__raw_writel(mcio, MCIO(sock));
++}
++EXPORT_SYMBOL_GPL(pxa_smemc_set_pcmcia_timing);
++
++void pxa_smemc_set_pcmcia_socket(int nr)
++{
++	switch (nr) {
++	case 0:
++		__raw_writel(0, MECR);
++		break;
++	case 1:
++		/*
++		 * We have at least one socket, so set MECR:CIT
++		 * (Card Is There)
++		 */
++		__raw_writel(MECR_CIT, MECR);
++		break;
++	case 2:
++		/* Set CIT and MECR:NOS (Number Of Sockets) */
++		__raw_writel(MECR_CIT | MECR_NOS, MECR);
++		break;
++	}
++}
++EXPORT_SYMBOL_GPL(pxa_smemc_set_pcmcia_socket);
++
  /*
-  * I2S Controller Register and Bit Definitions
-  */
--#define SACR0		__REG(0x40400000)  /* Global Control Register */
--#define SACR1		__REG(0x40400004)  /* Serial Audio I 2 S/MSB-Justified Control Register */
--#define SASR0		__REG(0x4040000C)  /* Serial Audio I 2 S/MSB-Justified Interface and FIFO Status Register */
--#define SAIMR		__REG(0x40400014)  /* Serial Audio Interrupt Mask Register */
--#define SAICR		__REG(0x40400018)  /* Serial Audio Interrupt Clear Register */
--#define SADIV		__REG(0x40400060)  /* Audio Clock Divider Register. */
--#define SADR		__REG(0x40400080)  /* Serial Audio Data Register (TX and RX FIFO access Register). */
-+#define SACR0		(0x0000)	/* Global Control Register */
-+#define SACR1		(0x0004)	/* Serial Audio I 2 S/MSB-Justified Control Register */
-+#define SASR0		(0x000C)	/* Serial Audio I 2 S/MSB-Justified Interface and FIFO Status Register */
-+#define SAIMR		(0x0014)	/* Serial Audio Interrupt Mask Register */
-+#define SAICR		(0x0018)	/* Serial Audio Interrupt Clear Register */
-+#define SADIV		(0x0060)	/* Audio Clock Divider Register. */
-+#define SADR		(0x0080)	/* Serial Audio Data Register (TX and RX FIFO access Register). */
+  * Intel PXA2xx internal register mapping.
+  *
+diff --git a/drivers/pcmcia/pxa2xx_base.c b/drivers/pcmcia/pxa2xx_base.c
+index 7cd1375d6087..13880137f175 100644
+--- a/drivers/pcmcia/pxa2xx_base.c
++++ b/drivers/pcmcia/pxa2xx_base.c
+@@ -24,11 +24,10 @@
+ #include <linux/spinlock.h>
+ #include <linux/platform_device.h>
+ #include <linux/soc/pxa/cpu.h>
++#include <linux/soc/pxa/smemc.h>
  
- #define SACR0_RFTH(x)	((x) << 12)	/* Rx FIFO Interrupt or DMA Trigger Threshold */
- #define SACR0_TFTH(x)	((x) << 8)	/* Tx FIFO Interrupt or DMA Trigger Threshold */
-@@ -77,16 +76,15 @@ struct pxa_i2s_port {
- static struct pxa_i2s_port pxa_i2s;
- static struct clk *clk_i2s;
- static int clk_ena = 0;
-+static void __iomem *i2s_reg_base;
+-#include <mach/smemc.h>
+ #include <asm/io.h>
+ #include <asm/irq.h>
+-#include <mach/pxa2xx-regs.h>
+ #include <asm/mach-types.h>
  
- static struct snd_dmaengine_dai_dma_data pxa2xx_i2s_pcm_stereo_out = {
--	.addr		= __PREG(SADR),
- 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
- 	.chan_name	= "tx",
- 	.maxburst	= 32,
- };
+ #include <pcmcia/ss.h>
+@@ -113,7 +112,7 @@ static inline u_int pxa2xx_pcmcia_cmd_time(u_int mem_clk_10khz,
+ 	return (300000 * (pcmcia_mcxx_asst + 1) / mem_clk_10khz);
+ }
  
- static struct snd_dmaengine_dai_dma_data pxa2xx_i2s_pcm_stereo_in = {
--	.addr		= __PREG(SADR),
- 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
- 	.chan_name	= "rx",
- 	.maxburst	= 32,
-@@ -102,7 +100,7 @@ static int pxa2xx_i2s_startup(struct snd_pcm_substream *substream,
- 		return PTR_ERR(clk_i2s);
+-static int pxa2xx_pcmcia_set_mcmem( int sock, int speed, int clock )
++static uint32_t pxa2xx_pcmcia_mcmem(int sock, int speed, int clock)
+ {
+ 	uint32_t val;
  
- 	if (!cpu_dai->active)
--		SACR0 = 0;
-+		writel(0, i2s_reg_base + SACR0);
+@@ -124,12 +123,10 @@ static int pxa2xx_pcmcia_set_mcmem( int sock, int speed, int clock )
+ 		| ((pxa2xx_mcxx_hold(speed, clock)
+ 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
+ 
+-	__raw_writel(val, MCMEM(sock));
+-
+-	return 0;
++	return val;
+ }
+ 
+-static int pxa2xx_pcmcia_set_mcio( int sock, int speed, int clock )
++static int pxa2xx_pcmcia_mcio(int sock, int speed, int clock)
+ {
+ 	uint32_t val;
+ 
+@@ -140,12 +137,11 @@ static int pxa2xx_pcmcia_set_mcio( int sock, int speed, int clock )
+ 		| ((pxa2xx_mcxx_hold(speed, clock)
+ 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
+ 
+-	__raw_writel(val, MCIO(sock));
+ 
+-	return 0;
++	return val;
+ }
+ 
+-static int pxa2xx_pcmcia_set_mcatt( int sock, int speed, int clock )
++static int pxa2xx_pcmcia_mcatt(int sock, int speed, int clock)
+ {
+ 	uint32_t val;
+ 
+@@ -156,31 +152,26 @@ static int pxa2xx_pcmcia_set_mcatt( int sock, int speed, int clock )
+ 		| ((pxa2xx_mcxx_hold(speed, clock)
+ 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
+ 
+-	__raw_writel(val, MCATT(sock));
+ 
+-	return 0;
++	return val;
+ }
+ 
+-static int pxa2xx_pcmcia_set_mcxx(struct soc_pcmcia_socket *skt, unsigned int clk)
++static int pxa2xx_pcmcia_set_timing(struct soc_pcmcia_socket *skt)
+ {
++	unsigned long clk = clk_get_rate(skt->clk) / 1000;
+ 	struct soc_pcmcia_timing timing;
+ 	int sock = skt->nr;
+ 
+ 	soc_common_pcmcia_get_timing(skt, &timing);
+ 
+-	pxa2xx_pcmcia_set_mcmem(sock, timing.mem, clk);
+-	pxa2xx_pcmcia_set_mcatt(sock, timing.attr, clk);
+-	pxa2xx_pcmcia_set_mcio(sock, timing.io, clk);
++	pxa_smemc_set_pcmcia_timing(sock,
++		pxa2xx_pcmcia_mcmem(sock, timing.mem, clk),
++		pxa2xx_pcmcia_mcatt(sock, timing.attr, clk),
++		pxa2xx_pcmcia_mcio(sock, timing.io, clk));
  
  	return 0;
  }
-@@ -114,7 +112,7 @@ static int pxa_i2s_wait(void)
  
- 	/* flush the Rx FIFO */
- 	for (i = 0; i < 16; i++)
--		SADR;
-+		readl(i2s_reg_base + SADR);
- 	return 0;
- }
+-static int pxa2xx_pcmcia_set_timing(struct soc_pcmcia_socket *skt)
+-{
+-	unsigned long clk = clk_get_rate(skt->clk);
+-	return pxa2xx_pcmcia_set_mcxx(skt, clk / 10000);
+-}
+-
+ #ifdef CONFIG_CPU_FREQ
  
-@@ -174,39 +172,39 @@ static int pxa2xx_i2s_hw_params(struct snd_pcm_substream *substream,
+ static int
+@@ -215,18 +206,13 @@ pxa2xx_pcmcia_frequency_change(struct soc_pcmcia_socket *skt,
  
- 	/* is port used by another stream */
- 	if (!(SACR0 & SACR0_ENB)) {
--		SACR0 = 0;
-+		writel(0, i2s_reg_base + SACR0);
- 		if (pxa_i2s.master)
--			SACR0 |= SACR0_BCKD;
-+			writel(readl(i2s_reg_base + SACR0) | (SACR0_BCKD), i2s_reg_base + SACR0);
- 
--		SACR0 |= SACR0_RFTH(14) | SACR0_TFTH(1);
--		SACR1 |= pxa_i2s.fmt;
-+		writel(readl(i2s_reg_base + SACR0) | (SACR0_RFTH(14) | SACR0_TFTH(1)), i2s_reg_base + SACR0);
-+		writel(readl(i2s_reg_base + SACR1) | (pxa_i2s.fmt), i2s_reg_base + SACR1);
- 	}
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--		SAIMR |= SAIMR_TFS;
-+		writel(readl(i2s_reg_base + SAIMR) | (SAIMR_TFS), i2s_reg_base + SAIMR);
- 	else
--		SAIMR |= SAIMR_RFS;
-+		writel(readl(i2s_reg_base + SAIMR) | (SAIMR_RFS), i2s_reg_base + SAIMR);
- 
- 	switch (params_rate(params)) {
- 	case 8000:
--		SADIV = 0x48;
-+		writel(0x48, i2s_reg_base + SADIV);
- 		break;
- 	case 11025:
--		SADIV = 0x34;
-+		writel(0x34, i2s_reg_base + SADIV);
- 		break;
- 	case 16000:
--		SADIV = 0x24;
-+		writel(0x24, i2s_reg_base + SADIV);
- 		break;
- 	case 22050:
--		SADIV = 0x1a;
-+		writel(0x1a, i2s_reg_base + SADIV);
- 		break;
- 	case 44100:
--		SADIV = 0xd;
-+		writel(0xd, i2s_reg_base + SADIV);
- 		break;
- 	case 48000:
--		SADIV = 0xc;
-+		writel(0xc, i2s_reg_base + SADIV);
- 		break;
- 	case 96000: /* not in manual and possibly slightly inaccurate */
--		SADIV = 0x6;
-+		writel(0x6, i2s_reg_base + SADIV);
- 		break;
- 	}
- 
-@@ -221,10 +219,10 @@ static int pxa2xx_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
- 	switch (cmd) {
- 	case SNDRV_PCM_TRIGGER_START:
- 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--			SACR1 &= ~SACR1_DRPL;
-+			writel(readl(i2s_reg_base + SACR1) & (~SACR1_DRPL), i2s_reg_base + SACR1);
- 		else
--			SACR1 &= ~SACR1_DREC;
--		SACR0 |= SACR0_ENB;
-+			writel(readl(i2s_reg_base + SACR1) & (~SACR1_DREC), i2s_reg_base + SACR1);
-+		writel(readl(i2s_reg_base + SACR0) | (SACR0_ENB), i2s_reg_base + SACR0);
- 		break;
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-@@ -243,15 +241,15 @@ static void pxa2xx_i2s_shutdown(struct snd_pcm_substream *substream,
- 				struct snd_soc_dai *dai)
+ void pxa2xx_configure_sockets(struct device *dev, struct pcmcia_low_level *ops)
  {
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		SACR1 |= SACR1_DRPL;
--		SAIMR &= ~SAIMR_TFS;
-+		writel(readl(i2s_reg_base + SACR1) | (SACR1_DRPL), i2s_reg_base + SACR1);
-+		writel(readl(i2s_reg_base + SAIMR) & (~SAIMR_TFS), i2s_reg_base + SAIMR);
- 	} else {
--		SACR1 |= SACR1_DREC;
--		SAIMR &= ~SAIMR_RFS;
-+		writel(readl(i2s_reg_base + SACR1) | (SACR1_DREC), i2s_reg_base + SACR1);
-+		writel(readl(i2s_reg_base + SAIMR) & (~SAIMR_RFS), i2s_reg_base + SAIMR);
- 	}
+-	/*
+-	 * We have at least one socket, so set MECR:CIT
+-	 * (Card Is There)
+-	 */
+-	uint32_t mecr = MECR_CIT;
++	int nr = 1;
  
--	if ((SACR1 & (SACR1_DREC | SACR1_DRPL)) == (SACR1_DREC | SACR1_DRPL)) {
--		SACR0 &= ~SACR0_ENB;
-+	if ((readl(i2s_reg_base + SACR1) & (SACR1_DREC | SACR1_DRPL)) == (SACR1_DREC | SACR1_DRPL)) {
-+		writel(readl(i2s_reg_base + SACR0) & (~SACR0_ENB), i2s_reg_base + SACR0);
- 		pxa_i2s_wait();
- 		if (clk_ena) {
- 			clk_disable_unprepare(clk_i2s);
-@@ -264,13 +262,13 @@ static void pxa2xx_i2s_shutdown(struct snd_pcm_substream *substream,
- static int pxa2xx_i2s_suspend(struct snd_soc_dai *dai)
- {
- 	/* store registers */
--	pxa_i2s.sacr0 = SACR0;
--	pxa_i2s.sacr1 = SACR1;
--	pxa_i2s.saimr = SAIMR;
--	pxa_i2s.sadiv = SADIV;
-+	pxa_i2s.sacr0 = readl(i2s_reg_base + SACR0);
-+	pxa_i2s.sacr1 = readl(i2s_reg_base + SACR1);
-+	pxa_i2s.saimr = readl(i2s_reg_base + SAIMR);
-+	pxa_i2s.sadiv = readl(i2s_reg_base + SADIV);
+-	/* Set MECR:NOS (Number Of Sockets) */
+ 	if ((ops->first + ops->nr) > 1 ||
+ 	    machine_is_viper() || machine_is_arcom_zeus())
+-		mecr |= MECR_NOS;
++		nr = 2;
  
- 	/* deactivate link */
--	SACR0 &= ~SACR0_ENB;
-+	writel(readl(i2s_reg_base + SACR0) & (~SACR0_ENB), i2s_reg_base + SACR0);
- 	pxa_i2s_wait();
- 	return 0;
+-	__raw_writel(mecr, MECR);
++	pxa_smemc_set_pcmcia_socket(nr);
  }
-@@ -279,12 +277,12 @@ static int pxa2xx_i2s_resume(struct snd_soc_dai *dai)
- {
- 	pxa_i2s_wait();
+ EXPORT_SYMBOL(pxa2xx_configure_sockets);
  
--	SACR0 = pxa_i2s.sacr0 & ~SACR0_ENB;
--	SACR1 = pxa_i2s.sacr1;
--	SAIMR = pxa_i2s.saimr;
--	SADIV = pxa_i2s.sadiv;
-+	writel(pxa_i2s.sacr0 & ~SACR0_ENB, i2s_reg_base + SACR0);
-+	writel(pxa_i2s.sacr1, i2s_reg_base + SACR1);
-+	writel(pxa_i2s.saimr, i2s_reg_base + SAIMR);
-+	writel(pxa_i2s.sadiv, i2s_reg_base + SADIV);
- 
--	SACR0 = pxa_i2s.sacr0;
-+	writel(pxa_i2s.sacr0, i2s_reg_base + SACR0);
- 
- 	return 0;
- }
-@@ -306,12 +304,12 @@ static int pxa2xx_i2s_probe(struct snd_soc_dai *dai)
- 	 * the SACR0[RST] bit must also be set and cleared to reset all
- 	 * I2S controller registers.
- 	 */
--	SACR0 = SACR0_RST;
--	SACR0 = 0;
-+	writel(SACR0_RST, i2s_reg_base + SACR0);
-+	writel(0, i2s_reg_base + SACR0);
- 	/* Make sure RPL and REC are disabled */
--	SACR1 = SACR1_DRPL | SACR1_DREC;
-+	writel(SACR1_DRPL | SACR1_DREC, i2s_reg_base + SACR1);
- 	/* Along with FIFO servicing */
--	SAIMR &= ~(SAIMR_RFS | SAIMR_TFS);
-+	writel(readl(i2s_reg_base + SAIMR) & (~(SAIMR_RFS | SAIMR_TFS)), i2s_reg_base + SAIMR);
- 
- 	snd_soc_dai_init_dma_data(dai, &pxa2xx_i2s_pcm_stereo_out,
- 		&pxa2xx_i2s_pcm_stereo_in);
-@@ -367,6 +365,22 @@ static const struct snd_soc_component_driver pxa_i2s_component = {
- 
- static int pxa2xx_i2s_drv_probe(struct platform_device *pdev)
- {
-+	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+diff --git a/include/linux/soc/pxa/smemc.h b/include/linux/soc/pxa/smemc.h
+new file mode 100644
+index 000000000000..cbf1a2d8af29
+--- /dev/null
++++ b/include/linux/soc/pxa/smemc.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#ifndef __PXA_REGS_H
++#define __PXA_REGS_H
 +
-+	if (!res) {
-+		dev_err(&pdev->dev, "missing MMIO resource\n");
-+		return -ENXIO;
-+	}
++#include <linux/types.h>
 +
-+	i2s_reg_base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(i2s_reg_base)) {
-+		dev_err(&pdev->dev, "ioremap failed\n");
-+		return PTR_ERR(i2s_reg_base);
-+	}
++void pxa_smemc_set_pcmcia_timing(int sock, u32 mcmem, u32 mcatt, u32 mcio);
++void pxa_smemc_set_pcmcia_socket(int nr);
 +
-+	pxa2xx_i2s_pcm_stereo_out.addr = res->start + SADR;
-+	pxa2xx_i2s_pcm_stereo_in.addr = res->start + SADR;
-+
- 	return devm_snd_soc_register_component(&pdev->dev, &pxa_i2s_component,
- 					       &pxa_i2s_dai, 1);
- }
++#endif
 -- 
 2.20.0
 
