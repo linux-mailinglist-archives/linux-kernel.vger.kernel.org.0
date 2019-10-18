@@ -2,119 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25F30DC241
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CD11DC26E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:15:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633305AbfJRKM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:12:58 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:41123 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387545AbfJRKM6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:12:58 -0400
-Received: from 79.184.255.51.ipv4.supernova.orange.pl (79.184.255.51) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 49e72b95e28af242; Fri, 18 Oct 2019 12:12:54 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     "Yin, Fengwei" <fengwei.yin@intel.com>
-Cc:     David Laight <David.Laight@aculab.com>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ACPI / processor_idle: use ndelay instead of io port access for wait
-Date:   Fri, 18 Oct 2019 12:12:54 +0200
-Message-ID: <2566427.rT6C98KLSe@kreacher>
-In-Reply-To: <2b3ce9e9-e805-1b8d-86c3-c8f498a4d3dd@intel.com>
-References: <20191015080404.6013-1-fengwei.yin@intel.com> <c9f3f4f93bb946f790fce4709253b359@AcuMS.aculab.com> <2b3ce9e9-e805-1b8d-86c3-c8f498a4d3dd@intel.com>
+        id S2442459AbfJRKPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:15:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54016 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405197AbfJRKPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 06:15:13 -0400
+Received: from localhost (unknown [209.136.236.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4DD2222C3;
+        Fri, 18 Oct 2019 10:15:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571393713;
+        bh=0w1nWKVTncaR1KMNvi/d1vuu7AgxloRlEXtR81GmvEs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kUigrHvWxaPf7GV+6RONd0dnt+cseGtoO4i/RW659+2HuH0w2NmRo2BJGN9JJnfAy
+         myGJaooD7KyACrXSujzvTnSpDKoWV+oqhqtpcwNdthp6HxmLvSoITs9KE229pNMHvy
+         Cw8Ep3QOhaja2RoVGykeI8tAMJPwrVVCdCJm/xHk=
+Date:   Fri, 18 Oct 2019 03:15:10 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-spdx@vger.kernel.org
+Subject: Re: [PATCH] export,module: add SPDX GPL-2.0 license identifier to
+ headers with no license
+Message-ID: <20191018101510.GA1172290@kroah.com>
+References: <20191018045053.8424-1-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018045053.8424-1-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, October 16, 2019 7:56:17 AM CEST Yin, Fengwei wrote:
-> Hi David,
+On Fri, Oct 18, 2019 at 01:50:53PM +0900, Masahiro Yamada wrote:
+> Commit b24413180f56 ("License cleanup: add SPDX GPL-2.0 license
+> identifier to files with no license") took care of a lot of files
+> without any license information.
 > 
-> On 10/15/2019 7:48 PM, David Laight wrote:
-> > From: Yin Fengwei
-> >> Sent: 15 October 2019 09:04
-> >> In function acpi_idle_do_entry(), an ioport access is used for dummy
-> >> wait to guarantee hardware behavior. But it could trigger unnecessary
-> >> vmexit in virtualization environment.
-> >>
-> >> If we run linux as guest and export all available native C state to
-> >> guest, we did see many PM timer access triggered VMexit when guest
-> >> enter deeper C state in our environment (We used ACRN hypervisor
-> >> instead of kvm or xen which has PM timer emulated and exports all
-> >> native C state to guest).
-> >>
-> >> According to the original comments of this part of code, io port
-> >> access is only for dummy wait. We could use busy wait instead of io
-> >> port access to guarantee hardware behavior and avoid unnecessary
-> >> VMexit.
-> > 
-> > You need some hard synchronisation instruction(s) after the inb()
-> > and before any kind of delay to ensure your delay code is executed
-> > after the inb() completes.
-> > 
-> > I'm pretty sure that inb() is only synchronised with memory reads.
-> Thanks a lot for the comments.
+> These headers were not processed by the tool perhaps because they
+> contain "GPL" in the code.
 > 
-> I didn't find the common serializing instructions API in kernel (only
-> memory  barrier which is used to make sure of memory access). For Intel
-> x86, cpuid could be used as serializing instruction. But it's not
-> suitable for common code here. Do you have any suggestion?
-
-In the virt guest case you don't need to worry at all AFAICS, because the inb()
-itself will trap to the HV.
-
-> > 
-> > ...
-> >> +	/* profiling the time used for dummy wait op */
-> >> +	ktime_get_real_ts64(&ts0);
-> >> +	inl(acpi_gbl_FADT.xpm_timer_block.address);
-> >> +	ktime_get_real_ts64(&ts1);
-
-You may as well use ktime_get() for this, as it's almost the same code as
-ktime_get_real_ts64() AFAICS, only simpler.
-
-Plus, static vars need not be initialized to 0.
-
-> > 
-> > That could be dominated by the cost of ktime_get_real_ts64().
-> > It also need synchronising instructions.
-> I did some testing. ktime_get_real_ts64() takes much less time than io
-> port access.
+> I do not see any license boilerplate in them, so they fall back to
+> GPL version 2 only, which is the project default.
 > 
-> The test code is like:
-> 1.
-> 	local_irq_save(flag);
-> 	ktime_get_real_ts64(&ts0);
-> 	inl(acpi_gbl_FADT.xpm_timer_block.address);
-> 	ktime_get_real_ts64(&ts1);
-> 	local_irq_restore(flag);
-> 
-> 2.
-> 	local_irq_save(flag);
-> 	ktime_get_real_ts64(&ts0);
-> 	ktime_get_real_ts64(&ts1);
-> 	local_irq_restore(flag);
-> 
-> The delta in 1 is about 500000ns. And delta in 2 is about
-> 2000ns. The date is gotten on Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz.
-> So I suppose the impact of ktime_get_real_ts64 is small.
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-You may not be hitting the worst case for ktime_get_real_ts64(), though.
+Ah, nice catch!
 
-I wonder if special casing the virt guest would be a better approach.
+I'll queue this up to my spdx tree if no one objects.
 
-Then, you could leave the code as is for non-virt and I'm not sure if the
-delay is needed in the virt guest case at all.
+thanks,
 
-So maybe do something like "if not in a virt guest, do the dummy inl()"
-and that would be it?
-
-
-
+greg k-h
