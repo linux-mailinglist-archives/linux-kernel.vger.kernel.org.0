@@ -2,101 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DDABDC44E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8112ADC456
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409944AbfJRMEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:04:05 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46587 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392487AbfJRMEF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 08:04:05 -0400
-Received: by mail-qt1-f195.google.com with SMTP id u22so8618761qtq.13
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 05:04:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Zgv+qsT50asyCBxx8dHLrc/7R2zuXJqrAElFwEmz+6o=;
-        b=PRl4/YMK8PN+sw8qz9vbBuWmnDNxUIbUV/4by7yJ/ZaetJCfkYyfwrAGp4L4IH6LoP
-         X90KnC+d9bCIKe0fkrb8KwvqpCKLZfxHCWiRVC5+Avh65mJjwzKqn/c7tQy4nIFc43w6
-         fEhxkzcQyeFDnYdq9lc6NIglUPHlGjhxzCtISkWH0lr1mN/d5ArBGgrWkrdHp3Fe8Lyd
-         mX6Uxi4EFn19ZqRvFKdtnYLqjyXoc84MmMj+814gfoww9pORycIuZnYnOy5whHI3n0U7
-         fWrPnn2VRYK4wEAYgggIvmmEHwL+yRBrdIpc5fY7eSH2tabBEWdHELFqZ+S8jDFESWhz
-         xVmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Zgv+qsT50asyCBxx8dHLrc/7R2zuXJqrAElFwEmz+6o=;
-        b=kbCTKpLYurM8Xyli6l/Hd63KPj8PfcbiW48TcZLK3T03wHt6FdVnrHKr0wnSsjYnbg
-         lLEPmnR+3Q2Yo0KGDt3yH6knAkaUXSY4gzZ4pwtboyJaqobuAG6SBFTFAdgRP2vHwVWG
-         oL6Vvku2TXL9jmbHWdjEGMG1W+XjwMK7y2cKWmwwE79HQjfpDlXWtwtK+9ojcarm5o3G
-         +FupVNeQSLCx/eVmkvheY6EuzapjfOZBtfL1d+sur4OyS62qwz04SYfEJYxcvBFCoGPX
-         yFcJqYX+C5zhPMiCku7S1vfpfj01R5Lm4Lw7xFH6cAoWjZjJC+tMWCLU9G1Mdo8p7myc
-         +l+A==
-X-Gm-Message-State: APjAAAXHOyN7cwgnfKYBUlXYSgGx4a1D5Oe22mOdjKKybvrIYNMdq8t7
-        iH7+eIABxNrOxXiRpI5ABPIT5Wzm31MPikuqBvBuQw==
-X-Google-Smtp-Source: APXvYqxN/PMVQWc4kwuCABb8SVWIpRbyl131FT7CZcvatX5vcKooHrltGmgsSQcxbFgna4xwbUWch+DuxQg3HoR+XIE=
-X-Received: by 2002:ac8:110d:: with SMTP id c13mr9331476qtj.209.1571400244300;
- Fri, 18 Oct 2019 05:04:04 -0700 (PDT)
+        id S2409972AbfJRMGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:06:25 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4731 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2409959AbfJRMGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 08:06:23 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C6A009722F2450F91989;
+        Fri, 18 Oct 2019 20:06:19 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Fri, 18 Oct 2019
+ 20:06:12 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <clm@fb.com>, <josef@toxicpanda.com>, <dsterba@suse.com>
+CC:     <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] btrfs: Make init_tree_roots static
+Date:   Fri, 18 Oct 2019 20:06:04 +0800
+Message-ID: <20191018120604.29508-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <20191018052323.21659-1-john.stultz@linaro.org>
- <20191018052323.21659-5-john.stultz@linaro.org> <20191018112124.grjgqrn3ckuc7n4v@DESKTOP-E1NTVVP.localdomain>
-In-Reply-To: <20191018112124.grjgqrn3ckuc7n4v@DESKTOP-E1NTVVP.localdomain>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Fri, 18 Oct 2019 14:03:53 +0200
-Message-ID: <CA+M3ks6KqqXCfqA6VDKnQOsvFLQfaGrUnA+eesnyzMRniFB00A@mail.gmail.com>
-Subject: Re: [PATCH v12 4/5] dma-buf: heaps: Add CMA heap to dmabuf heaps
-To:     Brian Starkey <Brian.Starkey@arm.com>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Vincent Donnefort <Vincent.Donnefort@arm.com>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Hillf Danton <hdanton@sina.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        nd <nd@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le ven. 18 oct. 2019 =C3=A0 13:21, Brian Starkey <Brian.Starkey@arm.com> a =
-=C3=A9crit :
->
-> On Fri, Oct 18, 2019 at 05:23:22AM +0000, John Stultz wrote:
-> > This adds a CMA heap, which allows userspace to allocate
-> > a dma-buf of contiguous memory out of a CMA region.
-> >
-> > This code is an evolution of the Android ION implementation, so
-> > thanks to its original author and maintainters:
-> >   Benjamin Gaignard, Laura Abbott, and others!
-> >
-> > NOTE: This patch only adds the default CMA heap. We will enable
-> > selectively adding other CMA memory regions to the dmabuf heaps
-> > interface with a later patch (which requires a dt binding)
+Fix sparse warning:
 
-Maybe we can use "no-map" DT property to trigger that. If set do not expose=
- the
-cma heap.
+fs/btrfs/disk-io.c:2534:12: warning:
+ symbol 'init_tree_roots' was not declared. Should it be static?
 
-Benjamin
->
-> That'll teach me for reading my email in FIFO order.
->
-> This approach makes sense to me.
->
-> -Brian
->
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/btrfs/disk-io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index d078276..cb187f5 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -2531,7 +2531,7 @@ static int btrfs_validate_write_super(struct btrfs_fs_info *fs_info,
+ 	return ret;
+ }
+ 
+-int __cold init_tree_roots(struct btrfs_fs_info *fs_info)
++static int __cold init_tree_roots(struct btrfs_fs_info *fs_info)
+ {
+ 	int backup_index = find_newest_super_backup(fs_info);
+ 	struct btrfs_super_block *sb = fs_info->super_copy;
+-- 
+2.7.4
+
+
