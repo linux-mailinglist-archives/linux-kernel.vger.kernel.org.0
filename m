@@ -2,101 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 983E8DBC60
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:05:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0A88DBC7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503819AbfJRFDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:03:55 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33035 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503780AbfJRFDz (ORCPT
+        id S2504225AbfJRFF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:05:56 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55093 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391511AbfJRFFy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:03:55 -0400
-Received: by mail-io1-f65.google.com with SMTP id z19so5963318ior.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:03:54 -0700 (PDT)
+        Fri, 18 Oct 2019 01:05:54 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p7so4696427wmp.4
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:05:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=1kXqnAV3BvDQ/yTcBOlg44rzpqzO4grBXIpdUaNHFpQ=;
-        b=PhnfsjBnStwgloirkfrQMlV2aEsZgdjJJYMMe4A4IQ4IOi7S5uTcWFfa32j3iBFQ/c
-         WKP0QCImurjrSkiceZZAukElEIbY5ETTtk/r3+2bTga5P5okeD6N2xDfVzOSJ26jZrZb
-         djreQpXMmnivyvDKN4QHv4ghUZa8p1i1TwL34=
+        bh=w0COLG3bzK0o6jYLfbxydoFv6NkgXFj1ig3oopc83YI=;
+        b=e+okOhtzP6+13ZVb52oUedSHNdXUvAj+AaZgTFlk49vnQCzXFWXRCp9LgLioHHfXd8
+         P0+MALJgEg5o7L5bPbaStznc4116PcXBbQ4NkJPUE9uzUlYWAoX3j0Zd3SxFoaEwRDlY
+         /2/myoHstRdz1soYjTJxepkrx+jWOHP8oQbO6rxJWdSA/hgTHt6qQEQRbZr9o4iHGci2
+         RYqKDsnIRRBm+lSwMsEDA8DLEcdoDIUTzVuQTGQI8+aFconpNYREGVcZqXfgOXPLdMuV
+         /lnMuNyyTT4C4UK/2V6PLZ57g0/mS5ZC6y9K9caJ5eyIc7+HuQdgcWfupFikyGTHtclB
+         +L6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=1kXqnAV3BvDQ/yTcBOlg44rzpqzO4grBXIpdUaNHFpQ=;
-        b=d4YP7Cbqb2EwJmCFZdXiKX/QTMLZytUG1Fk7794r/aSYAtnaFcUYxVT0WsW5yHQIKA
-         f4C2bbmE0rp+L3SjN+f52MV47kr07kJty033ul475n5N1/WbDftIKoC+cTFXBWcpi9Xi
-         Bh9whN6lY2Mye6QjBJJs8mJplLBIacmQye1tBEmw59F9AQ3hmR0TVeXj71tlGGbeigtI
-         w0TU71rRPCC8Bghi6T+C7r3f8BVirJ99s+1a3eLHJ+Ts1xwGRzp+wMKup75gUhE7YD0u
-         fPses2/41pFWvo8LFpVIG44hie1cSSwbFtpYRcW3dTy5pJJZ3jEXSI6c6zvAQnQWrQdl
-         T9pA==
-X-Gm-Message-State: APjAAAV0s5LFrALZwSJzxp6ZC6w5KB315MDZjMNkTybYHmYvZpbTDwQ/
-        xdDCliPFqrKcyGu+mceT4wbkzgrN5FAO1lcV4j64xYwVq74=
-X-Google-Smtp-Source: APXvYqwRxgKDLPgCCYZeE7qFw9W3nfXIYvw2H5isnZMGpt16134pjaIMVP22T7ZwatWVHujSSxBd+jnA+/zRmW39ymg=
-X-Received: by 2002:a63:d415:: with SMTP id a21mr7371460pgh.299.1571368242911;
- Thu, 17 Oct 2019 20:10:42 -0700 (PDT)
+        bh=w0COLG3bzK0o6jYLfbxydoFv6NkgXFj1ig3oopc83YI=;
+        b=MDCTtiUMUXUzKaX8eEDIPSeEzWs5VbHgi2w6DrZEAv/LUxWwm6Ct6WLgOnFNBe7UG4
+         nyTawtbfPOGeEWLUAWyT0FB+fA0t//GFCC6I+GN1Ggc0kulBVFX38Vwk38p/B8nYwvfp
+         QCRN41dre/s6m0iagnwSvDA9G9qW8LCl1O1vJjcpqYUZV57VYYUt9SIMczA0KOwZoZQG
+         tr2lDorURienPFHAwtiRjlqo2l5pwsF48knR9nj11IY+JvB0V1baGKGDt9YdmXNtWJT1
+         Qcrg3FqEVIvhMpltAwIKYDYoGI/RvdFWBNQc/g5IwkdksWVsa+9IAWA86XisnbKRLnov
+         RPLw==
+X-Gm-Message-State: APjAAAUk9TWbzyy48jNcBZPCa/1FosTFFgoKSja4EMqUTgwnX8599VIW
+        /AwmDYSHLAejrZzM8bp3vv3V1yRnBvgZehzzh+A5BzeL
+X-Google-Smtp-Source: APXvYqyaR6UdSsHoyTJfsRK0dDrdvlBOrSURqeguij/ZiiwiHZQ6f3cnRfyt6TgwuU56l7HPTB9yMUbOtPbu8y2CrzQ=
+X-Received: by 2002:a7b:c775:: with SMTP id x21mr5632921wmk.52.1571368385118;
+ Thu, 17 Oct 2019 20:13:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191005101345.146460-1-ikjn@chromium.org>
-In-Reply-To: <20191005101345.146460-1-ikjn@chromium.org>
-From:   Ikjoon Jang <ikjn@chromium.org>
-Date:   Fri, 18 Oct 2019 11:10:32 +0800
-Message-ID: <CAATdQgBQiFnP3+Dtz8EGCRNiCOWRoJ+zK25iESNLPmVJ+exPmw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: input: Add DT bindings for Whiskers switch
-To:     jikos@kernel.org, Dmitry Torokhov <dtor@chromium.org>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Enrico Granata <egranata@google.com>,
-        Nicolas Boichat <drinkcat@chromium.org>
+References: <20191018004929.3445-1-paul.walmsley@sifive.com>
+In-Reply-To: <20191018004929.3445-1-paul.walmsley@sifive.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Fri, 18 Oct 2019 08:42:54 +0530
+Message-ID: <CAAhSdy2nX2LwEEAZuMtW_ByGTkHO6KaUEvVxRnba_ENEjmFayQ@mail.gmail.com>
+Subject: Re: [PATCH 0/8] riscv: resolve most warnings from sparse
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A gentle ping on adding DT binding for Hammer (1/2).
+On Fri, Oct 18, 2019 at 6:19 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+>
+> Resolve most warnings from the 'sparse' static analysis tool for the
+> arch/riscv codebase.  This makes life easier for us as maintainers,
+> and makes it easier for developers to use static analysis tools on
+> their own changes.
+>
+> This patch series incorporates some changes based on feedback from
+> Christoph Hellwig <hch@lst.de>.
+>
+> Applies on the current riscv fixes branch that is based on v5.4-rc3.
 
-On Sat, Oct 5, 2019 at 6:14 PM Ikjoon Jang <ikjn@chromium.org> wrote:
+This series certainly conflict's with Christoph's NOMMU series so
+please rebase it on NOMMU series.
+
+Regards,
+Anup
+
 >
-> Add the DT binding document for Hammer's TABLET_MODE switch.
 >
-> Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
-> ---
->  .../devicetree/bindings/input/cros-cbas.yaml  | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/cros-cbas.yaml
+> - Paul
 >
-> diff --git a/Documentation/devicetree/bindings/input/cros-cbas.yaml b/Documentation/devicetree/bindings/input/cros-cbas.yaml
-> new file mode 100644
-> index 000000000000..3bc989c6a295
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/cros-cbas.yaml
-> @@ -0,0 +1,22 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/cros-cbas.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ChromeOS Hammer's Base Attached Switch
-> +
-> +maintainers:
-> +  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> +
-> +description:
-> +  This device is used to signal when a detachable base is attached to a
-> +  Chrome OS tablet. The node for this device must be under a cros-ec node
-> +  like google,cros-ec-spi or google,cros-ec-i2c.
-> +
-> +properties:
-> +  compatible:
-> +    const: google,cros-cbas
-> +
-> +required:
-> +  - compatible
+>
+> Paul Walmsley (8):
+>   riscv: add prototypes for assembly language functions from entry.S
+>   riscv: add prototypes for assembly language functions from head.S
+>   riscv: init: merge split string literals in preprocessor directive
+>   riscv: ensure RISC-V C model definitions are passed to static
+>     analyzers
+>   riscv: add missing prototypes
+>   riscv: mark some code and data as file-static
+>   riscv: add missing header file includes
+>   riscv: fp: add missing __user pointer annotations
+>
+> Kernel object size difference:
+>    text    data     bss     dec     hex filename
+> 6664206 2136568  312608 9113382  8b0f26 vmlinux.orig
+> 6664186 2136552  312608 9113346  8b0f02 vmlinux.patched
+>
+>  arch/riscv/Makefile                 |  2 ++
+>  arch/riscv/include/asm/irq.h        |  6 ++++++
+>  arch/riscv/include/asm/pgtable.h    |  2 ++
+>  arch/riscv/include/asm/processor.h  |  4 ++++
+>  arch/riscv/include/asm/ptrace.h     |  4 ++++
+>  arch/riscv/include/asm/smp.h        |  2 ++
+>  arch/riscv/include/asm/switch_to.h  |  1 +
+>  arch/riscv/kernel/cpufeature.c      |  1 +
+>  arch/riscv/kernel/entry.h           | 29 +++++++++++++++++++++++++++++
+>  arch/riscv/kernel/head.h            | 21 +++++++++++++++++++++
+>  arch/riscv/kernel/module-sections.c |  1 +
+>  arch/riscv/kernel/process.c         |  2 ++
+>  arch/riscv/kernel/reset.c           |  1 +
+>  arch/riscv/kernel/setup.c           |  2 ++
+>  arch/riscv/kernel/signal.c          |  6 ++++--
+>  arch/riscv/kernel/smp.c             |  2 ++
+>  arch/riscv/kernel/smpboot.c         |  3 +++
+>  arch/riscv/kernel/stacktrace.c      |  6 ++++--
+>  arch/riscv/kernel/syscall_table.c   |  1 +
+>  arch/riscv/kernel/time.c            |  1 +
+>  arch/riscv/kernel/traps.c           |  2 ++
+>  arch/riscv/kernel/vdso.c            |  3 ++-
+>  arch/riscv/mm/context.c             |  1 +
+>  arch/riscv/mm/fault.c               |  2 ++
+>  arch/riscv/mm/init.c                | 17 ++++++++++-------
+>  arch/riscv/mm/sifive_l2_cache.c     |  2 +-
+>  26 files changed, 111 insertions(+), 13 deletions(-)
+>  create mode 100644 arch/riscv/kernel/entry.h
+>  create mode 100644 arch/riscv/kernel/head.h
+>
 > --
-> 2.23.0.581.g78d2f28ef7-goog
+> 2.23.0
 >
