@@ -2,94 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72A93DBDCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 08:43:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06331DBDC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 08:43:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408991AbfJRGnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 02:43:50 -0400
-Received: from mail12.gandi.net ([217.70.182.73]:41477 "EHLO gandi.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2393594AbfJRGnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 02:43:49 -0400
-X-Greylist: delayed 570 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Oct 2019 02:43:48 EDT
-Received: from diconico07.dev (unknown [IPv6:2001:4b98:beef:a:e921:9c91:35ed:759a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by gandi.net (Postfix) with ESMTPSA id A11781602FD;
-        Fri, 18 Oct 2019 06:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gandi.net; s=20190808;
-        t=1571380457;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Jpi61/2s16j3fMtRfMj2xF4NuVyqdh4656NY34j9qBw=;
-        b=SPPiFN+nP1KBYsIYmk+vIOht95Cx/oNJm0rrk9zrtSCBbrDaeHT9N6rOdh/dcMYOFYIC9e
-        GMqfRhIz+DG2+i/FP0IUHyBNeWxWHeH2GAt7iSIiIsY10NtgT6ZbbW1NT4VWG1V71ix3x5
-        fFGMVgRdw9v50NGTsTNv6pXL+AddYF2oxvRz5ZX6g3wdFSbZNI/+sudoqkIXG4myGeeVY+
-        ZxXIvpAAHW4hMdiB+fqIU8DkUMGwbd7km1DW81Ke9JidW9LieCaIPAgy3hxTm+IbPQY8tk
-        HwqjI93URS2jntDPKiBZukWPnJs68Aaxb6tw2Tpsshg4Z/+Tc16flbeB9m0zMQ==
-Subject: Re: email as a bona fide git transport
-To:     Willy Tarreau <w@1wt.eu>, Greg KH <greg@kroah.com>,
-        Santiago Torres Arias <santiago@nyu.edu>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        workflows@vger.kernel.org, Git Mailing List <git@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Wong <e@80x24.org>
-References: <b9fb52b8-8168-6bf0-9a72-1e6c44a281a5@oracle.com>
- <20191016111009.GE13154@1wt.eu>
- <20191016144517.giwip4yuaxtcd64g@LykOS.localdomain>
- <20191017204343.GA1132188@kroah.com> <20191017204532.GA6446@chatter.i7.local>
- <20191018013029.GA1167832@kroah.com> <20191018015447.GB6446@chatter.i7.local>
- <20191018025215.GA15777@1wt.eu>
-From:   Nicolas Belouin <nicolas.belouin@gandi.net>
-Message-ID: <4ea21178-0cac-e958-7c69-ad5b4a74e6b5@gandi.net>
-Date:   Fri, 18 Oct 2019 08:34:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S2504432AbfJRGmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 02:42:35 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:42106 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730508AbfJRGmf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 02:42:35 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=luoben@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0TfNs02I_1571380952;
+Received: from bn0418deMacBook-Pro.local(mailfrom:luoben@linux.alibaba.com fp:SMTPD_---0TfNs02I_1571380952)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 18 Oct 2019 14:42:33 +0800
+Subject: Re: [PATCH] vfio/type1: remove hugepage checks in
+ is_invalid_reserved_pfn()
+To:     alex.williamson@redhat.com
+Cc:     aarcange@redhat.com, linux-kernel@vger.kernel.org
+References: <1d6b7e1c40783f2db4c6cb15bf679a94222ec6a3.1570073993.git.luoben@linux.alibaba.com>
+ <20191003164133.GG13922@redhat.com>
+From:   Ben Luo <luoben@linux.alibaba.com>
+Message-ID: <ae787a52-a7ed-f7b8-074f-ab8883037ac0@linux.alibaba.com>
+Date:   Fri, 18 Oct 2019 14:42:32 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191018025215.GA15777@1wt.eu>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <20191003164133.GG13922@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/19 4:52 AM, Willy Tarreau wrote:
-> On Thu, Oct 17, 2019 at 09:54:47PM -0400, Konstantin Ryabitsev wrote:
->> On Thu, Oct 17, 2019 at 06:30:29PM -0700, Greg KH wrote:
->>>> It could only possibly work if nobody ever adds their own
->>>> "Signed-Off-By" or
->>>> any other bylines. I expect this is a deal-breaker for most maintainers.
->>> Yeah it is :(
->>>
->>> But, if we could just have the signature on the code change, not the
->>> changelog text, that would help with that issue.
->> We totally should, and I even mused on how we would do that here:
->> https://public-inbox.org/git/20190910121324.GA6867@pure.paranoia.local/
+A friendly reminder :)
+
+
+Thanks,
+
+     Ben
+
+在 2019/10/4 上午12:41, Andrea Arcangeli 写道:
+> On Thu, Oct 03, 2019 at 11:49:42AM +0800, Ben Luo wrote:
+>> Currently, no hugepage split code can transfer the reserved bit
+>> from head to tail during the split, so checking the head can't make
+>> a difference in a racing condition with hugepage spliting.
 >>
->> However, since git's PGP signatures are made for the content in the actual
->> commit record (tree hash, parent, author, commit message, etc), the only way
->> we could preserve them between the email and the git tree is if we never
->> modify any of that data. The SOB and other trailers would have to only be
->> applied to the merge commit, or migrate into commit notes.
-> There's also the possibility to handle this a bit like we do when adding
-> comments before the SOB: a PGP signature would apply to the text *before*
-> it only. We could then have long chains of SOB, PGP, SOB, PGP etc.
+>> The buddy wouldn't allow a driver to allocate an hugepage if any
+>> subpage is reserved in the e820 map at boot, if any driver sets the
+>> reserved bit of head page before mapping the hugepage in userland,
+>> it needs to set the reserved bit in all subpages to be safe.
+>>
+>> Signed-off-by: Ben Luo <luoben@linux.alibaba.com>
+> Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
 >
-> Willy
-
-I don't think it can work that easily as the signed content is not just
-the message.
-It would need git to support nesting signatures and to allow amending a
-commit without
-touching the signature and to allow adding one to cover the new content
-and to have a
-way to verify every step.
-Moreover you won't be able to reparent the commit as a maintainer (wich
-I think is
-also a deal-breaker)
-
-Nicolas
-
+>
+>> ---
+>>   drivers/vfio/vfio_iommu_type1.c | 26 ++++----------------------
+>>   1 file changed, 4 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+>> index 054391f..e2019ba 100644
+>> --- a/drivers/vfio/vfio_iommu_type1.c
+>> +++ b/drivers/vfio/vfio_iommu_type1.c
+>> @@ -287,31 +287,13 @@ static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
+>>    * Some mappings aren't backed by a struct page, for example an mmap'd
+>>    * MMIO range for our own or another device.  These use a different
+>>    * pfn conversion and shouldn't be tracked as locked pages.
+>> + * For compound pages, any driver that sets the reserved bit in head
+>> + * page needs to set the reserved bit in all subpages to be safe.
+>>    */
+>>   static bool is_invalid_reserved_pfn(unsigned long pfn)
+>>   {
+>> -	if (pfn_valid(pfn)) {
+>> -		bool reserved;
+>> -		struct page *tail = pfn_to_page(pfn);
+>> -		struct page *head = compound_head(tail);
+>> -		reserved = !!(PageReserved(head));
+>> -		if (head != tail) {
+>> -			/*
+>> -			 * "head" is not a dangling pointer
+>> -			 * (compound_head takes care of that)
+>> -			 * but the hugepage may have been split
+>> -			 * from under us (and we may not hold a
+>> -			 * reference count on the head page so it can
+>> -			 * be reused before we run PageReferenced), so
+>> -			 * we've to check PageTail before returning
+>> -			 * what we just read.
+>> -			 */
+>> -			smp_rmb();
+>> -			if (PageTail(tail))
+>> -				return reserved;
+>> -		}
+>> -		return PageReserved(tail);
+>> -	}
+>> +	if (pfn_valid(pfn))
+>> +		return PageReserved(pfn_to_page(pfn));
+>>   
+>>   	return true;
+>>   }
+>> -- 
+>> 1.8.3.1
+>>
