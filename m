@@ -2,42 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E96DDCB30
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:33:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E09F9DCB40
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 18:33:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442969AbfJRQbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 12:31:08 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57725 "EHLO
+        id S2443051AbfJRQbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 12:31:21 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57786 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439882AbfJRQau (ORCPT
+        with ESMTP id S2440024AbfJRQbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 12:30:50 -0400
+        Fri, 18 Oct 2019 12:31:00 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iLV96-0002ph-5X; Fri, 18 Oct 2019 18:30:32 +0200
+        id 1iLV9D-0002v3-SK; Fri, 18 Oct 2019 18:30:40 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 56DFC1C04A9;
-        Fri, 18 Oct 2019 18:30:30 +0200 (CEST)
-Date:   Fri, 18 Oct 2019 16:30:30 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3FB691C04CB;
+        Fri, 18 Oct 2019 18:30:31 +0200 (CEST)
+Date:   Fri, 18 Oct 2019 16:30:31 -0000
 From:   "tip-bot2 for Jiri Slaby" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86/asm/purgatory: Start using annotations
+Subject: [tip: x86/asm] x86/boot: Annotate data appropriately
 Cc:     Jiri Slaby <jslaby@suse.cz>, Borislav Petkov <bp@suse.de>,
-        Alexios Zavras <alexios.zavras@intel.com>,
         Allison Randal <allison@lohutok.net>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
         Enrico Weigelt <info@metux.net>,
         "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
         "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191011115108.12392-16-jslaby@suse.cz>
-References: <20191011115108.12392-16-jslaby@suse.cz>
+        Wei Huang <wei@redhat.com>, "x86-ml" <x86@kernel.org>,
+        Xiaoyao Li <xiaoyao.li@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191011115108.12392-13-jslaby@suse.cz>
+References: <20191011115108.12392-13-jslaby@suse.cz>
 MIME-Version: 1.0
-Message-ID: <157141623011.29376.15374755752054973720.tip-bot2@tip-bot2>
+Message-ID: <157141623101.29376.314591768009826189.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,173 +57,199 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/asm branch of tip:
 
-Commit-ID:     b16fed65a7938248c8b37d5d0a8020defa6fd926
-Gitweb:        https://git.kernel.org/tip/b16fed65a7938248c8b37d5d0a8020defa6fd926
+Commit-ID:     b8c3f9b554e8bd0edb434a54d0dc48e3d9eb6edd
+Gitweb:        https://git.kernel.org/tip/b8c3f9b554e8bd0edb434a54d0dc48e3d9eb6edd
 Author:        Jiri Slaby <jslaby@suse.cz>
-AuthorDate:    Fri, 11 Oct 2019 13:50:55 +02:00
+AuthorDate:    Fri, 11 Oct 2019 13:50:52 +02:00
 Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Fri, 18 Oct 2019 10:48:43 +02:00
+CommitterDate: Fri, 18 Oct 2019 10:43:26 +02:00
 
-x86/asm/purgatory: Start using annotations
+x86/boot: Annotate data appropriately
 
-Purgatory used no annotations at all. So include linux/linkage.h and
-annotate everything:
+Use the new SYM_DATA, SYM_DATA_START, and SYM_DATA_END* macros for data,
+so that the data in the object file look sane:
 
-* code by SYM_CODE_*
-* data by SYM_DATA_*
+  Value   Size Type    Bind   Vis      Ndx Name
+    0000    10 OBJECT  GLOBAL DEFAULT    3 efi32_boot_gdt
+    000a    10 OBJECT  LOCAL  DEFAULT    3 save_gdt
+    0014     8 OBJECT  LOCAL  DEFAULT    3 func_rt_ptr
+    001c    48 OBJECT  GLOBAL DEFAULT    3 efi_gdt64
+    004c     0 OBJECT  LOCAL  DEFAULT    3 efi_gdt64_end
 
- [ bp: Fixup comment in gdt: ]
+    0000    48 OBJECT  LOCAL  DEFAULT    3 gdt
+    0030     0 OBJECT  LOCAL  DEFAULT    3 gdt_end
+    0030     8 OBJECT  LOCAL  DEFAULT    3 efi_config
+    0038    49 OBJECT  GLOBAL DEFAULT    3 efi32_config
+    0069    49 OBJECT  GLOBAL DEFAULT    3 efi64_config
+
+All have correct size and type now.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Alexios Zavras <alexios.zavras@intel.com>
 Cc: Allison Randal <allison@lohutok.net>
+Cc: Cao jin <caoj.fnst@cn.fujitsu.com>
 Cc: Enrico Weigelt <info@metux.net>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Cc: linux-arch@vger.kernel.org
 Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wei Huang <wei@redhat.com>
 Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191011115108.12392-16-jslaby@suse.cz
+Cc: Xiaoyao Li <xiaoyao.li@linux.intel.com>
+Link: https://lkml.kernel.org/r/20191011115108.12392-13-jslaby@suse.cz
 ---
- arch/x86/purgatory/entry64.S      | 24 ++++++++++++++----------
- arch/x86/purgatory/setup-x86_64.S | 14 ++++++++------
- arch/x86/purgatory/stack.S        |  7 ++++---
- 3 files changed, 26 insertions(+), 19 deletions(-)
+ arch/x86/boot/compressed/efi_thunk_64.S | 21 +++++++++-------
+ arch/x86/boot/compressed/head_64.S      | 32 +++++++++++-------------
+ arch/x86/boot/compressed/mem_encrypt.S  |  3 +--
+ arch/x86/realmode/rm/wakeup_asm.S       |  4 +--
+ 4 files changed, 30 insertions(+), 30 deletions(-)
 
-diff --git a/arch/x86/purgatory/entry64.S b/arch/x86/purgatory/entry64.S
-index 275a646..0b4390c 100644
---- a/arch/x86/purgatory/entry64.S
-+++ b/arch/x86/purgatory/entry64.S
-@@ -8,13 +8,13 @@
-  * This code has been taken from kexec-tools.
-  */
+diff --git a/arch/x86/boot/compressed/efi_thunk_64.S b/arch/x86/boot/compressed/efi_thunk_64.S
+index bff9ab7..d66000d 100644
+--- a/arch/x86/boot/compressed/efi_thunk_64.S
++++ b/arch/x86/boot/compressed/efi_thunk_64.S
+@@ -176,16 +176,19 @@ ENDPROC(efi_enter32)
  
-+#include <linux/linkage.h>
-+
- 	.text
- 	.balign 16
- 	.code64
--	.globl entry64, entry64_regs
--
- 
--entry64:
-+SYM_CODE_START(entry64)
- 	/* Setup a gdt that should be preserved */
- 	lgdt gdt(%rip)
- 
-@@ -54,10 +54,11 @@ new_cs_exit:
- 
- 	/* Jump to the new code... */
- 	jmpq	*rip(%rip)
-+SYM_CODE_END(entry64)
- 
- 	.section ".rodata"
- 	.balign 4
--entry64_regs:
-+SYM_DATA_START(entry64_regs)
- rax:	.quad 0x0
- rcx:	.quad 0x0
- rdx:	.quad 0x0
-@@ -75,13 +76,14 @@ r13:	.quad 0x0
- r14:	.quad 0x0
- r15:	.quad 0x0
- rip:	.quad 0x0
--	.size entry64_regs, . - entry64_regs
-+SYM_DATA_END(entry64_regs)
- 
- 	/* GDT */
- 	.section ".rodata"
- 	.balign 16
--gdt:
--	/* 0x00 unusable segment
-+SYM_DATA_START_LOCAL(gdt)
-+	/*
-+	 * 0x00 unusable segment
- 	 * 0x08 unused
- 	 * so use them as gdt ptr
- 	 */
-@@ -94,6 +96,8 @@ gdt:
- 
- 	/* 0x18 4GB flat data segment */
- 	.word 0xFFFF, 0x0000, 0x9200, 0x00CF
--gdt_end:
--stack:	.quad   0, 0
--stack_init:
-+SYM_DATA_END_LABEL(gdt, SYM_L_LOCAL, gdt_end)
-+
-+SYM_DATA_START_LOCAL(stack)
-+	.quad   0, 0
-+SYM_DATA_END_LABEL(stack, SYM_L_LOCAL, stack_init)
-diff --git a/arch/x86/purgatory/setup-x86_64.S b/arch/x86/purgatory/setup-x86_64.S
-index 321146b..89d9e9e 100644
---- a/arch/x86/purgatory/setup-x86_64.S
-+++ b/arch/x86/purgatory/setup-x86_64.S
-@@ -7,14 +7,14 @@
-  *
-  * This code has been taken from kexec-tools.
-  */
-+#include <linux/linkage.h>
- #include <asm/purgatory.h>
- 
- 	.text
--	.globl purgatory_start
- 	.balign 16
--purgatory_start:
- 	.code64
- 
-+SYM_CODE_START(purgatory_start)
- 	/* Load a gdt so I know what the segment registers are */
- 	lgdt	gdt(%rip)
- 
-@@ -32,10 +32,12 @@ purgatory_start:
- 	/* Call the C code */
- 	call purgatory
- 	jmp	entry64
-+SYM_CODE_END(purgatory_start)
- 
- 	.section ".rodata"
- 	.balign 16
--gdt:	/* 0x00 unusable segment
-+SYM_DATA_START_LOCAL(gdt)
-+	/* 0x00 unusable segment
- 	 * 0x08 unused
- 	 * so use them as the gdt ptr
- 	 */
-@@ -48,10 +50,10 @@ gdt:	/* 0x00 unusable segment
- 
- 	/* 0x18 4GB flat data segment */
- 	.word	0xFFFF, 0x0000, 0x9200, 0x00CF
--gdt_end:
-+SYM_DATA_END_LABEL(gdt, SYM_L_LOCAL, gdt_end)
- 
- 	.bss
- 	.balign 4096
--lstack:
-+SYM_DATA_START_LOCAL(lstack)
- 	.skip 4096
--lstack_end:
-+SYM_DATA_END_LABEL(lstack, SYM_L_LOCAL, lstack_end)
-diff --git a/arch/x86/purgatory/stack.S b/arch/x86/purgatory/stack.S
-index 8b14274..1ef507c 100644
---- a/arch/x86/purgatory/stack.S
-+++ b/arch/x86/purgatory/stack.S
-@@ -5,13 +5,14 @@
-  * Copyright (C) 2014 Red Hat Inc.
-  */
- 
-+#include <linux/linkage.h>
-+
- 	/* A stack for the loaded kernel.
- 	 * Separate and in the data section so it can be prepopulated.
- 	 */
  	.data
- 	.balign 4096
--	.globl stack, stack_end
+ 	.balign	8
+-	.global	efi32_boot_gdt
+-efi32_boot_gdt:	.word	0
+-		.quad	0
++SYM_DATA_START(efi32_boot_gdt)
++	.word	0
++	.quad	0
++SYM_DATA_END(efi32_boot_gdt)
++
++SYM_DATA_START_LOCAL(save_gdt)
++	.word	0
++	.quad	0
++SYM_DATA_END(save_gdt)
  
--stack:
-+SYM_DATA_START(stack)
- 	.skip 4096
--stack_end:
-+SYM_DATA_END_LABEL(stack, SYM_L_GLOBAL, stack_end)
+-save_gdt:	.word	0
+-		.quad	0
+-func_rt_ptr:	.quad	0
++SYM_DATA_LOCAL(func_rt_ptr, .quad 0)
+ 
+-	.global efi_gdt64
+-efi_gdt64:
++SYM_DATA_START(efi_gdt64)
+ 	.word	efi_gdt64_end - efi_gdt64
+ 	.long	0			/* Filled out by user */
+ 	.word	0
+@@ -194,4 +197,4 @@ efi_gdt64:
+ 	.quad	0x00cf92000000ffff	/* __KERNEL_DS */
+ 	.quad	0x0080890000000000	/* TS descriptor */
+ 	.quad   0x0000000000000000	/* TS continued */
+-efi_gdt64_end:
++SYM_DATA_END_LABEL(efi_gdt64, SYM_L_LOCAL, efi_gdt64_end)
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index 7afe6e0..ca762ea 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -659,11 +659,12 @@ SYM_FUNC_END(.Lno_longmode)
+ #include "../../kernel/verify_cpu.S"
+ 
+ 	.data
+-gdt64:
++SYM_DATA_START_LOCAL(gdt64)
+ 	.word	gdt_end - gdt
+ 	.quad   0
++SYM_DATA_END(gdt64)
+ 	.balign	8
+-gdt:
++SYM_DATA_START_LOCAL(gdt)
+ 	.word	gdt_end - gdt
+ 	.long	gdt
+ 	.word	0
+@@ -672,25 +673,24 @@ gdt:
+ 	.quad	0x00cf92000000ffff	/* __KERNEL_DS */
+ 	.quad	0x0080890000000000	/* TS descriptor */
+ 	.quad   0x0000000000000000	/* TS continued */
+-gdt_end:
++SYM_DATA_END_LABEL(gdt, SYM_L_LOCAL, gdt_end)
+ 
+ #ifdef CONFIG_EFI_STUB
+-efi_config:
+-	.quad	0
++SYM_DATA_LOCAL(efi_config, .quad 0)
+ 
+ #ifdef CONFIG_EFI_MIXED
+-	.global efi32_config
+-efi32_config:
++SYM_DATA_START(efi32_config)
+ 	.fill	5,8,0
+ 	.quad	efi64_thunk
+ 	.byte	0
++SYM_DATA_END(efi32_config)
+ #endif
+ 
+-	.global efi64_config
+-efi64_config:
++SYM_DATA_START(efi64_config)
+ 	.fill	5,8,0
+ 	.quad	efi_call
+ 	.byte	1
++SYM_DATA_END(efi64_config)
+ #endif /* CONFIG_EFI_STUB */
+ 
+ /*
+@@ -698,23 +698,21 @@ efi64_config:
+  */
+ 	.bss
+ 	.balign 4
+-boot_heap:
+-	.fill BOOT_HEAP_SIZE, 1, 0
+-boot_stack:
++SYM_DATA_LOCAL(boot_heap,	.fill BOOT_HEAP_SIZE, 1, 0)
++
++SYM_DATA_START_LOCAL(boot_stack)
+ 	.fill BOOT_STACK_SIZE, 1, 0
+-boot_stack_end:
++SYM_DATA_END_LABEL(boot_stack, SYM_L_LOCAL, boot_stack_end)
+ 
+ /*
+  * Space for page tables (not in .bss so not zeroed)
+  */
+ 	.section ".pgtable","a",@nobits
+ 	.balign 4096
+-pgtable:
+-	.fill BOOT_PGT_SIZE, 1, 0
++SYM_DATA_LOCAL(pgtable,		.fill BOOT_PGT_SIZE, 1, 0)
+ 
+ /*
+  * The page table is going to be used instead of page table in the trampoline
+  * memory.
+  */
+-top_pgtable:
+-	.fill PAGE_SIZE, 1, 0
++SYM_DATA_LOCAL(top_pgtable,	.fill PAGE_SIZE, 1, 0)
+diff --git a/arch/x86/boot/compressed/mem_encrypt.S b/arch/x86/boot/compressed/mem_encrypt.S
+index 6afb713..28d703c 100644
+--- a/arch/x86/boot/compressed/mem_encrypt.S
++++ b/arch/x86/boot/compressed/mem_encrypt.S
+@@ -96,6 +96,5 @@ ENDPROC(set_sev_encryption_mask)
+ 
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
+ 	.balign	8
+-GLOBAL(sme_me_mask)
+-	.quad	0
++SYM_DATA(sme_me_mask, .quad 0)
+ #endif
+diff --git a/arch/x86/realmode/rm/wakeup_asm.S b/arch/x86/realmode/rm/wakeup_asm.S
+index dad6198..08438ee 100644
+--- a/arch/x86/realmode/rm/wakeup_asm.S
++++ b/arch/x86/realmode/rm/wakeup_asm.S
+@@ -171,8 +171,8 @@ END(wakeup_gdt)
+ 
+ 	/* This is the standard real-mode IDT */
+ 	.balign	16
+-.Lwakeup_idt:
++SYM_DATA_START_LOCAL(.Lwakeup_idt)
+ 	.word	0xffff		/* limit */
+ 	.long	0		/* address */
+ 	.word	0
+-END(.Lwakeup_idt)
++SYM_DATA_END(.Lwakeup_idt)
