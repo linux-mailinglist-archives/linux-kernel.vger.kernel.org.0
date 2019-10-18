@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3C67DD3AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54E44DD367
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:19:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393263AbfJRWTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:19:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39106 "EHLO mail.kernel.org"
+        id S1732463AbfJRWHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:07:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732247AbfJRWHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:07:00 -0400
+        id S1732275AbfJRWHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:07:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C8B5222D2;
-        Fri, 18 Oct 2019 22:06:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38DDF22468;
+        Fri, 18 Oct 2019 22:07:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436419;
-        bh=fMBUQEOmoxly6xWm/iIwvO3nP3iN5L5jNyhwQBwg8xI=;
+        s=default; t=1571436420;
+        bh=aCSTbAXnQHzJmonbmjRU/TNSmpSmUo2JY9jr4+RSpH0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nvcZuLtoQqeYlfg8I1EDXqPxPBbLMjYo0mXixoj3dP4yAotVM9d9vb40xJP4Lsq17
-         H9cHSdi/KqGu9dVhcJMrpet/Q6en8D7d1/D8dGf6kIEAcDIRA7Jt7LWhyjrwsIuVsR
-         yoEgqzakOkuseCHkBG4w7dyvBXi/rlNAytTO20QE=
+        b=UGGcueTAINxrjRjROzRRfHKy289JVCfrgJpcEvGesZ6FnpQk2/hXLZy+QyEvRF9W8
+         8WLh1bEp0SgDTamqvIrjB7wM1K3CFEyeBa70uvjlTdQ7dFXhxZrP4KvwqMD0Q6T0GO
+         JmurC0sFVW/Zp8Cy/lzY7tRSvhQUPwglzyWmhBPs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Connor Kuehl <connor.kuehl@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.19 062/100] staging: rtl8188eu: fix null dereference when kzalloc fails
-Date:   Fri, 18 Oct 2019 18:04:47 -0400
-Message-Id: <20191018220525.9042-62-sashal@kernel.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 063/100] crypto: arm/aes-ce - add dependency on AES library
+Date:   Fri, 18 Oct 2019 18:04:48 -0400
+Message-Id: <20191018220525.9042-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
 References: <20191018220525.9042-1-sashal@kernel.org>
@@ -43,46 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Connor Kuehl <connor.kuehl@canonical.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit 955c1532a34305f2f780b47f0c40cc7c65500810 ]
+[ Upstream commit f703964fc66804e6049f2670fc11045aa8359b1a ]
 
-If kzalloc() returns NULL, the error path doesn't stop the flow of
-control from entering rtw_hal_read_chip_version() which dereferences the
-null pointer. Fix this by adding a 'goto' to the error path to more
-gracefully handle the issue and avoid proceeding with initialization
-steps that we're no longer prepared to handle.
+The ARM accelerated AES driver depends on the new AES library for
+its non-SIMD fallback so express this in its Kconfig declaration.
 
-Also update the debug message to be more consistent with the other debug
-messages in this function.
-
-Addresses-Coverity: ("Dereference after null check")
-
-Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
-Link: https://lore.kernel.org/r/20190927214415.899-1-connor.kuehl@canonical.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/rtl8188eu/os_dep/usb_intf.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/crypto/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-index dfee6985efa61..8ef7b44b6abc1 100644
---- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-@@ -348,8 +348,10 @@ static struct adapter *rtw_usb_if1_init(struct dvobj_priv *dvobj,
- 	}
- 
- 	padapter->HalData = kzalloc(sizeof(struct hal_data_8188e), GFP_KERNEL);
--	if (!padapter->HalData)
--		DBG_88E("cant not alloc memory for HAL DATA\n");
-+	if (!padapter->HalData) {
-+		DBG_88E("Failed to allocate memory for HAL data\n");
-+		goto free_adapter;
-+	}
- 
- 	/* step read_chip_version */
- 	rtw_hal_read_chip_version(padapter);
+diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
+index b8e69fe282b8d..44278f375ae23 100644
+--- a/arch/arm/crypto/Kconfig
++++ b/arch/arm/crypto/Kconfig
+@@ -89,6 +89,7 @@ config CRYPTO_AES_ARM_CE
+ 	tristate "Accelerated AES using ARMv8 Crypto Extensions"
+ 	depends on KERNEL_MODE_NEON
+ 	select CRYPTO_BLKCIPHER
++	select CRYPTO_LIB_AES
+ 	select CRYPTO_SIMD
+ 	help
+ 	  Use an implementation of AES in CBC, CTR and XTS modes that uses
 -- 
 2.20.1
 
