@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20D9FDC976
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 666A2DC92E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:44:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505495AbfJRPoq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 11:44:46 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:50459 "EHLO
+        id S2505440AbfJRPoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 11:44:14 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:43561 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505164AbfJRPmk (ORCPT
+        with ESMTP id S2408937AbfJRPmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 11:42:40 -0400
+        Fri, 18 Oct 2019 11:42:42 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N33AR-1htWxG247x-013P60; Fri, 18 Oct 2019 17:42:23 +0200
+ 1MhDAi-1hr5aP3RY2-00eKEx; Fri, 18 Oct 2019 17:42:23 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Daniel Mack <daniel@zonque.org>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
@@ -22,279 +22,251 @@ To:     Daniel Mack <daniel@zonque.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
-Subject: [PATCH 11/46] ARM: pxa: cmx270: use platform device for nand
-Date:   Fri, 18 Oct 2019 17:41:26 +0200
-Message-Id: <20191018154201.1276638-11-arnd@arndb.de>
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Paul Parsons <lost.distance@yahoo.com>
+Subject: [PATCH 12/46] ARM: pxa: make addr-map.h header local
+Date:   Fri, 18 Oct 2019 17:41:27 +0200
+Message-Id: <20191018154201.1276638-12-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191018154052.1276506-1-arnd@arndb.de>
 References: <20191018154052.1276506-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:AbuR27vzvwqTV64dzM3JZRxK8+Uh7OaKfpyn+sIT526ScJjmzmK
- JIJ7LTt+coUJgOsnQwlmCuxVOTtwZTHIFaEmlH7gkm/oxGXEWGKHiHSSjwxG05JZ9zmCL2f
- nyZ9BJcO99q/LJ6sLR9iDukJXjZznJhvvPK3Q+fjryuiX+0vktVBhsBkwCHvAEsxvI5YUOm
- Sz3dS9H0qPVlK5FG3CjoQ==
+X-Provags-ID: V03:K1:8WoOYpFjU7VWVDju/eEJLMj2+XGDEzE9YwdV9g62F5wRGpwSEAH
+ 9Nl2dp8EgqQjF6Bpzq+oxUNbh9GabQyK/XF9d5BFAPggcSEjWQLhw0vplYeToUl4PQeZMzY
+ FfelPX9bKVQ5NPpxDdOMX18TmSVgdo9yaZNvAsnsC0rl5jGES262IvSTsgAgPubrYQiXv7h
+ KMQhW1HIdgo1jC4JKkcOA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:l2PtyoVwGKc=:+0UEgTT2WSPL5NZ6La/kPz
- DHmB450niREfEPyFYAmQeTXByU0r3y2AE91V1gd21WSqwlhgnuOR1J0ph5In0M1ZrAvR+HN18
- UjDM5XG4d+1SoYl+AMm7duwpjCH9Qh9FigBmRXr2zzSlAWObwWI2GBiWhRf0svOpiLnFJipOm
- wnhQoVDcOnbCYFFNjxR+vlA8/Uqi8LDRXsFU62jSQNDck7MAbwe0UAkjeKzoQZ+uXHFn1fbw3
- ebVXOSacNAHlioTZgCEOOiALKXl2rkyuhf5aOl/R/iyEC1T+yM4YrfdrhR/JCxxUYWcUBJRG4
- PaoQpkISkiKX2VJDMLvXy84shXMYREoDOYZoVAgRnBd2rQv6kMQYhdxrOcwjGKP122/1ZDPSQ
- wxuP3rvoP7eu6MQD4YUOrUTteACUg6X4sbqgseaE2cP3+RYbVKjNScT/C99qd1bLJJS1it8Ea
- NUDBqPBIIgAP+nZurYQEhlLtWQJKDNFbTiZp6TuyBBSbI9MLb2M/ICKcxddt2AbTaJBvT4V8Z
- U5CECnKrQ2LotmlpizOTtf1xNJn7To3sYvMXDJ5GBhbOqjlfxLgg2nsMcRGtFtLl9Y2AZ2Mq8
- EBDiZ+14CfRIAEY/rmMpMJnr5fzDP4wyN/06P6mUUagvOIKsHdSLoRQuWCUPdXYrPlW5t0iBW
- AzXkE9Lee68P3GxF01Dy3/d7cNPHSADY1NRiEf1GyRKb5RI01eREEliDC5tzHHakmKlh+3jb1
- TeWeMUHBxXIsCgqgjqsTTH4hNC/Pm9kGFBdx2YngifU3fYK4xsL1x0luFLt591VEJarvlod1b
- Fm6SpJWE7rXJxCkPIrtdyMeudmH2lWJnKoN+1qkAdWGdzSOhAmJvFdFZPcMVagyGjFMK08tV6
- bwZe2eB6qhQFuQjQ1rTg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:KFSZbybX0NQ=:cAV3UCZ9dED3v79KGzQDQm
+ jaaHcwMByoDbWGaLU5ipaA0BOTip1EFY4V8Hesrbv7uMZ/PnWXgXS2aJksblS8sE4NRZKJNcs
+ j4q6Zt/OJ8QcCz4FR9AVYg0uPrY2an3H859SfijuswAeKa5CoZwHjxUzFQDa0mAOBwbh6NgSt
+ uPI+qMONy824pAhEVbSUtxst/z5GOy127HTQbDYre6ru34vFk2M9HgDW6n7toBdqbN7xNwyG/
+ /0aT7HEqP99VHQ1KqLjuFo0NZ3XJyD2KfIduyaTPV2sZcnQicq8UO9FNyNDz5VpkE9P9Txdaj
+ Hmkb30t0XuBYYsNlzScZ+qStcbQkklaAiPL8Z0VRkYAeaWmN5Diwo7fp6EnYuA0bhf2jCoE/h
+ lpgyLtQZiNPyzvsO98LR73KaH8w31JVNE3xFJ2whPAEZMMxSE2DyhkiM72BAqTMcA/h7FZbxM
+ nbcrRxtvp3f5rZPLYN+VPs4CRNyIjsPnN+kPDkSvuLk7bmwgOBZNGqlUaVxz4l1z6O0Ghwpac
+ DwApcPvFcf4OFd657oh102WbBTd3vEoWt0lFseaNaT+S229sP+1kFzrjdS2rDDVBwEMYF7BLu
+ 3iNNnqzjmoybdLBpe11BxYyLqTwv7r2xEcpoB5oQyNDl6Es1Eh8B3BxFVOxOtIDRxWcDTcM3j
+ MJ7L9s5EOhp3EnZRx9+2I/ZFLe8ItdBe1qcnZb5I0+A58nmGJGVI3R+xxfUGkSIOey5ja4Y2O
+ 91Su67sVpcAqwijNukO8Sd529hx20gtGEejU5e9bs14ymMuo89A9EgCtxADPxVJsh27qZ30hh
+ dNXHU85MeLZVIC67Mqm6FKJtLSpBOeklcws3M/CniR/Lq2rilJHViR7LdiMR4Mi1iZgL+lxAf
+ ycDCeFzRlJg8YoQhiPNQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver traditionally hardcodes the MMIO register address and
-the GPIO numbers from data defined in platform header files.
+Drivers should not rely on the contents of this file, so
+move it into the platform directory directly.
 
-To make it indepdendent of that, use a memory resource for the
-registers, and a gpio lookup table to replace the gpio numbers.
-
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Brian Norris <computersforpeace@gmail.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org
+Cc: Philipp Zabel <philipp.zabel@gmail.com>
+Cc: Paul Parsons <lost.distance@yahoo.com>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-pxa/cm-x270.c        | 25 +++++++++
- drivers/mtd/nand/raw/cmx270_nand.c | 88 +++++++++++-------------------
- 2 files changed, 56 insertions(+), 57 deletions(-)
+ arch/arm/mach-pxa/{include/mach => }/addr-map.h | 0
+ arch/arm/mach-pxa/cm-x2xx.c                     | 2 +-
+ arch/arm/mach-pxa/generic.c                     | 2 +-
+ arch/arm/mach-pxa/hx4700.c                      | 2 +-
+ arch/arm/mach-pxa/include/mach/trizeps4.h       | 2 +-
+ arch/arm/mach-pxa/lpd270.c                      | 2 +-
+ arch/arm/mach-pxa/magician.c                    | 2 +-
+ arch/arm/mach-pxa/mainstone.c                   | 2 +-
+ arch/arm/mach-pxa/pxa25x.c                      | 2 +-
+ arch/arm/mach-pxa/pxa25x.h                      | 2 +-
+ arch/arm/mach-pxa/pxa27x.c                      | 2 +-
+ arch/arm/mach-pxa/pxa27x.h                      | 2 +-
+ arch/arm/mach-pxa/pxa3xx.c                      | 2 +-
+ arch/arm/mach-pxa/pxa3xx.h                      | 2 +-
+ arch/arm/mach-pxa/xcep.c                        | 2 +-
+ 15 files changed, 14 insertions(+), 14 deletions(-)
+ rename arch/arm/mach-pxa/{include/mach => }/addr-map.h (100%)
 
-diff --git a/arch/arm/mach-pxa/cm-x270.c b/arch/arm/mach-pxa/cm-x270.c
-index 9baad11314f2..6d80400d8887 100644
---- a/arch/arm/mach-pxa/cm-x270.c
-+++ b/arch/arm/mach-pxa/cm-x270.c
-@@ -40,6 +40,10 @@
- #define GPIO19_WLAN_STRAP	(19)
- #define GPIO102_WLAN_RST	(102)
+diff --git a/arch/arm/mach-pxa/include/mach/addr-map.h b/arch/arm/mach-pxa/addr-map.h
+similarity index 100%
+rename from arch/arm/mach-pxa/include/mach/addr-map.h
+rename to arch/arm/mach-pxa/addr-map.h
+diff --git a/arch/arm/mach-pxa/cm-x2xx.c b/arch/arm/mach-pxa/cm-x2xx.c
+index b13fcc72abab..9b030eccd548 100644
+--- a/arch/arm/mach-pxa/cm-x2xx.c
++++ b/arch/arm/mach-pxa/cm-x2xx.c
+@@ -33,7 +33,7 @@
+ #undef GPIO88_GPIO
+ #undef GPIO89_GPIO
+ #include <linux/platform_data/asoc-pxa.h>
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <linux/platform_data/video-pxafb.h>
+ #include <mach/smemc.h>
  
-+/* NAND GPIOS */
-+#define GPIO_NAND_CS		(11)
-+#define GPIO_NAND_RB		(89)
-+
- static unsigned long cmx270_pin_config[] = {
- 	/* AC'97 */
- 	GPIO28_AC97_BITCLK,
-@@ -403,6 +407,26 @@ static void __init cmx270_init_spi(void)
- static inline void cmx270_init_spi(void) {}
- #endif
- 
-+static struct gpiod_lookup_table cmx270_nand_gpio_table = {
-+	.dev_id = "cmx270-nand",
-+	.table = {
-+		GPIO_LOOKUP("gpio-pxa", GPIO_NAND_CS, "cs", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("gpio-pxa", GPIO_NAND_RB, "rb", GPIO_ACTIVE_HIGH),
-+		{ },
-+	},
-+};
-+
-+static struct resource cmx270_nand_resources[] __initdata = {
-+	DEFINE_RES_MEM(PXA_CS1_PHYS, 12),
-+};
-+
-+static void __init cmx270_init_nand(void)
-+{
-+	platform_device_register_simple("cmx270-nand", -1,
-+					cmx270_nand_resources, 1);
-+	gpiod_add_lookup_table(&cmx270_nand_gpio_table);
-+}
-+
- void __init cmx270_init(void)
- {
- 	pxa2xx_mfp_config(ARRAY_AND_SIZE(cmx270_pin_config));
-@@ -416,4 +440,5 @@ void __init cmx270_init(void)
- 	cmx270_init_ohci();
- 	cmx270_init_2700G();
- 	cmx270_init_spi();
-+	cmx270_init_nand();
- }
-diff --git a/drivers/mtd/nand/raw/cmx270_nand.c b/drivers/mtd/nand/raw/cmx270_nand.c
-index 7af3d0bdcdb8..31cb20858c46 100644
---- a/drivers/mtd/nand/raw/cmx270_nand.c
-+++ b/drivers/mtd/nand/raw/cmx270_nand.c
-@@ -15,18 +15,17 @@
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
- #include <linux/slab.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
- #include <linux/soc/pxa/cpu.h>
-+#include <linux/platform_device.h>
- 
- #include <asm/io.h>
- #include <asm/irq.h>
+diff --git a/arch/arm/mach-pxa/generic.c b/arch/arm/mach-pxa/generic.c
+index 3c3cd90bb9b4..f9083c4f0aea 100644
+--- a/arch/arm/mach-pxa/generic.c
++++ b/arch/arm/mach-pxa/generic.c
+@@ -22,7 +22,7 @@
+ #include <asm/mach/map.h>
  #include <asm/mach-types.h>
  
 -#include <mach/addr-map.h>
--
--#define GPIO_NAND_CS	(11)
--#define GPIO_NAND_RB	(89)
-+static struct gpio_desc *gpiod_nand_cs;
-+static struct gpio_desc *gpiod_nand_rb;
++#include "addr-map.h"
+ #include <mach/irqs.h>
+ #include <mach/reset.h>
+ #include <mach/smemc.h>
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index 4dce8834c5b6..b3dcbe291e13 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -41,7 +41,7 @@
+ #include <asm/mach/arch.h>
  
- /* MTD structure for CM-X270 board */
- static struct mtd_info *cmx270_nand_mtd;
-@@ -70,14 +69,14 @@ static void cmx270_read_buf(struct nand_chip *this, u_char *buf, int len)
+ #include "pxa27x.h"
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <mach/hx4700.h>
+ #include <linux/platform_data/irda-pxaficp.h>
  
- static inline void nand_cs_on(void)
- {
--	gpio_set_value(GPIO_NAND_CS, 0);
-+	gpiod_set_value(gpiod_nand_cs, 0);
- }
+diff --git a/arch/arm/mach-pxa/include/mach/trizeps4.h b/arch/arm/mach-pxa/include/mach/trizeps4.h
+index 27926629f9c6..b6c19d155ef9 100644
+--- a/arch/arm/mach-pxa/include/mach/trizeps4.h
++++ b/arch/arm/mach-pxa/include/mach/trizeps4.h
+@@ -11,7 +11,7 @@
+ #ifndef _TRIPEPS4_H_
+ #define _TRIPEPS4_H_
  
- static void nand_cs_off(void)
- {
- 	dsb();
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include "irqs.h" /* PXA_GPIO_TO_IRQ */
  
--	gpio_set_value(GPIO_NAND_CS, 1);
-+	gpiod_set_value(gpiod_nand_cs, 1);
- }
+ /* physical memory regions */
+diff --git a/arch/arm/mach-pxa/lpd270.c b/arch/arm/mach-pxa/lpd270.c
+index c59fd2624f91..6f3b7ca4d899 100644
+--- a/arch/arm/mach-pxa/lpd270.c
++++ b/arch/arm/mach-pxa/lpd270.c
+@@ -38,7 +38,7 @@
  
- /*
-@@ -120,48 +119,41 @@ static int cmx270_device_ready(struct nand_chip *this)
- {
- 	dsb();
+ #include "pxa27x.h"
+ #include "lpd270.h"
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <linux/platform_data/asoc-pxa.h>
+ #include <linux/platform_data/video-pxafb.h>
+ #include <linux/platform_data/mmc-pxamci.h>
+diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+index ce4c677be868..e925f7a8d349 100644
+--- a/arch/arm/mach-pxa/magician.c
++++ b/arch/arm/mach-pxa/magician.c
+@@ -35,7 +35,7 @@
+ #include <asm/system_info.h>
  
--	return (gpio_get_value(GPIO_NAND_RB));
-+	return (gpiod_get_value(gpiod_nand_rb));
- }
+ #include "pxa27x.h"
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <mach/magician.h>
+ #include <linux/platform_data/video-pxafb.h>
+ #include <linux/platform_data/mmc-pxamci.h>
+diff --git a/arch/arm/mach-pxa/mainstone.c b/arch/arm/mach-pxa/mainstone.c
+index ed505de6b5d9..5f7bc5a9215e 100644
+--- a/arch/arm/mach-pxa/mainstone.c
++++ b/arch/arm/mach-pxa/mainstone.c
+@@ -51,7 +51,7 @@
+ #include <linux/platform_data/irda-pxaficp.h>
+ #include <linux/platform_data/usb-ohci-pxa27x.h>
+ #include <linux/platform_data/keypad-pxa27x.h>
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <mach/smemc.h>
  
- /*
-  * Main initialization routine
-  */
--static int __init cmx270_init(void)
-+static int cmx270_probe(struct platform_device *pdev)
- {
- 	struct nand_chip *this;
-+	struct device *dev = &pdev->dev;
- 	int ret;
+ #include "generic.h"
+diff --git a/arch/arm/mach-pxa/pxa25x.c b/arch/arm/mach-pxa/pxa25x.c
+index dfc90b41fba3..8d21c7eef1d2 100644
+--- a/arch/arm/mach-pxa/pxa25x.c
++++ b/arch/arm/mach-pxa/pxa25x.c
+@@ -34,7 +34,7 @@
+ #include "pxa25x.h"
+ #include <mach/reset.h>
+ #include "pm.h"
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <mach/smemc.h>
  
--	if (!(machine_is_armcore() && cpu_is_pxa27x()))
--		return -ENODEV;
--
--	ret = gpio_request(GPIO_NAND_CS, "NAND CS");
-+	gpiod_nand_cs = devm_gpiod_get(dev, "cs", GPIOD_OUT_HIGH);
-+	ret = PTR_ERR_OR_ZERO(gpiod_nand_cs);
- 	if (ret) {
- 		pr_warn("CM-X270: failed to request NAND CS gpio\n");
- 		return ret;
- 	}
+ #include "generic.h"
+diff --git a/arch/arm/mach-pxa/pxa25x.h b/arch/arm/mach-pxa/pxa25x.h
+index 403bc16c2ed2..4699ebf7b486 100644
+--- a/arch/arm/mach-pxa/pxa25x.h
++++ b/arch/arm/mach-pxa/pxa25x.h
+@@ -2,7 +2,7 @@
+ #ifndef __MACH_PXA25x_H
+ #define __MACH_PXA25x_H
  
--	gpio_direction_output(GPIO_NAND_CS, 1);
--
--	ret = gpio_request(GPIO_NAND_RB, "NAND R/B");
-+	gpiod_nand_rb = devm_gpiod_get(dev, "rb", GPIOD_IN);
-+	ret = PTR_ERR_OR_ZERO(gpiod_nand_rb);
- 	if (ret) {
- 		pr_warn("CM-X270: failed to request NAND R/B gpio\n");
--		goto err_gpio_request;
-+		return ret;
- 	}
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <mach/pxa2xx-regs.h>
+ #include "mfp-pxa25x.h"
+ #include <mach/irqs.h>
+diff --git a/arch/arm/mach-pxa/pxa27x.c b/arch/arm/mach-pxa/pxa27x.c
+index 38fdd22c4dc5..c36a9784fab8 100644
+--- a/arch/arm/mach-pxa/pxa27x.c
++++ b/arch/arm/mach-pxa/pxa27x.c
+@@ -33,7 +33,7 @@
+ #include <mach/reset.h>
+ #include <linux/platform_data/usb-ohci-pxa27x.h>
+ #include "pm.h"
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <mach/smemc.h>
  
--	gpio_direction_input(GPIO_NAND_RB);
--
- 	/* Allocate memory for MTD device structure and private data */
--	this = kzalloc(sizeof(struct nand_chip), GFP_KERNEL);
--	if (!this) {
--		ret = -ENOMEM;
--		goto err_kzalloc;
--	}
-+	this = devm_kzalloc(dev, sizeof(struct nand_chip), GFP_KERNEL);
-+	if (!this)
-+		return -ENOMEM;
+ #include "generic.h"
+diff --git a/arch/arm/mach-pxa/pxa27x.h b/arch/arm/mach-pxa/pxa27x.h
+index 6c99090647d2..bf2755561fe5 100644
+--- a/arch/arm/mach-pxa/pxa27x.h
++++ b/arch/arm/mach-pxa/pxa27x.h
+@@ -3,7 +3,7 @@
+ #define __MACH_PXA27x_H
  
--	cmx270_nand_io = ioremap(PXA_CS1_PHYS, 12);
-+	cmx270_nand_io = devm_platform_ioremap_resource(pdev, 0);
- 	if (!cmx270_nand_io) {
- 		pr_debug("Unable to ioremap NAND device\n");
--		ret = -EINVAL;
--		goto err_ioremap;
-+		return -EINVAL;
- 	}
+ #include <linux/suspend.h>
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <mach/pxa2xx-regs.h>
+ #include "mfp-pxa27x.h"
+ #include <mach/irqs.h>
+diff --git a/arch/arm/mach-pxa/pxa3xx.c b/arch/arm/mach-pxa/pxa3xx.c
+index 7c569fa2a6da..7881888107c7 100644
+--- a/arch/arm/mach-pxa/pxa3xx.c
++++ b/arch/arm/mach-pxa/pxa3xx.c
+@@ -32,7 +32,7 @@
+ #include <mach/reset.h>
+ #include <linux/platform_data/usb-ohci-pxa27x.h>
+ #include "pm.h"
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <mach/smemc.h>
+ #include <mach/irqs.h>
  
- 	cmx270_nand_mtd = nand_to_mtd(this);
-@@ -189,48 +181,30 @@ static int __init cmx270_init(void)
- 	ret = nand_scan(this, 1);
- 	if (ret) {
- 		pr_notice("No NAND device\n");
--		goto err_scan;
-+		return ret;
- 	}
+diff --git a/arch/arm/mach-pxa/pxa3xx.h b/arch/arm/mach-pxa/pxa3xx.h
+index 22ace053ea25..6b424d328680 100644
+--- a/arch/arm/mach-pxa/pxa3xx.h
++++ b/arch/arm/mach-pxa/pxa3xx.h
+@@ -2,7 +2,7 @@
+ #ifndef __MACH_PXA3XX_H	
+ #define __MACH_PXA3XX_H
  
- 	/* Register the partitions */
--	ret = mtd_device_register(cmx270_nand_mtd, partition_info,
--				  NUM_PARTITIONS);
--	if (ret)
--		goto err_scan;
--
--	/* Return happy */
--	return 0;
--
--err_scan:
--	iounmap(cmx270_nand_io);
--err_ioremap:
--	kfree(this);
--err_kzalloc:
--	gpio_free(GPIO_NAND_RB);
--err_gpio_request:
--	gpio_free(GPIO_NAND_CS);
--
--	return ret;
--
-+	return mtd_device_register(cmx270_nand_mtd, partition_info,
-+				   NUM_PARTITIONS);
- }
--module_init(cmx270_init);
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <mach/pxa3xx-regs.h>
+ #include <mach/irqs.h>
  
- /*
-  * Clean up routine
-  */
--static void __exit cmx270_cleanup(void)
-+static int cmx270_remove(struct platform_device *pdev)
- {
--	/* Release resources, unregister device */
- 	nand_release(mtd_to_nand(cmx270_nand_mtd));
+diff --git a/arch/arm/mach-pxa/xcep.c b/arch/arm/mach-pxa/xcep.c
+index e6ab428287ae..7389e0199144 100644
+--- a/arch/arm/mach-pxa/xcep.c
++++ b/arch/arm/mach-pxa/xcep.c
+@@ -25,7 +25,7 @@
+ #include <asm/mach/map.h>
  
--	gpio_free(GPIO_NAND_RB);
--	gpio_free(GPIO_NAND_CS);
--
--	iounmap(cmx270_nand_io);
--
--	kfree(mtd_to_nand(cmx270_nand_mtd));
-+	return 0;
- }
--module_exit(cmx270_cleanup);
-+
-+static struct platform_driver cmx270_nand_driver = {
-+	.driver.name = "cmx270-nand",
-+	.probe = cmx270_probe,
-+	.remove = cmx270_remove,
-+};
-+module_platform_driver(cmx270_nand_driver);
+ #include "pxa25x.h"
+-#include <mach/addr-map.h>
++#include "addr-map.h"
+ #include <mach/smemc.h>
  
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Mike Rapoport <mike@compulab.co.il>");
+ #include "generic.h"
 -- 
 2.20.0
 
