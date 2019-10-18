@@ -2,141 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6BFCDC65E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC96CDC659
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 15:41:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442860AbfJRNlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 09:41:18 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:42062 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388276AbfJRNlR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 09:41:17 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id E32133F451;
-        Fri, 18 Oct 2019 15:41:14 +0200 (CEST)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=MbVXQnTq;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 1Q_cdxpoZOJk; Fri, 18 Oct 2019 15:41:10 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id E86303F79C;
-        Fri, 18 Oct 2019 15:41:04 +0200 (CEST)
-Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 10858360C1D;
-        Fri, 18 Oct 2019 15:41:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1571406064; bh=CM0kDaJkew2uovB/LOxOt2lTd8T+CE/y2CkZ2N5cYKs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MbVXQnTqZA1neMRpxQaPGzT+SVBvuwBftmpYWmRQtMZ/Fq6HHjul0g5X5XwlDynyv
-         JRwKcZXwuIIHCCCMjZL5LdsJv5+6ciIEbuBSDaPeCHVrkP2xI8w1SOgWOcjs+K8l+q
-         BVETaa/98WezoCSKxfTFuIAh679Yn/XC+q5zBl7o=
-From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
-        <thomas_os@shipmail.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH 2/2] x86/cpu/vmware: Fix platform detection VMWARE_PORT macro
-Date:   Fri, 18 Oct 2019 15:40:52 +0200
-Message-Id: <20191018134052.3023-3-thomas_os@shipmail.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191018134052.3023-1-thomas_os@shipmail.org>
-References: <20191018134052.3023-1-thomas_os@shipmail.org>
+        id S2410422AbfJRNlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 09:41:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40414 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728150AbfJRNlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 09:41:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0FBAFB1D4;
+        Fri, 18 Oct 2019 13:41:00 +0000 (UTC)
+Date:   Fri, 18 Oct 2019 15:40:58 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Miroslav Benes <mbenes@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
+Message-ID: <20191018134058.7zyls4746wpa7jy5@pathway.suse.cz>
+References: <20191015135634.GK2328@hirez.programming.kicks-ass.net>
+ <alpine.LSU.2.21.1910151611000.13169@pobox.suse.cz>
+ <88bab814-ea24-ece9-2bc0-7a1e10a62f12@redhat.com>
+ <20191015153120.GA21580@linux-8ccs>
+ <7e9c7dd1-809e-f130-26a3-3d3328477437@redhat.com>
+ <20191015182705.1aeec284@gandalf.local.home>
+ <20191016074951.GM2328@hirez.programming.kicks-ass.net>
+ <alpine.LSU.2.21.1910161216100.7750@pobox.suse.cz>
+ <alpine.LSU.2.21.1910161521010.7750@pobox.suse.cz>
+ <20191018130342.GA4625@linux-8ccs>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018130342.GA4625@linux-8ccs>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+On Fri 2019-10-18 15:03:42, Jessica Yu wrote:
+> +++ Miroslav Benes [16/10/19 15:29 +0200]:
+> > On Wed, 16 Oct 2019, Miroslav Benes wrote:
+> > Thinking about it more... crazy idea. I think we could leverage these new
+> > ELF .text per vmlinux/module sections for the reinvention I was talking
+> > about. If we teach module loader to relocate (and apply alternatives and
+> > so on, everything in arch-specific module_finalize()) not the whole module
+> > in case of live patch modules, but separate ELF .text sections, it could
+> > solve the issue with late module patching we have. It is a variation on
+> > Steven's idea. When live patch module is loaded, only its section for
+> > present modules would be processed. Then whenever a to-be-patched module
+> > is loaded, its .text section in all present patch module would be
+> > processed.
+> > 
+> > The upside is that almost no work would be required on patch modules
+> > creation side. The downside is that klp_modinfo must stay. Module loader
+> > needs to be hacked a lot in both cases. So it remains to be seen which
+> > idea is easier to implement.
+> > 
+> > Jessica, do you think it would be feasible?
+> 
+> I think that does sound feasible. I'm trying to visualize how that
+> would look. I guess there would need to be various livepatching hooks
+> called during the different stages (apply_relocate_add(),
+> module_finalize(), module_enable_ro/x()).
+> 
+> So maybe something like the following?
+> 
+> When a livepatch module loads:
+>    apply_relocate_add()
+>        klp hook: apply .klp.rela.$objname relocations *only* for
+>        already loaded modules
+>    module_finalize()
+>        klp hook: apply .klp.arch.$objname changes for already loaded modules
+>    module_enable_ro()
+>        klp hook: only enable ro/x for .klp.text.$objname for already
+>        loaded modules
 
-The platform detection VMWARE_PORT macro uses the VMWARE_HYPERVISOR_PORT
-definition, but expects it to be an integer. However, when it was moved
-to the new vmware.h include file, it was changed to be a string to better
-fit into the VMWARE_HYPERCALL set of macros. This obviously breaks the
-platform detection VMWARE_PORT functionality.
+Just for record. We should also set ro for the not-yet used
+.klp.text.$objname at this stage so that it can't be modified
+easily "by accident".
 
-Change the VMWARE_HYPERVISOR_PORT and VMWARE_HYPERVISOR_PORT_HB
-definitions to be integers, and use __stringify() for their stringified
-form when needed.
 
-Fixes: b4dd4f6e3648 ("Add a header file for hypercall definitions")
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
----
- arch/x86/include/asm/vmware.h | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+> When a to-be-patched module loads:
+>    apply_relocate_add()
+>        klp hook: for each patch module that patches the coming
+>        module, apply .klp.rela.$objname relocations for this object
+>    module_finalize()
+>        klp hook: for each patch module that patches the coming
+>        module, apply .klp.arch.$objname changes for this object
+>    module_enable_ro()
+>        klp hook: for each patch module, apply ro/x permissions for
+>        .klp.text.$objname for this object
+> 
+> Then, in klp_module_coming, we only need to do the callbacks and
+> enable the patch, and get rid of the module_disable_ro->apply
+> relocs->module_enable_ro block.
+> 
+> Does that sound like what you had in mind or am I totally off?
 
-diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
-index f5fbe3778aef..d20eda0c6ed8 100644
---- a/arch/x86/include/asm/vmware.h
-+++ b/arch/x86/include/asm/vmware.h
-@@ -4,6 +4,7 @@
- 
- #include <asm/cpufeatures.h>
- #include <asm/alternative.h>
-+#include <linux/stringify.h>
- 
- /*
-  * The hypercall definitions differ in the low word of the %edx argument
-@@ -20,8 +21,8 @@
-  */
- 
- /* Old port-based version */
--#define VMWARE_HYPERVISOR_PORT    "0x5658"
--#define VMWARE_HYPERVISOR_PORT_HB "0x5659"
-+#define VMWARE_HYPERVISOR_PORT    0x5658
-+#define VMWARE_HYPERVISOR_PORT_HB 0x5659
- 
- /* Current vmcall / vmmcall version */
- #define VMWARE_HYPERVISOR_HB   BIT(0)
-@@ -29,7 +30,7 @@
- 
- /* The low bandwidth call. The low word of edx is presumed clear. */
- #define VMWARE_HYPERCALL						\
--	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT			\
-+	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT)	\
- 		      ", %%dx; inl (%%dx), %%eax",			\
- 		      "vmcall", X86_FEATURE_VMCALL,			\
- 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
-@@ -39,7 +40,8 @@
-  * HB and OUT bits set.
-  */
- #define VMWARE_HYPERCALL_HB_OUT						\
--	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT_HB ", %%dx; rep outsb", \
-+	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT_HB)	\
-+		      ", %%dx; rep outsb",				\
- 		      "vmcall", X86_FEATURE_VMCALL,			\
- 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
- 
-@@ -48,7 +50,8 @@
-  * HB bit set.
-  */
- #define VMWARE_HYPERCALL_HB_IN						\
--	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT_HB ", %%dx; rep insb", \
-+	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT_HB)	\
-+		      ", %%dx; rep insb",				\
- 		      "vmcall", X86_FEATURE_VMCALL,			\
- 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
- #endif
--- 
-2.21.0
+Makes sense to me.
 
+Well, I wonder if it is really any better from what we have now.
+We would still need special delayed handling for the module-specific
+elf sections. Also we still would not need to clear the modifications
+in these sections when the livepatched object gets unloaded.
+
+I am afraid that the real difference might come when we split
+the livepatch into per-livepatched object modules. This would
+move the complexity to another parts of the code ;-) I am
+unable to say what approach is easier and more safe to maintain
+at the moment.
+
+Best Regards,
+Petr
