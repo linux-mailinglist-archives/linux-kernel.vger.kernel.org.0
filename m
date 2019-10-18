@@ -2,538 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AE0CDD79B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 11:09:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A7FADD7A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 11:13:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728547AbfJSJJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 19 Oct 2019 05:09:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49338 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725797AbfJSJJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 05:09:48 -0400
-Received: from earth.universe (cust-west-pareq2-46-193-15-226.wb.wifirst.net [46.193.15.226])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF49C222C2;
-        Sat, 19 Oct 2019 09:09:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571476187;
-        bh=SobYbj/cE0iDf+fCkMv3zqZHgYr9EHU6yG7d+lpi12c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pXd8X/6fp/eUzDLGupWpuJTmryrrbu5XFMOQrxNsHNeJHFQj6uNvvbvZ9OGtMJHsS
-         72hDFinQbWgF5JfFZZI8nIUmSDZDcRJi6dH0dRp/5giLBnYtVq43vcJjDauTDzucmU
-         0SlRAu/xCzmZSR+IBT+v2MvxvB4wkQjvCIDrV3IM=
-Received: by earth.universe (Postfix, from userid 1000)
-        id C31933C09B1; Sat, 19 Oct 2019 11:09:44 +0200 (CEST)
-Date:   Sat, 19 Oct 2019 11:09:44 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH 40/46] ARM: pxa: tosa: use gpio lookup for battery
-Message-ID: <20191019090944.vfj3macmgb7i4253@earth.universe>
-References: <20191018154052.1276506-1-arnd@arndb.de>
- <20191018154201.1276638-40-arnd@arndb.de>
+        id S1728609AbfJSJNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 05:13:07 -0400
+Received: from sender4-pp-o94.zoho.com ([136.143.188.94]:25408 "EHLO
+        sender4-pp-o94.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728576AbfJSJNH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Oct 2019 05:13:07 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1571476359; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=m3d0u3qP4oNi3v+fMNa6jESURQm/++vNAIq0yiEVB+2rkYgM6/OqvpeuRQAzkY36K5egtZgXHlEjBkwgR3Y8Dnl+bkg5q4AwpvPmrtojiS2b+8JlUvkv3/OibF5HJaUfXOgwKhDL8DGnAmJlb7kyJCDpbzPhu20VfAu7V6ICq5o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1571476359; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=c1LHMbjebCq/p3Q155rI1KuvyuVAzusZr5to+xYs/3Y=; 
+        b=QrXmWfFLUs4BridPXlNzFzLXNd9VvhFO3XJF3lq61ZPTlpTuGfO6IIcyEShePM+2MQqK19yvcl/Ptu5BtsJURziemN3dkDooQ+I1Q6SBBdVC4Jw1yE4Ja02jpk9JN7xIGSXK6grdHVPj5Es90Q0XFAIqPntC4Pomnqsw+1mFDvE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
+  b=cELFXnRKTQMsh/d7U6m9uSQj1zZL1r3EQ0Bj+IQ+NQ54Fq//zg5tJTdDx0T1wR0ANa02B0X2CnE7
+    z3t5UwGUy5kWt4cH1USKiRjtUOlMyA4yf/DyIupa2PPLskAKqUqA  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1571476359;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        l=3710; bh=c1LHMbjebCq/p3Q155rI1KuvyuVAzusZr5to+xYs/3Y=;
+        b=lBOY46KTxJ0ked4LpLHBvpFqWSIZ+FXjk63gMf8WxKuj+tif6kmawyqa8jZmKjQd
+        OTRYBhw0IwRUgCrNN6krcJBQV4PD0Hk0NXu4zWBkLUNxWOJaDoF7+X+pRK9kxTsEksc
+        YSOxHMU0FaJMzpzULwnvU8pshbi32oJOUXDBe8MU=
+Received: from [192.168.10.218] (171.221.113.199 [171.221.113.199]) by mx.zohomail.com
+        with SMTPS id 1571476358155716.0469073276595; Sat, 19 Oct 2019 02:12:38 -0700 (PDT)
+Subject: Re: [PATCH 6/6 v2] MMC: JZ4740: Add support for LPM.
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>
+References: <1567669089-88693-1-git-send-email-zhouyanjie@zoho.com>
+ <1570857203-49192-1-git-send-email-zhouyanjie@zoho.com>
+ <1570857203-49192-7-git-send-email-zhouyanjie@zoho.com>
+ <CAPDyKFo9juNmf6hrcBjzOprS6GwzAPBq8y3ReGu=ry+MdxT9Bg@mail.gmail.com>
+Cc:     linux-mips@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Mark Rutland <mark.rutland@arm.com>, syq@debian.org,
+        Linus Walleij <linus.walleij@linaro.org>, armijn@tjaldur.nl,
+        Thomas Gleixner <tglx@linutronix.de>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+Message-ID: <5DA9EE2F.4030603@zoho.com>
+Date:   Sat, 19 Oct 2019 00:54:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5kovz5serylce4st"
-Content-Disposition: inline
-In-Reply-To: <20191018154201.1276638-40-arnd@arndb.de>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAPDyKFo9juNmf6hrcBjzOprS6GwzAPBq8y3ReGu=ry+MdxT9Bg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Uffe,
 
---5kovz5serylce4st
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2019=E5=B9=B410=E6=9C=8818=E6=97=A5 16:52, Ulf Hansson wrote:
+> On Sat, 12 Oct 2019 at 07:19, Zhou Yanjie <zhouyanjie@zoho.com> wrote:
+>> add support for low power mode of Ingenic's MMC/SD Controller.
+>>
+>> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+> I couldn't find a proper coverletter for the series, please provide
+> that next time as it really helps review.
 
-Hi,
+I'm sorry, maybe some problems with my git send-email cause cover
+later not to be sent out, next time I will pay attention to this problem.
 
-On Fri, Oct 18, 2019 at 05:41:55PM +0200, Arnd Bergmann wrote:
-> The battery driver uses a lot of GPIO lines, hardcoded from a
-> machine header file.
->=20
-> Change it to use a gpiod lookup table instead.
->=20
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+> Additionally, it seems like
+> you forgot to change the prefix of the patches to "mmc: jz4740" (or at
+> least you chosed upper case letters), but I will take care of that
+> this time. So, I have applied the series for next, thanks!
 
-That's a nice cleanup patch :) I assume, that this is also
-merged together with the whole series through ARM, so:
+I'm very sorry, I have misunderstood, before I thought jz4740 as a proper
+noun needs to be capitalized, I will pay attention to this next time.
 
-Reviewed-by: Sebastian Reichel <sre@kernel.org>
-Acked-by: Sebastian Reichel <sre@kernel.org>
+>
+> I also have a general question. Should we perhaps rename the driver
+> from jz4740_mmc.c to ingenic.c (and the file for the DT bindings, the
+> Kconfig, etc), as that seems like a more appropriate name? No?
 
--- Sebastian
+I am very much in favor of this proposal. Now jz4740_mmc.c is not only used
+for the JZ4740 processor, it is also used for JZ4725, JZ4760, JZ4770, JZ478=
+0
+and X1000, and now Ingenic's processor is no longer named after JZ47xx,
+it is divided into three product lines: M, T, and X. It is easy to cause=20
+some
+misunderstandings by using jz4740_mmc.c. At the same time, I think that
+some register names also need to be adjusted. For example, the STLPPL
+register name has only appeared in JZ4730 and JZ4740, and this register
+in all subsequent processors is called CTRL. This time I was confused by
+the STLPPL when I added drivers for the JZ4760's and X1000's LPM.
 
->  arch/arm/mach-pxa/tosa.c            |  23 +++++
->  drivers/power/supply/tosa_battery.c | 147 ++++++++++++++++------------
->  2 files changed, 109 insertions(+), 61 deletions(-)
->=20
-> diff --git a/arch/arm/mach-pxa/tosa.c b/arch/arm/mach-pxa/tosa.c
-> index 8329a2969b2b..ef3bbf6d158e 100644
-> --- a/arch/arm/mach-pxa/tosa.c
-> +++ b/arch/arm/mach-pxa/tosa.c
-> @@ -365,6 +365,28 @@ static struct pxaficp_platform_data tosa_ficp_platfo=
-rm_data =3D {
->  	.shutdown		=3D tosa_irda_shutdown,
->  };
-> =20
-> +static struct gpiod_lookup_table tosa_battery_gpio_table =3D {
-> +	.dev_id =3D "wm97xx-battery",
-> +	.table =3D {
-> +		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_CHARGE_OFF - TOSA_TC6393XB_GPIO_BASE=
-,    "main charge off", GPIO_ACTIVE_HIGH ),
-> +		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_CHARGE_OFF_JC - TOSA_TC6393XB_GPIO_B=
-ASE, "jacket charge off", GPIO_ACTIVE_HIGH ),
-> +		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BAT_SW_ON - TOSA_TC6393XB_GPIO_BASE,=
-     "battery switch", GPIO_ACTIVE_HIGH ),
-> +		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BAT0_V_ON - TOSA_TC6393XB_GPIO_BASE,=
-     "main battery", GPIO_ACTIVE_HIGH ),
-> +		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BAT1_V_ON - TOSA_TC6393XB_GPIO_BASE,=
-     "jacket battery", GPIO_ACTIVE_HIGH ),
-> +		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BAT1_TH_ON - TOSA_TC6393XB_GPIO_BASE=
-,    "main battery temp", GPIO_ACTIVE_HIGH ),
-> +		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BAT0_TH_ON - TOSA_TC6393XB_GPIO_BASE=
-,    "jacket battery temp", GPIO_ACTIVE_HIGH ),
-> +		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BU_CHRG_ON - TOSA_TC6393XB_GPIO_BASE=
-,    "backup battery", GPIO_ACTIVE_HIGH ),
-> +
-> +		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_BAT0_CRG,      "main battery full", =
-GPIO_ACTIVE_HIGH ),
-> +		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_BAT1_CRG,      "jacket battery full"=
-, GPIO_ACTIVE_HIGH ),
-> +		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_BAT0_LOW,      "main battery low", G=
-PIO_ACTIVE_HIGH ),
-> +		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_BAT1_LOW,      "jacket battery low",=
- GPIO_ACTIVE_HIGH ),
-> +		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_JACKET_DETECT, "jacket detect", GPIO=
-_ACTIVE_HIGH ),
-> +		{ },
-> +	},
-> +};
-> +
-> +
->  /*
->   * Tosa AC IN
->   */
-> @@ -946,6 +968,7 @@ static void __init tosa_init(void)
->  	/* enable batt_fault */
->  	PMCR =3D 0x01;
-> =20
-> +	gpiod_add_lookup_table(&tosa_battery_gpio_table);
->  	gpiod_add_lookup_table(&tosa_mci_gpio_table);
->  	gpiod_add_lookup_table(&tosa_audio_gpio_table);
->  	pxa_set_mci_info(&tosa_mci_platform_data);
-> diff --git a/drivers/power/supply/tosa_battery.c b/drivers/power/supply/t=
-osa_battery.c
-> index b26b0eca33e1..d10320f348d0 100644
-> --- a/drivers/power/supply/tosa_battery.c
-> +++ b/drivers/power/supply/tosa_battery.c
-> @@ -15,11 +15,16 @@
->  #include <linux/gpio.h>
-> =20
->  #include <asm/mach-types.h>
-> -#include <mach/tosa.h>
-> =20
->  static DEFINE_MUTEX(bat_lock); /* protects gpio pins */
->  static struct work_struct bat_work;
-> =20
-> +struct tosa_gpio {
-> +	const char *con;
-> +	enum gpiod_flags flags;
-> +	struct gpio_desc *desc;
-> +};
-> +
->  struct tosa_bat {
->  	int status;
->  	struct power_supply *psy;
-> @@ -28,38 +33,42 @@ struct tosa_bat {
->  	struct mutex work_lock; /* protects data */
-> =20
->  	bool (*is_present)(struct tosa_bat *bat);
-> -	int gpio_full;
-> -	int gpio_charge_off;
-> +	struct tosa_gpio gpio_full;
-> +	struct tosa_gpio gpio_charge_off;
-> =20
->  	int technology;
-> =20
-> -	int gpio_bat;
-> +	struct tosa_gpio gpio_bat;
->  	int adc_bat;
->  	int adc_bat_divider;
->  	int bat_max;
->  	int bat_min;
-> =20
-> -	int gpio_temp;
-> +	struct tosa_gpio gpio_temp;
->  	int adc_temp;
->  	int adc_temp_divider;
->  };
-> =20
->  static struct tosa_bat tosa_bat_main;
->  static struct tosa_bat tosa_bat_jacket;
-> +static struct tosa_gpio gpiod_jacket_det =3D { "jacket detect", GPIOD_IN=
- };
-> +static struct tosa_gpio gpiod_battery_switch =3D { "battery switch", GPI=
-OD_OUT_LOW };
-> +static struct tosa_gpio gpiod_main_battery_low =3D { "main battery low",=
- GPIOD_IN };
-> +static struct tosa_gpio gpiod_jacket_battery_low =3D { "jacket battery l=
-ow", GPIOD_IN };
-> =20
->  static unsigned long tosa_read_bat(struct tosa_bat *bat)
->  {
->  	unsigned long value =3D 0;
-> =20
-> -	if (bat->gpio_bat < 0 || bat->adc_bat < 0)
-> +	if (!bat->gpio_bat.desc || bat->adc_bat < 0)
->  		return 0;
-> =20
->  	mutex_lock(&bat_lock);
-> -	gpio_set_value(bat->gpio_bat, 1);
-> +	gpiod_set_value(bat->gpio_bat.desc, 1);
->  	msleep(5);
->  	value =3D wm97xx_read_aux_adc(dev_get_drvdata(bat->psy->dev.parent),
->  			bat->adc_bat);
-> -	gpio_set_value(bat->gpio_bat, 0);
-> +	gpiod_set_value(bat->gpio_bat.desc, 0);
->  	mutex_unlock(&bat_lock);
-> =20
->  	value =3D value * 1000000 / bat->adc_bat_divider;
-> @@ -71,15 +80,15 @@ static unsigned long tosa_read_temp(struct tosa_bat *=
-bat)
->  {
->  	unsigned long value =3D 0;
-> =20
-> -	if (bat->gpio_temp < 0 || bat->adc_temp < 0)
-> +	if (!bat->gpio_temp.desc || bat->adc_temp < 0)
->  		return 0;
-> =20
->  	mutex_lock(&bat_lock);
-> -	gpio_set_value(bat->gpio_temp, 1);
-> +	gpiod_set_value(bat->gpio_temp.desc, 1);
->  	msleep(5);
->  	value =3D wm97xx_read_aux_adc(dev_get_drvdata(bat->psy->dev.parent),
->  			bat->adc_temp);
-> -	gpio_set_value(bat->gpio_temp, 0);
-> +	gpiod_set_value(bat->gpio_temp.desc, 0);
->  	mutex_unlock(&bat_lock);
-> =20
->  	value =3D value * 10000 / bat->adc_temp_divider;
-> @@ -136,7 +145,7 @@ static int tosa_bat_get_property(struct power_supply =
-*psy,
-> =20
->  static bool tosa_jacket_bat_is_present(struct tosa_bat *bat)
->  {
-> -	return gpio_get_value(TOSA_GPIO_JACKET_DETECT) =3D=3D 0;
-> +	return gpiod_get_value(gpiod_jacket_det.desc) =3D=3D 0;
->  }
-> =20
->  static void tosa_bat_external_power_changed(struct power_supply *psy)
-> @@ -166,23 +175,23 @@ static void tosa_bat_update(struct tosa_bat *bat)
->  		bat->full_chrg =3D -1;
->  	} else if (power_supply_am_i_supplied(psy)) {
->  		if (bat->status =3D=3D POWER_SUPPLY_STATUS_DISCHARGING) {
-> -			gpio_set_value(bat->gpio_charge_off, 0);
-> +			gpiod_set_value(bat->gpio_charge_off.desc, 0);
->  			mdelay(15);
->  		}
-> =20
-> -		if (gpio_get_value(bat->gpio_full)) {
-> +		if (gpiod_get_value(bat->gpio_full.desc)) {
->  			if (old =3D=3D POWER_SUPPLY_STATUS_CHARGING ||
->  					bat->full_chrg =3D=3D -1)
->  				bat->full_chrg =3D tosa_read_bat(bat);
-> =20
-> -			gpio_set_value(bat->gpio_charge_off, 1);
-> +			gpiod_set_value(bat->gpio_charge_off.desc, 1);
->  			bat->status =3D POWER_SUPPLY_STATUS_FULL;
->  		} else {
-> -			gpio_set_value(bat->gpio_charge_off, 0);
-> +			gpiod_set_value(bat->gpio_charge_off.desc, 0);
->  			bat->status =3D POWER_SUPPLY_STATUS_CHARGING;
->  		}
->  	} else {
-> -		gpio_set_value(bat->gpio_charge_off, 1);
-> +		gpiod_set_value(bat->gpio_charge_off.desc, 1);
->  		bat->status =3D POWER_SUPPLY_STATUS_DISCHARGING;
->  	}
-> =20
-> @@ -251,18 +260,18 @@ static struct tosa_bat tosa_bat_main =3D {
->  	.full_chrg =3D -1,
->  	.psy =3D NULL,
-> =20
-> -	.gpio_full =3D TOSA_GPIO_BAT0_CRG,
-> -	.gpio_charge_off =3D TOSA_GPIO_CHARGE_OFF,
-> +	.gpio_full =3D { "main battery full", GPIOD_IN },
-> +	.gpio_charge_off =3D { "main charge off" , GPIOD_OUT_HIGH },
-> =20
->  	.technology =3D POWER_SUPPLY_TECHNOLOGY_LIPO,
-> =20
-> -	.gpio_bat =3D TOSA_GPIO_BAT0_V_ON,
-> +	.gpio_bat =3D { "main battery", GPIOD_OUT_LOW },
->  	.adc_bat =3D WM97XX_AUX_ID3,
->  	.adc_bat_divider =3D 414,
->  	.bat_max =3D 4310000,
->  	.bat_min =3D 1551 * 1000000 / 414,
-> =20
-> -	.gpio_temp =3D TOSA_GPIO_BAT1_TH_ON,
-> +	.gpio_temp =3D { "main battery temp", GPIOD_OUT_LOW },
->  	.adc_temp =3D WM97XX_AUX_ID2,
->  	.adc_temp_divider =3D 10000,
->  };
-> @@ -273,18 +282,18 @@ static struct tosa_bat tosa_bat_jacket =3D {
->  	.psy =3D NULL,
-> =20
->  	.is_present =3D tosa_jacket_bat_is_present,
-> -	.gpio_full =3D TOSA_GPIO_BAT1_CRG,
-> -	.gpio_charge_off =3D TOSA_GPIO_CHARGE_OFF_JC,
-> +	.gpio_full =3D { "jacket battery full", GPIOD_IN },
-> +	.gpio_charge_off =3D { "jacket charge off", GPIOD_OUT_HIGH },
-> =20
->  	.technology =3D POWER_SUPPLY_TECHNOLOGY_LIPO,
-> =20
-> -	.gpio_bat =3D TOSA_GPIO_BAT1_V_ON,
-> +	.gpio_bat =3D { "jacket battery", GPIOD_OUT_LOW },
->  	.adc_bat =3D WM97XX_AUX_ID3,
->  	.adc_bat_divider =3D 414,
->  	.bat_max =3D 4310000,
->  	.bat_min =3D 1551 * 1000000 / 414,
-> =20
-> -	.gpio_temp =3D TOSA_GPIO_BAT0_TH_ON,
-> +	.gpio_temp =3D { "jacket battery temp", GPIOD_OUT_LOW },
->  	.adc_temp =3D WM97XX_AUX_ID2,
->  	.adc_temp_divider =3D 10000,
->  };
-> @@ -294,36 +303,16 @@ static struct tosa_bat tosa_bat_bu =3D {
->  	.full_chrg =3D -1,
->  	.psy =3D NULL,
-> =20
-> -	.gpio_full =3D -1,
-> -	.gpio_charge_off =3D -1,
-> -
->  	.technology =3D POWER_SUPPLY_TECHNOLOGY_LiMn,
-> =20
-> -	.gpio_bat =3D TOSA_GPIO_BU_CHRG_ON,
-> +	.gpio_bat =3D { "backup battery", GPIOD_OUT_LOW },
->  	.adc_bat =3D WM97XX_AUX_ID4,
->  	.adc_bat_divider =3D 1266,
-> =20
-> -	.gpio_temp =3D -1,
->  	.adc_temp =3D -1,
->  	.adc_temp_divider =3D -1,
->  };
-> =20
-> -static struct gpio tosa_bat_gpios[] =3D {
-> -	{ TOSA_GPIO_CHARGE_OFF,	   GPIOF_OUT_INIT_HIGH, "main charge off" },
-> -	{ TOSA_GPIO_CHARGE_OFF_JC, GPIOF_OUT_INIT_HIGH, "jacket charge off" },
-> -	{ TOSA_GPIO_BAT_SW_ON,	   GPIOF_OUT_INIT_LOW,	"battery switch" },
-> -	{ TOSA_GPIO_BAT0_V_ON,	   GPIOF_OUT_INIT_LOW,	"main battery" },
-> -	{ TOSA_GPIO_BAT1_V_ON,	   GPIOF_OUT_INIT_LOW,	"jacket battery" },
-> -	{ TOSA_GPIO_BAT1_TH_ON,	   GPIOF_OUT_INIT_LOW,	"main battery temp" },
-> -	{ TOSA_GPIO_BAT0_TH_ON,	   GPIOF_OUT_INIT_LOW,	"jacket battery temp" },
-> -	{ TOSA_GPIO_BU_CHRG_ON,	   GPIOF_OUT_INIT_LOW,	"backup battery" },
-> -	{ TOSA_GPIO_BAT0_CRG,	   GPIOF_IN,		"main battery full" },
-> -	{ TOSA_GPIO_BAT1_CRG,	   GPIOF_IN,		"jacket battery full" },
-> -	{ TOSA_GPIO_BAT0_LOW,	   GPIOF_IN,		"main battery low" },
-> -	{ TOSA_GPIO_BAT1_LOW,	   GPIOF_IN,		"jacket battery low" },
-> -	{ TOSA_GPIO_JACKET_DETECT, GPIOF_IN,		"jacket detect" },
-> -};
-> -
->  #ifdef CONFIG_PM
->  static int tosa_bat_suspend(struct platform_device *dev, pm_message_t st=
-ate)
->  {
-> @@ -343,6 +332,21 @@ static int tosa_bat_resume(struct platform_device *d=
-ev)
->  #define tosa_bat_resume NULL
->  #endif
-> =20
-> +static int tosa_bat_gpio_get(struct device *dev, struct tosa_gpio *gpio)
-> +{
-> +	int ret;
-> +
-> +	if (!gpio->con)
-> +		return 0;
-> +
-> +	gpio->desc =3D devm_gpiod_get(dev, gpio->con, gpio->flags);
-> +	ret =3D PTR_ERR_OR_ZERO(gpio->desc);
-> +	if (ret)
-> +		dev_warn(dev, "failed to get gpio \"%s\"\n", gpio->con);
-> +
-> +	return ret;
-> +}
-> +
->  static int tosa_power_supply_register(struct device *dev,
->  			struct tosa_bat *bat,
->  			const struct power_supply_desc *desc)
-> @@ -350,6 +354,23 @@ static int tosa_power_supply_register(struct device =
-*dev,
->  	struct power_supply_config cfg =3D {
->  		.drv_data =3D bat,
->  	};
-> +	int ret;
-> +
-> +	ret =3D tosa_bat_gpio_get(dev, &bat->gpio_full);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D tosa_bat_gpio_get(dev, &bat->gpio_charge_off);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D tosa_bat_gpio_get(dev, &bat->gpio_bat);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D tosa_bat_gpio_get(dev, &bat->gpio_temp);
-> +	if (ret)
-> +		return ret;
-> =20
->  	mutex_init(&bat->work_lock);
->  	bat->psy =3D power_supply_register(dev, desc, &cfg);
-> @@ -358,49 +379,55 @@ static int tosa_power_supply_register(struct device=
- *dev,
->  }
-> =20
-> =20
-> -static int tosa_bat_probe(struct platform_device *dev)
-> +static int tosa_bat_probe(struct platform_device *pdev)
->  {
-> +	struct device *dev =3D &pdev->dev;
->  	int ret;
-> =20
->  	if (!machine_is_tosa())
->  		return -ENODEV;
-> =20
-> -	ret =3D gpio_request_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
-> +	ret =3D tosa_bat_gpio_get(dev, &gpiod_jacket_det);
->  	if (ret)
->  		return ret;
-> =20
-> +	/* these are not used anywhere, continue on failure */
-> +	tosa_bat_gpio_get(dev, &gpiod_battery_switch);
-> +	tosa_bat_gpio_get(dev, &gpiod_main_battery_low);
-> +	tosa_bat_gpio_get(dev, &gpiod_jacket_battery_low);
-> +
->  	INIT_WORK(&bat_work, tosa_bat_work);
-> =20
-> -	ret =3D tosa_power_supply_register(&dev->dev, &tosa_bat_main,
-> +	ret =3D tosa_power_supply_register(dev, &tosa_bat_main,
->  					 &tosa_bat_main_desc);
->  	if (ret)
->  		goto err_psy_reg_main;
-> =20
-> -	ret =3D tosa_power_supply_register(&dev->dev, &tosa_bat_jacket,
-> +	ret =3D tosa_power_supply_register(dev, &tosa_bat_jacket,
->  					 &tosa_bat_jacket_desc);
->  	if (ret)
->  		goto err_psy_reg_jacket;
-> =20
-> -	ret =3D tosa_power_supply_register(&dev->dev, &tosa_bat_bu,
-> +	ret =3D tosa_power_supply_register(dev, &tosa_bat_bu,
->  					 &tosa_bat_bu_desc);
->  	if (ret)
->  		goto err_psy_reg_bu;
-> =20
-> -	ret =3D request_irq(gpio_to_irq(TOSA_GPIO_BAT0_CRG),
-> +	ret =3D request_irq(gpiod_to_irq(tosa_bat_main.gpio_full.desc),
->  				tosa_bat_gpio_isr,
->  				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
->  				"main full", &tosa_bat_main);
->  	if (ret)
->  		goto err_req_main;
-> =20
-> -	ret =3D request_irq(gpio_to_irq(TOSA_GPIO_BAT1_CRG),
-> +	ret =3D request_irq(gpiod_to_irq(tosa_bat_jacket.gpio_full.desc),
->  				tosa_bat_gpio_isr,
->  				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
->  				"jacket full", &tosa_bat_jacket);
->  	if (ret)
->  		goto err_req_jacket;
-> =20
-> -	ret =3D request_irq(gpio_to_irq(TOSA_GPIO_JACKET_DETECT),
-> +	ret =3D request_irq(gpiod_to_irq(gpiod_jacket_det.desc),
->  				tosa_bat_gpio_isr,
->  				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
->  				"jacket detect", &tosa_bat_jacket);
-> @@ -409,9 +436,9 @@ static int tosa_bat_probe(struct platform_device *dev)
->  		return 0;
->  	}
-> =20
-> -	free_irq(gpio_to_irq(TOSA_GPIO_BAT1_CRG), &tosa_bat_jacket);
-> +	free_irq(gpiod_to_irq(tosa_bat_jacket.gpio_full.desc), &tosa_bat_jacket=
-);
->  err_req_jacket:
-> -	free_irq(gpio_to_irq(TOSA_GPIO_BAT0_CRG), &tosa_bat_main);
-> +	free_irq(gpiod_to_irq(tosa_bat_main.gpio_full.desc), &tosa_bat_main);
->  err_req_main:
->  	power_supply_unregister(tosa_bat_bu.psy);
->  err_psy_reg_bu:
-> @@ -423,15 +450,14 @@ static int tosa_bat_probe(struct platform_device *d=
-ev)
->  	/* see comment in tosa_bat_remove */
->  	cancel_work_sync(&bat_work);
-> =20
-> -	gpio_free_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
->  	return ret;
->  }
-> =20
->  static int tosa_bat_remove(struct platform_device *dev)
->  {
-> -	free_irq(gpio_to_irq(TOSA_GPIO_JACKET_DETECT), &tosa_bat_jacket);
-> -	free_irq(gpio_to_irq(TOSA_GPIO_BAT1_CRG), &tosa_bat_jacket);
-> -	free_irq(gpio_to_irq(TOSA_GPIO_BAT0_CRG), &tosa_bat_main);
-> +	free_irq(gpiod_to_irq(gpiod_jacket_det.desc), &tosa_bat_jacket);
-> +	free_irq(gpiod_to_irq(tosa_bat_jacket.gpio_full.desc), &tosa_bat_jacket=
-);
-> +	free_irq(gpiod_to_irq(tosa_bat_main.gpio_full.desc), &tosa_bat_main);
-> =20
->  	power_supply_unregister(tosa_bat_bu.psy);
->  	power_supply_unregister(tosa_bat_jacket.psy);
-> @@ -443,7 +469,6 @@ static int tosa_bat_remove(struct platform_device *de=
-v)
->  	 * unregistered now.
->  	 */
->  	cancel_work_sync(&bat_work);
-> -	gpio_free_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
->  	return 0;
->  }
-> =20
-> --=20
-> 2.20.0
->=20
+I also can send a patch to rename it if you need.
 
---5kovz5serylce4st
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards!
 
------BEGIN PGP SIGNATURE-----
+>
+> Kind regards
+> Uffe
+>
+>
+>> ---
+>>   drivers/mmc/host/jz4740_mmc.c | 23 +++++++++++++++++++++++
+>>   1 file changed, 23 insertions(+)
+>>
+>> diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc=
+.c
+>> index 44a04fe..4cbe7fb 100644
+>> --- a/drivers/mmc/host/jz4740_mmc.c
+>> +++ b/drivers/mmc/host/jz4740_mmc.c
+>> @@ -43,6 +43,7 @@
+>>   #define JZ_REG_MMC_RESP_FIFO   0x34
+>>   #define JZ_REG_MMC_RXFIFO      0x38
+>>   #define JZ_REG_MMC_TXFIFO      0x3C
+>> +#define JZ_REG_MMC_LPM         0x40
+>>   #define JZ_REG_MMC_DMAC                0x44
+>>
+>>   #define JZ_MMC_STRPCL_EXIT_MULTIPLE BIT(7)
+>> @@ -102,6 +103,12 @@
+>>   #define JZ_MMC_DMAC_DMA_SEL BIT(1)
+>>   #define JZ_MMC_DMAC_DMA_EN BIT(0)
+>>
+>> +#define        JZ_MMC_LPM_DRV_RISING BIT(31)
+>> +#define        JZ_MMC_LPM_DRV_RISING_QTR_PHASE_DLY BIT(31)
+>> +#define        JZ_MMC_LPM_DRV_RISING_1NS_DLY BIT(30)
+>> +#define        JZ_MMC_LPM_SMP_RISING_QTR_OR_HALF_PHASE_DLY BIT(29)
+>> +#define        JZ_MMC_LPM_LOW_POWER_MODE_EN BIT(0)
+>> +
+>>   #define JZ_MMC_CLK_RATE 24000000
+>>
+>>   enum jz4740_mmc_version {
+>> @@ -860,6 +867,22 @@ static int jz4740_mmc_set_clock_rate(struct jz4740_=
+mmc_host *host, int rate)
+>>          }
+>>
+>>          writew(div, host->base + JZ_REG_MMC_CLKRT);
+>> +
+>> +       if (real_rate > 25000000) {
+>> +               if (host->version >=3D JZ_MMC_X1000) {
+>> +                       writel(JZ_MMC_LPM_DRV_RISING_QTR_PHASE_DLY |
+>> +                                  JZ_MMC_LPM_SMP_RISING_QTR_OR_HALF_PHA=
+SE_DLY |
+>> +                                  JZ_MMC_LPM_LOW_POWER_MODE_EN,
+>> +                                  host->base + JZ_REG_MMC_LPM);
+>> +               } else if (host->version >=3D JZ_MMC_JZ4760) {
+>> +                       writel(JZ_MMC_LPM_DRV_RISING |
+>> +                                  JZ_MMC_LPM_LOW_POWER_MODE_EN,
+>> +                                  host->base + JZ_REG_MMC_LPM);
+>> +               } else if (host->version >=3D JZ_MMC_JZ4725B)
+>> +                       writel(JZ_MMC_LPM_LOW_POWER_MODE_EN,
+>> +                                  host->base + JZ_REG_MMC_LPM);
+>> +       }
+>> +
+>>          return real_rate;
+>>   }
+>>
+>> --
+>> 2.7.4
+>>
+>>
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl2q0tgACgkQ2O7X88g7
-+praeQ/7B+DU7DiqYMtjOx4cjrtNjTA1KQrDWHVR8Uwf5CI9rIT2ThclCeadzhmr
-MOSYr5wxnIhP8bYz6JxFVIpiPrFZsmyvTD0AtsOpTrNCxMdCwMKoa55Yn4aNQ2wO
-2M7I9LImHG+Pb1NFGZmI4HMHaWtXxt3w+KK1jfoTvKPkxBsLIWyfcoKzsiUZakKO
-9DBeph1f4huWMETJZiguR852GYAh1Iw07Sv29OgJJHHaeASuNz3zGo9RFw9x5RMe
-deaROClfIVDrbFEmbA6Zee2IOsNgkATiXswWWVOTJC60JL5AL7t2pqktSz6lX+ZN
-3IqABPOO8Shk9I0WLgV4G6jEr+Mgt3DxhXv6qsABSDJzunhnh5YJJjtVYrUUbps6
-w/O5nUIOE+6yF4pUohaPWSNZLBCclsqbd4jASSFj8rPTvQKEB++KfN9gUu9el+fD
-egHx8Sp6Do4dux4yhw3QmTspaRO7f3JJ5Xf/4Smqi6+zqXOt37eqPJ3xMdXLQrF1
-ZxmahKiT6e0d1Rz/S4PcKEIlbQX0EhOn9H7rqhk9BEimQB4FbV7j0jTFoQeoAxd3
-U3kij0Fa2Ag3BU6csxHbYfgzPUiNHeDGA03jW3e8n71sjjbY0JBkeOSg83syV67o
-oIrc4Rrgpb+121MMT3dTrCXUjNv6Mruq4zAaz/VSI7l5fhaoVoI=
-=m7WB
------END PGP SIGNATURE-----
 
---5kovz5serylce4st--
+
