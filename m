@@ -2,60 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9776DC746
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 16:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90E8BDC74E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 16:27:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634130AbfJROZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 10:25:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34994 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730937AbfJROZ0 (ORCPT
+        id S2634149AbfJRO1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 10:27:14 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45614 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410093AbfJRO1N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 10:25:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jcc1+ecujeFP9amWaaEK0sWmcb9810FGXg7viupUUuw=; b=uvI7mKv4KgeqsE8Kvolcfmo+a
-        P+z6BiDQNqceXE9dwMVcat/M3UZU70pZTGU1DeCqwPQwUi5YvvBUce17id8+Bj/LangeR+r/Qsvhw
-        3b17jFLtLzh5j6raTeO/jvrHNRwvVikywv0lJokbuLnvoObWEFTPBRn0NSazfEU5/NKDkAmMNBQQp
-        tGDszPqsOU8VWIQ9bKfSBMiEjQRRmTP4/2laIqNrrXBxXuJigUUAKcIAnpIEE0WlaYYglTe4JSeNd
-        DBNG2jH3S/zIkjBTtNsHl8bsPkUsUmDrZ/2fbzuS4+6HegzlBSSYLAt5K6BdU0N7QONuUeCeTNuhY
-        Zl4EgwyAQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iLTBz-0001xl-Gq; Fri, 18 Oct 2019 14:25:23 +0000
-Date:   Fri, 18 Oct 2019 07:25:23 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, matthew.wilcox@oracle.com,
-        kernel-team@fb.com, william.kucharski@oracle.com,
-        kirill.shutemov@linux.intel.com,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH] mm,thp: recheck each page before collapsing file THP
-Message-ID: <20191018142523.GL32665@bombadil.infradead.org>
-References: <20191018050832.1251306-1-songliubraving@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018050832.1251306-1-songliubraving@fb.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Fri, 18 Oct 2019 10:27:13 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q13so1522876wrs.12
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 07:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=1W5NI/wv1uPqOZl4UwHadNRRgfUhjmgG5NHjOvMoS64=;
+        b=ALh2c30X4Vy89Rep15JhELt8CpN+ivoCxgZZorJ0bloN63sDj1wflBC3UfDfwERp51
+         6oSjksZRYJo4gS2vARfUDA6eBYbm0o7z1ECAOmqc5C5jLXrrUSRvDP8atK8HIutnfTRj
+         bD+SxdLGw4MHW36Myucc/U6ExcaPyP5lJVvCN3+LdMZ2g/VQnfhXMd5ZoNH65lOfmY/e
+         tTAb4w/VK+0ntMJ+f4avjj31tXG+07vcWbLQZjDX+jfH0ari9fTr5C3HjQo7dZI2vNRc
+         SaJHwrNXeuIEhjnhNuuRIfBLa6/wP3rim0FQx8blkqcLzMKyl8/+C/JISOEKvQa6SbL/
+         Fomg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1W5NI/wv1uPqOZl4UwHadNRRgfUhjmgG5NHjOvMoS64=;
+        b=U23aKj5hryOB46YYwYJQ6gI/VQMBJfFCktUPzGFI4zH9rnMBImWKnrLFenqkUL9swW
+         I6s1BjuDERD8iyrLhPoULMX1p6sNA9CZjap/Ac0mkzQkt3cMjeLb1E7+aO9uCPNH6feo
+         KW020puVPVcVasBnxn8dFYs+kQ82ry4UsPWqcD8vFKx0xXmt1ocgOl9IsgkrZzqjXq4s
+         tTP5imf+/8Q2gjbvlOCOvNszL70KA8s0sBArbjtKTmfD9NSU5CsyZVjZFyGx4cjBuhg6
+         0ea4qu9Rfu4BpobFGcGqGYRRjVsFlxpt+T1hcGBVaW6l6mrVl9FqWuk+S0NqlL0RtpQb
+         IETQ==
+X-Gm-Message-State: APjAAAUPW3T/KzaJPVFw5kq/Sk4rbYXG6gVUwaHa8b3IabuEjTlCsTV5
+        BOpwmjvuJC+r7qwZW5/EKyM=
+X-Google-Smtp-Source: APXvYqztG/tu/QTZRUELhNY+BYjRGGN2sstwFPq8dG4aJfCpBXDO6ta8sLKNIC3KwS68zAw9YFRFcg==
+X-Received: by 2002:adf:8295:: with SMTP id 21mr7847660wrc.14.1571408831199;
+        Fri, 18 Oct 2019 07:27:11 -0700 (PDT)
+Received: from debian.office.codethink.co.uk. ([78.40.148.180])
+        by smtp.gmail.com with ESMTPSA id f18sm5817010wrv.38.2019.10.18.07.27.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Oct 2019 07:27:10 -0700 (PDT)
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] tty: rocket: reduce stack usage
+Date:   Fri, 18 Oct 2019 15:26:55 +0100
+Message-Id: <20191018142655.2609-1-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 10:08:32PM -0700, Song Liu wrote:
-> +			/* double check the page is correct and clean */
-> +			if (unlikely(!PageUptodate(page)) ||
-> +			    unlikely(PageDirty(page)) ||
-> +			    unlikely(page->mapping != mapping)) {
+The build of xtensa allmodconfig gives warning of:
+In function 'get_ports.isra.0':
+warning: the frame size of 1040 bytes is larger than 1024 bytes
 
-That's kind of an ugly way of writing it.  Why not more simply:
+Allocate memory for 'struct rocket_ports' dynamically to reduce the
+stack usage, as an added benifit we can remove the memset by using
+kzalloc while allocating memory.
 
-			if (unlikely(!PageUptodate(page) || PageDirty(page) ||
-				     page->mapping != mapping)) {
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
+ drivers/tty/rocket.c | 29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/tty/rocket.c b/drivers/tty/rocket.c
+index 5ba6816ebf81..cc1424b9a1e5 100644
+--- a/drivers/tty/rocket.c
++++ b/drivers/tty/rocket.c
+@@ -1222,22 +1222,25 @@ static int set_config(struct tty_struct *tty, struct r_port *info,
+  */
+ static int get_ports(struct r_port *info, struct rocket_ports __user *retports)
+ {
+-	struct rocket_ports tmp;
+-	int board;
++	struct rocket_ports *tmp;
++	int board, ret = 0;
+ 
+-	memset(&tmp, 0, sizeof (tmp));
+-	tmp.tty_major = rocket_driver->major;
++	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
++	tmp->tty_major = rocket_driver->major;
+ 
+ 	for (board = 0; board < 4; board++) {
+-		tmp.rocketModel[board].model = rocketModel[board].model;
+-		strcpy(tmp.rocketModel[board].modelString, rocketModel[board].modelString);
+-		tmp.rocketModel[board].numPorts = rocketModel[board].numPorts;
+-		tmp.rocketModel[board].loadrm2 = rocketModel[board].loadrm2;
+-		tmp.rocketModel[board].startingPortNumber = rocketModel[board].startingPortNumber;
+-	}
+-	if (copy_to_user(retports, &tmp, sizeof (*retports)))
+-		return -EFAULT;
+-	return 0;
++		tmp->rocketModel[board].model = rocketModel[board].model;
++		strcpy(tmp->rocketModel[board].modelString,
++		       rocketModel[board].modelString);
++		tmp->rocketModel[board].numPorts = rocketModel[board].numPorts;
++		tmp->rocketModel[board].loadrm2 = rocketModel[board].loadrm2;
++		tmp->rocketModel[board].startingPortNumber =
++			rocketModel[board].startingPortNumber;
++	}
++	if (copy_to_user(retports, tmp, sizeof(*retports)))
++		ret = -EFAULT;
++	kfree(tmp);
++	return ret;
+ }
+ 
+ static int reset_rm2(struct r_port *info, void __user *arg)
+-- 
+2.11.0
 
