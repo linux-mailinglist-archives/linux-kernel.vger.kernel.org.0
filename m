@@ -2,83 +2,343 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFC82DC511
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B859FDC523
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:39:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633898AbfJRMgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 08:36:03 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:55119 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403808AbfJRMgC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 08:36:02 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x9ICZi57020888, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCAS11.realtek.com.tw[172.21.6.12])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x9ICZi57020888
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Oct 2019 20:35:44 +0800
-Received: from RTITMBSVM04.realtek.com.tw ([fe80::e404:880:2ef1:1aa1]) by
- RTITCAS11.realtek.com.tw ([fe80::7c6d:ced5:c4ff:8297%15]) with mapi id
- 14.03.0468.000; Fri, 18 Oct 2019 20:35:43 +0800
-From:   Pkshih <pkshih@realtek.com>
-To:     "labbott@redhat.com" <labbott@redhat.com>,
-        "kvalo@codeaurora.org" <kvalo@codeaurora.org>
-CC:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nico@semmle.com" <nico@semmle.com>
-Subject: Re: [PATCH v2] rtlwifi: Fix potential overflow on P2P code
-Thread-Topic: [PATCH v2] rtlwifi: Fix potential overflow on P2P code
-Thread-Index: AQHVhalClczxzfC5skeU3Go3kf32jKdfz60A
-Date:   Fri, 18 Oct 2019 12:35:43 +0000
-Message-ID: <1571402142.1994.6.camel@realtek.com>
-References: <20191018114321.13131-1-labbott@redhat.com>
-In-Reply-To: <20191018114321.13131-1-labbott@redhat.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.6.62]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9E6FC9AFA9152045A93C210744C36458@realtek.com>
-Content-Transfer-Encoding: base64
+        id S2633901AbfJRMjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 08:39:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35636 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728515AbfJRMjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 08:39:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3AD3AB390;
+        Fri, 18 Oct 2019 12:39:02 +0000 (UTC)
+Date:   Fri, 18 Oct 2019 14:39:01 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     n-horiguchi@ah.jp.nec.com, mike.kravetz@oracle.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 11/16] mm,hwpoison: Rework soft offline for in-use
+ pages
+Message-ID: <20191018123901.GN5017@dhcp22.suse.cz>
+References: <20191017142123.24245-1-osalvador@suse.de>
+ <20191017142123.24245-12-osalvador@suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191017142123.24245-12-osalvador@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE5LTEwLTE4IGF0IDA3OjQzIC0wNDAwLCBMYXVyYSBBYmJvdHQgd3JvdGU6DQo+
-IE5pY29sYXMgV2Fpc21hbiBub3RpY2VkIHRoYXQgZXZlbiB0aG91Z2ggbm9hX2xlbiBpcyBjaGVj
-a2VkIGZvcg0KPiBhIGNvbXBhdGlibGUgbGVuZ3RoIGl0J3Mgc3RpbGwgcG9zc2libGUgdG8gb3Zl
-cnJ1biB0aGUgYnVmZmVycw0KPiBvZiBwMnBpbmZvIHNpbmNlIHRoZXJlJ3Mgbm8gY2hlY2sgb24g
-dGhlIHVwcGVyIGJvdW5kIG9mIG5vYV9udW0uDQo+IEJvdW5kIG5vYV9udW0gYWdhaW5zdCBQMlBf
-TUFYX05PQV9OVU0uDQo+IA0KPiBSZXBvcnRlZC1ieTogTmljb2xhcyBXYWlzbWFuIDxuaWNvQHNl
-bW1sZS5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IExhdXJhIEFiYm90dCA8bGFiYm90dEByZWRoYXQu
-Y29tPg0KDQpBY2tlZC1ieTogUGluZy1LZSBTaGloIDxwa3NoaWhAcmVhbHRlay5jb20+DQphbmQg
-UGxlYXNlIENDIHRvIHN0YWJsZQ0KQ2M6IFN0YWJsZSA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4g
-IyA0LjQrDQoNCi0tLQ0KDQpIaSBLYWxsZSwNCg0KVGhpcyBidWcgd2FzIGV4aXN0aW5nIHNpbmNl
-IHYzLjEwLCBhbmQgZGlyZWN0b3J5IG9mIHdpcmVsZXNzIGRyaXZlcnMgd2VyZQ0KbW92ZWQgYXQg
-djQuNC4gRG8gSSBuZWVkIHNlbmQgYW5vdGhlciBwYXRjaCB0byBmaXggdGhpcyBpc3N1ZSBmb3Ig
-bG9uZ3Rlcm0NCmtlcm5lbCB2My4xNi43NT8NCg0KVGhhbmtzDQpQSw0KDQoNCj4gLS0tDQo+IHYy
-OiBVc2UgUDJQX01BWF9OT0FfTlVNIGluc3RlYWQgb2YgZXJyb3Jpbmcgb3V0Lg0KPiAtLS0NCj4g
-wqBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvcHMuYyB8IDYgKysrKysrDQo+
-IMKgMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9wcy5jDQo+IGIvZHJpdmVycy9uZXQv
-d2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3BzLmMNCj4gaW5kZXggNzBmMDRjMmY1YjE3Li5mZmY4
-ZGRhMTQwMjMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRs
-d2lmaS9wcy5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9w
-cy5jDQo+IEBAIC03NTQsNiArNzU0LDkgQEAgc3RhdGljIHZvaWQgcnRsX3AycF9ub2FfaWUoc3Ry
-dWN0IGllZWU4MDIxMV9odyAqaHcsIHZvaWQNCj4gKmRhdGEsDQo+IMKgCQkJCXJldHVybjsNCj4g
-wqAJCQl9IGVsc2Ugew0KPiDCoAkJCQlub2FfbnVtID0gKG5vYV9sZW4gLSAyKSAvIDEzOw0KPiAr
-CQkJCWlmIChub2FfbnVtID4gUDJQX01BWF9OT0FfTlVNKQ0KPiArCQkJCQlub2FfbnVtID0gUDJQ
-X01BWF9OT0FfTlVNOw0KPiArDQo+IMKgCQkJfQ0KPiDCoAkJCW5vYV9pbmRleCA9IGllWzNdOw0K
-PiDCoAkJCWlmIChydGxwcml2LT5wc2MucDJwX3BzX2luZm8ucDJwX3BzX21vZGUgPT0NCj4gQEAg
-LTg0OCw2ICs4NTEsOSBAQCBzdGF0aWMgdm9pZCBydGxfcDJwX2FjdGlvbl9pZShzdHJ1Y3QgaWVl
-ZTgwMjExX2h3ICpodywNCj4gdm9pZCAqZGF0YSwNCj4gwqAJCQkJcmV0dXJuOw0KPiDCoAkJCX0g
-ZWxzZSB7DQo+IMKgCQkJCW5vYV9udW0gPSAobm9hX2xlbiAtIDIpIC8gMTM7DQo+ICsJCQkJaWYg
-KG5vYV9udW0gPiBQMlBfTUFYX05PQV9OVU0pDQo+ICsJCQkJCW5vYV9udW0gPSBQMlBfTUFYX05P
-QV9OVU07DQo+ICsNCj4gwqAJCQl9DQo+IMKgCQkJbm9hX2luZGV4ID0gaWVbM107DQo+IMKgCQkJ
-aWYgKHJ0bHByaXYtPnBzYy5wMnBfcHNfaW5mby5wMnBfcHNfbW9kZSA9PQ0KDQoNCg==
+On Thu 17-10-19 16:21:18, Oscar Salvador wrote:
+> This patch changes the way we set and handle in-use poisoned pages.
+> Until now, poisoned pages were released to the buddy allocator, trusting
+> that the checks that take place prior to hand the page would act as a
+> safe net and would skip that page.
+> 
+> This has proved to be wrong, as we got some pfn walkers out there, like
+> compaction, that all they care is the page to be PageBuddy and be in a
+> freelist.
+> Although this might not be the only user, having poisoned pages
+> in the buddy allocator seems a bad idea as we should only have
+> free pages that are ready and meant to be used as such.
+
+Agreed on this part.
+
+> Before explainaing the taken approach, let us break down the kind
+> of pages we can soft offline.
+> 
+> - Anonymous THP (after the split, they end up being 4K pages)
+> - Hugetlb
+> - Order-0 pages (that can be either migrated or invalited)
+> 
+> * Normal pages (order-0 and anon-THP)
+> 
+>   - If they are clean and unmapped page cache pages, we invalidate
+>     then by means of invalidate_inode_page().
+>   - If they are mapped/dirty, we do the isolate-and-migrate dance.
+> 
+>   Either way, do not call put_page directly from those paths.
+>   Instead, we keep the page and send it to page_set_poison to perform the
+>   right handling.
+> 
+>   page_set_poison sets the HWPoison flag and does the last put_page.
+>   This call to put_page is mainly to be able to call __page_cache_release,
+>   since this function is not exported.
+> 
+>   Down the chain, we placed a check for HWPoison page in free_pages_prepare,
+>   that just skips any poisoned page, so those pages do not end up in any
+>   pcplist/freelist.
+> 
+>   After that, we set the refcount on the page to 1 and we increment
+>   the poisoned pages counter.
+> 
+>   We could do as we do for free pages:
+>   1) wait until the page hits buddy's freelists
+>   2) take it off
+>   3) flag it
+> 
+>   The problem is that we could race with an allocation, so by the time we
+>   want to take the page off the buddy, the page is already allocated, so we
+>   cannot soft-offline it.
+>   This is not fatal of course, but if it is better if we can close the race
+>   as does not require a lot of code.
+> 
+> * Hugetlb pages
+> 
+>   - We isolate-and-migrate them
+> 
+>   After the migration has been succesful, we call dissolve_free_huge_page,
+>   and we set HWPoison on the page if we succeed.
+>   Hugetlb has a slightly different handling though.
+> 
+>   While for non-hugetlb pages we cared about closing the race with an allocation,
+>   doing so for hugetlb pages requires quite some additional code (we would need to
+>   hook in free_huge_page and some other places).
+>   So I decided to not make the code overly complicated and just fail normally
+>   if the page we allocated in the meantime.
+> 
+> Because of the way we handle now in-use pages, we no longer need the
+> put-as-isolation-migratetype dance, that was guarding for poisoned pages
+> to end up in pcplists.
+
+I am sorry but I got lost in the above description and I cannot really
+make much sense from the code either. Let me try to outline the way how
+I think about this.
+
+Say we have a pfn to hwpoison. We have effectivelly three possibilities
+- page is poisoned already - done nothing to do
+- page is managed by the buddy allocator - excavate from there
+- page is in use
+
+The last category is the most interesting one. There are essentially
+three classes of pages
+- freeable
+- migrateable
+- others
+
+We cannot do really much about the last one, right? Do we mark them
+HWPoison anyway?
+Freeable should be simply marked HWPoison and freed.
+For all those migrateable, we simply do migrate and mark HWPoison.
+
+Now the main question is how to handle HWPoison page when it is freed
+- aka last reference is dropped. The main question is whether the last
+reference is ever dropped. If yes then the free_pages_prepare should
+never release it to the allocator (some compound destructors would have
+to special case as well, e.g. hugetlb would have to hand over to the
+allocator rather than a pool). If not then the page would be lingering
+potentially with some state bound to it (e.g. memcg charge).  So I
+suspect you want the former.
+
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> ---
+>  include/linux/page-flags.h |  5 -----
+>  mm/memory-failure.c        | 43 ++++++++++++++-----------------------------
+>  mm/migrate.c               | 11 +++--------
+>  mm/page_alloc.c            | 31 +++----------------------------
+>  4 files changed, 20 insertions(+), 70 deletions(-)
+> 
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index f91cb8898ff0..21df81c9ea57 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -414,13 +414,8 @@ PAGEFLAG_FALSE(Uncached)
+>  PAGEFLAG(HWPoison, hwpoison, PF_ANY)
+>  TESTSCFLAG(HWPoison, hwpoison, PF_ANY)
+>  #define __PG_HWPOISON (1UL << PG_hwpoison)
+> -extern bool set_hwpoison_free_buddy_page(struct page *page);
+>  #else
+>  PAGEFLAG_FALSE(HWPoison)
+> -static inline bool set_hwpoison_free_buddy_page(struct page *page)
+> -{
+> -	return 0;
+> -}
+>  #define __PG_HWPOISON 0
+>  #endif
+>  
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 1d986580522d..9b40cf1cb4fc 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -80,9 +80,11 @@ EXPORT_SYMBOL_GPL(hwpoison_filter_flags_value);
+>  
+>  extern bool take_page_off_buddy(struct page *page);
+>  
+> -static void page_handle_poison(struct page *page)
+> +static void page_handle_poison(struct page *page, bool release)
+>  {
+>  	SetPageHWPoison(page);
+> +	if (release)
+> +		put_page(page);
+>  	page_ref_inc(page);
+>  	num_poisoned_pages_inc();
+>  }
+> @@ -1713,19 +1715,13 @@ static int soft_offline_huge_page(struct page *page)
+>  			ret = -EIO;
+>  	} else {
+>  		/*
+> -		 * We set PG_hwpoison only when the migration source hugepage
+> -		 * was successfully dissolved, because otherwise hwpoisoned
+> -		 * hugepage remains on free hugepage list, then userspace will
+> -		 * find it as SIGBUS by allocation failure. That's not expected
+> -		 * in soft-offlining.
+> +		 * We set PG_hwpoison only when we were able to take the page
+> +		 * off the buddy.
+>  		 */
+> -		ret = dissolve_free_huge_page(page);
+> -		if (!ret) {
+> -			if (set_hwpoison_free_buddy_page(page))
+> -				num_poisoned_pages_inc();
+> -			else
+> -				ret = -EBUSY;
+> -		}
+> +		if (!dissolve_free_huge_page(page) && take_page_off_buddy(page))
+> +			page_handle_poison(page, false);
+> +		else
+> +			ret = -EBUSY;
+>  	}
+>  	return ret;
+>  }
+> @@ -1760,10 +1756,8 @@ static int __soft_offline_page(struct page *page)
+>  	 * would need to fix isolation locking first.
+>  	 */
+>  	if (ret == 1) {
+> -		put_page(page);
+>  		pr_info("soft_offline: %#lx: invalidated\n", pfn);
+> -		SetPageHWPoison(page);
+> -		num_poisoned_pages_inc();
+> +		page_handle_poison(page, true);
+>  		return 0;
+>  	}
+>  
+> @@ -1794,7 +1788,9 @@ static int __soft_offline_page(struct page *page)
+>  		list_add(&page->lru, &pagelist);
+>  		ret = migrate_pages(&pagelist, new_page, NULL, MPOL_MF_MOVE_ALL,
+>  					MIGRATE_SYNC, MR_MEMORY_FAILURE);
+> -		if (ret) {
+> +		if (!ret) {
+> +			page_handle_poison(page, true);
+> +		} else {
+>  			if (!list_empty(&pagelist))
+>  				putback_movable_pages(&pagelist);
+>  
+> @@ -1813,27 +1809,16 @@ static int __soft_offline_page(struct page *page)
+>  static int soft_offline_in_use_page(struct page *page)
+>  {
+>  	int ret;
+> -	int mt;
+>  	struct page *hpage = compound_head(page);
+>  
+>  	if (!PageHuge(page) && PageTransHuge(hpage))
+>  		if (try_to_split_thp_page(page, "soft offline") < 0)
+>  			return -EBUSY;
+>  
+> -	/*
+> -	 * Setting MIGRATE_ISOLATE here ensures that the page will be linked
+> -	 * to free list immediately (not via pcplist) when released after
+> -	 * successful page migration. Otherwise we can't guarantee that the
+> -	 * page is really free after put_page() returns, so
+> -	 * set_hwpoison_free_buddy_page() highly likely fails.
+> -	 */
+> -	mt = get_pageblock_migratetype(page);
+> -	set_pageblock_migratetype(page, MIGRATE_ISOLATE);
+>  	if (PageHuge(page))
+>  		ret = soft_offline_huge_page(page);
+>  	else
+>  		ret = __soft_offline_page(page);
+> -	set_pageblock_migratetype(page, mt);
+>  	return ret;
+>  }
+>  
+> @@ -1842,7 +1827,7 @@ static int soft_offline_free_page(struct page *page)
+>  	int rc = -EBUSY;
+>  
+>  	if (!dissolve_free_huge_page(page) && take_page_off_buddy(page)) {
+> -		page_handle_poison(page);
+> +		page_handle_poison(page, false);
+>  		rc = 0;
+>  	}
+>  
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 4fe45d1428c8..71acece248d7 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -1224,16 +1224,11 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
+>  	 * we want to retry.
+>  	 */
+>  	if (rc == MIGRATEPAGE_SUCCESS) {
+> -		put_page(page);
+> -		if (reason == MR_MEMORY_FAILURE) {
+> +		if (reason != MR_MEMORY_FAILURE)
+>  			/*
+> -			 * Set PG_HWPoison on just freed page
+> -			 * intentionally. Although it's rather weird,
+> -			 * it's how HWPoison flag works at the moment.
+> +			 * We release the page in page_handle_poison.
+>  			 */
+> -			if (set_hwpoison_free_buddy_page(page))
+> -				num_poisoned_pages_inc();
+> -		}
+> +			put_page(page);
+>  	} else {
+>  		if (rc != -EAGAIN) {
+>  			if (likely(!__PageMovable(page))) {
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 255df0c76a40..cb35a4c8b1f2 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1132,6 +1132,9 @@ static __always_inline bool free_pages_prepare(struct page *page,
+>  
+>  	VM_BUG_ON_PAGE(PageTail(page), page);
+>  
+> +	if (unlikely(PageHWPoison(page)) && !order)
+> +		return false;
+> +
+>  	trace_mm_page_free(page, order);
+>  
+>  	/*
+> @@ -8698,32 +8701,4 @@ bool take_page_off_buddy(struct page *page)
+>  	spin_unlock_irqrestore(&zone->lock, flags);
+>  	return ret;
+>   }
+> -
+> -/*
+> - * Set PG_hwpoison flag if a given page is confirmed to be a free page.  This
+> - * test is performed under the zone lock to prevent a race against page
+> - * allocation.
+> - */
+> -bool set_hwpoison_free_buddy_page(struct page *page)
+> -{
+> -	struct zone *zone = page_zone(page);
+> -	unsigned long pfn = page_to_pfn(page);
+> -	unsigned long flags;
+> -	unsigned int order;
+> -	bool hwpoisoned = false;
+> -
+> -	spin_lock_irqsave(&zone->lock, flags);
+> -	for (order = 0; order < MAX_ORDER; order++) {
+> -		struct page *page_head = page - (pfn & ((1 << order) - 1));
+> -
+> -		if (PageBuddy(page_head) && page_order(page_head) >= order) {
+> -			if (!TestSetPageHWPoison(page))
+> -				hwpoisoned = true;
+> -			break;
+> -		}
+> -	}
+> -	spin_unlock_irqrestore(&zone->lock, flags);
+> -
+> -	return hwpoisoned;
+> -}
+>  #endif
+> -- 
+> 2.12.3
+
+-- 
+Michal Hocko
+SUSE Labs
