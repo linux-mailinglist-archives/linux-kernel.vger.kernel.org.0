@@ -2,386 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C44BDC92C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:44:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EAF0DC8F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:42:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505450AbfJRPoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 11:44:15 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:54997 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505173AbfJRPmm (ORCPT
+        id S2406045AbfJRPmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 11:42:07 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:30680 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728464AbfJRPmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 11:42:42 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MKKhF-1icBMt0kyF-00Lr5G; Fri, 18 Oct 2019 17:42:32 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH 36/46] ARM: pxa: move smemc register access from clk to platform
-Date:   Fri, 18 Oct 2019 17:41:51 +0200
-Message-Id: <20191018154201.1276638-36-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191018154052.1276506-1-arnd@arndb.de>
-References: <20191018154052.1276506-1-arnd@arndb.de>
+        Fri, 18 Oct 2019 11:42:07 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9IFNkim000339;
+        Fri, 18 Oct 2019 08:41:54 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=ZB+SZ0hSnUqrrzFSMfIrHyAwcTK9JWJQlouKjT2H2jg=;
+ b=Hj8VtmFdiX5cnSnUdn57A+YHiTNBLvSf2WM4/wfM5ozdgrErgmShGKBaP2EbaVEWh2ku
+ Jft/9X/7I9F1Y7jBMyAgC2uHJR7VxPk9zeGl9RLqCEzEwLKNdZsi9CtSZ4Cn3O+7Tw8m
+ mOZzlyDdiIQH0AAa8ZYt93BAWac/Zc2/FX4= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2vqeuqgf75-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 18 Oct 2019 08:41:54 -0700
+Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
+ prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Fri, 18 Oct 2019 08:41:53 -0700
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Fri, 18 Oct 2019 08:41:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=f1RDzVXPPuG7nnoD8fcm6UxfNtHnAhPJnE4RiKGYJfWu7DEBxQUeVsi/z59E0kFwT+iJ4o6g8RS1stf11DodwPhiuHI3xmNaRLyj6XxdS/in+xDPmC/dlr01nd5yIzLcgCHD6uhQX042pmPAiX2dpzymzjuecsnIwBsZES1zlV9GkF2SRj2Uf2eyG5BI0cPpEfOPOjU2vFNpt2Ssb1fZDKyg0Y4OYxPs8qE5U8X6NSragSO1hhr7niRQoYQMwGSeXhHHCmb6yDNWR9wPU6ZNcwzxJvAhaSeMxuyGrInDP2EvG+IIttUjTglZREftjZ8e7+hdy+cZnOgqhAhf+2qp3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZB+SZ0hSnUqrrzFSMfIrHyAwcTK9JWJQlouKjT2H2jg=;
+ b=j2/03vuGC5nWk2JJvt9d9P1CQgmsTCrdDiI2dQQv8VnpVF8SrSznhcNqnI/dcIqUVx4q7nO/R5PHT2wtY8HKjsri1o+QeV2iyagk75KYyztXYSQ/C2a/8ibD7uFCbkxqHbKj0UhceSRnDYSUDZwOP5hnC5VpZNt61dq9RD4Y73bGZ4q8ijg3F3fgIoZTGwt2foo1Py70GIZCKZqJXb9woHE0w67srv14xgG/ekiExThelflC1A53aDstaubGSb3xZVyttF0lKCO+IOSf1exeYs5BMJF85Odpk+m72lY1+GuABLCGGcotOXTp83E1umRNTLkedA2HTxLYsj+nXnGdOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZB+SZ0hSnUqrrzFSMfIrHyAwcTK9JWJQlouKjT2H2jg=;
+ b=fpAFlNhBbGDCZxti3WKx1e1QAzQXt16XAx+hpDWCz2WDtiR/BGZaYmHV12496aQCytIe0w99RDqbRLIEBRfhkMDFLlP3omc+7851lxGDPT+g+dRQ09rbksKTYIVmWvFs1IySEykTwVBekn5UYmPoMll7mhxsG0NJwCqVNXPZr8s=
+Received: from BYAPR15MB3479.namprd15.prod.outlook.com (20.179.57.24) by
+ BYAPR15MB3448.namprd15.prod.outlook.com (20.179.56.92) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2367.20; Fri, 18 Oct 2019 15:41:52 +0000
+Received: from BYAPR15MB3479.namprd15.prod.outlook.com
+ ([fe80::d51c:c256:7d42:ee23]) by BYAPR15MB3479.namprd15.prod.outlook.com
+ ([fe80::d51c:c256:7d42:ee23%3]) with mapi id 15.20.2367.019; Fri, 18 Oct 2019
+ 15:41:52 +0000
+From:   Rik van Riel <riel@fb.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Song Liu <songliubraving@fb.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "Johannes Weiner" <hannes@cmpxchg.org>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH] mm,thp: recheck each page before collapsing file THP
+Thread-Topic: [PATCH] mm,thp: recheck each page before collapsing file THP
+Thread-Index: AQHVhXJENhkhstl0P0GXabgc+7SHqadgZrUAgAAjgQA=
+Date:   Fri, 18 Oct 2019 15:41:52 +0000
+Message-ID: <137ff527ef842a9f46e32557e911c0f221745d6e.camel@fb.com>
+References: <20191018050832.1251306-1-songliubraving@fb.com>
+         <20191018133444.iif7b33muxmus6lb@box>
+In-Reply-To: <20191018133444.iif7b33muxmus6lb@box>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MN2PR19CA0006.namprd19.prod.outlook.com
+ (2603:10b6:208:178::19) To BYAPR15MB3479.namprd15.prod.outlook.com
+ (2603:10b6:a03:106::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c091:480::f10d]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3c5ba824-5c28-4df6-831f-08d753e1b28b
+x-ms-traffictypediagnostic: BYAPR15MB3448:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR15MB3448E66FDEA232900D3F2AAAA36C0@BYAPR15MB3448.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 01949FE337
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(376002)(136003)(366004)(346002)(189003)(199004)(66556008)(66476007)(66446008)(6512007)(66946007)(6636002)(64756008)(6246003)(4326008)(86362001)(2906002)(6486002)(6116002)(6436002)(305945005)(7736002)(102836004)(229853002)(6506007)(386003)(256004)(14444005)(36756003)(186003)(52116002)(478600001)(14454004)(76176011)(99286004)(54906003)(71200400001)(71190400001)(316002)(110136005)(11346002)(46003)(486006)(476003)(118296001)(446003)(2616005)(8936002)(81166006)(81156014)(8676002)(25786009)(5660300002)(4001150100001)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3448;H:BYAPR15MB3479.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: rEVohS04Whw1ML1dZmDrFWHIpAXDmgnUz2hoy2ojL9SY57qL/oACuwfQpdS91FV5K2hxD2OMNUaTaYQu+4pa99DVrCynXOOC6SAPwUI34M4yvgJ8Ex543eLqswdODOzT61dpKs7E0hJm6YMVdlOcarreh+XV9Iw5fEC3rwnYv+7Mfsduj65aJzI/lyNd6D22KvK3Bxth4LvBwo1UEPARFEfpnvQgan26A08n874EHZhthXHqSJ+jT12kNdMprv7p++u5Wq04dYR8iZz+m3FRTfwhfMpKq2kE1MUnlqwz/tyVCRQzrSn/iySw/gwP9fEXI5dq5M6nWmD4qolBnsewxR6sS8qkJktHWq00jH7XAt3PpT3Ho40Zz3pVQ9uHHpiPHJRG+MHjVmkgrPxW7g8rNJYFM5mBpubrVd/aZ/Y441i8ou3kDO1Z7LLfua2ruCzW
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6D072232D07F194281C85AC62EF5C9D5@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:vefQot4mM/0/KYwj0mbh8WEhS5x+08tf6SqzVPoLMRckoj1TaZG
- Vmi0PsagSv/2LRwp0sEc+15xtovMNpgpDoqj8Bg8w3FKPpRM3FaM/xK4YDBqW1mAr2iC4Rq
- AiDCa5KPtF5teLtE0M65WNK44qdFPc8+SSEwZIYMoWc0g8TdkAHDoZQyXsucZjAj7qdMz9i
- RvMJQMVmXQAahPjTwh6sQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:pA+dVlrwV1Y=:ui1MqPPZZTimHhl5Pkc88T
- YvCNDWJkOYT6V684/HX74gsOM3kj0MDIFSzoZmPi5j/uhdjs0lf6+16XWWpZW2op20dkU01yz
- +nyVeU1wl8H9GdipDrpil7co63x9SvYYVhbrY8sP+p75rDJ5iz5hTu8UWaGR3l1YI0lO2igRv
- SCv1ZRQtoNPZLjrZ6CutMKa+o2FhZOX+1pbMacYUc29ue6WqbWgUU5xv+3znie6SWYTET5nOA
- yxhOQ+CPBIZu/AG0gRSGCif1j2+5tz9PbN51RpwPe9I08vaYpFNMxbitng33XPlOUy6u5kGTA
- PmTvcXnoDi/CXigGRbCTJBK/sbJGm+w36Qaxiz2/DmJrAhavsyql2nr4IZv+fpqhfwdK761T9
- 0Lhn1q5N3zmdHf3Zf5vm2ARavMMa01SHTUruKTygxKojTyMr8VjiQ5zYIWJ45AO3JO8XGu9NE
- OrpnHVyKvSAaMaF/uWUSlRcyP1PGPrOkkDhF1pvOTKSoa161rZVUrZJV9OnQkoJgswWGdRxTU
- HXVPgcen+NdiWlHrcAmNcOw9uoO11p8tzFtILlaxe6vS4lTJSqJiVtsIDL8sydcEoljIzRui7
- e5ZxB5Vc4U69NZkJ1qAhWQBeQOhamWwt/C0PEiCoGtnExAm0xPxBr6Q8XmeNblO4089g0j6vI
- zQ7OTQuEUn0gJwUt09q2kBaji2oFs+Bd1Msf+PqhXStsUnkw+k62dw4YeLUZBk/4U9reo0f7e
- XBIisssmryIlx+n5PgX3J+VkGa6J+mMoGTpX50lkaJJYqAU9TtFTdrLrmXw+BqicOKiUgafrX
- nf09M8phDFe9EcFGZjt8gHqKdzIZQrlUb0mp2vyXLUlGdnFQk2a+G5iI7VhheFsKdgGd1EJ7b
- MDs1597H9aZS/zUGSOoA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c5ba824-5c28-4df6-831f-08d753e1b28b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2019 15:41:52.6387
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: i01yW7YyFMpY1nSMp+OtTA5QpqzkA7OmtVa4TnfWj6tdbACEq3AmgWzo49v0A3qc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3448
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-18_04:2019-10-18,2019-10-18 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0
+ lowpriorityscore=0 adultscore=0 mlxlogscore=999 spamscore=0 clxscore=1011
+ malwarescore=0 bulkscore=0 suspectscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910180141
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The get_sdram_rows() and get_memclkdiv() helpers need smemc
-register that are separate from the clk registers, move
-them out of the clk driver, and use an extern declaration
-instead.
-
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-pxa/generic.c   | 30 ++++++++++++++++++++++++++++++
- arch/arm/mach-pxa/pxa3xx.c    |  4 ++++
- arch/arm/mach-pxa/smemc.c     |  9 +++++++++
- drivers/clk/pxa/clk-pxa.c     |  4 +++-
- drivers/clk/pxa/clk-pxa.h     |  5 +++--
- drivers/clk/pxa/clk-pxa25x.c  | 30 +++---------------------------
- drivers/clk/pxa/clk-pxa27x.c  | 31 +++----------------------------
- drivers/clk/pxa/clk-pxa3xx.c  |  8 +++-----
- include/linux/soc/pxa/smemc.h |  3 +++
- 9 files changed, 61 insertions(+), 63 deletions(-)
-
-diff --git a/arch/arm/mach-pxa/generic.c b/arch/arm/mach-pxa/generic.c
-index 2c2c82fcf9cb..942af8946a73 100644
---- a/arch/arm/mach-pxa/generic.c
-+++ b/arch/arm/mach-pxa/generic.c
-@@ -18,6 +18,7 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/soc/pxa/cpu.h>
-+#include <linux/soc/pxa/smemc.h>
- 
- #include <asm/mach/map.h>
- #include <asm/mach-types.h>
-@@ -84,6 +85,35 @@ void pxa_smemc_set_pcmcia_socket(int nr)
- }
- EXPORT_SYMBOL_GPL(pxa_smemc_set_pcmcia_socket);
- 
-+#define MDCNFG_DRAC2(mdcnfg)	(((mdcnfg) >> 21) & 0x3)
-+#define MDCNFG_DRAC0(mdcnfg)	(((mdcnfg) >> 5) & 0x3)
-+
-+int pxa_smemc_get_sdram_rows(void)
-+{
-+	static int sdram_rows;
-+	unsigned int drac2 = 0, drac0 = 0;
-+	u32 mdcnfg;
-+
-+	if (sdram_rows)
-+		return sdram_rows;
-+
-+	mdcnfg = readl_relaxed(MDCNFG);
-+
-+	if (mdcnfg & (MDCNFG_DE2 | MDCNFG_DE3))
-+		drac2 = MDCNFG_DRAC2(mdcnfg);
-+
-+	if (mdcnfg & (MDCNFG_DE0 | MDCNFG_DE1))
-+		drac0 = MDCNFG_DRAC0(mdcnfg);
-+
-+	sdram_rows = 1 << (11 + max(drac0, drac2));
-+	return sdram_rows;
-+}
-+
-+void __iomem *pxa_smemc_get_mdrefr(void)
-+{
-+	return MDREFR;
-+}
-+
- /*
-  * Intel PXA2xx internal register mapping.
-  *
-diff --git a/arch/arm/mach-pxa/pxa3xx.c b/arch/arm/mach-pxa/pxa3xx.c
-index f4657f4edb3b..d486efb79dcd 100644
---- a/arch/arm/mach-pxa/pxa3xx.c
-+++ b/arch/arm/mach-pxa/pxa3xx.c
-@@ -52,6 +52,10 @@ extern void __init pxa_dt_irq_init(int (*fn)(struct irq_data *, unsigned int));
- #define NDCR_ND_ARB_EN		(1 << 12)
- #define NDCR_ND_ARB_CNTL	(1 << 19)
- 
-+#define CKEN_BOOT  		11      /* < Boot rom clock enable */
-+#define CKEN_TPM   		19      /* < TPM clock enable */
-+#define CKEN_HSIO2 		41      /* < HSIO2 clock enable */
-+
- #ifdef CONFIG_PM
- 
- #define ISRAM_START	0x5c000000
-diff --git a/arch/arm/mach-pxa/smemc.c b/arch/arm/mach-pxa/smemc.c
-index 47b99549d616..da0eeafdb5a0 100644
---- a/arch/arm/mach-pxa/smemc.c
-+++ b/arch/arm/mach-pxa/smemc.c
-@@ -69,4 +69,13 @@ static int __init smemc_init(void)
- 	return 0;
- }
- subsys_initcall(smemc_init);
-+
- #endif
-+
-+static const unsigned int df_clkdiv[4] = { 1, 2, 4, 1 };
-+unsigned int pxa3xx_smemc_get_memclkdiv(void)
-+{
-+	unsigned long memclkcfg = __raw_readl(MEMCLKCFG);
-+
-+	return	df_clkdiv[(memclkcfg >> 16) & 0x3];
-+}
-diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
-index cfc79f942b07..831180360069 100644
---- a/drivers/clk/pxa/clk-pxa.c
-+++ b/drivers/clk/pxa/clk-pxa.c
-@@ -11,6 +11,7 @@
- #include <linux/clkdev.h>
- #include <linux/io.h>
- #include <linux/of.h>
-+#include <linux/soc/pxa/smemc.h>
- 
- #include <dt-bindings/clock/pxa-clock.h>
- #include "clk-pxa.h"
-@@ -150,12 +151,13 @@ void pxa2xx_core_turbo_switch(bool on)
- }
- 
- void pxa2xx_cpll_change(struct pxa2xx_freq *freq,
--			u32 (*mdrefr_dri)(unsigned int), void __iomem *mdrefr,
-+			u32 (*mdrefr_dri)(unsigned int),
- 			void __iomem *cccr)
- {
- 	unsigned int clkcfg = freq->clkcfg;
- 	unsigned int unused, preset_mdrefr, postset_mdrefr;
- 	unsigned long flags;
-+	void __iomem *mdrefr = pxa_smemc_get_mdrefr();
- 
- 	local_irq_save(flags);
- 
-diff --git a/drivers/clk/pxa/clk-pxa.h b/drivers/clk/pxa/clk-pxa.h
-index f131d2834af4..d81fbec42004 100644
---- a/drivers/clk/pxa/clk-pxa.h
-+++ b/drivers/clk/pxa/clk-pxa.h
-@@ -146,12 +146,13 @@ static inline int dummy_clk_set_parent(struct clk_hw *hw, u8 index)
- 
- extern void clkdev_pxa_register(int ckid, const char *con_id,
- 				const char *dev_id, struct clk *clk);
--extern int clk_pxa_cken_init(const struct desc_clk_cken *clks, int nb_clks);
-+extern int clk_pxa_cken_init(const struct desc_clk_cken *clks,
-+			     int nb_clks);
- void clk_pxa_dt_common_init(struct device_node *np);
- 
- void pxa2xx_core_turbo_switch(bool on);
- void pxa2xx_cpll_change(struct pxa2xx_freq *freq,
--			u32 (*mdrefr_dri)(unsigned int), void __iomem *mdrefr,
-+			u32 (*mdrefr_dri)(unsigned int),
- 			void __iomem *cccr);
- int pxa2xx_determine_rate(struct clk_rate_request *req,
- 			  struct pxa2xx_freq *freqs,  int nb_freqs);
-diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
-index d0f957996acb..65807f000c6a 100644
---- a/drivers/clk/pxa/clk-pxa25x.c
-+++ b/drivers/clk/pxa/clk-pxa25x.c
-@@ -15,7 +15,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <mach/pxa2xx-regs.h>
--#include <mach/smemc.h>
-+#include <linux/soc/pxa/smemc.h>
- 
- #include <dt-bindings/clock/pxa-clock.h>
- #include "clk-pxa.h"
-@@ -33,9 +33,6 @@ enum {
- 	 ((T) ? CLKCFG_TURBO : 0))
- #define PXA25x_CCCR(N2, M, L) (N2 << 7 | M << 5 | L)
- 
--#define MDCNFG_DRAC2(mdcnfg)	(((mdcnfg) >> 21) & 0x3)
--#define MDCNFG_DRAC0(mdcnfg)	(((mdcnfg) >> 5) & 0x3)
--
- /* Define the refresh period in mSec for the SDRAM and the number of rows */
- #define SDRAM_TREF	64	/* standard 64ms SDRAM */
- 
-@@ -57,30 +54,9 @@ static const char * const get_freq_khz[] = {
- 	"core", "run", "cpll", "memory"
- };
- 
--static int get_sdram_rows(void)
--{
--	static int sdram_rows;
--	unsigned int drac2 = 0, drac0 = 0;
--	u32 mdcnfg;
--
--	if (sdram_rows)
--		return sdram_rows;
--
--	mdcnfg = readl_relaxed(MDCNFG);
--
--	if (mdcnfg & (MDCNFG_DE2 | MDCNFG_DE3))
--		drac2 = MDCNFG_DRAC2(mdcnfg);
--
--	if (mdcnfg & (MDCNFG_DE0 | MDCNFG_DE1))
--		drac0 = MDCNFG_DRAC0(mdcnfg);
--
--	sdram_rows = 1 << (11 + max(drac0, drac2));
--	return sdram_rows;
--}
--
- static u32 mdrefr_dri(unsigned int freq_khz)
- {
--	u32 interval = freq_khz * SDRAM_TREF / get_sdram_rows();
-+	u32 interval = freq_khz * SDRAM_TREF / pxa_smemc_get_sdram_rows();
- 
- 	return interval / 32;
- }
-@@ -268,7 +244,7 @@ static int clk_pxa25x_cpll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (i >= ARRAY_SIZE(pxa25x_freqs))
- 		return -EINVAL;
- 
--	pxa2xx_cpll_change(&pxa25x_freqs[i], mdrefr_dri, MDREFR, CCCR);
-+	pxa2xx_cpll_change(&pxa25x_freqs[i], mdrefr_dri, CCCR);
- 
- 	return 0;
- }
-diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
-index 287fdeae7c7c..eac67d425bee 100644
---- a/drivers/clk/pxa/clk-pxa27x.c
-+++ b/drivers/clk/pxa/clk-pxa27x.c
-@@ -12,8 +12,7 @@
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/of.h>
--
--#include <mach/smemc.h>
-+#include <linux/soc/pxa/smemc.h>
- 
- #include <dt-bindings/clock/pxa-clock.h>
- #include "clk-pxa.h"
-@@ -50,9 +49,6 @@ enum {
- 	 ((T)  ? CLKCFG_TURBO : 0))
- #define PXA27x_CCCR(A, L, N2) (A << 25 | N2 << 7 | L)
- 
--#define MDCNFG_DRAC2(mdcnfg)	(((mdcnfg) >> 21) & 0x3)
--#define MDCNFG_DRAC0(mdcnfg)	(((mdcnfg) >> 5) & 0x3)
--
- /* Define the refresh period in mSec for the SDRAM and the number of rows */
- #define SDRAM_TREF	64	/* standard 64ms SDRAM */
- 
-@@ -61,30 +57,9 @@ static const char * const get_freq_khz[] = {
- 	"system_bus"
- };
- 
--static int get_sdram_rows(void)
--{
--	static int sdram_rows;
--	unsigned int drac2 = 0, drac0 = 0;
--	u32 mdcnfg;
--
--	if (sdram_rows)
--		return sdram_rows;
--
--	mdcnfg = readl_relaxed(MDCNFG);
--
--	if (mdcnfg & (MDCNFG_DE2 | MDCNFG_DE3))
--		drac2 = MDCNFG_DRAC2(mdcnfg);
--
--	if (mdcnfg & (MDCNFG_DE0 | MDCNFG_DE1))
--		drac0 = MDCNFG_DRAC0(mdcnfg);
--
--	sdram_rows = 1 << (11 + max(drac0, drac2));
--	return sdram_rows;
--}
--
- static u32 mdrefr_dri(unsigned int freq_khz)
- {
--	u32 interval = freq_khz * SDRAM_TREF / get_sdram_rows();
-+	u32 interval = freq_khz * SDRAM_TREF / pxa_smemc_get_sdram_rows();
- 
- 	return (interval - 31) / 32;
- }
-@@ -260,7 +235,7 @@ static int clk_pxa27x_cpll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (i >= ARRAY_SIZE(pxa27x_freqs))
- 		return -EINVAL;
- 
--	pxa2xx_cpll_change(&pxa27x_freqs[i], mdrefr_dri, MDREFR, CCCR);
-+	pxa2xx_cpll_change(&pxa27x_freqs[i], mdrefr_dri, CCCR);
- 	return 0;
- }
- 
-diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
-index 60a0db4f3790..08594fc899e2 100644
---- a/drivers/clk/pxa/clk-pxa3xx.c
-+++ b/drivers/clk/pxa/clk-pxa3xx.c
-@@ -15,7 +15,7 @@
- #include <linux/clkdev.h>
- #include <linux/of.h>
- #include <linux/soc/pxa/cpu.h>
--#include <mach/smemc.h>
-+#include <linux/soc/pxa/smemc.h>
- #include <linux/clk/pxa.h>
- #include <mach/pxa3xx-regs.h>
- 
-@@ -41,8 +41,6 @@ static unsigned char hss_mult[4] = { 8, 12, 16, 24 };
- 
- /* crystal frequency to static memory controller multiplier (SMCFS) */
- static unsigned int smcfs_mult[8] = { 6, 0, 8, 0, 0, 16, };
--static unsigned int df_clkdiv[4] = { 1, 2, 4, 1 };
--
- static const char * const get_freq_khz[] = {
- 	"core", "ring_osc_60mhz", "run", "cpll", "system_bus"
- };
-@@ -118,10 +116,10 @@ static unsigned long clk_pxa3xx_smemc_get_rate(struct clk_hw *hw,
- 					      unsigned long parent_rate)
- {
- 	unsigned long acsr = ACSR;
--	unsigned long memclkcfg = __raw_readl(MEMCLKCFG);
- 
- 	return (parent_rate / 48)  * smcfs_mult[(acsr >> 23) & 0x7] /
--		df_clkdiv[(memclkcfg >> 16) & 0x3];
-+		pxa3xx_smemc_get_memclkdiv();
-+
- }
- PARENTS(clk_pxa3xx_smemc) = { "spll_624mhz" };
- RATE_RO_OPS(clk_pxa3xx_smemc, "smemc");
-diff --git a/include/linux/soc/pxa/smemc.h b/include/linux/soc/pxa/smemc.h
-index cbf1a2d8af29..9283e5642b19 100644
---- a/include/linux/soc/pxa/smemc.h
-+++ b/include/linux/soc/pxa/smemc.h
-@@ -6,5 +6,8 @@
- 
- void pxa_smemc_set_pcmcia_timing(int sock, u32 mcmem, u32 mcatt, u32 mcio);
- void pxa_smemc_set_pcmcia_socket(int nr);
-+int pxa_smemc_get_sdram_rows(void);
-+unsigned int pxa3xx_smemc_get_memclkdiv(void);
-+void __iomem *pxa_smemc_get_mdrefr(void);
- 
- #endif
--- 
-2.20.0
-
+T24gRnJpLCAyMDE5LTEwLTE4IGF0IDE2OjM0ICswMzAwLCBLaXJpbGwgQS4gU2h1dGVtb3Ygd3Jv
+dGU6DQo+IE9uIFRodSwgT2N0IDE3LCAyMDE5IGF0IDEwOjA4OjMyUE0gLTA3MDAsIFNvbmcgTGl1
+IHdyb3RlOg0KPiA+IEluIGNvbGxhcHNlX2ZpbGUoKSwgYWZ0ZXIgbG9ja2luZyB0aGUgcGFnZSwg
+aXQgaXMgbmVjZXNzYXJ5IHRvDQo+ID4gcmVjaGVjaw0KPiA+IHRoYXQgdGhlIHBhZ2UgaXMgdXAt
+dG8tZGF0ZSwgY2xlYW4sIGFuZCBwb2ludGluZyB0byB0aGUgcHJvcGVyDQo+ID4gbWFwcGluZy4N
+Cj4gPiBJZiBhbnkgY2hlY2sgZmFpbHMsIGFib3J0IHRoZSBjb2xsYXBzZS4NCj4gPiANCj4gPiBG
+aXhlczogOTljYjBkYmQ0N2ExICgibW0sdGhwOiBhZGQgcmVhZC1vbmx5IFRIUCBzdXBwb3J0IGZv
+ciAobm9uLQ0KPiA+IHNobWVtKSBGUyIpDQo+ID4gQ2M6IEtpcmlsbCBBLiBTaHV0ZW1vdiA8a2ly
+aWxsLnNodXRlbW92QGxpbnV4LmludGVsLmNvbT4NCj4gPiBDYzogSm9oYW5uZXMgV2VpbmVyIDxo
+YW5uZXNAY21weGNoZy5vcmc+DQo+ID4gQ2M6IEh1Z2ggRGlja2lucyA8aHVnaGRAZ29vZ2xlLmNv
+bT4NCj4gPiBDYzogV2lsbGlhbSBLdWNoYXJza2kgPHdpbGxpYW0ua3VjaGFyc2tpQG9yYWNsZS5j
+b20+DQo+ID4gQ2M6IEFuZHJldyBNb3J0b24gPGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc+DQo+
+ID4gU2lnbmVkLW9mZi1ieTogU29uZyBMaXUgPHNvbmdsaXVicmF2aW5nQGZiLmNvbT4NCj4gPiAt
+LS0NCj4gPiAgbW0va2h1Z2VwYWdlZC5jIHwgOCArKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdl
+ZCwgOCBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL21tL2todWdlcGFnZWQu
+YyBiL21tL2todWdlcGFnZWQuYw0KPiA+IGluZGV4IDBhMWI0YjQ4NGFjNS4uN2RhNDliNjQzYzRk
+IDEwMDY0NA0KPiA+IC0tLSBhL21tL2todWdlcGFnZWQuYw0KPiA+ICsrKyBiL21tL2todWdlcGFn
+ZWQuYw0KPiA+IEBAIC0xNjE5LDYgKzE2MTksMTQgQEAgc3RhdGljIHZvaWQgY29sbGFwc2VfZmls
+ZShzdHJ1Y3QgbW1fc3RydWN0DQo+ID4gKm1tLA0KPiA+ICAJCQkJcmVzdWx0ID0gU0NBTl9QQUdF
+X0xPQ0s7DQo+ID4gIAkJCQlnb3RvIHhhX2xvY2tlZDsNCj4gPiAgCQkJfQ0KPiA+ICsNCj4gPiAr
+CQkJLyogZG91YmxlIGNoZWNrIHRoZSBwYWdlIGlzIGNvcnJlY3QgYW5kIGNsZWFuDQo+ID4gKi8N
+Cj4gPiArCQkJaWYgKHVubGlrZWx5KCFQYWdlVXB0b2RhdGUocGFnZSkpIHx8DQo+ID4gKwkJCSAg
+ICB1bmxpa2VseShQYWdlRGlydHkocGFnZSkpIHx8DQo+ID4gKwkJCSAgICB1bmxpa2VseShwYWdl
+LT5tYXBwaW5nICE9IG1hcHBpbmcpKSB7DQo+ID4gKwkJCQlyZXN1bHQgPSBTQ0FOX0ZBSUw7DQo+
+ID4gKwkJCQlnb3RvIG91dF91bmxvY2s7DQo+ID4gKwkJCX0NCj4gPiAgCQl9DQo+ID4gIA0KPiA+
+ICAJCS8qDQo+IA0KPiBIbS4gQnV0IHdoeSBvbmx5IGZvciAhaXNfc2htZW0/IE9yIEkgcmVhZCBp
+dCB3cm9uZz8NCg0KSXQgbG9va3MgbGlrZSB0aGUgc2htZW0gY29kZSBwYXRoIGhhcyBpdHMgb3du
+IHdheSBvZiBiYWlsaW5nDQpvdXQgd2hlbiBhIHBhZ2UgaXMgIVBhZ2VVcHRvZGF0ZS4gQWxzbywg
+c2htZW0gY2FuIGhhbmRsZSBkaXJ0eQ0KcGFnZXMgZmluZS4NCg0KSG93ZXZlciwgSSBzdXBwb3Nl
+IHRoZSBzaG1lbSBjb2RlIG1pZ2h0IHdhbnQgdG8gY2hlY2sgZm9yIHRydW5jYXRlZA0KcGFnZXMs
+IHdoaWNoIGl0IGRvZXMgbm90IGN1cnJldG5seSBhcHBlYXIgdG8gZG8uIEkgZ3Vlc3MgZG9pbmcN
+CnRoZSB0cnlsb2NrX3BhZ2UgdW5kZXIgdGhlIHhhcnJheSBsb2NrIG1heSBwcm90ZWN0IGFnYWlu
+c3QgdHJ1bmNhdGUsDQpidXQgdGhhdCBpcyBzdWJ0bGUgZW5vdWdoIHRoYXQgYXQgdGhlIHZlcnkg
+bGVhc3QgaXQgc2hvdWxkIGJlDQpkb2N1bWVudGVkLg0KDQoNCg==
