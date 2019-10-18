@@ -2,196 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA4BADBCB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:11:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 525A1DBCD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394828AbfJRFKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:10:23 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45356 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727606AbfJRFKX (ORCPT
+        id S2437421AbfJRFVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:21:55 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43179 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726533AbfJRFVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:10:23 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r1so2654888pgj.12;
-        Thu, 17 Oct 2019 22:10:22 -0700 (PDT)
+        Fri, 18 Oct 2019 01:21:55 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j18so4721103wrq.10
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:21:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+EWYqOMJEOrwAelQrVSj5HwzBo+TWf7YqxT+vg7zDWE=;
-        b=b3Iq1OPqK5HQfae2P8Xv3XVKssSkqfpfeT3/1YGT3uEIQvhNcGr2l98icZIPr0/lSJ
-         a+t+QiS36I1nWnOkOrwj8SdfSd6sVCN3fz+metWDc3MBvB8OLaNjo7SUzodZUus4MUzM
-         4In5+nYEEtfd8pKNrVpwpdvgUfoRxnJd5ALQobye+0vNGu2TJz5S5sT/rpzmo3knCr9u
-         Fy9lTaJT+1X5QQ11h/Wcu6m6PYgRzfjr6iDwysJpWEgyAtYmdoRaUIeZKGpHxn3ilsUd
-         P71awp+HaIeZQq1/hgktqNapCjB3B5Lp20sY0jnfmwJNffh7x95lfSAoW6Nc+vkeZMM6
-         zjjA==
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YMtJ/rq4br1ldAroW8Dm9Xv9y05Fk6K5c9x3oKp9k7Q=;
+        b=pUdAa7J2Gehc3Z5S9pU0pPhmaabw9SjD3IScdYFCqeiH3a9/O0nd+npGP8SCaXV7ud
+         Mq/tpXJ03zoiJlySIp+C2bLcFQE3kz3xaUxLuoAgZsHlPhtDFPgaJgtQMwLCgRcyLqKl
+         pdNCMoaioINJYJGKaVPopoS23vLTZ8HYzl0/Toz2zbNO7gNdxWPh+lUW8akLY5nFvoaB
+         kR88ZMGqusSaZpH70Hpwo8f62b5xlkn/owvdAxJezCkYbdpfqMAygH4I6W6zwMcqPTrZ
+         jBxqiBp9fNjosicT7b99eNAyLeQ51Exl8xFWH245qIEAIQFebZQvModDW1RNp3gphBe/
+         N/HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+EWYqOMJEOrwAelQrVSj5HwzBo+TWf7YqxT+vg7zDWE=;
-        b=Dp7oD3bFX73sF0Gv2TErfkYDPi+3BP/GWDfKbSsVzPlH4a23dcvLAQrFCHAjXx01Gc
-         f0FL/yCq4LgyIrEJp6y2Kg27pfyCifwh0VV4mApN3ur6kHB8nHh4b5tN+2Rd11AIczIk
-         FvSJP8feseoousmc0m3OZ4FlUxjWhmUtY0jj1hium4RfWBrjar7UNk6zwfl97ViMO/Po
-         T+goCeh9joVsFeecXn6SlUf90SQs1RUF22xIIplmC86cbUKsqofaRUoPHMrtBpjq+pSi
-         WSVnQq/HM6EAs40wDfX04QHus7xdVPr3PyKh5Glqu5gjrgiR5CxSmlIQ+P4miGOj/sk/
-         IuTQ==
-X-Gm-Message-State: APjAAAUwpheooC56ptfaK4puwTfl29Ul8XNMcg4nDseH5Oi+xrmEyfm4
-        4cbz8SaWkrTxLhhSMm1ZK3Z+Pz/2dk4=
-X-Google-Smtp-Source: APXvYqxa8qrbWzhgY1avVUHnvL095QM2q4yqCnOM+3ueOITrdVvKeq2Qp+8FVXqPqBMYi2/1Fornyg==
-X-Received: by 2002:a17:90a:fd83:: with SMTP id cx3mr8614025pjb.64.1571373943189;
-        Thu, 17 Oct 2019 21:45:43 -0700 (PDT)
-Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id b3sm3696445pjp.13.2019.10.17.21.45.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 21:45:42 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-input@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Sam Bazely <sambazley@fastmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
-        Austin Palmer <austinp@valvesoftware.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH v3 2/3] HID: logitech-hidpp: rework device validation
-Date:   Thu, 17 Oct 2019 21:45:16 -0700
-Message-Id: <20191018044517.6430-3-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191018044517.6430-1-andrew.smirnov@gmail.com>
-References: <20191018044517.6430-1-andrew.smirnov@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YMtJ/rq4br1ldAroW8Dm9Xv9y05Fk6K5c9x3oKp9k7Q=;
+        b=l9NlFYldSqrVPYL8e3JlyFcmr6Xfa75RZjOiK3LxEfLj2hKNX6R83gvjUUYyoX51Ss
+         obj3ZjUXMxMPkqH8vMdPV+ZdPuMltskh73rz+2IPv7M70kVxntPhcG9w7HBjItQlc8YH
+         5fnZ9aPCBqVOCTwKe6BOGONMe1Q2e8hE6l0QZ6O0lwZEOQtq+qLz/GH4UaU+y02x7cHs
+         4UEtNULoV+QxXgEmZBVjNBAkVrYYcTP8t5YzO7s+CY3MSwhFz2UJ2S4R5yYqo4lQB3jT
+         OEjYMNV0Yj2KfztCpbzizaQz6b0XA9yAl4cH8ndOEYatMsWB0s0x2yTzZNmY/Jt9JUk2
+         kw6w==
+X-Gm-Message-State: APjAAAW9k29JZMtWCpWqTxxK2lHssUtpWeR0boCvoC7T/94swFFRFB24
+        YU43SH+KdD7IPmLff3DnWPVPF6tI5m11/EI7r7cKWMiQ
+X-Google-Smtp-Source: APXvYqyzL5PfqPUeOPJfIRSruOHCy55CDY3oAd0o+CVn7dWhpcrArUiDxTSajhvUF6JsyyNVFOA2Vcdi1oVTjp+LITs=
+X-Received: by 2002:a5d:440b:: with SMTP id z11mr5349333wrq.309.1571367051591;
+ Thu, 17 Oct 2019 19:50:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191017173743.5430-1-hch@lst.de> <20191017173743.5430-2-hch@lst.de>
+In-Reply-To: <20191017173743.5430-2-hch@lst.de>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Fri, 18 Oct 2019 08:20:40 +0530
+Message-ID: <CAAhSdy2fKnGbNHQHaxcthEsVDX_Jv3ZqPWHfmqn1gpB4sPho5g@mail.gmail.com>
+Subject: Re: [PATCH 01/15] riscv: cleanup <asm/bug.h>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-G920 device only advertises REPORT_ID_HIDPP_LONG and
-REPORT_ID_HIDPP_VERY_LONG in its HID report descriptor, so querying
-for REPORT_ID_HIDPP_SHORT with optional=false will always fail and
-prevent G920 to be recognized as a valid HID++ device.
+On Thu, Oct 17, 2019 at 11:07 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Remove various not required ifdefs and externs.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/riscv/include/asm/bug.h | 16 +++-------------
+>  1 file changed, 3 insertions(+), 13 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/bug.h b/arch/riscv/include/asm/bug.h
+> index 07ceee8b1747..75604fec1b1b 100644
+> --- a/arch/riscv/include/asm/bug.h
+> +++ b/arch/riscv/include/asm/bug.h
+> @@ -12,7 +12,6 @@
+>
+>  #include <asm/asm.h>
+>
+> -#ifdef CONFIG_GENERIC_BUG
+>  #define __INSN_LENGTH_MASK  _UL(0x3)
+>  #define __INSN_LENGTH_32    _UL(0x3)
+>  #define __COMPRESSED_INSN_MASK _UL(0xffff)
+> @@ -20,7 +19,6 @@
+>  #define __BUG_INSN_32  _UL(0x00100073) /* ebreak */
+>  #define __BUG_INSN_16  _UL(0x9002) /* c.ebreak */
+>
+> -#ifndef __ASSEMBLY__
+>  typedef u32 bug_insn_t;
+>
+>  #ifdef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
+> @@ -43,6 +41,7 @@ typedef u32 bug_insn_t;
+>         RISCV_SHORT " %2"
+>  #endif
+>
+> +#ifdef CONFIG_GENERIC_BUG
+>  #define __BUG_FLAGS(flags)                                     \
+>  do {                                                           \
+>         __asm__ __volatile__ (                                  \
+> @@ -58,14 +57,10 @@ do {                                                                \
+>                   "i" (flags),                                  \
+>                   "i" (sizeof(struct bug_entry)));              \
+>  } while (0)
+> -
+> -#endif /* !__ASSEMBLY__ */
+>  #else /* CONFIG_GENERIC_BUG */
+> -#ifndef __ASSEMBLY__
+>  #define __BUG_FLAGS(flags) do {                                        \
+>         __asm__ __volatile__ ("ebreak\n");                      \
+>  } while (0)
+> -#endif /* !__ASSEMBLY__ */
+>  #endif /* CONFIG_GENERIC_BUG */
+>
+>  #define BUG() do {                                             \
+> @@ -79,15 +74,10 @@ do {                                                                \
+>
+>  #include <asm-generic/bug.h>
+>
+> -#ifndef __ASSEMBLY__
+> -
+>  struct pt_regs;
+>  struct task_struct;
+>
+> -extern void die(struct pt_regs *regs, const char *str);
+> -extern void do_trap(struct pt_regs *regs, int signo, int code,
+> -       unsigned long addr);
+> -
+> -#endif /* !__ASSEMBLY__ */
+> +void die(struct pt_regs *regs, const char *str);
+> +void do_trap(struct pt_regs *regs, int signo, int code, unsigned long addr);
+>
+>  #endif /* _ASM_RISCV_BUG_H */
+> --
+> 2.20.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-To fix this and improve some other aspects, modify
-hidpp_validate_device() as follows:
+LGTM.
 
-  - Inline the code of hidpp_validate_report() to simplify
-    distingushing between non-present and invalid report descriptors
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-  - Drop the check for id >= HID_MAX_IDS || id < 0 since all of our
-    IDs are static and known to satisfy that at compile time
-
-  - Change the algorithms to check all possible report
-    types (including very long report) and deem the device as a valid
-    HID++ device if it supports at least one
-
-  - Treat invalid report length as a hard stop for the validation
-    algorithm, meaning that if any of the supported reports has
-    invalid length we assume the worst and treat the device as a
-    generic HID device.
-
-  - Fold initialization of hidpp->very_long_report_length into
-    hidpp_validate_device() since it already fetches very long report
-    length and validates its value
-
-Fixes: fe3ee1ec007b ("HID: logitech-hidpp: allow non HID++ devices to be handled by this module")
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=204191
-Reported-by: Sam Bazely <sambazley@fastmail.com>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Henrik Rydberg <rydberg@bitmath.org>
-Cc: Pierre-Loup A. Griffais <pgriffais@valvesoftware.com>
-Cc: Austin Palmer <austinp@valvesoftware.com>
-Cc: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org # 5.2+
----
- drivers/hid/hid-logitech-hidpp.c | 54 ++++++++++++++++++--------------
- 1 file changed, 30 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index 85911586b3b6..6e669eb7dc69 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -3498,34 +3498,45 @@ static int hidpp_get_report_length(struct hid_device *hdev, int id)
- 	return report->field[0]->report_count + 1;
- }
- 
--static bool hidpp_validate_report(struct hid_device *hdev, int id,
--				  int expected_length, bool optional)
-+static bool hidpp_validate_device(struct hid_device *hdev)
- {
--	int report_length;
-+	struct hidpp_device *hidpp = hid_get_drvdata(hdev);
-+	int id, report_length, supported_reports = 0;
-+
-+	id = REPORT_ID_HIDPP_SHORT;
-+	report_length = hidpp_get_report_length(hdev, id);
-+	if (report_length) {
-+		if (report_length < HIDPP_REPORT_SHORT_LENGTH)
-+			goto bad_device;
- 
--	if (id >= HID_MAX_IDS || id < 0) {
--		hid_err(hdev, "invalid HID report id %u\n", id);
--		return false;
-+		supported_reports++;
- 	}
- 
-+	id = REPORT_ID_HIDPP_LONG;
- 	report_length = hidpp_get_report_length(hdev, id);
--	if (!report_length)
--		return optional;
-+	if (report_length) {
-+		if (report_length < HIDPP_REPORT_LONG_LENGTH)
-+			goto bad_device;
- 
--	if (report_length < expected_length) {
--		hid_warn(hdev, "not enough values in hidpp report %d\n", id);
--		return false;
-+		supported_reports++;
- 	}
- 
--	return true;
--}
-+	id = REPORT_ID_HIDPP_VERY_LONG;
-+	report_length = hidpp_get_report_length(hdev, id);
-+	if (report_length) {
-+		if (report_length < HIDPP_REPORT_LONG_LENGTH ||
-+		    report_length > HIDPP_REPORT_VERY_LONG_MAX_LENGTH)
-+			goto bad_device;
- 
--static bool hidpp_validate_device(struct hid_device *hdev)
--{
--	return hidpp_validate_report(hdev, REPORT_ID_HIDPP_SHORT,
--				     HIDPP_REPORT_SHORT_LENGTH, false) &&
--	       hidpp_validate_report(hdev, REPORT_ID_HIDPP_LONG,
--				     HIDPP_REPORT_LONG_LENGTH, true);
-+		supported_reports++;
-+		hidpp->very_long_report_length = report_length;
-+	}
-+
-+	return supported_reports;
-+
-+bad_device:
-+	hid_warn(hdev, "not enough values in hidpp report %d\n", id);
-+	return false;
- }
- 
- static bool hidpp_application_equals(struct hid_device *hdev,
-@@ -3572,11 +3583,6 @@ static int hidpp_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 		return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
- 	}
- 
--	hidpp->very_long_report_length =
--		hidpp_get_report_length(hdev, REPORT_ID_HIDPP_VERY_LONG);
--	if (hidpp->very_long_report_length > HIDPP_REPORT_VERY_LONG_MAX_LENGTH)
--		hidpp->very_long_report_length = HIDPP_REPORT_VERY_LONG_MAX_LENGTH;
--
- 	if (id->group == HID_GROUP_LOGITECH_DJ_DEVICE)
- 		hidpp->quirks |= HIDPP_QUIRK_UNIFYING;
- 
--- 
-2.21.0
-
+Regards,
+Anup
