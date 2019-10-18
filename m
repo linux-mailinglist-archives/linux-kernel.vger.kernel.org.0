@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 289C6DC49A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:22:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A603DC49B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 14:22:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442728AbfJRMWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2442718AbfJRMWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 18 Oct 2019 08:22:13 -0400
-Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:36970 "EHLO
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:36966 "EHLO
         smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2442699AbfJRMWM (ORCPT
+        by vger.kernel.org with ESMTP id S2442708AbfJRMWM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Oct 2019 08:22:12 -0400
 Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 5975EC04D7;
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 714EDC04D8;
         Fri, 18 Oct 2019 12:15:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1571400951; bh=oQQShnjm5R0MR/xjv312sQ6gQ7J+z4O6hvMy/a53QQ0=;
+        t=1571400951; bh=jLkKy2hks3L8ylKTsganMXawjwSgKe7zOimqAAm3Gn0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Evvf5DHGG7VfVLWRKmvc8rRiZVi3Qxi7atXeNgJ54Nl/mqE4NqWeq8GWpaKNh2tsy
-         BmolhZsh4uSf1pTIQFm1TkXsBY79ZAaeeAvlWY2hU2W11GkF9EdS12yot+l+NNfOUN
-         A7ZmrLEKK9A3BAJxy2FWcA+FQqNU29zCRaNpRClzANrBwJSUd8Cv/BBLKQz17L5VAY
-         HA4w2K/DtimhvZt1LB5fJIDzlLeTbcMqCpt6eYkyznpISkCDrNut+uuFoanr+I0+cf
-         uJ4tKECNqKNpGeEM1uDUQNMMLpLTv8fxkopmSkISUD/fceknO7B1pjNcCOWm+FK5Zw
-         oZroCuxRoVOvQ==
+        b=N6w2HnxAZezvhMtu9qU1Y47rtBMzW2DtLzZV8TSwIvqlSy7chAPQwF4Y5HPLb4UjB
+         btVTyJphfC33x1rjts+OdKEabMd1dTQkMHDfVH4ReeiJMMIKdlYVYY78Kl1lBrc2Jo
+         TrHz3tpv47REzW8yI3udvxxxL7gXLYJltOkaUXm7RwLhb0c4eZaWc6oMLv1AVb/Oq+
+         uzGjx5TGDlxf7r3L9h5ptzTrH6ZBtITfgfFAEEZb3PVyIvcWqYilOmMWwGkwo57O0I
+         suf4Oaaz7JhD5n6S7d8FfxuUVEoy4NjslXfE/r2tsXV+UKvGi2mJQLSSFyBUXmijb3
+         lMQl5c5Ga9lFA==
 Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.73])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 542A1A006D;
+        by mailhost.synopsys.com (Postfix) with ESMTP id D7F2EA0070;
         Fri, 18 Oct 2019 12:15:49 +0000 (UTC)
 From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 To:     linux-snps-arc@lists.infradead.org,
@@ -35,9 +35,9 @@ To:     linux-snps-arc@lists.infradead.org,
 Cc:     linux-kernel@vger.kernel.org,
         Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [RFC 4/6] ARC: HAPS: add HIGHMEM memory zone to DTS
-Date:   Fri, 18 Oct 2019 15:15:43 +0300
-Message-Id: <20191018121545.8907-5-Eugeniy.Paltsev@synopsys.com>
+Subject: [RFC 5/6] ARC: HAPS: cleanup defconfigs from unused ETH drivers
+Date:   Fri, 18 Oct 2019 15:15:44 +0300
+Message-Id: <20191018121545.8907-6-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191018121545.8907-1-Eugeniy.Paltsev@synopsys.com>
 References: <20191018121545.8907-1-Eugeniy.Paltsev@synopsys.com>
@@ -48,52 +48,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is required as a preparation of merging nSIM and HASP
-defonfig and device tree.
-
-As we have HIGHMEM disabled in both HAPS and nSIM defconfigs
-this doesn't lead to any functional change.
+We have multiple vendors ethernet drivers enabled in haps_hs and
+haps_hs_smp defconfig. The only one we possibly require is
+VIRTIO_NET. So disable unused ones via disabling entire
+CONFIG_ETHERNET which controls all vendor-specific ethernet
+drivers.
 
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
- arch/arc/boot/dts/haps_hs.dts | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ arch/arc/configs/haps_hs_defconfig     | 11 +----------
+ arch/arc/configs/haps_hs_smp_defconfig | 11 +----------
+ 2 files changed, 2 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arc/boot/dts/haps_hs.dts b/arch/arc/boot/dts/haps_hs.dts
-index 11fad2f79056..60d578e2781f 100644
---- a/arch/arc/boot/dts/haps_hs.dts
-+++ b/arch/arc/boot/dts/haps_hs.dts
-@@ -9,13 +9,15 @@
- / {
- 	model = "snps,zebu_hs";
- 	compatible = "snps,zebu_hs";
--	#address-cells = <1>;
--	#size-cells = <1>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
- 	interrupt-parent = <&core_intc>;
- 
- 	memory {
- 		device_type = "memory";
--		reg = <0x80000000 0x20000000>;	/* 512 */
-+		/* CONFIG_LINUX_RAM_BASE needs to match low mem start */
-+		reg = <0x0 0x80000000 0x0 0x20000000	/* 512 MB low mem */
-+		       0x1 0x00000000 0x0 0x40000000>;	/* 1 GB highmem */
- 	};
- 
- 	chosen {
-@@ -31,8 +33,9 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 
--		/* child and parent address space 1:1 mapped */
--		ranges;
-+		/* only perip space at end of low mem accessible
-+			  bus addr,  parent bus addr, size    */
-+		ranges = <0x80000000 0x0 0x80000000 0x80000000>;
- 
- 		core_clk: core_clk {
- 			#clock-cells = <0>;
+diff --git a/arch/arc/configs/haps_hs_defconfig b/arch/arc/configs/haps_hs_defconfig
+index 33b7a402b6bd..7337cdf4ffdd 100644
+--- a/arch/arc/configs/haps_hs_defconfig
++++ b/arch/arc/configs/haps_hs_defconfig
+@@ -36,16 +36,7 @@ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_VIRTIO_BLK=y
+ CONFIG_NETDEVICES=y
+ CONFIG_VIRTIO_NET=y
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
++# CONFIG_ETHERNET is not set
+ # CONFIG_WLAN is not set
+ CONFIG_INPUT_EVDEV=y
+ # CONFIG_INPUT_KEYBOARD is not set
+diff --git a/arch/arc/configs/haps_hs_smp_defconfig b/arch/arc/configs/haps_hs_smp_defconfig
+index 5586511a00bf..bc927221afc0 100644
+--- a/arch/arc/configs/haps_hs_smp_defconfig
++++ b/arch/arc/configs/haps_hs_smp_defconfig
+@@ -37,16 +37,7 @@ CONFIG_DEVTMPFS=y
+ # CONFIG_PREVENT_FIRMWARE_BUILD is not set
+ # CONFIG_BLK_DEV is not set
+ CONFIG_NETDEVICES=y
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
++# CONFIG_ETHERNET is not set
+ # CONFIG_WLAN is not set
+ CONFIG_INPUT_EVDEV=y
+ # CONFIG_INPUT_KEYBOARD is not set
 -- 
 2.21.0
 
