@@ -2,153 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96D50DBD1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:38:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 336E8DBD3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:50:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404124AbfJRFiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:38:51 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45965 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391330AbfJRFiu (ORCPT
+        id S2404899AbfJRFt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:49:56 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51848 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727823AbfJRFtz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:38:50 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y72so3121154pfb.12
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:38:50 -0700 (PDT)
+        Fri, 18 Oct 2019 01:49:55 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 7so4796083wme.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:49:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=favjdzRU1rfhU7ChOjnx/HV3JdEGUj6dDH+WdrDvfms=;
-        b=vUspotA4ZuOGuUodX8gkdySdRLnqUW6TrEa8jP7fdzEC6CUR0IFEdhDYtqqG5iYSeZ
-         FHZThIg5bXROG9MY/BtWzzZ23fBXFgSDOiwVwXeDCxPlNABXxDDx02KCK5xGy9+9xd4U
-         grU+4C0WZRYGSoxz23MkOrzJ/dJVY56ENmyUJyZ3fH7/LqwyuI1X0qWx2qjLzKdPoFnN
-         yxG/5Vzbzl+ptro/zEiK7mP+JcmUZL7Qg33nkqwodfeNOLVV7kUyxZIScfjYz3yvZqQ9
-         xWOxkGqK+bJ+fOnw6UlBRJaBx1k8JLSXefW6psXIhSWWNLvmZaG6P73lmFHbbPMsYI75
-         jaKw==
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Be+nqHFdPq0NG3pyh4Rq7hQf+czCYg0L1pW1x7p+760=;
+        b=DoA6IJxv26NmgWjkeJeBKv/mm4gBftt7CZNlftvhSbQVjLZT75mE7vzu4UmAD3XZPr
+         MRZM0pDFz2HNMJySzUfEeVzKl1VbHaCSxmAkUVujCaolp5Wh+9U/Ly3OfHSQKuvrGup6
+         17AV7GSnpvpJFD26BfqTFd0Vq4dAvC4GfuQJZvzcGAxuaYucrdMCrnPHINXF+JFR7V2G
+         Jp5KD1aPBzQSYNWWB+1DBO3+Y51RVtciU2HDBz2oHOnZZnFnAxepA6Ai3+9sWhQ7eM+F
+         DUpXaFYjmHize5NmajKvCdL3pkf0OuvGiewLyWcoSTIHUVbZdvAoBbsATT4micGZ7Tw1
+         0Z2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=favjdzRU1rfhU7ChOjnx/HV3JdEGUj6dDH+WdrDvfms=;
-        b=LY4xjjNdazxe5X79FggIfsZ/SI42zHRdW4PNUgw5ny07IgaPe5Zv+IK8Yo4vZb327r
-         Hqivnc7DqYNuaduVPZ4u33nLYi82ROL5e7PFc9Qy8zaQ2VRD1m0uglmTIPLVXdrvszjq
-         aItycbS2zntZo9NuytT6FPcjsxix+Yv/4+qb9SSjYH5kH+EO/xfclQv3brMq7XmUGq1i
-         Mq9mM1Bfg4tp2scid4WybBS142SXBCmLGDxnks+YtsVRm1Zxt5NZmmyZAHpzhykWJCNl
-         cPxIRwZDCALV6SzmZ9hZN0OT0BGLo4XVEpWgH4gr16B908DFFlHPOSELKQEdudz5Y9TK
-         ehWA==
-X-Gm-Message-State: APjAAAXhuHgx7/dUhS6/PZXDR/l4LqYNYMbIBecnIVBJePJebrCX2Lx7
-        oYdGZNWyTXa9ewljQJvRzC2xZw==
-X-Google-Smtp-Source: APXvYqwAf78oDe4HV2k0xDu05GH8JYfHA0WpKkJGlDFTWKOn1FS3MDAG/e3XGdMC15CBnZUy2Ghrcg==
-X-Received: by 2002:a17:90a:ad95:: with SMTP id s21mr8860945pjq.11.1571377129786;
-        Thu, 17 Oct 2019 22:38:49 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id i16sm4824533pfa.184.2019.10.17.22.38.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 22:38:47 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 11:08:44 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: flush any pending policy update work scheduled
- before freeing
-Message-ID: <20191018053844.s2fbk2le6uz3chk6@vireshk-i7>
-References: <20191017163503.30791-1-sudeep.holla@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Be+nqHFdPq0NG3pyh4Rq7hQf+czCYg0L1pW1x7p+760=;
+        b=Bow/FAs7Hlf6kuZ1z0QnjcaA883H2r5r4C3l8Q1Eda/dWRU57ywN5R8bN54l6QPfps
+         TeSwtu80BOO/HpD8evRX9Gj9WgUkPAe6bkCXYLJ2bYF5aAgcIO/5KJz8ad4ih3Q7jd3m
+         Lu0qQQooaAhibCbbd55n/A0IXQ44wj54xlhFFk/zyy7/qYao2Q/bohmPRTAJCh43QheQ
+         5eQGGXeT0/fBXKLJjx8HLbgnAajrfaJ6JltDL66pHREUx0PmGRoFUOypga8KuNBJKCCW
+         nhIXmYqZdW7moj7URZHYy6z1WWZHD00sn8zXz4WwQN8Y+oGwv63ANiAotoyvvLAZBH/k
+         TRKw==
+X-Gm-Message-State: APjAAAUA5NX/sLEp14NL3wcTMhItWy7HYgnY9GYi003X408F/sw4a58Y
+        +mHkUn06nLzCwreFGOyvDraJeVAQ9JRRRlNra+/qVZWVHwM=
+X-Google-Smtp-Source: APXvYqwxdrfkpUCWZjtubzLxwgGss6R4bxw1aLLjLER8GLyL4IIeYeiFxknMdYUVFzcsXWuLWKN0LVPHIz/j2kKUtgc=
+X-Received: by 2002:a05:600c:214f:: with SMTP id v15mr5252538wml.177.1571367467638;
+ Thu, 17 Oct 2019 19:57:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017163503.30791-1-sudeep.holla@arm.com>
-User-Agent: NeoMutt/20180716-391-311a52
+References: <20191017173743.5430-1-hch@lst.de> <20191017173743.5430-9-hch@lst.de>
+In-Reply-To: <20191017173743.5430-9-hch@lst.de>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Fri, 18 Oct 2019 08:27:36 +0530
+Message-ID: <CAAhSdy2Ln1H4hSbjSt30pZQpHRiP5G2rJffDXFDS6TbvBnM-vw@mail.gmail.com>
+Subject: Re: [PATCH 08/15] riscv: add support for MMIO access to the timer registers
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-10-19, 17:35, Sudeep Holla wrote:
-> dev_pm_qos_remove_request ends calling {max,min}_freq_req QoS notifiers
-> which schedule policy update work.
-
-I don't think that's correct. We remove the notifiers first and then
-only remove the requests. Though it is possible due to the other bug
-we are discussing where the notifier doesn't really get removed from
-the right CPU, but even that patch didn't fix your issue.
-
-Looks like we are still missing something ?
-
-> It may end up racing with the freeing
-> the policy and unregistering the driver.
-> 
-> One possible race is as below where the cpufreq_driver is unregistered
-> but the scheduled work gets executed at later stage when cpufreq_driver
-> is NULL(i.e. after freeing the policy and driver)
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address 0000001c
-> pgd = (ptrval)
-> [0000001c] *pgd=80000080204003, *pmd=00000000
-> Internal error: Oops: 206 [#1] SMP THUMB2
-> Modules linked in:
-> CPU: 0 PID: 34 Comm: kworker/0:1 Not tainted 5.4.0-rc3-00006-g67f5a8081a4b #86
-> Hardware name: ARM-Versatile Express
-> Workqueue: events handle_update
-> PC is at cpufreq_set_policy+0x58/0x228
-> LR is at dev_pm_qos_read_value+0x77/0xac
-> Control: 70c5387d  Table: 80203000  DAC: fffffffd
-> Process kworker/0:1 (pid: 34, stack limit = 0x(ptrval))
-> 	(cpufreq_set_policy) from (refresh_frequency_limits.part.24+0x37/0x48)
-> 	(refresh_frequency_limits.part.24) from (handle_update+0x2f/0x38)
-> 	(handle_update) from (process_one_work+0x16d/0x3cc)
-> 	(process_one_work) from (worker_thread+0xff/0x414)
-> 	(worker_thread) from (kthread+0xff/0x100)
-> 	(kthread) from (ret_from_fork+0x11/0x28)
-> 
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+On Thu, Oct 17, 2019 at 11:08 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> When running in M-mode we can't use the SBI to set the timer, and
+> don't have access to the time CSR as that usually is emulated by
+> M-mode.  Instead provide code that directly accesses the MMIO for
+> the timer.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  drivers/cpufreq/cpufreq.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> Hi Rafael, Viresh,
-> 
-> This fixed the boot issue I reported[1] on TC2 with bL switcher enabled.
-> I have based this patch on -rc3 and not on top of your patches. This
-> only fixes the boot issue but I hit the other crashes while continuously
-> switching on and off the bL switcher that register/unregister the driver
-> Your patch series fixes them. I can based this on top of those if you
-> prefer.
-> 
-> Regards,
-> Sudeep
-> 
-> [1] https://lore.kernel.org/linux-pm/20191015155735.GA29105@bogus/
-> 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index c52d6fa32aac..b703c29a84be 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -1278,6 +1278,9 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
->  	}
->  
->  	dev_pm_qos_remove_request(policy->min_freq_req);
-> +	/* flush the pending policy->update work before freeing the policy */
-> +	if (work_pending(&policy->update))
-> +		flush_work(&policy->update);
+>  arch/riscv/include/asm/sbi.h      |  3 ++-
+>  arch/riscv/include/asm/timex.h    | 19 +++++++++++++++++--
+>  drivers/clocksource/timer-riscv.c | 21 +++++++++++++++++----
+>  3 files changed, 36 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> index 0cb74eccc73f..a4774bafe033 100644
+> --- a/arch/riscv/include/asm/sbi.h
+> +++ b/arch/riscv/include/asm/sbi.h
+> @@ -95,7 +95,8 @@ static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+>         SBI_CALL_4(SBI_REMOTE_SFENCE_VMA_ASID, hart_mask, start, size, asid);
+>  }
+>  #else /* CONFIG_RISCV_SBI */
+> -/* stub to for code is only reachable under IS_ENABLED(CONFIG_RISCV_SBI): */
+> +/* stubs to for code is only reachable under IS_ENABLED(CONFIG_RISCV_SBI): */
+> +void sbi_set_timer(uint64_t stime_value);
+>  void sbi_remote_fence_i(const unsigned long *hart_mask);
+>  #endif /* CONFIG_RISCV_SBI */
+>  #endif /* _ASM_RISCV_SBI_H */
+> diff --git a/arch/riscv/include/asm/timex.h b/arch/riscv/include/asm/timex.h
+> index c7ef131b9e4c..e17837d61667 100644
+> --- a/arch/riscv/include/asm/timex.h
+> +++ b/arch/riscv/include/asm/timex.h
+> @@ -7,12 +7,25 @@
+>  #define _ASM_RISCV_TIMEX_H
+>
+>  #include <asm/csr.h>
+> +#include <asm/io.h>
+>
+>  typedef unsigned long cycles_t;
+>
+> +extern u64 __iomem *riscv_time_val;
+> +extern u64 __iomem *riscv_time_cmp;
+> +
+> +#ifdef CONFIG_64BIT
+> +#define mmio_get_cycles()      readq_relaxed(riscv_time_val)
+> +#else
+> +#define mmio_get_cycles()      readl_relaxed(riscv_time_val)
+> +#define mmio_get_cycles_hi()   readl_relaxed(((u32 *)riscv_time_val) + 1)
+> +#endif
+> +
+>  static inline cycles_t get_cycles(void)
+>  {
+> -       return csr_read(CSR_TIME);
+> +       if (IS_ENABLED(CONFIG_RISCV_SBI))
+> +               return csr_read(CSR_TIME);
+> +       return mmio_get_cycles();
+>  }
+>  #define get_cycles get_cycles
+>
+> @@ -24,7 +37,9 @@ static inline u64 get_cycles64(void)
+>  #else /* CONFIG_64BIT */
+>  static inline u32 get_cycles_hi(void)
+>  {
+> -       return csr_read(CSR_TIMEH);
+> +       if (IS_ENABLED(CONFIG_RISCV_SBI))
+> +               return csr_read(CSR_TIMEH);
+> +       return mmio_get_cycles_hi();
+>  }
+>
+>  static inline u64 get_cycles64(void)
+> diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
+> index 5d2fdc3e28a9..2b9fbc4ebe49 100644
+> --- a/drivers/clocksource/timer-riscv.c
+> +++ b/drivers/clocksource/timer-riscv.c
+> @@ -3,9 +3,9 @@
+>   * Copyright (C) 2012 Regents of the University of California
+>   * Copyright (C) 2017 SiFive
+>   *
+> - * All RISC-V systems have a timer attached to every hart.  These timers can be
+> - * read from the "time" and "timeh" CSRs, and can use the SBI to setup
+> - * events.
+> + * All RISC-V systems have a timer attached to every hart.  These timers can
+> + * either be read from the "time" and "timeh" CSRs, and can use the SBI to
+> + * setup events, or directly accessed using MMIO registers.
+>   */
+>  #include <linux/clocksource.h>
+>  #include <linux/clockchips.h>
+> @@ -13,14 +13,27 @@
+>  #include <linux/delay.h>
+>  #include <linux/irq.h>
+>  #include <linux/sched_clock.h>
+> +#include <linux/io-64-nonatomic-lo-hi.h>
+>  #include <asm/smp.h>
+>  #include <asm/sbi.h>
+>
+> +u64 __iomem *riscv_time_cmp;
+> +u64 __iomem *riscv_time_val;
+> +
+> +static inline void mmio_set_timer(u64 val)
+> +{
+> +       writeq_relaxed(val,
+> +               riscv_time_cmp + cpuid_to_hartid_map(smp_processor_id()));
+> +}
+> +
+>  static int riscv_clock_next_event(unsigned long delta,
+>                 struct clock_event_device *ce)
+>  {
+>         csr_set(CSR_XIE, XIE_XTIE);
+> -       sbi_set_timer(get_cycles64() + delta);
+> +       if (IS_ENABLED(CONFIG_RISCV_SBI))
+> +               sbi_set_timer(get_cycles64() + delta);
+> +       else
+> +               mmio_set_timer(get_cycles64() + delta);
+>         return 0;
+>  }
+>
+> --
+> 2.20.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-This diff surely makes sense even without the QoS stuff, this race can
-still happen, very unlikely though.
+LGTM.
 
-And yes, you must use the other variant that Rafael suggested, we are
-already doing similar thing in a bunch of cpufreq governors :)
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-And I will probably add this after calling
-dev_pm_qos_remove_notifier() for the MAX policy as this doesn't and
-shouldn't depend on removing the qos request.
-
->  	kfree(policy->min_freq_req);
->  
->  	cpufreq_policy_put_kobj(policy);
-> -- 
-> 2.17.1
-
--- 
-viresh
+Regards,
+Anup
