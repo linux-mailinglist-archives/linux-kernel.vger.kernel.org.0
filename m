@@ -2,142 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBA61DC25F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02DCCDC239
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:12:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633437AbfJRKOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:14:00 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:32928 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S2633421AbfJRKN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:13:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B45967B9;
-        Fri, 18 Oct 2019 03:13:39 -0700 (PDT)
-Received: from e112269-lin.cambridge.arm.com (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2ADEE3F6C4;
-        Fri, 18 Oct 2019 03:13:37 -0700 (PDT)
-From:   Steven Price <steven.price@arm.com>
-To:     linux-mm@kvack.org
-Cc:     Steven Price <steven.price@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v12 13/22] mm: pagewalk: Add test_p?d callbacks
-Date:   Fri, 18 Oct 2019 11:12:39 +0100
-Message-Id: <20191018101248.33727-14-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191018101248.33727-1-steven.price@arm.com>
-References: <20191018101248.33727-1-steven.price@arm.com>
+        id S2633279AbfJRKMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:12:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2633218AbfJRKMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 06:12:42 -0400
+Received: from localhost (unknown [209.136.236.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B23D222C3;
+        Fri, 18 Oct 2019 10:12:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571393561;
+        bh=15Uz10pfRzT/PuTPEJ8kDH4R9b5B2WikPZM+ia3KwdA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=p6+yn5QsqVxDNfFgac3MNethqiWP89iNgNPkhVxfQ+5ok/MlF1Cha3r/hRYtWpmXk
+         7WtlBQdwcE+Jl1qK9GuMT0KdcsbbFveywGocYUlILBa5MVYWDyYbocZKywuZUcZ4rD
+         RrW75om6ip+1wg0Df2KK9Cok1bA3sL3RixQGtzbA=
+Date:   Fri, 18 Oct 2019 03:12:39 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.3 000/112] 5.3.7-stable review
+Message-ID: <20191018101239.GA1172118@kroah.com>
+References: <20191016214844.038848564@linuxfoundation.org>
+ <ef7c7e93-909c-890f-868b-44c93f6f7616@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef7c7e93-909c-890f-868b-44c93f6f7616@nvidia.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is useful to be able to skip parts of the page table tree even when
-walking without VMAs. Add test_p?d callbacks similar to test_walk but
-which are called just before a table at that level is walked. If the
-callback returns non-zero then the entire table is skipped.
+On Fri, Oct 18, 2019 at 09:01:50AM +0100, Jon Hunter wrote:
+> 
+> On 16/10/2019 22:49, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.3.7 release.
+> > There are 112 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Fri 18 Oct 2019 09:43:41 PM UTC.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.7-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v5.3:
+>     12 builds:	12 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     38 tests:	38 pass, 0 fail
+> 
+> Linux version:	5.3.7-rc1-gcbb18cd3e478
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- include/linux/pagewalk.h | 11 +++++++++++
- mm/pagewalk.c            | 24 ++++++++++++++++++++++++
- 2 files changed, 35 insertions(+)
+Wonderful, thanks for testing all of these and letting me know.
 
-diff --git a/include/linux/pagewalk.h b/include/linux/pagewalk.h
-index 12004b097eae..df424197a25a 100644
---- a/include/linux/pagewalk.h
-+++ b/include/linux/pagewalk.h
-@@ -24,6 +24,11 @@ struct mm_walk;
-  *			"do page table walk over the current vma", returning
-  *			a negative value means "abort current page table walk
-  *			right now" and returning 1 means "skip the current vma"
-+ * @test_pmd:		similar to test_walk(), but called for every pmd.
-+ * @test_pud:		similar to test_walk(), but called for every pud.
-+ * @test_p4d:		similar to test_walk(), but called for every p4d.
-+ *			Returning 0 means walk this part of the page tables,
-+ *			returning 1 means to skip this range.
-  *
-  * p?d_entry callbacks are called even if those levels are folded on a
-  * particular architecture/configuration.
-@@ -46,6 +51,12 @@ struct mm_walk_ops {
- 			     struct mm_walk *walk);
- 	int (*test_walk)(unsigned long addr, unsigned long next,
- 			struct mm_walk *walk);
-+	int (*test_pmd)(unsigned long addr, unsigned long next,
-+			pmd_t *pmd_start, struct mm_walk *walk);
-+	int (*test_pud)(unsigned long addr, unsigned long next,
-+			pud_t *pud_start, struct mm_walk *walk);
-+	int (*test_p4d)(unsigned long addr, unsigned long next,
-+			p4d_t *p4d_start, struct mm_walk *walk);
- };
- 
- /**
-diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-index 4139e9163aee..43acffefd43f 100644
---- a/mm/pagewalk.c
-+++ b/mm/pagewalk.c
-@@ -34,6 +34,14 @@ static int walk_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
- 	const struct mm_walk_ops *ops = walk->ops;
- 	int err = 0;
- 
-+	if (ops->test_pmd) {
-+		err = ops->test_pmd(addr, end, pmd_offset(pud, 0UL), walk);
-+		if (err < 0)
-+			return err;
-+		if (err > 0)
-+			return 0;
-+	}
-+
- 	pmd = pmd_offset(pud, addr);
- 	do {
- again:
-@@ -85,6 +93,14 @@ static int walk_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
- 	const struct mm_walk_ops *ops = walk->ops;
- 	int err = 0;
- 
-+	if (ops->test_pud) {
-+		err = ops->test_pud(addr, end, pud_offset(p4d, 0UL), walk);
-+		if (err < 0)
-+			return err;
-+		if (err > 0)
-+			return 0;
-+	}
-+
- 	pud = pud_offset(p4d, addr);
- 	do {
-  again:
-@@ -128,6 +144,14 @@ static int walk_p4d_range(pgd_t *pgd, unsigned long addr, unsigned long end,
- 	const struct mm_walk_ops *ops = walk->ops;
- 	int err = 0;
- 
-+	if (ops->test_p4d) {
-+		err = ops->test_p4d(addr, end, p4d_offset(pgd, 0UL), walk);
-+		if (err < 0)
-+			return err;
-+		if (err > 0)
-+			return 0;
-+	}
-+
- 	p4d = p4d_offset(pgd, addr);
- 	do {
- 		next = p4d_addr_end(addr, end);
--- 
-2.20.1
-
+greg k-h
