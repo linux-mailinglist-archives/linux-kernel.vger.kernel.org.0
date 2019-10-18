@@ -2,33 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1872DBC77
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECFBADBC75
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504171AbfJRFFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:05:39 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57424 "EHLO huawei.com"
+        id S2504150AbfJRFFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:05:36 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57418 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2407460AbfJRFFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:05:32 -0400
+        id S2389739AbfJRFFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 01:05:31 -0400
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0E99AE0AF947A235E1AF;
+        by Forcepoint Email with ESMTP id 059DAA76D140617EEE1E;
         Fri, 18 Oct 2019 11:19:46 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 18 Oct 2019 11:19:36 +0800
+ 14.3.439.0; Fri, 18 Oct 2019 11:19:37 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Petr Mladek <pmladek@suse.com>, <linux-kernel@vger.kernel.org>
 CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH v2 28/33] ASoC: samsung: Use pr_warn instead of pr_warning
-Date:   Fri, 18 Oct 2019 11:18:45 +0800
-Message-ID: <20191018031850.48498-28-wangkefeng.wang@huawei.com>
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v2 29/33] printk: Drop pr_warning
+Date:   Fri, 18 Oct 2019 11:18:46 +0800
+Message-ID: <20191018031850.48498-29-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018031850.48498-1-wangkefeng.wang@huawei.com>
 References: <20191018031710.41052-1-wangkefeng.wang@huawei.com>
@@ -43,42 +39,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
-pr_warning"), removing pr_warning so all logging messages use a
-consistent <prefix>_warn style. Let's do it.
+With all pr_warning are removed, saftely drop pr_warning definition.
 
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- sound/soc/samsung/s3c-i2s-v2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/printk.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/sound/soc/samsung/s3c-i2s-v2.c b/sound/soc/samsung/s3c-i2s-v2.c
-index 7e196b599be1..593be1b668d6 100644
---- a/sound/soc/samsung/s3c-i2s-v2.c
-+++ b/sound/soc/samsung/s3c-i2s-v2.c
-@@ -672,13 +672,13 @@ static int s3c2412_i2s_suspend(struct snd_soc_dai *dai)
- 		iismod = readl(i2s->regs + S3C2412_IISMOD);
- 
- 		if (iismod & S3C2412_IISCON_RXDMA_ACTIVE)
--			pr_warning("%s: RXDMA active?\n", __func__);
-+			pr_warn("%s: RXDMA active?\n", __func__);
- 
- 		if (iismod & S3C2412_IISCON_TXDMA_ACTIVE)
--			pr_warning("%s: TXDMA active?\n", __func__);
-+			pr_warn("%s: TXDMA active?\n", __func__);
- 
- 		if (iismod & S3C2412_IISCON_IIS_ACTIVE)
--			pr_warning("%s: IIS active\n", __func__);
-+			pr_warn("%s: IIS active\n", __func__);
- 	}
- 
- 	return 0;
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index c09d67edda3a..1e6108b8d15f 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -302,9 +302,8 @@ extern int kptr_restrict;
+ 	printk(KERN_CRIT pr_fmt(fmt), ##__VA_ARGS__)
+ #define pr_err(fmt, ...) \
+ 	printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+-#define pr_warning(fmt, ...) \
++#define pr_warn(fmt, ...) \
+ 	printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
+-#define pr_warn pr_warning
+ #define pr_notice(fmt, ...) \
+ 	printk(KERN_NOTICE pr_fmt(fmt), ##__VA_ARGS__)
+ #define pr_info(fmt, ...) \
 -- 
 2.20.1
 
