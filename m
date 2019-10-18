@@ -2,208 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 108BEDC257
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 736FEDC2AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 12:20:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633507AbfJRKOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 06:14:21 -0400
-Received: from mail-eopbgr760050.outbound.protection.outlook.com ([40.107.76.50]:6850
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2633484AbfJRKOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:14:19 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mi37szwimSH75B1tOLpVmlEmqSI8kOVHpMSOGUOFquH/dm+Y6al47U2G/kAkRVtRQelUPFDqPdqodaOxRC/UOnzYb73eTUyk0QOt/99S0m1fHvGygUHtbZ3J2NuO3XYIuVzhtJpqNjYuL536pjvry6uO+pjg7jYnjli5hlDT0C+s391jolz4f9cUo/qakzJXy3MR51KGIzuyP1nBkhlCfnxFjDcsnmmIlQXnG5YqnIfaCIWYECev58i1dkjGH4s3ZQ4QIgk29qFhl4PCCsfd/2tbrKzCSYTLYDGjnZqs+FQBP3NJ7UJvXNWJXZ2PCXCgVzSY7ElckJ/h+RKCRi4R5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6MGGiyrrLr1vVm/pYlJkP4AC0TQMkbhkx2InrFVh8rE=;
- b=JLrjipappHJwaTq1vY8QtwJp/Mqy0A9DuC/ElG0DAy5Q+f9l7UYXM69ZEf+fwTX+D+g1fT4yzw4+avQFRwUcRX4zPkmEqGG5/UirVbwaRanM/yxOWjqg+IVqXJcsZ0l5yQVUfsnL6Bqc1KG+JdJ0krzELRsaRnJyB7yFS52CxCp53WnrLMqszdOk7o99b5NTrcopVuHz3fhoVJLlQq5jO29oz0h407G4OaBIpMedI1mvRYG6SgqSsjYiw4m0owUQkTqRVFZ/gu2KLYDxoxuRqEWJY+zzRQZQ9WZWDa4gtGrI4jLUoT4KeBC1tJuESfAhspd9d5iNXwsPjbNJx1GGLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com;
- dmarc=permerror action=none header.from=amd.com; dkim=none (message not
- signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6MGGiyrrLr1vVm/pYlJkP4AC0TQMkbhkx2InrFVh8rE=;
- b=UgnVX6HDlGEfD+EuC214sdyuX+Whby6hCnWh/oQjDVrfMepqhGDLkk9NAmS2FXkiynMGd/WybDOsLtDbLUjuvhMXFDH88Q1eHgt05S9DP7/ohIa/R5a6F9MYTImHqgfEGNyavRqNOmigv88a+6fnOx14npfNXjTQcCnXt9SzUT0=
-Received: from CH2PR12CA0020.namprd12.prod.outlook.com (2603:10b6:610:57::30)
- by SN6PR12MB2686.namprd12.prod.outlook.com (2603:10b6:805:6f::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.18; Fri, 18 Oct
- 2019 10:14:16 +0000
-Received: from CO1NAM03FT027.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e48::208) by CH2PR12CA0020.outlook.office365.com
- (2603:10b6:610:57::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2347.18 via Frontend
- Transport; Fri, 18 Oct 2019 10:14:15 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=permerror action=none header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXMB01.amd.com (165.204.84.17) by
- CO1NAM03FT027.mail.protection.outlook.com (10.152.80.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.20.2367.14 via Frontend Transport; Fri, 18 Oct 2019 10:14:15 +0000
-Received: from SATLEXMB02.amd.com (10.181.40.143) by SATLEXMB01.amd.com
- (10.181.40.142) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 18 Oct
- 2019 05:14:14 -0500
-Received: from vishnu-All-Series.amd.com (10.180.168.240) by
- SATLEXMB02.amd.com (10.181.40.143) with Microsoft SMTP Server id 15.1.1713.5
- via Frontend Transport; Fri, 18 Oct 2019 05:14:11 -0500
-From:   Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-CC:     <Alexander.Deucher@amd.com>,
-        Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        "Takashi Iwai" <tiwai@suse.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        "Maruthi Srinivas Bayyavarapu" <Maruthi.Bayyavarapu@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 7/7] ASoC: amd: Added ACP3x system resume and runtime pm ops
-Date:   Sat, 19 Oct 2019 02:35:45 +0530
-Message-ID: <1571432760-3008-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1571432760-3008-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-References: <1571432760-3008-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+        id S2405188AbfJRKUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 06:20:50 -0400
+Received: from mga04.intel.com ([192.55.52.120]:24969 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387890AbfJRKUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 06:20:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2019 03:20:50 -0700
+X-IronPort-AV: E=Sophos;i="5.67,311,1566889200"; 
+   d="scan'208";a="371425922"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.239.13.123]) ([10.239.13.123])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 18 Oct 2019 03:20:45 -0700
+Subject: Re: [RFD] x86/split_lock: Request to Intel
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, kvm@vger.kernel.org
+References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com>
+ <1560897679-228028-10-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1906262209590.32342@nanos.tec.linutronix.de>
+ <20190626203637.GC245468@romley-ivt3.sc.intel.com>
+ <alpine.DEB.2.21.1906262338220.32342@nanos.tec.linutronix.de>
+ <20190925180931.GG31852@linux.intel.com>
+ <3ec328dc-2763-9da5-28d6-e28970262c58@redhat.com>
+ <alpine.DEB.2.21.1910161142560.2046@nanos.tec.linutronix.de>
+ <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com>
+ <c3ff2fb3-4380-fb07-1fa3-15896a09e748@intel.com>
+ <d30652bb-89fa-671a-5691-e2c76af231d0@redhat.com>
+ <8808c9ac-0906-5eec-a31f-27cbec778f9c@intel.com>
+ <alpine.DEB.2.21.1910161519260.2046@nanos.tec.linutronix.de>
+ <ba2c0aab-1d7c-5cfd-0054-ac2c266c1df3@redhat.com>
+ <alpine.DEB.2.21.1910171322530.1824@nanos.tec.linutronix.de>
+ <5da90713-9a0d-6466-64f7-db435ba07dbe@intel.com>
+ <alpine.DEB.2.21.1910181100000.1869@nanos.tec.linutronix.de>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <763bb046-e016-9440-55c4-33438e35e436@intel.com>
+Date:   Fri, 18 Oct 2019 18:20:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(376002)(346002)(39860400002)(428003)(199004)(189003)(47776003)(2906002)(1671002)(5660300002)(50466002)(478600001)(48376002)(54906003)(53416004)(70586007)(316002)(305945005)(70206006)(14444005)(76176011)(11346002)(426003)(8676002)(446003)(51416003)(36756003)(336012)(186003)(26005)(109986005)(356004)(7696005)(4326008)(6666004)(16586007)(8936002)(81156014)(86362001)(476003)(81166006)(126002)(2616005)(486006)(50226002)(266003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2686;H:SATLEXMB01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 397a4a19-6620-47e3-a5d7-08d753b3ee2b
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2686:
-X-Microsoft-Antispam-PRVS: <SN6PR12MB2686157F81B56160267245A2E76C0@SN6PR12MB2686.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3173;
-X-Forefront-PRVS: 01949FE337
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 46tWl6R1Ng0LWbt5z5P3iYnPqN+Q1NL/HISz1He4tR/iuu4Q81hfsIG0OBpzqZFWF7n/5t7wWKMp39McnXpUReSv3wh7FvbAbw5rFxLra+j3CIaf0K4oreJYL3LeqOWvFW72keePdikxmSMTTINvP4ZdWsyokf4yAQF7bMv67oZNxd5B9AL8CoX7TmBJpoOQa2brdXREDbD+jg/erbcVuXo4tOS/KqVxq5G04j7k4YDST4DzXa7vvxVfBjN9rdGq5Ps8mUBNpah72/se5aIw7oGhtNg27kThP9GTIvGpy6xwLotbTMd9VlEBZIk4XNVfhKfT8b78MLS+qm9R6gopIS7jRrreNaAtcKXWIsMB0eSCl7EVyhNW1cz4LqOWhzaFJic6WAn5BjOuO8thKkVl7jBPr4exKabugcHqdUTp91E=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2019 10:14:15.4695
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 397a4a19-6620-47e3-a5d7-08d753b3ee2b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB01.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2686
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <alpine.DEB.2.21.1910181100000.1869@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When system wide suspend happens, ACP will be powered off
-and when system resumes,for audio usecase to continue,
-all the runtime configuration data needs to be programmed again.
-Added resume pm call back to ACP pm ops and
-also Added runtime PM operations for ACP3x PCM platform device.
-Device will enter into D3 state when there is no activity
-on audio I2S lines.
+On 10/18/2019 5:02 PM, Thomas Gleixner wrote:
+> On Fri, 18 Oct 2019, Xiaoyao Li wrote:
+>> On 10/17/2019 8:29 PM, Thomas Gleixner wrote:
+>>> The more I look at this trainwreck, the less interested I am in merging any
+>>> of this at all.
+>>>
+>>> The fact that it took Intel more than a year to figure out that the MSR is
+>>> per core and not per thread is yet another proof that this industry just
+>>> works by pure chance.
+>>>
+>>
+>> Whether it's per-core or per-thread doesn't affect much how we implement for
+>> host/native.
+> 
+> How useful.
 
-Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
----
- sound/soc/amd/raven/pci-acp3x.c | 48 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 1 deletion(-)
+OK. IIUC. We can agree on the use model of native like below:
 
-diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
-index b74ecf6..192a7b9 100644
---- a/sound/soc/amd/raven/pci-acp3x.c
-+++ b/sound/soc/amd/raven/pci-acp3x.c
-@@ -9,6 +9,9 @@
- #include <linux/io.h>
- #include <linux/platform_device.h>
- #include <linux/interrupt.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/delay.h>
-+#include <sound/pcm.h>
- 
- #include "acp3x.h"
- 
-@@ -262,6 +265,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 		}
- 		break;
- 	}
-+	pm_runtime_set_autosuspend_delay(&pci->dev, 10000);
-+	pm_runtime_use_autosuspend(&pci->dev);
-+	pm_runtime_set_active(&pci->dev);
-+	pm_runtime_put_noidle(&pci->dev);
-+	pm_runtime_enable(&pci->dev);
- 	return 0;
- 
- unmap_mmio:
-@@ -282,6 +290,39 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 	return ret;
- }
- 
-+static int  snd_acp3x_suspend(struct device *dev)
-+{
-+	int status;
-+	struct acp3x_dev_data *adata = dev_get_drvdata(dev);
-+
-+	status = acp3x_deinit(adata->acp3x_base);
-+	if (status)
-+		dev_err(dev, "ACP de-init failed\n");
-+	else
-+		dev_info(dev, "ACP de-initialized\n");
-+
-+	return 0;
-+}
-+static int  snd_acp3x_resume(struct device *dev)
-+{
-+	int status;
-+	struct acp3x_dev_data *adata = dev_get_drvdata(dev);
-+
-+	status = acp3x_init(adata->acp3x_base);
-+	if (status) {
-+		dev_err(dev, "ACP init failed\n");
-+		return status;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops acp3x_pm = {
-+	.runtime_suspend = snd_acp3x_suspend,
-+	.runtime_resume =  snd_acp3x_resume,
-+	.resume =       snd_acp3x_resume,
-+};
-+
- static void snd_acp3x_remove(struct pci_dev *pci)
- {
- 	int i;
-@@ -297,7 +338,9 @@ static void snd_acp3x_remove(struct pci_dev *pci)
- 	else
- 		dev_info(&pci->dev, "ACP de-initialized\n");
- 	iounmap(adata->acp3x_base);
--
-+	pm_runtime_disable(&pci->dev);
-+	pm_runtime_get_noresume(&pci->dev);
-+	pci_disable_msi(pci);
- 	pci_disable_msi(pci);
- 	pci_release_regions(pci);
- 	pci_disable_device(pci);
-@@ -316,6 +359,9 @@ static struct pci_driver acp3x_driver  = {
- 	.id_table = snd_acp3x_ids,
- 	.probe = snd_acp3x_probe,
- 	.remove = snd_acp3x_remove,
-+	.driver = {
-+		.pm = &acp3x_pm,
-+	}
- };
- 
- module_pci_driver(acp3x_driver);
--- 
-2.7.4
+We enable #AC on all cores/threads to detect split lock.
+  -If user space causes #AC, sending SIGBUS to it.
+  -If kernel causes #AC, we globally disable #AC on all cores/threads, 
+letting kernel go on working and WARN. (only disabling #AC on the thread 
+generates it just doesn't help, since the buggy kernel code is possible 
+to run on any threads and thus disabling #AC on all of them)
 
+As described above, either enabled globally or disabled globally, so 
+whether it's per-core or per-thread really doesn't matter
+
+>> And also, no matter it's per-core or per-thread, we always can do something in
+>> VIRT.
+> 
+> It matters a lot. If it would be per thread then we would not have this
+> discussion at all.
+
+Indeed, it's the fact that the control MSR bit is per-core to cause this 
+discussion. But the per-core scope only makes this feature difficult or 
+impossible to be virtualized.
+
+We could make the decision to not expose it to guest to avoid the really 
+bad thing. However, even we don't expose this feature to guest and don't 
+virtualize it, the below problem always here.
+
+If you think it's not a problem and acceptable to add an option to let 
+KVM disable host's #AC detection, we can just make it this way. And then 
+we can design the virtualizaion part without any change to native design 
+at all.
+
+>> Maybe what matters is below.
+>>
+>>> Seriously, this makes only sense when it's by default enabled and not
+>>> rendered useless by VIRT. Otherwise we never get any reports and none of
+>>> the issues are going to be fixed.
+>>>
+>>
+>> For VIRT, it doesn't want old guest to be killed due to #AC. But for native,
+>> it doesn't want VIRT to disable the #AC detection
+>>
+>> I think it's just about the default behavior that whether to disable the
+>> host's #AC detection or kill the guest (SIGBUS or something else) once there
+>> is an split-lock #AC in guest.
+>>
+>> So we can provide CONFIG option to set the default behavior and module
+>> parameter to let KVM set/change the default behavior.
+> 
+> Care to read through the whole discussion and figure out WHY it's not that
+> simple?
+> 
+> Thanks,
+> 
+> 	tglx
+> 
