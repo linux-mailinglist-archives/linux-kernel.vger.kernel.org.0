@@ -2,127 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66DEDDD200
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:08:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC8ADDD20F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:08:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733102AbfJRWHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:07:39 -0400
-Received: from retiisi.org.uk ([95.216.213.190]:56118 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732957AbfJRWHe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:07:34 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S2387558AbfJRWIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:08:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387443AbfJRWH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:07:58 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 103D1634C8A;
-        Sat, 19 Oct 2019 01:06:57 +0300 (EEST)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1iLaOf-0001ge-N7; Sat, 19 Oct 2019 01:06:57 +0300
-Date:   Sat, 19 Oct 2019 01:06:57 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        c.barrett@framos.com, a.brela@framos.com
-Subject: Re: [PATCH 1/2] dt-bindings: media: i2c: Add IMX296 CMOS sensor
- binding
-Message-ID: <20191018220657.GI4735@valkosipuli.retiisi.org.uk>
-References: <20191011035613.13598-1-manivannan.sadhasivam@linaro.org>
- <20191011035613.13598-2-manivannan.sadhasivam@linaro.org>
- <20191015224554.GA5634@bogus>
- <20191016083748.GA2288@Mani-XPS-13-9360>
+        by mail.kernel.org (Postfix) with ESMTPSA id B65182245B;
+        Fri, 18 Oct 2019 22:07:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571436477;
+        bh=uVUEaIgtXkaktg71hvaC0xNXR8j2WaCarC4cO9SaM/Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YeAwUYXcIzzEP4t8G1+CreVeEH+hx6ZUh8g/+6d373P46UJ33sO54ja16a/hdHLVw
+         btcqcVPt+zAIuIR4WZPEbj137YNCr21vtbWUxUdQwvJN2M/o4eD1sQ+1SAMaW277oR
+         /6N82J09A2i+cVs529y8cxI7EvShGyf1m2A7uacU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Phil Elwell <phil@raspberrypi.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 03/56] sc16is7xx: Fix for "Unexpected interrupt: 8"
+Date:   Fri, 18 Oct 2019 18:07:00 -0400
+Message-Id: <20191018220753.10002-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191018220753.10002-1-sashal@kernel.org>
+References: <20191018220753.10002-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016083748.GA2288@Mani-XPS-13-9360>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Manivannan, Rob,
+From: Phil Elwell <phil@raspberrypi.org>
 
-On Wed, Oct 16, 2019 at 02:07:48PM +0530, Manivannan Sadhasivam wrote:
-> Hi Rob,
-> 
-> On Tue, Oct 15, 2019 at 05:45:54PM -0500, Rob Herring wrote:
-> > On Fri, Oct 11, 2019 at 09:26:12AM +0530, Manivannan Sadhasivam wrote:
-> > > Add devicetree binding for IMX296 CMOS image sensor.
-> > > 
-> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > ---
-> > >  .../devicetree/bindings/media/i2c/imx296.txt  | 55 +++++++++++++++++++
-> > >  1 file changed, 55 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx296.txt
-> > 
-> > You should know by now, use DT schema format please.
-> > 
-> 
-> I know for other subsystems but by having a vague look at the existing bindings
-> I thought media subsystem is still using .txt. But I now see few yaml bindings
-> in linux-next and will switch over this.
-> 
-> Btw, is it mandatory now to use YAML bindings for all subsystems? I don't
-> see any issue (instead I prefer) but I remember that you defer to the preference
-> of the subsystem maintainers before!
-> 
-> > > diff --git a/Documentation/devicetree/bindings/media/i2c/imx296.txt b/Documentation/devicetree/bindings/media/i2c/imx296.txt
-> > > new file mode 100644
-> > > index 000000000000..25d3b15162c1
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/media/i2c/imx296.txt
-> > > @@ -0,0 +1,55 @@
-> > > +* Sony IMX296 1/2.8-Inch CMOS Image Sensor
-> > > +
-> > > +The Sony IMX296 is a 1/2.9-Inch active pixel type CMOS Solid-state image
-> > > +sensor with square pixel array and 1.58 M effective pixels. This chip features
-> > > +a global shutter with variable charge-integration time. It is programmable
-> > > +through I2C and 4-wire interfaces. The sensor output is available via CSI-2
-> > > +serial data output (1 Lane).
-> > > +
-> > > +Required Properties:
-> > > +- compatible: Should be "sony,imx296"
-> > > +- reg: I2C bus address of the device
-> > > +- clocks: Reference to the mclk clock.
-> > > +- clock-names: Should be "mclk".
-> > > +- clock-frequency: Frequency of the mclk clock in Hz.
-> > > +- vddo-supply: Interface power supply.
-> > > +- vdda-supply: Analog power supply.
-> > > +- vddd-supply: Digital power supply.
-> > > +
-> > > +Optional Properties:
-> > > +- reset-gpios: Sensor reset GPIO
-> > > +
-> > > +The imx296 device node should contain one 'port' child node with
-> > > +an 'endpoint' subnode. For further reading on port node refer to
-> > > +Documentation/devicetree/bindings/media/video-interfaces.txt.
-> > > +
-> > > +Required Properties on endpoint:
-> > > +- data-lanes: check ../video-interfaces.txt
-> > 
-> > This should only be required when not using all the lanes on the device.
-> > 
-> 
-> This is a bit weird! How will someone know how many lanes the device is using
-> by looking at the binding? He can anyway refer the datasheet but still...
+[ Upstream commit 30ec514d440cf2c472c8e4b0079af2c731f71a3e ]
 
-Many current bindings document data-lanes as mandatory. Nothing prevents
-making all lanes are connected the default though, thus making data-lanes
-optional.
+The SC16IS752 has an Enhanced Feature Register which is aliased at the
+same address as the Interrupt Identification Register; accessing it
+requires that a magic value is written to the Line Configuration
+Register. If an interrupt is raised while the EFR is mapped in then
+the ISR won't be able to access the IIR, leading to the "Unexpected
+interrupt" error messages.
 
-The V4L2 fwnode framework supports easy parsing of that, too, by driver
-providing that default value before letting V4L2 fwnode framework to parse
-the endpoint properties.
+Avoid the problem by claiming a mutex around accesses to the EFR
+register, also claiming the mutex in the interrupt handler work
+item (this is equivalent to disabling interrupts to interlock against
+a non-threaded interrupt handler).
 
-Looking at this particular sensor --- doesn't it only have a single lane,
-and thus nothing to configure here?
+See: https://github.com/raspberrypi/linux/issues/2529
 
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/tty/serial/sc16is7xx.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index e48523da47ac9..c1655aba131f6 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -333,6 +333,7 @@ struct sc16is7xx_port {
+ 	struct kthread_worker		kworker;
+ 	struct task_struct		*kworker_task;
+ 	struct kthread_work		irq_work;
++	struct mutex			efr_lock;
+ 	struct sc16is7xx_one		p[0];
+ };
+ 
+@@ -504,6 +505,21 @@ static int sc16is7xx_set_baud(struct uart_port *port, int baud)
+ 		div /= 4;
+ 	}
+ 
++	/* In an amazing feat of design, the Enhanced Features Register shares
++	 * the address of the Interrupt Identification Register, and is
++	 * switched in by writing a magic value (0xbf) to the Line Control
++	 * Register. Any interrupt firing during this time will see the EFR
++	 * where it expects the IIR to be, leading to "Unexpected interrupt"
++	 * messages.
++	 *
++	 * Prevent this possibility by claiming a mutex while accessing the
++	 * EFR, and claiming the same mutex from within the interrupt handler.
++	 * This is similar to disabling the interrupt, but that doesn't work
++	 * because the bulk of the interrupt processing is run as a workqueue
++	 * job in thread context.
++	 */
++	mutex_lock(&s->efr_lock);
++
+ 	lcr = sc16is7xx_port_read(port, SC16IS7XX_LCR_REG);
+ 
+ 	/* Open the LCR divisors for configuration */
+@@ -519,6 +535,8 @@ static int sc16is7xx_set_baud(struct uart_port *port, int baud)
+ 	/* Put LCR back to the normal mode */
+ 	sc16is7xx_port_write(port, SC16IS7XX_LCR_REG, lcr);
+ 
++	mutex_unlock(&s->efr_lock);
++
+ 	sc16is7xx_port_update(port, SC16IS7XX_MCR_REG,
+ 			      SC16IS7XX_MCR_CLKSEL_BIT,
+ 			      prescaler);
+@@ -701,6 +719,8 @@ static void sc16is7xx_ist(struct kthread_work *ws)
+ {
+ 	struct sc16is7xx_port *s = to_sc16is7xx_port(ws, irq_work);
+ 
++	mutex_lock(&s->efr_lock);
++
+ 	while (1) {
+ 		bool keep_polling = false;
+ 		int i;
+@@ -710,6 +730,8 @@ static void sc16is7xx_ist(struct kthread_work *ws)
+ 		if (!keep_polling)
+ 			break;
+ 	}
++
++	mutex_unlock(&s->efr_lock);
+ }
+ 
+ static irqreturn_t sc16is7xx_irq(int irq, void *dev_id)
+@@ -904,6 +926,9 @@ static void sc16is7xx_set_termios(struct uart_port *port,
+ 	if (!(termios->c_cflag & CREAD))
+ 		port->ignore_status_mask |= SC16IS7XX_LSR_BRK_ERROR_MASK;
+ 
++	/* As above, claim the mutex while accessing the EFR. */
++	mutex_lock(&s->efr_lock);
++
+ 	sc16is7xx_port_write(port, SC16IS7XX_LCR_REG,
+ 			     SC16IS7XX_LCR_CONF_MODE_B);
+ 
+@@ -925,6 +950,8 @@ static void sc16is7xx_set_termios(struct uart_port *port,
+ 	/* Update LCR register */
+ 	sc16is7xx_port_write(port, SC16IS7XX_LCR_REG, lcr);
+ 
++	mutex_unlock(&s->efr_lock);
++
+ 	/* Get baud rate generator configuration */
+ 	baud = uart_get_baud_rate(port, termios, old,
+ 				  port->uartclk / 16 / 4 / 0xffff,
+@@ -1187,6 +1214,7 @@ static int sc16is7xx_probe(struct device *dev,
+ 	s->regmap = regmap;
+ 	s->devtype = devtype;
+ 	dev_set_drvdata(dev, s);
++	mutex_init(&s->efr_lock);
+ 
+ 	kthread_init_worker(&s->kworker);
+ 	kthread_init_work(&s->irq_work, sc16is7xx_ist);
 -- 
-Regards,
+2.20.1
 
-Sakari Ailus
