@@ -2,94 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AD04DBC7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 291A0DBCAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:10:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504235AbfJRFF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:05:59 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41040 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbfJRFF4 (ORCPT
+        id S2393941AbfJRFJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:09:37 -0400
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:45892 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388497AbfJRFJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:05:56 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p4so4690161wrm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:05:55 -0700 (PDT)
+        Fri, 18 Oct 2019 01:09:36 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 949A9272
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 04:30:01 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id mhnCGDYrv2_U for <linux-kernel@vger.kernel.org>;
+        Thu, 17 Oct 2019 23:30:01 -0500 (CDT)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 70F1F269
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 23:30:01 -0500 (CDT)
+Received: by mail-io1-f69.google.com with SMTP id a22so6814644ioq.23
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 21:30:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=A/Tf4iJWS8qcGlBMvo/id14sOzyak6H/JZlFaeq1a2M=;
-        b=GJTkrh1foXLVx/GfRMgwY/5lZrE6f9Fzp9iyjCdB5NFY+dJeU/d3QExp2xXE18QY5l
-         INr6CRdIP/oYiK2MI54mC66XxUdHkBJ5zJ9iRnMQg4Ip05vhs6wu7zLobhVq7FEcJtH1
-         Ljw7Rem15V6dQg65HgOc2KxvQdIvAa1422/x7Uyu+dheEEt6NGHDEC4X6Ekhc/JG8BLI
-         Na48sFj8Fwlg6iDcfBxfSYCUkmVkdM0RLpEpPrnFNF1Q2O6n2ylRctHkI0vThzAulNdq
-         8KOHE98G/wc1uq+arXQrfdACByJaIho595AG6ZxA0vC6qghDEuoRMz282Mfy77ii/kzn
-         GodA==
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=S+ExY7RtG2HqIxYagBLe/T94lp0xElb1mK1Anml9C8I=;
+        b=jOgX/6IAAce6fxtFdSpduVfsmh5bsIHnA+8VVZ0mbnCPUCT+tzRAGa3T5u7u6FNRXs
+         pTJMp7STs6Wf/JPbaLXY8YXbz5sf/WtjaBPRLva6TWdHgmtZxwQ/5HXd2OPWsXVFm7au
+         OA2DAJJJ67vhacDjOwXzwHbZxSTjr7XHqrav28tCL6Tov8x/wkXSUIenG91dU3laGTuw
+         CDqGtzgXShdroBwoiixulNlnaiH329FsYYLzbA2GgMEZ4nm+uXNUc4ZYlhS2UR/3nR5x
+         MR4Gr5pQyqmv7MeK5wZkVyEprVQeCh54BeulCAYlSOWTitR72M8+eEMycBQqIRS3oqMA
+         D1Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A/Tf4iJWS8qcGlBMvo/id14sOzyak6H/JZlFaeq1a2M=;
-        b=A46/C1uZInzw8FMiLvXU20VVDCIsGNFHEwrtKubtKN6zNXrY0DwriCf37ZD8GXgzrM
-         RvG3li81ExgYtvpIqtQA6daJSrpp/I3lm+ejGmtg2dWqRgRFvnReBaPfZtOW/O8m4K6L
-         wfeee0UqdgWVcqbPrfALPjIhVesxyjI78naIj3tBHmlji1AMJ+k4xWeR86quPlRT8KXU
-         JPGhQuCV31Z8xKj+7bY586lNyai7uOlP8R2Y9G8aq+5NiysLY891hbuTPPYJDJd6LL+Z
-         glyX39NXEOQIK+f4fhjE5bUpBQ2VsH66PdwL5dC5aVjTskV7WTGZg26ymX/U0ES26mxd
-         fc/Q==
-X-Gm-Message-State: APjAAAWODC77eAuWqzGcQ95nWCNp3BV2rBjYHcVd14yjGnMVyStTF+8Y
-        EjmRM2hntuz2iCNM5vjhhXmqtsUc
-X-Google-Smtp-Source: APXvYqxjFg1SXCQ+fipbiPTH8W1CtjD2slFtJSRD3RXU/MYRTMdtOmGZYYVkzVsFh9Oh91u3gt6q4g==
-X-Received: by 2002:adf:a506:: with SMTP id i6mr5692969wrb.159.1571371582365;
-        Thu, 17 Oct 2019 21:06:22 -0700 (PDT)
-Received: from ltop.local ([2a02:a03f:40ac:ce00:18e1:7d90:ccf5:4489])
-        by smtp.gmail.com with ESMTPSA id w18sm3970796wmc.9.2019.10.17.21.06.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 21:06:21 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 06:06:20 +0200
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] riscv: ensure RISC-V C model definitions are passed
- to static analyzers
-Message-ID: <20191018040619.o3qb5fyj4qdevwoe@ltop.local>
-References: <20191018004929.3445-1-paul.walmsley@sifive.com>
- <20191018004929.3445-5-paul.walmsley@sifive.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018004929.3445-5-paul.walmsley@sifive.com>
-User-Agent: NeoMutt/20180716
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=S+ExY7RtG2HqIxYagBLe/T94lp0xElb1mK1Anml9C8I=;
+        b=c/J6m91ZGk2d7l7me3eXlijqQVCT/Pz4HjsFXah/SMbx0wAObsrwoYWiJMP3wM9L7J
+         Q05eQBREonrAvdfjnHQgFtyCRnZ1r+gV3TLi4PSrcnup65rT9sqe98IKzPWSa64qfb26
+         gRjTuJ58r9xkSHQPmCi6hJBk3/4l6l9CqmVNdhaZeASBahmziSiX6QBJm+UleWLaXSUk
+         31rjYkNFR0xtJAeU48d4F29oSY4JuFDk9MqdVZDbTHgsNu54Se3Iv4k94rWxT5S+VQjx
+         wqopPbbII6QmBy2ISlV93Wi78+tyBAzmV8lLOoMLytw85M1cE1wR8/qN/TX9IM+2i7n0
+         CVMg==
+X-Gm-Message-State: APjAAAV2qpn6kg3YwS9pzyDQ8bFAF7P75tacKNZdt7f8fgmndL5XEBXt
+        udqoeqo4xA7BgYOquyzdNpR+WEAr01MRFvgkUp0LXffgfXau3Mz+Pc6hKoOnEkOeD1QJhHdcT5B
+        qcJapgVabSs0us6OxBwGGYqbOBKrw
+X-Received: by 2002:a92:8bca:: with SMTP id i193mr8102479ild.136.1571373000721;
+        Thu, 17 Oct 2019 21:30:00 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxVhwgtJqw281TwokvjEpYKzpFxY3mjcnKghYUQJtb90u5SQgULX83RETrMAXvH1tZvYPo8ZA==
+X-Received: by 2002:a92:8bca:: with SMTP id i193mr8102457ild.136.1571373000345;
+        Thu, 17 Oct 2019 21:30:00 -0700 (PDT)
+Received: from bee.dtc.umn.edu (cs-bee-u.cs.umn.edu. [128.101.106.63])
+        by smtp.gmail.com with ESMTPSA id d14sm1698308ilm.15.2019.10.17.21.29.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2019 21:29:59 -0700 (PDT)
+From:   Kangjie Lu <kjlu@umn.edu>
+To:     kjlu@umn.edu
+Cc:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] gma/gma500: fix a memory disclosure bug due to uninitialized bytes
+Date:   Thu, 17 Oct 2019 23:29:53 -0500
+Message-Id: <20191018042953.31099-1-kjlu@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 05:49:25PM -0700, Paul Walmsley wrote:
-> Static analysis tools such as sparse don't set the RISC-V C model
-> preprocessor directives such as "__riscv_cmodel_medany", set by the C
-> compilers.  This causes the static analyzers to evaluate different
-> preprocessor paths than C compilers would.  Fix this by defining the
-> appropriate C model macros in the static analyzer command lines.
-> 
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> ---
->  arch/riscv/Makefile | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> index f5e914210245..0247a90bd4d8 100644
-> --- a/arch/riscv/Makefile
-> +++ b/arch/riscv/Makefile
-> @@ -47,9 +47,11 @@ KBUILD_CFLAGS += -DCONFIG_PAGE_OFFSET=$(CONFIG_PAGE_OFFSET)
->  
->  ifeq ($(CONFIG_CMODEL_MEDLOW),y)
->  	KBUILD_CFLAGS += -mcmodel=medlow
-> +	CHECKFLAGS += -D__riscv_cmodel_medlow
->  endif
->  ifeq ($(CONFIG_CMODEL_MEDANY),y)
->  	KBUILD_CFLAGS += -mcmodel=medany
-> +	CHECKFLAGS += -D__riscv_cmodel_medany
+`best_clock` is an object that may be sent out. Object `clock`
+contains uninitialized bytes that are copied to `best_clock`,
+which leads to memory disclosure and information leak.
 
-I can teach sparse about this in the following days.
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+---
+ drivers/gpu/drm/gma500/cdv_intel_display.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
--- Luc Van Oostenryck
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_display.c b/drivers/gpu/drm/gma500/cdv_intel_display.c
+index f56852a503e8..8b784947ed3b 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_display.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_display.c
+@@ -405,6 +405,8 @@ static bool cdv_intel_find_dp_pll(const struct gma_limit_t *limit,
+ 	struct gma_crtc *gma_crtc = to_gma_crtc(crtc);
+ 	struct gma_clock_t clock;
+ 
++	memset(&clock, 0, sizeof(clock));
++
+ 	switch (refclk) {
+ 	case 27000:
+ 		if (target < 200000) {
+-- 
+2.17.1
+
