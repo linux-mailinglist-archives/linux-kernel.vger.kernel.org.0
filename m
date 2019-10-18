@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 976E5DD3EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A3AEDD3B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:21:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731248AbfJRWGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:06:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38122 "EHLO mail.kernel.org"
+        id S1731485AbfJRWG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:06:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730760AbfJRWGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:06:12 -0400
+        id S1731085AbfJRWGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:06:15 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFC25205F4;
-        Fri, 18 Oct 2019 22:06:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA7D2205F4;
+        Fri, 18 Oct 2019 22:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436371;
-        bh=fxdugRaZcLgOseleGocQUAJOQjGs8F4EZ2YaQ26avFk=;
+        s=default; t=1571436374;
+        bh=HKTIdQwMrvjWDforNYHTyKrkVYHiKnZQBFV//gOWcXo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U3ovjam4QJJxytX2QsIOE36t3xXFrXnlVFBgmBrY4DFqamslVqvKvrZc+WK05uN8H
-         bfBOrPhsz40PWklx49aAGntolZ195Bq1+3xgmz2OKUrm+JDA+3rU/N0T6qVruAQEWA
-         RifszM9oKepDQhgF5OpSORur8FpZYfR4i7OgqHmw=
+        b=TtQxZuNggzbhcRWNWiONnVFAKKbOz4T9v3g7ZUIM7FT/SAlumhoRhFP1GDe4UWfNG
+         am4upmtfcn0pAAOgx0BSjAFZfTPQZWWOeNzom7FKAdwSNyDxX6EdKgClHDlomeA0jb
+         H2i4NOMFrM8ZvEGWdhZLIhHB4cEM/6zbD5/FmgzY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        NeilBrown <neil@brown.name>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.19 025/100] staging: mt7621-pinctrl: use pinconf-generic for 'dt_node_to_map' and 'dt_free_map'
-Date:   Fri, 18 Oct 2019 18:04:10 -0400
-Message-Id: <20191018220525.9042-25-sashal@kernel.org>
+Cc:     Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>,
+        linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 028/100] HID: steam: fix boot loop with bluetooth firmware
+Date:   Fri, 18 Oct 2019 18:04:13 -0400
+Message-Id: <20191018220525.9042-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
 References: <20191018220525.9042-1-sashal@kernel.org>
@@ -44,114 +43,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
 
-[ Upstream commit 0ca1f90861b6d64386261096b42bfc81ce11948a ]
+[ Upstream commit cf28aee292e102740e49f74385b4b89c00050763 ]
 
-Instead of reimplement afunction to do 'dt_node_to_map' task like
-'rt2880_pinctrl_dt_node_to_map' make use of 'pinconf_generic_dt_node_to_map_all'
-generic function for this task. Also use its equivalent function for free which
-is 'pinconf_generic_dt_free_map'. Remove 'rt2880_pinctrl_dt_node_to_map' function
-which is not needed anymore. This decrease a bit driver LOC and make it more
-generic. To properly compile this changes 'GENERIC_PINCONF' option is selected
-with the driver in its Kconfig file.
+There is a new firmware for the Steam Controller with support for BLE
+connections. When using such a device with a wired connection, it
+reboots itself every 10 seconds unless an application has opened it.
 
-This also fix a problem with function 'rt2880_pinctrl_dt_node_to_map' which was
-calling internally 'pinctrl_utils_reserve_map' which expects 'num_maps' to be initialized.
-It does a memory allocation based on the value, and triggers the following
-warning if is not properly set:
+Doing hid_hw_open() unconditionally on probe fixes the issue, and the
+code becomes simpler.
 
-if (unlikely(order >= MAX_ORDER)) {
-        WARN_ON_ONCE(!(gfp_mask & __GFP_NOWARN));
-        return NULL;
-}
-
-Generic function 'pinconf_generic_dt_node_to_map_all' initializes properly
-'num_maps' to zero fixing the problem.
-
-Fixes: e12a1a6e087b ("staging: mt7621-pinctrl: refactor rt2880_pinctrl_dt_node_to_map function")
-Reported-by: NeilBrown <neil@brown.name>
-Tested-by: NeilBrown <neil@brown.name>
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/mt7621-pinctrl/Kconfig        |  1 +
- .../staging/mt7621-pinctrl/pinctrl-rt2880.c   | 41 ++-----------------
- 2 files changed, 4 insertions(+), 38 deletions(-)
+ drivers/hid/hid-steam.c | 34 +++++++++++-----------------------
+ 1 file changed, 11 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/staging/mt7621-pinctrl/Kconfig b/drivers/staging/mt7621-pinctrl/Kconfig
-index 37cf9c3273beb..fc36127113072 100644
---- a/drivers/staging/mt7621-pinctrl/Kconfig
-+++ b/drivers/staging/mt7621-pinctrl/Kconfig
-@@ -2,3 +2,4 @@ config PINCTRL_RT2880
- 	bool "RT2800 pinctrl driver for RALINK/Mediatek SOCs"
- 	depends on RALINK
- 	select PINMUX
-+	select GENERIC_PINCONF
-diff --git a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-index aa98fbb170139..80e7067cfb797 100644
---- a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-+++ b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-@@ -11,6 +11,7 @@
- #include <linux/of.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinconf-generic.h>
- #include <linux/pinctrl/pinmux.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/pinctrl/machine.h>
-@@ -73,48 +74,12 @@ static int rt2880_get_group_pins(struct pinctrl_dev *pctrldev,
- 	return 0;
+diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
+index dc4128bfe2ca9..8141cadfca0e3 100644
+--- a/drivers/hid/hid-steam.c
++++ b/drivers/hid/hid-steam.c
+@@ -283,11 +283,6 @@ static void steam_set_lizard_mode(struct steam_device *steam, bool enable)
+ static int steam_input_open(struct input_dev *dev)
+ {
+ 	struct steam_device *steam = input_get_drvdata(dev);
+-	int ret;
+-
+-	ret = hid_hw_open(steam->hdev);
+-	if (ret)
+-		return ret;
+ 
+ 	mutex_lock(&steam->mutex);
+ 	if (!steam->client_opened && lizard_mode)
+@@ -304,8 +299,6 @@ static void steam_input_close(struct input_dev *dev)
+ 	if (!steam->client_opened && lizard_mode)
+ 		steam_set_lizard_mode(steam, true);
+ 	mutex_unlock(&steam->mutex);
+-
+-	hid_hw_close(steam->hdev);
  }
  
--static int rt2880_pinctrl_dt_node_to_map(struct pinctrl_dev *pctrldev,
--					 struct device_node *np_config,
--					 struct pinctrl_map **map,
--					 unsigned int *num_maps)
--{
--	struct rt2880_priv *p = pinctrl_dev_get_drvdata(pctrldev);
--	struct property *prop;
--	const char *function_name, *group_name;
+ static enum power_supply_property steam_battery_props[] = {
+@@ -623,11 +616,6 @@ static void steam_client_ll_stop(struct hid_device *hdev)
+ static int steam_client_ll_open(struct hid_device *hdev)
+ {
+ 	struct steam_device *steam = hdev->driver_data;
 -	int ret;
--	int ngroups = 0;
--	unsigned int reserved_maps = 0;
 -
--	for_each_node_with_property(np_config, "group")
--		ngroups++;
--
--	*map = NULL;
--	ret = pinctrl_utils_reserve_map(pctrldev, map, &reserved_maps,
--					num_maps, ngroups);
--	if (ret) {
--		dev_err(p->dev, "can't reserve map: %d\n", ret);
+-	ret = hid_hw_open(steam->hdev);
+-	if (ret)
 -		return ret;
--	}
--
--	of_property_for_each_string(np_config, "group", prop, group_name) {
--		ret = pinctrl_utils_add_map_mux(pctrldev, map, &reserved_maps,
--						num_maps, group_name,
--						function_name);
--		if (ret) {
--			dev_err(p->dev, "can't add map: %d\n", ret);
--			return ret;
--		}
--	}
--
--	return 0;
--}
--
- static const struct pinctrl_ops rt2880_pctrl_ops = {
- 	.get_groups_count	= rt2880_get_group_count,
- 	.get_group_name		= rt2880_get_group_name,
- 	.get_group_pins		= rt2880_get_group_pins,
--	.dt_node_to_map		= rt2880_pinctrl_dt_node_to_map,
--	.dt_free_map		= pinctrl_utils_free_map,
-+	.dt_node_to_map		= pinconf_generic_dt_node_to_map_all,
-+	.dt_free_map		= pinconf_generic_dt_free_map,
- };
  
- static int rt2880_pmx_func_count(struct pinctrl_dev *pctrldev)
+ 	mutex_lock(&steam->mutex);
+ 	steam->client_opened = true;
+@@ -635,7 +623,7 @@ static int steam_client_ll_open(struct hid_device *hdev)
+ 
+ 	steam_input_unregister(steam);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static void steam_client_ll_close(struct hid_device *hdev)
+@@ -646,7 +634,6 @@ static void steam_client_ll_close(struct hid_device *hdev)
+ 	steam->client_opened = false;
+ 	mutex_unlock(&steam->mutex);
+ 
+-	hid_hw_close(steam->hdev);
+ 	if (steam->connected) {
+ 		steam_set_lizard_mode(steam, lizard_mode);
+ 		steam_input_register(steam);
+@@ -759,14 +746,15 @@ static int steam_probe(struct hid_device *hdev,
+ 	if (ret)
+ 		goto client_hdev_add_fail;
+ 
++	ret = hid_hw_open(hdev);
++	if (ret) {
++		hid_err(hdev,
++			"%s:hid_hw_open\n",
++			__func__);
++		goto hid_hw_open_fail;
++	}
++
+ 	if (steam->quirks & STEAM_QUIRK_WIRELESS) {
+-		ret = hid_hw_open(hdev);
+-		if (ret) {
+-			hid_err(hdev,
+-				"%s:hid_hw_open for wireless\n",
+-				__func__);
+-			goto hid_hw_open_fail;
+-		}
+ 		hid_info(hdev, "Steam wireless receiver connected");
+ 		steam_request_conn_status(steam);
+ 	} else {
+@@ -781,8 +769,8 @@ static int steam_probe(struct hid_device *hdev,
+ 
+ 	return 0;
+ 
+-hid_hw_open_fail:
+ input_register_fail:
++hid_hw_open_fail:
+ client_hdev_add_fail:
+ 	hid_hw_stop(hdev);
+ hid_hw_start_fail:
+@@ -809,8 +797,8 @@ static void steam_remove(struct hid_device *hdev)
+ 	cancel_work_sync(&steam->work_connect);
+ 	if (steam->quirks & STEAM_QUIRK_WIRELESS) {
+ 		hid_info(hdev, "Steam wireless receiver disconnected");
+-		hid_hw_close(hdev);
+ 	}
++	hid_hw_close(hdev);
+ 	hid_hw_stop(hdev);
+ 	steam_unregister(steam);
+ }
 -- 
 2.20.1
 
