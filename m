@@ -2,124 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33717DBC98
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AD04DBC7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 07:09:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504355AbfJRFHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 01:07:14 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39170 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504332AbfJRFHL (ORCPT
+        id S2504235AbfJRFF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 01:05:59 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41040 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbfJRFF4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:07:11 -0400
-Received: by mail-pf1-f194.google.com with SMTP id v4so3087555pff.6;
-        Thu, 17 Oct 2019 22:07:11 -0700 (PDT)
+        Fri, 18 Oct 2019 01:05:56 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p4so4690161wrm.8
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2019 22:05:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Dxf8j2dEp3gTKMidNHZOyi9cs38t6awcBjwDt5BGhco=;
-        b=kRzCl2sU8HhkN2FXU+AB6DHrD5pGZGK8OzQmjA2iRV6j8bod6JDJwCXwZC8OqJep3i
-         QNOn6QPM8Bq+xIddUidzOPgmu00nR5ZPwUV7rrfcXd2kzv461ggEh4UgeDVYvC0n30Pq
-         RaU1oHJXZyKXREXUNgwJr6IkVla6HHwlvRVaZ5SDQcJwXNjhLA+evDK9MEmFovwM5Bfc
-         HLqGNtPyecQjdt66rCHEz+h+1dr028s9/pFc3Fs65iCHDm/IGdPVpX9sDB1W1FIRzrJ5
-         YFC3yFRe0G0Fs+luyOzFip9poCXoUo8sJAN3HXEZu9QoPJzGJGsHl5eIUCZctGMuOeEf
-         2oYA==
+        bh=A/Tf4iJWS8qcGlBMvo/id14sOzyak6H/JZlFaeq1a2M=;
+        b=GJTkrh1foXLVx/GfRMgwY/5lZrE6f9Fzp9iyjCdB5NFY+dJeU/d3QExp2xXE18QY5l
+         INr6CRdIP/oYiK2MI54mC66XxUdHkBJ5zJ9iRnMQg4Ip05vhs6wu7zLobhVq7FEcJtH1
+         Ljw7Rem15V6dQg65HgOc2KxvQdIvAa1422/x7Uyu+dheEEt6NGHDEC4X6Ekhc/JG8BLI
+         Na48sFj8Fwlg6iDcfBxfSYCUkmVkdM0RLpEpPrnFNF1Q2O6n2ylRctHkI0vThzAulNdq
+         8KOHE98G/wc1uq+arXQrfdACByJaIho595AG6ZxA0vC6qghDEuoRMz282Mfy77ii/kzn
+         GodA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Dxf8j2dEp3gTKMidNHZOyi9cs38t6awcBjwDt5BGhco=;
-        b=TsIvVYg91c/j+hQqMVQl4rYoTHUFIeBsflKovafgcj3B6NuEavA16Nm5cF24DgaqOB
-         GRth1ERyBWnVKh0XYxwrknC1KmTJjHkKlt14EXi3NyQ2eL5SYecl5vJH184m4OuEFwjy
-         j0P4gBakmm/0P7SBAC71cXriHY42LMBMCJ6AJV1vAvO/yRBQf5Lyi+OD2J9oeKaXU54a
-         qVXv4JuQ1xf2yq65l0c3F0hiRzx+WK7H2SLoECR3HodwdOz9pc+qdTX5nSRDnquPX+iO
-         0uVBMEmxZFUQlrwZJ4LIdjjL9JfCWIrbX5+UQJJzjs9LrQFKDQfNe9hr8vYfhpzln8Ls
-         bz/g==
-X-Gm-Message-State: APjAAAXaDKri+4RYM7bSIqLjMV5kgU/pOGW74unq1CW7XArix2nvHjEs
-        QC64My3a+I+aJE6iLafOoWxO9L/I
-X-Google-Smtp-Source: APXvYqx7/HwYNBy93h+fmNaI9cnTLMGY7XFYbErDicOBeRlQ0eTPm/1tR+ecZKuvPeC4oiDJ4HVdmw==
-X-Received: by 2002:a17:90a:9201:: with SMTP id m1mr8641712pjo.74.1571371532978;
-        Thu, 17 Oct 2019 21:05:32 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m2sm6433577pff.154.2019.10.17.21.05.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Oct 2019 21:05:31 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 21:05:30 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Hui Peng <benquike@gmail.com>, davem@davemloft.net,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] Fix a NULL-ptr-deref bug in
- ath10k_usb_alloc_urb_from_pipe
-Message-ID: <20191018040530.GA28167@roeck-us.net>
-References: <20190804003101.11541-1-benquike@gmail.com>
- <20190831213139.GA32507@roeck-us.net>
- <87ftlgqw42.fsf@kamboji.qca.qualcomm.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=A/Tf4iJWS8qcGlBMvo/id14sOzyak6H/JZlFaeq1a2M=;
+        b=A46/C1uZInzw8FMiLvXU20VVDCIsGNFHEwrtKubtKN6zNXrY0DwriCf37ZD8GXgzrM
+         RvG3li81ExgYtvpIqtQA6daJSrpp/I3lm+ejGmtg2dWqRgRFvnReBaPfZtOW/O8m4K6L
+         wfeee0UqdgWVcqbPrfALPjIhVesxyjI78naIj3tBHmlji1AMJ+k4xWeR86quPlRT8KXU
+         JPGhQuCV31Z8xKj+7bY586lNyai7uOlP8R2Y9G8aq+5NiysLY891hbuTPPYJDJd6LL+Z
+         glyX39NXEOQIK+f4fhjE5bUpBQ2VsH66PdwL5dC5aVjTskV7WTGZg26ymX/U0ES26mxd
+         fc/Q==
+X-Gm-Message-State: APjAAAWODC77eAuWqzGcQ95nWCNp3BV2rBjYHcVd14yjGnMVyStTF+8Y
+        EjmRM2hntuz2iCNM5vjhhXmqtsUc
+X-Google-Smtp-Source: APXvYqxjFg1SXCQ+fipbiPTH8W1CtjD2slFtJSRD3RXU/MYRTMdtOmGZYYVkzVsFh9Oh91u3gt6q4g==
+X-Received: by 2002:adf:a506:: with SMTP id i6mr5692969wrb.159.1571371582365;
+        Thu, 17 Oct 2019 21:06:22 -0700 (PDT)
+Received: from ltop.local ([2a02:a03f:40ac:ce00:18e1:7d90:ccf5:4489])
+        by smtp.gmail.com with ESMTPSA id w18sm3970796wmc.9.2019.10.17.21.06.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Oct 2019 21:06:21 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 06:06:20 +0200
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] riscv: ensure RISC-V C model definitions are passed
+ to static analyzers
+Message-ID: <20191018040619.o3qb5fyj4qdevwoe@ltop.local>
+References: <20191018004929.3445-1-paul.walmsley@sifive.com>
+ <20191018004929.3445-5-paul.walmsley@sifive.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87ftlgqw42.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191018004929.3445-5-paul.walmsley@sifive.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 01, 2019 at 11:06:05AM +0300, Kalle Valo wrote:
-> Guenter Roeck <linux@roeck-us.net> writes:
+On Thu, Oct 17, 2019 at 05:49:25PM -0700, Paul Walmsley wrote:
+> Static analysis tools such as sparse don't set the RISC-V C model
+> preprocessor directives such as "__riscv_cmodel_medany", set by the C
+> compilers.  This causes the static analyzers to evaluate different
+> preprocessor paths than C compilers would.  Fix this by defining the
+> appropriate C model macros in the static analyzer command lines.
 > 
-> > Hi,
-> >
-> > On Sat, Aug 03, 2019 at 08:31:01PM -0400, Hui Peng wrote:
-> >> The `ar_usb` field of `ath10k_usb_pipe_usb_pipe` objects
-> >> are initialized to point to the containing `ath10k_usb` object
-> >> according to endpoint descriptors read from the device side, as shown
-> >> below in `ath10k_usb_setup_pipe_resources`:
-> >> 
-> >> for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
-> >>         endpoint = &iface_desc->endpoint[i].desc;
-> >> 
-> >>         // get the address from endpoint descriptor
-> >>         pipe_num = ath10k_usb_get_logical_pipe_num(ar_usb,
-> >>                                                 endpoint->bEndpointAddress,
-> >>                                                 &urbcount);
-> >>         ......
-> >>         // select the pipe object
-> >>         pipe = &ar_usb->pipes[pipe_num];
-> >> 
-> >>         // initialize the ar_usb field
-> >>         pipe->ar_usb = ar_usb;
-> >> }
-> >> 
-> >> The driver assumes that the addresses reported in endpoint
-> >> descriptors from device side  to be complete. If a device is
-> >> malicious and does not report complete addresses, it may trigger
-> >> NULL-ptr-deref `ath10k_usb_alloc_urb_from_pipe` and
-> >> `ath10k_usb_free_urb_to_pipe`.
-> >> 
-> >> This patch fixes the bug by preventing potential NULL-ptr-deref.
-> >> 
-> >> Signed-off-by: Hui Peng <benquike@gmail.com>
-> >> Reported-by: Hui Peng <benquike@gmail.com>
-> >> Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-> >
-> > This patch fixes CVE-2019-15099, which has CVSS scores of 7.5 (CVSS 3.0)
-> > and 7.8 (CVSS 2.0). Yet, I don't find it in the upstream kernel or in Linux
-> > next.
-> >
-> > Is the patch going to be applied to the upstream kernel anytime soon ?
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> ---
+>  arch/riscv/Makefile | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> Same answer as in patch 1:
-> 
-> https://patchwork.kernel.org/patch/11074655/
-> 
+> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> index f5e914210245..0247a90bd4d8 100644
+> --- a/arch/riscv/Makefile
+> +++ b/arch/riscv/Makefile
+> @@ -47,9 +47,11 @@ KBUILD_CFLAGS += -DCONFIG_PAGE_OFFSET=$(CONFIG_PAGE_OFFSET)
+>  
+>  ifeq ($(CONFIG_CMODEL_MEDLOW),y)
+>  	KBUILD_CFLAGS += -mcmodel=medlow
+> +	CHECKFLAGS += -D__riscv_cmodel_medlow
+>  endif
+>  ifeq ($(CONFIG_CMODEL_MEDANY),y)
+>  	KBUILD_CFLAGS += -mcmodel=medany
+> +	CHECKFLAGS += -D__riscv_cmodel_medany
 
-Sorry to bring this up again. The ath6k patch made it into the upstream
-kernel, but the ath10k patch didn't. Did it get lost, or was there a
-reason not to apply this patch ?
+I can teach sparse about this in the following days.
 
-Thanks,
-Guenter
+-- Luc Van Oostenryck
