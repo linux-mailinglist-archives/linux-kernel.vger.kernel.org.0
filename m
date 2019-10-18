@@ -2,46 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B71CDCD52
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:07:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ABB3DCD74
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 20:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505746AbfJRSHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 14:07:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45002 "EHLO
+        id S2505809AbfJRSIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 14:08:17 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45318 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505694AbfJRSHL (ORCPT
+        with ESMTP id S2505756AbfJRSHQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 14:07:11 -0400
+        Fri, 18 Oct 2019 14:07:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=kIdn4VulEh9KHSu4X43j6W5Pl8dnzX5CpSEuHNMmqZg=; b=WjwNhdAgMXyf
-        f/FpHLUkv9G0+RYaluq+UfZ74TKDku8p3GcVgmeDSuHf+HaJTuXfnFgJHPx9fLV5vwYYdOA0mDbXC
-        An0OrN8jGzCDLrpDYYQiHfZgoMOeRPov+MKLyAN4SwFfRe2vbPKQOhxCXCIzXgyv8NSADueQtIhib
-        PbwmU=;
+        List-Archive; bh=3hcMcor/FN+8Ad96YbO9u/6CZToK6CJA7ZrtqwtS/rc=; b=jyusJVGaSS2W
+        TsynWLOOKgiRRyo961YezP6/4Q0uwa7yA2HkIiCqH/NzO1NasX4a/bbr6lgOkjyG6JSnrPRXuok5J
+        y4TWUJMfwDFRf5dPlrLmKMjI289EsVP+nfIAXv1TrIzNKZJLDlq+uEQ5cFRDmvBvJ/mKXepSP1Sl+
+        qTtX8=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iLWeS-0004FY-Lf; Fri, 18 Oct 2019 18:07:00 +0000
+        id 1iLWeS-0004Fh-QU; Fri, 18 Oct 2019 18:07:00 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 1F8F92743259; Fri, 18 Oct 2019 19:07:00 +0100 (BST)
+        id 4E8672743273; Fri, 18 Oct 2019 19:07:00 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Olivier Moysan <olivier.moysan@st.com>
-Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
-        arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
-        broonie@kernel.org, lgirdwood@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Mark Brown <broonie@kernel.org>, mcoquelin.stm32@gmail.com,
-        olivier.moysan@st.com, perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: stm32: sai: fix sysclk management on shutdown" to the asoc tree
-In-Reply-To: <20191018082040.31022-1-olivier.moysan@st.com>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     alsa-devel@alsa-project.org, "Cc:"@sirena.co.uk,
+        "Cc:"@sirena.co.uk, Cezary Rojewski <cezary.rojewski@intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: Intel: sof-rt5682: add a check for devm_clk_get" to the asoc tree
+In-Reply-To: <20191017025044.31474-1-hslester96@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191018180700.1F8F92743259@ypsilon.sirena.org.uk>
+Message-Id: <20191018180700.4E8672743273@ypsilon.sirena.org.uk>
 Date:   Fri, 18 Oct 2019 19:07:00 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,7 +51,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: stm32: sai: fix sysclk management on shutdown
+   ASoC: Intel: sof-rt5682: add a check for devm_clk_get
 
 has been applied to the asoc tree at
 
@@ -75,68 +76,42 @@ to this mail.
 Thanks,
 Mark
 
-From 9b7a7f921689d6c254e5acd670be631ebd82d54d Mon Sep 17 00:00:00 2001
-From: Olivier Moysan <olivier.moysan@st.com>
-Date: Fri, 18 Oct 2019 10:20:40 +0200
-Subject: [PATCH] ASoC: stm32: sai: fix sysclk management on shutdown
+From e5f0d490fb718254a884453e47fcd48493cd67ea Mon Sep 17 00:00:00 2001
+From: Chuhong Yuan <hslester96@gmail.com>
+Date: Thu, 17 Oct 2019 10:50:44 +0800
+Subject: [PATCH] ASoC: Intel: sof-rt5682: add a check for devm_clk_get
 
-The commit below, adds a call to sysclk callback on shutdown.
-This introduces a regression in stm32 SAI driver, as some clock
-services are called twice, leading to unbalanced calls.
-Move processing related to mclk from shutdown to sysclk callback.
-When requested frequency is 0, assume shutdown and release mclk.
+sof_audio_probe misses a check for devm_clk_get and may cause problems.
+Add a check for it to fix the bug.
 
-Fixes: 2458adb8f92a ("SoC: simple-card-utils: set 0Hz to sysclk when shutdown")
-
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
-Link: https://lore.kernel.org/r/20191018082040.31022-1-olivier.moysan@st.com
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20191017025044.31474-1-hslester96@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/stm/stm32_sai_sub.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ sound/soc/intel/boards/sof_rt5682.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index d7501f88aaa6..a4060813bc74 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -505,10 +505,20 @@ static int stm32_sai_set_sysclk(struct snd_soc_dai *cpu_dai,
- 	if (dir == SND_SOC_CLOCK_OUT && sai->sai_mclk) {
- 		ret = regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX,
- 					 SAI_XCR1_NODIV,
--					 (unsigned int)~SAI_XCR1_NODIV);
-+					 freq ? 0 : SAI_XCR1_NODIV);
- 		if (ret < 0)
- 			return ret;
- 
-+		/* Assume shutdown if requested frequency is 0Hz */
-+		if (!freq) {
-+			/* Release mclk rate only if rate was actually set */
-+			if (sai->mclk_rate) {
-+				clk_rate_exclusive_put(sai->sai_mclk);
-+				sai->mclk_rate = 0;
-+			}
-+			return 0;
+diff --git a/sound/soc/intel/boards/sof_rt5682.c b/sound/soc/intel/boards/sof_rt5682.c
+index 5ce643d62faf..4f6e58c3954a 100644
+--- a/sound/soc/intel/boards/sof_rt5682.c
++++ b/sound/soc/intel/boards/sof_rt5682.c
+@@ -603,6 +603,15 @@ static int sof_audio_probe(struct platform_device *pdev)
+ 	/* need to get main clock from pmc */
+ 	if (sof_rt5682_quirk & SOF_RT5682_MCLK_BYTCHT_EN) {
+ 		ctx->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
++		if (IS_ERR(ctx->mclk)) {
++			ret = PTR_ERR(ctx->mclk);
++
++			dev_err(&pdev->dev,
++				"Failed to get MCLK from pmc_plt_clk_3: %d\n",
++				ret);
++			return ret;
 +		}
 +
- 		/* If master clock is used, set parent clock now */
- 		ret = stm32_sai_set_parent_clock(sai, freq);
- 		if (ret)
-@@ -1093,15 +1103,6 @@ static void stm32_sai_shutdown(struct snd_pcm_substream *substream,
- 
- 	regmap_update_bits(sai->regmap, STM_SAI_IMR_REGX, SAI_XIMR_MASK, 0);
- 
--	regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX, SAI_XCR1_NODIV,
--			   SAI_XCR1_NODIV);
--
--	/* Release mclk rate only if rate was actually set */
--	if (sai->mclk_rate) {
--		clk_rate_exclusive_put(sai->sai_mclk);
--		sai->mclk_rate = 0;
--	}
--
- 	clk_disable_unprepare(sai->sai_ck);
- 
- 	spin_lock_irqsave(&sai->irq_lock, flags);
+ 		ret = clk_prepare_enable(ctx->mclk);
+ 		if (ret < 0) {
+ 			dev_err(&pdev->dev,
 -- 
 2.20.1
 
