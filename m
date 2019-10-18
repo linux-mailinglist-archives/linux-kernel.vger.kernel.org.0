@@ -2,126 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99259DC84C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86F89DC853
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2019 17:21:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633035AbfJRPUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 11:20:07 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35527 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2501908AbfJRPUF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 11:20:05 -0400
-Received: by mail-lf1-f68.google.com with SMTP id w6so5030121lfl.2;
-        Fri, 18 Oct 2019 08:20:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+AnJxrgOsF5pdHMRsdpMSMexStt/hgIWSycUyGA4QAg=;
-        b=JRFvI3s7v+dr38puTvmC9iBqpU9pPsECM026W3PKld7UNAXFPbFz5r9bdS4GFfP/eG
-         Dy+aWu+AXVRp9HoMfO+UZ3LYoxW/bFdgZrMu898bwULHsJ5fHZtFIOZofdxqRGNbvJ8T
-         NwlybpP7mUpSJgV6QM7b/ioPiyKDi6bea1tYcdVObMF2PFaeUuGUe0QMOykiaUqNGBlp
-         6M5KOL0N6nP7xQ861JL+sGHvmLghc852AP56TlmdZoK1kWrDihqTQBl+DJMrIGlOHLwh
-         Wdl0LVBv6yXnlcUKqrwk9ceSOaACbTIhidQdyiRJj050D8e8utsKCK6flI56tInSvgkx
-         121A==
-X-Gm-Message-State: APjAAAUn7mKJtsJaI4tKF3zZBDXDYxuRLYzJmSE4RxYFUaNWBYsa0lE6
-        h+VqRAFUoIWIOZ1oYhLe14U=
-X-Google-Smtp-Source: APXvYqwZnHP5fM5ugg6DkmTBhXwuX0nTdcQH4m5Fbj3XQEpFQnlDh8mVi/DdcZNeL+QLbwYoMnxK9w==
-X-Received: by 2002:a19:c6d6:: with SMTP id w205mr5561511lff.17.1571412001935;
-        Fri, 18 Oct 2019 08:20:01 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id x5sm3197980lfg.71.2019.10.18.08.19.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Oct 2019 08:19:58 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@xi.terra>)
-        id 1iLU31-0006YM-6x; Fri, 18 Oct 2019 17:20:11 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>,
-        stable <stable@vger.kernel.org>
-Subject: [PATCH RFC v2 2/2] USB: ldusb: fix ring-buffer locking
-Date:   Fri, 18 Oct 2019 17:19:55 +0200
-Message-Id: <20191018151955.25135-3-johan@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191018151955.25135-1-johan@kernel.org>
-References: <20191018151955.25135-1-johan@kernel.org>
+        id S2633014AbfJRPVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 11:21:20 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:42406 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S2389421AbfJRPVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 11:21:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDC3AC8F;
+        Fri, 18 Oct 2019 08:20:59 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B4DA3F718;
+        Fri, 18 Oct 2019 08:20:57 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 16:20:52 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Yunfeng Ye <yeyunfeng@huawei.com>
+Cc:     catalin.marinas@arm.com, will@kernel.org,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        lorenzo.pieralisi@arm.com, tglx@linutronix.de,
+        David.Laight@ACULAB.COM, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        hushiyuan@huawei.com, wuyun.wu@huawei.com, linfeilong@huawei.com
+Subject: Re: [PATCH v4] arm64: psci: Reduce the waiting time for
+ cpu_psci_cpu_kill()
+Message-ID: <20191018152052.GA10312@bogus>
+References: <04ab51e4-bc08-8250-4e70-4c87c58c8ad0@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <04ab51e4-bc08-8250-4e70-4c87c58c8ad0@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The custom ring-buffer implementation was merged without any locking
-whatsoever, but a spinlock was later added by commit 9d33efd9a791
-("USB: ldusb bugfix").
+On Fri, Oct 18, 2019 at 08:46:37PM +0800, Yunfeng Ye wrote:
+> In case like suspend-to-disk and uspend-to-ram, a large number of CPU
 
-The lock did not cover the loads from the ring-buffer entry after
-determining the buffer was non-empty, nor the update of the tail index
-once the entry had been processed. The former could lead to stale data
-being returned, while the latter could lead to memory corruption on
-sufficiently weakly ordered architectures.
+s/case/cases/
+s/uspend-to-ram/suspend-to-ram/
 
-Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
-Fixes: 9d33efd9a791 ("USB: ldusb bugfix")
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/usb/misc/ldusb.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+> cores need to be shut down. At present, the CPU hotplug operation is
+> serialised, and the CPU cores can only be shut down one by one. In this
+> process, if PSCI affinity_info() does not return LEVEL_OFF quickly,
+> cpu_psci_cpu_kill() needs to wait for 10ms. If hundreds of CPU cores
+> need to be shut down, it will take a long time.
+> 
+> Normally, there is no need to wait 10ms in cpu_psci_cpu_kill(). So
+> change the wait interval from 10 ms to max 1 ms and use usleep_range()
+> instead of msleep() for more accurate timer.
+> 
+> In addition, reducing the time interval will increase the messages
+> output, so remove the "Retry ..." message, instead, put the number of
+> waiting times to the sucessful message.
+> 
+> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+> ---
+> v3 -> v4:
+>  - using time_before(jiffies, timeout) to check
+>  - update the comment as review suggest
+> 
+> v2 -> v3:
+>  - update the comment
+>  - remove the busy-wait logic, modify the loop logic and output message
+> 
+> v1 -> v2:
+>  - use usleep_range() instead of udelay() after waiting for a while
+>  arch/arm64/kernel/psci.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/psci.c b/arch/arm64/kernel/psci.c
+> index c9f72b2665f1..77965c3ba477 100644
+> --- a/arch/arm64/kernel/psci.c
+> +++ b/arch/arm64/kernel/psci.c
+> @@ -81,7 +81,8 @@ static void cpu_psci_cpu_die(unsigned int cpu)
+> 
+>  static int cpu_psci_cpu_kill(unsigned int cpu)
+>  {
+> -	int err, i;
+> +	int err, i = 0;
+> +	unsigned long timeout;
+> 
+>  	if (!psci_ops.affinity_info)
+>  		return 0;
+> @@ -91,16 +92,17 @@ static int cpu_psci_cpu_kill(unsigned int cpu)
+>  	 * while it is dying. So, try again a few times.
+>  	 */
+> 
+> -	for (i = 0; i < 10; i++) {
+> +	timeout = jiffies + msecs_to_jiffies(100);
+> +	do {
+> +		i++;
+>  		err = psci_ops.affinity_info(cpu_logical_map(cpu), 0);
+>  		if (err == PSCI_0_2_AFFINITY_LEVEL_OFF) {
+> -			pr_info("CPU%d killed.\n", cpu);
+> +			pr_info("CPU%d killed (polled %d times)\n", cpu, i);
 
-diff --git a/drivers/usb/misc/ldusb.c b/drivers/usb/misc/ldusb.c
-index 15b5f06fb0b3..6b5843b0071e 100644
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -477,11 +477,11 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
- 
- 		spin_lock_irq(&dev->rbsl);
- 	}
--	spin_unlock_irq(&dev->rbsl);
- 
- 	/* actual_buffer contains actual_length + interrupt_in_buffer */
- 	actual_buffer = (size_t *)(dev->ring_buffer + dev->ring_tail * (sizeof(size_t)+dev->interrupt_in_endpoint_size));
- 	if (*actual_buffer > dev->interrupt_in_endpoint_size) {
-+		spin_unlock_irq(&dev->rbsl);
- 		retval = -EIO;
- 		goto unlock_exit;
- 	}
-@@ -489,17 +489,26 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
- 	if (bytes_to_read < *actual_buffer)
- 		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
- 			 *actual_buffer-bytes_to_read);
-+	spin_unlock_irq(&dev->rbsl);
-+
-+	/*
-+	 * Pairs with spin_unlock_irqrestore() in
-+	 * ld_usb_interrupt_in_callback() and makes sure the ring-buffer entry
-+	 * has been updated before copy_to_user().
-+	 */
-+	smp_rmb();
- 
- 	/* copy one interrupt_in_buffer from ring_buffer into userspace */
- 	if (copy_to_user(buffer, actual_buffer+1, bytes_to_read)) {
- 		retval = -EFAULT;
- 		goto unlock_exit;
- 	}
--	dev->ring_tail = (dev->ring_tail+1) % ring_buffer_size;
--
- 	retval = bytes_to_read;
- 
- 	spin_lock_irq(&dev->rbsl);
-+
-+	dev->ring_tail = (dev->ring_tail + 1) % ring_buffer_size;
-+
- 	if (dev->buffer_overflow) {
- 		dev->buffer_overflow = 0;
- 		spin_unlock_irq(&dev->rbsl);
--- 
-2.23.0
+We can even drop loop counter completely, track time and log that
+instead of loop counter that doesn't give any indication without looking
+into the code.
+
+	start = jiffies, end = start + msecs_to_jiffies(100);
+	do {
+			....
+			pr_info("CPU%d killed (polled %u ms)\n", cpu,
+				jiffies_to_msecs(jiffies - start));
+			....
+	} while (time_before(jiffies, end));
+
+Just my preference. Looks good otherwise.
+
+--
+Regards,
+Sudeep
 
