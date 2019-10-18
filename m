@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A163DD4A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:27:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A85FDD4C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 00:28:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfJRWEH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 18:04:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35654 "EHLO mail.kernel.org"
+        id S2406428AbfJRW1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 18:27:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727616AbfJRWEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:04:02 -0400
+        id S1727637AbfJRWED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:04:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45F4D222CD;
-        Fri, 18 Oct 2019 22:04:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BBE2222C3;
+        Fri, 18 Oct 2019 22:04:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436241;
-        bh=1Ua/KLz2Zw5RYyuFpUKjROxfwsvNuH6AFnFVSVl/NgM=;
+        s=default; t=1571436242;
+        bh=KDouM1x/ZhUC/AxhtbM10VlvxvdYU4eTIV21usld9RQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G85yZd9Q0ViYogTu/46KZIAuWwtO/Ed4V5yXLK46wOx85xqTKPV5RsaooYURqfQ+R
-         XzGIrpKyo64MmgVpnSIqDUsaAgslI54EVDpwa4Su8xpDB5Xm+Uekw1Km1JZoeneMaP
-         vz/XFqhba2gU2LWMnYPZyBNJdtMcL4Azx0Ev5LHY=
+        b=R+hdJW+6Jj42Zqq+ixfLel6Tmz14SkrkcE4pB1aIXo0ichxaqna/H8na6MwDK1Qqm
+         h5isWJlzJ4hWjKRiWjpZQyvxV2GlK58akJ8r5KVtkOOgr+C+2QuvIsT+LJHVs2xUSQ
+         D56gtFK05Ev6KS9D13e7RV/WR23QfIqbJXWnskpo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 26/89] arm64: Fix incorrect irqflag restore for priority masking for compat
-Date:   Fri, 18 Oct 2019 18:02:21 -0400
-Message-Id: <20191018220324.8165-26-sashal@kernel.org>
+Cc:     James Morse <james.morse@arm.com>, Will Deacon <will@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 27/89] arm64: ftrace: Ensure synchronisation in PLT setup for Neoverse-N1 #1542419
+Date:   Fri, 18 Oct 2019 18:02:22 -0400
+Message-Id: <20191018220324.8165-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191018220324.8165-1-sashal@kernel.org>
 References: <20191018220324.8165-1-sashal@kernel.org>
@@ -45,40 +44,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: James Morse <james.morse@arm.com>
 
-[ Upstream commit f46f27a576cc3b1e3d45ea50bc06287aa46b04b2 ]
+[ Upstream commit dd8a1f13488438c6c220b7cafa500baaf21a6e53 ]
 
-Commit bd82d4bd2188 ("arm64: Fix incorrect irqflag restore for priority
-masking") added a macro to the entry.S call paths that leave the
-PSTATE.I bit set. This tells the pPNMI masking logic that interrupts
-are masked by the CPU, not by the PMR. This value is read back by
-local_daif_save().
+CPUs affected by Neoverse-N1 #1542419 may execute a stale instruction if
+it was recently modified. The affected sequence requires freshly written
+instructions to be executable before a branch to them is updated.
 
-Commit bd82d4bd2188 added this call to el0_svc, as el0_svc_handler
-is called with interrupts masked. el0_svc_compat was missed, but should
-be covered in the same way as both of these paths end up in
-el0_svc_common(), which expects to unmask interrupts.
+There are very few places in the kernel that modify executable text,
+all but one come with sufficient synchronisation:
+ * The module loader's flush_module_icache() calls flush_icache_range(),
+   which does a kick_all_cpus_sync()
+ * bpf_int_jit_compile() calls flush_icache_range().
+ * Kprobes calls aarch64_insn_patch_text(), which does its work in
+   stop_machine().
+ * static keys and ftrace both patch between nops and branches to
+   existing kernel code (not generated code).
 
-Fixes: bd82d4bd2188 ("arm64: Fix incorrect irqflag restore for priority masking")
+The affected sequence is the interaction between ftrace and modules.
+The module PLT is cleaned using __flush_icache_range() as the trampoline
+shouldn't be executable until we update the branch to it.
+
+Drop the double-underscore so that this path runs kick_all_cpus_sync()
+too.
+
 Signed-off-by: James Morse <james.morse@arm.com>
-Cc: Julien Thierry <julien.thierry.kdev@gmail.com>
 Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/entry.S | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/kernel/ftrace.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 84a822748c84e..e304fe04b098d 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -775,6 +775,7 @@ el0_sync_compat:
- 	b.ge	el0_dbg
- 	b	el0_inv
- el0_svc_compat:
-+	gic_prio_kentry_setup tmp=x1
- 	mov	x0, sp
- 	bl	el0_svc_compat_handler
- 	b	ret_to_user
+diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
+index 1717732579742..06e56b4703153 100644
+--- a/arch/arm64/kernel/ftrace.c
++++ b/arch/arm64/kernel/ftrace.c
+@@ -121,10 +121,16 @@ int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
+ 
+ 			/*
+ 			 * Ensure updated trampoline is visible to instruction
+-			 * fetch before we patch in the branch.
++			 * fetch before we patch in the branch. Although the
++			 * architecture doesn't require an IPI in this case,
++			 * Neoverse-N1 erratum #1542419 does require one
++			 * if the TLB maintenance in module_enable_ro() is
++			 * skipped due to rodata_enabled. It doesn't seem worth
++			 * it to make it conditional given that this is
++			 * certainly not a fast-path.
+ 			 */
+-			__flush_icache_range((unsigned long)&dst[0],
+-					     (unsigned long)&dst[1]);
++			flush_icache_range((unsigned long)&dst[0],
++					   (unsigned long)&dst[1]);
+ 		}
+ 		addr = (unsigned long)dst;
+ #else /* CONFIG_ARM64_MODULE_PLTS */
 -- 
 2.20.1
 
