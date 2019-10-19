@@ -2,76 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70193DDB48
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 00:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2162CDDB4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 00:12:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbfJSWHe convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 19 Oct 2019 18:07:34 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47043 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726143AbfJSWHe (ORCPT
+        id S1726225AbfJSWMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 18:12:25 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46126 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbfJSWMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 18:07:34 -0400
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-134-nL5Y94MiNzGK8GvS41-CuQ-1; Sat, 19 Oct 2019 18:07:30 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5AAB1800D4E;
-        Sat, 19 Oct 2019 22:07:29 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-25.brq.redhat.com [10.40.204.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5033E19C7F;
-        Sat, 19 Oct 2019 22:07:27 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc:     Jan Stancek <jstancek@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH] perf/x86/intel/pt: Fix base for single entry topa
-Date:   Sun, 20 Oct 2019 00:07:26 +0200
-Message-Id: <20191019220726.12213-1-jolsa@kernel.org>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: nL5Y94MiNzGK8GvS41-CuQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+        Sat, 19 Oct 2019 18:12:25 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e15so5317549pgu.13;
+        Sat, 19 Oct 2019 15:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=GfOewpLHGX+dzk9mg7++bvsjADScpIlodI4RprwqfC4=;
+        b=mMqU8AmXmMj9wx7BTAit1++7cUEmbP+mFUE9BBSX05UjmvFFUnShcyxspOHPql5YcU
+         Hd4s1I9/gE4EyHkuynU0Z/Kl833fz7XWRw92gOq6QKT1g6MW/O8TN3iouYx+fVX6Eebe
+         OV6MdFxMTSOzXIUNiu5jdtTNht7KvhjvWglQmXjmaSXnBLZCNTX8LYMqno9Uf3OkMQcn
+         rvLl9bKXWHqiF9B7+NkIhZ7UUP1EHHHfHbier1Wpbt++zFbiSaPEJ645x4Bygqj91CEb
+         YqT+Qy3HDib5eifmHsI3MVrVf/xYVBvqfiqz9z6AXWEfnH1rTBAjBFjDoquLnj7klXmt
+         ajEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GfOewpLHGX+dzk9mg7++bvsjADScpIlodI4RprwqfC4=;
+        b=Z+hVKS1p7Rt58Jej1QM7+wOpHuloCXAcp5qALE9LzvkRu4MW06ZnCq2gi/B7gPL3Cx
+         e7LU/cabv//rNdu5rL+VW2bufEAxwtTImM2Cz+epAXulvgqvi+BdH6zRWN1ribA+jREB
+         C385XdxhrIlX+1S3j99Jx+jRw2rHfpXhwILvbTmGWs3B3xDqfKK6T9Rk5OW1WQxXbX0/
+         xNXRndl0vN+T4R+O6pGWpViwo+vcmPKqyJv0ewotCP9m6neyzaiuL1D7dOCOJigkqYHf
+         GYbWabYSnF7Tc3FRQCaJ2WDMxsRw4neH59XZ86s/zY48dC70SiDNp5zVoesHgewm+tKp
+         ww1w==
+X-Gm-Message-State: APjAAAXCLBzaYsUvajJEnbnzrN2y62eEXKbykmb+3eXeeZaiHGMgGvP5
+        qarwMcu0EGfw6aesg5mnEiTqDBxf
+X-Google-Smtp-Source: APXvYqxtJv5Y38sSrZp0BxPCpqRRvkcQUbOu3nagjBlnrapXcaKu9JuZyQ4TtD13Dvaoe5Q2egyxRg==
+X-Received: by 2002:a63:495b:: with SMTP id y27mr17279766pgk.438.1571523144756;
+        Sat, 19 Oct 2019 15:12:24 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id bx18sm8522324pjb.26.2019.10.19.15.12.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Oct 2019 15:12:24 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+To:     agross@kernel.org, bjorn.andersson@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH] arm64: dts: qcom: msm8998: Fixup uart3 gpio config for bluetooth
+Date:   Sat, 19 Oct 2019 15:12:17 -0700
+Message-Id: <20191019221217.1432-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jan reported failing ltp test for pt. It looks like the reason
-is commit 38bb8d77d0b9, that did not keep the TOPA_SHIFT for
-entry base, adding it back.
+It turns out that the wcn3990 can float the gpio lines during bootup, etc
+which will result in the uart core thinking there is incoming data.  This
+results in the bluetooth stack getting garbage.  By applying a bias to
+match what wcn3990 would drive, the issue is corrected.
 
-[1] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/tracing/pt_test/pt_test.c
-
-Reported-by: Jan Stancek <jstancek@redhat.com>
-Fixes: 38bb8d77d0b9 ("perf/x86/intel/pt: Split ToPA metadata and page layout")
-Signed-off-by: Jiri Olsa <jolsa@redhat.com>
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 ---
- arch/x86/events/intel/pt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../boot/dts/qcom/msm8998-clamshell.dtsi      | 31 +++++++++++++++++++
+ arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi     | 31 +++++++++++++++++++
+ 2 files changed, 62 insertions(+)
 
-diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index 74e80ed9c6c4..05e43d0f430b 100644
---- a/arch/x86/events/intel/pt.c
-+++ b/arch/x86/events/intel/pt.c
-@@ -627,7 +627,7 @@ static struct topa *topa_alloc(int cpu, gfp_t gfp)
- 	 * link as the 2nd entry in the table
- 	 */
- 	if (!intel_pt_validate_hw_cap(PT_CAP_topa_multiple_entries)) {
--		TOPA_ENTRY(&tp->topa, 1)->base = page_to_phys(p);
-+		TOPA_ENTRY(&tp->topa, 1)->base = page_to_phys(p) >> TOPA_SHIFT;
- 		TOPA_ENTRY(&tp->topa, 1)->end = 1;
- 	}
+diff --git a/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi b/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
+index ab24d415acc0..7e02cb6c8e07 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
+@@ -74,6 +74,37 @@
+ 	};
+ };
  
++&blsp1_uart3_on {
++	/delete-node/ config;
++
++	pinconf-cts {
++		/*
++		 * Configure a pull-down on 47 (CTS) to match the pull
++		 * of the Bluetooth module.
++		 */
++		pins = "gpio47";
++		bias-pull-down;
++	};
++
++	pinconf-rts-tx {
++		/* We'll drive 48 (RFR) and 45 (TX), so no pull */
++		pins = "gpio45", "gpio48";
++		drive-strength = <2>;
++		bias-disable;
++	};
++
++	pinconf-rx {
++		/*
++		 * Configure a pull-up on 45 (RX). This is needed to
++		 * avoid garbage data when the TX pin of the Bluetooth
++		 * module is in tri-state (module powered off or not
++		 * driving the signal yet).
++		 */
++		pins = "gpio45";
++		bias-pull-up;
++	};
++};
++
+ &dsi0 {
+ 	status = "okay";
+ 
+diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+index 1a1836ed1052..17f51af5e999 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+@@ -37,6 +37,37 @@
+ 	};
+ };
+ 
++&blsp1_uart3_on {
++	/delete-node/ config;
++
++	pinconf-cts {
++		/*
++		 * Configure a pull-down on 47 (CTS) to match the pull
++		 * of the Bluetooth module.
++		 */
++		pins = "gpio47";
++		bias-pull-down;
++	};
++
++	pinconf-rts-tx {
++		/* We'll drive 48 (RFR) and 45 (TX), so no pull */
++		pins = "gpio45", "gpio48";
++		drive-strength = <2>;
++		bias-disable;
++	};
++
++	pinconf-rx {
++		/*
++		 * Configure a pull-up on 45 (RX). This is needed to
++		 * avoid garbage data when the TX pin of the Bluetooth
++		 * module is in tri-state (module powered off or not
++		 * driving the signal yet).
++		 */
++		pins = "gpio45";
++		bias-pull-up;
++	};
++};
++
+ &blsp2_uart1 {
+ 	status = "okay";
+ };
 -- 
-2.21.0
+2.17.1
 
