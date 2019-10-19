@@ -2,77 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 977F1DD88C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 13:35:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2552DD88D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 13:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfJSLfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 19 Oct 2019 07:35:43 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36665 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725283AbfJSLfn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 07:35:43 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v24so8752919ljj.3
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2019 04:35:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=+6MNGNbIyjiYQZvQQXGsFEf1Qjcg9l4udg2K+IWCOZ8=;
-        b=Ep8Qfdxbm1wPAvy4CgeFWMKhisOvOEao9dfuxJD1a/phrDsTUxqW7Fdtz2y8RfIrwO
-         FxgLoglBwK2jSlH5amH8ptKALOJhcfNK2Wxcsl2+//eueUPi8zs53ENt4tF94prsRQrh
-         EkkLnCI5+H8nICl+xzt1LC7AkVbaiNy6MO8d0ydjVJiK60SuopstwQjZOu0rij1dU1E5
-         AY+rqXmUhMwJM5FZ/hu54YKdOWiNJbwKHfchvrf62FCPL953dLFkzvg6IB1/SIaya+wz
-         Nk7bWhxdWytWHmJhc/AvzE0hGh9BSte6ljpvyZY0DQ+x9Wjnt7Wz9lLzHJzxxoCGP/rC
-         TvWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=+6MNGNbIyjiYQZvQQXGsFEf1Qjcg9l4udg2K+IWCOZ8=;
-        b=IZsV2l5RK7Dt+WAtM5brwtjBBgdo36KkwypROanH06V6+v+hSWDsrOgo8aw8vKXmjr
-         82Ki8jHnU9P5F0hG9j3ji4UQQfxKLnSpr9oPxi2LDNQEhBPUAjYzdlYHfswQIRgYVeKi
-         fZQ83alKWODehFrYk1/T8VYO7gGpuUycjX2UT1meMvg9J/So350sJprEcHjRtiStSpnO
-         sJc4OXjucM7WNBCrXdx7jruMm3zr/NNI+nz92/GtklhesCdy+/RhfhDoADGX5OJ5Dn9G
-         f5mjD9LDqjE41WuvWqBI8x8B7tt3KfNCMoYHR18dP24bWDqfwTM4htqg2UM+NNrAjjzB
-         /cTA==
-X-Gm-Message-State: APjAAAViWOWglC5fdj/PLV4s2f7LOt/24rfHwxBHENx0MVIcZSHaGR+s
-        x7ZUqhIZRN/enft3t449jFyG6NZw0Ho1s7A3Mx0=
-X-Google-Smtp-Source: APXvYqwZY+D3j7tenFhsvh7SSfnF1pi6ZiBQW+00UBR3ex7geg7511xepdbAMo+LWEikO8JuZ0zSjszBnk2X3KD3bl4=
-X-Received: by 2002:a2e:85c1:: with SMTP id h1mr9016806ljj.169.1571484941254;
- Sat, 19 Oct 2019 04:35:41 -0700 (PDT)
+        id S1726214AbfJSLgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 07:36:43 -0400
+Received: from mout.web.de ([212.227.15.4]:43405 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725912AbfJSLgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Oct 2019 07:36:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1571484955;
+        bh=oCBzSWqG4D/0rXGJWVI2yRVTqYHXmEZvnHw+pBKrH+Q=;
+        h=X-UI-Sender-Class:To:Cc:References:Subject:From:Date:In-Reply-To;
+        b=rnJu2inAiFRMA44p7ngU1QCALALGkKoGf/FcjXmUxPYY+VdzZaaGKbLxCgkrk1BML
+         wLvghLJUMFF/huL3iR3bpRYBqQ01/C5d4z6nB4W7o1RF2PVnv+TPy+Jm8wfzj5WM6E
+         62rOSfVDi21zljGfb9KI64t3+7Ar8QmwvYRd1++Q=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.48.29.47]) by smtp.web.de (mrweb003
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MDg8k-1iFh9Z1Eje-00H3GG; Sat, 19
+ Oct 2019 13:35:55 +0200
+To:     Marc Zyngier <maz@kernel.org>,
+        Himanshu Jha <himanshujha199640@gmail.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        YueHaibing <yuehaibing@huawei.com>
+References: <e895d04ef5a282b5b48fcb21cbc175d2@www.loen.fr>
+Subject: Re: coccinelle: api/devm_platform_ioremap_resource: remove useless
+ script
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <693a3b68-a0f1-81fe-40ce-2b6ba189450c@web.de>
+Date:   Sat, 19 Oct 2019 13:35:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Received: by 2002:a2e:550c:0:0:0:0:0 with HTTP; Sat, 19 Oct 2019 04:35:40
- -0700 (PDT)
-From:   John Dike <aspjohndike0203@gmail.com>
-Date:   Sat, 19 Oct 2019 04:35:40 -0700
-Message-ID: <CADsbYBUMkjD_K8DWstfuLBCEexjknc-ErVFbCSfS6tO4XPR8HA@mail.gmail.com>
-Subject: Your Immediate Attention Is Required.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e895d04ef5a282b5b48fcb21cbc175d2@www.loen.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:9nlaiWJbvvV8TxgqJFSr1+QQR7THaH++IMBXlFg5j25iwF4GIm5
+ +oxzYf9EGKyxhq9rZE4++nSLdqIXhJKJmJM4TZlvo6ejs0mqxYE/7RYCG9EMGdJI5UY+h13
+ 9pu0rqlcBjxxR/n4JBEfNXYaM1q5sI0sZtooQgnVysExHv+/mWmtm8P3Ct6AjNnbIYDB9Ow
+ Rt3ol+hAEpMgYQ1st2lqA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:I7uoybbYKlA=:hDu+H8nI7Q6W9+z9zIySy+
+ NKsgtD3gIv71JRFGuEpp4pkb+LWWcXeH/OfvBuIDcCZG2iRCPIzzYl+FiIslFaInjp0R3rT+i
+ eFcbZwbK5qBlM3nQB0mu9uLESfbmWpiYuMOM0MebxdypMOYxPR5mjd8nVAn5bnvH5VAZB9uLJ
+ Anb372sdPJnewUx1+6qdAMyEsny2wrtEk2jgWfKipbBaaUNA7fjtbm/4DONX5p0ttWqg1Jtxy
+ hkXEuNM3hyHWk1NSxy53VIIR3LuhqBYcbjrd4+RKrvpGlj7LgkqpOsvyorXb5vdm0sBqMqpW5
+ +TWp8hl2gOo+9krrDqHi3MS1tSAFPdJP8WIfTtSCdomlDlzMTmYy6x3tAxF1CLvwpkIQVoMWV
+ xVLirXDh77LeQCShWGeoiyMp6D6kBayP27C6mXEaqv2+DKmBWMqM7wzquNmcPsor5Z5xuHu/3
+ Pj9+ROjnrXLxEa3PpBpnKcUZqbHS+a32poQ3/vTWURKOGWN11SRF/iZWCUlGull5tw0x3x8cJ
+ JN9BIVbH8Q6/EoUVzeK+QSQ5sJmWvGJbwqte2+6RoBduT7quQt5uyLu7PBfWPnEY9Ts0aqROE
+ XIsdX3ADZ66RCE0y6X2n4qaluFTgF5FSkn4LIHUdJ9xD626PDZve9x6LVgBjzA/2M/qIxvHOB
+ ImjSWdFV388bLX+ZYOIyR/LtQLvG6Y9Av45XRvh/gskQCrtPZXN/7WTS5KgnqRRuztKsoqF8b
+ znkPDfMgsGLre1N/fgr7MQtO6kojafXI1srV+6uA7dkN4WBGEssDG6jxqzNj7KsTG5rCL4Ado
+ m2UqD6SQt2UKVjWsD/lcZrhFQnL/zFAIGdyZdkxM/F5qvtqn3t9M/uL0HI8JCylsgTIXuNuc8
+ JKkKUPBUhryvj9LXFx0Fj9dW3hBj7Ui/zEZpdFxitRsQ+EGYb6dJ3j/d0JeFLWaAwz9IrtUnR
+ KbGoyv3J1R3jI1QriEvZGxGC/PVIxYxPdDrmoVCUrlVMJJbrI4YXoUX4WXT0lXq6oX8Ol4yTX
+ mZsHmwYk8ogi18hUxPQZemoTmbzolPrt7BMW9ZGTthzs7oZl2Pgc4+SwUc6xtCq2wKY8IUrt2
+ 4tGvuaMly/B0mMl+vrteCNbKVUVUsSuyH9pxUYzO6Y4RZXkzmr8Y50QNYUSKoLtZDedm80J+y
+ R4Yv1BRx/8kghi0r2S4XABuxCmZL+YlSfFsvLyAjtLQeLiOiOuepv+i89/cHJqJ2P9nqHMbfy
+ c6JfFcU5ueolM7yRJQgkAz33etLupNNd71rllFSO3hL0Rzqk2yJZRnR8r8CQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zenith Bank of Nigeria Plc Headquarters
-Plot 84, Ajose Adeogun Street
-Victoria Island Lagos, Nigeria
-ISIN CODE : NGZENBNK9
+> I think part of the issue is that the script reports a WARNING
 
-Dear Sir,
-
-I am Mr.Uche Akpu, The Director foreign Operations Zenith Bank of
-Nigeria Plc. We have worked out your outstanding payment of $2.5M
-approved by the Central Bank of Nigeria unfortunately Mr.David
-Kimberly. of 1301 ST.Anthony Lane Peteiluma CA, USA is claiming that
-you are lying in your sick bed and about dying.
-Is it true  that you are sick?Please,do confirm  if the payment will
-be released to him as your next of kin as he claimed. I shall feed you
-with further modalities regarding the payment of your fund as soon as
-I hear from you on email: directorzenith2018@gmail.com  .Urgently
-Waiting for your confirmation.
+How much does this information influence really the stress tolerance
+and change resistance (or acceptance) for the presented collateral evolution?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/scripts/coccinelle/api/devm_platform_ioremap_resource.cocci
 
 
+> for something that is definitely correct code,
 
-Yrs,Faithfully,
+Can related software improvement possibilities be taken into account
+again under other circumstances?
 
-Mr.Uche Akpu.
+
+> and could instead be simply toned down.
+
+Does this view mean that the mentioned script for the semantic patch language
+should get another chance for integration?
+
+
+> Anyway, FWIW:
+>
+> Acked-by: Marc Zyngier <maz@kernel.org>
+
+Would you like to share any more constructive feedback?
+
+
+Will similar source file mass updates be better picked up
+by other well-known Linux developers?
+
+Regards,
+Markus
