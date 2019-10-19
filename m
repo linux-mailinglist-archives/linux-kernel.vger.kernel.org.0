@@ -2,104 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58909DD71B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 09:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 228E9DD71F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 09:30:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbfJSH0L convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 19 Oct 2019 03:26:11 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:31120 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727174AbfJSH0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 03:26:11 -0400
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id B03D8734A3179D6AD7A2;
-        Sat, 19 Oct 2019 15:26:04 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id x9J7Pkjr067896;
-        Sat, 19 Oct 2019 15:25:46 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019101915260155-30950 ;
-          Sat, 19 Oct 2019 15:26:01 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     robh@kernel.org
-Cc:     tomeu.vizoso@collabora.com, airlied@linux.ie, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, up2wing@gmail.com,
-        wang.liang82@zte.com.cn
-Subject: [PATCH] drm/panfrost: fix -Wmissing-prototypes warnings
-Date:   Sat, 19 Oct 2019 15:28:14 +0800
-Message-Id: <1571470094-39589-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        id S1727698AbfJSHaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 03:30:22 -0400
+Received: from h1.fbrelay.privateemail.com ([131.153.2.42]:47536 "EHLO
+        h1.fbrelay.privateemail.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726026AbfJSHaW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Oct 2019 03:30:22 -0400
+Received: from MTA-05-3.privateemail.com (mta-05.privateemail.com [198.54.127.60])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by h1.fbrelay.privateemail.com (Postfix) with ESMTPS id D4040800AA
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2019 03:18:48 -0400 (EDT)
+Received: from MTA-05.privateemail.com (localhost [127.0.0.1])
+        by MTA-05.privateemail.com (Postfix) with ESMTP id 1FE4E60049;
+        Sat, 19 Oct 2019 03:18:47 -0400 (EDT)
+Received: from wambui.zuku.co.ke (unknown [10.20.151.220])
+        by MTA-05.privateemail.com (Postfix) with ESMTPA id 8E05560040;
+        Sat, 19 Oct 2019 07:18:43 +0000 (UTC)
+From:   Wambui Karuga <wambui@karuga.xyz>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org, airlied@linux.ie, daniel@ffwll.ch,
+        sean@poorly.run, mripard@kernel.org,
+        maarten.lankhorst@linux.intel.com,
+        outreachy-kernel@googlegroups.com,
+        Wambui Karuga <wambui.karugax@gmail.com>
+Subject: [PATCH] drm: remove unnecessary return variable
+Date:   Sat, 19 Oct 2019 10:18:40 +0300
+Message-Id: <20191019071840.16877-1-wambui@karuga.xyz>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-10-19 15:26:01,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-10-19 15:25:53
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-MAIL: mse-fl1.zte.com.cn x9J7Pkjr067896
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We get these warnings when build kernel W=1:
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:35:6: warning: no previous prototype for ‘panfrost_perfcnt_clean_cache_done’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:40:6: warning: no previous prototype for ‘panfrost_perfcnt_sample_done’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:190:5: warning: no previous prototype for ‘panfrost_ioctl_perfcnt_enable’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:218:5: warning: no previous prototype for ‘panfrost_ioctl_perfcnt_dump’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:250:6: warning: no previous prototype for ‘panfrost_perfcnt_close’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:264:5: warning: no previous prototype for ‘panfrost_perfcnt_init’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:320:6: warning: no previous prototype for ‘panfrost_perfcnt_fini’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_mmu.c:227:6: warning: no previous prototype for ‘panfrost_mmu_flush_range’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_mmu.c:435:5: warning: no previous prototype for ‘panfrost_mmu_map_fault_addr’ [-Wmissing-prototypes]
+From: Wambui Karuga <wambui.karugax@gmail.com>
 
-For file panfrost_mmu.c, make functions static to fix this.
-For file panfrost_perfcnt.c, include head file can fix this.
+Remove unnecessary variable `ret` in drm_dp_atomic_find_vcpi_slots()
+only used to hold the function return value and have the function
+return the value directly.
+Issue found by coccinelle:
+@@
+local idexpression ret;
+expression e;
+@@
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+-ret =
++return
+     e;
+-return ret;
+
+Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
 ---
- drivers/gpu/drm/panfrost/panfrost_mmu.c     | 5 +++--
- drivers/gpu/drm/panfrost/panfrost_perfcnt.c | 1 +
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_dp_mst_topology.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-index bdd9905..d0458a5 100644
---- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-@@ -224,7 +224,7 @@ static size_t get_pgsize(u64 addr, size_t size)
- 	return SZ_2M;
+diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+index 9cccc5e63309..b854a422a523 100644
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -3540,7 +3540,7 @@ int drm_dp_atomic_find_vcpi_slots(struct drm_atomic_state *state,
+ {
+ 	struct drm_dp_mst_topology_state *topology_state;
+ 	struct drm_dp_vcpi_allocation *pos, *vcpi = NULL;
+-	int prev_slots, req_slots, ret;
++	int prev_slots, req_slots;
+ 
+ 	topology_state = drm_atomic_get_mst_topology_state(state, mgr);
+ 	if (IS_ERR(topology_state))
+@@ -3587,8 +3587,7 @@ int drm_dp_atomic_find_vcpi_slots(struct drm_atomic_state *state,
+ 	}
+ 	vcpi->vcpi = req_slots;
+ 
+-	ret = req_slots;
+-	return ret;
++	return req_slots;
  }
+ EXPORT_SYMBOL(drm_dp_atomic_find_vcpi_slots);
  
--void panfrost_mmu_flush_range(struct panfrost_device *pfdev,
-+static void panfrost_mmu_flush_range(struct panfrost_device *pfdev,
- 			      struct panfrost_mmu *mmu,
- 			      u64 iova, size_t size)
- {
-@@ -432,7 +432,8 @@ void panfrost_mmu_pgtable_free(struct panfrost_file_priv *priv)
- 
- #define NUM_FAULT_PAGES (SZ_2M / PAGE_SIZE)
- 
--int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as, u64 addr)
-+static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
-+		u64 addr)
- {
- 	int ret, i;
- 	struct panfrost_gem_object *bo;
-diff --git a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
-index 83c57d3..7493dc0 100644
---- a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
-@@ -17,6 +17,7 @@
- #include "panfrost_job.h"
- #include "panfrost_mmu.h"
- #include "panfrost_regs.h"
-+#include "panfrost_perfcnt.h"
- 
- #define COUNTERS_PER_BLOCK		64
- #define BYTES_PER_COUNTER		4
 -- 
-1.8.3.1
+2.23.0
 
