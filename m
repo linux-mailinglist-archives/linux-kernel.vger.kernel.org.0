@@ -2,224 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B36FDD61A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 04:01:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6A0CDD625
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 04:20:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbfJSCBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 18 Oct 2019 22:01:22 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34002 "EHLO
+        id S1726770AbfJSCOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 18 Oct 2019 22:14:34 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35303 "EHLO
         mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfJSCBV (ORCPT
+        with ESMTP id S1726033AbfJSCOe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Oct 2019 22:01:21 -0400
-Received: by mail-io1-f66.google.com with SMTP id q1so9691348ion.1;
-        Fri, 18 Oct 2019 19:01:19 -0700 (PDT)
+        Fri, 18 Oct 2019 22:14:34 -0400
+Received: by mail-io1-f66.google.com with SMTP id t18so5548874iog.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2019 19:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0LujGUq1E17eLWfgXufkbIxk3Qf8zWuZzZ2ag7/KZIM=;
+        b=LZFSWVo/FqIfWtBRcAdoNjHvH3rvfX9qMcVfsVCthMDFqbJLtWi9KZSI/wvRDvRhMH
+         iUvv6ziZzP77fV19rG8K3bCitaXGfwwgjf458UW4NA6v6SiPBBYpi1YuuJpH8KyWO/d+
+         PebGapSS6u3xTu5dfdJiKtuFtx5aUFJQSn7WU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=h2Om4jrmaYSV3RVSH6Bll8Mfy0zcDVPMDEzdsJPKN50=;
-        b=FksOxxu2bx2/tUZaoTAY24KwqRmLnzOCbxsJfqC3PGiDIlTnw3uUj9yS9AuWW1p0Da
-         ZkNFN+Jb19tYrz5Fk8sfz9tODFfrEffcIXoM8wOL59g1UC/RKyeSg+cLkUGI68r3y9i8
-         0Yyr05+/soI+KJUIFx5xnhza82740QUvpaYgliHvIY1os+e5kneDust13D7HKewZfKhi
-         hcxVhZzYX2aO0Dzll5SFA0ZxXmtgvF7P8+NMty4KSUbHWZAi2/pFdhOYjfEld5WVtiMN
-         02Bhy9GPN40I3lpPpUBg7e0Q0fjlrAWjQpU9K48Py9d/4mk4NlQhH6zzcyZwOsjkvGNu
-         QE5A==
-X-Gm-Message-State: APjAAAXxim+o+rYrZd1kz46/nJ1PBhAMh95fFNrgx8S4YtlR5aDNwxp7
-        FOXl7F7h29X+vHJSbB/s+BUVf/gpqYfO/JafGyE=
-X-Google-Smtp-Source: APXvYqwHrQhnbWkOoQLJVQp2N+es0LAx2Wmn9w8QNgxiqk1apZzW4d5JGiFF1Io/cEidwgaS33xtQf1YEbr309wTW3I=
-X-Received: by 2002:a6b:5c0f:: with SMTP id z15mr11805568ioh.173.1571450479050;
- Fri, 18 Oct 2019 19:01:19 -0700 (PDT)
+        bh=0LujGUq1E17eLWfgXufkbIxk3Qf8zWuZzZ2ag7/KZIM=;
+        b=N3u7qWH/w+2DdhsbnHRibM79jH03mRjnpelqawCEtGe3KLq6gs++GjQFsXi3iFJdZq
+         QXa4QYT2rr/U1Dp+yLC0kwvBKn1cnG+Y4AX0nvYU29t5igdd6v+i/jNbrC1zRWGWyPHD
+         9qpu3jKj6m8zp+2Z9cuzjkheCo4XK0pDkadZHqg8oRDXVeL3ExfAZQ2ce75SQRovR8+f
+         E49yEdnQ6pWCUsfM4uzyKAwDJtLnyxvfa5AI4gDg50Hcg9yxoG7MocmXTV3T+XHS/ui3
+         rPQDdu1pHnfohFkFdgGugWbSmaF+F38YNmswaMPWnoNH1mwePNfuCFPp5d5WqEpzHujZ
+         GJHQ==
+X-Gm-Message-State: APjAAAWo36m9gjZXDytiVELOk0vaVk1/ClRzVxkfsnfE9V5Zw2TcQzat
+        EUMzsLDA5Vu8AEv+yJEo36CghgfJ2dhA7bY7lZICQQ==
+X-Google-Smtp-Source: APXvYqz2oISE6BZo5J5v4ZJ3dazA6CNos/7qV2oR900EYojIfIBsbrGRhelFaKMttJ9Z/nDNRbOY8932+XNlNbq0njc=
+X-Received: by 2002:a02:77c4:: with SMTP id g187mr1197307jac.83.1571451273159;
+ Fri, 18 Oct 2019 19:14:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <1571367619-13573-1-git-send-email-chenhc@lemote.com> <CALCETrWXRgkQOJGRqa_sOLAG2zhjsEX6b86T2VTsNYN9ECRrtA@mail.gmail.com>
-In-Reply-To: <CALCETrWXRgkQOJGRqa_sOLAG2zhjsEX6b86T2VTsNYN9ECRrtA@mail.gmail.com>
-From:   Huacai Chen <chenhc@lemote.com>
-Date:   Sat, 19 Oct 2019 10:06:42 +0800
-Message-ID: <CAAhV-H6VkW5-hMOrzAQeyHT4pYGExZR6eTRbPHSPK50GAkigCw@mail.gmail.com>
-Subject: Re: [PATCH] lib/vdso: Use __arch_use_vsyscall() to indicate fallback
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+References: <20191008115342.28483-1-patrick.rudolph@9elements.com>
+ <20191008115342.28483-2-patrick.rudolph@9elements.com> <5d9d120b.1c69fb81.b6201.1477@mx.google.com>
+ <CAODwPW-mfySMQUejCwT+G45BtOysq_JCRQa8GwoYTkjY_yRwgA@mail.gmail.com>
+ <6cfca8c34ccd51f12b4418e9a74d8961e32077ed.camel@9elements.com>
+ <5d9f3b9f.1c69fb81.62109.325d@mx.google.com> <CAODwPW-x1fwGSrvLNWCU4GAfGbD0zqo2HLm+33D8eUtxbnFLCg@mail.gmail.com>
+ <5da779b4.1c69fb81.2d904.a23f@mx.google.com>
+In-Reply-To: <5da779b4.1c69fb81.2d904.a23f@mx.google.com>
+From:   Julius Werner <jwerner@chromium.org>
+Date:   Fri, 18 Oct 2019 19:14:20 -0700
+Message-ID: <CAODwPW9rnB2UZVXCEdMQvtiTQVRgBKHtFPGg7RO_rg=CqfOmEA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] firmware: coreboot: Export active CBFS partition
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Julius Werner <jwerner@chromium.org>,
+        Patrick Rudolph <patrick.rudolph@9elements.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Paul Burton <paul.burton@mips.com>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Zhang <benzh@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Samuel Holland <samuel@sholland.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Andy,
+> I don't know why we need to draw a line in the sand and say that if the
+> kernel doesn't need to know about it then it shouldn't parse it. I want
+> there to be a consistent userspace ABI that doesn't just move things
+> straight from memory to userspace in some binary format. I'd rather we
+> have an ABI that decodes and exposes information about the coreboot
+> tables through existing frameworks/subsystems where possible and makes
+> up new ones otherwise.
 
-On Fri, Oct 18, 2019 at 11:15 AM Andy Lutomirski <luto@kernel.org> wrote:
->
-> On Thu, Oct 17, 2019 at 7:57 PM Huacai Chen <chenhc@lemote.com> wrote:
-> >
-> > In do_hres(), we currently use whether the return value of __arch_get_
-> > hw_counter() is negtive to indicate fallback, but this is not a good
-> > idea. Because:
-> >
-> > 1, ARM64 returns ULL_MAX but MIPS returns 0 when clock_mode is invalid;
-> > 2, For a 64bit counter, a "negtive" value of counter is actually valid.
->
-> s/negtive/negative
->
-> What's the actual bug?  Is it that MIPS is returning 0 but the check
-> is < 0?  Sounds like MIPS should get fixed.
-My original bug is what Vincenzo said, MIPS has a boot failure if no
-valid clock_mode, and surely MIPS need to fix. However, when I try to
-fix it, I found that clock_getres() has another problem, because
-__cvdso_clock_getres_common() get vd[CS_HRES_COARSE].hrtimer_res, but
-hrtimer_res is set in update_vdso_data() which relies on
-__arch_use_vsyscall().
+Okay... I'm just saying this might grow to become a lot of stuff as
+people start having more and more use cases they want to support. But
+if you think the kernel should be the one parsing all that, I'm happy
+to defer to your expertise there (I'm not really a kernel guy after
+all).
 
->
-> >
-> > To solve this problem, we use U64_MAX as the only "invalid" return
-> > value -- this is still not fully correct, but has no problem in most
-> > cases.
->
-> I'm sort of okay with that, but...
->
-> > Moreover, all vdso time-related functions should rely on the
-> > return value of __arch_use_vsyscall(), because update_vdso_data() and
-> > update_vsyscall_tz() also rely on it. So, in the core functions of
-> > __cvdso_gettimeofday(), __cvdso_clock_gettime() and __cvdso_clock_
-> > getres(), if __arch_use_vsyscall() returns false, we use the fallback
-> > functions directly.
->
-> __arch_use_vsyscall() is not currently intended for use in the vDSO at all.
->
-> >
-> > Fixes: 00b26474c2f1613d7ab894c5 ("lib/vdso: Provide generic VDSO implementation")
-> > Cc: stable@vger.kernel.org
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Paul Burton <paul.burton@mips.com>
-> > Cc: linux-mips@vger.kernel.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Signed-off-by: Huacai Chen <chenhc@lemote.com>
-> > ---
-> >  arch/arm64/include/asm/vdso/vsyscall.h |  2 +-
-> >  arch/mips/include/asm/vdso/vsyscall.h  |  2 +-
-> >  include/asm-generic/vdso/vsyscall.h    |  2 +-
-> >  lib/vdso/gettimeofday.c                | 12 +++++++++++-
-> >  4 files changed, 14 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/arch/arm64/include/asm/vdso/vsyscall.h b/arch/arm64/include/asm/vdso/vsyscall.h
-> > index 0c731bf..406e6de 100644
-> > --- a/arch/arm64/include/asm/vdso/vsyscall.h
-> > +++ b/arch/arm64/include/asm/vdso/vsyscall.h
-> > @@ -31,7 +31,7 @@ int __arm64_get_clock_mode(struct timekeeper *tk)
-> >  #define __arch_get_clock_mode __arm64_get_clock_mode
-> >
-> >  static __always_inline
-> > -int __arm64_use_vsyscall(struct vdso_data *vdata)
-> > +int __arm64_use_vsyscall(const struct vdso_data *vdata)
-> >  {
-> >         return !vdata[CS_HRES_COARSE].clock_mode;
-> >  }
-> > diff --git a/arch/mips/include/asm/vdso/vsyscall.h b/arch/mips/include/asm/vdso/vsyscall.h
-> > index 1953147..8b10dd7 100644
-> > --- a/arch/mips/include/asm/vdso/vsyscall.h
-> > +++ b/arch/mips/include/asm/vdso/vsyscall.h
-> > @@ -29,7 +29,7 @@ int __mips_get_clock_mode(struct timekeeper *tk)
-> >  #define __arch_get_clock_mode __mips_get_clock_mode
-> >
-> >  static __always_inline
-> > -int __mips_use_vsyscall(struct vdso_data *vdata)
-> > +int __mips_use_vsyscall(const struct vdso_data *vdata)
-> >  {
-> >         return (vdata[CS_HRES_COARSE].clock_mode != VDSO_CLOCK_NONE);
-> >  }
-> > diff --git a/include/asm-generic/vdso/vsyscall.h b/include/asm-generic/vdso/vsyscall.h
-> > index e94b1978..ac05a625 100644
-> > --- a/include/asm-generic/vdso/vsyscall.h
-> > +++ b/include/asm-generic/vdso/vsyscall.h
-> > @@ -26,7 +26,7 @@ static __always_inline int __arch_get_clock_mode(struct timekeeper *tk)
-> >  #endif /* __arch_get_clock_mode */
-> >
-> >  #ifndef __arch_use_vsyscall
-> > -static __always_inline int __arch_use_vsyscall(struct vdso_data *vdata)
-> > +static __always_inline int __arch_use_vsyscall(const struct vdso_data *vdata)
-> >  {
-> >         return 1;
-> >  }
-> > diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-> > index e630e7f..4ad062e 100644
-> > --- a/lib/vdso/gettimeofday.c
-> > +++ b/lib/vdso/gettimeofday.c
-> > @@ -9,6 +9,7 @@
-> >  #include <linux/hrtimer_defs.h>
-> >  #include <vdso/datapage.h>
-> >  #include <vdso/helpers.h>
-> > +#include <vdso/vsyscall.h>
-> >
-> >  /*
-> >   * The generic vDSO implementation requires that gettimeofday.h
-> > @@ -50,7 +51,7 @@ static int do_hres(const struct vdso_data *vd, clockid_t clk,
-> >                 cycles = __arch_get_hw_counter(vd->clock_mode);
-> >                 ns = vdso_ts->nsec;
-> >                 last = vd->cycle_last;
-> > -               if (unlikely((s64)cycles < 0))
-> > +               if (unlikely(cycles == U64_MAX))
-> >                         return -1;
->
-> I would actually prefer:
->
-> if (unlikely(cycles < last))
->
-> or perhaps:
->
-> if (unlikely((s64)(cycles-last) < 0))
->
-> which would have the nice side effect of getting rid of the annoying
-> x86 special case in vdso_calc_delta().  The former version is
-> compatible with U64_MAX, whereas the latter version would need the
-> error case to return last-1 or similar.  The benefit of the latter
-> version is that it can survive wrap-around.
-When you say if (unlikely(cycles < last)), do you means if
-(unlikely(cycles <= last))? If __arch_get_hw_counter() return U64_MAX
-every time, I don't think cycles can be less than last.
+> One concern I have is endianness of the binary data. Is it big endian or
+> little endian or CPU native endian? The kernel can boot into big or
+> little endian on ARM platforms and userspace can be different vs. the
+> bootloader too. Userspace shouldn't need to know this detail, the kernel
+> should know and do the conversions and expose it somehow. That's why I'm
+> suggesting in this case we describe fmap as a sysfs class. I don't see
+> how we could export that information otherwise, besides in a binary blob
+> that falls into traps like this.
 
-Huacai
->
-> >
-> >                 ns += vdso_calc_delta(cycles, last, vd->mask, vd->mult);
-> > @@ -91,6 +92,9 @@ __cvdso_clock_gettime_common(clockid_t clock, struct __kernel_timespec *ts)
-> >         if (unlikely((u32) clock >= MAX_CLOCKS))
-> >                 return -1;
-> >
-> > +       if (!__arch_use_vsyscall(vd))
-> > +               return -1;
-> > +
->
-> NAK.  I don't think this is helpful or correct.  It doesn't appear to
-> do anything valid, and it's racy.
->
-> >         /*
-> >          * Convert the clockid to a bitmask and use it to check which
-> >          * clocks are handled in the VDSO directly.
-> > @@ -145,6 +149,9 @@ __cvdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
-> >  {
-> >         const struct vdso_data *vd = __arch_get_vdso_data();
-> >
-> > +       if (!__arch_use_vsyscall(vd))
-> > +               return gettimeofday_fallback(tv, tz);
-> > +
->
-> Ditto.
->
-> >         if (likely(tv != NULL)) {
-> >                 struct __kernel_timespec ts;
-> >
-> > @@ -189,6 +196,9 @@ int __cvdso_clock_getres_common(clockid_t clock, struct __kernel_timespec *res)
-> >         if (unlikely((u32) clock >= MAX_CLOCKS))
-> >                 return -1;
-> >
-> > +       if (!__arch_use_vsyscall(vd))
-> > +               return -1;
-> > +
->
-> Ditto.
+Right now it's just always CPU byte order of what coreboot happened to
+run at, and it's not exporting that info in any way either. We don't
+really have support for big-endian architectures anyway so it's not
+something we really thought about yet. If it ever comes to that, I
+assume the byte order of the table header's magic number could be used
+to tell the difference.
+
+> Right now we make devices for all the coreboot table entries, which is
+> pretty weird considering that some table entries are things like
+> LB_TAG_LINKER. That isn't a device. It's some information about how
+> coreboot was linked. We should probably blacklist tags so we don't make
+> devices and capture these ones in the bus code and expose them in
+> /sys/firware/coreboot/ somehow. We should also add device randomness
+> from the serial numbers, etc. that coreboot has stashed away in the
+> tables.
+
+I mean... should any of them be devices, then? All table entries are
+just "some information", where are you defining the difference there?
+I'm not sure if the current representation is the right one, but I
+think they should probably all be handled in a consistent way.
