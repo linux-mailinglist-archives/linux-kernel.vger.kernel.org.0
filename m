@@ -2,427 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72896DD8E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 16:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 724FCDD8EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 16:07:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbfJSOGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 19 Oct 2019 10:06:53 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33400 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbfJSOGx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 10:06:53 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q10so5616314pfl.0;
-        Sat, 19 Oct 2019 07:06:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FX+Ai4Ks3Bj580bcmWiGIMWnBBHWtyPV43CErKKin20=;
-        b=DEy0ivo9BKLJ2B2KBGNzUP5Zox1/0NdBkDOr6t2rBXfrcafQYtuti0BX7tosBGsIpW
-         GJ9Tv5U6Lf+euM2rIJQtuhJbOplFkNV9myqOWPh/1+g8CgW49a/AtO4kmmd0kcoIBahu
-         Od+f/Ix1rfKGt78WhIZJXlQETPNozZrk3i9SJ9Rt96G5ZRj2KlrQ4nQJBQeYtpGgoRTF
-         Do/TX0A/GoMmCdtFERhiPXaMzDghf9x3ZpqA8EgqKDS2uTFG1eEUb8/lpoL848+PCgC1
-         gBC1w1SSgipZ4+H2uFi5Lz267StaU6mgvTvcnqJPKkLCR701q85QN9aJUSXsamFJhP9R
-         0ESA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FX+Ai4Ks3Bj580bcmWiGIMWnBBHWtyPV43CErKKin20=;
-        b=UpjttQQmVx6zbzGkULs2HvgpVqspVmFxHBkyvfKLFyZvYBZrZMO9ClZhjgl8pg0oN3
-         N3kz4oQYsbvJJnwp67oZ75lbBJsqIKrYRX8z12EeZOHbrbfxBCw1C1gyBNDavEtRwAxQ
-         2h2jyYWwnQNuttG30nqbE7ynmCCstsFyNjKvLHFCWC5kw7KnuhqXp3DV+aQiW3zsLFFS
-         XknOZhWGkSMIzAOha00jGVkzgwubnz8HJEoV/s786TQUJ6VfyM6/xXE0pYx51Nma8FbI
-         M5vEzyudHxqknKzFaGo6u7oPquplQzAYwN3mvauLSrcIimLSN5l6/Ciz3z8AQWzAyO+F
-         xYMA==
-X-Gm-Message-State: APjAAAV+gezu4MxzrLgRJVFr4fv7NHjIE8QgLiTHx8cnX1bSVDo0+QRm
-        KMm0eCRMcUZY8nrhEYlKe5ungCgR
-X-Google-Smtp-Source: APXvYqzPruG8XTIpsVYZfrQ4XMHXoyEUUWkzJo0wRORFpcek8OvlJT6SFYk1qZRpb6vLeRRSoOSxaA==
-X-Received: by 2002:a17:90a:bb98:: with SMTP id v24mr17094381pjr.10.1571494011568;
-        Sat, 19 Oct 2019 07:06:51 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id a16sm9734666pfa.53.2019.10.19.07.06.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 19 Oct 2019 07:06:50 -0700 (PDT)
-Subject: Re: [PATCH 09/46] watchdog: sa1100: use platform device registration
-To:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        id S1726133AbfJSOHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 10:07:35 -0400
+Received: from mout.web.de ([212.227.15.14]:60475 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725890AbfJSOHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Oct 2019 10:07:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1571494016;
+        bh=goxpnIqn08LvtbB+mF1ScYlAdurBJ4Yjq07d+k9DSyg=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=mQUAaPV8V7lknvytzxgLveYBSFze0XgoF9OUuLaxGZOcuXSERdNcTrCWSIFgow13+
+         r93v1LUWxbv8zlqVEMGL99ZfOPc8hJauI81YN3dAOlW1mUN7DyOcivbKNJHWmgCb6n
+         9JHhiVa1A5f+NcDOSrc++0Kdr8mvrVD/oZD8E2gY=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.48.29.47]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LxaUl-1hx1Rr1QEt-017Ec9; Sat, 19
+ Oct 2019 16:06:56 +0200
+Subject: Re: coccinelle: api/devm_platform_ioremap_resource: remove useless
+ script
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Himanshu Jha <himanshujha199640@gmail.com>,
+        kernel-janitors@vger.kernel.org,
+        Coccinelle <cocci@systeme.lip6.fr>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Julia Lawall <Julia.Lawall@lip6.fr>, Arnd Bergmann <arnd@arndb.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org
-References: <20191018154052.1276506-1-arnd@arndb.de>
- <20191018154201.1276638-9-arnd@arndb.de>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <bb4713a0-60bd-8d27-874f-e7e3a5adaec8@roeck-us.net>
-Date:   Sat, 19 Oct 2019 07:06:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        YueHaibing <yuehaibing@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191017142237.9734-1-alexandre.belloni@bootlin.com>
+ <81269cd6-e26d-b8aa-cf17-3a2285851564@web.de>
+ <20191019120941.GL3125@piout.net>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <389d4ad6-7f57-2060-f00a-ac2295052b22@web.de>
+Date:   Sat, 19 Oct 2019 16:06:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-In-Reply-To: <20191018154201.1276638-9-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191019120941.GL3125@piout.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nxbycm+4JVDolwO+UCZRu+C+DlyZ+YhblHTz+cXQZCUM6R8yjl6
+ Qe9+jfZh/LA7uyxJ+UV3SOfmjLo+RTt/8G9RgCiAljs9YdBMF7xPgx7gVEsIH6RSjMGk3dD
+ DuBb8i0E74ilusmzVGK2BFxhiVO9bgCLpleEJdvri7qkFOnKiXKjbQizxfRdvR+UEwwataD
+ ZfBsW2C1a8YHUOpliVLhA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:c7m4hD3KMWY=:zJuWbf6rH4BoluSt+VZLy4
+ ij2apV9nVQwlZ/7th5UkD1FLCHmNFZR+0UVuP6wLsaJ95P/F5IfKrMyB6Vb9FA8e9/HnJp7Nf
+ nnzh7DyYwXaGJjOIF/qxPxtoEhmcvZ5ni68g+wuKdZVPmehMNrcwvkFXfJNnlBPh5XB3fdzIq
+ uUDswuz0A22dUBHkdoJnSXF7RjFmlQd8yvtcmMN8kt9Drj2MOAU7zSjDh5qLAGTnT2LzOgASY
+ qYNVBNOeITofBRKuqZGdWkydjOHrg2iGO+TFTg5JPTFvqQpZbdVcNlGD1TLCJ+gGWNUcbAHd/
+ F9cqdh5pgpUnt5BGquH0futP8m7W1Xx7oSio04LN2MZzPMnxZ3LSTxK8xr+znZ2Deg3eFuWJg
+ 3zQKaUD1sTsNXBAhqmacBQTN3heLMPTZldXCiYq+cu3kEmafqTMlWfw7QMQ8hpnLnZ05rk5EF
+ 6aKrAZGKKMi9TAl/8T45y/NTqLTDDWkbmQ6QmoTAXLNx9qozkr9D3P84cYK5P4/k9Z9T5y+8K
+ g10G9D0MkmvcIGBBTVlDcP0K1Jbkl+fCik7UL3Al9ygfuHqe/ELEKX+uKOV/cIxcFi6zrf1vB
+ F38zGPyEZHWCiRk9UEIecDAggSpvOd0WMn7vfjqfouGiWjkJj+biSyCTnEAvBA65mbPDyJBPx
+ xULH+YKe+v+sdN+Y7V9AItbc8yZ6GW3AlfUSpX2g9nDJYlmXy767LUBkcNSpWbIr/HMVrGVIE
+ MAR171W3YTyJ/l/iy+tS3+uL3+ihijyaJWfDggEgS2IwxXpQLe7My9XxqfvqsMpyYTKcO+LcZ
+ W2zlbUWqA4I7wBlxQkwdWKI5/2egOe67eI7TQ/lSz9cCC3aN0WMDcw9SfQbsnMsXIdWxbCJaf
+ 9VpEjIhxHRQe0sgH0Mg1Qzc+GsjiCZ5HpKrBD50PXEB/HUaVmgWqR7p9VhxkUrYIJ7JqATGeL
+ pxPoYbLgEC8x+RFvRGd39VlKjmgmUb1ijRVKeGpHLYkmAonPynZApffSc5y8Srs2nb3ZEEymM
+ OyJv0Suj26b/2uEL4t3HnocVaBA8Yk9qgZvTp8pd/xq+8G01H5Xk93tR4uJLTT3ZaF+4nMuCZ
+ bKyIg6DZLx97JPlzfHQjfWbzTKpY56humZiA0vug64qSwsaHzwC+oFgRisqYdfBMShIbDxBbC
+ Zkfq1vkr+W2jZb4LApfysBzE1oO75d3VTSoPo/dap9/zuo8tO+YE7LXSIe1hFng1JmvLsQsbK
+ WhQ1W27DJcXx4qYpJ+s5ApLkNNJ0YKFPLDIOWzrrSHqxfj23srFMQPd7gQI0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/19 8:41 AM, Arnd Bergmann wrote:
-> Rather than relying on machine specific headers to
-> pass down the reboot status and the register locations,
-> use resources and platform_data.
-> 
-> Aside from this, keep the changes to a minimum.
-> 
-> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: linux-watchdog@vger.kernel.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   arch/arm/mach-pxa/devices.c               | 11 +++
->   arch/arm/mach-pxa/include/mach/regs-ost.h |  2 +
->   arch/arm/mach-pxa/include/mach/reset.h    |  2 +-
->   arch/arm/mach-pxa/pxa25x.c                |  2 +-
->   arch/arm/mach-pxa/pxa27x.c                |  2 +-
->   arch/arm/mach-pxa/pxa3xx.c                |  2 +-
->   arch/arm/mach-pxa/reset.c                 |  3 -
->   arch/arm/mach-sa1100/generic.c            |  6 +-
->   arch/arm/mach-sa1100/include/mach/reset.h |  1 -
->   drivers/watchdog/sa1100_wdt.c             | 87 ++++++++++++++++-------
->   10 files changed, 83 insertions(+), 35 deletions(-)
-> 
-> diff --git a/arch/arm/mach-pxa/devices.c b/arch/arm/mach-pxa/devices.c
-> index 233035e6a2ff..fb9b4f6d32de 100644
-> --- a/arch/arm/mach-pxa/devices.c
-> +++ b/arch/arm/mach-pxa/devices.c
-> @@ -23,6 +23,8 @@
->   #include <linux/platform_data/mmp_dma.h>
->   #include <linux/platform_data/mtd-nand-pxa3xx.h>
->   
-> +#include <mach/regs-ost.h>
-> +#include <mach/reset.h>
->   #include "devices.h"
->   #include "generic.h"
->   
-> @@ -1110,3 +1112,12 @@ void __init pxa2xx_set_dmac_info(struct mmp_dma_platdata *dma_pdata)
->   {
->   	pxa_register_device(&pxa2xx_pxa_dma, dma_pdata);
->   }
-> +
-> +void __init pxa_register_wdt(unsigned int reset_status)
-> +{
-> +	struct resource res = DEFINE_RES_MEM(OST_PHYS, OST_LEN);
-> +
-> +	reset_status &= RESET_STATUS_WATCHDOG;
-> +	platform_device_register_resndata(NULL, "sa1100_wdt", -1, &res, 1,
-> +					  &reset_status, sizeof(reset_status));
-> +}
-> diff --git a/arch/arm/mach-pxa/include/mach/regs-ost.h b/arch/arm/mach-pxa/include/mach/regs-ost.h
-> index 109d0ed264df..c8001cfc8d6b 100644
-> --- a/arch/arm/mach-pxa/include/mach/regs-ost.h
-> +++ b/arch/arm/mach-pxa/include/mach/regs-ost.h
-> @@ -7,6 +7,8 @@
->   /*
->    * OS Timer & Match Registers
->    */
-> +#define OST_PHYS	0x40A00000
-> +#define OST_LEN		0x00000020
->   
->   #define OSMR0		io_p2v(0x40A00000)  /* */
->   #define OSMR1		io_p2v(0x40A00004)  /* */
-> diff --git a/arch/arm/mach-pxa/include/mach/reset.h b/arch/arm/mach-pxa/include/mach/reset.h
-> index e1c4d100fd45..963dd190bc13 100644
-> --- a/arch/arm/mach-pxa/include/mach/reset.h
-> +++ b/arch/arm/mach-pxa/include/mach/reset.h
-> @@ -8,8 +8,8 @@
->   #define RESET_STATUS_GPIO	(1 << 3)	/* GPIO Reset */
->   #define RESET_STATUS_ALL	(0xf)
->   
-> -extern unsigned int reset_status;
->   extern void clear_reset_status(unsigned int mask);
-> +extern void pxa_register_wdt(unsigned int reset_status);
->   
->   /**
->    * init_gpio_reset() - register GPIO as reset generator
-> diff --git a/arch/arm/mach-pxa/pxa25x.c b/arch/arm/mach-pxa/pxa25x.c
-> index 305047ebd2f1..dfc90b41fba3 100644
-> --- a/arch/arm/mach-pxa/pxa25x.c
-> +++ b/arch/arm/mach-pxa/pxa25x.c
-> @@ -240,7 +240,7 @@ static int __init pxa25x_init(void)
->   
->   	if (cpu_is_pxa25x()) {
->   
-> -		reset_status = RCSR;
-> +		pxa_register_wdt(RCSR);
->   
->   		pxa25x_init_pm();
->   
-> diff --git a/arch/arm/mach-pxa/pxa27x.c b/arch/arm/mach-pxa/pxa27x.c
-> index a81ac88ecbfd..38fdd22c4dc5 100644
-> --- a/arch/arm/mach-pxa/pxa27x.c
-> +++ b/arch/arm/mach-pxa/pxa27x.c
-> @@ -337,7 +337,7 @@ static int __init pxa27x_init(void)
->   
->   	if (cpu_is_pxa27x()) {
->   
-> -		reset_status = RCSR;
-> +		pxa_register_wdt(RCSR);
->   
->   		pxa27x_init_pm();
->   
-> diff --git a/arch/arm/mach-pxa/pxa3xx.c b/arch/arm/mach-pxa/pxa3xx.c
-> index fc84aed99481..7c569fa2a6da 100644
-> --- a/arch/arm/mach-pxa/pxa3xx.c
-> +++ b/arch/arm/mach-pxa/pxa3xx.c
-> @@ -463,7 +463,7 @@ static int __init pxa3xx_init(void)
->   
->   	if (cpu_is_pxa3xx()) {
->   
-> -		reset_status = ARSR;
-> +		pxa_register_wdt(ARSR);
->   
->   		/*
->   		 * clear RDH bit every time after reset
-> diff --git a/arch/arm/mach-pxa/reset.c b/arch/arm/mach-pxa/reset.c
-> index af78405aa4e9..fcb791c5ae3e 100644
-> --- a/arch/arm/mach-pxa/reset.c
-> +++ b/arch/arm/mach-pxa/reset.c
-> @@ -11,9 +11,6 @@
->   #include <mach/reset.h>
->   #include <mach/smemc.h>
->   
-> -unsigned int reset_status;
-> -EXPORT_SYMBOL(reset_status);
-> -
->   static void do_hw_reset(void);
->   
->   static int reset_gpio = -1;
-> diff --git a/arch/arm/mach-sa1100/generic.c b/arch/arm/mach-sa1100/generic.c
-> index 4dfb7554649d..6c21f214cd60 100644
-> --- a/arch/arm/mach-sa1100/generic.c
-> +++ b/arch/arm/mach-sa1100/generic.c
-> @@ -39,9 +39,6 @@
->   #include "generic.h"
->   #include <clocksource/pxa.h>
->   
-> -unsigned int reset_status;
-> -EXPORT_SYMBOL(reset_status);
-> -
->   #define NR_FREQS	16
->   
->   /*
-> @@ -319,10 +316,13 @@ static struct platform_device *sa11x0_devices[] __initdata = {
->   
->   static int __init sa1100_init(void)
->   {
-> +	struct resource wdt_res = DEFINE_RES_MEM(0x90000000, 0x20);
->   	pm_power_off = sa1100_power_off;
->   
->   	regulator_has_full_constraints();
->   
-> +	platform_device_register_simple("sa1100_wdt", -1, &wdt_res, 1);
-> +
->   	return platform_add_devices(sa11x0_devices, ARRAY_SIZE(sa11x0_devices));
+> What are the additional effects?
 
-Wouldn't it be better to add the watchdog device to sa11x0_devices ?
+I suggest to take another look at the commit 7945f929f1a77a1c8887a97ca07f8=
+7626858ff42
+("drivers: provide devm_platform_ioremap_resource()" from 2019-02-20)
+which triggered the discussed software evolution.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/dri=
+vers/base/platform.c
 
->   }
->   
-> diff --git a/arch/arm/mach-sa1100/include/mach/reset.h b/arch/arm/mach-sa1100/include/mach/reset.h
-> index 27695650a567..a6723d45ae2a 100644
-> --- a/arch/arm/mach-sa1100/include/mach/reset.h
-> +++ b/arch/arm/mach-sa1100/include/mach/reset.h
-> @@ -10,7 +10,6 @@
->   #define RESET_STATUS_GPIO	(1 << 3)	/* GPIO Reset */
->   #define RESET_STATUS_ALL	(0xf)
->   
-> -extern unsigned int reset_status;
->   static inline void clear_reset_status(unsigned int mask)
->   {
->   	RCSR = mask;
-> diff --git a/drivers/watchdog/sa1100_wdt.c b/drivers/watchdog/sa1100_wdt.c
-> index 0f6ffc1e7f4e..a24d6a07c7a7 100644
-> --- a/drivers/watchdog/sa1100_wdt.c
-> +++ b/drivers/watchdog/sa1100_wdt.c
-> @@ -22,6 +22,7 @@
->   #include <linux/types.h>
->   #include <linux/kernel.h>
->   #include <linux/fs.h>
-> +#include <linux/platform_device.h>
->   #include <linux/miscdevice.h>
->   #include <linux/watchdog.h>
->   #include <linux/init.h>
-> @@ -30,16 +31,42 @@
->   #include <linux/uaccess.h>
->   #include <linux/timex.h>
->   
-> -#ifdef CONFIG_ARCH_PXA
-> -#include <mach/regs-ost.h>
-> -#endif
-> +#define REG_OSMR0  	0x0000  /* OS timer Match Reg. 0 */
-> +#define REG_OSMR1  	0x0004  /* OS timer Match Reg. 1 */
-> +#define REG_OSMR2  	0x0008  /* OS timer Match Reg. 2 */
-> +#define REG_OSMR3  	0x000c  /* OS timer Match Reg. 3 */
-> +#define REG_OSCR   	0x0010  /* OS timer Counter Reg. */
-> +#define REG_OSSR   	0x0014  /* OS timer Status Reg. */
-> +#define REG_OWER   	0x0018  /* OS timer Watch-dog Enable Reg. */
-> +#define REG_OIER  	0x001C  /* OS timer Interrupt Enable Reg. */
->   
-> -#include <mach/reset.h>
-> +#define OSSR_M3		(1 << 3)	/* Match status channel 3 */
-> +#define OSSR_M2		(1 << 2)	/* Match status channel 2 */
-> +#define OSSR_M1		(1 << 1)	/* Match status channel 1 */
-> +#define OSSR_M0		(1 << 0)	/* Match status channel 0 */
-> +
-> +#define OWER_WME	(1 << 0)	/* Watchdog Match Enable */
-> +
-> +#define OIER_E3		(1 << 3)	/* Interrupt enable channel 3 */
-> +#define OIER_E2		(1 << 2)	/* Interrupt enable channel 2 */
-> +#define OIER_E1		(1 << 1)	/* Interrupt enable channel 1 */
-> +#define OIER_E0		(1 << 0)	/* Interrupt enable channel 0 */
->   
->   static unsigned long oscr_freq;
->   static unsigned long sa1100wdt_users;
->   static unsigned int pre_margin;
->   static int boot_status;
-> +static void __iomem *reg_base;
-> +
-> +static inline void sa1100_wr(u32 val, u32 offset)
-> +{
-> +	writel_relaxed(val, reg_base + offset);
-> +}
-> +
-> +static inline u32 sa1100_rd(u32 offset)
-> +{
-> +	return readl_relaxed(reg_base + offset);
-> +}
->   
->   /*
->    *	Allow only one person to hold it open
-> @@ -50,10 +77,10 @@ static int sa1100dog_open(struct inode *inode, struct file *file)
->   		return -EBUSY;
->   
->   	/* Activate SA1100 Watchdog timer */
-> -	writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
-> -	writel_relaxed(OSSR_M3, OSSR);
-> -	writel_relaxed(OWER_WME, OWER);
-> -	writel_relaxed(readl_relaxed(OIER) | OIER_E3, OIER);
-> +	sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
-> +	sa1100_wr(OSSR_M3, REG_OSSR);
-> +	sa1100_wr(OWER_WME, REG_OWER);
-> +	sa1100_wr(sa1100_rd(REG_OIER) | OIER_E3, REG_OIER);
->   	return stream_open(inode, file);
->   }
->   
-> @@ -61,7 +88,7 @@ static int sa1100dog_open(struct inode *inode, struct file *file)
->    * The watchdog cannot be disabled.
->    *
->    * Previous comments suggested that turning off the interrupt by
-> - * clearing OIER[E3] would prevent the watchdog timing out but this
-> + * clearing REG_OIER[E3] would prevent the watchdog timing out but this
->    * does not appear to be true (at least on the PXA255).
->    */
->   static int sa1100dog_release(struct inode *inode, struct file *file)
-> @@ -76,7 +103,7 @@ static ssize_t sa1100dog_write(struct file *file, const char __user *data,
->   {
->   	if (len)
->   		/* Refresh OSMR3 timer. */
-> -		writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
-> +		sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
->   	return len;
->   }
->   
-> @@ -110,7 +137,7 @@ static long sa1100dog_ioctl(struct file *file, unsigned int cmd,
->   		break;
->   
->   	case WDIOC_KEEPALIVE:
-> -		writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
-> +		sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
->   		ret = 0;
->   		break;
->   
-> @@ -125,7 +152,7 @@ static long sa1100dog_ioctl(struct file *file, unsigned int cmd,
->   		}
->   
->   		pre_margin = oscr_freq * time;
-> -		writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
-> +		sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
->   		/*fall through*/
->   
->   	case WDIOC_GETTIMEOUT:
-> @@ -150,12 +177,22 @@ static struct miscdevice sa1100dog_miscdev = {
->   	.fops		= &sa1100dog_fops,
->   };
->   
-> -static int margin __initdata = 60;		/* (secs) Default is 1 minute */
-> +static int margin = 60;		/* (secs) Default is 1 minute */
->   static struct clk *clk;
->   
-> -static int __init sa1100dog_init(void)
-> +static int sa1100dog_probe(struct platform_device *pdev)
->   {
->   	int ret;
-> +	int *platform_data;
-> +	struct resource *res;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res)
-> +		return -ENXIO;
-> +	reg_base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
 
-	reg_base = devm_platform_ioremap_resource(pdev, 0);
+> What is the end goal of converting all the existing drivers to devm_plat=
+form_ioremap_resource?
 
-> +	ret = PTR_ERR_OR_ZERO(reg_base);
-> +	if (ret)
-> +		return ret;
->   
->   	clk = clk_get(NULL, "OSTIMER0");
->   	if (IS_ERR(clk)) {
-> @@ -173,13 +210,9 @@ static int __init sa1100dog_init(void)
->   
->   	oscr_freq = clk_get_rate(clk);
->   
-> -	/*
-> -	 * Read the reset status, and save it for later.  If
-> -	 * we suspend, RCSR will be cleared, and the watchdog
-> -	 * reset reason will be lost.
-> -	 */
-> -	boot_status = (reset_status & RESET_STATUS_WATCHDOG) ?
-> -				WDIOF_CARDRESET : 0;
-> +	platform_data = pdev->dev.platform_data;
-> +	if (platform_data && *platform_data)
-> +		boot_status = WDIOF_CARDRESET;
->   	pre_margin = oscr_freq * margin;
->   
->   	ret = misc_register(&sa1100dog_miscdev);
-> @@ -195,15 +228,21 @@ static int __init sa1100dog_init(void)
->   	return ret;
->   }
->   
-> -static void __exit sa1100dog_exit(void)
-> +static int sa1100dog_remove(struct platform_device *pdev)
->   {
->   	misc_deregister(&sa1100dog_miscdev);
->   	clk_disable_unprepare(clk);
->   	clk_put(clk);
-> +
-> +	return 0;
->   }
->   
-> -module_init(sa1100dog_init);
-> -module_exit(sa1100dog_exit);
-> +struct platform_driver sa1100dog_driver = {
-> +	.driver.name = "sa1100_wdt",
-> +	.probe	  = sa1100dog_probe,
-> +	.remove	  = sa1100dog_remove,
-> +};
-> +module_platform_driver(sa1100dog_driver);
->   
->   MODULE_AUTHOR("Oleg Drokin <green@crimea.edu>");
->   MODULE_DESCRIPTION("SA1100/PXA2xx Watchdog");
-> 
+It was accepted by well-known Linux developers to put two function calls
+into another wrapper function.
 
+
+> This is not an evolution, it is unnecessary churn. Those patches have no
+> benefit and eat up very valuable reviewer time.
+
+I am curious if other contributors would like to describe more variants
+of software development opinions in affected areas.
+
+
+>> How will such feedback influence the development and integration of
+>> further scripts for the semantic patch language (Coccinelle software)?
+>
+> There are a few other scripts that have no added value when applied to
+> existing code, like ptr_ret.cocci.
+
+Would you like to clarify concerns around such source code transformation
+approaches in more detail?
+
+Regards,
+Markus
