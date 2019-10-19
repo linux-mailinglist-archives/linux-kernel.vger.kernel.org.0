@@ -2,117 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB405DD914
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 16:27:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AD3ADD918
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 16:30:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726026AbfJSO1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 19 Oct 2019 10:27:01 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:45032 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725924AbfJSO1A (ORCPT
+        id S1726129AbfJSOaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 10:30:04 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41046 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbfJSOaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 10:27:00 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9JEP3eE122196;
-        Sat, 19 Oct 2019 14:26:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=0s+wv1EkxEvpCtNNuYFyVgb9qMOKWevUFl0DIEAY7C8=;
- b=jZDrWAT+y74mh/cq3RI1MfxtJuS1a9ZoqDJiryoWPiWtEBDQf0krl2MrutLcUn+whuST
- D9ejZaJaH8Z8OWgPR7EWQyVQlie4Su5sFiE1GmaAjRtKnLKkAfrpu7QGIWP7jSe4CXJL
- 5FRVSV2kLc29+Fqr/Dx/9iNvOrHFZIHg2PxsHADsOqGahzsaDFvuILq4Kxp5d4swQJ8w
- WMIAiomp1NWRjT87S9UA9+1KLVZN0Ic+E1M/FiMLPVAN/+EFCnv7C56ufBnnj3l4kwJJ
- wCyx2+5lt3mxD9OZXbfOBWgSMwwbWQnRf1vk4xJxCnvw0fqd1oMrX3pVM2Q4536VmR/F pg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2vqtep998s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 19 Oct 2019 14:26:53 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9JEN23m010124;
-        Sat, 19 Oct 2019 14:24:52 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2vqsu81mnq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 19 Oct 2019 14:24:52 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9JEOou9008585;
-        Sat, 19 Oct 2019 14:24:51 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 19 Oct 2019 14:24:50 +0000
-Date:   Sat, 19 Oct 2019 17:24:43 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jules Irenge <jbi.octave@gmail.com>
-Cc:     outreachy-kernel@googlegroups.com, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/5] staging: wfx: fix warnings of no space is
- necessary
-Message-ID: <20191019142443.GH24678@kadam>
-References: <20191019140719.2542-1-jbi.octave@gmail.com>
- <20191019140719.2542-2-jbi.octave@gmail.com>
+        Sat, 19 Oct 2019 10:30:03 -0400
+Received: by mail-oi1-f195.google.com with SMTP id g81so7587461oib.8
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2019 07:30:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ghDSQm39Jlx5gmXnVANSIgsOJIuDnV4Wo+ABz1BaRQU=;
+        b=1tP4sHwYNnpUfkWS3qnr2mj9w0eS2pve2ZqGcA7RzVnVzMz+noVDjBSoCquw3GTUSk
+         f++M1+Rc6MGqcbC/TbG/SmndF5rQSjKZTrOEuHH9ie83u+6B1tSC005RK6D1DxL2ZlTh
+         Xllcir1nEKTJ7o0C8pxtRmkgEUBu9uehNb45RopqUyZIfHkcbzhZ9BGJiD8F8x7R1eBZ
+         FZwAgKrK8ZE1SNh4s3+j78KnVFNduRwTearMxrg3K2DGSzMocmiDQicDO/JE+c+fa5jV
+         /G6KTl3E1eIIPgv0if1LsVYBbc6ru8l7X979qo6qXHCDcLrtYbAYwp6XQ0LZYec+SXHg
+         B43g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ghDSQm39Jlx5gmXnVANSIgsOJIuDnV4Wo+ABz1BaRQU=;
+        b=a8rZnGjLIo0CPNxfFOsy889xihLRHj5yfDGdgbQDV1xuujks+8xi0J/r36Xa9niyF0
+         LRhDoFg82pZKZNUwEMVGtU/Qm51vChj1vwaBDCIym5RapV0AorUDenq2l8L2ZHMqhdKz
+         w342i2fFu1uSwiZ5HHM7zpjzpfuhsaySk0AljUMFXloylE3RT/XaJtB16JXcz4pTOeT/
+         ihZz3wwxrjyW/8MwxiCAvxN7MbPIbKgZKYr7xZBQbEqmCvCQqzeKDLizsDrLH+RTD68a
+         j6W2SavRmcfKyRprS3h6NtRshFAm2o3Uu6SgDR7mHSHQ+2dZOxXRfrbExtVMSBtREhV1
+         8IaQ==
+X-Gm-Message-State: APjAAAUEe55Qr/JypvYS0oH/r5gx8T7HNAwOQW5OB1H4/wzLvfpOKmyJ
+        m41Pwe9GqNm0khYMqeQ4caAA4jzAzHoUqa6ujK4zSg==
+X-Google-Smtp-Source: APXvYqy7kFGbeJUVk96O4myEcxmRrSHyTc66p9xYDDub/LBqYgX2CKrxiG35GXcyGwr8n6C75UtxLrayLoJT/v4Zxsk=
+X-Received: by 2002:a54:4e83:: with SMTP id c3mr12411782oiy.170.1571495400968;
+ Sat, 19 Oct 2019 07:30:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191019140719.2542-2-jbi.octave@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9414 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910190133
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9414 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910190133
+References: <20191017142237.9734-1-alexandre.belloni@bootlin.com>
+ <81269cd6-e26d-b8aa-cf17-3a2285851564@web.de> <20191019120941.GL3125@piout.net>
+In-Reply-To: <20191019120941.GL3125@piout.net>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Sat, 19 Oct 2019 16:29:49 +0200
+Message-ID: <CAMpxmJVEXubtBhQs5wH00wvK=yp8nr0cZ04x9t8eCTLVU=O1JA@mail.gmail.com>
+Subject: Re: [PATCH] coccinelle: api/devm_platform_ioremap_resource: remove
+ useless script
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Himanshu Jha <himanshujha199640@gmail.com>,
+        kernel-janitors@vger.kernel.org,
+        Coccinelle <cocci@systeme.lip6.fr>,
+        Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 19, 2019 at 03:07:15PM +0100, Jules Irenge wrote:
-> diff --git a/drivers/staging/wfx/bh.c b/drivers/staging/wfx/bh.c
-> index 3355183fc86c..573216b08042 100644
-> --- a/drivers/staging/wfx/bh.c
-> +++ b/drivers/staging/wfx/bh.c
-> @@ -69,13 +69,13 @@ static int rx_helper(struct wfx_dev *wdev, size_t read_len, int *is_cnf)
->  	if (wfx_data_read(wdev, skb->data, alloc_len))
->  		goto err;
->  
-> -	piggyback = le16_to_cpup((u16 *) (skb->data + alloc_len - 2));
-> +	piggyback = le16_to_cpup((u16 *)(skb->data + alloc_len - 2));
->  	_trace_piggyback(piggyback, false);
->  
-> -	hif = (struct hif_msg *) skb->data;
-> +	hif = (struct hif_msg *)skb->data;
->  	WARN(hif->encrypted & 0x1, "unsupported encryption type");
->  	if (hif->encrypted == 0x2) {
-> -		if (wfx_sl_decode(wdev, (void *) hif)) {
-> +		if (wfx_sl_decode(wdev, (void *)hif)) {
+sob., 19 pa=C5=BA 2019 o 14:09 Alexandre Belloni
+<alexandre.belloni@bootlin.com> napisa=C5=82(a):
+>
+> On 19/10/2019 11:00:47+0200, Markus Elfring wrote:
+> > > While it is useful for new drivers to use devm_platform_ioremap_resou=
+rce,
+> >
+> > This is nice.
+> >
+> >
+> > > this script is currently used to spam maintainers,
+> >
+> > This view is unfortunate.
+> >
+> > Do we stumble on a target conflict again?
+> >
+> >
+> > > often updating very old drivers.
+> >
+> > This can also happen.
+> >
+> >
+> > > The net benefit is the removal of 2 lines of code in the driver
+> >
+> > Additional effects can be reconsidered, can't they?
+> >
+>
+> What are the additional effects? What is the end goal of converting all
+> the existing drivers to devm_platform_ioremap_resource? The existing
+> code is currently always correct and it is difficult to see how this
+> would lead to any bug avoidance in the long term.
+>
+> > > but the review load for the maintainers is huge.
+> >
+> > Does collateral evolution trigger a remarkable amount of changes occasi=
+onally?
+> >
+>
+> This is not an evolution, it is unnecessary churn. Those patches have no
+> benefit and eat up very valuable reviewer time.
+>
+> >
+> > How will such feedback influence the development and integration of
+> > further scripts for the semantic patch language (Coccinelle software)?
+> >
+>
+> There are a few other scripts that have no added value when applied to
+> existing code, like ptr_ret.cocci.
+>
+> --
+> Alexandre Belloni, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
-In the future you may want to go through and remove the (void *) casts.
-It's not required here.
+Hi Alexandre,
 
-> diff --git a/drivers/staging/wfx/bus_spi.c b/drivers/staging/wfx/bus_spi.c
-> index f65f7d75e731..effd07957753 100644
-> --- a/drivers/staging/wfx/bus_spi.c
-> +++ b/drivers/staging/wfx/bus_spi.c
-> @@ -90,7 +90,7 @@ static int wfx_spi_copy_to_io(void *priv, unsigned int addr,
->  	struct wfx_spi_priv *bus = priv;
->  	u16 regaddr = (addr << 12) | (count / 2);
->  	// FIXME: use a bounce buffer
-> -	u16 *src16 = (void *) src;
-> +	u16 *src16 = (void *)src;
+Markus has been black-listed by several core maintainers already, I
+think you're wasting your time arguing. WRT the patch: when
+introducing this wrapper, I definitely didn't expect people to send
+hundreds of often wrong patches based on coccinelle reports, so I
+guess removing the script is correct.
 
-Here we are just getting rid of the constness.  Apparently we are doing
-that so we can modify it without GCC pointing out the bug!!  I don't
-know the code but this seems very wrong.
-
->  	int ret, i;
->  	struct spi_message      m;
->  	struct spi_transfer     t_addr = {
-
-regards,
-dan carpenter
+Bart
