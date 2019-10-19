@@ -2,93 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B578DD828
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 12:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 791E9DD836
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 12:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725913AbfJSKfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 19 Oct 2019 06:35:12 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:49557 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725777AbfJSKfM (ORCPT
+        id S1725844AbfJSKt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 06:49:56 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59134 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbfJSKt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 06:35:12 -0400
-Received: from belgarion ([90.76.41.223])
-        by mwinf5d17 with ME
-        id FNb42100B4otT8A03Nb44m; Sat, 19 Oct 2019 12:35:10 +0200
-X-ME-Helo: belgarion
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sat, 19 Oct 2019 12:35:10 +0200
-X-ME-IP: 90.76.41.223
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        "open list\:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        linux-leds@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
-Subject: Re: [PATCH 00/46] ARM: pxa: towards multiplatform support
-References: <20191018154052.1276506-1-arnd@arndb.de>
-        <87v9slg9k5.fsf@belgarion.home>
-        <CAK8P3a1JDtHsOW=iaxEycbJ4TBkR9MHUyDMeJnwxCtb=tefnBQ@mail.gmail.com>
-        <CAK8P3a0376Anmoc8VWXcEBg+z2B+1vcxJoywYYROBQNxpVmZuA@mail.gmail.com>
-X-URL:  http://belgarath.falguerolles.org/
-Date:   Sat, 19 Oct 2019 12:35:03 +0200
-In-Reply-To: <CAK8P3a0376Anmoc8VWXcEBg+z2B+1vcxJoywYYROBQNxpVmZuA@mail.gmail.com>
-        (Arnd Bergmann's message of "Fri, 18 Oct 2019 21:32:36 +0200")
-Message-ID: <87r239f2g8.fsf@belgarion.home>
-User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/26 (gnu/linux)
+        Sat, 19 Oct 2019 06:49:56 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iLmIz-0004gs-5f; Sat, 19 Oct 2019 12:49:53 +0200
+Date:   Sat, 19 Oct 2019 12:49:52 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     =?UTF-8?Q?J=C3=B6rn_Engel?= <joern@purestorage.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] random: make try_to_generate_entropy() more robust
+In-Reply-To: <CAHk-=wi80VJ+4cUny2kwm0RxrmVdh24VPz5ZHjY4qCWR5iQBDQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1910191214490.2098@nanos.tec.linutronix.de>
+References: <20191018203704.GC31027@cork> <20191018204220.GD31027@cork> <CAHk-=wi80VJ+4cUny2kwm0RxrmVdh24VPz5ZHjY4qCWR5iQBDQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/mixed; boundary="8323329-1132302849-1571482193=:2098"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> On Fri, Oct 18, 2019 at 9:17 PM Arnd Bergmann <arnd@arndb.de> wrote:
->> On Fri, Oct 18, 2019 at 9:04 PM Robert Jarzmik <robert.jarzmik@free.fr> wrote:
->> > Arnd Bergmann <arnd@arndb.de> writes:
->> >
->> > > Hi PXA maintainers,
->> > >
->> > > I'm in the process of getting the old ARM platforms to all build
->> > > in a single kernel. The largest part of that work is changing all
->> > > the device drivers to no longer require mach/*.h header files.
->> > >
->> > > This series does it for arch/pxa/.
->> > >
->> > > As with the omap1 and s3c24xx series I sent before, I don't
->> > > expect this all to be correct in the first version, though
->> > > a lot of the patches are fairly simple and I did exhaustive
->> > > compile-time testing on them.
->> > >
->> > > Please test if you have the hardware, or review!
->> >
->> > Hi Arnd,
->> >
->> > Would you have a git tree I can pull from ?
->> > That would make my life easier than applying manually 46 patches...
->>
->> I've now pushed it to
->>
->> git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git
->> pxa-multiplatform
->
-> Sorry for the duplication, I had some problems with email configuration
-> so my reply got rejected, let's see if it goes through this time.
-I have it now, thanks, I'll test and review as soon as I can.
+--8323329-1132302849-1571482193=:2098
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Cheers.
+On Fri, 18 Oct 2019, Linus Torvalds wrote:
+> On Fri, Oct 18, 2019 at 4:42 PM Jörn Engel <joern@purestorage.com> wrote:
+> >
+> > We can generate entropy on almost any CPU, even if it doesn't provide a
+> > high-resolution timer for random_get_entropy().  As long as the CPU is
+> > not idle, it changed the register file every few cycles.  As long as the
+> > ALU isn't fully synchronized with the timer, the drift between the
+> > register file and the timer is enough to generate entropy from.
+> 
+> >  static void entropy_timer(struct timer_list *t)
+> >  {
+> > +     struct pt_regs *regs = get_irq_regs();
+> > +
+> > +     /*
+> > +      * Even if we don't have a high-resolution timer in our system,
+> > +      * the register file itself is a high-resolution timer.  It
+> > +      * isn't monotonic or particularly useful to read the current
+> > +      * time.  But it changes with every retired instruction, which
+> > +      * is enough to generate entropy from.
+> > +      */
+> > +     mix_pool_bytes(&input_pool, regs, sizeof(*regs));
+> 
+> Ok, so I still like this conceptually, but I'm not entirely sure that
+> get_irq_regs() works reliably in a timer. It's done from softirq
+> TIMER_SOFTIRQ context, so not necessarily _in_ an interrupt.
+> 
+> Now, admittedly this code doesn't really need "reliably". The odd
+> occasional hickup would arguably just add more noise. And I think the
+> code works fine. get_irq_regs() will return a pointer to the last
+> interrupt or exception frame on the current CPU, and I guess it's all
+> fine. But let's bring in Thomas, who was not only active in the
+> randomness discussion, but might also have stronger opinions on this
+> get_irq_regs() usage.
+> 
+> Thomas, opinions? Using the register state (while we're doing the
+> whole entropy load with scheduling etc) looks like a good source of
+> high-entropy data outside of just the TSC, so it does seem like a very
+> valid model. But I want to run it past more people first, and Thomas
+> is the obvious victim^Wchoice.
 
--- 
-Robert
+The idea is good, but as Ingo pointed out this needs very careful checking
+of 'regs'. get_irq_regs() is really only valid from interrupt context up to
+the point where the old irq regs (default NULL) are restored, i.e. after
+irq_exit() from where softirqs are invoked.
+
+One slightly related thing I was looking into is that the mixing of
+interrupt entropy is always done from hard interrupt context. That has a
+few issues:
+
+    1) It's pretty visible in profiles for high frequency interrupt
+       scenarios.
+
+    2) The regs content can be pretty boring non-deterministic when the
+       interrupt hits idle.
+
+       Not an issue in the try_to_generate_entropy() case probably, but
+       that still needs some careful investigation.
+
+For #1 I was looking into a trivial storage model with a per cpu ring
+buffer, where each entry contains the entropy data of one interrupt and let
+some thread or whatever handle the mixing later.
+
+That would allow to filter out 'constant' data (#) but it would also give
+Joerns approach a way to get to some 'random' register content independent
+of the context in which the timer softirq is running in.
+
+Thanks,
+
+	tglx
+--8323329-1132302849-1571482193=:2098--
