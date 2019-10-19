@@ -2,64 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FAD5DD8EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 16:07:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56832DD8EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 16:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbfJSOHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 19 Oct 2019 10:07:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44172 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfJSOHI (ORCPT
+        id S1726164AbfJSOHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 10:07:48 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39961 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfJSOHs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 10:07:08 -0400
-Received: from [213.220.153.21] (helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iLpNn-0002CR-Jd; Sat, 19 Oct 2019 14:07:03 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-In-Reply-To: <20191018205631.248274-2-jannh@google.com>
-Date:   Sat, 19 Oct 2019 16:07:02 +0200
-Subject: Re: [PATCH 2/3] binder: Prevent repeated use of ->mmap() via NULL
- mapping
-Cc:     <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>
-To:     "Jann Horn" <jannh@google.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        =?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        "Todd Kjos" <tkjos@android.com>,
-        "Martijn Coenen" <maco@android.com>,
-        "Joel Fernandes" <joel@joelfernandes.org>,
-        "Christian Brauner" <christian@brauner.io>, <jannh@google.com>
-From:   "Christian Brauner" <christian.brauner@ubuntu.com>
-Message-Id: <BXTK4ZPTAH1J.TZS34Z5LVHR9@wittgenstein>
+        Sat, 19 Oct 2019 10:07:48 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b24so8618091wmj.5
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2019 07:07:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p7Q5YgxIlsTOJ6RN4Gx4aIi4gFkJcajKi+6SvF9kn/0=;
+        b=u2z5pF250EIkte8lyu3Ud+41Bfg4Xea7dGxk3D+jBXT0gHXPBYH9VVaD3TxBHfA881
+         Cd3V9utv9g4a1wc56H+4/cEQp8oNWsXiuBmMF3YB92lffUuFSi2qRO1Euq3z7s0prnSk
+         Y1NACEZccO7vIpybvASZjcVifQ8NVXMB6U/ngK8IsG7dOS8nYgCyMjeWC2zDy5XWwf9v
+         mRBTngY0mj5t6SOMIhPBske3Z/mReI+wmSmd70MlXkVxd3MNeQibNq3MizisP2SPKrVf
+         tpvns7yRRNyx5+vxyhoHMx/yeQcEsi476a7sYwhE7/apT8tocqn6hBM+9cnc50eHu0Cm
+         VhHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p7Q5YgxIlsTOJ6RN4Gx4aIi4gFkJcajKi+6SvF9kn/0=;
+        b=B6ZQmVuXfM53DOlU0UEH/8guJ9vnjpvJNg9/PhKTblU2FqowqRWJlH/bTcDf6uy7N4
+         cWPk7+3yziYpUu4Mg30Z1gEgURP6ScmbjBb4SFeTBc3pH1glFObTduayifFy10khqm1X
+         EZM6C8VrikS8xgTu2VSyPTpn4U5MlgJ700LYlfU12P0dhOMXX2d5VS8uGk7aF5d342ki
+         HPdBptHmStDFX9W+/4UknI/5KuCdwW/bNGYMjEeVxgEhKsSF6037LunxgdPYTQxQhzBo
+         Aw4m2ATXpjmeWeYebWxYfh9EFTDyv9+xh3gkwxpldenaPOLYWDGL/yHhDJeYNqsNkPYS
+         GD1g==
+X-Gm-Message-State: APjAAAXVdD9T4MBZMMS72Rz3o9F7zGzAp1Orkkw3oMtqkUr77A5y09fz
+        0hcj2dr7KWSCUPpgyJOl5w==
+X-Google-Smtp-Source: APXvYqxtjRpbCww16AMVNk3tJbdUfa7U59DGmNm1JpB6NrtOCrVeSeMPlsYvSBPpcQp30APalPxJ7A==
+X-Received: by 2002:a1c:1bc5:: with SMTP id b188mr12424365wmb.88.1571494064634;
+        Sat, 19 Oct 2019 07:07:44 -0700 (PDT)
+Received: from ninjahub.lan (host-92-23-80-57.as13285.net. [92.23.80.57])
+        by smtp.googlemail.com with ESMTPSA id t4sm7893080wrm.13.2019.10.19.07.07.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Oct 2019 07:07:43 -0700 (PDT)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     outreachy-kernel@googlegroups.com
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        jerome.pouiller@silabs.com, linux-kernel@vger.kernel.org,
+        Jules Irenge <jbi.octave@gmail.com>
+Subject: [PATCH v1 0/5]  staging: wfx: fix checkpatch warnings
+Date:   Sat, 19 Oct 2019 15:07:14 +0100
+Message-Id: <20191019140719.2542-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri Oct 18, 2019 at 10:56 PM Jann Horn wrote:
-> binder_alloc_mmap_handler() attempts to detect the use of ->mmap() on a
-> binder_proc whose binder_alloc has already been initialized by checking
-> whether alloc->buffer is non-zero.
->=20
-> Before commit 880211667b20 ("binder: remove kernel vm_area for buffer
-> space"), alloc->buffer was a kernel mapping address, which is always
-> non-zero, but since that commit, it is a userspace mapping address.
->=20
-> A sufficiently privileged user can map /dev/binder at NULL, tricking
-> binder_alloc_mmap_handler() into assuming that the binder_proc has not be=
-en
-> mapped yet. This leads to memory unsafety.
-> Luckily, no context on Android has such privileges, and on a typical Linu=
-x
-> desktop system, you need to be root to do that.
->=20
-> Fix it by using the mapping size instead of the mapping address to
-> distinguish the mapped case. A valid VMA can't have size zero.
->=20
-> Fixes: 880211667b20 ("binder: remove kernel vm_area for buffer space")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jann Horn <jannh@google.com>
+Fix checkpatch warnings.
 
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Jules Irenge (5):
+  staging: wfx: fix warnings of no space is necessary
+  staging: wfx: fix warning of line over 80 characters
+  staging: wfx: fix warnings of logical continuation
+  staging: wfx: correct misspelled words
+  staging: wfx: fix warnings of alignment should match open parenthesis
+
+ drivers/staging/wfx/bh.c       |  25 ++++---
+ drivers/staging/wfx/bus.h      |   6 +-
+ drivers/staging/wfx/bus_sdio.c |   9 +--
+ drivers/staging/wfx/bus_spi.c  |  11 +--
+ drivers/staging/wfx/data_rx.c  |  35 +++++----
+ drivers/staging/wfx/data_tx.c  | 127 +++++++++++++++++++++------------
+ drivers/staging/wfx/data_tx.h  |   4 +-
+ drivers/staging/wfx/debug.c    |  14 ++--
+ 8 files changed, 143 insertions(+), 88 deletions(-)
+
+-- 
+2.21.0
+
