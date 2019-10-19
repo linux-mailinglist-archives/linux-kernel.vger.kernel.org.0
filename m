@@ -2,95 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CBE3DDA20
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 20:36:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A244EDDA32
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 20:42:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbfJSSgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 19 Oct 2019 14:36:47 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42838 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfJSSgr (ORCPT
+        id S1726592AbfJSSmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 14:42:01 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:19862 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbfJSSl5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 14:36:47 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q12so5811858pff.9;
-        Sat, 19 Oct 2019 11:36:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=diC5OhcgPAQon4MoTk8oBGJIDhBSL5N3IWATCx4/9pA=;
-        b=fPzpyISqGRrzhG3UjcuuoLYaIWtp+frAaLeP6a6dfGgX/cLKXk+T9NFIDUtYY8oPGG
-         4KYgmWPdyz5bbiBKd0DnLXt1lVV02TSCMB/oGkGKqBl1BcoAQ13vKI3Mh3j1nwwUcLSR
-         w0ciXPA6NjD5BbhhT2B5pHfd9iAySV0pbzPut53QAPVKvIafm+B6odLaeMzb8qd9ZQ+b
-         hI/7pmc/NdMRZpioE30XcpiaGGGQxunwG6ZjH01FIo6xRQoSFL5gXwoa+DAeYS3m0xx/
-         L8u9i0KTn2vTAHbRz/bsLlfJMT+tp9hkHpQtE7T/s3NZ6g9rO0o9QxjezZntUHgC5Rwq
-         M5zw==
-X-Gm-Message-State: APjAAAXxbk1au8JZEnFgCwO5OJwP27r9DQX7fV4mc8NKB/eJ0xM+lMgX
-        0TTRJHXV0jR3vWNCcmpPFL4=
-X-Google-Smtp-Source: APXvYqzcpP34+frn1/CdUknue2M5Tq2aDYuthXzjQKvIYfvhH7DL4POvzlf4Nw6JCIodII+YDGkI6Q==
-X-Received: by 2002:a63:1e04:: with SMTP id e4mr16626950pge.4.1571510205979;
-        Sat, 19 Oct 2019 11:36:45 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id e192sm10404393pfh.83.2019.10.19.11.36.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2019 11:36:44 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 8F7D440256; Sat, 19 Oct 2019 18:36:43 +0000 (UTC)
-Date:   Sat, 19 Oct 2019 18:36:43 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Alan Maguire <alan.maguire@oracle.com>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Matthias Maennich <maennich@google.com>, shuah@kernel.org,
-        john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com,
-        keescook@chromium.org, yzaikin@google.com, davidgow@google.com,
-        tytso@mit.edu, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kselftest@vger.kernel.org,
-        Mike Salvatore <mike.salvatore@canonical.com>
-Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
- tests for policy unpack
-Message-ID: <20191019183643.GG11244@42.do-not-panic.com>
-References: <20191018001816.94460-1-brendanhiggins@google.com>
- <20191018122949.GD11244@42.do-not-panic.com>
- <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
+        Sat, 19 Oct 2019 14:41:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1571510511;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=l0qWMjci4TxLI+eOGNNufcvgLLDB/JaT6TCyJXXhCcU=;
+        b=UjQnHb+AQOaMSFBBI3VrgZgtWeLGA/znD4j9UHbEfOKWtuG+Ir0kG7/M48dVz7ifyP
+        tQDdWO0VYp5GgydokGuAoXTfMyrPxOxh44VkuwO6GXrMq5kBUGN3iPlv2eUMW84THkGp
+        hBZ2Os8m0SUzRO9MDw8hGnEeZc2OpLlPwAQmSM3SYVXjCXaBXXhB1AFiMrtsctoZhcUb
+        xgkwr0xZncMleSPV9z8Q6lqs/l1Fwm0/XTfpVbJyV7BM8qgxLhyYoL6beQ0jbnzXjIOy
+        LzGgblDvJrYDgd3N7815drXPtIudHqF+7oI2vdhrb/pGqkb7hZ5CT+psh7uqgEVkC6b6
+        qcRA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0pAyXkHTz8="
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 44.28.1 DYNA|AUTH)
+        with ESMTPSA id R0b2a8v9JIfRFML
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sat, 19 Oct 2019 20:41:27 +0200 (CEST)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        David Sterba <dsterba@suse.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com
+Subject: [PATCH v2 00/11] OpenPandora: make wl1251 connected to mmc3 sdio port of OpenPandora work again
+Date:   Sat, 19 Oct 2019 20:41:15 +0200
+Message-Id: <cover.1571510481.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+DT:     Pandora: fixes and extensions
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 19, 2019 at 01:56:01PM +0100, Alan Maguire wrote:
-> On Fri, 18 Oct 2019, Luis Chamberlain wrote:
-> 
-> > On Thu, Oct 17, 2019 at 05:18:16PM -0700, Brendan Higgins wrote:
-> > > From: Mike Salvatore <mike.salvatore@canonical.com>
-> > > 
-> > > In order to write the tests against the policy unpacking code, some
-> > > static functions needed to be exposed for testing purposes. One of the
-> > > goals of this patch is to establish a pattern for which testing these
-> > > kinds of functions should be done in the future.
-> > 
-> > And you'd run into the same situation expressed elsewhere with kunit of
-> > an issue of the kunit test as built-in working but if built as a module
-> > then it would not work, given the lack of exports. Symbols namespaces
-> > should resolve this [0], and we'd be careful where a driver imports this
-> > namespace.
-> > 
-> > [0] https://lwn.net/Articles/798254/
-> >
-> 
-> Thanks for the link! Looks interesting for us definitely!
-> 
-> WRT adding tests, I think what we're aiming at is a set of best practices 
-> to advise test developers using KUnit, while attempting to minimize 
-> side-effects of any changes we need to make to support testability.
-> 
-> One aspect of this we probably have to consider is inlining of code. 
 
-Sure. Makes sense.
+* added acked-by for wl1251 patches - Kalle Valo <kvalo@codeaurora.org>
+* really removed old pdata-quirks code (not through #if 0)
+* splited out a partial revert of
+	efdfeb079cc3b ("regulator: fixed: Convert to use GPIO descriptor only")
+  because that was introduced after v4.19 and stops the removal of
+  the pdata-quirks patch from cleanly applying to v4.9, v4.14, v4.19
+  - reported by Sasha Levin <sashal@kernel.org>
+* added a new patch to remove old omap hsmmc since pdata quirks
+  were last user - suggested by Tony Lindgren <tony@atomide.com>
 
-  Luis
+PATCH V1 2019-10-18 22:25:39:
+
+Here we have a set of scattered patches to make the OpenPandora WiFi work again.
+
+v4.7 did break the pdata-quirks which made the mmc3 interface
+fail completely, because some code now assumes device tree
+based instantiation.
+
+Fixes: 81eef6ca9201 ("mmc: omap_hsmmc: Use dma_request_chan() for requesting DMA channel")
+
+v4.11 did break the sdio qirks for wl1251 which made the driver no longer
+load, although the device was found as an sdio client.
+
+Fixes: 884f38607897 ("mmc: core: move some sdio IDs out of quirks file")
+
+To solve these issues:
+* we convert mmc3 and wl1251 initialization from pdata-quirks
+  to device tree
+* we make the wl1251 driver read properties from device tree
+* we fix the mmc core vendor ids and quirks
+* we fix the wl1251 (and wl1271) driver to use only vendor ids
+  from header file instead of (potentially conflicting) local
+  definitions
+
+
+H. Nikolaus Schaller (11):
+  Documentation: dt: wireless: update wl1251 for sdio
+  net: wireless: ti: wl1251 add device tree support
+  DTS: ARM: pandora-common: define wl1251 as child node of mmc3
+  mmc: host: omap_hsmmc: add code for special init of wl1251 to get rid
+    of pandora_wl1251_init_card
+  omap: pdata-quirks: revert pandora specific gpiod additions
+  omap: pdata-quirks: remove openpandora quirks for mmc3 and wl1251
+  omap: remove old hsmmc.[ch] and in Makefile
+  mmc: sdio: fix wl1251 vendor id
+  mmc: core: fix wl1251 sdio quirks
+  net: wireless: ti: wl1251 use new SDIO_VENDOR_ID_TI_WL1251 definition
+  net: wireless: ti: remove local VENDOR_ID and DEVICE_ID definitions
+
+ .../bindings/net/wireless/ti,wl1251.txt       |  26 +++
+ arch/arm/boot/dts/omap3-pandora-common.dtsi   |  37 +++-
+ arch/arm/mach-omap2/Makefile                  |   1 -
+ arch/arm/mach-omap2/hsmmc.c                   | 171 ------------------
+ arch/arm/mach-omap2/hsmmc.h                   |  32 ----
+ arch/arm/mach-omap2/pdata-quirks.c            | 105 -----------
+ drivers/mmc/core/quirks.h                     |   7 +
+ drivers/mmc/host/omap_hsmmc.c                 |  21 +++
+ drivers/net/wireless/ti/wl1251/sdio.c         |  23 ++-
+ drivers/net/wireless/ti/wlcore/sdio.c         |   8 -
+ include/linux/mmc/sdio_ids.h                  |   2 +
+ 11 files changed, 105 insertions(+), 328 deletions(-)
+ delete mode 100644 arch/arm/mach-omap2/hsmmc.c
+ delete mode 100644 arch/arm/mach-omap2/hsmmc.h
+
+-- 
+2.19.1
+
