@@ -2,60 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F336DD7F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 12:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6F67DD800
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 12:09:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726100AbfJSKJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 19 Oct 2019 06:09:38 -0400
-Received: from mail-40133.protonmail.ch ([185.70.40.133]:56659 "EHLO
-        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725283AbfJSKJe (ORCPT
+        id S1726204AbfJSKJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 06:09:55 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:57501 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725283AbfJSKJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 06:09:34 -0400
-Date:   Sat, 19 Oct 2019 10:09:28 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1571479773;
-        bh=PE784A8dtwRDPjcDgvmfW6T36kvPKDIzJdeF4T3ql5s=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=NQuCeR7PdX/2vkKbhztCKn/M2zmC3m2DvpeNehxZDtl3fac43jU1HsgtQvevqtDKH
-         CWC9HoDaKJ86nJmhRMj7tHYvRQTkCELyR5DfShGG4ott83oDqThgYQHvbApoSt5mnn
-         1NGzDcsiShaQ/Bc8KWo37iqY2K6xEbCoJkQyrgo4=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: Re: (was Fair Trade O.S.) Varanger O-S
-Message-ID: <ZW13iGkNuhPploR4F6DzNcpA-pkfy_ehJVeuqeXe8Vo6YS883JrgsQX8zanUvrlSF57vHVfcDKX-My906Nm8Hy7VScQQWISI0PLl8MuXc2o=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        Sat, 19 Oct 2019 06:09:54 -0400
+Received: from mail-qk1-f175.google.com ([209.85.222.175]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Md66H-1hmA0q38lP-00aBTh; Sat, 19 Oct 2019 12:09:52 +0200
+Received: by mail-qk1-f175.google.com with SMTP id u184so7726616qkd.4;
+        Sat, 19 Oct 2019 03:09:50 -0700 (PDT)
+X-Gm-Message-State: APjAAAV6BC7+dJNdNnbp0uBhqhWjVJbpXA0P+NWDqHRQrLjjeNPea+9O
+        UsfK6mxzuQugSbt2MHqE8UxQN6gKkEIDC4IrnOw=
+X-Google-Smtp-Source: APXvYqxDnkD1LGxVOqOKBA1bv73+2FIM7aUPofN3DdgTjR6MZneEs/uqd6EIDns9KMja9p9yGzmHvgB/h9FVcJa5zrw=
+X-Received: by 2002:a37:a614:: with SMTP id p20mr4599817qke.352.1571479789607;
+ Sat, 19 Oct 2019 03:09:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+References: <20191018154052.1276506-1-arnd@arndb.de> <803f6fa5-b929-007c-5302-4a2d5042241c@roeck-us.net>
+In-Reply-To: <803f6fa5-b929-007c-5302-4a2d5042241c@roeck-us.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 19 Oct 2019 12:09:33 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0t-P_w705z0BSXxzj8MmmKVCagLtidiP+NX51zGce0ag@mail.gmail.com>
+Message-ID: <CAK8P3a0t-P_w705z0BSXxzj8MmmKVCagLtidiP+NX51zGce0ag@mail.gmail.com>
+Subject: Re: [PATCH 00/46] ARM: pxa: towards multiplatform support
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        linux-leds@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:JoUK9zIsRwlckwxRsQPyrjTR+CJ+e1NzjrnywlpJZpvLQsrki/O
+ 6oqUixG3wGmHbC1gSpDeC2OejM6V4LXMb9u1x0OmYrMxGcagKms+P8T/tjhy15NahnZvLsx
+ 1gNVUhsGYzHMtoVbEaqcMjalLGwbYPFfNThqwVnR8BgbXGDhRMK7Adn2Vavriz2ulAIvmZU
+ H5PZHrbqDUGaqIhXvsl4Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:pA8x/njXmAI=:U9yaOvxfltjLDDMpfRuSsq
+ 3HS+Uk5OMnTj7jXsSqT09WlnY5kJE4lyndiUAbmRhkwH8a1mpWaZtSeNW5l9XHblbovqqlFen
+ I2hdy64SanS7+hdxQClxrj9MOTCMH+jQ/guAzqyyIS+ZJghWWRA96XK07WeYTSksO3Z3wi4PL
+ oeUQfeMOmonDkSFZQJSU0pUDf5ibRuBWvHgYEqc4ZFCtQoMh4HxHg4DcDHz0GcvNIW8zWcUi+
+ kGvUwPLgDOL+yFjxr4/A3kz9Dyp14ontGslHGkjqxAOAVjxv5J33fiBooNoR5GvtvGscuR2lq
+ suA01emt1k4nZL14WT/4N/ifAN322ft1kJa84NI7AHbBVjq+Ty7vVxQJynTFU9qV2TtVeePTh
+ z6LuoYpDlFdSQRZE9ZHsyb7Zbahb2icMEExmeS1b+ZHYjPQQSvKmuopKiOnFdVjBzVpbAs7Sq
+ OWKgo9HdQ3faFXmP1ql0IgKuQZAqcUuGMxzZ3qQRC6iZ+w6Fjnw74/gf6IBz3WfI6QsztRmxr
+ IChwQdXXDBnXtNhHmN5s+cYfz3SB5+3akBzydwjYiFDmkVYlrVsdsXPNkFi5WLrKvEs+jRXnT
+ 7x949r2gXzMwOU6maKqn9s+IqzNassNQF5qaczd5/st4LlH7WfivxkcQH4ofJColsHPGPKZh8
+ iktcGfmOnhb78/0TpIR8Pj7ulZJkGfkCzLvPJIWmyicG65izSidWtbu0o4peBVdS3AWBMLVL+
+ RO1hs5zPp4BOBWIHL0DmrFqHNsNyUF9ne462ySkT6FJvnaVrgtoV5lzoQCIgWh5yfmbR3zfdh
+ +cJJ58BOZyJDYKmZfk9jV62B7juGiiPu74mnB7POA41ONooMvzSSBTNUZFPGnif+VoMzuLyEz
+ 8oK7rdh0sSaKcju6RlWA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lessened the licence strictness and updated this with a mixed licence point=
- of view, as long as it respects the optimized commerciality of it. Politic=
-ans here want it aswell, and that is what I wanted since the 90s, and proba=
-bly many here. (the whole spotify debate etc.)
+On Sat, Oct 19, 2019 at 3:03 AM Guenter Roeck <linux@roeck-us.net> wrote:
+> On 10/18/19 8:40 AM, Arnd Bergmann wrote:
+>
+> I don't get very far.
+>
+> $ make-arm pxa_defconfig
+> arch/arm/Kconfig:677: can't open file "arch/arm/plat-pxa/Kconfig"
+> scripts/kconfig/Makefile:90: recipe for target 'pxa_defconfig' failed
 
-The Com directory giving full access to all commercial files, without unnec=
-essary usernames, for easy finding ones interests aswell, making this more =
-commercial than ever.
+>
+> Did I pick the wrong tree ?
 
-:Com/Category/Subcategory/Country/12.500 km2 zone/Person/Groupings
+It seems that one line got lost in a rebase and ended up in a different patch
+that was not part of the series. I updated the git tree now.
 
-Optimized principles overall giving a good O.S. This is the sensible conclu=
-sion, and what should happen with Source Available type systems.
-
-Best Greetings,
-Ywe C=C3=A6rlyn
-Lead & Philosophy
-Varanger O.S
-https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
-
-
+        Arnd
