@@ -2,78 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78291DD71A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 09:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9D52DD71C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2019 09:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfJSHYl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 19 Oct 2019 03:24:41 -0400
-Received: from h3.fbrelay.privateemail.com ([131.153.2.44]:44232 "EHLO
-        h3.fbrelay.privateemail.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726252AbfJSHYl (ORCPT
+        id S1727536AbfJSH2R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 03:28:17 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34194 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727102AbfJSH2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 03:24:41 -0400
-X-Greylist: delayed 351 seconds by postgrey-1.27 at vger.kernel.org; Sat, 19 Oct 2019 03:24:40 EDT
-Received: from MTA-10-4.privateemail.com (mta-10.privateemail.com [68.65.122.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by h3.fbrelay.privateemail.com (Postfix) with ESMTPS id 33DFE80843
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2019 03:24:40 -0400 (EDT)
-Received: from MTA-10.privateemail.com (localhost [127.0.0.1])
-        by MTA-10.privateemail.com (Postfix) with ESMTP id 2144160038;
-        Sat, 19 Oct 2019 03:24:39 -0400 (EDT)
-Received: from wambui.zuku.co.ke (unknown [10.20.151.221])
-        by MTA-10.privateemail.com (Postfix) with ESMTPA id A45FA60033;
-        Sat, 19 Oct 2019 07:24:35 +0000 (UTC)
-From:   Wambui Karuga <wambui@karuga.xyz>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org, alexander.deucher@amd.com,
-        christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie,
-        daniel@ffwll.ch, amd-gfx@lists.freedesktop.org,
-        outreachy-kernel@googlegroups.com
-Subject: [PATCH] drm/amd/amdgpu: make undeclared variables static
-Date:   Sat, 19 Oct 2019 10:24:26 +0300
-Message-Id: <20191019072426.20535-1-wambui@karuga.xyz>
-X-Mailer: git-send-email 2.23.0
+        Sat, 19 Oct 2019 03:28:17 -0400
+Received: by mail-wm1-f66.google.com with SMTP id y135so10785974wmc.1
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2019 00:28:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Fr2NikG6Tj2uHhMBe2Mkt6L0jUcAk7enEP452906uXE=;
+        b=BLw4kgK+cmpzbOJU9K0NFE4vLuzs47u37DDF+nCJnAntl0/SDWwHatDa9JwpA77tJb
+         F5HnbBVeTH0jlGnVZsfOHWY95iQe6GhDf8wjbiTaVhxLPdUqxyktcVh1lkzlOgUU2ko6
+         PTq7AO9uMz0AA1PVwUTYpTl8rvkXnEqb/UtqxDkwP7QIiN2TvwFBncP6lIvP1jtXiK65
+         K1QY7IJmUGLB5S3O3ZsO+3GA9VdS1Oswrr9FI2ipL9aB5xiqzWXMKBqcKSYxC9YRFFpU
+         5ckwoIiS3Znrg3tycBhGvjM/L0PBeOvWH9f9F5Ox+ZQIJZiuHQrQ+sJU5wtbi0vMq1h6
+         FHOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Fr2NikG6Tj2uHhMBe2Mkt6L0jUcAk7enEP452906uXE=;
+        b=Ww+LZE3PJ18zesxBE+WyedA5ykk2F4LHqwjM/3JtEFBYJE19wNrt/eNwTyiYn9BZdF
+         BaVohhEe4Jfz/JMWZtkF6KkROAOaHNJzTXflaEebtLOKEGTmq+R0fTFxIxT8IjvJxAGx
+         E9K2rEuIrKvzA2Ynf7UDlce72sbqUX1+fkZc807cZ1f0b7fw3ukF2K87E2e+WBK5Sh3r
+         6nJ9Ky3fZeYlNHnYWwlhzC/0p4rarPMRps7XsH8a8YWcAk5cUMl0vNSJfwa1r5huQqEf
+         hgHDjOKodl1mSdudMl+PcZYiF0Zh8nV/izznvHcgaCH60F3PHg39vy/2hnu4TvmSIOHy
+         DtnA==
+X-Gm-Message-State: APjAAAXOZraM3mW/RfrNlG1nZO3oW8cz7MDrIpVtoCl5ZQ+2KD/4CBFZ
+        3mrlhUb7uAhlasSdcQUSQOi/JA==
+X-Google-Smtp-Source: APXvYqwBhR7P6UqTDRz+njy9FXXBvhp+4umjAhhV9A+lzUkV+U7s7V+AWjdrnegkIkSF2YsxNA77IQ==
+X-Received: by 2002:a1c:a556:: with SMTP id o83mr11454552wme.0.1571470093037;
+        Sat, 19 Oct 2019 00:28:13 -0700 (PDT)
+Received: from dell ([95.149.164.96])
+        by smtp.gmail.com with ESMTPSA id g5sm3353151wmg.12.2019.10.19.00.28.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 19 Oct 2019 00:28:12 -0700 (PDT)
+Date:   Sat, 19 Oct 2019 08:28:09 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     broonie@kernel.org, linus.walleij@linaro.org,
+        daniel.thompson@linaro.org, arnd@arndb.de, baohua@kernel.org,
+        stephan@gerhold.net, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] mfd: mfd-core: Honour Device Tree's request to
+ disable a child-device
+Message-ID: <20191019072809.GX4365@dell>
+References: <20191018122647.3849-1-lee.jones@linaro.org>
+ <20191018122647.3849-3-lee.jones@linaro.org>
+ <b7c59d6e-2ad8-30a1-013a-53c116f7b6ba@arm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <b7c59d6e-2ad8-30a1-013a-53c116f7b6ba@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the `amdgpu_lockup_timeout` and `amdgpu_exp_hw_support` variables
-static to remove the following sparse warnings:
-drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c:103:19: warning: symbol 'amdgpu_lockup_timeout' was not declared. Should it be static?
-drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c:117:18: warning: symbol 'amdgpu_exp_hw_support' was not declared. Should it be static?
+Good morning Robin,
 
-Signed-off-by: Wambui Karuga <wambui@karuga.xyz>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It's been a while.  I hope that you are well.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 3fae1007143e..c5b3c0c9193b 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -100,7 +100,7 @@ int amdgpu_disp_priority = 0;
- int amdgpu_hw_i2c = 0;
- int amdgpu_pcie_gen2 = -1;
- int amdgpu_msi = -1;
--char amdgpu_lockup_timeout[AMDGPU_MAX_TIMEOUT_PARAM_LENTH];
-+static char amdgpu_lockup_timeout[AMDGPU_MAX_TIMEOUT_PARAM_LENTH];
- int amdgpu_dpm = -1;
- int amdgpu_fw_load_type = -1;
- int amdgpu_aspm = -1;
-@@ -114,7 +114,7 @@ int amdgpu_vm_block_size = -1;
- int amdgpu_vm_fault_stop = 0;
- int amdgpu_vm_debug = 0;
- int amdgpu_vm_update_mode = -1;
--int amdgpu_exp_hw_support = 0;
-+static int amdgpu_exp_hw_support;
- int amdgpu_dc = -1;
- int amdgpu_sched_jobs = 32;
- int amdgpu_sched_hw_submission = 2;
+Thanks for taking an interest.
+
+On Fri, 18 Oct 2019, Robin Murphy wrote:
+> On 18/10/2019 13:26, Lee Jones wrote:
+> > Until now, MFD has assumed all child devices passed to it (via
+> > mfd_cells) are to be registered.  It does not take into account
+> > requests from Device Tree and the like to disable child devices
+> > on a per-platform basis.
+> > 
+> > Well now it does.
+> > 
+> > Reported-by: Barry Song <Baohua.Song@csr.com>
+> > Reported-by: Stephan Gerhold <stephan@gerhold.net>
+> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> > ---
+> >   drivers/mfd/mfd-core.c | 5 +++++
+> >   1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+> > index eafdadd58e8b..24c139633524 100644
+> > --- a/drivers/mfd/mfd-core.c
+> > +++ b/drivers/mfd/mfd-core.c
+> > @@ -182,6 +182,11 @@ static int mfd_add_device(struct device *parent, int id,
+> >   	if (parent->of_node && cell->of_compatible) {
+> >   		for_each_child_of_node(parent->of_node, np) {
+> >   			if (of_device_is_compatible(np, cell->of_compatible)) {
+> > +				if (!of_device_is_available(np)) {
+> > +					/* Ignore disabled devices error free */
+> > +					ret = 0;
+> > +					goto fail_alias;
+> > +				}
+> 
+> Is it possible for a device to have multiple children of the same type? If
+> so, it seems like this might not work as desired if, say, the first child
+> was disabled but subsequent ones weren't.
+> 
+> It might make sense to use for_each_available_child_of_node() for the outer
+> loop, then check afterwards if anything was found.
+
+The subsystem in its current guise doesn't reliably support the
+situation you describe. We have no way to track which child nodes have
+been through this process previously, thus mfd-core will always choose
+the first child node with a matching compatible string.
+
+If you have any suggests in terms of adding support for multiple
+children with matching compatible strings, I'd be very receptive.
+
+> >   				pdev->dev.of_node = np;
+> >   				pdev->dev.fwnode = &np->fwnode;
+> >   				break;
+> > 
+
 -- 
-2.23.0
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
