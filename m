@@ -2,75 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BDDADDEA6
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 15:38:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 602B9DDEAB
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 15:42:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbfJTNiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 09:38:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43532 "EHLO mail.kernel.org"
+        id S1726484AbfJTNme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 09:42:34 -0400
+Received: from vps.xff.cz ([195.181.215.36]:52550 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbfJTNiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 09:38:00 -0400
-Received: from localhost (unknown [106.51.108.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A7B520679;
-        Sun, 20 Oct 2019 13:37:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571578679;
-        bh=za7ORQM0o/bZx348xhyzmEOt1K2y/INFWAQjAQLu7Rc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Te3mQI4m1f7FRFpyXfamK1Liz3THwRFnb25zjYUCxTz9hQv7WPh1bpZoEZz2iwksV
-         HKrTnxwyfDNOj+RWHCjNYqgPBAiopuG1VbgCLASx2cCbRVTV4u3imx+dzfqfr1kSWG
-         FJ+LwZeQ67ODn/CAg+JwdT3YFqj+3ZU7BpWqM/A0=
-Date:   Sun, 20 Oct 2019 19:07:55 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Add APSS watchdog node
-Message-ID: <20191020133755.GT2654@vkoul-mobl>
-References: <20191003041345.20912-1-bjorn.andersson@linaro.org>
+        id S1726296AbfJTNmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 09:42:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1571578951; bh=hofiJnVP7aDAhfypTNm/xBHKoQaxIAs/RXYARGH7SXc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=rL0PJD9+XJttVWgq6PD++yB5Sj29S7dDgQLRKYExvDwtHfsFge/DBYBBg32DHDc3h
+         uFt7Kll3lqRdpvBCmi1LsqpI0gVdL988W7mcdgp/2yBqEDdg6Xt1f6/Hipb/Rc017j
+         eBYOK1eBGMgpotIXKAPN/Iy0Dq4rBZghfte9nFRU=
+From:   megous@megous.com
+To:     linux-sunxi@googlegroups.com,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Ondrej Jirman <megous@megous.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/4] Add USB 3 support for H6 and Orange Pi 3
+Date:   Sun, 20 Oct 2019 15:42:25 +0200
+Message-Id: <20191020134229.1216351-1-megous@megous.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191003041345.20912-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02-10-19, 21:13, Bjorn Andersson wrote:
-> Add a node describing the watchdog found in the application subsystem.
+From: Ondrej Jirman <megous@megous.com>
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
+This series implements USB 3 support for Xunlong Orange Pi 3 board.
 
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index f0b2db34ec4a..23915eab4187 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -3488,6 +3488,12 @@
->  			status = "disabled";
->  		};
->  
-> +		watchdog@17980000 {
-> +			compatible = "qcom,apss-wdt-sdm845", "qcom,kpss-wdt";
-> +			reg = <0 0x17980000 0 0x1000>;
-> +			clocks = <&sleep_clk>;
-> +		};
-> +
->  		apss_shared: mailbox@17990000 {
->  			compatible = "qcom,sdm845-apss-shared";
->  			reg = <0 0x17990000 0 0x1000>;
-> -- 
-> 2.18.0
+This is a re-hash of the Icenowy's earlier USB3 work[1] without code
+that caused controversy previously. Orange Pi 3 board doesn't need vbus
+supply to be dynamically enabled, so that code is not needed to support
+USB3 on this board.
+
+Most of patches are already reviewed. I've converted dt-bindings to yaml
+format, and added the Orange Pi 3 board modifications.
+
+Hopefully with this series we can get USB3 support into mainline for
+Orange Pi 3, and build on it later to support more boards, where
+supporting them is more complicated.
+
+Please take a look.
+
+thank you and regards,
+  Ondrej Jirman
+
+[1] https://lore.kernel.org/patchwork/patch/1058919/
+
+
+Changes since Icenowy v5 series:
+- use earlier patches that did not include VBUS regulator/connector
+  code
+- converted dt bindings to yaml
+- added patch to enable usb3 on Orange Pi 3
+
+Icenowy Zheng (2):
+  phy: allwinner: add phy driver for USB3 PHY on Allwinner H6 SoC
+  arm64: dts: allwinner: h6: add USB3 device nodes
+
+Ondrej Jirman (2):
+  dt-bindings: Add bindings for USB3 phy on Allwinner H6
+  arm64: dts: allwinner: orange-pi-3: Enable USB 3.0 host support
+
+ .../phy/allwinner,sun50i-h6-usb3-phy.yaml     |  47 +++++
+ .../dts/allwinner/sun50i-h6-orangepi-3.dts    |   8 +
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  32 +++
+ drivers/phy/allwinner/Kconfig                 |  12 ++
+ drivers/phy/allwinner/Makefile                |   1 +
+ drivers/phy/allwinner/phy-sun50i-usb3.c       | 195 ++++++++++++++++++
+ 6 files changed, 295 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb3-phy.yaml
+ create mode 100644 drivers/phy/allwinner/phy-sun50i-usb3.c
 
 -- 
-~Vinod
+2.23.0
+
