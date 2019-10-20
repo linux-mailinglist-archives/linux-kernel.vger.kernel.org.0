@@ -2,124 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDFD4DDBEC
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 04:12:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE340DDBF6
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 04:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbfJTCHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 19 Oct 2019 22:07:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53602 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726204AbfJTCHV (ORCPT
+        id S1726214AbfJTC4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 19 Oct 2019 22:56:37 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46470 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbfJTC4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Oct 2019 22:07:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=loqJkqMzlVxDcukelK7SOp/qyy0wTiV9aAPSa734+ac=; b=d097UHLLElOGNwpFNfCX8uZT6
-        wiqz2KjmgfViFjejzMw0Zr2KSLcq/Ol4uZ8fhH1WypKsarjphl31GhcdecHRv0ZCJ22U87F5oh4eA
-        5bYp+RxoO4Ok1znwLHjUp9cVvzcfxfqskt5HnhQdtGij+2H+nVwvsMQBI5LdmHWcvZwEUJ8q+eYsd
-        Iw1Xvtrg96eZ3IavaN9e2mGM4yU5UsHKTgC9epVU/Sa+2POLmRxgbzwI1zlDz9SGkKXc1QMW7AZ9U
-        0eh2/ofeNuCKMR3DXumHycPZgE88vWcPHbaU+lCRsi3JLy7BMtfrhuQ+fFnq2J+unYA0XpmOHkmKv
-        ohAazOIGg==;
-Received: from [2601:1c0:6280:3f0::9ef4]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iM0cq-0008AT-IK; Sun, 20 Oct 2019 02:07:20 +0000
-Subject: Re: [PATCH] mm/vmstat: do not use size of vmstat_text as count of
- /proc/vmstat items
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-References: <157152151769.4139.15423465513138349343.stgit@buzz>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <83d18a9b-2a3e-d35a-a2c0-ba7be2141ec5@infradead.org>
-Date:   Sat, 19 Oct 2019 19:07:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Sat, 19 Oct 2019 22:56:36 -0400
+Received: by mail-wr1-f65.google.com with SMTP id o18so10032650wrv.13
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2019 19:56:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=BRMeqoMdwO36O1tOR2YaKgWgFeJDf+GC6GOmplD0o6U=;
+        b=k5vuSyYFX++8OtFAn75RNh2j+dFNa0iQBbTsjjNBzXTWVLNk5ZVp5obYyp1OILbAzW
+         1o23WogJ9c6UyCyX8DWxuY8ohEXrEtKANxziOM+izfboZXWBTbv5De9+X/VLohf83vHw
+         XAKpjZSVZdof34BxDcSU254Ybsxd7Fi/AwABjzDe2/xHsN3JU4RSd3C8t535wb44T7dY
+         NZzxaTrN35hlDlCOVtGc3LncFktUi4dven40Pxaiah0WtcyleN8jxn9JOh1Z0j6xPRTO
+         wjdOo7oZTS3cKkC5MHGie57RSugIn7KNwLr8JvrXMK2831JLyIkwnCLxmWfEfcIWA5dY
+         xIjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=BRMeqoMdwO36O1tOR2YaKgWgFeJDf+GC6GOmplD0o6U=;
+        b=kSMKerJmiM6tygmzylJBFbDxX3AIUdkpvCDMiLdIPoLLfG9HpCRYai05tDMyTUtvb4
+         TK2UcMOzEyXirgwb1MB8yLtqooPGVCbzsgwdQ7qB4oYbG1i0mJIYBbLN7kQar+aUB+jj
+         b9Mow6NBfPScnIgVNN79cu5W3iu+gwVDsmQOn5qwNv1Ka/5H1ltvpotwJajA3YZbBTaR
+         wCsMnvRCFRolmFK/fDHE3sgB1n5pO1oluoRVDxh12dfOtU0ucn9dLvJB2xC5yHULsriT
+         YDWW9UNzyavBSodpyaByCxvqz4MaNV2RKHtaN+YZyVNv0H06rRJPZodH934SfA9FxzEw
+         yhXw==
+X-Gm-Message-State: APjAAAVeMBKtXebmg4uFPKIePa/O066bIKBQlvLjOFTmrZCqnJA/nRGG
+        PyjsM7Api3Rh7JwSJo8wsuteysE9d7X01Ww32Bk=
+X-Google-Smtp-Source: APXvYqyjXvZaEuUGbm+Ri/PqXFsh4GvqnrgRoNOczaiYHYAHh8CtFijswiqyRSA2XHoD6BC8jTjW/wUZAr4rcCgk5h4=
+X-Received: by 2002:a5d:4588:: with SMTP id p8mr5537311wrq.180.1571540194906;
+ Sat, 19 Oct 2019 19:56:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <157152151769.4139.15423465513138349343.stgit@buzz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:adf:e6c6:0:0:0:0:0 with HTTP; Sat, 19 Oct 2019 19:56:34
+ -0700 (PDT)
+Reply-To: lisatofan110@gmail.com
+From:   Lisa Tofan <atmcarddepartment725@gmail.com>
+Date:   Sun, 20 Oct 2019 04:56:34 +0200
+Message-ID: <CAKm0Sm_Jw_ZH7_h_Zm89EM6OU+aw3KkpeyWPvzq4aLPmxicJ-w@mail.gmail.com>
+Subject: From Lisa Tofan
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/19/19 2:45 PM, Konstantin Khlebnikov wrote:
-> Strings from vmstat_text[] will be used for printing memory cgroup
-> statistics which exists even if CONFIG_VM_EVENT_COUNTERS=n.
-> 
-> This should be applied before patch "mm/memcontrol: use vmstat names
-> for printing statistics".
-> 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> Link: https://lore.kernel.org/linux-mm/cd1c42ae-281f-c8a8-70ac-1d01d417b2e1@infradead.org/T/#u
+Hello Dear,
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+This is Miss Lisa Tofan, How are you today hope all is well with you,
+please I will need your urgent attention
 
-Thanks.
-
-> ---
->  mm/vmstat.c |   26 ++++++++++++--------------
->  1 file changed, 12 insertions(+), 14 deletions(-)
-> 
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 590aeca27cab..13e36da70f3c 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1638,25 +1638,23 @@ static const struct seq_operations zoneinfo_op = {
->  	.show	= zoneinfo_show,
->  };
->  
-> +#define NR_VMSTAT_ITEMS (NR_VM_ZONE_STAT_ITEMS + \
-> +			 NR_VM_NUMA_STAT_ITEMS + \
-> +			 NR_VM_NODE_STAT_ITEMS + \
-> +			 NR_VM_WRITEBACK_STAT_ITEMS + \
-> +			 (IS_ENABLED(CONFIG_VM_EVENT_COUNTERS) ? \
-> +			  NR_VM_EVENT_ITEMS : 0))
-> +
->  static void *vmstat_start(struct seq_file *m, loff_t *pos)
->  {
->  	unsigned long *v;
-> -	int i, stat_items_size;
-> +	int i;
->  
-> -	if (*pos >= ARRAY_SIZE(vmstat_text))
-> +	if (*pos >= NR_VMSTAT_ITEMS)
->  		return NULL;
-> -	stat_items_size = NR_VM_ZONE_STAT_ITEMS * sizeof(unsigned long) +
-> -			  NR_VM_NUMA_STAT_ITEMS * sizeof(unsigned long) +
-> -			  NR_VM_NODE_STAT_ITEMS * sizeof(unsigned long) +
-> -			  NR_VM_WRITEBACK_STAT_ITEMS * sizeof(unsigned long);
-> -
-> -#ifdef CONFIG_VM_EVENT_COUNTERS
-> -	stat_items_size += sizeof(struct vm_event_state);
-> -#endif
->  
-> -	BUILD_BUG_ON(stat_items_size !=
-> -		     ARRAY_SIZE(vmstat_text) * sizeof(unsigned long));
-> -	v = kmalloc(stat_items_size, GFP_KERNEL);
-> +	BUILD_BUG_ON(ARRAY_SIZE(vmstat_text) < NR_VMSTAT_ITEMS);
-> +	v = kmalloc_array(NR_VMSTAT_ITEMS, sizeof(unsigned long), GFP_KERNEL);
->  	m->private = v;
->  	if (!v)
->  		return ERR_PTR(-ENOMEM);
-> @@ -1689,7 +1687,7 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
->  static void *vmstat_next(struct seq_file *m, void *arg, loff_t *pos)
->  {
->  	(*pos)++;
-> -	if (*pos >= ARRAY_SIZE(vmstat_text))
-> +	if (*pos >= NR_VMSTAT_ITEMS)
->  		return NULL;
->  	return (unsigned long *)m->private + *pos;
->  }
-> 
-
-
--- 
-~Randy
-
+regarding this important discussion kindly write me back here :
+lisatofan110@gmail.com : for more details,
+Thanks,
+Lisa Tofan
