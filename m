@@ -2,106 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9045DDD30
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 09:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCE12DDD31
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 09:32:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbfJTHaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 03:30:23 -0400
-Received: from mail-pl1-f182.google.com ([209.85.214.182]:38735 "EHLO
-        mail-pl1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfJTHaW (ORCPT
+        id S1726271AbfJTHch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 03:32:37 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:35882 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbfJTHch (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 03:30:22 -0400
-Received: by mail-pl1-f182.google.com with SMTP id w8so4971037plq.5
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 00:30:20 -0700 (PDT)
+        Sun, 20 Oct 2019 03:32:37 -0400
+Received: by mail-il1-f194.google.com with SMTP id z2so9226136ilb.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 00:32:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xIEpU0tkDVwXDBE078M49Pd4kGLB+/b7BLvzvh1elZc=;
-        b=k23FWgobVV1aG26lmU6fCW/9wkGn/FAte/1L5bxZf9QXSAj6cTg1EmvrTFzcDcSfeJ
-         FgLRBMsVrXsoGg8Pi/yvTcE+jc/SCimqUVY0h3v7C2sLX0JyQSj5SE7BOQgjDMJN+XXl
-         OOyUAJo1zQbTwsbhpNwtodrpl1z5CQQ6+5hEBfdivmKPyn4UrVx+SX4s4R3o3IzNGw6a
-         Ov4aRvaqqruYxXjGHd6hrnffD6Wy5NSjz/08HnG1yLEUJiJUYgRmkd7NfTue7UznW+WJ
-         5gJ06ipPlgmK2SwQ4N5t5fakl6kk9CVDmlm0ptz0h4JYj6VISBG7Vgi0EzQkH6yLVDin
-         tTCA==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=zMQWoMlbtRckJcAFhKudH6hAdOl11JUXh6khJneQffs=;
+        b=OkTvdh20PjZki8FcZ+g86Jm/Trv4+vJpj13dklLenYQBLtqaNf+QomQbkJblllM8H/
+         xS9C9gw79ZlTUVQOJXpa/Og4gmIlwp6zEOTuP03CdO9QjvpMFdOcD747Ukekc1Y9MgCQ
+         tTTMwOwTerc1Y2L+ENkLY3h4xMLWMsW+vGMHZyFV/mbKNADsQ9YmjVgAuX4WbFDBgYCl
+         KDSuvEIHdnDaZGP10bnattqpz/TBDYUuTtxTP1fanzJDUN19yjuUdhTCM6ZP5e6gOh9o
+         DhyECeZJwHxaeqqtaRuYkRcUO+1eTKDSkEn1UZItXD0JXdofLcF2tuKb11cxOlYzrOJj
+         aI3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xIEpU0tkDVwXDBE078M49Pd4kGLB+/b7BLvzvh1elZc=;
-        b=LMne4gKj8gNKG/gtQqrdyoCvqh5BCCAL1+CjkVEO4ar956d8z+j+i1hsUw2IUSRfee
-         WG5kHyMw3pC1cJqgv10DokMqhTzExSEdSA5oKRYfcrTuR4NlEJCaLTcJaJdSnDWw2tbh
-         uPKgi8jceCpd3OQnGJS7Xv/9Y22CkmgeaUbHUkxWK+vFk0e3d66hBBFmgTPPn1s0alrQ
-         Rxa1v9/eufOTsN/l1ObtoMZZyTSNplQ6RS+Bf8zLMThApLv8nDIurRPkggZ3Cv5ldhoR
-         4NU/crBqJ906k/k/bAcXxrzx6Q00FmGN8XVZkP5+3QgYM649R2J+yxnNURTFlwAO4iBy
-         rsLw==
-X-Gm-Message-State: APjAAAWJ4rQSqCEECZ0NzIKlC1YKazEejEP19rtIF5JNVEowi5hrzfXB
-        GYj2xlcl/Mh8E4J86kPAQTk=
-X-Google-Smtp-Source: APXvYqwUY9cR1hb3IyYu+aa8dI2wtIsm8M9G3GtnGk5zbLYrnFBHgO/x3lYPcZcfThXfEDJg114hqw==
-X-Received: by 2002:a17:902:8e86:: with SMTP id bg6mr18578322plb.240.1571556620184;
-        Sun, 20 Oct 2019 00:30:20 -0700 (PDT)
-Received: from localhost (221x242x255x113.ap221.ftth.ucom.ne.jp. [221.242.255.113])
-        by smtp.gmail.com with ESMTPSA id r24sm12025626pfh.69.2019.10.20.00.30.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2019 00:30:19 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Sun, 20 Oct 2019 16:30:17 +0900
-To:     Joe Perches <joe@perches.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: checkpatch: comparisons with a constant on the left
-Message-ID: <20191020073017.GA247560@tigerII.localdomain>
-References: <20191011015225.GA27495@jagdpanzerIV>
- <8720b5d432ca5ba5e128c241efee22674e012af8.camel@perches.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=zMQWoMlbtRckJcAFhKudH6hAdOl11JUXh6khJneQffs=;
+        b=RQAnAlRtHKmvKeaVR9h9EDiSKlIoilE4mYyPOYsSY4Or3ZcvC3Z48SbOBLOFG1L0fk
+         jrtiXmXSAH9qwWJf4OWEKYzAH80dPO4pG+5BYvSB3RIeYneHB7cwbaoMz9CKxf+yBgbv
+         IKKeUg/gxwhxm/kogeG3NIoyeMNmOJflnM670FEJCJyUO/adR10960GJn6xetY+LFfEW
+         7lubn3uDA7FDeWqdODqwzDa/Ruq6lBbAhMe0bg9HSisc14gCnvjeyupdddOA6jgzJyre
+         fh4tW7WGI2+odJuB4tV0Szv69kY6VijEjaP7MO445RPgZXzp+YuOYAb9z80g/Vl/dXEM
+         P0dw==
+X-Gm-Message-State: APjAAAWdKd1g5Iku/DCPM1msK2qvVAeBcmZN5cvN9tRVu7KRC19tyj76
+        dHKA81PcC1hJah2Mn+oiSUBlqVkFggdS9Acfxg==
+X-Google-Smtp-Source: APXvYqxiaRYgCtaI7RMXZeYuZ2C8px5BJqFYjfsUApjbhrqUEJiKPNpEzbjtGu8IspMhGKmGpb+icREE8egNYEQEcq8=
+X-Received: by 2002:a92:7742:: with SMTP id s63mr19982883ilc.230.1571556756114;
+ Sun, 20 Oct 2019 00:32:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8720b5d432ca5ba5e128c241efee22674e012af8.camel@perches.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Received: by 2002:a92:58c3:0:0:0:0:0 with HTTP; Sun, 20 Oct 2019 00:32:35
+ -0700 (PDT)
+Reply-To: agaddafi077@gmail.com
+From:   Mrs A Gaddafi <aishagh3@gmail.com>
+Date:   Sun, 20 Oct 2019 00:32:35 -0700
+Message-ID: <CAKwmWppAQBT2gHbTUisq78Fm6ETaPc44cEE6_SfcdSj-GRKWtQ@mail.gmail.com>
+Subject: GREETINGS MY DEAR,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (10/10/19 20:23), Joe Perches wrote:
-> On Fri, 2019-10-11 at 10:52 +0900, Sergey Senozhatsky wrote:
-> > Hi Joe,
-> 
-> Hi Sergey.
+Dear Friend,
 
-Hi Joe,
+I came across your e-mail contact prior a private search whilst in
+need of your partnership for investment assistance in your country. I
+am opportune to use this medium to exhibit my legal intentions towards
+investing to your country under your management. I am fully convinced
+that you will really be of help as a business partner.
 
-For some reason your reply triggered gmail spam filter; took
-me a while to notice and "recover" it from spam folder.
+My name is Aisha  Gaddafi a single Mother and a Widow and i have three
+Children. I am the only biological Daughter of late Libyan President
+(Late Colonel Muammar Gaddafi).
 
-[..]
-> > Both LINUX_VERSION_CODE and KERNEL_VERSION are constants, so
-> > I'm wondering if it's worth it to improve that check a tiny
-> > bit.
-> 
-> Probably not.
-> 
-> My preference is for people to ignore checkpatch
-> message bleats when they don't make overall sense.
-> 
-> checkpatch thinks anything that uses a form like
-> "name(<args...>)" is a function.
+I have investment funds worth Twenty Seven Million Five Hundred
+Thousand United State Dollar ($27.500.000.00 ) and i need a trusted
+investment Manager/Partner.  I am planning to go into investment
+projects in your country of origin or present country of Location to
+assist me establish the investments project.
 
-For example, DMA_BIT_MASK(xxx) can look like a function
-call yet still be a compile time constant.
+ I am willing to negotiate investment/business profit sharing ratio
+with you base on the future investment earning profits.
 
-Another example could be ARRAY_SIZE(xxx), I guess.
+If you are willing to handle this project on my behalf kindly reply
+urgent to enable me provide you more details about myself and more
+information about the release of the investment funds.
 
-[..]
-> but then again just using LINUX_VERSION_CODE emits a
-> warning message, so it's better to remove whatever is
-> in the block anyway... <smile>
+I appreciate Your Urgent Reply to my email address:
 
-That's certainly right. LINUX_VERSION_CODE should not be in the
-code, I agree. I was thinking more about 'const vs const' comparison
-in general, less about particular LINUX_VERSION_CODE case.
-
-	-ss
+Best Regards
+Mrs Aisha Gaddafi
