@@ -2,86 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8BE3DDF67
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 18:09:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18628DDF77
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 18:14:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbfJTQJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 12:09:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45756 "EHLO mail.kernel.org"
+        id S1726575AbfJTQN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 12:13:59 -0400
+Received: from mga17.intel.com ([192.55.52.151]:25889 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726482AbfJTQJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 12:09:05 -0400
-Received: from localhost.localdomain (ool-18bba523.dyn.optonline.net [24.187.165.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAB83218BA;
-        Sun, 20 Oct 2019 16:09:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571587744;
-        bh=2rqZqTghk0jq/6poDX1vz2pfYzf7Qp8iUns4NuEy5NQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=HZkr9mE9kNuZvNX5TVBK80qFqOhhKOI6Vd4XPcDsexisoiZQIUZLZ/LAj/FksDrGR
-         bgMOem4aYqutYg8IUTz77yWm6QiAJnF4ImF78HC7TIBhqG66WXDFG2MSG0pQ0AA/ea
-         uVPisOxbE+dqQv9ilAzF5wVw96sXtT4B8LpkVHCY=
-Message-ID: <1571587740.5104.10.camel@kernel.org>
-Subject: Re: [PATCH v8 7/8] ima: check against blacklisted hashes for files
- with modsig
-From:   Mimi Zohar <zohar@kernel.org>
-To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Eric Ricther <erichte@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Date:   Sun, 20 Oct 2019 12:09:00 -0400
-In-Reply-To: <1571587602.5104.8.camel@linux.ibm.com>
-References: <1571508377-23603-1-git-send-email-nayna@linux.ibm.com>
-         <1571508377-23603-8-git-send-email-nayna@linux.ibm.com>
-         <1571587602.5104.8.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        id S1726383AbfJTQN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 12:13:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 09:13:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,320,1566889200"; 
+   d="scan'208";a="195909354"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by fmsmga008.fm.intel.com with ESMTP; 20 Oct 2019 09:13:58 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 229A43002BE; Sun, 20 Oct 2019 09:13:58 -0700 (PDT)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     acme@kernel.org
+Cc:     jolsa@kernel.org, eranian@google.com, kan.liang@linux.intel.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org
+Subject: Optimize perf stat for large number of events/cpus v1
+Date:   Sun, 20 Oct 2019 09:13:37 -0700
+Message-Id: <20191020161346.18938-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-10-20 at 12:06 -0400, Mimi Zohar wrote:
-> On Sat, 2019-10-19 at 14:06 -0400, Nayna Jain wrote:
-> > Asymmetric private keys are used to sign multiple files. The kernel
-> > currently support checking against blacklisted keys. However, if the
-> > public key is blacklisted, any file signed by the blacklisted key will
-> > automatically fail signature verification. We might not want to blacklist
-> > all the files signed by a particular key, but just a single file.
-> > Blacklisting the public key is not fine enough granularity.
-> > 
-> > This patch adds support for checking against the blacklisted hash of the
-> > file based on the IMA policy. The blacklisted hash is the file hash
-> > without the appended signature. Defined is a new policy option
-> > "appraise_flag=check_blacklist".
-> 
-> Please add an example of how to blacklist a file with an appended
-> signature.  The simplest example that works on x86 as well as Power
-> would be blacklisting a kernel module.  The example should include
-> calculating the kernel module hash without the appended signature,
-> enabling the Kconfig option (CONFIG_SYSTEM_BLACKLIST_HASH_LIST), and
-> the blacklist hash format (eg. "bin:<file hash>").
+This patch kit optimizes perf stat for a large number of events 
+on systems with many CPUs and PMUs.
 
-And of course, the IMA appraise kernel module policy rule containing
-"appraise_flag=check_blacklist".
+Some profiling shows that the most overhead is doing IPIs to
+all the target CPUs. We can optimize this by using sched_setaffinity
+to set the affinity to a target CPU once and then doing
+the perf operation for all events on that CPU. This requires
+some restructuring, but cuts the set up time quite a bit.
 
-thanks,
+In theory we could go further by parallelizing these setups
+too, but that would be much more complicated and for now just batching it
+per CPU seems to be sufficient. At some point with many more cores 
+parallelization or a better bulk perf setup API might be needed though.
 
-Mimi
+In addition perf does a lot of redundant /sys accesses with
+many PMUs, which can be also expensve. This is also optimized.
+
+On a large test case (>700 events with many weak groups) on a 94 CPU
+system I go from
+
+real	0m8.607s
+user	0m0.550s
+sys	0m8.041s
+
+to 
+
+real	0m3.269s
+user	0m0.760s
+sys	0m1.694s
+
+so shaving ~6 seconds of system time, at slightly more cost
+in perf stat itself. On a 4 socket system with the savings
+are more dramatic:
+
+real	0m15.641s
+user	0m0.873s
+sys	0m14.729s
+
+to 
+
+real	0m4.493s
+user	0m1.578s
+sys	0m2.444s
+
+so 11s difference in the user visible set up time.
+
+Also available in 
+
+git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-misc perf/stat-scale-3
+
+v1: Initial post.
+
+-Andi
+
