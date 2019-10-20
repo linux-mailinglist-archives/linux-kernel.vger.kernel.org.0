@@ -2,76 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F775DDC38
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 06:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B288DDC4A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 06:08:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725977AbfJTEBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 00:01:23 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:36829 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbfJTEBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 00:01:23 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46wmKX4Rnkz9sP6;
-        Sun, 20 Oct 2019 15:01:20 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1571544080;
-        bh=A5NG6wBGHdQxoA6uV3LIcCnuwg/zZS43zd4ihERmpy0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Jd3e4VFMSbqS6nOxCu6DiIjWYGImoclTe+29yvZpy3kVlJ5hPvkpBpL6i6Cy7Im1Y
-         YuGkAf2NypMfbrBitTiTM8daaClbFz1ijiRbYTXKvwkITljx/141MMS7w43oIbo/zu
-         ZnPZXbvIjxo818x2mAz+neW1C+oYlYMTzmJ/pGdi78NV/Yssm+ZdafbpjFqvOxABPA
-         +TrGUAsw/71sKzwek+NUmfm8Ophm0LXHzpfsidEAe2jfq0abHoMJEzVqnFY+o4RfqQ
-         iwmtNXk2qVqK0QVsQLEDVJqzifzWsRjDGpybCDt2neiuAE/CExXkz54F3HtyJb3Yff
-         cWheuOKtIbCkg==
-Date:   Sun, 20 Oct 2019 15:01:19 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: remove the actions tree
-Message-ID: <20191020150119.1f997025@canb.auug.org.au>
+        id S1726212AbfJTEI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 00:08:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37106 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725843AbfJTEI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 00:08:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 10F15AC8F;
+        Sun, 20 Oct 2019 04:08:26 +0000 (UTC)
+From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To:     linux-realtek-soc@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/8] dt-bindings: watchdog: realtek: Convert RTD119x to schema
+Date:   Sun, 20 Oct 2019 06:08:10 +0200
+Message-Id: <20191020040817.16882-2-afaerber@suse.de>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20191020040817.16882-1-afaerber@suse.de>
+References: <20191020040817.16882-1-afaerber@suse.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/s6DPuxFm2n.b3NOvDxL/DTz";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/s6DPuxFm2n.b3NOvDxL/DTz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Convert the Realtek watchdog binding to a YAML schema.
 
-Hi all,
+Signed-off-by: Andreas Färber <afaerber@suse.de>
+---
+ v2: New
+ 
+ .../bindings/watchdog/realtek,rtd119x.txt          | 17 ----------
+ .../bindings/watchdog/realtek,rtd119x.yaml         | 38 ++++++++++++++++++++++
+ 2 files changed, 38 insertions(+), 17 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt
+ create mode 100644 Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml
 
-The actions tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/afaerber/linux-actions.git#f=
-or-next)
-has not been updated in more than a year, so I have removed it from
-linux-next.  Please let me know if/when you want it reinstated.
+diff --git a/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt b/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt
+deleted file mode 100644
+index 05653054bd5b..000000000000
+--- a/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-Realtek RTD1295 Watchdog
+-========================
+-
+-Required properties:
+-
+-- compatible :  Should be "realtek,rtd1295-watchdog"
+-- reg        :  Specifies the physical base address and size of registers
+-- clocks     :  Specifies one clock input
+-
+-
+-Example:
+-
+-	watchdog@98007680 {
+-		compatible = "realtek,rtd1295-watchdog";
+-		reg = <0x98007680 0x100>;
+-		clocks = <&osc27M>;
+-	};
+diff --git a/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml b/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml
+new file mode 100644
+index 000000000000..5d92cfdfd046
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/watchdog/realtek,rtd119x.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Realtek RTD1295 Watchdog
++
++maintainers:
++  - Andreas Färber <afaerber@suse.de>
++
++allOf:
++  - $ref: watchdog.yaml#
++
++properties:
++  compatible:
++    oneOf:
++      - const: realtek,rtd1295-watchdog
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++
++examples:
++  - |
++	watchdog@98007680 {
++		compatible = "realtek,rtd1295-watchdog";
++		reg = <0x98007680 0x100>;
++		clocks = <&osc27M>;
++	};
++...
+-- 
+2.16.4
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/s6DPuxFm2n.b3NOvDxL/DTz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2r3A8ACgkQAVBC80lX
-0GwsJggAiNQT/+VyHJBekHdRz9lIqrpY1m8Ux4A69BVlhyRe/Dd/aUTAfPFo7odD
-a2vQJJ6wpgpUdQ5JxJWIXjv8xJPb8dCSWFn6uilQfUuI5FJN56QY31826xe60sTh
-6Up1SbMfGVFEraRFtjp2bV21f+2aySDu/J3lM2200XsT2jjsTAS1PN0gvnJBBcm1
-gVqt1evE/ER9v/gbw3h0XOGLXKXtRtAGHlATnfxQ2slJPaYeFnLfvOMW+BwZ2iBM
-B3ZIG8gzMguVEEYDyfKdkDr6XPftvPHf/rWOTBaA5M0UfGkIPBCIl4N1hZTz6Z9G
-kkfA9ye8kN8cQTB1oD+hyH+YM8vqhw==
-=FFZ1
------END PGP SIGNATURE-----
-
---Sig_/s6DPuxFm2n.b3NOvDxL/DTz--
