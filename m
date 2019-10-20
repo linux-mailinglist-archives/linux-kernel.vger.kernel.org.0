@@ -2,83 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 905B4DDC60
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 06:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB410DDC90
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 06:40:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbfJTENX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 00:13:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:56253 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbfJTENX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 00:13:23 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46wmbN0XFjz9sP3;
-        Sun, 20 Oct 2019 15:13:19 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1571544800;
-        bh=iKlz7h6oUmqEU/r1/7WTdmpFp583ROg4rmyqRgewVfk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=EAxiI/isn3QYu/bm4GIvBeUrdKH2AGELj+8Wux/9/IYhFfzJnkyYV9hhGdoTSAs82
-         XQHcfLGi7+84wPFjgt1OS4ogw4U/m+QH3a5yZit1ygWLMQJ/nvi9kLwOfjVlErPZKn
-         RK6A2SNHn4WfUbt3Kv8bZ9dWl4XikNaYlS4SSE2lLtbXtOOyJ08UnaJ4+Q0l1XSajh
-         cyODpLuC2aXjGYVA08cuxXzZFTS006GzNnaNCv6pChkKUeJJ/hNmHV3GWbO/42D83y
-         0v8L2VRykhblmTd9++IFhpMcohtKklKOCjPK8qwtKt46qul2wy3CdAjIkQLM6JiW1C
-         A2A2w6wvHUWew==
-Date:   Sun, 20 Oct 2019 15:13:18 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: cleanup the kgdb trees
-Message-ID: <20191020151318.7ee6cf9e@canb.auug.org.au>
+        id S1726063AbfJTEkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 00:40:06 -0400
+Received: from mail-40135.protonmail.ch ([185.70.40.135]:33268 "EHLO
+        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfJTEkG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 00:40:06 -0400
+Date:   Sun, 20 Oct 2019 04:39:58 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1571546402;
+        bh=JpGq6kLQ71UO60e8vaDVRt0HWQHzEZQmR/GqtUISMVI=;
+        h=Date:To:From:Cc:Reply-To:Subject:Feedback-ID:From;
+        b=Mrjla7kjQaxaKicNRDRAc/aO2N3VS6KRIXRY+8/RZeasK+DaBUz55DSL1i47SOfRg
+         fkYWSEdIhdCSFTs+uybKtI4H+TA0c+MT5MsTT76QlEQUx1XKHiX8EWZzORp8FxxGoN
+         7E9Pwr51r+5RD0g6sCbSUzj5JaqNpVerl/3/e/U4=
+To:     "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+From:   Mazin Rezk <mnrzk@protonmail.com>
+Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        "jikos@kernel.org" <jikos@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>,
+        "mnrzk@protonmail.com" <mnrzk@protonmail.com>
+Reply-To: Mazin Rezk <mnrzk@protonmail.com>
+Subject: [PATCH v7 0/3] Logitech HID++ Bluetooth LE support
+Message-ID: <t5LOL-A4W7aknqQdC-3TavitC94BY_Ra1qyxCZMh_nprrDNSl4UF-jYpWtaDSU-0oQ5xzRyAo9o_mvSnA78bib_p6I3ePSJnTrp3Eb0X_yg=@protonmail.com>
+Feedback-ID: 18B_FC5q-t32TXzMsVp9BgkgrdNH3iwklfW8WOrHrcxZA0WRj7JodCh5VXKxs6A3OaiHK0QNd8wi3SImKex8yQ==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/EhN2uo=xd9n+EtCh.7NrcGv";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_REPLYTO
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/EhN2uo=xd9n+EtCh.7NrcGv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This series allows hid-logitech-hidpp to support Bluetooth LE HID++
+devices. Only the MX Master is added right now but more HID++ Bluetooth LE
+devices can be added once they are tested.
 
-Hi all,
+Thanks,
+Mazin
 
-The kgdb tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/jwessel/kgdb.git#kgdb-next)
-has not been updated in more than a year, so I have rmeoved it from
-linux-next.  It contained:
+Changes since [v6]:
 
-3bd67b37e350 kdb: print real address of pointers instead of hashed addresses
-a0ca72c2d1ac kdb: use correct pointer when 'btc' calls 'btt'
+        - Based patch on "HID: logitech-hidpp: rework device validation"
 
-Please let me know if/when you want it reinstated.
+        - Removed the need for additional quirks
 
-I have also renamed the kgdb-dt tree to kgdb.
+Changes since [v5]:
 
---=20
-Cheers,
-Stephen Rothwell
+        - Fixed bug where added quirks would overflow an unsigned long
 
---Sig_/EhN2uo=xd9n+EtCh.7NrcGv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+        - Changed the reserved quirk class bits from 0..20 to 0..15
 
------BEGIN PGP SIGNATURE-----
+Changes since [v4]:
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2r3t4ACgkQAVBC80lX
-0GxWnQf+PF1otOdWYEIuaroxdSnvBgZoNvlCypgymMYbuOY8MoHjzXvqpJsp1AZz
-IiG0RNwjTmT79ZDxZrHb3aSPwAZ9Gfelo+VuK4RvUVQP1/LrP53WlkZs3qUeg8pE
-MdoDw8w9+vPRab4PlxXK04jHgNjnJAskcpRxkSMYKApPYMiIGheUNPh/mLYtPBxr
-1GembAPSzs76R/rS3wdVrJBX8BntWMxu/sqEuh1peLBTh1GjuzAULKwFGl3OYtKA
-S28rmhpcrAgzEEVzDpngcuWDFBNVK796JvglGcRtDkIE+GHXZa0yeIdSSQNLQInx
-7wCFtKgyeC4PsCMqjfZjBW4tvc3Z1A==
-=ekNR
------END PGP SIGNATURE-----
+        - Omitted "HID: logitech: Add feature 0x0001: FeatureSet"
 
---Sig_/EhN2uo=xd9n+EtCh.7NrcGv--
+        - Stored WirelessDeviceStatus feature index in hidpp_device
+
+        - Made Bluetooth quirk class alias quirks instead of vice versa
+
+        - Omitted non-tested devices
+
+Changes since [v3]:
+
+        - Renamed hidpp20_featureset_get_feature to
+          hidpp20_featureset_get_feature_id.
+
+        - Re-ordered hidpp20_featureset_get_count and
+          hidpp20_featureset_get_feature_id based on their command IDs.
+
+        - Made feature_count initialize to 0 before running
+          hidpp20_get_features.
+
+Changes since [v2]:
+
+        - Split up the single patch into a series
+
+Changes since [v1]:
+
+        - Added WirelessDeviceStatus support
+
+[v6] https://lore.kernel.org/lkml/ggKipcQplIlTFmoP3hPnrQ-7_5-C0PKGd5feFymts=
+3uenIBA8zOwz47YmKheD34H1rpkguDAGdx5YbS9UqpwfjT5Ir0Lji941liLVp--QtQ=3D@proto=
+nmail.com
+[v5] https://lore.kernel.org/lkml/Mbf4goGxXZTfWwWtQQUke_rNf8kezpNOS9DVEVHf6=
+RnnmjS1oRtMOJf4r14WfCC6GRYVs7gi0uZcIJ18Va2OJowzSbyMUGwLrl6I5fjW48o=3D@proto=
+nmail.com
+[v4] https://lore.kernel.org/lkml/uBbIS3nFJ1jdYNLHcqjW5wxQAwmZv0kmYEoeoPrxN=
+hfzi6cHwmCOY-ewdqe7S1hNEj-p4Hd9D0_Y3PymUTdh_6WFXuMmIYUkV2xaKCPMYz0=3D@proto=
+nmail.com
+[v3] https://lore.kernel.org/lkml/l7xYjnA9EGfZe03FsrFhnH2aMq8qS8plWhHVvOtY_=
+l4ShZ1NV6HA6hn9aI-jAzbLYUGFCIQCIKkx9z42Uoj4-AZDwBfRcAecYIn-0ZA5upE=3D@proto=
+nmail.com
+[v2] https://www.spinics.net/lists/linux-input/msg63467.html
+[v1] https://www.spinics.net/lists/linux-input/msg63317.html
+
+Mazin Rezk (3):
+  HID: logitech-hidpp: Support translations from short to long reports
+  HID: logitech-hidpp: Support MX Master (b012, b01e) over Bluetooth
+  HID: logitech-hidpp: Support WirelessDeviceStatus connect events
+
+ drivers/hid/hid-logitech-hidpp.c | 69 +++++++++++++++++++++++++++-----
+ 1 file changed, 59 insertions(+), 10 deletions(-)
+
+--
+2.23.0
+
