@@ -2,104 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24871DDFDE
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 19:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22945DDFDA
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 19:58:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfJTRyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 13:54:53 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45792 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbfJTRyx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 13:54:53 -0400
-Received: by mail-lf1-f65.google.com with SMTP id v8so7657684lfa.12
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 10:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=lezLxz9ZEViSL/s9KgaBFqX70JcczDlWKnb8jAuYGeM=;
-        b=ec90vniSXCHPRmxIeHIqnueQnWjuhD3TybVWYWc6oT+Haw6EaikAdw1YE2H7lgwY+B
-         og64CZgDCHslF/HfAe3JTYzOkt4NZ9X0COOzBhf/2O8Jrwdr7Nx60P85FNhcjtKlgWPi
-         MuCI02s/xEJeojnVtv8xom0HPV83/TRAoaZeFIieaGTxrN+v7NXTqvPbPMpFrb6o7Sig
-         ORrS1gFaL7WiR92dXKoc//0/gpo2tRO4P5ypJNwuxXWPnvlfIrKy8IxAHI3u22KndR4G
-         rpFW6Kx6EKtvdnOHpuHtogHfFEdHUg6uWQ2XIHvYLZLPJmzGYimfk4NxBwpy8tnQ81ZD
-         mnKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lezLxz9ZEViSL/s9KgaBFqX70JcczDlWKnb8jAuYGeM=;
-        b=gYM5zsXazl5WnUGv7yvm64yYXQwQrM5YWH0AgHsdeNSNdJOVLk3/QliXQsuPtYTGRX
-         nVUby+gBS1yFW3FqOro/tOf2QzMoSAUWWnL0zAO7bG4z47RNXGljZp9+UnD/vakPDkle
-         3f7PdLpFSGVh2OQZiTIQRLOLbv2kMZz00FB7gZwh74+59Zudrr2i/c/NVxxWO05HVFcj
-         RACpH9Qd9wWiH/8MrkeguIOZ07WNZ+wtI19FyGrGKwRMJWzgmMisDGvtk2D79FmsgyAD
-         2t4TxWgZOb3zlB4BCRkfEXv3Nhrc0GQYf7VEXWynM3TKMd9kEPG1bC57yP2M62fWg73p
-         GdvQ==
-X-Gm-Message-State: APjAAAWBNv+K3zG2A7JxEqD2uf789qZSv8O2Gj6BAquNdLxBxXxEX6Sw
-        1TwdbBhZ6/awrgKqgmokakc=
-X-Google-Smtp-Source: APXvYqymdpC+Rp5WhOYkAbJ6JCs/CGvWEYhZfI+Je7Qev+wAQ3esy20KnJdueQRiQTynmMWfp4k10A==
-X-Received: by 2002:a19:855:: with SMTP id 82mr11965142lfi.44.1571594089814;
-        Sun, 20 Oct 2019 10:54:49 -0700 (PDT)
-Received: from localhost.localdomain ([93.152.168.243])
-        by smtp.gmail.com with ESMTPSA id t6sm5806085ljd.102.2019.10.20.10.54.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2019 10:54:49 -0700 (PDT)
-From:   Samuil Ivanov <samuil.ivanovbg@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Samuil Ivanov <samuil.ivanovbg@gmail.com>
-Subject: [PATCH] Staging: gasket: apex_driver: fixed a line over 80 characters coding style issue
-Date:   Sun, 20 Oct 2019 20:50:01 +0300
-Message-Id: <20191020175001.22105-1-samuil.ivanovbg@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726826AbfJTRwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 13:52:32 -0400
+Received: from mga07.intel.com ([134.134.136.100]:35220 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726711AbfJTRwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 13:52:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 10:52:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,320,1566889200"; 
+   d="scan'208";a="196640328"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by fmsmga007.fm.intel.com with ESMTP; 20 Oct 2019 10:52:30 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 019C73002BE; Sun, 20 Oct 2019 10:52:29 -0700 (PDT)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     acme@kernel.org
+Cc:     linux-kernel@vger.kernel.org, jolsa@kernel.org, eranian@google.com,
+        kan.liang@linux.intel.com, peterz@infradead.org
+Subject: Optimize perf stat for large number of events/cpus v2
+Date:   Sun, 20 Oct 2019 10:51:53 -0700
+Message-Id: <20191020175202.32456-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed four lines of code that were over 80 characters long.
+[The earlier v1 version had a lot of conflicts against some
+recent libperf changes in tip/perf/core. Resolve that and
+also fix some minor issues.]
 
-Signed-off-by: Samuil Ivanov <samuil.ivanovbg@gmail.com>
----
- drivers/staging/gasket/apex_driver.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+This patch kit optimizes perf stat for a large number of events 
+on systems with many CPUs and PMUs.
 
-diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
-index 46199c8ca441..f729ecd6363b 100644
---- a/drivers/staging/gasket/apex_driver.c
-+++ b/drivers/staging/gasket/apex_driver.c
-@@ -263,8 +263,8 @@ static int apex_enter_reset(struct gasket_dev *gasket_dev)
- 	 *    - Enable GCB idle
- 	 */
- 	gasket_read_modify_write_64(gasket_dev, APEX_BAR_INDEX,
--				    APEX_BAR2_REG_IDLEGENERATOR_IDLEGEN_IDLEREGISTER,
--				    0x0, 1, 32);
-+			APEX_BAR2_REG_IDLEGENERATOR_IDLEGEN_IDLEREGISTER,
-+			0x0, 1, 32);
- 
- 	/*    - Initiate DMA pause */
- 	gasket_dev_write_64(gasket_dev, 1, APEX_BAR_INDEX,
-@@ -399,7 +399,7 @@ static int apex_device_cleanup(struct gasket_dev *gasket_dev)
- 	hib_error = gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
- 				       APEX_BAR2_REG_USER_HIB_ERROR_STATUS);
- 	scalar_error = gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
--					  APEX_BAR2_REG_SCALAR_CORE_ERROR_STATUS);
-+					APEX_BAR2_REG_SCALAR_CORE_ERROR_STATUS);
- 
- 	dev_dbg(gasket_dev->dev,
- 		"%s 0x%p hib_error 0x%llx scalar_error 0x%llx\n",
-@@ -606,10 +606,10 @@ static int apex_pci_probe(struct pci_dev *pci_dev,
- 	while (retries < APEX_RESET_RETRY) {
- 		page_table_ready =
- 			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
--					   APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_INIT);
-+				APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_INIT);
- 		msix_table_ready =
- 			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
--					   APEX_BAR2_REG_KERNEL_HIB_MSIX_TABLE_INIT);
-+				APEX_BAR2_REG_KERNEL_HIB_MSIX_TABLE_INIT);
- 		if (page_table_ready && msix_table_ready)
- 			break;
- 		schedule_timeout(msecs_to_jiffies(APEX_RESET_DELAY));
--- 
-2.17.1
+Some profiling shows that the most overhead is doing IPIs to
+all the target CPUs. We can optimize this by using sched_setaffinity
+to set the affinity to a target CPU once and then doing
+the perf operation for all events on that CPU. This requires
+some restructuring, but cuts the set up time quite a bit.
+
+In theory we could go further by parallelizing these setups
+too, but that would be much more complicated and for now just batching it
+per CPU seems to be sufficient. At some point with many more cores 
+parallelization or a better bulk perf setup API might be needed though.
+
+In addition perf does a lot of redundant /sys accesses with
+many PMUs, which can be also expensve. This is also optimized.
+
+On a large test case (>700 events with many weak groups) on a 94 CPU
+system I go from
+
+real	0m8.607s
+user	0m0.550s
+sys	0m8.041s
+
+to 
+
+real	0m3.269s
+user	0m0.760s
+sys	0m1.694s
+
+so shaving ~6 seconds of system time, at slightly more cost
+in perf stat itself. On a 4 socket system with the savings
+are more dramatic:
+
+real	0m15.641s
+user	0m0.873s
+sys	0m14.729s
+
+to 
+
+real	0m4.493s
+user	0m1.578s
+sys	0m2.444s
+
+so 11s difference in the user visible set up time.
+
+Also available in 
+
+git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-misc perf/stat-scale-4
+
+v1: Initial post.
+v2: Rebase. Fix some minor issues.
+
+-Andi
 
