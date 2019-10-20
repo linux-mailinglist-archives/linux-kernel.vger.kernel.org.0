@@ -2,114 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE76FDE031
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 21:18:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 348F0DE034
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 21:29:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfJTTSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 15:18:23 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:41542 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfJTTSX (ORCPT
+        id S1726152AbfJTT2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 15:28:50 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41952 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfJTT2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 15:18:23 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9KJF1Wg172880;
-        Sun, 20 Oct 2019 19:18:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=34Vdw1WCYqerk3vPMHnUTd4cEYgBGYPHBeKZ2jLQCK0=;
- b=jK84XfyTARhzekulLY2QAZcAwNEyHgm6f4ryiIF7+u58SPQj/OYZj//JEao+M6TB+SDK
- UdBBIzkbAAneqBF80CWYjVvf/GQ3UXcxZeV+q+FfT4pnoQh/N2G54283kbEQqoIrJnFj
- X23FlB+L06j8QCT56Yrx02HzE1S3ZhBpFQ/4y8SqHJJsp0w3Yd+cOxkXx5DGNf02GunI
- EOM+WNVnSTGeVDddI1sfglasCBzC5JA9k58+UJLQ21glYRt2ZLehNNFjETGXaDCuSp2H
- IsW1DSTlbahfY3f12VOVRFo5eAusdx84zNmvUmB8U0Gjji+tBmq4YF8quKEDFOJTiszx Gg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2vqu4qbqtd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 20 Oct 2019 19:18:14 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9KJHwsF175882;
-        Sun, 20 Oct 2019 19:18:13 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2vrbxrg5kq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 20 Oct 2019 19:18:13 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9KJIAuZ010905;
-        Sun, 20 Oct 2019 19:18:11 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 20 Oct 2019 12:18:09 -0700
-Date:   Sun, 20 Oct 2019 22:17:59 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Jules Irenge <jbi.octave@gmail.com>, devel@driverdev.osuosl.org,
-        outreachy-kernel@googlegroups.com, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org
-Subject: Re: [PATCH v1 1/5] staging: wfx: fix warnings of no space is
- necessary
-Message-ID: <20191020191759.GJ24678@kadam>
-References: <20191019140719.2542-1-jbi.octave@gmail.com>
- <20191019140719.2542-2-jbi.octave@gmail.com>
- <20191019142443.GH24678@kadam>
- <alpine.LFD.2.21.1910191603520.6740@ninjahub.org>
- <20191019180514.GI24678@kadam>
- <336960fdf88dbed69dd3ed2689a5fb1d2892ace8.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <336960fdf88dbed69dd3ed2689a5fb1d2892ace8.camel@perches.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9416 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=884
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910200197
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9416 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=963 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910200196
+        Sun, 20 Oct 2019 15:28:50 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q7so6943136pfh.8
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 12:28:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=nR5/PUycvY3vVFKY1gw3WwFO6bJ14K3sXYLBVXSi9VY=;
+        b=Wjk/GMBQLsHEzT2/w1aDaC/FhEwRz5PVMC+wyOxAnn+YhUDJzFix/mmNmDYxsOIygj
+         Z5U1v2OphFon6mejTVenFgy4cfkeY3YzrbtTE2WBn8KzgvPyUc9Uao66q7JI6B6SMHaL
+         xcmH0FWJB6Px8d5ILH9yeEWdKP9+EE8BMifIxZ+VAei9LRX5dfpeo7YD04u1RAIeN0bp
+         zlcPXLnkL4vezEXbBewAZXmjPUuRkiMKSw2QNrNWuwXFvnbh16tXx+Szyu7jNoq2FC8d
+         DbOkKX3nuSZ8OwHwUO2gGq1UICUFEbf0JGCiLPaQtWOK70WqId6DZFbFULBAANvKDhvz
+         zDkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nR5/PUycvY3vVFKY1gw3WwFO6bJ14K3sXYLBVXSi9VY=;
+        b=Ad7956s8ZnwbNOlPSqjOE7kgobNOANwLrULguzP6sEoCTjcOYApSCvjAv5FUCydVAS
+         xovcAL0rWevkQn/Jq6pM+B8DBEVAqr7p+edmhsiaCxIgFJmqxcoHTZ5VY2Cxt1lrnKID
+         ISxx6bbxI2Bz+gfZ7TadN8FXrxs2HeTSGpWsJErgjdmuuGunJm01Fgh6LxPjvqT5/zYa
+         moq1nSTUZxKtZTzaNnBbl0mor2ifVzYcSsZW3+ElXpJjI9Yv5m7tGmyxP+k/tuUtAnG0
+         eGHYHfAP+IOnoAvIfD3KUkpOw6obSFaaWgBSBLPd93b0Avl/T6FDtAVln60xYwYXGJs9
+         6RoA==
+X-Gm-Message-State: APjAAAVXrb6ly+esOAJxj1PviEYuNFCtqynGPHhjW7rym5pUhqzwInu6
+        LYCdYY6N7N74g4Cu4r7ASNo=
+X-Google-Smtp-Source: APXvYqwp7wjSNWzeTWuX/bI6akg2I4lMGylDNLvJ0EkJJHQpeuRn8Aza+tyzcHjom9yq8uEbMs2mOA==
+X-Received: by 2002:a17:90a:d588:: with SMTP id v8mr23905743pju.51.1571599729521;
+        Sun, 20 Oct 2019 12:28:49 -0700 (PDT)
+Received: from localhost.localdomain ([103.97.240.176])
+        by smtp.gmail.com with ESMTPSA id p88sm12494994pjp.22.2019.10.20.12.28.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Oct 2019 12:28:48 -0700 (PDT)
+From:   Pratik Shinde <pratikshinde320@gmail.com>
+To:     linux-erofs@lists.ozlabs.org, gaoxiang25@huawei.com,
+        yuchao0@huawei.com
+Cc:     linux-kernel@vger.kernel.org,
+        Pratik Shinde <pratikshinde320@gmail.com>
+Subject: [PATCH] erofs: code for verifying superblock checksum of an erofs image.
+Date:   Mon, 21 Oct 2019 00:58:28 +0530
+Message-Id: <20191020192828.10772-1-pratikshinde320@gmail.com>
+X-Mailer: git-send-email 2.9.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 19, 2019 at 01:02:31PM -0700, Joe Perches wrote:
-> diff -u -p a/rtl8723bs/core/rtw_mlme_ext.c b/rtl8723bs/core/rtw_mlme_ext.c
-> --- a/rtl8723bs/core/rtw_mlme_ext.c
-> +++ b/rtl8723bs/core/rtw_mlme_ext.c
-> @@ -1132,7 +1132,7 @@ unsigned int OnAuthClient(struct adapter
->  				goto authclnt_fail;
->  			}
->  
-> -			memcpy((void *)(pmlmeinfo->chg_txt), (void *)(p + 2), len);
-> +			memcpy((void *)(pmlmeinfo->chg_txt), (p + 2), len);
+Patch for kernel side changes of checksum feature.I used kernel's
+crc32c library for calculating the checksum.
 
-I wonder why it didn't remove the first void cast?
+Signed-off-by: Pratik Shinde <pratikshinde320@gmail.com>
+---
+ fs/erofs/erofs_fs.h |  5 +++--
+ fs/erofs/internal.h |  2 +-
+ fs/erofs/super.c    | 50 ++++++++++++++++++++++++++++++++++++++++++++++----
+ 3 files changed, 50 insertions(+), 7 deletions(-)
 
-[ The rest of the email is bonus comments for outreachy developers ].
+diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
+index b1ee565..bab5506 100644
+--- a/fs/erofs/erofs_fs.h
++++ b/fs/erofs/erofs_fs.h
+@@ -17,6 +17,7 @@
+  */
+ #define EROFS_FEATURE_INCOMPAT_LZ4_0PADDING	0x00000001
+ #define EROFS_ALL_FEATURE_INCOMPAT		EROFS_FEATURE_INCOMPAT_LZ4_0PADDING
++#define EROFS_FEATURE_SB_CHKSUM 0x0001
+ 
+ /* 128-byte erofs on-disk super block */
+ struct erofs_super_block {
+@@ -37,8 +38,8 @@ struct erofs_super_block {
+ 	__u8 uuid[16];          /* 128-bit uuid for volume */
+ 	__u8 volume_name[16];   /* volume name */
+ 	__le32 feature_incompat;
+-
+-	__u8 reserved2[44];
++	__le32 chksum_blocks;	/* number of blocks used for checksum */
++	__u8 reserved2[40];
+ };
+ 
+ /*
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 544a453..cd3af45 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -86,7 +86,7 @@ struct erofs_sb_info {
+ 	u8 uuid[16];                    /* 128-bit uuid for volume */
+ 	u8 volume_name[16];             /* volume name */
+ 	u32 feature_incompat;
+-
++	u32 features;
+ 	unsigned int mount_opt;
+ };
+ 
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 0e36949..94e1d6a 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -9,6 +9,7 @@
+ #include <linux/statfs.h>
+ #include <linux/parser.h>
+ #include <linux/seq_file.h>
++#include <linux/crc32c.h>
+ #include "xattr.h"
+ 
+ #define CREATE_TRACE_POINTS
+@@ -46,6 +47,45 @@ void _erofs_info(struct super_block *sb, const char *function,
+ 	va_end(args);
+ }
+ 
++static int erofs_validate_sb_chksum(struct erofs_super_block *dsb,
++				       struct super_block *sb)
++{
++	u32 disk_chksum = le32_to_cpu(dsb->checksum);
++	u32 nblocks = le32_to_cpu(dsb->chksum_blocks);
++	u32 crc;
++	struct erofs_super_block *dsb2;
++	char *buf;
++	unsigned int off = 0;
++	void *kaddr;
++	struct page *page;
++	int i, ret = -EINVAL;
++
++	buf = kmalloc(nblocks * EROFS_BLKSIZ, GFP_KERNEL);
++	if (!buf)
++		goto out;
++	for (i = 0; i < nblocks; i++) {
++		page = erofs_get_meta_page(sb, i);
++		if (IS_ERR(page))
++			goto out;
++		kaddr = kmap_atomic(page);
++		(void) memcpy(buf + off, kaddr, EROFS_BLKSIZ);
++		kunmap_atomic(kaddr);
++		unlock_page(page);
++		/* first page will be released by erofs_read_superblock */
++		if (i != 0)
++			put_page(page);
++		off += EROFS_BLKSIZ;
++	}
++	dsb2 = (struct erofs_super_block *)(buf + EROFS_SUPER_OFFSET);
++	dsb2->checksum = 0;
++	crc = crc32c(0, buf, nblocks * EROFS_BLKSIZ);
++	if (crc != disk_chksum)
++		goto out;
++	ret = 0;
++out:	kfree(buf);
++	return ret;
++}
++
+ static void erofs_inode_init_once(void *ptr)
+ {
+ 	struct erofs_inode *vi = ptr;
+@@ -109,18 +149,20 @@ static int erofs_read_superblock(struct super_block *sb)
+ 		erofs_err(sb, "cannot read erofs superblock");
+ 		return PTR_ERR(page);
+ 	}
+-
+ 	sbi = EROFS_SB(sb);
+-
+ 	data = kmap_atomic(page);
+ 	dsb = (struct erofs_super_block *)(data + EROFS_SUPER_OFFSET);
+-
+ 	ret = -EINVAL;
+ 	if (le32_to_cpu(dsb->magic) != EROFS_SUPER_MAGIC_V1) {
+ 		erofs_err(sb, "cannot find valid erofs superblock");
+ 		goto out;
+ 	}
+-
++	if (dsb->feature_compat & EROFS_FEATURE_SB_CHKSUM) {
++		if (erofs_validate_sb_chksum(dsb, sb)) {
++			erofs_err(sb, "super block checksum incorrect");
++			goto out;
++		}
++	}
+ 	blkszbits = dsb->blkszbits;
+ 	/* 9(512 bytes) + LOG_SECTORS_PER_BLOCK == LOG_BLOCK_SIZE */
+ 	if (blkszbits != LOG_BLOCK_SIZE) {
+-- 
+2.9.3
 
-And someone needs to check the final patch probably to remove the extra
-parentheses around "(p + 2)".  Those were necessary when for the cast
-but not required after the cast is gone.
-
->  			pmlmeinfo->auth_seq = 3;
->  			issue_auth(padapter, NULL, 0);
->  			set_link_timer(pmlmeext, REAUTH_TO);
-
-It's sort of tricky to know what "one thing per patch means".
-
--       memset((void *)(&(pHTInfo->SelfHTCap)), 0,
-+       memset((&(pHTInfo->SelfHTCap)), 0,
-                sizeof(pHTInfo->SelfHTCap));
-
-Here the parentheses were never related to the cast so we should leave
-them as is.  In other words, in the first example, if we didn't remove
-the cast that would be "half a thing per patch" and in the second
-example that would be "two things in one patch".
-
-regards,
-dan carpenter
