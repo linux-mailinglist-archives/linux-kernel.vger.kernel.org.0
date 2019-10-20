@@ -2,59 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3805DDE9E
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 15:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04A58DDEA2
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 15:35:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbfJTN3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 09:29:52 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40781 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbfJTN3w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 09:29:52 -0400
-Received: by mail-lf1-f66.google.com with SMTP id i15so538299lfo.7
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 06:29:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=NHaXk9Xgibv5bu0J+Ys1gPvmt1A2z1FiuLXzfrmXQjE=;
-        b=c++UGavBwm1/5vfYiy0rUWQZl7E7RgxpXkRXq5vBmt9xscko9uNYTweKsctOrxY3s5
-         xGukFNF+JPcFdbgPp3GFxTO2FipIyFQHQu1YfadwgihxgN8FJ+BUmMefVG+IrPBrjnmd
-         2HsfFtIXK/hDT5yE9z0MxaVeGHW43Xv8e+qVv75erp9Hw9vlVLDwCWEw6UBgp5xU5sxI
-         RqfxnM6GY1zSw8Q3Q0ptJ8nfW/W9UZOZJpenHl4p4nzsVAIRiimH/copeJmuM5lBVBRB
-         NToejn/i2oC7EUD2e9pYfhvVxyNCxBhOiVAjBgw5cCVzTig1PtGBciUw7sLJqteQJ/y/
-         3bWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=NHaXk9Xgibv5bu0J+Ys1gPvmt1A2z1FiuLXzfrmXQjE=;
-        b=qbFlJeswhTnsTzWa6Q5PBsjEra4gfRu4lUsvNey2Li9X+qD2gcP54h5MZW0iWCyLiT
-         oUXQJaenQ/8p9O5zIcVfM1yEbKN9dNLeq/bXY9NIXkhwDk0UoSbB8M/bjggJmekm0ejC
-         sTsEL8T6Zgk9o1YBw8BOX3o6HeBhI5GFIs9VriFlfcrtwyZl4MFsw1awv9ARAGr8Yxc7
-         tVFmR52wG7fDoXsuycITn8fWWcTjvrREPuJtqeH9ck7gZxJZOiXJmpGc8OU+zyuYetJy
-         DUfdD6QTrYKZMChMLGu+w5q89OQSmO5z/QZCy2zgOrRFiRxxGH/X6ovhFNEOoSTJ04uX
-         v0UA==
-X-Gm-Message-State: APjAAAW71tFxaleh6hHbUH7Iyu1qsPDR9nedhq947GvHMPlXOPY8jPa9
-        icB5vTRrfnt2xXTJrQsOgODzXdB0+w2fhp5hOQw=
-X-Google-Smtp-Source: APXvYqwPIBSQ1ZAGsz4r0wti9Y/ZQVSMLo/G/Lh4Knqybze4Y49csozTb30JppgqKB5l9kyztLwtOmQJYNJILF8bvgw=
-X-Received: by 2002:a19:a402:: with SMTP id q2mr11677428lfc.128.1571578190446;
- Sun, 20 Oct 2019 06:29:50 -0700 (PDT)
+        id S1726409AbfJTNfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 09:35:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42804 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726296AbfJTNfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 09:35:02 -0400
+Received: from localhost (unknown [106.51.108.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8FDA20640;
+        Sun, 20 Oct 2019 13:35:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571578501;
+        bh=+4amG+FG7GWnyfpjXdXwK7H4DrC9sreLmaUdP6OQ5p4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=m2v3U+a94DsWB/fUiKtmWVvQO1na+tb2s51uhNt9vUwsFoaUjVD40cy9r4ikHUP20
+         kZ382FXkuWNWfPOdp8VU7YJLTJi0f9zZ/w4pnKSE7Z4qiwzXI+v2c32kh9P7otTm52
+         mRZRWQ4e9Mc9Y34dUFGjIscmYk6bObBd5ZIo/XHw=
+Date:   Sun, 20 Oct 2019 19:04:56 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: defconfig: Enable Qualcomm pseudo rng
+Message-ID: <20191020133456.GS2654@vkoul-mobl>
+References: <20191019195812.3834545-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Received: by 2002:a2e:6344:0:0:0:0:0 with HTTP; Sun, 20 Oct 2019 06:29:50
- -0700 (PDT)
-Reply-To: michael_g02@hotmail.com
-From:   michael grum <kassymjomarttokayev15@gmail.com>
-Date:   Sun, 20 Oct 2019 15:29:50 +0200
-Message-ID: <CA+DX0WMnzgNizX48mC4T2pvEFBs1ZKmfPTbfPA_hxMc_fUYzOA@mail.gmail.com>
-Subject: Re:Hola
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191019195812.3834545-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 19-10-19, 12:58, Bjorn Andersson wrote:
+> Most Qualcomm platforms contain a pseudo random number generator
+> hardware block. Enable the driver for this block and also enable the
+> interface for exposing this to userspace.
+
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Tested-by: Vinod Koul <vkoul@kernel.org>
+
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  arch/arm64/configs/defconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 6baf90875263..4591bf1303da 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -860,6 +860,8 @@ CONFIG_NLS_ISO8859_1=y
+>  CONFIG_SECURITY=y
+>  CONFIG_CRYPTO_ECHAINIV=y
+>  CONFIG_CRYPTO_ANSI_CPRNG=y
+> +CONFIG_CRYPTO_USER_API_RNG=m
+> +CONFIG_CRYPTO_DEV_QCOM_RNG=m
+>  CONFIG_DMA_CMA=y
+>  CONFIG_CMA_SIZE_MBYTES=32
+>  CONFIG_PRINTK_TIME=y
+> -- 
+> 2.23.0
+
 -- 
-Good afternooni' m Michael A. Grum Do you received my previous email
-let me know please :Thanks:
+~Vinod
