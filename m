@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F76DDFDB
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 19:58:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3E2FDDFDD
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 19:58:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbfJTRwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 13:52:44 -0400
+        id S1726931AbfJTRw7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 13:52:59 -0400
 Received: from mga09.intel.com ([134.134.136.24]:24807 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726740AbfJTRwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 13:52:32 -0400
+        id S1726559AbfJTRwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 13:52:31 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
   by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 10:52:30 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,320,1566889200"; 
-   d="scan'208";a="371971239"
+   d="scan'208";a="200226298"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga005.jf.intel.com with ESMTP; 20 Oct 2019 10:52:30 -0700
+  by orsmga003.jf.intel.com with ESMTP; 20 Oct 2019 10:52:30 -0700
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 056033002A2; Sun, 20 Oct 2019 10:52:30 -0700 (PDT)
+        id 0BA71300393; Sun, 20 Oct 2019 10:52:30 -0700 (PDT)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     linux-kernel@vger.kernel.org, jolsa@kernel.org, eranian@google.com,
         kan.liang@linux.intel.com, peterz@infradead.org,
         Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v2 1/9] perf evsel: Always preserve errno while cleaning up perf_event_open failures
-Date:   Sun, 20 Oct 2019 10:51:54 -0700
-Message-Id: <20191020175202.32456-2-andi@firstfloor.org>
+Subject: [PATCH v2 2/9] perf evsel: Avoid close(-1)
+Date:   Sun, 20 Oct 2019 10:51:55 -0700
+Message-Id: <20191020175202.32456-3-andi@firstfloor.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191020175202.32456-1-andi@firstfloor.org>
 References: <20191020175202.32456-1-andi@firstfloor.org>
@@ -42,56 +42,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-In some cases when perf_event_open fails, it may do some closes to clean
-up. In special cases these closes can fail too, which overwrites the
-errno of the perf_event_open, which is then incorrectly reported.
+In some weak fallback cases close can be called a lot with -1. Check
+for this case and avoid calling close then.
 
-Save/restore errno around closes.
+This is mainly to shut up valgrind which complains about this case.
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- tools/perf/util/evsel.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ tools/perf/lib/evsel.c  | 3 ++-
+ tools/perf/util/evsel.c | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/tools/perf/lib/evsel.c b/tools/perf/lib/evsel.c
+index a8cb582e2721..5a89857b0381 100644
+--- a/tools/perf/lib/evsel.c
++++ b/tools/perf/lib/evsel.c
+@@ -120,7 +120,8 @@ void perf_evsel__close_fd(struct perf_evsel *evsel)
+ 
+ 	for (cpu = 0; cpu < xyarray__max_x(evsel->fd); cpu++)
+ 		for (thread = 0; thread < xyarray__max_y(evsel->fd); ++thread) {
+-			close(FD(evsel, cpu, thread));
++			if (FD(evsel, cpu, thread) >= 0)
++				close(FD(evsel, cpu, thread));
+ 			FD(evsel, cpu, thread) = -1;
+ 		}
+ }
 diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index abc7fda4a0fe..d831038b55f2 100644
+index d831038b55f2..d4451846af93 100644
 --- a/tools/perf/util/evsel.c
 +++ b/tools/perf/util/evsel.c
-@@ -1574,7 +1574,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- {
- 	int cpu, thread, nthreads;
- 	unsigned long flags = PERF_FLAG_FD_CLOEXEC;
--	int pid = -1, err;
-+	int pid = -1, err, old_errno;
- 	enum { NO_CHANGE, SET_TO_MAX, INCREASED_MAX } set_rlimit = NO_CHANGE;
- 
- 	if ((perf_missing_features.write_backward && evsel->core.attr.write_backward) ||
-@@ -1727,8 +1727,8 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 	 */
- 	if (err == -EMFILE && set_rlimit < INCREASED_MAX) {
- 		struct rlimit l;
--		int old_errno = errno;
- 
-+		old_errno = errno;
- 		if (getrlimit(RLIMIT_NOFILE, &l) == 0) {
- 			if (set_rlimit == NO_CHANGE)
- 				l.rlim_cur = l.rlim_max;
-@@ -1812,6 +1812,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 	if (err)
- 		threads->err_thread = thread;
- 
-+	old_errno = errno;
+@@ -1815,7 +1815,8 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+ 	old_errno = errno;
  	do {
  		while (--thread >= 0) {
- 			close(FD(evsel, cpu, thread));
-@@ -1819,6 +1820,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+-			close(FD(evsel, cpu, thread));
++			if (FD(evsel, cpu, thread) >= 0)
++				close(FD(evsel, cpu, thread));
+ 			FD(evsel, cpu, thread) = -1;
  		}
  		thread = nthreads;
- 	} while (--cpu >= 0);
-+	errno = old_errno;
- 	return err;
- }
- 
 -- 
 2.21.0
 
