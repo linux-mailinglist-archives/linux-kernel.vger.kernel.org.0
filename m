@@ -2,105 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41A9EDE150
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 01:50:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 248E1DE152
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 01:53:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfJTXuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 19:50:50 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36107 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfJTXut (ORCPT
+        id S1726743AbfJTXw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 19:52:58 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37960 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbfJTXw6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 19:50:49 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k20so9555295oih.3;
-        Sun, 20 Oct 2019 16:50:47 -0700 (PDT)
+        Sun, 20 Oct 2019 19:52:58 -0400
+Received: by mail-io1-f65.google.com with SMTP id u8so13740599iom.5
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 16:52:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=3rw1DewHxluyubSe8F4VxhPdMk2b8nrOQjV5qzC5PIw=;
+        b=m4b416nIBuexcZCnBfGzST0Bal1DrOszVxv2Uut2lUUHDe4MPWN2Lzhapeyh+mFsW+
+         g9PpRI1+zsUiSoKOvk81MsFmlqSw1Qvy3f5955/j2VncnnEeXg7KYcr6GGeaxGUmZwLa
+         lvRSA+O5a96ok8m3UyAj8EowRy9VqES5ABLfPG7T4DWkEmkBpSWcDEB+/7IqScYfweBV
+         RLTpH1bYRxcu4MgVdU1GltpIUJEb4Sjq1xCFD0s3M31u+qstXRSzd2YeqrP1+0DB3rEW
+         DpnW8vbd0DmFXIUsrIRErA5aLXXAndu/tOMKktOxeaRmXyUXt62Igoa1D1SgM0o8gS+w
+         VQ4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8n+CfgHrVlYbOyIx7HIFqyuXutdrrSkrZVWKO7njL/U=;
-        b=GrwmHQz0f40MJAeUj/wIKLRj5Mz7fn/NsFx3fMu2aAgRuN7qEK8gG0l6k+Eqm0ke7g
-         ZfGuDGfNgRWV5iW+rieqwjPnvn1SC3te/SciTo38PmH8pl5/2W+dw1RjhM+vr38J8TXY
-         vWWhYxkC6qBgjxjYiG6MyaQktmQq6ISOc7Y5bJ3bKi+H/2q0OE2qqrHJpK1AR3mvj3TD
-         S4LgUYCe9MhPdAr/HMeySGrtypf7ZNAgJmN8+sniSNOY2xRpGJ57GJB4tJTnojv6+v81
-         uEKmp5tiX6RdSDUyO7XUPvhkTum4lijGLljQOPTkdXKq21emgJ8CBSIQV6JpDWgFdwso
-         3rNA==
-X-Gm-Message-State: APjAAAWk26aQRchz9AQgrCDDg9dJmWh/scFAKjcRgEw4N68zhQtkTg9N
-        IaaGWjYtH9sxImflZbk9Lo3p4flsmyhQtrmTV7k=
-X-Google-Smtp-Source: APXvYqwJx6/icv4b9V0nQ9H9QSSDWXq0NSOsNklvjxlbkPf67XhAPTbo2vI/mzE/NWRT6ZOgAV7MbbCSRpOpOp/dWO0=
-X-Received: by 2002:a05:6808:917:: with SMTP id w23mr16026275oih.68.1571615447361;
- Sun, 20 Oct 2019 16:50:47 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=3rw1DewHxluyubSe8F4VxhPdMk2b8nrOQjV5qzC5PIw=;
+        b=hqIoZ8bgp3qwr/IWekTTxla2DQSVw19wAI+4DGt7bDe4lyplX31sje1aQgUWCugA4B
+         XAKhXm6ktLB/YIylVIfItE6cT02d455dsWmCNzgU3jGuTYXeantVs1mSttrOEo2HZZm0
+         ZgbQwB2X2hnkfBima7/KynB6l6lfb3xyWCtdj/pSey88UIwWVejIGEy6xSmt6X22dP/i
+         fbqv6T5bT4sV0nXo0xMbxdIFTmQRdUFCaWTnlRlGH5WSek8BgwG2zOTFK0Qi+dJ9g+pl
+         nPOpZrqvoRjSfnY8dNIZ3ZBcVAzesLNecewXoSkRnIsvpVuki/u21bloK9hqr9CgDwI9
+         AAVw==
+X-Gm-Message-State: APjAAAX2RS7M67nh02Y0UQI7b4T27AojCXKmuJiFZXoBNQbCQ5HqAPh2
+        k31eIWz8YdB8n6XOk/oXq6kkQwF7/CLaS/oAPnI=
+X-Google-Smtp-Source: APXvYqyCD/IjVHn8ov0fb6lkNCggj2UjTVf2Mvp9YMudwpRulMvfdLEikch11kmUwefZm9E2eN0c9NqhI8AJA5nuUeA=
+X-Received: by 2002:a5e:d813:: with SMTP id l19mr8072965iok.74.1571615576248;
+ Sun, 20 Oct 2019 16:52:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191018105815.5714-1-sudeep.holla@arm.com>
-In-Reply-To: <20191018105815.5714-1-sudeep.holla@arm.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 21 Oct 2019 01:50:36 +0200
-Message-ID: <CAJZ5v0hBP4Zitd+V0s3zohd=gd6fKRHKN5RnwAPyfNXv3VX+iQ@mail.gmail.com>
-Subject: Re: [PATCH v2] cpufreq: cancel any pending policy update work
- scheduled before freeing
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Reply-To: afringawa@outlook.com
+Received: by 2002:a02:ce91:0:0:0:0:0 with HTTP; Sun, 20 Oct 2019 16:52:55
+ -0700 (PDT)
+From:   Afrin Gawa <afringawa@gmail.com>
+Date:   Sun, 20 Oct 2019 23:52:55 +0000
+X-Google-Sender-Auth: aYXUEteieDgXmmQpE7qd_gHWcLk
+Message-ID: <CAGnbCm8=H=g2_jFEY0cfuWMc+hXh94KQuEYm=A9O+LQu0Wi1Mw@mail.gmail.com>
+Subject: With Due Respect!
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 12:59 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
->
-> Schedules policy update work may end up racing with the freeing of the
-> policy and unregistering the driver.
->
-> One possible race is as below where the cpufreq_driver is unregistered
-> but the scheduled work gets executed at later stage when cpufreq_driver
-> is NULL(i.e. after freeing the policy and driver)
->
-> Unable to handle kernel NULL pointer dereference at virtual address 0000001c
-> pgd = (ptrval)
-> [0000001c] *pgd=80000080204003, *pmd=00000000
-> Internal error: Oops: 206 [#1] SMP THUMB2
-> Modules linked in:
-> CPU: 0 PID: 34 Comm: kworker/0:1 Not tainted 5.4.0-rc3-00006-g67f5a8081a4b #86
-> Hardware name: ARM-Versatile Express
-> Workqueue: events handle_update
-> PC is at cpufreq_set_policy+0x58/0x228
-> LR is at dev_pm_qos_read_value+0x77/0xac
-> Control: 70c5387d  Table: 80203000  DAC: fffffffd
-> Process kworker/0:1 (pid: 34, stack limit = 0x(ptrval))
->         (cpufreq_set_policy) from (refresh_frequency_limits.part.24+0x37/0x48)
->         (refresh_frequency_limits.part.24) from (handle_update+0x2f/0x38)
->         (handle_update) from (process_one_work+0x16d/0x3cc)
->         (process_one_work) from (worker_thread+0xff/0x414)
->         (worker_thread) from (kthread+0xff/0x100)
->         (kthread) from (ret_from_fork+0x11/0x28)
->
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/cpufreq/cpufreq.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> v1->v2:
->         - Dropped check for work_pending as it can still be racy
->         - Changed from flush_work to cancel_work_sync
->
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index e93cba29fbb2..8ad9c2859841 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -1279,6 +1279,8 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
->         }
->
->         dev_pm_qos_remove_request(policy->min_freq_req);
-> +       /* cancel any pending policy->update work before freeing the policy */
-> +       cancel_work_sync(&policy->update);
->         kfree(policy->min_freq_req);
->
->         cpufreq_policy_put_kobj(policy);
-> --
+Greetings,
 
-Applying as a fix for 5.4, thanks!
+I know that this mail will come to you as a surprise as we have never
+met before, but need not to worry as I am contacting you independently
+of my investigation and no one is informed of this communication. I
+need your urgent assistance in transferring the sum of $11,300,000.00
+USD immediately to your private account.The money has been here in our
+Bank lying dormant for years now without anybody coming for the claim
+of it.
+
+I want to release the money to you as the relative to our deceased
+customer (the account owner) who died a long with his supposed NEXT OF
+KIN since 16th October 2005. The Banking laws here does not allow such
+money to stay more than 14 years, because the money will be recalled
+to the Bank treasury account as unclaimed fund.
+
+By indicating your interest I will send you the full details on how
+the business will be executed.
+
+Please respond urgently and delete if you are not interested.
+
+Best Regards,
+Mr. Afrin Gawa
