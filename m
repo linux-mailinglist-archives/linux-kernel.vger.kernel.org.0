@@ -2,85 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCE12DDD31
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 09:32:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 161C9DDD39
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 09:56:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbfJTHch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 03:32:37 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:35882 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfJTHch (ORCPT
+        id S1726194AbfJTH4E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 03:56:04 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37819 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbfJTH4E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 03:32:37 -0400
-Received: by mail-il1-f194.google.com with SMTP id z2so9226136ilb.3
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 00:32:36 -0700 (PDT)
+        Sun, 20 Oct 2019 03:56:04 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p1so5756369pgi.4;
+        Sun, 20 Oct 2019 00:56:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=zMQWoMlbtRckJcAFhKudH6hAdOl11JUXh6khJneQffs=;
-        b=OkTvdh20PjZki8FcZ+g86Jm/Trv4+vJpj13dklLenYQBLtqaNf+QomQbkJblllM8H/
-         xS9C9gw79ZlTUVQOJXpa/Og4gmIlwp6zEOTuP03CdO9QjvpMFdOcD747Ukekc1Y9MgCQ
-         tTTMwOwTerc1Y2L+ENkLY3h4xMLWMsW+vGMHZyFV/mbKNADsQ9YmjVgAuX4WbFDBgYCl
-         KDSuvEIHdnDaZGP10bnattqpz/TBDYUuTtxTP1fanzJDUN19yjuUdhTCM6ZP5e6gOh9o
-         DhyECeZJwHxaeqqtaRuYkRcUO+1eTKDSkEn1UZItXD0JXdofLcF2tuKb11cxOlYzrOJj
-         aI3w==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yLA2DAJLAdD0BPQ/P6UE13BcbkNCyocrAF+mtXGIWrg=;
+        b=j8WdmtvHAaSmKz9JAZopxZmYm2S3zhIIeW5EY2zmf5v4BV6LoNOou5LRmo4ms0NpeS
+         N8L744jtixqiUkdxuneHttt68OOKSyCWW6SGzRpil2q8VH3gsfq3gzla0WMKjVRUCxq/
+         0PKDoi/odKVtqbU0Db2HoIAFsiluIGhsuDvhlWsmHmLW/o6LRXilP6Y5yDZX95IwIViz
+         w7XhIOcKTG5htmDP20YGVgOybyu4Nck6ljHmyYS0sfhCWzJGNHVw74J6P9o7MimrtDV8
+         EJdReUNC5plIV7uGkf+P5NdMt3D6TNBN1sAFmHhxAf87XCoDUZ/fSq5SdIHnpJVilO2c
+         UxqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=zMQWoMlbtRckJcAFhKudH6hAdOl11JUXh6khJneQffs=;
-        b=RQAnAlRtHKmvKeaVR9h9EDiSKlIoilE4mYyPOYsSY4Or3ZcvC3Z48SbOBLOFG1L0fk
-         jrtiXmXSAH9qwWJf4OWEKYzAH80dPO4pG+5BYvSB3RIeYneHB7cwbaoMz9CKxf+yBgbv
-         IKKeUg/gxwhxm/kogeG3NIoyeMNmOJflnM670FEJCJyUO/adR10960GJn6xetY+LFfEW
-         7lubn3uDA7FDeWqdODqwzDa/Ruq6lBbAhMe0bg9HSisc14gCnvjeyupdddOA6jgzJyre
-         fh4tW7WGI2+odJuB4tV0Szv69kY6VijEjaP7MO445RPgZXzp+YuOYAb9z80g/Vl/dXEM
-         P0dw==
-X-Gm-Message-State: APjAAAWdKd1g5Iku/DCPM1msK2qvVAeBcmZN5cvN9tRVu7KRC19tyj76
-        dHKA81PcC1hJah2Mn+oiSUBlqVkFggdS9Acfxg==
-X-Google-Smtp-Source: APXvYqxiaRYgCtaI7RMXZeYuZ2C8px5BJqFYjfsUApjbhrqUEJiKPNpEzbjtGu8IspMhGKmGpb+icREE8egNYEQEcq8=
-X-Received: by 2002:a92:7742:: with SMTP id s63mr19982883ilc.230.1571556756114;
- Sun, 20 Oct 2019 00:32:36 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yLA2DAJLAdD0BPQ/P6UE13BcbkNCyocrAF+mtXGIWrg=;
+        b=CAQ9uaFtkvAEGy3RkuKVpBDj+68W1XXSNsdRiScG5hxIr+3ju6huj0g99llTxeE9Jt
+         gPunj+HVPmnabGeSFJ7MMJiMTKju1MHoCyZRPPFPKWqfLy93H0nG04A7wd5mJdYOCLYF
+         hi7AP/OKSaXuVKgXoCbU7w1UDsXTMPVvu/lR1nPhdCWtcKQjTBqm9HwhQx1i7JeRR6Ca
+         HE87O2wMVqqOVlDakQNMFo7F0MerYEbJ95N62zf1Nu90kA8/OScY9a5nHJgbHV/xT0kp
+         xvdMMuKYCrF19ujOMlDSgHYPDsIQ0HAHe20ePAtbW1JpXvlBRp0LXkPvep6H/U5ITqQB
+         8SPg==
+X-Gm-Message-State: APjAAAUoH/IpR44eLf5oa3Zw77Egg317jDhobwgdMCMEk4RGpKowI7wa
+        gEqoa5yLAw9aghB2AK2d6asEm+qzyiiGIddTrBY=
+X-Google-Smtp-Source: APXvYqwtn37wtByUfUQCBPYTxcfTjtJ6ewvFt9KnfIz3JdSOUlg4VmqpWQzU/4lSNmEQjdGiiVhkIRqDEDjMLvque84=
+X-Received: by 2002:a17:90a:b391:: with SMTP id e17mr21932309pjr.132.1571558163520;
+ Sun, 20 Oct 2019 00:56:03 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a92:58c3:0:0:0:0:0 with HTTP; Sun, 20 Oct 2019 00:32:35
- -0700 (PDT)
-Reply-To: agaddafi077@gmail.com
-From:   Mrs A Gaddafi <aishagh3@gmail.com>
-Date:   Sun, 20 Oct 2019 00:32:35 -0700
-Message-ID: <CAKwmWppAQBT2gHbTUisq78Fm6ETaPc44cEE6_SfcdSj-GRKWtQ@mail.gmail.com>
-Subject: GREETINGS MY DEAR,
-To:     undisclosed-recipients:;
+References: <20191018224221.15495-1-ayman.bagabas@gmail.com>
+ <20191019082855.GN21344@kadam> <058a2a50d9a819a5e87d526f986b8bf2017b9671.camel@gmail.com>
+In-Reply-To: <058a2a50d9a819a5e87d526f986b8bf2017b9671.camel@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sun, 20 Oct 2019 10:55:51 +0300
+Message-ID: <CAHp75Vc77cEwst8UwFY7e-w2evJN08FLyJCj=BjBEa+X_+QW+g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] platform/x86: huawei-wmi: Stricter battery thresholds set
+To:     Ayman Bagabas <ayman.bagabas@gmail.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Mattias Jacobsson <2pi@mok.nu>, Takashi Iwai <tiwai@suse.de>,
+        kbuild test robot <lkp@intel.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+On Sun, Oct 20, 2019 at 3:33 AM <ayman.bagabas@gmail.com> wrote:
+> On Sat, 2019-10-19 at 11:31 +0300, Dan Carpenter wrote:
+> > On Fri, Oct 18, 2019 at 06:42:13PM -0400, Ayman Bagabas wrote:
+> > > Check if battery thresholds are within 0 and 100.
 
-I came across your e-mail contact prior a private search whilst in
-need of your partnership for investment assistance in your country. I
-am opportune to use this medium to exhibit my legal intentions towards
-investing to your country under your management. I am fully convinced
-that you will really be of help as a business partner.
+> > Don't forget to add your Signed-off-by: though.
 
-My name is Aisha  Gaddafi a single Mother and a Widow and i have three
-Children. I am the only biological Daughter of late Libyan President
-(Late Colonel Muammar Gaddafi).
+Please, resend all three with properly tagged with Sob, Fixes, etc.
 
-I have investment funds worth Twenty Seven Million Five Hundred
-Thousand United State Dollar ($27.500.000.00 ) and i need a trusted
-investment Manager/Partner.  I am planning to go into investment
-projects in your country of origin or present country of Location to
-assist me establish the investments project.
-
- I am willing to negotiate investment/business profit sharing ratio
-with you base on the future investment earning profits.
-
-If you are willing to handle this project on my behalf kindly reply
-urgent to enable me provide you more details about myself and more
-information about the release of the investment funds.
-
-I appreciate Your Urgent Reply to my email address:
-
-Best Regards
-Mrs Aisha Gaddafi
+-- 
+With Best Regards,
+Andy Shevchenko
