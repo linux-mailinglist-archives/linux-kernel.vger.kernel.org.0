@@ -2,99 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 084BFDDFC8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 19:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24871DDFDE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 19:58:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbfJTRhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 13:37:35 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43030 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbfJTRhf (ORCPT
+        id S1726944AbfJTRyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 13:54:53 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45792 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbfJTRyx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 13:37:35 -0400
-Received: by mail-pf1-f195.google.com with SMTP id a2so6836345pfo.10
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 10:37:33 -0700 (PDT)
+        Sun, 20 Oct 2019 13:54:53 -0400
+Received: by mail-lf1-f65.google.com with SMTP id v8so7657684lfa.12
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 10:54:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=vmU9pgUKQcEuMSYv/BBcahpMF4UtOam9a0i9ZLAtxwE=;
-        b=qKEkBRN+OgbmOLStSpTKuai/Xfu9qXtg1CINfl5SyuNp17UtrCIRg4cYlTHvTP7jvi
-         iySsIaj77Mkq5ikwpFE1Xm/HeB9gXw7gMQ9+8+PbXbc8crqm0BUMsyzxHH8y43gvMhWM
-         ZPqaZTwEpYG8bwy6YiqNQc1EtjsPyI3fSxBuepTvDf3qjb3uJLon9kJhgE/dinrNL/1d
-         KZru/zmy2IyvTIGkhnRqVhuRfzge3ksp3hSNQjh9rO7kaCgQf1K9d8g2B0hgk4eiYUK6
-         2caH3dikfd1EuVemAEzIBBhrl8BglKur+OZCB/z0GRnm39nGICVdA73ecO+5tC5KLM6h
-         coHA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lezLxz9ZEViSL/s9KgaBFqX70JcczDlWKnb8jAuYGeM=;
+        b=ec90vniSXCHPRmxIeHIqnueQnWjuhD3TybVWYWc6oT+Haw6EaikAdw1YE2H7lgwY+B
+         og64CZgDCHslF/HfAe3JTYzOkt4NZ9X0COOzBhf/2O8Jrwdr7Nx60P85FNhcjtKlgWPi
+         MuCI02s/xEJeojnVtv8xom0HPV83/TRAoaZeFIieaGTxrN+v7NXTqvPbPMpFrb6o7Sig
+         ORrS1gFaL7WiR92dXKoc//0/gpo2tRO4P5ypJNwuxXWPnvlfIrKy8IxAHI3u22KndR4G
+         rpFW6Kx6EKtvdnOHpuHtogHfFEdHUg6uWQ2XIHvYLZLPJmzGYimfk4NxBwpy8tnQ81ZD
+         mnKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=vmU9pgUKQcEuMSYv/BBcahpMF4UtOam9a0i9ZLAtxwE=;
-        b=hi170lBAhusHMVVEhaGNS9dqp1b9PTzKV1Sf789lr5t8plfOVNt0mtyOupd/d4/NJL
-         N085VvE550KusB29Sa/qj8S/fsOBFd6S0aV12TiFkPYujFTYPz3k+GS2lWGxhXdpIL+K
-         fX1RHsa5bBNpl1nQqBL3vj5jZz4E8fOqymR3nzOQeyGnAui7XxaAzjOgLAAB22dkb6By
-         s54b8egwkaYYxjUytm0pw0Qe5pbftrnKgnQABoP/zVsYK313TtywWMu7FEt3/JSZNlrM
-         AzlOdGsuZBRp1m434j753SRwcN46E3HmmPEwke2aWuyTRAn2QWcUlByZ81Pky9refMXa
-         PN2g==
-X-Gm-Message-State: APjAAAUFxZWdl2UiAIoh8R0c3PVw+n3DN12vyAqA75h19HpCT4sKjuBa
-        MzJ0T7Lsf0cRsOkJQs1Sws9v5Q==
-X-Google-Smtp-Source: APXvYqyeYLW2YaKmo1xJfJxB58IOQE39T7c3Z1n8MrWodF2BnuK8nbT7D29rYLyZtNnd4qsV0pqqdw==
-X-Received: by 2002:a63:4622:: with SMTP id t34mr21669219pga.0.1571593052820;
-        Sun, 20 Oct 2019 10:37:32 -0700 (PDT)
-Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
-        by smtp.gmail.com with ESMTPSA id e192sm13018937pfh.83.2019.10.20.10.37.31
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lezLxz9ZEViSL/s9KgaBFqX70JcczDlWKnb8jAuYGeM=;
+        b=gYM5zsXazl5WnUGv7yvm64yYXQwQrM5YWH0AgHsdeNSNdJOVLk3/QliXQsuPtYTGRX
+         nVUby+gBS1yFW3FqOro/tOf2QzMoSAUWWnL0zAO7bG4z47RNXGljZp9+UnD/vakPDkle
+         3f7PdLpFSGVh2OQZiTIQRLOLbv2kMZz00FB7gZwh74+59Zudrr2i/c/NVxxWO05HVFcj
+         RACpH9Qd9wWiH/8MrkeguIOZ07WNZ+wtI19FyGrGKwRMJWzgmMisDGvtk2D79FmsgyAD
+         2t4TxWgZOb3zlB4BCRkfEXv3Nhrc0GQYf7VEXWynM3TKMd9kEPG1bC57yP2M62fWg73p
+         GdvQ==
+X-Gm-Message-State: APjAAAWBNv+K3zG2A7JxEqD2uf789qZSv8O2Gj6BAquNdLxBxXxEX6Sw
+        1TwdbBhZ6/awrgKqgmokakc=
+X-Google-Smtp-Source: APXvYqymdpC+Rp5WhOYkAbJ6JCs/CGvWEYhZfI+Je7Qev+wAQ3esy20KnJdueQRiQTynmMWfp4k10A==
+X-Received: by 2002:a19:855:: with SMTP id 82mr11965142lfi.44.1571594089814;
+        Sun, 20 Oct 2019 10:54:49 -0700 (PDT)
+Received: from localhost.localdomain ([93.152.168.243])
+        by smtp.gmail.com with ESMTPSA id t6sm5806085ljd.102.2019.10.20.10.54.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2019 10:37:32 -0700 (PDT)
-Date:   Sun, 20 Oct 2019 10:37:29 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Huazhong Tan <tanhuazhong@huawei.com>
-Cc:     <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <salil.mehta@huawei.com>,
-        <yisen.zhuang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH net-next 0/8] net: hns3: add some cleanups &
- optimizations
-Message-ID: <20191020103729.0aebf696@cakuba.netronome.com>
-In-Reply-To: <1571472236-17401-1-git-send-email-tanhuazhong@huawei.com>
-References: <1571472236-17401-1-git-send-email-tanhuazhong@huawei.com>
-Organization: Netronome Systems, Ltd.
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sun, 20 Oct 2019 10:54:49 -0700 (PDT)
+From:   Samuil Ivanov <samuil.ivanovbg@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Samuil Ivanov <samuil.ivanovbg@gmail.com>
+Subject: [PATCH] Staging: gasket: apex_driver: fixed a line over 80 characters coding style issue
+Date:   Sun, 20 Oct 2019 20:50:01 +0300
+Message-Id: <20191020175001.22105-1-samuil.ivanovbg@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 19 Oct 2019 16:03:48 +0800, Huazhong Tan wrote:
-> This patchset includes some cleanups and optimizations for the HNS3
-> ethernet driver.
-> 
-> [patch 1/8] removes unused and unnecessary structures.
-> 
-> [patch 2/8] uses a ETH_ALEN u8 array to replace two mac_addr_*
-> field in struct hclge_mac_mgr_tbl_entry_cmd.
-> 
-> [patch 3/8] optimizes the barrier used in the IO path.
-> 
-> [patch 4/8] introduces macro ring_to_netdev() to get netdevive
-> from struct hns3_enet_ring variable.
-> 
-> [patch 5/8] makes struct hns3_enet_ring to be cacheline aligned
-> 
-> [patch 6/8] adds a minor cleanup for hns3_handle_rx_bd().
-> 
-> [patch 7/8] removes linear data allocating for fraglist SKB.
-> 
-> [patch 8/8] clears hardware error when resetting.
-> 
-> ---
-> note:
-> In previous patchset, there are some bugfixes which needs below
-> new feature, which is only in 'net-next' but not in 'net' now:
-> net: hns3: support tx-scatter-gather-fraglist feature
-> net: hns3: add support for spoof check setting
-> 
-> So, these bugfixes will be upstreamed when the patch needed is
-> on 'net' tree.
+Fixed four lines of code that were over 80 characters long.
 
-Thanks! Looks good to me now.
+Signed-off-by: Samuil Ivanov <samuil.ivanovbg@gmail.com>
+---
+ drivers/staging/gasket/apex_driver.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+index 46199c8ca441..f729ecd6363b 100644
+--- a/drivers/staging/gasket/apex_driver.c
++++ b/drivers/staging/gasket/apex_driver.c
+@@ -263,8 +263,8 @@ static int apex_enter_reset(struct gasket_dev *gasket_dev)
+ 	 *    - Enable GCB idle
+ 	 */
+ 	gasket_read_modify_write_64(gasket_dev, APEX_BAR_INDEX,
+-				    APEX_BAR2_REG_IDLEGENERATOR_IDLEGEN_IDLEREGISTER,
+-				    0x0, 1, 32);
++			APEX_BAR2_REG_IDLEGENERATOR_IDLEGEN_IDLEREGISTER,
++			0x0, 1, 32);
+ 
+ 	/*    - Initiate DMA pause */
+ 	gasket_dev_write_64(gasket_dev, 1, APEX_BAR_INDEX,
+@@ -399,7 +399,7 @@ static int apex_device_cleanup(struct gasket_dev *gasket_dev)
+ 	hib_error = gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
+ 				       APEX_BAR2_REG_USER_HIB_ERROR_STATUS);
+ 	scalar_error = gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
+-					  APEX_BAR2_REG_SCALAR_CORE_ERROR_STATUS);
++					APEX_BAR2_REG_SCALAR_CORE_ERROR_STATUS);
+ 
+ 	dev_dbg(gasket_dev->dev,
+ 		"%s 0x%p hib_error 0x%llx scalar_error 0x%llx\n",
+@@ -606,10 +606,10 @@ static int apex_pci_probe(struct pci_dev *pci_dev,
+ 	while (retries < APEX_RESET_RETRY) {
+ 		page_table_ready =
+ 			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
+-					   APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_INIT);
++				APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_INIT);
+ 		msix_table_ready =
+ 			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
+-					   APEX_BAR2_REG_KERNEL_HIB_MSIX_TABLE_INIT);
++				APEX_BAR2_REG_KERNEL_HIB_MSIX_TABLE_INIT);
+ 		if (page_table_ready && msix_table_ready)
+ 			break;
+ 		schedule_timeout(msecs_to_jiffies(APEX_RESET_DELAY));
+-- 
+2.17.1
+
