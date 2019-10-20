@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 650F3DDFD4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 19:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD0EDDDFD9
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 19:58:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbfJTRwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 13:52:32 -0400
-Received: from mga09.intel.com ([134.134.136.24]:24807 "EHLO mga09.intel.com"
+        id S1726792AbfJTRwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 13:52:31 -0400
+Received: from mga01.intel.com ([192.55.52.88]:3315 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726561AbfJTRwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726596AbfJTRwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 20 Oct 2019 13:52:31 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 10:52:30 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 10:52:30 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,320,1566889200"; 
-   d="scan'208";a="371971241"
+   d="scan'208";a="190893276"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga005.jf.intel.com with ESMTP; 20 Oct 2019 10:52:30 -0700
+  by orsmga008.jf.intel.com with ESMTP; 20 Oct 2019 10:52:30 -0700
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 1EE2830034D; Sun, 20 Oct 2019 10:52:30 -0700 (PDT)
+        id 2549B300393; Sun, 20 Oct 2019 10:52:30 -0700 (PDT)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     linux-kernel@vger.kernel.org, jolsa@kernel.org, eranian@google.com,
         kan.liang@linux.intel.com, peterz@infradead.org,
         Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v2 5/9] perf evsel: Add iterator to iterate over events ordered by CPU
-Date:   Sun, 20 Oct 2019 10:51:58 -0700
-Message-Id: <20191020175202.32456-6-andi@firstfloor.org>
+Subject: [PATCH v2 6/9] perf stat: Use affinity for closing file descriptors
+Date:   Sun, 20 Oct 2019 10:51:59 -0700
+Message-Id: <20191020175202.32456-7-andi@firstfloor.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191020175202.32456-1-andi@firstfloor.org>
 References: <20191020175202.32456-1-andi@firstfloor.org>
@@ -42,87 +42,149 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Add some common code that is needed to iterate over all events
-in CPU order. Used in followon patches
+Closing a perf fd can also trigger an IPI to the target CPU.
+Use the same affinity technique as we use for reading/enabling events
+to closing to optimize the CPU transitions.
+
+Before on a large test case with 94 CPUs:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 32.56    3.085463          50     61483           close
+
+After:
+
+ 10.54    0.735704          11     61485           close
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- tools/perf/util/evlist.c | 33 +++++++++++++++++++++++++++++++++
- tools/perf/util/evlist.h |  4 ++++
- tools/perf/util/evsel.h  |  1 +
- 3 files changed, 38 insertions(+)
+ tools/perf/lib/evsel.c              | 27 +++++++++++++++++++------
+ tools/perf/lib/include/perf/evsel.h |  1 +
+ tools/perf/util/evlist.c            | 31 +++++++++++++++++++++++++++--
+ tools/perf/util/evsel.h             |  1 +
+ 4 files changed, 52 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 21b77efa802c..27b4b958eddd 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -341,6 +341,39 @@ static int perf_evlist__nr_threads(struct evlist *evlist,
- 		return perf_thread_map__nr(evlist->core.threads);
+diff --git a/tools/perf/lib/evsel.c b/tools/perf/lib/evsel.c
+index 5a89857b0381..ea775dacbd2d 100644
+--- a/tools/perf/lib/evsel.c
++++ b/tools/perf/lib/evsel.c
+@@ -114,16 +114,23 @@ int perf_evsel__open(struct perf_evsel *evsel, struct perf_cpu_map *cpus,
+ 	return err;
  }
  
-+struct perf_cpu_map *evlist__cpu_iter_start(struct evlist *evlist)
++static void perf_evsel__close_fd_cpu(struct perf_evsel *evsel, int cpu)
 +{
-+	struct perf_cpu_map *cpus;
-+	struct evsel *pos;
++	int thread;
 +
-+	/*
-+	 * evlist->cpus is not necessarily a superset of all the
-+	 * event's cpus, so compute our own super set. This
-+	 * assume that there is a super set
-+	 */
-+	cpus = evlist->core.cpus;
-+	evlist__for_each_entry(evlist, pos) {
-+		pos->cpu_index = 0;
-+		if (pos->core.cpus->nr > cpus->nr)
-+			cpus = pos->core.cpus;
++	for (thread = 0; thread < xyarray__max_y(evsel->fd); ++thread) {
++		if (FD(evsel, cpu, thread) >= 0)
++			close(FD(evsel, cpu, thread));
++		FD(evsel, cpu, thread) = -1;
 +	}
-+	return cpus;
 +}
 +
-+bool evlist__cpu_iter_skip(struct evsel *ev, int cpu)
-+{
-+	if (ev->cpu_index >= ev->core.cpus->nr)
-+		return true;
-+	if (cpu >= 0 && ev->core.cpus->map[ev->cpu_index] != cpu)
-+		return true;
-+	return false;
-+}
-+
-+void evlist__cpu_iter_next(struct evsel *ev)
-+{
-+	ev->cpu_index++;
-+}
-+
- void evlist__disable(struct evlist *evlist)
+ void perf_evsel__close_fd(struct perf_evsel *evsel)
  {
- 	struct evsel *pos;
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 13051409fd22..c1deb8ebdcea 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -336,6 +336,10 @@ void perf_evlist__to_front(struct evlist *evlist,
- void perf_evlist__set_tracking_event(struct evlist *evlist,
- 				     struct evsel *tracking_evsel);
+-	int cpu, thread;
++	int cpu;
  
-+struct perf_cpu_map *evlist__cpu_iter_start(struct evlist *evlist);
-+bool evlist__cpu_iter_skip(struct evsel *ev, int cpu);
-+void evlist__cpu_iter_next(struct evsel *ev);
+ 	for (cpu = 0; cpu < xyarray__max_x(evsel->fd); cpu++)
+-		for (thread = 0; thread < xyarray__max_y(evsel->fd); ++thread) {
+-			if (FD(evsel, cpu, thread) >= 0)
+-				close(FD(evsel, cpu, thread));
+-			FD(evsel, cpu, thread) = -1;
+-		}
++		perf_evsel__close_fd_cpu(evsel, cpu);
+ }
+ 
+ void perf_evsel__free_fd(struct perf_evsel *evsel)
+@@ -141,6 +148,14 @@ void perf_evsel__close(struct perf_evsel *evsel)
+ 	perf_evsel__free_fd(evsel);
+ }
+ 
++void perf_evsel__close_cpu(struct perf_evsel *evsel, int cpu)
++{
++	if (evsel->fd == NULL)
++		return;
 +
- struct evsel *
- perf_evlist__find_evsel_by_str(struct evlist *evlist, const char *str);
++	perf_evsel__close_fd_cpu(evsel, cpu);
++}
++
+ int perf_evsel__read_size(struct perf_evsel *evsel)
+ {
+ 	u64 read_format = evsel->attr.read_format;
+diff --git a/tools/perf/lib/include/perf/evsel.h b/tools/perf/lib/include/perf/evsel.h
+index 4388667f265c..ed10a914cd3f 100644
+--- a/tools/perf/lib/include/perf/evsel.h
++++ b/tools/perf/lib/include/perf/evsel.h
+@@ -28,6 +28,7 @@ LIBPERF_API void perf_evsel__delete(struct perf_evsel *evsel);
+ LIBPERF_API int perf_evsel__open(struct perf_evsel *evsel, struct perf_cpu_map *cpus,
+ 				 struct perf_thread_map *threads);
+ LIBPERF_API void perf_evsel__close(struct perf_evsel *evsel);
++LIBPERF_API void perf_evsel__close_cpu(struct perf_evsel *evsel, int cpu);
+ LIBPERF_API int perf_evsel__read(struct perf_evsel *evsel, int cpu, int thread,
+ 				 struct perf_counts_values *count);
+ LIBPERF_API int perf_evsel__enable(struct perf_evsel *evsel);
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 27b4b958eddd..b1b29d473a9f 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -18,6 +18,7 @@
+ #include "debug.h"
+ #include "units.h"
+ #include <internal/lib.h> // page_size
++#include "affinity.h"
+ #include "../perf.h"
+ #include "asm/bug.h"
+ #include "bpf-event.h"
+@@ -1174,9 +1175,35 @@ void perf_evlist__set_selected(struct evlist *evlist,
+ void evlist__close(struct evlist *evlist)
+ {
+ 	struct evsel *evsel;
++	struct affinity affinity;
++	struct perf_cpu_map *cpus;
++	int i;
++
++	/* So far record doesn't set this up */
++	if (!evlist->core.cpus) {
++		evlist__for_each_entry_reverse(evlist, evsel)
++			evsel__close(evsel);
++		return;
++	}
  
+-	evlist__for_each_entry_reverse(evlist, evsel)
+-		evsel__close(evsel);
++	if (affinity__setup(&affinity) < 0)
++		return;
++	cpus = evlist__cpu_iter_start(evlist);
++	for (i = 0; i < cpus->nr; i++) {
++		int cpu = cpus->map[i];
++		affinity__set(&affinity, cpu);
++
++		evlist__for_each_entry_reverse(evlist, evsel) {
++			if (evlist__cpu_iter_skip(evsel, cpu))
++			    continue;
++			perf_evsel__close_cpu(&evsel->core, evsel->cpu_index);
++			evlist__cpu_iter_next(evsel);
++		}
++	}
++	evlist__for_each_entry_reverse(evlist, evsel) {
++		perf_evsel__free_fd(&evsel->core);
++		perf_evsel__free_id(&evsel->core);
++	}
+ }
+ 
+ static int perf_evlist__create_syswide_maps(struct evlist *evlist)
 diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index ddc5ee6f6592..cf90019ae744 100644
+index cf90019ae744..2e3b011ed09e 100644
 --- a/tools/perf/util/evsel.h
 +++ b/tools/perf/util/evsel.h
-@@ -95,6 +95,7 @@ struct evsel {
- 	bool			collect_stat;
- 	bool			weak_group;
- 	bool			percore;
-+	int			cpu_index;
- 	const char		*pmu_name;
- 	struct {
- 		perf_evsel__sb_cb_t	*cb;
+@@ -391,4 +391,5 @@ static inline bool evsel__has_callchain(const struct evsel *evsel)
+ struct perf_env *perf_evsel__env(struct evsel *evsel);
+ 
+ int perf_evsel__store_ids(struct evsel *evsel, struct evlist *evlist);
++
+ #endif /* __PERF_EVSEL_H */
 -- 
 2.21.0
 
