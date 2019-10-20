@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18628DDF77
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 18:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51D24DDF70
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 18:14:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbfJTQN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 12:13:59 -0400
+        id S1726689AbfJTQOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 12:14:02 -0400
 Received: from mga17.intel.com ([192.55.52.151]:25889 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726383AbfJTQN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726524AbfJTQN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 20 Oct 2019 12:13:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -17,19 +17,22 @@ Received: from fmsmga008.fm.intel.com ([10.253.24.58])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 09:13:58 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,320,1566889200"; 
-   d="scan'208";a="195909354"
+   d="scan'208";a="195909355"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
   by fmsmga008.fm.intel.com with ESMTP; 20 Oct 2019 09:13:58 -0700
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 229A43002BE; Sun, 20 Oct 2019 09:13:58 -0700 (PDT)
+        id 265D53002A2; Sun, 20 Oct 2019 09:13:58 -0700 (PDT)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     jolsa@kernel.org, eranian@google.com, kan.liang@linux.intel.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org
-Subject: Optimize perf stat for large number of events/cpus v1
-Date:   Sun, 20 Oct 2019 09:13:37 -0700
-Message-Id: <20191020161346.18938-1-andi@firstfloor.org>
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH v1 1/9] perf evsel: Always preserve errno while cleaning up perf_event_open failures
+Date:   Sun, 20 Oct 2019 09:13:38 -0700
+Message-Id: <20191020161346.18938-2-andi@firstfloor.org>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191020161346.18938-1-andi@firstfloor.org>
+References: <20191020161346.18938-1-andi@firstfloor.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -37,57 +40,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch kit optimizes perf stat for a large number of events 
-on systems with many CPUs and PMUs.
+From: Andi Kleen <ak@linux.intel.com>
 
-Some profiling shows that the most overhead is doing IPIs to
-all the target CPUs. We can optimize this by using sched_setaffinity
-to set the affinity to a target CPU once and then doing
-the perf operation for all events on that CPU. This requires
-some restructuring, but cuts the set up time quite a bit.
+In some cases when perf_event_open fails, it may do some closes to clean
+up. In special cases these closes can fail too, which overwrites the
+errno of the perf_event_open, which is then incorrectly reported.
 
-In theory we could go further by parallelizing these setups
-too, but that would be much more complicated and for now just batching it
-per CPU seems to be sufficient. At some point with many more cores 
-parallelization or a better bulk perf setup API might be needed though.
+Save/restore errno around closes.
 
-In addition perf does a lot of redundant /sys accesses with
-many PMUs, which can be also expensve. This is also optimized.
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ tools/perf/util/evsel.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-On a large test case (>700 events with many weak groups) on a 94 CPU
-system I go from
-
-real	0m8.607s
-user	0m0.550s
-sys	0m8.041s
-
-to 
-
-real	0m3.269s
-user	0m0.760s
-sys	0m1.694s
-
-so shaving ~6 seconds of system time, at slightly more cost
-in perf stat itself. On a 4 socket system with the savings
-are more dramatic:
-
-real	0m15.641s
-user	0m0.873s
-sys	0m14.729s
-
-to 
-
-real	0m4.493s
-user	0m1.578s
-sys	0m2.444s
-
-so 11s difference in the user visible set up time.
-
-Also available in 
-
-git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-misc perf/stat-scale-3
-
-v1: Initial post.
-
--Andi
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 85825384f9e8..a646975a20f3 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1740,7 +1740,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+ {
+ 	int cpu, thread, nthreads;
+ 	unsigned long flags = PERF_FLAG_FD_CLOEXEC;
+-	int pid = -1, err;
++	int pid = -1, err, old_errno;
+ 	enum { NO_CHANGE, SET_TO_MAX, INCREASED_MAX } set_rlimit = NO_CHANGE;
+ 
+ 	if ((perf_missing_features.write_backward && evsel->core.attr.write_backward) ||
+@@ -1893,8 +1893,8 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+ 	 */
+ 	if (err == -EMFILE && set_rlimit < INCREASED_MAX) {
+ 		struct rlimit l;
+-		int old_errno = errno;
+ 
++		old_errno = errno;
+ 		if (getrlimit(RLIMIT_NOFILE, &l) == 0) {
+ 			if (set_rlimit == NO_CHANGE)
+ 				l.rlim_cur = l.rlim_max;
+@@ -1978,6 +1978,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+ 	if (err)
+ 		threads->err_thread = thread;
+ 
++	old_errno = errno;
+ 	do {
+ 		while (--thread >= 0) {
+ 			close(FD(evsel, cpu, thread));
+@@ -1985,6 +1986,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+ 		}
+ 		thread = nthreads;
+ 	} while (--cpu >= 0);
++	errno = old_errno;
+ 	return err;
+ }
+ 
+-- 
+2.21.0
 
