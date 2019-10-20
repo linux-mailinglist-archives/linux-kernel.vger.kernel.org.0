@@ -2,153 +2,310 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1FF6DDE03
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 12:12:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C31EDDE11
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 12:15:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbfJTKL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 06:11:59 -0400
-Received: from mail-eopbgr1310089.outbound.protection.outlook.com ([40.107.131.89]:6574
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726206AbfJTKL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 06:11:59 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AmXlHlwdwmanHOLMiVYbdhzt0Q4LX4i/+4CakX0L8qt/0XpzEsTMNe0ExfJp9cLcYJfR8R4wvqUp0sMSJYHn3YI2pVhleqyamsL12Xjz6rd64uQB1PtCjerRff6YbgzMShX3lgko/aGEa7MXyqzhyxTol+8dZ1p8duRWxWhVNFQsGe2C6I0YSyg6jQ4nnd+vH0assv6fq4Uy4THI1bR2CvF18mDRCy203EwaCOWXfYv5I3cIeXgM0Q6FuWTfAJd1HM4HSK9JpJDnvrlglTgcL98TzLZLCtiNAF6AMxqkuWq86p8a4H4oMPeFAgvpaaip4mxI1Aqmw+boSEAwl2iyMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0eXyederqxVg5cyAP5Ou36J7ipAHL3ew/E/y1zgZz9c=;
- b=fAwu4/1iVgH0EWwj3Comvk9H/93MhgoR/ZxAoUc1t2N5Uxc3Svv/R0EQhyeYTzOK/Zz9Nw7B5ZFUp4fOsJBF1F++8pxFqPaHVI289a+SlBdGLwL1tZRsB1lpAuyoTiCRV4RDIqAyIO6LlNLUocWZgdYk//xN4W7uajjH39Xkvu67FD8AE1gob2Xh6ZTYwpM+7B29wzwrK5pxXsqg8Lidb73QyivRHKfu6/9A82965/9XGOyYQgdrdf2u6WV5mleywuI5cgGzesD5Ag/s1KacbaVEy7uuGy+K0DVpr+LSSOTj8a18Q5iJq5uY5b0FHm/bPs15zbBneWQGhnm7hAKb1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=teo-en-ming-corp.com; dmarc=pass action=none
- header.from=teo-en-ming-corp.com; dkim=pass header.d=teo-en-ming-corp.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=teoenmingcorp.onmicrosoft.com; s=selector2-teoenmingcorp-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0eXyederqxVg5cyAP5Ou36J7ipAHL3ew/E/y1zgZz9c=;
- b=RvzrSRndVWQdkh8sVQ1G8jDmSK4I+oO9mDfA0e6A6darE3FEBbtsiaKVbNauvWYxA+OL4wmihr9VkXAc0F2p8ck5qhKgkVFK52OE1oLLbsGBSTWuNQC0Dxs1vFut7Tn7BP2nfcTC3tl+pG6OcB6bHsi+9ffaXUOn626l59SPD2o=
-Received: from SG2PR01MB2141.apcprd01.prod.exchangelabs.com (10.170.143.19) by
- SG2PR01MB3158.apcprd01.prod.exchangelabs.com (20.178.135.17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.16; Sun, 20 Oct 2019 10:11:53 +0000
-Received: from SG2PR01MB2141.apcprd01.prod.exchangelabs.com
- ([fe80::48a5:3998:fd15:92e8]) by SG2PR01MB2141.apcprd01.prod.exchangelabs.com
- ([fe80::48a5:3998:fd15:92e8%6]) with mapi id 15.20.2367.019; Sun, 20 Oct 2019
- 10:11:53 +0000
-From:   Turritopsis Dohrnii Teo En Ming <ceo@teo-en-ming-corp.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Turritopsis Dohrnii Teo En Ming <ceo@teo-en-ming-corp.com>
-Subject: DNS Records for Teo En Ming Corporation (Office 365 Business Premium)
- (Using Linux command dig)
-Thread-Topic: DNS Records for Teo En Ming Corporation (Office 365 Business
- Premium) (Using Linux command dig)
-Thread-Index: AdWHLr7042ccU3QsQ4GXW5URRLzLZQ==
-Date:   Sun, 20 Oct 2019 10:11:53 +0000
-Message-ID: <SG2PR01MB21417B2FE0F0195DEEEE1116876E0@SG2PR01MB2141.apcprd01.prod.exchangelabs.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ceo@teo-en-ming-corp.com; 
-x-originating-ip: [118.189.211.120]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: dd266afc-3372-4ba3-da66-08d75545ee83
-x-ms-traffictypediagnostic: SG2PR01MB3158:
-x-ms-exchange-purlcount: 4
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SG2PR01MB3158DE2C778DCB9874BAE611876E0@SG2PR01MB3158.apcprd01.prod.exchangelabs.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 0196A226D1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39830400003)(376002)(366004)(346002)(47610400004)(189003)(199004)(45080400002)(66946007)(8676002)(76116006)(14454004)(25786009)(52536014)(508600001)(66446008)(66476007)(66556008)(64756008)(5660300002)(6916009)(186003)(81156014)(81166006)(86362001)(966005)(8936002)(2906002)(74316002)(66066001)(4326008)(33656002)(102836004)(305945005)(6506007)(55016002)(26005)(6306002)(71200400001)(71190400001)(7736002)(107886003)(5640700003)(52230400001)(9686003)(99286004)(486006)(6436002)(3846002)(6116002)(476003)(7696005)(256004)(2501003)(316002)(2351001)(47845001);DIR:OUT;SFP:1101;SCL:1;SRVR:SG2PR01MB3158;H:SG2PR01MB2141.apcprd01.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: teo-en-ming-corp.com does not
- designate permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ieQCp/9DLYcdd4psbmt9scCOggL4N+T1asOnNG73PSsGsaLQmcw2T5SBmTrbJsmzwSpDibcPZBygOKymfQS1AlcIuvBWIb3KVAN/yBW0gZxXcgGFiGsMUryNDv1T0aYcDEbRQrxWKnobX4/Ea70+W5/0djTfk9jZaF5C8W+4QzJmeA4wPpA+Ng2Z36s95XpJQEMtmPtmy09BRbwymfu7WldlbvRynQKk/EDwiIZR0lzmxBD7NKXGAu9topgOklY88HTKBIa+NMzF/XmeeTHeVfQDzKSvJcMEVkdlS27SB4Sg19PqydHUz37F1QWdn8uBDQdyAJvSm04SvT5PxhUQm4h8w7bx9H2cqPJ6ODlPsy8e1SKjoo/M2hnDUfZarCd3Ku01UmE+5Jn15qvhdX4m09wRx4q+QJPR+0VOT+LO48jb5JFzAdGSEQhKW/CJ8hSsvnsMhg9NQbkhfPmK5luaTg==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: teo-en-ming-corp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd266afc-3372-4ba3-da66-08d75545ee83
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2019 10:11:53.8347
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 23b3f6ae-c453-4b93-aec9-f17508e5885c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bz5nQAbdXRbiSobYJk9wHVuHPJzBmkMIMTRFf2O4Yb8UPSV4PSO3/1rzAr8N+YNHOFq50ezPZZi+xU7eHBkpUgVrYlrogL8IbKiERgW/PCw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR01MB3158
+        id S1726375AbfJTKPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 06:15:02 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60179 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbfJTKO6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 06:14:58 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iM8Ei-0007VU-2S; Sun, 20 Oct 2019 12:14:56 +0200
+Date:   Sun, 20 Oct 2019 10:13:56 -0000
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [GIT pull] x86/urgent for 5.4-rc4
+References: <157156643658.8795.8700195163364281095.tglx@nanos.tec.linutronix.de>
+Message-ID: <157156643658.8795.4431392863558132451.tglx@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Subject: DNS Records for Teo En Ming Corporation (Office 365 Business Premi=
-um) (Using Linux command dig)
+Linus,
 
-Good day from Singapore,
+please pull the latest x86-urgent-for-linus git tree from:
 
-Office 365 Business Premium User: CEO at teo-en-ming-corp.com
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
 
-Linux command dig:
+up to:  228d120051a2: x86/boot/acpi: Move get_cmdline_acpi_rsdp() under #ifdef guard
 
-teo-en-ming@debian:~$ dig @8.8.8.8 teo-en-ming-corp.com ANY
+A small set of x86 fixes:
 
-; <<>> DiG 9.11.5-P4-5.1-Debian <<>> @8.8.8.8 teo-en-ming-corp.com ANY
-; (1 server found)
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 32657
-;; flags: qr rd ra; QUERY: 1, ANSWER: 6, AUTHORITY: 0, ADDITIONAL: 1
+ - Prevent a NULL pointer dereference in the X2APIC code in case of a CPU
+   hotplug failure.
 
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 512
-;; QUESTION SECTION:
-;teo-en-ming-corp.com.          IN      ANY
+ - Prevent boot failures on HP superdome machines by invalidating the
+   level2 kernel pagetable entries outside of the kernel area as invalid so
+   BIOS reserved space won't be touched unintentionally. Also ensure that
+   memory holes are rounded up to the next PMD boundary correctly.
 
-;; ANSWER SECTION:
-teo-en-ming-corp.com.   599     IN      A       184.168.221.55
-teo-en-ming-corp.com.   3599    IN      NS      ns37.domaincontrol.com.
-teo-en-ming-corp.com.   3599    IN      NS      ns38.domaincontrol.com.
-teo-en-ming-corp.com.   3599    IN      SOA     ns37.domaincontrol.com. dns=
-.jomax.net. 2019101803 28800 7200 604800 600
-teo-en-ming-corp.com.   3599    IN      MX      0 teoenmingcorp-com0iei.mai=
-l.protection.outlook.com.
-teo-en-ming-corp.com.   3599    IN      TXT     "v=3Dspf1 include:spf.prote=
-ction.outlook.com -all"
+ - Enable X2APIC support on Hyper-V to prevent boot failures.
 
-;; Query time: 15 msec
-;; SERVER: 8.8.8.8#53(8.8.8.8)
-;; WHEN: Sun Oct 20 18:03:09 +08 2019
-;; MSG SIZE  rcvd: 287
+ - Set the paravirt name when running on Hyper-V for consistency
+
+ - Move a function under the appropriate ifdef guard to prevent build
+   warnings.
+
+Thanks,
+
+	tglx
+
+------------------>
+Andrea Parri (1):
+      x86/hyperv: Set pv_info.name to "Hyper-V"
+
+Roman Kagan (1):
+      x86/hyperv: Make vapic support x2apic mode
+
+Sean Christopherson (1):
+      x86/apic/x2apic: Fix a NULL pointer deref when handling a dying cpu
+
+Steve Wahl (2):
+      x86/boot/64: Make level2_kernel_pgt pages invalid outside kernel area
+      x86/boot/64: Round memory hole size up to next PMD page
+
+Zhenzhong Duan (1):
+      x86/boot/acpi: Move get_cmdline_acpi_rsdp() under #ifdef guard
 
 
+ arch/x86/boot/compressed/acpi.c       | 48 +++++++++++++++++------------------
+ arch/x86/boot/compressed/misc.c       | 25 +++++++++++++-----
+ arch/x86/hyperv/hv_apic.c             | 20 +++++++++++----
+ arch/x86/kernel/apic/x2apic_cluster.c |  3 ++-
+ arch/x86/kernel/cpu/mshyperv.c        |  4 +++
+ arch/x86/kernel/head64.c              | 22 ++++++++++++++--
+ 6 files changed, 84 insertions(+), 38 deletions(-)
 
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+index 149795c369f2..25019d42ae93 100644
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -20,30 +20,6 @@
+  */
+ struct mem_vector immovable_mem[MAX_NUMNODES*2];
+ 
+-/*
+- * Max length of 64-bit hex address string is 19, prefix "0x" + 16 hex
+- * digits, and '\0' for termination.
+- */
+-#define MAX_ADDR_LEN 19
+-
+-static acpi_physical_address get_cmdline_acpi_rsdp(void)
+-{
+-	acpi_physical_address addr = 0;
+-
+-#ifdef CONFIG_KEXEC
+-	char val[MAX_ADDR_LEN] = { };
+-	int ret;
+-
+-	ret = cmdline_find_option("acpi_rsdp", val, MAX_ADDR_LEN);
+-	if (ret < 0)
+-		return 0;
+-
+-	if (kstrtoull(val, 16, &addr))
+-		return 0;
+-#endif
+-	return addr;
+-}
+-
+ /*
+  * Search EFI system tables for RSDP.  If both ACPI_20_TABLE_GUID and
+  * ACPI_TABLE_GUID are found, take the former, which has more features.
+@@ -298,6 +274,30 @@ acpi_physical_address get_rsdp_addr(void)
+ }
+ 
+ #if defined(CONFIG_RANDOMIZE_BASE) && defined(CONFIG_MEMORY_HOTREMOVE)
++/*
++ * Max length of 64-bit hex address string is 19, prefix "0x" + 16 hex
++ * digits, and '\0' for termination.
++ */
++#define MAX_ADDR_LEN 19
++
++static acpi_physical_address get_cmdline_acpi_rsdp(void)
++{
++	acpi_physical_address addr = 0;
++
++#ifdef CONFIG_KEXEC
++	char val[MAX_ADDR_LEN] = { };
++	int ret;
++
++	ret = cmdline_find_option("acpi_rsdp", val, MAX_ADDR_LEN);
++	if (ret < 0)
++		return 0;
++
++	if (kstrtoull(val, 16, &addr))
++		return 0;
++#endif
++	return addr;
++}
++
+ /* Compute SRAT address from RSDP. */
+ static unsigned long get_acpi_srat_table(void)
+ {
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index 53ac0cb2396d..9652d5c2afda 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -345,6 +345,7 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
+ {
+ 	const unsigned long kernel_total_size = VO__end - VO__text;
+ 	unsigned long virt_addr = LOAD_PHYSICAL_ADDR;
++	unsigned long needed_size;
+ 
+ 	/* Retain x86 boot parameters pointer passed from startup_32/64. */
+ 	boot_params = rmode;
+@@ -379,26 +380,38 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
+ 	free_mem_ptr     = heap;	/* Heap */
+ 	free_mem_end_ptr = heap + BOOT_HEAP_SIZE;
+ 
++	/*
++	 * The memory hole needed for the kernel is the larger of either
++	 * the entire decompressed kernel plus relocation table, or the
++	 * entire decompressed kernel plus .bss and .brk sections.
++	 *
++	 * On X86_64, the memory is mapped with PMD pages. Round the
++	 * size up so that the full extent of PMD pages mapped is
++	 * included in the check against the valid memory table
++	 * entries. This ensures the full mapped area is usable RAM
++	 * and doesn't include any reserved areas.
++	 */
++	needed_size = max(output_len, kernel_total_size);
++#ifdef CONFIG_X86_64
++	needed_size = ALIGN(needed_size, MIN_KERNEL_ALIGN);
++#endif
++
+ 	/* Report initial kernel position details. */
+ 	debug_putaddr(input_data);
+ 	debug_putaddr(input_len);
+ 	debug_putaddr(output);
+ 	debug_putaddr(output_len);
+ 	debug_putaddr(kernel_total_size);
++	debug_putaddr(needed_size);
+ 
+ #ifdef CONFIG_X86_64
+ 	/* Report address of 32-bit trampoline */
+ 	debug_putaddr(trampoline_32bit);
+ #endif
+ 
+-	/*
+-	 * The memory hole needed for the kernel is the larger of either
+-	 * the entire decompressed kernel plus relocation table, or the
+-	 * entire decompressed kernel plus .bss and .brk sections.
+-	 */
+ 	choose_random_location((unsigned long)input_data, input_len,
+ 				(unsigned long *)&output,
+-				max(output_len, kernel_total_size),
++				needed_size,
+ 				&virt_addr);
+ 
+ 	/* Validate memory location choices. */
+diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+index 5c056b8aebef..e01078e93dd3 100644
+--- a/arch/x86/hyperv/hv_apic.c
++++ b/arch/x86/hyperv/hv_apic.c
+@@ -260,11 +260,21 @@ void __init hv_apic_init(void)
+ 	}
+ 
+ 	if (ms_hyperv.hints & HV_X64_APIC_ACCESS_RECOMMENDED) {
+-		pr_info("Hyper-V: Using MSR based APIC access\n");
++		pr_info("Hyper-V: Using enlightened APIC (%s mode)",
++			x2apic_enabled() ? "x2apic" : "xapic");
++		/*
++		 * With x2apic, architectural x2apic MSRs are equivalent to the
++		 * respective synthetic MSRs, so there's no need to override
++		 * the apic accessors.  The only exception is
++		 * hv_apic_eoi_write, because it benefits from lazy EOI when
++		 * available, but it works for both xapic and x2apic modes.
++		 */
+ 		apic_set_eoi_write(hv_apic_eoi_write);
+-		apic->read      = hv_apic_read;
+-		apic->write     = hv_apic_write;
+-		apic->icr_write = hv_apic_icr_write;
+-		apic->icr_read  = hv_apic_icr_read;
++		if (!x2apic_enabled()) {
++			apic->read      = hv_apic_read;
++			apic->write     = hv_apic_write;
++			apic->icr_write = hv_apic_icr_write;
++			apic->icr_read  = hv_apic_icr_read;
++		}
+ 	}
+ }
+diff --git a/arch/x86/kernel/apic/x2apic_cluster.c b/arch/x86/kernel/apic/x2apic_cluster.c
+index 45e92cba92f5..b0889c48a2ac 100644
+--- a/arch/x86/kernel/apic/x2apic_cluster.c
++++ b/arch/x86/kernel/apic/x2apic_cluster.c
+@@ -156,7 +156,8 @@ static int x2apic_dead_cpu(unsigned int dead_cpu)
+ {
+ 	struct cluster_mask *cmsk = per_cpu(cluster_masks, dead_cpu);
+ 
+-	cpumask_clear_cpu(dead_cpu, &cmsk->mask);
++	if (cmsk)
++		cpumask_clear_cpu(dead_cpu, &cmsk->mask);
+ 	free_cpumask_var(per_cpu(ipi_mask, dead_cpu));
+ 	return 0;
+ }
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index 267daad8c036..c656d92cd708 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -216,6 +216,10 @@ static void __init ms_hyperv_init_platform(void)
+ 	int hv_host_info_ecx;
+ 	int hv_host_info_edx;
+ 
++#ifdef CONFIG_PARAVIRT
++	pv_info.name = "Hyper-V";
++#endif
++
+ 	/*
+ 	 * Extract the features and hints
+ 	 */
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 29ffa495bd1c..206a4b6144c2 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -222,13 +222,31 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 	 * we might write invalid pmds, when the kernel is relocated
+ 	 * cleanup_highmap() fixes this up along with the mappings
+ 	 * beyond _end.
++	 *
++	 * Only the region occupied by the kernel image has so far
++	 * been checked against the table of usable memory regions
++	 * provided by the firmware, so invalidate pages outside that
++	 * region. A page table entry that maps to a reserved area of
++	 * memory would allow processor speculation into that area,
++	 * and on some hardware (particularly the UV platform) even
++	 * speculative access to some reserved areas is caught as an
++	 * error, causing the BIOS to halt the system.
+ 	 */
+ 
+ 	pmd = fixup_pointer(level2_kernel_pgt, physaddr);
+-	for (i = 0; i < PTRS_PER_PMD; i++) {
++
++	/* invalidate pages before the kernel image */
++	for (i = 0; i < pmd_index((unsigned long)_text); i++)
++		pmd[i] &= ~_PAGE_PRESENT;
++
++	/* fixup pages that are part of the kernel image */
++	for (; i <= pmd_index((unsigned long)_end); i++)
+ 		if (pmd[i] & _PAGE_PRESENT)
+ 			pmd[i] += load_delta;
+-	}
++
++	/* invalidate pages after the kernel image */
++	for (; i < PTRS_PER_PMD; i++)
++		pmd[i] &= ~_PAGE_PRESENT;
+ 
+ 	/*
+ 	 * Fixup phys_base - remove the memory encryption mask to obtain
 
------BEGIN EMAIL SIGNATURE-----
-
-The Gospel for all Targeted Individuals (TIs):
-
-[The New York Times] Microwave Weapons Are Prime Suspect in Ills of
-U.S. Embassy Workers
-
-Link:=A0https://www.nytimes.com/2018/09/01/science/sonic-attack-cuba-microw=
-ave.html
-
-***************************************************************************=
-*****************
-
-Singaporean Mr. Turritopsis Dohrnii Teo En Ming's Academic
-Qualifications as at 14 Feb 2019 and refugee seeking attempts at the
-United Nations Refugee Agency Bangkok (21 Mar 2017) and in Taiwan (5
-Aug 2019):
-
-[1]=A0https://tdtemcerts.wordpress.com/
-
-[2]=A0https://tdtemcerts.blogspot.sg/
-
-[3]=A0https://www.scribd.com/user/270125049/Teo-En-Ming
-
------END EMAIL SIGNATURE-----
 
