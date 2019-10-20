@@ -2,116 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A09EDDD7D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 11:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E65A0DDD83
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 11:32:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbfJTJ0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 05:26:16 -0400
-Received: from mga12.intel.com ([192.55.52.136]:39083 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbfJTJ0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 05:26:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 02:26:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,319,1566889200"; 
-   d="scan'208";a="348494050"
-Received: from lxy-clx-4s.sh.intel.com ([10.239.43.57])
-  by orsmga004.jf.intel.com with ESMTP; 20 Oct 2019 02:26:11 -0700
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>,
-        Krish Sadhukhan <krish.sadhukhan@oracle.com>,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/4] KVM: VMX: Rename {vmx,nested_vmx}_vcpu_setup()
-Date:   Sun, 20 Oct 2019 17:11:01 +0800
-Message-Id: <20191020091101.125516-5-xiaoyao.li@intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20191020091101.125516-1-xiaoyao.li@intel.com>
-References: <20191020091101.125516-1-xiaoyao.li@intel.com>
+        id S1726205AbfJTJck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 05:32:40 -0400
+Received: from outbound-smtp03.blacknight.com ([81.17.249.16]:54578 "EHLO
+        outbound-smtp03.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725893AbfJTJck (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 05:32:40 -0400
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp03.blacknight.com (Postfix) with ESMTPS id CFAE698BA8
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 10:32:37 +0100 (IST)
+Received: (qmail 31103 invoked from network); 20 Oct 2019 09:32:37 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.19.210])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 20 Oct 2019 09:32:37 -0000
+Date:   Sun, 20 Oct 2019 10:32:35 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Borislav Petkov <bp@alien8.de>, Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] mm, meminit: Recalculate pcpu batch and high limits
+ after init completes
+Message-ID: <20191020093235.GL3321@techsingularity.net>
+References: <20191018105606.3249-1-mgorman@techsingularity.net>
+ <20191018105606.3249-3-mgorman@techsingularity.net>
+ <20191018130127.GP5017@dhcp22.suse.cz>
+ <20191018140959.GK3321@techsingularity.net>
+ <20191018184024.2bb1a69997a9365c5d4ccf1c@linux-foundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20191018184024.2bb1a69997a9365c5d4ccf1c@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename {vmx,nested_vmx}_vcpu_setup() to match what they really do.
+On Fri, Oct 18, 2019 at 06:40:24PM -0700, Andrew Morton wrote:
+> On Fri, 18 Oct 2019 15:09:59 +0100 Mel Gorman <mgorman@techsingularity.net> wrote:
+> 
+> > > > Cc: stable@vger.kernel.org # v4.15+
+> > > 
+> > > Hmm, are you sure about 4.15? Doesn't this go all the way down to
+> > > deferred initialization? I do not see any recent changes on when
+> > > setup_per_cpu_pageset is called.
+> > > 
+> > 
+> > No, I'm not 100% sure. It looks like this was always an issue from the
+> > code but did not happen on at least one 4.12-based distribution kernel for
+> > reasons that are non-obvious. Either way, the tag should have been "v4.1+"
+> 
+> I could mark
+> 
+> mm-pcp-share-common-code-between-memory-hotplug-and-percpu-sysctl-handler.patch
+> mm-meminit-recalculate-pcpu-batch-and-high-limits-after-init-completes.patch
+> 
+> as Cc: <stable@vger.kernel.org>	[4.1+]
+> 
 
-Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
----
-Changes in v3:
-  - Move vmcs unrelated changes into 2 seperate patches.
-  - refine the function name.
----
- arch/x86/kvm/vmx/nested.c | 2 +-
- arch/x86/kvm/vmx/nested.h | 2 +-
- arch/x86/kvm/vmx/vmx.c    | 9 +++++----
- 3 files changed, 7 insertions(+), 6 deletions(-)
+That would be fine.
 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 5e231da00310..55c5791ac52b 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -5768,7 +5768,7 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
- 	return ret;
- }
- 
--void nested_vmx_vcpu_setup(void)
-+void nested_vmx_set_vmcs_shadowing_bitmap(void)
- {
- 	if (enable_shadow_vmcs) {
- 		vmcs_write64(VMREAD_BITMAP, __pa(vmx_vmread_bitmap));
-diff --git a/arch/x86/kvm/vmx/nested.h b/arch/x86/kvm/vmx/nested.h
-index 187d39bf0bf1..4cf1d40da15f 100644
---- a/arch/x86/kvm/vmx/nested.h
-+++ b/arch/x86/kvm/vmx/nested.h
-@@ -11,7 +11,7 @@ void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps,
- 				bool apicv);
- void nested_vmx_hardware_unsetup(void);
- __init int nested_vmx_hardware_setup(int (*exit_handlers[])(struct kvm_vcpu *));
--void nested_vmx_vcpu_setup(void);
-+void nested_vmx_set_vmcs_shadowing_bitmap(void);
- void nested_vmx_free_vcpu(struct kvm_vcpu *vcpu);
- int nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu, bool from_vmentry);
- bool nested_vmx_exit_reflected(struct kvm_vcpu *vcpu, u32 exit_reason);
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 84c32395d887..4211f72a1a01 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -4162,12 +4162,13 @@ static void ept_set_mmio_spte_mask(void)
- #define VMX_XSS_EXIT_BITMAP 0
- 
- /*
-- * Sets up the vmcs for emulated real mode.
-+ * Noting that the initialization of Guest-state Area of VMCS is in
-+ * vmx_vcpu_reset().
-  */
--static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
-+static void init_vmcs(struct vcpu_vmx *vmx)
- {
- 	if (nested)
--		nested_vmx_vcpu_setup();
-+		nested_vmx_set_vmcs_shadowing_bitmap();
- 
- 	if (cpu_has_vmx_msr_bitmap())
- 		vmcs_write64(MSR_BITMAP, __pa(vmx->vmcs01.msr_bitmap));
-@@ -6774,7 +6775,7 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
- 	cpu = get_cpu();
- 	vmx_vcpu_load(&vmx->vcpu, cpu);
- 	vmx->vcpu.cpu = cpu;
--	vmx_vcpu_setup(vmx);
-+	init_vmcs(vmx);
- 	vmx_vcpu_put(&vmx->vcpu);
- 	put_cpu();
- 	if (cpu_need_virtualize_apic_accesses(&vmx->vcpu)) {
+> But for backporting purposes it's a bit cumbersome that [2/3] is the
+> important patch.  I think I'll switch the ordering so that
+> mm-meminit-recalculate-pcpu-batch-and-high-limits-after-init-completes.patch
+> is the first patch and the other two can be queued for 5.5-rc1, OK?
+> 
+
+It might be easier to simply collapse patch 1 and 2 together. They were
+only split to make the review easier and to avoid two relatively big
+changes in one patch.
+
+> Also, is a Reported-by:Matt appropriate here?
+> 
+
+I don't object but I'm not actually sure who reported this first. I think
+it was Thomas who talked to Boris about an EPYC performance issue, who
+talked to Matt thinking it might be a scheduler issue who identified it
+was my problem :P
+
 -- 
-2.19.1
-
+Mel Gorman
+SUSE Labs
