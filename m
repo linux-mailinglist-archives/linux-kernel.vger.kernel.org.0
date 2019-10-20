@@ -2,88 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AA23DE01B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 20:56:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D6B9DE021
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 21:09:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfJTS4v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 14:56:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726281AbfJTS4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 14:56:51 -0400
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DB6021929;
-        Sun, 20 Oct 2019 18:56:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571597810;
-        bh=DMWKjIExqTNEr+jTC8Cfcm9xcLhUQN9BnsaReJNFJ8M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=g8+tJDxW537aodtTeA4/otxkxK01TEF9iPF9sSrkoDF3ukvWcWA//yZavpwqlni8Y
-         9fa6tqxNT/JEmkxpKvFzIrbd2Kl8ESLMW4Or00HmBVPMj4wVtxXxU8L0V6iA6zq3Qg
-         hlTKF4uSm1pgkha1yNEkF3TKb/aeLvREYzn6YuK0=
-Received: by mail-qt1-f182.google.com with SMTP id c17so14294315qtn.8;
-        Sun, 20 Oct 2019 11:56:50 -0700 (PDT)
-X-Gm-Message-State: APjAAAXj62PmDOvIh/nwiZu+CZOpaZM8OZxj9UtBcnNZKmjG0WYDzgUu
-        xp2kMmMWKmU1ADlmknmsB1bSJvkU0mVC++HBsw==
-X-Google-Smtp-Source: APXvYqzezxKnvH4ddIHzD22MnL1TUymJkjpa1epQZ/YP39BDEZsjaDCXMab8nDnoewNjHMIBJSM56RP3ixQbzXmu1kU=
-X-Received: by 2002:ac8:741a:: with SMTP id p26mr6395369qtq.143.1571597809618;
- Sun, 20 Oct 2019 11:56:49 -0700 (PDT)
+        id S1726736AbfJTTC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 15:02:56 -0400
+Received: from smtprelay0026.hostedemail.com ([216.40.44.26]:53540 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726281AbfJTTC4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 15:02:56 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id ABBD6100E7B42;
+        Sun, 20 Oct 2019 19:02:54 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:560:960:973:988:989:1260:1277:1311:1313:1314:1345:1431:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1981:2194:2198:2199:2200:2393:2553:2559:2562:2693:2828:2902:3138:3139:3140:3141:3142:3352:3865:3867:3868:3870:3872:4250:4321:5007:7901:7903:9121:10004:10400:10848:11026:11233:11658:11914:12043:12262:12297:12438:12555:12679:12740:12760:12895:12986:13069:13101:13161:13229:13311:13357:13439:14096:14097:14181:14659:14721:14819:21080:21365:21433:21451:21627:21939:30054:30070:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: level02_194bc56e7ad54
+X-Filterd-Recvd-Size: 2682
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 20 Oct 2019 19:02:53 +0000 (UTC)
+Message-ID: <2acb30fb3c9a86ac8cc882fb787cd04e5864224b.camel@perches.com>
+Subject: byteorder: cpu_to_le32_array vs cpu_to_be32_array function API
+ differences
+From:   Joe Perches <joe@perches.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Sun, 20 Oct 2019 12:02:52 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-References: <20190911093123.11312-1-colin.king@canonical.com> <4aa3bcde-1ad1-98ec-8deb-4a8ab1bbb41c@gmail.com>
-In-Reply-To: <4aa3bcde-1ad1-98ec-8deb-4a8ab1bbb41c@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Sun, 20 Oct 2019 13:56:38 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKETEt3SstdoRBV0s63fKeE7pPnOf405147r22ZC6XcgQ@mail.gmail.com>
-Message-ID: <CAL_JsqKETEt3SstdoRBV0s63fKeE7pPnOf405147r22ZC6XcgQ@mail.gmail.com>
-Subject: Re: [PATCH] dtc: fix spelling mistake "mmory" -> "memory"
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Colin King <colin.king@canonical.com>, devicetree@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 2:08 PM Frank Rowand <frowand.list@gmail.com> wrote:
->
-> Hi Rob,
->
->
-> On 09/11/2019 04:31, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > There is a spelling mistake in an error message. Fix it.
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  scripts/dtc/fdtput.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/dtc/fdtput.c b/scripts/dtc/fdtput.c
-> > index a363c3cabc59..3755e5f68a5a 100644
-> > --- a/scripts/dtc/fdtput.c
-> > +++ b/scripts/dtc/fdtput.c
-> > @@ -84,7 +84,7 @@ static int encode_value(struct display_info *disp, char **arg, int arg_count,
-> >                       value_size = (upto + len) + 500;
-> >                       value = realloc(value, value_size);
-> >                       if (!value) {
-> > -                             fprintf(stderr, "Out of mmory: cannot alloc "
-> > +                             fprintf(stderr, "Out of memory: cannot alloc "
-> >                                       "%d bytes\n", value_size);
-> >                               return -1;
-> >                       }
-> >
->
-> This is a very old version of the upstream file.  update-dtc-source.sh does
-> not pull new versions of this file.
->
-> We don't actually build fdtput, is there any reason to not just remove
-> scripts/dtc/fdtput.c?
+There's an argument inconsistency between these 4 functions
+in include/linux/byteorder/generic.h
 
-Yes, we should just remove it.
+It'd be more a consistent API with one form and not two.
 
-Rob
+   static inline void le32_to_cpu_array(u32 *buf, unsigned int words)
+   {
+   	while (words--) {
+   		__le32_to_cpus(buf);
+   		buf++;
+   	}
+   }
+
+   static inline void cpu_to_le32_array(u32 *buf, unsigned int words)
+   {
+   	while (words--) {
+   		__cpu_to_le32s(buf);
+   		buf++;
+   	}
+   }
+
+vs
+
+   static inline void cpu_to_be32_array(__be32 *dst, const u32 *src, size_t len)
+   {
+   	int i;
+
+   	for (i = 0; i < len; i++)
+   		dst[i] = cpu_to_be32(src[i]);
+   }
+
+   static inline void be32_to_cpu_array(u32 *dst, const __be32 *src, size_t len)
+   {
+   	int i;
+
+   	for (i = 0; i < len; i++)
+   		dst[i] = be32_to_cpu(src[i]);
+   }
+
+Added via 2 different commits:
+
+commit f2f2efb807d339513199b1bb771806c90cce83ae
+Author: Mika Westerberg <mika.westerberg@linux.intel.com>
+Date:   Mon Oct 2 13:38:28 2017 +0300
+
+    byteorder: Move {cpu_to_be32, be32_to_cpu}_array() from Thunderbolt to core
+    
+    We will be using these when communicating XDomain discovery protocol
+    over Thunderbolt link but they might be useful for other drivers as
+    well.
+    
+    Make them available through byteorder/generic.h.
+    
+    Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+and
+
+commit 9def051018c08e65c532822749e857eb4b2e12e7
+Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date:   Wed Mar 21 19:01:40 2018 +0200
+
+    crypto: Deduplicate le32_to_cpu_array() and cpu_to_le32_array()
+    
+    Deduplicate le32_to_cpu_array() and cpu_to_le32_array() by moving them
+    to the generic header.
+    
+    No functional change implied.
+    
+    Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
