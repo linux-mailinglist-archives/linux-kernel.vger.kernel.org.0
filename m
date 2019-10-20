@@ -2,283 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFE62DDFD3
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 19:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B058DDFE5
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 20:08:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfJTRwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 13:52:32 -0400
-Received: from mga09.intel.com ([134.134.136.24]:24807 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726740AbfJTRwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 13:52:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 10:52:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,320,1566889200"; 
-   d="scan'208";a="371971244"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga005.jf.intel.com with ESMTP; 20 Oct 2019 10:52:30 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 38C8C30034D; Sun, 20 Oct 2019 10:52:30 -0700 (PDT)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     acme@kernel.org
-Cc:     linux-kernel@vger.kernel.org, jolsa@kernel.org, eranian@google.com,
-        kan.liang@linux.intel.com, peterz@infradead.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v2 9/9] perf stat: Use affinity for enabling/disabling events
-Date:   Sun, 20 Oct 2019 10:52:02 -0700
-Message-Id: <20191020175202.32456-10-andi@firstfloor.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191020175202.32456-1-andi@firstfloor.org>
-References: <20191020175202.32456-1-andi@firstfloor.org>
+        id S1726740AbfJTSIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 14:08:34 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52471 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbfJTSIe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 14:08:34 -0400
+Received: by mail-wm1-f66.google.com with SMTP id r19so10838124wmh.2;
+        Sun, 20 Oct 2019 11:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZyScSgyx1v1KMw11LXs/d910+0o/5j0T6WzSjnl90Ec=;
+        b=lQyno92/NxMfxfaAdR+mU57q/zfWHHiSTBgeqKtrLeobdBwrmxKy8KCMFYCzAGRTZx
+         Z0qImnfC701v8yi3sL6xDOJaoS5fISZEqYdgo0emBbPDPBdYwHX483wROvG1g4II8N21
+         7tFLaM6sN993v+9w0yv+OGuVc0iPnjGmyKxleIleQi1ED4yQu76d6It6sKySFnYJBv5c
+         Krt59icxeVzsw/mMyv6LpQb5awEDRtpRZnHNKkyPb+q8ZJeE2wgnZP4h9n5uNbHyY5Uz
+         VoX1oD/A6C2NrFcipFbo0F4l5W0iwCcFRiJT5CtezpvWC/ChrJ1iq7fDDQ/ZQ/FRIT6Q
+         n0WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZyScSgyx1v1KMw11LXs/d910+0o/5j0T6WzSjnl90Ec=;
+        b=IB2uLI52J2T0aXcYeEB0thyWN5c1b8JXreBKQqU8WFPnnl+Mlc9E1DSnPpzo9hqpNP
+         iXVdojjJvRZ9LTlApN936rzHJbppX/Nnx77lxtSGxfEUr7hzviwMweZbx4nyyyj6SXw0
+         96SgAQUVL675KlgjQAxvfU+Wb/pFQ8KJsXrCnppXwZ6ncjtIRRDUVqNAFxhFEN9AKNK8
+         jqsLFNvEjuE/1+OavNcn/T53tzJcB/xeTN6OMwXDV384+p2aZ13Cn9e1WduDtwtju8cY
+         Xz80sWB65BpqmzBmnL5MT6gXbdkxm62x3UP5cOB6FoNyC2nqgD/r8ugy9H5+1FVj2BN7
+         o+7w==
+X-Gm-Message-State: APjAAAUBgEQAifPdozCcPyBP8Y1KQC08c5Uruh3snj5FDZrnbiT+D8HD
+        RH0aEfMBs+slbZsqrn/csVGqeGJvfHqQhqXo7CKemS5HPXo=
+X-Google-Smtp-Source: APXvYqzEC44nKgE2J9nQP5cTZEkGghcknqCros6dWpjbg+JD2QhjuAbWQ9aVqWOiSC00SOtfbarRFM11fwxwTpv1XfA=
+X-Received: by 2002:a05:600c:54e:: with SMTP id k14mr17042823wmc.9.1571594911706;
+ Sun, 20 Oct 2019 11:08:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <453A1153-9493-4A04-BF66-CE6A572DEBDB@paragon-software.com>
+In-Reply-To: <453A1153-9493-4A04-BF66-CE6A572DEBDB@paragon-software.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Sun, 20 Oct 2019 20:08:20 +0200
+Message-ID: <CAFLxGvyFBGiDab4wxWidjRyDgWkHVfigVsHiRDB4swpB3G+hvQ@mail.gmail.com>
+Subject: Re: [PATCH] fs: exFAT read-only driver GPL implementation by Paragon Software.
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+On Sat, Oct 19, 2019 at 10:33 AM Konstantin Komarov
+<almaz.alexandrovich@paragon-software.com> wrote:
+>
+> Recently exFAT filesystem specification has been made public by Microsoft=
+ (https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specification=
+).
+> Having decades of expertise in commercial file systems development, we at=
+ Paragon Software GmbH are very excited by Microsoft's decision and now wan=
+t to make our contribution to the Open Source Community by providing our im=
+plementation of exFAT Read-Only (yet!) fs implementation for the Linux Kern=
+el.
+> We are about to prepare the Read-Write support patch as well.
+> 'fs/exfat' is implemented accordingly to standard Linux fs development ap=
+proach with no use/addition of any custom API's.
+> To divide our contribution from 'drivers/staging' submit of Aug'2019, our=
+ Kconfig key is "EXFAT_RO_FS"
 
-Restructure event enabling/disabling to use affinity, which
-minimizes the number of IPIs needed.
+How is this driver different from the driver in drivers/staging?
+With the driver in staging and the upcoming driver from Samsung this
+is driver number
+three for exfat. ;-\
 
-Before on a large test case with 94 CPUs:
-
-% time     seconds  usecs/call     calls    errors syscall
------- ----------- ----------- --------- --------- ----------------
- 54.65    1.899986          22     84812       660 ioctl
-
-after:
-
- 39.21    0.930451          10     84796       644 ioctl
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- tools/perf/lib/evsel.c              | 49 ++++++++++++++++++++--------
- tools/perf/lib/include/perf/evsel.h |  2 ++
- tools/perf/util/evlist.c            | 50 ++++++++++++++++++++++++++---
- tools/perf/util/evsel.c             | 13 ++++++++
- tools/perf/util/evsel.h             |  2 ++
- 5 files changed, 98 insertions(+), 18 deletions(-)
-
-diff --git a/tools/perf/lib/evsel.c b/tools/perf/lib/evsel.c
-index ea775dacbd2d..89ddfade0b96 100644
---- a/tools/perf/lib/evsel.c
-+++ b/tools/perf/lib/evsel.c
-@@ -198,38 +198,61 @@ int perf_evsel__read(struct perf_evsel *evsel, int cpu, int thread,
- }
- 
- static int perf_evsel__run_ioctl(struct perf_evsel *evsel,
--				 int ioc,  void *arg)
-+				 int ioc,  void *arg,
-+				 int cpu)
- {
--	int cpu, thread;
-+	int thread;
- 
--	for (cpu = 0; cpu < xyarray__max_x(evsel->fd); cpu++) {
--		for (thread = 0; thread < xyarray__max_y(evsel->fd); thread++) {
--			int fd = FD(evsel, cpu, thread),
--			    err = ioctl(fd, ioc, arg);
-+	for (thread = 0; thread < xyarray__max_y(evsel->fd); thread++) {
-+		int fd = FD(evsel, cpu, thread),
-+		    err = ioctl(fd, ioc, arg);
- 
--			if (err)
--				return err;
--		}
-+		if (err)
-+			return err;
- 	}
- 
- 	return 0;
- }
- 
-+int perf_evsel__enable_cpu(struct perf_evsel *evsel, int cpu)
-+{
-+	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, 0, cpu);
-+}
-+
- int perf_evsel__enable(struct perf_evsel *evsel)
- {
--	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, 0);
-+	int i;
-+	int err = 0;
-+
-+	for (i = 0; i < evsel->cpus->nr && !err; i++)
-+		err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, 0, i);
-+	return err;
-+}
-+
-+int perf_evsel__disable_cpu(struct perf_evsel *evsel, int cpu)
-+{
-+	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, 0, cpu);
- }
- 
- int perf_evsel__disable(struct perf_evsel *evsel)
- {
--	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, 0);
-+	int i;
-+	int err = 0;
-+
-+	for (i = 0; i < evsel->cpus->nr && !err; i++)
-+		err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, 0, i);
-+	return err;
- }
- 
- int perf_evsel__apply_filter(struct perf_evsel *evsel, const char *filter)
- {
--	return perf_evsel__run_ioctl(evsel,
-+	int err = 0, i;
-+
-+	for (i = 0; i < evsel->cpus->nr && !err; i++)
-+		err = perf_evsel__run_ioctl(evsel,
- 				     PERF_EVENT_IOC_SET_FILTER,
--				     (void *)filter);
-+				     (void *)filter, i);
-+	return err;
- }
- 
- struct perf_cpu_map *perf_evsel__cpus(struct perf_evsel *evsel)
-diff --git a/tools/perf/lib/include/perf/evsel.h b/tools/perf/lib/include/perf/evsel.h
-index ed10a914cd3f..db31e512a120 100644
---- a/tools/perf/lib/include/perf/evsel.h
-+++ b/tools/perf/lib/include/perf/evsel.h
-@@ -32,7 +32,9 @@ LIBPERF_API void perf_evsel__close_cpu(struct perf_evsel *evsel, int cpu);
- LIBPERF_API int perf_evsel__read(struct perf_evsel *evsel, int cpu, int thread,
- 				 struct perf_counts_values *count);
- LIBPERF_API int perf_evsel__enable(struct perf_evsel *evsel);
-+LIBPERF_API int perf_evsel__enable_cpu(struct perf_evsel *evsel, int cpu);
- LIBPERF_API int perf_evsel__disable(struct perf_evsel *evsel);
-+LIBPERF_API int perf_evsel__disable_cpu(struct perf_evsel *evsel, int cpu);
- LIBPERF_API struct perf_cpu_map *perf_evsel__cpus(struct perf_evsel *evsel);
- LIBPERF_API struct perf_thread_map *perf_evsel__threads(struct perf_evsel *evsel);
- LIBPERF_API struct perf_event_attr *perf_evsel__attr(struct perf_evsel *evsel);
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index bcb8a3670f3f..55f38a71ad30 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -378,26 +378,66 @@ void evlist__cpu_iter_next(struct evsel *ev)
- void evlist__disable(struct evlist *evlist)
- {
- 	struct evsel *pos;
-+	struct affinity affinity;
-+	struct perf_cpu_map *cpus;
-+	int i;
- 
-+	if (affinity__setup(&affinity) < 0)
-+		return;
-+
-+	cpus = evlist__cpu_iter_start(evlist);
-+	for (i = 0; i < cpus->nr; i++) {
-+		int cpu = cpus->map[i];
-+		affinity__set(&affinity, cpu);
-+
-+		evlist__for_each_entry(evlist, pos) {
-+			if (evlist__cpu_iter_skip(pos, cpu))
-+				continue;
-+			if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos->core.fd)
-+				continue;
-+			evsel__disable_cpu(pos, pos->cpu_index);
-+			evlist__cpu_iter_next(pos);
-+		}
-+	}
-+	affinity__cleanup(&affinity);
- 	evlist__for_each_entry(evlist, pos) {
--		if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos->core.fd)
-+		if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
- 			continue;
--		evsel__disable(pos);
-+		pos->disabled = true;
- 	}
--
- 	evlist->enabled = false;
- }
- 
- void evlist__enable(struct evlist *evlist)
- {
- 	struct evsel *pos;
-+	struct affinity affinity;
-+	struct perf_cpu_map *cpus;
-+	int i;
-+
-+	if (affinity__setup(&affinity) < 0)
-+		return;
-+
-+	cpus = evlist__cpu_iter_start(evlist);
-+	for (i = 0; i < cpus->nr; i++) {
-+		int cpu = cpus->map[i];
-+		affinity__set(&affinity, cpu);
- 
-+		evlist__for_each_entry(evlist, pos) {
-+			if (evlist__cpu_iter_skip(pos, cpu))
-+				continue;
-+			if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
-+				continue;
-+			evsel__enable_cpu(pos, pos->cpu_index);
-+			evlist__cpu_iter_next(pos);
-+		}
-+	}
-+	affinity__cleanup(&affinity);
- 	evlist__for_each_entry(evlist, pos) {
- 		if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
- 			continue;
--		evsel__enable(pos);
-+		pos->disabled = false;
- 	}
--
- 	evlist->enabled = true;
- }
- 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 7106f9a067df..79050a6f4991 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1205,13 +1205,26 @@ int perf_evsel__append_addr_filter(struct evsel *evsel, const char *filter)
- 	return perf_evsel__append_filter(evsel, "%s,%s", filter);
- }
- 
-+/* Caller has to clear disabled after going through all CPUs. */
-+int evsel__enable_cpu(struct evsel *evsel, int cpu)
-+{
-+	int err = perf_evsel__enable_cpu(&evsel->core, cpu);
-+	return err;
-+}
-+
- int evsel__enable(struct evsel *evsel)
- {
- 	int err = perf_evsel__enable(&evsel->core);
- 
- 	if (!err)
- 		evsel->disabled = false;
-+	return err;
-+}
- 
-+/* Caller has to set disabled after going through all CPUs. */
-+int evsel__disable_cpu(struct evsel *evsel, int cpu)
-+{
-+	int err = perf_evsel__disable_cpu(&evsel->core, cpu);
- 	return err;
- }
- 
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 9fc9f6698aa4..15977bbe7b63 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -222,8 +222,10 @@ int perf_evsel__set_filter(struct evsel *evsel, const char *filter);
- int perf_evsel__append_tp_filter(struct evsel *evsel, const char *filter);
- int perf_evsel__append_addr_filter(struct evsel *evsel,
- 				   const char *filter);
-+int evsel__enable_cpu(struct evsel *evsel, int cpu);
- int evsel__enable(struct evsel *evsel);
- int evsel__disable(struct evsel *evsel);
-+int evsel__disable_cpu(struct evsel *evsel, int cpu);
- 
- int perf_evsel__open_per_cpu(struct evsel *evsel,
- 			     struct perf_cpu_map *cpus,
--- 
-2.21.0
-
+--=20
+Thanks,
+//richard
