@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8C06DDF71
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 18:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87B7ADDF78
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 18:14:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfJTQOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 12:14:04 -0400
-Received: from mga06.intel.com ([134.134.136.31]:28692 "EHLO mga06.intel.com"
+        id S1726801AbfJTQOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 12:14:30 -0400
+Received: from mga14.intel.com ([192.55.52.115]:39869 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726511AbfJTQN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726383AbfJTQN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 20 Oct 2019 12:13:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 09:13:58 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 09:13:58 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,320,1566889200"; 
-   d="scan'208";a="203147502"
+   d="scan'208";a="187321662"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by FMSMGA003.fm.intel.com with ESMTP; 20 Oct 2019 09:13:58 -0700
+  by orsmga007.jf.intel.com with ESMTP; 20 Oct 2019 09:13:58 -0700
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 393F430038C; Sun, 20 Oct 2019 09:13:58 -0700 (PDT)
+        id 3FA72300393; Sun, 20 Oct 2019 09:13:58 -0700 (PDT)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     jolsa@kernel.org, eranian@google.com, kan.liang@linux.intel.com,
         peterz@infradead.org, linux-kernel@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v1 4/9] perf affinity: Add infrastructure to save/restore affinity
-Date:   Sun, 20 Oct 2019 09:13:41 -0700
-Message-Id: <20191020161346.18938-5-andi@firstfloor.org>
+Subject: [PATCH v1 5/9] perf evsel: Add iterator to iterate over events ordered by CPU
+Date:   Sun, 20 Oct 2019 09:13:42 -0700
+Message-Id: <20191020161346.18938-6-andi@firstfloor.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191020161346.18938-1-andi@firstfloor.org>
 References: <20191020161346.18938-1-andi@firstfloor.org>
@@ -42,135 +42,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-The kernel perf subsystem has to IPI to the target CPU for many
-operations. On systems with many CPUs and when managing many events the
-overhead can be dominated by lots of IPIs.
-
-An alternative is to set up CPU affinity in the perf tool, then set up
-all the events for that CPU, and then move on to the next CPU.
-
-Add some affinity management infrastructure to enable such a model.
-Used in followon patches.
+Add some common code that is needed to iterate over all events
+in CPU order. Used in followon patches
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- tools/perf/util/Build      |  1 +
- tools/perf/util/affinity.c | 71 ++++++++++++++++++++++++++++++++++++++
- tools/perf/util/affinity.h | 15 ++++++++
- 3 files changed, 87 insertions(+)
- create mode 100644 tools/perf/util/affinity.c
- create mode 100644 tools/perf/util/affinity.h
+ tools/perf/util/evlist.c | 33 +++++++++++++++++++++++++++++++++
+ tools/perf/util/evlist.h |  4 ++++
+ tools/perf/util/evsel.h  |  1 +
+ 3 files changed, 38 insertions(+)
 
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index 5477f6afe735..302c7fda1e3a 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -74,6 +74,7 @@ perf-y += sort.o
- perf-y += hist.o
- perf-y += util.o
- perf-y += cpumap.o
-+perf-y += affinity.o
- perf-y += cputopo.o
- perf-y += cgroup.o
- perf-y += target.o
-diff --git a/tools/perf/util/affinity.c b/tools/perf/util/affinity.c
-new file mode 100644
-index 000000000000..12e8024a6300
---- /dev/null
-+++ b/tools/perf/util/affinity.c
-@@ -0,0 +1,71 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Manage affinity to optimize IPIs inside the kernel perf API. */
-+#define _GNU_SOURCE 1
-+#include <sched.h>
-+#include <stdlib.h>
-+#include <linux/zalloc.h>
-+#include "perf.h"
-+#include "cpumap.h"
-+#include "affinity.h"
-+
-+static int get_cpu_set_size(void)
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index fdef4eb82b48..00eaa6c5cdbe 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -324,6 +324,39 @@ static int perf_evlist__nr_threads(struct evlist *evlist,
+ 		return perf_thread_map__nr(evlist->core.threads);
+ }
+ 
++struct perf_cpu_map *evlist__cpu_iter_start(struct evlist *evlist)
 +{
-+	int sz = (cpu__max_cpu() + 64 - 1) / 64;
++	struct perf_cpu_map *cpus;
++	struct evsel *pos;
++
 +	/*
-+	 * sched_getaffinity doesn't like masks smaller than the kernel.
-+	 * Hopefully that's big enough.
++	 * evlist->cpus is not necessarily a superset of all the
++	 * event's cpus, so compute our own super set. This
++	 * assume that there is a super set
 +	 */
-+	if (sz < 4096/8)
-+		sz = 4096/8;
-+	return sz;
-+}
-+
-+int affinity__setup(struct affinity *a)
-+{
-+	int cpu_set_size = get_cpu_set_size();
-+
-+	a->orig_cpus = malloc(cpu_set_size);
-+	if (!a->orig_cpus)
-+		return -1;
-+        sched_getaffinity(0, cpu_set_size, (cpu_set_t *)a->orig_cpus);
-+	a->sched_cpus = zalloc(cpu_set_size);
-+	if (!a->sched_cpus) {
-+		free(a->orig_cpus);
-+		return -1;
++	cpus = evlist->core.cpus;
++	evlist__for_each_entry(evlist, pos) {
++		pos->cpu_index = 0;
++		if (pos->core.cpus->nr > cpus->nr)
++			cpus = pos->core.cpus;
 +	}
-+	a->changed = false;
-+	return 0;
++	return cpus;
 +}
 +
-+/*
-+ * perf_event_open does an IPI internally to the target CPU.
-+ * It is more efficient to change perf's affinity to the target
-+ * CPU and then set up all events on that CPU, so we amortize
-+ * CPU communication.
-+ */
-+void affinity__set(struct affinity *a, int cpu)
++bool evlist__cpu_iter_skip(struct evsel *ev, int cpu)
 +{
-+	int cpu_set_size = get_cpu_set_size();
-+
-+	if (cpu == -1)
-+		return;
-+	a->changed = true;
-+	a->sched_cpus[cpu / 8] |= 1 << (cpu % 8);
-+	/*
-+	 * We ignore errors because affinity is just an optimization.
-+	 * This could happen for example with isolated CPUs or cpusets.
-+	 * In this case the IPIs inside the kernel's perf API still work.
-+	 */
-+	sched_setaffinity(0, cpu_set_size, (cpu_set_t *)a->sched_cpus);
-+	a->sched_cpus[cpu / 8] ^= 1 << (cpu % 8);
++	if (ev->cpu_index >= ev->core.cpus->nr)
++		return true;
++	if (cpu >= 0 && ev->core.cpus->map[ev->cpu_index] != cpu)
++		return true;
++	return false;
 +}
 +
-+void affinity__cleanup(struct affinity *a)
++void evlist__cpu_iter_next(struct evsel *ev)
 +{
-+	int cpu_set_size = get_cpu_set_size();
-+
-+	if (a->changed)
-+		sched_setaffinity(0, cpu_set_size, (cpu_set_t *)a->orig_cpus);
-+	free(a->sched_cpus);
-+	free(a->orig_cpus);
++	ev->cpu_index++;
 +}
-diff --git a/tools/perf/util/affinity.h b/tools/perf/util/affinity.h
-new file mode 100644
-index 000000000000..e56148607e33
---- /dev/null
-+++ b/tools/perf/util/affinity.h
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#ifndef AFFINITY_H
-+#define AFFINITY_H 1
 +
-+struct affinity {
-+	unsigned char *orig_cpus;
-+	unsigned char *sched_cpus;
-+	bool changed;
-+};
+ void evlist__disable(struct evlist *evlist)
+ {
+ 	struct evsel *pos;
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index a55f0f2546e5..3f1268b9347b 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -309,6 +309,10 @@ void perf_evlist__to_front(struct evlist *evlist,
+ void perf_evlist__set_tracking_event(struct evlist *evlist,
+ 				     struct evsel *tracking_evsel);
+ 
++struct perf_cpu_map *evlist__cpu_iter_start(struct evlist *evlist);
++bool evlist__cpu_iter_skip(struct evsel *ev, int cpu);
++void evlist__cpu_iter_next(struct evsel *ev);
 +
-+void affinity__cleanup(struct affinity *a);
-+void affinity__set(struct affinity *a, int cpu);
-+int affinity__setup(struct affinity *a);
-+
-+#endif
+ struct evsel *
+ perf_evlist__find_evsel_by_str(struct evlist *evlist, const char *str);
+ 
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 68321d10eb2d..227320501eb8 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -172,6 +172,7 @@ struct evsel {
+ 	bool			collect_stat;
+ 	bool			weak_group;
+ 	bool			percore;
++	int			cpu_index;
+ 	const char		*pmu_name;
+ 	struct {
+ 		perf_evsel__sb_cb_t	*cb;
 -- 
 2.21.0
 
