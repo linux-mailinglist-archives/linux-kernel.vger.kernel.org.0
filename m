@@ -2,54 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 371E0DDE21
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 12:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD3ADDE54
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2019 13:49:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfJTKpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 06:45:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726275AbfJTKpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 06:45:06 -0400
-Subject: Re: [GIT pull] irq/urgent for 5.4-rc4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571568306;
-        bh=k1OQvqqy7J1bGRYpTHb8nefZ+CCEz1eiQBxiWDbub5Q=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=m2W/jlb2ZWvgidUqGkbBNubxhcvJgqq82RcGcJg77an8MLs+D7qi7e1h0fk8pzxfq
-         K0gxyicjOfdOtMj7ohPQbIFMz8sa2x0Ze85IMmYI+MEOfMuhmtDRgbEkct3EKrAcHm
-         +v3gQIXKXMA0NQgVy+PixOOmD/Q2bbe75COl3sVY=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <157156643658.8795.10312616020081094685.tglx@nanos.tec.linutronix.de>
-References: <157156643658.8795.8700195163364281095.tglx@nanos.tec.linutronix.de>
- <157156643658.8795.10312616020081094685.tglx@nanos.tec.linutronix.de>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <157156643658.8795.10312616020081094685.tglx@nanos.tec.linutronix.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- irq-urgent-for-linus
-X-PR-Tracked-Commit-Id: c9b59181c2b09261056757f3f27db2b6c606952f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 81c4bc31c4cd6a1e45805604aefd25eee1e72ade
-Message-Id: <157156830603.17957.7034279210399332190.pr-tracker-bot@kernel.org>
-Date:   Sun, 20 Oct 2019 10:45:06 +0000
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
+        id S1726319AbfJTLtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 07:49:18 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60264 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbfJTLtR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 07:49:17 -0400
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iM9hw-00084H-0h; Sun, 20 Oct 2019 13:49:12 +0200
+Date:   Sun, 20 Oct 2019 13:49:10 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andy Lutomirski <luto@kernel.org>
+cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [RFC patch 01/15] entry: Provide generic syscall entry
+ functionality
+In-Reply-To: <CALCETrXB92rZqHMyhSULWVY3Q5=t9q4N9aZFCTn4k0DMNPJfMQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1910201347460.2090@nanos.tec.linutronix.de>
+References: <20190919150314.054351477@linutronix.de> <20190919150808.521907403@linutronix.de> <CALCETrXB92rZqHMyhSULWVY3Q5=t9q4N9aZFCTn4k0DMNPJfMQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 20 Oct 2019 10:13:56 -0000:
+On Fri, 20 Sep 2019, Andy Lutomirski wrote:
+> On Thu, Sep 19, 2019 at 8:09 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > +#ifndef _TIF_AUDIT
+> > +# define _TIF_AUDIT                    (0)
+> > +#endif
+> 
+> I'm wondering if these should be __TIF (double-underscore) or
+> MAYBE_TIF_ or something to avoid errors where people do flags |=
+> TIF_WHATEVER and get surprised.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-for-linus
+That's what exists today already. See arch/*/include/asm/threadinfo.h
+ 
+> > +/**
+> > + * syscall_enter_from_usermode - Check and handle work before invoking
+> > + *                              a syscall
+> > + * @regs:      Pointer to currents pt_regs
+> > + * @syscall:   The syscall number
+> > + *
+> > + * Invoked from architecture specific syscall entry code with interrupts
+> > + * enabled.
+> > + *
+> > + * Returns: The original or a modified syscall number
+> > + */
+> 
+> Maybe document that it can return -1 to skip the syscall and that, if
+> this happens, it may use syscall_set_error() or
+> syscall_set_return_value() first.  If neither of those is called and
+> -1 is returned, then the syscall will fail with ENOSYS.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/81c4bc31c4cd6a1e45805604aefd25eee1e72ade
+Sure.
 
-Thank you!
+Thanks,
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+	tglx
+
