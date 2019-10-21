@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71CE1DF8EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 02:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D880DF8E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 02:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730668AbfJVAD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 20:03:56 -0400
+        id S1730597AbfJVADu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 20:03:50 -0400
 Received: from Galois.linutronix.de ([193.142.43.55]:38895 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730620AbfJVADy (ORCPT
+        with ESMTP id S1730548AbfJVADo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 20:03:54 -0400
+        Mon, 21 Oct 2019 20:03:44 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iMgxU-0004Hi-4l; Tue, 22 Oct 2019 01:19:28 +0200
+        id 1iMgxU-0004Ho-Gy; Tue, 22 Oct 2019 01:19:29 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3252C1C04E3;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id BF2601C04D3;
         Tue, 22 Oct 2019 01:19:20 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 23:19:19 -0000
+Date:   Mon, 21 Oct 2019 23:19:20 -0000
 From:   "tip-bot2 for Andi Kleen" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf evlist: Fix fix for freed id arrays
+Subject: [tip: perf/core] perf script: Fix --reltime with --time
 Cc:     Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191011182140.8353-2-andi@firstfloor.org>
-References: <20191011182140.8353-2-andi@firstfloor.org>
+In-Reply-To: <20191011182140.8353-1-andi@firstfloor.org>
+References: <20191011182140.8353-1-andi@firstfloor.org>
 MIME-Version: 1.0
-Message-ID: <157169995980.29376.12960960296127455918.tip-bot2@tip-bot2>
+Message-ID: <157169996037.29376.11389091155150315603.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,42 +48,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     5a40e1994815ab09c59614c6a13d94eef55d1a7f
-Gitweb:        https://git.kernel.org/tip/5a40e1994815ab09c59614c6a13d94eef55d1a7f
+Commit-ID:     b3509b6ed7a79ec49f6b64e4f3b780f259a2a468
+Gitweb:        https://git.kernel.org/tip/b3509b6ed7a79ec49f6b64e4f3b780f259a2a468
 Author:        Andi Kleen <ak@linux.intel.com>
-AuthorDate:    Fri, 11 Oct 2019 11:21:40 -07:00
+AuthorDate:    Fri, 11 Oct 2019 11:21:39 -07:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Tue, 15 Oct 2019 08:36:22 -03:00
 
-perf evlist: Fix fix for freed id arrays
+perf script: Fix --reltime with --time
 
-In the earlier fix for the memory overrun of id arrays I managed to typo
-the wrong event in the fix.
+My earlier patch to just enable --reltime with --time was a little too
+optimistic.  The --time parsing would accept absolute time, which is
+very confusing to the user.
 
-Of course we need to close the current event in the loop, not the
-original failing event.
+Support relative time in --time parsing too. This only works with recent
+perf record that records the first sample time. Otherwise we error out.
 
-The same test case as in the original patch still passes.
-
-Fixes: 7834fa948beb ("perf evlist: Fix access of freed id arrays")
+Fixes: 3714437d3fcc ("perf script: Allow --time with --reltime")
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Link: http://lore.kernel.org/lkml/20191011182140.8353-2-andi@firstfloor.org
+Link: http://lore.kernel.org/lkml/20191011182140.8353-1-andi@firstfloor.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evlist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-script.c  |  5 +++--
+ tools/perf/util/time-utils.c | 27 ++++++++++++++++++++++++---
+ tools/perf/util/time-utils.h |  5 +++++
+ 3 files changed, 32 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 21b77ef..8793b4e 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1599,7 +1599,7 @@ struct evsel *perf_evlist__reset_weak_group(struct evlist *evsel_list,
- 			is_open = false;
- 		if (c2->leader == leader) {
- 			if (is_open)
--				perf_evsel__close(&evsel->core);
-+				perf_evsel__close(&c2->core);
- 			c2->leader = c2;
- 			c2->core.nr_members = 0;
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 1c797a9..f86c5cc 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -3864,10 +3864,11 @@ int cmd_script(int argc, const char **argv)
+ 		goto out_delete;
+ 
+ 	if (script.time_str) {
+-		err = perf_time__parse_for_ranges(script.time_str, session,
++		err = perf_time__parse_for_ranges_reltime(script.time_str, session,
+ 						  &script.ptime_range,
+ 						  &script.range_size,
+-						  &script.range_num);
++						  &script.range_num,
++						  reltime);
+ 		if (err < 0)
+ 			goto out_delete;
+ 
+diff --git a/tools/perf/util/time-utils.c b/tools/perf/util/time-utils.c
+index 9796a2e..3024439 100644
+--- a/tools/perf/util/time-utils.c
++++ b/tools/perf/util/time-utils.c
+@@ -458,10 +458,11 @@ bool perf_time__ranges_skip_sample(struct perf_time_interval *ptime_buf,
+ 	return true;
+ }
+ 
+-int perf_time__parse_for_ranges(const char *time_str,
++int perf_time__parse_for_ranges_reltime(const char *time_str,
+ 				struct perf_session *session,
+ 				struct perf_time_interval **ranges,
+-				int *range_size, int *range_num)
++				int *range_size, int *range_num,
++				bool reltime)
+ {
+ 	bool has_percent = strchr(time_str, '%');
+ 	struct perf_time_interval *ptime_range;
+@@ -471,7 +472,7 @@ int perf_time__parse_for_ranges(const char *time_str,
+ 	if (!ptime_range)
+ 		return -ENOMEM;
+ 
+-	if (has_percent) {
++	if (has_percent || reltime) {
+ 		if (session->evlist->first_sample_time == 0 &&
+ 		    session->evlist->last_sample_time == 0) {
+ 			pr_err("HINT: no first/last sample time found in perf data.\n"
+@@ -479,7 +480,9 @@ int perf_time__parse_for_ranges(const char *time_str,
+ 			       "(if '--buildid-all' is enabled, please set '--timestamp-boundary').\n");
+ 			goto error;
  		}
++	}
+ 
++	if (has_percent) {
+ 		num = perf_time__percent_parse_str(
+ 				ptime_range, size,
+ 				time_str,
+@@ -492,6 +495,15 @@ int perf_time__parse_for_ranges(const char *time_str,
+ 	if (num < 0)
+ 		goto error_invalid;
+ 
++	if (reltime) {
++		int i;
++
++		for (i = 0; i < num; i++) {
++			ptime_range[i].start += session->evlist->first_sample_time;
++			ptime_range[i].end += session->evlist->first_sample_time;
++		}
++	}
++
+ 	*range_size = size;
+ 	*range_num = num;
+ 	*ranges = ptime_range;
+@@ -504,6 +516,15 @@ error:
+ 	return ret;
+ }
+ 
++int perf_time__parse_for_ranges(const char *time_str,
++				struct perf_session *session,
++				struct perf_time_interval **ranges,
++				int *range_size, int *range_num)
++{
++	return perf_time__parse_for_ranges_reltime(time_str, session, ranges,
++					range_size, range_num, false);
++}
++
+ int timestamp__scnprintf_usec(u64 timestamp, char *buf, size_t sz)
+ {
+ 	u64  sec = timestamp / NSEC_PER_SEC;
+diff --git a/tools/perf/util/time-utils.h b/tools/perf/util/time-utils.h
+index 4f42988..1142b0b 100644
+--- a/tools/perf/util/time-utils.h
++++ b/tools/perf/util/time-utils.h
+@@ -26,6 +26,11 @@ bool perf_time__ranges_skip_sample(struct perf_time_interval *ptime_buf,
+ 
+ struct perf_session;
+ 
++int perf_time__parse_for_ranges_reltime(const char *str, struct perf_session *session,
++				struct perf_time_interval **ranges,
++				int *range_size, int *range_num,
++				bool reltime);
++
+ int perf_time__parse_for_ranges(const char *str, struct perf_session *session,
+ 				struct perf_time_interval **ranges,
+ 				int *range_size, int *range_num);
