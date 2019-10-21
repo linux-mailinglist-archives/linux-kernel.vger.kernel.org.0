@@ -2,64 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E54DF2F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 131BEDF312
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:27:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729809AbfJUQZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:25:36 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:58675 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729657AbfJUQZe (ORCPT
+        id S1730072AbfJUQ0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:26:20 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34880 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729595AbfJUQ0O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:25:34 -0400
-Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1iMaUt-00032G-LA; Mon, 21 Oct 2019 17:25:31 +0100
-Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1iMaUt-0003YI-7X; Mon, 21 Oct 2019 17:25:31 +0100
-From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-To:     linux-kernel@lists.codethink.co.uk
-Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
-        Sudeep Holla <sudeep.holla@arm.com>,
+        Mon, 21 Oct 2019 12:26:14 -0400
+Received: by mail-pg1-f194.google.com with SMTP id c8so3300668pgb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 09:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FeEqDDuvyH1j0FkwnEHXEhJ7z7vVV3mb+til5JuVy4E=;
+        b=L8KbCMIZMxP2/ikOEVCaVOtgQiYYSXPdgW250Tq1STkF49vaQk3R5o7/jn3v5ajZbp
+         ydqA0q4Y7eZeucZjxDPT/99FlOAjOoFBxXR+42r+/Rkiey25D2gehkw0tu3RhUlmCKpG
+         o2oUle2jrjk5Q8f35+5xyrFgxajAkboXJop9KDriQvfZyaTxqY8uY3Bazh4lD8gAnlBZ
+         2yU3WuGv0nljF2MGSgD1AkYO3QrFrbykPlnVsu+7xKD+/7ecDGB35eephrOR/tbVALDD
+         1ImzxUDYILfSZGXq51tA24qE+j5WKw/gYMUVr0JgAIjxRFtWuQSpYxx3WYEg9n5T5D6/
+         UjCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FeEqDDuvyH1j0FkwnEHXEhJ7z7vVV3mb+til5JuVy4E=;
+        b=RTE0mJKTQzAiXjqojP/aKVcezJwlEqso2mX/zkRBh4voq8aRT5giQOebDnOCcPVnFY
+         V5+Z260NYaKkTXdzUkOtDqG64usudQOqAZZW1D8DWPv6aJcquLVZUsHxmKXiAkvCLD10
+         AJ+X7ZZ39eX5JfGZh3CtkrBgCtEzm/vgL1G/iC+zCCJ3dfJy4aMByueYfz9F6LxUq1rU
+         PLqmrdDSFBxvmkzDtdUKKrJjvdl4oHi4Yua6QfNa/xj3cEXCXmjscwW8x5eGGNd+ps9g
+         zyx8eenWVMgbEdvxud5nqoAOV1dmgWP0KHo04lpfKbnO4xGFOd/oKks3PZ0t6xyZl6+t
+         MnHw==
+X-Gm-Message-State: APjAAAUaCZckDBaINkuNHbEF4vmNZxuUGREU279I29bfc/IEnGNiCuu/
+        5MnFv0O6MyPcj5sJBjtY+n7y6g==
+X-Google-Smtp-Source: APXvYqy5d6rToN0TKdq5fL7MqUzExsdEL3H+tedaCNY+lPF4cHGJooqBtskg5MACrNiAARL8PJwnqw==
+X-Received: by 2002:a62:b504:: with SMTP id y4mr15005944pfe.40.1571675173480;
+        Mon, 21 Oct 2019 09:26:13 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id x5sm15983429pfi.32.2019.10.21.09.26.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 09:26:12 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 09:26:10 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     agross@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] RFC: cpu-topology: declare parse_acpi_topology in <linux/arch_topology.h>
-Date:   Mon, 21 Oct 2019 17:25:30 +0100
-Message-Id: <20191021162530.13611-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.23.0
+Subject: Re: [PATCH v2] tty: serial: msm_serial: Fix flow control
+Message-ID: <20191021162610.GC1204@tuxbook-pro>
+References: <20191021154616.25457-1-jeffrey.l.hugo@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021154616.25457-1-jeffrey.l.hugo@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The parse_acpi_topology() is not declared anywhere which
-causes the following sparse warning:
+On Mon 21 Oct 08:46 PDT 2019, Jeffrey Hugo wrote:
 
-drivers/base/arch_topology.c:522:19: warning: symbol 'parse_acpi_topology' was not declared. Should it be static?
+> hci_qca interfaces to the wcn3990 via a uart_dm on the msm8998 mtp and
+> Lenovo Miix 630 laptop.  As part of initializing the wcn3990, hci_qca
+> disables flow, configures the uart baudrate, and then reenables flow - at
+> which point an event is expected to be received over the uart from the
+> wcn3990.  It is observed that this event comes after the baudrate change
+> but before hci_qca re-enables flow. This is unexpected, and is a result of
+> msm_reset() being broken.
+> 
+> According to the uart_dm hardware documentation, it is recommended that
+> automatic hardware flow control be enabled by setting RX_RDY_CTL.  Auto
+> hw flow control will manage RFR based on the configured watermark.  When
+> there is space to receive data, the hw will assert RFR.  When the watermark
+> is hit, the hw will de-assert RFR.
+> 
+> The hardware documentation indicates that RFR can me manually managed via
+> CR when RX_RDY_CTL is not set.  SET_RFR asserts RFR, and RESET_RFR
+> de-asserts RFR.
+> 
+> msm_reset() is broken because after resetting the hardware, it
+> unconditionally asserts RFR via SET_RFR.  This enables flow regardless of
+> the current configuration, and would undo a previous flow disable
+> operation.  It should instead de-assert RFR via RESET_RFR to block flow
+> until the hardware is reconfigured.  msm_serial should rely on the client
+> to specify that flow should be enabled, either via mctrl() or the termios
+> structure, and only assert RFR in response to those triggers.
+> 
+> Fixes: 04896a77a97b ("msm_serial: serial driver for MSM7K onboard serial peripheral.")
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 
-RFC: is this the best place to put it?
+Looks good!
 
-Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
----
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-kernel@vger.kernel.org
----
- include/linux/arch_topology.h | 2 ++
- 1 file changed, 2 insertions(+)
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-diff --git a/include/linux/arch_topology.h b/include/linux/arch_topology.h
-index 42f2b5126094..7ae32900d9a2 100644
---- a/include/linux/arch_topology.h
-+++ b/include/linux/arch_topology.h
-@@ -59,4 +59,6 @@ void remove_cpu_topology(unsigned int cpuid);
- void reset_cpu_topology(void);
- #endif
- 
-+extern int parse_acpi_topology(void);
-+
- #endif /* _LINUX_ARCH_TOPOLOGY_H_ */
--- 
-2.23.0
-
+> ---
+> 
+> v2:
+> -mask out RX_RDY_CTL in msm_reset() to close a small race window for RFR
+> 
+>  drivers/tty/serial/msm_serial.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_serial.c
+> index 3657a24913fc..00964b6e4ac1 100644
+> --- a/drivers/tty/serial/msm_serial.c
+> +++ b/drivers/tty/serial/msm_serial.c
+> @@ -980,6 +980,7 @@ static unsigned int msm_get_mctrl(struct uart_port *port)
+>  static void msm_reset(struct uart_port *port)
+>  {
+>  	struct msm_port *msm_port = UART_TO_MSM(port);
+> +	unsigned int mr;
+>  
+>  	/* reset everything */
+>  	msm_write(port, UART_CR_CMD_RESET_RX, UART_CR);
+> @@ -987,7 +988,10 @@ static void msm_reset(struct uart_port *port)
+>  	msm_write(port, UART_CR_CMD_RESET_ERR, UART_CR);
+>  	msm_write(port, UART_CR_CMD_RESET_BREAK_INT, UART_CR);
+>  	msm_write(port, UART_CR_CMD_RESET_CTS, UART_CR);
+> -	msm_write(port, UART_CR_CMD_SET_RFR, UART_CR);
+> +	msm_write(port, UART_CR_CMD_RESET_RFR, UART_CR);
+> +	mr = msm_read(port, UART_MR1);
+> +	mr &= ~UART_MR1_RX_RDY_CTL;
+> +	msm_write(port, mr, UART_MR1);
+>  
+>  	/* Disable DM modes */
+>  	if (msm_port->is_uartdm)
+> -- 
+> 2.17.1
+> 
