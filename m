@@ -2,173 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22859DF2FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:26:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1C22DF2E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:22:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729939AbfJUQZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:25:40 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:36570 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729657AbfJUQZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:25:38 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2150780B1938B0A8656D;
-        Tue, 22 Oct 2019 00:25:30 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 22 Oct 2019 00:25:21 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>,
-        Luo Jiaxing <luojiaxing@huawei.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 18/18] scsi: hisi_sas: Record the phy down event in debugfs
-Date:   Tue, 22 Oct 2019 00:22:15 +0800
-Message-ID: <1571674935-108326-19-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1571674935-108326-1-git-send-email-john.garry@huawei.com>
-References: <1571674935-108326-1-git-send-email-john.garry@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+        id S1728793AbfJUQW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:22:27 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:37178 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727211AbfJUQW1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:22:27 -0400
+Received: from localhost (unknown [12.156.66.3])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 873891401B7A6;
+        Mon, 21 Oct 2019 09:22:26 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 09:22:26 -0700 (PDT)
+Message-Id: <20191021.092226.1711531718535546474.davem@davemloft.net>
+To:     tanhuazhong@huawei.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        salil.mehta@huawei.com, yisen.zhuang@huawei.com,
+        linuxarm@huawei.com, jakub.kicinski@netronome.com
+Subject: Re: [PATCH net-next 0/8] net: hns3: add some cleanups &
+ optimizations
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1571472236-17401-1-git-send-email-tanhuazhong@huawei.com>
+References: <1571472236-17401-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.2
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 21 Oct 2019 09:22:26 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luo Jiaxing <luojiaxing@huawei.com>
+From: Huazhong Tan <tanhuazhong@huawei.com>
+Date: Sat, 19 Oct 2019 16:03:48 +0800
 
-The number of phy down reflects the quality of the link between SAS
-controller and disk. In order to allow the user to confirm the link quality
-of the system, we record the number of phy down for each phy.
+> This patchset includes some cleanups and optimizations for the HNS3
+> ethernet driver.
+ ...
 
-The user can check the current phy down count by reading the debugfs file
-corresponding to the specific phy, or clear the phy down count by writing 0
-to the debugfs file.
-
-Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas.h       |  1 +
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 63 ++++++++++++++++++++++++++
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |  2 +
- 3 files changed, 66 insertions(+)
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-index 72823222e08f..233c73e01246 100644
---- a/drivers/scsi/hisi_sas/hisi_sas.h
-+++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -169,6 +169,7 @@ struct hisi_sas_phy {
- 	enum sas_linkrate	minimum_linkrate;
- 	enum sas_linkrate	maximum_linkrate;
- 	int enable;
-+	atomic_t down_cnt;
- };
- 
- struct hisi_sas_port {
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index a225f885b708..ed777b9e80b8 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -3705,6 +3705,52 @@ static const struct file_operations hisi_sas_debugfs_bist_enable_ops = {
- 	.owner = THIS_MODULE,
- };
- 
-+static ssize_t hisi_sas_debugfs_phy_down_cnt_write(struct file *filp,
-+						   const char __user *buf,
-+						   size_t count, loff_t *ppos)
-+{
-+	struct seq_file *s = filp->private_data;
-+	struct hisi_sas_phy *phy = s->private;
-+	unsigned int set_val;
-+	int res;
-+
-+	res = kstrtouint_from_user(buf, count, 0, &set_val);
-+	if (res)
-+		return res;
-+
-+	if (set_val > 0)
-+		return -EINVAL;
-+
-+	atomic_set(&phy->down_cnt, 0);
-+
-+	return count;
-+}
-+
-+static int hisi_sas_debugfs_phy_down_cnt_show(struct seq_file *s, void *p)
-+{
-+	struct hisi_sas_phy *phy = s->private;
-+
-+	seq_printf(s, "%d\n", atomic_read(&phy->down_cnt));
-+
-+	return 0;
-+}
-+
-+static int hisi_sas_debugfs_phy_down_cnt_open(struct inode *inode,
-+					      struct file *filp)
-+{
-+	return single_open(filp, hisi_sas_debugfs_phy_down_cnt_show,
-+			   inode->i_private);
-+}
-+
-+static const struct file_operations hisi_sas_debugfs_phy_down_cnt_ops = {
-+	.open = hisi_sas_debugfs_phy_down_cnt_open,
-+	.read = seq_read,
-+	.write = hisi_sas_debugfs_phy_down_cnt_write,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+	.owner = THIS_MODULE,
-+};
-+
- void hisi_sas_debugfs_work_handler(struct work_struct *work)
- {
- 	struct hisi_hba *hisi_hba =
-@@ -3837,6 +3883,21 @@ static int hisi_sas_debugfs_alloc(struct hisi_hba *hisi_hba, int dump_index)
- 	return -ENOMEM;
- }
- 
-+static void hisi_sas_debugfs_phy_down_cnt_init(struct hisi_hba *hisi_hba)
-+{
-+	struct dentry *dir = debugfs_create_dir("phy_down_cnt",
-+						hisi_hba->debugfs_dir);
-+	char name[16];
-+	int phy_no;
-+
-+	for (phy_no = 0; phy_no < hisi_hba->n_phy; phy_no++) {
-+		snprintf(name, 16, "%d", phy_no);
-+		debugfs_create_file(name, 0600, dir,
-+				    &hisi_hba->phy[phy_no],
-+				    &hisi_sas_debugfs_phy_down_cnt_ops);
-+	}
-+}
-+
- static void hisi_sas_debugfs_bist_init(struct hisi_hba *hisi_hba)
- {
- 	hisi_hba->debugfs_bist_dentry =
-@@ -3883,6 +3944,8 @@ void hisi_sas_debugfs_init(struct hisi_hba *hisi_hba)
- 	hisi_hba->debugfs_dump_dentry =
- 			debugfs_create_dir("dump", hisi_hba->debugfs_dir);
- 
-+	hisi_sas_debugfs_phy_down_cnt_init(hisi_hba);
-+
- 	for (i = 0; i < hisi_sas_debugfs_dump_count; i++) {
- 		if (hisi_sas_debugfs_alloc(hisi_hba, i)) {
- 			debugfs_remove_recursive(hisi_hba->debugfs_dir);
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index e4da309009c0..2ae7070db41a 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -1549,6 +1549,8 @@ static irqreturn_t phy_down_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
- 	u32 phy_state, sl_ctrl, txid_auto;
- 	struct device *dev = hisi_hba->dev;
- 
-+	atomic_inc(&phy->down_cnt);
-+
- 	del_timer(&phy->timer);
- 	hisi_sas_phy_write32(hisi_hba, phy_no, PHYCTRL_NOT_RDY_MSK, 1);
- 
--- 
-2.17.1
-
+Series applied.
