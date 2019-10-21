@@ -2,120 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77AAFDF31E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04D54DF36A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:44:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbfJUQ3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:29:38 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44829 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbfJUQ3h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:29:37 -0400
-Received: by mail-io1-f66.google.com with SMTP id w12so16635812iol.11
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 09:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=QksSY7CHcsQDyvWI4aoDqfiItjXy21p3bY0J2xZiASM=;
-        b=N2tR06QrZWO4pmNyszIUZ+mxDRLHqpDfaebBQiujkukbcGEn1nnWelQEh1zW5RszWK
-         2QtqJF2PylOtdATK/B0p4TaLf69RBYVw15TjWRfhd0sibIYSks1mC9DEjXiWFJ2VvuYS
-         mdpk5L/S4TyX1yW4cVGS3yhFPJr/vI0bhuzR+ZQqOrvFQsfoBm69ELhcHralfCp2NZnr
-         GdGXAjMx61tr2o56NxBMEGxGtCDWXxYx6XIRqvxrXXvU8XfOVd+TgR51BPSnvWY9moUx
-         jevVahV8kaGtJrIz73lfFIpCLsneYFOTrDpQ8vNnVrzBjebaobIDBsBlFGrU4AbQX96R
-         9OJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=QksSY7CHcsQDyvWI4aoDqfiItjXy21p3bY0J2xZiASM=;
-        b=Db1/V2tVMe/mTqdBR6pcCszzFdt30cVvpGWeGAhuF8ivisiKoi28a/4Ee2CrErxxrl
-         SdACIzXeiaQEy72QGMEHiiL7JdHhClnorPppJaun8+ZwL09ZcuI/mYB5+UTC3cOJ8TiH
-         /dmly0ZSBK/1WqhhFv30yh4eNB5f2odHoM/0axzhAxzoiTbDGbROJk/BsR9HicDZLfsV
-         UV48N7Uey5PvZ12XEZ5691UbhPJNqdZ051I5rtj8wMzymSFZgldJIJJUvmIxf00ULfTh
-         aR5mePzbJEgqnrVU37Znk/rvqiUfvEOpfIm6u5KEuI/FYLj5kXUXsrymilxMfoI2cIkd
-         TkeA==
-X-Gm-Message-State: APjAAAVVuRNdHbZT/ZEs41ESKRtJx3WYeChPYVsd8vAkIKW2umWhiaMk
-        aaEfSK5FDe8awhAV8VElMxXkxOXSViMy9rFXchqlWQ==
-X-Google-Smtp-Source: APXvYqySRfm1mH1L9jhvI5Jtz5amTa5nTOjvdKqiMYSyVlh9AaeuaMbimiFuiPr7MXVNzXnlztnF+f8r43m1ytzkdE4=
-X-Received: by 2002:a02:920f:: with SMTP id x15mr22552675jag.57.1571675375419;
- Mon, 21 Oct 2019 09:29:35 -0700 (PDT)
+        id S1729953AbfJUQnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:43:39 -0400
+Received: from mga01.intel.com ([192.55.52.88]:59354 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727582AbfJUQnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:43:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 09:43:38 -0700
+X-IronPort-AV: E=Sophos;i="5.67,324,1566889200"; 
+   d="scan'208";a="187595740"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 09:43:38 -0700
+Subject: [PATCH v2] fs/dax: Fix pmd vs pte conflict detection
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Jeff Smits <jeff.smits@intel.com>,
+        Doug Nelson <doug.nelson@intel.com>, stable@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jeff Moyer <jmoyer@redhat.com>,
+        "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Date:   Mon, 21 Oct 2019 09:29:20 -0700
+Message-ID: <157167532455.3945484.11971474077040503994.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-References: <20191006053916.8849-1-brgl@bgdev.pl> <CAMRc=Me3Q=67fCDrFM38LAGXCd+apJybLYVfyrfwmwYa5L1CmQ@mail.gmail.com>
- <CAK8P3a3tUg4SBtO0xb2GAHfegp23WF4TLymzqFfra2-fGLRO7w@mail.gmail.com>
-In-Reply-To: <CAK8P3a3tUg4SBtO0xb2GAHfegp23WF4TLymzqFfra2-fGLRO7w@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 21 Oct 2019 18:29:24 +0200
-Message-ID: <CAMRc=Me8g2gFiag0UQwuu4UZONcowQw900+MUbGF+4-E0z09Zg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] drivers: add new variants of devm_platform_ioremap_resource()
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Christoph Hellwig <hch@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pon., 21 pa=C5=BA 2019 o 17:53 Arnd Bergmann <arnd@arndb.de> napisa=C5=82(a=
-):
->
-> On Mon, Oct 21, 2019 at 5:04 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
-:
-> > niedz., 6 pa=C5=BA 2019 o 07:39 Bartosz Golaszewski <brgl@bgdev.pl> nap=
-isa=C5=82(a):
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > Bartosz Golaszewski (8):
-> > >   Documentation: devres: add missing entry for
-> > >     devm_platform_ioremap_resource()
-> > >   lib: devres: prepare devm_ioremap_resource() for more variants
-> > >   lib: devres: provide devm_ioremap_resource_wc()
-> > >   drivers: platform: provide devm_platform_ioremap_resource_wc()
-> > >   misc: sram: use devm_platform_ioremap_resource_wc()
-> > >   drivers: provide devm_platform_ioremap_resource_byname()
-> > >   gpio: mvebu: use devm_platform_ioremap_resource_byname()
-> > >   gpio: tegra186: use devm_platform_ioremap_resource_byname()
-> > >
-> > >  .../driver-api/driver-model/devres.rst        |  4 ++
-> > >  drivers/base/platform.c                       | 39 +++++++++++-
-> > >  drivers/gpio/gpio-mvebu.c                     | 19 +++---
-> > >  drivers/gpio/gpio-tegra186.c                  |  4 +-
-> > >  drivers/misc/sram.c                           | 28 +++------
-> > >  include/linux/device.h                        |  2 +
-> > >  include/linux/platform_device.h               |  6 ++
-> > >  lib/devres.c                                  | 62 +++++++++++++----=
---
-> > >  8 files changed, 108 insertions(+), 56 deletions(-)
-> >
-> > Greg, Arnd,
-> >
-> > gentle ping for this. I noticed that some maintainers are complaining
-> > about being spammed with patches converting old drivers to using
-> > devm_platform_ioremap_resource() and there's even a patch removing the
-> > relevant coccinelle script on the list, but I think for new drivers
-> > these are still useful. Do you want to pick them up for v5.5 (or at
-> > all)?
->
-> I think this series is useful and we should merge it. Are there any
-> remaining dependencies or conflicts with Christoph Hellwig's recent
-> __ioremap rework? If there are, I would prioritize his work and maybe
-> delay this one by another merge window, otherwise please add
-> my Reviewed-by to all patches and resend them for Greg to pick
-> up (provided he has no objections).
->
->         Arnd
+Users reported a v5.3 performance regression and inability to establish
+huge page mappings. A revised version of the ndctl "dax.sh" huge page
+unit test identifies commit 23c84eb78375 "dax: Fix missed wakeup with
+PMD faults" as the source.
 
-Is Christoph's work in next? The series doesn't apply cleanly on next,
-I needed to fix a couple conflicts. What branch should I rebase it on
-before resending?
+Update get_unlocked_entry() to check for NULL entries before checking
+the entry order, otherwise NULL is misinterpreted as a present pte
+conflict. The 'order' check needs to happen before the locked check as
+an unlocked entry at the wrong order must fallback to lookup the correct
+order.
 
-Bart
+Reported-by: Jeff Smits <jeff.smits@intel.com>
+Reported-by: Doug Nelson <doug.nelson@intel.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 23c84eb78375 ("dax: Fix missed wakeup with PMD faults")
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+Changes in v2:
+- Update the changelog to reflect the user visible effects of the bug
+  (Jeff)
+
+ fs/dax.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/dax.c b/fs/dax.c
+index 6bf81f931de3..2cc43cd914eb 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -220,10 +220,11 @@ static void *get_unlocked_entry(struct xa_state *xas, unsigned int order)
+ 
+ 	for (;;) {
+ 		entry = xas_find_conflict(xas);
++		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
++			return entry;
+ 		if (dax_entry_order(entry) < order)
+ 			return XA_RETRY_ENTRY;
+-		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
+-				!dax_is_locked(entry))
++		if (!dax_is_locked(entry))
+ 			return entry;
+ 
+ 		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
+
