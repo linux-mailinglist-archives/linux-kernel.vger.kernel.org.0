@@ -2,93 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3707DDE651
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:29:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95523DE64D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:28:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbfJUI2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 04:28:36 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55738 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727730AbfJUI2d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 04:28:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571646512;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Gz00+Twny7yE9efbQh6949Yl0LL93FuRzfJ8xHPNvtw=;
-        b=OxwIoB+CJ2qtBBQyfam9Q97WOIYsoI5zZx7R9lP5BxBC9KQlapatxwmF/OoTFjOnWrsHDl
-        Wi36VqbeR/Chn8YdDvxtQX3D+PS+dM8xAQLHt5ESebOezRsxKyY975XlkGd+kCP6vGzwWJ
-        t5D6b0tPDoLSo56TdYJNKkByOGLmx70=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-368-Tc0YJI4sMVeMAx8tzIlxfQ-1; Mon, 21 Oct 2019 04:28:29 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727726AbfJUI2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 04:28:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53762 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726180AbfJUI2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 04:28:23 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D38DB47B;
-        Mon, 21 Oct 2019 08:28:27 +0000 (UTC)
-Received: from [10.36.116.198] (ovpn-116-198.ams2.redhat.com [10.36.116.198])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F3FFD60126;
-        Mon, 21 Oct 2019 08:28:16 +0000 (UTC)
-Subject: Re: [patch 07/26] mm/memunmap: don't access uninitialized memmap in
- memunmap_pages()
-To:     Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     akpm@linux-foundation.org, alexander.h.duyck@linux.intel.com,
-        aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com,
-        benh@kernel.crashing.org, borntraeger@de.ibm.com, bp@alien8.de,
-        cai@lca.pw, catalin.marinas@arm.com, christophe.leroy@c-s.fr,
-        dalias@libc.org, damian.tometzki@gmail.com,
-        dan.j.williams@intel.com, dave.hansen@linux.intel.com,
-        fenghua.yu@intel.com, gerald.schaefer@de.ibm.com,
-        glider@google.com, gor@linux.ibm.com, gregkh@linuxfoundation.org,
-        heiko.carstens@de.ibm.com, hpa@zytor.com, ira.weiny@intel.com,
-        jgg@ziepe.ca, linux-mm@kvack.org, logang@deltatee.com,
-        luto@kernel.org, mark.rutland@arm.com, mgorman@techsingularity.net,
-        mingo@redhat.com, mm-commits@vger.kernel.org, mpe@ellerman.id.au,
-        osalvador@suse.de, pagupta@redhat.com, pasha.tatashin@soleen.com,
-        pasic@linux.ibm.com, paulus@samba.org,
-        pavel.tatashin@microsoft.com, peterz@infradead.org,
-        richard.weiyang@gmail.com, richardw.yang@linux.intel.com,
-        robin.murphy@arm.com, rppt@linux.ibm.com, stable@vger.kernel.org,
-        steve.capper@arm.com, tglx@linutronix.de, thomas.lendacky@amd.com,
-        tony.luck@intel.com, torvalds@linux-foundation.org, vbabka@suse.cz,
-        will@kernel.org, willy@infradead.org,
-        yamada.masahiro@socionext.com, yaojun8558363@gmail.com,
-        ysato@users.sourceforge.jp, yuzhao@google.com
-References: <20191019031939.9XlSnLGcS%akpm@linux-foundation.org>
- <20191021082610.GC9379@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <8ae0ba46-371b-9fed-0225-2c05bd3d6748@redhat.com>
-Date:   Mon, 21 Oct 2019 10:28:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C0FB2064A;
+        Mon, 21 Oct 2019 08:28:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571646502;
+        bh=tDjT88ehXn17T4Z8Un3YkEcUnFAmU6vDClRr1XSP4eU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=k/S0BIN6FthMY7nGWZKMDt3knzW5mNoyrW400Rd0XNo9+SBfwIj6EozNtWoMw5/bt
+         Yn2I63Nz/BEAl4XSszrNxHUOvd04KuZEjZAgV3iX4EyedCj8lXlyFa5CRgu3PbAad/
+         uh3GTf1u26OlTSF+fku0QThJ+L+IsGKIsSF27AmY=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jaswinder.singh@linaro.org,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>
+Subject: [BUGFIX PATCH v2 2/5] selftests: vm: Build/Run 64bit tests only on 64bit arch
+Date:   Mon, 21 Oct 2019 17:28:18 +0900
+Message-Id: <157164649814.17692.12605711936383924363.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <157164647813.17692.3834082082658965225.stgit@devnote2>
+References: <157164647813.17692.3834082082658965225.stgit@devnote2>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20191021082610.GC9379@dhcp22.suse.cz>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: Tc0YJI4sMVeMAx8tzIlxfQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.10.19 10:26, Michal Hocko wrote:
-> Has this been properly reviewed? I do not see any Acks nor Reviewed-bys.
->=20
+Some virtual address range tests requires 64bit address space,
+and we can not build and run those tests on the 32bit machine.
 
-As I modified this patch while carrying it along, it at least has my=20
-implicit Ack/RB.
+Filter the 64bit architectures in Makefile and run_vmtests,
+so that those tests are built/run only on 64bit archs.
 
---=20
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+---
+ tools/testing/selftests/vm/Makefile    |    5 +++++
+ tools/testing/selftests/vm/run_vmtests |   10 ++++++++++
+ 2 files changed, 15 insertions(+)
 
-Thanks,
-
-David / dhildenb
+diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
+index 9534dc2bc929..7f9a8a8c31da 100644
+--- a/tools/testing/selftests/vm/Makefile
++++ b/tools/testing/selftests/vm/Makefile
+@@ -1,5 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # Makefile for vm selftests
++uname_M := $(shell uname -m 2>/dev/null || echo not)
++ARCH ?= $(shell echo $(uname_M) | sed -e 's/aarch64.*/arm64/')
+ 
+ CFLAGS = -Wall -I ../../../../usr/include $(EXTRA_CFLAGS)
+ LDLIBS = -lrt
+@@ -16,8 +18,11 @@ TEST_GEN_FILES += on-fault-limit
+ TEST_GEN_FILES += thuge-gen
+ TEST_GEN_FILES += transhuge-stress
+ TEST_GEN_FILES += userfaultfd
++
++ifneq (,$(filter $(ARCH),arm64 ia64 mips64 parisc64 ppc64 riscv64 s390x sh64 sparc64 x86_64))
+ TEST_GEN_FILES += va_128TBswitch
+ TEST_GEN_FILES += virtual_address_range
++endif
+ 
+ TEST_PROGS := run_vmtests
+ 
+diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftests/vm/run_vmtests
+index 951c507a27f7..a692ea828317 100755
+--- a/tools/testing/selftests/vm/run_vmtests
++++ b/tools/testing/selftests/vm/run_vmtests
+@@ -58,6 +58,14 @@ else
+ 	exit 1
+ fi
+ 
++#filter 64bit architectures
++ARCH64STR="arm64 ia64 mips64 parisc64 ppc64 riscv64 s390x sh64 sparc64 x86_64"
++if [ -z $ARCH ]; then
++  ARCH=`uname -m 2>/dev/null | sed -e 's/aarch64.*/arm64/'`
++fi
++VADDR64=0
++echo "$ARCH64STR" | grep $ARCH && VADDR64=1
++
+ mkdir $mnt
+ mount -t hugetlbfs none $mnt
+ 
+@@ -189,6 +197,7 @@ else
+ 	echo "[PASS]"
+ fi
+ 
++if [ $VADDR64 -ne 0 ]; then
+ echo "-----------------------------"
+ echo "running virtual_address_range"
+ echo "-----------------------------"
+@@ -210,6 +219,7 @@ if [ $? -ne 0 ]; then
+ else
+     echo "[PASS]"
+ fi
++fi # VADDR64
+ 
+ echo "------------------------------------"
+ echo "running vmalloc stability smoke test"
 
