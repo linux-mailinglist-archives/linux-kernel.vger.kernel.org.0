@@ -2,214 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 488EFDEAF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85147DEAF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:32:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbfJULbh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 07:31:37 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54072 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727571AbfJULbh (ORCPT
+        id S1728455AbfJULcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 07:32:13 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43736 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727685AbfJULcN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 07:31:37 -0400
-Received: by mail-wm1-f65.google.com with SMTP id i16so12898157wmd.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 04:31:35 -0700 (PDT)
+        Mon, 21 Oct 2019 07:32:13 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c2so8302568wrr.10;
+        Mon, 21 Oct 2019 04:32:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=HROsPL2ByDXym6i/NHIHjJkM5kNiw9jG1m8a8LCeIIQ=;
-        b=PvVi5E3b/QEtjs/7GPTJkHEgTng108xrwCrEq3OeVnQI/O2sSx9Y5Hr8Q8GGsQ0k2c
-         OwivZCXGkcoAyDW3o+/DoYU75IjkTvv2Qpi4X94sUOe+LMSI0rFp0pwmRduwBWfM6qDj
-         KK+spBf+D/bMw2wS+NIGSJTt+0iIVP+gqX5uEuC7cI1X+n1WypYrGryTFXxeI6FTVmEb
-         qlwTGE5oFYvkYi4YEZXNFQ3kq8Aehp1No+gJ9JrI2dYSj+R+rWT7o2z/M8UQSU7wRn2F
-         TsO2LqfKosoQW6t9QnXaMW9J3LCu4QPbJisQNIA/eQ79jMD+g8nih6SrmAFJsQV5H20r
-         aY6g==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=dmRonkI3afpK0imoXn1gq5xR7xj6dy0LkZHT5B+WJK4=;
+        b=WAB+IVuKri7jyIS+XrkdoQjF/G1NPV05XAIxTDCvTQWJKxQzUkQgo2hySIbm2mQM0W
+         JExD82SpklgFPYFn/C0cyfEwjnkn3bTM/i9fzxcMFiCT9nYtCUXvRowCdR1KMFuYQE5n
+         Ee6XfNvGgmykJ3mdNEQ68xHCLwARAQCEeFkvqGxzO4Y4wzFS9DDuMBt/wOcb6odAeky5
+         KVJKGsryqDF6E0edd0XHPOvRfdZgotLjgd5yf9xDAGrgrUBbNZNmcwd/LqLPNignYlrr
+         YU2aSXwoqmNZ1Qs1UCcHASroQAQAuQ57sTmuWGbxZEbAa8ePKRJplh5UdrXmI1wzAc65
+         9SZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=HROsPL2ByDXym6i/NHIHjJkM5kNiw9jG1m8a8LCeIIQ=;
-        b=pH6pPq7fZi909M2nVkrMpkXO5DaRbFYFeD+vfz1ykg47UgIgnJ5gU+ecgOhF0dt33t
-         54NVZkfjf5/hQr4okNEzjd5Jeo9YRPORZi4f4Yy9UJak6opzRdRYGwP2UJBVyUfA5QkW
-         ea6PsqvnDTJPDTFu7Uw3atMXN/MrtGkGjOsyB+HyWLXjxKc297Ulmq5tVQQw4SQV2bEV
-         VGz2bAXPSFJcrRhzCmgfgvMhZHvk3SsPUrslOsAZxf921C43VcOSeYbB7Bn/a6SD0K8s
-         9B9SU1FpPQgb3udAcBktqxyiT/HPVrGbIGaWYzCmZ2F3bYjng+RNu66W3X9J/PFMKRhE
-         fvXw==
-X-Gm-Message-State: APjAAAVG5fN9ijResvw5MsXeMcKfeDYj+8YI1yslc3K7Hde0mV+d7DG6
-        HHVb8gePjzZAMwQ3idUm+twG4Q==
-X-Google-Smtp-Source: APXvYqz1au/AUOhj6ismuX2RR7PZXMJCNaAO/iedIYnZZsH6iJy5FEzKuwxsm7YEMvrMJQEsfA7hCQ==
-X-Received: by 2002:a05:600c:1107:: with SMTP id b7mr20230104wma.151.1571657494379;
-        Mon, 21 Oct 2019 04:31:34 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id e3sm13450131wme.39.2019.10.21.04.31.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 04:31:33 -0700 (PDT)
-References: <1571382865-41978-1-git-send-email-jian.hu@amlogic.com> <1571382865-41978-3-git-send-email-jian.hu@amlogic.com>
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jian Hu <jian.hu@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        "Rob Herring" <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] clk: meson: add support for A1 PLL clock ops
-In-reply-to: <1571382865-41978-3-git-send-email-jian.hu@amlogic.com>
-Date:   Mon, 21 Oct 2019 13:31:32 +0200
-Message-ID: <1jtv82bai3.fsf@starbuckisacylon.baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=dmRonkI3afpK0imoXn1gq5xR7xj6dy0LkZHT5B+WJK4=;
+        b=YZZdJICk/kWCqq1LqEnAkGS67R1S3KCu5EUtqqOxaXj4Ln+uiQRRmMKd1gYuOZeTHg
+         NFzPlmkR7+0vCtR9NtVlzvz1os0tZKZ3yeihkxDO+ar2lpSZb3AkmvXy0yuqJPcQwYSa
+         ojDkq4pThkKzDkQ+TOCSIqbDWBR8VYYDzha8lndp16+cU2a3guPDKLGco5mWgRp3pWrt
+         Tz3q6a5JT+FShxLtd3mOGvWvqTgHoUZAT/fRcgdXYhatEMM0VaHNcArjUMSuJiGjToWH
+         gtp78PI1cviIvFTrCI2IWKHJPvd2/oZvololysqwl3gWXoDJ9OX/ZrhAlvxYgp3R1/zr
+         3r5w==
+X-Gm-Message-State: APjAAAWABCLC9FD4JDSUsxkPWNMsLl99F0C7/nnyHT7Dvg+0YxhGYLA4
+        4gcq45G+8q6ZA/D6Pp6y6U1gOK6Sgx6Kuls6Z+s13jg2El4=
+X-Google-Smtp-Source: APXvYqz+ZPbQLozAQPGPER0WaspvJJddEsUd8jsTQ7g1P2xNiYmNSqmTPpYmSVUbh64hlbHHCu7ymudOIHJcBIQ34/g=
+X-Received: by 2002:a5d:5544:: with SMTP id g4mr892556wrw.72.1571657531203;
+ Mon, 21 Oct 2019 04:32:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <453A1153-9493-4A04-BF66-CE6A572DEBDB@paragon-software.com>
+ <CAFLxGvyFBGiDab4wxWidjRyDgWkHVfigVsHiRDB4swpB3G+hvQ@mail.gmail.com>
+ <20191021105409.32okvzbslxmcjdze@pali> <0877502e-8369-9cfd-36e8-5a4798260cd4@redhat.com>
+ <20191021111357.q2lg2g43y7hrddqi@pali>
+In-Reply-To: <20191021111357.q2lg2g43y7hrddqi@pali>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Mon, 21 Oct 2019 13:31:59 +0200
+Message-ID: <CAFLxGvyWtWUm81-qyQ-F20bt1pL7_C6rRsCzO84QSLs=gxMDAg@mail.gmail.com>
+Subject: Re: [PATCH] fs: exFAT read-only driver GPL implementation by Paragon Software.
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc:     Maurizio Lombardi <mlombard@redhat.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 21, 2019 at 1:13 PM Pali Roh=C3=A1r <pali.rohar@gmail.com> wrot=
+e:
+> On Monday 21 October 2019 13:08:07 Maurizio Lombardi wrote:
+> > Dne 21.10.2019 v 12:54 Pali Roh=C3=A1r napsal(a):
+> Maurizio, thank you for reference! I have not caught this Samsung
+> activity yet! So we now we have +1 for count of exFAT drivers.
 
-On Fri 18 Oct 2019 at 09:14, Jian Hu <jian.hu@amlogic.com> wrote:
+This is how I counted three exfat drivers.
+1. staging/exfat (old samsung driver)
+2. sdfat (new samsung dirver)
+3. paragon read-only
 
-> The A1 PLL design is different with previous SoCs. The PLL
-> internal analog modules Power-on sequence is different
-> with previous, and thus requires a strict register sequence to
-> enable the PLL. Unlike the previous series, the maximum frequency
-> is 6G in G12A, for A1 the maximum is 1536M.
->
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> ---
->  drivers/clk/meson/clk-pll.c | 66 ++++++++++++++++++++++++++++++++++++++++-----
->  drivers/clk/meson/clk-pll.h |  1 +
->  2 files changed, 61 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index ddb1e56..b440e62 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-> @@ -349,6 +349,56 @@ static void meson_clk_pll_disable(struct clk_hw *hw)
->  	meson_parm_write(clk->map, &pll->en, 0);
->  }
->  
-> +/*
-> + * The A1 design is different with previous SoCs.The PLL
-> + * internal analog modules Power-on sequence is different with
-> + * previous, different PLL has the different sequence, and
-> + * thus requires a strict register sequence to enable the PLL.
-> + * When set a new target frequency, the sequence should keep
-> + * the same with the initial sequence. Unlike the previous series,
-> + * the maximum frequency is 6G in G12A, for A1 the maximum
-> + * is 1536M.
-
-The comment about the max frequency belongs in your a1 driver, not in
-the PLL driver
-
-> + */
-> +static void meson_params_update_with_init_seq(struct clk_regmap *clk,
-> +				       struct meson_clk_pll_data *pll,
-> +				       unsigned int m, unsigned int n,
-> +				       unsigned int frac)
-> +{
-> +	struct parm *pm = &pll->m;
-> +	struct parm *pn = &pll->n;
-> +	struct parm *pfrac = &pll->frac;
-> +	const struct reg_sequence *init_regs = pll->init_regs;
-> +	unsigned int i, val;
-> +
-> +	for (i = 0; i < pll->init_count; i++) {
-> +		if (pn->reg_off == init_regs[i].reg) {
-> +			/* Clear M N bits and Update M N value */
-> +			val = init_regs[i].def;
-> +			val &= CLRPMASK(pn->width, pn->shift);
-> +			val &= CLRPMASK(pm->width, pm->shift);
-> +			val |= n << pn->shift;
-> +			val |= m << pm->shift;
-> +			regmap_write(clk->map, pn->reg_off, val);
-> +		} else if (MESON_PARM_APPLICABLE(&pll->frac) &&
-> +			   (pfrac->reg_off == init_regs[i].reg)) {
-> +			/* Clear Frac bits and Update Frac value */
-> +			val = init_regs[i].def;
-> +			val &= CLRPMASK(pfrac->width, pfrac->shift);
-> +			val |= frac << pfrac->shift;
-> +			regmap_write(clk->map, pfrac->reg_off, val);
-> +		} else {
-> +			/*
-> +			 * According to the PLL hardware constraint,
-> +			 * the left registers should be setted again.
-> +			 */
-> +			val = init_regs[i].def;
-> +			regmap_write(clk->map, init_regs[i].reg, val);
-> +		}
-> +		if (init_regs[i].delay_us)
-> +			udelay(init_regs[i].delay_us);
-> +	}
-
-So:
-
-1) All the code above this there make the PLL lock, IOW enable the
-PLL. It does not belong in the set_rate() callback but in enable() or
-prepare() maybe.
-
-2) All the above is works but it is a bit over complicated for what it
-does. From the a1_hifi_init_regs I see, all you really need to do is
-  * toggle BIT(6) in CTRL2
-  * toggle BIT(28) in CTRL0 (enable PARM)
-  * toggle BIT(26) in CTRL0
-
-You could use PARM 'rst' for one them and introduce another parm for the
-other one. You would not need to repoke the whole sequence this way.
-
-> +}
-> +
->  static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  				  unsigned long parent_rate)
->  {
-> @@ -366,16 +416,20 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  	if (ret)
->  		return ret;
->  
-> +	if (MESON_PARM_APPLICABLE(&pll->frac))
-> +		frac = __pll_params_with_frac(rate, parent_rate, m, n, pll);
-> +
->  	enabled = meson_parm_read(clk->map, &pll->en);
->  	if (enabled)
->  		meson_clk_pll_disable(hw);
->  
-> -	meson_parm_write(clk->map, &pll->n, n);
-> -	meson_parm_write(clk->map, &pll->m, m);
-> -
-> -	if (MESON_PARM_APPLICABLE(&pll->frac)) {
-> -		frac = __pll_params_with_frac(rate, parent_rate, m, n, pll);
-> -		meson_parm_write(clk->map, &pll->frac, frac);
-> +	if (pll->strict_sequence)
-> +		meson_params_update_with_init_seq(clk, pll, m, n, frac);
-> +	else {
-> +		meson_parm_write(clk->map, &pll->n, n);
-> +		meson_parm_write(clk->map, &pll->m, m);
-> +		if (MESON_PARM_APPLICABLE(&pll->frac))
-> +			meson_parm_write(clk->map, &pll->frac, frac);
->  	}
->  
->  	/* If the pll is stopped, bail out now */
-> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
-> index 367efd0..d5789cef 100644
-> --- a/drivers/clk/meson/clk-pll.h
-> +++ b/drivers/clk/meson/clk-pll.h
-> @@ -41,6 +41,7 @@ struct meson_clk_pll_data {
->  	const struct pll_params_table *table;
->  	const struct pll_mult_range *range;
->  	u8 flags;
-> +	bool strict_sequence;
-
-Don't introduce parameter for this We have ops to tune the behavior of
-the clock driver. Properly refactor the code if some of it is common.
-
->  };
->  
->  extern const struct clk_ops meson_clk_pll_ro_ops;
-
+--=20
+Thanks,
+//richard
