@@ -2,112 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6B14E0029
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30D48E0062
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 11:08:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731379AbfJVI7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:59:34 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40050 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728832AbfJVI7d (ORCPT
+        id S2388593AbfJVJIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 05:08:36 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50640 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388565AbfJVJIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:59:33 -0400
-Received: by mail-wr1-f67.google.com with SMTP id o28so17077993wro.7
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 01:59:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jxmCwIeHDgkpYVsOzcGzZpWtPrDaLJlk3S4i0/jBbqQ=;
-        b=FzT8PFDjIeRzigByVRwj0mJBOY+NZri4fx2GCcFeQvsKu0uIP5+G1eqnDjAUzziXIW
-         iSpGdtjw/lp3Cqe01O2ixd9JHyOXSLeoDOMn/iys8YEejPa0QHKhm7+iDi1ZmWFGWNjP
-         E9UwvDBr6PKnx7uCF5g51cb3H2YhOPDsKpR2o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=jxmCwIeHDgkpYVsOzcGzZpWtPrDaLJlk3S4i0/jBbqQ=;
-        b=ovJTohS9Ic68MVmkohPW6dKG1/gtQm00QhF0yte6rJlVzcWW4cSDDtRqACdDrMwGLt
-         BTlP/jObJ+xn20zFAr1s46nXAauPLjgT0YpA2DLP/Scx5sIJinDvZeq+IaIjKKUVYCYu
-         7MMjOn8R4h5V623whf1t111ukpejQWVhoRqWi1zZw6a/Z59LQtjO8yaWe999GxtztvFt
-         uxTfMkj20m9AfD01qPt971cs7eBsiZPwRe71xQ/9BHQIMSKRnJAGU9DInxCgOl/wTb2l
-         LFDBkdD6+RB98T7U5gyTVlPxiQxGkqEcE7sJASOD5ziMFxG2N1/GEgVG6xDXH8ZM2n9o
-         wn2Q==
-X-Gm-Message-State: APjAAAWI8bPvRTXnSKjjOtScanphu0wwgC2pMpKhZJVYTxIYP0Olk6BJ
-        s5xUSpha/eCDqxI52V10M8RgYA==
-X-Google-Smtp-Source: APXvYqzd2QpyGvXdawpEdZBVER8fWByd/JbP1ANnd25CFqLpm8M5brZeLwzlHZe2BHfKM5mySIaaEw==
-X-Received: by 2002:adf:9bdc:: with SMTP id e28mr2303057wrc.309.1571734770249;
-        Tue, 22 Oct 2019 01:59:30 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id b196sm10894237wmd.24.2019.10.22.01.59.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 01:59:29 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 10:59:27 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/gma500: fix memory disclosures due to uninitialized
- bytes
-Message-ID: <20191022085927.GA11828@phenom.ffwll.local>
-Mail-Followup-To: Kangjie Lu <kjlu@umn.edu>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20191018044150.1899-1-kjlu@umn.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018044150.1899-1-kjlu@umn.edu>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 22 Oct 2019 05:08:35 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9M94JXw156336;
+        Tue, 22 Oct 2019 09:06:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=z26nZqDxzBOJ9BRfbSpqDpmsq0mVNNYQLDQL4WWklhc=;
+ b=HIgodUMs9ZAbI6mH8+OJx/CTveL/ZDZUlvQ1TK9BjEaPawvfoZ/ZJMPAIHKHTRF5mcs7
+ gYIuc8aYW2jcbW44bsg4ROuMW6xqNsp4r1l4ymwWmUfYbUS7HqZWApB30EQ15g7Wb14a
+ T2g7VLoL8sS7PWCkZ9LBgPwhutXZc37mDwtHSOPW45gpwV+smSPktILa9iaHAQmpvvHE
+ /EBvqORUSoxJDRg0DLAqf3ekx9PD3nkzlxffAJlvd/bSRWbGBZYJdW/z5O4yJuTtCeUD
+ C69XyztcMJ+z00Uemi3Jwoeb1r8/GzbJ1Mmp5n1/iJD0pxzxg0vc9EBo7iFuHzj8Q2Br 3A== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2vqtepn899-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 22 Oct 2019 09:06:27 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9M937NR014871;
+        Tue, 22 Oct 2019 09:06:26 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2vsx2qbb6j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 22 Oct 2019 09:06:26 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9M96H0I006689;
+        Tue, 22 Oct 2019 09:06:21 GMT
+Received: from z2.cn.oracle.com (/10.182.70.159)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 22 Oct 2019 09:06:17 +0000
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com,
+        sean.j.christopherson@intel.com, vkuznets@redhat.com,
+        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com, peterz@infradead.org,
+        will@kernel.org, linux-hyperv@vger.kernel.org, kvm@vger.kernel.org,
+        mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+        sthemmin@microsoft.com, sashal@kernel.org,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH v7 0/5] Add a unified parameter "nopvspin"
+Date:   Mon, 21 Oct 2019 17:11:11 +0800
+Message-Id: <1571649076-2421-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9417 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910220086
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9417 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910220086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 11:41:50PM -0500, Kangjie Lu wrote:
-> "clock" may be copied to "best_clock". Initializing best_clock
-> is not sufficient. The fix initializes clock as well to avoid
-> memory disclosures and informaiton leaks.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+All the patches have Reviewed-by now, I think v7 could be the final
+version.
 
-Again no leak here, but also doesn't hurt, so applied.
--Daniel
+There are cases folks want to disable spinlock optimization for
+debug/test purpose. Xen and hyperv already have parameters "xen_nopvspin"
+and "hv_nopvspin" to support that, but kvm doesn't.
 
-> ---
->  drivers/gpu/drm/gma500/oaktrail_crtc.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/gma500/oaktrail_crtc.c b/drivers/gpu/drm/gma500/oaktrail_crtc.c
-> index 167c10767dd4..900e5499249d 100644
-> --- a/drivers/gpu/drm/gma500/oaktrail_crtc.c
-> +++ b/drivers/gpu/drm/gma500/oaktrail_crtc.c
-> @@ -129,6 +129,7 @@ static bool mrst_sdvo_find_best_pll(const struct gma_limit_t *limit,
->  	s32 freq_error, min_error = 100000;
->  
->  	memset(best_clock, 0, sizeof(*best_clock));
-> +	memset(&clock, 0, sizeof(clock));
->  
->  	for (clock.m = limit->m.min; clock.m <= limit->m.max; clock.m++) {
->  		for (clock.n = limit->n.min; clock.n <= limit->n.max;
-> @@ -185,6 +186,7 @@ static bool mrst_lvds_find_best_pll(const struct gma_limit_t *limit,
->  	int err = target;
->  
->  	memset(best_clock, 0, sizeof(*best_clock));
-> +	memset(&clock, 0, sizeof(clock));
->  
->  	for (clock.m = limit->m.min; clock.m <= limit->m.max; clock.m++) {
->  		for (clock.p1 = limit->p1.min; clock.p1 <= limit->p1.max;
-> -- 
-> 2.17.1
-> 
+The first patch adds that feature to KVM guest with "nopvspin".
+
+For compatibility reason original parameters "xen_nopvspin" and
+"hv_nopvspin" are retained and marked obsolete.
+
+v7:
+PATCH3: update comment and use goto, add RB              [Vitaly Kuznetsov]
+
+v6:
+PATCH1: add Reviewed-by                                  [Vitaly Kuznetsov]
+PATCH2: change 'pv' to 'PV', add Reviewed-by             [Vitaly Kuznetsov]
+PATCH3: refactor 'if' branch in kvm_spinlock_init()      [Vitaly Kuznetsov]
+
+v5:
+PATCH1: new patch to revert a currently unnecessory commit,
+        code is simpler a bit after that change.         [Boris Ostrovsky]
+PATCH3: fold 'if' statement,add comments on virt_spin_lock_key,
+        reorder with PATCH2 to better reflect dependency                               
+PATCH4: fold 'if' statement, add Reviewed-by             [Boris Ostrovsky]
+PATCH5: add Reviewed-by                                  [Michael Kelley]
+
+v4:
+PATCH1: use variable name nopvspin instead of pvspin and
+        defined it as __initdata, changed print message,
+        updated patch description                     [Sean Christopherson]
+PATCH2: remove Suggested-by, use "kvm-guest:" prefix  [Sean Christopherson]
+PATCH3: make variable nopvsin and xen_pvspin coexist
+        remove Reviewed-by due to code change         [Sean Christopherson]
+PATCH4: make variable nopvsin and hv_pvspin coexist   [Sean Christopherson]
+
+v3:
+PATCH2: Fix indentation
+
+v2:
+PATCH1: pick the print code change into separate PATCH2,
+        updated patch description             [Vitaly Kuznetsov]
+PATCH2: new patch with print code change      [Vitaly Kuznetsov]
+PATCH3: add Reviewed-by                       [Juergen Gross]
+
+Zhenzhong Duan (5):
+  Revert "KVM: X86: Fix setup the virt_spin_lock_key before static key
+    get initialized"
+  x86/kvm: Change print code to use pr_*() format
+  x86/kvm: Add "nopvspin" parameter to disable PV spinlocks
+  xen: Mark "xen_nopvspin" parameter obsolete
+  x86/hyperv: Mark "hv_nopvspin" parameter obsolete
+
+ Documentation/admin-guide/kernel-parameters.txt | 14 ++++-
+ arch/x86/hyperv/hv_spinlock.c                   |  4 ++
+ arch/x86/include/asm/qspinlock.h                |  1 +
+ arch/x86/kernel/kvm.c                           | 74 +++++++++++++++----------
+ arch/x86/xen/spinlock.c                         |  4 +-
+ kernel/locking/qspinlock.c                      |  7 +++
+ 6 files changed, 71 insertions(+), 33 deletions(-)
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+1.8.3.1
+
