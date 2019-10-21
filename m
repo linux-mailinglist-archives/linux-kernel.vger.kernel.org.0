@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2FFDDFA26
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 03:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FF39DFA2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 03:35:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730688AbfJVBcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 21:32:36 -0400
-Received: from mail.keramplus.com ([212.3.124.226]:38310 "EHLO
-        trixbox1.localdomain" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727953AbfJVBcf (ORCPT
+        id S1730619AbfJVBet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 21:34:49 -0400
+Received: from 61-222-241-106.HINET-IP.hinet.net ([61.222.241.106]:41982 "EHLO
+        ai-valuation.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728819AbfJVBes (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 21:32:35 -0400
-Received: from Shop01 (trixbox1.localdomain [127.0.0.1])
-        by trixbox1.localdomain (Postfix) with SMTP id 3A951ADD522;
-        Fri, 18 Oct 2019 05:47:35 +0300 (EEST)
-Received: from [188.248.139.43] by Shop01 with ESMTP id FF401C260A5; Thu, 17 Oct 2019 23:42:46 -0400
-Message-ID: <5--j976$mi8572zdn5p45-lx4h6o@ujd5.kn30x4b>
+        Mon, 21 Oct 2019 21:34:48 -0400
+X-Greylist: delayed 32812 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Oct 2019 21:34:48 EDT
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        by ai-valuation.com.tw (Postfix) with SMTP id 5EEECD9B2B5;
+        Mon, 21 Oct 2019 18:08:44 +0800 (CST)
+Received: from [209.5.183.33] by 127.0.0.1 with ESMTP id 3AF2DB4CCFC for <zhanyou830@hotmail.com>; Mon, 21 Oct 2019 10:04:55 +0000
+Message-ID: <nwpa-d-b$$v70-6i094n67de@4kz.97>
 From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
 Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
-To:     johncurrie1936@hotmail.co.uk
+To:     zhanyou830@hotmail.com
 Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
-Date:   Thu, 17 Oct 19 23:42:46 GMT
-X-Mailer: The Bat! (v1.52f) Business
+Date:   Mon, 21 Oct 19 10:04:55 GMT
+X-Mailer: AOL 7.0 for Windows US sub 118
 MIME-Version: 1.0
 Content-Type: multipart/alternative;
-        boundary="959EAA.C7CE."
+        boundary="34AD.38CF99_3B..29_.3"
 X-Priority: 3
 X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
@@ -34,7 +35,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---959EAA.C7CE.
+--34AD.38CF99_3B..29_.3
 Content-Type: text/plain;
 Content-Transfer-Encoding: quoted-printable
 
@@ -59,5 +60,5 @@ Barrister Hans Erich
 Yours sincerely,
 Barrister Hans Erich
 
---959EAA.C7CE.--
+--34AD.38CF99_3B..29_.3--
 
