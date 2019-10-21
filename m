@@ -2,93 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2190BDEAAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:19:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14077DEAB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbfJULTb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 07:19:31 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56970 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbfJULTb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 07:19:31 -0400
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iMVic-0006Ks-23; Mon, 21 Oct 2019 11:19:22 +0000
-Date:   Mon, 21 Oct 2019 13:19:21 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     syzbot <syzbot+492a4acccd8fc75ddfd0@syzkaller.appspotmail.com>,
-        oleg@redhat.com
-Cc:     akpm@linux-foundation.org, arnd@arndb.de, christian@brauner.io,
-        deepa.kernel@gmail.com, ebiederm@xmission.com, elver@google.com,
-        guro@fb.com, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, will@kernel.org
-Subject: Re: KCSAN: data-race in exit_signals / prepare_signal
-Message-ID: <20191021111920.frmc3njkha4c3a72@wittgenstein>
-References: <0000000000003b1e8005956939f1@google.com>
+        id S1728218AbfJULVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 07:21:53 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:49738 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1726767AbfJULVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 07:21:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77069EBD;
+        Mon, 21 Oct 2019 04:21:18 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F10E3F718;
+        Mon, 21 Oct 2019 04:21:16 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 12:21:14 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Yunfeng Ye <yeyunfeng@huawei.com>
+Cc:     catalin.marinas@arm.com, will@kernel.org,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        lorenzo.pieralisi@arm.com, tglx@linutronix.de,
+        David.Laight@ACULAB.COM, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        hushiyuan@huawei.com, wuyun.wu@huawei.com, linfeilong@huawei.com,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v5] arm64: psci: Reduce the waiting time for
+ cpu_psci_cpu_kill()
+Message-ID: <20191021112114.GC21581@bogus>
+References: <710429cc-4d88-b7c3-b068-5459cf8133b5@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000003b1e8005956939f1@google.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <710429cc-4d88-b7c3-b068-5459cf8133b5@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+Cc Will]
-
-On Mon, Oct 21, 2019 at 03:34:07AM -0700, syzbot wrote:
-> Hello,
+On Mon, Oct 21, 2019 at 06:52:16PM +0800, Yunfeng Ye wrote:
+> In cases like suspend-to-disk and suspend-to-ram, a large number of CPU
+> cores need to be shut down. At present, the CPU hotplug operation is
+> serialised, and the CPU cores can only be shut down one by one. In this
+> process, if PSCI affinity_info() does not return LEVEL_OFF quickly,
+> cpu_psci_cpu_kill() needs to wait for 10ms. If hundreds of CPU cores
+> need to be shut down, it will take a long time.
 > 
-> syzbot found the following crash on:
+> Normally, there is no need to wait 10ms in cpu_psci_cpu_kill(). So
+> change the wait interval from 10 ms to max 1 ms and use usleep_range()
+> instead of msleep() for more accurate timer.
 > 
-> HEAD commit:    d724f94f x86, kcsan: Enable KCSAN for x86
-> git tree:       https://github.com/google/ktsan.git kcsan
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13eab79f600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c0906aa620713d80
-> dashboard link: https://syzkaller.appspot.com/bug?extid=492a4acccd8fc75ddfd0
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+492a4acccd8fc75ddfd0@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KCSAN: data-race in exit_signals / prepare_signal
+> In addition, reducing the time interval will increase the messages
+> output, so remove the "Retry ..." message, instead, track time and
+> output to the the successful message.
 
-This traces back to Oleg fixing a race between a group stop and a thread
-exiting before it notices that it has a pending signal or is in the middle of
-do_exit() already, causing group stop to get wacky.
-The original commit to fix this race is
-commit d12619b5ff56 ("fix group stop with exit race") which took sighand
-lock before setting PF_EXITING on the thread.
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 
-Later on in
-commit 5dee1707dfbf ("move the related code from exit_notify() to exit_signals()")
-an improvement was made for the single-threaded case and the
-case where the group stop is already in progress. This removed the
-sighand lock around the PF_EXITING assignment.
-
-If the race really matters and given how tsk->flags is currently accessed
-everywhere the simple fix for now might be:
-
-diff --git a/kernel/signal.c b/kernel/signal.c
-index c4da1ef56fdf..cf61e044c4cc 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2819,7 +2819,9 @@ void exit_signals(struct task_struct *tsk)
-        cgroup_threadgroup_change_begin(tsk);
-
-        if (thread_group_empty(tsk) || signal_group_exit(tsk->signal)) {
-+               spin_lock_irq(&tsk->sighand->siglock);
-                tsk->flags |= PF_EXITING;
-+               spin_unlock_irq(&tsk->sighand->siglock);
-                cgroup_threadgroup_change_end(tsk);
-                return;
-        }
-
-Christian
+--
+Regards,
+Sudeep
