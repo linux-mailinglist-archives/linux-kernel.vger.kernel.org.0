@@ -2,121 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA90DEAEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9C2ADEAF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:31:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbfJUL3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 07:29:39 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:60583 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727571AbfJUL3i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 07:29:38 -0400
-Received: from mail-qk1-f178.google.com ([209.85.222.178]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1N5FxN-1huhaG0vbB-0117Z8 for <linux-kernel@vger.kernel.org>; Mon, 21 Oct
- 2019 13:29:37 +0200
-Received: by mail-qk1-f178.google.com with SMTP id w2so12229061qkf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 04:29:37 -0700 (PDT)
-X-Gm-Message-State: APjAAAWzRw0iz6yF9ICXqoVGR/pWXGa4DxU28XMBSRVILQA2jbLFdBbd
-        oDEqv3ussACx4PJeAIxmeFaonpDIfILiX4tYlTw=
-X-Google-Smtp-Source: APXvYqyxe91nGj8TKmw2rGsh4WkXsSBsZcCR4p2QMNxSQZJW/Arl7Yt8sn89P2z6gdacP0hRDEnp2Qs0G03JwPJmF9c=
-X-Received: by 2002:a05:620a:4f:: with SMTP id t15mr11058944qkt.286.1571657376091;
- Mon, 21 Oct 2019 04:29:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191021105822.20271-1-lee.jones@linaro.org>
-In-Reply-To: <20191021105822.20271-1-lee.jones@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 21 Oct 2019 13:29:20 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a10w9Xg6U8EgUqPLbucP3A0wc9xO_WNG06LxHrsZkZc1g@mail.gmail.com>
-Message-ID: <CAK8P3a10w9Xg6U8EgUqPLbucP3A0wc9xO_WNG06LxHrsZkZc1g@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] Simplify MFD Core
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Barry Song <baohua@kernel.org>, stephan@gerhold.net,
+        id S1728437AbfJULbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 07:31:42 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4696 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727685AbfJULbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 07:31:41 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DC82232381C44C0CE0B9;
+        Mon, 21 Oct 2019 19:31:39 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Mon, 21 Oct 2019
+ 19:31:32 +0800
+To:     <catalin.marinas@arm.com>, <will@kernel.org>,
+        <kstewart@linuxfoundation.org>, <", sudeep.holla"@arm.com>,
+        <gregkh@linuxfoundation.org>, <yeyunfeng@huawei.com>,
+        <lorenzo.pieralisi@arm.com>, <tglx@linutronix.de>,
+        <David.Laight@ACULAB.COM>, <mark.rutland@arm.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Daniel Drake <drake@endlessm.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        James Cameron <quozl@laptop.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:2JfCHba4azJOimTandb6ifbcUYw/cN0hh1p6j+ekjAtBpqDrT8u
- q0y6IQ77cLeCJj3/Pkw8F9rTb54tzGyh65be0svGnYMGK9cY/Siy+qoAg2jtrW46yPfHzrl
- pYYU3GeWkJ1kssZxsjalm2fxAwYitfRfQYrxrkgO7JpGGi3BKJEp8DBNBcA6mwx+Sk3xEOA
- GaNCpeBvs8eRiKne2mzdg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:qkJGr8GjrA4=:F87IxXjb0lVprBne15s/dr
- cTPXK2gvXyxNCa2ef//S0HCIvovjE+nlNRGDl+laPzBbFUMSHYIVHaDMWcUkslcybilXOvW+u
- 4826JtfQ1K8MjzrPmiEdDQwDkRGHG/d+6MuTUati3d1rp6A1kupeV8mV5Mek+qA9EOFZlQd40
- m/8BwZNeWzPUs2moBf3De4UaX7ELRkh8ZO29qHUMLs33GIeaxso57fYo37/0GBYzdPgM23RK6
- cAXZfoHE4WTKEdqAjQnydlsqX0Jwm/v6AauUkwpNdd9OTs1tDDaEIk/KJ6LsXBZYCoHQ+2l8h
- bKiHWDN2UvYOX4fL7MBgNTU5pLwHZry/kDFBSbZlmAyLfg5mAh3xf3f4E2jwF0ROR5/SQq8M+
- cdD0E3FZmVFAm5HBh0VEIRXAK1dhHHUcUVX7MndjMxAUVT7+fSQDWQYlNC7ojjHa9t7yyHy2u
- MbjrrQgha/aikLw7WXhmJwAQyqu0w/o56OLt7vwx8uvx6WwmewXCIMRxsLGi/yF3CXiTfXxcK
- nrtwqXREF93M0kT1ByHLJbSi348bHjiCHJz8tmkgathWKywLZ0N7HM8oGkQRSNqSeYD56dXfV
- M133arMZhINuP8oAT3t8GYYGg215Q91OfdEcefsbQBH/lZEcHN2ML6qL62kRvpIc9Z5mU8oic
- pbO69Oeo3C19QLY8yroQ/1wR52JLZzPb2dvXe3DwJWSakIcFh35a+rctK0CIfAo/FP+ZerbRC
- NfdW8UTpqGjwFc2KfSH2yg4+5ZnQWW6gB0pTZccenR5NX2CIR5SvCrxotkC5ns+lMbYiMcc3o
- RaLNqEiILLRCi60aGegeH02/yxvy7nE/6o7jqnyQz3EchoZ8YvdimBqeKgCr2bSjA25cceeyz
- SI6maFLWcCFB70EG9jqQ==
+        <hushiyuan@huawei.com>, <wuyun.wu@huawei.com>,
+        <linfeilong@huawei.com>
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+Subject: [PATCH v6] arm64: psci: Reduce the waiting time for
+ cpu_psci_cpu_kill()
+Message-ID: <0842431c-fa15-2ba1-ae6d-c1fea157941f@huawei.com>
+Date:   Mon, 21 Oct 2019 19:31:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 12:58 PM Lee Jones <lee.jones@linaro.org> wrote:
->
-> MFD currently has one over-complicated user.  CS5535 uses a mixture of
-> cell cloning, reference counting and subsystem-level call-backs to
-> achieve its goal of requesting an IO memory region only once across 3
-> consumers.  The same can be achieved by handling the region centrally
-> during the parent device's .probe() sequence.  Releasing can be handed
-> in a similar way during .remove().
->
-> While we're here, take the opportunity to provide some clean-ups and
-> error checking to issues noticed along the way.
->
-> This also paves the way for clean cell disabling via Device Tree being
-> discussed at [0]
->
-> [0] https://lkml.org/lkml/2019/10/18/612.
+In cases like suspend-to-disk and suspend-to-ram, a large number of CPU
+cores need to be shut down. At present, the CPU hotplug operation is
+serialised, and the CPU cores can only be shut down one by one. In this
+process, if PSCI affinity_info() does not return LEVEL_OFF quickly,
+cpu_psci_cpu_kill() needs to wait for 10ms. If hundreds of CPU cores
+need to be shut down, it will take a long time.
 
-As the CS5535 is primarily used on the OLPC XO1, it would be
-good to have someone test the series on such a machine.
+Normally, there is no need to wait 10ms in cpu_psci_cpu_kill(). So
+change the wait interval from 10 ms to max 1 ms and use usleep_range()
+instead of msleep() for more accurate timer.
 
-I've added a few people to Cc that may be able to help test it, or
-know someone who can.
+In addition, reducing the time interval will increase the messages
+output, so remove the "Retry ..." message, instead, track time and
+output to the the sucessful message.
 
-For the actual patches, see
-https://lore.kernel.org/lkml/20191021105822.20271-1-lee.jones@linaro.org/T/#t
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+v5 -> v6:
+ - add "Reviewed-by:"
 
-    Arnd
+v4 -> v5:
+ - track time instead of loop counter
 
-> Lee Jones (9):
->   mfd: cs5535-mfd: Use PLATFORM_DEVID_* defines and tidy error message
->   mfd: cs5535-mfd: Remove mfd_cell->id hack
->   mfd: cs5535-mfd: Request shared IO regions centrally
->   mfd: cs5535-mfd: Register clients using their own dedicated MFD cell
->     entries
->   mfd: mfd-core: Remove mfd_clone_cell()
->   x86: olpc: Remove invocation of MFD's .enable()/.disable() call-backs
->   mfd: mfd-core: Protect against NULL call-back function pointer
->   mfd: mfd-core: Remove usage counting for .{en,dis}able() call-backs
->   mfd: mfd-core: Move pdev->mfd_cell creation back into mfd_add_device()
->
->  arch/x86/platform/olpc/olpc-xo1-pm.c |   6 --
->  drivers/mfd/cs5535-mfd.c             | 124 +++++++++++++--------------
->  drivers/mfd/mfd-core.c               | 113 ++++--------------------
->  include/linux/mfd/core.h             |  20 -----
->  4 files changed, 79 insertions(+), 184 deletions(-)
->
-> --
-> 2.17.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+v3 -> v4:
+ - using time_before(jiffies, timeout) to check
+ - update the comment as review suggest
+
+v2 -> v3:
+ - update the comment
+ - remove the busy-wait logic, modify the loop logic and output message
+
+v1 -> v2:
+ - use usleep_range() instead of udelay() after waiting for a while
+
+ arch/arm64/kernel/psci.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm64/kernel/psci.c b/arch/arm64/kernel/psci.c
+index c9f72b2665f1..43ae4e0c968f 100644
+--- a/arch/arm64/kernel/psci.c
++++ b/arch/arm64/kernel/psci.c
+@@ -81,7 +81,8 @@ static void cpu_psci_cpu_die(unsigned int cpu)
+
+ static int cpu_psci_cpu_kill(unsigned int cpu)
+ {
+-	int err, i;
++	int err;
++	unsigned long start, end;
+
+ 	if (!psci_ops.affinity_info)
+ 		return 0;
+@@ -91,16 +92,18 @@ static int cpu_psci_cpu_kill(unsigned int cpu)
+ 	 * while it is dying. So, try again a few times.
+ 	 */
+
+-	for (i = 0; i < 10; i++) {
++	start = jiffies;
++	end = start + msecs_to_jiffies(100);
++	do {
+ 		err = psci_ops.affinity_info(cpu_logical_map(cpu), 0);
+ 		if (err == PSCI_0_2_AFFINITY_LEVEL_OFF) {
+-			pr_info("CPU%d killed.\n", cpu);
++			pr_info("CPU%d killed (polled %d ms)\n", cpu,
++				jiffies_to_msecs(jiffies - start));
+ 			return 0;
+ 		}
+
+-		msleep(10);
+-		pr_info("Retrying again to check for CPU kill\n");
+-	}
++		usleep_range(100, 1000);
++	} while (time_before(jiffies, end));
+
+ 	pr_warn("CPU%d may not have shut down cleanly (AFFINITY_INFO reports %d)\n",
+ 			cpu, err);
+-- 
+2.7.4.3
+
