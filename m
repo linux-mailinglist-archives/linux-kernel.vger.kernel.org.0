@@ -2,295 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B14EDEC99
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B161ADEC80
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:44:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728881AbfJUMoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 08:44:54 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35073 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728839AbfJUMom (ORCPT
+        id S1728778AbfJUMob (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 08:44:31 -0400
+Received: from skedge04.snt-world.com ([91.208.41.69]:60036 "EHLO
+        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbfJUMob (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:44:42 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 14so5992592wmu.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 05:44:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rhQapm9fDV832oC+He0CVqLo8g+PxtpKOAzMRPE4ljA=;
-        b=SBC1Jrc19lIVahzliJlzcj/Hnqij4S94myxcPHBLA9zEUlN/GVXeoylmryNVMXOrJP
-         AMqM0TmWJeJ2jnwQW5jjozOzz85wMSTmu/qeq19DwD6Fe83klABDaLc5I1muCg+3552A
-         vBesukBR5YimyIIQuiQXj1aNW2bq1gtZkE7uDt2/axaLuQhQ5lDwT//z+kxpqfi7SOwJ
-         B842g6llfCc43wexMtAHB2ULxyKqFl21aSlroUBkH/M6PxtxIlmFCxKcB97pcNaMrdDF
-         U3T/VM2Pst7QUmtjBV0UHZLgvoenozdv3WjwfO8QDqoX+pREdnixx5AsqR6iw3jab1hf
-         xanA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rhQapm9fDV832oC+He0CVqLo8g+PxtpKOAzMRPE4ljA=;
-        b=IeG7u5wgeAqozVHnr30KN3cWjXfPJ5MHotXgLV9WycJiPPYxAw50HDq5h+a2qDQA1V
-         XonGHCKvEXUxn4oCqJ4ujdvukJGvSLjEH5JUv762wok2e5gPdZuXypWszrmhOGi1kjEu
-         KvPqrLjyKFOMTinGMhHkyZfvvVWbzxm3mo/u6IOK1DXRDPDYi8vrcbDNJdh/pfSG9i+z
-         jb+0Gf7liMxOBi7lqAK/7AWhwp37ezdgltBj/esiYcDbs4PzsKSIGaewWIU8AConQaNw
-         oFYWlsvokCemTLLdlF5tJ7eHIOTlI++m49ZULYeK67V902A+Cbz6vA5erpfLoOVZF3BP
-         MB2A==
-X-Gm-Message-State: APjAAAWrOTNnmMZdXt0U/vzkFkVQYoHuJJDVslRSUMXQx2NqvG6XrXi8
-        YAPR1TrIr8G2TxJpRYH9xVCFJg==
-X-Google-Smtp-Source: APXvYqy97iy8LODbmza0VVhEd9vUSnqiJRhFbIOhJEubSikBBqKyqGMAsMgyja4luXC1VK6jdC7/kw==
-X-Received: by 2002:a7b:cc07:: with SMTP id f7mr18270855wmh.56.1571661879823;
-        Mon, 21 Oct 2019 05:44:39 -0700 (PDT)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id a17sm10216150wmb.8.2019.10.21.05.44.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 05:44:39 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Rob Herring <robh+dt@kernel.org>,
+        Mon, 21 Oct 2019 08:44:31 -0400
+Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge04.snt-world.com (Postfix) with ESMTPS id 071276272E0;
+        Mon, 21 Oct 2019 14:44:29 +0200 (CEST)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
+ (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 21 Oct
+ 2019 14:44:28 +0200
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
+ 15.01.1713.004; Mon, 21 Oct 2019 14:44:28 +0200
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     "krzk@kernel.org" <krzk@kernel.org>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 5/6] dt-bindings: mfd: max77650: convert the binding document to yaml
-Date:   Mon, 21 Oct 2019 14:44:27 +0200
-Message-Id: <20191021124428.2541-6-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191021124428.2541-1-brgl@bgdev.pl>
-References: <20191021124428.2541-1-brgl@bgdev.pl>
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 03/10] ARM: dts: imx6ul-kontron-n6310-s: Move common nodes
+ to a separate file
+Thread-Topic: [PATCH 03/10] ARM: dts: imx6ul-kontron-n6310-s: Move common
+ nodes to a separate file
+Thread-Index: AQHVhDNridwU/x73F0y3lESzDZ9q0qdkzUwAgAAjUoA=
+Date:   Mon, 21 Oct 2019 12:44:28 +0000
+Message-ID: <cb88a237-3d5b-a7b2-8ff9-51d192b5d0d7@kontron.de>
+References: <20191016150622.21753-1-frieder.schrempf@kontron.de>
+ <20191016150622.21753-4-frieder.schrempf@kontron.de>
+ <20191021103802.GC1934@pi3>
+In-Reply-To: <20191021103802.GC1934@pi3>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.193]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FE7C61A8E785454F8AF7F0B5D380FEC3@snt-world.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 071276272E0.A1A22
+X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: devicetree@vger.kernel.org, festevam@gmail.com,
+        kernel@pengutronix.de, krzk@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-
-Convert the binding document for MAX77650 core MFD module to YAML.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- .../devicetree/bindings/mfd/max77650.txt      |  46 ------
- .../devicetree/bindings/mfd/max77650.yaml     | 149 ++++++++++++++++++
- 2 files changed, 149 insertions(+), 46 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/max77650.yaml
-
-diff --git a/Documentation/devicetree/bindings/mfd/max77650.txt b/Documentation/devicetree/bindings/mfd/max77650.txt
-deleted file mode 100644
-index b529d8d19335..000000000000
---- a/Documentation/devicetree/bindings/mfd/max77650.txt
-+++ /dev/null
-@@ -1,46 +0,0 @@
--MAX77650 ultra low-power PMIC from Maxim Integrated.
--
--Required properties:
---------------------
--- compatible:		Must be "maxim,max77650"
--- reg:			I2C device address.
--- interrupts:		The interrupt on the parent the controller is
--			connected to.
--- interrupt-controller: Marks the device node as an interrupt controller.
--- #interrupt-cells:	Must be <2>.
--
--- gpio-controller:	Marks the device node as a gpio controller.
--- #gpio-cells:		Must be <2>. The first cell is the pin number and
--			the second cell is used to specify the gpio active
--			state.
--
--Optional properties:
----------------------
--gpio-line-names:	Single string containing the name of the GPIO line.
--
--The GPIO-controller module is represented as part of the top-level PMIC
--node. The device exposes a single GPIO line.
--
--For device-tree bindings of other sub-modules (regulator, power supply,
--LEDs and onkey) refer to the binding documents under the respective
--sub-system directories.
--
--For more details on GPIO bindings, please refer to the generic GPIO DT
--binding document <devicetree/bindings/gpio/gpio.txt>.
--
--Example:
----------
--
--	pmic@48 {
--		compatible = "maxim,max77650";
--		reg = <0x48>;
--
--		interrupt-controller;
--		interrupt-parent = <&gpio2>;
--		#interrupt-cells = <2>;
--		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
--
--		gpio-controller;
--		#gpio-cells = <2>;
--		gpio-line-names = "max77650-charger";
--	};
-diff --git a/Documentation/devicetree/bindings/mfd/max77650.yaml b/Documentation/devicetree/bindings/mfd/max77650.yaml
-new file mode 100644
-index 000000000000..4a70f875a6eb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/max77650.yaml
-@@ -0,0 +1,149 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/max77650.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MAX77650 ultra low-power PMIC from Maxim Integrated.
-+
-+maintainers:
-+  - Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+
-+description: |
-+  MAX77650 is an ultra-low power PMIC providing battery charging and power
-+  supply for low-power IoT and wearable applications.
-+
-+  The GPIO-controller module is represented as part of the top-level PMIC
-+  node. The device exposes a single GPIO line.
-+
-+  For device-tree bindings of other sub-modules (regulator, power supply,
-+  LEDs and onkey) refer to the binding documents under the respective
-+  sub-system directories.
-+
-+properties:
-+  compatible:
-+    const: maxim,max77650
-+
-+  reg:
-+    description:
-+      I2C device address.
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  "#interrupt-cells":
-+    const: 2
-+    description:
-+      The first cell is the IRQ number, the second cell is the trigger type.
-+
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    const: 2
-+    description:
-+      The first cell is the pin number and the second cell is used to specify
-+      the gpio active state.
-+
-+  gpio-line-names:
-+    maxItems: 1
-+    description:
-+      Single string containing the name of the GPIO line.
-+
-+  regulators:
-+    $ref: ../regulator/max77650-regulator.yaml
-+
-+  charger:
-+    $ref: ../power/supply/max77650-charger.yaml
-+
-+  leds:
-+    $ref: ../leds/leds-max77650.yaml
-+
-+  onkey:
-+    $ref: ../input/max77650-onkey.yaml
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-controller
-+  - "#interrupt-cells"
-+  - gpio-controller
-+  - "#gpio-cells"
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/input/linux-event-codes.h>
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        pmic@48 {
-+            compatible = "maxim,max77650";
-+            reg = <0x48>;
-+
-+            interrupt-controller;
-+            interrupt-parent = <&gpio2>;
-+            #interrupt-cells = <2>;
-+            interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            gpio-line-names = "max77650-charger";
-+
-+            regulators {
-+                compatible = "maxim,max77650-regulator";
-+
-+                max77650_ldo: regulator@0 {
-+                    regulator-compatible = "ldo";
-+                    regulator-name = "max77650-ldo";
-+                    regulator-min-microvolt = <1350000>;
-+                    regulator-max-microvolt = <2937500>;
-+                };
-+
-+                max77650_sbb0: regulator@1 {
-+                    regulator-compatible = "sbb0";
-+                    regulator-name = "max77650-sbb0";
-+                    regulator-min-microvolt = <800000>;
-+                    regulator-max-microvolt = <1587500>;
-+                };
-+            };
-+
-+            charger {
-+                compatible = "maxim,max77650-charger";
-+                input-voltage-min-microvolt = <4200000>;
-+                input-current-limit-microamp = <285000>;
-+            };
-+
-+            leds {
-+                compatible = "maxim,max77650-led";
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                led@0 {
-+                    reg = <0>;
-+                    label = "blue:usr0";
-+                };
-+
-+                led@1 {
-+                    reg = <1>;
-+                    label = "red:usr1";
-+                    linux,default-trigger = "heartbeat";
-+                };
-+
-+                led@2 {
-+                    reg = <2>;
-+                    label = "green:usr2";
-+                };
-+            };
-+
-+            onkey {
-+                compatible = "maxim,max77650-onkey";
-+                linux,code = <KEY_END>;
-+                maxim,onkey-slide;
-+            };
-+        };
-+    };
--- 
-2.23.0
-
+SGkgS3J6eXN6dG9mLA0KDQpPbiAyMS4xMC4xOSAxMjozOCwga3J6a0BrZXJuZWwub3JnIHdyb3Rl
+Og0KPiBPbiBXZWQsIE9jdCAxNiwgMjAxOSBhdCAwMzowNzoyNVBNICswMDAwLCBTY2hyZW1wZiBG
+cmllZGVyIHdyb3RlOg0KPj4gRnJvbTogRnJpZWRlciBTY2hyZW1wZiA8ZnJpZWRlci5zY2hyZW1w
+ZkBrb250cm9uLmRlPg0KPj4NCj4+IFRoZSBiYXNlYm9hcmQgZm9yIHRoZSBLb250cm9uIE42MzEw
+IFNvTSBpcyBhbHNvIHVzZWQgZm9yIG90aGVyIFNvTXMNCj4+IHN1Y2ggYXMgTjYzMTEgYW5kIE42
+NDExLiBJbiBvcmRlciB0byBzaGFyZSB0aGUgY29kZSwgd2UgbW92ZSB0aGUNCj4+IGRlZmluaXRp
+b25zIG9mIHRoZSBiYXNlYm9hcmQgdG8gYSBzZXBhcmF0ZSBkdHNpIGZpbGUuDQo+Pg0KPj4gU2ln
+bmVkLW9mZi1ieTogRnJpZWRlciBTY2hyZW1wZiA8ZnJpZWRlci5zY2hyZW1wZkBrb250cm9uLmRl
+Pg0KPj4gLS0tDQo+PiAgIGFyY2gvYXJtL2Jvb3QvZHRzL2lteDZ1bC1rb250cm9uLW42MzEwLXMu
+ZHRzICB8IDQwNSArLS0tLS0tLS0tLS0tLS0tLQ0KPj4gICBhcmNoL2FybS9ib290L2R0cy9pbXg2
+dWwta29udHJvbi1uNngxeC1zLmR0c2kgfCA0MTIgKysrKysrKysrKysrKysrKysrDQo+PiAgIDIg
+ZmlsZXMgY2hhbmdlZCwgNDEzIGluc2VydGlvbnMoKyksIDQwNCBkZWxldGlvbnMoLSkNCj4+ICAg
+Y3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJtL2Jvb3QvZHRzL2lteDZ1bC1rb250cm9uLW42eDF4
+LXMuZHRzaQ0KPj4NClsuLi5dDQo+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14
+NnVsLWtvbnRyb24tbjZ4MXgtcy5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnVsLWtvbnRy
+b24tbjZ4MXgtcy5kdHNpDQo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXggMDAwMDAw
+MDAwMDAwLi4wOGEzMjZjZTJjYmUNCj4+IC0tLSAvZGV2L251bGwNCj4+ICsrKyBiL2FyY2gvYXJt
+L2Jvb3QvZHRzL2lteDZ1bC1rb250cm9uLW42eDF4LXMuZHRzaQ0KPj4gQEAgLTAsMCArMSw0MTIg
+QEANCj4+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPj4gKy8qDQo+PiAr
+ICogQ29weXJpZ2h0IChDKSAyMDE3IGV4Y2VldCBlbGVjdHJvbmljcyBHbWJIDQo+PiArICogQ29w
+eXJpZ2h0IChDKSAyMDE4IEtvbnRyb24gRWxlY3Ryb25pY3MgR21iSA0KPj4gKyAqIENvcHlyaWdo
+dCAoYykgMjAxOSBLcnp5c3p0b2YgS296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+DQo+PiArICov
+DQo+PiArDQo+IA0KPiBUaGlzIGZpbGUgZG9lcyBub3QgaW5jbHVkZSBhbnl0aGluZyBlbHNlIGJ1
+dCB1c2VzIGRlZmluZXMgKEdQSU8gZmxhZ3MsDQo+IGNsb2NrcywgcGlucykuIFVzdWFsbHkgc291
+cmNlcyBzaG91bGQgbm90IHJlbHkgb24gaW5jbHVzaW9ucyBjb21pbmcgZnJvbQ0KPiB1bnJlbGF0
+ZWQgZmlsZXMgc28gaGVyZSB5b3Ugc2hvdWxkIGluY2x1ZGUgbmVjZXNzYXJ5IGhlYWRlcnMuIElu
+IGNhc2Ugb2YNCj4gZnV0dXJlIHJlZmFjdG9yaW5ncyBvciByZXVzZSBvbmUgbWlnaHQgbm90IGtu
+b3cgd2hpY2ggZGVmaW5lcyB5b3Ugd2FudGVkDQo+IHRvIHVzZSAoaW4gb3RoZXIgcGxhdGZvcm1z
+IGZvciBleGFtcGxlIHRoZXJlIG1pZ2h0IGJlIG11bHRpcGxlIGRlZmluZXMNCj4gaW4gbXVsdGlw
+bGUgaGVhZGVyIGZpbGVzIHdpdGggc2FtZSBuYW1lKS4NCg0KUmlnaHQsIEkgbmVlZCB0byBpbmNs
+dWRlIHRoZSBwcm9wZXIgaGVhZGVycyBoZXJlLiBJIHdpbGwgYWxzbyBjaGVjayB0aGUgDQpvdGhl
+ciBmaWxlcy4NCg0KVGhhbmtzIGZvciByZXZpZXdpbmchDQpGcmllZGVy
