@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53B9FDF919
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 02:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EB20DF912
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 02:05:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387640AbfJVAFV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 20:05:21 -0400
+        id S2387575AbfJVAFJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 20:05:09 -0400
 Received: from Galois.linutronix.de ([193.142.43.55]:38895 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387615AbfJVAFS (ORCPT
+        with ESMTP id S2387534AbfJVAFE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 20:05:18 -0400
+        Mon, 21 Oct 2019 20:05:04 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iMgx0-0003xO-QY; Tue, 22 Oct 2019 01:18:59 +0200
+        id 1iMgx6-0003yk-AN; Tue, 22 Oct 2019 01:19:04 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B02B91C0489;
-        Tue, 22 Oct 2019 01:18:57 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 23:18:57 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CE7061C0086;
+        Tue, 22 Oct 2019 01:18:58 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 23:18:58 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf trace: Pass a syscall_arg to syscall_arg_fmt->strtoul()
+Subject: [tip: perf/core] perf trace: Honour --max-events in processing
+ syscalls:sys_enter_*
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Luis =?utf-8?q?Cl=C3=A1udio_Gon=C3=A7alves?= 
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-c6mgkjt8ujnc263eld5tb7q3@git.kernel.org>
-References: <tip-c6mgkjt8ujnc263eld5tb7q3@git.kernel.org>
+In-Reply-To: <tip-0ob1dky1a9ijlfrfhxyl40wr@git.kernel.org>
+References: <tip-0ob1dky1a9ijlfrfhxyl40wr@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157169993725.29376.72854596027164518.tip-bot2@tip-bot2>
+Message-ID: <157169993806.29376.8362318761084030080.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,174 +52,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     9afec87ec1f832b8a521da42a72b73a44a59949d
-Gitweb:        https://git.kernel.org/tip/9afec87ec1f832b8a521da42a72b73a44a59949d
+Commit-ID:     db25bf98a3861225bc0b2138cf665097141c72ee
+Gitweb:        https://git.kernel.org/tip/db25bf98a3861225bc0b2138cf665097141c72ee
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Fri, 18 Oct 2019 11:15:55 -03:00
+AuthorDate:    Fri, 18 Oct 2019 11:48:57 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Sat, 19 Oct 2019 15:34:48 -03:00
+CommitterDate: Fri, 18 Oct 2019 12:19:02 -03:00
 
-perf trace: Pass a syscall_arg to syscall_arg_fmt->strtoul()
+perf trace: Honour --max-events in processing syscalls:sys_enter_*
 
-With just what we need for the STUL_STRARRAY, i.e. the 'struct strarray'
-pointer to be used, just like with syscall_arg_fmt->scnprintf() for the
-other direction (number -> string).
+We were doing this only at the sys_exit syscall tracepoint, as for
+strace-like we count the pair of sys_enter and sys_exit as one event,
+but when asking specifically for a the syscalls:sys_enter_NAME
+tracepoint we need to count each of those as an event.
 
-With this all the strarrays that are associated with syscalls can be
-used with '-e syscalls:sys_enter_SYSCALLNAME --filter', and soon will be
-possible as well to use with the strace-like shorter form, with just the
-syscall names, i.e. something like:
+I.e. things like:
 
-   -e lseek/whence==END/
+  # perf trace --max-events=4 -e syscalls:sys_enter_lseek
+     0.000 pool/2242 syscalls:sys_enter_lseek(fd: 14<anon_inode:[timerfd]>, offset: 0, whence: CUR)
+     0.034 pool/2242 syscalls:sys_enter_lseek(fd: 15<anon_inode:[timerfd]>, offset: 0, whence: CUR)
+     0.051 pool/2242 syscalls:sys_enter_lseek(fd: 16<anon_inode:[timerfd]>, offset: 0, whence: CUR)
+  2307.900 sshd/30800 syscalls:sys_enter_lseek(fd: 3</usr/lib64/libsystemd.so.0.25.0>, offset: 9032, whence: SET)
+  #
 
-For now we have to use the longer form:
-
-    # perf trace -e syscalls:sys_enter_lseek
-       0.000 pool/2242 syscalls:sys_enter_lseek(fd: 14<anon_inode:[timerfd]>, offset: 0, whence: CUR)
-       0.031 pool/2242 syscalls:sys_enter_lseek(fd: 15<anon_inode:[timerfd]>, offset: 0, whence: CUR)
-       0.046 pool/2242 syscalls:sys_enter_lseek(fd: 16<anon_inode:[timerfd]>, offset: 0, whence: CUR)
-    5003.528 pool/2242 syscalls:sys_enter_lseek(fd: 14<anon_inode:[timerfd]>, offset: 0, whence: CUR)
-    5003.575 pool/2242 syscalls:sys_enter_lseek(fd: 15<anon_inode:[timerfd]>, offset: 0, whence: CUR)
-    5003.593 pool/2242 syscalls:sys_enter_lseek(fd: 16<anon_inode:[timerfd]>, offset: 0, whence: CUR)
-   10002.017 pool/2242 syscalls:sys_enter_lseek(fd: 14<anon_inode:[timerfd]>, offset: 0, whence: CUR)
-   10002.051 pool/2242 syscalls:sys_enter_lseek(fd: 15<anon_inode:[timerfd]>, offset: 0, whence: CUR)
-   10002.068 pool/2242 syscalls:sys_enter_lseek(fd: 16<anon_inode:[timerfd]>, offset: 0, whence: CUR)
-  ^C# perf trace -e syscalls:sys_enter_lseek --filter="whence!=CUR"
-       0.000 sshd/24476 syscalls:sys_enter_lseek(fd: 3, offset: 9032, whence: SET)
-       0.060 sshd/24476 syscalls:sys_enter_lseek(fd: 3</usr/lib64/libcrypt.so.2.0.0>, offset: 9032, whence: SET)
-       0.187 sshd/24476 syscalls:sys_enter_lseek(fd: 3</usr/lib64/libcrypt.so.2.0.0>, offset: 118632, whence: SET)
-       0.203 sshd/24476 syscalls:sys_enter_lseek(fd: 3</usr/lib64/libcrypt.so.2.0.0>, offset: 118632, whence: SET)
-       0.349 sshd/24476 syscalls:sys_enter_lseek(fd: 3</usr/lib64/libcrypt.so.2.0.0>, offset: 61936, whence: SET)
-  ^C#
-
-And for those curious about what are those lseek(DSO, offset, SET), well, its the loader:
-
-  # perf trace -e syscalls:sys_enter_lseek/max-stack=16/ --filter="whence!=CUR"
-     0.000 sshd/24495 syscalls:sys_enter_lseek(fd: 3</usr/lib64/libgcrypt.so.20.2.5>, offset: 9032, whence: SET)
-                                       __libc_lseek64 (/usr/lib64/ld-2.29.so)
-                                       _dl_map_object (/usr/lib64/ld-2.29.so)
-     0.067 sshd/24495 syscalls:sys_enter_lseek(fd: 3</usr/lib64/libgcrypt.so.20.2.5>, offset: 9032, whence: SET)
-                                       __libc_lseek64 (/usr/lib64/ld-2.29.so)
-                                       _dl_map_object_from_fd (/usr/lib64/ld-2.29.so)
-                                       _dl_map_object (/usr/lib64/ld-2.29.so)
-     0.198 sshd/24495 syscalls:sys_enter_lseek(fd: 3</usr/lib64/libgcrypt.so.20.2.5>, offset: 118632, whence: SET)
-                                       __libc_lseek64 (/usr/lib64/ld-2.29.so)
-                                       _dl_map_object (/usr/lib64/ld-2.29.so)
-     0.219 sshd/24495 syscalls:sys_enter_lseek(fd: 3</usr/lib64/libgcrypt.so.20.2.5>, offset: 118632, whence: SET)
-                                       __libc_lseek64 (/usr/lib64/ld-2.29.so)
-                                       _dl_map_object_from_fd (/usr/lib64/ld-2.29.so)
-                                       _dl_map_object (/usr/lib64/ld-2.29.so)
-  ^C#
-
-:-)
-
-With this we can use strings in strarrays in filters, which allows us to
-reuse all these that are in place for syscalls:
-
-  $ find tools/perf/trace/beauty/ -name "*.c" | xargs grep -w DEFINE_STRARRAY
-  tools/perf/trace/beauty/fcntl.c:	static DEFINE_STRARRAY(fcntl_setlease, "F_");
-  tools/perf/trace/beauty/mmap.c:       static DEFINE_STRARRAY(mmap_flags, "MAP_");
-  tools/perf/trace/beauty/mmap.c:       static DEFINE_STRARRAY(madvise_advices, "MADV_");
-  tools/perf/trace/beauty/sync_file_range.c:       static DEFINE_STRARRAY(sync_file_range_flags, "SYNC_FILE_RANGE_");
-  tools/perf/trace/beauty/socket.c:	static DEFINE_STRARRAY(socket_ipproto, "IPPROTO_");
-  tools/perf/trace/beauty/mount_flags.c:	static DEFINE_STRARRAY(mount_flags, "MS_");
-  tools/perf/trace/beauty/pkey_alloc.c:	static DEFINE_STRARRAY(pkey_alloc_access_rights, "PKEY_");
-  tools/perf/trace/beauty/sockaddr.c:DEFINE_STRARRAY(socket_families, "PF_");
-  tools/perf/trace/beauty/tracepoints/x86_irq_vectors.c:static DEFINE_STRARRAY(x86_irq_vectors, "_VECTOR");
-  tools/perf/trace/beauty/tracepoints/x86_msr.c:static DEFINE_STRARRAY(x86_MSRs, "MSR_");
-  tools/perf/trace/beauty/prctl.c:	static DEFINE_STRARRAY(prctl_options, "PR_");
-  tools/perf/trace/beauty/prctl.c:	static DEFINE_STRARRAY(prctl_set_mm_options, "PR_SET_MM_");
-  tools/perf/trace/beauty/fspick.c:       static DEFINE_STRARRAY(fspick_flags, "FSPICK_");
-  tools/perf/trace/beauty/ioctl.c:	static DEFINE_STRARRAY(ioctl_tty_cmd, "");
-  tools/perf/trace/beauty/ioctl.c:	static DEFINE_STRARRAY(drm_ioctl_cmds, "");
-  tools/perf/trace/beauty/ioctl.c:	static DEFINE_STRARRAY(sndrv_pcm_ioctl_cmds, "");
-  tools/perf/trace/beauty/ioctl.c:	static DEFINE_STRARRAY(sndrv_ctl_ioctl_cmds, "");
-  tools/perf/trace/beauty/ioctl.c:	static DEFINE_STRARRAY(kvm_ioctl_cmds, "");
-  tools/perf/trace/beauty/ioctl.c:	static DEFINE_STRARRAY(vhost_virtio_ioctl_cmds, "");
-  tools/perf/trace/beauty/ioctl.c:	static DEFINE_STRARRAY(vhost_virtio_ioctl_read_cmds, "");
-  tools/perf/trace/beauty/ioctl.c:	static DEFINE_STRARRAY(perf_ioctl_cmds, "");
-  tools/perf/trace/beauty/ioctl.c:	static DEFINE_STRARRAY(usbdevfs_ioctl_cmds, "");
-  tools/perf/trace/beauty/fsmount.c:       static DEFINE_STRARRAY(fsmount_attr_flags, "MOUNT_ATTR_");
-  tools/perf/trace/beauty/renameat.c:       static DEFINE_STRARRAY(rename_flags, "RENAME_");
-  tools/perf/trace/beauty/kcmp.c:	static DEFINE_STRARRAY(kcmp_types, "KCMP_");
-  tools/perf/trace/beauty/move_mount.c:       static DEFINE_STRARRAY(move_mount_flags, "MOVE_MOUNT_");
-  $
-
-Well, some, as the mmap flags are like:
-
-  $ tools/perf/trace/beauty/mmap_flags.sh
-  static const char *mmap_flags[] = {
-  	[ilog2(0x40) + 1] = "32BIT",
-  	[ilog2(0x01) + 1] = "SHARED",
-  	[ilog2(0x02) + 1] = "PRIVATE",
-  	[ilog2(0x10) + 1] = "FIXED",
-  	[ilog2(0x20) + 1] = "ANONYMOUS",
-  	[ilog2(0x008000) + 1] = "POPULATE",
-  	[ilog2(0x010000) + 1] = "NONBLOCK",
-  	[ilog2(0x020000) + 1] = "STACK",
-  	[ilog2(0x040000) + 1] = "HUGETLB",
-  	[ilog2(0x080000) + 1] = "SYNC",
-  	[ilog2(0x100000) + 1] = "FIXED_NOREPLACE",
-  	[ilog2(0x0100) + 1] = "GROWSDOWN",
-  	[ilog2(0x0800) + 1] = "DENYWRITE",
-  	[ilog2(0x1000) + 1] = "EXECUTABLE",
-  	[ilog2(0x2000) + 1] = "LOCKED",
-  	[ilog2(0x4000) + 1] = "NORESERVE",
-  };
-  $
-
-So we'll need a strarray__strtoul_flags() that will break donw the flags
-into tokens separated by '|' before doing the lookup and then go on
-reconstructing the value from, say:
-
-      # perf trace -e syscalls:sys_enter_mmap --filter="flags==PRIVATE|FIXED|DENYWRITE"
-
-into:
-
-      # perf trace -e syscalls:sys_enter_mmap --filter="flags==0x2|0x10|0x0800"
-
-and finally into:
-
-      # perf trace -e syscalls:sys_enter_mmap --filter="flags==0x812"
-
-That is what we see if we don't use the augmented view obtained from:
-
-  # perf trace -e mmap
-  <SNIP>
-  211792.885 procmail/15393 mmap(addr: 0x7fcd11645000, len: 8192, prot: READ, flags: PRIVATE|FIXED|DENYWRITE, fd: 8, off: 0xa000) = 0x7fcd11645000
-  <SNIP>
-
-But plain use tracefs:
-
-        procmail-15559 [000] .... 54557.178262: sys_mmap(addr: 7f5c9bf7a000, len: 9b000, prot: 1, flags: 812, fd: 3, off: a9000)
+Were going on forever, since we only had sys_enter events.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-c6mgkjt8ujnc263eld5tb7q3@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-0ob1dky1a9ijlfrfhxyl40wr@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/perf/builtin-trace.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 1aaf7b2..0e7fc7c 100644
+index 0294b17..1aaf7b2 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -3696,7 +3696,11 @@ static int trace__expand_filter(struct trace *trace __maybe_unused, struct evsel
+@@ -2727,12 +2727,6 @@ static int trace__event_handler(struct trace *trace, struct evsel *evsel,
+ 			} else {
+ 				trace__fprintf_tp_fields(trace, evsel, sample, thread, NULL, 0);
+ 			}
+-			++trace->nr_events_printed;
+-
+-			if (evsel->max_events != ULONG_MAX && ++evsel->nr_events_printed == evsel->max_events) {
+-				evsel__disable(evsel);
+-				evsel__close(evsel);
+-			}
+ 		}
+ 	}
  
- 			if (fmt->strtoul) {
- 				u64 val;
--				if (fmt->strtoul(right, right_size, NULL, &val)) {
-+				struct syscall_arg syscall_arg = {
-+					.parm = fmt->parm,
-+				};
+@@ -2743,6 +2737,13 @@ newline:
+ 		trace__fprintf_callchain(trace, sample);
+ 	else if (callchain_ret < 0)
+ 		pr_err("Problem processing %s callchain, skipping...\n", perf_evsel__name(evsel));
 +
-+				if (fmt->strtoul(right, right_size, &syscall_arg, &val)) {
- 					char *n, expansion[19];
- 					int expansion_lenght = scnprintf(expansion, sizeof(expansion), "%#" PRIx64, val);
- 					int expansion_offset = right - new_filter;
++	++trace->nr_events_printed;
++
++	if (evsel->max_events != ULONG_MAX && ++evsel->nr_events_printed == evsel->max_events) {
++		evsel__disable(evsel);
++		evsel__close(evsel);
++	}
+ out:
+ 	thread__put(thread);
+ 	return 0;
