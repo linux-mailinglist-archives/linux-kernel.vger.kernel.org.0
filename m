@@ -2,68 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A385ADECAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:45:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 139C6DECAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728924AbfJUMpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 08:45:25 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55922 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728081AbfJUMpY (ORCPT
+        id S1728929AbfJUMpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 08:45:32 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46256 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727962AbfJUMpb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:45:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8npHG7xyZSoSEqzIUQXIFsHT1fl+7N1HJk4jdM+fJxY=; b=q46UganW/nhMIxuKjruzGMf3K
-        4Zis/viOhlxuBseSQJTpgaVbBrYbf6Tkt5BaxjYgVbfJ2+I0hglzi3ZzKc/SqvvhWLoaVt6s08Ye8
-        X9raUG5SeB3x8BXqgb5ouAx836kQX5KfEALvKo2dRIvH0Affp1pJkBVg6ks8uQ3XpVeAWDB3JJ9oI
-        l1BxqZS9GxCfoNwTKAwTHeeSE+U29jYXOSio4Hjk8OMkAfYt5BErwyGvhdeE35YtjIUFF7IuUTH/Y
-        gkmopnc4EDqzcHxVSIqvhPzMZvfaHJu51Ntz2SC6ULaS0cMdhL7Xc4ExztvSQy+ViWGn4jBR/AkYh
-        NmDfCsTOg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iMX3o-0004Yg-7i; Mon, 21 Oct 2019 12:45:20 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D863530702E;
-        Mon, 21 Oct 2019 14:44:21 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 06ADA2022BA17; Mon, 21 Oct 2019 14:45:19 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 14:45:18 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Laurence Oberman <loberman@redhat.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] Test softlockup
-Message-ID: <20191021124518.GF1817@hirez.programming.kicks-ass.net>
-References: <20190819104732.20966-1-pmladek@suse.com>
- <20190819104732.20966-4-pmladek@suse.com>
+        Mon, 21 Oct 2019 08:45:31 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n15so3021814wrw.13
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 05:45:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=I8rkz9wni1PLYTJYS1CHHJxzqvPcnSWI9WK6axWmJfM=;
+        b=AW+3V3g7BTEklmfuK/i+EY2s9qLVJXAYy0fpcJM/wgGxWc66ja7A848n7hu/YebqvC
+         cGn8QpIu13IAMy9QCkCg8wuiEv+BWTHW27o4lqD2dg2krKmQLjbIZPTQd7H1cT4BZ35q
+         09qOewOkfv/mN3lSElOw8XSsmQHi0HinSZCOm79vwSpyIyTtpZAio19SmtL5L3Alh49d
+         xwgadWESW2+8eOEHvvuc3/WieljrvTrJLQgeHoSpxKvFzAUytaNHoGNXoyEwg/NSnie9
+         qcebNcVhvgTcRLFsLpZnDWfQsPm5YwiSDcFHrdpUbZNcrHlO8DDm15gpH6HLN4rMeA8M
+         qFXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I8rkz9wni1PLYTJYS1CHHJxzqvPcnSWI9WK6axWmJfM=;
+        b=ptXy2k5sDRi+/QsfQFTK0ldSaQbcT1QKqfETYEmA+QieNUntmdW7NuV4VrtBitt7VR
+         pVSFVbe2r87EX5lp5UmBI3pQmi6bWAVjECagmihYE+h3G6BnsnKIhWOGagxm8N6Uu/cc
+         I/+NrvggY5o1MzbBJXGLuFRO4dVXj0Yj7upfS3fzu5U1t2BlEBydEKf0qbHl1K99PBdr
+         xSGrL12HBQ/Bnsy1rwakDQLSduSLYZsYGEuJ1quhVo8sTwpG6liAMwtt7Olu9E5BEjai
+         98xWrSgwd+YOrjuDgkAsp5HkjQXHQ8NaQ9k921/t3ZKVfuLCBJ0gO0OnunMRdHfMy1d4
+         Tuqg==
+X-Gm-Message-State: APjAAAWl41cSJAZWhlqwWLmUD54qYaIyAwB596O0C+slNXHhuWGef0TS
+        Bs9XOEyZ7ZVp3ceiA+f8QyJNbg8na+t+ng==
+X-Google-Smtp-Source: APXvYqxxYpfRu1R8MBd49BbDXNITCFzDHKp8X4m9mEedi4UuDplAZkkVe28aVRwif4Kzf+g9k1iTgw==
+X-Received: by 2002:adf:e28f:: with SMTP id v15mr18991524wri.130.1571661929630;
+        Mon, 21 Oct 2019 05:45:29 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id q66sm15560273wme.39.2019.10.21.05.45.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 05:45:28 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 13:45:27 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     arnd@arndb.de, broonie@kernel.org, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        baohua@kernel.org, stephan@gerhold.net
+Subject: Re: [PATCH v2 9/9] mfd: mfd-core: Move pdev->mfd_cell creation back
+ into mfd_add_device()
+Message-ID: <20191021124527.dr4mpys5vovfkk2e@holly.lan>
+References: <20191021105822.20271-1-lee.jones@linaro.org>
+ <20191021105822.20271-10-lee.jones@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190819104732.20966-4-pmladek@suse.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191021105822.20271-10-lee.jones@linaro.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 12:47:32PM +0200, Petr Mladek wrote:
-> Trigger busy loop by:
-> $> cat /proc/version
+On Mon, Oct 21, 2019 at 11:58:22AM +0100, Lee Jones wrote:
+> Most of the complexity of mfd_platform_add_cell() has been removed. The
+> only functionality left duplicates cell memory into the child's platform
+> device. Since it's only a few lines, moving it to the main thread and
+> removing the superfluous function makes sense.
 > 
-> Stop the busy loop by:
-> $> cat /proc/consoles
-> 
-> The code also shows the first touch*watchdog() function that hides
-> softlockup on a "well known" location.
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
 
-This seems like a terrible interface...
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+
+
+> ---
+>  drivers/mfd/mfd-core.c | 21 ++++-----------------
+>  1 file changed, 4 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+> index 5d56015baeeb..849dbe3798b0 100644
+> --- a/drivers/mfd/mfd-core.c
+> +++ b/drivers/mfd/mfd-core.c
+> @@ -49,19 +49,6 @@ int mfd_cell_disable(struct platform_device *pdev)
+>  }
+>  EXPORT_SYMBOL(mfd_cell_disable);
+>  
+> -static int mfd_platform_add_cell(struct platform_device *pdev,
+> -				 const struct mfd_cell *cell)
+> -{
+> -	if (!cell)
+> -		return 0;
+> -
+> -	pdev->mfd_cell = kmemdup(cell, sizeof(*cell), GFP_KERNEL);
+> -	if (!pdev->mfd_cell)
+> -		return -ENOMEM;
+> -
+> -	return 0;
+> -}
+> -
+>  #if IS_ENABLED(CONFIG_ACPI)
+>  static void mfd_acpi_add_device(const struct mfd_cell *cell,
+>  				struct platform_device *pdev)
+> @@ -141,6 +128,10 @@ static int mfd_add_device(struct device *parent, int id,
+>  	if (!pdev)
+>  		goto fail_alloc;
+>  
+> +	pdev->mfd_cell = kmemdup(cell, sizeof(*cell), GFP_KERNEL);
+> +	if (!pdev->mfd_cell)
+> +		goto fail_device;
+> +
+>  	res = kcalloc(cell->num_resources, sizeof(*res), GFP_KERNEL);
+>  	if (!res)
+>  		goto fail_device;
+> @@ -183,10 +174,6 @@ static int mfd_add_device(struct device *parent, int id,
+>  			goto fail_alias;
+>  	}
+>  
+> -	ret = mfd_platform_add_cell(pdev, cell);
+> -	if (ret)
+> -		goto fail_alias;
+> -
+>  	for (r = 0; r < cell->num_resources; r++) {
+>  		res[r].name = cell->resources[r].name;
+>  		res[r].flags = cell->resources[r].flags;
+> -- 
+> 2.17.1
+> 
