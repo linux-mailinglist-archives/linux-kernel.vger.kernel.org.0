@@ -2,71 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D59ABDF683
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 22:10:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20300DF692
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 22:14:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730266AbfJUUKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 16:10:25 -0400
-Received: from sauhun.de ([88.99.104.3]:50516 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbfJUUKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 16:10:25 -0400
-Received: from localhost (x4dbffd67.dyn.telefonica.de [77.191.253.103])
-        by pokefinder.org (Postfix) with ESMTPSA id 870832C0076;
-        Mon, 21 Oct 2019 22:10:23 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 22:10:23 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Chuhong Yuan <hslester96@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mmc: renesas_sdhi: add checks for pinctrl_lookup_state
-Message-ID: <20191021201022.GA3607@kunai>
-References: <20191018131338.11713-1-hslester96@gmail.com>
- <CAPDyKFoBYchP96hv=7XfTo8CrCSD+KC0h_oFRAsOYT-Lc1SFZQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YZ5djTAD1cGYuMQK"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFoBYchP96hv=7XfTo8CrCSD+KC0h_oFRAsOYT-Lc1SFZQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730204AbfJUUOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 16:14:09 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:47031 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbfJUUOJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 16:14:09 -0400
+Received: by mail-io1-f67.google.com with SMTP id c6so17473376ioo.13
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 13:14:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=xEwJBNto9KAcWmpasBhmnl15oU+oNgu4Rb5htYycPys=;
+        b=KVsrrGiu1YeYehU1az8RKsFfg4eBcY0CtUIjyUZtduksDidivB9UnrJlWVUdLlgOVA
+         QruyywfTieWlIjSakbJuEMbtHqpEz+RmjFcyVRZXI4V7gCBdIJSFyWk6vSbOPSowIqi2
+         +h/HSnECp8fmcx/QO4dOEdxJEjzngN34tmF81nWZgjBExEt4bFLV47uopshlr03ufNao
+         +y215KjagRkRaKyww/tDc7H+j8LWHltqQhQvpW5w1nUFlZsvvhEJGiTZBsS/r13ch0nL
+         60aYw/d567tToTPYr7qvJYiG5Cl2tIJZAMaIuSe0NkIsLUN1pKnkanpMJ5U3BRvD3Saa
+         1f7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xEwJBNto9KAcWmpasBhmnl15oU+oNgu4Rb5htYycPys=;
+        b=ojeB7axDtzv23G3wIWu+Dz23/drWy1M5hB3luqblYLFSUIpLzwvgl/sDox5ckXMX3P
+         nojQqJrd5mji/wQQtAXjM12HWcOsShbOIcmtfLoIbZmt+uS0GMcPmOgoOduoGfsAuwVA
+         giWofdKzNHIyC2sWN+ikmvProxrN1p4J+e8WLtkEmGQFKvu/H4BVvZNpgQ2bWBID7v23
+         Dgoh9DiJl247++Hzsp1OKzt2oKYrTOkfEPJmBTsYTQmCL6biKCgiGgD9inoMjBSZwSqF
+         NJpmMj73YEefTxELsaHojOu/ERw7XxU/SBEIuo7pj5nw9pUaHgeYMsSGlfmHfx9/XSu1
+         x0sQ==
+X-Gm-Message-State: APjAAAXZ8YHN+rVgGFhGdhIA3RTgNDuBnyhF4qPKwDsP7ql631KlkUTn
+        BjNvo+CxADJTByZyQXlJpto=
+X-Google-Smtp-Source: APXvYqyMysdRd5UuHT5ueyZwzA8prHNYS/S+jS9DrWr/U+gd47kIsoBaBz9G54WFClKzqAEAM+MQAw==
+X-Received: by 2002:a5e:8219:: with SMTP id l25mr16723iom.292.1571688848028;
+        Mon, 21 Oct 2019 13:14:08 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id m14sm5995877ild.3.2019.10.21.13.14.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 13:14:07 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <wahrenst@gmx.net>, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] locking/atomics: Fix memory leak in bcm2835_timer_init
+Date:   Mon, 21 Oct 2019 15:13:59 -0500
+Message-Id: <20191021201400.2760-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In the impelementation of bcm2835_timer_init() the allocated memory for
+timer should be released if setup_irq() fails.
 
---YZ5djTAD1cGYuMQK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fixes: 84c39b8b7d46 ("clocksource/drivers/bcm2835_timer: Unmap region obtained by of_iomap")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ drivers/clocksource/bcm2835_timer.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/clocksource/bcm2835_timer.c b/drivers/clocksource/bcm2835_timer.c
+index 2b196cbfadb6..7b27cc53ce9c 100644
+--- a/drivers/clocksource/bcm2835_timer.c
++++ b/drivers/clocksource/bcm2835_timer.c
+@@ -121,6 +121,7 @@ static int __init bcm2835_timer_init(struct device_node *node)
+ 	ret = setup_irq(irq, &timer->act);
+ 	if (ret) {
+ 		pr_err("Can't set up timer IRQ\n");
++		kfree(timer);
+ 		goto err_iounmap;
+ 	}
+ 
+-- 
+2.17.1
 
-> I understand that this is only used for those variants that supports
-> UHS-I via the renesas_sdhi_start_signal_voltage_switch(). Wolfram, is
-> this fine you think?
-
-I'll double check tomorrow.
-
-
---YZ5djTAD1cGYuMQK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl2uEKoACgkQFA3kzBSg
-KbapZA//fFBrrLLvrg3bAaZ7CuBwPbtyzstjWpD7TY7gdaf29v5TZp4H0ZL2nFAj
-N2NuwXTrPg2mmpxH9sIZoFtB9MxBCyjBnvMEuKKE/8XMsz7SAa8CWwSXdix6a70u
-abCEBGrYlAdYEgJJvbcYUyBY9dnRR/YB6/BnIkpBeDYE5EFBdLviBCN0Cc8oWMaZ
-qYVhAdP+fJyMu8aHh3fM0AfEzd9hNLs5cBh/cyKFSt+ySfO4TwH+3TvP09yL0Ira
-bQ5K3evh/GF6DxYkpMFOxz/MbSAL06IPboB6VCzDsonAXdAYqxGnmRkHWICfYB3h
-4WBQswSIqDM1sMy233maH95MObNKDmcFby17s5j+QdYwwhAui8zadBblTC/WM6o/
-b1WVRoM74PThNpzYQuECXo2UbEYgcgVr192BM+uFTY9RBRfdlFqrtiMMlsfCl0hm
-0qiCt0mv6JadtOFl8tpj1ChZYyC6aObx9zlI1fSJxqJGcsKMTrVAegGF9Lw68zZn
-TtFs/eKVbcaGZwR2yq1nIEtjTla83FjSI1WUn8DKTTGJsBBBw3STZ0qtMZ+RsUZk
-RkbjkPUAukURo9MY8n/zj4qsDZX8h8arq+y+iYd/Agv4hFLDz59uhwwf86U+kTg5
-LhIHgr48cgFmygvlHGFPfYLmyljuec+0X9R55mvCvDpms9PNAJQ=
-=813x
------END PGP SIGNATURE-----
-
---YZ5djTAD1cGYuMQK--
