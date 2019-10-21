@@ -2,114 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A42BFDF351
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:41:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD55DF340
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:36:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbfJUQkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:40:45 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:13891 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfJUQkp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:40:45 -0400
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQrEOHTIXsMv3qxU1"
-X-RZG-CLASS-ID: mo00
-Received: from localhost.localdomain
-        by smtp.strato.de (RZmta 44.28.1 AUTH)
-        with ESMTPSA id 409989v9LGedQlb
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 21 Oct 2019 18:40:39 +0200 (CEST)
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Hai Li <hali@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Nikita Travkin <nikitos.tr@gmail.com>
-Subject: [PATCH] drm/msm/dsi: Implement qcom,dsi-phy-regulator-ldo-mode for 28nm PHY
-Date:   Mon, 21 Oct 2019 18:34:25 +0200
-Message-Id: <20191021163425.83697-1-stephan@gerhold.net>
-X-Mailer: git-send-email 2.23.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729859AbfJUQfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:35:30 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:57700 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1729736AbfJUQfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:35:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 21ABE1758;
+        Mon, 21 Oct 2019 09:35:00 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DD6703F71F;
+        Mon, 21 Oct 2019 09:34:57 -0700 (PDT)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     amit.kachhap@arm.com, ard.biesheuvel@linaro.org,
+        catalin.marinas@arm.com, deller@gmx.de, duwe@suse.de,
+        james.morse@arm.com, jeyu@kernel.org, jpoimboe@redhat.com,
+        jthierry@redhat.com, mark.rutland@arm.com, mingo@redhat.com,
+        peterz@infradead.org, rostedt@goodmis.org, svens@stackframe.org,
+        takahiro.akashi@linaro.org, will@kernel.org
+Subject: [PATCH 8/8] arm64: ftrace: minimize ifdeffery
+Date:   Mon, 21 Oct 2019 17:34:26 +0100
+Message-Id: <20191021163426.9408-9-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20191021163426.9408-1-mark.rutland@arm.com>
+References: <20191021163426.9408-1-mark.rutland@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DSI PHY regulator supports two regulator modes: LDO and DCDC.
-This mode can be selected using the "qcom,dsi-phy-regulator-ldo-mode"
-device tree property.
+Now that we no longer refer to mod->arch.ftrace_trampolines in the body
+of ftrace_make_call(), we can use IS_ENABLED() rather than ifdeffery,
+and make the code easier to follow. Likewise in ftrace_make_nop().
 
-However, at the moment only the 20nm PHY driver actually implements
-that option. Add a check in the 28nm PHY driver to program the
-registers correctly for LDO mode.
+Let's do so.
 
-Tested-by: Nikita Travkin <nikitos.tr@gmail.com> # l8150
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
 ---
-This is needed to make the display work on Longcheer L8150,
-which has recently gained mainline support in:
-https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit/?id=16e8e8072108426029f0c16dff7fbe77fae3df8f
+ arch/arm64/kernel/ftrace.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-This patch is based on code from the downstream kernel:
-https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/drivers/video/msm/mdss/msm_mdss_io_8974.c?h=LA.BR.1.2.9.1-02310-8x16.0#n152
-
-The LDO regulator configuration is taken from msm8916-qrd.dtsi:
-https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/arch/arm/boot/dts/qcom/msm8916-qrd.dtsi?h=LA.BR.1.2.9.1-02310-8x16.0#n56
----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-index b3f678f6c2aa..4579e6de4532 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-@@ -48,6 +48,25 @@ static void dsi_28nm_phy_regulator_ctrl(struct msm_dsi_phy *phy, bool enable)
- 		return;
- 	}
- 
-+	if (phy->regulator_ldo_mode) {
-+		u32 ldo_ctrl;
-+
-+		if (phy->cfg->type == MSM_DSI_PHY_28NM_LP)
-+			ldo_ctrl = 0x05;
-+		else
-+			ldo_ctrl = 0x0d;
-+
-+		dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x0);
-+		dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 0);
-+		dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_5, 0x7);
-+		dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_3, 0);
-+		dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_2, 0x1);
-+		dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_1, 0x1);
-+		dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_4, 0x20);
-+		dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, ldo_ctrl);
-+		return;
-+	}
-+
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x0);
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 1);
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_5, 0);
-@@ -56,6 +75,7 @@ static void dsi_28nm_phy_regulator_ctrl(struct msm_dsi_phy *phy, bool enable)
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_1, 0x9);
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x7);
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_4, 0x20);
-+	dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x00);
+diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
+index aea652c33a38..8618faa82e6d 100644
+--- a/arch/arm64/kernel/ftrace.c
++++ b/arch/arm64/kernel/ftrace.c
+@@ -62,18 +62,18 @@ int ftrace_update_ftrace_func(ftrace_func_t func)
+ 	return ftrace_modify_code(pc, 0, new, false);
  }
  
- static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
-@@ -77,8 +97,6 @@ static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
+-#ifdef CONFIG_ARM64_MODULE_PLTS
+ static struct plt_entry *get_ftrace_plt(struct module *mod, unsigned long addr)
+ {
++#ifdef CONFIG_ARM64_MODULE_PLTS
+ 	struct plt_entry *plt = mod->arch.ftrace_trampolines;
  
- 	dsi_28nm_phy_regulator_ctrl(phy, true);
+ 	if (addr == FTRACE_ADDR)
+ 		return &plt[FTRACE_PLT_IDX];
+ 	if (addr == FTRACE_REGS_ADDR && IS_ENABLED(CONFIG_FTRACE_WITH_REGS))
+ 		return &plt[FTRACE_REGS_PLT_IDX];
++#endif
+ 	return NULL;
+ }
+-#endif
  
--	dsi_phy_write(base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x00);
--
- 	dsi_28nm_dphy_set_timing(phy, timing);
+ /*
+  * Turn on the call to ftrace_caller() in instrumented function
+@@ -85,10 +85,12 @@ int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
+ 	long offset = (long)pc - (long)addr;
  
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_CTRL_1, 0x00);
+ 	if (offset < -SZ_128M || offset >= SZ_128M) {
+-#ifdef CONFIG_ARM64_MODULE_PLTS
+ 		struct module *mod;
+ 		struct plt_entry *plt;
+ 
++		if (!IS_ENABLED(CONFIG_ARM64_MODULE_PLTS))
++			return -EINVAL;
++
+ 		/*
+ 		 * On kernels that support module PLTs, the offset between the
+ 		 * branch instruction and its target may legally exceed the
+@@ -113,9 +115,6 @@ int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
+ 		}
+ 
+ 		addr = (unsigned long)plt;
+-#else /* CONFIG_ARM64_MODULE_PLTS */
+-		return -EINVAL;
+-#endif /* CONFIG_ARM64_MODULE_PLTS */
+ 	}
+ 
+ 	old = aarch64_insn_gen_nop();
+@@ -185,9 +184,11 @@ int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec,
+ 	long offset = (long)pc - (long)addr;
+ 
+ 	if (offset < -SZ_128M || offset >= SZ_128M) {
+-#ifdef CONFIG_ARM64_MODULE_PLTS
+ 		u32 replaced;
+ 
++		if (!IS_ENABLED(CONFIG_ARM64_MODULE_PLTS))
++			return -EINVAL;
++
+ 		/*
+ 		 * 'mod' is only set at module load time, but if we end up
+ 		 * dealing with an out-of-range condition, we can assume it
+@@ -218,9 +219,6 @@ int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec,
+ 			return -EINVAL;
+ 
+ 		validate = false;
+-#else /* CONFIG_ARM64_MODULE_PLTS */
+-		return -EINVAL;
+-#endif /* CONFIG_ARM64_MODULE_PLTS */
+ 	} else {
+ 		old = aarch64_insn_gen_branch_imm(pc, addr,
+ 						  AARCH64_INSN_BRANCH_LINK);
 -- 
-2.23.0
+2.11.0
 
