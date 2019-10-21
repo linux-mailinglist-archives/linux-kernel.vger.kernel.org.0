@@ -2,91 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0780DF75B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 23:15:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1245DF765
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 23:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387400AbfJUVO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 17:14:59 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:39180 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbfJUVO7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 17:14:59 -0400
-Received: by mail-il1-f195.google.com with SMTP id i12so2897667ils.6
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 14:14:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=LR3+seWWFASqTSZQrCeqQuAxv454H5+n1q+3KOFbBcs=;
-        b=G1I6gh7o/OFhK2+ufBpndx46sR9cyY67N6CBxIyxkgWvcaRC5RoOzDnEuqkOFFZ9Xh
-         G2lGR9XhD9UJd43XoN6GjpKobREtEatr0444g4HiQ0vIp6qcNtT9izy8dxqFp7CXKHce
-         8ZBaD4kQTeheSROXlCqCHJqYicJ5iQ9VeVlwsT+l0LYnADQQy12XeEgxz24VbihIbmas
-         EBjpvrrl1tTvDVxNOoo+e8t7++Ptu20ey5KWx8LMT5lgriVDB4E5qG+qhKZbKmv0K1nQ
-         sj6wWW0LedhBb9aXveHWrW2drichJEGv+dQwI930GHMCZji2BtPwr2uJu7Pbcz+SohQR
-         h8iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LR3+seWWFASqTSZQrCeqQuAxv454H5+n1q+3KOFbBcs=;
-        b=K1dW2EdisHjdiR/XxHVZS2ZxOQPPcatCALh1iZX9T8syWtYR0IVkwHvagwrVSwSzu/
-         7CXzyTumYVoa8CLlhhZW9ns4aoRBZM4NWSgwA+jzTgeFTMgiMpGD7bVxk1qJhUr47K8o
-         oaJBRFdxJL33HchjIiY6weUVeQAMRNSJqHGu4Vq35vLNbmsa+Fb/sFfgtzShToYNf8hY
-         gGzbd+Q76YIEnUYFEptPXSefVg7vjW2gZPWpW8lKuqZthoJNlWe7ZnvaSvbTrp9Eu5cV
-         5IomvGjQb9qCBfX6m+itFHmDP+pdBqf5oOgXMs/qbWzaknYselDIQXrTiedmOnWBJSv7
-         5sGg==
-X-Gm-Message-State: APjAAAWRfPn2T3KYav4kYcTtjlsEShGP6jk5hdTO+Mla/0V6ZRWgbZ0A
-        DEz9Cu39unt6mlMotXTjtag=
-X-Google-Smtp-Source: APXvYqyUmrw7izwsnnLUWNHlEPHYO40uOt6aOQoTUw2Mw/Tsn91K4k/anOyP4E2hJDIrHP3dqzyD8w==
-X-Received: by 2002:a92:5b16:: with SMTP id p22mr29585825ilb.226.1571692498435;
-        Mon, 21 Oct 2019 14:14:58 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id m9sm6722618ilc.44.2019.10.21.14.14.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 14:14:57 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/nouveau: Fix memory leak in nouveau_bo_alloc
-Date:   Mon, 21 Oct 2019 16:14:48 -0500
-Message-Id: <20191021211449.9104-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        id S2387423AbfJUVWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 17:22:30 -0400
+Received: from muru.com ([72.249.23.125]:38764 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726672AbfJUVWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 17:22:30 -0400
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id E98C680CC;
+        Mon, 21 Oct 2019 21:23:03 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-omap@vger.kernel.org
+Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] bus: ti-sysc: Use swsup quirks also for am335x musb
+Date:   Mon, 21 Oct 2019 14:22:25 -0700
+Message-Id: <20191021212225.28148-1-tony@atomide.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the implementation of nouveau_bo_alloc() if it fails to determine the
-target page size via pi, then the allocated memory for nvbo should be
-released.
+Also on am335x we need the swsup quirks for musb.
 
-Fixes: 019cbd4a4feb ("drm/nouveau: Initialize GEM object before TTM object")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_bo.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/bus/ti-sysc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
-index f8015e0318d7..18857cf44068 100644
---- a/drivers/gpu/drm/nouveau/nouveau_bo.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
-@@ -276,8 +276,10 @@ nouveau_bo_alloc(struct nouveau_cli *cli, u64 *size, int *align, u32 flags,
- 			break;
- 	}
- 
--	if (WARN_ON(pi < 0))
-+	if (WARN_ON(pi < 0)) {
-+		kfree(nvbo);
- 		return ERR_PTR(-EINVAL);
-+	}
- 
- 	/* Disable compression if suitable settings couldn't be found. */
- 	if (nvbo->comp && !vmm->page[pi].comp) {
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -1259,6 +1259,8 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
+ 		   SYSC_MODULE_QUIRK_SGX),
+ 	SYSC_QUIRK("usb_otg_hs", 0, 0x400, 0x404, 0x408, 0x00000050,
+ 		   0xffffffff, SYSC_QUIRK_SWSUP_SIDLE | SYSC_QUIRK_SWSUP_MSTANDBY),
++	SYSC_QUIRK("usb_otg_hs", 0, 0, 0x10, -1, 0x4ea2080d, 0xffffffff,
++		   SYSC_QUIRK_SWSUP_SIDLE | SYSC_QUIRK_SWSUP_MSTANDBY),
+ 	SYSC_QUIRK("wdt", 0, 0, 0x10, 0x14, 0x502a0500, 0xfffff0f0,
+ 		   SYSC_MODULE_QUIRK_WDT),
+ 	/* Watchdog on am3 and am4 */
 -- 
-2.17.1
-
+2.23.0
