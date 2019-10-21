@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46D9DDEE17
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:42:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 745DEDEE0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:41:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729185AbfJUNmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:42:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43326 "EHLO mail.kernel.org"
+        id S1729692AbfJUNl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:41:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729673AbfJUNlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:41:21 -0400
+        id S1729684AbfJUNlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:41:24 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22C01217D7;
-        Mon, 21 Oct 2019 13:41:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1789214B2;
+        Mon, 21 Oct 2019 13:41:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571665280;
-        bh=Zwl3pQ9O3p+VGC4AQ/ycgZEmApWIil1oIONXPb6yYIo=;
+        s=default; t=1571665283;
+        bh=7/gUIJm+/IoIGxvP1+Gl4Sjo5zp3uxkuPDrsUZSXBXM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gi9tWJZ5OGcHo48hSnt6i9lF/L71xAwhNxV3ovBWR0H0/CnlOdzO/aB8cUljhyxyE
-         Z59Wv4EsYGJGCJklpRovk3iVjnJNoNmB2zKGC/FvRWoKEDscsTXKvJUTi9SGN0JEuh
-         dE78AFs+ZTn8yQ5yZExmbbEyWwBMMJAzWKcik70Y=
+        b=nmUmViL9jBAVQ2ABakjxYZSRyR1x9B6AFOER5F988YGtVT1BhwQtEKGL4+z5yt1m1
+         7d0w93OxqQsalOCORDw8UGV0Oswh6nnFq8StlboarKdYhtqs2f+aqjxQpLBbMT9R1t
+         zVNHr50LY1Wpi1drewnzoAx90r47Xj8tVKCrrSyM=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Alexey Budankov <alexey.budankov@linux.intel.com>,
         Andi Kleen <ak@linux.intel.com>,
         Jin Yao <yao.jin@linux.intel.com>,
         Michael Petlan <mpetlan@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>
-Subject: [PATCH 48/57] libperf: Add tests_mmap_cpus test
-Date:   Mon, 21 Oct 2019 10:38:25 -0300
-Message-Id: <20191021133834.25998-49-acme@kernel.org>
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 49/57] libperf: Keep count of failed tests
+Date:   Mon, 21 Oct 2019 10:38:26 -0300
+Message-Id: <20191021133834.25998-50-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191021133834.25998-1-acme@kernel.org>
 References: <20191021133834.25998-1-acme@kernel.org>
@@ -52,36 +52,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-Add mmaping tests that generates prctl call on every cpu validates it
-gets all the related events in ring buffer.
+Keep the count of failed tests, so we get better output with failures,
+like:
 
-Committer testing:
-
-  # make -C tools/perf/lib tests
-  make: Entering directory '/home/acme/git/perf/tools/perf/lib'
-    LINK     test-cpumap-a
-    LINK     test-threadmap-a
-    LINK     test-evlist-a
-    LINK     test-evsel-a
-    LINK     test-cpumap-so
-    LINK     test-threadmap-so
-    LINK     test-evlist-so
-    LINK     test-evsel-so
+  # make tests
+  ...
   running static:
   - running test-cpumap.c...OK
   - running test-threadmap.c...OK
-  - running test-evlist.c...OK
+  - running test-evlist.c...FAILED test-evlist.c:53 failed to create evsel2
+  FAILED test-evlist.c:163 failed to create evsel2
+  FAILED test-evlist.c:287 failed count
+    FAILED (3)
   - running test-evsel.c...OK
   running dynamic:
   - running test-cpumap.c...OK
   - running test-threadmap.c...OK
-  - running test-evlist.c...OK
+  - running test-evlist.c...FAILED test-evlist.c:53 failed to create evsel2
+  FAILED test-evlist.c:163 failed to create evsel2
+  FAILED test-evlist.c:287 failed count
+    FAILED (3)
   - running test-evsel.c...OK
-  make: Leaving directory '/home/acme/git/perf/tools/perf/lib'
-  #
+ ...
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -90,134 +84,100 @@ Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
-Link: http://lore.kernel.org/lkml/20191017105918.20873-8-jolsa@kernel.org
-[ Added _GNU_SOURCE define for sched.h to get sched_[gs]et_affinity
+Link: http://lore.kernel.org/lkml/20191017105918.20873-9-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/lib/tests/test-evlist.c | 98 ++++++++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
+ tools/perf/lib/include/internal/tests.h | 20 +++++++++++++++++---
+ tools/perf/lib/tests/test-cpumap.c      |  2 +-
+ tools/perf/lib/tests/test-evlist.c      |  2 +-
+ tools/perf/lib/tests/test-evsel.c       |  2 +-
+ tools/perf/lib/tests/test-threadmap.c   |  2 +-
+ 5 files changed, 21 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/lib/tests/test-evlist.c b/tools/perf/lib/tests/test-evlist.c
-index 90a1869ba4b1..741bc1bb4524 100644
---- a/tools/perf/lib/tests/test-evlist.c
-+++ b/tools/perf/lib/tests/test-evlist.c
-@@ -1,4 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE // needed for sched.h to get sched_[gs]etaffinity and CPU_(ZERO,SET)
-+#include <sched.h>
+diff --git a/tools/perf/lib/include/internal/tests.h b/tools/perf/lib/include/internal/tests.h
+index b7a20cd24ee1..2093e8868a67 100644
+--- a/tools/perf/lib/include/internal/tests.h
++++ b/tools/perf/lib/include/internal/tests.h
+@@ -4,14 +4,28 @@
+ 
  #include <stdio.h>
- #include <stdarg.h>
- #include <unistd.h>
-@@ -299,6 +301,101 @@ static int test_mmap_thread(void)
+ 
+-#define __T_START fprintf(stdout, "- running %s...", __FILE__)
+-#define __T_OK    fprintf(stdout, "OK\n")
+-#define __T_FAIL  fprintf(stdout, "FAIL\n")
++int tests_failed;
++
++#define __T_START					\
++do {							\
++	fprintf(stdout, "- running %s...", __FILE__);	\
++	fflush(NULL);					\
++	tests_failed = 0;				\
++} while (0)
++
++#define __T_END								\
++do {									\
++	if (tests_failed)						\
++		fprintf(stdout, "  FAILED (%d)\n", tests_failed);	\
++	else								\
++		fprintf(stdout, "OK\n");				\
++} while (0)
+ 
+ #define __T(text, cond)                                                          \
+ do {                                                                             \
+ 	if (!(cond)) {                                                           \
+ 		fprintf(stderr, "FAILED %s:%d %s\n", __FILE__, __LINE__, text);  \
++		tests_failed++;                                                  \
+ 		return -1;                                                       \
+ 	}                                                                        \
+ } while (0)
+diff --git a/tools/perf/lib/tests/test-cpumap.c b/tools/perf/lib/tests/test-cpumap.c
+index aa34c20df07e..c8d45091e7c2 100644
+--- a/tools/perf/lib/tests/test-cpumap.c
++++ b/tools/perf/lib/tests/test-cpumap.c
+@@ -26,6 +26,6 @@ int main(int argc, char **argv)
+ 	perf_cpu_map__put(cpus);
+ 	perf_cpu_map__put(cpus);
+ 
+-	__T_OK;
++	__T_END;
  	return 0;
  }
+diff --git a/tools/perf/lib/tests/test-evlist.c b/tools/perf/lib/tests/test-evlist.c
+index 741bc1bb4524..6d8ebe0c2504 100644
+--- a/tools/perf/lib/tests/test-evlist.c
++++ b/tools/perf/lib/tests/test-evlist.c
+@@ -408,6 +408,6 @@ int main(int argc, char **argv)
+ 	test_mmap_thread();
+ 	test_mmap_cpus();
  
-+static int test_mmap_cpus(void)
-+{
-+	struct perf_evlist *evlist;
-+	struct perf_evsel *evsel;
-+	struct perf_mmap *map;
-+	struct perf_cpu_map *cpus;
-+	struct perf_event_attr attr = {
-+		.type             = PERF_TYPE_TRACEPOINT,
-+		.sample_period    = 1,
-+		.wakeup_watermark = 1,
-+		.disabled         = 1,
-+	};
-+	cpu_set_t saved_mask;
-+	char path[PATH_MAX];
-+	int id, err, cpu, tmp;
-+	union perf_event *event;
-+	int count = 0;
-+
-+	snprintf(path, PATH_MAX, "%s/kernel/debug/tracing/events/syscalls/sys_enter_prctl/id",
-+		 sysfs__mountpoint());
-+
-+	if (filename__read_int(path, &id)) {
-+		fprintf(stderr, "error: failed to get tracepoint id: %s\n", path);
-+		return -1;
-+	}
-+
-+	attr.config = id;
-+
-+	cpus = perf_cpu_map__new(NULL);
-+	__T("failed to create cpus", cpus);
-+
-+	evlist = perf_evlist__new();
-+	__T("failed to create evlist", evlist);
-+
-+	evsel = perf_evsel__new(&attr);
-+	__T("failed to create evsel1", evsel);
-+
-+	perf_evlist__add(evlist, evsel);
-+
-+	perf_evlist__set_maps(evlist, cpus, NULL);
-+
-+	err = perf_evlist__open(evlist);
-+	__T("failed to open evlist", err == 0);
-+
-+	err = perf_evlist__mmap(evlist, 4);
-+	__T("failed to mmap evlist", err == 0);
-+
-+	perf_evlist__enable(evlist);
-+
-+	err = sched_getaffinity(0, sizeof(saved_mask), &saved_mask);
-+	__T("sched_getaffinity failed", err == 0);
-+
-+	perf_cpu_map__for_each_cpu(cpu, tmp, cpus) {
-+		cpu_set_t mask;
-+
-+		CPU_ZERO(&mask);
-+		CPU_SET(cpu, &mask);
-+
-+		err = sched_setaffinity(0, sizeof(mask), &mask);
-+		__T("sched_setaffinity failed", err == 0);
-+
-+		prctl(0, 0, 0, 0, 0);
-+	}
-+
-+	err = sched_setaffinity(0, sizeof(saved_mask), &saved_mask);
-+	__T("sched_setaffinity failed", err == 0);
-+
-+	perf_evlist__disable(evlist);
-+
-+	perf_evlist__for_each_mmap(evlist, map, false) {
-+		if (perf_mmap__read_init(map) < 0)
-+			continue;
-+
-+		while ((event = perf_mmap__read_event(map)) != NULL) {
-+			count++;
-+			perf_mmap__consume(map);
-+		}
-+
-+		perf_mmap__read_done(map);
-+	}
-+
-+	/* calls perf_evlist__munmap/perf_evlist__close */
-+	perf_evlist__delete(evlist);
-+
-+	/*
-+	 * The generated prctl events should match the
-+	 * number of cpus or be bigger (we are system-wide).
-+	 */
-+	__T("failed count", count >= perf_cpu_map__nr(cpus));
-+
-+	perf_cpu_map__put(cpus);
-+
-+	return 0;
-+}
-+
- int main(int argc, char **argv)
- {
- 	__T_START;
-@@ -309,6 +406,7 @@ int main(int argc, char **argv)
+-	__T_OK;
++	__T_END;
+ 	return 0;
+ }
+diff --git a/tools/perf/lib/tests/test-evsel.c b/tools/perf/lib/tests/test-evsel.c
+index 1b6c4285ac2b..135722ac965b 100644
+--- a/tools/perf/lib/tests/test-evsel.c
++++ b/tools/perf/lib/tests/test-evsel.c
+@@ -130,6 +130,6 @@ int main(int argc, char **argv)
  	test_stat_thread();
  	test_stat_thread_enable();
- 	test_mmap_thread();
-+	test_mmap_cpus();
  
- 	__T_OK;
+-	__T_OK;
++	__T_END;
  	return 0;
+ }
+diff --git a/tools/perf/lib/tests/test-threadmap.c b/tools/perf/lib/tests/test-threadmap.c
+index 8c5f47247d9e..7dc4d6fbedde 100644
+--- a/tools/perf/lib/tests/test-threadmap.c
++++ b/tools/perf/lib/tests/test-threadmap.c
+@@ -26,6 +26,6 @@ int main(int argc, char **argv)
+ 	perf_thread_map__put(threads);
+ 	perf_thread_map__put(threads);
+ 
+-	__T_OK;
++	__T_END;
+ 	return 0;
+ }
 -- 
 2.21.0
 
