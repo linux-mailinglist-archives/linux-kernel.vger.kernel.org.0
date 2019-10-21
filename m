@@ -2,131 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75BDDDEBE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:15:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B29DEBE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:15:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbfJUMPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 08:15:42 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33383 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728667AbfJUMPl (ORCPT
+        id S1728651AbfJUMP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 08:15:29 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:37462 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728613AbfJUMP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:15:41 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q10so8352820pfl.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 05:15:40 -0700 (PDT)
+        Mon, 21 Oct 2019 08:15:28 -0400
+Received: by mail-oi1-f194.google.com with SMTP id i16so10818452oie.4
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 05:15:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=FyfRV5Js9+leUaktEVHjzJNcbnyCVZmNmn0rQoEZsq8=;
-        b=sS7o7iqs+RScyt6BaNZLIHcYIvEhJBzm7BJzVTX38JcWinbzToZ3aJ5g9oqzVF6+LA
-         pQKXXkGuulQiZqNUINoLALWG17assWoUELh6fWzIh/rgY8oufCDbqAqSPPFYuaMrRoCJ
-         zMf8Rf2YFIkiY3PAL4K1+UaQ1lOxuO39kCeF6/eV9yyNt1zvc+ElEWiQT9jhtWtWm8+f
-         ittQeVB8GHx5bZtd372Di6jzjY/sBJQB5v1gBtU8T0phCcDpGFasEJ7mtIjf33oQV84m
-         ijB5jkjTmzw4ey3nhVsYg200l/pNeOnk9DIUPSf2yrkqE4Nn1EXptze6w7LvBo1+xQPc
-         frow==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1lI93YNTuV9z0QswEaOR/XuZAwGw+CRQ58pTCQCCBVA=;
+        b=ZjdyHa190eojc7Vs3ciDRMhe2DzSUghJPm7Juo02qFoKR8IEtGsOVE8gw1inVDqw4s
+         QybrcvyBD/VQbFJnXIo0T9ILSsGxoqHLJFW/UdUY53njccNqdE2GMgz1Dg4IY7raUnou
+         7AYKUqPaZxtgALSyUiFDUfP1nUpQa2uUrve98ve01kZmfCjTNg7DykYBI/64LSlxYVv0
+         ncVxPq/UAk821MxREnI9SUedNPsgSeE4YT6NUsyvPobRT+jfkwDkQHh71O45q6DDuJqs
+         uQu3czaRDDKQ9koMGngUYzRmVE9j8VmsSTkg6P/WHh+BBxkYmlFA+9YK/j2VB3qS3B+5
+         ru/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=FyfRV5Js9+leUaktEVHjzJNcbnyCVZmNmn0rQoEZsq8=;
-        b=qjY64gHp1IWtl1RAHdxqwiznTZDiIXlyJyhMLh0mAD052ToQMa4vIeP0VTKTBTw4fz
-         15utMc4rvhZ39zKa3pIuWkZLGP5EaYxS6WWn/EIxLwYM5t5PQZtLLLj5Y4TsRgcxyaRc
-         yU28H5YJlWVYeFmTyfKpcorO4g1nyvYdMYyKuQm/kVYAeCRoi3/2UMstgW+Zl6bB3pjq
-         DW8c2sroPYj88+O9+7m8UaO6g9oVnontk0OdVG6Ka4yUo4BPAGld6JHMvYHfmom37V/k
-         XbqzKhMVAEbGwvDhGpdWM/o2ptProVlhjVQUGrQu7/RqjRpz9FO1BiPnM1OUk6j/nydn
-         ot8w==
-X-Gm-Message-State: APjAAAUSLfu3A6TRdew5I99mTRqKGP+GGJ4OfYbhKOtFQLmHrWRGN8m+
-        QXPjtGbuI6kQkVQNhdhRnF/dygsjzeLhHQ==
-X-Google-Smtp-Source: APXvYqw5PBkD1utYutUy6zvkffZmPfQ/KetF+YXD6Io7HIuCYrta9vEtYPa8mkg2wYcbkc+A22Qy0A==
-X-Received: by 2002:a65:68c3:: with SMTP id k3mr5280332pgt.247.1571660139404;
-        Mon, 21 Oct 2019 05:15:39 -0700 (PDT)
-Received: from localhost ([49.248.62.222])
-        by smtp.gmail.com with ESMTPSA id 127sm15132523pfy.56.2019.10.21.05.15.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Oct 2019 05:15:38 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        daniel.lezcano@linaro.org, viresh.kumar@linaro.org,
-        sudeep.holla@arm.com, bjorn.andersson@linaro.org,
-        edubezval@gmail.com, agross@kernel.org, tdas@codeaurora.org,
-        swboyd@chromium.org, ilina@codeaurora.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Ben Segall <bsegall@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     linux-clk@vger.kernel.org
-Subject: [PATCH v5 5/6] clk: qcom: Initialize clock drivers earlier
-Date:   Mon, 21 Oct 2019 17:45:14 +0530
-Message-Id: <75ae9c3a1c0e69b95818c6ffe7181fdeaaf2d70e.1571656015.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1571656014.git.amit.kucheria@linaro.org>
-References: <cover.1571656014.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1571656014.git.amit.kucheria@linaro.org>
-References: <cover.1571656014.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1lI93YNTuV9z0QswEaOR/XuZAwGw+CRQ58pTCQCCBVA=;
+        b=cF8I+N3Hkb8xVl/hvuhi0jvEmjV1NmHwI44Dk41WRfQgslhk8X1PSa/gGcUBWQ53ry
+         BrgPa0HnbpP3922JBWi9o4ZbLkHHdkFfc4d1hrGO6I79FUGiY4wtZ6TAtiODZNhz5/LW
+         ZG1thnW+XT0xPxfh2uFwEXnfn2oHVmCwjCEJCHA55dg6vySZhHRVZ9nntB41mT15dlVT
+         12WeekXN4AceORi6c2zT935RCC5l9DJxRYvHInPIdd0S7GlueOrfvShuAi8rf5Ub/267
+         04WLsHTKYnwVasNo9O18C/f4D4GAoeV9xu/9EelNxmJjU2+o++KmEtmp7W3blnEkWAge
+         Q02g==
+X-Gm-Message-State: APjAAAWooTEmPb7nQXf5AV2qDHCqjjHdDPTBQHxcAAIsN4jA7BN/3jb/
+        NzLdzrpj5oNvM507CYLjAYUp/BLyl4g2OQIFOI/7sQ==
+X-Google-Smtp-Source: APXvYqzwJhH5YWW3SKrFdWanRjSMoGnIycjT9b8iyNsYkd7MemkP4K0kJxYkKoCAm++aj1mIcGuUlf7FmkifEsB0+No=
+X-Received: by 2002:a05:6808:4b:: with SMTP id v11mr18996250oic.70.1571660127086;
+ Mon, 21 Oct 2019 05:15:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <0000000000003b1e8005956939f1@google.com> <20191021111920.frmc3njkha4c3a72@wittgenstein>
+ <20191021120029.GA24935@redhat.com>
+In-Reply-To: <20191021120029.GA24935@redhat.com>
+From:   Marco Elver <elver@google.com>
+Date:   Mon, 21 Oct 2019 14:15:15 +0200
+Message-ID: <CANpmjNMfCK99DoUuR2qRBTLLhrGsYVcpKdtXW7S559tNJ-MO7A@mail.gmail.com>
+Subject: Re: KCSAN: data-race in exit_signals / prepare_signal
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        syzbot <syzbot+492a4acccd8fc75ddfd0@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, christian@brauner.io,
+        deepa.kernel@gmail.com, ebiederm@xmission.com, guro@fb.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initialize the clock drivers on sdm845 and qcs404 in core_initcall so we
-can have earlier access to cpufreq during booting.
+On Mon, 21 Oct 2019 at 14:00, Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> On 10/21, Christian Brauner wrote:
+> >
+> > This traces back to Oleg fixing a race between a group stop and a thread
+> > exiting before it notices that it has a pending signal or is in the middle of
+> > do_exit() already, causing group stop to get wacky.
+> > The original commit to fix this race is
+> > commit d12619b5ff56 ("fix group stop with exit race") which took sighand
+> > lock before setting PF_EXITING on the thread.
+>
+> Not really... sig_task_ignored() didn't check task->flags until the recent
+> 33da8e7c81 ("signal: Allow cifs and drbd to receive their terminating signals").
+> But I think this doesn't matter, see below.
+>
+> > If the race really matters and given how tsk->flags is currently accessed
+> > everywhere the simple fix for now might be:
+> >
+> > diff --git a/kernel/signal.c b/kernel/signal.c
+> > index c4da1ef56fdf..cf61e044c4cc 100644
+> > --- a/kernel/signal.c
+> > +++ b/kernel/signal.c
+> > @@ -2819,7 +2819,9 @@ void exit_signals(struct task_struct *tsk)
+> >         cgroup_threadgroup_change_begin(tsk);
+> >
+> >         if (thread_group_empty(tsk) || signal_group_exit(tsk->signal)) {
+> > +               spin_lock_irq(&tsk->sighand->siglock);
+> >                 tsk->flags |= PF_EXITING;
+> > +               spin_unlock_irq(&tsk->sighand->siglock);
+>
+> Well, exit_signals() tries to avoid ->siglock in this case....
+>
+> But this doesn't matter. IIUC the problem is not that exit_signals() sets
+> PF_EXITING, the problem is that it writes to tsk->flags and kasan detects
+> the data race.
+>
+> For example, freezable_schedule() which sets PF_FREEZER_SKIP can equally
+> "race" with sig_task_ignored() or with ANY other code which checks this
+> task's flags.
+>
+> I think this is WONTFIX.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/clk/qcom/clk-rpmh.c   | 2 +-
- drivers/clk/qcom/gcc-qcs404.c | 2 +-
- drivers/clk/qcom/gcc-sdm845.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+If taking the spinlock is unnecessary (which AFAIK it probably is) and
+there are no other writers to this flag, you will still need a
+WRITE_ONCE(tsk->flags, tsk->flags | PF_EXITING) to avoid the
+data-race.
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 96a36f6ff667d..20d4258f125b9 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -487,7 +487,7 @@ static int __init clk_rpmh_init(void)
- {
- 	return platform_driver_register(&clk_rpmh_driver);
- }
--subsys_initcall(clk_rpmh_init);
-+core_initcall(clk_rpmh_init);
- 
- static void __exit clk_rpmh_exit(void)
- {
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index bd32212f37e64..9b0c4ce2ef4ec 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -2855,7 +2855,7 @@ static int __init gcc_qcs404_init(void)
- {
- 	return platform_driver_register(&gcc_qcs404_driver);
- }
--subsys_initcall(gcc_qcs404_init);
-+core_initcall(gcc_qcs404_init);
- 
- static void __exit gcc_qcs404_exit(void)
- {
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index 95be125c3bddf..49dcff1af2db1 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -3628,7 +3628,7 @@ static int __init gcc_sdm845_init(void)
- {
- 	return platform_driver_register(&gcc_sdm845_driver);
- }
--subsys_initcall(gcc_sdm845_init);
-+core_initcall(gcc_sdm845_init);
- 
- static void __exit gcc_sdm845_exit(void)
- {
--- 
-2.17.1
+However, if it is possible that there are concurrent writers setting
+other bits in flags, you need to ensure that the bits are set
+atomically (unless it's ok to lose some bits here). This can only be
+done via 1) taking siglock, or 2) via e.g. atomic_or(...), however,
+flags is not atomic_t ...
 
+-- Marco
