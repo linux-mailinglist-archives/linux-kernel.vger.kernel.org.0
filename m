@@ -2,114 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B86EDF213
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:54:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EEF8DF223
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:56:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729580AbfJUPyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 11:54:44 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:57718 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729395AbfJUPyn (ORCPT
+        id S1729406AbfJUP4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 11:56:37 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:59989 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726955AbfJUP4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 11:54:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571673282;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nYYBigk1mBDQOVv3cRmHPXRlvdDEVLUfmEpCEsjnHaA=;
-        b=SeQuMJwbCc7deMnQJKd20wRpIjF76vWpSebuL3vB3uKwiqWujW69KUPbsgT5SSuoGdMavY
-        0USG3UszCXGCyvWf6RwD4FeIaytC08bNitg/aUAkMCx/4YTknZzvBoaNXoq3EJ4GcWbjzC
-        SqX6kYZ+agtUeLfV09vDF4ZiKkcv6lk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-196-zBapdSUgNuSypj5z_X7zRQ-1; Mon, 21 Oct 2019 11:54:40 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4D5AC80183E;
-        Mon, 21 Oct 2019 15:54:38 +0000 (UTC)
-Received: from [10.36.118.81] (unknown [10.36.118.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E38E360126;
-        Mon, 21 Oct 2019 15:54:35 +0000 (UTC)
-Subject: Re: [PATCH v1 1/2] mm/page_alloc.c: Don't set pages PageReserved()
- when offlining
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>
-References: <20191021141927.10252-1-david@redhat.com>
- <20191021141927.10252-2-david@redhat.com>
- <20191021144345.GT9379@dhcp22.suse.cz>
- <b6a392c9-1cb8-321e-b7ba-d483d928a3cc@redhat.com>
- <20191021154712.GW9379@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <91ecb9b7-4271-a3a7-2342-b0afd4c41606@redhat.com>
-Date:   Mon, 21 Oct 2019 17:54:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Mon, 21 Oct 2019 11:56:36 -0400
+X-Originating-IP: 86.207.98.53
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 687E36000B;
+        Mon, 21 Oct 2019 15:56:34 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-rtc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com
+Subject: [PATCH] rtc: disable uie before setting time and enable after
+Date:   Mon, 21 Oct 2019 17:56:30 +0200
+Message-Id: <20191021155631.3342-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20191021154712.GW9379@dhcp22.suse.cz>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: zBapdSUgNuSypj5z_X7zRQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.10.19 17:47, Michal Hocko wrote:
-> On Mon 21-10-19 17:39:36, David Hildenbrand wrote:
->> On 21.10.19 16:43, Michal Hocko wrote:
-> [...]
->>> We still set PageReserved before onlining pages and that one should be
->>> good to go as well (memmap_init_zone).
->>> Thanks!
->>
->> memmap_init_zone() is called when onlining memory. There, set all pages =
-to
->> reserved right now (on context =3D=3D MEMMAP_HOTPLUG). We clear PG_reser=
-ved when
->> onlining a page to the buddy (e.g., generic_online_page). If we would on=
-line
->> a memory block with holes, we would want to keep all such pages
->> (!pfn_valid()) set to reserved. Also, there might be other side effects.
->=20
-> Isn't it sufficient to have those pages in a poisoned state? They are
-> not onlined so their state is basically undefined anyway. I do not see
-> how PageReserved makes this any better.
+When setting the time in the future with the uie timer enabled,
+rtc_timer_do_work will loop for a while because the expiration of the uie
+timer was way before the current RTC time and a new timer will be enqueued
+until the current rtc time is reached.
 
-It is what people have been using for a long time. Memory hole ->=20
-PG_reserved. The memmap is valid, but people want to tell "this here is=20
-crap, don't look at it".
+If the uie timer is enabled, disable it before setting the time and enable
+it after expiring current timers (which may actually be an alarm).
 
->=20
-> Also is the hole inside a hotplugable memory something we really have to
-> care about. Has anybody actually seen a platform to require that?
+This is the safest thing to do to ensure the uie timer is still
+synchronized with the RTC, especially in the UIE emulation case.
 
-That's what I was asking. I can see "support" for this was added=20
-basically right from the beginning. I'd say we rip that out and=20
-cleanup/simplify. I am not aware of a platform that requires this.=20
-Especially, memory holes on DIMMs (detected during boot) seem like an=20
-unlikely thing.
+Reported-by: syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com
+Fixes: 6610e0893b8b ("RTC: Rework RTC code to use timerqueue for events")
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/interface.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-
---=20
-
-Thanks,
-
-David / dhildenb
+diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+index eea700723976..f8b7c004d6ec 100644
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -125,7 +125,7 @@ EXPORT_SYMBOL_GPL(rtc_read_time);
+ 
+ int rtc_set_time(struct rtc_device *rtc, struct rtc_time *tm)
+ {
+-	int err;
++	int err, uie;
+ 
+ 	err = rtc_valid_tm(tm);
+ 	if (err != 0)
+@@ -137,6 +137,17 @@ int rtc_set_time(struct rtc_device *rtc, struct rtc_time *tm)
+ 
+ 	rtc_subtract_offset(rtc, tm);
+ 
++#ifdef CONFIG_RTC_INTF_DEV_UIE_EMUL
++	uie = rtc->uie_rtctimer.enabled || rtc->uie_irq_active;
++#else
++	uie = rtc->uie_rtctimer.enabled;
++#endif
++	if (uie) {
++		err = rtc_update_irq_enable(rtc, 0);
++		if (err)
++			return err;
++	}
++
+ 	err = mutex_lock_interruptible(&rtc->ops_lock);
+ 	if (err)
+ 		return err;
+@@ -153,6 +164,12 @@ int rtc_set_time(struct rtc_device *rtc, struct rtc_time *tm)
+ 	/* A timer might have just expired */
+ 	schedule_work(&rtc->irqwork);
+ 
++	if (uie) {
++		err = rtc_update_irq_enable(rtc, 1);
++		if (err)
++			return err;
++	}
++
+ 	trace_rtc_set_time(rtc_tm_to_time64(tm), err);
+ 	return err;
+ }
+-- 
+2.21.0
 
