@@ -2,392 +2,277 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A94E2DF19C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:31:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B22EDF1A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729616AbfJUPbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 11:31:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40962 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729447AbfJUPbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 11:31:42 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        id S1729589AbfJUPet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 11:34:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44888 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728052AbfJUPes (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 11:34:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SBmuHY1zrIfyuRvYOx1xGQpAYRpV1fFuzLwSk80OX4k=; b=LY5zhChzeXPR6G5HKCb3we1j+
+        mJ6xe7mCc6enRslGq/FnvDmZRV5p8NvsmJ1ZEkOL8VO45f4c+8zIzQEbZbqvAkNT8E1Xak7rHL+3g
+        ArIj0A4vUYlEMiilp54GLXO1O8ULTG6Bo9ZpUOsvPqfSzzO2TUKb1Ac2EgVoV1NzGiAJSCe16Z10s
+        Bgdgd+xMQIR/V8lfwQ7BjX/MoMAVcVrf/+5Out9tA7dnluObiKFkI6Ut1LrfPaXkwBOmgadXP8SQw
+        EF0d6ddOZVYcAW2UxX2l6L0AcjG+4txsoD0p+W0Nrlsj4Zv6z4nUMs/RDDzi7+6NA675xgyGZ75qz
+        VytJ69whA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iMZhU-0000dA-4m; Mon, 21 Oct 2019 15:34:28 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CE792089C;
-        Mon, 21 Oct 2019 15:31:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571671900;
-        bh=O2vFTUwd76MITD8NwD78quVOY4WkZsWBLBIDSXT3sEc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=g1d8n/zY7qoeqh+v1l7HwU4yY358ucBFb7MkfQvIWLz5E8X3ti0t1h7VIhW3EvP2D
-         QdmYBcIL+ucg+VoangQtbuYDjSebBZCUQJiAVhOZCz226/4dO2USFTdGy/vG0RVM5f
-         9vIbNJyD7yH2OfiptoGAwHBYamKTahHgeqJpKW3c=
-Date:   Mon, 21 Oct 2019 16:31:34 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Gwendal Grignou <gwendal@chromium.org>
-Cc:     briannorris@chromium.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, lee.jones@linaro.org, bleung@chromium.org,
-        enric.balletbo@collabora.com, dianders@chromium.org,
-        groeck@chromium.org, fabien.lahoudere@collabora.com,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v2 01/18] platform: chrome: Put docs with the code
-Message-ID: <20191021163134.6d121b1e@archlinux>
-In-Reply-To: <20191021055403.67849-2-gwendal@chromium.org>
-References: <20191021055403.67849-1-gwendal@chromium.org>
-        <20191021055403.67849-2-gwendal@chromium.org>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2E672300EBF;
+        Mon, 21 Oct 2019 17:33:28 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5DE4C201EF68D; Mon, 21 Oct 2019 17:34:25 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 17:34:25 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jeyu@kernel.org
+Subject: Re: [PATCH v4 15/16] module: Move where we mark modules RO,X
+Message-ID: <20191021153425.GB19358@hirez.programming.kicks-ass.net>
+References: <20191018073525.768931536@infradead.org>
+ <20191018074634.801435443@infradead.org>
+ <20191021135312.jbbxsuipxldocdjk@treble>
+ <20191021141402.GI1817@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021141402.GI1817@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 20 Oct 2019 22:53:46 -0700
-Gwendal Grignou <gwendal@chromium.org> wrote:
-
-> To avoid doc rot, put function documentations with code, not header.
-> Use kernel-doc style comments for exported functions.
+On Mon, Oct 21, 2019 at 04:14:02PM +0200, Peter Zijlstra wrote:
+> On Mon, Oct 21, 2019 at 08:53:12AM -0500, Josh Poimboeuf wrote:
+> > On Fri, Oct 18, 2019 at 09:35:40AM +0200, Peter Zijlstra wrote:
+> > > Now that set_all_modules_text_*() is gone, nothing depends on the
+> > > relation between ->state = COMING and the protection state anymore.
+> > > This enables moving the protection changes later, such that the COMING
+> > > notifier callbacks can more easily modify the text.
+> > > 
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > Cc: Jessica Yu <jeyu@kernel.org>
+> > > ---
+> > >  kernel/module.c |    8 ++++----
+> > >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > > 
+> > > --- a/kernel/module.c
+> > > +++ b/kernel/module.c
+> > > @@ -3683,10 +3683,6 @@ static int complete_formation(struct mod
+> > >  	/* This relies on module_mutex for list integrity. */
+> > >  	module_bug_finalize(info->hdr, info->sechdrs, mod);
+> > >  
+> > > -	module_enable_ro(mod, false);
+> > > -	module_enable_nx(mod);
+> > > -	module_enable_x(mod);
+> > > -
+> > >  	/* Mark state as coming so strong_try_module_get() ignores us,
+> > >  	 * but kallsyms etc. can see us. */
+> > >  	mod->state = MODULE_STATE_COMING;
+> > > @@ -3852,6 +3848,10 @@ static int load_module(struct load_info
+> > >  	if (err)
+> > >  		goto bug_cleanup;
+> > >  
+> > > +	module_enable_ro(mod, false);
+> > > +	module_enable_nx(mod);
+> > > +	module_enable_x(mod);
+> > > +
+> > >  	/* Module is ready to execute: parsing args may do that. */
+> > >  	after_dashes = parse_args(mod->name, mod->args, mod->kp, mod->num_kp,
+> > >  				  -32768, 32767, mod,
+> > 
+> > [ Sorry if this was already discussed, I still have a large backlog. ]
+> > 
+> > Doesn't livepatch code also need to be modified?  We have:
 > 
-> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-Looks good to me.
-
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-> ---
-> New in v2.
+> Urgh bah.. I was too focussed on the other klp borkage :/ But yes,
+> arm64/ftrace and klp are the only two users of that function (outside of
+> module.c) and Mark was already writing a patch for arm64.
 > 
->  drivers/platform/chrome/cros_ec.c           |  33 +++++++
->  drivers/platform/chrome/cros_ec_proto.c     |  70 +++++++++++++
->  include/linux/platform_data/cros_ec_proto.h | 103 --------------------
->  3 files changed, 103 insertions(+), 103 deletions(-)
-> 
-> diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/cros_ec.c
-> index fd77e6fa74c2c..9b2d07422e175 100644
-> --- a/drivers/platform/chrome/cros_ec.c
-> +++ b/drivers/platform/chrome/cros_ec.c
-> @@ -104,6 +104,15 @@ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
->  	return ret;
->  }
->  
-> +/**
-> + * cros_ec_register() - Register a new ChromeOS EC, using the provided info.
-> + * @ec_dev: Device to register.
-> + *
-> + * Before calling this, allocate a pointer to a new device and then fill
-> + * in all the fields up to the --private-- marker.
-> + *
-> + * Return: 0 on success or negative error code.
-> + */
->  int cros_ec_register(struct cros_ec_device *ec_dev)
->  {
->  	struct device *dev = ec_dev->dev;
-> @@ -198,6 +207,14 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->  }
->  EXPORT_SYMBOL(cros_ec_register);
->  
-> +/**
-> + * cros_ec_unregister() - Remove a ChromeOS EC.
-> + * @ec_dev: Device to unregister.
-> + *
-> + * Call this to deregister a ChromeOS EC, then clean up any private data.
-> + *
-> + * Return: 0 on success or negative error code.
-> + */
->  int cros_ec_unregister(struct cros_ec_device *ec_dev)
->  {
->  	if (ec_dev->pd)
-> @@ -209,6 +226,14 @@ int cros_ec_unregister(struct cros_ec_device *ec_dev)
->  EXPORT_SYMBOL(cros_ec_unregister);
->  
->  #ifdef CONFIG_PM_SLEEP
-> +/**
-> + * cros_ec_suspend() - Handle a suspend operation for the ChromeOS EC device.
-> + * @ec_dev: Device to suspend.
-> + *
-> + * This can be called by drivers to handle a suspend event.
-> + *
-> + * Return: 0 on success or negative error code.
-> + */
->  int cros_ec_suspend(struct cros_ec_device *ec_dev)
->  {
->  	struct device *dev = ec_dev->dev;
-> @@ -243,6 +268,14 @@ static void cros_ec_report_events_during_suspend(struct cros_ec_device *ec_dev)
->  					     1, ec_dev);
->  }
->  
-> +/**
-> + * cros_ec_resume() - Handle a resume operation for the ChromeOS EC device.
-> + * @ec_dev: Device to resume.
-> + *
-> + * This can be called by drivers to handle a resume event.
-> + *
-> + * Return: 0 on success or negative error code.
-> + */
->  int cros_ec_resume(struct cros_ec_device *ec_dev)
->  {
->  	int ret;
-> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-> index f659f96bda128..7db58771ec77c 100644
-> --- a/drivers/platform/chrome/cros_ec_proto.c
-> +++ b/drivers/platform/chrome/cros_ec_proto.c
-> @@ -117,6 +117,17 @@ static int send_command(struct cros_ec_device *ec_dev,
->  	return ret;
->  }
->  
-> +/**
-> + * cros_ec_prepare_tx() - Prepare an outgoing message in the output buffer.
-> + * @ec_dev: Device to register.
-> + * @msg: Message to write.
-> + *
-> + * This is intended to be used by all ChromeOS EC drivers, but at present
-> + * only SPI uses it. Once LPC uses the same protocol it can start using it.
-> + * I2C could use it now, with a refactor of the existing code.
-> + *
-> + * Return: 0 on success or negative error code.
-> + */
->  int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
->  		       struct cros_ec_command *msg)
->  {
-> @@ -141,6 +152,16 @@ int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
->  }
->  EXPORT_SYMBOL(cros_ec_prepare_tx);
->  
-> +/**
-> + * cros_ec_check_result() - Check ec_msg->result.
-> + * @ec_dev: EC device.
-> + * @msg: Message to check.
-> + *
-> + * This is used by ChromeOS EC drivers to check the ec_msg->result for
-> + * errors and to warn about them.
-> + *
-> + * Return: 0 on success or negative error code.
-> + */
->  int cros_ec_check_result(struct cros_ec_device *ec_dev,
->  			 struct cros_ec_command *msg)
->  {
-> @@ -326,6 +347,13 @@ static int cros_ec_get_host_command_version_mask(struct cros_ec_device *ec_dev,
->  	return ret;
->  }
->  
-> +/**
-> + * cros_ec_query_all() -  Query the protocol version supported by the
-> + *         ChromeOS EC.
-> + * @ec_dev: Device to register.
-> + *
-> + * Return: 0 on success or negative error code.
-> + */
->  int cros_ec_query_all(struct cros_ec_device *ec_dev)
->  {
->  	struct device *dev = ec_dev->dev;
-> @@ -453,6 +481,16 @@ int cros_ec_query_all(struct cros_ec_device *ec_dev)
->  }
->  EXPORT_SYMBOL(cros_ec_query_all);
->  
-> +/**
-> + * cros_ec_cmd_xfer() - Send a command to the ChromeOS EC.
-> + * @ec_dev: EC device.
-> + * @msg: Message to write.
-> + *
-> + * Call this to send a command to the ChromeOS EC.  This should be used
-> + * instead of calling the EC's cmd_xfer() callback directly.
-> + *
-> + * Return: 0 on success or negative error code.
-> + */
->  int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
->  		     struct cros_ec_command *msg)
->  {
-> @@ -500,6 +538,18 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
->  }
->  EXPORT_SYMBOL(cros_ec_cmd_xfer);
->  
-> +/**
-> + * cros_ec_cmd_xfer_status() - Send a command to the ChromeOS EC.
-> + * @ec_dev: EC device.
-> + * @msg: Message to write.
-> + *
-> + * This function is identical to cros_ec_cmd_xfer, except it returns success
-> + * status only if both the command was transmitted successfully and the EC
-> + * replied with success status. It's not necessary to check msg->result when
-> + * using this function.
-> + *
-> + * Return: The number of bytes transferred on success or negative error code.
-> + */
->  int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
->  			    struct cros_ec_command *msg)
->  {
-> @@ -584,6 +634,16 @@ static int get_keyboard_state_event(struct cros_ec_device *ec_dev)
->  	return ec_dev->event_size;
->  }
->  
-> +/**
-> + * cros_ec_get_next_event() - Fetch next event from the ChromeOS EC.
-> + * @ec_dev: Device to fetch event from.
-> + * @wake_event: Pointer to a bool set to true upon return if the event might be
-> + *              treated as a wake event. Ignored if null.
-> + *
-> + * Return: negative error code on errors; 0 for no data; or else number of
-> + * bytes received (i.e., an event was retrieved successfully). Event types are
-> + * written out to @ec_dev->event_data.event_type on success.
-> + */
->  int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
->  {
->  	u8 event_type;
-> @@ -628,6 +688,16 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
->  }
->  EXPORT_SYMBOL(cros_ec_get_next_event);
->  
-> +/**
-> + * cros_ec_get_host_event() - Return a mask of event set by the ChromeOS EC.
-> + * @ec_dev: Device to fetch event from.
-> + *
-> + * When MKBP is supported, when the EC raises an interrupt, we collect the
-> + * events raised and call the functions in the ec notifier. This function
-> + * is a helper to know which events are raised.
-> + *
-> + * Return: 0 on error or non-zero bitmask of one or more EC_HOST_EVENT_*.
-> + */
->  u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev)
->  {
->  	u32 host_event;
-> diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
-> index eab7036cda090..0d4e4aaed37af 100644
-> --- a/include/linux/platform_data/cros_ec_proto.h
-> +++ b/include/linux/platform_data/cros_ec_proto.h
-> @@ -187,133 +187,30 @@ struct cros_ec_platform {
->  	u16 cmd_offset;
->  };
->  
-> -/**
-> - * cros_ec_suspend() - Handle a suspend operation for the ChromeOS EC device.
-> - * @ec_dev: Device to suspend.
-> - *
-> - * This can be called by drivers to handle a suspend event.
-> - *
-> - * Return: 0 on success or negative error code.
-> - */
->  int cros_ec_suspend(struct cros_ec_device *ec_dev);
->  
-> -/**
-> - * cros_ec_resume() - Handle a resume operation for the ChromeOS EC device.
-> - * @ec_dev: Device to resume.
-> - *
-> - * This can be called by drivers to handle a resume event.
-> - *
-> - * Return: 0 on success or negative error code.
-> - */
->  int cros_ec_resume(struct cros_ec_device *ec_dev);
->  
-> -/**
-> - * cros_ec_prepare_tx() - Prepare an outgoing message in the output buffer.
-> - * @ec_dev: Device to register.
-> - * @msg: Message to write.
-> - *
-> - * This is intended to be used by all ChromeOS EC drivers, but at present
-> - * only SPI uses it. Once LPC uses the same protocol it can start using it.
-> - * I2C could use it now, with a refactor of the existing code.
-> - *
-> - * Return: 0 on success or negative error code.
-> - */
->  int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
->  		       struct cros_ec_command *msg);
->  
-> -/**
-> - * cros_ec_check_result() - Check ec_msg->result.
-> - * @ec_dev: EC device.
-> - * @msg: Message to check.
-> - *
-> - * This is used by ChromeOS EC drivers to check the ec_msg->result for
-> - * errors and to warn about them.
-> - *
-> - * Return: 0 on success or negative error code.
-> - */
->  int cros_ec_check_result(struct cros_ec_device *ec_dev,
->  			 struct cros_ec_command *msg);
->  
-> -/**
-> - * cros_ec_cmd_xfer() - Send a command to the ChromeOS EC.
-> - * @ec_dev: EC device.
-> - * @msg: Message to write.
-> - *
-> - * Call this to send a command to the ChromeOS EC.  This should be used
-> - * instead of calling the EC's cmd_xfer() callback directly.
-> - *
-> - * Return: 0 on success or negative error code.
-> - */
->  int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
->  		     struct cros_ec_command *msg);
->  
-> -/**
-> - * cros_ec_cmd_xfer_status() - Send a command to the ChromeOS EC.
-> - * @ec_dev: EC device.
-> - * @msg: Message to write.
-> - *
-> - * This function is identical to cros_ec_cmd_xfer, except it returns success
-> - * status only if both the command was transmitted successfully and the EC
-> - * replied with success status. It's not necessary to check msg->result when
-> - * using this function.
-> - *
-> - * Return: The number of bytes transferred on success or negative error code.
-> - */
->  int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
->  			    struct cros_ec_command *msg);
->  
-> -/**
-> - * cros_ec_register() - Register a new ChromeOS EC, using the provided info.
-> - * @ec_dev: Device to register.
-> - *
-> - * Before calling this, allocate a pointer to a new device and then fill
-> - * in all the fields up to the --private-- marker.
-> - *
-> - * Return: 0 on success or negative error code.
-> - */
->  int cros_ec_register(struct cros_ec_device *ec_dev);
->  
-> -/**
-> - * cros_ec_unregister() - Remove a ChromeOS EC.
-> - * @ec_dev: Device to unregister.
-> - *
-> - * Call this to deregister a ChromeOS EC, then clean up any private data.
-> - *
-> - * Return: 0 on success or negative error code.
-> - */
->  int cros_ec_unregister(struct cros_ec_device *ec_dev);
->  
-> -/**
-> - * cros_ec_query_all() -  Query the protocol version supported by the
-> - *         ChromeOS EC.
-> - * @ec_dev: Device to register.
-> - *
-> - * Return: 0 on success or negative error code.
-> - */
->  int cros_ec_query_all(struct cros_ec_device *ec_dev);
->  
-> -/**
-> - * cros_ec_get_next_event() - Fetch next event from the ChromeOS EC.
-> - * @ec_dev: Device to fetch event from.
-> - * @wake_event: Pointer to a bool set to true upon return if the event might be
-> - *              treated as a wake event. Ignored if null.
-> - *
-> - * Return: negative error code on errors; 0 for no data; or else number of
-> - * bytes received (i.e., an event was retrieved successfully). Event types are
-> - * written out to @ec_dev->event_data.event_type on success.
-> - */
->  int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event);
->  
-> -/**
-> - * cros_ec_get_host_event() - Return a mask of event set by the ChromeOS EC.
-> - * @ec_dev: Device to fetch event from.
-> - *
-> - * When MKBP is supported, when the EC raises an interrupt, we collect the
-> - * events raised and call the functions in the ec notifier. This function
-> - * is a helper to know which events are raised.
-> - *
-> - * Return: 0 on error or non-zero bitmask of one or more EC_HOST_EVENT_*.
-> - */
->  u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
->  
->  #endif /* __LINUX_CROS_EC_PROTO_H */
+> Means these last two patches need to wait a little until we've fixed
+> those.
 
+So On IRC Josh suggested we use text_poke() for RELA. Since KLP is only
+available on Power and x86, and Power does not have STRICT_MODULE_RWX,
+the below should be sufficient.
+
+Completely untested...
+
+---
+ arch/x86/kernel/module.c  | 40 +++++++++++++++++++++++++++++++++-------
+ include/linux/livepatch.h |  7 +++++++
+ kernel/livepatch/core.c   | 14 ++++++++++----
+ 3 files changed, 50 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+index d5c72cb877b3..76fa2c5f2d7b 100644
+--- a/arch/x86/kernel/module.c
++++ b/arch/x86/kernel/module.c
+@@ -126,11 +126,12 @@ int apply_relocate(Elf32_Shdr *sechdrs,
+ 	return 0;
+ }
+ #else /*X86_64*/
+-int apply_relocate_add(Elf64_Shdr *sechdrs,
++int __apply_relocate_add(Elf64_Shdr *sechdrs,
+ 		   const char *strtab,
+ 		   unsigned int symindex,
+ 		   unsigned int relsec,
+-		   struct module *me)
++		   struct module *me,
++		   void *(*write)(void *addr, const void *val, size_t size))
+ {
+ 	unsigned int i;
+ 	Elf64_Rela *rel = (void *)sechdrs[relsec].sh_addr;
+@@ -162,19 +163,19 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+ 		case R_X86_64_64:
+ 			if (*(u64 *)loc != 0)
+ 				goto invalid_relocation;
+-			*(u64 *)loc = val;
++			write(loc, &val, 8);
+ 			break;
+ 		case R_X86_64_32:
+ 			if (*(u32 *)loc != 0)
+ 				goto invalid_relocation;
+-			*(u32 *)loc = val;
++			write(loc, &val, 4);
+ 			if (val != *(u32 *)loc)
+ 				goto overflow;
+ 			break;
+ 		case R_X86_64_32S:
+ 			if (*(s32 *)loc != 0)
+ 				goto invalid_relocation;
+-			*(s32 *)loc = val;
++			write(loc, &val, 4);
+ 			if ((s64)val != *(s32 *)loc)
+ 				goto overflow;
+ 			break;
+@@ -183,7 +184,7 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+ 			if (*(u32 *)loc != 0)
+ 				goto invalid_relocation;
+ 			val -= (u64)loc;
+-			*(u32 *)loc = val;
++			write(loc, &val, 4);
+ #if 0
+ 			if ((s64)val != *(s32 *)loc)
+ 				goto overflow;
+@@ -193,7 +194,7 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+ 			if (*(u64 *)loc != 0)
+ 				goto invalid_relocation;
+ 			val -= (u64)loc;
+-			*(u64 *)loc = val;
++			write(loc, &val, 8);
+ 			break;
+ 		default:
+ 			pr_err("%s: Unknown rela relocation: %llu\n",
+@@ -215,6 +216,31 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+ 	       me->name);
+ 	return -ENOEXEC;
+ }
++
++int apply_relocate_add(Elf64_Shdr *sechdrs,
++		   const char *strtab,
++		   unsigned int symindex,
++		   unsigned int relsec,
++		   struct module *me)
++{
++	return __apply_relocate_add(sechdrs, strtab, symindex, relsec, me, memcpy);
++}
++
++int klp_apply_relocate_add(Elf64_Shdr *sechdrs,
++		   const char *strtab,
++		   unsigned int symindex,
++		   unsigned int relsec,
++		   struct module *me)
++{
++	int ret;
++
++	ret = __apply_relocate_add(sechdrs, strtab, symindex, relsec, me, text_poke);
++	if (!ret)
++		text_poke_sync();
++
++	return ret;
++}
++
+ #endif
+ 
+ int module_finalize(const Elf_Ehdr *hdr,
+diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+index 273400814020..5b8c10871b70 100644
+--- a/include/linux/livepatch.h
++++ b/include/linux/livepatch.h
+@@ -217,6 +217,13 @@ void *klp_shadow_get_or_alloc(void *obj, unsigned long id,
+ void klp_shadow_free(void *obj, unsigned long id, klp_shadow_dtor_t dtor);
+ void klp_shadow_free_all(unsigned long id, klp_shadow_dtor_t dtor);
+ 
++
++extern int klp_apply_relocate_add(Elf64_Shdr *sechdrs,
++			      const char *strtab,
++			      unsigned int symindex,
++			      unsigned int relsec,
++			      struct module *me);
++
+ #else /* !CONFIG_LIVEPATCH */
+ 
+ static inline int klp_module_coming(struct module *mod) { return 0; }
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index ab4a4606d19b..e690519aba31 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -245,6 +245,15 @@ static int klp_resolve_symbols(Elf_Shdr *relasec, struct module *pmod)
+ 	return 0;
+ }
+ 
++int __weak klp_apply_relocate_add(Elf64_Shdr *sechdrs,
++			      const char *strtab,
++			      unsigned int symindex,
++			      unsigned int relsec,
++			      struct module *me)
++{
++	apply_relocate_add(sechdrs, strtab, symindex, relsec, me);
++}
++
+ static int klp_write_object_relocations(struct module *pmod,
+ 					struct klp_object *obj)
+ {
+@@ -285,7 +294,7 @@ static int klp_write_object_relocations(struct module *pmod,
+ 		if (ret)
+ 			break;
+ 
+-		ret = apply_relocate_add(pmod->klp_info->sechdrs,
++		ret = klp_apply_relocate_add(pmod->klp_info->sechdrs,
+ 					 pmod->core_kallsyms.strtab,
+ 					 pmod->klp_info->symndx, i, pmod);
+ 		if (ret)
+@@ -721,16 +730,13 @@ static int klp_init_object_loaded(struct klp_patch *patch,
+ 
+ 	mutex_lock(&text_mutex);
+ 
+-	module_disable_ro(patch->mod);
+ 	ret = klp_write_object_relocations(patch->mod, obj);
+ 	if (ret) {
+-		module_enable_ro(patch->mod, true);
+ 		mutex_unlock(&text_mutex);
+ 		return ret;
+ 	}
+ 
+ 	arch_klp_init_object_loaded(patch, obj);
+-	module_enable_ro(patch->mod, true);
+ 
+ 	mutex_unlock(&text_mutex);
+ 
