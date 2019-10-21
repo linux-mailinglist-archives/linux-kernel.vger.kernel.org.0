@@ -2,104 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 655A4DE47A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 08:22:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52167DE47E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 08:24:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfJUGWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 02:22:01 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55395 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbfJUGWB (ORCPT
+        id S1727040AbfJUGYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 02:24:01 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35458 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbfJUGYB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 02:22:01 -0400
-Received: by mail-wm1-f68.google.com with SMTP id g24so2590672wmh.5
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 23:21:59 -0700 (PDT)
+        Mon, 21 Oct 2019 02:24:01 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l10so11964077wrb.2;
+        Sun, 20 Oct 2019 23:23:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uyhVv4N2UiJ3EJxpaNQCWc5NdrhC/9AoAL7jZ85/7b8=;
-        b=GjbUSEjvkAF47IsFWgAUnfSwZ9jZeOmpmmzg8L/6guVX38gCMZuouTdMO5Iji6ewM0
-         ZcqaKKfluXkc0GCek0xGcyop4JHYb97Q/n3Eqc7ah2EKKHr0N7BGDs851PPpZHuHqzCj
-         Az8WGOd2xhVAFxxTDg1R2UqIdUdRXgD25JY9oY8pXU6I6vVvsfZ0aFENdmAVqf4UnUr8
-         lcQmqiLBmmkWCuTPfA0TxotJre4XtMv52V1BrM2hzvGfc4Miftl70l+50k9K9NVhoe2J
-         xX9Fh2F8N7Dj2Pl0njY0mgUTPdAzdCBXsCb1ksBM0pvjzMtLDB5366phzKtAZjRMiTXL
-         ANmA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=P/Bn3N4SdBYXBrFhIrBVDGvVfEThXJOrckrV1dEVW4k=;
+        b=C9HTA+V4/wcr0ybNSujlNCdBnp2EiyZsCvZiq7dNTLnm2J8BaR9gj3eWREL+kLyy+j
+         wdeg5BhL744wX0tjisvXvnzTWYs3KWLl0ibmWZU/fGjtXTtn8QkgtHShdbP1vpv62GjT
+         meRoB7aIZJ98CFdISjPIxjQLs77qXK4o/wBhcvEtxvmeQA8yGEwsOnWFbQV96Pe2s8ee
+         OiBCxw/umGVMHqoy1U6052ghvGuCmIk0E9OVPZmHq0YrpkLUnROy2zD3mfIXC3tvwdID
+         CEpfvVAyH6N6CrAFwIHvJ2JiyvNApG9v81wDNEJko0UpJOu/40BRneAQjy7YRC4tPKiv
+         KxaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uyhVv4N2UiJ3EJxpaNQCWc5NdrhC/9AoAL7jZ85/7b8=;
-        b=Jrt87ALWP9NYLCnx+UsBbnl2vKVpFYBV80CdFI6rM3EQpKCh8ORpfm70V5Yh5y0uTw
-         4oaE0ZABgDNlNZecJS6l1fB4Yl3rnyf/VNWGQ3heHkJ9KxP/X7NB9XR9jhoScVHbctJV
-         4Ppc3d8lD/tzGP8PahzcUB1+orj43tkEcCeaU59ucZEkLKKeoHd7gIDeWHIJWZquUzXR
-         2oFiP0P1beQ6SrxWifevwoE2QVBaCt5TxS4dZXd7/P2NfcW9jnkwzgTS9aKCyZDZVk+V
-         iLCT+8vfvXIcVYc6Cl8Nj5M34E7d3nUPYvlQYhlPe7F7btB1BPa6YL0jCF5znEHvk+bo
-         5vRg==
-X-Gm-Message-State: APjAAAUTBriTmDVlVbQTURUH7lycqIUbA0Ddt+WZSiuNJY8JEeCACU7v
-        YS1N5NniQ5hdfajRyQBkyPtHAUGJ23IaRdLIGBkZfg==
-X-Google-Smtp-Source: APXvYqx9wfbsml6zIZvtLXulYaMSgitt7ok8Qfrnv+GkD+c5R91Idi9S9ZV+WgZk06tMxv4wXfJaROot0zqVv9/hG5E=
-X-Received: by 2002:a7b:c925:: with SMTP id h5mr1847720wml.61.1571638919306;
- Sun, 20 Oct 2019 23:21:59 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=P/Bn3N4SdBYXBrFhIrBVDGvVfEThXJOrckrV1dEVW4k=;
+        b=Pql/awSregoA6xB1pXMYNyPlV6qboewSoZImzu+z2VbyAeE+xWb52Z6PpIsjasS09l
+         k/8DZNCpqwJ+WDgTpa8ccm2gZvu57vFw+CoCj9DfHppKIBZyF3Ft60fm/BEtkAWdLkXM
+         bl01KRi2Wo0G483bbPznxHATGUftG8NGJZVbX0O6ufLKtz/CuVB+uvqGajkccPBei5Jk
+         o9WsYjSIhuRxd7vQNTsDZSgG5xtZxtDlHSFTQG4bkO03XLSWQmc1mMFjIhp7n/KaxLQZ
+         NkCHIBkAa6VmRDSyVH7l4yz7PdPTMQjd4yO3ILjXsRpFVK5v2DSBoQJiD5Hv8rIzy8Cd
+         Z7jQ==
+X-Gm-Message-State: APjAAAUZQcunNvPBHen6x8nf8AtPosTj/UPAJBgGyZSz5G66rPjCASv4
+        h+jmqVkdFVBxAMKCvMyV8S0=
+X-Google-Smtp-Source: APXvYqysW4JFc4YN7z5G19JbfVEG1LzgBbdY25nOFh4KIAu1vpTZtbZTqAlzEsjEkndgVZySNuMrMw==
+X-Received: by 2002:adf:fe42:: with SMTP id m2mr12563862wrs.321.1571639037962;
+        Sun, 20 Oct 2019 23:23:57 -0700 (PDT)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id u1sm14186164wrp.56.2019.10.20.23.23.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2019 23:23:57 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 08:23:54 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Yunfeng Ye <yeyunfeng@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [GIT PULL] perf/urgent fixes
+Message-ID: <20191021062354.GA22042@gmail.com>
+References: <20191017160301.20888-1-acme@kernel.org>
 MIME-Version: 1.0
-References: <20191018161033.261971-1-samitolvanen@google.com> <20191018161033.261971-17-samitolvanen@google.com>
-In-Reply-To: <20191018161033.261971-17-samitolvanen@google.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 21 Oct 2019 08:21:48 +0200
-Message-ID: <CAKv+Gu-88USO+fbjBgj35B4fUQ7A_t9nHO_swyN=T1q1G2wViA@mail.gmail.com>
-Subject: Re: [PATCH 16/18] arm64: kprobes: fix kprobes without CONFIG_KRETPROBES
-To:     Sami Tolvanen <samitolvanen@google.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191017160301.20888-1-acme@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Oct 2019 at 18:11, Sami Tolvanen <samitolvanen@google.com> wrote:
->
-> This allows CONFIG_KRETPROBES to be disabled without disabling
-> kprobes entirely.
->
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 
-Can we make kretprobes work with the shadow call stack instead?
+* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-> ---
->  arch/arm64/kernel/probes/kprobes.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-> index c4452827419b..98230ae979ca 100644
-> --- a/arch/arm64/kernel/probes/kprobes.c
-> +++ b/arch/arm64/kernel/probes/kprobes.c
-> @@ -551,6 +551,7 @@ void __kprobes __used *trampoline_probe_handler(struct pt_regs *regs)
->         return (void *)orig_ret_address;
->  }
->
-> +#ifdef CONFIG_KRETPROBES
->  void __kprobes arch_prepare_kretprobe(struct kretprobe_instance *ri,
->                                       struct pt_regs *regs)
->  {
-> @@ -564,6 +565,7 @@ int __kprobes arch_trampoline_kprobe(struct kprobe *p)
->  {
->         return 0;
->  }
-> +#endif
->
->  int __init arch_init_kprobes(void)
->  {
-> --
-> 2.23.0.866.gb869b98d4c-goog
->
+> Hi Ingo/Thomas,
+> 
+> 	Please consider pulling,
+> 
+> Best regards,
+> 
+> - Arnaldo
+> 
+> Test results at the end of this message, as usual.
+> 
+> The following changes since commit 4f5cafb5cb8471e54afdc9054d973535614f7675:
+> 
+>   Linux 5.4-rc3 (2019-10-13 16:37:36 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-5.4-20191017
+> 
+> for you to fetch changes up to 1abecfcaa7bba21c9985e0136fa49836164dd8fd:
+> 
+>   perf kmem: Fix memory leak in compact_gfp_flags() (2019-10-16 10:08:32 -0300)
+> 
+> ----------------------------------------------------------------
+> perf/urgent fixes:
+> 
+> perf buildid-cache:
+> 
+>   Adrian Hunter:
+> 
+>   - Fix mode setting in copyfile_mode_ns() when copying /proc/kcore.
+> 
+> perf evlist:
+> 
+>   Andi Kleen:
+> 
+>   - Fix freeing id arrays.
+> 
+> tools headers:
+> 
+>   - Sync sched.h anc kvm.h headers with the kernel sources.
+> 
+> perf jvmti:
+> 
+>   Thomas Richter:
+> 
+>   - Link against tools/lib/ctype.o to have weak strlcpy().
+> 
+> perf annotate:
+> 
+>   Gustavo A. R. Silva:
+> 
+>   - Fix multiple memory and file descriptor leaks, found by coverity.
+> 
+> perf c2c/kmem:
+> 
+>   Yunfeng Ye:
+> 
+>    - Fix leaks in error handling paths in 'perf c2c', 'perf kmem',  found by
+>      internal static analysis tool.
+> 
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> ----------------------------------------------------------------
+> Adrian Hunter (1):
+>       perf tools: Fix mode setting in copyfile_mode_ns()
+> 
+> Andi Kleen (1):
+>       perf evlist: Fix fix for freed id arrays
+> 
+> Arnaldo Carvalho de Melo (4):
+>       tools headers kvm: Sync kvm headers with the kernel sources
+>       tools headers kvm: Sync kvm headers with the kernel sources
+>       tools headers kvm: Sync kvm.h headers with the kernel sources
+>       tools headers UAPI: Sync sched.h with the kernel
+> 
+> Gustavo A. R. Silva (1):
+>       perf annotate: Fix multiple memory and file descriptor leaks
+> 
+> Thomas Richter (1):
+>       perf jvmti: Link against tools/lib/ctype.h to have weak strlcpy()
+> 
+> Yunfeng Ye (3):
+>       perf tools: Fix resource leak of closedir() on the error paths
+>       perf c2c: Fix memory leak in build_cl_output()
+>       perf kmem: Fix memory leak in compact_gfp_flags()
+> 
+>  tools/arch/x86/include/uapi/asm/svm.h |  1 +
+>  tools/arch/x86/include/uapi/asm/vmx.h |  6 +++++-
+>  tools/include/uapi/linux/kvm.h        |  2 ++
+>  tools/include/uapi/linux/sched.h      | 30 ++++++++++++++++++++++++++++--
+>  tools/perf/builtin-c2c.c              | 14 +++++++++-----
+>  tools/perf/builtin-kmem.c             |  1 +
+>  tools/perf/jvmti/Build                |  6 +++++-
+>  tools/perf/util/annotate.c            |  2 +-
+>  tools/perf/util/copyfile.c            |  8 +++++---
+>  tools/perf/util/evlist.c              |  2 +-
+>  tools/perf/util/header.c              |  4 +++-
+>  tools/perf/util/util.c                |  6 ++++--
+>  12 files changed, 65 insertions(+), 17 deletions(-)
+
+Pulled, thanks a lot Arnaldo!
+
+A minor bugreport:
+
+There's a new nuisance message that I noticed when 'perf top' is started: 
+a "vmlinux file has not been found" - with a "press any key" - but the 
+message doesn't actually wait for the keypress, it's cleared on the first 
+screen refresh...
+
+I'd argue that both the keypress action and the warning message is 
+superfluous:
+
+ - It annoys users while not actually giving any straightforward way to 
+   fix it. It's displayed on every startup of perf top, which is highly 
+   distracting.
+
+ - At least on Ubuntu it appears to be wrong, because the vmlinux is 
+   available and symbol resolution/annotation appears to be working fine:
+
+	# uname -a
+	Linux dagon 5.4.0-rc3-custom-00557-gb6c81ae120e0 #1 SMP PREEMPT Sun Oct 20 15:28:00 CEST 2019 x86_64 x86_64 x86_64 GNU/Linux
+
+	# dpkg -l | grep gb6c81ae120e
+	ii  linux-headers-5.4.0-rc3-custom-00557-gb6c81ae120e0   5.4.0-rc3-custom-00557-gb6c81ae120e0-1                     amd64        Linux kernel headers for 5.4.0-rc3-custom-00557-gb6c81ae120e0 on amd64
+	ii  linux-image-5.4.0-rc3-custom-00557-gb6c81ae120e0     5.4.0-rc3-custom-00557-gb6c81ae120e0-1                     amd64        Linux kernel, version 5.4.0-rc3-custom-00557-gb6c81ae120e0
+	ii  linux-image-5.4.0-rc3-custom-00557-gb6c81ae120e0-dbg 5.4.0-rc3-custom-00557-gb6c81ae120e0-1                     amd64        Linux kernel debugging symbols for 5.4.0-rc3-custom-00557-gb6c81ae120e0
+	ii  linux-libc-dev:amd64                                 5.4.0-rc3-custom-00557-gb6c81ae120e0-1                     amd64        Linux support headers for userspace development
+
+   Note that the 'dbg' package is installed which includes the vmlinux, 
+   and perf does seem to find it:
+
+	# dpkg-query -L linux-image-5.4.0-rc3-custom-00557-gb6c81ae120e0-dbg | grep vmlinux$
+	/usr/lib/debug/lib/modules/5.4.0-rc3-custom-00557-gb6c81ae120e0/vmlinux
+
+   I can see annotated kernel functions just fine.
+
+ - Finally, when I run perf as root then kallsyms and /proc/kcore is used 
+   to annotate the kernel. So the 'cannot resolve' message cannot even be 
+   true. :-)
+
+Instead I believe some sort of explanation should be printed in the 
+natural flow when there's an unknown symbol or someone tries to enter a 
+kernel symbol that cannot be further resolved. Even there it probably 
+shouldn't be a 'warning' message, but something printed in-line where 
+usually we'd see the annotated output - to disrupt the normal workflow as 
+little as possible.
+
+Secondly, there also appears to be a TUI weirdness when the annotated 
+kernel functions are small (or weird): the blue cursor is stuck at the 
+top and I cannot move between the annotated instructions with the down/up 
+arrow:
+
+Samples: 13M of event 'cycles', 4000 Hz, Event count (approx.): 1272420588851
+clear_page_rep  /usr/lib/debug/boot/vmlinux-5.4.0-rc3-custom-00557-gb6c81ae120e0 [Percent: local period]
+  0.01 │     mov  $0x200,%ecx                                                                                                                                                                      ▒
+       │   xorl %eax,%eax                                                                                                                                                                          ▒
+  0.01 │     xor  %eax,%eax                                                                                                                                                                        ▒
+       │   rep stosq                                                                                                                                                                               ▒
+ 99.27 │     rep  stos %rax,%es:(%rdi)                                                                                                                                                             ▒
+       │   ret                                                                                                                                                                                     ▒
+  0.71 │   ← retq                         
+
+I can still exit the screen with 'q', and can move around in larger 
+annotated kernel functions. Not sure whether it's related to function 
+size, or perhaps to the 'hottest' instruction that the cursor is normally 
+placed at.
+
+Thanks,
+
+	Ingo
