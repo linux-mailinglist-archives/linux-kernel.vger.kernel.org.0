@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4639DEE10
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:41:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E89DEE11
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:41:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729751AbfJUNln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:41:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43660 "EHLO mail.kernel.org"
+        id S1729762AbfJUNlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:41:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729743AbfJUNlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:41:40 -0400
+        id S1729747AbfJUNln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:41:43 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26AC42053B;
-        Mon, 21 Oct 2019 13:41:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BADE120679;
+        Mon, 21 Oct 2019 13:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571665299;
-        bh=oHUY9ohOod0xt4F7F1gde1O9xHZIQP1eY0A6fuFzdvo=;
+        s=default; t=1571665302;
+        bh=HYlKT32t3KHzCTnNns6lZoAke8Jbm1AQj1rHDeYyTXw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JDaJ4kMPjNtBeBOAGLbSltYuOpFV3cXm53ju+Oxg3nsLDbVvkXT+fUxZLDPziNwAj
-         fmSV1DRfbld0nY1KUy2zsUtLqvhXYQvJE69SFsflL1zmitLFbqKfWkx+CGDLgqEvHP
-         eE+bkD1LpPFtzLaqlBWyyaOEGTkNe75r4QvA8FD0=
+        b=ExtrWvVtiJEJ2QbyWYJ7+y1c7IIBUl2EG9ZTyzlcD8Z67kp0mfApnxzOP8s1u9c20
+         Tb2ixC7h+tvuQLmwotN55x9vRcAnMcuGRKSlAnvKvFF53R/OpWciQiBuvjUQetQWIE
+         TTKAkrL9VZh+ueRUebdL/OEXRN5HAdyOX3LIz+2s=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -31,11 +31,14 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
         =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
         <lclaudio@redhat.com>
-Subject: [PATCH 54/57] libbeauty: Make the mmap_flags strarray visible outside of its beautifier
-Date:   Mon, 21 Oct 2019 10:38:31 -0300
-Message-Id: <20191021133834.25998-55-acme@kernel.org>
+Subject: [PATCH 55/57] libbeauty: Introduce strarray__strtoul_flags()
+Date:   Mon, 21 Oct 2019 10:38:32 -0300
+Message-Id: <20191021133834.25998-56-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191021133834.25998-1-acme@kernel.org>
 References: <20191021133834.25998-1-acme@kernel.org>
@@ -49,37 +52,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-So that we can later use it with the strarray__strtoul_flags() routine
-that will be soon introduced.
+Counterpart of strarray__scnprintf_flags(), i.e. from a expression like:
+
+   # perf trace -e syscalls:sys_enter_mmap --filter="flags==PRIVATE|FIXED|DENYWRITE"
+
+I.e. that "flags==PRIVATE|FIXED|DENYWRITE", turn that into
+
+   # perf trace -e syscalls:sys_enter_mmap --filter=0x812
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
+Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-vldj3ch8su6i20to5eq31e8x@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-8xst3zrqqogax7fmfzwymvbl@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/trace/beauty/mmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/builtin-trace.c       | 45 +++++++++++++++++++++++++++++++-
+ tools/perf/trace/beauty/beauty.h |  1 +
+ 2 files changed, 45 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/trace/beauty/mmap.c b/tools/perf/trace/beauty/mmap.c
-index 859a8a9db2c6..9fa771a90d79 100644
---- a/tools/perf/trace/beauty/mmap.c
-+++ b/tools/perf/trace/beauty/mmap.c
-@@ -33,11 +33,11 @@ static size_t syscall_arg__scnprintf_mmap_prot(char *bf, size_t size,
- 
- #define SCA_MMAP_PROT syscall_arg__scnprintf_mmap_prot
- 
--static size_t mmap__scnprintf_flags(unsigned long flags, char *bf, size_t size, bool show_prefix)
--{
- #include "trace/beauty/generated/mmap_flags_array.c"
-        static DEFINE_STRARRAY(mmap_flags, "MAP_");
- 
-+static size_t mmap__scnprintf_flags(unsigned long flags, char *bf, size_t size, bool show_prefix)
-+{
-        return strarray__scnprintf_flags(&strarray__mmap_flags, bf, size, show_prefix, flags);
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 72ef3b395504..73c5c14b52eb 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -586,6 +586,49 @@ bool strarray__strtoul(struct strarray *sa, char *bf, size_t size, u64 *ret)
+ 	return false;
  }
  
++bool strarray__strtoul_flags(struct strarray *sa, char *bf, size_t size, u64 *ret)
++{
++	u64 val = 0;
++	char *tok = bf, *sep, *end;
++
++	*ret = 0;
++
++	while (size != 0) {
++		int toklen = size;
++
++		sep = memchr(tok, '|', size);
++		if (sep != NULL) {
++			size -= sep - tok + 1;
++
++			end = sep - 1;
++			while (end > tok && isspace(*end))
++				--end;
++
++			toklen = end - tok + 1;
++		}
++
++		while (isspace(*tok))
++			++tok;
++
++		if (isalpha(*tok) || *tok == '_') {
++			if (!strarray__strtoul(sa, tok, toklen, &val))
++				return false;
++		} else {
++			bool is_hexa = tok[0] == 0 && (tok[1] = 'x' || tok[1] == 'X');
++
++			val = strtoul(tok, NULL, is_hexa ? 16 : 0);
++		}
++
++		*ret |= (1 << (val - 1));
++
++		if (sep == NULL)
++			break;
++		tok = sep + 1;
++	}
++
++	return true;
++}
++
+ bool strarrays__strtoul(struct strarrays *sas, char *bf, size_t size, u64 *ret)
+ {
+ 	int i;
+@@ -3676,7 +3719,7 @@ static int trace__expand_filter(struct trace *trace __maybe_unused, struct evsel
+ 			}
+ 
+ 		right_end = right + 1;
+-		while (isalnum(*right_end) || *right_end == '_')
++		while (isalnum(*right_end) || *right_end == '_' || *right_end == '|')
+ 			++right_end;
+ 
+ 		if (isalpha(*right)) {
+diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
+index 10801660a71f..e12b2228b892 100644
+--- a/tools/perf/trace/beauty/beauty.h
++++ b/tools/perf/trace/beauty/beauty.h
+@@ -32,6 +32,7 @@ size_t strarray__scnprintf_suffix(struct strarray *sa, char *bf, size_t size, co
+ size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, bool show_prefix, unsigned long flags);
+ 
+ bool strarray__strtoul(struct strarray *sa, char *bf, size_t size, u64 *ret);
++bool strarray__strtoul_flags(struct strarray *sa, char *bf, size_t size, u64 *ret);
+ 
+ struct trace;
+ struct thread;
 -- 
 2.21.0
 
