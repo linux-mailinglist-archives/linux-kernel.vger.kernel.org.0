@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A8D4DF882
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 01:20:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC36BDF880
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 01:20:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730611AbfJUXUB convert rfc822-to-8bit (ORCPT
+        id S1730640AbfJUXUB convert rfc822-to-8bit (ORCPT
         <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 19:20:01 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:38266 "EHLO
+Received: from Galois.linutronix.de ([193.142.43.55]:38260 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730420AbfJUXS5 (ORCPT
+        with ESMTP id S1730547AbfJUXSz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 19:18:57 -0400
+        Mon, 21 Oct 2019 19:18:55 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iMgwp-0003pV-IH; Tue, 22 Oct 2019 01:18:47 +0200
+        id 1iMgwq-0003pv-CF; Tue, 22 Oct 2019 01:18:48 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CFFA41C0086;
-        Tue, 22 Oct 2019 01:18:46 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 23:18:46 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A316B1C047B;
+        Tue, 22 Oct 2019 01:18:47 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 23:18:47 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf trace: Use strtoul for the fcntl 'cmd' argument
+Subject: [tip: perf/core] libbeauty: Introduce syscall_arg__strtoul_strarrays()
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Luis =?utf-8?q?Cl=C3=A1udio_Gon=C3=A7alves?= 
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-mob96wyzri4r3rvyigqfjv0a@git.kernel.org>
-References: <tip-mob96wyzri4r3rvyigqfjv0a@git.kernel.org>
+In-Reply-To: <tip-b1ia3xzcy72hv0u4m168fcd0@git.kernel.org>
+References: <tip-b1ia3xzcy72hv0u4m168fcd0@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157169992630.29376.7406698007090638319.tip-bot2@tip-bot2>
+Message-ID: <157169992705.29376.7071830026458245961.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,50 +51,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     82c38338e0850a01057960efc94c6130f1a0fdde
-Gitweb:        https://git.kernel.org/tip/82c38338e0850a01057960efc94c6130f1a0fdde
+Commit-ID:     1a8a90b823f5e7279f84b39bbcd6c59e266e7dc2
+Gitweb:        https://git.kernel.org/tip/1a8a90b823f5e7279f84b39bbcd6c59e266e7dc2
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Fri, 18 Oct 2019 15:44:42 -03:00
+AuthorDate:    Fri, 18 Oct 2019 15:41:07 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Sat, 19 Oct 2019 15:35:02 -03:00
+CommitterDate: Sat, 19 Oct 2019 15:35:01 -03:00
 
-perf trace: Use strtoul for the fcntl 'cmd' argument
+libbeauty: Introduce syscall_arg__strtoul_strarrays()
 
-Since its values are in two ranges of values we ended up codifying it
-using a 'struct strarrays', so now hook it up with STUL_STRARRAYS so
-that we can do:
-
-  # perf trace -e syscalls:*enter_fcntl --filter=cmd==SETLK||cmd==SETLKW
-     0.000 sssd_kcm/19021 syscalls:sys_enter_fcntl(fd: 13</var/lib/sss/secrets/secrets.ldb>, cmd: SETLK, arg: 0x7ffcf0a4dee0)
-     1.523 sssd_kcm/19021 syscalls:sys_enter_fcntl(fd: 13</var/lib/sss/secrets/secrets.ldb>, cmd: SETLK, arg: 0x7ffcf0a4de90)
-     1.629 sssd_kcm/19021 syscalls:sys_enter_fcntl(fd: 13</var/lib/sss/secrets/secrets.ldb>, cmd: SETLK, arg: 0x7ffcf0a4de90)
-     2.711 sssd_kcm/19021 syscalls:sys_enter_fcntl(fd: 13</var/lib/sss/secrets/secrets.ldb>, cmd: SETLK, arg: 0x7ffcf0a4de70)
-  ^C#
+To allow going from string to integer for 'struct strarrays'.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-mob96wyzri4r3rvyigqfjv0a@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-b1ia3xzcy72hv0u4m168fcd0@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/builtin-trace.c       | 5 +++++
+ tools/perf/trace/beauty/beauty.h | 3 +++
+ 2 files changed, 8 insertions(+)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 265ea87..72ef3b3 100644
+index 0e7fc7c..265ea87 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -894,7 +894,8 @@ static struct syscall_fmt syscall_fmts[] = {
- 	{ .name	    = "fchownat",
- 	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* fd */ }, }, },
- 	{ .name	    = "fcntl",
--	  .arg = { [1] = { .scnprintf = SCA_FCNTL_CMD, /* cmd */
-+	  .arg = { [1] = { .scnprintf = SCA_FCNTL_CMD,  /* cmd */
-+			   .strtoul   = STUL_STRARRAYS,
- 			   .parm      = &strarrays__fcntl_cmds_arrays,
- 			   .show_zero = true, },
- 		   [2] = { .scnprintf =  SCA_FCNTL_ARG, /* arg */ }, }, },
+@@ -540,6 +540,11 @@ bool syscall_arg__strtoul_strarray(char *bf, size_t size, struct syscall_arg *ar
+ 	return strarray__strtoul(arg->parm, bf, size, ret);
+ }
+ 
++bool syscall_arg__strtoul_strarrays(char *bf, size_t size, struct syscall_arg *arg, u64 *ret)
++{
++	return strarrays__strtoul(arg->parm, bf, size, ret);
++}
++
+ size_t syscall_arg__scnprintf_strarray_flags(char *bf, size_t size, struct syscall_arg *arg)
+ {
+ 	return strarray__scnprintf_flags(arg->parm, bf, size, arg->show_string_prefix, arg->val);
+diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
+index 1b8a30e..1080166 100644
+--- a/tools/perf/trace/beauty/beauty.h
++++ b/tools/perf/trace/beauty/beauty.h
+@@ -125,6 +125,9 @@ size_t syscall_arg__scnprintf_strarray_flags(char *bf, size_t size, struct sysca
+ bool syscall_arg__strtoul_strarray(char *bf, size_t size, struct syscall_arg *arg, u64 *ret);
+ #define STUL_STRARRAY syscall_arg__strtoul_strarray
+ 
++bool syscall_arg__strtoul_strarrays(char *bf, size_t size, struct syscall_arg *arg, u64 *ret);
++#define STUL_STRARRAYS syscall_arg__strtoul_strarrays
++
+ size_t syscall_arg__scnprintf_x86_irq_vectors(char *bf, size_t size, struct syscall_arg *arg);
+ #define SCA_X86_IRQ_VECTORS syscall_arg__scnprintf_x86_irq_vectors
+ 
