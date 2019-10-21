@@ -2,76 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 682A3DF828
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 00:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6708CDF833
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 00:49:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730442AbfJUWn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 18:43:28 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:45815 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730276AbfJUWn1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 18:43:27 -0400
-Received: by mail-vs1-f68.google.com with SMTP id y1so1212811vsg.12
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 15:43:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a8E0A8Vlgzb4xSRYYj/bS6TXPUSZill0B9wa3qYYw0E=;
-        b=b7OnnKIICEZMVXFl1NmYOdDcFZHXchQiF9AA/1N5pJuawnuvHkVE1IlsM/lRRh2pOy
-         +tASGs8d3rjxlFCky/tFGjrZodoX0p4Deov9tvP++w+7DeZr8MYEjdMkf7sAhwlH6Gxc
-         WJv6o+CSvqzoTlGP8vtZanFkkIcmQzBroXGREgjwNEhr/HuPvHIR+xU/UJcSYgDti2V1
-         r1cQGVXNTkoPdaT2rZPVCTE/vqwrjXU7v+mianqUEVDhMJMb0ii90mYChlbeJqqrrVsO
-         xszro/NyKQZOLCMnYcBtQPbBwGcEqBHnQ5xmgMZkhV8tOojOjuh3cxC3jt2Py6yycBJU
-         fm5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a8E0A8Vlgzb4xSRYYj/bS6TXPUSZill0B9wa3qYYw0E=;
-        b=YRfrebDqfIEueUQHBxAlEWZNVJQATJ4W+eMUNYfv/g86jlrLO2RVifghqz8OrVWKh+
-         UgL8vOEOlqTTECcsJhdjqUOomaO0LVqIHXyUTx433QL12ropc0Ns7QJVzWm/XlHqqHyV
-         rjJp3FVO85ti6hJ2DDmEWyvu8+8KwzU8XYHmu4SwG08m3VfajHmjqDffWKjwITYLw+uY
-         oJ9AOxMZ065mwJwacySkC2MU7JBJgITGna0dhVJ7fV4x9Bdw6/mwCDbjMc8T5LezzT+E
-         u8eui0WA73k6whjOeXq68L02BCoaGvRr6vVmc30sRlrFRpzQLokszYR8+8+4KItuuF5Z
-         PA7w==
-X-Gm-Message-State: APjAAAVjWM+SXfyCqrF0J8gRURqVT/S1cO7hqPyCw3NzXcMhbGiJdR9p
-        ZA7XrjhnL8xYaewO6Il6OCbPTWltajF/Z222asHw7w==
-X-Google-Smtp-Source: APXvYqxm3g+B4XpEPIU+7n7e+ETZjean8RmHMKds1LlOCp+Q7indJHinK9NpFNA5K8TZ8NnejNJPfqBCKWSQ8YgLxPA=
-X-Received: by 2002:a67:fb44:: with SMTP id e4mr113225vsr.112.1571697806489;
- Mon, 21 Oct 2019 15:43:26 -0700 (PDT)
+        id S1730463AbfJUWtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 18:49:33 -0400
+Received: from mga07.intel.com ([134.134.136.100]:59581 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730276AbfJUWtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 18:49:33 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 15:49:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,325,1566889200"; 
+   d="scan'208";a="209483476"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga002.jf.intel.com with ESMTP; 21 Oct 2019 15:49:31 -0700
+Date:   Mon, 21 Oct 2019 15:49:31 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/5] fs/xfs: Allow toggle of physical DAX flag
+Message-ID: <20191021224931.GA25526@iweiny-DESK2.sc.intel.com>
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <20191020155935.12297-6-ira.weiny@intel.com>
+ <20191021004536.GD8015@dread.disaster.area>
 MIME-Version: 1.0
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191018161033.261971-14-samitolvanen@google.com> <20191021165649.GE56589@lakrids.cambridge.arm.com>
-In-Reply-To: <20191021165649.GE56589@lakrids.cambridge.arm.com>
-From:   Sami Tolvanen <samitolvanen@google.com>
-Date:   Mon, 21 Oct 2019 15:43:14 -0700
-Message-ID: <CABCJKucm2ETxe2dgJhb4Ruzq72psFMGsx=0D6TVnJ-_DL2FgfA@mail.gmail.com>
-Subject: Re: [PATCH 13/18] arm64: preserve x18 when CPU is suspended
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021004536.GD8015@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 9:56 AM Mark Rutland <mark.rutland@arm.com> wrote:
-> This should have a corresponding change to cpu_suspend_ctx in
-> <asm/suspend.h>. Otherwise we're corrupting a portion of the stack.
+On Mon, Oct 21, 2019 at 11:45:36AM +1100, Dave Chinner wrote:
+> On Sun, Oct 20, 2019 at 08:59:35AM -0700, ira.weiny@intel.com wrote:
+> > @@ -1232,12 +1233,10 @@ xfs_diflags_to_linux(
+> >  		inode->i_flags |= S_NOATIME;
+> >  	else
+> >  		inode->i_flags &= ~S_NOATIME;
+> > -#if 0	/* disabled until the flag switching races are sorted out */
+> >  	if (xflags & FS_XFLAG_DAX)
+> >  		inode->i_flags |= S_DAX;
+> >  	else
+> >  		inode->i_flags &= ~S_DAX;
+> > -#endif
+> 
+> This code has bit-rotted. See xfs_setup_iops(), where we now have a
+> different inode->i_mapping->a_ops for DAX inodes.
 
-Ugh, correct. I'll fix this in the next version. Thanks.
+:-(
 
-Sami
+> 
+> That, fundamentally, is the issue here - it's not setting/clearing
+> the DAX flag that is the issue, it's doing a swap of the
+> mapping->a_ops while there may be other code using that ops
+> structure.
+> 
+> IOWs, if there is any code anywhere in the kernel that
+> calls an address space op without holding one of the three locks we
+> hold here (i_rwsem, MMAPLOCK, ILOCK) then it can race with the swap
+> of the address space operations.
+> 
+> By limiting the address space swap to file sizes of zero, we rule
+> out the page fault path (mmap of a zero length file segv's with an
+> access beyond EOF on the first read/write page fault, right?).
+
+Yes I checked that and thought we were safe here...
+
+> However, other aops callers that might run unlocked and do the wrong
+> thing if the aops pointer is swapped between check of the aop method
+> existing and actually calling it even if the file size is zero?
+> 
+> A quick look shows that FIBMAP (ioctl_fibmap())) looks susceptible
+> to such a race condition with the current definitions of the XFS DAX
+> aops. I'm guessing there will be others, but I haven't looked
+> further than this...
+
+I'll check for others and think on what to do about this.  ext4 will have the
+same problem I think.  :-(
+
+I don't suppose using a single a_ops for both DAX and non-DAX is palatable?
+
+> 
+> >  	/* lock, flush and invalidate mapping in preparation for flag change */
+> >  	xfs_ilock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
+> > +
+> > +	if (i_size_read(inode) != 0) {
+> > +		error = -EOPNOTSUPP;
+> > +		goto out_unlock;
+> > +	}
+> 
+> Wrong error. Should be the same as whatever is returned when we try
+> to change the extent size hint and can't because the file is
+> non-zero in length (-EINVAL, I think). Also needs a comment
+> explainging why this check exists, and probably better written as
+> i_size_read() > 0 ....
+
+Done, done, and done.
+
+Thank you,
+Ira
+
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
