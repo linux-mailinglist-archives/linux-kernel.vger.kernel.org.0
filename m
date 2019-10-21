@@ -2,78 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12FEEDEE02
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:41:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B7A6DEE09
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:41:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729559AbfJUNko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:40:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56296 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729539AbfJUNkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:40:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AAE91B233;
-        Mon, 21 Oct 2019 13:40:39 +0000 (UTC)
-Date:   Mon, 21 Oct 2019 15:40:38 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Laurence Oberman <loberman@redhat.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] watchdog/softlockup: Report the same softlockup
- regularly
-Message-ID: <20191021134038.fz2cdpxrd3p3yhb7@pathway.suse.cz>
-References: <20190819104732.20966-1-pmladek@suse.com>
- <20190819104732.20966-3-pmladek@suse.com>
- <20191021124339.GE1817@hirez.programming.kicks-ass.net>
+        id S1729671AbfJUNlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:41:19 -0400
+Received: from mga12.intel.com ([192.55.52.136]:25753 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729656AbfJUNlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:41:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 06:41:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,323,1566889200"; 
+   d="scan'208";a="209446042"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 21 Oct 2019 06:41:12 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 21 Oct 2019 16:41:11 +0300
+Date:   Mon, 21 Oct 2019 16:41:11 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Stuart Hayes <stuart.w.hayes@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Austin Bolen <austin_bolen@dell.com>, keith.busch@intel.com,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lukas@wunner.de
+Subject: Re: [PATCH v3 2/3] PCI: pciehp: Wait for PDS if in-band presence is
+ disabled
+Message-ID: <20191021134111.GK2819@lahna.fi.intel.com>
+References: <20191017193256.3636-1-stuart.w.hayes@gmail.com>
+ <20191017193256.3636-3-stuart.w.hayes@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191021124339.GE1817@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20191017193256.3636-3-stuart.w.hayes@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-10-21 14:43:39, Peter Zijlstra wrote:
-> On Mon, Aug 19, 2019 at 12:47:31PM +0200, Petr Mladek wrote:
-> > Softlockup report means that there is no progress on the given CPU. It
-> > might be a "short" affair where the system gets recovered. But often
-> > the system stops being responsive and need to get rebooted.
-> > 
-> > The softlockup might be root of the problems or just a symptom. It might
-> > be a deadlock, livelock, or often repeated state.
-> > 
-> > Regular reports help to distinguish different situations. Fortunately,
-> > the watchdog is finally able to show correct information how long
-> > softlockup_fn() was not scheduled.
-> > 
-> > Report before this patch:
-> > 
-> > [  320.248948] watchdog: BUG: soft lockup - CPU#2 stuck for 26s! [cat:4916]
-> > 
-> > And after this patch:
-> > 
-> > [  480.372418] watchdog: BUG: soft lockup - CPU#2 stuck for 26s! [cat:4943]
-> > [  508.372359] watchdog: BUG: soft lockup - CPU#2 stuck for 52s! [cat:4943]
-> > [  548.372359] watchdog: BUG: soft lockup - CPU#2 stuck for 89s! [cat:4943]
-> > [  576.372351] watchdog: BUG: soft lockup - CPU#2 stuck for 115s! [cat:4943]
-> > 
-> > Note that the horrible code never really worked before the accounting
-> > was fixed. The last working timestamp was regularly lost by the many
-> > touch*watchdog() calls.
+On Thu, Oct 17, 2019 at 03:32:55PM -0400, Stuart Hayes wrote:
+> From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 > 
-> So what's the point of patch 1? Just confusing people?
+> When inband presence is disabled, PDS may come up at any time, or not
+> at all. PDS being low may indicate that the card is still mating, and
+> we could expect contact bounce to bring down the link as well.
+> 
+> It is reasonable to assume that most cards will mate in a hotplug slot
+> in about a second. Thus, when we know PDS only reflects out-of-band
+> presence, it's worthwhile to wait the extra second or so to make sure
+> the card is properly mated before loading the driver, and to prevent
+> the hotplug code from disabling a device if the presence detect change
+> goes active after the device is enabled.
+> 
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
 
-I was not sure what was the expected behavior. The code actually
-looked like only the first report was wanted. But it probably never
-worked that way.
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Should I squash the two patches and send it again, please?
+One nit below.
 
-Best Regards,
-Petr
+> ---
+> v2:
+>   replace while(true) loop with do...while
+> v3
+>   remove unused variable declaration (pds)
+>   modify text of warning message
+> 
+>  drivers/pci/hotplug/pciehp_hpc.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+> index dc109d521f30..02eb811a014f 100644
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -242,6 +242,22 @@ static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
+>  	return found;
+>  }
+>  
+> +static void pcie_wait_for_presence(struct pci_dev *pdev)
+> +{
+> +	int timeout = 1250;
+> +	u16 slot_status;
+> +
+> +	do {
+> +		pcie_capability_read_word(pdev, PCI_EXP_SLTSTA, &slot_status);
+> +		if (!!(slot_status & PCI_EXP_SLTSTA_PDS))
+
+It is more readable if you write it like:
+
+		if (slot_status & PCI_EXP_SLTSTA_PDS)
+
+> +			return;
+> +		msleep(10);
+> +		timeout -= 10;
+> +	} while (timeout > 0);
+> +
+> +	pci_info(pdev, "Timeout waiting for Presence Detect state to be set\n");
+> +}
+> +
+>  int pciehp_check_link_status(struct controller *ctrl)
+>  {
+>  	struct pci_dev *pdev = ctrl_dev(ctrl);
+> @@ -251,6 +267,9 @@ int pciehp_check_link_status(struct controller *ctrl)
+>  	if (!pcie_wait_for_link(pdev, true))
+>  		return -1;
+>  
+> +	if (ctrl->inband_presence_disabled)
+> +		pcie_wait_for_presence(pdev);
+> +
+>  	found = pci_bus_check_dev(ctrl->pcie->port->subordinate,
+>  					PCI_DEVFN(0, 0));
+>  
+> -- 
+> 2.18.1
