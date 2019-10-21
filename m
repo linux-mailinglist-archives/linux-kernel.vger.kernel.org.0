@@ -2,117 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F82DEF13
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:14:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 807C9DEF18
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:15:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729302AbfJUOO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 10:14:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727755AbfJUOO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 10:14:27 -0400
-Received: from linux-8ccs (ip5f5ade6e.dynamic.kabel-deutschland.de [95.90.222.110])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3155B2070B;
-        Mon, 21 Oct 2019 14:14:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571667267;
-        bh=98/rw92U38HfDyMvYsaewyrwIf2e6BuR1DViSORVjRQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MnxJeEFB6wdl44jT4E/5wuvnJNxyRNEna/A9nRCk1jowhbtIlOkjQ3m3U3ICPWxHb
-         jGq1m9zoRNxCngb4XoSQG4AyM1wulqdzFvFYsACPvtcoqewnv6aZU08MLWtnxcRAvr
-         Qzx7knnSRijxzyGwtiwXcrBr/QV0cE8kL6dDlQg8=
-Date:   Mon, 21 Oct 2019 16:14:20 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Miroslav Benes <mbenes@suse.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
-Message-ID: <20191021141419.GB21112@linux-8ccs>
-References: <alpine.LSU.2.21.1910151611000.13169@pobox.suse.cz>
- <88bab814-ea24-ece9-2bc0-7a1e10a62f12@redhat.com>
- <20191015153120.GA21580@linux-8ccs>
- <7e9c7dd1-809e-f130-26a3-3d3328477437@redhat.com>
- <20191015182705.1aeec284@gandalf.local.home>
- <20191016074951.GM2328@hirez.programming.kicks-ass.net>
- <alpine.LSU.2.21.1910161216100.7750@pobox.suse.cz>
- <alpine.LSU.2.21.1910161521010.7750@pobox.suse.cz>
- <20191018130342.GA4625@linux-8ccs>
- <20191018134058.7zyls4746wpa7jy5@pathway.suse.cz>
+        id S1728945AbfJUOO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 10:14:58 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:33224 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729119AbfJUOO6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 10:14:58 -0400
+Received: by mail-vs1-f67.google.com with SMTP id p13so8983392vso.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 07:14:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yS8qs3B3YGG+1CaBCs+yd01gHNPGrQOZoSsD0Kk0Jog=;
+        b=Pn/BCboTlYXueWFu2lYYLoFGnsbCRWYun52IGpqPIDYrwc2DK/4wSWIlEIAwadC3Ou
+         dg7eBJiJxRYXrT6Ya9KUrMlTMR6vzqKpazwDroPYbKI7s/J1NEL0Rsc4GYU+P1Md7r7A
+         N0PZnApDTKbbzf9lUyHu+zTbPUaEPLIFUwUG+qiArKuGJgSBDB93WbhnHvQ55Bfly0Bg
+         xR0pyZRVdDcRVZVnGK1lHKMSaKowQU4IO4OApws7zDX3vYlltsiAQXfFTgIxakyKHFIt
+         cyeEQvT12qW/TlJhRySJdqZaFqyCWalutZWBk3pTWyqlu9Q7ejExawnfBfc4+yN2KrGm
+         52ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yS8qs3B3YGG+1CaBCs+yd01gHNPGrQOZoSsD0Kk0Jog=;
+        b=V/3SrXAJ5eeW//XYGjORbh993UtT8FqFY+GaRTiD0Auy7AB0HpIDS1mRSFJViBQaeu
+         O+7tsk6sNthjF4XtQaQjZtxnaTCWO3W4Q6FA1qXbteDRUATv6cCI6sKhfOmqTycLCbGN
+         qhYQvW2oo37npqWFT0ohTk2UdGaMspTn+2pfHLIrBUScy7VC4gEJ96ibq0JoagPp95R4
+         TZLJ5TbNLzgJRV3rzRYGdc6Mi0ZpyeAjgM+QZLf7Mtr11YG57kxWHB9ade4ScKnkemSG
+         7AkrOc7BkEm5n7lXpcEsX7jqc4U+HSarrlWkE++0lMrsHbm+SOjy6Hjxx0hK30kAv7jk
+         HyQg==
+X-Gm-Message-State: APjAAAVNxl/Qtprs6AIdsyZ16RNpa59NAHxPQO04T7V64iUjwjbSLyLC
+        2F9DyjrNLmQ03p8/fAEDb0oruwTZwNxLMUnI1K/esg==
+X-Google-Smtp-Source: APXvYqz9r09sX0s75qmyPEEUmSKArK+VJBphmNsHF6I2eD5KN0VEOGXWfbqgNE20Ygtof4lmLqC1eZzCLfMc1loRLkI=
+X-Received: by 2002:a05:6102:104d:: with SMTP id h13mr13907823vsq.165.1571667296086;
+ Mon, 21 Oct 2019 07:14:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20191018134058.7zyls4746wpa7jy5@pathway.suse.cz>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1571293310-92563-1-git-send-email-manish.narani@xilinx.com>
+In-Reply-To: <1571293310-92563-1-git-send-email-manish.narani@xilinx.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 21 Oct 2019 16:14:20 +0200
+Message-ID: <CAPDyKFo-8=crHZd9X7JpGJHdEwFs4Pz8rzEtVg6e7QZqE8N8nw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/8] Arasan SDHCI enhancements and ZynqMP Tap Delays Handling
+To:     Manish Narani <manish.narani@xilinx.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michal Simek <michal.simek@xilinx.com>, jolly.shah@xilinx.com,
+        rajan.vaja@xilinx.com, nava.manne@xilinx.com,
+        Moritz Fischer <mdf@kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        git@xilinx.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Petr Mladek [18/10/19 15:40 +0200]:
->On Fri 2019-10-18 15:03:42, Jessica Yu wrote:
->> +++ Miroslav Benes [16/10/19 15:29 +0200]:
->> > On Wed, 16 Oct 2019, Miroslav Benes wrote:
->> > Thinking about it more... crazy idea. I think we could leverage these new
->> > ELF .text per vmlinux/module sections for the reinvention I was talking
->> > about. If we teach module loader to relocate (and apply alternatives and
->> > so on, everything in arch-specific module_finalize()) not the whole module
->> > in case of live patch modules, but separate ELF .text sections, it could
->> > solve the issue with late module patching we have. It is a variation on
->> > Steven's idea. When live patch module is loaded, only its section for
->> > present modules would be processed. Then whenever a to-be-patched module
->> > is loaded, its .text section in all present patch module would be
->> > processed.
->> >
->> > The upside is that almost no work would be required on patch modules
->> > creation side. The downside is that klp_modinfo must stay. Module loader
->> > needs to be hacked a lot in both cases. So it remains to be seen which
->> > idea is easier to implement.
->> >
->> > Jessica, do you think it would be feasible?
->>
->> I think that does sound feasible. I'm trying to visualize how that
->> would look. I guess there would need to be various livepatching hooks
->> called during the different stages (apply_relocate_add(),
->> module_finalize(), module_enable_ro/x()).
->>
->> So maybe something like the following?
->>
->> When a livepatch module loads:
->>    apply_relocate_add()
->>        klp hook: apply .klp.rela.$objname relocations *only* for
->>        already loaded modules
->>    module_finalize()
->>        klp hook: apply .klp.arch.$objname changes for already loaded modules
->>    module_enable_ro()
->>        klp hook: only enable ro/x for .klp.text.$objname for already
->>        loaded modules
+On Thu, 17 Oct 2019 at 08:22, Manish Narani <manish.narani@xilinx.com> wrote:
 >
->Just for record. We should also set ro for the not-yet used
->.klp.text.$objname at this stage so that it can't be modified
->easily "by accident".
+> This patch series does the following:
+>  - Reorganize the Clock Handling in Arasan SD driver
+>  - Adds new sampling clock in Arasan SD driver
+>  - Adds support to set Clock Delays in SD Arasan Driver
+>  - Add SDIO Tap Delay handling in ZynqMP firmware driver
+>  - Add support for ZynqMP Tap Delays setting in Arasan SD driver
+>
+> Changes in v2:
+>         - Replaced the deprecated calls to clock framework APIs
+>         - Added support for dev_clk_get() call to work for SD card clock
+>         - Separated the clock data struct
+>         - Fragmented the patch series in smaller patches to make it more
+>           readable
+>
+> Changes in v3:
+>         - Reverted "Replaced the deprecated calls to clock framework APIs"
+>         - Removed devm_clk_get() call which was added in v2
+>
+> Manish Narani (8):
+>   mmc: sdhci-of-arasan: Separate out clk related data to another
+>     structure
+>   dt-bindings: mmc: arasan: Update Documentation for the input clock
+>   mmc: sdhci-of-arasan: Add sampling clock for a phy to use
+>   dt-bindings: mmc: arasan: Add optional properties for Arasan SDHCI
+>   mmc: sdhci-of-arasan: Add support to set clock phase delays for SD
+>   firmware: xilinx: Add SDIO Tap Delay nodes
+>   dt-bindings: mmc: arasan: Document 'xlnx,zynqmp-8.9a' controller
+>   mmc: sdhci-of-arasan: Add support for ZynqMP Platform Tap Delays Setup
+>
+>  .../devicetree/bindings/mmc/arasan,sdhci.txt  |  40 +-
+>  drivers/mmc/host/sdhci-of-arasan.c            | 477 +++++++++++++++++-
+>  include/linux/firmware/xlnx-zynqmp.h          |  13 +-
+>  3 files changed, 498 insertions(+), 32 deletions(-)
+>
+> --
+> 2.17.1
+>
 
-If we also set ro protection already for .klp.text.$objname for
-not-yet loaded modules, I think this would unfortunately mean we would
-still have to do the protection flipping for late module patching that
-Peter was trying to avoid, right?
+Manish, the series looks good to me. However, I expect you to post a
+re-spin, to move some of the new DT bindings into common mmc DT
+bindings, as Rob suggested.
 
-That is, we *still* end up having to do the whole module_disable_ro()
--> apply_relocate_add() -> module_finalize() -> module_enable_ro()
-thing for late module patching, except now we've moved that work to
-the module loader instead of in klp_module_coming.. It sounds just as
-complicated as the current way :/
+So waiting for another version, before I apply it.
 
-However, I think this complaint would not apply if livepatch switches
-to the one patch module per module model..
-
+Kind regards
+Uffe
