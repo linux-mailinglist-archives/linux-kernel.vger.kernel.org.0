@@ -2,120 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43C48DEC7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F383DECA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:45:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbfJUMoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 08:44:24 -0400
-Received: from skedge04.snt-world.com ([91.208.41.69]:59978 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727322AbfJUMoX (ORCPT
+        id S1728819AbfJUMoi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 08:44:38 -0400
+Received: from mail-wr1-f51.google.com ([209.85.221.51]:41605 "EHLO
+        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728792AbfJUMoh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:44:23 -0400
-Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 846D1626D74;
-        Mon, 21 Oct 2019 14:44:20 +0200 (CEST)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
- (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 21 Oct
- 2019 14:44:20 +0200
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Mon, 21 Oct 2019 14:44:20 +0200
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     "krzk@kernel.org" <krzk@kernel.org>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Mon, 21 Oct 2019 08:44:37 -0400
+Received: by mail-wr1-f51.google.com with SMTP id p4so13817091wrm.8
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 05:44:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VpVTW+WZL6DdTi8R1egFqPRwhOG2T/BnlrI0vbGyKSo=;
+        b=dr7wEaSY8UQJ/AGGF8UXvMrEs1GBk4PDp/qRe60BXnj7SOebY0ws+tP9IK08OXd3WA
+         kJoq8fetsUi4FkHh+sBV/YmnRD6gIjEH4N1Am4Ke2muT28aQSeyApTI3r+2/dP9N+0t7
+         onSwyMIwTu7ueIJ+elRnh3UjKkx+mEYmzWe1tFb7MvYeii774AU19xwhKT/Zt8V6uotq
+         02Em+Q3qsSDWgWOGt+RSYtRMl1ZmT4ZbyjojQJE7RlUNLYaVhOzGY+ZEGj9ZKpTzwIOe
+         gR5kB15y/ls8Ufg9q5zq1voYnC1BU+xBenMeFh562h8p/UmuHrVeS1dCHx8ihObV8JOk
+         ZBow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VpVTW+WZL6DdTi8R1egFqPRwhOG2T/BnlrI0vbGyKSo=;
+        b=Mp+cx9lmqr9T56CaJZOjLxn0W6F1sDiToioKajpHGZk6Ods5eFzwwO56sdWBpuvU8c
+         mrkxFK7Pmxqop8lndLu2svQn5I7MUMmzBEdC9qC860VC3aD4YXJLhjRK+R+3Uhbq4I5x
+         IozpyVXo30Ti2pLWLSt3HIT2WgOC39Qqesh90/ya1Y8qlg1UUP+q2LabX/b3kyQdtiFf
+         bDJ0NtLfhnQZtaEj4NvIXdbCgY9Cp9JXJTuSqfrK7POUdFWF6mSXnf1RyWDN5sufJo7r
+         t+h9ia23Sv7xY38DjzlZnr4wME8LDZjvDWPXZCogAWRQJhdVjHcdzTevBxyRMARNV3S7
+         cEXQ==
+X-Gm-Message-State: APjAAAUkOEYJmpRjrc+eYysm59sCmVxBR5vwuEu63xQKbxnMc+EcqnR3
+        1Wzggk7XeQQ7kW5Nbpl9J5Hssw==
+X-Google-Smtp-Source: APXvYqyQZq9D7JNE8PCA9bjbf3OX5gqPK3dKrKLOL8KxWrUV3Y0cO+9DD/86Di3mogYOVO6kiCvOTA==
+X-Received: by 2002:adf:e2c5:: with SMTP id d5mr18874464wrj.283.1571661873402;
+        Mon, 21 Oct 2019 05:44:33 -0700 (PDT)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id a17sm10216150wmb.8.2019.10.21.05.44.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 05:44:32 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/10] ARM: dts: imx6ul-kontron-n6310: Move common SoM
- nodes to a separate file
-Thread-Topic: [PATCH 01/10] ARM: dts: imx6ul-kontron-n6310: Move common SoM
- nodes to a separate file
-Thread-Index: AQHVhDNnN9aGUH4T40yWqnEyL2tHoqdkyomAgAAmC4A=
-Date:   Mon, 21 Oct 2019 12:44:19 +0000
-Message-ID: <89a91b79-63f9-2a2d-30aa-d4447f1cbc96@kontron.de>
-References: <20191016150622.21753-1-frieder.schrempf@kontron.de>
- <20191016150622.21753-2-frieder.schrempf@kontron.de>
- <20191021102809.GA1934@pi3>
-In-Reply-To: <20191021102809.GA1934@pi3>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.193]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6BDBCE0E9AD58646A5A23F8D39BE465A@snt-world.com>
-Content-Transfer-Encoding: base64
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 0/6] dt-bindings: max77650: convert the device-tree bindings to yaml
+Date:   Mon, 21 Oct 2019 14:44:22 +0200
+Message-Id: <20191021124428.2541-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 846D1626D74.AF304
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: devicetree@vger.kernel.org, festevam@gmail.com,
-        kernel@pengutronix.de, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
-X-Spam-Status: No
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjEuMTAuMTkgMTI6MjgsIGtyemtAa2VybmVsLm9yZyB3cm90ZToNCj4gT24gV2VkLCBPY3Qg
-MTYsIDIwMTkgYXQgMDM6MDc6MTlQTSArMDAwMCwgU2NocmVtcGYgRnJpZWRlciB3cm90ZToNCj4+
-IEZyb206IEZyaWVkZXIgU2NocmVtcGYgPGZyaWVkZXIuc2NocmVtcGZAa29udHJvbi5kZT4NCj4+
-DQo+PiBUaGUgS29udHJvbiBONjMxMSBhbmQgTjY0MTEgU29NcyBhcmUgdmVyeSBzaW1pbGFyIHRv
-IE42MzEwLiBJbg0KPj4gcHJlcGFyYXRpb24gdG8gYWRkIHN1cHBvcnQgZm9yIHRoZW0sIHdlIG1v
-dmUgdGhlIGNvbW1vbiBub2RlcyB0byBhDQo+PiBzZXBhcmF0ZSBmaWxlIGlteDZ1bC1rb250cm9u
-LW42eDF4LXNvbS1jb21tb24uZHRzaS4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBGcmllZGVyIFNj
-aHJlbXBmIDxmcmllZGVyLnNjaHJlbXBmQGtvbnRyb24uZGU+DQo+PiAtLS0NCj4+ICAgLi4uL2Jv
-b3QvZHRzL2lteDZ1bC1rb250cm9uLW42MzEwLXNvbS5kdHNpICAgIHwgIDk1ICstLS0tLS0tLS0t
-LS0tDQo+PiAgIC4uLi9kdHMvaW14NnVsLWtvbnRyb24tbjZ4MXgtc29tLWNvbW1vbi5kdHNpICB8
-IDEyMyArKysrKysrKysrKysrKysrKysNCj4+ICAgMiBmaWxlcyBjaGFuZ2VkLCAxMjQgaW5zZXJ0
-aW9ucygrKSwgOTQgZGVsZXRpb25zKC0pDQo+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2Fy
-bS9ib290L2R0cy9pbXg2dWwta29udHJvbi1uNngxeC1zb20tY29tbW9uLmR0c2kNCj4+DQo+PiBk
-aWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnVsLWtvbnRyb24tbjYzMTAtc29tLmR0
-c2kgYi9hcmNoL2FybS9ib290L2R0cy9pbXg2dWwta29udHJvbi1uNjMxMC1zb20uZHRzaQ0KPj4g
-aW5kZXggYTg5NmIyMzQ4ZGQyLi40N2QzY2U1ZDI1NWYgMTAwNjQ0DQo+PiAtLS0gYS9hcmNoL2Fy
-bS9ib290L2R0cy9pbXg2dWwta29udHJvbi1uNjMxMC1zb20uZHRzaQ0KPj4gKysrIGIvYXJjaC9h
-cm0vYm9vdC9kdHMvaW14NnVsLWtvbnRyb24tbjYzMTAtc29tLmR0c2kNCj4+IEBAIC02LDcgKzYs
-NyBAQA0KPj4gICAgKi8NCj4+ICAgDQo+PiAgICNpbmNsdWRlICJpbXg2dWwuZHRzaSINCj4+IC0j
-aW5jbHVkZSA8ZHQtYmluZGluZ3MvZ3Bpby9ncGlvLmg+DQo+PiArI2luY2x1ZGUgImlteDZ1bC1r
-b250cm9uLW42eDF4LXNvbS1jb21tb24uZHRzaSINCj4+ICAgDQo+PiAgIC8gew0KPj4gICAJbW9k
-ZWwgPSAiS29udHJvbiBONjMxMCBTT00iOw0KPj4gQEAgLTE4LDQ5ICsxOCw3IEBADQo+PiAgIAl9
-Ow0KPj4gICB9Ow0KPj4gICANCj4+IC0mZWNzcGkyIHsNCj4+IC0JY3MtZ3Bpb3MgPSA8JmdwaW80
-IDIyIEdQSU9fQUNUSVZFX0hJR0g+Ow0KPj4gLQlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOw0K
-Pj4gLQlwaW5jdHJsLTAgPSA8JnBpbmN0cmxfZWNzcGkyPjsNCj4+IC0Jc3RhdHVzID0gIm9rYXki
-Ow0KPj4gLQ0KPj4gLQlzcGktZmxhc2hAMCB7DQo+PiAtCQljb21wYXRpYmxlID0gIm14aWN5LG14
-MjV2ODAzNWYiLCAiamVkZWMsc3BpLW5vciI7DQo+PiAtCQlzcGktbWF4LWZyZXF1ZW5jeSA9IDw1
-MDAwMDAwMD47DQo+PiAtCQlyZWcgPSA8MD47DQo+PiAtCX07DQo+PiAtfTsNCj4+IC0NCj4+IC0m
-ZmVjMSB7DQo+PiAtCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7DQo+PiAtCXBpbmN0cmwtMCA9
-IDwmcGluY3RybF9lbmV0MSAmcGluY3RybF9lbmV0MV9tZGlvPjsNCj4+IC0JcGh5LW1vZGUgPSAi
-cm1paSI7DQo+PiAtCXBoeS1oYW5kbGUgPSA8JmV0aHBoeTE+Ow0KPj4gLQlzdGF0dXMgPSAib2th
-eSI7DQo+PiAtDQo+PiAtCW1kaW8gew0KPj4gLQkJI2FkZHJlc3MtY2VsbHMgPSA8MT47DQo+PiAt
-CQkjc2l6ZS1jZWxscyA9IDwwPjsNCj4+IC0NCj4+IC0JCWV0aHBoeTE6IGV0aGVybmV0LXBoeUAx
-IHsNCj4+IC0JCQlyZWcgPSA8MT47DQo+PiAtCQkJbWljcmVsLGxlZC1tb2RlID0gPDA+Ow0KPj4g
-LQkJCWNsb2NrcyA9IDwmY2xrcyBJTVg2VUxfQ0xLX0VORVRfUkVGPjsNCj4+IC0JCQljbG9jay1u
-YW1lcyA9ICJybWlpLXJlZiI7DQo+PiAtCQl9Ow0KPj4gLQl9Ow0KPj4gLX07DQo+PiAtDQo+PiAt
-JmZlYzIgew0KPj4gLQlwaHktbW9kZSA9ICJybWlpIjsNCj4+IC0Jc3RhdHVzID0gImRpc2FibGVk
-IjsNCj4+IC19Ow0KPj4gLQ0KPj4gICAmcXNwaSB7DQo+PiAtCXBpbmN0cmwtbmFtZXMgPSAiZGVm
-YXVsdCI7DQo+PiAtCXBpbmN0cmwtMCA9IDwmcGluY3RybF9xc3BpPjsNCj4+IC0Jc3RhdHVzID0g
-Im9rYXkiOw0KPj4gLQ0KPj4gICAJc3BpLWZsYXNoQDAgew0KPiANCj4gWW91IGxlZnQgcXNwaSBh
-bmQgZmxhc2ggcGFydGl0aW9ucyBoZXJlLCB3aGlsZSBhZGRpbmcgaXQgbGF0ZXIuIEl0IGlzDQo+
-IG5vdCBwdXJlIG1vdmUgdGhlbiBhbmQgc29tZSBkdXBsaWNhdGVkIHN0dWZmIHJlbWFpbnMuDQoN
-CkluZGVlZCwgdGhlIHNwaS1mbGFzaCBub2RlIGlzIGR1cGxpY2F0ZWQsIGFzIEkgZm9yZ290IHRv
-IHJlbW92ZSBpdCBmcm9tIA0KdGhlIGNvbW1vbiBpbmNsdWRlIGZpbGUuIEkgd2lsbCBjaGFuZ2Ug
-dGhhdC4=
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+This series converts all DT binding documents for MAX77650 PMIC to YAML.
+
+v1 -> v2:
+- use upper case for abbreviations in commit messages
+
+v2 -> v3:
+- pull all example fragments into the binding document for the core MFD module
+- fix all dt_binding_check errors
+- add references to submodules to the main binding document
+- drop the type for gpio-line-names
+- drop the description for the interrupts property
+- completely delete the previous txt files
+
+v3 -> v4:
+- remove unnecessary parts of descriptions, added details on the chip
+- correct file references (.txt -> .yaml)
+- fix mixing scalar and array constraints
+- dropped type refs for globally defined properties
+
+Bartosz Golaszewski (6):
+  dt-bindings: input: max77650: convert the binding document to yaml
+  dt-bindings: regulator: max77650: convert the binding document to yaml
+  dt-bindings: power: max77650: convert the binding document to yaml
+  dt-bindings: leds: max77650: convert the binding document to yaml
+  dt-bindings: mfd: max77650: convert the binding document to yaml
+  MAINTAINERS: update the list of maintained files for max77650
+
+ .../bindings/input/max77650-onkey.txt         |  26 ---
+ .../bindings/input/max77650-onkey.yaml        |  35 ++++
+ .../bindings/leds/leds-max77650.txt           |  57 -------
+ .../bindings/leds/leds-max77650.yaml          |  51 ++++++
+ .../devicetree/bindings/mfd/max77650.txt      |  46 ------
+ .../devicetree/bindings/mfd/max77650.yaml     | 149 ++++++++++++++++++
+ .../power/supply/max77650-charger.txt         |  28 ----
+ .../power/supply/max77650-charger.yaml        |  34 ++++
+ .../bindings/regulator/max77650-regulator.txt |  41 -----
+ .../regulator/max77650-regulator.yaml         |  31 ++++
+ MAINTAINERS                                   |   4 +-
+ 11 files changed, 302 insertions(+), 200 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.txt
+ create mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.yaml
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77650.yaml
+ delete mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+ create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.yaml
+ delete mode 100644 Documentation/devicetree/bindings/regulator/max77650-regulator.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/max77650-regulator.yaml
+
+-- 
+2.23.0
+
