@@ -2,76 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7440DE28E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 05:34:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B72C1DE291
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 05:35:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbfJUDes (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 23:34:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47360 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbfJUDer (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 23:34:47 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3FD92602F3; Mon, 21 Oct 2019 03:34:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571628887;
-        bh=fI7tTnZ9WhKA6PLwrHG4qATFBHcajJ5p+pnrXJfRTag=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hG5mgXE6cUFDxekZFIruNrN7BRBh68GopMGYkdyEr8mCo6gx9zOORNWcmNCS9KuvF
-         clIWEvsjA0mWxz9/kzGZBb1pmLPN1xaCs9PbdTgBJWp5xgM563dixnSUmDE+xM0q79
-         LdpJdWIJwmW+mY0sCtzNMSPj/VRswBACxcTkjg0A=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id B038E6030D;
-        Mon, 21 Oct 2019 03:34:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571628886;
-        bh=fI7tTnZ9WhKA6PLwrHG4qATFBHcajJ5p+pnrXJfRTag=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VWcoC3UUUfb1pJYIb6nwXlPxdc8u412Q8OmUxlkZRVMyxP3E1CX8xMg/Hf8iZlkd+
-         ATJIBC8mXtB4R1FBq15H35/j+bzYui9p1F0z3/9GfiM2cuyjRgAWl3tZPfBLJcGoDf
-         n2RWz7C9PnNbfI6SJTSA5mR/YQ0Y6E96M0HUGVRM=
+        id S1726997AbfJUDfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 23:35:13 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59038 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726835AbfJUDfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 23:35:13 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6D27770CA029068351AD;
+        Mon, 21 Oct 2019 11:35:11 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.203) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Mon, 21 Oct 2019
+ 11:35:00 +0800
+Subject: Re: [PATCH v7 00/12] implement KASLR for powerpc/fsl_booke/32
+To:     Scott Wood <oss@buserror.net>, <mpe@ellerman.id.au>,
+        <linuxppc-dev@lists.ozlabs.org>, <diana.craciun@nxp.com>,
+        <christophe.leroy@c-s.fr>, <benh@kernel.crashing.org>,
+        <paulus@samba.org>, <npiggin@gmail.com>, <keescook@chromium.org>,
+        <kernel-hardening@lists.openwall.com>
+CC:     <wangkefeng.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <jingxiangfeng@huawei.com>, <zhaohongjiang@huawei.com>,
+        <thunder.leizhen@huawei.com>, <yebin10@huawei.com>
+References: <20190920094546.44948-1-yanaijie@huawei.com>
+ <9c2dd2a8-83f2-983c-383e-956e19a7803a@huawei.com>
+ <c4769b34-95f6-81b9-4856-50459630aa0d@huawei.com>
+ <38141b946f3376ce471e46eaf065e357ac540354.camel@buserror.net>
+ <90bb659a-bde4-3b8e-8f01-bf22d7534f44@huawei.com>
+ <34ef1980887c8a6d635c20bdaf748bb0548e51b5.camel@buserror.net>
+From:   Jason Yan <yanaijie@huawei.com>
+Message-ID: <0543af6f-df4a-81ff-41fe-c81959568859@huawei.com>
+Date:   Mon, 21 Oct 2019 11:34:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <34ef1980887c8a6d635c20bdaf748bb0548e51b5.camel@buserror.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Sun, 20 Oct 2019 20:34:46 -0700
-From:   cgoldswo@codeaurora.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] of: reserved_mem: add missing of_node_put() for proper
- ref-counting
-In-Reply-To: <20191021020624.GE4500@tuxbook-pro>
-References: <1571536644-13840-1-git-send-email-cgoldswo@codeaurora.org>
- <20191021020624.GE4500@tuxbook-pro>
-Message-ID: <7c57d99e9240e1e7198b835a35089cf5@codeaurora.org>
-X-Sender: cgoldswo@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+X-Originating-IP: [10.177.96.203]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
 
-On 2019-10-20 19:06, Bjorn Andersson wrote:
-> Cc stable@ is used to assist in making sure your patch is backported to
-> stable kernels, other than that the purpose Cc here is to indicate that
-> specific people have been requested to comment on your patch.
+
+On 2019/10/10 2:46, Scott Wood wrote:
+> On Wed, 2019-10-09 at 16:41 +0800, Jason Yan wrote:
+>> Hi Scott,
+>>
+>> On 2019/10/9 15:13, Scott Wood wrote:
+>>> On Wed, 2019-10-09 at 14:10 +0800, Jason Yan wrote:
+>>>> Hi Scott,
+>>>>
+>>>> Would you please take sometime to test this?
+>>>>
+>>>> Thank you so much.
+>>>>
+>>>> On 2019/9/24 13:52, Jason Yan wrote:
+>>>>> Hi Scott,
+>>>>>
+>>>>> Can you test v7 to see if it works to load a kernel at a non-zero
+>>>>> address?
+>>>>>
+>>>>> Thanks,
+>>>
+>>> Sorry for the delay.  Here's the output:
+>>>
+>>
+>> Thanks for the test.
+>>
+>>> ## Booting kernel from Legacy Image at 10000000 ...
+>>>      Image Name:   Linux-5.4.0-rc2-00050-g8ac2cf5b4
+>>>      Image Type:   PowerPC Linux Kernel Image (gzip compressed)
+>>>      Data Size:    7521134 Bytes = 7.2 MiB
+>>>      Load Address: 04000000
+>>>      Entry Point:  04000000
+>>>      Verifying Checksum ... OK
+>>> ## Flattened Device Tree blob at 1fc00000
+>>>      Booting using the fdt blob at 0x1fc00000
+>>>      Uncompressing Kernel Image ... OK
+>>>      Loading Device Tree to 07fe0000, end 07fff65c ... OK
+>>> KASLR: No safe seed for randomizing the kernel base.
+>>> OF: reserved mem: initialized node qman-fqd, compatible id fsl,qman-fqd
+>>> OF: reserved mem: initialized node qman-pfdr, compatible id fsl,qman-pfdr
+>>> OF: reserved mem: initialized node bman-fbpr, compatible id fsl,bman-fbpr
+>>> Memory CAM mapping: 64/64/64 Mb, residual: 12032Mb
+>>
+>> When boot from 04000000, the max CAM value is 64M. And
+>> you have a board with 12G memory, CONFIG_LOWMEM_CAM_NUM=3 means only
+>> 192M memory is mapped and when kernel is randomized at the middle of
+>> this 192M memory, we will not have enough continuous memory for node map.
+>>
+>> Can you set CONFIG_LOWMEM_CAM_NUM=8 and see if it works?
 > 
-> So please skip these from the commit message in the future
+> OK, that worked.
+> 
 
-Thanks for informing me of this, I've re-read the patch submission
-documentation and will omit the Cc's in the future from the commit
-message (other than Cc stable@).
+Hi Scott, any more cases should be tested or any more comments?
+What else need to be done before this feature can be merged?
 
-Regards,
+Thanks,
+Jason
 
-Chris.
+> -Scott
+> 
+> 
+> 
+> .
+> 
+
