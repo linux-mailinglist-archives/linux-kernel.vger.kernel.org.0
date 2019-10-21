@@ -2,194 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A9C4DF435
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 19:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE9FDF43B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 19:29:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbfJUR2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 13:28:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52098 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726289AbfJUR2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 13:28:54 -0400
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 86EB787638
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 17:28:53 +0000 (UTC)
-Received: by mail-wr1-f70.google.com with SMTP id 67so7649635wrm.18
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 10:28:53 -0700 (PDT)
+        id S1729789AbfJUR33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 13:29:29 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33813 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbfJUR32 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 13:29:28 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b72so1693119edf.1;
+        Mon, 21 Oct 2019 10:29:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EYUsjio6mmwd3BPOKV1gElxOC+8ifBzUcmXkyLesSv8=;
+        b=ae0YyAgJUgh6AIFRiID5Nl+4QK8DShggkbfVS8PYIaGxtu/qAcFzyKjMO/p8qXsKdP
+         xsE3a7LDER6KecKte+BWfGfk9zUjp4nSjtrPMxBnPnnRmlqoLgzHdN3t+bv9+MsqrklH
+         x2T49SMy/XPz3wP8nyLMnGJxd1Zg0f2fJRTYKY619pcMW3lNZ7cPonS+nmw5hz5hWV1a
+         irLC0MR832lpALcTxa5tPGzwRr+F2pJA57j3EnfASskNmIDVj2wq39XTykDQl+3ErJ+x
+         4VMzKClR9zmP3QI54kLAjuYi45IZQuuMZYwI2om8wUxTGXA1bIH98wEPO0NaO4t7jUzd
+         N2Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lvbEIhN+KLA5G34KXJDqPu7aWF/7PZQEg8je+IqEmF4=;
-        b=mT+oWJqyMW3kD7D+20XT8BIZsv4Nh0azOYjfG5iryn7B5ntAe2L9EOjmWFYxRnH7hA
-         aqnAg0QYZyltVwHf7fugPthlKpWjj23CpDO6RZHJZMZlRUwecGFqtKykmLBT933PCZs/
-         A1RaX5TrOGAjH1SXP9ueHoUhsj1BPNFhZWnOtOmApS3NQNlTXAo5/q18cXxRERa1pOro
-         CE7/WjATE5Nq760ym2LIAu+1arsg1oVHHiODWCI5ZVFD5s4SpcTlT61sVfu90UHAkHMQ
-         eD4VtDYgSLOGuTsbFPdK1eQ9MjDOldhkfZ3mgDs7oLY33iSN3Qw+9fI3tJpc8FVaxx9t
-         nn4g==
-X-Gm-Message-State: APjAAAVz9yHYdS+ASTUN1/gQ80pO46mBH/RzW+Qrjgz4Qtb8Y8qZ89/c
-        UNepY97vdMTad0L4DA/KY9V7R1h5wPsJhMjLPM2gopXatj2S8LVaZ76D03bZwtwuf3M4YB676n2
-        mIlERFoB23V467t8CLKNo4/FY
-X-Received: by 2002:a7b:c019:: with SMTP id c25mr1082378wmb.61.1571678930587;
-        Mon, 21 Oct 2019 10:28:50 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxwIY/tsn9uA9I4YLp+kutIvQ8m7k5EbCTYWNNxxsB8jxi7jQKxpiLSQwcr3cxvYqwoNSRLVQ==
-X-Received: by 2002:a7b:c019:: with SMTP id c25mr1082361wmb.61.1571678930237;
-        Mon, 21 Oct 2019 10:28:50 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:847b:6afc:17c:89dd? ([2001:b07:6468:f312:847b:6afc:17c:89dd])
-        by smtp.gmail.com with ESMTPSA id a17sm12276159wrx.84.2019.10.21.10.28.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2019 10:28:49 -0700 (PDT)
-Subject: Re: [PATCH v9 19/22] RISC-V: KVM: Remove per-CPU vsip_shadow variable
-To:     Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Radim K <rkrcmar@redhat.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EYUsjio6mmwd3BPOKV1gElxOC+8ifBzUcmXkyLesSv8=;
+        b=siOXxqld2er9woru+2hsK26K5b9QkGXgX7FqG5y8PnzFxTACi8u5ZxJ/25vMh/i+YH
+         LnVTeatq6XtddVXz11q6WJRrgWfuD6B5/b+1nthMDGaY7rgjf53WY1vjZXgsvImf0GfJ
+         EsmLU3N2zOx3hGZrBR+6fxigsYxVjbbqcJE9SDFmpykG5LoZBeSRoXZPpE86SZkeE/rS
+         wi1TYKtF8AN/mJ+DiQNG3r5UqPh6Xap9f5bAzu4wMlFI6M01BWUnJyrcKS9Df4ssPiMX
+         HY72DGGtYSsETjR3f/LIm2muCvQWKqLQeXZZ3ZGRxwu/D9KLzkFZQvnKK4q3pmSrG5ft
+         umbA==
+X-Gm-Message-State: APjAAAVY1wUNd2gUNYCJU0viwbfsvIxGWZ1nZxu3cFKrgCRCPnR7PAEs
+        g6DQ5X4ki13pPA8WmPG94Q==
+X-Google-Smtp-Source: APXvYqwXwzmDl4AWu4PXPmYxSpf0/owrpLJsadNE9k1i9N076cwi3uOZRW/Va9vltJar9N4WB89cvQ==
+X-Received: by 2002:aa7:da96:: with SMTP id q22mr870455eds.278.1571678966846;
+        Mon, 21 Oct 2019 10:29:26 -0700 (PDT)
+Received: from avx2 ([46.53.249.42])
+        by smtp.gmail.com with ESMTPSA id g43sm207790edb.14.2019.10.21.10.29.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Oct 2019 10:29:25 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 20:29:23 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Joel Savitz <jsavitz@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Fabrizio D'Angelo <Fabrizio_Dangelo@student.uml.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Graf <graf@amazon.com>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Anup Patel <anup@brainfault.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20191016160649.24622-1-anup.patel@wdc.com>
- <20191016160649.24622-20-anup.patel@wdc.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <7381057d-a3f3-e79a-bb2c-b078fc918b1f@redhat.com>
-Date:   Mon, 21 Oct 2019 19:28:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        linux-fsdevel@vger.kernel.org, fedora-rpi@googlegroups.com
+Subject: Re: [PATCH] fs: proc: Clarify warnings for invalid proc dir names
+Message-ID: <20191021172923.GA5355@avx2>
+References: <20191020221742.5728-1-jsavitz@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20191016160649.24622-20-anup.patel@wdc.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20191020221742.5728-1-jsavitz@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/10/19 18:12, Anup Patel wrote:
-> Currently, we track last value wrote to VSIP CSR using per-CPU
-> vsip_shadow variable but this easily goes out-of-sync because
-> Guest can update VSIP.SSIP bit directly.
+On Sun, Oct 20, 2019 at 06:17:42PM -0400, Joel Savitz wrote:
+> When one attempts to create a directory in /proc with an invalid name,
+> such as one in a subdirectory that doesn't exist, one with a name beyond
+> 256 characters, or a reserved name such as '.' or '..', the kernel
+> throws a warning message that looks like this:
 > 
-> To simplify things, we remove per-CPU vsip_shadow variable and
-> unconditionally write vcpu->arch.guest_csr.vsip to VSIP CSR in
-> run-loop.
-> 
-> Signed-off-by: Anup Patel <anup.patel@wdc.com>
+> 	[ 7913.252558] name 'invalid_name'
 
-Please squash this and patch 20 into the corresponding patches earlier
-in the series.
+Yes, the important part is filename:line which uniquely identifies
+the issue.
 
-Paolo
+> This warning message is nearly the same for all invalid cases, including
+> the removal of a nonexistent directory. This patch clarifies the warning
+> message and differentiates the invalid creation/removal cases so as to
+> allow the user to more quickly understand their mistake.
 
-> ---
->  arch/riscv/include/asm/kvm_host.h |  3 ---
->  arch/riscv/kvm/main.c             |  6 ------
->  arch/riscv/kvm/vcpu.c             | 24 +-----------------------
->  3 files changed, 1 insertion(+), 32 deletions(-)
-> 
-> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-> index ec1ca4bc98f2..cd86acaed055 100644
-> --- a/arch/riscv/include/asm/kvm_host.h
-> +++ b/arch/riscv/include/asm/kvm_host.h
-> @@ -202,9 +202,6 @@ static inline void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu) {}
->  static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
->  static inline void kvm_arch_vcpu_block_finish(struct kvm_vcpu *vcpu) {}
->  
-> -int kvm_riscv_setup_vsip(void);
-> -void kvm_riscv_cleanup_vsip(void);
-> -
->  #define KVM_ARCH_WANT_MMU_NOTIFIER
->  int kvm_unmap_hva_range(struct kvm *kvm,
->  			unsigned long start, unsigned long end);
-> diff --git a/arch/riscv/kvm/main.c b/arch/riscv/kvm/main.c
-> index 55df85184241..002301a27d29 100644
-> --- a/arch/riscv/kvm/main.c
-> +++ b/arch/riscv/kvm/main.c
-> @@ -61,17 +61,11 @@ void kvm_arch_hardware_disable(void)
->  
->  int kvm_arch_init(void *opaque)
->  {
-> -	int ret;
-> -
->  	if (!riscv_isa_extension_available(NULL, h)) {
->  		kvm_info("hypervisor extension not available\n");
->  		return -ENODEV;
+> --- a/fs/proc/generic.c
+> +++ b/fs/proc/generic.c
+> @@ -173,7 +173,7 @@ static int __xlate_proc_name(const char *name, struct proc_dir_entry **ret,
+>  		len = next - cp;
+>  		de = pde_subdir_find(de, cp, len);
+>  		if (!de) {
+> -			WARN(1, "name '%s'\n", name);
+> +			WARN(1, "invalid proc dir name '%s'\n", name);
+
+Wrong string anyway, this is nonexistent name, directory or not.
+
+> -		WARN(1, "name len %u\n", qstr.len);
+> +		WARN(1, "invalid proc dir name len %u\n", qstr.len);
+>  		return NULL;
 >  	}
->  
-> -	ret = kvm_riscv_setup_vsip();
-> -	if (ret)
-> -		return ret;
-> -
->  	kvm_riscv_stage2_vmid_detect();
->  
->  	kvm_info("hypervisor extension available\n");
-> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-> index fd77cd39dd8c..f1a218d3a8cf 100644
-> --- a/arch/riscv/kvm/vcpu.c
-> +++ b/arch/riscv/kvm/vcpu.c
-> @@ -111,8 +111,6 @@ static void kvm_riscv_vcpu_host_fp_restore(struct kvm_cpu_context *cntx) {}
->  				 riscv_isa_extension_mask(s) | \
->  				 riscv_isa_extension_mask(u))
->  
-> -static unsigned long __percpu *vsip_shadow;
-> -
->  static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
-> @@ -765,7 +763,6 @@ int kvm_arch_vcpu_ioctl_set_guest_debug(struct kvm_vcpu *vcpu,
->  void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
->  {
->  	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
-> -	unsigned long *vsip = raw_cpu_ptr(vsip_shadow);
->  
->  	csr_write(CSR_VSSTATUS, csr->vsstatus);
->  	csr_write(CSR_VSIE, csr->vsie);
-> @@ -775,7 +772,6 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
->  	csr_write(CSR_VSCAUSE, csr->vscause);
->  	csr_write(CSR_VSTVAL, csr->vstval);
->  	csr_write(CSR_VSIP, csr->vsip);
-> -	*vsip = csr->vsip;
->  	csr_write(CSR_VSATP, csr->vsatp);
->  
->  	kvm_riscv_stage2_update_hgatp(vcpu);
-> @@ -843,26 +839,8 @@ static void kvm_riscv_check_vcpu_requests(struct kvm_vcpu *vcpu)
->  static void kvm_riscv_update_vsip(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
-> -	unsigned long *vsip = raw_cpu_ptr(vsip_shadow);
-> -
-> -	if (*vsip != csr->vsip) {
-> -		csr_write(CSR_VSIP, csr->vsip);
-> -		*vsip = csr->vsip;
-> -	}
-> -}
-> -
-> -int kvm_riscv_setup_vsip(void)
-> -{
-> -	vsip_shadow = alloc_percpu(unsigned long);
-> -	if (!vsip_shadow)
-> -		return -ENOMEM;
->  
-> -	return 0;
-> -}
-> -
-> -void kvm_riscv_cleanup_vsip(void)
-> -{
-> -	free_percpu(vsip_shadow);
-> +	csr_write(CSR_VSIP, csr->vsip);
->  }
->  
->  int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, struct kvm_run *run)
-> 
+>  	if (qstr.len == 1 && fn[0] == '.') {
+> -		WARN(1, "name '.'\n");
+> +		WARN(1, "invalid proc dir name '.'\n");
+>  		return NULL;
+>  	}
+>  	if (qstr.len == 2 && fn[0] == '.' && fn[1] == '.') {
+> -		WARN(1, "name '..'\n");
+> +		WARN(1, "invalid proc dir name '..'\n");
+>  		return NULL;
+>  	}
+>  	if (*parent == &proc_root && name_to_int(&qstr) != ~0U) {
+> @@ -402,7 +402,7 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
+>  		return NULL;
+>  	}
+>  	if (is_empty_pde(*parent)) {
+> -		WARN(1, "attempt to add to permanently empty directory");
+> +		WARN(1, "attempt to add to permanently empty directory in proc");
 
+"proc" will be spilled over all backtrace.
+
+> @@ -670,7 +670,7 @@ void remove_proc_entry(const char *name, struct proc_dir_entry *parent)
+>  		rb_erase(&de->subdir_node, &parent->subdir);
+>  	write_unlock(&proc_subdir_lock);
+>  	if (!de) {
+> -		WARN(1, "name '%s'\n", name);
+> +		WARN(1, "unable to remove nonexistent proc dir '%s'\n", name);
+
+I'm not sure if such chatty strings are necessary.
