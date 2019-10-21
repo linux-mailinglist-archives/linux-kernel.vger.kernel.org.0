@@ -2,372 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CE22DEC28
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64E64DEC35
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:29:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbfJUM1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 08:27:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42930 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727322AbfJUM1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:27:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 498BCAE16;
-        Mon, 21 Oct 2019 12:27:30 +0000 (UTC)
-Date:   Mon, 21 Oct 2019 14:27:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     linux-mm <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Minchan Kim <minchan@kernel.org>, Mel Gorman <mgorman@suse.de>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [RFC v1] mm: add page preemption
-Message-ID: <20191021122728.GN9379@dhcp22.suse.cz>
-References: <20191020134304.11700-1-hdanton@sina.com>
+        id S1728733AbfJUM33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 08:29:29 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36605 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727344AbfJUM32 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 08:29:28 -0400
+Received: by mail-wm1-f68.google.com with SMTP id c22so3483589wmd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 05:29:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0Bp8/Rt3sh+Dp54MmRulppkSlI3E35h5lLEu1NL/66s=;
+        b=fg+EZ8rR6zQ3vBZkhEVTMSJIkRWVW81aPPY4whM0f85iUyAYYOdFB/Zlwa2IAdEeCe
+         ab0iT+Taos9nYLyyrI3j3p3A269hUMedsQAmi/WkWVNLNbF+ovtsmMOFJdM7oPG0kX44
+         HoLGCvc36n6D1UzBl1e4+EVcvtdF82Kic5pDSs7TKv+UWhax298piQMnJAKjdhPSNpNt
+         u1yVwqWGzJxwNRSARVsdpIihgIJd6biiBL0XhfgL0Q6ofRhTIRPEt34P7v1GrImyAAPD
+         IHEx0dd7OIBt7XB3pH05mvDopQ1vK3+bFG1NQr7+IO2/IUFlfHjo7NcDyJ1pkgSz+NDN
+         RZ+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0Bp8/Rt3sh+Dp54MmRulppkSlI3E35h5lLEu1NL/66s=;
+        b=intc61kzUSlPHwLNEFPOqBzKV1FxR0AN57iCdzBh909r0D504N62TmDAeg3Isq0NWx
+         Y6hRJ3nj8Ur8BE62e5SAVomIMe5TZnttvA3r3ydPYRE5BXNJADqaBdKmrCSw5lHTjj6n
+         jjiIdLDb9r4rb8YQUDT7fawy/4tSO5LHbZL4ZWfJe1jRhxLQSih2oN698d4RI30BFCFI
+         xRnxw4D6SQ4h3zXdwjxTzTBCLskJvliXTujg8XhneoPOK2tadF8MWA1nnPlfIjdPfa+k
+         wUrIwzHxKCR2veJQfgh8EO0ORS9gTWV9mcu+QtKJgjNzUcIVUckS5oRSy1w7Qzn8Iuo2
+         hz3w==
+X-Gm-Message-State: APjAAAWTrHtMlxhdM7fuDWtJJD29JVMFilwPti/tk8E9AEYPjkLz7wu0
+        WVmEtZeRoqEBfopKj3ZfkHosuw==
+X-Google-Smtp-Source: APXvYqzINJ2+DBcQWI5LwLEFqSjji3k+FiqUhAU7wr8KOGRZc9tTARTg8q11xDs6VViDPVgwQwaOHA==
+X-Received: by 2002:a1c:9894:: with SMTP id a142mr18467038wme.70.1571660966800;
+        Mon, 21 Oct 2019 05:29:26 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id p20sm9987618wmc.23.2019.10.21.05.29.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 05:29:26 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 13:29:24 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     arnd@arndb.de, broonie@kernel.org, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        baohua@kernel.org, stephan@gerhold.net
+Subject: Re: [PATCH v2 4/9] mfd: cs5535-mfd: Register clients using their own
+ dedicated MFD cell entries
+Message-ID: <20191021122924.qmaio5oe5j66tfdj@holly.lan>
+References: <20191021105822.20271-1-lee.jones@linaro.org>
+ <20191021105822.20271-5-lee.jones@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191020134304.11700-1-hdanton@sina.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191021105822.20271-5-lee.jones@linaro.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 20-10-19 21:43:04, Hillf Danton wrote:
+On Mon, Oct 21, 2019 at 11:58:17AM +0100, Lee Jones wrote:
+> CS5535 is the only user of mfd_clone_cell().  It makes more sense to
+> register child devices in the traditional way and remove the quite
+> bespoke mfd_clone_cell() call from the MFD API.
 > 
-> Unlike cpu preemption, page preemption would have been a two-edge
-> option for quite a while. It is added by preventing tasks from
-> reclaiming as many lru pages as possible from other tasks of
-> higher priorities.
-
-This really begs for more explanation. I would start with what page
-preemption actually is. Why do we care and which workloads would benefit
-and how much. And last but not least why the existing infrastructure
-doesn't help (e.g. if you have clearly defined workloads with different
-memory consumption requirements then why don't you use memory cgroups to
-reflect the priority).
- 
-> Who need pp?
-> Users who want to manage/control jitters in lru pages under memory
-> pressure. Way in parallel to scheduling with task's memory footprint
-> taken into account, pp makes task prio a part of page reclaiming.
-
-How do you assign priority to generally shared pages?
-
-> [Off topic: prio can also be defined and added in memory controller
-> and then plays a role in memcg reclaiming, for example check prio
-> when selecting victim memcg.]
-> 
-> First on the page side, page->prio that is used to mirror the prio
-> of page owner tasks is added, and a couple of helpers for setting,
-> copying and comparing page->prio to help to add pages to lru.
-> 
-> Then on the reclaimer side, pgdat->kswapd_prio is added to mirror
-> the prio of tasks that wake up the kthread, and it is updated
-> every time kswapd raises its reclaiming priority.
-
-This sounds like a very bad design to me. You essentially hand over
-to a completely detached context while you want to handle priority
-inversion problems (or at least that is what I think you want).
-
-> Finally priorities on both sides are compared when deactivating lru
-> pages, and skip page if it is higher on prio.
-> 
-> V1 is based on next-20191018.
-> 
-> Changes since v0
-> - s/page->nice/page->prio/
-> - drop the role of kswapd's reclaiming prioirty in prio comparison
-> - add pgdat->kswapd_prio
-> 
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Hillf Danton <hdanton@sina.com>
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
 > ---
+>  drivers/mfd/cs5535-mfd.c | 24 ++++++++++++++++++------
+>  1 file changed, 18 insertions(+), 6 deletions(-)
 > 
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -281,6 +281,15 @@ config VIRT_TO_BUS
->  	  should probably not select this.
+> diff --git a/drivers/mfd/cs5535-mfd.c b/drivers/mfd/cs5535-mfd.c
+> index 053e33447808..96a99ac13384 100644
+> --- a/drivers/mfd/cs5535-mfd.c
+> +++ b/drivers/mfd/cs5535-mfd.c
+> @@ -57,9 +57,17 @@ static struct mfd_cell cs5535_mfd_cells[] = {
+>  	},
+>  };
 >  
+> -static const char *olpc_acpi_clones[] = {
+> -	"olpc-xo1-pm-acpi",
+> -	"olpc-xo1-sci-acpi"
+> +static struct mfd_cell cs5535_olpc_mfd_cells[] = {
+> +	{
+> +		.name = "olpc-xo1-pm-acpi",
+> +		.num_resources = 1,
+> +		.resources = &cs5535_mfd_resources[ACPI_BAR],
+> +	},
+> +	{
+> +		.name = "olpc-xo1-sci-acpi",
+> +		.num_resources = 1,
+> +		.resources = &cs5535_mfd_resources[ACPI_BAR],
+> +	},
+
+Is the cs5535-acpi cell actually used by anything? I think it was only
+ever used as a template and can be removed; I didn't spot any driver that
+uses it.
+
+PS If the cell were removed then my review comment on the previous patch
+   becomes moot ;-)
+
+
+>  };
 >  
-> +config PAGE_PREEMPTION
-> +	bool
-> +	help
-> +	  This makes a task unable to reclaim as many lru pages as
-> +	  possible from other tasks of higher priorities.
-> +
-> +	  Say N if unsure.
-> +
-> +
->  config MMU_NOTIFIER
->  	bool
->  	select SRCU
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -14,6 +14,7 @@
->  #include <linux/uprobes.h>
->  #include <linux/page-flags-layout.h>
->  #include <linux/workqueue.h>
-> +#include <linux/sched/prio.h>
->  
->  #include <asm/mmu.h>
->  
-> @@ -197,6 +198,10 @@ struct page {
->  	/* Usage count. *DO NOT USE DIRECTLY*. See page_ref.h */
->  	atomic_t _refcount;
->  
-> +#ifdef CONFIG_PAGE_PREEMPTION
-> +	int prio; /* mirror page owner task->prio */
-> +#endif
-> +
->  #ifdef CONFIG_MEMCG
->  	struct mem_cgroup *mem_cgroup;
->  #endif
-> @@ -232,6 +237,54 @@ struct page {
->  #define page_private(page)		((page)->private)
->  #define set_page_private(page, v)	((page)->private = (v))
->  
-> +#ifdef CONFIG_PAGE_PREEMPTION
-> +static inline bool page_prio_valid(struct page *p)
-> +{
-> +	return p->prio > MAX_PRIO;
-> +}
-> +
-> +static inline void set_page_prio(struct page *p, int task_prio)
-> +{
-> +	/* store page prio low enough to help khugepaged add lru pages */
-> +	if (!page_prio_valid(p))
-> +		p->prio = task_prio + MAX_PRIO + 1;
-> +}
-> +
-> +static inline void copy_page_prio(struct page *to, struct page *from)
-> +{
-> +	to->prio = from->prio;
-> +}
-> +
-> +static inline int page_prio(struct page *p)
-> +{
-> +	return p->prio - MAX_PRIO - 1;
-> +}
-> +
-> +static inline bool page_prio_higher(struct page *p, int prio)
-> +{
-> +	return page_prio(p) < prio;
-> +}
-> +#else
-> +static inline bool page_prio_valid(struct page *p)
-> +{
-> +	return true;
-> +}
-> +static inline void set_page_prio(struct page *p, int task_prio)
-> +{
-> +}
-> +static inline void copy_page_prio(struct page *to, struct page *from)
-> +{
-> +}
-> +static inline int page_prio(struct page *p)
-> +{
-> +	return MAX_PRIO + 1;
-> +}
-> +static inline bool page_prio_higher(struct page *p, int prio)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  struct page_frag_cache {
->  	void * va;
->  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -402,6 +402,7 @@ static void __lru_cache_add(struct page
->  	struct pagevec *pvec = &get_cpu_var(lru_add_pvec);
->  
->  	get_page(page);
-> +	set_page_prio(page, current->prio);
->  	if (!pagevec_add(pvec, page) || PageCompound(page))
->  		__pagevec_lru_add(pvec);
->  	put_cpu_var(lru_add_pvec);
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -647,6 +647,7 @@ void migrate_page_states(struct page *ne
->  		end_page_writeback(newpage);
->  
->  	copy_page_owner(page, newpage);
-> +	copy_page_prio(newpage, page);
->  
->  	mem_cgroup_migrate(page, newpage);
->  }
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1575,6 +1575,7 @@ static int shmem_replace_page(struct pag
->  
->  	get_page(newpage);
->  	copy_highpage(newpage, oldpage);
-> +	copy_page_prio(newpage, oldpage);
->  	flush_dcache_page(newpage);
->  
->  	__SetPageLocked(newpage);
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -671,6 +671,7 @@ static void __collapse_huge_page_copy(pt
->  			}
->  		} else {
->  			src_page = pte_page(pteval);
-> +			copy_page_prio(page, src_page);
->  			copy_user_highpage(page, src_page, address, vma);
->  			VM_BUG_ON_PAGE(page_mapcount(src_page) != 1, src_page);
->  			release_pte_page(src_page);
-> @@ -1723,6 +1724,7 @@ xa_unlocked:
->  				clear_highpage(new_page + (index % HPAGE_PMD_NR));
->  				index++;
->  			}
-> +			copy_page_prio(new_page, page);
->  			copy_highpage(new_page + (page->index % HPAGE_PMD_NR),
->  					page);
->  			list_del(&page->lru);
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -738,6 +738,9 @@ typedef struct pglist_data {
->  	int kswapd_order;
->  	enum zone_type kswapd_classzone_idx;
->  
-> +#ifdef CONFIG_PAGE_PREEMPTION
-> +	int kswapd_prio; /* mirror task->prio waking up kswapd */
-> +#endif
->  	int kswapd_failures;		/* Number of 'reclaimed == 0' runs */
->  
->  #ifdef CONFIG_COMPACTION
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -110,6 +110,10 @@ struct scan_control {
->  	/* The highest zone to isolate pages for reclaim from */
->  	s8 reclaim_idx;
->  
-> +#ifdef CONFIG_PAGE_PREEMPTION
-> +	s8 __pad;
-> +	int reclaimer_prio; /* mirror task->prio */
-> +#endif
->  	/* This context's GFP mask */
->  	gfp_t gfp_mask;
->  
-> @@ -1710,11 +1714,18 @@ static unsigned long isolate_lru_pages(u
->  		total_scan += nr_pages;
->  
->  		if (page_zonenum(page) > sc->reclaim_idx) {
-> +next_page:
->  			list_move(&page->lru, &pages_skipped);
->  			nr_skipped[page_zonenum(page)] += nr_pages;
->  			continue;
+>  static int cs5535_mfd_probe(struct pci_dev *pdev,
+> @@ -105,10 +113,14 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
+>  			goto err_remove_devices;
 >  		}
 >  
-> +		if (IS_ENABLED(CONFIG_PAGE_PREEMPTION) &&
-> +		    is_active_lru(lru) &&
-> +		    global_reclaim(sc) &&
-> +		    page_prio_higher(page, sc->reclaimer_prio))
-> +			goto next_page;
-> +
->  		/*
->  		 * Do not count skipped pages because that makes the function
->  		 * return with no isolated pages if the LRU mostly contains
-> @@ -3260,6 +3271,9 @@ unsigned long try_to_free_pages(struct z
->  	unsigned long nr_reclaimed;
->  	struct scan_control sc = {
->  		.nr_to_reclaim = SWAP_CLUSTER_MAX,
-> +#ifdef CONFIG_PAGE_PREEMPTION
-> +		.reclaimer_prio = current->prio,
-> +#endif
->  		.gfp_mask = current_gfp_context(gfp_mask),
->  		.reclaim_idx = gfp_zone(gfp_mask),
->  		.order = order,
-> @@ -3586,6 +3600,9 @@ static int balance_pgdat(pg_data_t *pgda
->  	bool boosted;
->  	struct zone *zone;
->  	struct scan_control sc = {
-> +#ifdef CONFIG_PAGE_PREEMPTION
-> +		.reclaimer_prio = pgdat->kswapd_prio,
-> +#endif
->  		.gfp_mask = GFP_KERNEL,
->  		.order = order,
->  		.may_unmap = 1,
-> @@ -3739,6 +3756,9 @@ restart:
->  		if (nr_boost_reclaim && !nr_reclaimed)
->  			break;
->  
-> +		if (IS_ENABLED(CONFIG_PAGE_PREEMPTION))
-> +			sc.reclaimer_prio = pgdat->kswapd_prio;
-> +
->  		if (raise_priority || !nr_reclaimed)
->  			sc.priority--;
->  	} while (sc.priority >= 1);
-> @@ -3831,6 +3851,10 @@ static void kswapd_try_to_sleep(pg_data_
->  		 */
->  		wakeup_kcompactd(pgdat, alloc_order, classzone_idx);
->  
-> +		if (IS_ENABLED(CONFIG_PAGE_PREEMPTION)) {
-> +			pgdat->kswapd_prio = MAX_PRIO + 1;
-> +			smp_wmb();
-> +		}
->  		remaining = schedule_timeout(HZ/10);
->  
->  		/*
-> @@ -3865,8 +3889,13 @@ static void kswapd_try_to_sleep(pg_data_
->  		 */
->  		set_pgdat_percpu_threshold(pgdat, calculate_normal_threshold);
->  
-> -		if (!kthread_should_stop())
-> +		if (!kthread_should_stop()) {
-> +			if (IS_ENABLED(CONFIG_PAGE_PREEMPTION)) {
-> +				pgdat->kswapd_prio = MAX_PRIO + 1;
-> +				smp_wmb();
-> +			}
->  			schedule();
-> +		}
->  
->  		set_pgdat_percpu_threshold(pgdat, calculate_pressure_threshold);
->  	} else {
-> @@ -3917,6 +3946,8 @@ static int kswapd(void *p)
->  	tsk->flags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
->  	set_freezable();
->  
-> +	if (IS_ENABLED(CONFIG_PAGE_PREEMPTION))
-> +		pgdat->kswapd_prio = MAX_PRIO + 1;
->  	pgdat->kswapd_order = 0;
->  	pgdat->kswapd_classzone_idx = MAX_NR_ZONES;
->  	for ( ; ; ) {
-> @@ -3985,6 +4016,17 @@ void wakeup_kswapd(struct zone *zone, gf
->  		return;
->  	pgdat = zone->zone_pgdat;
->  
-> +	if (IS_ENABLED(CONFIG_PAGE_PREEMPTION)) {
-> +		int prio = current->prio;
-> +
-> +		if (pgdat->kswapd_prio < prio) {
-> +			smp_rmb();
-> +			return;
-> +		}
-> +		pgdat->kswapd_prio = prio;
-> +		smp_wmb();
-> +	}
-> +
->  	if (pgdat->kswapd_classzone_idx == MAX_NR_ZONES)
->  		pgdat->kswapd_classzone_idx = classzone_idx;
->  	else
-> --
+> -		err = mfd_clone_cell("cs5535-acpi", olpc_acpi_clones,
+> -				     ARRAY_SIZE(olpc_acpi_clones));
+> +		err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE,
+> +				      cs5535_olpc_mfd_cells,
+> +				      ARRAY_SIZE(cs5535_olpc_mfd_cells),
+> +				      NULL, 0, NULL);
+>  		if (err) {
+> -			dev_err(&pdev->dev, "Failed to clone MFD cell\n");
+> +			dev_err(&pdev->dev,
+> +				"Failed to add CS5532 OLPC sub-devices: %d\n",
+> +				err);
+>  			goto err_release_acpi;
+>  		}
+>  	}
+> -- 
+> 2.17.1
 > 
-
--- 
-Michal Hocko
-SUSE Labs
