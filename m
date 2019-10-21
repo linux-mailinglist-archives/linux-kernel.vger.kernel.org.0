@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63890DF8E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 02:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1542CDF8E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 02:04:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730568AbfJVADq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 20:03:46 -0400
+        id S1730616AbfJVADv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 20:03:51 -0400
 Received: from Galois.linutronix.de ([193.142.43.55]:38895 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728375AbfJVADm (ORCPT
+        with ESMTP id S1730582AbfJVADu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 20:03:42 -0400
+        Mon, 21 Oct 2019 20:03:50 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iMgxT-0004G9-5V; Tue, 22 Oct 2019 01:19:27 +0200
+        id 1iMgxR-0004Gt-H2; Tue, 22 Oct 2019 01:19:26 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D596F1C0489;
-        Tue, 22 Oct 2019 01:19:18 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 23:19:18 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A5E881C04D7;
+        Tue, 22 Oct 2019 01:19:19 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 23:19:19 -0000
 From:   "tip-bot2 for Leo Yan" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf test: Avoid infinite loop for task exit case
+Subject: [tip: perf/core] perf test: Report failure for mmap events
 Cc:     Leo Yan <leo.yan@linaro.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
@@ -33,10 +33,10 @@ Cc:     Leo Yan <leo.yan@linaro.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191011091942.29841-2-leo.yan@linaro.org>
-References: <20191011091942.29841-2-leo.yan@linaro.org>
+In-Reply-To: <20191011091942.29841-1-leo.yan@linaro.org>
+References: <20191011091942.29841-1-leo.yan@linaro.org>
 MIME-Version: 1.0
-Message-ID: <157169995839.29376.12083653777021293473.tip-bot2@tip-bot2>
+Message-ID: <157169995926.29376.9331572443481931110.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,66 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     791ce9c48c79210d2ffcdbe69421e7783b32921f
-Gitweb:        https://git.kernel.org/tip/791ce9c48c79210d2ffcdbe69421e7783b32921f
+Commit-ID:     6add129c5d9210ada25217abc130df0b7096ee02
+Gitweb:        https://git.kernel.org/tip/6add129c5d9210ada25217abc130df0b7096ee02
 Author:        Leo Yan <leo.yan@linaro.org>
-AuthorDate:    Fri, 11 Oct 2019 17:19:42 +08:00
+AuthorDate:    Fri, 11 Oct 2019 17:19:41 +08:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Tue, 15 Oct 2019 08:36:22 -03:00
 
-perf test: Avoid infinite loop for task exit case
+perf test: Report failure for mmap events
 
-When executing the task exit testing case, perf gets stuck in an endless
-loop this case and doesn't return back on Arm64 Juno board.
+When fail to mmap events in task exit case, it misses to set 'err' to
+-1; thus the testing will not report failure for it.
 
-After digging into this issue, since Juno board has Arm's big.LITTLE
-CPUs, thus the PMUs are not compatible between the big CPUs and little
-CPUs.  This leads to a PMU event that cannot be enabled properly when
-the traced task is migrated from one variant's CPU to another variant.
-Finally, the test case runs into infinite loop for cannot read out any
-event data after return from polling.
+This patch sets 'err' to -1 when fails to mmap events, thus Perf tool
+can report correct result.
 
-Eventually, we need to work out formal solution to allow PMU events can
-be freely migrated from one CPU variant to another, but this is a
-difficult task and a different topic.  This patch tries to fix the Perf
-test case to avoid infinite loop, when the testing detects 1000 times
-retrying for reading empty events, it will directly bail out and return
-failure.  This allows the Perf tool can continue its other test cases.
-
+Fixes: d723a55096b8 ("perf test: Add test case for checking number of EXIT events")
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lore.kernel.org/lkml/20191011091942.29841-2-leo.yan@linaro.org
+Link: http://lore.kernel.org/lkml/20191011091942.29841-1-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/task-exit.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/perf/tests/task-exit.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
-index 19fa7cb..adaff90 100644
+index 4965f8b..19fa7cb 100644
 --- a/tools/perf/tests/task-exit.c
 +++ b/tools/perf/tests/task-exit.c
-@@ -54,6 +54,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
- 	struct perf_cpu_map *cpus;
- 	struct perf_thread_map *threads;
- 	struct mmap *md;
-+	int retry_count = 0;
- 
- 	signal(SIGCHLD, sig_handler);
- 
-@@ -133,6 +134,13 @@ retry:
- out_init:
- 	if (!exited || !nr_exit) {
- 		evlist__poll(evlist, -1);
-+
-+		if (retry_count++ > 1000) {
-+			pr_debug("Failed after retrying 1000 times\n");
-+			err = -1;
-+			goto out_free_maps;
-+		}
-+
- 		goto retry;
+@@ -111,6 +111,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
+ 	if (evlist__mmap(evlist, 128) < 0) {
+ 		pr_debug("failed to mmap events: %d (%s)\n", errno,
+ 			 str_error_r(errno, sbuf, sizeof(sbuf)));
++		err = -1;
+ 		goto out_delete_evlist;
  	}
  
