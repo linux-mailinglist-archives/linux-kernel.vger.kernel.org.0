@@ -2,126 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B7A6DEE09
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3945DEE13
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:42:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729671AbfJUNlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:41:19 -0400
-Received: from mga12.intel.com ([192.55.52.136]:25753 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729656AbfJUNlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:41:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 06:41:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,323,1566889200"; 
-   d="scan'208";a="209446042"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 21 Oct 2019 06:41:12 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 21 Oct 2019 16:41:11 +0300
-Date:   Mon, 21 Oct 2019 16:41:11 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Austin Bolen <austin_bolen@dell.com>, keith.busch@intel.com,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lukas@wunner.de
-Subject: Re: [PATCH v3 2/3] PCI: pciehp: Wait for PDS if in-band presence is
- disabled
-Message-ID: <20191021134111.GK2819@lahna.fi.intel.com>
-References: <20191017193256.3636-1-stuart.w.hayes@gmail.com>
- <20191017193256.3636-3-stuart.w.hayes@gmail.com>
+        id S1729785AbfJUNlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:41:53 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:46079 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729769AbfJUNlt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:41:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571665308;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/hrlMRSNUV7GfQJokj3U631Cnr3v4gmMYYBdE3Q72JM=;
+        b=b6F9VmDh7k0EHGtl3otLaaCiVAL25y7yTiKG592UesEg4jikUgokr1HOfQJ131f0ZsqAoo
+        QkQOEnPfLbi0kcl+OtLfMPuPZdWnTkA3Xp+MKJ3//nIHFposzEDyFrHwZFTmTENGKDkRpT
+        hacx0K2EAf2ei0kKHd52mOLiWR6KJKk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-47-5gj69c9WNK-7mJg0Vgjbpg-1; Mon, 21 Oct 2019 09:41:44 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E92BE80183E;
+        Mon, 21 Oct 2019 13:41:42 +0000 (UTC)
+Received: from krava (unknown [10.43.17.61])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 73A226012D;
+        Mon, 21 Oct 2019 13:41:38 +0000 (UTC)
+Date:   Mon, 21 Oct 2019 15:41:37 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jiwei Sun <jiwei.sun@windriver.com>
+Cc:     acme@redhat.com, arnaldo.melo@gmail.com,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        mpetlan@redhat.com, namhyung@kernel.org, a.p.zijlstra@chello.nl,
+        adrian.hunter@intel.com, Richard.Danter@windriver.com
+Subject: Re: [PATCH v4] perf record: Add support for limit perf output file
+ size
+Message-ID: <20191021134137.GA8264@krava>
+References: <20190925070637.13164-1-jiwei.sun@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017193256.3636-3-stuart.w.hayes@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20190925070637.13164-1-jiwei.sun@windriver.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: 5gj69c9WNK-7mJg0Vgjbpg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 03:32:55PM -0400, Stuart Hayes wrote:
-> From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> 
-> When inband presence is disabled, PDS may come up at any time, or not
-> at all. PDS being low may indicate that the card is still mating, and
-> we could expect contact bounce to bring down the link as well.
-> 
-> It is reasonable to assume that most cards will mate in a hotplug slot
-> in about a second. Thus, when we know PDS only reflects out-of-band
-> presence, it's worthwhile to wait the extra second or so to make sure
-> the card is properly mated before loading the driver, and to prevent
-> the hotplug code from disabling a device if the presence detect change
-> goes active after the device is enabled.
-> 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+On Wed, Sep 25, 2019 at 03:06:37PM +0800, Jiwei Sun wrote:
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+SNIP
 
-One nit below.
-
-> ---
-> v2:
->   replace while(true) loop with do...while
-> v3
->   remove unused variable declaration (pds)
->   modify text of warning message
-> 
->  drivers/pci/hotplug/pciehp_hpc.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-> index dc109d521f30..02eb811a014f 100644
-> --- a/drivers/pci/hotplug/pciehp_hpc.c
-> +++ b/drivers/pci/hotplug/pciehp_hpc.c
-> @@ -242,6 +242,22 @@ static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
->  	return found;
+>  SEE ALSO
+>  --------
+>  linkperf:perf-stat[1], linkperf:perf-list[1]
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index 48600c90cc7e..30904d2a3407 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -91,6 +91,7 @@ struct record {
+>  =09struct switch_output=09switch_output;
+>  =09unsigned long long=09samples;
+>  =09cpu_set_t=09=09affinity_mask;
+> +=09unsigned long=09=09output_max_size;=09/* =3D 0: unlimited */
+>  };
+> =20
+>  static volatile int auxtrace_record__snapshot_started;
+> @@ -120,6 +121,12 @@ static bool switch_output_time(struct record *rec)
+>  =09       trigger_is_ready(&switch_output_trigger);
 >  }
->  
-> +static void pcie_wait_for_presence(struct pci_dev *pdev)
+> =20
+> +static bool record__output_max_size_exceeded(struct record *rec)
 > +{
-> +	int timeout = 1250;
-> +	u16 slot_status;
-> +
-> +	do {
-> +		pcie_capability_read_word(pdev, PCI_EXP_SLTSTA, &slot_status);
-> +		if (!!(slot_status & PCI_EXP_SLTSTA_PDS))
-
-It is more readable if you write it like:
-
-		if (slot_status & PCI_EXP_SLTSTA_PDS)
-
-> +			return;
-> +		msleep(10);
-> +		timeout -= 10;
-> +	} while (timeout > 0);
-> +
-> +	pci_info(pdev, "Timeout waiting for Presence Detect state to be set\n");
+> +=09return rec->output_max_size &&
+> +=09       (rec->bytes_written >=3D rec->output_max_size);
 > +}
 > +
->  int pciehp_check_link_status(struct controller *ctrl)
+>  static int record__write(struct record *rec, struct mmap *map __maybe_un=
+used,
+>  =09=09=09 void *bf, size_t size)
 >  {
->  	struct pci_dev *pdev = ctrl_dev(ctrl);
-> @@ -251,6 +267,9 @@ int pciehp_check_link_status(struct controller *ctrl)
->  	if (!pcie_wait_for_link(pdev, true))
->  		return -1;
->  
-> +	if (ctrl->inband_presence_disabled)
-> +		pcie_wait_for_presence(pdev);
-> +
->  	found = pci_bus_check_dev(ctrl->pcie->port->subordinate,
->  					PCI_DEVFN(0, 0));
->  
-> -- 
-> 2.18.1
+> @@ -132,6 +139,12 @@ static int record__write(struct record *rec, struct =
+mmap *map __maybe_unused,
+> =20
+>  =09rec->bytes_written +=3D size;
+> =20
+> +=09if (record__output_max_size_exceeded(rec)) {
+> +=09=09WARN_ONCE(1, "WARNING: The perf data has already reached "
+> +=09=09=09     "the limit, stop recording!\n");
+
+I think the message whouldn't be a warning, the user asked for
+that, maybe something more like:
+
+  [ perf record: perf size limit reached (XXMB), stopping session ]
+
+> +=09=09raise(SIGTERM);
+
+could we just set 'done =3D 1' what's the benefit in killing perf?
+
+thanks,
+jirka
+
