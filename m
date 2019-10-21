@@ -2,119 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC693DE543
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 09:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1570CDE550
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 09:30:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbfJUHYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 03:24:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36586 "EHLO mail.kernel.org"
+        id S1727436AbfJUHaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 03:30:02 -0400
+Received: from mga12.intel.com ([192.55.52.136]:1461 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727047AbfJUHYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 03:24:50 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C67022070B;
-        Mon, 21 Oct 2019 07:24:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571642689;
-        bh=RR6s7mIccgzeU/T8AvPqnqdOGb3Mp0UjrcZYPHMUYYI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=1lYGtq5iYyONLoknJL6+mRREarql2YeAL5xX7EdcDHFVQMn2DsezxxHwc5PiIPGNe
-         8SrQ5DXWbk6KsodlJncs8y4sTYK8CO8EKfqnZmvud08Aw9ZRHIPCbGfAT8EzaNGf/Y
-         /Qmh0eWToAQNWgk8LDHGUui1+ISrAxUu/hH61XQo=
-Date:   Mon, 21 Oct 2019 16:24:45 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     shuah <shuah@kernel.org>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jaswinder.singh@linaro.org
-Subject: Re: [BUGFIX PATCH 0/5] selftests: Fixes for 32bit arch
-Message-Id: <20191021162445.3f35341ecad791757c0bc043@kernel.org>
-In-Reply-To: <ebd87597-9a1e-7d16-2dfb-5bd421383816@kernel.org>
-References: <157046101671.20724.9561877942986463668.stgit@devnote2>
-        <ebd87597-9a1e-7d16-2dfb-5bd421383816@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1726480AbfJUHaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 03:30:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 00:30:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,322,1566889200"; 
+   d="scan'208";a="196034772"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga008.fm.intel.com with ESMTP; 21 Oct 2019 00:29:54 -0700
+Cc:     baolu.lu@linux.intel.com
+Subject: Re: [PATCH] iommu/vt-d: Fix panic after kexec -p for kdump
+To:     John Donnelly <john.p.donnelly@oracle.com>,
+        linux-kernel@vger.kernel.org
+References: <4E962E33-4B15-4407-9FF0-3705229D8881@oracle.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <f30dcef0-4a6f-db89-fde8-048c309a1d9d@linux.intel.com>
+Date:   Mon, 21 Oct 2019 15:27:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <4E962E33-4B15-4407-9FF0-3705229D8881@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shuah,
+Hi John,
 
-On Fri, 18 Oct 2019 15:45:56 -0600
-shuah <shuah@kernel.org> wrote:
-
-> On 10/7/19 9:10 AM, Masami Hiramatsu wrote:
-> > Hi,
-> > 
-> > Here are some patches to fix some warnings/issues on 32bit arch
-> > (e.g. arm).
-> > 
-> > When I built the ksefltest on arm, I hit some 32bit related warnings.
-> > Here are the patches to fix those issues.
-> > 
-> > 
-> >   - [1/5] va_max was set 2^32 even on 32bit arch. This can make
-> >          va_max == 0 and always fail. Make it 3GB on 32bit.
-> >   - [2/5] Some VM tests requires 64bit user space, which should
-> >          not run on 32bit arch.
-> >   - [3/5] For counting the size of large file, we should use
-> >          size_t instead of unsinged long.
-> >   - [4/5] Gcc warns printf format for size_t and int64_t on
-> >          32bit arch. Use %llu and cast it.
-> >   - [5/5] Gcc warns __u64 and pointer type castings. It should
-> >          once translated to unsigned long.
-> > 
-> > Thank you,
-> > 
-> > ---
-> > 
-> > Masami Hiramatsu (5):
-> >        selftests: proc: Make va_max 3GB on 32bit arch
-> >        selftests: vm: Build/Run 64bit tests only on 64bit arch
-> >        selftests: net: Use size_t and ssize_t for counting file size
-> >        selftests: net: Fix printf format warnings on arm
-> >        selftests: sync: Fix cast warnings on arm
-> > 
-> > 
-> >   tools/testing/selftests/net/so_txtime.c            |    4 ++--
-> >   tools/testing/selftests/net/tcp_mmap.c             |    8 ++++----
-> >   tools/testing/selftests/net/udpgso.c               |    3 ++-
-> >   tools/testing/selftests/net/udpgso_bench_tx.c      |    3 ++-
-> >   .../selftests/proc/proc-self-map-files-002.c       |   11 ++++++++++-
-> >   tools/testing/selftests/sync/sync.c                |    6 +++---
-> >   tools/testing/selftests/vm/Makefile                |    5 +++++
-> >   tools/testing/selftests/vm/run_vmtests             |   10 ++++++++++
-> >   8 files changed, 38 insertions(+), 12 deletions(-)
-> > 
-> > --
-> > Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
-> > 
+On 10/18/19 10:17 PM, John Donnelly wrote:
+> This cures a panic on restart after a kexec -p  operation on 5.3 and 5.4 kernels.
 > 
-> Hi Masami,
+> The underlying state of the iommu registers (iommu->flags &
+> VTD_FLAG_TRANS_PRE_ENABLED) on a restart results in a domain being marked as
+> "DEFER_DEVICE_DOMAIN_INFO" that produces an Oops in identity_mapping().
 > 
-> I would love to pull these in. But looks like these are spread out
-> across several sub-systems.
-
-Right.
-
+> [   43.654737] BUG: kernel NULL pointer dereference, address:
+> 0000000000000056
+> [   43.655720] #PF: supervisor read access in kernel mode
+> [   43.655720] #PF: error_code(0x0000) - not-present page
+> [   43.655720] PGD 0 P4D 0
+> [   43.655720] Oops: 0000 [#1] SMP PTI
+> [   43.655720] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+> 5.3.2-1940.el8uek.x86_64 #1
+> [   43.655720] Hardware name: Oracle Corporation ORACLE SERVER
+> X5-2/ASM,MOTHERBOARD,1U, BIOS 30140300 09/20/2018
+> [   43.655720] RIP: 0010:iommu_need_mapping+0x29/0xd0
+> [   43.655720] Code: 00 0f 1f 44 00 00 48 8b 97 70 02 00 00 48 83 fa ff
+> 74 53 48 8d 4a ff b8 01 00 00 00 48 83 f9 fd 76 01 c3 48 8b 35 7f 58 e0
+> 01 <48> 39 72 58 75 f2 55 48 89 e5 41 54 53 48 8b 87 28 02 00 00 4c 8b
+> [   43.655720] RSP: 0018:ffffc9000001b9b0 EFLAGS: 00010246
+> [   43.655720] RAX: 0000000000000001 RBX: 0000000000001000 RCX:
+> fffffffffffffffd
+> [   43.655720] RDX: fffffffffffffffe RSI: ffff8880719b8000 RDI:
+> ffff8880477460b0
+> [   43.655720] RBP: ffffc9000001b9e8 R08: 0000000000000000 R09:
+> ffff888047c01700
+> [   43.655720] R10: 00002194036fc692 R11: 0000000000000000 R12:
+> 0000000000000000
+> [   43.655720] R13: ffff8880477460b0 R14: 0000000000000cc0 R15:
+> ffff888072d2b558
+> [   43.655720] FS:  0000000000000000(0000) GS:ffff888071c00000(0000)
+> knlGS:0000000000000000
+> [   43.655720] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   43.655720] CR2: 0000000000000056 CR3: 000000007440a002 CR4:
+> 00000000001606b0
+> [   43.655720] Call Trace:
+> [   43.655720]  ? intel_alloc_coherent+0x2a/0x180
+> [   43.655720]  ? __schedule+0x2c2/0x650
+> [   43.655720]  dma_alloc_attrs+0x8c/0xd0
+> [   43.655720]  dma_pool_alloc+0xdf/0x200
+> [   43.655720]  ehci_qh_alloc+0x58/0x130
+> [   43.655720]  ehci_setup+0x287/0x7ba
+> [   43.655720]  ? _dev_info+0x6c/0x83
+> [   43.655720]  ehci_pci_setup+0x91/0x436
+> [   43.655720]  usb_add_hcd.cold.48+0x1d4/0x754
+> [   43.655720]  usb_hcd_pci_probe+0x2bc/0x3f0
+> [   43.655720]  ehci_pci_probe+0x39/0x40
+> [   43.655720]  local_pci_probe+0x47/0x80
+> [   43.655720]  pci_device_probe+0xff/0x1b0
+> [   43.655720]  really_probe+0xf5/0x3a0
+> [   43.655720]  driver_probe_device+0xbb/0x100
+> [   43.655720]  device_driver_attach+0x58/0x60
+> [   43.655720]  __driver_attach+0x8f/0x150
+> [   43.655720]  ? device_driver_attach+0x60/0x60
+> [   43.655720]  bus_for_each_dev+0x74/0xb0
+> [   43.655720]  driver_attach+0x1e/0x20
+> [   43.655720]  bus_add_driver+0x151/0x1f0
+> [   43.655720]  ? ehci_hcd_init+0xb2/0xb2
+> [   43.655720]  ? do_early_param+0x95/0x95
+> [   43.655720]  driver_register+0x70/0xc0
+> [   43.655720]  ? ehci_hcd_init+0xb2/0xb2
+> [   43.655720]  __pci_register_driver+0x57/0x60
+> [   43.655720]  ehci_pci_init+0x6a/0x6c
+> [   43.655720]  do_one_initcall+0x4a/0x1fa
+> [   43.655720]  ? do_early_param+0x95/0x95
+> [   43.655720]  kernel_init_freeable+0x1bd/0x262
+> [   43.655720]  ? rest_init+0xb0/0xb0
+> [   43.655720]  kernel_init+0xe/0x110
+> [   43.655720]  ret_from_fork+0x24/0x50
 > 
-> There are some comments on vm patch. Do you mind sending them again
-> cc'ing everybody on the cover-letter. Looks like these are getting
-> lost in the noise.
+
+Good catch. Can you please add:
+
+Fixes: 8af46c784ecfe ("iommu/vt-d: Implement is_attach_deferred iommu 
+ops entry")
+Cc: stable@vger.kernel.org # v5.3+
+
+With above:
+
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+
+Best regards,
+Baolu
+
+> Signed-off-by: John Donnelly <john.p.donnelly@oracle.com>
+> ---
+> drivers/iommu/intel-iommu.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-
-OK, I'll update it and resend.
-
-Thank you,
-
-
-> thanks,
-> -- Shuah
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index c4e0e4a9ee9e..f83a9a302f8e 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -2783,7 +2783,7 @@ static int identity_mapping(struct device *dev)
+> 	struct device_domain_info *info;
+> 
+> 	info = dev->archdata.iommu;
+> -	if (info && info != DUMMY_DEVICE_DOMAIN_INFO)
+> +	if (info && info != DUMMY_DEVICE_DOMAIN_INFO && info != DEFER_DEVICE_DOMAIN_INFO)
+> 		return (info->domain == si_domain);
+> 
+> 	return 0;
+> 
