@@ -2,150 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E8CDF12B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 127F8DF133
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729473AbfJUPUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 11:20:54 -0400
-Received: from mail-eopbgr30121.outbound.protection.outlook.com ([40.107.3.121]:16389
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726847AbfJUPUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 11:20:54 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RpB3mIPsi8s3jBl1ZMERJOHM0VCFASgH7ObwLKttHTVm6uHmYHqf01Diod4FG0iQDW8n4SabLpou4+awyXzQd/1vKpav4X6e/kfP+zZXx5Z+c1F/MFUWnECyqVvf30BXWgrQMP7EOenkE2rE9qWQX88QdMS7tfgKbeYkeL4OkSYUem+mWeTipf3ADeMHLJEa/S+OtavO77MGbvrzHQKwbTCYyWtGY0gzJttYrunbNEmVsSqBQYNwdoLZu2uZwNUQXaFn67iYbSmIBWbe2baHHyAAQ8jt1iaFDwamuLNq5VMKJoQDGSmHwf3dOXPnOsdyeJtvvSS/UzAUaItI9lkLww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=76ShwPSz2IqcgJODhwTIqS3Hj9czJddBBjiNKAfdNvQ=;
- b=aTIC+4pSu4sKiVMCg0+cuyjQL/ogHG1xJuVwjE/Z6FUm9Ay7WqX+uJQSgzpxX3ASvvH+IFYLCjCPpnQITI/Sn6k3Eoslcmxp+Pn6z4gm0TS0RG7ziMv9Mdqfgu0+8n1nIAo/cb/0KNHaX0xDGE76dUIaS3iqNVRYKgnAxF2H1v7sDi1GkiUxGymvbJapKs64Jp8Y4x0zWAtUNwVBTHpypcwR8b28qZ+YUp+buTGhWftR5155OxsXyIN2RlteZ1mx6wVhuF4bCtFkYkM2BgHReSV93pjB9epleW8DobXvHhaVgDhfORR2Z65usiaBfw4ZqMxjAU/JBKSJbJDtVASTdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axentia.se; dmarc=pass action=none header.from=axentia.se;
- dkim=pass header.d=axentia.se; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=76ShwPSz2IqcgJODhwTIqS3Hj9czJddBBjiNKAfdNvQ=;
- b=Ym+th3QnW4XtDGi8kfR16HE5C7oHW4gnjs4RUISaZS/4AWvfrniLEbWuyFxkEBRj1INT7IKlRA8fe3onUCj+btf6w50PaiWQJETNJOEaA6uujCYXsW5Md7E4sqmFPkWAZGKYkaq0cwZmGxPvckBmAzdbjkQwrOk9xLxgdANrBsw=
-Received: from DB3PR0202MB3434.eurprd02.prod.outlook.com (52.134.66.158) by
- DB3PR0202MB3435.eurprd02.prod.outlook.com (52.134.65.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.21; Mon, 21 Oct 2019 15:20:45 +0000
-Received: from DB3PR0202MB3434.eurprd02.prod.outlook.com
- ([fe80::c5b8:6014:87a4:1afe]) by DB3PR0202MB3434.eurprd02.prod.outlook.com
- ([fe80::c5b8:6014:87a4:1afe%7]) with mapi id 15.20.2347.029; Mon, 21 Oct 2019
- 15:20:44 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     "Eugen.Hristev@microchip.com" <Eugen.Hristev@microchip.com>,
-        "wsa@the-dreams.de" <wsa@the-dreams.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "Ludovic.Desroches@microchip.com" <Ludovic.Desroches@microchip.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC:     "Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v5 3/9] i2c: add support for filters optional properties
-Thread-Topic: [PATCH v5 3/9] i2c: add support for filters optional properties
-Thread-Index: AQHVaHpW6NWckaLWlEK4ND0k79ASNKdldToA
-Date:   Mon, 21 Oct 2019 15:20:44 +0000
-Message-ID: <d7172480-0ba3-3412-aebf-353bfe8d6f66@axentia.se>
-References: <1568189911-31641-1-git-send-email-eugen.hristev@microchip.com>
- <1568189911-31641-4-git-send-email-eugen.hristev@microchip.com>
-In-Reply-To: <1568189911-31641-4-git-send-email-eugen.hristev@microchip.com>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-x-originating-ip: [213.112.138.100]
-x-clientproxiedby: HE1PR0902CA0016.eurprd09.prod.outlook.com
- (2603:10a6:3:e5::26) To DB3PR0202MB3434.eurprd02.prod.outlook.com
- (2603:10a6:8:5::30)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c754882a-b071-4299-ac44-08d7563a3dde
-x-ms-traffictypediagnostic: DB3PR0202MB3435:
-x-microsoft-antispam-prvs: <DB3PR0202MB3435005AB262E2F422C5D1C2BC690@DB3PR0202MB3435.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0197AFBD92
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(346002)(396003)(136003)(376002)(366004)(199004)(189003)(11346002)(7736002)(31686004)(8936002)(71200400001)(71190400001)(508600001)(31696002)(5660300002)(446003)(86362001)(316002)(476003)(2616005)(305945005)(3846002)(25786009)(7416002)(6116002)(256004)(14444005)(486006)(2906002)(76176011)(52116002)(2501003)(6436002)(58126008)(229853002)(66476007)(66556008)(64756008)(66446008)(99286004)(66066001)(110136005)(65806001)(6486002)(66946007)(36756003)(6512007)(14454004)(26005)(2201001)(81166006)(81156014)(186003)(102836004)(6246003)(53546011)(386003)(65956001)(6506007)(4326008)(8676002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:DB3PR0202MB3435;H:DB3PR0202MB3434.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: kNrx0wY9c9k6i0NWt0s75nCLUdA/Mynbt5QUpjaCJgrRsyEBOJCUi03dWaQa5bThZ1BGlz2R3pn7Kvz6iwhkVcEY20nqCJwVq0/4OgIQ4OvO6p1mhgtob/n2NDhNx7AVN7rPNeGrjGaSs7Q/zXJIL/KgqGtNcP/V9zP0Msod7BfXZ/Om54Fb9J/uHUhD9PUqp6JvYI7OGh30AX2sd2hsgMfPyzsEdoZBPA7sZEUzjo7pZB2z8dUBi5TRpg4bM/7mOPCxI+KVODRRHDYa254AACDwfCpGjNid4BuW3N9eJlYbKiU7V1R/E+qJyO1GwHtwgvMXKKJSAQr2zJuQ1SQJb/GpDHkk0ngROEDtw78twvoGUdjzCY2W0ohlcXHKkU03jYS5i+I8KF9XxuCeXf+v1CjF71b6Jc+hT5P5QYHZSK+DkX/ldB+v9xkC46AnCIFf
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6E26C7A80CEE0D4A864CA97F250362B5@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1729588AbfJUPVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 11:21:47 -0400
+Received: from mail.andi.de1.cc ([85.214.55.253]:49222 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728044AbfJUPVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 11:21:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ive50pzx0WvHvVBcHs4Tzw6cThZ+6wdZ4fZseJxKh6Y=; b=ayXC65dyk+YOSvIqBmmJY2x7V
+        TWyVZxCtI01zsfw8AMN+8dQ+LYmDlCY3KB+73mt7MI2Vge8+mDP4wN2edfxFs3eE9vYplJfCXX5Xx
+        Nxh/VXE1kITiMjPNGqK6LiU9HvidAyB0U85G4md1nV1yt5NED5oEsyuPiEThoNfI1i2a8=;
+Received: from ip-109-41-64-49.web.vodafone.de ([109.41.64.49] helo=localhost)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iMZV8-0001G7-Rs; Mon, 21 Oct 2019 17:21:43 +0200
+Received: from [::1] (helo=localhost)
+        by eeepc with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iMZV5-0001HV-EV; Mon, 21 Oct 2019 17:21:39 +0200
+Date:   Mon, 21 Oct 2019 17:20:55 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Stefan Agner <stefan@agner.ch>, lee.jones@linaro.org,
+        a.zummo@towertech.it, linux-kernel@vger.kernel.org,
+        linux-rtc@vger.kernel.org, phh@phh.me, b.galvani@gmail.com,
+        letux-kernel@openphoenux.org
+Subject: Re: [PATCH 5/5] rtc: rtc-rc5t583: add ricoh rc5t619 RTC driver
+Message-ID: <20191021172055.2fa66549@kemnade.info>
+In-Reply-To: <20191021135028.GV3125@piout.net>
+References: <20191021054104.26155-1-andreas@kemnade.info>
+        <20191021054104.26155-6-andreas@kemnade.info>
+        <d59b7e21112ac96a2d88ae623eb523fc@agner.ch>
+        <20191021135028.GV3125@piout.net>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: c754882a-b071-4299-ac44-08d7563a3dde
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2019 15:20:44.6237
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xDMbMiuCutJ1QtJiuQUjyCOz16iOAVxg2mYN66hGFEXJyqegeyEi437VAzJj4MVO
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0202MB3435
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/uCseBc73aLEs0S5AZO0JIAC"; protocol="application/pgp-signature"
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOS0wOS0xMSAxMDoyNCwgRXVnZW4uSHJpc3RldkBtaWNyb2NoaXAuY29tIHdyb3RlOg0K
-PiBGcm9tOiBFdWdlbiBIcmlzdGV2IDxldWdlbi5ocmlzdGV2QG1pY3JvY2hpcC5jb20+DQo+IA0K
-PiBpMmMtZGlnaXRhbC1maWx0ZXItd2lkdGgtbnM6DQo+IFRoaXMgb3B0aW9uYWwgdGltaW5nIHBy
-b3BlcnR5IHNwZWNpZmllcyB0aGUgd2lkdGggb2YgdGhlIHNwaWtlcyBvbiB0aGUgaTJjDQo+IGxp
-bmVzIChpbiBucykgdGhhdCBjYW4gYmUgZmlsdGVyZWQgb3V0IGJ5IGJ1aWx0LWluIGRpZ2l0YWwg
-ZmlsdGVycyB3aGljaCBhcmUNCj4gZW1iZWRkZWQgaW4gc29tZSBpMmMgY29udHJvbGxlcnMuDQo+
-IGkyYy1hbmFsb2ctZmlsdGVyLWN1dG9mZi1mcmVxdWVuY3k6DQo+IFRoaXMgb3B0aW9uYWwgdGlt
-aW5nIHByb3BlcnR5IHNwZWNpZmllcyB0aGUgY3V0b2ZmIGZyZXF1ZW5jeSBvZiBhIGxvdy1wYXNz
-DQo+IGFuYWxvZyBmaWx0ZXIgYnVpbHQtaW4gaTJjIGNvbnRyb2xsZXJzLiBUaGlzIGxvdyBwYXNz
-IGZpbHRlciBpcyB1c2VkIHRvIGZpbHRlcg0KPiBvdXQgaGlnaCBmcmVxdWVuY3kgbm9pc2Ugb24g
-dGhlIGkyYyBsaW5lcy4gU3BlY2lmaWVkIGluIEh6Lg0KPiBJbmNsdWRlIHRoZXNlIHByb3BlcnRp
-ZXMgaW4gdGhlIHRpbWluZ3Mgc3RydWN0dXJlIGFuZCByZWFkIHRoZW0gYXMgaW50ZWdlcnMuDQo+
-IA0KPiBTaWduZWQtb2ZmLWJ5OiBFdWdlbiBIcmlzdGV2IDxldWdlbi5ocmlzdGV2QG1pY3JvY2hp
-cC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9pMmMvaTJjLWNvcmUtYmFzZS5jIHwgNiArKysrKysN
-Cj4gIGluY2x1ZGUvbGludXgvaTJjLmggICAgICAgICB8IDYgKysrKysrDQo+ICAyIGZpbGVzIGNo
-YW5nZWQsIDEyIGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2kyYy9p
-MmMtY29yZS1iYXNlLmMgYi9kcml2ZXJzL2kyYy9pMmMtY29yZS1iYXNlLmMNCj4gaW5kZXggOWM0
-NDBmYS4uYzlmY2IxNiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9pMmMvaTJjLWNvcmUtYmFzZS5j
-DQo+ICsrKyBiL2RyaXZlcnMvaTJjL2kyYy1jb3JlLWJhc2UuYw0KPiBAQCAtMTY1OCw2ICsxNjU4
-LDEyIEBAIHZvaWQgaTJjX3BhcnNlX2Z3X3RpbWluZ3Moc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1
-Y3QgaTJjX3RpbWluZ3MgKnQsIGJvb2wgdXNlX2RlDQo+ICAJCXQtPnNkYV9mYWxsX25zID0gdC0+
-c2NsX2ZhbGxfbnM7DQo+ICANCj4gIAlkZXZpY2VfcHJvcGVydHlfcmVhZF91MzIoZGV2LCAiaTJj
-LXNkYS1ob2xkLXRpbWUtbnMiLCAmdC0+c2RhX2hvbGRfbnMpOw0KPiArDQo+ICsJZGV2aWNlX3By
-b3BlcnR5X3JlYWRfdTMyKGRldiwgImkyYy1kaWdpdGFsLWZpbHRlci13aWR0aC1ucyIsDQo+ICsJ
-CQkJICZ0LT5kaWdpdGFsX2ZpbHRlcl93aWR0aF9ucyk7DQo+ICsNCj4gKwlkZXZpY2VfcHJvcGVy
-dHlfcmVhZF91MzIoZGV2LCAiaTJjLWFuYWxvZy1maWx0ZXItY3V0b2ZmLWZyZXF1ZW5jeSIsDQo+
-ICsJCQkJICZ0LT5hbmFsb2dfZmlsdGVyX2N1dG9mZl9mcmVxX2h6KTsNCj4gIH0NCj4gIEVYUE9S
-VF9TWU1CT0xfR1BMKGkyY19wYXJzZV9md190aW1pbmdzKTsNCj4gIA0KPiBkaWZmIC0tZ2l0IGEv
-aW5jbHVkZS9saW51eC9pMmMuaCBiL2luY2x1ZGUvbGludXgvaTJjLmgNCj4gaW5kZXggZmE1NTUy
-Yy4uMjZjZTE0MyAxMDA2NDQNCj4gLS0tIGEvaW5jbHVkZS9saW51eC9pMmMuaA0KPiArKysgYi9p
-bmNsdWRlL2xpbnV4L2kyYy5oDQo+IEBAIC01NzUsNiArNTc1LDEwIEBAIHN0cnVjdCBpMmNfbG9j
-a19vcGVyYXRpb25zIHsNCj4gICAqIEBzY2xfaW50X2RlbGF5X25zOiB0aW1lIElQIGNvcmUgYWRk
-aXRpb25hbGx5IG5lZWRzIHRvIHNldHVwIFNDTCBpbiBucw0KPiAgICogQHNkYV9mYWxsX25zOiB0
-aW1lIFNEQSBzaWduYWwgdGFrZXMgdG8gZmFsbCBpbiBuczsgdChmKSBpbiB0aGUgSTJDIHNwZWNp
-ZmljYXRpb24NCj4gICAqIEBzZGFfaG9sZF9uczogdGltZSBJUCBjb3JlIGFkZGl0aW9uYWxseSBu
-ZWVkcyB0byBob2xkIFNEQSBpbiBucw0KPiArICogQGRpZ2l0YWxfZmlsdGVyX3dpZHRoX25zOiB3
-aWR0aCBpbiBucyBvZiBzcGlrZXMgb24gaTJjIGxpbmVzIHRoYXQgdGhlIElQIGNvcmUNCj4gKyAq
-CQkJICAgICBkaWdpdGFsIGZpbHRlciBjYW4gZmlsdGVyIG91dA0KPiArICogQGFuYWxvZ19maWx0
-ZXJfY3V0b2ZmX2ZyZXFfaHo6IHRocmVzaG9sZCBmcmVxdWVuY3kgZm9yIHRoZSBsb3cgcGFzcyBJ
-UCBjb3JlDQo+ICsJCQkgICAgICBhbmFsb2cgZmlsdGVyDQoNClRoZSBpbmRlbnRhdGlvbiBpcyBh
-IGxpdHRsZSBiaXQgZXhjZXNzaXZlIGFuZCBhbHNvIG9mZi4gT3RoZXIgY29tbWVudHMgaW4gdGhl
-DQpmaWxlIGp1c3QgdXNlcyBhIHNpbmdsZSB0YWIgYWZ0ZXIgdGhlIGFzdGVyaXNrIGluIHRoaXMg
-c2NlbmFyaW8uIEFsc28sIHRoZSBsYXN0DQpvZiB0aGUgbmV3IGxpbmVzIGlzIG1pc3NpbmcgdGhh
-dCBsZWFkaW5nIGFzdGVyaXNrLg0KDQpDaGVlcnMsDQpQZXRlcg0KDQo+ICAgKi8NCj4gIHN0cnVj
-dCBpMmNfdGltaW5ncyB7DQo+ICAJdTMyIGJ1c19mcmVxX2h6Ow0KPiBAQCAtNTgzLDYgKzU4Nyw4
-IEBAIHN0cnVjdCBpMmNfdGltaW5ncyB7DQo+ICAJdTMyIHNjbF9pbnRfZGVsYXlfbnM7DQo+ICAJ
-dTMyIHNkYV9mYWxsX25zOw0KPiAgCXUzMiBzZGFfaG9sZF9uczsNCj4gKwl1MzIgZGlnaXRhbF9m
-aWx0ZXJfd2lkdGhfbnM7DQo+ICsJdTMyIGFuYWxvZ19maWx0ZXJfY3V0b2ZmX2ZyZXFfaHo7DQo+
-ICB9Ow0KPiAgDQo+ICAvKioNCj4gDQoNCg==
+--Sig_/uCseBc73aLEs0S5AZO0JIAC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 21 Oct 2019 15:50:28 +0200
+Alexandre Belloni <alexandre.belloni@bootlin.com> wrote:
+
+> On 21/10/2019 15:19:09+0200, Stefan Agner wrote:
+> > On 2019-10-21 07:41, Andreas Kemnade wrote: =20
+> > > Add an RTC driver for the RTC device on Ricoh MFD rc5t619,
+> > > which is implemented as a variant of rn5t618
+> > >=20
+> > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > > ---
+> > >  drivers/rtc/Kconfig       |  10 +
+> > >  drivers/rtc/Makefile      |   1 +
+> > >  drivers/rtc/rtc-rc5t619.c | 476 ++++++++++++++++++++++++++++++++++++=
+++++++++++ =20
+> >=20
+> > Parts of this driver look very similar to drivers/rtc/rtc-rc5t583.c. Can
+> > it maybe shared?
+> >  =20
+>=20
+> If this could be done it would be better. I can't find any public
+> datasheet though...
+>=20
+at least they have different alarm configurations, The rc5t619 can specify
+alarm in seconds, the rc5t583 not but has other alarm configurations which
+are not present in the rn5t619 (judging by the lack of unused registers whe=
+re
+thoes information could be filled in).=20
+
+Register addresses do not match.
+Some details seem to be the same like century flag.
+Interestingly the rc5t583 driver does not care about 12h/24h mode.
+So there is a bug there.=20
+
+Regards,
+Andreas
+
+--Sig_/uCseBc73aLEs0S5AZO0JIAC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl2tzNcACgkQl4jFM1s/
+ye+ZuQ//fgwnaZghXCAjYyw0akgrJV9QoXWIwpcFg3jaD8MlWr3W6ykUn8iN2rZh
+dyolY1S7hFMI7asXpyW4DyI30AQ81fdEbivD3XeBYGWkWxm9/gmeSjyHyg5D3Qhm
+5HtJnaBL+7ejSyi8bDp8cc01ayYfbI6RlBdTxl0tqN50yRiPkgoDaf37d6GDt6Nk
+RfrD7W9UuXXDcHBXyimVK2QOx5Z1MPoCHXSa60tW1Mnv91ygut7C+b+lfKdwCHOC
+Edf4atI1gBAzog6/miUMmpqmqZr3d0bPJNx/wyOHqF0ERq76b2LYu1HIPj0Fpm1M
+ZxpcgqOmrwoWSYggbWOF9KLe1zldRWShJnUObAn9Nz0iSLu3byvexhLhz+/d8qVu
+ojbOFDeIXhl1PosjEVwyRlmmaJPRW7Lq7eodTFZTMUd9wKvt5Ih+6MCmXAVMFYeD
+9Wb1rkzzAt0JZR489SaXFpdXtYtlkYnkuTb712j0o7LzYqIkk0Bz9EiInJJLPcPH
+AgCwQMVG7BWi/d2HDBmHXb97vsuZeJcOjfYpe442Fl8zaT47vUHc28UHjseor8hy
+ZkBEUIQFlWlBGObgdowziC5tBrUjks3Ez8Oo43rqxKDACs2SJuWvfJPlHieeWS6H
+OHIMic6DjQLCZNH4bGcJpU7F5QiffqsFe/wZKiEluauiPACxl3M=
+=URg8
+-----END PGP SIGNATURE-----
+
+--Sig_/uCseBc73aLEs0S5AZO0JIAC--
