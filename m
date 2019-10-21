@@ -2,234 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98906DE47C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 08:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4495DE493
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 08:27:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfJUGWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 02:22:34 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2488 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726039AbfJUGWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 02:22:34 -0400
-Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id 4D12B4A03B8B412BD6DB;
-        Mon, 21 Oct 2019 14:22:31 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM405-HUB.china.huawei.com (10.3.20.213) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 21 Oct 2019 14:22:31 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Mon, 21 Oct 2019 14:22:30 +0800
-Date:   Mon, 21 Oct 2019 14:25:25 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Pratik Shinde <pratikshinde320@gmail.com>
-CC:     <linux-erofs@lists.ozlabs.org>, <yuchao0@huawei.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] erofs: code for verifying superblock checksum of an
- erofs image.
-Message-ID: <20191021062522.GA165782@architecture4>
-References: <20191020192828.10772-1-pratikshinde320@gmail.com>
+        id S1727310AbfJUG1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 02:27:15 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33233 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727166AbfJUG05 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 02:26:57 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iMR9N-00025i-GO; Mon, 21 Oct 2019 08:26:41 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 201CC1C047B;
+        Mon, 21 Oct 2019 08:26:41 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 06:26:40 -0000
+From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] tools headers UAPI: Sync sched.h with the kernel
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <tip-xqruu8wohwlbc57udg1g0xzx@git.kernel.org>
+References: <tip-xqruu8wohwlbc57udg1g0xzx@git.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191020192828.10772-1-pratikshinde320@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme703-chm.china.huawei.com (10.1.199.99) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+Message-ID: <157163920086.29376.11201291375139295425.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pratik,
+The following commit has been merged into the perf/urgent branch of tip:
 
-Some comments as below...
+Commit-ID:     5eca1379c0eb06e3908179665230a86d19bd2df7
+Gitweb:        https://git.kernel.org/tip/5eca1379c0eb06e3908179665230a86d19bd2df7
+Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate:    Tue, 15 Oct 2019 12:44:00 -03:00
+Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitterDate: Tue, 15 Oct 2019 12:44:00 -03:00
 
-On Mon, Oct 21, 2019 at 12:58:28AM +0530, Pratik Shinde wrote:
-> Patch for kernel side changes of checksum feature.I used kernel's
-> crc32c library for calculating the checksum.
-> 
-> Signed-off-by: Pratik Shinde <pratikshinde320@gmail.com>
-> ---
->  fs/erofs/erofs_fs.h |  5 +++--
->  fs/erofs/internal.h |  2 +-
->  fs/erofs/super.c    | 50 ++++++++++++++++++++++++++++++++++++++++++++++----
->  3 files changed, 50 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
-> index b1ee565..bab5506 100644
-> --- a/fs/erofs/erofs_fs.h
-> +++ b/fs/erofs/erofs_fs.h
-> @@ -17,6 +17,7 @@
->   */
->  #define EROFS_FEATURE_INCOMPAT_LZ4_0PADDING	0x00000001
->  #define EROFS_ALL_FEATURE_INCOMPAT		EROFS_FEATURE_INCOMPAT_LZ4_0PADDING
-> +#define EROFS_FEATURE_SB_CHKSUM 0x0001
+tools headers UAPI: Sync sched.h with the kernel
 
-How about keeping in sync with erofs-utils?
+To get the changes in:
 
->  
->  /* 128-byte erofs on-disk super block */
->  struct erofs_super_block {
-> @@ -37,8 +38,8 @@ struct erofs_super_block {
->  	__u8 uuid[16];          /* 128-bit uuid for volume */
->  	__u8 volume_name[16];   /* volume name */
->  	__le32 feature_incompat;
-> -
-> -	__u8 reserved2[44];
-> +	__le32 chksum_blocks;	/* number of blocks used for checksum */
-> +	__u8 reserved2[40];
->  };
->  
->  /*
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index 544a453..cd3af45 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -86,7 +86,7 @@ struct erofs_sb_info {
->  	u8 uuid[16];                    /* 128-bit uuid for volume */
->  	u8 volume_name[16];             /* volume name */
->  	u32 feature_incompat;
-> -
-> +	u32 features;
+  78f6face5af3 ("sched: add kernel-doc for struct clone_args")
+  f14c234b4bc5 ("clone3: switch to copy_struct_from_user()")
 
-no use? and 
-how about keeping in sync with erofs-utils, naming feature_compat as well? see,
+This file gets rebuilt, but no changes ensues:
 
-https://lore.kernel.org/r/20191020141102.GA30399@hsiangkao-HP-ZHAN-66-Pro-G1/
+   CC       /tmp/build/perf/trace/beauty/clone.o
 
->  	unsigned int mount_opt;
->  };
->  
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 0e36949..94e1d6a 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -9,6 +9,7 @@
->  #include <linux/statfs.h>
->  #include <linux/parser.h>
->  #include <linux/seq_file.h>
-> +#include <linux/crc32c.h>
->  #include "xattr.h"
->  
->  #define CREATE_TRACE_POINTS
-> @@ -46,6 +47,45 @@ void _erofs_info(struct super_block *sb, const char *function,
->  	va_end(args);
->  }
->  
-> +static int erofs_validate_sb_chksum(struct erofs_super_block *dsb,
-> +				       struct super_block *sb)
+This addresses this perf build warning:
 
-erofs_validate_sb_chksum(struct super_block *sb, void *sbdata)
+  Warning: Kernel ABI header at 'tools/include/uapi/linux/sched.h' differs from latest version at 'include/uapi/linux/sched.h'
+  diff -u tools/include/uapi/linux/sched.h include/uapi/linux/sched.h
 
-Can we pass void *sbdata --- first page(block) instead?
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-xqruu8wohwlbc57udg1g0xzx@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/include/uapi/linux/sched.h | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
-> +{
-> +	u32 disk_chksum = le32_to_cpu(dsb->checksum);
-> +	u32 nblocks = le32_to_cpu(dsb->chksum_blocks);
-> +	u32 crc;
-> +	struct erofs_super_block *dsb2;
-> +	char *buf;
-> +	unsigned int off = 0;
-> +	void *kaddr;
-> +	struct page *page;
-> +	int i, ret = -EINVAL;
-> +
-> +	buf = kmalloc(nblocks * EROFS_BLKSIZ, GFP_KERNEL);
-
-IMO, I think we could just
- 1) malloc EROFS_BLKSIZ;
- 2) copy sbdata -> buf;
- 3) dsb->checksum = 0;
- 4) crc32c the first copied block;
- 5) kfree.
-
-or some better approach without allocating memory.
-
-> +	if (!buf)
-> +		goto out;
-
-how about erroring out with proper return value?
-
-
-> +	for (i = 0; i < nblocks; i++) {
-> +		page = erofs_get_meta_page(sb, i);
-> +		if (IS_ERR(page))
-
-ditto.
-
-> +			goto out;
-> +		kaddr = kmap_atomic(page);
-> +		(void) memcpy(buf + off, kaddr, EROFS_BLKSIZ);
-
-we can call crc32c for multiple times, and no need to
-get and calc 0-th block again...
-
-and no memcpy at all.
-
-> +		kunmap_atomic(kaddr);
-> +		unlock_page(page);
-> +		/* first page will be released by erofs_read_superblock */
-> +		if (i != 0)
-> +			put_page(page);
-> +		off += EROFS_BLKSIZ;
-> +	}
-> +	dsb2 = (struct erofs_super_block *)(buf + EROFS_SUPER_OFFSET);
-> +	dsb2->checksum = 0;
-> +	crc = crc32c(0, buf, nblocks * EROFS_BLKSIZ);
-> +	if (crc != disk_chksum)
-> +		goto out;
-> +	ret = 0;
-> +out:	kfree(buf);
-> +	return ret;
-> +}
-> +
->  static void erofs_inode_init_once(void *ptr)
->  {
->  	struct erofs_inode *vi = ptr;
-> @@ -109,18 +149,20 @@ static int erofs_read_superblock(struct super_block *sb)
->  		erofs_err(sb, "cannot read erofs superblock");
->  		return PTR_ERR(page);
->  	}
-> -
->  	sbi = EROFS_SB(sb);
-> -
->  	data = kmap_atomic(page);
-
-should use kmap() then, because kmalloc() and get_meta_page() can sleep and
-last for long time.
-
->  	dsb = (struct erofs_super_block *)(data + EROFS_SUPER_OFFSET);
-> -
->  	ret = -EINVAL;
->  	if (le32_to_cpu(dsb->magic) != EROFS_SUPER_MAGIC_V1) {
->  		erofs_err(sb, "cannot find valid erofs superblock");
->  		goto out;
->  	}
-> -
-> +	if (dsb->feature_compat & EROFS_FEATURE_SB_CHKSUM) {
-> +		if (erofs_validate_sb_chksum(dsb, sb)) {
-
-		    erofs_validate_sb_chksum(sb, data)
-
-> +			erofs_err(sb, "super block checksum incorrect");
-
-It should be with a proper return value and corresponding messages,
-see the related discussion:
-https://lore.kernel.org/r/20190822090541.GA193349@architecture4/
-
-Thanks,
-Gao Xiang
-
-> +			goto out;
-> +		}
-> +	}
->  	blkszbits = dsb->blkszbits;
->  	/* 9(512 bytes) + LOG_SECTORS_PER_BLOCK == LOG_BLOCK_SIZE */
->  	if (blkszbits != LOG_BLOCK_SIZE) {
-> -- 
-> 2.9.3
-> 
+diff --git a/tools/include/uapi/linux/sched.h b/tools/include/uapi/linux/sched.h
+index b3105ac..99335e1 100644
+--- a/tools/include/uapi/linux/sched.h
++++ b/tools/include/uapi/linux/sched.h
+@@ -33,8 +33,31 @@
+ #define CLONE_NEWNET		0x40000000	/* New network namespace */
+ #define CLONE_IO		0x80000000	/* Clone io context */
+ 
+-/*
+- * Arguments for the clone3 syscall
++#ifndef __ASSEMBLY__
++/**
++ * struct clone_args - arguments for the clone3 syscall
++ * @flags:       Flags for the new process as listed above.
++ *               All flags are valid except for CSIGNAL and
++ *               CLONE_DETACHED.
++ * @pidfd:       If CLONE_PIDFD is set, a pidfd will be
++ *               returned in this argument.
++ * @child_tid:   If CLONE_CHILD_SETTID is set, the TID of the
++ *               child process will be returned in the child's
++ *               memory.
++ * @parent_tid:  If CLONE_PARENT_SETTID is set, the TID of
++ *               the child process will be returned in the
++ *               parent's memory.
++ * @exit_signal: The exit_signal the parent process will be
++ *               sent when the child exits.
++ * @stack:       Specify the location of the stack for the
++ *               child process.
++ * @stack_size:  The size of the stack for the child process.
++ * @tls:         If CLONE_SETTLS is set, the tls descriptor
++ *               is set to tls.
++ *
++ * The structure is versioned by size and thus extensible.
++ * New struct members must go at the end of the struct and
++ * must be properly 64bit aligned.
+  */
+ struct clone_args {
+ 	__aligned_u64 flags;
+@@ -46,6 +69,9 @@ struct clone_args {
+ 	__aligned_u64 stack_size;
+ 	__aligned_u64 tls;
+ };
++#endif
++
++#define CLONE_ARGS_SIZE_VER0 64 /* sizeof first published struct */
+ 
+ /*
+  * Scheduling policies
