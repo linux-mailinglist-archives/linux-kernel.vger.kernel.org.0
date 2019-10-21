@@ -2,113 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 142F4DEB3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9D36DEB48
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:45:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbfJULop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 07:44:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38182 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728305AbfJULom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 07:44:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 160A5AE16;
-        Mon, 21 Oct 2019 11:44:40 +0000 (UTC)
-Subject: Re: [PATCH 2/3] mm, pcp: Share common code between memory hotplug and
- percpu sysctl handler
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Borislav Petkov <bp@alien8.de>, Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20191021094808.28824-1-mgorman@techsingularity.net>
- <20191021094808.28824-3-mgorman@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ed5f81da-9687-a3b3-8c97-0a32c1cb78c4@suse.cz>
-Date:   Mon, 21 Oct 2019 13:44:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1728625AbfJULpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 07:45:32 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34803 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727725AbfJULpc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 07:45:32 -0400
+Received: by mail-lj1-f194.google.com with SMTP id j19so12968727lja.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 04:45:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dwxj+uOUwiu2R0WFfBHrgW9ls+QdQwTPDol7q0pKZ3g=;
+        b=DiJhkOHHFUpKDOyxqHB4vaKmVpAstfvhXZIH4GkcCFzoF5QWbnyBOFNNm6UpRicVgI
+         nEoYUkbP8FlO//n5TfoPf37YJpVoTBQsy12/8bfGZf9e+74Opqtm7XODV/VV7FRUaCYG
+         SETbygzuap2Mr/iVlQcyZCqAWCkC1rtzVkHhE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dwxj+uOUwiu2R0WFfBHrgW9ls+QdQwTPDol7q0pKZ3g=;
+        b=uHdsD7K1D4nBYzUZ83JbEeU7xZvQW5GpEgk7fr816EabelPG9eSWMF6yjGqHimV1Wr
+         6sIkay0JX+94Qn4R0trmDyDCm74/gVPx2FtsqoJdVvoJkSs/HwZWUr391ZQS9L10DdAk
+         VLNzAzCGMJm/0BjS0ffEqaPoDeHSt95zY7afilyZihD+JUQkTNkvtrLgUXqzcJwrKSdV
+         Z6lzXu6W95TxkUakbMq24hAIzBZuxjuIf5VSUnK5c5CxT2BCxXaKey39teTKP4L3IYkD
+         zGzCNj9vF587BJxEFKcVGn1v48AHGE6B+n/aKqQ3lV/v9FImtP8/TFjOAbysNyFkyxML
+         eiEQ==
+X-Gm-Message-State: APjAAAVPrMRgSMUf/AF5RieCkMNjilcw4MgsLRKNAROEFOVAl8i7gTRD
+        mjkMDY4Ml87WwcXnw35MR9iADHDiqhdolw==
+X-Google-Smtp-Source: APXvYqyyX04l88SbnqYWVMsLXQlUIpE4qUWOcB5TcIM+9Hd1KCb622jE+DZ7ZJrPSr/7EztN47qytw==
+X-Received: by 2002:a2e:9cc9:: with SMTP id g9mr14308079ljj.178.1571658329087;
+        Mon, 21 Oct 2019 04:45:29 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 10sm1622035lfy.57.2019.10.21.04.45.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2019 04:45:27 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id j19so12968543lja.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 04:45:27 -0700 (PDT)
+X-Received: by 2002:a2e:9848:: with SMTP id e8mr14847939ljj.148.1571658327338;
+ Mon, 21 Oct 2019 04:45:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191021094808.28824-3-mgorman@techsingularity.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191017234348.wcbbo2njexn7ixpk@willie-the-truck>
+ <CAHk-=wjPZYxiTs3F0Vbrd3kRizJGq-rQ_jqH1+8XR9Ai_kBoXg@mail.gmail.com>
+ <20191018174153.slpmkvsz45hb6cts@willie-the-truck> <CAHk-=whmtB98b8=YL2b8HzPKRadk2A9pL0aasmvgebhePrDP9w@mail.gmail.com>
+ <20191021064658.GB22042@gmail.com>
+In-Reply-To: <20191021064658.GB22042@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 21 Oct 2019 07:45:11 -0400
+X-Gmail-Original-Message-ID: <CAHk-=wgxm_w-BCEuBOFnRpTwQuCYwMtsDNz3cW0MDGEmQZTUGg@mail.gmail.com>
+Message-ID: <CAHk-=wgxm_w-BCEuBOFnRpTwQuCYwMtsDNz3cW0MDGEmQZTUGg@mail.gmail.com>
+Subject: Re: [GIT PULL] arm64: Fixes for -rc4
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM Kernel Mailing List 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/21/19 11:48 AM, Mel Gorman wrote:
-> Both the percpu_pagelist_fraction sysctl handler and memory hotplug
-> have a common requirement of updating the pcpu page allocation batch
-> and high values. Split the relevant helper to share common code.
-> 
-> No functional change.
-> 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> Acked-by: Michal Hocko <mhocko@suse.com>
+On Mon, Oct 21, 2019 at 2:47 AM Ingo Molnar <mingo@kernel.org> wrote:
+>
+> I think at least once I ran into that and sent you a 'slightly wrong'
+> diffstat - and maybe there's also been a few cases where you noticed
+> diffstats that didn't match your merge result, double checked it yourself
+> and didn't complain about it because you knew that this is a "git
+> request-pull" artifact?
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Right. If I see a diffstat that doesn't match, I just look at what a
+non-merged diffstat would have looked like, and if that matches I know
+what happened.
+
+There are other reasons why diffstats won't match, of course. Like me
+just having merged part of the same commits from another source (or
+multiple trees applying the same patch). So it's not _just_ due to
+multiple merge bases that the mis-match can happen.
+
+> Most of the time I notice it like Will did because the diffstat is
+> obviously weird and it's good to check pull requests a second (and a
+> third :-) time as well, but it's possible to have relatively small
+> distances between the merge bases where the diffstat doesn't look
+> 'obviously' bogus and mistakes can slip through.
+
+Yup.
+
+> Anyway, a small Git feature request: it would be super useful if "git
+> request-pull" output was a bit more dependable and at least warned about
+> this and didn't include what is, from the viewpoint of the person doing
+> the merge, a bogus diffstat.
+
+Well, warning for it would be fairly simple. Giving the "right" result
+isn't simple, though, since the merge might need manual fixup to
+succeed.
+
+The warning you can check yourself: just do
+
+    git merge-base --all upstream mybranch
+
+and if you get more than one result, you know you are in the situation
+where a diff from the merge base might not work (it *might* work, but
+probably won't).
+
+You can play around with it yourself, of course. Look at the
+git-request-puill.sh script, it says something like this:
+
+  merge_base=$(git merge-base $baserev $headrev) ||
+  die "fatal: No commits in common between $base and $head"
+
+and you could add something like
+
+  all_merge_bases="$(git merge-base --all $baserev $headrev)"
+
+and then add a warning if "all_merge_bases" doesn't match "merge_base".
+
+                Linus
