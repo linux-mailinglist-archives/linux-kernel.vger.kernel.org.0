@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D549BDEE29
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F113CDEE2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbfJUNj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:39:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41470 "EHLO mail.kernel.org"
+        id S1729328AbfJUNmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:42:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727152AbfJUNjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:39:52 -0400
+        id S1729351AbfJUNj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:39:56 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACB452166E;
-        Mon, 21 Oct 2019 13:39:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 612C721929;
+        Mon, 21 Oct 2019 13:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571665191;
-        bh=QaO8bSHrlGSQLLLS56coI3qNcVX5iG2JZY1zbN6UFqs=;
+        s=default; t=1571665195;
+        bh=OJ45aNISZct2ZDJvxP7I899FNuLrsSm4dUJUusunFsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tVTbRLxwqPS9SWbPvrIOmdnGu/X4dTxk0PL6YOYcmMuQ4wtQl/B6Eq+kTWQacyMqj
-         C/32aOOJJQ+5WNOC+hokWtaUK75wRIjhZ9WyXr/fF3Rpn70Fj3QzEsIrj1ijiWD2w7
-         DER4E1UTjh9lZMTz/JoGscPLcLbeEFoQUJ5SQ9TU=
+        b=tr3KUjunfENlxz7TuWlJloSyBHNZZMTdtBHzw3JxGNzXPcOTETQYAjEPPQLvAxw4C
+         aBsWR9zybTn3VCHIALyJGtYMQCleUKWpGGpSaeIUUFuIvHfDnvvyfbq0vnajLaKVNW
+         lAdlqDEuxhRwk9qMRo6a9w+O3kp8QZ1G/9ZNg0oU=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -37,9 +37,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Will Deacon <will@kernel.org>, linuxarm@huawei.com,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 21/57] perf vendor events arm64: Add some missing events for Hisi hip08 L3C PMU
-Date:   Mon, 21 Oct 2019 10:37:58 -0300
-Message-Id: <20191021133834.25998-22-acme@kernel.org>
+Subject: [PATCH 22/57] perf vendor events arm64: Add some missing events for Hisi hip08 HHA PMU
+Date:   Mon, 21 Oct 2019 10:37:59 -0300
+Message-Id: <20191021133834.25998-23-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191021133834.25998-1-acme@kernel.org>
 References: <20191021133834.25998-1-acme@kernel.org>
@@ -54,6 +54,8 @@ From: John Garry <john.garry@huawei.com>
 
 Add some more missing events.
 
+A trivial typo is also fixed.
+
 Signed-off-by: John Garry <john.garry@huawei.com>
 Reviewed-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -63,75 +65,56 @@ Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Will Deacon <will@kernel.org>
 Cc: linuxarm@huawei.com
-Link: http://lore.kernel.org/lkml/1567612484-195727-4-git-send-email-john.garry@huawei.com
+Link: http://lore.kernel.org/lkml/1567612484-195727-5-git-send-email-john.garry@huawei.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../arm64/hisilicon/hip08/uncore-l3c.json     | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ .../arm64/hisilicon/hip08/uncore-hha.json     | 23 ++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
-index ca48747642e1..f463d0acfaef 100644
---- a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
-+++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
-@@ -34,4 +34,60 @@
- 	    "PublicDescription": "l3c precharge commands",
- 	    "Unit": "hisi_sccl,l3c",
+diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
+index 447d3064de90..3be418a248ea 100644
+--- a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
++++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
+@@ -20,6 +20,13 @@
+ 	    "PublicDescription": "The number of all operations received by the HHA from another SCCL in this socket",
+ 	    "Unit": "hisi_sccl,hha",
+    },
++   {
++	    "EventCode": "0x03",
++	    "EventName": "uncore_hisi_hha.rx_ccix",
++	    "BriefDescription": "Count of the number of operations that HHA has received from CCIX",
++	    "PublicDescription": "Count of the number of operations that HHA has received from CCIX",
++	    "Unit": "hisi_sccl,hha",
++   },
+    {
+ 	    "EventCode": "0x1c",
+ 	    "EventName": "uncore_hisi_hha.rd_ddr_64b",
+@@ -29,7 +36,7 @@
+    },
+    {
+ 	    "EventCode": "0x1d",
+-	    "EventName": "uncore_hisi_hha.wr_dr_64b",
++	    "EventName": "uncore_hisi_hha.wr_ddr_64b",
+ 	    "BriefDescription": "The number of write operations sent by HHA to DDRC which size is 64 bytes",
+ 	    "PublicDescription": "The number of write operations sent by HHA to DDRC which size is 64 bytes",
+ 	    "Unit": "hisi_sccl,hha",
+@@ -48,4 +55,18 @@
+ 	    "PublicDescription": "The number of write operations sent by HHA to DDRC which size is 128 bytes",
+ 	    "Unit": "hisi_sccl,hha",
     },
 +   {
 +	    "EventCode": "0x20",
-+	    "EventName": "uncore_hisi_l3c.rd_spipe",
-+	    "BriefDescription": "Count of the number of read lines that come from this cluster of CPU core in spipe",
-+	    "PublicDescription": "Count of the number of read lines that come from this cluster of CPU core in spipe",
-+	    "Unit": "hisi_sccl,l3c",
++	    "EventName": "uncore_hisi_hha.spill_num",
++	    "BriefDescription": "Count of the number of spill operations that the HHA has sent",
++	    "PublicDescription": "Count of the number of spill operations that the HHA has sent",
++	    "Unit": "hisi_sccl,hha",
 +   },
 +   {
 +	    "EventCode": "0x21",
-+	    "EventName": "uncore_hisi_l3c.wr_spipe",
-+	    "BriefDescription": "Count of the number of write lines that come from this cluster of CPU core in spipe",
-+	    "PublicDescription": "Count of the number of write lines that come from this cluster of CPU core in spipe",
-+	    "Unit": "hisi_sccl,l3c",
-+   },
-+   {
-+	    "EventCode": "0x22",
-+	    "EventName": "uncore_hisi_l3c.rd_hit_spipe",
-+	    "BriefDescription": "Count of the number of read lines that hits in spipe of this L3C",
-+	    "PublicDescription": "Count of the number of read lines that hits in spipe of this L3C",
-+	    "Unit": "hisi_sccl,l3c",
-+   },
-+   {
-+	    "EventCode": "0x23",
-+	    "EventName": "uncore_hisi_l3c.wr_hit_spipe",
-+	    "BriefDescription": "Count of the number of write lines that hits in spipe of this L3C",
-+	    "PublicDescription": "Count of the number of write lines that hits in spipe of this L3C",
-+	    "Unit": "hisi_sccl,l3c",
-+   },
-+   {
-+	    "EventCode": "0x29",
-+	    "EventName": "uncore_hisi_l3c.back_invalid",
-+	    "BriefDescription": "Count of the number of L3C back invalid operations",
-+	    "PublicDescription": "Count of the number of L3C back invalid operations",
-+	    "Unit": "hisi_sccl,l3c",
-+   },
-+   {
-+	    "EventCode": "0x40",
-+	    "EventName": "uncore_hisi_l3c.retry_cpu",
-+	    "BriefDescription": "Count of the number of retry that L3C suppresses the CPU operations",
-+	    "PublicDescription": "Count of the number of retry that L3C suppresses the CPU operations",
-+	    "Unit": "hisi_sccl,l3c",
-+   },
-+   {
-+	    "EventCode": "0x41",
-+	    "EventName": "uncore_hisi_l3c.retry_ring",
-+	    "BriefDescription": "Count of the number of retry that L3C suppresses the ring operations",
-+	    "PublicDescription": "Count of the number of retry that L3C suppresses the ring operations",
-+	    "Unit": "hisi_sccl,l3c",
-+   },
-+   {
-+	    "EventCode": "0x42",
-+	    "EventName": "uncore_hisi_l3c.prefetch_drop",
-+	    "BriefDescription": "Count of the number of prefetch drops from this L3C",
-+	    "PublicDescription": "Count of the number of prefetch drops from this L3C",
-+	    "Unit": "hisi_sccl,l3c",
++	    "EventName": "uncore_hisi_hha.spill_success",
++	    "BriefDescription": "Count of the number of successful spill operations that the HHA has sent",
++	    "PublicDescription": "Count of the number of successful spill operations that the HHA has sent",
++	    "Unit": "hisi_sccl,hha",
 +   },
  ]
 -- 
