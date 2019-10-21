@@ -2,83 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A578DF36D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:44:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A7C4DF378
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:45:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729963AbfJUQoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:44:04 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:58092 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbfJUQoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:44:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 859F1175D;
-        Mon, 21 Oct 2019 09:43:47 -0700 (PDT)
-Received: from [10.1.196.105] (unknown [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0929D3F71F;
-        Mon, 21 Oct 2019 09:43:43 -0700 (PDT)
-Subject: Re: [PATCH v6 1/2] dt-bindings: edac: arm-dmc520.txt
-To:     Lei Wang <leiwang_git@outlook.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        "hangl@microsoft.com" <hangl@microsoft.com>,
-        "lewan@microsoft.com" <lewan@microsoft.com>,
-        "ruizhao@microsoft.com" <ruizhao@microsoft.com>,
-        "scott.branden@broadcom.com" <scott.branden@broadcom.com>,
-        "yuqing.shen@broadcom.com" <yuqing.shen@broadcom.com>,
-        "ray.jui@broadcom.com" <ray.jui@broadcom.com>
-References: <BY5PR04MB6599EAA659A53B2331CB812586890@BY5PR04MB6599.namprd04.prod.outlook.com>
- <20190923161015.GI15355@zn.tnic>
- <e2b9cd68-abaa-bdcd-cc56-cca285272569@outlook.com>
- <41637032-a308-9a92-1b49-cb51af2580f8@outlook.com>
- <BY5PR04MB65996A0CEB37001C763B248C866C0@BY5PR04MB6599.namprd04.prod.outlook.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <1ae9a840-d5b6-ccd6-8481-d43665b4411b@arm.com>
-Date:   Mon, 21 Oct 2019 17:43:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730002AbfJUQpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:45:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45786 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726847AbfJUQpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:45:14 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB54820882;
+        Mon, 21 Oct 2019 16:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571676313;
+        bh=QpBb8tPVc2TG+6Byr+wrOln8lhBuf1DFpqNHng8GEy4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RNtWxjaqYST8aS+SWhAft9y+3l/7i4iUaWgI5bBDz2G8OynNjeKrFCKu7vRvydFTz
+         UFJ/4Q1iCFNUkTsB60BhXYLF+v/0wrOXwDBI+L0Ei35Xx/v7aNKjKtWP5mfN9ym4c4
+         SOQK/SrvQN0bCyNVrAc9Anu8VX0CtRSODfMzu4eg=
+Date:   Mon, 21 Oct 2019 17:45:07 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Gwendal Grignou <gwendal@chromium.org>
+Cc:     briannorris@chromium.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, lee.jones@linaro.org, bleung@chromium.org,
+        enric.balletbo@collabora.com, dianders@chromium.org,
+        groeck@chromium.org, fabien.lahoudere@collabora.com,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2 18/18] iio: cros_ec: Use Hertz as unit for sampling
+ frequency
+Message-ID: <20191021174507.72f2b777@archlinux>
+In-Reply-To: <20191021055403.67849-19-gwendal@chromium.org>
+References: <20191021055403.67849-1-gwendal@chromium.org>
+        <20191021055403.67849-19-gwendal@chromium.org>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <BY5PR04MB65996A0CEB37001C763B248C866C0@BY5PR04MB6599.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lei,
+On Sun, 20 Oct 2019 22:54:03 -0700
+Gwendal Grignou <gwendal@chromium.org> wrote:
 
-On 18/10/2019 21:08, Lei Wang wrote:
-> This thread hasn't got traction from DT owners.
+> To be compliant with other sensors, set and get sensor sampling
+> frequency in Hz, not mHz.
+> 
+> Fixes: ae7b02ad2f32 ("iio: common: cros_ec_sensors: Expose
+> cros_ec_sensors frequency range via iio sysfs")
+> 
+> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 
-It looks like your patches didn't make it to the mailing list:
-https://lore.kernel.org/r/BY5PR04MB6599EAA659A53B2331CB812586890@BY5PR04MB6599.namprd04.prod.outlook.com
+Do we need to look at back porting this?
 
-You can search on https://lore.kernel.org/linux-edac/, I can only see the replies from the
-people who received it directly.
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-I can't see anything obvious in the headers that would cause it to get rejected. Did you
-get any bounces/errors from the list?
+Not sure which path this set will take in, hence I've given
+acks for various patches incase it's not via me.
 
-Depending on how the DT folk work, this may be why you haven't had a response yet. Tools
-like patchwork will depend on the message reaching the list.
+Whole set is in general good to have, but I do worry a bit about
+people noticing ABI breakage. *crosses fingers*
 
+Jonathan
 
-> James did give ACK before.
-> Should that be good enough?
+> ---
+> No changes in v2.
+> 
+>  .../cros_ec_sensors/cros_ec_sensors_core.c    | 32 +++++++++++--------
+>  .../linux/iio/common/cros_ec_sensors_core.h   |  6 ++--
+>  2 files changed, 22 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> index f50e239f9a1e9..76dc8cad1b4b5 100644
+> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> @@ -256,6 +256,7 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
+>  	struct cros_ec_dev *ec = sensor_hub->ec;
+>  	struct cros_ec_sensor_platform *sensor_platform = dev_get_platdata(dev);
+>  	u32 ver_mask;
+> +	int frequencies[ARRAY_SIZE(state->frequencies) / 2] = { 0 };
+>  	int ret, i;
+>  
+>  	platform_set_drvdata(pdev, indio_dev);
+> @@ -304,20 +305,22 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
+>  			state->calib[i].scale = MOTION_SENSE_DEFAULT_SCALE;
+>  
+>  		/* 0 is a correct value used to stop the device */
+> -		state->frequencies[0] = 0;
+>  		if (state->msg->version < 3) {
+>  			get_default_min_max_freq(state->resp->info.type,
+> -						 &state->frequencies[1],
+> -						 &state->frequencies[2],
+> +						 &frequencies[1],
+> +						 &frequencies[2],
+>  						 &state->fifo_max_event_count);
+>  		} else {
+> -			state->frequencies[1] =
+> -			    state->resp->info_3.min_frequency;
+> -			state->frequencies[2] =
+> -			    state->resp->info_3.max_frequency;
+> +			frequencies[1] = state->resp->info_3.min_frequency;
+> +			frequencies[2] = state->resp->info_3.max_frequency;
+>  			state->fifo_max_event_count =
+>  			    state->resp->info_3.fifo_max_event_count;
+>  		}
+> +		for (i = 0; i < ARRAY_SIZE(frequencies); i++) {
+> +			state->frequencies[2 * i] = frequencies[i] / 1000;
+> +			state->frequencies[2 * i + 1] =
+> +				(frequencies[i] % 1000) * 1000;
+> +		}
+>  
+>  		ret = devm_iio_triggered_buffer_setup(
+>  				dev, indio_dev, NULL,
+> @@ -707,7 +710,7 @@ int cros_ec_sensors_core_read(struct cros_ec_sensors_core_state *st,
+>  			  struct iio_chan_spec const *chan,
+>  			  int *val, int *val2, long mask)
+>  {
+> -	int ret;
+> +	int ret, frequency;
+>  
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_SAMP_FREQ:
+> @@ -719,8 +722,10 @@ int cros_ec_sensors_core_read(struct cros_ec_sensors_core_state *st,
+>  		if (ret)
+>  			break;
+>  
+> -		*val = st->resp->sensor_odr.ret;
+> -		ret = IIO_VAL_INT;
+> +		frequency = st->resp->sensor_odr.ret;
+> +		*val = frequency / 1000;
+> +		*val2 = (frequency % 1000) * 1000;
+> +		ret = IIO_VAL_INT_PLUS_MICRO;
+>  		break;
+>  	default:
+>  		ret = -EINVAL;
+> @@ -755,7 +760,7 @@ int cros_ec_sensors_core_read_avail(struct iio_dev *indio_dev,
+>  	case IIO_CHAN_INFO_SAMP_FREQ:
+>  		*length = ARRAY_SIZE(state->frequencies);
+>  		*vals = (const int *)&state->frequencies;
+> -		*type = IIO_VAL_INT;
+> +		*type = IIO_VAL_INT_PLUS_MICRO;
+>  		return IIO_AVAIL_LIST;
+>  	}
+>  
+> @@ -777,12 +782,13 @@ int cros_ec_sensors_core_write(struct cros_ec_sensors_core_state *st,
+>  			       struct iio_chan_spec const *chan,
+>  			       int val, int val2, long mask)
+>  {
+> -	int ret;
+> +	int ret, frequency;
+>  
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		frequency = val * 1000 + val2 / 1000;
+>  		st->param.cmd = MOTIONSENSE_CMD_SENSOR_ODR;
+> -		st->param.sensor_odr.data = val;
+> +		st->param.sensor_odr.data = frequency;
+>  
+>  		/* Always roundup, so caller gets at least what it asks for. */
+>  		st->param.sensor_odr.roundup = 1;
+> diff --git a/include/linux/iio/common/cros_ec_sensors_core.h b/include/linux/iio/common/cros_ec_sensors_core.h
+> index 4df3abd151fbf..256447b136296 100644
+> --- a/include/linux/iio/common/cros_ec_sensors_core.h
+> +++ b/include/linux/iio/common/cros_ec_sensors_core.h
+> @@ -52,6 +52,8 @@ typedef irqreturn_t (*cros_ec_sensors_capture_t)(int irq, void *p);
+>   *				is always 8-byte aligned.
+>   * @read_ec_sensors_data:	function used for accessing sensors values
+>   * @fifo_max_event_count:	Size of the EC sensor FIFO
+> + * @frequencies:		Table of known available frequencies:
+> + *				0, Min and Max in mHz.
+>   */
+>  struct cros_ec_sensors_core_state {
+>  	struct cros_ec_device *ec;
+> @@ -75,9 +77,7 @@ struct cros_ec_sensors_core_state {
+>  				    unsigned long scan_mask, s16 *data);
+>  
+>  	u32 fifo_max_event_count;
+> -
+> -	/* Table of known available frequencies : 0, Min and Max in mHz */
+> -	int frequencies[3];
+> +	int frequencies[6];
+>  };
+>  
+>  int cros_ec_sensors_read_lpc(struct iio_dev *indio_dev, unsigned long scan_mask,
 
-Nope! You need someone from the maintainer's entry for those files to review it.
-I gave my R-B as what you'd done made sense from the TRM and the driver. The DT folk will
-have a wider view and may have some advice.
-
-
-Thanks,
-
-James
