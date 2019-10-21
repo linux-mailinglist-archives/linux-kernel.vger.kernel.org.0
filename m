@@ -2,96 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF299DE6CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FF59DE6D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:43:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfJUImj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 04:42:39 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52332 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfJUImj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 04:42:39 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9L8gXFZ103191;
-        Mon, 21 Oct 2019 03:42:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571647353;
-        bh=7DTT/sWjsBy8Zjjf2rheZYVPaNOCPJxVzbIedIsgc3k=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Cyl+M2vHKoMAzP0Yr9PD+bCDJH+Lq/Z2N/y8ygRGEqZuOUe7BAZ64xq2UiUBUL5ea
-         gCzGkOgLZMvLTT26srTdKXzZ1Y0Aj7MHEC1dQwcOj1eQieA4iVDlDSIVw+eMg1YUQ2
-         JNOip6Af1kZlyPTRdGltB8gYeYoVscxxiL8rmbvY=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9L8gIQx124808
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Oct 2019 03:42:18 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 21
- Oct 2019 03:42:09 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 21 Oct 2019 03:42:09 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9L8gGr6046523;
-        Mon, 21 Oct 2019 03:42:17 -0500
-Subject: Re: [PATCH] fbdev/omap: fix max fclk divider for omap36xx
-To:     Adam Ford <aford173@gmail.com>, <linux-fbdev@vger.kernel.org>
-CC:     <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <adam.ford@logicpd.com>, <stable@vger.kernel.org>
-References: <20191018124938.29313-1-aford173@gmail.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <7b8b6eba-2cb3-9b25-66e2-e128cc09ceb4@ti.com>
-Date:   Mon, 21 Oct 2019 11:42:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727743AbfJUInQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 04:43:16 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:33536 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726480AbfJUInP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 04:43:15 -0400
+Received: from zn.tnic (p2E584653.dip0.t-ipconnect.de [46.88.70.83])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EF3441EC06BC;
+        Mon, 21 Oct 2019 10:43:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1571647394;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=+kD1jAx8Cm45kEHTqdRITtIEL5bTWSpmcXQjoaK9FS8=;
+        b=GD1wGdfH6JMpwKCUB4WkPwEazofhG+eixVieQYIjcBcyAlyfEppP/Jf43M0OBcBXkQ9dEl
+        GI16y8DEjx2S8Nk2U7d7GJqVM/SMZvSK5+1EcsU11GFjajlUya305pDTrotqyCyGTidFx9
+        Pm1qxhDKOmaLQ2vmCA+lxr0K2mDAO9w=
+Date:   Mon, 21 Oct 2019 10:42:34 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/6] EDAC/amd64: Gather hardware information early
+Message-ID: <20191021084234.GB7014@zn.tnic>
+References: <20191018153114.39378-1-Yazen.Ghannam@amd.com>
+ <20191018153114.39378-3-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20191018124938.29313-1-aford173@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191018153114.39378-3-Yazen.Ghannam@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/10/2019 15:49, Adam Ford wrote:
-> The OMAP36xx and AM/DM37x TRMs say that the maximum divider for DSS fclk
-> (in CM_CLKSEL_DSS) is 32. Experimentation shows that this is not
-> correct, and using divider of 32 breaks DSS with a flood or underflows
-> and sync losts. Dividers up to 31 seem to work fine.
+On Fri, Oct 18, 2019 at 03:31:26PM +0000, Ghannam, Yazen wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
 > 
-> There is another patch to the DT files to limit the divider correctly,
-> but as the DSS driver also needs to know the maximum divider to be able
-> to iteratively find good rates, we also need to do the fix in the DSS
-> driver.
+> Split out gathering hardware information from init_one_instance() into a
+> separate function get_hardware_info().
 > 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Cc: stable@vger.kernel.org #linux-4.9.y+
+> This is necessary so that the information can be cached earlier and used
+> to check if memory is populated and if ECC is enabled on a node.
 > 
-> diff --git a/drivers/video/fbdev/omap2/omapfb/dss/dss.c b/drivers/video/fbdev/omap2/omapfb/dss/dss.c
-> index 48c6500c24e1..4429ad37b64c 100644
-> --- a/drivers/video/fbdev/omap2/omapfb/dss/dss.c
-> +++ b/drivers/video/fbdev/omap2/omapfb/dss/dss.c
-> @@ -843,7 +843,7 @@ static const struct dss_features omap34xx_dss_feats = {
->   };
->   
->   static const struct dss_features omap3630_dss_feats = {
-> -	.fck_div_max		=	32,
-> +	.fck_div_max		=	31,
->   	.dss_fck_multiplier	=	1,
->   	.parent_clk_name	=	"dpll4_ck",
->   	.dpi_select_source	=	&dss_dpi_select_source_omap2_omap3,
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+> Link:
+> https://lkml.kernel.org/r/20190821235938.118710-9-Yazen.Ghannam@amd.com
 > 
+> rfc -> v1:
+> * Fixup after making struct amd64_family_type fam_type global.
+> 
+>  drivers/edac/amd64_edac.c | 72 +++++++++++++++++++++++----------------
+>  1 file changed, 42 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+> index b9a712819c68..4410da7c3a25 100644
+> --- a/drivers/edac/amd64_edac.c
+> +++ b/drivers/edac/amd64_edac.c
+> @@ -3416,33 +3416,16 @@ static void compute_num_umcs(void)
+>  	edac_dbg(1, "Number of UMCs: %x", num_umcs);
+>  }
+>  
+> -static int init_one_instance(unsigned int nid)
+> +static int get_hardware_info(struct amd64_pvt *pvt)
+>  {
+> -	struct pci_dev *F3 = node_to_amd_nb(nid)->misc;
+> -	struct mem_ctl_info *mci = NULL;
+> -	struct edac_mc_layer layers[2];
+> -	struct amd64_pvt *pvt = NULL;
+>  	u16 pci_id1, pci_id2;
+> -	int err = 0, ret;
+> -
+> -	ret = -ENOMEM;
+> -	pvt = kzalloc(sizeof(struct amd64_pvt), GFP_KERNEL);
+> -	if (!pvt)
+> -		goto err_ret;
+> -
+> -	pvt->mc_node_id	= nid;
+> -	pvt->F3 = F3;
+> -
+> -	ret = -EINVAL;
+> -	fam_type = per_family_init(pvt);
+> -	if (!fam_type)
+> -		goto err_free;
+> +	int ret = -EINVAL;
+>  
+>  	if (pvt->fam >= 0x17) {
+>  		pvt->umc = kcalloc(num_umcs, sizeof(struct amd64_umc), GFP_KERNEL);
+>  		if (!pvt->umc) {
+>  			ret = -ENOMEM;
+> -			goto err_free;
+> +			goto err_ret;
+>  		}
+>  
+>  		pci_id1 = fam_type->f0_id;
+> @@ -3452,18 +3435,33 @@ static int init_one_instance(unsigned int nid)
+>  		pci_id2 = fam_type->f2_id;
+>  	}
+>  
+> -	err = reserve_mc_sibling_devs(pvt, pci_id1, pci_id2);
+> -	if (err)
+> +	ret = reserve_mc_sibling_devs(pvt, pci_id1, pci_id2);
+> +	if (ret)
+>  		goto err_post_init;
+>  
+>  	read_mc_regs(pvt);
+>  
+> +	return 0;
+> +
+> +err_post_init:
+> +	if (pvt->fam >= 0x17)
+> +		kfree(pvt->umc);
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+So you're freeing pvt->umc here but nothing in that function allocated
+it. get_hardware_info() in probe_one_instance() did but if you do it
+this way, it is kinda hard to follow and the layering is a bit iffy.
 
-  Tomi
+So what I'd suggest is:
+
+* Rename get_hardware_info() to something like hw_info_get() so that
+you can have a counterpart hw_info_put() which does any cleanup after
+hw_info_get(), including the freeing of the ->umc.
+
+* In probe_one_instance(), if init_one_instance() fails, call
+hw_info_put() on the error path so that all your flow in the probe/init
+functions is nicely ballanced and easily followed.
+
+Makes sense?
+
+Thx.
 
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
