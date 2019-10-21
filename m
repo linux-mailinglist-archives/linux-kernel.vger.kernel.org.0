@@ -2,85 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04D54DF36A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6411DF322
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729953AbfJUQnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:43:39 -0400
-Received: from mga01.intel.com ([192.55.52.88]:59354 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727582AbfJUQnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:43:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 09:43:38 -0700
-X-IronPort-AV: E=Sophos;i="5.67,324,1566889200"; 
-   d="scan'208";a="187595740"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 09:43:38 -0700
-Subject: [PATCH v2] fs/dax: Fix pmd vs pte conflict detection
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Jeff Smits <jeff.smits@intel.com>,
-        Doug Nelson <doug.nelson@intel.com>, stable@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Jeff Moyer <jmoyer@redhat.com>,
-        "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Date:   Mon, 21 Oct 2019 09:29:20 -0700
-Message-ID: <157167532455.3945484.11971474077040503994.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1728517AbfJUQb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:31:29 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:28263 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727101AbfJUQb3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:31:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571675488;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6w7dW9mOc7e8F/WURa36AE0ItFqfFxyky2HnpydUOE0=;
+        b=eAOjRR/6+t1RmQmV1ycxOR5bpqqgKgCb2CK019RqggMMSW8yS1phRmShQMbf1X5Y87sCps
+        aEshZzdWw0RpmtWFln6oJCQ2Iq4F9s2dR4lXoaTqtHv8wWDDhC7ZaJ/jCLaO5ZzmkWH1OE
+        zW+1Qeugm0u/BbzIKUmVX7zNMTwW0Sk=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-299-snuSe-V1OKm9C_fhweXpFg-1; Mon, 21 Oct 2019 12:31:26 -0400
+Received: by mail-yb1-f197.google.com with SMTP id 202so10388292ybe.13
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 09:31:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fsdy/jGiGhYO0LCoELtFkTkwnBVL5KY786AsoYKXAR4=;
+        b=S9qpAclVfQcrmHQ2mTXFeLHWtsm54i6agOgN3XGCx6En0iLd8OwvG9EceIe8yL7pp7
+         ajYxW+Ym094zTPvtI16AHwcFYxEws4HE0ZGc/W8Ytf6+p2VDP8f3WXvjYRu4Rjpuioch
+         jpD4seCx2oHgUN8uHe+LpS194Gh2J9F0vrFBZHnEa/EhSGK9Ek/pd0bdEi+0U+OwXDIg
+         9NqVdRGSmUhmHjxJd3o8Qc0ljLwYuQL7yClBMm2hgid9Jw1fsEGJzMluA+c5hHsiJov5
+         mhEvu8WiaDXjhssHj49e2Hmy8mghkgDBE5BAfZv/IYnfNYuIm8nZy4nnPw8A24ozMIKW
+         pEww==
+X-Gm-Message-State: APjAAAWa+AxcWlV2/pdYPi1ndA2p+f5qMTyubTwNgpZ6RVsr6ex/NXIV
+        E0Ke6DkwSGkDgowAMd2El2Sf4XWyRoYOPPTj/S/YUqswicekeD9IBBz00cupL9z+0QGem1RXQd9
+        Xr5CKFdVldGLTvAvdAPI++ALFGoS+pZCKlQ8VTz8X
+X-Received: by 2002:a05:6902:4c8:: with SMTP id v8mr16247514ybs.66.1571675485764;
+        Mon, 21 Oct 2019 09:31:25 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxciDyD1lopQLg+gvSHhlech/D0NjAF1pJvvntU8U9FKaM9F7s7bZSlGbX3GSbC/6IuqejGRuqLtQKO7Q/5Jvs=
+X-Received: by 2002:a05:6902:4c8:: with SMTP id v8mr16247482ybs.66.1571675485370;
+ Mon, 21 Oct 2019 09:31:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <CACVy4SVuw0Qbjiv6PLRn1symoxGzyBMZx2F5O23+jGZG6WHuYA@mail.gmail.com>
+ <20191021083731.GK15862@gauss3.secunet.de>
+In-Reply-To: <20191021083731.GK15862@gauss3.secunet.de>
+From:   Tom Rix <trix@redhat.com>
+Date:   Mon, 21 Oct 2019 09:31:13 -0700
+Message-ID: <CACVy4SV3K257XfFkR_ahkU2yy9mzJD-9LrSiQPCnespB3k_0XQ@mail.gmail.com>
+Subject: Re: [PATCH] xfrm : lock input tasklet skb queue
+To:     Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+X-MC-Unique: snuSe-V1OKm9C_fhweXpFg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Users reported a v5.3 performance regression and inability to establish
-huge page mappings. A revised version of the ndctl "dax.sh" huge page
-unit test identifies commit 23c84eb78375 "dax: Fix missed wakeup with
-PMD faults" as the source.
+When preempt rt is full, softirq and interrupts run in kthreads. So it
+is possible for the tasklet to sleep and for its queue to get modified
+while it sleeps.
 
-Update get_unlocked_entry() to check for NULL entries before checking
-the entry order, otherwise NULL is misinterpreted as a present pte
-conflict. The 'order' check needs to happen before the locked check as
-an unlocked entry at the wrong order must fallback to lookup the correct
-order.
-
-Reported-by: Jeff Smits <jeff.smits@intel.com>
-Reported-by: Doug Nelson <doug.nelson@intel.com>
-Cc: <stable@vger.kernel.org>
-Fixes: 23c84eb78375 ("dax: Fix missed wakeup with PMD faults")
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Changes in v2:
-- Update the changelog to reflect the user visible effects of the bug
-  (Jeff)
-
- fs/dax.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/dax.c b/fs/dax.c
-index 6bf81f931de3..2cc43cd914eb 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -220,10 +220,11 @@ static void *get_unlocked_entry(struct xa_state *xas, unsigned int order)
- 
- 	for (;;) {
- 		entry = xas_find_conflict(xas);
-+		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
-+			return entry;
- 		if (dax_entry_order(entry) < order)
- 			return XA_RETRY_ENTRY;
--		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
--				!dax_is_locked(entry))
-+		if (!dax_is_locked(entry))
- 			return entry;
- 
- 		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
+On Mon, Oct 21, 2019 at 1:37 AM Steffen Klassert
+<steffen.klassert@secunet.com> wrote:
+>
+> On Sun, Oct 20, 2019 at 08:46:10AM -0700, Tom Rix wrote:
+> > On PREEMPT_RT_FULL while running netperf, a corruption
+> > of the skb queue causes an oops.
+> >
+> > This appears to be caused by a race condition here
+> >         __skb_queue_tail(&trans->queue, skb);
+> >         tasklet_schedule(&trans->tasklet);
+> > Where the queue is changed before the tasklet is locked by
+> > tasklet_schedule.
+> >
+> > The fix is to use the skb queue lock.
+> >
+> > Signed-off-by: Tom Rix <trix@redhat.com>
+> > ---
+> >  net/xfrm/xfrm_input.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
+> > index 9b599ed66d97..226dead86828 100644
+> > --- a/net/xfrm/xfrm_input.c
+> > +++ b/net/xfrm/xfrm_input.c
+> > @@ -758,12 +758,16 @@ static void xfrm_trans_reinject(unsigned long dat=
+a)
+> >      struct xfrm_trans_tasklet *trans =3D (void *)data;
+> >      struct sk_buff_head queue;
+> >      struct sk_buff *skb;
+> > +    unsigned long flags;
+> >
+> >      __skb_queue_head_init(&queue);
+> > +    spin_lock_irqsave(&trans->queue.lock, flags);
+> >      skb_queue_splice_init(&trans->queue, &queue);
+> >
+> >      while ((skb =3D __skb_dequeue(&queue)))
+> >          XFRM_TRANS_SKB_CB(skb)->finish(dev_net(skb->dev), NULL, skb);
+> > +
+> > +    spin_unlock_irqrestore(&trans->queue.lock, flags);
+> >  }
+> >
+> >  int xfrm_trans_queue(struct sk_buff *skb,
+> > @@ -771,15 +775,20 @@ int xfrm_trans_queue(struct sk_buff *skb,
+> >                     struct sk_buff *))
+> >  {
+> >      struct xfrm_trans_tasklet *trans;
+> > +    unsigned long flags;
+> >
+> >      trans =3D this_cpu_ptr(&xfrm_trans_tasklet);
+> > +    spin_lock_irqsave(&trans->queue.lock, flags);
+>
+> As you can see above 'trans' is per cpu, so a spinlock
+> is not needed here. Also this does not run in hard
+> interrupt context, so irqsave is also not needed.
+> I don't see how this can fix anything.
+>
+> Can you please explain that race a bit more detailed?
+>
 
