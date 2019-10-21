@@ -2,137 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3352DE21C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 04:27:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F96ADE229
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 04:32:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbfJUC1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 22:27:40 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37904 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726996AbfJUC1k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 22:27:40 -0400
-Received: by mail-pg1-f194.google.com with SMTP id w3so6792799pgt.5
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 19:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+XgAS3p3ETrEIu1jjk49WnshOluu9ziyQFPp12n3bCU=;
-        b=HBXUvt040GMIEwLCNj0cv5hSZlRkL/uSj5D7wLWdq/dK4otL0nVEbSqZR/yA3O2Og9
-         AGWR8nz33JcyPwt0cVzYqNq50Faf18+z3imXfVGexdoVV7YqaTAx1/VUr9tWFd1T5Cbb
-         Tf3GaNcBURk5SkpU/x/jomYDDMhIfJxW71YTg5rvruJX3ueO8ezhfGPDpZ8h4aBGcFO7
-         kumSOPEltTLr+L4+0n9vUg4CWg75RR45G4UAxyVxqOpn3JU7cI+2DI4kkwOVZWPX+nFt
-         EIZgqQsA7otGwkMKpKWeRDE8Vka9aexA24uKnw1PmWmT0weSSgJHTEGbfcCA0RE8KN8b
-         2ajw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+XgAS3p3ETrEIu1jjk49WnshOluu9ziyQFPp12n3bCU=;
-        b=W8RMLar506+VbwUDt915RjQcy42nalvOe8Z6BcabKgmyjR9xgI4Jb7/glwK7d+vKSj
-         RdyBmgF2aS6KM7ivDAq99Y6OSq6cQQJtT+Wf1nLSBXluaUhcT11JTFGMNqODtlhY6S/s
-         1hzP/8NO4jtnmBcvuQ4ZMWo07KRIFLPh4E7Mcweogl1IpgFRE6BBL+u2mNzJtcupzqc2
-         f/wkOPbq1bLIxhpTWoDhgXvudTJ4wrn0wfB7/V/HgZiDEDsFdMT7MMfGg7wX75ZJ9AU7
-         W+XOSRPQtiSpwb3/011k6LFoEVF3LqVpl9nZaMlkXS13R/JR8b71+I0IVqYgUTimhg3b
-         qFtg==
-X-Gm-Message-State: APjAAAUGzovEZ4mFKBL3l7bXvzmowYA7sNBYeqTm4cB00V3R5xaPZ9Th
-        7FR8U3IGMR2YQeA/rb+f4bWw4Q==
-X-Google-Smtp-Source: APXvYqwgXGc8U+6JV2azREgJVpwvucEYJlBr8fKvxMlwaeCP9tIcS23wt/WioWPY0VSEsf3wqmlSTg==
-X-Received: by 2002:a63:4e52:: with SMTP id o18mr11185515pgl.153.1571624859157;
-        Sun, 20 Oct 2019 19:27:39 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id f17sm20835265pgd.8.2019.10.20.19.27.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Oct 2019 19:27:38 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 07:57:36 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
-        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH 05/46] ARM: pxa: split up mach/hardware.h
-Message-ID: <20191021022736.yu6unspozqf5634p@vireshk-i7>
-References: <20191018154052.1276506-1-arnd@arndb.de>
- <20191018154201.1276638-5-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018154201.1276638-5-arnd@arndb.de>
-User-Agent: NeoMutt/20180716-391-311a52
+        id S1726835AbfJUCcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 22:32:52 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:48842 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726726AbfJUCcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 22:32:51 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A1C231A04CB;
+        Mon, 21 Oct 2019 04:32:49 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D22EF1A085F;
+        Mon, 21 Oct 2019 04:32:45 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 41597402B4;
+        Mon, 21 Oct 2019 10:32:41 +0800 (SGT)
+From:   Peng Ma <peng.ma@nxp.com>
+To:     vkoul@kernel.org
+Cc:     dan.j.williams@intel.com, leoyang.li@nxp.com,
+        k.kozlowski.k@gmail.com, fabio.estevam@nxp.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Ma <peng.ma@nxp.com>
+Subject: [V2] dmaengine: fsl-edma: Add eDMA support for QorIQ LS1028A platform
+Date:   Mon, 21 Oct 2019 10:21:49 +0800
+Message-Id: <20191021022149.37112-1-peng.ma@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-10-19, 17:41, Arnd Bergmann wrote:
-> The mach/hardware.h is included in lots of places, and it provides
-> three different things on pxa:
-> 
-> - the cpu_is_pxa* macros
-> - an indirect inclusion of mach/addr-map.h
-> - the __REG() and io_pv2() helper macros
-> 
-> Split it up into separate <linux/soc/pxa/cpu.h> and mach/pxa-regs.h
-> headers, then change all the files that use mach/hardware.h to
-> include the exact set of those three headers that they actually
-> need, allowing for further more targeted cleanup.
-> 
-> linux/soc/pxa/cpu.h can remain permanently exported and is now in
-> a global location along with similar headers. pxa-regs.h and
-> addr-map.h are only used in a very small number of drivers now
-> and can be moved to arch/arm/mach-pxa/ directly when those drivers
-> are to pass the necessary data as resources.
-> 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-input@vger.kernel.org
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-mmc@vger.kernel.org
-> Cc: linux-mtd@lists.infradead.org
-> Cc: linux-rtc@vger.kernel.org
-> Cc: linux-usb@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: linux-watchdog@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/cpufreq/pxa2xx-cpufreq.c              |  1 +
->  drivers/cpufreq/pxa3xx-cpufreq.c              |  1 +
+Our platforms(such as LS1021A, LS1012A, LS1043A, LS1046A, LS1028A) with below
+registers(CHCFG0 - CHCFG15) of eDMA as follows:
+*-----------------------------------------------------------*
+|     Offset   |	OTHERS      |		LS1028A	    |
+|--------------|--------------------|-----------------------|
+|     0x0      |        CHCFG0      |           CHCFG3      |
+|--------------|--------------------|-----------------------|
+|     0x1      |        CHCFG1      |           CHCFG2      |
+|--------------|--------------------|-----------------------|
+|     0x2      |        CHCFG2      |           CHCFG1      |
+|--------------|--------------------|-----------------------|
+|     0x3      |        CHCFG3      |           CHCFG0      |
+|--------------|--------------------|-----------------------|
+|     ...      |        ......      |           ......      |
+|--------------|--------------------|-----------------------|
+|     0xC      |        CHCFG12     |           CHCFG15     |
+|--------------|--------------------|-----------------------|
+|     0xD      |        CHCFG13     |           CHCFG14     |
+|--------------|--------------------|-----------------------|
+|     0xE      |        CHCFG14     |           CHCFG13     |
+|--------------|--------------------|-----------------------|
+|     0xF      |        CHCFG15     |           CHCFG12     |
+*-----------------------------------------------------------*
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+This patch is to improve edma driver to fit LS1028A platform.
 
+Signed-off-by: Peng Ma <peng.ma@nxp.com>
+---
+Changed for V2:
+	- Explaining what's the "Our platforms"
+
+ drivers/dma/fsl-edma-common.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+index b1a7ca9..611186b 100644
+--- a/drivers/dma/fsl-edma-common.c
++++ b/drivers/dma/fsl-edma-common.c
+@@ -7,6 +7,7 @@
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/dma-mapping.h>
++#include <linux/sys_soc.h>
+ 
+ #include "fsl-edma-common.h"
+ 
+@@ -42,6 +43,11 @@
+ 
+ #define EDMA_TCD		0x1000
+ 
++static struct soc_device_attribute soc_fixup_tuning[] = {
++	{ .family = "QorIQ LS1028A"},
++	{ },
++};
++
+ static void fsl_edma_enable_request(struct fsl_edma_chan *fsl_chan)
+ {
+ 	struct edma_regs *regs = &fsl_chan->edma->regs;
+@@ -109,10 +115,16 @@ void fsl_edma_chan_mux(struct fsl_edma_chan *fsl_chan,
+ 	u32 ch = fsl_chan->vchan.chan.chan_id;
+ 	void __iomem *muxaddr;
+ 	unsigned int chans_per_mux, ch_off;
++	int endian_diff[4] = {3, 1, -1, -3};
+ 	u32 dmamux_nr = fsl_chan->edma->drvdata->dmamuxs;
+ 
+ 	chans_per_mux = fsl_chan->edma->n_chans / dmamux_nr;
+ 	ch_off = fsl_chan->vchan.chan.chan_id % chans_per_mux;
++
++	if (!fsl_chan->edma->big_endian &&
++	    soc_device_match(soc_fixup_tuning))
++		ch_off += endian_diff[ch_off % 4];
++
+ 	muxaddr = fsl_chan->edma->muxbase[ch / chans_per_mux];
+ 	slot = EDMAMUX_CHCFG_SOURCE(slot);
+ 
 -- 
-viresh
+2.9.5
+
