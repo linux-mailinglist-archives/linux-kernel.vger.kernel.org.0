@@ -2,87 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4149DDF844
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 00:52:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56258DF84D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 00:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730507AbfJUWwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 18:52:41 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:56174 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730399AbfJUWwl (ORCPT
+        id S1730480AbfJUW4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 18:56:50 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:37968 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730350AbfJUW4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 18:52:41 -0400
-Received: from dread.disaster.area (pa49-180-40-48.pa.nsw.optusnet.com.au [49.180.40.48])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0202A363692;
-        Tue, 22 Oct 2019 09:52:35 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iMgXS-00074h-TR; Tue, 22 Oct 2019 09:52:34 +1100
-Date:   Tue, 22 Oct 2019 09:52:34 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Mike Christie <mchristi@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, martin@urbackup.org,
-        Damien.LeMoal@wdc.com
-Subject: Re: [PATCH] Add prctl support for controlling PF_MEMALLOC V2
-Message-ID: <20191021225234.GC2642@dread.disaster.area>
-References: <20191021214137.8172-1-mchristi@redhat.com>
+        Mon, 21 Oct 2019 18:56:50 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iMgbD-0003Sn-Ma; Tue, 22 Oct 2019 00:56:28 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D17D51C0086;
+        Tue, 22 Oct 2019 00:56:26 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 22:56:26 -0000
+From:   "tip-bot2 for Thomas Hellstrom" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/cpu/vmware: Fix platform detection VMWARE_PORT macro
+Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191021172403.3085-3-thomas_os@shipmail.org>
+References: <20191021172403.3085-3-thomas_os@shipmail.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191021214137.8172-1-mchristi@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
-        a=y881pOMu+B+mZdf5UrsJdA==:117 a=y881pOMu+B+mZdf5UrsJdA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=rSlL4X6sGr0P-yuullEA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Message-ID: <157169858645.29376.17154756298339377463.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 04:41:37PM -0500, Mike Christie wrote:
-> There are several storage drivers like dm-multipath, iscsi, tcmu-runner,
-> amd nbd that have userspace components that can run in the IO path. For
-> example, iscsi and nbd's userspace deamons may need to recreate a socket
-> and/or send IO on it, and dm-multipath's daemon multipathd may need to
-> send IO to figure out the state of paths and re-set them up.
-> 
-> In the kernel these drivers have access to GFP_NOIO/GFP_NOFS and the
-> memalloc_*_save/restore functions to control the allocation behavior,
-> but for userspace we would end up hitting a allocation that ended up
-> writing data back to the same device we are trying to allocate for.
+The following commit has been merged into the x86/urgent branch of tip:
 
-I think this needs to describe the symptoms this results in. i.e.
-that this can result in deadlocking the IO path.
+Commit-ID:     6fee2a0be0ecae939d4b6cd8297d88b5cbb61654
+Gitweb:        https://git.kernel.org/tip/6fee2a0be0ecae939d4b6cd8297d88b5cbb61654
+Author:        Thomas Hellstrom <thellstrom@vmware.com>
+AuthorDate:    Mon, 21 Oct 2019 19:24:03 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 22 Oct 2019 00:51:44 +02:00
 
-> This patch allows the userspace deamon to set the PF_MEMALLOC* flags
-> with prctl during their initialization so later allocations cannot
-> calling back into them.
-> 
-> Signed-off-by: Mike Christie <mchristi@redhat.com>
-> ---
+x86/cpu/vmware: Fix platform detection VMWARE_PORT macro
 
-....
-> +	case PR_SET_MEMALLOC:
-> +		if (!capable(CAP_SYS_ADMIN))
-> +			return -EPERM;
+The platform detection VMWARE_PORT macro uses the VMWARE_HYPERVISOR_PORT
+definition, but expects it to be an integer. However, when it was moved
+to the new vmware.h include file, it was changed to be a string to better
+fit into the VMWARE_HYPERCALL set of macros. This obviously breaks the
+platform detection VMWARE_PORT functionality.
 
-Wouldn't CAP_SYS_RAWIO (because it's required by kernel IO path
-drivers) or CAP_SYS_RESOURCE (controlling memory allocation
-behaviour) be more appropriate here?
+Change the VMWARE_HYPERVISOR_PORT and VMWARE_HYPERVISOR_PORT_HB
+definitions to be integers, and use __stringify() for their stringified
+form when needed.
 
-Which-ever is selected, the use should be added to the list above
-the definition of the capability in include/linux/capability.h...
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: b4dd4f6e3648 ("Add a header file for hypercall definitions")
+Link: https://lkml.kernel.org/r/20191021172403.3085-3-thomas_os@shipmail.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/vmware.h | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-Otherwise looks fine to me.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
+index 3caac90..ac9fc51 100644
+--- a/arch/x86/include/asm/vmware.h
++++ b/arch/x86/include/asm/vmware.h
+@@ -4,6 +4,7 @@
+ 
+ #include <asm/cpufeatures.h>
+ #include <asm/alternative.h>
++#include <linux/stringify.h>
+ 
+ /*
+  * The hypercall definitions differ in the low word of the %edx argument
+@@ -20,8 +21,8 @@
+  */
+ 
+ /* Old port-based version */
+-#define VMWARE_HYPERVISOR_PORT    "0x5658"
+-#define VMWARE_HYPERVISOR_PORT_HB "0x5659"
++#define VMWARE_HYPERVISOR_PORT    0x5658
++#define VMWARE_HYPERVISOR_PORT_HB 0x5659
+ 
+ /* Current vmcall / vmmcall version */
+ #define VMWARE_HYPERVISOR_HB   BIT(0)
+@@ -29,7 +30,7 @@
+ 
+ /* The low bandwidth call. The low word of edx is presumed clear. */
+ #define VMWARE_HYPERCALL						\
+-	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT ", %%dx; "	\
++	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT) ", %%dx; " \
+ 		      "inl (%%dx), %%eax",				\
+ 		      "vmcall", X86_FEATURE_VMCALL,			\
+ 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
+@@ -39,7 +40,8 @@
+  * HB and OUT bits set.
+  */
+ #define VMWARE_HYPERCALL_HB_OUT						\
+-	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT_HB ", %%dx; rep outsb", \
++	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT_HB) ", %%dx; " \
++		      "rep outsb",					\
+ 		      "vmcall", X86_FEATURE_VMCALL,			\
+ 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
+ 
+@@ -48,7 +50,8 @@
+  * HB bit set.
+  */
+ #define VMWARE_HYPERCALL_HB_IN						\
+-	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT_HB ", %%dx; rep insb", \
++	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT_HB) ", %%dx; " \
++		      "rep insb",					\
+ 		      "vmcall", X86_FEATURE_VMCALL,			\
+ 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
+ #endif
