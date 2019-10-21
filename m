@@ -2,92 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2C4FDF615
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 21:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D794DF61C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 21:37:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730123AbfJUTeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 15:34:00 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39914 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbfJUTeA (ORCPT
+        id S1730180AbfJUThR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 15:37:17 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:52432 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728819AbfJUThQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 15:34:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id c6so3100832wrm.6
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 12:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=5WndJUXXgXPHwhCLRr7+0pwnLZl+9kPbswD/C+BOyJg=;
-        b=vESnDQabBipv8xjPoc+wa2ekTjGtmzxFa4h6bCF3qeMKKFfZeqXR4+nvEHRA0fFcSR
-         IJQUqHM4+kKmbaxbkL91blNgMn7VdxdRCJPaslroCFq6gdNvHasjYj9xlJFRlmmQcMSD
-         +aerwVR89midy5FIYroHDoufpZsTi+pJ95BB2dMJidfzs5ZhJllBhkHii6DT1C5X3hxD
-         bb0JfJwsvxLjTJfxbF2uYUCH73ZyON4IokveiL1tCoGjLTabJDxX3/DxYpKfB7DVyjBM
-         IYDhULdiPp2gnyz54wgU6nbdHUPcMqmvC8r8LCTX/die87VBjodMjERvyZ9MKOYWFlTg
-         pJmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5WndJUXXgXPHwhCLRr7+0pwnLZl+9kPbswD/C+BOyJg=;
-        b=F7cbbPcriyySbF6stpdbby3bP5tX5gdiNBEbpBnXomKa1bLFNUiaJhoPFsewpno2xZ
-         IqPJeyGRZB56iEwpqvgH8zgOFo15V+3Tz/QHa0sM8I/sZ6cIRZ/DDE0OUsSYzgB+quLr
-         iDrOmFvxSDDzQsPnDpHQG9hltTpfjqoP5wPgpR5GWIq9iZzuwZfoPtNPIZpJTi/i/9Tu
-         fiwz8wfd3eJJXBLYtE0nleI/af3/n5fz1CsPIkYyaW8Ho0Sy8PGKCW9fu9Eioanwbks6
-         J/KCf74lDyBKFPXt/A0JdMIjrfmD7aboaqZhXO+yN65JC39HaNykqZBWfvMy51cxnLsv
-         WpNg==
-X-Gm-Message-State: APjAAAUr5aWQl3F8oe61lRZTbyfcmMFoR9G1nyz8g0vsH/B6IF/5rFOQ
-        pE7gs7H/Uw1BQNUajYR2QQM=
-X-Google-Smtp-Source: APXvYqzS5vgQy/FpbUE4Fmk+Rt3w4YTqGQCYR/5WDy7njSYsMCPb0vmcAPYauVMXqpLPNZsg0LNACw==
-X-Received: by 2002:a05:6000:1051:: with SMTP id c17mr20608149wrx.124.1571686438805;
-        Mon, 21 Oct 2019 12:33:58 -0700 (PDT)
-Received: from mail.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id 79sm24394580wmb.7.2019.10.21.12.33.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 12:33:58 -0700 (PDT)
-From:   Kamal Dasu <kdasu.kdev@gmail.com>
-To:     linux-mtd@lists.infradead.org
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Subject: [PATCH] mtd: set mtd partition panic write flag
-Date:   Mon, 21 Oct 2019 15:32:52 -0400
-Message-Id: <20191021193343.41320-1-kdasu.kdev@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 21 Oct 2019 15:37:16 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9LJbD3k071322;
+        Mon, 21 Oct 2019 14:37:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571686633;
+        bh=ekjozCXAw6b8U4H+XTTsLy7p9fWE1plsq41QyKEnJfY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=uhu8ADmfMLTbK8Fc1tT/Ngqs+VRtp8rNlCN5Ams4IzB3Y3pFN6889fKrb9CHCyVDf
+         R4339oSBJY1z6u9uU3OgV6WYTzyH4+FuXiy3mjP7x6ZwxDYycBN+Wk6G9ZFb5b5GM0
+         mxshtNvpLpJjnbP2Lkg2iO7cb0etkQFYkQccJ+NU=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9LJawLA051959
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Oct 2019 14:36:58 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 21
+ Oct 2019 14:36:57 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 21 Oct 2019 14:36:57 -0500
+Received: from [10.250.35.43] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9LJZuPo077548;
+        Mon, 21 Oct 2019 14:35:57 -0500
+Subject: Re: [PATCH 1/3] power_supply: Add additional health properties to the
+ header
+To:     Sebastian Reichel <sre@kernel.org>
+CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190930143137.21624-1-dmurphy@ti.com>
+ <20191020122510.4llflz7s2kogcdbf@earth.universe>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <b354bd2e-3fd8-eef9-6609-75d09210e745@ti.com>
+Date:   Mon, 21 Oct 2019 14:35:15 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191020122510.4llflz7s2kogcdbf@earth.universe>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check mtd panic write flag and set the mtd partition panic
-write flag so that low level drivers can use it to take
-required action to ensure oops data gets written to assigned
-mtd partition.
+Sebastian
 
-Fixes: 9f897bfdd8 ("mtd: Add flag to indicate panic_write")
-Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
----
- drivers/mtd/mtdpart.c | 4 ++++
- 1 file changed, 4 insertions(+)
+On 10/20/19 7:25 AM, Sebastian Reichel wrote:
+> Hi,
+>
+> On Mon, Sep 30, 2019 at 09:31:35AM -0500, Dan Murphy wrote:
+>> Add HEALTH_WARM, HEALTH_COOL and HEALTH_HOT to the health enum.
+> You used OVERHEAT instead of HOT in the implementation,
+> which makes sense to me, so please drop HOT here. Also
+> this needs to be documented in the ABI documentation:
 
-diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
-index 7328c066c5ba..b4f6479abeda 100644
---- a/drivers/mtd/mtdpart.c
-+++ b/drivers/mtd/mtdpart.c
-@@ -159,6 +159,10 @@ static int part_panic_write(struct mtd_info *mtd, loff_t to, size_t len,
- 		size_t *retlen, const u_char *buf)
- {
- 	struct mtd_part *part = mtd_to_part(mtd);
-+
-+	if (mtd->oops_panic_write)
-+		part->parent->oops_panic_write = true;
-+
- 	return part->parent->_panic_write(part->parent, to + part->offset, len,
- 					  retlen, buf);
- }
--- 
-2.17.1
+Hmm.  To me OVERHEAT and HOT can mean two different things.  I will 
+check the implementation but I would
+
+prefer to use HOT.
+
+If a battery or charger is HOT that may be expected to be within the 
+heat limits of the device being monitored but that it is hot.
+
+Overheating means the device is above the expected upper thermal limit.  
+Or over the heat limit.
+
+The user may want to take action within the hot range to cool the device 
+or may expect the device to run hot without over heating.
+
+
+> Documentation/ABI/testing/sysfs-class-power
+
+ACK
+
+Dan
+
 
