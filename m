@@ -2,81 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F4EDE268
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 04:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE1C0DE26B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 04:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfJUC4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 22:56:14 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42864 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfJUC4O (ORCPT
+        id S1726936AbfJUC6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 22:58:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44540 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbfJUC6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 22:56:14 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c16so2140952plz.9;
-        Sun, 20 Oct 2019 19:56:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bxMz0y2W7ERV0cHxluJ83jF2XfjJbXwAQncUIXq9fG8=;
-        b=KcZuXBOeExAjM7tEqSfor7pThzloqeH1GLyIVzobO0ubEc55L0Rz0UXjYZ8VDKVcZa
-         7IFi3b9vyXts4wPcRKDqYrAiXWYVjU+hzcEerbD6cwQXhQMPT6GO2k++3yd2oi1l+/vR
-         /y3rVC/dq6/YM1jIV81I96Ls0FAPD1QsluXoV/O/tA2eKLi7bKjr+3SlyRh9yXSMqjQk
-         ls2urqlkRyIBShM/dNx2rcYYIEiRxvostyg0Kdc+I6Io1xiwTuYuI7HpE9Dhrmo2YIOz
-         J4KTQYwJq8npEA7kn3PJdlhimN3j6EZz70KdDEareEC/72U9VHK0NxyUWmY27RFBKGos
-         N83Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bxMz0y2W7ERV0cHxluJ83jF2XfjJbXwAQncUIXq9fG8=;
-        b=P5cYbUTKG/gxPo/kLNXV8xXkL5LhqxO0lVNvmeSc0Z0uyZadlrsvR5MYwNacPw6zmq
-         6UtuO8ME6Ix3z1CCtCDO95JhG1LD29VMk8fCmQWw8rVNnMu4RYSTcMaSUmF7PRQCZGJR
-         /hzQnVGVOGgZrgoQqws4snJzgf6977TtQwfaPnbYg4c36wCXe+jMfMjBGmIsEiG6viu6
-         icCBc2ahEPZetoeEQKJlODoUsELGgUif3DyHvOsnFgVPRg6tEC5OVsaN/4X7m63apQS0
-         RmJG3ZpCJzIfWopwArfqdsjovnaCX2aU6fPopyjGNlnGXfF/POxddYQ8cbk6N+9NEGNu
-         no4Q==
-X-Gm-Message-State: APjAAAUYRz5nbrO1HxL8alAlKgfVu9D7GahWEy6D/HlNAtgILbcA5cQ4
-        UhjoXtn1Ik9cGDL5Dhaq1CXTCtKT
-X-Google-Smtp-Source: APXvYqzT9ep2deMoKRtgReGt2eOp0rclfoQyzI+jHhf9TP065Nn5lVrMFvkljc+/q5snRbktdSjFTA==
-X-Received: by 2002:a17:902:9881:: with SMTP id s1mr22664889plp.18.1571626573043;
-        Sun, 20 Oct 2019 19:56:13 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id v35sm15711929pgn.89.2019.10.20.19.56.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Oct 2019 19:56:12 -0700 (PDT)
-Subject: Re: [PATCH net-next 15/16] net: dsa: allocate ports on touch
-To:     Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        netdev@vger.kernel.org
-References: <20191020031941.3805884-1-vivien.didelot@gmail.com>
- <20191020031941.3805884-16-vivien.didelot@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <f78603c0-82ce-2bc4-87f8-b1586c144f6c@gmail.com>
-Date:   Sun, 20 Oct 2019 19:56:11 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        Sun, 20 Oct 2019 22:58:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bNOfY12uB6OkDBc28u8KRb7H8TREHQs/UdzmM7USCL8=; b=BFiBkZx3blmLyO3y9CNA6KIFq
+        9H7LR1mKsQGhNxemJDsd9ZDbIScnH2r6lVktfbUI7kq+lyF+BiSl3m6F2wPFgfEd+Jda4A/Q2dRuG
+        fgbEokmn7Pw7eFGXSsImVUjbWK3QSVkBDfuH3yJ+aD0g5LiRqdah/BiW3V40soROtdWmRIQsxaR2Q
+        idkWLimE1tsXTZm3pdfx0ZFqJ9AxXjEZG3ipOelH8h0m3OHcwjQ0Y1GUHjPLGuqg29l6KxzzEmCGC
+        WgZNvUg+2j5x8YGa7+CZ+RmnfPnvhf+Ic3mbLflsWKiT3XgvQI2VgtbssxipDTaxXVa267jq6E1t/
+        tIZbIki5g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iMNtc-0008SR-57; Mon, 21 Oct 2019 02:58:12 +0000
+Date:   Sun, 20 Oct 2019 19:58:12 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, trivial@kernel.org
+Subject: Re: [PATCH] docs/core-api: memory-allocation: fix typo
+Message-ID: <20191021025812.GB9214@bombadil.infradead.org>
+References: <20191021003833.15704-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
-In-Reply-To: <20191020031941.3805884-16-vivien.didelot@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021003833.15704-1-chris.packham@alliedtelesis.co.nz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/19/2019 8:19 PM, Vivien Didelot wrote:
-> Allocate the struct dsa_port the first time it is accessed with
-> dsa_port_touch, and remove the static dsa_port array from the
-> dsa_switch structure.
+On Mon, Oct 21, 2019 at 01:38:32PM +1300, Chris Packham wrote:
+> "on the safe size" should be "on the safe side".
 > 
-> Signed-off-by: Vivien Didelot <vivien.didelot@gmail.com>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Yes, it should.  Acked-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+If you like, you could do a follow-up patch mentioning the use
+of struct_size(), array_size() and array3_size().  I think this
+document is the right place for those.  Their kernel-doc is included in
+driver-api/basics.rst, but referencing those functions in this document
+would draw peoples' attention to them.
+
