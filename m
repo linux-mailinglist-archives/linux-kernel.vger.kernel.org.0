@@ -2,215 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BF46DF2DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 693B8DF2F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:26:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbfJUQVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:21:21 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44483 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfJUQVU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:21:20 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r16so10452837edq.11;
-        Mon, 21 Oct 2019 09:21:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=J7kXhyBYin2hNshrQsLbIqexvEmaaX5JxfmgulPDAhs=;
-        b=CGr9u20Eu4lRUt+v0PYZHqyWvsAmExvqOXoupAx41lYGj2F5fY1Xz29lqY/18b1Nf1
-         m1CBj5ETQ3XlPpUS+9nbmDuh44fkeGHJuX8Ab1xezRLekjUd1t8qxFRYC5gE32F0MHR9
-         eVfRGZm2PVKM5FwaNDtaY/M/jFpUk45Fpfp6DOJQspMZonQnvyALEwoMeHRLBUVbrlJj
-         L1oQDju4Djah1aAkkMrfFn50VibZ2ZV4qPIYXFMdE3/Eu+GV2xzpYO8+Uh35xo1WW8Eo
-         fM9ikHCwiVJUSEjfaGcvpr4KAxFRl2hVzMCPW8oPTw/AddDwqmaiyNqcYAJXGi3xjYf6
-         O0NA==
-X-Gm-Message-State: APjAAAUOpcPwJO4PEXTpXJDsdizazoWfhlXnxqiH5NJCCo3GHBsGkJQN
-        VHDZTsJAP6x+QSlEhAH5ZWs=
-X-Google-Smtp-Source: APXvYqzJjaDGk3bh7Rvx5mKz/l/mNrNxKhU6SPIZK78xraCXfMm3Bl9vspYovV2bf8f1O66wvaY1DQ==
-X-Received: by 2002:aa7:d915:: with SMTP id a21mr26132055edr.46.1571674877915;
-        Mon, 21 Oct 2019 09:21:17 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.217])
-        by smtp.googlemail.com with ESMTPSA id s4sm363303edt.34.2019.10.21.09.21.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Oct 2019 09:21:17 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 18:21:15 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Alim Akhtar <alim.akhtar@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: exynos: Rename children of SysRAM node to
- "sram"
-Message-ID: <20191021162115.GA21883@kozik-lap>
-References: <20191021151440.13505-1-krzk@kernel.org>
- <CAGOxZ531SdYcud3nQ-6hbCRZptUYznTRajVyxwEi-mFmm8-zPg@mail.gmail.com>
+        id S1729238AbfJUQZa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:25:30 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:33128 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728305AbfJUQZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:25:28 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E75D969206CA4E11755C;
+        Tue, 22 Oct 2019 00:25:24 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 22 Oct 2019 00:25:16 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, John Garry <john.garry@huawei.com>
+Subject: [PATCH 00/18] hisi_sas: Misc patches, mostly debugfs
+Date:   Tue, 22 Oct 2019 00:21:57 +0800
+Message-ID: <1571674935-108326-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAGOxZ531SdYcud3nQ-6hbCRZptUYznTRajVyxwEi-mFmm8-zPg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 09:37:24PM +0530, Alim Akhtar wrote:
-> On Mon, Oct 21, 2019 at 8:45 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > The device node name should reflect generic class of a device so rename
-> > the children of SysRAM node to "smp-sysram".  This will be also in sync
-> Typo "smp-sram"
+This series introduces a couple of minor improvements in the main driver,
+and mostly changes in the driver debugfs support.
 
-Thanks, indeed.
+The main change in the driver debugfs support is the ability to take
+multiple memory dumps, which was not available previously. And the bulk
+of the changes here is to create new structures for this purpose.
 
-> > with upcoming DT schema.  No functional change.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> Looks good to me.
+We also add a new debugfs feature to report PHY down events, which seem
+to be useful to some people.
 
-Shall I add your review-tag?
+Luo Jiaxing (14):
+  scsi: hisi_sas: Add timestamp for a debugfs dump
+  scsi: hisi_sas: Add debugfs file structure for CQ
+  scsi: hisi_sas: Add debugfs file structure for DQ
+  scsi: hisi_sas: Add debugfs file structure for registers
+  scsi: hisi_sas: Add debugfs file structure for port
+  scsi: hisi_sas: Add debugfs file structure for IOST
+  scsi: hisi_sas: Add debugfs file structure for ITCT
+  scsi: hisi_sas: Add debugfs file structure for IOST cache
+  scsi: hisi_sas: Add debugfs file structure for ITCT cache
+  scsi: hisi_sas: Allocate memory for multiple dumps of debugfs
+  scsi: hisi_sas: Add module parameter for debugfs dump count
+  scsi: hisi_sas: Add ability to have multiple debugfs dumps
+  scsi: hisi_sas: Delete the debugfs folder of hisi_sas when the probe
+    fails
+  scsi: hisi_sas: Record the phy down event in debugfs
 
-Best regards,
-Krzysztof
+Xiang Chen (4):
+  scsi: hisi_sas: Don't create debugfs dump folder twice
+  scsi: hisi_sas: Set the BIST init value before enabling BIST
+  scsi: hisi_sas: use wait_for_completion_timeout() when clearing ITCT
+  scsi: hisi_sas: Replace in_softirq() check in hisi_sas_task_exec()
 
+ drivers/scsi/hisi_sas/hisi_sas.h       |  67 ++++-
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 367 ++++++++++++++++---------
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c |   6 +-
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c |  13 +-
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |  26 +-
+ 5 files changed, 331 insertions(+), 148 deletions(-)
 
-> 
-> >  arch/arm/boot/dts/exynos3250.dtsi               | 4 ++--
-> >  arch/arm/boot/dts/exynos4210-universal_c210.dts | 6 +++---
-> >  arch/arm/boot/dts/exynos4210.dtsi               | 4 ++--
-> >  arch/arm/boot/dts/exynos4412.dtsi               | 4 ++--
-> >  arch/arm/boot/dts/exynos5250.dtsi               | 4 ++--
-> >  arch/arm/boot/dts/exynos54xx.dtsi               | 4 ++--
-> >  6 files changed, 13 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> > index b016b0b68306..044e5da64a76 100644
-> > --- a/arch/arm/boot/dts/exynos3250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> > @@ -145,12 +145,12 @@
-> >                         #size-cells = <1>;
-> >                         ranges = <0 0x02020000 0x40000>;
-> >
-> > -                       smp-sysram@0 {
-> > +                       smp-sram@0 {
-> >                                 compatible = "samsung,exynos4210-sysram";
-> >                                 reg = <0x0 0x1000>;
-> >                         };
-> >
-> > -                       smp-sysram@3f000 {
-> > +                       smp-sram@3f000 {
-> >                                 compatible = "samsung,exynos4210-sysram-ns";
-> >                                 reg = <0x3f000 0x1000>;
-> >                         };
-> > diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> > index 09d3d54d09ff..a1bdf7830a87 100644
-> > --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> > +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> > @@ -590,16 +590,16 @@
-> >  };
-> >
-> >  &sysram {
-> > -       smp-sysram@0 {
-> > +       smp-sram@0 {
-> >                 status = "disabled";
-> >         };
-> >
-> > -       smp-sysram@5000 {
-> > +       smp-sram@5000 {
-> >                 compatible = "samsung,exynos4210-sysram";
-> >                 reg = <0x5000 0x1000>;
-> >         };
-> >
-> > -       smp-sysram@1f000 {
-> > +       smp-sram@1f000 {
-> >                 status = "disabled";
-> >         };
-> >  };
-> > diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> > index 554819ae1446..b4466232f0c1 100644
-> > --- a/arch/arm/boot/dts/exynos4210.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> > @@ -79,12 +79,12 @@
-> >                         #size-cells = <1>;
-> >                         ranges = <0 0x02020000 0x20000>;
-> >
-> > -                       smp-sysram@0 {
-> > +                       smp-sram@0 {
-> >                                 compatible = "samsung,exynos4210-sysram";
-> >                                 reg = <0x0 0x1000>;
-> >                         };
-> >
-> > -                       smp-sysram@1f000 {
-> > +                       smp-sram@1f000 {
-> >                                 compatible = "samsung,exynos4210-sysram-ns";
-> >                                 reg = <0x1f000 0x1000>;
-> >                         };
-> > diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> > index 5022aa574b26..48868947373e 100644
-> > --- a/arch/arm/boot/dts/exynos4412.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> > @@ -195,12 +195,12 @@
-> >                         #size-cells = <1>;
-> >                         ranges = <0 0x02020000 0x40000>;
-> >
-> > -                       smp-sysram@0 {
-> > +                       smp-sram@0 {
-> >                                 compatible = "samsung,exynos4210-sysram";
-> >                                 reg = <0x0 0x1000>;
-> >                         };
-> >
-> > -                       smp-sysram@2f000 {
-> > +                       smp-sram@2f000 {
-> >                                 compatible = "samsung,exynos4210-sysram-ns";
-> >                                 reg = <0x2f000 0x1000>;
-> >                         };
-> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> > index e1f0215e3985..ec983283f573 100644
-> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> > @@ -171,12 +171,12 @@
-> >                         #size-cells = <1>;
-> >                         ranges = <0 0x02020000 0x30000>;
-> >
-> > -                       smp-sysram@0 {
-> > +                       smp-sram@0 {
-> >                                 compatible = "samsung,exynos4210-sysram";
-> >                                 reg = <0x0 0x1000>;
-> >                         };
-> >
-> > -                       smp-sysram@2f000 {
-> > +                       smp-sram@2f000 {
-> >                                 compatible = "samsung,exynos4210-sysram-ns";
-> >                                 reg = <0x2f000 0x1000>;
-> >                         };
-> > diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-> > index f78dee801cd9..8aa5117e58ce 100644
-> > --- a/arch/arm/boot/dts/exynos54xx.dtsi
-> > +++ b/arch/arm/boot/dts/exynos54xx.dtsi
-> > @@ -62,12 +62,12 @@
-> >                         #size-cells = <1>;
-> >                         ranges = <0 0x02020000 0x54000>;
-> >
-> > -                       smp-sysram@0 {
-> > +                       smp-sram@0 {
-> >                                 compatible = "samsung,exynos4210-sysram";
-> >                                 reg = <0x0 0x1000>;
-> >                         };
-> >
-> > -                       smp-sysram@53000 {
-> > +                       smp-sram@53000 {
-> >                                 compatible = "samsung,exynos4210-sysram-ns";
-> >                                 reg = <0x53000 0x1000>;
-> >                         };
-> > --
-> > 2.17.1
-> >
-> 
-> 
-> -- 
-> Regards,
-> Alim
+-- 
+2.17.1
+
