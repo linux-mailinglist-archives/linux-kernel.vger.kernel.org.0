@@ -2,127 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE27EDEE1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12FEEDEE02
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:41:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729638AbfJUNlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:41:10 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:52994 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1729004AbfJUNk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:40:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BE061007;
-        Mon, 21 Oct 2019 06:40:34 -0700 (PDT)
-Received: from [10.1.194.43] (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B15A43F718;
-        Mon, 21 Oct 2019 06:40:32 -0700 (PDT)
-Subject: Re: [PATCH v6 01/10] KVM: arm64: Document PV-time interface
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191011125930.40834-1-steven.price@arm.com>
- <20191011125930.40834-2-steven.price@arm.com>
- <20191015175651.GF24604@lakrids.cambridge.arm.com>
- <20191018171039.GA18838@lakrids.cambridge.arm.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <d01edcb3-0d9a-d4ec-6a60-a82f3ffccba5@arm.com>
-Date:   Mon, 21 Oct 2019 14:40:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729559AbfJUNko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:40:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56296 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729539AbfJUNkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:40:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AAE91B233;
+        Mon, 21 Oct 2019 13:40:39 +0000 (UTC)
+Date:   Mon, 21 Oct 2019 15:40:38 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Laurence Oberman <loberman@redhat.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] watchdog/softlockup: Report the same softlockup
+ regularly
+Message-ID: <20191021134038.fz2cdpxrd3p3yhb7@pathway.suse.cz>
+References: <20190819104732.20966-1-pmladek@suse.com>
+ <20190819104732.20966-3-pmladek@suse.com>
+ <20191021124339.GE1817@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20191018171039.GA18838@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021124339.GE1817@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/10/2019 18:10, Mark Rutland wrote:
-> On Tue, Oct 15, 2019 at 06:56:51PM +0100, Mark Rutland wrote:
-[...]
->>> +PV_TIME_ST
->>> +    ============= ========    ==========
->>> +    Function ID:  (uint32)    0xC5000021
->>> +    Return value: (int64)     IPA of the stolen time data structure for this
->>> +                              VCPU. On failure:
->>> +                              NOT_SUPPORTED (-1)
->>> +    ============= ========    ==========
->>> +
->>> +The IPA returned by PV_TIME_ST should be mapped by the guest as normal memory
->>> +with inner and outer write back caching attributes, in the inner shareable
->>> +domain. A total of 16 bytes from the IPA returned are guaranteed to be
->>> +meaningfully filled by the hypervisor (see structure below).
->>
->> At what granularity is this allowed to share IPA space with other
->> mappings? The spec doesn't provide any guidance here, and I strongly
->> suspect that it should.
->>
->> To support a 64K guest, we must ensure that this doesn't share a 64K IPA
->> granule with any MMIO, and it probably only makes sense for an instance
->> of this structure to share that granule with another vCPU's structure.
->>
->> We probably _also_ want to ensure that this doesn't share a 64K granule
->> with memory the guest sees as regular system RAM. Otherwise we're liable
->> to force it into having mismatched attributes for any of that RAM it
->> happens to map as part of mapping the PV_TIME_ST structure.
+On Mon 2019-10-21 14:43:39, Peter Zijlstra wrote:
+> On Mon, Aug 19, 2019 at 12:47:31PM +0200, Petr Mladek wrote:
+> > Softlockup report means that there is no progress on the given CPU. It
+> > might be a "short" affair where the system gets recovered. But often
+> > the system stops being responsive and need to get rebooted.
+> > 
+> > The softlockup might be root of the problems or just a symptom. It might
+> > be a deadlock, livelock, or often repeated state.
+> > 
+> > Regular reports help to distinguish different situations. Fortunately,
+> > the watchdog is finally able to show correct information how long
+> > softlockup_fn() was not scheduled.
+> > 
+> > Report before this patch:
+> > 
+> > [  320.248948] watchdog: BUG: soft lockup - CPU#2 stuck for 26s! [cat:4916]
+> > 
+> > And after this patch:
+> > 
+> > [  480.372418] watchdog: BUG: soft lockup - CPU#2 stuck for 26s! [cat:4943]
+> > [  508.372359] watchdog: BUG: soft lockup - CPU#2 stuck for 52s! [cat:4943]
+> > [  548.372359] watchdog: BUG: soft lockup - CPU#2 stuck for 89s! [cat:4943]
+> > [  576.372351] watchdog: BUG: soft lockup - CPU#2 stuck for 115s! [cat:4943]
+> > 
+> > Note that the horrible code never really worked before the accounting
+> > was fixed. The last working timestamp was regularly lost by the many
+> > touch*watchdog() calls.
 > 
-> I guess we can say that it's userspace's responsibiltiy to set this up
-> with sufficient alignment, but I do think we want to make a
-> recommendataion here.
+> So what's the point of patch 1? Just confusing people?
 
-I can add something like this to the kernel's documentation:
+I was not sure what was the expected behavior. The code actually
+looked like only the first report was wanted. But it probably never
+worked that way.
 
-    It is advisable that one or more 64k pages are set aside for the
-    purpose of these structures and not used for other purposes, this
-    enables the guest to map the region using 64k pages and avoids
-    conflicting attributes with other memory.
+Should I squash the two patches and send it again, please?
 
-> [...]
-> 
->>> +PV_TIME_ST returns the structure for the calling VCPU.
->>> +
->>> +Stolen Time
->>> +-----------
->>> +
->>> +The structure pointed to by the PV_TIME_ST hypercall is as follows:
->>> +
->>> ++-------------+-------------+-------------+----------------------------+
->>> +| Field       | Byte Length | Byte Offset | Description                |
->>> ++=============+=============+=============+============================+
->>> +| Revision    |      4      |      0      | Must be 0 for version 1.0  |
->>> ++-------------+-------------+-------------+----------------------------+
->>> +| Attributes  |      4      |      4      | Must be 0                  |
->>> ++-------------+-------------+-------------+----------------------------+
->>> +| Stolen time |      8      |      8      | Stolen time in unsigned    |
->>> +|             |             |             | nanoseconds indicating how |
->>> +|             |             |             | much time this VCPU thread |
->>> +|             |             |             | was involuntarily not      |
->>> +|             |             |             | running on a physical CPU. |
->>> ++-------------+-------------+-------------+----------------------------+
->>> +
->>> +All values in the structure are stored little-endian.
->>
->> Looking at the published DEN 0057A, endianness is never stated. Is this
->> going to be corrected in the next release?
-> 
-> I'm assuming that this has been communicated internally, and we can
-> assume the next rev of the spec will state so.
-
-Yes I've fed that back, so hopefully it should be in the next rev of the
-spec.
-
-> Assuming so, this looks good to me.
-
-Great, thanks for the review.
-
-Steve
+Best Regards,
+Petr
