@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 597C3DF397
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:50:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 734C3DF392
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729388AbfJUQte (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:49:34 -0400
-Received: from mail-eopbgr150050.outbound.protection.outlook.com ([40.107.15.50]:21126
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        id S1729936AbfJUQr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:47:59 -0400
+Received: from mail-eopbgr10066.outbound.protection.outlook.com ([40.107.1.66]:63694
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729891AbfJUQtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:49:32 -0400
+        id S1729405AbfJUQr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:47:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zWsSnQvJtQ+r5qSKgtU+rOw+cTaU+Npr3oF1zqZ62NU=;
- b=lCZpulkXKD+5MMk203KPXYuhPv0BhlFnibjNr+SqNT59Xl0kq1R/i70cvVPHvtlBJTfIWlG20SCp9pGrdafoUzKLOUHAFnUlLfPvlgOAd7nmSUVPmJpAMVHcC6DYFP6mWhtjd3YXYtYfphvCO2Lc92AtKmXJXsRRMLjAdJt1Hug=
-Received: from DB6PR0802CA0037.eurprd08.prod.outlook.com (2603:10a6:4:a3::23)
- by DBBPR08MB4492.eurprd08.prod.outlook.com (2603:10a6:10:c1::14) with
+ bh=LqjsYGtito0owHXQyV4kjHNN6CmmoCoNhwj27nXP6vE=;
+ b=6jcl66n4LMmg2Lezx5wQs+mvEHCPf/eF10A6OrrfW70+kwdZ2q2ui/6z8C/D+3HZJG2XOGreDMkOsDS+YvqCnPBRo6NhbrzMqdFRVwzcn0q11y1qG+c6/XkP1xRqbup5QJS2MCICEKNU0x1FilPkQjneSjAcljQY0Xc37qOc2RE=
+Received: from VI1PR08CA0250.eurprd08.prod.outlook.com (2603:10a6:803:dc::23)
+ by AM0PR08MB3761.eurprd08.prod.outlook.com (2603:10a6:208:103::30) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.16; Mon, 21 Oct
- 2019 16:47:46 +0000
-Received: from VE1EUR03FT005.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e09::201) by DB6PR0802CA0037.outlook.office365.com
- (2603:10a6:4:a3::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2367.20 via Frontend
- Transport; Mon, 21 Oct 2019 16:47:46 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2367.20; Mon, 21 Oct
+ 2019 16:47:50 +0000
+Received: from DB5EUR03FT033.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e0a::204) by VI1PR08CA0250.outlook.office365.com
+ (2603:10a6:803:dc::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2367.20 via Frontend
+ Transport; Mon, 21 Oct 2019 16:47:49 +0000
 Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
  smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
  header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
@@ -34,43 +34,43 @@ Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
 Received-SPF: TempError (protection.outlook.com: error in processing during
  lookup of arm.com: DNS Timeout)
 Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- VE1EUR03FT005.mail.protection.outlook.com (10.152.18.172) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2367.23 via Frontend Transport; Mon, 21 Oct 2019 16:47:44 +0000
-Received: ("Tessian outbound 6481c7fa5a3c:v33"); Mon, 21 Oct 2019 16:47:38 +0000
+ DB5EUR03FT033.mail.protection.outlook.com (10.152.20.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2305.15 via Frontend Transport; Mon, 21 Oct 2019 16:47:48 +0000
+Received: ("Tessian outbound 3fba803f6da3:v33"); Mon, 21 Oct 2019 16:47:42 +0000
 X-CheckRecipientChecked: true
-X-CR-MTA-CID: 668dfe31dcc6a0fb
+X-CR-MTA-CID: e9a25194a78a757f
 X-CR-MTA-TID: 64aa7808
-Received: from 8df1632baa3c.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.9.51])
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 9DF02324-B19A-406F-9504-5165503D2FBD.1;
-        Mon, 21 Oct 2019 16:47:33 +0000
-Received: from EUR03-VE1-obe.outbound.protection.outlook.com (mail-ve1eur03lp2051.outbound.protection.outlook.com [104.47.9.51])
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 8df1632baa3c.2
+Received: from 0883c3b38210.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.9.54])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id CD9AD2BC-D4F5-4AA8-AE85-95C16E356AB9.1;
+        Mon, 21 Oct 2019 16:47:37 +0000
+Received: from EUR03-VE1-obe.outbound.protection.outlook.com (mail-ve1eur03lp2054.outbound.protection.outlook.com [104.47.9.54])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 0883c3b38210.2
     (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Mon, 21 Oct 2019 16:47:33 +0000
+    Mon, 21 Oct 2019 16:47:37 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FAwBiQGAxZ5uhq8tEv//sBZ5qstEfYRTrBEsPs5Rsqo4bX50xKKXhS6f06m00GjVrlL1sL21blbEJIfzt7Eem0CKclrII7TrFgj7UtiCXj7SC/q1bgASdDDCdv9NUS8a3bo1gQcHqHqHpVTYkcjkVbrv+GRqC+AodJACzemkiZGxcpefFM6IKO8LwAxi13UgJ5pE91A+a4XBonvhUVx6zmZlO9uU+RlSKjVz5yNd7HkUEJBuA+lmNXiGRq0fOqYlGEPL8x8TY2Ld3t7FSbyLMSmm7TXlEPJ5gKD0ep1J1XqmpS0axwVUG+Ov6SlAJSee677W3tByeK8z4RlGzsZSbA==
+ b=Dh8A34tH++BdlsbHp71S4ooIsjM7Do4unGUK9U3vEFHYTp0J/6DF4u/q758XpDRZN9s7QfIkgjwXJhwbjR1HCiDLDzw9vmFhisBSNq5OSBVUl+La8cvwTA/1T4zOPVbHcEBQ0lEi/PCQp5l8gCm2EAglfqWMrLWvEHFN4px5e9/2Crt5RcBi02oTmXVfX8d35AFWvXpiYqJ2LFbs3VUcKzKNJgXzaGoxnw9FSOxuIIy8aiDFPevNQS0dJyMWzPUi0wpgjKsEGKN1rrg7+wSV6qhAu7ySCFqxX6HZZycNwczrVtO5XSHDZLZuS7JdyZGskdgcyrfRnyPPn+TZBDWZEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zWsSnQvJtQ+r5qSKgtU+rOw+cTaU+Npr3oF1zqZ62NU=;
- b=NBxvyPYsWVZhXLBeK1QWSZCWfi8qfUIC5t6BVMHO0slTVsZ2x0OoTh4nnLct0IJi9gJZsIDsyFJOs5+P4m59Eb4mgtIMQpBa/O3odWCdf6zNCcjvh/mTry1RP+zU9QyTStLiBvCyXCCDVRUGD1wmIUgxL7t+HQXp7TFXEfn4GB7MQa/zbYOt42NQCUF/EIS94GmkoqH0CSGcPashx7nmK/HVXAzCehZyFXB2ZktWDeMkZpxN7Ylj5krlhmcUJOWBjHh7wCSzRIIrh4UjSnvnIuqEA6MQ19ZKq/etYpV/90q4wV047wLj4FW2K3viknZ8sJ+rpYqUV7rqWXyiAWcO6A==
+ bh=LqjsYGtito0owHXQyV4kjHNN6CmmoCoNhwj27nXP6vE=;
+ b=jc/ujFe27o8obaY6EgiXW/6aO6XOpchsBej1qrWEp5ZwODa8cYQOhkYfotW8KDiJiLOnH139qTQb6FSTDeghCqG/TunGYM2hoVy+fOJ56I/Rqv8jFEW5USeJ1oly0bPdPUSxBP6LWiUNlAya0jkMJhdP2CEFs1jLihYE03ghRai+mjBrUb6xZ9FD9QC8yOB+GjVop/bdQ+icuwK0uAqVhst5wv1z5ES5Te78j5pDY82h1TywOKX3+gbPMEeCC2u5jCm5sIH8u2cMwgS7kEce/iimdZDupx0aXACn3HzHohmf9+UzQeeGEFvLIrWsNsMrm+0cbiNsXOUdDd7D6+Q/4A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
  header.d=arm.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zWsSnQvJtQ+r5qSKgtU+rOw+cTaU+Npr3oF1zqZ62NU=;
- b=lCZpulkXKD+5MMk203KPXYuhPv0BhlFnibjNr+SqNT59Xl0kq1R/i70cvVPHvtlBJTfIWlG20SCp9pGrdafoUzKLOUHAFnUlLfPvlgOAd7nmSUVPmJpAMVHcC6DYFP6mWhtjd3YXYtYfphvCO2Lc92AtKmXJXsRRMLjAdJt1Hug=
+ bh=LqjsYGtito0owHXQyV4kjHNN6CmmoCoNhwj27nXP6vE=;
+ b=6jcl66n4LMmg2Lezx5wQs+mvEHCPf/eF10A6OrrfW70+kwdZ2q2ui/6z8C/D+3HZJG2XOGreDMkOsDS+YvqCnPBRo6NhbrzMqdFRVwzcn0q11y1qG+c6/XkP1xRqbup5QJS2MCICEKNU0x1FilPkQjneSjAcljQY0Xc37qOc2RE=
 Received: from VI1PR08MB4078.eurprd08.prod.outlook.com (20.178.127.92) by
  VI1PR08MB3693.eurprd08.prod.outlook.com (20.178.13.153) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.18; Mon, 21 Oct 2019 16:47:29 +0000
+ 15.20.2347.18; Mon, 21 Oct 2019 16:47:35 +0000
 Received: from VI1PR08MB4078.eurprd08.prod.outlook.com
  ([fe80::7d25:d1f2:e3eb:868b]) by VI1PR08MB4078.eurprd08.prod.outlook.com
  ([fe80::7d25:d1f2:e3eb:868b%6]) with mapi id 15.20.2367.022; Mon, 21 Oct 2019
- 16:47:29 +0000
+ 16:47:35 +0000
 From:   Mihail Atanassov <Mihail.Atanassov@arm.com>
 To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 CC:     Mihail Atanassov <Mihail.Atanassov@arm.com>, nd <nd@arm.com>,
@@ -83,13 +83,12 @@ CC:     Mihail Atanassov <Mihail.Atanassov@arm.com>, nd <nd@arm.com>,
         "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
         "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/5] drm/komeda: Add option to print WARN- and INFO-level IRQ
- events
-Thread-Topic: [PATCH 4/5] drm/komeda: Add option to print WARN- and INFO-level
- IRQ events
-Thread-Index: AQHViC86lQh6BhWPhkSdWiuXUeWqOw==
-Date:   Mon, 21 Oct 2019 16:47:29 +0000
-Message-ID: <20191021164654.9642-5-mihail.atanassov@arm.com>
+Subject: [PATCH 5/5] drm/komeda: add rate limiting disable to err_verbosity
+Thread-Topic: [PATCH 5/5] drm/komeda: add rate limiting disable to
+ err_verbosity
+Thread-Index: AQHViC89H1LXrklOHUu4e/U5aAFNnw==
+Date:   Mon, 21 Oct 2019 16:47:35 +0000
+Message-ID: <20191021164654.9642-6-mihail.atanassov@arm.com>
 References: <20191021164654.9642-1-mihail.atanassov@arm.com>
 In-Reply-To: <20191021164654.9642-1-mihail.atanassov@arm.com>
 Accept-Language: en-GB, en-US
@@ -105,20 +104,20 @@ Authentication-Results-Original: spf=none (sender IP is )
  smtp.mailfrom=Mihail.Atanassov@arm.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-Correlation-Id: aab1b27c-dd4a-4555-858b-08d75646657d
+X-MS-Office365-Filtering-Correlation-Id: b57cd059-caff-4c93-bd8c-08d7564667c4
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-TrafficTypeDiagnostic: VI1PR08MB3693:|VI1PR08MB3693:|DBBPR08MB4492:
+X-MS-TrafficTypeDiagnostic: VI1PR08MB3693:|VI1PR08MB3693:|AM0PR08MB3761:
 x-ms-exchange-transport-forked: True
-X-Microsoft-Antispam-PRVS: <DBBPR08MB4492A6B422FF0774D107563B8F690@DBBPR08MB4492.eurprd08.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <AM0PR08MB376136FCE85C211C136C6A2A8F690@AM0PR08MB3761.eurprd08.prod.outlook.com>
 x-checkrecipientrouted: true
-x-ms-oob-tlc-oobclassifiers: OLM:1388;OLM:1388;
+x-ms-oob-tlc-oobclassifiers: OLM:2449;OLM:2449;
 x-forefront-prvs: 0197AFBD92
 X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(366004)(396003)(346002)(39860400002)(199004)(189003)(11346002)(6436002)(316002)(54906003)(256004)(8936002)(6512007)(14444005)(2501003)(71200400001)(5640700003)(71190400001)(50226002)(486006)(2906002)(446003)(6486002)(2616005)(44832011)(5660300002)(8676002)(476003)(305945005)(66066001)(36756003)(86362001)(25786009)(14454004)(186003)(478600001)(6506007)(386003)(102836004)(26005)(4326008)(2351001)(81156014)(1076003)(6116002)(3846002)(66946007)(81166006)(66556008)(52116002)(66476007)(7736002)(64756008)(66446008)(99286004)(76176011)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3693;H:VI1PR08MB4078.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: /LkEXHfkUUbTUyBF3hDHpD6g+u1DEcGGRcjkX8nxTcUdGVb6GzRz1Uz+KWcauw5IpcQcyPTq8b/h20tGOIabjeTx/h5UBEBJ8cGkm+cXYf2E7ZP3Akv92wLaZ6VXeKyR5nkKxRs69AzM8jy0K0xAl+gTNJzvLEkgNW7h89zu4eYWn2AF7AFNVE5bXfhdoASWmhCr7o+Eg66mPipCmO3nn+b0Kl35g/CLAJUGUUAv892Q9I07bbEjYICJlxetfAkp/qKU4LaHFzzNxrHhNyssyN/vEH4Ux2LjobI2C6pjp8rBgue0vwzX0enzs40MFjXESMVtQlfTfHa0xWR9wZYFgZkBC5wLRpewJAhWoHVn7Bp4eGhUJQpbNck4JFXmwXiWpdVHrd3Cj/k797ckNptbZCUFTm4+Ie23TquO0oHqkZ1NIaEwlXSWNqd/hPteZ2g2
+X-Microsoft-Antispam-Message-Info-Original: HLkzIMJEQxzlI9copX2NPj0yiWNa8wBN39G2iPJ9LYDFDKx3no8aPiV2lddOQ4qf0KSznQ+tIoReapEbfhW9rkAvw5Vq0rPPJwN8kx+h71IyKY5jKFXu07vJpZU388K01J8iNFhTdFfkcJOfhNfMKSVFOCO/RMwnG7md10/B9nGxm65wLLpJ0urrWMu+baCr/wLFXS1zG7JF/p/Kok3jltVYDNO3icOsx3PK26YVtXAasOPSrC+iS9RPfKQ5MRap8IYlvfhdn82AypvpxIepZhVnSpljhnEkq3NFnV9V4BQq/O97ANZ0VdPY6DYmT6D8r8Y723m9F3DYdYoU+DY15XiaS25552kSpl53J4L4ttVHNFCILA2ef5VgNp3m2boLhs9HhyBmUeV58Q/J33Jw3X8yiStOD+nYI/o8sJ6BcKaV1gv+JaMSeF9P6fHbdslF
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
@@ -126,81 +125,65 @@ X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3693
 Original-Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Mihail.Atanassov@arm.com; 
 X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT005.eop-EUR03.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(136003)(396003)(39860400002)(189003)(199004)(14454004)(316002)(305945005)(6116002)(2501003)(3846002)(2351001)(36906005)(2906002)(7736002)(54906003)(50466002)(14444005)(486006)(5660300002)(63350400001)(446003)(2616005)(11346002)(126002)(76130400001)(476003)(70206006)(70586007)(6512007)(356004)(336012)(23756003)(6486002)(99286004)(5640700003)(6506007)(6862004)(25786009)(76176011)(47776003)(186003)(4326008)(66066001)(386003)(102836004)(26005)(1076003)(22756006)(86362001)(478600001)(26826003)(8746002)(8676002)(8936002)(81156014)(81166006)(50226002)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR08MB4492;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: f3670ba4-12a0-40d4-70a7-08d756465c6d
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT033.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(396003)(376002)(39860400002)(199004)(189003)(6486002)(478600001)(2351001)(26826003)(70206006)(1076003)(86362001)(356004)(70586007)(76130400001)(2501003)(3846002)(6116002)(2906002)(14454004)(25786009)(305945005)(7736002)(50226002)(81156014)(5640700003)(8936002)(81166006)(8746002)(8676002)(50466002)(5660300002)(54906003)(316002)(14444005)(47776003)(186003)(6862004)(99286004)(63350400001)(4326008)(76176011)(26005)(102836004)(6506007)(386003)(66066001)(22756006)(2616005)(446003)(486006)(11346002)(6512007)(126002)(476003)(23756003)(36756003)(336012);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3761;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: a8b2873a-98fe-4272-17fa-08d756465ffd
 NoDisclaimer: True
 X-Forefront-PRVS: 0197AFBD92
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HyuAywHau+dQB4LZ0njkyN1exSsm1VfrQ11ETCl26YToCjlzhxHxqJXHS6GV24cWZmcG5eyS9mdYxq5J5kxtbJr8t+XPtsm4x4FoPhmizYJsSyDWZfZRloNCfA8dujWWDdMqdATcB6Io1Z1S3Gbp3biZtQTozR0JCUl7/BYSwhWVRfdT8TxO/Ct7BuG9tBu40q3u1gKlID+nCojB1z95NwopmQIpsKfj9OGzhRNxWOzmnQb6UlViSMnmyTO0ym6whQpl9XOKiP1PqPU0eZt4EE4LO2L8jxPqQzzlvZOHFnev87EITz2EiC9inBZpnPEfjbl71siLtU5ZnYCJYvhWXww4hoMLgm3zdjBE43Q5W+L00Duggm3bHagZ83pCwSkW2NBGlUbNV0EMVI7yUser7YV+Egcs8/P5/DPKxkWpPzBDSQWh6VsApLUECNNnxO+R
+X-Microsoft-Antispam-Message-Info: Bv65fn5ZeTCtYa67PTlTF7mKpJUkqjdAsf0NsVgf9QNd6GyMm/68SJlEhLgdiU9TzNows9Id9WHxs9DAOvNMw2GJMJWMva4w7rUAxRLH0p7a2BEwd75oOX+XIrEG+dQI3Faqyj2xEdmoHRhXdkXJNmwJ+06rjX38fY27b5iFnBaSyKG2EkqUP5zbBNkHr7Q7ia7Yt5UEBvYiJjP1z2vcTIPHi1iL2F9Z5UuBw1pCUxIrlJQPZu4ZttJvlMQxgcc1Rh3M4dRFnNwvo3Y0Rrhv9wC4P+0OMDKhatacWyvJ6Mjd/FzGQfAuarkysowcR2xZ9TfHdVgkf1h0d/2lEBFWwhxjmwwsHZEwawVU8//JX5j9D2BqFll4slof5njpFwxD3d0yWBW7Hyfz3Cdfah5ILZr9uLSxb6MTFPEUGekLgWhUfAJ3erY/11Ik57ltTyt/
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2019 16:47:44.5568
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2019 16:47:48.4370
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: aab1b27c-dd4a-4555-858b-08d75646657d
+X-MS-Exchange-CrossTenant-Network-Message-Id: b57cd059-caff-4c93-bd8c-08d7564667c4
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB4492
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3761
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extra detail (normally off) almost never hurts.
+It's possible to get multiple events in a single frame/flip, so add an
+option to print them all.
 
 Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
 ---
- drivers/gpu/drm/arm/display/komeda/komeda_dev.h   | 11 +++++++++++
- drivers/gpu/drm/arm/display/komeda/komeda_event.c |  4 ++++
- 2 files changed, 15 insertions(+)
+ drivers/gpu/drm/arm/display/komeda/komeda_dev.h   | 2 ++
+ drivers/gpu/drm/arm/display/komeda/komeda_event.c | 3 ++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/=
 drm/arm/display/komeda/komeda_dev.h
-index 4809000c1efb..d9fc9c48859a 100644
+index d9fc9c48859a..15f52e304c08 100644
 --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
 +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-@@ -51,6 +51,13 @@
-=20
- #define KOMEDA_WARN_EVENTS	KOMEDA_ERR_CSCE
-=20
-+#define KOMEDA_INFO_EVENTS ({0 \
-+			    | KOMEDA_EVENT_VSYNC \
-+			    | KOMEDA_EVENT_FLIP \
-+			    | KOMEDA_EVENT_EOW \
-+			    | KOMEDA_EVENT_MODE \
-+			    })
-+
- /* malidp device id */
- enum {
- 	MALI_D71 =3D 0,
-@@ -211,6 +218,10 @@ struct komeda_dev {
- 	u16 err_verbosity;
- 	/* Print a single line per error per frame with error events. */
- #define KOMEDA_DEV_PRINT_ERR_EVENTS BIT(0)
-+	/* Print a single line per warning per frame with error events. */
-+#define KOMEDA_DEV_PRINT_WARN_EVENTS BIT(1)
-+	/* Print a single line per info event per frame with error events. */
-+#define KOMEDA_DEV_PRINT_INFO_EVENTS BIT(2)
+@@ -224,6 +224,8 @@ struct komeda_dev {
+ #define KOMEDA_DEV_PRINT_INFO_EVENTS BIT(2)
  	/* Dump DRM state on an error or warning event. */
  #define KOMEDA_DEV_PRINT_DUMP_STATE_ON_EVENT BIT(8)
++	/* Disable rate limiting of event prints (normally one per commit) */
++#define KOMEDA_DEV_PRINT_DISABLE_RATELIMIT BIT(12)
  };
+=20
+ static inline bool
 diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_event.c b/drivers/gp=
 u/drm/arm/display/komeda/komeda_event.c
-index 5da61e7d75d5..bf88463bb4d9 100644
+index bf88463bb4d9..86e33fed8a91 100644
 --- a/drivers/gpu/drm/arm/display/komeda/komeda_event.c
 +++ b/drivers/gpu/drm/arm/display/komeda/komeda_event.c
-@@ -124,6 +124,10 @@ void komeda_print_events(struct komeda_events *evts, s=
-truct drm_device *dev)
+@@ -119,7 +119,8 @@ void komeda_print_events(struct komeda_events *evts, st=
+ruct drm_device *dev)
+ 	/* reduce the same msg print, only print the first evt for one frame */
+ 	if (evts->global || is_new_frame(evts))
+ 		en_print =3D true;
+-	if (!en_print)
++	if (!(err_verbosity & KOMEDA_DEV_PRINT_DISABLE_RATELIMIT)
++	    && !en_print)
+ 		return;
 =20
  	if (err_verbosity & KOMEDA_DEV_PRINT_ERR_EVENTS)
- 		print_evts |=3D KOMEDA_ERR_EVENTS;
-+	if (err_verbosity & KOMEDA_DEV_PRINT_WARN_EVENTS)
-+		print_evts |=3D KOMEDA_WARN_EVENTS;
-+	if (err_verbosity & KOMEDA_DEV_PRINT_INFO_EVENTS)
-+		print_evts |=3D KOMEDA_INFO_EVENTS;
-=20
- 	if (evts_mask & print_evts) {
- 		char msg[256];
 --=20
 2.23.0
 
