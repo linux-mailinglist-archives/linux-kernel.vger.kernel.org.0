@@ -2,124 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 171CADEBF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:19:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D018BDEC01
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:20:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbfJUMTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 08:19:07 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46946 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728521AbfJUMTG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:19:06 -0400
-Received: by mail-lf1-f67.google.com with SMTP id t8so9885202lfc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 05:19:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JNOM4Pg0n8Q4UqLt3Kh0p/niTCV+End7za47n4/6Ktg=;
-        b=UNEfoqJSjHmG0+iNd+CHQt8KffLkhlNrReI8ER0SN3uGr4sAv282oSQFllCK1GufFa
-         zhyeCzPVuEfYjLiYUz65wwf4KY0lcSxLiBZfhClN0nM4F+d1yXzwkBXnW56H1nx2orKR
-         9lHhBafiS+qfKOKzY/Sz5Y0Vu8kmm9SZea1bw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JNOM4Pg0n8Q4UqLt3Kh0p/niTCV+End7za47n4/6Ktg=;
-        b=UZgxaZBEwZSrAjLRldUsMuO7SeENfr7hQaBKpFIlO+MMdEHXdSXX9Lgo86AUfW8Fkr
-         DT4VtBlmKmEJVantqj6pLwS5MnE37wwpl+Axsh/uyOKML6ILycPh8SFRPal4DsKHYbQS
-         gV0QexcMJag5LDdjoFXQ3ANyPBjjpcw8wPDVxXms/0qseQEdOtWhDUWDhZz4K89WsyBt
-         suBOIvENxiAQpRru7AGswMteqsQLF17FbIfEEV8PYTM4whAaReAwJ+qTwOdICTGI4SSk
-         8YawV++SqB63WOGItgUmXvQi2Lw7+7al4qO5Ds6Zp2nCCsIvs+zbU6h2RqDsO2CgF1sX
-         shxQ==
-X-Gm-Message-State: APjAAAVbK5gYZfQnX4VNPq6Xw2OtdqeMkZh+n0knh+RzTnTgMmihzADZ
-        U8L3IFYofeJUlqCmcRPjrO0N1Q==
-X-Google-Smtp-Source: APXvYqwt2eM1kZ85F15jYxbBeCLzCU2TXQeJLonX186jbNS9UUkduoKUyAQHXJVB71RH+jbnqv8GOQ==
-X-Received: by 2002:ac2:484e:: with SMTP id 14mr8022102lfy.184.1571660343384;
-        Mon, 21 Oct 2019 05:19:03 -0700 (PDT)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id r19sm6810718ljd.95.2019.10.21.05.19.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Oct 2019 05:19:02 -0700 (PDT)
-Subject: Re: [PATCH v6] taskstats: fix data-race
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     bsingharora@gmail.com, dvyukov@google.com, elver@google.com,
-        parri.andrea@gmail.com, stable@vger.kernel.org,
-        syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com
-References: <20191009114809.8643-1-christian.brauner@ubuntu.com>
- <20191021113327.22365-1-christian.brauner@ubuntu.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <efaecf5d-b528-24ba-1955-e1b190ece98c@rasmusvillemoes.dk>
-Date:   Mon, 21 Oct 2019 14:19:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728562AbfJUMUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 08:20:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39002 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728345AbfJUMUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 08:20:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D3B73B35C;
+        Mon, 21 Oct 2019 12:20:02 +0000 (UTC)
+Date:   Mon, 21 Oct 2019 14:20:02 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     Oscar Salvador <osalvador@suse.de>,
+        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 02/16] mm,madvise: call soft_offline_page()
+ without MF_COUNT_INCREASED
+Message-ID: <20191021122002.GM9379@dhcp22.suse.cz>
+References: <20191017142123.24245-1-osalvador@suse.de>
+ <20191017142123.24245-3-osalvador@suse.de>
+ <20191018115227.GL5017@dhcp22.suse.cz>
+ <20191021070254.GB8782@hori.linux.bs1.fc.nec.co.jp>
 MIME-Version: 1.0
-In-Reply-To: <20191021113327.22365-1-christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021070254.GB8782@hori.linux.bs1.fc.nec.co.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/10/2019 13.33, Christian Brauner wrote:
-> The first approach used smp_load_acquire() and smp_store_release().
-> However, after having discussed this it seems that the data dependency
-> for kmem_cache_alloc() would be fixed by WRITE_ONCE().
-> Furthermore, the smp_load_acquire() would only manage to order the stats
-> check before the thread_group_empty() check. So it seems just using
-> READ_ONCE() and WRITE_ONCE() will do the job and I wanted to bring this
-> up for discussion at least.
+On Mon 21-10-19 07:02:55, Naoya Horiguchi wrote:
+> On Fri, Oct 18, 2019 at 01:52:27PM +0200, Michal Hocko wrote:
+> > On Thu 17-10-19 16:21:09, Oscar Salvador wrote:
+> > > From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > 
+> > > The call to get_user_pages_fast is only to get the pointer to a struct
+> > > page of a given address, pinning it is memory-poisoning handler's job,
+> > > so drop the refcount grabbed by get_user_pages_fast
+> > > 
+> > > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> > > ---
+> > >  mm/madvise.c | 24 ++++++++++++------------
+> > >  1 file changed, 12 insertions(+), 12 deletions(-)
+> > > 
+> > > diff --git a/mm/madvise.c b/mm/madvise.c
+> > > index 2be9f3fdb05e..89ed9a22ff4f 100644
+> > > --- a/mm/madvise.c
+> > > +++ b/mm/madvise.c
+> > > @@ -878,16 +878,24 @@ static int madvise_inject_error(int behavior,
+> > >  		 */
+> > >  		order = compound_order(compound_head(page));
+> > >  
+> > > -		if (PageHWPoison(page)) {
+> > > -			put_page(page);
+> > > +		/*
+> > > +		 * The get_user_pages_fast() is just to get the pfn of the
+> > > +		 * given address, and the refcount has nothing to do with
+> > > +		 * what we try to test, so it should be released immediately.
+> > > +		 * This is racy but it's intended because the real hardware
+> > > +		 * errors could happen at any moment and memory error handlers
+> > > +		 * must properly handle the race.
+> > > +		 */
+> > > +		put_page(page);
+> > > +
+> > > +		if (PageHWPoison(page))
+> > >  			continue;
+> > > -		}
+> > >  
+> > >  		if (behavior == MADV_SOFT_OFFLINE) {
+> > >  			pr_info("Soft offlining pfn %#lx at process virtual address %#lx\n",
+> > >  					pfn, start);
+> > >  
+> > > -			ret = soft_offline_page(page, MF_COUNT_INCREASED);
+> > > +			ret = soft_offline_page(page, 0);
+> > 
+> > What does prevent this struct page to go away completely?
 > 
-> /* v6 */
-> - Christian Brauner <christian.brauner@ubuntu.com>:
->   - bring up READ_ONCE()/WRITE_ONCE() approach for discussion
-> ---
->  kernel/taskstats.c | 26 +++++++++++++++-----------
->  1 file changed, 15 insertions(+), 11 deletions(-)
-> 
-> diff --git a/kernel/taskstats.c b/kernel/taskstats.c
-> index 13a0f2e6ebc2..111bb4139aa2 100644
-> --- a/kernel/taskstats.c
-> +++ b/kernel/taskstats.c
-> @@ -554,25 +554,29 @@ static int taskstats_user_cmd(struct sk_buff *skb, struct genl_info *info)
->  static struct taskstats *taskstats_tgid_alloc(struct task_struct *tsk)
->  {
->  	struct signal_struct *sig = tsk->signal;
-> -	struct taskstats *stats;
-> +	struct taskstats *stats_new, *stats;
->  
-> -	if (sig->stats || thread_group_empty(tsk))
-> -		goto ret;
-> +	/* Pairs with WRITE_ONCE() below. */
-> +	stats = READ_ONCE(sig->stats);
-> +	if (stats || thread_group_empty(tsk))
-> +		return stats;
->  
->  	/* No problem if kmem_cache_zalloc() fails */
-> -	stats = kmem_cache_zalloc(taskstats_cache, GFP_KERNEL);
-> +	stats_new = kmem_cache_zalloc(taskstats_cache, GFP_KERNEL);
->  
->  	spin_lock_irq(&tsk->sighand->siglock);
-> -	if (!sig->stats) {
-> -		sig->stats = stats;
-> -		stats = NULL;
-> +	if (!stats) {
-> +		stats = stats_new;
-> +		/* Pairs with READ_ONCE() above. */
-> +		WRITE_ONCE(sig->stats, stats_new);
-> +		stats_new = NULL;
+> Nothing does it.  Memory error handler tries to pin by itself and
+> then determines what state the page is in now.
 
-No idea about the memory ordering issues, but don't you need to
-load/check sig->stats again? Otherwise it seems that two threads might
-both see !sig->stats, both allocate a stats_new, and both
-unconditionally in turn assign their stats_new to sig->stats. Then the
-first assignment ends up becoming a memory leak (and any writes through
-that pointer done by the caller end up in /dev/null...)
-
-Rasmus
+OK, but the page is not pinned by this context so it can go away at any
+time, right? Or do I miss your point? Who would be the Error handler
+context in this case?
+-- 
+Michal Hocko
+SUSE Labs
