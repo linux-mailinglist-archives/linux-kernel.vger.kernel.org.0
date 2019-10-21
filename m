@@ -2,152 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 082F3DEDC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:38:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 062D0DEDF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728991AbfJUNiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:38:06 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34793 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbfJUNiF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:38:05 -0400
-Received: by mail-pg1-f194.google.com with SMTP id k20so7859379pgi.1;
-        Mon, 21 Oct 2019 06:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=b1PZ6SOJ7OdDQt8+lVytXILJGAVRFkgpcJ5+dAG12fw=;
-        b=LB+tV9MYjiaR8vrVT25ivC09xXjhdonxNFWid2hDBLzWPHw3/GK/90NtR4BjlhHJxx
-         DGa7cp7EM16xC3BDXNfXntsX2rMAAGvvjN3/e+U83apLVZDuDF/OzNXLLdaZoyehtx3H
-         ckLQZbuyW37o5YO58jyRWIiQxLr6gil8Ea/E5NjS/W+SxICC2p7Mk+sVhzSdTyvM1h1y
-         zTP9SxbdSvdtjwVAF1Yo+4wrGLf4j0bImlu1nLV6MxrJPuTYkRV9xrQUMnfmg6SW5W+Q
-         Ajm+6jkPOjljf1SybFLdxWn1S7hzIzXMO0dWanbUnst1OAvPkRkIFdupDgeEm0ZhZ7TQ
-         2OvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=b1PZ6SOJ7OdDQt8+lVytXILJGAVRFkgpcJ5+dAG12fw=;
-        b=irR+GoIisnh62PssvmOGV5IhEH046Ohu8P5UIobgz3bAOv1IF06Xp97K0pcc9Z+JCR
-         dZntZQ71pAUixAKZd/ZLf0dOG9ZrRgDlRlDe2skumBIsYSYbCGY3JnPiiP2sSmhGGOvI
-         IyPJVZXbqrIU7/Yqbfote5hnPRNyEQj0cJmO/0hVyzcfesh7aOF9Wdc/m9SwDsTE8P+o
-         BMVDCTdn13AHkleJlr+G35FZlapo4hy3VULRlo4bxunMcK8H1V4OQx32Dn4WDDsBAQ6H
-         BnZ+Y3M0e+1FrbkBrTUbN+ZoMdgda6F0+7UQ2A8uJXOgOaRvBlBn3SQjxXqjp/QSHeqM
-         YrfA==
-X-Gm-Message-State: APjAAAWkCW+xkajmRMatBa166jXOsGAGpt7kS/eDpDVNzJO0RxueMJiz
-        x2iX7YVkTZG6IEwvgjCh6HafQK2L
-X-Google-Smtp-Source: APXvYqx6UmiUNJ8OsgobEge2zBLNBqpn+JDBOATMHXfa+4BF+S0SfCYz4R9XSX0QOoH8TvkXgpov4w==
-X-Received: by 2002:a17:90a:8048:: with SMTP id e8mr30110326pjw.0.1571665083089;
-        Mon, 21 Oct 2019 06:38:03 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m12sm5595043pjk.13.2019.10.21.06.38.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Oct 2019 06:38:01 -0700 (PDT)
-Subject: Re: [PATCH v2 3/4] watchdog: add meson secure watchdog driver
-To:     Xingyu Chen <xingyu.chen@amlogic.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Qianggui Song <qianggui.song@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, linux-watchdog@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1571387622-35132-1-git-send-email-xingyu.chen@amlogic.com>
- <1571387622-35132-4-git-send-email-xingyu.chen@amlogic.com>
- <7397f6db-1dc8-3abd-41ff-2e47323c7ffa@roeck-us.net>
- <bfc892af-1cd3-1437-75b2-5ba2b7913284@amlogic.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <bd5ed275-4ae4-4163-b585-23fbead9833f@roeck-us.net>
-Date:   Mon, 21 Oct 2019 06:38:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729398AbfJUNkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:40:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41690 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729387AbfJUNkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:40:02 -0400
+Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 176F221783;
+        Mon, 21 Oct 2019 13:39:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571665201;
+        bh=RJ2JKF7aHbIXXe6fl+8TR4g4jjPM+fC+GP7eMON11ao=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rbX23Qj2fXZirrFAhYEv3m/Uz6PlPSyVaO4qH2swy/MGOqL1Yy5DW3zAsxkHA47C/
+         shhhv0KKHY8CKYoIQm90U2F4fNN8pq5kP/xQzAKaSBBYdPd5dsXpyW/22SuuBWjj4/
+         U4vOVnNySJX64juDx7ZmNC9/YSJTN0LOz0xvOWC8=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
+        <lclaudio@redhat.com>
+Subject: [PATCH 24/57] libbeauty: Add a generator for x86's IRQ vectors -> strings
+Date:   Mon, 21 Oct 2019 10:38:01 -0300
+Message-Id: <20191021133834.25998-25-acme@kernel.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191021133834.25998-1-acme@kernel.org>
+References: <20191021133834.25998-1-acme@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <bfc892af-1cd3-1437-75b2-5ba2b7913284@amlogic.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/21/19 1:03 AM, Xingyu Chen wrote:
-> Hi, Guenter
-> 
-> On 2019/10/21 0:56, Guenter Roeck wrote:
->> On 10/18/19 1:33 AM, Xingyu Chen wrote:
->>> The watchdog controller on the Meson-A/C series SoCs is moved to secure
->>> world, watchdog operation needs to be done in secure EL3 mode via ATF,
->>> Non-secure world can call SMC instruction to trap to AFT for watchdog
->>> operation.
->>>
->>> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
->>> ---
->>>   drivers/watchdog/Kconfig         |  17 ++++
->>>   drivers/watchdog/Makefile        |   1 +
->>>   drivers/watchdog/meson_sec_wdt.c | 187 +++++++++++++++++++++++++++++++++++++++
->>>   3 files changed, 205 insertions(+)
->>>   create mode 100644 drivers/watchdog/meson_sec_wdt.c
->>>
->>> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
->>> index 58e7c10..e84be42 100644
->>> --- a/drivers/watchdog/Kconfig
->>> +++ b/drivers/watchdog/Kconfig
->>> @@ -826,6 +826,23 @@ config MESON_GXBB_WATCHDOG
->>>         To compile this driver as a module, choose M here: the
->>>         module will be called meson_gxbb_wdt.
->>> +config MESON_SEC_WATCHDOG
->>> +    tristate "Amlogic Meson Secure watchdog support"
->>> +    depends on MESON_SM
->>> +    depends on ARCH_MESON || COMPILE_TEST
->>
->> This dependency is pointless. MESON_SM already depends on ARCH_MESON,
->> thus specifying "COMPILE_TEST" here adds no value but only
->> creates confusion.
-> Thanks for your analysis, perhaps i should remove the line below.
-> - depends on ARCH_MESON || COMPILE_TEST
-> 
-> Is it ok to modify code above like this ?
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Yes.
-[ ... ]
+We'll wire this up with the 'vector' arg in irq_vectors:*, etc:
 
->>> +static unsigned int meson_sec_wdt_get_timeleft(struct watchdog_device *wdt_dev)
->>> +{
->>> +    int ret;
->>> +    unsigned int timeleft;
->>> +    struct meson_sec_wdt *data = watchdog_get_drvdata(wdt_dev);
->>> +
->>> +    ret = meson_sm_call(data->fw, SM_WATCHDOG_OPS, &timeleft,
->>> +                MESON_SIP_WDT_GETTIMELEFT, 0, 0, 0, 0);
->>> +
->>> +    if (ret)
->>> +        return ret;
->>
->> Meh, that doesn't work. I just realized that the return type is unsigned,
->> so returning a negative error code is pointless. Guess we'll have to
->> live with returning 0 in this case after all. I wonder if we should
->> fix the API and return an integer (with negative error code), but that
->> is a different question.
-> Thanks for your review.
-> 
-> IMO, if returning an integer, and the value which copy to user buf should be formatted with %d instead of %u (see timeleft_show), it will cause the max value of timeleft is reduced from 4294967295 to 2147483647. but i'am not sure whether it will bring risk.
+Just run it straight away and check what it produces:
 
-Not that it matters right now, but I don't think that limiting 'timeleft'
-reporting to 2147483647 seconds, or ~68 years, would cause any risk.
-It would just be a large patch changing several drivers all at once,
-that is all.
+  $ tools/perf/trace/beauty/tracepoints/x86_irq_vectors.sh
+  static const char *x86_irq_vectors[] = {
+  	[0x02] = "NMI",
+  	[0x12] = "MCE",
+  	[0x20] = "IRQ_MOVE_CLEANUP",
+  	[0x80] = "IA32_SYSCALL",
+  	[0xec] = "LOCAL_TIMER",
+  	[0xed] = "HYPERV_STIMER0",
+  	[0xee] = "HYPERV_REENLIGHTENMENT",
+  	[0xef] = "MANAGED_IRQ_SHUTDOWN",
+  	[0xf0] = "POSTED_INTR_NESTED",
+  	[0xf1] = "POSTED_INTR_WAKEUP",
+  	[0xf2] = "POSTED_INTR",
+  	[0xf3] = "HYPERVISOR_CALLBACK",
+  	[0xf4] = "DEFERRED_ERROR",
+  	[0xf6] = "IRQ_WORK",
+  	[0xf7] = "X86_PLATFORM_IPI",
+  	[0xf8] = "REBOOT",
+  	[0xf9] = "THRESHOLD_APIC",
+  	[0xfa] = "THERMAL_APIC",
+  	[0xfb] = "CALL_FUNCTION_SINGLE",
+  	[0xfc] = "CALL_FUNCTION",
+  	[0xfd] = "RESCHEDULE",
+  	[0xfe] = "ERROR_APIC",
+  	[0xff] = "SPURIOUS_APIC",
+  };
+  $
 
-> 
-> So i also think returning 0 may be better in this case.
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-cpl1pa7kkwn0llufi5qw4li8@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ .../beauty/tracepoints/x86_irq_vectors.sh     | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100755 tools/perf/trace/beauty/tracepoints/x86_irq_vectors.sh
 
-Yes, please do that.
+diff --git a/tools/perf/trace/beauty/tracepoints/x86_irq_vectors.sh b/tools/perf/trace/beauty/tracepoints/x86_irq_vectors.sh
+new file mode 100755
+index 000000000000..f920003723b3
+--- /dev/null
++++ b/tools/perf/trace/beauty/tracepoints/x86_irq_vectors.sh
+@@ -0,0 +1,27 @@
++#!/bin/sh
++# SPDX-License-Identifier: LGPL-2.1
++# (C) 2019, Arnaldo Carvalho de Melo <acme@redhat.com>
++
++if [ $# -ne 1 ] ; then
++	arch_x86_header_dir=tools/arch/x86/include/asm/
++else
++	arch_x86_header_dir=$1
++fi
++
++x86_irq_vectors=${arch_x86_header_dir}/irq_vectors.h
++
++# FIRST_EXTERNAL_VECTOR is not that useful, find what is its number
++# and then replace whatever is using it and that is useful, which at
++# the time of writing of this script was: IRQ_MOVE_CLEANUP_VECTOR.
++
++first_external_regex='^#define[[:space:]]+FIRST_EXTERNAL_VECTOR[[:space:]]+(0x[[:xdigit:]]+)$'
++first_external_vector=$(egrep ${first_external_regex} ${x86_irq_vectors} | sed -r "s/${first_external_regex}/\1/g")
++
++printf "static const char *x86_irq_vectors[] = {\n"
++regex='^#define[[:space:]]+([[:alnum:]_]+)_VECTOR[[:space:]]+(0x[[:xdigit:]]+)$'
++sed -r "s/FIRST_EXTERNAL_VECTOR/${first_external_vector}/g" ${x86_irq_vectors} | \
++egrep ${regex} | \
++	sed -r "s/${regex}/\2 \1/g" | sort -n | \
++	xargs printf "\t[%s] = \"%s\",\n"
++printf "};\n\n"
++
+-- 
+2.21.0
 
-Thanks,
-Guenter
