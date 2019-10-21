@@ -2,47 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26F69DF898
+	by mail.lfdr.de (Postfix) with ESMTP id 8F749DF899
 	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 01:23:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730709AbfJUXVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 19:21:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47580 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730695AbfJUXVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 19:21:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6EE46AFE3;
-        Mon, 21 Oct 2019 23:21:08 +0000 (UTC)
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     mingo@kernel.org
-Cc:     tglx@linutronix.de, peterz@infradead.org, bp@alien8.de,
-        x86@kernel.org, dave@stgolabs.net, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 4/4] x86/mm, pat:  Rename pat_rbtree.c to pat_interval.c
-Date:   Mon, 21 Oct 2019 16:19:24 -0700
-Message-Id: <20191021231924.25373-5-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191021231924.25373-1-dave@stgolabs.net>
-References: <20191021231924.25373-1-dave@stgolabs.net>
+        id S1730517AbfJUXVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 19:21:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729270AbfJUXVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 19:21:50 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAA9920882;
+        Mon, 21 Oct 2019 23:21:49 +0000 (UTC)
+Date:   Mon, 21 Oct 2019 19:21:46 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v3] tracing: Introduce trace event injection
+Message-ID: <20191021192146.0d651ce2@oasis.local.home>
+In-Reply-To: <CAM_iQpU3dqvUR0Qp6ZdZrAiyT_t_uFk4K79vcT2Q_-EjqBCGbw@mail.gmail.com>
+References: <20190904211456.31204-1-xiyou.wangcong@gmail.com>
+        <CAM_iQpUiOi8JDBqAtMHii5UHK3D6WQkk_G5DriJ9Y0yTYbWf3Q@mail.gmail.com>
+        <CAM_iQpU3dqvUR0Qp6ZdZrAiyT_t_uFk4K79vcT2Q_-EjqBCGbw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Considering the previous changes, this is a more proper name.
+On Mon, 21 Oct 2019 13:41:51 -0700
+Cong Wang <xiyou.wangcong@gmail.com> wrote:
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- arch/x86/mm/{pat_rbtree.c => pat_interval.c} | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- rename arch/x86/mm/{pat_rbtree.c => pat_interval.c} (100%)
+> On Mon, Sep 23, 2019 at 2:13 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
+> >
+> > Hi, Steven
+> >
+> > Any reviews for V3? I've addressed your concern about Kconfig.
+> >  
+> 
+> Ping..
 
-diff --git a/arch/x86/mm/pat_rbtree.c b/arch/x86/mm/pat_interval.c
-similarity index 100%
-rename from arch/x86/mm/pat_rbtree.c
-rename to arch/x86/mm/pat_interval.c
--- 
-2.16.4
+Sorry, I still haven't forgotten about you. Just trying to deal with
+other fires at the moment.
 
+-- Steve
