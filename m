@@ -2,227 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B6F8DEC21
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:26:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1762DEC26
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:26:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbfJUM0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 08:26:12 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45454 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727392AbfJUM0M (ORCPT
+        id S1728663AbfJUM0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 08:26:45 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:41773 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727685AbfJUM0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:26:12 -0400
-Received: by mail-wr1-f65.google.com with SMTP id q13so8774899wrs.12
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 05:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qHVBYXsOO6hKuBWHsZEA4hqDK5PM7Cy9mG1hG95G+Fo=;
-        b=YzSgG/7cGg5JlIO32eJye07LN/sVpd2NLEKr455bPImBsMOgQeP7sD0kkGc330R5hV
-         jBwtzVRPQ3GWUGUNAxtaFO1uDNKdwUHhj00jIcbKxdjIQevX4RoKWf8JMqt9v7DtQyMF
-         PTnrV8GfhzXM2ivArGXzKOXgctwP+cwNFvDxqvwJO/NLmknme0vvhaL0aFmv8730fsDk
-         +Gi0UjX2OvA3cUOWlqTTeK3vADkdRv60eWE+mWp5QIKeIweJebdcmbU28oQRnvPVCIMq
-         cid3PRPyq8uIjntF5zNf9alIUKoRszqZpdnVOFR6qjhcHfPyzCH3ndKGZFm/TtAFP+25
-         UCeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qHVBYXsOO6hKuBWHsZEA4hqDK5PM7Cy9mG1hG95G+Fo=;
-        b=jAI408oCV4+vjy8ERA37t1/HWk9pJAVUtmflNVMh98Km2u/uo42bsFqyNVoIiJdTsA
-         t7BykvFYG6NsjJNmhOc8UWmnIxrxEnNkJz2wJirEHR6DX7KceBader4y2IF2UfJrICfv
-         JN8JRIuChuI4jP2moQ3BGUKL2GmKyg90csg+G/z7til4++66MrOR94OaMXMypgg63Poe
-         UfZXnDo9nwL5ndNZUN89jVpQgEBsYCK3DJVT/lX45gTXjnAYJnZFXg6XFHz4PKbkFvNl
-         DaPg5udZkmFiMsbrg6apyYyYD9uiJd8KCO1m5xwLnRVrHoxqGp8ZGBSOaE7dLwZpvdCR
-         bwfg==
-X-Gm-Message-State: APjAAAUIKUGOtPOUbkzOQCTYgx+oZqHUbW+/nEVfe75s8NjW3rVFxVn4
-        pG1EFRjSxQNLXeN7RBHaSUQa9A==
-X-Google-Smtp-Source: APXvYqznawhtnnwpuBdog7pKe5gZ4rlqUbhqGD143d++D+Qqgj93ohS2ObHSBqr409thEWRRKDYxtw==
-X-Received: by 2002:adf:e64f:: with SMTP id b15mr6699855wrn.372.1571660769331;
-        Mon, 21 Oct 2019 05:26:09 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id z1sm14789929wrn.57.2019.10.21.05.26.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 05:26:08 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 13:26:06 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     arnd@arndb.de, broonie@kernel.org, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        baohua@kernel.org, stephan@gerhold.net
-Subject: Re: [PATCH v2 3/9] mfd: cs5535-mfd: Request shared IO regions
- centrally
-Message-ID: <20191021122606.5q22j6wtyslwljco@holly.lan>
-References: <20191021105822.20271-1-lee.jones@linaro.org>
- <20191021105822.20271-4-lee.jones@linaro.org>
+        Mon, 21 Oct 2019 08:26:44 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id AD8263FA25;
+        Mon, 21 Oct 2019 14:26:41 +0200 (CEST)
+Authentication-Results: ste-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=SNroE+dT;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=shipmail.org
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id nCuPe42zSIw2; Mon, 21 Oct 2019 14:26:40 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id BC6423F9F2;
+        Mon, 21 Oct 2019 14:26:39 +0200 (CEST)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 5AB633600C3;
+        Mon, 21 Oct 2019 14:26:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1571660799; bh=OGtRnZKF2rFlGU94v3BrboznZRXCvrKJ6F4AewpUHZA=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=SNroE+dTvQR/6viwK2eSsMbsIaiZB+b8aybvCdLX9qiW5ECQbFX5ZPxHPEY1dQ9Xf
+         pO81xLj3LURF5zKZCORZJ+BXAiyW8qrk2suz1ss+GmVA5KKxgg9k35ovJNra1DNbl9
+         7uUdHLkOijoSK6maigMotfL+wq9ZKJKKD6dX83hk=
+Subject: Re: dma coherent memory user-space maps
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     Christoph Hellwig <hch@infradead.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <b811f66d-2353-23c6-c9fa-e279cdb0f832@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <0d59940d-1688-1b22-0524-c257c2401719@shipmail.org>
+Date:   Mon, 21 Oct 2019 14:26:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191021105822.20271-4-lee.jones@linaro.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <b811f66d-2353-23c6-c9fa-e279cdb0f832@shipmail.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 11:58:16AM +0100, Lee Jones wrote:
-> Prior to this patch, IO regions were requested via an MFD subsytem-level
-> .enable() call-back and similarly released by a .disable() call-back.
-> Double requests/releases were avoided by a centrally handled usage count
-> mechanism.
-> 
-> This complexity can all be avoided by handling IO regions only once during
-> .probe() and .remove() of the parent device.  Since this is the only
-> legitimate user of the aforementioned usage count mechanism, this patch
-> will allow it to be removed from MFD core in subsequent steps.
-> 
-> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/mfd/cs5535-mfd.c | 72 +++++++++++++++++-----------------------
->  1 file changed, 30 insertions(+), 42 deletions(-)
-> 
-> diff --git a/drivers/mfd/cs5535-mfd.c b/drivers/mfd/cs5535-mfd.c
-> index 9ce6bbcdbda1..053e33447808 100644
-> --- a/drivers/mfd/cs5535-mfd.c
-> +++ b/drivers/mfd/cs5535-mfd.c
-> @@ -27,38 +27,6 @@ enum cs5535_mfd_bars {
->  	NR_BARS,
->  };
->  
-> -static int cs5535_mfd_res_enable(struct platform_device *pdev)
-> -{
-> -	struct resource *res;
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> -	if (!res) {
-> -		dev_err(&pdev->dev, "can't fetch device resource info\n");
-> -		return -EIO;
-> -	}
-> -
-> -	if (!request_region(res->start, resource_size(res), DRV_NAME)) {
-> -		dev_err(&pdev->dev, "can't request region\n");
-> -		return -EIO;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static int cs5535_mfd_res_disable(struct platform_device *pdev)
-> -{
-> -	struct resource *res;
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> -	if (!res) {
-> -		dev_err(&pdev->dev, "can't fetch device resource info\n");
-> -		return -EIO;
-> -	}
-> -
-> -	release_region(res->start, resource_size(res));
-> -	return 0;
-> -}
-> -
->  static struct resource cs5535_mfd_resources[NR_BARS];
->  
->  static struct mfd_cell cs5535_mfd_cells[] = {
-> @@ -81,17 +49,11 @@ static struct mfd_cell cs5535_mfd_cells[] = {
->  		.name = "cs5535-pms",
->  		.num_resources = 1,
->  		.resources = &cs5535_mfd_resources[PMS_BAR],
-> -
-> -		.enable = cs5535_mfd_res_enable,
-> -		.disable = cs5535_mfd_res_disable,
->  	},
->  	[ACPI_BAR] = {
->  		.name = "cs5535-acpi",
->  		.num_resources = 1,
->  		.resources = &cs5535_mfd_resources[ACPI_BAR],
-> -
-> -		.enable = cs5535_mfd_res_enable,
-> -		.disable = cs5535_mfd_res_disable,
->  	},
->  };
->  
-> @@ -109,7 +71,6 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
->  	if (err)
->  		return err;
->  
-> -	/* fill in IO range for each cell; subdrivers handle the region */
->  	for (i = 0; i < NR_BARS; i++) {
->  		struct mfd_cell *cell = &cs5535_mfd_cells[i];
->  		struct resource *r = &cs5535_mfd_resources[i];
-> @@ -122,22 +83,47 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
->  		r->end = pci_resource_end(pdev, i);
->  	}
->  
-> +	err = pci_request_region(pdev, PMS_BAR, DRV_NAME);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Failed to request PMS_BAR's IO region\n");
-> +		goto err_disable;
-> +	}
-> +
->  	err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE, cs5535_mfd_cells,
->  			      ARRAY_SIZE(cs5535_mfd_cells), NULL, 0, NULL);
->  	if (err) {
->  		dev_err(&pdev->dev,
->  			"Failed to add CS5532 sub-devices: %d\n", err);
-> -		goto err_disable;
-> +		goto err_release_pms;
->  	}
->  
-> -	if (machine_is_olpc())
-> -		mfd_clone_cell("cs5535-acpi", olpc_acpi_clones, ARRAY_SIZE(olpc_acpi_clones));
-> +	if (machine_is_olpc()) {
-> +		err = pci_request_region(pdev, ACPI_BAR, DRV_NAME);
-> +		if (err) {
-> +			dev_err(&pdev->dev,
-> +				"Failed to request ACPI_BAR's IO region\n");
-> +			goto err_remove_devices;
-> +		}
-> +
-> +		err = mfd_clone_cell("cs5535-acpi", olpc_acpi_clones,
-> +				     ARRAY_SIZE(olpc_acpi_clones));
-> +		if (err) {
-> +			dev_err(&pdev->dev, "Failed to clone MFD cell\n");
-> +			goto err_release_acpi;
-> +		}
-> +	}
+On 10/8/19 2:34 PM, Thomas Hellström (VMware) wrote:
+> Hi, Christoph,
+>
+> Following our previous discussion I wonder if something along the 
+> lines of the following could work / be acceptible
+>
+> typedef unsigned long dma_pfn_t /* Opaque pfn type. Arch dependent. 
+> This could if needed be a struct with a pointer and an offset */
+>
+> /* Similar to vmf_insert_mixed() */
+> vm_fault_t dma_vmf_insert_mixed(struct device *dev,
+>                 struct vm_area_struct *vma,
+>                 unsigned long addr,
+>                 dma_pfn_t dpfn,
+>                 unsigned long attrs);
+>
+> /* Similar to vmf_insert_pfn_pmd() */
+> vm_fault_t dma_vmf_insert_pfn_pmd(struct device *dev,
+>                   struct vm_area_struct *vma,
+>                   unsigned long addr,
+>                   dma_pfn_t dpfn,
+>                   unsigned long attrs);
+>
+> /* Like vmap, but takes struct dma_pfns. */
+> extern void *dma_vmap(struct device *dev,
+>               dma_pfn_t dpfns[],
+>               unsigned int count, unsigned long flags,
+>               unsigned long attrs);
+>
+> /* Obtain struct dma_pfn pointers from a dma coherent allocation */
+> int dma_get_dpfns(struct device *dev, void *cpu_addr, dma_addr_t 
+> dma_addr,
+>           pgoff_t offset, pgoff_t num, dma_pfn_t dpfns[]);
+>
+> I figure, for most if not all architectures we could use an ordinary 
+> pfn as dma_pfn_t, but the dma layer would still have control over how 
+> those pfns are obtained and how they are used in the kernel's mapping 
+> APIs.
+>
+> If so, I could start looking at this, time permitting,  for the cases 
+> where the pfn can be obtained from the kernel address or from 
+> arch_dma_coherent_to_pfn(), and also the needed work to have a 
+> tailored vmap_pfn().
+>
+> Thanks,
+> /Thomas
+>
+>
+Ping?
 
-Making the request_region() conditional on machine_is_olpc() seems to be
-best on the assumption that the cs5535-acpi is not otherwise used.
+Thanks,
 
-I suspect the assumption is true but you have to combine knowledge from
-several bits of code to figure that out.
+Thomas
 
 
-Daniel.
-
-
->  
->  	dev_info(&pdev->dev, "%zu devices registered.\n",
->  			ARRAY_SIZE(cs5535_mfd_cells));
->  
->  	return 0;
->  
-> +err_release_acpi:
-> +	pci_release_region(pdev, ACPI_BAR);
-> +err_remove_devices:
-> +	mfd_remove_devices(&pdev->dev);
-> +err_release_pms:
-> +	pci_release_region(pdev, PMS_BAR);
->  err_disable:
->  	pci_disable_device(pdev);
->  	return err;
-> @@ -145,6 +131,8 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
->  
->  static void cs5535_mfd_remove(struct pci_dev *pdev)
->  {
-> +	pci_release_region(pdev, PMS_BAR);
-> +	pci_release_region(pdev, ACPI_BAR);
->  	mfd_remove_devices(&pdev->dev);
->  	pci_disable_device(pdev);
->  }
-> -- 
-> 2.17.1
-> 
