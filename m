@@ -2,250 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E791DE564
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 09:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BFAADE56E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 09:41:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfJUHit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 03:38:49 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46826 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfJUHit (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 03:38:49 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q5so7852596pfg.13;
-        Mon, 21 Oct 2019 00:38:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=EzHxjxCcrcWxlhbOhJJt2pI5JzN3G5bQJpPRRDe1b54=;
-        b=mhtFUZYDU7p/6USSWWIpO2oDPN2BtQP4Gi8UwQ6U/+OwOc3tNZ9X3UWYWAv+1ZPd3Y
-         Ep4LV+34lZ+bL6btTFlfGl9fDwcw9N4SzOLXrYBdGPVR/T7qmnBRD369Gcukyf7Ts1Zk
-         A1CL6HlqscRL6LaC6ta/BiQhc0wyTVzkQpK7G4VhDAAS7lBeFUU65YYSSCOm6SsmzpS4
-         rFX2T0CxfQLN0MTCNmOE3tPKi9v0Fyss69WOegnupe/EUYecty8rS+eNFm8bsiBfrOCt
-         wBgMbkfk1KeTN3+tOkJoRWpTMTZ+5bNuicWBCf7QqRCA+lCaVOErAWKhZCgCPcG450J9
-         g9sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EzHxjxCcrcWxlhbOhJJt2pI5JzN3G5bQJpPRRDe1b54=;
-        b=QRscAnmOX4dN21C2tdBKveCadlnKu35/H4nhpVgNf3Z+0Y7NZq7YHcnu/Rgi31unJm
-         QsJdVihrGCq+3Obcko/MfTSql0PY3WkSLqqF+rJQsFooYcCzzLoWTylcisvjkxBtWD5L
-         Q5IFQ8Jd9Jwe66BMCPs2r9PW+ePLCjKsSh7nELjOgoq+W6fu+Go+JLSHqE01dvu1zW0G
-         3K675/fdxughckcuzHKbrhCk9RXxg7PPXwufQHB9FfQtpmtpgoNE41laLpdwBK5H5wgh
-         feIrWQrcxfDePNm2CKd/70npYBaD0Txj1kjWZMR/EjohGMDV1QEZDuOappWM2gGMRB7y
-         HksQ==
-X-Gm-Message-State: APjAAAVUZFwf30j0EQP47guVLvCoqzNWTgrs4wpDv7ek5ivFwPxlPUWB
-        vtdh4jgavF7WUDXAiQwbcxE=
-X-Google-Smtp-Source: APXvYqxZ4Zy000feFimquQuetvRgWDV76y01WrKxqUcRgqrztaartd1p8WnciGOZzNJyKeR1cow7Sw==
-X-Received: by 2002:a17:90a:c382:: with SMTP id h2mr26197953pjt.110.1571643528196;
-        Mon, 21 Oct 2019 00:38:48 -0700 (PDT)
-Received: from bj04616pcu.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id r30sm14822659pfl.42.2019.10.21.00.38.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 00:38:47 -0700 (PDT)
-From:   Candle Sun <candlesea@gmail.com>
-To:     jikos@kernel.org, benjamin.tissoires@redhat.com,
-        nsaenzjulienne@suse.de
-Cc:     orson.zhai@unisoc.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Candle Sun <candle.sun@unisoc.com>,
-        Nianfu Bai <nianfu.bai@unisoc.com>
-Subject: [PATCH v3] HID: core: check whether usage page item is after usage id item
-Date:   Mon, 21 Oct 2019 15:38:19 +0800
-Message-Id: <20191021073819.18181-1-candlesea@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727224AbfJUHk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 03:40:59 -0400
+Received: from mail-eopbgr80057.outbound.protection.outlook.com ([40.107.8.57]:1702
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727462AbfJUHk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 03:40:58 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lbOz4YQ0/eiynkzvkaSv18CmwFPyBEY9zQ8zxQb7ib5k8NizvCJPq3BTtGA5k+Gcgi0o10G52/pHZ6yAUJjfHxh1xpT0U3I5/7hKESMvl8YPY0uxjNM/hTJZIOk16oJfL6JIFvWMz+MA4dFDpCaoYgYsjzh9EyfTw6PtzdHLLrjtoRxXmRVXOSK1UMjaeGPZikrkeOQh9EDNqmHGYEodwGTmpS0ZaWgLuDw7LEo8vj1BxZcTg+qUrLPoFXbdpWi0awmNPGQHDge0UlkOeWviIcbP9Cbb1Q8XLOUDCMD/mxAXtzi9QENlqFxv84mjSX7jXpGAzhH1vygZlVWyp7PDtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ke36duWD9fK3rgbM15mTV/dP/A2KOXQODYXyC57GJQE=;
+ b=aD8KPt9n8DF80gulTBAcG4uXMuoXoPYjU+cZIzmYdddDqzGUEzTXvqZyKQUDoHANAHI25uDdWrLudmqkcH07LO4KJLVVYIrIwyGqnRoEoDudOYZqeKtEVNQbvc/3aFJAGjXVQ6EhB1o3p7uweSCH7Dc/XbzORBCc3xpvHlvyMQKTbjMGnOZtwSTkun7To9+1NxIaSm2tGG3tY/EXmmCDG3HjocYa354lUk6uBSCFzdoMlhgGI0O0qtCrhAcfZ3OwFJZw7x1qaLEUkg9xM+0ZcFTzmCu3fCpiuHzen/sTlgAq8czPEHm2wDLLJDgNJXndilu7ELyfQbKoFyrAu7uGGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ke36duWD9fK3rgbM15mTV/dP/A2KOXQODYXyC57GJQE=;
+ b=Puy09oE5C0q4YHOLeGqVNcqE+hIZfVfqU/W3ADnTY+IURluat1ip1v1WC25Ac9dwOIOb0avPSGpdk8nWsVo1BTH+hX5C58T/ZOOorShX5Cda/ALqzTStdsFMLOkQA6UV9P49+mJ++h5qpcfccn+/hYl4VAmmd5p/h3aUb/PVazU=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
+ DB7PR04MB5369.eurprd04.prod.outlook.com (20.178.106.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2367.20; Mon, 21 Oct 2019 07:40:48 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::7804:558a:eef9:cc11]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::7804:558a:eef9:cc11%7]) with mapi id 15.20.2347.029; Mon, 21 Oct 2019
+ 07:40:48 +0000
+From:   Biwen Li <biwen.li@nxp.com>
+To:     Peter Rosin <peda@axentia.se>, Leo Li <leoyang.li@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [EXT] Re: [v3,2/2] i2c: mux: pca954x: support property idle-state
+Thread-Topic: [EXT] Re: [v3,2/2] i2c: mux: pca954x: support property
+ idle-state
+Thread-Index: AQHVg9kFy//9JNcSgkK6ygKn6GT14ade+pwAgAW0LXA=
+Date:   Mon, 21 Oct 2019 07:40:48 +0000
+Message-ID: <DB7PR04MB44902378FD1E4052F4FB261A8F690@DB7PR04MB4490.eurprd04.prod.outlook.com>
+References: <20191016040920.8511-1-biwen.li@nxp.com>
+ <20191016040920.8511-2-biwen.li@nxp.com>
+ <6e2fb6b9-4ffe-e6de-744f-a2bfe66a1b6c@axentia.se>
+In-Reply-To: <6e2fb6b9-4ffe-e6de-744f-a2bfe66a1b6c@axentia.se>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biwen.li@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 715e42a0-cd90-4940-29c7-08d755f9fda0
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: DB7PR04MB5369:|DB7PR04MB5369:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB5369C437E96BF130FD1F7B358F690@DB7PR04MB5369.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0197AFBD92
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(346002)(376002)(39860400002)(136003)(199004)(189003)(6246003)(256004)(44832011)(110136005)(14444005)(52536014)(186003)(229853002)(5660300002)(316002)(54906003)(476003)(486006)(9686003)(11346002)(446003)(74316002)(4001150100001)(99286004)(7696005)(4326008)(76176011)(66066001)(102836004)(26005)(6506007)(53546011)(66446008)(86362001)(2906002)(6116002)(3846002)(2501003)(7736002)(64756008)(478600001)(55016002)(71190400001)(71200400001)(81156014)(81166006)(8936002)(8676002)(305945005)(6436002)(14454004)(25786009)(66946007)(33656002)(76116006)(66476007)(66556008);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5369;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 4naQmO7zl/5yCSDpauHEBbIz55n+KyzOC4SbMNkHzgsWvkz7fYUnbRg+8e6P0d2xeBHSREt6aeHeAkGZKg7TA7MAHebDA5omxrEzTbJ5F7CWqFhOzptWQ1iybPLpQ/tQ+49+m5hv+HmRQc4twEPKTS6J+Ws4G5Y72vNKQbrCkDTbaAwEf4W4dTKmsLnaB4AE42QeDxXOL77O440QKb7KkorLC8ZTYu+Vyy5FFqbfSsbpLIAlP0LJBoWKkprHzJvQukiOrnnM+ZQCBR6EDtwCmYzMylGeptCGpGjKXN9jW1P2XhFRJFldOKQYWzIzB03pmQ3I4zkcqToGLOiCyiEQXgZz2HFT9X/fD+0tZb7sULIOnCOZVb98QEc9XyjLl6ckJKVayeDbv6AJrQgeMz/kxGDyzTCrKu85DWhxfc53k+ymycfnmkaDe7tkTUEHn+kl
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 715e42a0-cd90-4940-29c7-08d755f9fda0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2019 07:40:48.5534
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QpEcUcatnYsAraDF/2rwLlcRCVZ/jsnv2mfb0vObff8JTuJRXkeZRlqckdW/44DcnSrXKeBSIvpn49Ns4FkQMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5369
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Candle Sun <candle.sun@unisoc.com>
-
-Upstream commit 58e75155009c ("HID: core: move Usage Page concatenation
-to Main item") adds support for Usage Page item after Usage ID items
-(such as keyboards manufactured by Primax).
-
-Usage Page concatenation in Main item works well for following report
-descriptor patterns:
-
-    USAGE_PAGE (Keyboard)                   05 07
-    USAGE_MINIMUM (Keyboard LeftControl)    19 E0
-    USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
-    LOGICAL_MINIMUM (0)                     15 00
-    LOGICAL_MAXIMUM (1)                     25 01
-    REPORT_SIZE (1)                         75 01
-    REPORT_COUNT (8)                        95 08
-    INPUT (Data,Var,Abs)                    81 02
-
--------------
-
-    USAGE_MINIMUM (Keyboard LeftControl)    19 E0
-    USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
-    LOGICAL_MINIMUM (0)                     15 00
-    LOGICAL_MAXIMUM (1)                     25 01
-    REPORT_SIZE (1)                         75 01
-    REPORT_COUNT (8)                        95 08
-    USAGE_PAGE (Keyboard)                   05 07
-    INPUT (Data,Var,Abs)                    81 02
-
-But it makes the parser act wrong for the following report
-descriptor pattern(such as some Gamepads):
-
-    USAGE_PAGE (Button)                     05 09
-    USAGE (Button 1)                        09 01
-    USAGE (Button 2)                        09 02
-    USAGE (Button 4)                        09 04
-    USAGE (Button 5)                        09 05
-    USAGE (Button 7)                        09 07
-    USAGE (Button 8)                        09 08
-    USAGE (Button 14)                       09 0E
-    USAGE (Button 15)                       09 0F
-    USAGE (Button 13)                       09 0D
-    USAGE_PAGE (Consumer Devices)           05 0C
-    USAGE (Back)                            0a 24 02
-    USAGE (HomePage)                        0a 23 02
-    LOGICAL_MINIMUM (0)                     15 00
-    LOGICAL_MAXIMUM (1)                     25 01
-    REPORT_SIZE (1)                         75 01
-    REPORT_COUNT (11)                       95 0B
-    INPUT (Data,Var,Abs)                    81 02
-
-With Usage Page concatenation in Main item, parser recognizes all the
-11 Usages as consumer keys, it is not the HID device's real intention.
-
-This patch adds usage_page_last to flag whether Usage Page is after
-Usage ID items. usage_page_last is false default, it is set as true
-once Usage Page item is encountered and is reverted by next Usage ID
-item.
-
-Usage Page concatenation on the currently defined Usage Page will do
-firstly in Local parsing when Usage ID items encountered.
-
-When Main item is parsing, concatenation will do again with last
-defined Usage Page if usage_page_last flag is true.
-
-Signed-off-by: Candle Sun <candle.sun@unisoc.com>
-Signed-off-by: Nianfu Bai <nianfu.bai@unisoc.com>
----
-Changes in v3:
-- Rework the GET_COMPLETE_USAGE macro as static complete_usage()
-  function
-- Add some code comments for usage_page_last
-
-Changes in v2:
-- Update patch title
-- Add GET_COMPLETE_USAGE macro
-- Change the logic of checking whether to concatenate usage page again
-  in main parsing
----
- drivers/hid/hid-core.c | 42 +++++++++++++++++++++++++++++++++++++-----
- include/linux/hid.h    |  1 +
- 2 files changed, 38 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 3eaee2c37931..779b7798dae8 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -211,6 +211,18 @@ static unsigned hid_lookup_collection(struct hid_parser *parser, unsigned type)
- 	return 0; /* we know nothing about this usage type */
- }
- 
-+/*
-+ * Concatenate usage which defines 16 bits or less with the
-+ * currently defined usage page to form a 32 bit usage
-+ */
-+
-+static void complete_usage(struct hid_parser *parser, unsigned int index)
-+{
-+	parser->local.usage[index] &= 0xFFFF;
-+	parser->local.usage[index] |=
-+		(parser->global.usage_page & 0xFFFF) << 16;
-+}
-+
- /*
-  * Add a usage to the temporary parser table.
-  */
-@@ -221,7 +233,18 @@ static int hid_add_usage(struct hid_parser *parser, unsigned usage, u8 size)
- 		hid_err(parser->device, "usage index exceeded\n");
- 		return -1;
- 	}
--	parser->local.usage[parser->local.usage_index] = usage;
-+
-+	/*
-+	 * If Usage item only includes usage id, concatenate it with
-+	 * currently defined usage page and clear usage_page_last flag
-+	 */
-+	if (size <= 2) {
-+		parser->local.usage_page_last = false;
-+		complete_usage(parser, parser->local.usage_index);
-+	} else {
-+		parser->local.usage[parser->local.usage_index] = usage;
-+	}
-+
- 	parser->local.usage_size[parser->local.usage_index] = size;
- 	parser->local.collection_index[parser->local.usage_index] =
- 		parser->collection_stack_ptr ?
-@@ -366,6 +389,8 @@ static int hid_parser_global(struct hid_parser *parser, struct hid_item *item)
- 
- 	case HID_GLOBAL_ITEM_TAG_USAGE_PAGE:
- 		parser->global.usage_page = item_udata(item);
-+		/* Regard Usage Page is after Usage ID items */
-+		parser->local.usage_page_last = true;
- 		return 0;
- 
- 	case HID_GLOBAL_ITEM_TAG_LOGICAL_MINIMUM:
-@@ -543,13 +568,20 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
-  * usage value."
-  */
- 
--static void hid_concatenate_usage_page(struct hid_parser *parser)
-+static void hid_concatenate_last_usage_page(struct hid_parser *parser)
- {
- 	int i;
- 
-+	/*
-+	 * Concatenate usage page again only on detecting some Usage Page
-+	 * is really after Usage ID items
-+	 */
-+	if (!parser->local.usage_page_last)
-+		return;
-+
- 	for (i = 0; i < parser->local.usage_index; i++)
- 		if (parser->local.usage_size[i] <= 2)
--			parser->local.usage[i] += parser->global.usage_page << 16;
-+			complete_usage(parser, i);
- }
- 
- /*
-@@ -561,7 +593,7 @@ static int hid_parser_main(struct hid_parser *parser, struct hid_item *item)
- 	__u32 data;
- 	int ret;
- 
--	hid_concatenate_usage_page(parser);
-+	hid_concatenate_last_usage_page(parser);
- 
- 	data = item_udata(item);
- 
-@@ -772,7 +804,7 @@ static int hid_scan_main(struct hid_parser *parser, struct hid_item *item)
- 	__u32 data;
- 	int i;
- 
--	hid_concatenate_usage_page(parser);
-+	hid_concatenate_last_usage_page(parser);
- 
- 	data = item_udata(item);
- 
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index cd41f209043f..2e0ea2f7ec5c 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -412,6 +412,7 @@ struct hid_local {
- 	unsigned usage_minimum;
- 	unsigned delimiter_depth;
- 	unsigned delimiter_branch;
-+	bool usage_page_last;      /* whether usage page is after usage id */
- };
- 
- /*
--- 
-2.17.1
-
+PiBPbiAyMDE5LTEwLTE2IDA2OjA5LCBCaXdlbiBMaSB3cm90ZToNCj4gPiBUaGlzIHN1cHBvcnRz
+IHByb3BlcnR5IGlkbGUtc3RhdGUNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJpd2VuIExpIDxi
+aXdlbi5saUBueHAuY29tPg0KPiA+IC0tLQ0KPiA+IENoYW5nZSBpbiB2MzoNCj4gPiAgICAgICAt
+IHVwZGF0ZSBzdWJqZWN0IGFuZCBkZXNjcmlwdGlvbg0KPiA+ICAgICAgIC0gYWRkIGEgaGVscGVy
+IGZ1bmN0aW9uIHBjYTk1NHhfY2FsY3VsYXRlX2NoYW4oKQ0KPiA+DQo+ID4gQ2hhbmdlIGluIHYy
+Og0KPiA+ICAgICAgIC0gdXBkYXRlIHN1YmplY3QgYW5kIGRlc2NyaXB0aW9uDQo+ID4gICAgICAg
+LSBhZGQgcHJvcGVydHkgaWRsZS1zdGF0ZQ0KPiA+DQo+ID4gIGRyaXZlcnMvaTJjL211eGVzL2ky
+Yy1tdXgtcGNhOTU0eC5jIHwgNjQNCj4gPiArKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLQ0K
+PiA+ICAxIGZpbGUgY2hhbmdlZCwgMzkgaW5zZXJ0aW9ucygrKSwgMjUgZGVsZXRpb25zKC0pDQo+
+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pMmMvbXV4ZXMvaTJjLW11eC1wY2E5NTR4LmMN
+Cj4gPiBiL2RyaXZlcnMvaTJjL211eGVzL2kyYy1tdXgtcGNhOTU0eC5jDQo+ID4gaW5kZXggOTIz
+YWEzYTVhM2RjLi44Nzc3ZDQyOTI2OWMgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9pMmMvbXV4
+ZXMvaTJjLW11eC1wY2E5NTR4LmMNCj4gPiArKysgYi9kcml2ZXJzL2kyYy9tdXhlcy9pMmMtbXV4
+LXBjYTk1NHguYw0KPiA+IEBAIC04Niw3ICs4Niw3IEBAIHN0cnVjdCBwY2E5NTR4IHsNCj4gPg0K
+PiA+ICAgICAgIHU4IGxhc3RfY2hhbjsgICAgICAgICAgIC8qIGxhc3QgcmVnaXN0ZXIgdmFsdWUg
+Ki8NCj4gPiAgICAgICAvKiBNVVhfSURMRV9BU19JUywgTVVYX0lETEVfRElTQ09OTkVDVCBvciA+
+PSAwIGZvciBjaGFubmVsICovDQo+ID4gLSAgICAgczggaWRsZV9zdGF0ZTsNCj4gPiArICAgICBz
+MzIgaWRsZV9zdGF0ZTsNCj4gPg0KPiA+ICAgICAgIHN0cnVjdCBpMmNfY2xpZW50ICpjbGllbnQ7
+DQo+ID4NCj4gPiBAQCAtMjI5LDIyICsyMjksMjUgQEAgc3RhdGljIGludCBwY2E5NTR4X3JlZ193
+cml0ZShzdHJ1Y3QgaTJjX2FkYXB0ZXINCj4gKmFkYXAsDQo+ID4gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgSTJDX1NNQlVTX0JZVEUsICZkdW1teSk7ICB9DQo+ID4NCj4gPiArc3RhdGlj
+IGludCBwY2E5NTR4X2NhbGN1bGF0ZV9jaGFuKHN0cnVjdCBwY2E5NTR4ICpkYXRhLCB1MzIgY2hh
+bikNCj4gDQo+IFNob3VsZCByZXR1cm4gdTgsIGFuZCAiY2hhbiIgaXMgbm90IHdoYXQgaXMgY2Fs
+Y3VsYXRlZC4gUGVyaGFwcyBuYW1lIHRoZQ0KPiBmdW5jdGlvbiBwY2E5NTR4X3JlZ3ZhbD8NCk9r
+YXksIGdvdCBpdCwgSSB3aWxsIGNoYW5nZSBpdCBpbiB2NC4NCj4gDQo+IChZZXMsIGxhc3RfY2hh
+biBpcyBhbHNvIGNsZWFybHkgYSBiYWQgbmFtZSwgYW5kIEkgc3VzcGVjdCB5b3UgbWF5IGhhdmUN
+Cj4gYmFzZWQgdGhpcyBuYW1lIG9uIGl0LCBidXQgY2hhbmdpbmcgdGhhdCBpcyBhIHNlcGFyYXRl
+IHBhdGNoLikNCj4gDQo+ID4gK3sNCj4gPiArICAgICAvKiB3ZSBtYWtlIHN3aXRjaGVzIGxvb2sg
+bGlrZSBtdXhlcywgbm90IHN1cmUgaG93IHRvIGJlIHNtYXJ0ZXIgKi8NCj4gPiArICAgICBpZiAo
+ZGF0YS0+Y2hpcC0+bXV4dHlwZSA9PSBwY2E5NTR4X2lzbXV4KQ0KPiA+ICsgICAgICAgICAgICAg
+cmV0dXJuIGNoYW4gfCBkYXRhLT5jaGlwLT5lbmFibGU7DQo+ID4gKyAgICAgZWxzZQ0KPiA+ICsg
+ICAgICAgICAgICAgcmV0dXJuIDEgPDwgY2hhbjsNCj4gPiArfQ0KPiA+ICsNCj4gPiAgc3RhdGlj
+IGludCBwY2E5NTR4X3NlbGVjdF9jaGFuKHN0cnVjdCBpMmNfbXV4X2NvcmUgKm11eGMsIHUzMiBj
+aGFuKQ0KPiA+IHsNCj4gPiAgICAgICBzdHJ1Y3QgcGNhOTU0eCAqZGF0YSA9IGkyY19tdXhfcHJp
+dihtdXhjKTsNCj4gPiAgICAgICBzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50ID0gZGF0YS0+Y2xp
+ZW50Ow0KPiA+IC0gICAgIGNvbnN0IHN0cnVjdCBjaGlwX2Rlc2MgKmNoaXAgPSBkYXRhLT5jaGlw
+Ow0KPiA+ICAgICAgIHU4IHJlZ3ZhbDsNCj4gPiAgICAgICBpbnQgcmV0ID0gMDsNCj4gPg0KPiA+
+IC0gICAgIC8qIHdlIG1ha2Ugc3dpdGNoZXMgbG9vayBsaWtlIG11eGVzLCBub3Qgc3VyZSBob3cg
+dG8gYmUgc21hcnRlciAqLw0KPiA+IC0gICAgIGlmIChjaGlwLT5tdXh0eXBlID09IHBjYTk1NHhf
+aXNtdXgpDQo+ID4gLSAgICAgICAgICAgICByZWd2YWwgPSBjaGFuIHwgY2hpcC0+ZW5hYmxlOw0K
+PiA+IC0gICAgIGVsc2UNCj4gPiAtICAgICAgICAgICAgIHJlZ3ZhbCA9IDEgPDwgY2hhbjsNCj4g
+PiAtDQo+ID4gKyAgICAgcmVndmFsID0gcGNhOTU0eF9jYWxjdWxhdGVfY2hhbihkYXRhLCBjaGFu
+KTsNCj4gDQo+IEkgdGhpbmsgSSB3b3VsZCBoYXZlIGtlcHQgdGhlIGVtcHR5IGxpbmUgaGVyZS4g
+Tm90IGltcG9ydGFudC4uLg0KPiANCj4gPiAgICAgICAvKiBPbmx5IHNlbGVjdCB0aGUgY2hhbm5l
+bCBpZiBpdHMgZGlmZmVyZW50IGZyb20gdGhlIGxhc3QgY2hhbm5lbCAqLw0KPiA+IC0gICAgIGlm
+IChkYXRhLT5sYXN0X2NoYW4gIT0gcmVndmFsKSB7DQo+ID4gKyAgICAgaWYgKChkYXRhLT5sYXN0
+X2NoYW4gJiAweGZmKSAhPSByZWd2YWwpIHsNCj4gDQo+IFRoZSBjaGFuZ2VzIG9uIHRoaXMgbGlu
+ZSBhcmUgbm90IG5lZWRlZCAobGFzdF9jaGFuIGFuZCByZWd2YWwgYXJlIGJvdGggdTgpDQo+IGFu
+ZCBqdXN0IGNsdXR0ZXJzIHVwIHRoZSBjb2RlLg0KT2theSwgZ290IGl0LCBJIHdpbGwgbm90IGNo
+YW5nZSBpdCBpbiB2NC4NCj4gDQo+ID4gICAgICAgICAgICAgICByZXQgPSBwY2E5NTR4X3JlZ193
+cml0ZShtdXhjLT5wYXJlbnQsIGNsaWVudCwgcmVndmFsKTsNCj4gPiAgICAgICAgICAgICAgIGRh
+dGEtPmxhc3RfY2hhbiA9IHJldCA8IDAgPyAwIDogcmVndmFsOw0KPiA+ICAgICAgIH0NCj4gPiBA
+QCAtMjU2LDcgKzI1OSw3IEBAIHN0YXRpYyBpbnQgcGNhOTU0eF9kZXNlbGVjdF9tdXgoc3RydWN0
+DQo+ID4gaTJjX211eF9jb3JlICptdXhjLCB1MzIgY2hhbikgIHsNCj4gPiAgICAgICBzdHJ1Y3Qg
+cGNhOTU0eCAqZGF0YSA9IGkyY19tdXhfcHJpdihtdXhjKTsNCj4gPiAgICAgICBzdHJ1Y3QgaTJj
+X2NsaWVudCAqY2xpZW50ID0gZGF0YS0+Y2xpZW50Ow0KPiA+IC0gICAgIHM4IGlkbGVfc3RhdGU7
+DQo+ID4gKyAgICAgczMyIGlkbGVfc3RhdGU7DQo+ID4NCj4gPiAgICAgICBpZGxlX3N0YXRlID0g
+UkVBRF9PTkNFKGRhdGEtPmlkbGVfc3RhdGUpOw0KPiA+ICAgICAgIGlmIChpZGxlX3N0YXRlID49
+IDApDQo+ID4gQEAgLTQwMiw2ICs0MDUsMjMgQEAgc3RhdGljIHZvaWQgcGNhOTU0eF9jbGVhbnVw
+KHN0cnVjdA0KPiBpMmNfbXV4X2NvcmUgKm11eGMpDQo+ID4gICAgICAgaTJjX211eF9kZWxfYWRh
+cHRlcnMobXV4Yyk7DQo+ID4gIH0NCj4gPg0KPiA+ICtzdGF0aWMgaW50IHBjYTk1NHhfaW5pdChz
+dHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LCBzdHJ1Y3QgcGNhOTU0eA0KPiA+ICsqZGF0YSkgew0K
+PiA+ICsgICAgIC8qDQo+ID4gKyAgICAgICogV3JpdGUgdGhlIG11eCByZWdpc3RlciBhdCBhZGRy
+IHRvIHZlcmlmeQ0KPiA+ICsgICAgICAqIHRoYXQgdGhlIG11eCBpcyBpbiBmYWN0IHByZXNlbnQu
+IFRoaXMgYWxzbw0KPiA+ICsgICAgICAqIGluaXRpYWxpemVzIHRoZSBtdXggdG8gYSBjaGFubmVs
+DQo+ID4gKyAgICAgICogb3IgZGlzY29ubmVjdGVkIHN0YXRlLg0KPiA+ICsgICAgICAqLw0KPiAN
+Cj4gQWdhaW4sIHRoaXMgY29tbWVudCBiZWxvbmdzIGluIHBjYTk1NHhfcHJvYmUgYmVmb3JlIHRo
+ZSBjYWxsIHRvIHRoaXMNCj4gZnVuY3Rpb24uDQo+IEl0IGRvZXMgbm90IGFwcGx5IChhdCBsZWFz
+dCBub3QgdGhlIGZpcnN0IHNlbnRlbmNlKSB3aGVuIHBjYTk1NHhfaW5pdCBpcyBjYWxsZWQNCj4g
+ZnJvbSBwY2E5NTR4X3Jlc3VtZS4NCk9rYXksIGdvdCBpdCwgdGhhbmtzLCBJIHdpbGwgbW92ZSBp
+dCBpbiB2NC4NCj4gDQo+IEhtbW0sIGl0IGNvdWxkIGJlIGFyZ3VlZCB0aGF0IHNwZWNpZnlpbmcg
+TVVYX0lETEVfQVNfSVMgc2hvdWxkIG5vdA0KPiB0cmlnZ2VyIGEgZGlzY29ubmVjdCBvbiBpbml0
+IChzaW5jZSB0aGUgbXV4IGlzIGFsd2F5cyBpZGxlIGF0IGluaXQpIGFuZCB0aGF0DQo+IHNvbWUg
+b3RoZXIgbWV0aG9kIHNob3VsZCBiZSB1c2VkIHRvIGRldGVybWluZSBpZiB0aGUgY2hpcCBpcyBw
+cmVzZW50LiBUaGUNCj4gZGlmZmVyZW5jZSBpcyB0aGF0IHdpdGggdGhlIGlkbGUtc3RhdGUgcHJv
+cGVydHkgeW91IGNhbiBleHBsaWNpdGx5IHJlcXVlc3QNCj4gTVVYX0lETEVfQVNfSVMsIHdoaWxl
+IHRoZSBvbGQgY29kZSBvbmx5IGhhZCBzb21lIGRlZmF1bHQgYmVoYXZpb3IgaWYNCj4gaTJjLW11
+eC1pZGxlLWRpc2Nvbm5lY3Qgd2FzIG5vdCBwcmVzZW50Lg0KPiANCj4gVGhlIGVhc3kgd2F5IG91
+dCBvZiB0aGlzIGlzIHRvLCBpbiB0aGUgYmluZGluZywgZG9jdW1lbnQgdGhlIHNpdHVhdGlvbiBh
+bmQgc2F5DQo+IHRoYXQgImlkbGUtc3RhdGUgPSA8TVVYX0lETEVfQVNfSVM+OyIgaXMgbm90IHN1
+cHBvcnRlZCBidXQgdGhhdCBzaW1pbGFyDQo+IGZ1bmN0aW9uYWxpdHkgY2FuIGJlIG9idGFpbmVk
+IGJ5IGxlYXZpbmcgb3V0IGJvdGggdGhlDQo+IGkyYy1tdXgtaWRsZS1kaXNjb25uZWN0IGFuZCBp
+ZGxlLXN0YXRlIHByb3BlcnRpZXMuDQpJIHdpbGwgc3VwcG9ydCBNVVhfSURMRV9BU19JUyBpbiB2
+NC4NCg0KPiANCj4gPiArICAgICBpZiAoZGF0YS0+aWRsZV9zdGF0ZSA+PSAwKSB7DQo+ID4gKyAg
+ICAgICAgICAgICBkYXRhLT5sYXN0X2NoYW4gPSBwY2E5NTR4X2NhbGN1bGF0ZV9jaGFuKGRhdGEs
+DQo+IGRhdGEtPmlkbGVfc3RhdGUpOw0KPiA+ICsgICAgIH0gZWxzZSB7DQo+ID4gKyAgICAgICAg
+ICAgICAvKiBEaXNjb25uZWN0IG11bHRpcGxleGVyICovDQo+ID4gKyAgICAgICAgICAgICBkYXRh
+LT5sYXN0X2NoYW4gPSAwOw0KPiA+ICsgICAgIH0NCj4gPiArICAgICByZXR1cm4gaTJjX3NtYnVz
+X3dyaXRlX2J5dGUoY2xpZW50LCBkYXRhLT5sYXN0X2NoYW4pOyB9DQo+ID4gKw0KPiA+ICAvKg0K
+PiA+ICAgKiBJMkMgaW5pdC9wcm9iaW5nL2V4aXQgZnVuY3Rpb25zDQo+ID4gICAqLw0KPiA+IEBA
+IC00MTEsNyArNDMxLDYgQEAgc3RhdGljIGludCBwY2E5NTR4X3Byb2JlKHN0cnVjdCBpMmNfY2xp
+ZW50ICpjbGllbnQsDQo+ID4gICAgICAgc3RydWN0IGkyY19hZGFwdGVyICphZGFwID0gY2xpZW50
+LT5hZGFwdGVyOw0KPiA+ICAgICAgIHN0cnVjdCBkZXZpY2UgKmRldiA9ICZjbGllbnQtPmRldjsN
+Cj4gPiAgICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wID0gZGV2LT5vZl9ub2RlOw0KPiA+IC0g
+ICAgIGJvb2wgaWRsZV9kaXNjb25uZWN0X2R0Ow0KPiA+ICAgICAgIHN0cnVjdCBncGlvX2Rlc2Mg
+KmdwaW87DQo+ID4gICAgICAgc3RydWN0IGkyY19tdXhfY29yZSAqbXV4YzsNCj4gPiAgICAgICBz
+dHJ1Y3QgcGNhOTU0eCAqZGF0YTsNCj4gPiBAQCAtNDYyLDIyICs0ODEsMTggQEAgc3RhdGljIGlu
+dCBwY2E5NTR4X3Byb2JlKHN0cnVjdCBpMmNfY2xpZW50DQo+ICpjbGllbnQsDQo+ID4gICAgICAg
+ICAgICAgICB9DQo+ID4gICAgICAgfQ0KPiA+DQo+ID4gLSAgICAgLyogV3JpdGUgdGhlIG11eCBy
+ZWdpc3RlciBhdCBhZGRyIHRvIHZlcmlmeQ0KPiA+IC0gICAgICAqIHRoYXQgdGhlIG11eCBpcyBp
+biBmYWN0IHByZXNlbnQuIFRoaXMgYWxzbw0KPiA+IC0gICAgICAqIGluaXRpYWxpemVzIHRoZSBt
+dXggdG8gZGlzY29ubmVjdGVkIHN0YXRlLg0KPiA+IC0gICAgICAqLw0KPiA+IC0gICAgIGlmIChp
+MmNfc21idXNfd3JpdGVfYnl0ZShjbGllbnQsIDApIDwgMCkgew0KPiA+ICsgICAgIGRhdGEtPmlk
+bGVfc3RhdGUgPSBNVVhfSURMRV9BU19JUzsNCj4gPiArICAgICBpZiAobnAgJiYgb2ZfcHJvcGVy
+dHlfcmVhZF91MzIobnAsICJpZGxlLXN0YXRlIiwgJmRhdGEtPmlkbGVfc3RhdGUpKQ0KPiB7DQo+
+ID4gKyAgICAgICAgICAgICBpZiAobnAgJiYgb2ZfcHJvcGVydHlfcmVhZF9ib29sKG5wLA0KPiA+
+ICsgImkyYy1tdXgtaWRsZS1kaXNjb25uZWN0IikpDQo+IA0KPiBZb3UgZG8gbm90IG5lZWQgdG8g
+ZG8gdGhlICJucCAmJiIgcGFydCBmb3IgYm90aCBpZnMsIHNpbmNlIGl0J3MgYWxyZWFkeSBrbm93
+DQo+IHRoYXQgbnAgaXMgbm9uLU5VTEwgd2hlbiB5b3UgaGl0IHRoZSBzZWNvbmQgaWYuIEJ1dCwg
+aXQncyBhIE5PUCBpbiB0aGUgZmlyc3QgaWYsDQo+IHNpbmNlIG9mX3Byb3BlcnR5X3JlYWRfdTMy
+IHJldHVybnMgLUVJTlZBTCBpZiBpdCBpcy4gU28sIEkgc3VnZ2VzdA0KPiANCj4gICAgICAgICBp
+ZiAob2ZfcHJvcGVydHlfcmVhZF91MzIobnAsICJpZGxlLXN0YXRlIiwgJmRhdGEtPmlkbGVfc3Rh
+dGUpKSB7DQo+ICAgICAgICAgICAgICAgICBpZiAobnAgJiYgb2ZfcHJvcGVydHlfcmVhZF9ib29s
+KG5wLA0KPiAiaTJjLW11eC1pZGxlLWRpc2Nvbm5lY3QiKSkNCk9rYXksIHRoYW5rcywgSSB3aWxs
+IHJlbW92ZSBpdCBpbiB2NC4NCj4gDQo+IENoZWVycywNCj4gUGV0ZXINCj4gDQo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgIGRhdGEtPmlkbGVfc3RhdGUgPSBNVVhfSURMRV9ESVNDT05ORUNUOw0K
+PiA+ICsgICAgIH0NCj4gPiArDQo+ID4gKyAgICAgcmV0ID0gcGNhOTU0eF9pbml0KGNsaWVudCwg
+ZGF0YSk7DQo+ID4gKyAgICAgaWYgKHJldCA8IDApIHsNCj4gPiAgICAgICAgICAgICAgIGRldl93
+YXJuKGRldiwgInByb2JlIGZhaWxlZFxuIik7DQo+ID4gICAgICAgICAgICAgICByZXR1cm4gLUVO
+T0RFVjsNCj4gPiAgICAgICB9DQo+ID4NCj4gPiAtICAgICBkYXRhLT5sYXN0X2NoYW4gPSAwOyAg
+ICAgICAgICAgICAgIC8qIGZvcmNlIHRoZSBmaXJzdCBzZWxlY3Rpb24gKi8NCj4gPiAtICAgICBk
+YXRhLT5pZGxlX3N0YXRlID0gTVVYX0lETEVfQVNfSVM7DQo+ID4gLQ0KPiA+IC0gICAgIGlkbGVf
+ZGlzY29ubmVjdF9kdCA9IG5wICYmDQo+ID4gLSAgICAgICAgICAgICBvZl9wcm9wZXJ0eV9yZWFk
+X2Jvb2wobnAsICJpMmMtbXV4LWlkbGUtZGlzY29ubmVjdCIpOw0KPiA+IC0gICAgIGlmIChpZGxl
+X2Rpc2Nvbm5lY3RfZHQpDQo+ID4gLSAgICAgICAgICAgICBkYXRhLT5pZGxlX3N0YXRlID0gTVVY
+X0lETEVfRElTQ09OTkVDVDsNCj4gPg0KPiA+ICAgICAgIHJldCA9IHBjYTk1NHhfaXJxX3NldHVw
+KG11eGMpOw0KPiA+ICAgICAgIGlmIChyZXQpDQo+ID4gQEAgLTUzMSw4ICs1NDYsNyBAQCBzdGF0
+aWMgaW50IHBjYTk1NHhfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikNCj4gPiAgICAgICBzdHJ1
+Y3QgaTJjX211eF9jb3JlICptdXhjID0gaTJjX2dldF9jbGllbnRkYXRhKGNsaWVudCk7DQo+ID4g
+ICAgICAgc3RydWN0IHBjYTk1NHggKmRhdGEgPSBpMmNfbXV4X3ByaXYobXV4Yyk7DQo+ID4NCj4g
+PiAtICAgICBkYXRhLT5sYXN0X2NoYW4gPSAwOw0KPiA+IC0gICAgIHJldHVybiBpMmNfc21idXNf
+d3JpdGVfYnl0ZShjbGllbnQsIDApOw0KPiA+ICsgICAgIHJldHVybiBwY2E5NTR4X2luaXQoY2xp
+ZW50LCBkYXRhKTsNCj4gPiAgfQ0KPiA+ICAjZW5kaWYNCj4gPg0KPiA+DQoNCg==
