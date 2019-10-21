@@ -2,116 +2,375 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87557DF33A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:36:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87335DF34B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:38:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbfJUQfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:35:11 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40235 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729433AbfJUQfH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:35:07 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 15so2777979pgt.7
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 09:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pensando.io; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=YQ2SYzDjclp6+UMcXfMKe/dCfkknHxuiGOrHRSVn0cA=;
-        b=ZvioHrwPqgA32sqk/ZfXl+AIKFsddUO2tNAqbJtu4tCcRANhGvReU9J0qCrPtBX4dr
-         XyEFxDF3rI4Skd8uu+tW37bMnIbIfeVll6YP9QPsiv1m3u9UI7Hz50C/EOmQGDDvJxjt
-         MNnpf3ALOQX+wn100d4q49rWpqL/dLYkEvAbPydL+TGXqu4wUlet2YAblmsMtkne7qnv
-         mFnrVk537e3SRZLOSIfp5DZTMcRh1T3I7huUyEOh7iplVBe4IuwO1byLK+LTz8AIzALW
-         g8HnTvBYEWL7IAty6Tx+yooX0qDMEelsrde2cgdpkGApf9pCWxxWG6Loqrv6o3ZIrYoi
-         o0cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=YQ2SYzDjclp6+UMcXfMKe/dCfkknHxuiGOrHRSVn0cA=;
-        b=jvMidIC9NVI6Mrh4AAf94UKC9ibzSXsmt3FJt7iLOLP3DWlyqGTfUwrODMNDJIYwsP
-         N2T+a2xzMEDLhFpjLXErW7JZj1iHf9I5v9cWBs76y26Pv1N43Lf5SbPhm9kF3hVjEKx/
-         i3IVk7WxJJtQJaeKY3tcscM1k/NDAkantFgL3UdIVs9+SFWM6STegZ8CaF+89OidA/JM
-         Fc6vN652f4Z5rR4lqRrnZmJ0W2dZThnu4qlwyqLNfbQEG6HRwM4FlRqwrb44wNHypdr0
-         mmkmWUsJXGfNmphkYYG79kQwWYva8yGf0lFfefGd2z1EJl1ZIJm/QNIvEd5WMCNAS1r8
-         Wq9A==
-X-Gm-Message-State: APjAAAW81N7skRWZMgEsiSMsx61kzGk+U/nlBkai1QGojKJI2hUr2TMW
-        jP+kDMJqxfNt/tfBq5WS5qwm8bKU2xXQtomE
-X-Google-Smtp-Source: APXvYqwmyNu50+FxrTO6V6IulFup1S67xnT8cj+dbepaT4niD1qSPIKhFvBy+c/p26nJk53uezcFig==
-X-Received: by 2002:a63:ad0d:: with SMTP id g13mr26250877pgf.407.1571675706632;
-        Mon, 21 Oct 2019 09:35:06 -0700 (PDT)
-Received: from Shannons-MacBook-Pro.local (static-50-53-47-17.bvtn.or.frontiernet.net. [50.53.47.17])
-        by smtp.gmail.com with ESMTPSA id e4sm16610297pff.22.2019.10.21.09.35.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Oct 2019 09:35:05 -0700 (PDT)
-Subject: Re: [PATCH 5/5] ionic: Use debugfs_create_bool() to export bool
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        =?UTF-8?Q?Breno_Leit=c3=a3o?= <leitao@debian.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Paulo Flabiano Smorigo <pfsmorigo@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        David@rox.of.borg, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Casey Leedom <leedom@chelsio.com>,
-        Pensando Drivers <drivers@pensando.io>,
-        Kevin Hilman <khilman@kernel.org>, Nishanth Menon <nm@ti.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        netdev@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191021145149.31657-1-geert+renesas@glider.be>
- <20191021145149.31657-6-geert+renesas@glider.be>
-From:   Shannon Nelson <snelson@pensando.io>
-Message-ID: <aeebbd5f-6100-2780-ef1c-6b1c261c9d23@pensando.io>
-Date:   Mon, 21 Oct 2019 09:35:03 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        id S1728476AbfJUQin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:38:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726819AbfJUQim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:38:42 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B107A2053B;
+        Mon, 21 Oct 2019 16:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571675921;
+        bh=20hJL/WfxZOu9ppwy6d+wmNJQ4a24O231TqhPKggUFQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=YA/0SsdU3CpRyPLZptMVBpYWQbPwShas0erRrup6ILpE7KjiPKuzGFgaPl641aRsn
+         PjXypLqhqqYiWcvm1pCsN+tfItbC/4eRXmx54i2PzPGR6eCAKURgMfECcpvT7KNhMV
+         ECRU0bsM9kN/poIYs+Jiwnrv1IAnQkJY7vsKico0=
+Date:   Mon, 21 Oct 2019 17:38:35 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Gwendal Grignou <gwendal@chromium.org>
+Cc:     briannorris@chromium.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, lee.jones@linaro.org, bleung@chromium.org,
+        enric.balletbo@collabora.com, dianders@chromium.org,
+        groeck@chromium.org, fabien.lahoudere@collabora.com,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2 14/18] iio: cros_ec: Register to cros_ec_sensorhub
+ when EC supports FIFO
+Message-ID: <20191021173835.16a7830c@archlinux>
+In-Reply-To: <20191021055403.67849-15-gwendal@chromium.org>
+References: <20191021055403.67849-1-gwendal@chromium.org>
+        <20191021055403.67849-15-gwendal@chromium.org>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20191021145149.31657-6-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/21/19 7:51 AM, Geert Uytterhoeven wrote:
-> Currently bool ionic_cq.done_color is exported using
-> debugfs_create_u8(), which requires a cast, preventing further compiler
-> checks.
->
-> Fix this by switching to debugfs_create_bool(), and dropping the cast.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Sun, 20 Oct 2019 22:53:59 -0700
+Gwendal Grignou <gwendal@chromium.org> wrote:
 
-Acked-by: Shannon Nelson <snelson@pensando.io>
+> When EC supports FIFO, each IIO device registers a callback, to put
+> samples in the buffer when they arrives from the FIFO.
+> We can still use a trigger to collect samples, but there may be some
+> duplications in the buffer: EC has a single FIFO, so once one sensor is
+> using it, all sensors event will be in the FIFO.
+> To be sure events generated by cros_ec_sensorhub or the trigger uses the
+> same time domain, current_timestamp_clock must be set to "boottime".
+> 
+> When no FIFO, the user space app needs to call trigger_new, or better
+> register a high precision timer.
+> 
+> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+A couple of nitpicks inline that would be nice to tidy up.
 
 > ---
->   drivers/net/ethernet/pensando/ionic/ionic_debugfs.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/net/ethernet/pensando/ionic/ionic_debugfs.c b/drivers/net/ethernet/pensando/ionic/ionic_debugfs.c
-> index bc03cecf80cc9eb4..5beba915f69d12dd 100644
-> --- a/drivers/net/ethernet/pensando/ionic/ionic_debugfs.c
-> +++ b/drivers/net/ethernet/pensando/ionic/ionic_debugfs.c
-> @@ -170,8 +170,7 @@ void ionic_debugfs_add_qcq(struct ionic_lif *lif, struct ionic_qcq *qcq)
->   	debugfs_create_x64("base_pa", 0400, cq_dentry, &cq->base_pa);
->   	debugfs_create_u32("num_descs", 0400, cq_dentry, &cq->num_descs);
->   	debugfs_create_u32("desc_size", 0400, cq_dentry, &cq->desc_size);
-> -	debugfs_create_u8("done_color", 0400, cq_dentry,
-> -			  (u8 *)&cq->done_color);
-> +	debugfs_create_bool("done_color", 0400, cq_dentry, &cq->done_color);
->   
->   	debugfs_create_file("tail", 0400, cq_dentry, cq, &cq_tail_fops);
->   
+> Change in v2 from "Use triggered buffer only when EC does not support
+> FIFO":
+> - Keep trigger all the time.
+> - Add  devm_add_action to cleanup callback registration.
+> - EC that "reports" legacy sensors do not have FIFO.
+> - Use iiio_is_buffer_enabled instead of checking the scan_mask
+>   before sending samples to buffer.
+
+Hmm. I'm a bit dubious about this one as kind of indicates something
+is wrong with when the setup is done.  We should be ready to 
+receive data before any turns up.  Perhaps things are more complex
+here and we can't ensure that for some reason.
+
+> - Add empty lines for visibility.
+> 
+>  drivers/iio/accel/cros_ec_accel_legacy.c      |  8 +-
+>  .../cros_ec_sensors/cros_ec_lid_angle.c       |  2 +-
+>  .../common/cros_ec_sensors/cros_ec_sensors.c  |  8 +-
+>  .../cros_ec_sensors/cros_ec_sensors_core.c    | 80 ++++++++++++++++++-
+>  drivers/iio/light/cros_ec_light_prox.c        |  8 +-
+>  drivers/iio/pressure/cros_ec_baro.c           |  8 +-
+>  .../linux/iio/common/cros_ec_sensors_core.h   | 12 ++-
+>  7 files changed, 96 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
+> index 65f85faf6f31d..66683df9fc433 100644
+> --- a/drivers/iio/accel/cros_ec_accel_legacy.c
+> +++ b/drivers/iio/accel/cros_ec_accel_legacy.c
+> @@ -171,7 +171,8 @@ static int cros_ec_accel_legacy_probe(struct platform_device *pdev)
+>  	if (!indio_dev)
+>  		return -ENOMEM;
+>  
+> -	ret = cros_ec_sensors_core_init(pdev, indio_dev, true);
+> +	ret = cros_ec_sensors_core_init(pdev, indio_dev, true,
+> +			cros_ec_sensors_capture, NULL);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -191,11 +192,6 @@ static int cros_ec_accel_legacy_probe(struct platform_device *pdev)
+>  		state->sign[CROS_EC_SENSOR_Z] = -1;
+>  	}
+>  
+> -	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, NULL,
+> -			cros_ec_sensors_capture, NULL);
+> -	if (ret)
+> -		return ret;
+> -
+>  	return devm_iio_device_register(dev, indio_dev);
+>  }
+>  
+> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_lid_angle.c b/drivers/iio/common/cros_ec_sensors/cros_ec_lid_angle.c
+> index 1dcc2a16ab2dd..e30a59fcf0f95 100644
+> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_lid_angle.c
+> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_lid_angle.c
+> @@ -97,7 +97,7 @@ static int cros_ec_lid_angle_probe(struct platform_device *pdev)
+>  	if (!indio_dev)
+>  		return -ENOMEM;
+>  
+> -	ret = cros_ec_sensors_core_init(pdev, indio_dev, false);
+> +	ret = cros_ec_sensors_core_init(pdev, indio_dev, false, NULL, NULL);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
+> index 7dce044734678..9e7903ff99f80 100644
+> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
+> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
+> @@ -231,7 +231,8 @@ static int cros_ec_sensors_probe(struct platform_device *pdev)
+>  	if (!indio_dev)
+>  		return -ENOMEM;
+>  
+> -	ret = cros_ec_sensors_core_init(pdev, indio_dev, true);
+> +	ret = cros_ec_sensors_core_init(pdev, indio_dev, true,
+> +			cros_ec_sensors_capture, cros_ec_sensors_push_data);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -293,11 +294,6 @@ static int cros_ec_sensors_probe(struct platform_device *pdev)
+>  	else
+>  		state->core.read_ec_sensors_data = cros_ec_sensors_read_cmd;
+>  
+> -	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, NULL,
+> -			cros_ec_sensors_capture, NULL);
+> -	if (ret)
+> -		return ret;
+> -
+>  	return devm_iio_device_register(dev, indio_dev);
+>  }
+>  
+> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> index 4acb8b7310d43..3d2e17093c75a 100644
+> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/kfifo_buf.h>
+>  #include <linux/iio/trigger_consumer.h>
+> +#include <linux/iio/triggered_buffer.h>
+>  #include <linux/kernel.h>
+>  #include <linux/mfd/cros_ec.h>
+>  #include <linux/module.h>
+> @@ -83,17 +84,72 @@ static void get_default_min_max_freq(enum motionsensor_type type,
+>  	}
+>  }
+>  
+> +int cros_ec_sensors_push_data(
+> +		struct iio_dev *indio_dev,
+> +		s16 *data,
+> +		s64 timestamp)
+Whilst you have some cases in here that can't, this can be nicely aligned.
+> +int cros_ec_sensors_push_data(struct iio_dev *indio_dev, s16 *data,
+				 s64 timestamp)
+
+> +{
+> +	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
+> +	s16 *out;
+> +	unsigned int i;
+> +
+> +	/*
+> +	 * It can happen if we get a samples before the iio device is fully
+> +	 * registered.
+> +	 */
+> +	if (!st)
+> +		return 0;
+> +
+> +	/*
+> +	 * Ignore samples if the buffer is not set: it is needed if the ODR is
+> +	 * set but the buffer is not enabled yet.
+> +	 */
+> +	if (!iio_buffer_enabled(indio_dev))
+> +		return 0;
+> +
+> +	out = (s16 *)st->samples;
+> +	for_each_set_bit(i,
+> +			 indio_dev->active_scan_mask,
+> +			 indio_dev->masklength) {
+> +		*out = data[i];
+> +		out++;
+> +	}
+> +
+> +	iio_push_to_buffers_with_timestamp(indio_dev, st->samples, timestamp);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(cros_ec_sensors_push_data);
+> +
+> +static void cros_ec_sensors_core_clean(void *arg)
+> +{
+> +	struct platform_device *pdev = (struct platform_device *)arg;
+> +	struct cros_ec_sensorhub *sensor_hub =
+> +		dev_get_drvdata(pdev->dev.parent);
+> +	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> +	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
+> +	u8 sensor_num = st->param.info.sensor_num;
+> +
+> +	cros_ec_sensorhub_unregister_push_data(sensor_hub, sensor_num);
+> +}
+> +
+>  /**
+>   * cros_ec_sensors_core_init() - basic initialization of the core structure
+>   * @pdev:		platform device created for the sensors
+>   * @indio_dev:		iio device structure of the device
+>   * @physical_device:	true if the device refers to a physical device
+> + * @trigger_capture:    function pointer to call buffer is triggered,
+> + *    for backward compatibility.
+> + * @push_data:          function to call when cros_ec_sensorhub receives
+> + *    a sample for that sensor.
+>   *
+>   * Return: 0 on success, -errno on failure.
+>   */
+>  int cros_ec_sensors_core_init(struct platform_device *pdev,
+>  			      struct iio_dev *indio_dev,
+> -			      bool physical_device)
+> +			      bool physical_device,
+> +			      cros_ec_sensors_capture_t trigger_capture,
+> +			      cros_ec_sensorhub_push_data_cb_t push_data)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct cros_ec_sensors_core_state *state = iio_priv(indio_dev);
+> @@ -132,8 +188,6 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
+>  	indio_dev->name = pdev->name;
+>  
+>  	if (physical_device) {
+> -		indio_dev->modes = INDIO_DIRECT_MODE;
+> -
+>  		state->param.cmd = MOTIONSENSE_CMD_INFO;
+>  		state->param.info.sensor_num = sensor_platform->sensor_num;
+>  		ret = cros_ec_motion_send_host_cmd(state, 0);
+> @@ -162,9 +216,27 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
+>  			state->frequencies[2] =
+>  			    state->resp->info_3.max_frequency;
+>  		}
+> +
+> +		ret = devm_iio_triggered_buffer_setup(
+> +				dev, indio_dev, NULL,
+> +				trigger_capture, NULL);
+> +		if (ret)
+> +			return ret;
+> +
+> +		if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE_FIFO)) {
+> +			ret = cros_ec_sensorhub_register_push_data(
+> +					sensor_hub,
+> +					sensor_platform->sensor_num,
+> +					indio_dev, push_data);
+> +			if (ret)
+> +				return ret;
+> +
+> +			ret = devm_add_action_or_reset(
+> +					dev, cros_ec_sensors_core_clean, pdev);
+> +		}
+>  	}
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(cros_ec_sensors_core_init);
+>  
+> diff --git a/drivers/iio/light/cros_ec_light_prox.c b/drivers/iio/light/cros_ec_light_prox.c
+> index d85a391e50c59..da40c38370965 100644
+> --- a/drivers/iio/light/cros_ec_light_prox.c
+> +++ b/drivers/iio/light/cros_ec_light_prox.c
+> @@ -178,7 +178,8 @@ static int cros_ec_light_prox_probe(struct platform_device *pdev)
+>  	if (!indio_dev)
+>  		return -ENOMEM;
+>  
+> -	ret = cros_ec_sensors_core_init(pdev, indio_dev, true);
+> +	ret = cros_ec_sensors_core_init(pdev, indio_dev, true,
+> +			cros_ec_sensors_capture, cros_ec_sensors_push_data);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -237,11 +238,6 @@ static int cros_ec_light_prox_probe(struct platform_device *pdev)
+>  
+>  	state->core.read_ec_sensors_data = cros_ec_sensors_read_cmd;
+>  
+> -	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, NULL,
+> -					      cros_ec_sensors_capture, NULL);
+> -	if (ret)
+> -		return ret;
+> -
+>  	return devm_iio_device_register(dev, indio_dev);
+>  }
+>  
+> diff --git a/drivers/iio/pressure/cros_ec_baro.c b/drivers/iio/pressure/cros_ec_baro.c
+> index 2354302375dee..fb7daeb4b29f9 100644
+> --- a/drivers/iio/pressure/cros_ec_baro.c
+> +++ b/drivers/iio/pressure/cros_ec_baro.c
+> @@ -134,7 +134,8 @@ static int cros_ec_baro_probe(struct platform_device *pdev)
+>  	if (!indio_dev)
+>  		return -ENOMEM;
+>  
+> -	ret = cros_ec_sensors_core_init(pdev, indio_dev, true);
+> +	ret = cros_ec_sensors_core_init(pdev, indio_dev, true,
+> +			cros_ec_sensors_capture, cros_ec_sensors_push_data);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -180,11 +181,6 @@ static int cros_ec_baro_probe(struct platform_device *pdev)
+>  
+>  	state->core.read_ec_sensors_data = cros_ec_sensors_read_cmd;
+>  
+> -	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, NULL,
+> -					      cros_ec_sensors_capture, NULL);
+> -	if (ret)
+> -		return ret;
+> -
+>  	return devm_iio_device_register(dev, indio_dev);
+>  }
+>  
+> diff --git a/include/linux/iio/common/cros_ec_sensors_core.h b/include/linux/iio/common/cros_ec_sensors_core.h
+> index 0af918978f975..b4eb3790cde11 100644
+> --- a/include/linux/iio/common/cros_ec_sensors_core.h
+> +++ b/include/linux/iio/common/cros_ec_sensors_core.h
+> @@ -12,6 +12,7 @@
+>  #include <linux/irqreturn.h>
+>  #include <linux/platform_data/cros_ec_commands.h>
+>  #include <linux/platform_data/cros_ec_proto.h>
+> +#include <linux/platform_data/cros_ec_sensorhub.h>
+>  
+>  enum {
+>  	CROS_EC_SENSOR_X,
+> @@ -32,6 +33,9 @@ enum {
+>  /* Minimum sampling period to use when device is suspending */
+>  #define CROS_EC_MIN_SUSPEND_SAMPLING_FREQUENCY 1000  /* 1 second */
+>  
+> +typedef irqreturn_t (*cros_ec_sensors_capture_t)(int irq, void *p);
+> +
+Nitpick if you are rolling again.  One blank line is enough ;)
+> +
+>  /**
+>   * struct cros_ec_sensors_core_state - state data for EC sensors IIO driver
+>   * @ec:				cros EC device structure
+> @@ -87,9 +91,15 @@ int cros_ec_sensors_read_cmd(struct iio_dev *indio_dev, unsigned long scan_mask,
+>  
+>  struct platform_device;
+>  int cros_ec_sensors_core_init(struct platform_device *pdev,
+> -			      struct iio_dev *indio_dev, bool physical_device);
+> +			      struct iio_dev *indio_dev, bool physical_device,
+> +			      cros_ec_sensors_capture_t trigger_capture,
+> +			      cros_ec_sensorhub_push_data_cb_t push_data);
+>  
+>  irqreturn_t cros_ec_sensors_capture(int irq, void *p);
+> +int cros_ec_sensors_push_data(
+> +		struct iio_dev *indio_dev,
+> +		s16 *data,
+> +		s64 timestamp);
+>  
+>  int cros_ec_motion_send_host_cmd(struct cros_ec_sensors_core_state *st,
+>  				 u16 opt_length);
 
