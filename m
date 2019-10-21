@@ -2,97 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5D9DF433
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 19:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C454EDF438
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 19:29:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbfJUR1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 13:27:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50662 "EHLO mx1.redhat.com"
+        id S1729597AbfJUR24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 13:28:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727017AbfJUR1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 13:27:15 -0400
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        id S1726819AbfJUR2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 13:28:55 -0400
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BB84785542
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 17:27:15 +0000 (UTC)
-Received: by mail-wm1-f72.google.com with SMTP id 6so1768933wmj.9
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 10:27:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=o4xeYtdnmb8NdCuVzBbUa7fVvwoUzqqrPHBPV9zqYVk=;
-        b=HxC4VG8Y3N9xV0rA1VdRmtQqobikCZ7qxTSlRPy7r2bZP7FFuCe826s/tfKNbFkKNC
-         lfQyZtf0Z2+HHvhqkkQ66ajbV2WzpL+cGAoKY+hP1PTkHqx0+D9bjKL93DPpIeHtSKyn
-         t6oEQGiduhzhDMbRtAFy6QaZ6D/IUVtWcXZ1040QLSkc3nWO84rdiVxqb++zhporoiIJ
-         7ESYyFBeWkGoMRcYcLl/CM4LD5h3GbdejXJcOHcLYdJBueLjAq22xqm/FYiAvurecQRH
-         ARkGQbOE+0oQFcoLivuxOOl/xXVOZzWRpnZoZEcNZknTkNwOSPtg2+UJAMFCsfbZutZM
-         BpDw==
-X-Gm-Message-State: APjAAAVg5T+paprcgqmDVvHrbWebwpBWMH8HQHvhVkjLQbyuH7QvC4c3
-        vEZw2pRCY1SxbagcHESePu44A98DpefsLFjA/wzzyZzBv+PtepsYSB5FgyRznu7nC8JebtZL4PH
-        CoFMk9Ufhs+vIeudPAkZ5b2Xe
-X-Received: by 2002:a1c:a556:: with SMTP id o83mr21599611wme.0.1571678834219;
-        Mon, 21 Oct 2019 10:27:14 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzipaLfA3kUVnqB/RRSN8weGdEW5X/KaWu7Reo2wlZT9NrXTpU395PLRqKuErbW+MMVjo6+Dw==
-X-Received: by 2002:a1c:a556:: with SMTP id o83mr21599580wme.0.1571678833914;
-        Mon, 21 Oct 2019 10:27:13 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:847b:6afc:17c:89dd? ([2001:b07:6468:f312:847b:6afc:17c:89dd])
-        by smtp.gmail.com with ESMTPSA id t8sm15118590wrx.76.2019.10.21.10.27.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2019 10:27:13 -0700 (PDT)
-Subject: Re: [PATCH v9 20/22] RISC-V: KVM: Fix race-condition in
- kvm_riscv_vcpu_sync_interrupts()
-To:     Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Radim K <rkrcmar@redhat.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Graf <graf@amazon.com>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Anup Patel <anup@brainfault.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20191016160649.24622-1-anup.patel@wdc.com>
- <20191016160649.24622-21-anup.patel@wdc.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <1d2e9514-235e-183e-b4fc-d3becc9ce471@redhat.com>
-Date:   Mon, 21 Oct 2019 19:27:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 751D32077C;
+        Mon, 21 Oct 2019 17:28:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571678933;
+        bh=Qzg+nSzQSl15mcasjyGbnQQil/A3TPHlMSePYlNANZ8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RgGKvjMKa74HImO3uxjYKvw0NK90LMd1NHS62oYJe/PK7d2Wn6sNEjJ/2E2hICDBd
+         XByPz58+kfMLYVHX1NC7mvZsqWf+FPP3777xTm0eCgqua4idWWIpn63aYOk4Fv/Qdf
+         Ey7ZtrC9+zWSUcPXn5OWFVJdxwLias2NyrWVNb6U=
+Received: by mail-qt1-f171.google.com with SMTP id e14so2441067qto.1;
+        Mon, 21 Oct 2019 10:28:53 -0700 (PDT)
+X-Gm-Message-State: APjAAAWE5+HVqury7By6WCJIjedzOM76I1r2t/0LNRK6JID2UPap1e4z
+        diXGGJzTrZjDWD1GeRe6bf5Mn8QxxN8RubV/pw==
+X-Google-Smtp-Source: APXvYqycsWbsOq+RkNJmmVCRQvnEVotA2t3MyLrnXmKMy7TpkH+IaWBEzx0jJADgfZO6JSeE0XNQkDJsPHRfKzk4np8=
+X-Received: by 2002:ac8:70c4:: with SMTP id g4mr12467338qtp.136.1571678932597;
+ Mon, 21 Oct 2019 10:28:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191016160649.24622-21-anup.patel@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191005151404.5fc7386f@archlinux> <1571664677-6984-1-git-send-email-gupt21@gmail.com>
+In-Reply-To: <1571664677-6984-1-git-send-email-gupt21@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 21 Oct 2019 12:28:41 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLoVf4QCYJE_Bak+httr6_bT=iP63waNNiUHz1+PdLhPg@mail.gmail.com>
+Message-ID: <CAL_JsqLoVf4QCYJE_Bak+httr6_bT=iP63waNNiUHz1+PdLhPg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] dt-bindings: iio: light: add veml6030 ALS bindings
+To:     Rishi Gupta <gupt21@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>, alexios.zavras@intel.com,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/10/19 18:12, Anup Patel wrote:
-> +	/* Read current VSIP and VSIE CSRs */
-> +	vsip = csr_read(CSR_VSIP);
-> +	csr->vsie = csr_read(CSR_VSIE);
+On Mon, Oct 21, 2019 at 8:31 AM Rishi Gupta <gupt21@gmail.com> wrote:
+>
+> This commit adds device tree bindings for veml6030 ambient
+> light sensor.
+>
+> Signed-off-by: Rishi Gupta <gupt21@gmail.com>
+> ---
+> Changes in v3:
+> * None
+>
+> Changes in v2:
+> * Corrected grammatical mistake from 'is' to 'are' in description of bindings
+>
+>  .../devicetree/bindings/iio/light/veml6030.yaml    | 62 ++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/light/veml6030.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/iio/light/veml6030.yaml b/Documentation/devicetree/bindings/iio/light/veml6030.yaml
+> new file mode 100644
+> index 0000000..969b314
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/light/veml6030.yaml
+> @@ -0,0 +1,62 @@
+> +# SPDX-License-Identifier: GPL-2.0+
+
+(GPL-2.0-only OR BSD-2-Clause) for new bindings please.
+
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/light/veml6030.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	/* Sync-up VSIP.SSIP bit changes does by Guest */
-> +	if ((csr->vsip ^ vsip) & (1UL << IRQ_S_SOFT)) {
-> +		if (!test_and_set_bit(IRQ_S_SOFT, &v->irqs_pending_mask)) {
-> +			if (vsip & (1UL << IRQ_S_SOFT))
-> +				set_bit(IRQ_S_SOFT, &v->irqs_pending);
-> +			else
-> +				clear_bit(IRQ_S_SOFT, &v->irqs_pending);
-> +		}
+> +title: VEML6030 Ambient Light Sensor (ALS)
+> +
+> +maintainers:
+> +  - Rishi Gupta <gupt21@gmail.com>
+> +
+> +description: |
+> +  Bindings for the ambient light sensor veml6030 from Vishay
+> +  Semiconductors over an i2c interface.
+> +
+> +  Irrespective of whether interrupt is used or not, application
+> +  can get the ALS and White channel reading from IIO raw interface.
+> +
+> +  If the interrupts are used, application will receive an IIO event
+> +  whenever configured threshold is crossed.
+> +
+> +  Specifications about the sensor can be found at:
+> +    https://www.vishay.com/docs/84366/veml6030.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - vishay,veml6030
+> +
+> +  reg:
+> +    description:
+> +      I2C address of the device. If the ADDR pin on veml6030
+> +      is pulled up, this address is 0x48. If the ADDR pin is
+> +      pulled down, this address is 0x10.
 
-Looks good, but I wonder if this could just be "csr->vsip =
-csr_read(CSR_VSIP)", which will be fixed up by flush_interrupts on the
-next entry.
+If you want to define the addresses, then you do:
 
-Paolo
+enum:
+  - 0x10 # ADDR pin pulled down
+  - 0x48 # ADDR pin pulled up
+
+> +    maxItems: 1
+
+And drop this.
+
+> +
+> +  interrupts:
+> +    description:
+> +      interrupt mapping for IRQ. Configure with IRQ_TYPE_LEVEL_LOW.
+> +      Refer to interrupt-controller/interrupts.txt for generic
+> +      interrupt client node bindings.
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        light-sensor@10 {
+> +                compatible = "vishay,veml6030";
+> +                reg = <0x10>;
+> +                interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
+> +        };
+> +    };
+> +...
+> --
+> 2.7.4
+>
