@@ -2,251 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E661DF285
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54DF3DF25F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:05:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729652AbfJUQLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:11:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35718 "EHLO mail.kernel.org"
+        id S1728018AbfJUQFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:05:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbfJUQK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:10:59 -0400
-Received: from localhost.localdomain (unknown [194.230.155.217])
+        id S1726289AbfJUQFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:05:03 -0400
+Received: from linux-8ccs.suse.cz (ip5f5ade6e.dynamic.kabel-deutschland.de [95.90.222.110])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C85F20B7C;
-        Mon, 21 Oct 2019 16:02:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA5D1214AE;
+        Mon, 21 Oct 2019 16:05:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571673743;
-        bh=9vUKs8pCzKFuQ7qoUJr6IKkD/Ix0T+CpovzK7sscdoY=;
+        s=default; t=1571673902;
+        bh=gV8c3T01F0BTyDBAf4oVsD8CetT4S5sEcniUAfvvffE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YnuG4tgpME3kPNjXMpUARMsvb9tqSSpIBym0ehdPKylfYMgiqTnXeo27b5jdwh9dq
-         qlPWNYYo7/4HpfxKy1fzneHlbFxhhI5aYIHBVsgbpVpZ8Yz2PkRaBWPAY7U+tvf0qO
-         wKup6EQVUm2LRfxMmfeWS9uEP6d4M11xqW+icQ0U=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 2/2] dt-bindings: pwm: Convert Samsung PWM bindings to json-schema
-Date:   Mon, 21 Oct 2019 18:02:07 +0200
-Message-Id: <20191021160207.18026-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191021160207.18026-1-krzk@kernel.org>
-References: <20191021160207.18026-1-krzk@kernel.org>
+        b=iPP5Mraq1qg4uu6Fnr//Q9K+pTAUuBHVWp8FyhcwDmuFls+fVEdTfQA0qDdHVF/9y
+         /Y4S1MJeuhkA5ZW0i640O1JyEHY3B+NrnbFmCyvXtF5r6QDzK1YABH5bBWzK9kQpOZ
+         kaqbgZOe/v4H4+mbMgUIbPbIQVTgxXX4bzZCqJcM=
+From:   Jessica Yu <jeyu@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Matthias Maennich <maennich@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jessica Yu <jeyu@kernel.org>
+Subject: [PATCH v2] scripts/nsdeps: use alternative sed delimiter
+Date:   Mon, 21 Oct 2019 18:04:19 +0200
+Message-Id: <20191021160419.28270-1-jeyu@kernel.org>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20191021145137.31672-1-jeyu@kernel.org>
+References: <20191021145137.31672-1-jeyu@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert Samsung PWM (S3C, S5P and Exynos SoCs) bindings to DT schema
-format using json-schema.
+When doing an out of tree build with O=, the nsdeps script constructs
+the absolute pathname of the module source file so that it can insert
+MODULE_IMPORT_NS statements in the right place. However, ${srctree}
+contains an unescaped path to the source tree, which, when used in a sed
+substitution, makes sed complain:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+++ sed 's/[^ ]* *//home/jeyu/jeyu-linux\/&/g'
+sed: -e expression #1, char 12: unknown option to `s'
 
+The sed substitution command 's' ends prematurely with the forward
+slashes in the pathname, and sed errors out when it encounters the 'h',
+which is an invalid sed substitution option. To avoid escaping forward
+slashes in ${srctree}, we can use '|' as an alternative delimiter for
+sed to avoid this error.
+
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
 ---
 
-Changes since v3:
-1. Add reviewed-by.
+This is an alternative to my first patch here:
 
-Changes since v2:
-1. Add additionalProperties: false.
+  http://lore.kernel.org/r/20191021145137.31672-1-jeyu@kernel.org
 
-Changes since v1:
-1. Indent example with four spaces (more readable),
-2. Fix samsung,pwm-outputs after review,
-3. Remove double-quotes from clock names.
----
- .../devicetree/bindings/pwm/pwm-samsung.txt   |  51 --------
- .../devicetree/bindings/pwm/pwm-samsung.yaml  | 109 ++++++++++++++++++
- 2 files changed, 109 insertions(+), 51 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.txt
- create mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+Matthias suggested using an alternative sed delimiter instead to avoid the
+ugly/unreadable ${srctree//\//\\\/} substitution.
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
-deleted file mode 100644
-index 5538de9c2007..000000000000
---- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
-+++ /dev/null
-@@ -1,51 +0,0 @@
--* Samsung PWM timers
--
--Samsung SoCs contain PWM timer blocks which can be used for system clock source
--and clock event timers, as well as to drive SoC outputs with PWM signal. Each
--PWM timer block provides 5 PWM channels (not all of them can drive physical
--outputs - see SoC and board manual).
--
--Be aware that the clocksource driver supports only uniprocessor systems.
--
--Required properties:
--- compatible : should be one of following:
--    samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
--    samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
--    samsung,s5p6440-pwm - for 32-bit timers present on S5P64x0 SoCs
--    samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
--			  Exynos4210 rev0 SoCs
--    samsung,exynos4210-pwm - for 32-bit timers present on Exynos4210,
--                          Exynos4x12, Exynos5250 and Exynos5420 SoCs
--- reg: base address and size of register area
--- interrupts: list of timer interrupts (one interrupt per timer, starting at
--  timer 0)
--- clock-names: should contain all following required clock names:
--    - "timers" - PWM base clock used to generate PWM signals,
--  and any subset of following optional clock names:
--    - "pwm-tclk0" - first external PWM clock source,
--    - "pwm-tclk1" - second external PWM clock source.
--  Note that not all IP variants allow using all external clock sources.
--  Refer to SoC documentation to learn which clock source configurations
--  are available.
--- clocks: should contain clock specifiers of all clocks, which input names
--  have been specified in clock-names property, in same order.
--- #pwm-cells: should be 3. See pwm.txt in this directory for a description of
--  the cells format. The only third cell flag supported by this binding is
--  PWM_POLARITY_INVERTED.
--
--Optional properties:
--- samsung,pwm-outputs: list of PWM channels used as PWM outputs on particular
--    platform - an array of up to 5 elements being indices of PWM channels
--    (from 0 to 4), the order does not matter.
--
--Example:
--	pwm@7f006000 {
--		compatible = "samsung,s3c6400-pwm";
--		reg = <0x7f006000 0x1000>;
--		interrupt-parent = <&vic0>;
--		interrupts = <23>, <24>, <25>, <27>, <28>;
--		clocks = <&clock 67>;
--		clock-names = "timers";
--		samsung,pwm-outputs = <0>, <1>;
--		#pwm-cells = <3>;
--	}
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-new file mode 100644
-index 000000000000..ea7f32905172
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-@@ -0,0 +1,109 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pwm/pwm-samsung.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung SoC PWM timers
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding@gmail.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+
-+description: |+
-+  Samsung SoCs contain PWM timer blocks which can be used for system clock source
-+  and clock event timers, as well as to drive SoC outputs with PWM signal. Each
-+  PWM timer block provides 5 PWM channels (not all of them can drive physical
-+  outputs - see SoC and board manual).
-+
-+  Be aware that the clocksource driver supports only uniprocessor systems.
-+
-+allOf:
-+  - $ref: pwm.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,s3c2410-pwm             # 16-bit, S3C24xx
-+      - samsung,s3c6400-pwm             # 32-bit, S3C64xx
-+      - samsung,s5p6440-pwm             # 32-bit, S5P64x0
-+      - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
-+      - samsung,exynos4210-pwm          # 32-bit, Exynos
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 3
-+
-+  clock-names:
-+    description: |
-+      Should contain all following required clock names:
-+      - "timers" - PWM base clock used to generate PWM signals,
-+      and any subset of following optional clock names:
-+      - "pwm-tclk0" - first external PWM clock source,
-+      - "pwm-tclk1" - second external PWM clock source.
-+      Note that not all IP variants allow using all external clock sources.
-+      Refer to SoC documentation to learn which clock source configurations
-+      are available.
-+    oneOf:
-+      - items:
-+        - const: timers
-+      - items:
-+        - const: timers
-+        - const: pwm-tclk0
-+      - items:
-+        - const: timers
-+        - const: pwm-tclk1
-+      - items:
-+        - const: timers
-+        - const: pwm-tclk0
-+        - const: pwm-tclk1
-+
-+  interrupts:
-+    description:
-+      One interrupt per timer, starting at timer 0.
-+    minItems: 1
-+    maxItems: 5
-+
-+  "#pwm-cells":
-+    description:
-+      The only third cell flag supported by this binding
-+      is PWM_POLARITY_INVERTED.
-+    const: 3
-+
-+  samsung,pwm-outputs:
-+    description:
-+      A list of PWM channels used as PWM outputs on particular platform.
-+      It is an array of up to 5 elements being indices of PWM channels
-+      (from 0 to 4), the order does not matter.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+      - uniqueItems: true
-+      - items:
-+          minimum: 0
-+          maximum: 4
-+
-+required:
-+  - clocks
-+  - clock-names
-+  - compatible
-+  - interrupts
-+  - "#pwm-cells"
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pwm@7f006000 {
-+        compatible = "samsung,s3c6400-pwm";
-+        reg = <0x7f006000 0x1000>;
-+        interrupt-parent = <&vic0>;
-+        interrupts = <23>, <24>, <25>, <27>, <28>;
-+        clocks = <&clock 67>;
-+        clock-names = "timers";
-+        samsung,pwm-outputs = <0>, <1>;
-+        #pwm-cells = <3>;
-+    };
+ scripts/nsdeps | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/nsdeps b/scripts/nsdeps
+index 3754dac13b31..63da30a33422 100644
+--- a/scripts/nsdeps
++++ b/scripts/nsdeps
+@@ -33,7 +33,7 @@ generate_deps() {
+ 	if [ ! -f "$ns_deps_file" ]; then return; fi
+ 	local mod_source_files=`cat $mod_file | sed -n 1p                      \
+ 					      | sed -e 's/\.o/\.c/g'           \
+-					      | sed "s/[^ ]* */${srctree}\/&/g"`
++					      | sed "s|[^ ]* *|${srctree}\/&|g"`
+ 	for ns in `cat $ns_deps_file`; do
+ 		echo "Adding namespace $ns to module $mod_name (if needed)."
+ 		generate_deps_for_ns $ns $mod_source_files
 -- 
-2.17.1
+2.16.4
 
