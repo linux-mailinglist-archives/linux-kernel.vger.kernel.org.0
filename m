@@ -2,151 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA90FDEDFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C20F3DEDCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:38:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729522AbfJUNkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:40:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42308 "EHLO mail.kernel.org"
+        id S1729008AbfJUNiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:38:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728979AbfJUNkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:40:31 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
+        id S1728083AbfJUNiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:38:15 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6EB821929;
-        Mon, 21 Oct 2019 13:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571665230;
-        bh=CrHWuSYieCnWgLn1FrU4vSBdhvAzrmV0vb7wsK1WyzY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V7GI2KPox2MqxjFWfsb+lmVCJi6fneqiX9TGx81a0xvKP1HUZdeuoQz/0RyAKzvbP
-         9/e0dhAQmwUH8jR5ii5MAIqbVJEOy3bVdCZjjaLrTvoLIo5XaNmVa+35lYVWFZYVP0
-         28nMCikdAobXL0WB9x8Wy2Tc9+n6c444LZZ94h2c=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        linux-trace-devel@vger.kernel.org
-Subject: [PATCH 34/57] perf scripting engines: Iterate on tep event arrays directly
-Date:   Mon, 21 Oct 2019 10:38:11 -0300
-Message-Id: <20191021133834.25998-35-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191021133834.25998-1-acme@kernel.org>
-References: <20191021133834.25998-1-acme@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 9394520873;
+        Mon, 21 Oct 2019 13:38:13 +0000 (UTC)
+Date:   Mon, 21 Oct 2019 09:38:12 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, jeyu@kernel.org
+Subject: Re: [PATCH v4 00/16] Rewrite x86/ftrace to use text_poke (and more)
+Message-ID: <20191021093812.72b071c4@gandalf.local.home>
+In-Reply-To: <20191021090922.GA41231@gmail.com>
+References: <20191018073525.768931536@infradead.org>
+        <20191021090922.GA41231@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Mon, 21 Oct 2019 11:09:22 +0200
+Ingo Molnar <mingo@kernel.org> wrote:
 
-Instead of calling a useless (and broken) helper function to get the
-next event of a tep event array, just get the array directly and iterate
-over it.
+> Steve, any objections to this series? If not I'll stick it into 
+> tip:core/kprobes with a tentative v5.5 upstream merge target.
 
-Note, the broken part was from trace_find_next_event() which after this
-will no longer be used, and can be removed.
+I'm going to be doing work this merge window that is going to be
+directly conflicting with a lot of changes in this series. If one of us
+can simply have a separate branch with just this series based off of
+v5.4-rc3, it would work better.
 
-Committer notes:
+I could add it to mine, or for you. But I would still need to test this
+in my code first. Peter's last series failed my test suite.
 
-This fixes a segfault when generating python scripts from perf.data
-files with multiple tracepoint events, i.e. the following use case is
-fixed by this patch:
-
-  # perf record -e sched:* sleep 1
-  [ perf record: Woken up 31 times to write data ]
-  [ perf record: Captured and wrote 0.031 MB perf.data (9 samples) ]
-  # perf script -g python
-  Segmentation fault (core dumped)
-  #
-
-Reported-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Cc: linux-trace-devel@vger.kernel.org
-Link: http://lkml.kernel.org/r/20191017153733.630cd5eb@gandalf.local.home
-Link: http://lore.kernel.org/lkml/20191017210636.061448713@goodmis.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/scripting-engines/trace-event-perl.c   | 8 ++++++--
- tools/perf/util/scripting-engines/trace-event-python.c | 9 +++++++--
- 2 files changed, 13 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/util/scripting-engines/trace-event-perl.c b/tools/perf/util/scripting-engines/trace-event-perl.c
-index 15961854ba67..741f040648b5 100644
---- a/tools/perf/util/scripting-engines/trace-event-perl.c
-+++ b/tools/perf/util/scripting-engines/trace-event-perl.c
-@@ -539,10 +539,11 @@ static int perl_stop_script(void)
- 
- static int perl_generate_script(struct tep_handle *pevent, const char *outfile)
- {
-+	int i, not_first, count, nr_events;
-+	struct tep_event **all_events;
- 	struct tep_event *event = NULL;
- 	struct tep_format_field *f;
- 	char fname[PATH_MAX];
--	int not_first, count;
- 	FILE *ofp;
- 
- 	sprintf(fname, "%s.pl", outfile);
-@@ -603,8 +604,11 @@ sub print_backtrace\n\
- }\n\n\
- ");
- 
-+	nr_events = tep_get_events_count(pevent);
-+	all_events = tep_list_events(pevent, TEP_EVENT_SORT_ID);
- 
--	while ((event = trace_find_next_event(pevent, event))) {
-+	for (i = 0; all_events && i < nr_events; i++) {
-+		event = all_events[i];
- 		fprintf(ofp, "sub %s::%s\n{\n", event->system, event->name);
- 		fprintf(ofp, "\tmy (");
- 
-diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
-index 5d341efc3237..93c03b39cd9c 100644
---- a/tools/perf/util/scripting-engines/trace-event-python.c
-+++ b/tools/perf/util/scripting-engines/trace-event-python.c
-@@ -1687,10 +1687,11 @@ static int python_stop_script(void)
- 
- static int python_generate_script(struct tep_handle *pevent, const char *outfile)
- {
-+	int i, not_first, count, nr_events;
-+	struct tep_event **all_events;
- 	struct tep_event *event = NULL;
- 	struct tep_format_field *f;
- 	char fname[PATH_MAX];
--	int not_first, count;
- 	FILE *ofp;
- 
- 	sprintf(fname, "%s.py", outfile);
-@@ -1735,7 +1736,11 @@ static int python_generate_script(struct tep_handle *pevent, const char *outfile
- 	fprintf(ofp, "def trace_end():\n");
- 	fprintf(ofp, "\tprint(\"in trace_end\")\n\n");
- 
--	while ((event = trace_find_next_event(pevent, event))) {
-+	nr_events = tep_get_events_count(pevent);
-+	all_events = tep_list_events(pevent, TEP_EVENT_SORT_ID);
-+
-+	for (i = 0; all_events && i < nr_events; i++) {
-+		event = all_events[i];
- 		fprintf(ofp, "def %s__%s(", event->system, event->name);
- 		fprintf(ofp, "event_name, ");
- 		fprintf(ofp, "context, ");
--- 
-2.21.0
-
+-- Steve
