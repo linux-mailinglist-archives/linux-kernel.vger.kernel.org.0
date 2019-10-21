@@ -2,141 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F233DF854
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 00:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F1CBDF86D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 01:11:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730522AbfJUW6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 18:58:44 -0400
-Received: from mga14.intel.com ([192.55.52.115]:50811 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730405AbfJUW6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 18:58:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 15:58:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,325,1566889200"; 
-   d="scan'208";a="209539352"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Oct 2019 15:58:43 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paul Mackerras <paulus@ozlabs.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Cc:     kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: Add separate helper for putting borrowed reference to kvm
-Date:   Mon, 21 Oct 2019 15:58:42 -0700
-Message-Id: <20191021225842.23941-1-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.22.0
+        id S1730454AbfJUXLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 19:11:48 -0400
+Received: from 2.152.178.181.dyn.user.ono.com ([2.152.178.181]:48098 "EHLO
+        pulsar.hadrons.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730276AbfJUXLs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 19:11:48 -0400
+X-Greylist: delayed 1836 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Oct 2019 19:11:47 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hadrons.org
+        ; s=201908; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+        From:Date:From:Reply-To:Subject:Content-Transfer-Encoding:Content-ID:
+        Content-Description:References:X-Debbugs-Cc;
+        bh=lcZ+YMK9Whi3z5tx7xSI8b6zl56GrrzI4ArlbeylLpQ=; b=Z7Y5hGMHdidz4k/M88HQxnRP8X
+        M1p/0nnLKKgjZgcK8WtKsxct9/D22d3I1D/xnLjiv/zjDdOEwRSGaBDeLShPruvPtj48jgU0TtHsg
+        xHVoeRZg6qdzTtLGR2c9twppv/19Fcpax+wnNBQlEskJWBnXO6OqFHw+6O9e9Zh2oP87C9Xqx4pqe
+        P4612ObycNaGWYeokAELYxC9KxWSu/2PcfaPI8OFlsrkiQglI5TQ6AixKXi6z0/oYw9kbptltD9nl
+        +o/foFD8bugCUjyR05p/aXHpO+naPMztzCg2vDPhv9Oeh3OUla57u5yRCrZFDP1T+nSfNAc5mcEzv
+        EwhVJjfQ==;
+Received: from guillem by pulsar.hadrons.org with local (Exim 4.92)
+        (envelope-from <guillem@hadrons.org>)
+        id 1iMgP5-0004ci-4m; Tue, 22 Oct 2019 00:43:55 +0200
+Date:   Tue, 22 Oct 2019 00:40:57 +0200
+From:   Guillem Jover <guillem@hadrons.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Subject: Re: linux-next: build warning after merge of the vfs-fixes tree
+Message-ID: <20191021224057.GA6880@thunder.hadrons.org>
+Mail-Followup-To: Guillem Jover <guillem@hadrons.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191022093512.4317a715@canb.auug.org.au>
+ <20191022074426.2c0a2485@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new helper, kvm_put_kvm_no_destroy(), to handle putting a borrowed
-reference[*] to the VM when installing a new file descriptor fails.  KVM
-expects the refcount to remain valid in this case, as the in-progress
-ioctl() has an explicit reference to the VM.  The primary motiviation
-for the helper is to document that the 'kvm' pointer is still valid
-after putting the borrowed reference, e.g. to document that doing
-mutex(&kvm->lock) immediately after putting a ref to kvm isn't broken.
+Hi!
 
-[*] When exposing a new object to userspace via a file descriptor, e.g.
-    a new vcpu, KVM grabs a reference to itself (the VM) prior to making
-    the object visible to userspace to avoid prematurely freeing the VM
-    in the scenario where userspace immediately closes file descriptor.
+On Tue, 2019-10-22 at 07:44:26 +1100, Stephen Rothwell wrote:
+> Fixes tag
+> 
+>   Fixes: 7a074e96 ("aio: implement io_pgetevents")
+> 
+> has these problem(s):
+> 
+>   - SHA1 should be at least 12 digits long
+>     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>     or later) just making sure it is not set (or set to "auto").
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/powerpc/kvm/book3s_64_mmu_hv.c |  2 +-
- arch/powerpc/kvm/book3s_64_vio.c    |  2 +-
- include/linux/kvm_host.h            |  1 +
- virt/kvm/kvm_main.c                 | 16 ++++++++++++++--
- 4 files changed, 17 insertions(+), 4 deletions(-)
+On Tue, 2019-10-22 at 09:35:12 +1100, Stephen Rothwell wrote:
+> On Tue, 22 Oct 2019 08:07:34 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > fs/aio.c:2196:38: note: in expansion of macro 'NULL'
+> >  2196 |  struct __compat_aio_sigset ksig = { NULL, };
+> >       |                                      ^~~~
 
-diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-index 9a75f0e1933b..68678e31c84c 100644
---- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-@@ -2000,7 +2000,7 @@ int kvm_vm_ioctl_get_htab_fd(struct kvm *kvm, struct kvm_get_htab_fd *ghf)
- 	ret = anon_inode_getfd("kvm-htab", &kvm_htab_fops, ctx, rwflag | O_CLOEXEC);
- 	if (ret < 0) {
- 		kfree(ctx);
--		kvm_put_kvm(kvm);
-+		kvm_put_kvm_no_destroy(kvm);
- 		return ret;
- 	}
- 
-diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
-index 5834db0a54c6..883a66e76638 100644
---- a/arch/powerpc/kvm/book3s_64_vio.c
-+++ b/arch/powerpc/kvm/book3s_64_vio.c
-@@ -317,7 +317,7 @@ long kvm_vm_ioctl_create_spapr_tce(struct kvm *kvm,
- 	if (ret >= 0)
- 		list_add_rcu(&stt->list, &kvm->arch.spapr_tce_tables);
- 	else
--		kvm_put_kvm(kvm);
-+		kvm_put_kvm_no_destroy(kvm);
- 
- 	mutex_unlock(&kvm->lock);
- 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 719fc3e15ea4..90a2102605ef 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -622,6 +622,7 @@ void kvm_exit(void);
- 
- void kvm_get_kvm(struct kvm *kvm);
- void kvm_put_kvm(struct kvm *kvm);
-+void kvm_put_kvm_no_destroy(struct kvm *kvm);
- 
- static inline struct kvm_memslots *__kvm_memslots(struct kvm *kvm, int as_id)
- {
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 67ef3f2e19e8..b8534c6b8cf6 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -772,6 +772,18 @@ void kvm_put_kvm(struct kvm *kvm)
- }
- EXPORT_SYMBOL_GPL(kvm_put_kvm);
- 
-+/*
-+ * Used to put a reference that was taken on behalf of an object associated
-+ * with a user-visible file descriptor, e.g. a vcpu or device, if installation
-+ * of the new file descriptor fails and the reference cannot be transferred to
-+ * its final owner.  In such cases, the caller is still actively using @kvm and
-+ * will fail miserably if the refcount unexpectedly hits zero.
-+ */
-+void kvm_put_kvm_no_destroy(struct kvm *kvm)
-+{
-+	WARN_ON(refcount_dec_and_test(&kvm->users_count));
-+}
-+EXPORT_SYMBOL_GPL(kvm_put_kvm_no_destroy);
- 
- static int kvm_vm_release(struct inode *inode, struct file *filp)
- {
-@@ -2679,7 +2691,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, u32 id)
- 	kvm_get_kvm(kvm);
- 	r = create_vcpu_fd(vcpu);
- 	if (r < 0) {
--		kvm_put_kvm(kvm);
-+		kvm_put_kvm_no_destroy(kvm);
- 		goto unlock_vcpu_destroy;
- 	}
- 
-@@ -3117,7 +3129,7 @@ static int kvm_ioctl_create_device(struct kvm *kvm,
- 	kvm_get_kvm(kvm);
- 	ret = anon_inode_getfd(ops->name, &kvm_device_fops, dev, O_RDWR | O_CLOEXEC);
- 	if (ret < 0) {
--		kvm_put_kvm(kvm);
-+		kvm_put_kvm_no_destroy(kvm);
- 		mutex_lock(&kvm->lock);
- 		list_del(&dev->vm_node);
- 		mutex_unlock(&kvm->lock);
--- 
-2.22.0
+> > fs/aio.c:2196:38: note: in expansion of macro 'NULL'
+> >  2196 |  struct __compat_aio_sigset ksig = { NULL, };
+> >       |                                      ^~~~
 
+> > fs/aio.c:2231:38: note: in expansion of macro 'NULL'
+> >  2231 |  struct __compat_aio_sigset ksig = { NULL, };
+> >       |                                      ^~~~
+
+> > fs/aio.c:2231:38: note: in expansion of macro 'NULL'
+> >  2231 |  struct __compat_aio_sigset ksig = { NULL, };
+> >       |                                      ^~~~
+> > 
+> > Introduced by commit
+> > 
+> >   de80166a573d ("aio: Fix io_pgetevents() struct __compat_aio_sigset layout")
+
+Ugh, sorry about that, I guess I didn't see the warnings in the scroll
+back when I built this back then for testing. :/ Sending a new version
+fixing both issues.
+
+Thanks,
+Guillem
