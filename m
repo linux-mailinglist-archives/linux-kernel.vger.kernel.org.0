@@ -2,151 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D27C5DEBFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B78FDEBAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:11:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbfJUMTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 08:19:10 -0400
-Received: from ni.piap.pl ([195.187.100.5]:48172 "EHLO ni.piap.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728540AbfJUMTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:19:09 -0400
-Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ni.piap.pl (Postfix) with ESMTPSA id 8F1E7443597;
-        Mon, 21 Oct 2019 14:11:31 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 8F1E7443597
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=piap.pl; s=mail;
-        t=1571659891; bh=2l3g9AQNQvoNkKc40D1gZPWvLVs7AjrMyGTdwvpiyJo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hR8kZEAIxIvs7So3Xp8ANP/+MxjRK9eNSwNzAsIfbz4WyTzOfezCPLNASVzEbjKE/
-         Xmgf6XaIHh+QVaam4MXqyTCBgkFPrOD/s0rj5y+NPltuyessadSQT9ZDpelTGbhdIA
-         kpb9cfzTBUWcVrbuoVt77n/RWsRRfubcxySgma+Y=
-From:   khalasa@piap.pl (Krzysztof =?utf-8?Q?Ha=C5=82asa?=)
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: 802.11n IBSS: wlan0 stops receiving packets due to aggregation after sender reboot
-Date:   Mon, 21 Oct 2019 14:11:30 +0200
-Message-ID: <m34l02mh71.fsf@t19.piap.pl>
+        id S1728375AbfJUMLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 08:11:39 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54098 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbfJUMLi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 08:11:38 -0400
+Received: by mail-wm1-f65.google.com with SMTP id i16so13051228wmd.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 05:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1nWQn9JHkIyWFzO1YTIzRNr08Bu0P25VLya5djrPvZU=;
+        b=O0RqyHH9x9W9yuRreDzZfFvFCw2aKlpuUJgDs6q19bDn3KmMxUrSbA9wuy+igBdgoV
+         AL4qmZzd5gwAvvAVfKCLwxaTDQLMIuYJvNr/J2a4J1UBvJX1HTwibetWsV7OTv8XIGN5
+         tN8U06/qtKqaGeOT3y67gZpufPwEuyYXrq0q3LCD1ipoQRL1gW/QXPjNVNRA8KqgZel5
+         nzRVSGGB/aL2tawRPdzwft1pbqsP6ZoRVJsr8fMUqxHsTwoSZBJc6VUkllpWh3XFoVqi
+         IdYff/AvvJJrvYMMnLWsHpi3nUo2dzpv0Fx2a4xuxmbItbZZBMX593IO2makCLOpruqZ
+         +xmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1nWQn9JHkIyWFzO1YTIzRNr08Bu0P25VLya5djrPvZU=;
+        b=EyXxpvgM4U5/J+t4Zn1f6xnjH91mfpQRE7J+U7hmVvp2MSKTvCNoCvK5bFo0aUChbb
+         Hcy6F+Bbf7yd61ulv1FXDK6QIgoi5skLe4UathX+YlKxI7p9tFRMzfTR42YOsODIfB/J
+         2wxRjHoU5abNEgH3XDBo+Ne5q5aFp+jrSry39j3eYejSYwyDaa4k0jceVBljXwzvQTXy
+         FraE9PaiIG06V5CJdajPiFf4rrHQSy8zYcfDtVd59VXN2vqyFOTWGE9OlZiuKb5Tkac/
+         2GApgW8q2mDothN/qk/+r7BH/12tMd8dh3ISUFwiEqslrvMRYlDncT5Jnlnl1PvmPqeY
+         lsig==
+X-Gm-Message-State: APjAAAXyQ45TXqwD8AXrhLcPUr+5jZA3XtDoKiXUc3DWD6JJsWXf4Qj+
+        GyYd4ARkZM44EDh21Zr66EoGKE+lqSTOGw==
+X-Google-Smtp-Source: APXvYqzsTud6HllbIVok9Dz0padLasdwgqohMnlleYLHymDpbxyY63+6giaeoHjz0duHKZWc1tYEvA==
+X-Received: by 2002:a7b:c05a:: with SMTP id u26mr18887164wmc.128.1571659894688;
+        Mon, 21 Oct 2019 05:11:34 -0700 (PDT)
+Received: from localhost.localdomain (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id 37sm21660508wrc.96.2019.10.21.05.11.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 05:11:34 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     robh+dt@kernel.org
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: media: meson-ao-cec: convert to yaml
+Date:   Mon, 21 Oct 2019 14:11:31 +0200
+Message-Id: <20191021121131.25017-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-KLMS-Rule-ID: 4
-X-KLMS-Message-Action: skipped
-X-KLMS-AntiSpam-Status: not scanned, whitelist
-X-KLMS-AntiPhishing: not scanned, whitelist
-X-KLMS-AntiVirus: Kaspersky Security 8.0 for Linux Mail Server, version 8.0.1.721, not scanned, whitelist
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Johannes,
+Now that we have the DT validation in place, let's convert the device tree
+bindings for the Amlogic AO-CEC controller over to a YAML schemas.
 
-it seems I've encountered a bug in mac80211 RX aggregation handler.
-The hw is a pair of stations using AR9580 (PCI ID 168c:0033) PCIe
-adapters. Linux 5.4-rc4.
-The driver shows the chip is Atheros AR9300 Rev:4.
-I'm using (on both ends):
-	iw wlan0 set type ibss
-	ip link set wlan0 up
-	iw dev wlan0 ibss join $ESSID $FREQ HT20
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ .../media/amlogic,meson-gx-ao-cec.yaml        | 91 +++++++++++++++++++
+ .../bindings/media/meson-ao-cec.txt           | 37 --------
+ 2 files changed, 91 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/meson-ao-cec.txt
 
-The problem manifests itself after one of the stations is restarted
-(or the ath9k driver is reloaded, or a station is out of range for
-some time etc).
-It appears that the mac80211 RX aggregation code sets a new aggregation
-"session" at the remote station's request, but the head_seq_num
-(the sequence number the receiver expects to receive) isn't reset.
-I've added some debugging code to ___ieee80211_start_rx_ba_session()
-and ieee80211_sta_manage_reorder_buf() and it produced the following:
+diff --git a/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml b/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
+new file mode 100644
+index 000000000000..41197578f19a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
+@@ -0,0 +1,91 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++# Copyright 2019 BayLibre, SAS
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/media/amlogic,meson-gx-ao-cec.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Amlogic Meson AO-CEC Controller
++
++maintainers:
++  - Neil Armstrong <narmstrong@baylibre.com>
++
++description: |
++  The Amlogic Meson AO-CEC module is present is Amlogic SoCs and its purpose is
++  to handle communication between HDMI connected devices over the CEC bus.
++
++properties:
++  compatible:
++    enum:
++      - amlogic,meson-gx-ao-cec # GXBB, GXL, GXM, G12A and SM1 AO_CEC_A module
++      - amlogic,meson-g12a-ao-cec # G12A AO_CEC_B module
++      - amlogic,meson-sm1-ao-cec # SM1 AO_CEC_B module
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  hdmi-phandle:
++    description: phandle to the HDMI controller
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/phandle
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - amlogic,meson-gx-ao-cec
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: AO-CEC clock
++
++        clock-names:
++          maxItems: 1
++          items:
++            - const: core
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - amlogic,meson-g12a-ao-cec
++              - amlogic,meson-sm1-ao-cec
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: AO-CEC clock generator source
++
++        clock-names:
++          maxItems: 1
++          items:
++            - const: oscin
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - hdmi-phandle
++  - clocks
++  - clock-names
++
++examples:
++  - |
++    cec_AO: cec@100 {
++        compatible = "amlogic,meson-gx-ao-cec";
++        reg = <0x0 0x00100 0x0 0x14>;
++        interrupts = <199>;
++        clocks = <&clkc_cec>;
++        clock-names = "core";
++        hdmi-phandle = <&hdmi_tx>;
++    };
++
+diff --git a/Documentation/devicetree/bindings/media/meson-ao-cec.txt b/Documentation/devicetree/bindings/media/meson-ao-cec.txt
+deleted file mode 100644
+index ad92ee41c0dd..000000000000
+--- a/Documentation/devicetree/bindings/media/meson-ao-cec.txt
++++ /dev/null
+@@ -1,37 +0,0 @@
+-* Amlogic Meson AO-CEC driver
+-
+-The Amlogic Meson AO-CEC module is present is Amlogic SoCs and its purpose is
+-to handle communication between HDMI connected devices over the CEC bus.
+-
+-Required properties:
+-  - compatible : value should be following depending on the SoC :
+-	For GXBB, GXL, GXM, G12A and SM1 (AO_CEC_A module) :
+-	"amlogic,meson-gx-ao-cec"
+-	For G12A (AO_CEC_B module) :
+-	"amlogic,meson-g12a-ao-cec"
+-	For SM1 (AO_CEC_B module) :
+-	"amlogic,meson-sm1-ao-cec"
+-
+-  - reg : Physical base address of the IP registers and length of memory
+-	  mapped region.
+-
+-  - interrupts : AO-CEC interrupt number to the CPU.
+-  - clocks : from common clock binding: handle to AO-CEC clock.
+-  - clock-names : from common clock binding, must contain :
+-		For GXBB, GXL, GXM, G12A and SM1 (AO_CEC_A module) :
+-		- "core"
+-		For G12A, SM1 (AO_CEC_B module) :
+-		- "oscin"
+-		corresponding to entry in the clocks property.
+-  - hdmi-phandle: phandle to the HDMI controller
+-
+-Example:
+-
+-cec_AO: cec@100 {
+-	compatible = "amlogic,meson-gx-ao-cec";
+-	reg = <0x0 0x00100 0x0 0x14>;
+-	interrupts = <GIC_SPI 199 IRQ_TYPE_EDGE_RISING>;
+-	clocks = <&clkc_AO CLKID_AO_CEC_32K>;
+-	clock-names = "core";
+-	hdmi-phandle = <&hdmi_tx>;
+-};
+-- 
+2.22.0
 
-Both stations boot and join the IBSS, packets get through:
-[   61.123131] AGG RX OK: ssn 1
-[   61.125346] SEQ OK: 1 vs 1
-[   61.125484] SEQ OK: 2 vs 2
-[   62.100841] SEQ OK: 3 vs 3
-...
-[  180.124210] SEQ OK: 130 vs 130
-[  181.123888] SEQ OK: 131 vs 131
-[  182.126046] SEQ OK: 132 vs 132
-
-Now I'm rebooting the remote station. It joins IBSS, packets can be seen
-on mon0 monitoring interface (on the local station), but they aren't
-arriving on wlan0:
-
-[  192.131102] SEQ BAD: 0 vs 133
-[  192.151243] AGG RX no change - OK: ssn 1
-[  192.242760] SEQ BAD: 1 vs 133
-[  193.133819] SEQ BAD: 2 vs 133
-[  193.272802] SEQ BAD: 3 vs 133
-...
-[  421.272374] SEQ BAD: 130 vs 133
-[  421.303630] SEQ BAD: 131 vs 133
-[  422.327924] SEQ BAD: 132 vs 133
-
-Then the sequence number catches up and the communication is
-reestablished:
-[  423.167023] SEQ OK: 133 vs 133
-[  423.169061] SEQ OK: 134 vs 134
-[  423.351618] SEQ OK: 135 vs 135
-
-I'll attach a patch in a separate mail but I'm not sure if it's
-the optimal fix - one packet (the "SEQ BAD: 0 vs 133) is still dropped,
-and I guess it won't work if the sender decides to not request
-aggregation anymore.
-
-Comments?
-
-The debugging code:
---- a/net/mac80211/agg-rx.c
-+++ b/net/mac80211/agg-rx.c
-@@ -354,9 +354,10 @@ void ___ieee80211_start_rx_ba_session(struct sta_info =
-*sta,
- 			 */
- 			rcu_read_lock();
- 			tid_rx =3D rcu_dereference(sta->ampdu_mlme.tid_rx[tid]);
--			if (tid_rx && tid_rx->timeout =3D=3D timeout)
-+			if (tid_rx && tid_rx->timeout =3D=3D timeout) {
- 				status =3D WLAN_STATUS_SUCCESS;
--			else
-+				printk(KERN_DEBUG "AGG RX no change - OK: ssn %u\n", start_seq_num);
-+			} else
- 				status =3D WLAN_STATUS_REQUEST_DECLINED;
- 			rcu_read_unlock();
- 			goto end;
-@@ -434,6 +437,7 @@ void ___ieee80211_start_rx_ba_session(struct sta_info *=
-sta,
- 	tid_agg_rx->tid =3D tid;
- 	tid_agg_rx->sta =3D sta;
- 	status =3D WLAN_STATUS_SUCCESS;
-+	printk(KERN_DEBUG "AGG RX OK: ssn %u\n", start_seq_num);
-=20
- 	/* activate it for RX */
- 	rcu_assign_pointer(sta->ampdu_mlme.tid_rx[tid], tid_agg_rx);
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -1298,9 +1298,11 @@ static bool ieee80211_sta_manage_reorder_buf(struct =
-ieee80211_sub_if_data *sdata
-=20
- 	/* frame with out of date sequence number */
- 	if (ieee80211_sn_less(mpdu_seq_num, head_seq_num)) {
-+		printk(KERN_DEBUG "SEQ BAD: %u vs %u\n", mpdu_seq_num, head_seq_num);
- 		dev_kfree_skb(skb);
- 		goto out;
--	}
-+	} else
-+		printk(KERN_DEBUG "SEQ OK: %u vs %u\n", mpdu_seq_num, head_seq_num);
-=20
- 	/*
- 	 * If frame the sequence number exceeds our buffering window
-
---=20
-Krzysztof Ha=C5=82asa
-
-=C5=81UKASIEWICZ Research Network
-Industrial Research Institute for Automation and Measurements PIAP
-Al. Jerozolimskie 202, 02-486 Warsaw, Poland
