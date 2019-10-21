@@ -2,120 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D18A4DEF1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 779CBDEF20
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbfJUOPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 10:15:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37874 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbfJUOPe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 10:15:34 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0B32560240; Mon, 21 Oct 2019 14:15:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571667332;
-        bh=B9vcv3+VSGqLWBSxMU1TfHAiv6/ddsGG24vM268m8wg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Z90NS+kTtHCnZ2Q2bZYw0EkTdXC50ALMTfNYxjZfREFCtMf+FFkLYa+Rtr3wGFez4
-         RlysUX8nQgLd2EKtSTEjZ1LHhmTQcRpsb2XfGOSrPbRlPSztJ2BwqvFC/rqT5ZwI66
-         RGZ5zsNh5DTKp5DDs1SPJnlJ21WiS807T1Io5cbE=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B51EB60240;
-        Mon, 21 Oct 2019 14:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571667330;
-        bh=B9vcv3+VSGqLWBSxMU1TfHAiv6/ddsGG24vM268m8wg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=cJ2LqN+LdDigNzRphKJHpNfW4D/Y1SD2RxbE71JvtR5TeFBloxtZRsMvh8ArNweaI
-         4qhVjiYjXOohb4NwmoWed6UW/BGn9rRj9tEz9HQf7lxanytMEUoCMHbrFF/xTZtuCO
-         EefA/gjG1zq6CDbUYEZ3Vdb4aTg3TkMlAZxlFD5k=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B51EB60240
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-To:     linus.walleij@linaro.org, bjorn.andersson@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Subject: [PATCH] pinctrl: qcom: sc7180: Add missing tile info in SDC_QDSD_PINGROUP/UFS_RESET
-Date:   Mon, 21 Oct 2019 19:45:07 +0530
-Message-Id: <20191021141507.24066-1-rnayak@codeaurora.org>
-X-Mailer: git-send-email 2.22.0
+        id S1729351AbfJUOQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 10:16:06 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:53870 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1728551AbfJUOQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 10:16:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71E1E1007;
+        Mon, 21 Oct 2019 07:15:44 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A115B3F71F;
+        Mon, 21 Oct 2019 07:15:43 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 15:15:41 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Anvesh Salveru <anvesh.s@samsung.com>
+Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bhelgaas@google.com,
+        gustavo.pimentel@synopsys.com, jingoohan1@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 1/2] dt-bindings: PCI: designware: Add binding for ZRX-DC
+ PHY property
+Message-ID: <20191021141541.GS47056@e119886-lin.cambridge.arm.com>
+References: <CGME20191021122630epcas5p32bd92762c4304035cad5c1822d96e304@epcas5p3.samsung.com>
+ <1571660755-30270-1-git-send-email-anvesh.s@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1571660755-30270-1-git-send-email-anvesh.s@samsung.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SDC_QDSD_PINGROUP/UFS_RESET macros are missing the .tile info needed to
-calculate the right register offsets. Adding them here and also
-adjusting the offsets accordingly.
+On Mon, Oct 21, 2019 at 05:55:55PM +0530, Anvesh Salveru wrote:
+> Add support for ZRX-DC compliant PHYs. If PHY is not compliant to ZRX-DC
+> specification, then after every 100ms link should transition to recovery
+> state during the low power states which increases power consumption.
+> 
+> Platforms with ZRX-DC compliant PHY can use "snps,phy-zrxdc-compliant"
+> property in DesignWare controller DT node.
+> 
+> Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> index 78494c4050f7..9507ac38ac89 100644
+> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> @@ -38,6 +38,8 @@ Optional properties:
+>     for data corruption. CDM registers include standard PCIe configuration
+>     space registers, Port Logic registers, DMA and iATU (internal Address
+>     Translation Unit) registers.
+> +- snps,phy-zrxdc-compliant: This property is needed if phy complies with the
 
-Fixes: f2ae04c45b1a ("pinctrl: qcom: Add SC7180 pinctrl driver")
+Strictly speaking, this is a property of the phy - not the controller that
+uses it.
 
-Reported-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/pinctrl/qcom/pinctrl-sc7180.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+If I understand correctly, there are some DW based PCI controllers that use
+a phandle reference in DT to a Phy (such as fsl,imx6q-pcie.txt). Therefore
+it feels like this is in the wrong place. Is there a reason this isn't
+described in the Phy?
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-sc7180.c b/drivers/pinctrl/qcom/pinctrl-sc7180.c
-index 6399c8a2bc22..d6cfad7417b1 100644
---- a/drivers/pinctrl/qcom/pinctrl-sc7180.c
-+++ b/drivers/pinctrl/qcom/pinctrl-sc7180.c
-@@ -77,6 +77,7 @@ enum {
- 		.intr_cfg_reg = 0,			\
- 		.intr_status_reg = 0,			\
- 		.intr_target_reg = 0,			\
-+		.tile = SOUTH,				\
- 		.mux_bit = -1,				\
- 		.pull_bit = pull,			\
- 		.drv_bit = drv,				\
-@@ -102,6 +103,7 @@ enum {
- 		.intr_cfg_reg = 0,			\
- 		.intr_status_reg = 0,			\
- 		.intr_target_reg = 0,			\
-+		.tile = SOUTH,				\
- 		.mux_bit = -1,				\
- 		.pull_bit = 3,				\
- 		.drv_bit = 0,				\
-@@ -1087,14 +1089,14 @@ static const struct msm_pingroup sc7180_groups[] = {
- 	[116] = PINGROUP(116, WEST, qup04, qup04, _, _, _, _, _, _, _),
- 	[117] = PINGROUP(117, WEST, dp_hot, _, _, _, _, _, _, _, _),
- 	[118] = PINGROUP(118, WEST, _, _, _, _, _, _, _, _, _),
--	[119] = UFS_RESET(ufs_reset, 0x97f000),
--	[120] = SDC_QDSD_PINGROUP(sdc1_rclk, 0x97a000, 15, 0),
--	[121] = SDC_QDSD_PINGROUP(sdc1_clk, 0x97a000, 13, 6),
--	[122] = SDC_QDSD_PINGROUP(sdc1_cmd, 0x97a000, 11, 3),
--	[123] = SDC_QDSD_PINGROUP(sdc1_data, 0x97a000, 9, 0),
--	[124] = SDC_QDSD_PINGROUP(sdc2_clk, 0x97b000, 14, 6),
--	[125] = SDC_QDSD_PINGROUP(sdc2_cmd, 0x97b000, 11, 3),
--	[126] = SDC_QDSD_PINGROUP(sdc2_data, 0x97b000, 9, 0),
-+	[119] = UFS_RESET(ufs_reset, 0x7f000),
-+	[120] = SDC_QDSD_PINGROUP(sdc1_rclk, 0x7a000, 15, 0),
-+	[121] = SDC_QDSD_PINGROUP(sdc1_clk, 0x7a000, 13, 6),
-+	[122] = SDC_QDSD_PINGROUP(sdc1_cmd, 0x7a000, 11, 3),
-+	[123] = SDC_QDSD_PINGROUP(sdc1_data, 0x7a000, 9, 0),
-+	[124] = SDC_QDSD_PINGROUP(sdc2_clk, 0x7b000, 14, 6),
-+	[125] = SDC_QDSD_PINGROUP(sdc2_cmd, 0x7b000, 11, 3),
-+	[126] = SDC_QDSD_PINGROUP(sdc2_data, 0x7b000, 9, 0),
- };
- 
- static const struct msm_pinctrl_soc_data sc7180_pinctrl = {
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Thanks,
 
+Andrew Murray
+
+> +  ZRX-DC specification.
+>  RC mode:
+>  - num-viewport: number of view ports configured in hardware. If a platform
+>    does not specify it, the driver assumes 2.
+> -- 
+> 2.17.1
+> 
