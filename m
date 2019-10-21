@@ -2,108 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A959BDED67
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95F68DED5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728976AbfJUNVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:21:24 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60200 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728753AbfJUNVY (ORCPT
+        id S1728879AbfJUNU4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:20:56 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46844 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727256AbfJUNU4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:21:24 -0400
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iMXbA-00010Y-Lr; Mon, 21 Oct 2019 13:19:48 +0000
-Date:   Mon, 21 Oct 2019 15:19:48 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, linux@rasmusvillemoes.dk,
-        cyphar@cyphar.com, keescook@chromium.org
-Subject: Re: linux-next: Tree for Oct 18 (objtool)
-Message-ID: <20191021131947.yih3wqjbfroaj4dz@wittgenstein>
-References: <20191018180300.090dbcb9@canb.auug.org.au>
- <40de4e26-450e-b932-3d73-e833c8aeaa2e@infradead.org>
- <20191021123549.GC1817@hirez.programming.kicks-ass.net>
- <20191021131149.GA19358@hirez.programming.kicks-ass.net>
+        Mon, 21 Oct 2019 09:20:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571664055;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=B4XWknMJuOuh6KIQuH7ppQMvEXTX2kO1s3vMco8Hg40=;
+        b=XmVcOWgh9FUw9VSs335hS4IRfbXv5sFCP7+vv+4XwA6myZ+A5Ix+NgAk96EmSsjPWNOWr9
+        iYas5cCR4Q71PZYZZzhNaETjwVnY+YUPADcK6UUtG4KhxfKl1E/fRDZI7NM2a/ITkwgkq/
+        1CfM2Q4nvOGTCWIJjAhRL3ej2/ogr4s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-375-pDIa5xMtMX6HhtaRvjFBrQ-1; Mon, 21 Oct 2019 09:20:50 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3F888800D41;
+        Mon, 21 Oct 2019 13:20:48 +0000 (UTC)
+Received: from treble (ovpn-123-96.rdu2.redhat.com [10.10.123.96])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 47C265B69A;
+        Mon, 21 Oct 2019 13:20:46 +0000 (UTC)
+Date:   Mon, 21 Oct 2019 08:20:44 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Jiri Kosina <jikos@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        live-patching@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v8 0/5] arm64: ftrace with regs
+Message-ID: <20191021132044.zkzclqtrexryyybl@treble>
+References: <0f8d2e77-7e51-fba8-b179-102318d9ff84@arm.com>
+ <20190311114945.GA5625@lst.de>
+ <20190408153628.GL6139@lakrids.cambridge.arm.com>
+ <20190409175238.GE9255@fuggles.cambridge.arm.com>
+ <CAB=otbRXuDHSmh9NrGYoep=hxOKkXVsy6R84ACZ9xELwNr=4AA@mail.gmail.com>
+ <20190724161500.GG2624@lakrids.cambridge.arm.com>
+ <nycvar.YFH.7.76.1910161341520.13160@cbobk.fhfr.pm>
+ <20191016175841.GF46264@lakrids.cambridge.arm.com>
+ <20191018174100.GC18838@lakrids.cambridge.arm.com>
+ <20191019130135.10de9324@blackhole.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191021131149.GA19358@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191019130135.10de9324@blackhole.lan>
 User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: pDIa5xMtMX6HhtaRvjFBrQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 03:11:49PM +0200, Peter Zijlstra wrote:
-> On Mon, Oct 21, 2019 at 02:35:49PM +0200, Peter Zijlstra wrote:
-> > On Fri, Oct 18, 2019 at 08:33:11AM -0700, Randy Dunlap wrote:
-> > > On 10/18/19 12:03 AM, Stephen Rothwell wrote:
-> > > > Hi all,
-> > > > 
-> > > > Changes since 20191017:
-> > > > 
-> > > 
-> > > on x86_64:
-> > > lib/usercopy.o: warning: objtool: check_zeroed_user()+0x35f: call to __ubsan_handle_shift_out_of_bounds() with UACCESS enabled
-> > 
-> > Blergh... I suppose the below will fix that. I'm a bit conflicted on it
-> > though, the alternative is annotating more ubsan crud.
-> 
-> By popular request; here's that alternative. Completely untested :-)
+On Sat, Oct 19, 2019 at 01:01:35PM +0200, Torsten Duwe wrote:
+> All calls going _out_ from the KLP module are newly generated, as part
+> of the KLP module building process, and are thus aware of them being
+> "extern" -- a PLT entry should be generated and accounted for in the
+> KLP module.
 
-Am I not getting some mails? :)
-I prefer this one as it allows us to avoid working around this in
-usercopy.c. Should especially make if this potentially helps in other
-cases as well?
+Hm... for kpatch-build I assume we may need a GCC plugin to convert
+local calls to global somehow?
 
-> 
-> ---
->  lib/ubsan.c           | 5 ++++-
->  tools/objtool/check.c | 1 +
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/lib/ubsan.c b/lib/ubsan.c
-> index 39d5952c4273..0dce3ff45b5b 100644
-> --- a/lib/ubsan.c
-> +++ b/lib/ubsan.c
-> @@ -359,9 +359,10 @@ void __ubsan_handle_shift_out_of_bounds(struct shift_out_of_bounds_data *data,
->  	struct type_descriptor *lhs_type = data->lhs_type;
->  	char rhs_str[VALUE_LENGTH];
->  	char lhs_str[VALUE_LENGTH];
-> +	unsigned long flags = user_access_save();
->  
->  	if (suppress_report(&data->location))
-> -		return;
-> +		goto out;
->  
->  	ubsan_prologue(&data->location);
->  
-> @@ -387,6 +388,8 @@ void __ubsan_handle_shift_out_of_bounds(struct shift_out_of_bounds_data *data,
->  			lhs_type->type_name);
->  
->  	ubsan_epilogue();
-> +out:
-> +	user_access_restore(flags);
->  }
->  EXPORT_SYMBOL(__ubsan_handle_shift_out_of_bounds);
->  
-> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> index 543c068096b1..4768d91c6d68 100644
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -482,6 +482,7 @@ static const char *uaccess_safe_builtin[] = {
->  	"ubsan_type_mismatch_common",
->  	"__ubsan_handle_type_mismatch",
->  	"__ubsan_handle_type_mismatch_v1",
-> +	"__ubsan_handle_shift_out_of_bounds",
->  	/* misc */
->  	"csum_partial_copy_generic",
->  	"__memcpy_mcsafe",
+--=20
+Josh
+
