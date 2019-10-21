@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87613DEFD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B31D4DEFD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:37:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729321AbfJUOg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 10:36:56 -0400
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:7201 "EHLO
+        id S1729342AbfJUOg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 10:36:57 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:30511 "EHLO
         alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729093AbfJUOgz (ORCPT
+        by vger.kernel.org with ESMTP id S1729084AbfJUOgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 10:36:55 -0400
+        Mon, 21 Oct 2019 10:36:54 -0400
 Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 21 Oct 2019 20:00:44 +0530
-IronPort-SDR: zrqY6U8uaxAGnilZKL3X1+tzMf/ZVbuSH4VCq+yr8hz8lOlLK1osE9z11j5dvhdRv069y9wOlw
- TZT+HQWyLZBqd5UuLtLa2zUO57yOEj3qhAbFgz/D15vamOBhQiqrYAuDA0vSIxGY2+pR6Jweom
- RXTUuVEflCejBKPoVU+XLLf17daefWYIW4i/fisY2OdlTNbtuMCn8gENs6BoGYzXjUUCxfKwL6
- QJtYbOW2khR+32sSK96gUZfgdqodvrFkM/NPUNm1NAUTcadYU6DvVsbdVhQ2+FtxMYwq2sjWdj
- JEEvTYg0e5jzfwhPU7TdcC+S
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 21 Oct 2019 20:00:46 +0530
+IronPort-SDR: Ri63J7Aw6uMGMaKnhSMcHacbpjjmbEpNbp0lA+lRpSBZWZ+fEZRN+FwrTUBPe5zbbvdVs6pezi
+ Bol0g/ndn7RC3f5YJj9VOayAvWmO02jMVft7VRJi4i97g9eN98k3DYNhXvPYBOQNqy1T2+HfeN
+ m6J+5J2ZwWEeAKy/Ndfc5ZVSHRXL2OvDPBi16Y/2eNOeih5HSQ76aixS/BKaQA+m8a/lQg2n1A
+ PHl/QA2x8v+pThueahwQTiyressiIZxkmPy5kWba/9cW+P6bVrNxQu8HU5CadjbUVblkUIgIQ+
+ fhDmDQWWem2W8teNFvrXGSzX
 Received: from rampraka-linux.qualcomm.com ([10.206.25.221])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 21 Oct 2019 20:00:44 +0530
+  by ironmsg02-blr.qualcomm.com with ESMTP; 21 Oct 2019 20:00:45 +0530
 Received: by rampraka-linux.qualcomm.com (Postfix, from userid 2305851)
-        id E357B35FA; Mon, 21 Oct 2019 20:00:42 +0530 (IST)
+        id 84EA9329D; Mon, 21 Oct 2019 20:00:44 +0530 (IST)
 From:   Ram Prakash Gupta <rampraka@codeaurora.org>
 To:     asutoshd@codeaurora.org, stummala@codeaurora.org,
         sayalil@codeaurora.org, rampraka@codeaurora.org,
@@ -30,13 +30,9 @@ To:     asutoshd@codeaurora.org, stummala@codeaurora.org,
         adrian.hunter@intel.com, ulf.hansson@linaro.org,
         robh+dt@kernel.org, linux-mmc@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Sujit Reddy Thumma <sthumma@codeaurora.org>,
-        Talel Shenhar <tatias@codeaurora.org>,
-        Ritesh Harjani <riteshh@codeaurora.org>,
-        "Bao D. Nguyen" <nguyenb@codeaurora.org>
-Subject: [RFC 5/6] mmc: sdhci-msm: Add capability in platform host
-Date:   Mon, 21 Oct 2019 19:59:36 +0530
-Message-Id: <1571668177-3766-6-git-send-email-rampraka@codeaurora.org>
+Subject: [RFC 6/6] dt-bindings: mmc: sdhci-msm: Add clk scaling dt parameters
+Date:   Mon, 21 Oct 2019 19:59:37 +0530
+Message-Id: <1571668177-3766-7-git-send-email-rampraka@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1571668177-3766-1-git-send-email-rampraka@codeaurora.org>
 References: <1571668177-3766-1-git-send-email-rampraka@codeaurora.org>
@@ -45,34 +41,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Sujit Reddy Thumma <sthumma@codeaurora.org>
-Signed-off-by: Talel Shenhar <tatias@codeaurora.org>
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Signed-off-by: Bao D. Nguyen <nguyenb@codeaurora.org>
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-Co-Developed-by: Ram Prakash Gupta <rampraka@codeaurora.org>
+Adding clk scaling dt parameters.
+
 Signed-off-by: Ram Prakash Gupta <rampraka@codeaurora.org>
 ---
- drivers/mmc/host/sdhci-msm.c | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index b75c82d..67accf6 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -1934,6 +1934,8 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 		goto clk_disable;
- 	}
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+index da4edb1..afaf88d 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
++++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+@@ -39,6 +39,21 @@ Required properties:
+ 	"cal"	- reference clock for RCLK delay calibration (optional)
+ 	"sleep"	- sleep clock for RCLK delay calibration (optional)
  
-+	msm_host->mmc->caps2 |= MMC_CAP2_CLK_SCALE;
++Optional properties:
++- devfreq,freq-table - specifies supported frequencies for clock scaling.
++	Clock scaling logic shall toggle between these frequencies based
++	on card load. In case the defined frequencies are over or below
++	the supported card frequencies, they will be overridden
++	during card init. In case this entry is not supplied,
++	the driver will construct one based on the card
++	supported max and min frequencies.
++	The frequencies must be ordered from lowest to highest.
 +
- 	pm_runtime_get_noresume(&pdev->dev);
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
++- scaling-lower-bus-speed-mode - Few hosts can support DDR52 mode at the
++	same lower system voltage corner as high-speed mode. In such
++	cases, it is always better to put it in DDR  mode which will
++	improve the performance without any power impact.
++
+ Example:
+ 
+ 	sdhc_1: sdhci@f9824900 {
+@@ -56,6 +71,10 @@ Example:
+ 
+ 		clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
+ 		clock-names = "core", "iface";
++
++		devfreq,freq-table = <50000000 200000000>;
++		scaling-lower-bus-speed-mode = "DDR52"
++
+ 	};
+ 
+ 	sdhc_2: sdhci@f98a4900 {
 -- 
 1.9.1
 
