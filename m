@@ -2,142 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C3B1DF422
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 19:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C218DF424
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 19:25:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729779AbfJURYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 13:24:23 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:7293 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728969AbfJURYV (ORCPT
+        id S1729848AbfJURZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 13:25:14 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:47036 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbfJURZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 13:24:21 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 2485A3F859;
-        Mon, 21 Oct 2019 19:24:18 +0200 (CEST)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=rnuFuFL7;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id twD45rjnv80f; Mon, 21 Oct 2019 19:24:17 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id D59343F882;
-        Mon, 21 Oct 2019 19:24:15 +0200 (CEST)
-Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id C58D03602F2;
-        Mon, 21 Oct 2019 19:24:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1571678654; bh=6ygpk/IX7d3h/HqkkEaPvLmJltNsmHm9bF68PTR8u08=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rnuFuFL7EF7dedH0ajOrrbGFReJ3JCsU9qE0yrwdCuV/SnCYQK2phDzoktFl+88V0
-         woS0JviqmOy+bdr0yzFS5Gn2oEWywCzyIAEz076Al9XxYFJxtHkb2fbl/G90qJdoZv
-         0AHpPnDsojg6bVjlo9SpRdhpglmQXJDnkwCfFPE8=
-From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
-        <thomas_os@shipmail.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH v2 2/2] x86/cpu/vmware: Fix platform detection VMWARE_PORT macro
-Date:   Mon, 21 Oct 2019 19:24:03 +0200
-Message-Id: <20191021172403.3085-3-thomas_os@shipmail.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191021172403.3085-1-thomas_os@shipmail.org>
-References: <20191021172403.3085-1-thomas_os@shipmail.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 21 Oct 2019 13:25:13 -0400
+Received: by mail-qk1-f195.google.com with SMTP id e66so13367242qkf.13
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 10:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=puh0HaQp8tS+SKvTxBh5Bw6nNU6dCLvmCvb4xlqnNkw=;
+        b=LrddelN7aA9bef4/eIB+Ib6Ci1IUqxOU9X753Gd1U5va+vzUk8JQzI0fxG5e1B801k
+         91Wd41Xc7Yt1vZMyYhZWQs/i7eVtQJeTFBARPSEjqNgkAS1Dxn3TmLlE709SOG9G1v/l
+         FxI9bWug0rv0uOn0SxqCwTsT/2LhPq6FGQiplND+N/7PTCt+2PBO7E75TpF6eUzqOyE6
+         XMCCcaqqFdXulj0r2H2Z0RCXXyQXM6gbjY3dYqx6gYXcYSc0oHHfwEzzsiTEJu2kMhSB
+         +rhSRmfU24K0ggMWP2gXgyc1bcxDm/ij6t6zsg33Oc+Wh2MaDpGBJyXlSNaleNQ/1rvz
+         i01Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=puh0HaQp8tS+SKvTxBh5Bw6nNU6dCLvmCvb4xlqnNkw=;
+        b=OJZT05ekIzG3NmdMfqEQSrCzTcF8H5VChzgStb9T6tDdafHhy/hcd73XV3sjbOb5RC
+         mx7Pk94hLxJMqZyrW4b6rdLDBuv3sboLRWOOK5iRa3FBzzosdzd5KINWKDI64w283mrN
+         /GebNAnIEUwUsQG2LMBY5cwf/8sDTXmAihQ51Nvw0AevVyZRkjaFiocrwWqNjWCAKQpS
+         w38J523IuzM3/+wheYdw8vo+9M7hXWp077TbBx7LqW5w95oes/j9Q48GFaF+8ecZbNAG
+         da8oKMOeXSg7yr+hnvZvO3ugps1H2W+2LCn2bXGNEAhFPf4gqMd9HX8NMyOs6y3c8NAa
+         oZXw==
+X-Gm-Message-State: APjAAAW6Dcvhrb9hMZ/c6gtdybot2VXtw/PELja5gl/TYfwBwgMeQFUQ
+        0mbuwJLXcyLG1hZOa2dOQcabOA==
+X-Google-Smtp-Source: APXvYqx03r3bqCwmLO6I3HtMtCjp3zyZ2iq2xyxZmQ+mEjuUyp5Pl1acd32IMkr61SARy3aJNMX6ww==
+X-Received: by 2002:a37:e503:: with SMTP id e3mr10804782qkg.491.1571678712851;
+        Mon, 21 Oct 2019 10:25:12 -0700 (PDT)
+Received: from [10.241.90.10] ([155.52.187.14])
+        by smtp.gmail.com with ESMTPSA id z70sm4453608qkb.60.2019.10.21.10.25.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2019 10:25:12 -0700 (PDT)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v6 3/4] arm64: use both ZONE_DMA and ZONE_DMA32
+Date:   Mon, 21 Oct 2019 13:25:11 -0400
+Message-Id: <A1A8EEF0-2273-4338-B4D8-D9B1328484B4@lca.pw>
+References: <6703f8dab4a21fe4e1049f8f224502e1733bf72c.camel@suse.de>
+Cc:     linux-rpi-kernel@lists.infradead.org, f.fainelli@gmail.com,
+        will@kernel.org, marc.zyngier@arm.com, catalin.marinas@arm.com,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-mm@kvack.org, mbrugger@suse.com, wahrenst@gmx.net,
+        phill@raspberrypi.org, Robin Murphy <Robin.Murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+In-Reply-To: <6703f8dab4a21fe4e1049f8f224502e1733bf72c.camel@suse.de>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+X-Mailer: iPhone Mail (17A878)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
 
-The platform detection VMWARE_PORT macro uses the VMWARE_HYPERVISOR_PORT
-definition, but expects it to be an integer. However, when it was moved
-to the new vmware.h include file, it was changed to be a string to better
-fit into the VMWARE_HYPERCALL set of macros. This obviously breaks the
-platform detection VMWARE_PORT functionality.
 
-Change the VMWARE_HYPERVISOR_PORT and VMWARE_HYPERVISOR_PORT_HB
-definitions to be integers, and use __stringify() for their stringified
-form when needed.
+> On Oct 21, 2019, at 1:01 PM, Nicolas Saenz Julienne <nsaenzjulienne@suse.d=
+e> wrote:
+>=20
+> Could you enable CMA debugging to see if anything interesting comes out of=
+ it.
 
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Fixes: b4dd4f6e3648 ("Add a header file for hypercall definitions")
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
----
- arch/x86/include/asm/vmware.h | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+I did but nothing interesting came out. Did you use the same config I gave? A=
+lso, it has those cmdline.
 
-diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
-index 3caac90f9761..ac9fc51e2b18 100644
---- a/arch/x86/include/asm/vmware.h
-+++ b/arch/x86/include/asm/vmware.h
-@@ -4,6 +4,7 @@
- 
- #include <asm/cpufeatures.h>
- #include <asm/alternative.h>
-+#include <linux/stringify.h>
- 
- /*
-  * The hypercall definitions differ in the low word of the %edx argument
-@@ -20,8 +21,8 @@
-  */
- 
- /* Old port-based version */
--#define VMWARE_HYPERVISOR_PORT    "0x5658"
--#define VMWARE_HYPERVISOR_PORT_HB "0x5659"
-+#define VMWARE_HYPERVISOR_PORT    0x5658
-+#define VMWARE_HYPERVISOR_PORT_HB 0x5659
- 
- /* Current vmcall / vmmcall version */
- #define VMWARE_HYPERVISOR_HB   BIT(0)
-@@ -29,7 +30,7 @@
- 
- /* The low bandwidth call. The low word of edx is presumed clear. */
- #define VMWARE_HYPERCALL						\
--	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT ", %%dx; "	\
-+	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT) ", %%dx; " \
- 		      "inl (%%dx), %%eax",				\
- 		      "vmcall", X86_FEATURE_VMCALL,			\
- 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
-@@ -39,7 +40,8 @@
-  * HB and OUT bits set.
-  */
- #define VMWARE_HYPERCALL_HB_OUT						\
--	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT_HB ", %%dx; rep outsb", \
-+	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT_HB) ", %%dx; " \
-+		      "rep outsb",					\
- 		      "vmcall", X86_FEATURE_VMCALL,			\
- 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
- 
-@@ -48,7 +50,8 @@
-  * HB bit set.
-  */
- #define VMWARE_HYPERCALL_HB_IN						\
--	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT_HB ", %%dx; rep insb", \
-+	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT_HB) ", %%dx; " \
-+		      "rep insb",					\
- 		      "vmcall", X86_FEATURE_VMCALL,			\
- 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
- #endif
--- 
-2.21.0
-
+page_poison=3Don page_owner=3Don numa_balancing=3Denable \
+systemd.unified_cgroup_hierarchy=3D1 debug_guardpage_minorder=3D1 \
+page_alloc.shuffle=3D1=
