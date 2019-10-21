@@ -2,73 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20629DF8D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 01:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30B90DF91B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 02:05:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730460AbfJUXzj convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 19:55:39 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:52268 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730180AbfJUXzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 19:55:39 -0400
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id C2F8075B92D3F24D26F4;
-        Tue, 22 Oct 2019 07:55:36 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id x9LNtId7050475;
-        Tue, 22 Oct 2019 07:55:18 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019102207552806-63452 ;
-          Tue, 22 Oct 2019 07:55:28 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     vinicius.gomes@intel.com, jhs@mojatatu.com
-Cc:     xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, up2wing@gmail.com,
-        wang.liang82@zte.com.cn
-Subject: [RESEND][PATCH net-next] net: sched: taprio: fix -Wmissing-prototypes warnings
-Date:   Tue, 22 Oct 2019 07:57:42 +0800
-Message-Id: <1571702262-25929-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        id S2387668AbfJVAF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 20:05:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38895 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387615AbfJVAFX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 20:05:23 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iMgwr-0003qU-NK; Tue, 22 Oct 2019 01:18:50 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 332791C03AB;
+        Tue, 22 Oct 2019 01:18:49 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 23:18:48 -0000
+From:   "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] libperf: Do not export
+ perf_evsel__init()/perf_evlist__init()
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191017105918.20873-10-jolsa@kernel.org>
+References: <20191017105918.20873-10-jolsa@kernel.org>
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-10-22 07:55:28,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-10-22 07:55:20
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-MAIL: mse-fl1.zte.com.cn x9LNtId7050475
+Message-ID: <157169992878.29376.3893401323194986329.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We get one warnings when build kernel W=1:
-net/sched/sch_taprio.c:1155:6: warning: no previous prototype for ‘taprio_offload_config_changed’ [-Wmissing-prototypes]
+The following commit has been merged into the perf/core branch of tip:
 
-Make the function static to fix this.
+Commit-ID:     c27feefea10aed40e82cd5c6b06a154e141dc038
+Gitweb:        https://git.kernel.org/tip/c27feefea10aed40e82cd5c6b06a154e141dc038
+Author:        Jiri Olsa <jolsa@kernel.org>
+AuthorDate:    Thu, 17 Oct 2019 12:59:17 +02:00
+Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitterDate: Sat, 19 Oct 2019 15:35:01 -03:00
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+libperf: Do not export perf_evsel__init()/perf_evlist__init()
+
+There's no point in exporting perf_evsel__init()/perf_evlist__init(),
+it's called from perf_evsel__new()/perf_evlist__new() respectively.
+
+It's used only from perf where perf_evsel()/perf_evlist() is embedded
+perf's evsel/evlist.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lore.kernel.org/lkml/20191017105918.20873-10-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- net/sched/sch_taprio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/lib/include/internal/evlist.h | 1 +
+ tools/perf/lib/include/internal/evsel.h  | 1 +
+ tools/perf/lib/include/perf/evlist.h     | 1 -
+ tools/perf/lib/include/perf/evsel.h      | 2 --
+ tools/perf/lib/libperf.map               | 2 --
+ 5 files changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
-index 6719a65..2121187 100644
---- a/net/sched/sch_taprio.c
-+++ b/net/sched/sch_taprio.c
-@@ -1152,7 +1152,7 @@ void taprio_offload_free(struct tc_taprio_qopt_offload *offload)
-  * offload state (PENDING, ACTIVE, INACTIVE) so it can be visible in dump().
-  * This is left as TODO.
-  */
--void taprio_offload_config_changed(struct taprio_sched *q)
-+static void taprio_offload_config_changed(struct taprio_sched *q)
- {
- 	struct sched_gate_list *oper, *admin;
+diff --git a/tools/perf/lib/include/internal/evlist.h b/tools/perf/lib/include/internal/evlist.h
+index 20d90e2..a2fbccf 100644
+--- a/tools/perf/lib/include/internal/evlist.h
++++ b/tools/perf/lib/include/internal/evlist.h
+@@ -50,6 +50,7 @@ int perf_evlist__mmap_ops(struct perf_evlist *evlist,
+ 			  struct perf_evlist_mmap_ops *ops,
+ 			  struct perf_mmap_param *mp);
  
--- 
-1.8.3.1
-
++void perf_evlist__init(struct perf_evlist *evlist);
+ void perf_evlist__exit(struct perf_evlist *evlist);
+ 
+ /**
+diff --git a/tools/perf/lib/include/internal/evsel.h b/tools/perf/lib/include/internal/evsel.h
+index a69b829..1ffd083 100644
+--- a/tools/perf/lib/include/internal/evsel.h
++++ b/tools/perf/lib/include/internal/evsel.h
+@@ -50,6 +50,7 @@ struct perf_evsel {
+ 	bool			 system_wide;
+ };
+ 
++void perf_evsel__init(struct perf_evsel *evsel, struct perf_event_attr *attr);
+ int perf_evsel__alloc_fd(struct perf_evsel *evsel, int ncpus, int nthreads);
+ void perf_evsel__close_fd(struct perf_evsel *evsel);
+ void perf_evsel__free_fd(struct perf_evsel *evsel);
+diff --git a/tools/perf/lib/include/perf/evlist.h b/tools/perf/lib/include/perf/evlist.h
+index 8c4b3c2..0a7479d 100644
+--- a/tools/perf/lib/include/perf/evlist.h
++++ b/tools/perf/lib/include/perf/evlist.h
+@@ -10,7 +10,6 @@ struct perf_evsel;
+ struct perf_cpu_map;
+ struct perf_thread_map;
+ 
+-LIBPERF_API void perf_evlist__init(struct perf_evlist *evlist);
+ LIBPERF_API void perf_evlist__add(struct perf_evlist *evlist,
+ 				  struct perf_evsel *evsel);
+ LIBPERF_API void perf_evlist__remove(struct perf_evlist *evlist,
+diff --git a/tools/perf/lib/include/perf/evsel.h b/tools/perf/lib/include/perf/evsel.h
+index 4388667..557f581 100644
+--- a/tools/perf/lib/include/perf/evsel.h
++++ b/tools/perf/lib/include/perf/evsel.h
+@@ -21,8 +21,6 @@ struct perf_counts_values {
+ 	};
+ };
+ 
+-LIBPERF_API void perf_evsel__init(struct perf_evsel *evsel,
+-				  struct perf_event_attr *attr);
+ LIBPERF_API struct perf_evsel *perf_evsel__new(struct perf_event_attr *attr);
+ LIBPERF_API void perf_evsel__delete(struct perf_evsel *evsel);
+ LIBPERF_API int perf_evsel__open(struct perf_evsel *evsel, struct perf_cpu_map *cpus,
+diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
+index 8be02af..7be1af8 100644
+--- a/tools/perf/lib/libperf.map
++++ b/tools/perf/lib/libperf.map
+@@ -21,7 +21,6 @@ LIBPERF_0.0.1 {
+ 		perf_evsel__delete;
+ 		perf_evsel__enable;
+ 		perf_evsel__disable;
+-		perf_evsel__init;
+ 		perf_evsel__open;
+ 		perf_evsel__close;
+ 		perf_evsel__read;
+@@ -34,7 +33,6 @@ LIBPERF_0.0.1 {
+ 		perf_evlist__close;
+ 		perf_evlist__enable;
+ 		perf_evlist__disable;
+-		perf_evlist__init;
+ 		perf_evlist__add;
+ 		perf_evlist__remove;
+ 		perf_evlist__next;
