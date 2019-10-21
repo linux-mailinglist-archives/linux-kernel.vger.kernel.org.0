@@ -2,207 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8262DE782
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 11:13:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8448EDE78C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 11:13:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbfJUJNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 05:13:23 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33962 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbfJUJNW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 05:13:22 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iMTk7-0005Ji-S9; Mon, 21 Oct 2019 11:12:48 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 777141C047B;
-        Mon, 21 Oct 2019 11:12:44 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 09:12:44 -0000
-From:   "tip-bot2 for Vincent Guittot" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Clean up asym packing
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Segall <bsegall@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>, Mike Galbraith <efault@gmx.de>,
-        Morten.Rasmussen@arm.com, Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>, hdanton@sina.com,
-        parth@linux.ibm.com, pauld@redhat.com, quentin.perret@arm.com,
-        srikar@linux.vnet.ibm.com, valentin.schneider@arm.com,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <1571405198-27570-2-git-send-email-vincent.guittot@linaro.org>
-References: <1571405198-27570-2-git-send-email-vincent.guittot@linaro.org>
-MIME-Version: 1.0
-Message-ID: <157164916428.29376.1584839618089201858.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
+        id S1727800AbfJUJNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 05:13:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37830 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726987AbfJUJNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 05:13:44 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEF1320873;
+        Mon, 21 Oct 2019 09:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571649223;
+        bh=yqmr6bE4HTCk/kWaRLnlRHb3aZ8M5nE1t+SHzsWkT0c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dILlMHxsapCwB/RkiKFBJRcDoTVeP8uZtjnYn4j8HijxhFuviJQGK9RLJptUZVwle
+         rvnrlg/U39zZmz9e7H77HIsAXzMEN5hihlW58hLy52HHm+Ms7Lddmy2Cs/TeA0Xfw2
+         af0VNH2gjKVSuPOS00xFIi5Vol9q+2hboQvET6FM=
+Date:   Mon, 21 Oct 2019 18:13:37 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Sami Tolvanen <samitolvanen@google.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux@googlegroups.com,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 10/18] kprobes: fix compilation without
+ CONFIG_KRETPROBES
+Message-Id: <20191021181337.a1f886fa62b400023c576be0@kernel.org>
+In-Reply-To: <20191018130257.3376e397@gandalf.local.home>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+        <20191018161033.261971-11-samitolvanen@google.com>
+        <20191018130257.3376e397@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the sched/core branch of tip:
+On Fri, 18 Oct 2019 13:02:57 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Commit-ID:     490ba971d8b498ba3a47999ab94c6a0d1830ad41
-Gitweb:        https://git.kernel.org/tip/490ba971d8b498ba3a47999ab94c6a0d1830ad41
-Author:        Vincent Guittot <vincent.guittot@linaro.org>
-AuthorDate:    Fri, 18 Oct 2019 15:26:28 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 21 Oct 2019 09:40:53 +02:00
+> 
+> Added Masami who's the maintainer of kprobes.
+> 
+> -- Steve
+> 
+> 
+> On Fri, 18 Oct 2019 09:10:25 -0700
+> Sami Tolvanen <samitolvanen@google.com> wrote:
+> 
+> > kprobe_on_func_entry and arch_kprobe_on_func_entry need to be available
+> > even if CONFIG_KRETPROBES is not selected.
 
-sched/fair: Clean up asym packing
+Good catch! Since nowadays all arch supports kretprobes, I've missed to
+test it.
 
-Clean up asym packing to follow the default load balance behavior:
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-- classify the group by creating a group_asym_packing field.
-- calculate the imbalance in calculate_imbalance() instead of bypassing it.
+Thank you,
 
-We don't need to test twice same conditions anymore to detect asym packing
-and we consolidate the calculation of imbalance in calculate_imbalance().
+> > 
+> > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> > ---
+> >  kernel/kprobes.c | 38 +++++++++++++++++++-------------------
+> >  1 file changed, 19 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> > index 53534aa258a6..b5e20a4669b8 100644
+> > --- a/kernel/kprobes.c
+> > +++ b/kernel/kprobes.c
+> > @@ -1829,6 +1829,25 @@ unsigned long __weak arch_deref_entry_point(void *entry)
+> >  	return (unsigned long)entry;
+> >  }
+> >  
+> > +bool __weak arch_kprobe_on_func_entry(unsigned long offset)
+> > +{
+> > +	return !offset;
+> > +}
+> > +
+> > +bool kprobe_on_func_entry(kprobe_opcode_t *addr, const char *sym, unsigned long offset)
+> > +{
+> > +	kprobe_opcode_t *kp_addr = _kprobe_addr(addr, sym, offset);
+> > +
+> > +	if (IS_ERR(kp_addr))
+> > +		return false;
+> > +
+> > +	if (!kallsyms_lookup_size_offset((unsigned long)kp_addr, NULL, &offset) ||
+> > +						!arch_kprobe_on_func_entry(offset))
+> > +		return false;
+> > +
+> > +	return true;
+> > +}
+> > +
+> >  #ifdef CONFIG_KRETPROBES
+> >  /*
+> >   * This kprobe pre_handler is registered with every kretprobe. When probe
+> > @@ -1885,25 +1904,6 @@ static int pre_handler_kretprobe(struct kprobe *p, struct pt_regs *regs)
+> >  }
+> >  NOKPROBE_SYMBOL(pre_handler_kretprobe);
+> >  
+> > -bool __weak arch_kprobe_on_func_entry(unsigned long offset)
+> > -{
+> > -	return !offset;
+> > -}
+> > -
+> > -bool kprobe_on_func_entry(kprobe_opcode_t *addr, const char *sym, unsigned long offset)
+> > -{
+> > -	kprobe_opcode_t *kp_addr = _kprobe_addr(addr, sym, offset);
+> > -
+> > -	if (IS_ERR(kp_addr))
+> > -		return false;
+> > -
+> > -	if (!kallsyms_lookup_size_offset((unsigned long)kp_addr, NULL, &offset) ||
+> > -						!arch_kprobe_on_func_entry(offset))
+> > -		return false;
+> > -
+> > -	return true;
+> > -}
+> > -
+> >  int register_kretprobe(struct kretprobe *rp)
+> >  {
+> >  	int ret = 0;
+> 
 
-There is no functional changes.
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-Acked-by: Rik van Riel <riel@surriel.com>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Morten.Rasmussen@arm.com
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: hdanton@sina.com
-Cc: parth@linux.ibm.com
-Cc: pauld@redhat.com
-Cc: quentin.perret@arm.com
-Cc: srikar@linux.vnet.ibm.com
-Cc: valentin.schneider@arm.com
-Link: https://lkml.kernel.org/r/1571405198-27570-2-git-send-email-vincent.guittot@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/fair.c | 63 +++++++++++---------------------------------
- 1 file changed, 16 insertions(+), 47 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 682a754..5ce0f71 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7665,6 +7665,7 @@ struct sg_lb_stats {
- 	unsigned int group_weight;
- 	enum group_type group_type;
- 	int group_no_capacity;
-+	unsigned int group_asym_packing; /* Tasks should be moved to preferred CPU */
- 	unsigned long group_misfit_task_load; /* A CPU has a task too big for its capacity */
- #ifdef CONFIG_NUMA_BALANCING
- 	unsigned int nr_numa_running;
-@@ -8119,9 +8120,17 @@ asym_packing:
- 	 * ASYM_PACKING needs to move all the work to the highest
- 	 * prority CPUs in the group, therefore mark all groups
- 	 * of lower priority than ourself as busy.
-+	 *
-+	 * This is primarily intended to used at the sibling level.  Some
-+	 * cores like POWER7 prefer to use lower numbered SMT threads.  In the
-+	 * case of POWER7, it can move to lower SMT modes only when higher
-+	 * threads are idle.  When in lower SMT modes, the threads will
-+	 * perform better since they share less core resources.  Hence when we
-+	 * have idle threads, we want them to be the higher ones.
- 	 */
- 	if (sgs->sum_nr_running &&
- 	    sched_asym_prefer(env->dst_cpu, sg->asym_prefer_cpu)) {
-+		sgs->group_asym_packing = 1;
- 		if (!sds->busiest)
- 			return true;
- 
-@@ -8263,51 +8272,6 @@ next_group:
- }
- 
- /**
-- * check_asym_packing - Check to see if the group is packed into the
-- *			sched domain.
-- *
-- * This is primarily intended to used at the sibling level.  Some
-- * cores like POWER7 prefer to use lower numbered SMT threads.  In the
-- * case of POWER7, it can move to lower SMT modes only when higher
-- * threads are idle.  When in lower SMT modes, the threads will
-- * perform better since they share less core resources.  Hence when we
-- * have idle threads, we want them to be the higher ones.
-- *
-- * This packing function is run on idle threads.  It checks to see if
-- * the busiest CPU in this domain (core in the P7 case) has a higher
-- * CPU number than the packing function is being run on.  Here we are
-- * assuming lower CPU number will be equivalent to lower a SMT thread
-- * number.
-- *
-- * Return: 1 when packing is required and a task should be moved to
-- * this CPU.  The amount of the imbalance is returned in env->imbalance.
-- *
-- * @env: The load balancing environment.
-- * @sds: Statistics of the sched_domain which is to be packed
-- */
--static int check_asym_packing(struct lb_env *env, struct sd_lb_stats *sds)
--{
--	int busiest_cpu;
--
--	if (!(env->sd->flags & SD_ASYM_PACKING))
--		return 0;
--
--	if (env->idle == CPU_NOT_IDLE)
--		return 0;
--
--	if (!sds->busiest)
--		return 0;
--
--	busiest_cpu = sds->busiest->asym_prefer_cpu;
--	if (sched_asym_prefer(busiest_cpu, env->dst_cpu))
--		return 0;
--
--	env->imbalance = sds->busiest_stat.group_load;
--
--	return 1;
--}
--
--/**
-  * fix_small_imbalance - Calculate the minor imbalance that exists
-  *			amongst the groups of a sched_domain, during
-  *			load balancing.
-@@ -8391,6 +8355,11 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 	local = &sds->local_stat;
- 	busiest = &sds->busiest_stat;
- 
-+	if (busiest->group_asym_packing) {
-+		env->imbalance = busiest->group_load;
-+		return;
-+	}
-+
- 	if (busiest->group_type == group_imbalanced) {
- 		/*
- 		 * In the group_imb case we cannot rely on group-wide averages
-@@ -8495,8 +8464,8 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 	busiest = &sds.busiest_stat;
- 
- 	/* ASYM feature bypasses nice load balance check */
--	if (check_asym_packing(env, &sds))
--		return sds.busiest;
-+	if (busiest->group_asym_packing)
-+		goto force_balance;
- 
- 	/* There is no busy sibling group to pull tasks from */
- 	if (!sds.busiest || busiest->sum_nr_running == 0)
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
