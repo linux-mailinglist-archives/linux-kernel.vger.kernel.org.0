@@ -2,185 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2712DDF34E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFC71DF353
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbfJUQjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:39:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbfJUQjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:39:51 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84CC82053B;
-        Mon, 21 Oct 2019 16:39:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571675989;
-        bh=24sY/4YbTVozVy+uRaCPFe5IEYSBPEnCn/+jA2lhlA4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hHbQ0nZEF1b/in+qJOIPKq7ydJI4VD4cv2KyFv/e4KDfm1IZtGzooJlYvxRYyjgrt
-         VB3RKD+2n3gF+k4Q4E2r+NCMmUAwKefPQ/iPXspHZD/DcjYPmWj1ezLXWL1VqPMFQ9
-         sXhQD2IJVJH5kJceNj+avfeZIj0ewXr1HxjtRago=
-Date:   Mon, 21 Oct 2019 17:39:44 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Gwendal Grignou <gwendal@chromium.org>
-Cc:     briannorris@chromium.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, lee.jones@linaro.org, bleung@chromium.org,
-        enric.balletbo@collabora.com, dianders@chromium.org,
-        groeck@chromium.org, fabien.lahoudere@collabora.com,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v2 15/18] iio: cros_ec: Remove pm function
-Message-ID: <20191021173944.7bd0a865@archlinux>
-In-Reply-To: <20191021055403.67849-16-gwendal@chromium.org>
-References: <20191021055403.67849-1-gwendal@chromium.org>
-        <20191021055403.67849-16-gwendal@chromium.org>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729443AbfJUQku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:40:50 -0400
+Received: from mail-eopbgr790073.outbound.protection.outlook.com ([40.107.79.73]:29146
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729011AbfJUQkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:40:49 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fLJsq2qHaiK+ZgHpVaU1Msmjua9gVUpt9fLb162Qn6sb9UY/QHZkA92ZpwWwxsn67arthhaImMZiSl01CXWp0N3WWVWkQY7wCYLKruXRAQyDHTtJ5zScoP94t92nu1969N00qNhcKMaAWPrP2Oxcc8jUHDDFYnh04mk1ENXNLmx2cJL2q2WbUYGGVKGLle67oS51s0L8y0aq3j86YOvixlAfoPI5XUMY+vm8urLhtSqfaX3GsmB7k485YAX9qnNw7y+Mq9avDjg1MsVLmexlwwNcu3MHdQkvqT7IlVi/ixvkY0ut1sJPri7XneljbZLUmTKCc37/oFxKW1IXHgtyXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4jhDCcuz1BOoALwOTAI8b0aT1t+Uu6PkzO5MN1jYjCI=;
+ b=eFXTRHuwe3N2fpWakcI36ckbj5PZuTHf+XcCWJvuJ+b5DRSNan1CcjuzZq8fZm8ADWptz8VwFuAXjNfD7fDGxwC9qTDbnV/WA8Ta9lkhOzCWVqJCA7Qf1Bh9AWvBeh36Y3DrJq703YIJLDkImDDtYbO4eyGJK2kyRTX3aGjPzynp4Her29ggvc8L0dJ2XsnhCCYmIjG8RMnh75cmyW5A+nSIqBHsqJdaP46j16k4KZQ6N/L4jLobyiwlrBeXTP+JHIkUIzfR/h3sLcb5wLEOF5yji7h03gEArrZvr3R1QvG0U+ztVPfno4QM3hFOhvqTZmbCrXmCk52KVuViyk5EeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4jhDCcuz1BOoALwOTAI8b0aT1t+Uu6PkzO5MN1jYjCI=;
+ b=XfiwCpJTjy/M+LWxHyX4CNei3ws5hEqJe2TiXSKCbUTrbZIMOIBjVjKqZwH4l+RD2Gcv/FV2o8fhcpDfBwo1iAITO1BDxxYJ3HBmVyf9pOpCOsGBPhe9QZx/n0elbFULpAZgrrFk81zV7CkRK9SvYR7b6t0uG7U1eRliZvZaxVk=
+Received: from SN6PR12MB2639.namprd12.prod.outlook.com (52.135.103.16) by
+ SN6PR12MB2751.namprd12.prod.outlook.com (52.135.107.31) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Mon, 21 Oct 2019 16:40:46 +0000
+Received: from SN6PR12MB2639.namprd12.prod.outlook.com
+ ([fe80::ac86:15de:e8d6:61c8]) by SN6PR12MB2639.namprd12.prod.outlook.com
+ ([fe80::ac86:15de:e8d6:61c8%7]) with mapi id 15.20.2367.019; Mon, 21 Oct 2019
+ 16:40:46 +0000
+From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 0/6] AMD64 EDAC: Check for nodes without memory, etc.
+Thread-Topic: [PATCH 0/6] AMD64 EDAC: Check for nodes without memory, etc.
+Thread-Index: AQHVhcka4q8ovNc5PECMwVgUuntBS6dlMYeAgAAfVHA=
+Date:   Mon, 21 Oct 2019 16:40:46 +0000
+Message-ID: <SN6PR12MB26398930AFF9B992CFC9FF7DF8690@SN6PR12MB2639.namprd12.prod.outlook.com>
+References: <20191018153114.39378-1-Yazen.Ghannam@amd.com>
+ <20191021144807.GE7014@zn.tnic>
+In-Reply-To: <20191021144807.GE7014@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Yazen.Ghannam@amd.com; 
+x-originating-ip: [165.204.25.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ece807fe-4c4c-4744-8c0e-08d756456c3c
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: SN6PR12MB2751:
+x-microsoft-antispam-prvs: <SN6PR12MB27518A1B8E430E135C57A7FBF8690@SN6PR12MB2751.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 0197AFBD92
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(136003)(376002)(366004)(396003)(199004)(189003)(13464003)(7736002)(11346002)(8936002)(71200400001)(71190400001)(478600001)(5660300002)(316002)(446003)(55016002)(2906002)(476003)(6916009)(305945005)(3846002)(25786009)(6116002)(256004)(74316002)(486006)(7696005)(86362001)(76176011)(6436002)(229853002)(66476007)(66556008)(64756008)(66446008)(76116006)(54906003)(99286004)(66066001)(9686003)(33656002)(52536014)(66946007)(14454004)(26005)(81166006)(81156014)(186003)(6506007)(53546011)(102836004)(4744005)(6246003)(4326008)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2751;H:SN6PR12MB2639.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: a906eh3A2tqaso3KrZDhzzZiJT5y8r6VpevMhOYUDKNbRbTNAlG4jPON5+fMd7E/zm0CobDEYguXVqAfXGdjEaW4QZ9xwVFErL7cCj+v3GUsIhT77pHY2NYMk2VCMwthsQ4cbazuZGz44GkCo24XDt1ti3JVQaaHqQOxXC3OTGLI3uOJ0WUcLyujKbt7lPkRA8p8oLZyYz6UqpxDOEQyQP6zp9Gj3Mr94gk2ihx0ZL0sRps+IhLm8B9Xu+DJrjgQsbS9oIY28m+sJsNOE08/8wFhAhxAQJKTOMBtnVKK/vrv7AgSUmrfPV5t30wRm+LQAF27wH2rhsdnPJhlhJFGMAe39MAbmpuSmmuiTQhnqszNwuwCws4nuEy+kceDTUdYDG2DsQRL2vGHMQco0FjwHZ4vzZFn6Fqluwb7ZkZaflSkp3Hvxs5Al9rvKv3A9glJ
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ece807fe-4c4c-4744-8c0e-08d756456c3c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2019 16:40:46.3354
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3FTWdbp/8xcNGniEnrm+wiS+NIzow/++rNcMTzPljlFAoVeBn43OQPEoi5qyXdferoDv2MclEXNkubbc7qJ/uw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2751
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 20 Oct 2019 22:54:00 -0700
-Gwendal Grignou <gwendal@chromium.org> wrote:
-
-> Since cros_ec_sensorhub is shutting down the FIFO when the device
-> suspends, no need to slow down the EC sampling period rate.
-> It was necesseary to do that before command CMD_FIFO_INT_ENABLE was
-> introduced, but now all supported chromebooks have it.
-> 
-> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-Fair enough.
-
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
-> New in v2.
-> 
->  .../cros_ec_sensors/cros_ec_lid_angle.c       |  1 -
->  .../common/cros_ec_sensors/cros_ec_sensors.c  |  1 -
->  .../cros_ec_sensors/cros_ec_sensors_core.c    | 47 -------------------
->  drivers/iio/light/cros_ec_light_prox.c        |  1 -
->  .../linux/iio/common/cros_ec_sensors_core.h   |  5 --
->  5 files changed, 55 deletions(-)
-> 
-> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_lid_angle.c b/drivers/iio/common/cros_ec_sensors/cros_ec_lid_angle.c
-> index e30a59fcf0f95..af801e203623e 100644
-> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_lid_angle.c
-> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_lid_angle.c
-> @@ -127,7 +127,6 @@ MODULE_DEVICE_TABLE(platform, cros_ec_lid_angle_ids);
->  static struct platform_driver cros_ec_lid_angle_platform_driver = {
->  	.driver = {
->  		.name	= DRV_NAME,
-> -		.pm	= &cros_ec_sensors_pm_ops,
->  	},
->  	.probe		= cros_ec_lid_angle_probe,
->  	.id_table	= cros_ec_lid_angle_ids,
-> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-> index 9e7903ff99f80..2eb4bb254fbde 100644
-> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-> @@ -314,7 +314,6 @@ MODULE_DEVICE_TABLE(platform, cros_ec_sensors_ids);
->  static struct platform_driver cros_ec_sensors_platform_driver = {
->  	.driver = {
->  		.name	= "cros-ec-sensors",
-> -		.pm	= &cros_ec_sensors_pm_ops,
->  	},
->  	.probe		= cros_ec_sensors_probe,
->  	.id_table	= cros_ec_sensors_ids,
-> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> index 3d2e17093c75a..e89c355bb4b35 100644
-> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> @@ -716,52 +716,5 @@ int cros_ec_sensors_core_write(struct cros_ec_sensors_core_state *st,
->  }
->  EXPORT_SYMBOL_GPL(cros_ec_sensors_core_write);
->  
-> -static int __maybe_unused cros_ec_sensors_prepare(struct device *dev)
-> -{
-> -	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> -	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
-> -
-> -	if (st->curr_sampl_freq == 0)
-> -		return 0;
-> -
-> -	/*
-> -	 * If the sensors are sampled at high frequency, we will not be able to
-> -	 * sleep. Set sampling to a long period if necessary.
-> -	 */
-> -	if (st->curr_sampl_freq < CROS_EC_MIN_SUSPEND_SAMPLING_FREQUENCY) {
-> -		mutex_lock(&st->cmd_lock);
-> -		st->param.cmd = MOTIONSENSE_CMD_EC_RATE;
-> -		st->param.ec_rate.data = CROS_EC_MIN_SUSPEND_SAMPLING_FREQUENCY;
-> -		cros_ec_motion_send_host_cmd(st, 0);
-> -		mutex_unlock(&st->cmd_lock);
-> -	}
-> -	return 0;
-> -}
-> -
-> -static void __maybe_unused cros_ec_sensors_complete(struct device *dev)
-> -{
-> -	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> -	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
-> -
-> -	if (st->curr_sampl_freq == 0)
-> -		return;
-> -
-> -	if (st->curr_sampl_freq < CROS_EC_MIN_SUSPEND_SAMPLING_FREQUENCY) {
-> -		mutex_lock(&st->cmd_lock);
-> -		st->param.cmd = MOTIONSENSE_CMD_EC_RATE;
-> -		st->param.ec_rate.data = st->curr_sampl_freq;
-> -		cros_ec_motion_send_host_cmd(st, 0);
-> -		mutex_unlock(&st->cmd_lock);
-> -	}
-> -}
-> -
-> -const struct dev_pm_ops cros_ec_sensors_pm_ops = {
-> -#ifdef CONFIG_PM_SLEEP
-> -	.prepare = cros_ec_sensors_prepare,
-> -	.complete = cros_ec_sensors_complete
-> -#endif
-> -};
-> -EXPORT_SYMBOL_GPL(cros_ec_sensors_pm_ops);
-> -
->  MODULE_DESCRIPTION("ChromeOS EC sensor hub core functions");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/iio/light/cros_ec_light_prox.c b/drivers/iio/light/cros_ec_light_prox.c
-> index da40c38370965..6bac02cdd898a 100644
-> --- a/drivers/iio/light/cros_ec_light_prox.c
-> +++ b/drivers/iio/light/cros_ec_light_prox.c
-> @@ -255,7 +255,6 @@ MODULE_DEVICE_TABLE(platform, cros_ec_light_prox_ids);
->  static struct platform_driver cros_ec_light_prox_platform_driver = {
->  	.driver = {
->  		.name	= "cros-ec-light-prox",
-> -		.pm	= &cros_ec_sensors_pm_ops,
->  	},
->  	.probe		= cros_ec_light_prox_probe,
->  	.id_table	= cros_ec_light_prox_ids,
-> diff --git a/include/linux/iio/common/cros_ec_sensors_core.h b/include/linux/iio/common/cros_ec_sensors_core.h
-> index b4eb3790cde11..db3da7ffcc376 100644
-> --- a/include/linux/iio/common/cros_ec_sensors_core.h
-> +++ b/include/linux/iio/common/cros_ec_sensors_core.h
-> @@ -30,9 +30,6 @@ enum {
->   */
->  #define CROS_EC_SAMPLE_SIZE  (sizeof(s64) * 2)
->  
-> -/* Minimum sampling period to use when device is suspending */
-> -#define CROS_EC_MIN_SUSPEND_SAMPLING_FREQUENCY 1000  /* 1 second */
-> -
->  typedef irqreturn_t (*cros_ec_sensors_capture_t)(int irq, void *p);
->  
->  
-> @@ -119,8 +116,6 @@ int cros_ec_sensors_core_write(struct cros_ec_sensors_core_state *st,
->  			       struct iio_chan_spec const *chan,
->  			       int val, int val2, long mask);
->  
-> -extern const struct dev_pm_ops cros_ec_sensors_pm_ops;
-> -
->  /* List of extended channel specification for all sensors */
->  extern const struct iio_chan_spec_ext_info cros_ec_sensors_ext_info[];
->  
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1rZXJuZWwtb3duZXJA
+dmdlci5rZXJuZWwub3JnIDxsaW51eC1rZXJuZWwtb3duZXJAdmdlci5rZXJuZWwub3JnPiBPbiBC
+ZWhhbGYgT2YgQm9yaXNsYXYgUGV0a292DQo+IFNlbnQ6IE1vbmRheSwgT2N0b2JlciAyMSwgMjAx
+OSAxMDo0OCBBTQ0KPiBUbzogR2hhbm5hbSwgWWF6ZW4gPFlhemVuLkdoYW5uYW1AYW1kLmNvbT4N
+Cj4gQ2M6IGxpbnV4LWVkYWNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMC82XSBBTUQ2NCBFREFDOiBDaGVjayBmb3Ig
+bm9kZXMgd2l0aG91dCBtZW1vcnksIGV0Yy4NCj4gDQo+IE9uIEZyaSwgT2N0IDE4LCAyMDE5IGF0
+IDAzOjMxOjI1UE0gKzAwMDAsIEdoYW5uYW0sIFlhemVuIHdyb3RlOg0KPiA+IEZyb206IFlhemVu
+IEdoYW5uYW0gPHlhemVuLmdoYW5uYW1AYW1kLmNvbT4NCj4gPg0KPiA+IEhpIEJvcmlzLA0KPiA+
+DQo+ID4gVGhpcyBzZXQgY29udGFpbnMgdGhlIG5leHQgcmV2aXNpb24gb2YgdGhlIFJGQyBwYXRj
+aGVzIEkgaW5jbHVkZWQgd2l0aA0KPiA+IHRoZSBsYXN0IEFNRDY0IEVEQUMgdXBkYXRlcy4gSSBk
+cm9wcGVkIHRoZSBSRkMgdGFncywgYW5kIEkgYWRkZWQgYQ0KPiA+IGNvdXBsZSBvZiBuZXcgcGF0
+Y2hlcy4NCj4gDQo+IFlhaCwgbG9va3MgcHJldHR5IG11Y2ggZ29vZCwgbW9kdWxvIHRoZSBtaW5v
+ciB0aGluZ3MgSSBjb21tZW50ZWQgb24NCj4gZWFybGllci4NCj4gDQoNClRoYW5rIHlvdS4gSSds
+bCBzZW5kIGFub3RoZXIgcmV2aXNpb24gc29vbi4NCg0KLVlhemVuDQo=
