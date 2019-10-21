@@ -2,134 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D159DEB46
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCEA6DEB4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:46:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbfJULpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 07:45:25 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51697 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728605AbfJULpY (ORCPT
+        id S1728639AbfJULqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 07:46:00 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37898 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727962AbfJULqA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 07:45:24 -0400
-Received: by mail-wm1-f68.google.com with SMTP id q70so5775566wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 04:45:23 -0700 (PDT)
+        Mon, 21 Oct 2019 07:46:00 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 3so12453178wmi.3;
+        Mon, 21 Oct 2019 04:45:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=umMsATXlWgFAfcuZOGKS3dhZXdI24Lzqqx5ELSjQOWM=;
-        b=L2nU+xgCbN5LtkAhVSUAyqXKpaIpDb2NbqaWZD/9o/EUs39LUEO2TGEXCZnz/+1GMK
-         vmYJLj9mwZ8wqiG/kirdJIyY//VurXZfTQCPxCtOY9IL1skWqhSDbep7FMWDaLf13PQ/
-         K/qp+YDO47tUKlxjf4r2zecpRPk3YMUhUEBQLnU3Q0XHC57ZyUaPxmpuZHIIAQIzaN+r
-         Y/Xqo9jpEBUc0N9HPFcmvN3EWnuoZGNRmYXpqVEg0baVbVZf+XMCdVLcukyYbTdNbr2J
-         T9Lw2o/kyFrxYKTVufYqj0aVqDHuuCSO2Xl0SadOAKJWb8w3occPpbjoyIxp+cJPLyhh
-         MHfQ==
+        bh=U1IQDTvaARLaVd24Zh1gpxsP2o000LM9KsLDvNwZvKQ=;
+        b=udbYnAFz3mD3r3OJh4xHUpdLPntC2rn4pFfjH00JZZ95zXQ0TSvGeadqdngti7yNIW
+         27MmJWPjyi+NdwWWrKVEKKrNJWRKvB6j7i7JymGAs43sQXsg9oMy5v7Ni9hN8ewjXdX/
+         TMpjxI0C8FcNJP5K0x8lU1XFTpFPS82GCjZ/hemdfR5ybFaqZI1F/Uf304m8WPZa2RAn
+         mh0lBHvie4hMRxls50k9uAqAxYv+uJXoUWG04gGGSXU6vX6RqDc5uy4o+0cwEnAreSvt
+         YKhbjdJrnIOauaFHucVeNOUQjmfQnxHzSyJmi3xFh6LR9YngDl4HMdZGuWfsgxI9fh+K
+         lw8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=umMsATXlWgFAfcuZOGKS3dhZXdI24Lzqqx5ELSjQOWM=;
-        b=BI5P8Ux7BrTGsKXtsEe2KsRjSY7p2jZgX73SF6tfMP/PhOuXoXgU910irq3SA4/yzv
-         eVhKJpPHqF7Rme2EBqI0/Nr1ws6FAv+1klEjroMRY0arFmcdaPBs9lzq3K0HYUbojCMW
-         V3OgA/vRJ2Zr2MJX6pcilrPjui5vUDch5HMeA13oET+AsSQAOphNSuRf9R9OhHmoGUnQ
-         R0pj2aeZ9nvr/1yoZScmd4CONN5Ix3kIlvnbOgUXPhd2TmIgCrhW7DWzPYgSJ4qUnLuV
-         /pmos0Qj90RlnnF4HVF87/PzKWCnbl9fGKdj2uEjJXQVURA/9Jh1/EZUKb1kcBtuGpei
-         vLqg==
-X-Gm-Message-State: APjAAAUtBz6AzyJCNqxWoOmcffbFFfFRSNGTdV0HUQ7OK9KI3ed4ADM6
-        InVXqDPp4vF3n2XXAwUvSrDs4A==
-X-Google-Smtp-Source: APXvYqxEr92jhtBT1uFAamq5FfTEOFtNLr64Fwysmfw5liFBfPgdTxylfL+k5nkA5UswqABKpIGI9A==
-X-Received: by 2002:a1c:6a07:: with SMTP id f7mr6276449wmc.124.1571658322488;
-        Mon, 21 Oct 2019 04:45:22 -0700 (PDT)
-Received: from dell ([95.149.164.99])
-        by smtp.gmail.com with ESMTPSA id o4sm24943791wre.91.2019.10.21.04.45.21
+        bh=U1IQDTvaARLaVd24Zh1gpxsP2o000LM9KsLDvNwZvKQ=;
+        b=J4PqtAW+KdbhOmrPN3KhU9M8YnruRC+Wcs36aDUJ0BuKE5J6ZDdVajuFIRExlE1WnS
+         6e3TCfUxteY57BYo94UIgXqwYUKnEdn6XHFh861H/SUZSCsWNFJhPZgMLHo7z0pf08RR
+         S3pW/OKrW2qhDvywMkPd2gSBvl04P/x2PvkAo1xjrf/eNf0mRLkJ+oenWHo19hUKj2XQ
+         UAxIru477MYJNLGjxOMdkYJRCX+6HNFJU6pEuohgYjBlW22elZpOqXUODl8VkqX/DkrG
+         P25e/JX1NZ8jKMLUrkE80NDP+P/keltpgMcsn27m2Gtsyc9Y2BiaKw2+0u/BmpIG0KeW
+         Zqnw==
+X-Gm-Message-State: APjAAAW4wipKcEwuN+o0koLuY85DAiFr4yg1oFChL5iDFv35V85BCk4c
+        7XQE4e1a9Scg7ZsP7ziqqQw=
+X-Google-Smtp-Source: APXvYqxC5UL9u14Na2lUyp+kQoJTcCXOoxOAUG3UCJ3rO8yKGOC8uc0v2t5Cx4sGQYBIOx7EkapfFQ==
+X-Received: by 2002:a1c:f210:: with SMTP id s16mr17178705wmc.24.1571658358398;
+        Mon, 21 Oct 2019 04:45:58 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id c16sm986112wrw.32.2019.10.21.04.45.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Oct 2019 04:45:22 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 12:45:20 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     robh@kernel.org, broonie@kernel.org, linus.walleij@linaro.org,
-        vinod.koul@linaro.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        spapothi@codeaurora.org, bgoswami@codeaurora.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 02/11] mfd: wcd934x: add support to wcd9340/wcd9341
- codec
-Message-ID: <20191021114520.GD4365@dell>
-References: <20191018001849.27205-1-srinivas.kandagatla@linaro.org>
- <20191018001849.27205-3-srinivas.kandagatla@linaro.org>
- <20191021104611.GZ4365@dell>
- <1af8a875-8f55-6b7e-4204-ecedc1608889@linaro.org>
+        Mon, 21 Oct 2019 04:45:57 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 13:45:56 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Maurizio Lombardi <mlombard@redhat.com>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] fs: exFAT read-only driver GPL implementation by Paragon
+ Software.
+Message-ID: <20191021114556.lk2zkha57xmav7xz@pali>
+References: <453A1153-9493-4A04-BF66-CE6A572DEBDB@paragon-software.com>
+ <20191021111136.adpxjxmmz4p2vud2@pali>
+ <a4c42aa5-f9b7-4e74-2c11-220d45cb3669@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1af8a875-8f55-6b7e-4204-ecedc1608889@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <a4c42aa5-f9b7-4e74-2c11-220d45cb3669@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2019, Srinivas Kandagatla wrote:
+On Monday 21 October 2019 13:37:13 Maurizio Lombardi wrote:
+> So, 2 FAT tables are probably not sufficient for recovery, 2 bitmaps are needed too.
 
-> Thanks Lee for taking time to review.
-> 
-> I agree with most of the style related comments, will fix them in next
-> version. For others I have replied it inline.
+Yes, I know. But code which I referred check both number of fat tables
+and number of allocation bitmaps (as they are represented by one member
+in boot sector structure).
 
-[...]
+> Btw, only Windows CE supported this.
 
-> > > +static int wcd934x_bring_up(struct wcd934x_data *wcd)
-> > > +{
-> > > +	struct regmap *rm = wcd->regmap;
-> > 
-> > It's much more common to use 'regmap' or 'map'.
-> 
-> Only reason to make it short here is to save some lines!
-> If you prefer regmap, I will add that in next version!
+Is this information based on some real tests? Or just from marketing or
+Microsoft's information? (I would really like to know definite answer in
+this area).
 
-I doubt it'd save many (any?) lines.
+Because Microsoft says one thing in their FAT32 specification, second
+thing described in their FAT implementation and thing thing is how it is
+really implemented (in fatfast.sys kernel driver which is open source).
 
-[...]
-
-> > > +static int wcd934x_slim_status(struct slim_device *sdev,
-> > > +			       enum slim_device_status status)
-> > > +{
-> > > +	struct device *dev = &sdev->dev;
-> > > +	struct wcd934x_data *wcd;
-> > > +	int ret;
-> > 
-> > This is semantically odd!  Why are you doing most of the
-> > initialisation and bring-up in 'status' and not 'probe'.  Seems
-> > broken to me.
-> 
-> SLIMBus device will not be in a state to communicate before enumeration (at
-> probe), so all the device initialization is done in status callback where it
-> is ready for communication.
-
-Why do we need the device to be up *before* calling probe?
-
-> This is same with SoundWire Bus as well!
-
-[...]
-
-> > > +	struct device *dev;
-> > > +	struct clk *extclk;
-> > > +	struct regmap *regmap;
-> > > +	struct slim_device *sdev;
-> > 
-> > You don't need 'sdev' and 'dev'.
-> 
-> slim_device instance (sdev) is required by audio codec driver to allocate
-> stream runtime.
-
-You can extrapolate one from the other.
+So I would be really careful about how MS's exfat.sys implementation is
+working.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Pali Rohár
+pali.rohar@gmail.com
