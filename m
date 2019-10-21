@@ -2,80 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B3B3DE230
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 04:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF81DE237
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 04:40:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfJUCjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 22:39:18 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43208 "EHLO
+        id S1727001AbfJUCky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 22:40:54 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41035 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbfJUCjR (ORCPT
+        with ESMTP id S1726830AbfJUCky (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 22:39:17 -0400
-Received: by mail-pg1-f194.google.com with SMTP id l24so1875498pgh.10;
-        Sun, 20 Oct 2019 19:39:17 -0700 (PDT)
+        Sun, 20 Oct 2019 22:40:54 -0400
+Received: by mail-pg1-f194.google.com with SMTP id t3so6802913pga.8
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 19:40:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FXX0eimPN51agwu4IUgl2Y0MLDo3hLD4MB7m/Xqc9Vk=;
-        b=V/lNMqIv52M7BGUqI7bDaG9JIhTtFuYkms/GF44oEjDACl1JaxMdpa/agcoVNiWlkL
-         oNdxM/UZKAbywRpq4fyC/wnO9+VVOZA64fvIsc9rFYsTQxVWs7Dfqxdymjktz/x9veXj
-         /HjowO7T0Z5UBxEZ+/rkiCNz7Fiug3dmpeYtIo31olX7j9EeCl5ebieKBKLz8tn8bzhy
-         IoLT9QHm2fPx7u7xoOoqI0u7fcV/UajMO2S1IeHjS7CtQlCSrIyY1x6GNuBXIhOUJyb8
-         YDz2W0R+VyFQDwaHiq1ojDXkyYI1653s19VdKx+JDcHjCFtZo9ViqejdCvcatT9N4LOi
-         W+zw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2Bmcm7T/zcyVGhPhSabpZfUntv4i1edeqmeNi4+8NAw=;
+        b=OA/AFTiKFstPFoO/Ct4VVDeh4wnOMLVd+warA3PtSFT+985BDdvHSedeHMQ6jsHjfz
+         3lAfbTQr58ine6Ey7l/xUZcuIpAi3X5ZPe5qCoS0uO3XGOhvhm1KRJHo2qwLo1QQ0pus
+         gt8DOW/ue3q7TzQyJ/xlGWFAWprVEDNYrAUIpx41Nu58/lSYlc8pOHHLhTmz1FwpGX9V
+         pt/taCEuuqHBUFrjah4hZ+/2yF3nL8dJE58kivfgcibws0zJbOjdCeYazSrfnD1ez3wG
+         qXC8dwi23to7Y636OFL1U1r3ClIueqjqpjTdhX/DE+Dn2IoFdUgSTvFIshCKgTsR8YP2
+         Xvew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FXX0eimPN51agwu4IUgl2Y0MLDo3hLD4MB7m/Xqc9Vk=;
-        b=A73eCSzQo741z/3wc3BRLroQ3AzoD8qApv33fs0MB/+D6gPQH647M5hn4cFbFL7Jtz
-         mcn0/DgD2xwAykc05bGCXr7LvPZyFAntqlzk43tSbm2Ux0kzYEPWem4FHcjo/XZxRqv1
-         hPUcpLQt8Lm38kPqED+2HJnG/5L6LtVcx0wYykzqpjrrsd1DHcC1rZElc6fXArEo7vN3
-         2AikysanV6njhlRQ6FzVpaSVDkrnHTqlu+Q7LZ00hGOOHI2c6xhQBYAb2EgY6m33ihAo
-         gnbmpz2jJzNupgPRPPDAbjBl+hjfY7MG+8ArdkUraNJzqGs+NIag+vUvBUm5vfr/+hbu
-         jZkw==
-X-Gm-Message-State: APjAAAVPBxNfRBA1EQFBzlUFxkLG9i8jIfhQsCHVoxgXj6xgNTJypDLs
-        2gn+98fem8FOLp1qvmMzLUFd65dg
-X-Google-Smtp-Source: APXvYqyHw/R3WJ2dtQbajyHADqcnyCm4owRP6PJDKFQqsakdZn5+zKhoby2IVhQCXoVNhfDJBOVPdg==
-X-Received: by 2002:a62:7c4d:: with SMTP id x74mr19913197pfc.259.1571625556961;
-        Sun, 20 Oct 2019 19:39:16 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id z25sm14410808pfn.7.2019.10.20.19.39.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Oct 2019 19:39:16 -0700 (PDT)
-Subject: Re: [PATCH net-next 04/16] net: dsa: use ports list to find slave
-To:     Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        netdev@vger.kernel.org
-References: <20191020031941.3805884-1-vivien.didelot@gmail.com>
- <20191020031941.3805884-5-vivien.didelot@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <0b1fbb2e-a7d9-de3a-eac3-0bc4e2e717c9@gmail.com>
-Date:   Sun, 20 Oct 2019 19:39:15 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2Bmcm7T/zcyVGhPhSabpZfUntv4i1edeqmeNi4+8NAw=;
+        b=XAo+RuJxGehAuZ6G9Xx8mKgxvrUbq5m6UZ1C/mafxdZiZhexvmhqJLOA9maN5oM5dC
+         9aDBWvo2BggunnFPu/M3g3FzpFizJpbj6jB8wQrjtRs2uhoiEwvd7W3UfF98RoOlNSaD
+         Fqbpa5eXCP70FRE7sTMAEhUkvLFRIRTCPzN28VSG+j3XZP434cCiN5AwVWUPtG+P18mf
+         3ARY30+KFN5YnaGr67KhleCBah0n8V0lMCHGNApDf2pjR9Lfzge8HK59Jg2z6KkHyy0/
+         vsnCJKBMsaklULAwIGXXfi/O3iKVAX3wlrBKir2AufdluFkZrUXU9s+d8MKUSDLHO33k
+         kL1Q==
+X-Gm-Message-State: APjAAAX/DXBRaweN5rG3EBLtL4ROojSHRbLPiyB9D+8tpR/Lih+hDhxz
+        wR0SNOnfHKC53s1sSJTI80vR0fbwYz4=
+X-Google-Smtp-Source: APXvYqxLx0H3vlInhitEUORpSnDYrwSm3XKCc7L2YZpm1pbtgErYPIS1rZ/LGLGMGdM8wz92rggLBQ==
+X-Received: by 2002:a17:90a:9f44:: with SMTP id q4mr25587101pjv.81.1571625652356;
+        Sun, 20 Oct 2019 19:40:52 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id e14sm13870948pgk.70.2019.10.20.19.40.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Oct 2019 19:40:51 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 08:10:49 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nico@fluxnic.net
+Subject: Re: [PATCH v3 2/5] cpufreq: merge arm_big_little and vexpress-spc
+Message-ID: <20191021024049.uyit2zp24l6jqzf5@vireshk-i7>
+References: <20191018103749.11226-1-sudeep.holla@arm.com>
+ <20191018103749.11226-3-sudeep.holla@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20191020031941.3805884-5-vivien.didelot@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018103749.11226-3-sudeep.holla@arm.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 18-10-19, 11:37, Sudeep Holla wrote:
+> +static struct platform_driver ve_spc_cpufreq_platdrv = {
+> +	.driver = {
+> +		.name	= "vexpress-spc-cpufreq",
+> +	},
+> +	.probe		= ve_spc_cpufreq_probe,
+> +	.remove		= ve_spc_cpufreq_remove,
+> +};
+> +module_platform_driver(ve_spc_cpufreq_platdrv);
+>  
+>  MODULE_AUTHOR("Viresh Kumar <viresh.kumar@linaro.org>");
+> -MODULE_DESCRIPTION("Generic ARM big LITTLE cpufreq driver");
+> +MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
+> +MODULE_DESCRIPTION("Vexpress SPC ARM big LITTLE cpufreq driver");
+>  MODULE_LICENSE("GPL v2");
 
+Strange. The -B option you used while generating the patch makes it
+fails to get applied om my side with am -3. git doesn't get the rename
+of file properly and shows me this conflict:
 
-On 10/19/2019 8:19 PM, Vivien Didelot wrote:
-> Use the new ports list instead of iterating over switches and their
-> ports when looking for a slave device from a given master interface.
-> 
-> Signed-off-by: Vivien Didelot <vivien.didelot@gmail.com>
+  
+  static int ve_spc_init_opp_table(const struct cpumask *cpumask)
+  {
+@@@ -68,4 -697,7 +727,11 @@@ static struct platform_driver ve_spc_cp
+  };
+  module_platform_driver(ve_spc_cpufreq_platdrv);
+  
+++<<<<<<< HEAD
+ +MODULE_LICENSE("GPL");
+++=======
++ MODULE_AUTHOR("Viresh Kumar <viresh.kumar@linaro.org>");
++ MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
++ MODULE_DESCRIPTION("Vexpress SPC ARM big LITTLE cpufreq driver");
++ MODULE_LICENSE("GPL v2");
+++>>>>>>> cpufreq: merge arm_big_little and vexpress-spc
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Can you resend this patch (only) without the -B option ?
+
 -- 
-Florian
+viresh
