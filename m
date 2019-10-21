@@ -2,91 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FA57DE210
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 04:26:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58E24DE216
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 04:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfJUC0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 22:26:16 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44046 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbfJUC0Q (ORCPT
+        id S1726991AbfJUC1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 22:27:01 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36439 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726791AbfJUC1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 22:26:16 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q21so7396507pfn.11
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 19:26:15 -0700 (PDT)
+        Sun, 20 Oct 2019 22:27:00 -0400
+Received: by mail-qk1-f196.google.com with SMTP id y189so11103965qkc.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 19:27:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Pr/rGG/mLq+ux0BA0oJ5xhvPVmVJKmTBUD+kYnaEMFQ=;
-        b=XO0Y/0vRrT7a9yj8g9FT7WxMhv05CQmhcrosoxKyj55Lbbc3uF96jpPLNSaujXBnTh
-         ajuMLiCmzFzIWhcP5AMqAaGDsXxFAbbsXB5gu3WM6X1uVjfPpYS7tf2GNN1JliW3E+o0
-         fgK0IKdGlEUGfqRfFZ43pQntnf2HvIV3A0Ju5n3izY6orU9MfRnzZcT8WUJRuRcGXwSE
-         S5VkGTfvUKJtnkDwSwNB3cpQnanNtdn6MAJiYAttX/2aERLwpINJinISMcUnf1blTKpK
-         dS0vOkiIJk1gmv9bjWHF7WhlWhR8o78h+2DMZt+P1c7+mNTfNJ4UNoPre3O2ZVVMpF+G
-         9wlQ==
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jrxW9Qmajz62yvUJquj+KTYfgTaCJqtVwxFo17SjfJg=;
+        b=GdHGOI6FA40Cf/+MypBS3AhVeJaxk7piMbLSXh4snwlYbYQSyU4qdtsk5NWw4Is4MW
+         8CEOyhdLdJn1MUYeul4rYdmLKibTOfIZF5eVj45+tBaOQoJ7gKr+9twnE9J0ZylXTLKW
+         Oek1sYfiGGf7cKBCKkYsQ2l/1rEJ44mUZi3A8zstu2qW+bf0vpRv5d1byuJG5tPFOJ/F
+         PKn/EcFXsFyaUeBczL3W71GZZXnSW+QtvjGYzRHTnWKAhrm6W7y7GAfyhmz5IXICxg6v
+         NTy1rCcmjFtdsqV+iqw2s2ysWcElHOwdIOOG2lWrbNPvH8xBNneEGZO5MuurM78HUbOH
+         +EwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pr/rGG/mLq+ux0BA0oJ5xhvPVmVJKmTBUD+kYnaEMFQ=;
-        b=MJFhw1itQ+vWLabomS/KcUfRpzoqnqfVLt3OsHdv+YLJjBMoTQ90eUe5NKUoE50jBS
-         iib7UgdfHqLMNJom9VzcZ7X4v8czSuBsgsXXSPXY/zGxp/TZnDhW6PK5VWtudNDOr0pg
-         8tJe7DUXOZaWBrKa2WpMlRgUkt+qUjSLcrVDlXRjxAXCwNqL09kOjiiSAFfzG/55cGJO
-         H6SiOAokcmKHpuXi71jsvatEck9Bbt+cMR6kmxIo5nrZSeRHlXIwKvRE3nAByTTQPYBG
-         XX3mKbOkTXtXOCG9ltJ+frjE9XzB82yU6Se/bFUd+n1fFcNS7WdktwkddPUzTmVKB2u8
-         bTTg==
-X-Gm-Message-State: APjAAAU+LmZU2ExZ/u7m0aOFuhPnZAXg3qRt2cuNuR9CvH7r1aWCE/JP
-        vfC8MInMDwULjE3XU7aHD2QX+w==
-X-Google-Smtp-Source: APXvYqzds7k29oQ4eyX6PpIwq/UPWGsW2c53kCK0M4hNt/TssOTMKgAXPae6bLblBUYndtzyEcCYgg==
-X-Received: by 2002:a17:90a:ba86:: with SMTP id t6mr26640303pjr.56.1571624775229;
-        Sun, 20 Oct 2019 19:26:15 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id v4sm13698783pff.181.2019.10.20.19.26.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Oct 2019 19:26:14 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 07:56:12 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 34/46] ARM: pxa: remove get_clk_frequency_khz()
-Message-ID: <20191021022612.ckfqbhsulbuetomd@vireshk-i7>
-References: <20191018154052.1276506-1-arnd@arndb.de>
- <20191018154201.1276638-34-arnd@arndb.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jrxW9Qmajz62yvUJquj+KTYfgTaCJqtVwxFo17SjfJg=;
+        b=RI21O+ZiHhzuZGFvKKWaZSJT5QoUnAAwLQoehEf7UmUd8qxiHBv9zHFh2Jf0Id5TH/
+         V0dNUcZjlkM2ZslM9Oe0fV/XS/WiKX872AAtV4ARRKu8+5kTLeVLPep0zTw26DH+OhQH
+         1iNaWF780SMionE6BPk3izN5OE6ONNMrGMYujtWp7npjAQZR9t/zoIwEWbpPHYunMxPf
+         0Cki64RIgT1H8ioUMXDrghFUTtPDVu98xkkMbYwLWi3xI5e7JYrb2qmod6boZ3tBfGtn
+         bnyeCAB1QpfosXMIiIC5f2cGpbND6w6ItfJpC/nyCjifTfM7xarHTUdusDZqNJjBEUSs
+         GTMg==
+X-Gm-Message-State: APjAAAUFa9n870wcEWKU2bgDsSkdR2WvwMpyt2sh3um1EJoEBIWAsnAt
+        U9Sz4wjC3d3hSB2smymCjnC6qQwKo3bQMK//F1rVgw==
+X-Google-Smtp-Source: APXvYqzLwdW3DA3VpPfKWk5UBNKvFyqUgyR2WjiFtRKl7134YMV086Yowi5kRvOGGSPHNujQzRONodo0XwsojYlg7G8=
+X-Received: by 2002:a37:5f46:: with SMTP id t67mr19441250qkb.220.1571624819419;
+ Sun, 20 Oct 2019 19:26:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018154201.1276638-34-arnd@arndb.de>
-User-Agent: NeoMutt/20180716-391-311a52
+References: <20191016015408.11091-1-chiu@endlessm.com> <CAB4CAwen5y7Z4GU7YgpVafyGexxaMDLzrZ949t9p+LiZ9TxAPA@mail.gmail.com>
+In-Reply-To: <CAB4CAwen5y7Z4GU7YgpVafyGexxaMDLzrZ949t9p+LiZ9TxAPA@mail.gmail.com>
+From:   Chris Chiu <chiu@endlessm.com>
+Date:   Mon, 21 Oct 2019 10:26:48 +0800
+Message-ID: <CAB4CAwcW5JGtZQy+=vugx5rRYMycWoCSSdDc6nwhunqTtqoQaA@mail.gmail.com>
+Subject: Re: [PATCH v2] rtl8xxxu: fix RTL8723BU connection failure issue after
+ warm reboot
+To:     Jes Sorensen <Jes.Sorensen@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        David Miller <davem@davemloft.net>
+Cc:     linux-wireless <linux-wireless@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-10-19, 17:41, Arnd Bergmann wrote:
-> get_clk_frequency_khz() is not a proper name for a global function,
-> and there is only one caller.
-> 
-> Convert viper to use the properly namespaced
-> pxa25x_get_clk_frequency_khz() and remove the other references.
-> 
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm/mach-pxa/generic.c      | 15 ---------------
->  arch/arm/mach-pxa/generic.h      |  1 -
->  arch/arm/mach-pxa/viper.c        |  2 +-
->  drivers/cpufreq/pxa2xx-cpufreq.c |  2 --
->  4 files changed, 1 insertion(+), 19 deletions(-)
+On Thu, Oct 17, 2019 at 10:26 AM Chris Chiu <chiu@endlessm.com> wrote:
+>
+> On Wed, Oct 16, 2019 at 9:54 AM Chris Chiu <chiu@endlessm.com> wrote:
+> >
+> > The RTL8723BU has problems connecting to AP after each warm reboot.
+> > Sometimes it returns no scan result, and in most cases, it fails
+> > the authentication for unknown reason. However, it works totally
+> > fine after cold reboot.
+> >
+> > Compare the value of register SYS_CR and SYS_CLK_MAC_CLK_ENABLE
+> > for cold reboot and warm reboot, the registers imply that the MAC
+> > is already powered and thus some procedures are skipped during
+> > driver initialization. Double checked the vendor driver, it reads
+> > the SYS_CR and SYS_CLK_MAC_CLK_ENABLE also but doesn't skip any
+> > during initialization based on them. This commit only tells the
+> > RTL8723BU to do full initialization without checking MAC status.
+> >
+> > Signed-off-by: Chris Chiu <chiu@endlessm.com>
+> Signed-off-by: Jes Sorensen <Jes.Sorensen@gmail.com>
+>
+> Sorry, I forgot to add Jes.
+>
+> Chris
+> > ---
+> >
+> > Note:
+> >   v2: fix typo of commit message
+> >
+> >
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Gentle ping. Cheers.
 
--- 
-viresh
+Chris
