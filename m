@@ -2,110 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70BDCDE467
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 08:19:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF170DE473
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 08:21:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbfJUGTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 02:19:35 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41751 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbfJUGTe (ORCPT
+        id S1727101AbfJUGU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 02:20:58 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39614 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbfJUGU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 02:19:34 -0400
-Received: by mail-pg1-f193.google.com with SMTP id t3so7104935pga.8
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 23:19:34 -0700 (PDT)
+        Mon, 21 Oct 2019 02:20:57 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c6so165646wrm.6
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 23:20:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=npNayPk5J2u1XBbRL1kMyLo7Xv1HpI8J+9mr55B2g9k=;
-        b=QDvYpVhOa9llomgrWhkQTV7AvVq+a5nmiWzxknp7M34fEjVS0v79bpDXYYSHLu1xsh
-         3r2LrOxWZCd+j+SAZnX3yRG89haB45hBUtUWfOXkCUWRQjipPwvece8OYwGhB5XPEMcD
-         c23ua7i3PrboPvRFsD5ptap2coA5uv0FIuyTXAuCEXxI5d4XDx9p57AaYol3GG+DWot8
-         rOcaEGRFXQi6qMDjK8Ia0W2wdzqRJnHDWluTgedOmC4Cg7Ox1ipLSdIXb1pVuHVDr6DC
-         5EU+++ld2CJkiSlsN66IxR3O3iwDLczgHbsaQSPQ7rnFNDV0pmIVa35r8FugJDDtWKTi
-         9Bhw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CdvcOGCYVL+T0dd/Qovdpy0EycQbYWDHOCHJnmgemls=;
+        b=h6kY1+snCa9b1x7e/EgIjsAXXWChcSe7Uw0FjL6G+anKZpluVsnHZlfXHSt09rzA17
+         7QEgstgPbNp7zGit5Kg6IcWlVJCjEQWPZhijlHGqzE9gZYmdrNfkbUvmJSjt7J9BNrVI
+         iBrcqQELNZQolZpgXvm2krI6QCIE+5auETUijcAYUxxeV14FrPjKGIpTjQQ1uW5xGnK2
+         rB//6di6mnksNQgm1xPuAgR98MBRjT/PtPVc/7XVHsjRva7gRDw9sCzJA2LXB2t3ypJ8
+         2klWs/YFyTytVptXjN8BopBVvxJrkKyMYaLh0RglRJd0PZbT5T5vpgEG/gQbOEjzJNvh
+         219Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=npNayPk5J2u1XBbRL1kMyLo7Xv1HpI8J+9mr55B2g9k=;
-        b=It/QgrdtvbIWit/QFfG/7Q3gdE5Rdib+hVZ2pg/+JcAxkRNZNWPuFIzDdYoQaMTPqJ
-         ZKHiLFHN1VvAalZbxVtGsHW2Ue54B9Cj4BPyzkgOm/K5eJJw8Ij64Uy4PJ8uQF7TbZoF
-         hgRsEJJzRSTnGA78Ie6UNkpObs2hdpMlojwdg7Qwr7IF50tv2hF0ChmTjBbu7InMQRs9
-         xeqzTnOqhK3RzmzxkD2xp+O8lpci1S1F+GkOwz8Arx9ZgWtNXEWtN0nf5D0RBQ24SNxg
-         8xdld7qvNJ1A8g/vJ69xBcG4Xi9UE9ssINhXCzD6W7MxyRVjyvqQghGQ8l355H1yquG/
-         yYwQ==
-X-Gm-Message-State: APjAAAWgFxiNFaO7Y4eUE7NQV1i7u9HXczsAV95iG1KWIkUtv0kZMns7
-        SznFITTYSSKM6D47ovgGEGA2
-X-Google-Smtp-Source: APXvYqwa4lMT7wTGnd2y2szR63pKR1Kh4XWszfDbs08XxK1GjzoN2xaHY4ePYHjDl7fkNdK2QUchbw==
-X-Received: by 2002:a62:5c07:: with SMTP id q7mr20788083pfb.159.1571638773575;
-        Sun, 20 Oct 2019 23:19:33 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2405:204:700f:8db6:2442:890f:ac37:8127])
-        by smtp.gmail.com with ESMTPSA id x65sm14911120pgb.75.2019.10.20.23.19.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 20 Oct 2019 23:19:32 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 11:49:26 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-unisoc@lists.infradead.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>
-Subject: Re: [PATCH v2 3/4] gpio: Add RDA Micro GPIO controller support
-Message-ID: <20191021061926.GB12001@Mani-XPS-13-9360>
-References: <20191015173026.9962-1-manivannan.sadhasivam@linaro.org>
- <20191015173026.9962-4-manivannan.sadhasivam@linaro.org>
- <CACRpkdZRY138RAf8N2xGam89r66ik2vW44OZx0bDcCt4P2GBLA@mail.gmail.com>
- <20191019160513.GA17631@Mani-XPS-13-9360>
- <CACRpkdbgFGciZMBF-_h5Wi47Hmco7tA9Pr7XegM8SpWxhqLT1A@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CdvcOGCYVL+T0dd/Qovdpy0EycQbYWDHOCHJnmgemls=;
+        b=mW4b84x3MCbhxr1hP0dL9EWCbWoGM/UFBSCbVH3lxXa4JAUbWuyh4wTCi5f8G7/Mb0
+         2Vn19zW43iZj/bvVmUJqQ6Vc2oIkFHs4/uJJ8kqIQ7TH17SVj66MjpVsueuQHj9lNJzs
+         MMYfxchz6RcObs3nPwfC+Lf1xVHW4EAQs22Ujd53j9q318gbAMWQTowxmcHz6fuCkQo1
+         Vmd549WAeQkdnveBU0uiZ6u3QaK89mEvf0dRu1q4aHs+otbVYfo5KDVHswSrQtDA0s9Q
+         KnqbLecYXsknQZ4ESpJ4gwuxTEQud4OKzvxl78S/Zuxog6DYWGjZqRaU3bSsuc70ul8Q
+         SYcQ==
+X-Gm-Message-State: APjAAAVnYCjlXTd8xjzt7vtYA4VJvEzKaG0MlQ6deTfmpY+ivUMKF6BD
+        SjLI7PPI0foGiqm2GvJkRNfZaqjbqPs3NrFP4yGsWQ==
+X-Google-Smtp-Source: APXvYqy24wsGU0Cj+4SmHZlaSf1uaZpL2g4+f87/+EJ/1iZO4TCaFGyxMrU8YBrf0ThCHUcVzuLjkwXTWadLECQwLMk=
+X-Received: by 2002:a5d:43c9:: with SMTP id v9mr11140606wrr.200.1571638854218;
+ Sun, 20 Oct 2019 23:20:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbgFGciZMBF-_h5Wi47Hmco7tA9Pr7XegM8SpWxhqLT1A@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20191018161033.261971-1-samitolvanen@google.com> <20191018161033.261971-15-samitolvanen@google.com>
+In-Reply-To: <20191018161033.261971-15-samitolvanen@google.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 21 Oct 2019 08:20:43 +0200
+Message-ID: <CAKv+Gu-kMzsot5KSPSo_iMsuzcv8J1R5RLT9uGjuzJsxCVUPPg@mail.gmail.com>
+Subject: Re: [PATCH 14/18] arm64: efi: restore x18 if it was corrupted
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, 18 Oct 2019 at 18:11, Sami Tolvanen <samitolvanen@google.com> wrote:
+>
+> If we detect a corrupted x18 and SCS is enabled, restore the register
+> before jumping back to instrumented code.
+>
 
-On Mon, Oct 21, 2019 at 02:57:31AM +0200, Linus Walleij wrote:
-> On Sat, Oct 19, 2019 at 6:05 PM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> > On Wed, Oct 16, 2019 at 02:41:32PM +0200, Linus Walleij wrote:
-> 
-> > > select GPIO_GENERIC
-> >
-> > hmm.. I don't think this driver can use it. Please see the justification
-> > below.
-> (...)
-> > As you can see in this driver, there are 2 separate registers needs to be
-> > read in order to get the value. RDA_GPIO_VAL needs to be read when the pin
-> > is in input state and RDA_GPIO_SET needs to be read when the pin is in output
-> > state.
-> >
-> > The MMIO driver relies on a single `dat` register to read the GPIO state and
-> > this won't fit for this driver and hence my justification for not using it.
-> 
-> Use RDA_GPIO_VAL for dat, then set BGPIOF_READ_OUTPUT_REG_SET
-> and the mmio core will do what you want I think? That's what the flag is
-> for IIUC.
-> 
+You'll have to elaborate a bit here and explain that this is
+sufficient, given that we run EFI runtime services with interrupts
+enabled.
 
-Ah, this should work. Sorry for missing this earlier.
-
-> Maybe we should document it better :/
-> 
-
-That's how everything is in kernel for me... If you don't look closer, you'll
-not get it.
-
-Thanks,
-Mani
-
-> Yours,
-> Linus Walleij
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  arch/arm64/kernel/efi-rt-wrapper.S | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/kernel/efi-rt-wrapper.S b/arch/arm64/kernel/efi-rt-wrapper.S
+> index 3fc71106cb2b..945744f16086 100644
+> --- a/arch/arm64/kernel/efi-rt-wrapper.S
+> +++ b/arch/arm64/kernel/efi-rt-wrapper.S
+> @@ -34,5 +34,10 @@ ENTRY(__efi_rt_asm_wrapper)
+>         ldp     x29, x30, [sp], #32
+>         b.ne    0f
+>         ret
+> -0:     b       efi_handle_corrupted_x18        // tail call
+> +0:
+> +#ifdef CONFIG_SHADOW_CALL_STACK
+> +       /* Restore x18 before returning to instrumented code. */
+> +       mov     x18, x2
+> +#endif
+> +       b       efi_handle_corrupted_x18        // tail call
+>  ENDPROC(__efi_rt_asm_wrapper)
+> --
+> 2.23.0.866.gb869b98d4c-goog
+>
