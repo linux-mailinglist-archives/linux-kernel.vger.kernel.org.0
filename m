@@ -2,126 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE86ADE6D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:43:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87795DE6D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:44:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbfJUInI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 04:43:08 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43624 "EHLO huawei.com"
+        id S1727752AbfJUIoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 04:44:02 -0400
+Received: from mail-oln040092066082.outbound.protection.outlook.com ([40.92.66.82]:60899
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727127AbfJUInH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 04:43:07 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 711A73AA3629CE784B5A;
-        Mon, 21 Oct 2019 16:43:05 +0800 (CST)
-Received: from [127.0.0.1] (10.74.221.148) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Mon, 21 Oct 2019
- 16:42:59 +0800
-Subject: Re: [PATCH] docs: block: Remove blk_init_queue related description
-To:     Jonathan Corbet <corbet@lwn.net>
-References: <1571061002-25998-1-git-send-email-zhangshaokun@hisilicon.com>
- <20191018093920.6fbc8141@lwn.net>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-Message-ID: <4411794b-0bf2-d785-1eb8-5121668a2a1e@hisilicon.com>
-Date:   Mon, 21 Oct 2019 16:42:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.1
+        id S1727065AbfJUIoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 04:44:02 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=I+OPCvbxQwoMBTidoz1xuOEISmoXPGVgChpUF9Ou3QARYMSpHsBK8ejnnTmUkjktYaOx2FWFPLoAe//V7/9YPAagCy+6oYJgOSWWSQdS5ToCirkWIlyo7UoWe27Bb0SGD9rzFfkAfd1BJawyjfMt4zJTWhNCWUrz3ytBkNpEv1hYzmMstPVTzrbGzI31A5w61rXtA9H33kXIlwcBxWp2izBB1NxoDxbzNQl2a+ptjeEV4v/IuXztaGbX4DpgS4bAjYNbxRXpCB5oUrMiC6RZhG/JRiVjTpiVefxv0EfjMDM5lAgW1wAz6Jlj55ML0FpfpZJrphT6dQdOHXpe07oZAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0QB6dNWKygoF4guypCasXlzbcOPHSSammvgW5CV/Tj0=;
+ b=cjCbNOdXG5etySX99jkylSm1brxUgOKbd0X5DmuGnFkLqn7q7Gc4bJnUQSUHEc4VpuORPs6jN7/NuzQwWj4vcnLf9So8cTx8jmTlu+RYtwkNFZMB6rPXroPArHhiYIEHwJumsT2LwjscNfcXpKb5W9zLJ/KLMIYHP4MxiqPKxfnZIlMrqB+ZOFQlq1ExKywHLX0l+lyGvKddwCIBONvS7WgqaABqx83oL+8ZMCCw60a5ILrBtqFTyB6ilPUG04Hcspq85G+fpyLnKG+77la3itnbbYro50hnYrPCtNAsF1Gm8n/zekvHZJhwVcZa3CeVN/QMLRJfnzx8E+qmsIx+7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from DB5EUR01FT048.eop-EUR01.prod.protection.outlook.com
+ (10.152.4.57) by DB5EUR01HT214.eop-EUR01.prod.protection.outlook.com
+ (10.152.5.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2367.14; Mon, 21 Oct
+ 2019 08:43:58 +0000
+Received: from AM0PR0502MB3668.eurprd05.prod.outlook.com (10.152.4.53) by
+ DB5EUR01FT048.mail.protection.outlook.com (10.152.5.166) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2367.14 via Frontend Transport; Mon, 21 Oct 2019 08:43:58 +0000
+Received: from AM0PR0502MB3668.eurprd05.prod.outlook.com
+ ([fe80::b1e4:568d:bbc:8247]) by AM0PR0502MB3668.eurprd05.prod.outlook.com
+ ([fe80::b1e4:568d:bbc:8247%6]) with mapi id 15.20.2347.029; Mon, 21 Oct 2019
+ 08:43:58 +0000
+From:   Anatol Belski <weltling@outlook.de>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "trivial@kernel.org" <trivial@kernel.org>
+Subject: Re: [PATCH] include/linux/byteorder/generic.h: fix signed/unsigned
+ warnings
+Thread-Topic: [PATCH] include/linux/byteorder/generic.h: fix signed/unsigned
+ warnings
+Thread-Index: AQHVh2rzQudqiWaARkuhjP20crUqsKdkqXKAgAAfEIA=
+Date:   Mon, 21 Oct 2019 08:43:58 +0000
+Message-ID: <AM0PR0502MB3668CBCDF1C1C3747D02BBFBBA690@AM0PR0502MB3668.eurprd05.prod.outlook.com>
+References: <AM0PR0502MB3668B1A0EC328690DA25E9C6BA6E0@AM0PR0502MB3668.eurprd05.prod.outlook.com>
+         <20191021065245.GH32742@smile.fi.intel.com>
+In-Reply-To: <20191021065245.GH32742@smile.fi.intel.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+x-clientproxiedby: AM0PR06CA0053.eurprd06.prod.outlook.com
+ (2603:10a6:208:aa::30) To AM0PR0502MB3668.eurprd05.prod.outlook.com
+ (2603:10a6:208:19::11)
+x-incomingtopheadermarker: OriginalChecksum:18BFDDB472A3570CA96121E86E8DF5C53A7265AA33E418D970E2CB313C1689B9;UpperCasedChecksum:1157FD1386BDEAF7DFE3CA74B0C4FEE31136CC6A8CA77AF2B3C41BB6AB86AE58;SizeAsReceived:8055;Count:52
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [ejcq5jySr1kI4hMI53s/ekpre4RqsKHBuOUdl7LNtamqH1W+cwcZb1ZfjEGfeKGA]
+x-microsoft-original-message-id: <b673366e4bbde2432a250e196a2556be7faa1527.camel@outlook.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 52
+x-eopattributedmessage: 0
+x-ms-traffictypediagnostic: DB5EUR01HT214:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: RhDbtJce7qdluBnaujq88UHb9uinsFJlFNOSk7aXsgVCasULh9/ktcjvZniaYxRPl/iySY1O29Di4oj5kjfv216DDZG+4ZeJRz4lu/grXl6ynCH7GhSfbG/kZ+ZssFI5dcmJrLE/0F/gvhWKoKBAmdLKpxPTCMTfbdXs90zSApB7LYGOg+cYjX6fuwLn6J3Z
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <76D334A49846F64A9DDD3C2F6FA80921@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20191018093920.6fbc8141@lwn.net>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.221.148]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83558524-e54e-4a76-9f97-08d75602d00d
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2019 08:43:58.3927
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5EUR01HT214
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonathan,
-
-On 2019/10/18 23:39, Jonathan Corbet wrote:
-> On Mon, 14 Oct 2019 21:50:02 +0800
-> Shaokun Zhang <zhangshaokun@hisilicon.com> wrote:
-> 
->> blk_init_queue has been removed since commit <a1ce35fa4985>
->> ("block: remove dead elevator code"), Let's cleanup the description
->> in the biodoc.rst document.
->>
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> Cc: Jens Axboe <axboe@kernel.dk>
->> Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
-> 
-> So I applied this, then changed my mind and unapplied it; I think it's the
-> wrong fix.
-> 
-
-Thanks your reply.
-
-Let's to introduce why I hit this: I have a module driver that can works using
-4.19 kernel version, it breaks when I use the 5.3 kernel. While I checked that
-blk_init_queue has been removed by commit <a1ce35fa4985>
-("block: remove dead elevator code"), but there is still something about it in
-this document.
-
->>  Documentation/block/biodoc.rst | 10 ----------
->>  1 file changed, 10 deletions(-)
->>
->> diff --git a/Documentation/block/biodoc.rst b/Documentation/block/biodoc.rst
->> index b964796ec9c7..a19081d88349 100644
->> --- a/Documentation/block/biodoc.rst
->> +++ b/Documentation/block/biodoc.rst
->> @@ -1013,11 +1013,6 @@ request_fn execution which it means that lots of older drivers
->>  should still be SMP safe. Drivers are free to drop the queue
->>  lock themselves, if required. Drivers that explicitly used the
->>  io_request_lock for serialization need to be modified accordingly.
->> -Usually it's as easy as adding a global lock::
->> -
->> -	static DEFINE_SPINLOCK(my_driver_lock);
->> -
->> -and passing the address to that lock to blk_init_queue().
-> 
-> This is a section about coping with the removal of the io_request_lock,
-> which happened in 2.5, prior to the git era.  I think it is probably safe
-> to say that there are no relevant drivers that still need to be updated
-> for this particular change.
-> 
->>  5.2 64 bit sector numbers (sector_t prepares for 64 bit support)
->>  ----------------------------------------------------------------
->> @@ -1071,11 +1066,6 @@ right thing to use is bio_endio(bio) instead.
->>  If the driver is dropping the io_request_lock from its request_fn strategy,
->>  then it just needs to replace that with q->queue_lock instead.
->>  
->> -As described in Sec 1.1, drivers can set max sector size, max segment size
->> -etc per queue now. Drivers that used to define their own merge functions i
->> -to handle things like this can now just use the blk_queue_* functions at
->> -blk_init_queue time.
->> -
->>  Drivers no longer have to map a {partition, sector offset} into the
->>  correct absolute location anymore, this is done by the block layer, so
->>  where a driver received a request ala this before::
-> 
-> Here, too.  We're talking about teaching drivers how to use bios.
-> 
-> My suggested fix is to just remove both sections from the document
-> entirely; neither is relevant in 2019.
-> 
-> Even better, of course, would be to pass through this document and bring
-> it up to current practice in general; there is certain to be a lot more in
-> need of fixing here.
-> 
-
-I'm not very familiar with bio driver and this document, So is Jens or anyone happy to
-do more fixing about it.
-
-Thanks,
-Shaokun
-
-> Thanks,
-> 
-> jon
-> 
-> .
-> 
-
+SGksDQoNCk9uIE1vbiwgMjAxOS0xMC0yMSBhdCAwOTo1MiArMDMwMCwgQW5keSBTaGV2Y2hlbmtv
+IHdyb3RlOg0KPiBPbiBTdW4sIE9jdCAyMCwgMjAxOSBhdCAwNToyMjozMFBNICswMDAwLCBBbmF0
+b2wgQmVsc2tpIHdyb3RlOg0KPiA+IEZyb206IEFuYXRvbCBCZWxza2kgPGFuYmVsc2tpQG1pY3Jv
+c29mdC5jb20+DQo+IA0KPiBCZXR0ZXIgdG8gYWRkIGNvbW1pdCBtZXNzYWdlIGV2ZW4gZm9yIHNt
+YWxsIHBhdGNoZXMgbGlrZSB0aGlzLg0KPiBEbyB5b3UgaGF2ZSBjb21waWxlciAvIHNwYXJzZSAv
+IGV0YyB3YXJuaW5nPyBDaXRlIGl0IGhlcmUgYXMgd2VsbCENCj4gDQoNCnllcywgaXQncyAtV3Np
+Z24tY29tcGFyZS4gSSdsbCBzZW5kIGEgZm9sbG93IHVwIHdpdGggYSBiZXR0ZXIgY29tbWl0DQpt
+ZXNzYWdlLg0KDQpUaGFua3MNCg0KQW5hdG9sDQoNCg==
