@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90055DEC8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B14EDEC99
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:44:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728856AbfJUMoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 08:44:44 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51209 "EHLO
+        id S1728881AbfJUMoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 08:44:54 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35073 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728826AbfJUMol (ORCPT
+        with ESMTP id S1728839AbfJUMom (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:44:41 -0400
-Received: by mail-wm1-f66.google.com with SMTP id q70so5993762wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 05:44:39 -0700 (PDT)
+        Mon, 21 Oct 2019 08:44:42 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 14so5992592wmu.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 05:44:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Y7gENDxapt1vI6u/xEHM9T0bQ8UH+GWKfmCLbv4CxrI=;
-        b=N3K6Ornt7pVIdC7MOhYN8b5+hpGvtXx5FMdIjNZGjFHAS/cW4aEbX8MP3dEIi+DYEM
-         d6JpBo4Oxb+FrN4/KDdcxikUxOl9ABTtBHaHIVMGYs8+lA/UEgOp7SCOFtPR7qqN2dMw
-         MUdwwA2lJtgfVxwZl4Z6aNm5tsB4o34qXsKSuoPUypi7wPVkkWAFBkCU/+U1zF7caUa7
-         aGwX+oH2PAMc0n4WNW64kbw/eLYDQY+oZCZVi9Dl4veWXZBdLDM+0ZYdQq8EcFcTejrY
-         5jTE9ihlV3laSEl/b2hx9QNLEjDDpX/0JiIeiQgLbQDE5q/W0Wgu0Kr/rEOQMtPenB4H
-         hpYg==
+        bh=rhQapm9fDV832oC+He0CVqLo8g+PxtpKOAzMRPE4ljA=;
+        b=SBC1Jrc19lIVahzliJlzcj/Hnqij4S94myxcPHBLA9zEUlN/GVXeoylmryNVMXOrJP
+         AMqM0TmWJeJ2jnwQW5jjozOzz85wMSTmu/qeq19DwD6Fe83klABDaLc5I1muCg+3552A
+         vBesukBR5YimyIIQuiQXj1aNW2bq1gtZkE7uDt2/axaLuQhQ5lDwT//z+kxpqfi7SOwJ
+         B842g6llfCc43wexMtAHB2ULxyKqFl21aSlroUBkH/M6PxtxIlmFCxKcB97pcNaMrdDF
+         U3T/VM2Pst7QUmtjBV0UHZLgvoenozdv3WjwfO8QDqoX+pREdnixx5AsqR6iw3jab1hf
+         xanA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Y7gENDxapt1vI6u/xEHM9T0bQ8UH+GWKfmCLbv4CxrI=;
-        b=fVmpfYEMpiGT2ssynBKk7Vb8Jb07/cMrmEZGeAWXKZdl2yDPHJnHhGfVuM6MEaG+Uf
-         IBkYty7FhGqd23AFY8VlE7xrkCCDcrihuHoEJNFPwhWjV3TH2fn944CXha9xc5VMfpWd
-         acOp6gFxWaaO8ybYVsqJ38zucd48GqKM6S8aJS6Laas9oGe351cZciHcTWEgVYy0F+DM
-         X1P5A1cPObxNKUNksPr3px+UnpBZFjUXxmuJKg6E8zi5SkZ3mXriYv+ekaInzD0jzXOO
-         ygcVlot7ia34l8OJG5Ikc8Rsd0mQIaxDHYPfhs2TXL3EOEFqvx66Gphy3qSPMxSHKe0h
-         lbNw==
-X-Gm-Message-State: APjAAAWG82W69cQnr/DxOWSnMESIxthLsaU5CtW4QQrtTBCnTHqkRAAK
-        wQZhCtZjfLpQH1zcEJFg6iYt9Q==
-X-Google-Smtp-Source: APXvYqwyNHJlB1bT6Tqad/TuwHhp9berZIcmnpf54K+K8JcEPD6zvRbkcKunc9knaM3MzsTcqfVyvA==
-X-Received: by 2002:a1c:7311:: with SMTP id d17mr17985960wmb.49.1571661878539;
-        Mon, 21 Oct 2019 05:44:38 -0700 (PDT)
+        bh=rhQapm9fDV832oC+He0CVqLo8g+PxtpKOAzMRPE4ljA=;
+        b=IeG7u5wgeAqozVHnr30KN3cWjXfPJ5MHotXgLV9WycJiPPYxAw50HDq5h+a2qDQA1V
+         XonGHCKvEXUxn4oCqJ4ujdvukJGvSLjEH5JUv762wok2e5gPdZuXypWszrmhOGi1kjEu
+         KvPqrLjyKFOMTinGMhHkyZfvvVWbzxm3mo/u6IOK1DXRDPDYi8vrcbDNJdh/pfSG9i+z
+         jb+0Gf7liMxOBi7lqAK/7AWhwp37ezdgltBj/esiYcDbs4PzsKSIGaewWIU8AConQaNw
+         oFYWlsvokCemTLLdlF5tJ7eHIOTlI++m49ZULYeK67V902A+Cbz6vA5erpfLoOVZF3BP
+         MB2A==
+X-Gm-Message-State: APjAAAWrOTNnmMZdXt0U/vzkFkVQYoHuJJDVslRSUMXQx2NqvG6XrXi8
+        YAPR1TrIr8G2TxJpRYH9xVCFJg==
+X-Google-Smtp-Source: APXvYqy97iy8LODbmza0VVhEd9vUSnqiJRhFbIOhJEubSikBBqKyqGMAsMgyja4luXC1VK6jdC7/kw==
+X-Received: by 2002:a7b:cc07:: with SMTP id f7mr18270855wmh.56.1571661879823;
+        Mon, 21 Oct 2019 05:44:39 -0700 (PDT)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id a17sm10216150wmb.8.2019.10.21.05.44.37
+        by smtp.gmail.com with ESMTPSA id a17sm10216150wmb.8.2019.10.21.05.44.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 05:44:38 -0700 (PDT)
+        Mon, 21 Oct 2019 05:44:39 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -59,9 +59,9 @@ Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-pm@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 4/6] dt-bindings: leds: max77650: convert the binding document to yaml
-Date:   Mon, 21 Oct 2019 14:44:26 +0200
-Message-Id: <20191021124428.2541-5-brgl@bgdev.pl>
+Subject: [PATCH v4 5/6] dt-bindings: mfd: max77650: convert the binding document to yaml
+Date:   Mon, 21 Oct 2019 14:44:27 +0200
+Message-Id: <20191021124428.2541-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191021124428.2541-1-brgl@bgdev.pl>
 References: <20191021124428.2541-1-brgl@bgdev.pl>
@@ -74,136 +74,223 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Convert the binding document for MAX77650 LED module to YAML.
+Convert the binding document for MAX77650 core MFD module to YAML.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- .../bindings/leds/leds-max77650.txt           | 57 -------------------
- .../bindings/leds/leds-max77650.yaml          | 51 +++++++++++++++++
- 2 files changed, 51 insertions(+), 57 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
- create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.yaml
+ .../devicetree/bindings/mfd/max77650.txt      |  46 ------
+ .../devicetree/bindings/mfd/max77650.yaml     | 149 ++++++++++++++++++
+ 2 files changed, 149 insertions(+), 46 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77650.yaml
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-max77650.txt b/Documentation/devicetree/bindings/leds/leds-max77650.txt
+diff --git a/Documentation/devicetree/bindings/mfd/max77650.txt b/Documentation/devicetree/bindings/mfd/max77650.txt
 deleted file mode 100644
-index 3a67115cc1da..000000000000
---- a/Documentation/devicetree/bindings/leds/leds-max77650.txt
+index b529d8d19335..000000000000
+--- a/Documentation/devicetree/bindings/mfd/max77650.txt
 +++ /dev/null
-@@ -1,57 +0,0 @@
--LED driver for MAX77650 PMIC from Maxim Integrated.
--
--This module is part of the MAX77650 MFD device. For more details
--see Documentation/devicetree/bindings/mfd/max77650.txt.
--
--The LED controller is represented as a sub-node of the PMIC node on
--the device tree.
--
--This device has three current sinks.
+@@ -1,46 +0,0 @@
+-MAX77650 ultra low-power PMIC from Maxim Integrated.
 -
 -Required properties:
+--------------------
+-- compatible:		Must be "maxim,max77650"
+-- reg:			I2C device address.
+-- interrupts:		The interrupt on the parent the controller is
+-			connected to.
+-- interrupt-controller: Marks the device node as an interrupt controller.
+-- #interrupt-cells:	Must be <2>.
+-
+-- gpio-controller:	Marks the device node as a gpio controller.
+-- #gpio-cells:		Must be <2>. The first cell is the pin number and
+-			the second cell is used to specify the gpio active
+-			state.
+-
+-Optional properties:
 ---------------------
--- compatible:		Must be "maxim,max77650-led"
--- #address-cells:	Must be <1>.
--- #size-cells:		Must be <0>.
+-gpio-line-names:	Single string containing the name of the GPIO line.
 -
--Each LED is represented as a sub-node of the LED-controller node. Up to
--three sub-nodes can be defined.
+-The GPIO-controller module is represented as part of the top-level PMIC
+-node. The device exposes a single GPIO line.
 -
--Required properties of the sub-node:
--------------------------------------
+-For device-tree bindings of other sub-modules (regulator, power supply,
+-LEDs and onkey) refer to the binding documents under the respective
+-sub-system directories.
 -
--- reg:			Must be <0>, <1> or <2>.
--
--Optional properties of the sub-node:
--------------------------------------
--
--- label:		See Documentation/devicetree/bindings/leds/common.txt
--- linux,default-trigger: See Documentation/devicetree/bindings/leds/common.txt
--
--For more details, please refer to the generic GPIO DT binding document
--<devicetree/bindings/gpio/gpio.txt>.
+-For more details on GPIO bindings, please refer to the generic GPIO DT
+-binding document <devicetree/bindings/gpio/gpio.txt>.
 -
 -Example:
 ---------
 -
--	leds {
--		compatible = "maxim,max77650-led";
--		#address-cells = <1>;
--		#size-cells = <0>;
+-	pmic@48 {
+-		compatible = "maxim,max77650";
+-		reg = <0x48>;
 -
--		led@0 {
--			reg = <0>;
--			label = "blue:usr0";
--		};
+-		interrupt-controller;
+-		interrupt-parent = <&gpio2>;
+-		#interrupt-cells = <2>;
+-		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
 -
--		led@1 {
--			reg = <1>;
--			label = "red:usr1";
--			linux,default-trigger = "heartbeat";
--		};
--
--		led@2 {
--			reg = <2>;
--			label = "green:usr2";
--		};
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-		gpio-line-names = "max77650-charger";
 -	};
-diff --git a/Documentation/devicetree/bindings/leds/leds-max77650.yaml b/Documentation/devicetree/bindings/leds/leds-max77650.yaml
+diff --git a/Documentation/devicetree/bindings/mfd/max77650.yaml b/Documentation/devicetree/bindings/mfd/max77650.yaml
 new file mode 100644
-index 000000000000..8c43f1e1bf7d
+index 000000000000..4a70f875a6eb
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-max77650.yaml
-@@ -0,0 +1,51 @@
++++ b/Documentation/devicetree/bindings/mfd/max77650.yaml
+@@ -0,0 +1,149 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/leds/leds-max77650.yaml#
++$id: http://devicetree.org/schemas/mfd/max77650.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: LED driver for MAX77650 PMIC from Maxim Integrated.
++title: MAX77650 ultra low-power PMIC from Maxim Integrated.
 +
 +maintainers:
 +  - Bartosz Golaszewski <bgolaszewski@baylibre.com>
 +
 +description: |
-+  This module is part of the MAX77650 MFD device. For more details
-+  see Documentation/devicetree/bindings/mfd/max77650.yaml.
++  MAX77650 is an ultra-low power PMIC providing battery charging and power
++  supply for low-power IoT and wearable applications.
 +
-+  The LED controller is represented as a sub-node of the PMIC node on
-+  the device tree.
++  The GPIO-controller module is represented as part of the top-level PMIC
++  node. The device exposes a single GPIO line.
 +
-+  This device has three current sinks.
++  For device-tree bindings of other sub-modules (regulator, power supply,
++  LEDs and onkey) refer to the binding documents under the respective
++  sub-system directories.
 +
 +properties:
 +  compatible:
-+    const: maxim,max77650-led
++    const: maxim,max77650
 +
-+  "#address-cells":
-+    const: 1
++  reg:
++    description:
++      I2C device address.
++    maxItems: 1
 +
-+  "#size-cells":
-+    const: 0
++  interrupts:
++    maxItems: 1
 +
-+patternProperties:
-+  "^led@[0-2]$":
-+    type: object
-+    description: |
-+      Properties for a single LED.
++  interrupt-controller: true
 +
-+    properties:
-+      reg:
-+        description:
-+          Index of the LED.
-+        minimum: 0
-+        maximum: 2
++  "#interrupt-cells":
++    const: 2
++    description:
++      The first cell is the IRQ number, the second cell is the trigger type.
 +
-+      label: true
++  gpio-controller: true
 +
-+      linux,default-trigger: true
++  "#gpio-cells":
++    const: 2
++    description:
++      The first cell is the pin number and the second cell is used to specify
++      the gpio active state.
++
++  gpio-line-names:
++    maxItems: 1
++    description:
++      Single string containing the name of the GPIO line.
++
++  regulators:
++    $ref: ../regulator/max77650-regulator.yaml
++
++  charger:
++    $ref: ../power/supply/max77650-charger.yaml
++
++  leds:
++    $ref: ../leds/leds-max77650.yaml
++
++  onkey:
++    $ref: ../input/max77650-onkey.yaml
 +
 +required:
 +  - compatible
-+  - "#address-cells"
-+  - "#size-cells"
++  - reg
++  - interrupts
++  - interrupt-controller
++  - "#interrupt-cells"
++  - gpio-controller
++  - "#gpio-cells"
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/input/linux-event-codes.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        pmic@48 {
++            compatible = "maxim,max77650";
++            reg = <0x48>;
++
++            interrupt-controller;
++            interrupt-parent = <&gpio2>;
++            #interrupt-cells = <2>;
++            interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
++
++            gpio-controller;
++            #gpio-cells = <2>;
++            gpio-line-names = "max77650-charger";
++
++            regulators {
++                compatible = "maxim,max77650-regulator";
++
++                max77650_ldo: regulator@0 {
++                    regulator-compatible = "ldo";
++                    regulator-name = "max77650-ldo";
++                    regulator-min-microvolt = <1350000>;
++                    regulator-max-microvolt = <2937500>;
++                };
++
++                max77650_sbb0: regulator@1 {
++                    regulator-compatible = "sbb0";
++                    regulator-name = "max77650-sbb0";
++                    regulator-min-microvolt = <800000>;
++                    regulator-max-microvolt = <1587500>;
++                };
++            };
++
++            charger {
++                compatible = "maxim,max77650-charger";
++                input-voltage-min-microvolt = <4200000>;
++                input-current-limit-microamp = <285000>;
++            };
++
++            leds {
++                compatible = "maxim,max77650-led";
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                led@0 {
++                    reg = <0>;
++                    label = "blue:usr0";
++                };
++
++                led@1 {
++                    reg = <1>;
++                    label = "red:usr1";
++                    linux,default-trigger = "heartbeat";
++                };
++
++                led@2 {
++                    reg = <2>;
++                    label = "green:usr2";
++                };
++            };
++
++            onkey {
++                compatible = "maxim,max77650-onkey";
++                linux,code = <KEY_END>;
++                maxim,onkey-slide;
++            };
++        };
++    };
 -- 
 2.23.0
 
