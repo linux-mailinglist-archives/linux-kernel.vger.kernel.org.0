@@ -2,60 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 723D3DF1DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:44:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D30DADF1C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:42:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbfJUPoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 11:44:07 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49026 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726289AbfJUPoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 11:44:07 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4C2A82344871C2782850;
-        Mon, 21 Oct 2019 23:44:02 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 21 Oct 2019 23:43:53 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <sre@kernel.org>
-CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhongjiang@huawei.com>
-Subject: [PATCH] power: supply: cpcap-charger: Make cpcap_charger_voltage_to_regval static
-Date:   Mon, 21 Oct 2019 23:40:07 +0800
-Message-ID: <1571672407-58950-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1729635AbfJUPl7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 11:41:59 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41443 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729447AbfJUPl6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 11:41:58 -0400
+Received: by mail-io1-f68.google.com with SMTP id r144so4605993iod.8;
+        Mon, 21 Oct 2019 08:41:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yrezMpUPTuyBffQXpwXrXBC3vhqskF147L+22Fn98BU=;
+        b=EwmNb7cXzst/x89vU6zX83MOOZymhv4R7vncUF7z1tLKjEQC3olmiUnfQla3diTAaY
+         CwxGnWNj4NsBN6ZUzZjBq3ozYbikY1usGQPjjJNT2B6tGiIVTS7QPbyrtamOV8SKH2B6
+         XvM4vy8QY6L3spvc+y6BPseinBCXbXoxo5IezrWm6zw8bIpeoh87tqkE9cj1BEs2gGVs
+         aZGDKqPxfiP4VYqbsGB8dgHSbhD5NDYAIF8tT+X3o3dPr7iF4gr6lCXXFCR5y2eOOMi6
+         BlypA8VwHZxFc8HlZYhZEycLpi+Ml42Mz2S9+ief8wwwPHOzEt3YT9lVze8zUoiUqG2P
+         PGSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yrezMpUPTuyBffQXpwXrXBC3vhqskF147L+22Fn98BU=;
+        b=ZCGEwIH74dAJ8s2mYvJFciE/Q6pKYJwDZY0s/APbgfPAnlYdb5X1aJG6U/YF7uplko
+         L913PkEyk7TUF2mW1dVWE5zegOb+FlwLkWv2D0b6ISSE8XUxf10rdDAbtllHXwpusJyG
+         CUWrdcp7hAAF+h6AIExWb2zRG3kygGKIvhwCSeYyjaU/dem8VkYyoOEx7CeJdZDLGPLY
+         FZFqf1BNWB8tAfmRcCedTarpDrBEogCOACBGMoGynD0Ne9Y7IeYBl3wY2myq+nrO5tzK
+         UcGJIzGF2sz2falQtRqPhfghisjusJP3sbaKpi8v/GM6qYyLDYco4rMEfYw6fww1nbJA
+         zE0Q==
+X-Gm-Message-State: APjAAAUljxGL95LmGz3AE61khV27J9biz6kt/8qeRiHk2+cestMpJSWx
+        PSxnXhAA7eq1BNRB4S33Hepy++dhagr09ClXGlw=
+X-Google-Smtp-Source: APXvYqzSsz0JCUb9Vzflc4VEP6hwCRnJcMI8hMtnlwZ2QZkCnUzhMTr7V+XY5wal8xMfpEGVzAt4PglUUBLaMwmHu0g=
+X-Received: by 2002:a6b:7417:: with SMTP id s23mr17364283iog.221.1571672516254;
+ Mon, 21 Oct 2019 08:41:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+References: <20191007131649.1768-1-linux.amoon@gmail.com> <20191007131649.1768-6-linux.amoon@gmail.com>
+ <CAFBinCAoJLZj9Kh+SfF4Q+0OCzac2+huon_BU=Q3yE7Fu38U3w@mail.gmail.com>
+ <7hsgo4cgeg.fsf@baylibre.com> <CANAwSgRfcFa6uBNtpqz6y=9Uwsa4gcp_4tDD+Chhg4SynJCq0Q@mail.gmail.com>
+ <CAFBinCA6ZoeR4m4bhj08HF1DqxY1qB5mygpaQCGbo3d8M+Wr9Q@mail.gmail.com>
+ <CANAwSgSeYTnUkLnjw-RORw76Fyj3_WT0cdM9D0vFsY8g=9L94Q@mail.gmail.com>
+ <1jwode9lba.fsf@starbuckisacylon.baylibre.com> <CANAwSgSoK4X3_QbO3YpZRXNTpPJ+zVeid=w93f14Eyk8Dd32EQ@mail.gmail.com>
+ <CAFBinCBdwqxA2kLMAA9gtOcXevYK-J4x12odHwpQOAWakgWiEg@mail.gmail.com>
+ <CANAwSgRs2DUXwvhJD5qpXg04qEdP_Nt-wQqRbD2FpY2SWnHpAA@mail.gmail.com> <1a98c5f0-de8a-53bc-cfb7-c9b3255667c6@baylibre.com>
+In-Reply-To: <1a98c5f0-de8a-53bc-cfb7-c9b3255667c6@baylibre.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Mon, 21 Oct 2019 21:11:45 +0530
+Message-ID: <CANAwSgRD-Vd-D1H5cDYMyTLRMfzdkrFuiy4KfXYt6S+0goF-2w@mail.gmail.com>
+Subject: Re: [RFCv1 5/5] arm64/ARM: configs: Change CONFIG_PWM_MESON from m to y
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The GCC complains the following case when compiling kernel.
+Hi Neil,
 
-drivers/power/supply/cpcap-charger.c:563:5: warning: symbol 'cpcap_charger_voltage_to_regval' was not declared. Should it be static?
+On Mon, 21 Oct 2019 at 19:55, Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Hi Anand,
+>
+> On 21/10/2019 16:11, Anand Moon wrote:
+> > Hi Martin,
+> >
+> > On Fri, 18 Oct 2019 at 23:40, Martin Blumenstingl
+> > <martin.blumenstingl@googlemail.com> wrote:
+> >>
+> >> Hi Anand,
+> >>
+> >> On Fri, Oct 18, 2019 at 4:04 PM Anand Moon <linux.amoon@gmail.com> wrote:
+> >> [...]
+> >>>> Next step it to try narrow down the clock causing the issue.
+> >>>> Remove clk_ignore_unused from the command line and add CLK_INGORE_UNUSED
+> >>>> to the flag of some clocks your clock controller (g12a I think) until
+> >>>>
+> >>>> The peripheral clock gates already have this flag (something we should
+> >>>> fix someday) so don't bother looking there.
+> >>>>
+> >>>> Most likely the source of the pwm is getting disabled between the
+> >>>> late_init call and the probe of the PWM module. Since the pwm is already
+> >>>> active (w/o a driver), gating the clock source shuts dowm the power to
+> >>>> the cores.
+> >>>>
+> >>>> Looking a the possible inputs in pwm driver, I'd bet on fdiv4.
+> >>>>
+> >>>
+> >>> I had give this above steps a try but with little success.
+> >>> I am still looking into this much close.
+> >> it's not clear to me if you have only tested with the PWM and/or
+> >> FCLK_DIV4 clocks. can you please describe what you have tested so far?
+> >>
+> > Sorry for delayed response.
+> >
+> > I had just looked into clk related to SD_EMMC_A/B/C,
+> > with adding CLK_IGNORE/CRITICAL.
+> > Also looked into clk_summary for eMMC and microSD card,
+> > to identify the root cause, but I failed to move ahead.
+> >
+> >> for reference - my way of debugging this in the past was:
+> >> 1. add some printks to clk_disable_unused_subtree (right after the
+> >> clk_core_is_enabled check) to see which clocks are being disabled
+> >> 2. add CLK_IGNORE_UNUSED or CLK_IS_CRITICAL to the clocks which are
+> >> being disabled based on the information from step #1
+> >> 3. (at some point I had a working kernel with lots of clocks with
+> >> CLK_IGNORE_UNUSED/CLK_IS_CRITICAL)
+> >> 4. start dropping the CLK_IGNORE_UNUSED/CLK_IS_CRITICAL flags again
+> >> until you have traced it down to the clocks that are the actual issue
+> >> (so far I always had only one clock which caused issues, but it may be
+> >> multiple)
+> >> 5. investigate (and/or ask on the mailing list, Amlogic developers are
+> >> reading the mails here as well) for the few clocks from step #4
+> >>
+> >
+> > Thanks for you valuable suggestion. I have your patch to debug this
+> > [0]  https://patchwork.kernel.org/patch/9725921/mbox/
+> >
+> > So from the fist step I could identify that all the clk were getting closed
+> > after some core cpu clk was failing. Here is the log.
+> >
+> > step1: [1] https://pastebin.com/p13F9HGG
+> >
+> > so I marked these clk as CLK_IGNORE_UNUSED and finally
+> > I made it to boot using microSD card.
+> >
+> > After this just I converted these CLK to CLK_IS_CRITICAL
+> > as mostly these are used the CPU clk for now.
+> > Here is boot log successful for as of now.
+> >
+> > Finally: [2]  https://pastebin.com/qB6pMyGQ
+> >
+> > I know clk maintainer are against marking flags as *CLK_IS_CRITICAL*
+> > But this is just the step to move ahead.
+>
+> Thanks for the extensive debug.
+>
+> >
+> > Attach is my local clk and dts patch.Just for testing.
+> > [3] clk_critical.patch
+>
+>
+> Could you test with only the following changes:
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index ea4c791f106d..f49f5463363e 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -298,6 +298,7 @@ static struct clk_regmap g12a_fclk_div2 = {
+>                         &g12a_fclk_div2_div.hw
+>                 },
+>                 .num_parents = 1,
+> +               .flags = CLK_IS_CRITICAL,
+>         },
+>  };
+>
+> @@ -672,7 +673,7 @@ static struct clk_regmap g12b_cpub_clk = {
+>                         &g12a_sys_pll.hw
+>                 },
+>                 .num_parents = 2,
+> -               .flags = CLK_SET_RATE_PARENT,
+> +               .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>         },
+>  };
+>
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/power/supply/cpcap-charger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes these changes work at my end,
+I want to narrow down my changes, this looks pretty good.
 
-diff --git a/drivers/power/supply/cpcap-charger.c b/drivers/power/supply/cpcap-charger.c
-index 40d96b8..c0d452e 100644
---- a/drivers/power/supply/cpcap-charger.c
-+++ b/drivers/power/supply/cpcap-charger.c
-@@ -560,7 +560,7 @@ static void cpcap_charger_update_state(struct cpcap_charger_ddata *ddata,
- 	dev_dbg(ddata->dev, "state: %s\n", status);
- }
- 
--int cpcap_charger_voltage_to_regval(int voltage)
-+static int cpcap_charger_voltage_to_regval(int voltage)
- {
- 	int offset;
- 
--- 
-1.7.12.4
-
+Best Regards
+-Anand
