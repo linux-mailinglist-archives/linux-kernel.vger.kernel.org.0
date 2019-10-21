@@ -2,123 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE931DED53
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:19:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A959BDED67
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:21:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728881AbfJUNTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:19:34 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37120 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728696AbfJUNTd (ORCPT
+        id S1728976AbfJUNVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:21:24 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60200 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728753AbfJUNVY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:19:33 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e11so5251771wrv.4
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 06:19:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=IzXM9qRz/JzRTDA5ooE2NgWm+U2lHG9aYE8mnLThYtI=;
-        b=q9YWvNv9ifnEpmf4fcGn790DbawpBkhYQbpIVJg3hYiigRmAsjCJXHurvRjsJbr33y
-         GKAj9CRq9suFR+sT8bkXA66eo/oOwaQ8tVIgh8xTeyUwi3LXse8r+RohW9AKTnYXoZOJ
-         G30a0Fwt09369m1iUluNcYAKO/M8Hjw81Wl0xvLiTo4rpxSjJbUz8GYnKERP1UGsco/V
-         1AQp5U49KV73xRt8DhQWnoscHp1SDZ4FmHCi2q/M7u0w1ekqC+6fe7vPC9M2+U4Tu61t
-         wRem0MnPSHUthaSTQfUD8G9zahBK5zqx0/4Wr/SUvo5wn0J5soLVVBwAEM5zeqsGdw05
-         /q2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=IzXM9qRz/JzRTDA5ooE2NgWm+U2lHG9aYE8mnLThYtI=;
-        b=WMRh4aoqclJ7ossZniAkbrUMKYpAABsfLZYgLJxUHvdtDsm/U5Z/R0C79oWtPPTs+6
-         f/2J4exAaDbO8bweHHh+aHjA/uZUyybln4vDhKbw7KIpaaZrKkvzsskQXw59i9AH5JO6
-         TH2Xozg4rVml1oxTllL1oBuN3beTWnx9b8aMkA+w8DqrdN9EyF7qM7EQ3BoZHM/T8ACI
-         LLh6IyqJmW67H3z3LUk9urczJQGZW8wr0yQ7FPKldGCK3xHwHkKSt+Xh/BeubzE/upTM
-         rXJt3t6iuCAFe5fRyjIwXXs0UAgV3KN60Iej84u7XD/inEnCuD4w6ycdiDpDcVmd11yT
-         07Qw==
-X-Gm-Message-State: APjAAAW4bvtLz5UX2xBlp9Lda962iSdQh8Qigtv5QdXHCwbugOpwaVEM
-        0gXcGpvdSyQ5xd0ISP1LcSKrTA==
-X-Google-Smtp-Source: APXvYqzT82vjBtgcUeW0B+ywGszX0nXKvrB7d+PAaK9wi8U2cK7Uo07kUF1C0Fq2aDGrCrxNy/dEjw==
-X-Received: by 2002:a5d:4b8b:: with SMTP id b11mr5442650wrt.78.1571663969894;
-        Mon, 21 Oct 2019 06:19:29 -0700 (PDT)
-Received: from dell ([95.149.164.99])
-        by smtp.gmail.com with ESMTPSA id v10sm11291181wmg.48.2019.10.21.06.19.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Oct 2019 06:19:29 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 14:19:27 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     robh@kernel.org, broonie@kernel.org, linus.walleij@linaro.org,
-        vinod.koul@linaro.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        spapothi@codeaurora.org, bgoswami@codeaurora.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 02/11] mfd: wcd934x: add support to wcd9340/wcd9341
- codec
-Message-ID: <20191021131927.GJ4365@dell>
-References: <20191018001849.27205-1-srinivas.kandagatla@linaro.org>
- <20191018001849.27205-3-srinivas.kandagatla@linaro.org>
- <20191021104611.GZ4365@dell>
- <1af8a875-8f55-6b7e-4204-ecedc1608889@linaro.org>
- <20191021114520.GD4365@dell>
- <38dde3d9-8d7e-7dc0-7cba-137b43cea9d1@linaro.org>
+        Mon, 21 Oct 2019 09:21:24 -0400
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iMXbA-00010Y-Lr; Mon, 21 Oct 2019 13:19:48 +0000
+Date:   Mon, 21 Oct 2019 15:19:48 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, linux@rasmusvillemoes.dk,
+        cyphar@cyphar.com, keescook@chromium.org
+Subject: Re: linux-next: Tree for Oct 18 (objtool)
+Message-ID: <20191021131947.yih3wqjbfroaj4dz@wittgenstein>
+References: <20191018180300.090dbcb9@canb.auug.org.au>
+ <40de4e26-450e-b932-3d73-e833c8aeaa2e@infradead.org>
+ <20191021123549.GC1817@hirez.programming.kicks-ass.net>
+ <20191021131149.GA19358@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <38dde3d9-8d7e-7dc0-7cba-137b43cea9d1@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191021131149.GA19358@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2019, Srinivas Kandagatla wrote:
-
-> 
-> 
-> On 21/10/2019 12:45, Lee Jones wrote:
-> > On Mon, 21 Oct 2019, Srinivas Kandagatla wrote:
-> > 
-> > > Thanks Lee for taking time to review.
-> > > 
-> > > I agree with most of the style related comments, will fix them in next
-> > > version. For others I have replied it inline.
-> > 
-> > [...]
-> > 
-> > > > > +static int wcd934x_slim_status(struct slim_device *sdev,
-> > > > > +			       enum slim_device_status status)
-> > > > > +{
-> > > > > +	struct device *dev = &sdev->dev;
-> > > > > +	struct wcd934x_data *wcd;
-> > > > > +	int ret;
+On Mon, Oct 21, 2019 at 03:11:49PM +0200, Peter Zijlstra wrote:
+> On Mon, Oct 21, 2019 at 02:35:49PM +0200, Peter Zijlstra wrote:
+> > On Fri, Oct 18, 2019 at 08:33:11AM -0700, Randy Dunlap wrote:
+> > > On 10/18/19 12:03 AM, Stephen Rothwell wrote:
+> > > > Hi all,
 > > > > 
-> > > > This is semantically odd!  Why are you doing most of the
-> > > > initialisation and bring-up in 'status' and not 'probe'.  Seems
-> > > > broken to me.
+> > > > Changes since 20191017:
+> > > > 
 > > > 
-> > > SLIMBus device will not be in a state to communicate before enumeration (at
-> > > probe), so all the device initialization is done in status callback where it
-> > > is ready for communication.
+> > > on x86_64:
+> > > lib/usercopy.o: warning: objtool: check_zeroed_user()+0x35f: call to __ubsan_handle_shift_out_of_bounds() with UACCESS enabled
 > > 
-> > Why do we need the device to be up *before* calling probe?
-> > 
+> > Blergh... I suppose the below will fix that. I'm a bit conflicted on it
+> > though, the alternative is annotating more ubsan crud.
 > 
-> To Initialize the device.
-> And SLIMbus device registers access can not be done before enumeration.
+> By popular request; here's that alternative. Completely untested :-)
 
-I'm not sure why you need any hardware to be enabled before calling
-.probe(). That is the purpose of .probe(). The only way in which I can
-see this being a requirement is if information located on the device
-is required in order to do device-driver matching.
+Am I not getting some mails? :)
+I prefer this one as it allows us to avoid working around this in
+usercopy.c. Should especially make if this potentially helps in other
+cases as well?
 
-In which case, how was the .status() function matched?
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> 
+> ---
+>  lib/ubsan.c           | 5 ++++-
+>  tools/objtool/check.c | 1 +
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/ubsan.c b/lib/ubsan.c
+> index 39d5952c4273..0dce3ff45b5b 100644
+> --- a/lib/ubsan.c
+> +++ b/lib/ubsan.c
+> @@ -359,9 +359,10 @@ void __ubsan_handle_shift_out_of_bounds(struct shift_out_of_bounds_data *data,
+>  	struct type_descriptor *lhs_type = data->lhs_type;
+>  	char rhs_str[VALUE_LENGTH];
+>  	char lhs_str[VALUE_LENGTH];
+> +	unsigned long flags = user_access_save();
+>  
+>  	if (suppress_report(&data->location))
+> -		return;
+> +		goto out;
+>  
+>  	ubsan_prologue(&data->location);
+>  
+> @@ -387,6 +388,8 @@ void __ubsan_handle_shift_out_of_bounds(struct shift_out_of_bounds_data *data,
+>  			lhs_type->type_name);
+>  
+>  	ubsan_epilogue();
+> +out:
+> +	user_access_restore(flags);
+>  }
+>  EXPORT_SYMBOL(__ubsan_handle_shift_out_of_bounds);
+>  
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index 543c068096b1..4768d91c6d68 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -482,6 +482,7 @@ static const char *uaccess_safe_builtin[] = {
+>  	"ubsan_type_mismatch_common",
+>  	"__ubsan_handle_type_mismatch",
+>  	"__ubsan_handle_type_mismatch_v1",
+> +	"__ubsan_handle_shift_out_of_bounds",
+>  	/* misc */
+>  	"csum_partial_copy_generic",
+>  	"__memcpy_mcsafe",
