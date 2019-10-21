@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF22CDEE0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:41:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DED1DEE16
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:42:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729708AbfJUNlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:41:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43466 "EHLO mail.kernel.org"
+        id S1729119AbfJUNld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:41:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729691AbfJUNl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:41:28 -0400
+        id S1728812AbfJUNlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:41:31 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C75A21BE5;
-        Mon, 21 Oct 2019 13:41:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB0C52184C;
+        Mon, 21 Oct 2019 13:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571665287;
-        bh=9x+SoGNiwEueCjHdrQuI+99tuug4zhK59wXerQLhR/E=;
+        s=default; t=1571665290;
+        bh=uNrkdEAKyJPqVfFge5fqhG+TOyIuSHO/yAJmdTdLYo4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M4RvbFWNrZRpbT12Miaa8zMvHFmcrHe2Y+OkQb6wgfommz4jJz9oDITvazWURV006
-         yTjOHgT2obxATl6YO/05cmaMx788tDTOLIY55BJNjmU2DmNAFY1SluEwgBOaLjVV3O
-         psQrvLAswhyjdglrh2zG5ojM7PiG7qRhl0ZHh1SQ=
+        b=CpJD/HK4gLCoT5Uv2fOZFKh8uxVd2NvbWPZUosUnxQD7iPvbgwNuMZkPHeX3DEdig
+         CHbuKmM3uWjSd1s+LTA80hr756jiA46whGC9Ui/XHFf32tWlO8oD44zs+aukJDPzxO
+         V38dya7vyI7DM8cDXRSzyhGrHIuAUIZWvROUKLMU=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -37,9 +37,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Stephane Eranian <eranian@google.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 50/57] libperf: Do not export perf_evsel__init()/perf_evlist__init()
-Date:   Mon, 21 Oct 2019 10:38:27 -0300
-Message-Id: <20191021133834.25998-51-acme@kernel.org>
+Subject: [PATCH 51/57] libperf: Add pr_err() macro
+Date:   Mon, 21 Oct 2019 10:38:28 -0300
+Message-Id: <20191021133834.25998-52-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191021133834.25998-1-acme@kernel.org>
 References: <20191021133834.25998-1-acme@kernel.org>
@@ -52,11 +52,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-There's no point in exporting perf_evsel__init()/perf_evlist__init(),
-it's called from perf_evsel__new()/perf_evlist__new() respectively.
-
-It's used only from perf where perf_evsel()/perf_evlist() is embedded
-perf's evsel/evlist.
+And missing include for "perf/core.h" header, which provides LIBPERF_*
+debug levels and add missing pr_err() support.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -67,85 +64,46 @@ Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
-Link: http://lore.kernel.org/lkml/20191017105918.20873-10-jolsa@kernel.org
+Link: http://lore.kernel.org/lkml/20191017105918.20873-11-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/lib/include/internal/evlist.h | 1 +
- tools/perf/lib/include/internal/evsel.h  | 1 +
- tools/perf/lib/include/perf/evlist.h     | 1 -
- tools/perf/lib/include/perf/evsel.h      | 2 --
- tools/perf/lib/libperf.map               | 2 --
- 5 files changed, 2 insertions(+), 5 deletions(-)
+ tools/perf/lib/include/perf/core.h | 1 +
+ tools/perf/lib/internal.h          | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/tools/perf/lib/include/internal/evlist.h b/tools/perf/lib/include/internal/evlist.h
-index 20d90e29fc0e..a2fbccf1922f 100644
---- a/tools/perf/lib/include/internal/evlist.h
-+++ b/tools/perf/lib/include/internal/evlist.h
-@@ -50,6 +50,7 @@ int perf_evlist__mmap_ops(struct perf_evlist *evlist,
- 			  struct perf_evlist_mmap_ops *ops,
- 			  struct perf_mmap_param *mp);
+diff --git a/tools/perf/lib/include/perf/core.h b/tools/perf/lib/include/perf/core.h
+index 2a80e4b6f819..a3f6d68edad7 100644
+--- a/tools/perf/lib/include/perf/core.h
++++ b/tools/perf/lib/include/perf/core.h
+@@ -9,6 +9,7 @@
+ #endif
  
-+void perf_evlist__init(struct perf_evlist *evlist);
- void perf_evlist__exit(struct perf_evlist *evlist);
+ enum libperf_print_level {
++	LIBPERF_ERR,
+ 	LIBPERF_WARN,
+ 	LIBPERF_INFO,
+ 	LIBPERF_DEBUG,
+diff --git a/tools/perf/lib/internal.h b/tools/perf/lib/internal.h
+index 37db745e1502..2c27e158de6b 100644
+--- a/tools/perf/lib/internal.h
++++ b/tools/perf/lib/internal.h
+@@ -2,6 +2,8 @@
+ #ifndef __LIBPERF_INTERNAL_H
+ #define __LIBPERF_INTERNAL_H
  
- /**
-diff --git a/tools/perf/lib/include/internal/evsel.h b/tools/perf/lib/include/internal/evsel.h
-index a69b8299c36f..1ffd083b235e 100644
---- a/tools/perf/lib/include/internal/evsel.h
-+++ b/tools/perf/lib/include/internal/evsel.h
-@@ -50,6 +50,7 @@ struct perf_evsel {
- 	bool			 system_wide;
- };
++#include <perf/core.h>
++
+ void libperf_print(enum libperf_print_level level,
+ 		   const char *format, ...)
+ 	__attribute__((format(printf, 2, 3)));
+@@ -11,6 +13,7 @@ do {                            \
+ 	libperf_print(level, "libperf: " fmt, ##__VA_ARGS__);     \
+ } while (0)
  
-+void perf_evsel__init(struct perf_evsel *evsel, struct perf_event_attr *attr);
- int perf_evsel__alloc_fd(struct perf_evsel *evsel, int ncpus, int nthreads);
- void perf_evsel__close_fd(struct perf_evsel *evsel);
- void perf_evsel__free_fd(struct perf_evsel *evsel);
-diff --git a/tools/perf/lib/include/perf/evlist.h b/tools/perf/lib/include/perf/evlist.h
-index 8c4b3c28535e..0a7479dc13bf 100644
---- a/tools/perf/lib/include/perf/evlist.h
-+++ b/tools/perf/lib/include/perf/evlist.h
-@@ -10,7 +10,6 @@ struct perf_evsel;
- struct perf_cpu_map;
- struct perf_thread_map;
- 
--LIBPERF_API void perf_evlist__init(struct perf_evlist *evlist);
- LIBPERF_API void perf_evlist__add(struct perf_evlist *evlist,
- 				  struct perf_evsel *evsel);
- LIBPERF_API void perf_evlist__remove(struct perf_evlist *evlist,
-diff --git a/tools/perf/lib/include/perf/evsel.h b/tools/perf/lib/include/perf/evsel.h
-index 4388667f265c..557f5815a9c9 100644
---- a/tools/perf/lib/include/perf/evsel.h
-+++ b/tools/perf/lib/include/perf/evsel.h
-@@ -21,8 +21,6 @@ struct perf_counts_values {
- 	};
- };
- 
--LIBPERF_API void perf_evsel__init(struct perf_evsel *evsel,
--				  struct perf_event_attr *attr);
- LIBPERF_API struct perf_evsel *perf_evsel__new(struct perf_event_attr *attr);
- LIBPERF_API void perf_evsel__delete(struct perf_evsel *evsel);
- LIBPERF_API int perf_evsel__open(struct perf_evsel *evsel, struct perf_cpu_map *cpus,
-diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
-index 8be02afc324b..7be1af8a546c 100644
---- a/tools/perf/lib/libperf.map
-+++ b/tools/perf/lib/libperf.map
-@@ -21,7 +21,6 @@ LIBPERF_0.0.1 {
- 		perf_evsel__delete;
- 		perf_evsel__enable;
- 		perf_evsel__disable;
--		perf_evsel__init;
- 		perf_evsel__open;
- 		perf_evsel__close;
- 		perf_evsel__read;
-@@ -34,7 +33,6 @@ LIBPERF_0.0.1 {
- 		perf_evlist__close;
- 		perf_evlist__enable;
- 		perf_evlist__disable;
--		perf_evlist__init;
- 		perf_evlist__add;
- 		perf_evlist__remove;
- 		perf_evlist__next;
++#define pr_err(fmt, ...)        __pr(LIBPERF_ERR, fmt, ##__VA_ARGS__)
+ #define pr_warning(fmt, ...)    __pr(LIBPERF_WARN, fmt, ##__VA_ARGS__)
+ #define pr_info(fmt, ...)       __pr(LIBPERF_INFO, fmt, ##__VA_ARGS__)
+ #define pr_debug(fmt, ...)      __pr(LIBPERF_DEBUG, fmt, ##__VA_ARGS__)
 -- 
 2.21.0
 
