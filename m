@@ -2,132 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E7C5DF4D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 20:09:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9664EDF4D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 20:09:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729826AbfJUSIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 14:08:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727110AbfJUSIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 14:08:00 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADE8B2086D;
-        Mon, 21 Oct 2019 18:07:57 +0000 (UTC)
-Date:   Mon, 21 Oct 2019 14:07:56 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        amit.kachhap@arm.com, ard.biesheuvel@linaro.org,
-        catalin.marinas@arm.com, deller@gmx.de, duwe@suse.de,
-        james.morse@arm.com, jeyu@kernel.org, jpoimboe@redhat.com,
-        jthierry@redhat.com, mingo@redhat.com, peterz@infradead.org,
-        svens@stackframe.org, takahiro.akashi@linaro.org, will@kernel.org
-Subject: Re: [PATCH 1/8] ftrace: add ftrace_init_nop()
-Message-ID: <20191021140756.613a1bac@gandalf.local.home>
-In-Reply-To: <20191021163426.9408-2-mark.rutland@arm.com>
-References: <20191021163426.9408-1-mark.rutland@arm.com>
-        <20191021163426.9408-2-mark.rutland@arm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1730021AbfJUSIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 14:08:05 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:35936 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729878AbfJUSIE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 14:08:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1571681282;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=qQ6zV65O4QTCFnYrPW5AcyzqoTnREY7XPbgJ3s1IDW8=;
+        b=OH+QEsF7qliA4AI9mvrnicGWFLMcpuY9MqzuAT7wW1sa+9GRkIx1vaVlSIbfhMBMv0
+        NS3/R2t97sq1iP1MJmGf20rkY9S3BMwUYAhsDKNxMD55NNt4f5tsm6CGOhBeoDqiVWqg
+        vXZfuPoPYF7Uhl21FK6i9d/73TExoANaC6RynmClpWDpadd66hjnX9OrioTdY7rfNio4
+        aLr4Tg3urEHez4D9kZV8rV9GXCzW42jtu5ahFuRjmuqhhf4rOaqbzNuUecCpFtGCJhnn
+        tfsNdV/WtxciK7Y+MifqSv+y+m/5RANFDMSQGaP32r6aM09ILJAuizAGWeFEPffg3KxA
+        5yUQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDVCbXA4Ewxc="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.28.1 DYNA|AUTH)
+        with ESMTPSA id R0b2a8v9LI7xM5P
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 21 Oct 2019 20:07:59 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 1/7] dt-bindings: gpu: pvrsgx: add initial bindings
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20191021172557.GB5610@atomide.com>
+Date:   Mon, 21 Oct 2019 20:07:59 +0200
+Cc:     Rob Herring <robh+dt@kernel.org>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C6CD5A50-7F0A-4F56-ABB9-CAEDF7E47A5D@goldelico.com>
+References: <cover.1571424390.git.hns@goldelico.com> <f0fb68dc7bc027e5e911721852f6bc6fa2d77a63.1571424390.git.hns@goldelico.com> <CAL_Jsq+obsTSU3iP1wm_3-FsAJ4Mxiz0NbMY1_h5NeFn67Sj+A@mail.gmail.com> <CEA29A3B-4116-4FE3-8E18-0C97353688DC@goldelico.com> <20191021172557.GB5610@atomide.com>
+To:     Tony Lindgren <tony@atomide.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2019 17:34:19 +0100
-Mark Rutland <mark.rutland@arm.com> wrote:
 
-> Architectures may need to perform special initialization of ftrace
-> callsites, and today they do so by special-casing ftrace_make_nop() when
-> the expected branch address is MCOUNT_ADDR. In some cases (e.g. for
-> patchable-function-entry), we don't have an mcount-like symbol and don't
-> want a synthetic MCOUNT_ADDR, but we may need to perform some
-> initialization of callsites.
-> 
-> To make it possible to separate initialization from runtime
-> modification, and to handle cases without an mcount-like symbol, this
-> patch adds an optional ftrace_init_nop() function that architectures can
-> implement, which does not pass a branch address.
-> 
-> Where an architecture does not provide ftrace_init_nop(), we will fall
-> back to the existing behaviour of calling ftrace_make_nop() with
-> MCOUNT_ADDR.
-> 
-> At the same time, ftrace_code_disable() is renamed to
-> ftrace_code_init_disabled() to make it clearer that it is intended to
-> intialize a callsite into a disabled state, and is not for disabling a
-> callsite that has been runtime enabled.
+> Am 21.10.2019 um 19:25 schrieb Tony Lindgren <tony@atomide.com>:
+>=20
+> * H. Nikolaus Schaller <hns@goldelico.com> [191021 15:46]:
+>>> Am 21.10.2019 um 17:07 schrieb Rob Herring <robh+dt@kernel.org>:
+>>> On Fri, Oct 18, 2019 at 1:46 PM H. Nikolaus Schaller =
+<hns@goldelico.com> wrote:
+>>>> +Optional properties:
+>>>> +- timer:       the timer to be used by the driver.
+>>>=20
+>>> Needs a better description and vendor prefix at least.
+>>=20
+>> I am not yet sure if it is vendor specific or if all
+>> SGX implementations need some timer.
+>>=20
+>>>=20
+>>> Why is this needed rather than using the OS's timers?
+>>=20
+>> Because nobody understands the current (out of tree and
+>> planned for staging) driver well enough what the timer
+>> is doing. It is currently hard coded that some omap refer
+>> to timer7 and others use timer11.
+>=20
+> Just configure it in the driver based on the compatible
+> value to keep it out of the dts. It's best to stick to
+> standard bindings.
 
-To make the name even better, let's just rename it to:
+IMHO leads to ugly code... Since the timer is not part of
+the SGX IPR module but one of the OMAP timers it is sort
+of hardware connection that can be chosen a little arbitrarily.
 
- ftrace_nop_initialization()
+This is the main reason why I think adding it to a device tree
+source so that a board that really requires to use a timer
+for a different purpose, can reassign it. This is not possible
+if we hard-code that into the driver by scanning for
+compatible. In that case the driver must check board compatible
+names...
 
-I think that may be the best description for it.
+But if we gain a better understanding of its role in the driver
+(does it really need a dedicated timer and for what and which
+properties the timer must have) we can probably replace it.
 
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Torsten Duwe <duwe@suse.de>
-> ---
->  kernel/trace/ftrace.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index f296d89be757..afd7e210e595 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -2493,15 +2493,22 @@ struct dyn_ftrace *ftrace_rec_iter_record(struct ftrace_rec_iter *iter)
->  	return &iter->pg->records[iter->index];
->  }
->  
-> +#ifndef ftrace_init_nop
-> +static int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
-> +{
-> +	return ftrace_make_nop(mod, rec, MCOUNT_ADDR);
-> +}
-> +#endif
+>=20
+>>>> +- img,cores:   number of cores. Defaults to <1>.
+>>>=20
+>>> Not discoverable?
+>>=20
+>> Not sure if it is. This is probably available in undocumented
+>> registers of the sgx.
+>=20
+> This too, and whatever non-standrd other properities
+> you might have.
 
-Can you place the above in the ftrace.h header. That's where that would
-belong.
+Here it is a feature of the SGX IPR of the SoC, i.e.
+describes that the hardware has one or two cores.
 
-#ifndef ftrace_init_nop
-struct module;
-static inline int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
-{
-	return ftrace_make_nop(mod, rec, MCOUNT_ADDR);
-}
-#endif
-
--- Steve
-
-> +
->  static int
-> -ftrace_code_disable(struct module *mod, struct dyn_ftrace *rec)
-> +ftrace_code_init_disabled(struct module *mod, struct dyn_ftrace *rec)
->  {
->  	int ret;
->  
->  	if (unlikely(ftrace_disabled))
->  		return 0;
->  
-> -	ret = ftrace_make_nop(mod, rec, MCOUNT_ADDR);
-> +	ret = ftrace_init_nop(mod, rec);
->  	if (ret) {
->  		ftrace_bug_type = FTRACE_BUG_INIT;
->  		ftrace_bug(ret, rec);
-> @@ -2943,7 +2950,7 @@ static int ftrace_update_code(struct module *mod, struct ftrace_page *new_pgs)
->  			 * to the NOP instructions.
->  			 */
->  			if (!__is_defined(CC_USING_NOP_MCOUNT) &&
-> -			    !ftrace_code_disable(mod, p))
-> +			    !ftrace_code_init_disabled(mod, p))
->  				break;
->  
->  			update_cnt++;
+BR,
+NIkolaus
 
