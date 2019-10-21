@@ -2,98 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87795DE6D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:44:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAEE5DE6DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbfJUIoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 04:44:02 -0400
-Received: from mail-oln040092066082.outbound.protection.outlook.com ([40.92.66.82]:60899
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727065AbfJUIoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 04:44:02 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I+OPCvbxQwoMBTidoz1xuOEISmoXPGVgChpUF9Ou3QARYMSpHsBK8ejnnTmUkjktYaOx2FWFPLoAe//V7/9YPAagCy+6oYJgOSWWSQdS5ToCirkWIlyo7UoWe27Bb0SGD9rzFfkAfd1BJawyjfMt4zJTWhNCWUrz3ytBkNpEv1hYzmMstPVTzrbGzI31A5w61rXtA9H33kXIlwcBxWp2izBB1NxoDxbzNQl2a+ptjeEV4v/IuXztaGbX4DpgS4bAjYNbxRXpCB5oUrMiC6RZhG/JRiVjTpiVefxv0EfjMDM5lAgW1wAz6Jlj55ML0FpfpZJrphT6dQdOHXpe07oZAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0QB6dNWKygoF4guypCasXlzbcOPHSSammvgW5CV/Tj0=;
- b=cjCbNOdXG5etySX99jkylSm1brxUgOKbd0X5DmuGnFkLqn7q7Gc4bJnUQSUHEc4VpuORPs6jN7/NuzQwWj4vcnLf9So8cTx8jmTlu+RYtwkNFZMB6rPXroPArHhiYIEHwJumsT2LwjscNfcXpKb5W9zLJ/KLMIYHP4MxiqPKxfnZIlMrqB+ZOFQlq1ExKywHLX0l+lyGvKddwCIBONvS7WgqaABqx83oL+8ZMCCw60a5ILrBtqFTyB6ilPUG04Hcspq85G+fpyLnKG+77la3itnbbYro50hnYrPCtNAsF1Gm8n/zekvHZJhwVcZa3CeVN/QMLRJfnzx8E+qmsIx+7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from DB5EUR01FT048.eop-EUR01.prod.protection.outlook.com
- (10.152.4.57) by DB5EUR01HT214.eop-EUR01.prod.protection.outlook.com
- (10.152.5.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2367.14; Mon, 21 Oct
- 2019 08:43:58 +0000
-Received: from AM0PR0502MB3668.eurprd05.prod.outlook.com (10.152.4.53) by
- DB5EUR01FT048.mail.protection.outlook.com (10.152.5.166) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2367.14 via Frontend Transport; Mon, 21 Oct 2019 08:43:58 +0000
-Received: from AM0PR0502MB3668.eurprd05.prod.outlook.com
- ([fe80::b1e4:568d:bbc:8247]) by AM0PR0502MB3668.eurprd05.prod.outlook.com
- ([fe80::b1e4:568d:bbc:8247%6]) with mapi id 15.20.2347.029; Mon, 21 Oct 2019
- 08:43:58 +0000
-From:   Anatol Belski <weltling@outlook.de>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "trivial@kernel.org" <trivial@kernel.org>
-Subject: Re: [PATCH] include/linux/byteorder/generic.h: fix signed/unsigned
- warnings
-Thread-Topic: [PATCH] include/linux/byteorder/generic.h: fix signed/unsigned
- warnings
-Thread-Index: AQHVh2rzQudqiWaARkuhjP20crUqsKdkqXKAgAAfEIA=
-Date:   Mon, 21 Oct 2019 08:43:58 +0000
-Message-ID: <AM0PR0502MB3668CBCDF1C1C3747D02BBFBBA690@AM0PR0502MB3668.eurprd05.prod.outlook.com>
-References: <AM0PR0502MB3668B1A0EC328690DA25E9C6BA6E0@AM0PR0502MB3668.eurprd05.prod.outlook.com>
-         <20191021065245.GH32742@smile.fi.intel.com>
-In-Reply-To: <20191021065245.GH32742@smile.fi.intel.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-x-clientproxiedby: AM0PR06CA0053.eurprd06.prod.outlook.com
- (2603:10a6:208:aa::30) To AM0PR0502MB3668.eurprd05.prod.outlook.com
- (2603:10a6:208:19::11)
-x-incomingtopheadermarker: OriginalChecksum:18BFDDB472A3570CA96121E86E8DF5C53A7265AA33E418D970E2CB313C1689B9;UpperCasedChecksum:1157FD1386BDEAF7DFE3CA74B0C4FEE31136CC6A8CA77AF2B3C41BB6AB86AE58;SizeAsReceived:8055;Count:52
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [ejcq5jySr1kI4hMI53s/ekpre4RqsKHBuOUdl7LNtamqH1W+cwcZb1ZfjEGfeKGA]
-x-microsoft-original-message-id: <b673366e4bbde2432a250e196a2556be7faa1527.camel@outlook.de>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 52
-x-eopattributedmessage: 0
-x-ms-traffictypediagnostic: DB5EUR01HT214:
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: RhDbtJce7qdluBnaujq88UHb9uinsFJlFNOSk7aXsgVCasULh9/ktcjvZniaYxRPl/iySY1O29Di4oj5kjfv216DDZG+4ZeJRz4lu/grXl6ynCH7GhSfbG/kZ+ZssFI5dcmJrLE/0F/gvhWKoKBAmdLKpxPTCMTfbdXs90zSApB7LYGOg+cYjX6fuwLn6J3Z
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <76D334A49846F64A9DDD3C2F6FA80921@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727780AbfJUIoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 04:44:34 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36502 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726725AbfJUIoe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 04:44:34 -0400
+Received: by mail-lj1-f193.google.com with SMTP id v24so12363815ljj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 01:44:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k6/jwOGjiFLpH18FIWhNhZ0b7utZqe9omHEbx9Di3qc=;
+        b=ny1psNlus6p5dkVI9gKh/ohbftFJOKoxVqwKOIqBiTkUW1eDiirauCFo0YlGpcq4rI
+         WFOQMTUIPmw7acqRsnEpi7gh2AVwP1KTQiWzoCNu72p0edzYjx1TA/KK9Mw3q5dOmPWy
+         VURWTOjmMmlGvDfFFCTNfZUBm3RrmLjPY/oH6VbEknGxMHMPRXb6dETyQWq5NgmjGpE9
+         seNl/g2FXHgMcKfD+AJwFETvA7yJB0N/aaMMe64HdsKVJ+cY0JwMsUnuyByJrbtsW3Ea
+         U2l5XN/8lXequvxW5d1EINdnjjM0+8KhBH7TVBa3Sw0279HkoVwJKgntMGl/KMznXbuw
+         LW8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k6/jwOGjiFLpH18FIWhNhZ0b7utZqe9omHEbx9Di3qc=;
+        b=actZM6ijzRAMvt30QOoGcjbRr7TN0hxpCbGG4cfJw9PLNDNsEyen6wZB6jK7k0nbMX
+         I1idMEoQeazZTxRTOLJgOOfS9+QxCYIZtpTWwpACzRF0of86iSulqk6OFp8rCcUBsEH2
+         gs9tQHO9zG3x33PT+xva+hTMD8kTWrUNIMGFA213wECqq+o96s7dhwE3KAGa8NeuDZEn
+         nKKTuqobhh95lrh9FVVHoyX9tWdoeA+Vkff0N+J8EC8MJPpp+C4YG2b8ukVGssiBIc27
+         a+NlNIuDDyriTr7C/trJ/vgVRo6wRwUV1qEPuUH/suzOBVTw2QLZ1ZfdfkKe13wIobIV
+         I2sg==
+X-Gm-Message-State: APjAAAVM0omlNgnYx9ZO4HCEMdIRCgWAyamRVHrrAgQqpYB8b6rfQUWj
+        4x/6jRwWNIUVCKIq0lOqtX7n0skLCuUGFTtuDahqMQ==
+X-Google-Smtp-Source: APXvYqw3VignrQH9m/81Ix+X7BloIsTLB0LulQ1fKdOjgmbDbyB+b487Iidjikay1R+k8Azxcfc4fiYeYLELvlDNRAc=
+X-Received: by 2002:a05:651c:237:: with SMTP id z23mr14883234ljn.214.1571647472078;
+ Mon, 21 Oct 2019 01:44:32 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83558524-e54e-4a76-9f97-08d75602d00d
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2019 08:43:58.3927
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5EUR01HT214
+References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org> <20191021075038.GA27361@gmail.com>
+In-Reply-To: <20191021075038.GA27361@gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Mon, 21 Oct 2019 10:44:20 +0200
+Message-ID: <CAKfTPtCcvKuf1Gt0W-BeEbQxFP_co14jdv_L5zEpS==Ecibabg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] sched/fair: rework the CFS load balance
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Mel Gorman <mgorman@techsingularity.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Parth Shah <parth@linux.ibm.com>,
+        Rik van Riel <riel@surriel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksDQoNCk9uIE1vbiwgMjAxOS0xMC0yMSBhdCAwOTo1MiArMDMwMCwgQW5keSBTaGV2Y2hlbmtv
-IHdyb3RlOg0KPiBPbiBTdW4sIE9jdCAyMCwgMjAxOSBhdCAwNToyMjozMFBNICswMDAwLCBBbmF0
-b2wgQmVsc2tpIHdyb3RlOg0KPiA+IEZyb206IEFuYXRvbCBCZWxza2kgPGFuYmVsc2tpQG1pY3Jv
-c29mdC5jb20+DQo+IA0KPiBCZXR0ZXIgdG8gYWRkIGNvbW1pdCBtZXNzYWdlIGV2ZW4gZm9yIHNt
-YWxsIHBhdGNoZXMgbGlrZSB0aGlzLg0KPiBEbyB5b3UgaGF2ZSBjb21waWxlciAvIHNwYXJzZSAv
-IGV0YyB3YXJuaW5nPyBDaXRlIGl0IGhlcmUgYXMgd2VsbCENCj4gDQoNCnllcywgaXQncyAtV3Np
-Z24tY29tcGFyZS4gSSdsbCBzZW5kIGEgZm9sbG93IHVwIHdpdGggYSBiZXR0ZXIgY29tbWl0DQpt
-ZXNzYWdlLg0KDQpUaGFua3MNCg0KQW5hdG9sDQoNCg==
+On Mon, 21 Oct 2019 at 09:50, Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Vincent Guittot <vincent.guittot@linaro.org> wrote:
+>
+> > Several wrong task placement have been raised with the current load
+> > balance algorithm but their fixes are not always straight forward and
+> > end up with using biased values to force migrations. A cleanup and rework
+> > of the load balance will help to handle such UCs and enable to fine grain
+> > the behavior of the scheduler for other cases.
+> >
+> > Patch 1 has already been sent separately and only consolidate asym policy
+> > in one place and help the review of the changes in load_balance.
+> >
+> > Patch 2 renames the sum of h_nr_running in stats.
+> >
+> > Patch 3 removes meaningless imbalance computation to make review of
+> > patch 4 easier.
+> >
+> > Patch 4 reworks load_balance algorithm and fixes some wrong task placement
+> > but try to stay conservative.
+> >
+> > Patch 5 add the sum of nr_running to monitor non cfs tasks and take that
+> > into account when pulling tasks.
+> >
+> > Patch 6 replaces runnable_load by load now that the signal is only used
+> > when overloaded.
+> >
+> > Patch 7 improves the spread of tasks at the 1st scheduling level.
+> >
+> > Patch 8 uses utilization instead of load in all steps of misfit task
+> > path.
+> >
+> > Patch 9 replaces runnable_load_avg by load_avg in the wake up path.
+> >
+> > Patch 10 optimizes find_idlest_group() that was using both runnable_load
+> > and load. This has not been squashed with previous patch to ease the
+> > review.
+> >
+> > Patch 11 reworks find_idlest_group() to follow the same steps as
+> > find_busiest_group()
+> >
+> > Some benchmarks results based on 8 iterations of each tests:
+> > - small arm64 dual quad cores system
+> >
+> >            tip/sched/core        w/ this patchset    improvement
+> > schedpipe      53125 +/-0.18%        53443 +/-0.52%   (+0.60%)
+> >
+> > hackbench -l (2560/#grp) -g #grp
+> >  1 groups      1.579 +/-29.16%       1.410 +/-13.46% (+10.70%)
+> >  4 groups      1.269 +/-9.69%        1.205 +/-3.27%   (+5.00%)
+> >  8 groups      1.117 +/-1.51%        1.123 +/-1.27%   (+4.57%)
+> > 16 groups      1.176 +/-1.76%        1.164 +/-2.42%   (+1.07%)
+> >
+> > Unixbench shell8
+> >   1 test     1963.48 +/-0.36%       1902.88 +/-0.73%    (-3.09%)
+> > 224 tests    2427.60 +/-0.20%       2469.80 +/-0.42%  (1.74%)
+> >
+> > - large arm64 2 nodes / 224 cores system
+> >
+> >            tip/sched/core        w/ this patchset    improvement
+> > schedpipe     124084 +/-1.36%       124445 +/-0.67%   (+0.29%)
+> >
+> > hackbench -l (256000/#grp) -g #grp
+> >   1 groups    15.305 +/-1.50%       14.001 +/-1.99%   (+8.52%)
+> >   4 groups     5.959 +/-0.70%        5.542 +/-3.76%   (+6.99%)
+> >  16 groups     3.120 +/-1.72%        3.253 +/-0.61%   (-4.92%)
+> >  32 groups     2.911 +/-0.88%        2.837 +/-1.16%   (+2.54%)
+> >  64 groups     2.805 +/-1.90%        2.716 +/-1.18%   (+3.17%)
+> > 128 groups     3.166 +/-7.71%        3.891 +/-6.77%   (+5.82%)
+> > 256 groups     3.655 +/-10.09%       3.185 +/-6.65%  (+12.87%)
+> >
+> > dbench
+> >   1 groups   328.176 +/-0.29%      330.217 +/-0.32%   (+0.62%)
+> >   4 groups   930.739 +/-0.50%      957.173 +/-0.66%   (+2.84%)
+> >  16 groups  1928.292 +/-0.36%     1978.234 +/-0.88%   (+0.92%)
+> >  32 groups  2369.348 +/-1.72%     2454.020 +/-0.90%   (+3.57%)
+> >  64 groups  2583.880 +/-3.39%     2618.860 +/-0.84%   (+1.35%)
+> > 128 groups  2256.406 +/-10.67%    2392.498 +/-2.13%   (+6.03%)
+> > 256 groups  1257.546 +/-3.81%     1674.684 +/-4.97%  (+33.17%)
+> >
+> > Unixbench shell8
+> >   1 test     6944.16 +/-0.02     6605.82 +/-0.11      (-4.87%)
+> > 224 tests   13499.02 +/-0.14    13637.94 +/-0.47%     (+1.03%)
+> > lkp reported a -10% regression on shell8 (1 test) for v3 that
+> > seems that is partially recovered on my platform with v4.
+> >
+> > tip/sched/core sha1:
+> >   commit 563c4f85f9f0 ("Merge branch 'sched/rt' into sched/core, to pick up -rt changes")
+> >
+> > Changes since v3:
+> > - small typo and variable ordering fixes
+> > - add some acked/reviewed tag
+> > - set 1 instead of load for migrate_misfit
+> > - use nr_h_running instead of load for asym_packing
+> > - update the optimization of find_idlest_group() and put back somes
+> >  conditions when comparing load
+> > - rework find_idlest_group() to match find_busiest_group() behavior
+> >
+> > Changes since v2:
+> > - fix typo and reorder code
+> > - some minor code fixes
+> > - optimize the find_idles_group()
+> >
+> > Not covered in this patchset:
+> > - Better detection of overloaded and fully busy state, especially for cases
+> >   when nr_running > nr CPUs.
+> >
+> > Vincent Guittot (11):
+> >   sched/fair: clean up asym packing
+> >   sched/fair: rename sum_nr_running to sum_h_nr_running
+> >   sched/fair: remove meaningless imbalance calculation
+> >   sched/fair: rework load_balance
+> >   sched/fair: use rq->nr_running when balancing load
+> >   sched/fair: use load instead of runnable load in load_balance
+> >   sched/fair: evenly spread tasks when not overloaded
+> >   sched/fair: use utilization to select misfit task
+> >   sched/fair: use load instead of runnable load in wakeup path
+> >   sched/fair: optimize find_idlest_group
+> >   sched/fair: rework find_idlest_group
+> >
+> >  kernel/sched/fair.c | 1181 +++++++++++++++++++++++++++++----------------------
+> >  1 file changed, 682 insertions(+), 499 deletions(-)
+>
+> Thanks, that's an excellent series!
+>
+> I've queued it up in sched/core with a handful of readability edits to
+> comments and changelogs.
+
+Thanks
+
+>
+> There are some upstreaming caveats though, I expect this series to be a
+> performance regression magnet:
+>
+>  - load_balance() and wake-up changes invariably are such: some workloads
+>    only work/scale well by accident, and if we touch the logic it might
+>    flip over into a less advantageous scheduling pattern.
+>
+>  - In particular the changes from balancing and waking on runnable load
+>    to full load that includes blocking *will* shift IO-intensive
+>    workloads that you tests don't fully capture I believe. You also made
+>    idle balancing more aggressive in essence - which might reduce cache
+>    locality for some workloads.
+>
+> A full run on Mel Gorman's magic scalability test-suite would be super
+> useful ...
+>
+> Anyway, please be on the lookout for such performance regression reports.
+
+Yes I monitor the regressions on the mailing list
+
+>
+> Also, we seem to have grown a fair amount of these TODO entries:
+>
+>   kernel/sched/fair.c: * XXX borrowed from update_sg_lb_stats
+>   kernel/sched/fair.c: * XXX: only do this for the part of runnable > running ?
+>   kernel/sched/fair.c:     * XXX illustrate
+>   kernel/sched/fair.c:    } else if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
+>   kernel/sched/fair.c: * can also include other factors [XXX].
+>   kernel/sched/fair.c: * [XXX expand on:
+>   kernel/sched/fair.c: * [XXX more?]
+>   kernel/sched/fair.c: * [XXX write more on how we solve this.. _after_ merging pjt's patches that
+>   kernel/sched/fair.c:             * XXX for now avg_load is not computed and always 0 so we
+>   kernel/sched/fair.c:            /* XXX broken for overlapping NUMA groups */
+>
+
+I will have a look :-)
+
+> :-)
+>
+> Thanks,
+>
+>         Ingo
