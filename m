@@ -2,247 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A684FDEF44
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4B8CDEF42
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:19:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729395AbfJUOTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 10:19:49 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:34451 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729367AbfJUOTs (ORCPT
+        id S1729381AbfJUOTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 10:19:43 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41619 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728983AbfJUOTl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 10:19:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571667585;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mYUMEJaK1383wbhJylNjGJmZNGDf5P2E9sdvzh1W3ao=;
-        b=Wz2DvcFIOO9dzzdbxEZ0nSmHhWNIQ5trvHlHKB3rc+qZndfeHr5OYo1mgo3E/gc9x2mnP2
-        qNToxhYHsT9xnxbiir1iRpMjftgJcou91WbQBsmmHe4cS89p59+ZB9AoSOH0YZRuN73NxW
-        zh7xQEULbFSpe2mnqqXqYxJ8+e/YECY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-340-qphLBJmuPg2YN-F3yKqOrQ-1; Mon, 21 Oct 2019 10:19:42 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6EF621005500;
-        Mon, 21 Oct 2019 14:19:40 +0000 (UTC)
-Received: from t460s.redhat.com (unknown [10.36.118.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7AADF5D6A5;
-        Mon, 21 Oct 2019 14:19:37 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Pingfan Liu <kernelfans@gmail.com>, Qian Cai <cai@lca.pw>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: [PATCH v1 2/2] mm/page_isolation.c: Convert SKIP_HWPOISON to MEMORY_OFFLINE
-Date:   Mon, 21 Oct 2019 16:19:26 +0200
-Message-Id: <20191021141927.10252-3-david@redhat.com>
-In-Reply-To: <20191021141927.10252-1-david@redhat.com>
-References: <20191021141927.10252-1-david@redhat.com>
+        Mon, 21 Oct 2019 10:19:41 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p4so14210770wrm.8
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 07:19:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=8BmtAgTp6az/piGxEOJcuKdKJZkPabwvQkljUwS2Mmg=;
+        b=a9mRXj1yVGXDwgyWCgELRQ2VWOtPAQd+qzVYAhmoFwBQ6wSaII+jRjXJKO0YFgaaiS
+         AnkEUlJ2S7y2Gm8wk7MZfS1CkqlG90UyPlxhZoz8hH1u13+pTmhLK0lBTB67BkM9972M
+         IUlwjnKNbQXzo3cRJYEUnb9kMy3Kq2MgTc3aYSk2rgdn97IIsLGrRWL+3qsrL2OP+rN+
+         hk+KPbMOxHGZLpeOCA6QhLrz3h51BHvh5p4Y3DXXWplNXkMukBkrYF3aidQZxKjUxmfG
+         HlF7n+UCKHumY3Y9VYhvr0vd7JREoHiJe5E4ciDZxQX4baLfiRr3ryP48aQ9ioL+fQRx
+         E6Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=8BmtAgTp6az/piGxEOJcuKdKJZkPabwvQkljUwS2Mmg=;
+        b=dEYQF19Yohq8aHy4nnF4ShGCHKHToia8zMj0v33xVv1haFg2i1TpnGZ7a0ziQGu0ee
+         5HmWgICai9LLMXtdShKgHkV1RY98yCojdmTKCiBO4wnzU+92PTT+Fqsdb95NLowcVbSj
+         fL5IfBsnXho66lrdRCzI0LeNCWwuATVlRK8F5oWwiXEtYlNYY77vhaczEKBVEOYrMPyi
+         Ptl7kQ+U+HT193eoDq3v6qAgOt8jKhZvxHFBkSV7t6C9fVmfG+rCk2we7J75uc9wxRRq
+         ucfTwTUMn3Y40Sr637NeLXs/hnFE9FOzVw3KS0rjRifpsSNUdLZ6rVKKa937J3o+tLR8
+         SZzQ==
+X-Gm-Message-State: APjAAAUwP9neFlN1ftrErtzU7DoWsHEGo6qBdgoBrZ78PvFIvYa5W9iW
+        MYwisgSj4yqJqXJWLAHj7P6U5pzZjCxLcw==
+X-Google-Smtp-Source: APXvYqzRPV2o7Jqel93IqNBc7wKHwfddowhkL2D+3CGGFkzcvzeVKTMamw+9Bys0AT08kXBE8hUIig==
+X-Received: by 2002:a5d:538e:: with SMTP id d14mr17353195wrv.86.1571667578083;
+        Mon, 21 Oct 2019 07:19:38 -0700 (PDT)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id u26sm16017546wrd.87.2019.10.21.07.19.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Oct 2019 07:19:37 -0700 (PDT)
+Subject: Re: [PATCH] usb: dwc3: select CONFIG_REGMAP_MMIO
+To:     Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191021141847.2214613-1-arnd@arndb.de>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <ecd51843-2805-8209-2f72-b2af37bf4e5d@baylibre.com>
+Date:   Mon, 21 Oct 2019 16:19:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: qphLBJmuPg2YN-F3yKqOrQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191021141847.2214613-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have two types of users of page isolation:
-1. Memory offlining: Offline memory so it can be unplugged. Memory won't
-=09=09     be touched.
-2. Memory allocation: Allocate memory (e.g., alloc_contig_range()) to
-=09=09      become the owner of the memory and make use of it.
+On 21/10/2019 16:18, Arnd Bergmann wrote:
+> After many randconfig builds, one configuration caused a link
+> error with dwc3-meson-g12a lacking the regmap-mmio code:
+> 
+> drivers/usb/dwc3/dwc3-meson-g12a.o: In function `dwc3_meson_g12a_probe':
+> dwc3-meson-g12a.c:(.text+0x9f): undefined reference to `__devm_regmap_init_mmio_clk'
+> 
+> Add the select statement that we have for all other users
+> of that dependency.
+> 
+> Fixes: c99993376f72 ("usb: dwc3: Add Amlogic G12A DWC3 glue")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/usb/dwc3/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
+> index 89abc6078703..556a876c7896 100644
+> --- a/drivers/usb/dwc3/Kconfig
+> +++ b/drivers/usb/dwc3/Kconfig
+> @@ -102,6 +102,7 @@ config USB_DWC3_MESON_G12A
+>         depends on ARCH_MESON || COMPILE_TEST
+>         default USB_DWC3
+>         select USB_ROLE_SWITCH
+> +	select REGMAP_MMIO
+>         help
+>           Support USB2/3 functionality in Amlogic G12A platforms.
+>  	 Say 'Y' or 'M' if you have one such device.
+> 
 
-For example, in case we want to offline memory, we can ignore (skip over)
-PageHWPoison() pages, as the memory won't get used. We can allow to
-offline memory. In contrast, we don't want to allow to allocate such
-memory.
-
-Let's generalize the approach so we can special case other types of
-pages we want to skip over in case we offline memory. While at it, also
-pass the same flags to test_pages_isolated().
-
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Pingfan Liu <kernelfans@gmail.com>
-Cc: Qian Cai <cai@lca.pw>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Suggested-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- include/linux/page-isolation.h |  4 ++--
- mm/memory_hotplug.c            |  8 +++++---
- mm/page_alloc.c                |  4 ++--
- mm/page_isolation.c            | 12 ++++++------
- 4 files changed, 15 insertions(+), 13 deletions(-)
-
-diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.=
-h
-index 1099c2fee20f..6861df759fad 100644
---- a/include/linux/page-isolation.h
-+++ b/include/linux/page-isolation.h
-@@ -30,7 +30,7 @@ static inline bool is_migrate_isolate(int migratetype)
- }
- #endif
-=20
--#define SKIP_HWPOISON=090x1
-+#define MEMORY_OFFLINE=090x1
- #define REPORT_FAILURE=090x2
-=20
- bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
-@@ -58,7 +58,7 @@ undo_isolate_page_range(unsigned long start_pfn, unsigned=
- long end_pfn,
-  * Test all pages in [start_pfn, end_pfn) are isolated or not.
-  */
- int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
--=09=09=09bool skip_hwpoisoned_pages);
-+=09=09=09int isol_flags);
-=20
- struct page *alloc_migrate_target(struct page *page, unsigned long private=
-);
-=20
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 5e6b2a312362..aa8abbd0d2e9 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1149,7 +1149,8 @@ static bool is_pageblock_removable_nolock(unsigned lo=
-ng pfn)
- =09if (!zone_spans_pfn(zone, pfn))
- =09=09return false;
-=20
--=09return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, SKIP_HWPOIS=
-ON);
-+=09return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE,
-+=09=09=09=09    MEMORY_OFFLINE);
- }
-=20
- /* Checks if this range of memory is likely to be hot-removable. */
-@@ -1366,7 +1367,8 @@ static int
- check_pages_isolated_cb(unsigned long start_pfn, unsigned long nr_pages,
- =09=09=09void *data)
- {
--=09return test_pages_isolated(start_pfn, start_pfn + nr_pages, true);
-+=09return test_pages_isolated(start_pfn, start_pfn + nr_pages,
-+=09=09=09=09   MEMORY_OFFLINE);
- }
-=20
- static int __init cmdline_parse_movable_node(char *p)
-@@ -1477,7 +1479,7 @@ static int __ref __offline_pages(unsigned long start_=
-pfn,
- =09/* set above range as isolated */
- =09ret =3D start_isolate_page_range(start_pfn, end_pfn,
- =09=09=09=09       MIGRATE_MOVABLE,
--=09=09=09=09       SKIP_HWPOISON | REPORT_FAILURE);
-+=09=09=09=09       MEMORY_OFFLINE | REPORT_FAILURE);
- =09if (ret < 0) {
- =09=09reason =3D "failure to isolate range";
- =09=09goto failed_removal;
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index bf6b21f02154..b44712c7fdd7 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -8270,7 +8270,7 @@ bool has_unmovable_pages(struct zone *zone, struct pa=
-ge *page, int count,
- =09=09 * The HWPoisoned page may be not in buddy system, and
- =09=09 * page_count() is not 0.
- =09=09 */
--=09=09if ((flags & SKIP_HWPOISON) && PageHWPoison(page))
-+=09=09if (flags & MEMORY_OFFLINE && PageHWPoison(page))
- =09=09=09continue;
-=20
- =09=09if (__PageMovable(page))
-@@ -8486,7 +8486,7 @@ int alloc_contig_range(unsigned long start, unsigned =
-long end,
- =09}
-=20
- =09/* Make sure the range is really isolated. */
--=09if (test_pages_isolated(outer_start, end, false)) {
-+=09if (test_pages_isolated(outer_start, end, 0)) {
- =09=09pr_info_ratelimited("%s: [%lx, %lx) PFNs busy\n",
- =09=09=09__func__, outer_start, end);
- =09=09ret =3D -EBUSY;
-diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-index 89c19c0feadb..82b80aeb8a71 100644
---- a/mm/page_isolation.c
-+++ b/mm/page_isolation.c
-@@ -168,7 +168,8 @@ __first_valid_page(unsigned long pfn, unsigned long nr_=
-pages)
-  * @migratetype:=09Migrate type to set in error recovery.
-  * @flags:=09=09The following flags are allowed (they can be combined in
-  *=09=09=09a bit mask)
-- *=09=09=09SKIP_HWPOISON - ignore hwpoison pages
-+ *=09=09=09MEMORY_OFFLINE - isolate to offline (!allocate) memory
-+ *=09=09=09=09=09 e.g., skip over PageHWPoison() pages
-  *=09=09=09REPORT_FAILURE - report details about the failure to
-  *=09=09=09isolate the range
-  *
-@@ -257,7 +258,7 @@ void undo_isolate_page_range(unsigned long start_pfn, u=
-nsigned long end_pfn,
-  */
- static unsigned long
- __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn=
-,
--=09=09=09=09  bool skip_hwpoisoned_pages)
-+=09=09=09=09  int flags)
- {
- =09struct page *page;
-=20
-@@ -274,7 +275,7 @@ __test_page_isolated_in_pageblock(unsigned long pfn, un=
-signed long end_pfn,
- =09=09=09 * simple way to verify that as VM_BUG_ON(), though.
- =09=09=09 */
- =09=09=09pfn +=3D 1 << page_order(page);
--=09=09else if (skip_hwpoisoned_pages && PageHWPoison(page))
-+=09=09else if (flags & MEMORY_OFFLINE && PageHWPoison(page))
- =09=09=09/* A HWPoisoned page cannot be also PageBuddy */
- =09=09=09pfn++;
- =09=09else
-@@ -286,7 +287,7 @@ __test_page_isolated_in_pageblock(unsigned long pfn, un=
-signed long end_pfn,
-=20
- /* Caller should ensure that requested range is in a single zone */
- int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
--=09=09=09bool skip_hwpoisoned_pages)
-+=09=09=09int isol_flags)
- {
- =09unsigned long pfn, flags;
- =09struct page *page;
-@@ -308,8 +309,7 @@ int test_pages_isolated(unsigned long start_pfn, unsign=
-ed long end_pfn,
- =09/* Check all pages are free or marked as ISOLATED */
- =09zone =3D page_zone(page);
- =09spin_lock_irqsave(&zone->lock, flags);
--=09pfn =3D __test_page_isolated_in_pageblock(start_pfn, end_pfn,
--=09=09=09=09=09=09skip_hwpoisoned_pages);
-+=09pfn =3D __test_page_isolated_in_pageblock(start_pfn, end_pfn, isol_flag=
-s);
- =09spin_unlock_irqrestore(&zone->lock, flags);
-=20
- =09trace_test_pages_isolated(start_pfn, end_pfn, pfn);
---=20
-2.21.0
-
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
