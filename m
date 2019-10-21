@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3152ADF881
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 01:20:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C79DF87F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 01:20:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730625AbfJUXUB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 19:20:01 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:38288 "EHLO
+        id S1730533AbfJUXSx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 19:18:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38233 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730555AbfJUXTA (ORCPT
+        with ESMTP id S1729606AbfJUXSw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 19:19:00 -0400
+        Mon, 21 Oct 2019 19:18:52 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iMgwn-0003o6-6S; Tue, 22 Oct 2019 01:18:45 +0200
+        id 1iMgwo-0003p2-Ne; Tue, 22 Oct 2019 01:18:47 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6ADE51C03AB;
-        Tue, 22 Oct 2019 01:18:44 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 23:18:44 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E2AEC1C03AB;
+        Tue, 22 Oct 2019 01:18:45 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 23:18:45 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf trace: Wire up strarray__strtoul_flags()
+Subject: [tip: perf/core] libbeauty: Make the mmap_flags strarray visible
+ outside of its beautifier
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
         Luis =?utf-8?q?Cl=C3=A1udio_Gon=C3=A7alves?= 
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-r2lpqo7dfsrhi4ll0npsb3u7@git.kernel.org>
-References: <tip-r2lpqo7dfsrhi4ll0npsb3u7@git.kernel.org>
+In-Reply-To: <tip-vldj3ch8su6i20to5eq31e8x@git.kernel.org>
+References: <tip-vldj3ch8su6i20to5eq31e8x@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157169992403.29376.4934812365962459720.tip-bot2@tip-bot2>
+Message-ID: <157169992561.29376.11839272924377614712.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,72 +52,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     e0712baa00322881ee74e28031f12a1cc032f0d4
-Gitweb:        https://git.kernel.org/tip/e0712baa00322881ee74e28031f12a1cc032f0d4
+Commit-ID:     f77526be82fcc31cb0d54796dd8f8476472b05d0
+Gitweb:        https://git.kernel.org/tip/f77526be82fcc31cb0d54796dd8f8476472b05d0
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Sat, 19 Oct 2019 15:26:50 -03:00
+AuthorDate:    Sat, 19 Oct 2019 15:13:21 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Sat, 19 Oct 2019 15:35:02 -03:00
 
-perf trace: Wire up strarray__strtoul_flags()
+libbeauty: Make the mmap_flags strarray visible outside of its beautifier
 
-Now anything that uses STRARRAY_FLAGS, like the 'fsmount' syscall will
-support mapping or-ed strings back to a value that can be used in a
-filter.
-
-In some cases, where STRARRAY_FLAGS isn't used but instead the scnprintf
-is a special one because of specific needs, like for mmap, then one has
-to set the ->pars to the strarray. See the next cset.
+So that we can later use it with the strarray__strtoul_flags() routine
+that will be soon introduced.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
-Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-r2lpqo7dfsrhi4ll0npsb3u7@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-vldj3ch8su6i20to5eq31e8x@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c       | 6 ++++++
- tools/perf/trace/beauty/beauty.h | 3 +++
- 2 files changed, 9 insertions(+)
+ tools/perf/trace/beauty/mmap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 73c5c14..7bb84c4 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -540,6 +540,11 @@ bool syscall_arg__strtoul_strarray(char *bf, size_t size, struct syscall_arg *ar
- 	return strarray__strtoul(arg->parm, bf, size, ret);
- }
+diff --git a/tools/perf/trace/beauty/mmap.c b/tools/perf/trace/beauty/mmap.c
+index 859a8a9..9fa771a 100644
+--- a/tools/perf/trace/beauty/mmap.c
++++ b/tools/perf/trace/beauty/mmap.c
+@@ -33,11 +33,11 @@ static size_t syscall_arg__scnprintf_mmap_prot(char *bf, size_t size,
  
-+bool syscall_arg__strtoul_strarray_flags(char *bf, size_t size, struct syscall_arg *arg, u64 *ret)
+ #define SCA_MMAP_PROT syscall_arg__scnprintf_mmap_prot
+ 
+-static size_t mmap__scnprintf_flags(unsigned long flags, char *bf, size_t size, bool show_prefix)
+-{
+ #include "trace/beauty/generated/mmap_flags_array.c"
+        static DEFINE_STRARRAY(mmap_flags, "MAP_");
+ 
++static size_t mmap__scnprintf_flags(unsigned long flags, char *bf, size_t size, bool show_prefix)
 +{
-+	return strarray__strtoul_flags(arg->parm, bf, size, ret);
-+}
-+
- bool syscall_arg__strtoul_strarrays(char *bf, size_t size, struct syscall_arg *arg, u64 *ret)
- {
- 	return strarrays__strtoul(arg->parm, bf, size, ret);
-@@ -882,6 +887,7 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
- 
- #define STRARRAY_FLAGS(name, array) \
- 	  { .scnprintf	= SCA_STRARRAY_FLAGS, \
-+	    .strtoul	= STUL_STRARRAY_FLAGS, \
- 	    .parm	= &strarray__##array, }
- 
- #include "trace/beauty/arch_errno_names.c"
-diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
-index e12b222..5a61043 100644
---- a/tools/perf/trace/beauty/beauty.h
-+++ b/tools/perf/trace/beauty/beauty.h
-@@ -126,6 +126,9 @@ size_t syscall_arg__scnprintf_strarray_flags(char *bf, size_t size, struct sysca
- bool syscall_arg__strtoul_strarray(char *bf, size_t size, struct syscall_arg *arg, u64 *ret);
- #define STUL_STRARRAY syscall_arg__strtoul_strarray
- 
-+bool syscall_arg__strtoul_strarray_flags(char *bf, size_t size, struct syscall_arg *arg, u64 *ret);
-+#define STUL_STRARRAY_FLAGS syscall_arg__strtoul_strarray_flags
-+
- bool syscall_arg__strtoul_strarrays(char *bf, size_t size, struct syscall_arg *arg, u64 *ret);
- #define STUL_STRARRAYS syscall_arg__strtoul_strarrays
+        return strarray__scnprintf_flags(&strarray__mmap_flags, bf, size, show_prefix, flags);
+ }
  
