@@ -2,118 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF43DF2C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:18:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A20C8DF2CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:19:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbfJUQSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:18:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37928 "EHLO mail.kernel.org"
+        id S1729703AbfJUQSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:18:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727303AbfJUQSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:18:01 -0400
-Received: from localhost.localdomain (unknown [194.230.155.217])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726276AbfJUQSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:18:39 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB90D214B2;
-        Mon, 21 Oct 2019 16:17:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571674680;
-        bh=wuXiVSVhv0GuAFMI8jKpur+OW7AvMoJZSNiRXZZygDY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=2J5EJLOUpiK8dnlh3Y2Ews/l7UoghzFyqIKPUdCNhLUhMRFNBW3K2KN8Fvg6B8dBh
-         RCHc3eXnAUZvbtyiin9Ijn6WSWNP5V6uGjlYOWI5h/nBJ4dOWohIDB5i0tKUu9Wgnq
-         +xJuleX6ojM0STnd0j+4weZkcRQRyhUF8U2xU0uI=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4] ARM: dts: am: Rename "ocmcram" node to "sram"
-Date:   Mon, 21 Oct 2019 18:17:52 +0200
-Message-Id: <20191021161752.21502-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        by mail.kernel.org (Postfix) with ESMTPSA id C7E8721906;
+        Mon, 21 Oct 2019 16:18:38 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1iMaOD-0001e6-Vu; Mon, 21 Oct 2019 12:18:38 -0400
+Message-Id: <20191021161758.096336406@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Mon, 21 Oct 2019 12:17:58 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [for-linus][PATCH 0/2] tracing: A couple of fixes for upstream
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The device node name should reflect generic class of a device so rename
-the "ocmcram" node and its children to "sram".  This will be also in
-sync with upcoming DT schema.  No functional change.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Prateek Sood (1):
+      trace: Fix race in perf_trace_buf initialization
 
----
+Zhengjun Xing (1):
+      tracing: Fix "gfp_t" format for synthetic events
 
-Changes since v3:
-1. Rename also children.
-
-v3 is here:
-https://lore.kernel.org/linux-arm-kernel/20191002164316.14905-9-krzk@kernel.org/
----
- arch/arm/boot/dts/am33xx.dtsi | 6 +++---
- arch/arm/boot/dts/am4372.dtsi | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
-index fb6b8aa12cc5..765963de5d41 100644
---- a/arch/arm/boot/dts/am33xx.dtsi
-+++ b/arch/arm/boot/dts/am33xx.dtsi
-@@ -393,20 +393,20 @@
- 			};
- 		};
- 
--		ocmcram: ocmcram@40300000 {
-+		ocmcram: sram@40300000 {
- 			compatible = "mmio-sram";
- 			reg = <0x40300000 0x10000>; /* 64k */
- 			ranges = <0x0 0x40300000 0x10000>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 
--			pm_sram_code: pm-sram-code@0 {
-+			pm_sram_code: pm-code-sram@0 {
- 				compatible = "ti,sram";
- 				reg = <0x0 0x1000>;
- 				protect-exec;
- 			};
- 
--			pm_sram_data: pm-sram-data@1000 {
-+			pm_sram_data: pm-data-sram@1000 {
- 				compatible = "ti,sram";
- 				reg = <0x1000 0x1000>;
- 				pool;
-diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
-index 848e2a8884e2..3e3ae48c2e5a 100644
---- a/arch/arm/boot/dts/am4372.dtsi
-+++ b/arch/arm/boot/dts/am4372.dtsi
-@@ -349,20 +349,20 @@
- 			};
- 		};
- 
--		ocmcram: ocmcram@40300000 {
-+		ocmcram: sram@40300000 {
- 			compatible = "mmio-sram";
- 			reg = <0x40300000 0x40000>; /* 256k */
- 			ranges = <0x0 0x40300000 0x40000>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 
--			pm_sram_code: pm-sram-code@0 {
-+			pm_sram_code: pm-code-sram@0 {
- 				compatible = "ti,sram";
- 				reg = <0x0 0x1000>;
- 				protect-exec;
- 			};
- 
--			pm_sram_data: pm-sram-data@1000 {
-+			pm_sram_data: pm-data-sram@1000 {
- 				compatible = "ti,sram";
- 				reg = <0x1000 0x1000>;
- 				pool;
--- 
-2.17.1
-
+----
+ kernel/trace/trace_event_perf.c  | 4 ++++
+ kernel/trace/trace_events_hist.c | 2 ++
+ 2 files changed, 6 insertions(+)
