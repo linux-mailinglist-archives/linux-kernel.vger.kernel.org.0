@@ -2,108 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6A0ADEEB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BED86DEEB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:04:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729205AbfJUOEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 10:04:46 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:53572 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1727152AbfJUOEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 10:04:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 677711007;
-        Mon, 21 Oct 2019 07:04:27 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D46CA3F71F;
-        Mon, 21 Oct 2019 07:04:26 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 15:04:25 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Anvesh Salveru <anvesh.s@samsung.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, gustavo.pimentel@synopsys.com,
-        jingoohan1@gmail.com, lorenzo.pieralisi@arm.com,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 2/2] PCI: dwc: Add support to handle ZRX-DC Compliant PHYs
-Message-ID: <20191021140424.GR47056@e119886-lin.cambridge.arm.com>
-References: <CGME20191021123016epcas5p3ab7100162a8d6d803b117976240f20b4@epcas5p3.samsung.com>
- <1571660993-30329-1-git-send-email-anvesh.s@samsung.com>
+        id S1729254AbfJUOEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 10:04:53 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21510 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727152AbfJUOEw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 10:04:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571666692;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RKikTFQfQl9obO8nBmvsNy3yfDHyABUEda/W5xGYkIQ=;
+        b=fOdzSx4lnn3vhdbWTx4l6VPv5z/gyUdkqXvrFHvui984S4d/17ARBhs2FA5NQIvlhzoWmp
+        OVe8pDCPs1es2DJ6mLdWskztaM/3eP6Y9/2rST5QaALwkWEh796rKkLskdAVr2ijxcaj55
+        gwz0/TctI0WcTDswc/Obn5ZOWwH2JhU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-75-LNF1Qb3vNtiKNNFH1U_5FA-1; Mon, 21 Oct 2019 10:04:48 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 23B79800D41;
+        Mon, 21 Oct 2019 14:04:42 +0000 (UTC)
+Received: from krava (unknown [10.43.17.61])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 35FB15DD64;
+        Mon, 21 Oct 2019 14:04:40 +0000 (UTC)
+Date:   Mon, 21 Oct 2019 16:04:39 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     "Jin, Yao" <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v2 3/5] perf report: Sort by sampled cycles percent per
+ block for stdio
+Message-ID: <20191021140439.GE32718@krava>
+References: <20191015053350.13909-1-yao.jin@linux.intel.com>
+ <20191015053350.13909-4-yao.jin@linux.intel.com>
+ <20191015084102.GA10951@krava>
+ <6882f3ae-0f8d-5a01-7fd5-5b9f9c93f9ac@linux.intel.com>
+ <20191016101543.GC15580@krava>
+ <456b8e97-dc50-449c-9999-0bddef0e9c4c@linux.intel.com>
+ <20191016125325.GA10222@krava>
+ <2a16a22e-5bdd-949b-480f-1c0956e13c14@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2a16a22e-5bdd-949b-480f-1c0956e13c14@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: LNF1Qb3vNtiKNNFH1U_5FA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <1571660993-30329-1-git-send-email-anvesh.s@samsung.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 05:59:53PM +0530, Anvesh Salveru wrote:
-> Many platforms use DesignWare controller but the PHY can be different in
-> different platforms. If the PHY is compliant is to ZRX-DC specification
+On Mon, Oct 21, 2019 at 02:56:57PM +0800, Jin, Yao wrote:
 
-s/is to/to the/
+SNIP
 
-> it helps in low power consumption during power states.
+> > > Does it seem like what the c2c does?
+> >=20
+> > well c2c has its own data output with multiline column titles,
+> > hence it has its own separate dimension stuff, but your code
+> > output is within the standard perf report right? single column
+> > output.. why couldn't you use just sort_entry ?
+> >=20
+> > jirka
+> >=20
+>=20
+> Hi Jiri,
+>=20
+> I've being thinking how to use sort_entry but I have some troubles.
+>=20
+> In v2, I used "struct perf_hpp_fmt" to pass extra argument. For example,
+>=20
+> static int64_t block_cycles_cov_sort(struct perf_hpp_fmt *fmt,
+> =09=09=09=09     struct hist_entry *left,
+> =09=09=09=09     struct hist_entry *right)
+> {
+> =09struct block_fmt *block_fmt =3D container_of(fmt, ...);
+> =09struct report *rep =3D block_fmt->rep;
+> =09...
+> }
+>=20
+> But if I just use sort_entry, I can't pass extra argument (it's not a goo=
+d
+> idea to add more fields in struct hist_entry).
+>=20
+> int64_t sort__xxx_sort(struct hist_entry *left,
+> =09=09       struct hist_entry *right)
+>=20
+> And for entry print it's similar, I can't pass extra argument in.
+>=20
+> In v2,
+> static int block_cycles_pct_entry(struct perf_hpp_fmt *fmt,
+> =09=09=09=09  struct perf_hpp *hpp,
+> =09=09=09=09  struct hist_entry *he)
+> {
+> =09struct block_fmt *block_fmt =3D container_of(fmt,...);
+> =09struct report *rep =3D block_fmt->rep;
+> =09...
+> }
+>=20
+> But for se_snprintf, I can't pass extra argument in.
+>=20
+> hist_entry__xxx_snprintf(struct hist_entry *he, char *bf,
+> =09=09=09 size_t size, unsigned int width)
+>=20
+> That's why I feel headache for just using the sort_entry. :(
 
-s/in low/lower/
+you might be right, I just want to omit another field output framework ;-)=
+=20
+I'm checking on this and will let you know if I find some way
 
-> 
-> If current data rate is 8.0 GT/s or higher and PHY is not compliant to
-> ZRX-DC specification, then after every 100ms link should transition to
-> recovery state during the low power states.
-> 
-> DesignWare controller provides GEN3_ZRXDC_NONCOMPL field in
-> GEN3_RELATED_OFF to specify about ZRX-DC compliant PHY.
-> 
-> Platforms with ZRX-DC compliant PHY can set "snps,phy-zrxdc-compliant"
-> property in controller DT node to specify this property to the controller.
-> 
-> Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware.c | 7 +++++++
->  drivers/pci/controller/dwc/pcie-designware.h | 3 +++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 820488dfeaed..6560d9f765d7 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -556,4 +556,11 @@ void dw_pcie_setup(struct dw_pcie *pci)
->  		       PCIE_PL_CHK_REG_CHK_REG_START;
->  		dw_pcie_writel_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS, val);
->  	}
-> +
-> +	if (of_property_read_bool(np, "snps,phy-zrxdc-compliant")) {
-> +		val = dw_pcie_readl_dbi(pci, PCIE_PORT_GEN3_RELATED);
-> +		val &= ~PORT_LOGIC_GEN3_ZRXDC_NONCOMPL;
-> +		dw_pcie_writel_dbi(pci, PCIE_PORT_GEN3_RELATED, val);
-> +	}
-> +
+jirka
 
-Given that this duplicates tegra_pcie_prepare_host in pcie-tegra194.c, can
-we update that driver to adopt this new binding?
-
-Thanks,
-
-Andrew Murray
-
->  }
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 5a18e94e52c8..427a55ec43c6 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -60,6 +60,9 @@
->  #define PCIE_MSI_INTR0_MASK		0x82C
->  #define PCIE_MSI_INTR0_STATUS		0x830
->  
-> +#define PCIE_PORT_GEN3_RELATED		0x890
-> +#define PORT_LOGIC_GEN3_ZRXDC_NONCOMPL		BIT(0)
-> +
->  #define PCIE_ATU_VIEWPORT		0x900
->  #define PCIE_ATU_REGION_INBOUND		BIT(31)
->  #define PCIE_ATU_REGION_OUTBOUND	0
-> -- 
-> 2.17.1
-> 
