@@ -2,159 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABDA2DEB4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D31B9DEB42
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:45:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728531AbfJULqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 07:46:32 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45458 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbfJULqc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 07:46:32 -0400
-Received: by mail-wr1-f65.google.com with SMTP id q13so8616879wrs.12
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 04:46:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=r99SrmIAWCZFhQdc6QFpd7cI3BE/OyLzeiOHzb6k9dA=;
-        b=AMcWdO51d/gm6zTYZOvF3fnk145odN8cyZWo76JC0ghHEXavyH8vzyGV/wfxZXgYVU
-         8XO0R/dE8lsMsAr6TglgjDyz9nMN8Rv53iwvQmDiBbuFFbYDR+bFA3CdxPki/htNdtJi
-         QtRQdRNKibX7XrlX7Kwn4lBr3sSZS8Q+I2Tvj/DKaGAONzsjEY09lf0Ms8j/jAKmUqPg
-         +WAhJE/Az06Wvtg/NyhKSkvQkniMvQHTVTwGAoWgwvCAsdavTxiHULlfspg416S324mc
-         LI6mi/Apx61FqeJytQo2Qtjfmal0sQ8ujYiBBnVLvOimamhx1Sil//g2hH7ByN6Ib5UB
-         8hyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=r99SrmIAWCZFhQdc6QFpd7cI3BE/OyLzeiOHzb6k9dA=;
-        b=e4tcYHETS18oDzr4CApXhUS0PyyWfQjb+NWCO9aXuJgOO+jl308BByM1+6OiTPp2xL
-         B1R7VczpAgo9i1lPi0CH/TkgvcyAX7uThwErLKEU7KRvbvtIbEjRVjOuqmz1kRCqlANG
-         R2kfSaA3l9LhaZRoXFRcuqIi0q4y0zbF2jGjRKp3CeFteGcwTjHv4aQ8kDvkD/qQEgNh
-         ghC0wJC4wQQzF8rUdGOdoaxr4uVkeKna8EaMsvQ7kheFx6AuT+fmS/HT4O+WSPVZJhNo
-         Wdi+6n/VsNdAMd6bbZJEE3E0QrELWHomfiIDltlqyvXo/0WeaiSA/9eLHlUbPb1uJWK3
-         eDiw==
-X-Gm-Message-State: APjAAAWgvRA7bCVuoc8X/SPgkQU+NyLI2H/ekXt6UbEMNST6GpxjJYZ1
-        /GmCj0MuLwZIB52dXKfdUksB7w==
-X-Google-Smtp-Source: APXvYqz5RaYEnHFOjq+WSQPnFuuDBupuZAPhnGNk9cAwiBNB0sPg6VYeOLxAVLwf8rQBz7C98J8PXQ==
-X-Received: by 2002:a5d:66c6:: with SMTP id k6mr12067264wrw.152.1571658389329;
-        Mon, 21 Oct 2019 04:46:29 -0700 (PDT)
-Received: from dell ([95.149.164.99])
-        by smtp.gmail.com with ESMTPSA id q3sm14546759wru.33.2019.10.21.04.46.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Oct 2019 04:46:28 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 12:46:27 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     arnd@arndb.de, broonie@kernel.org, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        baohua@kernel.org, stephan@gerhold.net
-Subject: Re: [PATCH v2 2/9] mfd: cs5535-mfd: Remove mfd_cell->id hack
-Message-ID: <20191021114627.GE4365@dell>
-References: <20191021105822.20271-1-lee.jones@linaro.org>
- <20191021105822.20271-3-lee.jones@linaro.org>
- <20191021111137.ey6cbrrb2af3wj5i@holly.lan>
+        id S1728600AbfJULpI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 07:45:08 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:32320 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728258AbfJULpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 07:45:08 -0400
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id 2B0DD870B525E6AC6AFD;
+        Mon, 21 Oct 2019 19:45:06 +0800 (CST)
+Received: from notes_smtp.zte.com.cn (notes_smtp.zte.com.cn [10.30.1.239])
+        by mse-fl1.zte.com.cn with ESMTP id x9LBigDo090126;
+        Mon, 21 Oct 2019 19:44:42 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019102119444801-57393 ;
+          Mon, 21 Oct 2019 19:44:48 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     jhs@mojatatu.com
+Cc:     xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, up2wing@gmail.com,
+        wang.liang82@zte.com.cn
+Subject: [PATCH] net: sched: taprio: fix -Wmissing-prototypes warnings
+Date:   Mon, 21 Oct 2019 19:47:04 +0800
+Message-Id: <1571658424-4273-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191021111137.ey6cbrrb2af3wj5i@holly.lan>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-10-21 19:44:48,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-10-21 19:44:44
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-MAIL: mse-fl1.zte.com.cn x9LBigDo090126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2019, Daniel Thompson wrote:
+We get one warnings when build kernel W=1:
+net/sched/sch_taprio.c:1155:6: warning: no previous prototype for ‘taprio_offload_config_changed’ [-Wmissing-prototypes]
 
-> On Mon, Oct 21, 2019 at 11:58:15AM +0100, Lee Jones wrote:
-> > The current implementation abuses the platform 'id' mfd_cell member
-> > to index into the correct resources entry.  If we place all cells
-> > into their numbered slots, we can cycle through all the cell entries
-> > and only process the populated ones which avoids this behaviour.
-> > 
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > ---
-> >  drivers/mfd/cs5535-mfd.c | 31 +++++++++++++------------------
-> >  1 file changed, 13 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/drivers/mfd/cs5535-mfd.c b/drivers/mfd/cs5535-mfd.c
-> > index 2c47afc22d24..9ce6bbcdbda1 100644
-> > --- a/drivers/mfd/cs5535-mfd.c
-> > +++ b/drivers/mfd/cs5535-mfd.c
-> > @@ -62,26 +62,22 @@ static int cs5535_mfd_res_disable(struct platform_device *pdev)
-> >  static struct resource cs5535_mfd_resources[NR_BARS];
-> >  
-> >  static struct mfd_cell cs5535_mfd_cells[] = {
-> 
-> This array is sized from the initializer...
-> 
-> > -	{
-> > -		.id = SMB_BAR,
-> > +	[SMB_BAR] = {
-> >  		.name = "cs5535-smb",
-> >  		.num_resources = 1,
-> >  		.resources = &cs5535_mfd_resources[SMB_BAR],
-> >  	},
-> > -	{
-> > -		.id = GPIO_BAR,
-> > +	[GPIO_BAR] = {
-> >  		.name = "cs5535-gpio",
-> >  		.num_resources = 1,
-> >  		.resources = &cs5535_mfd_resources[GPIO_BAR],
-> >  	},
-> > -	{
-> > -		.id = MFGPT_BAR,
-> > +	[MFGPT_BAR] = {
-> >  		.name = "cs5535-mfgpt",
-> >  		.num_resources = 1,
-> >  		.resources = &cs5535_mfd_resources[MFGPT_BAR],
-> >  	},
-> > -	{
-> > -		.id = PMS_BAR,
-> > +	[PMS_BAR] = {
-> >  		.name = "cs5535-pms",
-> >  		.num_resources = 1,
-> >  		.resources = &cs5535_mfd_resources[PMS_BAR],
-> > @@ -89,8 +85,7 @@ static struct mfd_cell cs5535_mfd_cells[] = {
-> >  		.enable = cs5535_mfd_res_enable,
-> >  		.disable = cs5535_mfd_res_disable,
-> >  	},
-> > -	{
-> > -		.id = ACPI_BAR,
-> > +	[ACPI_BAR] = {
-> >  		.name = "cs5535-acpi",
-> >  		.num_resources = 1,
-> >  		.resources = &cs5535_mfd_resources[ACPI_BAR],
-> > @@ -115,16 +110,16 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
-> >  		return err;
-> >  
-> >  	/* fill in IO range for each cell; subdrivers handle the region */
-> > -	for (i = 0; i < ARRAY_SIZE(cs5535_mfd_cells); i++) {
-> > -		int bar = cs5535_mfd_cells[i].id;
-> > -		struct resource *r = &cs5535_mfd_resources[bar];
-> > +	for (i = 0; i < NR_BARS; i++) {
-> 
-> ... which means this translation from ARRAY_SIZE() to NR_BARS
-> is rather odd.
-> 
-> I don't care whether the array is sized using NR_BARS or the loop
-> uses ARRAY_SIZE() but IMHO the loop boundary condition must match
-> the array declaration.
+Make the function static to fix this.
 
-Sounds reasonable.
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+---
+ net/sched/sch_taprio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> With that fixed free to throw the following onto the next rev:
-> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-
-Ta.
-
+diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
+index 6719a65..2121187 100644
+--- a/net/sched/sch_taprio.c
++++ b/net/sched/sch_taprio.c
+@@ -1152,7 +1152,7 @@ void taprio_offload_free(struct tc_taprio_qopt_offload *offload)
+  * offload state (PENDING, ACTIVE, INACTIVE) so it can be visible in dump().
+  * This is left as TODO.
+  */
+-void taprio_offload_config_changed(struct taprio_sched *q)
++static void taprio_offload_config_changed(struct taprio_sched *q)
+ {
+ 	struct sched_gate_list *oper, *admin;
+ 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.8.3.1
+
