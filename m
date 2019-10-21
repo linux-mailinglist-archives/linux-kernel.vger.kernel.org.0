@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AD6CDE78B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 11:13:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DA92DE783
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 11:13:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbfJUJNq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 05:13:46 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33992 "EHLO
+        id S1727666AbfJUJN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 05:13:28 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33969 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbfJUJNo (ORCPT
+        with ESMTP id S1727111AbfJUJN0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 05:13:44 -0400
+        Mon, 21 Oct 2019 05:13:26 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iMTk3-0005JY-Ne; Mon, 21 Oct 2019 11:12:43 +0200
+        id 1iMTk5-0005Je-Ai; Mon, 21 Oct 2019 11:12:45 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 545271C0092;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E13E11C0092;
         Mon, 21 Oct 2019 11:12:43 +0200 (CEST)
 Date:   Mon, 21 Oct 2019 09:12:43 -0000
 From:   "tip-bot2 for Vincent Guittot" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Use rq->nr_running when balancing load
+Subject: [tip: sched/core] sched/fair: Remove meaningless imbalance calculation
 Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Rik van Riel <riel@surriel.com>,
         Ben Segall <bsegall@google.com>,
         Dietmar Eggemann <dietmar.eggemann@arm.com>,
         Juri Lelli <juri.lelli@redhat.com>,
@@ -35,13 +36,13 @@ Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Gleixner <tglx@linutronix.de>, hdanton@sina.com,
         parth@linux.ibm.com, pauld@redhat.com, quentin.perret@arm.com,
-        riel@surriel.com, srikar@linux.vnet.ibm.com,
-        valentin.schneider@arm.com, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <1571405198-27570-6-git-send-email-vincent.guittot@linaro.org>
-References: <1571405198-27570-6-git-send-email-vincent.guittot@linaro.org>
+        srikar@linux.vnet.ibm.com, valentin.schneider@arm.com,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1571405198-27570-4-git-send-email-vincent.guittot@linaro.org>
+References: <1571405198-27570-4-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Message-ID: <157164916309.29376.18106664431086525097.tip-bot2@tip-bot2>
+Message-ID: <157164916372.29376.15935956843178525422.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -57,23 +58,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     5e23e474431529b7d1480f649ce33d0e9c1b2e48
-Gitweb:        https://git.kernel.org/tip/5e23e474431529b7d1480f649ce33d0e9c1b2e48
+Commit-ID:     fcf0553db6f4c79387864f6e4ab4a891601f395e
+Gitweb:        https://git.kernel.org/tip/fcf0553db6f4c79387864f6e4ab4a891601f395e
 Author:        Vincent Guittot <vincent.guittot@linaro.org>
-AuthorDate:    Fri, 18 Oct 2019 15:26:32 +02:00
+AuthorDate:    Fri, 18 Oct 2019 15:26:30 +02:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 21 Oct 2019 09:40:54 +02:00
+CommitterDate: Mon, 21 Oct 2019 09:40:53 +02:00
 
-sched/fair: Use rq->nr_running when balancing load
+sched/fair: Remove meaningless imbalance calculation
 
-CFS load_balance() only takes care of CFS tasks whereas CPUs can be used by
-other scheduling classes. Typically, a CFS task preempted by an RT or deadline
-task will not get a chance to be pulled by another CPU because
-load_balance() doesn't take into account tasks from other classes.
-Add sum of nr_running in the statistics and use it to detect such
-situations.
+Clean up load_balance() and remove meaningless calculation and fields before
+adding a new algorithm.
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+Acked-by: Rik van Riel <riel@surriel.com>
 Cc: Ben Segall <bsegall@google.com>
 Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Cc: Juri Lelli <juri.lelli@redhat.com>
@@ -88,76 +86,169 @@ Cc: hdanton@sina.com
 Cc: parth@linux.ibm.com
 Cc: pauld@redhat.com
 Cc: quentin.perret@arm.com
-Cc: riel@surriel.com
 Cc: srikar@linux.vnet.ibm.com
 Cc: valentin.schneider@arm.com
-Link: https://lkml.kernel.org/r/1571405198-27570-6-git-send-email-vincent.guittot@linaro.org
+Link: https://lkml.kernel.org/r/1571405198-27570-4-git-send-email-vincent.guittot@linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/fair.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ kernel/sched/fair.c | 105 +-------------------------------------------
+ 1 file changed, 1 insertion(+), 104 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 76a2aa8..4e7396c 100644
+index ad8f16a..a1bc04f 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7694,6 +7694,7 @@ struct sg_lb_stats {
+@@ -5380,18 +5380,6 @@ static unsigned long capacity_of(int cpu)
+ 	return cpu_rq(cpu)->cpu_capacity;
+ }
+ 
+-static unsigned long cpu_avg_load_per_task(int cpu)
+-{
+-	struct rq *rq = cpu_rq(cpu);
+-	unsigned long nr_running = READ_ONCE(rq->cfs.h_nr_running);
+-	unsigned long load_avg = cpu_runnable_load(rq);
+-
+-	if (nr_running)
+-		return load_avg / nr_running;
+-
+-	return 0;
+-}
+-
+ static void record_wakee(struct task_struct *p)
+ {
+ 	/*
+@@ -7657,7 +7645,6 @@ static unsigned long task_h_load(struct task_struct *p)
+ struct sg_lb_stats {
+ 	unsigned long avg_load; /*Avg load across the CPUs of the group */
  	unsigned long group_load; /* Total load over the CPUs of the group */
+-	unsigned long load_per_task;
  	unsigned long group_capacity;
  	unsigned long group_util; /* Total utilization of the group */
-+	unsigned int sum_nr_running; /* Nr of tasks running in the group */
  	unsigned int sum_h_nr_running; /* Nr of CFS tasks running in the group */
- 	unsigned int idle_cpus;
- 	unsigned int group_weight;
-@@ -7928,7 +7929,7 @@ static inline int sg_imbalanced(struct sched_group *group)
- static inline bool
- group_has_capacity(struct lb_env *env, struct sg_lb_stats *sgs)
- {
--	if (sgs->sum_h_nr_running < sgs->group_weight)
-+	if (sgs->sum_nr_running < sgs->group_weight)
- 		return true;
+@@ -8039,9 +8026,6 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 	sgs->group_capacity = group->sgc->capacity;
+ 	sgs->avg_load = (sgs->group_load*SCHED_CAPACITY_SCALE) / sgs->group_capacity;
  
- 	if ((sgs->group_capacity * 100) >
-@@ -7949,7 +7950,7 @@ group_has_capacity(struct lb_env *env, struct sg_lb_stats *sgs)
- static inline bool
- group_is_overloaded(struct lb_env *env, struct sg_lb_stats *sgs)
- {
--	if (sgs->sum_h_nr_running <= sgs->group_weight)
-+	if (sgs->sum_nr_running <= sgs->group_weight)
- 		return false;
+-	if (sgs->sum_h_nr_running)
+-		sgs->load_per_task = sgs->group_load / sgs->sum_h_nr_running;
+-
+ 	sgs->group_weight = group->group_weight;
  
- 	if ((sgs->group_capacity * 100) <
-@@ -8053,6 +8054,8 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 		sgs->sum_h_nr_running += rq->cfs.h_nr_running;
+ 	sgs->group_no_capacity = group_is_overloaded(env, sgs);
+@@ -8272,76 +8256,6 @@ next_group:
+ }
  
- 		nr_running = rq->nr_running;
-+		sgs->sum_nr_running += nr_running;
-+
- 		if (nr_running > 1)
- 			*sg_status |= SG_OVERLOAD;
+ /**
+- * fix_small_imbalance - Calculate the minor imbalance that exists
+- *			amongst the groups of a sched_domain, during
+- *			load balancing.
+- * @env: The load balancing environment.
+- * @sds: Statistics of the sched_domain whose imbalance is to be calculated.
+- */
+-static inline
+-void fix_small_imbalance(struct lb_env *env, struct sd_lb_stats *sds)
+-{
+-	unsigned long tmp, capa_now = 0, capa_move = 0;
+-	unsigned int imbn = 2;
+-	unsigned long scaled_busy_load_per_task;
+-	struct sg_lb_stats *local, *busiest;
+-
+-	local = &sds->local_stat;
+-	busiest = &sds->busiest_stat;
+-
+-	if (!local->sum_h_nr_running)
+-		local->load_per_task = cpu_avg_load_per_task(env->dst_cpu);
+-	else if (busiest->load_per_task > local->load_per_task)
+-		imbn = 1;
+-
+-	scaled_busy_load_per_task =
+-		(busiest->load_per_task * SCHED_CAPACITY_SCALE) /
+-		busiest->group_capacity;
+-
+-	if (busiest->avg_load + scaled_busy_load_per_task >=
+-	    local->avg_load + (scaled_busy_load_per_task * imbn)) {
+-		env->imbalance = busiest->load_per_task;
+-		return;
+-	}
+-
+-	/*
+-	 * OK, we don't have enough imbalance to justify moving tasks,
+-	 * however we may be able to increase total CPU capacity used by
+-	 * moving them.
+-	 */
+-
+-	capa_now += busiest->group_capacity *
+-			min(busiest->load_per_task, busiest->avg_load);
+-	capa_now += local->group_capacity *
+-			min(local->load_per_task, local->avg_load);
+-	capa_now /= SCHED_CAPACITY_SCALE;
+-
+-	/* Amount of load we'd subtract */
+-	if (busiest->avg_load > scaled_busy_load_per_task) {
+-		capa_move += busiest->group_capacity *
+-			    min(busiest->load_per_task,
+-				busiest->avg_load - scaled_busy_load_per_task);
+-	}
+-
+-	/* Amount of load we'd add */
+-	if (busiest->avg_load * busiest->group_capacity <
+-	    busiest->load_per_task * SCHED_CAPACITY_SCALE) {
+-		tmp = (busiest->avg_load * busiest->group_capacity) /
+-		      local->group_capacity;
+-	} else {
+-		tmp = (busiest->load_per_task * SCHED_CAPACITY_SCALE) /
+-		      local->group_capacity;
+-	}
+-	capa_move += local->group_capacity *
+-		    min(local->load_per_task, local->avg_load + tmp);
+-	capa_move /= SCHED_CAPACITY_SCALE;
+-
+-	/* Move if we gain throughput */
+-	if (capa_move > capa_now)
+-		env->imbalance = busiest->load_per_task;
+-}
+-
+-/**
+  * calculate_imbalance - Calculate the amount of imbalance present within the
+  *			 groups of a given sched_domain during load balance.
+  * @env: load balance environment
+@@ -8360,15 +8274,6 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 		return;
+ 	}
  
-@@ -8410,13 +8413,13 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 		}
+-	if (busiest->group_type == group_imbalanced) {
+-		/*
+-		 * In the group_imb case we cannot rely on group-wide averages
+-		 * to ensure CPU-load equilibrium, look at wider averages. XXX
+-		 */
+-		busiest->load_per_task =
+-			min(busiest->load_per_task, sds->avg_load);
+-	}
+-
+ 	/*
+ 	 * Avg load of busiest sg can be less and avg load of local sg can
+ 	 * be greater than avg load across all sgs of sd because avg load
+@@ -8379,7 +8284,7 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 	    (busiest->avg_load <= sds->avg_load ||
+ 	     local->avg_load >= sds->avg_load)) {
+ 		env->imbalance = 0;
+-		return fix_small_imbalance(env, sds);
++		return;
+ 	}
  
- 		if (busiest->group_weight == 1 || sds->prefer_sibling) {
--			unsigned int nr_diff = busiest->sum_h_nr_running;
-+			unsigned int nr_diff = busiest->sum_nr_running;
- 			/*
- 			 * When prefer sibling, evenly spread running tasks on
- 			 * groups.
- 			 */
- 			env->migration_type = migrate_task;
--			lsub_positive(&nr_diff, local->sum_h_nr_running);
-+			lsub_positive(&nr_diff, local->sum_nr_running);
- 			env->imbalance = nr_diff >> 1;
- 			return;
- 		}
-@@ -8580,7 +8583,7 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
+ 	/*
+@@ -8417,14 +8322,6 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 				       busiest->group_misfit_task_load);
+ 	}
  
- 	/* Try to move all excess tasks to child's sibling domain */
- 	if (sds.prefer_sibling && local->group_type == group_has_spare &&
--	    busiest->sum_h_nr_running > local->sum_h_nr_running + 1)
-+	    busiest->sum_nr_running > local->sum_nr_running + 1)
- 		goto force_balance;
+-	/*
+-	 * if *imbalance is less than the average load per runnable task
+-	 * there is no guarantee that any tasks will be moved so we'll have
+-	 * a think about bumping its value to force at least one task to be
+-	 * moved
+-	 */
+-	if (env->imbalance < busiest->load_per_task)
+-		return fix_small_imbalance(env, sds);
+ }
  
- 	if (busiest->group_type != group_overloaded &&
+ /******* find_busiest_group() helpers end here *********************/
