@@ -2,177 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12CFCDE703
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C7F6DE70D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:48:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbfJUIsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 04:48:08 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38054 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727110AbfJUIsH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 04:48:07 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 3so11856171wmi.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 01:48:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KLmmSe30L+aODhM7WuVO8E/CQ0NyD3+ZyMeNHSXjuK0=;
-        b=rdf47YftBU7zXq2Ioay8hQyGLkJgyAv39ctPr0tUioLU/CdUBgbKIlDOUvnwLqfZAj
-         CLpS9A69dAlYAtU03jWyk8zHh9kqbGrAB+OR0ur0SatqZfIGwwKG09a6c+yrM8bWIhml
-         olvVnuqJY1c+rr7eqceW4hmcP/gkKDbAc8pFVWoZMFkdu7wwUI9MBciLrSu9MU9LtR5u
-         k5gdxdk9nfZ+exc2tqTJSi8liwSCI/lTe8M7PlTIcn6d8ozGLevC6sX+DE4XsXxiLI39
-         BkB7JjF7D74i5wsq+nMox2xYDDBOB4dLfGNrzGCEOPgEu9nMJalCbzXXb688ajwsZGLb
-         J+Eg==
+        id S1727260AbfJUIsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 04:48:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47724 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726819AbfJUIsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 04:48:41 -0400
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 86E70335DC
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 08:48:41 +0000 (UTC)
+Received: by mail-qt1-f198.google.com with SMTP id f15so13390802qth.6
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 01:48:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KLmmSe30L+aODhM7WuVO8E/CQ0NyD3+ZyMeNHSXjuK0=;
-        b=k0Qn8W63gGjY1i94QLPc5zWhAgRPWcMj2Eyb4+6kdkGtlSm8pwrbCLkUQSjMVkzIaO
-         yr+o+MMbv3zPoaGZPQEjVG7DvH6v71fJLVwS+t9Yp0zBKokpHxjrULpxjet3uFg9s9+6
-         4a9V8vSTCpsu6M67pf27kzOXHAqyrBCNT/g7sMLjA/Jsb43im3YgkzukUzzpVDE6/LQK
-         wqAlif6/7LWKZfWM5WtB1kGjJpI/Ukw/shbaxMIHHYd7gsE04sRRE0d8oWxyqgSxa/CG
-         kcXwOGycNH4fK4AR9/O6pOPIgcxymZOYKUC7luudIx8ERV0w2fYBskPP7alWYA9+CwTJ
-         QycA==
-X-Gm-Message-State: APjAAAVLX37fr6kSN2UCknB+QpUHR9jAmN0q8gxyg8i1kqX+zJ8EtLbn
-        fvMK5Y2JnqfA5Vk5Mm3Sq90=
-X-Google-Smtp-Source: APXvYqy5WqNzwEigipNzUjrMG0MzN8PvTaHV4NgrpbrkQ5IgAkpt2Q5AgCJnT2/BarFEl/X52aAItA==
-X-Received: by 2002:a05:600c:2319:: with SMTP id 25mr14247789wmo.3.1571647685503;
-        Mon, 21 Oct 2019 01:48:05 -0700 (PDT)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id 200sm3618351wme.32.2019.10.21.01.48.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 01:48:04 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 10:48:02 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, jeyu@kernel.org
-Subject: Re: [PATCH v4 03/16] x86/alternatives,jump_label: Provide better
- text_poke() batching interface
-Message-ID: <20191021084802.GA825@gmail.com>
-References: <20191018073525.768931536@infradead.org>
- <20191018074634.113249026@infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IRqmfLWgWgklrhuIT0YEqcb3zcO5An3swDX6Xn5ZmWQ=;
+        b=oNceSHtfmKFKKHgLTqbis6rnRXC6gPvNA3U84zQU8mSqqn2HtHw+9zLYIIK2a+nm2n
+         MJSoR5+/bIMhcLmnmCzLzayVpmT+qvUSu9oRdrqPkN2ZNdNjcqLSRm5ARDnU8cwLZ/AE
+         47+W4sss7SNOchL4pqZNqSNnxMjVS532Q1ICEt1RvEQpb5JAzpNoUWtbC7Y29Dk7T8VP
+         prij8XclIsz/3dUkA8XTI65cWmg58mc63zSvjmWPFWygqcgODOviiSK0cKU7ldfYUc/A
+         Ye9UQnfBErDbByUYDQGqc7MmchCCu53LQX1/NlBqXnPIPBFMzCx83teYWtT19hDhkhAG
+         OM3w==
+X-Gm-Message-State: APjAAAWSQDgHdutmAmO01mtGLLAo6lG3k7HlkbgXiEZ2fP0J4RNnRA1f
+        98ShOr7y7q3w0ga0ZgrfbHnX72tWU06cyNU8e+Ji0MiRsBaRwp1q48OjVJt/VJB6xr6qSOX5kYO
+        4K+OPZRgnQ+2k6MQm+NMcQpHfij162qcevcSjEb3q
+X-Received: by 2002:a05:620a:718:: with SMTP id 24mr21040852qkc.157.1571647720596;
+        Mon, 21 Oct 2019 01:48:40 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyMSJL3T6FDafLXsYkKHSRUn9ds4wEGZrqyrQwy1ZdVD37ycdGAVZNZ8hFxO2cMo4t/PkEIVrqxmsVkDYGB08g=
+X-Received: by 2002:a05:620a:718:: with SMTP id 24mr21040840qkc.157.1571647720291;
+ Mon, 21 Oct 2019 01:48:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018074634.113249026@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190814213118.28473-1-kherbst@redhat.com> <2215840.qs0dBhReda@kreacher>
+ <CACO55ttC-o9bKU7nHNcfjm2YnffiupQ7UHUt7BYL3fu+yEyTbw@mail.gmail.com>
+ <5228680.jBuKzensJx@kreacher> <CAJ=jquZLU2=yxayGCs=XGghxdMMre6qAWRY0Q4VErjBGqeWdjQ@mail.gmail.com>
+ <CAJZ5v0hogSM3OgfJ0GFn7+BYwxR05Hb5ZMLo=NiB2wmpu=qeug@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hogSM3OgfJ0GFn7+BYwxR05Hb5ZMLo=NiB2wmpu=qeug@mail.gmail.com>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Mon, 21 Oct 2019 10:48:29 +0200
+Message-ID: <CACO55tvAyE1t2Bm8J=Yb_Gi5PDAgof=mRsJAKHFxOvEZpV-qGg@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH 1/7] Revert "ACPI / OSI: Add OEM _OSI string to
+ enable dGPU direct output"
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Alex Hung <alex.hung@canonical.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dave Airlie <airlied@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Dave Airlie <airlied@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+fyi: I decided to go for a different workaround to fix the runpm
+issues observed with nvidia gpus with nouveau in the "pci: prevent
+putting nvidia GPUs into lower device states on certain intel bridges"
+thread
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
+that's on the pci and pm mailing list. Maybe it makes sense to wait
+for that to land before actually removing the ACPI workarounds here?
+The workaround I had in this series didn't seem to be reliable enough,
+so I ditched that approached.
 
-> --- a/arch/x86/kernel/jump_label.c
-> +++ b/arch/x86/kernel/jump_label.c
-> @@ -35,18 +35,19 @@ static void bug_at(unsigned char *ip, in
->  	BUG();
->  }
->  
-> -static void __jump_label_set_jump_code(struct jump_entry *entry,
-> -				       enum jump_label_type type,
-> -				       union jump_code_union *code,
-> -				       int init)
-> +static const void *
-> +__jump_label_set_jump_code(struct jump_entry *entry, enum jump_label_type type, int init)
->  {
-> +	static union jump_code_union code; /* relies on text_mutex */
->  	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
->  	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
->  	const void *expect;
->  	int line;
->  
-> -	code->jump = 0xe9;
-> -	code->offset = jump_entry_target(entry) -
-> +	lockdep_assert_held(&text_mutex);
-> +
-> +	code.jump = JMP32_INSN_OPCODE;
-> +	code.offset = jump_entry_target(entry) -
->  		       (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
->  
->  	if (init) {
-> @@ -54,23 +55,23 @@ static void __jump_label_set_jump_code(s
->  	} else if (type == JUMP_LABEL_JMP) {
->  		expect = ideal_nop; line = __LINE__;
->  	} else {
-> -		expect = code->code; line = __LINE__;
-> +		expect = code.code; line = __LINE__;
-
-Side note: the whole 'line' logic looked weird to me and it obsfuscates 
-the logic a bit, and I had to look it up to see what it's about: 
-improving the debug output of text-patching crashes.
-
-How about something like the below on top of your queue? We have %phD 
-that can nicely print instructions in hex.
-
-Totally untested though.
-
-Thanks,
-
-	Ingo
-
----
- arch/x86/kernel/jump_label.c |   21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
-
-Index: tip/arch/x86/kernel/jump_label.c
-===================================================================
---- tip.orig/arch/x86/kernel/jump_label.c
-+++ tip/arch/x86/kernel/jump_label.c
-@@ -16,14 +16,15 @@
- #include <asm/alternative.h>
- #include <asm/text-patching.h>
- 
--static void bug_at(const void *ip, int line)
-+static void bug_at(const void *ip, const void *op_expected, const void *op_unexpected)
- {
- 	/*
- 	 * The location is not an op that we were expecting.
- 	 * Something went wrong. Crash the box, as something could be
- 	 * corrupting the kernel.
- 	 */
--	pr_crit("jump_label: Fatal kernel bug, unexpected op at %pS [%p] (%5ph) %d\n", ip, ip, ip, line);
-+	pr_crit("jump_label: Fatal kernel bug, expected op (%*phD), unexpected op (%*phD) at %pS [%p] (%5ph\n",
-+		JUMP_LABEL_NOP_SIZE, op_expected, JUMP_LABEL_NOP_SIZE, op_unexpected, ip, ip, ip);
- 	BUG();
- }
- 
-@@ -34,23 +35,21 @@ __jump_label_set_jump_code(struct jump_e
- 	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
- 	const void *expect, *code;
- 	const void *addr, *dest;
--	int line;
- 
- 	addr = (void *)jump_entry_code(entry);
- 	dest = (void *)jump_entry_target(entry);
- 
- 	code = text_gen_insn(JMP32_INSN_OPCODE, addr, dest);
- 
--	if (init) {
--		expect = default_nop; line = __LINE__;
--	} else if (type == JUMP_LABEL_JMP) {
--		expect = ideal_nop; line = __LINE__;
--	} else {
--		expect = code; line = __LINE__;
--	}
-+	if (init)
-+		expect = default_nop;
-+	else if (type == JUMP_LABEL_JMP)
-+		expect = ideal_nop;
-+	else
-+		expect = code;
- 
- 	if (memcmp(addr, expect, JUMP_LABEL_NOP_SIZE))
--		bug_at(addr, line);
-+		bug_at(addr, expect, addr);
- 
- 	if (type == JUMP_LABEL_NOP)
- 		code = ideal_nop;
+On Mon, Oct 21, 2019 at 10:14 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Mon, Oct 21, 2019 at 4:14 AM Alex Hung <alex.hung@canonical.com> wrote:
+> >
+> > We have done some tests on three of Intel + nVidia configuration
+> > systems with OEM _OSI strings removed - while some bugs are still
+> > observed, ex. one out of three has suspend/resume issues, no system
+> > crashes were observed - the biggest issue that worries us.
+> >
+> > The positive results give us confident to ack the removal of the OEM
+> > _OSI strings. While our tests were not able to cover all possible I+N
+> > systems, we are sure we can fix issues along the way. If there aren't
+> > systems that cannot be fixed without these OEM _OSI strings, these
+> > strings should probably enable with DMI quirks (possible future
+> > patches) so they won't affect others.
+> >
+> > Acked-by: Alex Hung <alex.hung@canonical.com>
+>
+> OK, thanks!
+>
+> I can queue this up or if it's better to route it through the DRM
+> tree, please do that (and let me know).
