@@ -2,108 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F134DEA60
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:07:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63F29DEA67
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbfJULHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 07:07:15 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38808 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727058AbfJULHP (ORCPT
+        id S1728370AbfJULIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 07:08:16 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58908 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727433AbfJULIP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 07:07:15 -0400
-Received: by mail-io1-f67.google.com with SMTP id u8so15350746iom.5;
-        Mon, 21 Oct 2019 04:07:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n1+aLy128QQ7U6cUlqcBOvUp4FNAoRlJ7X0gYCNLLqs=;
-        b=Lx5prVpIW3WfSNwmK/1yUOg1NwGefIdVmw3AMLk1OwAkh0F/Ikkmu1hdJyTYRrSKZx
-         ZTVAx6+TyKBcHZFYf7xIFZJLBHGK19Z/bgfCXkq3XmVO5MG1pHaDMVsRDYLutXPktMCt
-         w5AN5ehKujfzQsE2PS/X4JBX/m5Ne4o8nxKGwnYa7LEupj7z8DjRN4x0aLlmG4RBZZBh
-         HFCm62rSxEjdVHFiWJeVbt+lqtOXM8k3qfGeyW39MG5OH1VZQNXwAC00dAeM7gr8FiUb
-         Qj2H2AaR85J8y+kHc47VPO3vOwdUgEqaqHfI8NlKxLR+lf85LJAuVfm2xycDH8h9WZBt
-         GMnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n1+aLy128QQ7U6cUlqcBOvUp4FNAoRlJ7X0gYCNLLqs=;
-        b=BBLciaVSihQ3OeGZLFHcDgid4Z4O4ehahL2C2DLnYugDl5kuUJoplnVy1SXNM496s3
-         l/4tNmT8y/8DN5QVzSSutR5ltZzywDWCwtS/Trc0ZbFZamyues5b2je6D9bjlDc7H+wx
-         oQP1PvG18sFa91LgtoHzB20wY2WDjJFrpmecz0eTukOz856uscqBidJzeILGoq9uk4yP
-         7VIUseukqKGqkpik5unLMCW9VxWaUputWN+wljnv57NNMSVz3SX2NawFCBTivXv8cKs2
-         pKmankDtR+Q0hGdiWP0w85zGjVuSOl4gT8yRFI1L+J/F/AIcSAeGpjhFnmdjtwlyO7Y/
-         ULsQ==
-X-Gm-Message-State: APjAAAXF/95U8mOv7RIjOESAmnLOYC/8kkTA4Ejo+IY0xpVSudfB0nSc
-        DoX7UQFowKE2/WP+zy9iFiovtbtTOXhzIaP5Gxk=
-X-Google-Smtp-Source: APXvYqxJS0FbQFfzoUfhz3RR8Z3vT75zJ5yamE9bYEK37eDUtbpG03UFr6Kz06usvzDFHokXueWoF3QYO1bPcztKW4Q=
-X-Received: by 2002:a5d:9952:: with SMTP id v18mr20134179ios.58.1571656032438;
- Mon, 21 Oct 2019 04:07:12 -0700 (PDT)
+        Mon, 21 Oct 2019 07:08:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571656094;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/m6iR+lAGe4oWRdWBbbxaVLhAtZ0rF+yJWWCBo2VUQY=;
+        b=AR0Ji90MP+RQX7cImW5E3LCqQ5Bg8ureKOZxD0zlIzqnldlCw5c27JiXuwk9pOiv7m9UV9
+        Jy7VPk3MME1to/9um/o6kSVfbpHqKuiVNx18gsY87dQHzSnFok9ilh4Ow8ngjzDAhunRX6
+        QtZFlGIEWVSe4LItrpbHpGH1OQGcYC4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-235-66Y5VWh_OvypLh4oG7bHRg-1; Mon, 21 Oct 2019 07:08:11 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0C925107AD31;
+        Mon, 21 Oct 2019 11:08:10 +0000 (UTC)
+Received: from [10.40.204.224] (ovpn-204-224.brq.redhat.com [10.40.204.224])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 48E3E5D6A5;
+        Mon, 21 Oct 2019 11:08:08 +0000 (UTC)
+Subject: Re: [PATCH] fs: exFAT read-only driver GPL implementation by Paragon
+ Software.
+To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>
+References: <453A1153-9493-4A04-BF66-CE6A572DEBDB@paragon-software.com>
+ <CAFLxGvyFBGiDab4wxWidjRyDgWkHVfigVsHiRDB4swpB3G+hvQ@mail.gmail.com>
+ <20191021105409.32okvzbslxmcjdze@pali>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+From:   Maurizio Lombardi <mlombard@redhat.com>
+Message-ID: <0877502e-8369-9cfd-36e8-5a4798260cd4@redhat.com>
+Date:   Mon, 21 Oct 2019 13:08:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-References: <20191018130507.29893-1-aford173@gmail.com> <712504cb-c0ad-2e3e-bc3b-5cc1b70dd005@ti.com>
-In-Reply-To: <712504cb-c0ad-2e3e-bc3b-5cc1b70dd005@ti.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Mon, 21 Oct 2019 06:07:01 -0500
-Message-ID: <CAHCN7xLBY4bCkzEWEgcrdY0SrvMJv4Y2fSzVHO86P9+hUoZi0Q@mail.gmail.com>
-Subject: Re: [PATCH] fbdev/omap: fix max fclk divider for omap36xx
-To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc:     linux-fbdev@vger.kernel.org,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Adam Ford <adam.ford@logicpd.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191021105409.32okvzbslxmcjdze@pali>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: 66Y5VWh_OvypLh4oG7bHRg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 3:44 AM Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
->
-> On 18/10/2019 16:05, Adam Ford wrote:
-> > The OMAP36xx and AM/DM37x TRMs say that the maximum divider for DSS fclk
-> > (in CM_CLKSEL_DSS) is 32. Experimentation shows that this is not
-> > correct, and using divider of 32 breaks DSS with a flood or underflows
-> > and sync losts. Dividers up to 31 seem to work fine.
-> >
-> > There is another patch to the DT files to limit the divider correctly,
-> > but as the DSS driver also needs to know the maximum divider to be able
-> > to iteratively find good rates, we also need to do the fix in the DSS
-> > driver.
-> >
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> > Cc: stable@vger.kernel.org # linux-4.4.y only
-> >
-> > diff --git a/drivers/video/fbdev/omap2/dss/dss.c b/drivers/video/fbdev/omap2/dss/dss.c
-> > index 9200a8668b49..a57c3a5f4bf8 100644
-> > --- a/drivers/video/fbdev/omap2/dss/dss.c
-> > +++ b/drivers/video/fbdev/omap2/dss/dss.c
-> > @@ -843,7 +843,7 @@ static const struct dss_features omap34xx_dss_feats = {
-> >   };
-> >
-> >   static const struct dss_features omap3630_dss_feats = {
-> > -     .fck_div_max            =       32,
-> > +     .fck_div_max            =       31,
-> >       .dss_fck_multiplier     =       1,
-> >       .parent_clk_name        =       "dpll4_ck",
-> >       .dpi_select_source      =       &dss_dpi_select_source_omap2_omap3,
-> >
->
-> To clarify, this patch is only for the v4.4 stable, whereas the previous
-> patch was for next merge window and v4.9+ stable. Right?
 
-That is correct.  The patch I did for 4.9+ didn't apply cleanly on
-4.4, so I had to do a separate patch for 4.4.
 
-adam
->
-> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
->
->   Tomi
->
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Dne 21.10.2019 v 12:54 Pali Roh=C3=A1r napsal(a):
+> Plus there is new version of
+> this out-of-tree Samsung's exfat driver called sdfat which can be found
+> in some Android phones.=20
+
+[...]
+
+>=20
+> About that one implementation from Samsung, which was recently merged
+> into staging tree, more people wrote that code is in horrible state and
+> probably it should not have been merged. That implementation has
+> all-one-one driver FAT12, FAT16, FAT32 and exFAT which basically
+> duplicate current kernel fs/fat code.
+>=20
+> Quick look at this Konstantin's patch, it looks like that code is not in
+> such bad state as staging one. It has only exFAT support (no FAT32) but
+> there is no write support (yet).
+
+But, AFAIK, Samsung is preparing a patch that will replace the current
+staging driver with their newer sdfat driver that also has write support.
+
+https://marc.info/?l=3Dlinux-fsdevel&m=3D156985252507812&w=3D2
+
+Maurizio
+
