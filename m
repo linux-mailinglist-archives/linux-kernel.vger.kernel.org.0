@@ -2,79 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C1FEDECEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:58:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73221DED4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:17:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbfJUM6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 08:58:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58546 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728081AbfJUM6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:58:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 433A8AC18;
-        Mon, 21 Oct 2019 12:58:52 +0000 (UTC)
-Date:   Mon, 21 Oct 2019 14:58:49 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     n-horiguchi@ah.jp.nec.com, mike.kravetz@oracle.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 10/16] mm,hwpoison: Rework soft offline for free
- pages
-Message-ID: <20191021125842.GA11330@linux>
-References: <20191017142123.24245-1-osalvador@suse.de>
- <20191017142123.24245-11-osalvador@suse.de>
- <20191018120615.GM5017@dhcp22.suse.cz>
+        id S1728851AbfJUNRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:17:15 -0400
+Received: from gateway22.websitewelcome.com ([192.185.46.234]:28288 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727985AbfJUNRP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:17:15 -0400
+X-Greylist: delayed 1221 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Oct 2019 09:17:14 EDT
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id F0F9C1A125
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 07:56:52 -0500 (CDT)
+Received: from gator4201.hostgator.com ([108.167.189.26])
+        by cmsmtp with SMTP
+        id MXEyiEC8wOdBHMXEyiZwNT; Mon, 21 Oct 2019 07:56:52 -0500
+X-Authority-Reason: nr=8
+Received: from ariseadmin by gator4201.hostgator.com with local (Exim 4.92)
+        (envelope-from <facebook@fb.com>)
+        id 1iMXEZ-003ohs-MS; Mon, 21 Oct 2019 07:56:27 -0500
+Received: from 115.164.222.132 ([115.164.222.132]) (proxying for
+ 115.164.222.132)
+        (SquirrelMail authenticated user soklivann@ariseagency.com)
+        by webmail.ariseagency.com with HTTP;
+        Mon, 21 Oct 2019 07:56:27 -0500
+Message-ID: <375eed3aa3eb46dfa2c8bef07e29e449.squirrel@webmail.ariseagency.com>
+Date:   Mon, 21 Oct 2019 07:56:27 -0500
+Subject: YOU WON!!!
+From:   "fb" <facebook@fb.com>
+Reply-To: facebook_winnings@mail.bg
+User-Agent: SquirrelMail/1.5.2 [SVN]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018120615.GM5017@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4201.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [32727 501] / [47 12]
+X-AntiAbuse: Sender Address Domain - fb.com
+X-BWhitelist: no
+X-Source-IP: 
+X-Source-L: No
+X-Exim-ID: 1iMXEZ-003ohs-MS
+X-Source: /usr/local/cpanel/3rdparty/php/72/bin/php-cgi
+X-Source-Args: /usr/local/cpanel/3rdparty/php/72/bin/php-cgi /usr/local/cpanel/base/3rdparty/squirrelmail/src/compose.php 
+X-Source-Dir: /usr/local/cpanel/base/3rdparty/squirrelmail/src
+X-Source-Sender: 
+X-Source-Auth: ariseadmin
+X-Email-Count: 70
+X-Source-Cap: YXJpc2VhZG1pbjthcmlzZWFkbWluO2dhdG9yNDIwMS5ob3N0Z2F0b3IuY29t
+X-Local-Domain: no
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 02:06:15PM +0200, Michal Hocko wrote:
-> On Thu 17-10-19 16:21:17, Oscar Salvador wrote:
-> [...]
-> > +bool take_page_off_buddy(struct page *page)
-> > + {
-> > +	struct zone *zone = page_zone(page);
-> > +	unsigned long pfn = page_to_pfn(page);
-> > +	unsigned long flags;
-> > +	unsigned int order;
-> > +	bool ret = false;
-> > +
-> > +	spin_lock_irqsave(&zone->lock, flags);
-> 
-> What prevents the page to be allocated in the meantime? Also what about
-> free pages on the pcp lists? Also the page could be gone by the time you
-> have reached here.
+Facebook
+Plaza Sentral Suite
+Jalan Stesen Sentral 3
+Kuala Lumpur 50470
+Malaysia
 
-Nothing prevents the page to be allocated in the meantime.
-We would just bail out and return -EBUSY to userspace.
-Since we do not do __anything__ to the page until we are sure we took it off,
-and it is completely isolated from the memory, there is no danger.
+REF: FACEBOOKMY/69-CAW692019
 
-Since soft-offline is kinda "best effort" mode, it is something like:
-"Sorry, could not poison the page, try again".
+CONGRATULATIONS
 
-Now, thinking about this a bit more, I guess we could be more clever here
-and call the routine that handles in-use pages if we see that the page
-was allocated by the time we reach take_page_off_buddy.
+We are pleased to inform you of the announcement today, the winners of the
+Facebook’s 2019 Users Appreciation Promotions Programme. You consequently
+won in category A because of your facebook usage.
 
-About pcp pages, you are right.
-I thought that we were already handling that case, and we do, but looking closer the
-call to shake_page() (that among other things spills pcppages into buddy)
-is performed at a later stage.
-I think we need to adjust __get_any_page to recognize pcp pages as well.
+You have therefore been approved for a lump sum pay out of $ 1,000,000
+Million USD (United States Dollars).
 
-I will do some work here.
+Pls contact the Officer as stated below:
 
-Thanks for comments.
+Contact Person Name: N. Tann
+Officer in Charge
+Facebook’s 2019 Users Appreciation Promotions Programme
 
--- 
-Oscar Salvador
-SUSE L3
+Email Address: < facebook.winnings@mail.bg >
+
+
+PLEASE FILL IN THE FORM BELOW AND DULY FORWARD IT TO THE ABOVE
+CORRESPONDENCE AS SOON AS YOU RECEIVE THIS EMAIL COMMUNICATION
+NOTIFICATION.
+
+NAMES IN FULL: --------------------------------
+ADDRESS: -----------------------------
+TEL/FAX: -----------------------------
+
+Kindly follow and adhere to all instructions for claims as directed.
+
+Thank you and Congratulations once again.
+
+Sincerely,
+Dan Near
+VP of Asia Pacific for Facebook
+
+This E-mail and any files transmitted with it are confidential and may be
+legally priviledged and are solely for the individual or entity to whom
+they are addressed. All liability for viruses is excluded to the fullest
+extent permitted by law.
+
+
+                   Facebook © 2019
+
+
