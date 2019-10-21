@@ -2,129 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13345DEAA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:17:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AFDDDEAB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 13:19:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728448AbfJULRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 07:17:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49908 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727620AbfJULRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 07:17:13 -0400
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24665206C2;
-        Mon, 21 Oct 2019 11:17:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571656632;
-        bh=+HuhLJjJiwH7Kl+C7z+5jg90DFHTonlD/TcagMhzneg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WHEqFWuCUlAJUZ35FvUobSwWmnxHYqXGs7cDfeaufr9guGGbHGcoT+LAVfCOjJz7D
-         WC3mUYHbu415W3tZ/a6rGOM3tOer6ga4TmcngO4OT6KTWKRKf4iDwuFZfeZxXEAzWF
-         JnIw6fp7n5GkokmZulJjLAx60pIzr/419ar4dhx8=
-Date:   Mon, 21 Oct 2019 13:17:09 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Alistair Francis <alistair@alistair23.me>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        alistair23@gmail.com
-Subject: Re: [PATCH] arm64: dts: sun50i: sopine-baseboard: Expose serial1,
- serial2 and serial3
-Message-ID: <20191021111709.dpu6g7jltuw6cbbn@gilmour>
-References: <20191012200524.23512-1-alistair@alistair23.me>
- <20191016144946.p3tm67vh5lqigndn@gilmour>
- <CAGb2v67QrTJjSO99UNs-=3ZZnK948am11=izRTHT6gZ06E28eA@mail.gmail.com>
+        id S1728322AbfJULTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 07:19:40 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:49666 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1726767AbfJULTk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 07:19:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C448EBD;
+        Mon, 21 Oct 2019 04:19:05 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C73533F718;
+        Mon, 21 Oct 2019 04:19:04 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 12:19:03 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Dilip Kota <eswara.kota@linux.intel.com>
+Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        lorenzo.pieralisi@arm.com, robh@kernel.org,
+        martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
+        hch@infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
+        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com
+Subject: Re: [PATCH v4 1/3] dt-bindings: PCI: intel: Add YAML schemas for the
+ PCIe RC controller
+Message-ID: <20191021111902.GO47056@e119886-lin.cambridge.arm.com>
+References: <cover.1571638827.git.eswara.kota@linux.intel.com>
+ <710257e49c4b3d07fa98b3e5a829b807f74b54d7.1571638827.git.eswara.kota@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lkkvvoygykhcnyp4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGb2v67QrTJjSO99UNs-=3ZZnK948am11=izRTHT6gZ06E28eA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <710257e49c4b3d07fa98b3e5a829b807f74b54d7.1571638827.git.eswara.kota@linux.intel.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 21, 2019 at 02:39:18PM +0800, Dilip Kota wrote:
+> Add YAML shcemas for PCIe RC controller on Intel Gateway SoCs
 
---lkkvvoygykhcnyp4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+s/shcemas/schemas/
 
-Hi,
+> which is Synopsys DesignWare based PCIe core.
 
-On Wed, Oct 16, 2019 at 10:54:27PM +0800, Chen-Yu Tsai wrote:
-> On Wed, Oct 16, 2019 at 10:49 PM Maxime Ripard <mripard@kernel.org> wrote:
-> > On Sat, Oct 12, 2019 at 01:05:24PM -0700, Alistair Francis wrote:
-> > > Follow what the sun50i-a64-pine64.dts does and expose all 5 serial
-> > > connections.
-> > >
-> > > Signed-off-by: Alistair Francis <alistair@alistair23.me>
-> > > ---
-> > >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 25 +++++++++++++++++++
-> > >  1 file changed, 25 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> > > index 124b0b030b28..49c37b21ab36 100644
-> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> > > @@ -56,6 +56,10 @@
-> > >       aliases {
-> > >               ethernet0 = &emac;
-> > >               serial0 = &uart0;
-> > > +             serial1 = &uart1;
-> > > +             serial2 = &uart2;
-> > > +             serial3 = &uart3;
-> > > +             serial4 = &uart4;
-> > >       };
-> > >
-> > >       chosen {
-> > > @@ -280,6 +284,27 @@
-> > >       };
-> > >  };
-> > >
-> > > +/* On Pi-2 connector */
-> > > +&uart2 {
-> > > +     pinctrl-names = "default";
-> > > +     pinctrl-0 = <&uart2_pins>;
-> > > +     status = "disabled";
-> > > +};
-> > > +
-> > > +/* On Euler connector */
-> > > +&uart3 {
-> > > +     pinctrl-names = "default";
-> > > +     pinctrl-0 = <&uart3_pins>;
-> > > +     status = "disabled";
-> > > +};
-> > > +
-> > > +/* On Euler connector, RTS/CTS optional */
-> > > +&uart4 {
-> > > +     pinctrl-names = "default";
-> > > +     pinctrl-0 = <&uart4_pins>;
-> > > +     status = "disabled";
-> > > +};
-> >
-> > Since these are all the default muxing, maybe we should just set that
-> > in the DTSI?
->
-> Maybe not, since people may want to only use RX/TX, and leave the other
-> two pins for GPIO?
+The revision history below doesn't need to be in the commit mesage and
+so you should add a '---' before the following (and thanks for the
+detailed history).
 
-Right, I'll apply that patch.
+Besides that:
 
-Thanks!
-Maxime
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
 
---lkkvvoygykhcnyp4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXa2TtQAKCRDj7w1vZxhR
-xbyUAP9PwLyhb0omaH3Q6aySeHkcOMgye7JVSNrXofoOkyX1qgEAzoj0Rt+iokqY
-UA3Ryk3GULps6bfsB7pZzNNQxNc4WQI=
-=K29e
------END PGP SIGNATURE-----
-
---lkkvvoygykhcnyp4--
+> 
+> changes on v4:
+> 	Add "snps,dw-pcie" compatible.
+> 	Rename phy-names property value to pcie.
+> 	And maximum and minimum values to num-lanes.
+> 	Add ref for reset-assert-ms entry and update the
+> 	 description for easy understanding.
+> 	Remove pcie core interrupt entry.
+> 
+> changes on v3:
+>         Add the appropriate License-Identifier
+>         Rename intel,rst-interval to 'reset-assert-us'
+>         Add additionalProperties: false
+>         Rename phy-names to 'pciephy'
+>         Remove the dtsi node split of SoC and board in the example
+>         Add #interrupt-cells = <1>; or else interrupt parsing will fail
+>         Name yaml file with compatible name
+> 
+> Signed-off-by: Dilip Kota <eswara.kota@linux.intel.com>
+> ---
+>  .../devicetree/bindings/pci/intel-gw-pcie.yaml     | 135 +++++++++++++++++++++
+>  1 file changed, 135 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml b/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+> new file mode 100644
+> index 000000000000..49dd87ec1e3d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+> @@ -0,0 +1,135 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/intel-gw-pcie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: PCIe RC controller on Intel Gateway SoCs
+> +
+> +maintainers:
+> +  - Dilip Kota <eswara.kota@linux.intel.com>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: intel,lgm-pcie
+> +      - const: snps,dw-pcie
+> +
+> +  device_type:
+> +    const: pci
+> +
+> +  "#address-cells":
+> +    const: 3
+> +
+> +  "#size-cells":
+> +    const: 2
+> +
+> +  reg:
+> +    items:
+> +      - description: Controller control and status registers.
+> +      - description: PCIe configuration registers.
+> +      - description: Controller application registers.
+> +
+> +  reg-names:
+> +    items:
+> +      - const: dbi
+> +      - const: config
+> +      - const: app
+> +
+> +  ranges:
+> +    description: Ranges for the PCI memory and I/O regions.
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    description: PCIe registers interface clock.
+> +
+> +  phys:
+> +    maxItems: 1
+> +
+> +  phy-names:
+> +    const: pcie
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +  num-lanes:
+> +    minimum: 1
+> +    maximum: 2
+> +    description: Number of lanes to use for this port.
+> +
+> +  linux,pci-domain:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: PCI domain ID.
+> +
+> +  '#interrupt-cells':
+> +    const: 1
+> +
+> +  interrupt-map-mask:
+> +    description: Standard PCI IRQ mapping properties.
+> +
+> +  interrupt-map:
+> +    description: Standard PCI IRQ mapping properties.
+> +
+> +  max-link-speed:
+> +    description: Specify PCI Gen for link capability.
+> +
+> +  bus-range:
+> +    description: Range of bus numbers associated with this controller.
+> +
+> +  reset-assert-ms:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Delay after asserting reset to the PCIe device.
+> +      Some devices need an interval upto 500ms. By default it is 100ms.
+> +
+> +required:
+> +  - compatible
+> +  - device_type
+> +  - reg
+> +  - reg-names
+> +  - ranges
+> +  - resets
+> +  - clocks
+> +  - phys
+> +  - phy-names
+> +  - reset-gpios
+> +  - num-lanes
+> +  - linux,pci-domain
+> +  - interrupt-map
+> +  - interrupt-map-mask
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pcie10:pcie@d0e00000 {
+> +      compatible = "intel,lgm-pcie", "snps,dw-pcie";
+> +      device_type = "pci";
+> +      #address-cells = <3>;
+> +      #size-cells = <2>;
+> +      reg = <0xd0e00000 0x1000>,
+> +            <0xd2000000 0x800000>,
+> +            <0xd0a41000 0x1000>;
+> +      reg-names = "dbi", "config", "app";
+> +      linux,pci-domain = <0>;
+> +      max-link-speed = <4>;
+> +      bus-range = <0x00 0x08>;
+> +      interrupt-parent = <&ioapic1>;
+> +      #interrupt-cells = <1>;
+> +      interrupt-map-mask = <0 0 0 0x7>;
+> +      interrupt-map = <0 0 0 1 &ioapic1 27 1>,
+> +                      <0 0 0 2 &ioapic1 28 1>,
+> +                      <0 0 0 3 &ioapic1 29 1>,
+> +                      <0 0 0 4 &ioapic1 30 1>;
+> +      ranges = <0x02000000 0 0xd4000000 0xd4000000 0 0x04000000>;
+> +      resets = <&rcu0 0x50 0>;
+> +      clocks = <&cgu0 LGM_GCLK_PCIE10>;
+> +      phys = <&cb0phy0>;
+> +      phy-names = "pcie";
+> +      status = "okay";
+> +      reset-assert-ms = <500>;
+> +      reset-gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
+> +      num-lanes = <2>;
+> +    };
+> -- 
+> 2.11.0
+> 
