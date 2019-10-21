@@ -2,125 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89AA0DF4A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 20:01:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D62FBDF4B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 20:04:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbfJUSA4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 14:00:56 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39018 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729388AbfJUSAz (ORCPT
+        id S1729977AbfJUSDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 14:03:18 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39388 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbfJUSDS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 14:00:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=NBKg7z/RWZPm9A3Z0ZyyZEqHwnPNJzRElLBLEbH7hrs=; b=ppfGIhq/ufNJ
-        R2esk6NDpi5I8o/Z//GhcbYeNbpsuz4J6SzMaUwcPS9CX7DCG6nxq+8RXLXiKDG7gQFgvA75714Zz
-        gCfs3HlRbDUP7EojhMazCdZZe+yx08O5qH/c3Sk4HgR2CgtTqGyO0TAFq3uODGQiLGhFi70Zy3xzm
-        J7Q1Y=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iMbz5-0004bq-HG; Mon, 21 Oct 2019 18:00:47 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id E69772741DD1; Mon, 21 Oct 2019 19:00:46 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: msm8916-wcd-analog: Fix RX1 selection in RDAC2 MUX" to the asoc tree
-In-Reply-To: <20191020153007.206070-1-stephan@gerhold.net>
-X-Patchwork-Hint: ignore
-Message-Id: <20191021180046.E69772741DD1@ypsilon.sirena.org.uk>
-Date:   Mon, 21 Oct 2019 19:00:46 +0100 (BST)
+        Mon, 21 Oct 2019 14:03:18 -0400
+Received: by mail-qt1-f196.google.com with SMTP id t8so4834053qtc.6
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 11:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wyEp1kOdaCYzrwvdEM/kPkFxBB0Sg4gRdGjRJK/qdGA=;
+        b=mvpvVaZFNZtubTKfQHrkzk+N5tFEJzXkNyBqBIs3pZ3zkZK3mabIbyDflu013jujfB
+         e5vctsPQHk3tuswyq/oOs+kWRhM2nWogmkJ61jp/QjY6kwuVK3ylBA8sIIL3uNUVSDCx
+         HK4x0bfd8m9zAN5LrzGqHzcEHECkkVIH1KbUc6fCKfKaWaCtAqICaAK9Xen2TkIRNmq9
+         gEmYUJpCAZfaAP5kH1NIlJCW02OKZT8Jog5Mb7cSxUWKfNatckxZkVwXvsCNB3xE+e8d
+         pZFKxvx7vuzVF8dHS49kJug9W1Wnb2i82nJ7jTiccu5BUcADyeJ59xd+d1KqbHVDwfU4
+         h8wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wyEp1kOdaCYzrwvdEM/kPkFxBB0Sg4gRdGjRJK/qdGA=;
+        b=iAZLLSgF1M3LqQbxJ0sCjWQUb3wtmLazj9W9KEukZM/ikBZkuTz0+dmGHdyC5dVSMB
+         PTYcWNZg+JJaXfB0wWuQHQkpZXGSgQT1k90ucf756C3qPno2K/N+BgT8vopiI7KNXf0g
+         9eRh4tfDxOuKwOCOqbSVUGaQzNe4kEaeYMBUQ2XbUnly6WcMChkQTnOijVyb506nWkie
+         1uvlQcaRfwzV37iclUYZhWeCfrD8BeCBtEFD8Wc0pYA6F9RraZXZbAn7n83Pl4nVCl3Y
+         h5IIaSnj/s288oYDtPNdeXE12qsRFSHL6cocLAi0VBOaRI54yVSI4rCjWZQyKG/0zTo+
+         0eGg==
+X-Gm-Message-State: APjAAAXUb/jyKNmi4CUV85oFaiaq0Rg7xLsbCrB256NFz/cR6XkPWsPS
+        dPPKBBMjGOwJPccgZFkn+DutVw==
+X-Google-Smtp-Source: APXvYqz68/kqjdmLF8f0rHCHXaVIR95FOdV8pEtEZdEGeJGVjChL9WqcBJ04eXbqarquvsAy3MC8cw==
+X-Received: by 2002:ac8:3a26:: with SMTP id w35mr25006063qte.211.1571680995603;
+        Mon, 21 Oct 2019 11:03:15 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::3:2d1])
+        by smtp.gmail.com with ESMTPSA id 131sm8838166qkg.1.2019.10.21.11.03.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 11:03:14 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 14:03:14 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH v3] mm,thp: recheck each page before collapsing file THP
+Message-ID: <20191021180314.GA185593@cmpxchg.org>
+References: <20191018180345.4188310-1-songliubraving@fb.com>
+ <20191018181712.91dd9e9f9941642300e1b8d9@linux-foundation.org>
+ <9DC29F5B-1DF5-408F-BEDF-FD1FBAAB1361@fb.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9DC29F5B-1DF5-408F-BEDF-FD1FBAAB1361@fb.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Sat, Oct 19, 2019 at 05:24:00AM +0000, Song Liu wrote:
+> In collapse_file(), for !is_shmem case, current check cannot guarantee 
+> the locked page is up-to-date. Specifically, xas_unlock_irq() should not
+> be called before lock_page() and get_page(); and it is necessary to 
+> recheck PageUptodate() after locking the page. 
+> 
+> With this bug and CONFIG_READ_ONLY_THP_FOR_FS=y, madvise(HUGE)'ed .text 
+> may contain corrupted data. This is because khugepaged mistakenly 
+> collapses some not up-to-date sub pages into a huge page, and assumes the 
+> huge page is up-to-date. This will NOT corrupt data in the disk, because 
+> the page is read-only and never written back. Fix this by properly 
+> checking PageUptodate() after locking the page. This check replaces 
+> "VM_BUG_ON_PAGE(!PageUptodate(page), page);". 
+> 
+> Also, move PageDirty() check after locking the page. Current khugepaged 
+> should not try to collapse dirty file THP, because it is limited to 
+> read-only .text. Add a warning with the PageDirty() check as it should 
+> not happen. This warning is added after page_mapping() check, because 
+> if the page is truncated, it might be dirty.
+> 
+> Fixes: 99cb0dbd47a1 ("mm,thp: add read-only THP support for (non-shmem) FS")
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: William Kucharski <william.kucharski@oracle.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Song Liu <songliubraving@fb.com>
 
-   ASoC: msm8916-wcd-analog: Fix RX1 selection in RDAC2 MUX
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 9110d1b0e229cebb1ffce0c04db2b22beffd513d Mon Sep 17 00:00:00 2001
-From: Stephan Gerhold <stephan@gerhold.net>
-Date: Sun, 20 Oct 2019 17:30:06 +0200
-Subject: [PATCH] ASoC: msm8916-wcd-analog: Fix RX1 selection in RDAC2 MUX
-
-According to the PM8916 Hardware Register Description,
-CDC_D_CDC_CONN_HPHR_DAC_CTL has only a single bit (RX_SEL)
-to switch between RX1 (0) and RX2 (1). It is not possible to
-disable it entirely to achieve the "ZERO" state.
-
-However, at the moment the "RDAC2 MUX" mixer defines three possible
-values ("ZERO", "RX2" and "RX1"). Setting the mixer to "ZERO"
-actually configures it to RX1. Setting the mixer to "RX1" has
-(seemingly) no effect.
-
-Remove "ZERO" and replace it with "RX1" to fix this.
-
-Fixes: 585e881e5b9e ("ASoC: codecs: Add msm8916-wcd analog codec")
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Link: https://lore.kernel.org/r/20191020153007.206070-1-stephan@gerhold.net
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/msm8916-wcd-analog.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/msm8916-wcd-analog.c b/sound/soc/codecs/msm8916-wcd-analog.c
-index 667e9f73aba3..e3d311fb510e 100644
---- a/sound/soc/codecs/msm8916-wcd-analog.c
-+++ b/sound/soc/codecs/msm8916-wcd-analog.c
-@@ -306,7 +306,7 @@ struct pm8916_wcd_analog_priv {
- };
- 
- static const char *const adc2_mux_text[] = { "ZERO", "INP2", "INP3" };
--static const char *const rdac2_mux_text[] = { "ZERO", "RX2", "RX1" };
-+static const char *const rdac2_mux_text[] = { "RX1", "RX2" };
- static const char *const hph_text[] = { "ZERO", "Switch", };
- 
- static const struct soc_enum hph_enum = SOC_ENUM_SINGLE_VIRT(
-@@ -321,7 +321,7 @@ static const struct soc_enum adc2_enum = SOC_ENUM_SINGLE_VIRT(
- 
- /* RDAC2 MUX */
- static const struct soc_enum rdac2_mux_enum = SOC_ENUM_SINGLE(
--			CDC_D_CDC_CONN_HPHR_DAC_CTL, 0, 3, rdac2_mux_text);
-+			CDC_D_CDC_CONN_HPHR_DAC_CTL, 0, 2, rdac2_mux_text);
- 
- static const struct snd_kcontrol_new spkr_switch[] = {
- 	SOC_DAPM_SINGLE("Switch", CDC_A_SPKR_DAC_CTL, 7, 1, 0)
--- 
-2.20.1
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
