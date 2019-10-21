@@ -2,67 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B6CCDE264
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 04:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8460DE266
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 04:55:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfJUCwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 22:52:34 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4737 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726768AbfJUCwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 22:52:34 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 93BB4285F04837690E45;
-        Mon, 21 Oct 2019 10:52:31 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Mon, 21 Oct 2019
- 10:52:24 +0800
-From:   Miaohe Lin <linmiaohe@huawei.com>
-To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
-        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>
-CC:     <x86@kernel.org>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linmiaohe@huawei.com>
-Subject: [PATCH] KVM: remove redundant code in kvm_arch_vm_ioctl
-Date:   Mon, 21 Oct 2019 10:52:56 +0800
-Message-ID: <1571626376-11357-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1726982AbfJUCzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 22:55:14 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45015 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbfJUCzO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 22:55:14 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e10so6816260pgd.11;
+        Sun, 20 Oct 2019 19:55:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=n6q4nAKjxfy0IGRBzsfdgwCjetx208YR00SKYdDf5L4=;
+        b=STNF+qMPIQVPczXkdxKSlD7w9+m12ligvY2hSWRH95O1dBrIYa8s65d5s0K+j0aGEp
+         zK7nS69ITUiG2UPwpir0lbHWtBx9pDycufLrMR4HJ2iUsZAkcodVzE0mMf9FDneDwllI
+         p8Dmb4cHjDYiih54GyuFarAY80k/etNSoEzlOhqFDZwntIqf2Y07e4zLHaMfLzlEcdvB
+         2Cm2KKkaIY+MGHCuv4yCVHHV4xAbZp8mc64d2ELeFRcs+2I7YhSt9qyDKmNWR/MfEpWa
+         K7bqKQfGhB2CHGvnMFTjKYSBsPeXbFH1rEP0b5z+AKTsLFz3rlS8Q8jA9nXx9sEe7E3M
+         jmHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n6q4nAKjxfy0IGRBzsfdgwCjetx208YR00SKYdDf5L4=;
+        b=O9pmNxzZNImTa4/M9RZ1QhCYeJo4mJdSc/xDA19EvAxVqq4VQa2XySbEUrcuC64OCM
+         fRy7W0lGzZhDjsEGmWR6bGgZ6JsueE22pO5VEe+BnOlCKFDGxWIwGOAXxRjaCXhN1O0R
+         VmyJM4ODW1S+gmuDt733FbmmipgDlYdf1+gjKnaa+ovk2OQGMSr1zWeotCGaRhcPmrl5
+         wigiOgcV34Yyf6Ik4DhiJoi1pIaZMz57ldmuCoEDHM7QT7thJuCcVYJo4ajAGp/CeaK7
+         7z30eKfCYst6H8Hs1ftOp75UOmu+fwm9Kb6w2K/G7MPoDoS0c4sh9Zb3pb6pBRbi+meN
+         VjQg==
+X-Gm-Message-State: APjAAAUhH+fsTwIgAg7S/ZWnsFEueksEoEAm7Vzl1fs4MAvIgQ6K4syI
+        JzUZJMnMqj1QoMJI3m6Mk1GuxmAx
+X-Google-Smtp-Source: APXvYqzoI9MAdfH9YKyZ/mCwnnw1W+NHkvwtkREsYGpI9gnh7v1OzvFFXJehGB/SrxtG/xhv2FRKLw==
+X-Received: by 2002:a63:f854:: with SMTP id v20mr9155261pgj.92.1571626513214;
+        Sun, 20 Oct 2019 19:55:13 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
+        by smtp.gmail.com with ESMTPSA id b22sm12988674pfo.85.2019.10.20.19.55.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Oct 2019 19:55:12 -0700 (PDT)
+Subject: Re: [PATCH net-next 16/16] net: dsa: remove dsa_switch_alloc helper
+To:     Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        netdev@vger.kernel.org
+References: <20191020031941.3805884-1-vivien.didelot@gmail.com>
+ <20191020031941.3805884-17-vivien.didelot@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <c271fa76-5740-b30d-7d26-8183ea059d72@gmail.com>
+Date:   Sun, 20 Oct 2019 19:55:11 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20191020031941.3805884-17-vivien.didelot@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we reach here with r = 0, we will reassign r = 0
-unnecesarry, then do the label set_irqchip_out work.
-If we reach here with r != 0, then we will do the label
-work directly. So this if statement and r = 0 assignment
-is redundant.
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
----
- arch/x86/kvm/x86.c | 3 ---
- 1 file changed, 3 deletions(-)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 661e2bf38526..0b3ebc2afb3d 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4916,9 +4916,6 @@ long kvm_arch_vm_ioctl(struct file *filp,
- 		if (!irqchip_kernel(kvm))
- 			goto set_irqchip_out;
- 		r = kvm_vm_ioctl_set_irqchip(kvm, chip);
--		if (r)
--			goto set_irqchip_out;
--		r = 0;
- 	set_irqchip_out:
- 		kfree(chip);
- 		break;
+On 10/19/2019 8:19 PM, Vivien Didelot wrote:
+> Now that ports are dynamically listed in the fabric, there is no need
+> to provide a special helper to allocate the dsa_switch structure. This
+> will give more flexibility to drivers to embed this structure as they
+> wish in their private structure.
+> 
+> Signed-off-by: Vivien Didelot <vivien.didelot@gmail.com>
+
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
-2.19.1
-
+Florian
