@@ -2,101 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 364BFDF4E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 20:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B3CFDF4A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 20:01:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729953AbfJUSLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 14:11:37 -0400
-Received: from gateway30.websitewelcome.com ([192.185.197.25]:44764 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727211AbfJUSLh (ORCPT
+        id S1729754AbfJUSAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 14:00:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38986 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728196AbfJUSAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 14:11:37 -0400
-X-Greylist: delayed 1301 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Oct 2019 14:11:36 EDT
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 275D435422
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 12:49:48 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id MboSiKZqnOdBHMboSig39H; Mon, 21 Oct 2019 12:49:48 -0500
-X-Authority-Reason: nr=8
+        Mon, 21 Oct 2019 14:00:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=mnkunLEF23UbiKstBGeBSKdC/co/nIvZTCOX/NZlbww=; b=tUM3lE38Ag01bD4YI89LCWIkMh
-        /iA+bY0K0sithlPdbdStN0PDu25sb/avL8AlbdrA32oPewpKZicCe4GhwAOG7fwAZEtZmCsezatIF
-        bZ5nqIaQPnizANZDFU8wAyREhzMsQ9wPRBWwyOIF8NdSzpjuHWFmKV9DQEfwttUkp9HcdpeFSvgBZ
-        NJi9+/i6Wyw1eOEdwaurDIFIty0dbIzxr+nkiWFzLDWo/Xlp5xaP3T+juJprPiSUdJEkNertbINah
-        RRGHv/GlKgUW/Bu5z5c3i6m6wilxdZdv/W19BR6RZlIn6i6eB3PyQTA7kcbvzDpb+MAbaiTwPULqt
-        WTr+a2YA==;
-Received: from [187.192.22.73] (port=33626 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1iMboQ-000AL9-QC; Mon, 21 Oct 2019 12:49:47 -0500
-Date:   Mon, 21 Oct 2019 12:49:37 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Sebastian Reichel <sre@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] power: supply: ab8500_charger: Fix inconsistent IS_ERR and
- PTR_ERR
-Message-ID: <20191021174937.GA17424@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.22.73
-X-Source-L: No
-X-Exim-ID: 1iMboQ-000AL9-QC
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.22.73]:33626
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=uq0cbL+MVqRsyuw0sPQS5GA0v05y+bqGq3kL9K0P2h8=; b=PGEycT3N3lTQ
+        NSSgmXX+NrJZnmMPp0DDgf3TJ5vpiZ60E/A5h7/jh7v9/BlffeXg/8qSJZDhUVO94BoiVkdBKZIA6
+        oHFGZxOgPxsjFb2uNM5ycbXGiYwo6ZffM4e2i8UHOVbaL6uUVM1svJMDhy6F5RQfWvgyT7vK5Cl+k
+        9gRQU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iMbz5-0004bf-DO; Mon, 21 Oct 2019 18:00:47 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 8052B2743293; Mon, 21 Oct 2019 19:00:46 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Maciej Falkowski <m.falkowski@samsung.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: i2s: Document clocks macros" to the asoc tree
+In-Reply-To: <20190926110219.6144-1-m.szyprowski@samsung.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20191021180046.8052B2743293@ypsilon.sirena.org.uk>
+Date:   Mon, 21 Oct 2019 19:00:46 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix inconsistent IS_ERR and PTR_ERR in ab8500_charger_probe().
+The patch
 
-The proper pointer to be passed as argument is di->adc_main_charger_c
+   ASoC: samsung: i2s: Document clocks macros
 
-This bug was detected with the help of Coccinelle.
+has been applied to the asoc tree at
 
-Fixes: 97ab78bac5d0 ("power: supply: ab8500_charger: Convert to IIO ADC")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 6cc23ed2ceab880e96ad287d9c85b53659050510 Mon Sep 17 00:00:00 2001
+From: Maciej Falkowski <m.falkowski@samsung.com>
+Date: Thu, 26 Sep 2019 13:02:19 +0200
+Subject: [PATCH] ASoC: samsung: i2s: Document clocks macros
+
+Document clocks macros with their description
+from 'Documentation/devicetree/bindings/sound/samsung-i2s.txt'
+
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Link: https://lore.kernel.org/r/20190926110219.6144-1-m.szyprowski@samsung.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/power/supply/ab8500_charger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/dt-bindings/sound/samsung-i2s.h | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply/ab8500_charger.c
-index ff2bb4411a22..8a0f9d769690 100644
---- a/drivers/power/supply/ab8500_charger.c
-+++ b/drivers/power/supply/ab8500_charger.c
-@@ -3393,7 +3393,7 @@ static int ab8500_charger_probe(struct platform_device *pdev)
- 		if (PTR_ERR(di->adc_main_charger_c) == -ENODEV)
- 			return -EPROBE_DEFER;
- 		dev_err(&pdev->dev, "failed to get ADC main charger current\n");
--		return PTR_ERR(di->adc_main_charger_v);
-+		return PTR_ERR(di->adc_main_charger_c);
- 	}
- 	di->adc_vbus_v = devm_iio_channel_get(&pdev->dev, "vbus_v");
- 	if (IS_ERR(di->adc_vbus_v)) {
+diff --git a/include/dt-bindings/sound/samsung-i2s.h b/include/dt-bindings/sound/samsung-i2s.h
+index 77545f14c379..250de0d6c734 100644
+--- a/include/dt-bindings/sound/samsung-i2s.h
++++ b/include/dt-bindings/sound/samsung-i2s.h
+@@ -2,8 +2,14 @@
+ #ifndef _DT_BINDINGS_SAMSUNG_I2S_H
+ #define _DT_BINDINGS_SAMSUNG_I2S_H
+ 
+-#define CLK_I2S_CDCLK		0
+-#define CLK_I2S_RCLK_SRC	1
+-#define CLK_I2S_RCLK_PSR	2
++#define CLK_I2S_CDCLK		0 /* the CDCLK (CODECLKO) gate clock */
++
++#define CLK_I2S_RCLK_SRC	1 /* the RCLKSRC mux clock (corresponding to
++				   * RCLKSRC bit in IISMOD register)
++				   */
++
++#define CLK_I2S_RCLK_PSR	2 /* the RCLK prescaler divider clock
++				   * (corresponding to the IISPSR register)
++				   */
+ 
+ #endif /* _DT_BINDINGS_SAMSUNG_I2S_H */
 -- 
-2.23.0
+2.20.1
 
