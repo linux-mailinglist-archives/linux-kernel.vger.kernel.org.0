@@ -2,76 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF95FDE618
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9849DE622
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbfJUIRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 04:17:11 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33647 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727650AbfJUIRL (ORCPT
+        id S1727239AbfJUITu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 04:19:50 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58115 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727122AbfJUITu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 04:17:11 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iMSrp-0004FX-Ek; Mon, 21 Oct 2019 10:16:41 +0200
-Date:   Mon, 21 Oct 2019 10:16:40 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Miaohe Lin <linmiaohe@huawei.com>
-cc:     pbonzini@redhat.com, rkrcmar@redhat.com,
-        sean.j.christopherson@intel.com, vkuznets@redhat.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: remove redundant code in kvm_arch_vm_ioctl
-In-Reply-To: <1571626376-11357-1-git-send-email-linmiaohe@huawei.com>
-Message-ID: <alpine.DEB.2.21.1910211015260.1904@nanos.tec.linutronix.de>
-References: <1571626376-11357-1-git-send-email-linmiaohe@huawei.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 21 Oct 2019 04:19:50 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iMSuo-0001Aa-1T; Mon, 21 Oct 2019 10:19:46 +0200
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iMSun-0008Pf-Bn; Mon, 21 Oct 2019 10:19:45 +0200
+Date:   Mon, 21 Oct 2019 10:19:45 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Robert Jones <rjones@gateworks.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dt: add lsm9ds1 iio imu/magn support to gw553x
+Message-ID: <20191021081945.o7knknxacm6uvd3c@pengutronix.de>
+References: <20191018232124.4126-1-rjones@gateworks.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018232124.4126-1-rjones@gateworks.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 10:16:17 up 156 days, 14:34, 97 users,  load average: 0.07, 0.08,
+ 0.08
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2019, Miaohe Lin wrote:
-> If we reach here with r = 0, we will reassign r = 0
-> unnecesarry, then do the label set_irqchip_out work.
-> If we reach here with r != 0, then we will do the label
-> work directly. So this if statement and r = 0 assignment
-> is redundant.
+Hi Robert,
+
+same here, don't name it 'ARM: dt: ...' instead name it 'ARM: dts: imx:
+ventana: ..' or 'ARM: dts: imx: imx6qdl-gw553x: ..'.
+
+On 19-10-18 16:21, Robert Jones wrote:
+> Add one node for the accel/gyro i2c device and another for the separate
+> magnetometer device in the lsm9ds1.
 > 
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> Signed-off-by: Robert Jones <rjones@gateworks.com>
 > ---
->  arch/x86/kvm/x86.c | 3 ---
->  1 file changed, 3 deletions(-)
+>  arch/arm/boot/dts/imx6qdl-gw553x.dtsi | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
 > 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 661e2bf38526..0b3ebc2afb3d 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -4916,9 +4916,6 @@ long kvm_arch_vm_ioctl(struct file *filp,
->  		if (!irqchip_kernel(kvm))
->  			goto set_irqchip_out;
->  		r = kvm_vm_ioctl_set_irqchip(kvm, chip);
-> -		if (r)
-> -			goto set_irqchip_out;
-> -		r = 0;
->  	set_irqchip_out:
->  		kfree(chip);
->  		break;
+> diff --git a/arch/arm/boot/dts/imx6qdl-gw553x.dtsi b/arch/arm/boot/dts/imx6qdl-gw553x.dtsi
+> index a106689..55e6922 100644
+> --- a/arch/arm/boot/dts/imx6qdl-gw553x.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-gw553x.dtsi
+> @@ -173,6 +173,25 @@
+>  	pinctrl-0 = <&pinctrl_i2c2>;
+>  	status = "okay";
+>  
+> +	lsm9ds1_ag@6a {
+> +		compatible = "st,lsm9ds1-imu";
 
-Can you please get rid of that odd jump label completely?
+Didn't found this compatible string.
 
-  		if (irqchip_kernel(kvm))
-			r = kvm_vm_ioctl_set_irqchip(kvm, chip);
+> +		reg = <0x6a>;
+> +		st,drdy-int-pin = <1>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_acc_gyro>;
+> +		interrupt-parent = <&gpio7>;
+> +		interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
+> +	};
+> +
+> +	lsm9ds1_m@1c {
+> +		compatible = "st,lsm9ds1-magn";
+> +		reg = <0x1c>;
 
-Hmm?
+Nodes are sorted according their i2c-addresses.
 
+Regards,
+  Marco
 
-Thanks,
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_mag>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <2 IRQ_TYPE_EDGE_RISING>;
+> +	};
+> +
+>  	ltc3676: pmic@3c {
+>  		compatible = "lltc,ltc3676";
+>  		reg = <0x3c>;
+> @@ -462,6 +481,18 @@
+>  		>;
+>  	};
+>  
+> +	pinctrl_acc_gyro: acc_gyrogrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_GPIO_18__GPIO7_IO13		0x1b0b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_mag: maggrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_GPIO_2__GPIO1_IO02		0x1b0b0
+> +		>;
+> +	};
+> +
+>  	pinctrl_pps: ppsgrp {
+>  		fsl,pins = <
+>  			MX6QDL_PAD_ENET_RXD1__GPIO1_IO26	0x1b0b1
+> -- 
+> 2.9.2
+> 
+> 
+> 
 
-	tglx
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
