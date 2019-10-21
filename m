@@ -2,196 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5A7ADE9CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 12:38:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A7A2DE9D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 12:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728196AbfJUKiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 06:38:09 -0400
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:35437 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726725AbfJUKiJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 06:38:09 -0400
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id MV4diU1Tdo1ZhMV4giLfb1; Mon, 21 Oct 2019 12:38:06 +0200
-Subject: Re: [Patch 07/19] media: ti-vpe: cal: add CSI2 PHY LDO errata support
-To:     Benoit Parrot <bparrot@ti.com>, Rob Herring <robh+dt@kernel.org>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jyri Sarha <jsarha@ti.com>
-References: <20191018153437.20614-1-bparrot@ti.com>
- <20191018153437.20614-8-bparrot@ti.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <68dbd926-0e37-93f7-e03e-def4b4146d32@xs4all.nl>
-Date:   Mon, 21 Oct 2019 12:38:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728254AbfJUKip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 06:38:45 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:48602 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1727987AbfJUKio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 06:38:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C95CEBD;
+        Mon, 21 Oct 2019 03:38:15 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6DE2B3F718;
+        Mon, 21 Oct 2019 03:38:14 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 11:38:08 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Abhishek Shah <abhishek.shah@broadcom.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        linux-pci@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH 1/1] PCI: iproc: Invalidate PAXB address mapping before
+ programming it
+Message-ID: <20191021103808.GA29528@e121166-lin.cambridge.arm.com>
+References: <20190906035813.24046-1-abhishek.shah@broadcom.com>
+ <20191015164303.GC25674@e121166-lin.cambridge.arm.com>
+ <CAKUFe6bQPMirQ01s-ezaQcUU85J+moFKMO8sLZgvtG2EPowrGA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191018153437.20614-8-bparrot@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfN7I+pVfMgIkvnB5EwZLFJ0MzMPcjgiwikp5JFhEn8sQI3ONVzWrvTz1WXmzHqV32dd4F71xp6LHS8hxF4BjyMGFnGWLPZj+McnqgS56vq8S4Bh7FRGF
- azKBb52I+vN9gcbpc55rg0mhDafJYNqZWU6iBAh8/agM8cKH8aNp+QISlX5n1eMN87PuBq3vCtUkZ35NYta7W7tx59fugU/ozRxMXV5p4T8m7hNNkRgU/5B1
- 2hJ9cl6y+exwcglLLHA6iB9+ZUYaQeJFAohkJVQ5zAyDankwfjUCloFx9XNQTlr1LYEWiJwPDV6VuJ8fw2jlltQ7f42ztQrt0m01A2lwTbo=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKUFe6bQPMirQ01s-ezaQcUU85J+moFKMO8sLZgvtG2EPowrGA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/19 5:34 PM, Benoit Parrot wrote:
-> Apply Errata i913 every time the functional clock is enabled.
-> This should take care of suspend/resume case as well.
+On Thu, Oct 17, 2019 at 07:57:56PM +0530, Abhishek Shah wrote:
+> Hi Lorenzo,
 > 
-> Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> Signed-off-by: Jyri Sarha <jsarha@ti.com>
-> ---
->  drivers/media/platform/ti-vpe/cal.c      | 56 +++++++++++++++++++++++-
->  drivers/media/platform/ti-vpe/cal_regs.h | 27 ++++++++++++
->  2 files changed, 82 insertions(+), 1 deletion(-)
+> Please see my comments inline:
 > 
-> diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-> index 62aeedb705e9..3cbc4dca6de8 100644
-> --- a/drivers/media/platform/ti-vpe/cal.c
-> +++ b/drivers/media/platform/ti-vpe/cal.c
-> @@ -284,6 +284,13 @@ static struct cal_data dra72x_cal_data = {
->  	.flags = 0,
->  };
->  
-> +static struct cal_data dra72x_es1_cal_data = {
-> +	.csi2_phy_core = dra72x_cal_csi_phy,
-> +	.num_csi2_phy = ARRAY_SIZE(dra72x_cal_csi_phy),
-> +
-> +	.flags = DRA72_CAL_PRE_ES2_LDO_DISABLE,
-> +};
-> +
->  /*
->   * there is one cal_dev structure in the driver, it is shared by
->   * all instances.
-> @@ -569,9 +576,52 @@ static void cal_get_hwinfo(struct cal_dev *dev)
->  		hwinfo);
->  }
->  
-> +/*
-> + *   Errata i913: CSI2 LDO Needs to be disabled when module is powered on
-> + *
-> + *   Enabling CSI2 LDO shorts it to core supply. It is crucial the 2 CSI2
-> + *   LDOs on the device are disabled if CSI-2 module is powered on
-> + *   (0x4845 B304 | 0x4845 B384 [28:27] = 0x1) or in ULPS (0x4845 B304
-> + *   | 0x4845 B384 [28:27] = 0x2) mode. Common concerns include: high
-> + *   current draw on the module supply in active mode.
-> + *
-> + *   Errata does not apply when CSI-2 module is powered off
-> + *   (0x4845 B304 | 0x4845 B384 [28:27] = 0x0).
-> + *
-> + * SW Workaround:
-> + *	Set the following register bits to disable the LDO,
-> + *	which is essentially CSI2 REG10 bit 6:
-> + *
-> + *		Core 0:  0x4845 B828 = 0x0000 0040
-> + *		Core 1:  0x4845 B928 = 0x0000 0040
-> + */
-> +static void i913_errata(struct cal_dev *dev, unsigned int port)
-> +{
-> +	u32 reg10 = reg_read(dev->cc[port], CAL_CSI2_PHY_REG10);
-> +
-> +	set_field(&reg10, CAL_CSI2_PHY_REG0_HSCLOCKCONFIG_DISABLE,
-> +		  CAL_CSI2_PHY_REG10_I933_LDO_DISABLE_MASK);
-> +
-> +	cal_dbg(1, dev, "CSI2_%d_REG10 = 0x%08x\n", port, reg10);
-> +	reg_write(dev->cc[port], CAL_CSI2_PHY_REG10, reg10);
-> +}
-> +
->  static inline int cal_runtime_get(struct cal_dev *dev)
-
-I'd drop the 'inline' here. It doesn't seem appropriate anymore since this
-function is now more complex.
-
-Regards,
-
-	Hans
-
->  {
-> -	return pm_runtime_get_sync(&dev->pdev->dev);
-> +	int r;
-> +
-> +	r = pm_runtime_get_sync(&dev->pdev->dev);
-> +
-> +	if (dev->flags & DRA72_CAL_PRE_ES2_LDO_DISABLE) {
-> +		/*
-> +		 * Apply errata on both port eveytime we (re-)enable
-> +		 * the clock
-> +		 */
-> +		i913_errata(dev, 0);
-> +		i913_errata(dev, 1);
-> +	}
-> +
-> +	return r;
->  }
->  
->  static inline void cal_runtime_put(struct cal_dev *dev)
-> @@ -2071,6 +2121,10 @@ static const struct of_device_id cal_of_match[] = {
->  		.compatible = "ti,dra72-cal",
->  		.data = (void *)&dra72x_cal_data,
->  	},
-> +	{
-> +		.compatible = "ti,dra72-pre-es2-cal",
-> +		.data = (void *)&dra72x_es1_cal_data,
-> +	},
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, cal_of_match);
-> diff --git a/drivers/media/platform/ti-vpe/cal_regs.h b/drivers/media/platform/ti-vpe/cal_regs.h
-> index 68cfc922b422..78d6f015c9ea 100644
-> --- a/drivers/media/platform/ti-vpe/cal_regs.h
-> +++ b/drivers/media/platform/ti-vpe/cal_regs.h
-> @@ -10,6 +10,30 @@
->  #ifndef __TI_CAL_REGS_H
->  #define __TI_CAL_REGS_H
->  
-> +/*
-> + * struct cal_dev.flags possibilities
-> + *
-> + * DRA72_CAL_PRE_ES2_LDO_DISABLE:
-> + *   Errata i913: CSI2 LDO Needs to be disabled when module is powered on
-> + *
-> + *   Enabling CSI2 LDO shorts it to core supply. It is crucial the 2 CSI2
-> + *   LDOs on the device are disabled if CSI-2 module is powered on
-> + *   (0x4845 B304 | 0x4845 B384 [28:27] = 0x1) or in ULPS (0x4845 B304
-> + *   | 0x4845 B384 [28:27] = 0x2) mode. Common concerns include: high
-> + *   current draw on the module supply in active mode.
-> + *
-> + *   Errata does not apply when CSI-2 module is powered off
-> + *   (0x4845 B304 | 0x4845 B384 [28:27] = 0x0).
-> + *
-> + * SW Workaround:
-> + *	Set the following register bits to disable the LDO,
-> + *	which is essentially CSI2 REG10 bit 6:
-> + *
-> + *		Core 0:  0x4845 B828 = 0x0000 0040
-> + *		Core 1:  0x4845 B928 = 0x0000 0040
-> + */
-> +#define DRA72_CAL_PRE_ES2_LDO_DISABLE BIT(0)
-> +
->  #define CAL_NUM_CSI2_PORTS		2
->  
->  /* CAL register offsets */
-> @@ -71,6 +95,7 @@
->  #define CAL_CSI2_PHY_REG0		0x000
->  #define CAL_CSI2_PHY_REG1		0x004
->  #define CAL_CSI2_PHY_REG2		0x008
-> +#define CAL_CSI2_PHY_REG10		0x028
->  
->  /* CAL Control Module Core Camerrx Control register offsets */
->  #define CM_CTRL_CORE_CAMERRX_CONTROL	0x000
-> @@ -458,6 +483,8 @@
->  #define CAL_CSI2_PHY_REG1_CLOCK_MISS_DETECTOR_STATUS_SUCCESS		0
->  #define CAL_CSI2_PHY_REG1_RESET_DONE_STATUS_MASK		GENMASK(29, 28)
->  
-> +#define CAL_CSI2_PHY_REG10_I933_LDO_DISABLE_MASK		BIT_MASK(6)
-> +
->  #define CAL_CSI2_PHY_REG2_CCP2_SYNC_PATTERN_MASK		GENMASK(23, 0)
->  #define CAL_CSI2_PHY_REG2_TRIGGER_CMD_RXTRIGESC3_MASK		GENMASK(25, 24)
->  #define CAL_CSI2_PHY_REG2_TRIGGER_CMD_RXTRIGESC2_MASK		GENMASK(27, 26)
+> On Tue, Oct 15, 2019 at 10:13 PM Lorenzo Pieralisi
+> <lorenzo.pieralisi@arm.com> wrote:
+> >
+> > On Fri, Sep 06, 2019 at 09:28:13AM +0530, Abhishek Shah wrote:
+> > > Invalidate PAXB inbound/outbound address mapping each time before
+> > > programming it. This is helpful for the cases where we need to
+> > > reprogram inbound/outbound address mapping without resetting PAXB.
+> > > kexec kernel is one such example.
+> >
+> > This looks like a hack, explain to us please what it actually solves and
+> > why a full reset is not necessary.
+> >
+> The PAXB IP performs address translation(PCI<->AXI address) for both inbound and
+> outbound addresses (amongst other things) based on version of IP being used.
+> It does so using the IMAP/IARR/OMAP/OARR registers.
 > 
+> These registers get programmed as per mappings specified in device tree during
+> PCI driver probe for each RC and do not get reset when kexec/kdump kernel boots.
+> This results in driver assuming valid mappings in place for some mapping windows
+> during kexec/kdump kernel boot, consequently it skips those windows and
+> we run out of available mapping windows, leading to mapping failure.
+> 
+> Normally, we take care of resetting PAXB block in firmware, but in
+> primary kernel to kexec/kdump kernel handover, no firmware is executed
+> in between.  So, we just, by default, invalidate the mapping registers
+> each time before
+> programming them to solve the issue described above..
+> We do not need full reset for handling this.
 
+I see. A simple bitmap to detect which windows are *actually*
+programmed by the current kernel (that can be used by
+
+iproc_pcie_ob_is_valid()
+
+to carry out a valid check) would do as well instead of having to
+invalidate all the OB registers.
+
+It is up to you, let me know and I will merge code accordingly.
+
+Lorenzo
+
+> > > Signed-off-by: Abhishek Shah <abhishek.shah@broadcom.com>
+> > > Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> > > Reviewed-by: Vikram Mysore Prakash <vikram.prakash@broadcom.com>
+> >
+> > Patches are reviewed on public mailing lists, remove tags given
+> > on internal reviews - they are not relevant.
+> >
+> Ok, will remove.
+> 
+> > > ---
+> > >  drivers/pci/controller/pcie-iproc.c | 28 ++++++++++++++++++++++++++++
+> > >  1 file changed, 28 insertions(+)
+> > >
+> > > diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+> > > index e3ca46497470..99a9521ba7ab 100644
+> > > --- a/drivers/pci/controller/pcie-iproc.c
+> > > +++ b/drivers/pci/controller/pcie-iproc.c
+> > > @@ -1245,6 +1245,32 @@ static int iproc_pcie_map_dma_ranges(struct iproc_pcie *pcie)
+> > >       return ret;
+> > >  }
+> > >
+> > > +static void iproc_pcie_invalidate_mapping(struct iproc_pcie *pcie)
+> > > +{
+> > > +     struct iproc_pcie_ib *ib = &pcie->ib;
+> > > +     struct iproc_pcie_ob *ob = &pcie->ob;
+> > > +     int idx;
+> > > +
+> > > +     if (pcie->ep_is_internal)
+> >
+> > What's this check for and why leaving mappings in place is safe for
+> > this category of IPs ?
+> For this category of IP(PAXC), no mappings need to be programmed in
+> the first place.
+> 
+> >
+> > > +             return;
+> > > +
+> > > +     if (pcie->need_ob_cfg) {
+> > > +             /* iterate through all OARR mapping regions */
+> > > +             for (idx = ob->nr_windows - 1; idx >= 0; idx--) {
+> > > +                     iproc_pcie_write_reg(pcie,
+> > > +                                          MAP_REG(IPROC_PCIE_OARR0, idx), 0);
+> > > +             }
+> > > +     }
+> > > +
+> > > +     if (pcie->need_ib_cfg) {
+> > > +             /* iterate through all IARR mapping regions */
+> > > +             for (idx = 0; idx < ib->nr_regions; idx++) {
+> > > +                     iproc_pcie_write_reg(pcie,
+> > > +                                          MAP_REG(IPROC_PCIE_IARR0, idx), 0);
+> > > +             }
+> > > +     }
+> > > +}
+> > > +
+> > >  static int iproce_pcie_get_msi(struct iproc_pcie *pcie,
+> > >                              struct device_node *msi_node,
+> > >                              u64 *msi_addr)
+> > > @@ -1517,6 +1543,8 @@ int iproc_pcie_setup(struct iproc_pcie *pcie, struct list_head *res)
+> > >       iproc_pcie_perst_ctrl(pcie, true);
+> > >       iproc_pcie_perst_ctrl(pcie, false);
+> > >
+> > > +     iproc_pcie_invalidate_mapping(pcie);
+> >
+> > It makes more sense to call this in the .shutdown() method if I
+> > understand what it does.
+> >
+> It would work for kexec kernel, but not for kdump kernel as only for
+> kexec'ed kernel,
+> "device_shutdown" callback is present. We are here taking care of both the cases
+> with this patch.
+> 
+> 
+> Regards,
+> Abhishek
+> 
+> > Lorenzo
+> >
+> > >       if (pcie->need_ob_cfg) {
+> > >               ret = iproc_pcie_map_ranges(pcie, res);
+> > >               if (ret) {
+> > > --
+> > > 2.17.1
+> > >
