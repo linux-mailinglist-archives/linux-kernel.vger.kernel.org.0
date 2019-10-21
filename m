@@ -2,127 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 109B4DF13D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 060C9DF142
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbfJUPXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 11:23:45 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:63214 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbfJUPXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 11:23:45 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46xgQL1gnpz9tyv5;
-        Mon, 21 Oct 2019 17:23:38 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=Skk3cYPI; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 0oLWw6VBcru1; Mon, 21 Oct 2019 17:23:38 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46xgQL0Xwsz9tyv4;
-        Mon, 21 Oct 2019 17:23:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1571671418; bh=nm0UPQIaAz9eXoUIEZbDmlT9s/fOientiagkm7/79CU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Skk3cYPIGnFSMihmQlheRa3z/IOC/tmfS1U8+JeB7nQ26lsXGHlUGpqJpOVPKEDNA
-         x0EFrq7w6gMb5hmhMWXTx2aWBboHBLsJvmzE+nAlOArBN6SErIbFu54Ck7MJXz2f7Q
-         U4HrIEBt2eV5Wo+/INlnh1l+kTjje6HT8WMBBS8I=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 371118BB21;
-        Mon, 21 Oct 2019 17:23:43 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id FqiSqnIpHT5m; Mon, 21 Oct 2019 17:23:43 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B7BFE8B8FE;
-        Mon, 21 Oct 2019 17:23:42 +0200 (CEST)
-Subject: Re: [PATCH] lib/vdso: Make clock_getres() POSIX compliant again
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Andreas Schwab <schwab@linux-m68k.org>
-Cc:     Nathan Lynch <nathanl@linux.ibm.com>,
-        "linuxppc-dev@ozlabs.org" <linuxppc-dev@ozlabs.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-References: <0fc22a08-31d9-e4d1-557e-bf5b482a9a20__6444.28012180782$1571503753$gmane$org@c-s.fr>
- <87v9skcznp.fsf@igel.home> <ed65e4c6-2fe0-2f5c-f667-5a81b19eb073@c-s.fr>
- <87tv83zqt1.fsf@hase.home> <b64c367b-d1e5-bf26-d452-145c0be6e30a@c-s.fr>
- <alpine.DEB.2.21.1910201243580.2090@nanos.tec.linutronix.de>
- <875zkjipra.fsf@igel.home>
- <alpine.DEB.2.21.1910201731070.2090@nanos.tec.linutronix.de>
- <87r237h01a.fsf@igel.home>
- <alpine.DEB.2.21.1910202145160.2090@nanos.tec.linutronix.de>
- <87eez7glre.fsf@igel.home>
- <alpine.DEB.2.21.1910211202260.1904@nanos.tec.linutronix.de>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <fb552fd1-99e4-0685-c41f-3e4e0efc46ec@c-s.fr>
-Date:   Mon, 21 Oct 2019 17:23:42 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1910211202260.1904@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S1729559AbfJUPYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 11:24:16 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37833 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728052AbfJUPYQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 11:24:16 -0400
+Received: by mail-io1-f65.google.com with SMTP id 1so5047085iou.4;
+        Mon, 21 Oct 2019 08:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3P+aBDo0ELSsFt8nCKFHScePQc27b2VSrL87S+QPBsU=;
+        b=inbN/c7buo+FoE6Dk6EAnrg8ORKRrFdixSmEroAn9vkrHOGV2OF7X+KnCKCLDz1FBo
+         Op0aI8hSOoy5A7ciprqD8+Ss8WrJY15q5EQ/YuoWkA96CyKkwV3AwVzPX3k0UDTvj/Vx
+         oMhkhmTj1RTF9zzZwALy4yLUi/N0u+/l+weT/H81oKL2vSYCpjep5E25XQW2rbvC/qXH
+         bI2WnZ2KrzBkf68EBgJEH6LLC5o44cfZf6a2wFWFNhs7tN5XMHPPWSzAeOa8Ltr4yl/7
+         DTChh4sLLiEZvmjbG/2hv0inoeTsnvW3W9acY5hFc7wyH+eyfg7P6gcQNH6ths7h1dxr
+         ydFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3P+aBDo0ELSsFt8nCKFHScePQc27b2VSrL87S+QPBsU=;
+        b=KNSkd3pZIPsSs0k7RERiy8QiTozoQ+rXzUMgfk/YOfw+JUJNMNTRASHZtMiASzs+QE
+         jIiLDF1Q/kZeiRa2GUoygAxG0SRtJcgfbJ+551OA3ZMCcUnjtMLkKzNJlhEcm9QjTXtB
+         ss3eMrStTKPnN/kizNx32ty6OTz23aH6dwKWPq8fW1nHLcmsiwqyT5ftY2M19hxvERVf
+         qHJCTVwi4ilOQwCsO3RjWLwooT69gP1KhqhIKswfSHGlSVcWrI1vSlhDcDW47+WHsv+o
+         00St0aiEIcRYad3mm1nPsHheyUpzpaaC7D+pDd4eLBqKMhDK3oW/3HAGiB6CnM35mYZc
+         no4w==
+X-Gm-Message-State: APjAAAXxUOBg4fNBemXT3Zl5q/uXAwIy6Te2AyOgWEsG8lYn3VLixWPC
+        U6weM3HZwbcartC91HJYUrE=
+X-Google-Smtp-Source: APXvYqwqC3FNN0SgZe4VhLQX6Z6RdX7ParI/Or2Bl+4oBAvPlu2BndYD4qtUpntFEl3ejY72uMnUPg==
+X-Received: by 2002:a5d:8185:: with SMTP id u5mr15715116ion.147.1571671453827;
+        Mon, 21 Oct 2019 08:24:13 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id n123sm3872105iod.62.2019.10.21.08.24.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 08:24:13 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+To:     john.johansen@canonical.com
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] apparmor: Fix use-after-free in aa_audit_rule_init
+Date:   Mon, 21 Oct 2019 10:23:47 -0500
+Message-Id: <20191021152348.3906-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
+References: <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In the implementation of aa_audit_rule_init(), when aa_label_parse()
+fails the allocated memory for rule is released using
+aa_audit_rule_free(). But after this release, the return statement
+tries to access the label field of the rule which results in
+use-after-free. Before releasing the rule, copy errNo and return it
+after release.
 
+Fixes: 52e8c38001d8 ("apparmor: Fix memory leak of rule on error exit path")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+Changes in v2:
+	-- Fix typo in description
+	-- move err definition inside the if statement.
 
-Le 21/10/2019 à 12:07, Thomas Gleixner a écrit :
-> A recent commit removed the NULL pointer check from the clock_getres()
-> implementation causing a test case to fault.
-> 
-> POSIX requires an explicit NULL pointer check for clock_getres() aside of
-> the validity check of the clock_id argument for obscure reasons.
-> 
-> Add it back for both 32bit and 64bit.
-> 
-> Note, this is only a partial revert of the offending commit which does not
-> bring back the broken fallback invocation in the the 32bit compat
-> implementations of clock_getres() and clock_gettime().
-> 
-> Fixes: a9446a906f52 ("lib/vdso/32: Remove inconsistent NULL pointer checks")
-> Reported-by: Andreas Schwab <schwab@linux-m68k.org>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+ security/apparmor/audit.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Tested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+index 5a98661a8b46..334065302fb6 100644
+--- a/security/apparmor/audit.c
++++ b/security/apparmor/audit.c
+@@ -197,8 +197,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+ 	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
+ 				     GFP_KERNEL, true, false);
+ 	if (IS_ERR(rule->label)) {
++		int err = rule->label;
+ 		aa_audit_rule_free(rule);
+-		return PTR_ERR(rule->label);
++		return PTR_ERR(err);
+ 	}
+ 
+ 	*vrule = rule;
+-- 
+2.17.1
 
-> Cc: stable@vger.kernel.org
-> ---
->   lib/vdso/gettimeofday.c |    9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> --- a/lib/vdso/gettimeofday.c
-> +++ b/lib/vdso/gettimeofday.c
-> @@ -214,9 +214,10 @@ int __cvdso_clock_getres_common(clockid_
->   		return -1;
->   	}
->   
-> -	res->tv_sec = 0;
-> -	res->tv_nsec = ns;
-> -
-> +	if (likely(res)) {
-> +		res->tv_sec = 0;
-> +		res->tv_nsec = ns;
-> +	}
->   	return 0;
->   }
->   
-> @@ -245,7 +246,7 @@ static __maybe_unused int
->   		ret = clock_getres_fallback(clock, &ts);
->   #endif
->   
-> -	if (likely(!ret)) {
-> +	if (likely(!ret && res)) {
->   		res->tv_sec = ts.tv_sec;
->   		res->tv_nsec = ts.tv_nsec;
->   	}
-> 
