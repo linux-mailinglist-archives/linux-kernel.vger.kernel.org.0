@@ -2,86 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 828DBDE27B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 05:03:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 107B1DE27E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 05:10:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfJUDDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 23:03:40 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41655 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfJUDDj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 23:03:39 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q7so7458798pfh.8;
-        Sun, 20 Oct 2019 20:03:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ACaqDcqfjllbOB1eFfbSuTOX190d3zV2fq0EmIDPM4U=;
-        b=X10b1fhMwiSeorZ8V1wR5NIeqGJYcicv/C7+OpkEgXE2wDa9RVtCvajbichjKjka5h
-         IPmBIqi/IuENgPtpXFq2Fzft617e2A5nT0ACRRE2iR0eZLE7HG1D8hed/gkEHHsyHHpV
-         px95kaMu7LbavdJbSWQO65537Qsy4sjbbLA9YyZl2tE1jksZY+2YVkkx0vHmN60fIbt3
-         GmluchDnrgxsaFCmsS1QJtRx5y8RCaxsOvTBM8Vvfiwame9JGzjEE0VkOVo5CxW3pUMz
-         dfJw0NPC9FZxlGSXaX2MMPNMMP8L5FrFF0bjV/RcBTViTvBMIBOiUv6Uk7Jha4jF5fno
-         Sewg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ACaqDcqfjllbOB1eFfbSuTOX190d3zV2fq0EmIDPM4U=;
-        b=X9ajzEjWhf+2XE987kitmME0kxdQIUhfQpwLz1PFhbwUEYIWQ45gcfTcSTqfiwAoUE
-         fYp5xaosuK3tZK6I5lqqxHAyJDhmoRy5YYuADSNDw537Tf7xC8s0XYAK8UWej5wkl+Bc
-         v8jcg4x9yw1mLdcnmf5sVwSAQQNMqiT/Kw0CDNpPu0pHw55ptXCC1RP0e6RvoEPvtbv8
-         Aa0DkDWnCJXgEF7ibRaYGxAwLIwtpsmFhF0PM9vEN9bwMX5YRLzMNuyNgPMyMDWMB99O
-         Ile8m7SSe1M6Vy0unnbTLzXS+rH7r/Nnj2s2UcaYDZKpSVGALX20Iuj5pk8QyBJZcym7
-         DPFA==
-X-Gm-Message-State: APjAAAWBQ/7aPLVOv6EibSvBz+DjQC8R6HRX7blJWgMzmplsmLuzY+TY
-        ss8D8cGmMs7SyIfrhKeZo1/88hy/
-X-Google-Smtp-Source: APXvYqzhL73699ehSUCG1hIidByYxGPcyUUn5KVfbvsRFibviSI7p+sR3Qp+tV2Zjr1LlzUUe0VGtg==
-X-Received: by 2002:a63:d44a:: with SMTP id i10mr12835607pgj.105.1571627017192;
-        Sun, 20 Oct 2019 20:03:37 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id h4sm11969550pgg.81.2019.10.20.20.03.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Oct 2019 20:03:36 -0700 (PDT)
-Subject: Re: [PATCH net-next 08/16] net: dsa: use ports list to setup multiple
- master devices
-To:     Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        netdev@vger.kernel.org
-References: <20191020031941.3805884-1-vivien.didelot@gmail.com>
- <20191020031941.3805884-9-vivien.didelot@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <55f1256b-c1b3-f222-9275-c0cc969a59ab@gmail.com>
-Date:   Sun, 20 Oct 2019 20:03:34 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1726874AbfJUDKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 23:10:24 -0400
+Received: from spam01.hygon.cn ([110.188.70.11]:56519 "EHLO spam1.hygon.cn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726770AbfJUDKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 23:10:23 -0400
+Received: from MK-FE.hygon.cn ([172.23.18.61])
+        by spam1.hygon.cn with ESMTP id x9L39Bo0072446;
+        Mon, 21 Oct 2019 11:09:11 +0800 (GMT-8)
+        (envelope-from fanjinke@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-FE.hygon.cn with ESMTP id x9L394ew021535;
+        Mon, 21 Oct 2019 11:09:04 +0800 (GMT-8)
+        (envelope-from fanjinke@hygon.cn)
+Received: from cncheex01.Hygon.cn (172.23.18.10) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Mon, 21 Oct
+ 2019 11:08:50 +0800
+Received: from cncheex01.Hygon.cn ([172.23.18.10]) by cncheex01.Hygon.cn
+ ([172.23.18.10]) with mapi id 15.01.1466.003; Mon, 21 Oct 2019 11:08:50 +0800
+From:   Jinke Fan <fanjinke@hygon.cn>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        Wen Pu <puwen@hygon.cn>,
+        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+        "kim.phillips@amd.com" <kim.phillips@amd.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND RFC PATCH v3] rtc: Fix the AltCentury value on AMD/Hygon
+ platform
+Thread-Topic: [RESEND RFC PATCH v3] rtc: Fix the AltCentury value on AMD/Hygon
+ platform
+Thread-Index: AQHVhsk9kjjnHG3zLEyv1IS/Xg7OVqdj5gmA
+Date:   Mon, 21 Oct 2019 03:08:50 +0000
+Message-ID: <26fee8c9-695d-7703-bac9-5582ab560ae5@hygon.cn>
+References: <20191015080827.11589-1-fanjinke@hygon.cn>
+ <20191019220456.GP3125@piout.net>
+In-Reply-To: <20191019220456.GP3125@piout.net>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.23.18.44]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <34E5FF9BBF6C4C4F9EDB5771EC3556A7@Hygon.cn>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20191020031941.3805884-9-vivien.didelot@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MAIL: spam1.hygon.cn x9L39Bo0072446
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/19/2019 8:19 PM, Vivien Didelot wrote:
-> Now that we have a potential list of CPU ports, make use of it instead
-> of only configuring the master device of an unique CPU port.
-
-Out of your series, this is the only one that has possible side effects
-to existing set-up in that if you had multiple CPU ports defined, today,
-we would stop at the first one, whereas now, we will set them all up. I
-believe this is right way to do it, but have not had time to fire up a
-test on a BCM7278 w/ bcm_sf2 and this patch series to confirm that, will
-do that first thing tomorrow morning.
-
-Great stuff, thanks!
--- 
-Florian
+T24gMjAxOS8xMC8yMCA2OjA0LCBBbGV4YW5kcmUgQmVsbG9uaSB3cm90ZToNCj4gT24gMTUvMTAv
+MjAxOSAxNjowODoyNyswODAwLCBKaW5rZSBGYW4gd3JvdGU6DQo+PiAgIAlzYXZlX2ZyZXFfc2Vs
+ZWN0ID0gQ01PU19SRUFEKFJUQ19GUkVRX1NFTEVDVCk7DQo+PiAtCUNNT1NfV1JJVEUoKHNhdmVf
+ZnJlcV9zZWxlY3R8UlRDX0RJVl9SRVNFVDIpLCBSVENfRlJFUV9TRUxFQ1QpOw0KPj4gKw0KPj4g
+KyNpZmRlZiBDT05GSUdfWDg2DQo+PiArCWlmIChib290X2NwdV9kYXRhLng4Nl92ZW5kb3IgPT0g
+WDg2X1ZFTkRPUl9BTUQgfHwNCj4+ICsJICAgIGJvb3RfY3B1X2RhdGEueDg2X3ZlbmRvciA9PSBY
+ODZfVkVORE9SX0hZR09OKQ0KPj4gKwkJQ01PU19XUklURSgoc2F2ZV9mcmVxX3NlbGVjdCAmICh+
+UlRDX0RWMCkpLCBSVENfRlJFUV9TRUxFQ1QpOw0KPiANCj4gVGhpcyBzaG91bGQgcHJvYmFibHkg
+dXNlIH5SVENfRElWX1JFU0VUMi4NCg0KWWVzLCB+UlRDX0RJVl9SRVNFVDIgY2FuIGFjdHVhbGx5
+IGFjaGlldmUgdGhlIHNhbWUgZWZmZWN0LCBiZWNhdXNlIG9mDQpiaXQ1LWJpdDYgaXMgZGVmaW5l
+ZCBhcyByZXNlcnZlZC4NCg0KPj4gKwllbHNlDQo+PiArCQlDTU9TX1dSSVRFKChzYXZlX2ZyZXFf
+c2VsZWN0IHwgUlRDX0RJVl9SRVNFVDIpLCBSVENfRlJFUV9TRUxFQ1QpOw0KPj4gKyNlbHNlDQo+
+PiArCUNNT1NfV1JJVEUoKHNhdmVfZnJlcV9zZWxlY3QgfCBSVENfRElWX1JFU0VUMiksIFJUQ19G
+UkVRX1NFTEVDVCk7DQo+PiArI2VuZGlmDQo+IA0KPiBBbHNvLCBsYXRlciB5b3UgaGF2ZToNCj4g
+DQo+IENNT1NfV1JJVEUoc2F2ZV9mcmVxX3NlbGVjdCwgUlRDX0ZSRVFfU0VMRUNUKTsNCj4gDQo+
+IFRoaXMgbWF5IHdyaXRlIGJpdDQgYWdhaW4gd2hpY2ggd291bGQgbWFrZSBtYzE0NjgxOF9nZXRf
+dGltZSBmYWlsIHNvIHlvdQ0KPiBwcm9iYWJseSB3YW50IHRvIHVwZGF0ZSBzYXZlX2ZyZXFfc2Vs
+ZWN0Lg0KDQpZZXMsIHRoYW5rcyBmb3IgcmVtaW5kaW5nIG1lLg0KDQotLSANCkJlc3QgUmVnYXJk
+cywNCkppbmtlIEZhbi4=
