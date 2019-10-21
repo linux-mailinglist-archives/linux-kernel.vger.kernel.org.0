@@ -2,140 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9849DE622
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE15DE628
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:20:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfJUITu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 04:19:50 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:58115 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbfJUITu (ORCPT
+        id S1727707AbfJUIU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 04:20:58 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46046 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbfJUIU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 04:19:50 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iMSuo-0001Aa-1T; Mon, 21 Oct 2019 10:19:46 +0200
-Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iMSun-0008Pf-Bn; Mon, 21 Oct 2019 10:19:45 +0200
-Date:   Mon, 21 Oct 2019 10:19:45 +0200
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Robert Jones <rjones@gateworks.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mon, 21 Oct 2019 04:20:57 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v8so8736702lfa.12;
+        Mon, 21 Oct 2019 01:20:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=5JzKSpnIK5rSjQFv+xBtJ5cRm0LAw3wIvKLByt2f/kI=;
+        b=QQro1XbO4awUyGIP6YDCeU8B9aDmE+UCgs8wgUZGMLtLgWPlpnGinM3IZSDAJXr3dU
+         zxe+ra5fgBuMtDANQxH1Lmseq/7SOfznON+l98+vY0c38crblBvxev6mhiuafZh/xl7T
+         PCJ4wUfTmUxlsOK93GxcjnHmYb8F7UBvIaV96VbxCF+geUBb7WWLZaJpuSQlKROXixcv
+         vxijcFL9A+Igg91lW1acupgTRVcQOjURXc8FAr2cxyRkRbWvD4pHcDBW84OXBvOCmcyK
+         ABgILBH9qlbGAwZr9tYAJqV+oRsystOutOKABizo5+MQ1J9k8y8Nuf9Hh+iDsWyaWcLb
+         VzMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5JzKSpnIK5rSjQFv+xBtJ5cRm0LAw3wIvKLByt2f/kI=;
+        b=hRcX4nWUftaR9dPwqok6FCn+AUfIL+EqbAci3nvpPtp8NOXkHtB78bz5Vpm1dHAOU/
+         o6piOa3wfHcEsX5S3GOvKDFpaY3x50O0AFBAnV7hXSivs16x7wzpQdkzviMFmR9DTTlS
+         V+N16mSLZOJi06NyeVA9G96MoSM76FZPfVMbSzgziPTiZ6E9m2LvCcy8FdYPAFb2HN/t
+         iCdzK2L/joszQXHlBjfjDWRp5YeBR+/utbivqmSQF0uqfTsmYV53kcbIl8ZL4heyeUk4
+         GWW4AjA5eFNwuD8z30xMwye5HxD+GaxXesDUfLwBSSQWldVvrmDFuRypcxaJrfIwWYZN
+         xOnA==
+X-Gm-Message-State: APjAAAVsSUc1x85XYN2rpx2bKuJ8U1KnjUt4I1dnbrPdq+eNaXncXiDF
+        fSl8Us9z1V0QBkfv2R2chK4=
+X-Google-Smtp-Source: APXvYqy4KwjOgJwK4T+IIgoUkEcxcswQs8VRoMux4nTdEMlg8h921V+P9V5ED2tELeaDOb47y/wq/g==
+X-Received: by 2002:ac2:4566:: with SMTP id k6mr13856386lfm.132.1571646055615;
+        Mon, 21 Oct 2019 01:20:55 -0700 (PDT)
+Received: from localhost.localdomain ([94.204.252.234])
+        by smtp.gmail.com with ESMTPSA id m17sm16494781lje.0.2019.10.21.01.20.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 21 Oct 2019 01:20:54 -0700 (PDT)
+From:   Christian Hewitt <christianshewitt@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dt: add lsm9ds1 iio imu/magn support to gw553x
-Message-ID: <20191021081945.o7knknxacm6uvd3c@pengutronix.de>
-References: <20191018232124.4126-1-rjones@gateworks.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018232124.4126-1-rjones@gateworks.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 10:16:17 up 156 days, 14:34, 97 users,  load average: 0.07, 0.08,
- 0.08
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Christian Hewitt <christianshewitt@gmail.com>
+Subject: [PATCH v2] soc: amlogic: meson-gx-socinfo: Fix S905D3 ID for VIM3L
+Date:   Mon, 21 Oct 2019 12:20:04 +0400
+Message-Id: <1571646004-21269-1-git-send-email-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robert,
+Chip on the board is S905D3 not S905X3:
 
-same here, don't name it 'ARM: dt: ...' instead name it 'ARM: dts: imx:
-ventana: ..' or 'ARM: dts: imx: imx6qdl-gw553x: ..'.
+[    0.098998] soc soc0: Amlogic Meson SM1 (S905D3) Revision 2b:c (b0:2) Detected
 
-On 19-10-18 16:21, Robert Jones wrote:
-> Add one node for the accel/gyro i2c device and another for the separate
-> magnetometer device in the lsm9ds1.
-> 
-> Signed-off-by: Robert Jones <rjones@gateworks.com>
-> ---
->  arch/arm/boot/dts/imx6qdl-gw553x.dtsi | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx6qdl-gw553x.dtsi b/arch/arm/boot/dts/imx6qdl-gw553x.dtsi
-> index a106689..55e6922 100644
-> --- a/arch/arm/boot/dts/imx6qdl-gw553x.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-gw553x.dtsi
-> @@ -173,6 +173,25 @@
->  	pinctrl-0 = <&pinctrl_i2c2>;
->  	status = "okay";
->  
-> +	lsm9ds1_ag@6a {
-> +		compatible = "st,lsm9ds1-imu";
+Change from v1: use 0xf0 mask instead of 0xf2 as advised by Neil Armstrong.
 
-Didn't found this compatible string.
+Fixes: 1d7c541b8a5b ("soc: amlogic: meson-gx-socinfo: Add S905X3 ID for VIM3L")
 
-> +		reg = <0x6a>;
-> +		st,drdy-int-pin = <1>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_acc_gyro>;
-> +		interrupt-parent = <&gpio7>;
-> +		interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> +
-> +	lsm9ds1_m@1c {
-> +		compatible = "st,lsm9ds1-magn";
-> +		reg = <0x1c>;
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ drivers/soc/amlogic/meson-gx-socinfo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Nodes are sorted according their i2c-addresses.
-
-Regards,
-  Marco
-
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_mag>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <2 IRQ_TYPE_EDGE_RISING>;
-> +	};
-> +
->  	ltc3676: pmic@3c {
->  		compatible = "lltc,ltc3676";
->  		reg = <0x3c>;
-> @@ -462,6 +481,18 @@
->  		>;
->  	};
->  
-> +	pinctrl_acc_gyro: acc_gyrogrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_GPIO_18__GPIO7_IO13		0x1b0b0
-> +		>;
-> +	};
-> +
-> +	pinctrl_mag: maggrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_GPIO_2__GPIO1_IO02		0x1b0b0
-> +		>;
-> +	};
-> +
->  	pinctrl_pps: ppsgrp {
->  		fsl,pins = <
->  			MX6QDL_PAD_ENET_RXD1__GPIO1_IO26	0x1b0b1
-> -- 
-> 2.9.2
-> 
-> 
-> 
-
+diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
+index 87ed558..01fc0d2 100644
+--- a/drivers/soc/amlogic/meson-gx-socinfo.c
++++ b/drivers/soc/amlogic/meson-gx-socinfo.c
+@@ -69,7 +69,7 @@ static const struct meson_gx_package_id {
+ 	{ "S922X", 0x29, 0x40, 0xf0 },
+ 	{ "A311D", 0x29, 0x10, 0xf0 },
+ 	{ "S905X3", 0x2b, 0x5, 0xf },
+-	{ "S905X3", 0x2b, 0xb0, 0xf2 },
++	{ "S905D3", 0x2b, 0xb0, 0xf0 },
+ 	{ "A113L", 0x2c, 0x0, 0xf8 },
+ };
+ 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.7.4
+
