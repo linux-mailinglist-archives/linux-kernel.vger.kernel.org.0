@@ -2,71 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 396ABDF23A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:59:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DBB3DF26B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:07:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729846AbfJUP7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 11:59:21 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31577 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726847AbfJUP7T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 11:59:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571673558;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gB3h1+rX6SwZqtoY3Kw85+CkKWUkDR1tjhYDoTIgQqI=;
-        b=Yr/Q7ZL8MJAVMiFbIi8tp9ibze5U2B/hU0douP+WMf2A8OP1GFsJggyWojLWSuE84t1C1T
-        cFZ+6VubAgOafi5tZVkOLsbzjDLsEWpJI/eTtwCRFVdpzoMNLcFJM2sGt27wobMBuyR7+D
-        Dr78NMssfcAoevfbQxOXDn9Ada7w68I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-304-ZRM1CcYIMe2Hn_ko3VmGjA-1; Mon, 21 Oct 2019 11:59:16 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7CBA01005500;
-        Mon, 21 Oct 2019 15:59:15 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BD4756012E;
-        Mon, 21 Oct 2019 15:59:13 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <000000000000830fe50595115344@google.com>
-References: <000000000000830fe50595115344@google.com>
-To:     syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>
-Cc:     dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: WARNING: refcount bug in find_key_to_update
+        id S1729832AbfJUQHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 12:07:07 -0400
+Received: from ufsin32.ru ([109.198.192.98]:56108 "EHLO mx.ufsin32.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726672AbfJUQHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 12:07:06 -0400
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        by mx.ufsin32.ru (Postfix) with SMTP id 98EB5423F7;
+        Mon, 21 Oct 2019 13:59:19 +0300 (GMT-3)
+Received: from [66.64.98.122]
+        by 127.0.0.1 with SMTP;
+        Mon, 21 Oct 2019 12:58:35 +0200
+Message-ID: <gaak0-$j6534$a94n63@239qq>
+From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
+To:     sangamipl@gmail.com
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Date:   Mon, 21 Oct 19 12:58:35 GMT
+X-Mailer: Microsoft Outlook IMO, Build 9.0.2416 (9.0.2910.0)
 MIME-Version: 1.0
-Content-ID: <8508.1571673553.1@warthog.procyon.org.uk>
-Date:   Mon, 21 Oct 2019 16:59:13 +0100
-Message-ID: <8509.1571673553@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: ZRM1CcYIMe2Hn_ko3VmGjA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/alternative;
+        boundary="9_B.__FCB."
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com> wrote:
 
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11c8adab600=
-000
+--9_B.__FCB.
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-How do I tell what's been passed into the add_key for the encrypted key?
+Greetings
 
-David
+My name is Barrister Hans Erich.
+
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
+
+Your full names ---------
+
+
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+
+--9_B.__FCB.--
 
