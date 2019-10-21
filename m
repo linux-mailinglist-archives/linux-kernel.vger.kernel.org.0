@@ -2,104 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBB48DE991
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 12:35:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3BE4DE9CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 12:38:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbfJUKfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 06:35:41 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38759 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727517AbfJUKfk (ORCPT
+        id S1728089AbfJUKhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 06:37:55 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54916 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726725AbfJUKhz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 06:35:40 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v9so2074018wrq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 03:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kCC2K+1Phv+hZCvepsAaxz4dYzO4ZQaseMmOK9Alp0E=;
-        b=t3cX8WuPKhyW/BpGMRXewuy78R7w/7zHRJAn8p3dQKQhukExp9KXRyiHQyZRTZgcFr
-         0/pl5MrCraK5WBczSBLwEjUlqJTKVoS/g+6NITgaiFUHaA7IbHUBno7wgha+PhK8Ezmj
-         5mJSHCJmisfZGWC1TVJG+/bomIXUOeCqAXrKt+0YDkAEWgYrCiIUXsZ8c30JsZpVc/uW
-         2F25TYKY7ZnPOQ/WQe6pOp9mAEwYaNyQVo2o5NzhBoPbgVKO/CdBduSVc9MBnP5TSM6f
-         VLUNnsx7qaQ2y3zEpnuF8EUCKoY7Wl+T/mPi5QVjgndd4zTXy2aXSO8Y1CRecvEAspBy
-         D7kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kCC2K+1Phv+hZCvepsAaxz4dYzO4ZQaseMmOK9Alp0E=;
-        b=g4pHs8V3Q2rs0hR/nweF4kRHxUXefJtRhqt53WunmrvEyMGFy0RC3R3mwlJs7ssk9a
-         8Q66fAu5v79iAAIswb6c0AdMsddAqWInyW4dE8EqhfJZUpFpvP5Cov54zVbgR2NBAfZf
-         v6T0EkJQhm1g789va5/gA3ic6ksuZYpYQFpyJyD48hx9UHq+LUb4s7XjEHnyq+aHaaka
-         gMLL+hUUgv9v5izHh+IRq6CvOufWU5Pq6gPEAQNy1Yc4p9decOMLPWcoWq9MwL+uUS7R
-         gMcbYvK9ZgZp4jtqqJ1icUkVY1xIaZC5b6ePwW5GKMUgwhSoFFn3Vb6Ev191Ha8QYoQ6
-         fbtw==
-X-Gm-Message-State: APjAAAWNsCKMsJayx/hCWRjMM3MQnkzvYJehUPQz4U5wUCI9YtsrBNGz
-        dqgPHARHFCRI4wq63ThhIyAIxg==
-X-Google-Smtp-Source: APXvYqwzq4W2hoqMGfXD+SnL4v4XRwsU52eKiLQU7E1OuYqmacWEauu7fUOpM3T6jtW1TY+PYeZ8Yw==
-X-Received: by 2002:adf:92a5:: with SMTP id 34mr18183433wrn.337.1571654139130;
-        Mon, 21 Oct 2019 03:35:39 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id c18sm13475121wrv.10.2019.10.21.03.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 03:35:38 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 11:35:36 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v6 2/9] backlight: gpio: remove stray newline
-Message-ID: <20191021103536.svhda5kmffhm5hjd@holly.lan>
-References: <20191019083556.19466-1-brgl@bgdev.pl>
- <20191019083556.19466-3-brgl@bgdev.pl>
+        Mon, 21 Oct 2019 06:37:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SssMt3eW+z2CI/cFwTW6F4urVB4aoQtUGwnCYEoR8S8=; b=S5YUav6lX2y7FicsXrF472bcD
+        7uN1twe01t6mQLAE4MQeWkDKroNbo6lU9ZfaVYxdnvPaepkYXyJZyrz1tvP4/TY7JVUVlVpB5L4hz
+        nDR3rFT3w6T6N986DiM6TfRKFUEUbDB7z8F/OotjqsozHXwX6m2PrX7L1jTUbHjEv/HpiagBRBZ/f
+        w3tEnXdNNOHhcpbXG74zBjgzIb5wBO/YcFgCizHQyvofDlQPSc03nygNQCGnvcgm/vmjdRJVbtdCT
+        Q3p96IA1hI4f73xMh6v4VPdoCLTnfpUUnF6iEmtNSA4qXPQKKhfQ8YOZyju+uOz1IQxTL1dGJI3EJ
+        tAYDkFjzQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iMV4O-0002pL-2t; Mon, 21 Oct 2019 10:37:48 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 19247300EBF;
+        Mon, 21 Oct 2019 12:36:48 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 27D942022BA17; Mon, 21 Oct 2019 12:37:45 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 12:37:45 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Ian Rogers <irogers@google.com>,
+        Song Liu <songliubraving@fb.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 4/4] perf/core,x86: synchronize PMU task contexts on
+ optimized context switches
+Message-ID: <20191021103745.GF1800@hirez.programming.kicks-ass.net>
+References: <0b20a07f-d074-d3da-7551-c9a4a94fe8e3@linux.intel.com>
+ <f3253a36-c174-8051-a462-9728ef721766@linux.intel.com>
+ <20191021075942.GA8809@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191019083556.19466-3-brgl@bgdev.pl>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191021075942.GA8809@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 19, 2019 at 10:35:49AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Oct 21, 2019 at 09:59:42AM +0200, Ingo Molnar wrote:
 > 
-> Remove a double newline from the driver.
+> * Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > +			/*
+> > +			 * PMU specific parts of task perf context may require
+> > +			 * additional synchronization, at least for proper Intel
+> > +			 * LBR callstack data profiling;
+> > +			 */
+> > +			pmu->sync_task_ctx(ctx->task_ctx_data,
+> > +					   next_ctx->task_ctx_data);
+> 
+> Firstly, I'm pretty sure you never run this on a CPU where 
+> pmu->sync_task_ctx is NULL, right? ;-)
+> 
+> Secondly, even on Intel CPUs in many cases we'll just call into a ~2 deep 
+> function pointer based call hierarchy, just to find that nothing needs to 
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+See prototype here for getting rid of at least one layer of indirect
+calls:
 
-(wow! that one was easy ;-) )
+  https://lkml.kernel.org/r/20191007083831.26880701.6@infradead.org
 
-> ---
->  drivers/video/backlight/gpio_backlight.c | 1 -
->  1 file changed, 1 deletion(-)
+> be done, because there's no LBR call stack maintained:
 > 
-> diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-> index 7e1990199fae..3955b513f2f8 100644
-> --- a/drivers/video/backlight/gpio_backlight.c
-> +++ b/drivers/video/backlight/gpio_backlight.c
-> @@ -91,7 +91,6 @@ static int gpio_backlight_initial_power_state(struct gpio_backlight *gbl)
->  	return FB_BLANK_UNBLANK;
->  }
->  
-> -
->  static int gpio_backlight_probe(struct platform_device *pdev)
->  {
->  	struct gpio_backlight_platform_data *pdata =
-> -- 
-> 2.23.0
+> +       if (!one || !another)
+> +               return;
 > 
+> So while it's technically a layering violation, it might make sense to 
+> elevate this check to the generic layer and say that synchronization 
+> calls by the core layer will always provide two valid pointers?
+
+Alternatively we can write the thing like:
+
+	if (pmu->swap_task_ctx)
+		pmu->swap_task_ctx(ctx, next_ctx)
+	else
+		swap(ctx->task_ctx_data, next_ctx->task_ctx_data);
+
+
