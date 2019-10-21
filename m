@@ -2,171 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C352DEDFD
+	by mail.lfdr.de (Postfix) with ESMTP id AA90FDEDFE
 	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbfJUNkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:40:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42258 "EHLO mail.kernel.org"
+        id S1729522AbfJUNkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:40:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728083AbfJUNk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:40:28 -0400
+        id S1728979AbfJUNkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:40:31 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAC3520679;
-        Mon, 21 Oct 2019 13:40:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6EB821929;
+        Mon, 21 Oct 2019 13:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571665227;
-        bh=WYwzIakmuWo0+t/g5LtHL3sK58VgM7KPWY9apQ5mMI0=;
+        s=default; t=1571665230;
+        bh=CrHWuSYieCnWgLn1FrU4vSBdhvAzrmV0vb7wsK1WyzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vtp+z5BDT9QlBclJiduSKN63Sz35dbBD/rx7hHo0rtKLZWQkYtKgZvAhoB82Te7b+
-         EToKEi6t/3OZ0LHWFzt/9aMhrukhOzoWSfrFWCAiaAdkqzl+JMgSrbYjH2rwL/J9+A
-         C2J2QvNBE0vQkAxK78wYoVlydyAuAVJp8CFkeQOY=
+        b=V7GI2KPox2MqxjFWfsb+lmVCJi6fneqiX9TGx81a0xvKP1HUZdeuoQz/0RyAKzvbP
+         9/e0dhAQmwUH8jR5ii5MAIqbVJEOy3bVdCZjjaLrTvoLIo5XaNmVa+35lYVWFZYVP0
+         28nMCikdAobXL0WB9x8Wy2Tc9+n6c444LZZ94h2c=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>
-Subject: [PATCH 33/57] perf trace: Initialize evsel_trace->fmt for syscalls:sys_enter_* tracepoints
-Date:   Mon, 21 Oct 2019 10:38:10 -0300
-Message-Id: <20191021133834.25998-34-acme@kernel.org>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        linux-trace-devel@vger.kernel.org
+Subject: [PATCH 34/57] perf scripting engines: Iterate on tep event arrays directly
+Date:   Mon, 21 Oct 2019 10:38:11 -0300
+Message-Id: <20191021133834.25998-35-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191021133834.25998-1-acme@kernel.org>
 References: <20191021133834.25998-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-From the syscall_fmts->arg entries for formatting strace-like syscalls.
+Instead of calling a useless (and broken) helper function to get the
+next event of a tep event array, just get the array directly and iterate
+over it.
 
-This is when resolving the string "whence" on a filter expression for
-the syscalls:sys_enter_lseek:
+Note, the broken part was from trace_find_next_event() which after this
+will no longer be used, and can be removed.
 
-  Breakpoint 3, perf_evsel__syscall_arg_fmt (evsel=0xc91ed0, arg=0x7fffffff7cd0 "whence") at builtin-trace.c:3626
-  3626	{
-  (gdb) n
-  3628		struct syscall_arg_fmt *fmt = __evsel__syscall_arg_fmt(evsel);
-  (gdb) n
-  3630		if (evsel->tp_format == NULL || fmt == NULL)
-  (gdb) n
-  3633		for (field = evsel->tp_format->format.fields; field; field = field->next, ++fmt)
-  (gdb) n
-  3634			if (strcmp(field->name, arg) == 0)
-  (gdb) p field->name
-  $3 = 0xc945e0 "__syscall_nr"
-  (gdb) n
-  3633		for (field = evsel->tp_format->format.fields; field; field = field->next, ++fmt)
-  (gdb) p *fmt
-  $4 = {scnprintf = 0x0, strtoul = 0x0, mask_val = 0x0, parm = 0x0, name = 0x0, nr_entries = 0, show_zero = false}
-  (gdb) n
-  3634			if (strcmp(field->name, arg) == 0)
-  (gdb) p field->name
-  $5 = 0xc94690 "fd"
-  (gdb) n
-  3633		for (field = evsel->tp_format->format.fields; field; field = field->next, ++fmt)
-  (gdb) n
-  3634			if (strcmp(field->name, arg) == 0)
-  (gdb) n
-  3633		for (field = evsel->tp_format->format.fields; field; field = field->next, ++fmt)
-  (gdb) n
-  3634			if (strcmp(field->name, arg) == 0)
-  (gdb) p *fmt
-  $9 = {scnprintf = 0x489be2 <syscall_arg__scnprintf_strarray>, strtoul = 0x0, mask_val = 0x0, parm = 0xa2da80 <strarray.whences>, name = 0x0,
-    nr_entries = 0, show_zero = false}
-  (gdb) p field->name
-  $10 = 0xc947b0 "whence"
-  (gdb) p fmt->parm
-  $11 = (void *) 0xa2da80 <strarray.whences>
-  (gdb) p *(struct strarray *)fmt->parm
-  $12 = {offset = 0, nr_entries = 5, prefix = 0x724d37 "SEEK_", entries = 0xa2da40 <whences>}
-  (gdb) p (struct strarray *)fmt->parm)->entries
-  Junk after end of expression.
-  (gdb) p ((struct strarray *)fmt->parm)->entries
-  $13 = (const char **) 0xa2da40 <whences>
-  (gdb) p ((struct strarray *)fmt->parm)->entries[0]
-  $14 = 0x724d21 "SET"
-  (gdb) p ((struct strarray *)fmt->parm)->entries[1]
-  $15 = 0x724d25 "CUR"
-  (gdb) p ((struct strarray *)fmt->parm)->entries[2]
-  $16 = 0x724d29 "END"
-  (gdb) p ((struct strarray *)fmt->parm)->entries[2]
-  $17 = 0x724d29 "END"
-  (gdb) p ((struct strarray *)fmt->parm)->entries[3]
-  $18 = 0x724d2d "DATA"
-  (gdb) p ((struct strarray *)fmt->parm)->entries[4]
-  $19 = 0x724d32 "HOLE"
-  (gdb)
+Committer notes:
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+This fixes a segfault when generating python scripts from perf.data
+files with multiple tracepoint events, i.e. the following use case is
+fixed by this patch:
+
+  # perf record -e sched:* sleep 1
+  [ perf record: Woken up 31 times to write data ]
+  [ perf record: Captured and wrote 0.031 MB perf.data (9 samples) ]
+  # perf script -g python
+  Segmentation fault (core dumped)
+  #
+
+Reported-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-lc8h9jgvbnboe0g7ic8tra1y@git.kernel.org
+Cc: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Cc: linux-trace-devel@vger.kernel.org
+Link: http://lkml.kernel.org/r/20191017153733.630cd5eb@gandalf.local.home
+Link: http://lore.kernel.org/lkml/20191017210636.061448713@goodmis.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ tools/perf/util/scripting-engines/trace-event-perl.c   | 8 ++++++--
+ tools/perf/util/scripting-engines/trace-event-python.c | 9 +++++++--
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 5792278065f6..3502417dc7f2 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -4366,6 +4366,25 @@ static void evlist__set_default_evsel_handler(struct evlist *evlist, void *handl
- 	}
- }
+diff --git a/tools/perf/util/scripting-engines/trace-event-perl.c b/tools/perf/util/scripting-engines/trace-event-perl.c
+index 15961854ba67..741f040648b5 100644
+--- a/tools/perf/util/scripting-engines/trace-event-perl.c
++++ b/tools/perf/util/scripting-engines/trace-event-perl.c
+@@ -539,10 +539,11 @@ static int perl_stop_script(void)
  
-+static void evsel__set_syscall_arg_fmt(struct evsel *evsel, const char *name)
-+{
-+	struct syscall_arg_fmt *fmt = evsel__syscall_arg_fmt(evsel);
-+
-+	if (fmt) {
-+		struct syscall_fmt *scfmt = syscall_fmt__find(name);
-+
-+		if (scfmt) {
-+			int skip = 0;
-+
-+			if (strcmp(evsel->tp_format->format.fields->name, "__syscall_nr") == 0 ||
-+			    strcmp(evsel->tp_format->format.fields->name, "nr") == 0)
-+				++skip;
-+
-+			memcpy(fmt + skip, scfmt->arg, (evsel->tp_format->format.nr_fields - skip) * sizeof(*fmt));
-+		}
-+	}
-+}
-+
- static int evlist__set_syscall_tp_fields(struct evlist *evlist)
+ static int perl_generate_script(struct tep_handle *pevent, const char *outfile)
  {
- 	struct evsel *evsel;
-@@ -4387,11 +4406,15 @@ static int evlist__set_syscall_tp_fields(struct evlist *evlist)
++	int i, not_first, count, nr_events;
++	struct tep_event **all_events;
+ 	struct tep_event *event = NULL;
+ 	struct tep_format_field *f;
+ 	char fname[PATH_MAX];
+-	int not_first, count;
+ 	FILE *ofp;
  
- 			if (__tp_field__init_ptr(&sc->args, sc->id.offset + sizeof(u64)))
- 				return -1;
+ 	sprintf(fname, "%s.pl", outfile);
+@@ -603,8 +604,11 @@ sub print_backtrace\n\
+ }\n\n\
+ ");
+ 
++	nr_events = tep_get_events_count(pevent);
++	all_events = tep_list_events(pevent, TEP_EVENT_SORT_ID);
+ 
+-	while ((event = trace_find_next_event(pevent, event))) {
++	for (i = 0; all_events && i < nr_events; i++) {
++		event = all_events[i];
+ 		fprintf(ofp, "sub %s::%s\n{\n", event->system, event->name);
+ 		fprintf(ofp, "\tmy (");
+ 
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index 5d341efc3237..93c03b39cd9c 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -1687,10 +1687,11 @@ static int python_stop_script(void)
+ 
+ static int python_generate_script(struct tep_handle *pevent, const char *outfile)
+ {
++	int i, not_first, count, nr_events;
++	struct tep_event **all_events;
+ 	struct tep_event *event = NULL;
+ 	struct tep_format_field *f;
+ 	char fname[PATH_MAX];
+-	int not_first, count;
+ 	FILE *ofp;
+ 
+ 	sprintf(fname, "%s.py", outfile);
+@@ -1735,7 +1736,11 @@ static int python_generate_script(struct tep_handle *pevent, const char *outfile
+ 	fprintf(ofp, "def trace_end():\n");
+ 	fprintf(ofp, "\tprint(\"in trace_end\")\n\n");
+ 
+-	while ((event = trace_find_next_event(pevent, event))) {
++	nr_events = tep_get_events_count(pevent);
++	all_events = tep_list_events(pevent, TEP_EVENT_SORT_ID);
 +
-+			evsel__set_syscall_arg_fmt(evsel, evsel->tp_format->name + sizeof("sys_enter_") - 1);
- 		} else if (!strncmp(evsel->tp_format->name, "sys_exit_", 9)) {
- 			struct syscall_tp *sc = __evsel__syscall_tp(evsel);
- 
- 			if (__tp_field__init_uint(&sc->ret, sizeof(u64), sc->id.offset + sizeof(u64), evsel->needs_swap))
- 				return -1;
-+
-+			evsel__set_syscall_arg_fmt(evsel, evsel->tp_format->name + sizeof("sys_exit_") - 1);
- 		}
- 	}
- 
++	for (i = 0; all_events && i < nr_events; i++) {
++		event = all_events[i];
+ 		fprintf(ofp, "def %s__%s(", event->system, event->name);
+ 		fprintf(ofp, "event_name, ");
+ 		fprintf(ofp, "context, ");
 -- 
 2.21.0
 
