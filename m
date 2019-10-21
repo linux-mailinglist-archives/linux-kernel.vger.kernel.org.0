@@ -2,121 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C819DE94C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 12:22:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18BA5DE956
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 12:22:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbfJUKVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 06:21:17 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54688 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727110AbfJUKVR (ORCPT
+        id S1728191AbfJUKWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 06:22:07 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:32996 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727968AbfJUKWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 06:21:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gctGGf6gN1uE/p3OgM+7fZIiQaTfbewCECnuMIfvjcw=; b=Fa4SCjViGkrQdUoDl9oUwXSPh
-        ic8/hDm1Xqrgx1fY/lUf2GeCtZDRn5Tmwk2rAw0yGkuC9skapY+0zmbR0a2GAuTOxs81iDMx5Lc7O
-        B2ofzcQ/Tt0fct4dL1AEyxWH1E0dINHoWkkx/7yAE+lFS5M1dnKRaqfYa44tHO2JbR+SNBGBqECWb
-        8njBKNMhBL9mcDHKAYwF+DAJ/W17vhd+qBe4XS5BIgeVj/eQ4/ur+HDXqsoTK4whS2+XtFNDf/qbC
-        NZu1rv2Es/eN6UHl8Q8tkUjHDimkBokOogkGgr2GvtkDkTolw+oPpq+fINGjpIOiRmFaj5w9v/DBR
-        AXvp+nu1Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iMUo9-0002Yt-5b; Mon, 21 Oct 2019 10:21:01 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1D48E300EBF;
-        Mon, 21 Oct 2019 12:20:01 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1348B202411A1; Mon, 21 Oct 2019 12:20:59 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 12:20:59 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Stephane Eranian <eranian@google.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@elte.hu, acme@redhat.com,
-        jolsa@redhat.com, kan.liang@intel.com, songliubraving@fb.com,
-        irogers@google.com
-Subject: Re: [PATCH] perf/core: fix multiplexing event scheduling issue
-Message-ID: <20191021102059.GD1800@hirez.programming.kicks-ass.net>
-References: <20191018002746.149200-1-eranian@google.com>
+        Mon, 21 Oct 2019 06:22:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571653325;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WOCT7wly6KfhuOArDnM97rOlSlf5dicr3quLe5triaA=;
+        b=YwX8sdlK51KtNkNSfj3iFY1teH25gy60xd+NFVxdg8LD50oRUsZFMqbGKegjjq4LP8524l
+        59UNgMAW9Rq9ZLV+OxTGO/hNMBzUvSHkkpQuNLQ/eLdxIF03U2xHBMnLcPbpX4UnP9dHJt
+        Cu4JK+L4SaHJiF8+Sf89U0fA6uvPo6w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-322-mVNupHU-OimsifvQ82L67A-1; Mon, 21 Oct 2019 06:22:02 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 14CFC1005500;
+        Mon, 21 Oct 2019 10:22:01 +0000 (UTC)
+Received: from [10.72.12.22] (ovpn-12-22.pek2.redhat.com [10.72.12.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C574104F1;
+        Mon, 21 Oct 2019 10:21:51 +0000 (UTC)
+Subject: Re: [RFC 1/2] vhost: IFC VF hardware operation layer
+To:     "Zhu, Lingshan" <lingshan.zhu@intel.com>, mst@redhat.com,
+        alex.williamson@redhat.com
+Cc:     linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, tiwei.bie@intel.com, jason.zeng@intel.com,
+        zhiyuan.lv@intel.com
+References: <20191016013050.3918-1-lingshan.zhu@intel.com>
+ <20191016013050.3918-2-lingshan.zhu@intel.com>
+ <2d711b6b-3bdc-afaa-8110-beebd6c5a896@redhat.com>
+ <32d4c431-24f2-f9f0-8573-268abc7bb71c@intel.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <0fe6eb76-85a7-a1cb-5b11-8edb01dd65c7@redhat.com>
+Date:   Mon, 21 Oct 2019 18:21:50 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018002746.149200-1-eranian@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <32d4c431-24f2-f9f0-8573-268abc7bb71c@intel.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: mVNupHU-OimsifvQ82L67A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 05:27:46PM -0700, Stephane Eranian wrote:
-> This patch complements the following commit:
-> 7fa343b7fdc4 ("perf/core: Fix corner case in perf_rotate_context()")
-> 
-> The fix from Song addresses the consequences of the problem but
-> not the cause. This patch fixes the causes and can sit on top of
-> Song's patch.
 
-I'm tempted to say the other way around.
+On 2019/10/21 =E4=B8=8B=E5=8D=885:57, Zhu, Lingshan wrote:
+>
+> On 10/16/2019 4:45 PM, Jason Wang wrote:
+>>
+>> On 2019/10/16 =E4=B8=8A=E5=8D=889:30, Zhu Lingshan wrote:
+>>> + */
+>>> +#define IFCVF_TRANSPORT_F_START 28
+>>> +#define IFCVF_TRANSPORT_F_END=C2=A0=C2=A0 34
+>>> +
+>>> +#define IFC_SUPPORTED_FEATURES \
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ((1ULL << VIRTIO_NET_F_MAC)=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | \
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (1ULL << VIRTIO_F_ANY=
+_LAYOUT)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+| \
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (1ULL << VIRTIO_F_VER=
+SION_1) | \
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (1ULL << VHOST_F_LOG_=
+ALL)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | \
+>>
+>>
+>> Let's avoid using VHOST_F_LOG_ALL, using the get_mdev_features()=20
+>> instead.
+> Thanks, I will remove VHOST_F_LOG_ALL
+>>
+>>
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (1ULL << VIRTIO_NET_F=
+_GUEST_ANNOUNCE)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | \
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (1ULL << VIRTIO_NET_F=
+_CTRL_VQ)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ | \
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (1ULL << VIRTIO_NET_F=
+_STATUS)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+| \
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (1ULL << VIRTIO_NET_F=
+_MRG_RXBUF)) /* not fully supported */
+>>
+>>
+>> Why not having VIRTIO_F_IOMMU_PLATFORM and VIRTIO_F_ORDER_PLATFORM?
+>
+> I will add VIRTIO_F_ORDER_PLATFORM, for VIRTIO_F_IOMMU_PLATFORM, if we=20
+> add this bit, QEMU may enable viommu, can cause troubles in LM
 
-Consider the case where you claim fixed2 with a pinned event and then
-have another fixed2 in the flexible list. At that point you're _never_
-going to run any other flexible events (without Song's patch).
 
-This patch isn't going to help with that. Similarly, Songs patch helps
-with your situation where it will allow rotation to resume after you
-disable/remove all active events (while you still have pending events).
+Qemu has mature support of vIOMMU support for VFIO device, it can shadow=20
+IO page tables and setup them through DMA ioctl of vfio containers. Any=20
+issue you saw here?
 
-> This patch fixes a scheduling problem in the core functions of
-> perf_events. Under certain conditions, some events would not be
-> scheduled even though many counters would be available. This
-> is related to multiplexing and is architecture agnostic and
-> PMU agnostic (i.e., core or uncore).
-> 
-> This problem can easily be reproduced when you have two perf
-> stat sessions. The first session does not cause multiplexing,
-> let's say it is measuring 1 event, E1. While it is measuring,
-> a second session starts and causes multiplexing. Let's say it
-> adds 6 events, B1-B6. Now, 7 events compete and are multiplexed.
-> When the second session terminates, all 6 (B1-B6) events are
-> removed. Normally, you'd expect the E1 event to continue to run
-> with no multiplexing. However, the problem is that depending on
-> the state Of E1 when B1-B6 are removed, it may never be scheduled
-> again. If E1 was inactive at the time of removal, despite the
-> multiplexing hrtimer still firing, it will not find any active
-> events and will not try to reschedule. This is what Song's patch
-> fixes. It forces the multiplexing code to consider non-active events.
+Btw, to test them quickly, you can implement set_config/get_config and=20
+test them through virtio-mdev/kernel drivers as well.
 
-This; so Song's patch fixes the fundamental problem of the rotation not
-working right under certain conditions.
+Thanks
 
-> However, the cause is not addressed. The kernel should not rely on
-> the multiplexing hrtimer to unblock inactive events. That timer
-> can have abitrary duration in the milliseconds. Until the timer
-> fires, counters are available, but no measurable events are using
-> them. We do not want to introduce blind spots of arbitrary durations.
 
-This I disagree with -- you don't get a guarantee other than
-timer_period/n when you multiplex, and idling the counters until the
-next tick doesn't violate that at all.
+> (through we don't support LM in this version driver)
+>
+> Thanks,
+> BR
+> Zhu Lingshan
+>>
+>> Thanks
+>>
 
-> This patch addresses the cause of the problem, by checking that,
-> when an event is disabled or removed and the context was multiplexing
-> events, inactive events gets immediately a chance to be scheduled by
-> calling ctx_resched(). The rescheduling is done on  event of equal
-> or lower priority types.  With that in place, as soon as a counter
-> is freed, schedulable inactive events may run, thereby eliminating
-> a blind spot.
-
-Disagreed, Song's patch removed the fundamental blind spot of rotation
-completely failing.
-
-This just slightly optimizes counter usage -- at a cost of having to
-reprogram the counters more often.
-
-Not saying we shouldn't do this, but this justification is just all
-sorts of wrong.
