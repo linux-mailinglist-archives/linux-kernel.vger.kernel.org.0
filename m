@@ -2,93 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FEA5DE514
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 09:04:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 458F3DE518
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 09:05:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbfJUHEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 03:04:43 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:50654 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbfJUHEm (ORCPT
+        id S1727425AbfJUHFr convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 03:05:47 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:48478 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbfJUHFr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 03:04:42 -0400
-Received: from ramsan ([84.194.98.4])
-        by michel.telenet-ops.be with bizsmtp
-        id G74g2100C05gfCL0674goJ; Mon, 21 Oct 2019 09:04:40 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iMRk8-0002V9-3E; Mon, 21 Oct 2019 09:04:40 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iMRk8-0002pQ-1B; Mon, 21 Oct 2019 09:04:40 +0200
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     linux-m68k@lists.linux-m68k.org
-Cc:     Max Staudt <max@enpas.org>, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] m68k: defconfig: Enable ICY I2C and LTC2990 on Amiga
-Date:   Mon, 21 Oct 2019 09:04:38 +0200
-Message-Id: <20191021070438.10819-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 21 Oct 2019 03:05:47 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x9L75X5d015633
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 21 Oct 2019 16:05:33 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9L75XAx018806;
+        Mon, 21 Oct 2019 16:05:33 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9L75Wvl020457;
+        Mon, 21 Oct 2019 16:05:33 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.151] [10.38.151.151]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-9685657; Mon, 21 Oct 2019 16:04:41 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC23GP.gisp.nec.co.jp ([10.38.151.151]) with mapi id 14.03.0439.000; Mon,
+ 21 Oct 2019 16:04:40 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Oscar Salvador <osalvador@suse.de>
+CC:     "mhocko@kernel.org" <mhocko@kernel.org>,
+        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 09/16] mm,hwpoison: Unify THP handling for hard
+ and soft offline
+Thread-Topic: [RFC PATCH v2 09/16] mm,hwpoison: Unify THP handling for hard
+ and soft offline
+Thread-Index: AQHVhPZEHfGD3bd9MkGP7p/dXrA8ladkGtAA
+Date:   Mon, 21 Oct 2019 07:04:40 +0000
+Message-ID: <20191021070439.GC9037@hori.linux.bs1.fc.nec.co.jp>
+References: <20191017142123.24245-1-osalvador@suse.de>
+ <20191017142123.24245-10-osalvador@suse.de>
+In-Reply-To: <20191017142123.24245-10-osalvador@suse.de>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.96]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <ACAC5400327B2B44B0993E28BA42104F@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable support for the ICY I2C board for Amiga, which is typically
-equipped with an LTC2990 hwmon chip, in the Amiga and multi-platform
-defconfig files.
+On Thu, Oct 17, 2019 at 04:21:16PM +0200, Oscar Salvador wrote:
+> Place the THP's page handling in a helper and use it
+> from both hard and soft-offline machinery, so we get rid
+> of some duplicated code.
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> ---
+>  mm/memory-failure.c | 48 ++++++++++++++++++++++--------------------------
+>  1 file changed, 22 insertions(+), 26 deletions(-)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 836d671fb74f..37b230b8cfe7 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1066,6 +1066,25 @@ static int identify_page_state(unsigned long pfn, struct page *p,
+>  	return page_action(ps, p, pfn);
+>  }
+>  
+> +static int try_to_split_thp_page(struct page *page, const char *msg)
+> +{
+> +	lock_page(page);
+> +	if (!PageAnon(page) || unlikely(split_huge_page(page))) {
+> +		unsigned long pfn = page_to_pfn(page);
+> +
+> +		unlock_page(page);
+> +		if (!PageAnon(page))
+> +			pr_info("%s: %#lx: non anonymous thp\n", msg, pfn);
+> +		else
+> +			pr_info("%s: %#lx: thp split failed\n", msg, pfn);
+> +		put_page(page);
+> +		return -EBUSY;
+> +	}
+> +	unlock_page(page);
+> +
+> +	return 0;
+> +}
+> +
+>  static int memory_failure_hugetlb(unsigned long pfn, int flags)
+>  {
+>  	struct page *p = pfn_to_page(pfn);
+> @@ -1288,21 +1307,8 @@ int memory_failure(unsigned long pfn, int flags)
+>  	}
+>  
+>  	if (PageTransHuge(hpage)) {
+> -		lock_page(p);
+> -		if (!PageAnon(p) || unlikely(split_huge_page(p))) {
+> -			unlock_page(p);
+> -			if (!PageAnon(p))
+> -				pr_err("Memory failure: %#lx: non anonymous thp\n",
+> -					pfn);
+> -			else
+> -				pr_err("Memory failure: %#lx: thp split failed\n",
+> -					pfn);
+> -			if (TestClearPageHWPoison(p))
+> -				num_poisoned_pages_dec();
+> -			put_page(p);
+> +		if (try_to_split_thp_page(p, "Memory Failure") < 0)
+>  			return -EBUSY;
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-To be queued for v5.5.
+Although this is not a cleanup thing, this failure path means that
+hwpoison is handled (PG_hwpoison is marked), so action_result() should
+be called.  I'll add a patch for this later.
 
- arch/m68k/configs/amiga_defconfig | 6 +++++-
- arch/m68k/configs/multi_defconfig | 6 +++++-
- 2 files changed, 10 insertions(+), 2 deletions(-)
+Anyway, this cleanup patch looks fine to me.
 
-diff --git a/arch/m68k/configs/amiga_defconfig b/arch/m68k/configs/amiga_defconfig
-index 6c9d4e47cf1745dd..619d30d663a2f515 100644
---- a/arch/m68k/configs/amiga_defconfig
-+++ b/arch/m68k/configs/amiga_defconfig
-@@ -421,11 +421,15 @@ CONFIG_INPUT_M68K_BEEP=m
- # CONFIG_LEGACY_PTYS is not set
- CONFIG_PRINTER=m
- # CONFIG_HW_RANDOM is not set
-+CONFIG_I2C=m
-+CONFIG_I2C_CHARDEV=m
-+CONFIG_I2C_ICY=m
- CONFIG_NTP_PPS=y
- CONFIG_PPS_CLIENT_LDISC=m
- CONFIG_PPS_CLIENT_PARPORT=m
- CONFIG_PTP_1588_CLOCK=m
--# CONFIG_HWMON is not set
-+CONFIG_HWMON=m
-+CONFIG_SENSORS_LTC2990=m
- CONFIG_FB=y
- CONFIG_FB_CIRRUS=y
- CONFIG_FB_AMIGA=y
-diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_defconfig
-index 45654650f50a32fa..b764a0368a568be5 100644
---- a/arch/m68k/configs/multi_defconfig
-+++ b/arch/m68k/configs/multi_defconfig
-@@ -481,11 +481,15 @@ CONFIG_SERIAL_PMACZILOG_TTYS=y
- CONFIG_SERIAL_PMACZILOG_CONSOLE=y
- CONFIG_PRINTER=m
- # CONFIG_HW_RANDOM is not set
-+CONFIG_I2C=m
-+CONFIG_I2C_CHARDEV=m
-+CONFIG_I2C_ICY=m
- CONFIG_NTP_PPS=y
- CONFIG_PPS_CLIENT_LDISC=m
- CONFIG_PPS_CLIENT_PARPORT=m
- CONFIG_PTP_1588_CLOCK=m
--# CONFIG_HWMON is not set
-+CONFIG_HWMON=m
-+CONFIG_SENSORS_LTC2990=m
- CONFIG_FB=y
- CONFIG_FB_CIRRUS=y
- CONFIG_FB_AMIGA=y
--- 
-2.17.1
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
+> -		}
+> -		unlock_page(p);
+>  		VM_BUG_ON_PAGE(!page_count(p), p);
+>  		hpage = compound_head(p);
+>  	}
+> @@ -1801,19 +1807,9 @@ static int soft_offline_in_use_page(struct page *page)
+>  	int mt;
+>  	struct page *hpage = compound_head(page);
+>  
+> -	if (!PageHuge(page) && PageTransHuge(hpage)) {
+> -		lock_page(page);
+> -		if (!PageAnon(page) || unlikely(split_huge_page(page))) {
+> -			unlock_page(page);
+> -			if (!PageAnon(page))
+> -				pr_info("soft offline: %#lx: non anonymous thp\n", page_to_pfn(page));
+> -			else
+> -				pr_info("soft offline: %#lx: thp split failed\n", page_to_pfn(page));
+> -			put_page(page);
+> +	if (!PageHuge(page) && PageTransHuge(hpage))
+> +		if (try_to_split_thp_page(page, "soft offline") < 0)
+>  			return -EBUSY;
+> -		}
+> -		unlock_page(page);
+> -	}
+>  
+>  	/*
+>  	 * Setting MIGRATE_ISOLATE here ensures that the page will be linked
+> -- 
+> 2.12.3
+> 
+> 
