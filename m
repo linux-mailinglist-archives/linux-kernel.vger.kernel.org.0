@@ -2,80 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 248E1DE152
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 01:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED161DE15C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 02:08:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfJTXw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 20 Oct 2019 19:52:58 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37960 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfJTXw6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Oct 2019 19:52:58 -0400
-Received: by mail-io1-f65.google.com with SMTP id u8so13740599iom.5
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2019 16:52:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=3rw1DewHxluyubSe8F4VxhPdMk2b8nrOQjV5qzC5PIw=;
-        b=m4b416nIBuexcZCnBfGzST0Bal1DrOszVxv2Uut2lUUHDe4MPWN2Lzhapeyh+mFsW+
-         g9PpRI1+zsUiSoKOvk81MsFmlqSw1Qvy3f5955/j2VncnnEeXg7KYcr6GGeaxGUmZwLa
-         lvRSA+O5a96ok8m3UyAj8EowRy9VqES5ABLfPG7T4DWkEmkBpSWcDEB+/7IqScYfweBV
-         RLTpH1bYRxcu4MgVdU1GltpIUJEb4Sjq1xCFD0s3M31u+qstXRSzd2YeqrP1+0DB3rEW
-         DpnW8vbd0DmFXIUsrIRErA5aLXXAndu/tOMKktOxeaRmXyUXt62Igoa1D1SgM0o8gS+w
-         VQ4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=3rw1DewHxluyubSe8F4VxhPdMk2b8nrOQjV5qzC5PIw=;
-        b=hqIoZ8bgp3qwr/IWekTTxla2DQSVw19wAI+4DGt7bDe4lyplX31sje1aQgUWCugA4B
-         XAKhXm6ktLB/YIylVIfItE6cT02d455dsWmCNzgU3jGuTYXeantVs1mSttrOEo2HZZm0
-         ZgbQwB2X2hnkfBima7/KynB6l6lfb3xyWCtdj/pSey88UIwWVejIGEy6xSmt6X22dP/i
-         fbqv6T5bT4sV0nXo0xMbxdIFTmQRdUFCaWTnlRlGH5WSek8BgwG2zOTFK0Qi+dJ9g+pl
-         nPOpZrqvoRjSfnY8dNIZ3ZBcVAzesLNecewXoSkRnIsvpVuki/u21bloK9hqr9CgDwI9
-         AAVw==
-X-Gm-Message-State: APjAAAX2RS7M67nh02Y0UQI7b4T27AojCXKmuJiFZXoBNQbCQ5HqAPh2
-        k31eIWz8YdB8n6XOk/oXq6kkQwF7/CLaS/oAPnI=
-X-Google-Smtp-Source: APXvYqyCD/IjVHn8ov0fb6lkNCggj2UjTVf2Mvp9YMudwpRulMvfdLEikch11kmUwefZm9E2eN0c9NqhI8AJA5nuUeA=
-X-Received: by 2002:a5e:d813:: with SMTP id l19mr8072965iok.74.1571615576248;
- Sun, 20 Oct 2019 16:52:56 -0700 (PDT)
+        id S1726733AbfJUAIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 20 Oct 2019 20:08:07 -0400
+Received: from ozlabs.org ([203.11.71.1]:60091 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726576AbfJUAIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Oct 2019 20:08:07 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46xH5w6D4Nz9sNx;
+        Mon, 21 Oct 2019 11:08:04 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1571616485;
+        bh=X9w5V/XTy4bCeUmkoajC65IM6vFKbBsy/YOD7h9VvnA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=BeMyn70HjTuQED2UU0IF+TeZAEmEE8infGIEHcwdKmVz1u1HCYrdA/dCVoa/dSADU
+         QA/xgnstFLEoUvv6W+mDuEwip4wU2TWJLg/VwvT9wcPr48d3kmTa1Yp7uy1l7UFEUT
+         b8poZEZiGqHlQetJ65+cnOy/0TTcVh2XwpmJxM0rT6EdPU7n+LWDOO99x2WpHRz/AC
+         50cmAYp0YIkDNtzNTVZn1RdBcEfr7qA5sdJMUd+l2Vm2yZn79Ou+lDoW47YYDYAAnK
+         5QL6eKtzTATDpKz861VWNwVmJNt+l36AsiUuoJ9sXuVbXm1Vz93Bmh7y5lY8ZDFOop
+         walcMpYzqnubw==
+Date:   Mon, 21 Oct 2019 11:07:45 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Jiri Pirko <jiri@mellanox.com>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Message-ID: <20191021110745.3c7563a4@canb.auug.org.au>
 MIME-Version: 1.0
-Reply-To: afringawa@outlook.com
-Received: by 2002:a02:ce91:0:0:0:0:0 with HTTP; Sun, 20 Oct 2019 16:52:55
- -0700 (PDT)
-From:   Afrin Gawa <afringawa@gmail.com>
-Date:   Sun, 20 Oct 2019 23:52:55 +0000
-X-Google-Sender-Auth: aYXUEteieDgXmmQpE7qd_gHWcLk
-Message-ID: <CAGnbCm8=H=g2_jFEY0cfuWMc+hXh94KQuEYm=A9O+LQu0Wi1Mw@mail.gmail.com>
-Subject: With Due Respect!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/QMu1u_AWC0pXc5bHC_x_aNk";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings,
+--Sig_/QMu1u_AWC0pXc5bHC_x_aNk
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I know that this mail will come to you as a surprise as we have never
-met before, but need not to worry as I am contacting you independently
-of my investigation and no one is informed of this communication. I
-need your urgent assistance in transferring the sum of $11,300,000.00
-USD immediately to your private account.The money has been here in our
-Bank lying dormant for years now without anybody coming for the claim
-of it.
+Hi all,
 
-I want to release the money to you as the relative to our deceased
-customer (the account owner) who died a long with his supposed NEXT OF
-KIN since 16th October 2005. The Banking laws here does not allow such
-money to stay more than 14 years, because the money will be recalled
-to the Bank treasury account as unclaimed fund.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-By indicating your interest I will send you the full details on how
-the business will be executed.
+  include/net/net_namespace.h
 
-Please respond urgently and delete if you are not interested.
+between commit:
 
-Best Regards,
-Mr. Afrin Gawa
+  2a06b8982f8f ("net: reorder 'struct net' fields to avoid false sharing")
+
+from Linus' tree and commit:
+
+  a30c7b429f2d ("net: introduce per-netns netdevice notifiers")
+
+from the net-next tree.
+
+I fixed it up (see below - but it clearly needs more thought) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/net/net_namespace.h
+index 4c2cd9378699,5ac2bb16d4b3..000000000000
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@@ -102,14 -94,14 +103,15 @@@ struct net=20
+ =20
+  	struct uevent_sock	*uevent_sock;		/* uevent socket */
+ =20
+ -	struct list_head 	dev_base_head;
+  	struct hlist_head 	*dev_name_head;
+  	struct hlist_head	*dev_index_head;
++ 	struct raw_notifier_head	netdev_chain;
+ +	/* Note that @hash_mix can be read millions times per second,
+ +	 * it is critical that it is on a read_mostly cache line.
+ +	 */
+ +	u32			hash_mix;
+ =20
+ -	unsigned int		dev_base_seq;	/* protected by rtnl_mutex */
+ -	int			ifindex;
+ -	unsigned int		dev_unreg_count;
+ +	struct net_device       *loopback_dev;          /* The loopback */
+ =20
+  	/* core fib_rules */
+  	struct list_head	rules_ops;
+
+--Sig_/QMu1u_AWC0pXc5bHC_x_aNk
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2s9tEACgkQAVBC80lX
+0GwZpwgAkoebksFVR77r9Wjmyx1QSfLT6xE+3K8mT+eQ70TVcHY4DzSFxuqNhp9C
+nwCyGorGYrcdi4toAQrE7pxExLdArXdma90EHa7HjRxyO6hJO+UUJKE6wTQVF9Hw
+pX85LM0jtoUJewpPdngcv+lY4T2Q75GqLyNHUeTcJCdosATgrCmvsiB9zKGUPJo8
+yZtXvQexcfDTKZmRclVAxBCCuhe78R+2Ptc0EwbBmnDisZFoXLUYT2A/ZyOjVoWR
+RK9803tVm0KVNCVHvpwTyTR4zRIi23GnzmH2oMkNoykdbGioT0gIC+5muEvlVy9+
+hhw2kK5a7Ml6ROqFRgJYhhvn25hCVQ==
+=fbdo
+-----END PGP SIGNATURE-----
+
+--Sig_/QMu1u_AWC0pXc5bHC_x_aNk--
