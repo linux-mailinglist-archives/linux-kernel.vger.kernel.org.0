@@ -2,30 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1669CDED56
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECBA0DEE53
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:49:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbfJUNTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:19:51 -0400
-Received: from ufsin32.ru ([109.198.192.98]:56423 "EHLO mx.ufsin32.ru"
+        id S1729159AbfJUNtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:49:09 -0400
+Received: from ufsin32.ru ([109.198.192.98]:55104 "EHLO mx.ufsin32.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727344AbfJUNTv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:19:51 -0400
-X-Greylist: delayed 10410 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Oct 2019 09:19:50 EDT
+        id S1728083AbfJUNtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:49:09 -0400
 Received: from 127.0.0.1 (localhost [127.0.0.1])
-        by mx.ufsin32.ru (Postfix) with SMTP id 562713EFCC;
-        Mon, 21 Oct 2019 13:14:16 +0300 (GMT-3)
-Received: from [111.41.143.114] by 127.0.0.1 id <0093914-49449>; Mon, 21 Oct 2019 15:09:35 +0500
-Message-ID: <3f$9us--m$e-$$609k4t59ja@2xv.e1b8ux>
+        by mx.ufsin32.ru (Postfix) with SMTP id 5CE213FD59;
+        Mon, 21 Oct 2019 13:44:27 +0300 (GMT-3)
+Received: from [92.227.89.159] by 127.0.0.1 id <5723176-86212>; Mon, 21 Oct 2019 10:38:36 +0000
+Message-ID: <z22zu$mvutf0qe$s-72c@2o8471>
 From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
 Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
-To:     superrok2002@hotmail.com
+To:     tmccomb@netguild.net
 Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
-Date:   Mon, 21 Oct 19 15:09:35 GMT
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+Date:   Mon, 21 Oct 19 10:38:36 GMT
+X-Mailer: Microsoft Outlook, Build 10.0.2627
 MIME-Version: 1.0
 Content-Type: multipart/alternative;
-        boundary="1B41E2521.0D"
+        boundary="284.75177.F.AA3A.D"
 X-Priority: 3
 X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
@@ -34,7 +33,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---1B41E2521.0D
+--284.75177.F.AA3A.D
 Content-Type: text/plain;
 Content-Transfer-Encoding: quoted-printable
 
@@ -59,5 +58,5 @@ Barrister Hans Erich
 Yours sincerely,
 Barrister Hans Erich
 
---1B41E2521.0D--
+--284.75177.F.AA3A.D--
 
