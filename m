@@ -2,137 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC289DEF9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:32:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FA26DEFA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbfJUOb4 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 10:31:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57680 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727140AbfJUOb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 10:31:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2197DC138;
-        Mon, 21 Oct 2019 14:31:53 +0000 (UTC)
-Date:   Mon, 21 Oct 2019 16:32:08 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     "Erwan Velu" <erwanaliasr1@gmail.com>
-Cc:     "Robert P. J. Day" <rpjday@crashcourse.ca>,
-        "Erwan Velu" <e.velu@criteo.com>,
-        "Changbin Du" <changbin.du@intel.com>,
-        "Boris Brezillon" <bbrezillon@kernel.org>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        "Jens Wiklander" <jens.wiklander@linaro.org>,
-        "Sumit Garg" <sumit.garg@linaro.org>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        "Michal Marek" <michal.lkml@markovi.net>,
-        "Mattias Jacobsson" <2pi@mok.nu>,
-        "Masahiro Yamada" <yamada.masahiro@socionext.com>,
-        <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] firmware/dmi_scan: Add dmi_save_release to save
- releases fields
-Message-ID: <20191021163208.5cd03d59@endymion>
-In-Reply-To: <20190918094323.17515-1-e.velu@criteo.com>
-References: <20190918094323.17515-1-e.velu@criteo.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1728401AbfJUOd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 10:33:28 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:37730 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727344AbfJUOd2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 10:33:28 -0400
+Received: by mail-vk1-f193.google.com with SMTP id v78so2803462vke.4
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 07:33:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8jfA0P/Q8T8UjCLrgdWWyNBUpvtRRs/536E+E+xKTUI=;
+        b=fo+M5yNGWjh6WpyTan0dMaP6adElk8Q28uVOOSVGR6oiDnQuPMI6e5xfGmEds2bvv2
+         IZMqR+5WOgGiJjjultpETJ7uo8T7veXupA55susBuyXB3N3RA8t2kBkiFC7FeiwQrY0a
+         S3uv76RJKvqdexspozSjBMMdh+Fbw7PUvOfTRlUkCf3WFVU48277x4gcmqd5D63DMsLp
+         SvtWTKOaN/08hHadAKZNaTeN3YkefHsndbvdf3CYoc7cu4n3287YMpAgef4nIr6AXUWQ
+         lQfJ9MA1fE89OMxCfSUQ29NsqZEh07ssu/CmNX5i+UalUOUU+JKl/VNLstP4teC6m+4q
+         AVtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8jfA0P/Q8T8UjCLrgdWWyNBUpvtRRs/536E+E+xKTUI=;
+        b=Ezymb3o4qiOQS7mhd5DpJ8of9Y7EzPE4agTEw4xO7Hf0ahOmDcqbpMJMVkgPIIJZHM
+         15rJwjdq5u8ZVtc+HKJhLozcuKIizbo2cGnAZFegt+rmb82v6YTHC7U/7wbFEX33I3Fk
+         8t1fOpJ4gBz/g4DPapShPkxu1yhXXE2/vnXQQB0PaWNoEHcbgrfrH9PhgNIFGa4Z+YdC
+         ZJURNmixGJrKCBVdtJ8qAUFFN3zW8QLr6i1iA2t52Mbkvc0stuJLQXMJA9X0KoY20Js+
+         5aCbWdYD41dOvrT6v34eyN58pwVo+CUtp9+Cgk3r3NzCq832OPAdj2upd3VAenINZ9fq
+         8Nzw==
+X-Gm-Message-State: APjAAAUtafEKzql1ObSlAvvcYwbR0joJaiW06O9WJkrANklU//Xz8nkL
+        C1BecrnPwIxe57rgHXxAaa1Yb/XOxthOq5ieDDT7kg==
+X-Google-Smtp-Source: APXvYqwxG+OOH5vTVcxbeM++YEq/oLjw7diPz4dlTQB9dJJL+KeH2klQ2bLGQpl2ZMsrWsuLtAulGEUhOnAzfVkF7Ws=
+X-Received: by 2002:a1f:2f51:: with SMTP id v78mr12965554vkv.101.1571668405527;
+ Mon, 21 Oct 2019 07:33:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20191018131338.11713-1-hslester96@gmail.com>
+In-Reply-To: <20191018131338.11713-1-hslester96@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 21 Oct 2019 16:32:49 +0200
+Message-ID: <CAPDyKFoBYchP96hv=7XfTo8CrCSD+KC0h_oFRAsOYT-Lc1SFZQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi: add checks for pinctrl_lookup_state
+To:     Chuhong Yuan <hslester96@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Erwan,
-
-Sorry for the late answer.
-
-On Wed, 18 Sep 2019 11:43:19 +0200, Erwan Velu wrote:
-> In DMI type 0, there is several fields that encodes a release.
-
-is -> are
-encodes -> encode
-
-> The dmi_save_release() function have the logic to check if the field is valid.
-> If so, it reports the actual value.
-> 
-> Signed-off-by: Erwan Velu <e.velu@criteo.com>
+On Fri, 18 Oct 2019 at 15:13, Chuhong Yuan <hslester96@gmail.com> wrote:
+>
+> renesas_sdhi_probe misses checks for pinctrl_lookup_state and may miss
+> failures.
+> Add checks for them to fix the problem.
+>
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 > ---
->  drivers/firmware/dmi_scan.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-
-This patch introduces a warning:
-
-drivers/firmware/dmi_scan.c:185:20: warning: ‘dmi_save_release’ defined but not used [-Wunused-function]
- static void __init dmi_save_release(const struct dmi_header *dm, int slot,
-                    ^~~~~~~~~~~~~~~~
-
-because you add a static function with no user. I understand that you
-add a use later in the series, but it's not OK to introduce a warning
-even if temporary. It also makes little sense to split the changes that
-way as there is no way to cherry-pick one of the patches without the
-rest. And it makes things more difficult to review too, as I can't
-possibly judge if this function if right without also seeing where is
-will be called and how.
-
-So, please merge all the changes into a single patch.
-
-> diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
-> index 35ed56b9c34f..202bd2c69d0f 100644
-> --- a/drivers/firmware/dmi_scan.c
-> +++ b/drivers/firmware/dmi_scan.c
-> @@ -181,6 +181,32 @@ static void __init dmi_save_ident(const struct dmi_header *dm, int slot,
->  	dmi_ident[slot] = p;
->  }
->  
-> +static void __init dmi_save_release(const struct dmi_header *dm, int slot,
-> +		int index)
-> +{
-> +	const u8 *d;
-> +	char *s;
+>  drivers/mmc/host/renesas_sdhi_core.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index d4ada5cca2d1..dc5ad6632df3 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -694,8 +694,13 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+>         if (!IS_ERR(priv->pinctrl)) {
+>                 priv->pins_default = pinctrl_lookup_state(priv->pinctrl,
+>                                                 PINCTRL_STATE_DEFAULT);
+> +               if (IS_ERR(priv->pins_default))
+> +                       return PTR_ERR(priv->pins_default);
 > +
-> +	// If the table doesn't have the field, let's return
+>                 priv->pins_uhs = pinctrl_lookup_state(priv->pinctrl,
+>                                                 "state_uhs");
+> +               if (IS_ERR(priv->pins_uhs))
+> +                       return PTR_ERR(priv->pins_uhs);
+>         }
 
-Please stick to C89-style comments (/* */) as used everywhere else in
-this file.
+This looks correct to me, as I guess if there is a pinctrl specified
+for device node of the controller, it means that it should be used!?
 
-> +	if (dmi_ident[slot] || dm->length < index)
-> +		return;
-> +
-> +	d = (u8 *) dm + index;
-> +
-> +	// As per the specification,
-> +	// if the system doesn't have the field, the value is FF
-> +	if (d[0] == 0xFF)
-> +		return;
+I understand that this is only used for those variants that supports
+UHS-I via the renesas_sdhi_start_signal_voltage_switch(). Wolfram, is
+this fine you think?
 
-That's not exactly what the specification says. It says:
+>
+>         host = tmio_mmc_host_alloc(pdev, mmc_data);
+> --
+> 2.20.1
+>
 
-"If the system does not support the use of [the System BIOS Major
-Release] field, the value is 0FFh for both this field and the System
-BIOS Minor Release field." So unused is when both fields are 0xFF. You
-can't test them independently.
-
-Same goes for the Embedded Controller Firmware Release fields, even if
-it is worded differently, the logic is the same.
-
-> +
-> +	s = dmi_alloc(4);
-> +	if (!s)
-> +		return;
-> +
-> +	sprintf(s, "%u", d[0]);
-> +
-> +	dmi_ident[slot] = s;
-> +}
-> +
->  static void __init dmi_save_uuid(const struct dmi_header *dm, int slot,
->  		int index)
->  {
-
-
--- 
-Jean Delvare
-SUSE L3 Support
+Kind regards
+Uffe
