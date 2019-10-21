@@ -2,87 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F828DF3B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 18:58:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE62DF411
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 19:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbfJUQ5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 12:57:17 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:58462 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbfJUQ5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:57:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E63D31715;
-        Mon, 21 Oct 2019 09:56:53 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FF163F71F;
-        Mon, 21 Oct 2019 09:56:52 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 17:56:50 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Sami Tolvanen <samitolvanen@google.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/18] arm64: preserve x18 when CPU is suspended
-Message-ID: <20191021165649.GE56589@lakrids.cambridge.arm.com>
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191018161033.261971-14-samitolvanen@google.com>
+        id S1729643AbfJURUT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 13:20:19 -0400
+Received: from 165084187012.ctinets.com ([165.84.187.12]:35748 "EHLO
+        mail2.ltyschool.edu.hk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727110AbfJURUT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 13:20:19 -0400
+X-Greylist: delayed 1899 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Oct 2019 13:20:18 EDT
+Received: from localhost (mail2.ltyschool.edu.hk [127.0.0.1])
+        by mail2.ltyschool.edu.hk (Postfix) with ESMTP id 3B8492E1F74;
+        Tue, 22 Oct 2019 00:38:02 +0800 (HKT)
+X-Virus-Scanned: amavisd-new at mail2.ltyschool.edu.hk
+Received: from mail2.ltyschool.edu.hk ([127.0.0.1])
+        by localhost (mail2.ltyschool.edu.hk [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id y6g0HJjKqXOo; Tue, 22 Oct 2019 00:38:01 +0800 (HKT)
+Received: from mail2.ltyschool.edu.hk (mail2.ltyschool.edu.hk [127.0.0.1])
+        by mail2.ltyschool.edu.hk (Postfix) with ESMTP id DD7C02E1F6C;
+        Tue, 22 Oct 2019 00:37:59 +0800 (HKT)
+Date:   Tue, 22 Oct 2019 00:37:59 +0800 (HKT)
+From:   "Mme " <st1701132@ltyschool.edu.hk>
+Reply-To: annie.martinez121@gmail.com
+Message-ID: <25219916.1979485.1571675879568.JavaMail.root@ltyschool.edu.hk>
+Subject: =?utf-8?Q?Que_Dieu_Vous_B=C3=A9nisse!?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018161033.261971-14-samitolvanen@google.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [197.234.221.9]
+X-Mailer: Zimbra 7.2.0_GA_2669 (zclient/7.2.0_GA_2669)
+To:     undisclosed-recipients:;
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 09:10:28AM -0700, Sami Tolvanen wrote:
-> Don't lose the current task's shadow stack when the CPU is suspended.
-> 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  arch/arm64/mm/proc.S | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-> index fdabf40a83c8..9a8bd4bc8549 100644
-> --- a/arch/arm64/mm/proc.S
-> +++ b/arch/arm64/mm/proc.S
-> @@ -73,6 +73,9 @@ alternative_endif
->  	stp	x8, x9, [x0, #48]
->  	stp	x10, x11, [x0, #64]
->  	stp	x12, x13, [x0, #80]
-> +#ifdef CONFIG_SHADOW_CALL_STACK
-> +	stp	x18, xzr, [x0, #96]
-> +#endif
+Bonjour,
 
-This should have a corresponding change to cpu_suspend_ctx in
-<asm/suspend.h>. Otherwise we're corrupting a portion of the stack.
+Je soussignée Mme Annie MARTINEZ. Je suis née en France. Je souffre d’un cancer du foie en phase terminale.
+Après de nombreux essais cliniques sans succès, mon médecin vient de m’annoncer que mes jours sont comptés. Je voudrais réaliser un projet d’aide humanitaire à travers vous bien qu’on ne se connait pas vraiment. J’ai alors décidé de vous léguer à titre de legs une somme de un million cinq cent mille dollars américain. Ma propre famille qui devrait en bénéficier m'avait rejetée pour la simple raison de mon mariage avec un Arabe Libyen.
 
-Mark.
+« N’hésitez pas à me répondre pour me parlé directement »
 
->  	ret
->  ENDPROC(cpu_do_suspend)
->  
-> @@ -89,6 +92,9 @@ ENTRY(cpu_do_resume)
->  	ldp	x9, x10, [x0, #48]
->  	ldp	x11, x12, [x0, #64]
->  	ldp	x13, x14, [x0, #80]
-> +#ifdef CONFIG_SHADOW_CALL_STACK
-> +	ldp	x18, x19, [x0, #96]
-> +#endif
->  	msr	tpidr_el0, x2
->  	msr	tpidrro_el0, x3
->  	msr	contextidr_el1, x4
-> -- 
-> 2.23.0.866.gb869b98d4c-goog
-> 
+NB: Veuillez vous assurer de répondre a la bonne adresse Émail merci et QUE DIEU VOUS BÉNISSE.
+
+Sincèrement
+Mme ANNIE MARTINEZ
+E-mail Privée: annie.martinez121@gmail.com
