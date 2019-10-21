@@ -2,108 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DED1DEE16
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:42:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C66D4DEE0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:41:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbfJUNld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:41:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43516 "EHLO mail.kernel.org"
+        id S1729731AbfJUNlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:41:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728812AbfJUNlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:41:31 -0400
+        id S1729719AbfJUNle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:41:34 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB0C52184C;
-        Mon, 21 Oct 2019 13:41:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33A3D21783;
+        Mon, 21 Oct 2019 13:41:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571665290;
-        bh=uNrkdEAKyJPqVfFge5fqhG+TOyIuSHO/yAJmdTdLYo4=;
+        s=default; t=1571665293;
+        bh=Lw3YWvueKJz9oTDD8qjg6QZ/jcLn2EWre7eZ2Jv8myw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CpJD/HK4gLCoT5Uv2fOZFKh8uxVd2NvbWPZUosUnxQD7iPvbgwNuMZkPHeX3DEdig
-         CHbuKmM3uWjSd1s+LTA80hr756jiA46whGC9Ui/XHFf32tWlO8oD44zs+aukJDPzxO
-         V38dya7vyI7DM8cDXRSzyhGrHIuAUIZWvROUKLMU=
+        b=ZPNmvqA2leDHavpATsTEdx57TVsTbx/9RZlN3zTzobB/umnBV8SaEMFJWHfP6Apkw
+         +LYvTje9bTL7k5ej5LPPSc2juQYqUYVxKjVPYzgML9fktY5z4OGoGP+dYkJ1siuInV
+         /iAf2nN5wlp52FCp+gbb3pF04bKnEEVck2xhyhno=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 51/57] libperf: Add pr_err() macro
-Date:   Mon, 21 Oct 2019 10:38:28 -0300
-Message-Id: <20191021133834.25998-52-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
+        <lclaudio@redhat.com>
+Subject: [PATCH 52/57] libbeauty: Introduce syscall_arg__strtoul_strarrays()
+Date:   Mon, 21 Oct 2019 10:38:29 -0300
+Message-Id: <20191021133834.25998-53-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191021133834.25998-1-acme@kernel.org>
 References: <20191021133834.25998-1-acme@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-And missing include for "perf/core.h" header, which provides LIBPERF_*
-debug levels and add missing pr_err() support.
+To allow going from string to integer for 'struct strarrays'.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lore.kernel.org/lkml/20191017105918.20873-11-jolsa@kernel.org
+Link: https://lkml.kernel.org/n/tip-b1ia3xzcy72hv0u4m168fcd0@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/lib/include/perf/core.h | 1 +
- tools/perf/lib/internal.h          | 3 +++
- 2 files changed, 4 insertions(+)
+ tools/perf/builtin-trace.c       | 5 +++++
+ tools/perf/trace/beauty/beauty.h | 3 +++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/tools/perf/lib/include/perf/core.h b/tools/perf/lib/include/perf/core.h
-index 2a80e4b6f819..a3f6d68edad7 100644
---- a/tools/perf/lib/include/perf/core.h
-+++ b/tools/perf/lib/include/perf/core.h
-@@ -9,6 +9,7 @@
- #endif
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 0e7fc7cc42d9..265ea876f00b 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -540,6 +540,11 @@ bool syscall_arg__strtoul_strarray(char *bf, size_t size, struct syscall_arg *ar
+ 	return strarray__strtoul(arg->parm, bf, size, ret);
+ }
  
- enum libperf_print_level {
-+	LIBPERF_ERR,
- 	LIBPERF_WARN,
- 	LIBPERF_INFO,
- 	LIBPERF_DEBUG,
-diff --git a/tools/perf/lib/internal.h b/tools/perf/lib/internal.h
-index 37db745e1502..2c27e158de6b 100644
---- a/tools/perf/lib/internal.h
-+++ b/tools/perf/lib/internal.h
-@@ -2,6 +2,8 @@
- #ifndef __LIBPERF_INTERNAL_H
- #define __LIBPERF_INTERNAL_H
- 
-+#include <perf/core.h>
++bool syscall_arg__strtoul_strarrays(char *bf, size_t size, struct syscall_arg *arg, u64 *ret)
++{
++	return strarrays__strtoul(arg->parm, bf, size, ret);
++}
 +
- void libperf_print(enum libperf_print_level level,
- 		   const char *format, ...)
- 	__attribute__((format(printf, 2, 3)));
-@@ -11,6 +13,7 @@ do {                            \
- 	libperf_print(level, "libperf: " fmt, ##__VA_ARGS__);     \
- } while (0)
+ size_t syscall_arg__scnprintf_strarray_flags(char *bf, size_t size, struct syscall_arg *arg)
+ {
+ 	return strarray__scnprintf_flags(arg->parm, bf, size, arg->show_string_prefix, arg->val);
+diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
+index 1b8a30e5dcf9..10801660a71f 100644
+--- a/tools/perf/trace/beauty/beauty.h
++++ b/tools/perf/trace/beauty/beauty.h
+@@ -125,6 +125,9 @@ size_t syscall_arg__scnprintf_strarray_flags(char *bf, size_t size, struct sysca
+ bool syscall_arg__strtoul_strarray(char *bf, size_t size, struct syscall_arg *arg, u64 *ret);
+ #define STUL_STRARRAY syscall_arg__strtoul_strarray
  
-+#define pr_err(fmt, ...)        __pr(LIBPERF_ERR, fmt, ##__VA_ARGS__)
- #define pr_warning(fmt, ...)    __pr(LIBPERF_WARN, fmt, ##__VA_ARGS__)
- #define pr_info(fmt, ...)       __pr(LIBPERF_INFO, fmt, ##__VA_ARGS__)
- #define pr_debug(fmt, ...)      __pr(LIBPERF_DEBUG, fmt, ##__VA_ARGS__)
++bool syscall_arg__strtoul_strarrays(char *bf, size_t size, struct syscall_arg *arg, u64 *ret);
++#define STUL_STRARRAYS syscall_arg__strtoul_strarrays
++
+ size_t syscall_arg__scnprintf_x86_irq_vectors(char *bf, size_t size, struct syscall_arg *arg);
+ #define SCA_X86_IRQ_VECTORS syscall_arg__scnprintf_x86_irq_vectors
+ 
 -- 
 2.21.0
 
