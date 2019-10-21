@@ -2,128 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01B5FDF0C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:04:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CCFADF0C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:05:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729175AbfJUPEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 11:04:53 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39689 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfJUPEx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 11:04:53 -0400
-Received: by mail-io1-f65.google.com with SMTP id a1so16286203ioc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 08:04:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=tWhc5uJs7MS/OG9cE4Cx7yK7L1yYTVuLaTuL5bFFTEk=;
-        b=xhngFmRQQM1D4pq9bIoMfnS+5fCAmX6gmyeEmFG0ukm7A7X0Mje5muv4Cv+HO0X3bx
-         jJXPVKEIDEe6ncTL0EP1ySuuHhrcDkueCwaJeAfTxOizLMwsd/lcBjMM2tRAtmO+XU6L
-         Kxs9a51GuYICueb/prnKL3irvHY/Oep5zyBDgTE8hJXOT9LKJj7RU3FeoJ8r6miomECA
-         cKhvvKHTcbBvaC/SPe6eRJUq347iOvczH/2CWTMkX7ZkORrw+6iE6Sc1q/NXgP4e1YLr
-         jFwwB8iLe+zBTK3brgT8rnJcQhJrBvxbU9krMWtmEedSGWLFa6iT5eQaY7DrZvE0HL/g
-         6J4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=tWhc5uJs7MS/OG9cE4Cx7yK7L1yYTVuLaTuL5bFFTEk=;
-        b=IxyWMVbipl4GEvd8od+/2FLZGOwYorOwN42m6Et/x1sf7iatWx959og7eoMo+9j4Wx
-         9BtG5eUgi8eXqHK20W7ext74M+pnnJBOCygGEd3bMZw56SSPXD9zdHnh5coxhbqBLVEr
-         3c++M9Gel2YXN/Xd3diPxJzb1DErzua8GY0+x2BGu/RZWT4nO6NYzZpOF0+dOYOD3CPQ
-         Z8SUujoiTcYYb8sqlhqEyJ0cbfuwdVCe6ly+SxMZEfgXtFBuVYiSpGTMAMDXGF0ZRbrI
-         PJL8Klif+2mXSO6o4oGR6oyKN3y5otoF6lwrysQ/o2rx4FdcLD2+ZZWbUGwSU4LgwXMA
-         cH2Q==
-X-Gm-Message-State: APjAAAVf45xy+twMP40WzZKjcgYOYVMbyILrH8KLSD1y6VaawbFMvDUw
-        5CToJm7pH+Cciiw4YU90qi4qJyP9s6KRyb9z/ofVkg==
-X-Google-Smtp-Source: APXvYqyZtkP6PxsU3UaMQpu8AZwU/DkiQJeu4K/7glTT1ZkinSdT651Fwq7T77GW8oGg2nJltTvYwYQlVaCp648B1hU=
-X-Received: by 2002:a05:6602:10f:: with SMTP id s15mr11394239iot.220.1571670290816;
- Mon, 21 Oct 2019 08:04:50 -0700 (PDT)
+        id S1729373AbfJUPFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 11:05:08 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:55178 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1726289AbfJUPFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 11:05:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB0841007;
+        Mon, 21 Oct 2019 08:04:43 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 334183F71F;
+        Mon, 21 Oct 2019 08:04:43 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 16:04:41 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Pankaj Dubey <pankaj.dubey@samsung.com>, robh+dt@kernel.org,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     'Anvesh Salveru' <anvesh.s@samsung.com>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhelgaas@google.com, gustavo.pimentel@synopsys.com,
+        jingoohan1@gmail.com, mark.rutland@arm.com
+Subject: Re: [PATCH 1/2] dt-bindings: PCI: designware: Add binding for ZRX-DC
+ PHY property
+Message-ID: <20191021150441.GV47056@e119886-lin.cambridge.arm.com>
+References: <CGME20191021122630epcas5p32bd92762c4304035cad5c1822d96e304@epcas5p3.samsung.com>
+ <1571660755-30270-1-git-send-email-anvesh.s@samsung.com>
+ <20191021141541.GS47056@e119886-lin.cambridge.arm.com>
+ <05ba01d5881f$b98989a0$2c9c9ce0$@samsung.com>
 MIME-Version: 1.0
-References: <20191006053916.8849-1-brgl@bgdev.pl>
-In-Reply-To: <20191006053916.8849-1-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 21 Oct 2019 17:04:39 +0200
-Message-ID: <CAMRc=Me3Q=67fCDrFM38LAGXCd+apJybLYVfyrfwmwYa5L1CmQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] drivers: add new variants of devm_platform_ioremap_resource()
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-doc <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <05ba01d5881f$b98989a0$2c9c9ce0$@samsung.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-niedz., 6 pa=C5=BA 2019 o 07:39 Bartosz Golaszewski <brgl@bgdev.pl> napisa=
-=C5=82(a):
->
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> The new devm_platform_ioremap_resource() helper has now been widely
-> adopted and used in many drivers. Users of the write-combined ioremap()
-> variants could benefit from the same code shrinkage. This series provides
-> a write-combined version of devm_platform_ioremap_resource() and uses it =
-in a
-> relevant driver with the assumption that - just like was the case
-> previously - a coccinelle script will be developed to ease the transition
-> for others.
->
-> There are also users of platform_get_resource_byname() who call
-> devm_ioremap_resource() next, so provide another variant that they can us=
-e
-> together with two examples.
->
-> v1 -> v2:
-> - dropped everything related to nocache ioremap as this is going away
->
-> v2 -> v3:
-> - don't call platform_get_resource() as an argument of devm_ioremap_resou=
-rce(),
->   it actually decreases readability
-> - add devm_platform_ioremap_resource_byname() as another variant
->
-> Bartosz Golaszewski (8):
->   Documentation: devres: add missing entry for
->     devm_platform_ioremap_resource()
->   lib: devres: prepare devm_ioremap_resource() for more variants
->   lib: devres: provide devm_ioremap_resource_wc()
->   drivers: platform: provide devm_platform_ioremap_resource_wc()
->   misc: sram: use devm_platform_ioremap_resource_wc()
->   drivers: provide devm_platform_ioremap_resource_byname()
->   gpio: mvebu: use devm_platform_ioremap_resource_byname()
->   gpio: tegra186: use devm_platform_ioremap_resource_byname()
->
->  .../driver-api/driver-model/devres.rst        |  4 ++
->  drivers/base/platform.c                       | 39 +++++++++++-
->  drivers/gpio/gpio-mvebu.c                     | 19 +++---
->  drivers/gpio/gpio-tegra186.c                  |  4 +-
->  drivers/misc/sram.c                           | 28 +++------
->  include/linux/device.h                        |  2 +
->  include/linux/platform_device.h               |  6 ++
->  lib/devres.c                                  | 62 +++++++++++++------
->  8 files changed, 108 insertions(+), 56 deletions(-)
->
-> --
-> 2.23.0
->
+On Mon, Oct 21, 2019 at 08:26:28PM +0530, Pankaj Dubey wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Andrew Murray <andrew.murray@arm.com>
+> > Sent: Monday, October 21, 2019 7:46 PM
+> > To: Anvesh Salveru <anvesh.s@samsung.com>
+> > Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; bhelgaas@google.com;
+> > gustavo.pimentel@synopsys.com; jingoohan1@gmail.com; robh+dt@kernel.org;
+> > mark.rutland@arm.com; Pankaj Dubey <pankaj.dubey@samsung.com>
+> > Subject: Re: [PATCH 1/2] dt-bindings: PCI: designware: Add binding for
+> ZRX-DC
+> > PHY property
+> > 
+> > On Mon, Oct 21, 2019 at 05:55:55PM +0530, Anvesh Salveru wrote:
+> > > Add support for ZRX-DC compliant PHYs. If PHY is not compliant to
+> > > ZRX-DC specification, then after every 100ms link should transition to
+> > > recovery state during the low power states which increases power
+> > consumption.
+> > >
+> > > Platforms with ZRX-DC compliant PHY can use "snps,phy-zrxdc-compliant"
+> > > property in DesignWare controller DT node.
+> > >
+> > > Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
+> > > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/pci/designware-pcie.txt | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> > > b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> > > index 78494c4050f7..9507ac38ac89 100644
+> > > --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> > > +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> > > @@ -38,6 +38,8 @@ Optional properties:
+> > >     for data corruption. CDM registers include standard PCIe
+> configuration
+> > >     space registers, Port Logic registers, DMA and iATU (internal
+> Address
+> > >     Translation Unit) registers.
+> > > +- snps,phy-zrxdc-compliant: This property is needed if phy complies
+> > > +with the
+> > 
+> > Strictly speaking, this is a property of the phy - not the controller that
+> uses it.
+> > 
+> > If I understand correctly, there are some DW based PCI controllers that
+> use a
+> > phandle reference in DT to a Phy (such as fsl,imx6q-pcie.txt). Therefore
+> it feels
+> > like this is in the wrong place. Is there a reason this isn't described in
+> the Phy?
+> >
+> 
+> Yes, from HW point of view this is a property of the PHY. As PHY is the one
+> which is ZRXDC compliant or non-compliant. 
+> But as the DW controller programming needs to be altered for handling such
+> phys, so we added it as a DT binding of DW controller driver. 
+> Also it might be possible that, some other PCIe controller (other than
+> DesignWare), do not have any such provision in controller H/W and they
+> expect PHY itself should expose some SFR to handle such scenario. In such
+> cases it is straight-forward to add this binding as part of PHY node.
+> 
+> We can add this as part of PHY binding, but in that case we will end up
+> checking PHY binding in DWC driver via PHY nodes which seems little a bit of
+> hack. 
+> 
+> Do you have any other better approach to handle this? 
 
-Greg, Arnd,
+I think there may be others that have more informed opinions, such as
+Kishon and Rob (on CC).
 
-gentle ping for this. I noticed that some maintainers are complaining
-about being spammed with patches converting old drivers to using
-devm_platform_ioremap_resource() and there's even a patch removing the
-relevant coccinelle script on the list, but I think for new drivers
-these are still useful. Do you want to pick them up for v5.5 (or at
-all)?
+Thanks,
 
-Bart
+Andrew Murray
+
+>  
+> > Thanks,
+> > 
+> > Andrew Murray
+> > 
+> > > +  ZRX-DC specification.
+> > >  RC mode:
+> > >  - num-viewport: number of view ports configured in hardware. If a
+> platform
+> > >    does not specify it, the driver assumes 2.
+> > > --
+> > > 2.17.1
+> > >
+> 
