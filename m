@@ -2,72 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9502EDEC15
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4282BDEC1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 14:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728592AbfJUMXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 08:23:19 -0400
-Received: from sauhun.de ([88.99.104.3]:46704 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727256AbfJUMXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:23:18 -0400
-Received: from localhost (p54B33572.dip0.t-ipconnect.de [84.179.53.114])
-        by pokefinder.org (Postfix) with ESMTPSA id 9F05D2C040F;
-        Mon, 21 Oct 2019 14:23:16 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 14:23:16 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Eddie James <eajames@linux.ibm.com>
-Cc:     linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-        brendanhiggins@google.com, joel@jms.id.au, andrew@aj.id.au,
-        robh+dt@kernel.org, mark.rutland@arm.com, benh@kernel.crashing.org
-Subject: Re: [PATCH 2/2] dt-bindings: i2c: Aspeed: Add AST2600 compatible
-Message-ID: <20191021122316.GI1145@ninjato>
-References: <1568392510-866-1-git-send-email-eajames@linux.ibm.com>
- <1568392510-866-3-git-send-email-eajames@linux.ibm.com>
+        id S1728521AbfJUMYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 08:24:51 -0400
+Received: from skedge03.snt-world.com ([91.208.41.68]:39718 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbfJUMYu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 08:24:50 -0400
+Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge03.snt-world.com (Postfix) with ESMTPS id D14ED601DAF;
+        Mon, 21 Oct 2019 14:24:39 +0200 (CEST)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
+ (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 21 Oct
+ 2019 14:24:39 +0200
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
+ 15.01.1713.004; Mon, 21 Oct 2019 14:24:39 +0200
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     Marco Felsch <m.felsch@pengutronix.de>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "NXP Linux Team" <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 00/10] Add support for more Kontron i.MX6UL/ULL SoMs and
+ boards
+Thread-Topic: [PATCH 00/10] Add support for more Kontron i.MX6UL/ULL SoMs and
+ boards
+Thread-Index: AQHVhDNGmnCbI2WJmkisIF0qUQi7cqdeW9UAgAAC0ACABoDlgIAAC4sA
+Date:   Mon, 21 Oct 2019 12:24:39 +0000
+Message-ID: <76484360-c868-a784-11f2-7fec696e3061@kontron.de>
+References: <20191016150622.21753-1-frieder.schrempf@kontron.de>
+ <20191017081422.65m5dtqznsanfftp@pengutronix.de>
+ <6e6f9cf4-85b3-35e3-1238-11e39855bc08@kontron.de>
+ <20191021114319.krrhdtvycu7zxxie@pengutronix.de>
+In-Reply-To: <20191021114319.krrhdtvycu7zxxie@pengutronix.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.193]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5CD73DCB632EB64AA83D2754D99E78A7@snt-world.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3eH4Qcq5fItR5cpy"
-Content-Disposition: inline
-In-Reply-To: <1568392510-866-3-git-send-email-eajames@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: D14ED601DAF.A2522
+X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: aisheng.dong@nxp.com, andrew.smirnov@gmail.com,
+        davem@davemloft.net, devicetree@vger.kernel.org, festevam@gmail.com,
+        gregkh@linuxfoundation.org, jonathan.cameron@huawei.com,
+        kernel@pengutronix.de, krzk@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, m.felsch@pengutronix.de,
+        manivannan.sadhasivam@linaro.org, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, paulmck@linux.ibm.com,
+        robh+dt@kernel.org, robh@kernel.org, s.hauer@pengutronix.de,
+        shawnguo@kernel.org
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---3eH4Qcq5fItR5cpy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Sep 13, 2019 at 11:35:10AM -0500, Eddie James wrote:
-> Document the AST2600 I2C bus compatible string.
->=20
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-
-Applied to for-next, thanks!
-
-
---3eH4Qcq5fItR5cpy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl2tozQACgkQFA3kzBSg
-KbYW4RAArdkdyER9/nDFPWwqsfMrIVd+zx2BH3gX1AN4YyZk6MrTvGUPAMOfYwbF
-pfdZPEi/zwvgMrbdc6N7oKiNv0pTj83z8zFlku15rp+FaaKCljWRKlVDUMKA5LRK
-T7yOYHCTKSUCgxuw2VvY7eEyPPzuNuodlFr7sz8QGY8JepN1ZyanlvuFPD9FY/3b
-rKfbsmyl6EzlNHjIDCdJJMFjh5T6y8q21uipGq0FcZ/3WLA7sNMgSY7RF5otI820
-nH9D33hHySsYeDe6R69HPoHz+chYGbJ9Ua4am2q9fBiNMZUrrIYQ+WgMbp5Pfxgl
-scG9UT+pzzltQj2JY8i/k1RyR7gOYxJfIr4bvT43iy5G8dMbw72aRmxMg/E2qd0k
-VlB0ZZK/w7gg+h5NTvFC81owsW1UxwtghP/YdH9HJs9D+XiFxnhwA74cdS28bNFq
-fK1XZeYYSSWyCZ690GpOVN22UToHyj8xA7ml+8CU2ivdP39HuMblLIYIHm53bN7M
-uoMI3XSIKLCMJeITDhQOeWdeq9Reu5v/IRUTg06AsWggpARdTYJLRjI/R3wVKhyi
-aq7VIZx0nrbZO+xOE0Rf/l+Lt7/FoEB+Ejpfzj5RmWy8HJcSjE6hb1/DBlfLRvI4
-j1kLtMRTkfguWpIFhhBwhiCRObfLHIiefx17cEgh3zMMWbM6Pio=
-=t3sq
------END PGP SIGNATURE-----
-
---3eH4Qcq5fItR5cpy--
+SGkgTWFyY28sDQoNCk9uIDIxLjEwLjE5IDEzOjQzLCBNYXJjbyBGZWxzY2ggd3JvdGU6DQo+IEhp
+IEZyaWVkZXIsDQo+IA0KPiBPbiAxOS0xMC0xNyAwODoyNCwgU2NocmVtcGYgRnJpZWRlciB3cm90
+ZToNCj4+IEhpIE1hcmNvLA0KPj4NCj4+IE9uIDE3LjEwLjE5IDEwOjE0LCBNYXJjbyBGZWxzY2gg
+d3JvdGU6DQo+Pj4gSGkgRnJpZWRlciwNCj4+Pg0KPj4+IE9uIDE5LTEwLTE2IDE1OjA2LCBTY2hy
+ZW1wZiBGcmllZGVyIHdyb3RlOg0KPj4+PiBGcm9tOiBGcmllZGVyIFNjaHJlbXBmIDxmcmllZGVy
+LnNjaHJlbXBmQGtvbnRyb24uZGU+DQo+Pj4+DQo+Pj4+IEluIG9yZGVyIHRvIHN1cHBvcnQgbW9y
+ZSBvZiB0aGUgaS5NWDZVTC9VTEwtYmFzZWQgU29NcyBhbmQgYm9hcmRzIGJ5DQo+Pj4+IEtvbnRy
+b24gRWxlY3Ryb25pY3MgR21iSCwgd2UgcmVzdHJ1Y3R1cmUgdGhlIGRldmljZXRyZWVzIHRvIHNo
+YXJlIGNvbW1vbg0KPj4+PiBwYXJ0cyBhbmQgYWRkIG5ldyBkZXZpY2V0cmVlcyBmb3IgdGhlIG1p
+c3NpbmcgYm9hcmRzLg0KPj4+Pg0KPj4+PiBDdXJyZW50bHkgdGhlcmUgYXJlIHRoZSBmb2xsb3dp
+bmcgU29NIGZsYXZvcnM6DQo+Pj4+ICAgICAqIE42MzEwOiBTb00gd2l0aCBpLk1YNlVMLTIsIDI1
+Nk1CIFJBTSwgMjU2TUIgU1BJIE5BTkQNCj4+Pj4gICAgICogTjYzMTE6IFNvTSB3aXRoIGkuTVg2
+VUwtMiwgNTEyTUIgUkFNLCA1MTJNQiBTUEkgTkFORCAobmV3KQ0KPj4+PiAgICAgKiBONjQxMTog
+U29NIHdpdGggaS5NWDZVTEwsIDUxMk1CIFJBTSwgNTEyTUIgU1BJIE5BTkQgKG5ldykNCj4+Pj4N
+Cj4+Pj4gRWFjaCBvZiB0aGUgU29NcyBhbHNvIGZlYXR1cmVzIDFNQiBTUEkgTk9SIGFuZCBhbiBF
+dGhlcm5ldCBQSFkuIFRoZSBjYXJyaWVyDQo+Pj4+IGJvYXJkIGZvciB0aGUgZXZhbGtpdCBpcyB0
+aGUgc2FtZSBmb3IgYWxsIFNvTXMuDQo+Pj4+DQo+Pj4+IEZyaWVkZXIgU2NocmVtcGYgKDEwKToN
+Cj4+Pj4gICAgIEFSTTogZHRzOiBpbXg2dWwta29udHJvbi1uNjMxMDogTW92ZSBjb21tb24gU29N
+IG5vZGVzIHRvIGEgc2VwYXJhdGUNCj4+Pj4gICAgICAgZmlsZQ0KPj4+PiAgICAgQVJNOiBkdHM6
+IEFkZCBzdXBwb3J0IGZvciB0d28gbW9yZSBLb250cm9uIFNvTXMgTjYzMTEgYW5kIE42NDExDQo+
+Pj4+ICAgICBBUk06IGR0czogaW14NnVsLWtvbnRyb24tbjYzMTAtczogTW92ZSBjb21tb24gbm9k
+ZXMgdG8gYSBzZXBhcmF0ZSBmaWxlDQo+Pj4+ICAgICBBUk06IGR0czogQWRkIHN1cHBvcnQgZm9y
+IHR3byBtb3JlIEtvbnRyb24gZXZhbGtpdCBib2FyZHMgJ042MzExIFMnDQo+Pj4+ICAgICAgIGFu
+ZCAnTjY0MTEgUycNCj4+Pj4gICAgIEFSTTogZHRzOiBpbXg2dWwta29udHJvbi1uNngxeDogQWRk
+ICdjaG9zZW4nIG5vZGUgd2l0aCAnc3Rkb3V0LXBhdGgnDQo+Pj4+ICAgICBBUk06IGR0czogaW14
+NnVsLWtvbnRyb24tbjZ4MXgtczogU3BlY2lmeSBidXMtd2lkdGggZm9yIFNEIGNhcmQgYW5kDQo+
+Pj4+ICAgICAgIGVNTUMNCj4+Pj4gICAgIEFSTTogZHRzOiBpbXg2dWwta29udHJvbi1uNngxeC1z
+OiBBZGQgdmJ1cy1zdXBwbHkgYW5kIG92ZXJjdXJyZW50DQo+Pj4+ICAgICAgIHBvbGFyaXR5IHRv
+IHVzYiBub2Rlcw0KPj4+PiAgICAgQVJNOiBkdHM6IGlteDZ1bC1rb250cm9uLW42eDF4LXM6IFJl
+bW92ZSBhbiBvYnNvbGV0ZSBjb21tZW50IGFuZCBmaXgNCj4+Pj4gICAgICAgaW5kZW50YXRpb24N
+Cj4+Pj4gICAgIGR0LWJpbmRpbmdzOiBhcm06IGZzbDogQWRkIG1vcmUgS29udHJvbiBpLk1YNlVM
+L1VMTCBjb21wYXRpYmxlcw0KPj4+PiAgICAgTUFJTlRBSU5FUlM6IEFkZCBhbiBlbnRyeSBmb3Ig
+S29udHJvbiBFbGVjdHJvbmljcyBBUk0gYm9hcmQgc3VwcG9ydA0KPj4+DQo+Pj4gRGlkIHlvdSBz
+ZW5kIGFsbCBwYXRjaGVzIHRvIHNhbWUgVG86IGFuZCBDYzo/DQo+Pg0KPj4gTm8sIEkgaGF2ZSBh
+IHNjcmlwdCB0aGF0IHJ1bnMgZ2V0X21haW50YWluZXIucGwgZm9yIGVhY2ggcGF0Y2guIFNvIHRo
+ZQ0KPj4gcmVjaXBpZW50cyBtaWdodCBkaWZmZXIuIEkgb25seSBoYWQgS3J6eXN6dG9mIGFuZCBS
+b2IgYXMgaGFyZC1jb2RlZA0KPj4gcmVjaXBpZW50cyBmb3IgdGhlIHdob2xlIHNlcmllcy4NCj4+
+DQo+PiBEbyB5b3UgdGhpbmsgSSBzaG91bGQgY2hhbmdlIHRoaXMgc28gZWFjaCByZWNpcGllbnQg
+cmVjZWl2ZXMgdGhlIHdob2xlDQo+PiBzZXJpZXM/DQo+IA0KPiBJIGRvIGl0IHRoYXQgd2F5IGJl
+Y2F1c2Ugc29tZXRpbWVzIGl0IGlzIGJldHRlciBmb3IgdGhlIHJldmlld2VyIHRvIHNlZQ0KPiB0
+aGUgd2hvbGUgY29udGV4dC4NCg0KU291bmRzIHJlYXNvbmFibGUuIFRoYW5rcyBmb3IgdGhlIGZl
+ZWRiYWNrLg0KU29tZXRpbWVzIGl0IGp1c3QgZmVlbHMgbGlrZSBpdCB3aWxsIGNhdXNlIGEgbG90
+IG9mIHVzZWxlc3MgbWFpbCB0cmFmZmljIA0Kd2hlbiBzZW5kaW5nIGFsbCBwYXRjaGVzIHRvIGFs
+bCBwZW9wbGUgc3VnZ2VzdGVkIGJ5IGdldF9tYWludGFpbmVyLnBsLCANCmJ1dCBpbiBnZW5lcmFs
+IEkgYWdyZWUsIGl0IGlzIGRlZmluaXRlbHkgdXNlZnVsIHRvIHJlY2VpdmUgYWxsIHRoZSANCmNv
+bnRleHQuIEkgbWlnaHQgaGF2ZSB0byB0d2VhayBteSBnZXRfbWFpbnRhaW5lciBhcmd1bWVudHMs
+IHRvIHRyaW0gdGhlIA0KbGlzdCBvZiByZWNpcGllbnRzIGFuZCB0aGVuIHNlbmQgdGhlIHdob2xl
+IHNlcmllcyB0byB0aGVzZSBwZW9wbGUuDQoNClRoYW5rcywNCkZyaWVkZXI=
