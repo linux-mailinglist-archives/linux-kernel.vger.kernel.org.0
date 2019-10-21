@@ -2,172 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E6FDEDEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE27EDEE1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbfJUNj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:39:57 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35544 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729347AbfJUNjy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:39:54 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 14so6196491wmu.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 06:39:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rxZzIwlDD5DO3Dig1AAmB3NX72gSPtCfOYTtxG2Ms5Q=;
-        b=o3pc+fU/IFhuH3lLsX421aMMLNgviKUCS8A1bpdOmWwPY+qswyHRHsftp/JYKIgYCT
-         FDKGAHGBuyqR6IE5DhsJIbh1tZwPUOfQC9iRtmBMXQINkFEeWondGaIU4S0d3uPPlvZ1
-         RywTXQ0VjFlT5oqDG151fTDTrhpQqSr8vUdHplHloWnbCANc+Y0iKvua71c+LMkCJZq/
-         a3gXTpfWTSZIYtv+XBfny+NVQIojTHjJbK9l/GUakkcOSw8FqYpwiQJuEV2bhPXsvCui
-         RN4vRrsTpwB4XDDjLBDDLu3/nN/uCyuugzpAmsBVbeSzcTya/2YiF2eOS/d1hHTcNSXN
-         cPYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rxZzIwlDD5DO3Dig1AAmB3NX72gSPtCfOYTtxG2Ms5Q=;
-        b=ZVEsqjyTio0+hppKQEB1w/2nSvER58vQqOfqUW87tufUIY67/sORZBeL0hsY/B9Nrw
-         sZBy3xBMKoV1COyFui6hHkwuSIM6lGvJlpTm2my8LtdR9Bh5HumKMmVVaPQecNHEhBPQ
-         riGxQ+G7LgJxGaorlIYm4JUP+r/SjZkN26u/N3qgX/Z4VS1EfoJb8WjHpCcwZ+RSYj5L
-         1PRCNzPEVR9gIN+K4x4Mx1r23PPoogGeR4+FY6TVwO9FLPqJwfdfcItkEwahQCEgJ1g7
-         Aa9nUJ+n+WIEN0cLdd+xBRwh+fGbRJyb2Ea39sL2v41cqAJrsQglUwM6hfPXbpHjDEwY
-         InwQ==
-X-Gm-Message-State: APjAAAU/Dhsajc9603JKfzkd5l3bt/FPP8w+1j5lOpbbQpOkZy+Vp0Sf
-        MqxxSetPrOlhN2Ab1dmwH+hMaA==
-X-Google-Smtp-Source: APXvYqzYcRG7qQc57VrQDTccwlNW2H5DWKsVDXNVe8OUa6L1J6a/dYF402AJ/L9jlUOo8hOKSLt6TA==
-X-Received: by 2002:a1c:39c1:: with SMTP id g184mr1936913wma.75.1571665192059;
-        Mon, 21 Oct 2019 06:39:52 -0700 (PDT)
-Received: from localhost.localdomain (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 17sm4050552wmg.29.2019.10.21.06.39.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 06:39:51 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     robh+dt@kernel.org
-Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        mjourdan@baylibre.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH] dt-bindings: soc: amlogic: canvas: convert to yaml
-Date:   Mon, 21 Oct 2019 15:39:50 +0200
-Message-Id: <20191021133950.30490-1-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
+        id S1729638AbfJUNlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:41:10 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:52994 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1729004AbfJUNk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:40:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BE061007;
+        Mon, 21 Oct 2019 06:40:34 -0700 (PDT)
+Received: from [10.1.194.43] (e112269-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B15A43F718;
+        Mon, 21 Oct 2019 06:40:32 -0700 (PDT)
+Subject: Re: [PATCH v6 01/10] KVM: arm64: Document PV-time interface
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191011125930.40834-1-steven.price@arm.com>
+ <20191011125930.40834-2-steven.price@arm.com>
+ <20191015175651.GF24604@lakrids.cambridge.arm.com>
+ <20191018171039.GA18838@lakrids.cambridge.arm.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <d01edcb3-0d9a-d4ec-6a60-a82f3ffccba5@arm.com>
+Date:   Mon, 21 Oct 2019 14:40:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191018171039.GA18838@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have the DT validation in place, let's convert the device tree
-bindings for the Amlogic Canvas over to a YAML schemas.
+On 18/10/2019 18:10, Mark Rutland wrote:
+> On Tue, Oct 15, 2019 at 06:56:51PM +0100, Mark Rutland wrote:
+[...]
+>>> +PV_TIME_ST
+>>> +    ============= ========    ==========
+>>> +    Function ID:  (uint32)    0xC5000021
+>>> +    Return value: (int64)     IPA of the stolen time data structure for this
+>>> +                              VCPU. On failure:
+>>> +                              NOT_SUPPORTED (-1)
+>>> +    ============= ========    ==========
+>>> +
+>>> +The IPA returned by PV_TIME_ST should be mapped by the guest as normal memory
+>>> +with inner and outer write back caching attributes, in the inner shareable
+>>> +domain. A total of 16 bytes from the IPA returned are guaranteed to be
+>>> +meaningfully filled by the hypervisor (see structure below).
+>>
+>> At what granularity is this allowed to share IPA space with other
+>> mappings? The spec doesn't provide any guidance here, and I strongly
+>> suspect that it should.
+>>
+>> To support a 64K guest, we must ensure that this doesn't share a 64K IPA
+>> granule with any MMIO, and it probably only makes sense for an instance
+>> of this structure to share that granule with another vCPU's structure.
+>>
+>> We probably _also_ want to ensure that this doesn't share a 64K granule
+>> with memory the guest sees as regular system RAM. Otherwise we're liable
+>> to force it into having mismatched attributes for any of that RAM it
+>> happens to map as part of mapping the PV_TIME_ST structure.
+> 
+> I guess we can say that it's userspace's responsibiltiy to set this up
+> with sufficient alignment, but I do think we want to make a
+> recommendataion here.
 
-Cc: Maxime Jourdan <mjourdan@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../bindings/soc/amlogic/amlogic,canvas.txt   | 33 -------------
- .../bindings/soc/amlogic/amlogic,canvas.yaml  | 49 +++++++++++++++++++
- 2 files changed, 49 insertions(+), 33 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.txt
- create mode 100644 Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml
+I can add something like this to the kernel's documentation:
 
-diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.txt b/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.txt
-deleted file mode 100644
-index e876f3ce54f6..000000000000
---- a/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.txt
-+++ /dev/null
-@@ -1,33 +0,0 @@
--Amlogic Canvas
--================================
--
--A canvas is a collection of metadata that describes a pixel buffer.
--Those metadata include: width, height, phyaddr, wrapping and block mode.
--Starting with GXBB the endianness can also be described.
--
--Many IPs within Amlogic SoCs rely on canvas indexes to read/write pixel data
--rather than use the phy addresses directly. For instance, this is the case for
--the video decoders and the display.
--
--Amlogic SoCs have 256 canvas.
--
--Device Tree Bindings:
-----------------------
--
--Video Lookup Table
----------------------------
--
--Required properties:
--- compatible: has to be one of:
--		- "amlogic,meson8-canvas", "amlogic,canvas" on Meson8
--		- "amlogic,meson8b-canvas", "amlogic,canvas" on Meson8b
--		- "amlogic,meson8m2-canvas", "amlogic,canvas" on Meson8m2
--		- "amlogic,canvas" on GXBB and newer
--- reg: Base physical address and size of the canvas registers.
--
--Example:
--
--canvas: video-lut@48 {
--	compatible = "amlogic,canvas";
--	reg = <0x0 0x48 0x0 0x14>;
--};
-diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml
-new file mode 100644
-index 000000000000..4322f876753d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml
-@@ -0,0 +1,49 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright 2019 BayLibre, SAS
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/soc/amlogic/amlogic,canvas.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Amlogic Canvas
-+
-+maintainers:
-+  - Neil Armstrong <narmstrong@baylibre.com>
-+  - Maxime Jourdan <mjourdan@baylibre.com>
-+
-+description: |
-+  A canvas is a collection of metadata that describes a pixel buffer.
-+  Those metadata include: width, height, phyaddr, wrapping and block mode.
-+  Starting with GXBB the endianness can also be described.
-+
-+  Many IPs within Amlogic SoCs rely on canvas indexes to read/write pixel data
-+  rather than use the phy addresses directly. For instance, this is the case for
-+  the video decoders and the display.
-+
-+  Amlogic SoCs have 256 canvas.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+        - enum:
-+          - amlogic,meson8-canvas
-+          - amlogic,meson8b-canvas
-+          - amlogic,meson8m2-canvas
-+        - const: amlogic,canvas
-+      - const: amlogic,canvas # GXBB and newer SoCs
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+examples:
-+  - |
-+    canvas: video-lut@48 {
-+        compatible = "amlogic,canvas";
-+        reg = <0x48 0x14>;
-+    };
-+
--- 
-2.22.0
+    It is advisable that one or more 64k pages are set aside for the
+    purpose of these structures and not used for other purposes, this
+    enables the guest to map the region using 64k pages and avoids
+    conflicting attributes with other memory.
 
+> [...]
+> 
+>>> +PV_TIME_ST returns the structure for the calling VCPU.
+>>> +
+>>> +Stolen Time
+>>> +-----------
+>>> +
+>>> +The structure pointed to by the PV_TIME_ST hypercall is as follows:
+>>> +
+>>> ++-------------+-------------+-------------+----------------------------+
+>>> +| Field       | Byte Length | Byte Offset | Description                |
+>>> ++=============+=============+=============+============================+
+>>> +| Revision    |      4      |      0      | Must be 0 for version 1.0  |
+>>> ++-------------+-------------+-------------+----------------------------+
+>>> +| Attributes  |      4      |      4      | Must be 0                  |
+>>> ++-------------+-------------+-------------+----------------------------+
+>>> +| Stolen time |      8      |      8      | Stolen time in unsigned    |
+>>> +|             |             |             | nanoseconds indicating how |
+>>> +|             |             |             | much time this VCPU thread |
+>>> +|             |             |             | was involuntarily not      |
+>>> +|             |             |             | running on a physical CPU. |
+>>> ++-------------+-------------+-------------+----------------------------+
+>>> +
+>>> +All values in the structure are stored little-endian.
+>>
+>> Looking at the published DEN 0057A, endianness is never stated. Is this
+>> going to be corrected in the next release?
+> 
+> I'm assuming that this has been communicated internally, and we can
+> assume the next rev of the spec will state so.
+
+Yes I've fed that back, so hopefully it should be in the next rev of the
+spec.
+
+> Assuming so, this looks good to me.
+
+Great, thanks for the review.
+
+Steve
