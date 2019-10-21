@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D473CDEDF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:40:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 589E7DEDF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 15:40:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbfJUNkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 09:40:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41980 "EHLO mail.kernel.org"
+        id S1729459AbfJUNkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 09:40:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729390AbfJUNkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:40:14 -0400
+        id S1729441AbfJUNkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:40:17 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFD3220873;
-        Mon, 21 Oct 2019 13:40:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E90AA214B2;
+        Mon, 21 Oct 2019 13:40:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571665213;
-        bh=tXIvQP7f9sWnvZ2CqU7cyI2q498MnIgv2v33J6cIotM=;
+        s=default; t=1571665216;
+        bh=9UxFmKuBFjeNvT1nzWgHQrO/jr2YDfCt399FobUHFrs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WAN5AUWe8BkKR/JuAKs8UzHvKqsfjGQuTnJk0zgb6q+ld6lnVBXkel157NNr+LUJZ
-         LBSoyiwcU4cm89hQPyCgmqbIkq61oqWFZMF7UnqcAq6gZAQJSbeVuUTBNDt+cws8YV
-         /gNKAoCU6Mf1bjjK0yfffeUUPv6QlTiKjmA1soWg=
+        b=ly1AgBf15ZhXjnv18TsCyAXCb5gjRPEj3fhCyCvH6vTBbdx24jHzjbS+P5k08v4D8
+         B/4UHxsTPWyWRU/wSNWLpt8RfLRv60DQKBaBXz4TNxmifMFsDARA8YiTm9Ed6ZlsJr
+         f40Tnh4GgY03JlTsqGEA1uLdiIq6FBI1uNDH0WVs=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -31,13 +31,12 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
         David Ahern <dsahern@gmail.com>,
         =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
         <lclaudio@redhat.com>
-Subject: [PATCH 28/57] perf trace: Hook the 'vec' tracepoint argument with the x86 IRQ vectors scnprintf/strtoul
-Date:   Mon, 21 Oct 2019 10:38:05 -0300
-Message-Id: <20191021133834.25998-29-acme@kernel.org>
+Subject: [PATCH 29/57] perf trace: Show error message when not finding a field used in a filter expression
+Date:   Mon, 21 Oct 2019 10:38:06 -0300
+Message-Id: <20191021133834.25998-30-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191021133834.25998-1-acme@kernel.org>
 References: <20191021133834.25998-1-acme@kernel.org>
@@ -51,85 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Ended up only being useful when filtering multiple irq_vectors
-tracepoints, as we end up having a tracepoint for each of the entries,
-i.e.:
+It was there, but as pr_debug(), make it pr_err() so that we can see it
+without -v:
 
-This will always come with the "RESCHEDULE_VECTOR" in the 'vector' arg:
-
-  # perf trace --max-events 8 -e irq_vectors:reschedule*
-     0.000 cc1/29067 irq_vectors:reschedule_entry(vector: RESCHEDULE)
-     0.004 cc1/29067 irq_vectors:reschedule_exit(vector: RESCHEDULE)
-     0.553 cc1/29067 irq_vectors:reschedule_entry(vector: RESCHEDULE)
-     0.556 cc1/29067 irq_vectors:reschedule_exit(vector: RESCHEDULE)
-     1.182 cc1/29067 irq_vectors:reschedule_entry(vector: RESCHEDULE)
-     1.185 cc1/29067 irq_vectors:reschedule_exit(vector: RESCHEDULE)
-     1.203 :29052/29052 irq_vectors:reschedule_entry(vector: RESCHEDULE)
-     1.206 :29052/29052 irq_vectors:reschedule_exit(vector: RESCHEDULE)
+  # trace -e syscalls:*lseek --filter="whenc==SET" sleep 1
+  "whenc" not found in "syscalls:sys_enter_lseek", can't set filter "whenc==SET"
   #
-
-While filtering that value will produce nothing:
-
-  # perf trace --max-events 8 -e irq_vectors:reschedule* --filter="vector != RESCHEDULE"
-  ^C#
-
-Maybe it'll be useful for those other tracepoints:
-
-  # perf list irq_vectors:vector_*
-
-  List of pre-defined events (to be used in -e):
-
-    irq_vectors:vector_activate                        [Tracepoint event]
-    irq_vectors:vector_alloc                           [Tracepoint event]
-    irq_vectors:vector_alloc_managed                   [Tracepoint event]
-    irq_vectors:vector_clear                           [Tracepoint event]
-    irq_vectors:vector_config                          [Tracepoint event]
-    irq_vectors:vector_deactivate                      [Tracepoint event]
-    irq_vectors:vector_free_moved                      [Tracepoint event]
-    irq_vectors:vector_reserve                         [Tracepoint event]
-    irq_vectors:vector_reserve_managed                 [Tracepoint event]
-    irq_vectors:vector_setup                           [Tracepoint event]
-    irq_vectors:vector_teardown                        [Tracepoint event]
-    irq_vectors:vector_update                          [Tracepoint event]
-  #
-
-But since we have it done, keep it.
-
-This at least served to teach me that all those irq vectors have a entry
-and an exit tracepoint that I can then use just like with
-raw_syscalls:sys_{enter,exit}, i.e. pair them, use just a
-trace__irq_vectors_entry() + trace__irq_vectors_exit() and use the
-'vector' arg as I use the 'syscall id' one for syscalls.
-
-Then the default for 'perf trace' will include irq_vectors in addition
-to syscalls.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-wer4cwbbqub3o7sa8h1j3uzb@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-ly4rgm1bto8uwc2itpaixjob@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/builtin-trace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 58bbe85d4166..e71605c99080 100644
+index e71605c99080..cafd18466dfa 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -1528,7 +1528,8 @@ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
- }
+@@ -3611,8 +3611,8 @@ static int trace__expand_filter(struct trace *trace __maybe_unused, struct evsel
  
- static struct syscall_arg_fmt syscall_arg_fmts__by_name[] = {
--	{ .name = "msr", .scnprintf = SCA_X86_MSR, .strtoul = STUL_X86_MSR, }
-+	{ .name = "msr",	.scnprintf = SCA_X86_MSR,	  .strtoul = STUL_X86_MSR,	   },
-+	{ .name = "vector",	.scnprintf = SCA_X86_IRQ_VECTORS, .strtoul = STUL_X86_IRQ_VECTORS, },
- };
+ 			fmt = perf_evsel__syscall_arg_fmt(evsel, arg);
+ 			if (fmt == NULL) {
+-				pr_debug("\"%s\" not found in \"%s\", can't set filter \"%s\"\n",
+-					 arg, evsel->name, evsel->filter);
++				pr_err("\"%s\" not found in \"%s\", can't set filter \"%s\"\n",
++				       arg, evsel->name, evsel->filter);
+ 				return -1;
+ 			}
  
- static int syscall_arg_fmt__cmp(const void *name, const void *fmtp)
 -- 
 2.21.0
 
