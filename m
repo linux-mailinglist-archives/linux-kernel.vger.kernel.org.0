@@ -2,104 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07993DE437
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 07:59:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52021DE43D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 08:00:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbfJUF7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 01:59:07 -0400
-Received: from mail-sh.amlogic.com ([58.32.228.43]:32104 "EHLO
-        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfJUF7H (ORCPT
+        id S1727280AbfJUGAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 02:00:07 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:41584 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727194AbfJUGAG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 01:59:07 -0400
-Received: from droid13.amlogic.com (116.236.93.172) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.1591.10; Mon, 21 Oct 2019
- 13:59:15 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>
-CC:     Nan Li <nan.li@amlogic.com>, Jianxin Pan <jianxin.pan@amlogic.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Victor Wan <victor.wan@amlogic.com>
-Subject: [PATCH] mmc: fix mmc dma operation
-Date:   Mon, 21 Oct 2019 13:59:01 +0800
-Message-ID: <1571637541-119016-1-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 21 Oct 2019 02:00:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571637605;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dDGATv3pDDt35nGamPbAiYICPiIcyMTX5D3TlrrxwFE=;
+        b=LO2LGnn5bRC+I8oL6PHluwuY2ZZehUCoevjG1bH6OmWvnyj+wt9HPHvILfcfEX03XlLQSd
+        YoV/Ki8wD3EZt8gCKH8TZAuKFC9IzydJSZ1w7L8Ih7oBa+3qYGkFtQduDt27T8MzvZWteH
+        HfvRSt1CwYSbO7+6/gMxLsj1G1sLypA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-78-NR0dB1IIOm-f7cm23buKPw-1; Mon, 21 Oct 2019 02:00:01 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9F351100551E;
+        Mon, 21 Oct 2019 05:59:57 +0000 (UTC)
+Received: from [10.72.12.209] (ovpn-12-209.pek2.redhat.com [10.72.12.209])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1919360606;
+        Mon, 21 Oct 2019 05:59:23 +0000 (UTC)
+Subject: Re: [PATCH V4 5/6] virtio: introduce a mdev based transport
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        maxime.coquelin@redhat.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com, rob.miller@broadcom.com,
+        xiao.w.wang@intel.com, haotian.wang@sifive.com,
+        zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
+        farman@linux.ibm.com, pasic@linux.ibm.com, sebott@linux.ibm.com,
+        oberpar@linux.ibm.com, heiko.carstens@de.ibm.com,
+        gor@linux.ibm.com, borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
+        stefanha@redhat.com
+References: <20191017104836.32464-1-jasowang@redhat.com>
+ <20191017104836.32464-6-jasowang@redhat.com>
+ <20191018162007.31631039.cohuck@redhat.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <2bb5645b-5c46-9cae-0571-65c302f51cf2@redhat.com>
+Date:   Mon, 21 Oct 2019 13:59:23 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [116.236.93.172]
+In-Reply-To: <20191018162007.31631039.cohuck@redhat.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: NR0dB1IIOm-f7cm23buKPw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nan Li <nan.li@amlogic.com>
 
-In MMC dma transfer, the region requested by dma_map_sg() may be released
-by dma_unmap_sg() before the transfer is completed.
+On 2019/10/18 =E4=B8=8B=E5=8D=8810:20, Cornelia Huck wrote:
+> On Thu, 17 Oct 2019 18:48:35 +0800
+> Jason Wang <jasowang@redhat.com> wrote:
+>
+>> This patch introduces a new mdev transport for virtio. This is used to
+>> use kernel virtio driver to drive the mediated device that is capable
+>> of populating virtqueue directly.
+>>
+>> A new virtio-mdev driver will be registered to the mdev bus, when a
+>> new virtio-mdev device is probed, it will register the device with
+>> mdev based config ops. This means it is a software transport between
+>> mdev driver and mdev device. The transport was implemented through
+>> device specific ops which is a part of mdev_parent_ops now.
+>>
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>> ---
+>>   drivers/virtio/Kconfig       |   7 +
+>>   drivers/virtio/Makefile      |   1 +
+>>   drivers/virtio/virtio_mdev.c | 409 +++++++++++++++++++++++++++++++++++
+>>   3 files changed, 417 insertions(+)
+> (...)
+>
+>> +static int virtio_mdev_probe(struct device *dev)
+>> +{
+>> +=09struct mdev_device *mdev =3D mdev_from_dev(dev);
+>> +=09const struct virtio_mdev_device_ops *ops =3D mdev_get_dev_ops(mdev);
+>> +=09struct virtio_mdev_device *vm_dev;
+>> +=09int rc;
+>> +
+>> +=09vm_dev =3D devm_kzalloc(dev, sizeof(*vm_dev), GFP_KERNEL);
+>> +=09if (!vm_dev)
+>> +=09=09return -ENOMEM;
+>> +
+>> +=09vm_dev->vdev.dev.parent =3D dev;
+>> +=09vm_dev->vdev.dev.release =3D virtio_mdev_release_dev;
+>> +=09vm_dev->vdev.config =3D &virtio_mdev_config_ops;
+>> +=09vm_dev->mdev =3D mdev;
+>> +=09INIT_LIST_HEAD(&vm_dev->virtqueues);
+>> +=09spin_lock_init(&vm_dev->lock);
+>> +
+>> +=09vm_dev->version =3D ops->get_mdev_features(mdev);
+>> +=09if (vm_dev->version !=3D VIRTIO_MDEV_F_VERSION_1) {
+>> +=09=09dev_err(dev, "VIRTIO_MDEV_F_VERSION_1 is mandatory\n");
+>> +=09=09return -ENXIO;
+>> +=09}
+> Hm, so how is that mdev features interface supposed to work? If
+> VIRTIO_MDEV_F_VERSION_1 is a bit, I would expect this code to test for
+> its presence, and not for identity.
 
-Put the unmap operation in front of mmc_request_done() to avoid this.
 
-Signed-off-by: Nan Li <nan.li@amlogic.com>
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
----
- drivers/mmc/host/meson-gx-mmc.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+This should be used by driver to detect the which sets of functions and=20
+their semantics that could be provided by the device. E.g when driver=20
+support both version 2 and version 1 but device only support version 1,=20
+driver can switch to use version 1. Btw, Is there a easy way for to test=20
+its presence or do you mean doing sanity testing on existence of the=20
+mandatory ops that provided by the device?
 
-diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-index e712315..7667e8a 100644
---- a/drivers/mmc/host/meson-gx-mmc.c
-+++ b/drivers/mmc/host/meson-gx-mmc.c
-@@ -173,6 +173,7 @@ struct meson_host {
- 	int irq;
- 
- 	bool vqmmc_enabled;
-+	bool needs_pre_post_req;
- };
- 
- #define CMD_CFG_LENGTH_MASK GENMASK(8, 0)
-@@ -654,6 +655,8 @@ static void meson_mmc_request_done(struct mmc_host *mmc,
- 	struct meson_host *host = mmc_priv(mmc);
- 
- 	host->cmd = NULL;
-+	if (host->needs_pre_post_req)
-+		meson_mmc_post_req(mmc, mrq, 0);
- 	mmc_request_done(host->mmc, mrq);
- }
- 
-@@ -803,25 +806,23 @@ static void meson_mmc_start_cmd(struct mmc_host *mmc, struct mmc_command *cmd)
- static void meson_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- {
- 	struct meson_host *host = mmc_priv(mmc);
--	bool needs_pre_post_req = mrq->data &&
-+
-+	host->needs_pre_post_req = mrq->data &&
- 			!(mrq->data->host_cookie & SD_EMMC_PRE_REQ_DONE);
- 
--	if (needs_pre_post_req) {
-+	if (host->needs_pre_post_req) {
- 		meson_mmc_get_transfer_mode(mmc, mrq);
- 		if (!meson_mmc_desc_chain_mode(mrq->data))
--			needs_pre_post_req = false;
-+			host->needs_pre_post_req = false;
- 	}
- 
--	if (needs_pre_post_req)
-+	if (host->needs_pre_post_req)
- 		meson_mmc_pre_req(mmc, mrq);
- 
- 	/* Stop execution */
- 	writel(0, host->regs + SD_EMMC_START);
- 
- 	meson_mmc_start_cmd(mmc, mrq->sbc ?: mrq->cmd);
--
--	if (needs_pre_post_req)
--		meson_mmc_post_req(mmc, mrq, 0);
- }
- 
- static void meson_mmc_read_resp(struct mmc_host *mmc, struct mmc_command *cmd)
--- 
-2.7.4
+
+>
+> What will happen if we come up with a version 2? If this is backwards
+> compatible, will both version 2 and version 1 be set?
+
+
+Yes, I think so, and version 2 should be considered as some extensions=20
+of version 1. If it's completely, it should use a new class id.
+
+Thanks
+
+
+>
+>> +
+>> +=09vm_dev->vdev.id.device =3D ops->get_device_id(mdev);
+>> +=09if (vm_dev->vdev.id.device =3D=3D 0)
+>> +=09=09return -ENODEV;
+>> +
+>> +=09vm_dev->vdev.id.vendor =3D ops->get_vendor_id(mdev);
+>> +=09rc =3D register_virtio_device(&vm_dev->vdev);
+>> +=09if (rc)
+>> +=09=09put_device(dev);
+>> +=09else
+>> +=09=09dev_set_drvdata(dev, vm_dev);
+>> +
+>> +=09return rc;
+>> +}
+> (...)
 
