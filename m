@@ -2,150 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 189EADFC7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 06:17:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 751C0DFCED
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 06:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730828AbfJVEOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 00:14:50 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:32864 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfJVEOu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 00:14:50 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i76so9139341pgc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 21:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rs9LAlJ/Mb8c9Q5mqnJ0h++sIssMn8kGp7hyQlxdI80=;
-        b=QZEVW2RSSdkh1WJhJ+2zM6gvI5OM1zukP2RcEMAPrk+gYXdCshBt6eo69Xdgf3piwH
-         2jsrvgUWf8cb/5otO7cLp0OZTGHxclN0W7hqZny+giRNR8fylKD+GerxqjcUfDHD2lG2
-         0KEw2YMYwQxe0KdAWRk8BFnaKDfT6Y4Mi/ezDoYAsR2aM80Bu/w8isG2AaVlXU5mmZZi
-         ZsbERCij07rF7+9yS69wVKkOmNcbWkmFlmMwOqEO0p+lgpHQoaJBcTEvA3l4FlUVr5em
-         877NV13qWH29BIhewCk+S4alQLXyTiejyaeVxvRhyP2IOZ4F9mgRTLfTePWYZ1dO2ZV+
-         Z9ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rs9LAlJ/Mb8c9Q5mqnJ0h++sIssMn8kGp7hyQlxdI80=;
-        b=SWEReylUAQmA1wUmEr1BB8h4gQdVVjThVOb9qoGaFEYLWQv1K0xqs4xlRvx+uKN+cz
-         7SurrV7u34PwT/8pwcnGdLSIf245sASAi+dzIRV+tzbJDrA6b9soEekmTtBkNA/Dw6YG
-         CLm9F39FZI2/FozJ8QKw72LEcSHZINiFCQduBSTf0hwL1MzhwCh2daE2+xWKQK+UybJO
-         jgudE3Xhxybq/rysHg0XogVYCK/V3X+vv1xxAUAaeap8sfvN6Lli5eRbzFjWJkx3+bl8
-         FdUuVsyhOV8c48Jrk4B4261O5pA9w6ypDETLBuIyw1ZJg5HEi3l5vZJe1OFf7uG3yP5Z
-         O6Nw==
-X-Gm-Message-State: APjAAAWEj1Z+kE3OIh2X3+x/GDQZ1QIA11gX1XVPEx54MgZhGzSTOHJ/
-        bOIHVen+ZSX5SZm3PsC3BDg=
-X-Google-Smtp-Source: APXvYqxuxUG7glI4cNP3QMXePzxvwJJd44e9KiYRq8sAvVisFJ5DBx1aafSGvsKs5wZCfJW9UfCxWA==
-X-Received: by 2002:a62:1c96:: with SMTP id c144mr278831pfc.219.1571717689798;
-        Mon, 21 Oct 2019 21:14:49 -0700 (PDT)
-Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id b3sm15042191pjp.13.2019.10.21.21.14.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 21:14:48 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Peter Chen <peter.chen@nxp.com>, linux-imx@nxp.com,
+        id S2387659AbfJVE7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 00:59:01 -0400
+Received: from ni.piap.pl ([195.187.100.5]:41074 "EHLO ni.piap.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387462AbfJVE7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 00:59:00 -0400
+Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ni.piap.pl (Postfix) with ESMTPSA id A1BD9443141;
+        Tue, 22 Oct 2019 06:58:57 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl A1BD9443141
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=piap.pl; s=mail;
+        t=1571720338; bh=5sGEWkaUNVS3ZDgcwrCiHd9vXY1HkWoD0Tk6Dh28hfM=;
+        h=From:To:Cc:Subject:In-Reply-To:Date:References:From;
+        b=lzJJG3out/A+BWjk9oZFkkvPT8gnUGpbqmq09MWSXDYx1sSDSOuZkuFadAvksnWTe
+         dmiGyNb4wbvhhRDFQoJL2KMUrM/lWvY3bGdkUlpzrCsUvnFWwtjB7pO7v+rAHboqC8
+         Rl8spBVi3z6o3Fqv3hL2lzwJfKGpNhMJpBIRVwYM=
+From:   khalasa@piap.pl (Krzysztof =?utf-8?Q?Ha=C5=82asa?=)
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ARM: imx: Drop imx_anatop_usb_chrg_detect_disable()
-Date:   Mon, 21 Oct 2019 21:14:45 -0700
-Message-Id: <20191022041445.23897-1-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
+Subject: [PATCH] 802.11n IBSS: wlan0 stops receiving packets due to aggregation after sender reboot
+In-Reply-To: <m34l02mh71.fsf@t19.piap.pl>
+Date:   Mon, 21 Oct 2019 14:18:53 +0200
+Lines:  32
+References: <m34l02mh71.fsf@t19.piap.pl>
+Message-ID: <m3v9shl6jz.fsf@t19.piap.pl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-KLMS-Rule-ID: 4
+X-KLMS-Message-Action: skipped
+X-KLMS-AntiSpam-Status: not scanned, whitelist
+X-KLMS-AntiPhishing: not scanned, whitelist
+X-KLMS-AntiVirus: Kaspersky Security 8.0 for Linux Mail Server, version 8.0.1.721, not scanned, whitelist
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With commit b5bbe2235361 ("usb: phy: mxs: Disable external charger
-detect in mxs_phy_hw_init()") in tree all of the necessary charger
-setup is done by the USB PHY driver which covers all of the affected
-i.MX6 SoCs.
+Fix a bug where the mac80211 RX aggregation code sets a new aggregation
+"session" at the remote station's request, but the head_seq_num
+(the sequence number the receiver expects to receive) isn't reset.
 
-NOTE: imx_anatop_usb_chrg_detect_disable() was also called for i.MX7D,
-but looking at its datasheet it appears to have a different USB PHY IP
-block, so executing i.MX6 charger disable configuration seems
-unnecessary.
+Spotted on a pair of AR9580 in IBSS mode.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Peter Chen <peter.chen@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
+Signed-off-by: Krzysztof Halasa <khalasa@piap.pl>
 
-Changes since [v1]:
+diff --git a/net/mac80211/agg-rx.c b/net/mac80211/agg-rx.c
+index 4d1c335e06e5..775a51cc51c9 100644
+--- a/net/mac80211/agg-rx.c
++++ b/net/mac80211/agg-rx.c
+@@ -354,9 +354,11 @@ void ___ieee80211_start_rx_ba_session(struct sta_info =
+*sta,
+ 			 */
+ 			rcu_read_lock();
+ 			tid_rx =3D rcu_dereference(sta->ampdu_mlme.tid_rx[tid]);
+-			if (tid_rx && tid_rx->timeout =3D=3D timeout)
++			if (tid_rx && tid_rx->timeout =3D=3D timeout) {
++				tid_rx->ssn =3D start_seq_num;
++				tid_rx->head_seq_num =3D start_seq_num;
+ 				status =3D WLAN_STATUS_SUCCESS;
+-			else
++			} else
+ 				status =3D WLAN_STATUS_REQUEST_DECLINED;
+ 			rcu_read_unlock();
+ 			goto end;
 
-    - Scope of the patch reduced to remove only
-      imx_anatop_usb_chrg_detect_disable() instead of
-      imx_anatop_init()
+--=20
+Krzysztof Ha=C5=82asa
 
-[v1] lore.kernel.org/lkml/20190731180131.8597-1-andrew.smirnov@gmail.com
-
- arch/arm/mach-imx/anatop.c | 20 +-------------------
- 1 file changed, 1 insertion(+), 19 deletions(-)
-
-diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
-index 777d8c255501..8fb68c0ec34c 100644
---- a/arch/arm/mach-imx/anatop.c
-+++ b/arch/arm/mach-imx/anatop.c
-@@ -19,8 +19,6 @@
- #define ANADIG_REG_2P5		0x130
- #define ANADIG_REG_CORE		0x140
- #define ANADIG_ANA_MISC0	0x150
--#define ANADIG_USB1_CHRG_DETECT	0x1b0
--#define ANADIG_USB2_CHRG_DETECT	0x210
- #define ANADIG_DIGPROG		0x260
- #define ANADIG_DIGPROG_IMX6SL	0x280
- #define ANADIG_DIGPROG_IMX7D	0x800
-@@ -33,8 +31,6 @@
- #define BM_ANADIG_ANA_MISC0_STOP_MODE_CONFIG	0x1000
- /* Below MISC0_DISCON_HIGH_SNVS is only for i.MX6SL */
- #define BM_ANADIG_ANA_MISC0_DISCON_HIGH_SNVS	0x2000
--#define BM_ANADIG_USB_CHRG_DETECT_CHK_CHRG_B	0x80000
--#define BM_ANADIG_USB_CHRG_DETECT_EN_B		0x100000
- 
- static struct regmap *anatop;
- 
-@@ -96,16 +92,6 @@ void imx_anatop_post_resume(void)
- 
- }
- 
--static void imx_anatop_usb_chrg_detect_disable(void)
--{
--	regmap_write(anatop, ANADIG_USB1_CHRG_DETECT,
--		BM_ANADIG_USB_CHRG_DETECT_EN_B
--		| BM_ANADIG_USB_CHRG_DETECT_CHK_CHRG_B);
--	regmap_write(anatop, ANADIG_USB2_CHRG_DETECT,
--		BM_ANADIG_USB_CHRG_DETECT_EN_B |
--		BM_ANADIG_USB_CHRG_DETECT_CHK_CHRG_B);
--}
--
- void __init imx_init_revision_from_anatop(void)
- {
- 	struct device_node *np;
-@@ -171,10 +157,6 @@ void __init imx_init_revision_from_anatop(void)
- void __init imx_anatop_init(void)
- {
- 	anatop = syscon_regmap_lookup_by_compatible("fsl,imx6q-anatop");
--	if (IS_ERR(anatop)) {
-+	if (IS_ERR(anatop))
- 		pr_err("%s: failed to find imx6q-anatop regmap!\n", __func__);
--		return;
--	}
--
--	imx_anatop_usb_chrg_detect_disable();
- }
--- 
-2.21.0
-
+=C5=81UKASIEWICZ Research Network
+Industrial Research Institute for Automation and Measurements PIAP
+Al. Jerozolimskie 202, 02-486 Warsaw, Poland
