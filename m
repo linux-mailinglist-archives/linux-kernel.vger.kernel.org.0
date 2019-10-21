@@ -2,80 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D007DF427
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 19:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C5D9DF433
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 19:29:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbfJUR0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 13:26:02 -0400
-Received: from muru.com ([72.249.23.125]:38610 "EHLO muru.com"
+        id S1728370AbfJUR1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 13:27:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50662 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbfJUR0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 13:26:02 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 95D3A810A;
-        Mon, 21 Oct 2019 17:26:35 +0000 (UTC)
-Date:   Mon, 21 Oct 2019 10:25:57 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
-Subject: Re: [PATCH 1/7] dt-bindings: gpu: pvrsgx: add initial bindings
-Message-ID: <20191021172557.GB5610@atomide.com>
-References: <cover.1571424390.git.hns@goldelico.com>
- <f0fb68dc7bc027e5e911721852f6bc6fa2d77a63.1571424390.git.hns@goldelico.com>
- <CAL_Jsq+obsTSU3iP1wm_3-FsAJ4Mxiz0NbMY1_h5NeFn67Sj+A@mail.gmail.com>
- <CEA29A3B-4116-4FE3-8E18-0C97353688DC@goldelico.com>
+        id S1727017AbfJUR1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 13:27:15 -0400
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BB84785542
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 17:27:15 +0000 (UTC)
+Received: by mail-wm1-f72.google.com with SMTP id 6so1768933wmj.9
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 10:27:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=o4xeYtdnmb8NdCuVzBbUa7fVvwoUzqqrPHBPV9zqYVk=;
+        b=HxC4VG8Y3N9xV0rA1VdRmtQqobikCZ7qxTSlRPy7r2bZP7FFuCe826s/tfKNbFkKNC
+         lfQyZtf0Z2+HHvhqkkQ66ajbV2WzpL+cGAoKY+hP1PTkHqx0+D9bjKL93DPpIeHtSKyn
+         t6oEQGiduhzhDMbRtAFy6QaZ6D/IUVtWcXZ1040QLSkc3nWO84rdiVxqb++zhporoiIJ
+         7ESYyFBeWkGoMRcYcLl/CM4LD5h3GbdejXJcOHcLYdJBueLjAq22xqm/FYiAvurecQRH
+         ARkGQbOE+0oQFcoLivuxOOl/xXVOZzWRpnZoZEcNZknTkNwOSPtg2+UJAMFCsfbZutZM
+         BpDw==
+X-Gm-Message-State: APjAAAVg5T+paprcgqmDVvHrbWebwpBWMH8HQHvhVkjLQbyuH7QvC4c3
+        vEZw2pRCY1SxbagcHESePu44A98DpefsLFjA/wzzyZzBv+PtepsYSB5FgyRznu7nC8JebtZL4PH
+        CoFMk9Ufhs+vIeudPAkZ5b2Xe
+X-Received: by 2002:a1c:a556:: with SMTP id o83mr21599611wme.0.1571678834219;
+        Mon, 21 Oct 2019 10:27:14 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzipaLfA3kUVnqB/RRSN8weGdEW5X/KaWu7Reo2wlZT9NrXTpU395PLRqKuErbW+MMVjo6+Dw==
+X-Received: by 2002:a1c:a556:: with SMTP id o83mr21599580wme.0.1571678833914;
+        Mon, 21 Oct 2019 10:27:13 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:847b:6afc:17c:89dd? ([2001:b07:6468:f312:847b:6afc:17c:89dd])
+        by smtp.gmail.com with ESMTPSA id t8sm15118590wrx.76.2019.10.21.10.27.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2019 10:27:13 -0700 (PDT)
+Subject: Re: [PATCH v9 20/22] RISC-V: KVM: Fix race-condition in
+ kvm_riscv_vcpu_sync_interrupts()
+To:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Graf <graf@amazon.com>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Anup Patel <anup@brainfault.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20191016160649.24622-1-anup.patel@wdc.com>
+ <20191016160649.24622-21-anup.patel@wdc.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <1d2e9514-235e-183e-b4fc-d3becc9ce471@redhat.com>
+Date:   Mon, 21 Oct 2019 19:27:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CEA29A3B-4116-4FE3-8E18-0C97353688DC@goldelico.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191016160649.24622-21-anup.patel@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* H. Nikolaus Schaller <hns@goldelico.com> [191021 15:46]:
-> > Am 21.10.2019 um 17:07 schrieb Rob Herring <robh+dt@kernel.org>:
-> > On Fri, Oct 18, 2019 at 1:46 PM H. Nikolaus Schaller <hns@goldelico.com> wrote:
-> >> +Optional properties:
-> >> +- timer:       the timer to be used by the driver.
-> > 
-> > Needs a better description and vendor prefix at least.
-> 
-> I am not yet sure if it is vendor specific or if all
-> SGX implementations need some timer.
-> 
-> > 
-> > Why is this needed rather than using the OS's timers?
-> 
-> Because nobody understands the current (out of tree and
-> planned for staging) driver well enough what the timer
-> is doing. It is currently hard coded that some omap refer
-> to timer7 and others use timer11.
+On 16/10/19 18:12, Anup Patel wrote:
+> +	/* Read current VSIP and VSIE CSRs */
+> +	vsip = csr_read(CSR_VSIP);
+> +	csr->vsie = csr_read(CSR_VSIE);
+> +
+> +	/* Sync-up VSIP.SSIP bit changes does by Guest */
+> +	if ((csr->vsip ^ vsip) & (1UL << IRQ_S_SOFT)) {
+> +		if (!test_and_set_bit(IRQ_S_SOFT, &v->irqs_pending_mask)) {
+> +			if (vsip & (1UL << IRQ_S_SOFT))
+> +				set_bit(IRQ_S_SOFT, &v->irqs_pending);
+> +			else
+> +				clear_bit(IRQ_S_SOFT, &v->irqs_pending);
+> +		}
 
-Just configure it in the driver based on the compatible
-value to keep it out of the dts. It's best to stick to
-standard bindings.
+Looks good, but I wonder if this could just be "csr->vsip =
+csr_read(CSR_VSIP)", which will be fixed up by flush_interrupts on the
+next entry.
 
-> >> +- img,cores:   number of cores. Defaults to <1>.
-> > 
-> > Not discoverable?
-> 
-> Not sure if it is. This is probably available in undocumented
-> registers of the sgx.
-
-This too, and whatever non-standrd other properities
-you might have.
-
-Regards,
-
-Tony
+Paolo
