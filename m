@@ -2,99 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F50ADE6DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E170DE6DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbfJUIom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 04:44:42 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52918 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbfJUIom (ORCPT
+        id S1727763AbfJUIo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 04:44:28 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35804 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726725AbfJUIo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 04:44:42 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9L8idk3104173;
-        Mon, 21 Oct 2019 03:44:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571647479;
-        bh=DDg3LWxscvyyXGbEjqescmT5LKMOD1f8SepEshmq+cA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=FA9VVVwPSTPuaABZgQe4Mb6BH+VXBERCLxMx86uVX/1aF7u0i03jsnr6dpDFoB5Hi
-         m2bi0C5uZ+xuNcHahE+2AIr69ylCWqKCmfCu/IRAw7d/G3gfmKBBelVFzmX6mRE1TU
-         v2UPXlUnN0kzZ2Q2sY0c3rmJhDauiao+fzuU8Qos=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9L8idio130326
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Oct 2019 03:44:39 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 21
- Oct 2019 03:44:29 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 21 Oct 2019 03:44:29 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9L8iLlk052375;
-        Mon, 21 Oct 2019 03:44:22 -0500
-Subject: Re: [PATCH] fbdev/omap: fix max fclk divider for omap36xx
-To:     Adam Ford <aford173@gmail.com>, <linux-fbdev@vger.kernel.org>
-CC:     <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <adam.ford@logicpd.com>, <stable@vger.kernel.org>
-References: <20191018130507.29893-1-aford173@gmail.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <712504cb-c0ad-2e3e-bc3b-5cc1b70dd005@ti.com>
-Date:   Mon, 21 Oct 2019 11:44:21 +0300
+        Mon, 21 Oct 2019 04:44:28 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y6so3105583lfj.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 01:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8/hi6STco3BJnKtkPIQo5XB037qXP/mO2OC/fnkWZ4g=;
+        b=AmvxbgxZ1nqplWkvkmvLg1S+3doHd3O+FoFnUODtx947C7JXyxKZdKzXZ54IPTFKwQ
+         lk2r4Bw8JpfwR6ikz4X5Wx9JXMLQ4My9AM4ZPqlvln3zkn5qfMycvc54l/mKvx6Oid2k
+         1GATkH6tw5bojR5GlUqxoIyfDpGcdFMFrqv/M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8/hi6STco3BJnKtkPIQo5XB037qXP/mO2OC/fnkWZ4g=;
+        b=geHeXmvPoUWaoX/NYQTjiPGjdU7nS1j9ttFMpHK9Xpa+5XKik71O/7hqj8Kl9ET9fP
+         40BozwTJGzJUcVQJZdIfG8PZC2xxdsJ3PqA2yk0Vqvm/deAZSa8c/o2EWpM6gGi6fHPE
+         J1EDGfk+3FIJYeYfzsK9/q68IAblkdMNeqNzsNo8wZ+sconEipdbr8LuqiSHs9vlIcKG
+         TY7B3P2MFB2EiyHSsVkuL5GmT0WdyfsaVrIn+tsLLEVQRuY9G5YBqG6iE6IimLTyQxC/
+         PxvsR6L7WBSibnIO5g0EhbSyqAqL3JdD+ftEYZPJeZZsGlKCy+HVCMRY4Bz5jUgHDv2k
+         qYyw==
+X-Gm-Message-State: APjAAAXtJDdmLBcfIkeV0e6nWph5UuyPYx/gFGAteeQsiYdZdV6ByXi/
+        mE63E1jBKGIj5A3JtJfZup/yFtJPd9pyFHVX
+X-Google-Smtp-Source: APXvYqyrWDcNM6SJ9gZHhTTWqc+blLcYki76oV/4j/OJ5eLQE2mSnwjUq8i2SjuIjDI2gDLu/mZSSg==
+X-Received: by 2002:a19:c518:: with SMTP id w24mr14768885lfe.14.1571647464949;
+        Mon, 21 Oct 2019 01:44:24 -0700 (PDT)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id i190sm11001603lfi.45.2019.10.21.01.44.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Oct 2019 01:44:24 -0700 (PDT)
+Subject: Re: [PATCH 0/7] towards QE support on ARM
+To:     Li Yang <leoyang.li@nxp.com>
+Cc:     Qiang Zhao <qiang.zhao@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Timur Tabi <timur@kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
+ <VE1PR04MB6687DA0268FAF03D3E77A23B8F6C0@VE1PR04MB6687.eurprd04.prod.outlook.com>
+ <e02fa027-9c78-3272-d2d7-7ad2b0ed3ab0@rasmusvillemoes.dk>
+ <CADRPPNREUK1SVxO4P5qb2COn+T04dtYgpVEzrveKUt16hBqAtQ@mail.gmail.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <679bf33b-8c05-b77a-0cb2-d79dc5bfbe75@rasmusvillemoes.dk>
+Date:   Mon, 21 Oct 2019 10:44:23 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191018130507.29893-1-aford173@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <CADRPPNREUK1SVxO4P5qb2COn+T04dtYgpVEzrveKUt16hBqAtQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/10/2019 16:05, Adam Ford wrote:
-> The OMAP36xx and AM/DM37x TRMs say that the maximum divider for DSS fclk
-> (in CM_CLKSEL_DSS) is 32. Experimentation shows that this is not
-> correct, and using divider of 32 breaks DSS with a flood or underflows
-> and sync losts. Dividers up to 31 seem to work fine.
+On 18/10/2019 23.52, Li Yang wrote:
+> On Fri, Oct 18, 2019 at 3:54 PM Rasmus Villemoes
+> <linux@rasmusvillemoes.dk> wrote:
+>>
+>> On 18/10/2019 22.16, Leo Li wrote:
+>>>
+>>>>
+>>>> There have been several attempts in the past few years to allow building the
+>>>> QUICC engine drivers for platforms other than PPC. This is (the beginning of)
+>>>> yet another attempt. I hope I can get someone to pick up these relatively
+>>>> trivial patches (I _think_ they shouldn't change functionality at all), and then
+>>>> I'll continue slowly working towards removing the PPC32 dependency for
+>>>> CONFIG_QUICC_ENGINE.
+>>>
+>>> Hi Rasmus,
+>>>
+>>> I don't fully understand the motivation of this work.  As far as I know the QUICC ENGINE is only used on PowerPC based SoCs.
+>>
+>> Hm, you're not the Leo Li that participated in this thread
+>> <https://lore.kernel.org/lkml/AM3PR04MB11857AE8D2B0BE56121B97D391C90@AM3PR04MB1185.eurprd04.prod.outlook.com/T/#u>?
 > 
-> There is another patch to the DT files to limit the divider correctly,
-> but as the DSS driver also needs to know the maximum divider to be able
-> to iteratively find good rates, we also need to do the fix in the DSS
-> driver.
+> Oops, I totally forgot about this discussion which is just three years
+> ago.  :)  The QE-HDLC on LS1021a is kind of a special case.
 > 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Cc: stable@vger.kernel.org # linux-4.4.y only
+>>
+>>
+>>  Can you give an example on how is it used on ARM system?
+>>
+>> LS1021A, for example, which is the one I'm aiming for getting fully
+>> supported in mainline.
+>> <https://www.nxp.com/products/processors-and-microcontrollers/arm-processors/layerscape-communication-process/qoriq-layerscape-1021a-dual-core-communications-processor-with-lcd-controller:LS1021A>
+>>
+>> The forks at https://github.com/qoriq-open-source/linux.git have various
+>> degrees of support (grep for commits saying stuff like "remove PPCisms"
+>> - some versions can be found on
+>> <https://lore.kernel.org/lkml/?q=remove+ppcisms>). Our current kernel is
+>> based on commits from the now-vanished 4.1 branch, and unfortunately at
+>> least the 4.14 branch (LSDK-18.06-V4.14) trivially doesn't build on ARM,
+>> despite the PPC32 dependency having been removed from CONFIG_QUICC_ENGINE.
 > 
-> diff --git a/drivers/video/fbdev/omap2/dss/dss.c b/drivers/video/fbdev/omap2/dss/dss.c
-> index 9200a8668b49..a57c3a5f4bf8 100644
-> --- a/drivers/video/fbdev/omap2/dss/dss.c
-> +++ b/drivers/video/fbdev/omap2/dss/dss.c
-> @@ -843,7 +843,7 @@ static const struct dss_features omap34xx_dss_feats = {
->   };
->   
->   static const struct dss_features omap3630_dss_feats = {
-> -	.fck_div_max		=	32,
-> +	.fck_div_max		=	31,
->   	.dss_fck_multiplier	=	1,
->   	.parent_clk_name	=	"dpll4_ck",
->   	.dpi_select_source	=	&dss_dpi_select_source_omap2_omap3,
+> Can you try the 4.14 branch from a newer LSDK release?  LS1021a should
+> be supported platform on LSDK.  If it is broken, something is wrong.
+
+What newer release? LSDK-18.06-V4.14 is the latest -V4.14 tag at
+https://github.com/qoriq-open-source/linux.git, and identical to the
+linux-4.14 branch. And despite commit 4c33e2d0576b removing the PPC32
+dependency from QUICC_ENGINE, it clearly hasn't been built on arm, since
+back around v4.12, mainline's qe.c grew a call to pvr_version_is which
+is ppc-only. So from that I sort of assumed that NXP had dropped trying
+to support the LS1021A even in their own kernels.
+
+In any case, we have zero interest in running an NXP kernel. Maybe I
+should clarify what I meant by "based on commits from" above: We're
+currently running a mainline 4.14 kernel on LS1021A, with a few patches
+inspired from the NXP 4.1 branch applied on top - but also with some
+manual fixes for e.g. the pvr_version_is() issue. Now we want to move
+that to a 4.19-based kernel (so that it aligns with our MPC8309 platform).
+
+>> This is just some first few steps, and I'm not claiming
+>> that this is sufficient to make the QE drivers build on ARM yet. But I
+>> have a customer with both mpc8309-based and ls1021a-based platforms, and
+>> they want to run the same, as-close-to-mainline-as-possible, kernel on
+>> both. So I will take a piecemeal approach, and try to make sure I don't
+>> break the ppc boards in the process (just building and booting one board
+>> is of course not sufficient, but better than nothing). Once I get to
+>> actually build some of the QE drivers for ARM, I'll of course also test
+>> them.
 > 
+> Understood.  Zhao Qiang also maintains some patches similar to your
+> patchset and I think they are tested on ARM.  But the review of these
+> patches from last submission didn't finish.  It looks like your
+> patches are better divided but not really verified on ARM.  Zhao
+> Qiang's patches are tested but maybe need some final touch for
+> cleaning up.  I will let you guys decide what is the best approach to
+> make this upstreamed.
 
-To clarify, this patch is only for the v4.4 stable, whereas the previous 
-patch was for next merge window and v4.9+ stable. Right?
+Yes, as I said, I wanted to try a fresh approach since Zhao
+Qiang's patches seemed to be getting nowhere. Splitting the patches into
+smaller pieces is definitely part of that - for example, the completely
+trivial whitespace fix in patch 1 is to make sure the later coccinelle
+generated patch is precisely that (i.e., a later respin can just rerun
+the coccinelle script, with zero manual fixups). I also want to avoid
+mixing the ppcism cleanups with other things (e.g. replacing some
+of_get_property() by of_property_read_u32()). And the "testing on ARM"
+part comes once I get to actually building on ARM. But there's not much
+point doing all that unless there's some indication that this can be
+applied to some tree that actually feeds into Linus', which is why I
+started with a few trivial patches and precisely to start this discussion.
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-
-  Tomi
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Rasmus
