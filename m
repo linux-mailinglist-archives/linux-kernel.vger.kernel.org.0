@@ -2,45 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F58FDEA35
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 12:58:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EABDDEA37
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 12:58:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728146AbfJUK62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 06:58:28 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37287 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727058AbfJUK61 (ORCPT
+        id S1728327AbfJUK6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 06:58:32 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38017 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727032AbfJUK62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 06:58:27 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f22so12292741wmc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 03:58:26 -0700 (PDT)
+        Mon, 21 Oct 2019 06:58:28 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v9so2160828wrq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 03:58:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=M+Rr/WbPC8m7dZLhfszJHtex79KIwoH5LRc6fwcboyc=;
-        b=xEhVtga6MQRbG6XAjBCACpSU2T15US9KjrquctDHuyVAap92YsR4cpqZxx2G5wqwtw
-         ua/RA9+ma6tcuCAlgqO8oSmy3+2IFSb4BlVTWZKEGr9GajuSihUV3DE8khNmcmFYtiMF
-         MEqNJ2rvrw0GjYVb3MOf+F/qm7FO0UNbewTyd1M1m3C0ymePmRk2531mV+YdyoGtf7ig
-         AL/rCtOUhQyNJtiBGvKqBYud+v2dZIN/s0VGGekoBELHF8OeUGVWQTIe4l2CNXt0TB9H
-         wuaXEWJhnF/8GTR5539dLHqIVqAL7baluYHVUg3fBY2GlvEJ7+ZZIxmAMU/eZFjCFrXd
-         UcoQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=TJ3e2otpMWVdhjzztz3QDOTYAmPJU5Qr6nYPafBRUGw=;
+        b=uPg/RYjg86DcbqDDwpLKJLDizvEJdEwdu7r8c2St5KAPIaUBtJ2NW+5df+E/vgXtRN
+         5KCsxEpSpB+ox0II7sWLU3yx5zbb3bufQ9EdHuMQsm9cxEgwwa95Xn//m2vJuZg1aSk9
+         DkAsQh224TNp+EtORwR5LqBWH6mauTV2SPhSUPH0izHHkNJMgCZD9j+g92xNaSILVH+L
+         dWEP0ZxA4RqmAgcPuMTW71oZN0nM2oFbvTD0Txz+qhIi7ft29z9G8DkYPqbjA/HDsHeg
+         hkHAUiGTBRPTl4v9JqDXpcwLen9YMKYs8bWi1bhKchCeIVDVmZgUmQ8L0Prx/dEq9IXG
+         oK7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=M+Rr/WbPC8m7dZLhfszJHtex79KIwoH5LRc6fwcboyc=;
-        b=ELV+U4qN0olLrgOQ0g07rhizvwi2Ts5eD7zLqJIVeOFWOTGlePspX1xyigOK3dB8ho
-         5QKPA4L3BavQ3cExxqmEA5i6xUmauNnYKHKTRsW5fRpt619y6dC655Q1Ir5KZzcp7nD3
-         0Bl9ZZD65MbElEIKx9cqYa/xpN/eua1NOlZmTWn0j/qHJc3+b2jghAns3VvfMVDBmK5c
-         iLtGPygAckX9u1w4yPyxZN8ZDpAsaOi0Xs24dECE0BVw08gphgaeXW9LGqPCFET6iaAW
-         sMuQlVh9HT4TjuiJJa5+NvesUy7KqVadO2lVHIDoeU6i7oxEs679Sz9Mh4W9FWH2Aqms
-         gPng==
-X-Gm-Message-State: APjAAAXN9qkdFchTsqyFYuFazHC2AU47MoJCYt/UqmJRcgi+cJOlYezj
-        CnUOXtxfSREUiY3PIoMPaQEdhA==
-X-Google-Smtp-Source: APXvYqyZaLFdktAFhb8++mIsfBPmw4LFdRDLPPon8Kt+H7Xg6gt/0KS3EztE21y/XGtYBi3ex7C0uA==
-X-Received: by 2002:a1c:f305:: with SMTP id q5mr18617648wmq.137.1571655505510;
-        Mon, 21 Oct 2019 03:58:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=TJ3e2otpMWVdhjzztz3QDOTYAmPJU5Qr6nYPafBRUGw=;
+        b=DtOrN1LmB6ud5KhAH0zgnJQLoZFvPgt0HRoQyqilKIiH2PBc5VSl219+vw8X3JrQRj
+         OKzodgz2o14vwYPy/hgHqQHpEZIea3JvXbANOYqDW/zoUQuoNgkGv4kPGONyx3/ZWxc3
+         U3HWh9mzi9aBm1ocx/t0IqO5F2OcJhU6rEN+TBmORzNkrwLIgKShvEQlNtf2085HgBn9
+         3G3hXf+OdFEWg1B6SsAm/xqIupLrNA13G2PODXXfMtntr3Cc2a9LJQE6wY2Ft0yAFzDT
+         5M6oWTnn3RfDkCOKpGgnIKF0D+6fvYgDU6syD8GEVNU7NKlUnuKVRU6/a8hlW8LDAJ98
+         QzXA==
+X-Gm-Message-State: APjAAAXyjq+lVNLQiBoHMPNeNuMUZ9hpLuSSQgfbujwLLxXCqTtkwaOt
+        UE2IsC8y/XURJHBehfZ5licxxA==
+X-Google-Smtp-Source: APXvYqwyiJ4CShgCva1aHDb9OaW+SaBP+3Mjz6V/AfG/14A+ll0S9UPgGeR8jG6GaIzIwyi/fU8qqw==
+X-Received: by 2002:a5d:4047:: with SMTP id w7mr19242902wrp.270.1571655506394;
+        Mon, 21 Oct 2019 03:58:26 -0700 (PDT)
 Received: from localhost.localdomain ([95.149.164.99])
-        by smtp.gmail.com with ESMTPSA id q22sm12544289wmj.31.2019.10.21.03.58.24
+        by smtp.gmail.com with ESMTPSA id q22sm12544289wmj.31.2019.10.21.03.58.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 21 Oct 2019 03:58:25 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
@@ -49,48 +50,49 @@ To:     daniel.thompson@linaro.org, arnd@arndb.de, broonie@kernel.org,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         baohua@kernel.org, stephan@gerhold.net,
         Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v2 0/9] Simplify MFD Core
-Date:   Mon, 21 Oct 2019 11:58:13 +0100
-Message-Id: <20191021105822.20271-1-lee.jones@linaro.org>
+Subject: [PATCH v2 1/9] mfd: cs5535-mfd: Use PLATFORM_DEVID_* defines and tidy error message
+Date:   Mon, 21 Oct 2019 11:58:14 +0100
+Message-Id: <20191021105822.20271-2-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191021105822.20271-1-lee.jones@linaro.org>
+References: <20191021105822.20271-1-lee.jones@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MFD currently has one over-complicated user.  CS5535 uses a mixture of
-cell cloning, reference counting and subsystem-level call-backs to
-achieve its goal of requesting an IO memory region only once across 3
-consumers.  The same can be achieved by handling the region centrally
-during the parent device's .probe() sequence.  Releasing can be handed
-in a similar way during .remove().
+In most contexts '-1' doesn't really mean much to the casual observer.
+In almost all cases, it's better to use a human readable define.  In
+this case PLATFORM_DEVID_* defines have already been provided for this
+purpose.
 
-While we're here, take the opportunity to provide some clean-ups and
-error checking to issues noticed along the way.
+While we're here, let's be specific about the 'MFD devices' which
+failed.  It will help when trying to distinguish which of the 2 sets
+of sub-devices we actually failed to register.
 
-This also paves the way for clean cell disabling via Device Tree being
-discussed at [0]
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/mfd/cs5535-mfd.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-[0] https://lkml.org/lkml/2019/10/18/612.
-
-Lee Jones (9):
-  mfd: cs5535-mfd: Use PLATFORM_DEVID_* defines and tidy error message
-  mfd: cs5535-mfd: Remove mfd_cell->id hack
-  mfd: cs5535-mfd: Request shared IO regions centrally
-  mfd: cs5535-mfd: Register clients using their own dedicated MFD cell
-    entries
-  mfd: mfd-core: Remove mfd_clone_cell()
-  x86: olpc: Remove invocation of MFD's .enable()/.disable() call-backs
-  mfd: mfd-core: Protect against NULL call-back function pointer
-  mfd: mfd-core: Remove usage counting for .{en,dis}able() call-backs
-  mfd: mfd-core: Move pdev->mfd_cell creation back into mfd_add_device()
-
- arch/x86/platform/olpc/olpc-xo1-pm.c |   6 --
- drivers/mfd/cs5535-mfd.c             | 124 +++++++++++++--------------
- drivers/mfd/mfd-core.c               | 113 ++++--------------------
- include/linux/mfd/core.h             |  20 -----
- 4 files changed, 79 insertions(+), 184 deletions(-)
-
+diff --git a/drivers/mfd/cs5535-mfd.c b/drivers/mfd/cs5535-mfd.c
+index f1825c0ccbd0..2c47afc22d24 100644
+--- a/drivers/mfd/cs5535-mfd.c
++++ b/drivers/mfd/cs5535-mfd.c
+@@ -127,10 +127,11 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
+ 		cs5535_mfd_cells[i].id = 0;
+ 	}
+ 
+-	err = mfd_add_devices(&pdev->dev, -1, cs5535_mfd_cells,
++	err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE, cs5535_mfd_cells,
+ 			      ARRAY_SIZE(cs5535_mfd_cells), NULL, 0, NULL);
+ 	if (err) {
+-		dev_err(&pdev->dev, "MFD add devices failed: %d\n", err);
++		dev_err(&pdev->dev,
++			"Failed to add CS5532 sub-devices: %d\n", err);
+ 		goto err_disable;
+ 	}
+ 
 -- 
 2.17.1
 
