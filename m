@@ -2,120 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0BBEDEEC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABBE6DEEDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 16:09:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729276AbfJUOGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 10:06:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41846 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728098AbfJUOGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 10:06:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 53209BD9D;
-        Mon, 21 Oct 2019 14:06:20 +0000 (UTC)
-Date:   Mon, 21 Oct 2019 16:06:19 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     n-horiguchi@ah.jp.nec.com, mike.kravetz@oracle.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 11/16] mm,hwpoison: Rework soft offline for in-use
- pages
-Message-ID: <20191021140619.GQ9379@dhcp22.suse.cz>
-References: <20191017142123.24245-1-osalvador@suse.de>
- <20191017142123.24245-12-osalvador@suse.de>
- <20191018123901.GN5017@dhcp22.suse.cz>
- <20191021134846.GB11330@linux>
+        id S1729276AbfJUOI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 10:08:58 -0400
+Received: from mga01.intel.com ([192.55.52.88]:45232 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728098AbfJUOI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 10:08:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 07:08:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,323,1566889200"; 
+   d="scan'208";a="209449335"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 21 Oct 2019 07:08:52 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 21 Oct 2019 17:08:52 +0300
+Date:   Mon, 21 Oct 2019 17:08:52 +0300
+From:   Mika Westerberg <mika.westerberg@intel.com>
+To:     Karol Herbst <kherbst@redhat.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lyude Paul <lyude@redhat.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Linux ACPI Mailing List <linux-acpi@vger.kernel.org>
+Subject: Re: [PATCH v3] pci: prevent putting nvidia GPUs into lower device
+ states on certain intel bridges
+Message-ID: <20191021140852.GM2819@lahna.fi.intel.com>
+References: <CACO55ttOJaXKWmKQQbMAQRJHLXF-VtNn58n4BZhFKYmAdfiJjA@mail.gmail.com>
+ <20191016213722.GA72810@google.com>
+ <CACO55tuXck7vqGVLmMBGFg6A2pr3h8koRuvvWHLNDH8XvBVxew@mail.gmail.com>
+ <20191021133328.GI2819@lahna.fi.intel.com>
+ <CACO55tujUZr+rKkyrkfN+wkNOJWdNEVhVc-eZ3RCXJD+G1z=7A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191021134846.GB11330@linux>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACO55tujUZr+rKkyrkfN+wkNOJWdNEVhVc-eZ3RCXJD+G1z=7A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 21-10-19 15:48:48, Oscar Salvador wrote:
-> On Fri, Oct 18, 2019 at 02:39:01PM +0200, Michal Hocko wrote:
-> > 
-> > I am sorry but I got lost in the above description and I cannot really
-> > make much sense from the code either. Let me try to outline the way how
-> > I think about this.
-> > 
-> > Say we have a pfn to hwpoison. We have effectivelly three possibilities
-> > - page is poisoned already - done nothing to do
-> > - page is managed by the buddy allocator - excavate from there
-> > - page is in use
-> > 
-> > The last category is the most interesting one. There are essentially
-> > three classes of pages
-> > - freeable
-> > - migrateable
-> > - others
-> > 
-> > We cannot do really much about the last one, right? Do we mark them
-> > HWPoison anyway?
+On Mon, Oct 21, 2019 at 03:54:09PM +0200, Karol Herbst wrote:
+> > I really would like to provide you more information about such
+> > workaround but I'm not aware of any ;-) I have not seen any issues like
+> > this when D3cold is properly implemented in the platform.  That's why
+> > I'm bit skeptical that this has anything to do with specific Intel PCIe
+> > ports. More likely it is some power sequence in the _ON/_OFF() methods
+> > that is run differently on Windows.
 > 
-> We can only perform actions on LRU/Movable pages or hugetlb pages.
+> yeah.. maybe. I really don't know what's the actual root cause. I just
+> know that with this workaround it works perfectly fine on my and some
+> other systems it was tested on. Do you know who would be best to
+> approach to get proper documentation about those methods and what are
+> the actual prerequisites of those methods?
 
-What would prevent other pages mapped via page tables to be handled as
-well?
-
-> So unless the page does not fall into those areas, we do not do anything
-> with them.
-> 
-> > Freeable should be simply marked HWPoison and freed.
-> > For all those migrateable, we simply do migrate and mark HWPoison.
-> > Now the main question is how to handle HWPoison page when it is freed
-> > - aka last reference is dropped. The main question is whether the last
-> > reference is ever dropped. If yes then the free_pages_prepare should
-> > never release it to the allocator (some compound destructors would have
-> > to special case as well, e.g. hugetlb would have to hand over to the
-> > allocator rather than a pool). If not then the page would be lingering
-> > potentially with some state bound to it (e.g. memcg charge).  So I
-> > suspect you want the former.
-> 
-> For non-hugetlb pages, we do not call put_page in the migration path,
-> but we do it in page_handle_poison, after the page has been flagged as
-> hwpoison.
-> Then the check in free_papes_prepare will see that the page is hwpoison
-> and will bail out, so the page is not released into the allocator/pcp lists.
-> 
-> Hugetlb pages follow a different methodology.
-> They are dissolved, and then we split the higher-order page and take the
-> page off the buddy.
-> The problem is that while it is easy to hold a non-hugetlb page,
-> doing the same for hugetlb pages is not that easy:
-> 
-> 1) we would need to hook in enqueue_hugetlb_page so the page is not enqueued
->    into hugetlb freelists
-> 2) when trying to free a hugetlb page, we would need to do as we do for gigantic
->    pages now, and that is breaking down the pages into order-0 pages and release
->    them to the buddy (so the check in free_papges_prepare would skip the
->    hwpoison page).
->    Trying to handle a higher-order hwpoison page in free_pages_prepare is
->    a bit complicated.
-
-I am not sure I see the problem. If you dissolve the hugetlb page then
-there is no hugetlb page anymore and so you make it a regular high-order
-page.
-
-> There is one thing I was unsure though.
-> Bailing out at the beginning of free_pages_prepare if the page is hwpoison
-> means that the calls to
-> 
-> - __memcg_kmem_uncharge
-> - page_cpupid_reset_last
-> - reset_page_owner
-> - ...
-> 
-> will not be performed.
-> I thought this is right because the page is not really "free", it is just unusable,
-> so.. it should be still charged to the memcg?
-
-If the page is free then it shouldn't pin the memcg or any other state.
--- 
-Michal Hocko
-SUSE Labs
+Those should be documented in the ACPI spec. Chapter 7 should explain
+power resources and the device power methods in detail.
