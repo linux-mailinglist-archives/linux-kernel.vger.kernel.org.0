@@ -2,101 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3EBEDE72B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:55:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96AF1DE732
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 10:56:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfJUIzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 04:55:02 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42827 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbfJUIzC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 04:55:02 -0400
-Received: by mail-oi1-f195.google.com with SMTP id i185so10356888oif.9;
-        Mon, 21 Oct 2019 01:55:00 -0700 (PDT)
+        id S1727448AbfJUI4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 04:56:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56989 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727331AbfJUI4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 04:56:21 -0400
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AAC4E83F4C
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 08:56:21 +0000 (UTC)
+Received: by mail-wr1-f71.google.com with SMTP id a6so4042823wru.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 01:56:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P/ILjmf9K7qy+5ndurAox0KwdPha8scfK03vxEE4NRY=;
-        b=qcIdAx+pCT2mvNclo7bSkh3t1yfqyHeWFKZL+trru+D74F9qqvwzrzfgbFrhCLelCH
-         sy+cOMGn0SDsiQrJNBwtMjKsLUwa3qxNehbuA0tNAG8ev326bQ7meCnRF8TgmUkq/phr
-         SmzxuclRSKqNS3byHFotU9M8cOIyIogL5+pU952zYSBr3vFLHg0Xg2rjver8K6Z7YY7B
-         6x2zvJ5RSxf66rUNDUzzKm7A0J1/HLTdE914hFIZhLGI9pV2IrK5kTGHtsFiEeT1Ocyw
-         aHKGWLcCXZFPAm/GXKTBmM6pllNN/2y9+VRrxqFdLLbLWpcfmoxNip/Ub3KwrvDVn6GV
-         ovvw==
-X-Gm-Message-State: APjAAAWxsjiwYzVkxkyvT47sWH1hukgyP2V6IhebSCsMi5+kdI4nOQK9
-        zKVxXUlSbQGet8wmx3umU4AJ462++Y6jAXPhTv4=
-X-Google-Smtp-Source: APXvYqxjzY5Z9AlzOzvJ1XuK2u9xTXSln0v5M1CtCTChjomBuQeW7TgO9aX3S6FSb4eoCSqoL9ysnO+NpbIvsAV6Oss=
-X-Received: by 2002:aca:5885:: with SMTP id m127mr18881140oib.110.1571648099816;
- Mon, 21 Oct 2019 01:54:59 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gQn5Li/EcmWGQTJyF2DN7cNoKtM74y39k0g3g/XyNac=;
+        b=gsdUA4EijfHWqRUSl8C8BoY7udA8vXEfcjOBfmaEpaBsWzDsHgBHeOVm6z//oLWFlN
+         1JpVo9Oxc+BUmSg2KqWvErmIUoEev9xAzVaEEGJmOgH3WnGRqgLiVqNFeJalomX44xg1
+         3MuI29/4iD9Pqy2Nv1vYpcpU3UNsmPYKpuchLAeUkPlpt/cCzhMysuMxum9tqjO5dCWS
+         tIo3MB7Nhh3qO1TnhK8jpfPc1S1TRwlNMulj81hvtC+QZEu13PRwxY/QTuD1u/UcsFk6
+         AzLaH3eWYWd9vvJSjojpUOl1NJq7XNIh2mbFU7r6/23vHJ3Hx9Mw3uAJV+fh0jT1FWUa
+         XLOA==
+X-Gm-Message-State: APjAAAWtnmWgts6cObfgYvq7j8U5oH/CXIBAc2c4r6KOrFoArDdgr9dt
+        eY+DCCkArURnpMSxhVHIxLqrEcAEQ8LIOFQjqTNronyRmO76JWoOabdPyZSVQwbtJV2dNnv72sp
+        hCaGzc6JXUPHgy04jrPvqCKw5
+X-Received: by 2002:a5d:464f:: with SMTP id j15mr5164424wrs.366.1571648180110;
+        Mon, 21 Oct 2019 01:56:20 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqysKxDXg0I4Kw8rQkZnFYRtY7gmE/enX8CLo4Y5mT4aGF0Vfe7KNufYviTHlKtqR3lwtPQDew==
+X-Received: by 2002:a5d:464f:: with SMTP id j15mr5164400wrs.366.1571648179814;
+        Mon, 21 Oct 2019 01:56:19 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:566:fc24:94f2:2f13? ([2001:b07:6468:f312:566:fc24:94f2:2f13])
+        by smtp.gmail.com with ESMTPSA id c8sm720806wml.44.2019.10.21.01.56.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2019 01:56:19 -0700 (PDT)
+Subject: Re: [PATCH] KVM: remove redundant code in kvm_arch_vm_ioctl
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Miaohe Lin <linmiaohe@huawei.com>
+Cc:     rkrcmar@redhat.com, sean.j.christopherson@intel.com,
+        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
+        joro@8bytes.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1571626376-11357-1-git-send-email-linmiaohe@huawei.com>
+ <alpine.DEB.2.21.1910211015260.1904@nanos.tec.linutronix.de>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <6ad3a479-5015-10c7-3f32-70f3ed1ecf64@redhat.com>
+Date:   Mon, 21 Oct 2019 10:56:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190814213118.28473-1-kherbst@redhat.com> <2215840.qs0dBhReda@kreacher>
- <CACO55ttC-o9bKU7nHNcfjm2YnffiupQ7UHUt7BYL3fu+yEyTbw@mail.gmail.com>
- <5228680.jBuKzensJx@kreacher> <CAJ=jquZLU2=yxayGCs=XGghxdMMre6qAWRY0Q4VErjBGqeWdjQ@mail.gmail.com>
- <CAJZ5v0hogSM3OgfJ0GFn7+BYwxR05Hb5ZMLo=NiB2wmpu=qeug@mail.gmail.com> <CACO55tvAyE1t2Bm8J=Yb_Gi5PDAgof=mRsJAKHFxOvEZpV-qGg@mail.gmail.com>
-In-Reply-To: <CACO55tvAyE1t2Bm8J=Yb_Gi5PDAgof=mRsJAKHFxOvEZpV-qGg@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 21 Oct 2019 10:54:48 +0200
-Message-ID: <CAJZ5v0hedXR13mw2FANuMNNOx0XmXiUUTus5C14Y-ADGteM4hA@mail.gmail.com>
-Subject: Re: [Nouveau] [PATCH 1/7] Revert "ACPI / OSI: Add OEM _OSI string to
- enable dGPU direct output"
-To:     Karol Herbst <kherbst@redhat.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alex Hung <alex.hung@canonical.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dave Airlie <airlied@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Dave Airlie <airlied@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1910211015260.1904@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 10:48 AM Karol Herbst <kherbst@redhat.com> wrote:
->
-> fyi: I decided to go for a different workaround to fix the runpm
-> issues observed with nvidia gpus with nouveau in the "pci: prevent
-> putting nvidia GPUs into lower device states on certain intel bridges"
-> thread
+On 21/10/19 10:16, Thomas Gleixner wrote:
+> Can you please get rid of that odd jump label completely?
+> 
+>   		if (irqchip_kernel(kvm))
+> 			r = kvm_vm_ioctl_set_irqchip(kvm, chip);
 
-OK, I've seen that.
+Keeping the label has the advantage of making the get and set cases a
+bit more similar (the get case has to do a copy_to_user after
+kvm_vm_ioctl_get_irqchip returns).  Unfortunately struct kvm_irqchip is
+quite big (520 bytes) so we don't allocate it on the stack.
 
-> that's on the pci and pm mailing list. Maybe it makes sense to wait
-> for that to land before actually removing the ACPI workarounds here?
+So I queued Miaohe's patch.
 
-Sounds reasonable.
-
-> The workaround I had in this series didn't seem to be reliable enough,
-> so I ditched that approached.
-
-OK, please let me know when the _OSI string in question can be dropped.
-
-> On Mon, Oct 21, 2019 at 10:14 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Mon, Oct 21, 2019 at 4:14 AM Alex Hung <alex.hung@canonical.com> wrote:
-> > >
-> > > We have done some tests on three of Intel + nVidia configuration
-> > > systems with OEM _OSI strings removed - while some bugs are still
-> > > observed, ex. one out of three has suspend/resume issues, no system
-> > > crashes were observed - the biggest issue that worries us.
-> > >
-> > > The positive results give us confident to ack the removal of the OEM
-> > > _OSI strings. While our tests were not able to cover all possible I+N
-> > > systems, we are sure we can fix issues along the way. If there aren't
-> > > systems that cannot be fixed without these OEM _OSI strings, these
-> > > strings should probably enable with DMI quirks (possible future
-> > > patches) so they won't affect others.
-> > >
-> > > Acked-by: Alex Hung <alex.hung@canonical.com>
-> >
-> > OK, thanks!
-> >
-> > I can queue this up or if it's better to route it through the DRM
-> > tree, please do that (and let me know).
+Paolo
