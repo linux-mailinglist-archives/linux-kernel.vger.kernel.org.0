@@ -2,101 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56678DF154
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E287DF16A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 17:29:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729388AbfJUP2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 11:28:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57024 "EHLO mx1.redhat.com"
+        id S1729694AbfJUP3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 11:29:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727960AbfJUP2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 11:28:36 -0400
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729635AbfJUP3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 11:29:15 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CC28059455
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 15:28:35 +0000 (UTC)
-Received: by mail-wm1-f70.google.com with SMTP id z5so3271036wma.5
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 08:28:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HEmIeXds/Gv0xSpUczzsnAMQ34YFmWv/ybBjSlwqKDI=;
-        b=uOrMMsvWOl+pO+PzPt3m0gtRZtmkEhqQ1afyb+nzWiLt/xdzQsuC+vFthUObl5mkVZ
-         YCFis2nzA3jHNSn4Y65rxDp7JtT7h8dpyO971LmnnabFztl3h3VuhO4Jzwr9nNAMbz0W
-         104et9R8rMwwl9UUcd+2eINh38ih66PHTfSPbXriUvP+IZIfLRkuxS3kQPVN6DKPUBi4
-         e8Am9ieVWlWIV/R11K2b5Du1j0jORzVxtoi0DQ1TTpCSzeBZbauOZfvOzHtIwz5O2opi
-         v+JLX+iDEA7keYPI7O8SMrKhVXdIu+F78Ly8xMYhQLgGRPOB/oOGaHmoVnTfTugjVNL2
-         E9uA==
-X-Gm-Message-State: APjAAAWeyPi44NS75BRMS6m/KUya50RD4vIPDM9O3Ez/CFUSsCLBTSVL
-        mi1JJfsZuYagZwj8PAMkykwflcuYQOM41x2n9qLdBonp0Ogq/lY0JgKc4WtKfPZUMoombm40EZ1
-        NU0EliOA1/Y4prC58WL5pZSPD
-X-Received: by 2002:adf:fcd1:: with SMTP id f17mr4908326wrs.82.1571671714172;
-        Mon, 21 Oct 2019 08:28:34 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxbXQZvDtUPX3OgBdKqjnT8Xk1PJokt8PI4arS1ny3lsG5USqzk+Rt03RIBSFxDHJDa143s/g==
-X-Received: by 2002:adf:fcd1:: with SMTP id f17mr4908292wrs.82.1571671713880;
-        Mon, 21 Oct 2019 08:28:33 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:847b:6afc:17c:89dd? ([2001:b07:6468:f312:847b:6afc:17c:89dd])
-        by smtp.gmail.com with ESMTPSA id a2sm2635979wrv.39.2019.10.21.08.28.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2019 08:28:33 -0700 (PDT)
-Subject: Re: [PATCH v2 4/4] KVM: x86/vPMU: Add lazy mechanism to release
- perf_event per vPMC
-To:     Like Xu <like.xu@linux.intel.com>, kvm@vger.kernel.org
-Cc:     peterz@infradead.org, Jim Mattson <jmattson@google.com>,
-        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
-        vkuznets@redhat.com, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        ak@linux.intel.com, wei.w.wang@intel.com, kan.liang@intel.com,
-        like.xu@intel.com, ehankland@google.com, arbel.moshe@oracle.com,
-        linux-kernel@vger.kernel.org
-References: <20191013091533.12971-1-like.xu@linux.intel.com>
- <20191013091533.12971-5-like.xu@linux.intel.com>
- <5eb638a3-5ebe-219a-c975-19808ab702b9@redhat.com>
- <c2979d05-4536-e3b5-e2f6-3e6740c1a82d@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <2175c2cd-2c1e-22e8-2f67-3fc334ef2a40@redhat.com>
-Date:   Mon, 21 Oct 2019 17:28:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 93AFA206C2;
+        Mon, 21 Oct 2019 15:29:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571671754;
+        bh=okh6J99YfICq6YXZz5SmxsuOA3O6fnBw1o/6a5Ss0aw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hzuC7RdlFXK6fzXhBuLI/ZtfCZMK/rVwb5TbktpCWBE3z+8WR4xf/CDJyU8IGblHi
+         yRCFDuHT1v0VWjWAH7QIPQ6LDMWLmaGWEasy0TYSP2zz64nq9WgyKyyTZig2ouRq2f
+         3SEymL9nI88zpMqXDkk9fo6p8rt44BPMeIZDGjAY=
+Date:   Mon, 21 Oct 2019 16:29:08 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Gwendal Grignou <gwendal@chromium.org>
+Cc:     briannorris@chromium.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, lee.jones@linaro.org, bleung@chromium.org,
+        enric.balletbo@collabora.com, dianders@chromium.org,
+        groeck@chromium.org, fabien.lahoudere@collabora.com,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2 00/18] cros_ec: Add sensorhub driver and FIFO
+ processing*** SUBJECT HERE
+Message-ID: <20191021162908.67255884@archlinux>
+In-Reply-To: <20191021055403.67849-1-gwendal@chromium.org>
+References: <20191021055403.67849-1-gwendal@chromium.org>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <c2979d05-4536-e3b5-e2f6-3e6740c1a82d@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/10/19 16:04, Like Xu wrote:
-> 
->>
->> 2) introduce a new callback msr_idx_to_pmc that returns a struct
->> kvm_pmc*, and change kvm_pmu_is_valid_msr to do
-> 
-> For callback msr_idx_to_pmc,
-> how do we deal with the input 'MSR_CORE_PERF_FIXED_CTR_CTRL'
-> which may return several fixed kvm_pmcs not just one?
+On Sun, 20 Oct 2019 22:53:45 -0700
+Gwendal Grignou <gwendal@chromium.org> wrote:
 
-For RDMSR, do not do anything.  For WRMSR, you can handle it in the
-set_msr callback.
+Tidy up the title for v3!
 
->>
->> static int kvm_pmu_mark_pmc_in_use(struct kvm_vcpu *vcpu, u32 msr)
+> This patchset adds a sensorhub driver for spreading sensor
+> events coming from the Embedded controller sensor FIFO:
 > 
-> s/static int/static void/.
+>        +---------------+ +--------------+ +----
+>        | cros_ec_accel | | cros_ec_gyro | | ...
+>        +---------------+ +--------------+ +----
+>            id:0       \        id:1 |       / id:..
+>                  +------------------------------+
+>                  |       cros_ec_sensorhub      |
+>                  +------------------------------+
+>                  |           cros_ec_dev        |
+>                  +------------------------------+
+>                  | cros_ec_i2c, cros_ec_lpc, .. |
+>                  +------------------------------+
+>                                  |
+>                                  EC
 > 
->> {
->>     struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
->>     struct kvm_pmc *pmc = kvm_x86_ops->pmu_ops->msr_idx_to_pmc(vcpu, msr);
+> When new sensors events are present, the EC raises and interrupt,
+> sensorhub reads the FIFO and uses the 'id' field to spread the event to
+> the proper IIO sensors. This stack is similar to the HID sensor input
+> stack.
 > 
-> We need 'if(pmc)' here.
+> The first patch move cros_ec_proto functions documentations into the
+> code to prevent rot.
+> 
+> The inext 3 patches add a primitive cros_ec_sensorhub. MFD just have to
 
-Agreed, sorry for the sloppiness.  Never interpret my suggestions as
-more than pseudocode. :)
+next
 
-Paolo
+> register this driver if at least one sensor is presented by the EC.
+> cros_ec_sensorhub retrieves more information from the EC to find out
+> which sensors are actually present:
+>   mfd: cros_ec: Add sensor_count and make check_features public
+>   platform: cros_ec: Add cros_ec_sensor_hub driver
+>   platform/mfd:iio: cros_ec: Register sensor through sensorhub
+> 
+> The next 3 patches prepare for FIFO support:
+>   platform: chrome: cros-ec: record event timestamp in the hard irq
+>   platform: chrome: cros_ec: Do not attempt to register a non-positive
+>   platform: chrome: cros_ec: handle MKBP more events flag
+> 
+> That last patch fixes a regression that changes event processing.
+> Revert the patches that fixed that regression.
+> 
+> The next 3 patches add FIFO support. An interface is added to connect
+> the IIO sensors with cros_ec_sensorhub, and filters are needed to spread
+> the timestamp when the EC send batches of events and deal with variation
+> in interrupt delay.
+>   platform: chrome: sensorhub: Add FIFO support
+>   platform: chrome: sensorhub: Add code to spread timestmap
+>   platform: chrome: sensorhub: Add median filter
+> 
+> The remaining patches update IIO cros_ec drivers:
+> The first patch moves cros_ec_sensor_core functions documentation into
+> the .c file.
+> Then we can use the FIFO function exposed by cros_ec_sensorhub:
+>   iio: cros_ec: Use triggered buffer only when EC does not support FIFO
+> 
+> The power management functions are not necessary anymore, since we
+> shutoff the FIFO from cros_ec_sensorhub:
+>   iio: cros_ec: Register to cros_ec_sensorhub when EC supports FIFO
+> 
+> Finally, the last 3 patches present sensor information following the IIO
+> ABI:
+> -  Configurable EC timeout to allow batch mode in buffer/hwfifo_timeout,
+>   in seconds.
+> -  Hard coded EC FIFO size in buffer/hwfifo_watermark_max
+> -  Sensor sampling frequency in hertz at sampling_frequency:
+>   iio: cros_ec: Expose hwfifo_timeout
+>   iio: cros_ec: Report hwfifo_watermark_max
+>   iio: cros_ec: Use Hertz as unit for sampling frequency
+> 
+> For testing, libiio test tools can be used:
+> A iio device link looks like:
+> iio:device1 ->
+> ...09:00/GOOG0004:00/cros-ec-dev.6.auto/cros-ec-sensorhub.7.auto/
+>                      cros-ec-accel.15.auto/iio:device1
+> 
+> When FIFO is available, no trigger are presented. Once
+> sampling_freqeuncy and hwfifo_timeout are set, sensor events flow
+> when listening to /dev/iio:device1:
+> echo 12 > sampling_frequency   # Set ODR to at least 12Hz
+> echo .100 > buffer/hwfifo_timeout  # do not wait more than 100ms to
+>                                    # to send samples
+> iio_readdev -b 2 -T 1000 -s 2 iio:device1 2>/dev/null| od -x
+> 0000000 ffd0 2e20 d990 0000 8630 b56c 07ea 0000
+> 0000020 ffc0 2e10 d970 0000 877e b56c 07ea 0000
+> 0000040`
+> 
+> When FIFO is not supported by the EC, a trigger is present in the
+> directory. After registering a trigger, setting sampling_frequency,
+> the latest data collected by the sensor will be retrieved by the host
+> when the trigger expires.
+> 
+> When cros_ec_accel_legacy driver is used, no FIFO is supported and the
+> sampling frequency for the accelerometers is hard coded at 10Hz.
+> 
+> This set is built upon the master branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> 
+> Enrico Granata (2):
+>   platform: chrome: cros_ec: Do not attempt to register a non-positive
+>     IRQ number
+>   platform: chrome: cros_ec: handle MKBP more events flag
+> 
+> Gwendal Grignou (16):
+>   platform: chrome: Put docs with the code
+>   mfd: cros_ec: Add sensor_count and make check_features public
+>   platform: cros_ec: Add cros_ec_sensor_hub driver
+>   platform/mfd:iio: cros_ec: Register sensor through sensorhub
+>   platform: chrome: cros-ec: record event timestamp in the hard irq
+>   Revert "Input: cros_ec_keyb - add back missing mask for event_type"
+>   Revert "Input: cros_ec_keyb: mask out extra flags in event_type"
+>   platform: chrome: sensorhub: Add FIFO support
+>   platform: chrome: sensorhub: Add code to spread timestmap
+>   platform: chrome: sensorhub: Add median filter
+>   iio: cros_ec: Move function description to .c file
+>   iio: cros_ec: Register to cros_ec_sensorhub when EC supports FIFO
+>   iio: cros_ec: Remove pm function
+>   iio: cros_ec: Expose hwfifo_timeout
+>   iio: cros_ec: Report hwfifo_watermark_max
+>   iio: cros_ec: Use Hertz as unit for sampling frequency
+> 
+>  drivers/iio/accel/cros_ec_accel_legacy.c      |  14 +-
+>  drivers/iio/common/cros_ec_sensors/Kconfig    |   2 +-
+>  .../cros_ec_sensors/cros_ec_lid_angle.c       |   3 +-
+>  .../common/cros_ec_sensors/cros_ec_sensors.c  |  19 +-
+>  .../cros_ec_sensors/cros_ec_sensors_core.c    | 359 +++++--
+>  drivers/iio/light/cros_ec_light_prox.c        |  21 +-
+>  drivers/iio/pressure/cros_ec_baro.c           |  14 +-
+>  drivers/input/keyboard/cros_ec_keyb.c         |   6 +-
+>  drivers/mfd/cros_ec_dev.c                     | 235 +----
+>  drivers/platform/chrome/Kconfig               |  12 +
+>  drivers/platform/chrome/Makefile              |   2 +
+>  drivers/platform/chrome/cros_ec.c             |  80 +-
+>  drivers/platform/chrome/cros_ec_ishtp.c       |  25 +-
+>  drivers/platform/chrome/cros_ec_lpc.c         |  17 +-
+>  drivers/platform/chrome/cros_ec_proto.c       | 267 ++++-
+>  drivers/platform/chrome/cros_ec_rpmsg.c       |  23 +-
+>  drivers/platform/chrome/cros_ec_sensorhub.c   | 263 +++++
+>  .../platform/chrome/cros_ec_sensorhub_ring.c  | 973 ++++++++++++++++++
+>  .../linux/iio/common/cros_ec_sensors_core.h   | 106 +-
+>  include/linux/platform_data/cros_ec_proto.h   | 138 +--
+>  .../linux/platform_data/cros_ec_sensorhub.h   | 171 +++
+>  21 files changed, 2118 insertions(+), 632 deletions(-)
+>  create mode 100644 drivers/platform/chrome/cros_ec_sensorhub.c
+>  create mode 100644 drivers/platform/chrome/cros_ec_sensorhub_ring.c
+>  create mode 100644 include/linux/platform_data/cros_ec_sensorhub.h
+> 
+
