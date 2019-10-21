@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 748AFDEA40
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 12:59:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9172DEA36
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 12:58:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbfJUK6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 06:58:31 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53318 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728184AbfJUK6a (ORCPT
+        id S1728312AbfJUK6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 06:58:32 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38022 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727058AbfJUK6a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Oct 2019 06:58:30 -0400
-Received: by mail-wm1-f65.google.com with SMTP id i16so12785545wmd.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 03:58:28 -0700 (PDT)
+Received: by mail-wr1-f67.google.com with SMTP id v9so2160948wrq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 03:58:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/WGAQrvHY5TjDUNFg6EjqFOZngCTsCOrFFEohgL8HW8=;
-        b=B+XYPSq1urYE2HkEcpY2835/NlXmGMnLkjGbIG1A67Ue4TIGWTiHwFP/CiCW2C5h+T
-         h4Cy7j+aP+O4QHAnjFTRRYyVNuY9Dh6GepwO16DNbSg9ZunSaKm2KiwnxR/YZxkMwume
-         NnjiEuKgmvF+Dq/UPGVy5kIEYzNAySo86swGeLrolI3Qz1viYRWzQ6KZRM0MNDTUYMpQ
-         bmqIfZxg98ZWG+aJ29/Z2AsbhE+1Fzf6S+BVkSKStF9ShV4MWItJp7AHceymb1CxWUxI
-         pWOdsLZqoiaxyXUNnc5tGbN18hG0es6wJGt6f1gYZoqqxUFOuAHs6KTLEVxNnmsmJaGp
-         FkCA==
+        bh=45AT36kNkG6TuZTs0Da4Zkgj9k+BoulBorMLvGdJTSQ=;
+        b=FFP1C61B/LvUJEmQ2mYw/K2hW8FBRzhLSkQ9m4i27lqiPrqi/dCTKUbwP/XUTjLdNO
+         7q1nDyGJp4p3+IJgrl9OJ/C9HrbG5yFg5V6+hu8LVzjyWNxQhH3sa1zXaBa+cWjIj+sV
+         CRoqgJ3JWtWrKBIHWK+WlEZDrlOHLkmyepoWU+YaTtoSmw9FmgsARPv8h+/iuaBJ79Bk
+         kmAdJRqiSPJwczawk0wtx0PSK6k83mj0MiC1FfKB3ZYgGTRMrEXa9+iGeCQJtT48m7uv
+         1yg75JMBbBoIwGBtIUwPus87jWSfu+OfzaeVCLEPZ0dM4ZBS2/0CqAOMHILGica8DXUU
+         dbag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/WGAQrvHY5TjDUNFg6EjqFOZngCTsCOrFFEohgL8HW8=;
-        b=OgwFFPaXGQUw0+0QQih5BrgYM1NQ7zuTw2FAM3+lSYj4jE9/Zf3Fq3Q5N86LkWRlSO
-         P2fQrnyBrZ+rFNys8mg072sy4T4O5WU6IXaTyo+SzW4m6jZ5LZOJXqNLV0a4qYH5i11R
-         A2M+0EKcl5HKQw/GJHp4LUR+lkXHLYaTARMme7vaudzHYUdcVoEhppoC9VQw8flrO4/G
-         GAaDDG0wNWfr3k7NRZH9vUgvHP4s8lfJCAYWp7ZnNkA1KQz/caq9+IitE6HxzQ/f+M/W
-         5jqxTHASd5ks3pTzkTD8+LfUU5zcRZKdmedQ5qTijwtB3VbeaYpbQQHc6CvPyAtBYZiU
-         wMzg==
-X-Gm-Message-State: APjAAAWmnoVNwCSCcrcJw8uA1/f/wBiNXq8zp0le/NBk3u45g3thag8r
-        rieh8ekCjMgxFvTLJuS/ouFT5g==
-X-Google-Smtp-Source: APXvYqy4ioC1NHywrjClvJ5LC459fxXuH6zKMg0fk8PIDO/Kskdhz3hGWzFcmG6iC/AhBj6iaHvygg==
-X-Received: by 2002:a05:600c:2948:: with SMTP id n8mr5822833wmd.128.1571655507269;
-        Mon, 21 Oct 2019 03:58:27 -0700 (PDT)
+        bh=45AT36kNkG6TuZTs0Da4Zkgj9k+BoulBorMLvGdJTSQ=;
+        b=fmEqtOekAnaW0lLUbJlVDG7njw8wvyVCziFgd+dfTxzGwtBgqx2jva/TyE7C8oeXNJ
+         h8j5eG0g4AWj5yevyuFadshIbYQ3m0LMAS3PsDJhtLiqhHS9OwtdarpL1k6zG52fC9kN
+         yD+2WUyt/HRY6prhDXNobTW2FtSBfQEQR2gF5YVjX1kBw9u1LfUxNhebbtaFWdYroTIM
+         ptoaWjctwXZoluRw8G0xmRUxBNP8fM1pOJ6cuOnjakyrY02I8WBMQDArzBT6YjgIhSKF
+         cI2feoBKWUDh8Vu04Z8ANsCaPt062sNnlBeQ2MA7JhLW1BFeOSDGAHjF26jWuCjkA3wU
+         tzuQ==
+X-Gm-Message-State: APjAAAVdxPZV81Q8F9YXbyGgPVVrlGazC4mhgGZu3bVV4iV9DpUdYs6s
+        i1jcVuiaku10mjijQOhVsvar0A==
+X-Google-Smtp-Source: APXvYqwCfB1GEi1vIrmvERSut1ef1m6svBhU9PBaX+IYPMcyfDknKO0cVM9VqPhgbyJpf+0H6MCsrQ==
+X-Received: by 2002:adf:e28f:: with SMTP id v15mr18585655wri.130.1571655508272;
+        Mon, 21 Oct 2019 03:58:28 -0700 (PDT)
 Received: from localhost.localdomain ([95.149.164.99])
-        by smtp.gmail.com with ESMTPSA id q22sm12544289wmj.31.2019.10.21.03.58.26
+        by smtp.gmail.com with ESMTPSA id q22sm12544289wmj.31.2019.10.21.03.58.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 03:58:26 -0700 (PDT)
+        Mon, 21 Oct 2019 03:58:27 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     daniel.thompson@linaro.org, arnd@arndb.de, broonie@kernel.org,
         linus.walleij@linaro.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         baohua@kernel.org, stephan@gerhold.net,
         Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v2 2/9] mfd: cs5535-mfd: Remove mfd_cell->id hack
-Date:   Mon, 21 Oct 2019 11:58:15 +0100
-Message-Id: <20191021105822.20271-3-lee.jones@linaro.org>
+Subject: [PATCH v2 3/9] mfd: cs5535-mfd: Request shared IO regions centrally
+Date:   Mon, 21 Oct 2019 11:58:16 +0100
+Message-Id: <20191021105822.20271-4-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191021105822.20271-1-lee.jones@linaro.org>
 References: <20191021105822.20271-1-lee.jones@linaro.org>
@@ -61,86 +61,151 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current implementation abuses the platform 'id' mfd_cell member
-to index into the correct resources entry.  If we place all cells
-into their numbered slots, we can cycle through all the cell entries
-and only process the populated ones which avoids this behaviour.
+Prior to this patch, IO regions were requested via an MFD subsytem-level
+.enable() call-back and similarly released by a .disable() call-back.
+Double requests/releases were avoided by a centrally handled usage count
+mechanism.
 
+This complexity can all be avoided by handling IO regions only once during
+.probe() and .remove() of the parent device.  Since this is the only
+legitimate user of the aforementioned usage count mechanism, this patch
+will allow it to be removed from MFD core in subsequent steps.
+
+Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/mfd/cs5535-mfd.c | 31 +++++++++++++------------------
- 1 file changed, 13 insertions(+), 18 deletions(-)
+ drivers/mfd/cs5535-mfd.c | 72 +++++++++++++++++-----------------------
+ 1 file changed, 30 insertions(+), 42 deletions(-)
 
 diff --git a/drivers/mfd/cs5535-mfd.c b/drivers/mfd/cs5535-mfd.c
-index 2c47afc22d24..9ce6bbcdbda1 100644
+index 9ce6bbcdbda1..053e33447808 100644
 --- a/drivers/mfd/cs5535-mfd.c
 +++ b/drivers/mfd/cs5535-mfd.c
-@@ -62,26 +62,22 @@ static int cs5535_mfd_res_disable(struct platform_device *pdev)
+@@ -27,38 +27,6 @@ enum cs5535_mfd_bars {
+ 	NR_BARS,
+ };
+ 
+-static int cs5535_mfd_res_enable(struct platform_device *pdev)
+-{
+-	struct resource *res;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "can't fetch device resource info\n");
+-		return -EIO;
+-	}
+-
+-	if (!request_region(res->start, resource_size(res), DRV_NAME)) {
+-		dev_err(&pdev->dev, "can't request region\n");
+-		return -EIO;
+-	}
+-
+-	return 0;
+-}
+-
+-static int cs5535_mfd_res_disable(struct platform_device *pdev)
+-{
+-	struct resource *res;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "can't fetch device resource info\n");
+-		return -EIO;
+-	}
+-
+-	release_region(res->start, resource_size(res));
+-	return 0;
+-}
+-
  static struct resource cs5535_mfd_resources[NR_BARS];
  
  static struct mfd_cell cs5535_mfd_cells[] = {
--	{
--		.id = SMB_BAR,
-+	[SMB_BAR] = {
- 		.name = "cs5535-smb",
- 		.num_resources = 1,
- 		.resources = &cs5535_mfd_resources[SMB_BAR],
- 	},
--	{
--		.id = GPIO_BAR,
-+	[GPIO_BAR] = {
- 		.name = "cs5535-gpio",
- 		.num_resources = 1,
- 		.resources = &cs5535_mfd_resources[GPIO_BAR],
- 	},
--	{
--		.id = MFGPT_BAR,
-+	[MFGPT_BAR] = {
- 		.name = "cs5535-mfgpt",
- 		.num_resources = 1,
- 		.resources = &cs5535_mfd_resources[MFGPT_BAR],
- 	},
--	{
--		.id = PMS_BAR,
-+	[PMS_BAR] = {
+@@ -81,17 +49,11 @@ static struct mfd_cell cs5535_mfd_cells[] = {
  		.name = "cs5535-pms",
  		.num_resources = 1,
  		.resources = &cs5535_mfd_resources[PMS_BAR],
-@@ -89,8 +85,7 @@ static struct mfd_cell cs5535_mfd_cells[] = {
- 		.enable = cs5535_mfd_res_enable,
- 		.disable = cs5535_mfd_res_disable,
+-
+-		.enable = cs5535_mfd_res_enable,
+-		.disable = cs5535_mfd_res_disable,
  	},
--	{
--		.id = ACPI_BAR,
-+	[ACPI_BAR] = {
+ 	[ACPI_BAR] = {
  		.name = "cs5535-acpi",
  		.num_resources = 1,
  		.resources = &cs5535_mfd_resources[ACPI_BAR],
-@@ -115,16 +110,16 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
+-
+-		.enable = cs5535_mfd_res_enable,
+-		.disable = cs5535_mfd_res_disable,
+ 	},
+ };
+ 
+@@ -109,7 +71,6 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
+ 	if (err)
  		return err;
  
- 	/* fill in IO range for each cell; subdrivers handle the region */
--	for (i = 0; i < ARRAY_SIZE(cs5535_mfd_cells); i++) {
--		int bar = cs5535_mfd_cells[i].id;
--		struct resource *r = &cs5535_mfd_resources[bar];
-+	for (i = 0; i < NR_BARS; i++) {
-+		struct mfd_cell *cell = &cs5535_mfd_cells[i];
-+		struct resource *r = &cs5535_mfd_resources[i];
- 
--		r->flags = IORESOURCE_IO;
--		r->start = pci_resource_start(pdev, bar);
--		r->end = pci_resource_end(pdev, bar);
-+		if (cell->num_resources <= 0)
-+			continue;
- 
--		/* id is used for temporarily storing BAR; unset it now */
--		cs5535_mfd_cells[i].id = 0;
-+		r->flags = IORESOURCE_IO;
-+		r->start = pci_resource_start(pdev, i);
-+		r->end = pci_resource_end(pdev, i);
+-	/* fill in IO range for each cell; subdrivers handle the region */
+ 	for (i = 0; i < NR_BARS; i++) {
+ 		struct mfd_cell *cell = &cs5535_mfd_cells[i];
+ 		struct resource *r = &cs5535_mfd_resources[i];
+@@ -122,22 +83,47 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
+ 		r->end = pci_resource_end(pdev, i);
  	}
  
++	err = pci_request_region(pdev, PMS_BAR, DRV_NAME);
++	if (err) {
++		dev_err(&pdev->dev, "Failed to request PMS_BAR's IO region\n");
++		goto err_disable;
++	}
++
  	err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE, cs5535_mfd_cells,
+ 			      ARRAY_SIZE(cs5535_mfd_cells), NULL, 0, NULL);
+ 	if (err) {
+ 		dev_err(&pdev->dev,
+ 			"Failed to add CS5532 sub-devices: %d\n", err);
+-		goto err_disable;
++		goto err_release_pms;
+ 	}
+ 
+-	if (machine_is_olpc())
+-		mfd_clone_cell("cs5535-acpi", olpc_acpi_clones, ARRAY_SIZE(olpc_acpi_clones));
++	if (machine_is_olpc()) {
++		err = pci_request_region(pdev, ACPI_BAR, DRV_NAME);
++		if (err) {
++			dev_err(&pdev->dev,
++				"Failed to request ACPI_BAR's IO region\n");
++			goto err_remove_devices;
++		}
++
++		err = mfd_clone_cell("cs5535-acpi", olpc_acpi_clones,
++				     ARRAY_SIZE(olpc_acpi_clones));
++		if (err) {
++			dev_err(&pdev->dev, "Failed to clone MFD cell\n");
++			goto err_release_acpi;
++		}
++	}
+ 
+ 	dev_info(&pdev->dev, "%zu devices registered.\n",
+ 			ARRAY_SIZE(cs5535_mfd_cells));
+ 
+ 	return 0;
+ 
++err_release_acpi:
++	pci_release_region(pdev, ACPI_BAR);
++err_remove_devices:
++	mfd_remove_devices(&pdev->dev);
++err_release_pms:
++	pci_release_region(pdev, PMS_BAR);
+ err_disable:
+ 	pci_disable_device(pdev);
+ 	return err;
+@@ -145,6 +131,8 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
+ 
+ static void cs5535_mfd_remove(struct pci_dev *pdev)
+ {
++	pci_release_region(pdev, PMS_BAR);
++	pci_release_region(pdev, ACPI_BAR);
+ 	mfd_remove_devices(&pdev->dev);
+ 	pci_disable_device(pdev);
+ }
 -- 
 2.17.1
 
