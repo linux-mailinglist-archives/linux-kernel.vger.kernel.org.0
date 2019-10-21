@@ -2,53 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CC6EDE516
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 09:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ED47DE517
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2019 09:05:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbfJUHFZ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 03:05:25 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:48380 "EHLO
+        id S1727407AbfJUHF3 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 03:05:29 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:48403 "EHLO
         tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbfJUHFX (ORCPT
+        with ESMTP id S1726424AbfJUHF2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 03:05:23 -0400
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x9L75A81015339
+        Mon, 21 Oct 2019 03:05:28 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x9L75Flq015393
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 21 Oct 2019 16:05:10 +0900
+        Mon, 21 Oct 2019 16:05:15 +0900
 Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9L75ArF000799;
-        Mon, 21 Oct 2019 16:05:10 +0900
-Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9L6xUes015505;
-        Mon, 21 Oct 2019 16:05:10 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.148] [10.38.151.148]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-9695728; Mon, 21 Oct 2019 16:03:53 +0900
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9L75FOq017626;
+        Mon, 21 Oct 2019 16:05:15 +0900
+Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9L73dLb019265;
+        Mon, 21 Oct 2019 16:05:15 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-9695733; Mon, 21 Oct 2019 16:04:01 +0900
 Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC20GP.gisp.nec.co.jp ([10.38.151.148]) with mapi id 14.03.0439.000; Mon,
- 21 Oct 2019 16:03:53 +0900
+ BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0439.000; Mon,
+ 21 Oct 2019 16:04:00 +0900
 From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 To:     Oscar Salvador <osalvador@suse.de>
 CC:     "mhocko@kernel.org" <mhocko@kernel.org>,
         "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 05/16] mm,hwpoison: Un-export get_hwpoison_page
- and make it static
-Thread-Topic: [RFC PATCH v2 05/16] mm,hwpoison: Un-export get_hwpoison_page
- and make it static
-Thread-Index: AQHVhPYxkUySkjBIvEqVwpj4PP28kKdkGpaA
-Date:   Mon, 21 Oct 2019 07:03:52 +0000
-Message-ID: <20191021070351.GA9037@hori.linux.bs1.fc.nec.co.jp>
+Subject: Re: [RFC PATCH v2 06/16] mm,hwpoison: Kill put_hwpoison_page
+Thread-Topic: [RFC PATCH v2 06/16] mm,hwpoison: Kill put_hwpoison_page
+Thread-Index: AQHVhPYzgz0BcFE9qEa25BSbP458radkGqEA
+Date:   Mon, 21 Oct 2019 07:04:00 +0000
+Message-ID: <20191021070400.GB9037@hori.linux.bs1.fc.nec.co.jp>
 References: <20191017142123.24245-1-osalvador@suse.de>
- <20191017142123.24245-6-osalvador@suse.de>
-In-Reply-To: <20191017142123.24245-6-osalvador@suse.de>
+ <20191017142123.24245-7-osalvador@suse.de>
+In-Reply-To: <20191017142123.24245-7-osalvador@suse.de>
 Accept-Language: en-US, ja-JP
 Content-Language: ja-JP
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [10.34.125.96]
 Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <6C77147F52A6A94F8A5F5C353046EE4B@gisp.nec.co.jp>
+Content-ID: <156A1B01F944214AB6C6A8C6930806A6@gisp.nec.co.jp>
 Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 X-TM-AS-MML: disable
@@ -57,9 +55,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 04:21:12PM +0200, Oscar Salvador wrote:
-> Since get_hwpoison_page is only used in memory-failure code now,
-> let us un-export it and make it private to that code.
+On Thu, Oct 17, 2019 at 04:21:13PM +0200, Oscar Salvador wrote:
+> After ("4e41a30c6d50: mm: hwpoison: adjust for new thp refcounting"),
+> put_hwpoison_page got reduced to a put_page.
+> Let us just use put_page instead.
 > 
 > Signed-off-by: Oscar Salvador <osalvador@suse.de>
 
