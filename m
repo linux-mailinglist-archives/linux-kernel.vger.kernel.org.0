@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 744EEDF907
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 02:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82A69DF8FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 02:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730166AbfJVAEu convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 20:04:50 -0400
+        id S1730715AbfJVAEc convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 20:04:32 -0400
 Received: from Galois.linutronix.de ([193.142.43.55]:38895 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730774AbfJVAEs (ORCPT
+        with ESMTP id S2387494AbfJVAEQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 20:04:48 -0400
+        Mon, 21 Oct 2019 20:04:16 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iMgx9-000437-0j; Tue, 22 Oct 2019 01:19:07 +0200
+        id 1iMgxE-00044B-BM; Tue, 22 Oct 2019 01:19:12 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 90D5A1C04D5;
-        Tue, 22 Oct 2019 01:19:03 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 23:19:03 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5C0131C04D6;
+        Tue, 22 Oct 2019 01:19:05 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 23:19:04 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf trace: Show error message when not finding a
- field used in a filter expression
+Subject: [tip: perf/core] libbeauty: Add a strarray__scnprintf_suffix() method
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Luis =?utf-8?q?Cl=C3=A1udio_Gon=C3=A7alves?= 
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-ly4rgm1bto8uwc2itpaixjob@git.kernel.org>
-References: <tip-ly4rgm1bto8uwc2itpaixjob@git.kernel.org>
+In-Reply-To: <tip-agxbj6es2ke3rehwt4gkdw23@git.kernel.org>
+References: <tip-agxbj6es2ke3rehwt4gkdw23@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157169994330.29376.15718531732941246606.tip-bot2@tip-bot2>
+Message-ID: <157169994497.29376.16628224131641403691.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,45 +52,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     3cdc8db91e0e73f94fa6ce3bf966b0152ccf0107
-Gitweb:        https://git.kernel.org/tip/3cdc8db91e0e73f94fa6ce3bf966b0152ccf0107
+Commit-ID:     97c2a7806f691f4124914623baa54223416a8cef
+Gitweb:        https://git.kernel.org/tip/97c2a7806f691f4124914623baa54223416a8cef
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Thu, 17 Oct 2019 16:41:34 -03:00
+AuthorDate:    Tue, 15 Oct 2019 16:01:42 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Thu, 17 Oct 2019 17:26:35 -03:00
+CommitterDate: Tue, 15 Oct 2019 16:01:42 -03:00
 
-perf trace: Show error message when not finding a field used in a filter expression
+libbeauty: Add a strarray__scnprintf_suffix() method
 
-It was there, but as pr_debug(), make it pr_err() so that we can see it
-without -v:
-
-  # trace -e syscalls:*lseek --filter="whenc==SET" sleep 1
-  "whenc" not found in "syscalls:sys_enter_lseek", can't set filter "whenc==SET"
-  #
+In some cases, like with x86 IRQ vectors, the common part in names is at
+the end, so a suffix, add a scnprintf function for that.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-ly4rgm1bto8uwc2itpaixjob@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-agxbj6es2ke3rehwt4gkdw23@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/builtin-trace.c       | 14 ++++++++++++++
+ tools/perf/trace/beauty/beauty.h |  1 +
+ 2 files changed, 15 insertions(+)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index e71605c..cafd184 100644
+index 907eaf3..58bbe85 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -3611,8 +3611,8 @@ static int trace__expand_filter(struct trace *trace __maybe_unused, struct evsel
+@@ -423,6 +423,20 @@ out_delete:
+ 	({ struct syscall_tp *fields = evsel->priv; \
+ 	   fields->name.pointer(&fields->name, sample); })
  
- 			fmt = perf_evsel__syscall_arg_fmt(evsel, arg);
- 			if (fmt == NULL) {
--				pr_debug("\"%s\" not found in \"%s\", can't set filter \"%s\"\n",
--					 arg, evsel->name, evsel->filter);
-+				pr_err("\"%s\" not found in \"%s\", can't set filter \"%s\"\n",
-+				       arg, evsel->name, evsel->filter);
- 				return -1;
- 			}
++size_t strarray__scnprintf_suffix(struct strarray *sa, char *bf, size_t size, const char *intfmt, bool show_suffix, int val)
++{
++	int idx = val - sa->offset;
++
++	if (idx < 0 || idx >= sa->nr_entries || sa->entries[idx] == NULL) {
++		size_t printed = scnprintf(bf, size, intfmt, val);
++		if (show_suffix)
++			printed += scnprintf(bf + printed, size - printed, " /* %s??? */", sa->prefix);
++		return printed;
++	}
++
++	return scnprintf(bf, size, "%s%s", sa->entries[idx], show_suffix ? sa->prefix : "");
++}
++
+ size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const char *intfmt, bool show_prefix, int val)
+ {
+ 	int idx = val - sa->offset;
+diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
+index 0dee0cf..165f56b 100644
+--- a/tools/perf/trace/beauty/beauty.h
++++ b/tools/perf/trace/beauty/beauty.h
+@@ -28,6 +28,7 @@ struct strarray {
+ }
  
+ size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const char *intfmt, bool show_prefix, int val);
++size_t strarray__scnprintf_suffix(struct strarray *sa, char *bf, size_t size, const char *intfmt, bool show_suffix, int val);
+ size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, bool show_prefix, unsigned long flags);
+ 
+ bool strarray__strtoul(struct strarray *sa, char *bf, size_t size, u64 *ret);
