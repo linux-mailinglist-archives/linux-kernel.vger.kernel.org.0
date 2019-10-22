@@ -2,97 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA64BE0D1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 22:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8484FE0D1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 22:13:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389268AbfJVULf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 16:11:35 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:42716 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387645AbfJVULf (ORCPT
+        id S2389315AbfJVUNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 16:13:32 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:46799 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389303AbfJVUNb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 16:11:35 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iN0V9-0007Ux-9U; Tue, 22 Oct 2019 20:11:31 +0000
-Date:   Tue, 22 Oct 2019 21:11:31 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wugyuan@cn.ibm.com, jlayton@kernel.org, hsiangkao@aol.com,
-        Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH RESEND 1/1] vfs: Really check for inode ptr in lookup_fast
-Message-ID: <20191022201131.GZ26530@ZenIV.linux.org.uk>
-References: <20190927044243.18856-1-riteshh@linux.ibm.com>
- <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
- <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com>
- <20191022143736.GX26530@ZenIV.linux.org.uk>
+        Tue, 22 Oct 2019 16:13:31 -0400
+Received: from mail-qt1-f174.google.com ([209.85.160.174]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MSswA-1iRrex3uAw-00UJql for <linux-kernel@vger.kernel.org>; Tue, 22 Oct
+ 2019 22:13:30 +0200
+Received: by mail-qt1-f174.google.com with SMTP id t20so28734686qtr.10
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 13:13:29 -0700 (PDT)
+X-Gm-Message-State: APjAAAX3RIKOBuArGOe92sTgorDQDiwDKyvcTa+gqLok9pHfzEZorhAw
+        pv/qrmsGq07wmQ5mkR+JBxWflQb3WUUAppTk0yw=
+X-Google-Smtp-Source: APXvYqwHws2+wdbd8O8mZBRDAI3f/vMQUkU/DX6M5bMx+/92TDs7sn5fYNiZg1DtZYJeC8Fy8qgIRm0PfsfvEwlnrmU=
+X-Received: by 2002:a0c:fde8:: with SMTP id m8mr3823785qvu.4.1571775208879;
+ Tue, 22 Oct 2019 13:13:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022143736.GX26530@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191018154052.1276506-1-arnd@arndb.de> <20191018154201.1276638-30-arnd@arndb.de>
+ <20191022163913.GV5554@sirena.co.uk>
+In-Reply-To: <20191022163913.GV5554@sirena.co.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 22 Oct 2019 22:13:12 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0a2EU8mKNGLNoh+fnpNU6X=qgpAv3kOGN5uXv+f63KwA@mail.gmail.com>
+Message-ID: <CAK8P3a0a2EU8mKNGLNoh+fnpNU6X=qgpAv3kOGN5uXv+f63KwA@mail.gmail.com>
+Subject: Re: [PATCH 30/46] SoC: pxa: use pdev resource for FIFO regs
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:Z7gtCbAlZJNUJ5dtscheTnGsImUi59yfxtXxsOnip7nUV+bpUQW
+ 5e+n+gxjVe1MEgQ88jaJ6Ps9VZopc+E6mgXTiERvAJWNFrw9il0xmOilt6wOqDR3Q1dJKL6
+ MbXjRnwZUSF0pu4JV679XLYtqkw4Q9b0J7IAQzouZeWxHuiOuoYlAaJV+olRYwAVlazRSCt
+ QTRFu3YRhrSvUBlJ061+g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:DxOSmeBgJQM=:DNcJtrdP/WV/ixqJ4D7k4n
+ +s7wDYln3wavlJlYMX5ujL3MRAlXj//VCEL9TqlfyNt9a2doZKhzcpaAhdQYjmBbDGcrQ55hm
+ lHv26TsgvfBqK6A0Wqx2jB46rcvo0MsC1kc2PqYO4UkiWdV7Gr1b4HOFi62KOrP6QWsdAjFI4
+ RFW+JWVMIuXYydNuQjNru8f2q4S/znPVNUS9tpS+3Go78i66yu/9XXgR6RkUZ9DbC7LuT+J43
+ fE/ylIzVarGk9yHy1BA74qzWUGpd0yMc0cLJa4K4ne5Otw8RlR/76ErCdIHC29B/yPRjxoQFq
+ 5F9B/tNu+KVT8DQ0VOUmgLBdokY3lA5yuPUAOZKtbpa8zf60PR9eJNc1qV38vIZVTl5IgxaFB
+ xpRe83kfbKlwo1BTqXQx2T0L6jdd2eju6dDIDXZOhEMJIDd9B8aXJBaAskiSqPOv66Z6Yn8KF
+ RewU+/Umbz1KLYYmMk/9+c/UPPJ4uQYf7uATjdS7XgSmaaClRhvGHeyOiGo/IwogFHJgvaete
+ Qxe4VZ1MY4SN/qXc4VHIJvuBCal4zvraVSDYTm4uepTqJT7KBCb4WPP8TLkYE20QNz+vV8TeR
+ FhkTrGThfQzMF4fq2JFJW2lknnTsr+qi/PrZFsdVhz8S9V3w76YLz3pKJQ9+hxRfq7dG8WRIN
+ CMRbz73GVnjmqgUJ6jCaYnjAnkCn5yzoY1f+Cu1bcGKs5h+OWp+eXpr931v93H2We0L7uR0pW
+ RvhTyC/ZP98hNaakZWGCcofY/P27eukYdcrShU33B/y2ThpU915PktxUEX+2adtptJ+spg/5m
+ LffdjlFMyJXnUjdblwi1qkjmBkrHlDx6K8cuvsoVtwa/sisNe6W5yo9qySZGi2S45Q6S10Qfd
+ h0SrzERdFWA6Do6BtyFQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 03:37:36PM +0100, Al Viro wrote:
-> On Tue, Oct 22, 2019 at 07:08:54PM +0530, Ritesh Harjani wrote:
-> > I think we have still not taken this patch. Al?
+On Tue, Oct 22, 2019 at 6:39 PM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Fri, Oct 18, 2019 at 05:41:45PM +0200, Arnd Bergmann wrote:
+> > The driver currently takes the hardwired FIFO address from
+> > a header file that we want to eliminate. Change it to use
+> > the mmio resource instead and stop including the heare.
+>
+> Acked-by: Mark Brown <broonie@kernel.org>
+>
+> Please submit patches using subject lines reflecting the style for the
+> subsystem, this makes it easier for people to identify relevant patches.
 
-> You've picked the easiest one to hit, but on e.g. KVM setups you can have the
-> host thread representing the CPU where __d_set_inode_and_type() runs get
-> preempted (by the host kernel), leaving others with much wider window.
-> 
-> Sure, we can do that to all callers of d_is_negative/d_is_positive, but...
-> the same goes for any places that assumes that d_is_dir() implies that
-> the sucker is positive, etc.
-> 
-> What we have guaranteed is
-> 	* ->d_lock serializes ->d_flags/->d_inode changes
-> 	* ->d_seq is bumped before/after such changes
-> 	* positive dentry never changes ->d_inode as long as you hold
-> a reference (negative dentry *can* become positive right under you)
-> 
-> So there are 3 classes of valid users: those holding ->d_lock, those
-> sampling and rechecking ->d_seq and those relying upon having observed
-> the sucker they've pinned to be positive.
-> 
-> What you've been hitting is "we have it pinned, ->d_flags says it's
-> positive but we still observe the value of ->d_inode from before the
-> store to ->d_flags that has made it look positive".
+Fixed, I guess I lost an 'A' somewhere.
 
-Actually, your patch opens another problem there.  Suppose you make
-it d_really_is_positive() and hit the same race sans reordering.
-Dentry is found by __d_lookup() and is negative.  Right after we
-return from __d_lookup() another thread makes it positive (a symlink)
-- ->d_inode is set, d_really_is_positive() becomes true.  OK, on we
-go, pick the inode and move on.  Right?  ->d_flags is still not set
-by the thread that made it positive.  We return from lookup_fast()
-and call step_into().  And get to
-        if (likely(!d_is_symlink(path->dentry)) ||
-Which checks ->d_flags and sees the value from before the sucker
-became positive.  IOW, d_is_symlink() is false here.  If that
-was the last path component and we'd been told to follow links,
-we will end up with positive dentry of a symlink coming out of
-pathname resolution.
-
-Similar fun happens if you have mkdir racing with lookup - ENOENT
-is what should've happened if lookup comes first, success - if
-mkdir does.  This way we can hit ENOTDIR, due to false negative
-from d_can_lookup().
-
-IOW, d_really_is_negative() in lookup_fast() will paper over
-one of oopsen, but it
-	* won't cover similar oopsen on other codepaths and
-	* will lead to bogus behaviour.
-
-I'm not sure that blanket conversion of d_is_... to smp_load_acquire()
-is the right solution; it might very well be that we need to do that
-only on a small subset of call sites, lookup_fast() being one of
-those.  But we do want at least to be certain that something we'd
-got from lookup_fast() in non-RCU mode already has ->d_flags visible.
-
-I'm going through the callers right now, will post a followup once
-the things get cleaner...
+      Arnd
