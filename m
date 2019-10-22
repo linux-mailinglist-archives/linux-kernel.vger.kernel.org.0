@@ -2,104 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C171DFFBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 453C3DFFBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388476AbfJVImF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:42:05 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35455 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388436AbfJVImF (ORCPT
+        id S2388497AbfJVImP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 04:42:15 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41636 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388436AbfJVImP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:42:05 -0400
-Received: by mail-wr1-f65.google.com with SMTP id l10so16598296wrb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 01:42:02 -0700 (PDT)
+        Tue, 22 Oct 2019 04:42:15 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p4so17020874wrm.8
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 01:42:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=w7zx6YjrUFBDjmlRgA0qIw68+thnie5ZFOUiXEi4KEg=;
-        b=IOFsvrWemMIlBx/Id6R7C0FEOjokmQxy2tXXKg2kEaF20aFgrcRucmX08oKRKRGrSB
-         sTwb4Z4kje5NuCqNN+LSfX9Tx49KGScFacxoxCg/WzzftVhac/cyFWLCOILy9C2iTMV0
-         0WmG2iRDNltXYKRseoabJcOEvthJeWH1pgmCRjR82TW1rHFZ2ipHY3lje6rpeh7OMCfM
-         WpQpSlRlaV5A9C1I9FL4eSNpA/uNKnlt3td/2BSVyw8hncaYRMHiT56wZCL2s195qm8Q
-         fPkrXm3wQL7PDC/09QwkRlNoJ0EQp1XRVjRFIhOl5f6FXz35Mua/TrRk9J3gvm6bUhDt
-         2UCg==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CCoUEx7pgvSwkd52sbHiDWqhbn6D15dx3IidcUSOlCs=;
+        b=Dnqw8eUlpREisKkdtKQIU3R7AtWD+I7KGdKQt39MsbLsH6Qoc355nKrI0tHLiqB3NG
+         /Y4Dn9+GMLBCqAfugauXi/usjnov8QawMPImXtU3CjjRKa7jMHE2ZeArfrFGVHD/rFE1
+         xT/hLokfxu1BCgHKdBRBCGLOgTZF0se9W2/2o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w7zx6YjrUFBDjmlRgA0qIw68+thnie5ZFOUiXEi4KEg=;
-        b=mMuHMYhqry6wXPAviSd/cMxD3Pf8FjJ7XxeZUrdtbgXLmNW41eueDRq34mIu8cRG0l
-         Z0WwggHdVkDGctM0C3AlPldadArMEghlf2zeWXq183ZqzqyVtGXXvFQ5tL7lKnJHYZqf
-         /gLkpHX6WTOh5/Uj5K03JJdLVgTtenjMAtvEuKZ54Eo/rbj5mpxEFpGlEb4e+uQXB6y/
-         +qZw4opg/5Nc5ujqPDFb7MO4Dx3/1N4zk5UUEG8XS88M5o6yfu/kvcqXU4dkAU8ymFno
-         oZ61n2XdsKGG1fvuOp7xd2MXqo09xEaT19CUVNdcHt4AoQm0cetbEXYIwcRPfiMaMiMH
-         hV+Q==
-X-Gm-Message-State: APjAAAVYD4UIMLKSBteUaFvNIJ0mBfYWFwikzdwYa9K8CPKTaHbdlYq9
-        KLSEUSqaUMIp5h1d7YUaWdtj9vd4
-X-Google-Smtp-Source: APXvYqzcXNrvIwbbzD94/2BLL+deniiP5vjAf4yriWNWreVpt5hFPKkRsiy1oUXhDCUADb2H6/8oBw==
-X-Received: by 2002:adf:a157:: with SMTP id r23mr2275618wrr.51.1571733722135;
-        Tue, 22 Oct 2019 01:42:02 -0700 (PDT)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id 37sm28155431wrc.96.2019.10.22.01.41.59
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=CCoUEx7pgvSwkd52sbHiDWqhbn6D15dx3IidcUSOlCs=;
+        b=V5uM5YKLZEPicxCrexD/VYpVv8sOMe2OEKp//0dwAC6Xwy57kNn5cG1OgAHJ6NX2Qf
+         J9w2JkANfYkS/vxHYfITgk9AeNfm0eO15rZeiL25j1WG2xNPEysLtqdmD9EDNDzEpXRt
+         2ATL9QDkM6Utev1PijEo37hlb9OSCbwEL7gWFqY0fEF+JSPiP/ZKaFOGFjZu6Z7SaWhm
+         /ieSyNiaviW5nL62D2GApWEVzzx9QmeDYdol2zjRDPGgp/oX0uIkwVU16SR6lxMjUCzr
+         HWtotQF/yimVxdaQaKE1hizRxwMQYUiqBsPEkDDttdfByxUPKvv4LvUQV1NAwWqPd22H
+         w5cg==
+X-Gm-Message-State: APjAAAWzWQD94apRs0YuvamKtm1YJjlS3BzGWgiTATvsZn4PoCuToWpb
+        fcpDVeMSaxxt8f0aF78wOuHcpw==
+X-Google-Smtp-Source: APXvYqysKcOFImNh7q+xLEnI5+oG8yvXGOPWq0yok1GRmNS4PwSgal7nZQXzjWKsbnuYzK3jXSOCnw==
+X-Received: by 2002:adf:c409:: with SMTP id v9mr2344929wrf.41.1571733732870;
+        Tue, 22 Oct 2019 01:42:12 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id d4sm24692928wrc.54.2019.10.22.01.42.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 01:41:59 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 10:41:58 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH] drm/scdc: Fix typo in bit definition of SCDC_STATUS_FLAGS
-Message-ID: <20191022084158.GA1531961@ulmo>
-References: <20191016123342.19119-1-patrik.r.jakobsson@gmail.com>
+        Tue, 22 Oct 2019 01:42:12 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 10:42:10 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Brian Starkey <Brian.Starkey@arm.com>, nd <nd@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Mihail Atanassov <Mihail.Atanassov@arm.com>,
+        Sean Paul <sean@poorly.run>
+Subject: Re: [RFC,3/3] drm/komeda: Allow non-component drm_bridge only
+ endpoints
+Message-ID: <20191022084210.GX11828@phenom.ffwll.local>
+Mail-Followup-To: Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Brian Starkey <Brian.Starkey@arm.com>, nd <nd@arm.com>,
+        David Airlie <airlied@linux.ie>, Liviu Dudau <Liviu.Dudau@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Mihail Atanassov <Mihail.Atanassov@arm.com>,
+        Sean Paul <sean@poorly.run>
+References: <20191004143418.53039-4-mihail.atanassov@arm.com>
+ <20191009055407.GA3082@jamwan02-TSP300>
+ <5390495.Gzyn2rW8Nj@e123338-lin>
+ <20191016162206.u2yo37rtqwou4oep@DESKTOP-E1NTVVP.localdomain>
+ <20191017030752.GA3109@jamwan02-TSP300>
+ <20191017082043.bpiuvfr3r4jngxtu@DESKTOP-E1NTVVP.localdomain>
+ <20191017102055.GA8308@jamwan02-TSP300>
+ <20191017104812.6qpuzoh5bx5i2y3m@DESKTOP-E1NTVVP.localdomain>
+ <20191017114137.GC25745@shell.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191016123342.19119-1-patrik.r.jakobsson@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191017114137.GC25745@shell.armlinux.org.uk>
+X-Operating-System: Linux phenom 5.2.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 17, 2019 at 12:41:37PM +0100, Russell King - ARM Linux admin wrote:
+> On Thu, Oct 17, 2019 at 10:48:12AM +0000, Brian Starkey wrote:
+> > On Thu, Oct 17, 2019 at 10:21:03AM +0000, james qian wang (Arm Technology China) wrote:
+> > > On Thu, Oct 17, 2019 at 08:20:56AM +0000, Brian Starkey wrote:
+> > > > On Thu, Oct 17, 2019 at 03:07:59AM +0000, james qian wang (Arm Technology China) wrote:
+> > > > > On Wed, Oct 16, 2019 at 04:22:07PM +0000, Brian Starkey wrote:
+> > > > > > 
+> > > > > > If James is strongly against merging this, maybe we just swap
+> > > > > > wholesale to bridge? But for me, the pragmatic approach would be this
+> > > > > > stop-gap.
+> > > > > >
+> > > > > 
+> > > > > This is a good idea, and I vote +ULONG_MAX :)
+> > > > > 
+> > > > > and I also checked tda998x driver, it supports bridge. so swap the
+> > > > > wholesale to brige is perfect. :)
+> > > > > 
+> > > > 
+> > > > Well, as Mihail wrote, it's definitely not perfect.
+> > > > 
+> > > > Today, if you rmmod tda998x with the DPU driver still loaded,
+> > > > everything will be unbound gracefully.
+> > > > 
+> > > > If we swap to bridge, then rmmod'ing tda998x (or any other bridge
+> > > > driver the DPU is using) with the DPU driver still loaded will result
+> > > > in a crash.
+> > > 
+> > > I haven't read the bridge code, but seems this is a bug of drm_bridge,
+> > > since if the bridge is still in using by others, the rmmod should fail
+> > > 
+> > 
+> > Correct, but there's no fix for that today. You can also take a look
+> > at the thread linked from Mihail's cover letter.
+> > 
+> > > And personally opinion, if the bridge doesn't handle the dependence.
+> > > for us:
+> > > 
+> > > - add such support to bridge
+> > 
+> > That would certainly be helpful. I don't know if there's consensus on
+> > how to do that.
+> > 
+> > >   or
+> > > - just do the insmod/rmmod in correct order.
+> > > 
+> > > > So, there really are proper benefits to sticking with the component
+> > > > code for tda998x, which is why I'd like to understand why you're so
+> > > > against this patch?
+> > > >
+> > > 
+> > > This change handles two different connectors in komeda internally, compare
+> > > with one interface, it increases the complexity, more risk of bug and more
+> > > cost of maintainance.
+> > > 
+> > 
+> > Well, it's only about how to bind the drivers - two different methods
+> > of binding, not two different connectors. I would argue that carrying
+> > our out-of-tree patches to support both platforms is a larger
+> > maintenance burden.
+> > 
+> > Honestly this looks like a win-win to me. We get the superior approach
+> > when its supported, and still get to support bridges which are more
+> > common.
+> > 
+> > As/when improvements are made to the bridge code we can remove the
+> > component bits and not lose anything.
+> 
+> There was an idea a while back about using the device links code to
+> solve the bridge issue - but at the time the device links code wasn't
+> up to the job.  I think that's been resolved now, but I haven't been
+> able to confirm it.  I did propose some patches for bridge at the
+> time but they probably need updating.
 
---yrj/dFKFPuw6o+aM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think the only patches that existed where for panel, and we only
+discussed the bridge case. At least I can only find patches for panel,not
+bridge, but might be missing something.
 
-On Wed, Oct 16, 2019 at 02:33:42PM +0200, Patrik Jakobsson wrote:
-> Fix typo where bits got compared (x < y) instead of shifted (x << y).
->=20
-> Signed-off-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-> ---
->  include/drm/drm_scdc_helper.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-
-Oh my...
-
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-
---yrj/dFKFPuw6o+aM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2uwNQACgkQ3SOs138+
-s6HmzQ/+LeJ9cSBWTm8G78GN2R6/IefuOM9gGj8CdAAJJnyL4wEFKkYc86SeiVfk
-yNhx4VgC4X6Mv9X/Nt/qDaZRw5gUWYgxw163JntkOMtu4KL8kFkISNURSIR5tlrT
-MufD5f+MqSziPl/y4Qr4CIaJyGRc6bwv0tCxZHNQL0jou4j0W8mYtZrm3yksgjd0
-1J77t1n1aqcyIqcHtgmnOTmEa2U6RsdM6po1xUAqmJP4DzufvXVkI4fBdDDnvUdu
-biuW2fXl0DBd9Hy29qbqO2HJGRxrE4nXEEOGoe7DT4G3gyDji11MV5VvMErWt5Nn
-z+PxAOIr45cihflEfZx5Olq6u/1Czyj5WzoPhqTT65HMMe+TTQs+TMh2CNSY009C
-jWXfNqpV8IrozTriqf52lNQgP3BJn7wZOW44lBz5iONKLuUrnFd2O5kLqTmOYcuL
-MRjUl7ImuH20li2PLZDZha7SLqbcmAfolj06Fnlti+27xydRJ3a56+VZ9Fjv9YaV
-/ZfObVrj7MUTjC8agnyqg63OJZwx0cJs30b7VQk0pM2xjLJIwdJCnFu7zcenQtIh
-2C4o7Gk3+VnPT+m1F6relGT5eUYHyHZoedu6S5p0mpkUh8YalFWvwN6cBygyZLQ7
-1F2AZgpNmfdSC3Fn8tyB6R3AkWepbHvuF2pNJyrQSbzyfnp2SfQ=
-=kd/G
------END PGP SIGNATURE-----
-
---yrj/dFKFPuw6o+aM--
+Either way I think device core is fixed now, so would be really great if
+someone can give this another stab, and make drm_bridge/panel easier to
+use without fireworks on unload.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
