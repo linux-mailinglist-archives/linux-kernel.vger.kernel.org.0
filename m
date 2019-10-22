@@ -2,88 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C6A2E0E9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 01:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0481E0EA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 01:43:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389762AbfJVXim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 19:38:42 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:35347 "EHLO ozlabs.org"
+        id S2389784AbfJVXnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 19:43:25 -0400
+Received: from mga07.intel.com ([134.134.136.100]:55396 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732854AbfJVXim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 19:38:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46yVM30KZ7z9sP3;
-        Wed, 23 Oct 2019 10:38:39 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1571787519;
-        bh=ami4f9vYKglFSg2kDdmqUNRGc0PgB16FBNgszZYiGT8=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=iJS0BO5Zt/5UnZpboy9Fexepcv5UxfOTmUBHzEbwB/BblzxTYNspikCD5UaCMR91e
-         f15rhAPDNUBW6y4Tor1tzB4i77fVRALpb+PgigrOTkMVHa+fLDz6+teRjwks8R2K4H
-         BA3jub/ckFJsXyIIybAF0gIbX7nsDILWm6ncQ4PGN6N0MSZ2C1r69Aj3sigiDO+5h7
-         MsBi7VOWstM54ck9npR7g7Wfo7iru0Ovs8QwCVdCbtR4OyLbOlonmHCazRoiHaeLeO
-         p6OcrSNJoTAmwzTF55V8Tax4wHJ1+SWFIfY/bWTPzDZFBdJDXxofABlAUaB2BijTsE
-         nJNwdofapNTKw==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Eric Ricther <erichte@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Subject: Re: [PATCH v8 3/8] powerpc: detect the trusted boot state of the system
-In-Reply-To: <1571508377-23603-4-git-send-email-nayna@linux.ibm.com>
-References: <1571508377-23603-1-git-send-email-nayna@linux.ibm.com> <1571508377-23603-4-git-send-email-nayna@linux.ibm.com>
-Date:   Wed, 23 Oct 2019 10:38:38 +1100
-Message-ID: <87wocw5p1d.fsf@mpe.ellerman.id.au>
+        id S1732854AbfJVXnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 19:43:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 16:43:23 -0700
+X-IronPort-AV: E=Sophos;i="5.68,218,1569308400"; 
+   d="scan'208";a="372703092"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 16:43:23 -0700
+Message-ID: <03b350f7de4b8f75cc3579e6c43f36aa09fd16b2.camel@linux.intel.com>
+Subject: Re: [PATCH v12 0/6] mm / virtio: Provide support for unused page
+ reporting
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Duyck <alexander.duyck@gmail.com>, nitesh@redhat.com,
+        david@redhat.com
+Cc:     kvm@vger.kernel.org, mst@redhat.com, linux-kernel@vger.kernel.org,
+        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org,
+        mgorman@techsingularity.net, vbabka@suse.cz,
+        yang.zhang.wz@gmail.com, konrad.wilk@oracle.com,
+        pagupta@redhat.com, riel@surriel.com, lcapitulino@redhat.com,
+        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com, osalvador@suse.de
+Date:   Tue, 22 Oct 2019 16:43:23 -0700
+In-Reply-To: <20191022160140.a6954868d59f47b36334b504@linux-foundation.org>
+References: <20191022221223.17338.5860.stgit@localhost.localdomain>
+         <20191022160140.a6954868d59f47b36334b504@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nayna Jain <nayna@linux.ibm.com> writes:
-> diff --git a/arch/powerpc/kernel/secure_boot.c b/arch/powerpc/kernel/secure_boot.c
-> index 99bba7915629..9753470ab08a 100644
-> --- a/arch/powerpc/kernel/secure_boot.c
-> +++ b/arch/powerpc/kernel/secure_boot.c
-> @@ -28,3 +39,16 @@ bool is_ppc_secureboot_enabled(void)
->  	pr_info("Secure boot mode %s\n", enabled ? "enabled" : "disabled");
->  	return enabled;
->  }
-> +
-> +bool is_ppc_trustedboot_enabled(void)
-> +{
-> +	struct device_node *node;
-> +	bool enabled = false;
-> +
-> +	node = get_ppc_fw_sb_node();
-> +	enabled = of_property_read_bool(node, "trusted-enabled");
+On Tue, 2019-10-22 at 16:01 -0700, Andrew Morton wrote:
+> On Tue, 22 Oct 2019 15:27:52 -0700 Alexander Duyck <alexander.duyck@gmail.com> wrote:
+> 
+> > Below are the results from various benchmarks. I primarily focused on two
+> > tests. The first is the will-it-scale/page_fault2 test, and the other is
+> > a modified version of will-it-scale/page_fault1 that was enabled to use
+> > THP. I did this as it allows for better visibility into different parts
+> > of the memory subsystem. The guest is running on one node of a E5-2630 v3
+> > CPU with 48G of RAM that I split up into two logical nodes in the guest
+> > in order to test with NUMA as well.
+> > 
+> > Test		    page_fault1 (THP)     page_fault2
+> > Baseline	 1  1256106.33  +/-0.09%   482202.67  +/-0.46%
+> >                 16  8864441.67  +/-0.09%  3734692.00  +/-1.23%
+> > 
+> > Patches applied  1  1257096.00  +/-0.06%   477436.00  +/-0.16%
+> >                 16  8864677.33  +/-0.06%  3800037.00  +/-0.19%
+> > 
+> > Patches enabled	 1  1258420.00  +/-0.04%   480080.00  +/-0.07%
+> >  MADV disabled  16  8753840.00  +/-1.27%  3782764.00  +/-0.37%
+> > 
+> > Patches enabled	 1  1267916.33  +/-0.08%   472075.67  +/-0.39%
+> >                 16  8287050.33  +/-0.67%  3774500.33  +/-0.11%
+> > 
+> > The results above are for a baseline with a linux-next-20191021 kernel,
+> > that kernel with this patch set applied but page reporting disabled in
+> > virtio-balloon, patches applied but the madvise disabled by direct
+> > assigning a device, and the patches applied and page reporting fully
+> > enabled.  These results include the deviation seen between the average
+> > value reported here versus the high and/or low value. I observed that
+> > during the test the memory usage for the first three tests never dropped
+> > whereas with the patches fully enabled the VM would drop to using only a
+> > few GB of the host's memory when switching from memhog to page fault tests.
+> > 
+> > Most of the overhead seen with this patch set fully enabled is due to the
+> > fact that accessing the reported pages will cause a page fault and the host
+> > will have to zero the page before giving it back to the guest. The overall
+> > guest size is kept fairly small to only a few GB while the test is running.
+> > This overhead is much more visible when using THP than with standard 4K
+> > pages. As such for the case where the host memory is not oversubscribed
+> > this results in a performance regression, however if the host memory were
+> > oversubscribed this patch set should result in a performance improvement
+> > as swapping memory from the host can be avoided.
+> 
+> I'm trying to understand "how valuable is this patchset" and the above
+> resulted in some headscratching.
+> 
+> Overall, how valuable is this patchset?  To real users running real
+> workloads?
 
-Also here you need:
+A more detailed reply is in my response to your comments on patch 3.
+Basically the value is for host memory overcommit in that we can avoid
+having to go to swap nearly as often and can potentially pack the guests
+even tighter with better performance.
 
-	of_node_put(node);
+> > There is currently an alternative patch set[1] that has been under work
+> > for some time however the v12 version of that patch set could not be
+> > tested as it triggered a kernel panic when I attempted to test it. It
+> > requires multiple modifications to get up and running with performance
+> > comparable to this patch set. A follow-on set has yet to be posted. As
+> > such I have not included results from that patch set, and I would
+> > appreciate it if we could keep this patch set the focus of any discussion
+> > on this thread.
+> 
+> Actually, the rest of us would be interested in a comparison ;)  
 
-> +
-> +	pr_info("Trusted boot mode %s\n", enabled ? "enabled" : "disabled");
-> +
-> +	return enabled;
-> +}
+I understand that. However, the last time I tried benchmarking that patch
+set it blew up into a thread where we kept having to fix things on that
+patch set and by the time we were done we weren't benchmarking the v12
+patch set anymore since we had made so many modifications to it, and that 
+assumes Nitesh and I were in sync. Also I don't know what the current
+state of his patch set is as he was working on some additional changes
+when we last discussed things.
 
-cheers
+Ideally that patch set can be reposted with the necessary fixes and then
+we can go through any necessary debug, repair, and addressing limitations
+there.
+
+
