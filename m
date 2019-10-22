@@ -2,81 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55D11E0617
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 16:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6DE5E0623
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 16:14:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388405AbfJVOLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 10:11:40 -0400
-Received: from mail-qt1-f170.google.com ([209.85.160.170]:33168 "EHLO
-        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388082AbfJVOLj (ORCPT
+        id S2387460AbfJVOOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 10:14:47 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:52705 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725788AbfJVOOq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 10:11:39 -0400
-Received: by mail-qt1-f170.google.com with SMTP id r5so27012644qtd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 07:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=arduzF1kaBslJXI74pdz56xr6dr059GQhC1NJB2xSFE=;
-        b=YCRaElP+gpxetCfMZggzVtUoHeeRk/Y7ygsovmdgMmP64xp3sTxvdrpZi18emZf2ui
-         xWc9o/M4dKzJSzHpvCM0GPbxXJemh0YK9VMOFedXtk/DurHXz4dwKJse/oSLmhapxSbl
-         ltCseOCjeskQ/zAO91IPgsDctagYTrUbjU4Mi1KkNCuZ252lRnEb3VqcCLLSmuHdjCtZ
-         LdtUCI5RgBfqOm3l9R8+SDfaI5er3O7178hMb887dwzS0QKvv+E52by6YUBsnUZh5gq2
-         WybRH9AXOK1vKq4gZxwTk+vqi5JGOjqt6JzHdjOa5U0fPbNOjOZzYn7HsxBxbG9efKmR
-         /8Fg==
+        Tue, 22 Oct 2019 10:14:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571753685;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=3mPV7Lvqud62ejV9ltsaZ32Xw/m6Chr/EI0mwJ2l8R8=;
+        b=dnnv74ZckAe18m0+YiFthesAW314sKo1B2kOIrxYqH5HgD+9KL6lwi/AT+eCxaiH0P1wJR
+        TXZ63nTmaPcH+Xre8A5KaZTQG5nlIela2A+Dr+32QIKqoBcuLHyIJ+cmLeKo4Mi4AsCLkR
+        1x/rcsEBlDDYZHPk+uOzMkrRB/cRekY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-265-bO08ke6lNK-x6mA2Oc_shw-1; Tue, 22 Oct 2019 10:14:44 -0400
+Received: by mail-wr1-f69.google.com with SMTP id l4so6573124wru.10
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 07:14:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=arduzF1kaBslJXI74pdz56xr6dr059GQhC1NJB2xSFE=;
-        b=GrijKycXUjKve/qCjREW/wYuRFvyrO8oVAvv2Ucb3g2jBXG0jPCgh1QkBE7lCntTjW
-         WlQwxnq7q0Oh9yYGOZu3ujNc72CnbxkK2gX+Q3Ki5CfLxvP2yIvYGfXe5UKFToAjUSY9
-         zL7wPphIPLoh0txGeEiuigvGe/FxvrNXqpmgq2SwcyonZ39Cabpc7Ha1LZl1xxPQu1iW
-         BaPnLODh7/LcsMaUsZqrgduEYWHNTjT/iqNpR2VFfyljxMQ0Z/q6mebYM08+IE4sul0f
-         pyBDhYJAC8DIA7x/JoJfTHF+qlztMYMPgIzmEJtLygRF5Sr/1U35Znx62YM0GgL4ESPO
-         cwfA==
-X-Gm-Message-State: APjAAAWC0NKhm/y27WZjJoD/vN+PRlLSbnM6i6qmyLDcG0toGtMgqltt
-        4oWTzT9aGPXh3tonRCBzOYw=
-X-Google-Smtp-Source: APXvYqzDq98FByN5Brr9w4Gosxnz3h5L5txtj/t2DITW+xXqpB516Vf6ckAqK1gPYKz+D81TjtbrGg==
-X-Received: by 2002:ac8:5387:: with SMTP id x7mr3501726qtp.367.1571753498547;
-        Tue, 22 Oct 2019 07:11:38 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id z141sm10038341qka.126.2019.10.22.07.11.37
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kMPt/t32x+1ODJs2XSy8W133vtfVEltVTT+TH3yLruo=;
+        b=uNKxH6xy6Sdr2FWA9GhT/VMVn2I4mitiH564I0YwBfnx6NwvjhhYsCXWwpODGMb/gH
+         WUmTFRCwXvQ6U2DWScmuEPfZPlpLEMfNUD25ozwlkIn0RbJ6NQiLn+eBCk0X7UPjSOgq
+         Fquk8yH4BMPknLv42YtJULa9GCQLAbwbA1RkhZrezXoInFCJAYCXYQ+mwOjvQGCbzUXD
+         UeBu4xwhhVutsTNb7d0a7gTGxzoW+c6VjRgHD6yslPRTlq8HsM5ecTkINBrCmwW+X4kW
+         j0reVLnAUoSpm/XZl4iUZ/CBf8dQeiyCaZ1cLEjMptZt+x7o1kbXLMNGXpA4oWfgTtf7
+         RDeg==
+X-Gm-Message-State: APjAAAWVcQpUkCRvc6+zusBs+jGJRmIWIjm9DtGvFftJL4uXxbT/wmeZ
+        RsdgXkSWqL1Qc5dIIAn5RaDTlNR0JSiukoGjH0GAoKdktfp2AdZmgc3yHBIz95enSiOEo1G1DEu
+        Q92yIT4dFg5nK4eu//xmJ0FC1
+X-Received: by 2002:a1c:1a95:: with SMTP id a143mr3101176wma.85.1571753683076;
+        Tue, 22 Oct 2019 07:14:43 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwjYxSC4lQ+YDOYHCxAn6MLTwUvZVS5nL+m7CEVs7fbxB2mvutslNDGc4MQu6FR+JAKOxH8dg==
+X-Received: by 2002:a1c:1a95:: with SMTP id a143mr3101149wma.85.1571753682811;
+        Tue, 22 Oct 2019 07:14:42 -0700 (PDT)
+Received: from mcroce-redhat.mxp.redhat.com (nat-pool-mxp-t.redhat.com. [149.6.153.186])
+        by smtp.gmail.com with ESMTPSA id r19sm11625521wrr.47.2019.10.22.07.14.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 07:11:37 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 81A6E4035B; Tue, 22 Oct 2019 11:11:35 -0300 (-03)
-Date:   Tue, 22 Oct 2019 11:11:35 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org,
-        jolsa@kernel.org, eranian@google.com, kan.liang@linux.intel.com,
-        peterz@infradead.org
-Subject: Re: Optimize perf stat for large number of events/cpus v2
-Message-ID: <20191022141135.GO1797@kernel.org>
-References: <20191020175202.32456-1-andi@firstfloor.org>
- <20191022080223.GC28177@krava>
+        Tue, 22 Oct 2019 07:14:41 -0700 (PDT)
+From:   Matteo Croce <mcroce@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] mvpp2: prefetch frame header
+Date:   Tue, 22 Oct 2019 16:14:38 +0200
+Message-Id: <20191022141438.22002-1-mcroce@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022080223.GC28177@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-MC-Unique: bO08ke6lNK-x6mA2Oc_shw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Oct 22, 2019 at 10:02:23AM +0200, Jiri Olsa escreveu:
-> On Sun, Oct 20, 2019 at 10:51:53AM -0700, Andi Kleen wrote:
-> > v1: Initial post.
-> > v2: Rebase. Fix some minor issues.
- 
-> looks really helpful, I ack-ed 1st 2 patches,
-> I'll need more time for the rest
+When receiving traffic, eth_type_trans() is high up on the perf top list,
+because it's the first function which access the packet data.
 
-Thanks, applied the first two, will go thru the others.
+Move the DMA unmap a bit higher, and put a prefetch just after it, so we
+have more time to load the data into the cache.
 
-- Arnaldo
+The packet rate increase is about 13% with a tc drop test: 1620 =3D> 1830 k=
+pps
+
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
+---
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/=
+ethernet/marvell/mvpp2/mvpp2_main.c
+index 111b3b8239e1..17378e0d8da1 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -2966,6 +2966,11 @@ static int mvpp2_rx(struct mvpp2_port *port, struct =
+napi_struct *napi,
+ =09=09=09continue;
+ =09=09}
+=20
++=09=09dma_unmap_single(dev->dev.parent, dma_addr,
++=09=09=09=09 bm_pool->buf_size, DMA_FROM_DEVICE);
++
++=09=09prefetch(data);
++
+ =09=09if (bm_pool->frag_size > PAGE_SIZE)
+ =09=09=09frag_size =3D 0;
+ =09=09else
+@@ -2983,9 +2988,6 @@ static int mvpp2_rx(struct mvpp2_port *port, struct n=
+api_struct *napi,
+ =09=09=09goto err_drop_frame;
+ =09=09}
+=20
+-=09=09dma_unmap_single(dev->dev.parent, dma_addr,
+-=09=09=09=09 bm_pool->buf_size, DMA_FROM_DEVICE);
+-
+ =09=09rcvd_pkts++;
+ =09=09rcvd_bytes +=3D rx_bytes;
+=20
+--=20
+2.21.0
+
