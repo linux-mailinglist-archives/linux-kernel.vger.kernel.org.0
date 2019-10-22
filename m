@@ -2,102 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB882E07D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 17:49:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5111E07DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 17:49:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388619AbfJVPtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 11:49:17 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:33974 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387659AbfJVPtQ (ORCPT
+        id S2388700AbfJVPtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 11:49:21 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35721 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388438AbfJVPtQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 Oct 2019 11:49:16 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 0ADED3C0579;
-        Tue, 22 Oct 2019 17:49:13 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id F24eroNkNbDo; Tue, 22 Oct 2019 17:49:07 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 76C173C009D;
-        Tue, 22 Oct 2019 17:49:07 +0200 (CEST)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 22 Oct
- 2019 17:49:07 +0200
-Date:   Tue, 22 Oct 2019 17:49:04 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     <kuninori.morimoto.gx@renesas.com>
-CC:     <patch@alsa-project.org>, <broonie@kernel.org>,
-        <twischer@de.adit-jv.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [alsa-devel] [PATCH] ASoC: rsnd: dma: fix SSI9 4/5/6/7 busif dma
- address
-Message-ID: <20191022154904.GA17721@vmlxhi-102.adit-jv.com>
-References: <1550823803-32446-1-git-send-email-twischer@de.adit-jv.com>
+Received: by mail-oi1-f196.google.com with SMTP id x3so14625030oig.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 08:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:reply-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fW5P1wesLCHZQObDiW106qVWcGlV18+kX2FDeNS0bDU=;
+        b=TRPruYNbISBS+7rIpRO5ztgbH0jMfci9ZE0JHzU7QzNPDCtFBXmWOUOWwc3VKUBX5V
+         yg0Jtrd05x32ud6NRmSGLXWYNdee8wae9FiYboOYE5viUmmRktj16zBdoSQBLjT9+5vp
+         1m4Vdph2FcVAR52D/MlxUceq0dz1slR8B9PGkxJnQEd7UFLkT3yDWOO79y68Rb1HBoHk
+         oqoaltanJskEcPWQ3rVd1n5O7N4UTJZgLN9HIAWLhXiDh2pTrL6cOHQGDb+fs4eY2Gmi
+         VM9m96fmVLqOkr7d+TY3XRt1T0xYm8GrKneHolADTDd0PaKgzc10t4e1evq+lwAEoqh9
+         YDqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :reply-to:references:mime-version:content-disposition:in-reply-to
+         :user-agent;
+        bh=fW5P1wesLCHZQObDiW106qVWcGlV18+kX2FDeNS0bDU=;
+        b=MFoaXOZ6YkpBT6Mv5Xa4Pgw5lRy7wHVRpD2slUyY3XK5JoePlloYUYA3Y36ffkmezq
+         /F53DsbHXAJ297ECe8EYEJN2IocwyQmMj98kUhM5yo65+LHF13KB6sS7BUHAubxxg6Ez
+         2DV0978iD+XrQg4OU6qD0DSNly4oU6QaTr7IuqRw4Vehran2lMQ7ricehFOXvlCdUDUO
+         Z4+FkBmtzII7qXSVl1il+KNMIyy9gpMdkmx7PxY7nhUnkJ5Y7CPjunj+UUWTv+NItolM
+         rKJMlLd37DLbf+mWvYjsIeJPEmBb4y8zvi/CgMjOP8dMRbTUeAnklY8Gm3oCdXxkFrpJ
+         a2UQ==
+X-Gm-Message-State: APjAAAVNGO2QNk7nyi8lImAPCRD3MaKwDLA6pkCX6TrjcPQXHqjjGL2e
+        vw9pocCCxfvfQm0xxWksYw==
+X-Google-Smtp-Source: APXvYqzbd5bU2MoNBaWevjpW/u6WPXzyk3+hUZtvzTptH1YvNf6I4IJfw3gYMcRxx7zRykXzG8Oohg==
+X-Received: by 2002:aca:dd07:: with SMTP id u7mr3706712oig.106.1571759355176;
+        Tue, 22 Oct 2019 08:49:15 -0700 (PDT)
+Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
+        by smtp.gmail.com with ESMTPSA id z10sm5423031ote.54.2019.10.22.08.49.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2019 08:49:14 -0700 (PDT)
+Received: from t560 (unknown [192.168.27.180])
+        by serve.minyard.net (Postfix) with ESMTPSA id DACE2180044;
+        Tue, 22 Oct 2019 15:49:13 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 10:49:12 -0500
+From:   Corey Minyard <minyard@acm.org>
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipmi: Fix memory leak in __ipmi_bmc_register
+Message-ID: <20191022154912.GT14232@t560>
+Reply-To: minyard@acm.org
+References: <20191021200649.1511-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1550823803-32446-1-git-send-email-twischer@de.adit-jv.com>
-User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
-X-Originating-IP: [10.72.93.184]
+In-Reply-To: <20191021200649.1511-1-navid.emamdoost@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Morimoto-san,
+On Mon, Oct 21, 2019 at 03:06:48PM -0500, Navid Emamdoost wrote:
+> In the impelementation of __ipmi_bmc_register() the allocated memory for
+> bmc should be released in case ida_simple_get() fails.
 
-On Fri, Feb 22, 2019 at 09:23:23AM +0100, twischer@de.adit-jv.com wrote:
-> From: Jiada Wang <jiada_wang@mentor.com>
+Thanks, queued for next merge window.
+
+-corey
+
 > 
-> Currently each SSI unit 's busif dma address is calculated by
-> following calculation formulation:
-> 0xec540000 + 0x1000 * id + busif / 4 * 0xA000 + busif % 4 * 0x400
-> 
-> But according to user manual 41.1.4 Register Configuration
-> ssi9 4/5/6/7 busif data register address
-> (SSI9_4_BUSIF/SSI9_5_BUSIF/SSI9_6_BUSIF/SSI9_7_BUSIF)
-> are out of this rule.
-> 
-> This patch updates the calculation formulation to correct
-> ssi9 4/5/6/7 busif data register address
-> 
-> Fixes: commit 5e45a6fab3b9 ("ASoc: rsnd: dma: Calculate dma address with consider of BUSIF")
-> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-> Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
+> Fixes: 68e7e50f195f ("ipmi: Don't use BMC product/dev ids in the BMC name")
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 > ---
->  sound/soc/sh/rcar/dma.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/char/ipmi/ipmi_msghandler.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-> index 0324a5c..28f65eb 100644
-> --- a/sound/soc/sh/rcar/dma.c
-> +++ b/sound/soc/sh/rcar/dma.c
-> @@ -508,10 +508,10 @@ static struct rsnd_mod_ops rsnd_dmapp_ops = {
->  #define RDMA_SSI_I_N(addr, i)	(addr ##_reg - 0x00300000 + (0x40 * i) + 0x8)
->  #define RDMA_SSI_O_N(addr, i)	(addr ##_reg - 0x00300000 + (0x40 * i) + 0xc)
+> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+> index 2aab80e19ae0..e4928ed46396 100644
+> --- a/drivers/char/ipmi/ipmi_msghandler.c
+> +++ b/drivers/char/ipmi/ipmi_msghandler.c
+> @@ -3031,8 +3031,11 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
+>  		bmc->pdev.name = "ipmi_bmc";
 >  
-> -#define RDMA_SSIU_I_N(addr, i, j) (addr ##_reg - 0x00441000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400))
-> +#define RDMA_SSIU_I_N(addr, i, j) (addr ##_reg - 0x00441000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400) - (0x4000 * ((i) / 9) * ((j) / 4)))
->  #define RDMA_SSIU_O_N(addr, i, j) RDMA_SSIU_I_N(addr, i, j)
->  
-> -#define RDMA_SSIU_I_P(addr, i, j) (addr ##_reg - 0x00141000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400))
-> +#define RDMA_SSIU_I_P(addr, i, j) (addr ##_reg - 0x00141000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400) - (0x4000 * ((i) / 9) * ((j) / 4)))
->  #define RDMA_SSIU_O_P(addr, i, j) RDMA_SSIU_I_P(addr, i, j)
->  
->  #define RDMA_SRC_I_N(addr, i)	(addr ##_reg - 0x00500000 + (0x400 * i))
-
-Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-
-This patch lives in our tree for a while without any issues.
-It still applies cleanly to v5.4-rc4-18-g3b7c59a1950c.
-Any chance to see it in vanilla?
-
--- 
-Best Regards,
-Eugeniu
+>  		rv = ida_simple_get(&ipmi_bmc_ida, 0, 0, GFP_KERNEL);
+> -		if (rv < 0)
+> +		if (rv < 0) {
+> +			kfree(bmc);
+>  			goto out;
+> +		}
+> +
+>  		bmc->pdev.dev.driver = &ipmidriver.driver;
+>  		bmc->pdev.id = rv;
+>  		bmc->pdev.dev.release = release_bmc_device;
+> -- 
+> 2.17.1
+> 
