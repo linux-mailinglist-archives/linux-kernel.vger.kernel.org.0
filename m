@@ -2,89 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6F7AE00A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 11:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EAF0E0097
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 11:23:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731472AbfJVJZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 05:25:28 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37278 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731338AbfJVJZX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 05:25:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WY6KImieCGZAjEO6KzSr9f0KT5JTeFka9FBaH89KLj0=; b=sPEnRcrtXhmnfZeDpfkVk+nbEO
-        D/Ik8q1Xi20bN9wIK5hZhQtXd9FC4yfqId+7etImPpvCCDInzVY6hO4/tUPb0/NkbcNwkgoKq15jV
-        W6pw0BORHWaT/rn+XY/6u53jpB/BJTcvchHLNCkevdszLRnZ6hDE9j2Y7YsNMYrePx+GewF8bONM2
-        QYxm2jx6Tstxu7+d+x9vjAJ/oVDy9dDTHcps/CEWFiC7A+XDiXa4JavCeGPAuPDtaapGfvOM1LtP3
-        Xr/1QxKVyyyzRnhC6c1hHvKAa1lbvRI1AVQn7TNYvRREuoXScbkPyKzrpW3AgpffsZg3VtCkZvScZ
-        wRJ4zExg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iMqPg-00029C-J9; Tue, 22 Oct 2019 09:25:12 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 93366301124;
-        Tue, 22 Oct 2019 11:24:11 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 1F69420D8D3C2; Tue, 22 Oct 2019 11:25:09 +0200 (CEST)
-Message-Id: <20191022092307.483110884@infradead.org>
-User-Agent: quilt/0.65
-Date:   Tue, 22 Oct 2019 11:20:20 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     mingo@kernel.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, andi@firstfloor.org, kan.liang@linux.intel.com
-Subject: [PATCH 3/3] perf: Optimize perf_init_event() for TYPE_SOFTWARE
-References: <20191022092017.740591163@infradead.org>
+        id S2388487AbfJVJW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 05:22:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46430 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387995AbfJVJW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 05:22:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4F914AC16;
+        Tue, 22 Oct 2019 09:22:57 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 11:22:56 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     n-horiguchi@ah.jp.nec.com, mike.kravetz@oracle.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 10/16] mm,hwpoison: Rework soft offline for free
+ pages
+Message-ID: <20191022092256.GH9379@dhcp22.suse.cz>
+References: <20191017142123.24245-1-osalvador@suse.de>
+ <20191017142123.24245-11-osalvador@suse.de>
+ <20191018120615.GM5017@dhcp22.suse.cz>
+ <20191021125842.GA11330@linux>
+ <20191021154158.GV9379@dhcp22.suse.cz>
+ <20191022074615.GA19060@linux>
+ <20191022082611.GD9379@dhcp22.suse.cz>
+ <20191022083505.GA19708@linux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191022083505.GA19708@linux>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Liang, Kan" <kan.liang@linux.intel.com>
+On Tue 22-10-19 10:35:17, Oscar Salvador wrote:
+> On Tue, Oct 22, 2019 at 10:26:11AM +0200, Michal Hocko wrote:
+> > On Tue 22-10-19 09:46:20, Oscar Salvador wrote:
+> > [...]
+> > > So, opposite to hard-offline, in soft-offline we do not fiddle with pages
+> > > unless we are sure the page is not reachable anymore by any means.
+> > 
+> > I have to say I do not follow. Is there any _real_ reason for
+> > soft-offline to behave differenttly from MCE (hard-offline)?
+> 
+> Yes.
+> Do not take it as 100% true as I read that in some code/Documentation
+> a while ago.
+> 
+> But I think that it boils down to:
+> 
+> soft-offline: "We have seen some erros in the underlying page, but
+>                it is still usable, so we have a chance to keep the
+>                the contents (via migration)"
+> hard-offline: "The underlying page is dead, we cannot trust it, so
+>                we shut it down, killing whoever is holding it
+>                along the way".
 
-Andi reported that he was hitting the linear search in
-perf_init_event() a lot. Now that all !TYPE_SOFTWARE events should hit
-the IDR, make sure the TYPE_SOFTWARE events are at the head of the
-list such that we'll quickly find the right PMU (provided a valid
-event was given).
+Hmm, that might be a misunderstanding on my end. I thought that it is
+the MCE handler to say whether the failure is recoverable or not. If yes
+then we can touch the content of the memory (that would imply the
+migration). Other than that both paths should be essentially the same,
+no? Well unrecoverable case would be essentially force migration failure
+path.
 
-Reported-by: Andi Kleen <andi@firstfloor.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/events/core.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+MADV_HWPOISON is explicitly documented to test MCE handling IIUC:
+: This feature is intended for testing of memory error-handling
+: code; it is available only if the kernel was configured with
+: CONFIG_MEMORY_FAILURE.
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -10167,7 +10167,16 @@ int perf_pmu_register(struct pmu *pmu, c
- 	if (!pmu->event_idx)
- 		pmu->event_idx = perf_event_idx_default;
- 
--	list_add_rcu(&pmu->entry, &pmus);
-+	/*
-+	 * Ensure the TYPE_SOFTWARE PMUs are at the head of the list,
-+	 * since these cannot be in the IDR. This way the linear search
-+	 * is fast, provided a valid software event is provided.
-+	 */
-+	if (type == PERF_TYPE_SOFTWARE || !name)
-+		list_add_rcu(&pmu->entry, &pmus);
-+	else
-+		list_add_tail_rcu(&pmu->entry, &pmus);
-+
- 	atomic_set(&pmu->exclusive_cnt, 0);
- 	ret = 0;
- unlock:
-
-
+There is no explicit note about the type of the error that is injected
+but I think it is reasonably safe to assume this is a recoverable one.
+-- 
+Michal Hocko
+SUSE Labs
