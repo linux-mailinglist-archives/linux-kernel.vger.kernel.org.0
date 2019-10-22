@@ -2,119 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD7BFE07E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 17:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDFDBE07FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 17:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388725AbfJVPwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 11:52:23 -0400
-Received: from mga03.intel.com ([134.134.136.65]:53569 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387675AbfJVPwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 11:52:23 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 08:52:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,216,1569308400"; 
-   d="scan'208";a="196476114"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga008.fm.intel.com with ESMTP; 22 Oct 2019 08:52:20 -0700
-Date:   Tue, 22 Oct 2019 08:52:20 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     James Hogan <jhogan@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 14/15] KVM: Terminate memslot walks via used_slots
-Message-ID: <20191022155220.GD2343@linux.intel.com>
-References: <20191022003537.13013-1-sean.j.christopherson@intel.com>
- <20191022003537.13013-15-sean.j.christopherson@intel.com>
- <642f73ee-9425-0149-f4f4-f56be9ae5713@redhat.com>
- <20191022152827.GC2343@linux.intel.com>
- <625e511f-bd35-3b92-0c6d-550c10fc5827@redhat.com>
+        id S2388823AbfJVPxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 11:53:51 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45007 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388789AbfJVPxv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 11:53:51 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iMwT7-0006Ja-Jx; Tue, 22 Oct 2019 17:53:09 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iMwT5-0002EX-5J; Tue, 22 Oct 2019 17:53:07 +0200
+Date:   Tue, 22 Oct 2019 17:53:07 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Olof Johansson <olof@lixom.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH 11/36] ARM: s5pv210: split from plat-samsung
+Message-ID: <20191022155307.izh4ryorm7thw7tq@pengutronix.de>
+References: <20191010202802.1132272-1-arnd@arndb.de>
+ <20191010203043.1241612-1-arnd@arndb.de>
+ <20191010203043.1241612-11-arnd@arndb.de>
+ <20191011055149.4dudr4tk2znpt65u@pengutronix.de>
+ <CAK8P3a1st8gR7u+8-oyP6HrzZdmrzhq7PRonYuz0a5O8rfKaSA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <625e511f-bd35-3b92-0c6d-550c10fc5827@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK8P3a1st8gR7u+8-oyP6HrzZdmrzhq7PRonYuz0a5O8rfKaSA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 05:30:58PM +0200, Paolo Bonzini wrote:
-> On 22/10/19 17:28, Sean Christopherson wrote:
-> > On Tue, Oct 22, 2019 at 04:04:18PM +0200, Paolo Bonzini wrote:
-> >> On 22/10/19 02:35, Sean Christopherson wrote:
-> >>> +static inline int kvm_shift_memslots_forward(struct kvm_memslots *slots,
-> >>> +					     struct kvm_memory_slot *new)
-> >>> +{
-> >>> +	struct kvm_memory_slot *mslots = slots->memslots;
-> >>> +	int i;
-> >>> +
-> >>> +	if (WARN_ON_ONCE(slots->id_to_index[new->id] == -1) ||
-> >>> +	    WARN_ON_ONCE(!slots->used_slots))
-> >>> +		return -1;
-> >>> +
-> >>> +	for (i = slots->id_to_index[new->id]; i < slots->used_slots - 1; i++) {
-> >>> +		if (new->base_gfn > mslots[i + 1].base_gfn)
-> >>> +			break;
-> >>> +
-> >>> +		WARN_ON_ONCE(new->base_gfn == mslots[i + 1].base_gfn);
-> >>> +
-> >>> +		/* Shift the next memslot forward one and update its index. */
-> >>> +		mslots[i] = mslots[i + 1];
-> >>> +		slots->id_to_index[mslots[i].id] = i;
-> >>> +	}
-> >>> +	return i;
-> >>> +}
-> >>> +
-> >>> +static inline int kvm_shift_memslots_back(struct kvm_memslots *slots,
-> >>> +					  struct kvm_memory_slot *new,
-> >>> +					  int start)
-> >>
-> >> This new implementation of the insertion sort loses the comments that
-> >> were there in the old one.  Please keep them as function comments.
-> > 
-> > I assume you're talking about this blurb in particular?
-> > 
-> > 	 * The ">=" is needed when creating a slot with base_gfn == 0,
-> > 	 * so that it moves before all those with base_gfn == npages == 0.
+Hello,
+
+On Tue, Oct 22, 2019 at 04:01:12PM +0200, Arnd Bergmann wrote:
+> > > @@ -235,7 +235,6 @@ machine-$(CONFIG_PLAT_SPEAR)              += spear
+> > >  # by CONFIG_* macro name.
+> > >  plat-$(CONFIG_ARCH_OMAP)     += omap
+> > >  plat-$(CONFIG_ARCH_S3C64XX)  += samsung
+> > > -plat-$(CONFIG_ARCH_S5PV210)  += samsung
+> >
+> > Would it make more sense to make this
+> >
+> >         plat-$(PLAT_SAMSUNG) += samsung
+> >
+> > (in a separate patch)? Hmm, it seems there is no plat-y for
+> > PLAT_S3C24XX=y builds. Is this intended? If yes, the directory name
+> > containing "samsung" suggests something that seems untrue.
 > 
-> Yes, well all of the comments.  You can also keep them in the caller, as
-> you prefer.
+> By the end of the series, the plat-samsung directory is completely
+> removed (folded into mach-s3c), so that would only add more
+> churn for the same result I think.
 
-The primary function comment is still there, the only other comment that I
-dropped was the second half of the above comment:
+fine for me. The background of my question was me wondering if builds
+for PLAT_S3C24XX=y (before your patch series) don't need plat-samsung.
 
-	 *
-	 * On the other hand, if new->npages is zero, the above loop has
-	 * already left i pointing to the beginning of the empty part of
-	 * mslots, and the ">=" would move the hole backwards in this
-	 * case---which is wrong.  So skip the loop when deleting a slot.
-	 */
+Best regards
+Uwe
 
-Which doesn't carry forward very well.  Is there another comment I'm
-overlooking?
-
-Anyways, I'm not at all opposed to adding comments, just want to make sure
-I'm not forgetting something.  If it's ok with you, I'll comment the code
-and/or functions and reply here to refine them without having to respin
-the whole series.
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
