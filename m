@@ -2,119 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4420E00AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 11:26:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99B5AE00B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 11:26:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731485AbfJVJ0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 05:26:17 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40120 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728182AbfJVJ0R (ORCPT
+        id S1731495AbfJVJ0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 05:26:38 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44062 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731217AbfJVJ0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 05:26:17 -0400
-Received: by mail-pf1-f195.google.com with SMTP id x127so10274887pfb.7;
-        Tue, 22 Oct 2019 02:26:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=DdMpMJAPnmBmCGb18HjxGQhrUj1kKI9wqWAZL3wLOWs=;
-        b=S1DWMhTY89ozmFHQkzFl5Q28aag2OyFasv0X7bDFv76h0glgW/z2aSTZTECEzNHTcv
-         jko++DVwnjYdd+qOqawZrmm8AZt8Sp3b222Tw6dJM1wUwaykte2a//RI8aaRTLLjABqU
-         uxY1LM14teSkX9WooV1VxG0h5gpCrUCUHGufzQ/Rq/oQdxRfE7h0/0pWkib4iOm3ErVE
-         Z9PhPgW855RJD0RRSvJ+ogN73MUuXZslBBgdQFqs8O801UQpYHUrvAxreGxHFueODljA
-         6XO979ZFcWNrOA7oRvHXkru2vCmpExuUQhOwZpXPl3RIPcYWK+QqkT/LaUEu5wXjdKuf
-         +SXw==
+        Tue, 22 Oct 2019 05:26:38 -0400
+Received: by mail-ot1-f68.google.com with SMTP id 21so13534853otj.11;
+        Tue, 22 Oct 2019 02:26:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=DdMpMJAPnmBmCGb18HjxGQhrUj1kKI9wqWAZL3wLOWs=;
-        b=edYBAKzg4/Fat7IOI5xf5mh5s/3bO873H53efF5wV2cHAEwkd/jab3zQu4lk44kdPh
-         11fTZuU2JTYrfExnWQFfniwoKWyZM3aOSwkxwPRX1b+81/rsp9HjkMdZ0QY3sn4BrV2m
-         nJrZSxfNEKRTY5+rMlceTXM86xD4bN5Sk1CsrsJMmXVc9R3PnobQEbzbTaM+EB2a7R5l
-         vSPc5Ll/U6YdiyX2WNkQY7Mf4Nlh0WWNe50OF6KAAPZB/PGnM/93FEM0Z1U7IB+Zgsj+
-         NTqdZu/EKJRsKuwdTmmoPlM4KvonVAA5v4JIkPgjEBnX8YgQY3/jAnHWHPofPDcPRX1H
-         vrpg==
-X-Gm-Message-State: APjAAAUtWrNDG+5GjvK5sAq9bae1JLk+qPS7ed4336xjNDPxWbhP4+pF
-        VHMoqfDUomytvc+q5gvB3KI=
-X-Google-Smtp-Source: APXvYqwgWG9OpQkEB7Kl+tkbEIQ+XaDY3+W/SRAzsOjNPH5E+4ZQBagRjyMUhp7M4Mw7SPKih9L6Rw==
-X-Received: by 2002:a63:7344:: with SMTP id d4mr2776662pgn.416.1571736376600;
-        Tue, 22 Oct 2019 02:26:16 -0700 (PDT)
-Received: from localhost.localdomain ([163.152.162.99])
-        by smtp.gmail.com with ESMTPSA id j17sm17423770pfr.70.2019.10.22.02.26.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 02:26:15 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 18:26:11 +0900
-From:   Suwan Kim <suwan.kim027@gmail.com>
-To:     shuah <shuah@kernel.org>
-Cc:     Julia Lawall <julia.lawall@lip6.fr>, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        valentina.manea.m@gmail.com, kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH] =?iso-8859-1?B?dXNiaXA6oEZp?= =?iso-8859-1?Q?x?= free of
- unallocated memory in vhci tx
-Message-ID: <20191022092611.GA3941@localhost.localdomain>
-References: <20191021142414.27164-1-suwan.kim027@gmail.com>
- <alpine.DEB.2.21.1910211706240.2877@hadrien>
- <936d4cf8-cd5a-a297-8298-e9bc5d3c193d@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7e3ngfUWD69prUYE+IQGbpsBsUEu9n83CImOve8PLh0=;
+        b=qnSBguEdg3PlNSdjdkzXLQT/xrve6TBfx5LAyyYoox0BZfdpqctMqUb30/VK8Jsw3e
+         YcoP5pHbfkQnu+l7HKSlKNSTaAimujf5ExHI3/N87dr8GSvu0k+xsGBt1fQBQrvCHR9/
+         BXwFjvpySXbyF77Mk7sgrro0yFz1wmUGlGPxA7UHe5AgycAhd/Q/3txhFLMGM/Yajb7f
+         z6cOYNtptLcHzuVVmwyOIgfzdHHHyL+q5tOEiuwzHV/9exhwlk+iUbb2LISrBJ92+mvj
+         BmNbFLzoS0iwKLz7w2rBGWR0ENgEcT87gyehwwDjGysX7Jrcpg2OAuHAW9AnbixIa3Ds
+         YAmA==
+X-Gm-Message-State: APjAAAViGg8uRH2m8oYnxRFPN11SeUzrNDcen28+JqFD5+eq6S8MjwA3
+        z2xLcB4If+gwocwMOt9W14JBGwoN6IZ0PBPJmxsznNDy
+X-Google-Smtp-Source: APXvYqys/ZtV6eqp8MKmYWagePQMB32nL6cvMnFYVvIgMgRDLMLJ/tc6rc8qd/YY1BlNX+dRzq896nFEBtR3GkL5HX8=
+X-Received: by 2002:a9d:459b:: with SMTP id x27mr1770619ote.167.1571736397010;
+ Tue, 22 Oct 2019 02:26:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <936d4cf8-cd5a-a297-8298-e9bc5d3c193d@kernel.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <20191022075123.17057-1-ran.wang_1@nxp.com>
+In-Reply-To: <20191022075123.17057-1-ran.wang_1@nxp.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 22 Oct 2019 11:26:26 +0200
+Message-ID: <CAJZ5v0g4uyh7Xv2PuVuF1KrpBCXzSPa+vCJh6C7LTEeyvBDNjg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] PM: wakeup: Add routine to help fetch wakeup source object.
+To:     Ran Wang <ran.wang_1@nxp.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh+dt@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Pavel Machek <pavel@ucw.cz>, Huang Anson <anson.huang@nxp.com>,
+        Li Biwen <biwen.li@nxp.com>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 01:28:54PM -0600, shuah wrote:
-> On 10/21/19 9:08 AM, Julia Lawall wrote:
-> > 
-> > 
-> > On Mon, 21 Oct 2019, Suwan Kim wrote:
-> > 
-> > > iso_buffer should be set to NULL after use and free in the while loop.
-> > > In the case of isochronous URB in the while loop, iso_buffer is
-> > > allocated and after sending it to server, buffer is deallocated. And
-> > > then, if the next URB in the while loop is not a isochronous pipe,
-> > > iso_buffer still holds the previously deallocated buffer address and
-> > > kfree tries to free wrong buffer address.
-> > > 
-> > > Fixes: ea44d190764b (“usbip: Implement SG support to vhci-hcd and stub driver”)
-> > > Reported-by: kbuild test robot <lkp@intel.com>
-> > > Reported-by: Julia Lawall <julia.lawall@lip6.fr>
-> > > Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
-> > > ---
-> > >   drivers/usb/usbip/vhci_tx.c | 1 +
-> > >   1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/drivers/usb/usbip/vhci_tx.c b/drivers/usb/usbip/vhci_tx.c
-> > > index c3803785f6ef..b290e810d11b 100644
-> > > --- a/drivers/usb/usbip/vhci_tx.c
-> > > +++ b/drivers/usb/usbip/vhci_tx.c
-> > > @@ -73,6 +73,7 @@ static int vhci_send_cmd_submit(struct vhci_device *vdev)
-> > >   		memset(&pdu_header, 0, sizeof(pdu_header));
-> > >   		memset(&msg, 0, sizeof(msg));
-> > >   		memset(&iov, 0, sizeof(iov));
-> > > +		iso_buffer = NULL;
-> > 
-> > Somehow I would have put it after the kfree, since the kfree makes the
-> > value invalid.  iso_buffer is already initialized to NULL for the first
-> > iteration.  If you want to put the setting to NULL at the top of the loop,
-> > maybe the = NULL in the first line should be removed.
-> > 
-> 
-> It makes sense to clear it after kfree() on line 150.
-> 
-> This kfree() and clearing iso_buffer are necessary only for
-> PIPE_ISOCHRONOUS case.
-> 
-> Please add a comment above that this is for isoc case.
+On Tue, Oct 22, 2019 at 9:51 AM Ran Wang <ran.wang_1@nxp.com> wrote:
+>
+> Some user might want to go through all registered wakeup sources
+> and doing things accordingly. For example, SoC PM driver might need to
+> do HW programming to prevent powering down specific IP which wakeup
+> source depending on. So add this API to help walk through all registered
+> wakeup source objects on that list and return them one by one.
+>
+> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> Tested-by: Leonard Crestez <leonard.crestez@nxp.com>
+> ---
+> Change in v8
+>         - Rename wakeup_source_get_next() to wakeup_sources_walk_next().
+>         - Add wakeup_sources_read_lock() to take over locking job of
+>           wakeup_source_get_star().
+>         - Rename wakeup_source_get_start() to wakeup_sources_walk_start().
+>         - Replace wakeup_source_get_stop() with wakeup_sources_read_unlock().
+>         - Define macro for_each_wakeup_source(ws).
+>
+> Change in v7:
+>         - Remove define of member *dev in wake_irq to fix conflict with commit
+>         c8377adfa781 ("PM / wakeup: Show wakeup sources stats in sysfs"), user
+>         will use ws->dev->parent instead.
+>         - Remove '#include <linux/of_device.h>' because it is not used.
+>
+> Change in v6:
+>         - Add wakeup_source_get_star() and wakeup_source_get_stop() to aligned
+>         with wakeup_sources_stats_seq_start/nex/stop.
+>
+> Change in v5:
+>         - Update commit message, add decription of walk through all wakeup
+>         source objects.
+>         - Add SCU protection in function wakeup_source_get_next().
+>         - Rename wakeup_source member 'attached_dev' to 'dev' and move it up
+>         (before wakeirq).
+>
+> Change in v4:
+>         - None.
+>
+> Change in v3:
+>         - Adjust indentation of *attached_dev;.
+>
+> Change in v2:
+>         - None.
+>
+>  drivers/base/power/wakeup.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/pm_wakeup.h   |  9 +++++++++
+>  2 files changed, 51 insertions(+)
+>
+> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+> index 5817b51..8c7a5f9 100644
+> --- a/drivers/base/power/wakeup.c
+> +++ b/drivers/base/power/wakeup.c
+> @@ -248,6 +248,48 @@ void wakeup_source_unregister(struct wakeup_source *ws)
+>  EXPORT_SYMBOL_GPL(wakeup_source_unregister);
+>
+>  /**
+> + * wakeup_sources_read_lock - Lock wakeup source list for read.
 
-Ok. I will send v2.
+Please document the return value.
 
-Regards
-Suwan Kim
+> + */
+> +int wakeup_sources_read_lock(void)
+> +{
+> +       return srcu_read_lock(&wakeup_srcu);
+> +}
+> +EXPORT_SYMBOL_GPL(wakeup_sources_read_lock);
+> +
+> +/**
+> + * wakeup_sources_read_unlock - Unlock wakeup source list.
+
+Please document the argument.
+
+> + */
+> +void wakeup_sources_read_unlock(int idx)
+> +{
+> +       srcu_read_unlock(&wakeup_srcu, idx);
+> +}
+> +EXPORT_SYMBOL_GPL(wakeup_sources_read_unlock);
+> +
+> +/**
+> + * wakeup_sources_walk_start - Begin a walk on wakeup source list
+
+Please document the return value and add a note that the wakeup
+sources list needs to be locked for reading for this to be safe.
+
+> + */
+> +struct wakeup_source *wakeup_sources_walk_start(void)
+> +{
+> +       struct list_head *ws_head = &wakeup_sources;
+> +
+> +       return list_entry_rcu(ws_head->next, struct wakeup_source, entry);
+> +}
+> +EXPORT_SYMBOL_GPL(wakeup_sources_walk_start);
+> +
+> +/**
+> + * wakeup_sources_walk_next - Get next wakeup source from the list
+> + * @ws: Previous wakeup source object
+
+Please add a note that the wakeup sources list needs to be locked for
+reading for this to be safe.
+
+> + */
+> +struct wakeup_source *wakeup_sources_walk_next(struct wakeup_source *ws)
+> +{
+> +       struct list_head *ws_head = &wakeup_sources;
+> +
+> +       return list_next_or_null_rcu(ws_head, &ws->entry,
+> +                               struct wakeup_source, entry);
+> +}
+> +EXPORT_SYMBOL_GPL(wakeup_sources_walk_next);
+> +
+> +/**
+>   * device_wakeup_attach - Attach a wakeup source object to a device object.
+>   * @dev: Device to handle.
+>   * @ws: Wakeup source object to attach to @dev.
+> diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
+> index 661efa0..aa3da66 100644
+> --- a/include/linux/pm_wakeup.h
+> +++ b/include/linux/pm_wakeup.h
+> @@ -63,6 +63,11 @@ struct wakeup_source {
+>         bool                    autosleep_enabled:1;
+>  };
+>
+> +#define for_each_wakeup_source(ws) \
+> +       for ((ws) = wakeup_sources_walk_start();        \
+> +            (ws);                                      \
+> +            (ws) = wakeup_sources_walk_next((ws)))
+> +
+>  #ifdef CONFIG_PM_SLEEP
+>
+>  /*
+> @@ -92,6 +97,10 @@ extern void wakeup_source_remove(struct wakeup_source *ws);
+>  extern struct wakeup_source *wakeup_source_register(struct device *dev,
+>                                                     const char *name);
+>  extern void wakeup_source_unregister(struct wakeup_source *ws);
+> +extern int wakeup_sources_read_lock(void);
+> +extern void wakeup_sources_read_unlock(int idx);
+> +extern struct wakeup_source *wakeup_sources_walk_start(void);
+> +extern struct wakeup_source *wakeup_sources_walk_next(struct wakeup_source *ws);
+>  extern int device_wakeup_enable(struct device *dev);
+>  extern int device_wakeup_disable(struct device *dev);
+>  extern void device_set_wakeup_capable(struct device *dev, bool capable);
+> --
+> 2.7.4
+>
