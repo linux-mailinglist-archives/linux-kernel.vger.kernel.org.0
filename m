@@ -2,391 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E70E0118
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 11:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BA47E0120
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 11:50:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731570AbfJVJsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 05:48:45 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:52565 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730312AbfJVJso (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 05:48:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571737722;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PRAOR12JaNY9es9Bx8VnFx8au7NL5fQbM+PyXwndRGQ=;
-        b=MIw3OCAW78vuZhHQ7TvF+bQrvNxohPM5ATAbajhBKs+BCo+aIbubJF95qVjUnmLOHHTnGs
-        nJfpLXSIBJTqqgm3gnixCwcfJRZALCjiv/21s9lmy7mDC44+YMYKDotL+/Tw740cuDAUHQ
-        J2Lfuok3Q68YdXMR1GVTQWoOj7V7+Rs=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-12-J0BsqCP4Pf-RQrr61MY72g-1; Tue, 22 Oct 2019 05:48:41 -0400
-Received: by mail-qk1-f197.google.com with SMTP id x186so16166873qke.13
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 02:48:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9pP78e8PS7VCP+PGqOJvtb2re0XLv7PavFO0GY0t0YU=;
-        b=J1ayG7KKNyWcnxWYMPJBU1bOkKPSowAK9Cm8niqv+An5GZJCW+Lq+F27kQte/X8Eu2
-         1R6Xo5k7KBiO6sNKfMsxSntrAqLSuO/b6fu58nN7VGr/88P1b9P6rlm/jY+ly6i69J+m
-         iOlZQWrA0nqBHB23h93Ux6hW08m1OrXH+u2bFUL6oOQQXxRFtDLZhC+ArP3II3iTbF+B
-         IGSkOOOev5DEyNmqA1yl+4sm6igFgOUeatPW+dpOe74StoiDGumMv182Gv/a/RX81NGY
-         vj0BtblwnZYaUvycu6eqXFrhYZGrPycG5wLAumdLw1r0aBnUnd2gRf48xwRmzkUvEGLQ
-         ZoGA==
-X-Gm-Message-State: APjAAAVv+bIIyMlBNDDqPR7I3lYF6w3KsDpwD6SFB6X69JlR3ci9HYZM
-        1LyO45FIMFSJHV7gx95eDjGE1Q44OYynD5HGfK56KU4g4CzUzfUfPUCamYDqGRknVXCNScBDrqt
-        5g4vl46aANne6BcQYPkJOjIOUQ3ag85iiX70pGUvX
-X-Received: by 2002:ac8:75ca:: with SMTP id z10mr806337qtq.260.1571737720793;
-        Tue, 22 Oct 2019 02:48:40 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwgKioRJF0ivUW1HRKd99+gzOt+WW91+HkZO766Vx5SNrosMazF7uNAc8t3J0HkIJgikuVs7aKdhL5dqYHdOH0=
-X-Received: by 2002:ac8:75ca:: with SMTP id z10mr806310qtq.260.1571737720392;
- Tue, 22 Oct 2019 02:48:40 -0700 (PDT)
+        id S1731591AbfJVJuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 05:50:18 -0400
+Received: from mout.gmx.net ([212.227.15.19]:52665 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728182AbfJVJuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 05:50:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1571737790;
+        bh=OE/0MVT0jwdzZZXVDP3ALcBpFIqz2P+d6POGuGMFRDY=;
+        h=X-UI-Sender-Class:Date:In-Reply-To:References:Subject:Reply-to:To:
+         CC:From;
+        b=Y78YX+aZjnPYPJGYXgg9E9WDr/o71f9xVzjw4w0Fb5u40zkwc/kJp3Lv/hx28MIqz
+         Gl1C0msgglfINc9wyGEH3FCzmqTNaV4oSPbSHZG551Smpwjb2WuePRHOqgr14VcqVF
+         sr4nU08T94aigvDi2nq1osHmLuTANbcyYscIyTRQ=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from frank-bq ([185.75.73.113]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N2mFi-1hszdC0mD6-01335A; Tue, 22
+ Oct 2019 11:49:50 +0200
+Date:   Tue, 22 Oct 2019 11:49:47 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190910070446.639-3-frank-w@public-files.de>
+References: <20190910070446.639-1-frank-w@public-files.de> <20190910070446.639-3-frank-w@public-files.de>
 MIME-Version: 1.0
-References: <20191021073819.18181-1-candlesea@gmail.com> <CAPnx3XP2MrEZT+BAzW3-Ve9ekzvPzcj6wvzeC8VRHhCyo59XpQ@mail.gmail.com>
-In-Reply-To: <CAPnx3XP2MrEZT+BAzW3-Ve9ekzvPzcj6wvzeC8VRHhCyo59XpQ@mail.gmail.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 22 Oct 2019 11:48:28 +0200
-Message-ID: <CAO-hwJ+ObCH_NPJd=Uy5uuVCpGzO7+iCSWnwPkoVt9H+8NHahA@mail.gmail.com>
-Subject: Re: [PATCH v3] HID: core: check whether usage page item is after
- usage id item
-To:     Candle Sun <candlesea@gmail.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        =?UTF-8?B?57+f5LqsIChPcnNvbiBaaGFpKQ==?= <orson.zhai@unisoc.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Candle Sun <candle.sun@unisoc.com>,
-        Nianfu Bai <nianfu.bai@unisoc.com>
-X-MC-Unique: J0BsqCP4Pf-RQrr61MY72g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 2/7] rtc: mt6397: move some common definitions into rtc.h
+Reply-to: frank-w@public-files.de
+To:     linux-mediatek@lists.infradead.org
+CC:     linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-pm@vger.kernel.org, Josef Friedl <josef.friedl@speed.at>,
+        linux-kernel@vger.kernel.org,
+        Tianping Fang <tianping.fang@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+From:   Frank Wunderlich <frank-w@public-files.de>
+Message-ID: <D5C0F601-D71C-40DC-BF89-5C167DB004A1@public-files.de>
+X-Provags-ID: V03:K1:IDQ6Jwwc7LHNhDz0snpL9KvZ48Wwi3GQfUWLY3C+qRfc+xCLK16
+ VIpVqXjm0vosezYP0lKD6q1a3Ykm8DY1U1sI7Bzgslu6NVi/00Gc8ftSzoSI3DohyGHzk6K
+ YLisBIsWGAhnS+1mr95nVB3M2m7Z/RaHwT6BEaaQjhKAM67qKcylpx6isItv2H5Nnw93gLf
+ TwUjRIpjNUSgdx9+zniTA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:soT82Ffej2w=:7rJfWtDTS3SX+upAw34teJ
+ pdr/VwAVmlNWPBFT+zyNEb940CW5sHe5qMrGextya3JYDZUHekANpzUbAgv8aO+vybIsFeqXR
+ R6MZcr6F+OgckblbB3u7N5ICw8XyRtcY8hlZkRHehl9harQdgQLjrwxZ9B16tH5D5CGpiUYxA
+ q8JAdZPeKp1CsTgMlO67nkvifvR1I6tFtMpzq9Hx90A+4/uL3asUaJD6X70IOwXpqIcGNv8qI
+ VLIQqrOFG0xAPvH5jvV0HWkXvh6WV9IkTfPnydZChYrPnJFhZlMMU1R8miBROuw6drjokgKcA
+ XP2g15U4CKOSdkabJQplRsWZrpe/AQ+jBU61Mk+ZXmew2zyji+VJu5zJFvt8359UdHEFE9SzM
+ Mm6OBKstduSagtt4WWcbo9dQ9oQ9hTua5YBevroOjwiTScbvJ56o34ae416OvceYIQ8rIz4xf
+ HmTH7hiwTzGwX2ON9e3pCSRy9ymDLZxTK6q+ooM62DmRHckHLJOoa3ZC5gsDBC0YzdZszBaeU
+ 5tzTPxnCmmCfkyL3tCBo+oRRkU2sooS0mmKnhABR9IqsQLTu07y7ISES3XCNQvaYhnbh9wINR
+ zp38LkQNSblDgvP9prNoYRxJvUpV/DVvXWQLiHwJrO5COcyHN4CtvhRTtg44jHo20cLHckZwt
+ lKQo50s9aZVVH8MiVsatzX+JgxPQmuRwPQzImub3MA2ysd4xrEipjqUTenwpeQAs1Yg1f56H5
+ 8aC0iCh3qLvPiUbvH9A5BTu1gA2dZ8btBLHC4Q2qwBNrwhnD11DLeORmjureVXmoTGP0eH1AL
+ 2/m/Ki8Q3lJc8CDTcH46hw3ZqRcoJVCZ1iSjqny+bN/nopDrp3oMD0OxndZJ7XGqCdFlEAc/v
+ iwUwEmlMUOlFA82ljsSH8LMU3lA9a7uLdmKE569XQ1bs2MN0tgK+0y3Iigy7NucB6+5o4upMU
+ LBCyr0lCIxBTFpVS06+X+39uAxEsGCunhTCnbW+HFQQ3g+I5vv+Sk345oaDNoPZjfMUL7T2o7
+ SX5E8oNwpO1JycXSeBzU45dGG4TFNpm+g2ReNE3NgNoOuiZYUZ1MEthAkg+rwjEvxNws/7r/r
+ fkKymykZ8OgDWXWlvULE2NXmdw7sTuTXlRNm1klfApr8OrDGoC8ctbVzinKbtCDLEG4tQcUH/
+ ZA2K2Z2igjLGuW4F37RK0xDesjF44vU6WB5r/DkRXfxR68TVN7iopaGvFJy5e6nc1fNpc0BDq
+ aHf2osz2ZrW8yuWYogMPdqeQ/2uKCIXXQTDxZV+ucRjLJygJxfp4lG+p3u1I=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Candle,
+Is it ok now? It seems not yet merged to next=2E Other code is based on thi=
+s=2E
 
-On Mon, Oct 21, 2019 at 9:54 AM Candle Sun <candlesea@gmail.com> wrote:
+Am 10=2E September 2019 09:04:41 MESZ schrieb Frank Wunderlich <frank-w@pu=
+blic-files=2Ede>:
+>From: Josef Friedl <josef=2Efriedl@speed=2Eat>
 >
-> Hi,
+>move code to separate header-file to reuse definitions later
+>in poweroff-driver (drivers/power/reset/mt6323-poweroff=2Ec)
 >
+>Suggested-by: Frank Wunderlich <frank-w@public-files=2Ede>
+>Signed-off-by: Josef Friedl <josef=2Efriedl@speed=2Eat>
+>Signed-off-by: Frank Wunderlich <frank-w@public-files=2Ede>
+>Acked-by: Alexandre Belloni <alexandre=2Ebelloni@bootlin=2Ecom>
+>Acked-for-MFD-by: Lee Jones <lee=2Ejones@linaro=2Eorg>
+>---
+>changes since v6: updated copyright
+>changes since v5: none
+>changes since v4: none
+>changes since v3: none
+>changes since v2: add missing commit-message
+>---
+> drivers/rtc/rtc-mt6397=2Ec       | 55 +-------------------------
+> include/linux/mfd/mt6397/rtc=2Eh | 71 ++++++++++++++++++++++++++++++++++
+> 2 files changed, 72 insertions(+), 54 deletions(-)
+> create mode 100644 include/linux/mfd/mt6397/rtc=2Eh
 >
-> On Mon, Oct 21, 2019 at 3:38 PM Candle Sun <candlesea@gmail.com> wrote:
-> >
-> > From: Candle Sun <candle.sun@unisoc.com>
-> >
-> > Upstream commit 58e75155009c ("HID: core: move Usage Page concatenation
-> > to Main item") adds support for Usage Page item after Usage ID items
-> > (such as keyboards manufactured by Primax).
-> >
-> > Usage Page concatenation in Main item works well for following report
-> > descriptor patterns:
-> >
-> >     USAGE_PAGE (Keyboard)                   05 07
-> >     USAGE_MINIMUM (Keyboard LeftControl)    19 E0
-> >     USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
-> >     LOGICAL_MINIMUM (0)                     15 00
-> >     LOGICAL_MAXIMUM (1)                     25 01
-> >     REPORT_SIZE (1)                         75 01
-> >     REPORT_COUNT (8)                        95 08
-> >     INPUT (Data,Var,Abs)                    81 02
-> >
-> > -------------
-> >
-> >     USAGE_MINIMUM (Keyboard LeftControl)    19 E0
-> >     USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
-> >     LOGICAL_MINIMUM (0)                     15 00
-> >     LOGICAL_MAXIMUM (1)                     25 01
-> >     REPORT_SIZE (1)                         75 01
-> >     REPORT_COUNT (8)                        95 08
-> >     USAGE_PAGE (Keyboard)                   05 07
-> >     INPUT (Data,Var,Abs)                    81 02
-> >
-> > But it makes the parser act wrong for the following report
-> > descriptor pattern(such as some Gamepads):
-> >
-> >     USAGE_PAGE (Button)                     05 09
-> >     USAGE (Button 1)                        09 01
-> >     USAGE (Button 2)                        09 02
-> >     USAGE (Button 4)                        09 04
-> >     USAGE (Button 5)                        09 05
-> >     USAGE (Button 7)                        09 07
-> >     USAGE (Button 8)                        09 08
-> >     USAGE (Button 14)                       09 0E
-> >     USAGE (Button 15)                       09 0F
-> >     USAGE (Button 13)                       09 0D
-> >     USAGE_PAGE (Consumer Devices)           05 0C
-> >     USAGE (Back)                            0a 24 02
-> >     USAGE (HomePage)                        0a 23 02
-> >     LOGICAL_MINIMUM (0)                     15 00
-> >     LOGICAL_MAXIMUM (1)                     25 01
-> >     REPORT_SIZE (1)                         75 01
-> >     REPORT_COUNT (11)                       95 0B
-> >     INPUT (Data,Var,Abs)                    81 02
-> >
-> > With Usage Page concatenation in Main item, parser recognizes all the
-> > 11 Usages as consumer keys, it is not the HID device's real intention.
-> >
-> > This patch adds usage_page_last to flag whether Usage Page is after
-> > Usage ID items. usage_page_last is false default, it is set as true
-> > once Usage Page item is encountered and is reverted by next Usage ID
-> > item.
-> >
-> > Usage Page concatenation on the currently defined Usage Page will do
-> > firstly in Local parsing when Usage ID items encountered.
-> >
-> > When Main item is parsing, concatenation will do again with last
-> > defined Usage Page if usage_page_last flag is true.
-> >
-> > Signed-off-by: Candle Sun <candle.sun@unisoc.com>
-> > Signed-off-by: Nianfu Bai <nianfu.bai@unisoc.com>
-> > ---
-> > Changes in v3:
-> > - Rework the GET_COMPLETE_USAGE macro as static complete_usage()
-> >   function
-> > - Add some code comments for usage_page_last
-> >
-> > Changes in v2:
-> > - Update patch title
-> > - Add GET_COMPLETE_USAGE macro
-> > - Change the logic of checking whether to concatenate usage page again
-> >   in main parsing
-> > ---
-> >  drivers/hid/hid-core.c | 42 +++++++++++++++++++++++++++++++++++++-----
-> >  include/linux/hid.h    |  1 +
-> >  2 files changed, 38 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> > index 3eaee2c37931..779b7798dae8 100644
-> > --- a/drivers/hid/hid-core.c
-> > +++ b/drivers/hid/hid-core.c
-> > @@ -211,6 +211,18 @@ static unsigned hid_lookup_collection(struct hid_p=
-arser *parser, unsigned type)
-> >         return 0; /* we know nothing about this usage type */
-> >  }
-> >
-> > +/*
-> > + * Concatenate usage which defines 16 bits or less with the
-> > + * currently defined usage page to form a 32 bit usage
-> > + */
-> > +
-> > +static void complete_usage(struct hid_parser *parser, unsigned int ind=
-ex)
-> > +{
-> > +       parser->local.usage[index] &=3D 0xFFFF;
-> > +       parser->local.usage[index] |=3D
-> > +               (parser->global.usage_page & 0xFFFF) << 16;
-> > +}
-> > +
-> >  /*
-> >   * Add a usage to the temporary parser table.
-> >   */
-> > @@ -221,7 +233,18 @@ static int hid_add_usage(struct hid_parser *parser=
-, unsigned usage, u8 size)
-> >                 hid_err(parser->device, "usage index exceeded\n");
-> >                 return -1;
-> >         }
-> > -       parser->local.usage[parser->local.usage_index] =3D usage;
-
-This broke my CI, and it turns out that installing the patch on an
-actual laptop, the touchpad, touchscreen were not present, nor any HID
-devices plugged in.
-
-Basically, complete_usage() doesn't append the usage, and now we are
-never assigning a usage to any field.
-
-> > +
-> > +       /*
-> > +        * If Usage item only includes usage id, concatenate it with
-> > +        * currently defined usage page and clear usage_page_last flag
-> > +        */
-> > +       if (size <=3D 2) {
-> > +               parser->local.usage_page_last =3D false;
-> > +               complete_usage(parser, parser->local.usage_index);
-> > +       } else {
-> > +               parser->local.usage[parser->local.usage_index] =3D usag=
-e;
-> > +       }
-> > +
-> >         parser->local.usage_size[parser->local.usage_index] =3D size;
-> >         parser->local.collection_index[parser->local.usage_index] =3D
-> >                 parser->collection_stack_ptr ?
-> > @@ -366,6 +389,8 @@ static int hid_parser_global(struct hid_parser *par=
-ser, struct hid_item *item)
-> >
-> >         case HID_GLOBAL_ITEM_TAG_USAGE_PAGE:
-> >                 parser->global.usage_page =3D item_udata(item);
-> > +               /* Regard Usage Page is after Usage ID items */
-> > +               parser->local.usage_page_last =3D true;
-> >                 return 0;
-> >
-> >         case HID_GLOBAL_ITEM_TAG_LOGICAL_MINIMUM:
-> > @@ -543,13 +568,20 @@ static int hid_parser_local(struct hid_parser *pa=
-rser, struct hid_item *item)
-> >   * usage value."
-> >   */
-> >
-> > -static void hid_concatenate_usage_page(struct hid_parser *parser)
-> > +static void hid_concatenate_last_usage_page(struct hid_parser *parser)
-> >  {
-> >         int i;
-> >
-> > +       /*
-> > +        * Concatenate usage page again only on detecting some Usage Pa=
-ge
-> > +        * is really after Usage ID items
-> > +        */
-> > +       if (!parser->local.usage_page_last)
-> > +               return;
-> > +
-> >         for (i =3D 0; i < parser->local.usage_index; i++)
-> >                 if (parser->local.usage_size[i] <=3D 2)
-> > -                       parser->local.usage[i] +=3D parser->global.usag=
-e_page << 16;
-> > +                       complete_usage(parser, i);
-> >  }
-> >
-> >  /*
-> > @@ -561,7 +593,7 @@ static int hid_parser_main(struct hid_parser *parse=
-r, struct hid_item *item)
-> >         __u32 data;
-> >         int ret;
-> >
-> > -       hid_concatenate_usage_page(parser);
-> > +       hid_concatenate_last_usage_page(parser);
-> >
-> >         data =3D item_udata(item);
-> >
-> > @@ -772,7 +804,7 @@ static int hid_scan_main(struct hid_parser *parser,=
- struct hid_item *item)
-> >         __u32 data;
-> >         int i;
-> >
-> > -       hid_concatenate_usage_page(parser);
-> > +       hid_concatenate_last_usage_page(parser);
-> >
-> >         data =3D item_udata(item);
-> >
-> > diff --git a/include/linux/hid.h b/include/linux/hid.h
-> > index cd41f209043f..2e0ea2f7ec5c 100644
-> > --- a/include/linux/hid.h
-> > +++ b/include/linux/hid.h
-> > @@ -412,6 +412,7 @@ struct hid_local {
-> >         unsigned usage_minimum;
-> >         unsigned delimiter_depth;
-> >         unsigned delimiter_branch;
-> > +       bool usage_page_last;      /* whether usage page is after usage=
- id */
-> >  };
-> >
->
-> Hi Benjamin,
-> Here I still use the usage_page_last flag, not using following method
-> you provided in v2:
->
-> if ((parser->local.usage[parser->local.usage_index - 1] &
-> HID_USAGE_PAGE) >> 16 =3D=3D usage_page)
->               return 0;
->
-> Because last usage maybe one Extended Usage, some logic for checking
-> it should be added.
-> It will make the code obscure. Using one more member in struct
-> hid_local is straightforward
-> and maybe better.
-
-
-Still not convinced by this. Please see below for a less intrusive
-patch, which is also shorter.
-
----
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 63fdbf09b044..00ea04fb1be3 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -211,6 +211,18 @@ static unsigned hid_lookup_collection(struct
-hid_parser *parser, unsigned type)
-     return 0; /* we know nothing about this usage type */
- }
-
-+/*
-+ * Concatenate usage which defines 16 bits or less with the
-+ * currently defined usage page to form a 32 bit usage
-+ */
-+
-+static void complete_usage(struct hid_parser *parser, unsigned int index)
-+{
-+    parser->local.usage[index] &=3D 0xFFFF;
-+    parser->local.usage[index] |=3D
-+        (parser->global.usage_page & 0xFFFF) << 16;
-+}
-+
- /*
-  * Add a usage to the temporary parser table.
-  */
-@@ -222,6 +234,14 @@ static int hid_add_usage(struct hid_parser
-*parser, unsigned usage, u8 size)
-         return -1;
-     }
-     parser->local.usage[parser->local.usage_index] =3D usage;
-+
-+    /*
-+     * If Usage item only includes usage id, concatenate it with
-+     * currently defined usage page
-+     */
-+    if (size <=3D 2)
-+        complete_usage(parser, parser->local.usage_index);
-+
-     parser->local.usage_size[parser->local.usage_index] =3D size;
-     parser->local.collection_index[parser->local.usage_index] =3D
-         parser->collection_stack_ptr ?
-@@ -546,10 +566,28 @@ static int hid_parser_local(struct hid_parser
-*parser, struct hid_item *item)
- static void hid_concatenate_usage_page(struct hid_parser *parser)
- {
-     int i;
-+    uint16_t usage_page, current_page;
-
--    for (i =3D 0; i < parser->local.usage_index; i++)
--        if (parser->local.usage_size[i] <=3D 2)
--            parser->local.usage[i] +=3D parser->global.usage_page << 16;
-+    if (!parser->local.usage_index)
-+        return;
-+
-+    usage_page =3D parser->global.usage_page;
-+
-+    /*
-+     * Concatenate usage page again only if the last declared Usage Page
-+     * has not been already used in the previous Usages
-+     */
-+    for (i =3D parser->local.usage_index - 1; i >=3D 0; i--) {
-+        if (parser->local.usage_size[i] > 2)
-+            /* ignore extended usages */
-+            continue;
-+
-+        current_page =3D parser->local.usage[i] >> 16;
-+        if (current_page =3D=3D usage_page)
-+            break;
-+
-+        complete_usage(parser, i);
-+    }
- }
-
- /*
----
-
-Isn't that better?
-
-I tested this against
-https://gitlab.freedesktop.org/libevdev/hid-tools/merge_requests/58,
-which you kindly submitted and it seems to do the job.
-
-Cheers,
-Benjamin
-
+>diff --git a/drivers/rtc/rtc-mt6397=2Ec b/drivers/rtc/rtc-mt6397=2Ec
+>index b46ed4dc7015=2E=2Ec08ee5edf865 100644
+>--- a/drivers/rtc/rtc-mt6397=2Ec
+>+++ b/drivers/rtc/rtc-mt6397=2Ec
+>@@ -9,60 +9,7 @@
+> #include <linux/module=2Eh>
+> #include <linux/regmap=2Eh>
+> #include <linux/rtc=2Eh>
+>-#include <linux/irqdomain=2Eh>
+>-#include <linux/platform_device=2Eh>
+>-#include <linux/of_address=2Eh>
+>-#include <linux/of_irq=2Eh>
+>-#include <linux/io=2Eh>
+>-#include <linux/mfd/mt6397/core=2Eh>
+>-
+>-#define RTC_BBPU		0x0000
+>-#define RTC_BBPU_CBUSY		BIT(6)
+>-
+>-#define RTC_WRTGR		0x003c
+>-
+>-#define RTC_IRQ_STA		0x0002
+>-#define RTC_IRQ_STA_AL		BIT(0)
+>-#define RTC_IRQ_STA_LP		BIT(3)
+>-
+>-#define RTC_IRQ_EN		0x0004
+>-#define RTC_IRQ_EN_AL		BIT(0)
+>-#define RTC_IRQ_EN_ONESHOT	BIT(2)
+>-#define RTC_IRQ_EN_LP		BIT(3)
+>-#define RTC_IRQ_EN_ONESHOT_AL	(RTC_IRQ_EN_ONESHOT | RTC_IRQ_EN_AL)
+>-
+>-#define RTC_AL_MASK		0x0008
+>-#define RTC_AL_MASK_DOW		BIT(4)
+>-
+>-#define RTC_TC_SEC		0x000a
+>-/* Min, Hour, Dom=2E=2E=2E register offset to RTC_TC_SEC */
+>-#define RTC_OFFSET_SEC		0
+>-#define RTC_OFFSET_MIN		1
+>-#define RTC_OFFSET_HOUR		2
+>-#define RTC_OFFSET_DOM		3
+>-#define RTC_OFFSET_DOW		4
+>-#define RTC_OFFSET_MTH		5
+>-#define RTC_OFFSET_YEAR		6
+>-#define RTC_OFFSET_COUNT	7
+>-
+>-#define RTC_AL_SEC		0x0018
+>-
+>-#define RTC_PDN2		0x002e
+>-#define RTC_PDN2_PWRON_ALARM	BIT(4)
+>-
+>-#define RTC_MIN_YEAR		1968
+>-#define RTC_BASE_YEAR		1900
+>-#define RTC_NUM_YEARS		128
+>-#define RTC_MIN_YEAR_OFFSET	(RTC_MIN_YEAR - RTC_BASE_YEAR)
+>-
+>-struct mt6397_rtc {
+>-	struct device		*dev;
+>-	struct rtc_device	*rtc_dev;
+>-	struct mutex		lock;
+>-	struct regmap		*regmap;
+>-	int			irq;
+>-	u32			addr_base;
+>-};
+>+#include <linux/mfd/mt6397/rtc=2Eh>
+>=20
+> static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
+> {
+>diff --git a/include/linux/mfd/mt6397/rtc=2Eh
+>b/include/linux/mfd/mt6397/rtc=2Eh
+>new file mode 100644
+>index 000000000000=2E=2Ef84b9163c0ee
+>--- /dev/null
+>+++ b/include/linux/mfd/mt6397/rtc=2Eh
+>@@ -0,0 +1,71 @@
+>+/* SPDX-License-Identifier: GPL-2=2E0 */
+>+/*
+>+ * Copyright (C) 2014-2019 MediaTek Inc=2E
+>+ *
+>+ * Author: Tianping=2EFang <tianping=2Efang@mediatek=2Ecom>
+>+ *        Sean Wang <sean=2Ewang@mediatek=2Ecom>
+>+ */
+>+
+>+#ifndef _LINUX_MFD_MT6397_RTC_H_
+>+#define _LINUX_MFD_MT6397_RTC_H_
+>+
+>+#include <linux/jiffies=2Eh>
+>+#include <linux/mutex=2Eh>
+>+#include <linux/regmap=2Eh>
+>+#include <linux/rtc=2Eh>
+>+
+>+#define RTC_BBPU               0x0000
+>+#define RTC_BBPU_CBUSY         BIT(6)
+>+#define RTC_BBPU_KEY            (0x43 << 8)
+>+
+>+#define RTC_WRTGR              0x003c
+>+
+>+#define RTC_IRQ_STA            0x0002
+>+#define RTC_IRQ_STA_AL         BIT(0)
+>+#define RTC_IRQ_STA_LP         BIT(3)
+>+
+>+#define RTC_IRQ_EN             0x0004
+>+#define RTC_IRQ_EN_AL          BIT(0)
+>+#define RTC_IRQ_EN_ONESHOT     BIT(2)
+>+#define RTC_IRQ_EN_LP          BIT(3)
+>+#define RTC_IRQ_EN_ONESHOT_AL  (RTC_IRQ_EN_ONESHOT | RTC_IRQ_EN_AL)
+>+
+>+#define RTC_AL_MASK            0x0008
+>+#define RTC_AL_MASK_DOW                BIT(4)
+>+
+>+#define RTC_TC_SEC             0x000a
+>+/* Min, Hour, Dom=2E=2E=2E register offset to RTC_TC_SEC */
+>+#define RTC_OFFSET_SEC         0
+>+#define RTC_OFFSET_MIN         1
+>+#define RTC_OFFSET_HOUR                2
+>+#define RTC_OFFSET_DOM         3
+>+#define RTC_OFFSET_DOW         4
+>+#define RTC_OFFSET_MTH         5
+>+#define RTC_OFFSET_YEAR                6
+>+#define RTC_OFFSET_COUNT       7
+>+
+>+#define RTC_AL_SEC             0x0018
+>+
+>+#define RTC_PDN2               0x002e
+>+#define RTC_PDN2_PWRON_ALARM   BIT(4)
+>+
+>+#define RTC_MIN_YEAR           1968
+>+#define RTC_BASE_YEAR          1900
+>+#define RTC_NUM_YEARS          128
+>+#define RTC_MIN_YEAR_OFFSET    (RTC_MIN_YEAR - RTC_BASE_YEAR)
+>+
+>+#define MTK_RTC_POLL_DELAY_US  10
+>+#define MTK_RTC_POLL_TIMEOUT   (jiffies_to_usecs(HZ))
+>+
+>+struct mt6397_rtc {
+>+	struct device           *dev;
+>+	struct rtc_device       *rtc_dev;
+>+
+>+	/* Protect register access from multiple tasks */
+>+	struct mutex            lock;
+>+	struct regmap           *regmap;
+>+	int                     irq;
+>+	u32                     addr_base;
+>+};
+>+
+>+#endif /* _LINUX_MFD_MT6397_RTC_H_ */
