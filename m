@@ -2,110 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B3F7E0015
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E61F7E001C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731220AbfJVI4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:56:35 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54945 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726978AbfJVI4f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:56:35 -0400
-Received: by mail-wm1-f65.google.com with SMTP id p7so16246093wmp.4
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 01:56:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NhL0fj9j5ptz9/xvHkQKOUdaslq/CkWZYa1JsAOtxdI=;
-        b=HkJ5+MiJN5s233Lm4108n/NHXuc/rh3e7JUmGptlI92KC8Q+kkmPwZVA11ptKcqGBP
-         nkgtevwOkp8YI1V/3vsZB61EqzCJmPDEJ8ZKissu//tLQ9HadBwMaJ0WBm5IU/+LyRig
-         R1iIlCkSBTesmDVn577MKXytRnEQoDXE6RDuk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=NhL0fj9j5ptz9/xvHkQKOUdaslq/CkWZYa1JsAOtxdI=;
-        b=okIXZmtRfPw4683vv7dtEySjCgSQmuq7mCm22OmFVqvrvoUZ3fzPEh0/1BLn2X1K7A
-         ViQX0z876F+m+l1J2yN5SDU1qPiF5eCmrNV3a2qWIg1lThWvuNYW/R0pUzYnXUmIZTgX
-         3e2vH2DRsttwTcJhYrUfZxZR+e7Wm4GzxpU1D9GwOOwiK0Df1nElEL8nzrdpM7VbgIcy
-         8ddxs1GTG1Ypzpr+r2RsuqveGnO5E638U6s36fmKxXYbqOoabXa0J/+aIzauTqRR13J6
-         0FWG5Xzc9H/5u7NAa/rNAppZKGMZOUMXLX6+2YiiEIu6QvNvHopBZwxuo+LSXoBKxjn2
-         MIlg==
-X-Gm-Message-State: APjAAAXjHHN8Epzans9Qi257VtGFeNdabamw2qBWmG+33np0kazE1SOI
-        K/zhBrwWMtJQSFILNac1Tg2o9w==
-X-Google-Smtp-Source: APXvYqxAfMxeUyGmFf4v1DK17doImX3Vhpdg+HjGuwTEd4+hbl0KGo4Sg9ZmYxWQbSjf750Elb+ibQ==
-X-Received: by 2002:a05:600c:211:: with SMTP id 17mr1886520wmi.135.1571734593057;
-        Tue, 22 Oct 2019 01:56:33 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id p17sm14054884wrn.4.2019.10.22.01.56.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 01:56:32 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 10:56:30 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gma/gma500: fix a memory disclosure bug due to
- uninitialized bytes
-Message-ID: <20191022085630.GZ11828@phenom.ffwll.local>
-Mail-Followup-To: Kangjie Lu <kjlu@umn.edu>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20191018042953.31099-1-kjlu@umn.edu>
-MIME-Version: 1.0
+        id S1731271AbfJVI5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 04:57:37 -0400
+Received: from gate.crashing.org ([63.228.1.57]:42736 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731223AbfJVI5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 04:57:36 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x9M8vAi3013910;
+        Tue, 22 Oct 2019 03:57:10 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x9M8v9Dv013909;
+        Tue, 22 Oct 2019 03:57:09 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Tue, 22 Oct 2019 03:57:09 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/3] powerpc/prom_init: Use -ffreestanding to avoid a reference to bcmp
+Message-ID: <20191022085709.GI28442@gate.crashing.org>
+References: <20190911182049.77853-1-natechancellor@gmail.com> <20191014025101.18567-1-natechancellor@gmail.com> <20191014025101.18567-4-natechancellor@gmail.com> <20191014093501.GE28442@gate.crashing.org> <CAKwvOdmcUT2A9FG0JD9jd0s=gAavRc_h+RLG6O3mBz4P1FfF8w@mail.gmail.com> <20191014191141.GK28442@gate.crashing.org> <20191018190022.GA1292@ubuntu-m2-xlarge-x86> <20191018200210.GR28442@gate.crashing.org> <20191022051529.GA44041@ubuntu-m2-xlarge-x86>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191018042953.31099-1-kjlu@umn.edu>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191022051529.GA44041@ubuntu-m2-xlarge-x86>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 11:29:53PM -0500, Kangjie Lu wrote:
-> `best_clock` is an object that may be sent out. Object `clock`
-> contains uninitialized bytes that are copied to `best_clock`,
-> which leads to memory disclosure and information leak.
+On Mon, Oct 21, 2019 at 10:15:29PM -0700, Nathan Chancellor wrote:
+> On Fri, Oct 18, 2019 at 03:02:10PM -0500, Segher Boessenkool wrote:
+> > I think the proper solution is for the kernel to *do* use -ffreestanding,
+> > and then somehow tell the kernel that memcpy etc. are the standard
+> > functions.  A freestanding GCC already requires memcpy, memmove, memset,
+> > memcmp, and sometimes abort to exist and do the standard thing; why cannot
+> > programs then also rely on it to be the standard functions.
+> > 
+> > What exact functions are the reason the kernel does not use -ffreestanding?
+> > Is it just memcpy?  Is more wanted?
 > 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/gpu/drm/gma500/cdv_intel_display.c | 2 ++
->  1 file changed, 2 insertions(+)
+> I think Linus summarized it pretty well here:
 > 
-> diff --git a/drivers/gpu/drm/gma500/cdv_intel_display.c b/drivers/gpu/drm/gma500/cdv_intel_display.c
-> index f56852a503e8..8b784947ed3b 100644
-> --- a/drivers/gpu/drm/gma500/cdv_intel_display.c
-> +++ b/drivers/gpu/drm/gma500/cdv_intel_display.c
-> @@ -405,6 +405,8 @@ static bool cdv_intel_find_dp_pll(const struct gma_limit_t *limit,
->  	struct gma_crtc *gma_crtc = to_gma_crtc(crtc);
->  	struct gma_clock_t clock;
->  
-> +	memset(&clock, 0, sizeof(clock));
+> https://lore.kernel.org/lkml/CAHk-=wi-epJZfBHDbKKDZ64us7WkF=LpUfhvYBmZSteO8Q0RAg@mail.gmail.com/
 
-I guess whatever analyzer you use for this doesn't see past the ->clock
-vfunc call, so shouldn't be a real issue. Also, it's not an information
-disclosure since we only ever leak this to other kernel code, never
-userspace.
+GCC recognises __builtin_memcpy (or any other __builtin) just fine even
+with -ffreestanding.
 
-But I guess doesn't hurt, so applied.
--Daniel
+So the kernel wants a warning (or error) whenever a call to one of these
+library functions is generated by the compiler without the user asking
+for it directly (via a __builtin)?  And that is all that is needed for
+the kernel to use -ffreestanding?
 
-> +
->  	switch (refclk) {
->  	case 27000:
->  		if (target < 200000) {
-> -- 
-> 2.17.1
-> 
+That shouldn't be hard.  Anything missing here?
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+
+Segher
