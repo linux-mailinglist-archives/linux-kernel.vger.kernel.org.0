@@ -2,100 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B15FAE032A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 13:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB60EE0337
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 13:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388763AbfJVLkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 07:40:10 -0400
-Received: from mga01.intel.com ([192.55.52.88]:6512 "EHLO mga01.intel.com"
+        id S2388735AbfJVLnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 07:43:23 -0400
+Received: from uho.ysoft.cz ([81.19.3.130]:35272 "EHLO uho.ysoft.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387965AbfJVLkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 07:40:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 04:40:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,326,1566889200"; 
-   d="scan'208";a="349030713"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 22 Oct 2019 04:40:09 -0700
-Received: from [10.125.253.19] (abudanko-mobl.ccr.corp.intel.com [10.125.253.19])
-        by linux.intel.com (Postfix) with ESMTP id 7508758048F;
-        Tue, 22 Oct 2019 04:40:06 -0700 (PDT)
-Subject: Re: [PATCH v4 4/4] perf/core,x86: synchronize PMU task contexts on
- optimized context switches
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Ian Rogers <irogers@google.com>,
-        Song Liu <songliubraving@fb.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <f4662ac9-e72e-d141-bead-da07e29f81e8@linux.intel.com>
- <4d6320bb-0d15-0028-aefb-a176c986b8db@linux.intel.com>
- <20191022094300.GL1817@hirez.programming.kicks-ass.net>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <50f1e2d5-3960-015c-c7e3-e850a17207ef@linux.intel.com>
-Date:   Tue, 22 Oct 2019 14:40:05 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730515AbfJVLnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 07:43:22 -0400
+Received: from [10.1.8.111] (unknown [10.1.8.111])
+        by uho.ysoft.cz (Postfix) with ESMTP id 354F1A36DE;
+        Tue, 22 Oct 2019 13:43:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+        s=20160406-ysoft-com; t=1571744598;
+        bh=PL+MS9WK2NxE5fJ6IsanL5YnouIlzoCz8e3JcSi9SiE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=AzTQz9pYhDZOCi91CgiwkkbtNt12CVtYy4QsoUb7wWKndEklWRtIZfgW+gmNclpLA
+         eQ4yhItpShkPRWwmzhGEakDlj/3+ZDHX2lhoCsaPFSCZRzbdJIH3E0NUAblBi4E+g8
+         TkOqT16lZ+UARIyFWNnqWln83hW5MLf/8SWJ2qPY=
+Subject: Re: [PATCH net-next v2 00/16] net: dsa: turn arrays of ports into a
+ list
+To:     Vivien Didelot <vivien.didelot@gmail.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org
+References: <20191021205130.304149-1-vivien.didelot@gmail.com>
+From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+Message-ID: <821609f6-5430-5c46-82a4-a30a6eb85531@ysoft.com>
+Date:   Tue, 22 Oct 2019 13:43:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20191022094300.GL1817@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191021205130.304149-1-vivien.didelot@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 21. 10. 19 22:51, Vivien Didelot wrote:
+> The dsa_switch structure represents the physical switch device itself,
+> and is allocated by the driver. The dsa_switch_tree and dsa_port structures
+> represent the logical switch fabric (eventually composed of multiple switch
+> devices) and its ports, and are allocated by the DSA core.
+> 
+> This branch lists the logical ports directly in the fabric which simplifies
+> the iteration over all ports when assigning the default CPU port or configuring
+> the D in DSA in drivers like mv88e6xxx.
+> 
+> This also removes the unique dst->cpu_dp pointer and is a first step towards
+> supporting multiple CPU ports and dropping the DSA_MAX_PORTS limitation.
+> 
+> Because the dsa_port structures are not tight to the dsa_switch structure
+> anymore, we do not need to provide an helper for the drivers to allocate a
+> switch structure. Like in many other subsystems, drivers can now embed their
+> dsa_switch structure as they wish into their private structure. This will
+> be particularly interesting for the Broadcom drivers which were currently
+> limited by the dynamically allocated array of DSA ports.
+> 
+> The series implements the list of dsa_port structures, makes use of it,
+> then drops dst->cpu_dp and the dsa_switch_alloc helper.
 
-On 22.10.2019 12:43, Peter Zijlstra wrote:
-> On Tue, Oct 22, 2019 at 09:01:11AM +0300, Alexey Budankov wrote:
-> 
->>  			swap(ctx->task_ctx_data, next_ctx->task_ctx_data);
->>  
->> +			/*
->> +			 * PMU specific parts of task perf context can require
->> +			 * additional synchronization which makes sense only if
->> +			 * both next_ctx->task_ctx_data and ctx->task_ctx_data
->> +			 * pointers are allocated. As an example of such
->> +			 * synchronization see implementation details of Intel
->> +			 * LBR call stack data profiling;
->> +			 */
->> +			if (ctx->task_ctx_data && next_ctx->task_ctx_data)
->> +				pmu->sync_task_ctx(next_ctx->task_ctx_data,
->> +						   ctx->task_ctx_data);
-> 
-> This still does not check if pmu->sync_task_ctx is set. If any other
-> arch ever uses task_ctx_data without then also supplying this method
-> things will go *bang*.
+I just tried the whole series on our imx6dl-yapp4-hydra with QCA8334
+switch and did not notice any problems as well. Thank you.
 
-Argh, and that is why it is documented as the optional one.
-Undoubtedly, we have to avoid crashes on other architectures.
-So "if (pmu->sync_task_ctx)" has to be a part of v5.
-
-> 
-> Also, I think I prefer the variant I gave you yesterday:
-> 
->   https://lkml.kernel.org/r/20191021103745.GF1800@hirez.programming.kicks-ass.net
-> 
-> 	if (pmu->swap_task_ctx)
-> 		pmu->swap_task_ctx(ctx, next_ctx);
-> 	else
-> 		swap(ctx->task_ctx_data, next_ctx->task_ctx_data);
-> 
-> That also unconfuses the argument order in your above patch (where you
-> have to undo thw swap).
-
-I would name the method sync_task_ctx not swap_task_ctx because sync reserves 
-broader meaning, IMHO.
-
-~Alexey
+Tested-by: Michal Vokáč <michal.vokac@ysoft.com>
