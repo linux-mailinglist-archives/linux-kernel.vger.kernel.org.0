@@ -2,117 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73C7CE03A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 14:13:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF5EFE03A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 14:13:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388995AbfJVMNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 08:13:12 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42464 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388106AbfJVMNM (ORCPT
+        id S2389029AbfJVMNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 08:13:22 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:59739 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388106AbfJVMNW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 08:13:12 -0400
-Received: by mail-io1-f65.google.com with SMTP id i26so10760096iog.9;
-        Tue, 22 Oct 2019 05:13:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7VUSL4glh9tdmGltrbXAxLhst/cC64H17TVs7Wd2ISI=;
-        b=KNj120IAsn18ftYPNYtGAMO522hDC71q+lnhMtWOYXoXlDsQo9QgcVuidnJk/ml7tr
-         UbqrQwC1U8wazJ7pHfzxOF7LsixYPLXxRE9/JTcNA33V/m2jTWO+KAELTbrPE8q0D6HW
-         S9+0vi0V/9gTXRujRZeQ8kuvFFrKCsEWVB5YHsGdr//QG36RtI8w7Ivuc3u3oSfL7y0U
-         07cTguxrdcpKQNMzG+oFAzr+Ziun2e0ahAEXELyZvsQxszVck3Pxet4kl1tSkrZdOCHp
-         z0Jy+6K1Gkapib2IaHiK6EzZNdk0P8i9rV92PT0J1kYTE863bAcw/RHuDUMxThwvDmiy
-         imCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7VUSL4glh9tdmGltrbXAxLhst/cC64H17TVs7Wd2ISI=;
-        b=AHDOiZeYzU4MPkOHoXOO0vH/+DIHujzqaI8diCJGXU4j0MsjLjd/pa4ycqUeNzKgeP
-         saHkRriQTVpqOcKobXdUI6nkDvuYLxDhKYaUSAI0hN9OSQX6iNQJZcyA/Hczcod19V5H
-         WmlbzSjGeQ16xOFnGq2c3M1NndvbeYW0sy8OGE+sN634XkJJcBZKBbLsClTZLs6V8TL4
-         jQwNwCT8y0vICEs0Njv6eOSGz7O6LYZQ/xi3UWHObOAKjDgGAQurWQDdAOvV76ra7+bX
-         SKYeTJ0jA5j7Xt8qxgHo4u09L/UphqL8v5Df99LBhsLqYy1iyis2S/52vV6kEPf8bOhH
-         O05Q==
-X-Gm-Message-State: APjAAAX+Il5atyqjZDHhNPeGO++AoQ1OJipAEPaaVpS/Ra6odzXPzqUa
-        b/XixEDpYwC93152KBqfa3IN1HceH6VHssd9rw0=
-X-Google-Smtp-Source: APXvYqz9BuIKcbppibeFWeJbwe4oRUtRoe+yhYAEZFYke6YfzSl3wycLo6ueyYsgQWQ8Is+1lpwo08JP+zHbKn3n89w=
-X-Received: by 2002:a02:92c9:: with SMTP id c9mr3507699jah.0.1571746391225;
- Tue, 22 Oct 2019 05:13:11 -0700 (PDT)
+        Tue, 22 Oct 2019 08:13:22 -0400
+Received: from cpe-2606-a000-111b-43ee-0-0-0-115f.dyn6.twc.com ([2606:a000:111b:43ee::115f] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1iMt2B-00038h-L6; Tue, 22 Oct 2019 08:13:10 -0400
+Date:   Tue, 22 Oct 2019 08:13:02 -0400
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        Dan Walsh <dwalsh@redhat.com>, mpatel@redhat.com
+Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
+ outside init_user_ns
+Message-ID: <20191022121302.GA9397@hmswarspite.think-freely.org>
+References: <cover.1568834524.git.rgb@redhat.com>
+ <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
+ <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
+ <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
+ <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca>
+ <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
+ <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca>
+ <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190828150037.2640-1-aford173@gmail.com> <20190905230443.GA52127@atomide.com>
- <CAHCN7xL0fbr=Sv+b=0AuGB1PPhAAFdAFLEd_iBM+ZMTkUw5sHQ@mail.gmail.com>
- <CAHCN7xL-Gfxe0qF5w7BUsHnyhcNNpmCnchdKErnmiqggXfsLWw@mail.gmail.com>
- <20190909134033.s26eiurpat3iekse@pali> <20190909163543.GQ52127@atomide.com>
-In-Reply-To: <20190909163543.GQ52127@atomide.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Tue, 22 Oct 2019 07:13:00 -0500
-Message-ID: <CAHCN7xJjMNOLT5oPn8CArApM5b2ksPon8eALq=gUi0ZqoLjGHQ@mail.gmail.com>
-Subject: Re: [RFC] ARM: omap3: Enable HWMODS for HW Random Number Generator
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Adam Ford <adam.ford@logicpd.com>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Walmsley <paul@pwsan.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Spam-Score: -2.9 (--)
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 9, 2019 at 11:35 AM Tony Lindgren <tony@atomide.com> wrote:
->
-> * Pali Roh=C3=A1r <pali.rohar@gmail.com> [190909 13:41]:
-> > On Monday 09 September 2019 08:37:09 Adam Ford wrote:
-> > > I applied this on 5.3 and it is working.  I assume the same is true i=
-n for-next.
->
-> Hmm I noticed I stopped getting RNG data after several rmmod modprobe
-> cycles, or several hd /dev/random reads. Anybody else seeing that?
->
-> > > Do you want to submit a formal patch?  I  can mark it as 'tested-by'
-> > > This really helps speed up the startup sequence on boards with sshd
-> > > because it delays for nearly 80 seconds waiting for entropy without
-> > > the hwrng.
+On Mon, Oct 21, 2019 at 08:31:37PM -0400, Paul Moore wrote:
+> On Mon, Oct 21, 2019 at 7:58 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2019-10-21 17:43, Paul Moore wrote:
+> > > On Mon, Oct 21, 2019 at 5:38 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > On 2019-10-21 15:53, Paul Moore wrote:
+> > > > > On Fri, Oct 18, 2019 at 9:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > > On 2019-09-18 21:22, Richard Guy Briggs wrote:
+> > > > > > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
+> > > > > > > process in a non-init user namespace the capability to set audit
+> > > > > > > container identifiers.
+> > > > > > >
+> > > > > > > Use audit netlink message types AUDIT_GET_CAPCONTID 1027 and
+> > > > > > > AUDIT_SET_CAPCONTID 1028.  The message format includes the data
+> > > > > > > structure:
+> > > > > > > struct audit_capcontid_status {
+> > > > > > >         pid_t   pid;
+> > > > > > >         u32     enable;
+> > > > > > > };
+> > > > > >
+> > > > > > Paul, can I get a review of the general idea here to see if you're ok
+> > > > > > with this way of effectively extending CAP_AUDIT_CONTROL for the sake of
+> > > > > > setting contid from beyond the init user namespace where capable() can't
+> > > > > > reach and ns_capable() is meaningless for these purposes?
+> > > > >
+> > > > > I think my previous comment about having both the procfs and netlink
+> > > > > interfaces apply here.  I don't see why we need two different APIs at
+> > > > > the start; explain to me why procfs isn't sufficient.  If the argument
+> > > > > is simply the desire to avoid mounting procfs in the container, how
+> > > > > many container orchestrators can function today without a valid /proc?
+> > > >
+> > > > Ok, sorry, I meant to address that question from a previous patch
+> > > > comment at the same time.
+> > > >
+> > > > It was raised by Eric Biederman that the proc filesystem interface for
+> > > > audit had its limitations and he had suggested an audit netlink
+> > > > interface made more sense.
+> > >
+> > > I'm sure you've got it handy, so I'm going to be lazy and ask: archive
+> > > pointer to Eric's comments?  Just a heads-up, I'm really *not* a fan
+> > > of using the netlink interface for this, so unless Eric presents a
+> > > super compelling reason for why we shouldn't use procfs I'm inclined
+> > > to stick with /proc.
 > >
-> > Hi! When applying a patch, could you please disable this rng for n900?
-> >
-> > In omap3-n900.dts for rng should be status =3D "disabled" (as Tony alre=
-ady
-> > wrote), similarly like for aes.
->
-> Yeah I'll post a proper patch after -rc1.
+> > It was actually a video call with Eric and Steve where that was
+> > recommended, so I can't provide you with any first-hand communication
+> > about it.  I'll get more details...
+> 
+> Yeah, that sort of information really needs to be on the list.
+> 
+> > So, with that out of the way, could you please comment on the general
+> > idea of what was intended to be the central idea of this mechanism to be
+> > able to nest containers beyond the initial user namespace (knowing that
+> > a /proc interface is available and the audit netlink interface isn't
+> > necessary for it to work and the latter can be easily removed)?
+> 
+> I'm not entirely clear what you are asking about, are you asking why I
+> care about nesting container orchestrators?  Simply put, it is not
+> uncommon for the LXC/LXD folks to see nested container orchestrators,
+> so I felt it was important to support that use case.  When we
+> originally started this effort we probably should have done a better
+> job reaching out to the LXC/LXD folks, we may have caught this
+> earlier.  Regardless, we caught it, and it looks like we are on our
+> way to supporting it (that's good).
+> 
+> Are you asking why I prefer the procfs approach to setting/getting the
+> audit container ID?  For one, it makes it easier for a LSM to enforce
+> the audit container ID operations independent of the other audit
+> control APIs.  It also provides a simpler interface for container
+> orchestrators.  Both seem like desirable traits as far as I'm
+> concerned.
+> 
+I agree that one api is probably the best approach here, but I actually
+think that the netlink interface is the more flexible approach.  Its a
+little more work for userspace (you have to marshal your data into a
+netlink message before sending it, and wait for an async response), but
+thats a well known pattern, and it provides significantly more
+flexibility for the kernel.  LSM already has a hook to audit netlink
+messages in sock_sendmsg, so thats not a problem, and if you use
+netlink, you get the advantage of being able to broadcast messages
+within your network namespaces, facilitating any needed orchestrator
+co-ordination.  To do the same thing with a filesystem api, you need to
+use the fanotify api, which IIRC doesn't work on proc.
 
-Tony,
+Neil
 
-I am just following up on this.  Without the HWRNG there are some
-tools and daemons like sshd which wait a long time at startup.  The
-patch you sent really helps speed up the startup time in these cases.
-At least in my case, it shaves 80 seconds off by eliminating the
-delays.
-
-Do you think you'll have time to post a more formal patch?  If not, I
-can do it.  I just don't know which mailing list is the more
-appropriate.  I was able to verity your patch on a DM3730 and OMAP3530
-
-Thanks,
-
-adam
-
-
->
-> Regards,
->
-> Tony
+> > > > The intent was to switch to the audit netlink interface for contid,
+> > > > capcontid and to add the audit netlink interface for loginuid and
+> > > > sessionid while deprecating the proc interface for loginuid and
+> > > > sessionid.  This was alluded to in the cover letter, but not very clear,
+> > > > I'm afraid.  I have patches to remove the contid and loginuid/sessionid
+> > > > interfaces in another tree which is why I had forgotten to outline that
+> > > > plan more explicitly in the cover letter.
+> 
+> -- 
+> paul moore
+> www.paul-moore.com
+> 
