@@ -2,99 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9E74E021D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 12:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F4CE0221
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 12:33:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731856AbfJVKcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 06:32:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47538 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727101AbfJVKcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 06:32:21 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BBB620B7C;
-        Tue, 22 Oct 2019 10:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571740341;
-        bh=BBu2NmvdVb1QtTKj1PLuJSKNxaY/KN55w4CVevFLVBo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KajojXmq4Opns6SbxaWXEo4/LI9mHBWmmp1W2aXPlozLc7kp6IXqE+gekpYO1rBBh
-         Lo3B4lTD3EkEg/8b2eTtKD0FyYK4bfLHiO9C1j8sNAxnDv/1KbiBJsZSxivB9ZdJ8X
-         RuK1hXqqdI+mNnwERHTL1PW0DZUUgSyTfsDLBJaY=
-Date:   Tue, 22 Oct 2019 11:32:13 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Dave Martin <Dave.Martin@arm.com>,
-        Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arch@vger.kernel.org, Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Florian Weimer <fweimer@redhat.com>,
-        linux-kernel@vger.kernel.org, Sudakshina Das <sudi.das@arm.com>,
-        Suzuki Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH v2 04/12] arm64: docs: cpu-feature-registers: Document
- ID_AA64PFR1_EL1
-Message-ID: <20191022103212.GA17035@willie-the-truck>
-References: <1570733080-21015-1-git-send-email-Dave.Martin@arm.com>
- <1570733080-21015-5-git-send-email-Dave.Martin@arm.com>
- <87zhi7l8qz.fsf@linaro.org>
- <20191011145148.GK27757@arm.com>
- <20191021191818.GH4691@sirena.co.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191021191818.GH4691@sirena.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731891AbfJVKdi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 06:33:38 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:7790 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731871AbfJVKdh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 06:33:37 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9MAWqZK140796;
+        Tue, 22 Oct 2019 06:33:21 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2vsygbhejn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 22 Oct 2019 06:33:21 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x9MAXLuU142572;
+        Tue, 22 Oct 2019 06:33:21 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2vsygbheja-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 22 Oct 2019 06:33:21 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x9MAUoQ9014531;
+        Tue, 22 Oct 2019 10:33:20 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma04wdc.us.ibm.com with ESMTP id 2vqt47dhma-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 22 Oct 2019 10:33:20 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9MAXJk223855480
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 22 Oct 2019 10:33:19 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7A3826A051;
+        Tue, 22 Oct 2019 10:33:19 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3B8596A058;
+        Tue, 22 Oct 2019 10:33:19 +0000 (GMT)
+Received: from sofia.ibm.com (unknown [9.124.31.210])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 22 Oct 2019 10:33:19 +0000 (GMT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 12DC42E31BD; Tue, 22 Oct 2019 16:03:17 +0530 (IST)
+From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+To:     Nathan Lynch <nathanl@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Kamalesh Babulal <kamaleshb@in.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: [PATCH v2 0/1] pseries/hotplug: Change the default behaviour of cede_offline
+Date:   Tue, 22 Oct 2019 16:03:10 +0530
+Message-Id: <1571740391-3251-1-git-send-email-ego@linux.vnet.ibm.com>
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-22_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910220095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 08:18:18PM +0100, Mark Brown wrote:
-> On Fri, Oct 11, 2019 at 03:51:49PM +0100, Dave Martin wrote:
-> > On Fri, Oct 11, 2019 at 02:19:48PM +0100, Alex Bennée wrote:
-> 
-> > > > -  4) ID_AA64ISAR1_EL1 - Instruction set attribute register 1
-> > > > +  5) ID_AA64ISAR1_EL1 - Instruction set attribute register 1
-> 
-> > > If I'm not mistaken .rst has support for auto-enumeration if the #
-> > > character is used. That might reduce the pain of re-numbering in future.
-> 
-> > Ack, though it would be good to go one better and generate this document
-> > from the cpufeature.c tables (or from some common source).  The numbers
-> > are relatively easy to maintain -- remembering to update the document
-> > at all seems the bigger maintenance headache right now.
-> 
-> I agree, it'd be better if the table were autogenerated.  Having tried
-> doing the modification to # it does mean that the document looks a bit
-> weird when viewing it as a text file in the kernel source which TBH is
-> how I suspect a lot of people will view it so given the infrequency with
-> which new registers are added I'm not sure it's worth it.
-> 
-> > I think this particular patch is superseded by similar fixes from other
-> > people, just not in torvalds/master yet.
-> 
-> Nor in -next for the minute :/
+From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 
-Which patch is missing? The only other one on my radar is "docs/arm64:
-cpu-feature-registers: Documents missing visible fields" which is currently
-in -next as a8613e7070e7. "similar fixes from other people" isn't very
-specific :(
+This is the v2 of the fix to change the default behaviour of cede_offline.
+The previous version can be found here: https://lkml.org/lkml/2019/9/12/222
 
-Will
+The main change from v1 is that the patch2 to create a sysfs file to
+report and control the value of cede_offline_enabled has been dropped.
+
+Problem Description:
+====================
+Currently on Pseries Linux Guests, the offlined CPU can be put to one
+of the following two states:
+   - Long term processor cede (also called extended cede)
+   - Returned to the Hypervisor via RTAS "stop-self" call.
+
+This is controlled by the kernel boot parameter "cede_offline=on/off".
+
+By default the offlined CPUs enter extended cede. The PHYP hypervisor
+considers CPUs in extended cede to be "active" since the CPUs are
+still under the control fo the Linux Guests. Hence, when we change the
+SMT modes by offlining the secondary CPUs, the PURR and the RWMR SPRs
+will continue to count the values for offlined CPUs in extended cede
+as if they are online.
+
+One of the expectations with PURR is that the for an interval of time,
+the sum of the PURR increments across the online CPUs of a core should
+equal the number of timebase ticks for that interval.
+
+This is currently not the case.
+
+In the following data (Generated using
+https://github.com/gautshen/misc/blob/master/purr_tb.py):
+
+SD-PURR = Sum of PURR increments on online CPUs of that core in 1 second
+      
+SMT=off
+===========================================
+Core            SD-PURR         SD-PURR
+                (expected)      (observed)
+===========================================
+core00 [  0]	512000000	69883784	
+core01 [  8]	512000000	88782536	
+core02 [ 16]	512000000	94296824	
+core03 [ 24]	512000000	80951968	
+
+SMT=2
+===========================================
+Core            SD-PURR         SD-PURR
+                (expected)      (observed)
+===========================================
+core00 [  0,1]	512000000	136147792	
+core01 [  8,9]	512000000	128636784	
+core02 [ 16,17]	512000000	135426488	
+core03 [ 24,25]	512000000	153027520	
+
+SMT=4
+===================================================
+Core			SD-PURR         SD-PURR
+                	(expected)      (observed)
+===================================================
+core00 [  0,1,2,3]	512000000	258331616	
+core01 [  8,9,10,11]	512000000	274220072	
+core02 [ 16,17,18,19]	512000000	260013736	
+core03 [ 24,25,26,27]	512000000	260079672	
+
+SMT=on
+===================================================================
+Core					SD-PURR         SD-PURR
+                			(expected)      (observed)
+===================================================================
+core00 [  0,1,2,3,4,5,6,7]		512000000	512941248	
+core01 [  8,9,10,11,12,13,14,15]	512000000	512936544	
+core02 [ 16,17,18,19,20,21,22,23]	512000000	512931544	
+core03 [ 24,25,26,27,28,29,30,31]	512000000	512923800
+
+This patchset addresses this issue by ensuring that by default, the
+offlined CPUs are returned to the Hypervisor via RTAS "stop-self" call
+by changing the default value of "cede_offline_enabled" to false.
+
+With the patches, we see that the observed value of the sum of the
+PURR increments across the the online threads of a core in 1-second
+matches the number of tb-ticks in 1-second.
+
+SMT=off
+===========================================
+Core            SD-PURR         SD-PURR
+                (expected)      (observed)
+===========================================
+core00 [  0]	512000000	 512527568	
+core01 [  8]	512000000	 512556128	
+core02 [ 16]	512000000	 512590016	
+core03 [ 24]	512000000	 512589440	
+
+SMT=2
+===========================================
+Core            SD-PURR         SD-PURR
+                (expected)      (observed)
+===========================================
+core00 [  0,1]	512000000	512635328
+core01 [  8,9]	512000000	512610416	
+core02 [ 16,17]	512000000	512639360	
+core03 [ 24,25]	512000000	512638720	
+
+SMT=4
+===================================================
+Core		        SD-PURR         SD-PURR
+                	(expected)      (observed)
+===================================================
+core00 [  0,1,2,3]	512000000	512757328	
+core01 [  8,9,10,11]	512000000	512727920	
+core02 [ 16,17,18,19]	512000000	512754712	
+core03 [ 24,25,26,27]	512000000	512739040	
+
+SMT=on
+==============================================================
+Core				   SD-PURR         SD-PURR
+                		   (expected)      (observed)
+==============================================================
+core00 [  0,1,2,3,4,5,6,7]	   512000000	   512920936	
+core01 [  8,9,10,11,12,13,14,15]   512000000	   512878728	
+core02 [ 16,17,18,19,20,21,22,23]  512000000	   512921192	
+core03 [ 24,25,26,27,28,29,30,31]  512000000	   512924816	
+
+Further, the patch
+   gives an improvement of 5% in offlining of a core on POWER8,
+   gives an improvement of 18% in offlining of a core on POWER9,
+   causes a regression of 2.5% in onlining of a core on POWER8,
+   causes a regression of 4.5% in onlining of a core on POWER9.
+                 
+POWER8
+======================================================================
+| Operation | Patch status |#Samples|Min |Max  |Median|Avg    |Stddev|
+|           |              |        |(ms)|(ms) | (ms) |(ms)   |      |
+======================================================================
+| Offline   | Without Patch| 20     | 822| 1232| 972  | 986.8 |112.58|
+| Offline   | With Patch   | 20     | 831| 1152| 941  | 938.6 | 80.33|
+| --------- | -------------|--------|----| ----|------|-------|------|
+| Online    | Without Patch| 20     |1460| 1760| 1620 |1591.2 | 82.72|
+| Online    | With Patch   | 20     |1489| 1839| 1629 |1629.6 | 94.90|
+======================================================================
+
+POWER9
+======================================================================
+| Operation | Patch status |#Samples|Min |Max  |Median|Avg    |Stddev|
+|           |              |        |(ms)|(ms) | (ms) |(ms)   |      |
+======================================================================
+| Offline   | Without Patch| 20     |1120|1653 | 1394 |1392.9 |133.63|
+| Offline   | With Patch   | 20     | 930|1316 | 1161 |1130.8 |117.76|
+| --------- | -------------|--------|----| ----|------|-------|------|
+| Online    | Without Patch| 20     |1652|2108 | 1903 |1891.6 |130.74|
+| Online    | With Patch   | 20     |1824|2222 | 1960 |1976.1 | 93.98|
+======================================================================
+
+Gautham R. Shenoy (1):
+  pseries/hotplug-cpu: Change default behaviour of cede_offline to "off"
+
+ Documentation/core-api/cpu_hotplug.rst       |  2 +-
+ arch/powerpc/platforms/pseries/hotplug-cpu.c | 12 +++++++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+-- 
+1.9.4
+
