@@ -2,110 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88325E0547
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 313DCE0554
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388502AbfJVNjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 09:39:01 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37650 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388106AbfJVNjB (ORCPT
+        id S2388570AbfJVNld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 09:41:33 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:52447 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726142AbfJVNlc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 09:39:01 -0400
-Received: by mail-pl1-f194.google.com with SMTP id u20so8382880plq.4;
-        Tue, 22 Oct 2019 06:39:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gpoW/8Yw0CDfvnTYDUEt7wnlvPB+LdjenekF+dbtjls=;
-        b=r3lN2fcNiqbiD+lTtxMThvS7h5kEpehwJT2wWH9MYxpdx0zW6ZvPe5+oJTGHBdo3UJ
-         +1snUlb5BmZKfZgCMc5oHa9QCVpM51bJtLcoi0n8l6jvNxfYgPFgQ3xMC4wejMQvvNYf
-         FLjLePAA2nsc9FCaZLwszr/yv2z8Vo+c37bA8ZqlWGieYmxcCBCFDjIlAayEvRnKlNTe
-         rqo/FUiZITczTRPc6fHUG/C01orY7LXqFnZKXsZ7XIBhPyrITrbCxMUTxVQfktXKt10E
-         YtnLrgW/UV4XeUX78ycvlYJllBR+2c+GHpwybsbZFCsZd91dCUD8z8jlNuKghFtR7G86
-         EPSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gpoW/8Yw0CDfvnTYDUEt7wnlvPB+LdjenekF+dbtjls=;
-        b=AUGwPbPwoXLPDAYRjGmvwEPtzEdlSMz3iixGNDBdffY14Bi4wUIbqjQVkZb+MW2Dzk
-         lkaYNEU1PAg7JXfLhqtSxpgy50m3BYm91sXSrFlfDcLtkE9z/3snsi3oxE7RUfVS3jiZ
-         2He8/I71I8HKs/X3cYXFPDEOGU8tvN/atLosaXz7C15H9nLls2bJZujJ8sEAN/aGmMK8
-         5RTn98PlYEFXTyUl0XSAjqbejd5faNhyRjYPbI63iyNE3uMWcHTKpz6D4jPYdAVcfk4S
-         gEBHFQZAep+AssdqbSVN03mFZNOo8bIZvlDBOmPGwV6JzKJMvEtyQRCgeSFCH/lGL3F/
-         cMzQ==
-X-Gm-Message-State: APjAAAUrrK+mNU/wp0Gzzbgba7og3kSx9snAMFD9L2p52dxpA6OTbB/n
-        SlqP5qFYY8Jmw9A1NWuxMqtQhCOu
-X-Google-Smtp-Source: APXvYqxnblBiUF+4VE72i3RD2Q7pDJaYooI6GNAv8EneUhqFZsEv0k6WdGtSCJU5/e/gq6M4YVlHIA==
-X-Received: by 2002:a17:902:d90f:: with SMTP id c15mr3753482plz.157.1571751540152;
-        Tue, 22 Oct 2019 06:39:00 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f188sm22206087pfa.170.2019.10.22.06.38.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Oct 2019 06:38:59 -0700 (PDT)
-Subject: Re: [PATCH 09/46] watchdog: sa1100: use platform device registration
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
-References: <20191018154052.1276506-1-arnd@arndb.de>
- <20191018154201.1276638-9-arnd@arndb.de>
- <bb4713a0-60bd-8d27-874f-e7e3a5adaec8@roeck-us.net>
- <CAK8P3a0GPVs+PqUwsL2H8VJqLh=MJnMTwPu9nhX+Nq-xiMS1yQ@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <21d72661-a4f1-d51f-ddf0-f8cebb984029@roeck-us.net>
-Date:   Tue, 22 Oct 2019 06:38:57 -0700
+        Tue, 22 Oct 2019 09:41:32 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9MDf9EN023993;
+        Tue, 22 Oct 2019 15:41:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=PHnNpeOdbXGQynUc5JNgL2qz+nampoSlHPLGeS01Zp0=;
+ b=FJaqOA+9PRB8vd17zEuNNPHGpg7DCIwXrjIseHdwXWVRkZ4oTEJdBmQihL/jKh+2kcTn
+ 3djoMkk+ReNeJVL2BmdsoMrSBBergpI0ZH7QSsZRPmXQfSPlMtrCKS/BfzuIEJUQ3qv+
+ 7QIRpje2lq024m7G7aSH1cf7c9Af0bRdEGYd9qqX5MfAlPcQ/wD88u3VwJJUpvk+F2W3
+ 9LIch0n/JuZh9VbJJoLBWttHZpA6NHE0EhQsHWep3mHDZHu74xs7CVcc88i/CGlTtBB2
+ zHaWiywNvbid2PwJ0Yn6YKCqUGz/BeJJMx5WWWRAnIiUNLJuz5+JRRzSs/cVCt86pEIV Yw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2vqr8w7sra-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 22 Oct 2019 15:41:15 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C2421100034;
+        Tue, 22 Oct 2019 15:41:12 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 91EEE2AE209;
+        Tue, 22 Oct 2019 15:41:12 +0200 (CEST)
+Received: from [10.48.1.171] (10.75.127.48) by SFHDAG5NODE2.st.com
+ (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 22 Oct
+ 2019 15:41:11 +0200
+Subject: Re: [PATCH v2] i2c: i2c-stm32f7: remove warning when compiling with
+ W=1
+To:     Alain Volmat <alain.volmat@st.com>, <wsa@the-dreams.de>,
+        <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <linux-i2c@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <fabrice.gasnier@st.com>
+References: <1571145118-3522-1-git-send-email-alain.volmat@st.com>
+From:   Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+Message-ID: <c10c0652-3f9e-ea5c-98f2-206af86b0fe4@st.com>
+Date:   Tue, 22 Oct 2019 15:41:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0GPVs+PqUwsL2H8VJqLh=MJnMTwPu9nhX+Nq-xiMS1yQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1571145118-3522-1-git-send-email-alain.volmat@st.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-22_03:2019-10-22,2019-10-22 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/22/19 2:44 AM, Arnd Bergmann wrote:
-> On Sat, Oct 19, 2019 at 4:07 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> 
->>> @@ -319,10 +316,13 @@ static struct platform_device *sa11x0_devices[] __initdata = {
->>>
->>>    static int __init sa1100_init(void)
->>>    {
->>> +     struct resource wdt_res = DEFINE_RES_MEM(0x90000000, 0x20);
->>>        pm_power_off = sa1100_power_off;
->>>
->>>        regulator_has_full_constraints();
->>>
->>> +     platform_device_register_simple("sa1100_wdt", -1, &wdt_res, 1);
->>> +
->>>        return platform_add_devices(sa11x0_devices, ARRAY_SIZE(sa11x0_devices));
->>
->> Wouldn't it be better to add the watchdog device to sa11x0_devices ?
-> 
-> Generally speaking, platform_device_register_simple() is better than
-> platform_add_devices(), it does the same thing with fewer source lines
-> and smaller object code, and it doesn't have the problem of lifetime rules
-> for statically allocated reference-counted devices.
-> 
-> One day we may want to replace all static platform_device instances with
-> platform_device_info instead, but right now there are too many of those.
-> 
-> I can change this one to a platform_device for consistency though if you
-> think it's worth it.
-> 
+Hello
 
-No, I was just wondering. Thanks for the explanation.
+Looks good
 
-Guenter
+Reviewed-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 
+Thx
+Regards
+
+On 10/15/19 3:11 PM, Alain Volmat wrote:
+> Remove the following warning:
+> 
+> drivers/i2c/busses/i2c-stm32f7.c:315:
+> warning: cannot understand function prototype:
+> 'struct stm32f7_i2c_spec i2c_specs[] =
+> 
+> Replace a comment starting with /** by simply /* to avoid having
+> it interpreted as a kernel-doc comment.
+> 
+> Fixes: aeb068c57214 ("i2c: i2c-stm32f7: add driver")
+> Signed-off-by: Alain Volmat <alain.volmat@st.com>
+> ---
+> Changes in v2: update commit description
+> ---
+>  drivers/i2c/busses/i2c-stm32f7.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+> index d36cf08461f7..7aa4a47792a7 100644
+> --- a/drivers/i2c/busses/i2c-stm32f7.c
+> +++ b/drivers/i2c/busses/i2c-stm32f7.c
+> @@ -305,7 +305,7 @@ struct stm32f7_i2c_dev {
+>  	struct regmap *regmap;
+>  };
+>  
+> -/**
+> +/*
+>   * All these values are coming from I2C Specification, Version 6.0, 4th of
+>   * April 2014.
+>   *
+> 
