@@ -2,116 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54EBEE0DD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 23:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FB4EE0DDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 23:50:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733167AbfJVVmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 17:42:53 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40026 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731559AbfJVVmx (ORCPT
+        id S1733214AbfJVVqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 17:46:00 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:35379 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733177AbfJVVp7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 17:42:53 -0400
-Received: by mail-qt1-f193.google.com with SMTP id o49so21317557qta.7
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 14:42:51 -0700 (PDT)
+        Tue, 22 Oct 2019 17:45:59 -0400
+Received: by mail-vk1-f193.google.com with SMTP id d66so3960511vka.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 14:45:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UkVKcIoIjwq/4A0nvuIrRwIJe7BfuWm5uRD47GZUEfM=;
-        b=RH2e1j+TaBj5hLQezyCMTCJMMgTJv8iyXFP6oi7yBda7boYLxE/75IqlCvdSqkfjKo
-         UI0vJQI+QQgcRd86+pdAoij4fnL4PuIwY/xMdr7ya84mJKI0lQl+3HHjmDEiOVGMS4UY
-         FGtgYoOm+eWSvAhmhs/crmTiyzht0NFTlsEAjD5ZNL99YfRZhBz50+Lqf9f80deynnWG
-         Wx1Su905GSpJZxfD/2akXjNl4UKi9cWGl9eZccJhfeO16I/VQoWCRLH7nqV1MWwqgVVr
-         l/LP3JAJr5reGl4bakvVttU+XEWyxTVQtiUne915oAXSj34XHfRjYFmxaI2K1135QTii
-         ZlbQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aMrKTryhNXEL/B3UTp309ZugYMIYjNFJ3JCQDb7MpUg=;
+        b=e7GEnWKdbrItjF4U3+0nKF/lx06Wuk/tgdQ9ljPjtYqFQxUxKdNDAzX4a3J6VJRTNe
+         fvZtiXWCwgTHkznQdje8cmtubTkLp7iAWQx8JQFReAwrsWNXsaolV9s3JWeGTMMfUgSg
+         /repYwQIO6djr64TXfPZeXSpbh0xxoZWJHDJcfD+y+CBwuzbqN5LUnqOWUTiGUf9R0Qr
+         mx9Cap4UGrAAnISWvG3FD7dZFNO0uJ247ZJQzIRI+2iGU4ea2aaoSxUg8M9zDlq777fS
+         qDyNrdBaDb9pA7+swtiQSKBEfo7e0BGKpeLpbQo3G6PYa3kXJxBuLrIskMILqlTGUpAh
+         147A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UkVKcIoIjwq/4A0nvuIrRwIJe7BfuWm5uRD47GZUEfM=;
-        b=f6jXtaekJmdcSJfvyGH17rA8wC/3VAblorxJACmSX5qXIQlz15OB8mYqZbzNIelZTH
-         YgQstRyKOXtunXvs3hLxNQmH4F11kjAKmB/HATAf/vJzR4Etz6U63yI0Sk2F2K2eKDAG
-         0MvxxbqjaPM0DBQjc8ElEOa96Aher/oOADX1Cx/X5z5MhRHACPyBvh1vsS28ooLMBeYq
-         mXXbHAA5OX6syIg1OpTxOf0rKHKrsYYuDg7173+TCuSCPoY196L1EcNEs5UXB6A7m8Fg
-         jPVMjBEMNVq2edPKijibJnGsSNm1pmCM3s7rBXGkgSqD4UWf3KJFrR4STNkH9UKkm7+x
-         iDtQ==
-X-Gm-Message-State: APjAAAVRvH8Hkzgi19YKQxDIzSf9eiqAc9hOu7WCXsqItRd85WERpLco
-        EGmGfa9VD7Wwbd1xJED7toZNGw==
-X-Google-Smtp-Source: APXvYqxB7Z1O/1QPWUmZvZR2n/xFeF+vKMTbbtldyTA1/Ksng4TKY3QDjSFoUj8HOcKtIUvzxGt84A==
-X-Received: by 2002:a0c:f952:: with SMTP id i18mr5363328qvo.131.1571780570446;
-        Tue, 22 Oct 2019 14:42:50 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::3:869e])
-        by smtp.gmail.com with ESMTPSA id n4sm10492844qkc.61.2019.10.22.14.42.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 14:42:49 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 17:42:49 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH 5/8] mm: vmscan: replace shrink_node() loop with a retry
- jump
-Message-ID: <20191022214249.GB361040@cmpxchg.org>
-References: <20191022144803.302233-1-hannes@cmpxchg.org>
- <20191022144803.302233-6-hannes@cmpxchg.org>
- <20191022195629.GA24142@tower.DHCP.thefacebook.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aMrKTryhNXEL/B3UTp309ZugYMIYjNFJ3JCQDb7MpUg=;
+        b=hBdWPHf7A4hMlikAIbQDPmjuLX/w7qrVDSe+/DTZ7Id4dBp5kFkOf/oXGXN9q8HRQK
+         rldMsGJPzodDJlBuFCCW+/qkxM8EU7OD7ap0sd+o6D47sVoKmJrUYngLLX336g2FyLUw
+         z3Rz6mYm3zhKVVSSXnsUritVkMzbydg5PB4Ni+AZi+zpC4l+EpBM9RkXj+VRKUyLlcwS
+         kou3uS/VZsb6l3hAo29YlpWvX+4ZGD7WsxysS+BVHaR2ggs0Qgu+xjLguF+CDdd1J++O
+         f54IGyi21m872MXvKuzRkEL0TryuChCnY07xONQAjdVXUTTUdCrLRDuaAfX9fnRh924W
+         +GTQ==
+X-Gm-Message-State: APjAAAUq8AaAfK+tr9//pQU/RVIls2+IfL2+pQXDL84mg9dPDLctRDfc
+        oZ9BuXD9FpOFyNE6jNR4HtyXDWgbPPOlzxaVb8BylQ==
+X-Google-Smtp-Source: APXvYqzBN7l8ISCANHOSmoQVZ7BSwt3ADui9uc+L7MwmUC/V+3k+jtXG0/+Q6ONVrUpOvA8D2yYjNueSFsMjPD9iN3Q=
+X-Received: by 2002:a1f:a5d8:: with SMTP id o207mr3327674vke.81.1571780756763;
+ Tue, 22 Oct 2019 14:45:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022195629.GA24142@tower.DHCP.thefacebook.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191018161033.261971-4-samitolvanen@google.com> <20191022182206.0d8b2301@why>
+In-Reply-To: <20191022182206.0d8b2301@why>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Tue, 22 Oct 2019 14:45:45 -0700
+Message-ID: <CABCJKudSBjOkPFZ-DBFRNqQ=kx5u1Q8W6MY0VGoo=5BTakP2dg@mail.gmail.com>
+Subject: Re: [PATCH 03/18] arm64: kvm: stop treating register x18 as caller save
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 07:56:33PM +0000, Roman Gushchin wrote:
-> On Tue, Oct 22, 2019 at 10:48:00AM -0400, Johannes Weiner wrote:
-> > -			/* Record the group's reclaim efficiency */
-> > -			vmpressure(sc->gfp_mask, memcg, false,
-> > -				   sc->nr_scanned - scanned,
-> > -				   sc->nr_reclaimed - reclaimed);
-> > -
-> > -		} while ((memcg = mem_cgroup_iter(root, memcg, NULL)));
-> > +		reclaimed = sc->nr_reclaimed;
-> > +		scanned = sc->nr_scanned;
-> > +		shrink_node_memcg(pgdat, memcg, sc);
-> >  
-> > -		if (reclaim_state) {
-> > -			sc->nr_reclaimed += reclaim_state->reclaimed_slab;
-> > -			reclaim_state->reclaimed_slab = 0;
-> > -		}
-> > +		shrink_slab(sc->gfp_mask, pgdat->node_id, memcg,
-> > +			    sc->priority);
-> >  
-> > -		/* Record the subtree's reclaim efficiency */
-> > -		vmpressure(sc->gfp_mask, sc->target_mem_cgroup, true,
-> > -			   sc->nr_scanned - nr_scanned,
-> > -			   sc->nr_reclaimed - nr_reclaimed);
-> > +		/* Record the group's reclaim efficiency */
-> > +		vmpressure(sc->gfp_mask, memcg, false,
-> > +			   sc->nr_scanned - scanned,
-> > +			   sc->nr_reclaimed - reclaimed);
-> 
-> It doesn't look as a trivial change. I'd add some comments to the commit message
-> why it's safe to do.
+On Tue, Oct 22, 2019 at 10:22 AM Marc Zyngier <maz@kernel.org> wrote:
+> >  .macro save_callee_saved_regs ctxt
+> > +     str     x18,      [\ctxt, #CPU_XREG_OFFSET(18)]
+> >       stp     x19, x20, [\ctxt, #CPU_XREG_OFFSET(19)]
+> >       stp     x21, x22, [\ctxt, #CPU_XREG_OFFSET(21)]
+> >       stp     x23, x24, [\ctxt, #CPU_XREG_OFFSET(23)]
+> > @@ -38,6 +39,7 @@
+> >       ldp     x25, x26, [\ctxt, #CPU_XREG_OFFSET(25)]
+> >       ldp     x27, x28, [\ctxt, #CPU_XREG_OFFSET(27)]
+> >       ldp     x29, lr,  [\ctxt, #CPU_XREG_OFFSET(29)]
+> > +     ldr     x18,      [\ctxt, #CPU_XREG_OFFSET(18)]
+>
+> There is now an assumption that ctxt is x18 (otherwise why would it be
+> out of order?). Please add a comment to that effect.
 
-It's an equivalent change - it's just really misleading because the
-+++ lines are not the counter-part of the --- lines here!
+> > -     // Restore guest regs x19-x29, lr
+> > +     // Restore guest regs x18-x29, lr
+> >       restore_callee_saved_regs x18
+>
+> Or you could elect another register such as x29 as the base, and keep
+> the above in a reasonable order.
 
-There are two vmpressure calls in this function: one against the
-individual cgroups, and one against the tree. The diff puts them
-adjacent here, but the counter-part for the --- lines is here:
+I'm fine with either option. Ard, any thoughts?
 
-> > +	/* Record the subtree's reclaim efficiency */
-> > +	vmpressure(sc->gfp_mask, sc->target_mem_cgroup, true,
-> > +		   sc->nr_scanned - nr_scanned,
-> > +		   sc->nr_reclaimed - nr_reclaimed);
-
-And the counter-part to the +++ lines is further up (beginning of the
-quoted diff).
+Sami
