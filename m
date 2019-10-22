@@ -2,99 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A2A5DFF8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:38:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 365D5DFFAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:38:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731258AbfJVIgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:36:40 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45258 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731240AbfJVIgj (ORCPT
+        id S1731383AbfJVIhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 04:37:31 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:58556 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731245AbfJVIha (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:36:39 -0400
-Received: by mail-wr1-f66.google.com with SMTP id q13so12017791wrs.12
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 01:36:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XXUGs3TD/mQ9EDaZ43OuKw31dOCYSa+NG57KsS4H5LI=;
-        b=Bq+WXbKond/Rk9fhT8Y+bUAcQeyz3dkHjScEjk448jWb1Cp5GqJJPCE/dB22YytQit
-         h6rjUQWMBpc6TooG9agn4sMX+chbXQnG5/8GgY+UxdpejJgraAYrt48FfVjryUqgw14o
-         eKxMTfkTMWm6W1yJ42/yHNIZN8oq7M3iZ8mEiAbWi4ivzIihNzO6TCeTyTQVmTlgQkKe
-         w6GlUVEL7VzvEO8ptqVO/U2g/gEt53Lk5q/TY+E9Eno8mRgVIsykdcC0QMwT9om0FLNt
-         R47+/7FvF2qIahLXXIjlHw8sxq2q5/N9Ji3jmmIME4Sz3qd6qMUDOxZG0TtzF9ObGur4
-         yPZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XXUGs3TD/mQ9EDaZ43OuKw31dOCYSa+NG57KsS4H5LI=;
-        b=ql1gwC5o1rHleIvntin2haoHPeey62l0DhM7ucHX627LGphuatH7Xm2XZC48sTUAia
-         UiAFhc8moNF0/cwc0B7tlHgE4aIyzCFR6rL+AOtldpE79tgtLX00XIn4D3yU7ClEy8Se
-         OwuFeV2xTUBB9X+IkM00EbjdDMcVDPXUBT/429osjuvs22Ekf5AgUAatne1g4SXR/En3
-         dQFYFwnO8upZmUeZ6q+yzzxEmjeTJ/wDVZXQbCMJ4dm98oVHfAk1t8VVwI2PRV9QrOla
-         +32Q2uj1UZoIX92+Fj35Jff97lkRope2gulUL0HYuf+24Jm3JbpYQA5GdHTx/DNczrrA
-         jKzA==
-X-Gm-Message-State: APjAAAVtBexiL3e1QVyYKd6qmFzrYT/blwG/P7q8jku/UVgWZC99JBX+
-        iuaaFj1rm8ytmJX3Di4/K2REAw==
-X-Google-Smtp-Source: APXvYqxz6AIr8fWnzKdVVzEewafWfmryfrIOZCjdoeaPq7mVTlB+8VWT79OlNyvmz2Bd6kRuyVN66w==
-X-Received: by 2002:a5d:498a:: with SMTP id r10mr2396794wrq.129.1571733397641;
-        Tue, 22 Oct 2019 01:36:37 -0700 (PDT)
-Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id g17sm17115253wrq.58.2019.10.22.01.36.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 01:36:37 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Cc:     linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v7 1/9] backlight: gpio: remove unneeded include
-Date:   Tue, 22 Oct 2019 10:36:22 +0200
-Message-Id: <20191022083630.28175-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191022083630.28175-1-brgl@bgdev.pl>
-References: <20191022083630.28175-1-brgl@bgdev.pl>
+        Tue, 22 Oct 2019 04:37:30 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9M8bQ7x069426;
+        Tue, 22 Oct 2019 03:37:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571733446;
+        bh=u9k+ocnU3Lbu2+l7pPhribNV6H9O0KaUMXBMv+zOd9E=;
+        h=From:To:CC:Subject:Date;
+        b=K3/l+eoEqqFFYU9eAp4rYVz9l8PVNTWpuePD5IsnnFXxvN+DYFYirXXs1K62mMha0
+         ibhkOTVP76bEjUcRVssZtgVV+Y1X5xNpGXWh7aWyqTERGvXGSDwSF4l/Msh2VekTvR
+         +qBms8U4f8goeaBI6nqXzmZj0UvXhDFSkBCkmSFo=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9M8auIn024438
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 22 Oct 2019 03:36:56 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 22
+ Oct 2019 03:36:46 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 22 Oct 2019 03:36:46 -0500
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9M8arZM054988;
+        Tue, 22 Oct 2019 03:36:54 -0500
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+CC:     <linux-kernel@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH] reset: Fix memory leak in reset_control_array_put()
+Date:   Tue, 22 Oct 2019 14:06:23 +0530
+Message-ID: <20191022083623.29697-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Memory allocated for 'struct reset_control_array' in
+of_reset_control_array_get() is never freed in
+reset_control_array_put() resulting in kmemleak showing
+the following backtrace.
 
-We no longer use any symbols from of_gpio.h. Remove this include.
+  backtrace:
+    [<00000000c5f17595>] __kmalloc+0x1b0/0x2b0
+    [<00000000bd499e13>] of_reset_control_array_get+0xa4/0x180
+    [<000000004cc02754>] 0xffff800008c669e4
+    [<0000000050a83b24>] platform_drv_probe+0x50/0xa0
+    [<00000000d3a0b0bc>] really_probe+0x108/0x348
+    [<000000005aa458ac>] driver_probe_device+0x58/0x100
+    [<000000008853626c>] device_driver_attach+0x6c/0x90
+    [<0000000085308d19>] __driver_attach+0x84/0xc8
+    [<00000000080d35f2>] bus_for_each_dev+0x74/0xc8
+    [<00000000dd7f015b>] driver_attach+0x20/0x28
+    [<00000000923ba6e6>] bus_add_driver+0x148/0x1f0
+    [<0000000061473b66>] driver_register+0x60/0x110
+    [<00000000c5bec167>] __platform_driver_register+0x40/0x48
+    [<000000007c764b4f>] 0xffff800008c6c020
+    [<0000000047ec2e8c>] do_one_initcall+0x5c/0x1b0
+    [<0000000093d4b50d>] do_init_module+0x54/0x1d0
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/video/backlight/gpio_backlight.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/reset/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-index 18e053e4716c..7e1990199fae 100644
---- a/drivers/video/backlight/gpio_backlight.c
-+++ b/drivers/video/backlight/gpio_backlight.c
-@@ -12,7 +12,6 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_gpio.h>
- #include <linux/platform_data/gpio_backlight.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 213ff40dda11..36b1ff69b1e2 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -748,6 +748,7 @@ static void reset_control_array_put(struct reset_control_array *resets)
+ 	for (i = 0; i < resets->num_rstcs; i++)
+ 		__reset_control_put_internal(resets->rstc[i]);
+ 	mutex_unlock(&reset_list_mutex);
++	kfree(resets);
+ }
+ 
+ /**
 -- 
-2.23.0
+2.17.1
 
