@@ -2,106 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B6B0E0834
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:04:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E719E082E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:04:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389125AbfJVQD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 12:03:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387746AbfJVQD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:03:56 -0400
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E39F21906;
-        Tue, 22 Oct 2019 16:03:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571760235;
-        bh=wZqpmahqkdwN8bSUWflCybWpGAN6ZEbtQZB3qCoZljg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=kfdQNIrvB/s9H8KQC7rO59/l3ydNVyU/ihPEcbQgqHc8iYlLgPGNP53znI1XGkZbp
-         zKp9BNTuVAovRoYJsjf0ve98p9jxSW+o5aOdHl3RUA2eSeb5OZHAVyfbDGCyhl2YOe
-         swTrBGgRroC8KtsMuhpKGF8CHBPraGYjLhOee4NY=
-Received: by mail-qt1-f174.google.com with SMTP id c21so27497198qtj.12;
-        Tue, 22 Oct 2019 09:03:55 -0700 (PDT)
-X-Gm-Message-State: APjAAAUiRov13Q4nl311SaYm+NmPw+IsM68HfJdrep2TI4MIJE9HtocR
-        N6y9j05t/isX8pmBUPOcEbPa5te3nymJcMoqGg==
-X-Google-Smtp-Source: APXvYqyyB49iT/626fOA+V3xooxxBwy9dN/zE/XUizKQfbN9LeELAEH0K+nxf/XITvR19bMhVI+BTk4qKYDqfrxtpdo=
-X-Received: by 2002:ac8:44d9:: with SMTP id b25mr4261906qto.300.1571760234567;
- Tue, 22 Oct 2019 09:03:54 -0700 (PDT)
+        id S2389061AbfJVQDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 12:03:52 -0400
+Received: from smtprelay0178.hostedemail.com ([216.40.44.178]:36971 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387746AbfJVQDv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 12:03:51 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 86C3481D6;
+        Tue, 22 Oct 2019 16:03:50 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3871:3872:3874:4321:5007:9707:10004:10400:11232:11657:11658:11914:12043:12297:12555:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21451:21627:30054:30070:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: soda94_216e47221b22d
+X-Filterd-Recvd-Size: 1297
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 22 Oct 2019 16:03:49 +0000 (UTC)
+Message-ID: <5db6c53e5c87ca2999c577333d9c6df678b36994.camel@perches.com>
+Subject: Re: [PATCH] MAINTAINERS: add reset controller framework keywords
+From:   Joe Perches <joe@perches.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel@pengutronix.de
+Date:   Tue, 22 Oct 2019 09:03:48 -0700
+In-Reply-To: <20191022123823.4854-1-p.zabel@pengutronix.de>
+References: <20191022123823.4854-1-p.zabel@pengutronix.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-References: <20191016025220.td3xb7oxlfkznxl6@smtp.gmail.com>
- <20191017191152.GA11222@bogus> <20191019150652.h6bkfz2w2ohemvwy@smtp.gmail.com>
- <CAL_JsqKqgko02KstmytNNUUF0-QR7rpMF4dV=X55N=TnDahd+Q@mail.gmail.com> <20191022140604.ovmooly47qax2sms@smtp.gmail.com>
-In-Reply-To: <20191022140604.ovmooly47qax2sms@smtp.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 22 Oct 2019 11:03:43 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLf8kpOu0MQN-TAhQkiZCGfMKWmztnHNo+2BAVqfX8yGQ@mail.gmail.com>
-Message-ID: <CAL_JsqLf8kpOu0MQN-TAhQkiZCGfMKWmztnHNo+2BAVqfX8yGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: iio: adc: Add DT docs for AD7292
-To:     Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Dragos Bogdan <dragos.bogdan@analog.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        devicetree@vger.kernel.org, kernel-usp@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 9:06 AM Marcelo Schmitt
-<marcelo.schmitt1@gmail.com> wrote:
->
-> Hi,
->
-> I ran the DTC and CHECK for AD7292 schema however, the target '__build'
-> did not run due to errors found in regulator/fixed-regulator.yaml and
-> arm/allwinner,sun4i-a10-csi.yaml.
+On Tue, 2019-10-22 at 14:38 +0200, Philipp Zabel wrote:
+> Add a regex that matches users of the reset controller API.
+[]
+> diff --git a/MAINTAINERS b/MAINTAINERS
+[]
+> @@ -13851,6 +13851,7 @@ F:	include/dt-bindings/reset/
+>  F:	include/linux/reset.h
+>  F:	include/linux/reset/
+>  F:	include/linux/reset-controller.h
+> +K:	\b(devm_|of_)?reset_control(ler_[a-z]+|_[a-z_]+)?\b
 
-Fixes for those are still pending in -next. Use 'make -k' and ignore those.
+Please add ?: to each group so no capture is done.
+It's a little faster.
 
->
-> I recall seeing something about the maxItems requirement over regulator
-> supplies being changed on the iio mailing list, so I updated my repo
-> locally, cloned and reinstalled the dt-schema toolset. However, I still
-> can't make it go through the '__build' target.
->
-> Python 3.7.5rc1 is my default python and I got the following pip3
-> packages installed:
->
-> ruamel.yaml        0.16.5
-> ruamel.yaml.clib   0.2.0
-> rfc3987            1.3.8
-> jsonschema         3.0.1
-> dtschema           0.0.1  at $HOME/<iio repo dir>/dt-schema
->
-> Debian Bullseye packages installed:
-> python3-yaml/testing,now 5.1.2-1
-> libyaml-dev/testing,now 0.2.2-1
->
-> I was only able to run DTC after installing the libyaml-dev package, so
-> I think it might be worth to add it to the project dependencies at
-> https://github.com/robherring/dt-schema.
+K:	\b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
 
-Strictly speaking, it's not a dependency for dt-schema. It's
-documented in Documentation/devicetree/writing-schema.rst. I've added
-a pointer to that in bindings/submitting-patches.txt. I'm not sure how
-else to make it more obvious.
 
-BTW, You will get a useful error message if libyaml is missing when
-building 'make dtbs_check'. I need to make that work for
-dt_binding_check.
-
-> apt-get install libyaml-dev
-
-You need the lib too, but that tends to already be installed. IIRC,
-installing the headers doesn't install the lib automatically.
-
-In any case, I wanted to avoid putting in distro specific instructions
-in the kernel.
-
-Rob
