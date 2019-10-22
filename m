@@ -2,151 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC2FDF9AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 02:36:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C707FDF9D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 02:37:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730855AbfJVAgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 20:36:13 -0400
-Received: from mga07.intel.com ([134.134.136.100]:35286 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730680AbfJVAfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 20:35:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 17:35:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,325,1566889200"; 
-   d="scan'208";a="348897241"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by orsmga004.jf.intel.com with ESMTP; 21 Oct 2019 17:35:39 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     James Hogan <jhogan@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 15/15] KVM: Dynamically size memslot array based on number of used slots
-Date:   Mon, 21 Oct 2019 17:35:37 -0700
-Message-Id: <20191022003537.13013-16-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191022003537.13013-1-sean.j.christopherson@intel.com>
-References: <20191022003537.13013-1-sean.j.christopherson@intel.com>
+        id S1730974AbfJVAhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 20:37:10 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44823 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730690AbfJVAhI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 20:37:08 -0400
+Received: by mail-lj1-f195.google.com with SMTP id c4so140109lja.11
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 17:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IWhaX4k6lFHGGs9vgp5PpGqm7vKA7sqLPJ/OVQwJYM8=;
+        b=Mxn6zclG7aCJE+Gbl0eDGL3OWzLs5QH1w1HctpXaXwa9lerQff2UuOFWNngRVL4rXP
+         DVdvDkzXv9TwweIDY/j2A/og6LdXEdMN/VBgdnfG92KVKX6hVsFCn4QCtKqr/tGmQ06q
+         14m19p9d10EH7vCewH2Xl+BiXNWN+IgXQc0Wh2dJoGP10RmkbAo08sSWzf53pHr3wImS
+         pUMTNlgMkEpEHZgE2FuTsgX9cUM/TK53D0iy90ILc3vDdTlNkaip67g+0i2mE4Li2tQj
+         X1kbr936re/JPT+azvWX2YkV/0YmW1WpfQk3ageC8tYUU8XlDmFW4RmM93LstdIAb8i7
+         /EXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IWhaX4k6lFHGGs9vgp5PpGqm7vKA7sqLPJ/OVQwJYM8=;
+        b=DEDRMDnIocgwveyaHAdH7y6DpWOMa14QQ9w04WkAcGXVGhVt6Pdg3Ph02tfoTjQR0r
+         9nSKrI5D2DHH69V26RAw65D5BblUXSh0dnqHbsKhkD7DktZOAyyFXxkO7cKFhYj895/w
+         ntOhO0FCou/HOMa/B/7YvDAvlC7ZX9HzWGXA4c8EL6sVt5F3VH8MXcX7kA2Ao+4gxfcP
+         pQRjfxgrwxAu7h6aT0YqfInuzXb5NpgaQ8OOIkzNfIzwZ/Ivh/5z/RbzL5HbPWEHnkoU
+         c3T8Hbv8dA3pvTpU0gA91INL9wgOmBYDErJ8xEts8sFiIxJVsU8xhxkO0cKBUS8mlRGi
+         sK8g==
+X-Gm-Message-State: APjAAAV3KrmjtgY+IE8plctpaGDnk4hONRVJyhxsl1b2a7Cpjpp+uaVn
+        DAUSpwdq08BMppmyXiYD79NKNTbM26lvQvyTP4w=
+X-Google-Smtp-Source: APXvYqzJxVNLIiOghpn1W2rzPihKl7eHGQ0C3yaZSdE3EDpHK+15u/NGo2yCgMTFqy3MF6QpJLHu0T9oTVQysyHklNI=
+X-Received: by 2002:a2e:9cc9:: with SMTP id g9mr16376348ljj.188.1571704626347;
+ Mon, 21 Oct 2019 17:37:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190827180622.159326993@infradead.org> <20190827181147.166658077@infradead.org>
+ <aaffb32f-6ca9-f9e3-9b1a-627125c563ed@redhat.com> <20191002182106.GC4643@worktop.programming.kicks-ass.net>
+ <20191003181045.7fb1a5b3@gandalf.local.home> <20191004112237.GA19463@hirez.programming.kicks-ass.net>
+ <20191004094228.5a5774fe@gandalf.local.home>
+In-Reply-To: <20191004094228.5a5774fe@gandalf.local.home>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Mon, 21 Oct 2019 17:36:54 -0700
+Message-ID: <CAADnVQJ0cWYPY-+FhZoqUZ8p1k1FiDsO5jhXiQdcCPmd1UeCyQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] x86/ftrace: Use text_poke()
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the memslot logic doesn't assume memslots are always non-NULL,
-dynamically size the array of memslots instead of unconditionally
-allocating memory for the maximum number of memslots.
+On Fri, Oct 4, 2019 at 6:45 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Fri, 4 Oct 2019 13:22:37 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> > On Thu, Oct 03, 2019 at 06:10:45PM -0400, Steven Rostedt wrote:
+> > > But still, we are going from 120 to 660 IPIs for every CPU. Not saying
+> > > it's a problem, but something that we should note. Someone (those that
+> > > don't like kernel interference) may complain.
+> >
+> > It is machine wide function tracing, interference is going to happen..
+> > :-)
+> >
+> > Anyway, we can grow the batch size if sufficient benefit can be shown to
+> > exist.
+>
+> Yeah, I was thinking that we just go with these patches and then fix
+> the IPI issue when someone starts complaining ;-)
+>
+> Anyway, is this series ready to go? I can pull them in (I guess I
+> should get an ack from Thomas or Ingo as they are x86 specific). I'm
+> currently working on code that affects the same code paths as this
+> patch, and would like to build my changes on top of this, instead of
+> monkeying around with major conflicts.
 
-Note, because a to-be-deleted memslot must first be invalidated, the
-array size cannot be immediately reduced when deleting a memslot.
-However, consecutive deletions will realize the memory savings, i.e.
-a second deletion will trim the entry.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- include/linux/kvm_host.h |  5 ++++-
- virt/kvm/kvm_main.c      | 31 ++++++++++++++++++++++++++++---
- 2 files changed, 32 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 3f8a7760bb79..9e3a68257e80 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -433,11 +433,14 @@ static inline int kvm_arch_vcpu_memslots_id(struct kvm_vcpu *vcpu)
-  */
- struct kvm_memslots {
- 	u64 generation;
--	struct kvm_memory_slot memslots[KVM_MEM_SLOTS_NUM];
- 	/* The mapping table from slot id to the index in memslots[]. */
- 	short id_to_index[KVM_MEM_SLOTS_NUM];
- 	atomic_t lru_slot;
- 	int used_slots;
-+	struct kvm_memory_slot memslots[];
-+	/*
-+	 * WARNING: 'memslots' is dynamically-sized.  It *MUST* be at the end.
-+	 */
- };
- 
- struct kvm {
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 177caac395de..131b2dd7db72 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -535,7 +535,7 @@ static struct kvm_memslots *kvm_alloc_memslots(void)
- 		return NULL;
- 
- 	for (i = 0; i < KVM_MEM_SLOTS_NUM; i++)
--		slots->id_to_index[i] = slots->memslots[i].id = -1;
-+		slots->id_to_index[i] = -1;
- 
- 	return slots;
- }
-@@ -934,6 +934,32 @@ static struct kvm_memslots *install_new_memslots(struct kvm *kvm,
- 	return old_memslots;
- }
- 
-+/*
-+ * Note, at a minimum, the current number of used slots must be allocated, even
-+ * when deleting a memslot, as we need a complete duplicate of the memslots for
-+ * use when invalidating a memslot prior to deleting/moving the memslot.
-+ */
-+static struct kvm_memslots *kvm_dup_memslots(struct kvm_memslots *old,
-+					     enum kvm_mr_change change)
-+{
-+	struct kvm_memslots *slots;
-+	size_t old_size, new_size;
-+
-+	old_size = sizeof(struct kvm_memslots) +
-+		   (sizeof(struct kvm_memory_slot) * old->used_slots);
-+
-+	if (change == KVM_MR_CREATE)
-+		new_size = old_size + sizeof(struct kvm_memory_slot);
-+	else
-+		new_size = old_size;
-+
-+	slots = kvzalloc(new_size, GFP_KERNEL_ACCOUNT);
-+	if (likely(slots))
-+		memcpy(slots, old, old_size);
-+
-+	return slots;
-+}
-+
- static int kvm_set_memslot(struct kvm *kvm,
- 			   const struct kvm_userspace_memory_region *mem,
- 			   const struct kvm_memory_slot *old,
-@@ -944,10 +970,9 @@ static int kvm_set_memslot(struct kvm *kvm,
- 	struct kvm_memslots *slots;
- 	int r;
- 
--	slots = kvzalloc(sizeof(struct kvm_memslots), GFP_KERNEL_ACCOUNT);
-+	slots = kvm_dup_memslots(__kvm_memslots(kvm, as_id), change);
- 	if (!slots)
- 		return -ENOMEM;
--	memcpy(slots, __kvm_memslots(kvm, as_id), sizeof(struct kvm_memslots));
- 
- 	if (change == KVM_MR_DELETE || change == KVM_MR_MOVE) {
- 		/*
--- 
-2.22.0
-
+What is the status of this set ?
+Steven, did you apply it ?
