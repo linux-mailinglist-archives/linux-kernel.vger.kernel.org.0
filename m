@@ -2,112 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B349AE0479
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC504E0480
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:06:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731944AbfJVNFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 09:05:54 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:38102 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729696AbfJVNFy (ORCPT
+        id S1731974AbfJVNG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 09:06:28 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58313 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731804AbfJVNG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 09:05:54 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9MD5pLL077666;
-        Tue, 22 Oct 2019 08:05:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571749551;
-        bh=ieLw0UD3TwNfGq2EsjYftsH6Edo4lDfAf/yj37BOjiM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=mF1FIsNT5Ib6vj+r6XWhXX5qijsZY1qb0QuDBC0F7UNZXcoR3lOZTbq7NCEnyYQp/
-         so66Gene4HaEpi/nOoDbTfQgjk5w6cm99uMjvmmZFEzbWBWg85hCG1kiqCkWIltIKa
-         LfQ2ZwltgNSTBxTZCYQsNv5hTBZC30uaSh2lUJ2w=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9MD5pqn086771
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Oct 2019 08:05:51 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 22
- Oct 2019 08:05:49 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 22 Oct 2019 08:05:39 -0500
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9MD5XhK075548;
-        Tue, 22 Oct 2019 08:05:33 -0500
-Subject: Re: [PATCH 00/13] PHY: Add support for SERDES in TI's J721E SoC
-To:     Kishon Vijay Abraham I <kishon@ti.com>, Jyri Sarha <jsarha@ti.com>
-CC:     Anil Varughese <aniljoy@cadence.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20191016113117.12370-1-kishon@ti.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <6bc9645d-28df-bcef-e94d-498516fc4ac2@ti.com>
-Date:   Tue, 22 Oct 2019 16:05:32 +0300
+        Tue, 22 Oct 2019 09:06:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571749585;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Syfd0H8D/BZLCngMYW2+8Gfqpo3syPeWg7AigfxOHa0=;
+        b=T7IdaOvNunr1wNsBP9ffS7PduaqV/tkwfalTxTZHSFu2y5t0mfQs8spb0eri7IZW8uUrtV
+        rrb+UFDXuLjq9C914hc/Qfh3z7NWwhFOM7psQZVi80IMd0wQq7xXT9sKS+HmyyHwrji21v
+        YGXIuhVoFUdobL2AKLepAiu27t238w4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-150-71H0vHNaOHmN2MZTv4qjeg-1; Tue, 22 Oct 2019 09:06:22 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ABD6B800D4E;
+        Tue, 22 Oct 2019 13:06:20 +0000 (UTC)
+Received: from [10.72.12.23] (ovpn-12-23.pek2.redhat.com [10.72.12.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 514B819C69;
+        Tue, 22 Oct 2019 13:06:00 +0000 (UTC)
+Subject: Re: [RFC 2/2] vhost: IFC VF vdpa layer
+To:     Zhu Lingshan <lingshan.zhu@linux.intel.com>,
+        "Zhu, Lingshan" <lingshan.zhu@intel.com>, mst@redhat.com,
+        alex.williamson@redhat.com
+Cc:     linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, tiwei.bie@intel.com, jason.zeng@intel.com,
+        zhiyuan.lv@intel.com
+References: <20191016013050.3918-1-lingshan.zhu@intel.com>
+ <20191016013050.3918-3-lingshan.zhu@intel.com>
+ <9495331d-3c65-6f49-dcd9-bfdb17054cf0@redhat.com>
+ <f65358e9-6728-8260-74f7-176d7511e989@intel.com>
+ <1cae60b6-938d-e2df-2dca-fbf545f06853@redhat.com>
+ <ddf412c6-69e2-b3ca-d0c8-75de1db78ed9@linux.intel.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <b2adaab0-bbc3-b7f0-77da-e1e3cab93b76@redhat.com>
+Date:   Tue, 22 Oct 2019 21:05:57 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20191016113117.12370-1-kishon@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <ddf412c6-69e2-b3ca-d0c8-75de1db78ed9@linux.intel.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: 71H0vHNaOHmN2MZTv4qjeg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 16/10/2019 14:31, Kishon Vijay Abraham I wrote:
-> TI's J721E SoC uses Cadence Sierra SERDES for USB, PCIe and SGMII.
-> TI has a wrapper named WIZ to control input signals to Sierra and
-> Torrent SERDES.
-> 
-> This patch series:
->   1) Add support to WIZ module present in TI's J721E SoC
->   2) Adapt Cadence Sierra PHY driver to be used for J721E SoC
-> 
-> Anil Varughese (1):
->    phy: cadence: Sierra: Configure both lane cdb and common cdb registers
->      for external SSC
-> 
-> Kishon Vijay Abraham I (12):
->    dt-bindings: phy: Sierra: Add bindings for Sierra in TI's J721E
->    phy: cadence: Sierra: Make "phy_clk" and "sierra_apb" optional
->      resources
->    phy: cadence: Sierra: Use "regmap" for read and write to Sierra
->      registers
->    phy: cadence: Sierra: Add support for SERDES_16G used in J721E SoC
->    phy: cadence: Sierra: Make cdns_sierra_phy_init() as phy_ops
->    phy: cadence: Sierra: Modify register macro names to be in sync with
->      Sierra user guide
->    phy: cadence: Sierra: Get reset control "array" for each link
->    phy: cadence: Sierra: Check for PLL lock during PHY power on
->    phy: cadence: Sierra: Change MAX_LANES of Sierra to 16
->    phy: cadence: Sierra: Set cmn_refclk/cmn_refclk1 frequency to 25MHz
->    dt-bindings: phy: Document WIZ (SERDES wrapper) bindings
->    phy: ti: j721e-wiz: Add support for WIZ module present in TI J721E SoC
+On 2019/10/22 =E4=B8=8B=E5=8D=882:53, Zhu Lingshan wrote:
+>
+> On 10/21/2019 6:19 PM, Jason Wang wrote:
+>>
+>> On 2019/10/21 =E4=B8=8B=E5=8D=885:53, Zhu, Lingshan wrote:
+>>>
+>>> On 10/16/2019 6:19 PM, Jason Wang wrote:
+>>>>
+>>>> On 2019/10/16 =E4=B8=8A=E5=8D=889:30, Zhu Lingshan wrote:
+>>>>> This commit introduced IFC VF operations for vdpa, which complys to
+>>>>> vhost_mdev interfaces, handles IFC VF initialization,
+>>>>> configuration and removal.
+>>>>>
+>>>>> Signed-off-by: Zhu Lingshan <lingshan.zhu@intel.com>
+>>>>> ---
 
-Tested USB3.0 on J7ES using this series.
 
-Tested-by: Roger Quadros <rogerq@ti.com>
+[...]
 
-> 
->   .../bindings/phy/phy-cadence-sierra.txt       |  13 +-
->   .../bindings/phy/ti,phy-j721e-wiz.txt         |  95 ++
->   drivers/phy/cadence/phy-cadence-sierra.c      | 695 +++++++++++---
->   drivers/phy/ti/Kconfig                        |  15 +
->   drivers/phy/ti/Makefile                       |   1 +
->   drivers/phy/ti/phy-j721e-wiz.c                | 904 ++++++++++++++++++
->   6 files changed, 1585 insertions(+), 138 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.txt
->   create mode 100644 drivers/phy/ti/phy-j721e-wiz.c
-> 
 
--- 
-cheers,
--roger
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>>
+>>
+>>>
+>>>>
+>>>>
+>>>>> +}
+>>>>> +
+>>>>> +static int ifcvf_mdev_set_features(struct mdev_device *mdev, u64=20
+>>>>> features)
+>>>>> +{
+>>>>> +=C2=A0=C2=A0=C2=A0 struct ifcvf_adapter *adapter =3D mdev_get_drvdat=
+a(mdev);
+>>>>> +=C2=A0=C2=A0=C2=A0 struct ifcvf_hw *vf =3D IFC_PRIVATE_TO_VF(adapter=
+);
+>>>>> +
+>>>>> +=C2=A0=C2=A0=C2=A0 vf->req_features =3D features;
+>>>>> +
+>>>>> +=C2=A0=C2=A0=C2=A0 return 0;
+>>>>> +}
+>>>>> +
+>>>>> +static u64 ifcvf_mdev_get_vq_state(struct mdev_device *mdev, u16=20
+>>>>> qid)
+>>>>> +{
+>>>>> +=C2=A0=C2=A0=C2=A0 struct ifcvf_adapter *adapter =3D mdev_get_drvdat=
+a(mdev);
+>>>>> +=C2=A0=C2=A0=C2=A0 struct ifcvf_hw *vf =3D IFC_PRIVATE_TO_VF(adapter=
+);
+>>>>> +
+>>>>> +=C2=A0=C2=A0=C2=A0 return vf->vring[qid].last_avail_idx;
+>>>>
+>>>>
+>>>> Does this really work? I'd expect it should be fetched from hw=20
+>>>> since it's an internal state.
+>>> for now, it's working, we intend to support LM in next version drivers.
+>>
+>>
+>> I'm not sure I understand here, I don't see any synchronization=20
+>> between the hardware and last_avail_idx, so last_avail_idx should not=20
+>> change.
+>>
+>> Btw, what did "LM" mean :) ?
+>
+> I can add bar IO operations here, LM =3D live migration, sorry for the=20
+> abbreviation.
+
+
+Just make sure I understand here, I believe you mean reading=20
+last_avail_idx through IO bar here?
+
+Thanks
+
+
