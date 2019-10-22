@@ -2,140 +2,394 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7ACADFBAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 04:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56A64DFBB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 04:39:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730788AbfJVCfh convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 21 Oct 2019 22:35:37 -0400
-Received: from mga02.intel.com ([134.134.136.20]:54583 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727264AbfJVCfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 22:35:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 19:35:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,325,1566889200"; 
-   d="scan'208";a="227536442"
-Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
-  by fmsmga002.fm.intel.com with ESMTP; 21 Oct 2019 19:35:35 -0700
-Received: from orsmsx116.amr.corp.intel.com (10.22.240.14) by
- ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 21 Oct 2019 19:35:34 -0700
-Received: from orsmsx103.amr.corp.intel.com ([169.254.5.9]) by
- ORSMSX116.amr.corp.intel.com ([169.254.7.79]) with mapi id 14.03.0439.000;
- Mon, 21 Oct 2019 19:35:34 -0700
-From:   "Brown, Aaron F" <aaron.f.brown@intel.com>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-CC:     "emamd001@umn.edu" <emamd001@umn.edu>,
-        "smccaman@umn.edu" <smccaman@umn.edu>,
-        "kjlu@umn.edu" <kjlu@umn.edu>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ethernet/intel:  release the local packet buffer
-Thread-Topic: [PATCH] ethernet/intel:  release the local packet buffer
-Thread-Index: AQHVbbQoopumek9cY0G4nbDkuqi67admH4Jg
-Date:   Tue, 22 Oct 2019 02:35:33 +0000
-Message-ID: <309B89C4C689E141A5FF6A0C5FB2118B971541EE@ORSMSX103.amr.corp.intel.com>
-References: <20190918000013.32083-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20190918000013.32083-1-navid.emamdoost@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTM4YzlmZmUtNThjMi00ZWRiLWE1MDctOTI1ZWRhYmQ4Mzc2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWDQ1cE1KVzVLRjl6VDVFZ1VLQ3pweGJ2SEZKK2dhRE9JZ0xxVWZtbCtCSm1FS3VGbHpwQkFubE85ZU5hSVp6UiJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1730863AbfJVCj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 22:39:27 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22200 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727264AbfJVCj1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 22:39:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571711965;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KAl+5MXVpDO/2CNxopFnp97PuYlAbX3fxWiMSRndTeM=;
+        b=Zj1BsA88mK8yc/nBY/bGMNKpODkxvJqEJA4T3Qb4V8D41OeeaWAKzlZ+3Q/4exQTfIFIQg
+        LJVHizcnqhAwIrCd5IOfZtBogx/c2brqxEVy4KzM0O/kkuomaaE6E6gGUeGq1AASbg3Uo0
+        /ecMfy+rbncy79gYV13OHfcCOJZcuig=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-254-cL1rGJqdNKuOp6GTtn-Mcg-1; Mon, 21 Oct 2019 22:39:21 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A69FE1800DC7;
+        Tue, 22 Oct 2019 02:39:18 +0000 (UTC)
+Received: from malachite.redhat.com (ovpn-120-98.rdu2.redhat.com [10.10.120.98])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 298B16012E;
+        Tue, 22 Oct 2019 02:39:13 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
+Cc:     Juston Li <juston.li@intel.com>, Imre Deak <imre.deak@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Sean Paul <sean@poorly.run>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 01/14] drm/dp_mst: Destroy MSTBs asynchronously
+Date:   Mon, 21 Oct 2019 22:35:56 -0400
+Message-Id: <20191022023641.8026-2-lyude@redhat.com>
+In-Reply-To: <20191022023641.8026-1-lyude@redhat.com>
+References: <20191022023641.8026-1-lyude@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: cL1rGJqdNKuOp6GTtn-Mcg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: netdev-owner@vger.kernel.org [mailto:netdev-
-> owner@vger.kernel.org] On Behalf Of Navid Emamdoost
-> Sent: Tuesday, September 17, 2019 5:00 PM
-> Cc: emamd001@umn.edu; smccaman@umn.edu; kjlu@umn.edu; Navid
-> Emamdoost <navid.emamdoost@gmail.com>; Kirsher, Jeffrey T
-> <jeffrey.t.kirsher@intel.com>; David S. Miller <davem@davemloft.net>;
-> intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Subject: [PATCH] ethernet/intel: release the local packet bufferq
-> 
-> In e100_loopback_test the buffer allocated for the local packet needs to
-> be released.
-> 
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-> ---
->  drivers/net/ethernet/intel/e100.c | 1 +
->  1 file changed, 1 insertion(+)
+When reprobing an MST topology during resume, we have to account for the
+fact that while we were suspended it's possible that mstbs may have been
+removed from any ports in the topology. Since iterating downwards in the
+topology requires that we hold &mgr->lock, destroying MSTBs from this
+context would result in attempting to lock &mgr->lock a second time and
+deadlocking.
 
-Sorry for the delay getting to this, took me a bit to get the hardware together.
+So, fix this by first moving destruction of MSTBs into
+destroy_connector_work, then rename destroy_connector_work and friends
+to reflect that they now destroy both ports and mstbs.
 
-NAK, this patch introduces a trace to my test machines when I run the ethtool diagnostic on an e100 port, the system will sometimes survive a bit after the trace, however if I try to run traffic across the interface after the trace the system panics and locks up with a kernel not syncing message.  I do not have a capture of the lock up panic (I can probably get one via serial port or netconsole if really necessary.)  The trace before the lock up panic is as follows:
----------------------------------------------------------------------------
-[  102.460446] BUG: Bad page state in process ethtool  pfn:78db8
-[  102.460474] page:ffffd5bf41e36e00 refcount:-1 mapcount:0 mapping:0000000000000000 index:0x0
-[  102.460505] flags: 0xfffffc0000000()
-[  102.460523] raw: 000fffffc0000000 dead000000000100 dead000000000122 0000000000000000
-[  102.460553] raw: 0000000000000000 0000000000000000 ffffffffffffffff 0000000000000000
-[  102.460582] page dumped because: nonzero _refcount
-[  102.460602] Modules linked in: snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_intel_nhlt snd_hda_codec
- snd_hwdep snd_hda_core snd_seq snd_seq_device snd_pcm mei_wdt snd_timer iTCO_wdt mei_me snd iTCO_vendor_support gpio_ic
-h mei coretemp lpc_ich pcspkr sg soundcore i2c_i801 joydev acpi_cpufreq nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_t
-ables xfs libcrc32c sd_mod sr_mod cdrom i915 video i2c_algo_bit drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_
-fops e1000e ata_generic firewire_ohci pata_marvell ata_piix drm pata_acpi serio_raw e100 firewire_core libata ptp pps_co
-re mii crc_itu_t
-[  102.460800] CPU: 3 PID: 1541 Comm: ethtool Not tainted 5.4.0-rc1_next-queue_dev-queue_regress-00576-g16390e0 #3
-[  102.460836] Hardware name:  /DQ35JO, BIOS JOQ3510J.86A.0954.2008.0922.2331 09/22/2008
-[  102.460865] Call Trace:
-[  102.460883]  dump_stack+0x5a/0x73
-[  102.460900]  bad_page+0xf5/0x10f
-[  102.460916]  get_page_from_freelist+0x103e/0x1290
-[  102.460936]  ? __switch_to_asm+0x40/0x70
-[  102.460955]  ? __build_skb+0x20/0x190
-[  102.460972]  __alloc_pages_nodemask+0x17d/0x320
-[  102.460991]  page_frag_alloc+0x87/0x130
-[  102.461008]  __netdev_alloc_skb+0x10b/0x130
-[  102.461029]  e100_rx_alloc_skb+0x20/0x180 [e100]
-[  102.461050]  e100_rx_alloc_list+0x98/0x160 [e100]
-[  102.461070]  e100_up+0x11/0x120 [e100]
-[  102.461088]  e100_diag_test+0x14e/0x157 [e100]
-[  102.461107]  ? _cond_resched+0x15/0x30
-[  102.461125]  ? dev_ethtool+0x1133/0x2c30
-[  102.461143]  dev_ethtool+0x1159/0x2c30
-[  102.461161]  ? inet_ioctl+0x1a0/0x1d0
-[  102.461178]  ? netdev_run_todo+0x5d/0x2d0
-[  102.461196]  dev_ioctl+0xb3/0x4e0
-[  102.461212]  sock_do_ioctl+0xa0/0x140
-[  102.461228]  ? do_anonymous_page+0x361/0x670
-[  102.461247]  sock_ioctl+0x26e/0x380
-[  102.461264]  do_vfs_ioctl+0xa9/0x630
-[  102.461281]  ? handle_mm_fault+0xe2/0x1f0
-[  102.462101]  ? __do_page_fault+0x247/0x490
-[  102.462911]  ksys_ioctl+0x60/0x90
-[  102.463715]  __x64_sys_ioctl+0x16/0x20
-[  102.464519]  do_syscall_64+0x5b/0x1b0
-[  102.465321]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  102.466134] RIP: 0033:0x7f03e53f32f7
-[  102.466948] Code: 44 00 00 48 8b 05 79 1b 2d 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 49 1b 2d 00 f7 d8 64 89 01 48
-[  102.468728] RSP: 002b:00007ffffc72ebf8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[  102.469657] RAX: ffffffffffffffda RBX: 00007ffffc72ec50 RCX: 00007f03e53f32f7
-[  102.470595] RDX: 00007ffffc72ec60 RSI: 0000000000008946 RDI: 0000000000000003
-[  102.471532] RBP: 0000000000000001 R08: 0000000000000002 R09: 0000000000000038
-[  102.472453] R10: 00007ffffc72e7c0 R11: 0000000000000246 R12: 0000000000000038
-[  102.473359] R13: 0000000001428010 R14: 00000000014280d0 R15: 00007ffffc72edc8
-[  102.474260] Disabling lock debugging due to kernel taint
-[  104.924447] e100 0000:06:00.0 eth0: NIC Link is Up 100 Mbps Full Duplex
----------------------------------------------------------------------------
+Note that even though this means that MSTBs will still be accessible for
+a short period of time between their removal from the topology and
+delayed destruction, we are still protected against referencing a MSTB
+with a refcount of 0 since we use kref_get_unless_zero() in most places.
 
+Changes since v1:
+* s/destroy_connector_list/destroy_port_list/
+  s/connector_destroy_lock/delayed_destroy_lock/
+  s/connector_destroy_work/delayed_destroy_work/
+  s/drm_dp_finish_destroy_branch_device/drm_dp_delayed_destroy_mstb/
+  s/drm_dp_finish_destroy_port/drm_dp_delayed_destroy_port/
+  - danvet
+* Use two loops in drm_dp_delayed_destroy_work() - danvet
+* Better explain why we need to do this - danvet
+* Use cancel_work_sync() instead of flush_work() - flush_work() doesn't
+  account for work requeing
+
+Cc: Juston Li <juston.li@intel.com>
+Cc: Imre Deak <imre.deak@intel.com>
+Cc: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+Cc: Harry Wentland <hwentlan@amd.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Sean Paul <sean@poorly.run>
+---
+ drivers/gpu/drm/drm_dp_mst_topology.c | 164 +++++++++++++++++---------
+ include/drm/drm_dp_mst_helper.h       |  26 ++--
+ 2 files changed, 128 insertions(+), 62 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp=
+_mst_topology.c
+index 9cccc5e63309..66ff226d8c86 100644
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -1398,34 +1398,17 @@ static void drm_dp_destroy_mst_branch_device(struct=
+ kref *kref)
+ =09struct drm_dp_mst_branch *mstb =3D
+ =09=09container_of(kref, struct drm_dp_mst_branch, topology_kref);
+ =09struct drm_dp_mst_topology_mgr *mgr =3D mstb->mgr;
+-=09struct drm_dp_mst_port *port, *tmp;
+-=09bool wake_tx =3D false;
+=20
+-=09mutex_lock(&mgr->lock);
+-=09list_for_each_entry_safe(port, tmp, &mstb->ports, next) {
+-=09=09list_del(&port->next);
+-=09=09drm_dp_mst_topology_put_port(port);
+-=09}
+-=09mutex_unlock(&mgr->lock);
+-
+-=09/* drop any tx slots msg */
+-=09mutex_lock(&mstb->mgr->qlock);
+-=09if (mstb->tx_slots[0]) {
+-=09=09mstb->tx_slots[0]->state =3D DRM_DP_SIDEBAND_TX_TIMEOUT;
+-=09=09mstb->tx_slots[0] =3D NULL;
+-=09=09wake_tx =3D true;
+-=09}
+-=09if (mstb->tx_slots[1]) {
+-=09=09mstb->tx_slots[1]->state =3D DRM_DP_SIDEBAND_TX_TIMEOUT;
+-=09=09mstb->tx_slots[1] =3D NULL;
+-=09=09wake_tx =3D true;
+-=09}
+-=09mutex_unlock(&mstb->mgr->qlock);
++=09INIT_LIST_HEAD(&mstb->destroy_next);
+=20
+-=09if (wake_tx)
+-=09=09wake_up_all(&mstb->mgr->tx_waitq);
+-
+-=09drm_dp_mst_put_mstb_malloc(mstb);
++=09/*
++=09 * This can get called under mgr->mutex, so we need to perform the
++=09 * actual destruction of the mstb in another worker
++=09 */
++=09mutex_lock(&mgr->delayed_destroy_lock);
++=09list_add(&mstb->destroy_next, &mgr->destroy_branch_device_list);
++=09mutex_unlock(&mgr->delayed_destroy_lock);
++=09schedule_work(&mgr->delayed_destroy_work);
+ }
+=20
+ /**
+@@ -1540,10 +1523,10 @@ static void drm_dp_destroy_port(struct kref *kref)
+ =09=09=09 * we might be holding the mode_config.mutex
+ =09=09=09 * from an EDID retrieval */
+=20
+-=09=09=09mutex_lock(&mgr->destroy_connector_lock);
+-=09=09=09list_add(&port->next, &mgr->destroy_connector_list);
+-=09=09=09mutex_unlock(&mgr->destroy_connector_lock);
+-=09=09=09schedule_work(&mgr->destroy_connector_work);
++=09=09=09mutex_lock(&mgr->delayed_destroy_lock);
++=09=09=09list_add(&port->next, &mgr->destroy_port_list);
++=09=09=09mutex_unlock(&mgr->delayed_destroy_lock);
++=09=09=09schedule_work(&mgr->delayed_destroy_work);
+ =09=09=09return;
+ =09=09}
+ =09=09/* no need to clean up vcpi
+@@ -3085,7 +3068,7 @@ void drm_dp_mst_topology_mgr_suspend(struct drm_dp_ms=
+t_topology_mgr *mgr)
+ =09=09=09   DP_MST_EN | DP_UPSTREAM_IS_SRC);
+ =09mutex_unlock(&mgr->lock);
+ =09flush_work(&mgr->work);
+-=09flush_work(&mgr->destroy_connector_work);
++=09flush_work(&mgr->delayed_destroy_work);
+ }
+ EXPORT_SYMBOL(drm_dp_mst_topology_mgr_suspend);
+=20
+@@ -3995,34 +3978,104 @@ static void drm_dp_tx_work(struct work_struct *wor=
+k)
+ =09mutex_unlock(&mgr->qlock);
+ }
+=20
+-static void drm_dp_destroy_connector_work(struct work_struct *work)
++static inline void
++drm_dp_delayed_destroy_port(struct drm_dp_mst_port *port)
+ {
+-=09struct drm_dp_mst_topology_mgr *mgr =3D container_of(work, struct drm_d=
+p_mst_topology_mgr, destroy_connector_work);
+-=09struct drm_dp_mst_port *port;
+-=09bool send_hotplug =3D false;
++=09port->mgr->cbs->destroy_connector(port->mgr, port->connector);
++
++=09drm_dp_port_teardown_pdt(port, port->pdt);
++=09port->pdt =3D DP_PEER_DEVICE_NONE;
++
++=09drm_dp_mst_put_port_malloc(port);
++}
++
++static inline void
++drm_dp_delayed_destroy_mstb(struct drm_dp_mst_branch *mstb)
++{
++=09struct drm_dp_mst_topology_mgr *mgr =3D mstb->mgr;
++=09struct drm_dp_mst_port *port, *tmp;
++=09bool wake_tx =3D false;
++
++=09mutex_lock(&mgr->lock);
++=09list_for_each_entry_safe(port, tmp, &mstb->ports, next) {
++=09=09list_del(&port->next);
++=09=09drm_dp_mst_topology_put_port(port);
++=09}
++=09mutex_unlock(&mgr->lock);
++
++=09/* drop any tx slots msg */
++=09mutex_lock(&mstb->mgr->qlock);
++=09if (mstb->tx_slots[0]) {
++=09=09mstb->tx_slots[0]->state =3D DRM_DP_SIDEBAND_TX_TIMEOUT;
++=09=09mstb->tx_slots[0] =3D NULL;
++=09=09wake_tx =3D true;
++=09}
++=09if (mstb->tx_slots[1]) {
++=09=09mstb->tx_slots[1]->state =3D DRM_DP_SIDEBAND_TX_TIMEOUT;
++=09=09mstb->tx_slots[1] =3D NULL;
++=09=09wake_tx =3D true;
++=09}
++=09mutex_unlock(&mstb->mgr->qlock);
++
++=09if (wake_tx)
++=09=09wake_up_all(&mstb->mgr->tx_waitq);
++
++=09drm_dp_mst_put_mstb_malloc(mstb);
++}
++
++static void drm_dp_delayed_destroy_work(struct work_struct *work)
++{
++=09struct drm_dp_mst_topology_mgr *mgr =3D
++=09=09container_of(work, struct drm_dp_mst_topology_mgr,
++=09=09=09     delayed_destroy_work);
++=09bool send_hotplug =3D false, go_again;
++
+ =09/*
+ =09 * Not a regular list traverse as we have to drop the destroy
+-=09 * connector lock before destroying the connector, to avoid AB->BA
++=09 * connector lock before destroying the mstb/port, to avoid AB->BA
+ =09 * ordering between this lock and the config mutex.
+ =09 */
+-=09for (;;) {
+-=09=09mutex_lock(&mgr->destroy_connector_lock);
+-=09=09port =3D list_first_entry_or_null(&mgr->destroy_connector_list, stru=
+ct drm_dp_mst_port, next);
+-=09=09if (!port) {
+-=09=09=09mutex_unlock(&mgr->destroy_connector_lock);
+-=09=09=09break;
++=09do {
++=09=09go_again =3D false;
++
++=09=09for (;;) {
++=09=09=09struct drm_dp_mst_branch *mstb;
++
++=09=09=09mutex_lock(&mgr->delayed_destroy_lock);
++=09=09=09mstb =3D list_first_entry_or_null(&mgr->destroy_branch_device_lis=
+t,
++=09=09=09=09=09=09=09struct drm_dp_mst_branch,
++=09=09=09=09=09=09=09destroy_next);
++=09=09=09if (mstb)
++=09=09=09=09list_del(&mstb->destroy_next);
++=09=09=09mutex_unlock(&mgr->delayed_destroy_lock);
++
++=09=09=09if (!mstb)
++=09=09=09=09break;
++
++=09=09=09drm_dp_delayed_destroy_mstb(mstb);
++=09=09=09go_again =3D true;
+ =09=09}
+-=09=09list_del(&port->next);
+-=09=09mutex_unlock(&mgr->destroy_connector_lock);
+=20
+-=09=09mgr->cbs->destroy_connector(mgr, port->connector);
++=09=09for (;;) {
++=09=09=09struct drm_dp_mst_port *port;
+=20
+-=09=09drm_dp_port_teardown_pdt(port, port->pdt);
+-=09=09port->pdt =3D DP_PEER_DEVICE_NONE;
++=09=09=09mutex_lock(&mgr->delayed_destroy_lock);
++=09=09=09port =3D list_first_entry_or_null(&mgr->destroy_port_list,
++=09=09=09=09=09=09=09struct drm_dp_mst_port,
++=09=09=09=09=09=09=09next);
++=09=09=09if (port)
++=09=09=09=09list_del(&port->next);
++=09=09=09mutex_unlock(&mgr->delayed_destroy_lock);
++
++=09=09=09if (!port)
++=09=09=09=09break;
++
++=09=09=09drm_dp_delayed_destroy_port(port);
++=09=09=09send_hotplug =3D true;
++=09=09=09go_again =3D true;
++=09=09}
++=09} while (go_again);
+=20
+-=09=09drm_dp_mst_put_port_malloc(port);
+-=09=09send_hotplug =3D true;
+-=09}
+ =09if (send_hotplug)
+ =09=09drm_kms_helper_hotplug_event(mgr->dev);
+ }
+@@ -4209,12 +4262,13 @@ int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_=
+topology_mgr *mgr,
+ =09mutex_init(&mgr->lock);
+ =09mutex_init(&mgr->qlock);
+ =09mutex_init(&mgr->payload_lock);
+-=09mutex_init(&mgr->destroy_connector_lock);
++=09mutex_init(&mgr->delayed_destroy_lock);
+ =09INIT_LIST_HEAD(&mgr->tx_msg_downq);
+-=09INIT_LIST_HEAD(&mgr->destroy_connector_list);
++=09INIT_LIST_HEAD(&mgr->destroy_port_list);
++=09INIT_LIST_HEAD(&mgr->destroy_branch_device_list);
+ =09INIT_WORK(&mgr->work, drm_dp_mst_link_probe_work);
+ =09INIT_WORK(&mgr->tx_work, drm_dp_tx_work);
+-=09INIT_WORK(&mgr->destroy_connector_work, drm_dp_destroy_connector_work);
++=09INIT_WORK(&mgr->delayed_destroy_work, drm_dp_delayed_destroy_work);
+ =09init_waitqueue_head(&mgr->tx_waitq);
+ =09mgr->dev =3D dev;
+ =09mgr->aux =3D aux;
+@@ -4255,7 +4309,7 @@ void drm_dp_mst_topology_mgr_destroy(struct drm_dp_ms=
+t_topology_mgr *mgr)
+ {
+ =09drm_dp_mst_topology_mgr_set_mst(mgr, false);
+ =09flush_work(&mgr->work);
+-=09flush_work(&mgr->destroy_connector_work);
++=09cancel_work_sync(&mgr->delayed_destroy_work);
+ =09mutex_lock(&mgr->payload_lock);
+ =09kfree(mgr->payloads);
+ =09mgr->payloads =3D NULL;
+@@ -4267,7 +4321,7 @@ void drm_dp_mst_topology_mgr_destroy(struct drm_dp_ms=
+t_topology_mgr *mgr)
+ =09drm_atomic_private_obj_fini(&mgr->base);
+ =09mgr->funcs =3D NULL;
+=20
+-=09mutex_destroy(&mgr->destroy_connector_lock);
++=09mutex_destroy(&mgr->delayed_destroy_lock);
+ =09mutex_destroy(&mgr->payload_lock);
+ =09mutex_destroy(&mgr->qlock);
+ =09mutex_destroy(&mgr->lock);
+diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helpe=
+r.h
+index 4a25e0577ae0..b2160c366fb7 100644
+--- a/include/drm/drm_dp_mst_helper.h
++++ b/include/drm/drm_dp_mst_helper.h
+@@ -143,6 +143,12 @@ struct drm_dp_mst_branch {
+ =09 */
+ =09struct kref malloc_kref;
+=20
++=09/**
++=09 * @destroy_next: linked-list entry used by
++=09 * drm_dp_delayed_destroy_work()
++=09 */
++=09struct list_head destroy_next;
++
+ =09u8 rad[8];
+ =09u8 lct;
+ =09int num_ports;
+@@ -571,18 +577,24 @@ struct drm_dp_mst_topology_mgr {
+ =09struct work_struct tx_work;
+=20
+ =09/**
+-=09 * @destroy_connector_list: List of to be destroyed connectors.
++=09 * @destroy_port_list: List of to be destroyed connectors.
++=09 */
++=09struct list_head destroy_port_list;
++=09/**
++=09 * @destroy_branch_device_list: List of to be destroyed branch
++=09 * devices.
+ =09 */
+-=09struct list_head destroy_connector_list;
++=09struct list_head destroy_branch_device_list;
+ =09/**
+-=09 * @destroy_connector_lock: Protects @connector_list.
++=09 * @delayed_destroy_lock: Protects @destroy_port_list and
++=09 * @destroy_branch_device_list.
+ =09 */
+-=09struct mutex destroy_connector_lock;
++=09struct mutex delayed_destroy_lock;
+ =09/**
+-=09 * @destroy_connector_work: Work item to destroy connectors. Needed to
+-=09 * avoid locking inversion.
++=09 * @delayed_destroy_work: Work item to destroy MST port and branch
++=09 * devices, needed to avoid locking inversion.
+ =09 */
+-=09struct work_struct destroy_connector_work;
++=09struct work_struct delayed_destroy_work;
+ };
+=20
+ int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
+--=20
+2.21.0
 
