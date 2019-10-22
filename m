@@ -2,121 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 069F8E0026
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 328D6E002D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:59:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731365AbfJVI6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:58:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33264 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726978AbfJVI6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:58:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DFD59B7F5;
-        Tue, 22 Oct 2019 08:58:52 +0000 (UTC)
-Date:   Tue, 22 Oct 2019 10:58:51 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>
-Subject: Re: [PATCH v1 1/2] mm/page_alloc.c: Don't set pages PageReserved()
- when offlining
-Message-ID: <20191022085851.GF9379@dhcp22.suse.cz>
-References: <20191021141927.10252-1-david@redhat.com>
- <20191021141927.10252-2-david@redhat.com>
- <20191021144345.GT9379@dhcp22.suse.cz>
- <b6a392c9-1cb8-321e-b7ba-d483d928a3cc@redhat.com>
- <20191021154712.GW9379@dhcp22.suse.cz>
- <91ecb9b7-4271-a3a7-2342-b0afd4c41606@redhat.com>
- <20191022082053.GB9379@dhcp22.suse.cz>
- <c9517b78-c38f-4e1b-f8cb-8df67bf106ec@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c9517b78-c38f-4e1b-f8cb-8df67bf106ec@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731392AbfJVI7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 04:59:54 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:38884 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728832AbfJVI7y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 04:59:54 -0400
+Received: by mail-pg1-f201.google.com with SMTP id b24so12136396pgi.5
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 01:59:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=LZl6zNSvagqcd/4AyoUyx0eWouXvQtN7q4jWsmfi4io=;
+        b=tfuy+tQwGzR8wBSj4bqW+++GTJLvz/JNlH7jUKHLm9iuvXEQfhb5ZNR9xHYc2Fezxa
+         4JaEb5XDWhwEoZ4mxDhEpCWBwDg5Pts4SEkzpjZjI7XS1V1c/AhFAqoXPtUzk+0aa6Rk
+         emCFtwda12zRaQHYEakvagoMbVU+Q0scW3GD6EJ8l6UOPl7t18ykbui3kBQZ3kSZShQ2
+         ubjOmWTl30P4t5QBJ26DQzGRmoV9c9+9CY0j0iYxxaJBhcvtwsJNdoNsTbAkpK4mThGx
+         7fA6ofgnYZwOsTSE63oMpJ3Hh3kYdWb4hASmlnUnKbPBWAWjY5/Xd1Yq5/KZJN55BADZ
+         02IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=LZl6zNSvagqcd/4AyoUyx0eWouXvQtN7q4jWsmfi4io=;
+        b=VfKVS1MKZuvQJ0iiZpWo4aoAIfHxhbybfbe9PWWUmx4Vpc/M4tSzKL6YbVPsPOxyGD
+         VQieOFtAywTnznOmCIZ0bkDz1Ncs3fEvnI2i9MBabwI+ewwEAmH8sj8HszIhecbPyM00
+         dJiyQlFkyCkxuQZdl4KKecUX66KEZuUHDiJxZLBF61fHslEgPaVMnD66Dbs2lgxPgPoz
+         /zbuOKFDtHAoGiS/P7pYQjW46AoC4Q+3ZRM4cTm5d6p2YgV9sxGqmE0bSuX0kvcIRz/z
+         1/o66sMEO7dDWP4SBddodmkCOu8sPD/4MG+BC4GT1cQ06Yk+WZtigclc+Z41rz/oOd7J
+         3WQw==
+X-Gm-Message-State: APjAAAVnNPVNZNTw7mxxFDvgAwJBeuZ/D7HaP0w34wsC2+sxL+HnY7v1
+        fRi9EPd0thYwyyANOdLNTumEjCn/xA9W
+X-Google-Smtp-Source: APXvYqzQ/rX6WZj13Gy2AaMaTZY65r5k/J8i4M18FF8gz4I4aUGooW8mDpkAcV8SY3HIrxQHuXL9DYahdITE
+X-Received: by 2002:a65:609a:: with SMTP id t26mr643896pgu.349.1571734791388;
+ Tue, 22 Oct 2019 01:59:51 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 16:59:24 +0800
+Message-Id: <20191022085924.92783-1-pumahsu@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
+Subject: [PATCH V2] usb: typec: Add sysfs node to show connector orientation
+From:   Puma Hsu <pumahsu@google.com>
+To:     heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
+Cc:     badhri@google.com, kyletso@google.com, albertccwang@google.com,
+        rickyniu@google.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Puma Hsu <pumahsu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 22-10-19 10:23:37, David Hildenbrand wrote:
-> On 22.10.19 10:20, Michal Hocko wrote:
-> > On Mon 21-10-19 17:54:35, David Hildenbrand wrote:
-> > > On 21.10.19 17:47, Michal Hocko wrote:
-> > > > On Mon 21-10-19 17:39:36, David Hildenbrand wrote:
-> > > > > On 21.10.19 16:43, Michal Hocko wrote:
-> > > > [...]
-> > > > > > We still set PageReserved before onlining pages and that one should be
-> > > > > > good to go as well (memmap_init_zone).
-> > > > > > Thanks!
-> > > > > 
-> > > > > memmap_init_zone() is called when onlining memory. There, set all pages to
-> > > > > reserved right now (on context == MEMMAP_HOTPLUG). We clear PG_reserved when
-> > > > > onlining a page to the buddy (e.g., generic_online_page). If we would online
-> > > > > a memory block with holes, we would want to keep all such pages
-> > > > > (!pfn_valid()) set to reserved. Also, there might be other side effects.
-> > > > 
-> > > > Isn't it sufficient to have those pages in a poisoned state? They are
-> > > > not onlined so their state is basically undefined anyway. I do not see
-> > > > how PageReserved makes this any better.
-> > > 
-> > > It is what people have been using for a long time. Memory hole ->
-> > > PG_reserved. The memmap is valid, but people want to tell "this here is
-> > > crap, don't look at it".
-> > 
-> > The page is poisoned, right? If yes then setting the reserved bit
-> > doesn't make any sense.
-> 
-> No it's not poisoned AFAIK. It should be initialized
+Export the Type-C connector orientation so that user space
+can get this information.
 
-Dohh, it seems I still keep confusing myself. You are right the page is
-initialized at this stage. A potential hole in RAM or ZONE_DEVICE memory
-will just not hit the page allocator. Sorry about the noise.
+Signed-off-by: Puma Hsu <pumahsu@google.com>
+---
+ Documentation/ABI/testing/sysfs-class-typec | 11 +++++++++++
+ drivers/usb/typec/class.c                   | 18 ++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
-> - and I remember that PG_reserved on memory holes is relevant to
-> detect MMIO pages. (e.g., looking at KVM code ...)
-
-I can see kvm_is_reserved_pfn() which checks both pfn_valid and
-PageReserved. How does this help to detect memory holes though?
-Any driver might be setting the page reserved.
+diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
+index d7647b258c3c..b22f71801671 100644
+--- a/Documentation/ABI/testing/sysfs-class-typec
++++ b/Documentation/ABI/testing/sysfs-class-typec
+@@ -108,6 +108,17 @@ Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+ Description:
+ 		Revision number of the supported USB Type-C specification.
  
-> > > > Also is the hole inside a hotplugable memory something we really have to
-> > > > care about. Has anybody actually seen a platform to require that?
-> > > 
-> > > That's what I was asking. I can see "support" for this was added basically
-> > > right from the beginning. I'd say we rip that out and cleanup/simplify. I am
-> > > not aware of a platform that requires this. Especially, memory holes on
-> > > DIMMs (detected during boot) seem like an unlikely thing.
-> > 
-> > The thing is that the hotplug development shows ad-hoc decisions
-> > throughout the code. It is even worse that it is hard to guess whether
-> > some hludges are a result of a careful design or ad-hoc trial and
-> > failure approach on setups that never were production. Building on top
-> > of that be preserving hacks is not going to improve the situation. So I
-> > am perfectly fine to focus on making the most straightforward setups
-> > work reliably. Even when there is a risk of breaking some odd setups. We
-> > can fix them up later but we would have at least a specific example and
-> > document it.
-> > 
-> 
-> Alright, I'll prepare a simple patch that rejects offlining memory with
-
-Is offlining an interesting path? I would expect onlining to be much
-more interesting one.
-
-> memory holes. We can apply that and see if anybody screams out loud. If not,
-> we can clean up that crap.
++What:		/sys/class/typec/<port>/connector_orientation
++Date:		October 2019
++Contact:	Puma Hsu <pumahsu@google.com>
++Description:
++		Indicates which typec connector orientation is configured now.
++		cc1 is defined as "normal" and cc2 is defined as "reversed".
++
++		Valid value:
++		- unknown (nothing configured)
++		- normal (configured in cc1 side)
++		- reversed (configured in cc2 side)
+ 
+ USB Type-C partner devices (eg. /sys/class/typec/port0-partner/)
+ 
+diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+index 94a3eda62add..911d06676aeb 100644
+--- a/drivers/usb/typec/class.c
++++ b/drivers/usb/typec/class.c
+@@ -1245,6 +1245,23 @@ static ssize_t usb_power_delivery_revision_show(struct device *dev,
+ }
+ static DEVICE_ATTR_RO(usb_power_delivery_revision);
+ 
++static const char * const typec_connector_orientation[] = {
++	[TYPEC_ORIENTATION_NONE]		= "unknown",
++	[TYPEC_ORIENTATION_NORMAL]		= "normal",
++	[TYPEC_ORIENTATION_REVERSE]		= "reversed",
++};
++
++static ssize_t connector_orientation_show(struct device *dev,
++						struct device_attribute *attr,
++						char *buf)
++{
++	struct typec_port *p = to_typec_port(dev);
++
++	return sprintf(buf, "%s\n",
++		       typec_connector_orientation[p->orientation]);
++}
++static DEVICE_ATTR_RO(connector_orientation);
++
+ static struct attribute *typec_attrs[] = {
+ 	&dev_attr_data_role.attr,
+ 	&dev_attr_power_operation_mode.attr,
+@@ -1255,6 +1272,7 @@ static struct attribute *typec_attrs[] = {
+ 	&dev_attr_usb_typec_revision.attr,
+ 	&dev_attr_vconn_source.attr,
+ 	&dev_attr_port_type.attr,
++	&dev_attr_connector_orientation.attr,
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(typec);
 -- 
-Michal Hocko
-SUSE Labs
+2.23.0.866.gb869b98d4c-goog
+
