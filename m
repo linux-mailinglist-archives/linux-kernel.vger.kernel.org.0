@@ -2,122 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B7BEE085E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAEA0E0867
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:13:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389240AbfJVQLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 12:11:40 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36930 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbfJVQLj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:11:39 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 53so3067961otv.4;
-        Tue, 22 Oct 2019 09:11:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qlFpjPqwrKm9MJZBKWrL3lYlnTOZRR36fjtod+pxjlg=;
-        b=O+SlIIEXrfPtzBr2MXZifvBbDYjiea20aWCfdAVXjEhNDCF3IJw27ilT/w942x02fm
-         z7KhWKEv5RNnjN5lHxNeLByEU47w8cZEk7mdf5khyegd3yQ3b/4YwqCTVo26dgZlUZd3
-         urcytFmbjr5irvMT4bIrw3TWReGMyi/jNRBIN7vyU+xBv5iyekDTPwQ4/lBC35GRDIrZ
-         94u+wl3Le8st4+O4UZSnD26pwO1M/MKfSqSrEdHA/KiGDHRkaRWN5S/lp6PnfzRBMTA9
-         OWgRPJE2bdSXwpS5srG2TdtVCwnjhPxoXSsliyk8skDJcXMHX6HO2hdgYbji3TJilWn3
-         DkuA==
-X-Gm-Message-State: APjAAAU/VJB7D8jsirZIktpUQXdZBYB34tHxCTSYGWI6H03xPJLNBeBs
-        3yBnL7OEIzp0wf13M7OT2oi1vXnxCmtc/cv0iTM=
-X-Google-Smtp-Source: APXvYqx3r0pg5wNHcKf52wGFqqCCeQDWDahFYAHD22kHuprsjU3b/z6v6JTbTtf3YhD6d7CiotdExo3lW5b2H2fZNvc=
-X-Received: by 2002:a9d:459b:: with SMTP id x27mr3235413ote.167.1571760698020;
- Tue, 22 Oct 2019 09:11:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191021132818.23787-1-sudeep.holla@arm.com> <20191022022508.g3ar735237haybxe@vireshk-i7>
- <CAJZ5v0gEbiyjpT4+RG5ytDHOgcyCHFqOgD59bK6h=Fhbqvv7Tw@mail.gmail.com> <20191022100736.sguepyp2t56peqfr@vireshk-i7>
-In-Reply-To: <20191022100736.sguepyp2t56peqfr@vireshk-i7>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 22 Oct 2019 18:11:26 +0200
-Message-ID: <CAJZ5v0g0e7NAb74h565sxnfzeYdDJOzcEiS9NyuNEvtdpL3hUA@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: Move cancelling of policy update work just after
- removing notifiers
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
+        id S2389271AbfJVQNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 12:13:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59766 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732118AbfJVQNW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 12:13:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BA110B383;
+        Tue, 22 Oct 2019 16:13:20 +0000 (UTC)
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] MIPS: SGI-IP27: collect externs in new header file
+Date:   Tue, 22 Oct 2019 18:13:11 +0200
+Message-Id: <20191022161315.4194-1-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 12:07 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 22-10-19, 11:46, Rafael J. Wysocki wrote:
-> > On Tue, Oct 22, 2019 at 4:25 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > >
-> > > On 21-10-19, 14:28, Sudeep Holla wrote:
-> > > > Commit 099967699ad9 ("cpufreq: Cancel policy update work scheduled before freeing")
-> > > > added cancel_work_sync(policy->update) after the frequency QoS were
-> > > > removed. We can cancel the work just after taking the last CPU in the
-> > > > policy offline and unregistering the notifiers as policy->update cannot
-> > > > be scheduled from anywhere at this point.
-> > > >
-> > > > However, due to other bugs, doing so still triggered the race between
-> > > > freeing of policy and scheduled policy update work. Now that all those
-> > > > issues are resolved, we can move this cancelling of any scheduled policy
-> > > > update work just after removing min/max notifiers.
-> > > >
-> > > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > > ---
-> > > >  drivers/cpufreq/cpufreq.c | 5 +++--
-> > > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > > >
-> > > > Hi Rafael,
-> > > >
-> > > > Based on Viresh's suggestion, I am posting a patch to move this
-> > > > cancel_work_sync earlier though it's not a must have change.
-> > >
-> > > For me it is :)
-> > >
-> > > > I will leave it up to your preference.
-> > > >
-> > > > Regards,
-> > > > Sudeep
-> > > >
-> > > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > > > index 829a3764df1b..48a224a6b178 100644
-> > > > --- a/drivers/cpufreq/cpufreq.c
-> > > > +++ b/drivers/cpufreq/cpufreq.c
-> > > > @@ -1268,6 +1268,9 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
-> > > >       freq_qos_remove_notifier(&policy->constraints, FREQ_QOS_MIN,
-> > > >                                &policy->nb_min);
-> > > >
-> > > > +     /* Cancel any pending policy->update work before freeing the policy. */
-> > > > +     cancel_work_sync(&policy->update);
-> > > > +
-> > > >       if (policy->max_freq_req) {
-> > > >               /*
-> > > >                * CPUFREQ_CREATE_POLICY notification is sent only after
-> > > > @@ -1279,8 +1282,6 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
-> > > >       }
-> > > >
-> > > >       freq_qos_remove_request(policy->min_freq_req);
-> > > > -     /* Cancel any pending policy->update work before freeing the policy. */
-> > > > -     cancel_work_sync(&policy->update);
-> > > >       kfree(policy->min_freq_req);
-> > > >
-> > > >       cpufreq_policy_put_kobj(policy);
-> > >
-> > > Thanks for doing this.
-> > >
-> > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> >
-> > Folded into the previous patch and applied.
-> >
-> > Please double check the result in the current linux-next branch in my tree.
->
-> I would have kept the blank line after cancel_work_sync() which isn't
-> there anymore.
+IP27 code has a few externs distributed over .c files. Collect them
+together into one commcon header file.
 
-OK, it looks better with the extra blank line, so updated.  Thanks!
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+---
+ arch/mips/sgi-ip27/ip27-common.h | 9 +++++++++
+ arch/mips/sgi-ip27/ip27-init.c   | 4 ++--
+ arch/mips/sgi-ip27/ip27-reset.c  | 2 ++
+ arch/mips/sgi-ip27/ip27-smp.c    | 4 ++--
+ arch/mips/sgi-ip27/ip27-timer.c  | 2 ++
+ 5 files changed, 17 insertions(+), 4 deletions(-)
+ create mode 100644 arch/mips/sgi-ip27/ip27-common.h
+
+diff --git a/arch/mips/sgi-ip27/ip27-common.h b/arch/mips/sgi-ip27/ip27-common.h
+new file mode 100644
+index 000000000000..e9e9f1dc8c20
+--- /dev/null
++++ b/arch/mips/sgi-ip27/ip27-common.h
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++
++#ifndef __IP27_COMMON_H
++#define __IP27_COMMON_H
++
++extern void ip27_reboot_setup(void);
++extern void hub_rt_clock_event_init(void);
++
++#endif /* __IP27_COMMON_H */
+diff --git a/arch/mips/sgi-ip27/ip27-init.c b/arch/mips/sgi-ip27/ip27-init.c
+index 1dad799758c4..f48e2b3990f6 100644
+--- a/arch/mips/sgi-ip27/ip27-init.c
++++ b/arch/mips/sgi-ip27/ip27-init.c
+@@ -36,6 +36,8 @@
+ #include <asm/sn/sn0/ip27.h>
+ #include <asm/sn/mapped_kernel.h>
+ 
++#include "ip27-common.h"
++
+ #define CPU_NONE		(cpuid_t)-1
+ 
+ static DECLARE_BITMAP(hub_init_mask, MAX_COMPACT_NODES);
+@@ -113,8 +115,6 @@ get_nasid(void)
+ 			 >> NSRI_NODEID_SHFT);
+ }
+ 
+-extern void ip27_reboot_setup(void);
+-
+ void __init plat_mem_setup(void)
+ {
+ 	u64 p, e, n_mode;
+diff --git a/arch/mips/sgi-ip27/ip27-reset.c b/arch/mips/sgi-ip27/ip27-reset.c
+index c90228d0d4c2..74d078247e49 100644
+--- a/arch/mips/sgi-ip27/ip27-reset.c
++++ b/arch/mips/sgi-ip27/ip27-reset.c
+@@ -26,6 +26,8 @@
+ #include <asm/sn/gda.h>
+ #include <asm/sn/sn0/hub.h>
+ 
++#include "ip27-common.h"
++
+ void machine_restart(char *command) __noreturn;
+ void machine_halt(void) __noreturn;
+ void machine_power_off(void) __noreturn;
+diff --git a/arch/mips/sgi-ip27/ip27-smp.c b/arch/mips/sgi-ip27/ip27-smp.c
+index 386702abe660..c38df7c62964 100644
+--- a/arch/mips/sgi-ip27/ip27-smp.c
++++ b/arch/mips/sgi-ip27/ip27-smp.c
+@@ -27,6 +27,8 @@
+ #include <asm/sn/sn0/hubio.h>
+ #include <asm/sn/sn0/ip27.h>
+ 
++#include "ip27-common.h"
++
+ /*
+  * Takes as first input the PROM assigned cpu id, and the kernel
+  * assigned cpu id as the second.
+@@ -147,8 +149,6 @@ static void ip27_init_cpu(void)
+ 
+ static void ip27_smp_finish(void)
+ {
+-	extern void hub_rt_clock_event_init(void);
+-
+ 	hub_rt_clock_event_init();
+ 	local_irq_enable();
+ }
+diff --git a/arch/mips/sgi-ip27/ip27-timer.c b/arch/mips/sgi-ip27/ip27-timer.c
+index 9ca775465a91..d53a29070e12 100644
+--- a/arch/mips/sgi-ip27/ip27-timer.c
++++ b/arch/mips/sgi-ip27/ip27-timer.c
+@@ -38,6 +38,8 @@
+ #include <asm/sn/sn0/hubio.h>
+ #include <asm/pci/bridge.h>
+ 
++#include "ip27-common.h"
++
+ static int rt_next_event(unsigned long delta, struct clock_event_device *evt)
+ {
+ 	unsigned int cpu = smp_processor_id();
+-- 
+2.16.4
+
