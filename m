@@ -2,92 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94FCBE0841
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:06:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59D89E0844
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:07:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732600AbfJVQGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 12:06:49 -0400
-Received: from muru.com ([72.249.23.125]:38978 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727309AbfJVQGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:06:48 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 4304680FA;
-        Tue, 22 Oct 2019 16:07:21 +0000 (UTC)
-Date:   Tue, 22 Oct 2019 09:06:43 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Adam Ford <adam.ford@logicpd.com>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Walmsley <paul@pwsan.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC] ARM: omap3: Enable HWMODS for HW Random Number Generator
-Message-ID: <20191022160643.GR5610@atomide.com>
-References: <20190828150037.2640-1-aford173@gmail.com>
- <20190905230443.GA52127@atomide.com>
- <CAHCN7xL0fbr=Sv+b=0AuGB1PPhAAFdAFLEd_iBM+ZMTkUw5sHQ@mail.gmail.com>
- <CAHCN7xL-Gfxe0qF5w7BUsHnyhcNNpmCnchdKErnmiqggXfsLWw@mail.gmail.com>
- <20190909134033.s26eiurpat3iekse@pali>
- <20190909163543.GQ52127@atomide.com>
- <CAHCN7xJjMNOLT5oPn8CArApM5b2ksPon8eALq=gUi0ZqoLjGHQ@mail.gmail.com>
+        id S1732610AbfJVQHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 12:07:19 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:41211 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730547AbfJVQHS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 12:07:18 -0400
+Received: by mail-il1-f193.google.com with SMTP id z10so15946642ilo.8
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 09:07:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
+        b=OdA8y2OrMnKdQ2AG642Z/2HAekLQQncyfHIgyEUyEkRC4swmdMoEJYvbnrDNAwqI+M
+         LMYafxjYtsR5BXG7qa7gpv5m+LPr87Ca++LL98ESh2DvsO7gt5DbhO4dOa0l91V0S5z+
+         6Sd3N+pVe1p7vJJR4is1RY4RnfaK4/7jRQMVGMcMdd7gNobEAV97z8wSwI3fCdxGg/7T
+         rmkDrovf2gfimpxqUE3SETp3QWIFUmg04ad396vQJ4IwHxGx42j7AnQnW1OtziEWya4G
+         vuVu3rwI5x+nIS6vQGOcOlmWMNEfJrHEQo8gFIVlJikhahyFZa+bF2FcHpQ4r/nEv0tn
+         lNsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
+        b=FA6cycJTfVrCkdxmIZlzKBOFmqMCd//Fwq15uI2DbUbVNMxbJ4rT5mLFckZ6WIY2mA
+         LOKBUBqj4ynXEEnF8RbTQ00U2AcuG3Zcr2xyMa3+0KxLw1V0Fb+XGZsl+khK5rvSDjBq
+         4jRPr2mVAq5ampqK/VQZnRZejqTnOGYsEyDAhBcbEn5pwlUyqRYaoLhyVpCmCvPLlAxe
+         aCtP+ysVtDQ45dE7OW+PLqxiKhWjxzFb/hSL/jXAcCQM9/Og0irFKu28FmHTnokSMiEE
+         bk1PjOVDzt7utXXkw4dr5l4DXdYq43hZ6DcJelXdUpNjomsOx8jtZHrDpspRXFMkBL2d
+         qsGw==
+X-Gm-Message-State: APjAAAWIvyP2EoQKS02JiNpOlxCl++wVUC9I12pUeG4rDitHOyrwFmKK
+        SK8oSg5EhxRk1n974a5k7cpdw4AAbUrBcoEh34s=
+X-Google-Smtp-Source: APXvYqzhSEO5Slwz1wRZRXkfay3edL1fWlI4FozfhySK0jhsnjGY+9xRDMKfNaR1VLucBruMtnlkaPKmiciP6sNb5RM=
+X-Received: by 2002:a92:c503:: with SMTP id r3mr6247203ilg.150.1571760438042;
+ Tue, 22 Oct 2019 09:07:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHCN7xJjMNOLT5oPn8CArApM5b2ksPon8eALq=gUi0ZqoLjGHQ@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Received: by 2002:a5e:de4d:0:0:0:0:0 with HTTP; Tue, 22 Oct 2019 09:07:17
+ -0700 (PDT)
+Reply-To: eddywilliam0002@gmail.com
+From:   eddy william <davisemm6@gmail.com>
+Date:   Tue, 22 Oct 2019 18:07:17 +0200
+Message-ID: <CAKAY_3UK3Qy+SibmHKRveUfuDo03dfYOq1riu=T_mC56irZ-mw@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Adam Ford <aford173@gmail.com> [191022 12:13]:
-> On Mon, Sep 9, 2019 at 11:35 AM Tony Lindgren <tony@atomide.com> wrote:
-> >
-> > * Pali Rohár <pali.rohar@gmail.com> [190909 13:41]:
-> > > On Monday 09 September 2019 08:37:09 Adam Ford wrote:
-> > > > I applied this on 5.3 and it is working.  I assume the same is true in for-next.
-> >
-> > Hmm I noticed I stopped getting RNG data after several rmmod modprobe
-> > cycles, or several hd /dev/random reads. Anybody else seeing that?
-> >
-> > > > Do you want to submit a formal patch?  I  can mark it as 'tested-by'
-> > > > This really helps speed up the startup sequence on boards with sshd
-> > > > because it delays for nearly 80 seconds waiting for entropy without
-> > > > the hwrng.
-> > >
-> > > Hi! When applying a patch, could you please disable this rng for n900?
-> > >
-> > > In omap3-n900.dts for rng should be status = "disabled" (as Tony already
-> > > wrote), similarly like for aes.
-> >
-> > Yeah I'll post a proper patch after -rc1.
-> 
-> Tony,
-> 
-> I am just following up on this.  Without the HWRNG there are some
-> tools and daemons like sshd which wait a long time at startup.  The
-> patch you sent really helps speed up the startup time in these cases.
-> At least in my case, it shaves 80 seconds off by eliminating the
-> delays.
-> 
-> Do you think you'll have time to post a more formal patch?  If not, I
-> can do it.  I just don't know which mailing list is the more
-> appropriate.  I was able to verity your patch on a DM3730 and OMAP3530
+Good day, dear
 
-Yeah sorry for the delays, I'll post it when I get a chance to
-work on that again. I need to first deal with the other pending
-patches for v5.5, and we've had quite a few fixes for v5.4.
+My name is Mr. Joe Akaba ESQ, Working with one of the best
+chambers and I write to inform you about the death of my client who
+dead as a result of an accident with his family .On the 19th day of August
+2017, My late client died as a result of deadly accident without him be
+register any of his family member as next of kin to bank where he deposited
+a huge amount of money and He died with his family and i have searched for
+any other members of his
+nearby relative without any fruitful result and it was when the bank
+here sent me a notice of their resolution to confiscate he=E2=80=99s estate=
+ in line
+with their abandoned property.
 
-Regards,
+This is to bring your attention by seeking your consent to present
+your name as My late client next of Kin to the bank where he
+deposited a huge amount of money before his death Eight million Five
+hundred thousand United State dollar .$8.5 million Usd
 
-Tony
+I have unsuccessfully made several attempts to locate any of my
+clients extended relatives, but all to no avail. Please i need your urgent
+ respond so that we can move to the bank where the fund is deposited .
+
+Thanks and regards,
+Barrister Joe Akaba (Esq)
+Principal attorney of
+dominion associates
+chambers barristers & solicitors
+Call +22890-33-26-71
