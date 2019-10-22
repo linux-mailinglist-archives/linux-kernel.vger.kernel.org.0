@@ -2,79 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17EE2E0830
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29FD0E0837
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389092AbfJVQDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 12:03:55 -0400
-Received: from muru.com ([72.249.23.125]:38962 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387746AbfJVQDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:03:54 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 66F6380FA;
-        Tue, 22 Oct 2019 16:04:29 +0000 (UTC)
-Date:   Tue, 22 Oct 2019 09:03:51 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Add logicpd-som-lv and logicpd-torpedo to
- OMAP TREE
-Message-ID: <20191022160351.GQ5610@atomide.com>
-References: <20190923135908.23080-1-aford173@gmail.com>
- <CAHCN7xLQvYbY_Pu5hQOO8o+1o8CAVvXq_-RM78Q=jYvtLxtmbg@mail.gmail.com>
+        id S1732590AbfJVQFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 12:05:03 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41087 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbfJVQFD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 12:05:03 -0400
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1iMweW-0007t2-Bf; Tue, 22 Oct 2019 18:04:59 +0200
+Message-ID: <1ef138bcb511bdfeff798edf93b9aa8bd06d6e22.camel@pengutronix.de>
+Subject: Re: [PATCH 2/3] ARM: dts: imx6qdl-zii-rdu2: Fix accelerometer
+ interrupt-names
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org
+Date:   Tue, 22 Oct 2019 18:04:25 +0200
+In-Reply-To: <20191022040500.18548-2-andrew.smirnov@gmail.com>
+References: <20191022040500.18548-1-andrew.smirnov@gmail.com>
+         <20191022040500.18548-2-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHCN7xLQvYbY_Pu5hQOO8o+1o8CAVvXq_-RM78Q=jYvtLxtmbg@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Adam Ford <aford173@gmail.com> [191021 21:41]:
-> On Mon, Sep 23, 2019 at 8:59 AM Adam Ford <aford173@gmail.com> wrote:
-> >
-> > The OMAP DEVICE TREE SUPPORT lists a bunch of device tree files
-> > with wildcard names using am3*, am4*, am5*, dra7*, and *omap*.
-> > Unfortunately, the LogicPD boards do not follow this convention
-> > so changes to these boards don't get automatically flagged to
-> > route to the omap mailing list.  After consulting with Tony
-> > Lindgren, he agreed it made sense to add these boards to the
-> > list.
-> >
-> > This patch adds the omap based boards to the omap device tree
-> > maintainer list.
-> >
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
+Am Montag, den 21.10.2019, 21:04 -0700 schrieb Andrey Smirnov:
+> According to Documentation/devicetree/bindings/iio/accel/mma8452.txt,
+> the correct interrupt-names are "INT1" and "INT2", so fix them
+> accordingly.
 > 
-> Tony,
+> While at it, modify the node to only specify "INT2" since providing
+> two interrupts is not necessary or useful (the driver will only use
+> one).
 > 
-> Are you ok with this?  I am not sure who to bug, but I am guessing
-> whomever it is will want/need your approval too.
+> Signed-off-by: Fabio Estevam <festevam@gmail.com>
+> [andrew.smirnov@gmail.com modified the patch to drop INT1]
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Yeah looks fine to me thanks, I'll apply it into
-omap-for-v5.5/maintainers branch.
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-Regards,
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org,
+> Cc: linux-kernel@vger.kernel.org
+> ---
+> 
+> Original patch from Fabio can be seen here:
+> 
+> https://lore.kernel.org/linux-arm-kernel/20191010125300.2822-1-festevam@gmail.com/
+> 
+>  arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+> index 8d46f7b2722b..a8c86e621b49 100644
+> --- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+> @@ -358,8 +358,8 @@
+>  		compatible = "fsl,mma8451";
+>  		reg = <0x1c>;
+>  		interrupt-parent = <&gpio1>;
+> -		interrupt-names = "int1", "int2";
+> -		interrupts = <18 IRQ_TYPE_LEVEL_LOW>, <20 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-names = "INT2";
+> +		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
+>  	};
+>  
+>  	hpa2: amp@60 {
+> @@ -849,7 +849,6 @@
+>  &iomuxc {
+>  	pinctrl_accel: accelgrp {
+>  		fsl,pins = <
+> -			MX6QDL_PAD_SD1_CMD__GPIO1_IO18		0x4001b000
+>  			MX6QDL_PAD_SD1_CLK__GPIO1_IO20		0x4001b000
+>  		>;
+>  	};
 
-Tony
-
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index a50e97a63bc8..0ee89575699c 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -11645,6 +11645,8 @@ F:      arch/arm/boot/dts/*am3*
-> >  F:     arch/arm/boot/dts/*am4*
-> >  F:     arch/arm/boot/dts/*am5*
-> >  F:     arch/arm/boot/dts/*dra7*
-> > +F:     arch/arm/boot/dts/logicpd-som-lv*
-> > +F:     arch/arm/boot/dts/logicpd-torpedo*
-> >
-> >  OMAP DISPLAY SUBSYSTEM and FRAMEBUFFER SUPPORT (DSS2)
-> >  L:     linux-omap@vger.kernel.org
-> > --
-> > 2.17.1
-> >
