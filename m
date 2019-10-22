@@ -2,59 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E719E082E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:04:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5293E0835
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:04:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389061AbfJVQDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 12:03:52 -0400
-Received: from smtprelay0178.hostedemail.com ([216.40.44.178]:36971 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387746AbfJVQDv (ORCPT
+        id S2389153AbfJVQEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 12:04:10 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52041 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387746AbfJVQEJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:03:51 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 86C3481D6;
-        Tue, 22 Oct 2019 16:03:50 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3871:3872:3874:4321:5007:9707:10004:10400:11232:11657:11658:11914:12043:12297:12555:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21451:21627:30054:30070:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: soda94_216e47221b22d
-X-Filterd-Recvd-Size: 1297
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 22 Oct 2019 16:03:49 +0000 (UTC)
-Message-ID: <5db6c53e5c87ca2999c577333d9c6df678b36994.camel@perches.com>
-Subject: Re: [PATCH] MAINTAINERS: add reset controller framework keywords
-From:   Joe Perches <joe@perches.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel@vger.kernel.org
-Cc:     kernel@pengutronix.de
-Date:   Tue, 22 Oct 2019 09:03:48 -0700
-In-Reply-To: <20191022123823.4854-1-p.zabel@pengutronix.de>
-References: <20191022123823.4854-1-p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Tue, 22 Oct 2019 12:04:09 -0400
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1iMwdg-0007pH-Oh; Tue, 22 Oct 2019 18:04:05 +0200
+Message-ID: <b42947d0d5cc2266073b85d8302442de395ed02b.camel@pengutronix.de>
+Subject: Re: [PATCH 3/3] ARM: dts: imx6qdl-zii-rdu2: Specify supplies for
+ accelerometer
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org
+Date:   Tue, 22 Oct 2019 18:03:49 +0200
+In-Reply-To: <20191022040500.18548-3-andrew.smirnov@gmail.com>
+References: <20191022040500.18548-1-andrew.smirnov@gmail.com>
+         <20191022040500.18548-3-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-10-22 at 14:38 +0200, Philipp Zabel wrote:
-> Add a regex that matches users of the reset controller API.
-[]
-> diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> @@ -13851,6 +13851,7 @@ F:	include/dt-bindings/reset/
->  F:	include/linux/reset.h
->  F:	include/linux/reset/
->  F:	include/linux/reset-controller.h
-> +K:	\b(devm_|of_)?reset_control(ler_[a-z]+|_[a-z_]+)?\b
+Am Montag, den 21.10.2019, 21:05 -0700 schrieb Andrey Smirnov:
+> Specify 'vdd' and 'vddio' supplies for accelerometer to avoid warnings
+> during boot.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Please add ?: to each group so no capture is done.
-It's a little faster.
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-K:	\b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
-
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org,
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+> index a8c86e621b49..42c0a728216d 100644
+> --- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+> @@ -360,6 +360,8 @@
+>  		interrupt-parent = <&gpio1>;
+>  		interrupt-names = "INT2";
+>  		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
+> +		vdd-supply = <&reg_3p3v>;
+> +		vddio-supply = <&reg_3p3v>;
+>  	};
+>  
+>  	hpa2: amp@60 {
 
