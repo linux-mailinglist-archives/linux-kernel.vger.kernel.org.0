@@ -2,146 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B04E1E0A85
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 19:22:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32944E0A93
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 19:27:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732323AbfJVRWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 13:22:25 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:34535 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731730AbfJVRWZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 13:22:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571764943;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DYe7sXZbkW6x0+4z45DRiC8jJviu2jpg3kuxyxWl3ng=;
-        b=KSrwysvhmEKzaleMyo/ZP3JSUxdJUaFIcHqcev1I/bJAcU/Rn98TcjTdztwvm4tcgb8qgs
-        zjWKkJUBn2m/4vLrmB0y333PQ2rcr8N5FqZxqJI2KC+QM1DE3AMLGAu8a6q6KGUqTzkgJV
-        /yB46Fn+SwIQA8LvXUaIw9Y4zu55bwU=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-348-vt7zFo_1Ol2CweukfxJpXg-1; Tue, 22 Oct 2019 13:22:22 -0400
-Received: by mail-qk1-f200.google.com with SMTP id v143so17274807qka.21
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 10:22:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=aPRxFMkNB6srnlFX1YYoFjkf1pH9LbIq1Eh01At/K7g=;
-        b=LwY0XLSh0nQ4ghFb0zTANWHZ7H47kpymH9tmPkzZv1EWsalgW/BXMU6Srp7bVGNFKF
-         tCjOXDR+8fV4B/UWrwNJ6gIC6uhd/mxK1zfEeOwjQrZrKfmVRbfO6rlP0ARnMnHCkAbj
-         rJwexeBQyxKZVoTiNs0oS2lDd3BQup0/ojXuPb90a74bX/2hjKjaII3sY6xHAnbtzeCh
-         7UpU1Lfypn2546WlNYYupKu05xDGr5waNP9MUous/bihyX7NHYB4/9c+O70LRv6MYjRJ
-         PHLXNnCepeip7QM75gwhW46Uk2Tv8RQzQa8sMSmwLA0To0HnjPCmOREhNvWXX+/FvGZZ
-         Wpsw==
-X-Gm-Message-State: APjAAAWqRHbmMBEsJ+Oy51HcvrvAD11GhmbkMA/zhcrdFfqHouCzbzKB
-        RE+rRBX9thskDUSSG3hr2n2b+MoVq3G4mirUs2FE0qg5lHjIV7JKWv7cqT1/rtYssvVfs5wAanE
-        isQPx9Sr60uoYUUMJWOZPRoCr
-X-Received: by 2002:a05:6214:2a4:: with SMTP id m4mr63219qvv.165.1571764942124;
-        Tue, 22 Oct 2019 10:22:22 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqy5uvybGj0e1kNUfWhUC24F1OoT5sVrZih1f+cM/euoSjPZxd6/saXn/ubK0+Vz/yya6hB0mw==
-X-Received: by 2002:a05:6214:2a4:: with SMTP id m4mr63188qvv.165.1571764941783;
-        Tue, 22 Oct 2019 10:22:21 -0700 (PDT)
-Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
-        by smtp.gmail.com with ESMTPSA id 81sm12662041qkd.73.2019.10.22.10.22.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 10:22:21 -0700 (PDT)
-Message-ID: <f1043a5f770b290b02e17b3114d80ce7f83a58a1.camel@redhat.com>
-Subject: Re: [RFC] kasan: include the hashed pointer for an object's location
-From:   Lyude Paul <lyude@redhat.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Sean Paul <sean@poorly.run>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Tue, 22 Oct 2019 13:22:19 -0400
-In-Reply-To: <CACT4Y+YQf-aje4jqSMop24af_GO8G_oPMfrJ9B7oo5_EudwHow@mail.gmail.com>
-References: <20191022021810.3216-1-lyude@redhat.com>
-         <CACT4Y+YQf-aje4jqSMop24af_GO8G_oPMfrJ9B7oo5_EudwHow@mail.gmail.com>
-Organization: Red Hat
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30)
+        id S1731802AbfJVR1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 13:27:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59338 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730141AbfJVR1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 13:27:36 -0400
+Received: from localhost (mobile-166-172-186-56.mycingular.net [166.172.186.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED62B206C2;
+        Tue, 22 Oct 2019 17:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571765254;
+        bh=JWegfatqnKGnwIzK55U0uFuQH+f+y/FRqF/iMkFMuJE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hVs/wyGwoVAsJ0TQf6lKLkQzLCMuchKjQbWtTsoTnkegv7sobTel1iNjAkDUD5138
+         GK+NNZYulZV+MFFAqnG1RvGYBoquhmWp3OktbwKtyeFTMQqbRBjh+veSftBgpN32Nw
+         HEZGO0WqmZ0vCmMeU/kXEDgNiTc7IAfefr5yiKJ0=
+Date:   Tue, 22 Oct 2019 13:27:31 -0400
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Puma Hsu <pumahsu@google.com>
+Cc:     heikki.krogerus@linux.intel.com, badhri@google.com,
+        kyletso@google.com, albertccwang@google.com, rickyniu@google.com,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] usb: typec: Add sysfs node to show connector
+ orientation
+Message-ID: <20191022172731.GA230934@kroah.com>
+References: <20191022085924.92783-1-pumahsu@google.com>
 MIME-Version: 1.0
-X-MC-Unique: vt7zFo_1Ol2CweukfxJpXg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191022085924.92783-1-pumahsu@google.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-10-22 at 04:27 +0200, Dmitry Vyukov wrote:
-> On Tue, Oct 22, 2019 at 4:19 AM Lyude Paul <lyude@redhat.com> wrote:
-> > The vast majority of the kernel that needs to print out pointers as a
-> > way to keep track of a specific object in the kernel for debugging
-> > purposes does so using hashed pointers, since these are "good enough".
-> > Ironically, the one place we don't do this is within kasan. While
-> > simply printing a hashed version of where an out of bounds memory acces=
-s
-> > occurred isn't too useful, printing out the hashed address of the objec=
-t
-> > in question usually is since that's the format most of the kernel is
-> > likely to be using in debugging output.
-> >=20
-> > Of course this isn't perfect though-having the object's originating
-> > address doesn't help users at all that need to do things like printing
-> > the address of a struct which is embedded within another struct, but
-> > it's certainly better then not printing any hashed addresses. And users
-> > which need to handle less trivial cases like that can simply fall back
-> > to careful usage of %px.
-> >=20
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Cc: Sean Paul <sean@poorly.run>
-> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> > Cc: Alexander Potapenko <glider@google.com>
-> > Cc: Dmitry Vyukov <dvyukov@google.com>
-> > Cc: kasan-dev@googlegroups.com
-> > ---
-> >  mm/kasan/report.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-> > index 621782100eaa..0a5663fee1f7 100644
-> > --- a/mm/kasan/report.c
-> > +++ b/mm/kasan/report.c
-> > @@ -128,8 +128,9 @@ static void describe_object_addr(struct kmem_cache
-> > *cache, void *object,
-> >         int rel_bytes;
-> >=20
-> >         pr_err("The buggy address belongs to the object at %px\n"
-> > -              " which belongs to the cache %s of size %d\n",
-> > -               object, cache->name, cache->object_size);
-> > +              " (aka %p) which belongs to the cache\n"
-> > +              " %s of size %d\n",
-> > +              object, object, cache->name, cache->object_size);
->=20
-> Hi Lyude,
->=20
-> This only prints hashed address for heap objects, but
-> print_address_description() has 4 different code paths for different
-> types of addresses (heap, global, stack, page). Plus there is a case
-> for address without shadow.
-> Should we print the hashed address at least for all cases in
-> print_address_description()?
+On Tue, Oct 22, 2019 at 04:59:24PM +0800, Puma Hsu wrote:
+> Export the Type-C connector orientation so that user space
+> can get this information.
+> 
+> Signed-off-by: Puma Hsu <pumahsu@google.com>
+> ---
+>  Documentation/ABI/testing/sysfs-class-typec | 11 +++++++++++
+>  drivers/usb/typec/class.c                   | 18 ++++++++++++++++++
+>  2 files changed, 29 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
+> index d7647b258c3c..b22f71801671 100644
+> --- a/Documentation/ABI/testing/sysfs-class-typec
+> +++ b/Documentation/ABI/testing/sysfs-class-typec
+> @@ -108,6 +108,17 @@ Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>  Description:
+>  		Revision number of the supported USB Type-C specification.
+>  
+> +What:		/sys/class/typec/<port>/connector_orientation
+> +Date:		October 2019
+> +Contact:	Puma Hsu <pumahsu@google.com>
+> +Description:
+> +		Indicates which typec connector orientation is configured now.
+> +		cc1 is defined as "normal" and cc2 is defined as "reversed".
 
-Yep-this is probably a good idea. Will send a respin in a little bit
->=20
->=20
-> >         if (!addr)
-> >                 return;
-> > --
-> > 2.21.0
-> >=20
---=20
-Cheers,
-=09Lyude Paul
+Why the blank line after "Description:"?  Shouldn't "Indicates..." be
+right after it?
+> +
+> +		Valid value:
+> +		- unknown (nothing configured)
+> +		- normal (configured in cc1 side)
+> +		- reversed (configured in cc2 side)
+>  
+>  USB Type-C partner devices (eg. /sys/class/typec/port0-partner/)
+>  
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index 94a3eda62add..911d06676aeb 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -1245,6 +1245,23 @@ static ssize_t usb_power_delivery_revision_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(usb_power_delivery_revision);
+>  
+> +static const char * const typec_connector_orientation[] = {
+> +	[TYPEC_ORIENTATION_NONE]		= "unknown",
+> +	[TYPEC_ORIENTATION_NORMAL]		= "normal",
+> +	[TYPEC_ORIENTATION_REVERSE]		= "reversed",
+> +};
+> +
+> +static ssize_t connector_orientation_show(struct device *dev,
+> +						struct device_attribute *attr,
+> +						char *buf)
 
+Can you line this up properly?
+
+thanks,
+
+greg k-h
