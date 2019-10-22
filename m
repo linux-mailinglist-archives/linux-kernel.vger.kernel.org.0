@@ -2,67 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ACF6E0B7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 20:34:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61A7AE0B7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 20:35:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732502AbfJVSeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 14:34:04 -0400
-Received: from mail-wr1-f43.google.com ([209.85.221.43]:46363 "EHLO
-        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbfJVSeD (ORCPT
+        id S1732580AbfJVSf2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 14:35:28 -0400
+Received: from mail-lj1-f181.google.com ([209.85.208.181]:44485 "EHLO
+        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729635AbfJVSf2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 14:34:03 -0400
-Received: by mail-wr1-f43.google.com with SMTP id n15so8406670wrw.13
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 11:34:02 -0700 (PDT)
+        Tue, 22 Oct 2019 14:35:28 -0400
+Received: by mail-lj1-f181.google.com with SMTP id c4so3165097lja.11
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 11:35:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=VAfWdgYR0S0HOj0z6wvnuYHJwjiI0dKzh1qGdDFZs/M=;
-        b=umiyZeGfN89Eo7mpKmu2i2uZ3hTpFMu72G5GdsiELt1XXP+Aj6rqvSsbLDhPRgpdA/
-         5UsTb/trA8uTwwkU1XONupzTW/5nhU1GtbtVSdlCt1JOGc1B8Xh0NSioCr2yEeAl1EAk
-         +69yWsXdPlEqWhoOpuPfTKi18R6TAPVC5qUlJ9M+kp/0naREdvtMPekX2bkMB5Eeakjh
-         MSc564VyHSJdzC9c0yM8zrBjU0mz91Dy63R0efyQaJjBPFKf4ZIgfi0EoD6oKr/mbHxf
-         s7jAOGxqOT8byrFuNILR5jtgJ58QxWJOybMvtQ5bSOfRr1okJGf7g74GZPgyHplxFHKP
-         KwNA==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=d4Vj26TGvpT8Pp948ejBZToOMkzRLVxh6k+58Wg2xwg=;
+        b=LodsJjm6yZ9LOjHCZEgtJxPVD8w+jNkfjFrQS54WsJ6WEloyHeuGDp9UTETDxo91W2
+         Y2of27/MtHkxOMFUQNn2NnAJHBfewC+ZziwnsRgEFEBl6FfCkxUpiGSwuF5krICiJz1j
+         OgZ7/ClTmcOpHiTytb9h1kvKp9vuaSxqy1C88K05ebjWoH86JlZZpl+EiCs+PNAHrVL6
+         wQDyZJhRXkuygo0Bui0hDSKV/UKgirFVjAU8eMYihfCdaBkZK430xDM3GFg/IDA5Acdq
+         rhmjprkxZToDzITWkcg9ydTi1JULGf17T+fbWu2TWDGEc+05cFJArKuGGqJtYzgDUsgA
+         KGwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=VAfWdgYR0S0HOj0z6wvnuYHJwjiI0dKzh1qGdDFZs/M=;
-        b=it/mun2ZoCvV1hlZ/Kus5X1fPkkuEqbcByk6996lHSSY5MASWuGfUjToReEctgW4ZX
-         1lennJ0Pk+QxocEtOW6wTXxxJdKMqtjYoi1wv933uxAra9llgQ3oGMML0sHLSYp/Cg8l
-         30xU2CVTCXi0ohOviiSuEAoqzamt8qwaWFWxr8Pe4zT+zFww7KLXnT5v00jnwO/nrLL7
-         NCSkaCX59WHyw5q5vQf0TJBrGCKJPFdIxvd38WP0QLF7W7pA+igP81nV43DvTqdIA3+C
-         SE5jsI+B3DmnBAwu5F6eq6llRBNlqpWqMtM/pe8kgF2/LEnrQ3/dE4GIAAOF2XGnuQvQ
-         Oovg==
-X-Gm-Message-State: APjAAAUrSuTcJJSeIgtMjv4XQdFX1BvxgBW3qzKugHtib4IOizeL8hzI
-        C5Va+Y0hvYQxEHV/7cANM51z78f0cNzgn8F0iE8=
-X-Google-Smtp-Source: APXvYqyi0iGQJjrgCc5BziJcGsfGUbE+rbHGXplfxv3lr1VSq54ERLyK8watodMMDNHT1ZXvYBj8f7KjYjZjVnACd1w=
-X-Received: by 2002:adf:f90f:: with SMTP id b15mr4743244wrr.76.1571769241623;
- Tue, 22 Oct 2019 11:34:01 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=d4Vj26TGvpT8Pp948ejBZToOMkzRLVxh6k+58Wg2xwg=;
+        b=krHJlpX3lakOVu11fROrSB3ckoZsi6bWefz5p2KzmaiUcPqDB25W6HDCNt6BVUDRAe
+         x5ozQWjeTCSeAzDjdkGSbpe8e/AYHohancDnxlnQ/Rt0sdtwO2Zyb1mR+gvTgN3r3/uU
+         5kTbH8wSOsIgm08PAW4lK1qi5fIrcG2MQCiHmOp3uDhmvmsOJ9oYNKgYBBeXUD8UtGm5
+         /3m0ZTSN/g5UokzJqt84rU+IqiWyR9Q7h9jN5thmooR6Tb8ZlsD7F2GvIFkJtaBfYSbr
+         9OXfW0BIXFu2dl2/LB+a6YjumamWoA7aUdQRR6Y5xRBPHBYZnCm8IS58KMCjBLtiaU5Q
+         zyAg==
+X-Gm-Message-State: APjAAAVJr/wmgqQJTByoDrp25JJALNWLUfWtDC1l72Mkit7zsYg7avTS
+        t6i6VbxGmBQMxC/8rX2J4mUcZ6Yvm4o=
+X-Google-Smtp-Source: APXvYqw2hpKR+LmLpH9nt6R/Lr+GpVj8pTxyVu9B9jUaIrwacwn5DW2rt/eNMqk8oikwYa1unkr0zA==
+X-Received: by 2002:a05:651c:30f:: with SMTP id a15mr3287332ljp.97.1571769325806;
+        Tue, 22 Oct 2019 11:35:25 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id o5sm6592526lfn.78.2019.10.22.11.35.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2019 11:35:25 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 11:35:16 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Hayes Wang <hayeswang@realtek.com>
+Cc:     <netdev@vger.kernel.org>, <nic_swsd@realtek.com>,
+        <linux-kernel@vger.kernel.org>, <pmalani@chromium.org>,
+        <grundler@chromium.org>
+Subject: Re: [PATCH net-next 0/4] r8152: PHY firmware
+Message-ID: <20191022113516.15c2313b@cakuba.netronome.com>
+In-Reply-To: <1394712342-15778-330-Taiwan-albertk@realtek.com>
+References: <1394712342-15778-330-Taiwan-albertk@realtek.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Reply-To: janetrossana01@gmail.com
-Received: by 2002:a1c:2c0b:0:0:0:0:0 with HTTP; Tue, 22 Oct 2019 11:33:58
- -0700 (PDT)
-From:   janet rossana <janetrossana01@gmail.com>
-Date:   Tue, 22 Oct 2019 20:33:58 +0200
-X-Google-Sender-Auth: 9hjoQWiEWWSGHt1ULgcfe9Xss2U
-Message-ID: <CADmhhyyXyr+irvuga7yeqJfwyxrp65CLbNF-pyLt=NNvL5-0nQ@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please dear, I know this contact will be so strange to you, but i
-summon courage to reach you because i desperately need your friendly
-assistance there in your country. I am making preparations to relocate
-with my children there, and i have some capital which i wanted to
-invest there to be able to take care of my kids. And i want you by my
-side to plan the investment and decide the best city for us to reside.
-Please listen to me so that you will understand properly the reason i
-contacted you.
+On Mon, 21 Oct 2019 11:41:09 +0800, Hayes Wang wrote:
+> Support loading the firmware of the PHY with the type of RTL_FW_PHY_NC.
 
-Mrs.Janet.
+Applied, thanks!
