@@ -2,75 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08186DFC86
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 06:23:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 189EADFC7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 06:17:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730993AbfJVEXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 00:23:04 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:56030 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729133AbfJVEXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 00:23:04 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 397301A0009;
-        Tue, 22 Oct 2019 06:23:02 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 788A81A05EE;
-        Tue, 22 Oct 2019 06:22:58 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E4D4740245;
-        Tue, 22 Oct 2019 12:22:53 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     peda@axentia.se, leoyang.li@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
-Subject: [v5,3/3] arm64: dts: fsl-ls208xa-rdb: fix an errata E-00013
-Date:   Tue, 22 Oct 2019 12:11:52 +0800
-Message-Id: <20191022041152.3663-3-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20191022041152.3663-1-biwen.li@nxp.com>
-References: <20191022041152.3663-1-biwen.li@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730828AbfJVEOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 00:14:50 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:32864 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbfJVEOu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 00:14:50 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i76so9139341pgc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 21:14:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rs9LAlJ/Mb8c9Q5mqnJ0h++sIssMn8kGp7hyQlxdI80=;
+        b=QZEVW2RSSdkh1WJhJ+2zM6gvI5OM1zukP2RcEMAPrk+gYXdCshBt6eo69Xdgf3piwH
+         2jsrvgUWf8cb/5otO7cLp0OZTGHxclN0W7hqZny+giRNR8fylKD+GerxqjcUfDHD2lG2
+         0KEw2YMYwQxe0KdAWRk8BFnaKDfT6Y4Mi/ezDoYAsR2aM80Bu/w8isG2AaVlXU5mmZZi
+         ZsbERCij07rF7+9yS69wVKkOmNcbWkmFlmMwOqEO0p+lgpHQoaJBcTEvA3l4FlUVr5em
+         877NV13qWH29BIhewCk+S4alQLXyTiejyaeVxvRhyP2IOZ4F9mgRTLfTePWYZ1dO2ZV+
+         Z9ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rs9LAlJ/Mb8c9Q5mqnJ0h++sIssMn8kGp7hyQlxdI80=;
+        b=SWEReylUAQmA1wUmEr1BB8h4gQdVVjThVOb9qoGaFEYLWQv1K0xqs4xlRvx+uKN+cz
+         7SurrV7u34PwT/8pwcnGdLSIf245sASAi+dzIRV+tzbJDrA6b9soEekmTtBkNA/Dw6YG
+         CLm9F39FZI2/FozJ8QKw72LEcSHZINiFCQduBSTf0hwL1MzhwCh2daE2+xWKQK+UybJO
+         jgudE3Xhxybq/rysHg0XogVYCK/V3X+vv1xxAUAaeap8sfvN6Lli5eRbzFjWJkx3+bl8
+         FdUuVsyhOV8c48Jrk4B4261O5pA9w6ypDETLBuIyw1ZJg5HEi3l5vZJe1OFf7uG3yP5Z
+         O6Nw==
+X-Gm-Message-State: APjAAAWEj1Z+kE3OIh2X3+x/GDQZ1QIA11gX1XVPEx54MgZhGzSTOHJ/
+        bOIHVen+ZSX5SZm3PsC3BDg=
+X-Google-Smtp-Source: APXvYqxuxUG7glI4cNP3QMXePzxvwJJd44e9KiYRq8sAvVisFJ5DBx1aafSGvsKs5wZCfJW9UfCxWA==
+X-Received: by 2002:a62:1c96:: with SMTP id c144mr278831pfc.219.1571717689798;
+        Mon, 21 Oct 2019 21:14:49 -0700 (PDT)
+Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
+        by smtp.gmail.com with ESMTPSA id b3sm15042191pjp.13.2019.10.21.21.14.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 21:14:48 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Peter Chen <peter.chen@nxp.com>, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ARM: imx: Drop imx_anatop_usb_chrg_detect_disable()
+Date:   Mon, 21 Oct 2019 21:14:45 -0700
+Message-Id: <20191022041445.23897-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Specify a channel zero in idle state to
-avoid enterring tri-stated state for PCA9547.
-About E-00013:
-	- Description: I2C1 and I2C3 buses
-	  are missing pull-up.
-	- Impact: When the PCA954x device is tri-stated, the I2C bus
-	  will float. This makes the I2C bus and its associated
-	  downstream devices inaccessible.
-	- Hardware fix: Populate resistors R189 and R190 for I2C1
-	  and resistors R228 and R229 for I2C3.
-	- Software fix: Remove the tri-state option from the PCA954x
-	  driver(PCA954x always on enable status, specify a
-	  channel zero in dts to fix the errata E-00013).
+With commit b5bbe2235361 ("usb: phy: mxs: Disable external charger
+detect in mxs_phy_hw_init()") in tree all of the necessary charger
+setup is done by the USB PHY driver which covers all of the affected
+i.MX6 SoCs.
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
+NOTE: imx_anatop_usb_chrg_detect_disable() was also called for i.MX7D,
+but looking at its datasheet it appears to have a different USB PHY IP
+block, so executing i.MX6 charger disable configuration seems
+unnecessary.
+
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Peter Chen <peter.chen@nxp.com>
+Cc: linux-imx@nxp.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 ---
-Change in v5:
-	- specify a channel zero when pca9547 in idle state.
 
- arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Changes since [v1]:
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-index 6fd7f63085c9..412f1bc0db5f 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-@@ -49,6 +49,7 @@
- 		reg = <0x75>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		idle-state = <0>;
- 		i2c@1 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+    - Scope of the patch reduced to remove only
+      imx_anatop_usb_chrg_detect_disable() instead of
+      imx_anatop_init()
+
+[v1] lore.kernel.org/lkml/20190731180131.8597-1-andrew.smirnov@gmail.com
+
+ arch/arm/mach-imx/anatop.c | 20 +-------------------
+ 1 file changed, 1 insertion(+), 19 deletions(-)
+
+diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
+index 777d8c255501..8fb68c0ec34c 100644
+--- a/arch/arm/mach-imx/anatop.c
++++ b/arch/arm/mach-imx/anatop.c
+@@ -19,8 +19,6 @@
+ #define ANADIG_REG_2P5		0x130
+ #define ANADIG_REG_CORE		0x140
+ #define ANADIG_ANA_MISC0	0x150
+-#define ANADIG_USB1_CHRG_DETECT	0x1b0
+-#define ANADIG_USB2_CHRG_DETECT	0x210
+ #define ANADIG_DIGPROG		0x260
+ #define ANADIG_DIGPROG_IMX6SL	0x280
+ #define ANADIG_DIGPROG_IMX7D	0x800
+@@ -33,8 +31,6 @@
+ #define BM_ANADIG_ANA_MISC0_STOP_MODE_CONFIG	0x1000
+ /* Below MISC0_DISCON_HIGH_SNVS is only for i.MX6SL */
+ #define BM_ANADIG_ANA_MISC0_DISCON_HIGH_SNVS	0x2000
+-#define BM_ANADIG_USB_CHRG_DETECT_CHK_CHRG_B	0x80000
+-#define BM_ANADIG_USB_CHRG_DETECT_EN_B		0x100000
+ 
+ static struct regmap *anatop;
+ 
+@@ -96,16 +92,6 @@ void imx_anatop_post_resume(void)
+ 
+ }
+ 
+-static void imx_anatop_usb_chrg_detect_disable(void)
+-{
+-	regmap_write(anatop, ANADIG_USB1_CHRG_DETECT,
+-		BM_ANADIG_USB_CHRG_DETECT_EN_B
+-		| BM_ANADIG_USB_CHRG_DETECT_CHK_CHRG_B);
+-	regmap_write(anatop, ANADIG_USB2_CHRG_DETECT,
+-		BM_ANADIG_USB_CHRG_DETECT_EN_B |
+-		BM_ANADIG_USB_CHRG_DETECT_CHK_CHRG_B);
+-}
+-
+ void __init imx_init_revision_from_anatop(void)
+ {
+ 	struct device_node *np;
+@@ -171,10 +157,6 @@ void __init imx_init_revision_from_anatop(void)
+ void __init imx_anatop_init(void)
+ {
+ 	anatop = syscon_regmap_lookup_by_compatible("fsl,imx6q-anatop");
+-	if (IS_ERR(anatop)) {
++	if (IS_ERR(anatop))
+ 		pr_err("%s: failed to find imx6q-anatop regmap!\n", __func__);
+-		return;
+-	}
+-
+-	imx_anatop_usb_chrg_detect_disable();
+ }
 -- 
-2.17.1
+2.21.0
 
