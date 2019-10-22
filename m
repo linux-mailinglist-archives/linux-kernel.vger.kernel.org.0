@@ -2,143 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD144E039D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 14:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD580E03A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 14:13:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388981AbfJVMMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 08:12:07 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:53088 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388960AbfJVMMG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 08:12:06 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9MC8tCn113199;
-        Tue, 22 Oct 2019 12:11:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=MFJzMYNcFvDsXyams3WVY/szvOVOHehPEPgrKljIzhc=;
- b=bp60qwlbt9nzMsjtdt9HiuUcE5bkuVIY3/S6BWCxKWwdv9U9/lhQcG/A/+aeudq0GXmH
- nt/k/rQKYyVRl3Ss2EdxNXrTuxxhYNllr6aPxugzRRNupLwst3z50/Z8E6YtnTmlvqOm
- IjNEQiiy1ZlKklOjSEACe05aD4iH1vtIhuZuDXVLsVtgHxUTssn7ldu2ja6F8PdYzw8A
- Qw7FcjPj9U7XU6n02Npi3CrqoZvXgGept8ESk7nljs2C44Gs/uIKqAOFuKT9HO448cbF
- oxve13v/F6Ywc+nulsOX6sJXlfqME/fdUFb9LtKgvYHlrdk1xXqPSYGWUVHlsrMlL+Mf IQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2vqtepp5pt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Oct 2019 12:11:33 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9MC8J4q100829;
-        Tue, 22 Oct 2019 12:11:33 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2vrc01rnte-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Oct 2019 12:11:33 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9MCBVdT031690;
-        Tue, 22 Oct 2019 12:11:31 GMT
-Received: from [10.175.28.77] (/10.175.28.77)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 22 Oct 2019 05:11:31 -0700
-Subject: Re: email as a bona fide git transport
-From:   Vegard Nossum <vegard.nossum@oracle.com>
-To:     Willy Tarreau <w@1wt.eu>, "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Santiago Torres Arias <santiago@nyu.edu>,
-        workflows@vger.kernel.org, Git Mailing List <git@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        Eric Wong <e@80x24.org>
-References: <b9fb52b8-8168-6bf0-9a72-1e6c44a281a5@oracle.com>
- <20191016111009.GE13154@1wt.eu>
- <20191016144517.giwip4yuaxtcd64g@LykOS.localdomain>
- <56664222-6c29-09dc-ef78-7b380b113c4a@oracle.com>
- <20191018161547.GG21137@mit.edu>
- <de49fe5e-85cb-9fb0-f9f4-c294d72e356c@oracle.com>
- <20191018191456.GI21137@mit.edu> <20191020031716.GA17475@1wt.eu>
- <1a259d8d-b3d1-b64e-07c3-ba143b42c442@oracle.com>
-Message-ID: <de6dd8b5-5c28-d0b2-d3fc-e72a6d643105@oracle.com>
-Date:   Tue, 22 Oct 2019 14:11:22 +0200
+        id S2389007AbfJVMNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 08:13:16 -0400
+Received: from mail-eopbgr810055.outbound.protection.outlook.com ([40.107.81.55]:57216
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388106AbfJVMNQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 08:13:16 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R+tSwfuwhpSIBRx7nIVmPXSW6av1dgAnPPhnqc5S2yfezqalj2EoRFPHRxmPgLhWWa9+4UB1SHY8EQRN0EYJg85kODxNSyOT2LTeASt+mb1ZN78QIY0cBzv+AFQq3chUM40QXjdRqu1AxQc5D1NzWPAeEDQOFnXAgGEw4K3elJQCLex58I5qDptgu9ir6b+tfMDORFcLcOESDdi4vgOz5n0BJEey9R0IzG9kjaKmKdxNrsgxdFKp/AOxf0+Bfxyq9Q5S2iRPIR+WBjj1urmclcZ5ZxLuL1nSvE0WCH1xcm4p+ayyhXVVB24F290kF+e1I7ZLPu0JIl0HwYE1dz4IoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=erZ4S0w/Qq6IL7i2I6z2gT3RJ9w/1cUbTZHg77/V71Q=;
+ b=HDtSlmhBh0rb40sL1ZpZ23nh1+IOn3pLdjoQRnoLH1a6JcrSTkFJwS3ZVAhkRo22IqY3v4Gi/CbISZOMQPdwpb7MCIIAJb0WQ4ZtfNd5TFbl8DWtDuH187wiqf3dfC91VWBaRniRC6+WZ00r6XkM4yA6bGUzotRg9RgGUBiS4M5jkyEfOKaJ8Ex9thPzohI4tBzdk2RTUOftGOb1/+2h9i5Jt6l4g5I4eHwn8JGnWpwcI7c+fxUIIAUAcrcpCBuKlQ1WmdsKVIHMvIHus1HBg05hl9mA0gR5s0oJQELsbQvb1Ox0llOFqYWMPoCG3k940aJFbL70QWJjwnh2Y1d53w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=pengutronix.de smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=erZ4S0w/Qq6IL7i2I6z2gT3RJ9w/1cUbTZHg77/V71Q=;
+ b=eCRGo85TPBe0pLfVRiJJJXyc9+tr/UWE19fQZnYw592TwDYhC3SMZcYjVVqvspisa3UaI2GuveVl8A5BxIrGxUuuKwt+27p1FeOYZe4fjjWh15UWXy9cNralbhLeYzfwthadYfeaVM/OmtFtNUGGVkUdAldJCybfgRhePAowGaA=
+Received: from MWHPR0201CA0031.namprd02.prod.outlook.com
+ (2603:10b6:301:74::44) by DM6PR02MB4970.namprd02.prod.outlook.com
+ (2603:10b6:5:11::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2367.20; Tue, 22 Oct
+ 2019 12:13:12 +0000
+Received: from BL2NAM02FT036.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::204) by MWHPR0201CA0031.outlook.office365.com
+ (2603:10b6:301:74::44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2367.21 via Frontend
+ Transport; Tue, 22 Oct 2019 12:13:12 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; pengutronix.de; dkim=none (message not signed)
+ header.d=none;pengutronix.de; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ BL2NAM02FT036.mail.protection.outlook.com (10.152.77.154) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2367.14
+ via Frontend Transport; Tue, 22 Oct 2019 12:13:11 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1iMt2F-0004ip-16; Tue, 22 Oct 2019 05:13:11 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1iMt29-0003wM-KR; Tue, 22 Oct 2019 05:13:05 -0700
+Received: from xsj-pvapsmtp01 (mail.xilinx.com [149.199.38.66] (may be forged))
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x9MCD179027641;
+        Tue, 22 Oct 2019 05:13:01 -0700
+Received: from [172.30.17.123]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1iMt24-0003vN-KB; Tue, 22 Oct 2019 05:13:00 -0700
+Subject: Re: [PATCH] reset: zynqmp: Make reset_control_ops const
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel@vger.kernel.org
+Cc:     Michal Simek <michal.simek@xilinx.com>, kernel@pengutronix.de
+References: <20191022115517.19886-1-p.zabel@pengutronix.de>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <0b42b11c-d4c4-e7fc-1dc3-c6ac07ab8b1d@xilinx.com>
+Date:   Tue, 22 Oct 2019 14:12:59 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <1a259d8d-b3d1-b64e-07c3-ba143b42c442@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191022115517.19886-1-p.zabel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9417 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910220110
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9417 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910220110
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(136003)(346002)(396003)(199004)(189003)(476003)(58126008)(36756003)(106002)(9786002)(31696002)(23676004)(2486003)(8936002)(126002)(486006)(31686004)(446003)(336012)(6246003)(4744005)(186003)(229853002)(76176011)(70206006)(70586007)(426003)(8676002)(230700001)(65956001)(305945005)(47776003)(478600001)(2616005)(2906002)(11346002)(65806001)(50466002)(316002)(5660300002)(356004)(81156014)(14444005)(26005)(4326008)(36386004)(44832011)(81166006)(42866002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4970;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8cc0759c-05ee-47fa-d1e9-08d756e93552
+X-MS-TrafficTypeDiagnostic: DM6PR02MB4970:
+X-Microsoft-Antispam-PRVS: <DM6PR02MB49703237A8558966E9A2E8A4C6680@DM6PR02MB4970.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:660;
+X-Forefront-PRVS: 01986AE76B
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: mxdmQgYYfXf0MzIFvMNbjE77Cktq7vuHCgZg8Tw6S0dqr79kdNgnONuM4GRGZcG+Put9H6rS04AFysq9+k7n4pCmaiNychtFiuXgriPGIURJFYdoDN7bpC2jBp/k50nvWx+mIeFG/hi9oWXBDRsdC68QRg20jFSFKNyRIqYfGnc3u/Nsn3YKZWaJJFWIU70Sx+g3d1vfIviYmErUeNRfWa5o4lEcwtj/YRZbiMBpIxfWE730FRF3IJ7C0eUAaNv8eUbEukFmMApbS9wrzaN2Q6zQ5wFWNhslIdoZhTkd/mWQar0iGRUf0wxHqUA0L/IoATqYh3InjfZjEFI4PLDWwC/ElnuGER2cQOG+GYR5c+/ltgmyaUZ43+8gkuNZw0X8WKjKaJErVgxtwcbxOlRL1eml032XWm+Op9KyfWzd6mt/7BNNLk6u0Oov9jhH35aa
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2019 12:13:11.6451
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cc0759c-05ee-47fa-d1e9-08d756e93552
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4970
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/20/19 8:28 AM, Vegard Nossum wrote:
+On 22. 10. 19 13:55, Philipp Zabel wrote:
+> The zynqmp_reset_ops structure is never modified. Make it const.
 > 
-> On 10/20/19 5:17 AM, Willy Tarreau wrote:
->> On Fri, Oct 18, 2019 at 03:14:56PM -0400, Theodore Y. Ts'o wrote:
->>> On Fri, Oct 18, 2019 at 06:50:51PM +0200, Vegard Nossum wrote:
->>>> The problem I ran into with putting the metadata at the end was
->>>> detecting where the diff ends. A comment in 'git apply' suggested that
->>>> detecting the difference between "--" as a diff/signature separator and
->>>> as part of the diff is nontrivial in the sense that you need to 
->>>> actually
->>>> do some parsing and keep track of hunk sizes.
->>>
->>> Could we cheat by having "git format-patch" add a "Diff-size" in the
->>> header which gives the number of lines in the diff so git am can just
->>> count lines to find the Trailer section?
->>
->> Be careful with this, it starts like this and ends up with non-editable
->> patches. I'd rather have git-am use best-effort detection of the end.
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
+>  drivers/reset/reset-zynqmp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Expect filesystem developers to come up with a format that uses extents ;-)
+> diff --git a/drivers/reset/reset-zynqmp.c b/drivers/reset/reset-zynqmp.c
+> index 99e75d92dada..0144075b11a6 100644
+> --- a/drivers/reset/reset-zynqmp.c
+> +++ b/drivers/reset/reset-zynqmp.c
+> @@ -64,7 +64,7 @@ static int zynqmp_reset_reset(struct reset_controller_dev *rcdev,
+>  					    PM_RESET_ACTION_PULSE);
+>  }
+>  
+> -static struct reset_control_ops zynqmp_reset_ops = {
+> +static const struct reset_control_ops zynqmp_reset_ops = {
+>  	.reset = zynqmp_reset_reset,
+>  	.assert = zynqmp_reset_assert,
+>  	.deassert = zynqmp_reset_deassert,
 > 
->> Also when dealing with stable backports, I've done a lot of
->> "cat foo.diff >> bar.patch" to fixup some patches in which I just had
->> to move some parts around. Having to count lines and edit a counter
->> somewhere is going to become really painful.
-> 
-> I almost have some new patches ready for putting the metadata after the
-> patch using a very bare-bones diff parser (it's actually not that bad),
-> I just need to fix a few corner cases that are causing breakage in the
-> git test suite.
 
-I sent v2 of the patches (with metadata _after_ the diff) to the git
-list here:
+Acked-by: Michal Simek <michal.simek@xilinx.com>
 
-https://public-inbox.org/git/20191022114518.32055-1-vegard.nossum@oracle.com/T/#u
-
-As I wrote in there, we could already today start using
-
-   git am --message-id
-
-when applying patches and this would provide something that a bot could
-annotate with git notes pointing to lore/LKML/LWN/whatever. I think that
-would already be a pretty nice improvement over today's situation.
-
-Sadly, since the beginning of 2018, this was only used for a measly
-~0.14% of all non-merge commits in the kernel:
-
-$ git rev-list --count --no-merges --since='2018-01-01' --grep 
-'Message-Id: ' linus/master
-178
-
-$ git rev-list --count --no-merges --since='2018-01-01' linus/master
-130777
-
-So how can we spread the word about --message-id and get maintainers to
-actually use it? I don't suppose it's reasonable to change the 'git am'
-default setting?
-
-
-Vegard
+Thanks,
+Michal
