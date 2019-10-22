@@ -2,85 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 911A3E0C5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 21:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D8F6E0C4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 21:13:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388769AbfJVTMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 15:12:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388467AbfJVTMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 15:12:39 -0400
-Received: from localhost.localdomain (rrcs-50-75-166-42.nys.biz.rr.com [50.75.166.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06965222CD;
-        Tue, 22 Oct 2019 19:12:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571771558;
-        bh=Okum0wathcf1ScrSzrZsCiqUTVvdU9caLoqJnp5U0KY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PROCQPtZDZmaKyYXPxYHvgKsVUd/icvfFR9ashemkF8b/cixY0p8T5H1q9SF38sBr
-         8iri0bC7CQke9mmhPYmo4U1NgsMRLbOQQabuABTlzoaPZa8D4+ShipM7VUQ0Rqj8Nj
-         o4TNk7r5ZBTlxeytc81cjTk1hXuefFEPw5RjLaqg=
-From:   paulmck@kernel.org
-To:     rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Micah Morton <mortonm@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH tip/core/rcu 10/10] security/safesetid: Replace rcu_swap_protected() with rcu_replace()
-Date:   Tue, 22 Oct 2019 12:12:15 -0700
-Message-Id: <20191022191215.25781-10-paulmck@kernel.org>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20191022191136.GA25627@paulmck-ThinkPad-P72>
-References: <20191022191136.GA25627@paulmck-ThinkPad-P72>
+        id S1732846AbfJVTMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 15:12:20 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39899 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729696AbfJVTMT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 15:12:19 -0400
+Received: by mail-qk1-f193.google.com with SMTP id 4so17349121qki.6
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 12:12:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nysxb4NxOzc34BLE8aYpf5+rztCogoNfw8sxbZXLVf0=;
+        b=c+ZppCOcCXkLqnSt1Af5JzQ/n2eRfVp476u86d5pkFQCcdqA5AJTSyjOedcMFbtjt5
+         yrdUfYJ+mBAjWwiglQglsyMFst/wIy24oQ3kgFVsHYDk6tMsQy389iTzKZYzVr97jt96
+         JEOJxXnyF4cUogJdBTXGTpWtkJTju+EFkaGLvKa6nhI5AS0YrQQyVJxlaywjd6nYtww6
+         tECDcqYYfoqOeT+c3hoxOnYsSE9528TjKYBYRpjKjbER5Q2icHA0OwItQED1sZIUOb+v
+         EM0btFnLkJfkq/0SFiqtll1lCisBvD8i44XtEJdIC+L9Vp9VFUk1Jr94fFL1cN7JWEk/
+         C68Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nysxb4NxOzc34BLE8aYpf5+rztCogoNfw8sxbZXLVf0=;
+        b=deK1p59z6y67MbEfpltc+rdz5nZaoYfVzrMA5VVqSLlj/wJ6C/ZqYO/KRCiG5dCx4o
+         pYDEj2jpIbvra5fMbRD1jvCnuScz6ryBDpw1agKE+E+/yRMKFLwc9PWRCRg9QpDiN9Iq
+         gh+qMQTV1hG06dEjDYzCZt31SRoQDm8uvGj2B4pSHoTGWFzh40pD0kuwzPsdLxbZti8K
+         j5GgKlLaUPQuh1TiBvUSOyapxUUNTz7ziJz4unHMK6Zt3cBJHAIXZTewCADPPiIqqxSJ
+         9jllCWOTXfD7o5/kXqzNyez5FDNeES7YDwXxfuqT+aeMrBPeQ40Y8kJRzriBlSbXuDMt
+         7pAg==
+X-Gm-Message-State: APjAAAXQhXpqq8cChDhG64xwxVhHgo6tHkaNP1ieo5JiGBHfaUozsqmV
+        IYO2ZFC8e73ca1ibZOvkS0r4J/9tOWo=
+X-Google-Smtp-Source: APXvYqyraFIgkVanyUK/zRQeSMtzlbZh+bvyY2t61gipfsOHgnqkFON4RBYL1xMqtXrGBQ8vl/LVeg==
+X-Received: by 2002:a37:a709:: with SMTP id q9mr4552281qke.57.1571771537157;
+        Tue, 22 Oct 2019 12:12:17 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
+        by smtp.gmail.com with ESMTPSA id f10sm8527753qth.40.2019.10.22.12.12.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Oct 2019 12:12:16 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1iMzZo-0002n5-7w; Tue, 22 Oct 2019 16:12:16 -0300
+Date:   Tue, 22 Oct 2019 16:12:16 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] IB/uverbs: Add a check for uverbs_attr_get
+Message-ID: <20191022191216.GE23952@ziepe.ca>
+References: <20191018081533.8544-1-hslester96@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018081533.8544-1-hslester96@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+On Fri, Oct 18, 2019 at 04:15:34PM +0800, Chuhong Yuan wrote:
+> Only uverbs_copy_to_struct_or_zero in uverbs_ioctl.c does not have a
+> check for uverbs_attr_get.
+> Although its usage in uverbs_response has a check for attr's validity,
+> UVERBS_HANDLER does not.
+> Therefore, it is better to add a check like other functions in
+> uverbs_ioctl.c.
+> 
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> ---
+>  drivers/infiniband/core/uverbs_ioctl.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-This commit replaces the use of rcu_swap_protected() with the more
-intuitively appealing rcu_replace() as a step towards removing
-rcu_swap_protected().
+The call in uverbs_ioctl.c is safe as well, that code path checks that
+the attribute exists.
 
-Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Reported-by: Reported-by: kbuild test robot <lkp@intel.com>
-[ paulmck: From rcu_replace() to rcu_replace_pointer() per Ingo Molnar. ]
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Micah Morton <mortonm@chromium.org>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: <linux-security-module@vger.kernel.org>
----
- security/safesetid/securityfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Still, it make sense that this check should be present, so applied to
+for-next with a clearer commit message
 
-diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
-index 74a13d4..f8bc574 100644
---- a/security/safesetid/securityfs.c
-+++ b/security/safesetid/securityfs.c
-@@ -179,8 +179,8 @@ static ssize_t handle_policy_update(struct file *file,
- 	 * doesn't currently exist, just use a spinlock for now.
- 	 */
- 	mutex_lock(&policy_update_lock);
--	rcu_swap_protected(safesetid_setuid_rules, pol,
--			   lockdep_is_held(&policy_update_lock));
-+	pol = rcu_replace_pointer(safesetid_setuid_rules, pol,
-+				  lockdep_is_held(&policy_update_lock));
- 	mutex_unlock(&policy_update_lock);
- 	err = len;
- 
--- 
-2.9.5
-
+Thanks,
+Jason
