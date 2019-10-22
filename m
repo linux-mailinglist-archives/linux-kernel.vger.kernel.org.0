@@ -2,227 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC215E0DE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 23:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1771E0DF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 23:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733275AbfJVVqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 17:46:25 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:33080 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731271AbfJVVqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 17:46:23 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iN1ys-00049R-Ri; Tue, 22 Oct 2019 15:46:22 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iN1ys-000259-F6; Tue, 22 Oct 2019 15:46:18 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Tue, 22 Oct 2019 15:46:16 -0600
-Message-Id: <20191022214616.7943-6-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191022214616.7943-1-logang@deltatee.com>
-References: <20191022214616.7943-1-logang@deltatee.com>
+        id S1731622AbfJVV6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 17:58:47 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45854 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731217AbfJVV6r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 17:58:47 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b4so2563371pfr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 14:58:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eXGzF7dq1xTVTq11IVCExXEYGAuBuij8za1gI6IMyEc=;
+        b=mAju3yDxsrfMAx8IHyZc18wnEhu0bCutzIoDjvCKoK5fFtrdmhM5TfQ2CCYV18ulAi
+         zKUeeufW8u2rbgQNA4wAogwFIDoz1FQeHu3LsxSNHQJTKK+OKhKqGXkGSbOewTRLuJax
+         iY3Kzu/sFzzthqMUMAIaot3ExJpNNrdXu5nusuKqWB4FB5YdLIRCfo61qIaO4yrv77ol
+         XhNo9fYAAsxhCitI8gOcm8xsp8cLyE+mGREVT2b4qKyHAO3j9cJGIa3QW/9ZJq8hLKsh
+         DGqHqZzIXrjy9gNxutWcrfiPPpltHGE49XlV4QEJ40myofebi+u1cR5jAQYXxz/LRCBf
+         8Ktg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eXGzF7dq1xTVTq11IVCExXEYGAuBuij8za1gI6IMyEc=;
+        b=pj/xyolzAuzQ1UOvDGaCxaD92ByVEE07n0+MT7OUdWUkOzT1dj3TJOl/pspA1ZKF3P
+         UN95wtQ1Aw9DeRYKt5le6vJfUCBRmbLiqWK4HbviYPihGHLsq04BdSXwxBTwFuaB2SEZ
+         RHcUoMW8N1EynU1iI8XmbBH2hf1vPbDzWeJrbKMKZOT7mPqf7GnBXRQcbOHaUcR3b9Da
+         HCqAg5yUCO6J8F7er6E8sYzeIrws3Y3IvAls/6LwJjjiaIrhxgGukUmukt85WJDUIBZt
+         8GnOadsei9dlJ4yrmQq8iDWL3htdwlMFRB6yQtJE/EW8A0YIVBwR+1QU4laapKZnPpXd
+         pbQA==
+X-Gm-Message-State: APjAAAXtZWjVOrdOdjLcBKAaK+gxmRtF8DUI25ZfULMjjOzYZJJrFxCP
+        4QtRtjJKyPAXR5r9kruDPmK1GvW+
+X-Google-Smtp-Source: APXvYqxMAKTn9qWk7Ka8q1g5HsxUjI25Ren7t315F41Aa1IGxjlJeoWMvHmfoQeU3zQCqZPljukcPg==
+X-Received: by 2002:a17:90a:8c92:: with SMTP id b18mr7271418pjo.136.1571781526026;
+        Tue, 22 Oct 2019 14:58:46 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1833])
+        by smtp.gmail.com with ESMTPSA id g35sm19141045pgg.42.2019.10.22.14.58.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Oct 2019 14:58:45 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 14:58:43 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 3/3] x86/ftrace: Use text_poke()
+Message-ID: <20191022215841.2qsmhd6vxi4mwade@ast-mbp.dhcp.thefacebook.com>
+References: <CAADnVQLn+Fh-UgSRD9SZCT7WYOez5De04iCZucYbA9mYxPm2AQ@mail.gmail.com>
+ <20191021231630.49805757@oasis.local.home>
+ <20191021231904.4b968dc1@oasis.local.home>
+ <20191022040532.fvpxcs74i4mn4rc6@ast-mbp.dhcp.thefacebook.com>
+ <20191022071956.07e21543@gandalf.local.home>
+ <20191022094455.6a0a1a27@gandalf.local.home>
+ <20191022175052.frjzlnjjfwwfov64@ast-mbp.dhcp.thefacebook.com>
+ <20191022141021.2c4496c2@gandalf.local.home>
+ <20191022204620.jp535nfvfubjngzd@ast-mbp.dhcp.thefacebook.com>
+ <20191022170430.6af3b360@gandalf.local.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org, vkoul@kernel.org, dan.j.williams@intel.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
-        autolearn_force=no version=3.4.2
-Subject: [PATCH 5/5] dmaengine: plx-dma: Implement descriptor submission
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191022170430.6af3b360@gandalf.local.home>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On prep, a spin lock is taken and the next entry in the circular buffer
-is filled. On submit, the valid bit is set in the hardware descriptor
-and the lock is released.
+On Tue, Oct 22, 2019 at 05:04:30PM -0400, Steven Rostedt wrote:
+> 
+> I gave a solution for this. And that is to add another flag to allow
+> for just the minimum to change the ip. And we can even add another flag
+> to allow for changing the stack if needed (to emulate a call with the
+> same parameters).
 
-The DMA engine is started (if it's not already running) when the client
-calls dma_async_issue_pending().
+your solution is to reduce the overhead.
+my solution is to remove it competely. See the difference?
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- drivers/dma/plx_dma.c | 119 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 119 insertions(+)
+> By doing this work, live kernel patching will also benefit. Because it
+> is also dealing with the unnecessary overhead of saving regs.
+> 
+> And we could possibly even have kprobes benefit from this if a kprobe
+> doesn't need full regs.
 
-diff --git a/drivers/dma/plx_dma.c b/drivers/dma/plx_dma.c
-index d3c2319e2fad..21e4d7634eeb 100644
---- a/drivers/dma/plx_dma.c
-+++ b/drivers/dma/plx_dma.c
-@@ -7,6 +7,7 @@
- 
- #include "dmaengine.h"
- 
-+#include <linux/circ_buf.h>
- #include <linux/dmaengine.h>
- #include <linux/kref.h>
- #include <linux/list.h>
-@@ -122,6 +123,11 @@ static struct plx_dma_dev *chan_to_plx_dma_dev(struct dma_chan *c)
- 	return container_of(c, struct plx_dma_dev, dma_chan);
- }
- 
-+static struct plx_dma_desc *to_plx_desc(struct dma_async_tx_descriptor *txd)
-+{
-+	return container_of(txd, struct plx_dma_desc, txd);
-+}
-+
- static struct plx_dma_desc *plx_dma_get_desc(struct plx_dma_dev *plxdev, int i)
- {
- 	return plxdev->desc_ring[i & (PLX_DMA_RING_COUNT - 1)];
-@@ -244,6 +250,113 @@ static void plx_dma_desc_task(unsigned long data)
- 	plx_dma_process_desc(plxdev);
- }
- 
-+static struct dma_async_tx_descriptor *plx_dma_prep_memcpy(struct dma_chan *c,
-+		dma_addr_t dma_dst, dma_addr_t dma_src, size_t len,
-+		unsigned long flags)
-+	__acquires(plxdev->ring_lock)
-+{
-+	struct plx_dma_dev *plxdev = chan_to_plx_dma_dev(c);
-+	struct plx_dma_desc *plxdesc;
-+
-+	spin_lock_bh(&plxdev->ring_lock);
-+	if (!plxdev->ring_active)
-+		goto err_unlock;
-+
-+	if (!CIRC_SPACE(plxdev->head, plxdev->tail, PLX_DMA_RING_COUNT))
-+		goto err_unlock;
-+
-+	if (len > PLX_DESC_SIZE_MASK)
-+		goto err_unlock;
-+
-+	plxdesc = plx_dma_get_desc(plxdev, plxdev->head);
-+	plxdev->head++;
-+
-+	plxdesc->hw->dst_addr_lo = cpu_to_le32(lower_32_bits(dma_dst));
-+	plxdesc->hw->dst_addr_hi = cpu_to_le16(upper_32_bits(dma_dst));
-+	plxdesc->hw->src_addr_lo = cpu_to_le32(lower_32_bits(dma_src));
-+	plxdesc->hw->src_addr_hi = cpu_to_le16(upper_32_bits(dma_src));
-+
-+	plxdesc->orig_size = len;
-+
-+	if (flags & DMA_PREP_INTERRUPT)
-+		len |= PLX_DESC_FLAG_INT_WHEN_DONE;
-+
-+	plxdesc->hw->flags_and_size = cpu_to_le32(len);
-+	plxdesc->txd.flags = flags;
-+
-+	/* return with the lock held, it will be released in tx_submit */
-+
-+	return &plxdesc->txd;
-+
-+err_unlock:
-+	/*
-+	 * Keep sparse happy by restoring an even lock count on
-+	 * this lock.
-+	 */
-+	__acquire(plxdev->ring_lock);
-+
-+	spin_unlock_bh(&plxdev->ring_lock);
-+	return NULL;
-+}
-+
-+static dma_cookie_t plx_dma_tx_submit(struct dma_async_tx_descriptor *desc)
-+	__releases(plxdev->ring_lock)
-+{
-+	struct plx_dma_dev *plxdev = chan_to_plx_dma_dev(desc->chan);
-+	struct plx_dma_desc *plxdesc = to_plx_desc(desc);
-+	dma_cookie_t cookie;
-+
-+	cookie = dma_cookie_assign(desc);
-+
-+	/*
-+	 * Ensure the descriptor updates are visible to the dma device
-+	 * before setting the valid bit.
-+	 */
-+	wmb();
-+
-+	plxdesc->hw->flags_and_size |= cpu_to_le32(PLX_DESC_FLAG_VALID);
-+
-+	spin_unlock_bh(&plxdev->ring_lock);
-+
-+	return cookie;
-+}
-+
-+static enum dma_status plx_dma_tx_status(struct dma_chan *chan,
-+		dma_cookie_t cookie, struct dma_tx_state *txstate)
-+{
-+	struct plx_dma_dev *plxdev = chan_to_plx_dma_dev(chan);
-+	enum dma_status ret;
-+
-+	ret = dma_cookie_status(chan, cookie, txstate);
-+	if (ret == DMA_COMPLETE)
-+		return ret;
-+
-+	plx_dma_process_desc(plxdev);
-+
-+	return dma_cookie_status(chan, cookie, txstate);
-+}
-+
-+static void plx_dma_issue_pending(struct dma_chan *chan)
-+{
-+	struct plx_dma_dev *plxdev = chan_to_plx_dma_dev(chan);
-+
-+	rcu_read_lock();
-+	if (!rcu_dereference(plxdev->pdev)) {
-+		rcu_read_unlock();
-+		return;
-+	}
-+
-+	/*
-+	 * Ensure the valid bits are visible before starting the
-+	 * DMA engine.
-+	 */
-+	wmb();
-+
-+	writew(PLX_REG_CTRL_START_VAL, plxdev->bar + PLX_REG_CTRL);
-+
-+	rcu_read_unlock();
-+}
-+
- static irqreturn_t plx_dma_isr(int irq, void *devid)
- {
- 	struct plx_dma_dev *plxdev = devid;
-@@ -307,7 +420,9 @@ static int plx_dma_alloc_desc(struct plx_dma_dev *plxdev)
- 			goto free_and_exit;
- 
- 		dma_async_tx_descriptor_init(&desc->txd, &plxdev->dma_chan);
-+		desc->txd.tx_submit = plx_dma_tx_submit;
- 		desc->hw = &plxdev->hw_ring[i];
-+
- 		plxdev->desc_ring[i] = desc;
- 	}
- 
-@@ -428,11 +543,15 @@ static int plx_dma_create(struct pci_dev *pdev)
- 	dma = &plxdev->dma_dev;
- 	dma->chancnt = 1;
- 	INIT_LIST_HEAD(&dma->channels);
-+	dma_cap_set(DMA_MEMCPY, dma->cap_mask);
- 	dma->copy_align = DMAENGINE_ALIGN_1_BYTE;
- 	dma->dev = get_device(&pdev->dev);
- 
- 	dma->device_alloc_chan_resources = plx_dma_alloc_chan_resources;
- 	dma->device_free_chan_resources = plx_dma_free_chan_resources;
-+	dma->device_prep_dma_memcpy = plx_dma_prep_memcpy;
-+	dma->device_issue_pending = plx_dma_issue_pending;
-+	dma->device_tx_status = plx_dma_tx_status;
- 
- 	chan = &plxdev->dma_chan;
- 	chan->device = dma;
--- 
-2.20.1
+Neither of two statements are true. The per-function generated trampoline
+I'm talking about is bpf specific. For a function with two arguments it's just:
+push rbp 
+mov rbp, rsp
+push rdi
+push rsi
+lea  rdi,[rbp-0x10]
+call jited_bpf_prog
+pop rsi
+pop rdi
+leave
+ret
+
+fentry's nop is replaced with call to the above.
+That's it.
+kprobe and live patching has no use out of it.
+
+> But you said that you can't have this and trace the functions at the
+> same time. Which also means you can't do live kernel patching on these
+> functions either.
+
+I don't think it's a real use case, but to avoid further arguing
+I'll add one nop to the front of generated bpf trampoline so that
+ftrace and livepatch can use it.
 
