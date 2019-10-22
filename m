@@ -2,61 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71FD0E0881
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:17:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAE5FE0886
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:17:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389325AbfJVQQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 12:16:56 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43837 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387575AbfJVQQz (ORCPT
+        id S2389356AbfJVQRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 12:17:36 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:36489 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727152AbfJVQRf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:16:55 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1iMwq5-0000qx-Sz; Tue, 22 Oct 2019 18:16:53 +0200
-Message-ID: <0925a763d31cf8055184247f272ea29af866c0ea.camel@pengutronix.de>
-Subject: Re: [PATCH] MAINTAINERS: add reset controller framework keywords
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
-Cc:     kernel@pengutronix.de
-Date:   Tue, 22 Oct 2019 18:16:53 +0200
-In-Reply-To: <5db6c53e5c87ca2999c577333d9c6df678b36994.camel@perches.com>
-References: <20191022123823.4854-1-p.zabel@pengutronix.de>
-         <5db6c53e5c87ca2999c577333d9c6df678b36994.camel@perches.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Tue, 22 Oct 2019 12:17:35 -0400
+Received: from mail-qt1-f182.google.com ([209.85.160.182]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MO9vD-1igY3r0lq5-00OaRo; Tue, 22 Oct 2019 18:17:34 +0200
+Received: by mail-qt1-f182.google.com with SMTP id u22so27548891qtq.13;
+        Tue, 22 Oct 2019 09:17:33 -0700 (PDT)
+X-Gm-Message-State: APjAAAVVsDH9Dx0DMUddF7SQc69kO/vvo27iR978Rcab1Xi25EOUH3S5
+        RbOdo7Lse1xU3vXLljxWYoZopYC8aOAHMEnT3w4=
+X-Google-Smtp-Source: APXvYqzOVveCcqi6IzsUb1jWOUTf6iMi0+WDBOpmGm2qZQuClTYIYUCOIg/E6ED39g/gNb+nD+rxAapci4yU+CYXkiI=
+X-Received: by 2002:ac8:18eb:: with SMTP id o40mr4277193qtk.304.1571761052972;
+ Tue, 22 Oct 2019 09:17:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20191022142914.1803322-1-arnd@arndb.de> <MN2PR20MB29732A5C1B14AE24DD7531A3CA680@MN2PR20MB2973.namprd20.prod.outlook.com>
+In-Reply-To: <MN2PR20MB29732A5C1B14AE24DD7531A3CA680@MN2PR20MB2973.namprd20.prod.outlook.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 22 Oct 2019 18:17:16 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1-d7PmYB6v9y2DFD+kOB9ebDsixhFNcuxVJ2+rrBwjqA@mail.gmail.com>
+Message-ID: <CAK8P3a1-d7PmYB6v9y2DFD+kOB9ebDsixhFNcuxVJ2+rrBwjqA@mail.gmail.com>
+Subject: Re: [PATCH] crypto: inside-secure - select CONFIG_CRYPTO_SM3
+To:     Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Pascal van Leeuwen <pascalvanl@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:8p6IsfGbVz0hGZQIFrLX7uaVKL5DNWbfLFWQX0A851z+dPKH9n/
+ B4Sq0SRyMN/0AtuEAzUbLolWkEsMQyI+XJVHEIgNy1TPQvdFLQCeIyLu+XaIjhK+p+SnNGH
+ llFaf4K6pEfdJ8Epuf5wXDjYupX5zeoWId6ALD6N8gYT/CXUBEq+90Yx2BDC3I3+3SYF92S
+ uF2ORlRRgjLnnDJaF7eKw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:L5rxhNVuXIc=:xKEVhUbPuqVibDmdfqMLZD
+ qsaYeDH5Kzq9GKBWpRyEsm7d3cz+iipopPkGfWaRfrFocpiHMhs51l4L5CBFxwpMWJjSUR1Qd
+ KpsEhHRuBVh9FAFTv2M3Vlpp3Lryi8W1psOdTeCciIwEpGBzWSY2XGUxcHrIHJs0BOjuL5Nr7
+ SkOc0d3ivJoNbVMqQVXQKAPPLUH93SdFa0dglJIIh7afikzelgRXzI0wwihDir9JApBHTW05l
+ AOLs18Z7Asrz8HVSCPpfcAwRxJlauOYG1SXYUfYEdp4mrQZB+UNq7pTFh5RCf3TInnqsU8IhX
+ qViH4GWirZQoFTbiDfTW9/InpASrOvtICmtHMcJQxjhkpIbXNieEeDfAvo72eEc2XPyBqHTuA
+ Cs3sKx/EJY0LcOHXlvzJk5aZrzk8ofF8SJDxrjtUzEIIRd7z6HXPv1zefDIgbPGWW2BMgtbQt
+ vLOR2+YtnLc51YDxGLISl82vFbqYxLzZYns1pvwqnOnuleSIfPt0FEyOBaXRElTFnTqiovRFV
+ anE9blKeSSxVFoVHPSxAQRnLZr6WrLIGdUhxgkTGVSvCfJDfrQEiurkbmj8ORMGRxJ43vy1Ys
+ fJyzHQtjvaO098HIqAK1Kb8gzySpaMt4ehFKlTjKyL3UqbR5xSQshP33WR2pdC49XZfXH5inC
+ vDUPaw+ojrTJzyQonuVM83vXhw98MSkf0puoL531j8l/f/tzA1JUrPGTY0lA3chzt3sojJT+q
+ Givy/G/Z0DaeCPTsHux6YTGIzAHZ93UoqBl2qdgnk3KOr6Rf/WtKR+vBnljFzkqeKF9l0H7hs
+ ZKFaqKC0KcGKlTaBaoNdNVZJ85PxOxpR5MuWVgxjvZxkLD+oyZ9m+vo/Ad8nMXu5EFBbiy0Nm
+ MfHI9Ypp02HDG8dXOffg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-10-22 at 09:03 -0700, Joe Perches wrote:
-> On Tue, 2019-10-22 at 14:38 +0200, Philipp Zabel wrote:
-> > Add a regex that matches users of the reset controller API.
-> []
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> []
-> > @@ -13851,6 +13851,7 @@ F:	include/dt-bindings/reset/
-> >  F:	include/linux/reset.h
-> >  F:	include/linux/reset/
-> >  F:	include/linux/reset-controller.h
-> > +K:	\b(devm_|of_)?reset_control(ler_[a-z]+|_[a-z_]+)?\b
-> 
-> Please add ?: to each group so no capture is done.
-> It's a little faster.
-> 
-> K:	\b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
+On Tue, Oct 22, 2019 at 5:42 PM Pascal Van Leeuwen
+<pvanleeuwen@verimatrix.com> wrote:
 
-Thank you, fixed in v2.
+> > diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+> > index 357e230769c8..1ca8d9a15f2a 100644
+> > --- a/drivers/crypto/Kconfig
+> > +++ b/drivers/crypto/Kconfig
+> > @@ -753,6 +753,7 @@ config CRYPTO_DEV_SAFEXCEL
+> >       select CRYPTO_SHA512
+> >       select CRYPTO_CHACHA20POLY1305
+> >       select CRYPTO_SHA3
+> > +     select CRYPTO_SM3
+> >
+> Was this problem observed with the latest state of the Cryptodev GIT?
+> Because I already attempted to fix this issue with commit 99a59da3723b9725
+> Can you please double check if you still get the compile error with that
+> commit included?
+> (I can't tell from this mail which version of the sources you are using)
 
-regards
-Philipp
+I was testing on linux-5.4-rc3 plus some of my own patches, so your fix
+was not included.
 
+With your patch applied, mine is no longer needed.
+
+        Arnd
