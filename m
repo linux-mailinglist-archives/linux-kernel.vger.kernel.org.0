@@ -2,64 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C457DFFC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE0C7DFFD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:44:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388601AbfJVIne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:43:34 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55868 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388579AbfJVInd (ORCPT
+        id S2388545AbfJVIn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 04:43:28 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:44766 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388518AbfJVIn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:43:33 -0400
-Received: by mail-wm1-f68.google.com with SMTP id g24so6998130wmh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 01:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jXNXj1e2zC7QQcAuycavLZxRUf6xfVt6rz1LoeDud/w=;
-        b=2QCyA3PXiPUyeYFfuokAvpJI+PvkjVpE4UOc0GXfQNWQLPRIJ0QiOrQS0JzYXAd+n3
-         Szn91AoIXkU1TUwFXYX0ApUs9c5lC5Y5TGYRD81OltYhvuecZU7li+rSgVDjbcAnQ9wq
-         WDqai+Etz77UZ+acGmURkx9RBtZ6h5KdcahbnB2TyEfltA8mCNAFgHETKBRTRNIG9xy8
-         GdlzdG76F+YGV7UVe4OPMrUqElEx17hrl8Yv5dIC5ZavP8i2kjUZrBlwH3DSvF/24Dmp
-         bHOtuWOpcUGSPaVQ3cpAWkjb87PLohAZ5qbXRVxeE1FpXwe5mOf9bHcgEjua7PJi2nd1
-         0Z/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jXNXj1e2zC7QQcAuycavLZxRUf6xfVt6rz1LoeDud/w=;
-        b=XEOYdlkj+mrRLwcOhgDGasx67e1kuX0t/m2SfPpY697cLwHlw9vhUsMvOkxsnqV3Lj
-         F1weEhPNI8DaoavwH9B6uLGIX47A5UCaCJ38kUSqQ+oEtPBSabxUDAej/twX3uugg5i+
-         6dO1UUMzKiGvDNAN4+8kOK+7gQJRIWch3ig3DEnqi0GhHsOEluKVGfTGZtoupaVNs3Xe
-         pIBSGH2axcDQJWOpx5qOEJ5p7FGSGOJPyAKf5N/Xo7nqsmnqQYrreBTNDSkNsvI6xpjk
-         M/2y9uuZ/uRLnT2waryFqVNY6dcBGt+nqNXZV2LF3/spvPMAC/GFmdKRelNEfvxCaBWa
-         UeUg==
-X-Gm-Message-State: APjAAAW1f02huFAZZwhjMxaploMZx1szAp6DB9fRVtgA2h2Wr1fSWiZq
-        g1o4/kEUFmBWd+kVD8hQr1IXEA==
-X-Google-Smtp-Source: APXvYqxrmktides0gIu13c3NuG/KSYgp4SuGdxhZ/o9zHotYMfXm0eCSV6Q2f87+20WxPanjVJ0Q0w==
-X-Received: by 2002:a1c:dc83:: with SMTP id t125mr1994370wmg.50.1571733811370;
-        Tue, 22 Oct 2019 01:43:31 -0700 (PDT)
-Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id q25sm477231wra.3.2019.10.22.01.43.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 01:43:30 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH v3 8/8] gpio: tegra186: use devm_platform_ioremap_resource_byname()
-Date:   Tue, 22 Oct 2019 10:43:18 +0200
-Message-Id: <20191022084318.22256-9-brgl@bgdev.pl>
+        Tue, 22 Oct 2019 04:43:28 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iMplF-0003JS-4F; Tue, 22 Oct 2019 09:43:25 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.3)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iMplE-0003Y1-Ee; Tue, 22 Oct 2019 09:43:24 +0100
+From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Subject: [PATCH] cpu-topology: declare parse_acpi_topology in <linux/arch_topology.h>
+Date:   Tue, 22 Oct 2019 09:43:23 +0100
+Message-Id: <20191022084323.13594-1-ben.dooks@codethink.co.uk>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191022084318.22256-1-brgl@bgdev.pl>
-References: <20191022084318.22256-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,40 +34,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+The parse_acpi_topology() is not declared anywhere which
+causes the following sparse warning:
 
-Use the devm_platform_ioremap_resource_byname() helper instead of
-calling platform_get_resource_byname() and devm_ioremap_resource()
-separately.
+drivers/base/arch_topology.c:522:19: warning: symbol 'parse_acpi_topology' was not declared. Should it be static?
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
 ---
- drivers/gpio/gpio-tegra186.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org
+---
+ include/linux/arch_topology.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index a9058fda187e..ef40fbe923cf 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -407,7 +407,6 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
- 	unsigned int i, j, offset;
- 	struct gpio_irq_chip *irq;
- 	struct tegra_gpio *gpio;
--	struct resource *res;
- 	char **names;
- 	int err;
+diff --git a/include/linux/arch_topology.h b/include/linux/arch_topology.h
+index 42f2b5126094..3015ecbb90b1 100644
+--- a/include/linux/arch_topology.h
++++ b/include/linux/arch_topology.h
+@@ -57,6 +57,7 @@ const struct cpumask *cpu_coregroup_mask(int cpu);
+ void update_siblings_masks(unsigned int cpu);
+ void remove_cpu_topology(unsigned int cpuid);
+ void reset_cpu_topology(void);
++int parse_acpi_topology(void);
+ #endif
  
-@@ -417,8 +416,7 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
- 
- 	gpio->soc = of_device_get_match_data(&pdev->dev);
- 
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gpio");
--	gpio->base = devm_ioremap_resource(&pdev->dev, res);
-+	gpio->base = devm_platform_ioremap_resource_byname(pdev, "gpio");
- 	if (IS_ERR(gpio->base))
- 		return PTR_ERR(gpio->base);
- 
+ #endif /* _LINUX_ARCH_TOPOLOGY_H_ */
 -- 
 2.23.0
 
