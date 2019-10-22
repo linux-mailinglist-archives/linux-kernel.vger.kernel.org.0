@@ -2,79 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B55E5E0E1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 00:20:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92AD8E0E25
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 00:26:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387948AbfJVWUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 18:20:03 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:55882 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbfJVWUD (ORCPT
+        id S1733289AbfJVW0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 18:26:06 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37654 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731754AbfJVW0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 18:20:03 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 07525806A8;
-        Wed, 23 Oct 2019 11:20:02 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1571782802;
-        bh=LtvxEKkSPHNyKRPgRkt0mLmoWuIQEMyTQMTbpJmYd90=;
-        h=From:To:Cc:Subject:Date;
-        b=JeFmbIAlCo9DhZjJ1FxwXIAL7L/7mQe2qKyW7ybOI51joj1Pmh57AuxCaFCFViCMQ
-         a4ZuNy+bFVzXvi42zpzrL0FTE9hx5tDHNWoJzfQcyYVAvIQi05h4Ws7D8k2pwHYE1G
-         ctXud6XnoELJLn1W14Ibis9/kttSzOBekfaMKKnDc7ja22R45ZMHvNXhi7eVUgKvcA
-         3lxBpwJ7HYWJupmkT0hVxoBDLomIJ7K+ZT6K5IcEmndwiJlcpZyLZ1k1V13DU7v7km
-         R67TZ3r7cPK/SQI71jO6agO4A5F/LtwGAMNsbIt4qCE83MXTh5BAKbqHRoQeA8VT/s
-         S08MyFszQZBUQ==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5daf80900000>; Wed, 23 Oct 2019 11:20:02 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
-        by smtp (Postfix) with ESMTP id EAF1713EED4;
-        Wed, 23 Oct 2019 11:20:03 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id BF38C280059; Wed, 23 Oct 2019 11:19:59 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, rjui@broadcom.com,
-        f.fainelli@gmail.com
-Cc:     bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Scott Branden <sbranden@broadcom.com>
-Subject: [PATCH] ARM: dts: bcm: HR2: add label to sp805 watchdog
-Date:   Wed, 23 Oct 2019 11:19:56 +1300
-Message-Id: <20191022221956.10746-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.23.0
+        Tue, 22 Oct 2019 18:26:06 -0400
+Received: by mail-lj1-f194.google.com with SMTP id l21so18896649lje.4
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 15:26:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=zyVBsTyeuK8exQz7uSYQwdsxGdhjYLow8oX5vGt2F/c=;
+        b=lcXDohfgOnbx7TXbgUm4VMI+uk3OyUyfK2CRjgW8nUbpj1mYGechfdG73lQX6EqufG
+         a2eCV8+eaW0ZtqTiMH9967z0RKOexKyX24PlFg3uKQBGXwIRAIog2i2aclI5/unG9HE4
+         iMl/AO5AAc+oDh0AWhnFdJIk6Mi+Fr2PxrW40XVI0Hw0aAyDk0DirtgWbmV7WZe12ep4
+         bBdZ27K1LD9Pr17nHwA/u526pml3DtsgxPB9SLuugjD51/HwmBVdGk2I/wG7eHQhIDTR
+         Eiqe0K3kmGPRYQb6jJC0ClIlupHA/l+5AzGD7lv2tP8GetLk30BfZsjh7Glwx1UN34oh
+         jPsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=zyVBsTyeuK8exQz7uSYQwdsxGdhjYLow8oX5vGt2F/c=;
+        b=dN09QJ0u2QYIw2NbO1cBKobKmjkgu0Kj4DFD0kRG+sorAHSW/qRP1TdGMJ3N2ONlkv
+         KpmffP2jJaKsrHoYaaXOBq+SRTzEtyR2d0f3Uf5kJdKJDA2CaEe2uWcuVdhzL6mhYGmG
+         cX9z5suFsWaCnEETWd/QrCoJV1I5fin8caYz7wEHGrjD1ash0pvR1iexfVaDFreG8lFZ
+         nHlq2TxX1SDxRXKHgi7ZmybtIn/+HN2hIsVIuQFUqYCPdL3a+fp1IUUxFGlrXX1evPW6
+         pqTQ8xmFduzZMRNM/vex/b7XYXwj8wBLgHaWUvdZbC4ZliF17LkhKAuOvPEQnMFWXdVw
+         1xIw==
+X-Gm-Message-State: APjAAAVa4f4u9VzH5yANHNpo5+NQ8A8aAacBpHbpXtzdd5cbBSAoWFHG
+        Z1gmxnZbFLf3za/3ZWYqVlQgf8gS6n0=
+X-Google-Smtp-Source: APXvYqz6GvtPBXEdvYogP8HTZ4WdOZhDKd0gF/nGW9a+kQSEprgmY0IHuP1ltVctdf3Z4M3WUqH+LA==
+X-Received: by 2002:a2e:8544:: with SMTP id u4mr445073ljj.158.1571783162792;
+        Tue, 22 Oct 2019 15:26:02 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id c76sm12184600lfg.11.2019.10.22.15.26.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2019 15:26:02 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 15:25:54 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+Cc:     linux-kernel@lists.codethink.co.uk,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: mvneta: make stub functions static inline
+Message-ID: <20191022152554.251d36ef@cakuba.netronome.com>
+In-Reply-To: <20191022152205.11815-1-ben.dooks@codethink.co.uk>
+References: <20191022152205.11815-1-ben.dooks@codethink.co.uk>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows boards the option of adding properties or disabling the
-watchdog entirely.
+On Tue, 22 Oct 2019 16:22:05 +0100, Ben Dooks (Codethink) wrote:
+> If the CONFIG_MVNET_BA is not set, then make the stub functions
+> static inline to avoid trying to export them, and remove hte
+> following sparse warnings:
+> 
+> drivers/net/ethernet/marvell/mvneta_bm.h:163:6: warning: symbol 'mvneta_bm_pool_destroy' was not declared. Should it be static?
+> drivers/net/ethernet/marvell/mvneta_bm.h:165:6: warning: symbol 'mvneta_bm_bufs_free' was not declared. Should it be static?
+> drivers/net/ethernet/marvell/mvneta_bm.h:167:5: warning: symbol 'mvneta_bm_construct' was not declared. Should it be static?
+> drivers/net/ethernet/marvell/mvneta_bm.h:168:5: warning: symbol 'mvneta_bm_pool_refill' was not declared. Should it be static?
+> drivers/net/ethernet/marvell/mvneta_bm.h:170:23: warning: symbol 'mvneta_bm_pool_use' was not declared. Should it be static?
+> drivers/net/ethernet/marvell/mvneta_bm.h:181:18: warning: symbol 'mvneta_bm_get' was not declared. Should it be static?
+> drivers/net/ethernet/marvell/mvneta_bm.h:182:6: warning: symbol 'mvneta_bm_put' was not declared. Should it be static?
+> 
+> Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
- arch/arm/boot/dts/bcm-hr2.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks like this one will require a bit more work.
 
-diff --git a/arch/arm/boot/dts/bcm-hr2.dtsi b/arch/arm/boot/dts/bcm-hr2.d=
-tsi
-index e4d49731287f..6142c672811e 100644
---- a/arch/arm/boot/dts/bcm-hr2.dtsi
-+++ b/arch/arm/boot/dts/bcm-hr2.dtsi
-@@ -268,7 +268,7 @@
- 			clock-frequency =3D <100000>;
- 		};
-=20
--		watchdog@39000 {
-+		watchdog: watchdog@39000 {
- 			compatible =3D "arm,sp805", "arm,primecell";
- 			reg =3D <0x39000 0x1000>;
- 			interrupts =3D <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>;
---=20
-2.23.0
+>  drivers/net/ethernet/marvell/mvneta_bm.h | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/mvneta_bm.h b/drivers/net/ethernet/marvell/mvneta_bm.h
+> index c8425d35c049..9c0c6e20cf80 100644
+> --- a/drivers/net/ethernet/marvell/mvneta_bm.h
+> +++ b/drivers/net/ethernet/marvell/mvneta_bm.h
+> @@ -160,14 +160,14 @@ static inline u32 mvneta_bm_pool_get_bp(struct mvneta_bm *priv,
+>  			     (bm_pool->id << MVNETA_BM_POOL_ACCESS_OFFS));
+>  }
+>  #else
+> -void mvneta_bm_pool_destroy(struct mvneta_bm *priv,
+> -			    struct mvneta_bm_pool *bm_pool, u8 port_map) {}
+> -void mvneta_bm_bufs_free(struct mvneta_bm *priv, struct mvneta_bm_pool *bm_pool,
+> -			 u8 port_map) {}
+> -int mvneta_bm_construct(struct hwbm_pool *hwbm_pool, void *buf) { return 0; }
+> -int mvneta_bm_pool_refill(struct mvneta_bm *priv,
+> -			  struct mvneta_bm_pool *bm_pool) {return 0; }
+> -struct mvneta_bm_pool *mvneta_bm_pool_use(struct mvneta_bm *priv, u8 pool_id,
+> +static inline void mvneta_bm_pool_destroy(struct mvneta_bm *priv,
+> +					  struct mvneta_bm_pool *bm_pool, u8 port_map) {}
+> +static inline void mvneta_bm_bufs_free(struct mvneta_bm *priv, struct mvneta_bm_pool *bm_pool,
+> +				       u8 port_map) {}
 
+You're going over 80 characters now.
+
+> +static inline int mvneta_bm_construct(struct hwbm_pool *hwbm_pool, void *buf) { return 0; }
+> +static inline int mvneta_bm_pool_refill(struct mvneta_bm *priv,
+> +					struct mvneta_bm_pool *bm_pool) {return 0; }
+> +static inline struct mvneta_bm_pool *mvneta_bm_pool_use(struct mvneta_bm *priv, u8 pool_id,
+>  					  enum mvneta_bm_type type, u8 port_id,
+>  					  int pkt_size) { return NULL; }
+
+The follow up lines need to be adjusted so that they start on the same
+column as the opening bracket.
+
+checkpatch.pl catches those. Please run it with --strict while at it.
+
+> @@ -178,7 +178,7 @@ static inline void mvneta_bm_pool_put_bp(struct mvneta_bm *priv,
+>  static inline u32 mvneta_bm_pool_get_bp(struct mvneta_bm *priv,
+>  					struct mvneta_bm_pool *bm_pool)
+>  { return 0; }
+> -struct mvneta_bm *mvneta_bm_get(struct device_node *node) { return NULL; }
+> -void mvneta_bm_put(struct mvneta_bm *priv) {}
+> +static inline struct mvneta_bm *mvneta_bm_get(struct device_node *node) { return NULL; }
+> +static inline void mvneta_bm_put(struct mvneta_bm *priv) {}
+>  #endif /* CONFIG_MVNETA_BM */
+>  #endif
