@@ -2,163 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C0BCDFC48
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 05:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8A32DFC50
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 05:55:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387508AbfJVDvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 23:51:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729573AbfJVDvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 23:51:46 -0400
-Received: from [192.168.1.27] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BE1220659;
-        Tue, 22 Oct 2019 03:51:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571716305;
-        bh=PmJXpAoOqCPINMiF32BoEa6xiE54h9KITk1Y0KuPtyk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=oigK4LVS63vRYZf3mGLsk+NQ2UVMnaJY52i7eISFw0avHtJamSTFlFHOMdvSAxz4B
-         arIrE3b4Be79wtVEVbU7ih6hmkvrucnYlCaawbEV4ELccXWp5N4ejR6I841gMeJrel
-         7Z8ImHTgC3dJXNfzOp+/l+lwZSTiVe3yN2kY5eh4=
-Subject: Re: [PATCHv1] arm64: dts: agilex: add service layer, fpga manager and
- fpga region
-To:     richard.gong@linux.intel.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Richard Gong <richard.gong@intel.com>
-References: <1571340880-18421-1-git-send-email-richard.gong@linux.intel.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e34ba161-9648-6e31-6163-5997b8049efa@kernel.org>
-Date:   Mon, 21 Oct 2019 22:51:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730869AbfJVDyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 23:54:52 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:53990 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729573AbfJVDyw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 23:54:52 -0400
+X-UUID: 76b88ee9b43842089b9471311eb9d08c-20191022
+X-UUID: 76b88ee9b43842089b9471311eb9d08c-20191022
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        (envelope-from <anthony.huang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1938651709; Tue, 22 Oct 2019 11:54:45 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 22 Oct 2019 11:54:43 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 22 Oct 2019 11:54:43 +0800
+From:   Anthony Huang <anthony.huang@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
+Subject: [RFC PATCH 0/2] Add Mediatek MMDVFS driver
+Date:   Tue, 22 Oct 2019 11:51:51 +0800
+Message-ID: <1571716313-10215-1-git-send-email-anthony.huang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <1571340880-18421-1-git-send-email-richard.gong@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This RFC patch adds the Mediatek MMDVFS(Multimedia Dynamic Voltage and
+Frequency Scaling) driver. The multimedia HWs, such as display, camera,
+share the same power supplier, and on some platforms, they share the
+same clock MUX. If each HW needs different clock frequency at the same
+time, the clock MUX must be set to the clock source which can meet the
+highest required clock frequency.
+
+Following implementation is used to achieve the goal. There are OPP tables
+for all the clock MUXs for MM HWs defined in DTS, ant these OPP tables have
+the same number of levels. The MMDVFS registers the regulator callback and
+the MM HWs can get available clock frequencies from OPP tables and set
+corresponding voltage by regulor API. The MMDVFS's callback will be
+triggered if the voltage is changed and this voltage represents the highest
+required OPP level. The MMDVFS has a mapping table: which clock source
+should be set to each clock MUX for every OPP level. So all the clock MUXs
+will be set to the clock sources according to the current OPP level in the
+MMDVFS's regulator callback.
 
 
-On 10/17/19 2:34 PM, richard.gong@linux.intel.com wrote:
-> From: Richard Gong <richard.gong@intel.com>
-> 
-> Add service layer, fpga manager and fpga region to the device tree
-> on Intel Agilex platform.
-> 
-> Signed-off-by: Richard Gong <richard.gong@intel.com>
-> ---
->  arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 32 +++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-> index 36abc25..94090c6 100644
-> --- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-> @@ -12,6 +12,19 @@
->  	#address-cells = <2>;
->  	#size-cells = <2>;
->  
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		service_reserved: svcbuffer@0 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x0 0x0 0x0 0x1000000>;
-> +			alignment = <0x1000>;
-> +			no-map;
-> +		};
-> +	};
-> +
->  	cpus {
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> @@ -81,6 +94,13 @@
->  		interrupt-parent = <&intc>;
->  		ranges = <0 0 0 0xffffffff>;
->  
-> +		base_fpga_region {
-> +			#address-cells = <0x1>;
-> +			#size-cells = <0x1>;
-> +			compatible = "fpga-region";
-> +			fpga-mgr = <&fpga_mgr>;
-> +		};
-> +
->  		gmac0: ethernet@ff800000 {
->  			compatible = "altr,socfpga-stmmac", "snps,dwmac-3.74a", "snps,dwmac";
->  			reg = <0xff800000 0x2000>;
-> @@ -442,5 +462,17 @@
->  
->  			status = "disabled";
->  		};
-> +
-> +		firmware {
-> +			svc {
-> +				compatible = "intel,stratix10-svc";
-> +				method = "smc";
-> +				memory-region = <&service_reserved>;
-> +
-> +				fpga_mgr: fpga-mgr {
-> +					compatible = "intel,stratix10-soc-fpga-mgr";
-> +				};
-> +			};
-> +		};
->  	};
->  };
-> 
 
-Applied.
+Anthony Huang (2):
+  dt-bindings: soc: mediatek: Add document for mmdvfs driver
+  soc: mediatek: Add mtk-mmdvfs driver
 
-Dinh
+ .../devicetree/bindings/soc/mediatek/mmdvfs.txt    |  149 ++++++++++
+ drivers/soc/mediatek/Kconfig                       |    9 +
+ drivers/soc/mediatek/Makefile                      |    1 +
+ drivers/soc/mediatek/mtk-mmdvfs.c                  |  313 ++++++++++++++++++++
+ 4 files changed, 472 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/mediatek/mmdvfs.txt
+ create mode 100644 drivers/soc/mediatek/mtk-mmdvfs.c
+
+-- 
+1.7.9.5
