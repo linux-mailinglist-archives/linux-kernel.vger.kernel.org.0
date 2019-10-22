@@ -2,143 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1C29E0D4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 22:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EB1BE0D50
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 22:35:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389478AbfJVUem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 16:34:42 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41268 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389449AbfJVUei (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 16:34:38 -0400
-Received: by mail-qt1-f193.google.com with SMTP id c17so25868137qtn.8
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 13:34:38 -0700 (PDT)
+        id S2389505AbfJVUfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 16:35:17 -0400
+Received: from mail-eopbgr760059.outbound.protection.outlook.com ([40.107.76.59]:62979
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731351AbfJVUfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 16:35:16 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bxZfxsR/3K3wII/CfubZ8BUxZfVVF/NwwaECMtI2vGbBeue1rXLw4Q31keTQ7g/rRPNGDGJPYs87XwSjMtSW2r9Y7Se5dAPEowyNF/uSkVKKkDZff2w9aI0prt11Clw2Qz1DRuh8taL8ZBQkxHjlXyjQdbiiH7c4PsQ+K72qnlezNNEKOTBRyR0Y1iRcsrMRdK+0vgdP6kwvWKJELnM3of6s1Hqz+xAnjkxLFuHKFvjM/EKGAT1wJVaRnH+oX4OC4U/pKianNyk6FBJINRJEWxMMjKfumYKM7wLsXt5aVu0Jz6p5ChIsm4eT879qGgDr8V4qKFJShTGTgYGDq/YCUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sB/8tcRui2wHVa3f2dyELvitwmW4G/UU4Y5rW0Sv9m0=;
+ b=R5bS8SXvLJUFuS3I3bJxSLPKk5UaDNRwczIvOHpk0IIqEt6nAzaZPet14lUY3kkjVoWZrU3i0BqkR+3BoEeKK9Viw6lGEwiVW4TUJm7KThmvxWGOLSDRqMQt7kjRn+JiAaYsxh4NKj/qPXMd3EomrLReWOnHr9AeJRWA1z28kJGb6fNcQL8Kk/2jAWMN1WmhvarSsWzgAj4NsPFYoSysgYq0FCavT8JKteIrcCyf9QbDlWV6uSIKIflBr6eC+8uGuCgUVRTHNCU/Y1Wi1O2lilahA8xx/ssfPspKT97LzcPSxrvOIGUPVqw8raijaNSJgGX2SWkJvNIAAhFm2LrCCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Cu2iRByuQkBOdiS3ftuWg2x1Invt9O2eimcBFeYIbQQ=;
-        b=C7KBtZnlB3OLT3U/IskLPfrl3eYN7TUJSCVxUyZTTHjT39Q8gfZqWYNG/+7MnuzkzU
-         jlvkgRS5cMhKcRFdBesSUcwLQMK7SQDxdOefzxZVbTboj9zhfgFvIEQGAQu9ClpOaaGJ
-         usZxOmUcITG5BSz18Q3N9ySOJpP+vQo8F08cjsseG+y/jW4ldXvgNhzfbtnOP/8KGFLX
-         Jkck8I97wwtNbLpAzlnaczz4Xu1WxWvaFf+4mEpu6LY9P+UX3qA63Ohvey0Q/eniq3+s
-         piVm6NiLzEekGjtl6K4snX2hLIxfFKiHNpBeuBI7gaKboqZoueX3HbJNV0cTv5JRs/uX
-         fGgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Cu2iRByuQkBOdiS3ftuWg2x1Invt9O2eimcBFeYIbQQ=;
-        b=HdcCv8pJV/BxolGYJ0/OAWwSB8xEcVCMm9riPhuT5ydoM2YPBGeVEcz2V1fincrHGl
-         iPNFOehjeCLbQHib31w3IFY5yafOzd8me8lK6jwJQxtkMh2+09JHVhWApSUwH/C3kAuI
-         5e13jMFjCS0bBszx0SDhb2vkB4wlmbnC3m0ZFhZiP4ccOlXqtXaINHmmN4PaiB7lcDTP
-         QG7JeYd2HAFqe0px7T8Nm+TbJURpPfcCug4pzJwsXMS9idSPjekfYQzlG7X1XrORzhbH
-         EBlxRTp+kh0DeikMDCMCOHF7M0voEdhWX9t+E4V0DhtKPRljb8igWMXWbCONYp/Hyd2g
-         il8g==
-X-Gm-Message-State: APjAAAWRZpcOKHUEru873e1IBef0s0V1eTrGMVdSJhiXV3k/vN4sbJHd
-        crHHzIeUcmEAf1A+crYU9mLaJw==
-X-Google-Smtp-Source: APXvYqwmF2Eif6hUS3VRwX1OSpSCpqeWF5dLxB6Ve3D4fRDRdppov3egMef+I+jToBIYIfLlnrkcSQ==
-X-Received: by 2002:aed:35e7:: with SMTP id d36mr5404833qte.59.1571776477484;
-        Tue, 22 Oct 2019 13:34:37 -0700 (PDT)
-Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.googlemail.com with ESMTPSA id r126sm8895038qke.98.2019.10.22.13.34.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 22 Oct 2019 13:34:36 -0700 (PDT)
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com, qperret@google.com
-Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-Subject: [Patch v4 6/6] sched: thermal: Enable tuning of decay period
-Date:   Tue, 22 Oct 2019 16:34:25 -0400
-Message-Id: <1571776465-29763-7-git-send-email-thara.gopinath@linaro.org>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
-References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sB/8tcRui2wHVa3f2dyELvitwmW4G/UU4Y5rW0Sv9m0=;
+ b=krr29fq8HXtyj6fQc6w9CBP/rMgEDVXAt5COu/cNPswOq+dcXkoeJW0i/+M7P5+Nj/OPFVZ4gXeAePsVKOVm2ewees1J/FmNwLDDx3bw47lmSz5Z7UBmej1g19mUfBlNEGyTBb5g/2rJcxcJO8RWmPmmhvI88qqVLvhZkh11X3g=
+Received: from BN7PR12MB2628.namprd12.prod.outlook.com (20.176.178.20) by
+ BN7PR12MB2723.namprd12.prod.outlook.com (20.176.177.94) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2387.20; Tue, 22 Oct 2019 20:35:09 +0000
+Received: from BN7PR12MB2628.namprd12.prod.outlook.com
+ ([fe80::2115:dffc:44b6:e53a]) by BN7PR12MB2628.namprd12.prod.outlook.com
+ ([fe80::2115:dffc:44b6:e53a%6]) with mapi id 15.20.2347.029; Tue, 22 Oct 2019
+ 20:35:08 +0000
+From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+To:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
+CC:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bp@alien8.de" <bp@alien8.de>
+Subject: [PATCH v2 0/6] AMD64 EDAC: Check for nodes without memory, etc.
+Thread-Topic: [PATCH v2 0/6] AMD64 EDAC: Check for nodes without memory, etc.
+Thread-Index: AQHViRgxcQiEBlwrekGL67NfTPIxZg==
+Date:   Tue, 22 Oct 2019 20:35:08 +0000
+Message-ID: <20191022203448.13962-1-Yazen.Ghannam@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN4PR0501CA0024.namprd05.prod.outlook.com
+ (2603:10b6:803:40::37) To BN7PR12MB2628.namprd12.prod.outlook.com
+ (2603:10b6:408:30::20)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Yazen.Ghannam@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [165.204.78.2]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: a171a99e-0d2e-47e9-de20-08d7572f5431
+x-ms-traffictypediagnostic: BN7PR12MB2723:
+x-ms-exchange-purlcount: 1
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BN7PR12MB2723328A32376E21175BD687F8680@BN7PR12MB2723.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 01986AE76B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(39860400002)(366004)(396003)(376002)(199004)(189003)(6306002)(476003)(2616005)(26005)(102836004)(186003)(966005)(6436002)(81166006)(81156014)(52116002)(99286004)(50226002)(6512007)(486006)(8936002)(36756003)(6486002)(305945005)(8676002)(7736002)(4744005)(2501003)(14454004)(5660300002)(478600001)(4326008)(25786009)(2351001)(316002)(2906002)(54906003)(6116002)(86362001)(256004)(66066001)(1076003)(5640700003)(66946007)(6916009)(6506007)(66476007)(3846002)(66446008)(71190400001)(71200400001)(64756008)(66556008)(386003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2723;H:BN7PR12MB2628.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: qGiPl+pW6OSsbTd0WGwLTa0+JjxOAI+f3S91iVgx06FeT4/hObOCgnr9/2N7UBL73GUimPID3TXHdQ0NL9pg3jBhYvJqriOqxHN0MszIYW/7ApahQaHW/ShIVV5DhcUhz+UoaFAll4DjHNERtkQn8J4ksOd7H/4s6KU9K+RasWlxwb22A/jqB5AcaqGPBp1NnF3xdYVW04XOPwvMIO5ASqIJoyFeXBdMsbFpUBoK+zo9CIMYY3+85wuyffb2i+AgSqhkw6uG44tiYdMsMkKhWHLvP2KCJZ8wTcQ9VyG+Xm+feYjcxwp6r/6Fb/YhXLvYyHegw9NrSjShQgBI1T+YHPuYqNNSgCA6DE9A/UZPI8cQaTwQVbXPfrEFV672zo9zWnRZSfBkxxGFso04uOEtk797wrayNHIhG+9nr4PQy4nLsJRrbp9k4B1LIakjI4JMwsLOlQuvLGY4E+9yNDPJYYgczaloxNJVZj536qtNw9w=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a171a99e-0d2e-47e9-de20-08d7572f5431
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2019 20:35:08.7815
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1aGNt+5fmrzrq7Cizyrp16wmUEJFzC8pXxQlB6huDYGFjr0oJ1dlYeTyyEL6XLaySERXp9A+5ElAIj7YEfJ44A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2723
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thermal pressure follows pelt signas which means the
-decay period for thermal pressure is the default pelt
-decay period. Depending on soc charecteristics and thermal
-activity, it might be beneficial to decay thermal pressure
-slower, but still in-tune with the pelt signals.
-One way to achieve this is to provide a command line parameter
-to set the decay coefficient to an integer between 0 and 10.
+From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
----
-v3->v4:
-	- Removed the sysctl setting to tune decay period and instead
-	  introduced a command line parameter to control it. The rationale
-	  here being changing decay period of a PELT signal runtime can
-	  result in a skewed average value for atleast some cycles.
+Hi Boris,
 
- Documentation/admin-guide/kernel-parameters.txt |  5 +++++
- kernel/sched/thermal.c                          | 25 ++++++++++++++++++++++++-
- 2 files changed, 29 insertions(+), 1 deletion(-)
+Most of these patches address the issue where the module checks and
+complains about DRAM ECC on nodes without memory.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a84a83f..61d7baa 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4273,6 +4273,11 @@
- 			incurs a small amount of overhead in the scheduler
- 			but is useful for debugging and performance tuning.
- 
-+	sched_thermal_decay_coeff=
-+			[KNL, SMP] Set decay coefficient for thermal pressure signal.
-+			Format: integer betweer 0 and 10
-+			Default is 0.
-+
- 	skew_tick=	[KNL] Offset the periodic timer tick per cpu to mitigate
- 			xtime_lock contention on larger systems, and/or RCU lock
- 			contention on all systems with CONFIG_MAXSMP set.
-diff --git a/kernel/sched/thermal.c b/kernel/sched/thermal.c
-index 0c84960..0da31e1 100644
---- a/kernel/sched/thermal.c
-+++ b/kernel/sched/thermal.c
-@@ -10,6 +10,28 @@
- #include "pelt.h"
- #include "thermal.h"
- 
-+/**
-+ * By default the decay is the default pelt decay period.
-+ * The decay coefficient can change is decay period in
-+ * multiples of 32.
-+ *   Decay coefficient    Decay period(ms)
-+ *	0			32
-+ *	1			64
-+ *	2			128
-+ *	3			256
-+ *	4			512
-+ */
-+static int sched_thermal_decay_coeff;
-+
-+static int __init setup_sched_thermal_decay_coeff(char *str)
-+{
-+	if (kstrtoint(str, 0, &sched_thermal_decay_coeff))
-+		pr_warn("Unable to set scheduler thermal pressure decay coefficient\n");
-+
-+	return 1;
-+}
-+__setup("sched_thermal_decay_coeff=", setup_sched_thermal_decay_coeff);
-+
- static DEFINE_PER_CPU(unsigned long, delta_capacity);
- 
- /**
-@@ -40,6 +62,7 @@ void update_thermal_pressure(int cpu, u64 capped_freq_ratio)
-  */
- void trigger_thermal_pressure_average(struct rq *rq)
- {
--	update_thermal_load_avg(rq_clock_task(rq), rq,
-+	update_thermal_load_avg(rq_clock_task(rq) >>
-+				sched_thermal_decay_coeff, rq,
- 				per_cpu(delta_capacity, cpu_of(rq)));
- }
--- 
-2.1.4
+Thanks,
+Yazen
+
+Link:
+https://lkml.kernel.org/r/20191018153114.39378-1-Yazen.Ghannam@amd.com
+
+Yazen Ghannam (6):
+  EDAC/amd64: Make struct amd64_family_type global
+  EDAC/amd64: Gather hardware information early
+  EDAC/amd64: Save max number of controllers to family type
+  EDAC/amd64: Use cached data when checking for ECC
+  EDAC/amd64: Check for memory before fully initializing an instance
+  EDAC/amd64: Set grain per DIMM
+
+ drivers/edac/amd64_edac.c | 196 +++++++++++++++++++-------------------
+ drivers/edac/amd64_edac.h |   2 +
+ 2 files changed, 100 insertions(+), 98 deletions(-)
+
+--=20
+2.17.1
 
