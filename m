@@ -2,62 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAFD7E08C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:27:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BD62E08CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:28:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732375AbfJVQ1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 12:27:03 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33279 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731277AbfJVQ1C (ORCPT
+        id S1732546AbfJVQ2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 12:28:13 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:55748 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731132AbfJVQ2N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:27:02 -0400
-Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.pengutronix.de.)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1iMwzt-00025E-Dd; Tue, 22 Oct 2019 18:27:01 +0200
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel@pengutronix.de
-Subject: [PATCH] reset: fix of_reset_simple_xlate kerneldoc comment
-Date:   Tue, 22 Oct 2019 18:27:00 +0200
-Message-Id: <20191022162700.8060-1-p.zabel@pengutronix.de>
-X-Mailer: git-send-email 2.20.1
+        Tue, 22 Oct 2019 12:28:13 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9MGS6XL109569;
+        Tue, 22 Oct 2019 11:28:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571761686;
+        bh=JvsTsVvNKyEdNQmcoKWgQZvfupVu9GC3u5TfI4yGQMM=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=KTr54bVYexkynr4Z7RouTo4jQnbtq7sYxR+gez5C3vs0Jm8GQk/Q0Wm3uCtdw6HDI
+         +ROp7ZMVE86dxBuEzDBRXUo+VDyjSGwaeIICLt0zaC6RLQjV63FKNLFetqvKRkJUn9
+         +awYQorHoibayeRpqbUrO9EzfUfvqD9kD/1nv+Xs=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9MGRpd0078602
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 22 Oct 2019 11:27:51 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 22
+ Oct 2019 11:27:41 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 22 Oct 2019 11:27:41 -0500
+Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with SMTP id x9MGRKBC082935;
+        Tue, 22 Oct 2019 11:27:20 -0500
+Date:   Tue, 22 Oct 2019 11:27:20 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
+CC:     Rob Herring <robh+dt@kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [Patch 0/3] ARM: dts: dra7: add vpe nodes
+Message-ID: <20191022162720.yile7i4qwxgbuuou@ti.com>
+References: <20191009175628.20570-1-bparrot@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191009175628.20570-1-bparrot@ti.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The flags parameter never made it into the API, but was erroneously
-included in the kerneldoc comment. Remove it to fix a documentation
-build warning:
+Tony,
 
-  ./drivers/reset/core.c:86: warning: Excess function parameter 'flags' description in 'of_reset_simple_xlate'
+Ping,
 
-Fixes: 61fc41317666 ("reset: Add reset controller API")
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/reset/core.c | 1 -
- 1 file changed, 1 deletion(-)
+I already had comments from Rob but i would like your feedback before
+sending a v2.
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 213ff40dda11..7c95cafcdf08 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -76,7 +76,6 @@ static const char *rcdev_name(struct reset_controller_dev *rcdev)
-  * of_reset_simple_xlate - translate reset_spec to the reset line number
-  * @rcdev: a pointer to the reset controller device
-  * @reset_spec: reset line specifier as found in the device tree
-- * @flags: a flags pointer to fill in (optional)
-  *
-  * This simple translation function should be used for reset controllers
-  * with 1:1 mapping, where reset lines can be indexed by number without gaps.
--- 
-2.20.1
+Regards,
+Benoit
 
+Benoit Parrot <bparrot@ti.com> wrote on Wed [2019-Oct-09 12:56:25 -0500]:
+> This patch series adds the needed clkctrl and ty-sysc nodes for VPE module.
+> We also document the VPE DT bindings.
+> 
+> Benoit Parrot (3):
+>   dt-bindings: media: ti-vpe: Document VPE driver
+>   ARM: dts: dra7: add vpe clkctrl node
+>   ARM: dts: dra7: Add ti-sysc node for VPE
+> 
+>  .../devicetree/bindings/media/ti-vpe.txt      | 48 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  arch/arm/boot/dts/dra7-l4.dtsi                | 30 ++++++++++--
+>  arch/arm/boot/dts/dra7xx-clocks.dtsi          | 18 ++++++-
+>  drivers/clk/ti/clk-7xx.c                      |  6 +++
+>  include/dt-bindings/clock/dra7.h              | 10 ++++
+>  6 files changed, 108 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/media/ti-vpe.txt
+> 
+> -- 
+> 2.17.1
+> 
