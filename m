@@ -2,100 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0FE9DFF56
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:26:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51FDEDFF38
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:16:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388356AbfJVIZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:25:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38430 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388061AbfJVIZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:25:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6F466B314;
-        Tue, 22 Oct 2019 08:25:23 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 9B09F1E4812; Tue, 22 Oct 2019 10:15:51 +0200 (CEST)
-Date:   Tue, 22 Oct 2019 10:15:51 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Jan Kara <jack@suse.cz>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "tj@kernel.org" <tj@kernel.org>, Dennis Zhou <dennis@kernel.org>
-Subject: Re: [PATCH v2] cgroup, blkcg: prevent dirty inodes to pin dying
- memory cgroups
-Message-ID: <20191022081551.GD2436@quack2.suse.cz>
-References: <20191010234036.2860655-1-guro@fb.com>
- <20191015090933.GA21104@quack2.suse.cz>
- <20191015214041.GA24736@tower.DHCP.thefacebook.com>
- <20191016091840.GC30337@quack2.suse.cz>
- <20191021234858.GA16251@castle>
+        id S2388310AbfJVIQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 04:16:30 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44953 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388061AbfJVIQa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 04:16:30 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iMpL8-0006mc-Dk; Tue, 22 Oct 2019 10:16:26 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iMpL6-0003pF-L0; Tue, 22 Oct 2019 10:16:24 +0200
+Date:   Tue, 22 Oct 2019 10:16:24 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM Kernel Mailing List 
+        <linux-arm-kernel@lists.infradead.org>, git@vger.kernel.org
+Subject: Re: [GIT PULL] arm64: Fixes for -rc4
+Message-ID: <20191022081624.4tmumskeoayt4bzg@pengutronix.de>
+References: <20191017234348.wcbbo2njexn7ixpk@willie-the-truck>
+ <CAHk-=wjPZYxiTs3F0Vbrd3kRizJGq-rQ_jqH1+8XR9Ai_kBoXg@mail.gmail.com>
+ <20191018174153.slpmkvsz45hb6cts@willie-the-truck>
+ <CAHk-=whmtB98b8=YL2b8HzPKRadk2A9pL0aasmvgebhePrDP9w@mail.gmail.com>
+ <20191021064658.GB22042@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191021234858.GA16251@castle>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191021064658.GB22042@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 21-10-19 23:49:04, Roman Gushchin wrote:
-> On Wed, Oct 16, 2019 at 11:18:40AM +0200, Jan Kara wrote:
-> > On Tue 15-10-19 21:40:45, Roman Gushchin wrote:
-> > > On Tue, Oct 15, 2019 at 11:09:33AM +0200, Jan Kara wrote:
-> > > > On Thu 10-10-19 16:40:36, Roman Gushchin wrote:
-> > > > 
-> > > > > @@ -426,7 +431,7 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
-> > > > >  	if (!list_empty(&inode->i_io_list)) {
-> > > > >  		struct inode *pos;
-> > > > >  
-> > > > > -		inode_io_list_del_locked(inode, old_wb);
-> > > > > +		inode_io_list_del_locked(inode, old_wb, false);
-> > > > >  		inode->i_wb = new_wb;
-> > > > >  		list_for_each_entry(pos, &new_wb->b_dirty, i_io_list)
-> > > > >  			if (time_after_eq(inode->dirtied_when,
-> > > > 
-> > > > This bit looks wrong. Not the change you made as such but the fact that you
-> > > > can now move inode from b_attached list of old wb to the dirty list of new
-> > > > wb.
-> > > 
-> > > Hm, can you, please, elaborate a bit more why it's wrong?
-> > > The reference to the old_wb will be dropped by the switching code.
-> > 
-> > My point is that the code in full looks like:
-> > 
-> >         if (!list_empty(&inode->i_io_list)) {
-> >                 struct inode *pos;
-> > 
-> >                 inode_io_list_del_locked(inode, old_wb);
-> >                 inode->i_wb = new_wb;
-> >                 list_for_each_entry(pos, &new_wb->b_dirty, i_io_list)
-> >                         if (time_after_eq(inode->dirtied_when,
-> >                                           pos->dirtied_when))
-> >                                 break;
-> >                 inode_io_list_move_locked(inode, new_wb, pos->i_io_list.prev);
-> >         } else {
-> > 
-> > So inode is always moved from some io list in old_wb to b_dirty list of
-> > new_wb. This is fine when it could be only on b_dirty, b_io, b_more_io lists
-> > of old_wb. But once you add b_attached list to the game, it is not correct
-> > anymore. You should not add clean inode to b_dirty list of new_wb.
-> 
-> I see...
-> 
-> Hm, will checking of i_state for not containing I_DIRTY_ALL bits be enough here?
-> Alternatively, I can introduce a new bit which will explicitly point at the
-> inode being on the b_attached list, but I'd prefer not to do it.
+Hello,
 
-Yeah, keying of i_state should work. And while we are at it, we could also
-correctly handle I_DIRTY_TIME case and move inode only to b_dirty_time
-list. That seems to be (mostly harmless) preexisting issue.
+I added the git list to Cc:. For the new readers: The context of this
+thread can be found at
+https://lwn.net/ml/linux-kernel/20191017234348.wcbbo2njexn7ixpk@willie-the-truck/
 
-								Honza
+On Mon, Oct 21, 2019 at 08:46:58AM +0200, Ingo Molnar wrote:
+> Anyway, a small Git feature request: it would be super useful if "git 
+> request-pull" output was a bit more dependable and at least warned about 
+> this and didn't include what is, from the viewpoint of the person doing 
+> the merge, a bogus diffstat. (Generating the correct diffstat is probably 
+> beyond request-pull's abilities: it would require changing the working 
+> tree to actually perform the merge - while request-pull is a read-only 
+> operation right now. But detecting the condition and warning about it 
+> should be possible?)
+
+I think Will's case is still an easy one compared with what could
+actually happen.
+
+The related history looks as follows:
+
+             ,-.     ,-.              ,-.    ,-.    ,-.
+  v5.4-rc1 --| |-...-| |-- v5.4-rc2 --| |-..-| |-..-| |-- v5.4-rc3
+      \      `-'     `-'       \      `-'    /-'    `-'
+       \   ,-.     ,-.          \         ,-/    ,-.     ,-.
+        `--| |-...-| |--------------------|*|----| |-...-|H|
+           `-'     `-'            \       `-'    `-'     /-'
+                                   \   ,-.     ,-.      /
+                                    `--| |-...-| |-----'
+                                       `-'     `-'
+
+Will asked Linus to merge the Commit marked 'H', the two merge bases are
+v5.4-rc2 and '*'.
+
+(FTR:
+  * = 3e7c93bd04edfb0cae7dad1215544c9350254b8f
+  H = 777d062e5bee0e3c0751cdcbce116a76ee2310ec
+, they can be found in
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git)
+
+The formally correct way to create the diffstat is to merge v5.4-rc2 and
+'*' (in general: all merge bases) and calculate the diff between this
+merge and the to-be-merged-commit. Compared to what Will did (i.e. merge
+Linus' HEAD and this branch and then diff @~ with @) doing it the way I
+described has the advantage(?) that commits that conflict with this
+merge request in Linus' tree since the merge bases are not in the way.
+
+In this case this can be done automatically:
+
+	$ git read-tree --index-output=tralala v5.4-rc2 3e7c93bd04edfb0cae7dad1215544c9350254b8f
+	$ GIT_INDEX=tralala git write-tree
+	6a2acfd1870d9da3c330ea9b648a7e858b5ee39f
+	$ git diff --stat 6a2acfd1870d9da3c330ea9b648a7e858b5ee39f 777d062e5bee0e3c0751cdcbce116a76ee2310ec
+	 Documentation/arm64/silicon-errata.rst |  2 ++
+	 arch/arm64/Kconfig                     | 17 ++++++++++++++
+	 arch/arm64/include/asm/asm-uaccess.h   |  7 +++---
+	 arch/arm64/include/asm/cpucaps.h       |  4 +++-
+	 arch/arm64/include/asm/memory.h        | 10 ++++++--
+	 arch/arm64/include/asm/pgtable.h       |  3 ---
+	 arch/arm64/include/asm/sysreg.h        |  2 +-
+	 arch/arm64/kernel/cpu_errata.c         | 38 +++++++++++++++++++++++++++++++
+	 arch/arm64/kernel/cpufeature.c         | 15 ++++++++----
+	 arch/arm64/kernel/entry.S              |  8 ++++---
+	 arch/arm64/kernel/hibernate.c          |  9 +++++++-
+	 arch/arm64/kernel/process.c            | 18 +++++++++++++++
+	 arch/arm64/kvm/hyp/switch.c            | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+	 arch/arm64/mm/fault.c                  |  6 ++++-
+	 include/linux/sched.h                  |  1 +
+	 15 files changed, 186 insertions(+), 23 deletions(-)
+
+Would be great if git-request-pull learned to do that.
+
+Best regards
+Uwe
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
