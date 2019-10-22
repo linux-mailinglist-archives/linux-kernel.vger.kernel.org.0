@@ -2,120 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FD97E042F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 14:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5498DE0436
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 14:54:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389009AbfJVMwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 08:52:06 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49910 "EHLO mx1.redhat.com"
+        id S2389136AbfJVMyc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 08:54:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388655AbfJVMwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 08:52:06 -0400
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2387695AbfJVMyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 08:54:32 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BB26783F51
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 12:52:05 +0000 (UTC)
-Received: by mail-qk1-f198.google.com with SMTP id z136so88780qkb.9
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 05:52:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3yeQelJTclqqXcJSeLCRYJucLdCvZTdooL8LQ/VknXg=;
-        b=WRRRVoYDdKEUCTU8nezcpOHqRPF9CA9Ey/VSWqXGR8S8JChnlyQ80VsVJf87SWwPGC
-         NauNc02U22Ap6Wl9h5q8QW/GjOA/XfC9COshBSqmsBlEf2sDlPy6NZ+JUNaoKEGW6bEC
-         3ebmTfwDj71die3ql+9QGQ/Md53dWI00yGD5CseABrwN3smFEnOdswb+fjvW12ZVEODC
-         lLc+ARzK+kFK/A8hH9v07H2sKLPGoM772vjGG8hdD4Yjslfa0+Jik/X6O5ccDsV93NXn
-         /nupmOJeW8cQ8AtwRujD2t0H9RVaWLYJKX1f6ED2lQgoQZwdAU9vzvDG+EMePnVkRNoN
-         cU5g==
-X-Gm-Message-State: APjAAAVgdnG2lePwja1aI9ynibdPKYTmL3lOQwQJhYCHzvcZ5E7mH11Y
-        /BUrw6Qoo8Ey2vbJqEVcqi9BMMvX42IINV6gt5IJ1cw4NYgY9NduZG93/dZTY7Ld3qnTL50QhhN
-        54UVBNH9TLTkP/NwbJXatPGl5aJb7tLQBmxM5/qEX
-X-Received: by 2002:a37:9c0f:: with SMTP id f15mr2853218qke.62.1571748724999;
-        Tue, 22 Oct 2019 05:52:04 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyTSf/89W7mLASTE6fmyhuNivQ1p+xmXUQgPgY57L2MD0+HVVER/VSyOJiIJsiIDyT24Z8QmXi/IjC27y0EsqE=
-X-Received: by 2002:a37:9c0f:: with SMTP id f15mr2853196qke.62.1571748724699;
- Tue, 22 Oct 2019 05:52:04 -0700 (PDT)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC95C2075A;
+        Tue, 22 Oct 2019 12:54:29 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 08:54:28 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        amit.kachhap@arm.com, ard.biesheuvel@linaro.org,
+        catalin.marinas@arm.com, deller@gmx.de, duwe@suse.de,
+        james.morse@arm.com, jeyu@kernel.org, jpoimboe@redhat.com,
+        jthierry@redhat.com, mingo@redhat.com, peterz@infradead.org,
+        svens@stackframe.org, takahiro.akashi@linaro.org, will@kernel.org
+Subject: Re: [PATCH 1/8] ftrace: add ftrace_init_nop()
+Message-ID: <20191022085428.75cfaad6@gandalf.local.home>
+In-Reply-To: <20191022112811.GA11583@lakrids.cambridge.arm.com>
+References: <20191021163426.9408-1-mark.rutland@arm.com>
+        <20191021163426.9408-2-mark.rutland@arm.com>
+        <20191021140756.613a1bac@gandalf.local.home>
+        <20191022112811.GA11583@lakrids.cambridge.arm.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <CACO55ttOJaXKWmKQQbMAQRJHLXF-VtNn58n4BZhFKYmAdfiJjA@mail.gmail.com>
- <20191016213722.GA72810@google.com> <CACO55tuXck7vqGVLmMBGFg6A2pr3h8koRuvvWHLNDH8XvBVxew@mail.gmail.com>
- <20191021133328.GI2819@lahna.fi.intel.com> <CACO55tujUZr+rKkyrkfN+wkNOJWdNEVhVc-eZ3RCXJD+G1z=7A@mail.gmail.com>
- <20191021140852.GM2819@lahna.fi.intel.com> <CACO55tvp6n2ahizwhc70xRJ1uTohs2ep962vwtHGQK-MkcLmsw@mail.gmail.com>
- <20191021154606.GT2819@lahna.fi.intel.com> <CACO55tsGhvG1qapRkdu_j7R534cFa5o=Gv2s4VZDrWUrxjBFwA@mail.gmail.com>
- <CACO55ts7hivYgN7=3bcAjWx2h8FfbR5UiKiOOExYY9m-TGRNfw@mail.gmail.com> <20191022124453.GK2819@lahna.fi.intel.com>
-In-Reply-To: <20191022124453.GK2819@lahna.fi.intel.com>
-From:   Karol Herbst <kherbst@redhat.com>
-Date:   Tue, 22 Oct 2019 14:51:53 +0200
-Message-ID: <CACO55tvxvwUqzg=jLoO6bhmcaXQwRaTv9S4pt2t0V5TUi+HsEw@mail.gmail.com>
-Subject: Re: [PATCH v3] pci: prevent putting nvidia GPUs into lower device
- states on certain intel bridges
-To:     Mika Westerberg <mika.westerberg@intel.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lyude Paul <lyude@redhat.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        Linux ACPI Mailing List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 2:45 PM Mika Westerberg
-<mika.westerberg@intel.com> wrote:
->
-> On Tue, Oct 22, 2019 at 11:16:14AM +0200, Karol Herbst wrote:
-> > I think there is something I totally forgot about:
-> >
-> > When there was never a driver bound to the GPU, and if runtime power
-> > management gets enabled on that device, runtime suspend/resume works
-> > as expected (I am not 100% sure on if that always works, but I will
-> > recheck that).
->
-> AFAIK, if there is no driver bound to the PCI device it is left to D0
-> regardless of the runtime PM state which could explain why it works in
-> that case (it is never put into D3hot).
->
-> I looked at the acpidump you sent and there is one thing that may
-> explain the differences between Windows and Linux. Not sure if you were
-> aware of this already, though. The power resource PGOF() method has
-> this:
->
->    If (((OSYS <= 0x07D9) || ((OSYS == 0x07DF) && (_REV == 0x05)))) {
->       ...
->    }
->
+On Tue, 22 Oct 2019 12:28:11 +0100
+Mark Rutland <mark.rutland@arm.com> wrote:
 
-I think this is the fallback to some older method of runtime
-suspending the device, and I think it will end up touching different
-registers on the bridge controller which do not show the broken
-behaviour.
+> > To make the name even better, let's just rename it to:
+> > 
+> >  ftrace_nop_initialization()
+> > 
+> > I think that may be the best description for it.  
+> 
+> Perhaps ftrace_nop_initialize(), so that it's not a noun?
+> 
+> I've made it ftrace_nop_initialization() in my branch for now.
 
-You'll find references to following variables which all cause a link
-to be powered down: Q0L2 (newest), P0L2, P0LD (oldest, I think).
+I'm fine with ftrace_nop_initialize().
 
-Maybe I remember incorrectly and have to read the code again... okay,
-the fallback path uses P0LD indeed. That's actually the only register
-of those being documented by Intel afaik.
+> 
+> > > diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> > > index f296d89be757..afd7e210e595 100644
+> > > --- a/kernel/trace/ftrace.c
+> > > +++ b/kernel/trace/ftrace.c
+> > > @@ -2493,15 +2493,22 @@ struct dyn_ftrace *ftrace_rec_iter_record(struct ftrace_rec_iter *iter)
+> > >  	return &iter->pg->records[iter->index];
+> > >  }
+> > >  
+> > > +#ifndef ftrace_init_nop
+> > > +static int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
+> > > +{
+> > > +	return ftrace_make_nop(mod, rec, MCOUNT_ADDR);
+> > > +}
+> > > +#endif  
+> > 
+> > Can you place the above in the ftrace.h header. That's where that would
+> > belong.
+> > 
+> > #ifndef ftrace_init_nop
+> > struct module;
+> > static inline int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
+> > {
+> > 	return ftrace_make_nop(mod, rec, MCOUNT_ADDR);
+> > }
+> > #endif  
+> 
+> True.
+> 
+> I've put this immediately after ftrace_make_nop() in the header, and
+> given it a kerneldoc comment. There's a declaration for struct module at
+> the top of the header, so I've just relied on that
+> 
+> That looks like:
+> 
+> | /**
+> |  * ftrace_init_nop - initialize a nop call site
+> |  * @mod: module structure if called by module load initialization
+> |  * @rec: the mcount call site record
 
-> If I read it right, the later condition tries to detect Linux which
-> fails nowadays but if you have acpi_rev_override in the command line (or
-> the machine is listed in acpi_rev_dmi_table) this check passes and does
-> some magic which is not clear to me. There is similar in PGON() side
-> which is used to turn the device back on.
->
-> You can check what actually happens when _ON()/_OFF() is called by
-> passing something like below to the kernel command line:
->
->   acpi.trace_debug_layer=0x80 acpi.trace_debug_level=0x10 acpi.trace_method_name=\_SB.PCI0.PEG0.PG00._ON acpi.trace_state=method
->
-> (See also Documentation/firmware-guide/acpi/method-tracing.rst).
->
-> Trace goes to system dmesg.
+Perhaps say "mcount/fentry"
 
-This sounds to be very helpful, I'll give it a try.
+> |  *
+> |  * This is a very sensitive operation and great care needs
+> |  * to be taken by the arch.  The operation should carefully
+> |  * read the location, check to see if what is read is indeed
+> |  * what we expect it to be, and then on success of the compare,
+> |  * it should write to the location.
+> |  *
+> |  * The code segment at @rec->ip should be as initialized by the
+
+"should be as" is a bit confusing. What about?
+
+ "The code segment at @rec->ip should contain the contents created by
+  the compiler".
+
+-- Steve
+
+
+> |  * compiler
+> |  *
+> |  * Return must be:
+> |  *  0 on success
+> |  *  -EFAULT on error reading the location
+> |  *  -EINVAL on a failed compare of the contents
+> |  *  -EPERM  on error writing to the location
+> |  * Any other value will be considered a failure.
+> |  */
+> | #ifndef ftrace_init_nop
+> | static int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
+> | {
+> | 	return ftrace_make_nop(mod, rec, MCOUNT_ADDR);
+> | }
+> | #endif
+> 
+> Thanks,
+> Mark.
+
