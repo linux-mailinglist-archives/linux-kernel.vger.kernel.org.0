@@ -2,151 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF4E5E0EAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 01:49:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 771B8E0EB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 01:49:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389845AbfJVXtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 19:49:02 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13400 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389812AbfJVXs5 (ORCPT
+        id S2389947AbfJVXt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 19:49:29 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46005 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389861AbfJVXt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 19:48:57 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5daf956e0000>; Tue, 22 Oct 2019 16:49:02 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 22 Oct 2019 16:48:56 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 22 Oct 2019 16:48:56 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 22 Oct
- 2019 23:48:56 +0000
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.36.57) by
- HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3 via Frontend Transport; Tue, 22 Oct 2019 23:48:56 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=P/i5kEYw48pPVIElu1zgU8gcROQIcLk3LE7zxUtoEtSIhDJ6M3FPOpPUDNiTZqm1Vi9VDDK9F4yv5ugZQMF7hr/BdW0zbLWSiucz/j5mgVB44GR26qjF1SlAySj0WYpjXYyNgZWa+jbjgSmDBz2zVUxvLLwoQLUYcoFLbc4J9zj6goNpbSddNCKnONohQk1eVHyAQWNCHpQ295nn2F0IIb7OPRrk0dhPVCcPj/nbOKWULpWng38rTxnXxXfN540N3PgpJcsGMifbyDq2cdKMksyjEhs2Gz0lfMjn5Pd6JvMW3jzp4m+TUrF/C7NWnmKaMnRvBfIZ0YYsVg3Leg17YQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hh7MXofScYhBwjHA1E2Rr/9tALzMhSRaxjzSxLclQ4s=;
- b=QfNmE2k3QtO/sJbDMywj5mGgaPSHRpaVPXliRGae2bv72a+FDk1MRHD4mcWSs/0DYPmRqDJRSLcNb3dn1cFmeHthIvQEycEaCAbwgbdj5oyWcmrW0GkNx9G6UwOaiVEvxbB4UCzTqSAVvLDWprR4BtXsgR/rZeZ/T41RfwBjOPT5tN9Yx+TO34H033W32CoBNJSL2QOBVPz+Glj184prMHGKeGRPceGU4iFK+O/Xg6k+io6Ui2zuS2ZQ0UItHMKDwg6t846mV3vQwaCUrI2UojjGa5b/BROy3lEiY1IF2BskQwwwrhJHP1V0P0mMPzdDHjqd4D7qGqb8rqu3q2EHHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-Received: from BYAPR12MB2710.namprd12.prod.outlook.com (20.177.124.11) by
- BYAPR12MB2856.namprd12.prod.outlook.com (20.179.93.29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.28; Tue, 22 Oct 2019 23:48:55 +0000
-Received: from BYAPR12MB2710.namprd12.prod.outlook.com
- ([fe80::c0fa:c019:dd8e:dd40]) by BYAPR12MB2710.namprd12.prod.outlook.com
- ([fe80::c0fa:c019:dd8e:dd40%6]) with mapi id 15.20.2347.029; Tue, 22 Oct 2019
- 23:48:55 +0000
-From:   Krishna Reddy <vdumpa@nvidia.com>
-To:     Robin Murphy <robin.murphy@arm.com>,
-        "will@kernel.org" <will@kernel.org>
-CC:     "joro@8bytes.org" <joro@8bytes.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
-        "Yu-Huan Hsu" <YHsu@nvidia.com>, Sachin Nikam <Snikam@nvidia.com>,
-        Pritesh Raithatha <praithatha@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        Alexander Van Brunt <avanbrunt@nvidia.com>,
-        "thomasz@nvidia.com" <thomasz@nvidia.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        Juha Tukkinen <jtukkinen@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Nicolin Chen <nicolinc@nvidia.com>
-Subject: RE: [PATCH v3 0/7] Nvidia Arm SMMUv2 Implementation
-Thread-Topic: [PATCH v3 0/7] Nvidia Arm SMMUv2 Implementation
-Thread-Index: AQHVhgwr2/1seTuEaUyC0D9/Qf1q8adm9sOAgABg1jA=
-Date:   Tue, 22 Oct 2019 23:48:55 +0000
-Message-ID: <BYAPR12MB2710879535971E290E8B25D3B3680@BYAPR12MB2710.namprd12.prod.outlook.com>
-References: <1571441492-21919-1-git-send-email-vdumpa@nvidia.com>
- <6d9e6425-fa69-9b76-b477-1fe50c459ca5@arm.com>
-In-Reply-To: <6d9e6425-fa69-9b76-b477-1fe50c459ca5@arm.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Enabled=True;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_SiteId=43083d15-7273-40c1-b7db-39efd9ccc17a;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Owner=VDUMPA@nvidia.com;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_SetDate=2019-10-22T23:48:52.8304322Z;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Name=Unrestricted;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_ActionId=2963f581-b925-41a1-8109-ed18d39e57e8;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vdumpa@nvidia.com; 
-x-originating-ip: [216.228.112.22]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1005c41b-ffcf-4272-7641-08d7574a667a
-x-ms-traffictypediagnostic: BYAPR12MB2856:|BYAPR12MB2856:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR12MB28563C77B9A8FAD795B84917B3680@BYAPR12MB2856.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 01986AE76B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(39860400002)(346002)(396003)(136003)(189003)(199004)(76116006)(86362001)(25786009)(6246003)(6436002)(4744005)(229853002)(107886003)(55016002)(52536014)(4326008)(66066001)(64756008)(54906003)(66446008)(66556008)(66946007)(66476007)(33656002)(9686003)(11346002)(476003)(7696005)(8676002)(186003)(6506007)(71200400001)(74316002)(5660300002)(486006)(71190400001)(446003)(305945005)(81166006)(81156014)(102836004)(478600001)(26005)(256004)(8936002)(6116002)(2906002)(2501003)(3846002)(14454004)(316002)(7736002)(76176011)(99286004)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2856;H:BYAPR12MB2710.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3f6s9SPPqph/UZ7Lx2+MRvotk/0sckXSYrhNvMobFSAvMFKnzWqzv3Hjl93sqIPhC1k2mLTKgCs06TUzoiqk0bVf216/dYhGWz5BG6mEssHeIbcJ/lTyGHLyjm7x8jm+ABcyMmt7QFRPb1Aw3Jhf3ZYIKVhKvpkqgwXv8rN1EFWdyCxniqH4uD7Rfd8NxV0Ks6bjp6GVXKXedecjAAZOqt8NWAzjb94HExlIrCNMzq5gSBvh6yNAFXXiYiXv2hseNn/I6DA+3SV33zaUieXBdFFrygTHHgKJ6jj3hvcPYOtdzeCGJCQS/GcdG+/BaW586pekfsMPsc7xDQ6sxIbIFDyRU8LsxPrFiKiV64tXTdTCLKYJcksRygp37GzgMmy2A80tKVCCF2uR88KB1VpRK4S6kz2LxO4YUkZ8dvJ7Vrd4ggKmugvjste7BeEEf/ti
+        Tue, 22 Oct 2019 19:49:27 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b4so2738297pfr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 16:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=jy9PGt/JUHpqCjsUhqnEfKaQDEpFjLPDpvn+6DlfB7s=;
+        b=cgvmVjDrPJ345Wr7smrxVEa9O3ft7r0SWLnAusfoV/SzNtw9nPEQVJDpNPaLfYdM0G
+         yMNc5jvG22vT+gDtYmIc/lFTWnAdoElOXRax1gO/lboPqGXAmprKW4w7vULyarOUS6js
+         c4yNVsTZmP2F1Ewr6f35gLNkCLaIBGoCBnRF9HPxZgC4Pj8RvLo/iTPCjT+V39rX7hE+
+         CgInbjWOCkETixOykJxv4Leol9zOiAa8lGYldfODoXIx6wlI7JplpjxpA7OZsmbypvkP
+         QvRvpxMk+l+nWo9k0YB20p9RjOPKRn+tYmJqlFQKP/pOEW11zP0WvuzzRIZWlZt0QhAR
+         TVhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=jy9PGt/JUHpqCjsUhqnEfKaQDEpFjLPDpvn+6DlfB7s=;
+        b=qkUu+s9ru15NYZS52Ekw25mJPDhgnkdsq5tbclC6dUUt543YviYk5PJmk4EVvM0PK2
+         8Hq8O2gSx54bJReznyBiZmItYrFzVmZjDy1ZYFiES+dw8U9/1kAbOBPZUP+yoDV6Vru4
+         a42fmmSNUP7jP+vnzNv1/qT9EQNZwNRa+gCsfu/gpynMNmtm6gCk000Lgi3hbHOazHLN
+         /BjDhTU6qDtNi4/5pjEKnirHCZe3rpPE6cxPIjM0yVfUHd03K4kMBdh+mQK4hORajBza
+         oQ5fHJtaxyhm8T1lrSdd/vqRSIymJ62aEv5dbg/e1AEfdqti10mQd6j36Tmyri/B9IPl
+         Z9nw==
+X-Gm-Message-State: APjAAAVvPPPbwzJTRb8agC9F3Wz6048Pk5QMZXP9Bs3Xv3UwoAC1SP4K
+        2FinTpG/awZ9dVcwbDsLASU=
+X-Google-Smtp-Source: APXvYqydM8hZGzOc0Cn8BCHDzqTYCzCLqeT48fLgD1D3OjpyS4Nzp6jjX2rsyNlEnsrmx29k7KqgOg==
+X-Received: by 2002:a63:65c6:: with SMTP id z189mr6437316pgb.433.1571788165838;
+        Tue, 22 Oct 2019 16:49:25 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1833])
+        by smtp.gmail.com with ESMTPSA id r18sm24624538pgm.31.2019.10.22.16.49.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Oct 2019 16:49:25 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 16:49:22 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 3/3] x86/ftrace: Use text_poke()
+Message-ID: <20191022234921.n5nplxlyq25mksxg@ast-mbp.dhcp.thefacebook.com>
+References: <20191022215841.2qsmhd6vxi4mwade@ast-mbp.dhcp.thefacebook.com>
+ <7364B113-DD65-423D-BED3-FF90C4DF8334@amacapital.net>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1005c41b-ffcf-4272-7641-08d7574a667a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2019 23:48:55.3573
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: AdK44H9I2DwMtfaoWTLZ6nAKu7UhfyztEEBJYk7aGtI2Ny0uUudihfHiikgkabZEHwwvSohvf6T89t4UIO5m1Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2856
-X-OriginatorOrg: Nvidia.com
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1571788142; bh=hh7MXofScYhBwjHA1E2Rr/9tALzMhSRaxjzSxLclQ4s=;
-        h=X-PGP-Universal:ARC-Seal:ARC-Message-Signature:
-         ARC-Authentication-Results:From:To:CC:Subject:Thread-Topic:
-         Thread-Index:Date:Message-ID:References:In-Reply-To:
-         Accept-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:msip_labels:
-         authentication-results:x-originating-ip:x-ms-publictraffictype:
-         x-ms-office365-filtering-correlation-id:x-ms-traffictypediagnostic:
-         x-ms-exchange-transport-forked:x-microsoft-antispam-prvs:
-         x-ms-oob-tlc-oobclassifiers:x-forefront-prvs:
-         x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam:
-         x-microsoft-antispam-message-info:MIME-Version:
-         X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-CrossTenant-userprincipalname:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=JuyFt6ousahItj4lJXzCbpeM1/og4cXzKIGryozbYvks1k2aWV9vxmpPO4RDjixzc
-         TKgKfJ/+q/GxgdMr8Ln9+QBDBzwgSSuwPWh2ZNBsmep3VyMSJwYsvfMWxCPY7TkiPW
-         hHl23rs5jd9hUgAY5q9X1A8bskIr29kAzvCfmgm2RGqHqALu4pAtW0wM5ENwm0pbg0
-         613g2Jbx3WCpWwxjJHHkVhaJcD8O92lsfZuDp5Una/bwyxbjwrE2MWFPrcPVPjCajm
-         COg+YGU/fHcmJ9TtyRD5FGotUwd8+D8rNuiB+UP/l68rjnfQIzpSzPeC/X+AxU6IMi
-         ho6XcFoEqH3Bg==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7364B113-DD65-423D-BED3-FF90C4DF8334@amacapital.net>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUm9iaW4sDQo+PkFwb2xvZ2llcyBmb3IgY3Jvc3NlZCB3aXJlcywgYnV0IEkgaGFkIGEgc2Vy
-aWVzIGdldHRpbmcgcmlkIG9mIGFybV9zbW11X2ZsdXNoX29wcyB3aGljaCB3YXMgYWxzbyBtZWFu
-dCB0byBlbmQgdXAgbWFraW5nIHRoaW5ncyBhIGJpdCBlYXNpZXIgZm9yIHlvdToNCg0KSSB3YXMg
-bG9va2luZyB0byByZWJhc2Ugb24gdG9wIG9mIHlvdXIgY2hhbmdlcyBmaXJzdC4gIFRoZW4gSSBy
-ZWFkIFdpbGwncyByZXBseSB0aGF0IHNhaWQgeW91ciB3b3JrIGlzIHF1ZXVlZCBmb3IgNS41LiAN
-CkxldCBtZSBrbm93IGlmIHRoZXNlIHBhdGNoZXMgbmVlZCB0byByZWJhc2VkIG9uIHRvcCBvZiBp
-b21tdS9kZXZlbCBvciBhIGRpZmZlcmVudCBicmFuY2guIEkgY2FuIHJlc2VuZCB0aGUgcGF0Y2gg
-c2V0IG9uIHRvcCBvZiBuZWNlc3NhcnkgYnJhbmNoLg0KDQotS1INCg==
+On Tue, Oct 22, 2019 at 03:45:26PM -0700, Andy Lutomirski wrote:
+> 
+> 
+> >> On Oct 22, 2019, at 2:58 PM, Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+> >> 
+> >> ﻿On Tue, Oct 22, 2019 at 05:04:30PM -0400, Steven Rostedt wrote:
+> >> I gave a solution for this. And that is to add another flag to allow
+> >> for just the minimum to change the ip. And we can even add another flag
+> >> to allow for changing the stack if needed (to emulate a call with the
+> >> same parameters).
+> > 
+> > your solution is to reduce the overhead.
+> > my solution is to remove it competely. See the difference?
+> > 
+> >> By doing this work, live kernel patching will also benefit. Because it
+> >> is also dealing with the unnecessary overhead of saving regs.
+> >> And we could possibly even have kprobes benefit from this if a kprobe
+> >> doesn't need full regs.
+> > 
+> > Neither of two statements are true. The per-function generated trampoline
+> > I'm talking about is bpf specific. For a function with two arguments it's just:
+> > push rbp 
+> > mov rbp, rsp
+> > push rdi
+> > push rsi
+> > lea  rdi,[rbp-0x10]
+> > call jited_bpf_prog
+> > pop rsi
+> > pop rdi
+> > leave
+> > ret
+> 
+> Why are you saving rsi?  You said upthread that you’re saving the args, but rsi is already available in rsi.
+
+because rsi is caller saved. The above example is for probing something
+like tcp_set_state(struct sock *sk, int state) that everyone used to
+kprobe until we got a tracepoint there.
+The main bpf prog has only one argument R1 == rdi on x86,
+but it's allowed to clobber all caller saved regs.
+Just like x86 function that accepts one argument in rdi can clobber rsi and others.
+So it's essential to save 'sk' and 'state' for tcp_set_state()
+to continue as nothing happened.
+
+>  But I’m wondering whether the bpf jitted code could just directly access the frame instead of indirecting through a register.
+
+That's an excellent question!
+We've debated a ton whether to extend main prog from R1 to all R1-R5
+like bpf subprograms allow. The problem is a lot of existing infra
+assume single R1==ctx. Passing 6th argument is not defined either.
+But it's nice to see all arguments of the kernel function.
+Also bpf is 64-bit ISA. Even when it's running on 32-bit arch.
+Just taking values from registers doesn't work there.
+Whereas when args are indirectly passed as a bunch of u64s in the stack
+the bpf prog becomes portable across architectures
+(not 100% of course, but close).
+
+> Is it entirely specific to the probed function? 
+
+yes. It is specific to the probed function. The verifier makes sure
+that only first two arguments are accessed as read-only
+via *(u64*)(r1 + 0) and *(u64*)(r1 + 8)
+But the program is allowed to use r2-r5 without saving them.
+r6-r10 are saved in implicit program prologue.
+
+> In any event, I think you can’t *just* use text_poke.  Something needs to coordinate to ensure that, if you bpf trace an already-kprobed function, the right thing happens.
+
+Right. Not _just_. I'm looking at Peter's patches and as a minimum I need to grab
+text_mutex and make sure it's nop being replaced.
+
+> FWIW, if you are going to use a trampoline like this, consider using r11 for the caller frame instead of rsi.
+
+r11 can be used by jited code that doing divide and multiply.
+It's possible to refactor that code and free it up.
+I prefer to save such micro-optimization for later.
+Dealing with interpreter is also a pain to the point I'm considering
+to avoid supporting it for these new things.
+Folks should be using CONFIG_BPF_JIT_ALWAYS_ON anyway.
+
