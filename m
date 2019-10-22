@@ -2,58 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F22CE0569
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:45:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 065C7E0570
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:47:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732125AbfJVNpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 09:45:19 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:46188 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732115AbfJVNpS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 09:45:18 -0400
-Received: by mail-il1-f195.google.com with SMTP id m16so9046964iln.13
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 06:45:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=MYssgbwKZ9UwAHOJSjc1dTz4dJL4jKJnwdxb1/8K5gk=;
-        b=fn18RITWGDaewdSWVv1V1VF+lUqbccB2T7djb3QlBlRRbruO0I1KCnfeYxOuS2OV0U
-         gbn++okfzSAngxI+PWXMyssr9SXiaEdpTuLD9Lh56SrBliRnMEDZhG2Glf17Xuy/aNID
-         P1sFudaGNH5IL0oUfFkUGOh6lxVvLXP2za8QdD/GLq3H5Up4/NJfMfTYtvAbNYpFRp+u
-         X6UTGRGGmD4oP7hHF2R0x99nZAoCoEWZATJXFCrz6M4KP9jLLODbsfzjGtvlu0bF/Sm4
-         uKU17jRm3Ct9jnPHB2bkVX0i/oIRKppKYfgdHUu/XFj79oXmusXQovGTwgGE0UKu9oNY
-         xrBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=MYssgbwKZ9UwAHOJSjc1dTz4dJL4jKJnwdxb1/8K5gk=;
-        b=lI83ZnCFktfAylNsqW/09EkgdxossHzW3TqBI1ZCPVJJQYL27heyRqr9uR7/ao1Ti9
-         lTmK9FqucKWkW7xqNUbii3ypRpt8T7AfkM+U/wI8y2BkWhuBP2p+XdY1/QsNNGnHEuTy
-         UXU3GGwLeNFrN/iYUtNG027DvyE2Ew+nqHO0/mdWSpEg7ReAKsmYDU4iYzRbqQtNOyw8
-         fwEB2/lQvmROahEKLTIT7vA0DuS9IKuK6M6qnGFnmHiWVa+aJVx79O7ze3WTGdJoNX6o
-         2IUdRfZnxRRLk8QBNU649Ter/aeBvzVWPxmjWVNm/Bd8fGTzAbZO4vzRDqleZ7LS2dew
-         FSQA==
-X-Gm-Message-State: APjAAAUO1mJWqSbB7/PlCa/nmg6JollMb/XMnsdKw4hgrLwA04i+9AIb
-        hbCDeWDgeSSqc6Z3k7uRVrcwGReDzMGIKVGLt5Q=
-X-Google-Smtp-Source: APXvYqyhrIzXw+4u4KboDG7a7pva1SNW4fkVKCHZ+j8Yf5/wVqwDLIJAqMEMZkZfIiZ0yUKgQZ5j/agKfB5ulWGydBs=
-X-Received: by 2002:a92:258e:: with SMTP id l136mr32223065ill.73.1571751917235;
- Tue, 22 Oct 2019 06:45:17 -0700 (PDT)
+        id S1732137AbfJVNrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 09:47:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55284 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730540AbfJVNrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 09:47:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CF95EAE86;
+        Tue, 22 Oct 2019 13:47:01 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 14:47:00 +0100
+From:   Luis Henriques <lhenriques@suse.com>
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ceph: Fix use-after-free in __ceph_remove_cap
+Message-ID: <20191022134700.GA23308@hermes.olymp>
+References: <20191017144636.28617-1-lhenriques@suse.com>
+ <a68eeb81a5b193be2da49b83dfedce7d2782fb40.camel@kernel.org>
+ <87a79unocw.fsf@suse.com>
+ <CAAM7YA=dg8ufUWqrD_V8pSdvxrnU+knOW4uW4io_b=Lwjhpg5Q@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:da16:0:0:0:0:0 with HTTP; Tue, 22 Oct 2019 06:45:16
- -0700 (PDT)
-Reply-To: martinskwamemartins@gmail.com
-From:   Martins Kwame <edemkoffi24@gmail.com>
-Date:   Tue, 22 Oct 2019 13:45:16 +0000
-Message-ID: <CAPGQs5n-Z4ZRcXgTkiN1YuF1UPYFSue5i3O5j+NxJA3iPV2bJg@mail.gmail.com>
-Subject: Re;
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAM7YA=dg8ufUWqrD_V8pSdvxrnU+knOW4uW4io_b=Lwjhpg5Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-can we talk about this please ?
+On Tue, Oct 22, 2019 at 08:48:56PM +0800, Yan, Zheng wrote:
+> On Mon, Oct 21, 2019 at 10:55 PM Luis Henriques <lhenriques@suse.com> wrote:
+> 
+> >
+> > Jeff Layton <jlayton@kernel.org> writes:
+> >
+> > > On Thu, 2019-10-17 at 15:46 +0100, Luis Henriques wrote:
+> > >> KASAN reports a use-after-free when running xfstest generic/531, with
+> > the
+> > >> following trace:
+> > >>
+> > >> [  293.903362]  kasan_report+0xe/0x20
+> > >> [  293.903365]  rb_erase+0x1f/0x790
+> > >> [  293.903370]  __ceph_remove_cap+0x201/0x370
+> > >> [  293.903375]  __ceph_remove_caps+0x4b/0x70
+> > >> [  293.903380]  ceph_evict_inode+0x4e/0x360
+> > >> [  293.903386]  evict+0x169/0x290
+> > >> [  293.903390]  __dentry_kill+0x16f/0x250
+> > >> [  293.903394]  dput+0x1c6/0x440
+> > >> [  293.903398]  __fput+0x184/0x330
+> > >> [  293.903404]  task_work_run+0xb9/0xe0
+> > >> [  293.903410]  exit_to_usermode_loop+0xd3/0xe0
+> > >> [  293.903413]  do_syscall_64+0x1a0/0x1c0
+> > >> [  293.903417]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > >>
+> > >> This happens because __ceph_remove_cap() may queue a cap release
+> > >> (__ceph_queue_cap_release) which can be scheduled before that cap is
+> > >> removed from the inode list with
+> > >>
+> > >>      rb_erase(&cap->ci_node, &ci->i_caps);
+> > >>
+> > >> And, when this finally happens, the use-after-free will occur.
+> > >>
+> > >> This can be fixed by protecting the rb_erase with the s_cap_lock
+> > spinlock,
+> > >> which is used by ceph_send_cap_releases(), before the cap is freed.
+> > >>
+> > >> Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> > >> ---
+> > >>  fs/ceph/caps.c | 4 ++--
+> > >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >>
+> > >> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > >> index d3b9c9d5c1bd..21ee38cabe98 100644
+> > >> --- a/fs/ceph/caps.c
+> > >> +++ b/fs/ceph/caps.c
+> > >> @@ -1089,13 +1089,13 @@ void __ceph_remove_cap(struct ceph_cap *cap,
+> > bool queue_release)
+> > >>      }
+> > >>      cap->cap_ino = ci->i_vino.ino;
+> > >>
+> > >> -    spin_unlock(&session->s_cap_lock);
+> > >> -
+> > >>      /* remove from inode list */
+> > >>      rb_erase(&cap->ci_node, &ci->i_caps);
+> > >>      if (ci->i_auth_cap == cap)
+> > >>              ci->i_auth_cap = NULL;
+> > >>
+> > >> +    spin_unlock(&session->s_cap_lock);
+> > >> +
+> > >>      if (removed)
+> > >>              ceph_put_cap(mdsc, cap);
+> > >>
+> > >
+> > > Is there any reason we need to wait until this point to remove it from
+> > > the rbtree? ISTM that we ought to just do that at the beginning of the
+> > > function, before we take the s_cap_lock.
+> >
+> > That sounds good to me, at least at a first glace.  I spent some time
+> > looking for any possible issues in the code, and even run a few tests.
+> >
+> > However, looking at git log I found commit f818a73674c5 ("ceph: fix cap
+> > removal races"), which moved that rb_erase from the beginning of the
+> > function to it's current position.  So, unless the race mentioned in
+> > this commit has disappeared in the meantime (which is possible, this
+> > commit is from 2010!), this rbtree operation shouldn't be changed.
+> >
+> > And I now wonder if my patch isn't introducing a race too...
+> > __ceph_remove_cap() is supposed to always be called with the session
+> > mutex held, except for the ceph_evict_inode() path.  Which is where I'm
+> > seeing the UAF.  So, maybe what's missing here is the s_mutex.  Hmm...
+> >
+> >
+> we can't lock s_mutex here, because i_ceph_lock is locked
+
+Well, my idea wasn't to get s_mutex here but earlier in the stack.
+Maybe in ceph_evict_inode, protecting the call to __ceph_remove_caps.
+But I didn't really looked into that yet, so I'm not really sure if
+that's feasible (or even if that would fix this UAF).  I suspect that's
+not possible anyway, due to the comment above __ceph_remove_cap:
+
+  caller will not hold session s_mutex if called from destroy_inode.
+
+Cheers,
+--
+Luís
