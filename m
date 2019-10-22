@@ -2,62 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43D65E023A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 12:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B9CDE0219
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 12:31:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731866AbfJVKjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 06:39:04 -0400
-Received: from mail.keramplus.com ([212.3.124.226]:58271 "EHLO
-        trixbox1.localdomain" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727101AbfJVKjE (ORCPT
+        id S1731848AbfJVKbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 06:31:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55250 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731761AbfJVKbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 06:39:04 -0400
-Received: from 127.0.0.1 (trixbox1.localdomain [127.0.0.1])
-        by trixbox1.localdomain (Postfix) with SMTP id 34625ADAC34;
-        Fri, 18 Oct 2019 03:02:10 +0300 (EEST)
-Received: from [38.165.211.116] by 127.0.0.1 with ESMTP id 6DDE26BD630; Thu, 17 Oct 2019 21:59:24 -0300
-Message-ID: <1t-c$2dq7l$rg@fqojd0.mei>
-From:   "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
-Reply-To: "Mr Barrister Hans Erich" <Barrister_Hans@stationlibraryjhelum.com>
-To:     tianyu@tianyufrp.com
-Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
-Date:   Thu, 17 Oct 19 21:59:24 GMT
-X-Mailer: AOL 7.0 for Windows US sub 118
+        Tue, 22 Oct 2019 06:31:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oGXqvKq/gQw1kFy1CCcjXeG012Q/MaLJgKwZFIYOTZE=; b=gPP45qct/5tRq4RjHiYFllSvM
+        S8xyheu9OWbqubuOu6qzB6tZ2nQWIdtouaUs7/ZakFH8cLU5cRwCXbBX6hPfe6Y0pVPJZyzHE/fdD
+        JOEPnObZJEczzLTdvPZrM/bZWkCyC/yFOjIQ11EF9epkv7zU5KP+YpWwHGGsQ2JxAwkmzyYCYVpVS
+        Jsyu9aBKjgB5cvR5xhcr4E0HxECsRRiskRQMpogvTIgEgnIMxCMp/eLfvS5XLgW3M78oeO0qq5VDF
+        2e+byrwbIltwgDI1fGXVWTaGWnzRLgv2AgR8M7+csvikbv5aqNJjsA56MXoxkI7QyYoHXLFQBeQsG
+        3Z4WV+icQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iMrRp-0000B3-SC; Tue, 22 Oct 2019 10:31:30 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 65528300489;
+        Tue, 22 Oct 2019 12:30:29 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E4FA120420870; Tue, 22 Oct 2019 12:31:26 +0200 (CEST)
+Date:   Tue, 22 Oct 2019 12:31:26 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, jeyu@kernel.org,
+        paulmck@kernel.org, mathieu.desnoyers@efficios.com
+Subject: Re: [PATCH v4 12/16] x86/kprobes: Fix ordering
+Message-ID: <20191022103126.GN1817@hirez.programming.kicks-ass.net>
+References: <20191018073525.768931536@infradead.org>
+ <20191018074634.629386219@infradead.org>
+ <20191022103521.3015bc5e128cd68fa645013c@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="AFB3FE8F9B8DB.AA1056"
-X-Priority: 3
-X-MSMail-Priority: Normal
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191022103521.3015bc5e128cd68fa645013c@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 22, 2019 at 10:35:21AM +0900, Masami Hiramatsu wrote:
+> On Fri, 18 Oct 2019 09:35:37 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > Kprobes does something like:
+> > 
+> > register:
+> > 	arch_arm_kprobe()
+> > 	  text_poke(INT3)
+> >           /* guarantees nothing, INT3 will become visible at some point, maybe */
+> > 
+> >         kprobe_optimizer()
+> > 	  /* guarantees the bytes after INT3 are unused */
+> > 	  syncrhonize_rcu_tasks();
+> > 	  text_poke_bp(JMP32);
+> > 	  /* implies IPI-sync, kprobe really is enabled */
+> > 
+> > 
+> > unregister:
+> > 	__disarm_kprobe()
+> > 	  unoptimize_kprobe()
+> > 	    text_poke_bp(INT3 + tail);
+> > 	    /* implies IPI-sync, so tail is guaranteed visible */
+> >           arch_disarm_kprobe()
+> >             text_poke(old);
+> > 	    /* guarantees nothing, old will maybe become visible */
+> > 
+> > 	synchronize_rcu()
+> > 
+> >         free-stuff
+> 
+> Note that this is only for the case of optimized kprobe.
+> (On some probe points we can not optimize it)
 
---AFB3FE8F9B8DB.AA1056
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+Of course..
 
-Greetings
+> > Now the problem is that on register, the synchronize_rcu_tasks() does
+> > not imply sufficient to guarantee all CPUs have already observed INT3
+> > (although in practise this is exceedingly unlikely not to have
+> > happened) (similar to how MEMBARRIER_CMD_PRIVATE_EXPEDITED does not
+> > imply MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE).
+> 
+> OK, so the sync_core() after int3 is needed to guarantee the probe
+> is enabled on each core.
 
-My name is Barrister Hans Erich.
+Indeed, AFAIU the old instruction can stay in I$ or micro-ops caches
+which are not (fully) cache coherent.
 
-I have a client who is interested to invest in your country, she is a well=
- known politician in her country and deserve a lucrative investment partne=
-rship with you outside her country without any delay   Please can you mana=
-ge such investment please Kindly reply for further details.
+So without forcing a serializing instruction (CPUID, CR3 write, etc..)
+there is no guarantee.
 
-Your full names ---------
+> > Worse, even if it did, we'd have to do 2 synchronize calls to provide
+> > the guarantee we're looking for, the first to ensure INT3 is visible,
+> > the second to guarantee nobody is then still using the instruction
+> > bytes after INT3.
+> 
+> I think this 2nd guarantee is done by syncrhonize_rcu() if we
+> put sync_core() after int3. syncrhonize_rcu() ensures that
+> all cores once scheduled and all interrupts have done.
 
+Right, with IPI it all works, without IPI it might be that the INT3 is
+still visible when we start synchronize_rcu() and thereby violate the
+RCU guarantees.
 
-Your urgent response will be appreciated
+> > --- a/arch/x86/kernel/kprobes/opt.c
+> > +++ b/arch/x86/kernel/kprobes/opt.c
+> > @@ -444,14 +444,10 @@ void arch_optimize_kprobes(struct list_h
+> >  /* Replace a relative jump with a breakpoint (int3).  */
+> >  void arch_unoptimize_kprobe(struct optimized_kprobe *op)
+> >  {
+> > -	u8 insn_buff[JMP32_INSN_SIZE];
+> > -
+> > -	/* Set int3 to first byte for kprobes */
+> > -	insn_buff[0] = INT3_INSN_OPCODE;
+> > -	memcpy(insn_buff + 1, op->optinsn.copied_insn, DISP32_SIZE);
+> > -
+> > -	text_poke_bp(op->kp.addr, insn_buff, JMP32_INSN_SIZE,
+> > -		     text_gen_insn(JMP32_INSN_OPCODE, op->kp.addr, op->optinsn.insn));
+> > +	arch_arm_kprobe(&op->kp);
+> > +	text_poke(op->kp.addr + INT3_INSN_SIZE,
+> > +		  op->optinsn.copied_insn, DISP32_SIZE);
+> > +	text_poke_sync();
+> >  }
+> 
+> For this part, I thought it was same as what text_poke_bp() does.
+> But, indeed, this looks better (simpler & lighter) than using
+> text_poke_bp()...
 
-Thank you and God bless you.
+Indeed. The reason I wrote it as such is that now the
+text_poke_bp(.emulate) argument is unused, which I can go remove in a
+future patch.
 
-Barrister Hans Erich
+The whole reason I went looking here is that I was going to write a
+comment on how this was correct; it seems I've still to do that..
 
-Yours sincerely,
-Barrister Hans Erich
+/me adds the two entries to the TODO list.
 
---AFB3FE8F9B8DB.AA1056--
+> So, in total, this looks good to me.
+> 
+> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
+Thanks!
