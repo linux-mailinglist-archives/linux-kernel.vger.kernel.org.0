@@ -2,184 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56780E04E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:24:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B349AE0479
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:06:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389251AbfJVNYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 09:24:24 -0400
-Received: from gateway31.websitewelcome.com ([192.185.143.234]:22266 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388087AbfJVNYY (ORCPT
+        id S1731944AbfJVNFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 09:05:54 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:38102 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729696AbfJVNFy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 09:24:24 -0400
-X-Greylist: delayed 1277 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Oct 2019 09:24:22 EDT
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id B232BA7EE6
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 08:03:04 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id MtoWiVgEjHunhMtoWi2oHD; Tue, 22 Oct 2019 08:03:04 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:To:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=0DF9+JWLKklI0vooiTv9yvpDYkgO00PuecbN53kCwrk=; b=dxRdNg73f1fbbJqG2J8H7ffltK
-        ZZiiGJshGi8VozZ5htEu4VMywx1NKpcZF910VQBW96jisaW4XdV9wbg1sBAlB+qhoPpwi9O1fxjq6
-        /BEGQosbLHFkWjmmFupZsNGyEQ05OTLEEd7fI72u7hA9iVOocj4t3a+Ffnh1VX9lEZo1oTPUvnP74
-        mC3y/DJplSZuu0LLLTfkkFw/xtEx1a5WQQsJJvIeaF/MPqYsvJpkKPHpoxfK5uI4NfhDL97aqcwxA
-        /MVZSdNIaRNgZPf4evfCJIV7fvmkLV967M8C2EdgNLkIOlcny9rGk71TNDfI9LDHZZLr833lsXrax
-        tnT+T8kg==;
-Received: from [187.192.22.73] (port=51118 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1iMtoV-002Mj5-Ku; Tue, 22 Oct 2019 08:03:03 -0500
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        kieran.bingham@ideasonboard.com, mchehab@kernel.org,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <CACT4Y+ZMxcvnZnDa=uYyaLQaW5r22vBpXkDuMU=CM2BVzjF_Tg@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: adv748x: missing parens
-Message-ID: <baecb140-986a-da96-665a-0ec581ae2c75@embeddedor.com>
-Date:   Tue, 22 Oct 2019 08:02:50 -0500
+        Tue, 22 Oct 2019 09:05:54 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9MD5pLL077666;
+        Tue, 22 Oct 2019 08:05:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571749551;
+        bh=ieLw0UD3TwNfGq2EsjYftsH6Edo4lDfAf/yj37BOjiM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=mF1FIsNT5Ib6vj+r6XWhXX5qijsZY1qb0QuDBC0F7UNZXcoR3lOZTbq7NCEnyYQp/
+         so66Gene4HaEpi/nOoDbTfQgjk5w6cm99uMjvmmZFEzbWBWg85hCG1kiqCkWIltIKa
+         LfQ2ZwltgNSTBxTZCYQsNv5hTBZC30uaSh2lUJ2w=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9MD5pqn086771
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 22 Oct 2019 08:05:51 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 22
+ Oct 2019 08:05:49 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 22 Oct 2019 08:05:39 -0500
+Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9MD5XhK075548;
+        Tue, 22 Oct 2019 08:05:33 -0500
+Subject: Re: [PATCH 00/13] PHY: Add support for SERDES in TI's J721E SoC
+To:     Kishon Vijay Abraham I <kishon@ti.com>, Jyri Sarha <jsarha@ti.com>
+CC:     Anil Varughese <aniljoy@cadence.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20191016113117.12370-1-kishon@ti.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <6bc9645d-28df-bcef-e94d-498516fc4ac2@ti.com>
+Date:   Tue, 22 Oct 2019 16:05:32 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ZMxcvnZnDa=uYyaLQaW5r22vBpXkDuMU=CM2BVzjF_Tg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191016113117.12370-1-kishon@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.22.73
-X-Source-L: No
-X-Exim-ID: 1iMtoV-002Mj5-Ku
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [187.192.22.73]:51118
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+Hi,
 
-Thanks for the report.
-
-On 10/22/19 02:29, Dmitry Vyukov wrote:
-> Hi Kieran,
+On 16/10/2019 14:31, Kishon Vijay Abraham I wrote:
+> TI's J721E SoC uses Cadence Sierra SERDES for USB, PCIe and SGMII.
+> TI has a wrapper named WIZ to control input signals to Sierra and
+> Torrent SERDES.
 > 
-> Building kernel with clang gives me:
+> This patch series:
+>   1) Add support to WIZ module present in TI's J721E SoC
+>   2) Adapt Cadence Sierra PHY driver to be used for J721E SoC
 > 
-> drivers/media/i2c/adv748x/adv748x-afe.c:452:12: warning: operator '?:'
-> has lower precedence than '|'; '|' will be evaluated first
-> [-Wbitwise-conditional-parentheses]
+> Anil Varughese (1):
+>    phy: cadence: Sierra: Configure both lane cdb and common cdb registers
+>      for external SSC
 > 
-> ret = sdp_clrset(state, ADV748X_SDP_FRP, ADV748X_SDP_FRP_MASK, enable
-> ? ctrl->val - 1 : 0);
-> #define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~m) | v)
+> Kishon Vijay Abraham I (12):
+>    dt-bindings: phy: Sierra: Add bindings for Sierra in TI's J721E
+>    phy: cadence: Sierra: Make "phy_clk" and "sierra_apb" optional
+>      resources
+>    phy: cadence: Sierra: Use "regmap" for read and write to Sierra
+>      registers
+>    phy: cadence: Sierra: Add support for SERDES_16G used in J721E SoC
+>    phy: cadence: Sierra: Make cdns_sierra_phy_init() as phy_ops
+>    phy: cadence: Sierra: Modify register macro names to be in sync with
+>      Sierra user guide
+>    phy: cadence: Sierra: Get reset control "array" for each link
+>    phy: cadence: Sierra: Check for PLL lock during PHY power on
+>    phy: cadence: Sierra: Change MAX_LANES of Sierra to 16
+>    phy: cadence: Sierra: Set cmn_refclk/cmn_refclk1 frequency to 25MHz
+>    dt-bindings: phy: Document WIZ (SERDES wrapper) bindings
+>    phy: ti: j721e-wiz: Add support for WIZ module present in TI J721E SoC
+
+Tested USB3.0 on J7ES using this series.
+
+Tested-by: Roger Quadros <rogerq@ti.com>
+
 > 
-> This is on linux-next commit a722f75b2923b4fd44c17e7255e822ac48fe85f0
-> Date:   Tue Oct 22 16:17:17 2019 +1100
->     Add linux-next specific files for 20191022
+>   .../bindings/phy/phy-cadence-sierra.txt       |  13 +-
+>   .../bindings/phy/ti,phy-j721e-wiz.txt         |  95 ++
+>   drivers/phy/cadence/phy-cadence-sierra.c      | 695 +++++++++++---
+>   drivers/phy/ti/Kconfig                        |  15 +
+>   drivers/phy/ti/Makefile                       |   1 +
+>   drivers/phy/ti/phy-j721e-wiz.c                | 904 ++++++++++++++++++
+>   6 files changed, 1585 insertions(+), 138 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.txt
+>   create mode 100644 drivers/phy/ti/phy-j721e-wiz.c
 > 
-> It seems sdp_clrset needs some more parens.
-> 
 
-Yep. It seems this is enough to fix the issue:
-
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 5042f9e94aee..fccb388ce179 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -394,10 +394,10 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
-
- #define io_read(s, r) adv748x_read(s, ADV748X_PAGE_IO, r)
- #define io_write(s, r, v) adv748x_write(s, ADV748X_PAGE_IO, r, v)
--#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~m) | v)
-+#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~(m)) | (v))
-
- #define hdmi_read(s, r) adv748x_read(s, ADV748X_PAGE_HDMI, r)
--#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, r+1)) & m)
-+#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, (r)+1)) & (m))
- #define hdmi_write(s, r, v) adv748x_write(s, ADV748X_PAGE_HDMI, r, v)
-
- #define repeater_read(s, r) adv748x_read(s, ADV748X_PAGE_REPEATER, r)
-@@ -405,11 +405,11 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
-
- #define sdp_read(s, r) adv748x_read(s, ADV748X_PAGE_SDP, r)
- #define sdp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_SDP, r, v)
--#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~m) | v)
-+#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~(m)) | (v))
-
- #define cp_read(s, r) adv748x_read(s, ADV748X_PAGE_CP, r)
- #define cp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_CP, r, v)
--#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~m) | v)
-+#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~(m)) | (v))
-
- #define tx_read(t, r) adv748x_read(t->state, t->page, r)
- #define tx_write(t, r, v) adv748x_write(t->state, t->page, r, v)
-
-
-More on writing safe macros in C:
-
-https://wiki.sei.cmu.edu/confluence/display/c/PRE31-C.+Avoid+side+effects+in+arguments+to+unsafe+macros
-
---
-Gustavo
+-- 
+cheers,
+-roger
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
