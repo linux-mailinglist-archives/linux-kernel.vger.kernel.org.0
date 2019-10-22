@@ -2,160 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0DBBDFFAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FF69DFFAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:38:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388346AbfJVIhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:37:31 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36035 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731242AbfJVIha (ORCPT
+        id S2388445AbfJVIhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 04:37:55 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54692 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388393AbfJVIhy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:37:30 -0400
-Received: by mail-wr1-f65.google.com with SMTP id w18so16466888wrt.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 01:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xuCgV4YUFYa6Caw2Y7xISyDpnVmWYzdkWcO2116lWE4=;
-        b=giNNnQgAjHNft/0FgO/AAhey9WyM3sxbadX7UZAgHpUwSifwzOZJ53L+/otOLfZy1b
-         HbgoaElE/oR4BlnRE2UoC/++L7XXQOdCTshf8W5PhHihnq/lRnMl+sepQsVLnOMqPfuc
-         Fn5Pj1o0zLvx9mlVr+ApFuiwJwEmfTyGh9RRI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=xuCgV4YUFYa6Caw2Y7xISyDpnVmWYzdkWcO2116lWE4=;
-        b=fH9GLxYjr+wFVYi0vBmOzhMq2Jm5Zlu6FZJfD95UNIhtKI3WanuDG3mEUNMwvfyOJI
-         kda+DBnEFpTknAswaeRbansClfXpYDF5auJHPO3nD5a9cB3aaU1KZ/yHnAcJYzmcSIl0
-         UFAqAcW/PDlRlilLDmLb5ukWXsY08x0qdkAOViujFiQFDqjJ8mimpSoIrnYtTSgfVFo4
-         SoDgz5dXVc+Bp7722D6UwsISx/LCtL1sJ3aQWEZDYZ8dWEQHxcFrMD5WXPr/4Mb+FHSa
-         yfMl4sdlu1V1FAVp0TNFfgCC9d0qOCSonYIagZ/1vSgFnFkVowhPV4jrMusdThecIUlG
-         CyNw==
-X-Gm-Message-State: APjAAAUlIj0yFjDq3HOEdlAbKPN6JEBaZT6Pjuh/BpLTBNExYohSPICv
-        mbAdF6B0aW+CA3d/44oHbEUFpg==
-X-Google-Smtp-Source: APXvYqzn4oehIGnlOKvsXHpvbPtT9iSU1nTJNoBE2XJUwT2ImOHs2/TzhEOV5ZcOXZEqgAMK7GYnPw==
-X-Received: by 2002:a5d:6a03:: with SMTP id m3mr420075wru.90.1571733447653;
-        Tue, 22 Oct 2019 01:37:27 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id p12sm4910430wrt.7.2019.10.22.01.37.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 01:37:26 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 10:37:25 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     airlied@linux.ie, daniel@ffwll.ch, ville.syrjala@linux.intel.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2] drm: atomic helper: fix W=1 warnings
-Message-ID: <20191022083725.GW11828@phenom.ffwll.local>
-Mail-Followup-To: Benjamin Gaignard <benjamin.gaignard@st.com>,
-        airlied@linux.ie, ville.syrjala@linux.intel.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20191008124254.2144-1-benjamin.gaignard@st.com>
+        Tue, 22 Oct 2019 04:37:54 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 621F46079C; Tue, 22 Oct 2019 08:37:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571733473;
+        bh=Po5RtiTU4/a1PjWYIFhSvt3ysgdj+uj3Q97l1tGoGno=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=QCCCcIC789yQ7vbQZCHzAEybmJpv0vZdd2l3JH455L1ATtObglxlqGa3Mevq6K7t+
+         QEcCnfnJwgsLraluQWKf4zK9AejH43f7u+H3LWYMpIs8CnrO/GUhpuLz+QeogAUIwR
+         PB6O61Alyb4w5ROOD6RWvjzr+xx/RRSHcQTQ17nA=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8C0B66081E;
+        Tue, 22 Oct 2019 08:37:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571733468;
+        bh=Po5RtiTU4/a1PjWYIFhSvt3ysgdj+uj3Q97l1tGoGno=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=S+TEhuqHHOLxBvvFbhB4Fg/0nbgR8jLvULtLxz34XMRYJ1ZrEH2uoixCBf1BT0aGQ
+         XapuA4XFkIkgBxjEYlBHtuvpoqnD7+SjujRhfeQsiwkRsMrsjjtpwpvFAV3J5KXW6/
+         b9XS1mAnHnbxutmCYP5i6EHXsjV6fCyS/gOcQgFo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8C0B66081E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008124254.2144-1-benjamin.gaignard@st.com>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] ath10k: Fix a NULL-ptr-deref bug in
+ ath10k_usb_alloc_urb_from_pipe
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20191018133516.12606-1-linux@roeck-us.net>
+References: <20191018133516.12606-1-linux@roeck-us.net>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hui Peng <benquike@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20191022083752.621F46079C@smtp.codeaurora.org>
+Date:   Tue, 22 Oct 2019 08:37:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 02:42:54PM +0200, Benjamin Gaignard wrote:
-> Few for_each macro set variables that are never used later which led
-> to generate unused-but-set-variable warnings.
-> Add (void)(foo) inside the macros to remove these warnings
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-OCD in me would lean towards annotating all of them, unconditionally, and
-be done. But I guess this works too. Either way:
+> The `ar_usb` field of `ath10k_usb_pipe_usb_pipe` objects
+> are initialized to point to the containing `ath10k_usb` object
+> according to endpoint descriptors read from the device side, as shown
+> below in `ath10k_usb_setup_pipe_resources`:
+> 
+> for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
+>         endpoint = &iface_desc->endpoint[i].desc;
+> 
+>         // get the address from endpoint descriptor
+>         pipe_num = ath10k_usb_get_logical_pipe_num(ar_usb,
+>                                                 endpoint->bEndpointAddress,
+>                                                 &urbcount);
+>         ......
+>         // select the pipe object
+>         pipe = &ar_usb->pipes[pipe_num];
+> 
+>         // initialize the ar_usb field
+>         pipe->ar_usb = ar_usb;
+> }
+> 
+> The driver assumes that the addresses reported in endpoint
+> descriptors from device side  to be complete. If a device is
+> malicious and does not report complete addresses, it may trigger
+> NULL-ptr-deref `ath10k_usb_alloc_urb_from_pipe` and
+> `ath10k_usb_free_urb_to_pipe`.
+> 
+> This patch fixes the bug by preventing potential NULL-ptr-deref.
+> 
+> Signed-off-by: Hui Peng <benquike@gmail.com>
+> Reported-by: Hui Peng <benquike@gmail.com>
+> Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> [groeck: Add driver tag to subject, fix build warning]
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> ---
->  include/drm/drm_atomic.h | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> index 927e1205d7aa..b6c73fd9f55a 100644
-> --- a/include/drm/drm_atomic.h
-> +++ b/include/drm/drm_atomic.h
-> @@ -693,6 +693,7 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
->  	     (__i)++)								\
->  		for_each_if ((__state)->connectors[__i].ptr &&			\
->  			     ((connector) = (__state)->connectors[__i].ptr,	\
-> +			     (void)(connector) /* Only to avoid unused-but-set-variable warning */, \
->  			     (old_connector_state) = (__state)->connectors[__i].old_state,	\
->  			     (new_connector_state) = (__state)->connectors[__i].new_state, 1))
->  
-> @@ -714,6 +715,7 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
->  	     (__i)++)								\
->  		for_each_if ((__state)->connectors[__i].ptr &&			\
->  			     ((connector) = (__state)->connectors[__i].ptr,	\
-> +			     (void)(connector) /* Only to avoid unused-but-set-variable warning */, \
->  			     (old_connector_state) = (__state)->connectors[__i].old_state, 1))
->  
->  /**
-> @@ -734,7 +736,9 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
->  	     (__i)++)								\
->  		for_each_if ((__state)->connectors[__i].ptr &&			\
->  			     ((connector) = (__state)->connectors[__i].ptr,	\
-> -			     (new_connector_state) = (__state)->connectors[__i].new_state, 1))
-> +			     (void)(connector) /* Only to avoid unused-but-set-variable warning */, \
-> +			     (new_connector_state) = (__state)->connectors[__i].new_state, \
-> +			     (void)(new_connector_state) /* Only to avoid unused-but-set-variable warning */, 1))
->  
->  /**
->   * for_each_oldnew_crtc_in_state - iterate over all CRTCs in an atomic update
-> @@ -754,7 +758,9 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
->  	     (__i)++)							\
->  		for_each_if ((__state)->crtcs[__i].ptr &&		\
->  			     ((crtc) = (__state)->crtcs[__i].ptr,	\
-> +			      (void)(crtc) /* Only to avoid unused-but-set-variable warning */, \
->  			     (old_crtc_state) = (__state)->crtcs[__i].old_state, \
-> +			     (void)(old_crtc_state) /* Only to avoid unused-but-set-variable warning */, \
->  			     (new_crtc_state) = (__state)->crtcs[__i].new_state, 1))
->  
->  /**
-> @@ -793,7 +799,9 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
->  	     (__i)++)							\
->  		for_each_if ((__state)->crtcs[__i].ptr &&		\
->  			     ((crtc) = (__state)->crtcs[__i].ptr,	\
-> -			     (new_crtc_state) = (__state)->crtcs[__i].new_state, 1))
-> +			     (void)(crtc) /* Only to avoid unused-but-set-variable warning */, \
-> +			     (new_crtc_state) = (__state)->crtcs[__i].new_state, \
-> +			     (void)(new_crtc_state) /* Only to avoid unused-but-set-variable warning */, 1))
->  
->  /**
->   * for_each_oldnew_plane_in_state - iterate over all planes in an atomic update
-> @@ -813,6 +821,7 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
->  	     (__i)++)							\
->  		for_each_if ((__state)->planes[__i].ptr &&		\
->  			     ((plane) = (__state)->planes[__i].ptr,	\
-> +			      (void)(plane) /* Only to avoid unused-but-set-variable warning */, \
->  			      (old_plane_state) = (__state)->planes[__i].old_state,\
->  			      (new_plane_state) = (__state)->planes[__i].new_state, 1))
->  
-> @@ -873,7 +882,9 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
->  	     (__i)++)							\
->  		for_each_if ((__state)->planes[__i].ptr &&		\
->  			     ((plane) = (__state)->planes[__i].ptr,	\
-> -			      (new_plane_state) = (__state)->planes[__i].new_state, 1))
-> +			      (void)(plane) /* Only to avoid unused-but-set-variable warning */, \
-> +			      (new_plane_state) = (__state)->planes[__i].new_state, \
-> +			      (void)(new_plane_state) /* Only to avoid unused-but-set-variable warning */, 1))
->  
->  /**
->   * for_each_oldnew_private_obj_in_state - iterate over all private objects in an atomic update
-> -- 
-> 2.15.0
-> 
+Patch applied to ath-next branch of ath.git, thanks.
+
+bfd6e6e6c5d2 ath10k: Fix a NULL-ptr-deref bug in ath10k_usb_alloc_urb_from_pipe
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+https://patchwork.kernel.org/patch/11198433/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
