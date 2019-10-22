@@ -2,102 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32944E0A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 19:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DD26E0A99
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 19:29:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731802AbfJVR1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 13:27:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59338 "EHLO mail.kernel.org"
+        id S2387640AbfJVR32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 13:29:28 -0400
+Received: from mga17.intel.com ([192.55.52.151]:50509 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730141AbfJVR1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 13:27:36 -0400
-Received: from localhost (mobile-166-172-186-56.mycingular.net [166.172.186.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED62B206C2;
-        Tue, 22 Oct 2019 17:27:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571765254;
-        bh=JWegfatqnKGnwIzK55U0uFuQH+f+y/FRqF/iMkFMuJE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hVs/wyGwoVAsJ0TQf6lKLkQzLCMuchKjQbWtTsoTnkegv7sobTel1iNjAkDUD5138
-         GK+NNZYulZV+MFFAqnG1RvGYBoquhmWp3OktbwKtyeFTMQqbRBjh+veSftBgpN32Nw
-         HEZGO0WqmZ0vCmMeU/kXEDgNiTc7IAfefr5yiKJ0=
-Date:   Tue, 22 Oct 2019 13:27:31 -0400
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Puma Hsu <pumahsu@google.com>
-Cc:     heikki.krogerus@linux.intel.com, badhri@google.com,
-        kyletso@google.com, albertccwang@google.com, rickyniu@google.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] usb: typec: Add sysfs node to show connector
- orientation
-Message-ID: <20191022172731.GA230934@kroah.com>
-References: <20191022085924.92783-1-pumahsu@google.com>
+        id S1730141AbfJVR32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 13:29:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 10:29:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,217,1569308400"; 
+   d="scan'208";a="281360689"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga001.jf.intel.com with ESMTP; 22 Oct 2019 10:29:24 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id EE4F83AB; Tue, 22 Oct 2019 20:29:23 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Yury Norov <yury.norov@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 04/11] lib/test_bitmap: Rename exp to exp1 to avoid ambiguous name
+Date:   Tue, 22 Oct 2019 20:29:15 +0300
+Message-Id: <20191022172922.61232-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
+References: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022085924.92783-1-pumahsu@google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 04:59:24PM +0800, Puma Hsu wrote:
-> Export the Type-C connector orientation so that user space
-> can get this information.
-> 
-> Signed-off-by: Puma Hsu <pumahsu@google.com>
-> ---
->  Documentation/ABI/testing/sysfs-class-typec | 11 +++++++++++
->  drivers/usb/typec/class.c                   | 18 ++++++++++++++++++
->  2 files changed, 29 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
-> index d7647b258c3c..b22f71801671 100644
-> --- a/Documentation/ABI/testing/sysfs-class-typec
-> +++ b/Documentation/ABI/testing/sysfs-class-typec
-> @@ -108,6 +108,17 @@ Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
->  Description:
->  		Revision number of the supported USB Type-C specification.
->  
-> +What:		/sys/class/typec/<port>/connector_orientation
-> +Date:		October 2019
-> +Contact:	Puma Hsu <pumahsu@google.com>
-> +Description:
-> +		Indicates which typec connector orientation is configured now.
-> +		cc1 is defined as "normal" and cc2 is defined as "reversed".
+One function is using exp as local variable.
+Avoid ambiguous naming by rename global one to exp1.
 
-Why the blank line after "Description:"?  Shouldn't "Indicates..." be
-right after it?
-> +
-> +		Valid value:
-> +		- unknown (nothing configured)
-> +		- normal (configured in cc1 side)
-> +		- reversed (configured in cc2 side)
->  
->  USB Type-C partner devices (eg. /sys/class/typec/port0-partner/)
->  
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 94a3eda62add..911d06676aeb 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -1245,6 +1245,23 @@ static ssize_t usb_power_delivery_revision_show(struct device *dev,
->  }
->  static DEVICE_ATTR_RO(usb_power_delivery_revision);
->  
-> +static const char * const typec_connector_orientation[] = {
-> +	[TYPEC_ORIENTATION_NONE]		= "unknown",
-> +	[TYPEC_ORIENTATION_NORMAL]		= "normal",
-> +	[TYPEC_ORIENTATION_REVERSE]		= "reversed",
-> +};
-> +
-> +static ssize_t connector_orientation_show(struct device *dev,
-> +						struct device_attribute *attr,
-> +						char *buf)
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ lib/test_bitmap.c | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-Can you line this up properly?
+diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
+index 38f923411ada..6b70166ac960 100644
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -247,7 +247,7 @@ struct test_bitmap_parselist{
+ 	const int flags;
+ };
+ 
+-static const unsigned long exp[] __initconst = {
++static const unsigned long exp1[] __initconst = {
+ 	BITMAP_FROM_U64(1),
+ 	BITMAP_FROM_U64(2),
+ 	BITMAP_FROM_U64(0x0000ffff),
+@@ -271,29 +271,29 @@ static const unsigned long exp2[] __initconst = {
+ static const struct test_bitmap_parselist parselist_tests[] __initconst = {
+ #define step (sizeof(u64) / sizeof(unsigned long))
+ 
+-	{0, "0",			&exp[0], 8, 0},
+-	{0, "1",			&exp[1 * step], 8, 0},
+-	{0, "0-15",			&exp[2 * step], 32, 0},
+-	{0, "16-31",			&exp[3 * step], 32, 0},
+-	{0, "0-31:1/2",			&exp[4 * step], 32, 0},
+-	{0, "1-31:1/2",			&exp[5 * step], 32, 0},
+-	{0, "0-31:1/4",			&exp[6 * step], 32, 0},
+-	{0, "1-31:1/4",			&exp[7 * step], 32, 0},
+-	{0, "0-31:4/4",			&exp[8 * step], 32, 0},
+-	{0, "1-31:4/4",			&exp[9 * step], 32, 0},
+-	{0, "0-31:1/4,32-63:2/4",	&exp[10 * step], 64, 0},
+-	{0, "0-31:3/4,32-63:4/4",	&exp[11 * step], 64, 0},
+-	{0, "  ,,  0-31:3/4  ,, 32-63:4/4  ,,  ",	&exp[11 * step], 64, 0},
++	{0, "0",			&exp1[0], 8, 0},
++	{0, "1",			&exp1[1 * step], 8, 0},
++	{0, "0-15",			&exp1[2 * step], 32, 0},
++	{0, "16-31",			&exp1[3 * step], 32, 0},
++	{0, "0-31:1/2",			&exp1[4 * step], 32, 0},
++	{0, "1-31:1/2",			&exp1[5 * step], 32, 0},
++	{0, "0-31:1/4",			&exp1[6 * step], 32, 0},
++	{0, "1-31:1/4",			&exp1[7 * step], 32, 0},
++	{0, "0-31:4/4",			&exp1[8 * step], 32, 0},
++	{0, "1-31:4/4",			&exp1[9 * step], 32, 0},
++	{0, "0-31:1/4,32-63:2/4",	&exp1[10 * step], 64, 0},
++	{0, "0-31:3/4,32-63:4/4",	&exp1[11 * step], 64, 0},
++	{0, "  ,,  0-31:3/4  ,, 32-63:4/4  ,,  ",	&exp1[11 * step], 64, 0},
+ 
+ 	{0, "0-31:1/4,32-63:2/4,64-95:3/4,96-127:4/4",	exp2, 128, 0},
+ 
+ 	{0, "0-2047:128/256", NULL, 2048, PARSE_TIME},
+ 
+-	{0, "",				&exp[12 * step], 8, 0},
+-	{0, "\n",			&exp[12 * step], 8, 0},
+-	{0, ",,  ,,  , ,  ,",		&exp[12 * step], 8, 0},
+-	{0, " ,  ,,  , ,   ",		&exp[12 * step], 8, 0},
+-	{0, " ,  ,,  , ,   \n",		&exp[12 * step], 8, 0},
++	{0, "",				&exp1[12 * step], 8, 0},
++	{0, "\n",			&exp1[12 * step], 8, 0},
++	{0, ",,  ,,  , ,  ,",		&exp1[12 * step], 8, 0},
++	{0, " ,  ,,  , ,   ",		&exp1[12 * step], 8, 0},
++	{0, " ,  ,,  , ,   \n",		&exp1[12 * step], 8, 0},
+ 
+ 	{-EINVAL, "-1",	NULL, 8, 0},
+ 	{-EINVAL, "-0",	NULL, 8, 0},
+@@ -374,7 +374,7 @@ static void __init test_bitmap_parselist_user(void)
+ 	__test_bitmap_parselist(1);
+ }
+ 
+-#define EXP1_IN_BITS	(sizeof(exp) * 8)
++#define EXP1_IN_BITS	(sizeof(exp1) * 8)
+ 
+ static void __init test_bitmap_arr32(void)
+ {
+@@ -385,9 +385,9 @@ static void __init test_bitmap_arr32(void)
+ 	memset(arr, 0xa5, sizeof(arr));
+ 
+ 	for (nbits = 0; nbits < EXP1_IN_BITS; ++nbits) {
+-		bitmap_to_arr32(arr, exp, nbits);
++		bitmap_to_arr32(arr, exp1, nbits);
+ 		bitmap_from_arr32(bmap2, arr, nbits);
+-		expect_eq_bitmap(bmap2, exp, nbits);
++		expect_eq_bitmap(bmap2, exp1, nbits);
+ 
+ 		next_bit = find_next_bit(bmap2,
+ 				round_up(nbits, BITS_PER_LONG), nbits);
+-- 
+2.23.0
 
-thanks,
-
-greg k-h
