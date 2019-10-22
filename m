@@ -2,104 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEF87E02B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 13:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0171E02B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 13:20:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387755AbfJVLUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 07:20:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56844 "EHLO mail.kernel.org"
+        id S2388373AbfJVLUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 07:20:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725788AbfJVLUB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 07:20:01 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D730320B7C;
-        Tue, 22 Oct 2019 11:19:58 +0000 (UTC)
-Date:   Tue, 22 Oct 2019 07:19:56 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH 3/3] x86/ftrace: Use text_poke()
-Message-ID: <20191022071956.07e21543@gandalf.local.home>
-In-Reply-To: <20191022040532.fvpxcs74i4mn4rc6@ast-mbp.dhcp.thefacebook.com>
-References: <aaffb32f-6ca9-f9e3-9b1a-627125c563ed@redhat.com>
-        <20191002182106.GC4643@worktop.programming.kicks-ass.net>
-        <20191003181045.7fb1a5b3@gandalf.local.home>
-        <20191004112237.GA19463@hirez.programming.kicks-ass.net>
-        <20191004094228.5a5774fe@gandalf.local.home>
-        <CAADnVQJ0cWYPY-+FhZoqUZ8p1k1FiDsO5jhXiQdcCPmd1UeCyQ@mail.gmail.com>
-        <20191021204310.3c26f730@oasis.local.home>
-        <CAADnVQLn+Fh-UgSRD9SZCT7WYOez5De04iCZucYbA9mYxPm2AQ@mail.gmail.com>
-        <20191021231630.49805757@oasis.local.home>
-        <20191021231904.4b968dc1@oasis.local.home>
-        <20191022040532.fvpxcs74i4mn4rc6@ast-mbp.dhcp.thefacebook.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2387786AbfJVLUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 07:20:06 -0400
+Subject: Re: [GIT PULL] pin control fixes for v5.4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571743205;
+        bh=tCcnDzs9CibPEhnrwLdPMnchK9XFJ/YHCcJPFtzrVPA=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=yXIUgZw1WA+pc2s+ggBYusH5mNM8dR4vWOs8083Y79FiRWCy6y3bFMib0+O+TRIs0
+         M+TnfnxmjFwKSn44H2A67zWERiU8grlXyncrw2D4VQi87wAaUVzxHDBg5JVbBYDpbs
+         IDxlzULfaovOQeXyQDiOR4S9D95Bl9uVUVQl8fyY=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdbiyY9AT5Y8OwMmFgwgvn_DGUFrJVHWbZwyAxnK_bA7HQ@mail.gmail.com>
+References: <CACRpkdbiyY9AT5Y8OwMmFgwgvn_DGUFrJVHWbZwyAxnK_bA7HQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdbiyY9AT5Y8OwMmFgwgvn_DGUFrJVHWbZwyAxnK_bA7HQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+ tags/pinctrl-v5.4-2
+X-PR-Tracked-Commit-Id: d6e7a1a5119c4e719b0d63651f09762d7384bfed
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3b7c59a1950c75f2c0152e5a9cd77675b09233d6
+Message-Id: <157174320587.11205.11116457943132650143.pr-tracker-bot@kernel.org>
+Date:   Tue, 22 Oct 2019 11:20:05 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2019 21:05:33 -0700
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+The pull request you sent on Tue, 22 Oct 2019 10:57:10 +0200:
 
-> On Mon, Oct 21, 2019 at 11:19:04PM -0400, Steven Rostedt wrote:
-> > On Mon, 21 Oct 2019 23:16:30 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> >   
-> > > > what bugs you're seeing?
-> > > > The IPI frequency that was mentioned in this thread or something else?
-> > > > I'm hacking ftrace+bpf stuff in the same spot and would like to
-> > > > base my work on the latest and greatest.    
-> > 
-> > I'm also going to be touching some of this code too, as I'm waiting for
-> > Peter's code to settle down. What are you touching? I'm going to be
-> > working on making the dyn_ftrace records smaller, and this is going to
-> > change the way the iterations work on modifying the code.  
-> 
-> I'm not touching dyn_ftrace.
-> Actually calling my stuff ftrace+bpf is probably not correct either.
-> I'm reusing code patching of nop into call that ftrace does. That's it.
-> Turned out I cannot use 99% of ftrace facilities.
-> ftrace_caller, ftrace_call, ftrace_ops_list_func and the whole ftrace api
-> with ip, parent_ip and pt_regs cannot be used for this part of the work.
-> bpf prog needs to access raw function arguments. To achieve that I'm
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.4-2
 
-You can do that today with the ftrace facility, just like live patching
-does. You register a ftrace_ops with the flag FTRACE_OPS_FL_IPMODIFY,
-and your func will set the regs->ip to your bpf handler. When the
-ftrace_ops->func returns, instead of going back to the called
-function, it can jump to your bpf_handler. You can create a shadow stack
-(like function graph tracer does) to save the return address for where
-you bpf handler needs to return to. As your bpf_handler needs raw
-access to the parameters, it may not even need the shadow stack because
-it should know the function it is reading the parameters from.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3b7c59a1950c75f2c0152e5a9cd77675b09233d6
 
-If you still want the return address without the shadow stack, it
-wouldn't be hard to add another ftrace_ops flag, that allows the
-ftrace_ops to inject a return address to simulate a call function
-before it jumps to the modified IP.
+Thank you!
 
-> generating code on the fly. Just like bpf jits do.
-> As soon as I have something reviewable I'll share it.
-> That's the stuff I mentioned to you at KR.
-> First nop of a function will be replaced with a call into bpf.
-> Very similar to what existing kprobe+bpf does, but faster and safer.
-> Second part of calling real ftrace from bpf is on todo list.
-
-Having two different infrastructures modifying the first nop is going
-to cause a huge nightmare to maintain. This is why live patching didn't
-do it. I strongly suggested that you do not have bpf have its own
-infrastructure.
-
--- Steve
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
