@@ -2,84 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB944E0E1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 00:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AFEFE0E1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 00:20:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733309AbfJVWT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 18:19:27 -0400
-Received: from muru.com ([72.249.23.125]:39180 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730331AbfJVWT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 18:19:26 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 88D5080FA;
-        Tue, 22 Oct 2019 22:19:57 +0000 (UTC)
-Date:   Tue, 22 Oct 2019 15:19:19 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
-        Adam Ford <adam.ford@logicpd.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] configs: ARM: omap2plus: Enable OMAP3_THERMAL
-Message-ID: <20191022221919.GF5610@atomide.com>
-References: <20191007220540.30690-1-aford173@gmail.com>
- <20191022162223.GU5610@atomide.com>
- <CAHCN7xLy975mxX+cm56PMx-TKODEZjYPfMHb=byspKxYXXq7OA@mail.gmail.com>
+        id S2388126AbfJVWUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 18:20:04 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42526 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387767AbfJVWUE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 18:20:04 -0400
+Received: by mail-lj1-f194.google.com with SMTP id u4so4733079ljj.9
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 15:20:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=eJeiOHf0qMrqlF/fxKjCis2VKW2qM0EkZCFmwOD6UAY=;
+        b=kblqZkpKk9Zv8+vkRFatupFOSxOn+KEJuyarb+K8rHZ/PuJhhR0Ed/8kh+trzE+yE5
+         HXws66SwIuCM+7LckDSHL7N4WKeHP3ryW4/5zdszebvixBPYOEus0ggkgOArT9A1VUlq
+         MBctIzg0ofDuYIPuGGjG7wg22DTTVgAAuKw6iNFdj1NLMRrhYSiXV5dK7d4CjsWt2OTe
+         pBGDl7CCrzI63IYMbC/nPICyLBw5VqVUvhSIUmGZ2fqo+2k6SnB09abYgnmKRMfEnuig
+         +nm1+fqNM9DOl7GLGS8F3n6TWEdLT8DtJdd7GvGGepzxTYvys+4PqHUMCqo3KkIIACvd
+         XYIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=eJeiOHf0qMrqlF/fxKjCis2VKW2qM0EkZCFmwOD6UAY=;
+        b=mr8+bpFBJwAD7IrTIXHCO/2peJRwtSkDXfszWdm1FIILG9PU9HlgNs+3SX26FnrOvk
+         FRtPHbQbn3S/NV8z3xs0w4zy0v1MuJ+rtQ+c6Xlfl9WpbTeFJT3q2msb/sCu4TA0HQoY
+         CGwENc135R6Xv6+vYYEOqVeuPA59meSHGnOUe6IjS+JjAI6f0tehnFhnXD9LkYWmBCG9
+         YNq+76aJZtUsRnEJuVJkk1TMgFhh/ngyRRxhmMonXfGxr8pr/FfSYdqzaxUCF9ccikdW
+         y92lrnLKQdEIL8MuN9cN/oUSAw0/8ENxXwoG8JLNmcDWvGY0fwZpfoxAeFPsvVogMZ0K
+         paSw==
+X-Gm-Message-State: APjAAAUGWYVuZxcur4weYmG1lxOHIROeHqCdt3lp/wdVLLU00YfHFDSd
+        gC0HGgN5bMRgW6uU4hp10oihxa/pFW4=
+X-Google-Smtp-Source: APXvYqygfc/fvNSdOubo3mFfaZ2INJ9KgK0gK/dRspdCWOAaWW0QuhW0oG93R+xgpeYR28cfxYUKew==
+X-Received: by 2002:a2e:b4ee:: with SMTP id s14mr20399148ljm.88.1571782802349;
+        Tue, 22 Oct 2019 15:20:02 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id h21sm1583836ljl.20.2019.10.22.15.19.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2019 15:20:01 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 15:19:54 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+Cc:     linux-kernel@lists.codethink.co.uk,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipv6: include <net/addrconf.h> for missing declarations
+Message-ID: <20191022151954.2973f774@cakuba.netronome.com>
+In-Reply-To: <20191022144440.23086-1-ben.dooks@codethink.co.uk>
+References: <20191022144440.23086-1-ben.dooks@codethink.co.uk>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHCN7xLy975mxX+cm56PMx-TKODEZjYPfMHb=byspKxYXXq7OA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Adam Ford <aford173@gmail.com> [191022 19:01]:
-> On Tue, Oct 22, 2019 at 11:22 AM Tony Lindgren <tony@atomide.com> wrote:
-> >
-> > Hi,
-> >
-> > * Adam Ford <aford173@gmail.com> [191007 15:06]:
-> > > The some in the OMAP3 family have a bandgap thermal sensor, but
-> > > omap2plus has it disabled.
-> > >
-> > > This patch enables the OMAP3_THERMAL by default like the rest of
-> > > the OMAP family.
-> >
-> > Looks like this breaks off mode during idle for omap3, and that's
-> > probably why it never got enabled. The difference in power
-> > consumption during idle is about 7mW vs 32mW for the SoC as
-> > measured from torpedo shunt for main_battery_som.
-> >
-> > I think the right fix might be simply to add handling for
-> > CPU_CLUSTER_PM_ENTER to the related thermal driver to disable
-> > it during idle like we have for gpio-omap.c for example.
+On Tue, 22 Oct 2019 15:44:40 +0100, Ben Dooks (Codethink) wrote:
+> Include <net/addrconf.h> for the missing declarations of
+> various functions. Fixes the following sparse warnings:
 > 
-> I am not sure I know where to start on fixing that issue.  Would you
-> entertain enabling the driver if we set the device tree to 'disabled'
-> by default?  This way if people want to to use it, it can be enabled
-> on a per-device option.  Once the power stuff gets resolved, we might
-> be able to enable it by default.  For people who are planning on using
-> the DM3730 @ 1GHz in high temp environments, I am not sure they'll
-> care about low power.
+> net/ipv6/addrconf_core.c:94:5: warning: symbol 'register_inet6addr_notifier' was not declared. Should it be static?
+> net/ipv6/addrconf_core.c:100:5: warning: symbol 'unregister_inet6addr_notifier' was not declared. Should it be static?
+> net/ipv6/addrconf_core.c:106:5: warning: symbol 'inet6addr_notifier_call_chain' was not declared. Should it be static?
+> net/ipv6/addrconf_core.c:112:5: warning: symbol 'register_inet6addr_validator_notifier' was not declared. Should it be static?
+> net/ipv6/addrconf_core.c:118:5: warning: symbol 'unregister_inet6addr_validator_notifier' was not declared. Should it be static?
+> net/ipv6/addrconf_core.c:125:5: warning: symbol 'inet6addr_validator_notifier_call_chain' was not declared. Should it be static?
+> net/ipv6/addrconf_core.c:237:6: warning: symbol 'in6_dev_finish_destroy' was not declared. Should it be static?
+> 
+> Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
 
-They should both work fine together though. They are not mutually
-exclusive features.
-
-> I'll try to look into it when I have time, but I was hoping a
-> compromise might be a reasonable work-around.
-
-It should be hopefully a trivial fix.. I have not looked at the
-driver code though.
-
-Regards,
-
-Tony
+Applied, thanks!
