@@ -2,135 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1527E0AAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 19:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0683E0AB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 19:31:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732630AbfJVR3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 13:29:50 -0400
-Received: from mga11.intel.com ([192.55.52.93]:43553 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388136AbfJVR3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 13:29:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 10:29:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,217,1569308400"; 
-   d="scan'208";a="196507356"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 22 Oct 2019 10:29:28 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 40CB84FE; Tue, 22 Oct 2019 20:29:24 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Yury Norov <yury.norov@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 11/11] gpio: pca953x: Tight up indentation
-Date:   Tue, 22 Oct 2019 20:29:22 +0300
-Message-Id: <20191022172922.61232-12-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
-References: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
+        id S1732657AbfJVRaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 13:30:04 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:32798 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729871AbfJVRaC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 13:30:02 -0400
+Received: by mail-lj1-f194.google.com with SMTP id a22so18082784ljd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 10:30:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=HmmPBl6eQCJQQpK05KW2nNJH7nyGoslANOpWRy61vOw=;
+        b=zYh25urd8gs/0FeIw9pUR75l7cU4AlLmzOJvB6ZLBSpfGISKg9PuCs9ZV2wD0jAI7V
+         cKcsmwjQWpX/u/wIY3StphOwuuFtS/TuWDnRTA42d6kACzgwf0gyqwpERegSyMe2dIMn
+         LIUDxpLB9H8xTqkLR+RhcjAyMsrw+rc/EaSQldj/orTbyI734aVIWjj7GZd6MtmU5Znh
+         i2b9LYEIiZtRB73o1wmzfB2xBuzW+gKyJfEqcev98AZ5SVm2QXuz2VhM07AqGahfr4Iu
+         VaDKlG7ehiyVq5urU0fsWwcwl2WX0avYGr7HBnb3BjEoJGegVQ5LdaqXKmskejbCYh3e
+         ItfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=HmmPBl6eQCJQQpK05KW2nNJH7nyGoslANOpWRy61vOw=;
+        b=MQU23qx0CBT8TS4J3bizzB8zHqoK1aCaF/Ci7Eyf8YA7taeVxP+1BJ1kxUWcgjD9aX
+         nQNTPgjJGY+rucF6QIE5v5hA4KDt+Tmhtpvy8EbaTmZyLacNTiKNo4hmg54HrPzTKc6a
+         nmHUE93ZyI258w6Rl4v7dnrOL2nX3BC4CKyHf45scKYLVbjYkUux2KCLgCmOYo5HUGyF
+         7L7/eWYf7t8UsTnJA6EtQFoqpJLmX0pOt+xn+sD6Zb2Dm8XsSTVfaneQEbEHkkMUXgPV
+         CNkTZ8UqAYirlE8XnwfB9Bek62F24Xf43VjjjhsOACgwOgp7Pvt2xRRkRtpO5PTQHU2j
+         JtiA==
+X-Gm-Message-State: APjAAAWHKOnintAE0hnk18DveELTrVWVp9vgeNZxxc8lahFcg4+B+0Pf
+        21/bimQaU/CsYiHUsppyup/jQ1vP1Rc=
+X-Google-Smtp-Source: APXvYqxpzJg00yRe3OjBd6BnC1zysssaNWZcfUFrdIXzW/KSn/Vdod1X21VKHzDtvBdgHy9erg6Qcw==
+X-Received: by 2002:a2e:416:: with SMTP id 22mr3073575lje.55.1571765400271;
+        Tue, 22 Oct 2019 10:30:00 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id h21sm1288560ljl.20.2019.10.22.10.29.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2019 10:30:00 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 10:29:52 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        anirudha.sarangi@xilinx.com, john.linn@xilinx.com,
+        mchehab+samsung@kernel.org, gregkh@linuxfoundation.org,
+        nicolas.ferre@microchip.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net-next] net: axienet: In kconfig add ARM64 as
+ supported platform
+Message-ID: <20191022102952.09211971@cakuba.netronome.com>
+In-Reply-To: <cbdd6608-804a-086c-1892-1903ec4a7d80@xilinx.com>
+References: <1571653110-20505-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+        <cbdd6608-804a-086c-1892-1903ec4a7d80@xilinx.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need to split some of the lines. However,
-improve the style of multi-line comment. On top of this
-there is no need to have double space.
+On Mon, 21 Oct 2019 16:15:45 +0200, Michal Simek wrote:
+> On 21. 10. 19 12:18, Radhey Shyam Pandey wrote:
+> > xilinx axi_emac driver is supported on ZynqMP UltraScale platform.
+> > So enable ARCH64 in kconfig. It also removes redundant ARCH_ZYNQ
+> > dependency. Basic sanity testing is done on zu+ mpsoc zcu102
+> > evaluation board.
+> > 
+> > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> > ---
+> > Changes for v2:
+> > Remove redundant ARCH_ZYNQ dependency.
+> > Modified commit description.
+> > ---
+> >  drivers/net/ethernet/xilinx/Kconfig | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/xilinx/Kconfig b/drivers/net/ethernet/xilinx/Kconfig
+> > index 8d994ce..da11876 100644
+> > --- a/drivers/net/ethernet/xilinx/Kconfig
+> > +++ b/drivers/net/ethernet/xilinx/Kconfig
+> > @@ -6,7 +6,7 @@
+> >  config NET_VENDOR_XILINX
+> >  	bool "Xilinx devices"
+> >  	default y
+> > -	depends on PPC || PPC32 || MICROBLAZE || ARCH_ZYNQ || MIPS || X86 || ARM || COMPILE_TEST
+> > +	depends on PPC || PPC32 || MICROBLAZE || MIPS || X86 || ARM || ARM64 || COMPILE_TEST
+> >  	---help---
+> >  	  If you have a network (Ethernet) card belonging to this class, say Y.
+> >  
+> > @@ -26,11 +26,11 @@ config XILINX_EMACLITE
+> >  
+> >  config XILINX_AXI_EMAC
+> >  	tristate "Xilinx 10/100/1000 AXI Ethernet support"
+> > -	depends on MICROBLAZE || X86 || ARM || COMPILE_TEST
+> > +	depends on MICROBLAZE || X86 || ARM || ARM64 || COMPILE_TEST
+> >  	select PHYLINK
+> >  	---help---
+> >  	  This driver supports the 10/100/1000 Ethernet from Xilinx for the
+> > -	  AXI bus interface used in Xilinx Virtex FPGAs.
+> > +	  AXI bus interface used in Xilinx Virtex FPGAs and Soc's.
+> >  
+> >  config XILINX_LL_TEMAC
+> >  	tristate "Xilinx LL TEMAC (LocalLink Tri-mode Ethernet MAC) driver"
+> >   
+> 
+> Acked-by: Michal Simek <michal.simek@xilinx.com>
+> 
+> But I can image that others could prefer to remove all dependencies.
 
-Correct above indentation issues without altering the functionality.
+Yes, we'd much rather see this litany of architectures removed.
+Is there any reason it's there in the first place?
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-pca953x.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 774e4c69df03..f80ed5a43614 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -421,7 +421,9 @@ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
- 	ret = regmap_read(chip->regmap, inreg, &reg_val);
- 	mutex_unlock(&chip->i2c_lock);
- 	if (ret < 0) {
--		/* NOTE:  diagnostic already emitted; that's all we should
-+		/*
-+		 * NOTE:
-+		 * diagnostic already emitted; that's all we should
- 		 * do unless gpio_*_value_cansleep() calls become different
- 		 * from their nonsleeping siblings (and report faults).
- 		 */
-@@ -735,8 +737,7 @@ static irqreturn_t pca953x_irq_handler(int irq, void *devid)
- 	return IRQ_HANDLED;
- }
- 
--static int pca953x_irq_setup(struct pca953x_chip *chip,
--			     int irq_base)
-+static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
- {
- 	struct i2c_client *client = chip->client;
- 	struct irq_chip *irq_chip = &chip->irq_chip;
-@@ -786,9 +787,9 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
- 	irq_chip->irq_set_type = pca953x_irq_set_type;
- 	irq_chip->irq_shutdown = pca953x_irq_shutdown;
- 
--	ret =  gpiochip_irqchip_add_nested(&chip->gpio_chip, irq_chip,
--					   irq_base, handle_simple_irq,
--					   IRQ_TYPE_NONE);
-+	ret = gpiochip_irqchip_add_nested(&chip->gpio_chip, irq_chip,
-+					  irq_base, handle_simple_irq,
-+					  IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_err(&client->dev,
- 			"could not connect irqchip to gpiochip\n");
-@@ -862,7 +863,7 @@ static int device_pca957x_init(struct pca953x_chip *chip, u32 invert)
- static const struct of_device_id pca953x_dt_ids[];
- 
- static int pca953x_probe(struct i2c_client *client,
--				   const struct i2c_device_id *i2c_id)
-+			 const struct i2c_device_id *i2c_id)
- {
- 	struct pca953x_platform_data *pdata;
- 	struct pca953x_chip *chip;
-@@ -871,8 +872,7 @@ static int pca953x_probe(struct i2c_client *client,
- 	u32 invert = 0;
- 	struct regulator *reg;
- 
--	chip = devm_kzalloc(&client->dev,
--			sizeof(struct pca953x_chip), GFP_KERNEL);
-+	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
- 	if (chip == NULL)
- 		return -ENOMEM;
- 
-@@ -986,7 +986,7 @@ static int pca953x_probe(struct i2c_client *client,
- 
- 	if (pdata && pdata->setup) {
- 		ret = pdata->setup(client, chip->gpio_chip.base,
--				chip->gpio_chip.ngpio, pdata->context);
-+				   chip->gpio_chip.ngpio, pdata->context);
- 		if (ret < 0)
- 			dev_warn(&client->dev, "setup failed, %d\n", ret);
- 	}
-@@ -1006,7 +1006,7 @@ static int pca953x_remove(struct i2c_client *client)
- 
- 	if (pdata && pdata->teardown) {
- 		ret = pdata->teardown(client, chip->gpio_chip.base,
--				chip->gpio_chip.ngpio, pdata->context);
-+				      chip->gpio_chip.ngpio, pdata->context);
- 		if (ret < 0)
- 			dev_err(&client->dev, "teardown failed, %d\n", ret);
- 	} else {
--- 
-2.23.0
-
+Most drivers are tested on just a few architectures, but as long
+as correct APIs are used they are assumed to work across the board.
+Otherwise 75% of our drivers would be x86 only. Don't be shy.
