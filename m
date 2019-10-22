@@ -2,50 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D52C6E04DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F076E04E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:23:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387936AbfJVNXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 09:23:12 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:42580 "EHLO
+        id S2389153AbfJVNX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 09:23:29 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:42626 "EHLO
         lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731900AbfJVNXM (ORCPT
+        with ESMTP id S1728346AbfJVNX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 09:23:12 -0400
+        Tue, 22 Oct 2019 09:23:29 -0400
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9MDN92i086982;
-        Tue, 22 Oct 2019 08:23:09 -0500
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9MDNROO087130;
+        Tue, 22 Oct 2019 08:23:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571750589;
-        bh=959IPe/7SWQE1ma2r3Hx0VuoAIgKUJl/uvGTSglRrsc=;
-        h=From:To:CC:Subject:Date;
-        b=WFSGM0/V6TqcnEVBMWnHd9yjA1CsWzQVexn9Dwql6jFzaqhnHObk+oVDqh6KylkDS
-         SBao+6htLGAj4CbO7sJcq3RnXima0qaekXlFkoYOODcgCXUcrPVY30oMlo7keHiZ8D
-         7M+GSVJI2RmbwvZvseo//yoAC8z+OZEEwdFgWE6Y=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9MDN9Xg068061
+        s=ti-com-17Q1; t=1571750607;
+        bh=IjFogRcV5VPblbZbB1hDvqvhqSLBqIveS+AehjX8pis=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=MhoFLSVqvtpPys7QuSBA59p1W8YLj77oQ93Sy2Yhc3QFXGCEYXYUiqpTtkVo06Vec
+         KWjo2LjCONXFgTfmPnmYFdgzvd2aCd3hHnI9ypXfBjNoId94jMGdM+y7F9vw7QeofR
+         PBP9i0f2oa5nwUhTuRRG2790UVfIfPyvZ9xlNXUc=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9MDNC5p068138
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Oct 2019 08:23:09 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 22 Oct 2019 08:23:12 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 22
- Oct 2019 08:23:08 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2019 08:23:01 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 22 Oct 2019 08:22:59 -0500
+ Frontend Transport; Tue, 22 Oct 2019 08:23:11 -0500
 Received: from lta0400828a.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9MDMplY126427;
-        Tue, 22 Oct 2019 08:22:52 -0500
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9MDMplZ126427;
+        Tue, 22 Oct 2019 08:22:54 -0500
 From:   Roger Quadros <rogerq@ti.com>
 To:     <kishon@ti.com>
 CC:     <aniljoy@cadence.com>, <adouglas@cadence.com>, <nsekhar@ti.com>,
         <jsarha@ti.com>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 0/3] phy: cadence: j721e-wiz: Add Type-C plug flip support
-Date:   Tue, 22 Oct 2019 16:22:46 +0300
-Message-ID: <20191022132249.869-1-rogerq@ti.com>
+Subject: [PATCH 1/3] phy: cadence: Sierra: add phy_reset hook
+Date:   Tue, 22 Oct 2019 16:22:47 +0300
+Message-ID: <20191022132249.869-2-rogerq@ti.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191022132249.869-1-rogerq@ti.com>
+References: <20191022132249.869-1-rogerq@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -54,39 +56,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This is required if type C driver needs to hold
+global reset on J7ES to perform LN10 swap.
 
-On J721e platform, the 2 lanes of SERDES PHY are used to achieve
-USB Type-C plug flip support without any additional MUX component
-by using a lane swap feature.
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+---
+ drivers/phy/cadence/phy-cadence-sierra.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-However, the driver needs to know the Type-C plug orientation before
-it can decide whether to swap the lanes or not. This is achieved via a
-GPIO named DIR.
-
-Another constraint is that the lane swap must happen only when the PHY
-is in inactive state. This is achieved by sampling the GPIO and
-programming the lane swap before bringing the PHY out of reset.
-
-This series adds support to read the GPIO and accordingly program
-the Lane swap for Type-C plug flip support.
-
-Series must be applied on top of
-https://lkml.org/lkml/2019/10/16/517
-
-cheers,
--roger
-
-Roger Quadros (3):
-  phy: cadence: Sierra: add phy_reset hook
-  dt-bindings: phy: ti,phy-j721e-wiz: Add Type-C dir GPIO
-  phy: ti: j721e-wiz: Manage typec-gpio-dir
-
- .../bindings/phy/ti,phy-j721e-wiz.txt         |  9 ++++
- drivers/phy/cadence/phy-cadence-sierra.c      | 10 +++++
- drivers/phy/ti/phy-j721e-wiz.c                | 41 +++++++++++++++++++
- 3 files changed, 60 insertions(+)
-
+diff --git a/drivers/phy/cadence/phy-cadence-sierra.c b/drivers/phy/cadence/phy-cadence-sierra.c
+index affede8c4368..e6d27bdec22a 100644
+--- a/drivers/phy/cadence/phy-cadence-sierra.c
++++ b/drivers/phy/cadence/phy-cadence-sierra.c
+@@ -339,10 +339,20 @@ static int cdns_sierra_phy_off(struct phy *gphy)
+ 	return reset_control_assert(ins->lnk_rst);
+ }
+ 
++static int cdns_sierra_phy_reset(struct phy *gphy)
++{
++	struct cdns_sierra_phy *sp = dev_get_drvdata(gphy->dev.parent);
++
++	reset_control_assert(sp->phy_rst);
++	reset_control_deassert(sp->phy_rst);
++	return 0;
++};
++
+ static const struct phy_ops ops = {
+ 	.init		= cdns_sierra_phy_init,
+ 	.power_on	= cdns_sierra_phy_on,
+ 	.power_off	= cdns_sierra_phy_off,
++	.reset		= cdns_sierra_phy_reset,
+ 	.owner		= THIS_MODULE,
+ };
+ 
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
 Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
