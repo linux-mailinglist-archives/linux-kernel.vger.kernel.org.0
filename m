@@ -2,256 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 292C3E0069
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 11:10:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C7ADE0075
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 11:12:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731418AbfJVJKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 05:10:07 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:38983 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731346AbfJVJKH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 05:10:07 -0400
-Received: from aptenodytes (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 0BF77240016;
-        Tue, 22 Oct 2019 09:10:02 +0000 (UTC)
-Date:   Tue, 22 Oct 2019 11:10:02 +0200
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     mripard@kernel.org, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-        gregkh@linuxfoundation.org, wens@csie.org,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] media: cedrus: Fix decoding for some H264 videos
-Message-ID: <20191022091002.GC2651@aptenodytes>
-References: <20191002193553.1633467-1-jernej.skrabec@siol.net>
- <20191002193553.1633467-2-jernej.skrabec@siol.net>
- <20191002215442.GA24151@aptenodytes>
- <1916783.jTTlJIDQL9@jernej-laptop>
+        id S1731443AbfJVJMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 05:12:54 -0400
+Received: from mout.web.de ([212.227.15.4]:53889 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731327AbfJVJMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 05:12:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1571735561;
+        bh=7X8VPzfXyeZbtQNCoVO8DTiV4iU03bvctWw6Zpoy29A=;
+        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
+        b=fR/g9lMtRvoVFVfoSXCs5/jSsVWU6d99xFqhViPUe6CQkR3oCnAxtAlm5SI0QKVJq
+         R0i9rbT/B93kA/w7mZGAxRDNGMboor9BGSv5xtlFwN4yXUiWrHeiTEj0u8X31CIXJ3
+         TqeAvJeMdVspgxoOcm0UPMfTmQkVn3yez1PWMjnE=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.132.150.42]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MUBPu-1iV3iE41Qo-00R2EE; Tue, 22
+ Oct 2019 11:12:41 +0200
+Cc:     linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>,
+        Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20191021202626.5246-1-navid.emamdoost@gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/davinci: Fix memory leak in
+ davinci_timer_register
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        kernel-janitors@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <1d9f02d3-45ac-1d2f-457b-91cae123383d@web.de>
+Date:   Tue, 22 Oct 2019 11:12:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
-Content-Disposition: inline
-In-Reply-To: <1916783.jTTlJIDQL9@jernej-laptop>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191021202626.5246-1-navid.emamdoost@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RzN1YiacG8MmLcL8zUPl6r5PXF7Wed5b728Mu2rwRlYiPX9iNtF
+ 8yL2OZ0aK0fq1+DN2qU0HZjJl0OOgWeq8XnKLTq8frRUmsrLX2OS84sNuV1Jjkft6rhYkCK
+ CnBg1yiTborkcbD4PbFA+RlLjRlkgHq2wqBY9vFPbHM/AD6dW8eRCjkxUveLsrpdrPO9dtw
+ WLFMLcBBCQX17zooNLfcw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:LEF+jN6fgpU=:ic88S6x7uFnEwcMsv/Ye3Z
+ ZZHAeJUCKjtNls7e7KpaPBtPOgJAXjVkfGXe2DCkCfWs9SvsbHqqPDXY52UMClor7UfeeGQXs
+ bf9nbSOe7OxYwFTu2ahy0TeiPeLSsaDECTxeqzlje097JjphQ5d6yHrp0uApw7EkKIbnTa9uE
+ NzJD/rYRwo4GgHrQWkBvZgLuzTiB76rSLell4MCksV8vsKi371cr14z30hGyc+ajD44JGqBhx
+ /owW/ExcxYSk6voTfe3v8eYf8kN6vm8oLew6cwYi/mqcfvTDdcP6NcE1zheK72hJQfL1iWO1e
+ 6d2I23I1vHG3TZsJZxGs21ZjyX5ekWpTkjN2Dle/gz9SKTLkL68DLuanlEuZBfjeWNnC1tdm2
+ kjGfC5YOrzqNkizd8GMCEXgs+qdIzfOmn18dm5cSTk0Mn0Wqd//h+hpAfRH2/r9Z//xq6rS+M
+ hl+Ls26xYBwucaqvR4KJb/j4H/RQ4VqFXPjswvXjo1V6SOk2bs66OKsCizoNWh3GnPBJsP8G7
+ KA+zzGJ18UMEeUbFYt1NOK+YA2EYGHFFBNuQ18wIrUEOIaHfG3pMlbcQFNvRinkPcag6lnOm6
+ Ip2Ms+sEd/OAO8nQovIw9ZfQ2fBQ+gHcWewE3Lxn3ZzJTP+CDM9AS2KMXfSkAQD7o2TByLCxd
+ sNDtoTRVojaL4w4m8qFnRw0IKGMke8DaaNL8XX/93GC+YXdUqEpzqHo0OqcJplnsVT8s1+q0n
+ OKxJzaFr+J9Y6Exa2LJJrR7Q21PCeRHPTsbVVUYaJQ9/E+SQzt1MEWbahc9v/5BRCDAgqr1V7
+ B4VDguOKssyCHGFBuI428ulAh4PdGdJMNAuTarnbj91lxIkxBK58OFKyeOS4bG0ffSpY39LJi
+ 5Mmoih0tVa0ijRngQpW/UoVZUBVOs93YXqAilUOizYdydAVpOfClnQ9xuajk01fHIEKeRubjT
+ 7vhRL5Sjgx7fpqG9i3NmQ+kS3dzmg12rSdXJuTWP9U9bEFpxWDhA3pCyK9jSOZIdCFoeAIBOz
+ Ap0bogwQLQYLNn848wG6R2Lyyr/msIBr/rKUf/k/NiMLdziwAoWnNwBnH7U42MjBNeyALwG6y
+ ft4CTISQSmCMSQAFMV+1tX8tzofCLDagbdYC8LIMQF6FHSTql9z6WZwcZYn5q9abAP4i602Qq
+ yCYoDlmTuEOXIioJta4sDacJnbwzaBXUtAMD8JKSNXxck/EhOQg269ugYTCyFC9mZZXH/tAbZ
+ VXe2nTUF/rckMhRdz5HMa2axBt43ued0QXmKbSKVnB7WeVb7MgL5kCJibsUs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> In the impelementation of davinci_timer_register() the allocated memory
+> for clockevent should be released if request_irq() fails.
 
---p4qYPpj5QlsIQJ0K
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* Please avoid the copying of typos from previous change descriptions.
 
-Hi,
+* Under which circumstances will an =E2=80=9Cimperative mood=E2=80=9D matt=
+er for you here?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?id=3D7d194c2100ad2a6dded54588=
+7d02754948ca5241#n151
 
-On Tue 15 Oct 19, 19:16, Jernej =C5=A0krabec wrote:
-> Please understand that I was working on this on and off for almost half a=
- year=20
-> and checked many times all register values. At one point I tried libvdpau-
-> sunxi which has no problem with sample video.  Still, all relevant regist=
-er=20
-> values were the same. In a desperate attempt, I tried with HW header pars=
-ing=20
-> which magically solved the issue. After that, I reused values provided in=
-=20
-> controls and then finally I made minimal solution as suggested in this pa=
-tch.=20
 
-Okay thanks for the details.
+> +++ b/drivers/clocksource/timer-davinci.c
+> @@ -299,6 +299,7 @@ int __init davinci_timer_register(struct clk *clk,
+>  			 "clockevent/tim12", clockevent);
+>  	if (rv) {
+>  		pr_err("Unable to request the clockevent interrupt");
+> +		kfree(clockevent);
+>  		return rv;
+>  	}
 
-I think I've delayed this for far too long already so I think we should get=
- it
-in without further delay.
+* Should a complete source code analysis point out that a similar fix
+  will be needed also in the if branch after a failed call of
+  the function =E2=80=9Cclocksource_register_hz=E2=80=9D?
 
-The patch apparently no longer applies on top of media/master, but feel free
-to send out a rebased series with:
+* Can any more exception handling become relevant because of previous
+  resource allocations in this function implementation?
 
-Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-
-Let's leave out 2/3 though, I think I will submit a series adding the flag
-as indication for the per-slice value in the uAPI and use it in cedrus.
-
-Cheers,
-
-Paul
-
-> >=20
-> > I could try and have a look if you have an available sample for testing=
- the
-> > erroneous case!
->=20
-> Of course: http://jernej.libreelec.tv/videos/h264/test.mkv
->=20
-> >=20
-> > Another minor thing: do you have some idea of whether the udelay call a=
-dds
-> > significant delay in the process?
->=20
-> I didn't notice any issue with it. Do you have any better idea? I just di=
-dn't=20
-> want to make empty loop and udelay is the shortest delay that is provided=
- by=20
-> the kernel API.
->=20
-> Best regards,
-> Jernej
->=20
-> >=20
-> > Cheers and thanks for the patch!
-> >=20
-> > Paul
-> >=20
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > ---
-> > >=20
-> > >  .../staging/media/sunxi/cedrus/cedrus_h264.c  | 30 +++++++++++++++++=
---
-> > >  .../staging/media/sunxi/cedrus/cedrus_regs.h  |  3 ++
-> > >  2 files changed, 30 insertions(+), 3 deletions(-)
-> > >=20
-> > > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-> > > b/drivers/staging/media/sunxi/cedrus/cedrus_h264.c index
-> > > d6a782703c9b..bd848146eada 100644
-> > > --- a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-> > > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-> > > @@ -6,6 +6,7 @@
-> > >=20
-> > >   * Copyright (c) 2018 Bootlin
-> > >   */
-> > >=20
-> > > +#include <linux/delay.h>
-> > >=20
-> > >  #include <linux/types.h>
-> > > =20
-> > >  #include <media/videobuf2-dma-contig.h>
-> > >=20
-> > > @@ -289,6 +290,28 @@ static void cedrus_write_pred_weight_table(struct
-> > > cedrus_ctx *ctx,>=20
-> > >  	}
-> > > =20
-> > >  }
-> > >=20
-> > > +/*
-> > > + * It turns out that using VE_H264_VLD_OFFSET to skip bits is not
-> > > reliable. In + * rare cases frame is not decoded correctly. However,
-> > > setting offset to 0 and + * skipping appropriate amount of bits with
-> > > flush bits trigger always works. + */
-> > > +static void cedrus_skip_bits(struct cedrus_dev *dev, int num)
-> > > +{
-> > > +	int count =3D 0;
-> > > +
-> > > +	while (count < num) {
-> > > +		int tmp =3D min(num - count, 32);
-> > >=20
-> > > +
-> > > +		cedrus_write(dev, VE_H264_TRIGGER_TYPE,
-> > > +			     VE_H264_TRIGGER_TYPE_FLUSH_BITS |
-> > > +			     VE_H264_TRIGGER_TYPE_N_BITS(tmp));
-> > > +		while (cedrus_read(dev, VE_H264_STATUS) &=20
-> VE_H264_STATUS_VLD_BUSY)
-> > > +			udelay(1);
-> > > +
-> > > +		count +=3D tmp;
-> > > +	}
-> > > +}
-> > > +
-> > >=20
-> > >  static void cedrus_set_params(struct cedrus_ctx *ctx,
-> > > =20
-> > >  			      struct cedrus_run *run)
-> > > =20
-> > >  {
-> > >=20
-> > > @@ -299,12 +322,11 @@ static void cedrus_set_params(struct cedrus_ctx
-> > > *ctx,
-> > >=20
-> > >  	struct vb2_buffer *src_buf =3D &run->src->vb2_buf;
-> > >  	struct cedrus_dev *dev =3D ctx->dev;
-> > >  	dma_addr_t src_buf_addr;
-> > >=20
-> > > -	u32 offset =3D slice->header_bit_size;
-> > > -	u32 len =3D (slice->size * 8) - offset;
-> > > +	u32 len =3D slice->size * 8;
-> > >=20
-> > >  	u32 reg;
-> > >  =09
-> > >  	cedrus_write(dev, VE_H264_VLD_LEN, len);
-> > >=20
-> > > -	cedrus_write(dev, VE_H264_VLD_OFFSET, offset);
-> > > +	cedrus_write(dev, VE_H264_VLD_OFFSET, 0);
-> > >=20
-> > >  	src_buf_addr =3D vb2_dma_contig_plane_dma_addr(src_buf, 0);
-> > >  	cedrus_write(dev, VE_H264_VLD_END,
-> > >=20
-> > > @@ -323,6 +345,8 @@ static void cedrus_set_params(struct cedrus_ctx *=
-ctx,
-> > >=20
-> > >  	cedrus_write(dev, VE_H264_TRIGGER_TYPE,
-> > >  =09
-> > >  		     VE_H264_TRIGGER_TYPE_INIT_SWDEC);
-> > >=20
-> > > +	cedrus_skip_bits(dev, slice->header_bit_size);
-> > > +
-> > >=20
-> > >  	if (((pps->flags & V4L2_H264_PPS_FLAG_WEIGHTED_PRED) &&
-> > >  =09
-> > >  	     (slice->slice_type =3D=3D V4L2_H264_SLICE_TYPE_P ||
-> > >  	    =20
-> > >  	      slice->slice_type =3D=3D V4L2_H264_SLICE_TYPE_SP)) ||
-> > >=20
-> > > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> > > b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h index
-> > > 3329f9aaf975..b52926a54025 100644
-> > > --- a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> > > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> > > @@ -538,13 +538,16 @@
-> > >=20
-> > >  					=20
-> VE_H264_CTRL_SLICE_DECODE_INT)
-> > > =20
-> > >  #define VE_H264_TRIGGER_TYPE		0x224
-> > >=20
-> > > +#define VE_H264_TRIGGER_TYPE_N_BITS(x)		(((x) & 0x3f) << 8)
-> > >=20
-> > >  #define VE_H264_TRIGGER_TYPE_AVC_SLICE_DECODE	(8 << 0)
-> > >  #define VE_H264_TRIGGER_TYPE_INIT_SWDEC		(7 << 0)
-> > >=20
-> > > +#define VE_H264_TRIGGER_TYPE_FLUSH_BITS		(3 << 0)
-> > >=20
-> > >  #define VE_H264_STATUS			0x228
-> > >  #define VE_H264_STATUS_VLD_DATA_REQ_INT	=09
-> VE_H264_CTRL_VLD_DATA_REQ_INT
-> > >  #define VE_H264_STATUS_DECODE_ERR_INT	=09
-> VE_H264_CTRL_DECODE_ERR_INT
-> > >  #define VE_H264_STATUS_SLICE_DECODE_INT	=09
-> VE_H264_CTRL_SLICE_DECODE_INT
-> > >=20
-> > > +#define VE_H264_STATUS_VLD_BUSY			BIT(8)
-> > >=20
-> > >  #define VE_H264_STATUS_INT_MASK		=09
-> VE_H264_CTRL_INT_MASK
->=20
->=20
->=20
->=20
-
---p4qYPpj5QlsIQJ0K
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAl2ux2oACgkQ3cLmz3+f
-v9GxNggAoUPhMks1m1yhI9h7qrbOWuYWwl/SbtO4mnSw6R/3aI6fsdBfNqwnS9lI
-kFIGM1gxkSOjPbgQ0b2U/h1EXCF1OwymUilB9PBVDB1UpaXsKFqDsYpWFVSX8XAC
-BfLuPBNd0SHD+/eS8GMgjAsNbdoTk/cArdrPI6minSnan13GEzaQ43do9VU8rZL+
-Ti24S9Jx8Nr/Y+8Xsk42FyDBElBQdb0MO11QRqIsJ43TJJ9GeWG528T9bWzmCZyV
-Egh6MMu2T4FPWeQ7iTB4DctCGZR1RhxuvF9V45WHFBDmaExEx4Rq24ixXX4X/2pv
-wfmqLhGApSVGcd3OMEmwpwj//gVE/g==
-=PWnD
------END PGP SIGNATURE-----
-
---p4qYPpj5QlsIQJ0K--
+Regards,
+Markus
