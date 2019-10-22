@@ -2,132 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EA1CDFF9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0DBBDFFAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731341AbfJVIhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:37:00 -0400
-Received: from mail-eopbgr10076.outbound.protection.outlook.com ([40.107.1.76]:1664
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731321AbfJVIg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:36:58 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MyI3KM6T57C76M8GK2rSV5SDRgJrvbxEvNwJPxJoV1UGILMOoJNo8IG0Y0jUVl/NWuaj72/QsWIdrKQIOazk/tQvRFJFsL5XO2It8Nj3zISbtJ0Coh9ZjtWcdmLtMKGkkEnsr8WtFWRVvNrr1k45GWXkCI+IyGIjHL1SYa6we3AsCv8/0X2nF/oxYAhvXmcnsCBYfDj8d3RMa39Of+3j2OLN9fHxd7Ie0jW1y+z3GQAvPzJt39mmlXYkY83M70xPYNMC0e8l+f990mVAwvv29v9QzaWwpCh6L6MC4sAwMB416IFX0x8xiEk3KyaZTl5psITxCknPpw1n0Iyi3BVC9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=stwmg0OizPp2+nyPdC+KT02MhX3t+bf4yKUhEqNkjgE=;
- b=d3U2y3CMLS8LWAm6EjdIknPeKLmpDAh6hhdkILX/KaQ46yedVph201nAFlEktjKNB8lYMV3XJ1qU7egciYWY1wBbMqU1c34ej7mUVg7158+WPllj4vlSZKFquqBt7CdA2l0SdeBWaHPA031/ov/w6o/9B+hjuYDBPbJer1DyCB+lcxsr6u3mdxB7YwS/g8yXePWGmUXOht4lSHM/gvU1mwEMn5VPmMGAB5/jXREKwhb46zyTxCzwr85oLLSJDKyUIgPy3slbElKPwpHjTvkW9ftucrEu/AYjCulaTPnUB73W+mjvx/qqUbxzJmDAREhpPfcTSPE6CFGBtEndXDPolA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=stwmg0OizPp2+nyPdC+KT02MhX3t+bf4yKUhEqNkjgE=;
- b=K1drMWADM3OgjX497twXlKim3NGToOdVKd9SUijgDseDXIURTUS3KDdvY0dpyN9vByAtVSHq7sv9WD0Sxs/dhhzOFJgvJms2TWJWbYct3QP8G+GhvVMfT9ZjtcfHAIgDEyOUEkKK0CdGIJvM0GmaTTJS+VKjRbvJRSXjA6JkX4s=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3658.eurprd04.prod.outlook.com (52.134.65.28) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.22; Tue, 22 Oct 2019 08:36:52 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::d469:ad51:2bec:19f0]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::d469:ad51:2bec:19f0%6]) with mapi id 15.20.2367.022; Tue, 22 Oct 2019
- 08:36:52 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-CC:     "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] cpufreq: imx-cpufreq-dt: Correct i.MX8MN's default speed
- grade value
-Thread-Topic: [PATCH] cpufreq: imx-cpufreq-dt: Correct i.MX8MN's default speed
- grade value
-Thread-Index: AQHViJMjrjphINO/nEKP49CFCN+2HqdmUvUAgAADUQA=
-Date:   Tue, 22 Oct 2019 08:36:52 +0000
-Message-ID: <DB3PR0402MB391687A3723E810119A58866F5680@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1571719179-23316-1-git-send-email-Anson.Huang@nxp.com>
- <20191022082400.7dsoo57mt7wfpqs7@vireshk-i7>
-In-Reply-To: <20191022082400.7dsoo57mt7wfpqs7@vireshk-i7>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ea30b8a5-e85e-496b-6fee-08d756cafd4d
-x-ms-traffictypediagnostic: DB3PR0402MB3658:|DB3PR0402MB3658:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB3PR0402MB365839A73F4318F9BB88A617F5680@DB3PR0402MB3658.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 01986AE76B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(39860400002)(396003)(136003)(376002)(189003)(199004)(6436002)(11346002)(64756008)(446003)(76176011)(6116002)(3846002)(6246003)(99286004)(476003)(44832011)(66946007)(76116006)(486006)(52536014)(66476007)(66066001)(66556008)(9686003)(26005)(102836004)(7696005)(86362001)(186003)(55016002)(6506007)(53546011)(66446008)(5660300002)(256004)(316002)(81156014)(8676002)(8936002)(54906003)(7736002)(305945005)(74316002)(14454004)(229853002)(4326008)(25786009)(81166006)(6916009)(33656002)(71190400001)(71200400001)(478600001)(2906002)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3658;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: w7SDN1dgh/gcYXrSf8TK1Hl8XrR6d0/K97Ci3iaxBn85oSvibrdM/IBP8uvm+hzqtkFbtDR0GHjyC4wuErKe/8bWsdT0vGsO0jXkOjD/T04vFeCB3oNCxSRo+H92eHroCgGeChS8sMlC8apMVyM7r36iFa2lR6Eg1Qs4gP1VimX/N2W1KYxLItnZhAE9J//+fW7wWhevxDrZED3rNvC/30Nmh2sFNgUnL9N/ITcoG5/c2MNGe8rZRyV/PdRVQ46eEgRdJDODKv+dEgQN/32k+7N/7KLAkXbBiIfy737gV6MIRbyho3S6pP98SAEkMl8YYwF3fN9egrd53tI8R/z68WrdBS2GaCjKIhi/CywcZ/oaNb63Q1HMjOUul5BGp9Q/KCM9WzrQYiJgDfLq1qlS0GaZXVe6UstOWbXn1JzeQgQFn0CXNAAW4A39aJwZuyIq
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S2388346AbfJVIhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 04:37:31 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36035 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731242AbfJVIha (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 04:37:30 -0400
+Received: by mail-wr1-f65.google.com with SMTP id w18so16466888wrt.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 01:37:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xuCgV4YUFYa6Caw2Y7xISyDpnVmWYzdkWcO2116lWE4=;
+        b=giNNnQgAjHNft/0FgO/AAhey9WyM3sxbadX7UZAgHpUwSifwzOZJ53L+/otOLfZy1b
+         HbgoaElE/oR4BlnRE2UoC/++L7XXQOdCTshf8W5PhHihnq/lRnMl+sepQsVLnOMqPfuc
+         Fn5Pj1o0zLvx9mlVr+ApFuiwJwEmfTyGh9RRI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=xuCgV4YUFYa6Caw2Y7xISyDpnVmWYzdkWcO2116lWE4=;
+        b=fH9GLxYjr+wFVYi0vBmOzhMq2Jm5Zlu6FZJfD95UNIhtKI3WanuDG3mEUNMwvfyOJI
+         kda+DBnEFpTknAswaeRbansClfXpYDF5auJHPO3nD5a9cB3aaU1KZ/yHnAcJYzmcSIl0
+         UFAqAcW/PDlRlilLDmLb5ukWXsY08x0qdkAOViujFiQFDqjJ8mimpSoIrnYtTSgfVFo4
+         SoDgz5dXVc+Bp7722D6UwsISx/LCtL1sJ3aQWEZDYZ8dWEQHxcFrMD5WXPr/4Mb+FHSa
+         yfMl4sdlu1V1FAVp0TNFfgCC9d0qOCSonYIagZ/1vSgFnFkVowhPV4jrMusdThecIUlG
+         CyNw==
+X-Gm-Message-State: APjAAAUlIj0yFjDq3HOEdlAbKPN6JEBaZT6Pjuh/BpLTBNExYohSPICv
+        mbAdF6B0aW+CA3d/44oHbEUFpg==
+X-Google-Smtp-Source: APXvYqzn4oehIGnlOKvsXHpvbPtT9iSU1nTJNoBE2XJUwT2ImOHs2/TzhEOV5ZcOXZEqgAMK7GYnPw==
+X-Received: by 2002:a5d:6a03:: with SMTP id m3mr420075wru.90.1571733447653;
+        Tue, 22 Oct 2019 01:37:27 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id p12sm4910430wrt.7.2019.10.22.01.37.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2019 01:37:26 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 10:37:25 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc:     airlied@linux.ie, daniel@ffwll.ch, ville.syrjala@linux.intel.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2] drm: atomic helper: fix W=1 warnings
+Message-ID: <20191022083725.GW11828@phenom.ffwll.local>
+Mail-Followup-To: Benjamin Gaignard <benjamin.gaignard@st.com>,
+        airlied@linux.ie, ville.syrjala@linux.intel.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20191008124254.2144-1-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea30b8a5-e85e-496b-6fee-08d756cafd4d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2019 08:36:52.7778
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oBy6pLcwIHG5tXBq9V9pWxbhx7vsJB9A/e10S18YWXHBxEQMsebZiWFrB639y06Did7VF0taAi0gbolN4I5S6A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3658
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191008124254.2144-1-benjamin.gaignard@st.com>
+X-Operating-System: Linux phenom 5.2.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFZpcmVzaA0KDQo+IE9uIDIyLTEwLTE5LCAxMjozOSwgQW5zb24gSHVhbmcgd3JvdGU6DQo+
-ID4gaS5NWDhNTiBoYXMgZGlmZmVyZW50IHNwZWVkIGdyYWRlIGRlZmluaXRpb24gY29tcGFyZWQg
-dG8NCj4gPiBpLk1YOE1RL2kuTVg4TU0sIHdoZW4gZnVzZXMgYXJlIE5PVCB3cml0dGVuLCB0aGUg
-ZGVmYXVsdCBzcGVlZF9ncmFkZQ0KPiA+IHNob3VsZCBiZSBzZXQgdG8gbWluaW11bSBhdmFpbGFi
-bGUgT1BQIGRlZmluZWQgaW4gRFQgd2hpY2ggaXMgMS4yR0h6LA0KPiA+IHRoZSBjb3JyZXNwb25k
-aW5nIHNwZWVkX2dyYWRlIHZhbHVlIHNob3VsZCBiZSAweGIuDQo+ID4NCj4gPiBGaXhlczogNWI4
-MDEwYmE3MGQ1ICgiY3B1ZnJlcTogaW14LWNwdWZyZXEtZHQ6IEFkZCBpLk1YOE1OIHN1cHBvcnQi
-KQ0KPiA+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29tPg0K
-PiA+IC0tLQ0KPiA+ICBkcml2ZXJzL2NwdWZyZXEvaW14LWNwdWZyZXEtZHQuYyB8IDIwICsrKysr
-KysrKystLS0tLS0tLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCAx
-MCBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NwdWZyZXEvaW14
-LWNwdWZyZXEtZHQuYw0KPiA+IGIvZHJpdmVycy9jcHVmcmVxL2lteC1jcHVmcmVxLWR0LmMNCj4g
-PiBpbmRleCAzNWRiMTRjLi4yNjUzMWYwIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvY3B1ZnJl
-cS9pbXgtY3B1ZnJlcS1kdC5jDQo+ID4gKysrIGIvZHJpdmVycy9jcHVmcmVxL2lteC1jcHVmcmVx
-LWR0LmMNCj4gPiBAQCAtNDQsMTkgKzQ0LDE5IEBAIHN0YXRpYyBpbnQgaW14X2NwdWZyZXFfZHRf
-cHJvYmUoc3RydWN0DQo+IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gPiAgCW1rdF9zZWdtZW50
-ID0gKGNlbGxfdmFsdWUgJiBPQ09UUF9DRkczX01LVF9TRUdNRU5UX01BU0spID4+DQo+ID4gT0NP
-VFBfQ0ZHM19NS1RfU0VHTUVOVF9TSElGVDsNCj4gPg0KPiA+ICAJLyoNCj4gPiAtCSAqIEVhcmx5
-IHNhbXBsZXMgd2l0aG91dCBmdXNlcyB3cml0dGVuIHJlcG9ydCAiMCAwIiB3aGljaCBtZWFucw0K
-PiA+IC0JICogY29uc3VtZXIgc2VnbWVudCBhbmQgbWluaW11bSBzcGVlZCBncmFkaW5nLg0KPiA+
-IC0JICoNCj4gPiAtCSAqIEFjY29yZGluZyB0byBkYXRhc2hlZXQgbWluaW11bSBzcGVlZCBncmFk
-aW5nIGlzIG5vdCBzdXBwb3J0ZWQNCj4gZm9yDQo+ID4gLQkgKiBjb25zdW1lciBwYXJ0cyBzbyBj
-bGFtcCB0byAxIHRvIGF2b2lkIHdhcm5pbmcgZm9yICJubyBPUFBzIg0KPiA+ICsJICogRWFybHkg
-c2FtcGxlcyB3aXRob3V0IGZ1c2VzIHdyaXR0ZW4gcmVwb3J0ICIwIDAiIHdoaWNoIG1heSBOT1QN
-Cj4gPiArCSAqIG1hdGNoIGFueSBPUFAgZGVmaW5lZCBpbiBEVC4gU28gY2xhbXAgdG8gbWluaW11
-bSBPUFAgZGVmaW5lZA0KPiBpbg0KPiA+ICsJICogRFQgdG8gYXZvaWQgd2FybmluZyBmb3IgIm5v
-IE9QUHMiLg0KPiA+ICAJICoNCj4gPiAgCSAqIEFwcGxpZXMgdG8gaS5NWDhNIHNlcmllcyBTb0Nz
-Lg0KPiA+ICAJICovDQo+ID4gLQlpZiAobWt0X3NlZ21lbnQgPT0gMCAmJiBzcGVlZF9ncmFkZSA9
-PSAwICYmICgNCj4gPiAtCQkJb2ZfbWFjaGluZV9pc19jb21wYXRpYmxlKCJmc2wsaW14OG1tIikg
-fHwNCj4gPiAtCQkJb2ZfbWFjaGluZV9pc19jb21wYXRpYmxlKCJmc2wsaW14OG1uIikgfHwNCj4g
-PiAtCQkJb2ZfbWFjaGluZV9pc19jb21wYXRpYmxlKCJmc2wsaW14OG1xIikpKQ0KPiA+IC0JCXNw
-ZWVkX2dyYWRlID0gMTsNCj4gPiArCWlmIChta3Rfc2VnbWVudCA9PSAwICYmIHNwZWVkX2dyYWRl
-ID09IDApIHsNCj4gPiArCQlpZiAob2ZfbWFjaGluZV9pc19jb21wYXRpYmxlKCJmc2wsaW14OG1t
-IikgfHwNCj4gPiArCQkJb2ZfbWFjaGluZV9pc19jb21wYXRpYmxlKCJmc2wsaW14OG1xIikpDQo+
-IA0KPiBvZl9tYWNoaW5lX2lzX2NvbXBhdGlibGUgc2hvdWxkIGNvbWUgcmlnaHQgYmVsb3cgdGhl
-IGFib3ZlDQo+IG9mX21hY2hpbmVfaXNfY29tcGF0aWJsZSBoZXJlLCBpbnN0ZWFkIG9mIGEgbGVh
-ZGluZyB0YWIuDQoNCkFoLCB5ZXMsIGZpeGVkIGluIFYyLg0KDQpUaGFua3MsDQpBbnNvbg0KDQo=
+On Tue, Oct 08, 2019 at 02:42:54PM +0200, Benjamin Gaignard wrote:
+> Few for_each macro set variables that are never used later which led
+> to generate unused-but-set-variable warnings.
+> Add (void)(foo) inside the macros to remove these warnings
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+
+OCD in me would lean towards annotating all of them, unconditionally, and
+be done. But I guess this works too. Either way:
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> ---
+>  include/drm/drm_atomic.h | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+> index 927e1205d7aa..b6c73fd9f55a 100644
+> --- a/include/drm/drm_atomic.h
+> +++ b/include/drm/drm_atomic.h
+> @@ -693,6 +693,7 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
+>  	     (__i)++)								\
+>  		for_each_if ((__state)->connectors[__i].ptr &&			\
+>  			     ((connector) = (__state)->connectors[__i].ptr,	\
+> +			     (void)(connector) /* Only to avoid unused-but-set-variable warning */, \
+>  			     (old_connector_state) = (__state)->connectors[__i].old_state,	\
+>  			     (new_connector_state) = (__state)->connectors[__i].new_state, 1))
+>  
+> @@ -714,6 +715,7 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
+>  	     (__i)++)								\
+>  		for_each_if ((__state)->connectors[__i].ptr &&			\
+>  			     ((connector) = (__state)->connectors[__i].ptr,	\
+> +			     (void)(connector) /* Only to avoid unused-but-set-variable warning */, \
+>  			     (old_connector_state) = (__state)->connectors[__i].old_state, 1))
+>  
+>  /**
+> @@ -734,7 +736,9 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
+>  	     (__i)++)								\
+>  		for_each_if ((__state)->connectors[__i].ptr &&			\
+>  			     ((connector) = (__state)->connectors[__i].ptr,	\
+> -			     (new_connector_state) = (__state)->connectors[__i].new_state, 1))
+> +			     (void)(connector) /* Only to avoid unused-but-set-variable warning */, \
+> +			     (new_connector_state) = (__state)->connectors[__i].new_state, \
+> +			     (void)(new_connector_state) /* Only to avoid unused-but-set-variable warning */, 1))
+>  
+>  /**
+>   * for_each_oldnew_crtc_in_state - iterate over all CRTCs in an atomic update
+> @@ -754,7 +758,9 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
+>  	     (__i)++)							\
+>  		for_each_if ((__state)->crtcs[__i].ptr &&		\
+>  			     ((crtc) = (__state)->crtcs[__i].ptr,	\
+> +			      (void)(crtc) /* Only to avoid unused-but-set-variable warning */, \
+>  			     (old_crtc_state) = (__state)->crtcs[__i].old_state, \
+> +			     (void)(old_crtc_state) /* Only to avoid unused-but-set-variable warning */, \
+>  			     (new_crtc_state) = (__state)->crtcs[__i].new_state, 1))
+>  
+>  /**
+> @@ -793,7 +799,9 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
+>  	     (__i)++)							\
+>  		for_each_if ((__state)->crtcs[__i].ptr &&		\
+>  			     ((crtc) = (__state)->crtcs[__i].ptr,	\
+> -			     (new_crtc_state) = (__state)->crtcs[__i].new_state, 1))
+> +			     (void)(crtc) /* Only to avoid unused-but-set-variable warning */, \
+> +			     (new_crtc_state) = (__state)->crtcs[__i].new_state, \
+> +			     (void)(new_crtc_state) /* Only to avoid unused-but-set-variable warning */, 1))
+>  
+>  /**
+>   * for_each_oldnew_plane_in_state - iterate over all planes in an atomic update
+> @@ -813,6 +821,7 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
+>  	     (__i)++)							\
+>  		for_each_if ((__state)->planes[__i].ptr &&		\
+>  			     ((plane) = (__state)->planes[__i].ptr,	\
+> +			      (void)(plane) /* Only to avoid unused-but-set-variable warning */, \
+>  			      (old_plane_state) = (__state)->planes[__i].old_state,\
+>  			      (new_plane_state) = (__state)->planes[__i].new_state, 1))
+>  
+> @@ -873,7 +882,9 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
+>  	     (__i)++)							\
+>  		for_each_if ((__state)->planes[__i].ptr &&		\
+>  			     ((plane) = (__state)->planes[__i].ptr,	\
+> -			      (new_plane_state) = (__state)->planes[__i].new_state, 1))
+> +			      (void)(plane) /* Only to avoid unused-but-set-variable warning */, \
+> +			      (new_plane_state) = (__state)->planes[__i].new_state, \
+> +			      (void)(new_plane_state) /* Only to avoid unused-but-set-variable warning */, 1))
+>  
+>  /**
+>   * for_each_oldnew_private_obj_in_state - iterate over all private objects in an atomic update
+> -- 
+> 2.15.0
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
