@@ -2,83 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E57BCE08FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:35:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97FB7E0900
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:35:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389494AbfJVQfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 12:35:19 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56850 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389485AbfJVQfT (ORCPT
+        id S1731277AbfJVQfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 12:35:44 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37434 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbfJVQfo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:35:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3DAMGtjpRcEj5MxkyBHvgw9I1vtN+eg87OdL/Q7rOxU=; b=nsKzOX/bnhQYhfAQ88mC+POLD
-        LqhgI3wA4l4S8A2a4tBz+r3o+TlxcauggO+bP2Ws1IJG7vsbrSD3KmoEHon6rJIILXiL8wZbccXkg
-        8vKUkL2HuWf4XfRUBRfJIqG3QNOxPCEUOLmqFgEoJkLdC46I3sbQGbJvPayUDKE5ls+bs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iMx7d-00071w-MA; Tue, 22 Oct 2019 16:35:01 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 21EC22743259; Tue, 22 Oct 2019 17:35:01 +0100 (BST)
-Date:   Tue, 22 Oct 2019 17:35:01 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     kuninori.morimoto.gx@renesas.com, patch@alsa-project.org,
-        twischer@de.adit-jv.com, perex@perex.cz, tiwai@suse.com,
-        Jiada Wang <jiada_wang@mentor.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [alsa-devel] [PATCH] ASoC: rsnd: dma: fix SSI9 4/5/6/7 busif dma
- address
-Message-ID: <20191022163501.GK5554@sirena.co.uk>
-References: <1550823803-32446-1-git-send-email-twischer@de.adit-jv.com>
- <20191022154904.GA17721@vmlxhi-102.adit-jv.com>
+        Tue, 22 Oct 2019 12:35:44 -0400
+Received: by mail-ot1-f68.google.com with SMTP id 53so3139983otv.4;
+        Tue, 22 Oct 2019 09:35:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oZAk62VktTsx+Ob5O9T/IcWukBxIKCSIlZ2KMfpKjSc=;
+        b=Tq4KtB0FuMuoXmcUzSundCvbSJdQdrRbgdQQQDuSY6CoyeUiVeFxew5RMZl1dEt7n4
+         SOo27ORB/aukXzehw0h/Xof7eu/iBlt8LuspsyTaQO0gkzmmd8D3iEtBbAl6CkQjbCC/
+         wm4Sfg35sZhYOXYLrXLKmGRQXSeTPfxSZhXmwveV8wOjt52DBjAulV1pJllMJ+6QHsqy
+         mWLflW0VWNJHoTQhLs86iP4TJj2NKgqKAk5/q7MCtkKP6UbwpCaEGrdEYDVVbui8Ix6K
+         r3YQ41reM9wVWZdVFAjBa2gTkti+IbBm5aefJFNRYp5jda1Kw2O1Tjy7OjsQHrpIAJlR
+         AoSg==
+X-Gm-Message-State: APjAAAUgkZX3ljNkwdCUc5bo76sp4dLNLeiCmzpJzpa7D7twD2qz1P9k
+        VxBj2G/xH5G3EalSYYTwzzisYHi85bCzFl4nUMk=
+X-Google-Smtp-Source: APXvYqyiUYppacOkbJofxp7QuUJl+cq2qZ0YPjnNVSiXTq67WvH+Mf7/GyLi7Db/N96lB5giKe21wKkj3mnO9yuE0Fc=
+X-Received: by 2002:a9d:5907:: with SMTP id t7mr3368476oth.118.1571762142513;
+ Tue, 22 Oct 2019 09:35:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="QxIEt88oQPsT6QmF"
-Content-Disposition: inline
-In-Reply-To: <20191022154904.GA17721@vmlxhi-102.adit-jv.com>
-X-Cookie: Whip it, whip it good!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1570927586-12023-1-git-send-email-zhenzhong.duan@oracle.com>
+In-Reply-To: <1570927586-12023-1-git-send-email-zhenzhong.duan@oracle.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 22 Oct 2019 18:35:31 +0200
+Message-ID: <CAJZ5v0iaWxu1vL08zyEfx6_Eku9yK5kh-HK4ZdbBtqZvSVd6tw@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: not unset the driver if it already exist
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Marcelo Tosatti <mtosatti@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 14, 2019 at 2:43 AM Zhenzhong Duan
+<zhenzhong.duan@oracle.com> wrote:
+>
+> __cpuidle_set_driver() check if there is an already exist driver and
+> unset it before return with -EBUSY. The next call will succeed as it's
+> just unset. This is strange as we should either keep old driver and
+> return -EBUSY or unset and set new driver and return 0.
+>
+> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> ---
+>  drivers/cpuidle/driver.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/cpuidle/driver.c b/drivers/cpuidle/driver.c
+> index 80c1a83..a200304 100644
+> --- a/drivers/cpuidle/driver.c
+> +++ b/drivers/cpuidle/driver.c
+> @@ -74,7 +74,6 @@ static inline int __cpuidle_set_driver(struct cpuidle_driver *drv)
+>         for_each_cpu(cpu, drv->cpumask) {
+>
+>                 if (__cpuidle_get_cpu_driver(cpu)) {
+> -                       __cpuidle_unset_driver(drv);
+>                         return -EBUSY;
+>                 }
 
---QxIEt88oQPsT6QmF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+There is a bug here, but it needs to be fixed differently.
 
-On Tue, Oct 22, 2019 at 05:49:04PM +0200, Eugeniu Rosca wrote:
-
-> It still applies cleanly to v5.4-rc4-18-g3b7c59a1950c.
-> Any chance to see it in vanilla?
-
-Someone would need to resend it.  No idea what the issues are but I
-don't have it any more.
-
---QxIEt88oQPsT6QmF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2vL7QACgkQJNaLcl1U
-h9Atiwf/TC9MLCgCfLcRjT+GAkZHV5/iKnB0WppOTrYDfawY44SqLnFxcFDqs1xw
-ZLYAVe3WabLE3vXk5AuUw2RuqHXEeVLLL/bsGQEIbzMmuSIYo0g8Qv1mOyCA2Q2R
-gXHENTJHUPBPnYQeo7JfwVo3stcXdFjnN4LMWJU1rLgNGXrjsfo1jbhAzs1nVXbo
-KCqkYC0Z7+/s/Y0lPGJ7QjDlHaRN3Mhj43jvxu3WPxyHRGFN/kXC0anJT0c2J7QE
-9B8J5in7U2ptKLnsu8IZd+7NHooSk78VOR7Q1EaTwg2eekqVzd6b8M5C4h88Rb4x
-fZu8hn34aED77ELINZbd+aCnXJZeZw==
-=tQ84
------END PGP SIGNATURE-----
-
---QxIEt88oQPsT6QmF--
+The function should check if any of the CPUs in the mask have a driver
+(which is different from drv) already and if so return -EBUSY before
+updating any cpuidle_drivers per-CPU pointers.
