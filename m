@@ -2,108 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A13E9E0E57
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 00:44:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15525E0E5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 00:45:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389521AbfJVWoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 18:44:16 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:52329 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389139AbfJVWoN (ORCPT
+        id S2389567AbfJVWp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 18:45:29 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33827 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731850AbfJVWp3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 18:44:13 -0400
-Received: by mail-il1-f199.google.com with SMTP id h22so10838943ild.19
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 15:44:13 -0700 (PDT)
+        Tue, 22 Oct 2019 18:45:29 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b128so11583282pfa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 15:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:date:message-id:subject
+         :in-reply-to:references:to:cc;
+        bh=7aR+uSzeMahVa2OPNUR1feGVGkqBz5tWi+pFrnNsLQY=;
+        b=HidD9NIIzokyyLiafLDrpYk6/ir9qUK4mM7burZJAZgMgK1Fly7NzNqMBKkKKbhDWN
+         qUVPQpYEuK17Jtw1MFP8s7uh4Z08mCuvkN8ZppirqOQdzGEAm1d0Fi3y1SWXO/HhEgZD
+         6hlmkjlS6c1tE1+EwnMVW0e+tXRduAvwqHgZmEWj0SIQR+0uRuW14DHeNGs0DGNS6p7B
+         lxnZNpQhD7IFwYwb5gULrGBECcpthxARKeAZQe3WdzPdGnICPZ+iIV6R4aql5KRlTarh
+         KjamU56iYgeAfEsynCOmj5Wceu2AbMFOvy+BONNCxUOGMxPlr6+w3TLiFaPJlRbGvKvr
+         Rbvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=4/WCKvnAqzDaDL12Bhh7UvH0NJCk0RkWjjsx/whG8ZM=;
-        b=WNKiIjJIvW8DSlSuXd49E2QRgGs1AxE8goVnIYASDD+1n9N8LtQEasjyXLDLa0o96o
-         YVGCvYKAIFq3lSu/IUuk0haCtYAuyq81sjk5ivxDcg62KN5CGeF4T30exfwlITYBCkCB
-         YdHmaEaPz2ybVgnqpfHPOIUwmHE7JZn878Di5aGNOg44nPLhP8NEtXtf9wPWyzDJxQmh
-         +5kIQxYPk+s4rPWeSuwhZdt6zmpiP5FBFJFrCAeQhvjcBcqL4jO4rZhq5vzHMeXV8eo+
-         oOIAQzshO0DyulX8IwtUZAj+wchJFBoyRn3FU/aeS6Mkijb89bApHbj511IGLlyjVNk2
-         UX5g==
-X-Gm-Message-State: APjAAAVTCybcSF9FepYka+4rgmze0K0X2KmGwrXMkOdal4+XE6PGYFIp
-        V/7jbuSgR5KE8METR1THKkaDbrTbyWbcTlYe6/av6t3XMfVh
-X-Google-Smtp-Source: APXvYqzC897uqVhegwaruTsaLD8YtovbI5/bp3lBEAQ2A5tfdg0flpoCccIvkepMLFKVqJy1o120cjJ/yqARBtV+1988Jjftiypn
-MIME-Version: 1.0
-X-Received: by 2002:a6b:ba82:: with SMTP id k124mr191815iof.92.1571784252679;
- Tue, 22 Oct 2019 15:44:12 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 15:44:12 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000b75de0595878a3e@google.com>
-Subject: linux-next test error: WARNING in collapse_file
-From:   syzbot <syzbot+667740df862911577d63@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, hughd@google.com, jglisse@redhat.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version:date
+         :message-id:subject:in-reply-to:references:to:cc;
+        bh=7aR+uSzeMahVa2OPNUR1feGVGkqBz5tWi+pFrnNsLQY=;
+        b=ZmIZqaxfv6b/Sza/GJZaCzAZ6phl7/6hlc5B999OeOROKxoE4IuFutAK/WyvPHhQod
+         FdXip9dE1Q1Mjd3Xx39y2Ze/9dFltf/BdT0bU0XcDuqoF7BCL/7TIM/I1A55Pd1z0KM0
+         1Q7KDv27Dol4VTs7daTxzwHFWUCayhxFUXBi9FpDmbLNcRCeAaGfKFfabnCFFXXl7UTe
+         bhlYICHdbmjv+eWESrEjIjB0TSXooMyCvwq7+wgnai4z51kEX4yEdVujklH+HCiwtNoE
+         C/A78EmFpvBu7NV/l0ybUe1IsNJZweptvYpvrXDQKZ98YKz/tN8CVM2HF4ihp5SsopbT
+         b51Q==
+X-Gm-Message-State: APjAAAXw4IHR6XlpcYvdd7ia/MRa0YyvFDX1Ftw87J4KQEuieXxBo5Yv
+        uVY2POtilbaXe8es2nNZzSJUWQ==
+X-Google-Smtp-Source: APXvYqwUR6i6zvgFtKulNmjwpxHtvT9uBcaIKeL4bHbbK8eiBP+9G6cCPFLpKx/0EJH1wr2JW1Ac7g==
+X-Received: by 2002:a17:90a:1a0d:: with SMTP id 13mr7746464pjk.100.1571784328325;
+        Tue, 22 Oct 2019 15:45:28 -0700 (PDT)
+Received: from [10.145.97.154] ([12.53.65.170])
+        by smtp.gmail.com with ESMTPSA id q26sm17968253pgk.60.2019.10.22.15.45.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2019 15:45:27 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Date:   Tue, 22 Oct 2019 15:45:26 -0700
+Message-Id: <7364B113-DD65-423D-BED3-FF90C4DF8334@amacapital.net>
+Subject: Re: [PATCH 3/3] x86/ftrace: Use text_poke()
+In-Reply-To: <20191022215841.2qsmhd6vxi4mwade@ast-mbp.dhcp.thefacebook.com>
+References: <20191022215841.2qsmhd6vxi4mwade@ast-mbp.dhcp.thefacebook.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+X-Mailer: iPhone Mail (17A878)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    a722f75b Add linux-next specific files for 20191022
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=126aea5b600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=32434321999f01e9
-dashboard link: https://syzkaller.appspot.com/bug?extid=667740df862911577d63
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+667740df862911577d63@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 1080 at mm/khugepaged.c:1643  
-collapse_file+0x1f9d/0x4170 mm/khugepaged.c:1643
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 1080 Comm: khugepaged Not tainted 5.4.0-rc4-next-20191022 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  panic+0x2e3/0x75c kernel/panic.c:221
-  __warn.cold+0x2f/0x35 kernel/panic.c:582
-  report_bug+0x289/0x300 lib/bug.c:195
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  fixup_bug arch/x86/kernel/traps.c:169 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:collapse_file+0x1f9d/0x4170 mm/khugepaged.c:1643
-Code: a1 c0 ff 31 c9 ba 01 00 00 00 4c 89 fe 48 8b bd c0 fe ff ff e8 e4 e9  
-ec ff e9 b4 fd ff ff 4c 8b bd 88 fe ff ff e8 93 a1 c0 ff <0f> 0b 4c 8b a3  
-50 ff ff ff c7 85 80 fe ff ff 00 00 00 00 e9 05 f6
-RSP: 0018:ffff8880a818fad0 EFLAGS: 00010293
-RAX: ffff8880a7dd8440 RBX: ffff8880a818fc88 RCX: ffffffff81b2b688
-RDX: 0000000000000000 RSI: ffffffff81b2b9ad RDI: 0000000000000001
-RBP: ffff8880a818fcb0 R08: ffff8880a7dd8440 R09: fffff940004942b9
-R10: fffff940004942b8 R11: ffffea00024a15c7 R12: 0000000000000001
-R13: ffffea0002383a08 R14: 0000000000000000 R15: ffffea0002338000
-  khugepaged_scan_file mm/khugepaged.c:1881 [inline]
-  khugepaged_scan_mm_slot mm/khugepaged.c:1979 [inline]
-  khugepaged_do_scan mm/khugepaged.c:2063 [inline]
-  khugepaged+0x2da9/0x4360 mm/khugepaged.c:2108
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>> On Oct 22, 2019, at 2:58 PM, Alexei Starovoitov <alexei.starovoitov@gmail=
+.com> wrote:
+>>=20
+>> =EF=BB=BFOn Tue, Oct 22, 2019 at 05:04:30PM -0400, Steven Rostedt wrote:
+>> I gave a solution for this. And that is to add another flag to allow
+>> for just the minimum to change the ip. And we can even add another flag
+>> to allow for changing the stack if needed (to emulate a call with the
+>> same parameters).
+>=20
+> your solution is to reduce the overhead.
+> my solution is to remove it competely. See the difference?
+>=20
+>> By doing this work, live kernel patching will also benefit. Because it
+>> is also dealing with the unnecessary overhead of saving regs.
+>> And we could possibly even have kprobes benefit from this if a kprobe
+>> doesn't need full regs.
+>=20
+> Neither of two statements are true. The per-function generated trampoline
+> I'm talking about is bpf specific. For a function with two arguments it's j=
+ust:
+> push rbp=20
+> mov rbp, rsp
+> push rdi
+> push rsi
+> lea  rdi,[rbp-0x10]
+> call jited_bpf_prog
+> pop rsi
+> pop rdi
+> leave
+> ret
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Why are you saving rsi?  You said upthread that you=E2=80=99re saving the ar=
+gs, but rsi is already available in rsi.
+
+Just how custom is this bpf program?  It seems to clobber no regs (except ar=
+gs), and it doesn=E2=80=99t return anything. Is it entirely specific to the p=
+robed function?  If so, why not just call it directly?
+
+In any event, I think you can=E2=80=99t *just* use text_poke.  Something nee=
+ds to coordinate to ensure that, if you bpf trace an already-kprobed functio=
+n, the right thing happens.
+
+FWIW, if you are going to use a trampoline like this, consider using r11 for=
+ the caller frame instead of rsi.  You won=E2=80=99t need to restore it. But=
+ I=E2=80=99m wondering whether the bpf jitted code could just directly acces=
+s the frame instead of indirecting through a register. (Or am I entirely mis=
+understanding what rdi is for in your example?)=
