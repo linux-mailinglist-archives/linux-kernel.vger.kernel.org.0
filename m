@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89890DFD62
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 08:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20F08DFD6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 08:00:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730931AbfJVF73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 01:59:29 -0400
-Received: from mga06.intel.com ([134.134.136.31]:55889 "EHLO mga06.intel.com"
+        id S2387575AbfJVGAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 02:00:08 -0400
+Received: from mga17.intel.com ([192.55.52.151]:54929 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726024AbfJVF72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 01:59:28 -0400
+        id S1730705AbfJVGAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 02:00:07 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 22:59:28 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 23:00:07 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,326,1566889200"; 
-   d="scan'208";a="209598441"
+   d="scan'208";a="187778623"
 Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Oct 2019 22:59:27 -0700
+  by orsmga007.jf.intel.com with ESMTP; 21 Oct 2019 23:00:06 -0700
 Received: from [10.249.230.171] (abudanko-mobl.ccr.corp.intel.com [10.249.230.171])
-        by linux.intel.com (Postfix) with ESMTP id E79C6580100;
-        Mon, 21 Oct 2019 22:59:23 -0700 (PDT)
-Subject: [PATCH v4 2/4] perf/x86: install platform specific sync_task_ctx
- adapter
+        by linux.intel.com (Postfix) with ESMTP id 3197558029D;
+        Mon, 21 Oct 2019 23:00:02 -0700 (PDT)
+Subject: [PATCH v4 3/4] perf/x86/intel: implement LBR callstacks context
+ synchronization
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -40,8 +40,8 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 References: <f4662ac9-e72e-d141-bead-da07e29f81e8@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <359cc996-50bc-2ab3-5c66-f1e5135d08c2@linux.intel.com>
-Date:   Tue, 22 Oct 2019 08:59:22 +0300
+Message-ID: <2bd6306a-9086-60b8-b5c9-4e16f39950d4@linux.intel.com>
+Date:   Tue, 22 Oct 2019 09:00:01 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
@@ -55,38 +55,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Bridge perf core and x86 sync_task_ctx() method calls.
+Implement intel_pmu_lbr_sync_task_ctx() method updating counters
+of the events that requested LBR callstack data on a sample.
+
+The counter can be zero for the case when task context belongs to
+a thread that has just come from a block on a futex and the context
+contains saved (lbr_stack_state == LBR_VALID) LBR register values.
+
+For the values to be restored at LBR registers on the next thread's
+switch-in event it swaps the counter value with the one that is
+expected to be non zero at the previous equivalent task perf event
+context.
+
+Swap operation type ensures the previous task perf event context
+stays consistent with the amount of events that requested LBR
+callstack data on a sample.
 
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- arch/x86/events/core.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/events/intel/lbr.c  | 6 ++++++
+ arch/x86/events/perf_event.h | 3 +++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 7b21455d7504..f51bddf5f48c 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2243,6 +2243,12 @@ static void x86_pmu_sched_task(struct perf_event_context *ctx, bool sched_in)
- 		x86_pmu.sched_task(ctx, sched_in);
+diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
+index ea54634eabf3..3cf58bcb88af 100644
+--- a/arch/x86/events/intel/lbr.c
++++ b/arch/x86/events/intel/lbr.c
+@@ -417,6 +417,12 @@ static void __intel_pmu_lbr_save(struct x86_perf_task_context *task_ctx)
+ 	cpuc->last_log_id = ++task_ctx->log_id;
  }
  
-+static void x86_pmu_sync_task_ctx(void *prev, void *next)
++void intel_pmu_lbr_sync_task_ctx(struct x86_perf_task_context *prev,
++				 struct x86_perf_task_context *next)
 +{
-+	if (x86_pmu.sync_task_ctx)
-+		x86_pmu.sync_task_ctx(prev, next);
++	swap(prev->lbr_callstack_users, next->lbr_callstack_users);
 +}
 +
- void perf_check_microcode(void)
+ void intel_pmu_lbr_sched_task(struct perf_event_context *ctx, bool sched_in)
  {
- 	if (x86_pmu.check_microcode)
-@@ -2297,6 +2303,7 @@ static struct pmu pmu = {
- 	.event_idx		= x86_pmu_event_idx,
- 	.sched_task		= x86_pmu_sched_task,
- 	.task_ctx_size          = sizeof(struct x86_perf_task_context),
-+	.sync_task_ctx		= x86_pmu_sync_task_ctx,
- 	.check_period		= x86_pmu_check_period,
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index be78f2765f74..0474ec6f4771 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -1024,6 +1024,9 @@ void intel_pmu_store_pebs_lbrs(struct pebs_lbr *lbr);
  
- 	.aux_output_match	= x86_pmu_aux_output_match,
+ void intel_ds_init(void);
+ 
++void intel_pmu_lbr_sync_task_ctx(struct x86_perf_task_context *prev,
++				 struct x86_perf_task_context *next);
++
+ void intel_pmu_lbr_sched_task(struct perf_event_context *ctx, bool sched_in);
+ 
+ u64 lbr_from_signext_quirk_wr(u64 val);
 -- 
 2.20.1
 
