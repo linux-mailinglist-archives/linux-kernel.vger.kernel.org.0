@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7A11E00A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 11:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6F7AE00A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 11:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731448AbfJVJZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 05:25:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53076 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731338AbfJVJZR (ORCPT
+        id S1731472AbfJVJZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 05:25:28 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:37278 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731338AbfJVJZX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 05:25:17 -0400
+        Tue, 22 Oct 2019 05:25:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=yLtJ8P6gz03aUZVPIm6Z/OVxKfrGoXfiB2G4aC34xIE=; b=VTrZSEeQi/av4rzOjJIj7/KPmD
-        QW+UhvFedRUw5r38vvezqEdelaRO/tAPyjOlCiggCUkOXvhLe2dOW89m8HMXdDRuBD8U35hnkNWK4
-        oNUP6PRxvw6NCUen2muCd4F51WwsSBiKJ9Hwu+NjntbgQmHHag64hvuE0HGhyxW59PO4Zpuk9XLUt
-        8WZE4BJiQYmuGrd6oNu5A/HGrv/8u98sU581BW13c/dZht2rV4uv3ubLu0t6GNwGdY1GSi223CgI3
-        eC/edMAsMc7/WzkOJ2SRGTQ9qjHDaVZ1YB3SmhP1AehrnpE7LRiiCM19iPU875MKlZnLArOuxqrft
-        JeatnYGA==;
+        bh=WY6KImieCGZAjEO6KzSr9f0KT5JTeFka9FBaH89KLj0=; b=sPEnRcrtXhmnfZeDpfkVk+nbEO
+        D/Ik8q1Xi20bN9wIK5hZhQtXd9FC4yfqId+7etImPpvCCDInzVY6hO4/tUPb0/NkbcNwkgoKq15jV
+        W6pw0BORHWaT/rn+XY/6u53jpB/BJTcvchHLNCkevdszLRnZ6hDE9j2Y7YsNMYrePx+GewF8bONM2
+        QYxm2jx6Tstxu7+d+x9vjAJ/oVDy9dDTHcps/CEWFiC7A+XDiXa4JavCeGPAuPDtaapGfvOM1LtP3
+        Xr/1QxKVyyyzRnhC6c1hHvKAa1lbvRI1AVQn7TNYvRREuoXScbkPyKzrpW3AgpffsZg3VtCkZvScZ
+        wRJ4zExg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iMqPf-0005LY-Dp; Tue, 22 Oct 2019 09:25:11 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iMqPg-00029C-J9; Tue, 22 Oct 2019 09:25:12 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9534E301A79;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 93366301124;
         Tue, 22 Oct 2019 11:24:11 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 1A59720977B04; Tue, 22 Oct 2019 11:25:09 +0200 (CEST)
-Message-Id: <20191022092307.425783389@infradead.org>
+        id 1F69420D8D3C2; Tue, 22 Oct 2019 11:25:09 +0200 (CEST)
+Message-Id: <20191022092307.483110884@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 22 Oct 2019 11:20:19 +0200
+Date:   Tue, 22 Oct 2019 11:20:20 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     mingo@kernel.org, peterz@infradead.org,
         linux-kernel@vger.kernel.org
 Cc:     acme@kernel.org, mark.rutland@arm.com,
         alexander.shishkin@linux.intel.com, jolsa@redhat.com,
         namhyung@kernel.org, andi@firstfloor.org, kan.liang@linux.intel.com
-Subject: [PATCH 2/3] perf: Optimize perf_init_event()
+Subject: [PATCH 3/3] perf: Optimize perf_init_event() for TYPE_SOFTWARE
 References: <20191022092017.740591163@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,114 +52,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+
 Andi reported that he was hitting the linear search in
-perf_init_event() a lot. Make more agressive use of the IDR lookup to
-avoid hitting the linear search.
-
-With exception of PERF_TYPE_SOFTWARE (which relies on a hideous hack),
-we can put everything in the IDR. On top of that, we can alias
-TYPE_HARDWARE and TYPE_HW_CACHE to TYPE_RAW on the lookup side.
-
-This greatly reduces the chances of hitting the linear search.
+perf_init_event() a lot. Now that all !TYPE_SOFTWARE events should hit
+the IDR, make sure the TYPE_SOFTWARE events are at the head of the
+list such that we'll quickly find the right PMU (provided a valid
+event was given).
 
 Reported-by: Andi Kleen <andi@firstfloor.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Kan <kan.liang@linux.intel.com>
 ---
- kernel/events/core.c |   41 ++++++++++++++++++++++++++++++-----------
- 1 file changed, 30 insertions(+), 11 deletions(-)
+ kernel/events/core.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -10067,7 +10067,7 @@ static struct lock_class_key cpuctx_lock
+@@ -10167,7 +10167,16 @@ int perf_pmu_register(struct pmu *pmu, c
+ 	if (!pmu->event_idx)
+ 		pmu->event_idx = perf_event_idx_default;
  
- int perf_pmu_register(struct pmu *pmu, const char *name, int type)
- {
--	int cpu, ret;
-+	int cpu, ret, max = PERF_TYPE_MAX;
- 
- 	mutex_lock(&pmus_lock);
- 	ret = -ENOMEM;
-@@ -10080,12 +10080,17 @@ int perf_pmu_register(struct pmu *pmu, c
- 		goto skip_type;
- 	pmu->name = name;
- 
--	if (type < 0) {
--		type = idr_alloc(&pmu_idr, pmu, PERF_TYPE_MAX, 0, GFP_KERNEL);
--		if (type < 0) {
--			ret = type;
-+	if (type != PERF_TYPE_SOFTWARE) {
-+		if (type >= 0)
-+			max = type;
-+
-+		ret = idr_alloc(&pmu_idr, pmu, max, 0, GFP_KERNEL);
-+		if (ret < 0)
- 			goto free_pdc;
--		}
-+
-+		WARN_ON(type >= 0 && ret != type);
-+
-+		type = ret;
- 	}
- 	pmu->type = type;
- 
-@@ -10175,7 +10180,7 @@ int perf_pmu_register(struct pmu *pmu, c
- 	put_device(pmu->dev);
- 
- free_idr:
--	if (pmu->type >= PERF_TYPE_MAX)
-+	if (pmu->type != PERF_TYPE_SOFTWARE)
- 		idr_remove(&pmu_idr, pmu->type);
- 
- free_pdc:
-@@ -10197,7 +10202,7 @@ void perf_pmu_unregister(struct pmu *pmu
- 	synchronize_rcu();
- 
- 	free_percpu(pmu->pmu_disable_count);
--	if (pmu->type >= PERF_TYPE_MAX)
-+	if (pmu->type != PERF_TYPE_SOFTWARE)
- 		idr_remove(&pmu_idr, pmu->type);
- 	if (pmu_bus_running) {
- 		if (pmu->nr_addr_filters)
-@@ -10267,9 +10272,8 @@ static int perf_try_init_event(struct pm
- 
- static struct pmu *perf_init_event(struct perf_event *event)
- {
-+	int idx, type, ret;
- 	struct pmu *pmu;
--	int idx;
--	int ret;
- 
- 	idx = srcu_read_lock(&pmus_srcu);
- 
-@@ -10282,12 +10286,27 @@ static struct pmu *perf_init_event(struc
- 	}
- 
- 	rcu_read_lock();
--	pmu = idr_find(&pmu_idr, event->attr.type);
+-	list_add_rcu(&pmu->entry, &pmus);
 +	/*
-+	 * PERF_TYPE_HARDWARE and PERF_TYPE_HW_CACHE
-+	 * are often aliases for PERF_TYPE_RAW.
++	 * Ensure the TYPE_SOFTWARE PMUs are at the head of the list,
++	 * since these cannot be in the IDR. This way the linear search
++	 * is fast, provided a valid software event is provided.
 +	 */
-+	type = event->attr.type;
-+	if (type == PERF_TYPE_HARDWARE || type == PERF_TYPE_HW_CACHE)
-+		type = PERF_TYPE_RAW;
++	if (type == PERF_TYPE_SOFTWARE || !name)
++		list_add_rcu(&pmu->entry, &pmus);
++	else
++		list_add_tail_rcu(&pmu->entry, &pmus);
 +
-+again:
-+	pmu = idr_find(&pmu_idr, type);
- 	rcu_read_unlock();
- 	if (pmu) {
- 		ret = perf_try_init_event(pmu, event);
-+		if (ret == -ENOENT && event->attr.type != type) {
-+			type = event->attr.type;
-+			goto again;
-+		}
-+
- 		if (ret)
- 			pmu = ERR_PTR(ret);
-+
- 		goto unlock;
- 	}
- 
+ 	atomic_set(&pmu->exclusive_cnt, 0);
+ 	ret = 0;
+ unlock:
 
 
