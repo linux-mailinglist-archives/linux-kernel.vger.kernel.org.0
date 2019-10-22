@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97362E0A9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 19:30:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0FFDE0AB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 19:31:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732517AbfJVR31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 13:29:27 -0400
-Received: from mga04.intel.com ([192.55.52.120]:17268 "EHLO mga04.intel.com"
+        id S1732710AbfJVRaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 13:30:01 -0400
+Received: from mga02.intel.com ([134.134.136.20]:34323 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730141AbfJVR31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731808AbfJVR31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 Oct 2019 13:29:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 10:29:27 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 10:29:27 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,217,1569308400"; 
-   d="scan'208";a="201748566"
+   d="scan'208";a="187972685"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 22 Oct 2019 10:29:24 -0700
+  by orsmga007.jf.intel.com with ESMTP; 22 Oct 2019 10:29:24 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id C71391C5; Tue, 22 Oct 2019 20:29:23 +0300 (EEST)
+        id D331512C; Tue, 22 Oct 2019 20:29:23 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -32,10 +32,12 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         William Breathitt Gray <vilhelm.gray@gmail.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 00/11] gpio: pca953x: Convert to bitmap (extended) API
-Date:   Tue, 22 Oct 2019 20:29:11 +0300
-Message-Id: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 01/11] lib/test_bitmap: Force argument of bitmap_parselist_user() to proper address space
+Date:   Tue, 22 Oct 2019 20:29:12 +0300
+Message-Id: <20191022172922.61232-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
+References: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -43,48 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While converting gpio-pca953x driver to bitmap API, I noticed that we have
-no function to replace bits.
+Sparse complains:
 
-So, that's how patch 7 appears.
+lib/test_bitmap.c:345:58: warning: incorrect type in argument 1 (different address spaces)
+lib/test_bitmap.c:345:58:    expected char const [noderef] <asn:1> *ubuf
+lib/test_bitmap.c:345:58:    got char const *const in
 
-First 6 patches are preparatory of the test suite (including some warning
-fixes, etc).
+Force argument of bitmap_parselist_user() to proper address space.
 
-Patches 8-9 are preparatory for the GPIO driver to be easier converted
-to bitmap API, conversion to which happens in patch 10.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ lib/test_bitmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch 11 simple indentation fixes.
-
-Since the series depends to the commit e51819d749db ("bitops: introduce the
-for_each_set_clump8 macro") in Andrew's set and taking into consideration
-a lot of bitmap related patches here, it would make sense to route these thru
-Andrew as well.
-
-In v2:
-- address wrong logic in pca953x_gpio_set_multiple() (William)
-- 10 more patches as described above
-
-Andy Shevchenko (11):
-  lib/test_bitmap: Force argument of bitmap_parselist_user() to proper
-    address space
-  lib/test_bitmap: Undefine macros after use
-  lib/test_bitmap: Name EXP_BYTES properly
-  lib/test_bitmap: Rename exp to exp1 to avoid ambiguous name
-  lib/test_bitmap: Move exp1 and exp2 upper for others to use
-  lib/test_bitmap: Fix comment about this file
-  bitmap: Introduce bitmap_replace() helper
-  gpio: pca953x: Remove redundant variable and check in IRQ handler
-  gpio: pca953x: Use input from regs structure in pca953x_irq_pending()
-  gpio: pca953x: Convert to use bitmap API
-  gpio: pca953x: Tight up indentation
-
- drivers/gpio/gpio-pca953x.c | 196 ++++++++++++++++--------------------
- include/linux/bitmap.h      |  16 +++
- lib/bitmap.c                |  12 +++
- lib/test_bitmap.c           | 137 ++++++++++++++++---------
- 4 files changed, 203 insertions(+), 158 deletions(-)
-
+diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
+index dc167c13eb39..09aa29a6b562 100644
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -330,7 +330,7 @@ static void __init __test_bitmap_parselist(int is_user)
+ 
+ 			set_fs(KERNEL_DS);
+ 			time = ktime_get();
+-			err = bitmap_parselist_user(ptest.in, len,
++			err = bitmap_parselist_user((__force const char __user *)ptest.in, len,
+ 						    bmap, ptest.nbits);
+ 			time = ktime_get() - time;
+ 			set_fs(orig_fs);
 -- 
 2.23.0
 
