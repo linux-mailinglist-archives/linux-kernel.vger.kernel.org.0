@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 757AAE0EB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 01:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A676AE0EBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 01:49:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389870AbfJVXtH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 19:49:07 -0400
-Received: from mga06.intel.com ([134.134.136.31]:28707 "EHLO mga06.intel.com"
+        id S2389966AbfJVXti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 19:49:38 -0400
+Received: from mga06.intel.com ([134.134.136.31]:28710 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389812AbfJVXtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 19:49:05 -0400
+        id S2389858AbfJVXtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 19:49:06 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 16:49:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,218,1569308400"; 
-   d="scan'208";a="191652625"
+   d="scan'208";a="191652628"
 Received: from jacob-builder.jf.intel.com ([10.7.199.155])
   by orsmga008.jf.intel.com with ESMTP; 22 Oct 2019 16:49:03 -0700
 From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -35,9 +35,9 @@ Cc:     "Yi Liu" <yi.l.liu@intel.com>,
         Jonathan Cameron <jic23@kernel.org>,
         Eric Auger <eric.auger@redhat.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v6 01/10] iommu/vt-d: Enlightened PASID allocation
-Date:   Tue, 22 Oct 2019 16:53:14 -0700
-Message-Id: <1571788403-42095-2-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v6 02/10] iommu/vt-d: Add custom allocator for IOASID
+Date:   Tue, 22 Oct 2019 16:53:15 -0700
+Message-Id: <1571788403-42095-3-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1571788403-42095-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1571788403-42095-1-git-send-email-jacob.jun.pan@linux.intel.com>
@@ -46,174 +46,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lu Baolu <baolu.lu@linux.intel.com>
+When VT-d driver runs in the guest, PASID allocation must be
+performed via virtual command interface. This patch registers a
+custom IOASID allocator which takes precedence over the default
+XArray based allocator. The resulting IOASID allocation will always
+come from the host. This ensures that PASID namespace is system-
+wide.
 
-If Intel IOMMU runs in caching mode, a.k.a. virtual IOMMU, the
-IOMMU driver should rely on the emulation software to allocate
-and free PASID IDs. The Intel vt-d spec revision 3.0 defines a
-register set to support this. This includes a capability register,
-a virtual command register and a virtual response register. Refer
-to section 10.4.42, 10.4.43, 10.4.44 for more information.
-
-This patch adds the enlightened PASID allocation/free interfaces
-via the virtual command register.
-
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Liu, Yi L <yi.l.liu@intel.com>
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
 ---
- drivers/iommu/intel-pasid.c | 83 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/iommu/intel-pasid.h | 13 ++++++-
+ drivers/iommu/Kconfig       |  1 +
+ drivers/iommu/intel-iommu.c | 67 +++++++++++++++++++++++++++++++++++++++++++++
  include/linux/intel-iommu.h |  2 ++
- 3 files changed, 97 insertions(+), 1 deletion(-)
+ 3 files changed, 70 insertions(+)
 
-diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-index 040a445be300..76bcbb21e112 100644
---- a/drivers/iommu/intel-pasid.c
-+++ b/drivers/iommu/intel-pasid.c
-@@ -63,6 +63,89 @@ void *intel_pasid_lookup_id(int pasid)
- 	return p;
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index fd50ddffffbf..961fe5795a90 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -211,6 +211,7 @@ config INTEL_IOMMU_SVM
+ 	bool "Support for Shared Virtual Memory with Intel IOMMU"
+ 	depends on INTEL_IOMMU && X86
+ 	select PCI_PASID
++	select IOASID
+ 	select MMU_NOTIFIER
+ 	help
+ 	  Shared Virtual Memory (SVM) provides a facility for devices
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 3f974919d3bd..3aff0141c522 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -1706,6 +1706,8 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
+ 		if (ecap_prs(iommu->ecap))
+ 			intel_svm_finish_prq(iommu);
+ 	}
++	ioasid_unregister_allocator(&iommu->pasid_allocator);
++
+ #endif
  }
  
-+static int check_vcmd_pasid(struct intel_iommu *iommu)
-+{
-+	u64 cap;
-+
-+	if (!ecap_vcs(iommu->ecap)) {
-+		pr_warn("IOMMU: %s: Hardware doesn't support virtual command\n",
-+			iommu->name);
-+		return -ENODEV;
-+	}
-+
-+	cap = dmar_readq(iommu->reg + DMAR_VCCAP_REG);
-+	if (!(cap & DMA_VCS_PAS)) {
-+		pr_warn("IOMMU: %s: Emulation software doesn't support PASID allocation\n",
-+			iommu->name);
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int *pasid)
-+{
-+	u64 res;
-+	u8 status_code;
-+	unsigned long flags;
-+	int ret = 0;
-+
-+	ret = check_vcmd_pasid(iommu);
-+	if (ret)
-+		return ret;
-+
-+	raw_spin_lock_irqsave(&iommu->register_lock, flags);
-+	dmar_writeq(iommu->reg + DMAR_VCMD_REG, VCMD_CMD_ALLOC);
-+	IOMMU_WAIT_OP(iommu, DMAR_VCRSP_REG, dmar_readq,
-+		      !(res & VCMD_VRSP_IP), res);
-+	raw_spin_unlock_irqrestore(&iommu->register_lock, flags);
-+
-+	status_code = VCMD_VRSP_SC(res);
-+	switch (status_code) {
-+	case VCMD_VRSP_SC_SUCCESS:
-+		*pasid = VCMD_VRSP_RESULT(res);
-+		break;
-+	case VCMD_VRSP_SC_NO_PASID_AVAIL:
-+		pr_info("IOMMU: %s: No PASID available\n", iommu->name);
-+		ret = -ENOMEM;
-+		break;
-+	default:
-+		ret = -ENODEV;
-+		pr_warn("IOMMU: %s: Unexpected error code %d\n",
-+			iommu->name, status_code);
-+	}
-+
-+	return ret;
-+}
-+
-+void vcmd_free_pasid(struct intel_iommu *iommu, unsigned int pasid)
-+{
-+	u64 res;
-+	u8 status_code;
-+	unsigned long flags;
-+
-+	if (check_vcmd_pasid(iommu))
-+		return;
-+
-+	raw_spin_lock_irqsave(&iommu->register_lock, flags);
-+	dmar_writeq(iommu->reg + DMAR_VCMD_REG, (pasid << 8) | VCMD_CMD_FREE);
-+	IOMMU_WAIT_OP(iommu, DMAR_VCRSP_REG, dmar_readq,
-+		      !(res & VCMD_VRSP_IP), res);
-+	raw_spin_unlock_irqrestore(&iommu->register_lock, flags);
-+
-+	status_code = VCMD_VRSP_SC(res);
-+	switch (status_code) {
-+	case VCMD_VRSP_SC_SUCCESS:
-+		break;
-+	case VCMD_VRSP_SC_INVALID_PASID:
-+		pr_info("IOMMU: %s: Invalid PASID\n", iommu->name);
-+		break;
-+	default:
-+		pr_warn("IOMMU: %s: Unexpected error code %d\n",
-+			iommu->name, status_code);
-+	}
-+}
-+
- /*
-  * Per device pasid table management:
-  */
-diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
-index fc8cd8f17de1..e413e884e685 100644
---- a/drivers/iommu/intel-pasid.h
-+++ b/drivers/iommu/intel-pasid.h
-@@ -23,6 +23,16 @@
- #define is_pasid_enabled(entry)		(((entry)->lo >> 3) & 0x1)
- #define get_pasid_dir_size(entry)	(1 << ((((entry)->lo >> 9) & 0x7) + 7))
+@@ -4910,6 +4912,46 @@ static int __init probe_acpi_namespace_devices(void)
+ 	return 0;
+ }
  
-+/* Virtual command interface for enlightened pasid management. */
-+#define VCMD_CMD_ALLOC			0x1
-+#define VCMD_CMD_FREE			0x2
-+#define VCMD_VRSP_IP			0x1
-+#define VCMD_VRSP_SC(e)			(((e) >> 1) & 0x3)
-+#define VCMD_VRSP_SC_SUCCESS		0
-+#define VCMD_VRSP_SC_NO_PASID_AVAIL	1
-+#define VCMD_VRSP_SC_INVALID_PASID	1
-+#define VCMD_VRSP_RESULT(e)		(((e) >> 8) & 0xfffff)
++#ifdef CONFIG_INTEL_IOMMU_SVM
++static ioasid_t intel_ioasid_alloc(ioasid_t min, ioasid_t max, void *data)
++{
++	struct intel_iommu *iommu = data;
++	ioasid_t ioasid;
 +
- /*
-  * Domain ID reserved for pasid entries programmed for first-level
-  * only and pass-through transfer modes.
-@@ -95,5 +105,6 @@ int intel_pasid_setup_pass_through(struct intel_iommu *iommu,
- 				   struct device *dev, int pasid);
- void intel_pasid_tear_down_entry(struct intel_iommu *iommu,
- 				 struct device *dev, int pasid);
--
-+int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int *pasid);
-+void vcmd_free_pasid(struct intel_iommu *iommu, unsigned int pasid);
- #endif /* __INTEL_PASID_H */
++	/*
++	 * VT-d virtual command interface always uses the full 20 bit
++	 * PASID range. Host can partition guest PASID range based on
++	 * policies but it is out of guest's control.
++	 */
++	if (min < PASID_MIN || max > PASID_MAX)
++		return INVALID_IOASID;
++
++	if (vcmd_alloc_pasid(iommu, &ioasid))
++		return INVALID_IOASID;
++
++	return ioasid;
++}
++
++static void intel_ioasid_free(ioasid_t ioasid, void *data)
++{
++	struct iommu_pasid_alloc_info *svm;
++	struct intel_iommu *iommu = data;
++
++	if (!iommu)
++		return;
++	/*
++	 * Sanity check the ioasid owner is done at upper layer, e.g. VFIO
++	 * We can only free the PASID when all the devices are unbond.
++	 */
++	svm = ioasid_find(NULL, ioasid, NULL);
++	if (!svm) {
++		pr_warn("Freeing unbond IOASID %d\n", ioasid);
++		return;
++	}
++	vcmd_free_pasid(iommu, ioasid);
++}
++#endif
++
+ int __init intel_iommu_init(void)
+ {
+ 	int ret = -ENODEV;
+@@ -5020,6 +5062,31 @@ int __init intel_iommu_init(void)
+ 				       "%s", iommu->name);
+ 		iommu_device_set_ops(&iommu->iommu, &intel_iommu_ops);
+ 		iommu_device_register(&iommu->iommu);
++#ifdef CONFIG_INTEL_IOMMU_SVM
++		if (cap_caching_mode(iommu->cap) && sm_supported(iommu)) {
++			/*
++			 * Register a custom ASID allocator if we are running
++			 * in a guest, the purpose is to have a system wide PASID
++			 * namespace among all PASID users.
++			 * There can be multiple vIOMMUs in each guest but only
++			 * one allocator is active. All vIOMMU allocators will
++			 * eventually be calling the same host allocator.
++			 */
++			iommu->pasid_allocator.alloc = intel_ioasid_alloc;
++			iommu->pasid_allocator.free = intel_ioasid_free;
++			iommu->pasid_allocator.pdata = (void *)iommu;
++			ret = ioasid_register_allocator(&iommu->pasid_allocator);
++			if (ret) {
++				pr_warn("Custom PASID allocator registeration failed\n");
++				/*
++				 * Disable scalable mode on this IOMMU if there
++				 * is no custom allocator. Mixing SM capable vIOMMU
++				 * and non-SM vIOMMU are not supported.
++				 */
++				intel_iommu_sm = 0;
++			}
++		}
++#endif
+ 	}
+ 
+ 	bus_set_iommu(&pci_bus_type, &intel_iommu_ops);
 diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index ed11ef594378..eea7468694a7 100644
+index eea7468694a7..fb1973a761c1 100644
 --- a/include/linux/intel-iommu.h
 +++ b/include/linux/intel-iommu.h
-@@ -161,6 +161,7 @@
- #define ecap_smpwc(e)		(((e) >> 48) & 0x1)
- #define ecap_flts(e)		(((e) >> 47) & 0x1)
- #define ecap_slts(e)		(((e) >> 46) & 0x1)
-+#define ecap_vcs(e)		(((e) >> 44) & 0x1)
- #define ecap_smts(e)		(((e) >> 43) & 0x1)
- #define ecap_dit(e)		((e >> 41) & 0x1)
- #define ecap_pasid(e)		((e >> 40) & 0x1)
-@@ -279,6 +280,7 @@
+@@ -19,6 +19,7 @@
+ #include <linux/iommu.h>
+ #include <linux/io-64-nonatomic-lo-hi.h>
+ #include <linux/dmar.h>
++#include <linux/ioasid.h>
  
- /* PRS_REG */
- #define DMA_PRS_PPR	((u32)1)
-+#define DMA_VCS_PAS	((u64)1)
- 
- #define IOMMU_WAIT_OP(iommu, offset, op, cond, sts)			\
- do {									\
+ #include <asm/cacheflush.h>
+ #include <asm/iommu.h>
+@@ -542,6 +543,7 @@ struct intel_iommu {
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+ 	struct page_req_dsc *prq;
+ 	unsigned char prq_name[16];    /* Name for PRQ interrupt */
++	struct ioasid_allocator_ops pasid_allocator; /* Custom allocator for PASIDs */
+ #endif
+ 	struct q_inval  *qi;            /* Queued invalidation info */
+ 	u32 *iommu_state; /* Store iommu states between suspend and resume.*/
 -- 
 2.7.4
 
