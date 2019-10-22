@@ -2,117 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 405BBE09BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:52:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD456E09AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:51:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388675AbfJVQw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 12:52:26 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34969 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732104AbfJVQw0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:52:26 -0400
-Received: by mail-oi1-f194.google.com with SMTP id x3so14816695oig.2;
-        Tue, 22 Oct 2019 09:52:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Vxt2BZlQ+53rWMwmVviD+TwDtnO3WTo/KugRQtRT0Hk=;
-        b=hp8pOtAjAB1FU2Ve7em50M7AMTnbgeZogItfSSnQgZluLX+t786AlYjCy12P6wad0W
-         b/Ngt8oyL1mSgvqzAdXaWhY6sBwMCzsi3O+rkDJUoBsvu+iZ53HwhtW+WZBlRxR1by4+
-         k97hSaDRPIlK+yv9BYltD4IXMipDICnw2+IKK1fHbdXrfTWTJIo+HwBW7CeqVloQEXPZ
-         ABOeYi5v7RpPmIT94FR3v3M3iG+yVoBehtcQu2UuaunJtIjgfJdN6dQ42ejD573sBZay
-         qMMgk6aNO9wFEncAB67R1vtk/U3gVmIx3Bsve9Kcs6b6N2gwG6UmyJvPkLe4q59bdazA
-         EQCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Vxt2BZlQ+53rWMwmVviD+TwDtnO3WTo/KugRQtRT0Hk=;
-        b=njov1SHV9J97Kg7x1pZsGKD7obddB9/A0Ko+T1i3UBsLB5ZPXax/A+iQa+B///c4yU
-         yby0JWUO+/EwR0LPD/zWiTwxsVAN5Dsj+1goQ9FngsJanXVz8AswFziZklq8O33T2veU
-         iZ624RNxB+/FIPzd8YxzDc/S+gGmMNE9qP/I6GHm1aXI/T20/Yxxhv4Dub7ab5OepglJ
-         m+Woe9umD8P4vxEY01sKAfouN2LTGXHWWBl5v9xQA/Lg6eXTa1zHwi/ey2Cd6Ozhkfbv
-         Ig99i/vP8JIekMQmc7tbQVEbJptyWbStXeQlr4nU9XdQ5xSFfJLoH5J+OOILonG81OVo
-         kggw==
-X-Gm-Message-State: APjAAAXwtfRQwCy8amMxUpwD9Vh+OM/i9JJ36aEugH7YxTAtHqxwcweh
-        1oml04Ik0pQH6GaDuPGNLBA=
-X-Google-Smtp-Source: APXvYqz/bBY7HDB1zRkrDNQyzP753kDbijKRJnKXe7SQX/AeICng2K8PMN6kR1y/bEt1IyvKmqKyVg==
-X-Received: by 2002:aca:f005:: with SMTP id o5mr3744584oih.36.1571763144136;
-        Tue, 22 Oct 2019 09:52:24 -0700 (PDT)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id z24sm613884oib.21.2019.10.22.09.52.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 09:52:23 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] clk: sunxi: Fix operator precedence in sunxi_divs_clk_setup
-Date:   Tue, 22 Oct 2019 09:50:54 -0700
-Message-Id: <20191022165054.48302-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        id S1732880AbfJVQvb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 12:51:31 -0400
+Received: from mga02.intel.com ([134.134.136.20]:31181 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727885AbfJVQvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 12:51:31 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 09:51:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,216,1569308400"; 
+   d="scan'208";a="201737358"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga006.jf.intel.com with ESMTP; 22 Oct 2019 09:51:29 -0700
+Date:   Tue, 22 Oct 2019 09:51:29 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Boaz Harrosh <boaz@plexistor.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/5] fs/stat: Define DAX statx attribute
+Message-ID: <20191022165128.GA5432@iweiny-DESK2.sc.intel.com>
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <20191020155935.12297-2-ira.weiny@intel.com>
+ <119b57ed-2799-c499-00df-50da80d23612@plexistor.com>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <119b57ed-2799-c499-00df-50da80d23612@plexistor.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-r375326 in Clang exposes an issue with operator precedence in
-sunxi_div_clk_setup:
+On Tue, Oct 22, 2019 at 02:32:04PM +0300, Boaz Harrosh wrote:
+> On 20/10/2019 18:59, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > In order for users to determine if a file is currently operating in DAX
+> > mode (effective DAX).  Define a statx attribute value and set that
+> > attribute if the effective DAX flag is set.
+> > 
+> > To go along with this we propose the following addition to the statx man
+> > page:
+> > 
+> > STATX_ATTR_DAX
+> > 
+> > 	DAX (cpu direct access) is a file mode that attempts to minimize
+> > 	software cache effects for both I/O and memory mappings of this
+> > 	file.  It requires a capable device, a compatible filesystem
+> > 	block size, and filesystem opt-in. It generally assumes all
+> > 	accesses are via cpu load / store instructions which can
+> > 	minimize overhead for small accesses, but adversely affect cpu
+> > 	utilization for large transfers. File I/O is done directly
+> > 	to/from user-space buffers. While the DAX property tends to
+> > 	result in data being transferred synchronously it does not give
+> > 	the guarantees of synchronous I/O that data and necessary
+> > 	metadata are transferred. Memory mapped I/O may be performed
+> > 	with direct mappings that bypass system memory buffering. Again
+> > 	while memory-mapped I/O tends to result in data being
+> > 	transferred synchronously it does not guarantee synchronous
+> > 	metadata updates. A dax file may optionally support being mapped
+> > 	with the MAP_SYNC flag which does allow cpu store operations to
+> > 	be considered synchronous modulo cpu cache effects.
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > ---
+> >  fs/stat.c                 | 3 +++
+> >  include/uapi/linux/stat.h | 1 +
+> >  2 files changed, 4 insertions(+)
+> > 
+> > diff --git a/fs/stat.c b/fs/stat.c
+> > index c38e4c2e1221..59ca360c1ffb 100644
+> > --- a/fs/stat.c
+> > +++ b/fs/stat.c
+> > @@ -77,6 +77,9 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+> >  	if (IS_AUTOMOUNT(inode))
+> >  		stat->attributes |= STATX_ATTR_AUTOMOUNT;
+> >  
+> > +	if (inode->i_flags & S_DAX)
+> 
+> Is there a reason not to use IS_DAX(inode) ?
 
-drivers/clk/sunxi/clk-sunxi.c:1083:30: warning: operator '?:' has lower
-precedence than '|'; '|' will be evaluated first
-[-Wbitwise-conditional-parentheses]
-                                                 data->div[i].critical ?
-                                                 ~~~~~~~~~~~~~~~~~~~~~ ^
-drivers/clk/sunxi/clk-sunxi.c:1083:30: note: place parentheses around
-the '|' expression to silence this warning
-                                                 data->div[i].critical ?
-                                                                       ^
-                                                                      )
-drivers/clk/sunxi/clk-sunxi.c:1083:30: note: place parentheses around
-the '?:' expression to evaluate it first
-                                                 data->div[i].critical ?
-                                                                       ^
-                                                 (
-1 warning generated.
+No, just forgot there was a macro when this was written.  Changed.
 
-It appears that the intention was for ?: to be evaluated first so that
-CLK_IS_CRITICAL could be added to clkflags if the critical boolean was
-set; right now, | is being evaluated first. Add parentheses around the
-?: block to have it be evaluated first.
+Thanks,
+Ira
 
-Fixes: 9919d44ff297 ("clk: sunxi: Use CLK_IS_CRITICAL flag for critical clks")
-Link: https://github.com/ClangBuiltLinux/linux/issues/745
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/clk/sunxi/clk-sunxi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index d3a43381a792..27201fd26e44 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -1080,8 +1080,8 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
- 						 rate_hw, rate_ops,
- 						 gate_hw, &clk_gate_ops,
- 						 clkflags |
--						 data->div[i].critical ?
--							CLK_IS_CRITICAL : 0);
-+						 (data->div[i].critical ?
-+							CLK_IS_CRITICAL : 0));
- 
- 		WARN_ON(IS_ERR(clk_data->clks[i]));
- 	}
--- 
-2.23.0
-
+> 
+> > +		stat->attributes |= STATX_ATTR_DAX;
+> > +
+> >  	if (inode->i_op->getattr)
+> >  		return inode->i_op->getattr(path, stat, request_mask,
+> >  					    query_flags);
+> > diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> > index 7b35e98d3c58..5b0962121ef7 100644
+> > --- a/include/uapi/linux/stat.h
+> > +++ b/include/uapi/linux/stat.h
+> > @@ -169,6 +169,7 @@ struct statx {
+> >  #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
+> >  
+> >  #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
+> > +#define STATX_ATTR_DAX			0x00002000 /* [I] File is DAX */
+> >  
+> >  
+> >  #endif /* _UAPI_LINUX_STAT_H */
+> > 
+> 
