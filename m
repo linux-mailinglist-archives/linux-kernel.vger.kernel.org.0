@@ -2,210 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9608BE0669
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 16:29:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03CE4E0672
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 16:31:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731823AbfJVO30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 10:29:26 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27060 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727582AbfJVO3Z (ORCPT
+        id S1729994AbfJVObZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 10:31:25 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:57895 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726955AbfJVObZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 10:29:25 -0400
+        Tue, 22 Oct 2019 10:31:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571754564;
+        s=mimecast20190719; t=1571754684;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=99x+P3m9acVw3MrQAWw2EOvH80A/uxpSA9gp5a6gHE4=;
-        b=ExFZknmAUYAUxQyHN3iAvjQHEOQIRqpcaTuYAn5fEBpUfPTBUpn2/K99+jQZB4HEMXLReT
-        nSPA3EjQOC3EreZ9GSKUXq77j7qX7opkyujAsIUhQh4Ds6cAowndd+55gt2C1fz5V7gYI4
-        c1ueDmUW0DhMzuMI5VvuytFhWsraK14=
+        bh=uQINK4WAab2a12o9SHlK/upMXG8ZGLD6Q9Wbn9V1iMw=;
+        b=hH+8tRk9V1z6FMZbYVcThekFC9ViWQgz0MdULNXdgg3HTJMKlML4sywFdbVjWKn3gfXlhk
+        dC/H5gVIS+1MzTBI4Jib50u+cm8Wxtnp1DqkDkv31U8af8FhC6tEkpmwfAohsrtH3whstb
+        Yo0JU/fXzTZPBqU8/0RNYSKPAndM3Mw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-183-6S1jDIpfO_a0u_OZuqNhHg-1; Tue, 22 Oct 2019 10:29:20 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-371-SjCmvh6LOxCAPrxBPRs7jQ-1; Tue, 22 Oct 2019 10:31:20 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AC5E05E4;
-        Tue, 22 Oct 2019 14:29:17 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-117-200.phx2.redhat.com [10.3.117.200])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E3B645C1D4;
-        Tue, 22 Oct 2019 14:29:13 +0000 (UTC)
-Subject: Re: [PATCH] ipmi: Don't allow device module unload when in use
-To:     minyard@acm.org
-Cc:     openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Corey Minyard <cminyard@mvista.com>
-References: <20191014134141.GA25427@t560>
- <20191014154632.11103-1-minyard@acm.org>
-From:   Tony Camuso <tcamuso@redhat.com>
-Message-ID: <28065598-c638-07eb-d966-0e85ce62c37f@redhat.com>
-Date:   Tue, 22 Oct 2019 10:29:12 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 308C61005500;
+        Tue, 22 Oct 2019 14:31:18 +0000 (UTC)
+Received: from treble (ovpn-124-213.rdu2.redhat.com [10.10.124.213])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C6353608C0;
+        Tue, 22 Oct 2019 14:31:09 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 09:31:07 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Jessica Yu <jeyu@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, live-patching@vger.kernel.org,
+        pmladek@suse.com
+Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
+Message-ID: <20191022143107.xkymboxgcgojc5b5@treble>
+References: <alpine.LSU.2.21.1910151611000.13169@pobox.suse.cz>
+ <88bab814-ea24-ece9-2bc0-7a1e10a62f12@redhat.com>
+ <20191015153120.GA21580@linux-8ccs>
+ <7e9c7dd1-809e-f130-26a3-3d3328477437@redhat.com>
+ <20191015182705.1aeec284@gandalf.local.home>
+ <20191016074951.GM2328@hirez.programming.kicks-ass.net>
+ <alpine.LSU.2.21.1910161216100.7750@pobox.suse.cz>
+ <alpine.LSU.2.21.1910161521010.7750@pobox.suse.cz>
+ <20191018130342.GA4625@linux-8ccs>
+ <alpine.LSU.2.21.1910221022590.28918@pobox.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20191014154632.11103-1-minyard@acm.org>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: 6S1jDIpfO_a0u_OZuqNhHg-1
+In-Reply-To: <alpine.LSU.2.21.1910221022590.28918@pobox.suse.cz>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: SjCmvh6LOxCAPrxBPRs7jQ-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Corey,
+On Tue, Oct 22, 2019 at 10:27:49AM +0200, Miroslav Benes wrote:
+> > Does that sound like what you had in mind or am I totally off?
+>=20
+> Sort of. What I had in mind was that we could get rid of all special .klp=
+=20
+> ELF section if module loader guarantees that only sections for loaded=20
+> modules are processed. Then .klp.rela.$objname is not needed and proper=
+=20
+> .rela.text.$objname (or whatever its text section is named) should be=20
+> sufficient. The same for the rest (.klp.arch).
 
-Testing shows that this patch works as expected.
+If I understand correctly, using kvm as an example to-be-patched module,
+we'd have:
 
-Regards,
-Tony
+  .text.kvm
+  .rela.text.kvm
+  .altinstructions.kvm
+  .rela.altinstructions.kvm
+  __jump_table.kvm
+  .rela__jump_table.kvm
+
+etc.  i.e. any "special" sections would need to be renamed.
+
+Is that right?
+
+But also I think *any* sections which need relocations would need to be
+renamed, for example:
+
+  .rodata.kvm
+  .rela.rodata.kvm
+  .orc_unwind_ip.kvm
+  .rela.orc_unwind_ip.kvm
 
 
-On 10/14/19 11:46 AM, minyard@acm.org wrote:
-> From: Corey Minyard <cminyard@mvista.com>
->=20
-> If something has the IPMI driver open, don't allow the device
-> module to be unloaded.  Before it would unload and the user would
-> get errors on use.
->=20
-> This change is made on user request, and it makes it consistent
-> with the I2C driver, which has the same behavior.
->=20
-> It does change things a little bit with respect to kernel users.
-> If the ACPI or IPMI watchdog (or any other kernel user) has
-> created a user, then the device module cannot be unloaded.  Before
-> it could be unloaded,
->=20
-> This does not affect hot-plug.  If the device goes away (it's on
-> something removable that is removed or is hot-removed via sysfs)
-> then it still behaves as it did before.
->=20
-> Reported-by: tony camuso <tcamuso@redhat.com>
-> Signed-off-by: Corey Minyard <cminyard@mvista.com>
-> ---
-> Tony, here is a suggested change for this.  Can you look it over and
-> see if it looks ok?
->=20
-> Thanks,
->=20
-> -corey
->=20
->   drivers/char/ipmi/ipmi_msghandler.c | 23 ++++++++++++++++-------
->   include/linux/ipmi_smi.h            | 12 ++++++++----
->   2 files changed, 24 insertions(+), 11 deletions(-)
->=20
-> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi=
-_msghandler.c
-> index 2aab80e19ae0..15680de18625 100644
-> --- a/drivers/char/ipmi/ipmi_msghandler.c
-> +++ b/drivers/char/ipmi/ipmi_msghandler.c
-> @@ -448,6 +448,8 @@ enum ipmi_stat_indexes {
->  =20
->   #define IPMI_IPMB_NUM_SEQ=0964
->   struct ipmi_smi {
-> +=09struct module *owner;
-> +
->   =09/* What interface number are we? */
->   =09int intf_num;
->  =20
-> @@ -1220,6 +1222,11 @@ int ipmi_create_user(unsigned int          if_num,
->   =09if (rv)
->   =09=09goto out_kfree;
->  =20
-> +=09if (!try_module_get(intf->owner)) {
-> +=09=09rv =3D -ENODEV;
-> +=09=09goto out_kfree;
-> +=09}
-> +=09
->   =09/* Note that each existing user holds a refcount to the interface. *=
-/
->   =09kref_get(&intf->refcount);
->  =20
-> @@ -1349,6 +1356,7 @@ static void _ipmi_destroy_user(struct ipmi_user *us=
-er)
->   =09}
->  =20
->   =09kref_put(&intf->refcount, intf_free);
-> +=09module_put(intf->owner);
->   }
->  =20
->   int ipmi_destroy_user(struct ipmi_user *user)
-> @@ -2459,7 +2467,7 @@ static int __get_device_id(struct ipmi_smi *intf, s=
-truct bmc_device *bmc)
->    * been recently fetched, this will just use the cached data.  Otherwis=
-e
->    * it will run a new fetch.
->    *
-> - * Except for the first time this is called (in ipmi_register_smi()),
-> + * Except for the first time this is called (in ipmi_add_smi()),
->    * this will always return good data;
->    */
->   static int __bmc_get_device_id(struct ipmi_smi *intf, struct bmc_device=
- *bmc,
-> @@ -3377,10 +3385,11 @@ static void redo_bmc_reg(struct work_struct *work=
-)
->   =09kref_put(&intf->refcount, intf_free);
->   }
->  =20
-> -int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
-> -=09=09      void=09=09       *send_info,
-> -=09=09      struct device            *si_dev,
-> -=09=09      unsigned char            slave_addr)
-> +int ipmi_add_smi(struct module         *owner,
-> +=09=09 const struct ipmi_smi_handlers *handlers,
-> +=09=09 void=09=09       *send_info,
-> +=09=09 struct device         *si_dev,
-> +=09=09 unsigned char         slave_addr)
->   {
->   =09int              i, j;
->   =09int              rv;
-> @@ -3406,7 +3415,7 @@ int ipmi_register_smi(const struct ipmi_smi_handler=
-s *handlers,
->   =09=09return rv;
->   =09}
->  =20
-> -
-> +=09intf->owner =3D owner;
->   =09intf->bmc =3D &intf->tmp_bmc;
->   =09INIT_LIST_HEAD(&intf->bmc->intfs);
->   =09mutex_init(&intf->bmc->dyn_mutex);
-> @@ -3514,7 +3523,7 @@ int ipmi_register_smi(const struct ipmi_smi_handler=
-s *handlers,
->  =20
->   =09return rv;
->   }
-> -EXPORT_SYMBOL(ipmi_register_smi);
-> +EXPORT_SYMBOL(ipmi_add_smi);
->  =20
->   static void deliver_smi_err_response(struct ipmi_smi *intf,
->   =09=09=09=09     struct ipmi_smi_msg *msg,
-> diff --git a/include/linux/ipmi_smi.h b/include/linux/ipmi_smi.h
-> index 4dc66157d872..deec18b8944a 100644
-> --- a/include/linux/ipmi_smi.h
-> +++ b/include/linux/ipmi_smi.h
-> @@ -224,10 +224,14 @@ static inline int ipmi_demangle_device_id(uint8_t n=
-etfn, uint8_t cmd,
->    * is called, and the lower layer must get the interface from that
->    * call.
->    */
-> -int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
-> -=09=09      void                     *send_info,
-> -=09=09      struct device            *dev,
-> -=09=09      unsigned char            slave_addr);
-> +int ipmi_add_smi(struct module            *owner,
-> +=09=09 const struct ipmi_smi_handlers *handlers,
-> +=09=09 void                     *send_info,
-> +=09=09 struct device            *dev,
-> +=09=09 unsigned char            slave_addr);
-> +
-> +#define ipmi_register_smi(handlers, send_info, dev, slave_addr) \
-> +=09ipmi_add_smi(THIS_MODULE, handlers, send_info, dev, slave_addr)
->  =20
->   /*
->    * Remove a low-level interface from the IPMI driver.  This will
->=20
+It's an interesting idea.
+
+We'd have to be careful about ordering issues.  For example, there are
+module-specific jump labels stored in mod->jump_entries.  Right now
+that's just a pointer to the module's __jump_table section.  With late
+module patching, when kvm is loaded we'd have to insert the klp module's
+__jump_table.kvm entries into kvm's mod->jump_entries list somehow.
+
+Presumably we'd also have that issue for other sections.  Handling that
+_might_ be as simple as just hacking up find_module_sections() to
+re-allocate sections and append "patched sections" to them.
+
+But then you still have to worry about when to apply the relocations.
+If you apply them before patching the sections, then relative
+relocations would have the wrong values.  If you apply them after, then
+you have to figure out where the appended relocations are.
+
+And if we allow unpatching then we'd presumably have to be able to
+remove entries from the module specific section lists.
+
+So I get the feeling a lot of complexity would creep in.  Even just
+thinking about it requires more mental gymnastics than the
+one-patch-per-module idea, so I view that as a bad sign.
+
+--=20
+Josh
 
