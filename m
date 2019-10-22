@@ -2,142 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1D46E0470
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56780E04E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:24:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731714AbfJVNCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 09:02:51 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34738 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731583AbfJVNCu (ORCPT
+        id S2389251AbfJVNYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 09:24:24 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.234]:22266 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388087AbfJVNYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 09:02:50 -0400
-Received: by mail-oi1-f193.google.com with SMTP id 83so14101712oii.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 06:02:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kuKLQUxYTkpNquMkRmE+sotbdgdLrnH62e1xn6PHfbU=;
-        b=OA8cRa7tD6FPhuQ4fOfUw/N5hOeyF7n/lLzNq3Ht4ejf7flFCx3QqXSB5bOT1sLk73
-         ZsryZ3JVOnRII4PQhu6d29eVoQye7p4mGl8rHMBpQgoiZzib5f6zyc7OVSxrZYXHFDpH
-         gRYOr6/6wRM57aYrxTehevcSTyrRWPDQ2eYFYNJPStg78PuxujyDxr3z66sy68ynlc8V
-         cdWBK4hJXpdo806HSFYYN/pKKpf5xyJ2W+nA8dkv3Ku7Zt/5LIlFI5ETaE6sVUO+GY8A
-         kiPxxwJp8i0cpt9wfhKYSMxbt4zahzUejFDk87y6aY5rE4ozijMMry/LOQ0WiLDqDqr8
-         pYrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kuKLQUxYTkpNquMkRmE+sotbdgdLrnH62e1xn6PHfbU=;
-        b=iXItLkQDDp6lSQrHDcADHPAqwebZcAptUZR5JI0/9DDsHIeELBWSxO/7vSZdY5rE4d
-         IFset3OiVx9Q8FnAjmAyNXFzI8xXeKGsVHIfimF555hQx9XBmWg80WLSxpUi3SXon3EF
-         k6IbiNFC/BE50qANTx2CkzzFWLBn69ZgMdgZGY+C8w5mjPPyOcXxa5oZa+BtU9mzZays
-         Rk1rbkiUpLEcWariUu3CWBivohIiS+pAXGEPiBRu7IpefLqaG4IdtBDcPY+wB89/0W9G
-         jd6G2Ia2KwVydGgTqC73kZdWlrLtP+As+2Jigg4uxZu5drCWKqZ6+xAd0n3NH2mWBgzM
-         ny3A==
-X-Gm-Message-State: APjAAAXARbM37tBRif9B+11ms8nXfHD++/lBwZC5kpovDPsFiChOz6Lh
-        OmMNjBPltBoN5nwxs2VIy6YGHtebssyYEEEfrSBKJg==
-X-Google-Smtp-Source: APXvYqyE6JC7ar+RMfPYe2Bc7CF9ZEa9LQOjvcDMXILupXpHwW11aEDB46Lmm6zDvKX0yjzZjdW35NrOtLMI1hgKKkw=
-X-Received: by 2002:aca:f1a:: with SMTP id 26mr2807399oip.172.1571749369044;
- Tue, 22 Oct 2019 06:02:49 -0700 (PDT)
+        Tue, 22 Oct 2019 09:24:24 -0400
+X-Greylist: delayed 1277 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Oct 2019 09:24:22 EDT
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id B232BA7EE6
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 08:03:04 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id MtoWiVgEjHunhMtoWi2oHD; Tue, 22 Oct 2019 08:03:04 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:To:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=0DF9+JWLKklI0vooiTv9yvpDYkgO00PuecbN53kCwrk=; b=dxRdNg73f1fbbJqG2J8H7ffltK
+        ZZiiGJshGi8VozZ5htEu4VMywx1NKpcZF910VQBW96jisaW4XdV9wbg1sBAlB+qhoPpwi9O1fxjq6
+        /BEGQosbLHFkWjmmFupZsNGyEQ05OTLEEd7fI72u7hA9iVOocj4t3a+Ffnh1VX9lEZo1oTPUvnP74
+        mC3y/DJplSZuu0LLLTfkkFw/xtEx1a5WQQsJJvIeaF/MPqYsvJpkKPHpoxfK5uI4NfhDL97aqcwxA
+        /MVZSdNIaRNgZPf4evfCJIV7fvmkLV967M8C2EdgNLkIOlcny9rGk71TNDfI9LDHZZLr833lsXrax
+        tnT+T8kg==;
+Received: from [187.192.22.73] (port=51118 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iMtoV-002Mj5-Ku; Tue, 22 Oct 2019 08:03:03 -0500
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        kieran.bingham@ideasonboard.com, mchehab@kernel.org,
+        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <CACT4Y+ZMxcvnZnDa=uYyaLQaW5r22vBpXkDuMU=CM2BVzjF_Tg@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: adv748x: missing parens
+Message-ID: <baecb140-986a-da96-665a-0ec581ae2c75@embeddedor.com>
+Date:   Tue, 22 Oct 2019 08:02:50 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191017141305.146193-1-elver@google.com> <20191017141305.146193-9-elver@google.com>
- <20191022125921.GD11583@lakrids.cambridge.arm.com>
-In-Reply-To: <20191022125921.GD11583@lakrids.cambridge.arm.com>
-From:   Marco Elver <elver@google.com>
-Date:   Tue, 22 Oct 2019 15:02:37 +0200
-Message-ID: <CANpmjNPcToD2Joe_BE4xgLDOGCscHrtJdqivDPfFjE6nCpq5PQ@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] x86, kcsan: Enable KCSAN for x86
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alexander Potapenko <glider@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-efi@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACT4Y+ZMxcvnZnDa=uYyaLQaW5r22vBpXkDuMU=CM2BVzjF_Tg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.22.73
+X-Source-L: No
+X-Exim-ID: 1iMtoV-002Mj5-Ku
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [187.192.22.73]:51118
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Oct 2019 at 14:59, Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On Thu, Oct 17, 2019 at 04:13:05PM +0200, Marco Elver wrote:
-> > This patch enables KCSAN for x86, with updates to build rules to not use
-> > KCSAN for several incompatible compilation units.
-> >
-> > Signed-off-by: Marco Elver <elver@google.com>
-> > ---
-> > v2:
-> > * Document build exceptions where no previous above comment explained
-> >   why we cannot instrument.
-> > ---
-> >  arch/x86/Kconfig                      | 1 +
-> >  arch/x86/boot/Makefile                | 2 ++
-> >  arch/x86/boot/compressed/Makefile     | 2 ++
-> >  arch/x86/entry/vdso/Makefile          | 3 +++
-> >  arch/x86/include/asm/bitops.h         | 6 +++++-
-> >  arch/x86/kernel/Makefile              | 7 +++++++
-> >  arch/x86/kernel/cpu/Makefile          | 3 +++
-> >  arch/x86/lib/Makefile                 | 4 ++++
-> >  arch/x86/mm/Makefile                  | 3 +++
-> >  arch/x86/purgatory/Makefile           | 2 ++
-> >  arch/x86/realmode/Makefile            | 3 +++
-> >  arch/x86/realmode/rm/Makefile         | 3 +++
-> >  drivers/firmware/efi/libstub/Makefile | 2 ++
-> >  13 files changed, 40 insertions(+), 1 deletion(-)
->
-> > diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-> > index 0460c7581220..693d0a94b118 100644
-> > --- a/drivers/firmware/efi/libstub/Makefile
-> > +++ b/drivers/firmware/efi/libstub/Makefile
-> > @@ -31,7 +31,9 @@ KBUILD_CFLAGS                       := $(cflags-y) -DDISABLE_BRANCH_PROFILING \
-> >                                  -D__DISABLE_EXPORTS
-> >
-> >  GCOV_PROFILE                 := n
-> > +# Sanitizer runtimes are unavailable and cannot be linked here.
-> >  KASAN_SANITIZE                       := n
-> > +KCSAN_SANITIZE                       := n
-> >  UBSAN_SANITIZE                       := n
-> >  OBJECT_FILES_NON_STANDARD    := y
->
-> Not a big deal, but it might make sense to move the EFI stub exception
-> to patch 3 since it isn't x86 specific (and will also apply for arm64).
+Hi Dmitry,
 
-Thanks for spotting, moved for v3.
+Thanks for the report.
 
--- Marco
+On 10/22/19 02:29, Dmitry Vyukov wrote:
+> Hi Kieran,
+> 
+> Building kernel with clang gives me:
+> 
+> drivers/media/i2c/adv748x/adv748x-afe.c:452:12: warning: operator '?:'
+> has lower precedence than '|'; '|' will be evaluated first
+> [-Wbitwise-conditional-parentheses]
+> 
+> ret = sdp_clrset(state, ADV748X_SDP_FRP, ADV748X_SDP_FRP_MASK, enable
+> ? ctrl->val - 1 : 0);
+> #define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~m) | v)
+> 
+> This is on linux-next commit a722f75b2923b4fd44c17e7255e822ac48fe85f0
+> Date:   Tue Oct 22 16:17:17 2019 +1100
+>     Add linux-next specific files for 20191022
+> 
+> It seems sdp_clrset needs some more parens.
+> 
 
-> Otherwise this looks good to me.
->
-> Thanks,
-> Mark.
+Yep. It seems this is enough to fix the issue:
+
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index 5042f9e94aee..fccb388ce179 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -394,10 +394,10 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
+
+ #define io_read(s, r) adv748x_read(s, ADV748X_PAGE_IO, r)
+ #define io_write(s, r, v) adv748x_write(s, ADV748X_PAGE_IO, r, v)
+-#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~m) | v)
++#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~(m)) | (v))
+
+ #define hdmi_read(s, r) adv748x_read(s, ADV748X_PAGE_HDMI, r)
+-#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, r+1)) & m)
++#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, (r)+1)) & (m))
+ #define hdmi_write(s, r, v) adv748x_write(s, ADV748X_PAGE_HDMI, r, v)
+
+ #define repeater_read(s, r) adv748x_read(s, ADV748X_PAGE_REPEATER, r)
+@@ -405,11 +405,11 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
+
+ #define sdp_read(s, r) adv748x_read(s, ADV748X_PAGE_SDP, r)
+ #define sdp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_SDP, r, v)
+-#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~m) | v)
++#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~(m)) | (v))
+
+ #define cp_read(s, r) adv748x_read(s, ADV748X_PAGE_CP, r)
+ #define cp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_CP, r, v)
+-#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~m) | v)
++#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~(m)) | (v))
+
+ #define tx_read(t, r) adv748x_read(t->state, t->page, r)
+ #define tx_write(t, r, v) adv748x_write(t->state, t->page, r, v)
+
+
+More on writing safe macros in C:
+
+https://wiki.sei.cmu.edu/confluence/display/c/PRE31-C.+Avoid+side+effects+in+arguments+to+unsafe+macros
+
+--
+Gustavo
