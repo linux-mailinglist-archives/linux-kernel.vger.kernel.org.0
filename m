@@ -2,104 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDFDBE07FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 17:54:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 076A8E07F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 17:53:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388823AbfJVPxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 11:53:51 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45007 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388789AbfJVPxv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 11:53:51 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iMwT7-0006Ja-Jx; Tue, 22 Oct 2019 17:53:09 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iMwT5-0002EX-5J; Tue, 22 Oct 2019 17:53:07 +0200
-Date:   Tue, 22 Oct 2019 17:53:07 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Olof Johansson <olof@lixom.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH 11/36] ARM: s5pv210: split from plat-samsung
-Message-ID: <20191022155307.izh4ryorm7thw7tq@pengutronix.de>
-References: <20191010202802.1132272-1-arnd@arndb.de>
- <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-11-arnd@arndb.de>
- <20191011055149.4dudr4tk2znpt65u@pengutronix.de>
- <CAK8P3a1st8gR7u+8-oyP6HrzZdmrzhq7PRonYuz0a5O8rfKaSA@mail.gmail.com>
+        id S2388773AbfJVPxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 11:53:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53804 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387888AbfJVPxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 11:53:31 -0400
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5AFC583F42
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 15:53:30 +0000 (UTC)
+Received: by mail-wr1-f69.google.com with SMTP id 92so4034976wro.14
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 08:53:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JG+rDaiZPjv/G30aIXSiabMNCIhXTu4D3139P64uM1U=;
+        b=IhKzwdBC4Rwrx3od6zl4oKzYzwgJhp5XCnJDp/Zz4IPw1NTa6ItVTmCOZufAXg8GgI
+         Xf6D3WYjiBuB0lR0T9gpm1LDN18fCTBQjBrUcmC6FsJwiIkRNNC1PqFE9DFKzDdY1ZSX
+         Gq2oylgnQKV5/EQaL4AKrZolhgZ3A9JE3TEkQn+bu6/Nb81Lqe/iD7RT4buUHUCMpcbT
+         DjDMZP6OnHKwyV+H7UZcK/bPuX+9RRgZu4fFX5Z7OhTM/G180a09DO5fCEzw3Eiv/Ab6
+         uKOl1pD8xQZmixvRlPK8bvIwtRDLh9kQigOYO/FpFYlnTdJAwsQxgoJeStUL1ZVrroEH
+         v4cw==
+X-Gm-Message-State: APjAAAX3hpwsmH8GhY6IsyApWCl0rDfxBEacNrY37Z4dENeNs2qEpYER
+        7ROOji84x52qiPakL7DAzg4ZUAKetjr1T/9hNPWqsn6cF3e92li+3vLXIQ92tgzGEk+AGG4jlP7
+        2EiiqvLGvMLoCTeEr2OEGb2nj
+X-Received: by 2002:a1c:c90c:: with SMTP id f12mr3515222wmb.97.1571759608919;
+        Tue, 22 Oct 2019 08:53:28 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqz6V+VvQ3ZIcj/uWsxd5zvt1LhKvigbB1GL0YOeGKZ2oispvsSJTapzUQJ7s70S4Bt0HGQCSQ==
+X-Received: by 2002:a1c:c90c:: with SMTP id f12mr3515188wmb.97.1571759608659;
+        Tue, 22 Oct 2019 08:53:28 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:c0e4:dcf4:b543:ce19? ([2001:b07:6468:f312:c0e4:dcf4:b543:ce19])
+        by smtp.gmail.com with ESMTPSA id t123sm24286579wma.40.2019.10.22.08.53.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2019 08:53:28 -0700 (PDT)
+Subject: Re: [PATCH v2 14/15] KVM: Terminate memslot walks via used_slots
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     James Hogan <jhogan@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+References: <20191022003537.13013-1-sean.j.christopherson@intel.com>
+ <20191022003537.13013-15-sean.j.christopherson@intel.com>
+ <642f73ee-9425-0149-f4f4-f56be9ae5713@redhat.com>
+ <20191022152827.GC2343@linux.intel.com>
+ <625e511f-bd35-3b92-0c6d-550c10fc5827@redhat.com>
+ <20191022155220.GD2343@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <5c61c094-ee32-4dcf-b3ae-092eba0159c5@redhat.com>
+Date:   Tue, 22 Oct 2019 17:53:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK8P3a1st8gR7u+8-oyP6HrzZdmrzhq7PRonYuz0a5O8rfKaSA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20191022155220.GD2343@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Tue, Oct 22, 2019 at 04:01:12PM +0200, Arnd Bergmann wrote:
-> > > @@ -235,7 +235,6 @@ machine-$(CONFIG_PLAT_SPEAR)              += spear
-> > >  # by CONFIG_* macro name.
-> > >  plat-$(CONFIG_ARCH_OMAP)     += omap
-> > >  plat-$(CONFIG_ARCH_S3C64XX)  += samsung
-> > > -plat-$(CONFIG_ARCH_S5PV210)  += samsung
-> >
-> > Would it make more sense to make this
-> >
-> >         plat-$(PLAT_SAMSUNG) += samsung
-> >
-> > (in a separate patch)? Hmm, it seems there is no plat-y for
-> > PLAT_S3C24XX=y builds. Is this intended? If yes, the directory name
-> > containing "samsung" suggests something that seems untrue.
+On 22/10/19 17:52, Sean Christopherson wrote:
 > 
-> By the end of the series, the plat-samsung directory is completely
-> removed (folded into mach-s3c), so that would only add more
-> churn for the same result I think.
+> Anyways, I'm not at all opposed to adding comments, just want to make sure
+> I'm not forgetting something.  If it's ok with you, I'll comment the code
+> and/or functions and reply here to refine them without having to respin
+> the whole series.
 
-fine for me. The background of my question was me wondering if builds
-for PLAT_S3C24XX=y (before your patch series) don't need plat-samsung.
+Yes, I agree this is better.
 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Paolo
