@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F076E04E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:23:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA7D0E04DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:23:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389153AbfJVNX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 09:23:29 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:42626 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728346AbfJVNX3 (ORCPT
+        id S2388100AbfJVNXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 09:23:17 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:32930 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387966AbfJVNXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 09:23:29 -0400
+        Tue, 22 Oct 2019 09:23:16 -0400
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9MDNROO087130;
-        Tue, 22 Oct 2019 08:23:27 -0500
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9MDNEtS003725;
+        Tue, 22 Oct 2019 08:23:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571750607;
-        bh=IjFogRcV5VPblbZbB1hDvqvhqSLBqIveS+AehjX8pis=;
+        s=ti-com-17Q1; t=1571750594;
+        bh=gR7OAXsQc4OiOhV7DWYE58CP8SVL3y7X8+jWjC3qNZ0=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=MhoFLSVqvtpPys7QuSBA59p1W8YLj77oQ93Sy2Yhc3QFXGCEYXYUiqpTtkVo06Vec
-         KWjo2LjCONXFgTfmPnmYFdgzvd2aCd3hHnI9ypXfBjNoId94jMGdM+y7F9vw7QeofR
-         PBP9i0f2oa5nwUhTuRRG2790UVfIfPyvZ9xlNXUc=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9MDNC5p068138
+        b=KZY93pcExSDQEi9oLzUIIiXl5q/7TsnHy7jPRnKLrHCT/ic5AslsO5BpI+RJWXNSz
+         UzZ6hLRY1vnJdVC4MEM4vE9oC56pDT12OHWZSac9Jnze3/RXTEE7PxoAD9cWAeUY6c
+         rVjbxsMV93eHx9x6tavZtyC4A6WmRRQh98BHdcqY=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9MDNEc6068197
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Oct 2019 08:23:12 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 22 Oct 2019 08:23:14 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 22
- Oct 2019 08:23:01 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2019 08:23:13 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 22 Oct 2019 08:23:11 -0500
+ Frontend Transport; Tue, 22 Oct 2019 08:23:04 -0500
 Received: from lta0400828a.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9MDMplZ126427;
-        Tue, 22 Oct 2019 08:22:54 -0500
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9MDMpla126427;
+        Tue, 22 Oct 2019 08:22:56 -0500
 From:   Roger Quadros <rogerq@ti.com>
 To:     <kishon@ti.com>
 CC:     <aniljoy@cadence.com>, <adouglas@cadence.com>, <nsekhar@ti.com>,
         <jsarha@ti.com>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 1/3] phy: cadence: Sierra: add phy_reset hook
-Date:   Tue, 22 Oct 2019 16:22:47 +0300
-Message-ID: <20191022132249.869-2-rogerq@ti.com>
+Subject: [PATCH 2/3] dt-bindings: phy: ti,phy-j721e-wiz: Add Type-C dir GPIO
+Date:   Tue, 22 Oct 2019 16:22:48 +0300
+Message-ID: <20191022132249.869-3-rogerq@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191022132249.869-1-rogerq@ti.com>
 References: <20191022132249.869-1-rogerq@ti.com>
@@ -56,40 +56,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is required if type C driver needs to hold
-global reset on J7ES to perform LN10 swap.
+This is an optional GPIO, if specified will be used to
+swap lane 0 and lane 1 based on GPIO status. This is required
+to achieve plug flip support for USB Type-C.
+
+Type-C companions typically need some time after the cable is
+plugged before and before they reflect the correct status of
+Type-C plug orientation on the DIR line.
+
+Type-C Spec specifies CC attachment debounce time (tCCDebounce)
+of 100 ms (min) to 200 ms (max).
+
+Allow the DT node to specify the time (in ms) that we need
+to wait before sampling the DIR line.
 
 Signed-off-by: Roger Quadros <rogerq@ti.com>
 Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 ---
- drivers/phy/cadence/phy-cadence-sierra.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../devicetree/bindings/phy/ti,phy-j721e-wiz.txt         | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/phy/cadence/phy-cadence-sierra.c b/drivers/phy/cadence/phy-cadence-sierra.c
-index affede8c4368..e6d27bdec22a 100644
---- a/drivers/phy/cadence/phy-cadence-sierra.c
-+++ b/drivers/phy/cadence/phy-cadence-sierra.c
-@@ -339,10 +339,20 @@ static int cdns_sierra_phy_off(struct phy *gphy)
- 	return reset_control_assert(ins->lnk_rst);
- }
+diff --git a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.txt b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.txt
+index 19b4c3e855d6..253535a8819f 100644
+--- a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.txt
++++ b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.txt
+@@ -24,6 +24,15 @@ Optional properties:
+ assigned-clocks and assigned-clock-parents: As documented in the generic
+ clock bindings in Documentation/devicetree/bindings/clock/clock-bindings.txt
  
-+static int cdns_sierra_phy_reset(struct phy *gphy)
-+{
-+	struct cdns_sierra_phy *sp = dev_get_drvdata(gphy->dev.parent);
++ - typec-dir-gpios: GPIO to signal Type-C cable orientation for lane swap.
++     If GPIO is active, lane 0 and lane 1 of SERDES will be swapped to
++     achieve the funtionality of an exernal type-C plug flip mux.
 +
-+	reset_control_assert(sp->phy_rst);
-+	reset_control_deassert(sp->phy_rst);
-+	return 0;
-+};
++ - typec-dir-debounce: Number of milliseconds to wait before sampling
++     typec-dir-gpio. If not specified, the GPIO will be sampled ASAP.
++     Type-C spec states minimum CC pin debounce of 100 ms and maximum
++     of 200 ms.
 +
- static const struct phy_ops ops = {
- 	.init		= cdns_sierra_phy_init,
- 	.power_on	= cdns_sierra_phy_on,
- 	.power_off	= cdns_sierra_phy_off,
-+	.reset		= cdns_sierra_phy_reset,
- 	.owner		= THIS_MODULE,
- };
- 
+ Required subnodes:
+  - Clock Subnode: WIZ node should have '3' subnodes for each of the clock
+      selects it supports. The clock subnodes should have the following names
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
 Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
