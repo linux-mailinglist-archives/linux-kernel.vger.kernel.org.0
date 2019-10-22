@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75791DFEF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:05:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16BAFDFEFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388120AbfJVIFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:05:54 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:49215 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388019AbfJVIFx (ORCPT
+        id S2388142AbfJVIF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 04:05:57 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47841 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388133AbfJVIFz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:05:53 -0400
+        Tue, 22 Oct 2019 04:05:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571731552;
+        s=mimecast20190719; t=1571731555;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=UJBqHCwpIBtwLyrKpDMAXOjT9q0eBo6gpCpHT0A5CYs=;
-        b=bUldyGddilpkePhC+ulhauT+5S354eBhMnziXjg+LK+6M9qmB+l4ZLJWL+phWL9UbMDi/p
-        aQtN2ZEKQ7kmKvIksWJiuqeC6siDpTfjhF/c/tw+K3dwLeI9qaUK6MPpd5QYWroaXMCLgq
-        k/ZLok0pWUBJr6tj6S2YEqlqesVbDxo=
+        bh=HWju8v0ylZxHY2q8lIGnYZrlUnAZLYf6aSqluBMV1e4=;
+        b=dJn2eEhau+exi4nYdLIK8NCwXRQ21q6v8wXPHAXBX11dqy266GxM+vFigK/zHtqOoip4HF
+        hNrHs5KjPCv3dYAp5f3VQq+zhyp5qikBP21uyJJ/tYGRm6z+FTLGqFHEaMPQj2ckX56jTi
+        boQnDgwqN9XwuaZ3nzkIvZHMIKcY9wk=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-172-yq8PqrZiMIu0kX-iL-wLUw-1; Tue, 22 Oct 2019 04:05:51 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-182-h5_LunauPA-uTd6PBDMJPg-1; Tue, 22 Oct 2019 04:05:51 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2063F800D4E;
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 95E5C2B7;
         Tue, 22 Oct 2019 08:05:50 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-43.ams2.redhat.com [10.36.116.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E4865C219;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5878C5DA8D;
         Tue, 22 Oct 2019 08:05:47 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 7BE489D69; Tue, 22 Oct 2019 10:05:46 +0200 (CEST)
+        id A75D09D72; Tue, 22 Oct 2019 10:05:46 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Gurchetan Singh <gurchetansingh@chromium.org>,
@@ -43,13 +43,13 @@ Cc:     Gurchetan Singh <gurchetansingh@chromium.org>,
         Daniel Vetter <daniel@ffwll.ch>,
         virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/5] drm/virtio: print a single line with device features
-Date:   Tue, 22 Oct 2019 10:05:42 +0200
-Message-Id: <20191022080546.19769-2-kraxel@redhat.com>
+Subject: [PATCH 2/5] drm/virtio: move byteorder handling into virtio_gpu_cmd_transfer_to_host_2d function
+Date:   Tue, 22 Oct 2019 10:05:43 +0200
+Message-Id: <20191022080546.19769-3-kraxel@redhat.com>
 In-Reply-To: <20191022080546.19769-1-kraxel@redhat.com>
 References: <20191022080546.19769-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: yq8PqrZiMIu0kX-iL-wLUw-1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: h5_LunauPA-uTd6PBDMJPg-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
@@ -58,37 +58,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Be consistent with the rest of the code base.
+No functional change.
+
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/virtio/virtgpu_kms.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_drv.h   |  4 ++--
+ drivers/gpu/drm/virtio/virtgpu_plane.c | 12 ++++++------
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 12 ++++++------
+ 3 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/=
-virtgpu_kms.c
-index 0b3cdb0d83b0..2f5773e43557 100644
---- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-@@ -155,16 +155,15 @@ int virtio_gpu_init(struct drm_device *dev)
- #ifdef __LITTLE_ENDIAN
- =09if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_VIRGL))
- =09=09vgdev->has_virgl_3d =3D true;
--=09DRM_INFO("virgl 3d acceleration %s\n",
--=09=09 vgdev->has_virgl_3d ? "enabled" : "not supported by host");
--#else
--=09DRM_INFO("virgl 3d acceleration not supported by guest\n");
- #endif
- =09if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_EDID)) {
- =09=09vgdev->has_edid =3D true;
--=09=09DRM_INFO("EDID support available.\n");
- =09}
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/=
+virtgpu_drv.h
+index 314e02f94d9c..0b56ba005e25 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.h
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+@@ -267,8 +267,8 @@ void virtio_gpu_cmd_unref_resource(struct virtio_gpu_de=
+vice *vgdev,
+ =09=09=09=09   uint32_t resource_id);
+ void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
+ =09=09=09=09=09uint64_t offset,
+-=09=09=09=09=09__le32 width, __le32 height,
+-=09=09=09=09=09__le32 x, __le32 y,
++=09=09=09=09=09uint32_t width, uint32_t height,
++=09=09=09=09=09uint32_t x, uint32_t y,
+ =09=09=09=09=09struct virtio_gpu_object_array *objs,
+ =09=09=09=09=09struct virtio_gpu_fence *fence);
+ void virtio_gpu_cmd_resource_flush(struct virtio_gpu_device *vgdev,
+diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virti=
+o/virtgpu_plane.c
+index f4b7360282ce..390524143139 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_plane.c
++++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
+@@ -132,10 +132,10 @@ static void virtio_gpu_primary_plane_update(struct dr=
+m_plane *plane,
+ =09=09=09virtio_gpu_array_add_obj(objs, vgfb->base.obj[0]);
+ =09=09=09virtio_gpu_cmd_transfer_to_host_2d
+ =09=09=09=09(vgdev, 0,
+-=09=09=09=09 cpu_to_le32(plane->state->src_w >> 16),
+-=09=09=09=09 cpu_to_le32(plane->state->src_h >> 16),
+-=09=09=09=09 cpu_to_le32(plane->state->src_x >> 16),
+-=09=09=09=09 cpu_to_le32(plane->state->src_y >> 16),
++=09=09=09=09 plane->state->src_w >> 16,
++=09=09=09=09 plane->state->src_h >> 16,
++=09=09=09=09 plane->state->src_x >> 16,
++=09=09=09=09 plane->state->src_y >> 16,
+ =09=09=09=09 objs, NULL);
+ =09=09}
+ =09} else {
+@@ -234,8 +234,8 @@ static void virtio_gpu_cursor_plane_update(struct drm_p=
+lane *plane,
+ =09=09virtio_gpu_array_add_obj(objs, vgfb->base.obj[0]);
+ =09=09virtio_gpu_cmd_transfer_to_host_2d
+ =09=09=09(vgdev, 0,
+-=09=09=09 cpu_to_le32(plane->state->crtc_w),
+-=09=09=09 cpu_to_le32(plane->state->crtc_h),
++=09=09=09 plane->state->crtc_w,
++=09=09=09 plane->state->crtc_h,
+ =09=09=09 0, 0, objs, vgfb->fence);
+ =09=09dma_fence_wait(&vgfb->fence->f, true);
+ =09=09dma_fence_put(&vgfb->fence->f);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/v=
+irtgpu_vq.c
+index 80176f379ad5..74ad3bc3ebe8 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -549,8 +549,8 @@ void virtio_gpu_cmd_resource_flush(struct virtio_gpu_de=
+vice *vgdev,
 =20
-+=09DRM_INFO("features: %cvirgl %cedid\n",
-+=09=09 vgdev->has_virgl_3d ? '+' : '-',
-+=09=09 vgdev->has_edid     ? '+' : '-');
-+
- =09ret =3D virtio_find_vqs(vgdev->vdev, 2, vqs, callbacks, names, NULL);
- =09if (ret) {
- =09=09DRM_ERROR("failed to find virt queues\n");
+ void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
+ =09=09=09=09=09uint64_t offset,
+-=09=09=09=09=09__le32 width, __le32 height,
+-=09=09=09=09=09__le32 x, __le32 y,
++=09=09=09=09=09uint32_t width, uint32_t height,
++=09=09=09=09=09uint32_t x, uint32_t y,
+ =09=09=09=09=09struct virtio_gpu_object_array *objs,
+ =09=09=09=09=09struct virtio_gpu_fence *fence)
+ {
+@@ -571,10 +571,10 @@ void virtio_gpu_cmd_transfer_to_host_2d(struct virtio=
+_gpu_device *vgdev,
+ =09cmd_p->hdr.type =3D cpu_to_le32(VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D);
+ =09cmd_p->resource_id =3D cpu_to_le32(bo->hw_res_handle);
+ =09cmd_p->offset =3D cpu_to_le64(offset);
+-=09cmd_p->r.width =3D width;
+-=09cmd_p->r.height =3D height;
+-=09cmd_p->r.x =3D x;
+-=09cmd_p->r.y =3D y;
++=09cmd_p->r.width =3D cpu_to_le32(width);
++=09cmd_p->r.height =3D cpu_to_le32(height);
++=09cmd_p->r.x =3D cpu_to_le32(x);
++=09cmd_p->r.y =3D cpu_to_le32(y);
+=20
+ =09virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, &cmd_p->hdr, fence);
+ }
 --=20
 2.18.1
 
