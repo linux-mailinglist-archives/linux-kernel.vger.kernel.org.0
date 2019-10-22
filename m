@@ -2,153 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 771B8E0EB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 01:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BC1EE0EC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 01:49:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389947AbfJVXt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 19:49:29 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46005 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389861AbfJVXt1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 19:49:27 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b4so2738297pfr.12
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 16:49:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=jy9PGt/JUHpqCjsUhqnEfKaQDEpFjLPDpvn+6DlfB7s=;
-        b=cgvmVjDrPJ345Wr7smrxVEa9O3ft7r0SWLnAusfoV/SzNtw9nPEQVJDpNPaLfYdM0G
-         yMNc5jvG22vT+gDtYmIc/lFTWnAdoElOXRax1gO/lboPqGXAmprKW4w7vULyarOUS6js
-         c4yNVsTZmP2F1Ewr6f35gLNkCLaIBGoCBnRF9HPxZgC4Pj8RvLo/iTPCjT+V39rX7hE+
-         CgInbjWOCkETixOykJxv4Leol9zOiAa8lGYldfODoXIx6wlI7JplpjxpA7OZsmbypvkP
-         QvRvpxMk+l+nWo9k0YB20p9RjOPKRn+tYmJqlFQKP/pOEW11zP0WvuzzRIZWlZt0QhAR
-         TVhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jy9PGt/JUHpqCjsUhqnEfKaQDEpFjLPDpvn+6DlfB7s=;
-        b=qkUu+s9ru15NYZS52Ekw25mJPDhgnkdsq5tbclC6dUUt543YviYk5PJmk4EVvM0PK2
-         8Hq8O2gSx54bJReznyBiZmItYrFzVmZjDy1ZYFiES+dw8U9/1kAbOBPZUP+yoDV6Vru4
-         a42fmmSNUP7jP+vnzNv1/qT9EQNZwNRa+gCsfu/gpynMNmtm6gCk000Lgi3hbHOazHLN
-         /BjDhTU6qDtNi4/5pjEKnirHCZe3rpPE6cxPIjM0yVfUHd03K4kMBdh+mQK4hORajBza
-         oQ5fHJtaxyhm8T1lrSdd/vqRSIymJ62aEv5dbg/e1AEfdqti10mQd6j36Tmyri/B9IPl
-         Z9nw==
-X-Gm-Message-State: APjAAAVvPPPbwzJTRb8agC9F3Wz6048Pk5QMZXP9Bs3Xv3UwoAC1SP4K
-        2FinTpG/awZ9dVcwbDsLASU=
-X-Google-Smtp-Source: APXvYqydM8hZGzOc0Cn8BCHDzqTYCzCLqeT48fLgD1D3OjpyS4Nzp6jjX2rsyNlEnsrmx29k7KqgOg==
-X-Received: by 2002:a63:65c6:: with SMTP id z189mr6437316pgb.433.1571788165838;
-        Tue, 22 Oct 2019 16:49:25 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1833])
-        by smtp.gmail.com with ESMTPSA id r18sm24624538pgm.31.2019.10.22.16.49.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Oct 2019 16:49:25 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 16:49:22 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH 3/3] x86/ftrace: Use text_poke()
-Message-ID: <20191022234921.n5nplxlyq25mksxg@ast-mbp.dhcp.thefacebook.com>
-References: <20191022215841.2qsmhd6vxi4mwade@ast-mbp.dhcp.thefacebook.com>
- <7364B113-DD65-423D-BED3-FF90C4DF8334@amacapital.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7364B113-DD65-423D-BED3-FF90C4DF8334@amacapital.net>
-User-Agent: NeoMutt/20180223
+        id S2389976AbfJVXtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 19:49:42 -0400
+Received: from mga06.intel.com ([134.134.136.31]:28707 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732951AbfJVXtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 19:49:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 16:49:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,218,1569308400"; 
+   d="scan'208";a="191652622"
+Received: from jacob-builder.jf.intel.com ([10.7.199.155])
+  by orsmga008.jf.intel.com with ESMTP; 22 Oct 2019 16:49:02 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>
+Cc:     "Yi Liu" <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v6 00/10] Nested Shared Virtual Address (SVA) VT-d support
+Date:   Tue, 22 Oct 2019 16:53:13 -0700
+Message-Id: <1571788403-42095-1-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 03:45:26PM -0700, Andy Lutomirski wrote:
-> 
-> 
-> >> On Oct 22, 2019, at 2:58 PM, Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> >> 
-> >> ﻿On Tue, Oct 22, 2019 at 05:04:30PM -0400, Steven Rostedt wrote:
-> >> I gave a solution for this. And that is to add another flag to allow
-> >> for just the minimum to change the ip. And we can even add another flag
-> >> to allow for changing the stack if needed (to emulate a call with the
-> >> same parameters).
-> > 
-> > your solution is to reduce the overhead.
-> > my solution is to remove it competely. See the difference?
-> > 
-> >> By doing this work, live kernel patching will also benefit. Because it
-> >> is also dealing with the unnecessary overhead of saving regs.
-> >> And we could possibly even have kprobes benefit from this if a kprobe
-> >> doesn't need full regs.
-> > 
-> > Neither of two statements are true. The per-function generated trampoline
-> > I'm talking about is bpf specific. For a function with two arguments it's just:
-> > push rbp 
-> > mov rbp, rsp
-> > push rdi
-> > push rsi
-> > lea  rdi,[rbp-0x10]
-> > call jited_bpf_prog
-> > pop rsi
-> > pop rdi
-> > leave
-> > ret
-> 
-> Why are you saving rsi?  You said upthread that you’re saving the args, but rsi is already available in rsi.
+Shared virtual address (SVA), a.k.a, Shared virtual memory (SVM) on Intel
+platforms allow address space sharing between device DMA and applications.
+SVA can reduce programming complexity and enhance security.
+This series is intended to enable SVA virtualization, i.e. shared guest
+application address space and physical device DMA address. Only IOMMU portion
+of the changes are included in this series. Additional support is needed in
+VFIO and QEMU (will be submitted separately) to complete this functionality.
 
-because rsi is caller saved. The above example is for probing something
-like tcp_set_state(struct sock *sk, int state) that everyone used to
-kprobe until we got a tracepoint there.
-The main bpf prog has only one argument R1 == rdi on x86,
-but it's allowed to clobber all caller saved regs.
-Just like x86 function that accepts one argument in rdi can clobber rsi and others.
-So it's essential to save 'sk' and 'state' for tcp_set_state()
-to continue as nothing happened.
+To make incremental changes and reduce the size of each patchset. This series
+does not inlcude support for page request services.
 
->  But I’m wondering whether the bpf jitted code could just directly access the frame instead of indirecting through a register.
+In VT-d implementation, PASID table is per device and maintained in the host.
+Guest PASID table is shadowed in VMM where virtual IOMMU is emulated.
 
-That's an excellent question!
-We've debated a ton whether to extend main prog from R1 to all R1-R5
-like bpf subprograms allow. The problem is a lot of existing infra
-assume single R1==ctx. Passing 6th argument is not defined either.
-But it's nice to see all arguments of the kernel function.
-Also bpf is 64-bit ISA. Even when it's running on 32-bit arch.
-Just taking values from registers doesn't work there.
-Whereas when args are indirectly passed as a bunch of u64s in the stack
-the bpf prog becomes portable across architectures
-(not 100% of course, but close).
+    .-------------.  .---------------------------.
+    |   vIOMMU    |  | Guest process CR3, FL only|
+    |             |  '---------------------------'
+    .----------------/
+    | PASID Entry |--- PASID cache flush -
+    '-------------'                       |
+    |             |                       V
+    |             |                CR3 in GPA
+    '-------------'
+Guest
+------| Shadow |--------------------------|--------
+      v        v                          v
+Host
+    .-------------.  .----------------------.
+    |   pIOMMU    |  | Bind FL for GVA-GPA  |
+    |             |  '----------------------'
+    .----------------/  |
+    | PASID Entry |     V (Nested xlate)
+    '----------------\.------------------------------.
+    |             |   |SL for GPA-HPA, default domain|
+    |             |   '------------------------------'
+    '-------------'
+Where:
+ - FL = First level/stage one page tables
+ - SL = Second level/stage two page tables
 
-> Is it entirely specific to the probed function? 
+This is the remaining VT-d only portion of V5 since the uAPIs and IOASID common
+code have been applied to Joerg's IOMMU core branch.
+(https://lkml.org/lkml/2019/10/2/833)
 
-yes. It is specific to the probed function. The verifier makes sure
-that only first two arguments are accessed as read-only
-via *(u64*)(r1 + 0) and *(u64*)(r1 + 8)
-But the program is allowed to use r2-r5 without saving them.
-r6-r10 are saved in implicit program prologue.
+The complete set with VFIO patches are here:
+https://github.com/jacobpan/linux.git:siov_sva
 
-> In any event, I think you can’t *just* use text_poke.  Something needs to coordinate to ensure that, if you bpf trace an already-kprobed function, the right thing happens.
+The complete nested SVA upstream patches are divided into three phases:
+    1. Common APIs and PCI device direct assignment
+    2. Page Request Services (PRS) support
+    3. Mediated device assignment
 
-Right. Not _just_. I'm looking at Peter's patches and as a minimum I need to grab
-text_mutex and make sure it's nop being replaced.
+With this set and the accompanied VFIO code, we will achieve phase #1.
 
-> FWIW, if you are going to use a trampoline like this, consider using r11 for the caller frame instead of rsi.
+Thanks,
 
-r11 can be used by jited code that doing divide and multiply.
-It's possible to refactor that code and free it up.
-I prefer to save such micro-optimization for later.
-Dealing with interpreter is also a pain to the point I'm considering
-to avoid supporting it for these new things.
-Folks should be using CONFIG_BPF_JIT_ALWAYS_ON anyway.
+Jacob
+
+ChangeLog:
+	- V6
+	  - Rebased on top of Joerg's core branch
+	  (git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git core)
+	  - Adapt to new uAPIs and IOASID allocators
+
+	- V5
+	  Rebased on v5.3-rc4 which has some of the IOMMU fault APIs merged.
+ 	  Addressed v4 review comments from Eric Auger, Baolu Lu, and
+	    Jonathan Cameron. Specific changes are as follows:
+	  - Refined custom IOASID allocator to support multiple vIOMMU, hotplug
+	    cases.
+	  - Extracted vendor data from IOMMU guest PASID bind data, for VT-d
+	    will support all necessary guest PASID entry fields for PASID
+	    bind.
+	  - Support non-identity host-guest PASID mapping
+	  - Exception handling in various cases
+
+	- V4
+	  - Redesigned IOASID allocator such that it can support custom
+	  allocators with shared helper functions. Use separate XArray
+	  to store IOASIDs per allocator. Took advice from Eric Auger to
+	  have default allocator use the generic allocator structure.
+	  Combined into one patch in that the default allocator is just
+	  "another" allocator now. Can be built as a module in case of
+	  driver use without IOMMU.
+	  - Extended bind guest PASID data to support SMMU and non-identity
+	  guest to host PASID mapping https://lkml.org/lkml/2019/5/21/802
+	  - Rebased on Jean's sva/api common tree, new patches starts with
+	   [PATCH v4 10/22]
+
+	- V3
+	  - Addressed thorough review comments from Eric Auger (Thank you!)
+	  - Moved IOASID allocator from driver core to IOMMU code per
+	    suggestion by Christoph Hellwig
+	    (https://lkml.org/lkml/2019/4/26/462)
+	  - Rebased on top of Jean's SVA API branch and Eric's v7[1]
+	    (git://linux-arm.org/linux-jpb.git sva/api)
+	  - All IOMMU APIs are unmodified (except the new bind guest PASID
+	    call in patch 9/16)
+
+	- V2
+	  - Rebased on Joerg's IOMMU x86/vt-d branch v5.1-rc4
+	  - Integrated with Eric Auger's new v7 series for common APIs
+	  (https://github.com/eauger/linux/tree/v5.1-rc3-2stage-v7)
+	  - Addressed review comments from Andy Shevchenko and Alex Williamson on
+	    IOASID custom allocator.
+	  - Support multiple custom IOASID allocators (vIOMMUs) and dynamic
+	    registration.
+
+
+Jacob Pan (9):
+  iommu/vt-d: Add custom allocator for IOASID
+  iommu/vt-d: Replace Intel specific PASID allocator with IOASID
+  iommu/vt-d: Move domain helper to header
+  iommu/vt-d: Avoid duplicated code for PASID setup
+  iommu/vt-d: Add nested translation helper function
+  iommu/vt-d: Misc macro clean up for SVM
+  iommu/vt-d: Add bind guest PASID support
+  iommu/vt-d: Support flushing more translation cache types
+  iommu/vt-d: Add svm/sva invalidate function
+
+Lu Baolu (1):
+  iommu/vt-d: Enlightened PASID allocation
+
+ drivers/iommu/Kconfig       |   1 +
+ drivers/iommu/dmar.c        |  46 ++++++
+ drivers/iommu/intel-iommu.c | 259 +++++++++++++++++++++++++++++++--
+ drivers/iommu/intel-pasid.c | 343 +++++++++++++++++++++++++++++++++++++-------
+ drivers/iommu/intel-pasid.h |  25 +++-
+ drivers/iommu/intel-svm.c   | 298 ++++++++++++++++++++++++++++++--------
+ include/linux/intel-iommu.h |  39 ++++-
+ include/linux/intel-svm.h   |  17 +++
+ 8 files changed, 904 insertions(+), 124 deletions(-)
+
+-- 
+2.7.4
 
