@@ -2,834 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1B30DFF83
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2988ADFF8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:38:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731214AbfJVIgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:36:01 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:49655 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726978AbfJVIgA (ORCPT
+        id S2388341AbfJVIgm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 04:36:42 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40539 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731244AbfJVIgk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:36:00 -0400
-X-Originating-IP: 92.137.17.54
-Received: from localhost (alyon-657-1-975-54.w92-137.abo.wanadoo.fr [92.137.17.54])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 464B51C0006;
-        Tue, 22 Oct 2019 08:35:55 +0000 (UTC)
-Date:   Tue, 22 Oct 2019 10:35:54 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Kamel Bouhara <kamel.bouhara@bootlin.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?iso-8859-1?Q?K=E9vin?= RAYMOND <k.raymond@overkiz.com>,
-        Mickael GARDET <m.gardet@overkiz.com>
-Subject: Re: [PATCH v2 2/2] ARM: dts: at91: add a dts and dtsi file for
- kizbox2 based boards
-Message-ID: <20191022083554.GB3125@piout.net>
-References: <20191021125804.23856-1-kamel.bouhara@bootlin.com>
- <20191021125804.23856-2-kamel.bouhara@bootlin.com>
+        Tue, 22 Oct 2019 04:36:40 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b24so15249691wmj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 01:36:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lPnRL6NpoSqZohNp9zgeBMxysYnhgrlrtuMJ1IcmiO4=;
+        b=OVaxqkiV3r66rCJJ/etx7RcDaFZpH+qujz5COsDg5e2kyosZzs1ammXKSMfEvWjVqo
+         5LUTARizfYH78ZKf1AjSkhJ0vaerruSVrLdmnWd1/zJHjTY+TRrXeiUYXKp+Mh0NSrpJ
+         ieQMAoZO59R40dcP9klGlFS/jeZ5AHtdTzMf7i1wsVdXIYsmQEad9sLN2lqxuSfVkAHT
+         jtFE85+X8jX1kAEtQ7n4IB0VXYKse0OXHrwGcPpbLaoY7Ofm1rbcAqCXB0uErCYA/D0a
+         HZJjTK9CEXfvyAbhVNTtWRYxSdiyGshcerExV5YXr8ylFkySuMNC1oQV/N5DrJWJZmHD
+         ycUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lPnRL6NpoSqZohNp9zgeBMxysYnhgrlrtuMJ1IcmiO4=;
+        b=DAeNwwfbdeNsI7Bhki131GlQL3xcW+4CG7UNAHFSCWnPfEgtP436guc8kfAf0398JW
+         ALSl5bOMrbVTS/5m6VvGmiBag8p6I7hV4iQIkoBbru2n4jkqZj0BbRrev8SnYGM0iM4t
+         eyYhX3OX/m2EqBEh3JLQQmtSOhaf7/fLIDXaFjjSbfULOT41i7ZKB9/iNgjLmO4IeRMa
+         c1s3FnYIlNbUYzyRtoZ+iIprhxGWVS0/876f/uUIt0qMpIWlBTOgFC1Ao21scBjlMT4Z
+         F+C0AZA57INnHzZQJRIegzpwfuXv+eCrjQbLdWcwLQ46sMK/uFK556TJc2v2nU96dupC
+         23GQ==
+X-Gm-Message-State: APjAAAUD1YRWXR/orH1e7r6BRCkfKFtbUlhTvwk458fy4wVe4J2FWaaf
+        DTiFHPYL2Hp3pOnYRWVQyK+7Xw==
+X-Google-Smtp-Source: APXvYqwin7FI5BQUaoLOJ1m7zw/wr3yxBZOmxIPUtoJU2kMR7WARJaTrWbmN83nJqNw4l2Y2RU1QXA==
+X-Received: by 2002:a1c:2cc4:: with SMTP id s187mr1901269wms.166.1571733396580;
+        Tue, 22 Oct 2019 01:36:36 -0700 (PDT)
+Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
+        by smtp.gmail.com with ESMTPSA id g17sm17115253wrq.58.2019.10.22.01.36.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2019 01:36:36 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jacopo Mondi <jacopo@jmondi.org>
+Cc:     linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v7 0/9] backlight: gpio: simplify the driver
+Date:   Tue, 22 Oct 2019 10:36:21 +0200
+Message-Id: <20191022083630.28175-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191021125804.23856-2-kamel.bouhara@bootlin.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/10/2019 14:58:04+0200, Kamel Bouhara wrote:
-> There are several boards available depending on the PCB
-> (3 antennas support and several revison). Add a dtsi file to share
-> common binding between all kizbox2 boards. This patch also add support
-> for the kizbox2-2 variant.
-> 
-> Signed-off-by: Kévin RAYMOND <k.raymond@overkiz.com>
-> Signed-off-by: Mickael GARDET <m.gardet@overkiz.com>
-> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> ---
-> Changes in v2:
-> 	- Replaced "_" by "-" in dts/dtsi file names
-> 	- Fixed unusual C++ Style comments
-> 
->  arch/arm/boot/dts/Makefile                 |   2 +-
->  arch/arm/boot/dts/at91-kizbox.dts          | 173 +++++++-------
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This change should be separated in a different patch.
+While working on my other series related to gpio-backlight[1] I noticed
+that we could simplify the driver if we made the only user of platform
+data use GPIO lookups and device properties. This series tries to do
+that.
 
->  arch/arm/boot/dts/at91-kizbox2-2.dts       |  26 +++
->  arch/arm/boot/dts/at91-kizbox2-common.dtsi | 258 +++++++++++++++++++++
->  arch/arm/boot/dts/at91-kizbox2.dts         | 244 -------------------
->  5 files changed, 370 insertions(+), 333 deletions(-)
->  create mode 100644 arch/arm/boot/dts/at91-kizbox2-2.dts
->  create mode 100644 arch/arm/boot/dts/at91-kizbox2-common.dtsi
->  delete mode 100644 arch/arm/boot/dts/at91-kizbox2.dts
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 3bda216c41be..4ac053115a8e 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -45,7 +45,7 @@ dtb-$(CONFIG_SOC_AT91SAM9) += \
->  	at91sam9x25ek.dtb \
->  	at91sam9x35ek.dtb
->  dtb-$(CONFIG_SOC_SAM_V7) += \
-> -	at91-kizbox2.dtb \
-> +	at91-kizbox2-2.dtb \
->  	at91-kizbox3-hs.dtb \
->  	at91-nattis-2-natte-2.dtb \
->  	at91-sama5d27_som1_ek.dtb \
-> diff --git a/arch/arm/boot/dts/at91-kizbox.dts b/arch/arm/boot/dts/at91-kizbox.dts
-> index 90996eaf73b2..9eb1ea750159 100644
-> --- a/arch/arm/boot/dts/at91-kizbox.dts
-> +++ b/arch/arm/boot/dts/at91-kizbox.dts
-> @@ -28,85 +28,6 @@
->  		};
->  	};
-> 
-> -	ahb {
-> -		apb {
-> -			tcb0: timer@fffa0000 {
-> -				timer@0 {
-> -					compatible = "atmel,tcb-timer";
-> -					reg = <0>, <1>;
-> -				};
-> -
-> -				timer@2 {
-> -					compatible = "atmel,tcb-timer";
-> -					reg = <2>;
-> -				};
-> -			};
-> -
-> -			macb0: ethernet@fffc4000 {
-> -				phy-mode = "mii";
-> -				pinctrl-0 = <&pinctrl_macb_rmii
-> -				             &pinctrl_macb_rmii_mii_alt>;
-> -				status = "okay";
-> -			};
-> -
-> -			usart3: serial@fffd0000 {
-> -				status = "okay";
-> -			};
-> -
-> -			dbgu: serial@fffff200 {
-> -				status = "okay";
-> -			};
-> -
-> -			watchdog@fffffd40 {
-> -				timeout-sec = <15>;
-> -				atmel,max-heartbeat-sec = <16>;
-> -				atmel,min-heartbeat-sec = <0>;
-> -				status = "okay";
-> -			};
-> -		};
-> -
-> -		usb0: ohci@500000 {
-> -			num-ports = <1>;
-> -			status = "okay";
-> -		};
-> -
-> -		ebi: ebi@10000000 {
-> -			status = "okay";
-> -
-> -			nand_controller: nand-controller {
-> -				status = "okay";
-> -				pinctrl-0 = <&pinctrl_nand_cs &pinctrl_nand_rb>;
-> -				pinctrl-names = "default";
-> -
-> -				nand@3 {
-> -					reg = <0x3 0x0 0x800000>;
-> -					rb-gpios = <&pioC 13 GPIO_ACTIVE_HIGH>;
-> -					cs-gpios = <&pioC 14 GPIO_ACTIVE_HIGH>;
-> -					nand-bus-width = <8>;
-> -					nand-ecc-mode = "soft";
-> -					nand-on-flash-bbt;
-> -					label = "atmel_nand";
-> -
-> -					partitions {
-> -						compatible = "fixed-partitions";
-> -						#address-cells = <1>;
-> -						#size-cells = <1>;
-> -
-> -						bootstrap@0 {
-> -							label = "bootstrap";
-> -							reg = <0x0 0x20000>;
-> -						};
-> -
-> -						ubi@20000 {
-> -							label = "ubi";
-> -							reg = <0x20000 0x7fe0000>;
-> -						};
-> -					};
-> -				};
-> -			};
-> -		};
-> -	};
-> -
->  	gpio_keys {
->  		compatible = "gpio-keys";
->  		#address-cells = <1>;
-> @@ -127,15 +48,6 @@
->  		};
->  	};
-> 
-> -	i2c-gpio-0 {
-> -		status = "okay";
-> -
-> -		rtc: pcf8563@51 {
-> -			compatible = "nxp,pcf8563";
-> -			reg = <0x51>;
-> -		};
-> -	};
-> -
->  	pwm_leds {
->  		compatible = "pwm-leds";
-> 
-> @@ -179,3 +91,88 @@
->  			     &pinctrl_tcb1_tiob0>;
->  	};
->  };
-> +
-> +&tcb0 {
-> +	timer@0 {
-> +		compatible = "atmel,tcb-timer";
-> +		reg = <0>, <1>;
-> +	};
-> +
-> +	timer@2 {
-> +		compatible = "atmel,tcb-timer";
-> +		reg = <2>;
-> +	};
-> +};
-> +
-> +&ebi {
-> +	status = "okay";
-> +};
-> +
-> +&nand_controller {
-> +	status = "okay";
-> +	pinctrl-0 = <&pinctrl_nand_cs &pinctrl_nand_rb>;
-> +	pinctrl-names = "default";
-> +
-> +	nand@3 {
-> +		reg = <0x3 0x0 0x800000>;
-> +		rb-gpios = <&pioC 13 GPIO_ACTIVE_HIGH>;
-> +		cs-gpios = <&pioC 14 GPIO_ACTIVE_HIGH>;
-> +		nand-bus-width = <8>;
-> +		nand-ecc-mode = "soft";
-> +		nand-on-flash-bbt;
-> +		label = "atmel_nand";
-> +
-> +		partitions {
-> +			compatible = "fixed-partitions";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +
-> +			bootstrap@0 {
-> +				label = "bootstrap";
-> +				reg = <0x0 0x20000>;
-> +			};
-> +
-> +			ubi@20000 {
-> +				label = "ubi";
-> +				reg = <0x20000 0x7fe0000>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&macb0 {
-> +	phy-mode = "mii";
-> +	pinctrl-0 = <&pinctrl_macb_rmii
-> +		     &pinctrl_macb_rmii_mii_alt>;
-> +	status = "okay";
-> +};
-> +
-> +&usart3 {
-> +	status = "okay";
-> +};
-> +
-> +&dbgu {
-> +	status = "okay";
-> +};
-> +
-> +&watchdog {
-> +	timeout-sec = <15>;
-> +	atmel,max-heartbeat-sec = <16>;
-> +	atmel,min-heartbeat-sec = <0>;
-> +	status = "okay";
-> +};
-> +
-> +&usb0 {
-> +	num-ports = <1>;
-> +	status = "okay";
-> +};
-> +
-> +&i2c-gpio-0 {
-> +	status = "okay";
-> +
-> +	rtc: pcf8563@51 {
-> +		compatible = "nxp,pcf8563";
-> +		reg = <0x51>;
-> +	};
-> +};
-> +
-> diff --git a/arch/arm/boot/dts/at91-kizbox2-2.dts b/arch/arm/boot/dts/at91-kizbox2-2.dts
-> new file mode 100644
-> index 000000000000..cab8b3579efa
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/at91-kizbox2-2.dts
-> @@ -0,0 +1,26 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * at91-kizbox2-2.dts - Device Tree file for the Kizbox2 with
-> + * two head board
-> + *
-> + * Copyright (C) 2015 Overkiz SAS
-> + *
-> + * Authors: Antoine Aubert <a.aubert@overkiz.com>
-> + *	    Kévin Raymond <k.raymond@overkiz.com>
-> + */
-> +/dts-v1/;
-> +#include "at91-kizbox2-common.dtsi"
-> +
-> +/ {
-> +	model = "Overkiz Kizbox 2 with two heads";
-> +	compatible = "overkiz,kizbox2-2", "atmel,sama5d31",
-> +		     "atmel,sama5d3", "atmel,sama5";
-> +};
-> +
-> +&usart1 {
-> +	status = "okay";
-> +};
-> +
-> +&usart2 {
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm/boot/dts/at91-kizbox2-common.dtsi b/arch/arm/boot/dts/at91-kizbox2-common.dtsi
-> new file mode 100644
-> index 000000000000..af38253a6e7a
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/at91-kizbox2-common.dtsi
-> @@ -0,0 +1,258 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * at91-kizbox2_common.dtsi - Device Tree Include file for
-> + * Overkiz Kizbox 2 family SoC
-> + *
-> + * Copyright (C) 2014-2018 Overkiz SAS
-> + *
-> + * Authors: Antoine Aubert <a.aubert@overkiz.com>
-> + *          Gaël Portay <g.portay@overkiz.com>
-> + *          Kévin Raymond <k.raymond@overkiz.com>
-> + */
-> +#include "sama5d31.dtsi"
-> +
-> +/ {
-> +	chosen {
-> +		bootargs = "ubi.mtd=ubi";
-> +		stdout-path = &dbgu;
-> +	};
-> +
-> +	memory {
-> +		reg = <0x20000000 0x10000000>;
-> +	};
-> +
-> +	clocks {
-> +		slow_xtal {
-> +			clock-frequency = <32768>;
-> +		};
-> +
-> +		main_xtal {
-> +			clock-frequency = <12000000>;
-> +		};
-> +	};
-> +
-> +	gpio_keys {
-> +		compatible = "gpio-keys";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		prog {
-> +			label = "PB_PROG";
-> +			gpios = <&pioE 27 GPIO_ACTIVE_LOW>;
-> +			linux,code = <0x102>;
-> +			wakeup-source;
-> +		};
-> +
-> +		reset {
-> +			label = "PB_RST";
-> +			gpios = <&pioE 29 GPIO_ACTIVE_LOW>;
-> +			linux,code = <0x100>;
-> +			wakeup-source;
-> +		};
-> +
-> +		user {
-> +			label = "PB_USER";
-> +			gpios = <&pioE 31 GPIO_ACTIVE_HIGH>;
-> +			linux,code = <0x101>;
-> +			wakeup-source;
-> +		};
-> +	};
-> +
-> +	pwm_leds {
-> +		compatible = "pwm-leds";
-> +
-> +		blue {
-> +			label = "pwm:blue:user";
-> +			pwms = <&pwm0 2 10000000 0>;
-> +			max-brightness = <255>;
-> +			linux,default-trigger = "none";
-> +		};
-> +
-> +		green {
-> +			label = "pwm:green:user";
-> +			pwms = <&pwm0 1 10000000 0>;
-> +			max-brightness = <255>;
-> +			linux,default-trigger = "default-on";
-> +		};
-> +
-> +		red {
-> +			label = "pwm:red:user";
-> +			pwms = <&pwm0 0 10000000 0>;
-> +			max-brightness = <255>;
-> +			linux,default-trigger = "default-on";
-> +		};
-> +	};
-> +};
-> +
-> +&i2c1 {
-> +	status = "okay";
-> +
-> +	pmic: act8865@5b {
-> +		compatible = "active-semi,act8865";
-> +		reg = <0x5b>;
-> +		status = "okay";
-> +
-> +		regulators {
-> +			vcc_1v8_reg: DCDC_REG1 {
-> +				regulator-name = "VCC_1V8";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			vcc_1v2_reg: DCDC_REG2 {
-> +				regulator-name = "VCC_1V2";
-> +				regulator-min-microvolt = <1200000>;
-> +				regulator-max-microvolt = <1200000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			vcc_3v3_reg: DCDC_REG3 {
-> +				regulator-name = "VCC_3V3";
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			vddfuse_reg: LDO_REG1 {
-> +				regulator-name = "FUSE_2V5";
-> +				regulator-min-microvolt = <2500000>;
-> +				regulator-max-microvolt = <2500000>;
-> +			};
-> +
-> +			vddana_reg: LDO_REG2 {
-> +				regulator-name = "VDDANA";
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			vled_reg: LDO_REG3 {
-> +				regulator-name = "VLED";
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			v3v8_rf_reg: LDO_REG4 {
-> +				regulator-name = "V3V8_RF";
-> +				regulator-min-microvolt = <3800000>;
-> +				regulator-max-microvolt = <3800000>;
-> +				regulator-always-on;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&usart0 {
-> +	atmel,use-dma-rx;
-> +	atmel,use-dma-tx;
-> +	status = "disabled";
-> +};
-> +
-> +&usart1 {
-> +	atmel,use-dma-rx;
-> +	atmel,use-dma-tx;
-> +	status = "disabled";
-> +};
-> +
-> +&usart2 {
-> +	atmel,use-dma-rx;
-> +	atmel,use-dma-tx;
-> +	status = "disabled";
-> +};
-> +
-> +&pwm0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_pwm0_pwmh0_1
-> +		     &pinctrl_pwm0_pwmh1_1
-> +		     &pinctrl_pwm0_pwmh2_0>;
-> +	status = "okay";
-> +};
-> +
-> +&adc0 {
-> +	atmel,adc-vref = <3333>;
-> +	status = "okay";
-> +};
-> +
-> +&macb1 {
-> +	phy-mode = "rmii";
-> +	status = "okay";
-> +};
-> +
-> +&dbgu {
-> +	status = "okay";
-> +};
-> +
-> +&watchdog {
-> +	status = "okay";
-> +};
-> +
-> +&ebi {
-> +	pinctrl-0 = <&pinctrl_ebi_nand_addr>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> +
-> +&nand_controller {
-> +	status = "okay";
-> +
-> +	nand@3 {
-> +		reg = <0x3 0x0 0x2>;
-> +		atmel,rb = <0>;
-> +		nand-bus-width = <8>;
-> +		nand-ecc-mode = "hw";
-> +		nand-ecc-strength = <4>;
-> +		nand-ecc-step-size = <512>;
-> +		nand-on-flash-bbt;
-> +		label = "atmel_nand";
-> +
-> +		partitions {
-> +			compatible = "fixed-partitions";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +
-> +			bootstrap@0 {
-> +				label = "bootstrap";
-> +				reg = <0x0 0x20000>;
-> +			};
-> +
-> +			ubi@20000 {
-> +				label = "ubi";
-> +				reg = <0x20000 0x7fe0000>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&usb1 {
-> +	status = "okay";
-> +};
-> +
-> +&usb2 {
-> +	status = "okay";
-> +};
-> +
-> +/* WMBUS (inverted with IO in the latest schematic) */
-> +&pinctrl_usart0 {
-> +	atmel,pins =
-> +		<AT91_PIOD 17 AT91_PERIPH_A AT91_PINCTRL_NONE
-> +		 AT91_PIOD 18 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
-> +		 AT91_PIOE 2 AT91_PERIPH_GPIO AT91_PINCTRL_MULTI_DRIVE>;
-> +};
-> +
-> +/* RTS */
-> +&pinctrl_usart1 {
-> +	atmel,pins =
-> +		<AT91_PIOB 28 AT91_PERIPH_A AT91_PINCTRL_NONE
-> +		 AT91_PIOB 29 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
-> +		 AT91_PIOE 7 AT91_PERIPH_GPIO AT91_PINCTRL_MULTI_DRIVE>;
-> +};
-> +
-> +/* IO (inverted with WMBUS in the latest schematic) */
-> +&pinctrl_usart2 {
-> +	atmel,pins =
-> +		<AT91_PIOE 25 AT91_PERIPH_B AT91_PINCTRL_NONE
-> +		 AT91_PIOE 26 AT91_PERIPH_B AT91_PINCTRL_PULL_UP
-> +		 AT91_PIOE 8 AT91_PERIPH_GPIO AT91_PINCTRL_MULTI_DRIVE>;
-> +};
-> diff --git a/arch/arm/boot/dts/at91-kizbox2.dts b/arch/arm/boot/dts/at91-kizbox2.dts
-> deleted file mode 100644
-> index 86d821884bd4..000000000000
-> --- a/arch/arm/boot/dts/at91-kizbox2.dts
-> +++ /dev/null
-> @@ -1,244 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-or-later
-> -/*
-> - * at91-kizbox2.dts - Device Tree file for Overkiz Kizbox 2 board
-> - *
-> - * Copyright (C) 2014 Gaël PORTAY <g.portay@overkiz.com>
-> - */
-> -/dts-v1/;
-> -#include "sama5d31.dtsi"
-> -#include <dt-bindings/pwm/pwm.h>
-> -
-> -/ {
-> -	model = "Overkiz Kizbox 2";
-> -	compatible = "overkiz,kizbox2", "atmel,sama5d31", "atmel,sama5d3", "atmel,sama5";
-> -
-> -	chosen {
-> -		bootargs = "ubi.mtd=ubi";
-> -		stdout-path = &dbgu;
-> -	};
-> -
-> -	memory {
-> -		reg = <0x20000000 0x10000000>;
-> -	};
-> -
-> -	clocks {
-> -		slow_xtal {
-> -			clock-frequency = <32768>;
-> -		};
-> -
-> -		main_xtal {
-> -			clock-frequency = <12000000>;
-> -		};
-> -	};
-> -
-> -	ahb {
-> -		apb {
-> -			i2c1: i2c@f0018000 {
-> -				status = "okay";
-> -
-> -				pmic: act8865@5b {
-> -					compatible = "active-semi,act8865";
-> -					reg = <0x5b>;
-> -					status = "okay";
-> -
-> -					regulators {
-> -						vcc_1v8_reg: DCDC_REG1 {
-> -							regulator-name = "VCC_1V8";
-> -							regulator-min-microvolt = <1800000>;
-> -							regulator-max-microvolt = <1800000>;
-> -							regulator-always-on;
-> -						};
-> -
-> -						vcc_1v2_reg: DCDC_REG2 {
-> -							regulator-name = "VCC_1V2";
-> -							regulator-min-microvolt = <1200000>;
-> -							regulator-max-microvolt = <1200000>;
-> -							regulator-always-on;
-> -						};
-> -
-> -						vcc_3v3_reg: DCDC_REG3 {
-> -							regulator-name = "VCC_3V3";
-> -							regulator-min-microvolt = <3300000>;
-> -							regulator-max-microvolt = <3300000>;
-> -							regulator-always-on;
-> -						};
-> -
-> -						vddfuse_reg: LDO_REG1 {
-> -							regulator-name = "FUSE_2V5";
-> -							regulator-min-microvolt = <2500000>;
-> -							regulator-max-microvolt = <2500000>;
-> -						};
-> -
-> -						vddana_reg: LDO_REG2 {
-> -							regulator-name = "VDDANA";
-> -							regulator-min-microvolt = <3300000>;
-> -							regulator-max-microvolt = <3300000>;
-> -							regulator-always-on;
-> -						};
-> -
-> -						vled_reg: LDO_REG3 {
-> -							regulator-name = "VLED";
-> -							regulator-min-microvolt = <3300000>;
-> -							regulator-max-microvolt = <3300000>;
-> -							regulator-always-on;
-> -						};
-> -
-> -						v3v8_rf_reg: LDO_REG4 {
-> -							regulator-name = "V3V8_RF";
-> -							regulator-min-microvolt = <3800000>;
-> -							regulator-max-microvolt = <3800000>;
-> -							regulator-always-on;
-> -						};
-> -					};
-> -				};
-> -			};
-> -
-> -			tcb0: timer@f0010000 {
-> -				timer@0 {
-> -					compatible = "atmel,tcb-timer";
-> -					reg = <0>;
-> -				};
-> -
-> -				timer@1 {
-> -					compatible = "atmel,tcb-timer";
-> -					reg = <1>;
-> -				};
-> -			};
-> -
-> -			usart0: serial@f001c000 {
-> -				status = "okay";
-> -			};
-> -
-> -			usart1: serial@f0020000 {
-> -				status = "okay";
-> -			};
-> -
-> -			pwm0: pwm@f002c000 {
-> -				pinctrl-names = "default";
-> -				pinctrl-0 = <&pinctrl_pwm0_pwmh0_1
-> -					     &pinctrl_pwm0_pwmh1_1
-> -					     &pinctrl_pwm0_pwmh2_0>;
-> -				status = "okay";
-> -			};
-> -
-> -			adc0: adc@f8018000 {
-> -				atmel,adc-vref = <3333>;
-> -				status = "okay";
-> -			};
-> -
-> -			usart2: serial@f8020000 {
-> -				status = "okay";
-> -			};
-> -
-> -			macb1: ethernet@f802c000 {
-> -				phy-mode = "rmii";
-> -				status = "okay";
-> -			};
-> -
-> -			dbgu: serial@ffffee00 {
-> -				status = "okay";
-> -			};
-> -
-> -			watchdog@fffffe40 {
-> -				status = "okay";
-> -			};
-> -		};
-> -
-> -		usb1: ohci@600000 {
-> -			status = "okay";
-> -		};
-> -
-> -		usb2: ehci@700000 {
-> -			status = "okay";
-> -		};
-> -
-> -		ebi: ebi@10000000 {
-> -			pinctrl-0 = <&pinctrl_ebi_nand_addr>;
-> -			pinctrl-names = "default";
-> -			status = "okay";
-> -
-> -			nand_controller: nand-controller {
-> -				status = "okay";
-> -
-> -				nand@3 {
-> -					reg = <0x3 0x0 0x2>;
-> -					atmel,rb = <0>;
-> -					nand-bus-width = <8>;
-> -					nand-ecc-mode = "hw";
-> -					nand-ecc-strength = <4>;
-> -					nand-ecc-step-size = <512>;
-> -					nand-on-flash-bbt;
-> -					label = "atmel_nand";
-> -
-> -					partitions {
-> -						compatible = "fixed-partitions";
-> -						#address-cells = <1>;
-> -						#size-cells = <1>;
-> -
-> -						bootstrap@0 {
-> -							label = "bootstrap";
-> -							reg = <0x0 0x20000>;
-> -						};
-> -
-> -						ubi@20000 {
-> -							label = "ubi";
-> -							reg = <0x20000 0x7fe0000>;
-> -						};
-> -					};
-> -				};
-> -			};
-> -		};
-> -	};
-> -
-> -	gpio_keys {
-> -		compatible = "gpio-keys";
-> -		#address-cells = <1>;
-> -		#size-cells = <0>;
-> -
-> -		prog {
-> -			label = "PB_PROG";
-> -			gpios = <&pioE 27 GPIO_ACTIVE_LOW>;
-> -			linux,code = <0x102>;
-> -			wakeup-source;
-> -		};
-> -
-> -		reset {
-> -			label = "PB_RST";
-> -			gpios = <&pioE 29 GPIO_ACTIVE_LOW>;
-> -			linux,code = <0x100>;
-> -			wakeup-source;
-> -		};
-> -
-> -		user {
-> -			label = "PB_USER";
-> -			gpios = <&pioE 31 GPIO_ACTIVE_HIGH>;
-> -			linux,code = <0x101>;
-> -			wakeup-source;
-> -		};
-> -	};
-> -
-> -	pwm_leds {
-> -		compatible = "pwm-leds";
-> -
-> -		blue {
-> -			label = "pwm:blue:user";
-> -			pwms = <&pwm0 2 10000000 0>;
-> -			max-brightness = <255>;
-> -			linux,default-trigger = "default-on";
-> -		};
-> -
-> -		green {
-> -			label = "pwm:green:user";
-> -			pwms = <&pwm0 1 10000000 0>;
-> -			max-brightness = <255>;
-> -			linux,default-trigger = "default-on";
-> -		};
-> -
-> -		red {
-> -			label = "pwm:red:user";
-> -			pwms = <&pwm0 0 10000000 0>;
-> -			max-brightness = <255>;
-> -			linux,default-trigger = "default-on";
-> -		};
-> -	};
-> -};
-> --
-> 2.23.0
-> 
+First two patches contain minor fixes. Third patch makes the driver
+explicitly drive the GPIO line. Fourth patch adds all necessary data
+structures to ecovec24. Patch 5/9 unifies much of the code for both
+pdata and non-pdata cases. Patches 6-7/9 remove unused platform data
+fields. Last two patches contain additional improvements for the GPIO
+backlight driver while we're already modifying it.
+
+I don't have access to this HW but hopefully this works. Only compile
+tested.
+
+[1] https://lkml.org/lkml/2019/6/25/900
+
+v1 -> v2:
+- rebased on top of v5.3-rc1 and adjusted to the recent changes from Andy
+- added additional two patches with minor improvements
+
+v2 -> v3:
+- in patch 7/7: used initializers to set values for pdata and dev local vars
+
+v3 -> v4:
+- rebased on top of v5.4-rc1
+- removed changes that are no longer relevant after commit ec665b756e6f
+  ("backlight: gpio-backlight: Correct initial power state handling")
+- added patch 7/7
+
+v4 -> v5:
+- in patch 7/7: added a comment replacing the name of the function being
+  pulled into probe()
+
+v5 -> v6:
+- added a patch making the driver explicitly set the direction of the GPIO
+  to output
+- added a patch removing a redundant newline
+
+v6 -> v7:
+- renamed the function calculating the new GPIO value for status update
+- collected more tags
+
+Bartosz Golaszewski (9):
+  backlight: gpio: remove unneeded include
+  backlight: gpio: remove stray newline
+  backlight: gpio: explicitly set the direction of the GPIO
+  sh: ecovec24: add additional properties to the backlight device
+  backlight: gpio: simplify the platform data handling
+  sh: ecovec24: don't set unused fields in platform data
+  backlight: gpio: remove unused fields from platform data
+  backlight: gpio: use a helper variable for &pdev->dev
+  backlight: gpio: pull gpio_backlight_initial_power_state() into probe
+
+ arch/sh/boards/mach-ecovec24/setup.c         |  33 +++--
+ drivers/video/backlight/gpio_backlight.c     | 128 +++++++------------
+ include/linux/platform_data/gpio_backlight.h |   3 -
+ 3 files changed, 69 insertions(+), 95 deletions(-)
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.23.0
+
