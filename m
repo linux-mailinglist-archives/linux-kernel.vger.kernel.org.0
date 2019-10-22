@@ -2,174 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6633CDFCE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 06:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E48BDFCF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 07:03:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731072AbfJVEzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 00:55:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730852AbfJVEzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 00:55:24 -0400
-Received: from localhost (unknown [122.181.223.147])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C1E6214B2;
-        Tue, 22 Oct 2019 04:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571720122;
-        bh=/UuJtR4yUNa3dIyz2E6GHXQxE0HGm8Ql3v3DS7hg5lE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ehGK/HeAAY8pYPuARtN+ddW8n+XqzhnIbcoBWV/8j9nA06Fx2ySmAta+uaOSDDKXX
-         Tb9lfmQtlsgXM5kmm99BlyzjIBz3PneTg9X3C6UcZZXMfyCcxZjB8FUNZT1LPfxwi0
-         mNOQX8pH32J54NxkZfV63YyZv4Fz87gDlT0GFon8=
-Date:   Tue, 22 Oct 2019 10:25:18 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        broonie@kernel.org, srinivas.kandagatla@linaro.org,
-        jank@cadence.com, slawomir.blauciak@intel.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-Subject: Re: [alsa-devel] [PATCH v2 4/5] soundwire: intel/cadence: add flag
- for interrupt enable
-Message-ID: <20191022045518.GJ2654@vkoul-mobl>
-References: <20190916190952.32388-1-pierre-louis.bossart@linux.intel.com>
- <20190916190952.32388-5-pierre-louis.bossart@linux.intel.com>
- <20191021041404.GY2654@vkoul-mobl>
- <8ba388e7-e344-068b-b233-8d96903abf6b@linux.intel.com>
+        id S1731045AbfJVFDR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 01:03:17 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35455 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbfJVFDR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 01:03:17 -0400
+Received: by mail-qt1-f196.google.com with SMTP id m15so24986045qtq.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 22:03:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aMZUw4RZ8LRoIEo/M8wLU2dUlX8Lf4I6GNgeaCdEJTE=;
+        b=Bm5YWl3YSDLmI6XEYT2aREQHi/d4DFZLdiBdsM6xiDDq/BKaSOsYruIpvWbsTu2fAJ
+         fCd6k9uRn0SMdjtbJ0cW1yp7sxNlbKs14WEsGMBNXN9bu7vzDmFukEdpu+HCVg4K4cEx
+         5htnMRH0GXDpsilfxdvsOs11y+p1vbqpwNhg3+EE2WITTKu3X8iO4s+pU+dVqdsDgPR/
+         azbTJr6sKnz0y2U2zvPlM2q297plwZw59IWyTlo4XUOluzAz1qsXmBx3n0jdJlITL9ca
+         m/03nLm3lvKBALqScmKtlGFycjBEQ8mgRSbLYmJpcCcWlpSLAlkg6vauykdLF6ei3ygb
+         +4LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aMZUw4RZ8LRoIEo/M8wLU2dUlX8Lf4I6GNgeaCdEJTE=;
+        b=AcGuij4vGNdLYhHI/Q/kjXsFUQB0XUxxqBcdAK1hqWDgj1BahHo+7sXcvcEuyLcwEh
+         XVfTUmNKsY79CkymCQ+s0xj5evjBikjRRcvupNgjpYCeR8oONjibWR/bBnrtPe7s5GiI
+         sqbmZm3b/Q7NIN8JKlVQlfpNfdwCqTesspUHVq2e6m9pjuDzeoH77hUuG4tC+k7iSWTd
+         j8D5rXAX5oHUhepg7ix+fwQCu/C10XJDySu8eTlSGho/C3fUGPDspko4dXgPnePnQmQC
+         /maFlW4MbsENe3tQjNNmPmrWNrAX6vDdJ1TTbkLnScltTNpCbc/vx56VpbFq9iiIlpNy
+         A+lw==
+X-Gm-Message-State: APjAAAUyZv6Hy/Kz8Nlh/HUBiFfY/3rXt3o1/CJ8FIPKxeCjtPl7nFJO
+        gJKc+r9aHZALC2Rcy1TO2k4E1w==
+X-Google-Smtp-Source: APXvYqypFrKAfo4u+k7i5uS+DIIu3FSuhgIprl0FLMNrHhJmaXpSGb67NhMugWYDVcwjBdGFbOVggw==
+X-Received: by 2002:ac8:3f2c:: with SMTP id c41mr1521407qtk.258.1571720595091;
+        Mon, 21 Oct 2019 22:03:15 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s (li937-157.members.linode.com. [45.56.119.157])
+        by smtp.gmail.com with ESMTPSA id l15sm9772390qkj.16.2019.10.21.22.03.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Oct 2019 22:03:14 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 13:03:04 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mike Leach <mike.leach@linaro.org>,
+        Coresight ML <coresight@lists.linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v3 3/6] perf cs-etm: Support thread stack
+Message-ID: <20191022050304.GB32731@leoy-ThinkPad-X240s>
+References: <20191005091614.11635-1-leo.yan@linaro.org>
+ <20191005091614.11635-4-leo.yan@linaro.org>
+ <20191011175353.GA13688@xps15>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8ba388e7-e344-068b-b233-8d96903abf6b@linux.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191011175353.GA13688@xps15>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-10-19, 05:26, Pierre-Louis Bossart wrote:
-> On 10/20/19 11:14 PM, Vinod Koul wrote:
-> > On 16-09-19, 14:09, Pierre-Louis Bossart wrote:
-> > > Prepare for future PM support and fix error handling by disabling
-> > > interrupts as needed.
-> > > 
-> > > Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> > > ---
-> > >   drivers/soundwire/cadence_master.c | 18 ++++++++++++------
-> > >   drivers/soundwire/cadence_master.h |  2 +-
-> > >   drivers/soundwire/intel.c          | 12 +++++++-----
-> > >   3 files changed, 20 insertions(+), 12 deletions(-)
-> > > 
-> > > diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-> > > index 5f900cf2acb9..a71df99ca18f 100644
-> > > --- a/drivers/soundwire/cadence_master.c
-> > > +++ b/drivers/soundwire/cadence_master.c
-> > > @@ -819,14 +819,17 @@ EXPORT_SYMBOL(sdw_cdns_exit_reset);
-> > >    * sdw_cdns_enable_interrupt() - Enable SDW interrupts and update config
-> > >    * @cdns: Cadence instance
-> > >    */
-> > > -int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns)
-> > > +int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns, bool state)
-> > >   {
-> > > -	u32 mask;
-> > > +	u32 slave_intmask0 = 0;
-> > > +	u32 slave_intmask1 = 0;
-> > > +	u32 mask = 0;
-> > > +
-> > > +	if (!state)
-> > > +		goto update_masks;
-> > > -	cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK0,
-> > > -		    CDNS_MCP_SLAVE_INTMASK0_MASK);
-> > > -	cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK1,
-> > > -		    CDNS_MCP_SLAVE_INTMASK1_MASK);
-> > > +	slave_intmask0 = CDNS_MCP_SLAVE_INTMASK0_MASK;
-> > > +	slave_intmask1 = CDNS_MCP_SLAVE_INTMASK1_MASK;
-> > >   	/* enable detection of all slave state changes */
-> > >   	mask = CDNS_MCP_INT_SLAVE_MASK;
-> > > @@ -849,6 +852,9 @@ int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns)
-> > >   	if (interrupt_mask) /* parameter override */
-> > >   		mask = interrupt_mask;
-> > > +update_masks:
-> > > +	cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK0, slave_intmask0);
-> > > +	cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK1, slave_intmask1);
-> > >   	cdns_writel(cdns, CDNS_MCP_INTMASK, mask);
-> > >   	/* commit changes */
-> > > diff --git a/drivers/soundwire/cadence_master.h b/drivers/soundwire/cadence_master.h
-> > > index 1a67728c5000..302351808098 100644
-> > > --- a/drivers/soundwire/cadence_master.h
-> > > +++ b/drivers/soundwire/cadence_master.h
-> > > @@ -162,7 +162,7 @@ int sdw_cdns_init(struct sdw_cdns *cdns);
-> > >   int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
-> > >   		      struct sdw_cdns_stream_config config);
-> > >   int sdw_cdns_exit_reset(struct sdw_cdns *cdns);
-> > > -int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns);
-> > > +int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns, bool state);
-> > >   #ifdef CONFIG_DEBUG_FS
-> > >   void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root);
-> > > diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-> > > index cdb3243e8823..08530c136c5f 100644
-> > > --- a/drivers/soundwire/intel.c
-> > > +++ b/drivers/soundwire/intel.c
-> > > @@ -1036,7 +1036,7 @@ static int intel_probe(struct platform_device *pdev)
-> > >   	ret = sdw_add_bus_master(&sdw->cdns.bus);
-> > >   	if (ret) {
-> > >   		dev_err(&pdev->dev, "sdw_add_bus_master fail: %d\n", ret);
-> > > -		goto err_master_reg;
-> > > +		return ret;
+Hi Mathieu,
+
+On Fri, Oct 11, 2019 at 11:53:53AM -0600, Mathieu Poirier wrote:
+> On Sat, Oct 05, 2019 at 05:16:11PM +0800, Leo Yan wrote:
+> > Since Arm CoreSight doesn't support thread stack, the decoding cannot
+> > display symbols with indented spaces to reflect the stack depth.
 > > 
-> > I am not sure I like this line change, before this IIRC the function and
-> > single place of return, so changing this doesn't seem to improve
-> > anything here..?
+> > This patch adds support thread stack for Arm CoreSight, this allows
+> > 'perf script' to display properly for option '-F,+callindent'.
+> > 
+> > Before:
+> > 
+> >   # perf script -F,+callindent
+> >             main  2808          1          branches: coresight_test1                      ffff8634f5c8 coresight_test1+0x3c (/root/coresight_test/libcstest.so)
+> >             main  2808          1          branches: printf@plt                           aaaaba8d37ec main+0x28 (/root/coresight_test/main)
+> >             main  2808          1          branches: printf@plt                           aaaaba8d36bc printf@plt+0xc (/root/coresight_test/main)
+> >             main  2808          1          branches: _init                                aaaaba8d3650 _init+0x30 (/root/coresight_test/main)
+> >             main  2808          1          branches: _dl_fixup                            ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.so)
+> >             main  2808          1          branches: _dl_lookup_symbol_x                  ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
+> >   [...]
+> > 
+> > After:
+> > 
+> >   # perf script -F,+callindent
+> >             main  2808          1          branches:                 coresight_test1                                      ffff8634f5c8 coresight_test1+0x3c (/root/coresight_test/libcstest.so)
+> >             main  2808          1          branches:                 printf@plt                                           aaaaba8d37ec main+0x28 (/root/coresight_test/main)
+> >             main  2808          1          branches:                     printf@plt                                       aaaaba8d36bc printf@plt+0xc (/root/coresight_test/main)
+> >             main  2808          1          branches:                     _init                                            aaaaba8d3650 _init+0x30 (/root/coresight_test/main)
+> >             main  2808          1          branches:                     _dl_fixup                                        ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.s
+> >             main  2808          1          branches:                         _dl_lookup_symbol_x                          ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
+> >   [...]
+> > 
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> >  tools/perf/util/cs-etm.c | 44 ++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 44 insertions(+)
+> > 
+> > diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> > index 58ceba7b91d5..780abbfd1833 100644
+> > --- a/tools/perf/util/cs-etm.c
+> > +++ b/tools/perf/util/cs-etm.c
+> > @@ -1117,6 +1117,45 @@ static void cs_etm__copy_insn(struct cs_etm_queue *etmq,
+> >  			   sample->insn_len, (void *)sample->insn);
+> >  }
+> >  
+> > +static void cs_etm__add_stack_event(struct cs_etm_queue *etmq,
+> > +				    struct cs_etm_traceid_queue *tidq)
+> > +{
+> > +	struct cs_etm_auxtrace *etm = etmq->etm;
+> > +	u8 trace_chan_id = tidq->trace_chan_id;
+> > +	int insn_len;
+> > +	u64 from_ip, to_ip;
+> > +
+> > +	if (etm->synth_opts.thread_stack) {
+> > +		from_ip = cs_etm__last_executed_instr(tidq->prev_packet);
+> > +		to_ip = cs_etm__first_executed_instr(tidq->packet);
+> > +
+> > +		insn_len = cs_etm__instr_size(etmq, trace_chan_id,
+> > +					      tidq->prev_packet->isa, from_ip);
+> > +
+> > +		/*
+> > +		 * Create thread stacks by keeping track of calls and returns;
+> > +		 * any call pushes thread stack, return pops the stack, and
+> > +		 * flush stack when the trace is discontinuous.
+> > +		 */
+> > +		thread_stack__event(tidq->thread, tidq->prev_packet->cpu,
+> > +				    tidq->prev_packet->flags,
+> > +				    from_ip, to_ip, insn_len,
+> > +				    etmq->buffer->buffer_nr);
 > 
-> Doing a goto to do a return is not very nice either.
+> Details are a little fuzzy in my head but I'm pretty sure
+> we want trace_chan_id here.  
 
-Hrmm, isn't that what you are doing few lines below. The point here is
-that this line of change here doesnt change anything, doesnt improve
-anything so why change :)
+I spent some time to look into this question, and I think we don't
+need to add extra info for trace_chan_id.
 
-> I can change this, but it doesn't really matter: this entire code will be
-> removed anyways to get rid of platform_devices and the probe itself will be
-> split in two.
+The main reason is for CPU wide tracing, if one task is migrated from
+CPU_a to CPU_b, if we append 'trace_chan_id' for the buffer number, then
+it will tell the thread_stack that the buffer has been changed (or it
+will be considered the trace is discontinuous), then thread stack will
+be flushed.  Actually, this is not what we want; if a task is migrated
+from one CPU to another, we still need to keep its thread stack if the
+trace data comes from the same buffer_nr.
+
+To be honest, I struggled to understand what's the purpose for
+'buffer->buffer_nr', from the code, I think 'buffer->buffer_nr' is
+mainly used to trace the splitted buffers (e.g. the buffers are splitted
+into different queues so the trace data coming from different trace
+chunk?).  Now I observe 'buffer->buffer_nr' is always zero since the
+buffer is not used with splitted mode.  If later we support 1:1 map
+between tracers and sinks, then we need to set 'buffer->buffer_nr' so
+can reflect the correct buffer mapping, but we don't need to use
+trace_chan_id as extra info at here.
+
+Please let me know what you think about this?  If you agree with this,
+I will send out patch v4 soon with addressing other comments.
+
+Thanks,
+Leo Yan
+
+> > +	} else {
+> > +		/*
+> > +		 * The thread stack can be output via thread_stack__process();
+> > +		 * thus the detailed information about paired calls and returns
+> > +		 * will be facilitated by Python script for the db-export.
+> > +		 *
+> > +		 * Need to set trace buffer number and flush thread stack if the
+> > +		 * trace buffer number has been alternate.
+> > +		 */
+> > +		thread_stack__set_trace_nr(tidq->thread,
+> > +					   tidq->prev_packet->cpu,
+> > +					   etmq->buffer->buffer_nr);
 > 
+> Same here.
+> 
+> > +	}
+> > +}
+> > +
+> >  static int cs_etm__synth_instruction_sample(struct cs_etm_queue *etmq,
+> >  					    struct cs_etm_traceid_queue *tidq,
+> >  					    u64 addr, u64 period)
+> > @@ -1393,6 +1432,9 @@ static int cs_etm__sample(struct cs_etm_queue *etmq,
+> >  		tidq->period_instructions = instrs_over;
+> >  	}
+> >  
+> > +	if (tidq->prev_packet->last_instr_taken_branch)
+> > +		cs_etm__add_stack_event(etmq, tidq);
+> > +
+> >  	if (etm->sample_branches) {
+> >  		bool generate_sample = false;
+> >  
+> > @@ -2593,6 +2635,8 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+> >  		itrace_synth_opts__set_default(&etm->synth_opts,
+> >  				session->itrace_synth_opts->default_no_sample);
+> >  		etm->synth_opts.callchain = false;
+> > +		etm->synth_opts.thread_stack =
+> > +				session->itrace_synth_opts->thread_stack;
+> >  	}
+> >  
+> >  	err = cs_etm__synth_events(etm, session);
+> > -- 
+> > 2.17.1
 > > 
-> > >   	}
-> > >   	if (sdw->cdns.bus.prop.hw_disabled) {
-> > > @@ -1067,7 +1067,7 @@ static int intel_probe(struct platform_device *pdev)
-> > >   		goto err_init;
-> > >   	}
-> > > -	ret = sdw_cdns_enable_interrupt(&sdw->cdns);
-> > > +	ret = sdw_cdns_enable_interrupt(&sdw->cdns, true);
-> > >   	if (ret < 0) {
-> > >   		dev_err(sdw->cdns.dev, "cannot enable interrupts\n");
-> > >   		goto err_init;
-> > > @@ -1076,7 +1076,7 @@ static int intel_probe(struct platform_device *pdev)
-> > >   	ret = sdw_cdns_exit_reset(&sdw->cdns);
-> > >   	if (ret < 0) {
-> > >   		dev_err(sdw->cdns.dev, "unable to exit bus reset sequence\n");
-> > > -		goto err_init;
-> > > +		goto err_interrupt;
-> > >   	}
-> > >   	/* Register DAIs */
-> > > @@ -1084,18 +1084,19 @@ static int intel_probe(struct platform_device *pdev)
-> > >   	if (ret) {
-> > >   		dev_err(sdw->cdns.dev, "DAI registration failed: %d\n", ret);
-> > >   		snd_soc_unregister_component(sdw->cdns.dev);
-> > > -		goto err_dai;
-> > > +		goto err_interrupt;
-> > >   	}
-> > >   	intel_debugfs_init(sdw);
-> > >   	return 0;
-> > > +err_interrupt:
-> > > +	sdw_cdns_enable_interrupt(&sdw->cdns, false);
-> > >   err_dai:
-> > 
-> > Isn't this unused now?
-
-??? you missed this.
-
--- 
-~Vinod
