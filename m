@@ -2,97 +2,322 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58692E0607
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 16:09:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9159E0614
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 16:11:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731952AbfJVOJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 10:09:08 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59504 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727582AbfJVOJI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 10:09:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571753347;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
-        bh=uSxGqEuW52lrWz/8potOYyUverZyGRXQnr3ONuzw9lw=;
-        b=WXRtanUd45HLLJffFxnO2L8OIwb636oOtefPsq/Ag/F7bDeFeEZk/u3ezydCAxnapi6wW3
-        EaVbpaz/hcejDPkf7dpPr864xU9Gxjl84ymDZB6Vzp8J4nSG6LDUOaj674e4KK2yBodBay
-        6OG+9DGFK1JQTcazgEn9tQnOPdDIizE=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-379-NnB6b5-iOEOm0i45E50IwQ-1; Tue, 22 Oct 2019 10:09:04 -0400
-Received: by mail-wr1-f72.google.com with SMTP id 4so5072970wrf.19
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 07:09:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=makMNuKu1ppWLAvCA/QyEUL2D+FfE16R1xUwog6fpcY=;
-        b=Bdw6DYU6/aMDymbbqNeiA7bnnxv0leq0SIpZIWO9Pv2tqWOxhqdmXSETfSsqADbpMH
-         U++alYvFVRtEvk1s7ntQK7knlElJPUYFvMfyKJnUmnSLxtnyudkJDXMtYZkH4N9xINUe
-         Sql6MsLGZjGBgVdKgLAQx4lZj1Cm2qh3KsyFkQlA16reIxcNND9HVKqHs6ChIOXxOGja
-         XM3AInnoKFCRJUE3b4vi0/PPVrTIppbZgMPs/nc31HTIznQUHEH4Wnlo1o2GZQE3FFZT
-         JT08cXDvi8QpIqE5BnJLBcPXJ0dqj9mVjxtX7jDU+zeoqqU1aXqwuEr5BVEbiGmXOw7E
-         BUUg==
-X-Gm-Message-State: APjAAAU68uIET1HENOWcuUduFs+17YRI1ZRREe5IWvOjdMqPP/dfitS1
-        uRqCAVuqMFoEBenmWJkpXoRlotmvhO2Ziit60H3WKID+XXIjMgDpzbeVt1+MJzP8735r4HwppaV
-        qm864xmQIjvzHgs3Db1aWs2C2
-X-Received: by 2002:a1c:64d4:: with SMTP id y203mr3274025wmb.27.1571753343663;
-        Tue, 22 Oct 2019 07:09:03 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzkJgcR6x3vTLahX+BVgNWIDW6o7sVahp6sEE316gNwH/lVfCALUNph0Wv1M5z5/y2k/6tSsQ==
-X-Received: by 2002:a1c:64d4:: with SMTP id y203mr3273996wmb.27.1571753343407;
-        Tue, 22 Oct 2019 07:09:03 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:c0e4:dcf4:b543:ce19? ([2001:b07:6468:f312:c0e4:dcf4:b543:ce19])
-        by smtp.gmail.com with ESMTPSA id z125sm25633535wme.37.2019.10.22.07.09.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2019 07:09:02 -0700 (PDT)
-Subject: Re: [PATCH v3 6/6] KVM: x86/vPMU: Add lazy mechanism to release
- perf_event per vPMC
-To:     Like Xu <like.xu@linux.intel.com>, kvm@vger.kernel.org
-Cc:     peterz@infradead.org, like.xu@intel.com,
-        linux-kernel@vger.kernel.org, jmattson@google.com,
-        sean.j.christopherson@intel.com, wei.w.wang@intel.com,
-        kan.liang@intel.com
-References: <20191021160651.49508-1-like.xu@linux.intel.com>
- <20191021160651.49508-7-like.xu@linux.intel.com>
- <c17a9d77-2c30-b3c0-4652-57f0b9252f3b@redhat.com>
- <7d46a902-43eb-4693-f481-1c2efd397fbd@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <d3434a16-07ed-7070-f316-9a2fa072ace0@redhat.com>
-Date:   Tue, 22 Oct 2019 16:09:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2388127AbfJVOLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 10:11:36 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:53762 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1732055AbfJVOLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 10:11:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 97B851764;
+        Tue, 22 Oct 2019 07:11:10 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E6AC3F71A;
+        Tue, 22 Oct 2019 07:11:06 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 15:11:04 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Marco Elver <elver@google.com>
+Cc:     akiyks@gmail.com, stern@rowland.harvard.edu, glider@google.com,
+        parri.andrea@gmail.com, andreyknvl@google.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, arnd@arndb.de, boqun.feng@gmail.com,
+        bp@alien8.de, dja@axtens.net, dlustig@nvidia.com,
+        dave.hansen@linux.intel.com, dhowells@redhat.com,
+        dvyukov@google.com, hpa@zytor.com, mingo@redhat.com,
+        j.alglave@ucl.ac.uk, joel@joelfernandes.org, corbet@lwn.net,
+        jpoimboe@redhat.com, luc.maranget@inria.fr, npiggin@gmail.com,
+        paulmck@linux.ibm.com, peterz@infradead.org, tglx@linutronix.de,
+        will@kernel.org, kasan-dev@googlegroups.com,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v2 1/8] kcsan: Add Kernel Concurrency Sanitizer
+ infrastructure
+Message-ID: <20191022141103.GE11583@lakrids.cambridge.arm.com>
+References: <20191017141305.146193-1-elver@google.com>
+ <20191017141305.146193-2-elver@google.com>
 MIME-Version: 1.0
-In-Reply-To: <7d46a902-43eb-4693-f481-1c2efd397fbd@linux.intel.com>
-Content-Language: en-US
-X-MC-Unique: NnB6b5-iOEOm0i45E50IwQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191017141305.146193-2-elver@google.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/10/19 14:00, Like Xu wrote:
->=20
-> Second, the structure of pmu->pmc_in_use is in the following format:
->=20
-> =C2=A0 Intel: [0 .. INTEL_PMC_MAX_GENERIC-1] <=3D> gp counters
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [INTEL=
-_PMC_IDX_FIXED .. INTEL_PMC_IDX_FIXED + 2] <=3D> fixed
-> =C2=A0 AMD:=C2=A0=C2=A0 [0 .. AMD64_NUM_COUNTERS-1] <=3D> gp counters
+Hi Marco,
 
-Sorry---I confused INTEL_PMC_MAX_FIXED and INTEL_PMC_IDX_FIXED.
+On Thu, Oct 17, 2019 at 04:12:58PM +0200, Marco Elver wrote:
+> Kernel Concurrency Sanitizer (KCSAN) is a dynamic data-race detector for
+> kernel space. KCSAN is a sampling watchpoint-based data-race detector.
+> See the included Documentation/dev-tools/kcsan.rst for more details.
+> 
+> This patch adds basic infrastructure, but does not yet enable KCSAN for
+> any architecture.
+> 
+> Signed-off-by: Marco Elver <elver@google.com>
+> ---
+> v2:
+> * Elaborate comment about instrumentation calls emitted by compilers.
+> * Replace kcsan_check_access(.., {true, false}) with
+>   kcsan_check_{read,write} for improved readability.
+> * Change bug title of race of unknown origin to just say "data-race in".
+> * Refine "Key Properties" in kcsan.rst, and mention observed slow-down.
+> * Add comment about safety of find_watchpoint without user_access_save.
+> * Remove unnecessary preempt_disable/enable and elaborate on comment why
+>   we want to disable interrupts and preemptions.
+> * Use common struct kcsan_ctx in task_struct and for per-CPU interrupt
+>   contexts [Suggested by Mark Rutland].
 
-The patches look good, I'll give them another look since I obviously
-wasn't very much awake when reviewing them.
+This is generally looking good to me.
 
-Paolo
+I have a few comments below. Those are mostly style and naming things to
+minimize surprise, though I also have a couple of queries (nested vs
+flat atomic regions and the number of watchpoints).
 
+[...]
+
+> diff --git a/include/linux/kcsan.h b/include/linux/kcsan.h
+> new file mode 100644
+> index 000000000000..fd5de2ba3a16
+> --- /dev/null
+> +++ b/include/linux/kcsan.h
+> @@ -0,0 +1,108 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef _LINUX_KCSAN_H
+> +#define _LINUX_KCSAN_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/kcsan-checks.h>
+> +
+> +#ifdef CONFIG_KCSAN
+> +
+> +/*
+> + * Context for each thread of execution: for tasks, this is stored in
+> + * task_struct, and interrupts access internal per-CPU storage.
+> + */
+> +struct kcsan_ctx {
+> +	int disable; /* disable counter */
+
+Can we call this disable_count? That would match the convention used for
+preempt_count, and make it clear this isn't a boolean.
+
+> +	int atomic_next; /* number of following atomic ops */
+
+I'm a little unclear on why we need this given the begin ... end
+helpers -- isn't knowing that we're in an atomic region sufficient?
+
+> +
+> +	/*
+> +	 * We use separate variables to store if we are in a nestable or flat
+> +	 * atomic region. This helps make sure that an atomic region with
+> +	 * nesting support is not suddenly aborted when a flat region is
+> +	 * contained within. Effectively this allows supporting nesting flat
+> +	 * atomic regions within an outer nestable atomic region. Support for
+> +	 * this is required as there are cases where a seqlock reader critical
+> +	 * section (flat atomic region) is contained within a seqlock writer
+> +	 * critical section (nestable atomic region), and the "mismatching
+> +	 * kcsan_end_atomic()" warning would trigger otherwise.
+> +	 */
+> +	int atomic_region;
+> +	bool atomic_region_flat;
+> +};
+
+I think we need to introduce nestability and flatness first. How about:
+
+	/*
+	 * Some atomic sequences are flat, and cannot contain another
+	 * atomic sequence. Other atomic sequences are nestable, and may
+	 * contain other flat and/or nestable sequences.
+	 *
+	 * For example, a seqlock writer critical section is nestable
+	 * and may contain a seqlock reader critical section, which is
+	 * flat.
+	 *
+	 * To support this we track the depth of nesting, and whether
+	 * the leaf level is flat.
+	 */
+	int atomic_nest_count;
+	bool in_flat_atomic;
+
+That said, I'm not entirely clear on the distinction. Why would nesting
+a reader within another reader not be legitimate?
+
+> +
+> +/**
+> + * kcsan_init - initialize KCSAN runtime
+> + */
+> +void kcsan_init(void);
+> +
+> +/**
+> + * kcsan_disable_current - disable KCSAN for the current context
+> + *
+> + * Supports nesting.
+> + */
+> +void kcsan_disable_current(void);
+> +
+> +/**
+> + * kcsan_enable_current - re-enable KCSAN for the current context
+> + *
+> + * Supports nesting.
+> + */
+> +void kcsan_enable_current(void);
+> +
+> +/**
+> + * kcsan_begin_atomic - use to denote an atomic region
+> + *
+> + * Accesses within the atomic region may appear to race with other accesses but
+> + * should be considered atomic.
+> + *
+> + * @nest true if regions may be nested, or false for flat region
+> + */
+> +void kcsan_begin_atomic(bool nest);
+> +
+> +/**
+> + * kcsan_end_atomic - end atomic region
+> + *
+> + * @nest must match argument to kcsan_begin_atomic().
+> + */
+> +void kcsan_end_atomic(bool nest);
+> +
+
+Similarly to the check_{read,write}() naming, could we get rid of the
+bool argument and split this into separate nestable and flat functions?
+
+That makes it easier to read in-context, e.g.
+
+	kcsan_nestable_atomic_begin();
+	...
+	kcsan_nestable_atomic_end();
+
+... has a more obvious meaning than:
+
+	kcsan_begin_atomic(true);
+	...
+	kcsan_end_atomic(true);
+
+... and putting the begin/end at the end of the name makes it easier to
+spot the matching pair.
+
+[...]
+
+> +static inline bool is_enabled(void)
+> +{
+> +	return READ_ONCE(kcsan_enabled) && get_ctx()->disable == 0;
+> +}
+
+Can we please make this kcsan_is_enabled(), to avoid confusion with
+IS_ENABLED()?
+
+> +static inline unsigned int get_delay(void)
+> +{
+> +	unsigned int max_delay = in_task() ? CONFIG_KCSAN_UDELAY_MAX_TASK :
+> +					     CONFIG_KCSAN_UDELAY_MAX_INTERRUPT;
+> +	return IS_ENABLED(CONFIG_KCSAN_DELAY_RANDOMIZE) ?
+> +		       ((prandom_u32() % max_delay) + 1) :
+> +		       max_delay;
+> +}
+> +
+> +/* === Public interface ===================================================== */
+> +
+> +void __init kcsan_init(void)
+> +{
+> +	BUG_ON(!in_task());
+> +
+> +	kcsan_debugfs_init();
+> +	kcsan_enable_current();
+> +#ifdef CONFIG_KCSAN_EARLY_ENABLE
+> +	/*
+> +	 * We are in the init task, and no other tasks should be running.
+> +	 */
+> +	WRITE_ONCE(kcsan_enabled, true);
+> +#endif
+
+Where possible, please use IS_ENABLED() rather than ifdeffery for
+portions of functions like this, e.g.
+
+	/*
+	 * We are in the init task, and no other tasks should be running.
+	 */
+	if (IS_ENABLED(CONFIG_KCSAN_EARLY_ENABLE))
+		WRITE_ONCE(kcsan_enabled, true);
+
+That makes code a bit easier to read, and ensures that the code always
+gets build coverage, so it's less likely that code changes will
+introduce a build failure when the option is enabled.
+
+[...]
+
+> +#ifdef CONFIG_KCSAN_DEBUG
+> +	kcsan_disable_current();
+> +	pr_err("KCSAN: watching %s, size: %zu, addr: %px [slot: %d, encoded: %lx]\n",
+> +	       is_write ? "write" : "read", size, ptr,
+> +	       watchpoint_slot((unsigned long)ptr),
+> +	       encode_watchpoint((unsigned long)ptr, size, is_write));
+> +	kcsan_enable_current();
+> +#endif
+
+This can use IS_ENABLED(), e.g.
+
+	if (IS_ENABLED(CONFIG_KCSAN_DEBUG)) {
+		kcsan_disable_current();
+		pr_err("KCSAN: watching %s, size: %zu, addr: %px [slot: %d, encoded: %lx]\n",
+		       is_write ? "write" : "read", size, ptr,
+		       watchpoint_slot((unsigned long)ptr),
+		       encode_watchpoint((unsigned long)ptr, size, is_write));
+		kcsan_enable_current();
+	}
+
+[...]
+> +#ifdef CONFIG_KCSAN_REPORT_RACE_UNKNOWN_ORIGIN
+> +		kcsan_report(ptr, size, is_write, smp_processor_id(),
+> +			     kcsan_report_race_unknown_origin);
+> +#endif
+
+This can also use IS_ENABLED().
+
+[...]
+
+> diff --git a/kernel/kcsan/kcsan.h b/kernel/kcsan/kcsan.h
+> new file mode 100644
+> index 000000000000..429479b3041d
+> --- /dev/null
+> +++ b/kernel/kcsan/kcsan.h
+> @@ -0,0 +1,140 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef _MM_KCSAN_KCSAN_H
+> +#define _MM_KCSAN_KCSAN_H
+> +
+> +#include <linux/kcsan.h>
+> +
+> +/*
+> + * Total number of watchpoints. An address range maps into a specific slot as
+> + * specified in `encoding.h`. Although larger number of watchpoints may not even
+> + * be usable due to limited thread count, a larger value will improve
+> + * performance due to reducing cache-line contention.
+> + */
+> +#define KCSAN_NUM_WATCHPOINTS 64
+
+Is there any documentation as to how 64 was chosen? It's fine if it's
+arbitrary, but it would be good to know either way.
+
+I wonder if this is something that might need to scale with NR_CPUS (or
+nr_cpus).
+
+> +enum kcsan_counter_id {
+> +	/*
+> +	 * Number of watchpoints currently in use.
+> +	 */
+> +	kcsan_counter_used_watchpoints,
+
+Nit: typically enum values are capitalized (as coding-style.rst says).
+That helps to make it clear each value is a constant rather than a
+variable. Likewise for the other enums here.
+
+Thanks,
+Mark.
