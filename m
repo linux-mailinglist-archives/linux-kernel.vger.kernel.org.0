@@ -2,126 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69BAAE0779
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 17:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49054E077B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 17:32:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732269AbfJVPbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 11:31:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:21136 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732228AbfJVPbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 11:31:02 -0400
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 96D3637E80
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 15:31:01 +0000 (UTC)
-Received: by mail-wr1-f70.google.com with SMTP id j14so9029003wrm.6
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 08:31:01 -0700 (PDT)
+        id S1732401AbfJVPbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 11:31:33 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33995 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730305AbfJVPbc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 11:31:32 -0400
+Received: by mail-lj1-f193.google.com with SMTP id j19so17695784lja.1;
+        Tue, 22 Oct 2019 08:31:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bYuISgCPeW5+MVYfOIxCD24v5h78aw8/fY5c9Ec2zaE=;
-        b=bMULqvMmPv90dO8yrrcA9pNfuA6ZpSKPgEbyNseYcgbvIV0oipqsDzsdFXjDR7hEv4
-         lDYe/LBlDyaOm45XeTmYvujEnlePowIfoKZk7fwR+brxbruV85VH08L4Zs5TJorrvEhj
-         zJrMoDXdiDOoP5SP6kHPFLEZy6FE27yeQzJ/r0OiHyYW3Go90wr3wVWa1adXNKFscP4v
-         SwpUpoUoYl215Rtfp8u5O+AoXVm7F3SHSTnSGeB+obj2dMmeJGA8LvmJP4/TwR8woYBv
-         kjIu50I284hfnbAu6nLavehC5eInR+xkanDWNXyBhMy9+bE7jpAEB/LiO6L8xLjRJuMl
-         h2rA==
-X-Gm-Message-State: APjAAAUxuXQQZIsnJX60zbC+U2+GhKjcL/jKg1h9X6SQvq9rBoToVf3+
-        e8pdDkzywUiwgZv9L0x/c4UbYnbAKF07dPYiipsGatASJ2R/+rS/dg9np0sNqRHfYLwaa7S58Vk
-        bOPAYJuW0rbfr3ZJp5AsglFEg
-X-Received: by 2002:a7b:c4c6:: with SMTP id g6mr3605232wmk.126.1571758260030;
-        Tue, 22 Oct 2019 08:31:00 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzRNIaPW2VC3E0u/tx9jObrvh39A/kSU1/g2oCY4LzK3jFChqIF1uPjGeoTV55xRLqzG4HUGw==
-X-Received: by 2002:a7b:c4c6:: with SMTP id g6mr3605195wmk.126.1571758259666;
-        Tue, 22 Oct 2019 08:30:59 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:c0e4:dcf4:b543:ce19? ([2001:b07:6468:f312:c0e4:dcf4:b543:ce19])
-        by smtp.gmail.com with ESMTPSA id i18sm17512175wrx.14.2019.10.22.08.30.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2019 08:30:59 -0700 (PDT)
-Subject: Re: [PATCH v2 14/15] KVM: Terminate memslot walks via used_slots
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     James Hogan <jhogan@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-References: <20191022003537.13013-1-sean.j.christopherson@intel.com>
- <20191022003537.13013-15-sean.j.christopherson@intel.com>
- <642f73ee-9425-0149-f4f4-f56be9ae5713@redhat.com>
- <20191022152827.GC2343@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <625e511f-bd35-3b92-0c6d-550c10fc5827@redhat.com>
-Date:   Tue, 22 Oct 2019 17:30:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=EJB7XvTqhwkjvsiq5gN/UX3zka3jCAmlwtv3LG1edKM=;
+        b=GmteRHHVXu7hTKNck9oncJxOalc+3Wn2O/Neg1SgG0y+YprmsuFFXlpvoSuTZ17BwV
+         wnnGWJw3jrTExyJdTz6nEi7Camk1f/OD6K26d5GoA7Lni/IeQ5xiMGs7Ag6S4ehbLvKU
+         WdFjHEB9l6JBuKC7Mbln8PzR8Ov3yJPjNaWoqz4DmF8AzgIETu65FfrWRjCSV3dOupPW
+         5SL7wH2Bk/tNqQmuDSVUajAAbuDnv4L0paULBNcV5WtF5rESmQn+6tDahVOOMUMf/U0J
+         bpuNFeoVkvngd7r9NyvIbDOJGTiAUAZ7GVnjboBOBGL+GHtS+lgTiPAOv6hLAW/jgDMc
+         C4Xg==
+X-Gm-Message-State: APjAAAXY47a8bbQC7tosthE7diIfjXlnTtcKgav1qTspk/Nvvi28pQDv
+        XvRV/ZZdaSfbIG9TNU8Dxcw=
+X-Google-Smtp-Source: APXvYqz7WVVbHykWkvapHIKnSa5f3AP+b6vE+OgP9+nSP9uT98ogjaSLRJqBoOoJ6Wqgl5oBqYNZqA==
+X-Received: by 2002:a2e:6c15:: with SMTP id h21mr18862340ljc.10.1571758290572;
+        Tue, 22 Oct 2019 08:31:30 -0700 (PDT)
+Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
+        by smtp.gmail.com with ESMTPSA id q24sm7556775ljj.6.2019.10.22.08.31.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Oct 2019 08:31:29 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.92.2)
+        (envelope-from <johan@xi.terra>)
+        id 1iMw8O-0005oL-4R; Tue, 22 Oct 2019 17:31:44 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Johan Hovold <johan@kernel.org>,
+        stable <stable@vger.kernel.org>,
+        syzbot+a4fbb3bb76cda0ea4e58@syzkaller.appspotmail.com
+Subject: [PATCH] USB: ldusb: fix control-message timeout
+Date:   Tue, 22 Oct 2019 17:31:27 +0200
+Message-Id: <20191022153127.22295-1-johan@kernel.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <000000000000daa63d059580f872@google.com>
+References: <000000000000daa63d059580f872@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20191022152827.GC2343@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/10/19 17:28, Sean Christopherson wrote:
-> On Tue, Oct 22, 2019 at 04:04:18PM +0200, Paolo Bonzini wrote:
->> On 22/10/19 02:35, Sean Christopherson wrote:
->>> +static inline int kvm_shift_memslots_forward(struct kvm_memslots *slots,
->>> +					     struct kvm_memory_slot *new)
->>> +{
->>> +	struct kvm_memory_slot *mslots = slots->memslots;
->>> +	int i;
->>> +
->>> +	if (WARN_ON_ONCE(slots->id_to_index[new->id] == -1) ||
->>> +	    WARN_ON_ONCE(!slots->used_slots))
->>> +		return -1;
->>> +
->>> +	for (i = slots->id_to_index[new->id]; i < slots->used_slots - 1; i++) {
->>> +		if (new->base_gfn > mslots[i + 1].base_gfn)
->>> +			break;
->>> +
->>> +		WARN_ON_ONCE(new->base_gfn == mslots[i + 1].base_gfn);
->>> +
->>> +		/* Shift the next memslot forward one and update its index. */
->>> +		mslots[i] = mslots[i + 1];
->>> +		slots->id_to_index[mslots[i].id] = i;
->>> +	}
->>> +	return i;
->>> +}
->>> +
->>> +static inline int kvm_shift_memslots_back(struct kvm_memslots *slots,
->>> +					  struct kvm_memory_slot *new,
->>> +					  int start)
->>
->> This new implementation of the insertion sort loses the comments that
->> were there in the old one.  Please keep them as function comments.
-> 
-> I assume you're talking about this blurb in particular?
-> 
-> 	 * The ">=" is needed when creating a slot with base_gfn == 0,
-> 	 * so that it moves before all those with base_gfn == npages == 0.
+USB control-message timeouts are specified in milliseconds, not jiffies.
+Waiting 83 minutes for a transfer to complete is a bit excessive.
 
-Yes, well all of the comments.  You can also keep them in the caller, as
-you prefer.
+Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.13
+Reported-by: syzbot+a4fbb3bb76cda0ea4e58@syzkaller.appspotmail.com
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/usb/misc/ldusb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Paolo
+diff --git a/drivers/usb/misc/ldusb.c b/drivers/usb/misc/ldusb.c
+index dd1ea25e42b1..8f86b4ebca89 100644
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -581,7 +581,7 @@ static ssize_t ld_usb_write(struct file *file, const char __user *buffer,
+ 					 1 << 8, 0,
+ 					 dev->interrupt_out_buffer,
+ 					 bytes_to_write,
+-					 USB_CTRL_SET_TIMEOUT * HZ);
++					 USB_CTRL_SET_TIMEOUT);
+ 		if (retval < 0)
+ 			dev_err(&dev->intf->dev,
+ 				"Couldn't submit HID_REQ_SET_REPORT %d\n",
+-- 
+2.23.0
 
