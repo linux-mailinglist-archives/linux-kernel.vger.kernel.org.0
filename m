@@ -2,168 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3F3ADFD6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 08:00:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89890DFD62
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 08:00:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731152AbfJVF7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 01:59:53 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40274 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731015AbfJVF7w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 01:59:52 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 15so3921426pgt.7
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 22:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=shSJXxHkqiOnwVznDt/3eHxUBXqubG/+hrNMGFN/+WI=;
-        b=gAXkknV0IucthKymxPq6B+aWK9aCNWfbX4eYnr4pyGjA0hMdT1OztIzNZPrdJn7u8K
-         Z1ykMhxLWpFO52vL4nSGDmaXBg+yCIt3WUr5hC4LqFjJCh/9miVn2JYz6FDwSHJ5rFXq
-         uKshCmFJeG51cvhsB/FCvyJMaMOR6jdMl+vwmRu0R2fPAZ9dL3hob3qfBhmq39zsre3T
-         aFf99CL7FKDHbIfcWo4UYJrbL26o6TJ2rPcyXlShN2rhCvyM3ZMkNy/3y+oCYI7zs6aX
-         kuLEneqiXs1VLpG6Z9mZMCaID7JPILuVPGFcZMBgpkq+mEdPedz0vjEeUA5z3X2fiZrJ
-         L0mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=shSJXxHkqiOnwVznDt/3eHxUBXqubG/+hrNMGFN/+WI=;
-        b=cIZWZQ44tvJuYE3TBqL6FVfK+rcfXNXZFyTOhl4moB1p44crVUlUaFq7DTppMiyPzI
-         4mp+cYyUh8+LuKfq1gRglhqiacObl5w8/j8pncGlAcBWczc4/k2IldOMIzeFQWXUAXwR
-         ER42jVHp3JrSAYeK+bYSybUjouDlpSdAMGuicSz/rqEQd4FYq+an8cHyIKqQg4xOyfec
-         s/Oy+EqdAL+7+3xaCzTE7/mcfEEsepPw0mqIXm9DocAbEoArmptKWdusx8NGRl1mYjT3
-         9sBKgWBCLursf0Ip0zotCUHm0fQU64BL0v8nJ+rDsDAgs3OseYLuABuzCKu+5kb7WSex
-         u6Mw==
-X-Gm-Message-State: APjAAAVUCPOeMdpKQpVOsPJ7GCFSCohcSv2hKg9vwq6pNk1dPSsy4g+P
-        nYcRDyVIuyeL5wMqftVTVLRweA==
-X-Google-Smtp-Source: APXvYqzjoLSvUGt8Q1QqZRMMmRg+VMwOLpmfXvYascTlsJAQYMKM43f/kIbY3Q4CvcoWWUgNKGr7HQ==
-X-Received: by 2002:a63:1d60:: with SMTP id d32mr1932366pgm.37.1571723989575;
-        Mon, 21 Oct 2019 22:59:49 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id g35sm16568061pgg.42.2019.10.21.22.59.45
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 21 Oct 2019 22:59:48 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        asutoshd@codeaurora.org
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, arnd@arndb.de,
-        linus.walleij@linaro.org, vincent.guittot@linaro.org,
-        baolin.wang@linaro.org, baolin.wang7@gmail.com,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] mmc: host: sdhci-sprd: Add software queue support
-Date:   Tue, 22 Oct 2019 13:58:57 +0800
-Message-Id: <eea9982c738e90c527de2e92c6f2ca97ac74d97f.1571722391.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1571722391.git.baolin.wang@linaro.org>
-References: <cover.1571722391.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1571722391.git.baolin.wang@linaro.org>
-References: <cover.1571722391.git.baolin.wang@linaro.org>
+        id S1730931AbfJVF73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 01:59:29 -0400
+Received: from mga06.intel.com ([134.134.136.31]:55889 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726024AbfJVF72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 01:59:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 22:59:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,326,1566889200"; 
+   d="scan'208";a="209598441"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Oct 2019 22:59:27 -0700
+Received: from [10.249.230.171] (abudanko-mobl.ccr.corp.intel.com [10.249.230.171])
+        by linux.intel.com (Postfix) with ESMTP id E79C6580100;
+        Mon, 21 Oct 2019 22:59:23 -0700 (PDT)
+Subject: [PATCH v4 2/4] perf/x86: install platform specific sync_task_ctx
+ adapter
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Ian Rogers <irogers@google.com>,
+        Song Liu <songliubraving@fb.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <f4662ac9-e72e-d141-bead-da07e29f81e8@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <359cc996-50bc-2ab3-5c66-f1e5135d08c2@linux.intel.com>
+Date:   Tue, 22 Oct 2019 08:59:22 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <f4662ac9-e72e-d141-bead-da07e29f81e8@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add software queue support to improve the performance.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Bridge perf core and x86 sync_task_ctx() method calls.
+
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- drivers/mmc/host/Kconfig      |    1 +
- drivers/mmc/host/sdhci-sprd.c |   26 ++++++++++++++++++++++++++
- 2 files changed, 27 insertions(+)
+ arch/x86/events/core.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index efa4019..54b86f6 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -632,6 +632,7 @@ config MMC_SDHCI_SPRD
- 	depends on ARCH_SPRD
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select MMC_HSQ
- 	help
- 	  This selects the SDIO Host Controller in Spreadtrum
- 	  SoCs, this driver supports R11(IP version: R11P0).
-diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-index d07b979..3cc1277 100644
---- a/drivers/mmc/host/sdhci-sprd.c
-+++ b/drivers/mmc/host/sdhci-sprd.c
-@@ -19,6 +19,7 @@
- #include <linux/slab.h>
- 
- #include "sdhci-pltfm.h"
-+#include "mmc_hsq.h"
- 
- /* SDHCI_ARGUMENT2 register high 16bit */
- #define SDHCI_SPRD_ARG2_STUFF		GENMASK(31, 16)
-@@ -379,6 +380,16 @@ static unsigned int sdhci_sprd_get_ro(struct sdhci_host *host)
- 	return 0;
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 7b21455d7504..f51bddf5f48c 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2243,6 +2243,12 @@ static void x86_pmu_sched_task(struct perf_event_context *ctx, bool sched_in)
+ 		x86_pmu.sched_task(ctx, sched_in);
  }
  
-+static void sdhci_sprd_request_done(struct sdhci_host *host,
-+				    struct mmc_request *mrq)
++static void x86_pmu_sync_task_ctx(void *prev, void *next)
 +{
-+	/* Validate if the request was from software queue firstly. */
-+	if (mmc_hsq_finalize_request(host->mmc, mrq))
-+		return;
-+
-+	 mmc_request_done(host->mmc, mrq);
++	if (x86_pmu.sync_task_ctx)
++		x86_pmu.sync_task_ctx(prev, next);
 +}
 +
- static struct sdhci_ops sdhci_sprd_ops = {
- 	.read_l = sdhci_sprd_readl,
- 	.write_l = sdhci_sprd_writel,
-@@ -392,6 +403,7 @@ static unsigned int sdhci_sprd_get_ro(struct sdhci_host *host)
- 	.hw_reset = sdhci_sprd_hw_reset,
- 	.get_max_timeout_count = sdhci_sprd_get_max_timeout_count,
- 	.get_ro = sdhci_sprd_get_ro,
-+	.request_done = sdhci_sprd_request_done,
- };
- 
- static void sdhci_sprd_request(struct mmc_host *mmc, struct mmc_request *mrq)
-@@ -521,6 +533,7 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
+ void perf_check_microcode(void)
  {
- 	struct sdhci_host *host;
- 	struct sdhci_sprd_host *sprd_host;
-+	struct mmc_hsq *hsq;
- 	struct clk *clk;
- 	int ret = 0;
+ 	if (x86_pmu.check_microcode)
+@@ -2297,6 +2303,7 @@ static struct pmu pmu = {
+ 	.event_idx		= x86_pmu_event_idx,
+ 	.sched_task		= x86_pmu_sched_task,
+ 	.task_ctx_size          = sizeof(struct x86_perf_task_context),
++	.sync_task_ctx		= x86_pmu_sync_task_ctx,
+ 	.check_period		= x86_pmu_check_period,
  
-@@ -631,6 +644,16 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
- 
- 	sprd_host->flags = host->flags;
- 
-+	hsq = devm_kzalloc(&pdev->dev, sizeof(*hsq), GFP_KERNEL);
-+	if (!hsq) {
-+		ret = -ENOMEM;
-+		goto err_cleanup_host;
-+	}
-+
-+	ret = mmc_hsq_init(hsq, host->mmc);
-+	if (ret)
-+		goto err_cleanup_host;
-+
- 	ret = __sdhci_add_host(host);
- 	if (ret)
- 		goto err_cleanup_host;
-@@ -689,6 +712,7 @@ static int sdhci_sprd_runtime_suspend(struct device *dev)
- 	struct sdhci_host *host = dev_get_drvdata(dev);
- 	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
- 
-+	mmc_hsq_suspend(host->mmc);
- 	sdhci_runtime_suspend_host(host);
- 
- 	clk_disable_unprepare(sprd_host->clk_sdio);
-@@ -717,6 +741,8 @@ static int sdhci_sprd_runtime_resume(struct device *dev)
- 		goto clk_disable;
- 
- 	sdhci_runtime_resume_host(host, 1);
-+	mmc_hsq_resume(host->mmc);
-+
- 	return 0;
- 
- clk_disable:
+ 	.aux_output_match	= x86_pmu_aux_output_match,
 -- 
-1.7.9.5
+2.20.1
 
