@@ -2,45 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 529B6E01CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 12:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79483E01D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 12:15:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731749AbfJVKPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 06:15:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729666AbfJVKPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 06:15:08 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 598FE2075A;
-        Tue, 22 Oct 2019 10:15:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571739306;
-        bh=JvFDhIHW2078G3XkkbjyfQ2GnXTHvER802eg7Axfue8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=X7qllggY4xUXxZJT61yTCil7uF4SANm5VzXBg+6q6Ys8tzbRvzX3+Tq42IfT6VNNr
-         eE/dXoOwAXKeFA3es7GRs2gEUP+BLbwwZBm3sViiikJgLyq/QqoxwUEpRURf7ETlhT
-         dBd3WBUfbvUvCrvN5sh7qW4PtoS302SiELOxJKcU=
-Date:   Tue, 22 Oct 2019 11:15:02 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2] iio: pressure: bmp280: use devm action and remove
- labels from probe
-Message-ID: <20191022111502.5097190e@archlinux>
-In-Reply-To: <CAMRc=MekOWGKo4eJ69ifV+MG5==PetPpb87Amrqm_x95sjFiGQ@mail.gmail.com>
-References: <20191007024131.22708-1-brgl@bgdev.pl>
-        <20191012143722.7cb7015d@archlinux>
-        <CAMRc=MekOWGKo4eJ69ifV+MG5==PetPpb87Amrqm_x95sjFiGQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1731799AbfJVKP2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 06:15:28 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:30355 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731778AbfJVKP0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 06:15:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571739325;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jb+jSLMMXhdA2TXJb5G1pOFPifh/azLKzIqyNehvil8=;
+        b=UgNDkoDTC252jB2hFd3Fsfb7QlX8K/cs7nzl06jQADrJc52ovWA4glR3dQg89OcRcv1C5+
+        /OQL8wX4O76eZqjdUbx87yy1tNquuDS4Srs9trNk3LKh6QE9M5bNpu0bYVn1V3OKK0X3zC
+        4eknomgcEIELZFR/rNTcrLyHvPY8Y84=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-35-KwjT40cYNaCmXPH9U9KO2g-1; Tue, 22 Oct 2019 06:15:21 -0400
+Received: by mail-qk1-f199.google.com with SMTP id d25so16165186qkk.17
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 03:15:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/+tB79fPqhNVkFo2VEsWEyKbhlVTlDgMTu/kLHgRvk0=;
+        b=nq0Q1q/PtFqDnGFo/KKiG95oa3pl1D7XBaod/+0rGppHX11xvuwPePiKTVNk7ef2j/
+         4X5dVZFGiQYLj03P6trlhlhBd25yjJ2wQQqEJPwQAy4sK2GrWMBDNepYFy/Nx4z7hcdI
+         SmiWsSAQKoYryHSlQ2uFbtnt5ynuqOZ78qccT62tw3yC3pbK3TH1nxvZ656C9FtgBfHd
+         ykS0msQ4nr0I9Z4Xy21YlojpbnNb2rpZwZFl/afGRSS3D3bMS/AMmqO2ybCJVVxz7+hx
+         bfNsUb7BzLSbOk7wQtfMtK1NlCez/7XJt6/xibTsiBmjlty5BeFGSK9VlwZGFOBuRZHV
+         SQTA==
+X-Gm-Message-State: APjAAAXtXNH06vFj0n7h7pE48W/tltMGtpedSTyByhzt7/cu2S4kG630
+        yX7kdjAiZAwNvkQpZT63kTJ8rYMp/TZleysdnMrA52+q6qyc86zONukTNeu+VLh9arSzZVg2jtn
+        nYrB9V7epQm1XPl9bAf3TVT5wOSL8lv8kVgVNOoXQ
+X-Received: by 2002:a0c:abcc:: with SMTP id k12mr2302876qvb.101.1571739321351;
+        Tue, 22 Oct 2019 03:15:21 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqw3wlp22/ODzKPhuKB4Wguk4PUNSjqc4San3at8E7aERmoz6go8O9OAAVKGDfW8/RCdENvOC2RZnVCL4j6Ezjg=
+X-Received: by 2002:a0c:abcc:: with SMTP id k12mr2302839qvb.101.1571739321002;
+ Tue, 22 Oct 2019 03:15:21 -0700 (PDT)
 MIME-Version: 1.0
+References: <rzUqln0ASGmn_QTpqCkke6UzMFQDj2H7fIngMOxQwtiX52PkWc_BbxkGy4XcIm7kaVcQHwAYhO7ITZoMotLSHw_2WZre9_QJBDhXoMPTLsw=@protonmail.com>
+In-Reply-To: <rzUqln0ASGmn_QTpqCkke6UzMFQDj2H7fIngMOxQwtiX52PkWc_BbxkGy4XcIm7kaVcQHwAYhO7ITZoMotLSHw_2WZre9_QJBDhXoMPTLsw=@protonmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Tue, 22 Oct 2019 12:15:09 +0200
+Message-ID: <CAO-hwJKmZX8MksRvXC=iyG_eaDxmr3N4tRM_moACxX1aNYSokg@mail.gmail.com>
+Subject: Re: [PATCH v7 1/3] HID: logitech-hidpp: Support translations from
+ short to long reports
+To:     Mazin Rezk <mnrzk@protonmail.com>
+Cc:     "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "jikos@kernel.org" <jikos@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>
+X-MC-Unique: KwjT40cYNaCmXPH9U9KO2g-1
+X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,257 +68,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2019 14:47:18 +0200
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Hi Mazin,
 
-> sob., 12 pa=C5=BA 2019 o 15:37 Jonathan Cameron <jic23@kernel.org> napisa=
-=C5=82(a):
-> >
-> > On Mon,  7 Oct 2019 04:41:31 +0200
-> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > =20
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > We can drop some duplicate code if we use devm_action for disabling
-> > > regulators and pm and the managed variant of iio_device_register().
-> > >
-> > > This allows us to completely remove all remove() callbacks from both
-> > > i2c and spi code.
-> > >
-> > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com> =20
-> > This is on top of the bulk regulator patch which is awaiting precusors
-> > getting to my upstream.  I'll hold this one as well on that.
-> >
-> > If it looks like I've forgotten it then give me a poke.
-> > =20
->=20
-> Hi Jonathan,
->=20
-> gentle poke after v5.4-rc4. Only one of the three patches is in next
-> so far, the one using bulk regulators is missing too besides this one.
-Thanks for the reminder.
+On Sun, Oct 20, 2019 at 6:41 AM Mazin Rezk <mnrzk@protonmail.com> wrote:
+>
+> This patch allows short reports to be translated into long reports.
+>
+> hidpp_validate_device now returns a u8 instead of a bool which represents
+> the supported reports. The corresponding bits (i.e.
+> HIDPP_REPORT_*_SUPPORTED) are set if an HID++ report is supported.
+>
+> If a short report is being sent and the device does not support it, it is
+> instead sent as a long report.
+>
+> Thanks,
+> Mazin
+>
+> Signed-off-by: Mazin Rezk <mnrzk@protonmail.com>
+> ---
 
-Applied to the togreg branch of iio.git and pushed out as testing for the
-autobuilders to play with it.
+Yep, I like this patch much better.
 
-Thanks,
+I also tested the 0xb012 MX Master, and it now works like a charm :)
 
-Jonathan
->=20
-> Best regards,
-> Bartosz Golaszewski
->=20
-> > Thanks,
-> >
-> > Jonathan
-> > =20
-> > > ---
-> > > v1 -> v2:
-> > > - squash the patches using devm_iio_device_register() and devm_action
-> > >   to keep the changes bisectable
-> > >
-> > >  drivers/iio/pressure/bmp280-core.c | 62 +++++++++++++++-------------=
---
-> > >  drivers/iio/pressure/bmp280-i2c.c  |  6 ---
-> > >  drivers/iio/pressure/bmp280-spi.c  |  6 ---
-> > >  drivers/iio/pressure/bmp280.h      |  1 -
-> > >  4 files changed, 30 insertions(+), 45 deletions(-)
-> > >
-> > > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressur=
-e/bmp280-core.c
-> > > index c2988dbdb1a7..79254dd26dfd 100644
-> > > --- a/drivers/iio/pressure/bmp280-core.c
-> > > +++ b/drivers/iio/pressure/bmp280-core.c
-> > > @@ -984,6 +984,22 @@ static int bmp085_fetch_eoc_irq(struct device *d=
-ev,
-> > >       return 0;
-> > >  }
-> > >
-> > > +static void bmp280_pm_disable(void *data)
-> > > +{
-> > > +     struct device *dev =3D data;
-> > > +
-> > > +     pm_runtime_get_sync(dev);
-> > > +     pm_runtime_put_noidle(dev);
-> > > +     pm_runtime_disable(dev);
-> > > +}
-> > > +
-> > > +static void bmp280_regulators_disable(void *data)
-> > > +{
-> > > +     struct regulator_bulk_data *supplies =3D data;
-> > > +
-> > > +     regulator_bulk_disable(BMP280_NUM_SUPPLIES, supplies);
-> > > +}
-> > > +
-> > >  int bmp280_common_probe(struct device *dev,
-> > >                       struct regmap *regmap,
-> > >                       unsigned int chip,
-> > > @@ -1055,6 +1071,11 @@ int bmp280_common_probe(struct device *dev,
-> > >               return ret;
-> > >       }
-> > >
-> > > +     ret =3D devm_add_action_or_reset(dev, bmp280_regulators_disable,
-> > > +                                    data->supplies);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > >       /* Wait to make sure we started up properly */
-> > >       usleep_range(data->start_up_time, data->start_up_time + 100);
-> > >
-> > > @@ -1069,17 +1090,16 @@ int bmp280_common_probe(struct device *dev,
-> > >       data->regmap =3D regmap;
-> > >       ret =3D regmap_read(regmap, BMP280_REG_ID, &chip_id);
-> > >       if (ret < 0)
-> > > -             goto out_disable_regulators;
-> > > +             return ret;
-> > >       if (chip_id !=3D chip) {
-> > >               dev_err(dev, "bad chip id: expected %x got %x\n",
-> > >                       chip, chip_id);
-> > > -             ret =3D -EINVAL;
-> > > -             goto out_disable_regulators;
-> > > +             return -EINVAL;
-> > >       }
-> > >
-> > >       ret =3D data->chip_info->chip_config(data);
-> > >       if (ret < 0)
-> > > -             goto out_disable_regulators;
-> > > +             return ret;
-> > >
-> > >       dev_set_drvdata(dev, indio_dev);
-> > >
-> > > @@ -1093,14 +1113,14 @@ int bmp280_common_probe(struct device *dev,
-> > >               if (ret < 0) {
-> > >                       dev_err(data->dev,
-> > >                               "failed to read calibration coefficient=
-s\n");
-> > > -                     goto out_disable_regulators;
-> > > +                     return ret;
-> > >               }
-> > >       } else if (chip_id =3D=3D BMP280_CHIP_ID || chip_id =3D=3D BME2=
-80_CHIP_ID) {
-> > >               ret =3D bmp280_read_calib(data, &data->calib.bmp280, ch=
-ip_id);
-> > >               if (ret < 0) {
-> > >                       dev_err(data->dev,
-> > >                               "failed to read calibration coefficient=
-s\n");
-> > > -                     goto out_disable_regulators;
-> > > +                     return ret;
-> > >               }
-> > >       }
-> > >
-> > > @@ -1112,7 +1132,7 @@ int bmp280_common_probe(struct device *dev,
-> > >       if (irq > 0 || (chip_id  =3D=3D BMP180_CHIP_ID)) {
-> > >               ret =3D bmp085_fetch_eoc_irq(dev, name, irq, data);
-> > >               if (ret)
-> > > -                     goto out_disable_regulators;
-> > > +                     return ret;
-> > >       }
-> > >
-> > >       /* Enable runtime PM */
-> > > @@ -1127,36 +1147,14 @@ int bmp280_common_probe(struct device *dev,
-> > >       pm_runtime_use_autosuspend(dev);
-> > >       pm_runtime_put(dev);
-> > >
-> > > -     ret =3D iio_device_register(indio_dev);
-> > > +     ret =3D devm_add_action_or_reset(dev, bmp280_pm_disable, dev);
-> > >       if (ret)
-> > > -             goto out_runtime_pm_disable;
-> > > -
-> > > -     return 0;
-> > > +             return ret;
-> > >
-> > > -out_runtime_pm_disable:
-> > > -     pm_runtime_get_sync(data->dev);
-> > > -     pm_runtime_put_noidle(data->dev);
-> > > -     pm_runtime_disable(data->dev);
-> > > -out_disable_regulators:
-> > > -     regulator_bulk_disable(BMP280_NUM_SUPPLIES, data->supplies);
-> > > -     return ret;
-> > > +     return devm_iio_device_register(dev, indio_dev);
-> > >  }
-> > >  EXPORT_SYMBOL(bmp280_common_probe);
-> > >
-> > > -int bmp280_common_remove(struct device *dev)
-> > > -{
-> > > -     struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> > > -     struct bmp280_data *data =3D iio_priv(indio_dev);
-> > > -
-> > > -     iio_device_unregister(indio_dev);
-> > > -     pm_runtime_get_sync(data->dev);
-> > > -     pm_runtime_put_noidle(data->dev);
-> > > -     pm_runtime_disable(data->dev);
-> > > -     regulator_bulk_disable(BMP280_NUM_SUPPLIES, data->supplies);
-> > > -     return 0;
-> > > -}
-> > > -EXPORT_SYMBOL(bmp280_common_remove);
-> > > -
-> > >  #ifdef CONFIG_PM
-> > >  static int bmp280_runtime_suspend(struct device *dev)
-> > >  {
-> > > diff --git a/drivers/iio/pressure/bmp280-i2c.c b/drivers/iio/pressure=
-/bmp280-i2c.c
-> > > index acd9a3784fb4..3109c8e2cc11 100644
-> > > --- a/drivers/iio/pressure/bmp280-i2c.c
-> > > +++ b/drivers/iio/pressure/bmp280-i2c.c
-> > > @@ -38,11 +38,6 @@ static int bmp280_i2c_probe(struct i2c_client *cli=
-ent,
-> > >                                  client->irq);
-> > >  }
-> > >
-> > > -static int bmp280_i2c_remove(struct i2c_client *client)
-> > > -{
-> > > -     return bmp280_common_remove(&client->dev);
-> > > -}
-> > > -
-> > >  static const struct acpi_device_id bmp280_acpi_i2c_match[] =3D {
-> > >       {"BMP0280", BMP280_CHIP_ID },
-> > >       {"BMP0180", BMP180_CHIP_ID },
-> > > @@ -82,7 +77,6 @@ static struct i2c_driver bmp280_i2c_driver =3D {
-> > >               .pm =3D &bmp280_dev_pm_ops,
-> > >       },
-> > >       .probe          =3D bmp280_i2c_probe,
-> > > -     .remove         =3D bmp280_i2c_remove,
-> > >       .id_table       =3D bmp280_i2c_id,
-> > >  };
-> > >  module_i2c_driver(bmp280_i2c_driver);
-> > > diff --git a/drivers/iio/pressure/bmp280-spi.c b/drivers/iio/pressure=
-/bmp280-spi.c
-> > > index 9d57b7a3b134..625b86878ad8 100644
-> > > --- a/drivers/iio/pressure/bmp280-spi.c
-> > > +++ b/drivers/iio/pressure/bmp280-spi.c
-> > > @@ -86,11 +86,6 @@ static int bmp280_spi_probe(struct spi_device *spi)
-> > >                                  spi->irq);
-> > >  }
-> > >
-> > > -static int bmp280_spi_remove(struct spi_device *spi)
-> > > -{
-> > > -     return bmp280_common_remove(&spi->dev);
-> > > -}
-> > > -
-> > >  static const struct of_device_id bmp280_of_spi_match[] =3D {
-> > >       { .compatible =3D "bosch,bmp085", },
-> > >       { .compatible =3D "bosch,bmp180", },
-> > > @@ -118,7 +113,6 @@ static struct spi_driver bmp280_spi_driver =3D {
-> > >       },
-> > >       .id_table =3D bmp280_spi_id,
-> > >       .probe =3D bmp280_spi_probe,
-> > > -     .remove =3D bmp280_spi_remove,
-> > >  };
-> > >  module_spi_driver(bmp280_spi_driver);
-> > >
-> > > diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp=
-280.h
-> > > index eda50ef65706..57ba0e85db91 100644
-> > > --- a/drivers/iio/pressure/bmp280.h
-> > > +++ b/drivers/iio/pressure/bmp280.h
-> > > @@ -112,7 +112,6 @@ int bmp280_common_probe(struct device *dev,
-> > >                       unsigned int chip,
-> > >                       const char *name,
-> > >                       int irq);
-> > > -int bmp280_common_remove(struct device *dev);
-> > >
-> > >  /* PM ops */
-> > >  extern const struct dev_pm_ops bmp280_dev_pm_ops; =20
-> > =20
+nitpick: can you squash the next patch into this one? Because to be
+useful, this patch really need one or 2 supported devices.
+
+Cheers,
+Benjamin
+
+
+
+>  drivers/hid/hid-logitech-hidpp.c | 25 +++++++++++++++++++------
+>  1 file changed, 19 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-=
+hidpp.c
+> index e9bba282f9c1..ee604b17514f 100644
+> --- a/drivers/hid/hid-logitech-hidpp.c
+> +++ b/drivers/hid/hid-logitech-hidpp.c
+> @@ -49,6 +49,10 @@ MODULE_PARM_DESC(disable_tap_to_click,
+>  #define HIDPP_REPORT_LONG_LENGTH               20
+>  #define HIDPP_REPORT_VERY_LONG_MAX_LENGTH      64
+>
+> +#define HIDPP_REPORT_SHORT_SUPPORTED           BIT(0)
+> +#define HIDPP_REPORT_LONG_SUPPORTED            BIT(1)
+> +#define HIDPP_REPORT_VERY_LONG_SUPPORTED       BIT(2)
+> +
+>  #define HIDPP_SUB_ID_CONSUMER_VENDOR_KEYS      0x03
+>  #define HIDPP_SUB_ID_ROLLER                    0x05
+>  #define HIDPP_SUB_ID_MOUSE_EXTRA_BTNS          0x06
+> @@ -183,6 +187,7 @@ struct hidpp_device {
+>
+>         unsigned long quirks;
+>         unsigned long capabilities;
+> +       u8 supported_reports;
+>
+>         struct hidpp_battery battery;
+>         struct hidpp_scroll_counter vertical_wheel_counter;
+> @@ -340,6 +345,11 @@ static int hidpp_send_rap_command_sync(struct hidpp_=
+device *hidpp_dev,
+>         struct hidpp_report *message;
+>         int ret, max_count;
+>
+> +       /* Send as long report if short reports are not supported. */
+> +       if (report_id =3D=3D REPORT_ID_HIDPP_SHORT &&
+> +           !(hidpp_dev->supported_reports & HIDPP_REPORT_SHORT_SUPPORTED=
+))
+> +               report_id =3D REPORT_ID_HIDPP_LONG;
+> +
+>         switch (report_id) {
+>         case REPORT_ID_HIDPP_SHORT:
+>                 max_count =3D HIDPP_REPORT_SHORT_LENGTH - 4;
+> @@ -3458,10 +3468,11 @@ static int hidpp_get_report_length(struct hid_dev=
+ice *hdev, int id)
+>         return report->field[0]->report_count + 1;
+>  }
+>
+> -static bool hidpp_validate_device(struct hid_device *hdev)
+> +static u8 hidpp_validate_device(struct hid_device *hdev)
+>  {
+>         struct hidpp_device *hidpp =3D hid_get_drvdata(hdev);
+> -       int id, report_length, supported_reports =3D 0;
+> +       int id, report_length;
+> +       u8 supported_reports =3D 0;
+>
+>         id =3D REPORT_ID_HIDPP_SHORT;
+>         report_length =3D hidpp_get_report_length(hdev, id);
+> @@ -3469,7 +3480,7 @@ static bool hidpp_validate_device(struct hid_device=
+ *hdev)
+>                 if (report_length < HIDPP_REPORT_SHORT_LENGTH)
+>                         goto bad_device;
+>
+> -               supported_reports++;
+> +               supported_reports |=3D HIDPP_REPORT_SHORT_SUPPORTED;
+>         }
+>
+>         id =3D REPORT_ID_HIDPP_LONG;
+> @@ -3478,7 +3489,7 @@ static bool hidpp_validate_device(struct hid_device=
+ *hdev)
+>                 if (report_length < HIDPP_REPORT_LONG_LENGTH)
+>                         goto bad_device;
+>
+> -               supported_reports++;
+> +               supported_reports |=3D HIDPP_REPORT_LONG_SUPPORTED;
+>         }
+>
+>         id =3D REPORT_ID_HIDPP_VERY_LONG;
+> @@ -3488,7 +3499,7 @@ static bool hidpp_validate_device(struct hid_device=
+ *hdev)
+>                     report_length > HIDPP_REPORT_VERY_LONG_MAX_LENGTH)
+>                         goto bad_device;
+>
+> -               supported_reports++;
+> +               supported_reports |=3D HIDPP_REPORT_VERY_LONG_SUPPORTED;
+>                 hidpp->very_long_report_length =3D report_length;
+>         }
+>
+> @@ -3536,7 +3547,9 @@ static int hidpp_probe(struct hid_device *hdev, con=
+st struct hid_device_id *id)
+>         /*
+>          * Make sure the device is HID++ capable, otherwise treat as gene=
+ric HID
+>          */
+> -       if (!hidpp_validate_device(hdev)) {
+> +       hidpp->supported_reports =3D hidpp_validate_device(hdev);
+> +
+> +       if (!hidpp->supported_reports) {
+>                 hid_set_drvdata(hdev, NULL);
+>                 devm_kfree(&hdev->dev, hidpp);
+>                 return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+> --
+> 2.23.0
+>
 
