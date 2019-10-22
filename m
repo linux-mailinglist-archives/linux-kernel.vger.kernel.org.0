@@ -2,105 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19AADE047E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5CBE048C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:09:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731959AbfJVNGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 09:06:22 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36312 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731948AbfJVNGV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 09:06:21 -0400
-Received: by mail-qt1-f194.google.com with SMTP id d17so12007074qto.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 06:06:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IFWTbMD8AdeW8CJ2pCx3d0rW0WQ9zdFS/kI+sYlxUlw=;
-        b=HhLfr2vGbjQYb9rn8HQIy2DLmFbAqcxrwLSlbP3wl17ZMLM1KjkzM4iR1Cvu6S1qDd
-         CoEeF4DA79piGOBUWJGNkZAF8WQ8IIM/lGLGTaALz+Hf36nOLIphsPix9D4E6y5LB8Fs
-         l+QbEjt4JlU2YrAtAc4G1gB4AL+x0BZiIo11L6pWdIYMQvzNQ8BhHDhTOqo5K8kB25Ml
-         HnAE4jArpeieysIkWtaYYxGKcml0GZnI4AdZf986UtI4LSoqWCRT0mMrnfKz7I2Wo9KT
-         3hZbhzNN8HEhUl5UKFqJcwdT5ngWiaW84WSDtr6Z+CcY57RR23rFjQJcTySy6+Cpbxrx
-         oJIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IFWTbMD8AdeW8CJ2pCx3d0rW0WQ9zdFS/kI+sYlxUlw=;
-        b=DmecknBPiOqcKHbXYNn8L1JtRlZWd+2a8Fu+3jC743VQ3RCsg8eNzcsby2c8AC5+3C
-         41Zvj9TsFV/x4j9O6Y1yPvC3ndO4bt6EvpxCpPs4JPS1iHDpnVMXXve8Suhmn3KwREfD
-         zD0GH/2UlULaaPuCqT6l0c+++DKn4qXJLxnEVe9jPsFjmKXKpoAXY5VfvVv9eL4xRDWS
-         NRKCyJr3ljYPQb+/zV5JCcsbdE05Z/+pe2peLoxlEZUD40rW04jiT7TdSCUnszB62QrD
-         DcBN/1k52qIFdBcQk1IpknY+LO5gu8EQUIsZw2x0JRjgycb2UlFosNRm85IXeaRwZXaQ
-         xMfQ==
-X-Gm-Message-State: APjAAAWnw5gbeJNM+jqC0MENJ1ZRdyioyMZEG1e45Hr1h73XFp7Y+F9O
-        vZqXGTn6iL+0ikINXmUXGfCdvVEIsG2yFg4hYafSMg==
-X-Google-Smtp-Source: APXvYqxx/KtPDbvOc/l9nR5i6+vVfYhh1O6G+InyUToPteiA4rp6ydW+ZlHhJfx3jmclxN9NxPqz/B4OF/PJPBB2h7g=
-X-Received: by 2002:ac8:237b:: with SMTP id b56mr3301704qtb.264.1571749580487;
- Tue, 22 Oct 2019 06:06:20 -0700 (PDT)
+        id S1731791AbfJVNIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 09:08:46 -0400
+Received: from mout01.posteo.de ([185.67.36.65]:35113 "EHLO mout01.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728448AbfJVNIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 09:08:45 -0400
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout01.posteo.de (Postfix) with ESMTPS id E73EA160074
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 15:08:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1571749720; bh=yZ7wkG5/nTFz2HWgD0QS+01R6jUGKtQkz4Yu6HL4NZE=;
+        h=Subject:To:Cc:From:Openpgp:Autocrypt:Date:From;
+        b=fvHI1RN9P3xoDhX78fw+fQHj3rn09Z4Irp18rrvkrNFlro26Rn2i9WQvgODOa+XCp
+         HZBV7qels2lyBIL5J9G/v/lliHY23UjJhAtBaym8QixvhfT1xcl2SOGOeBsl4ctnWk
+         XVAuBHrQldKQEjAJf4JWT7Yks6NcRxlqt0eskCAAHkIfncjhkzYEsYc/0aIDVAp80b
+         IRsvE+FP+Neb3EmpqZv5t6bJGA+6aoxqIW0hkXNDzjjAnO8tIYRhhTIVpSyziIjtGn
+         zLUmrQES9gpvqCafaFT9WLIhlVtndKkVRtI4irhiVBrWuDLyq+QxU6pPHefLa3FIvA
+         ARt1/IHOfhK7A==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 46yDN56YYYz6tm6;
+        Tue, 22 Oct 2019 15:08:37 +0200 (CEST)
+Subject: Re: [PATCH] dt-bindings: mma8452: Re-word 'interrupt-names'
+ description
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        linux-iio@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191022035626.13002-1-andrew.smirnov@gmail.com>
+ <1a1bdf10-2505-6baf-8030-ce5e0e2b55a9@posteo.de>
+ <20191022115010.7957744e@archlinux>
+From:   Martin Kepplinger <martink@posteo.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=martink@posteo.de; keydata=
+ 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
+Message-ID: <8cf84d9f-e9d9-4c18-ac0b-e568a34f2608@posteo.de>
+Date:   Tue, 22 Oct 2019 15:08:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191022111806.23143-1-colin.king@canonical.com>
-In-Reply-To: <20191022111806.23143-1-colin.king@canonical.com>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Tue, 22 Oct 2019 18:36:08 +0530
-Message-ID: <CAP245DXjVDJ68kmWONmWh4YB=dcVrQ4q1y3bPncDc5=FohY2Vw@mail.gmail.com>
-Subject: Re: [PATCH][next] thermal: qcom: tsens-v1: fix kfree of a non-pointer value
-To:     Colin King <colin.king@canonical.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191022115010.7957744e@archlinux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 4:48 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently the kfree of pointer qfprom_cdata is kfreeing an
-> error value that has been cast to a pointer rather than a
-> valid address.  Fix this by removing the kfree.
+On 22.10.19 12:50, Jonathan Cameron wrote:
+> On Tue, 22 Oct 2019 10:43:09 +0200
+> Martin Kepplinger <martink@posteo.de> wrote:
+> 
+>> On 22.10.19 05:56, Andrey Smirnov wrote:
+>>> Current wording in the binding documentation doesn't make it 100%
+>>> clear that only one of "INT1" and "INT2" will ever be used by the
+>>> driver and that specifying both has no advantages. Re-word it to make
+>>> this aspect a bit more explicit.
+> 
+> From a quick glance at the datasheet, it appears that the hardware
+> is capable of routing different interrupts to different pins, even
+> if the driver does not do so.
+> 
+> CTRL_REG5 has 6 different bits to set whether particular blocks have
+> their interrupt routed to INT1 or INT2, so it appears to be possible
+> to send some each way.
+>  
+> A binding is for the hardware not the driver, so if I'm right about this
+> the current text is correct and should be left alone.
 
-Hmm, we just added this to other places[1] as a fix for mem leaks
-using the nvmem api.
+right, please ignore my "acked-by". Thanks a lot for taking a look.
 
-I think we need to fix up the qfprom_read wrapper. Srini?
+                            martin
 
-[1] https://lore.kernel.org/stable/20191010083616.685532154@linuxfoundation.org/
-
-> Fixes: 95ededc17e4e ("thermal: qcom: tsens-v1: Add support for MSM8956 and MSM8976")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/thermal/qcom/tsens-v1.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/thermal/qcom/tsens-v1.c b/drivers/thermal/qcom/tsens-v1.c
-> index 2d1077b64887..bd2ddb684a45 100644
-> --- a/drivers/thermal/qcom/tsens-v1.c
-> +++ b/drivers/thermal/qcom/tsens-v1.c
-> @@ -240,10 +240,8 @@ static int calibrate_8976(struct tsens_priv *priv)
->         u32 *qfprom_cdata;
->
->         qfprom_cdata = (u32 *)qfprom_read(priv->dev, "calib");
-> -       if (IS_ERR(qfprom_cdata)) {
-> -               kfree(qfprom_cdata);
-> +       if (IS_ERR(qfprom_cdata))
->                 return PTR_ERR(qfprom_cdata);
-> -       }
->
->         mode = (qfprom_cdata[4] & MSM8976_CAL_SEL_MASK);
->         dev_dbg(priv->dev, "calibration mode is %d\n", mode);
-> --
-> 2.20.1
->
