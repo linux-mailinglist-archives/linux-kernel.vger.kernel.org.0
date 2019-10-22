@@ -2,98 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BAE1E0665
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 16:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C1C0E065E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 16:27:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731603AbfJVO2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 10:28:19 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:45591 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727194AbfJVO2S (ORCPT
+        id S1730945AbfJVO1o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 10:27:44 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:35177 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbfJVO1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 10:28:18 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MN5aF-1idDT43P41-00J6G4; Tue, 22 Oct 2019 16:27:47 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Adam Ford <aford173@gmail.com>,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh@kernel.org>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] hwrng: omap3-rom - Fix unused function warnings
-Date:   Tue, 22 Oct 2019 16:27:31 +0200
-Message-Id: <20191022142741.1794378-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 22 Oct 2019 10:27:43 -0400
+Received: by mail-qk1-f193.google.com with SMTP id w2so16411980qkf.2;
+        Tue, 22 Oct 2019 07:27:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=X0ZOGYsSTOrqAuUJQSbLUK9pxP5SaCYK2GX9ZXRXpGo=;
+        b=buFDSpnktDPCZOnBms8qhalNZimgAYSLbVNQ08D23fWAEr8Amk28tWNY7kQrcLSKYX
+         LLNIQU13CSzasXYCEmisROuDbWG4K9DilKBU7R7n8luUguLxMsy04Ky6L2KPh/n8PDHT
+         ylk1MLCdbtCnrHbu8wwBUOJUrnENaxHvyOcfhP01bl4SkovkcesoK98SGOvZOZdDEtK5
+         sS4rtifd2yyyLy3aVYojExK/aaQDXD0CW7r0hdfYwnkSNQNVYaICjioD9pihR7Al5zeM
+         E3IjnFA0NV2BspGqs/LX5ub01djtBsefxTQkc8G6SiGf8dQZj+qaRYq0Er3icg7c9Acs
+         35Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X0ZOGYsSTOrqAuUJQSbLUK9pxP5SaCYK2GX9ZXRXpGo=;
+        b=IgqPSbOeJ6PJQwJKoOJCTD6OWuzb9KdlURXdEjYK0tgJ1EeFeTX9Dubf7Ke4rmp3UR
+         KkdvYV/HNvsRx6WTPD3nRLdolCwV0njq1EiRXMB2eduET8zf0fBxg6KwsKctxhkt1xJL
+         leEwqn8UgVQ/PKBl+pD28lYa8rLllccoEA/a3tqbsGRU6O4NdXdXdnCozEbtrReMr/jo
+         dBZz5wLIi8070WrHnEnd06Pp77lJaed39JW0/IV2sfOQ7Hd9vtM6fdqNgGfTEvo6B87N
+         Rb/tIqOkGbQZeJzAa38jjhTIHsPfv2WBvWk6Zm62YIU4CcqxDUoV3tzGb9wRZFhhFm24
+         SNaA==
+X-Gm-Message-State: APjAAAW9x74UX1HAnwRnuMgolDSD4cKq+xSV6TWitsz4oSo7DxD2V6Re
+        vcdwRF2HlZ004sWfabEW+n7CoJL4V/k=
+X-Google-Smtp-Source: APXvYqxNL03HGLClVr1AH7C8sRxH8TcjK0Dkh8gIZmURmo0hIogq04ewNWkBtNqsKIOZASOCvveTbw==
+X-Received: by 2002:a37:9202:: with SMTP id u2mr3291112qkd.8.1571754462621;
+        Tue, 22 Oct 2019 07:27:42 -0700 (PDT)
+Received: from smtp.gmail.com (gwcrusp.semfio.usp.br. [143.107.150.86])
+        by smtp.gmail.com with ESMTPSA id k29sm9824775qtu.70.2019.10.22.07.27.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2019 07:27:41 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 11:27:37 -0300
+From:   Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     dragos.bogdan@analog.com, alexandru.ardelean@analog.com,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        kernel-usp@googlegroups.com
+Subject: Re: [PATCH v2 1/2] iio: adc: Add driver support for AD7292
+Message-ID: <20191022142736.ztch3mzqpv6jcvhm@smtp.gmail.com>
+References: <20191016025119.53fclzngzt5qwlmk@smtp.gmail.com>
+ <20191021180644.3a260af2@archlinux>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:PBfTuEp8ZX4Ra2Ce3a9pZMSs9SwhMX1hftuoj/HSfQ/p0GlQWT4
- wMj8mkLE7kG+8bdty5J1+ElmfuOTIR4PA6vdmHFsFLC0YXcpfucBrpTcccLMbR6YXng5JVu
- zE7vpU4lQC0NFySxsgbnkX4cEG95HGNmQWpd8uRboG0BVC4+FQgUOv15lgD8qAWPhbEnYba
- tNjqA/jWVavi2TrI1wYfg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:pKRLuV2+9dI=:6cTjtlK905RHJs9ndFcqmD
- juozbcR0cdC4bMaUv2wwl6wuJrWELOB45PPT6II7Kef6Vub0TSU5FFQk/iKBYuLi88kUDPtK7
- 7vaTpiHI3qkJQIUNBziBwkg8xIAeOlU/Ze7GkCT85tdTAF8Z2p+MQaV7Sc5Ie9PIYsMu8dOyP
- /LqJU8oAIJ2h8wnKKVhpoJ20FFmQj2ETCkxFs4EvykGt93Lof1ORVpTH0jd5mrXT4qfoGszXI
- xJk3RPilXcdGBszcps4Uc0xJu48ZgoybpIkvqQdgPAO+7PdhHL3pUkrgrTX5GiHWqfBGlGaAN
- JoKezIHCF5sq/q2fZSLG0Cg/yC6pj/KdBZFl8ntnxBHG6OlZ/LtZjhnuO7wRxRT82rmEWOyWp
- r9Iy+joHgPvnzw6HjnWfqPz0aGidOqjEA1EoDMeNsSgJUf/fMVnh7DxCyBDjdvtHCNezJXdwX
- HyN1jg6bOGbxFbo93wMXApStWS/WTikWUdStKZS5UTgVSbSS2HwPIrK6h5t7KIEYKsY667iNK
- +zKbvb6uc7JS6ZwcsNJhs5i8oyJ5Zbc3dL0yLOGbtfyDSfeGcGe6iavaFuo/kr3ZO4jF/EG2n
- dN4AoZ3H175TBYbr9+YV8B0PCByqpNbVHMvG6XLnKY2kl8vnZnxgXu1zKZ3llRKe2EUY3jhnq
- AMMOCTx04fbukNEpcKqVduYCJu0qXfDLeP24tQDFceNGbTmy7tD9twpmYJSe64+A6Iedtj91/
- Y4DQrY0KpjrLYjZTBvnPBm5EflRX5Kki1hmyk5ScEZQ8hERqOmGEl3bY1jtfZaWL6Xzxjz1Be
- kY25MZEJbHMalz08x1sntIC1dKasN2delAgrDfjKfL4q1mcQn5YT3bV0OOMyGq82+mIXSAWaq
- TqWnK6DBylwqp8GwnGLg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021180644.3a260af2@archlinux>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When runtime-pm is disabled, we get a few harmless warnings:
+Hi Jonathan,
 
-drivers/char/hw_random/omap3-rom-rng.c:65:12: error: unused function 'omap_rom_rng_runtime_suspend' [-Werror,-Wunused-function]
-drivers/char/hw_random/omap3-rom-rng.c:81:12: error: unused function 'omap_rom_rng_runtime_resume' [-Werror,-Wunused-function]
+Should I send a V3 for the whole patchset or just for the DT binding patch?
 
-Mark these functions as __maybe_unused so gcc can drop them
-silently.
+Thanks,
 
-Fixes: 8d9d4bdc495f ("hwrng: omap3-rom - Use runtime PM instead of custom functions")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/char/hw_random/omap3-rom-rng.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Marcelo
 
-diff --git a/drivers/char/hw_random/omap3-rom-rng.c b/drivers/char/hw_random/omap3-rom-rng.c
-index 0b90983c95c8..e08a8887e718 100644
---- a/drivers/char/hw_random/omap3-rom-rng.c
-+++ b/drivers/char/hw_random/omap3-rom-rng.c
-@@ -62,7 +62,7 @@ static int omap3_rom_rng_read(struct hwrng *rng, void *data, size_t max, bool w)
- 	return r;
- }
- 
--static int omap_rom_rng_runtime_suspend(struct device *dev)
-+static int __maybe_unused omap_rom_rng_runtime_suspend(struct device *dev)
- {
- 	struct omap_rom_rng *ddata;
- 	int r;
-@@ -78,7 +78,7 @@ static int omap_rom_rng_runtime_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int omap_rom_rng_runtime_resume(struct device *dev)
-+static int __maybe_unused omap_rom_rng_runtime_resume(struct device *dev)
- {
- 	struct omap_rom_rng *ddata;
- 	int r;
--- 
-2.20.0
-
+On 10/21, Jonathan Cameron wrote:
+> On Tue, 15 Oct 2019 23:51:22 -0300
+> Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
+> 
+> > The AD7292 is a 10-bit monitor and control system with ADC, DACs,
+> > temperature sensor, and GPIOs.
+> > 
+> > Configure AD7292 devices in direct access mode, enabling single-ended
+> > ADC readings.
+> > 
+> > Datasheet:
+> > Link: https://www.analog.com/media/en/technical-documentation/data-sheets/ad7292.pdf
+> > 
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> This looks fine to me.
+> 
+> Assuming nothing else comes up, I'll pick this up once the binding was tidied up.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
