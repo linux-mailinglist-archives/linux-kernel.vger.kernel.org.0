@@ -2,78 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B56BE0A73
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 19:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48A03E0A86
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 19:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732288AbfJVRTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 13:19:45 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42004 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbfJVRTo (ORCPT
+        id S1732460AbfJVRWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 13:22:33 -0400
+Received: from inca-roads.misterjones.org ([213.251.177.50]:42247 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731730AbfJVRWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 13:19:44 -0400
-Received: by mail-lj1-f196.google.com with SMTP id u4so3907150ljj.9
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 10:19:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=cy34QT92NHhuXVd0S9iPTc4eeCufEq/lJNlVwgrDWg0=;
-        b=tEpsjhnXNsRzMFdAsi5Me5vtmMaSPKxbjyPby898vjwDTkOf6U4LzY66u49GwG4QxU
-         PelGGK5wr/HkW0Vel+2/ab6Ro+WYh6lMvqELw1S19dch0gJnycxJkFTFS7qJ/0CbRwDp
-         sS0FMnzQOyBKK+qQMbNnbfna88/YZZt46vKYn3UZ5CPC4RZdQ+MgHwWZ2JxseE2eFT1j
-         cxE31qCc1oC8snuXaIae7fZMBEiVgQZhqc9zYn8CWTLNW1AV4MhL6/90fvnphP33G9EI
-         jCZ8RU5+GWaky9PujnMjVTE9Uf3mk/Ci5xhAlEXOcUF/xARugV0TAjRGujTBAnYhurKv
-         MZ0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=cy34QT92NHhuXVd0S9iPTc4eeCufEq/lJNlVwgrDWg0=;
-        b=DhmOiQFPnxb0IDNUiVcjlZXi8BI2XMrGhzg3fvIgMssZuJF1Tir9VCwJKklC9pyLcn
-         7iNuYxfKB27AI0J1F23KsLk0RgiypAX4OMXHV9FmzYp/8O42SqqSjvt8uBeIfAC26aGJ
-         QKy6TUc6QB0hSYcDrk1kTnFop0Sl1gRY9B41Du/ZLYGVd5rqjEZy5CI2YGM3/ToUi1tr
-         /0Cdgt6RGvek4dU0jT9kCEKW+QJHF7Krm/V1vX4cSn7kKyMWQ4UjKkfMIO9slUh056LI
-         isSzCOwJj63TsxfwR+CTjFWIM2dQ2B5xbkJfVq9UISzuQN9hVCF74QnG7pWoco5HtG5l
-         w3rw==
-X-Gm-Message-State: APjAAAWe68n4U6adOLmLuPaEMWT9cGbfHT38+VNqTnm/e09/rZjBGPUv
-        UNHJH4vp1InR3lfNVtKjuWPPFg==
-X-Google-Smtp-Source: APXvYqx2nMG9uV82zzuDAWW/sGyUPqp5AI2OI+UE3fPbmcfyRxRy2DzOxBhWNqFGs90SK1p+WXM+Qw==
-X-Received: by 2002:a2e:97ca:: with SMTP id m10mr192469ljj.190.1571764782935;
-        Tue, 22 Oct 2019 10:19:42 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id d24sm5173468lfl.65.2019.10.22.10.19.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 10:19:42 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 10:19:36 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Tejun Heo <tj@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org, kernel-team@fb.com,
-        linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [PATCH] net: fix sk_page_frag() recursion from memory reclaim
-Message-ID: <20191022101936.23759c14@cakuba.netronome.com>
-In-Reply-To: <41874d3e-584c-437c-0110-83e001abf1b9@gmail.com>
-References: <20191019170141.GQ18794@devbig004.ftw2.facebook.com>
-        <dc6ff540-e7fc-695e-ed71-2bc0a92a0a9b@gmail.com>
-        <20191019211856.GR18794@devbig004.ftw2.facebook.com>
-        <41874d3e-584c-437c-0110-83e001abf1b9@gmail.com>
-Organization: Netronome Systems, Ltd.
+        Tue, 22 Oct 2019 13:22:33 -0400
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iMxrD-0002o8-Lr; Tue, 22 Oct 2019 19:22:07 +0200
+Date:   Tue, 22 Oct 2019 18:22:06 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        kernel-hardening@lists.openwall.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Laura Abbott <labbott@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 03/18] arm64: kvm: stop treating register x18 as caller
+ save
+Message-ID: <20191022182206.0d8b2301@why>
+In-Reply-To: <20191018161033.261971-4-samitolvanen@google.com>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+        <20191018161033.261971-4-samitolvanen@google.com>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: samitolvanen@google.com, will@kernel.org, catalin.marinas@arm.com, rostedt@goodmis.org, ard.biesheuvel@linaro.org, mark.rutland@arm.com, keescook@chromium.org, kernel-hardening@lists.openwall.com, ndesaulniers@google.com, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, labbott@redhat.com, Dave.Martin@arm.com, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 19 Oct 2019 14:25:57 -0700, Eric Dumazet wrote:
-> On 10/19/19 2:18 PM, Tejun Heo wrote:
-> 
-> > Whatever works is fine by me.  gfpflags_allow_blocking() is clearer
-> > than testing __GFP_DIRECT_RECLAIM directly tho.  Maybe a better way is
-> > introducing a new gfpflags_ helper?  
-> 
-> Sounds good to me !
+On Fri, 18 Oct 2019 09:10:18 -0700
+Sami Tolvanen <samitolvanen@google.com> wrote:
 
-IIUC there will be a v2 with a new helper, dropping this from patchwork.
+> From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> 
+> In preparation of using x18 as a task struct pointer register when
+> running in the kernel, stop treating it as caller save in the KVM
+> guest entry/exit code. Currently, the code assumes there is no need
+> to preserve it for the host, given that it would have been assumed
+> clobbered anyway by the function call to __guest_enter(). Instead,
+> preserve its value and restore it upon return.
+> 
+> Link: https://patchwork.kernel.org/patch/9836891/
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  arch/arm64/kvm/hyp/entry.S | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/entry.S b/arch/arm64/kvm/hyp/entry.S
+> index e5cc8d66bf53..20bd9a20ea27 100644
+> --- a/arch/arm64/kvm/hyp/entry.S
+> +++ b/arch/arm64/kvm/hyp/entry.S
+> @@ -23,6 +23,7 @@
+>  	.pushsection	.hyp.text, "ax"
+>  
+>  .macro save_callee_saved_regs ctxt
+> +	str	x18,      [\ctxt, #CPU_XREG_OFFSET(18)]
+>  	stp	x19, x20, [\ctxt, #CPU_XREG_OFFSET(19)]
+>  	stp	x21, x22, [\ctxt, #CPU_XREG_OFFSET(21)]
+>  	stp	x23, x24, [\ctxt, #CPU_XREG_OFFSET(23)]
+> @@ -38,6 +39,7 @@
+>  	ldp	x25, x26, [\ctxt, #CPU_XREG_OFFSET(25)]
+>  	ldp	x27, x28, [\ctxt, #CPU_XREG_OFFSET(27)]
+>  	ldp	x29, lr,  [\ctxt, #CPU_XREG_OFFSET(29)]
+> +	ldr	x18,      [\ctxt, #CPU_XREG_OFFSET(18)]
+
+There is now an assumption that ctxt is x18 (otherwise why would it be
+out of order?). Please add a comment to that effect.
+
+>  .endm
+>  
+>  /*
+> @@ -87,12 +89,9 @@ alternative_else_nop_endif
+>  	ldp	x14, x15, [x18, #CPU_XREG_OFFSET(14)]
+>  	ldp	x16, x17, [x18, #CPU_XREG_OFFSET(16)]
+>  
+> -	// Restore guest regs x19-x29, lr
+> +	// Restore guest regs x18-x29, lr
+>  	restore_callee_saved_regs x18
+
+Or you could elect another register such as x29 as the base, and keep
+the above in a reasonable order.
+
+>  
+> -	// Restore guest reg x18
+> -	ldr	x18,      [x18, #CPU_XREG_OFFSET(18)]
+> -
+>  	// Do not touch any register after this!
+>  	eret
+>  	sb
+> @@ -114,7 +113,7 @@ ENTRY(__guest_exit)
+>  	// Retrieve the guest regs x0-x1 from the stack
+>  	ldp	x2, x3, [sp], #16	// x0, x1
+>  
+> -	// Store the guest regs x0-x1 and x4-x18
+> +	// Store the guest regs x0-x1 and x4-x17
+>  	stp	x2, x3,   [x1, #CPU_XREG_OFFSET(0)]
+>  	stp	x4, x5,   [x1, #CPU_XREG_OFFSET(4)]
+>  	stp	x6, x7,   [x1, #CPU_XREG_OFFSET(6)]
+> @@ -123,9 +122,8 @@ ENTRY(__guest_exit)
+>  	stp	x12, x13, [x1, #CPU_XREG_OFFSET(12)]
+>  	stp	x14, x15, [x1, #CPU_XREG_OFFSET(14)]
+>  	stp	x16, x17, [x1, #CPU_XREG_OFFSET(16)]
+> -	str	x18,      [x1, #CPU_XREG_OFFSET(18)]
+>  
+> -	// Store the guest regs x19-x29, lr
+> +	// Store the guest regs x18-x29, lr
+>  	save_callee_saved_regs x1
+>  
+>  	get_host_ctxt	x2, x3
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
