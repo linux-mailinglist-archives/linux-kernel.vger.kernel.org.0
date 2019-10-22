@@ -2,92 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DF83E0871
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:14:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C242E086A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:13:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389337AbfJVQNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 12:13:37 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:58520 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389312AbfJVQNg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:13:36 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9MGDTIF052496;
-        Tue, 22 Oct 2019 11:13:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571760809;
-        bh=QGk7qbe/nYACD/rro5HVU0hxjmC2+PiIZcphPyYqDg4=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=BbyZ+sZSr3GX6SkfLtTPvcIegE8IWRidE7M9CyzLnq/VjEjC/TU+aRjcyOQJHytN9
-         csyjsi10Ulk28g61RvhvXfgwaW+lJEKTUNQZkA4yk6fVP2e2e1Fhhea+YavWWmzHe6
-         LqI6XK2TeYMgYp1CLe1Z82oO49YahMfMDr4IY1sc=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9MGDTBd043929
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Oct 2019 11:13:29 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 22
- Oct 2019 11:13:28 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 22 Oct 2019 11:13:19 -0500
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with SMTP id x9MGDDPn111989;
-        Tue, 22 Oct 2019 11:13:13 -0500
-Date:   Tue, 22 Oct 2019 11:13:13 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Tony Lindgren <tony@atomide.com>
-CC:     Tero Kristo <t-kristo@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch 1/9] ARM: dts: dra7: add cam clkctrl node
-Message-ID: <20191022161313.nzwovtxipibpvwpf@ti.com>
-References: <20191018154849.3127-1-bparrot@ti.com>
- <20191018154849.3127-2-bparrot@ti.com>
- <20191022154012.GM5610@atomide.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191022154012.GM5610@atomide.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S2389305AbfJVQN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 12:13:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59806 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732215AbfJVQNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 12:13:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2CFB2B386;
+        Tue, 22 Oct 2019 16:13:21 +0000 (UTC)
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 4/5] MIPS: arc: use function argument for passing argc/argv to prom_init_cmdline
+Date:   Tue, 22 Oct 2019 18:13:14 +0200
+Message-Id: <20191022161315.4194-4-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20191022161315.4194-1-tbogendoerfer@suse.de>
+References: <20191022161315.4194-1-tbogendoerfer@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tony Lindgren <tony@atomide.com> wrote on Tue [2019-Oct-22 08:40:12 -0700]:
-> * Benoit Parrot <bparrot@ti.com> [191018 15:46]:
-> > Add clkctrl nodes for CAM domain.
-> 
-> You're missing the Linux clk folks and list from Cc, can
-> you please resend?
+prom_argc and prom_argv are only used by prom_init_cmdline(), so
+we could pass them directly as function argument.
 
-Sure.
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+---
+ arch/mips/fw/arc/cmdline.c      | 16 +++++++++++-----
+ arch/mips/fw/arc/init.c         |  7 +------
+ arch/mips/include/asm/sgialib.h |  9 +--------
+ 3 files changed, 13 insertions(+), 19 deletions(-)
 
-> 
-> I need an ack for the clk-7xx.c changes if I'm to apply
-> this patch.
-> 
-> Probably the best way would be for tero to collect
-> all the drivers/clk/ti clock data changes and provide
-> an immutable branch with those that I can merge too.
+diff --git a/arch/mips/fw/arc/cmdline.c b/arch/mips/fw/arc/cmdline.c
+index c0122a1dc587..155c5e911723 100644
+--- a/arch/mips/fw/arc/cmdline.c
++++ b/arch/mips/fw/arc/cmdline.c
+@@ -17,6 +17,12 @@
+ 
+ #undef DEBUG_CMDLINE
+ 
++/*
++ * A 32-bit ARC PROM pass arguments and environment as 32-bit pointer.
++ * These macro take care of sign extension.
++ */
++#define prom_argv(index) ((char *) (long)argv[(index)])
++
+ static char *ignored[] = {
+ 	"ConsoleIn=",
+ 	"ConsoleOut=",
+@@ -32,14 +38,14 @@ static char *used_arc[][2] = {
+ 	{ "OSLoadOptions=", "" }
+ };
+ 
+-static char * __init move_firmware_args(char* cp)
++static char __init *move_firmware_args(int argc, LONG *argv, char *cp)
+ {
+ 	char *s;
+ 	int actr, i;
+ 
+ 	actr = 1; /* Always ignore argv[0] */
+ 
+-	while (actr < prom_argc) {
++	while (actr < argc) {
+ 		for(i = 0; i < ARRAY_SIZE(used_arc); i++) {
+ 			int len = strlen(used_arc[i][0]);
+ 
+@@ -64,7 +70,7 @@ static char * __init move_firmware_args(char* cp)
+ 	return cp;
+ }
+ 
+-void __init prom_init_cmdline(void)
++void __init prom_init_cmdline(int argc, LONG *argv)
+ {
+ 	char *cp;
+ 	int actr, i;
+@@ -76,9 +82,9 @@ void __init prom_init_cmdline(void)
+ 	 * Move ARC variables to the beginning to make sure they can be
+ 	 * overridden by later arguments.
+ 	 */
+-	cp = move_firmware_args(cp);
++	cp = move_firmware_args(argc, argv, cp);
+ 
+-	while (actr < prom_argc) {
++	while (actr < argc) {
+ 		for (i = 0; i < ARRAY_SIZE(ignored); i++) {
+ 			int len = strlen(ignored[i]);
+ 
+diff --git a/arch/mips/fw/arc/init.c b/arch/mips/fw/arc/init.c
+index c713292462aa..f9d1dea9b2ca 100644
+--- a/arch/mips/fw/arc/init.c
++++ b/arch/mips/fw/arc/init.c
+@@ -18,8 +18,6 @@
+ 
+ /* Master romvec interface. */
+ struct linux_romvec *romvec;
+-int prom_argc;
+-LONG *_prom_argv;
+ 
+ #if defined(CONFIG_64BIT) && defined(CONFIG_FW_ARC32)
+ /* stack for calling 32bit ARC prom */
+@@ -32,9 +30,6 @@ void __init prom_init(void)
+ 
+ 	romvec = ROMVECTOR;
+ 
+-	prom_argc = fw_arg0;
+-	_prom_argv = (LONG *) fw_arg1;
+-
+ 	if (pb->magic != 0x53435241) {
+ 		printk(KERN_CRIT "Aieee, bad prom vector magic %08lx\n",
+ 		       (unsigned long) pb->magic);
+@@ -42,7 +37,7 @@ void __init prom_init(void)
+ 			;
+ 	}
+ 
+-	prom_init_cmdline();
++	prom_init_cmdline(fw_arg0, (LONG *)fw_arg1);
+ 	prom_identify_arch();
+ 	printk(KERN_INFO "PROMLIB: ARC firmware Version %d Revision %d\n",
+ 	       pb->ver, pb->rev);
+diff --git a/arch/mips/include/asm/sgialib.h b/arch/mips/include/asm/sgialib.h
+index 40ab4ef0b1dc..80f900417f7e 100644
+--- a/arch/mips/include/asm/sgialib.h
++++ b/arch/mips/include/asm/sgialib.h
+@@ -15,13 +15,6 @@
+ #include <asm/sgiarcs.h>
+ 
+ extern struct linux_romvec *romvec;
+-extern int prom_argc;
+-
+-extern LONG *_prom_argv;
+-
+-/* A 32-bit ARC PROM pass arguments and environment as 32-bit pointer.
+-   These macros take care of sign extension.  */
+-#define prom_argv(index) ((char *) (long) _prom_argv[(index)])
+ 
+ extern int prom_flags;
+ 
+@@ -55,7 +48,7 @@ extern void prom_identify_arch(void);
+ extern PCHAR ArcGetEnvironmentVariable(PCHAR name);
+ 
+ /* ARCS command line parsing. */
+-extern void prom_init_cmdline(void);
++extern void prom_init_cmdline(int argc, LONG *argv);
+ 
+ /* File operations. */
+ extern LONG ArcRead(ULONG fd, PVOID buf, ULONG num, PULONG cnt);
+-- 
+2.16.4
 
-So I assume then that the clk*.c and header file changes should be split in
-a separate patch?
-
-Tero,
-Let me know how youo would like to proceed.
-
-Benoit
-
-> 
-> That way the related dts changes can be applied on
-> top of it with things working.
-> 
-> Regards,
-> 
-> Tony
