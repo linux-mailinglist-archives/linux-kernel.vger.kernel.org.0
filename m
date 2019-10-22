@@ -2,123 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04915DFD77
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 08:02:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90C5EDFD7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 08:05:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387729AbfJVGBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 02:01:17 -0400
-Received: from mga09.intel.com ([134.134.136.24]:31498 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727943AbfJVGBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 02:01:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 23:01:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,326,1566889200"; 
-   d="scan'208";a="227580609"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 21 Oct 2019 23:01:14 -0700
-Received: from [10.249.230.171] (abudanko-mobl.ccr.corp.intel.com [10.249.230.171])
-        by linux.intel.com (Postfix) with ESMTP id 69818580100;
-        Mon, 21 Oct 2019 23:01:12 -0700 (PDT)
-Subject: [PATCH v4 4/4] perf/core,x86: synchronize PMU task contexts on
- optimized context switches
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Ian Rogers <irogers@google.com>,
-        Song Liu <songliubraving@fb.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <f4662ac9-e72e-d141-bead-da07e29f81e8@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <4d6320bb-0d15-0028-aefb-a176c986b8db@linux.intel.com>
-Date:   Tue, 22 Oct 2019 09:01:11 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730978AbfJVGFp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 02:05:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42800 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbfJVGFp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 02:05:45 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 42CFB6079C; Tue, 22 Oct 2019 06:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571724344;
+        bh=cY8sxLPZP4vsxpJajBId/YF2IaHEql2Vk2+ldt9E2fU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nfEx9uo1O1xSaTXuWcoK6t5ju6WT/+pvadG+v2eS/U3MfhLX13srdYUx/1I37J7WK
+         k5VL4kA4kLjXmvb3dvJMEoAtu7z13VHQYfJzGPsv3KtVXqbbt7VK6Zqo5r+wVJqb/b
+         pFulOVd8CwoUJV/4tIRTEqoHjEVeKapn/0dDPHsM=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 2357960614;
+        Tue, 22 Oct 2019 06:05:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571724343;
+        bh=cY8sxLPZP4vsxpJajBId/YF2IaHEql2Vk2+ldt9E2fU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fjydRdeXHA1xaIJwtrdGYONDeonhkM77FMoHhORPsVd7Rjra+fBoVB2ieBsewZ5fq
+         z9QJ1V6Nl3lytIgUJJhpQb5W8lzCBNdTOUx+zgdWv/qjmcT5jXZWpwYVdpgTnTlEcq
+         YJxjxuDX40mtlCRkl7T+L3HqCeCkVnBBAhq2+1ig=
 MIME-Version: 1.0
-In-Reply-To: <f4662ac9-e72e-d141-bead-da07e29f81e8@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Tue, 22 Oct 2019 11:35:43 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        linux-arm-msm@vger.kernel.org,
+        linux-bluetooth-owner@vger.kernel.org, hemantg@codeaurora.org,
+        Harish Bandi <c-hbandi@codeaurora.org>
+Subject: Re: [PATCH 2/4] Bluetooth: hci_qca: Don't vote for specific voltage
+In-Reply-To: <7f9a4de91f364a5f8ce707c8d8a2344d@codeaurora.org>
+References: <20191018052405.3693555-1-bjorn.andersson@linaro.org>
+ <20191018052405.3693555-3-bjorn.andersson@linaro.org>
+ <20191018182205.GA20212@google.com>
+ <7f9a4de91f364a5f8ce707c8d8a2344d@codeaurora.org>
+Message-ID: <5bbd8e5bbd832ecdafc7c2d603f10c6c@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Matthias, Bjorn andresson,
 
-Install Intel specific PMU task context synchronization adapter and
-extend optimized context switch path with PMU specific task context
-synchronization to fix LBR callstack virtualization on context switches.
+On 2019-10-21 12:07, Harish Bandi wrote:
+> + Bala
+> 
+> On 2019-10-18 23:52, Matthias Kaehlcke wrote:
+>> On Thu, Oct 17, 2019 at 10:24:02PM -0700, Bjorn Andersson wrote:
+>>> Devices with specific voltage requirements should not request voltage
+>>> from the driver, but instead rely on the system configuration to 
+>>> define
+>>> appropriate voltages for each rail.
+>>> 
+>>> This ensures that PMIC and board variations are accounted for, 
+>>> something
+>>> that the 0.1V range in the hci_qca driver currently tries to address.
+>>> But on the Lenovo Yoga C630 (with wcn3990) vddch0 is 3.1V, which 
+>>> means
+>>> the driver will fail to set the voltage.
+>>> 
+>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>> ---
+>>>  drivers/bluetooth/hci_qca.c | 26 ++++++++------------------
+>>>  1 file changed, 8 insertions(+), 18 deletions(-)
+>>> 
+>>> diff --git a/drivers/bluetooth/hci_qca.c 
+>>> b/drivers/bluetooth/hci_qca.c
+>>> index c07c529b0d81..54aafcc69d06 100644
+>>> --- a/drivers/bluetooth/hci_qca.c
+>>> +++ b/drivers/bluetooth/hci_qca.c
+>>> @@ -130,8 +130,6 @@ enum qca_speed_type {
+>>>   */
+>>>  struct qca_vreg {
+>>>  	const char *name;
+>>> -	unsigned int min_uV;
+>>> -	unsigned int max_uV;
+>>>  	unsigned int load_uA;
+>>>  };
+>>> 
+>>> @@ -1332,10 +1330,10 @@ static const struct hci_uart_proto qca_proto 
+>>> = {
+>>>  static const struct qca_vreg_data qca_soc_data_wcn3990 = {
+>>>  	.soc_type = QCA_WCN3990,
+>>>  	.vregs = (struct qca_vreg []) {
+>>> -		{ "vddio",   1800000, 1900000,  15000  },
+>>> -		{ "vddxo",   1800000, 1900000,  80000  },
+>>> -		{ "vddrf",   1300000, 1350000,  300000 },
+>>> -		{ "vddch0",  3300000, 3400000,  450000 },
+>>> +		{ "vddio", 15000  },
+>>> +		{ "vddxo", 80000  },
+>>> +		{ "vddrf", 300000 },
+>>> +		{ "vddch0", 450000 },
+>>>  	},
+>>>  	.num_vregs = 4,
+>>>  };
+>>> @@ -1343,10 +1341,10 @@ static const struct qca_vreg_data 
+>>> qca_soc_data_wcn3990 = {
+>>>  static const struct qca_vreg_data qca_soc_data_wcn3998 = {
+>>>  	.soc_type = QCA_WCN3998,
+>>>  	.vregs = (struct qca_vreg []) {
+>>> -		{ "vddio",   1800000, 1900000,  10000  },
+>>> -		{ "vddxo",   1800000, 1900000,  80000  },
+>>> -		{ "vddrf",   1300000, 1352000,  300000 },
+>>> -		{ "vddch0",  3300000, 3300000,  450000 },
+>>> +		{ "vddio", 10000  },
+>>> +		{ "vddxo", 80000  },
+>>> +		{ "vddrf", 300000 },
+>>> +		{ "vddch0", 450000 },
+>>>  	},
+>>>  	.num_vregs = 4,
+>>>  };
+>>> @@ -1386,13 +1384,6 @@ static int qca_power_off(struct hci_dev *hdev)
+>>>  static int qca_enable_regulator(struct qca_vreg vregs,
+>>>  				struct regulator *regulator)
+>>>  {
+>>> -	int ret;
+>>> -
+>>> -	ret = regulator_set_voltage(regulator, vregs.min_uV,
+>>> -				    vregs.max_uV);
+>>> -	if (ret)
+>>> -		return ret;
+>>> -
+>>>  	return regulator_enable(regulator);
+>>> 
+>>>  }
+>>> @@ -1401,7 +1392,6 @@ static void qca_disable_regulator(struct 
+>>> qca_vreg vregs,
+>>>  				  struct regulator *regulator)
+>>>  {
+>>>  	regulator_disable(regulator);
+>>> -	regulator_set_voltage(regulator, 0, vregs.max_uV);
+>>> 
+>>>  }
+>> 
+>> This was brought up multiple times during the initial review, but
+>> wasn't addressed.
+>> 
+>> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- arch/x86/events/intel/core.c |  7 +++++++
- kernel/events/core.c         | 13 +++++++++++++
- 2 files changed, 20 insertions(+)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index bbf6588d47ee..b9f518aa478e 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3820,6 +3820,12 @@ static void intel_pmu_sched_task(struct perf_event_context *ctx,
- 	intel_pmu_lbr_sched_task(ctx, sched_in);
- }
- 
-+static void intel_pmu_sync_task_ctx(struct x86_perf_task_context *one,
-+				    struct x86_perf_task_context *another)
-+{
-+	intel_pmu_lbr_sync_task_ctx(one, another);
-+}
-+
- static int intel_pmu_check_period(struct perf_event *event, u64 value)
- {
- 	return intel_pmu_has_bts_period(event, value) ? -EINVAL : 0;
-@@ -3955,6 +3961,7 @@ static __initconst const struct x86_pmu intel_pmu = {
- 
- 	.guest_get_msrs		= intel_guest_get_msrs,
- 	.sched_task		= intel_pmu_sched_task,
-+	.sync_task_ctx		= intel_pmu_sync_task_ctx,
- 
- 	.check_period		= intel_pmu_check_period,
- 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f9a5d4356562..51d4138b06f7 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -3204,11 +3204,24 @@ static void perf_event_context_sched_out(struct task_struct *task, int ctxn,
- 		raw_spin_lock(&ctx->lock);
- 		raw_spin_lock_nested(&next_ctx->lock, SINGLE_DEPTH_NESTING);
- 		if (context_equiv(ctx, next_ctx)) {
-+			struct pmu *pmu = ctx->pmu;
-+
- 			WRITE_ONCE(ctx->task, next);
- 			WRITE_ONCE(next_ctx->task, task);
- 
- 			swap(ctx->task_ctx_data, next_ctx->task_ctx_data);
- 
-+			/*
-+			 * PMU specific parts of task perf context can require
-+			 * additional synchronization which makes sense only if
-+			 * both next_ctx->task_ctx_data and ctx->task_ctx_data
-+			 * pointers are allocated. As an example of such
-+			 * synchronization see implementation details of Intel
-+			 * LBR call stack data profiling;
-+			 */
-+			if (ctx->task_ctx_data && next_ctx->task_ctx_data)
-+				pmu->sync_task_ctx(next_ctx->task_ctx_data,
-+						   ctx->task_ctx_data);
- 			/*
- 			 * RCU_INIT_POINTER here is safe because we've not
- 			 * modified the ctx and the above modification of
+yes true PMIC dts regulator should do this.
+But we have some real time issues observed.
+
+Issue 1:
+
+In PMIC dts node, ASAIK we have three levels of voltages.
+
+1. Default voltage.
+2. Minimum voltage. (mandatory entry)
+3. Maximum voltage. (mandatory entry)
+
+Let us assume that the if PMIC regulator dts node supports  defaults 
+voltage to 3.2 Volts and Min  as 3.1 V and max as 3.3V
+So default operating voltage is 3.1V  when we turn on BT (but according 
+to spec SoC requires min of 3.3V to operate,
+Might have some functionality failures on end to end testing
+
+Issue 2:
+
+WCN3990 RF is shared with WiFi, so it also try to turn on the 
+regulators. Wifi driver uses the same approach of restricting to min and 
+max voltages in driver.
+Let us assume we turned ON BT and CH0 is set to 3.1v (as in your case), 
+Wifi is tuned on now, as its request the CH0 to operate at 3.3 Volts, 
+regulator will fail to set this voltage as BT is operating
+at CH0 3.1v (assuming max voltage is 3.2v)
+https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git/tree/drivers/net/wireless/ath/ath10k/snoc.c#n39
+
+Issue 3:
+
+By mistake PMIC has low min or default voltage and high max voltages, 
+that is harm for WNC3990.
+
+I would suggest to restrict the min and max voltages in driver, instead 
+of relaying on PMIC to do this.
+BTW pmic will do this and doing it in our driver is safer.
+
+Let me know your views on this.
 -- 
-2.20.1
-
+Regards
+Balakrishna.
