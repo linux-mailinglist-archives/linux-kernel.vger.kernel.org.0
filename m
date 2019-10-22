@@ -2,120 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1054E0010
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94004DFFF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 10:48:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388155AbfJVIzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 04:55:06 -0400
-Received: from mail.jv-coder.de ([5.9.79.73]:52278 "EHLO mail.jv-coder.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388006AbfJVIzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:55:05 -0400
-X-Greylist: delayed 431 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Oct 2019 04:55:03 EDT
-Received: from [10.61.40.7] (unknown [37.156.92.209])
-        by mail.jv-coder.de (Postfix) with ESMTPSA id 4448F9F6BD;
-        Tue, 22 Oct 2019 08:47:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jv-coder.de; s=dkim;
-        t=1571734070; bh=B5UzEcZgqD9vIy/43EpvWvtJjrmFm6+a9SNT6O+SI/g=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version;
-        b=Y+dTwcYA9wru1V2q4847F2606ey5b+BfmUaKp2SYkY0Fdlf9gXLQLyscO0ZI/oPC0
-         NZD+LfDdoazTpJexwHemi5AnoP3O9X/+vGnLnlXQmdL3o4Yo7wifvmRzQbN5Nk3/JI
-         IxmcUxNm97t2yPQx87GRY6gIZphjwgEy/YSr9iec=
-Subject: Re: [LTP] sched_football: Validity of testcase
-To:     Cyril Hrubis <chrubis@suse.cz>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     ltp@lists.linux.it, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org
-References: <015a01d56486$6c905050$45b0f0f0$@jv-coder.de>
- <20190913135121.GB7939@rei>
-From:   Joerg Vehlow <lkml@jv-coder.de>
-Message-ID: <51ded182-023d-da52-9784-f2705cd89026@jv-coder.de>
-Date:   Tue, 22 Oct 2019 10:47:49 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S2388023AbfJVIsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 04:48:42 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:40170 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387575AbfJVIsl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 04:48:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MtL3YOiN71djeLoYB9yivNmcp6DZe3ZfGe1tUxOoKk8=; b=nZdVxcSfO3OODaDonUKkJDZp+
+        p/ojEa1+QNdV4Bar+TtDVx0SS/00km22RcUYQoZOh45qChHxG9hFOihQBSiJFSfHMz0k5g+ETpQCF
+        D0P9k5sJzwS5JlHx8zOhs+jG/Ydc7HXmHlAtIpnTtsTvylN7nA6z1qZuV1tl7y3PKfkUg97E4Wo/k
+        ff6wUb744sqaA2kix/oN5v08RmSNsQGzl9VgUWYWey+m6+CeJoAJvK91DRhsL6LCZxA5n3hRx5rrM
+        5b6PBXuuBB/bqjejOKT/VkIW/fOojFJgYYNWKTJ2+kvN654lhZ3zOrNMAgW2WPCSvRaqfzWuh6keh
+        A21EgMV1A==;
+Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:45890)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1iMpqC-00065m-AN; Tue, 22 Oct 2019 09:48:32 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1iMpq6-0004PU-O5; Tue, 22 Oct 2019 09:48:26 +0100
+Date:   Tue, 22 Oct 2019 09:48:26 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Brian Starkey <Brian.Starkey@arm.com>, nd <nd@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Mihail Atanassov <Mihail.Atanassov@arm.com>,
+        Sean Paul <sean@poorly.run>
+Subject: Re: [RFC,3/3] drm/komeda: Allow non-component drm_bridge only
+ endpoints
+Message-ID: <20191022084826.GP25745@shell.armlinux.org.uk>
+References: <20191004143418.53039-4-mihail.atanassov@arm.com>
+ <20191009055407.GA3082@jamwan02-TSP300>
+ <5390495.Gzyn2rW8Nj@e123338-lin>
+ <20191016162206.u2yo37rtqwou4oep@DESKTOP-E1NTVVP.localdomain>
+ <20191017030752.GA3109@jamwan02-TSP300>
+ <20191017082043.bpiuvfr3r4jngxtu@DESKTOP-E1NTVVP.localdomain>
+ <20191017102055.GA8308@jamwan02-TSP300>
+ <20191017104812.6qpuzoh5bx5i2y3m@DESKTOP-E1NTVVP.localdomain>
+ <20191017114137.GC25745@shell.armlinux.org.uk>
+ <20191022084210.GX11828@phenom.ffwll.local>
 MIME-Version: 1.0
-In-Reply-To: <20190913135121.GB7939@rei>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,HELO_MISC_IP,RDNS_NONE autolearn=no
-        autolearn_force=no version=3.4.2
-X-Spam-Level: *
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.jv-coder.de
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191022084210.GX11828@phenom.ffwll.local>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Oct 22, 2019 at 10:42:10AM +0200, Daniel Vetter wrote:
+> On Thu, Oct 17, 2019 at 12:41:37PM +0100, Russell King - ARM Linux admin wrote:
+> > On Thu, Oct 17, 2019 at 10:48:12AM +0000, Brian Starkey wrote:
+> > > On Thu, Oct 17, 2019 at 10:21:03AM +0000, james qian wang (Arm Technology China) wrote:
+> > > > On Thu, Oct 17, 2019 at 08:20:56AM +0000, Brian Starkey wrote:
+> > > > > On Thu, Oct 17, 2019 at 03:07:59AM +0000, james qian wang (Arm Technology China) wrote:
+> > > > > > On Wed, Oct 16, 2019 at 04:22:07PM +0000, Brian Starkey wrote:
+> > > > > > > 
+> > > > > > > If James is strongly against merging this, maybe we just swap
+> > > > > > > wholesale to bridge? But for me, the pragmatic approach would be this
+> > > > > > > stop-gap.
+> > > > > > >
+> > > > > > 
+> > > > > > This is a good idea, and I vote +ULONG_MAX :)
+> > > > > > 
+> > > > > > and I also checked tda998x driver, it supports bridge. so swap the
+> > > > > > wholesale to brige is perfect. :)
+> > > > > > 
+> > > > > 
+> > > > > Well, as Mihail wrote, it's definitely not perfect.
+> > > > > 
+> > > > > Today, if you rmmod tda998x with the DPU driver still loaded,
+> > > > > everything will be unbound gracefully.
+> > > > > 
+> > > > > If we swap to bridge, then rmmod'ing tda998x (or any other bridge
+> > > > > driver the DPU is using) with the DPU driver still loaded will result
+> > > > > in a crash.
+> > > > 
+> > > > I haven't read the bridge code, but seems this is a bug of drm_bridge,
+> > > > since if the bridge is still in using by others, the rmmod should fail
+> > > > 
+> > > 
+> > > Correct, but there's no fix for that today. You can also take a look
+> > > at the thread linked from Mihail's cover letter.
+> > > 
+> > > > And personally opinion, if the bridge doesn't handle the dependence.
+> > > > for us:
+> > > > 
+> > > > - add such support to bridge
+> > > 
+> > > That would certainly be helpful. I don't know if there's consensus on
+> > > how to do that.
+> > > 
+> > > >   or
+> > > > - just do the insmod/rmmod in correct order.
+> > > > 
+> > > > > So, there really are proper benefits to sticking with the component
+> > > > > code for tda998x, which is why I'd like to understand why you're so
+> > > > > against this patch?
+> > > > >
+> > > > 
+> > > > This change handles two different connectors in komeda internally, compare
+> > > > with one interface, it increases the complexity, more risk of bug and more
+> > > > cost of maintainance.
+> > > > 
+> > > 
+> > > Well, it's only about how to bind the drivers - two different methods
+> > > of binding, not two different connectors. I would argue that carrying
+> > > our out-of-tree patches to support both platforms is a larger
+> > > maintenance burden.
+> > > 
+> > > Honestly this looks like a win-win to me. We get the superior approach
+> > > when its supported, and still get to support bridges which are more
+> > > common.
+> > > 
+> > > As/when improvements are made to the bridge code we can remove the
+> > > component bits and not lose anything.
+> > 
+> > There was an idea a while back about using the device links code to
+> > solve the bridge issue - but at the time the device links code wasn't
+> > up to the job.  I think that's been resolved now, but I haven't been
+> > able to confirm it.  I did propose some patches for bridge at the
+> > time but they probably need updating.
+> 
+> I think the only patches that existed where for panel, and we only
+> discussed the bridge case. At least I can only find patches for panel,not
+> bridge, but might be missing something.
 
-is no one interested in this?
+I had a patches, which is why I raised the problem with the core:
 
-> Hi,
-> 
-> I was looking thoroughly at the realtime testcase sched_football,
-> because it sometimes fails and like to know your opinion on the test case.
-> 
-> A short introduction to how the test works:
-> It creates nThreads threads called offense and n threads called defense
-> (all fifo scheduled). The offense threads run at a lower priority than
-> the defense threads and the main thread has the highest priority. After
-> all threads are created (validated using an atomic counter). The test
-> verifies, that the offense threads are never executed by incrementing
-> a counter in the offense threads, that is zeroed in the main thread.
-> During the test the main threads sleeps to regularly.
-> 
-> While the test is totally fine on a single core system, you can
-> immediately see, that it will fail on a system with nCores > nThreads,
-> because there will be a core were only an offense thread an no defense
-> thread is scheduled. In its default setup nThreads = nCores. This should
-> theoretically work, because there is a defense thread for every score with
-> 
-> a higher priority than the offense threads and they should be scheduled
-> onto  every core. This is indeed what happens. The problem seems to be
-> the  initialization phase. When the threads are created, they are not
-> evenly scheduled. After pthread_create was called, the threads are
-> scheduled
-> 
-> too cores where nothing is running. If there is no idle core anymore, they
-> are
-> scheduled to any core (the first?, the one with the shortest wait queue?).
-> At
-> some point after all threads are created, they are rescheduled to every
-> core.
-> It looks like the test fails, when there is initially a core with only an
-> offense thread scheduled onto it. In perf sched traces I saw, that a
-> defense
-> thread was migrated to this core, but still the offense thread was
-> executed
-> for
-> a short time, until the offense thread runs. From this point onwards only
-> defense threads are running.
-> 
-> I tested adding a sleep to the main function, after all threads are
-> created,
-> to give the system some time for rescheduling. A sleep of around 50ms
-> works
-> quite well and supports my theory about the migration time being the
-> problem.
-> 
-> Now I am not sure if the test case is even valid or if the scheduler is
-> not
-> working as it is supposed to. Looking at the commits of sched_football it
-> looks like it was running stable at least at some point, at least it es
-> reported to have run 15k iterations in e6432e45.
-> What do you think about the test case? Is it even valid?
-> Should the cpu affinity be set fixed?
-> 
-> A note about my testing methodology:
-> After I realized, that the execution often failed due to the offense
-> thread
-> running after referee set the_ball to 0, I replaced the loop with just
-> usleep(10000), for faster iteration.
-> I tested on ubuntu 19.04 with linux 5.0.0-27 running in vmware and
-> a custom yocto distribution running linux 4.19.59 (with and without rt
-> patches)
-> 
-> Jörg
+6961edfee26d bridge hacks using device links
 
+but it never went further than an experiment at the time because of the
+problems in the core.  As it was a hack, it never got posted.  Seems
+that kernel tree (for the cubox) is still 5.2 based, so has a lot of
+patches and might need updating to a more recent base before anything
+can be tested.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
