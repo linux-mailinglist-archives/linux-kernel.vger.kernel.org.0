@@ -2,416 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C28BDFC53
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 05:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35EC0DFC4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 05:52:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730951AbfJVDy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 21 Oct 2019 23:54:56 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:53990 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730597AbfJVDyy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Oct 2019 23:54:54 -0400
-X-UUID: d289a01a8e544498a9ea56792d8861a6-20191022
-X-UUID: d289a01a8e544498a9ea56792d8861a6-20191022
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <anthony.huang@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 565567059; Tue, 22 Oct 2019 11:54:45 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 22 Oct 2019 11:54:43 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 22 Oct 2019 11:54:43 +0800
-From:   Anthony Huang <anthony.huang@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Anthony Huang <anthony.huang@mediatek.com>
-Subject: [RFC PATCH 2/2] soc: mediatek: Add mtk-mmdvfs driver
-Date:   Tue, 22 Oct 2019 11:51:53 +0800
-Message-ID: <1571716313-10215-3-git-send-email-anthony.huang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1571716313-10215-1-git-send-email-anthony.huang@mediatek.com>
-References: <1571716313-10215-1-git-send-email-anthony.huang@mediatek.com>
+        id S2387586AbfJVDwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 21 Oct 2019 23:52:07 -0400
+Received: from mail-eopbgr00077.outbound.protection.outlook.com ([40.107.0.77]:23206
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387535AbfJVDwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Oct 2019 23:52:06 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d+K9ZCZk+zKqWgM127YEQvXSnmRwDL1lReebrLguTPdpqFM4ZnBSx1WO8OPvGt4doSebUEvJrcoO1IRFshyI/UqaEotnFxy+MO9Q6jOyXt1O98ztsZypwboAy/vRk7PRlqhr9C8Gz+QQBrDzUht99RHZ84aFfnAB3jDRm8KPh5B4bP+O9WvgnXtw8pqz0IEGgHr9iI02aeZwQQh7cN/K8dnjzDhSpNrxhtboTTK/tmVRGSmTVXgewMn3iQuUUlXB4pqUTjvTN9YFeae0gxUVUulyub3/NjjEyaKOFKYVKIIpyixsnvhPHsbfdHEq8T7OYE908+RcFRKDv2eUXXVGcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mQ0dvUmPUYBYrL8PGpnq3i4yFo2N8D7UTBgiGdy809Q=;
+ b=bsE4qVF2dKW5uCrg6lQsHkLH2vmhwJA0ubkMa6t8N4Q8YmTHwdt06JksPZ/ZsN8taBVPGxjscir7B/DbTfjUVVPWn4+ZqLddQEnOQ6nwo8+/ItqkR9So0PMy7Mz1oEMRHkmJ5RuZze0S6Xt79jBdkI6OynHwUWd8DxczQmfVviXsuuCAVhHVwFK3m1OY36MwtvPMQblblCdtSv3fcpzlE5lPWV+5TRDgRNw03rhfHSP64LfKc91sboi+RHBlTrL7AfH3SjQB++Ffa0N1kMKXdrkb5gPQbDWVu8BoSyETjjBpdhYFMIr2awGA4Dq7VKsJXaCm4HbRhoR+h967+gryXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mQ0dvUmPUYBYrL8PGpnq3i4yFo2N8D7UTBgiGdy809Q=;
+ b=RlDiFd6PxyC8RQGrWwQoZlYZeHm1cJhmaPq8Lc8USb9WyceT3JJduBTG9efEdhOYtneTzxqvnpAJd0GpI9CSYI9SdQQRCXUcgWpWkjs1Ilrmua5cjH0eOSimUBJ2zsq7DXovMiqRXV9nuI4s9dzZQmTqR8z644b1lWecpP/8icg=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
+ DB7PR04MB4076.eurprd04.prod.outlook.com (52.134.110.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2367.24; Tue, 22 Oct 2019 03:51:57 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::7804:558a:eef9:cc11]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::7804:558a:eef9:cc11%7]) with mapi id 15.20.2367.022; Tue, 22 Oct 2019
+ 03:51:57 +0000
+From:   Biwen Li <biwen.li@nxp.com>
+To:     Peter Rosin <peda@axentia.se>, Leo Li <leoyang.li@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [EXT] Re: [v4,2/2] i2c: mux: pca954x: support property idle-state
+Thread-Topic: [EXT] Re: [v4,2/2] i2c: mux: pca954x: support property
+ idle-state
+Thread-Index: AQHVh+cyMyKMRhMm/km0I8f2DYDpKadlFPEAgADiXRA=
+Date:   Tue, 22 Oct 2019 03:51:57 +0000
+Message-ID: <DB7PR04MB44906D1B767F0FDE5AE5E3FF8F680@DB7PR04MB4490.eurprd04.prod.outlook.com>
+References: <20191021080048.47189-1-biwen.li@nxp.com>
+ <20191021080048.47189-2-biwen.li@nxp.com>
+ <07b1e1d8-4112-d9b1-2a05-21da09fa020c@axentia.se>
+In-Reply-To: <07b1e1d8-4112-d9b1-2a05-21da09fa020c@axentia.se>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biwen.li@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: f55f8891-da65-438e-6ac7-08d756a32fae
+x-ms-traffictypediagnostic: DB7PR04MB4076:|DB7PR04MB4076:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB40760FEFDE6545D7AE9B36C58F680@DB7PR04MB4076.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 01986AE76B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(346002)(396003)(136003)(366004)(189003)(199004)(81156014)(8676002)(99286004)(81166006)(256004)(478600001)(76176011)(7696005)(14444005)(14454004)(9686003)(71200400001)(71190400001)(25786009)(6436002)(476003)(2906002)(55016002)(54906003)(110136005)(74316002)(229853002)(486006)(7736002)(2501003)(44832011)(4001150100001)(86362001)(4326008)(6246003)(305945005)(102836004)(446003)(8936002)(26005)(11346002)(186003)(52536014)(6506007)(5660300002)(53546011)(316002)(66446008)(64756008)(66556008)(66476007)(6116002)(33656002)(76116006)(66946007)(3846002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4076;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: XJLJlHflPCN+FV2Qqy8FVaRs5JW4fGuk+Jv+mZdvGHlaiZsE4PlRKBwN1boIF2BXt6hPDoPtU5JlMXc5WIFlu9Qsg4JfmhzKYxw8xfxI7BjIaOjpFoEimCVMeWowXjldw4aQ7l4c/ePy8S4cc2Xu+d2VTKT4rmFwyaPAK+5HC4a3n5ih9WX9BSgsHX29aFR1SP7bQFXFOzKJxoU6ygACZpbcZv7uNEX0iHlF1cGphnQBUNDfzFQQDcm92Ob4l78L5WQbXCLTqfclSbmlSHAnA1FLh4tRBbkxPYcff7+xnYBiSvJ8KtxEnRjWNHoRhrNC9xG5TvdzS4e4fydfFNOGkT63NXD848DvI+L0zuhJBVrohbY6TKcAgQ67ZpIfy9MNIODubtY1B4vX0bwnOEONZOcgi1eUNZx+KEAbzbaXsU0OlBbaquEIUOv2IPotwHiy
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f55f8891-da65-438e-6ac7-08d756a32fae
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2019 03:51:57.2774
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 33lgrHMrQtnE9jt0/Tz/evNch9tbCt98UmFe/hDkQUEfEXUkN+nguBJnd4v4NDSwF6lNW3pwrUn5U4rDATzjuw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4076
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mediatek MMDVFS driver is used to set clk for Mediatek multimedia
-hardwares. The MMDVFS registers a regulator callback and multimedia
-hardwares set voltage by regulator API and then this callback will be
-triggered. The MMDVFS will get current opp level from opp table according
-to the voltage, and then the MMDVFS sets all the clock MUXs to the clock
-sources according to the opp level.
-
-On some platforms, both clock MUX and frequency hopping need to be used
-together. The MMDVFS supports these two clock setting methods and the
-execution sequence of them can be configured in DTS.
-
-Signed-off-by: Anthony Huang <anthony.huang@mediatek.com>
----
- drivers/soc/mediatek/Kconfig      |    9 ++
- drivers/soc/mediatek/Makefile     |    1 +
- drivers/soc/mediatek/mtk-mmdvfs.c |  313 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 323 insertions(+)
- create mode 100644 drivers/soc/mediatek/mtk-mmdvfs.c
-
-diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
-index 2114b56..e92762b 100644
---- a/drivers/soc/mediatek/Kconfig
-+++ b/drivers/soc/mediatek/Kconfig
-@@ -44,4 +44,13 @@ config MTK_SCPSYS
- 	  Say yes here to add support for the MediaTek SCPSYS power domain
- 	  driver.
- 
-+config MTK_MMDVFS
-+	tristate "MediaTek MMDVFS Support"
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	help
-+	  Say yes here to add support for the MediaTek Multimedia DVFS (MMDVFS)
-+	  driver. The MMDVFS is used to set clk for Mediatek multimedia hardwares
-+	  , such as display, camera, mdp and video codec. Say no if your device
-+	  does not need to do DVFS for Multimedia hardwares.
-+
- endmenu
-diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
-index b017330..faf52944 100644
---- a/drivers/soc/mediatek/Makefile
-+++ b/drivers/soc/mediatek/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-$(CONFIG_MTK_CMDQ) += mtk-cmdq-helper.o
- obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o
-+obj-$(CONFIG_MTK_MMDVFS) += mtk-mmdvfs.o
- obj-$(CONFIG_MTK_PMIC_WRAP) += mtk-pmic-wrap.o
- obj-$(CONFIG_MTK_SCPSYS) += mtk-scpsys.o
-diff --git a/drivers/soc/mediatek/mtk-mmdvfs.c b/drivers/soc/mediatek/mtk-mmdvfs.c
-new file mode 100644
-index 0000000..f6e45b0
---- /dev/null
-+++ b/drivers/soc/mediatek/mtk-mmdvfs.c
-@@ -0,0 +1,313 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 MediaTek Inc.
-+ */
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/regulator/consumer.h>
-+
-+#define MAX_OPP_NUM (6)
-+#define MAX_MUX_NUM (10)
-+#define MAX_HOPPING_CLK_NUM (2)
-+
-+enum {
-+	ACTION_DEFAULT,
-+	ACTION_IHDM, /* Voltage Increase: Hopping First, Decrease: MUX First*/
-+};
-+
-+struct mmdvfs_mux_data {
-+	const char *mux_name;
-+	struct clk *mux;
-+	struct clk *clk_src[MAX_OPP_NUM];
-+};
-+
-+struct mmdvfs_hopping_data {
-+	const char *hopping_name;
-+	struct clk *hopping_clk;
-+	u32 hopping_rate[MAX_OPP_NUM];
-+};
-+
-+struct mmdvfs_drv_data {
-+	bool need_change_voltage;
-+	u32 request_voltage;
-+	u32 num_muxes;
-+	struct mmdvfs_mux_data muxes[MAX_MUX_NUM];
-+	u32 num_hoppings;
-+	struct mmdvfs_hopping_data hoppings[MAX_HOPPING_CLK_NUM];
-+	u32 action;
-+	struct notifier_block nb;
-+	u32 voltages[MAX_OPP_NUM];
-+};
-+
-+static void set_all_muxes(struct mmdvfs_drv_data *drv_data, u32 opp_level)
-+{
-+	u32 num_muxes = drv_data->num_muxes;
-+	u32 i;
-+	struct clk *mux, *clk_src;
-+	s32 err;
-+
-+	for (i = 0; i < num_muxes; i++) {
-+		mux = drv_data->muxes[i].mux;
-+		clk_src = drv_data->muxes[i].clk_src[opp_level];
-+		err = clk_prepare_enable(mux);
-+
-+		if (err) {
-+			pr_notice("prepare mux(%s) fail:%d opp_level:%d\n",
-+				  drv_data->muxes[i].mux_name, err, opp_level);
-+			continue;
-+		}
-+		err = clk_set_parent(mux, clk_src);
-+		if (err)
-+			pr_notice("set parent(%s) fail:%d opp_level:%d\n",
-+				  drv_data->muxes[i].mux_name, err, opp_level);
-+		clk_disable_unprepare(mux);
-+	}
-+}
-+
-+static void set_all_hoppings(struct mmdvfs_drv_data *drv_data, u32 opp_level)
-+{
-+	u32 num_hoppings = drv_data->num_hoppings;
-+	u32 i, hopping_rate;
-+	struct clk *hopping;
-+	s32 err;
-+
-+	for (i = 0; i < num_hoppings; i++) {
-+		hopping = drv_data->hoppings[i].hopping_clk;
-+		hopping_rate = drv_data->hoppings[i].hopping_rate[opp_level];
-+		err = clk_prepare_enable(hopping);
-+
-+		if (err) {
-+			pr_notice("prepare hopping(%s) fail:%d opp_level:%d\n",
-+				  drv_data->hoppings[i].hopping_name,
-+				  err, opp_level);
-+			continue;
-+		}
-+		err = clk_set_rate(hopping, hopping_rate);
-+		if (err)
-+			pr_notice("set %s rate(%u) fail:%d opp_level:%d\n",
-+				  drv_data->hoppings[i].hopping_name,
-+				  hopping_rate, err, opp_level);
-+		clk_disable_unprepare(hopping);
-+	}
-+}
-+
-+static void set_all_clk(struct mmdvfs_drv_data *drv_data,
-+			u32 voltage, bool vol_inc)
-+{
-+	u32 i;
-+	u32 opp_level;
-+
-+	for (i = 0; i < MAX_OPP_NUM; i++) {
-+		if (drv_data->voltages[i] == voltage) {
-+			opp_level = i;
-+			break;
-+		}
-+	}
-+	if (i == MAX_OPP_NUM) {
-+		pr_notice("voltage(%d) is not found\n", voltage);
-+		return;
-+	}
-+
-+	switch (drv_data->action) {
-+	/* Voltage Increase: Hopping First, Decrease: MUX First*/
-+	case ACTION_IHDM:
-+		if (vol_inc) {
-+			set_all_hoppings(drv_data, opp_level);
-+			set_all_muxes(drv_data, opp_level);
-+		} else {
-+			set_all_muxes(drv_data, opp_level);
-+			set_all_hoppings(drv_data, opp_level);
-+		}
-+		break;
-+	default:
-+		set_all_muxes(drv_data, opp_level);
-+		break;
-+	}
-+	pr_debug("set clk to opp level:%d\n", opp_level);
-+}
-+
-+static int regulator_event_notify(struct notifier_block *nb,
-+				  unsigned long event, void *data)
-+{
-+	unsigned long uV;
-+	struct mmdvfs_drv_data *drv_data;
-+	struct pre_voltage_change_data *pvc_data;
-+
-+	drv_data = container_of(nb, struct mmdvfs_drv_data, nb);
-+
-+	if (event == REGULATOR_EVENT_PRE_VOLTAGE_CHANGE) {
-+		pvc_data = data;
-+		uV = pvc_data->min_uV;
-+
-+		if (uV < pvc_data->old_uV) {
-+			set_all_clk(drv_data, uV, false);
-+			drv_data->request_voltage = uV;
-+		} else if (uV > pvc_data->old_uV) {
-+			drv_data->need_change_voltage = true;
-+		}
-+		pr_debug("regulator event=PRE_VOLTAGE_CHANGE old=%lu new=%lu\n",
-+			 pvc_data->old_uV, pvc_data->min_uV);
-+	} else if (event == REGULATOR_EVENT_VOLTAGE_CHANGE) {
-+		uV = (unsigned long)data;
-+		if (drv_data->need_change_voltage) {
-+			set_all_clk(drv_data, uV, true);
-+			drv_data->need_change_voltage = false;
-+			drv_data->request_voltage = uV;
-+		}
-+		pr_debug("regulator event=VOLTAGE_CHANGE voltage=%lu\n", uV);
-+	} else if (event == REGULATOR_EVENT_ABORT_VOLTAGE_CHANGE) {
-+		uV = (unsigned long)data;
-+		/* If clk was changed, restore to previous setting */
-+		if (uV != drv_data->request_voltage) {
-+			set_all_clk(drv_data, uV,
-+				    uV > drv_data->request_voltage);
-+			drv_data->need_change_voltage = false;
-+			drv_data->request_voltage = uV;
-+		}
-+		pr_info("regulator event=ABORT_VOLTAGE_CHANGE voltage=%lu\n",
-+			uV);
-+	}
-+	return 0;
-+}
-+
-+static const struct of_device_id of_mmdvfs_match_tbl[] = {
-+	{
-+		.compatible = "mediatek,mmdvfs",
-+	},
-+	{}
-+};
-+
-+static int mmdvfs_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct mmdvfs_drv_data *drv_data;
-+	struct regulator *reg;
-+	u32 num_mux = 0, num_hopping = 0;
-+	u32 num_clksrc, index, hopping_rate, num_hopping_rate;
-+	struct property *mux_prop, *clksrc_prop;
-+	struct property *hopping_prop, *hopping_rate_prop;
-+	const char *mux_name, *clksrc_name, *hopping_name;
-+	char prop_name[32];
-+	const __be32 *p;
-+	s32 ret;
-+	unsigned long freq;
-+	struct dev_pm_opp *opp;
-+
-+	drv_data = devm_kzalloc(dev, sizeof(*drv_data), GFP_KERNEL);
-+	if (!drv_data)
-+		return -ENOMEM;
-+
-+	of_property_for_each_string(dev->of_node, "mediatek,support_mux",
-+				    mux_prop, mux_name) {
-+		if (num_mux >= MAX_MUX_NUM) {
-+			pr_notice("Too many items in support_mux\n");
-+			return -EINVAL;
-+		}
-+		drv_data->muxes[num_mux].mux = devm_clk_get(dev, mux_name);
-+		drv_data->muxes[num_mux].mux_name = mux_name;
-+		snprintf(prop_name, sizeof(prop_name) - 1,
-+			 "mediatek,mux_%s", mux_name);
-+		num_clksrc = 0;
-+		of_property_for_each_string(dev->of_node, prop_name,
-+					    clksrc_prop, clksrc_name) {
-+			if (num_clksrc >= MAX_OPP_NUM) {
-+				pr_notice("Too many items in %s\n", prop_name);
-+				return -EINVAL;
-+			}
-+			drv_data->muxes[num_mux].clk_src[num_clksrc] =
-+				devm_clk_get(dev, clksrc_name);
-+			num_clksrc++;
-+		}
-+		num_mux++;
-+	}
-+	drv_data->num_muxes = num_mux;
-+
-+	of_property_for_each_string(dev->of_node, "mediatek,support_hopping",
-+				    hopping_prop, hopping_name) {
-+		if (num_hopping >= MAX_HOPPING_CLK_NUM) {
-+			pr_notice("Too many items in support_hopping\n");
-+			return -EINVAL;
-+		}
-+		drv_data->hoppings[num_hopping].hopping_clk =
-+					devm_clk_get(dev, hopping_name);
-+		drv_data->hoppings[num_hopping].hopping_name = hopping_name;
-+		snprintf(prop_name, sizeof(prop_name) - 1,
-+			 "mediatek,hopping_%s", hopping_name);
-+		num_hopping_rate = 0;
-+		of_property_for_each_u32(dev->of_node, prop_name,
-+					 hopping_rate_prop, p, hopping_rate) {
-+			if (num_hopping_rate >= MAX_OPP_NUM) {
-+				pr_notice("Too many items in %s\n", prop_name);
-+				return -EINVAL;
-+			}
-+			drv_data->hoppings[num_hopping].hopping_rate
-+					[num_hopping_rate] = hopping_rate;
-+			num_hopping_rate++;
-+		}
-+		num_hopping++;
-+	}
-+	drv_data->num_hoppings = num_hopping;
-+
-+	of_property_read_u32(dev->of_node,
-+			     "mediatek,action", &drv_data->action);
-+
-+	/* Get voltage info from opp table */
-+	dev_pm_opp_of_add_table(dev);
-+	freq = 0;
-+	index = 0;
-+	while (!IS_ERR(opp = dev_pm_opp_find_freq_ceil(dev, &freq))) {
-+		drv_data->voltages[index] = dev_pm_opp_get_voltage(opp);
-+		freq++;
-+		index++;
-+		dev_pm_opp_put(opp);
-+	}
-+
-+	reg = devm_regulator_get(dev, "dvfsrc-vcore");
-+	if (IS_ERR(reg))
-+		return PTR_ERR(reg);
-+
-+	drv_data->nb.notifier_call = regulator_event_notify;
-+	ret = devm_regulator_register_notifier(reg, &drv_data->nb);
-+	if (ret)
-+		pr_notice("Failed to register notifier: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static struct platform_driver mmdvfs_drv = {
-+	.probe = mmdvfs_probe,
-+	.driver = {
-+		.name = "mtk-mmdvfs",
-+		.owner = THIS_MODULE,
-+		.of_match_table = of_mmdvfs_match_tbl,
-+	},
-+};
-+
-+static int __init mtk_mmdvfs_init(void)
-+{
-+	s32 status;
-+
-+	status = platform_driver_register(&mmdvfs_drv);
-+	if (status) {
-+		pr_notice("Failed to register MMDVFS driver(%d)\n", status);
-+		return -ENODEV;
-+	}
-+	return 0;
-+}
-+
-+static void __exit mtk_mmdvfs_exit(void)
-+{
-+	platform_driver_unregister(&mmdvfs_drv);
-+}
-+
-+module_init(mtk_mmdvfs_init);
-+module_exit(mtk_mmdvfs_exit);
-+
-+MODULE_DESCRIPTION("MTK MMDVFS driver");
-+MODULE_AUTHOR("Anthony Huang<anthony.huang@mediatek.com>");
-+MODULE_LICENSE("GPL");
--- 
-1.7.9.5
-
+PiBDYXV0aW9uOiBFWFQgRW1haWwNCj4gDQo+IE9uIDIwMTktMTAtMjEgMTA6MDAsIEJpd2VuIExp
+IHdyb3RlOg0KPiA+IFRoaXMgc3VwcG9ydHMgcHJvcGVydHkgaWRsZS1zdGF0ZQ0KPiA+DQo+IA0K
+PiBZb3Ugc2hvdWxkIGV4cGFuZCB0aGlzIGEgbGl0dGxlIGJpdCB0byBleHBsYWluIHRoYXQgaWRs
+ZS1zdGF0ZSwgaWYgcHJlc2VudCwgb3ZlcnJpZGVzDQo+IGkyYy1tdXgtaWRsZS1kaXNjb25uZWN0
+LiBZb3UgY291bGQgYWxzbyBtZW50aW9uIHlvdXIgdXNlIGNhc2Ugd2hlcmUgeW91IG5lZWQNCj4g
+dG8gYXZvaWQgZGlzY29ubmVjdHMgb24gcHJvYmUvcmVzdW1lLg0KT2theSwgZ290IGl0LiBJIHdp
+bGwgYWRkIHNvbWUgaW5mb3JtYXRpb24gaW4gdjUuDQo+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEJp
+d2VuIExpIDxiaXdlbi5saUBueHAuY29tPg0KPiA+IC0tLQ0KPiA+IENoYW5nZSBpbiB2NDoNCj4g
+PiAgICAgICAtIHJlbmFtZSBmdW5jdGlvbg0KPiA+ICAgICAgICAgcGNhOTU0eF9jYWxjdWxhdGVf
+Y2hhbiAtPiBwY2E5NTR4X3JlZ3ZhbA0KPiA+DQo+ID4gQ2hhbmdlIGluIHYzOg0KPiA+ICAgICAg
+IC0gdXBkYXRlIHN1YmplY3QgYW5kIGRlc2NyaXB0aW9uDQo+ID4gICAgICAgLSBhZGQgYSBoZWxw
+ZXIgZnVuY3Rpb24gcGNhOTU0eF9jYWxjdWxhdGVfY2hhbigpDQo+ID4NCj4gPiBDaGFuZ2UgaW4g
+djI6DQo+ID4gICAgICAgLSB1cGRhdGUgc3ViamVjdCBhbmQgZGVzY3JpcHRpb24NCj4gPiAgICAg
+ICAtIGFkZCBwcm9wZXJ0eSBpZGxlLXN0YXRlDQo+ID4NCj4gPiAgZHJpdmVycy9pMmMvbXV4ZXMv
+aTJjLW11eC1wY2E5NTR4LmMgfCA1OQ0KPiA+ICsrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0t
+DQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzNiBpbnNlcnRpb25zKCspLCAyMyBkZWxldGlvbnMoLSkN
+Cj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2kyYy9tdXhlcy9pMmMtbXV4LXBjYTk1NHgu
+Yw0KPiA+IGIvZHJpdmVycy9pMmMvbXV4ZXMvaTJjLW11eC1wY2E5NTR4LmMNCj4gPiBpbmRleCA5
+MjNhYTNhNWEzZGMuLmU1NjZjNGNkOGJhNSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2kyYy9t
+dXhlcy9pMmMtbXV4LXBjYTk1NHguYw0KPiA+ICsrKyBiL2RyaXZlcnMvaTJjL211eGVzL2kyYy1t
+dXgtcGNhOTU0eC5jDQo+ID4gQEAgLTg2LDcgKzg2LDcgQEAgc3RydWN0IHBjYTk1NHggew0KPiA+
+DQo+ID4gICAgICAgdTggbGFzdF9jaGFuOyAgICAgICAgICAgLyogbGFzdCByZWdpc3RlciB2YWx1
+ZSAqLw0KPiA+ICAgICAgIC8qIE1VWF9JRExFX0FTX0lTLCBNVVhfSURMRV9ESVNDT05ORUNUIG9y
+ID49IDAgZm9yIGNoYW5uZWwgKi8NCj4gPiAtICAgICBzOCBpZGxlX3N0YXRlOw0KPiA+ICsgICAg
+IHMzMiBpZGxlX3N0YXRlOw0KPiA+DQo+ID4gICAgICAgc3RydWN0IGkyY19jbGllbnQgKmNsaWVu
+dDsNCj4gPg0KPiA+IEBAIC0yMjksMjAgKzIyOSwyMyBAQCBzdGF0aWMgaW50IHBjYTk1NHhfcmVn
+X3dyaXRlKHN0cnVjdCBpMmNfYWRhcHRlcg0KPiAqYWRhcCwNCj4gPiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBJMkNfU01CVVNfQllURSwgJmR1bW15KTsgIH0NCj4gPg0KPiA+ICtzdGF0
+aWMgdTggcGNhOTU0eF9yZWd2YWwoc3RydWN0IHBjYTk1NHggKmRhdGEsIHU4IGNoYW4pIHsNCj4g
+PiArICAgICAvKiB3ZSBtYWtlIHN3aXRjaGVzIGxvb2sgbGlrZSBtdXhlcywgbm90IHN1cmUgaG93
+IHRvIGJlIHNtYXJ0ZXINCj4gPiArKi8NCj4gDQo+IEkga25vdyB5b3UgYXJlIGp1c3QgbW92aW5n
+IHRoZSBjb21tZW50IGFyb3VuZCwgYnV0IHBsZWFzZSBmaXggdGhlIHNlbnRlbmNlIHRvDQo+IHN0
+YXJ0IHdpdGggYSBjYXBpdGFsIGxldHRlciBhbmQgZW5kIHdpdGggYSBwZXJpb2QuIFNvcnJ5IEkg
+ZGlkbid0IGNhdGNoIHRoaXMgaW4gdjMuDQpPa2F5LCBnb3QgaXQsIEkgd2lsbCBmaXggaXQgaW4g
+djUuDQo+IA0KPiA+ICsgICAgIGlmIChkYXRhLT5jaGlwLT5tdXh0eXBlID09IHBjYTk1NHhfaXNt
+dXgpDQo+ID4gKyAgICAgICAgICAgICByZXR1cm4gY2hhbiB8IGRhdGEtPmNoaXAtPmVuYWJsZTsN
+Cj4gPiArICAgICBlbHNlDQo+ID4gKyAgICAgICAgICAgICByZXR1cm4gMSA8PCBjaGFuOw0KPiA+
+ICt9DQo+ID4gKw0KPiA+ICBzdGF0aWMgaW50IHBjYTk1NHhfc2VsZWN0X2NoYW4oc3RydWN0IGky
+Y19tdXhfY29yZSAqbXV4YywgdTMyIGNoYW4pDQo+ID4gew0KPiA+ICAgICAgIHN0cnVjdCBwY2E5
+NTR4ICpkYXRhID0gaTJjX211eF9wcml2KG11eGMpOw0KPiA+ICAgICAgIHN0cnVjdCBpMmNfY2xp
+ZW50ICpjbGllbnQgPSBkYXRhLT5jbGllbnQ7DQo+ID4gLSAgICAgY29uc3Qgc3RydWN0IGNoaXBf
+ZGVzYyAqY2hpcCA9IGRhdGEtPmNoaXA7DQo+ID4gICAgICAgdTggcmVndmFsOw0KPiA+ICAgICAg
+IGludCByZXQgPSAwOw0KPiA+DQo+ID4gLSAgICAgLyogd2UgbWFrZSBzd2l0Y2hlcyBsb29rIGxp
+a2UgbXV4ZXMsIG5vdCBzdXJlIGhvdyB0byBiZSBzbWFydGVyICovDQo+ID4gLSAgICAgaWYgKGNo
+aXAtPm11eHR5cGUgPT0gcGNhOTU0eF9pc211eCkNCj4gPiAtICAgICAgICAgICAgIHJlZ3ZhbCA9
+IGNoYW4gfCBjaGlwLT5lbmFibGU7DQo+ID4gLSAgICAgZWxzZQ0KPiA+IC0gICAgICAgICAgICAg
+cmVndmFsID0gMSA8PCBjaGFuOw0KPiA+IC0NCj4gPiArICAgICByZWd2YWwgPSBwY2E5NTR4X3Jl
+Z3ZhbChkYXRhLCAodTgpKGNoYW4gJiAweGZmKSk7DQo+IA0KPiBCb3RoIGEgbWFzayBhbmQgYSBj
+YXN0IHRvIGRvIHdoYXQgdGhlIGNvbXBpbGVyIHNob3VsZCBiZSBkb2luZyBhbGwgYnkgaXRzZWxm
+Pw0KPiBJZiB5b3UgbmVlZCB0byBraWxsIGEgd2FybmluZywgb3Igc29tZXRoaW5nLCBwbGVhc2Ug
+ZG8ganVzdCBvbmUgb3IgdGhlbS4gQnV0DQo+IHBlcnNvbmFsbHkgSSBwcmVmZXIgdGhlIHNob3J0
+LCBzd2VldCBhbmQgdW5jbHV0dGVyZWQ6DQpPa2F5LCBnb3QgaXQsIHRoYW5rcy4gSSB3aWxsIGFk
+anVzdCBpdCBpbiB2NS4NCj4gDQo+ICAgICAgICAgcmVndmFsID0gcGNhOTU0eF9yZWd2YWwoZGF0
+YSwgY2hhbik7DQo+IA0KPiA+ICAgICAgIC8qIE9ubHkgc2VsZWN0IHRoZSBjaGFubmVsIGlmIGl0
+cyBkaWZmZXJlbnQgZnJvbSB0aGUgbGFzdCBjaGFubmVsICovDQo+ID4gICAgICAgaWYgKGRhdGEt
+Pmxhc3RfY2hhbiAhPSByZWd2YWwpIHsNCj4gPiAgICAgICAgICAgICAgIHJldCA9IHBjYTk1NHhf
+cmVnX3dyaXRlKG11eGMtPnBhcmVudCwgY2xpZW50LCByZWd2YWwpOw0KPiA+IEBAIC0yNTYsNyAr
+MjU5LDcgQEAgc3RhdGljIGludCBwY2E5NTR4X2Rlc2VsZWN0X211eChzdHJ1Y3QNCj4gPiBpMmNf
+bXV4X2NvcmUgKm11eGMsIHUzMiBjaGFuKSAgew0KPiA+ICAgICAgIHN0cnVjdCBwY2E5NTR4ICpk
+YXRhID0gaTJjX211eF9wcml2KG11eGMpOw0KPiA+ICAgICAgIHN0cnVjdCBpMmNfY2xpZW50ICpj
+bGllbnQgPSBkYXRhLT5jbGllbnQ7DQo+ID4gLSAgICAgczggaWRsZV9zdGF0ZTsNCj4gPiArICAg
+ICBzMzIgaWRsZV9zdGF0ZTsNCj4gPg0KPiA+ICAgICAgIGlkbGVfc3RhdGUgPSBSRUFEX09OQ0Uo
+ZGF0YS0+aWRsZV9zdGF0ZSk7DQo+ID4gICAgICAgaWYgKGlkbGVfc3RhdGUgPj0gMCkNCj4gPiBA
+QCAtNDAyLDYgKzQwNSwxNyBAQCBzdGF0aWMgdm9pZCBwY2E5NTR4X2NsZWFudXAoc3RydWN0IGky
+Y19tdXhfY29yZQ0KPiAqbXV4YykNCj4gPiAgICAgICBpMmNfbXV4X2RlbF9hZGFwdGVycyhtdXhj
+KTsNCj4gPiAgfQ0KPiA+DQo+ID4gK3N0YXRpYyBpbnQgcGNhOTU0eF9pbml0KHN0cnVjdCBpMmNf
+Y2xpZW50ICpjbGllbnQsIHN0cnVjdCBwY2E5NTR4DQo+ID4gKypkYXRhKSB7DQo+ID4gKyAgICAg
+aWYgKGRhdGEtPmlkbGVfc3RhdGUgPj0gMCkgew0KPiA+ICsgICAgICAgICAgICAgZGF0YS0+bGFz
+dF9jaGFuID0gcGNhOTU0eF9yZWd2YWwoZGF0YSwNCj4gPiArKHU4KShkYXRhLT5pZGxlX3N0YXRl
+ICYgMHhmZikpOw0KPiANCj4gRGl0by4NCg0KR290IGl0LCB0aGFua3MuDQo+IA0KPiA+ICsgICAg
+IH0gZWxzZSB7DQo+ID4gKyAgICAgICAgICAgICAvKiBEaXNjb25uZWN0IG11bHRpcGxleGVyICov
+DQo+ID4gKyAgICAgICAgICAgICBkYXRhLT5sYXN0X2NoYW4gPSAwOw0KPiA+ICsgICAgIH0NCj4g
+PiArICAgICByZXR1cm4gaTJjX3NtYnVzX3dyaXRlX2J5dGUoY2xpZW50LCBkYXRhLT5sYXN0X2No
+YW4pOw0KPiANCj4gSGVyZSdzIGFub3RoZXIgdGhpbmcgSSBtaXNzZWQgaW4gdGhlIGVhcmxpZXIg
+aXRlcmF0aW9ucy4gSWYgaTJjX3NtYnVzX3dyaXRlX2J5dGUNCj4gZmFpbHMgaGVyZSwgSSB0aGlu
+ayB5b3Ugc2hvdWxkIHNldCBkYXRhLT5sYXN0X2NoYW4gdG8gemVyby4gRm9yIHRoZSBjYWxsIGZy
+b20gcHJvYmUNCj4gaXQgb2J2aW91c2x5IGRvZXNuJ3QgbWF0dGVyIG11Y2gsIGJ1dCBJIHRoaW5r
+IHRoZSBjYWxsIGR1cmluZyByZXN1bWUgaXMgYmV0dGVyIG9mZg0KPiB3aXRoIHN1Y2ggZXh0cmEg
+cHJlY2F1dGlvbiBpbiBwbGFjZS4NCllvdSBhcmUgcmlnaHQuIEkgd2lsbCBhZGQgZXh0cmEgcHJl
+Y2F1dGlvbiBpbiB2NS4NCj4gDQo+IENoZWVycywNCj4gUGV0ZXINCj4gDQo+ID4gK30NCj4gPiAr
+DQo+ID4gIC8qDQo+ID4gICAqIEkyQyBpbml0L3Byb2JpbmcvZXhpdCBmdW5jdGlvbnMNCj4gPiAg
+ICovDQo+ID4gQEAgLTQxMSw3ICs0MjUsNiBAQCBzdGF0aWMgaW50IHBjYTk1NHhfcHJvYmUoc3Ry
+dWN0IGkyY19jbGllbnQgKmNsaWVudCwNCj4gPiAgICAgICBzdHJ1Y3QgaTJjX2FkYXB0ZXIgKmFk
+YXAgPSBjbGllbnQtPmFkYXB0ZXI7DQo+ID4gICAgICAgc3RydWN0IGRldmljZSAqZGV2ID0gJmNs
+aWVudC0+ZGV2Ow0KPiA+ICAgICAgIHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAgPSBkZXYtPm9mX25v
+ZGU7DQo+ID4gLSAgICAgYm9vbCBpZGxlX2Rpc2Nvbm5lY3RfZHQ7DQo+ID4gICAgICAgc3RydWN0
+IGdwaW9fZGVzYyAqZ3BpbzsNCj4gPiAgICAgICBzdHJ1Y3QgaTJjX211eF9jb3JlICptdXhjOw0K
+PiA+ICAgICAgIHN0cnVjdCBwY2E5NTR4ICpkYXRhOw0KPiA+IEBAIC00NjIsMjMgKzQ3NSwyNCBA
+QCBzdGF0aWMgaW50IHBjYTk1NHhfcHJvYmUoc3RydWN0IGkyY19jbGllbnQgKmNsaWVudCwNCj4g
+PiAgICAgICAgICAgICAgIH0NCj4gPiAgICAgICB9DQo+ID4NCj4gPiAtICAgICAvKiBXcml0ZSB0
+aGUgbXV4IHJlZ2lzdGVyIGF0IGFkZHIgdG8gdmVyaWZ5DQo+ID4gKyAgICAgZGF0YS0+aWRsZV9z
+dGF0ZSA9IE1VWF9JRExFX0FTX0lTOw0KPiA+ICsgICAgIGlmIChvZl9wcm9wZXJ0eV9yZWFkX3Uz
+MihucCwgImlkbGUtc3RhdGUiLCAmZGF0YS0+aWRsZV9zdGF0ZSkpIHsNCj4gPiArICAgICAgICAg
+ICAgIGlmIChucCAmJiBvZl9wcm9wZXJ0eV9yZWFkX2Jvb2wobnAsDQo+ICJpMmMtbXV4LWlkbGUt
+ZGlzY29ubmVjdCIpKQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICBkYXRhLT5pZGxlX3N0YXRl
+ID0gTVVYX0lETEVfRElTQ09OTkVDVDsNCj4gPiArICAgICB9DQo+ID4gKw0KPiA+ICsgICAgIC8q
+DQo+ID4gKyAgICAgICogV3JpdGUgdGhlIG11eCByZWdpc3RlciBhdCBhZGRyIHRvIHZlcmlmeQ0K
+PiA+ICAgICAgICAqIHRoYXQgdGhlIG11eCBpcyBpbiBmYWN0IHByZXNlbnQuIFRoaXMgYWxzbw0K
+PiA+IC0gICAgICAqIGluaXRpYWxpemVzIHRoZSBtdXggdG8gZGlzY29ubmVjdGVkIHN0YXRlLg0K
+PiA+ICsgICAgICAqIGluaXRpYWxpemVzIHRoZSBtdXggdG8gYSBjaGFubmVsDQo+ID4gKyAgICAg
+ICogb3IgZGlzY29ubmVjdGVkIHN0YXRlLg0KPiA+ICAgICAgICAqLw0KPiA+IC0gICAgIGlmIChp
+MmNfc21idXNfd3JpdGVfYnl0ZShjbGllbnQsIDApIDwgMCkgew0KPiA+ICsgICAgIHJldCA9IHBj
+YTk1NHhfaW5pdChjbGllbnQsIGRhdGEpOw0KPiA+ICsgICAgIGlmIChyZXQgPCAwKSB7DQo+ID4g
+ICAgICAgICAgICAgICBkZXZfd2FybihkZXYsICJwcm9iZSBmYWlsZWRcbiIpOw0KPiA+ICAgICAg
+ICAgICAgICAgcmV0dXJuIC1FTk9ERVY7DQo+ID4gICAgICAgfQ0KPiA+DQo+ID4gLSAgICAgZGF0
+YS0+bGFzdF9jaGFuID0gMDsgICAgICAgICAgICAgICAvKiBmb3JjZSB0aGUgZmlyc3Qgc2VsZWN0
+aW9uICovDQo+ID4gLSAgICAgZGF0YS0+aWRsZV9zdGF0ZSA9IE1VWF9JRExFX0FTX0lTOw0KPiA+
+IC0NCj4gPiAtICAgICBpZGxlX2Rpc2Nvbm5lY3RfZHQgPSBucCAmJg0KPiA+IC0gICAgICAgICAg
+ICAgb2ZfcHJvcGVydHlfcmVhZF9ib29sKG5wLCAiaTJjLW11eC1pZGxlLWRpc2Nvbm5lY3QiKTsN
+Cj4gPiAtICAgICBpZiAoaWRsZV9kaXNjb25uZWN0X2R0KQ0KPiA+IC0gICAgICAgICAgICAgZGF0
+YS0+aWRsZV9zdGF0ZSA9IE1VWF9JRExFX0RJU0NPTk5FQ1Q7DQo+ID4gLQ0KPiA+ICAgICAgIHJl
+dCA9IHBjYTk1NHhfaXJxX3NldHVwKG11eGMpOw0KPiA+ICAgICAgIGlmIChyZXQpDQo+ID4gICAg
+ICAgICAgICAgICBnb3RvIGZhaWxfY2xlYW51cDsNCj4gPiBAQCAtNTMxLDggKzU0NSw3IEBAIHN0
+YXRpYyBpbnQgcGNhOTU0eF9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQ0KPiA+ICAgICAgIHN0
+cnVjdCBpMmNfbXV4X2NvcmUgKm11eGMgPSBpMmNfZ2V0X2NsaWVudGRhdGEoY2xpZW50KTsNCj4g
+PiAgICAgICBzdHJ1Y3QgcGNhOTU0eCAqZGF0YSA9IGkyY19tdXhfcHJpdihtdXhjKTsNCj4gPg0K
+PiA+IC0gICAgIGRhdGEtPmxhc3RfY2hhbiA9IDA7DQo+ID4gLSAgICAgcmV0dXJuIGkyY19zbWJ1
+c193cml0ZV9ieXRlKGNsaWVudCwgMCk7DQo+ID4gKyAgICAgcmV0dXJuIHBjYTk1NHhfaW5pdChj
+bGllbnQsIGRhdGEpOw0KPiA+ICB9DQo+ID4gICNlbmRpZg0KPiA+DQo+ID4NCg0K
