@@ -2,73 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FBD6E0DA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 23:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8D6DE0D91
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 23:01:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732488AbfJVVG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 17:06:27 -0400
-Received: from server.multitradingpratama.com ([103.27.207.159]:46444 "EHLO
-        server.multitradingpratama.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731942AbfJVVG0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 17:06:26 -0400
-X-Greylist: delayed 1428 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Oct 2019 17:06:26 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=multitradingpratama.com; s=default; h=Content-Transfer-Encoding:
-        MIME-Version:Content-Type:Subject:To:From:Message-ID:Date:Sender:Reply-To:Cc:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SXMMVe9zo6Znj4aqSunoAH6+b1DYIUGbbhP0p/Ffvis=; b=dl2N4tV5/bqeBRZn0mq7xsObY
-        bf1Azi5NkWY8rR11lIheioe/lxaaYtBtv0Jp815zy4Ew/nxIE3hLCSv8KsiapNhbsZ2HO0/pCfgVa
-        H0xrIhOfwknfV0+RFMfCVf8QmXCtVQF0Rv+lRC9Kv7Ns2Fh+kQtmGrBFv/bTuMUEB7zhDXGJMeEDb
-        v1Sx1KNt3G9JIz+UXNuKh5/ailsnsSFEi+3X2mQzVwUdjBkKS9eBrF7vgJQepTKjSluKbsWPrqx4H
-        2z4FGitSiicARy7p1PgYoxCBXv1xvwBm+dg/I3UkmjxZHvExuHQlNcUat6GxKrmpW/mhUXn6Sx4Tr
-        jTsi653uw==;
-Received: from [::1] (port=52620 helo=server.multitradingpratama.com)
-        by server.multitradingpratama.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <sahabuddin@multitradingpratama.com>)
-        id 1iN0yZ-0008KR-5p; Wed, 23 Oct 2019 03:41:55 +0700
-Received: from static.kpn.net (static.kpn.net [31.161.186.7]) by
- webmail.multitradingpratama.com (Horde Framework) with HTTPS; Wed, 23 Oct
- 2019 03:41:54 +0700
-Date:   Wed, 23 Oct 2019 03:41:54 +0700
-Message-ID: <20191023034154.Horde.qyniUKYjZlfhFQF1ZjmdJ5v@webmail.multitradingpratama.com>
-From:   Chin Sang <sahabuddin@multitradingpratama.com>
-Subject: geschaftsvorschlag
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+        id S1732016AbfJVVBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 17:01:22 -0400
+Received: from mga12.intel.com ([192.55.52.136]:15244 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730146AbfJVVBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 17:01:22 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 14:01:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,217,1569308400"; 
+   d="scan'208";a="196569094"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga008.fm.intel.com with ESMTP; 22 Oct 2019 14:01:21 -0700
+Date:   Tue, 22 Oct 2019 14:01:20 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, vkuznets@redhat.com, wanpengli@tencent.com,
+        jmattson@google.com, joro@8bytes.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, peterz@infradead.org, will@kernel.org,
+        linux-hyperv@vger.kernel.org, kvm@vger.kernel.org,
+        mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+        sthemmin@microsoft.com, sashal@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v7 2/5] x86/kvm: Change print code to use pr_*() format
+Message-ID: <20191022210120.GQ2343@linux.intel.com>
+References: <1571649076-2421-1-git-send-email-zhenzhong.duan@oracle.com>
+ <1571649076-2421-3-git-send-email-zhenzhong.duan@oracle.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.multitradingpratama.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - multitradingpratama.com
-X-Get-Message-Sender-Via: server.multitradingpratama.com: authenticated_id: sahabuddin@multitradingpratama.com
-X-Authenticated-Sender: server.multitradingpratama.com: sahabuddin@multitradingpratama.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <1571649076-2421-3-git-send-email-zhenzhong.duan@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 21, 2019 at 05:11:13PM +0800, Zhenzhong Duan wrote:
+> pr_*() is preferred than printk(KERN_* ...), after change all the print
+> in arch/x86/kernel/kvm.c will have "kvm_guest: xxx" style.
+> 
+> No functional change.
+> 
+> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krcmar <rkrcmar@redhat.com>
+> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Cc: Wanpeng Li <wanpengli@tencent.com>
+> Cc: Jim Mattson <jmattson@google.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> ---
+>  arch/x86/kernel/kvm.c | 30 ++++++++++++++++--------------
+>  1 file changed, 16 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 3bc6a266..249f14a 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -7,6 +7,8 @@
+>   *   Authors: Anthony Liguori <aliguori@us.ibm.com>
+>   */
+>  
+> +#define pr_fmt(fmt) "kvm_guest: " fmt
 
-Geschäftsanfrage
-Hallo,
-Ich bin Dr. Chin Sang und habe einen Geschäftsvorschlag im Wert von
-21,5 Mio. USD, den Sie mit mir abwickeln können. Sie können Ihre
-Antwort in englischer Sprache senden, um ein gutes Verständnis für das
-Geschäft zu erhalten. Kontaktieren Sie mich daher unter meiner
-privaten E-Mail: chinsang909@gmail.com. Weitere Informationen zu
-diesem Geschäftsvorschlag.
-Grüße
-Dr.Chin Sang.
-Für ein gutes Verständnis meines Vorschlags ist es gut, wenn Sie Ihre
-Antwort auf Englisch senden könnento : chinsang909@gmail.com
+Sort of a silly nit, especially since I suggested kvm_guest...
 
+What about using kvm-guest instead of kvm_guest to be consistent with
+kvm-clock, the other prolific logger in a KVM guest.
+
+E.g.
+
+  kvm-clock: cpu 1, msr 551e041, secondary cpu clock
+  kvm-guest: setup async PF for cpu 1
+  kvm-guest: stealtime: cpu 1, msr 277695f40
+  kvm-clock: cpu 2, msr 551e081, secondary cpu clock
+  kvm-guest: setup async PF for cpu 2
+  kvm-guest: stealtime: cpu 2, msr 277715f40
+  kvm-clock: cpu 3, msr 551e0c1, secondary cpu clock
+  kvm-guest: setup async PF for cpu 3
+  kvm-guest: stealtime: cpu 3, msr 277795f40
+  kvm-clock: cpu 4, msr 551e101, secondary cpu clock
+  
+instead of
+
+  kvm-clock: cpu 1, msr 551e041, secondary cpu clock
+  kvm_guest: setup async PF for cpu 1
+  kvm_guest: stealtime: cpu 1, msr 277695f40
+  kvm-clock: cpu 2, msr 551e081, secondary cpu clock
+  kvm_guest: setup async PF for cpu 2
+  kvm_guest: stealtime: cpu 2, msr 277715f40
+  kvm-clock: cpu 3, msr 551e0c1, secondary cpu clock
+  kvm_guest: setup async PF for cpu 3
+  kvm_guest: stealtime: cpu 3, msr 277795f40
+  kvm-clock: cpu 4, msr 551e101, secondary cpu clock
