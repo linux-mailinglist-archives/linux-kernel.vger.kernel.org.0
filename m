@@ -2,79 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B67DE045F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B018E0465
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:00:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389209AbfJVM7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 08:59:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51346 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389143AbfJVM7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 08:59:53 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A0732075A;
-        Tue, 22 Oct 2019 12:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571749192;
-        bh=4CPRU2ALG6GtK6+pZ+F3xABl2sxm6yLoW6A4ltcqWtU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=qd0nYUPsgaG9IQbK11fQUzwXq8mTBGzbDXUTHySjkMY6Isg3AWTNC57qoNvhrhJE3
-         QU5mwzF0qEtRY4mBoO2BgXUMNBl7kBZ+DpM0UhKcORxb/NSXxxULcBPdRqfsiFGVLY
-         9YV20AE4vybz5xwzQNJeySSj3JmCvGA+VTmjSLng=
-Date:   Tue, 22 Oct 2019 07:59:50 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Dilip Kota <eswara.kota@linux.intel.com>
-Cc:     Andrew Murray <andrew.murray@arm.com>, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, lorenzo.pieralisi@arm.com,
-        robh@kernel.org, martin.blumenstingl@googlemail.com,
-        linux-pci@vger.kernel.org, hch@infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] pci: intel: Add sysfs attributes to configure
- pcie link
-Message-ID: <20191022125950.GA133170@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <187a1a7d-80bd-a0e9-a0d9-7fc53bff8907@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731496AbfJVNAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 09:00:53 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33559 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731093AbfJVNAx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 09:00:53 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 6so3645933wmf.0;
+        Tue, 22 Oct 2019 06:00:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=eyay/8zntu7rIdOGWbuuJlhvNDUp8DvLGfNMZ5zr0AE=;
+        b=FSYnU4t9/vZp2uPLVq3Fg0KlMo56fPAyUqjsSrDs8h5CtcGzsoWkwC7X+6Sb0blIjs
+         mh9CH1u1wtd8olscTGb16Qp9MIhcqwN1ATuwMbM118OlNfsiM2V1XKMV+SKDvx4uvSRZ
+         HatP9lEQRcxCvNyPII/+tBdNeLLjM7lBDLCxxVy/23DwbGTSeZabUaPXvhM4LzqmPGp1
+         uPb+raskjXqzLLrW1CJBb5AGgj679jDAgiLqDJD/yvK0cdtOkwZEB949d6cniw6y/6mv
+         w9wxqcC0idJrH2VRkn5glabT0H1GEG4ZW+8Rb0es4GjOwrK8gSzSKVtCH5E0xzxeOGIN
+         FcTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eyay/8zntu7rIdOGWbuuJlhvNDUp8DvLGfNMZ5zr0AE=;
+        b=BdxJXi+l+kJhZtZjx7ZaorPBBxZ/w3kjK8XZcJEwwqPwVj5+q45e90Y9qLZGxK76hS
+         LyRZ9pKBCvSYTgissCm7UOHJj6//i2ZTwlaguw1g/OKXGbAjjRZKFArkYLauhLnx81ZU
+         30l08Hmn3lEgHJh6hW9I8psja5FSuWFc83ejLOtfTv1zalXVvASC9BfXRUAliQVkOMm1
+         BTsxtdloWIoV6Bz2CAR9XghDoOkelQWG+60ONKRAmGZ33nI7j8NnmKLVeZd45TZoBS5n
+         poOt+pRsOtAd94CSoAJC6ovz+CIIXzhJ4H4zu2OOs//22NnOkIYwxa2OGAUSAXLRgnDv
+         gIVw==
+X-Gm-Message-State: APjAAAUQOawMctAp8vLNPaKY6YEieXTmIcgNUTI0ydIZ57ECsDKFWcDz
+        9leo/SI4T21x4RaIO1JljIY=
+X-Google-Smtp-Source: APXvYqybM6ZsQXLzFphVl6khI9qS0LBEyihcOwpRXwt6K/+SMZPRCd+NlKqTs2m/weKn7AXrxv4OBA==
+X-Received: by 2002:a7b:c049:: with SMTP id u9mr2901966wmc.12.1571749249658;
+        Tue, 22 Oct 2019 06:00:49 -0700 (PDT)
+Received: from debian.office.codethink.co.uk ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id b62sm25935509wmc.13.2019.10.22.06.00.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Oct 2019 06:00:48 -0700 (PDT)
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        linux-mmc@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] mmc: block: remove unused variable
+Date:   Tue, 22 Oct 2019 14:00:36 +0100
+Message-Id: <20191022130036.23877-1-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Rafael, linux-pm, beginning of discussion at
-https://lore.kernel.org/r/d8574605f8e70f41ce1e88ccfb56b63c8f85e4df.1571638827.git.eswara.kota@linux.intel.com]
+The use of 'status' was removed but the variable itself was not
+removed and thus adding a build warning.
 
-On Tue, Oct 22, 2019 at 05:27:38PM +0800, Dilip Kota wrote:
-> On 10/22/2019 1:18 AM, Bjorn Helgaas wrote:
-> > On Mon, Oct 21, 2019 at 02:38:50PM +0100, Andrew Murray wrote:
-> > > On Mon, Oct 21, 2019 at 02:39:20PM +0800, Dilip Kota wrote:
-> > > > PCIe RC driver on Intel Gateway SoCs have a requirement
-> > > > of changing link width and speed on the fly.
-> > Please add more details about why this is needed.  Since you're adding
-> > sysfs files, it sounds like it's not actually the *driver* that needs
-> > this; it's something in userspace?
+Fixes: 05224f7e4975 ("mmc: block: Add CMD13 polling for MMC IOCTLS with R1B response")
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
+ drivers/mmc/core/block.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> We have use cases to change the link speed and width on the fly.
-> One is EMI check and other is power saving.  Some battery backed
-> applications have to switch PCIe link from higher GEN to GEN1 and
-> width to x1. During the cases like external power supply got
-> disconnected or broken. Once external power supply is connected then
-> switch PCIe link to higher GEN and width.
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index ee1fd7df4ec8..95b41c0891d0 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -497,7 +497,6 @@ static int __mmc_blk_ioctl_cmd(struct mmc_card *card, struct mmc_blk_data *md,
+ 	struct scatterlist sg;
+ 	int err;
+ 	unsigned int target_part;
+-	u32 status = 0;
+ 
+ 	if (!card || !md || !idata)
+ 		return -EINVAL;
+-- 
+2.11.0
 
-That sounds plausible, but of course nothing there is specific to the
-Intel Gateway, so we should implement this generically so it would
-work on all hardware.
-
-I'm not sure what the interface should look like -- should it be a
-low-level interface as you propose where userspace would have to
-identify each link of interest, or is there some system-wide
-power/performance knob that could tune all links?  Cc'd Rafael and
-linux-pm in case they have ideas.
-
-Bjorn
