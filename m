@@ -2,67 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD21DE08CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3143EE08D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 18:28:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732455AbfJVQ1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 12:27:49 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55927 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731132AbfJVQ1s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:27:48 -0400
-Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.pengutronix.de.)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1iMx0c-00027u-VS; Tue, 22 Oct 2019 18:27:47 +0200
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>, kernel@pengutronix.de
-Subject: [PATCH] reset: fix of_reset_control_get_count kerneldoc comment
-Date:   Tue, 22 Oct 2019 18:27:42 +0200
-Message-Id: <20191022162742.9908-1-p.zabel@pengutronix.de>
-X-Mailer: git-send-email 2.20.1
+        id S1732570AbfJVQ23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 12:28:29 -0400
+Received: from muru.com ([72.249.23.125]:39062 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731132AbfJVQ23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 12:28:29 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 6BE3C80FA;
+        Tue, 22 Oct 2019 16:29:03 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 09:28:25 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Benoit Parrot <bparrot@ti.com>
+Cc:     Tero Kristo <t-kristo@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Patch 1/9] ARM: dts: dra7: add cam clkctrl node
+Message-ID: <20191022162825.GX5610@atomide.com>
+References: <20191018154849.3127-1-bparrot@ti.com>
+ <20191018154849.3127-2-bparrot@ti.com>
+ <20191022154012.GM5610@atomide.com>
+ <20191022161313.nzwovtxipibpvwpf@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191022161313.nzwovtxipibpvwpf@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a newline and remove a superfluous kerneldoc marker before the
-of_reset_control_get_count kerneldoc comment, to fix documentation
-build warnings:
+* Benoit Parrot <bparrot@ti.com> [191022 16:14]:
+> Tony Lindgren <tony@atomide.com> wrote on Tue [2019-Oct-22 08:40:12 -0700]:
+> > Probably the best way would be for tero to collect
+> > all the drivers/clk/ti clock data changes and provide
+> > an immutable branch with those that I can merge too.
+> 
+> So I assume then that the clk*.c and header file changes should be split in
+> a separate patch?
 
-  ./drivers/reset/core.c:832: warning: Incorrect use of kernel-doc format:  * of_reset_control_get_count - Count number of resets available with a device
-  ./drivers/reset/core.c:840: warning: Function parameter or member 'node' not described in 'of_reset_control_get_count'
+Yes please.
 
-Fixes: 17c82e206d2a ("reset: Add APIs to manage array of resets")
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/reset/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Regards,
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 7c95cafcdf08..660e0b07feca 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -824,9 +824,10 @@ int __device_reset(struct device *dev, bool optional)
- }
- EXPORT_SYMBOL_GPL(__device_reset);
- 
--/**
-+/*
-  * APIs to manage an array of reset controls.
-  */
-+
- /**
-  * of_reset_control_get_count - Count number of resets available with a device
-  *
--- 
-2.20.1
-
+Tony
