@@ -2,117 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2ADBE01D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 12:15:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18670E01D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 12:15:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731787AbfJVKPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 06:15:23 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50636 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731778AbfJVKPU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 06:15:20 -0400
-Received: by mail-wm1-f68.google.com with SMTP id q13so6496394wmj.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 03:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bs4FuisA7tS9+U8xJf8/W529cyeyrvU2aBJyOthDVWw=;
-        b=PN5rfyxjT7AapqUMB+Y7mgH5VSyCVdj5Jn9Slj8OyW8taLbYV2jYyrTmViNLP9cC03
-         tVgLKPkNPWkehyPE26++c9DZRVajd6Us3QrOAH2+GJqXd5vVSL7TTct/qBS13QHEw0LS
-         Pkp6lpvnqugLw3cBBics6hufuqH/xur5gqhK3ijhqwGTp0pGjDbbzDI4R9mdKyINFLOA
-         2DDa0c0U3RGF2UhrLeUICJa9i5o0BEvM+AnH2fCHQw6B7beSrg+peyiwvtLZDirbwZlK
-         EPN/oSUG2rTIYSyOpo8xuv8x8DGvmP7bcBK7m8OJXtM40TDw6JckyeJWCMfmhDY1DwIq
-         eKbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bs4FuisA7tS9+U8xJf8/W529cyeyrvU2aBJyOthDVWw=;
-        b=mwjKSaO/0xWn+3HKmuaCH8NMu8Bz30Lspwi4hvd5X0UUUHZqLz3pewz9cbBtuj2SQQ
-         CZ22mDHLxAoQc7RIzXHZSB4gLGWv92JM2kbmE/Um9hQjQgU5tl0rAYshC+pi8ylIreXl
-         h3MsB02VzUojVuHmrAmjb5pjT78plrgoy5BJSGeW09/G6OkSPF/Opeusi9D3titZ88GQ
-         UIxor15vaAQ5f1zBGABfsAmRaezJznTdPQPLqHCk5YZYQmcER/Yhalmfh+puXg2rgNKE
-         h8nmMOLkTq054alOSFKbr7s3zceTunBgVzv5FHxRWIB7iDr/oNBljTLOorTNwv1hw8y/
-         +mnA==
-X-Gm-Message-State: APjAAAVLVY9OS4SpUniHIiXZahXFAeqdny/d+Kj7jWGEeLtXjkGDNzlS
-        iAJaoMZ03a3Zh25YBeolUj7tHSPU4KNVOAozOrgMrA==
-X-Google-Smtp-Source: APXvYqzASurI4j7z0wMJJau3KlGT38dQAA5aGGhbhkHPR/X3cn+65+QRDlPiVrWQ7I94OJmtZ/ghi2t5pjMzNjCQikA=
-X-Received: by 2002:a7b:c925:: with SMTP id h5mr2062160wml.61.1571739318364;
- Tue, 22 Oct 2019 03:15:18 -0700 (PDT)
+        id S1731810AbfJVKPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 06:15:44 -0400
+Received: from mga17.intel.com ([192.55.52.151]:8000 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726847AbfJVKPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 06:15:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 03:15:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,326,1566889200"; 
+   d="scan'208";a="201625935"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 22 Oct 2019 03:15:43 -0700
+Received: from [10.226.39.21] (unknown [10.226.39.21])
+        by linux.intel.com (Postfix) with ESMTP id E4EEA58029F;
+        Tue, 22 Oct 2019 03:15:39 -0700 (PDT)
+Subject: Re: [PATCH v4 1/3] dt-bindings: PCI: intel: Add YAML schemas for the
+ PCIe RC controller
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        lorenzo.pieralisi@arm.com, robh@kernel.org,
+        martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
+        hch@infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
+        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com
+References: <cover.1571638827.git.eswara.kota@linux.intel.com>
+ <710257e49c4b3d07fa98b3e5a829b807f74b54d7.1571638827.git.eswara.kota@linux.intel.com>
+ <20191021111902.GO47056@e119886-lin.cambridge.arm.com>
+From:   Dilip Kota <eswara.kota@linux.intel.com>
+Message-ID: <0394d6dd-e665-4f00-a600-21fd10acbd9d@linux.intel.com>
+Date:   Tue, 22 Oct 2019 18:15:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191017093020.28658-1-kasong@redhat.com> <CAKv+Gu8nJ0uDn0G9s5N1ZM=FE4JB5c2Kjs=mKpatTFkwF0WaaQ@mail.gmail.com>
- <20191022074422.GA31700@zn.tnic>
-In-Reply-To: <20191022074422.GA31700@zn.tnic>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 22 Oct 2019 12:15:12 +0200
-Message-ID: <CAKv+Gu_GxP+83D0cOT=0UgDrxunm2CuKpAfK1SnVkVqV=E0Ozw@mail.gmail.com>
-Subject: Re: [PATCH v4] x86, efi: never relocate kernel below lowest
- acceptable address
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Kairui Song <kasong@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191021111902.GO47056@e119886-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Oct 2019 at 09:45, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Tue, Oct 22, 2019 at 08:13:56AM +0200, Ard Biesheuvel wrote:
-> > On Thu, 17 Oct 2019 at 11:30, Kairui Song <kasong@redhat.com> wrote:
-> > >
-> > > Currently, kernel fails to boot on some HyperV VMs when using EFI.
-> > > And it's a potential issue on all platforms.
-> > >
-> > > It's caused by broken kernel relocation on EFI systems, when below three
-> > > conditions are met:
-> > >
-> > > 1. Kernel image is not loaded to the default address (LOAD_PHYSICAL_ADDR)
-> > >    by the loader.
-> > > 2. There isn't enough room to contain the kernel, starting from the
-> > >    default load address (eg. something else occupied part the region).
-> > > 3. In the memmap provided by EFI firmware, there is a memory region
-> > >    starts below LOAD_PHYSICAL_ADDR, and suitable for containing the
-> > >    kernel.
-> > >
-> > > EFI stub will perform a kernel relocation when condition 1 is met. But
-> > > due to condition 2, EFI stub can't relocate kernel to the preferred
-> > > address, so it fallback to ask EFI firmware to alloc lowest usable memory
-> > > region, got the low region mentioned in condition 3, and relocated
-> > > kernel there.
-> > >
-> > > It's incorrect to relocate the kernel below LOAD_PHYSICAL_ADDR. This
-> > > is the lowest acceptable kernel relocation address.
-> > >
-> > > The first thing goes wrong is in arch/x86/boot/compressed/head_64.S.
-> > > Kernel decompression will force use LOAD_PHYSICAL_ADDR as the output
-> > > address if kernel is located below it. Then the relocation before
-> > > decompression, which move kernel to the end of the decompression buffer,
-> > > will overwrite other memory region, as there is no enough memory there.
-> > >
-> > > To fix it, just don't let EFI stub relocate the kernel to any address
-> > > lower than lowest acceptable address.
-> > >
-> > > Signed-off-by: Kairui Song <kasong@redhat.com>
-> > > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > >
-> >
-> > Ingo, Boris, could you please comment on this?
->
-> Yah, the commit message makes more sense now.
->
+Hi Andrew Murray,
 
+On 10/21/2019 7:19 PM, Andrew Murray wrote:
+> On Mon, Oct 21, 2019 at 02:39:18PM +0800, Dilip Kota wrote:
+>> Add YAML shcemas for PCIe RC controller on Intel Gateway SoCs
+> s/shcemas/schemas/
+>
+>> which is Synopsys DesignWare based PCIe core.
+> The revision history below doesn't need to be in the commit mesage and
+> so you should add a '---' before the following (and thanks for the
+> detailed history).
+>
+> Besides that:
+>
+> Reviewed-by: Andrew Murray <andrew.murray@arm.com>
 
-Thanks Boris.
+Thank you for the review. I will fix the conventions
 
-Kairui, I will apply the requested changes myself - no need to spin a v5
+Regards,
+Dilip
+
+>
+>> changes on v4:
+>> 	Add "snps,dw-pcie" compatible.
+>> 	Rename phy-names property value to pcie.
+>> 	And maximum and minimum values to num-lanes.
+>> 	Add ref for reset-assert-ms entry and update the
+>> 	 description for easy understanding.
+>> 	Remove pcie core interrupt entry.
+>>
+>> changes on v3:
+>>          Add the appropriate License-Identifier
+>>          Rename intel,rst-interval to 'reset-assert-us'
+>>          Add additionalProperties: false
+>>          Rename phy-names to 'pciephy'
+>>          Remove the dtsi node split of SoC and board in the example
+>>          Add #interrupt-cells = <1>; or else interrupt parsing will fail
+>>          Name yaml file with compatible name
+>>
+>> Signed-off-by: Dilip Kota <eswara.kota@linux.intel.com>
+>> ---
+>>   .../devicetree/bindings/pci/intel-gw-pcie.yaml     | 135 +++++++++++++++++++++
+>>   1 file changed, 135 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml b/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+>> new file mode 100644
+>> index 000000000000..49dd87ec1e3d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+>> @@ -0,0 +1,135 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pci/intel-gw-pcie.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: PCIe RC controller on Intel Gateway SoCs
+>> +
+>> +maintainers:
+>> +  - Dilip Kota <eswara.kota@linux.intel.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - const: intel,lgm-pcie
+>> +      - const: snps,dw-pcie
+>> +
+>> +  device_type:
+>> +    const: pci
+>> +
+>> +  "#address-cells":
+>> +    const: 3
+>> +
+>> +  "#size-cells":
+>> +    const: 2
+>> +
+>> +  reg:
+>> +    items:
+>> +      - description: Controller control and status registers.
+>> +      - description: PCIe configuration registers.
+>> +      - description: Controller application registers.
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: dbi
+>> +      - const: config
+>> +      - const: app
+>> +
+>> +  ranges:
+>> +    description: Ranges for the PCI memory and I/O regions.
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    description: PCIe registers interface clock.
+>> +
+>> +  phys:
+>> +    maxItems: 1
+>> +
+>> +  phy-names:
+>> +    const: pcie
+>> +
+>> +  reset-gpios:
+>> +    maxItems: 1
+>> +
+>> +  num-lanes:
+>> +    minimum: 1
+>> +    maximum: 2
+>> +    description: Number of lanes to use for this port.
+>> +
+>> +  linux,pci-domain:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description: PCI domain ID.
+>> +
+>> +  '#interrupt-cells':
+>> +    const: 1
+>> +
+>> +  interrupt-map-mask:
+>> +    description: Standard PCI IRQ mapping properties.
+>> +
+>> +  interrupt-map:
+>> +    description: Standard PCI IRQ mapping properties.
+>> +
+>> +  max-link-speed:
+>> +    description: Specify PCI Gen for link capability.
+>> +
+>> +  bus-range:
+>> +    description: Range of bus numbers associated with this controller.
+>> +
+>> +  reset-assert-ms:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description: |
+>> +      Delay after asserting reset to the PCIe device.
+>> +      Some devices need an interval upto 500ms. By default it is 100ms.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - device_type
+>> +  - reg
+>> +  - reg-names
+>> +  - ranges
+>> +  - resets
+>> +  - clocks
+>> +  - phys
+>> +  - phy-names
+>> +  - reset-gpios
+>> +  - num-lanes
+>> +  - linux,pci-domain
+>> +  - interrupt-map
+>> +  - interrupt-map-mask
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    pcie10:pcie@d0e00000 {
+>> +      compatible = "intel,lgm-pcie", "snps,dw-pcie";
+>> +      device_type = "pci";
+>> +      #address-cells = <3>;
+>> +      #size-cells = <2>;
+>> +      reg = <0xd0e00000 0x1000>,
+>> +            <0xd2000000 0x800000>,
+>> +            <0xd0a41000 0x1000>;
+>> +      reg-names = "dbi", "config", "app";
+>> +      linux,pci-domain = <0>;
+>> +      max-link-speed = <4>;
+>> +      bus-range = <0x00 0x08>;
+>> +      interrupt-parent = <&ioapic1>;
+>> +      #interrupt-cells = <1>;
+>> +      interrupt-map-mask = <0 0 0 0x7>;
+>> +      interrupt-map = <0 0 0 1 &ioapic1 27 1>,
+>> +                      <0 0 0 2 &ioapic1 28 1>,
+>> +                      <0 0 0 3 &ioapic1 29 1>,
+>> +                      <0 0 0 4 &ioapic1 30 1>;
+>> +      ranges = <0x02000000 0 0xd4000000 0xd4000000 0 0x04000000>;
+>> +      resets = <&rcu0 0x50 0>;
+>> +      clocks = <&cgu0 LGM_GCLK_PCIE10>;
+>> +      phys = <&cb0phy0>;
+>> +      phy-names = "pcie";
+>> +      status = "okay";
+>> +      reset-assert-ms = <500>;
+>> +      reset-gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
+>> +      num-lanes = <2>;
+>> +    };
+>> -- 
+>> 2.11.0
+>>
