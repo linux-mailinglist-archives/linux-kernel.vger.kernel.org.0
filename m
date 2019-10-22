@@ -2,167 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73D5BE04E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:24:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5A11E04EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 15:25:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389244AbfJVNXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 09:23:49 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:33030 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389226AbfJVNXt (ORCPT
+        id S2388665AbfJVNZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 09:25:37 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.119]:28782 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728346AbfJVNZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 09:23:49 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9MDNkTf003907;
-        Tue, 22 Oct 2019 08:23:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571750626;
-        bh=WDj6QPyW6ZuJ8MWf4ORoc/EmksLmyGtH8kZua5ibgLg=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=fhnLAxHZYDfYYM2OyO/UElKIsrskrnSj2aYhKyL6+3N3VO1pG7j4DvU8vlBBjTzVM
-         1xSO4d2lsSsAx72glZk7CP2EC7lWk9i6Y0RLP90bAtZtfh86I0VLgv0AX1uTTHb2lY
-         qrbGY09KeuZVPXeHHDpGd/ZKmihcqDIjdpzICJZw=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9MDNVbd068725
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Oct 2019 08:23:31 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 22
- Oct 2019 08:23:21 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 22 Oct 2019 08:23:30 -0500
-Received: from lta0400828a.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9MDMplb126427;
-        Tue, 22 Oct 2019 08:22:58 -0500
-From:   Roger Quadros <rogerq@ti.com>
-To:     <kishon@ti.com>
-CC:     <aniljoy@cadence.com>, <adouglas@cadence.com>, <nsekhar@ti.com>,
-        <jsarha@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 3/3] phy: ti: j721e-wiz: Manage typec-gpio-dir
-Date:   Tue, 22 Oct 2019 16:22:49 +0300
-Message-ID: <20191022132249.869-4-rogerq@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191022132249.869-1-rogerq@ti.com>
-References: <20191022132249.869-1-rogerq@ti.com>
+        Tue, 22 Oct 2019 09:25:36 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id A7EE3F0394
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 08:25:33 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id MuAHiqyANBnGaMuAHisPuP; Tue, 22 Oct 2019 08:25:33 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=CJG652dXFMSOvZpO2bsuZOAfIU0kqX1SEjlnk/KgB/A=; b=A/I4g5QGMVQyfQCILO2wfnRNR5
+        i15DhF/GIm7zR59Vlu3LIEbuKU9HyNfu/7aYozbHUoaGK97RpM50KwVOmIshqG6fQB6+8BLsjufW8
+        wGC6GSNdXpwoYe+4DYNFZ+histGrFaXGNzIeMa8tkeLGIBkoAjFCMI1qbxx9wl+qZdUaUQWa3Dr/6
+        WxmoiyZ1133Iyqpr20PFnkr7VHNJ/MJxUbuVAZ41Kk1SyJfvHTT/lT29Bt+jtPENyHmwwpFN8sBme
+        Wss1D3a5v6Ke/pT2w8tsbkdmxeLHnS4AoWRdcu8OW0rBarg5AD++cWxQf0WgYZVuww593C8yXHHpd
+        dA4XG8Tw==;
+Received: from [187.192.22.73] (port=51876 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iMuAF-002fBb-W0; Tue, 22 Oct 2019 08:25:32 -0500
+Date:   Tue, 22 Oct 2019 08:25:22 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] media: i2c: adv748x: Fix unsafe macros
+Message-ID: <20191022132522.GA12072@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.22.73
+X-Source-L: No
+X-Exim-ID: 1iMuAF-002fBb-W0
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.22.73]:51876
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Based on this GPIO state we need to configure LN10
-bit to swap lane0 and lane1 if required (flipped connector).
+Enclose multiple macro parameters in parentheses in order to
+make such macros safer and fix the Clang warning below:
 
-Type-C companions typically need some time after the cable is
-plugged before and before they reflect the correct status of
-Type-C plug orientation on the DIR line.
+drivers/media/i2c/adv748x/adv748x-afe.c:452:12: warning: operator '?:'
+has lower precedence than '|'; '|' will be evaluated first
+[-Wbitwise-conditional-parentheses]
 
-Type-C Spec specifies CC attachment debounce time (tCCDebounce)
-of 100 ms (min) to 200 ms (max).
+ret = sdp_clrset(state, ADV748X_SDP_FRP, ADV748X_SDP_FRP_MASK, enable
+? ctrl->val - 1 : 0);
 
-Use the DT property to figure out if we need to add delay
-or not before sampling the Type-C DIR line.
-
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/phy/ti/phy-j721e-wiz.c | 41 ++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ drivers/media/i2c/adv748x/adv748x.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/phy/ti/phy-j721e-wiz.c b/drivers/phy/ti/phy-j721e-wiz.c
-index 2a95da843e9f..2becdbcb762a 100644
---- a/drivers/phy/ti/phy-j721e-wiz.c
-+++ b/drivers/phy/ti/phy-j721e-wiz.c
-@@ -9,6 +9,8 @@
- #include <dt-bindings/phy/phy.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/mux/consumer.h>
-@@ -22,6 +24,7 @@
- #define WIZ_SERDES_CTRL		0x404
- #define WIZ_SERDES_TOP_CTRL	0x408
- #define WIZ_SERDES_RST		0x40c
-+#define WIZ_SERDES_TYPEC	0x410
- #define WIZ_LANECTL(n)		(0x480 + (0x40 * (n)))
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index 5042f9e94aee..fccb388ce179 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -394,10 +394,10 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
  
- #define WIZ_MAX_LANES		4
-@@ -29,6 +32,8 @@
- #define WIZ_DIV_NUM_CLOCKS_16G	2
- #define WIZ_DIV_NUM_CLOCKS_10G	1
+ #define io_read(s, r) adv748x_read(s, ADV748X_PAGE_IO, r)
+ #define io_write(s, r, v) adv748x_write(s, ADV748X_PAGE_IO, r, v)
+-#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~m) | v)
++#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~(m)) | (v))
  
-+#define WIZ_SERDES_TYPEC_LN10_SWAP	BIT(30)
-+
- enum wiz_lane_standard_mode {
- 	LANE_MODE_GEN1,
- 	LANE_MODE_GEN2,
-@@ -206,6 +211,8 @@ struct wiz {
- 	u32			num_lanes;
- 	struct platform_device	*serdes_pdev;
- 	struct reset_controller_dev wiz_phy_reset_dev;
-+	struct gpio_desc	*gpio_typec_dir;
-+	int			typec_dir_delay;
- };
+ #define hdmi_read(s, r) adv748x_read(s, ADV748X_PAGE_HDMI, r)
+-#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, r+1)) & m)
++#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, (r)+1)) & (m))
+ #define hdmi_write(s, r, v) adv748x_write(s, ADV748X_PAGE_HDMI, r, v)
  
- static int wiz_reset(struct wiz *wiz)
-@@ -703,6 +710,21 @@ static int wiz_phy_reset_deassert(struct reset_controller_dev *rcdev,
- 	struct wiz *wiz = dev_get_drvdata(dev);
- 	int ret;
+ #define repeater_read(s, r) adv748x_read(s, ADV748X_PAGE_REPEATER, r)
+@@ -405,11 +405,11 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
  
-+	/* if typec-dir gpio was specified, set LN10 SWAP bit based on that */
-+	if (id == 0 && wiz->gpio_typec_dir) {
-+		if (wiz->typec_dir_delay)
-+			msleep_interruptible(wiz->typec_dir_delay);
-+
-+		if (gpiod_get_value_cansleep(wiz->gpio_typec_dir)) {
-+			regmap_update_bits(wiz->regmap, WIZ_SERDES_TYPEC,
-+					   WIZ_SERDES_TYPEC_LN10_SWAP,
-+					   WIZ_SERDES_TYPEC_LN10_SWAP);
-+		} else {
-+			regmap_update_bits(wiz->regmap, WIZ_SERDES_TYPEC,
-+					   WIZ_SERDES_TYPEC_LN10_SWAP, 0);
-+		}
-+	}
-+
- 	if (id == 0) {
- 		ret = regmap_field_write(wiz->phy_reset_n, true);
- 		return ret;
-@@ -789,6 +811,25 @@ static int wiz_probe(struct platform_device *pdev)
- 		goto err_addr_to_resource;
- 	}
+ #define sdp_read(s, r) adv748x_read(s, ADV748X_PAGE_SDP, r)
+ #define sdp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_SDP, r, v)
+-#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~m) | v)
++#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~(m)) | (v))
  
-+	wiz->gpio_typec_dir = devm_gpiod_get_optional(dev, "typec-dir",
-+						      GPIOD_IN);
-+	if (IS_ERR(wiz->gpio_typec_dir)) {
-+		ret = PTR_ERR(wiz->gpio_typec_dir);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "Failed to request typec-dir gpio: %d\n",
-+				ret);
-+		goto err_addr_to_resource;
-+	}
-+
-+	if (wiz->gpio_typec_dir) {
-+		ret = of_property_read_u32(node, "typec-dir-debounce",
-+					   &wiz->typec_dir_delay);
-+		if (ret && ret != -EINVAL) {
-+			dev_err(dev, "Invalid typec-dir-debounce property\n");
-+			goto err_addr_to_resource;
-+		}
-+	}
-+
- 	wiz->dev = dev;
- 	wiz->regmap = regmap;
- 	wiz->num_lanes = num_lanes;
+ #define cp_read(s, r) adv748x_read(s, ADV748X_PAGE_CP, r)
+ #define cp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_CP, r, v)
+-#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~m) | v)
++#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~(m)) | (v))
+ 
+ #define tx_read(t, r) adv748x_read(t->state, t->page, r)
+ #define tx_write(t, r, v) adv748x_write(t->state, t->page, r, v)
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.23.0
 
