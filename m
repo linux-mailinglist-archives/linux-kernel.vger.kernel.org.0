@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 372F7E0C52
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 21:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98960E0C57
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 21:13:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733003AbfJVTMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 15:12:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43538 "EHLO mail.kernel.org"
+        id S1733062AbfJVTMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 15:12:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732903AbfJVTM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 15:12:29 -0400
+        id S1732990AbfJVTMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 15:12:31 -0400
 Received: from localhost.localdomain (rrcs-50-75-166-42.nys.biz.rr.com [50.75.166.42])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1A4521D81;
-        Tue, 22 Oct 2019 19:12:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9992F222C2;
+        Tue, 22 Oct 2019 19:12:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571771548;
-        bh=c352t9a37W5iZ6QoYbS1JdFxmkNCiGi48vP+/8QJvW4=;
+        s=default; t=1571771550;
+        bh=xvqU+DkqSwLSkL389M85X3LHYTzrsH2JRYG7WtqfMbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ietizg4mUds30r5O4A4J+Bp5G/ZLJ5XbMtd5So8K55enMBKbNOcUbvqKS9Wm7AqeZ
-         nq1d2JW4rk9RdrqiB7AoaNsv4o26kshE0NqC+GcPcOfsp6Hg2oq042xGZJ7Od+fJcT
-         qkSF05XSStsT+H5BHnc4OcVoBm5L3+4eCM7DhPKA=
+        b=h+ekN0hJzMU6y7DMOH26WIIjasFP1wEm2W7tmFmXMVmVnWIFEjzWc+3aEMLt1aJLf
+         uqCIUtizCEUE9vYjvYO4kaIuK3ZWvUaYAB/ltFiGNOqUe5QlCYsLhrkYcTPdQ/WfCa
+         hcbWtgPXvvD4um8tPHqzLemVfgPOVJ1XTi4u6pqU=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -32,10 +32,13 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@kernel.org>,
-        linux-afs@lists.infradead.org
-Subject: [PATCH tip/core/rcu 05/10] fs/afs: Replace rcu_swap_protected() with rcu_replace()
-Date:   Tue, 22 Oct 2019 12:12:10 -0700
-Message-Id: <20191022191215.25781-5-paulmck@kernel.org>
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>, Yonghong Song <yhs@fb.com>,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH tip/core/rcu 06/10] bpf/cgroup: Replace rcu_swap_protected() with rcu_replace()
+Date:   Tue, 22 Oct 2019 12:12:11 -0700
+Message-Id: <20191022191215.25781-6-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20191022191136.GA25627@paulmck-ThinkPad-P72>
 References: <20191022191136.GA25627@paulmck-ThinkPad-P72>
@@ -54,28 +57,33 @@ Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta
 Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
 [ paulmck: From rcu_replace() to rcu_replace_pointer() per Ingo Molnar. ]
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Acked-by: David Howells <dhowells@redhat.com>
-Cc: <linux-afs@lists.infradead.org>
-Cc: <linux-kernel@vger.kernel.org>
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Martin KaFai Lau <kafai@fb.com>
+Cc: Yonghong Song <yhs@fb.com>
+Cc: <netdev@vger.kernel.org>
+Cc: <bpf@vger.kernel.org>
 ---
- fs/afs/vl_list.c | 4 ++--
+ kernel/bpf/cgroup.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/afs/vl_list.c b/fs/afs/vl_list.c
-index 21eb0c0..8fea54e 100644
---- a/fs/afs/vl_list.c
-+++ b/fs/afs/vl_list.c
-@@ -279,8 +279,8 @@ struct afs_vlserver_list *afs_extract_vlserver_list(struct afs_cell *cell,
- 			struct afs_addr_list *old = addrs;
- 
- 			write_lock(&server->lock);
--			rcu_swap_protected(server->addresses, old,
--					   lockdep_is_held(&server->lock));
-+			old = rcu_replace_pointer(server->addresses, old,
-+						  lockdep_is_held(&server->lock));
- 			write_unlock(&server->lock);
- 			afs_put_addrlist(old);
- 		}
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index ddd8add..c684cf4 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -180,8 +180,8 @@ static void activate_effective_progs(struct cgroup *cgrp,
+ 				     enum bpf_attach_type type,
+ 				     struct bpf_prog_array *old_array)
+ {
+-	rcu_swap_protected(cgrp->bpf.effective[type], old_array,
+-			   lockdep_is_held(&cgroup_mutex));
++	old_array = rcu_replace_pointer(cgrp->bpf.effective[type], old_array,
++					lockdep_is_held(&cgroup_mutex));
+ 	/* free prog array after grace period, since __cgroup_bpf_run_*()
+ 	 * might be still walking the array
+ 	 */
 -- 
 2.9.5
 
