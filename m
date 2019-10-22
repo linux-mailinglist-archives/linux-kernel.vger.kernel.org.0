@@ -2,181 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 705E2E0E5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 00:47:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE05EE0E63
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 00:53:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389586AbfJVWrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 18:47:06 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:40982 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731185AbfJVWrF (ORCPT
+        id S2389593AbfJVWxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 18:53:16 -0400
+Received: from mail-wr1-f41.google.com ([209.85.221.41]:41801 "EHLO
+        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731850AbfJVWxP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 18:47:05 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9MMhL0W024864;
-        Tue, 22 Oct 2019 15:47:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=WbsnqqUSzdFKRHlzwTEhlV4yqA2I4HU8EJNeRCKLVGU=;
- b=FNd7529pP+8Vc55F/Q9t/i876mWGMjannldvKhoVy5c+gRwDnHRemZerooy91prT3/d8
- AoYn98kCsuoRkoixPldSYEmE80SZu63wKeMLZ3b+BZiKEBWeZ/zRTnXocy8Lj76vwFd/
- Zfcdd7HyUaz0vN2dJKA91sKyFzVEb7QWFjE= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2vt9tc890k-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 22 Oct 2019 15:46:59 -0700
-Received: from ash-exhub103.TheFacebook.com (2620:10d:c0a8:82::c) by
- ash-exhub103.TheFacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 22 Oct 2019 15:46:59 -0700
-Received: from NAM01-BY2-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Tue, 22 Oct 2019 15:46:59 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MndvvgPpya+G95EW3Bc8gvXS1b8JlwrPcXyORhQ54VbM7fnWySDpvJ228uw0+E9W1epzgcwIKXcnHWugV2+zu9CrqnN2M0FfqKLJ+AV8M8t6oGVYmweLgnSuqTXBwDeWzOQs115yJG+aoXyQVIUp9uhB3QutKtWHOKtyQKGvBncupUs9FM6de8Y7UinYuLveuiG+Kfc3gV1x8PrKCfMtwveJwC4AEecuOWu3a7gkiwqBn9biyGE2Dl1l0Xu/GSYUgJGTiEIldpXm8Bi0qFL7hZT7r8xBq1QoKvoty395rqRZLtvjBVQgHJiwKiTVxJZZARG0/jsG6UndVvbJ2hWGBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WbsnqqUSzdFKRHlzwTEhlV4yqA2I4HU8EJNeRCKLVGU=;
- b=EVhOtp7G1/vbdeHkelJCBjWz30PT65aPe+PFQOyGODHWzqB3GujsnfVTsvOC+XHznPWL9iBDLO1EzjIxdVUp2Wx8XmznCGq5ssErQPdXy8eNgqIw5T5xI4oTB7Gkoanlsmxaij7ckLomMkx4ErghHuw4tAp6N14uDTeLhsFlPRgxABXVq9B3jw42013SJ70zX75LAuhud3FUnUyUI1hyIP646ieab+hFcXtkNYXZoQZFgHfaVrEpMi9PwgnKbxTNXecJNHDN6qZDfmZN6ks+fWSNdNzWrOIcR5S3vCBcO6pD9Zh/Iipw/UxX0THMUX2Bxo3ZlJ9z0dmpMUx3bNaWvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WbsnqqUSzdFKRHlzwTEhlV4yqA2I4HU8EJNeRCKLVGU=;
- b=f8Th9P1EuAhNG9oni7Tkov9s0ECYlNmlHDL4GFIivrcAUJcrxSo0RYHeMpDmJv6i6sFMBe0f7QVOdjCbVUMXcQAAH+oFHziBKv303otj5im4zpl0iMOq4sZOSkR+Fd66mbYFcrgqk8/llk9Sy1WgO4XZJeSDn++rhe84L7eIM0o=
-Received: from BN8PR15MB2626.namprd15.prod.outlook.com (20.179.137.220) by
- BN8PR15MB2818.namprd15.prod.outlook.com (20.179.138.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2367.24; Tue, 22 Oct 2019 22:46:58 +0000
-Received: from BN8PR15MB2626.namprd15.prod.outlook.com
- ([fe80::3056:945b:e60e:e2e0]) by BN8PR15MB2626.namprd15.prod.outlook.com
- ([fe80::3056:945b:e60e:e2e0%6]) with mapi id 15.20.2367.022; Tue, 22 Oct 2019
- 22:46:57 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH 5/8] mm: vmscan: replace shrink_node() loop with a retry
- jump
-Thread-Topic: [PATCH 5/8] mm: vmscan: replace shrink_node() loop with a retry
- jump
-Thread-Index: AQHViOfIg7Ukgv6lUkWvXEXYWe2LvqdmnnOAgACTCYCAABHlAA==
-Date:   Tue, 22 Oct 2019 22:46:57 +0000
-Message-ID: <20191022224652.GA22777@tower.DHCP.thefacebook.com>
-References: <20191022144803.302233-1-hannes@cmpxchg.org>
- <20191022144803.302233-6-hannes@cmpxchg.org>
- <20191022195629.GA24142@tower.DHCP.thefacebook.com>
- <20191022214249.GB361040@cmpxchg.org>
-In-Reply-To: <20191022214249.GB361040@cmpxchg.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR02CA0005.namprd02.prod.outlook.com
- (2603:10b6:300:4b::15) To BN8PR15MB2626.namprd15.prod.outlook.com
- (2603:10b6:408:c7::28)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::3:5d4e]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 37200b8e-1fce-4a33-001b-08d75741be67
-x-ms-traffictypediagnostic: BN8PR15MB2818:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BN8PR15MB28180C300AF186255CD768C0BE680@BN8PR15MB2818.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1079;
-x-forefront-prvs: 01986AE76B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39860400002)(136003)(366004)(346002)(51914003)(189003)(199004)(478600001)(305945005)(6436002)(316002)(7736002)(4326008)(54906003)(6486002)(102836004)(6246003)(76176011)(52116002)(6916009)(229853002)(386003)(6506007)(14454004)(81166006)(11346002)(71190400001)(186003)(8676002)(446003)(256004)(71200400001)(81156014)(25786009)(486006)(476003)(86362001)(8936002)(5660300002)(99286004)(64756008)(6512007)(46003)(9686003)(66446008)(2906002)(66476007)(66556008)(6116002)(33656002)(1076003)(66946007);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR15MB2818;H:BN8PR15MB2626.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: JY7ygeHwFjT9wJKR/Tecc6XlIXzRcD07Bgv5c8fXPh4Ed4VibMKXhyxNOi+Pzr031kjV2ZtIZRYLqR/Hd8GoENYsm7lPvkIhNUZRKIlQcuBLItr3Kq2FX1A1AdyriC1FKtlB2o7Klx0MSP/cIjzvhDekK3FJHY0R6ZByF7lCpH1vWeene+k5fUqUvWcM8QUd7CE01TiV2x71lkHI1kD9xIFknkr1R9gug1AOmOUc6zL7Y+zNHX+rerf/D+m27S/2Odztr7D3Wdh0b96r4vaurMufu34B6jHHctPz0ZdDgY8g81fAIQ8YcrwUv70qZ0wYz9u+YjSZxwIF3jybYeAxmbotDAtk6dKpzvP4Skr2O1ERGWFtg1XndJ3l7CIJ/zhvypX1JMsH2VXJ9s9r+WsHF9nL2235eY9HW1rqtLh44rUmeitJapjjKHUq79/lxD3N
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <55484D1ED615434F824251448E8DE299@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 22 Oct 2019 18:53:15 -0400
+Received: by mail-wr1-f41.google.com with SMTP id p4so19850891wrm.8
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 15:53:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nUbl/7U4fkEGLyjIs78RxKgsdpcQ3o0lLUl8H+Jr9fo=;
+        b=Z0s18jwW3kbE5NWQ3W8bKGguxVnDjsqpJGhS7fN7Ammppo4JXdzz0GkGHUGgx5aQwE
+         5tWCMcJWBeRNjlpeXo7CbLHBdKtpJA2+RDI4eDBtefKonwUi5v2y6rvt/MUsFvosmBBI
+         GJcvKJ2QcgyX+Bm3RgYpxE89WWLn4zaQixEp76MbsSBCT02xbGtYmOC7JNp2b+8bUAYM
+         wr2v5dFIirlH2kTxowx7o1/pEfy51SR9TY5JPKJvtR49ahKE4+NBicMjVbDQgCNRkzB+
+         DcrVMo5AT0gVLIjtuOQpzoCeiuV5WaRof5a/7rAHGv1w5rQ8Nqu2uz+l5Qf0Npd+LWcQ
+         UvUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nUbl/7U4fkEGLyjIs78RxKgsdpcQ3o0lLUl8H+Jr9fo=;
+        b=JbtHUh3RPjlXhGw0kQjp8we0xAxOVXU5tSwmWPCN7S4ivRCl7lhfY3a3O9MdgaBIW+
+         v9a6y6ma4EnM9rGJ5pFGkmeVSowhPGDImCUOooJykPQUOwZv70qVfJnl5iLcggCkEw1E
+         z2O0p5WKfF3cCqIkWsrWFUVt/UMc02wRA4kgNgEES5VGCPSMqKsHuAi4mvFD21OKo7EA
+         RCTv/maQ8ey31WQBjqGiyqwK27b7uWeM/FfteJa26+kDvtQ/+yaSJ0YSFfalKr6ujSmi
+         WP9oEYZYSp9PhAGan1xdcZAw5hLA9OcPJXRrrT7pvAMOXnnBH948X+lyZvtb6tdy2+yx
+         Zflw==
+X-Gm-Message-State: APjAAAU12sv5NTdG+spWB0466bbBM+iG13SJwRb5oV3h/lILIe8l2swg
+        20+Dsq33U4yWzFluxZxtNMMfhsvz5zVRIe3R7hoHDQ==
+X-Google-Smtp-Source: APXvYqxJzXoVmDdiBFZrDuTeagPuEgSlmfWkj3gU16VmvlXrjMrhYgIk9hD2xImjQLLoqOeNb8137WlwJzp5QESm7Yo=
+X-Received: by 2002:a5d:674f:: with SMTP id l15mr5899718wrw.80.1571784792413;
+ Tue, 22 Oct 2019 15:53:12 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37200b8e-1fce-4a33-001b-08d75741be67
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2019 22:46:57.8114
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TPN/DG7Pr8IQThSQMEwFJdSG29TEoXdFZZxUXoY8CH0l1s7+d2b3Qxjj2ZP7wgYk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR15MB2818
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-22_06:2019-10-22,2019-10-22 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 suspectscore=0
- impostorscore=0 clxscore=1015 lowpriorityscore=0 spamscore=0 phishscore=0
- malwarescore=0 adultscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910220196
-X-FB-Internal: deliver
+References: <CAA25o9TABY=3C+FQEg8FDyF1rim315G2hmeB1DBWJLn-wG1j0g@mail.gmail.com>
+ <CAJZ5v0gJWxLJTi7TjaRP-3aR3f4VnX1n9dRE_jxdS6e3SM46LQ@mail.gmail.com>
+ <CAA25o9TiaaKGH4ZkOa=FhZW7PdXQ592YZ4q52o-QNx=yFsR4Pw@mail.gmail.com> <CAJZ5v0j7N=o0S1tSwn5DP10oAmb5oN5SsM3jWhs+ZJ2YxMEvnw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0j7N=o0S1tSwn5DP10oAmb5oN5SsM3jWhs+ZJ2YxMEvnw@mail.gmail.com>
+From:   Luigi Semenzato <semenzato@google.com>
+Date:   Tue, 22 Oct 2019 15:53:00 -0700
+Message-ID: <CAA25o9Rd5x7PjFkrhWL-vqfV9uEYKA4K2K=9t1V7TY2OKX+k6g@mail.gmail.com>
+Subject: Re: is hibernation usable?
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Geoff Pike <gpike@google.com>, Bas Nowaira <bassem@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 05:42:49PM -0400, Johannes Weiner wrote:
-> On Tue, Oct 22, 2019 at 07:56:33PM +0000, Roman Gushchin wrote:
-> > On Tue, Oct 22, 2019 at 10:48:00AM -0400, Johannes Weiner wrote:
-> > > -			/* Record the group's reclaim efficiency */
-> > > -			vmpressure(sc->gfp_mask, memcg, false,
-> > > -				   sc->nr_scanned - scanned,
-> > > -				   sc->nr_reclaimed - reclaimed);
-> > > -
-> > > -		} while ((memcg =3D mem_cgroup_iter(root, memcg, NULL)));
-> > > +		reclaimed =3D sc->nr_reclaimed;
-> > > +		scanned =3D sc->nr_scanned;
-> > > +		shrink_node_memcg(pgdat, memcg, sc);
-> > > =20
-> > > -		if (reclaim_state) {
-> > > -			sc->nr_reclaimed +=3D reclaim_state->reclaimed_slab;
-> > > -			reclaim_state->reclaimed_slab =3D 0;
-> > > -		}
-> > > +		shrink_slab(sc->gfp_mask, pgdat->node_id, memcg,
-> > > +			    sc->priority);
-> > > =20
-> > > -		/* Record the subtree's reclaim efficiency */
-> > > -		vmpressure(sc->gfp_mask, sc->target_mem_cgroup, true,
-> > > -			   sc->nr_scanned - nr_scanned,
-> > > -			   sc->nr_reclaimed - nr_reclaimed);
-> > > +		/* Record the group's reclaim efficiency */
-> > > +		vmpressure(sc->gfp_mask, memcg, false,
-> > > +			   sc->nr_scanned - scanned,
-> > > +			   sc->nr_reclaimed - reclaimed);
-> >=20
-> > It doesn't look as a trivial change. I'd add some comments to the commi=
-t message
-> > why it's safe to do.
->=20
-> It's an equivalent change - it's just really misleading because the
-> +++ lines are not the counter-part of the --- lines here!
->=20
-> There are two vmpressure calls in this function: one against the
-> individual cgroups, and one against the tree. The diff puts them
-> adjacent here, but the counter-part for the --- lines is here:
->=20
-> > > +	/* Record the subtree's reclaim efficiency */
-> > > +	vmpressure(sc->gfp_mask, sc->target_mem_cgroup, true,
-> > > +		   sc->nr_scanned - nr_scanned,
-> > > +		   sc->nr_reclaimed - nr_reclaimed);
->=20
-> And the counter-part to the +++ lines is further up (beginning of the
-> quoted diff).
->=20
+On Tue, Oct 22, 2019 at 3:14 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Tue, Oct 22, 2019 at 11:26 PM Luigi Semenzato <semenzato@google.com> wrote:
+> >
+> > Thank you for the quick reply!
+> >
+> > On Tue, Oct 22, 2019 at 1:57 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > >
+> > > On Tue, Oct 22, 2019 at 10:09 PM Luigi Semenzato <semenzato@google.com> wrote:
+> > > >
+> > > > Following a thread in linux-pm
+> > > > (https://marc.info/?l=linux-mm&m=157012300901871) I have some issues
+> > > > that may be of general interest.
+> > > >
+> > > > 1. To the best of my knowledge, Linux hibernation is guaranteed to
+> > > > fail if more than 1/2 of total RAM is in use (for instance, by
+> > > > anonymous pages).  My knowledge is based on evidence, experiments,
+> > > > code inspection, the thread above, and a comment in
+> > > > Documentation/swsusp.txt, copied here:
+> > >
+> > > So I use it on a regular basis (i.e. every day) on a system that often
+> > > has over 50% or RAM in use and it all works.
+> > >
+> > > I also know about other people using it on a regular basis.
+> > >
+> > > For all of these users, it is usable.
+> > >
+> > > >  "Instead, we load the image into unused memory and then atomically
+> > > > copy it back to it original location. This implies, of course, a
+> > > > maximum image size of half the amount of memory."
+> > >
+> > > That isn't right any more.  An image that is loaded during resume can,
+> > > in fact, be larger than 50% of RAM.  An image that is created during
+> > > hibernation, however, cannot.
+> >
+> > Sorry, I don't understand this.  Are you saying that, for instance,
+> > you can resume a 30 GB image on a 32 GB device, but that image could
+> > only have been created on a 64 GB device?
+>
+> Had it been possible to create images larger than 50% of memory during
+> hibernation, it would have been possible to load them during resume as
+> well.
+>
+> The resume code doesn't have a 50% of RAM limitation, the image
+> creation code does.
 
-Ah, ok, got it. You were right in the foreword, indentation change
-diffs are hard to read.
+Thanks a lot for the clarifications.
 
-Thanks for the explanation!
+It is possible that you and I have different definitions of "working
+in general".  My main issue ia that I would like image creation (i.e.
+entering hibernation) to work with >50% of RAM in use, and I am
+extrapolating that other people would like that too.  I can see that
+there are many uses where this is not needed though, especially if you
+mostly care about resume.
 
-Reviewed-by: Roman Gushchin <guro@fb.com>
+>
+> > > > 2. There's no simple/general workaround.  Rafael suggested on the
+> > > > thread "Whatever doesn't fit into 50% of RAM needs to be swapped out
+> > > > before hibernation".  This is a good suggestion: I am actually close
+> > > > to achieving this using memcgroups, but it's a fair amount of work,
+> > > > and a fairly special case.  Not everybody uses memcgroups, and I don't
+> > > > know of other reliable ways of forcing swap from user level.
+> > >
+> > > I don't need to do anything like that.
+> >
+> > Again, I don't understand.  Why did you make that suggestion then?
+> >
+> > > hibernate_preallocate_memory() manages to free a sufficient amount of
+> > > memory on my system every time.
+> >
+> > Unfortunately this doesn't work for me.  I may have described a simple
+> > experiment: on a 4GB device, create two large processes like this:
+> >
+> > dd if=/dev/zero bs=1100M count=1 | sleep infinity &
+> > dd if=/dev/zero bs=1100M count=1 | sleep infinity &
+> >
+> > so that more than 50% of TotalMem is used for anonymous pages.  Then
+> > echo disk > /sys/power/state fails with ENOMEM.
+>
+> I guess hibernate_preallocate_memory() is not able to free enough
+> memory for itself in that case.
+>
+> > Is this supposed to work?
+>
+> Yes, it is, in general.
+>
+> > Maybe I am doing something wrong?
+> > Hibernation works before I create the dd processes.  After I force
+> > some of those pages to a separate swap device, hibernation works too,
+> > so those pages aren't mlocked or anything.
+>
+> It looks like you are doing something that is not covered by
+> hibernate_preallocate_memory().
+>
+> > > > 3. A feature that works only when 1/2 of total RAM can be allocated
+> > > > is, in my opinion, not usable, except possibly under special
+> > > > circumstances, such as mine. Most of the available articles and
+> > > > documentation do not mention this important fact (but for the excerpt
+> > > > I mentioned, which is not in a prominent position).
+> > >
+> > > It can be used with over 1/2 of RAM allocated and that is quite easy
+> > > to demonstrate.
+> > >
+> > > Honestly, I'm not sure what your problem is really.
+> >
+> > I apologize if I am doing something stupid and I should know better
+> > before I waste other people's time.  I have been trying to explain
+> > these issues as best as I can.  I have a reproducible failure.  I'll
+> > be happy to provide any additional detail.
+>
+> Simply put, hibernation, as implemented today, needs to allocate over
+> 50% of RAM (or at least as much as to be able to copy all of the
+> non-free pages) for image creation.  If it cannot do that, it will
+> fail and you know how to prevent it from allocating enough memory in a
+> reproducible way.  AFAICS that's a situation in which every attempt to
+> allocate 50% of memory for any other purpose will fail as well.
+>
+> Frankly, you are first to report this problem, so it arguably is not
+> common.  It looks like hibernate_preallocate_memory() may be improved
+> to cover that case, but then the question is how much more complicated
+> it will have to become for this purpose and whether or not that's
+> worth pursuing.
+
+Right.  I was hoping to discuss that.  Is it easier to do in the
+kernel what I am trying to do at user level, i.e. force swap of excess
+pages (possibly to a separate device or partition) so that enough
+pages are freed up to make hibernate_preallocate_memory always
+succeed?  I started reading the swap code, but it is entangled with
+page reclaim and I haven't seen a simple solution, neither do I know
+if there is one and how long it would take to find it, or code around
+it.  (However I haven't looked yet at how it works when memcgroup
+limits are lowered---that may give me good ideas).
+
+Thanks!
+
+
+>
+> > >
+> > > > Two questions then:
+> > > >
+> > > > A. Should the documentation be changed to reflect this fact more
+> > > > clearly?  I feel that the current situation is a disservice to the
+> > > > user community.
+> > >
+> > > Propose changes.
+> >
+> > Sure, after we resolve the above questions.
+> >
+> > > > B. Would it be worthwhile to improve the hibernation code to remove
+> > > > this limitation?  Is this of interest to anybody (other than me)?
+> > >
+> > > Again, propose specific changes.
