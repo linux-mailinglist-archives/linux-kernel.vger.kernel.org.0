@@ -2,84 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31541DFD32
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 07:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA3F2DFD38
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 07:57:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387464AbfJVFyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 01:54:14 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40694 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfJVFyO (ORCPT
+        id S2387597AbfJVF4e convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 22 Oct 2019 01:56:34 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:49469 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbfJVF4e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 01:54:14 -0400
-Received: by mail-wr1-f67.google.com with SMTP id o28so16461398wro.7
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2019 22:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=70+N4pxkreRk5D8qTuATktL5M/ApNQm1mVe3QKo4Ow8=;
-        b=VeZ/77yCO2vkRreTdZF0BmlF3aBW7GYN63ztZ+W9IxGlyzot3aZzQG7XNVjBY7A7oD
-         5ErFNuJigjHDoajFcUUKer2ZNuRvqeRRkKDFwX0d2Zr1W2J0Sitj3DU47jafk1WpqrB9
-         RO+JgyMPsgCHPUuHfaLf9mhm0FhMWiroTQMq0AMJS2EyfB2q8y2Uj4BUJeCO2gXI9tCY
-         6QkWiBS+nVx6fiVGxPNCg3OkhqZK5Cxo3moubEo1LbU3pI9Z3P3SLfQSm8r4r1GEdvXM
-         A3I5Jr0ovB215EmWyJbd+kRIvPhHLcOf8Yw0LDZ75fNBWsAH3Ssp+sYWHP4KD/+V8/GQ
-         /NvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=70+N4pxkreRk5D8qTuATktL5M/ApNQm1mVe3QKo4Ow8=;
-        b=ftdtM3efjZDG7mkFycUdEdO+nCBShvaB6ztNGjD7EDFWxWIGGm74ZS9SQ0KSmQxCoi
-         xh+WvVrkf/PnRjaEQkC9Ix4vWI+HKkHEw0jZEZ50u8N4md9xeqrIHd8dWEcGtH+Dt7US
-         Rzv412rvC0OI0NLn+9dDzbSmcU15CiFsEw1KtqB9WVsvsc+K55PKBZ0vBPoYum72waEh
-         +QUtXy8lHbRX1QihB+2hchDl/dCFpDrkithS7yCTU+nAjuqKXlzf0e9V2UHHpfLuoTWV
-         gs4SSI5wgnmw7slzSnyZcsHRxcvrhwhJ/F6Lc7Z1qcNvs9FfWGwTf/a7sl2KplfRcc1q
-         579w==
-X-Gm-Message-State: APjAAAUO+/8PSMwcgGteVjv1uZtilF9EAYSVr5wBBoCpzuFTJVdZO6Y8
-        oJ7iPgBG+amXvRDme1CQGZFHOI6cEpzZ8cWwjJj25g==
-X-Google-Smtp-Source: APXvYqwrYnGYkoL34VBIT6H+JNjJm/uZwOLCkW8JDJj+1Q/w7n/LWtklQn1YWpTuz0AHRX28UXgTzenaMPN3dF2ZvS4=
-X-Received: by 2002:adf:9f08:: with SMTP id l8mr1573796wrf.325.1571723652654;
- Mon, 21 Oct 2019 22:54:12 -0700 (PDT)
+        Tue, 22 Oct 2019 01:56:34 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x9M5uScL025584, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCAS11.realtek.com.tw[172.21.6.12])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x9M5uScL025584
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 22 Oct 2019 13:56:28 +0800
+Received: from RTITMBSVM03.realtek.com.tw ([fe80::e1fe:b2c1:57ec:f8e1]) by
+ RTITCAS11.realtek.com.tw ([fe80::7c6d:ced5:c4ff:8297%15]) with mapi id
+ 14.03.0468.000; Tue, 22 Oct 2019 13:56:27 +0800
+From:   Hayes Wang <hayeswang@realtek.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        nic_swsd <nic_swsd@realtek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pmalani@chromium.org" <pmalani@chromium.org>,
+        "grundler@chromium.org" <grundler@chromium.org>
+Subject: RE: [PATCH net-next 4/4] r8152: support firmware of PHY NC for RTL8153A
+Thread-Topic: [PATCH net-next 4/4] r8152: support firmware of PHY NC for
+ RTL8153A
+Thread-Index: AQHVh8FvTRaFw2OX3UCuAY94UXOizqdlfiOAgACsfLA=
+Date:   Tue, 22 Oct 2019 05:56:25 +0000
+Message-ID: <0835B3720019904CB8F7AA43166CEEB2F18EC964@RTITMBSVM03.realtek.com.tw>
+References: <1394712342-15778-330-Taiwan-albertk@realtek.com>
+        <1394712342-15778-334-Taiwan-albertk@realtek.com>
+ <20191021203625.448da742@cakuba.netronome.com>
+In-Reply-To: <20191021203625.448da742@cakuba.netronome.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.177.214]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191018161033.261971-15-samitolvanen@google.com> <CAKv+Gu-kMzsot5KSPSo_iMsuzcv8J1R5RLT9uGjuzJsxCVUPPg@mail.gmail.com>
- <CABCJKuf-tXu2ZhBMCYTHP3BU8g1i-0GGd7+YvyTDUc1kH2iZvA@mail.gmail.com>
-In-Reply-To: <CABCJKuf-tXu2ZhBMCYTHP3BU8g1i-0GGd7+YvyTDUc1kH2iZvA@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 22 Oct 2019 07:54:07 +0200
-Message-ID: <CAKv+Gu_b6eCy4BbM0xFBgL2EzW+eP5rH+wTOgNCO=ai-vb-WWw@mail.gmail.com>
-Subject: Re: [PATCH 14/18] arm64: efi: restore x18 if it was corrupted
-To:     Sami Tolvanen <samitolvanen@google.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Oct 2019 at 00:40, Sami Tolvanen <samitolvanen@google.com> wrote:
->
-> On Sun, Oct 20, 2019 at 11:20 PM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
-> > You'll have to elaborate a bit here and explain that this is
-> > sufficient, given that we run EFI runtime services with interrupts
-> > enabled.
->
-> I can add a note about this in v2. This is called with preemption
-> disabled and we have a separate interrupt shadow stack, so as far as I
-> can tell, this should be sufficient. Did you have concerns about this?
->
+Jakub Kicinski [mailto:jakub.kicinski@netronome.com]
+> Sent: Tuesday, October 22, 2019 11:36 AM
+> To: Hayes Wang
+> Cc: netdev@vger.kernel.org; nic_swsd; linux-kernel@vger.kernel.org;
+> pmalani@chromium.org; grundler@chromium.org
+> Subject: Re: [PATCH net-next 4/4] r8152: support firmware of PHY NC for
+> RTL8153A
+> 
+> On Mon, 21 Oct 2019 11:41:13 +0800, Hayes Wang wrote:
+> > Support the firmware of PHY NC which is used to fix the issue found
+> > for PHY. Currently, only RTL_VER_04, RTL_VER_05, and RTL_VER_06 need
+> > it.
+> >
+> > The order of loading PHY firmware would be
+> >
+> > 	RTL_FW_PHY_START
+> > 	RTL_FW_PHY_NC
+> 
+> Perhaps that's obvious to others, but what's NC? :)
 
-No concerns, but we should put the above clarification in the commit log.
+The PHY has several micro controllers which deal with different features.
+The NC is our internal name helping us to know which one is specified.
+
+Best Regards,
+Hayes
+
+
