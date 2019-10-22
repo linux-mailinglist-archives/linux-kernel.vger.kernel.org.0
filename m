@@ -2,81 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62077E0CEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 21:57:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 787B4E0CFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 22:06:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389167AbfJVT4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 15:56:52 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38381 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388843AbfJVT4u (ORCPT
+        id S1732993AbfJVUFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 16:05:43 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:55532 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731806AbfJVUFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 15:56:50 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q78so3387998lje.5
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 12:56:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=mJFn/3QyJLqAcJcgayRN2NV4RnnfMUx/ZNp60iWEx0U=;
-        b=qx44oaObOl5Z3A8Im8+pd3RJwQ67FnX72mNIzR2fNuacOOqtifUryGU1mSP9cx9Coi
-         OwlA4xg5cu62BzgCmrFo5BHDbaaGce4VYz17waemIbXYi5mvl63eMCn1dgsguehVvGzz
-         8FWw+rCapfcw470Q3OkxUgJLJZ6281Y5WYQ6xjxRMPHeGeaydHSo6q7bC0Fj1D8IBmrE
-         C5VNjCF6+ZzPXerBYfKuZu0o13OdANRZGkEtC+iORESw+cDO+e2pK9sGFqBhY5qe0J9A
-         okyPozGjA72PYNCGJSJqa99xICbZJZ2SAXpl+lLoT24JPrzHoUY1HUpwK4rdzQ0aRSwp
-         CHPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=mJFn/3QyJLqAcJcgayRN2NV4RnnfMUx/ZNp60iWEx0U=;
-        b=S6t5G7PQnUKYZ0ZqVbFP/338MdNp797BtIRdq9O0M9Soufbyh7MYftb/Qk68rqFasV
-         lvrf90nHPVnyJLQRymFmQ29xkBniVX0vmLvbOa+EUONzTkv4imncALsX9KeVY0+EHkyf
-         10SuvfC4EIDATX0KyncQPL/l/G9meir1Via1OjqJtMNxlD9w6Zs/wWFatvbSkeca1ln5
-         EplRjZTULGgqj29sKNoLqx2pSSKGcErAH9Aqnul4TDhTwmZI1aVEfQ0a2JAtuqeaPFb/
-         u6Gq48d3fWahNNpDVZ5XySI2RG47WlkMPV7Lp9dk4JGmumcSU6I7MvZ5s6U/jn/K5ytz
-         BIew==
-X-Gm-Message-State: APjAAAVjLxfoI1KXZ959z3LsmyVgjRewoEfk291TFaIq8rey3yad9dyO
-        xz23mbjFEwlH1r2jPmqTiP5R7g==
-X-Google-Smtp-Source: APXvYqxV+52xwMMCtGYUGGGLHmIa0mfaTIVpi2sWRWwgXWVGuY7Yc9SOZf2U7O6CBUohPQt+DgwJWw==
-X-Received: by 2002:a05:651c:1023:: with SMTP id w3mr3672555ljm.79.1571774208276;
-        Tue, 22 Oct 2019 12:56:48 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id p22sm9942111ljp.69.2019.10.22.12.56.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 12:56:48 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 12:56:40 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Shannon Nelson <snelson@pensando.io>,
-        Pensando Drivers <drivers@pensando.io>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jason Baron <jbaron@akamai.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dynamic_debug: provide dynamic_hex_dump stub
-Message-ID: <20191022125640.02f02424@cakuba.netronome.com>
-In-Reply-To: <20190918195607.2080036-1-arnd@arndb.de>
-References: <20190918195607.2080036-1-arnd@arndb.de>
-Organization: Netronome Systems, Ltd.
+        Tue, 22 Oct 2019 16:05:43 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id E9038806A8;
+        Wed, 23 Oct 2019 09:05:39 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1571774739;
+        bh=ZAzrF3c701Q5En7yhnqJaJPDpGkraxfx66BqdRfMHpg=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=IoztEt39IvxMRUjeFnL1s2fX2nu82jD49uVLV96oAzsrdu3rIKKmTHvVEE90tJTq+
+         O+oO9SVkAzhrqmUHkWXXB82/aymNrTlIV4eiw1+lFdwlp7OOxvGEsUpCFqusA65eA0
+         JyiLh6dNAhP24QHiv3s5PNfM3Ow0/p6JH8vM1GNMjsqmkYazLyZmUNuCpLRMUa5Fxn
+         4gIB72nb92CeOaPhW/GhAEH3VoHDpEB9r0LYAjkQzTd3fOup4tHEXeTJOw5quLJZ2V
+         1ox+mBiMwjG3ocoRzkeXCtTgk2ktwGIMhZ5oa4il6kjYv/AqnqwpKzCZsK4xPQGymd
+         Zc2rhB9UatUXA==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5daf61130001>; Wed, 23 Oct 2019 09:05:39 +1300
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
+ (TLS) id 15.0.1156.6; Wed, 23 Oct 2019 09:05:39 +1300
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Wed, 23 Oct 2019 09:05:39 +1300
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     "corbet@lwn.net" <corbet@lwn.net>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH] docs/core-api: memory-allocation: mention size helpers
+Thread-Topic: [PATCH] docs/core-api: memory-allocation: mention size helpers
+Thread-Index: AQHViFZz73VvXhctJkq3urlKh1RGBqdlzAUAgABxhQA=
+Date:   Tue, 22 Oct 2019 20:05:38 +0000
+Message-ID: <ed4a98e3d8c0efe58d888cf8fc6e913b40281f11.camel@alliedtelesis.co.nz>
+References: <20191021212751.21300-1-chris.packham@alliedtelesis.co.nz>
+         <20191022071920.4efff72b@lwn.net>
+In-Reply-To: <20191022071920.4efff72b@lwn.net>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:22:a0a7:2bd4:9fed:473b]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <481BDAA1D53A234A88941CA38DCDD107@atlnz.lc>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Sep 2019 21:55:11 +0200, Arnd Bergmann wrote:
-> The ionic driver started using dymamic_hex_dump(), but
-> that is not always defined:
-> 
-> drivers/net/ethernet/pensando/ionic/ionic_main.c:229:2: error: implicit declaration of function 'dynamic_hex_dump' [-Werror,-Wimplicit-function-declaration]
-> 
-> Add a dummy implementation to use when CONFIG_DYNAMIC_DEBUG
-> is disabled, printing nothing.
-> 
-> Fixes: 938962d55229 ("ionic: Add adminq action")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Patch applied to net/master, thanks!
+SGkgSm9uLA0KDQpPbiBUdWUsIDIwMTktMTAtMjIgYXQgMDc6MTkgLTA2MDAsIEpvbmF0aGFuIENv
+cmJldCB3cm90ZToNCj4gT24gVHVlLCAyMiBPY3QgMjAxOSAxMDoyNzo0NyArMTMwMA0KPiBDaHJp
+cyBQYWNraGFtIDxjaHJpcy5wYWNraGFtQGFsbGllZHRlbGVzaXMuY28ubno+IHdyb3RlOg0KPiAN
+Cj4gPiBNZW50aW9uIHN0cnVjdF9zaXplKCksIGFycmF5X3NpemUoKSBhbmQgYXJyYXkzX3NpemUo
+KSBpbiB0aGUgc2FtZSBwbGFjZQ0KPiA+IGFzIGttYWxsb2MoKSBhbmQgZnJpZW5kcy4NCj4gPiAN
+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBDaHJpcyBQYWNraGFtIDxjaHJpcy5wYWNraGFtQGFsbGllZHRl
+bGVzaXMuY28ubno+DQo+ID4gLS0tDQo+ID4gIERvY3VtZW50YXRpb24vY29yZS1hcGkvbWVtb3J5
+LWFsbG9jYXRpb24ucnN0IHwgNCArKystDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlv
+bnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlv
+bi9jb3JlLWFwaS9tZW1vcnktYWxsb2NhdGlvbi5yc3QgYi9Eb2N1bWVudGF0aW9uL2NvcmUtYXBp
+L21lbW9yeS1hbGxvY2F0aW9uLnJzdA0KPiA+IGluZGV4IGU1OTc3OWFhNzYxNS4uNmExMzE3Njdi
+ZWNkIDEwMDY0NA0KPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vY29yZS1hcGkvbWVtb3J5LWFsbG9j
+YXRpb24ucnN0DQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9jb3JlLWFwaS9tZW1vcnktYWxsb2Nh
+dGlvbi5yc3QNCj4gPiBAQCAtOTEsNyArOTEsOSBAQCBUaGUgbW9zdCBzdHJhaWdodGZvcndhcmQg
+d2F5IHRvIGFsbG9jYXRlIG1lbW9yeSBpcyB0byB1c2UgYSBmdW5jdGlvbg0KPiA+ICBmcm9tIHRo
+ZSA6YzpmdW5jOmBrbWFsbG9jYCBmYW1pbHkuIEFuZCwgdG8gYmUgb24gdGhlIHNhZmUgc2lkZSBp
+dCdzDQo+ID4gIGJlc3QgdG8gdXNlIHJvdXRpbmVzIHRoYXQgc2V0IG1lbW9yeSB0byB6ZXJvLCBs
+aWtlDQo+ID4gIDpjOmZ1bmM6YGt6YWxsb2NgLiBJZiB5b3UgbmVlZCB0byBhbGxvY2F0ZSBtZW1v
+cnkgZm9yIGFuIGFycmF5LCB0aGVyZQ0KPiA+IC1hcmUgOmM6ZnVuYzpga21hbGxvY19hcnJheWAg
+YW5kIDpjOmZ1bmM6YGtjYWxsb2NgIGhlbHBlcnMuDQo+ID4gK2FyZSA6YzpmdW5jOmBrbWFsbG9j
+X2FycmF5YCBhbmQgOmM6ZnVuYzpga2NhbGxvY2AgaGVscGVycy4gVGhlIGhlbHBlcnMNCj4gPiAr
+OmM6ZnVuYzpgc3RydWN0X3NpemVgLCA6YzpmdW5jOmBhcnJheV9zaXplYCBhbmQgOmM6ZnVuYzpg
+YXJyYXkzX3NpemVgIGNhbiBiZQ0KPiA+ICt1c2VkIHRvIHNhZmVseSBjYWxjdWxhdGUgb2JqZWN0
+IHNpemVzIHdpdGhvdXQgb3ZlcmZsb3dpbmcuDQo+IA0KPiBRdWljayBjb21tZW50OiB3ZSBkb24n
+dCBuZWVkIDpjOmZ1bmM6IGFueW1vcmU7IHRoZSBtYXJrdXAgaGFwcGVucyBhbnl3YXkuDQo+IFNv
+IHJhdGhlciB0aGFuIGFkZGluZyBtb3JlIG9mIHRoZW0sIGNvdWxkIEkgYXNrIHlvdSB0byBwbGVh
+c2UgdGFrZSBvdXQgdGhlDQo+IG9uZXMgdGhhdCBhcmUgdGhlcmUgbm93Pw0KDQpTbyBqdXN0IHdp
+dGggYmFja3F1b3RlcyBpLmUuIDpjOmZ1bmM6YGttYWxsb2NgIGJlY29tZXMgYGttYWxsb2NgPw0K
+DQo+IA0KPiBUaGFua3MsDQo+IA0KPiBqb24NCg==
