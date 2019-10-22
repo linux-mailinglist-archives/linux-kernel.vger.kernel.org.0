@@ -2,408 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 092D3E0223
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 12:33:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3DD6E022F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2019 12:35:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388169AbfJVKdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 06:33:40 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:44062 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731871AbfJVKdj (ORCPT
+        id S2388466AbfJVKfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 06:35:46 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44527 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388415AbfJVKfq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 06:33:39 -0400
-Received: by mail-yb1-f194.google.com with SMTP id v1so4968996ybo.11;
-        Tue, 22 Oct 2019 03:33:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Uzw8wFWkH5Kyype/kl73JFu2MEfzd8ISu9rdpai/058=;
-        b=ixwFe1ny2f7hC+Zoa6Sv7b54jAxJJW0oL8TZnKu93dp/f5keCrQhz/y9Ai6AxUXtO+
-         TPZw/QSXb37udzmmSQj3fMwomNoCZESD8f0Qu5jtJJtJwZxjmwf4MtA6uO1dTAoyESPu
-         lnZ+IjxmFyN77IRjXERHH8xUhxcGmj5vML6TE8+z5HUnqnuszAx7CvnEIeBSyqz7EJL2
-         O0wTByusVCbGJYCGM2feb4UUDidlLrhLxpcEogbDpxSgYwOHg/oA459nfrf2MjHf57xK
-         jLqffc06Yp+ntPaL2xS/AdMdBxT7hmz2k4iqOq4GhDd6yAvparpL3UgRZNov8mhs7dBz
-         hMog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Uzw8wFWkH5Kyype/kl73JFu2MEfzd8ISu9rdpai/058=;
-        b=rj7HxEPcehwnVDA3UGUwfCpTx68K0TrJ8t17W23IsqNWPljFpE7rnvTgWT4WKpwYJs
-         iHyT8mMnjyl+hUHE+6tWqR7PazR337T1tZsAkhVt3I414IojeDAK++X44gQEV4jpWRoJ
-         tlohRB1nbMNzRK54G6InUL00XnGrtp58lQFSPMNM7XmbU3GncGxEr9Br5VFYOzhGEITc
-         0HZ9m/Xe0cPs9h30tGkY+bcRHGUBAS5dqW/FKGKDNtBtFe1g5eTiyou9nCFymuTJIiN0
-         XN/+nwO1LHJZHcSSydsx2m8Ji99xn4kpn7W3OE6ZHp9jhNj+B363M5EwGyX+dYrofSEI
-         zi4A==
-X-Gm-Message-State: APjAAAWAU7DgfCFWfrmGZllh0etNMQ1U2z03wpHek7f0m5QpCx/3FNph
-        /Pf0BeOX+QyJh2RUEOHWBtU2WbTiRlK6QhsuPr8=
-X-Google-Smtp-Source: APXvYqxDfo8QEghympNWoAftftw/F8ZqsF8RL9fTFbfnBWwCqFg+cu20VQTkmASjXR1fNeCX0m9T9GykriLxLptPxm0=
-X-Received: by 2002:a25:c60a:: with SMTP id k10mr1878910ybf.91.1571740416802;
- Tue, 22 Oct 2019 03:33:36 -0700 (PDT)
+        Tue, 22 Oct 2019 06:35:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571740544;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ULN5eSGY4MtkW08yCSqz0QqvTO9SX1bksmLq7XKOj9M=;
+        b=azJ3Q7p1XNV5UDQEiC1Bs8pmqc1ZHXN2sjin3vP+z6G0iu1Tj3KhbEMPsjLanT15sjCL07
+        0Y8XPk9F5WMSYLVfp2o0AlqlEQMSgzieHgW5Y9T24qUmzuRYG7btOQOKk3jLRgEkTdbtTu
+        ciiPvyHDzKLTvh5NXY/uxE9dpTttBeo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-282-W9eko3ddNJq9PMAOLuqccg-1; Tue, 22 Oct 2019 06:35:41 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 75F501800D79;
+        Tue, 22 Oct 2019 10:35:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9C7095DD61;
+        Tue, 22 Oct 2019 10:35:34 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjFozfjV34_qy3_Z155uz_Z7qFVfE8h=_9ceGU-SVk9hA@mail.gmail.com>
+References: <CAHk-=wjFozfjV34_qy3_Z155uz_Z7qFVfE8h=_9ceGU-SVk9hA@mail.gmail.com> <000000000000830fe50595115344@google.com> <00000000000071e2fc05951229ad@google.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     dhowells@redhat.com,
+        syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com>,
+        aou@eecs.berkeley.edu,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris James Morris <jmorris@namei.org>,
+        keyrings@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: WARNING: refcount bug in find_key_to_update
 MIME-Version: 1.0
-References: <20191021073819.18181-1-candlesea@gmail.com> <CAPnx3XP2MrEZT+BAzW3-Ve9ekzvPzcj6wvzeC8VRHhCyo59XpQ@mail.gmail.com>
- <CAO-hwJ+ObCH_NPJd=Uy5uuVCpGzO7+iCSWnwPkoVt9H+8NHahA@mail.gmail.com>
-In-Reply-To: <CAO-hwJ+ObCH_NPJd=Uy5uuVCpGzO7+iCSWnwPkoVt9H+8NHahA@mail.gmail.com>
-From:   Candle Sun <candlesea@gmail.com>
-Date:   Tue, 22 Oct 2019 18:33:25 +0800
-Message-ID: <CAPnx3XNWrLt8M79amV1Krm7wSj0_N7YawjsO+9krr-sDrcg8bA@mail.gmail.com>
-Subject: Re: [PATCH v3] HID: core: check whether usage page item is after
- usage id item
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        =?UTF-8?B?57+f5LqsIChPcnNvbiBaaGFpKQ==?= <orson.zhai@unisoc.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Candle Sun <candle.sun@unisoc.com>,
-        Nianfu Bai <nianfu.bai@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-ID: <11433.1571740533.1@warthog.procyon.org.uk>
+Date:   Tue, 22 Oct 2019 11:35:33 +0100
+Message-ID: <11434.1571740533@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: W9eko3ddNJq9PMAOLuqccg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benjamin,
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-On Tue, Oct 22, 2019 at 5:48 PM Benjamin Tissoires
-<benjamin.tissoires@redhat.com> wrote:
->
-> Hi Candle,
->
-> On Mon, Oct 21, 2019 at 9:54 AM Candle Sun <candlesea@gmail.com> wrote:
-> >
-> > Hi,
-> >
-> >
-> > On Mon, Oct 21, 2019 at 3:38 PM Candle Sun <candlesea@gmail.com> wrote:
-> > >
-> > > From: Candle Sun <candle.sun@unisoc.com>
-> > >
-> > > Upstream commit 58e75155009c ("HID: core: move Usage Page concatenati=
-on
-> > > to Main item") adds support for Usage Page item after Usage ID items
-> > > (such as keyboards manufactured by Primax).
-> > >
-> > > Usage Page concatenation in Main item works well for following report
-> > > descriptor patterns:
-> > >
-> > >     USAGE_PAGE (Keyboard)                   05 07
-> > >     USAGE_MINIMUM (Keyboard LeftControl)    19 E0
-> > >     USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
-> > >     LOGICAL_MINIMUM (0)                     15 00
-> > >     LOGICAL_MAXIMUM (1)                     25 01
-> > >     REPORT_SIZE (1)                         75 01
-> > >     REPORT_COUNT (8)                        95 08
-> > >     INPUT (Data,Var,Abs)                    81 02
-> > >
-> > > -------------
-> > >
-> > >     USAGE_MINIMUM (Keyboard LeftControl)    19 E0
-> > >     USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
-> > >     LOGICAL_MINIMUM (0)                     15 00
-> > >     LOGICAL_MAXIMUM (1)                     25 01
-> > >     REPORT_SIZE (1)                         75 01
-> > >     REPORT_COUNT (8)                        95 08
-> > >     USAGE_PAGE (Keyboard)                   05 07
-> > >     INPUT (Data,Var,Abs)                    81 02
-> > >
-> > > But it makes the parser act wrong for the following report
-> > > descriptor pattern(such as some Gamepads):
-> > >
-> > >     USAGE_PAGE (Button)                     05 09
-> > >     USAGE (Button 1)                        09 01
-> > >     USAGE (Button 2)                        09 02
-> > >     USAGE (Button 4)                        09 04
-> > >     USAGE (Button 5)                        09 05
-> > >     USAGE (Button 7)                        09 07
-> > >     USAGE (Button 8)                        09 08
-> > >     USAGE (Button 14)                       09 0E
-> > >     USAGE (Button 15)                       09 0F
-> > >     USAGE (Button 13)                       09 0D
-> > >     USAGE_PAGE (Consumer Devices)           05 0C
-> > >     USAGE (Back)                            0a 24 02
-> > >     USAGE (HomePage)                        0a 23 02
-> > >     LOGICAL_MINIMUM (0)                     15 00
-> > >     LOGICAL_MAXIMUM (1)                     25 01
-> > >     REPORT_SIZE (1)                         75 01
-> > >     REPORT_COUNT (11)                       95 0B
-> > >     INPUT (Data,Var,Abs)                    81 02
-> > >
-> > > With Usage Page concatenation in Main item, parser recognizes all the
-> > > 11 Usages as consumer keys, it is not the HID device's real intention=
-.
-> > >
-> > > This patch adds usage_page_last to flag whether Usage Page is after
-> > > Usage ID items. usage_page_last is false default, it is set as true
-> > > once Usage Page item is encountered and is reverted by next Usage ID
-> > > item.
-> > >
-> > > Usage Page concatenation on the currently defined Usage Page will do
-> > > firstly in Local parsing when Usage ID items encountered.
-> > >
-> > > When Main item is parsing, concatenation will do again with last
-> > > defined Usage Page if usage_page_last flag is true.
-> > >
-> > > Signed-off-by: Candle Sun <candle.sun@unisoc.com>
-> > > Signed-off-by: Nianfu Bai <nianfu.bai@unisoc.com>
-> > > ---
-> > > Changes in v3:
-> > > - Rework the GET_COMPLETE_USAGE macro as static complete_usage()
-> > >   function
-> > > - Add some code comments for usage_page_last
-> > >
-> > > Changes in v2:
-> > > - Update patch title
-> > > - Add GET_COMPLETE_USAGE macro
-> > > - Change the logic of checking whether to concatenate usage page agai=
-n
-> > >   in main parsing
-> > > ---
-> > >  drivers/hid/hid-core.c | 42 +++++++++++++++++++++++++++++++++++++---=
---
-> > >  include/linux/hid.h    |  1 +
-> > >  2 files changed, 38 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> > > index 3eaee2c37931..779b7798dae8 100644
-> > > --- a/drivers/hid/hid-core.c
-> > > +++ b/drivers/hid/hid-core.c
-> > > @@ -211,6 +211,18 @@ static unsigned hid_lookup_collection(struct hid=
-_parser *parser, unsigned type)
-> > >         return 0; /* we know nothing about this usage type */
-> > >  }
-> > >
-> > > +/*
-> > > + * Concatenate usage which defines 16 bits or less with the
-> > > + * currently defined usage page to form a 32 bit usage
-> > > + */
-> > > +
-> > > +static void complete_usage(struct hid_parser *parser, unsigned int i=
-ndex)
-> > > +{
-> > > +       parser->local.usage[index] &=3D 0xFFFF;
-> > > +       parser->local.usage[index] |=3D
-> > > +               (parser->global.usage_page & 0xFFFF) << 16;
-> > > +}
-> > > +
-> > >  /*
-> > >   * Add a usage to the temporary parser table.
-> > >   */
-> > > @@ -221,7 +233,18 @@ static int hid_add_usage(struct hid_parser *pars=
-er, unsigned usage, u8 size)
-> > >                 hid_err(parser->device, "usage index exceeded\n");
-> > >                 return -1;
-> > >         }
-> > > -       parser->local.usage[parser->local.usage_index] =3D usage;
->
-> This broke my CI, and it turns out that installing the patch on an
-> actual laptop, the touchpad, touchscreen were not present, nor any HID
-> devices plugged in.
->
-> Basically, complete_usage() doesn't append the usage, and now we are
-> never assigning a usage to any field.
->
+> > syzbot has bisected this bug to 0570bc8b7c9b ("Merge tag
+> >  'riscv/for-v5.3-rc1' ...")
+>=20
+> Yeah, that looks unlikely. The only non-riscv changes are from
+> documentation updates and moving a config variable around.
+>=20
+> Looks like the crash is quite unlikely, and only happens in one out of
+> ten runs for the ones it has happened to.
+>=20
+> The backtrace looks simple enough, though:
+>=20
+>   RIP: 0010:refcount_inc_checked+0x2b/0x30 lib/refcount.c:156
+>    __key_get include/linux/key.h:281 [inline]
+>    find_key_to_update+0x67/0x80 security/keys/keyring.c:1127
+>    key_create_or_update+0x4e5/0xb20 security/keys/key.c:905
+>    __do_sys_add_key security/keys/keyctl.c:132 [inline]
+>    __se_sys_add_key security/keys/keyctl.c:72 [inline]
+>    __x64_sys_add_key+0x219/0x3f0 security/keys/keyctl.c:72
+>    do_syscall_64+0xd0/0x540 arch/x86/entry/common.c:296
+>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>=20
+> which to me implies that there's some locking bug, and somebody
+> released the key without holding a lock.
 
-So sorry, it is really really a BIG bug, I should be more careful. (=E2=95=
-=AF=EF=B9=8F=E2=95=B0)
+I'm wondering if this is actually a bug in the error handling in the encryp=
+ted
+key type.  Looking in the syzbot console log, there's a lot of output from
+there prior to the crash, of which the following is an excerpt:
 
-Candle
+[  248.516746][T27381] encrypted_key: key user:syz not found
+[  248.524392][T27382] encrypted_key: key user:syz not found
+[  248.616141][T27392] encrypted_key: key user:syz not found
+[  248.618890][T27393] encrypted_key: key user:syz not found
+[  248.690844][T27404] encrypted_key: key user:syz not found
+[  248.739405][T27403] encrypted_key: key user:syz not found
+[  248.804881][T27417] encrypted_key: key user:syz not found
+[  248.828354][T27418] encrypted_key: keyword 'new' not allowed when called=
+ from .update method
+[  248.925249][T27427] encrypted_key: keyword 'new' not allowed when called=
+ from .update method
+[  248.928200][T27415] Bad refcount user syz
+[  248.934043][T27428] encrypted_key: key user:syz not found
+[  248.939502][T27429] encrypted_key: key user:syz not found
+[  248.968744][T27434] encrypted_key: key user:syz not found
+[  248.982201][T27415] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[  248.996072][T27415] BUG: KASAN: use-after-free in refcount_inc_not_zero_=
+checked+0x81/0x200
 
-> > > +
-> > > +       /*
-> > > +        * If Usage item only includes usage id, concatenate it with
-> > > +        * currently defined usage page and clear usage_page_last fla=
-g
-> > > +        */
-> > > +       if (size <=3D 2) {
-> > > +               parser->local.usage_page_last =3D false;
-> > > +               complete_usage(parser, parser->local.usage_index);
-> > > +       } else {
-> > > +               parser->local.usage[parser->local.usage_index] =3D us=
-age;
-> > > +       }
-> > > +
-> > >         parser->local.usage_size[parser->local.usage_index] =3D size;
-> > >         parser->local.collection_index[parser->local.usage_index] =3D
-> > >                 parser->collection_stack_ptr ?
-> > > @@ -366,6 +389,8 @@ static int hid_parser_global(struct hid_parser *p=
-arser, struct hid_item *item)
-> > >
-> > >         case HID_GLOBAL_ITEM_TAG_USAGE_PAGE:
-> > >                 parser->global.usage_page =3D item_udata(item);
-> > > +               /* Regard Usage Page is after Usage ID items */
-> > > +               parser->local.usage_page_last =3D true;
-> > >                 return 0;
-> > >
-> > >         case HID_GLOBAL_ITEM_TAG_LOGICAL_MINIMUM:
-> > > @@ -543,13 +568,20 @@ static int hid_parser_local(struct hid_parser *=
-parser, struct hid_item *item)
-> > >   * usage value."
-> > >   */
-> > >
-> > > -static void hid_concatenate_usage_page(struct hid_parser *parser)
-> > > +static void hid_concatenate_last_usage_page(struct hid_parser *parse=
-r)
-> > >  {
-> > >         int i;
-> > >
-> > > +       /*
-> > > +        * Concatenate usage page again only on detecting some Usage =
-Page
-> > > +        * is really after Usage ID items
-> > > +        */
-> > > +       if (!parser->local.usage_page_last)
-> > > +               return;
-> > > +
-> > >         for (i =3D 0; i < parser->local.usage_index; i++)
-> > >                 if (parser->local.usage_size[i] <=3D 2)
-> > > -                       parser->local.usage[i] +=3D parser->global.us=
-age_page << 16;
-> > > +                       complete_usage(parser, i);
-> > >  }
-> > >
-> > >  /*
-> > > @@ -561,7 +593,7 @@ static int hid_parser_main(struct hid_parser *par=
-ser, struct hid_item *item)
-> > >         __u32 data;
-> > >         int ret;
-> > >
-> > > -       hid_concatenate_usage_page(parser);
-> > > +       hid_concatenate_last_usage_page(parser);
-> > >
-> > >         data =3D item_udata(item);
-> > >
-> > > @@ -772,7 +804,7 @@ static int hid_scan_main(struct hid_parser *parse=
-r, struct hid_item *item)
-> > >         __u32 data;
-> > >         int i;
-> > >
-> > > -       hid_concatenate_usage_page(parser);
-> > > +       hid_concatenate_last_usage_page(parser);
-> > >
-> > >         data =3D item_udata(item);
-> > >
-> > > diff --git a/include/linux/hid.h b/include/linux/hid.h
-> > > index cd41f209043f..2e0ea2f7ec5c 100644
-> > > --- a/include/linux/hid.h
-> > > +++ b/include/linux/hid.h
-> > > @@ -412,6 +412,7 @@ struct hid_local {
-> > >         unsigned usage_minimum;
-> > >         unsigned delimiter_depth;
-> > >         unsigned delimiter_branch;
-> > > +       bool usage_page_last;      /* whether usage page is after usa=
-ge id */
-> > >  };
-> > >
-> >
-> > Hi Benjamin,
-> > Here I still use the usage_page_last flag, not using following method
-> > you provided in v2:
-> >
-> > if ((parser->local.usage[parser->local.usage_index - 1] &
-> > HID_USAGE_PAGE) >> 16 =3D=3D usage_page)
-> >               return 0;
-> >
-> > Because last usage maybe one Extended Usage, some logic for checking
-> > it should be added.
-> > It will make the code obscure. Using one more member in struct
-> > hid_local is straightforward
-> > and maybe better.
->
->
-> Still not convinced by this. Please see below for a less intrusive
-> patch, which is also shorter.
->
-> ---
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 63fdbf09b044..00ea04fb1be3 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -211,6 +211,18 @@ static unsigned hid_lookup_collection(struct
-> hid_parser *parser, unsigned type)
->      return 0; /* we know nothing about this usage type */
->  }
->
-> +/*
-> + * Concatenate usage which defines 16 bits or less with the
-> + * currently defined usage page to form a 32 bit usage
-> + */
-> +
-> +static void complete_usage(struct hid_parser *parser, unsigned int index=
-)
-> +{
-> +    parser->local.usage[index] &=3D 0xFFFF;
-> +    parser->local.usage[index] |=3D
-> +        (parser->global.usage_page & 0xFFFF) << 16;
-> +}
-> +
->  /*
->   * Add a usage to the temporary parser table.
->   */
-> @@ -222,6 +234,14 @@ static int hid_add_usage(struct hid_parser
-> *parser, unsigned usage, u8 size)
->          return -1;
->      }
->      parser->local.usage[parser->local.usage_index] =3D usage;
-> +
-> +    /*
-> +     * If Usage item only includes usage id, concatenate it with
-> +     * currently defined usage page
-> +     */
-> +    if (size <=3D 2)
-> +        complete_usage(parser, parser->local.usage_index);
-> +
->      parser->local.usage_size[parser->local.usage_index] =3D size;
->      parser->local.collection_index[parser->local.usage_index] =3D
->          parser->collection_stack_ptr ?
-> @@ -546,10 +566,28 @@ static int hid_parser_local(struct hid_parser
-> *parser, struct hid_item *item)
->  static void hid_concatenate_usage_page(struct hid_parser *parser)
->  {
->      int i;
-> +    uint16_t usage_page, current_page;
->
-> -    for (i =3D 0; i < parser->local.usage_index; i++)
-> -        if (parser->local.usage_size[i] <=3D 2)
-> -            parser->local.usage[i] +=3D parser->global.usage_page << 16;
-> +    if (!parser->local.usage_index)
-> +        return;
-> +
-> +    usage_page =3D parser->global.usage_page;
-> +
-> +    /*
-> +     * Concatenate usage page again only if the last declared Usage Page
-> +     * has not been already used in the previous Usages
-> +     */
-> +    for (i =3D parser->local.usage_index - 1; i >=3D 0; i--) {
-> +        if (parser->local.usage_size[i] > 2)
-> +            /* ignore extended usages */
-> +            continue;
-> +
-> +        current_page =3D parser->local.usage[i] >> 16;
-> +        if (current_page =3D=3D usage_page)
-> +            break;
-> +
-> +        complete_usage(parser, i);
-> +    }
->  }
->
->  /*
-> ---
->
-> Isn't that better?
->
-> I tested this against
-> https://gitlab.freedesktop.org/libevdev/hid-tools/merge_requests/58,
-> which you kindly submitted and it seems to do the job.
->
-> Cheers,
-> Benjamin
->
+Note that the "Bad refcount user syz" is a bit I patched in to print the ty=
+pe
+and description of the key that incurred the error.
 
-OK. I will amend the patch.
+It's a tad difficult to say exactly what's going on since I've no idea what
+the syzbot reproducer is actually doing.
 
-Best regards,
-Candle
+#{"threaded":true,"collide":true,"repeat":true,"procs":6,"sandbox":"namespa=
+ce","fault_call":-1,"tun":true,"netdev":true,"resetnet":true,"cgroups":true=
+,"binfmt_misc":true,"close_fds":true,"tmpdir":true,"segv":true}
+perf_event_open(&(0x7f000001d000)=3D{0x1, 0x70, 0x0, 0x0, 0x0, 0x0, 0x0, 0x=
+7f, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0=
+x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0=
+x0, 0x0, 0x0, 0x0, @perf_config_ext}, 0x0, 0xffffffffffffffff, 0xffffffffff=
+ffffff, 0x0)
+keyctl$instantiate(0xc, 0x0, &(0x7f0000000100)=3DANY=3D[@ANYBLOB=3D'new def=
+ault user:syz 04096'], 0x1, 0x0)
+r0 =3D add_key(&(0x7f0000000140)=3D'encrypted\x00', &(0x7f0000000180)=3D{'s=
+yz'}, &(0x7f0000000100), 0xca, 0xfffffffffffffffe)
+add_key$user(&(0x7f0000000040)=3D'user\x00', &(0x7f0000000000)=3D{'syz'}, &=
+(0x7f0000000440)=3D'X', 0x1, 0xfffffffffffffffe)
+keyctl$read(0xb, r0, &(0x7f0000000240)=3D""/112, 0x349b7f55)
+
+However, it looks like the encrypted key type is trying to access a user ke=
+y,
+so maybe there's an overput there?  I'm trying to insert more debugging, bu=
+t
+the test doesn't always fail.
+
+syzbot <syzbot+6455648abc28dbdd1e7f@syzkaller.appspotmail.com> wrote:
+
+> HEAD commit:    bc88f85c kthread: make __kthread_queue_delayed_work stati=
+c
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1730584b60000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3De0ac4d9b35046=
+343
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D6455648abc28dbd=
+d1e7f
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11c8adab600=
+000
+
+David
+
