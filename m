@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EFC3E17DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 126E1E17E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404411AbfJWK1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 06:27:54 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39456 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404089AbfJWK1x (ORCPT
+        id S2404431AbfJWK14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 06:27:56 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45099 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404354AbfJWK1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 06:27:53 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r141so9513731wme.4
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 03:27:51 -0700 (PDT)
+        Wed, 23 Oct 2019 06:27:55 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q13so16486311wrs.12
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 03:27:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TsLzXYwYLSB8hHF4vHJgIrxG5rx+YZo4hwBqQCis9kU=;
-        b=HMEcdTrR4CvUBuOE/pxGdcLXELcvaRrzceVSud5clQgbs5E9hVfOR8m8XtaHdO6iaM
-         0KDid/rHDUfvx2pz5SVf+akkm18nDfrxb7w66mL6iVX3+G5/bGw9J40pd6aFRbHA2wCh
-         g/3xTrthcykr4AbPtZfVRkVatqcMvINLfgxyW+afwmw98exMYHxHIreBJo8knkT46XKl
-         MLYsxJFYDhXgGV54rYH660VzeaCiWyciSCq8oB+WYmRxi1hxwZ248jhmg0KjopxfgVhn
-         xHOkvOV5H8yKz8ISkL2+srjgz8vk7kwhIjiuicuOdikQBtInwiS9TqlLYl3ej+cFSjbu
-         MJBA==
-X-Gm-Message-State: APjAAAU276a0flBFWwtCs835UNvXW1b95ldVwiVPqx2qz1CdPqhXoWYz
-        jOHzpR6fdcX2TkjxxKeCMPI=
-X-Google-Smtp-Source: APXvYqzP6Mht+wSNTC2Mtl2i9OMjpIr9618QNI6FunUy6TCvoivmzg9pmKUkUO33dVax3Omo1X3Haw==
-X-Received: by 2002:a1c:1d41:: with SMTP id d62mr7091015wmd.32.1571826471365;
-        Wed, 23 Oct 2019 03:27:51 -0700 (PDT)
+        bh=HogpH9E/f0iRGMXfxCc+U7lRJjZn9ahpkT4ZsQUlsRA=;
+        b=mb6ln6M5ZifdSxPIOMH+pyjiWtraqiD6e6mJ/ehutBNtfEc5JymRZqiLDXGpPwvLqh
+         zU+U/2q7KARnMy6uW8US71c3FNip0LrGmW6oiqe828XGF+ooYjGbPYc2KrC9SXKg+Hm1
+         lbL+SYF8JGjQZ/6vNbAojpfzG8fpWx9Ub+b8hJRU/0qoZPlH7TxTBVMxx1q86MAx/UZm
+         6ZGAqe7rhq0CN917goX9KEsHe3kjYy5N6YWHgONYc7vhC7/4ZWNWK5r0hgbWlhxP9HgF
+         ofBQeLjTZu8tnw0AWu7YsIPWJPyb+WkW14Pqjc2L7Tu4dEtr+A1ip7R8HHmFxh+pbp+G
+         e68Q==
+X-Gm-Message-State: APjAAAWaTXbBw2mm8Edn6tRph6bVx6HFKD5mZoBCJhj9H6xbFlDu/nSw
+        o8PlfvpYT2I8qSSWjAmAXKo=
+X-Google-Smtp-Source: APXvYqxgZBZbWr+ZaAPWcVFpHB2ZDTH3/EHAddQJLlI72Frxl1clvXwGfNlUONV6WKYAB5Vnp2ejpw==
+X-Received: by 2002:adf:f685:: with SMTP id v5mr7993017wrp.246.1571826473245;
+        Wed, 23 Oct 2019 03:27:53 -0700 (PDT)
 Received: from tiehlicka.suse.cz (ip-37-188-173-3.eurotel.cz. [37.188.173.3])
-        by smtp.gmail.com with ESMTPSA id u21sm18234122wmu.27.2019.10.23.03.27.49
+        by smtp.gmail.com with ESMTPSA id u21sm18234122wmu.27.2019.10.23.03.27.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 03:27:50 -0700 (PDT)
+        Wed, 23 Oct 2019 03:27:52 -0700 (PDT)
 From:   Michal Hocko <mhocko@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Mel Gorman <mgorman@suse.de>, Waiman Long <longman@redhat.com>
@@ -45,9 +45,9 @@ Cc:     Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <guro@fb.com>,
         Rafael Aquini <aquini@redhat.com>, <linux-mm@kvack.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Michal Hocko <mhocko@suse.com>
-Subject: [RFC PATCH 1/2] mm, vmstat: hide /proc/pagetypeinfo from normal users
-Date:   Wed, 23 Oct 2019 12:27:36 +0200
-Message-Id: <20191023102737.32274-2-mhocko@kernel.org>
+Subject: [RFC PATCH 2/2] mm, vmstat: reduce zone->lock holding time by /proc/pagetypeinfo
+Date:   Wed, 23 Oct 2019 12:27:37 +0200
+Message-Id: <20191023102737.32274-3-mhocko@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191023102737.32274-1-mhocko@kernel.org>
 References: <20191023095607.GE3016@techsingularity.net>
@@ -61,37 +61,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michal Hocko <mhocko@suse.com>
 
-/proc/pagetypeinfo is a debugging tool to examine internal page
-allocator state wrt to fragmentation. It is not very useful for
-any other use so normal users really do not need to read this file.
+pagetypeinfo_showfree_print is called by zone->lock held in irq mode.
+This is not really nice because it blocks both any interrupts on that
+cpu and the page allocator. On large machines this might even trigger
+the hard lockup detector.
 
-Waiman Long has noticed that reading this file can have negative side
-effects because zone->lock is necessary for gathering data and that
-a) interferes with the page allocator and its users and b) can lead to
-hard lockups on large machines which have very long free_list.
+Considering the pagetypeinfo is a debugging tool we do not really need
+exact numbers here. The primary reason to look at the outuput is to see
+how pageblocks are spread among different migratetypes therefore putting
+a bound on the number of pages on the free_list sounds like a reasonable
+tradeoff.
 
-Reduce both issues by simply not exporting the file to regular users.
+The new output will simply tell
+[...]
+Node    6, zone   Normal, type      Movable >100000 >100000 >100000 >100000  41019  31560  23996  10054   3229    983    648
 
-Reported-by: Waiman Long <longman@redhat.com>
-Cc: stable
+instead of
+Node    6, zone   Normal, type      Movable 399568 294127 221558 102119  41019  31560  23996  10054   3229    983    648
+
+The limit has been chosen arbitrary and it is a subject of a future
+change should there be a need for that.
+
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Michal Hocko <mhocko@suse.com>
 ---
- mm/vmstat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/vmstat.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
 diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 6afc892a148a..4e885ecd44d1 100644
+index 4e885ecd44d1..762034fc3b83 100644
 --- a/mm/vmstat.c
 +++ b/mm/vmstat.c
-@@ -1972,7 +1972,7 @@ void __init init_mm_internals(void)
- #endif
- #ifdef CONFIG_PROC_FS
- 	proc_create_seq("buddyinfo", 0444, NULL, &fragmentation_op);
--	proc_create_seq("pagetypeinfo", 0444, NULL, &pagetypeinfo_op);
-+	proc_create_seq("pagetypeinfo", 0400, NULL, &pagetypeinfo_op);
- 	proc_create_seq("vmstat", 0444, NULL, &vmstat_op);
- 	proc_create_seq("zoneinfo", 0444, NULL, &zoneinfo_op);
- #endif
+@@ -1386,8 +1386,25 @@ static void pagetypeinfo_showfree_print(struct seq_file *m,
+ 
+ 			area = &(zone->free_area[order]);
+ 
+-			list_for_each(curr, &area->free_list[mtype])
++			list_for_each(curr, &area->free_list[mtype]) {
+ 				freecount++;
++				/*
++				 * Cap the free_list iteration because it might
++				 * be really large and we are under a spinlock
++				 * so a long time spent here could trigger a
++				 * hard lockup detector. Anyway this is a
++				 * debugging tool so knowing there is a handful
++				 * of pages in this order should be more than
++				 * sufficient
++				 */
++				if (freecount > 100000) {
++					seq_printf(m, ">%6lu ", freecount);
++					spin_unlock_irq(&zone->lock);
++					cond_resched();
++					spin_lock_irq(&zone->lock);
++					continue;
++				}
++			}
+ 			seq_printf(m, "%6lu ", freecount);
+ 		}
+ 		seq_putc(m, '\n');
 -- 
 2.20.1
 
