@@ -2,137 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79E79E147E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:41:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AF47E148B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:44:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390489AbfJWIkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:40:52 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28405 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2390348AbfJWIkw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:40:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571820050;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Leo1i+YgTzOAxyY1K0L+NX63hVj5HiYTBpizOFvje2U=;
-        b=C8i4c9owWLo9ELGFMx0EgsC5LvJTAmpyeUaS34sSBa41veIUd7TE1CiY+lujUsQazKtoMr
-        /5vCjW72xS8UELAKiJvXqzvq+qohN8bEf7rvy5MoJWW2pXttCSH6oy+5Lhb9cpBSL5vOXO
-        UjfheVFNaVEZDVgMG+iEv2byU4pE2Ys=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-182-apkC9BGkO-e0K5zNBfDeLA-1; Wed, 23 Oct 2019 04:40:46 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 44F761800D6B;
-        Wed, 23 Oct 2019 08:40:44 +0000 (UTC)
-Received: from krava (unknown [10.43.17.61])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 1FEE360BE1;
-        Wed, 23 Oct 2019 08:40:39 +0000 (UTC)
-Date:   Wed, 23 Oct 2019 10:40:39 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        John Garry <john.garry@huawei.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v2 2/9] perf tools: splice events onto evlist even on
- error
-Message-ID: <20191023084039.GD22919@krava>
-References: <20191017170531.171244-1-irogers@google.com>
- <20191023005337.196160-1-irogers@google.com>
- <20191023005337.196160-3-irogers@google.com>
+        id S2390457AbfJWIoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:44:23 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:58222 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390343AbfJWIoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 04:44:23 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1iNCFc-0004MA-Ja; Wed, 23 Oct 2019 16:44:16 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1iNCFY-0003xp-75; Wed, 23 Oct 2019 16:44:12 +0800
+Date:   Wed, 23 Oct 2019 16:44:12 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
+        Joe Perches <joe@perches.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
+        Otto Sabart <ottosabart@seberm.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5.1 RESEND] dt-bindings: hwrng: Add Samsung Exynos 5250+
+ True RNG bindings
+Message-ID: <20191023084412.va5gswstckblm5a4@gondor.apana.org.au>
+References: <CGME20190111132222eucas1p1d80caf8ba30422bc5fe1a1fac4cf48e8@eucas1p1.samsung.com>
+ <CAL_JsqKt-ujsB-t9A=4dEAjqrvcquUG+qF3tFg1YCqmup_5wcw@mail.gmail.com>
+ <20190111132139.12333-1-l.stelmach@samsung.com>
+ <CAJKOXPfM+EUzBBBhrtSFw5-e7hiimsFT8okcd8J9gGyFdzd2+w@mail.gmail.com>
+ <58f7d127-b798-04b8-1bc6-d37a8af273f7@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20191023005337.196160-3-irogers@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: apkC9BGkO-e0K5zNBfDeLA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <58f7d127-b798-04b8-1bc6-d37a8af273f7@suse.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 05:53:30PM -0700, Ian Rogers wrote:
-> If event parsing fails the event list is leaked, instead splice the list
-> onto the out result and let the caller cleanup.
->=20
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/parse-events.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
->=20
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
-s.c
-> index 4d42344698b8..a8f8801bd127 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -1962,15 +1962,20 @@ int parse_events(struct evlist *evlist, const cha=
-r *str,
-> =20
->  =09ret =3D parse_events__scanner(str, &parse_state, PE_START_EVENTS);
->  =09perf_pmu__parse_cleanup();
-> +
+On Wed, Oct 23, 2019 at 10:16:48AM +0200, Andreas Färber wrote:
+>
+> For some reason this text file in linux-next is lonely in devicetree/...
+> rather than living in Documentation/devicetree/... - please fix that.
+> The patch here looks correct, so not sure what went wrong:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/devicetree/bindings/rng/samsung,exynos5250-trng.txt?h=next-20191023&id=85552c22f03c9066c33f26f34538b67fee6a91a8
 
-I dont understand.. is there something on the list in case we fail?
+It's because the patch
 
-> +=09if (list_empty(&parse_state.list)) {
-> +=09=09WARN_ONCE(true, "WARNING: event parser found nothing\n");
-> +=09=09return -1;
-> +=09}
+	https://patchwork.kernel.org/patch/11181265/
 
-this will display extra warning message for fail case:
+was generated at the wrong level (p0 instead of p1).
 
-[jolsa@krava perf]$ ./perf record -e krava ls
-WARNING: event parser found nothing
-event syntax error: 'krava'
-                     \___ parser error
+I'll fix this up in my tree.  Thanks for the heads up.
 
-we don't want that
-
-jirka
-
-> +
-> +=09/*
-> +=09 * Add list to the evlist even with errors to allow callers to clean =
-up.
-> +=09 */
-> +=09perf_evlist__splice_list_tail(evlist, &parse_state.list);
-> +
->  =09if (!ret) {
->  =09=09struct evsel *last;
-> =20
-> -=09=09if (list_empty(&parse_state.list)) {
-> -=09=09=09WARN_ONCE(true, "WARNING: event parser found nothing\n");
-> -=09=09=09return -1;
-> -=09=09}
-> -
-> -=09=09perf_evlist__splice_list_tail(evlist, &parse_state.list);
->  =09=09evlist->nr_groups +=3D parse_state.nr_groups;
->  =09=09last =3D evlist__last(evlist);
->  =09=09last->cmdline_group_boundary =3D true;
-> --=20
-> 2.23.0.866.gb869b98d4c-goog
->=20
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
