@@ -2,231 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81DE0E23ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 22:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05DF2E23F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 22:06:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407411AbfJWUFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 16:05:40 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51095 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407364AbfJWUFi (ORCPT
+        id S2405596AbfJWUG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 16:06:29 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36509 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388917AbfJWUG2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 16:05:38 -0400
-Received: by mail-wm1-f66.google.com with SMTP id q13so285791wmj.0;
-        Wed, 23 Oct 2019 13:05:35 -0700 (PDT)
+        Wed, 23 Oct 2019 16:06:28 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u16so17171773lfq.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 13:06:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=e457YyDFVfE5IUj3AWYMM47UgnP78lQnD30EkuZGvV4=;
-        b=Nd5+8WyfUvMvrRGpAoQzAIWF3RPRPKytP45I3c6Eu9F5W6Y/MRlrceT/kdCy7vg6bq
-         EtLJJIpSHXC52vNPUadKytkaujNUGUMZhst5iZI3nvSdB4PBUcUHlyzKeUBgDhJ3jJeE
-         nShz+HHFspjQddQifOtG+y0axO+D0UMJiOSkNLppnLqGas8fxrqvObMGYAA02GDFfXic
-         FUBX3IFSt9CNSBpLTa2bfRcRwTIRRSyzxJw7LeXGrKkGTnguNec70OpSSUJwzozMEDN0
-         uQqNS84h5TriKM05W2Gxw4xIkQ6pb1I/FfLY7Pb3F+fOWj6EmySQFJ+JZjIM7VuSWIcH
-         suSQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1jaFwe4q6bPt92D9NnO8xEHAIq6OE3EbX3c4MTsblKI=;
+        b=QTa7xQ+lSwOcSENU5d3ioAmvuK+eJ7Opp6W4T7fSOlW+uYkIKp6tgjsMoWHUCikYk/
+         yDf7vitA4LeAB/cgHOeLpnumUzwQY6Qd69hoIOyjQpodwhPVfL1HRf/N7jWshrALEz/9
+         apqy5xe2oOktYRfGN1Xg7420O1pbiQACdeOUC4zcuFrnnVC78Lp1qHM5N/51hjzBFqHy
+         UhlslcLQ6f3ToF8S4XpmZuI+I400E5skjS4Pq1Fvtz6IZnMArKNpxP0NRqdSfsFYzjSL
+         EU1hvmNWPEGVpg3E/FZbfnKPYF7528CkuzhBlPAvbZMP7zryD/tQKnSN4W6ZZhcSimft
+         G8+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=e457YyDFVfE5IUj3AWYMM47UgnP78lQnD30EkuZGvV4=;
-        b=jgJoBtHHEKT2C7sxoqpDVj1nYM9jK8Ej7wHAX+U8KRz0VhKb0JR41PFWt075r/N9t3
-         0dK4GcTURP8/+fpLMhEOGzCP7ZIsOTaJSu9+pcude14lsV+OeTvuDehzyhKjGL2LzGKn
-         V82C+pobcBTSACMsslWIszmkP6RyU7gX0fJxJZCujheeeN7zxWIpifyGG/pQbxfZPYt/
-         f+r2176xX4RPKlB5qeAYgpEHcehi8X/xlcy11cRnWWY33fOXUVIzTpvm/Zas+HIUogOY
-         U4SXih4KoSdh9IG6jDtn3+/NBDbbImpLhSoGjO3Tx5gvCBn+3DTK8GC1ncsVifVynj/S
-         65Bw==
-X-Gm-Message-State: APjAAAUf/t+eXFlITZP0iNkRHcQJVwBMn1HbF6/K6ofLpQVyUZipZ+Zb
-        cbyGgCgMzxGqUJ6J1CD7mMFuAtA3
-X-Google-Smtp-Source: APXvYqyQF9MvnVeDCqE61Au88klmgqDp9o2axtuvArdAeZ73CHrG1gCZf+jFhAwBD0chDF00HDWoYg==
-X-Received: by 2002:a05:600c:21d7:: with SMTP id x23mr1497043wmj.6.1571861134886;
-        Wed, 23 Oct 2019 13:05:34 -0700 (PDT)
-Received: from Red.localdomain (lfbn-1-7036-79.w90-116.abo.wanadoo.fr. [90.116.209.79])
-        by smtp.googlemail.com with ESMTPSA id b5sm177555wmj.18.2019.10.23.13.05.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 13:05:34 -0700 (PDT)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     catalin.marinas@arm.com, davem@davemloft.net,
-        herbert@gondor.apana.org.au, linux@armlinux.org.uk,
-        mark.rutland@arm.com, mripard@kernel.org, robh+dt@kernel.org,
-        wens@csie.org, will@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH v6 11/11] crypto: sun4i-ss: Move to Allwinner directory
-Date:   Wed, 23 Oct 2019 22:05:13 +0200
-Message-Id: <20191023200513.22630-12-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191023200513.22630-1-clabbe.montjoie@gmail.com>
-References: <20191023200513.22630-1-clabbe.montjoie@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1jaFwe4q6bPt92D9NnO8xEHAIq6OE3EbX3c4MTsblKI=;
+        b=onbGO2ZvUBER58NNUX/BWRxB41B9AbVjWB/OHFMETyY4MPsf8WYCx1G1mwlM2MdVxL
+         C11Sw9v8gqkpCnuHUve4XSp/fh7R3YZW0Nj32WdjJ6qMGRySYo2rsCH8HLHbzDTOJqvF
+         +qWcP+T1s3sLqPjzojuzvFAfpe+GBozFNGtKccSSK3COPhaNFFogsJB7LFSenx5F5x7X
+         tmroDkc3NOUcTKmf87QuXO+2TbGd46GAR+KO41GC5Ed7c1QrxqmAGYxEVWBRf0ZntCew
+         XrnhGIkSVGQ7qOOYrwOCxVUmKCuTZSzFNEftd0N0zxLYlXRODCjNNhg/re/kTB5rZxXO
+         L+fQ==
+X-Gm-Message-State: APjAAAUBGocPgmOE5yBrrIv+/lfMhbRDJS6E9FV4p3wNhANabhhNA8fZ
+        p+QkIE5ROgGH0AZAr+0WAIDrTDAXSm+DSIdI8B4R1Q==
+X-Google-Smtp-Source: APXvYqyaKxx+sqmFJkqH8dzqUztnO8ZQzp3x0kUrGCwpTFMt86EoJ5vWDJlpgMuDwNbHDTYYWwemQujGlchEWihWM9U=
+X-Received: by 2002:ac2:5325:: with SMTP id f5mr5158156lfh.98.1571861184749;
+ Wed, 23 Oct 2019 13:06:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191012191602.45649-1-dancol@google.com> <20191012191602.45649-4-dancol@google.com>
+ <CALCETrVZHd+csdRL-uKbVN3Z7yeNNtxiDy-UsutMi=K3ZgCiYw@mail.gmail.com>
+ <CAKOZuevUqs_Oe1UEwguQK7Ate3ai1DSVSij=0R=vmz9LzX4k6Q@mail.gmail.com>
+ <CALCETrUyq=J37gU-MYXqLdoi7uH7iNNVRjvcGUT11JA1QuTFyg@mail.gmail.com>
+ <CAG48ez3P27-xqdjKLqfP_0Q_v9K92CgEjU4C=kob2Ax7=NoZbA@mail.gmail.com> <20191023190959.GA9902@redhat.com>
+In-Reply-To: <20191023190959.GA9902@redhat.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 23 Oct 2019 13:05:47 -0700
+Message-ID: <CAKOZuetKkM=PK2QA8LdXwM8cM8qJvFu4u5bjePWai3XRnHe-pA@mail.gmail.com>
+Subject: Re: [PATCH 3/7] Add a UFFD_SECURE flag to the userfaultfd API.
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Nosh Minwalla <nosh@google.com>,
+        Tim Murray <timmurray@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we have a dedicated Allwinner directory for crypto driver, move
-the sun4i-ss driver in it.
+On Wed, Oct 23, 2019 at 12:10 PM Andrea Arcangeli <aarcange@redhat.com> wrote:
+> On Sat, Oct 12, 2019 at 06:14:23PM -0700, Andy Lutomirski wrote:
+> > [adding more people because this is going to be an ABI break, sigh]
+>
+> That wouldn't break the ABI, no more than when if you boot a kernel
+> built with CONFIG_USERFAULTFD=n.
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
----
- MAINTAINERS                                   |  6 -----
- drivers/crypto/Kconfig                        | 26 ------------------
- drivers/crypto/Makefile                       |  1 -
- drivers/crypto/allwinner/Kconfig              | 27 +++++++++++++++++++
- drivers/crypto/allwinner/Makefile             |  1 +
- .../{sunxi-ss => allwinner/sun4i-ss}/Makefile |  0
- .../sun4i-ss}/sun4i-ss-cipher.c               |  0
- .../sun4i-ss}/sun4i-ss-core.c                 |  0
- .../sun4i-ss}/sun4i-ss-hash.c                 |  0
- .../sun4i-ss}/sun4i-ss-prng.c                 |  0
- .../sun4i-ss}/sun4i-ss.h                      |  0
- 11 files changed, 28 insertions(+), 33 deletions(-)
- rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/Makefile (100%)
- rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/sun4i-ss-cipher.c (100%)
- rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/sun4i-ss-core.c (100%)
- rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/sun4i-ss-hash.c (100%)
- rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/sun4i-ss-prng.c (100%)
- rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/sun4i-ss.h (100%)
+The change Andy is proposing would convert programs that work with
+CONFIG_USERFAULTFD=y today into programs that don't work with
+CONFIG_USERFAULTFD. Whether that counts as an ABI break is above my
+ability to decide, but IMHO, I think it should count. Such a change at
+least merits more-than-usual scrutiny. I'd love to get Linus's
+opinion.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9153c02e1f63..2120c74f476a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -684,12 +684,6 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
- F:	drivers/cpufreq/sun50i-cpufreq-nvmem.c
- 
--ALLWINNER SECURITY SYSTEM
--M:	Corentin Labbe <clabbe.montjoie@gmail.com>
--L:	linux-crypto@vger.kernel.org
--S:	Maintained
--F:	drivers/crypto/sunxi-ss/
--
- ALLWINNER CRYPTO DRIVERS
- M:	Corentin Labbe <clabbe.montjoie@gmail.com>
- L:	linux-crypto@vger.kernel.org
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 610bb52d77d6..9f08ed72eae8 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -659,32 +659,6 @@ config CRYPTO_DEV_IMGTEC_HASH
- 	  hardware hash accelerator. Supporting MD5/SHA1/SHA224/SHA256
- 	  hashing algorithms.
- 
--config CRYPTO_DEV_SUN4I_SS
--	tristate "Support for Allwinner Security System cryptographic accelerator"
--	depends on ARCH_SUNXI && !64BIT
--	depends on PM
--	select CRYPTO_MD5
--	select CRYPTO_SHA1
--	select CRYPTO_AES
--	select CRYPTO_LIB_DES
--	select CRYPTO_BLKCIPHER
--	help
--	  Some Allwinner SoC have a crypto accelerator named
--	  Security System. Select this if you want to use it.
--	  The Security System handle AES/DES/3DES ciphers in CBC mode
--	  and SHA1 and MD5 hash algorithms.
--
--	  To compile this driver as a module, choose M here: the module
--	  will be called sun4i-ss.
--
--config CRYPTO_DEV_SUN4I_SS_PRNG
--	bool "Support for Allwinner Security System PRNG"
--	depends on CRYPTO_DEV_SUN4I_SS
--	select CRYPTO_RNG
--	help
--	  Select this option if you want to provide kernel-side support for
--	  the Pseudo-Random Number Generator found in the Security System.
--
- config CRYPTO_DEV_ROCKCHIP
- 	tristate "Rockchip's Cryptographic Engine driver"
- 	depends on OF && ARCH_ROCKCHIP
-diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
-index 90d60eff5ecc..79e2da4a51e4 100644
---- a/drivers/crypto/Makefile
-+++ b/drivers/crypto/Makefile
-@@ -40,7 +40,6 @@ obj-$(CONFIG_CRYPTO_DEV_ROCKCHIP) += rockchip/
- obj-$(CONFIG_CRYPTO_DEV_S5P) += s5p-sss.o
- obj-$(CONFIG_CRYPTO_DEV_SAHARA) += sahara.o
- obj-$(CONFIG_ARCH_STM32) += stm32/
--obj-$(CONFIG_CRYPTO_DEV_SUN4I_SS) += sunxi-ss/
- obj-$(CONFIG_CRYPTO_DEV_TALITOS) += talitos.o
- obj-$(CONFIG_CRYPTO_DEV_UX500) += ux500/
- obj-$(CONFIG_CRYPTO_DEV_VIRTIO) += virtio/
-diff --git a/drivers/crypto/allwinner/Kconfig b/drivers/crypto/allwinner/Kconfig
-index a3e5781fa95e..9c445973ca08 100644
---- a/drivers/crypto/allwinner/Kconfig
-+++ b/drivers/crypto/allwinner/Kconfig
-@@ -5,6 +5,33 @@ config CRYPTO_DEV_ALLWINNER
- 	help
- 	  Say Y here to get to see options for Allwinner hardware crypto devices
- 
-+config CRYPTO_DEV_SUN4I_SS
-+	tristate "Support for Allwinner Security System cryptographic accelerator"
-+	depends on ARCH_SUNXI && !64BIT
-+	depends on PM
-+	depends on CRYPTO_DEV_ALLWINNER
-+	select CRYPTO_MD5
-+	select CRYPTO_SHA1
-+	select CRYPTO_AES
-+	select CRYPTO_LIB_DES
-+	select CRYPTO_BLKCIPHER
-+	help
-+	  Some Allwinner SoC have a crypto accelerator named
-+	  Security System. Select this if you want to use it.
-+	  The Security System handle AES/DES/3DES ciphers in CBC mode
-+	  and SHA1 and MD5 hash algorithms.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called sun4i-ss.
-+
-+config CRYPTO_DEV_SUN4I_SS_PRNG
-+	bool "Support for Allwinner Security System PRNG"
-+	depends on CRYPTO_DEV_SUN4I_SS
-+	select CRYPTO_RNG
-+	help
-+	  Select this option if you want to provide kernel-side support for
-+	  the Pseudo-Random Number Generator found in the Security System.
-+
- config CRYPTO_DEV_SUN8I_CE
- 	tristate "Support for Allwinner Crypto Engine cryptographic offloader"
- 	select CRYPTO_BLKCIPHER
-diff --git a/drivers/crypto/allwinner/Makefile b/drivers/crypto/allwinner/Makefile
-index 11f02db9ee06..fdb720c5bcc7 100644
---- a/drivers/crypto/allwinner/Makefile
-+++ b/drivers/crypto/allwinner/Makefile
-@@ -1 +1,2 @@
-+obj-$(CONFIG_CRYPTO_DEV_SUN4I_SS) += sun4i-ss/
- obj-$(CONFIG_CRYPTO_DEV_SUN8I_CE) += sun8i-ce/
-diff --git a/drivers/crypto/sunxi-ss/Makefile b/drivers/crypto/allwinner/sun4i-ss/Makefile
-similarity index 100%
-rename from drivers/crypto/sunxi-ss/Makefile
-rename to drivers/crypto/allwinner/sun4i-ss/Makefile
-diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-cipher.c b/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-cipher.c
-similarity index 100%
-rename from drivers/crypto/sunxi-ss/sun4i-ss-cipher.c
-rename to drivers/crypto/allwinner/sun4i-ss/sun4i-ss-cipher.c
-diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-core.c b/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-core.c
-similarity index 100%
-rename from drivers/crypto/sunxi-ss/sun4i-ss-core.c
-rename to drivers/crypto/allwinner/sun4i-ss/sun4i-ss-core.c
-diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-hash.c b/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-hash.c
-similarity index 100%
-rename from drivers/crypto/sunxi-ss/sun4i-ss-hash.c
-rename to drivers/crypto/allwinner/sun4i-ss/sun4i-ss-hash.c
-diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-prng.c b/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-prng.c
-similarity index 100%
-rename from drivers/crypto/sunxi-ss/sun4i-ss-prng.c
-rename to drivers/crypto/allwinner/sun4i-ss/sun4i-ss-prng.c
-diff --git a/drivers/crypto/sunxi-ss/sun4i-ss.h b/drivers/crypto/allwinner/sun4i-ss/sun4i-ss.h
-similarity index 100%
-rename from drivers/crypto/sunxi-ss/sun4i-ss.h
-rename to drivers/crypto/allwinner/sun4i-ss/sun4i-ss.h
--- 
-2.21.0
+> All non-cooperative features can be removed any time in a backwards
+> compatible way, the only precaution is to mark their feature bits as
+> reserved so they can't be reused for something else later.
+>
+> > least severely restricted.  A .read implementation MUST NOT ACT ON THE
+> > CALLING TASK.  Ever.  Just imagine the effect of passing a userfaultfd
+> > as stdin to a setuid program.
+>
+> With UFFD_EVENT_FORK, the newly created uffd that controls the child,
+> is not passed to the parent nor to the child. Instead it's passed to
+> the CRIU monitor only, which has to be already running as root and is
+> fully trusted and acts a hypervisor (despite there is no hypervisor).
 
+The phrase "CRIU monitor" above stands out.  :-) Not every process
+that uses userfaultfd will be CRIU-related, and in particular, there's
+no requirement right now that limits UFFD_EVENT_FORK to privileged
+processes.
+
+The attack Andy is describing involves a random unprivileged process
+creating a userfaultfd file object, configuring it to UFFD_EVENT_FORK,
+somehow (stdin, SCM_RIGHTS, binder, etc.) passing that FD to a
+more-privileged process, and convincing that privileged process to
+read(2) that FD and disturb its file descriptor table, which in turn
+can cause EoP or all kinds of other havoc. This is a serious bug that
+needs some kind of fix.
+
+> On Mon, Oct 14, 2019 at 06:04:22PM +0200, Jann Horn wrote:
+> > FWIW, <https://codesearch.debian.net/search?q=UFFD_FEATURE_EVENT_FORK&literal=1>
+> > just shows the kernel, kernel selftests, and strace code for decoding
+> > syscall arguments. CRIU uses it though (probably for postcopy live
+> > migration / lazy migration?), I guess that code isn't in debian for
+> > some reason.
+>
+> https://criu.org/Userfaultfd#Limitations
+>
+> The CRIU developers did a truly amazing job by making container post
+> copy live migration work great for a subset of apps, that alone was an
+> amazing achievement. Is that achievement enough to use post copy live
+> migration of bare metal containers in production? Unfortunately
+> probably not and not just in debian.
+
+Nobody is claiming that there's anything wrong with UFFD. That UFFD is
+being used for features that have nothing to do with CRIU or
+containerization is a signal that UFFD's creators made a good,
+general-purpose tool. (We're considering it for two completely
+unrelated purposes in Android in fact.) I don't think we can assume
+that the UFFD feature has gone unused on the basis of CRIU's
+slower-than-hoped-for adoption. Who's using it for something?
+*Probably* nobody, but like I said above, it's worth thinking about
+and being careful.
+
+> In my view there's simply no justification not to use virtual machines
+> when the alternative requires so much more code to be written and so
+> much more complexity to be dealt with.
+
+This is a debate that won't get resolved here. A ton of work has gone
+into namespaces, migration, various cgroup things, and so on, and I
+don't see that work getting torn out.
+
+> While at it, as far as userfaultfd is concerned I'd rather see people
+> spend time to write a malloc library that uses userfaultfd with the
+> UFFD_FEATURE_SIGBUS features and it replaces mmap with UFFDIO_ZEROPAGE
+> (plus adding the THP accelleration currently missing)
+
+I'd also like to see realloc(3) use mremap(2) in real implementations
+and for C++ to grow an allocator interface that can use realloc(3).
+But I think that's a separate matter.
+
+> and munmap with
+> MADV_DONTNEED to do allocations and freeing of memory with full
+> scalability without ever hitting on the map sem for writing.
+
+Some allocators, e.g., jemalloc, already use MADV_DONTNEED.
+
+> fork COWs cannot throttle
+
+Sure they can. Can't we stick processes in a memcg and set a
+memory.high threshold beyond which threads in that cgroup will enter
+direct reclaim on page allocations? I'd call that throttling.
+
+> and all apps using fork() risk to hit on x2
+> memory usage which can become oom-killer material if the memory size
+> of the process is huge.
+
+fork is one of the reasons people use overcommit all the time. I'd
+like to see a lot less overcommit in the world.
+
+> On my side, instead of trying to fix whatever issue in
+> UFFD_EVENT_FORK,
+
+This issue *has* to get fixed one way or another.
