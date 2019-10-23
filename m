@@ -2,166 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D19E1425
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4982E142D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:28:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390298AbfJWI0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:26:53 -0400
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:40062 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727574AbfJWI0x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:26:53 -0400
-Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9N8MxPv029131;
-        Wed, 23 Oct 2019 04:26:50 -0400
-Received: from nam02-cy1-obe.outbound.protection.outlook.com (mail-cys01nam02lp2051.outbound.protection.outlook.com [104.47.37.51])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2vt9t21hrs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Oct 2019 04:26:50 -0400
+        id S2390336AbfJWI2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:28:13 -0400
+Received: from mail-eopbgr50078.outbound.protection.outlook.com ([40.107.5.78]:62475
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390034AbfJWI2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 04:28:12 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L7q7jrilikLxUQvgkifhVvtvrlwvSQ5kyGU1+s+CNRpN0kR2wzs4bcK7OtT0JUdVCSgtcENqoqqDhrJ13aXDPmOv/OG24B0Z6sXRNmimfv+KkXCGdHs0SKk9kvsRXf0i3qYkY7vlRpAumXTS5ajx3GyN3ZxTSKUk9e25Q1evUkaY4KBhgxPU7Zijjh82sgz0BgRuzMwP3ylv2WCTC33rxphG9REAG0g4BcmEqP6M4jqQbeNgIkvqcwyT4K2++uiYepMxi/o3z4aZroEqL8OIzaZnPcNfIzcVPEpbBERF3K9UNtD/CtuaxrkSFLhZPxjAcf/KkpT8A0t422PbnTEO/A==
+ b=X+iAsvAvWL/yGg/5qR1lOO+4INOqC2yD16Q+zWSl+hX1JIPh4J1GPP9vIvvoHmALj9LJXYnZTlyr2V23ibgR+IHMzVtZLK2USu8U7GIy/s4vToB29qn0jFa6AJA7rmSnOBWKNfGe/9nhmRxsuPcLUq+Ay51NAy1BT7yF9hs9RqVAZgqodqLJGTD7UX/UwAkfhbRZvhvwpsNyE6THmD2h0Vm7xi3ktdS8T6f65gHWSo6y42KxG/QCqRbPE0gVUpurAa8qVQ4l+fyM2cNQpIswlnlg7RtFjfx2Blf7bQeeU1qMcg7ROI0jJD2jiJhMNPawesKo79aZVu0Dcry9uGBy1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zic5/NIo81qQGHwCDs5FOCVbB/OBxV+6dWSx5pDhZRY=;
- b=NA5OqC3c0GZ7/1D8VOvD8QK4xV4vg9BgOa43TyrQP+YKWVCw1eWBV+AUPHL0dneCfLzycelT6cFJyzHSgBmGDJeL+nT/EvjD6FD+32fWyhF/gDhmhzBaUTCjz7SxChxmAwEY1pAGISmrNEvHhMCp8xcGdLoetY8m6droCocbcXtrJC97ZA8xbel5fYFL8Wxpj8we5QsgYeHEO5UB2hV+hofrfiddxTyR5v1gr+GdZEtPU4C8wisE2vgvprzfG3iT8Vk2xVCerf7iZeNJHEosjRVTCBOVnnDPLl2gQkIvqvVYyUcWzTwVJfi/wrB4lFR2n+o3aByq9MdJMsJAZbBQkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.57) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ bh=wBI8+VpEjy81yxpmbh7MGyAEolNlJ+Yxnl07v6jag3k=;
+ b=WA5cXOm9+ZbkgX2Os8pqJf2ZC453OtR4oNsGYSkiV6I7dCYxuzTxUc1CD23LGgiNKFQTbB5SGr7Lfjt0+HSmTmucaASg37him2LJOlu107/G0/wpvKhQejIG3gqAa7BAc2r2xKok5vTTMBE9ORIBcenr9/rMTa3k9iYfPeC1WiQJzKxUrIzX9PA5iRRVwpDrm40RvPRKsJ8AGeuDJW3z62g4/sWszQh7Ynw1Gj2clqPpMRI3NFqEvi+PdlQO+zaHPI8PHbp0g6yKlDw1olhKsN98XQ7NKiMYq+56etmBoUTyoSI4eRDA1JSh8b1yGaxso5vJJrpJXABSg4Y2MK/KVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zic5/NIo81qQGHwCDs5FOCVbB/OBxV+6dWSx5pDhZRY=;
- b=9RGXWQ4T4VCbwPU1mYr9T+Yke/o5S/qaT54vDZ86ZkN+hXK7DGO98eLS2xhMGWxcE3FoP6CbnADPQE4iePjgNpbHaJoAieJcfQcX7bb2JUe5JAfz4XJ1WSChdp3q9fpPWLvj0V5QiuEhugCOrElob5kVwJ7AyBhUMV5E1QnuWt0=
-Received: from MWHPR03CA0007.namprd03.prod.outlook.com (2603:10b6:300:117::17)
- by DM5PR03MB3274.namprd03.prod.outlook.com (2603:10b6:4:40::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2367.20; Wed, 23 Oct
- 2019 08:26:48 +0000
-Received: from BL2NAM02FT032.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::209) by MWHPR03CA0007.outlook.office365.com
- (2603:10b6:300:117::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2387.20 via Frontend
- Transport; Wed, 23 Oct 2019 08:26:48 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- BL2NAM02FT032.mail.protection.outlook.com (10.152.77.169) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2367.14
- via Frontend Transport; Wed, 23 Oct 2019 08:26:48 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x9N8QfEk012565
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Wed, 23 Oct 2019 01:26:41 -0700
-Received: from saturn.ad.analog.com (10.48.65.116) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Oct 2019 04:26:47 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH] iio: hdc100x: fix iio_triggered_buffer_{predisable,postenable} positions
-Date:   Wed, 23 Oct 2019 11:27:14 +0300
-Message-ID: <20191023082714.18681-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
+ bh=wBI8+VpEjy81yxpmbh7MGyAEolNlJ+Yxnl07v6jag3k=;
+ b=YQcBZDf4R0zm7k8ZaETidwdnIX0a4OK7TgybkPeimyhieBfow1qVFhmG/FX85dg91sfRNjADyuSmdOpdMycY1IR0CFK6doMh0316WZAww3DKGmqbHpogVmXT+m0iaSgpAW7ZII+yCmNsXWM0JsKX0BEEEnFScJ3MW7/wPzLwIjo=
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) by
+ VI1PR04MB6237.eurprd04.prod.outlook.com (20.179.24.74) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Wed, 23 Oct 2019 08:28:07 +0000
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::68e3:e1a6:78fd:7133]) by VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::68e3:e1a6:78fd:7133%3]) with mapi id 15.20.2387.021; Wed, 23 Oct 2019
+ 08:28:07 +0000
+From:   Peter Chen <peter.chen@nxp.com>
+To:     Igor Opaniuk <igor.opaniuk@gmail.com>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Stefan Agner <stefan.agner@toradex.com>,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Sanchayan Maity <maitysanchayan@gmail.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/2] usb: chipidea: use of extcon framework to work for
+ non OTG case
+Thread-Topic: [PATCH v1 1/2] usb: chipidea: use of extcon framework to work
+ for non OTG case
+Thread-Index: AQHViCsAqaE2F5BkzEikzWHSfo+rUadl6qoAgADFcwCAATcWgA==
+Date:   Wed, 23 Oct 2019 08:28:07 +0000
+Message-ID: <20191023082755.GA8578@b29397-desktop>
+References: <20191021161654.14353-1-igor.opaniuk@gmail.com>
+ <20191022020748.GA26973@b29397-desktop>
+ <CAByghJbAnAN8dVAa0taPfLiMx2r4evcZhoryfZYyxjYiaFpTsw@mail.gmail.com>
+In-Reply-To: <CAByghJbAnAN8dVAa0taPfLiMx2r4evcZhoryfZYyxjYiaFpTsw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peter.chen@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 9cc61e58-47ce-4f6f-e93a-08d75792ee79
+x-ms-traffictypediagnostic: VI1PR04MB6237:|VI1PR04MB6237:
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-antispam-prvs: <VI1PR04MB62378EC0BE0C343636CD29168B6B0@VI1PR04MB6237.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 019919A9E4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(136003)(376002)(39860400002)(346002)(366004)(396003)(189003)(199004)(54906003)(316002)(71190400001)(86362001)(66946007)(66476007)(64756008)(76116006)(66446008)(66556008)(71200400001)(66066001)(25786009)(305945005)(3846002)(6116002)(91956017)(33716001)(7736002)(256004)(4326008)(14444005)(2906002)(229853002)(6246003)(6916009)(44832011)(11346002)(446003)(6436002)(14454004)(6486002)(76176011)(478600001)(1076003)(99286004)(7416002)(102836004)(6506007)(26005)(53546011)(33656002)(476003)(9686003)(8936002)(81166006)(81156014)(6512007)(8676002)(486006)(186003)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6237;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Zh5LH72q/kc751CNMU73zv6xWZgPWyvCKJR6sxxhoD0C/7nyfAkkOozByGAcgFsXyUGeggJ9sO+eCWvxaXu46f0mno44WjyubCbNjTx3dTCZbrH7WJGWwvpcJWqsC7hz/lMl0LLKGlMK2JHJP003xzhyfcVWOOULyt9GOM+n6YlceiQbm6GjisIWiG72JqAVpYvgttKykB8ruDtC2tv4DAcbpqLnAquXN9kNnIngW0EiP+9ZeRp0fMpX/k73VpGTos9fDzMwtCj6E3g5V7AhCUUDy6zPjSMrbX+/hOOGmipZ0tzB+RuEnUj++ZIHx2Mz3fmg2leWH2ngUGji9KYUnvP7arOPUjo6vO0hNJa7dzJ+0zN2reoSvQsGrzxVV++T9KzzHULod/ui/uxs+fOkW/F5WTFm+xRPjRCQ/JyhKpgEBx7nhvlbBThjPz5fjaeE
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <06F95D668D4926478A4E443058C4F085@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(39860400002)(346002)(396003)(189003)(199004)(107886003)(126002)(8676002)(336012)(36756003)(186003)(26005)(70586007)(70206006)(4326008)(106002)(50466002)(50226002)(316002)(305945005)(246002)(5660300002)(426003)(7636002)(110136005)(476003)(54906003)(86362001)(8936002)(48376002)(51416003)(7696005)(2616005)(47776003)(6666004)(356004)(2870700001)(486006)(2906002)(44832011)(14444005)(478600001)(5024004)(1076003)(142933001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB3274;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d5b18cbb-e8c5-4dbf-55e1-08d75792bf70
-X-MS-TrafficTypeDiagnostic: DM5PR03MB3274:
-X-Microsoft-Antispam-PRVS: <DM5PR03MB3274D46F3A4E97A38A27AB1FF96B0@DM5PR03MB3274.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-Forefront-PRVS: 019919A9E4
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: BIZfUiSvyrFWnfsLloqDohdhJ8iM9qObHgPGRvHfC4QpAjmCoyCO/Xs2samxcGEi801IGQh3Tx1lmgpg7OiL2dHI5kyLQe1wjoVBXVcGsXvI4PaoKgRpM6R/0MTVXr1qmHvgcK92wHL56fYmKGe3Tc378P7xVyuehmY3Qrk2QE/hUGLPA+68G8Byl/tVmUQ9wqwCMN4+MumiAODTdLrvt8yTnsUCfOZMhORAzSzaVjeyW5gfX7y5fQ1GWc+t5FOtcmT7V09tazivLk050txKKr0gMIhrx61PzRDaeftDTNhsBhjqLpwUuCmZuOeMpd5mEa2a2/2T82/qoqK1GnmTdxkKTVBZfIg5W8+K24yaBkRJRqMRouWGJE53wDpU4F5fLYJeaxyPXp1qWB4NpESMIl86S+2SA/mgOLvEOWYETtltQVn01SiJgJw2yH8WW++U
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2019 08:26:48.4236
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cc61e58-47ce-4f6f-e93a-08d75792ee79
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2019 08:28:07.2833
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5b18cbb-e8c5-4dbf-55e1-08d75792bf70
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3274
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-23_02:2019-10-22,2019-10-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 phishscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 spamscore=0 bulkscore=0
- mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910230083
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vazHGy8wCgUfIC1Bh94aA9Ebvo3Z4QblygpPzTsk2hOj1U+v/npcD7d/6xmeN8EgQE2CQFG4aJnL8Pqoy61xsg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6237
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The iio_triggered_buffer_postenable() hook should be called first to
-attach the poll function and the iio_triggered_buffer_predisable() hook
-should be called last in the predisable hook.
+On 19-10-22 16:54:30, Igor Opaniuk wrote:
+> Hi Peter,
+>=20
+> On Tue, Oct 22, 2019 at 5:11 AM Peter Chen <peter.chen@nxp.com> wrote:
+> >
+> > On 19-10-21 19:16:53, Igor Opaniuk wrote:
+> > > From: Stefan Agner <stefan.agner@toradex.com>
+> > >
+> > > The existing usage of extcon in chipidea driver freezes the kernel
+> > > presumably due to OTGSC register access.
+> > >
+> > > Prevent accessing any OTG registers for SoC with dual role devices
+> > > but no true OTG support. Use the flag CI_HDRC_DUAL_ROLE_NOT_OTG for
+> > > those devices and in case extcon is present, do the role switch
+> > > using extcon only.
+> >
+> > Hi Igor & Stefan,
+> >
+> > I have several questions about the problem you met:
+> > - Which vendor's controller you have used?
+> > - What do you mean "no true OTG"? Does it mean no "OTGSC" register?
+>=20
+> Probably the commit message adds a bit of confusion here
+> (I've kept the original one from the patch in our downstream kernel,
+> but will probably reword it).
+>=20
+> The actual problem is that USB_OTG1_ID pin isn't wired, so we can't rely
+> on the value of ID pin state in OTGSC for the role detection.
+> In our SoM (Colibri iMX6ULL) ID pin from USB connector is wired
+> to SNVS_TAMPER2 which is pinmuxed as GPIO pin (GPIO5_02),
+> [1] (this is schematic for the Carrier Board, not SoM (isn't publicly
+> available),
+> but there is a pretty good explanation + schematic
+> in the section "2.3.2.2 USB 2.0 OTG Schematic Example ").
 
-This change updates the driver to attach/detach the poll func in the
-correct order.
+Ok, I clear now. Then, you may not use CI_HDRC_DUAL_ROLE_NOT_OTG which
+is for the controller without OTGSC. For imx6ull, access OTGSC will not
+hang the system if USB is NOT at suspend mode.
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/iio/humidity/hdc100x.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+Current upstream design has already considered the user case for switch
+role through GPIO, but there is an issue that the external cable
+wakeup doesn't work, I will submit it later (see ci_extcon_wakeup_int
+implementation at downstream kernel).
 
-diff --git a/drivers/iio/humidity/hdc100x.c b/drivers/iio/humidity/hdc100x.c
-index bfe1cdb16846..963ff043eecf 100644
---- a/drivers/iio/humidity/hdc100x.c
-+++ b/drivers/iio/humidity/hdc100x.c
-@@ -278,31 +278,34 @@ static int hdc100x_buffer_postenable(struct iio_dev *indio_dev)
- 	struct hdc100x_data *data = iio_priv(indio_dev);
- 	int ret;
- 
-+	ret = iio_triggered_buffer_postenable(indio_dev);
-+	if (ret)
-+		return ret;
-+
- 	/* Buffer is enabled. First set ACQ Mode, then attach poll func */
- 	mutex_lock(&data->lock);
- 	ret = hdc100x_update_config(data, HDC100X_REG_CONFIG_ACQ_MODE,
- 				    HDC100X_REG_CONFIG_ACQ_MODE);
- 	mutex_unlock(&data->lock);
- 	if (ret)
--		return ret;
-+		iio_triggered_buffer_predisable(indio_dev);
- 
--	return iio_triggered_buffer_postenable(indio_dev);
-+	return ret;
- }
- 
- static int hdc100x_buffer_predisable(struct iio_dev *indio_dev)
- {
- 	struct hdc100x_data *data = iio_priv(indio_dev);
--	int ret;
--
--	/* First detach poll func, then reset ACQ mode. OK to disable buffer */
--	ret = iio_triggered_buffer_predisable(indio_dev);
--	if (ret)
--		return ret;
-+	int ret, ret2;
- 
- 	mutex_lock(&data->lock);
- 	ret = hdc100x_update_config(data, HDC100X_REG_CONFIG_ACQ_MODE, 0);
- 	mutex_unlock(&data->lock);
- 
-+	ret2 = iio_triggered_buffer_predisable(indio_dev);
-+	if (ret == 0)
-+		ret = ret2;
-+
- 	return ret;
- }
- 
--- 
-2.20.1
+You could try to disable runtime-pm to see if the behaviour is expected
+or not, if it is NOT expected, please report what's that?
 
+>=20
+> >
+> > >       if (dr_mode =3D=3D USB_DR_MODE_OTG || dr_mode =3D=3D USB_DR_MOD=
+E_HOST) {
+> > >               ret =3D ci_hdrc_host_init(ci);
+> > > @@ -1145,8 +1208,18 @@ static int ci_hdrc_probe(struct platform_devic=
+e *pdev)
+> > >
+> > >       if (!ci_otg_is_fsm_mode(ci)) {
+> > >               /* only update vbus status for peripheral */
+> > > -             if (ci->role =3D=3D CI_ROLE_GADGET)
+> > > -                     ci_handle_vbus_change(ci);
+> > > +             if (dr_mode =3D=3D USB_DR_MODE_PERIPHERAL) {
+> > > +                     usb_gadget_vbus_connect(&ci->gadget);
+> >
+> > We only use ci->role at runtime, since it has already considered the
+> > dts setting, kernel configuration and hardware setting.
+> >
+> > If your controller doesn't otgsc register, but do need to support
+> > role switch, you may enhance the function ci_get_role
+>=20
+> Btw, ci_get_role() implementation still resides in the NXP dowstream kern=
+el
+> and I've never seen anything posted to the ML (if it was, could you
+> please point me to
+> the patch?). I can introduce the new one, which wraps both OTGSC handling
+> + extcon for CI_HDRC_DUAL_ROLE_NOT_OTG controllers.
+
+Sorry about that, I just read code for the upstream kernel with some
+downstream patches on it.
+
+>=20
+> Frankly speaking, I don't know the reason why additional workqueue (ci->w=
+ork_dr)
+> was introduced (will try to reach Stefan regarding this).
+> As I see it's valid to call extcon_get_state() from the atomic
+> context, so probably
+> using something like ci_get_role()(or ci_detect_role(), whatever)
+> instead of explicitly
+> retrieving bits from OTGSC in every ID pin check is a good choice.
+>=20
+
+There are VBUS and ID events handling which are not non-atomic.
+
+--=20
+
+Thanks,
+Peter Chen=
