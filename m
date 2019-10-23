@@ -2,161 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5605CE153A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:05:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B20BDE157C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:14:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390861AbfJWJEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 05:04:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52432 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390314AbfJWJEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 05:04:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2C3B1B83F;
-        Wed, 23 Oct 2019 09:04:28 +0000 (UTC)
-Date:   Wed, 23 Oct 2019 11:04:22 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Waiman Long <longman@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Aquini <aquini@redhat.com>, Mel Gorman <mgorman@suse.de>
-Subject: Re: [PATCH] mm/vmstat: Reduce zone lock hold time when reading
- /proc/pagetypeinfo
-Message-ID: <20191023090422.GK754@dhcp22.suse.cz>
-References: <20191022162156.17316-1-longman@redhat.com>
- <20191022165745.GT9379@dhcp22.suse.cz>
- <20191023083143.GC3016@techsingularity.net>
+        id S2390738AbfJWJOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 05:14:03 -0400
+Received: from smtp86.ord1d.emailsrvr.com ([184.106.54.86]:51309 "EHLO
+        smtp86.ord1d.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732361AbfJWJOD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 05:14:03 -0400
+X-Greylist: delayed 449 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Oct 2019 05:14:02 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+        s=20190130-41we5z8j; t=1571821592;
+        bh=OegGS/GRixpjinYAdFnaxb8OEXr2UIj9Qvl4F/12miI=;
+        h=Subject:To:From:Date:From;
+        b=BXvd9oNTpVecEoseU+lgJdvLtTENOEg+nAXG77Djswpvi9Qkovbkxgsw5u8nND2ih
+         onXmzFSvI1PlxN8ilcbq4RqNvd2X0s+E5H+rbok4ifCeDRbTEXKZ0dvVCcYCIyh0WG
+         2ccuX3JTanTZoHOwmOKV0j6WHaKbXkzKZwhD2WrA=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp3.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 2B1AD60080;
+        Wed, 23 Oct 2019 05:06:32 -0400 (EDT)
+X-Sender-Id: abbotti@mev.co.uk
+Received: from [10.0.0.173] (remote.quintadena.com [81.133.34.160])
+        (using TLSv1.2 with cipher AES128-SHA)
+        by 0.0.0.0:465 (trex/5.7.12);
+        Wed, 23 Oct 2019 05:06:32 -0400
+Subject: Re: [PATCH -next] staging: comedi: dt2814: remove set but not used
+ variables 'data'
+To:     YueHaibing <yuehaibing@huawei.com>, hsweeten@visionengravers.com,
+        gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20191023074827.33264-1-yuehaibing@huawei.com>
+From:   Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+Message-ID: <39229719-55d4-4a71-f698-95ce491496b4@mev.co.uk>
+Date:   Wed, 23 Oct 2019 10:06:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023083143.GC3016@techsingularity.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191023074827.33264-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 23-10-19 09:31:43, Mel Gorman wrote:
-> On Tue, Oct 22, 2019 at 06:57:45PM +0200, Michal Hocko wrote:
-> > [Cc Mel]
-> > 
-> > On Tue 22-10-19 12:21:56, Waiman Long wrote:
-> > > The pagetypeinfo_showfree_print() function prints out the number of
-> > > free blocks for each of the page orders and migrate types. The current
-> > > code just iterates the each of the free lists to get counts.  There are
-> > > bug reports about hard lockup panics when reading the /proc/pagetyeinfo
-> > > file just because it look too long to iterate all the free lists within
-> > > a zone while holing the zone lock with irq disabled.
-> > > 
-> > > Given the fact that /proc/pagetypeinfo is readable by all, the possiblity
-> > > of crashing a system by the simple act of reading /proc/pagetypeinfo
-> > > by any user is a security problem that needs to be addressed.
-> > 
-> > Should we make the file 0400? It is a useful thing when debugging but
-> > not something regular users would really need for life.
-> > 
+On 23/10/2019 08:48, YueHaibing wrote:
+> drivers/staging/comedi/drivers/dt2814.c:193:6:
+>   warning: variable data set but not used [-Wunused-but-set-variable]
 > 
-> I think this would be useful in general. The information is not that
-> useful outside of debugging. Even then it's only useful when trying to
-> get a handle on why a path like compaction is taking too long.
-
-So can we go with this to address the security aspect of this and have
-something trivial to backport.
-
-> > > There is a free_area structure associated with each page order. There
-> > > is also a nr_free count within the free_area for all the different
-> > > migration types combined. Tracking the number of free list entries
-> > > for each migration type will probably add some overhead to the fast
-> > > paths like moving pages from one migration type to another which may
-> > > not be desirable.
-> > 
-> > Have you tried to measure that overhead?
-> >  
+> It is never used, so can be removed.
 > 
-> I would prefer this option not be taken. It would increase the cost of
-> watermark calculations which is a relatively fast path.
-
-Is the change for the wmark check going to require more than
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index c0b2e0306720..5d95313ba4a5 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3448,9 +3448,6 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
- 		struct free_area *area = &z->free_area[o];
- 		int mt;
- 
--		if (!area->nr_free)
--			continue;
--
- 		for (mt = 0; mt < MIGRATE_PCPTYPES; mt++) {
- 			if (!free_area_empty(area, mt))
- 				return true;
-
-Is this really going to be visible in practice? Sure we are going to do
-more checks but most orders tend to have at least some memory in a
-reasonably balanced system and we can hardly expect an optimal
-allocation path on those that are not.
- 
-> > > we can actually skip iterating the list of one of the migration types
-> > > and used nr_free to compute the missing count. Since MIGRATE_MOVABLE
-> > > is usually the largest one on large memory systems, this is the one
-> > > to be skipped. Since the printing order is migration-type => order, we
-> > > will have to store the counts in an internal 2D array before printing
-> > > them out.
-> > > 
-> > > Even by skipping the MIGRATE_MOVABLE pages, we may still be holding the
-> > > zone lock for too long blocking out other zone lock waiters from being
-> > > run. This can be problematic for systems with large amount of memory.
-> > > So a check is added to temporarily release the lock and reschedule if
-> > > more than 64k of list entries have been iterated for each order. With
-> > > a MAX_ORDER of 11, the worst case will be iterating about 700k of list
-> > > entries before releasing the lock.
-> > 
-> > But you are still iterating through the whole free_list at once so if it
-> > gets really large then this is still possible. I think it would be
-> > preferable to use per migratetype nr_free if it doesn't cause any
-> > regressions.
-> > 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>   drivers/staging/comedi/drivers/dt2814.c | 8 ++------
+>   1 file changed, 2 insertions(+), 6 deletions(-)
 > 
-> I think it will. The patch as it is contains the overhead within the
-> reader of the pagetypeinfo proc file which is a non-critical path. The
-> page allocator paths on the other hand is very important.
+> diff --git a/drivers/staging/comedi/drivers/dt2814.c b/drivers/staging/comedi/drivers/dt2814.c
+> index d2c7157..e7c6787 100644
+> --- a/drivers/staging/comedi/drivers/dt2814.c
+> +++ b/drivers/staging/comedi/drivers/dt2814.c
+> @@ -186,21 +186,17 @@ static int dt2814_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
+>   
+>   static irqreturn_t dt2814_interrupt(int irq, void *d)
+>   {
+> -	int lo, hi;
+>   	struct comedi_device *dev = d;
+>   	struct dt2814_private *devpriv = dev->private;
+>   	struct comedi_subdevice *s = dev->read_subdev;
+> -	int data;
+>   
+>   	if (!dev->attached) {
+>   		dev_err(dev->class_dev, "spurious interrupt\n");
+>   		return IRQ_HANDLED;
+>   	}
+>   
+> -	hi = inb(dev->iobase + DT2814_DATA);
+> -	lo = inb(dev->iobase + DT2814_DATA);
+> -
+> -	data = (hi << 4) | (lo >> 4);
+> +	inb(dev->iobase + DT2814_DATA);
+> +	inb(dev->iobase + DT2814_DATA);
+>   
+>   	if (!(--devpriv->ntrig)) {
+>   		int i;
+> 
 
-As pointed out in other email. The problem with this patch is that it
-hasn't really removed the iteration over the whole free_list which is
-the primary problem. So I think that we should either consider this a
-non-issue and make it "admin knows this is potentially expensive" or do
-something like Andrew was suggesting if we do not want to change the
-nr_free accounting.
+Those variables are currently unused due to a bug that I need to fix.
 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 6afc892a148a..83c0295ecddc 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1386,8 +1386,16 @@ static void pagetypeinfo_showfree_print(struct seq_file *m,
- 
- 			area = &(zone->free_area[order]);
- 
--			list_for_each(curr, &area->free_list[mtype])
-+			list_for_each(curr, &area->free_list[mtype]) {
- 				freecount++;
-+				if (freecount > BIG_NUMBER) {
-+					seq_printf(">%6lu ", freecount);
-+					spin_unlock_irq(&zone->lock);
-+					cond_resched();
-+					spin_lock_irq(&zone->lock);
-+					continue;
-+				}
-+			}
- 			seq_printf(m, "%6lu ", freecount);
- 		}
- 		seq_putc(m, '\n');
+
 -- 
-Michal Hocko
-SUSE Labs
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
