@@ -2,91 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC2C6E1064
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 05:06:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59E2AE1072
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 05:17:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389628AbfJWDGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 23:06:05 -0400
-Received: from sender4-pp-o94.zoho.com ([136.143.188.94]:25429 "EHLO
-        sender4-pp-o94.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732703AbfJWDGE (ORCPT
+        id S1731656AbfJWDRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 23:17:16 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:47212 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727154AbfJWDRQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 23:06:04 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1571799948; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=CwQbYnVGK6JbEVTd9NtY96mgOIX0S+1ATTxhKH6VxhNzWUnsqqcDB0OZHWcZwcp3mbH9V5BqvHHf0MOPiX91Tw3Z5aRCxyKnKL4LSv6SsDlJ4siMmQpq6dTwQb4kZUwhMhtFFuN5B3Q3M/w3Nn73za1nSi1KZo5SvB0srFM/pBA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1571799948; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To; 
-        bh=A/dWkEZHy42hUUFI5RXmIqSsQ6EBJgvvYOFnxw/N3t4=; 
-        b=Eh2bimbhGUK1gwV1cbkQMGalwW3rTZnKoiiVQl1SLWmVy1+Ko/cp3gTza0I7Dn12y2TweUbxWA17sQPxhy50BhjUnWhqHFryX2avFmQo5u5dfZl91Lb6K69y+1Jw5AYMx/7SQNn1eHaTi+2FqFQDz/oOArXo84R5twIB7KLbGwY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=neLtYkaMBFP1gAOPQuIsPSE3OhcyzIhcENIuUYhFXPQCKAc5an/KZWbTWD7y4qzj9MW6tOKT0n3m
-    h+GTfZXTDBIevAFmBsGiMiaeJjuzUMAhJGsuzxyTJnQyWmxuylGr  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1571799948;
-        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        l=1209; bh=A/dWkEZHy42hUUFI5RXmIqSsQ6EBJgvvYOFnxw/N3t4=;
-        b=CR8UgsX/Hty7kc2s+vlfAcUNwUQF8BDLekPCoqA61JtdnZhoKJIgSUME1WANanqK
-        0jqrq0af12Fp1zDvF7Tthk+oZF92VnOl0iuYFTIvxdgp81Q9QSQKNoUU8matWmIhV7C
-        vW7u2Babilr8yvR7QWQdVWmrTrHhHv5VfWotQbi0=
-Received: from zhouyanjie-virtual-machine.lan (182.148.156.27 [182.148.156.27]) by mx.zohomail.com
-        with SMTPS id 1571799946481488.59997078669005; Tue, 22 Oct 2019 20:05:46 -0700 (PDT)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        paul.burton@mips.com, vkoul@kernel.org, paul@crapouillou.net,
-        mark.rutland@arm.com, Zubair.Kakakhel@imgtec.com,
-        dan.j.williams@intel.com
-Subject: [PATCH 2/2] DMA: JZ4780: Add support for the X1000.
-Date:   Wed, 23 Oct 2019 11:05:03 +0800
-Message-Id: <1571799903-44561-3-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1571799903-44561-1-git-send-email-zhouyanjie@zoho.com>
-References: <1571799903-44561-1-git-send-email-zhouyanjie@zoho.com>
-X-ZohoMailClient: External
+        Tue, 22 Oct 2019 23:17:16 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iN795-0007Lx-Tp; Wed, 23 Oct 2019 03:17:12 +0000
+Date:   Wed, 23 Oct 2019 04:17:11 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: Re: [PATCH v6 11/43] compat_ioctl: move drivers to compat_ptr_ioctl
+Message-ID: <20191023031711.GA26530@ZenIV.linux.org.uk>
+References: <20191009190853.245077-1-arnd@arndb.de>
+ <20191009191044.308087-11-arnd@arndb.de>
+ <20191022043451.GB20354@ZenIV.linux.org.uk>
+ <CAK8P3a1C=skow522Ge7w=ya2hK8TPS8ncusdyX-Ne4GBWB1H4A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1C=skow522Ge7w=ya2hK8TPS8ncusdyX-Ne4GBWB1H4A@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for probing the dma-jz4780 driver on the X1000 Soc.
+On Tue, Oct 22, 2019 at 12:26:09PM +0200, Arnd Bergmann wrote:
+> On Tue, Oct 22, 2019 at 6:34 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Wed, Oct 09, 2019 at 09:10:11PM +0200, Arnd Bergmann wrote:
+> > > Each of these drivers has a copy of the same trivial helper function to
+> > > convert the pointer argument and then call the native ioctl handler.
+> > >
+> > > We now have a generic implementation of that, so use it.
+> >
+> > I'd rather flipped your #7 (ceph_compat_ioctl() introduction) past
+> > that one...
+> 
+> The idea was to be able to backport the ceph patch as a bugfix
+> to stable kernels without having to change it or backport
+> compat_ptr_ioctl() as well.
+> 
+> If you still prefer it that way, I'd move to a simpler version of this
+> patch and drop the Cc:stable.
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
----
- drivers/dma/dma-jz4780.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+What I'm going to do is to put the introduction of compat_ptr_ioctl()
+into a never-rebased branch; having e.g. ceph patch done on top of
+it should suffice - it can go into -stable just fine.  Trivially
+backported all the way back, has no prereqs and is guaranteed to
+cause no conflicts, so if any -stable fodder ends up depending upon
+it, there will be no problem whatsoever.  IMO that commit should
+precede everything else in the queue...
 
-diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 7fe9309..c7f1199 100644
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -1012,11 +1012,18 @@ static const struct jz4780_dma_soc_data jz4780_dma_soc_data = {
- 	.flags = JZ_SOC_DATA_ALLOW_LEGACY_DT | JZ_SOC_DATA_PROGRAMMABLE_DMA,
- };
- 
-+static const struct jz4780_dma_soc_data x1000_dma_soc_data = {
-+	.nb_channels = 8,
-+	.transfer_ord_max = 7,
-+	.flags = JZ_SOC_DATA_ALLOW_LEGACY_DT | JZ_SOC_DATA_PROGRAMMABLE_DMA,
-+};
-+
- static const struct of_device_id jz4780_dma_dt_match[] = {
- 	{ .compatible = "ingenic,jz4740-dma", .data = &jz4740_dma_soc_data },
- 	{ .compatible = "ingenic,jz4725b-dma", .data = &jz4725b_dma_soc_data },
- 	{ .compatible = "ingenic,jz4770-dma", .data = &jz4770_dma_soc_data },
- 	{ .compatible = "ingenic,jz4780-dma", .data = &jz4780_dma_soc_data },
-+	{ .compatible = "ingenic,x1000-dma", .data = &x1000_dma_soc_data },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, jz4780_dma_dt_match);
--- 
-2.7.4
-
-
+Another thing is that I'd fold #8 into #6 - it clearly belongs
+in there.
