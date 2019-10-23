@@ -2,39 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78DE6E1742
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:03:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3651BE1751
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390968AbfJWKDt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 06:03:49 -0400
-Received: from mga05.intel.com ([192.55.52.43]:56935 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390897AbfJWKDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 06:03:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 03:03:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
-   d="scan'208";a="223133571"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by fmsmga004.fm.intel.com with ESMTP; 23 Oct 2019 03:03:47 -0700
-Subject: Re: [PATCH] usb: xhci: fix Immediate Data Transfer endianness
-To:     Samuel Holland <samuel@sholland.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20191020015313.4558-1-samuel@sholland.org>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <f5029323-9b3b-1c66-3c89-c3230d5a24ea@linux.intel.com>
-Date:   Wed, 23 Oct 2019 13:05:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2391035AbfJWKGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 06:06:21 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56624 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390361AbfJWKGV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 06:06:21 -0400
+Received: from [114.245.47.48] (helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <aaron.ma@canonical.com>)
+        id 1iNDX0-0006Qg-9r; Wed, 23 Oct 2019 10:06:18 +0000
+Subject: Re: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
+To:     Kailang <kailang@realtek.com>, Takashi Iwai <tiwai@suse.de>
+Cc:     "perex@perex.cz" <perex@perex.cz>,
+        "hui.wang@canonical.com" <hui.wang@canonical.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20191022153855.14368-1-aaron.ma@canonical.com>
+ <s5hpniodaq4.wl-tiwai@suse.de> <848ebd7fd86e4c05936e70f500f718e9@realtek.com>
+From:   Aaron Ma <aaron.ma@canonical.com>
+Autocrypt: addr=aaron.ma@canonical.com; prefer-encrypt=mutual; keydata=
+ mQENBFffeLkBCACi4eE4dPsgWN6B9UDOVcAvb5QgU/hRG6yS0I1lGKQv4KA+bke0c5g8clbO
+ 9gIlIl2bityfA9NzBsDik4Iei3AxMbFyxv9keMwcOFQBIOZF0P3f05qjxftF8P+yp9QTV4hp
+ BkFzsXzWRgXN3r8hU8wqZybepF4B1C83sm2kQ5A5N0AUGbZli9i2G+/VscG9sWfLy8T7f4YW
+ MjmlijCjoV6k29vsmTWQPZ7EApNpvR5BnZQPmQWzkkr0lNXlsKcyLgefQtlwg6drK4fe4wz0
+ ouBIHJEiXE1LWK1hUzkCUASra4WRwKk1Mv/NLLE/aJRqEvF2ukt3uVuM77RWfl7/H/v5ABEB
+ AAG0IUFhcm9uIE1hIDxhYXJvbi5tYUBjYW5vbmljYWwuY29tPokBNwQTAQgAIQUCV994uQIb
+ AwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDNxCzQfVU6ntJ9B/9aVy0+RkLqF9QpLmw+
+ LAf1m3Fd+4ZarPTerqDqkLla3ekYhbrEtlI1mYuB5f+gtrIjmcW27gacHdslKB9YwaL8B4ZB
+ GJKhcrntLg4YPzYUnXZkHHTv1hMw7fBYw82cBT+EbG0Djh6Po6Ihqyr3auHhfFcp1PZH4Mtq
+ 6hN5KaDZzF/go+tRF5e4bn61Nhdue7mrhFSlfkzLG2ehHWmRV+S91ksH81YDFnazK0sRINBx
+ V1S8ts3WJ2f1AbgmnDlbK3c/AfI5YxnIHn/x2ZdXj1P/wn7DgZHmpMy5DMuk0gN34NLUPLA/
+ cHeKoBAF8emugljiKecKBpMTLe8FrVOxbkrauQENBFffeLkBCACweKP3Wx+gK81+rOUpuQ00
+ sCyKzdtMuXXJ7oL4GzYHbLfJq+F+UHpQbytVGTn3R5+Y61v41g2zTYZooaC+Hs1+ixf+buG2
+ +2LZjPSELWPNzH9lsKNlCcEvu1XhyyHkBDbnFFHWlUlql3nSXMo//dOTG/XGKaEaZUxjCLUC
+ 8ehLc16DJDvdXsPwWhHrCH/4k92F6qQ14QigBMsl75jDTDJMEYgRYEBT1D/bwxdIeoN1BfIG
+ mYgf059RrWax4SMiJtVDSUuDOpdwoEcZ0FWesRfbFrM+k/XKiIbjMZSvLunA4FIsOdWYOob4
+ Hh0rsm1G+fBLYtT+bE26OWpQ/lSn4TdhABEBAAGJAR8EGAEIAAkFAlffeLkCGwwACgkQzcQs
+ 0H1VOp6p5Af/ap5EVuP1AhFdPD3pXLNrUUt72W3cuAOjXyss43qFC2YRjGfktrizsDjQU46g
+ VKoD6EW9XUPgvYM+k8BJEoXDLhHWnCnMKlbHP3OImxzLRhF4kdlnLicz1zKRcessQatRpJgG
+ NIiD+eFyh0CZcWBO1BB5rWikjO/idicHao2stFdaBmIeXvhT9Xp6XNFEmzOmfHps+kKpWshY
+ 9LDAU0ERBNsW4bekOCa/QxfqcbZYRjrVQvya0EhrPhq0bBpzkIL/7QSBMcdv6IajTlHnLARF
+ nAIofCEKeEl7+ksiRapL5Nykcbt4dldE3sQWxIybC94SZ4inENKw6I8RNpigWm0R5w==
+Message-ID: <892889ae-0ce1-fbf6-d19f-50a5686e84c2@canonical.com>
+Date:   Wed, 23 Oct 2019 18:06:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20191020015313.4558-1-samuel@sholland.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <848ebd7fd86e4c05936e70f500f718e9@realtek.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -42,31 +63,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.10.2019 4.53, Samuel Holland wrote:
-> The arguments to queue_trb are always byteswapped to LE for placement in
-> the ring, but this should not happen in the case of immediate data; the
-> bytes copied out of transfer_buffer are already in the correct order.
-> Add a complementary byteswap so the bytes end up in the ring correctly.
+On 10/23/19 4:44 PM, Kailang wrote:
 > 
-> This was observed on BE ppc64 with a "Texas Instruments TUSB73x0
-> SuperSpeed USB 3.0 xHCI Host Controller [104c:8241]" as a ch341
-> usb-serial adapter ("1a86:7523 QinHeng Electronics HL-340 USB-Serial
-> adapter") always transmitting the same character (generally NUL) over
-> the serial link regardless of the key pressed.
 > 
+>> -----Original Message-----
+>> From: Takashi Iwai <tiwai@suse.de>
+>> Sent: Wednesday, October 23, 2019 12:08 AM
+>> To: Aaron Ma <aaron.ma@canonical.com>
+>> Cc: perex@perex.cz; Kailang <kailang@realtek.com>;
+>> hui.wang@canonical.com; alsa-devel@alsa-project.org;
+>> linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
+>>
+>> On Tue, 22 Oct 2019 17:38:55 +0200,
+>> Aaron Ma wrote:
+>>>
+>>> These 2 ThinkCentres installed a new realtek codec ID 0x623, it has 2
+>>> front mics with the same location on pin 0x18 and 0x19.
+>>>
+>>> Apply fixup ALC283_FIXUP_HEADSET_MIC to change 1 front mic location to
+>>> right, then pulseaudio can handle them.
+>>> One "Front Mic" and one "Mic" will be shown, and audio output works
+>>> fine.
+>>>
+>>> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+>>
+>> I'd like to have Kailang's review about the new codec before applying.
+>>
+>> Kailang, could you take a look?
+> OK.
+> I will post you the patch for ALC623 codec tomorrow.
+> Thanks.
 
-Thanks, nice catch.
+Cc me too.
 
-It's unfortunate that we ended up with a situation where this fix is the
-least intrusive one.
-With IDT we would just want to memcpy() bytes an not care about endianness,
-but on BE we end up storing data bytes in a u64, and start with a complementary u64
-byteswap to counter a later u32 byteswap done after splitting the u64 to upper
-and lower 32 bit parts.
+Thank you.
+Aaron
 
-This because that TRB field is normally used for 64bit data buffer pointers,
-and all code is written to support that
-
-adding to queue
-
--Mathias
+> 
+>>
+>>
+>> thanks,
+>>
+>> Takashi
+>>
+>>> ---
+>>>  sound/pci/hda/patch_realtek.c | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/sound/pci/hda/patch_realtek.c
+>>> b/sound/pci/hda/patch_realtek.c index b000b36ac3c6..c34d8b435f58
+>>> 100644
+>>> --- a/sound/pci/hda/patch_realtek.c
+>>> +++ b/sound/pci/hda/patch_realtek.c
+>>> @@ -7186,6 +7186,8 @@ static const struct snd_pci_quirk alc269_fixup_tbl[]
+>> = {
+>>>  	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station",
+>> ALC294_FIXUP_LENOVO_MIC_LOCATION),
+>>>  	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station",
+>> ALC294_FIXUP_LENOVO_MIC_LOCATION),
+>>>  	SND_PCI_QUIRK(0x17aa, 0x3151, "ThinkCentre Station",
+>>> ALC283_FIXUP_HEADSET_MIC),
+>>> +	SND_PCI_QUIRK(0x17aa, 0x3178, "ThinkCentre Station",
+>> ALC283_FIXUP_HEADSET_MIC),
+>>> +	SND_PCI_QUIRK(0x17aa, 0x3176, "ThinkCentre Station",
+>>> +ALC283_FIXUP_HEADSET_MIC),
+>>>  	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80",
+>> ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+>>>  	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210",
+>> ALC283_FIXUP_INT_MIC),
+>>>  	SND_PCI_QUIRK(0x17aa, 0x3978, "Lenovo B50-70",
+>>> ALC269_FIXUP_DMIC_THINKPAD_ACPI), @@ -9187,6 +9189,7 @@ static
+>> const struct hda_device_id snd_hda_id_realtek[] = {
+>>>  	HDA_CODEC_ENTRY(0x10ec0298, "ALC298", patch_alc269),
+>>>  	HDA_CODEC_ENTRY(0x10ec0299, "ALC299", patch_alc269),
+>>>  	HDA_CODEC_ENTRY(0x10ec0300, "ALC300", patch_alc269),
+>>> +	HDA_CODEC_ENTRY(0x10ec0623, "ALC623", patch_alc269),
+>>>  	HDA_CODEC_REV_ENTRY(0x10ec0861, 0x100340, "ALC660",
+>> patch_alc861),
+>>>  	HDA_CODEC_ENTRY(0x10ec0660, "ALC660-VD", patch_alc861vd),
+>>>  	HDA_CODEC_ENTRY(0x10ec0861, "ALC861", patch_alc861),
+>>> --
+>>> 2.17.1
+>>>
+>>
+>> ------Please consider the environment before printing this e-mail.
