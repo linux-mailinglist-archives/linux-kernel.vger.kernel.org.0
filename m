@@ -2,69 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAD70E220F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:47:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91528E2219
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:52:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732029AbfJWRrh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 13:47:37 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:38668 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730513AbfJWRrg (ORCPT
+        id S1732257AbfJWRw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 13:52:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:20620 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730584AbfJWRw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:47:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1571852843; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=n2YxJuEgeum48XOf8+NOF4s4gfxtGM+tvTtwbCujb0E=;
-        b=wM7lI1FgaKyh76bG9Ww+hKrY1LJdZa77wh81VQWYjUAV5hBPf57jMfsS1miWOxYk6XeMm9
-        XWhcRuwEHjLZiW987ljqJdrP7JX95TPMiRDQ7yhoS09VQdUs2AdnJ9XWpmzn292P5wr+nw
-        O4d0hx9FAQnxdel5rdG/8W/u22Ays/w=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        od@zcrc.me, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 3/3] watchdog: jz4740: Drop dependency on MACH_JZ47xx
-Date:   Wed, 23 Oct 2019 19:47:14 +0200
-Message-Id: <20191023174714.14362-3-paul@crapouillou.net>
-In-Reply-To: <20191023174714.14362-1-paul@crapouillou.net>
-References: <20191023174714.14362-1-paul@crapouillou.net>
-MIME-Version: 1.0
+        Wed, 23 Oct 2019 13:52:29 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9NHX1rx048517
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 13:52:27 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vtt20bm7b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 13:52:27 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 23 Oct 2019 18:52:25 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 23 Oct 2019 18:52:22 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9NHqLjt58523784
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Oct 2019 17:52:21 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 916004C052;
+        Wed, 23 Oct 2019 17:52:21 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 187A44C044;
+        Wed, 23 Oct 2019 17:52:20 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.184.174])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 23 Oct 2019 17:52:19 +0000 (GMT)
+Subject: Re: [PATCH v1 5/6] KEYS: measure queued keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        dhowells@redhat.com, casey@schaufler-ca.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+Date:   Wed, 23 Oct 2019 13:52:19 -0400
+In-Reply-To: <89d778d1-1ac9-4a58-b159-7db68b7fa4ad@linux.microsoft.com>
+References: <20191023001818.3684-1-nramas@linux.microsoft.com>
+         <20191023001818.3684-6-nramas@linux.microsoft.com>
+         <1571836990.5104.96.camel@linux.ibm.com>
+         <89d778d1-1ac9-4a58-b159-7db68b7fa4ad@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19102317-4275-0000-0000-000003764C0B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19102317-4276-0000-0000-00003889740D
+Message-Id: <1571853139.5104.154.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-23_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910230168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Depending on MACH_JZ47xx prevent us from creating a generic kernel that
-works on more than one MIPS board. Instead, we just depend on MIPS being
-set.
+On Wed, 2019-10-23 at 10:34 -0700, Lakshmi Ramasubramanian wrote:
+> On 10/23/19 6:23 AM, Mimi Zohar wrote:
+> 
+> > The ordering of this patch set is awkward.  It should first introduce
+> > a generic method for measuring keys based on the keyring.  Then add
+> > the additional support needed for the specific builtin_trusted_keys
+> > keyring usecase.
+> 
+> Would the following ordering of the patch set be acceptable:
+> 
+>   => PATCH 0/5: Cover letter
+> 
+>   => PATCH 1/5: Define the enum "hook(BUILTIN_TRUSTED_KEYS)" in ima.h
+> 
+>   => PATCH 2/5: Define ima hook
+>                 This will initially do nothing if ima is not yet
+>                 initialized.
+>                 Call process_buffer_measurement() if ima is initialized.
+> 
+>   => PATCH 3/5: key_create_or_update change and the call to ima hook
+> 
+>   => PATCH 4/5: Queue\De-Queue of key measurement requests.
+>                 Enable queuing of key in the ima hook if ima is not
+>                 initialized.
+> 
+>   => PATCH 5/5: ima policy to enable measurement of keys which will
+>                 enable end-to-end working of this feature.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
----
+The first patches need to introduce the generic concept of measuring
+keys based on policy.  Only afterwards would you add any builtin
+trusted keyring specific code.
 
-Notes:
-    v2: Rebase on top of 5.4-rc4
-
- drivers/watchdog/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index dbef995856bf..fd4844f0a8f3 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -1641,7 +1641,7 @@ config INDYDOG
- 
- config JZ4740_WDT
- 	tristate "Ingenic jz4740 SoC hardware watchdog"
--	depends on MACH_JZ4740 || MACH_JZ4780
-+	depends on MIPS
- 	depends on COMMON_CLK
- 	select WATCHDOG_CORE
- 	select MFD_SYSCON
--- 
-2.23.0
+Mimi
 
