@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7CF4E18F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36D06E18BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:22:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391110AbfJWLXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 07:23:47 -0400
-Received: from mga14.intel.com ([192.55.52.115]:29695 "EHLO mga14.intel.com"
+        id S2404826AbfJWLWD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 07:22:03 -0400
+Received: from mga05.intel.com ([192.55.52.43]:63098 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404685AbfJWLWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2404696AbfJWLWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 23 Oct 2019 07:22:00 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 04:21:59 -0700
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 04:21:59 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
-   d="scan'208";a="399359439"
+   d="scan'208";a="210009575"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 23 Oct 2019 04:21:55 -0700
+  by orsmga002.jf.intel.com with ESMTP; 23 Oct 2019 04:21:55 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 0D4C81CB; Wed, 23 Oct 2019 14:21:55 +0300 (EEST)
+        id 1689823E; Wed, 23 Oct 2019 14:21:55 +0300 (EEST)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-usb@vger.kernel.org
 Cc:     Andreas Noever <andreas.noever@gmail.com>,
@@ -38,9 +38,9 @@ Cc:     Andreas Noever <andreas.noever@gmail.com>,
         Oliver Neukum <oneukum@suse.com>,
         Christian Kellner <ckellner@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 01/25] thunderbolt: Introduce tb_switch_is_icm()
-Date:   Wed, 23 Oct 2019 14:21:30 +0300
-Message-Id: <20191023112154.64235-2-mika.westerberg@linux.intel.com>
+Subject: [PATCH 02/25] thunderbolt: Log switch route string on config read/write timeout
+Date:   Wed, 23 Oct 2019 14:21:31 +0300
+Message-Id: <20191023112154.64235-3-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191023112154.64235-1-mika.westerberg@linux.intel.com>
 References: <20191023112154.64235-1-mika.westerberg@linux.intel.com>
@@ -51,89 +51,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We currently differentiate between SW CM (Software Connection Manager,
-sometimes also called External Connection Manager) and ICM (Firmware
-based Connection Manager, Internal Connection Manager) by looking
-directly at the sw->config.enabled field which may be rather hard to
-understand for the casual reader. For this reason introduce a wrapper
-function with documentation that should make the intention more clear.
+This helps to point out which switch config read/write triggered the
+timeout.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/thunderbolt/lc.c     |  4 ++--
- drivers/thunderbolt/switch.c |  4 ++--
- drivers/thunderbolt/tb.h     | 14 ++++++++++++++
- 3 files changed, 18 insertions(+), 4 deletions(-)
+ drivers/thunderbolt/ctl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/thunderbolt/lc.c b/drivers/thunderbolt/lc.c
-index ae1e92611c3e..af38076088f6 100644
---- a/drivers/thunderbolt/lc.c
-+++ b/drivers/thunderbolt/lc.c
-@@ -94,7 +94,7 @@ int tb_lc_configure_link(struct tb_switch *sw)
- 	struct tb_port *up, *down;
- 	int ret;
+diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
+index 2ec1af8f7968..d97813e80e5f 100644
+--- a/drivers/thunderbolt/ctl.c
++++ b/drivers/thunderbolt/ctl.c
+@@ -962,8 +962,8 @@ int tb_cfg_read(struct tb_ctl *ctl, void *buffer, u64 route, u32 port,
+ 		return tb_cfg_get_error(ctl, space, &res);
  
--	if (!sw->config.enabled || !tb_route(sw))
-+	if (!tb_route(sw) || tb_switch_is_icm(sw))
- 		return 0;
+ 	case -ETIMEDOUT:
+-		tb_ctl_warn(ctl, "timeout reading config space %u from %#x\n",
+-			    space, offset);
++		tb_ctl_warn(ctl, "%llx: timeout reading config space %u from %#x\n",
++			    route, space, offset);
+ 		break;
  
- 	up = tb_upstream_port(sw);
-@@ -124,7 +124,7 @@ void tb_lc_unconfigure_link(struct tb_switch *sw)
- {
- 	struct tb_port *up, *down;
+ 	default:
+@@ -988,8 +988,8 @@ int tb_cfg_write(struct tb_ctl *ctl, const void *buffer, u64 route, u32 port,
+ 		return tb_cfg_get_error(ctl, space, &res);
  
--	if (sw->is_unplugged || !sw->config.enabled || !tb_route(sw))
-+	if (sw->is_unplugged || !tb_route(sw) || tb_switch_is_icm(sw))
- 		return;
+ 	case -ETIMEDOUT:
+-		tb_ctl_warn(ctl, "timeout writing config space %u to %#x\n",
+-			    space, offset);
++		tb_ctl_warn(ctl, "%llx: timeout writing config space %u to %#x\n",
++			    route, space, offset);
+ 		break;
  
- 	up = tb_upstream_port(sw);
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index 5ea8db667e83..f9efd670d032 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -986,7 +986,7 @@ static int tb_plug_events_active(struct tb_switch *sw, bool active)
- 	u32 data;
- 	int res;
- 
--	if (!sw->config.enabled)
-+	if (tb_switch_is_icm(sw))
- 		return 0;
- 
- 	sw->config.plug_events_delay = 0xff;
-@@ -1710,7 +1710,7 @@ static int tb_switch_add_dma_port(struct tb_switch *sw)
- 	}
- 
- 	/* Root switch DMA port requires running firmware */
--	if (!tb_route(sw) && sw->config.enabled)
-+	if (!tb_route(sw) && !tb_switch_is_icm(sw))
- 		return 0;
- 
- 	sw->dma_port = dma_port_alloc(sw);
-diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index 6407d529871d..1565af2e48cb 100644
---- a/drivers/thunderbolt/tb.h
-+++ b/drivers/thunderbolt/tb.h
-@@ -591,6 +591,20 @@ static inline bool tb_switch_is_fr(const struct tb_switch *sw)
- 	}
- }
- 
-+/**
-+ * tb_switch_is_icm() - Is the switch handled by ICM firmware
-+ * @sw: Switch to check
-+ *
-+ * In case there is a need to differentiate whether ICM firmware or SW CM
-+ * is handling @sw this function can be called. It is valid to call this
-+ * after tb_switch_alloc() and tb_switch_configure() has been called
-+ * (latter only for SW CM case).
-+ */
-+static inline bool tb_switch_is_icm(const struct tb_switch *sw)
-+{
-+	return !sw->config.enabled;
-+}
-+
- int tb_wait_for_port(struct tb_port *port, bool wait_if_unplugged);
- int tb_port_add_nfc_credits(struct tb_port *port, int credits);
- int tb_port_set_initial_credits(struct tb_port *port, u32 credits);
+ 	default:
 -- 
 2.23.0
 
