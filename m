@@ -2,58 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED53E17D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:26:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D155DE17DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:27:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404274AbfJWKZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 06:25:58 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34563 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404042AbfJWKZ6 (ORCPT
+        id S2404340AbfJWK1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 06:27:52 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34113 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733253AbfJWK1w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 06:25:58 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v3so5989152wmh.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 03:25:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hazent-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Az7GdSb+e6TdjHcHdIa3JCr0/3rrdnc/fgd5bd/3iww=;
-        b=fI+o7jbYb3n+SZzHk/tq/7rzJV5liOoXtUp9W6GyQ26jncKxp1OonqYSGlf0yweLmt
-         5aSk5KYE2mMm22/k7ecPb1ffZZ4ERARz3Saps9aFBKvQnJyKxgFmWVdmbdFEA0A8rxKd
-         mk0QTMMsJnSgtUot7gDwK7xnHyrGR58tShsW5zlC+3jjkt7DmbNK1kQemkDH029g/Axj
-         q9SOqdofyZcKgZAGCMmFSmSpB4yN6CMtT2UytG2xZpzB42fVAhSmLpYIecR+vvUwVqAy
-         O5O3RG3xLi9E4ar9qulZ/nHOsmp5VOyDXRFI6HwCQDDq/YEghCeJV+L95g+SWG0+szl5
-         SIyA==
+        Wed, 23 Oct 2019 06:27:52 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t16so16323457wrr.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 03:27:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Az7GdSb+e6TdjHcHdIa3JCr0/3rrdnc/fgd5bd/3iww=;
-        b=TpYIfNEm1zv9ZKzYcPvQBo5aqr+qi9j5aAbRmKAx/dTu3pwSlyjhE3Mojg5P9n60P/
-         FjLmPXRggaEAz5canI/7PGE0UdvrakebxvH8PW4FHEvmPtNxF+w1V6++pOPPehDcO5J5
-         0JNH3gBz1TILBrEXRlYKlmOn6uPMqfRVoE7Ss9I6xE4PZo/6CvAa13vuOl8QJJigj/x9
-         EomywUrfBZYwR4Ef7QNZmpHAsbdeE/0ZkgJt+hciTtKpmIb7wy12lgNqJAbCFV05xpU+
-         pGFwqrD11y3H/HtJi1/h1iP9u5ba4B3rbDKFTZ9gPQm7oJ2se98b5H+zT1Woe13Y+6qJ
-         lZAQ==
-X-Gm-Message-State: APjAAAUtydxYrFwUx0dIr9RsM4GjFUe0C9QUG0eciHP7HWCJlyh8DquQ
-        tzeyd1/MxfyWPGXI/OtnS1RdHQ==
-X-Google-Smtp-Source: APXvYqxVLWttQAwlsY3dG0DxuB8fZT0ysWMSuHeOsGPJ2uJL8m4ti8uBNdeioogb40RlvJR/K0Igqw==
-X-Received: by 2002:a1c:1901:: with SMTP id 1mr7112162wmz.28.1571826356170;
-        Wed, 23 Oct 2019 03:25:56 -0700 (PDT)
-Received: from salem.gmr.ssr.upm.es (salem.gmr.ssr.upm.es. [138.4.36.7])
-        by smtp.gmail.com with ESMTPSA id v20sm17424441wml.26.2019.10.23.03.25.54
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=WB7/i5uuRwyukis66Pg18JvXY3b0KiEPdqkT6P2Dv5I=;
+        b=R7x6VqVuX7lVkmCO+K2fDj/vYXfgGxw/ejpqrsQfonR+8OMs7MVVN9Cdq2EpfLXNGU
+         CmtSHbJOrdtfKjHA+LsqS5uh9v7KpfIkmPKxoBx1i5GkQ9ALmtop69IgQtIEPjV5gYhm
+         /qD7fydWMTA3ZD2Y7HiW/wS9ka+zTm/IVor/16czzynERlOTjbdhStRfCrTnNO/kq/6y
+         3Ffvga9fWCsuxGrnBao5AAAxs0x2M+PwwsL84UPTiTtd+mU8sLUmI7nbEpWUIqpSLhe7
+         kPqNg6VHNIYAtqChxVoLux8YxID1CM25Sp+GMNSZr3df22ryRw1HOw1w2IxdosdlFirk
+         ol2g==
+X-Gm-Message-State: APjAAAX2+EFXoyYiAVlc/9gOHGZrqjfUy2Dcc72z4Gl1ZLxm4/pIoasu
+        OAICdWCeDVzqhLZtoZ1CUwQ=
+X-Google-Smtp-Source: APXvYqxhanNo7P+GGioOseTpZYeqbU9Rk+Vt1EErh5XE4tuQ07F4oXbDPsz/GAFPh2pt4bzO8TH5xA==
+X-Received: by 2002:adf:9b9d:: with SMTP id d29mr7760523wrc.293.1571826469733;
+        Wed, 23 Oct 2019 03:27:49 -0700 (PDT)
+Received: from tiehlicka.suse.cz (ip-37-188-173-3.eurotel.cz. [37.188.173.3])
+        by smtp.gmail.com with ESMTPSA id u21sm18234122wmu.27.2019.10.23.03.27.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 03:25:55 -0700 (PDT)
-From:   Alvaro Gamez Machado <alvaro.gamez@hazent.com>
-To:     Michal Simek <monstr@monstr.eu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Alvaro Gamez Machado <alvaro.gamez@hazent.com>
-Subject: [PATCH v2] microblaze: add support for reserved memory defined by device tree
-Date:   Wed, 23 Oct 2019 12:25:48 +0200
-Message-Id: <20191023102548.15164-1-alvaro.gamez@hazent.com>
-X-Mailer: git-send-email 2.23.0
+        Wed, 23 Oct 2019 03:27:48 -0700 (PDT)
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>, Waiman Long <longman@redhat.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <guro@fb.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Aquini <aquini@redhat.com>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH 0/2] mm/vmstat: Reduce zone lock hold time when reading /proc/pagetypeinfo
+Date:   Wed, 23 Oct 2019 12:27:35 +0200
+Message-Id: <20191023102737.32274-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191023095607.GE3016@techsingularity.net>
+References: <20191023095607.GE3016@techsingularity.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,37 +57,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows reserving regions of physical memory from the device tree.
-See Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-for more details.
+On Wed 23-10-19 10:56:08, Mel Gorman wrote:
+> On Wed, Oct 23, 2019 at 11:04:22AM +0200, Michal Hocko wrote:
+> > So can we go with this to address the security aspect of this and have
+> > something trivial to backport.
+> > 
+> 
+> Yes.
 
-Signed-off-by: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
----
- arch/microblaze/mm/init.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Ok, patch 1 in reply to this email.
 
-diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-index a015a951c8b7..b69362fbfdbd 100644
---- a/arch/microblaze/mm/init.c
-+++ b/arch/microblaze/mm/init.c
-@@ -17,6 +17,7 @@
- #include <linux/slab.h>
- #include <linux/swap.h>
- #include <linux/export.h>
-+#include <linux/of_fdt.h>
- 
- #include <asm/page.h>
- #include <asm/mmu_context.h>
-@@ -188,6 +189,9 @@ void __init setup_memory(void)
- 
- void __init mem_init(void)
- {
-+	early_init_fdt_reserve_self();
-+	early_init_fdt_scan_reserved_mem();
-+
- 	high_memory = (void *)__va(memory_start + lowmem_size - 1);
- 
- 	/* this will put all memory onto the freelists */
+> > > > > There is a free_area structure associated with each page order. There
+> > > > > is also a nr_free count within the free_area for all the different
+> > > > > migration types combined. Tracking the number of free list entries
+> > > > > for each migration type will probably add some overhead to the fast
+> > > > > paths like moving pages from one migration type to another which may
+> > > > > not be desirable.
+> > > > 
+> > > > Have you tried to measure that overhead?
+> > > >  
+> > > 
+> > > I would prefer this option not be taken. It would increase the cost of
+> > > watermark calculations which is a relatively fast path.
+> > 
+> > Is the change for the wmark check going to require more than
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index c0b2e0306720..5d95313ba4a5 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -3448,9 +3448,6 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
+> >  		struct free_area *area = &z->free_area[o];
+> >  		int mt;
+> >  
+> > -		if (!area->nr_free)
+> > -			continue;
+> > -
+> >  		for (mt = 0; mt < MIGRATE_PCPTYPES; mt++) {
+> >  			if (!free_area_empty(area, mt))
+> >  				return true;
+> > 
+> > Is this really going to be visible in practice? Sure we are going to do
+> > more checks but most orders tend to have at least some memory in a
+> > reasonably balanced system and we can hardly expect an optimal
+> > allocation path on those that are not.
+> >  
+> 
+> You also have to iterate over them all later in the same function.  The the
+> free counts are per migrate type then they would have to be iterated over
+> every time.
+> 
+> Similarly, there would be multiple places where all the counters would
+> have to be iterated -- find_suitable_fallback, show_free_areas,
+> fast_isolate_freepages, fill_contig_page_info, zone_init_free_lists etc.
+> 
+> It'd be a small cost but given that it's aimed at fixing a problem with
+> reading pagetypeinfo, is it really worth it? I don't think so.
+
+Fair enough.
+
+[...]
+> > As pointed out in other email. The problem with this patch is that it
+> > hasn't really removed the iteration over the whole free_list which is
+> > the primary problem. So I think that we should either consider this a
+> > non-issue and make it "admin knows this is potentially expensive" or do
+> > something like Andrew was suggesting if we do not want to change the
+> > nr_free accounting.
+> > 
+> 
+> Again, the cost is when reading a proc file. From what Andrew said,
+> the lock is necessary to safely walk the list but if anything. I would
+> be ok with limiting the length of the walk but honestly, I would also
+> be ok with simply deleting the proc file. The utility for debugging a
+> problem with it is limited now (it was more important when fragmentation
+> avoidance was first introduced) and there is little an admin can do with
+> the information. I can't remember the last time I asked for the contents
+> of the file when trying to debug a problem. There is a possibility that
+> someone will complain but I'm not aware of any utility that reads the
+> information and does something useful with it. In the unlikely event
+> something breaks, the file can be re-added with a limited walk.
+
+I went with a bound to the pages iteratred over in the free_list. See
+patch 2.
+
 -- 
-2.23.0
+Michal Hocko
+SUSE Labs
 
