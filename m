@@ -2,53 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D461E1F73
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 17:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7F87E1F7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 17:38:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406663AbfJWPiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 11:38:05 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:59818 "EHLO vps0.lunn.ch"
+        id S2406775AbfJWPih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 11:38:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390140AbfJWPiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 11:38:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=V3oDxr418GNArABHMwXWMqzw6a3zK7l1rUhwHe5yV+s=; b=iPF6zM0xmLLT26VQxQ2zDfozH6
-        Ufu9tk0izsRMbMRFuECX4f57dbespw4Njlr/xJPGeq68YebbFOw8Xj9T0O+y+tyD0VunoMF1NuFox
-        lGCahVUDmQuh4XIbsHjitNtcznHHv/WYZQ4/l6gBel6v2nWXsWav5UMM5b8RCVR5DLiQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1iNIhz-0007MJ-3W; Wed, 23 Oct 2019 17:37:59 +0200
-Date:   Wed, 23 Oct 2019 17:37:59 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] net: phy: dp83867: move dt parsing to probe
-Message-ID: <20191023153759.GA13748@lunn.ch>
-References: <20191023144846.1381-1-grygorii.strashko@ti.com>
- <20191023144846.1381-3-grygorii.strashko@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023144846.1381-3-grygorii.strashko@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2406692AbfJWPif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 11:38:35 -0400
+Received: from localhost.localdomain (unknown [194.230.155.217])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58C302064A;
+        Wed, 23 Oct 2019 15:38:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571845115;
+        bh=eE8y1vH8jBO0acryf9BCwImwIuhGJ07TIWhlosnHoNA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gu6Ab9QAgNfM7NGUJR3zkec5u+/CuBA16gfkL/0IFK2M8wzH4uDyT/qkxGVnmgoSO
+         QFQW79CTNSghX8IzQpE927M+HA3Ir9B1LwqlFj18bzKf6MouKcw0GZ8VWmBjkz/agk
+         2Xk2jUDyZRjUxTGfmT7NQTGHvpiBetl6kAXZnSVE=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 1/2] ARM: s3c: Rename s3c64xx_spi_setname() function
+Date:   Wed, 23 Oct 2019 17:38:23 +0200
+Message-Id: <20191023153824.6085-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 05:48:46PM +0300, Grygorii Strashko wrote:
-> Move DT parsing code to probe dp83867_probe() as it's one time operation.
-> 
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+The name s3c64xx_spi_setname() suggests it is shared with S3C64xx
+platform, but except of contents it is not.  It is called only by
+S3C24xx code, so make it clear in the name.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/mach-s3c24xx/s3c2416.c  | 2 +-
+ arch/arm/mach-s3c24xx/s3c2443.c  | 2 +-
+ arch/arm/mach-s3c24xx/spi-core.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-    Andrew
+diff --git a/arch/arm/mach-s3c24xx/s3c2416.c b/arch/arm/mach-s3c24xx/s3c2416.c
+index 1cdb7bd3e713..9514196cad8c 100644
+--- a/arch/arm/mach-s3c24xx/s3c2416.c
++++ b/arch/arm/mach-s3c24xx/s3c2416.c
+@@ -113,7 +113,7 @@ void __init s3c2416_map_io(void)
+ 	/* initialize device information early */
+ 	s3c2416_default_sdhci0();
+ 	s3c2416_default_sdhci1();
+-	s3c64xx_spi_setname("s3c2443-spi");
++	s3c24xx_spi_setname("s3c2443-spi");
+ 
+ 	iotable_init(s3c2416_iodesc, ARRAY_SIZE(s3c2416_iodesc));
+ }
+diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/s3c2443.c
+index 313e369c3ddd..4cbeb74cf3d6 100644
+--- a/arch/arm/mach-s3c24xx/s3c2443.c
++++ b/arch/arm/mach-s3c24xx/s3c2443.c
+@@ -91,7 +91,7 @@ void __init s3c2443_map_io(void)
+ 	s3c24xx_gpiocfg_default.get_pull = s3c2443_gpio_getpull;
+ 
+ 	/* initialize device information early */
+-	s3c64xx_spi_setname("s3c2443-spi");
++	s3c24xx_spi_setname("s3c2443-spi");
+ 
+ 	iotable_init(s3c2443_iodesc, ARRAY_SIZE(s3c2443_iodesc));
+ }
+diff --git a/arch/arm/mach-s3c24xx/spi-core.h b/arch/arm/mach-s3c24xx/spi-core.h
+index bb555ccbe057..1048fac629a2 100644
+--- a/arch/arm/mach-s3c24xx/spi-core.h
++++ b/arch/arm/mach-s3c24xx/spi-core.h
+@@ -11,7 +11,7 @@
+  */
+ 
+ /* re-define device name depending on support. */
+-static inline void s3c64xx_spi_setname(char *name)
++static inline void s3c24xx_spi_setname(char *name)
+ {
+ #ifdef CONFIG_S3C64XX_DEV_SPI0
+ 	s3c64xx_device_spi0.name = name;
+-- 
+2.17.1
+
