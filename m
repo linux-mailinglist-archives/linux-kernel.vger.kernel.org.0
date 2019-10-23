@@ -2,99 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03B9AE219C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:18:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52D48E21A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:19:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbfJWRSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 13:18:17 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35713 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbfJWRSR (ORCPT
+        id S1728821AbfJWRTM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 13:19:12 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39729 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728549AbfJWRTL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:18:17 -0400
-Received: by mail-wm1-f68.google.com with SMTP id v6so3436759wmj.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 10:18:15 -0700 (PDT)
+        Wed, 23 Oct 2019 13:19:11 -0400
+Received: by mail-lj1-f193.google.com with SMTP id y3so21945418ljj.6;
+        Wed, 23 Oct 2019 10:19:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=48XDzmeFiM9yOQfqbOoh8NKzWofKTXbdxGBYN62jtKs=;
-        b=K0hKL19qHw3J5tEam6YX1YovarKMfA3S6y4cNF77riVmCADwA/pXcYvmY0AeRHQ++Y
-         jIRM4zjpusmWcKoGcs1aG+IZEIaqeUcXqXbxWbxyqAXzTYi8q2iFgrUS+HRVCAY45cwA
-         OM+2clMI8peNxrDQUz6R18LprsOW4U7o1S9yUo1oU1nnr5EyvGHDwuvvgr2S70OeAlee
-         nqzFU5+Qt9bYt1TvxhXxJjm5enxaXLlnBA+hFq9MOiJdtN6VSULqfbftc8LjaUPw3WRR
-         JnAQXuWP7Es9gpasa98YAoNwV2rjgVR2XwUo9EYnWUVjRYrTdKrEXsNyY71PrfjfwBEU
-         PTNA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DnypHcyiSmDYpsEnrDTzJLRsh2gQEWlfzVr6c4JGW3s=;
+        b=IXEvy/Cs3F9Yw8kyCFMhSn+IrR/NXoG5FUCcrmhgxsxYeM32T0bAZWB5BSSGb5FQeQ
+         ic5Rr4dM4ZPwQ8pzEvB8yyOMZDhv6J0BRJ0XrBNqgtODlOwjvjXmj78gdcfdIzktgPsw
+         C0V59cUWLFMOrHqlw64fz/uQCuANctsbTbS7SDEpK7CSz0lRLQYEvsrFu1WxKJmw4onP
+         5tU8wbryvjWcV8J178St8tD2bIzl8teG86w3r6f7C34EvaM9/ZkDwY7rCa5pXAjcm6qL
+         wod1T1qUgG8L4CDU8T6/D0/izlClk0wg6h+c19Uw5gyI6Bl2jx/eAvAYgHIQETcf9vHt
+         sKSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=48XDzmeFiM9yOQfqbOoh8NKzWofKTXbdxGBYN62jtKs=;
-        b=runqY74oMLv/h+kGhZP7Zfm0PPtPP0NQ+T496nruX9tQkqne8ThL80RuyUm+s++x0v
-         Ja/FUSW2TV+sUVThdZbm042SNmn9YnhVHX1PoehGs2pO1KeIYtTYAT14xLBqS8GeoCsk
-         mLqwuC1WeggH7k7azwnveAliU6oR4x9aMVatrTYcJZHM63WVyLEs2hLavWzGy4MlURq7
-         hF+DD2fKreO8I9rkP0jwt562n7m5bN62GmBsp6bw9zDvhakBBK6sb1pLp4Rv/s+MZDnI
-         G1Ut5vKbZ+//t+8GDa8I2CopLNWB3Fai7NAyVgviLu6s1EM3CYR0tbgZIkR/G8I6v4y+
-         ah0w==
-X-Gm-Message-State: APjAAAWfUYmRBIJ6ImJpx0WRu0rMOxOwb6RYm9/N/Jm/asNkVGm6Sh33
-        usXdrBvGCChZZjtdJcC5BhJ26A==
-X-Google-Smtp-Source: APXvYqzNDT5y6csWeVLItVHdqJPlxCEQp3G7g/uwZZKeYuvL1K3rIgc2YTkz8U/QH+j0z4bPJx5fmQ==
-X-Received: by 2002:a7b:c049:: with SMTP id u9mr931749wmc.12.1571851094909;
-        Wed, 23 Oct 2019 10:18:14 -0700 (PDT)
-Received: from balsini.lon.corp.google.com ([2a00:79e0:d:210:e751:37a0:1e95:e65d])
-        by smtp.gmail.com with ESMTPSA id r65sm21571740wmr.9.2019.10.23.10.18.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 10:18:14 -0700 (PDT)
-From:   Alessio Balsini <balsini@android.com>
-To:     gregkh@linuxfoundation.org
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, Alessio Balsini <balsini@android.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 4.9 4.14] loop: Add LOOP_SET_DIRECT_IO to compat ioctl
-Date:   Wed, 23 Oct 2019 18:17:36 +0100
-Message-Id: <20191023171736.161697-1-balsini@android.com>
-X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
-In-Reply-To: <20190805115309.GJ2349@hirez.programming.kicks-ass.net>
-References: <20190805115309.GJ2349@hirez.programming.kicks-ass.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DnypHcyiSmDYpsEnrDTzJLRsh2gQEWlfzVr6c4JGW3s=;
+        b=q/hMHfdCT14TYgcJWIPwIYbYMfjdMMBt01DDZfvHcFG0xgzoY/XdiF3ZPUz8W9up6p
+         9eOefk75ySlORyRd2smxIHqEIyvV94UaGoWOIIPTBioxIy2qbSkWmYVorEFxeDLPqVWo
+         7QeAUAeLAz26pOmiQ2NRDCPp1D2lym/5Roc5nbqx4AY54Eblv/wNROPiYRwpe7v6WZjz
+         5GFBwExUjkLOZGwiCf4VljwVabYQdreVY8FsZPlA5qtzr5PMrD+FX9yyZwageMs/nop3
+         1GeaXaoCMa4My4iWgL6o2ZYct1mblo+e1p4gQOysT+iCoC/lsQ4Lrw/fRwwLFidfwA5d
+         RBCQ==
+X-Gm-Message-State: APjAAAXDBZIazYBJhDHzKQJQTWV0+tjc4a5gyvaYLIuWDq7t5s1d8N+r
+        gBIbKA5IxLnm9bhEXR/43ekoJMnGALxMJTRNGeI=
+X-Google-Smtp-Source: APXvYqytM3ljI+jWm3E+FZrjToihDhEk8GstYb412o1d3uBbgrjAaU2m0S2ecGjhHvSgvnPxlWWM1qTMQcAeO5jGqDE=
+X-Received: by 2002:a2e:9b12:: with SMTP id u18mr23724844lji.142.1571851149345;
+ Wed, 23 Oct 2019 10:19:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191023154038.24075-1-kpsingh@chromium.org>
+In-Reply-To: <20191023154038.24075-1-kpsingh@chromium.org>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 23 Oct 2019 10:18:57 -0700
+Message-ID: <CAADnVQJFyM9fDE0DoJmKFk71D9MScHzmzjDmvq3s-KjK1D6bVw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2] libbpf: Fix strncat bounds error in libbpf_prog_type_by_name
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Florent Revest <revest@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fdbe4eeeb1aac219b14f10c0ed31ae5d1123e9b8 ]
+On Wed, Oct 23, 2019 at 8:40 AM KP Singh <kpsingh@chromium.org> wrote:
+>
+> From: KP Singh <kpsingh@google.com>
+>
+> On compiling samples with this change, one gets an error:
+>
+>  error: =E2=80=98strncat=E2=80=99 specified bound 118 equals destination =
+size
+>   [-Werror=3Dstringop-truncation]
+>
+>     strncat(dst, name + section_names[i].len,
+>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>      sizeof(raw_tp_btf_name) - (dst - raw_tp_btf_name));
+>      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> strncat requires the destination to have enough space for the
+> terminating null byte.
+>
+> Fixes: f75a697e09137 ("libbpf: Auto-detect btf_id of BTF-based raw_tracep=
+oint")
+> Signed-off-by: KP Singh <kpsingh@google.com>
 
-Enabling Direct I/O with loop devices helps reducing memory usage by
-avoiding double caching.  32 bit applications running on 64 bits systems
-are currently not able to request direct I/O because is missing from the
-lo_compat_ioctl.
-
-This patch fixes the compatibility issue mentioned above by exporting
-LOOP_SET_DIRECT_IO as additional lo_compat_ioctl() entry.
-The input argument for this ioctl is a single long converted to a 1-bit
-boolean, so compatibility is preserved.
-
-Cc: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Alessio Balsini <balsini@android.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/block/loop.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index da3902ac16c86..8aadd4d0c3a88 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1557,6 +1557,7 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
- 		arg = (unsigned long) compat_ptr(arg);
- 	case LOOP_SET_FD:
- 	case LOOP_CHANGE_FD:
-+	case LOOP_SET_DIRECT_IO:
- 		err = lo_ioctl(bdev, mode, cmd, arg);
- 		break;
- 	default:
--- 
-2.23.0.866.gb869b98d4c-goog
-
+Applied. Thanks
