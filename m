@@ -2,107 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 326C2E19FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:25:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBF31E19F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:25:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391289AbfJWMZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 08:25:44 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:46734 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfJWMZn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:25:43 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9NCPevr108427;
-        Wed, 23 Oct 2019 07:25:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571833540;
-        bh=snNVf3bc8UtAfUt7sWc/Ao17r0XA6k0DLqh6nrpj5WU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=OjQIaDmgEPwwgfH0UshyjUySGXkavlhKcvCXh7pgBgWt3KK5FXIMjTi/cV+LIe2n9
-         ZbWOxcCRIJ7Bu3lPHIiuBQfCW9lQ6OS3OrozM2ZcCy9AKvS1b7TXuqFxUJDOOAahK4
-         WwcHnwymrnc0iR9ZKsTq1TmhLUXOlT2mSFHz8lRA=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9NCPe0R023680
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Oct 2019 07:25:40 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 23
- Oct 2019 07:25:40 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 23 Oct 2019 07:25:30 -0500
-Received: from [10.250.35.43] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9NCPe6t073320;
-        Wed, 23 Oct 2019 07:25:40 -0500
-Subject: Re: [PATCH v14 13/19] leds: lp55xx: Add multicolor framework support
- to lp55xx
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20191018122521.6757-1-dmurphy@ti.com>
- <20191018122521.6757-14-dmurphy@ti.com>
- <2da123af-8cbe-e143-73f2-ca741e0923d2@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <3b0a4424-b742-0f19-94ca-1ed24aa8692d@ti.com>
-Date:   Wed, 23 Oct 2019 07:25:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1732144AbfJWMZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 08:25:08 -0400
+Received: from mga04.intel.com ([192.55.52.120]:58290 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725775AbfJWMZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 08:25:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 05:25:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
+   d="scan'208";a="197412241"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 23 Oct 2019 05:25:06 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id ED6181F5; Wed, 23 Oct 2019 15:25:05 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] driver core: platform: Declare ret variable only once
+Date:   Wed, 23 Oct 2019 15:25:05 +0300
+Message-Id: <20191023122505.64684-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <2da123af-8cbe-e143-73f2-ca741e0923d2@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
+We may define ret variable only once and avoid adding it each time
+platform_get_irq_optional() get extended.
 
-On 10/18/19 5:02 PM, Jacek Anaszewski wrote:
-> Dan,
->
-> I forgot to mention one thing below.
->
-> On 10/18/19 2:25 PM, Dan Murphy wrote:
->> Add multicolor framework support for the lp55xx family.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
-> [...]
->
->> -	led->cdev.default_trigger = pdata->led_config[chan].default_trigger;
->>   
->>   	if (led->chan_nr >= max_channel) {
->>   		dev_err(dev, "Use channel numbers between 0 and %d\n",
->> @@ -170,18 +242,13 @@ static int lp55xx_init_led(struct lp55xx_led *led,
->>   		return -EINVAL;
->>   	}
->>   
->> -	led->cdev.brightness_set_blocking = lp55xx_set_brightness;
->> -	led->cdev.groups = lp55xx_led_groups;
->> -
->> -	if (pdata->led_config[chan].name) {
->> -		led->cdev.name = pdata->led_config[chan].name;
->> -	} else {
->> -		snprintf(name, sizeof(name), "%s:channel%d",
->> -			pdata->label ? : chip->cl->name, chan);
->> -		led->cdev.name = name;
->> -	}
->> +#if IS_ENABLED(CONFIG_LEDS_CLASS_MULTI_COLOR)
->> +	if (pdata->led_config[chan].num_colors > 1)
->> +		ret = devm_led_classdev_multicolor_register(dev, &led->mc_cdev);
->> +	else
->> +#endif
-> This looks odd. I think that no-ops from previous version were OK.
+For the sake of consistency do the same in __platform_get_irq_byname().
 
-Hmm.  I will add it back but there were issues compiling with modules.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/base/platform.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-But maybe if I use IS_ENABLED in the header that may solve the issue
-
-Dan
-
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index e0ca682a756d..dad9806875f7 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -106,9 +106,9 @@ int platform_get_irq_optional(struct platform_device *dev, unsigned int num)
+ 	return dev->archdata.irqs[num];
+ #else
+ 	struct resource *r;
+-	if (IS_ENABLED(CONFIG_OF_IRQ) && dev->dev.of_node) {
+-		int ret;
++	int ret;
+ 
++	if (IS_ENABLED(CONFIG_OF_IRQ) && dev->dev.of_node) {
+ 		ret = of_irq_get(dev->dev.of_node, num);
+ 		if (ret > 0 || ret == -EPROBE_DEFER)
+ 			return ret;
+@@ -117,8 +117,6 @@ int platform_get_irq_optional(struct platform_device *dev, unsigned int num)
+ 	r = platform_get_resource(dev, IORESOURCE_IRQ, num);
+ 	if (has_acpi_companion(&dev->dev)) {
+ 		if (r && r->flags & IORESOURCE_DISABLED) {
+-			int ret;
+-
+ 			ret = acpi_irq_get(ACPI_HANDLE(&dev->dev), num, r);
+ 			if (ret)
+ 				return ret;
+@@ -151,8 +149,7 @@ int platform_get_irq_optional(struct platform_device *dev, unsigned int num)
+ 	 * allows a common code path across either kind of resource.
+ 	 */
+ 	if (num == 0 && has_acpi_companion(&dev->dev)) {
+-		int ret = acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
+-
++		ret = acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
+ 		/* Our callers expect -ENXIO for missing IRQs. */
+ 		if (ret >= 0 || ret == -EPROBE_DEFER)
+ 			return ret;
+@@ -240,10 +237,9 @@ static int __platform_get_irq_byname(struct platform_device *dev,
+ 				     const char *name)
+ {
+ 	struct resource *r;
++	int ret;
+ 
+ 	if (IS_ENABLED(CONFIG_OF_IRQ) && dev->dev.of_node) {
+-		int ret;
+-
+ 		ret = of_irq_get_byname(dev->dev.of_node, name);
+ 		if (ret > 0 || ret == -EPROBE_DEFER)
+ 			return ret;
+-- 
+2.23.0
 
