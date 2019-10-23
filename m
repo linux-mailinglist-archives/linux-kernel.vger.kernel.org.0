@@ -2,153 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7085FE26BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 00:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EBCBE26C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 00:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392697AbfJWW4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 18:56:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727831AbfJWW4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 18:56:20 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77AFA21929;
-        Wed, 23 Oct 2019 22:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571871379;
-        bh=pH0FnxHuQ4uryY+5yag7Co6S+Z3nSAfsh/gAbdxNnLk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NZLyOT+ZqApYNjFfkvN4E7nfBNCZAjOdC/wzoETDChxjDRKMAXrf0iSDA2NpO1dAl
-         n3jrJoabu0ncBYm24CEnLneZZFelnIqDG07Oa2FG2xVneQxq6qjLqnh4rNvt1Xk8HB
-         diUUCetS09WEi0qR/QGP/DU2B2gikuUL57m32dSk=
-Date:   Wed, 23 Oct 2019 15:56:19 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Jani Nikula <jani.nikula@intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        Vishal Kulkarni <vishal@chelsio.com>, netdev@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v4] string-choice: add yesno(), onoff(),
- enableddisabled(), plural() helpers
-Message-Id: <20191023155619.43e0013f0c8c673a5c508c1e@linux-foundation.org>
-In-Reply-To: <20191023131308.9420-1-jani.nikula@intel.com>
-References: <20191023131308.9420-1-jani.nikula@intel.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+        id S2392718AbfJWW6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 18:58:21 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51522 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727831AbfJWW6U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 18:58:20 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9NMuW77060287;
+        Wed, 23 Oct 2019 22:57:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=mALkVjqe/dJFWOA+4tAmvsRvDbr3+wKdwJ8X0lzXfnw=;
+ b=k/4I8aqTrCxR9mMmyKw2CRiQQEi2p2m58pecHDF91Klae7yp8ZSY0ZH99VJFDa5dM3Jm
+ 93gsaMTqwg4dCmkSNcCsARoQRgX0AQnleWcMmBJhNilyNKrQfNspvT5OzJUP/JtQ6931
+ iUiHA+0gwgSOAVll9FfZPkathFqmMCg0IndF2rCG5uQGCROV1sacvffKaIFiS7BbQ2dy
+ 5uln7j/q39ofI5x2ZIK67M7qRndwe2+yQS/jktDfu0RRivDXxUtu8wsPix0GrfXngSkk
+ tto07CmaPk77GhCDtGsbbjqCypjpZngCqpGhxHNeKTSPTT435J+eN4Zw/gyhId7wLwP1 5w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2vqteq0asr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Oct 2019 22:57:52 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9NMs1XO058353;
+        Wed, 23 Oct 2019 22:57:52 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2vtsk30uyg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Oct 2019 22:57:51 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9NMvpWl028525;
+        Wed, 23 Oct 2019 22:57:51 GMT
+Received: from dhcp-10-159-238-126.vpn.oracle.com (/10.159.238.126)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 23 Oct 2019 15:57:50 -0700
+Subject: Re: [PATCH 4/5] tracing: Handle the trace array ref counter in new
+ functions
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
+        Srinivas Eeda <srinivas.eeda@oracle.com>,
+        Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+References: <1565805327-579-1-git-send-email-divya.indi@oracle.com>
+ <1565805327-579-5-git-send-email-divya.indi@oracle.com>
+ <20191015190436.65c8c7a3@gandalf.local.home>
+ <4cad186e-ba8b-8e1a-731b-4350a095ba5a@oracle.com>
+ <20191022225253.4086195c@oasis.local.home>
+From:   Divya Indi <divya.indi@oracle.com>
+Message-ID: <2b08751a-4028-2130-9a70-c2aa2d76a31c@oracle.com>
+Date:   Wed, 23 Oct 2019 15:57:49 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191022225253.4086195c@oasis.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9419 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910230205
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9419 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910230205
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Oct 2019 16:13:08 +0300 Jani Nikula <jani.nikula@intel.com> wrot=
-e:
+Hi Steven,                                                                         
+                                                                                 
+A few clarifications on this discussion on reference counter -                   
+                                                                                 
+1) We will still need to export trace_array_put() to be used for every           
+trace_array_get_by_name() OR trace_array_create() + trace_array_get().              
+                                                                                 
+How else will we reduce the reference counter [For eg: When multiple modules     
+lookup the same trace array (say, reference counter = 4)]?                       
+                                                                                 
+2) tr = trace_array_create("my_tr");                                             
+   trace_array_get(tr);                                                          
+                                                                                 
+Both of these functions will iterate through the list of trace arrays to verify  
+whether the trace array exists (redundant, but more intuitive? Does this seem    
+acceptable?)                                                                     
+                                                                                 
+To avoid iterating twice, we went with increasing ref_ctr in trace_array_create. 
+This necessitated a trace_array_put() in instance_mkdir (Or as suggested below,
+we can do this trace_array_put() in instance_rmdir().)                        
+                                                                                                               
+                                                                                 
+3) A summary of suggested changes (Let me know if this looks good) -                                              
+                                                                                 
+tr = trace_array_get_by_name("foo-bar"); // ref_ctr++.                           
+                                                                                 
+if (!tr)                                                                         
+{                                                                                
+        // instance_mkdir also causes ref_ctr = 1                                
+        tr = trace_array_create("foo-bar"); // ref_ctr = 1                       
+        trace_array_get(tr); // ref_ctr++                                        
+}                                                                                
+                                                                                 
+trace_array_printk(.....);                                                       
+trace_array_set_clr_event(......);                                               
+...                                                                              
+...                                                                              
+...                                                                              
+// Done using the trace array.                                                   
+trace_array_put(tr); // ref_ctr--                                                
+...                                                                              
+...                                                                              
+...                                                                              
+// We can now remove the trace array via trace_array_destroy or instance_rmdir()
+trace_array_destroy(tr); // ref_ctr > 1 returns -EBUSY.
+                                                       
+                          
+Thanks,                                                                          
+Divya 
 
-> The kernel has plenty of ternary operators to choose between constant
-> strings, such as condition ? "yes" : "no", as well as value =3D=3D 1 ? ""=
- :
-> "s":
->=20
-> $ git grep '? "yes" : "no"' | wc -l
-> 258
-> $ git grep '? "on" : "off"' | wc -l
-> 204
-> $ git grep '? "enabled" : "disabled"' | wc -l
-> 196
-> $ git grep '? "" : "s"' | wc -l
-> 25
->=20
-> Additionally, there are some occurences of the same in reverse order,
-> split to multiple lines, or otherwise not caught by the simple grep.
->=20
-> Add helpers to return the constant strings. Remove existing equivalent
-> and conflicting functions in i915, cxgb4, and USB core. Further
-> conversion can be done incrementally.
->=20
-> The main goal here is to abstract recurring patterns, and slightly clean
-> up the code base by not open coding the ternary operators.
-
-Fair enough.
-
-> --- /dev/null
-> +++ b/include/linux/string-choice.h
-> @@ -0,0 +1,31 @@
-> +/* SPDX-License-Identifier: MIT */
-> +/*
-> + * Copyright =A9 2019 Intel Corporation
-> + */
-> +
-> +#ifndef __STRING_CHOICE_H__
-> +#define __STRING_CHOICE_H__
-> +
-> +#include <linux/types.h>
-> +
-> +static inline const char *yesno(bool v)
-> +{
-> +	return v ? "yes" : "no";
-> +}
-> +
-> +static inline const char *onoff(bool v)
-> +{
-> +	return v ? "on" : "off";
-> +}
-> +
-> +static inline const char *enableddisabled(bool v)
-> +{
-> +	return v ? "enabled" : "disabled";
-> +}
-> +
-> +static inline const char *plural(long v)
-> +{
-> +	return v =3D=3D 1 ? "" : "s";
-> +}
-> +
-> +#endif /* __STRING_CHOICE_H__ */
-
-These aren't very good function names.  Better to create a kernel-style
-namespace such as "choice_" and then add the expected underscores:
-
-choice_yes_no()
-choice_enabled_disabled()
-choice_plural()
-
-(Example: note that slabinfo.c already has an "onoff()").
-
-
-Also, I worry that making these functions inline means that each .o
-file will contain its own copy of the strings ("yes", "no", "enabled",
-etc) if the .c file calls the relevant helper.  I'm not sure if the
-linker is smart enough (yet) to fix this up.  If not, we will end up
-with a smaller kernel by uninlining these functions.=20
-lib/string-choice.c would suit.
-
-And doing this will cause additional savings: calling a single-arg
-out-of-line function generates less .text than calling yesno().  When I
-did this:=20
-
---- a/include/linux/string-choice.h~string-choice-add-yesno-onoff-enableddi=
-sabled-plural-helpers-fix
-+++ a/include/linux/string-choice.h
-@@ -8,10 +8,7 @@
-=20
- #include <linux/types.h>
-=20
--static inline const char *yesno(bool v)
--{
--	return v ? "yes" : "no";
--}
-+const char *yesno(bool v);
-=20
- static inline const char *onoff(bool v)
- {
-
-The text segment of drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.o
-(78 callsites) shrunk by 118 bytes.
-
+On 10/22/19 7:52 PM, Steven Rostedt wrote:
+> On Wed, 16 Oct 2019 16:42:02 -0700
+> Divya Indi <divya.indi@oracle.com> wrote:
+>
+>> Hi Steve,
+>>
+>> Thanks again for taking the time to review and providing feedback. Please find my comments inline.
+>>
+>> On 10/15/19 4:04 PM, Steven Rostedt wrote:
+>>> Sorry for taking so long to getting to these patches.
+>>>
+>>> On Wed, 14 Aug 2019 10:55:26 -0700
+>>> Divya Indi <divya.indi@oracle.com> wrote:
+>>>  
+>>>> For functions returning a trace array Eg: trace_array_create(), we need to
+>>>> increment the reference counter associated with the trace array to ensure it
+>>>> does not get freed when in use.
+>>>>
+>>>> Once we are done using the trace array, we need to call
+>>>> trace_array_put() to make sure we are not holding a reference to it
+>>>> anymore and the instance/trace array can be removed when required.  
+>>> I think it would be more in line with other parts of the kernel if we
+>>> don't need to do the trace_array_put() before calling
+>>> trace_array_destroy().  
+>> The reason we went with this approach is
+>>
+>> instance_mkdir -          ref_ctr = 0  // Does not return a trace array ptr.
+>> trace_array_create -      ref_ctr = 1  // Since this returns a trace array ptr.
+>> trace_array_lookup -      ref_ctr = 1  // Since this returns a trace array ptr.
+>>
+>> if we make trace_array_destroy to expect ref_ctr to be 1, we risk destroying the trace array while in use.
+>>
+>> We could make it -
+>>
+>> instance_mkdir - 	ref_ctr = 1
+>> trace_array_create -    ref_ctr = 2
+>> trace_array_lookup -    ref_ctr = 2+  // depending on no of lookups
+>>
+>> but, we'd still need the trace_array_put() (?)
+>>
+>> We can also have one function doing create (if does not exist) or lookup (if exists), but that would require
+>> some redundant code since instance_mkdir needs to return -EXIST when a trace array already exists.
+>>
+>> Let me know your thoughts on this.
+>>
+> Can't we just move the trace_array_put() in the instance_rmdir()?
+>
+> static int instance_rmdir(const char *name)
+> {
+> 	struct trace_array *tr;
+> 	int ret;
+>
+> 	mutex_lock(&event_mutex);
+> 	mutex_lock(&trace_types_lock);
+>
+> 	ret = -ENODEV;
+> 	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
+> 		if (tr->name && strcmp(tr->name, name) == 0) {
+> 			__trace_array_put(tr);
+> 			ret = __remove_instance(tr);
+> 			if (ret)
+> 				tr->ref++;
+> 			break;
+> 		}
+> 	}
+>
+> 	mutex_unlock(&trace_types_lock);
+> 	mutex_unlock(&event_mutex);
+>
+> 	return ret;
+> }
+>
+> -- Steve
