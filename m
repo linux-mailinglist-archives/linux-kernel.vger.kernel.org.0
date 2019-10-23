@@ -2,51 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7737E17CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:25:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94510E17CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:25:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404402AbfJWKZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 06:25:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56386 "EHLO mail.kernel.org"
+        id S2404391AbfJWKZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 06:25:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391024AbfJWKZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 06:25:07 -0400
-Subject: Re: [GIT PULL] EDAC fix for 5.4
+        id S2391001AbfJWKZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 06:25:06 -0400
+Subject: Re: [GIT PULL] Btrfs fixes for 5.4-rc5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1571826306;
-        bh=b8F2m3SFJhpHjXyJAIps/x1YKc8omHwLdZOcjhr733U=;
+        bh=dkE3MrqlPJvwnrTN1PpFKAE8Ll7LIwAMZtG0/eVUxes=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=xx5KqGRbPXcoqODN1UtA4yBkarSY/nO5QJE9Hy94+tZ1mc7OEbLDGe2PZKU6Ih2jE
-         cAwvpZRIdv/N/O9FchDcS1XNUDDOXzJhZ94UI2Zv/EblwphjyLC+kXWGSsa/ShrSbS
-         hPUOOJe5nkpoOn6DeARpT0SRiq12OPGTzk0pm10w=
+        b=QKjMO6Iwqc6sLTVHlbFoAqM0SzLM1e/lUeMfH9HNby9O2345vN1Z2ACs8nV+SpsZb
+         qsuwxrYEvD7UajIyRzDK+FGo8ciSVXFjdWNWyZCDBdqrmq/M0Xit2owJwxqLc9+swq
+         2ASByCg2akqS8pjjk+lVMi0kBCcq/6VPuZQfjNB4=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191023073047.GD12272@zn.tnic>
-References: <20191023073047.GD12272@zn.tnic>
+In-Reply-To: <cover.1571751313.git.dsterba@suse.com>
+References: <cover.1571751313.git.dsterba@suse.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191023073047.GD12272@zn.tnic>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git
- tags/edac_urgent_for_5.4
-X-PR-Tracked-Commit-Id: 1e72e673b9d102ff2e8333e74b3308d012ddf75b
+X-PR-Tracked-Message-Id: <cover.1571751313.git.dsterba@suse.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.4-rc4-tag
+X-PR-Tracked-Commit-Id: ba0b084ac309283db6e329785c1dc4f45fdbd379
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e969c860d56345b2c2efd2bf2b6d8c716bdc1468
-Message-Id: <157182630681.4124.17219799857806635866.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 54955e3bfde54dcdd29694741f2ddfc6b763b193
+Message-Id: <157182630637.4124.5490393115058163263.pr-tracker-bot@kernel.org>
 Date:   Wed, 23 Oct 2019 10:25:06 +0000
-To:     Borislav Petkov <bp@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
+To:     David Sterba <dsterba@suse.com>
+Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 23 Oct 2019 09:30:47 +0200:
+The pull request you sent on Tue, 22 Oct 2019 15:52:07 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_5.4
+> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.4-rc4-tag
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e969c860d56345b2c2efd2bf2b6d8c716bdc1468
+https://git.kernel.org/torvalds/c/54955e3bfde54dcdd29694741f2ddfc6b763b193
 
 Thank you!
 
