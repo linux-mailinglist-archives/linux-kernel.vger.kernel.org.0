@@ -2,82 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FF52E0FD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 03:56:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90874E0FDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 03:59:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388189AbfJWB4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 21:56:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38770 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727582AbfJWB4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 21:56:23 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D82B52064A;
-        Wed, 23 Oct 2019 01:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571795782;
-        bh=7K4aAK3LqRh8jXXyar1/Xb/Z6TWqqFQnOKm4QUrFieo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pC4WKRsLT4Eq3kgZaw8DuTmD/QC0WMjYDHLMLBOcyBV8tMKHYe5I7oRo0gXqtL3GA
-         1mxLLvmFtnJHwDXBEWwHlckTDa7n+aqrUUjFfRGNQGgjDUVub3S8ArioIFjeDnI9I6
-         OyTtxz0s5jjxPXA04EmhWdMmpSjAm5IPBVQ469TA=
-Date:   Wed, 23 Oct 2019 10:56:18 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jaswinder.singh@linaro.org
-Subject: Re: [BUGFIX PATCH v2 1/5] selftests: proc: Make va_max 1GB on 32bit
- arch
-Message-Id: <20191023105618.48a8fcee869fbae8ead31cee@kernel.org>
-In-Reply-To: <20191021173053.GB5355@avx2>
-References: <157164647813.17692.3834082082658965225.stgit@devnote2>
-        <157164648909.17692.6080553792829040898.stgit@devnote2>
-        <20191021173053.GB5355@avx2>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1733251AbfJWB7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 21:59:38 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38032 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727582AbfJWB7i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 21:59:38 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9N1t6RI028643;
+        Wed, 23 Oct 2019 01:59:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=vumlNhIDpEfgHxXgVPRZJkF7ivtI8M5hQwk1p8n3CZg=;
+ b=Q97sViVSujkG1sGSwXzfEd1u5r0ZEV1JPXEvOzhGXss/yMBx6dOe80WT9QT1CXozWkNZ
+ cm7m6AI8A1xFAztt1FTrgDUR5PUmCXTCweyHZh6JZI55TIFWQEQgaT0S3VCiDOyO53jH
+ sQlWdRvkafHU1w/l+8EEGtTDI1uh9+Fm3UMiaVlima3+t2f415DdCAqLRO/mRL7QZrkj
+ Ifu8AnNswKFrI8gamOPcXpyZASodvOeHqDHcNoUebYFZFsi3TYCHFiXfF0e1AOLhDIEV
+ OmEgcUI4bXkktMjPXColBm92/lW9XztDPR7jBNzOyzMrfUCGOYunOhDod5ZkJPkcc0vF /A== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2vqswtjcdr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Oct 2019 01:59:19 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9N1sGPI043034;
+        Wed, 23 Oct 2019 01:59:19 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2vsp40wrt4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Oct 2019 01:59:18 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9N1xFLZ011819;
+        Wed, 23 Oct 2019 01:59:17 GMT
+Received: from z2.cn.oracle.com (/10.182.71.218)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 22 Oct 2019 18:59:14 -0700
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     rjw@rjwysocki.net, daniel.lezcano@linaro.org,
+        linux-pm@vger.kernel.org, mtosatti@redhat.com,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH v2] cpuidle: not unset the driver if it already exist
+Date:   Wed, 23 Oct 2019 09:57:14 +0800
+Message-Id: <1571795834-2027-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9418 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910230017
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9418 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910230017
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2019 20:30:53 +0300
-Alexey Dobriyan <adobriyan@gmail.com> wrote:
+__cpuidle_set_driver() check if there is an already exist driver and
+unset it before return with -EBUSY. The next call will succeed as it's
+just unset.
 
-> On Mon, Oct 21, 2019 at 05:28:09PM +0900, Masami Hiramatsu wrote:
-> > Currently proc-self-map-files-002.c sets va_max (max test address
-> > of user virtual address) to 4GB, but it is too big for 32bit
-> > arch and 1UL << 32 is overflow on 32bit long.
-> > 
-> > Make va_max 1GB on 32bit arch like i386 and arm.
-> 
-> > +#if __BITS_PER_LONG == 32
-> > +# define VA_MAX (1UL << 30)
-> > +#elif __BITS_PER_LONG == 64
-> > +# define VA_MAX (1UL << 32)
-> > +#else
-> > +# define VA_MAX 0
-> > +#endif
-> > +
-> >  int main(void)
-> >  {
-> >  	const int PAGE_SIZE = sysconf(_SC_PAGESIZE);
-> > -	const unsigned long va_max = 1UL << 32;
-> > +	const unsigned long va_max = VA_MAX;
-> 
-> No, just make it like 1MB unconditionally.
+check if any of the CPUs in the mask have a driver different from drv
+already and if so return -EBUSY before updating any cpuidle_drivers
+per-CPU pointers.
 
-Ah, I sse. BTW, would you mean 1GB?
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+---
+v2: update code logic per Rafael
 
-> This is not intended to cover all address space, just large enough part
-> (larger than reasonable vm.mmap_min_addr)
+ drivers/cpuidle/driver.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-Then, should we better to check the /proc/sys/vm/mmap_min_addr?
-
-Thank you,
-
+diff --git a/drivers/cpuidle/driver.c b/drivers/cpuidle/driver.c
+index 80c1a83..acfce04 100644
+--- a/drivers/cpuidle/driver.c
++++ b/drivers/cpuidle/driver.c
+@@ -62,24 +62,23 @@ static inline void __cpuidle_unset_driver(struct cpuidle_driver *drv)
+  * __cpuidle_set_driver - set per CPU driver variables for the given driver.
+  * @drv: a valid pointer to a struct cpuidle_driver
+  *
+- * For each CPU in the driver's cpumask, unset the registered driver per CPU
+- * to @drv.
+- *
+- * Returns 0 on success, -EBUSY if the CPUs have driver(s) already.
++ * Returns 0 on success, -EBUSY if any CPU in the cpumask have a driver
++ * different from drv already.
+  */
+ static inline int __cpuidle_set_driver(struct cpuidle_driver *drv)
+ {
+ 	int cpu;
+ 
+ 	for_each_cpu(cpu, drv->cpumask) {
++		struct cpuidle_driver *old_drv;
+ 
+-		if (__cpuidle_get_cpu_driver(cpu)) {
+-			__cpuidle_unset_driver(drv);
++		old_drv = __cpuidle_get_cpu_driver(cpu);
++		if (old_drv && old_drv != drv)
+ 			return -EBUSY;
+-		}
++	}
+ 
++	for_each_cpu(cpu, drv->cpumask)
+ 		per_cpu(cpuidle_drivers, cpu) = drv;
+-	}
+ 
+ 	return 0;
+ }
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+1.8.3.1
+
