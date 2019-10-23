@@ -2,269 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773F8E0F84
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 02:59:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6D2BE0F8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 03:07:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731988AbfJWA7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 20:59:01 -0400
-Received: from mga06.intel.com ([134.134.136.31]:32827 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731059AbfJWA7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 20:59:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 17:59:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,218,1569308400"; 
-   d="scan'208";a="399226426"
-Received: from otc-nc-03.jf.intel.com (HELO otc-nc-03) ([10.54.39.145])
-  by fmsmga006.fm.intel.com with ESMTP; 22 Oct 2019 17:58:59 -0700
-Date:   Tue, 22 Oct 2019 17:58:59 -0700
-From:   "Raj, Ashok" <ashok.raj@intel.com>
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Ashok Raj <ashok.raj@intel.com>
-Subject: Re: [PATCH v6 03/10] iommu/vt-d: Replace Intel specific PASID
- allocator with IOASID
-Message-ID: <20191023005859.GD100970@otc-nc-03>
-References: <1571788403-42095-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1571788403-42095-4-git-send-email-jacob.jun.pan@linux.intel.com>
+        id S1732161AbfJWBHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 21:07:01 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:38162 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728353AbfJWBHA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 21:07:00 -0400
+Received: by mail-il1-f194.google.com with SMTP id y5so17298620ilb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 18:07:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=HWO7yS040YN9ygzKwM7Iiq1eggk2WSVzMxvdmCJxTAY=;
+        b=TYJlOMF6UdCArlzyrqcMSueIwlX2j0yf5xLo3vXieheL7oW7kiPQnQ9ckj+KFCE0/c
+         6EulMnd58a5ZVy9efaKslK7lVo/8p6LnHFNfsWibqUY6aifbVFFr5npILT6RrhmFEcbE
+         Pbh/vgCmjEkv3uOvr4yPU85VAbhWfrDF12yv3WTu3o17qlc0wrlSQRKv4tu9g2k4bVX+
+         0T/84bgQkY82/S01VbjjRXcSl2lYgz9NG9w6bF6QfYb12lEuoIJdpj6LpR3P9B4DPYF6
+         UorOanl4XGIRpwU3AJnlCu5ApAWlC029yLANfWbZb8GZc9g03AGs40kUTwcDYNLIfBnH
+         zCUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=HWO7yS040YN9ygzKwM7Iiq1eggk2WSVzMxvdmCJxTAY=;
+        b=YS6eeAweHdTuBq4D7ZIjZhMPE49VeqAbLPOF30WphIA6mYoQR+fuV/WWo3XPlNxIJ3
+         WUdQws/oJL9hzKaOtGh5kbxQcH3D9N6nqh/QsHh+Dn34hVcyijHx9duUfBnQpz6B13yi
+         zeVysKPIbR+pf4sUp+ABUrr7qHyhXm0J7F78e6IsmmML77D8cH1tmktSxNfDGLiBW24i
+         3ew8zcw/EaZksPfeqMF0L+zxp0pcn0vl3r3q9/B5OwW6XweZm0VRaiQkOPf1jdAccjUc
+         4MCvKg5odpEWHFtGHHTUyiqyWzL1y8E0yieLqeziiVHsyOihoq6v9r9C0xApXssoajrc
+         T6Dw==
+X-Gm-Message-State: APjAAAW76nxrTZ1SbjcQ6kudlRWT6EHuHKxLNdzLkT8lUzO5kYP9kiDN
+        gUFwg90lsMDHgracg4QofKJ93Okf88s=
+X-Google-Smtp-Source: APXvYqxV/TMbIFPWC+V5RaBuYoBsRlkm6Ti6k/ihWCnbo14PsG+UHmULY2sHqCNrLdwP+b7P+DoMdg==
+X-Received: by 2002:a92:5a9b:: with SMTP id b27mr34644602ilg.180.1571792819781;
+        Tue, 22 Oct 2019 18:06:59 -0700 (PDT)
+Received: from localhost ([64.62.168.194])
+        by smtp.gmail.com with ESMTPSA id d17sm917352ioe.31.2019.10.22.18.06.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2019 18:06:59 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 18:06:57 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Alistair Francis <Alistair.Francis@wdc.com>
+cc:     Anup Patel <Anup.Patel@wdc.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "rkir@google.com" <rkir@google.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] RISC-V: defconfig: Enable Goldfish RTC driver
+In-Reply-To: <17db4a6244d09abf867daf2a6c10de6a5cd58c89.camel@wdc.com>
+Message-ID: <alpine.DEB.2.21.9999.1910221751500.25457@viisi.sifive.com>
+References: <20190925063706.56175-3-anup.patel@wdc.com>  <mhng-edb410db-fdd1-46f6-84c3-ae3b843f7e3a@palmer-si-x1c4>  <MN2PR04MB606160F5306A5F3C5D97FB788D900@MN2PR04MB6061.namprd04.prod.outlook.com>  <alpine.DEB.2.21.9999.1910221213490.28831@viisi.sifive.com>
+ <17db4a6244d09abf867daf2a6c10de6a5cd58c89.camel@wdc.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1571788403-42095-4-git-send-email-jacob.jun.pan@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 04:53:16PM -0700, Jacob Pan wrote:
-> Make use of generic IOASID code to manage PASID allocation,
-> free, and lookup. Replace Intel specific code.
+On Tue, 22 Oct 2019, Alistair Francis wrote:
+
+> I think it makese sense for this to go into Linux first.
 > 
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> ---
->  drivers/iommu/intel-iommu.c | 12 ++++++------
->  drivers/iommu/intel-pasid.c | 36 ------------------------------------
->  drivers/iommu/intel-svm.c   | 37 +++++++++++++++++++++----------------
->  3 files changed, 27 insertions(+), 58 deletions(-)
+> The QEMU patches are going to be accepted, just some nit picking to do
+> first :)
 > 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 3aff0141c522..72febcf2c48f 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -5311,7 +5311,7 @@ static void auxiliary_unlink_device(struct dmar_domain *domain,
->  	domain->auxd_refcnt--;
->  
->  	if (!domain->auxd_refcnt && domain->default_pasid > 0)
-> -		intel_pasid_free_id(domain->default_pasid);
-> +		ioasid_free(domain->default_pasid);
-
-if the domain is gauranteed to be torn down, its ok.. but otherwise
-do you need to clear domain->default_pasid to avoid accidental reference
-in some other code path?
-
->  }
->  
->  static int aux_domain_add_dev(struct dmar_domain *domain,
-> @@ -5329,10 +5329,10 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
->  	if (domain->default_pasid <= 0) {
->  		int pasid;
->  
-> -		pasid = intel_pasid_alloc_id(domain, PASID_MIN,
-> -					     pci_max_pasids(to_pci_dev(dev)),
-> -					     GFP_KERNEL);
-> -		if (pasid <= 0) {
-> +		/* No private data needed for the default pasid */
-> +		pasid = ioasid_alloc(NULL, PASID_MIN, pci_max_pasids(to_pci_dev(dev)) - 1,
-
-If we ensure IOMMU max-pasid is full 20bit width, its good. In a vIOMMU
-if iommu max pasid is restricted for some kind of partitioning in future
-you want to consider limiting to no more than what's provisioned in the vIOMMU 
-right?
-
-
-> +				NULL);
-> +		if (pasid == INVALID_IOASID) {
->  			pr_err("Can't allocate default pasid\n");
->  			return -ENODEV;
->  		}
-> @@ -5368,7 +5368,7 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
->  	spin_unlock(&iommu->lock);
->  	spin_unlock_irqrestore(&device_domain_lock, flags);
->  	if (!domain->auxd_refcnt && domain->default_pasid > 0)
-> -		intel_pasid_free_id(domain->default_pasid);
-> +		ioasid_free(domain->default_pasid);
->  
->  	return ret;
->  }
-> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-> index 76bcbb21e112..c0d1f28d3412 100644
-> --- a/drivers/iommu/intel-pasid.c
-> +++ b/drivers/iommu/intel-pasid.c
-> @@ -26,42 +26,6 @@
->   */
->  static DEFINE_SPINLOCK(pasid_lock);
->  u32 intel_pasid_max_id = PASID_MAX;
-> -static DEFINE_IDR(pasid_idr);
-> -
-> -int intel_pasid_alloc_id(void *ptr, int start, int end, gfp_t gfp)
-> -{
-> -	int ret, min, max;
-> -
-> -	min = max_t(int, start, PASID_MIN);
-> -	max = min_t(int, end, intel_pasid_max_id);
-> -
-> -	WARN_ON(in_interrupt());
-> -	idr_preload(gfp);
-> -	spin_lock(&pasid_lock);
-> -	ret = idr_alloc(&pasid_idr, ptr, min, max, GFP_ATOMIC);
-> -	spin_unlock(&pasid_lock);
-> -	idr_preload_end();
-> -
-> -	return ret;
-> -}
-> -
-> -void intel_pasid_free_id(int pasid)
-> -{
-> -	spin_lock(&pasid_lock);
-> -	idr_remove(&pasid_idr, pasid);
-> -	spin_unlock(&pasid_lock);
-> -}
-> -
-> -void *intel_pasid_lookup_id(int pasid)
-> -{
-> -	void *p;
-> -
-> -	spin_lock(&pasid_lock);
-> -	p = idr_find(&pasid_idr, pasid);
-> -	spin_unlock(&pasid_lock);
-> -
-> -	return p;
-> -}
->  
->  static int check_vcmd_pasid(struct intel_iommu *iommu)
->  {
-> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-> index 9b159132405d..5aef5b7bf561 100644
-> --- a/drivers/iommu/intel-svm.c
-> +++ b/drivers/iommu/intel-svm.c
-> @@ -17,6 +17,7 @@
->  #include <linux/dmar.h>
->  #include <linux/interrupt.h>
->  #include <linux/mm_types.h>
-> +#include <linux/ioasid.h>
->  #include <asm/page.h>
->  
->  #include "intel-pasid.h"
-> @@ -318,16 +319,15 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
->  		if (pasid_max > intel_pasid_max_id)
->  			pasid_max = intel_pasid_max_id;
->  
-> -		/* Do not use PASID 0 in caching mode (virtualised IOMMU) */
-> -		ret = intel_pasid_alloc_id(svm,
-> -					   !!cap_caching_mode(iommu->cap),
-> -					   pasid_max - 1, GFP_KERNEL);
-> -		if (ret < 0) {
-> +		/* Do not use PASID 0, reserved for RID to PASID */
-> +		svm->pasid = ioasid_alloc(NULL, PASID_MIN,
-> +					pasid_max - 1, svm);
-> +		if (svm->pasid == INVALID_IOASID) {
->  			kfree(svm);
->  			kfree(sdev);
-> +			ret = ENOSPC;
->  			goto out;
->  		}
-> -		svm->pasid = ret;
->  		svm->notifier.ops = &intel_mmuops;
->  		svm->mm = mm;
->  		svm->flags = flags;
-> @@ -337,7 +337,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
->  		if (mm) {
->  			ret = mmu_notifier_register(&svm->notifier, mm);
->  			if (ret) {
-> -				intel_pasid_free_id(svm->pasid);
-> +				ioasid_free(svm->pasid);
->  				kfree(svm);
->  				kfree(sdev);
->  				goto out;
-> @@ -353,7 +353,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
->  		if (ret) {
->  			if (mm)
->  				mmu_notifier_unregister(&svm->notifier, mm);
-> -			intel_pasid_free_id(svm->pasid);
-> +			ioasid_free(svm->pasid);
->  			kfree(svm);
->  			kfree(sdev);
->  			goto out;
-> @@ -401,7 +401,12 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
->  	if (!iommu)
->  		goto out;
->  
-> -	svm = intel_pasid_lookup_id(pasid);
-> +	svm = ioasid_find(NULL, pasid, NULL);
-> +	if (IS_ERR(svm)) {
-> +		ret = PTR_ERR(svm);
-> +		goto out;
-> +	}
-> +
->  	if (!svm)
->  		goto out;
->  
-> @@ -423,7 +428,7 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
->  				kfree_rcu(sdev, rcu);
->  
->  				if (list_empty(&svm->devs)) {
-> -					intel_pasid_free_id(svm->pasid);
-> +					ioasid_free(svm->pasid);
->  					if (svm->mm)
->  						mmu_notifier_unregister(&svm->notifier, svm->mm);
->  
-> @@ -458,10 +463,11 @@ int intel_svm_is_pasid_valid(struct device *dev, int pasid)
->  	if (!iommu)
->  		goto out;
->  
-> -	svm = intel_pasid_lookup_id(pasid);
-> -	if (!svm)
-> +	svm = ioasid_find(NULL, pasid, NULL);
-> +	if (IS_ERR(svm)) {
-> +		ret = PTR_ERR(svm);
->  		goto out;
-> -
-> +	}
->  	/* init_mm is used in this case */
->  	if (!svm->mm)
->  		ret = 1;
-> @@ -568,13 +574,12 @@ static irqreturn_t prq_event_thread(int irq, void *d)
->  
->  		if (!svm || svm->pasid != req->pasid) {
->  			rcu_read_lock();
-> -			svm = intel_pasid_lookup_id(req->pasid);
-> +			svm = ioasid_find(NULL, req->pasid, NULL);
->  			/* It *can't* go away, because the driver is not permitted
->  			 * to unbind the mm while any page faults are outstanding.
->  			 * So we only need RCU to protect the internal idr code. */
->  			rcu_read_unlock();
-> -
-> -			if (!svm) {
-> +			if (IS_ERR(svm) || !svm) {
->  				pr_err("%s: Page request for invalid PASID %d: %08llx %08llx\n",
->  				       iommu->name, req->pasid, ((unsigned long long *)req)[0],
->  				       ((unsigned long long *)req)[1]);
-> -- 
-> 2.7.4
+> After that we have to wait for a PR and then a QEMU release until most
+> people will see the change in QEMU. In that time Linux 5.4 will be
+> released, if this can make it into 5.4 then everyone using 5.4 will get
+> the new RTC as soon as they upgrade QEMU (QEMU provides the device
+> tree). If this has to wait until QEMU has support then it won't be
+> supported for users until even later.
 > 
+> Users are generally slow to update kernels (buildroot is still using
+> 5.1 by default for example) so the sooner changes like this go in the
+> better.
+
+The defconfigs are really just for kernel developers.  We expect users to 
+define their own Kconfigs for their own needs.
+
+If using the Goldfish code really is what we all want to do (see below), 
+then the kernel patch that should go in right away -- which also has no 
+dependence on what QEMU does -- would be the first patch of this series:
+
+https://lore.kernel.org/linux-riscv/20190925063706.56175-2-anup.patel@wdc.com/
+
+And that should go in via whoever is maintaining the Goldfish driver, not 
+the RISC-V tree.  (It looks like drivers/platform/goldfish is completely 
+unmaintained - a red flag! - so probably someone needs to persuade Greg or 
+Andrew to take it.)
+
+Incidentally, just looking at drivers/platform/goldfish, that driver seems 
+to be some sort of Google-specific RPC driver.  Are you all really sure 
+you want to enable that just for an RTC?  Seems like overkill - there are 
+much simpler RTCs out there.
+
+
+- Paul
