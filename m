@@ -2,72 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98213E1CF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB374E1D3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405993AbfJWNln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 09:41:43 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38744 "EHLO huawei.com"
+        id S2406136AbfJWNsl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:48:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57768 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391642AbfJWNlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:41:42 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 68646F7628D9BF9903EC;
-        Wed, 23 Oct 2019 21:41:40 +0800 (CST)
-Received: from localhost.localdomain (10.90.53.225) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 23 Oct 2019 21:41:31 +0800
-From:   Chen Wandun <chenwandun@huawei.com>
-To:     <akpm@linux-foundation.org>, <mhocko@suse.com>, <vbabka@suse.cz>,
-        <osalvador@suse.de>, <mgorman@techsingularity.net>,
-        <rppt@linux.ibm.com>, <dan.j.williams@intel.com>,
-        <alexander.h.duyck@linux.intel.com>, <anshuman.khandual@arm.com>,
-        <pavel.tatashin@microsoft.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <chenwandun@huawei.com>
-Subject: [PATCH] mm/page_alloc: fix gcc compile warning
-Date:   Wed, 23 Oct 2019 21:48:28 +0800
-Message-ID: <1571838508-117928-1-git-send-email-chenwandun@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S2405869AbfJWNsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 09:48:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5BAC2B123;
+        Wed, 23 Oct 2019 13:48:38 +0000 (UTC)
+Subject: Re: [RFC PATCH 2/2] mm, vmstat: reduce zone->lock holding time by
+ /proc/pagetypeinfo
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>, Waiman Long <longman@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Aquini <aquini@redhat.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191023095607.GE3016@techsingularity.net>
+ <20191023102737.32274-1-mhocko@kernel.org>
+ <20191023102737.32274-3-mhocko@kernel.org>
+ <30211965-8ad0-416d-0fe1-113270bd1ea8@suse.cz>
+ <20191023133720.GA17610@dhcp22.suse.cz>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <7fb34979-66a4-4a5d-1798-402826e31e72@suse.cz>
+Date:   Wed, 23 Oct 2019 15:48:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20191023133720.GA17610@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chenwandun <chenwandun@huawei.com>
+On 10/23/19 3:37 PM, Michal Hocko wrote:
+> On Wed 23-10-19 15:32:05, Vlastimil Babka wrote:
+>> On 10/23/19 12:27 PM, Michal Hocko wrote:
+>>> From: Michal Hocko <mhocko@suse.com>
+>>>
+>>> pagetypeinfo_showfree_print is called by zone->lock held in irq mode.
+>>> This is not really nice because it blocks both any interrupts on that
+>>> cpu and the page allocator. On large machines this might even trigger
+>>> the hard lockup detector.
+>>>
+>>> Considering the pagetypeinfo is a debugging tool we do not really need
+>>> exact numbers here. The primary reason to look at the outuput is to see
+>>> how pageblocks are spread among different migratetypes therefore putting
+>>> a bound on the number of pages on the free_list sounds like a reasonable
+>>> tradeoff.
+>>>
+>>> The new output will simply tell
+>>> [...]
+>>> Node    6, zone   Normal, type      Movable >100000 >100000 >100000 >100000  41019  31560  23996  10054   3229    983    648
+>>>
+>>> instead of
+>>> Node    6, zone   Normal, type      Movable 399568 294127 221558 102119  41019  31560  23996  10054   3229    983    648
+>>>
+>>> The limit has been chosen arbitrary and it is a subject of a future
+>>> change should there be a need for that.
+>>>
+>>> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+>>> Signed-off-by: Michal Hocko <mhocko@suse.com>
+>>
+>> Hmm dunno, I would rather e.g. hide the file behind some config or boot
+>> option than do this. Or move it to /sys/kernel/debug ?
+> 
+> But those wouldn't really help to prevent from the lockup, right?
 
-mm/page_alloc.o: In function `page_alloc_init_late':
-mm/page_alloc.c:1956: undefined reference to `zone_pcp_update'
-mm/page_alloc.o:(.debug_addr+0x8350): undefined reference to `zone_pcp_update'
-make: *** [vmlinux] Error 1
+No, but it would perhaps help ensure that only people who know what they
+are doing (or been told so by a developer e.g. on linux-mm) will try to
+collect the data, and not some automatic monitoring tools taking
+periodic snapshots of stuff in /proc that looks interesting.
 
-zone_pcp_update is defined in CONFIG_MEMORY_HOTPLUG,
-so add ifdef when calling zone_pcp_update.
+> Besides that who would enable that config and how much of a difference
+> would root only vs. debugfs make?
 
-Signed-off-by: Chenwandun <chenwandun@huawei.com>
----
- mm/page_alloc.c | 2 ++
- 1 file changed, 2 insertions(+)
+I would hope those tools don't scrap debugfs as much as /proc, but I
+might be wrong of course :)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index f9488ef..8513150 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1952,8 +1952,10 @@ void __init page_alloc_init_late(void)
- 	 * so the pcpu batch and high limits needs to be updated or the limits
- 	 * will be artificially small.
- 	 */
-+#ifdef CONFIG_MEMORY_HOTPLUG
- 	for_each_populated_zone(zone)
- 		zone_pcp_update(zone);
-+#endif
- 
- 	/*
- 	 * We initialized the rest of the deferred pages.  Permanently disable
--- 
-2.7.4
+> Is the incomplete value a real problem?
+
+Hmm perhaps not. If the overflow happens only for one migratetype, one
+can use also /proc/buddyinfo to get to the exact count, as was proposed
+in this thread for Movable migratetype.
+
+>>> ---
+>>>  mm/vmstat.c | 19 ++++++++++++++++++-
+>>>  1 file changed, 18 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/mm/vmstat.c b/mm/vmstat.c
+>>> index 4e885ecd44d1..762034fc3b83 100644
+>>> --- a/mm/vmstat.c
+>>> +++ b/mm/vmstat.c
+>>> @@ -1386,8 +1386,25 @@ static void pagetypeinfo_showfree_print(struct seq_file *m,
+>>>  
+>>>  			area = &(zone->free_area[order]);
+>>>  
+>>> -			list_for_each(curr, &area->free_list[mtype])
+>>> +			list_for_each(curr, &area->free_list[mtype]) {
+>>>  				freecount++;
+>>> +				/*
+>>> +				 * Cap the free_list iteration because it might
+>>> +				 * be really large and we are under a spinlock
+>>> +				 * so a long time spent here could trigger a
+>>> +				 * hard lockup detector. Anyway this is a
+>>> +				 * debugging tool so knowing there is a handful
+>>> +				 * of pages in this order should be more than
+>>> +				 * sufficient
+>>> +				 */
+>>> +				if (freecount > 100000) {
+>>> +					seq_printf(m, ">%6lu ", freecount);
+>>> +					spin_unlock_irq(&zone->lock);
+>>> +					cond_resched();
+>>> +					spin_lock_irq(&zone->lock);
+>>> +					continue;
+>>> +				}
+>>> +			}
+>>>  			seq_printf(m, "%6lu ", freecount);
+>>>  		}
+>>>  		seq_putc(m, '\n');
+>>>
+> 
 
