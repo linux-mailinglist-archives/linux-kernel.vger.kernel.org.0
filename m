@@ -2,108 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F6DE253C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 23:26:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75251E2542
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 23:27:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392341AbfJWV0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 17:26:02 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45153 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392252AbfJWV0C (ORCPT
+        id S2392408AbfJWV1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 17:27:35 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50918 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733169AbfJWV1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 17:26:02 -0400
-Received: by mail-pf1-f196.google.com with SMTP id x28so241773pfi.12
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 14:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rv4Nqh5d+/cF2RpTBWJWh8crG9DJ9LN8rUEiLCVkDCI=;
-        b=oxa7Yq/pKC6Rtd8OTFkXDgv+sg58exGMNevQgY3cd/UoqcmGNae53c+vJ/Gv3HMIDe
-         1InEbVJhTKBH1sdxN5bLgjnNQnl4tnly+ZsYiPj+aTVPQ/ilgn3tCucka8j02OQpoMOh
-         VBXes1Krr5ikefRmE0ryyaFKvRch5oAe274i6gFt3LgvAo6HN7DvKw9VsP85ADeX83oi
-         rYGxAHbLzViqTLFA9btg/bC/cwBeo3cATsyFEwMvrFgHAhfdJd/u+tZjLqcl7uDWIJ3W
-         ZQbJARrMZozIZVsGBfy40SIYNTP9S7OBcEa7ipxSKyYkngWATCFBqYQg7qcgzNT6/jjH
-         d90A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rv4Nqh5d+/cF2RpTBWJWh8crG9DJ9LN8rUEiLCVkDCI=;
-        b=k/EDMt+q6SYLsMz9+OaaKoKht7v1dZvEyJubw5dMyUxMLfuXWbzvRPNiKvw5mB38yl
-         z5Gc3PWBwfeBPHLRHui7P2P4pYEF1S43VM2mKdDFFFcLejkUk+/e5QJMs0fEPDZbAupl
-         CZOO8qox8G/XtatCDao1W7HqHYzkftlOngMZaH0HJTja6po28Mc8ej5WaH4kx/v3aA3O
-         27VRfVSDmA6xtW6QxJNJ5Bsjqt5BJpad5bUrljYzWIIlGTRvoMCVUJA01Wfed5J+2eYS
-         3icGb9wfk5XPHiBcV1Uri9FVpCfk49QgnnshmEBnhR+f1CwQW3ZdRV+UuB/2mhx/0F6o
-         gNTg==
-X-Gm-Message-State: APjAAAVQtE0VojnEJDI7nMblI5ehEFDYKFIFHbKR7FJ1k9WW6vaUuD9x
-        jzhEyLheeP/+ODpK3Fd6/cul8GXSWzyrjSCekRHtVA==
-X-Google-Smtp-Source: APXvYqxtwcSKP3dxNcBOousSaiPma55QN+uHm54W5IwsX3gK7duaFgAkFXHm+eMI1oaF/mQ8CtDYgxMTVBxaFGpzq8w=
-X-Received: by 2002:a62:61c4:: with SMTP id v187mr13349382pfb.23.1571865960644;
- Wed, 23 Oct 2019 14:26:00 -0700 (PDT)
+        Wed, 23 Oct 2019 17:27:35 -0400
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iNOAG-00012f-6l; Wed, 23 Oct 2019 23:27:32 +0200
+Date:   Wed, 23 Oct 2019 23:27:30 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Cyrill Gorcunov <gorcunov@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
+        Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH] x86/dumpstack/64: Don't evaluate exception stacks before
+ setup
+In-Reply-To: <20191023183140.GC2963@bombadil.infradead.org>
+Message-ID: <alpine.DEB.2.21.1910232326490.1852@nanos.tec.linutronix.de>
+References: <20191019114421.GK9698@uranus.lan> <20191022142325.GD12121@uranus.lan> <20191022145619.GE12121@uranus.lan> <alpine.DEB.2.21.1910231457400.2308@nanos.tec.linutronix.de> <alpine.DEB.2.21.1910231533180.2308@nanos.tec.linutronix.de>
+ <20191023135943.GK12121@uranus.lan> <alpine.DEB.2.21.1910231950590.1852@nanos.tec.linutronix.de> <20191023183140.GC2963@bombadil.infradead.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20191018215549.65000-1-davidgow@google.com> <20191019082731.GM21344@kadam>
- <CABVgOSkegmhmeRa=7Qcx3MnX88wLy9qZx97CMhk4NvWb-pgpYQ@mail.gmail.com>
-In-Reply-To: <CABVgOSkegmhmeRa=7Qcx3MnX88wLy9qZx97CMhk4NvWb-pgpYQ@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Wed, 23 Oct 2019 14:25:49 -0700
-Message-ID: <CAFd5g46BuY02M_QBD3PVFnbsvO7fuuS+ZOBmfFBmmGy3xSMXbQ@mail.gmail.com>
-Subject: Re: [PATCH linux-kselftest/test v4] lib/list-test: add a test for the
- 'list' doubly linked list
-To:     David Gow <davidgow@google.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 3:13 PM David Gow <davidgow@google.com> wrote:
->
-> On Sat, Oct 19, 2019 at 1:27 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > On Fri, Oct 18, 2019 at 02:55:49PM -0700, David Gow wrote:
-> > > +     list4 = kzalloc(sizeof(*list4), GFP_KERNEL);
-> > > +     KUNIT_ASSERT_NOT_ERR_OR_NULL(test, list4);
-> >
-> > Why not just use GFP_KERNEL | GFP_NOFAIL and remove the check?
->
-> I've sent a new version of the patch out (v5) which uses __GFP_NOFAIL instead.
->
-> The idea had been to exercise KUnit's assertion functionality, in the
-> hope that it'd allow the test to fail (but potentially allow other
-> tests to still run) in the case of allocation failure. Given that
-> we're only allocating enough to store ~4 pointers in total, though,
-> that's probably of little use.
->
-> > kzalloc() can't return error pointers.  If this were an IS_ERR_OR_NULL()
-> > check then it would generate a static checker warning, but static
-> > checkers don't know about KUNIT_ASSERT_NOT_ERR_OR_NULL() yet so you're
-> > safe.
->
-> Alas, KUnit doesn't have a KUNIT_ASSERT_NOT_NULL() macro, and I'd
-> assumed it was not dangerous (even if not ideal) to check for error
-> pointers, even if kzalloc() can't return them.
+On Wed, 23 Oct 2019, Matthew Wilcox wrote:
 
-Maybe it would be good for us (not in this case, just generally
-speaking) to add a KUNIT_ASSERT_NOT_NULL() and friends?
+> On Wed, Oct 23, 2019 at 08:05:49PM +0200, Thomas Gleixner wrote:
+> > Prevent this by checking the validity of the cea_exception_stack base
+> > address and bailing out if it is zero.
+> 
+> Could also initialise cea_exception_stack to -1?  That would lead to it
+> being caught by ...
+> 
+> >  	end = begin + sizeof(struct cea_exception_stacks);
+> >  	/* Bail if @stack is outside the exception stack area. */
+> >  	if (stk < begin || stk >= end)
+> 
+> this existing check.
 
-> Perhaps it'd make sense to add a convenient way of checking the
-> NULL-ness of pointers to KUnit (it's possible with the
-> KUNIT_ASSERT_PTR_EQ(), but requires a bit of casting to make the type
-> checker happy) in the future. Once KUnit is properly upstream, it may
-> be worth teaching the static analysis tools about these functions to
-> avoid having warnings in these sorts of tests.
->
-> For now, though, (and for this test in particular), I agree with the
-> suggestion of just using __GFP_NOFAIL.
->
-> Thanks a lot for the comments,
-> -- David
+Yes thought about that, but then decided to do it in a readable way :)
