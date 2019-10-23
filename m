@@ -2,105 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D024E1BD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0421AE1BE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:11:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405626AbfJWNK5 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 23 Oct 2019 09:10:57 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35592 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfJWNK4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:10:56 -0400
-Received: by mail-ed1-f68.google.com with SMTP id k2so5018362edx.2;
-        Wed, 23 Oct 2019 06:10:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=lzwXfyhUE7yc9zrzbjqMe71sKuHvjq9U3aqm0Bd1AoI=;
-        b=S/A3aIGnph7/r49FdcX/+rOROLnuReURWi9z5AaaiFgwNDyHNguoHy2jLTKIg0AobS
-         Ii8Aob7iyqUE9px3EJl+QbMXPlHqS2i4AJjUkEXgVYMOpJB5ylqfR28AxSRz0LGrE0oN
-         dz0N+b0G4A1+WoZyqXNpZC27TiMgZrwh3OQIocjQVBgN+3XtOoyCaMvlIaqATpBbxqeb
-         aH+TRLRapqnj+ldkTcAZ0Bi9oR73bzEGJ0oLBkEdJwU7OEXluqUoH1Bhl4rcsWPwWDMa
-         DGF3xhA2WaMsusqyac2NzMIPJnBzhBlKnq/yDYu7/oI4+szOWAtVn2bNxBf1GiYtQfaY
-         jRtQ==
-X-Gm-Message-State: APjAAAXIBu2F0LkRRidZBYch85DAr88A/27wF1+klG85knTLuwFmQPUI
-        Ki2dfON5MI5tkKTRGbG4ylA=
-X-Google-Smtp-Source: APXvYqyft44OcCGb0xN0+fC1gmfK8usNRgvA/I5KY4vuTv2zLifQ5kptU9qNo1AQahi2rM4m7Aa/dg==
-X-Received: by 2002:aa7:c595:: with SMTP id g21mr36717915edq.79.1571836252860;
-        Wed, 23 Oct 2019 06:10:52 -0700 (PDT)
-Received: from pi3 ([194.230.155.217])
-        by smtp.googlemail.com with ESMTPSA id b12sm785479edq.75.2019.10.23.06.10.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 06:10:52 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 15:10:49 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org,
-        Lihua Yao <ylhuajnu@163.com>,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        Lihua Yao <ylhuajnu@outlook.com>,
-        Sergio Prado <sergio.prado@e-labworks.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 00/36] ARM: samsung platform cleanup
-Message-ID: <20191023131049.GG11048@pi3>
-References: <20191010202802.1132272-1-arnd@arndb.de>
+        id S2405661AbfJWNLo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:11:44 -0400
+Received: from mga12.intel.com ([192.55.52.136]:31767 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732092AbfJWNLo (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 09:11:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 06:11:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
+   d="scan'208";a="196772810"
+Received: from shilongz-mobl.ccr.corp.intel.com (HELO [10.254.210.50]) ([10.254.210.50])
+  by fmsmga008.fm.intel.com with ESMTP; 23 Oct 2019 06:11:42 -0700
+Subject: Re: [PATCH v3 3/5] perf report: Sort by sampled cycles percent per
+ block for stdio
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <20191022080710.6491-1-yao.jin@linux.intel.com>
+ <20191022080710.6491-4-yao.jin@linux.intel.com>
+ <20191023113642.GN22919@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <ffdcc12e-96ee-02f3-b327-93541af35f1a@linux.intel.com>
+Date:   Wed, 23 Oct 2019 21:11:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20191010202802.1132272-1-arnd@arndb.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191023113642.GN22919@krava>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:28:02PM +0200, Arnd Bergmann wrote:
-> I've spent some time looking at the remaining ARMv4/ARMv5 platforms
-> that are not part of ARCH_MULTIPLATFORM, and tried to get them closer
-> to that. Here is what came out of that for the samsung platforms:
+
+
+On 10/23/2019 7:36 PM, Jiri Olsa wrote:
+> On Tue, Oct 22, 2019 at 04:07:08PM +0800, Jin Yao wrote:
 > 
-> * Exynos and s5pv210 are made independent of plat-samsung
-> * device drivers stop using mach/*.h headers for s3c24xx
->   (and other platforms not in this series)
-> * s3c24xx and s3c64xx get merged into mach-s3c, removing
->   the need for plat-samsung (I have other patches for the
->   remaining plat-* directories)
-> * mach/io.h gets cleaned up to only be needed for BAST
->   PC104 mode (looking for ideas to proceed)
-> * mach/irqs.h remains for now, this still needs to be converted
->   to sparse IRQs.
+> SNIP
 > 
-> Some bits are a little ugly, but overall I think this a big
-> improvement.
+>> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+>> index 43d1d410854a..eb286700a8a9 100644
+>> --- a/tools/perf/util/sort.c
+>> +++ b/tools/perf/util/sort.c
+>> @@ -492,6 +492,10 @@ struct sort_entry sort_sym_ipc_null = {
+>>   	.se_width_idx	= HISTC_SYMBOL_IPC,
+>>   };
+>>   
+>> +struct sort_entry sort_block_cycles = {
+>> +	.se_cmp		= sort__sym_cmp,
+>> +};
 > 
-> The contents are available for testing in
+> so this is here only for you to be able to write '-s total_cycles'
+> and has no other functonality right?
 > 
-> git://kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git s3c-multiplatform
 
-When sending v2, can you Cc:
+Yes, that's right.
 
-Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Lihua Yao <ylhuajnu@outlook.com>
-(or Lihua Yao <ylhuajnu@163.com> if outlook.com bounces)
-Sergio Prado <sergio.prado@e-labworks.com>
-Sylwester Nawrocki <s.nawrocki@samsung.com>
+> I think we'd be better with report boolean option instad, like
+> 'perf report --total-cycles', because your code does the column
+> display by itself.. and we could get rid of this -s confusion
+> 
 
-These are folks which to my knowledge had working S3C and S5P boards
-so maybe they could provide testing.
+Yes, I agree. Thanks for this suggestion!
 
-Best regards,
-Krzysztof
+Thanks
+Jin Yao
 
+> jirka
+> 
