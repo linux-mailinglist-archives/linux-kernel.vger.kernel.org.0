@@ -2,159 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38929E13E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:17:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14E31E1423
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:26:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390229AbfJWIRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:17:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55066 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390050AbfJWIRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:17:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 15D43C167;
-        Wed, 23 Oct 2019 08:17:30 +0000 (UTC)
+        id S2390292AbfJWI0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:26:39 -0400
+Received: from salem.gmr.ssr.upm.es ([138.4.36.7]:56260 "EHLO
+        salem.gmr.ssr.upm.es" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727574AbfJWI0j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 04:26:39 -0400
+X-Greylist: delayed 545 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Oct 2019 04:26:38 EDT
+Received: by salem.gmr.ssr.upm.es (Postfix, from userid 1000)
+        id C3267AC0075; Wed, 23 Oct 2019 10:17:29 +0200 (CEST)
 Date:   Wed, 23 Oct 2019 10:17:29 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     linux-mm <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Minchan Kim <minchan@kernel.org>, Mel Gorman <mgorman@suse.de>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [RFC v1] mm: add page preemption
-Message-ID: <20191023081729.GI754@dhcp22.suse.cz>
-References: <20191020134304.11700-1-hdanton@sina.com>
- <20191022121439.7164-1-hdanton@sina.com>
- <20191022142802.14304-1-hdanton@sina.com>
+From:   Alvaro Gamez Machado <alvaro.gamez@hazent.com>
+To:     Michal Simek <monstr@monstr.eu>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch: microblaze: support for reserved-memory entries in
+ DT
+Message-ID: <20191023081728.GA17517@salem.gmr.ssr.upm.es>
+References: <20191022081929.10602-1-alvaro.gamez@hazent.com>
+ <64db9f22-2e24-23f8-bf64-c4a972fa50c1@monstr.eu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191022142802.14304-1-hdanton@sina.com>
+In-Reply-To: <64db9f22-2e24-23f8-bf64-c4a972fa50c1@monstr.eu>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 22-10-19 22:28:02, Hillf Danton wrote:
+Hi Michal
+
+On Wed, Oct 23, 2019 at 09:59:40AM +0200, Michal Simek wrote:
+> Hi,
 > 
-> On Tue, 22 Oct 2019 14:42:41 +0200 Michal Hocko wrote:
-> > 
-> > On Tue 22-10-19 20:14:39, Hillf Danton wrote:
-> > > 
-> > > On Mon, 21 Oct 2019 14:27:28 +0200 Michal Hocko wrote:
-> > [...]
-> > > > Why do we care and which workloads would benefit and how much.
-> > > 
-> > > Page preemption, disabled by default, should be turned on by those
-> > > who wish that the performance of their workloads can survive memory
-> > > pressure to certain extent.
-> > 
-> > I am sorry but this doesn't say anything to me. How come not all
-> > workloads would fit that description?
 > 
-> That means pp plays a role when kswapd becomes active, and it may
-> prevent too much jitters in active lru pages.
-
-This is still too vague to be useful in any way.
-
-> > > The number of pp users is supposed near the people who change the
-> > > nice value of their apps either to -1 or higher at least once a week,
-> > > less than vi users among UK's undergraduates.
-> > > 
-> > > > And last but not least why the existing infrastructure doesn't help
-> > > > (e.g. if you have clearly defined workloads with different
-> > > > memory consumption requirements then why don't you use memory cgroups to
-> > > > reflect the priority).
-> > > 
-> > > Good question:)
-> > > 
-> > > Though pp is implemented by preventing any task from reclaiming as many
-> > > pages as possible from other tasks that are higher on priority, it is
-> > > trying to introduce prio into page reclaiming, to add a feature.
-> > > 
-> > > Page and memcg are different objects after all; pp is being added at
-> > > the page granularity. It should be an option available in environments
-> > > without memcg enabled.
-> > 
-> > So do you actually want to establish LRUs per priority?
+> On 22. 10. 19 10:19, Alvaro Gamez Machado wrote:
+> > Signed-off-by: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
 > 
-> No, no change other than the prio for every lru page was added. LRU per prio
-> is too much to implement.
+> please put there reasonable description to commit message.
 
-Well, considering that per page priority is a no go as already pointed
-out by Willy then you do not have other choice right?
-
-> > Why using memcgs is not an option?
-> 
-> I have plan to add prio in memcg. As you see, I sent a rfc before v0 with
-> nice added in memcg, and realised a couple days ago that its dependence on
-> soft limit reclaim is not acceptable.
-> 
-> But we can't do that without determining how to define memcg's prio.
-> What is in mind now is the highest (or lowest) prio of tasks in a memcg
-> with a knob offered to userspace.
-> 
-> If you like, I want to have a talk about it sometime later.
-
-This doesn't really answer my question. Why cannot you use memcgs as
-they are now. Why exactly do you need a fixed priority?
-
-> > This is the main facility to partition reclaimable
-> > memory in the first place. You should really focus on explaining on why
-> > a much more fine grained control is needed much more thoroughly.
+Ok, will use those below as template.
+ 
+> > ---
+> >  arch/microblaze/mm/init.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
 > > 
-> > > What is way different from the protections offered by memory cgroup
-> > > is that pages protected by memcg:min/low can't be reclaimed regardless
-> > > of memory pressure. Such guarantee is not available under pp as it only
-> > > suggests an extra factor to consider on deactivating lru pages.
-> > 
-> > Well, low limit can be breached if there is no eliglible memcg to be
-> > reclaimed. That means that you can shape some sort of priority by
-> > setting the low limit already.
-> > 
-> > [...]
-> > 
-> > > What was added on the reclaimer side is
-> > > 
-> > > 1, kswapd sets pgdat->kswapd_prio, the switch between page reclaimer
-> > >    and allocator in terms of prio, to the lowest value before taking
-> > >    a nap.
-> > > 
-> > > 2, any allocator is able to wake up the reclaimer because of the
-> > >    lowest prio, and it starts reclaiming pages using the waker's prio.
-> > > 
-> > > 3, allocator comes while kswapd is active, its prio is checked and
-> > >    no-op if kswapd is higher on prio; otherwise switch is updated
-> > >    with the higher prio.
-> > > 
-> > > 4, every time kswapd raises sc.priority that starts with DEF_PRIORITY,
-> > >    it is checked if there is pending update of switch; and kswapd's
-> > >    prio steps up if there is a pending one, thus its prio never steps
-> > >    down. Nor prio inversion. 
-> > > 
-> > > 5, goto 1 when kswapd finishes its work.
-> > 
-> > What about the direct reclaim?
+> > diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+> > index a015a951c8b7..928c5c2816e4 100644
+> > --- a/arch/microblaze/mm/init.c
+> > +++ b/arch/microblaze/mm/init.c
+> > @@ -17,6 +17,8 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/swap.h>
+> >  #include <linux/export.h>
+> > +#include <linux/of_fdt.h>
+> > +#include <linux/of.h>
 > 
-> Their prio will not change before reclaiming finishes, so leave it be.
+> of_fdt.h should be enough.
 
-This doesn't answer my question.
+Ok
 
-> > What if pages of a lower priority are
-> > hard to reclaim? Do you want a process of a higher priority stall more
-> > just because it has to wait for those lower priority pages?
+> >  
+> >  #include <asm/page.h>
+> >  #include <asm/mmu_context.h>
+> > @@ -188,6 +190,9 @@ void __init setup_memory(void)
+> >  
+> >  void __init mem_init(void)
+> >  {
+> > +	early_init_fdt_reserve_self();
+> > +	early_init_fdt_scan_reserved_mem();
+> > +
+> >  	high_memory = (void *)__va(memory_start + lowmem_size - 1);
+> >  
+> >  	/* this will put all memory onto the freelists */
+> > 
 > 
-> The problems above are not introduced by pp, let Mr. Kswapd take care of
-> them.
+> 
+> Also I have looked at others arch and take a look at
+> 
+> 1b10cb21d888c021bedbe678f7c26aee1bf04ffa
+> ARC: add support for reserved memory defined by device tree
+> 
+> where they also enable OF_RESERVED_MEM to call fdt_init_reserve_mem()
+> 
+> The same here
+> 4e7c84ec045921dacc78d36295e2e61390249665
+>  xtensa: support reserved-memory DT node
+> 
+> and here
+> 9bf14b7c540ae9ca7747af3a0c0d8470ef77b6ce
+> arm64: add support for reserved memory defined by device tree
+> 
 
-No, this is not an answer.
+They did that at the time, but it seems it's not needed anymore:
+
+34e04eedd1cf1be714abb0e5976338cc72ccc05f
+  of: select OF_RESERVED_MEM automatically
+
+This commit removed those select OF_RESERVED_MEM lines. Is it needed
+specifically for microblaze? I didn't need to do that in order for
+reserved-memory entries to work on my platform.
+
+Thanks!
+
+> Please note this in commit message.
+> 
+> Thanks,
+> Michal
+> 
+> 
+> -- 
+> Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+> w: www.monstr.eu p: +42-0-721842854
+> Maintainer of Linux kernel - Xilinx Microblaze
+> Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+> U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
+> 
 
 -- 
-Michal Hocko
-SUSE Labs
+Alvaro G. M.
