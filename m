@@ -2,199 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3850E1C64
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:23:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFCE0E1C6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:23:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405804AbfJWNXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 09:23:21 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35040 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405794AbfJWNXV (ORCPT
+        id S2405842AbfJWNXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:23:44 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:58323 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405812AbfJWNXo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:23:21 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9NDKJlK098962
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 09:23:20 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2vtp0u4q3s-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 09:23:19 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 23 Oct 2019 14:23:17 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 23 Oct 2019 14:23:13 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9NDNCu915204484
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Oct 2019 13:23:12 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9B962A4065;
-        Wed, 23 Oct 2019 13:23:12 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 79CEDA4060;
-        Wed, 23 Oct 2019 13:23:11 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.184.174])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 23 Oct 2019 13:23:11 +0000 (GMT)
-Subject: Re: [PATCH v1 5/6] KEYS: measure queued keys
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        dhowells@redhat.com, casey@schaufler-ca.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Date:   Wed, 23 Oct 2019 09:23:10 -0400
-In-Reply-To: <20191023001818.3684-6-nramas@linux.microsoft.com>
-References: <20191023001818.3684-1-nramas@linux.microsoft.com>
-         <20191023001818.3684-6-nramas@linux.microsoft.com>
+        Wed, 23 Oct 2019 09:23:44 -0400
+Received: from mail-qt1-f178.google.com ([209.85.160.178]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MpDVx-1hf9pS47iR-00qfp4; Wed, 23 Oct 2019 15:23:42 +0200
+Received: by mail-qt1-f178.google.com with SMTP id w14so32197503qto.9;
+        Wed, 23 Oct 2019 06:23:41 -0700 (PDT)
+X-Gm-Message-State: APjAAAUOEer4RSyYJoTiziHt8cYel+67LG9wADwnk7kk+F0IuyC1ktQY
+        QG1Ro0Qn/r+hOJoQLOSWGVIi/mOzQpv60MzBVto=
+X-Google-Smtp-Source: APXvYqwU3y5YqkOIsK2y7eYvy0ctJhOflxSMk/EdUo4ryq/EKaRqLWAAN8gOEJgyL2Cd6mKUElnaT6RSKuR35fFlkXE=
+X-Received: by 2002:a0c:c70a:: with SMTP id w10mr8851889qvi.222.1571837020471;
+ Wed, 23 Oct 2019 06:23:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
+ <20191010203043.1241612-15-arnd@arndb.de> <20191023123722.GD11048@pi3>
+In-Reply-To: <20191023123722.GD11048@pi3>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 23 Oct 2019 15:23:24 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a13UWnsnTeDQPTDdAXjnwT+-UZchKqezqG+npEuFNK2vg@mail.gmail.com>
+Message-ID: <CAK8P3a13UWnsnTeDQPTDdAXjnwT+-UZchKqezqG+npEuFNK2vg@mail.gmail.com>
+Subject: Re: [PATCH 15/36] ARM: s3c: adc: move header to linux/soc/samsung
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-hwmon@vger.kernel.org,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19102313-0016-0000-0000-000002BC2203
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19102313-0017-0000-0000-0000331D61EE
-Message-Id: <1571836990.5104.96.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-23_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910230136
+X-Provags-ID: V03:K1:giqxSs+A+LAWYj0Sxj5nusxA8wHxPgN5F7tmxIao8ABk3bArcf2
+ zUzbNsCh/ELi1K0kYEtEHgESjQs8HH8mRSfd6UfgD6VoJILtQhIurqpPVu/Y7ppYgCxdeBO
+ +KPW8WQc+3tYNDu+wtPaWzmF1d5joeNw55Bk/kXIYjEbT2M7JIc++gbj3x+D9b2+YVUHKmD
+ CGd/U+YvZsxVeqmRKKhmQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:c23PmR9jg7U=:6laGSqdsRzet9T20EG8mhj
+ lZQ2S+7Lre/1Kzv6tJnOjdHHK8EXjc/R15mmPPfPm5h+MuuAwjf1KuercXzl/j5MPe7UzUoo1
+ C63FU6HnEhpnPHPYXb0KDFIlRTu9uAGEZC+XPCSGfbQEmEPYhQqHi/vgYSYfmYXIfzSDPpLN3
+ f3cvZ13VuNbUM4x1o1VxHQ327ejTmy8a+Uf/oFKDLRsLl3qjxb+TxwMu0L2G63Sfr+ahQiHe1
+ aJ852JJkqrYYBGDGft9v4qKqE2gmq6zGKoMVmFhc3hL2jC4I3GKFyufrGApIxZDOoJhCNjYmx
+ OAFKxQB5OJDc4y6PMADDKi5eIUA2dJ5nI6F+Fvq9Y33vABOubg2B+kZgDjs6DrgNgLC1/LQNp
+ 5OhBo0KjulvjcuGLeXq9FHG6rzYEFhsQp8nX7/Z9SMlXOhDszKiI6ksfZrl4r4nnXErAPCJQP
+ OM0F6N7qjKmaeeE++LrBmfw3YHyvGs3i+ITKviJOiAdL9cIGDI6Itw3jrbwftAbf64tA033LD
+ gaFdIIOYwk40PqVyx4ETW/tTJ8EuPAseG17aDzKz8zDxIO5vA8+ubHKCfiONgh6P1oyHOLL6x
+ uAmOBPPyB+e4uGE5Zz6LpAj7LOTsfo1gdm/iJMnqPEyfJjOXqwwdOaD3zvv6f1f3mzrt5Zx3b
+ KaXpf7+ujMKJBRmpkAprsHhO42e0jXZQJnxNSei2NARCRKJ0Hi2hTtZNzLxPBOwaI3iSqX1Jc
+ srxZWs+TDPV0QWZYr3puP+6ixTN95m/CXe0vJ34uuR42GfSxSvdmDFuaz0abdbvy8HQiPB2wA
+ y72Fdtkd/7Dz81LMb3+g/uP4lwPBAX6bRtWRxXe0iklXLSqImDosSqnK/QmOlhVi5TG1Wkq13
+ XXob4cq0+k4U7jH5cCPA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-10-22 at 17:18 -0700, Lakshmi Ramasubramanian wrote:
-> Call process_buffer_measurement to measure keys that
-> are added and updated in the system.
+On Wed, Oct 23, 2019 at 2:41 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-This patch description doesn't describe what the patch actually does
-(eg. it not only calls process_buffer_measurement, but defines the IMA
-hook itself.)
+> > diff --git a/arch/arm/plat-samsung/include/plat/adc.h b/include/linux/soc/samsung/s3c-adc.h
+> > similarity index 100%
+> > rename from arch/arm/plat-samsung/include/plat/adc.h
+> > rename to include/linux/soc/samsung/s3c-adc.h
+>
+> Can you update the name of header guard? __LINUX_SOC_SAMSUNG_S3C_ADC_H?
 
-The ordering of this patch set is awkward.  It should first introduce
-a generic method for measuring keys based on the keyring.  Then add
-the additional support needed for the specific builtin_trusted_keys
-keyring usecase.
+Ok, done.
 
-> 
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> ---
->  security/integrity/ima/ima_main.c  | 23 +++++++++++++++++++++
->  security/integrity/ima/ima_queue.c | 32 ++++++++++++++++++++++++++++++
->  2 files changed, 55 insertions(+)
-> 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 8e965d18fb21..7c2afb954f19 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -678,6 +678,29 @@ void ima_kexec_cmdline(const void *buf, int size)
->  	}
->  }
->  
-> +/*
-> + * ima_post_key_create_or_update
-> + * @keyring points to the keyring to which the key belongs
-> + * @key points to the key being created or updated
-> + * @cred cred structure
-> + * @flags flags passed to key_create_or_update function
-> + * @create flag to indicate whether the key was created or updated
-> + *
-> + * IMA hook called when a new key is created or updated.
-> + *
-> + * On success return 0.
-> + * Return appropriate error code on error
-> + */
-> +int ima_post_key_create_or_update(struct key *keyring, struct key *key,
-> +				  const struct cred *cred,
-> +				  unsigned long flags, bool create)
-> +{
-> +	if (key->type != &key_type_asymmetric)
-> +		return 0;
-> +
-> +	return ima_measure_key(keyring, key);
-> +}
-> +
-
-Here is the new IMA hook, not "[PATCH v1 3/6] KEYS: ima hook to
-measure builtin_trusted_keys".  The new hook should call
-process_buffer_measurement() directly.  A subsequent patch, based on
-the keyring, would determine if it needs to be queued.
-
-Mimi
-
-
->  static int __init init_ima(void)
->  {
->  	int error;
-> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-> index a262e289615b..0da11a292f99 100644
-> --- a/security/integrity/ima/ima_queue.c
-> +++ b/security/integrity/ima/ima_queue.c
-> @@ -322,7 +322,12 @@ static struct ima_trusted_key_entry *ima_alloc_trusted_queue_entry(
->  int ima_measure_key(struct key *keyring, struct key *key)
->  {
->  	int rc = 0;
-> +	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
-> +	struct ima_template_desc *template_desc = ima_template_desc_current();
-> +	int action;
->  	struct ima_trusted_key_entry *entry = NULL;
-> +	const struct public_key *pk;
-> +	u32 secid;
->  	enum ima_hooks func;
->  	bool queued = false;
->  
-> @@ -344,16 +349,43 @@ int ima_measure_key(struct key *keyring, struct key *key)
->  
->  	mutex_unlock(&ima_trusted_keys_mutex);
->  
-> +	if ((rc == 0) && !queued) {
-> +		security_task_getsecid(current, &secid);
-> +		action = ima_get_action(NULL, current_cred(), secid, 0,
-> +					func, &pcr, &template_desc);
-> +		if (action & IMA_MEASURE) {
-> +			pk = key->payload.data[asym_crypto];
-> +			process_buffer_measurement(pk->key, pk->keylen,
-> +						   key->description,
-> +						   pcr, template_desc);
-> +		}
-> +	}
-> +
->  	return rc;
->  }
->  
->  void ima_measure_queued_trusted_keys(void)
->  {
->  	struct ima_trusted_key_entry *entry, *tmp;
-> +	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
-> +	struct ima_template_desc *template_desc = ima_template_desc_current();
-> +	int action;
-> +	u32 secid;
->  
->  	mutex_lock(&ima_trusted_keys_mutex);
->  
->  	list_for_each_entry_safe(entry, tmp, &ima_trusted_keys, list) {
-> +		security_task_getsecid(current, &secid);
-> +		action = ima_get_action(NULL, current_cred(), secid, 0,
-> +					entry->func, &pcr,
-> +					&template_desc);
-> +		if (action & IMA_MEASURE) {
-> +			process_buffer_measurement(entry->public_key,
-> +						   entry->public_key_len,
-> +						   entry->key_description,
-> +						   pcr,
-> +						   template_desc);
-> +		}
->  		list_del(&entry->list);
->  		ima_free_trusted_key_entry(entry);
->  	}
-
+       Arnd
