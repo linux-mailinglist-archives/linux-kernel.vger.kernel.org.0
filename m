@@ -2,55 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C9CDE1434
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82B13E1441
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:31:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390351AbfJWI3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:29:23 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:48116 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390339AbfJWI3W (ORCPT
+        id S2390339AbfJWIbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:31:50 -0400
+Received: from outbound-smtp22.blacknight.com ([81.17.249.190]:46920 "EHLO
+        outbound-smtp22.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390165AbfJWIbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:29:22 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iNC17-0005Up-55; Wed, 23 Oct 2019 10:29:17 +0200
-Date:   Wed, 23 Oct 2019 10:29:12 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Wanpeng Li <kernellwp@gmail.com>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, kvm <kvm@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH v2] sched/nohz: Optimize get_nohz_timer_target()
-In-Reply-To: <CANRm+CxUpwZ9KwOcQp=Ok64giyjjcJOGb2=zU6vayQzLqYvpXQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1910231028250.2308@nanos.tec.linutronix.de>
-References: <1561682593-12071-1-git-send-email-wanpengli@tencent.com> <20190628011012.GA19488@lerouge> <CANRm+CxUpwZ9KwOcQp=Ok64giyjjcJOGb2=zU6vayQzLqYvpXQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 23 Oct 2019 04:31:49 -0400
+Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
+        by outbound-smtp22.blacknight.com (Postfix) with ESMTPS id 19574B86F3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 09:31:46 +0100 (IST)
+Received: (qmail 2938 invoked from network); 23 Oct 2019 08:31:45 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.19.210])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 23 Oct 2019 08:31:45 -0000
+Date:   Wed, 23 Oct 2019 09:31:43 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Aquini <aquini@redhat.com>, Mel Gorman <mgorman@suse.de>
+Subject: Re: [PATCH] mm/vmstat: Reduce zone lock hold time when reading
+ /proc/pagetypeinfo
+Message-ID: <20191023083143.GC3016@techsingularity.net>
+References: <20191022162156.17316-1-longman@redhat.com>
+ <20191022165745.GT9379@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20191022165745.GT9379@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Oct 2019, Wanpeng Li wrote:
-> I didn't see your refactor to get_nohz_timer_target() which you
-> mentioned in IRC after four months, I can observe cyclictest drop from
-> 4~5us to 8us in kvm guest(we offload the lapic timer emulation to
-> housekeeping cpu to avoid timer fire external interrupt on the pCPU
-> which vCPU resident incur a vCPU vmexit) w/o this patch in the case of
-> there is no busy housekeeping cpu. The score can be recovered after I
-> give stress to create a busy housekeeping cpu.
+On Tue, Oct 22, 2019 at 06:57:45PM +0200, Michal Hocko wrote:
+> [Cc Mel]
 > 
-> Could you consider applying this patch for temporary since I'm not
-> sure when the refactor can be ready.
+> On Tue 22-10-19 12:21:56, Waiman Long wrote:
+> > The pagetypeinfo_showfree_print() function prints out the number of
+> > free blocks for each of the page orders and migrate types. The current
+> > code just iterates the each of the free lists to get counts.  There are
+> > bug reports about hard lockup panics when reading the /proc/pagetyeinfo
+> > file just because it look too long to iterate all the free lists within
+> > a zone while holing the zone lock with irq disabled.
+> > 
+> > Given the fact that /proc/pagetypeinfo is readable by all, the possiblity
+> > of crashing a system by the simple act of reading /proc/pagetypeinfo
+> > by any user is a security problem that needs to be addressed.
+> 
+> Should we make the file 0400? It is a useful thing when debugging but
+> not something regular users would really need for life.
+> 
 
-Yeah. It's delayed (again).... Will pick that up.
+I think this would be useful in general. The information is not that
+useful outside of debugging. Even then it's only useful when trying to
+get a handle on why a path like compaction is taking too long.
 
-Thanks,
+> > There is a free_area structure associated with each page order. There
+> > is also a nr_free count within the free_area for all the different
+> > migration types combined. Tracking the number of free list entries
+> > for each migration type will probably add some overhead to the fast
+> > paths like moving pages from one migration type to another which may
+> > not be desirable.
+> 
+> Have you tried to measure that overhead?
+>  
 
-	tglx
+I would prefer this option not be taken. It would increase the cost of
+watermark calculations which is a relatively fast path.
+
+> > we can actually skip iterating the list of one of the migration types
+> > and used nr_free to compute the missing count. Since MIGRATE_MOVABLE
+> > is usually the largest one on large memory systems, this is the one
+> > to be skipped. Since the printing order is migration-type => order, we
+> > will have to store the counts in an internal 2D array before printing
+> > them out.
+> > 
+> > Even by skipping the MIGRATE_MOVABLE pages, we may still be holding the
+> > zone lock for too long blocking out other zone lock waiters from being
+> > run. This can be problematic for systems with large amount of memory.
+> > So a check is added to temporarily release the lock and reschedule if
+> > more than 64k of list entries have been iterated for each order. With
+> > a MAX_ORDER of 11, the worst case will be iterating about 700k of list
+> > entries before releasing the lock.
+> 
+> But you are still iterating through the whole free_list at once so if it
+> gets really large then this is still possible. I think it would be
+> preferable to use per migratetype nr_free if it doesn't cause any
+> regressions.
+> 
+
+I think it will. The patch as it is contains the overhead within the
+reader of the pagetypeinfo proc file which is a non-critical path. The
+page allocator paths on the other hand is very important.
+
+-- 
+Mel Gorman
+SUSE Labs
