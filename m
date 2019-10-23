@@ -2,96 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEEE1E1C9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:30:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F7DBE1CA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:32:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391994AbfJWNaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 09:30:00 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:40247 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389928AbfJWN37 (ORCPT
+        id S2392025AbfJWNcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:32:11 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45304 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389224AbfJWNcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:29:59 -0400
-Received: from mail-qk1-f175.google.com ([209.85.222.175]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MpDVx-1hf9jO1AyN-00qfjg; Wed, 23 Oct 2019 15:29:57 +0200
-Received: by mail-qk1-f175.google.com with SMTP id 71so15857206qkl.0;
-        Wed, 23 Oct 2019 06:29:57 -0700 (PDT)
-X-Gm-Message-State: APjAAAUz1m/L03nkwFR64TEPwnvYj2SBot3Ce1SNhrefR9kc+30hO9Da
-        kirG5qiC00YmM7D7X+yQ28U+cbJ4+Hg5GS3UTyw=
-X-Google-Smtp-Source: APXvYqzGCvORTP+HJikmS9n+sLPhWUfQgJCCEYKmJ03DZvSC0gT0L7hZhZ7lqgzmTpFpBJ2WhE68gjxgaObVawX07k4=
-X-Received: by 2002:a37:a50f:: with SMTP id o15mr7091533qke.3.1571837396079;
- Wed, 23 Oct 2019 06:29:56 -0700 (PDT)
+        Wed, 23 Oct 2019 09:32:10 -0400
+Received: by mail-lj1-f196.google.com with SMTP id q64so21114333ljb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 06:32:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Wzxz1HRetKbtdZRIGFi+6T+sl+zIChdSBNVj624bN+w=;
+        b=GCdeB54p3XbpLOICpXtiiEJFuVt9MpKDpi6YvUWuKBbDAgN771qopihE72xllMiaD0
+         FOkJvk9HjcCoGYOX/YHNCZAa+pF94yMyAr8Q5iQTV2rq+q7dDZ/Zpvv2NwZFNYdV6tJN
+         saw2Mthif5qLS0aZWjZthnwiS/3G+LEsm2uP/LKleo2jB+FeVIx/TjzV6xoCQeFt3mj0
+         1yOg8MZtZi0exfVi+bEliec8hcB2ylXCc0i9SvkfbdfbgCbkFEJv8JUqmN9aXmn3uaFm
+         D47LHSzMbVu2O47X72DZElqi8pfy89VAEkAkWy0f+2ARricY+OMSb1Mca/RiAQ4vG5dS
+         L9eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wzxz1HRetKbtdZRIGFi+6T+sl+zIChdSBNVj624bN+w=;
+        b=unhmWI0ILjwuXN6H8Pb/udR88KBMpRLB+9WIM1zcu4fJN7ZSfL/Ak9S5GWkj8+YpVK
+         McVoHLHYpTwaX7VJVuStqY8fvSe8I4T3m6ShjwVV+prLU9DfUTGo9zwL5i0u48BFFHQa
+         kSXxipU5q8EGy4cWU/V9NnNnSAvSy0yrTJWFhGeLKCQ7CFIbAYE7za8bMpPR8v5ve97o
+         Ew4JwdA9ChgjgqonIubcFaSLswVMowvs/7VZYHPu/zRvay+kvmisRWTunHdVi04gzLJM
+         jIwCrinyUmCHsZVIHO/ux3DQ3md2MXEQ968Xxw4EcuoK7D5cW7SSkn0NpHxrTxOSPgfb
+         Ewpw==
+X-Gm-Message-State: APjAAAUUfW1t9PDib13fOln4not4WF8Cn1eg7AqcRtiNlhvC70x4oL3s
+        laxUt8VQBFiBOj5okKIP/LtHexIB
+X-Google-Smtp-Source: APXvYqzn95bg8bmQRTCowErfd7qdL378ZN0P2XfgbA2+CA2HDmORmBzR23ZYk69MHOFdrYZX5pNqVw==
+X-Received: by 2002:a2e:9058:: with SMTP id n24mr5556839ljg.114.1571837526825;
+        Wed, 23 Oct 2019 06:32:06 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.199.94])
+        by smtp.gmail.com with ESMTPSA id x13sm4461769ljb.92.2019.10.23.06.32.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 06:32:05 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id A490D4610AC; Wed, 23 Oct 2019 16:32:04 +0300 (MSK)
+Date:   Wed, 23 Oct 2019 16:32:04 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [BUG -tip] kmemleak and stacktrace cause page faul
+Message-ID: <20191023133204.GH12121@uranus.lan>
+References: <20191019114421.GK9698@uranus.lan>
+ <20191022142325.GD12121@uranus.lan>
+ <20191022145619.GE12121@uranus.lan>
+ <alpine.DEB.2.21.1910231457400.2308@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-21-arnd@arndb.de> <20191023125053.GF11048@pi3>
-In-Reply-To: <20191023125053.GF11048@pi3>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 23 Oct 2019 15:29:40 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3x1_eB4GT7qvhgVnq-sU8a=wkSf4FP18p7pVHmtrfWFA@mail.gmail.com>
-Message-ID: <CAK8P3a3x1_eB4GT7qvhgVnq-sU8a=wkSf4FP18p7pVHmtrfWFA@mail.gmail.com>
-Subject: Re: [PATCH 21/36] ARM: s3c: move iis pinctrl config into boards
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:45uo9k27IIpvoy/lowmX+iONkHFYeoQnOIQJAEa6ppYylVtzEXq
- kW2ac8i4htkGzKKk4ldFgDxmMg4155Pp4dYObmc1NuY/8vxlP7iKv4u2MHuAaGNcFrVqcCD
- B64z6UzDoNSGSudD7wVd7RDHcfMiMZj+1FInnORk014sBvIRncGhAISk782REyxXzhMPcsZ
- 3Uh8qiTjRBYfx+1vPA85A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:o21pk2LcCic=:GEQ5+tFm0A0qWIS7Vogk5M
- 5EFViD+5FUVRSI3WOIKTN7UaBKTlfP4nEpN8TQ6fcd1YiKKQ0xt6rL0sg9sxfblyZQaPZ43iP
- yQqrRvTXyrWNuYJIOdSKChQAh8usEUSxM6GYJOHtBkjhH+AkKMq7SGogpXROLrAdQmU2IGd09
- jJDj3Xor8OBIw8WgZx/RBcnM5KuVGmjgyHacj+111XYMIML2sbNgpNlZsZMitpj1dYpzZHmIt
- WS6qk4xy3dTyr941IsiHOECW55WljVEvxjdUvzXFHxCjEGhOlkZD6TnZmcUEPOlKn0f1eznvl
- fXtC3usXJFSIMz/yPApySJrB6nXwpCeQi3m8w1EuEv+5ESdBc+323DT5zUJMfdEg3jaTmubYw
- fvWCNXMVCbLBFT0R1tvbNQC4o8Pz4gO0ONBMK+4b4kKgPJyjruugu59DCv3dTESBuXNYlf9XE
- nwNHNJC9mVza64vwu443gFdqK+zUuqrhfQyeMs9mNM6jQIb+FZYGNXJUXIq2yx9jegsFpgeT8
- CWIMocJAXGi6hvMgRyg0cKTSlRml39XENNZn4f5ii0Ln3jUC1mGaa3HgX9p8UIG25ppK6EsYU
- 4eineBnRapCS9n9hjmvK/TEpG2QVHy9dkCxeKiLimDX03+YZ9zaX/JETObhTmqVjxjcZs1Aqo
- bjYLC8MrX3JqoHOJYWuHvOM0ZaGYYZMtRWp0UjpK1mQEsKyScu/F1/bnPdHRiK2xuD+rJ0sT9
- Qu2OIpOU1w2Vd6cuir0ch+wuwwg3rM6eJNf65RFeRXXfLd9q93xEczY8Lay5QDVRGv3fnO0w8
- ebma8iao+utzb31K61FuxqmFzGIr5yPwnKZ6Fbrp4wRQ0E1E255mamlJ/KmEofO3uGOIUqVYJ
- BDOlVYxNVEZGSD5uzr9Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1910231457400.2308@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 2:51 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Thu, Oct 10, 2019 at 10:30:05PM +0200, Arnd Bergmann wrote:
-> > The s3c_gpio_cfgall_range() function is an internal interface of
-> > the samsung gpio driver and should not be called directly by drivers,
-> > so move the iis pin initialization into the boards.
-> >
-> > Note that the s3c2412-i2s driver has no boards using it in
-> > mainline linux, the driver gets selected for the jive machine
-> > but is never instantiated.
+On Wed, Oct 23, 2019 at 03:21:05PM +0200, Thomas Gleixner wrote:
+> On Tue, 22 Oct 2019, Cyrill Gorcunov wrote:
+> > On Tue, Oct 22, 2019 at 05:23:25PM +0300, Cyrill Gorcunov wrote:
+> > > 
+> > > I presume the kmemleak tries to save stack trace too early when estack_pages are not
+> > > yet filled.
+> > 
+> > Indeed, at this stage of boot the percpu_setup_exception_stacks has not been called
+> > yet and estack_pages full of crap
+> > 
+> > [    0.157502] stk 0x1008 k 1 begin 0x0 end 0xd000 estack_pages 0xffffffff82014880 ep 0xffffffff82014888
+> > [    0.159395] estack_pages[0] = 0x0
+> > [    0.160046] estack_pages[1] = 0x5100000001000
+> > [    0.160881] estack_pages[2] = 0x0
+> > [    0.161530] estack_pages[3] = 0x6100000003000
+> > [    0.162343] estack_pages[4] = 0x0
+> > [    0.162962] estack_pages[5] = 0x0
+> > [    0.163523] estack_pages[6] = 0x0
+> > [    0.164065] estack_pages[7] = 0x8100000007000
+> > [    0.164978] estack_pages[8] = 0x0
+> > [    0.165624] estack_pages[9] = 0x9100000009000
+> > [    0.166448] estack_pages[10] = 0x0
+> > [    0.167064] estack_pages[11] = 0xa10000000b000
+> > [    0.168055] estack_pages[12] = 0x0
+> 
+> Errm. estack_pages is statically initialized and it's an array of:.
+> 
+> struct estack_pages {
+>         u32     offs;
+>         u16     size;
+>         u16     type;
+> };
+> 
+> [0,2,4,5,6,8,10,12] are guard pages so 0 is not that crappy at all
 
-> This is not entirely equivalent move as before this was probe (so being
-> executed also on rebinds) and now it is init. I guess it should not make
-> any difference so let it be.
+Wait, Thomas, I might be wrong, but per-cpu is initialized to the pointer,
+the memory for this estack_pages has not yet been allocated, no?
 
-Right, I've added an explanation in the changelog text now:
+> The rest looks completely valid if you actually decode it proper.
 
- The s3c_gpio_cfgall_range() function is an internal interface of the
- samsung gpio driver and should not be called directly by drivers, so
- move the iis pin initialization into the boards.
+The diff I made to fetch the values are
 
-+This means the pin configuration is only run once at early boot, rather
-+than each time the driver binds, but the effect should be the same.
+diff --git a/arch/x86/kernel/dumpstack_64.c b/arch/x86/kernel/dumpstack_64.c
+index 753b8cfe8b8a..bf0d755b6079 100644
+--- a/arch/x86/kernel/dumpstack_64.c
++++ b/arch/x86/kernel/dumpstack_64.c
+@@ -101,8 +101,18 @@ static bool in_exception_stack(unsigned long *stack, struct stack_info *info)
+ 
+ 	/* Calc page offset from start of exception stacks */
+ 	k = (stk - begin) >> PAGE_SHIFT;
++
+ 	/* Lookup the page descriptor */
+ 	ep = &estack_pages[k];
++
++	printk("stk 0x%lx k %u begin 0x%lx end 0x%lx estack_pages 0x%lx ep 0x%lx\n",
++	       stk, k, begin, end, (long)(void *)&estack_pages[0], (long)(void *)ep);
++
++	for (k = 0; k < CEA_ESTACK_PAGES; k++) {
++		long v = *(long *)(void *)&estack_pages[k];
++		printk("estack_pages[%d] = 0x%lx\n", k, v);
++	}
++
+ 	/* Guard page? */
+ 	if (!ep->size)
+ 		return false;
 
-        Arnd
+
+> 
+> e.g. 0x51000 00001000
+> 
+>      bit  0-31: 00001000		Offset 0x1000: 1 Page
+>      bit 32-47: 1000			Size 0x1000:   1 Page
+>      bit 48-63: 5			Type 5: STACK_TYPE_EXCEPTION + ESTACK_DF
+> 
+> So, no. This is NOT the problem.
+
+I drop the left of your reply. True, I agreed with anything you said.
+You know I didn't manage to dive more into this problem yesterday
+but if time permits I'll continue today. It is easily triggering
+under kvm (the kernel I'm building is almost without modules so
+I simply upload bzImage into the guest). FWIW, the config I'm
+using is https://gist.github.com/cyrillos/7cd5d2510a99af8ea872f07ac6f9095b
