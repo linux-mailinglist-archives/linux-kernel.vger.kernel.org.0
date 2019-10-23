@@ -2,29 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC88E1792
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:14:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70BB6E1780
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:14:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404359AbfJWKOT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 06:14:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53804 "EHLO mx1.suse.de"
+        id S2404178AbfJWKNd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 06:13:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53846 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391029AbfJWKNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2391093AbfJWKNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 23 Oct 2019 06:13:30 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 40CC8B513;
-        Wed, 23 Oct 2019 10:13:28 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 3BF2DB506;
+        Wed, 23 Oct 2019 10:13:29 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v2 02/11] dt-bindings: reset: Add Realtek RTD1195
-Date:   Wed, 23 Oct 2019 12:13:08 +0200
-Message-Id: <20191023101317.26656-3-afaerber@suse.de>
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Dinh Nguyen <dinguyen@kernel.org>
+Subject: [PATCH v2 03/11] reset: simple: Keep alphabetical order
+Date:   Wed, 23 Oct 2019 12:13:09 +0200
+Message-Id: <20191023101317.26656-4-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191023101317.26656-1-afaerber@suse.de>
 References: <20191023101317.26656-1-afaerber@suse.de>
@@ -36,97 +37,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a header with symbolic reset indices for Realtek RTD1195 SoC.
-Naming was derived from BSP register description headers.
+Restore alphabetical order for Kconfig dependencies and help text.
+Compatibles got out of order too, but no functional change done here.
 
+Goal is to make it obvious where to add new platforms.
+
+Fixes: 64c47b624f64 ("reset: Add reset controller support for BM1880 SoC")
+Fixes: 1d7592f84f92 ("reset: simple: Enable for ASPEED systems")
+Fixes: 96a2f50305d1 ("reset: build simple reset controller driver for Agilex")
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- v2: New
+ v2: New (prepares for following patch extending it to Realtek)
  
- include/dt-bindings/reset/realtek,rtd1195.h | 74 +++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
- create mode 100644 include/dt-bindings/reset/realtek,rtd1195.h
+ drivers/reset/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/dt-bindings/reset/realtek,rtd1195.h b/include/dt-bindings/reset/realtek,rtd1195.h
-new file mode 100644
-index 000000000000..27902abf935b
---- /dev/null
-+++ b/include/dt-bindings/reset/realtek,rtd1195.h
-@@ -0,0 +1,74 @@
-+/* SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause) */
-+/*
-+ * Realtek RTD1195 reset controllers
-+ *
-+ * Copyright (c) 2017 Andreas Färber
-+ */
-+#ifndef DT_BINDINGS_RESET_RTD1195_H
-+#define DT_BINDINGS_RESET_RTD1195_H
-+
-+/* soft reset 1 */
-+#define RTD1195_RSTN_MISC		0
-+#define RTD1195_RSTN_RNG		1
-+#define RTD1195_RSTN_USB3_POW		2
-+#define RTD1195_RSTN_GSPI		3
-+#define RTD1195_RSTN_USB3_P0_MDIO	4
-+#define RTD1195_RSTN_VE_H265		5
-+#define RTD1195_RSTN_USB		6
-+#define RTD1195_RSTN_USB_PHY0		8
-+#define RTD1195_RSTN_USB_PHY1		9
-+#define RTD1195_RSTN_HDMIRX		11
-+#define RTD1195_RSTN_HDMI		12
-+#define RTD1195_RSTN_ETN		14
-+#define RTD1195_RSTN_AIO		15
-+#define RTD1195_RSTN_GPU		16
-+#define RTD1195_RSTN_VE_H264		17
-+#define RTD1195_RSTN_VE_JPEG		18
-+#define RTD1195_RSTN_TVE		19
-+#define RTD1195_RSTN_VO			20
-+#define RTD1195_RSTN_LVDS		21
-+#define RTD1195_RSTN_SE			22
-+#define RTD1195_RSTN_DCU		23
-+#define RTD1195_RSTN_DC_PHY		24
-+#define RTD1195_RSTN_CP			25
-+#define RTD1195_RSTN_MD			26
-+#define RTD1195_RSTN_TP			27
-+#define RTD1195_RSTN_AE			28
-+#define RTD1195_RSTN_NF			29
-+#define RTD1195_RSTN_MIPI		30
-+
-+/* soft reset 2 */
-+#define RTD1195_RSTN_ACPU		0
-+#define RTD1195_RSTN_VCPU		1
-+#define RTD1195_RSTN_PCR		9
-+#define RTD1195_RSTN_CR			10
-+#define RTD1195_RSTN_EMMC		11
-+#define RTD1195_RSTN_SDIO		12
-+#define RTD1195_RSTN_I2C_5		18
-+#define RTD1195_RSTN_RTC		20
-+#define RTD1195_RSTN_I2C_4		23
-+#define RTD1195_RSTN_I2C_3		24
-+#define RTD1195_RSTN_I2C_2		25
-+#define RTD1195_RSTN_I2C_1		26
-+#define RTD1195_RSTN_UR1		28
-+
-+/* soft reset 3 */
-+#define RTD1195_RSTN_SB2		0
-+
-+/* iso soft reset */
-+#define RTD1195_ISO_RSTN_VFD		0
-+#define RTD1195_ISO_RSTN_IR		1
-+#define RTD1195_ISO_RSTN_CEC0		2
-+#define RTD1195_ISO_RSTN_CEC1		3
-+#define RTD1195_ISO_RSTN_DP		4
-+#define RTD1195_ISO_RSTN_CBUSTX		5
-+#define RTD1195_ISO_RSTN_CBUSRX		6
-+#define RTD1195_ISO_RSTN_EFUSE		7
-+#define RTD1195_ISO_RSTN_UR0		8
-+#define RTD1195_ISO_RSTN_GMAC		9
-+#define RTD1195_ISO_RSTN_GPHY		10
-+#define RTD1195_ISO_RSTN_I2C_0		11
-+#define RTD1195_ISO_RSTN_I2C_6		12
-+#define RTD1195_ISO_RSTN_CBUS		13
-+
-+#endif
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 46f7986c3587..fac356a9b818 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -129,7 +129,7 @@ config RESET_SCMI
+ 
+ config RESET_SIMPLE
+ 	bool "Simple Reset Controller Driver" if COMPILE_TEST
+-	default ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED || ARCH_BITMAIN || ARC || ARCH_AGILEX
++	default ARCH_AGILEX || ARCH_ASPEED || ARCH_BITMAIN || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARC
+ 	help
+ 	  This enables a simple reset controller driver for reset lines that
+ 	  that can be asserted and deasserted by toggling bits in a contiguous,
+@@ -138,10 +138,10 @@ config RESET_SIMPLE
+ 	  Currently this driver supports:
+ 	   - Altera SoCFPGAs
+ 	   - ASPEED BMC SoCs
++	   - Bitmain BM1880 SoC
+ 	   - RCC reset controller in STM32 MCUs
+ 	   - Allwinner SoCs
+ 	   - ZTE's zx2967 family
+-	   - Bitmain BM1880 SoC
+ 
+ config RESET_STM32MP157
+ 	bool "STM32MP157 Reset Driver" if COMPILE_TEST
 -- 
 2.16.4
 
