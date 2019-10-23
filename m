@@ -2,134 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0AAE1F1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 17:21:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3420BE1F25
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 17:22:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406624AbfJWPVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 11:21:10 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57218 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2406602AbfJWPVJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 11:21:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571844068;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=93aeFP5T+vRMcJvg4/fDd9Eq3JQGr3j/oyGTUsAl3c8=;
-        b=X6XOxHcsPUVkExbGbppmroJ8efNJVeE0cdUS9YOlHlJu/G8iKuYc05J+kYS4KVQE/mzqq8
-        r/wPdp+YrIFs+u1kLr3mEgEgWqIr2z+MWEKs06KbLOZdc7fxLpdbGV+P1ahgkkRNsnXEYS
-        IDYtdBLh7nt8KFLPx56l4PGGssBVOqc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-225-3MTVpcEMNnCZYTLXuZa83Q-1; Wed, 23 Oct 2019 11:21:04 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2406636AbfJWPWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 11:22:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59716 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390590AbfJWPWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 11:22:33 -0400
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CB7A1107AFA9;
-        Wed, 23 Oct 2019 15:21:02 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3036A1001B20;
-        Wed, 23 Oct 2019 15:21:01 +0000 (UTC)
-Subject: Re: [RFC PATCH 2/2] mm, vmstat: reduce zone->lock holding time by
- /proc/pagetypeinfo
-From:   Waiman Long <longman@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <guro@fb.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Aquini <aquini@redhat.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-References: <20191023095607.GE3016@techsingularity.net>
- <20191023102737.32274-1-mhocko@kernel.org>
- <20191023102737.32274-3-mhocko@kernel.org>
- <a3510617-fd23-9f90-3c40-700bcb0f353c@redhat.com>
-Organization: Red Hat
-Message-ID: <c5d19ad0-db65-e592-490a-3ba73f81296b@redhat.com>
-Date:   Wed, 23 Oct 2019 11:21:00 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        by mail.kernel.org (Postfix) with ESMTPSA id E1A9C2173B;
+        Wed, 23 Oct 2019 15:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571844153;
+        bh=xJ5Ug43nm7zSbxQ4Bnd58U6/uHIXTRGyKbwkCrb1hbE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lA2NM44oqKLQL6Py6n/5TEN6kzCCf0o2qZDzSPFWPRaxjnNhSP9gWyHdPy/3MI+ST
+         0EmBiJA+WZHP5YdmXSzaZoOMQ2HgNII2FPPHLDGm4X99MiuyKlv9Vn7BCbB5HXgcQ3
+         mqAq6As9iMEPgqhNWu+Gs8IRoUcOdR8T8sBxRQRw=
+Received: by mail-qt1-f170.google.com with SMTP id o25so19459144qtr.5;
+        Wed, 23 Oct 2019 08:22:32 -0700 (PDT)
+X-Gm-Message-State: APjAAAVGzoaTsZdR3zBONji+Ry2XUn9eTNJUmJ99aSFg7GOh+MCerera
+        G8dT7fcTT8YYx+hyW/yU7ESVszmrG+iZwY8YbA==
+X-Google-Smtp-Source: APXvYqw/saQh1AzPPj9v3pcO4u41RTTvTh4j7xWPhNPzQFrE+1EfmtDNB6Fnbf7GdLX6CuuuefKnLoKY1LRcMSunzoU=
+X-Received: by 2002:ac8:293b:: with SMTP id y56mr9877674qty.224.1571844152043;
+ Wed, 23 Oct 2019 08:22:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <a3510617-fd23-9f90-3c40-700bcb0f353c@redhat.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: 3MTVpcEMNnCZYTLXuZa83Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <BY5PR04MB6599EAA659A53B2331CB812586890@BY5PR04MB6599.namprd04.prod.outlook.com>
+ <20190923161015.GI15355@zn.tnic> <e2b9cd68-abaa-bdcd-cc56-cca285272569@outlook.com>
+ <41637032-a308-9a92-1b49-cb51af2580f8@outlook.com> <BY5PR04MB65996A0CEB37001C763B248C866C0@BY5PR04MB6599.namprd04.prod.outlook.com>
+ <1ae9a840-d5b6-ccd6-8481-d43665b4411b@arm.com> <BY5PR04MB659953E22E846D0BF4384D0086690@BY5PR04MB6599.namprd04.prod.outlook.com>
+ <70e31777-f4c0-fdd2-fcae-6589d355dd28@arm.com>
+In-Reply-To: <70e31777-f4c0-fdd2-fcae-6589d355dd28@arm.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 23 Oct 2019 10:22:20 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+m-3ojBWH9ni0NFJ08WxqQ784-Y1WcF_h19F=uUExrqw@mail.gmail.com>
+Message-ID: <CAL_Jsq+m-3ojBWH9ni0NFJ08WxqQ784-Y1WcF_h19F=uUExrqw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: edac: arm-dmc520.txt
+To:     James Morse <james.morse@arm.com>
+Cc:     Lei Wang <leiwang_git@outlook.com>, Borislav Petkov <bp@alien8.de>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "hangl@microsoft.com" <hangl@microsoft.com>,
+        "lewan@microsoft.com" <lewan@microsoft.com>,
+        "ruizhao@microsoft.com" <ruizhao@microsoft.com>,
+        "scott.branden@broadcom.com" <scott.branden@broadcom.com>,
+        "yuqing.shen@broadcom.com" <yuqing.shen@broadcom.com>,
+        "ray.jui@broadcom.com" <ray.jui@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/23/19 10:56 AM, Waiman Long wrote:
-> On 10/23/19 6:27 AM, Michal Hocko wrote:
->> From: Michal Hocko <mhocko@suse.com>
->>
->> pagetypeinfo_showfree_print is called by zone->lock held in irq mode.
->> This is not really nice because it blocks both any interrupts on that
->> cpu and the page allocator. On large machines this might even trigger
->> the hard lockup detector.
->>
->> Considering the pagetypeinfo is a debugging tool we do not really need
->> exact numbers here. The primary reason to look at the outuput is to see
->> how pageblocks are spread among different migratetypes therefore putting
->> a bound on the number of pages on the free_list sounds like a reasonable
->> tradeoff.
->>
->> The new output will simply tell
->> [...]
->> Node    6, zone   Normal, type      Movable >100000 >100000 >100000 >100=
-000  41019  31560  23996  10054   3229    983    648
->>
->> instead of
->> Node    6, zone   Normal, type      Movable 399568 294127 221558 102119 =
- 41019  31560  23996  10054   3229    983    648
->>
->> The limit has been chosen arbitrary and it is a subject of a future
->> change should there be a need for that.
->>
->> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
->> Signed-off-by: Michal Hocko <mhocko@suse.com>
->> ---
->>  mm/vmstat.c | 19 ++++++++++++++++++-
->>  1 file changed, 18 insertions(+), 1 deletion(-)
->>
->> diff --git a/mm/vmstat.c b/mm/vmstat.c
->> index 4e885ecd44d1..762034fc3b83 100644
->> --- a/mm/vmstat.c
->> +++ b/mm/vmstat.c
->> @@ -1386,8 +1386,25 @@ static void pagetypeinfo_showfree_print(struct se=
-q_file *m,
->> =20
->>  =09=09=09area =3D &(zone->free_area[order]);
->> =20
->> -=09=09=09list_for_each(curr, &area->free_list[mtype])
->> +=09=09=09list_for_each(curr, &area->free_list[mtype]) {
->>  =09=09=09=09freecount++;
->> +=09=09=09=09/*
->> +=09=09=09=09 * Cap the free_list iteration because it might
->> +=09=09=09=09 * be really large and we are under a spinlock
->> +=09=09=09=09 * so a long time spent here could trigger a
->> +=09=09=09=09 * hard lockup detector. Anyway this is a
->> +=09=09=09=09 * debugging tool so knowing there is a handful
->> +=09=09=09=09 * of pages in this order should be more than
->> +=09=09=09=09 * sufficient
->> +=09=09=09=09 */
->> +=09=09=09=09if (freecount > 100000) {
->> +=09=09=09=09=09seq_printf(m, ">%6lu ", freecount);
+On Wed, Oct 23, 2019 at 8:22 AM James Morse <james.morse@arm.com> wrote:
+>
+> Hi Lei,
+>
+> On 21/10/2019 18:36, Lei Wang wrote:
+> >> It looks like your patches didn't make it to the mailing list:
+> >> https://lore.kernel.org/r/BY5PR04MB6599EAA659A53B2331CB812586890@BY5PR04MB6599.namprd04.prod.outlook.com
+> >>
+> >> You can search on https://lore.kernel.org/linux-edac/, I can only see the replies from the
+> >> people who received it directly.
+> >>
+> >> I can't see anything obvious in the headers that would cause it to get rejected. Did you
+> >> get any bounces/errors from the list?
+> >>
+> >> Depending on how the DT folk work, this may be why you haven't had a response yet. Tools
+> >> like patchwork will depend on the message reaching the list.
+> >
+> > Yes I got reject from
+> >
+> > linux-edac@vger.kernel.org
+>
+> > devicetree@vger.kernel.org
+>
+> This is very likely the reason the DT folk haven't seen this.
 
-It will print ">100001" which seems a bit awk and will be incorrect if
-it is exactly 100001. Could you just hardcode ">100000" into seq_printf()?
+Yes, if it doesn't go to the DT list and into patchwork, then it goes
+with the other 95K unread emails and maybe I see it.
 
-Cheers,
-Longman
-
-
+Rob
