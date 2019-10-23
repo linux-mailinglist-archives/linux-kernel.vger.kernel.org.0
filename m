@@ -2,238 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 031C0E21BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BD1EE21E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729593AbfJWR2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 13:28:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41614 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729423AbfJWR2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:28:09 -0400
-Received: from localhost (unknown [104.132.0.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3FED21872;
-        Wed, 23 Oct 2019 17:28:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571851687;
-        bh=5pgWB4AkehuWd0cfv4A/b1IFZsyYusfiPRz17cePncs=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=OWFT3gE6ccyQz2r3n9mQVAaG7rJDOKP8MU6yf2is0l5OG60rTBToazya3uXg90hAL
-         MC3ETtBjtGo0d0z5fshUsHzywa7dGbRHxEyvu6KKJvcw31zPhELmcSVxt/rFXVQBse
-         gHSGDvBLs5gxe6IGxUV2XMCD6tNMX2HIO6ggcB5s=
-Date:   Wed, 23 Oct 2019 10:28:07 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH 2/2] f2fs: support data compression
-Message-ID: <20191023172807.GA37885@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20191022171602.93637-1-jaegeuk@kernel.org>
- <20191022171602.93637-2-jaegeuk@kernel.org>
- <20191023052447.GD361298@sol.localdomain>
+        id S1730584AbfJWRha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 13:37:30 -0400
+Received: from emh02.mail.saunalahti.fi ([62.142.5.108]:57640 "EHLO
+        emh02.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729283AbfJWRh3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 13:37:29 -0400
+Received: from darkstar.musicnaut.iki.fi (85-76-128-127-nat.elisa-mobile.fi [85.76.128.127])
+        by emh02.mail.saunalahti.fi (Postfix) with ESMTP id 9873F200AD;
+        Wed, 23 Oct 2019 20:30:14 +0300 (EEST)
+Date:   Wed, 23 Oct 2019 20:30:14 +0300
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Wambui Karuga <wambui.karugax@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     outreachy-kernel@googlegroups.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: octeon: Fix incorrect type in assignment
+Message-ID: <20191023173014.GC18977@darkstar.musicnaut.iki.fi>
+References: <20191010043815.14027-1-wambui.karugax@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191023052447.GD361298@sol.localdomain>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20191010043815.14027-1-wambui.karugax@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/22, Eric Biggers wrote:
-> On Tue, Oct 22, 2019 at 10:16:02AM -0700, Jaegeuk Kim wrote:
-> > From: Chao Yu <yuchao0@huawei.com>
-> > 
-> > This patch tries to support compression in f2fs.
-> > 
-> > - New term named cluster is defined as basic unit of compression, file can
-> > be divided into multiple clusters logically. One cluster includes 4 << n
-> > (n >= 0) logical pages, compression size is also cluster size, each of
-> > cluster can be compressed or not.
-> > 
-> > - In cluster metadata layout, one special flag is used to indicate cluster
-> > is compressed one or normal one, for compressed cluster, following metadata
-> > maps cluster to [1, 4 << n - 1] physical blocks, in where f2fs stores
-> > data including compress header and compressed data.
-> > 
-> > - In order to eliminate write amplification during overwrite, F2FS only
-> > support compression on write-once file, data can be compressed only when
-> > all logical blocks in file are valid and cluster compress ratio is lower
-> > than specified threshold.
-> > 
-> > - To enable compression on regular inode, there are three ways:
-> > * chattr +c file
-> > * chattr +c dir; touch dir/file
-> > * mount w/ -o compress_extension=ext; touch file.ext
-> > 
-> > Compress metadata layout:
-> >                              [Dnode Structure]
-> >              +-----------------------------------------------+
-> >              | cluster 1 | cluster 2 | ......... | cluster N |
-> >              +-----------------------------------------------+
-> >              .           .                       .           .
-> >        .                       .                .                      .
-> >   .         Compressed Cluster       .        .        Normal Cluster            .
-> > +----------+---------+---------+---------+  +---------+---------+---------+---------+
-> > |compr flag| block 1 | block 2 | block 3 |  | block 1 | block 2 | block 3 | block 4 |
-> > +----------+---------+---------+---------+  +---------+---------+---------+---------+
-> >            .                             .
-> >          .                                           .
-> >        .                                                           .
-> >       +-------------+-------------+----------+----------------------------+
-> >       | data length | data chksum | reserved |      compressed data       |
-> >       +-------------+-------------+----------+----------------------------+
-> > 
-> > Changelog:
-> > 
-> > 20190326:
-> > - fix error handling of read_end_io().
-> > - remove unneeded comments in f2fs_encrypt_one_page().
-> > 
-> > 20190327:
-> > - fix wrong use of f2fs_cluster_is_full() in f2fs_mpage_readpages().
-> > - don't jump into loop directly to avoid uninitialized variables.
-> > - add TODO tag in error path of f2fs_write_cache_pages().
-> > 
-> > 20190328:
-> > - fix wrong merge condition in f2fs_read_multi_pages().
-> > - check compressed file in f2fs_post_read_required().
-> > 
-> > 20190401
-> > - allow overwrite on non-compressed cluster.
-> > - check cluster meta before writing compressed data.
-> > 
-> > 20190402
-> > - don't preallocate blocks for compressed file.
-> > 
-> > - add lz4 compress algorithm
-> > - process multiple post read works in one workqueue
-> >   Now f2fs supports processing post read work in multiple workqueue,
-> >   it shows low performance due to schedule overhead of multiple
-> >   workqueue executing orderly.
-> > 
-> > - compress: support buffered overwrite
-> > C: compress cluster flag
-> > V: valid block address
-> > N: NEW_ADDR
-> > 
-> > One cluster contain 4 blocks
-> > 
-> >  before overwrite   after overwrite
-> > 
-> > - VVVV		->	CVNN
-> > - CVNN		->	VVVV
-> > 
-> > - CVNN		->	CVNN
-> > - CVNN		->	CVVV
-> > 
-> > - CVVV		->	CVNN
-> > - CVVV		->	CVVV
-> > 
-> > [Jaegeuk Kim]
-> > - add tracepoint for f2fs_{,de}compress_pages()
-> > - fix many bugs and add some compression stats
-> > 
-> > Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Hi,
+
+On Thu, Oct 10, 2019 at 07:38:15AM +0300, Wambui Karuga wrote:
+> Fix the following warning generated by sparse in
+> drivers/staging/octeon/ethernet-tx.c:
 > 
-> How was this tested?  Shouldn't there a mount option analogous to
-> test_dummy_encryption that causes all files to be auto-compressed, so that a
-> full run of xfstests can be done with compression?  I see "compress_extension",
-> but apparently it's only for a file extension?  Also, since reads can involve
-> any combination of decryption, compression, and verity, it's important to test
-> as many combinations as possible, including all at once.  Has that been done?
-
-This patch should be RFC which requires as many tests as possible. I posted it
-quite early in order to get some reviews and feedback as well.
-
-What I've done so far would look like:
-- mkfs.f2fs -f -O encrypt -O quota -O compression -O extra_attr /dev/sdb1
-- mount -t f2fs /dev/sdb1 /mnt/test
-- mkdir /mnt/test/comp_dir
-- f2fs_io setflags compression /mnt/test/comp_dir
-- cd /mnt/test/comp_dir
-- git clone kernel.git
-- compile kernel
-- or, fsstress on top of it
-
+> drivers/staging/octeon/ethernet-tx.c:563:50: warning: incorrect type in assignment (different base types)
+> drivers/staging/octeon/ethernet-tx.c:563:50:    expected unsigned short [usertype] hw_chksum
+> drivers/staging/octeon/ethernet-tx.c:563:50:    got restricted __wsum [usertype] csum
 > 
-> I also tried running the fs-verity xfstests on this with
-> 'kvm-xfstests -c f2fs -g verity', but the kernel immediately crashes:
-
-I didn't check verity yet. I'll take a look at this soon.
-
+> Warning generated by running:
+> make C=2 CF="-D__CHECK_ENDIAN__" drivers/staging/octeon/
 > 
-> BUG: kernel NULL pointer dereference, address: 0000000000000182
-> #PF: supervisor read access in kernel mode
-> #PF: error_code(0x0000) - not-present page
-> PGD 0 P4D 0 
-> Oops: 0000 [#1] SMP
-> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.4.0-rc1-00119-g60f351f4c50f #3
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20191013_105130-anatol 04/01/2014
-> RIP: 0010:__queue_work+0x3e/0x5f0 kernel/workqueue.c:1409
-> Code: d4 53 48 83 ec 18 89 7d d4 8b 3d c1 bf 2a 01 85 ff 74 17 65 48 8b 04 25 80 5d 01 00 8b b0 0c 07 00 00 85 f6 0f 84 1
-> RSP: 0018:ffffc900000a8db0 EFLAGS: 00010046
-> RAX: ffff88807d94e340 RBX: 0000000000000246 RCX: 0000000000000000
-> RDX: ffff88807d9e0be8 RSI: 0000000000000000 RDI: 0000000000000001
-> RBP: ffffc900000a8df0 R08: 0000000000000000 R09: 0000000000000001
-> R10: ffff888075f2bc68 R11: 0000000000000000 R12: ffff88807d9e0be8
-> R13: 0000000000000000 R14: 0000000000000030 R15: ffff88807c2c6780
-> FS:  0000000000000000(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000182 CR3: 00000000757e3000 CR4: 00000000003406e0
-> Call Trace:
->  <IRQ>
->  queue_work_on+0x67/0x70 kernel/workqueue.c:1518
->  queue_work include/linux/workqueue.h:494 [inline]
->  f2fs_enqueue_post_read_work fs/f2fs/data.c:166 [inline]
->  bio_post_read_processing fs/f2fs/data.c:173 [inline]
->  f2fs_read_end_io+0xcb/0xe0 fs/f2fs/data.c:195
->  bio_endio+0xa4/0x1a0 block/bio.c:1818
->  req_bio_endio block/blk-core.c:242 [inline]
->  blk_update_request+0xf6/0x310 block/blk-core.c:1462
->  blk_mq_end_request+0x1c/0x130 block/blk-mq.c:568
->  virtblk_request_done+0x32/0x80 drivers/block/virtio_blk.c:226
->  blk_done_softirq+0x98/0xc0 block/blk-softirq.c:37
->  __do_softirq+0xc1/0x40d kernel/softirq.c:292
->  invoke_softirq kernel/softirq.c:373 [inline]
->  irq_exit+0xb3/0xc0 kernel/softirq.c:413
->  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
->  do_IRQ+0x5b/0x110 arch/x86/kernel/irq.c:263
->  common_interrupt+0xf/0xf arch/x86/entry/entry_64.S:607
->  </IRQ>
-> RIP: 0010:native_safe_halt arch/x86/include/asm/irqflags.h:60 [inline]
-> RIP: 0010:arch_safe_halt arch/x86/include/asm/irqflags.h:103 [inline]
-> RIP: 0010:default_idle+0x29/0x160 arch/x86/kernel/process.c:580
-> Code: 90 55 48 89 e5 41 55 41 54 65 44 8b 25 70 64 76 7e 53 0f 1f 44 00 00 e8 95 13 88 ff e9 07 00 00 00 0f 00 2d 8b c0 b
-> RSP: 0018:ffffc90000073e78 EFLAGS: 00000202 ORIG_RAX: ffffffffffffffdc
-> RAX: ffff88807d94e340 RBX: 0000000000000001 RCX: 0000000000000000
-> RDX: 0000000000000046 RSI: 0000000000000006 RDI: ffff88807d94e340
-> RBP: ffffc90000073e90 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-> R13: ffff88807d94e340 R14: 0000000000000000 R15: 0000000000000000
->  arch_cpu_idle+0xa/0x10 arch/x86/kernel/process.c:571
->  default_idle_call+0x1e/0x30 kernel/sched/idle.c:94
->  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
->  do_idle+0x1e4/0x210 kernel/sched/idle.c:263
->  cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:355
->  start_secondary+0x151/0x1a0 arch/x86/kernel/smpboot.c:264
->  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:241
-> CR2: 0000000000000182
-> ---[ end trace 86328090a3179142 ]---
-> RIP: 0010:__queue_work+0x3e/0x5f0 kernel/workqueue.c:1409
-> Code: d4 53 48 83 ec 18 89 7d d4 8b 3d c1 bf 2a 01 85 ff 74 17 65 48 8b 04 25 80 5d 01 00 8b b0 0c 07 00 00 85 f6 0f 84 1
-> RSP: 0018:ffffc900000a8db0 EFLAGS: 00010046
-> RAX: ffff88807d94e340 RBX: 0000000000000246 RCX: 0000000000000000
-> RDX: ffff88807d9e0be8 RSI: 0000000000000000 RDI: 0000000000000001
-> RBP: ffffc900000a8df0 R08: 0000000000000000 R09: 0000000000000001
-> R10: ffff888075f2bc68 R11: 0000000000000000 R12: ffff88807d9e0be8
-> R13: 0000000000000000 R14: 0000000000000030 R15: ffff88807c2c6780
-> FS:  0000000000000000(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000182 CR3: 00000000757e3000 CR4: 00000000003406e0
-> Kernel panic - not syncing: Fatal exception in interrupt
-> Kernel Offset: disabled
-> Rebooting in 5 seconds..
+> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+> ---
+>  drivers/staging/octeon/octeon-stubs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/octeon/octeon-stubs.h b/drivers/staging/octeon/octeon-stubs.h
+> index 38954b6c89e1..b2e3c72205dd 100644
+> --- a/drivers/staging/octeon/octeon-stubs.h
+> +++ b/drivers/staging/octeon/octeon-stubs.h
+> @@ -123,7 +123,7 @@ union cvmx_pip_wqe_word0 {
+>  	struct {
+>  		uint64_t next_ptr:40;
+>  		uint8_t unused;
+> -		uint16_t hw_chksum;
+> +		__wsum hw_chksum;
+
+I don't think this is correct. This struct defines HW register layout,
+and the field needs to be 16 bits.
+
+A.
