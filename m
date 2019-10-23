@@ -2,144 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4636E2537
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 23:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04F6DE253C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 23:26:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392121AbfJWVZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 17:25:42 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:59011 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392012AbfJWVZm (ORCPT
+        id S2392341AbfJWV0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 17:26:02 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45153 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392252AbfJWV0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 17:25:42 -0400
-Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
-  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="Tudor.Ambarus@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa4.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa4.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: 9THn2kmwp5J212zXQahLtbWMyrI35OIdW+awRSDMAx84zgHN3jfsYF2t4Ki3yeSK5zmmp/0XvP
- D1NEeJYWR3BbSfqLC1UeE32pe0PvzVd17abx72A333UF+J3OMGe95CzVu/r33OQyoMsGkrGcwG
- qOlfvwSChVQSXDuDY1wrzNRf6L5cu6NsHbWMkCaDlWOKUf/5rKE6M94uWhjhBFXgtnWN6riTqD
- pZF4ngSHUFFFaf6iPbitP1uVQibiDt5YhfxhaAGlWlkhJum/o0RIhtrnhd3Qq2l0hLJAlzx4Ck
- zn8=
-X-IronPort-AV: E=Sophos;i="5.68,222,1569308400"; 
-   d="scan'208";a="52725911"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Oct 2019 14:25:40 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 23 Oct 2019 14:25:40 -0700
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
- Transport; Wed, 23 Oct 2019 14:25:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lRQw5tFtIUIrjcWuQ15by+I9mPYvtpgJg80qbJhdUN+tKtjJszfC2Rms3tdal9zKqVAx5wCcqnb9P53Rg594NG9T/uHZQbdXJaxjNFaIvZTnlFo9F//Imd4ZAJVP90yTyKCQckcAF9kBBLBTRIi/jjUHXgfXue3F1cAjn8pShPvQxuKXlw85vU3jxOWJQ8aJlXvRyMLr3X3uIEzgcR/QOQLF4mWbtvpYdE3smV2wmDkzVIGA40Wy4msYeivQz4mmzBSM4kyGY1IrYcJ7t5sTY8apNMLhaxitwo8RT8A6+iio7QMKcmeq6CvQfKo+Aw062j2kCm9H0fWD7sr+mJnx8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VblfyDx2y1jXOJcoC29e6DXPe1HvRb+PV61Z83yJrIA=;
- b=K89ulAd2nCV3oX3LgznlrX4SSo8iRCa7DFYEIqni5wh+nEa244zRyceFfe75d42gJkKLbp7hHxPrFrB8ee28LPce+HnnKk+BgUxuuBywliRi8asl+opW55WBEIzPyIse4qPunSlXk1GA1WD+UPKeYWlAYiaqouSh/XGmEL53957UAvsO+GAd/2sbC6VsKRdbsKLjdeKt+orRY/O/dbMvBwqYyySV9gE/Xe3mEZ/nGz3Zh2H14XOOo+QRxNqF1r50ZkHCxSO23WBkpmtD9lt9tjQvS8/vNuQBnQPLJXDHPNTn8HA4W4o2kKBMOB83VSkR1k0+J5aeihS6WOFlXNu0nA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+        Wed, 23 Oct 2019 17:26:02 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x28so241773pfi.12
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 14:26:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VblfyDx2y1jXOJcoC29e6DXPe1HvRb+PV61Z83yJrIA=;
- b=iVKvUl8OGu6wWD/xkMb75zVru817vEPOPeQJtt1HX/4Dep7rwttrYlobELHyUwLAMG03cX6NqePa+CyrAFvxGfi6lFMKeKz4aMnZEz1tbBkvixjowopYZQE/vdY/N9+5aoX8zgqjpSQ/+0+dLWCeCAyDBv3ivi2eedieLh53PsE=
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
- MN2PR11MB4349.namprd11.prod.outlook.com (10.255.90.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.22; Wed, 23 Oct 2019 21:25:37 +0000
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::c09c:36c8:3301:4457]) by MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::c09c:36c8:3301:4457%5]) with mapi id 15.20.2347.029; Wed, 23 Oct 2019
- 21:25:36 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <vigneshr@ti.com>, <boris.brezillon@collabora.com>,
-        <marek.vasut@gmail.com>, <linux-mtd@lists.infradead.org>,
-        <geert+renesas@glider.be>, <jonas@norrbonn.se>
-CC:     <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <miquel.raynal@bootlin.com>, <richard@nod.at>, <joel@jms.id.au>,
-        <andrew@aj.id.au>, <matthias.bgg@gmail.com>, <vz@mleia.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH v2 03/22] mtd: spi-nor: cadence-quadspi: Fix
- cqspi_command_read() definition
-Thread-Topic: [PATCH v2 03/22] mtd: spi-nor: cadence-quadspi: Fix
- cqspi_command_read() definition
-Thread-Index: AQHVcqwajFKyuDqBQky8we7iWaMUrKdo620A
-Date:   Wed, 23 Oct 2019 21:25:36 +0000
-Message-ID: <fd618129-2844-290a-64a2-b68e7d03ee1f@microchip.com>
-References: <20190924074533.6618-1-tudor.ambarus@microchip.com>
- <20190924074533.6618-4-tudor.ambarus@microchip.com>
-In-Reply-To: <20190924074533.6618-4-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR06CA0105.eurprd06.prod.outlook.com
- (2603:10a6:803:8c::34) To MN2PR11MB4448.namprd11.prod.outlook.com
- (2603:10b6:208:193::29)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [86.120.239.29]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9431ddd9-a31d-41dd-65d4-08d757ff8ba7
-x-ms-traffictypediagnostic: MN2PR11MB4349:
-x-microsoft-antispam-prvs: <MN2PR11MB4349CC2F1216DB84D2C2515BF06B0@MN2PR11MB4349.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2657;
-x-forefront-prvs: 019919A9E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(366004)(39860400002)(199004)(189003)(71190400001)(446003)(11346002)(71200400001)(486006)(476003)(7416002)(8936002)(2616005)(66066001)(66946007)(66556008)(66476007)(81166006)(8676002)(66446008)(64756008)(81156014)(7736002)(229853002)(25786009)(53546011)(186003)(31686004)(3846002)(6116002)(36756003)(54906003)(110136005)(76176011)(316002)(99286004)(26005)(6506007)(386003)(102836004)(52116002)(2201001)(6486002)(4744005)(2501003)(14454004)(4326008)(6512007)(6246003)(86362001)(478600001)(31696002)(256004)(2906002)(305945005)(5660300002)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4349;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: DiuJS9HHMS/K79RB4/0xrK8ighm42U3YVRqPQoUTGNktaZFxkSA1uWaQOIdAhW3nLKMfJLv/y5lrw0/SCvHfz5MfuvEzgRy+FBQGH0vh+wHZ8TqyRDoqABzVgTFAQlXEG/Q5rT+iPJtBlZ+As6+P+jlNGqnJXUVKAck+98aQkmJuuxcgv6FlH59Y9H+Rn+4zCpSAYrfwFpSjvrsxbWxXrq+W//cnLSd2I2ZgvucEw8f4aFhP9Aq6DGdXWJ9RjML8qMJeNlWuY7Bn3MfFYCtkIlZYfGTyiDEHEpUlrAwRZw97EPZt8esXheTbH6nGa62PEPCARyfSJwtmd5k7VmGUCiHBvXhVDuLFKG6sLNu9eftwPQKGTTFciTMefBUbigQM/lMelp6CnElMFA+4tFArRLGxgxuCl4UmKbraQGSh6ChHsiDjtKoLl+LLovFkJTRy
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <58C8278D6223884D915B224D264B1FE7@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rv4Nqh5d+/cF2RpTBWJWh8crG9DJ9LN8rUEiLCVkDCI=;
+        b=oxa7Yq/pKC6Rtd8OTFkXDgv+sg58exGMNevQgY3cd/UoqcmGNae53c+vJ/Gv3HMIDe
+         1InEbVJhTKBH1sdxN5bLgjnNQnl4tnly+ZsYiPj+aTVPQ/ilgn3tCucka8j02OQpoMOh
+         VBXes1Krr5ikefRmE0ryyaFKvRch5oAe274i6gFt3LgvAo6HN7DvKw9VsP85ADeX83oi
+         rYGxAHbLzViqTLFA9btg/bC/cwBeo3cATsyFEwMvrFgHAhfdJd/u+tZjLqcl7uDWIJ3W
+         ZQbJARrMZozIZVsGBfy40SIYNTP9S7OBcEa7ipxSKyYkngWATCFBqYQg7qcgzNT6/jjH
+         d90A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rv4Nqh5d+/cF2RpTBWJWh8crG9DJ9LN8rUEiLCVkDCI=;
+        b=k/EDMt+q6SYLsMz9+OaaKoKht7v1dZvEyJubw5dMyUxMLfuXWbzvRPNiKvw5mB38yl
+         z5Gc3PWBwfeBPHLRHui7P2P4pYEF1S43VM2mKdDFFFcLejkUk+/e5QJMs0fEPDZbAupl
+         CZOO8qox8G/XtatCDao1W7HqHYzkftlOngMZaH0HJTja6po28Mc8ej5WaH4kx/v3aA3O
+         27VRfVSDmA6xtW6QxJNJ5Bsjqt5BJpad5bUrljYzWIIlGTRvoMCVUJA01Wfed5J+2eYS
+         3icGb9wfk5XPHiBcV1Uri9FVpCfk49QgnnshmEBnhR+f1CwQW3ZdRV+UuB/2mhx/0F6o
+         gNTg==
+X-Gm-Message-State: APjAAAVQtE0VojnEJDI7nMblI5ehEFDYKFIFHbKR7FJ1k9WW6vaUuD9x
+        jzhEyLheeP/+ODpK3Fd6/cul8GXSWzyrjSCekRHtVA==
+X-Google-Smtp-Source: APXvYqxtwcSKP3dxNcBOousSaiPma55QN+uHm54W5IwsX3gK7duaFgAkFXHm+eMI1oaF/mQ8CtDYgxMTVBxaFGpzq8w=
+X-Received: by 2002:a62:61c4:: with SMTP id v187mr13349382pfb.23.1571865960644;
+ Wed, 23 Oct 2019 14:26:00 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9431ddd9-a31d-41dd-65d4-08d757ff8ba7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2019 21:25:36.9244
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: om4XFLf+l23tcWCbc4oUqwAtDiSN4YmR1u5pK1ECuM292x2ZngMGdSiPRIm92jHyp5AUVwaBL1hDNT2pJ7PrAgPjShG3qa2kbLjtrVN0JiU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4349
+References: <20191018215549.65000-1-davidgow@google.com> <20191019082731.GM21344@kadam>
+ <CABVgOSkegmhmeRa=7Qcx3MnX88wLy9qZx97CMhk4NvWb-pgpYQ@mail.gmail.com>
+In-Reply-To: <CABVgOSkegmhmeRa=7Qcx3MnX88wLy9qZx97CMhk4NvWb-pgpYQ@mail.gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Wed, 23 Oct 2019 14:25:49 -0700
+Message-ID: <CAFd5g46BuY02M_QBD3PVFnbsvO7fuuS+ZOBmfFBmmGy3xSMXbQ@mail.gmail.com>
+Subject: Re: [PATCH linux-kselftest/test v4] lib/list-test: add a test for the
+ 'list' doubly linked list
+To:     David Gow <davidgow@google.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDA5LzI0LzIwMTkgMTA6NDUgQU0sIFR1ZG9yIEFtYmFydXMgLSBNMTgwNjQgd3JvdGU6
-DQo+IEZyb206IFR1ZG9yIEFtYmFydXMgPHR1ZG9yLmFtYmFydXNAbWljcm9jaGlwLmNvbT4NCj4g
-DQo+IG5fdHggd2FzIG5ldmVyIHVzZWQsIGRyb3AgaXQuIFJlcGxhY2UgJ2NvbnN0IHU4ICp0eGJ1
-Zicgd2l0aCAndTggb3Bjb2RlJywNCj4gdG8gY29tcGx5IHdpdGggdGhlIFNQSSBOT1IgaW50ICgq
-cmVhZF9yZWcpKCkgbWV0aG9kLiBUaGUgJ2NvbnN0Jw0KPiBxdWFsaWZpZXIgaGFzIG5vIG1lYW5p
-bmcgZm9yIHBhcmFtZXRlcnMgcGFzc2VkIGJ5IHZhbHVlLCBkcm9wIGl0Lg0KPiBHb2luZyBmdXJo
-ZXIsIHRoZSBvcGNvZGUgd2FzIHBhc3NlZCB0byBjcXNwaV9jYWxjX3JkcmVnKCkgYW5kIG5ldmVy
-IHVzZWQsDQo+IGRyb3AgaXQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBUdWRvciBBbWJhcnVzIDx0
-dWRvci5hbWJhcnVzQG1pY3JvY2hpcC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9tdGQvc3BpLW5v
-ci9jYWRlbmNlLXF1YWRzcGkuYyB8IDE1ICsrKysrKystLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5n
-ZWQsIDcgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkNCg0KQXBwbGllZCB0byBzcGktbm9y
-L25leHQuDQo=
+On Tue, Oct 22, 2019 at 3:13 PM David Gow <davidgow@google.com> wrote:
+>
+> On Sat, Oct 19, 2019 at 1:27 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > On Fri, Oct 18, 2019 at 02:55:49PM -0700, David Gow wrote:
+> > > +     list4 = kzalloc(sizeof(*list4), GFP_KERNEL);
+> > > +     KUNIT_ASSERT_NOT_ERR_OR_NULL(test, list4);
+> >
+> > Why not just use GFP_KERNEL | GFP_NOFAIL and remove the check?
+>
+> I've sent a new version of the patch out (v5) which uses __GFP_NOFAIL instead.
+>
+> The idea had been to exercise KUnit's assertion functionality, in the
+> hope that it'd allow the test to fail (but potentially allow other
+> tests to still run) in the case of allocation failure. Given that
+> we're only allocating enough to store ~4 pointers in total, though,
+> that's probably of little use.
+>
+> > kzalloc() can't return error pointers.  If this were an IS_ERR_OR_NULL()
+> > check then it would generate a static checker warning, but static
+> > checkers don't know about KUNIT_ASSERT_NOT_ERR_OR_NULL() yet so you're
+> > safe.
+>
+> Alas, KUnit doesn't have a KUNIT_ASSERT_NOT_NULL() macro, and I'd
+> assumed it was not dangerous (even if not ideal) to check for error
+> pointers, even if kzalloc() can't return them.
+
+Maybe it would be good for us (not in this case, just generally
+speaking) to add a KUNIT_ASSERT_NOT_NULL() and friends?
+
+> Perhaps it'd make sense to add a convenient way of checking the
+> NULL-ness of pointers to KUnit (it's possible with the
+> KUNIT_ASSERT_PTR_EQ(), but requires a bit of casting to make the type
+> checker happy) in the future. Once KUnit is properly upstream, it may
+> be worth teaching the static analysis tools about these functions to
+> avoid having warnings in these sorts of tests.
+>
+> For now, though, (and for this test in particular), I agree with the
+> suggestion of just using __GFP_NOFAIL.
+>
+> Thanks a lot for the comments,
+> -- David
