@@ -2,152 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0319E1A6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C27DAE1A8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:34:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405349AbfJWMck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 08:32:40 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:53314 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405322AbfJWMcg (ORCPT
+        id S2391604AbfJWMdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 08:33:36 -0400
+Received: from mail-sz.amlogic.com ([211.162.65.117]:16838 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389633AbfJWMde (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:32:36 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9NCWVFX040054;
-        Wed, 23 Oct 2019 07:32:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571833952;
-        bh=CBJpQnDOw/C0K6sbGNGmoemEh5d6+cekq14/b5b6p+U=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=IgfxJCKCg6pd4E2uc5lKI1fMV6Qhq52WSZSLIvl4Xn6rCW6qgNyrUyv8NvX1ljua2
-         54ZkI9PpxhTmW4BQ5ksu5cXfUuHVVF2x7H8jty1oWJy1Su718fL/MQHCtKD92xU1aK
-         KRFsHFjVg8JlCdG+zqFC1vPLzk3LdjkdUKPsaR9U=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9NCWVEN032074
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Oct 2019 07:32:31 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 23
- Oct 2019 07:32:21 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 23 Oct 2019 07:32:21 -0500
-Received: from [10.1.3.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9NCWTxb040261;
-        Wed, 23 Oct 2019 07:32:30 -0500
-Subject: Re: [PATCH v2 0/3] phy: cadence: j721e-wiz: Add Type-C plug flip
- support
-To:     Roger Quadros <rogerq@ti.com>, <kishon@ti.com>
-CC:     <aniljoy@cadence.com>, <adouglas@cadence.com>, <nsekhar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20191023084916.26895-1-rogerq@ti.com>
-From:   Jyri Sarha <jsarha@ti.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jsarha@ti.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <9216886d-62d4-db9f-8397-20f77c07ee76@ti.com>
-Date:   Wed, 23 Oct 2019 15:32:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 23 Oct 2019 08:33:34 -0400
+Received: from [10.28.18.45] (10.28.18.45) by mail-sz.amlogic.com (10.28.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 23 Oct
+ 2019 20:33:42 +0800
+Subject: Re: [PATCH v3 2/4] pinctrl: meson: add a new dt parse callback for
+ Meson-A series SoCs
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        <linux-gpio@vger.kernel.org>
+CC:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <1571050492-6598-1-git-send-email-qianggui.song@amlogic.com>
+ <1571050492-6598-3-git-send-email-qianggui.song@amlogic.com>
+ <1j4kzzvnrr.fsf@starbuckisacylon.baylibre.com>
+From:   Qianggui Song <qianggui.song@amlogic.com>
+Message-ID: <4e4aa76e-d315-2b99-91f4-6667eb5221e7@amlogic.com>
+Date:   Wed, 23 Oct 2019 20:33:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191023084916.26895-1-rogerq@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1j4kzzvnrr.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.18.45]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/10/2019 11:49, Roger Quadros wrote:
-> Hi,
-> 
-> On J721e platform, the 2 lanes of SERDES PHY are used to achieve
-> USB Type-C plug flip support without any additional MUX component
-> by using a lane swap feature.
-> 
-> However, the driver needs to know the Type-C plug orientation before
-> it can decide whether to swap the lanes or not. This is achieved via a
-> GPIO named DIR.
-> 
-> Another constraint is that the lane swap must happen only when the PHY
-> is in inactive state. This is achieved by sampling the GPIO and
-> programming the lane swap before bringing the PHY out of reset.
-> 
-> This series adds support to read the GPIO and accordingly program
-> the Lane swap for Type-C plug flip support.
-> 
-> Series must be applied on top of
-> https://lkml.org/lkml/2019/10/16/517
-> 
-> cheers,
-> -roger
-> 
-> Changelog:
-> v2
-> - revise commit log of patch 1
-> - use regmap_field in patch 3
-> 
-
-Reviewed-by: Jyri Sarha <jsarha@ti.com>
-
-For the whole series.
-
-> Roger Quadros (3):
->   phy: cadence: Sierra: add phy_reset hook
->   dt-bindings: phy: ti,phy-j721e-wiz: Add Type-C dir GPIO
->   phy: ti: j721e-wiz: Manage typec-gpio-dir
-> 
->  .../bindings/phy/ti,phy-j721e-wiz.txt         |  9 ++++
->  drivers/phy/cadence/phy-cadence-sierra.c      | 10 ++++
->  drivers/phy/ti/phy-j721e-wiz.c                | 48 +++++++++++++++++++
->  3 files changed, 67 insertions(+)
-> 
 
 
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+On 2019/10/23 17:01, Jerome Brunet wrote:
+> 
+> On Mon 14 Oct 2019 at 12:54, Qianggui Song <qianggui.song@amlogic.com> wrote:
+> 
+>> Meson A1 Soc share the same register layout of pinmux with previous
+>> Meson-G12A, however there is difference for gpio and pin config register
+>> in A1. The main difference is that registers before A1 are grouped by
+>> function while those of A1 are by bank. The new register layout is as
+>> below:
+>>
+>> /* first bank */	      /* addr */
+>> - P_PADCTRL_GPIOP_I         base + 0x00 << 2
+>> - P_PADCTRL_GPIOP_O         base + 0x01 << 2
+>> - P_PADCTRL_GPIOP_OEN       base + 0x02 << 2
+>> - P_PADCTRL_GPIOP_PULL_EN   base + 0x03 << 2
+>> - P_PADCTRL_GPIOP_PULL_UP   base + 0x04 << 2
+>> - P_PADCTRL_GPIOP_DS        base + 0x05 << 2
+>>
+>> /* second bank */
+>> - P_PADCTRL_GPIOB_I         base + 0x10 << 2
+>> - P_PADCTRL_GPIOB_O         base + 0x11 << 2
+>> - P_PADCTRL_GPIOB_OEN       base + 0x12 << 2
+>> - P_PADCTRL_GPIOB_PULL_EN   base + 0x13 << 2
+>> - P_PADCTRL_GPIOB_PULL_UP   base + 0x14 << 2
+>> - P_PADCTRL_GPIOB_DS        base + 0x15 << 2
+>>
+>> Each bank contains at least 6 registers to be configured, if one bank
+>> has more than 16 gpios, an extra P_PADCTRL_GPIO[X]_DS_EXT is included.
+>> Between two adjacent P_PADCTRL_GPIO[X]_I, there is an offset 0x10, that
+>> is to say, for third bank, the offsets will be 0x20,0x21,0x22,0x23,0x24
+>> ,0x25 according to above register layout. For previous chips, registers
+>> are grouped according to their functions while registers of A1 are
+>> according to bank.
+>>
+>> Current Meson pinctrl driver can cover such change by using base address
+>> of GPIO as that of drive-strength.While simply giving reg_ds = reg_pullen
+>> make wrong value to reg_ds for Socs that do not support drive-strength
+>> like AXG.To make things simple, add an extra dt parser function for
+>> a1 or later chip and remain the old dt parser function for old Socs.
+>>
+>> Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
+>> ---
+>>  drivers/pinctrl/meson/pinctrl-meson.c | 16 +++++++++++++++-
+>>  drivers/pinctrl/meson/pinctrl-meson.h |  7 +++++++
+>>  2 files changed, 22 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+>> index 8bba9d053d9f..e8f6298fc96a 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+>> @@ -695,6 +695,17 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
+>>  	return 0;
+>>  }
+>>  
+>> +int meson_pinctrl_parse_dt_extra(struct meson_pinctrl *pc,
+>> +				 struct device_node *node)
+> 
+> This function is the fixup for the a1 family, AFAICT.
+> It should be named as such and it belong in pinctrl-meson-a1.c
+> 
+> Every controller performing fixups should have their function as well:
+>  (1) AO of gxbb, gxl and axg 
+>  (2) AO of g12 and sm
+> 
+OK, Will try to move this function to pinctrl-meson-a1.c. That should be
+better than rewriting parse function for each chips EE/AO alone.
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = meson_pinctrl_parse_dt(pc, node);
+> 
+> As said in previous review,  meson_pinctrl_parse_dt() should be called
+> for every SoC to parse the *available* regions.
+> 
+> The fixup, if necessary, will be done by providing a callback
+> 
+> IOW, please:
+>  * rework meson_pinctrl_parse_dt() to only parse the avaialble region
+>  * don't call meson_pinctrl_parse_dt() from the extra function
+>  * provided the extra function for the AO controllers of the other SoCs
+> 
+That means I need to move not only ao fixup but ds to extra function for
+old chips do not support this.But it will touch other Socs, should I do
+this in A1 pinctrl patchset? or do this rework in another patchset.
+>> +	pc->reg_ds = pc->reg_pullen;
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>  int meson_pinctrl_probe(struct platform_device *pdev)
+>>  {
+>>  	struct device *dev = &pdev->dev;
+>> @@ -708,7 +719,10 @@ int meson_pinctrl_probe(struct platform_device *pdev)
+>>  	pc->dev = dev;
+>>  	pc->data = (struct meson_pinctrl_data *) of_device_get_match_data(dev);
+>>  
+>> -	ret = meson_pinctrl_parse_dt(pc, dev->of_node);
+>> +	if (pc->data->parse_dt)
+>> +		ret = pc->data->parse_dt(pc, dev->of_node);
+>> +	else
+>> +		ret = meson_pinctrl_parse_dt(pc, dev->of_node);
+>>  	if (ret)
+> 
+> 
+> 
+>>  		return ret;
+>>  
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
+>> index c696f3241a36..0cd6a869cae3 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson.h
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson.h
+>> @@ -11,6 +11,8 @@
+>>  #include <linux/regmap.h>
+>>  #include <linux/types.h>
+>>  
+>> +struct meson_pinctrl;
+>> +
+>>  /**
+>>   * struct meson_pmx_group - a pinmux group
+>>   *
+>> @@ -114,6 +116,7 @@ struct meson_pinctrl_data {
+>>  	unsigned int num_banks;
+>>  	const struct pinmux_ops *pmx_ops;
+>>  	void *pmx_data;
+>> +	int (*parse_dt)(struct meson_pinctrl *pc, struct device_node *node);
+>>  };
+>>  
+>>  struct meson_pinctrl {
+>> @@ -171,3 +174,7 @@ int meson_pmx_get_groups(struct pinctrl_dev *pcdev,
+>>  
+>>  /* Common probe function */
+>>  int meson_pinctrl_probe(struct platform_device *pdev);
+>> +
+>> +/* Extra dt parse function for register layout grouped by bank */
+>> +int meson_pinctrl_parse_dt_extra(struct meson_pinctrl *pc,
+>> +				 struct device_node *node);
+> 
+> .
+> 
