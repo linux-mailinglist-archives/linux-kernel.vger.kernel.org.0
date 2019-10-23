@@ -2,109 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0828FE2064
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 18:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5615EE2069
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 18:20:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407180AbfJWQSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 12:18:54 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26805 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2404695AbfJWQSy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 12:18:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571847533;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=42dR9KjvWxTtpNo0xdhv7ZprPq7NaqJV9H6bwrJzSyY=;
-        b=DvVsdjIq4XD3f1We8eOx8IujJDn+gCVhGiLCSmyK0BpWdgW1A07+qchHgy6IBdeMVviLsn
-        40xQXiCWV+AyDPTeBJMXgezujyS0mUJqPmGcUP7K9ZFVKCA6OVc5TLaQS8t4+0kIJ/bSag
-        ffLxeBVLdEya9fAMptp+wiC9djHvcVw=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-156-BdisPddhPKK0HzH_B01oUg-1; Wed, 23 Oct 2019 12:18:50 -0400
-Received: by mail-wr1-f69.google.com with SMTP id r8so4004238wrx.8
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 09:18:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tOBGfSTF1KhMQpx4CgtoYn86qXiufMDfXR3BQXzAiZU=;
-        b=jBkakNeCSZWU3lgUqUgPJlykFhH/fKsl4thDKUDiTFfET8z8LhrQxPzY5pc9nzYaox
-         tsqThQFpqS+G2Lng7NHoJ/Unew3SclDSXCya0kQHNq7gNPqCVoWPbJbkz9WgXz9EqLBW
-         mRDpSSIRrgIogP2j922Eu1ifVWDw8w3sahgnsSRDwaniL7tQP2D5W3PLD0PueYN+CArb
-         Wd0FsJRiBkP4hSzgc2NPjck9kSmqCi0/qfHjrVvmvp4i+YdFjK9kbzklvejOg0J3d+wy
-         jzbos+cKxrljeSPPwoTEADHl9/jSrWV5V2HBMYKGwJCih4eIqTUSwWVMmq/0wJNNaYP6
-         +wLA==
-X-Gm-Message-State: APjAAAVerT1h9s2CIHEs9/hINitX0XCY1mDBEjwzJCSeeCX//CpcSsJV
-        nrz1wliDBBu7eJ91gZqWozseY5qLgvi0j8QvZfI3NdmHottDO2tj4KlOGzF7VcSz7tOfOUkTitC
-        vZmRfiyXgywDVFc9M2PnY/oRg
-X-Received: by 2002:a7b:c5c9:: with SMTP id n9mr752676wmk.28.1571847529565;
-        Wed, 23 Oct 2019 09:18:49 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwYz1HPlsDwZXRMQfmrsug6VYnNhIgU6zeDVTcRhDmNybUK9nIvatCeNxKFr3IjmW++iM0D8A==
-X-Received: by 2002:a7b:c5c9:: with SMTP id n9mr752660wmk.28.1571847529404;
-        Wed, 23 Oct 2019 09:18:49 -0700 (PDT)
-Received: from shalem.localdomain (2001-1c00-0c14-2800-ec23-a060-24d5-2453.cable.dynamic.v6.ziggo.nl. [2001:1c00:c14:2800:ec23:a060:24d5:2453])
-        by smtp.gmail.com with ESMTPSA id x12sm12712262wru.93.2019.10.23.09.18.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2019 09:18:48 -0700 (PDT)
-Subject: Re: [PATCH] Add touchscreen platform data for the Schneider SCT101CTM
- tablet
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Daniel Gorbea Ainz <danielgorbea@hotmail.com>,
-        "dvhart@infradead.org" <dvhart@infradead.org>,
-        "andy@infradead.org" <andy@infradead.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <VI1PR10MB2574F4636A90613136ACF4BED86B0@VI1PR10MB2574.EURPRD10.PROD.OUTLOOK.COM>
- <05eec4e5-927c-fdd6-037b-71520e149d5b@redhat.com>
- <CAHp75VeoUCxLt9YFPBpS3d8zOpXb7B4UbpPaiNLWAv0tm4zPHA@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <d18ca285-9a45-286f-3f61-c02059b2f9a6@redhat.com>
-Date:   Wed, 23 Oct 2019 18:18:47 +0200
+        id S2407198AbfJWQUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 12:20:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42950 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2407057AbfJWQUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 12:20:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AD166B428;
+        Wed, 23 Oct 2019 16:20:13 +0000 (UTC)
+Subject: Re: [RFC PATCH 2/2] mm, vmstat: reduce zone->lock holding time by
+ /proc/pagetypeinfo
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>, Waiman Long <longman@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Aquini <aquini@redhat.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191023095607.GE3016@techsingularity.net>
+ <20191023102737.32274-1-mhocko@kernel.org>
+ <20191023102737.32274-3-mhocko@kernel.org>
+ <30211965-8ad0-416d-0fe1-113270bd1ea8@suse.cz>
+ <20191023133720.GA17610@dhcp22.suse.cz>
+ <7fb34979-66a4-4a5d-1798-402826e31e72@suse.cz>
+ <20191023143102.GI17610@dhcp22.suse.cz>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8b5a9ee8-4e52-f98c-d833-2e8493baa3a6@suse.cz>
+Date:   Wed, 23 Oct 2019 18:20:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeoUCxLt9YFPBpS3d8zOpXb7B4UbpPaiNLWAv0tm4zPHA@mail.gmail.com>
+In-Reply-To: <20191023143102.GI17610@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-MC-Unique: BdisPddhPKK0HzH_B01oUg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 23-10-2019 18:15, Andy Shevchenko wrote:
-> On Wed, Oct 23, 2019 at 7:08 PM Hans de Goede <hdegoede@redhat.com> wrote=
-:
->> On 23-10-2019 17:23, Daniel Gorbea Ainz wrote:
->>> Add touchscreen platform data for the Schneider SCT101CTM tablet
+On 10/23/19 4:31 PM, Michal Hocko wrote:
+> On Wed 23-10-19 15:48:36, Vlastimil Babka wrote:
+>> On 10/23/19 3:37 PM, Michal Hocko wrote:
 >>>
->>> Signed-off-by: Daniel Gorbea <danielgorbea@hotmail.com>
+>>> But those wouldn't really help to prevent from the lockup, right?
 >>
->> Patch looks good to me:
+>> No, but it would perhaps help ensure that only people who know what they
+>> are doing (or been told so by a developer e.g. on linux-mm) will try to
+>> collect the data, and not some automatic monitoring tools taking
+>> periodic snapshots of stuff in /proc that looks interesting.
+> 
+> Well, we do trust root doesn't do harm, right?
+
+Perhaps too much :)
+
+>>> Besides that who would enable that config and how much of a difference
+>>> would root only vs. debugfs make?
 >>
->> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+>> I would hope those tools don't scrap debugfs as much as /proc, but I
+>> might be wrong of course :)
 >>
->> Daniel, I received your patch just fine, shall I resend
->> it to the list for you ?
->=20
-> What list? Everything seems okay to me.
-> I don't see it in patchwork, though.
+>>> Is the incomplete value a real problem?
+>>
+>> Hmm perhaps not. If the overflow happens only for one migratetype, one
+>> can use also /proc/buddyinfo to get to the exact count, as was proposed
+>> in this thread for Movable migratetype.
+> 
+> Let's say this won't be the case. What is the worst case that the
+> imprecision would cause? In other words. Does it really matter whether
+> we have 100k pages on the free list of the specific migrate type for
+> order or say 200k?
 
-Right, Daniel replied that vger@kernel.org did not like his email/patch
-so it makes sense that patchwork has not picked it up.
+Probably not, it rather matters for which order the count approaches zero.
 
-Regards,
-
-Hans
 
