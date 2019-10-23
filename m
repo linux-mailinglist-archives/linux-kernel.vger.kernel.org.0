@@ -2,104 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3888E18C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:22:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7148E18F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:25:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404931AbfJWLWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 07:22:13 -0400
-Received: from mga09.intel.com ([134.134.136.24]:21010 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404882AbfJWLWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 07:22:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 04:22:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
-   d="scan'208";a="349365445"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2019 04:22:04 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 18A978B2; Wed, 23 Oct 2019 14:21:56 +0300 (EEST)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     linux-usb@vger.kernel.org
-Cc:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Rajmohan Mani <rajmohan.mani@intel.com>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        Lukas Wunner <lukas@wunner.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Mario.Limonciello@dell.com,
-        Anthony Wong <anthony.wong@canonical.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Christian Kellner <ckellner@redhat.com>,
+        id S2404721AbfJWLZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 07:25:42 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38450 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404612AbfJWLZm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 07:25:42 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w3so11973772pgt.5
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 04:25:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CMbUesWrEBI4umlhGm4RX5JKBMDct6YIIfX5NPakVec=;
+        b=F59zCQmMZ8PGnVxppmEJ1cQ9+Ru2hgprfou80/UTpJDSpK/s5dEAh4fD0/KLRESMQV
+         9fpsdghcO2ZIyAkWok4ZGaXXaJqeaFuASZSO7kJeaBKkdNq8QhLvxHvMyNxFBrUbXgKr
+         uwp0BAgyf7Urc40k1QC0scuLSc6ch3y4cwaUJdUjQgWgEFNObAc5NVKdC13CNQlkrmgq
+         yDSOSVsud0Hz/Vj3vS4Tga6CQH1nqR1eoOnBKvsC7768baqyYK65HpPPC2jOOE/e4oug
+         a9aOQLaeqKIIbbmnyXoWhHbGZkIhALc3EuQM8FQ6NhKblgzipTEE+45RlvpSP18ETm33
+         FvTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CMbUesWrEBI4umlhGm4RX5JKBMDct6YIIfX5NPakVec=;
+        b=Lhfdx7NfsFnRhRO48hhkfBOLTS8I7Tp6VtjnfEMzU1lx6h5gwmEC/+HbF7kZN5OvaN
+         LtSb1x3LAsyQjySLfjphIe+YJ5/u6Jzfu8QiKsbaKdNdElwWQDIYK5DKLlfeiS8TBIa3
+         I6wRSjYU3tD/p60K1UVlJsdY5pZXDIILnjymrqkc2R/e2hUYTT0lFAkzzUJA21VJQXRs
+         0RPlZMb5WoDGeLKyGQwnWmuXFotX0DYbxHY4zMDddhbHMjsO3bnYpygyGZVWSOYyHwnN
+         YB+MSBY7VJT/wZe9rLgmiD8GKYJAtFgzzjbVrgplZBQVu+GlC03Zf98rlQfA0tFFwsTy
+         fN9A==
+X-Gm-Message-State: APjAAAUqLIAZCumljrCWUbk7uEb/xKn+9+zAkf77ZjAAqiHTLZUTrYnI
+        cK2rezq/TbR0wFRg9EFImyv/S4fkKIU=
+X-Google-Smtp-Source: APXvYqzxhzsRny5uh2R2JdrXKYiUCBZlYE60w6K6/wJCw7cMH69UZFHcridk5yb6oiGxufLe6QDfIw==
+X-Received: by 2002:a63:b5b:: with SMTP id a27mr9661769pgl.262.1571829941207;
+        Wed, 23 Oct 2019 04:25:41 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id j11sm11855535pgk.3.2019.10.23.04.25.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Oct 2019 04:25:40 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 16:55:37 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 25/25] thunderbolt: Update documentation with the USB4 information
-Date:   Wed, 23 Oct 2019 14:21:54 +0300
-Message-Id: <20191023112154.64235-26-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191023112154.64235-1-mika.westerberg@linux.intel.com>
-References: <20191023112154.64235-1-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 2/2] cpufreq: vexpress-spc: find and skip duplicates when
+ merging frequencies
+Message-ID: <20191023112537.pywnhihvmokcveeu@vireshk-i7>
+References: <20191023110811.15086-1-sudeep.holla@arm.com>
+ <20191023110811.15086-2-sudeep.holla@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191023110811.15086-2-sudeep.holla@arm.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update user's and administrator's guide to mention USB4, how it relates
-to Thunderbolt (it is public spec of Thunderbolt 3) and and how it is
-supported in Linux.
+On 23-10-19, 12:08, Sudeep Holla wrote:
+> Currently the cpufreq core aborts the validation and return error
+> immediately when it encounter duplicate frequency table entries.
+> This change was introduced long back since commit da0c6dc00c69
+> ("cpufreq: Handle sorted frequency tables more efficiently").
+> 
+> However, this missed the testing with modified firmware for long time.
+> Inorder to make it work with default settings, we need to ensure the
+> merged table for bL switcher contains no duplicates. Find the duplicates
+> and skip them when merging the frequenct tables of A15 and A7 clusters.
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  drivers/cpufreq/vexpress-spc-cpufreq.c | 35 ++++++++++++++++++++------
+>  1 file changed, 28 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/vexpress-spc-cpufreq.c b/drivers/cpufreq/vexpress-spc-cpufreq.c
+> index 093ef8d3a8d4..921dbd42b3bb 100644
+> --- a/drivers/cpufreq/vexpress-spc-cpufreq.c
+> +++ b/drivers/cpufreq/vexpress-spc-cpufreq.c
+> @@ -242,6 +242,19 @@ static inline u32 get_table_max(struct cpufreq_frequency_table *table)
+>  	return max_freq;
+>  }
+>  
+> +static bool search_frequency(struct cpufreq_frequency_table *table, int size,
+> +			     unsigned int freq)
+> +{
+> +	int count;
+> +
+> +	for (count = 0; count < size; count++) {
+> +		if (table[count].frequency == freq)
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+>  static int merge_cluster_tables(void)
+>  {
+>  	int i, j, k = 0, count = 1;
+> @@ -256,13 +269,21 @@ static int merge_cluster_tables(void)
+>  
+>  	freq_table[MAX_CLUSTERS] = table;
+>  
+> -	/* Add in reverse order to get freqs in increasing order */
+> -	for (i = MAX_CLUSTERS - 1; i >= 0; i--) {
+> -		for (j = 0; freq_table[i][j].frequency != CPUFREQ_TABLE_END;
+> -		     j++, k++) {
+> -			table[k].frequency =
+> -				VIRT_FREQ(i, freq_table[i][j].frequency);
+> -		}
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- Documentation/admin-guide/thunderbolt.rst | 25 ++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+I think we can still use this single loop, which already starts from
+A7 cluster. Just that we can add an if (A15) block inside it as the
+first line.
 
-diff --git a/Documentation/admin-guide/thunderbolt.rst b/Documentation/admin-guide/thunderbolt.rst
-index 898ad78f3cc7..f44c77860870 100644
---- a/Documentation/admin-guide/thunderbolt.rst
-+++ b/Documentation/admin-guide/thunderbolt.rst
-@@ -1,6 +1,23 @@
--=============
-- Thunderbolt
--=============
-+======================
-+ Thunderbolt and USB4
-+======================
-+USB4 is a public spec based on Thunderbolt 3 with some differences at the
-+register level among other things. There are two different implementations
-+available: firmware connection manager and software connection manager.
-+Typically PCs come with a firmware connection manager for Thunderbolt 3 and
-+early USB4 capable systems. Apple systems on the other hand use software
-+connection manager and the later USB4 compliant devices follow the suit.
-+
-+The Linux Thunderbolt driver supports both and can detect at runtime which
-+connection manager implementation is to be used. To be on the safe side the
-+software connection manager in Linux also advertises security level
-+``user`` which means PCIe tunneling is disabled by default. The
-+documentation below applies to both implementations with the exception that
-+the software connection manager only supports ``user`` security level and
-+is expected to be accompanied with an IOMMU based DMA protection.
-+
-+Security levels and how to use them
-+-----------------------------------
- The interface presented here is not meant for end users. Instead there
- should be a userspace tool that handles all the low-level details, keeps
- a database of the authorized devices and prompts users for new connections.
-@@ -18,8 +35,6 @@ This will authorize all devices automatically when they appear. However,
- keep in mind that this bypasses the security levels and makes the system
- vulnerable to DMA attacks.
- 
--Security levels and how to use them
-------------------------------------
- Starting with Intel Falcon Ridge Thunderbolt controller there are 4
- security levels available. Intel Titan Ridge added one more security level
- (usbonly). The reason for these is the fact that the connected devices can
+> +	/* Add A7_CLUSTER first to get freqs in increasing order */
+> +	for (j = 0; freq_table[A7_CLUSTER][j].frequency != CPUFREQ_TABLE_END;
+> +	     j++, k++) {
+> +		table[k].frequency =
+> +			VIRT_FREQ(A7_CLUSTER, freq_table[A7_CLUSTER][j].frequency);
+> +	}
+> +	count = k;
+> +
+> +	/* And then A15_CLUSTER checking for duplicates */
+> +	for (j = 0; freq_table[A15_CLUSTER][j].frequency != CPUFREQ_TABLE_END;
+> +	     j++) {
+> +		if (search_frequency(table, count,
+> +				     freq_table[A15_CLUSTER][j].frequency))
+> +			continue; /* skip duplicates */
+> +		table[k++].frequency = freq_table[A15_CLUSTER][j].frequency;
+>  	}
+
+How many duplicate entries are there anyway in the firmware? Or do we
+really need to make it that generic? I mean, only the last of A7 and
+first of A15 should be overlapping, in that case why search entire
+table again ?
+
+>  
+>  	table[k].driver_data = k;
+> -- 
+> 2.17.1
+
 -- 
-2.23.0
-
+viresh
