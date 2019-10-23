@@ -2,63 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B7BFE195D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:52:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12C5EE1964
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:53:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391144AbfJWLvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 07:51:55 -0400
-Received: from mga02.intel.com ([134.134.136.20]:18128 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732092AbfJWLvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 07:51:55 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 04:51:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
-   d="scan'208";a="201967601"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.121])
-  by orsmga006.jf.intel.com with ESMTP; 23 Oct 2019 04:51:51 -0700
-Date:   Wed, 23 Oct 2019 14:51:51 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     ivan.lazeev@gmail.com, jsnitsel@redhat.com
-Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8] tpm_crb: fix fTPM on AMD Zen+ CPUs
-Message-ID: <20191023115151.GF21973@linux.intel.com>
-References: <20191016182814.18350-1-ivan.lazeev@gmail.com>
- <20191021155735.GA7387@linux.intel.com>
+        id S2405136AbfJWLxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 07:53:14 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:36377 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732092AbfJWLxO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 07:53:14 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x9NBqkls003476, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x9NBqkls003476
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 23 Oct 2019 19:52:46 +0800
+Received: from RTITMBSVM03.realtek.com.tw ([fe80::e1fe:b2c1:57ec:f8e1]) by
+ RTITCASV01.realtek.com.tw ([::1]) with mapi id 14.03.0468.000; Wed, 23 Oct
+ 2019 19:52:45 +0800
+From:   Hayes Wang <hayeswang@realtek.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     nic_swsd <nic_swsd@realtek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "pmalani@chromium.org" <pmalani@chromium.org>,
+        "grundler@chromium.org" <grundler@chromium.org>,
+        "'Linux Samsung SOC'" <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: RE: [PATCH net-next] r8152: support request_firmware for RTL8153
+Thread-Topic: [PATCH net-next] r8152: support request_firmware for RTL8153
+Thread-Index: AQHVg84yG1svvwJLbEa5ZZ4zq0Zj+qdnd3YAgACNnOD//4TeAIAAm7jA
+Date:   Wed, 23 Oct 2019 11:52:45 +0000
+Message-ID: <0835B3720019904CB8F7AA43166CEEB2F18ED47C@RTITMBSVM03.realtek.com.tw>
+References: <1394712342-15778-329-Taiwan-albertk@realtek.com>
+        <CGME20191023091648eucas1p12dcc4e9041169e3c7ae43f4ea525dd7f@eucas1p1.samsung.com>
+        <44261242-ff44-0067-bbb9-2241e400ad53@samsung.com>
+        <0835B3720019904CB8F7AA43166CEEB2F18ED3FA@RTITMBSVM03.realtek.com.tw>
+ <c20abd08-5f22-2cc8-15fa-956d06b5b8af@samsung.com>
+In-Reply-To: <c20abd08-5f22-2cc8-15fa-956d06b5b8af@samsung.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.177.214]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191021155735.GA7387@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 06:57:35PM +0300, Jarkko Sakkinen wrote:
-> Almost tested this today. Unfortunately the USB stick at hand was
-> broken.  I'll retry tomorrow or Wed depending on which day I visit at
-> the office and which day I WFH.
-> 
-> At least the AMI BIOS had all the TPM stuff in it. The hardware I'll be
-> using is Udoo Bolt V8 (thanks Jerry for pointing me out this device)
-> with AMD Ryzen Embedded V1605B [1]
-> 
-> Thanks for the patience with your patch.
-> 
-> [1] https://en.wikichip.org/wiki/amd/ryzen_embedded/v1605b
-
-Jerry, are you confident to give this tested-by?
-
-I'm still in process of finding what I should put to .config in order
-to get USB keyboard working with UDOO BOLT.
-
-/Jarkko
+TWFyZWsgU3p5cHJvd3NraSBbbWFpbHRvOm0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbV0NCj4gU2Vu
+dDogV2VkbmVzZGF5LCBPY3RvYmVyIDIzLCAyMDE5IDY6MjMgUE0NClsuLi5dDQo+ID4+IFRoaXMg
+cGF0Y2ggKHdoaWNoIGxhbmRlZCBpbiBsaW51eC1uZXh0IGxhc3QgZGF5cykgY2F1c2VzIGEgZm9s
+bG93aW5nDQo+ID4+IGtlcm5lbCBvb3BzIG9uIHRoZSBBUk0gMzJiaXQgRXh5bm9zNTQyMiBTb0Mg
+YmFzZWQgT2Ryb2lkIFhVNCBib2FyZDoNCj4gPiBQbGVhc2UgdHJ5IHRoZSBmb2xsb3dpbmcgcGF0
+Y2guDQo+IA0KPiBZZXMsIHRoaXMgZml4ZXMgdGhlIGlzc3VlLiBJJ3ZlIGFwcGxpZWQgdGhvc2Ug
+Y2hhbmdlcyBtYW51YWxseSBvbiB0b3Agb2YNCj4gTGludXggbmV4dC0yMDE5MTAyMiwgZHVlIHRv
+IHNvbWUgZGlmZmVyZW5jZXMgaW4gdGhlIGNvbnRleHQuIFdoZW4geW91DQo+IHByZXBhcmUgYSBm
+aW5hbCBwYXRjaCwgZmVlbCBmcmVlIHRvIGFkZDoNCj4gDQo+IFJlcG9ydGVkLWJ5OiBNYXJlayBT
+enlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+DQo+IEZpeGVzOiA5MzcwZjJkMDVh
+MmEgKCJyODE1Mjogc3VwcG9ydCByZXF1ZXN0X2Zpcm13YXJlIGZvciBSVEw4MTUzIikNCj4gVGVz
+dGVkLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+DQoNClRo
+YW5rcw0KDQpCZXN0IFJlZ2FyZHMsDQpIYXllcw0KDQoNCg0K
