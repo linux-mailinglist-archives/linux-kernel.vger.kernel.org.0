@@ -2,91 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 562C4E1AF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14563E1AFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391383AbfJWMmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 08:42:16 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46397 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389887AbfJWMmP (ORCPT
+        id S2391618AbfJWMmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 08:42:44 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39939 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732361AbfJWMmo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:42:15 -0400
-Received: by mail-lj1-f193.google.com with SMTP id d1so20905706ljl.13;
-        Wed, 23 Oct 2019 05:42:13 -0700 (PDT)
+        Wed, 23 Oct 2019 08:42:44 -0400
+Received: by mail-qk1-f194.google.com with SMTP id y81so15684090qkb.7
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 05:42:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=mKyOrNdcShBVuby78giN6WHF0/2rdo1R9G5aayTHBy4=;
+        b=DQf113s2Ove9W20kNFDkOTSoIFdDb3YWXnkZWNQ87u6IGupJcMQbUlbei0LZXxZQs/
+         TqpXedoG0Czy54pJzsg6c0oIBRDYsRS5dWGPDslcttanQD3uNlsKuiBl6G92fUXi+jXA
+         NY8AYQdI6IeuI0f8EKfDfvytMOLr8a2f/JHG5wYJhXEAptTMOLr+mpljwKjUj/Napzq1
+         96agON74xwbA/UQWQUx7ktbirN503MLZuUDG19lI1UZyOrsLXJ8qb9ogaJJ8wxlOLXt5
+         Qqql8yuW4FkEMeIJwKoBx9JwiJI6UCKohvK4E3WZGkchw1m4oy2DtwDVa3MCF2y+Ya4Q
+         vEnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=kQcNlSjXQd9kUXGNlIQxjvubKLwEBgtwHBAUWhoJSUo=;
-        b=RLwZOE4I9m8jfKeHOzrw1/MTSF29HoL3SdyPRi7cL+3lpzp17iEpxmrM1nEEQlCQWS
-         rEUOszMLaFKknu4qElVzpANJgTtviAiDq5xfGtQUwHxSWpZhiwFwmmywXMR3tpfnfrMo
-         sJvdn0WVViK9DIq2TgImBgPcqD6pjbl8BVY4JNkN1kRY1/ugi21YyIoqMeKuKjcosBHV
-         aCozKnpLmO2nxc0Ad8YPDIJMKlreFi4v99mFm3Ho3d7ZQwC02RABk7UBi9t/CQ+0PJcq
-         3hx9pjMluXdYW1TyptgpKx61LbxcZnKOimbJMQMBVH5jLmT+6ZQrguaeCIqWtbaBkJop
-         a/yQ==
-X-Gm-Message-State: APjAAAWjJcnBiNXOh2f3qfzy88hf2K1qhh++4qMlvj/JEAQK4EGcZy5c
-        /h+euj8yRFEM+/qoRb5uhq4=
-X-Google-Smtp-Source: APXvYqx0/8+u+gdKO6hPWbAni56ZxUpm0GD4YFDTDuu/OepdORNRBC+v14ZTlSNfLqzJtLtwglJysQ==
-X-Received: by 2002:a2e:9f08:: with SMTP id u8mr15766019ljk.124.1571834532558;
-        Wed, 23 Oct 2019 05:42:12 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id x26sm5134522lfq.89.2019.10.23.05.42.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 05:42:11 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 15:41:59 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] watchdog: bd70528: Add MODULE_ALIAS to allow module auto
- loading
-Message-ID: <20191023124159.GA3490@localhost.localdomain>
-MIME-Version: 1.0
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=mKyOrNdcShBVuby78giN6WHF0/2rdo1R9G5aayTHBy4=;
+        b=A+qYF+K8FjvivvH9xV+hFL4RTR2qhVtMpMVupLA/Ns3UmF5h/hUZJMmWgCOjYMaRWO
+         1pjUjkBqwTRVO2TXlacWaexwsu1bBsx7t0gWiUyZR6QRFRXr1SlUqFpn6P46V0Nc+lzU
+         2m3mMSChyjNo+hl1XGNO8DpqujCuJiYTbzCTrpRTdkzVxu3KfgqWE13ULbTChq6FBAvz
+         HSs+tAGmjKe6sTMiDtesJW7dk0Sl77ryrQ/Ngy5/RNeeM56rUoYylzhaIuzEtmg0DdoC
+         zCk4OxWLcZC1yA4ywBTOQPFqEiCbx8Eke8jMe6XTCtetB0hoL3DonNzq8gReH5rwGdaQ
+         B5Ng==
+X-Gm-Message-State: APjAAAVZSRMfvuxoSatWVX/oTYKqQYRbf0GIr6WHtZ6LYTfw9gUgpbLk
+        HFS+4iEFZpuk+6nK0Xgb41tAjg==
+X-Google-Smtp-Source: APXvYqzAxLS8JhAkJl2sEI6TpG9FWohKN2MaJ4mlvx91OUAfECuSmhyAf03NCVSZfUDDKb6ogR7tRw==
+X-Received: by 2002:a37:a8d3:: with SMTP id r202mr7705859qke.405.1571834561570;
+        Wed, 23 Oct 2019 05:42:41 -0700 (PDT)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id j7sm17172579qtc.73.2019.10.23.05.42.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2019 05:42:40 -0700 (PDT)
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] mm/vmstat: Reduce zone lock hold time when reading /proc/pagetypeinfo
+Date:   Wed, 23 Oct 2019 08:42:40 -0400
+Message-Id: <C448FBC6-60AE-46FA-9548-FF31A22378BC@lca.pw>
+References: <20191023095607.GE3016@techsingularity.net>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Aquini <aquini@redhat.com>
+In-Reply-To: <20191023095607.GE3016@techsingularity.net>
+To:     Mel Gorman <mgorman@suse.de>
+X-Mailer: iPhone Mail (17A878)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bd70528 watchdog driver is probed by MFD driver. Add MODULE_ALIAS
-in order to allow udev to load the module when MFD sub-device cell for
-watchdog is added.
-
-Fixes: bbc88a0ec9f37 ("watchdog: bd70528: Initial support for ROHM BD70528 watchdog block")
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
-
-I'm not really sure if this is a bug-fix or feature but I guess the
-Fixes tag won't harm, right?
-
- drivers/watchdog/bd70528_wdt.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/watchdog/bd70528_wdt.c b/drivers/watchdog/bd70528_wdt.c
-index b0152fef4fc7..bc60e036627a 100644
---- a/drivers/watchdog/bd70528_wdt.c
-+++ b/drivers/watchdog/bd70528_wdt.c
-@@ -288,3 +288,4 @@ module_platform_driver(bd70528_wdt);
- MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
- MODULE_DESCRIPTION("BD70528 watchdog driver");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:bd70528-wdt");
--- 
-2.21.0
 
 
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+> On Oct 23, 2019, at 5:56 AM, Mel Gorman <mgorman@suse.de> wrote:
+>=20
+> Again, the cost is when reading a proc file. =46rom what Andrew said,
+> the lock is necessary to safely walk the list but if anything. I would
+> be ok with limiting the length of the walk but honestly, I would also
+> be ok with simply deleting the proc file. The utility for debugging a
+> problem with it is limited now (it was more important when fragmentation
+> avoidance was first introduced) and there is little an admin can do with
+> the information. I can't remember the last time I asked for the contents
+> of the file when trying to debug a problem. There is a possibility that
+> someone will complain but I'm not aware of any utility that reads the
+> information and does something useful with it. In the unlikely event
+> something breaks, the file can be re-added with a limited walk.
 
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
+Agree. It is better to remove this file all together in linux-next first for=
+ a while to see if anyone complains loudly.=
