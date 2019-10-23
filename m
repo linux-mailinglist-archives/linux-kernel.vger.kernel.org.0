@@ -2,151 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C845EE2136
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 18:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F33B6E2127
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 18:58:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfJWQ7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 12:59:22 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:35031 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbfJWQ7V (ORCPT
+        id S1726652AbfJWQ6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 12:58:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40226 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbfJWQ6K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 12:59:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1571849957;
-        s=strato-dkim-0002; d=gerhold.net;
-        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=yJSh4O/Weq0HT56NhjFS1glIBJT4Lljt1Ot7yEFQ4Uk=;
-        b=sDn/5z25GMoKOqQ8YbhpZC3r4dG4YJqX8bdhzVTfOIiuegm7mZCHHpwQ2lcD3dEs5u
-        H2UNgdKMAL/BOJJ3ZE4TTDQcx2AF8zOlE6F1zI+gksU9QSIHsabmnVfXQuS3wn9cEguR
-        EOCUgD8H1d/yIbjVVCVBb/10flSotWCAXFDE4izH0P3WRDTyJ/FZnK4e8OpwNkuT6bKj
-        Dcb40IKYoEkQKcWt5UsWuCy3MHOKrQtGS1HeSo3jyRhe20BY6Gv0ggI66HTgChv/lQyh
-        AgaEW0YbQOi08esUuHeEqyv7WEdVlw1SmTsAaowdF5afxFx6YH+vcRCXEHZrbRjs8bMG
-        wGTQ==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXS7IYBkLahKxP526PRnc="
-X-RZG-CLASS-ID: mo00
-Received: from localhost.localdomain
-        by smtp.strato.de (RZmta 44.28.1 DYNA|AUTH)
-        with ESMTPSA id 409989v9NGxDeZo
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 23 Oct 2019 18:59:13 +0200 (CEST)
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Hai Li <hali@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Nikita Travkin <nikitos.tr@gmail.com>
-Subject: [PATCH v2] drm/msm/dsi: Implement qcom,dsi-phy-regulator-ldo-mode for 28nm PHY
-Date:   Wed, 23 Oct 2019 18:56:17 +0200
-Message-Id: <20191023165617.28738-1-stephan@gerhold.net>
-X-Mailer: git-send-email 2.23.0
+        Wed, 23 Oct 2019 12:58:10 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BE63960DB8; Wed, 23 Oct 2019 16:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571849888;
+        bh=e/wbk7W51qosh1x31nJNEuLAxvnQRx8M8ayYRV5U3eg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=edqcx+u+rlmocI2E86il4NC0lXAUiJ0VXXX3etgyxoQhitzri37iHd9IHR3m+TQR2
+         UfNZeqL9X0vG9KyyxRLVx74Er4dWWritg0vZkDymTzbh4eogvCPS9DKIVbqjb/l0ek
+         1jdStirZfReVfjq2xKODj+mbER4Ndow2NUIaIkOA=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from jackp-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jackp@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9D54960DB8;
+        Wed, 23 Oct 2019 16:58:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571849887;
+        bh=e/wbk7W51qosh1x31nJNEuLAxvnQRx8M8ayYRV5U3eg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=i0XqgQqBfDxVfDQ6znF3gcx2COuTjhZ19Nb5eIKcq/bGbJHXbq5vbPqV2SOst+Ezg
+         QbwXeTP6U403KXRPyXTAQh9kXzhHdZhRGTOHPvyXA0mwhlSZaPw8NEQ1x9f/IB+jlt
+         OU9ynhfOTw1gvQQmNdk4JYrXtZJVqTixWAej2H1w=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D54960DB8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jackp@codeaurora.org
+Date:   Wed, 23 Oct 2019 09:58:04 -0700
+From:   Jack Pham <jackp@codeaurora.org>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>
+Subject: Re: [PATCH] usb: dwc3: gadget: Correct the logic for finding last SG
+ entry
+Message-ID: <20191023165804.GD9754@jackp-linux.qualcomm.com>
+References: <1559141985-17104-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <87y32gcvc1.fsf@linux.intel.com>
+ <BYAPR02MB559181C009B74446A797838DA7170@BYAPR02MB5591.namprd02.prod.outlook.com>
+ <87ftoldh48.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ftoldh48.fsf@linux.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DSI PHY regulator supports two regulator modes: LDO and DCDC.
-This mode can be selected using the "qcom,dsi-phy-regulator-ldo-mode"
-device tree property.
+Hi Anurag,
 
-However, at the moment only the 20nm PHY driver actually implements
-that option. Add a check in the 28nm PHY driver to program the
-registers correctly for LDO mode.
+On Fri, Jun 07, 2019 at 09:49:59AM +0300, Felipe Balbi wrote:
+> Anurag Kumar Vulisha <anuragku@xilinx.com> writes:
+> >>> The dma_map_sg() merges sg1 & sg2 memory regions into sg1-
+> >>>dma_address.
+> >>> Similarly sg3 & sg4 into sg2->dma_address, sg5 & sg6 into the
+> >>> sg3->dma_address and sg6 & sg8 into sg4->dma_address. Here the
+> >>memory
+> >>> regions are merged but the page_link properties like SG_END are not
+> >>> retained into the merged sgs.
+> >>
+> >>isn't this a bug in the scatterlist mapping code? Why doesn't it keep
+> >>SG_END?
+> >>
+> >
+> > Thanks for providing your comment.
+> >
+> > I don't think it is a bug, instead I feel some enhancement needs to be done in
+> > dma-mapping code.
+> >
+> > SG_END represents the last sg entry in the sglist and it is correctly getting
+> > set to the last sg entry.
+> >
+> > The issue happens only when 2 or more sg entry pages are merged into
+> > contiguous dma-able address and sg_is_last() is used to find the last sg entry
+> > with valid dma address.
+> 
+> Right, and that's something that's bound to happen. I'm arguing that, perhaps,
+> dma API should move SG_END in case entries are merged.
+> 
+> > I think that along with sg_is_last() a new flag (SG_DMA_END) and function
+> > (something like sg_dma_is_last() ) needs to be added into dma-mapping code for
+> > identifying the last valid sg entry with valid dma address. So that we can
+> > make use of that function instead of sg_is_last().
+> 
+> Sure, propose a patch to DMA API.
 
-Tested-by: Nikita Travkin <nikitos.tr@gmail.com> # l8150
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
----
-Changes in v2: Move DCDC/LDO code into separate methods
-v1: https://lore.kernel.org/linux-arm-msm/20191021163425.83697-1-stephan@gerhold.net/
+I'm curious if this was ever resolved. I just ran into this exact issue
+with Android ADB which uses 16KB buffers, along with f_fs supporting
+S/G since 5.0, combined with our IOMMU which performs this merging
+behavior, so it resulted in a single TRB getting queued with CHN=1 and
+LST=0 and thus the transfer never completes. Your initial patch resolves
+the issue for me, but upon revisiting this discussion I couldn't tell if
+you had attempted to patch DMA API instead as per Felipe's suggestion.
 
-This is needed to make the display work on Longcheer L8150,
-which has recently gained mainline support in:
-https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit/?id=16e8e8072108426029f0c16dff7fbe77fae3df8f
-
-This patch is based on code from the downstream kernel:
-https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/drivers/video/msm/mdss/msm_mdss_io_8974.c?h=LA.BR.1.2.9.1-02310-8x16.0#n152
-
-The LDO regulator configuration is taken from msm8916-qrd.dtsi:
-https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/arch/arm/boot/dts/qcom/msm8916-qrd.dtsi?h=LA.BR.1.2.9.1-02310-8x16.0#n56
----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c | 42 +++++++++++++++++-----
- 1 file changed, 34 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-index b3f678f6c2aa..b384ea20f359 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-@@ -39,15 +39,10 @@ static void dsi_28nm_dphy_set_timing(struct msm_dsi_phy *phy,
- 		DSI_28nm_PHY_TIMING_CTRL_11_TRIG3_CMD(0));
- }
- 
--static void dsi_28nm_phy_regulator_ctrl(struct msm_dsi_phy *phy, bool enable)
-+static void dsi_28nm_phy_regulator_enable_dcdc(struct msm_dsi_phy *phy)
- {
- 	void __iomem *base = phy->reg_base;
- 
--	if (!enable) {
--		dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 0);
--		return;
--	}
--
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x0);
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 1);
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_5, 0);
-@@ -56,6 +51,39 @@ static void dsi_28nm_phy_regulator_ctrl(struct msm_dsi_phy *phy, bool enable)
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_1, 0x9);
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x7);
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_4, 0x20);
-+	dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x00);
-+}
-+
-+static void dsi_28nm_phy_regulator_enable_ldo(struct msm_dsi_phy *phy)
-+{
-+	void __iomem *base = phy->reg_base;
-+
-+	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x0);
-+	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 0);
-+	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_5, 0x7);
-+	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_3, 0);
-+	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_2, 0x1);
-+	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_1, 0x1);
-+	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_4, 0x20);
-+
-+	if (phy->cfg->type == MSM_DSI_PHY_28NM_LP)
-+		dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x05);
-+	else
-+		dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x0d);
-+}
-+
-+static void dsi_28nm_phy_regulator_ctrl(struct msm_dsi_phy *phy, bool enable)
-+{
-+	if (!enable) {
-+		dsi_phy_write(phy->reg_base +
-+			      REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 0);
-+		return;
-+	}
-+
-+	if (phy->regulator_ldo_mode)
-+		dsi_28nm_phy_regulator_enable_ldo(phy);
-+	else
-+		dsi_28nm_phy_regulator_enable_dcdc(phy);
- }
- 
- static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
-@@ -77,8 +105,6 @@ static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
- 
- 	dsi_28nm_phy_regulator_ctrl(phy, true);
- 
--	dsi_phy_write(base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x00);
--
- 	dsi_28nm_dphy_set_timing(phy, timing);
- 
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_CTRL_1, 0x00);
+Thanks,
+Jack
 -- 
-2.23.0
-
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
