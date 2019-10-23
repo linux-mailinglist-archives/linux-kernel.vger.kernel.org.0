@@ -2,211 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37BA0E1E1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 16:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23696E1E25
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 16:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392203AbfJWO1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 10:27:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47400 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731524AbfJWO1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 10:27:18 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5726C21872;
-        Wed, 23 Oct 2019 14:27:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571840836;
-        bh=D230z3qUz64Kf7uR9xKOBMmSGsbjH9R5QiOnkFAdwxM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=gzc2pEgtp8+DLNg0G5X7RoF2IgDQAzk7riINQxaQWJU/benhJAa+pqjx0qwSdNaar
-         mSPJtu25oYl+3jQ/0ZU9VKNG7/BRCpkflgk0AUQdA0uyyMBUpTs0DJycQZaPMGZke9
-         7sr4tmtGgu4tSpX9IB0R6oZuKU13RWJVAAQcoLx4=
-Date:   Wed, 23 Oct 2019 09:27:15 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "logang@deltatee.com" <logang@deltatee.com>
-Subject: Re: [PATCH v2 1/1] PCI: Add hp_mmio_size and hp_mmio_pref_size
- parameters
-Message-ID: <20191023142715.GA162472@google.com>
+        id S2392219AbfJWO27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 10:28:59 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:38191 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389521AbfJWO27 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 10:28:59 -0400
+Received: from mail-qk1-f176.google.com ([209.85.222.176]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MxmBi-1i5ENr47vK-00zICK; Wed, 23 Oct 2019 16:28:58 +0200
+Received: by mail-qk1-f176.google.com with SMTP id u22so19897705qkk.11;
+        Wed, 23 Oct 2019 07:28:57 -0700 (PDT)
+X-Gm-Message-State: APjAAAUpebkaTULw/A7WTcaFgoAZ369yJFKgyFCJMXiAR8nznL2z2oj3
+        AkWoDtS1hSVU4qoBZnw+PQaVaSPL4diTKGaETb8=
+X-Google-Smtp-Source: APXvYqzP2LPP0EVOvQLFv73W1u8YOBkdDSztlR+gJoeDvIZmUcdwNseA92hgtQnhiy+B/pAU/u5EvOBy39PrXQdnbVo=
+X-Received: by 2002:a37:a50f:: with SMTP id o15mr7389101qke.3.1571840936788;
+ Wed, 23 Oct 2019 07:28:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SL2P216MB0187E4D0055791957B7E2660806B0@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191009190853.245077-1-arnd@arndb.de> <20191009191044.308087-10-arnd@arndb.de>
+ <d1022cda6bd6ce73e9875644a5a2c65e4d554f37.camel@codethink.co.uk>
+ <CAK8P3a0BYkPTSnQUmde2k+HVcg7XNihzWTEzrCD4d8G8ecO9-w@mail.gmail.com>
+ <20191022043051.GA20354@ZenIV.linux.org.uk> <CAK8P3a3yutJU83AfxKXTFuCVQwsX50KYsDgbGbHeJJ0JoLbejg@mail.gmail.com>
+ <20191023102937.GK3125@piout.net>
+In-Reply-To: <20191023102937.GK3125@piout.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 23 Oct 2019 16:28:40 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2+wEH5mtq_vF6fTSkmCfBeKHOvNmjbvViiHFWxUAjV_g@mail.gmail.com>
+Message-ID: <CAK8P3a2+wEH5mtq_vF6fTSkmCfBeKHOvNmjbvViiHFWxUAjV_g@mail.gmail.com>
+Subject: Re: [Y2038] [PATCH v6 10/43] compat_ioctl: move rtc handling into rtc-dev.c
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:j3q3khfz/zd9/Zc1ZRm1iLAWqMfYAPWxVT1x0kkvwFdE5ei6Jfw
+ aJaarYdEiqkKpe1TTRe3WHqtllQb2u/IXAeiqBEwzO+XBA5eEL3jOxpmfeH0Kws0yNCb/nj
+ RMkCrNectmQR7z1T/y06NmYB4kVLFTZ7VcZlX3kZOI/zzieqlwv4K56qnW0VIxqllaNtChp
+ pBdpaKA4mxA5S7la7CzIw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:PiV8fkotnMs=:Wfp8ZqLnz6P85zFhCBlG+x
+ qHpx6LvC4+hC+v3wqoQg+oz1+iqg2+dQlEB/xh+gPv1kVd21UbwPxCiTc/PxG2K0lcCfJJp52
+ 2xIGeZW/7PAnfj24Sf1WJ9zIuSMVckpWfiVvELHPi0NVkvRTU1LBVxhxmyU+azoJv85Xdzt29
+ Tq6THYNdrmpkY9V9Bwsr6AOD7SblYjfR+BjLqNVNIieNMb0VowQcNKhfsGPkyjnMvl1gkOV08
+ bacWjmCXH7KkzCSRea/Z/ANG7PRqup8oCipTC8A04YKOzpxVYxWYs0dHMxGTfh3KwgxQ7ZXlh
+ Rv7lTvcrm5LPGOen8olDOLxUviSHMUt/wfecVy+0MFi7xvv0P0na3dpzt0+E1YmzKonL+hTRd
+ oUUJIG3g2bRHKN34Lm2ggWYoeBUXpjuq4xvO6gqW81g02vMpY2l1TptxszXnasUKKE0VQORvK
+ B99m0+iEZb9gCXwtWhQKAnuGSxAVJ0Y53SpNN9a9tOR50lEsYeMoy5ONDcpE+cCmF8KEg9qc7
+ IrLYGY2GloyYgpR7u7ilwmTomAQpCxFd4GsvHcENdwgGNGdxJg/ZUUTMNhl+cHDiWEtPPRhz/
+ PzdyIV/n3GCpurysTvwE1GCRENF1h6wJoLyb9oil5WjCQChurfyDE/5lNMzzcrNYzZz5l6zsM
+ 9jQOHVI0udONF8/rDyz8vgmr89pdVd/LSdIQf0eyc39HVjbIOYnX5AuLSQo1lu82YNdckDM+6
+ Gs1EhWwKiJBtgXL/+89+Yis5J/sEZcrgkFtOSR7nDT9+13zcGuD9+yawnyOLr3M/8M7EjdaOu
+ 5wypEExuQJR9wQ/ymNmk0ehMIRb8T4KD9gtafFkoa6f1OW9xDUq+RvJJGPfKcObnp+nZb8T7+
+ 0i04fbpzDneLGNvBheuw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 12:12:29PM +0000, Nicholas Johnson wrote:
-> Add kernel parameter pci=hpmmiosize=nn[KMG] to set MMIO bridge window
-> size for hotplug bridges.
-> 
-> Add kernel parameter pci=hpmmioprefsize=nn[KMG] to set MMIO_PREF bridge
-> window size for hotplug bridges.
-> 
-> Leave pci=hpmemsize=nn[KMG] unchanged, to prevent disruptions to
-> existing users. This sets both MMIO and MMIO_PREF to the same size.
-> 
-> The two new parameters conform to the style of pci=hpiosize=nn[KMG].
-> 
-> Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+On Wed, Oct 23, 2019 at 12:29 PM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+> On 22/10/2019 14:14:21+0200, Arnd Bergmann wrote:
+> > On Tue, Oct 22, 2019 at 6:30 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > I don't see any chance that this code is revived. If anyone wanted to
+> > make it work, the right approach would be to use the rtc framework
+> > and rewrite the code first.
+> >
+> > I could send a patch to remove the dead code though if that helps.
+> >
+>
+> Please do.
 
-Applied to pci/resource for v5.5, thanks!
+Ok, done. Speaking of removing rtc drivers, should we just kill off
+drivers/char/rtc.c and drivers/char/efirtc.c as well? I don't remember
+why we left them in the tree, but I'm fairly sure they are not actually
+needed.
 
-> ---
->  .../admin-guide/kernel-parameters.txt         |  9 ++++++-
->  drivers/pci/pci.c                             | 13 +++++++---
->  drivers/pci/pci.h                             |  3 ++-
->  drivers/pci/setup-bus.c                       | 24 ++++++++++---------
->  4 files changed, 33 insertions(+), 16 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index a84a83f88..cfe8c2b67 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -3492,8 +3492,15 @@
->  		hpiosize=nn[KMG]	The fixed amount of bus space which is
->  				reserved for hotplug bridge's IO window.
->  				Default size is 256 bytes.
-> +		hpmmiosize=nn[KMG]	The fixed amount of bus space which is
-> +				reserved for hotplug bridge's MMIO window.
-> +				Default size is 2 megabytes.
-> +		hpmmioprefsize=nn[KMG]	The fixed amount of bus space which is
-> +				reserved for hotplug bridge's MMIO_PREF window.
-> +				Default size is 2 megabytes.
->  		hpmemsize=nn[KMG]	The fixed amount of bus space which is
-> -				reserved for hotplug bridge's memory window.
-> +				reserved for hotplug bridge's MMIO and
-> +				MMIO_PREF window.
->  				Default size is 2 megabytes.
->  		hpbussize=nn	The minimum amount of additional bus numbers
->  				reserved for buses below a hotplug bridge.
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index a97e2571a..e0406c663 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -85,10 +85,12 @@ unsigned long pci_cardbus_io_size = DEFAULT_CARDBUS_IO_SIZE;
->  unsigned long pci_cardbus_mem_size = DEFAULT_CARDBUS_MEM_SIZE;
->  
->  #define DEFAULT_HOTPLUG_IO_SIZE		(256)
-> -#define DEFAULT_HOTPLUG_MEM_SIZE	(2*1024*1024)
-> +#define DEFAULT_HOTPLUG_MMIO_SIZE	(2*1024*1024)
-> +#define DEFAULT_HOTPLUG_MMIO_PREF_SIZE	(2*1024*1024)
->  /* pci=hpmemsize=nnM,hpiosize=nn can override this */
->  unsigned long pci_hotplug_io_size  = DEFAULT_HOTPLUG_IO_SIZE;
-> -unsigned long pci_hotplug_mem_size = DEFAULT_HOTPLUG_MEM_SIZE;
-> +unsigned long pci_hotplug_mmio_size = DEFAULT_HOTPLUG_MMIO_SIZE;
-> +unsigned long pci_hotplug_mmio_pref_size = DEFAULT_HOTPLUG_MMIO_PREF_SIZE;
->  
->  #define DEFAULT_HOTPLUG_BUS_SIZE	1
->  unsigned long pci_hotplug_bus_size = DEFAULT_HOTPLUG_BUS_SIZE;
-> @@ -6286,8 +6288,13 @@ static int __init pci_setup(char *str)
->  				pcie_ecrc_get_policy(str + 5);
->  			} else if (!strncmp(str, "hpiosize=", 9)) {
->  				pci_hotplug_io_size = memparse(str + 9, &str);
-> +			} else if (!strncmp(str, "hpmmiosize=", 11)) {
-> +				pci_hotplug_mmio_size = memparse(str + 11, &str);
-> +			} else if (!strncmp(str, "hpmmioprefsize=", 15)) {
-> +				pci_hotplug_mmio_pref_size = memparse(str + 15, &str);
->  			} else if (!strncmp(str, "hpmemsize=", 10)) {
-> -				pci_hotplug_mem_size = memparse(str + 10, &str);
-> +				pci_hotplug_mmio_size = memparse(str + 10, &str);
-> +				pci_hotplug_mmio_pref_size = pci_hotplug_mmio_size;
->  			} else if (!strncmp(str, "hpbussize=", 10)) {
->  				pci_hotplug_bus_size =
->  					simple_strtoul(str + 10, &str, 0);
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 3f6947ee3..9faa55a15 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -218,7 +218,8 @@ extern const struct device_type pci_dev_type;
->  extern const struct attribute_group *pci_bus_groups[];
->  
->  extern unsigned long pci_hotplug_io_size;
-> -extern unsigned long pci_hotplug_mem_size;
-> +extern unsigned long pci_hotplug_mmio_size;
-> +extern unsigned long pci_hotplug_mmio_pref_size;
->  extern unsigned long pci_hotplug_bus_size;
->  
->  /**
-> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> index e7dbe2170..93fd2070a 100644
-> --- a/drivers/pci/setup-bus.c
-> +++ b/drivers/pci/setup-bus.c
-> @@ -1178,7 +1178,8 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
->  {
->  	struct pci_dev *dev;
->  	unsigned long mask, prefmask, type2 = 0, type3 = 0;
-> -	resource_size_t additional_mem_size = 0, additional_io_size = 0;
-> +	resource_size_t additional_io_size = 0, additional_mmio_size = 0,
-> +			additional_mmio_pref_size = 0;
->  	struct resource *b_res;
->  	int ret;
->  
-> @@ -1212,7 +1213,8 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
->  		pci_bridge_check_ranges(bus);
->  		if (bus->self->is_hotplug_bridge) {
->  			additional_io_size  = pci_hotplug_io_size;
-> -			additional_mem_size = pci_hotplug_mem_size;
-> +			additional_mmio_size = pci_hotplug_mmio_size;
-> +			additional_mmio_pref_size = pci_hotplug_mmio_pref_size;
->  		}
->  		/* Fall through */
->  	default:
-> @@ -1230,9 +1232,9 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
->  		if (b_res[2].flags & IORESOURCE_MEM_64) {
->  			prefmask |= IORESOURCE_MEM_64;
->  			ret = pbus_size_mem(bus, prefmask, prefmask,
-> -				  prefmask, prefmask,
-> -				  realloc_head ? 0 : additional_mem_size,
-> -				  additional_mem_size, realloc_head);
-> +				prefmask, prefmask,
-> +				realloc_head ? 0 : additional_mmio_pref_size,
-> +				additional_mmio_pref_size, realloc_head);
->  
->  			/*
->  			 * If successful, all non-prefetchable resources
-> @@ -1254,9 +1256,9 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
->  		if (!type2) {
->  			prefmask &= ~IORESOURCE_MEM_64;
->  			ret = pbus_size_mem(bus, prefmask, prefmask,
-> -					 prefmask, prefmask,
-> -					 realloc_head ? 0 : additional_mem_size,
-> -					 additional_mem_size, realloc_head);
-> +				prefmask, prefmask,
-> +				realloc_head ? 0 : additional_mmio_pref_size,
-> +				additional_mmio_pref_size, realloc_head);
->  
->  			/*
->  			 * If successful, only non-prefetchable resources
-> @@ -1265,7 +1267,7 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
->  			if (ret == 0)
->  				mask = prefmask;
->  			else
-> -				additional_mem_size += additional_mem_size;
-> +				additional_mmio_size += additional_mmio_pref_size;
->  
->  			type2 = type3 = IORESOURCE_MEM;
->  		}
-> @@ -1285,8 +1287,8 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
->  		 * prefetchable resource in a 64-bit prefetchable window.
->  		 */
->  		pbus_size_mem(bus, mask, IORESOURCE_MEM, type2, type3,
-> -				realloc_head ? 0 : additional_mem_size,
-> -				additional_mem_size, realloc_head);
-> +			realloc_head ? 0 : additional_mmio_size,
-> +			additional_mmio_size, realloc_head);
->  		break;
->  	}
->  }
-> -- 
-> 2.23.0
-> 
+      Arnd
