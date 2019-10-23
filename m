@@ -2,72 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EB8DE1212
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 08:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89CEEE120A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 08:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388235AbfJWGZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 02:25:32 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:40086 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725947AbfJWGZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 02:25:32 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id D4C0CF4705001F0471B5;
-        Wed, 23 Oct 2019 14:25:28 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 23 Oct 2019
- 14:25:19 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <vgoyal@redhat.com>, <stefanha@redhat.com>, <miklos@szeredi.hu>,
-        <mszeredi@redhat.com>
-CC:     <virtualization@lists.linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] virtiofs: remove unused variable 'fc'
-Date:   Wed, 23 Oct 2019 14:21:30 +0800
-Message-ID: <20191023062130.23068-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1731961AbfJWGYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 02:24:06 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36345 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbfJWGYG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 02:24:06 -0400
+Received: by mail-qk1-f196.google.com with SMTP id y189so18789286qkc.3;
+        Tue, 22 Oct 2019 23:24:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Yi1p/5AgQUValFkbegnxonQlGe9ds008uEI8GJ+OXbo=;
+        b=AuCfw9OIu+7nH6ya75fRfE9wSSXOEJme4h+b4Jl8lqE3QhpBP0wyip4SbHdD89k+dU
+         YXkDowI6+oNJdoRgFSF8ON+KH+nGnv9PS7lTmPjLzsl0n3+c81FqncBaSpb91bkTBQeu
+         W7CouiNjm3HxMmcdVYt1E1lY3fcVggMLerrJk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Yi1p/5AgQUValFkbegnxonQlGe9ds008uEI8GJ+OXbo=;
+        b=jQMCkLOGGe61IK461adncOqwHnapsqH5QxTUenhAZ0csTIpUfM8cCqgVri+K9lpzKY
+         t8X9aQEroYVOuXUNZnAJ7vYUspbAo8XMRnM2ojF9AUadiljHCGb6S/OK5kDTtJNVn30E
+         C5SHhHfO1hJpbfQSn18PbP5qpHkzdOmlfGL0jrvPOYGClT+zs6Qe0KV75yZIJM98C1HK
+         2M0DrlDC6RYyS5P3k0gZbnLOG1THXD7A9lDC0/564Vs49+3nVWKdC62VH6vIkKBsTGsr
+         WTlY1xoQRO8MI3M9pWD+yXDwBKmLlbf+BxawTXJYesuYbJ+4Dvbb4T8rboINMpqF2Ehi
+         hPOw==
+X-Gm-Message-State: APjAAAUBoeCu/ae06lfLcWoDv3/Ee096sc8NM7lEUBKK9mbU6GQYqlbH
+        +iUXQdNXn+yPlFxxcvucxlugCyHk8HQo+OuGP8o=
+X-Google-Smtp-Source: APXvYqzVR5Etz/Es4HiMMf1UU0Ef58kwEksY2/0I7PJeRjGUW1kKtmEKe5E3i1zok0d9FQ5uFZGtdYzcPByiBOb1fvE=
+X-Received: by 2002:a37:aa07:: with SMTP id t7mr7032088qke.414.1571811845300;
+ Tue, 22 Oct 2019 23:24:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <baabb9e9-a1b2-3a04-9fb6-aa632de5f722@web.de>
+In-Reply-To: <baabb9e9-a1b2-3a04-9fb6-aa632de5f722@web.de>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 23 Oct 2019 06:23:53 +0000
+Message-ID: <CACPK8XfUJ5VGpTS3gwxSVZbdWZKPH6PwT2JKGGJ2yzoXYKdtZg@mail.gmail.com>
+Subject: Re: [PATCH] EDAC: Aspeed: Use devm_platform_ioremap_resource() in aspeed_probe()
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-edac@vger.kernel.org,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Borislav Petkov <bp@alien8.de>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rrichter@marvell.com>,
+        Stefan Schaeckeler <sschaeck@cisco.com>,
+        Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fs/fuse/virtio_fs.c:983:20: warning:
- variable fc set but not used [-Wunused-but-set-variable]
+On Sat, 21 Sep 2019 at 16:47, Markus Elfring <Markus.Elfring@web.de> wrote:
+>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 21 Sep 2019 18:32:46 +0200
+>
+> Simplify this function implementation by using a known wrapper function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-It is not used since commit 7ee1e2e631db ("virtiofs:
-No need to check fpq->connected state")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/fuse/virtio_fs.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 2de8fc0..a5c8604 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -980,7 +980,6 @@ __releases(fiq->lock)
- {
- 	unsigned int queue_id = VQ_REQUEST; /* TODO multiqueue */
- 	struct virtio_fs *fs;
--	struct fuse_conn *fc;
- 	struct fuse_req *req;
- 	struct virtio_fs_vq *fsvq;
- 	int ret;
-@@ -993,7 +992,6 @@ __releases(fiq->lock)
- 	spin_unlock(&fiq->lock);
- 
- 	fs = fiq->priv;
--	fc = fs->vqs[queue_id].fud->fc;
- 
- 	pr_debug("%s: opcode %u unique %#llx nodeid %#llx in.len %u out.len %u\n",
- 		  __func__, req->in.h.opcode, req->in.h.unique,
--- 
-2.7.4
-
-
+Acked-by: Joel Stanley <joel@jms.id.au>
