@@ -2,86 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C961E0F98
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 03:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3774E0FA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 03:24:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732604AbfJWBRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 21:17:02 -0400
-Received: from mga04.intel.com ([192.55.52.120]:50268 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727851AbfJWBRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 21:17:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 18:17:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,218,1569308400"; 
-   d="scan'208";a="372722536"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by orsmga005.jf.intel.com with ESMTP; 22 Oct 2019 18:17:00 -0700
-Date:   Wed, 23 Oct 2019 09:19:51 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>,
-        Jim Mattson <jmattson@google.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v7 5/7] kvm: x86: Add CET CR4 bit and XSS support
-Message-ID: <20191023011951.GB27009@local-michael-cet-test>
-References: <20190927021927.23057-1-weijiang.yang@intel.com>
- <20190927021927.23057-6-weijiang.yang@intel.com>
- <CALMp9eStz-VCv5G60KFtumQ8W1Jqf9bOcK_=KwL1P3LLjgajnQ@mail.gmail.com>
- <20191017195642.GJ20903@linux.intel.com>
- <20191018015802.GD2286@local-michael-cet-test>
- <20191022201321.GN2343@linux.intel.com>
+        id S1733066AbfJWBYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 21:24:39 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:40090 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727881AbfJWBYj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 21:24:39 -0400
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x9N1OGrk001511
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 10:24:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x9N1OGrk001511
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1571793857;
+        bh=BtdIFLzjSF0M2qZMCrwtECZtdItHeicakXIfe0ZLK1g=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tLZW+9iu20JkdNHoXZf6lFj5MjNtqWIes0I7cwWYXPnpkxxf22gevgi6ZJb+A76px
+         H1BS1F1MPVXv2Vw7DSwI6RsKohohdrtRjDAHpdtr4Fm6WsiIA1atMbxBUkwcunJO3L
+         MSY+8SO85sijFiv4VzNzzaj1aLIkZtCvf0rhgVRR0bU1Pkn7c9VzQyaCMPBUtlmUN5
+         BvwbJMHoRhA+84Tw5JM8F5yj0V30ywqxHdFOjkp5wObu7zNiTerjyhexFMc1wj0VNP
+         Q/Y/lPYn1BUcW7Bfqmc2r5kzL80eBN9xm0ciKBmq00znef+9P87bhSNX5ytwyvxI/X
+         lFYzNA7hXbA2g==
+X-Nifty-SrcIP: [209.85.217.44]
+Received: by mail-vs1-f44.google.com with SMTP id b123so12672825vsb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 18:24:16 -0700 (PDT)
+X-Gm-Message-State: APjAAAXHf64d8bGAYIG2wRkqOhjUTWH7EUAj0N/jFSan1HcPtFipNQfq
+        k3tShHx4LHcq9Uxzw145JOnO2Z14xjoMhbrvTSU=
+X-Google-Smtp-Source: APXvYqzQ7EbfRKHTdEDtX1IIUzO9qaHq6Jv9BvfMZFAFcz+7Zyy5R3MPoflIftEjT1ud6nWCH8ukcTG4yUDvI3oQwzs=
+X-Received: by 2002:a67:ff86:: with SMTP id v6mr3902386vsq.181.1571793855568;
+ Tue, 22 Oct 2019 18:24:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022201321.GN2343@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20191021160419.28270-1-jeyu@kernel.org> <20191022110403.29715-1-jeyu@kernel.org>
+In-Reply-To: <20191022110403.29715-1-jeyu@kernel.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 23 Oct 2019 10:23:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATzCA-+-9Mp6GZcBk1UZnUdgoYHLkX0wVSHyJcRefyWEg@mail.gmail.com>
+Message-ID: <CAK7LNATzCA-+-9Mp6GZcBk1UZnUdgoYHLkX0wVSHyJcRefyWEg@mail.gmail.com>
+Subject: Re: [PATCH v3] scripts/nsdeps: use alternative sed delimiter
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthias Maennich <maennich@google.com>,
+        David Laight <David.Laight@aculab.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 01:13:21PM -0700, Sean Christopherson wrote:
-> On Fri, Oct 18, 2019 at 09:58:02AM +0800, Yang Weijiang wrote:
-> > On Thu, Oct 17, 2019 at 12:56:42PM -0700, Sean Christopherson wrote:
-> > > On Wed, Oct 02, 2019 at 12:05:23PM -0700, Jim Mattson wrote:
-> > > > > +               u64 kvm_xss = kvm_supported_xss();
-> > > > > +
-> > > > > +               best->ebx =
-> > > > > +                       xstate_required_size(vcpu->arch.xcr0 | kvm_xss, true);
-> > > > 
-> > > > Shouldn't this size be based on the *current* IA32_XSS value, rather
-> > > > than the supported IA32_XSS bits? (i.e.
-> > > > s/kvm_xss/vcpu->arch.ia32_xss/)
-> > > 
-> > > Ya.
-> > >
-> > I'm not sure if I understand correctly, kvm_xss is what KVM supports,
-> > but arch.ia32_xss reflects what guest currently is using, shoudn't CPUID
-> > report what KVM supports instead of current status?
-> > Will CPUID match current IA32_XSS status if guest changes it runtime?
-> 
-> Not in this case.  Select CPUID output is dependent on current state as
-> opposed to being a constant defind by hardware.  Per the SDM, EBX is:
-> 
->   The size in bytes of the XSAVE area containing all states enabled by
->   XCRO | IA32_XSS
-> 
-> Since KVM is emulating CPUID for the guest, XCR0 and IA32_XSS in this
-> context refers to the guest's current/actual XCR0/IA32_XSS values.  The
-> purpose of this behavior is so that software can call CPUID to query the
-> actual amount of memory that is needed for XSAVE(S), as opposed to the
-> absolute max size that _might_ be needed.
-> 
-> MONITOR/MWAIT is the other case that comes to mind where CPUID dynamically
-> reflects configured state, e.g. MWAIT is reported as unsupported if it's
-> disabled via IA32_MISC_ENABLE MSR.
-Yep, make sense, thank you for explanation.
+On Tue, Oct 22, 2019 at 8:04 PM Jessica Yu <jeyu@kernel.org> wrote:
+>
+> When doing an out of tree build with O=, the nsdeps script constructs
+> the absolute pathname of the module source file so that it can insert
+> MODULE_IMPORT_NS statements in the right place. However, ${srctree}
+> contains an unescaped path to the source tree, which, when used in a sed
+> substitution, makes sed complain:
+>
+> ++ sed 's/[^ ]* *//home/jeyu/jeyu-linux\/&/g'
+> sed: -e expression #1, char 12: unknown option to `s'
+>
+> The sed substitution command 's' ends prematurely with the forward
+> slashes in the pathname, and sed errors out when it encounters the 'h',
+> which is an invalid sed substitution option. To avoid escaping forward
+> slashes ${srctree}, we can use '|' as an alternative delimiter for
+> sed instead to avoid this error.
+>
+> Signed-off-by: Jessica Yu <jeyu@kernel.org>
+> ---
+>
+> v3: don't need to escape '/' since we're using a different delimiter.
+>
+>  scripts/nsdeps | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/nsdeps b/scripts/nsdeps
+> index 3754dac13b31..dda6fbac016e 100644
+> --- a/scripts/nsdeps
+> +++ b/scripts/nsdeps
+> @@ -33,7 +33,7 @@ generate_deps() {
+>         if [ ! -f "$ns_deps_file" ]; then return; fi
+>         local mod_source_files=`cat $mod_file | sed -n 1p                      \
+>                                               | sed -e 's/\.o/\.c/g'           \
+> -                                             | sed "s/[^ ]* */${srctree}\/&/g"`
+> +                                             | sed "s|[^ ]* *|${srctree}/&|g"`
+>         for ns in `cat $ns_deps_file`; do
+>                 echo "Adding namespace $ns to module $mod_name (if needed)."
+>                 generate_deps_for_ns $ns $mod_source_files
+> --
+> 2.16.4
+>
+
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+-- 
+Best Regards
+Masahiro Yamada
