@@ -2,177 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0877E212A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 18:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1B92E212D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 18:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfJWQ60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 12:58:26 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:39608 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726265AbfJWQ60 (ORCPT
+        id S1726752AbfJWQ65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 12:58:57 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38528 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726712AbfJWQ65 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 12:58:26 -0400
+        Wed, 23 Oct 2019 12:58:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571849905;
+        s=mimecast20190719; t=1571849936;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=qTTBTaOEjj6UwppDZDbr2espgMg/5p88pNBoo1l7DMI=;
-        b=SVM4XfdqAB1KKgHlaWTpcuX4VN3WOWZnrN809l7NFPS5ufHb5lUvSNqSv4QlB7AsWBlKWq
-        wQbD0YctYqW0HiTJ5x0tvplgvikqoN9wQT+5CDf/ky3tR+w87uHQmaPO7bhqPediVraNc/
-        PyNMqxSPIvfSwM6E2t69mUDA6YfgpbE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-285-2c7kOI1UPM2-cf5wB0RQTg-1; Wed, 23 Oct 2019 12:58:21 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 33D951005500;
-        Wed, 23 Oct 2019 16:58:19 +0000 (UTC)
-Received: from redhat.com (ovpn-124-105.rdu2.redhat.com [10.10.124.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B6B6B1001B07;
-        Wed, 23 Oct 2019 16:58:16 +0000 (UTC)
-Date:   Wed, 23 Oct 2019 12:58:14 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc:     Zhangfei Gao <zhangfei.gao@linaro.org>, francois.ozog@linaro.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Zaibo Xu <xuzaibo@huawei.com>, ilias.apalodimas@linaro.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        Wangzhou <wangzhou1@hisilicon.com>, grant.likely@arm.com,
-        "haojian . zhuang" <haojian.zhuang@linaro.org>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        linux-accelerators@lists.ozlabs.org, kenneth-lee-2012@foxmail.com
-Subject: Re: [PATCH v6 2/3] uacce: add uacce driver
-Message-ID: <20191023165814.GB4163@redhat.com>
-References: <1571214873-27359-1-git-send-email-zhangfei.gao@linaro.org>
- <1571214873-27359-3-git-send-email-zhangfei.gao@linaro.org>
- <20191016172802.GA1533448@lophozonia>
+        bh=svxKy9PpZYdSp7My5GoLpaiAHrwdkyewTYZPNZNZ5xI=;
+        b=KIudtqZjdSyR0zAwaz6uW/Fz4HUw9nQfkvJ3MgudY31zLvPENQikR2tUlJhSI/UPfFJEGk
+        cv73hbsoTUoB5iI1skqD7TCy7GGmtTrFYSzOzL0Qr8et+gGSXecWNfsQXkvrgNmwLT4lBG
+        k+kpgfF8K6BqhjVWsLsS9EvKGvxR4zI=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-159-VU-4ulozMBecvazaRcXPaQ-1; Wed, 23 Oct 2019 12:58:54 -0400
+Received: by mail-lf1-f71.google.com with SMTP id x20so4292462lfe.14
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 09:58:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WadZePlEGvqCjR+F4g4l9zs3Tb/z+tEXc700EM0+NZE=;
+        b=EdR7DaXFM0kE57+VCqbWYgZGGJ4Zm/4sfhsArOl5u9XozV9QTz2qxsD2lUZlb9HIzu
+         sXLbCVL5MQ3ZmlFfQlfVk12fL93TThYO2gdvfGAN0cpKSe/O9CI5TJqRBPl3QBsjgYNk
+         rWoOb8geVrFWZuk/BnguJOwRR4AfjLm/cr/NTun/UcdK9RbprbocldgYhoIOz8z8dsnu
+         I96rt4mM2UoQoOs8llgjaZnmYuCJcXQv1C5co1EtzS3ps7xARQsLk8gcUR54mqSNxxrs
+         /tiE/nQ/9o5ile87ndqEG48hGEhxD08YcT+y1nTqjwaqU+q31fqhx2eF0kBp1hgrzEh3
+         diNA==
+X-Gm-Message-State: APjAAAUAM8F9lmNz9GTYVvkZnoB/EfRZGualAB9paQFxObEW+LN+M+R6
+        2TT1KThUwr3JiMmG+DAqmIVElnxRIbRE27ixnk6f5wqoAN7WF1EYa3djwuKOQJeCLTTOACdNlQ2
+        PkAaJgedKWy8tTjqfsRoTRttGqTw7z5ees7oEj+4x
+X-Received: by 2002:a19:f707:: with SMTP id z7mr12684775lfe.0.1571849932884;
+        Wed, 23 Oct 2019 09:58:52 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxzuAJ3SiF0de98rFTJPLLTmMZ3yLAQ4bENcIP+wrr2Kj8d3MAxXL/CqGOvxQJUi82d4cSF+Pao0feEKCQuYsA=
+X-Received: by 2002:a19:f707:: with SMTP id z7mr12684749lfe.0.1571849932584;
+ Wed, 23 Oct 2019 09:58:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191016172802.GA1533448@lophozonia>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: 2c7kOI1UPM2-cf5wB0RQTg-1
+References: <20191021200948.23775-1-mcroce@redhat.com> <20191021200948.23775-5-mcroce@redhat.com>
+ <20191023100132.GD8732@netronome.com>
+In-Reply-To: <20191023100132.GD8732@netronome.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Wed, 23 Oct 2019 18:58:16 +0200
+Message-ID: <CAGnkfhy1rsm0Dp_jsuHhfXY0kzMc_hShYmYSX=X8=q-HMtNczg@mail.gmail.com>
+Subject: Re: [PATCH net-next 4/4] bonding: balance ICMP echoes in layer3+4 mode
+To:     Simon Horman <simon.horman@netronome.com>
+Cc:     netdev <netdev@vger.kernel.org>,
+        Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Paul Blakey <paulb@mellanox.com>,
+        LKML <linux-kernel@vger.kernel.org>
+X-MC-Unique: VU-4ulozMBecvazaRcXPaQ-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 07:28:02PM +0200, Jean-Philippe Brucker wrote:
-[...]
+On Wed, Oct 23, 2019 at 12:01 PM Simon Horman
+<simon.horman@netronome.com> wrote:
+>
+> On Mon, Oct 21, 2019 at 10:09:48PM +0200, Matteo Croce wrote:
+> > The bonding uses the L4 ports to balance flows between slaves.
+> > As the ICMP protocol has no ports, those packets are sent all to the
+> > same device:
+> >
+> >     # tcpdump -qltnni veth0 ip |sed 's/^/0: /' &
+> >     # tcpdump -qltnni veth1 ip |sed 's/^/1: /' &
+> >     # ping -qc1 192.168.0.2
+> >     1: IP 192.168.0.1 > 192.168.0.2: ICMP echo request, id 315, seq 1, =
+length 64
+> >     1: IP 192.168.0.2 > 192.168.0.1: ICMP echo reply, id 315, seq 1, le=
+ngth 64
+> >     # ping -qc1 192.168.0.2
+> >     1: IP 192.168.0.1 > 192.168.0.2: ICMP echo request, id 316, seq 1, =
+length 64
+> >     1: IP 192.168.0.2 > 192.168.0.1: ICMP echo reply, id 316, seq 1, le=
+ngth 64
+> >     # ping -qc1 192.168.0.2
+> >     1: IP 192.168.0.1 > 192.168.0.2: ICMP echo request, id 317, seq 1, =
+length 64
+> >     1: IP 192.168.0.2 > 192.168.0.1: ICMP echo reply, id 317, seq 1, le=
+ngth 64
+> >
+> > But some ICMP packets have an Identifier field which is
+> > used to match packets within sessions, let's use this value in the hash
+> > function to balance these packets between bond slaves:
+> >
+> >     # ping -qc1 192.168.0.2
+> >     0: IP 192.168.0.1 > 192.168.0.2: ICMP echo request, id 303, seq 1, =
+length 64
+> >     0: IP 192.168.0.2 > 192.168.0.1: ICMP echo reply, id 303, seq 1, le=
+ngth 64
+> >     # ping -qc1 192.168.0.2
+> >     1: IP 192.168.0.1 > 192.168.0.2: ICMP echo request, id 304, seq 1, =
+length 64
+> >     1: IP 192.168.0.2 > 192.168.0.1: ICMP echo reply, id 304, seq 1, le=
+ngth 64
+> >
+> > Signed-off-by: Matteo Croce <mcroce@redhat.com>
+>
+> I see where this patch is going but it is unclear to me what problem it i=
+s
+> solving. I would expect ICMP traffic to be low volume and thus able to be
+> handled by a single lower-device of a bond.
+>
+> ...
 
-> > +static struct uacce_qfile_region *
-> > +uacce_create_region(struct uacce_queue *q, struct vm_area_struct *vma,
-> > +=09=09    enum uacce_qfrt type, unsigned int flags)
-> > +{
-> > +=09struct uacce_qfile_region *qfr;
-> > +=09struct uacce_device *uacce =3D q->uacce;
-> > +=09unsigned long vm_pgoff;
-> > +=09int ret =3D -ENOMEM;
-> > +
-> > +=09qfr =3D kzalloc(sizeof(*qfr), GFP_ATOMIC);
-> > +=09if (!qfr)
-> > +=09=09return ERR_PTR(-ENOMEM);
-> > +
-> > +=09qfr->type =3D type;
-> > +=09qfr->flags =3D flags;
-> > +=09qfr->iova =3D vma->vm_start;
-> > +=09qfr->nr_pages =3D vma_pages(vma);
-> > +
-> > +=09if (vma->vm_flags & VM_READ)
-> > +=09=09qfr->prot |=3D IOMMU_READ;
-> > +
-> > +=09if (vma->vm_flags & VM_WRITE)
-> > +=09=09qfr->prot |=3D IOMMU_WRITE;
-> > +
-> > +=09if (flags & UACCE_QFRF_SELFMT) {
-> > +=09=09if (!uacce->ops->mmap) {
-> > +=09=09=09ret =3D -EINVAL;
-> > +=09=09=09goto err_with_qfr;
-> > +=09=09}
-> > +
-> > +=09=09ret =3D uacce->ops->mmap(q, vma, qfr);
-> > +=09=09if (ret)
-> > +=09=09=09goto err_with_qfr;
-> > +=09=09return qfr;
-> > +=09}
->=20
-> I wish the SVA and !SVA paths were less interleaved. Both models are
-> fundamentally different:
->=20
-> * Without SVA you cannot share the device between multiple processes. All
->   DMA mappings are in the "main", non-PASID address space of the device.
->=20
->   Note that process isolation without SVA could be achieved with the
->   auxiliary domains IOMMU API (introduced primarily for vfio-mdev) but
->   this is not the model chosen here.
->=20
-> * With SVA you can share the device between multiple processes. But if th=
-e
->   process can somehow program its portion of the device to access the mai=
-n
->   address space, you loose isolation. Only the kernel must be able to
->   program and access the main address space.
->=20
-> When interleaving both code paths it's easy to make a mistake and loose
-> this isolation. Although I think this code is correct, it took me some
-> time to understand that we never end up calling dma_alloc or iommu_map
-> when using SVA. Might be worth at least adding a check that if
-> UACCE_DEV_SVA, then we never end up in the bottom part of this function.
+Hi,
 
-I would go even further, just remove the DMA path as it is not use.
-But yes at bare minimum it needs to be completely separate to avoid
-confusion.
+The problem is not balancing the volume, even if it could increase due
+to IoT devices pinging some well known DNS servers to check for
+connection.
+If a bonding slave is down, people using pings to check for
+connectivity could fail to detect a broken link if all the packets are
+sent to the alive link.
+Anyway, although I didn't measure it, the computational overhead of
+this changeset should be minimal, and only affect ICMP packets when
+the ICMP dissector is used.
 
-
-[...]
-
-
-> > +static int uacce_fops_open(struct inode *inode, struct file *filep)
-> > +{
-> > +=09struct uacce_queue *q;
-> > +=09struct iommu_sva *handle =3D NULL;
-> > +=09struct uacce_device *uacce;
-> > +=09int ret;
-> > +=09int pasid =3D 0;
-> > +
-> > +=09uacce =3D idr_find(&uacce_idr, iminor(inode));
-> > +=09if (!uacce)
-> > +=09=09return -ENODEV;
-> > +
-> > +=09if (!try_module_get(uacce->pdev->driver->owner))
-> > +=09=09return -ENODEV;
-> > +
-> > +=09ret =3D uacce_dev_open_check(uacce);
-> > +=09if (ret)
-> > +=09=09goto out_with_module;
-> > +
-> > +=09if (uacce->flags & UACCE_DEV_SVA) {
-> > +=09=09handle =3D iommu_sva_bind_device(uacce->pdev, current->mm, NULL)=
-;
-> > +=09=09if (IS_ERR(handle))
-> > +=09=09=09goto out_with_module;
-> > +=09=09pasid =3D iommu_sva_get_pasid(handle);
->=20
-> We need to register an mm_exit callback. Once we return, userspace will
-> start running jobs on the accelerator. If the process is killed while the
-> accelerator is running, the mm_exit callback tells the device driver to
-> stop using this PASID (stop_queue()), so that it can be reallocated for
-> another process.
->=20
-> Implementing this with the right locking and ordering can be tricky. I'll
-> try to implement the callback and test it on the device this week.
-
-It already exist it is call mmu notifier, you can register an mmu notifier
-and get callback once the mm exit.
-
-Cheers,
-J=E9r=F4me
+Regards,
+--=20
+Matteo Croce
+per aspera ad upstream
 
