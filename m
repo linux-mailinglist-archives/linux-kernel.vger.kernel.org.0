@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D155DE17DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EFC3E17DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:28:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404340AbfJWK1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 06:27:52 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34113 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733253AbfJWK1w (ORCPT
+        id S2404411AbfJWK1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 06:27:54 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39456 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404089AbfJWK1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 06:27:52 -0400
-Received: by mail-wr1-f66.google.com with SMTP id t16so16323457wrr.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 03:27:50 -0700 (PDT)
+        Wed, 23 Oct 2019 06:27:53 -0400
+Received: by mail-wm1-f67.google.com with SMTP id r141so9513731wme.4
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 03:27:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WB7/i5uuRwyukis66Pg18JvXY3b0KiEPdqkT6P2Dv5I=;
-        b=R7x6VqVuX7lVkmCO+K2fDj/vYXfgGxw/ejpqrsQfonR+8OMs7MVVN9Cdq2EpfLXNGU
-         CmtSHbJOrdtfKjHA+LsqS5uh9v7KpfIkmPKxoBx1i5GkQ9ALmtop69IgQtIEPjV5gYhm
-         /qD7fydWMTA3ZD2Y7HiW/wS9ka+zTm/IVor/16czzynERlOTjbdhStRfCrTnNO/kq/6y
-         3Ffvga9fWCsuxGrnBao5AAAxs0x2M+PwwsL84UPTiTtd+mU8sLUmI7nbEpWUIqpSLhe7
-         kPqNg6VHNIYAtqChxVoLux8YxID1CM25Sp+GMNSZr3df22ryRw1HOw1w2IxdosdlFirk
-         ol2g==
-X-Gm-Message-State: APjAAAX2+EFXoyYiAVlc/9gOHGZrqjfUy2Dcc72z4Gl1ZLxm4/pIoasu
-        OAICdWCeDVzqhLZtoZ1CUwQ=
-X-Google-Smtp-Source: APXvYqxhanNo7P+GGioOseTpZYeqbU9Rk+Vt1EErh5XE4tuQ07F4oXbDPsz/GAFPh2pt4bzO8TH5xA==
-X-Received: by 2002:adf:9b9d:: with SMTP id d29mr7760523wrc.293.1571826469733;
-        Wed, 23 Oct 2019 03:27:49 -0700 (PDT)
+        bh=TsLzXYwYLSB8hHF4vHJgIrxG5rx+YZo4hwBqQCis9kU=;
+        b=HMEcdTrR4CvUBuOE/pxGdcLXELcvaRrzceVSud5clQgbs5E9hVfOR8m8XtaHdO6iaM
+         0KDid/rHDUfvx2pz5SVf+akkm18nDfrxb7w66mL6iVX3+G5/bGw9J40pd6aFRbHA2wCh
+         g/3xTrthcykr4AbPtZfVRkVatqcMvINLfgxyW+afwmw98exMYHxHIreBJo8knkT46XKl
+         MLYsxJFYDhXgGV54rYH660VzeaCiWyciSCq8oB+WYmRxi1hxwZ248jhmg0KjopxfgVhn
+         xHOkvOV5H8yKz8ISkL2+srjgz8vk7kwhIjiuicuOdikQBtInwiS9TqlLYl3ej+cFSjbu
+         MJBA==
+X-Gm-Message-State: APjAAAU276a0flBFWwtCs835UNvXW1b95ldVwiVPqx2qz1CdPqhXoWYz
+        jOHzpR6fdcX2TkjxxKeCMPI=
+X-Google-Smtp-Source: APXvYqzP6Mht+wSNTC2Mtl2i9OMjpIr9618QNI6FunUy6TCvoivmzg9pmKUkUO33dVax3Omo1X3Haw==
+X-Received: by 2002:a1c:1d41:: with SMTP id d62mr7091015wmd.32.1571826471365;
+        Wed, 23 Oct 2019 03:27:51 -0700 (PDT)
 Received: from tiehlicka.suse.cz (ip-37-188-173-3.eurotel.cz. [37.188.173.3])
-        by smtp.gmail.com with ESMTPSA id u21sm18234122wmu.27.2019.10.23.03.27.47
+        by smtp.gmail.com with ESMTPSA id u21sm18234122wmu.27.2019.10.23.03.27.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 03:27:48 -0700 (PDT)
+        Wed, 23 Oct 2019 03:27:50 -0700 (PDT)
 From:   Michal Hocko <mhocko@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Mel Gorman <mgorman@suse.de>, Waiman Long <longman@redhat.com>
@@ -43,13 +43,15 @@ Cc:     Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <guro@fb.com>,
         Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rafael Aquini <aquini@redhat.com>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 0/2] mm/vmstat: Reduce zone lock hold time when reading /proc/pagetypeinfo
-Date:   Wed, 23 Oct 2019 12:27:35 +0200
-Message-Id: <20191023102737.32274-1-mhocko@kernel.org>
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: [RFC PATCH 1/2] mm, vmstat: hide /proc/pagetypeinfo from normal users
+Date:   Wed, 23 Oct 2019 12:27:36 +0200
+Message-Id: <20191023102737.32274-2-mhocko@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191023095607.GE3016@techsingularity.net>
+In-Reply-To: <20191023102737.32274-1-mhocko@kernel.org>
 References: <20191023095607.GE3016@techsingularity.net>
+ <20191023102737.32274-1-mhocko@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,89 +59,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 23-10-19 10:56:08, Mel Gorman wrote:
-> On Wed, Oct 23, 2019 at 11:04:22AM +0200, Michal Hocko wrote:
-> > So can we go with this to address the security aspect of this and have
-> > something trivial to backport.
-> > 
-> 
-> Yes.
+From: Michal Hocko <mhocko@suse.com>
 
-Ok, patch 1 in reply to this email.
+/proc/pagetypeinfo is a debugging tool to examine internal page
+allocator state wrt to fragmentation. It is not very useful for
+any other use so normal users really do not need to read this file.
 
-> > > > > There is a free_area structure associated with each page order. There
-> > > > > is also a nr_free count within the free_area for all the different
-> > > > > migration types combined. Tracking the number of free list entries
-> > > > > for each migration type will probably add some overhead to the fast
-> > > > > paths like moving pages from one migration type to another which may
-> > > > > not be desirable.
-> > > > 
-> > > > Have you tried to measure that overhead?
-> > > >  
-> > > 
-> > > I would prefer this option not be taken. It would increase the cost of
-> > > watermark calculations which is a relatively fast path.
-> > 
-> > Is the change for the wmark check going to require more than
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index c0b2e0306720..5d95313ba4a5 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -3448,9 +3448,6 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
-> >  		struct free_area *area = &z->free_area[o];
-> >  		int mt;
-> >  
-> > -		if (!area->nr_free)
-> > -			continue;
-> > -
-> >  		for (mt = 0; mt < MIGRATE_PCPTYPES; mt++) {
-> >  			if (!free_area_empty(area, mt))
-> >  				return true;
-> > 
-> > Is this really going to be visible in practice? Sure we are going to do
-> > more checks but most orders tend to have at least some memory in a
-> > reasonably balanced system and we can hardly expect an optimal
-> > allocation path on those that are not.
-> >  
-> 
-> You also have to iterate over them all later in the same function.  The the
-> free counts are per migrate type then they would have to be iterated over
-> every time.
-> 
-> Similarly, there would be multiple places where all the counters would
-> have to be iterated -- find_suitable_fallback, show_free_areas,
-> fast_isolate_freepages, fill_contig_page_info, zone_init_free_lists etc.
-> 
-> It'd be a small cost but given that it's aimed at fixing a problem with
-> reading pagetypeinfo, is it really worth it? I don't think so.
+Waiman Long has noticed that reading this file can have negative side
+effects because zone->lock is necessary for gathering data and that
+a) interferes with the page allocator and its users and b) can lead to
+hard lockups on large machines which have very long free_list.
 
-Fair enough.
+Reduce both issues by simply not exporting the file to regular users.
 
-[...]
-> > As pointed out in other email. The problem with this patch is that it
-> > hasn't really removed the iteration over the whole free_list which is
-> > the primary problem. So I think that we should either consider this a
-> > non-issue and make it "admin knows this is potentially expensive" or do
-> > something like Andrew was suggesting if we do not want to change the
-> > nr_free accounting.
-> > 
-> 
-> Again, the cost is when reading a proc file. From what Andrew said,
-> the lock is necessary to safely walk the list but if anything. I would
-> be ok with limiting the length of the walk but honestly, I would also
-> be ok with simply deleting the proc file. The utility for debugging a
-> problem with it is limited now (it was more important when fragmentation
-> avoidance was first introduced) and there is little an admin can do with
-> the information. I can't remember the last time I asked for the contents
-> of the file when trying to debug a problem. There is a possibility that
-> someone will complain but I'm not aware of any utility that reads the
-> information and does something useful with it. In the unlikely event
-> something breaks, the file can be re-added with a limited walk.
+Reported-by: Waiman Long <longman@redhat.com>
+Cc: stable
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ mm/vmstat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I went with a bound to the pages iteratred over in the free_list. See
-patch 2.
-
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index 6afc892a148a..4e885ecd44d1 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1972,7 +1972,7 @@ void __init init_mm_internals(void)
+ #endif
+ #ifdef CONFIG_PROC_FS
+ 	proc_create_seq("buddyinfo", 0444, NULL, &fragmentation_op);
+-	proc_create_seq("pagetypeinfo", 0444, NULL, &pagetypeinfo_op);
++	proc_create_seq("pagetypeinfo", 0400, NULL, &pagetypeinfo_op);
+ 	proc_create_seq("vmstat", 0444, NULL, &vmstat_op);
+ 	proc_create_seq("zoneinfo", 0444, NULL, &zoneinfo_op);
+ #endif
 -- 
-Michal Hocko
-SUSE Labs
+2.20.1
 
