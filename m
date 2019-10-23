@@ -2,202 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EBCBE26C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 00:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBE27E26C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 00:59:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392718AbfJWW6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 18:58:21 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:51522 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727831AbfJWW6U (ORCPT
+        id S2407986AbfJWW7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 18:59:48 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44917 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392721AbfJWW7o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 18:58:20 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9NMuW77060287;
-        Wed, 23 Oct 2019 22:57:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=mALkVjqe/dJFWOA+4tAmvsRvDbr3+wKdwJ8X0lzXfnw=;
- b=k/4I8aqTrCxR9mMmyKw2CRiQQEi2p2m58pecHDF91Klae7yp8ZSY0ZH99VJFDa5dM3Jm
- 93gsaMTqwg4dCmkSNcCsARoQRgX0AQnleWcMmBJhNilyNKrQfNspvT5OzJUP/JtQ6931
- iUiHA+0gwgSOAVll9FfZPkathFqmMCg0IndF2rCG5uQGCROV1sacvffKaIFiS7BbQ2dy
- 5uln7j/q39ofI5x2ZIK67M7qRndwe2+yQS/jktDfu0RRivDXxUtu8wsPix0GrfXngSkk
- tto07CmaPk77GhCDtGsbbjqCypjpZngCqpGhxHNeKTSPTT435J+eN4Zw/gyhId7wLwP1 5w== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2vqteq0asr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Oct 2019 22:57:52 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9NMs1XO058353;
-        Wed, 23 Oct 2019 22:57:52 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2vtsk30uyg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Oct 2019 22:57:51 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9NMvpWl028525;
-        Wed, 23 Oct 2019 22:57:51 GMT
-Received: from dhcp-10-159-238-126.vpn.oracle.com (/10.159.238.126)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 23 Oct 2019 15:57:50 -0700
-Subject: Re: [PATCH 4/5] tracing: Handle the trace array ref counter in new
- functions
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
-        Srinivas Eeda <srinivas.eeda@oracle.com>,
-        Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-References: <1565805327-579-1-git-send-email-divya.indi@oracle.com>
- <1565805327-579-5-git-send-email-divya.indi@oracle.com>
- <20191015190436.65c8c7a3@gandalf.local.home>
- <4cad186e-ba8b-8e1a-731b-4350a095ba5a@oracle.com>
- <20191022225253.4086195c@oasis.local.home>
-From:   Divya Indi <divya.indi@oracle.com>
-Message-ID: <2b08751a-4028-2130-9a70-c2aa2d76a31c@oracle.com>
-Date:   Wed, 23 Oct 2019 15:57:49 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        Wed, 23 Oct 2019 18:59:44 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q21so13819541pfn.11;
+        Wed, 23 Oct 2019 15:59:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VBEn/ZEVvdF0PqXom7XbyG81OSCKs1CYpQEi1Eolam8=;
+        b=D9Xv4ssAOo2hZ/YGQdDTtME2FAHVqoWaRy5aJoAHz6gy1Ci3f7i42Pb4UGYG+abd29
+         fk2pRdZJEKYVmxaW5L9obfNOKqEwRjwig57aCo+x9GR/SMN6N51feS558DuO6+u9fbTd
+         rXu+2ywkwdlD/dPu9nqnJaLJn+6af8vSAUZluXsH9OXdnvkPbNMRX4QVK0H/Fw+Dyb/R
+         Mncl2w6T7m9AVw8REiHK0P6w+Qo9fWeyQ0SBC70ZWCp/aeIOdoBodjpNns9fZ+iAG9ql
+         u76e7qqCh8tjqr7/tVUP0yEANPeQspoKdLHioH2uXdhl6WjaIE+vm2D9A4SIUFM064j2
+         8OtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VBEn/ZEVvdF0PqXom7XbyG81OSCKs1CYpQEi1Eolam8=;
+        b=kaLtDpRG6I7oWj0ltddiE+70yGAkPtwfMG0iIpPke6WkLh7TBjKVy1rr3MOoUIGC7M
+         9oh8FITG13UTa2ccGrB/jDEqbiryeuFygAw3gIpF6JeOVHfpAcwtr6ZNZbWwFBEmWwWO
+         qC/bGJ7mBiVIJA0Tli2MpfpJY25W0DZDjvJ2/BsZXoN5HNfTnZSpUw3ySfLF4b2tZj8I
+         IFZZqMJHQ6dRc39rk66DC8MjuB34rCgsivBK7Yvb+dZDJUTBG0kDCx+hJ+EyoBe4A+No
+         yPp1JAygcuuyJs4aXCu2yC4IpUbRn/kxmO3pZ5E6a6CYLunGGAZAHdWKMZoQVRNNIip6
+         jp/A==
+X-Gm-Message-State: APjAAAXXdNm32L5ohKmIBfcP3ubSXUFjxMOmGNZHZOqwc79hYkoNZVZs
+        xSv0JmSCciYWxHgp5FALEBw=
+X-Google-Smtp-Source: APXvYqx3N2SmZe1Lma+SZXSglX0ZRaurx+TsuCKC4IH2bF3mV551cJT9zYZsSuPilhdCYoomVw3/Bg==
+X-Received: by 2002:a63:2f47:: with SMTP id v68mr12804624pgv.318.1571871582843;
+        Wed, 23 Oct 2019 15:59:42 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id s21sm26262778pgv.37.2019.10.23.15.59.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 15:59:41 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 15:59:39 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH][RESEND] input: adp5589: Make keypad support optional
+Message-ID: <20191023225939.GA35946@dtor-ws>
+References: <20190927123836.28047-1-alexandru.ardelean@analog.com>
+ <20191023070541.13940-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-In-Reply-To: <20191022225253.4086195c@oasis.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9419 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910230205
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9419 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910230205
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191023070541.13940-1-alexandru.ardelean@analog.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven,                                                                         
-                                                                                 
-A few clarifications on this discussion on reference counter -                   
-                                                                                 
-1) We will still need to export trace_array_put() to be used for every           
-trace_array_get_by_name() OR trace_array_create() + trace_array_get().              
-                                                                                 
-How else will we reduce the reference counter [For eg: When multiple modules     
-lookup the same trace array (say, reference counter = 4)]?                       
-                                                                                 
-2) tr = trace_array_create("my_tr");                                             
-   trace_array_get(tr);                                                          
-                                                                                 
-Both of these functions will iterate through the list of trace arrays to verify  
-whether the trace array exists (redundant, but more intuitive? Does this seem    
-acceptable?)                                                                     
-                                                                                 
-To avoid iterating twice, we went with increasing ref_ctr in trace_array_create. 
-This necessitated a trace_array_put() in instance_mkdir (Or as suggested below,
-we can do this trace_array_put() in instance_rmdir().)                        
-                                                                                                               
-                                                                                 
-3) A summary of suggested changes (Let me know if this looks good) -                                              
-                                                                                 
-tr = trace_array_get_by_name("foo-bar"); // ref_ctr++.                           
-                                                                                 
-if (!tr)                                                                         
-{                                                                                
-        // instance_mkdir also causes ref_ctr = 1                                
-        tr = trace_array_create("foo-bar"); // ref_ctr = 1                       
-        trace_array_get(tr); // ref_ctr++                                        
-}                                                                                
-                                                                                 
-trace_array_printk(.....);                                                       
-trace_array_set_clr_event(......);                                               
-...                                                                              
-...                                                                              
-...                                                                              
-// Done using the trace array.                                                   
-trace_array_put(tr); // ref_ctr--                                                
-...                                                                              
-...                                                                              
-...                                                                              
-// We can now remove the trace array via trace_array_destroy or instance_rmdir()
-trace_array_destroy(tr); // ref_ctr > 1 returns -EBUSY.
-                                                       
-                          
-Thanks,                                                                          
-Divya 
+Hi Alexandru,
 
-On 10/22/19 7:52 PM, Steven Rostedt wrote:
-> On Wed, 16 Oct 2019 16:42:02 -0700
-> Divya Indi <divya.indi@oracle.com> wrote:
->
->> Hi Steve,
->>
->> Thanks again for taking the time to review and providing feedback. Please find my comments inline.
->>
->> On 10/15/19 4:04 PM, Steven Rostedt wrote:
->>> Sorry for taking so long to getting to these patches.
->>>
->>> On Wed, 14 Aug 2019 10:55:26 -0700
->>> Divya Indi <divya.indi@oracle.com> wrote:
->>>  
->>>> For functions returning a trace array Eg: trace_array_create(), we need to
->>>> increment the reference counter associated with the trace array to ensure it
->>>> does not get freed when in use.
->>>>
->>>> Once we are done using the trace array, we need to call
->>>> trace_array_put() to make sure we are not holding a reference to it
->>>> anymore and the instance/trace array can be removed when required.  
->>> I think it would be more in line with other parts of the kernel if we
->>> don't need to do the trace_array_put() before calling
->>> trace_array_destroy().  
->> The reason we went with this approach is
->>
->> instance_mkdir -          ref_ctr = 0  // Does not return a trace array ptr.
->> trace_array_create -      ref_ctr = 1  // Since this returns a trace array ptr.
->> trace_array_lookup -      ref_ctr = 1  // Since this returns a trace array ptr.
->>
->> if we make trace_array_destroy to expect ref_ctr to be 1, we risk destroying the trace array while in use.
->>
->> We could make it -
->>
->> instance_mkdir - 	ref_ctr = 1
->> trace_array_create -    ref_ctr = 2
->> trace_array_lookup -    ref_ctr = 2+  // depending on no of lookups
->>
->> but, we'd still need the trace_array_put() (?)
->>
->> We can also have one function doing create (if does not exist) or lookup (if exists), but that would require
->> some redundant code since instance_mkdir needs to return -EXIST when a trace array already exists.
->>
->> Let me know your thoughts on this.
->>
-> Can't we just move the trace_array_put() in the instance_rmdir()?
->
-> static int instance_rmdir(const char *name)
-> {
-> 	struct trace_array *tr;
-> 	int ret;
->
-> 	mutex_lock(&event_mutex);
-> 	mutex_lock(&trace_types_lock);
->
-> 	ret = -ENODEV;
-> 	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
-> 		if (tr->name && strcmp(tr->name, name) == 0) {
-> 			__trace_array_put(tr);
-> 			ret = __remove_instance(tr);
-> 			if (ret)
-> 				tr->ref++;
-> 			break;
-> 		}
-> 	}
->
-> 	mutex_unlock(&trace_types_lock);
-> 	mutex_unlock(&event_mutex);
->
-> 	return ret;
-> }
->
-> -- Steve
+On Wed, Oct 23, 2019 at 10:05:41AM +0300, Alexandru Ardelean wrote:
+> From: Lars-Peter Clausen <lars@metafoo.de>
+> 
+> On some platforms the adp5589 is used in GPIO only mode. On these platforms
+> we do not want to register a input device, so make that optional and only
+> create the input device if a keymap is supplied.
+> 
+> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> ---
+>  drivers/input/keyboard/adp5589-keys.c | 197 +++++++++++++++-----------
+>  1 file changed, 111 insertions(+), 86 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/adp5589-keys.c b/drivers/input/keyboard/adp5589-keys.c
+> index 4f96a4a99e5b..08bfa8b213e8 100644
+> --- a/drivers/input/keyboard/adp5589-keys.c
+> +++ b/drivers/input/keyboard/adp5589-keys.c
+> @@ -495,10 +495,10 @@ static int adp5589_build_gpiomap(struct adp5589_kpad *kpad,
+>  	return n_unused;
+>  }
+>  
+> -static int adp5589_gpio_add(struct adp5589_kpad *kpad)
+> +static int adp5589_gpio_add(struct adp5589_kpad *kpad,
+> +	const struct adp5589_kpad_platform_data *pdata)
+>  {
+>  	struct device *dev = &kpad->client->dev;
+> -	const struct adp5589_kpad_platform_data *pdata = dev_get_platdata(dev);
+>  	const struct adp5589_gpio_platform_data *gpio_data = pdata->gpio_data;
+>  	int i, error;
+>  
+
+All these changes passing pdata to various functions are not really
+needed for this patch. I dropped them and applied.
+
+Sorry for the delay.
+
+-- 
+Dmitry
