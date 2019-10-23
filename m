@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F5F5E15E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57918E15D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:29:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403906AbfJWJ3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 05:29:37 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:45816 "EHLO foss.arm.com"
+        id S2403937AbfJWJ3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 05:29:41 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:45844 "EHLO foss.arm.com"
         rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1732648AbfJWJ3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 05:29:36 -0400
+        id S1732648AbfJWJ3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 05:29:38 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 92F5932B;
-        Wed, 23 Oct 2019 02:29:09 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 699E54F2;
+        Wed, 23 Oct 2019 02:29:15 -0700 (PDT)
 Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.145.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CDE23F718;
-        Wed, 23 Oct 2019 02:29:08 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 11:29:07 +0200
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E83E23F718;
+        Wed, 23 Oct 2019 02:29:14 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 11:29:13 +0200
 From:   Christoffer Dall <christoffer.dall@arm.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     James Hogan <jhogan@kernel.org>,
@@ -35,98 +35,52 @@ Cc:     James Hogan <jhogan@kernel.org>,
         linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
         kvmarm@lists.cs.columbia.edu, Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH v2 01/15] KVM: Reinstall old memslots if arch preparation
- fails
-Message-ID: <20191023092907.GD2652@e113682-lin.lund.arm.com>
+Subject: Re: [PATCH v2 02/15] KVM: Don't free new memslot if allocation of
+ said memslot fails
+Message-ID: <20191023092913.GE2652@e113682-lin.lund.arm.com>
 References: <20191022003537.13013-1-sean.j.christopherson@intel.com>
- <20191022003537.13013-2-sean.j.christopherson@intel.com>
+ <20191022003537.13013-3-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191022003537.13013-2-sean.j.christopherson@intel.com>
+In-Reply-To: <20191022003537.13013-3-sean.j.christopherson@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 05:35:23PM -0700, Sean Christopherson wrote:
-> Reinstall the old memslots if preparing the new memory region fails
-> after invalidating a to-be-{re}moved memslot.
+On Mon, Oct 21, 2019 at 05:35:24PM -0700, Sean Christopherson wrote:
+> The two implementations of kvm_arch_create_memslot() in x86 and PPC are
+> both good citizens and free up all local resources if creation fails.
+> Return immediately (via a superfluous goto) instead of calling
+> kvm_free_memslot().
 > 
-> Remove the superfluous 'old_memslots' variable so that it's somewhat
-> clear that the error handling path needs to free the unused memslots,
-> not simply the 'old' memslots.
+> Note, the call to kvm_free_memslot() is effectively an expensive nop in
+> this case as there are no resources to be freed.
 > 
-> Fixes: bc6678a33d9b9 ("KVM: introduce kvm->srcu and convert kvm_set_memory_region to SRCU update")
+> No functional change intended.
+> 
 > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > ---
->  virt/kvm/kvm_main.c | 23 ++++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
+>  virt/kvm/kvm_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 67ef3f2e19e8..9afd706dc038 100644
+> index 9afd706dc038..2cb38b2148cb 100644
 > --- a/virt/kvm/kvm_main.c
 > +++ b/virt/kvm/kvm_main.c
-> @@ -924,7 +924,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
->  	unsigned long npages;
->  	struct kvm_memory_slot *slot;
->  	struct kvm_memory_slot old, new;
-> -	struct kvm_memslots *slots = NULL, *old_memslots;
-> +	struct kvm_memslots *slots;
->  	int as_id, id;
->  	enum kvm_mr_change change;
+> @@ -1014,7 +1014,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>  		new.userspace_addr = mem->userspace_addr;
 >  
-> @@ -1032,7 +1032,13 @@ int __kvm_set_memory_region(struct kvm *kvm,
->  		slot = id_to_memslot(slots, id);
->  		slot->flags |= KVM_MEMSLOT_INVALID;
->  
-> -		old_memslots = install_new_memslots(kvm, as_id, slots);
-> +		/*
-> +		 * We can re-use the old memslots, the only difference from the
-> +		 * newly installed memslots is the invalid flag, which will get
-> +		 * dropped by update_memslots anyway.  We'll also revert to the
-> +		 * old memslots if preparing the new memory region fails.
-> +		 */
-> +		slots = install_new_memslots(kvm, as_id, slots);
->  
->  		/* From this point no new shadow pages pointing to a deleted,
->  		 * or moved, memslot will be created.
-> @@ -1042,13 +1048,6 @@ int __kvm_set_memory_region(struct kvm *kvm,
->  		 *	- kvm_is_visible_gfn (mmu_check_roots)
->  		 */
->  		kvm_arch_flush_shadow_memslot(kvm, slot);
-> -
-> -		/*
-> -		 * We can re-use the old_memslots from above, the only difference
-> -		 * from the currently installed memslots is the invalid flag.  This
-> -		 * will get overwritten by update_memslots anyway.
-> -		 */
-> -		slots = old_memslots;
+>  		if (kvm_arch_create_memslot(kvm, &new, npages))
+> -			goto out_free;
+> +			goto out;
 >  	}
 >  
->  	r = kvm_arch_prepare_memory_region(kvm, &new, mem, change);
-> @@ -1062,15 +1061,17 @@ int __kvm_set_memory_region(struct kvm *kvm,
->  	}
->  
->  	update_memslots(slots, &new, change);
-> -	old_memslots = install_new_memslots(kvm, as_id, slots);
-> +	slots = install_new_memslots(kvm, as_id, slots);
->  
->  	kvm_arch_commit_memory_region(kvm, mem, &old, &new, change);
->  
->  	kvm_free_memslot(kvm, &old, &new);
-> -	kvfree(old_memslots);
-> +	kvfree(slots);
->  	return 0;
->  
->  out_slots:
-> +	if (change == KVM_MR_DELETE || change == KVM_MR_MOVE)
-> +		slots = install_new_memslots(kvm, as_id, slots);
->  	kvfree(slots);
->  out_free:
->  	kvm_free_memslot(kvm, &new, &old);
+>  	/* Allocate page dirty bitmap if needed */
 > -- 
 > 2.22.0
+> 
 
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
