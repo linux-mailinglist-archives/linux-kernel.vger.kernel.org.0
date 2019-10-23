@@ -2,69 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F5AAE1B05
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B072E1B16
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:44:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391660AbfJWMoB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 23 Oct 2019 08:44:01 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:43425 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391648AbfJWMoB (ORCPT
+        id S2391683AbfJWMoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 08:44:24 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:37276 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390091AbfJWMoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:44:01 -0400
-Received: from marcel-macpro.fritz.box (p4FEFC197.dip0.t-ipconnect.de [79.239.193.151])
-        by mail.holtmann.org (Postfix) with ESMTPSA id E87EBCECDF;
-        Wed, 23 Oct 2019 14:52:59 +0200 (CEST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3594.4.19\))
-Subject: Re: [PATCH] Revert "Bluetooth: hci_ll: set operational frequency
- earlier"
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <CAHCN7xKAkYacV6qWuONVqRyJuODt2mNquTWAgEFb0NcjjqpnsA@mail.gmail.com>
-Date:   Wed, 23 Oct 2019 14:43:59 +0200
-Cc:     "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Adam Ford <adam.ford@logicpd.com>,
-        Sebastian Reichel <sre@kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <D50D569D-E0ED-4682-880F-396590BFE3A6@holtmann.org>
-References: <20191002114626.12407-1-aford173@gmail.com>
- <1550E9D9-43ED-4345-A9AF-6D9F097FC64E@holtmann.org>
- <CAHCN7xKA9-K4uYU9oFW+A7ywc8TGixNa-yHJgL7uSTbyXnisTQ@mail.gmail.com>
- <CAHCN7xKAkYacV6qWuONVqRyJuODt2mNquTWAgEFb0NcjjqpnsA@mail.gmail.com>
-To:     Adam Ford <aford173@gmail.com>
-X-Mailer: Apple Mail (2.3594.4.19)
+        Wed, 23 Oct 2019 08:44:23 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 64735C0DD6;
+        Wed, 23 Oct 2019 12:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1571834663; bh=aXrQqzbVm4I5+qHlUf7maqgUqLYuJAqo/qBpRrPFRz0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Bsg6Jw/zAIzcB8ZsPsuB1WTp14Cted3p0mmnYx1fbDk7TltotUXCa/BPdMrzT9bi2
+         CtO/mQkXnG17i+zpKtW1i8NLlYrqsoDtIp78aQJZFc+MxWuXT4IdQz5fZdw2ZN9yXa
+         kM6JO/2kCWTYY1g49D8q+QycTPaNkdSuBpoUUhMCUn2gwLUnx7eBSEFyymk5gfu1ED
+         pobxNeBaYM722mFaQAoEPAyb1fZAAARNdp/bciMfA0ubismBSF2vBHcuIf0XCj0UEC
+         ILCQiTZjthDC+8FHUJl9XRzE1/kKFmKKIzFxuibVx2GD1nk7VPwOoqg/QdNQzqeF61
+         ItgKj4pYlyYaA==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.73])
+        by mailhost.synopsys.com (Postfix) with ESMTP id A035BA0057;
+        Wed, 23 Oct 2019 12:44:20 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH 0/8] ARC: merge HAPS-HS with nSIM-HS configs
+Date:   Wed, 23 Oct 2019 15:44:09 +0300
+Message-Id: <20191023124417.5770-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adam,
+Starting from nSIM 2019.06 is possible to use DW UART
+instead of ARC UART. That allows us to merge
+"nsim_hs" with "haps_hs" and "nsim_hs_smp" with "haps_hs_smp"
+with some minor changes.
 
->>>> As nice as it would be to update firmware faster, that patch broke
->>>> at least two different boards, an OMAP4+WL1285 based Motorola Droid
->>>> 4, as reported by Sebasian Reichel and the Logic PD i.MX6Q +
->>>> WL1837MOD.
->>>> 
->>>> This reverts commit a2e02f38eff84f199c8e32359eb213f81f270047.
->>>> 
->>>> Signed-off-by: Adam Ford <aford173@gmail.com>
->>> 
->>> patch has been applied to bluetooth-next tree.
->> 
->> Any change this can get pushed upstream to stable?  (including 5.4?)
->> 
-> 
-> Marcel,  I have confirmed this revert also fixes a regression on my
-> omap36xx based device using a wl1283 Bluetooth.  At this point, I
-> believe we've identified at least 3 devices with regressions that this
-> revert fixes.
+We eliminate nsim_hs_defconfig and nsim_hs_smp_defconfig
+and leave haps_hs_defconfig and haps_hs_smp_defconfig
+which can be used on HAPS / nSIM / ZEBU / QEMU platforms
+without additional changes in Linux kernel.
 
-as soon as we have done our pull request and this is in Linus’ tree, feel free to suggest it for -stable tree inclusion.
+Also while I'm at it cleanup both HAPS and nSIM configurations
+from obsolete/unused options.
 
-Regards
+Changes:
+RFC -> v1:
+ * update KBUILD_DEFCONFIG to use the haps defconfig instead of
+   nSIM one
+ * switch nsim_700 to dwuart
 
-Marcel
+Eugeniy Paltsev (8):
+  ARC: regenerate nSIM and HAPS defconfigs
+  ARC: HAPS: cleanup defconfigs from unused IO-related options
+  ARC: HAPS: use same UART configuration everywhere
+  ARC: HAPS: add HIGHMEM memory zone to DTS
+  ARC: HAPS: cleanup defconfigs from unused ETH drivers
+  ARC: merge HAPS-HS with nSIM-HS configs
+  ARC: nSIM_700: switch to DW UART usage
+  ARC: nSIM_700: remove unused network options
+
+ arch/arc/Makefile                      |  2 +-
+ arch/arc/boot/dts/haps_hs.dts          | 15 +++---
+ arch/arc/boot/dts/haps_hs_idu.dts      |  1 -
+ arch/arc/boot/dts/nsim_700.dts         | 36 +++++---------
+ arch/arc/boot/dts/nsim_hs.dts          | 67 --------------------------
+ arch/arc/boot/dts/nsim_hs_idu.dts      | 65 -------------------------
+ arch/arc/configs/haps_hs_defconfig     | 30 +++---------
+ arch/arc/configs/haps_hs_smp_defconfig | 32 +++---------
+ arch/arc/configs/nsim_700_defconfig    | 19 ++++----
+ arch/arc/configs/nsim_hs_defconfig     | 60 -----------------------
+ arch/arc/configs/nsim_hs_smp_defconfig | 58 ----------------------
+ arch/arc/plat-sim/platform.c           |  1 -
+ 12 files changed, 44 insertions(+), 342 deletions(-)
+ delete mode 100644 arch/arc/boot/dts/nsim_hs.dts
+ delete mode 100644 arch/arc/boot/dts/nsim_hs_idu.dts
+ delete mode 100644 arch/arc/configs/nsim_hs_defconfig
+ delete mode 100644 arch/arc/configs/nsim_hs_smp_defconfig
+
+-- 
+2.21.0
 
