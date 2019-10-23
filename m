@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BED2E13A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:09:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3611AE13D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:13:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390074AbfJWIJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:09:44 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:40028 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727574AbfJWIJo (ORCPT
+        id S2390163AbfJWINL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:13:11 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:41886 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727574AbfJWINL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:09:44 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9N89gbD078048;
-        Wed, 23 Oct 2019 03:09:42 -0500
+        Wed, 23 Oct 2019 04:13:11 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9N8D960078588;
+        Wed, 23 Oct 2019 03:13:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571818182;
-        bh=ZfP9BharqnfDDOfH8UAQbM0m+BiwuI/R1NAozBclods=;
+        s=ti-com-17Q1; t=1571818389;
+        bh=uVlUM68KJ4gRVVup5JV8Sfox9tFnz2sJr5rZVh5XS0s=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=MfQV+IGFnagRc37Yi3oA1t489rrWR+PifzaYeEqhPSInDKnmFFIehc5PYJhtN52Vh
-         l973nGx6TCeNB71RwACtmzpcckT7ONmHWF11KPP8FaurYTPBwamUf67huBOdeRVTvn
-         L2xeiJjQbWE0Z6PNf/WpXp5+qDeA9CVXPArh/Gyw=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9N89bdd088759;
-        Wed, 23 Oct 2019 03:09:42 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+        b=Z3lN3OV6UJMaoD+m9jWaSHmUIYLTQWqyWb14Ld17ooLUBMqQZGYJ+nfEuVYD+s98w
+         qrtCk/hEV+VvPy4XqUPnH9EY98e+VwMOj4jGx0UZUdlexNBciQWvYBZyELbGoyR6Sb
+         7Ym+gSJp/H7BtspIXy7IION+J7dKgZdGcr1LECPE=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9N8D45E097509
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 23 Oct 2019 03:13:08 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 23
- Oct 2019 03:08:40 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2019 03:10:54 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 23 Oct 2019 03:08:40 -0500
+ Frontend Transport; Wed, 23 Oct 2019 03:10:43 -0500
 Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9N88lhF120094;
-        Wed, 23 Oct 2019 03:08:47 -0500
-Subject: Re: [PATCH 1/3] phy: cadence: Sierra: add phy_reset hook
-To:     Kishon Vijay Abraham I <kishon@ti.com>
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9N8Aob5059117;
+        Wed, 23 Oct 2019 03:10:51 -0500
+Subject: Re: [PATCH 3/3] phy: ti: j721e-wiz: Manage typec-gpio-dir
+To:     Jyri Sarha <jsarha@ti.com>, <kishon@ti.com>
 CC:     <aniljoy@cadence.com>, <adouglas@cadence.com>, <nsekhar@ti.com>,
-        <jsarha@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
 References: <20191022132249.869-1-rogerq@ti.com>
- <20191022132249.869-2-rogerq@ti.com>
- <3d261add-8fa8-13b8-a42b-8662fcbe4b23@ti.com>
+ <20191022132249.869-4-rogerq@ti.com>
+ <35e5a15c-5513-9c0d-6fdd-df06f8c95450@ti.com>
 From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <1956da9e-ec5f-ce68-25ea-1d570e1f7b54@ti.com>
-Date:   Wed, 23 Oct 2019 11:08:46 +0300
+Message-ID: <878dc50e-45c9-c355-d064-5251fc4245ec@ti.com>
+Date:   Wed, 23 Oct 2019 11:10:49 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <3d261add-8fa8-13b8-a42b-8662fcbe4b23@ti.com>
+In-Reply-To: <35e5a15c-5513-9c0d-6fdd-df06f8c95450@ti.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -60,57 +60,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kishon,
 
-On 23/10/2019 10:36, Kishon Vijay Abraham I wrote:
-> Roger,
-> 
-> On 22/10/19 6:52 PM, Roger Quadros wrote:
->> This is required if type C driver needs to hold
->> global reset on J7ES to perform LN10 swap.
-> 
-> Can you replace "This" with something more specific.
 
-I meant this patch, but I will revise the commit message.
-
-cheers,
--roger
-> 
-> Thanks
-> Kishon
+On 23/10/2019 08:28, Jyri Sarha wrote:
+> On 22/10/2019 16:22, Roger Quadros wrote:
+>> Based on this GPIO state we need to configure LN10
+>> bit to swap lane0 and lane1 if required (flipped connector).
+>>
+>> Type-C companions typically need some time after the cable is
+>> plugged before and before they reflect the correct status of
+>> Type-C plug orientation on the DIR line.
+>>
+>> Type-C Spec specifies CC attachment debounce time (tCCDebounce)
+>> of 100 ms (min) to 200 ms (max).
+>>
+>> Use the DT property to figure out if we need to add delay
+>> or not before sampling the Type-C DIR line.
 >>
 >> Signed-off-by: Roger Quadros <rogerq@ti.com>
 >> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 >> ---
->>   drivers/phy/cadence/phy-cadence-sierra.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
+>>   drivers/phy/ti/phy-j721e-wiz.c | 41 ++++++++++++++++++++++++++++++++++
+>>   1 file changed, 41 insertions(+)
 >>
->> diff --git a/drivers/phy/cadence/phy-cadence-sierra.c b/drivers/phy/cadence/phy-cadence-sierra.c
->> index affede8c4368..e6d27bdec22a 100644
->> --- a/drivers/phy/cadence/phy-cadence-sierra.c
->> +++ b/drivers/phy/cadence/phy-cadence-sierra.c
->> @@ -339,10 +339,20 @@ static int cdns_sierra_phy_off(struct phy *gphy)
->>   	return reset_control_assert(ins->lnk_rst);
->>   }
+>> diff --git a/drivers/phy/ti/phy-j721e-wiz.c b/drivers/phy/ti/phy-j721e-wiz.c
+>> index 2a95da843e9f..2becdbcb762a 100644
+>> --- a/drivers/phy/ti/phy-j721e-wiz.c
+>> +++ b/drivers/phy/ti/phy-j721e-wiz.c
+>> @@ -9,6 +9,8 @@
+>>   #include <dt-bindings/phy/phy.h>
+>>   #include <linux/clk.h>
+>>   #include <linux/clk-provider.h>
+>> +#include <linux/gpio.h>
+>> +#include <linux/gpio/consumer.h>
+>>   #include <linux/io.h>
+>>   #include <linux/module.h>
+>>   #include <linux/mux/consumer.h>
+>> @@ -22,6 +24,7 @@
+>>   #define WIZ_SERDES_CTRL		0x404
+>>   #define WIZ_SERDES_TOP_CTRL	0x408
+>>   #define WIZ_SERDES_RST		0x40c
+>> +#define WIZ_SERDES_TYPEC	0x410
+>>   #define WIZ_LANECTL(n)		(0x480 + (0x40 * (n)))
 >>   
->> +static int cdns_sierra_phy_reset(struct phy *gphy)
->> +{
->> +	struct cdns_sierra_phy *sp = dev_get_drvdata(gphy->dev.parent);
+>>   #define WIZ_MAX_LANES		4
+>> @@ -29,6 +32,8 @@
+>>   #define WIZ_DIV_NUM_CLOCKS_16G	2
+>>   #define WIZ_DIV_NUM_CLOCKS_10G	1
+>>   
+>> +#define WIZ_SERDES_TYPEC_LN10_SWAP	BIT(30)
 >> +
->> +	reset_control_assert(sp->phy_rst);
->> +	reset_control_deassert(sp->phy_rst);
->> +	return 0;
->> +};
->> +
->>   static const struct phy_ops ops = {
->>   	.init		= cdns_sierra_phy_init,
->>   	.power_on	= cdns_sierra_phy_on,
->>   	.power_off	= cdns_sierra_phy_off,
->> +	.reset		= cdns_sierra_phy_reset,
->>   	.owner		= THIS_MODULE,
+>>   enum wiz_lane_standard_mode {
+>>   	LANE_MODE_GEN1,
+>>   	LANE_MODE_GEN2,
+>> @@ -206,6 +211,8 @@ struct wiz {
+>>   	u32			num_lanes;
+>>   	struct platform_device	*serdes_pdev;
+>>   	struct reset_controller_dev wiz_phy_reset_dev;
+>> +	struct gpio_desc	*gpio_typec_dir;
+>> +	int			typec_dir_delay;
 >>   };
 >>   
+>>   static int wiz_reset(struct wiz *wiz)
+>> @@ -703,6 +710,21 @@ static int wiz_phy_reset_deassert(struct reset_controller_dev *rcdev,
+>>   	struct wiz *wiz = dev_get_drvdata(dev);
+>>   	int ret;
+>>   
+>> +	/* if typec-dir gpio was specified, set LN10 SWAP bit based on that */
+>> +	if (id == 0 && wiz->gpio_typec_dir) {
+>> +		if (wiz->typec_dir_delay)
+>> +			msleep_interruptible(wiz->typec_dir_delay);
+>> +
+>> +		if (gpiod_get_value_cansleep(wiz->gpio_typec_dir)) {
+>> +			regmap_update_bits(wiz->regmap, WIZ_SERDES_TYPEC,
+>> +					   WIZ_SERDES_TYPEC_LN10_SWAP,
+>> +					   WIZ_SERDES_TYPEC_LN10_SWAP);
+> 
+> A nit pick, but wouldn't it be more coherent with the rest of the driver
+> to define a REG_FIELD also for TYPEC_LN10_SWAP bit?
+
+I agree. Although, I hate fields as you need to do so much boilerplate just to
+flip one bit.
+
+cheers,
+-roger
+> 
+>> +		} else {
+>> +			regmap_update_bits(wiz->regmap, WIZ_SERDES_TYPEC,
+>> +					   WIZ_SERDES_TYPEC_LN10_SWAP, 0);
+>> +		}
+>> +	}
+>> +
+>>   	if (id == 0) {
+>>   		ret = regmap_field_write(wiz->phy_reset_n, true);
+>>   		return ret;
+>> @@ -789,6 +811,25 @@ static int wiz_probe(struct platform_device *pdev)
+>>   		goto err_addr_to_resource;
+>>   	}
+>>   
+>> +	wiz->gpio_typec_dir = devm_gpiod_get_optional(dev, "typec-dir",
+>> +						      GPIOD_IN);
+>> +	if (IS_ERR(wiz->gpio_typec_dir)) {
+>> +		ret = PTR_ERR(wiz->gpio_typec_dir);
+>> +		if (ret != -EPROBE_DEFER)
+>> +			dev_err(dev, "Failed to request typec-dir gpio: %d\n",
+>> +				ret);
+>> +		goto err_addr_to_resource;
+>> +	}
+>> +
+>> +	if (wiz->gpio_typec_dir) {
+>> +		ret = of_property_read_u32(node, "typec-dir-debounce",
+>> +					   &wiz->typec_dir_delay);
+>> +		if (ret && ret != -EINVAL) {
+>> +			dev_err(dev, "Invalid typec-dir-debounce property\n");
+>> +			goto err_addr_to_resource;
+>> +		}
+>> +	}
+>> +
+>>   	wiz->dev = dev;
+>>   	wiz->regmap = regmap;
+>>   	wiz->num_lanes = num_lanes;
 >>
+> 
+> 
 
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
