@@ -2,129 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E912FE13EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34599E1404
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:22:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390241AbfJWIUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:20:37 -0400
-Received: from mout.web.de ([217.72.192.78]:48157 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390020AbfJWIUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:20:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1571818815;
-        bh=1urHB5QX4TImKjSn5rNYrLD++7pMPjelkawIGF5kTrI=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=P7m4Rk844Uc8RcUThTIJqzdEdQEhgIICRE0EfqVGVkTuuSX8V8JQXZUfxyY3p9kcL
-         ROsDFDPPCjNkH5jXpaV3Y5cje3HfIf4kDTtP7X6W+zd7C1s/9wBv3oEN6Crew5cy37
-         En2fow/TAANI39gm+4bINRr7wjkzW93JrdwmH8IE=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.135.140.249]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0Lp71s-1hkqNe3ZXY-00exfy; Wed, 23
- Oct 2019 10:20:15 +0200
-Subject: Re: [PATCH] clocksource/drivers: Fix error handling in
- ttc_setup_clocksource
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Navid Emamdoost <emamd001@umn.edu>,
-        Stephen McCamant <smccaman@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <2a6cdb63-397b-280a-7379-740e8f43ddf6@xilinx.com>
- <20191023044737.2824-1-navid.emamdoost@gmail.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <5913e1b8-b292-de06-e47f-d5f982db2b10@web.de>
-Date:   Wed, 23 Oct 2019 10:20:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S2390171AbfJWIWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:22:48 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4708 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390079AbfJWIWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 04:22:48 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 71AC8803911819FBA876;
+        Wed, 23 Oct 2019 16:22:44 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 23 Oct 2019
+ 16:22:37 +0800
+Subject: Re: [PATCH v2] perf jevents: Fix resource leak in process_mapfile()
+ and main()
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+CC:     <peterz@infradead.org>, <mingo@redhat.com>, <mark.rutland@arm.com>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <john.garry@huawei.com>,
+        <ak@linux.intel.com>, <lukemujica@google.com>,
+        <kan.liang@linux.intel.com>, <yuzenghui@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <hushiyuan@huawei.com>, <linfeilong@huawei.com>
+References: <d7907042-ec9c-2bef-25b4-810e14602f89@huawei.com>
+ <20191016142536.GH22835@kernel.org>
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+Message-ID: <b4aea0a8-f0a5-d439-e8c9-1b88841300be@huawei.com>
+Date:   Wed, 23 Oct 2019 16:22:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20191023044737.2824-1-navid.emamdoost@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191016142536.GH22835@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jB/9/sNWnRg7fAXxmE9K1RoIPmjkhyq0QzhkP43nkMA5Emp6kAI
- KocIVANYQavqi6O1Pqrs6DlclG3w22AH2CGQHTH6kl8hS1y5P3cF/EDSN9RD7iocRZx5uT3
- MSbJG6WcTueYh9Y1BkKN87I6K0uuUX1kqbSP/5gIFOmhmOnPt15Qi1aqfGbiIDhNtOUc1Vv
- TI1NYqhu/qNIGN9iAaCtg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4xhHCnPgOyM=:bo0DmfHB14HK/aUTgUa63Q
- V5onzlyvu8gTGD4xAvOCeLTcObbW+Crc2xi2jJdl75OnGdTadOjZ98pDHq7fDwby6lV6xuRAy
- xEEEN7yWtUpnUeZFflvY/1Xamsif/8OKBy76S9ss244QYrbXs7M97KWvCEGPnFXpWmBThdr0V
- i8sMx6Te8T8kqpuABhwd3luLsiFppSXAks8san4bDLKQiJZHwsgn5Vd2/ibtQhgMBe6cHBpVL
- yvzKl0Et9zx+xHz8yqgcz7czoceaiKS57lig0d+1Py3/91IpXoj+2QAhiexYxHTZ3QhY8kOLE
- HsNyAepIyMzU+6LkcobA7uPMrTuVFZZEQsB5DWS6bv/mYa4F6X8qEKeeCkJDKW1PkYn7HPG4t
- 69T3f85K1leQx0yclbyepiGsKPwP3nXxSn1yJ/HjS/CuCbpavPPh6x9tETpkAuW0+7CTbeyZY
- juIlKMMswwIEd3943HPWaaKS66zntUT6JmfVYEErYd5ySVo/AlQuQypuvu090E0DZLXdrBnDd
- OMlJAhBQf+iEtJScg6WTYhWpqjr61enNFCMB6MzcsPwe4cwsDpHCMc4sDWmAWF1sbwl0X105L
- s/hKgxzgSPU5jhXvgBGLNOERbkuGhrrKy6DM+xia9FYBntk60f9RkTP9/dch6FesWijwCREWt
- zSiP4XOVOHdFVdZxOqpSS/1+2zBfqjiOfSwdw8AefQ3ZjG2gRjPmIzyiQMOzH1bMmG6jFZmQw
- vbs2N+BvQ93JBH6umBQ+6xsRYsGWsnNA0pzxqyMRCdtb4jpFKPg0csRomyqqSFZs+LOtKar3E
- qYh2OPfVdKh4MCE1XSupP9c7ENVVnLDAhqKfR8TeKKVh5OkNnUUpxIZaR48goQNSoKdHD3lH5
- h7YbTk+V3iD+kfKuWXyON3hR6tjriM7ZFLbv69+d4USrrUIe7GvxHlLvHvpoJLJf2Ecmhdccu
- m1uJDRypUTv7ZBnvc5QlzrzaCxqK8YhGxbFCVPLYEmdjtGoRFsUZb67eAH5+XYVhpYVB5s1k3
- cWCu0mXHY11cwQti9PLK47bUPCgTRR5fFRocQYZhsDpPRZP8tShEilmtz1AtwePDYZmtoztv8
- q5aTXykTnOXsV4jn9sQFjv+JsMIEpYxYJWK6Xce935rSHigPIgcsAO5uvzWtDETI/0jjPiZWt
- vFEiYpKjGmaOYWOsnBlhHL3dHLP3d7aKYomdtp0VW+giRBP1t7zIT13F/vZU8BUVP2nwp1XAm
- d9bEjaSMkA12/snhZn4nWIzwaNYAPSUffBh3PUeU3kCAPUOYXxk1xsdelDdg=
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Fixes: e932900a3279 ("arm: zynq: Use standard timer binding")
 
-How do you think about to add the tag =E2=80=9CReported-by=E2=80=9D for Mi=
-chal Simek?
-https://lore.kernel.org/linux-arm-kernel/2a6cdb63-397b-280a-7379-740e8f43d=
-df6@xilinx.com/
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?id=3D3b7c59a1950c75f2c0152e5a9c=
-d77675b09233d6#n584
 
-Regards,
-Markus
+On 2019/10/16 22:25, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Oct 16, 2019 at 09:50:17PM +0800, Yunfeng Ye escreveu:
+>> There are memory leaks and file descriptor resource leaks in
+>> process_mapfile() and main().
+>>
+>> Fix this by adding free(), fclose() and free_arch_std_events()
+>> on the error paths.
+>>
+>> Fixes: 80eeb67fe577 ("perf jevents: Program to convert JSON file")
+>> Fixes: 3f056b66647b ("perf jevents: Make build fail on JSON parse error")
+>> Fixes: e9d32c1bf0cd ("perf vendor events: Add support for arch standard events")
+> 
+> Nice, thanks for adding the fixes line, I looked at those three patches
+> and indeed they were leaky, thanks for the fixes, we shouldn't have
+> those leaks even if that, for now, makes the tool to end anyway.
+> 
+The other 3 patchs have been applied, is this patch applied ? thanks.
+
+> - Arnaldo
+> 
+>> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+>> ---
+>> v1 -> v2:
+>>  - add free(eventsfp) to fix eventsfp resource leaks
+>>  - add free_arch_std_events() on the error path
+>>
+>>  tools/perf/pmu-events/jevents.c | 13 +++++++++++--
+>>  1 file changed, 11 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+>> index e2837260ca4d..99e3fd04a5cb 100644
+>> --- a/tools/perf/pmu-events/jevents.c
+>> +++ b/tools/perf/pmu-events/jevents.c
+>> @@ -758,6 +758,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>>  	char *line, *p;
+>>  	int line_num;
+>>  	char *tblname;
+>> +	int ret = 0;
+>>
+>>  	pr_info("%s: Processing mapfile %s\n", prog, fpath);
+>>
+>> @@ -769,6 +770,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>>  	if (!mapfp) {
+>>  		pr_info("%s: Error %s opening %s\n", prog, strerror(errno),
+>>  				fpath);
+>> +		free(line);
+>>  		return -1;
+>>  	}
+>>
+>> @@ -795,7 +797,8 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>>  			/* TODO Deal with lines longer than 16K */
+>>  			pr_info("%s: Mapfile %s: line %d too long, aborting\n",
+>>  					prog, fpath, line_num);
+>> -			return -1;
+>> +			ret = -1;
+>> +			goto out;
+>>  		}
+>>  		line[strlen(line)-1] = '\0';
+>>
+>> @@ -825,7 +828,9 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>>
+>>  out:
+>>  	print_mapping_table_suffix(outfp);
+>> -	return 0;
+>> +	fclose(mapfp);
+>> +	free(line);
+>> +	return ret;
+>>  }
+>>
+>>  /*
+>> @@ -1122,6 +1127,7 @@ int main(int argc, char *argv[])
+>>  		goto empty_map;
+>>  	} else if (rc < 0) {
+>>  		/* Make build fail */
+>> +		fclose(eventsfp);
+>>  		free_arch_std_events();
+>>  		return 1;
+>>  	} else if (rc) {
+>> @@ -1134,6 +1140,7 @@ int main(int argc, char *argv[])
+>>  		goto empty_map;
+>>  	} else if (rc < 0) {
+>>  		/* Make build fail */
+>> +		fclose(eventsfp);
+>>  		free_arch_std_events();
+>>  		return 1;
+>>  	} else if (rc) {
+>> @@ -1151,6 +1158,8 @@ int main(int argc, char *argv[])
+>>  	if (process_mapfile(eventsfp, mapfile)) {
+>>  		pr_info("%s: Error processing mapfile %s\n", prog, mapfile);
+>>  		/* Make build fail */
+>> +		fclose(eventsfp);
+>> +		free_arch_std_events();
+>>  		return 1;
+>>  	}
+>>
+>> -- 
+>> 2.7.4.3
+> 
+
