@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06F74E20B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 18:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 078E0E20B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 18:36:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436603AbfJWQgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 12:36:25 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:48578 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407309AbfJWQgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2436499AbfJWQgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 23 Oct 2019 12:36:02 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:48558 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2407301AbfJWQgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 12:36:00 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1iNJc4-0006Vu-8I; Wed, 23 Oct 2019 10:36:01 -0600
+        id 1iNJc4-0006Vv-8G; Wed, 23 Oct 2019 10:35:59 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1iNJc2-00016b-P6; Wed, 23 Oct 2019 10:35:54 -0600
+        id 1iNJc2-00016e-Ro; Wed, 23 Oct 2019 10:35:54 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
 Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
@@ -26,8 +26,8 @@ Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
         Max Gurtovoy <maxg@mellanox.com>,
         Stephen Bates <sbates@raithlin.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed, 23 Oct 2019 10:35:41 -0600
-Message-Id: <20191023163545.4193-4-logang@deltatee.com>
+Date:   Wed, 23 Oct 2019 10:35:42 -0600
+Message-Id: <20191023163545.4193-5-logang@deltatee.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191023163545.4193-1-logang@deltatee.com>
 References: <20191023163545.4193-1-logang@deltatee.com>
@@ -41,7 +41,7 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
         GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
         version=3.4.2
-Subject: [PATCH 3/7] nvmet: Introduce common execute function for get_log_page and identify
+Subject: [PATCH 4/7] nvmet: Cleanup discovery execute handlers
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,141 +49,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of picking the sub-command handler to execute in a nested
-switch statement introduce a landing functions that calls out
-to the appropriate sub-command handler.
-
-This will allow us to have a common place in the handler to check
-the transfer length in a future patch.
+Push the lid and cns check into their respective handlers and, while
+we're at it, rename the functions to be consistent with other
+discovery handlers.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 [logang@deltatee.com: separated out of a larger draft patch from hch]
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 ---
- drivers/nvme/target/admin-cmd.c | 93 ++++++++++++++++++---------------
- 1 file changed, 50 insertions(+), 43 deletions(-)
+ drivers/nvme/target/discovery.c | 44 ++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/nvme/target/admin-cmd.c b/drivers/nvme/target/admin-cmd.c
-index 831a062d27cb..3665b45d6515 100644
---- a/drivers/nvme/target/admin-cmd.c
-+++ b/drivers/nvme/target/admin-cmd.c
-@@ -282,6 +282,33 @@ static void nvmet_execute_get_log_page_ana(struct nvmet_req *req)
+diff --git a/drivers/nvme/target/discovery.c b/drivers/nvme/target/discovery.c
+index 3764a8900850..825e61e61b0c 100644
+--- a/drivers/nvme/target/discovery.c
++++ b/drivers/nvme/target/discovery.c
+@@ -157,7 +157,7 @@ static size_t discovery_log_entries(struct nvmet_req *req)
+ 	return entries;
+ }
+ 
+-static void nvmet_execute_get_disc_log_page(struct nvmet_req *req)
++static void nvmet_execute_disc_get_log_page(struct nvmet_req *req)
+ {
+ 	const int entry_size = sizeof(struct nvmf_disc_rsp_page_entry);
+ 	struct nvmet_ctrl *ctrl = req->sq->ctrl;
+@@ -171,6 +171,13 @@ static void nvmet_execute_get_disc_log_page(struct nvmet_req *req)
+ 	u16 status = 0;
+ 	void *buffer;
+ 
++	if (req->cmd->get_log_page.lid != NVME_LOG_DISC) {
++		req->error_loc =
++			offsetof(struct nvme_get_log_page_command, lid);
++		status = NVME_SC_INVALID_OPCODE | NVME_SC_DNR;
++		goto out;
++	}
++
+ 	/* Spec requires dword aligned offsets */
+ 	if (offset & 0x3) {
+ 		status = NVME_SC_INVALID_FIELD | NVME_SC_DNR;
+@@ -227,12 +234,18 @@ static void nvmet_execute_get_disc_log_page(struct nvmet_req *req)
  	nvmet_req_complete(req, status);
  }
  
-+static void nvmet_execute_get_log_page(struct nvmet_req *req)
-+{
-+	switch (req->cmd->get_log_page.lid) {
-+	case NVME_LOG_ERROR:
-+		return nvmet_execute_get_log_page_error(req);
-+	case NVME_LOG_SMART:
-+		return nvmet_execute_get_log_page_smart(req);
-+	case NVME_LOG_FW_SLOT:
-+		/*
-+		 * We only support a single firmware slot which always is
-+		 * active, so we can zero out the whole firmware slot log and
-+		 * still claim to fully implement this mandatory log page.
-+		 */
-+		return nvmet_execute_get_log_page_noop(req);
-+	case NVME_LOG_CHANGED_NS:
-+		return nvmet_execute_get_log_changed_ns(req);
-+	case NVME_LOG_CMD_EFFECTS:
-+		return nvmet_execute_get_log_cmd_effects_ns(req);
-+	case NVME_LOG_ANA:
-+		return nvmet_execute_get_log_page_ana(req);
-+	}
-+	pr_err("unhandled lid %d on qid %d\n",
-+	       req->cmd->get_log_page.lid, req->sq->qid);
-+	req->error_loc = offsetof(struct nvme_get_log_page_command, lid);
-+	nvmet_req_complete(req, NVME_SC_INVALID_FIELD | NVME_SC_DNR);
-+}
-+
- static void nvmet_execute_identify_ctrl(struct nvmet_req *req)
+-static void nvmet_execute_identify_disc_ctrl(struct nvmet_req *req)
++static void nvmet_execute_disc_identify(struct nvmet_req *req)
  {
  	struct nvmet_ctrl *ctrl = req->sq->ctrl;
-@@ -565,6 +592,25 @@ static void nvmet_execute_identify_desclist(struct nvmet_req *req)
- 	nvmet_req_complete(req, status);
- }
+ 	struct nvme_id_ctrl *id;
+ 	u16 status = 0;
  
-+static void nvmet_execute_identify(struct nvmet_req *req)
-+{
-+	switch (req->cmd->identify.cns) {
-+	case NVME_ID_CNS_NS:
-+		return nvmet_execute_identify_ns(req);
-+	case NVME_ID_CNS_CTRL:
-+		return nvmet_execute_identify_ctrl(req);
-+	case NVME_ID_CNS_NS_ACTIVE_LIST:
-+		return nvmet_execute_identify_nslist(req);
-+	case NVME_ID_CNS_NS_DESC_LIST:
-+		return nvmet_execute_identify_desclist(req);
++	if (req->cmd->identify.cns != NVME_ID_CNS_CTRL) {
++		req->error_loc = offsetof(struct nvme_identify, cns);
++		status = NVME_SC_INVALID_OPCODE | NVME_SC_DNR;
++		goto out;
 +	}
 +
-+	pr_err("unhandled identify cns %d on qid %d\n",
-+	       req->cmd->identify.cns, req->sq->qid);
-+	req->error_loc = offsetof(struct nvme_identify, cns);
-+	nvmet_req_complete(req, NVME_SC_INVALID_FIELD | NVME_SC_DNR);
-+}
-+
- /*
-  * A "minimum viable" abort implementation: the command is mandatory in the
-  * spec, but we are not required to do any useful work.  We couldn't really
-@@ -819,52 +865,13 @@ u16 nvmet_parse_admin_cmd(struct nvmet_req *req)
- 
- 	switch (cmd->common.opcode) {
+ 	id = kzalloc(sizeof(*id), GFP_KERNEL);
+ 	if (!id) {
+ 		status = NVME_SC_INTERNAL;
+@@ -344,31 +357,12 @@ u16 nvmet_parse_discovery_cmd(struct nvmet_req *req)
+ 		return 0;
  	case nvme_admin_get_log_page:
-+		req->execute = nvmet_execute_get_log_page;
  		req->data_len = nvmet_get_log_page_len(cmd);
 -
 -		switch (cmd->get_log_page.lid) {
--		case NVME_LOG_ERROR:
--			req->execute = nvmet_execute_get_log_page_error;
+-		case NVME_LOG_DISC:
+-			req->execute = nvmet_execute_get_disc_log_page;
 -			return 0;
--		case NVME_LOG_SMART:
--			req->execute = nvmet_execute_get_log_page_smart;
--			return 0;
--		case NVME_LOG_FW_SLOT:
--			/*
--			 * We only support a single firmware slot which always
--			 * is active, so we can zero out the whole firmware slot
--			 * log and still claim to fully implement this mandatory
--			 * log page.
--			 */
--			req->execute = nvmet_execute_get_log_page_noop;
--			return 0;
--		case NVME_LOG_CHANGED_NS:
--			req->execute = nvmet_execute_get_log_changed_ns;
--			return 0;
--		case NVME_LOG_CMD_EFFECTS:
--			req->execute = nvmet_execute_get_log_cmd_effects_ns;
--			return 0;
--		case NVME_LOG_ANA:
--			req->execute = nvmet_execute_get_log_page_ana;
--			return 0;
+-		default:
+-			pr_err("unsupported get_log_page lid %d\n",
+-			       cmd->get_log_page.lid);
+-			req->error_loc =
+-				offsetof(struct nvme_get_log_page_command, lid);
+-			return NVME_SC_INVALID_OPCODE | NVME_SC_DNR;
 -		}
--		break;
++		req->execute = nvmet_execute_disc_get_log_page;
 +		return 0;
  	case nvme_admin_identify:
-+		req->execute = nvmet_execute_identify;
  		req->data_len = NVME_IDENTIFY_DATA_SIZE;
 -		switch (cmd->identify.cns) {
--		case NVME_ID_CNS_NS:
--			req->execute = nvmet_execute_identify_ns;
--			return 0;
 -		case NVME_ID_CNS_CTRL:
--			req->execute = nvmet_execute_identify_ctrl;
+-			req->execute =
+-				nvmet_execute_identify_disc_ctrl;
 -			return 0;
--		case NVME_ID_CNS_NS_ACTIVE_LIST:
--			req->execute = nvmet_execute_identify_nslist;
--			return 0;
--		case NVME_ID_CNS_NS_DESC_LIST:
--			req->execute = nvmet_execute_identify_desclist;
--			return 0;
+-		default:
+-			pr_err("unsupported identify cns %d\n",
+-			       cmd->identify.cns);
+-			req->error_loc = offsetof(struct nvme_identify, cns);
+-			return NVME_SC_INVALID_OPCODE | NVME_SC_DNR;
 -		}
--		break;
++		req->execute = nvmet_execute_disc_identify;
 +		return 0;
- 	case nvme_admin_abort_cmd:
- 		req->execute = nvmet_execute_abort;
- 		req->data_len = 0;
+ 	default:
+ 		pr_err("unhandled cmd %d\n", cmd->common.opcode);
+ 		req->error_loc = offsetof(struct nvme_common_command, opcode);
 -- 
 2.20.1
 
