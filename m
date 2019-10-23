@@ -2,95 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F4050E1285
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 08:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93764E1288
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 08:55:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389582AbfJWGww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 02:52:52 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35667 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbfJWGww (ORCPT
+        id S2388872AbfJWGzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 02:55:09 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:38326 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbfJWGzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 02:52:52 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l10so20284715wrb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 23:52:49 -0700 (PDT)
+        Wed, 23 Oct 2019 02:55:09 -0400
+Received: by mail-yw1-f67.google.com with SMTP id s6so7113817ywe.5;
+        Tue, 22 Oct 2019 23:55:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=kmtb4K0rNRYR6l8glRe+TfiUWbt5tG9y6EvhXSR2S34=;
-        b=boLXMSL/b1vtVUCNgvKDZ1TBphBQcTnI8xC4MdbV4iSBBLh+RZxV9lE9F0OKBozWze
-         QS77BX9z4QJma02fn4ymiAMuphc0BitowAIqHywZBpQ9ajOZaxCs91dCnZNRgktljn+R
-         mL2CPpTU/oIkVvu5c1NHxwHFiF107yu/k+4D+5IT2hTDqMs2cuF33ttdjcbaildjRgFI
-         Y3FtELHwkd5960O646vm6CDQGOdYA4vxffiRJwmtc05wMSQOHLqKvO5dqRFOX2MzvKNT
-         lGv2VfbK3WBflbQ8iZ1mPlleKPvT95eh5p4vqL2reR9G0e8S+DMUPRAd8ufnXLrLR6Ip
-         AJpQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tWMfIewyW2yZnqk9iPz3LngqD0QBboavwiUrFcIU6Tk=;
+        b=ZItP+0oobmwxRWpFscmdU9mtpw5Ngc7+Ab8AeULxE3u2I5by5dse+l/thhFQYJOI5o
+         KNTsWo9qU/mp7tYu8GXzSY/+Cc1E7rl4FQT2awWeV5y8TsFR6YOll5izd7L2Hxj17dli
+         x+LQV/nU6tJmX9KKR4UoJIXkFZd2Pp0BW9HQkuNJuJEtuNJsGPDz4YrRctEuW7Wo4NQ4
+         mlYsZ2feJsgiMR697WQzGmsyWaa9SwhBoTRJkIhV3/lHwOmhiM0eKNaBTxKS7krOKklW
+         IqUtxPA0HFb/pASs89Wb847XvRKiwfO/6dTwqtGeMuzQGibs89yMYZmmT+75ctCNzJWi
+         Ha/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=kmtb4K0rNRYR6l8glRe+TfiUWbt5tG9y6EvhXSR2S34=;
-        b=EzR3JcQBVqH74cCiZ+f2yY2OD52/yh0q1KQZiulOQlKwW7de3eB49IZEiaDxl7d4Hb
-         Vn3xolompAT4aHUX/CIRQw1Px9oae7n5E1G7TAdQqC7Y/yQDg3XqPIBNJf2E9l7XmeMs
-         LZLKrBG5m8Y+N3n8ibfk6KVrp96zNR8UoV7b6IwgU7g9dCWDpkIKBVsd6AeBCkAw3JWr
-         akHc42/iJ4McHInMBoAfa+9xU1kX+YDY0bIS9VxsKsR4b7jhEmOk3P/fg4ZoEaaIbHRn
-         I9Fp82dDPoC34rcZS0SDtO5YBTEJAa/V6UyJrCsV+On2U6a3JEfHc7NAsjFPWV7sUixD
-         UHxQ==
-X-Gm-Message-State: APjAAAWhfL/5r+HcGR9iH7Rg/KhVhSLvZSjwwvQHFcL74Nq0AmIwT0e7
-        oY9j3QGPwdoVUKJgata3DIHzOZlwq2QLgS1yjnM=
-X-Google-Smtp-Source: APXvYqw/bzHuAeFIEZpH9/NapvWMUjsy9U1z373Io997WssO9DC4auMKEoPjRTwQon147gzrwWvDCc/AWmzpTAahh28=
-X-Received: by 2002:a5d:4902:: with SMTP id x2mr7140467wrq.374.1571813569161;
- Tue, 22 Oct 2019 23:52:49 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tWMfIewyW2yZnqk9iPz3LngqD0QBboavwiUrFcIU6Tk=;
+        b=DegaDjv2ReQ3rXR3DvCCDa6pY9FWBLaA9FZIQd6dpgyBNaMKJRK1DLmhaa8AFXJZTB
+         gEZXMqJ3oTWm6aFPILj5DCAUvlDAP8SiD0PudBzbl15JXewbaJQ6GcRDAw+nxKuTxNli
+         UvDSN8dXrelq53tHujunYvn7u4xrvFSuW71kgiWHP8djxGAjiNoZTAf+jg32Q3LpeqD4
+         IV1hX7GewzQGMi45bMdY9XvOOU1TCzjRh3AojU9paMxyS45lrpNG5eY0vw27QaIKozcO
+         ti7R9FTBzLZKdyobNzUPS5bGlxhQH15JjrDbjpu36EJWlDXJjqIgeNSYdHUJ30mFi85S
+         KmkQ==
+X-Gm-Message-State: APjAAAUIBAMUW102UX6qeah1nbZj5IXKZjGH29KDVU9zQnbiMP3BLiwC
+        L2Y/25WvoRiaNS5TnGYTbeD8ayBsxh24pYkCa9g=
+X-Google-Smtp-Source: APXvYqyK0RBRSgeWbGn7/LkyjHCNbkCod4NzmBkwYNzSbYnoQBKsqwCBuMw2+GUec7foLcGq8YHoQC9v4cNSmSY2L94=
+X-Received: by 2002:a81:6c58:: with SMTP id h85mr1527436ywc.88.1571813708118;
+ Tue, 22 Oct 2019 23:55:08 -0700 (PDT)
 MIME-Version: 1.0
-Reply-To: chezakiahchedin58@gmail.com
-Received: by 2002:adf:c3d4:0:0:0:0:0 with HTTP; Tue, 22 Oct 2019 23:52:48
- -0700 (PDT)
-From:   Aisha Al-Qaddafi <chezakiahchedin58@gmail.com>
-Date:   Tue, 22 Oct 2019 23:52:48 -0700
-X-Google-Sender-Auth: bj_hVgCKKhHI1CyDxyu6wu14cVE
-Message-ID: <CAB7GnjD47npQoNL4a2p1oV1S1qJteC9UHTokP2B6=66cHNUMZQ@mail.gmail.com>
-Subject: INFORMATIONEN
-To:     undisclosed-recipients:;
+References: <20191022204453.97058-1-salyzyn@android.com>
+In-Reply-To: <20191022204453.97058-1-salyzyn@android.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 23 Oct 2019 09:54:57 +0300
+Message-ID: <CAOQ4uxjFqq0zA7V3A9s0h2om7AWY5AT-2sQ4z2G0Vk2gtf1M=w@mail.gmail.com>
+Subject: Re: [PATCH v14 0/5] overlayfs override_creds=off & nested get xattr fix
+To:     Mark Salyzyn <salyzyn@android.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sehr geehrter Herr / Frau,
+On Tue, Oct 22, 2019 at 11:45 PM Mark Salyzyn <salyzyn@android.com> wrote:
+>
+> Patch series:
+>
+> Mark Salyzyn (5):
+>   Add flags option to get xattr method paired to __vfs_getxattr
+>   overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh
+>   overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+>   overlayfs: internal getxattr operations without sepolicy checking
+>   overlayfs: override_creds=off option bypass creator_cred
+>
+> The first four patches address fundamental security issues that should
+> be solved regardless of the override_creds=off feature.
+>
+> The fifth adds the feature depends on these other fixes.
+>
+> By default, all access to the upper, lower and work directories is the
+> recorded mounter's MAC and DAC credentials.  The incoming accesses are
+> checked against the caller's credentials.
+>
+> If the principles of least privilege are applied for sepolicy, the
+> mounter's credentials might not overlap the credentials of the caller's
+> when accessing the overlayfs filesystem.  For example, a file that a
+> lower DAC privileged caller can execute, is MAC denied to the
+> generally higher DAC privileged mounter, to prevent an attack vector.
+>
+> We add the option to turn off override_creds in the mount options; all
+> subsequent operations after mount on the filesystem will be only the
+> caller's credentials.  The module boolean parameter and mount option
+> override_creds is also added as a presence check for this "feature",
+> existence of /sys/module/overlay/parameters/overlay_creds
+>
+> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Stephen Smalley <sds@tycho.nsa.gov>
+> Cc: linux-unionfs@vger.kernel.org
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+>
+> ---
+> v14:
+> - Rejoin, rebase and a few adjustments.
+>
+> v13:
+> - Pull out first patch and try to get it in alone feedback, some
+>   Acks, and then <crickets> because people forgot why we were doing i.
 
-Bitte verzeihen Sie mir, wenn meine Anfrage von Ihrer freundlichen
-Person nicht akzeptiert wird. Ich bin Aisha Al-Qaddafi; Ich bin die
-einzige leibliche Tochter meines verstorbenen Vaters (Oberst Muammar
-Gaddafi, der der fr=C3=BChere libysche Pr=C3=A4sident war).
+Mark,
 
+I do not see the first patch on fsdevel
+and I am confused from all the suggested APIs
+I recall Christoph's comment on v8 for not using xattr_gs_args
+and just adding flags to existing get() method.
+I agree to that comment.
 
-Ich bitte um Ihre Unterst=C3=BCtzung bei der =C3=9Cberweisung meines
-Erbschaftsgeldes in H=C3=B6he von 25.000.000,00 USD (25 Millionen
-US-Dollar) auf Ihr Konto als mein Anlageverwalter, da ich derzeit
-Fl=C3=BCchtling bin und meine Familie nach meinem Tod mit der libyschen
-Regierung Streitigkeiten hat Vater.
+I remember asking - don't remember the answer -
+do you have any testing for this feature?
+I have a WIP branch to run unionmount-testsuite not as root,
+which is a start, but I didn't get to finish the work.
+Let me know if you want to take up this work.
 
-
-Ich interessiere mich jedoch f=C3=BCr Sie als meinen Anlageverwalter in
-Ihrem Land, und ich plane, meine Erbschaftsfonds wie folgt in ein
-profitables Unternehmen und einen =C3=B6ffentlichen Nutzen zu investieren:
-
-=C2=A0=C2=A0=C2=A0=C2=A01. Richten Sie ein Waisenhaus ein, um den Waisenhau=
-skindern zu helfen.
-=C2=A0=C2=A0=C2=A0=C2=A02. Bauen Sie ein Pflegeheim f=C3=BCr =C3=A4ltere, w=
-eniger privilegierte Menschen
-=C2=A0=C2=A0=C2=A0=C2=A03. Investition in Gastfreundschaft und Hotelmanagem=
-ent
-
-=C2=A0Ich bin bereit, mit Ihnen ein Verh=C3=A4ltnis zwischen Investition un=
-d
-Unternehmensgewinn zu verhandeln, das auf den k=C3=BCnftigen Gewinnen aus
-Kapitalanlagen basiert. Wenn Sie Interesse haben, dieses Projekt in
-Ihrem Land abzuwickeln, setzen Sie sich bitte umgehend mit mir in
-Verbindung, um weitere Informationen zu erhalten.
-
-Ihre dringende Antwort wird gesch=C3=A4tzt.
-Dein
-Frau Aisha Al-Qaddafi.
+Thanks,
+Amir.
