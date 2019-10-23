@@ -2,154 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCDBFE2533
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 23:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A5F4E253B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 23:26:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392093AbfJWVZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 17:25:01 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:9018 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392012AbfJWVZA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 17:25:00 -0400
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="Tudor.Ambarus@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: cE2YaGadm4jSx1aV3E2tdG5p12t4mbgQEQzocF9ScEXJyxotnvOjAWSpHJLXmHRVzS5HUdlgTW
- Da4l/u5kf2vZofZZnufGM2Z0lJc5LzbhW5pgn62P5aY/Gi5D2VzeG+2aSVzSjFYzyQ1Y+XvYSf
- 8kR5rHcK628mqVjY9GfdOOGZvuyo1rFOt670ZIYQGr4RA4G0uyg1BGMY0MHf9f+DuVqYrBA9Xe
- T/y206WkEqwDGk6LyLPBk7rfKC8VQ5Ksl2mexKHPFgh8SDPsR2kDEaxZmFbtEAk9xnvb3ytZ8L
- 2hg=
-X-IronPort-AV: E=Sophos;i="5.68,222,1569308400"; 
-   d="scan'208";a="54151951"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Oct 2019 14:24:59 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 23 Oct 2019 14:24:58 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
- Transport; Wed, 23 Oct 2019 14:24:58 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hWYnaJE6QOlfbAPlWtoPTxA0HzLRv5H8HY+g+yjsYXmD1UJlSaFdGFJ9xRWHhAmag5FYpMn3FzU0LdANvz7sQKaNPAgWunw/e/tkvo83qn/rH+spb0MyvZOJ/G8GO6xL++Ob2ZyeX6bQgLrh5DpuFnffD6OuglOANU4iei0JZ0ljWSw9+8uZvP8/Tr49muiK2YMRx+yB0qEjlJt02hsP46vCzG1q/PWtUJwbgFNQJLstgt8THyGM8H9IaR2l2n7pr5xTibGi9B9Iv+jcVQkFc2jZ2y9eXC1m1TMT4dsjjCmi5LoFKKPrBEXUl/JEzzl8XCx4SS25MBQ2IK3XGhfOmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rfQerkVRfO4/hdMv1w7iaxwJKKrsFgZjV92MIq9sa0Q=;
- b=YDKU/pBplpVlUbT7It4+WIqM6L6jKZRFyFSmBI/wXvjD3pc7wPhULhXakJxyDZYbQd1QxqTW+mtL+7/YsrLSZujH0FGPhf8eQEZ++ZioBiIip3CCG+HytY2fYpVcJvOwzzJHYFbOhQBGyDNtPMjZDKlMwCx5LnpuJVLZF0WHXDYYJLanaEbximPqEvaFc+2dr9LFyK7fmZ2phOCGJffz90dQaGhhMoLATEbhtLEDDsnCQBG/jsE/rQZf3NSZZen46LcFaeG8LEJ1J5cUzZgs+Z220riiyJuvqogJXQ3/xkozC88n8j+zcsEiTzISNB9Jm5E7rprOmlUNqtGj736hQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rfQerkVRfO4/hdMv1w7iaxwJKKrsFgZjV92MIq9sa0Q=;
- b=BPEYnKjXAsw4nGqfARKU2rGT6y7y2mZ/KjyA6SdBO+PZ5EYxqd3YXu2pOE3B6WtKtWJHMk0TDT5dZI6NGxicLI5xgRmoPeKeWYSvuAq82qZCjsgyvPnzAV13wflI+gVcCemHf9Q3TjbVxvXul3UnJ522nqm77Rh59p7bZZVyfhs=
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
- MN2PR11MB3549.namprd11.prod.outlook.com (20.178.250.87) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.18; Wed, 23 Oct 2019 21:24:57 +0000
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::c09c:36c8:3301:4457]) by MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::c09c:36c8:3301:4457%5]) with mapi id 15.20.2347.029; Wed, 23 Oct 2019
- 21:24:57 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <vigneshr@ti.com>, <boris.brezillon@collabora.com>,
-        <marek.vasut@gmail.com>, <linux-mtd@lists.infradead.org>,
-        <geert+renesas@glider.be>, <jonas@norrbonn.se>
-CC:     <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <miquel.raynal@bootlin.com>, <richard@nod.at>, <joel@jms.id.au>,
-        <andrew@aj.id.au>, <matthias.bgg@gmail.com>, <vz@mleia.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH v2 02/22] mtd: spi-nor: Introduce 'struct
- spi_nor_controller_ops'
-Thread-Topic: [PATCH v2 02/22] mtd: spi-nor: Introduce 'struct
- spi_nor_controller_ops'
-Thread-Index: AQHVcqwXvwt12P9zSEWzEDp8S155Aqdo6zKA
-Date:   Wed, 23 Oct 2019 21:24:57 +0000
-Message-ID: <18ad9382-b081-9945-f981-5bf5ba1cde56@microchip.com>
-References: <20190924074533.6618-1-tudor.ambarus@microchip.com>
- <20190924074533.6618-3-tudor.ambarus@microchip.com>
-In-Reply-To: <20190924074533.6618-3-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR06CA0096.eurprd06.prod.outlook.com
- (2603:10a6:803:8c::25) To MN2PR11MB4448.namprd11.prod.outlook.com
- (2603:10b6:208:193::29)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [86.120.239.29]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a36900a4-4399-4346-c136-08d757ff73f3
-x-ms-traffictypediagnostic: MN2PR11MB3549:
-x-microsoft-antispam-prvs: <MN2PR11MB35493C6D6608B44929760BBCF06B0@MN2PR11MB3549.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2150;
-x-forefront-prvs: 019919A9E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(376002)(396003)(366004)(199004)(189003)(6436002)(25786009)(2906002)(5660300002)(102836004)(26005)(64756008)(446003)(66556008)(8936002)(86362001)(2201001)(386003)(6506007)(66476007)(229853002)(66946007)(53546011)(36756003)(31696002)(81166006)(6116002)(81156014)(2501003)(8676002)(256004)(3846002)(14454004)(71200400001)(71190400001)(7416002)(110136005)(66066001)(52116002)(316002)(99286004)(6486002)(54906003)(76176011)(6512007)(31686004)(478600001)(11346002)(66446008)(6246003)(186003)(4326008)(305945005)(2616005)(486006)(476003)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3549;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: PaMmgRfwTh7beEDA0C0eGbkflOWDE+3KA9ugF8Z1nFSEGqSkoZsNqCtt1a2WBiUSdjQ0eQX27zT1Y5jeGQJsM2Vd2J4yWour6867TPTXnRCWMUTvfBjEJmXhQ6iHsF0kSVO28hrTSu77U7Kjn6boK0T8/cg9inJrnU6Zd74Si3vdM6yFOFSpU8F/b2643l+rtFbK1NiNeKVaun4fCB3f6zYQMH+gD88vcHTK+uf/utcFF/kCYWvh0wsFIxDZVlQX2loSz6Hb62/HMud1DLBTFuGxJf86HtwGMkIl5CKJzAG0l33C0zuQV8Z2cTx9fi4NZB1LoIWvuWYvcwvOc11cZLYPaFSQyvRwHX+B9t4pHcLDMUg2dG7qOVtbbCG9egfMV0Z9Ka2/gm2X0EXPdLM/zb679oquXiCcL9nBCbmv4CVue3DNsNd13hoWmnp9RtN7
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D377C1234231CD4495F1D287096B941D@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2392159AbfJWVZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 17:25:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41466 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2407499AbfJWVZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 17:25:50 -0400
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEEDB21D7E
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 21:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571865949;
+        bh=YaJ5EMettNl2MRhvjPY7Zn9r4Nj39GyLbVZCpxRItLw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1V9uM3+PyveNNb8Jwxgm5uovWimS6VRLFaIBFVUjKmtPMB6n0DHkEGMqnkVDoprzm
+         EUbOAXwqhZzveNbA/trpSKy3kiAfi7dRBAJcZVwIxROZnPo/BkcSRO1P9DbsRAgsYz
+         qb9+fM1ZjoJc1yKItbXBngxbx2ms6V72bhlRSZTU=
+Received: by mail-wm1-f48.google.com with SMTP id c22so411113wmd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 14:25:48 -0700 (PDT)
+X-Gm-Message-State: APjAAAWCukSqG7v1iiTZ4KmcM9y+ETJtIrRwY6WM3INP4BILugbvffHU
+        pkEEvfTfXfo4g0yDv8d2zhLSDsPddXwx7HskhJliRw==
+X-Google-Smtp-Source: APXvYqzDhz05GfKuPVJ0lFj8rX0SmLt2uNDoHXCnXcwvIrQD/5AUdG1f6wN5ePJMnqV5Eko2QiOL3rkFj9652KYjMRs=
+X-Received: by 2002:a7b:c74a:: with SMTP id w10mr1591999wmk.173.1571865947075;
+ Wed, 23 Oct 2019 14:25:47 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: a36900a4-4399-4346-c136-08d757ff73f3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2019 21:24:57.1555
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: juTPhF0ai6dSVS7tx3Kis9XYsQMVpipmU4tHsKgRVWFHPccWDrsDgi3FgIoPEM4bFjCd4khkfleluN8S2q98XigGpEqbzQvft0kHwR3ur84=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3549
+References: <20191012191602.45649-1-dancol@google.com> <20191012191602.45649-4-dancol@google.com>
+ <CALCETrVZHd+csdRL-uKbVN3Z7yeNNtxiDy-UsutMi=K3ZgCiYw@mail.gmail.com>
+ <CAKOZuevUqs_Oe1UEwguQK7Ate3ai1DSVSij=0R=vmz9LzX4k6Q@mail.gmail.com>
+ <CALCETrUyq=J37gU-MYXqLdoi7uH7iNNVRjvcGUT11JA1QuTFyg@mail.gmail.com>
+ <CAG48ez3P27-xqdjKLqfP_0Q_v9K92CgEjU4C=kob2Ax7=NoZbA@mail.gmail.com>
+ <20191023190959.GA9902@redhat.com> <CALCETrWY+5ynDct7eU_nDUqx=okQvjm=Y5wJvA4ahBja=CQXGw@mail.gmail.com>
+ <20191023211645.GC9902@redhat.com>
+In-Reply-To: <20191023211645.GC9902@redhat.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 23 Oct 2019 14:25:35 -0700
+X-Gmail-Original-Message-ID: <CALCETrVS_Ym9wpvTP-ys-OBKCgg7QQjPdhJZe5YXJ6e8JQkNQQ@mail.gmail.com>
+Message-ID: <CALCETrVS_Ym9wpvTP-ys-OBKCgg7QQjPdhJZe5YXJ6e8JQkNQQ@mail.gmail.com>
+Subject: Re: [PATCH 3/7] Add a UFFD_SECURE flag to the userfaultfd API.
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Nosh Minwalla <nosh@google.com>,
+        Tim Murray <timmurray@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDA5LzI0LzIwMTkgMTA6NDUgQU0sIFR1ZG9yIEFtYmFydXMgLSBNMTgwNjQgd3JvdGU6
-DQo+IEZyb206IFR1ZG9yIEFtYmFydXMgPHR1ZG9yLmFtYmFydXNAbWljcm9jaGlwLmNvbT4NCj4g
-DQo+IE1vdmUgYWxsIFNQSSBOT1IgY29udHJvbGxlciBkcml2ZXIgc3BlY2lmaWMgb3BzIGluIGEg
-ZGVkaWNhdGVkDQo+IHN0cnVjdHVyZS4gJ3N0cnVjdCBzcGlfbm9yJyBiZWNvbWVzIGxpZ2h0ZXIu
-DQo+IA0KPiBVc2Ugc2l6ZV90IGZvciBsZW5ndGhzIGluICdpbnQgKCp3cml0ZV9yZWcpKCknIGFu
-ZCAnaW50ICgqcmVhZF9yZWcpKCknLg0KPiBSZW5hbWUgd2l0ZS9yZWFkX2J1ZiB0byBidWYsIHRo
-ZSBuYW1lIG9mIHRoZSBmdW5jdGlvbnMgYXJlDQo+IHN1Z2dlc3RpdmUgZW5vdWdoLiBDb25zdGlm
-eSBidWYgaW4gaW50ICgqd3JpdGVfcmVnKS4gQ29tcGx5IHdpdGggdGhlc2UNCj4gY2hhbmdlcyBp
-biB0aGUgU1BJIE5PUiBjb250cm9sbGVyIGRyaXZlcnMuDQo+IA0KPiBTdWdnZXN0ZWQtYnk6IEJv
-cmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGNvbGxhYm9yYS5jb20+DQo+IFNpZ25lZC1v
-ZmYtYnk6IFR1ZG9yIEFtYmFydXMgPHR1ZG9yLmFtYmFydXNAbWljcm9jaGlwLmNvbT4NCj4gLS0t
-DQo+ICBkcml2ZXJzL210ZC9zcGktbm9yL2FzcGVlZC1zbWMuYyAgICAgIHwgMjMgKysrKysrLS0t
-LS0NCj4gIGRyaXZlcnMvbXRkL3NwaS1ub3IvY2FkZW5jZS1xdWFkc3BpLmMgfCAzOSArKysrKysr
-KysrLS0tLS0tLS0NCj4gIGRyaXZlcnMvbXRkL3NwaS1ub3IvaGlzaS1zZmMuYyAgICAgICAgfCAy
-MiArKysrKy0tLS0tDQo+ICBkcml2ZXJzL210ZC9zcGktbm9yL2ludGVsLXNwaS5jICAgICAgIHwg
-MjQgKysrKysrLS0tLS0NCj4gIGRyaXZlcnMvbXRkL3NwaS1ub3IvbXRrLXF1YWRzcGkuYyAgICAg
-fCAyNSArKysrKysrLS0tLS0NCj4gIGRyaXZlcnMvbXRkL3NwaS1ub3IvbnhwLXNwaWZpLmMgICAg
-ICAgfCAyMyArKysrKysrLS0tLQ0KPiAgZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMgICAg
-ICAgICB8IDc2ICsrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tDQo+ICBpbmNsdWRl
-L2xpbnV4L210ZC9zcGktbm9yLmggICAgICAgICAgIHwgNTEgKysrKysrKysrKysrKy0tLS0tLS0t
-LS0NCj4gIDggZmlsZXMgY2hhbmdlZCwgMTY2IGluc2VydGlvbnMoKyksIDExNyBkZWxldGlvbnMo
-LSkNCg0KQXBwbGllZCB0byBzcGktbm9yL25leHQuDQo=
+On Wed, Oct 23, 2019 at 2:16 PM Andrea Arcangeli <aarcange@redhat.com> wrote:
+>
+> On Wed, Oct 23, 2019 at 12:21:18PM -0700, Andy Lutomirski wrote:
+> > There are two things going on here.
+> >
+> > 1. Daniel wants to add LSM labels to userfaultfd objects.  This seems
+> > reasonable to me.  The question, as I understand it, is: who is the
+> > subject that creates a uffd referring to a forked child?  I'm sure
+> > this is solvable in any number of straightforward ways, but I think
+> > it's less important than:
+>
+> The new uffd created during fork would definitely need to be accounted
+> on the criu monitor, nor to the parent nor the child, so it'd need to
+> be accounted to the process/context that has the fd in its file
+> descriptors array. But since this is less important let's ignore this
+> for a second.
+>
+> > 2. The existing ABI is busted independently of #1.  Suppose you call
+> > userfaultfd to get a userfaultfd and enable UFFD_FEATURE_EVENT_FORK.
+> > Then you do:
+> >
+> > $ sudo <&[userfaultfd number]
+> >
+> > Sudo will read it and get a new fd unexpectedly added to its fd table.
+> > It's worse if SCM_RIGHTS is involved.
+>
+> So the problem is just that a new fd is created. So for this to turn
+> out to a practical issue, it requires finding a reckless suid that
+> won't even bother checking the return value of the open/socket
+> syscalls or some equivalent fd number related side effect. All right
+> that makes more sense now and of course I agree it needs fixing.
+
+Or it requires a long-lived daemon that receives fds over SCM_RIGHTS
+and reads from them.
+
+>
+> > So I think we either need to declare that UFFD_FEATURE_EVENT_FORK is
+> > only usable by global root or we need to remove it and maybe re-add it
+> > in some other form.
+>
+> If I had a time machine, I'd rather prefer to do the below:
+>
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index fe6d804a38dc..574062051678 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -1958,7 +1958,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
+>                 return -ENOMEM;
+>
+>         refcount_set(&ctx->refcount, 1);
+> -       ctx->flags = flags;
+> +       ctx->flags = flags | UFFD_CLOEXEC;
+
+That doesn't solve the problem.  With your time machine, you should
+instead use ioctl() or recvmsg().
+
+>
+> 4) enforce the global root permission check when creating the uffd only if
+>    UFFD_FEATURE_EVENT_FORK is set.
+
+This could work, but we should also add a better way to do
+UFFD_FEATURE_EVENT_FORK and get CRIU to start using it.  If CRIU is
+the only user, we can probably drop the old ABI after a couple of
+releases, since as far as I know, CRIU users need to upgrade their
+CRIU more or less in sync with the kernel so that new kernel features
+get checkpointed and restored.
