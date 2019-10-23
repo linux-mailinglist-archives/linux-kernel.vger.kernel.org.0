@@ -2,63 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9E40E2727
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 01:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F973E272D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 01:52:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392792AbfJWXqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 19:46:50 -0400
-Received: from smtprelay0132.hostedemail.com ([216.40.44.132]:53368 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389801AbfJWXqt (ORCPT
+        id S2392804AbfJWXwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 19:52:40 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:51360 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389801AbfJWXwk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 19:46:49 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 8C573181D3417;
-        Wed, 23 Oct 2019 23:46:48 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1566:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3622:3866:3868:3870:4321:5007:6119:8603:10004:10400:11026:11232:11473:11658:11914:12297:12740:12760:12895:13069:13255:13311:13357:13439:14659:14721:21080:21433:21451:21627:30054:30070:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
-X-HE-Tag: plot32_3b2e9464b9b05
-X-Filterd-Recvd-Size: 1614
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 23 Oct 2019 23:46:46 +0000 (UTC)
-Message-ID: <dbecfcf9ed62c481bb040c619af3b1ee5a7de848.camel@perches.com>
-Subject: Re: [PATCH v4] string-choice: add yesno(), onoff(),
- enableddisabled(), plural() helpers
-From:   Joe Perches <joe@perches.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Jani Nikula <jani.nikula@intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        Vishal Kulkarni <vishal@chelsio.com>, netdev@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Date:   Wed, 23 Oct 2019 16:46:45 -0700
-In-Reply-To: <20191023155619.43e0013f0c8c673a5c508c1e@linux-foundation.org>
-References: <20191023131308.9420-1-jani.nikula@intel.com>
-         <20191023155619.43e0013f0c8c673a5c508c1e@linux-foundation.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Wed, 23 Oct 2019 19:52:40 -0400
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iNQQc-0002uz-NX; Thu, 24 Oct 2019 01:52:34 +0200
+Date:   Thu, 24 Oct 2019 01:52:33 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        linux-arch@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
+        Miroslav Benes <mbenes@suse.cz>
+Subject: Re: [patch V2 07/17] x86/entry/64: Remove redundant interrupt
+ disable
+In-Reply-To: <20191023220618.qsmog2k5oaagj27v@treble>
+Message-ID: <alpine.DEB.2.21.1910240146200.1852@nanos.tec.linutronix.de>
+References: <20191023122705.198339581@linutronix.de> <20191023123118.296135499@linutronix.de> <20191023220618.qsmog2k5oaagj27v@treble>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-10-23 at 15:56 -0700, Andrew Morton wrote:
-> And doing this will cause additional savings: calling a single-arg
-> out-of-line function generates less .text than calling yesno().
+On Wed, 23 Oct 2019, Josh Poimboeuf wrote:
 
-I get no change in size at all with any of
-	extern
-	static __always_inline
-with either of bool or int argument.
+> On Wed, Oct 23, 2019 at 02:27:12PM +0200, Thomas Gleixner wrote:
+> > Now that the trap handlers return with interrupts disabled, the
+> > unconditional disabling of interrupts in the low level entry code can be
+> > removed along with the trace calls.
+> > 
+> > Add debug checks where appropriate.
+> 
+> This seems a little scary.  Does anybody other than Andy actually run
+> with CONFIG_DEBUG_ENTRY?
 
-gcc 8.3, defconfig with CONFIG_CHELSIO_T4
+I do.
 
+> What happens if somebody accidentally leaves irqs enabled?  How do we
+> know you found all the leaks?
+
+For the DO_ERROR() ones that's trivial:
+
+ #define DO_ERROR(trapnr, signr, sicode, addr, str, name)                  \
+ dotraplinkage void do_##name(struct pt_regs *regs, long error_code)	   \
+ {									   \
+ 	do_error_trap(regs, error_code, str, trapnr, signr, sicode, addr); \
++	lockdep_assert_irqs_disabled();					   \
+ }
+ 
+ DO_ERROR(X86_TRAP_DE,     SIGFPE,  FPE_INTDIV,   IP, "divide error",        divide_error)
+
+Now for the rest we surely could do:
+
+dotraplinkage void do_bounds(struct pt_regs *regs, long error_code)
+{
+	__do_bounds(regs, error_code);
+	lockdep_assert_irqs_disabled();
+}
+
+and move the existing body into a static function so independent of any
+(future) return path there the lockdep assert will be invoked.
+
+Thanks,
+
+	tglx
 
