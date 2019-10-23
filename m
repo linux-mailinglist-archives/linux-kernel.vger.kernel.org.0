@@ -2,116 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EF83E1673
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED106E1665
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:40:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404079AbfJWJlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 05:41:40 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:57066 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403799AbfJWJlj (ORCPT
+        id S2404032AbfJWJkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 05:40:49 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39543 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729191AbfJWJkt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 05:41:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Zj5XfgeeJGpKuLcZ9xIMs7v8y6wlyVmuVne2tYjeW1M=; b=tSh0TWsLv0zTB/+cgvenf9Alp
-        bJ97VOL1Q4Q/wIuvnA12UaDMLRf78wnJjHpbggLuo4iMGeNglZ1as6l8RASl1TDll+uOHTPG25/pR
-        acvy9GNDVqZ7KfBh47xSWs+PI5asIdAhm13tXE6BItpl+2VzngNhBvzuj+zOzsXjQrFsNNJCGjnRC
-        AbTb9a1MpJm1fedkHTRfoEwRE0vhBKPst8jQpneLESyhJ64OYxELIPZrr0oJy1xuGi9RVf/xLwxxe
-        lNgreE5Mr25YZDU0qQD3g4xFyjZHQ8a3w8RDULX7AAdieMMMEEubl0LuajXBuQGADa2mAfoNErhWi
-        9nNtjsKOg==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:46362)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iND8K-00047D-6h; Wed, 23 Oct 2019 10:40:48 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iND7x-0005NN-6r; Wed, 23 Oct 2019 10:40:25 +0100
-Date:   Wed, 23 Oct 2019 10:40:25 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greentime Hu <green.hu@gmail.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Helge Deller <deller@gmx.de>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Salter <msalter@redhat.com>,
-        Matt Turner <mattst88@gmail.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Richard Weinberger <richard@nod.at>,
-        Sam Creasey <sammy@sammy.net>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-parisc@vger.kernel.org, linux-um@lists.infradead.org,
-        sparclinux@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH 02/12] arm: nommu: use pgtable-nopud instead of
- 4level-fixup
-Message-ID: <20191023094025.GY25745@shell.armlinux.org.uk>
-References: <1571822941-29776-1-git-send-email-rppt@kernel.org>
- <1571822941-29776-3-git-send-email-rppt@kernel.org>
+        Wed, 23 Oct 2019 05:40:49 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a11so5208313wra.6
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 02:40:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=T1vZzFViZyMkNTAaMLcRtzCAcI3MmnDKFouAR6APmLw=;
+        b=baqvOwE4akmVAZoKsYSgsHLHqy6z2Ogz6Fh2kYLnw+faVDaGNCl83nolJogzWCqyP5
+         W0zBf5tSZqoPFjZUkouxLd9gDLNMjFaTkSlQlE6ZdoVRV3DewMuf3jI7i1g2KDITYfCF
+         BxvupF/D4ssQasSWtotBkG/uwDB68xzfxuI09jr63uOP+1B5+rbI3cweZ8Kt0keGj7RT
+         WZEprvrNLFm8fCHsK1g55qBu9NKRQCGsWJP+YyKFU/1Mi+x0VGHnzgdO0pLNX9ZUTxFt
+         5OlGNAMlbAEQG6gENZoOXxfQnaQzwcRwLr83wcDXelInl6p8ZeLiBdX85bjfQjEiwHUE
+         KFGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=T1vZzFViZyMkNTAaMLcRtzCAcI3MmnDKFouAR6APmLw=;
+        b=H67hpYxUeFrG7pcn4VJe6ewEenRvbwqHyiDxHJSnsSaJ/31YhIGhlZZExK0ItlotK3
+         98tlE+ZJF4phawM+kdRngbiLmr38CZncurT1V0tsgGBNKGsVHDdpKqDRCfs+9PLlBeEo
+         gHSbgEyflB8ShPmhmLBmYTkGs2ZOCodbvi2HfITowhEk+nKboQwrzIGQjJEi5fyRgqkq
+         eR+gpdUTav5HuHdaegLRXjIOZVUEGsu5bhgN1XaZycHc63r6dWIiiUb0Gzhrm4m8vqDM
+         9rwzhNCuJRu/2kg5D6uQgGd2vW/PZFCwBseU+mX9Fij6MHU5UCPVvXSQl3noAg46aT+I
+         vjZQ==
+X-Gm-Message-State: APjAAAWw0PUyAqAD1ELGiKEaxE6GLWYrEsyBxJ8UBUeIwsy6mYmkwgXE
+        RfGkVO4st1O71ok4l6U9panwPA==
+X-Google-Smtp-Source: APXvYqycXcyw31uAAhWTtIQ5erAv+53zHhtWrf7wMIsRejx/pwbJLyNDcoWiQ9gT5mZGlllhEUK4wg==
+X-Received: by 2002:adf:978a:: with SMTP id s10mr7889652wrb.264.1571823645654;
+        Wed, 23 Oct 2019 02:40:45 -0700 (PDT)
+Received: from dell ([95.149.164.99])
+        by smtp.gmail.com with ESMTPSA id r5sm3650011wrs.57.2019.10.23.02.40.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Oct 2019 02:40:45 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 10:40:43 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Gene Chen <gene.chen.richtek@gmail.com>
+Cc:     matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        gene_chen@richtek.com, Wilma.Wu@mediatek.com,
+        shufan_lee@richtek.com, cy_huang@richtek.com
+Subject: Re: [PATCH v3] mfd: mt6360: add pmic mt6360 driver
+Message-ID: <20191023094043.GB19477@dell>
+References: <1569338741-2784-1-git-send-email-gene.chen.richtek@gmail.com>
+ <20191004133324.GE18429@dell>
+ <CAE+NS37bQyWknxy+bXYZqyHH_3RbhTQJc5fVd=ibjV6QMz_rew@mail.gmail.com>
+ <CAE+NS37TEcfxOy97WL0kQ2u8zM9sbROaEr-1b81hX2eoqh-sfg@mail.gmail.com>
+ <20191016100438.GF4365@dell>
+ <CAE+NS36Pdc8zutu=GpNQkREyEu07iLF8NDMtSQcUJE3RuuT2VQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1571822941-29776-3-git-send-email-rppt@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAE+NS36Pdc8zutu=GpNQkREyEu07iLF8NDMtSQcUJE3RuuT2VQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 12:28:51PM +0300, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> 
-> The generic nommu implementation of page table manipulation takes care of
-> folding of the upper levels and does not require fixups.
-> 
-> Simply replace of include/asm-generic/4level-fixup.h with
-> include/asm-generic/pgtable-nopud.h.
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+On Tue, 22 Oct 2019, Gene Chen wrote:
 
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+> 2019-10-16 18:04 GMT+08:00, Lee Jones <lee.jones@linaro.org>:
+> > On Tue, 15 Oct 2019, Gene Chen wrote:
+> >
+> >> Hi Lee,
+> >>
+> >> we find OF_MFD_CELL is not defined in mfd/core.h, which is ready to
+> >> merge to next kernel version
+> >> https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next-history/+/master/Next/merge.log
+> >
+> > It's here:
+> >
+> > Merging mfd/for-mfd-next (38a6fc63a3ea mfd: db8500-prcmu: Example using new
+> > OF_MFD_CELL/MFD_CELL_BASIC MACROs)
+> > $ git merge mfd/for-mfd-next
+> > Merge made by the 'recursive' strategy.
+> >  drivers/mfd/ab8500-core.c    | 138
+> > +++++++++++++------------------------------
+> >  drivers/mfd/db8500-prcmu.c   |  21 +++----
+> >  drivers/mfd/intel-lpss-pci.c |  28 ++++++---
+> >  drivers/mfd/ipaq-micro.c     |   6 +-
+> >  drivers/mfd/rk808.c          |  22 ++-----
+> >  include/linux/mfd/core.h     |  29 +++++++++                <===== [THIS
+> > ONE]
+> >  include/linux/mfd/rk808.h    |   2 +-
+> >  7 files changed, 105 insertions(+), 141 deletions(-)
+> >
+> > https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next-history/+/master/Next/merge.log#4470
+> >
+> 
+> I thought i need to wait this "mfd/for-mfd-next" patch merge to latest
+> codebase, but we can't actually get the date or version (e.g. Linux
+> 5.4-rc4) landing
+> and i try command "git merge mfd/for-mfd-next" which also can't work
+> may i ask how to pull this patch for temporarily build pass?
 
-Thanks.
+Rebase onto for-mfd-next or cherry-pick the commit you need.
 
-> ---
->  arch/arm/include/asm/pgtable.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/include/asm/pgtable.h b/arch/arm/include/asm/pgtable.h
-> index 3ae120c..eabcb48 100644
-> --- a/arch/arm/include/asm/pgtable.h
-> +++ b/arch/arm/include/asm/pgtable.h
-> @@ -12,7 +12,7 @@
->  
->  #ifndef CONFIG_MMU
->  
-> -#include <asm-generic/4level-fixup.h>
-> +#include <asm-generic/pgtable-nopud.h>
->  #include <asm/pgtable-nommu.h>
->  
->  #else
-> -- 
-> 2.7.4
-> 
-> 
+The tree is located here:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
