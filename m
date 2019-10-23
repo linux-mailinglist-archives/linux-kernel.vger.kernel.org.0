@@ -2,79 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC103E1D83
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4261E1D8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 16:01:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389188AbfJWN7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 09:59:48 -0400
-Received: from mail-lf1-f51.google.com ([209.85.167.51]:42515 "EHLO
-        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfJWN7r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:59:47 -0400
-Received: by mail-lf1-f51.google.com with SMTP id z12so16161151lfj.9
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 06:59:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PzYDV5DXErX10ZqPaP0g5TiUIQRWwQClDhhFIA0pg7I=;
-        b=urO4kUbKaHufZkqTEc0ZFNs9vm5MIShfzhvLzFTgW5Df8R7ZqVMoxYiIpAG0YmJO0n
-         H27PFdt4KA3j1BkHFa0lSFOJKHH6stPLwNdYCtcqI5La1NGNUpApBQHwncgYNwefbm1p
-         vfJlaJJGmv3ZtPrmNc1luqd63yrfj1OshxbKwpNkDEmejtdcDnh86aociFJJs1GCxU0N
-         LzvOCSZhWzM/L21qan7KtnWkJ1tnQXQH5luoPGjvgucDeyKiYE2mhzHr0L02CiENe4dz
-         bymt9lpb8tiG6x3B9/38Vxapyy5unN5YngQ43GGVLAZKBiaslP0REiesnuIkgKinmoTR
-         mnbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PzYDV5DXErX10ZqPaP0g5TiUIQRWwQClDhhFIA0pg7I=;
-        b=YhYyQxBClcohQHDzh1jHiWcv3ZRorwUZs603bZCVL9DBNeYYrK2ByKflPiZAuT8t0D
-         rVSLftAYPbve+K6o3d0COufkjyexsVGkOpoZhgWIemXVpG8jG2Ny+IzKiPdJFNe1LdlH
-         Vs83b3yVNLQ+CpcV41vp2EbnalVZDhz5gHmRYkYT/VMCouwlWFvtFc0Mtt5YqmIlqCeM
-         MOVf4/7vmV/icn8Jsmushj3TEA5x8ehyDdXCwoGzHtX0u/NUbxeDlO9pnlqTTmjad9hR
-         9QGBcLVeMhYho9VT67OeTltBxO6gcGtiMDPDIhXhE/GTyxSaQqkFUJ9Tt5QX9tjwmQ88
-         D90w==
-X-Gm-Message-State: APjAAAWCxm1Z1H7dqtcjQWrD0WEZZQNeZCaj4b/3URabavFW3vy3GeIB
-        4YTYOPns8Ivw9o1fXzXn51b3i8UO
-X-Google-Smtp-Source: APXvYqxtoGMUq2m7AXo9nHC7MPm/FUIVQKfAs+qOOAeohUtP5YSnYiC/wDXHoi4eSTcxgeV3wxDBNg==
-X-Received: by 2002:ac2:5b47:: with SMTP id i7mr15089170lfp.82.1571839185809;
-        Wed, 23 Oct 2019 06:59:45 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.199.94])
-        by smtp.gmail.com with ESMTPSA id h10sm10036618ljb.14.2019.10.23.06.59.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 06:59:44 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id AD63B4610AC; Wed, 23 Oct 2019 16:59:43 +0300 (MSK)
-Date:   Wed, 23 Oct 2019 16:59:43 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [BUG -tip] kmemleak and stacktrace cause page faul
-Message-ID: <20191023135943.GK12121@uranus.lan>
-References: <20191019114421.GK9698@uranus.lan>
- <20191022142325.GD12121@uranus.lan>
- <20191022145619.GE12121@uranus.lan>
- <alpine.DEB.2.21.1910231457400.2308@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1910231533180.2308@nanos.tec.linutronix.de>
+        id S2406288AbfJWOAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 10:00:51 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56768 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725789AbfJWOAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 10:00:51 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A41CF777CE33060F98F3;
+        Wed, 23 Oct 2019 22:00:49 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Wed, 23 Oct 2019
+ 22:00:42 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <joro@8bytes.org>
+CC:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <swboyd@chromium.org>, <geert+renesas@glider.be>,
+        <jroedel@suse.de>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] iommu/ipmmu-vmsa: Remove dev_err() on platform_get_irq() failure
+Date:   Wed, 23 Oct 2019 21:59:41 +0800
+Message-ID: <20191023135941.15000-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1910231533180.2308@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 03:47:57PM +0200, Thomas Gleixner wrote:
-> 
-> So the fix is trivial.
+platform_get_irq() will call dev_err() itself on failure,
+so there is no need for the driver to also do this.
+This is detected by coccinelle.
 
-Works like a charm.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/iommu/ipmmu-vmsa.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Tested-by: Cyrill Gorcunov <gorcunov@gmail.com>
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index a8b7957..5904c23 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -1110,10 +1110,8 @@ static int ipmmu_probe(struct platform_device *pdev)
+ 	/* Root devices have mandatory IRQs */
+ 	if (ipmmu_is_root(mmu)) {
+ 		irq = platform_get_irq(pdev, 0);
+-		if (irq < 0) {
+-			dev_err(&pdev->dev, "no IRQ found\n");
++		if (irq < 0)
+ 			return irq;
+-		}
+ 
+ 		ret = devm_request_irq(&pdev->dev, irq, ipmmu_irq, 0,
+ 				       dev_name(&pdev->dev), mmu);
+-- 
+2.7.4
+
+
