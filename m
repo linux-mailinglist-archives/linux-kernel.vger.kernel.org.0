@@ -2,74 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38BC2E2502
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 23:16:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CD3BE24FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 23:15:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406223AbfJWVP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 17:15:56 -0400
-Received: from mga09.intel.com ([134.134.136.24]:22997 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406097AbfJWVPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 17:15:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 14:15:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,222,1569308400"; 
-   d="scan'208";a="373003492"
-Received: from ayamada-mobl1.gar.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.254.95.208])
-  by orsmga005.jf.intel.com with ESMTP; 23 Oct 2019 14:15:51 -0700
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Zhu Yingjiang <yingjiang.zhu@linux.intel.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>
-Subject: [PATCH 5/5] ASoC: SOF: Intel: hda: disable SoundWire interrupts on suspend
-Date:   Wed, 23 Oct 2019 16:15:04 -0500
-Message-Id: <20191023211504.32675-6-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191023211504.32675-1-pierre-louis.bossart@linux.intel.com>
-References: <20191023211504.32675-1-pierre-louis.bossart@linux.intel.com>
+        id S2406110AbfJWVPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 17:15:42 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:35771 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732586AbfJWVPm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 17:15:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571865339;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jFKJV2s+bqZnJXR7hB445Zevjz0xMvRNh+0riasEM+0=;
+        b=JL/ZkQz7xTa7sIdcDvYiN2tEzZhnXBPG0LbA5h/NRr5eVpyekepJj502yN9pKlb7+CVSFY
+        M+R03qQ4ZcBnZ7egaTW4VbP1Pj4C/L59CgZSxOsLX9VNsc59yoiSxbFjsoaLiDnjqL00eL
+        UI2uyKOkvrypk4bNEfo367oCpsvFXZU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-140-pjhd7Cr8P72pc380zm9iXQ-1; Wed, 23 Oct 2019 17:15:38 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3D9A71005509;
+        Wed, 23 Oct 2019 21:15:36 +0000 (UTC)
+Received: from treble (ovpn-121-225.rdu2.redhat.com [10.10.121.225])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 471225C1D4;
+        Wed, 23 Oct 2019 21:15:31 +0000 (UTC)
+Date:   Wed, 23 Oct 2019 16:15:28 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        Nicolai Stange <nstange@suse.de>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] livepatch: Allow to distinguish different version
+ of system state changes
+Message-ID: <20191023211528.nfstzbuzzxsyffqh@treble>
+References: <20191003090137.6874-1-pmladek@suse.com>
+ <20191003090137.6874-4-pmladek@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191003090137.6874-4-pmladek@suse.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: pjhd7Cr8P72pc380zm9iXQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Doing this avoid conflicts and errors reported on the bus.
+Hi Petr,
 
-The interrupts are only re-enabled on resume after the firmware is
-downloaded, so the behavior is not fully symmetric
+Sorry for taking so long...
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- sound/soc/sof/intel/hda-dsp.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, Oct 03, 2019 at 11:01:35AM +0200, Petr Mladek wrote:
+> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+> index 726947338fd5..42907c4a0ce8 100644
+> --- a/include/linux/livepatch.h
+> +++ b/include/linux/livepatch.h
+> @@ -133,10 +133,12 @@ struct klp_object {
+>  /**
+>   * struct klp_state - state of the system modified by the livepatch
+>   * @id:=09=09system state identifier (non-zero)
+> + * @version:=09version of the change (non-zero)
 
-diff --git a/sound/soc/sof/intel/hda-dsp.c b/sound/soc/sof/intel/hda-dsp.c
-index fa2f1f66c72c..a7509e8a0e30 100644
---- a/sound/soc/sof/intel/hda-dsp.c
-+++ b/sound/soc/sof/intel/hda-dsp.c
-@@ -361,6 +361,8 @@ static int hda_suspend(struct snd_sof_dev *sdev, bool runtime_suspend)
- #endif
- 	int ret;
- 
-+	hda_sdw_int_enable(sdev, false);
-+
- 	/* disable IPC interrupts */
- 	hda_dsp_ipc_int_disable(sdev);
- 
--- 
-2.20.1
+Is it necessary to assume that 'version' is non-zero?  It would be easy
+for a user to not realize that and start with version 0.  Then the patch
+state would be silently ignored.
+
+I have the same concern about 'id', but I guess at least one of them has
+to be non-zero to differentiate valid entries from the array terminator.
+
+> +/* Check if the patch is able to deal with the given system state. */
+> +static bool klp_is_state_compatible(struct klp_patch *patch,
+> +=09=09=09=09    struct klp_state *state)
+> +{
+> +=09struct klp_state *new_state;
+> +
+> +=09new_state =3D klp_get_state(patch, state->id);
+> +
+> +=09if (new_state)
+> +=09=09return new_state->version >=3D state->version;
+> +
+> +=09/* Cumulative livepatch must handle all already modified states. */
+> +=09return !patch->replace;
+> +}
+
+From my perspective I view '!new_state' as an error condition.  I'd find
+it easier to read if the ordering were changed to check for the error
+first:
+
+=09if (!new_state) {
+=09=09/*
+=09=09 * A cumulative livepatch must handle all already
+=09=09 * modified states.
+=09=09 */
+=09=09return !patch->replace;
+=09}
+
+=09return new_state->version >=3D state->version;
+
+
+> +
+> +/*
+> + * Check that the new livepatch will not break the existing system state=
+s.
+> + * Cumulative patches must handle all already modified states.
+> + * Non-cumulative patches can touch already modified states.
+> + */
+> +bool klp_is_patch_compatible(struct klp_patch *patch)
+> +{
+> +=09struct klp_patch *old_patch;
+> +=09struct klp_state *state;
+> +
+> +
+> +=09klp_for_each_patch(old_patch) {
+
+Extra newline above.
+
+> +=09=09klp_for_each_state(old_patch, state) {
+> +=09=09=09if (!klp_is_state_compatible(patch, state))
+> +=09=09=09=09return false;
+> +=09=09}
+> +=09}
+
+I think renaming 'state' to 'old_state' would make the intention a
+little clearer, and would be consistent with 'old_patch'.
+
+--=20
+Josh
 
