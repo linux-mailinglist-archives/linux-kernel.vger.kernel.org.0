@@ -2,124 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B72E4E1442
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:32:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B34BE143E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390353AbfJWIc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:32:26 -0400
-Received: from mga02.intel.com ([134.134.136.20]:4257 "EHLO mga02.intel.com"
+        id S2390277AbfJWIb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:31:29 -0400
+Received: from mx7.zte.com.cn ([202.103.147.169]:4505 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390020AbfJWIc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:32:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 01:32:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
-   d="scan'208";a="209874161"
-Received: from kuha.fi.intel.com ([10.237.72.53])
-  by fmsmga001.fm.intel.com with SMTP; 23 Oct 2019 01:32:22 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 23 Oct 2019 11:32:21 +0300
-Date:   Wed, 23 Oct 2019 11:32:21 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Puma Hsu <pumahsu@google.com>, Guenter Roeck <linux@roeck-us.net>
-Cc:     gregkh@linuxfoundation.org, badhri@google.com, kyletso@google.com,
-        albertccwang@google.com, rickyniu@google.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] usb: typec: Add sysfs node to show connector
- orientation
-Message-ID: <20191023083221.GB8828@kuha.fi.intel.com>
-References: <20191022085924.92783-1-pumahsu@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022085924.92783-1-pumahsu@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S2387829AbfJWIb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 04:31:29 -0400
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id B1BFDE93D3079EB8002D;
+        Wed, 23 Oct 2019 16:31:26 +0800 (CST)
+Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
+        by mse-fl1.zte.com.cn with ESMTP id x9N8U30j081278;
+        Wed, 23 Oct 2019 16:30:03 +0800 (GMT-8)
+        (envelope-from zhong.shiqi@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019102316302352-91717 ;
+          Wed, 23 Oct 2019 16:30:23 +0800 
+From:   zhongshiqi <zhong.shiqi@zte.com.cn>
+To:     harry.wentland@amd.com
+Cc:     sunpeng.li@amd.com, alexander.deucher@amd.com,
+        christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie,
+        daniel@ffwll.ch, Bhawanpreet.Lakha@amd.com, Jun.Lei@amd.com,
+        David.Francis@amd.com, Dmytro.Laktyushkin@amd.com,
+        anthony.koo@amd.com, Wenjing.Liu@amd.com,
+        nicholas.kazlauskas@amd.com, Aidan.Wood@amd.com,
+        Chris.Park@amd.com, Eric.Yang2@amd.com,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn, cheng.shengyu@zte.com.cn,
+        zhongshiqi <zhong.shiqi@zte.com.cn>
+Subject: [PATCH] dc.c:use kzalloc without test
+Date:   Wed, 23 Oct 2019 16:32:23 +0800
+Message-Id: <1571819543-15676-1-git-send-email-zhong.shiqi@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-10-23 16:30:23,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-10-23 16:30:06,
+        Serialize complete at 2019-10-23 16:30:06
+X-MAIL: mse-fl1.zte.com.cn x9N8U30j081278
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Guenter
+dc.c:583:null check is needed after using kzalloc function
 
-On Tue, Oct 22, 2019 at 04:59:24PM +0800, Puma Hsu wrote:
-> Export the Type-C connector orientation so that user space
-> can get this information.
-> 
-> Signed-off-by: Puma Hsu <pumahsu@google.com>
-> ---
->  Documentation/ABI/testing/sysfs-class-typec | 11 +++++++++++
->  drivers/usb/typec/class.c                   | 18 ++++++++++++++++++
->  2 files changed, 29 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
-> index d7647b258c3c..b22f71801671 100644
-> --- a/Documentation/ABI/testing/sysfs-class-typec
-> +++ b/Documentation/ABI/testing/sysfs-class-typec
-> @@ -108,6 +108,17 @@ Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
->  Description:
->  		Revision number of the supported USB Type-C specification.
->  
-> +What:		/sys/class/typec/<port>/connector_orientation
-> +Date:		October 2019
-> +Contact:	Puma Hsu <pumahsu@google.com>
-> +Description:
-> +		Indicates which typec connector orientation is configured now.
-> +		cc1 is defined as "normal" and cc2 is defined as "reversed".
-> +
-> +		Valid value:
-> +		- unknown (nothing configured)
+Signed-off-by: zhongshiqi <zhong.shiqi@zte.com.cn>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-"unknown" means we do not know the orientation.
-
-> +		- normal (configured in cc1 side)
-> +		- reversed (configured in cc2 side)
-
-Guenter, do you think "connector_orientation" OK. I proposed it, but
-I'm now wondering if something like "polarity" would be better?
-
->  USB Type-C partner devices (eg. /sys/class/typec/port0-partner/)
->  
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 94a3eda62add..911d06676aeb 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -1245,6 +1245,23 @@ static ssize_t usb_power_delivery_revision_show(struct device *dev,
->  }
->  static DEVICE_ATTR_RO(usb_power_delivery_revision);
->  
-> +static const char * const typec_connector_orientation[] = {
-> +	[TYPEC_ORIENTATION_NONE]		= "unknown",
-> +	[TYPEC_ORIENTATION_NORMAL]		= "normal",
-> +	[TYPEC_ORIENTATION_REVERSE]		= "reversed",
-> +};
-> +
-> +static ssize_t connector_orientation_show(struct device *dev,
-> +						struct device_attribute *attr,
-> +						char *buf)
-> +{
-> +	struct typec_port *p = to_typec_port(dev);
-> +
-> +	return sprintf(buf, "%s\n",
-> +		       typec_connector_orientation[p->orientation]);
-> +}
-> +static DEVICE_ATTR_RO(connector_orientation);
-> +
->  static struct attribute *typec_attrs[] = {
->  	&dev_attr_data_role.attr,
->  	&dev_attr_power_operation_mode.attr,
-> @@ -1255,6 +1272,7 @@ static struct attribute *typec_attrs[] = {
->  	&dev_attr_usb_typec_revision.attr,
->  	&dev_attr_vconn_source.attr,
->  	&dev_attr_port_type.attr,
-> +	&dev_attr_connector_orientation.attr,
->  	NULL,
->  };
->  ATTRIBUTE_GROUPS(typec);
-
-thanks,
-
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
+index 5d1aded..4b8819c 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
+@@ -580,6 +580,10 @@ static bool construct(struct dc *dc,
+ #ifdef CONFIG_DRM_AMD_DC_DCN2_0
+ 	// Allocate memory for the vm_helper
+ 	dc->vm_helper = kzalloc(sizeof(struct vm_helper), GFP_KERNEL);
++	if (!dc->vm_helper) {
++		dm_error("%s: failed to create dc->vm_helper\n", __func__);
++		goto fail;
++	}
+ 
+ #endif
+ 	memcpy(&dc->bb_overrides, &init_params->bb_overrides, sizeof(dc->bb_overrides));
 -- 
-heikki
+2.9.5
+
