@@ -2,120 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E36E152D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63DE5E1538
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390842AbfJWJDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 05:03:34 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43758 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390828AbfJWJDb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 05:03:31 -0400
-Received: by mail-oi1-f195.google.com with SMTP id s5so1324378oie.10;
-        Wed, 23 Oct 2019 02:03:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JUN9J/2vsghSQEDoYKjkArcf/+ULxW+MHO+ZanwPpo4=;
-        b=gsvSpxN8asmmJPaABTh0U7UQr4o1rZIqS6m6NbPa1f9vlQ7DPCM7tz1n9y/Nwa1WfI
-         dQVVzLdpzhZ1I0ur3nKHHMl+3CX5ERnkxHNtFUdIBNFqE8Kn2vM6Rjac8qJb0UIV+IQt
-         rv3VgX1Vo53WsqiLUfaWEb2e52sZsooDt6XTh1qpSn+e24v+VwbQp3nAxIes8ObbcPiN
-         QN/gjimkQpSq/tkzmqHAHi5qXuCPxE3uN2iYg5yaIH4Mnrq6pY8VOmCPIsxTmI9J084S
-         TlW+tDSexTnnIY7kb4nU7zi9iAze3agfwMiuKhQ4XzW2TIN/BcNp1TE5b7nLb2AkmPmN
-         qKdg==
-X-Gm-Message-State: APjAAAUfYFk0i+GW7Qo64YsSi3pTP8HOgQ63O6ckbotBBtcNg9uwe24p
-        4iuYMEs5ydQToTc9ILZhc7f+livCDpFoLsOFN54=
-X-Google-Smtp-Source: APXvYqzpnyRsjI08y4ZRUgjrw1GIJ1LFN//WuKMFEHxAIcp2foV7Lo1Ho0NyPkQWiuDpIsFmd7Iy31deRT8TXFwo9RE=
-X-Received: by 2002:aca:d706:: with SMTP id o6mr6936010oig.57.1571821410371;
- Wed, 23 Oct 2019 02:03:30 -0700 (PDT)
+        id S2390853AbfJWJEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 05:04:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52210 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390380AbfJWJEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 05:04:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4FDFFB365;
+        Wed, 23 Oct 2019 09:04:18 +0000 (UTC)
+Date:   Wed, 23 Oct 2019 11:04:04 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     Jessica Yu <jeyu@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, live-patching@vger.kernel.org,
+        pmladek@suse.com
+Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
+In-Reply-To: <20191022143107.xkymboxgcgojc5b5@treble>
+Message-ID: <alpine.LSU.2.21.1910231057270.4266@pobox.suse.cz>
+References: <alpine.LSU.2.21.1910151611000.13169@pobox.suse.cz> <88bab814-ea24-ece9-2bc0-7a1e10a62f12@redhat.com> <20191015153120.GA21580@linux-8ccs> <7e9c7dd1-809e-f130-26a3-3d3328477437@redhat.com> <20191015182705.1aeec284@gandalf.local.home>
+ <20191016074951.GM2328@hirez.programming.kicks-ass.net> <alpine.LSU.2.21.1910161216100.7750@pobox.suse.cz> <alpine.LSU.2.21.1910161521010.7750@pobox.suse.cz> <20191018130342.GA4625@linux-8ccs> <alpine.LSU.2.21.1910221022590.28918@pobox.suse.cz>
+ <20191022143107.xkymboxgcgojc5b5@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <20191023074945.17016-1-fengwei.yin@intel.com> <30ee0a348f624698801691f65eeecd87@AcuMS.aculab.com>
-In-Reply-To: <30ee0a348f624698801691f65eeecd87@AcuMS.aculab.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 23 Oct 2019 11:03:19 +0200
-Message-ID: <CAJZ5v0jizy95pVh1gek5rmaVvGeZUMkVdKJUdesZeXGbj=mwRw@mail.gmail.com>
-Subject: Re: [PATCH v3] ACPI/processor_idle: Remove dummy wait if kernel is in
- guest mode
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Yin Fengwei <fengwei.yin@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "lenb@kernel.org" <lenb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 10:45 AM David Laight <David.Laight@aculab.com> wrote:
->
-> From: Yin Fengwei
-> > Sent: 23 October 2019 08:50
->
->
-> > In function acpi_idle_do_entry(), an ioport access is used for dummy
-> > wait to guarantee hardware behavior. But it could trigger unnecessary
-> > vmexit if kernel is running as guest in virtualization environtment.
-> >
-> > If it's in virtualization environment, the deeper C state enter
-> > operation (inb()) will trap to hyervisor. It's not needed to do
-> > dummy wait after the inb() call. So we remove the dummy io port
-> > access to avoid unnecessary VMexit.
-> >
-> > We keep dummy io port access to maintain timing for native environment.
-> >
-> > Signed-off-by: Yin Fengwei <fengwei.yin@intel.com>
-> > ---
-> > ChangeLog:
-> > v2 -> v3:
-> >  - Remove dummy io port access totally for virtualization env.
-> >
-> > v1 -> v2:
-> >  - Use ndelay instead of dead loop for dummy delay.
-> >
-> >  drivers/acpi/processor_idle.c | 36 ++++++++++++++++++++++++++++++++---
-> >  1 file changed, 33 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-> > index ed56c6d20b08..0c4a97dd6917 100644
-> > --- a/drivers/acpi/processor_idle.c
-> > +++ b/drivers/acpi/processor_idle.c
-> > @@ -58,6 +58,17 @@ struct cpuidle_driver acpi_idle_driver = {
-> >  static
-> >  DEFINE_PER_CPU(struct acpi_processor_cx * [CPUIDLE_STATE_MAX], acpi_cstate);
-> >
-> > +static void (*dummy_wait)(u64 address);
-> > +
-> > +static void default_dummy_wait(u64 address)
-> > +{
-> > +     inl(address);
-> > +}
-> > +
-> > +static void default_noop_wait(u64 address)
-> > +{
-> > +}
-> > +
->
-> Overengineered...
-> Just add:
->
-> static void wait_for_freeze(void)
-> {
-> #ifdef  CONFIG_X86
->         /* No delay is needed if we are a guest */
->         if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
->                 return;
-> #endif
->
->         /* Dummy wait op - must do something useless after P_LVL2 read
->            because chipsets cannot guarantee that STPCLK# signal
->            gets asserted in time to freeze execution properly. */
->         inl(acpi_gbl_FADT.xpm_timer_block.address);
-> }
->
-> and use it to replace the inl().
+On Tue, 22 Oct 2019, Josh Poimboeuf wrote:
 
-I was about to make a similar comment.
+> On Tue, Oct 22, 2019 at 10:27:49AM +0200, Miroslav Benes wrote:
+> > > Does that sound like what you had in mind or am I totally off?
+> > 
+> > Sort of. What I had in mind was that we could get rid of all special .klp 
+> > ELF section if module loader guarantees that only sections for loaded 
+> > modules are processed. Then .klp.rela.$objname is not needed and proper 
+> > .rela.text.$objname (or whatever its text section is named) should be 
+> > sufficient. The same for the rest (.klp.arch).
+> 
+> If I understand correctly, using kvm as an example to-be-patched module,
+> we'd have:
+> 
+>   .text.kvm
+>   .rela.text.kvm
+>   .altinstructions.kvm
+>   .rela.altinstructions.kvm
+>   __jump_table.kvm
+>   .rela__jump_table.kvm
+> 
+> etc.  i.e. any "special" sections would need to be renamed.
+> 
+> Is that right?
+
+Yes.
+ 
+> But also I think *any* sections which need relocations would need to be
+> renamed, for example:
+> 
+>   .rodata.kvm
+>   .rela.rodata.kvm
+>   .orc_unwind_ip.kvm
+>   .rela.orc_unwind_ip.kvm
+
+Correct.
+ 
+> It's an interesting idea.
+> 
+> We'd have to be careful about ordering issues.  For example, there are
+> module-specific jump labels stored in mod->jump_entries.  Right now
+> that's just a pointer to the module's __jump_table section.  With late
+> module patching, when kvm is loaded we'd have to insert the klp module's
+> __jump_table.kvm entries into kvm's mod->jump_entries list somehow.
+
+Yes.
+ 
+> Presumably we'd also have that issue for other sections.  Handling that
+> _might_ be as simple as just hacking up find_module_sections() to
+> re-allocate sections and append "patched sections" to them.
+>
+> But then you still have to worry about when to apply the relocations.
+> If you apply them before patching the sections, then relative
+> relocations would have the wrong values.  If you apply them after, then
+> you have to figure out where the appended relocations are.
+
+Ah, right. That is a valid remark.
+ 
+> And if we allow unpatching then we'd presumably have to be able to
+> remove entries from the module specific section lists.
+
+Correct.
+
+> So I get the feeling a lot of complexity would creep in.  Even just
+> thinking about it requires more mental gymnastics than the
+> one-patch-per-module idea, so I view that as a bad sign.
+
+Yes, the devil is in the details. It would be better if the approach 
+helped even someone/something else in the kernel. Without it, it is 
+probably better to stick to Steven's proposal and handle the complexity 
+elsewhere.
+
+Thanks
+Miroslav
