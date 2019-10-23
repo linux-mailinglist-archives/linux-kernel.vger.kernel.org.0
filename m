@@ -2,119 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0031AE23BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 22:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBC62E2395
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 22:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407314AbfJWUDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 16:03:34 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40107 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405556AbfJWUCy (ORCPT
+        id S2404759AbfJWUCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 16:02:31 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46237 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733176AbfJWUCb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 16:02:54 -0400
-Received: by mail-pf1-f196.google.com with SMTP id x127so13590165pfb.7;
-        Wed, 23 Oct 2019 13:02:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=U7yrLgCm1sWsKsLg4PFcTaFGPRuqfSdp4yJRNe14wag=;
-        b=HWZAI6oUd4zj5C+itjIgtiekMAiuAHD1aH14ZRblUi0kgK8bfcauhA0kZFvigeINED
-         o+DET2XYKe39buC3Cm8XwojwxPZUtrWMJlnoiutYxE1FHFfGcgJrw73fLW3iCpf1KHnc
-         Kk5Vpkp5NSowVcuJ+wKorVBX7tSU3vf0UgnbVgX0Blc5wlmprlBEhmgVU8dbuIVhB/bN
-         oXel/TsuRPrnjrHOeQblhSvrGqELeZ9IqsKSjCWLbScuAGJs1KKu67/LgKQRAqDGYyJF
-         yrxafOTOPvCiylFwBfgRibm6ylv7qCOCSnEDlPjcAt4xEREPDCC6xW790hFn/bshZ8Il
-         WSUw==
+        Wed, 23 Oct 2019 16:02:31 -0400
+Received: by mail-oi1-f195.google.com with SMTP id k25so18472265oiw.13;
+        Wed, 23 Oct 2019 13:02:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=U7yrLgCm1sWsKsLg4PFcTaFGPRuqfSdp4yJRNe14wag=;
-        b=TKoyidKF/bCwwZGsd2cCTSIyFY0vNBR2nurea9qZ6n7HavUBheMNs5GdRlsez2l0VX
-         sA3okagmEHxKJWK2SXSp7gSIF4vZBv59xrP5p6Gnfuo8b7sZBJUM/n+PIS1Vq0IoMFvz
-         k1E44dtZH5xQW+7CmeMmgmFkiaRCctg1zuM2UppMVxvAuQ4uleaAJgIk7qTRYGee8agB
-         Fn62NgEcnFRnARmWF0fv6S8RHUNhB3ysGO6UWri3Mg0mi/DvzCxZRkOOw7RaySY6CaFL
-         mf2z/yF/u737YbHA+nOs4ThpNzrjuweeCR/l4Co+jRHjdFxdrMG6cd7DXW7KXQtc94+J
-         yKkA==
-X-Gm-Message-State: APjAAAVmsOc9K1iBYaKzBdjT0jOAhd3yzxfuLBKchjs8L7oXLxyfnQ28
-        CpfcTqaG+M2xm1TbjJXjKtM=
-X-Google-Smtp-Source: APXvYqxl0S3jmfDiv5LaLLsAIuswlGWVayQhvZbkI3bhz/FCaod8i35vRC9p0hMMKqFMk2b91qtXyg==
-X-Received: by 2002:aa7:87ce:: with SMTP id i14mr12485376pfo.78.1571860973889;
-        Wed, 23 Oct 2019 13:02:53 -0700 (PDT)
-Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id 6sm10593598pfy.43.2019.10.23.13.02.52
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oozQkcJW95p1Dv4QaVuryfJ5LQcESPRxHdu7Ak0V1Z4=;
+        b=Lnhei2WvMiNQNJYGKx4s4TVS1f1Jpwi+hxk68F9sUn3JU0vLfXJrhtNzMhIDlgSl0U
+         93Ap0lCE3O9SiW8uXBzZc9fErOezS/i7jDAM6f0f9OvxQUSV4cExGYOM7U3CgAh0UweY
+         ABZJmaTd9Sdgh5/F/k0/Dp3MdQ+sLQbKZXNS/vgUMW9ZvDQ6de7X/uPMa0m6Grvh+UoN
+         0FYzO1AGa2CHt58VRHk97pbMZX9LczJz2VD85DfzyZh0h4HmHFrF/l370XvsOW/jtiMp
+         iN0Y6H5NvdThzkHVyUoGuRkqLccaiXFRVzSAZ+HmQL3cH/JUhs0RuzcdCPb94luY602S
+         qX/g==
+X-Gm-Message-State: APjAAAVfFvzarYgaBa1Pu1l6eVTEhMuHbZsxlzmWpcj8VFeEWDnyAEhA
+        3Jr/Z7eyZDXFclNbX95AMw==
+X-Google-Smtp-Source: APXvYqxFAjzGZNtqdc+1PYTID1AcXDBTvo2ape+7GxX6izU5pTGV6D/uDL/INQ1Bx2cz/ihfg3IHEw==
+X-Received: by 2002:aca:c40f:: with SMTP id u15mr1506436oif.67.1571860949970;
+        Wed, 23 Oct 2019 13:02:29 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y18sm6342903oto.2.2019.10.23.13.02.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 13:02:53 -0700 (PDT)
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wed, 23 Oct 2019 13:02:29 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 15:02:28 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Daniel Palmer <daniel@0x0f.com>
+Cc:     Daniel Palmer <daniel@thingy.jp>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Ripard <mripard@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Linus Walleij <linus.walleij@linaro.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Doug Anderson <armlinux@m.disordat.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: [PATCH v6 09/15] software node: simplify property_entry_read_string_array()
-Date:   Wed, 23 Oct 2019 13:02:27 -0700
-Message-Id: <20191023200233.86616-10-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
-In-Reply-To: <20191023200233.86616-1-dmitry.torokhov@gmail.com>
-References: <20191023200233.86616-1-dmitry.torokhov@gmail.com>
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Sugaya Taichi <sugaya.taichi@socionext.com>,
+        Nathan Huckleberry <nhuck15@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: arm: Initial MStar vendor prefixes and
+ compatible strings
+Message-ID: <20191023200228.GA29675@bogus>
+References: <20191014061617.10296-1-daniel@0x0f.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191014061617.10296-1-daniel@0x0f.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need to treat string arrays and single strings separately, we can go
-exclusively by the element length in relation to data type size.
+On Mon, Oct 14, 2019 at 03:15:56PM +0900, Daniel Palmer wrote:
+> This adds a prefix for MStar and thingy.jp and then defines compatible
+> strings for the first MStar based board.
+> 
+> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+> ---
+>  .../devicetree/bindings/arm/mstar.yaml        | 22 +++++++++++++++++++
+>  .../devicetree/bindings/vendor-prefixes.yaml  |  4 ++++
+>  MAINTAINERS                                   |  6 +++++
+>  3 files changed, 32 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mstar.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/mstar.yaml b/Documentation/devicetree/bindings/arm/mstar.yaml
+> new file mode 100644
+> index 000000000000..0ea5b2b9387f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mstar.yaml
+> @@ -0,0 +1,22 @@
+> +# SPDX-License-Identifier: (GPL-2.0+ OR X11)
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/base/swnode.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+(GPL-2.0-only OR BSD-2-Clause) is preferred. Any reason to differ?
 
-diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-index f59dfd01725f..d8d0dc0ca5ac 100644
---- a/drivers/base/swnode.c
-+++ b/drivers/base/swnode.c
-@@ -173,28 +173,21 @@ static int property_entry_read_string_array(const struct property_entry *props,
- 					    const char *propname,
- 					    const char **strings, size_t nval)
- {
--	const struct property_entry *prop;
- 	const void *pointer;
--	size_t array_len, length;
-+	size_t length;
-+	int array_len;
- 
- 	/* Find out the array length. */
--	prop = property_entry_get(props, propname);
--	if (!prop)
--		return -EINVAL;
--
--	if (prop->is_array)
--		/* Find the length of an array. */
--		array_len = property_entry_count_elems_of_size(props, propname,
--							  sizeof(const char *));
--	else
--		/* The array length for a non-array string property is 1. */
--		array_len = 1;
-+	array_len = property_entry_count_elems_of_size(props, propname,
-+						       sizeof(const char *));
-+	if (array_len < 0)
-+		return array_len;
- 
- 	/* Return how many there are if strings is NULL. */
- 	if (!strings)
- 		return array_len;
- 
--	array_len = min(nval, array_len);
-+	array_len = min_t(size_t, nval, array_len);
- 	length = array_len * sizeof(*strings);
- 
- 	pointer = property_entry_find(props, propname, length);
--- 
-2.23.0.866.gb869b98d4c-goog
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/mstar.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MStar platforms device tree bindings
+> +
+> +maintainers:
+> +  - Daniel Palmer <daniel@thingy.jp>
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +
 
+Drop the blank line.
+
+> +      - description: thingy.jp BreadBee
+> +        items:
+> +          - const: thingyjp,breadbee
+> +          - const: mstar,infinity
+> +          - const: mstar,infinity3
+
+infinity vs. infinity3? What's the difference? It's generally sufficient 
+to just list a board compatible and a SoC compatible.
+
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> index 967e78c5ec0a..1425468188da 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -617,6 +617,8 @@ patternProperties:
+>      description: Microsemi Corporation
+>    "^msi,.*":
+>      description: Micro-Star International Co. Ltd.
+> +  "^mstar,.*":
+> +    description: MStar Semiconductor, Inc.
+>    "^mti,.*":
+>      description: Imagination Technologies Ltd. (formerly MIPS Technologies Inc.)
+>    "^multi-inno,.*":
+> @@ -943,6 +945,8 @@ patternProperties:
+>      description: Three Five Corp
+>    "^thine,.*":
+>      description: THine Electronics, Inc.
+> +  "^thingyjp,.*":
+> +    description: thingy.jp
+>    "^ti,.*":
+>      description: Texas Instruments
+>    "^tianma,.*":
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a69e6db80c79..8b7913c13f9a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1981,6 +1981,12 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  F:	arch/arm/mach-pxa/mioa701.c
+>  S:	Maintained
+>  
+> +ARM/MStar SoC support
+> +M:	Daniel Palmer <daniel@thingy.jp>
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +F:	Documentation/devicetree/bindings/arm/mstar.yaml
+> +S:	Maintained
+> +
+>  ARM/NEC MOBILEPRO 900/c MACHINE SUPPORT
+>  M:	Michael Petchkovsky <mkpetch@internode.on.net>
+>  S:	Maintained
+> -- 
+> 2.23.0
+> 
