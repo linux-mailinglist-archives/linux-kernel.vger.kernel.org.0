@@ -2,108 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 098DFE1C54
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B27FE1BA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:01:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405767AbfJWNWb convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 23 Oct 2019 09:22:31 -0400
-Received: from nemx1.ne.ch ([148.196.30.16]:56858 "EHLO nemx1.ne.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405266AbfJWNWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:22:31 -0400
-X-Greylist: delayed 20580 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Oct 2019 09:22:29 EDT
-Received: from rpnedge1.rpn.ch ([157.26.1.37])
-        by nemx1.ne.ch with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <Susanne.Nussbaum@rpn.ch>)
-        id 1iNBDy-00084k-FN; Wed, 23 Oct 2019 09:38:33 +0200
-Received: from rpncmbx4.rpn.ch (157.26.0.38) by RPNEDGE1.rpn.ch (157.26.1.37)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Wed, 23 Oct
- 2019 09:37:36 +0200
-Received: from rpncmbx4.rpn.ch (157.26.0.38) by rpncmbx4.rpn.ch (157.26.0.38)
- with Microsoft SMTP Server (version=TLS1_2,
+        id S2405541AbfJWNBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:01:00 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:50654 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732149AbfJWNBA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 09:01:00 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9ND0wKF041617;
+        Wed, 23 Oct 2019 08:00:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571835658;
+        bh=EuU0iGlFfXpr/90VNz9x7JLNC8IyvPE3kuocYGWj/Qo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=mkYsadjYcD5QCy3EEcZdQ+YA6c7Mcxq8O0UpaFZRGt3cBhODgZOJ/UD27AvGFf8DD
+         wZ5YAmlVGnx2DY4F3TUwPudgr8aL/CAoFKO1FBbLKSJ4XR+9ecgyC66YxW0XE0Mqci
+         sU171WB0CmEPng9RYVY3m3i2CHQ5+xv+SJg2l0EE=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9ND0wct073288
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 23 Oct 2019 08:00:58 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 23
- Oct 2019 09:37:35 +0200
-Received: from rpncmbx4.rpn.ch ([10.26.1.38]) by rpncmbx4.rpn.ch
- ([10.26.1.38]) with mapi id 15.01.1713.009; Wed, 23 Oct 2019 09:37:35 +0200
-From:   Nussbaum Susanne <Susanne.Nussbaum@rpn.ch>
-To:     "No-reply@microsoft.net" <No-reply@microsoft.net>
-Subject: 20 of your incoming messages has been suspended 
-Thread-Topic: 20 of your incoming messages has been suspended 
-Thread-Index: AQHViXS8lBL5CLFtMUK5MKHVDLX3sw==
-Date:   Wed, 23 Oct 2019 07:37:35 +0000
-Message-ID: <c2fe0e3962cb4f68befbf4aa1525cfbc@rpn.ch>
-Accept-Language: fr-CH, en-US
-Content-Language: fr-CH
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [157.26.1.46]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+ Oct 2019 08:00:48 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 23 Oct 2019 08:00:57 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9ND0tlG088549;
+        Wed, 23 Oct 2019 08:00:56 -0500
+Subject: Re: [PATCH v2 2/3] dt-bindings: phy: ti,phy-j721e-wiz: Add Type-C dir
+ GPIO
+To:     Roger Quadros <rogerq@ti.com>
+CC:     <aniljoy@cadence.com>, <adouglas@cadence.com>, <nsekhar@ti.com>,
+        <jsarha@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20191023084916.26895-1-rogerq@ti.com>
+ <20191023084916.26895-3-rogerq@ti.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <d8398dc4-cd6c-a3d1-1951-f1ad3d1b3ae3@ti.com>
+Date:   Wed, 23 Oct 2019 18:30:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-Originating-IP: 157.26.1.37
-X-EtatdeNeuchatel-Domain: rpn.ch
-X-EtatdeNeuchatel-Username: 157.26.1.37
-Authentication-Results: ne.ch; auth=pass smtp.auth=157.26.1.37@rpn.ch
-X-EtatdeNeuchatel-Outgoing-Class: ham
-X-EtatdeNeuchatel-Outgoing-Evidence: Combined (0.50)
-X-Recommended-Action: accept
-X-Filter-ID: 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
- BSmZBoVt2x2Uh1UwcBJN+Ui9xg==
-X-Report-Abuse-To: spam@nemx1.ne.ch
+In-Reply-To: <20191023084916.26895-3-rogerq@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MICROSOFT URGENT NOTICE
+Roger,
 
-20 of your incoming messages has been suspended because your email box account needs to be verify now.Do click on the verify below to verify your email box account now.
+On 23/10/19 2:19 PM, Roger Quadros wrote:
+> This is an optional GPIO, if specified will be used to
+> swap lane 0 and lane 1 based on GPIO status. This is required
+> to achieve plug flip support for USB Type-C.
+> 
+> Type-C companions typically need some time after the cable is
+> plugged before and before they reflect the correct status of
+> Type-C plug orientation on the DIR line.
+> 
+> Type-C Spec specifies CC attachment debounce time (tCCDebounce)
+> of 100 ms (min) to 200 ms (max).
+> 
+> Allow the DT node to specify the time (in ms) that we need
+> to wait before sampling the DIR line.
+> 
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> ---
+>  .../devicetree/bindings/phy/ti,phy-j721e-wiz.txt         | 9 +++++++++
 
+I've posted new version to change the binding document to YAML format. Can you
+make the changes on top of that series?
 
-VERIFY<http://de43e.000webhostapp.com/>
+Thanks
+Kishon
 
-
-Microsoft Verification Team
-
-
-Copyright © 2019 Microsoft .Inc . All rights reserved.
-
-
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.txt b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.txt
+> index 19b4c3e855d6..253535a8819f 100644
+> --- a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.txt
+> +++ b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.txt
+> @@ -24,6 +24,15 @@ Optional properties:
+>  assigned-clocks and assigned-clock-parents: As documented in the generic
+>  clock bindings in Documentation/devicetree/bindings/clock/clock-bindings.txt
+>  
+> + - typec-dir-gpios: GPIO to signal Type-C cable orientation for lane swap.
+> +     If GPIO is active, lane 0 and lane 1 of SERDES will be swapped to
+> +     achieve the funtionality of an exernal type-C plug flip mux.
+> +
+> + - typec-dir-debounce: Number of milliseconds to wait before sampling
+> +     typec-dir-gpio. If not specified, the GPIO will be sampled ASAP.
+> +     Type-C spec states minimum CC pin debounce of 100 ms and maximum
+> +     of 200 ms.
+> +
+>  Required subnodes:
+>   - Clock Subnode: WIZ node should have '3' subnodes for each of the clock
+>       selects it supports. The clock subnodes should have the following names
+> 
