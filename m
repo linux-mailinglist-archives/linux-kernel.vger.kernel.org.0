@@ -2,68 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BD1EE21E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 178AEE21C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:32:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730584AbfJWRha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 13:37:30 -0400
-Received: from emh02.mail.saunalahti.fi ([62.142.5.108]:57640 "EHLO
-        emh02.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729283AbfJWRh3 (ORCPT
+        id S1729731AbfJWRcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 13:32:02 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40267 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbfJWRcC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:37:29 -0400
-Received: from darkstar.musicnaut.iki.fi (85-76-128-127-nat.elisa-mobile.fi [85.76.128.127])
-        by emh02.mail.saunalahti.fi (Postfix) with ESMTP id 9873F200AD;
-        Wed, 23 Oct 2019 20:30:14 +0300 (EEST)
-Date:   Wed, 23 Oct 2019 20:30:14 +0300
-From:   Aaro Koskinen <aaro.koskinen@iki.fi>
-To:     Wambui Karuga <wambui.karugax@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     outreachy-kernel@googlegroups.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: octeon: Fix incorrect type in assignment
-Message-ID: <20191023173014.GC18977@darkstar.musicnaut.iki.fi>
-References: <20191010043815.14027-1-wambui.karugax@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191010043815.14027-1-wambui.karugax@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 23 Oct 2019 13:32:02 -0400
+Received: by mail-wm1-f66.google.com with SMTP id b24so20430938wmj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 10:32:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=dmtFsSUBWA54jB5wbZR7TL/ePVjER+sBaUCUBdLRxXM=;
+        b=x6ROYP7fQnUWXi7GomAjmzViOaiRf4rEu2CVqKuswbfpWXqv40LiLqN/Eg94rawgyb
+         zfXZ5hSKFTk2Up6JdnCD1FYkuKwTL32r+TbfVH6AmSgoOGG5sBM0Rnm+k14ieZ3qhJOO
+         JWZlSgfcBVsyOhb5kG2YnCjItfXoSU7aIM+8DABOW0XbziSqB86q2LnPaoQ1bKqhgIH8
+         akwKAcbwQl69DKFd9/sRxkTd99DsVW5XMglsRSyJSl2OR3OklDESQOUDdlNA1IvavfwF
+         cet7YlMT3pjXyHyXx6AIQVTnxkFoE00naoHSTo98s8dAKlz+ZDvA0A/KN0esS8cKuHp1
+         067Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dmtFsSUBWA54jB5wbZR7TL/ePVjER+sBaUCUBdLRxXM=;
+        b=cSN0qJlDW81uHRq9O38MMLFWC7UE/cF7tU1p+b3Wf4vVwnHobYk5xau83VzKVlMUcu
+         dXQKZyLmy2l8GiFeYRatcPIrR68P3VZRaUMpfdQv9BTN3Mswl4zCnUmK9G+X2A/JtiZt
+         tN9lkXsJyGB2EmTPzyfVuUzrlAz2yUX4gQE8hgL9p1bsFVGPfy9NkuNZmk1OkZLEPsFb
+         hN5KxHqJgQdkDM4YFPHf64cJKmxohlprsXNPUaz5KlH0f9RoBug6Kg++6fyL2p6BpUPE
+         Y8lFvZYEM7yHbhO+Cf6vECpKH+sC2rc48J8w0azmVhvfTD8sW4aBRx/hq6dcuU3AZ5b+
+         hfIQ==
+X-Gm-Message-State: APjAAAVfU/fm3wd/7ZALhNPRhbXUvBb/eFFC7B0ZW5Xq6/W4+KYoTW4E
+        2BnvqmyfNT/v1aSuHfBjPPUFQw==
+X-Google-Smtp-Source: APXvYqwpg48qOMHAuNtyyvSmuZgoDwb0BYtWY3fWDcD0ur3NTmDRxKFO5PFgey3pimscOkk/uSduog==
+X-Received: by 2002:a1c:2cc4:: with SMTP id s187mr985909wms.166.1571851920625;
+        Wed, 23 Oct 2019 10:32:00 -0700 (PDT)
+Received: from e123331-lin.home (lfbn-mar-1-643-104.w90-118.abo.wanadoo.fr. [90.118.215.104])
+        by smtp.gmail.com with ESMTPSA id f7sm14900374wre.68.2019.10.23.10.31.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 10:31:59 -0700 (PDT)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org, Chester Lin <clin@suse.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Guillaume Gardet <Guillaume.Gardet@arm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Kairui Song <kasong@redhat.com>,
+        Narendra K <Narendra.K@dell.com>
+Subject: [GIT PULL 0/5] EFI fixes for v5.4
+Date:   Wed, 23 Oct 2019 19:31:56 +0200
+Message-Id: <20191023173201.6607-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.17.1
+X-ARM-No-Footer: FoSSMail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The following changes since commit 7d194c2100ad2a6dded545887d02754948ca5241:
 
-On Thu, Oct 10, 2019 at 07:38:15AM +0300, Wambui Karuga wrote:
-> Fix the following warning generated by sparse in
-> drivers/staging/octeon/ethernet-tx.c:
-> 
-> drivers/staging/octeon/ethernet-tx.c:563:50: warning: incorrect type in assignment (different base types)
-> drivers/staging/octeon/ethernet-tx.c:563:50:    expected unsigned short [usertype] hw_chksum
-> drivers/staging/octeon/ethernet-tx.c:563:50:    got restricted __wsum [usertype] csum
-> 
-> Warning generated by running:
-> make C=2 CF="-D__CHECK_ENDIAN__" drivers/staging/octeon/
-> 
-> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
-> ---
->  drivers/staging/octeon/octeon-stubs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/octeon/octeon-stubs.h b/drivers/staging/octeon/octeon-stubs.h
-> index 38954b6c89e1..b2e3c72205dd 100644
-> --- a/drivers/staging/octeon/octeon-stubs.h
-> +++ b/drivers/staging/octeon/octeon-stubs.h
-> @@ -123,7 +123,7 @@ union cvmx_pip_wqe_word0 {
->  	struct {
->  		uint64_t next_ptr:40;
->  		uint8_t unused;
-> -		uint16_t hw_chksum;
-> +		__wsum hw_chksum;
+  Linux 5.4-rc4 (2019-10-20 15:56:22 -0400)
 
-I don't think this is correct. This struct defines HW register layout,
-and the field needs to be 16 bits.
+are available in the Git repository at:
 
-A.
+  git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git efi-urgent
+
+for you to fetch changes up to 0d0013109c849cccb16560df213b5d6115a2d206:
+
+  x86, efi: never relocate kernel below lowest acceptable address (2019-10-23 09:00:10 +0200)
+
+----------------------------------------------------------------
+Some more fixes for the EFI subsystem:
+- Prevent boot problems on HyperV due to incorrect placement of the kernel
+- Classify UEFI randomness as bootloader randomness
+- Fix EFI boot for the Raspberry Pi2 running U-boot
+- Some more odd fixes.
+
+----------------------------------------------------------------
+Ard Biesheuvel (1):
+      efi: libstub/arm: account for firmware reserved memory at the base of RAM
+
+Dominik Brodowski (1):
+      efi/random: treat EFI_RNG_PROTOCOL output as bootloader randomness
+
+Jerry Snitselaar (1):
+      efi/tpm: return -EINVAL when determining tpm final events log size fails
+
+Kairui Song (1):
+      x86, efi: never relocate kernel below lowest acceptable address
+
+Narendra K (1):
+      efi: Make CONFIG_EFI_RCI2_TABLE selectable on x86 only
+
+ arch/x86/boot/compressed/eboot.c               |  4 +++-
+ drivers/firmware/efi/Kconfig                   |  1 +
+ drivers/firmware/efi/efi.c                     |  2 +-
+ drivers/firmware/efi/libstub/Makefile          |  1 +
+ drivers/firmware/efi/libstub/arm32-stub.c      | 16 +++++++++++++---
+ drivers/firmware/efi/libstub/efi-stub-helper.c | 24 ++++++++++--------------
+ drivers/firmware/efi/tpm.c                     |  1 +
+ include/linux/efi.h                            | 18 ++++++++++++++++--
+ 8 files changed, 46 insertions(+), 21 deletions(-)
