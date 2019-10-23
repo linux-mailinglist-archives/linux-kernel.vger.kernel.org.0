@@ -2,133 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 088F6E24D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 22:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B84E24EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 23:07:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405818AbfJWU4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 16:56:41 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37740 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405172AbfJWU4l (ORCPT
+        id S2392053AbfJWVH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 17:07:29 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37352 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391902AbfJWVH3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 16:56:41 -0400
-Received: by mail-wm1-f68.google.com with SMTP id q130so176673wme.2;
-        Wed, 23 Oct 2019 13:56:40 -0700 (PDT)
+        Wed, 23 Oct 2019 17:07:29 -0400
+Received: by mail-pg1-f194.google.com with SMTP id p1so12862132pgi.4
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 14:07:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hTdZZnlA7EABBBAHUknV0T6AXSDyE/LhNtrQ1WO3UbI=;
+        b=XcUqdG2izYOn+mbHak6wx+UZELo+hDTuO/+fxjKpVKHu0vitTZdRpxSAWCiL288QOM
+         Y4sQAcicvH5dezcg14hGy1Asu7I5ifDnXHph8pEEYigQaild/ZOsD1de9jXymX4iAo4U
+         YtPkllEHsNkBl1XYV8p60uhU9i8FsE8WCeV/8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=32v8K2RHKvWo9eMjAZ2zLlE2KejEYDR1L/fOwlpiWkU=;
-        b=sNlbQcnr4Qcave2hUpGJBUHxgmyXmJgFUOM+7kuZ9Edt5XuTjDQ/L/c9t4SMrB1lnU
-         335vBCfSgBd0z/iA42ZO7YkIPg+x0UVDXKi6ztAa8sNGzF080Z8c8su0upppYlsflTz2
-         I6daSbVbf/fMsuxmUEgNWEyArKBWD45gNeNThKVgpBHV47ONPHJJ3/AG7CUzhbgSrZot
-         LoxU9GDTe/P7kMeleltAFMrXTuBkqk+QwniV08/JmL3iON7nJYNxxGZFbR67TeoUGpbb
-         FgmxD73umW8AX/RDTSNNXBB0S4PJJM26Riv8TIdnatnz+xW/OgzYVN7YSTg9T7WJ8/3y
-         V4fQ==
-X-Gm-Message-State: APjAAAXr9OJu9v7iNfGwwsXfC+gcp6mpNYnELtYFgkaA6+PIzmOMCB0D
-        YzUJa2SiIlpcG4SbhRS5HzgJf/JCtM8BnVD8
-X-Google-Smtp-Source: APXvYqx3/CV7TtgBkFCYKsLwC9Yvg+bNsX7rQNs1v1Im2R4whylc7FoGZ8LrNsu0JT58IAfGfzwGDg==
-X-Received: by 2002:a1c:7e10:: with SMTP id z16mr1586651wmc.11.1571864199028;
-        Wed, 23 Oct 2019 13:56:39 -0700 (PDT)
-Received: from localhost ([109.70.119.5])
-        by smtp.gmail.com with ESMTPSA id o18sm26164584wrm.11.2019.10.23.13.56.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Oct 2019 13:56:38 -0700 (PDT)
-From:   Patrick Bellasi <patrick.bellasi@matbug.net>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Douglas Raillard <douglas.raillard@arm.com>,
-        Quentin Perret <qperret@google.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.com>
-Subject: [PATCH v2] sched/fair: util_est: fast ramp-up EWMA on utilization increases
-Date:   Wed, 23 Oct 2019 21:56:30 +0100
-Message-Id: <20191023205630.14469-1-patrick.bellasi@matbug.net>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hTdZZnlA7EABBBAHUknV0T6AXSDyE/LhNtrQ1WO3UbI=;
+        b=lo1W5f4+BgG19xVw0osCYbSYfiadqDcvJoD0Mpdi8UUYJQ9CXGchjQAJRaSnRXRzQf
+         J/GQIHZB9D7zKAXAsm9FrS0Z12fQJvZMshk4tShjzy49dAz4mibGcxPVzqN4jBL0oLAE
+         NWn6Z9L3Hq1NkTpsI3rCx9uROJ0r71ZfaFNK82U+4vP07b3yYgJvVL5wwA8vDXItdcVL
+         bpNA4LBnJwwTUVXjFkpdVXohYFggwWbTI2pmdZmw6Ni6rafDkBpyb8vvQUK272vcW65u
+         jGSw1QkgDxL5DZh792qyWjHrc5ZUn3foHWF16RAgwRswFLsERvPKANqst3Frb3o2Lbi+
+         /tOw==
+X-Gm-Message-State: APjAAAU0yJMEtN+O3beOr/dTUEV/TxNr8i1l3n3pmOcDbnUQHiPJfqFD
+        UiJ+g812wHuYMmdAsiQnmR8xJA==
+X-Google-Smtp-Source: APXvYqxIMniSNwAkzc2lHxYvMbXHhVnLpxKHVTcbtv205RmdruWuesi6Yx4Fs/+BBpFofGh5PgQlew==
+X-Received: by 2002:a63:3d41:: with SMTP id k62mr11959835pga.129.1571864848131;
+        Wed, 23 Oct 2019 14:07:28 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id z12sm26529195pfj.41.2019.10.23.14.07.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 14:07:27 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Minas Harutyunyan <hminas@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc:     linux-rockchip@lists.infradead.org, stefan.wahren@i2se.com,
+        mka@chromium.org, Alexandru M Stan <amstan@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] usb: dwc2: Fix NULL qh in dwc2_queue_transaction
+Date:   Wed, 23 Oct 2019 14:06:31 -0700
+Message-Id: <20191023140530.v2.1.I9850aab29e945168070b0a9c50c421d5485e7d97@changeid>
+X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The estimated utilization for a task:
+From: Alexandru M Stan <amstan@chromium.org>
 
-   util_est = max(util_avg, est.enqueue, est.ewma)
+When a usb device disconnects in a certain way, dwc2_queue_transaction
+still gets called after dwc2_hcd_cleanup_channels.
 
-is defined based on:
- - util_avg: the PELT defined utilization
- - est.enqueued: the util_avg at the end of the last activation
- - est.ewma:     a exponential moving average on the est.enqueued
-                 samples
+dwc2_hcd_cleanup_channels does "channel->qh = NULL;" but
+dwc2_queue_transaction still wants to dereference qh.
+This adds a check for a null qh.
 
-According to this definition, when a task suddenly change its bandwidth
-requirements from small to big, the EWMA will need to collect multiple
-samples before converging up to track the new big utilization.
-
-This slow convergence towards bigger utilization values is not
-aligned to the default scheduler behavior, which is to optimize for
-performance. Moreover, the est.ewma component fails to compensate for
-temporarely utilization drops which spans just few est.enqueued samples.
-
-To let util_est do a better job in the scenario depicted above, change
-its definition by making util_est directly follow upward motion and
-only decay the est.ewma on downward.
-
-Signed-off-by: Patrick Bellasi <patrick.bellasi@matbug.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Alexandru M Stan <amstan@chromium.org>
+[dianders: rebased to mainline]
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
- kernel/sched/fair.c     | 14 +++++++++++++-
- kernel/sched/features.h |  1 +
- 2 files changed, 14 insertions(+), 1 deletion(-)
+While testing a newer version of the Linux kernel on rk3288-veyron
+devices we saw a bunch of crashes reported in dwc2_queue_transaction()
+where chan->qh was NULL [1].  I don't know how to reproduce those
+crashes myself, but I noticed that in our 3.14 kernel we had a patch
+that probably fixed it.  That patch was sent upstream ages ago [2] but
+never landed.  Here I've rebased the patch.  While I haven't
+reproduced the crash myself, it seems fairly likely that this will fix
+the problem.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a81c36472822..a14487462b6c 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3768,11 +3768,22 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
- 	if (ue.enqueued & UTIL_AVG_UNCHANGED)
- 		return;
+[1] https://crbug.com/1017388
+[2] https://lore.kernel.org/r/1442952651-4341-2-git-send-email-amstan@chromium.org
+
+Changes in v2:
+- Rebased to mainline
+
+ drivers/usb/dwc2/hcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+index 81afe553aa66..b90f858af960 100644
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -2824,7 +2824,7 @@ static int dwc2_queue_transaction(struct dwc2_hsotg *hsotg,
+ 		list_move_tail(&chan->split_order_list_entry,
+ 			       &hsotg->split_order);
  
-+	/*
-+	 * Reset EWMA on utilization increases, the moving average is used only
-+	 * to smooth utilization decreases.
-+	 */
-+	ue.enqueued = (task_util(p) | UTIL_AVG_UNCHANGED);
-+	if (sched_feat(UTIL_EST_FASTUP)) {
-+		if (ue.ewma < ue.enqueued) {
-+			ue.ewma = ue.enqueued;
-+			goto done;
-+		}
-+	}
-+
- 	/*
- 	 * Skip update of task's estimated utilization when its EWMA is
- 	 * already ~1% close to its last activation value.
- 	 */
--	ue.enqueued = (task_util(p) | UTIL_AVG_UNCHANGED);
- 	last_ewma_diff = ue.enqueued - ue.ewma;
- 	if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
- 		return;
-@@ -3805,6 +3816,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
- 	ue.ewma <<= UTIL_EST_WEIGHT_SHIFT;
- 	ue.ewma  += last_ewma_diff;
- 	ue.ewma >>= UTIL_EST_WEIGHT_SHIFT;
-+done:
- 	WRITE_ONCE(p->se.avg.util_est, ue);
- }
- 
-diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 2410db5e9a35..7481cd96f391 100644
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -89,3 +89,4 @@ SCHED_FEAT(WA_BIAS, true)
-  * UtilEstimation. Use estimated CPU utilization.
-  */
- SCHED_FEAT(UTIL_EST, true)
-+SCHED_FEAT(UTIL_EST_FASTUP, true)
+-	if (hsotg->params.host_dma) {
++	if (hsotg->params.host_dma && chan->qh) {
+ 		if (hsotg->params.dma_desc_enable) {
+ 			if (!chan->xfer_started ||
+ 			    chan->ep_type == USB_ENDPOINT_XFER_ISOC) {
 -- 
-2.17.1
+2.23.0.866.gb869b98d4c-goog
 
