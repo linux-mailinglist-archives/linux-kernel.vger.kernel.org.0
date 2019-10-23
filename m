@@ -2,137 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 131C5E107A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 05:23:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A60DE1085
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 05:24:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731987AbfJWDXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 23:23:06 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45118 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbfJWDXG (ORCPT
+        id S1732696AbfJWDYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 23:24:36 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50702 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731772AbfJWDYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 23:23:06 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r1so11231866pgj.12
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 20:23:06 -0700 (PDT)
+        Tue, 22 Oct 2019 23:24:35 -0400
+Received: by mail-wm1-f65.google.com with SMTP id q13so9405437wmj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 20:24:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vG1wlSoVjAH3TslkWdryreWfIFyS6PFtkukPqp6iu6k=;
-        b=LXsEOBqKOd15Ki+pYR61bVtYMBRigi5yBLP9kWdnCjKN1Swh9GjKCUwx0e3QhP41oi
-         f6UJc+sH3LzMZoN5qWZvLMzAjEU16NRk8kTsJPTu7URZghySrGM6OTxY9fqqjuAyt3uB
-         HxfziLk4zNdgSGfMY3vn4D+fHbIQTuh2zDQX0+0jzinbdY/BmlbbGmqBiBOcegI/b0tJ
-         ojhMWWAwm3fDesTkzWreV/gkOS+mhpjHcAcqoqKZc4aFnm+M4kBRGIj5lV0WwPW/N7Pj
-         2xkTKceWyv4TxlJ6s5uVbJ7Pb8+aahzzhlR9yxioAT2pJFcOEdxw0J2tRmXjARLs2pFt
-         whlA==
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PoiwGNtU0nAEwpqhaQ40WOeNzy+Ug1D1A+7yaqwVZpE=;
+        b=yLN/ddNFMfFhvPjBZjTwKqoSwWn/DGdu7QUqpRbP8p9LI1mFK7KIlnrmHTLH01uos+
+         X0D82O2AYz2IOS9/+jyeTWKP9FcdB/e3uP6Z42DJbWTV6MQr7OkuzYq3kjk1RuEoOSOC
+         eNv3Qo7LIIG+xOTLtiUJ+6EnRnxxTFzlGvAGBHGPUMmYKgEhFhfnbJFhQI1rQPdG1OiE
+         d96LttnBqOssIU7NYDQc5/uF1ZD1QnrxEj/9dMaee9uPD4JB1Vjxwda0O5TfOCTW1vBp
+         YBogOBQGt8j3ddQYskXwVEGM3mtoVnSL2pbeaIDRQvrjheAM3nxeNfolhNL/blZzk/9l
+         TX+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vG1wlSoVjAH3TslkWdryreWfIFyS6PFtkukPqp6iu6k=;
-        b=OLgh2CtsH8xPxqlyNUWyZbtSo2Hfzvj6uGhGAKFmTvA3mZVw4Lu9mYl9cwllTD0xVq
-         IUwHjA4zJUzM32NPVt6So4ny1hgwuLJsRCq+ezlB/uFlr1xKGAjnc45ek4UlcWt8Uqog
-         aUAztVg8ToG/HhA2j3b8yz1iqUKDhC0JfM7B2xaonMwW08NKTDpOGB1lZ726AcbsM3Wf
-         fUQrsI+/iTjDur5GxV53UafEO8LBhXNbZnXTyRdhINqSKFh4nfn+zZAcRT5a0v4BW56W
-         fF+VFwo11agW0m2XNzzrFVruOKYNI/I0WjF4aEO5i7+F3IRUhCaKc3QWRyrk0dfeKd+u
-         JoAw==
-X-Gm-Message-State: APjAAAWf//l4mFd6ObWPCRTXGPmU3IZti+voVgVRHdHZvQuktseW1UGw
-        tkwNGduhuB4xLAJFqaiR/mUYjw==
-X-Google-Smtp-Source: APXvYqzL207UMotVVbLIBySCNyQniimBEc7wiboiIj6T8IbhYFht01SBvULx1tt1kgQWqReZqGRDrQ==
-X-Received: by 2002:a17:90a:ac12:: with SMTP id o18mr8782943pjq.93.1571800985488;
-        Tue, 22 Oct 2019 20:23:05 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id f15sm19700257pfd.141.2019.10.22.20.23.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Oct 2019 20:23:04 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 08:53:02 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>, broonie@kernel.org
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] cpufreq: s3c64xx: Remove pointless NULL check in
- s3c64xx_cpufreq_driver_init
-Message-ID: <20191023032302.tu5nkvulo2yoctgr@vireshk-i7>
-References: <20191023000906.14374-1-natechancellor@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PoiwGNtU0nAEwpqhaQ40WOeNzy+Ug1D1A+7yaqwVZpE=;
+        b=BcXE0W73TpoM4OcN+LnNmPyKLRo22ZZDfFfaTFJKCatwYYQqciZmHbsyEqJt1GjFRS
+         V5Re3g7X8DcBjoZOZjveTmIeCaiEQDJ4kSWE+SNShO+nnNUuneWsmfgUnjpE+dTdQh+c
+         1tiohX4B08cZ8y78r0x8/+Iri9DdQ7B5vWz1x+eLZT9K3dANZKayUbJc/u7LEzErgNEc
+         o34/IgA6v7P7q1qPJpf/H5ZjViKAw8Mm6OyNxI7PoaXGDczrJoWzLC/00DgohyvkX6Yq
+         VsZBpehp97vlAhnLeOHg/VuGI5Ec4kGJOM3IgDNC0Xf8HKsmxjkqEZ7J7GUnn6bBgily
+         B0iA==
+X-Gm-Message-State: APjAAAUTP7qTx6aet/7iP2FSR/gu5TotvnzK60TT4zMmLuL7q+4vsaqM
+        y2TSie8cJhr0C4hbX4du2dS9FCpV2X5BSxKEGoLsuA==
+X-Google-Smtp-Source: APXvYqy5Sx8ql4wbo4/WWnaIsB4nlRntpQJU9X6Eo8IJsbZIxg84bb2+RxjkQXSTZmod8Omr2TCvJvSRKbaedXpuwn0=
+X-Received: by 2002:a1c:9695:: with SMTP id y143mr5676311wmd.103.1571801071659;
+ Tue, 22 Oct 2019 20:24:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023000906.14374-1-natechancellor@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+References: <20190925063706.56175-3-anup.patel@wdc.com> <mhng-edb410db-fdd1-46f6-84c3-ae3b843f7e3a@palmer-si-x1c4>
+ <MN2PR04MB606160F5306A5F3C5D97FB788D900@MN2PR04MB6061.namprd04.prod.outlook.com>
+ <alpine.DEB.2.21.9999.1910221213490.28831@viisi.sifive.com>
+ <17db4a6244d09abf867daf2a6c10de6a5cd58c89.camel@wdc.com> <alpine.DEB.2.21.9999.1910221751500.25457@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1910221751500.25457@viisi.sifive.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Wed, 23 Oct 2019 08:54:19 +0530
+Message-ID: <CAAhSdy3KccuzC0pV6Jy_diLwkdgb=SdHBQnsSoGrgpu6g7TCQA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] RISC-V: defconfig: Enable Goldfish RTC driver
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Alistair Francis <Alistair.Francis@wdc.com>,
+        Anup Patel <Anup.Patel@wdc.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "rkir@google.com" <rkir@google.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-10-19, 17:09, Nathan Chancellor wrote:
-> When building with Clang + -Wtautological-pointer-compare:
-> 
-> drivers/cpufreq/s3c64xx-cpufreq.c:152:6: warning: comparison of array
-> 's3c64xx_freq_table' equal to a null pointer is always false
-> [-Wtautological-pointer-compare]
->         if (s3c64xx_freq_table == NULL) {
->             ^~~~~~~~~~~~~~~~~~    ~~~~
-> 1 warning generated.
-> 
-> The definition of s3c64xx_freq_table is surrounded by an ifdef
-> directive for CONFIG_CPU_S3C6410, which is always true for this driver
-> because it depends on it in drivers/cpufreq/Kconfig.arm (and if it
-> weren't, there would be a build error because s3c64xx_freq_table would
-> not be a defined symbol).
-> 
-> Resolve this warning by removing the unnecessary NULL check because it
-> is always false as Clang notes. While we are at it, remove the
-> unnecessary ifdef conditional because it is always true.
-> 
-> Fixes: b3748ddd8056 ("[ARM] S3C64XX: Initial support for DVFS")
+On Wed, Oct 23, 2019 at 6:37 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+>
+> On Tue, 22 Oct 2019, Alistair Francis wrote:
+>
+> > I think it makese sense for this to go into Linux first.
+> >
+> > The QEMU patches are going to be accepted, just some nit picking to do
+> > first :)
+> >
+> > After that we have to wait for a PR and then a QEMU release until most
+> > people will see the change in QEMU. In that time Linux 5.4 will be
+> > released, if this can make it into 5.4 then everyone using 5.4 will get
+> > the new RTC as soon as they upgrade QEMU (QEMU provides the device
+> > tree). If this has to wait until QEMU has support then it won't be
+> > supported for users until even later.
+> >
+> > Users are generally slow to update kernels (buildroot is still using
+> > 5.1 by default for example) so the sooner changes like this go in the
+> > better.
+>
+> The defconfigs are really just for kernel developers.  We expect users to
+> define their own Kconfigs for their own needs.
+>
+> If using the Goldfish code really is what we all want to do (see below),
+> then the kernel patch that should go in right away -- which also has no
+> dependence on what QEMU does -- would be the first patch of this series:
+>
+> https://lore.kernel.org/linux-riscv/20190925063706.56175-2-anup.patel@wdc.com/
+>
+> And that should go in via whoever is maintaining the Goldfish driver, not
+> the RISC-V tree.  (It looks like drivers/platform/goldfish is completely
+> unmaintained - a red flag! - so probably someone needs to persuade Greg or
+> Andrew to take it.)
 
-+broonie, who wrote this patch to see his views on why he kept it like
-this.
+GregKH has already queued this for Linux-5.5 and you can see this
+commit present in linux-next tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/drivers/platform/goldfish?h=next-20191022
 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/748
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/cpufreq/s3c64xx-cpufreq.c | 7 -------
->  1 file changed, 7 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/s3c64xx-cpufreq.c b/drivers/cpufreq/s3c64xx-cpufreq.c
-> index af0c00dabb22..c6bdfc308e99 100644
-> --- a/drivers/cpufreq/s3c64xx-cpufreq.c
-> +++ b/drivers/cpufreq/s3c64xx-cpufreq.c
-> @@ -19,7 +19,6 @@
->  static struct regulator *vddarm;
->  static unsigned long regulator_latency;
->  
-> -#ifdef CONFIG_CPU_S3C6410
->  struct s3c64xx_dvfs {
->  	unsigned int vddarm_min;
->  	unsigned int vddarm_max;
-> @@ -48,7 +47,6 @@ static struct cpufreq_frequency_table s3c64xx_freq_table[] = {
->  	{ 0, 4, 800000 },
->  	{ 0, 0, CPUFREQ_TABLE_END },
->  };
-> -#endif
->  
->  static int s3c64xx_cpufreq_set_target(struct cpufreq_policy *policy,
->  				      unsigned int index)
-> @@ -149,11 +147,6 @@ static int s3c64xx_cpufreq_driver_init(struct cpufreq_policy *policy)
->  	if (policy->cpu != 0)
->  		return -EINVAL;
->  
-> -	if (s3c64xx_freq_table == NULL) {
-> -		pr_err("No frequency information for this CPU\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	policy->clk = clk_get(NULL, "armclk");
->  	if (IS_ERR(policy->clk)) {
->  		pr_err("Unable to obtain ARMCLK: %ld\n",
-> -- 
-> 2.23.0
+>
+> Incidentally, just looking at drivers/platform/goldfish, that driver seems
+> to be some sort of Google-specific RPC driver.  Are you all really sure
 
--- 
-viresh
+Nopes, it's not RPC driver. In fact, all Goldfish virtual platform devices
+are MMIO devices.
+
+> you want to enable that just for an RTC?  Seems like overkill - there are
+> much simpler RTCs out there.
+
+No, it's not overkill. All Goldfish virtual platform devices are quite simple
+MMIO devices having bare minimum registers required for device
+functioning.
+
+The problem is VirtIO spec does not define any RTC device so instead of
+inventing our own virtual RTC device we re-use RTC device defined in
+Goldfish virtual platform for QEMU virt machine. This way we can re-use
+the Linux Goldfish RTC driver.
+
+BTW, I will send-out QEMU Goldfish RTC patches today or tomorrow
+addressing nit comments from Alistair.
+
+Regards,
+Anup
