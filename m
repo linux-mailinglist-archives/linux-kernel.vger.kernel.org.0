@@ -2,99 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D76F1E1AD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:38:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61C9DE1AF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:42:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390342AbfJWMiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 08:38:06 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42452 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732361AbfJWMiF (ORCPT
+        id S2390824AbfJWMmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 08:42:01 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:46827 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389887AbfJWMmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:38:05 -0400
-Received: by mail-qt1-f195.google.com with SMTP id w14so31972806qto.9;
-        Wed, 23 Oct 2019 05:38:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TTxfg8uYCGG6i9hFGyJ0oHAZKHi72jFC6jG4zn1k97Q=;
-        b=XFffVwVqJgOaIQp+xpGltzSaVRG+X5kt3ObAyXI3K5+lughh1ATjfvD5NBAAsJODbg
-         HsjXmpYjQXMwiTmn+kQwGO7Zh+MnJbsPc3PZ0ETxzY49ibWz8LJaEka/WhGxHsZBW3jw
-         KEQ07OaCHixpqhZsL87owKp3ce9pEaiwtTkRkWRZBHa1VJtHMsB8Kp2APGLarSCNs4Pb
-         DgQTb3rzxRhW8bxN8jIe6kirZ6yD2aAvcIr69f1khmiiRMygKHbT4kGeOBUdU33i6x72
-         oLriPVYKYapGah8V3QQ9/XlTr2cpq7r2dO+CKqg4uG75XMKzjvbWQqg8DyBvzRl9HE7y
-         UWGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TTxfg8uYCGG6i9hFGyJ0oHAZKHi72jFC6jG4zn1k97Q=;
-        b=mjDRZv4TAKFAIfcPUwQrPZ2zBw02kkYsunsNurS4XaDrHpNnLWjrhqJIWnDjVlSbka
-         IjLtzXov5arywOF6dia/HXOPedLmGtt9EMfbfauD9EYnw9siluxW3Mm+WJp4AWMuA9EV
-         9N1+GCRR09o+8qQyXQ4quhN7S5jTmcrERImpZvQc8PiFNUM/dYXrgypK9aKLVZWSJUpr
-         YO4RV3gNHLUsEPrt6lfONnH5th2IHV1NyIpKAAVbr1o3OwR/eTxTC/DQo3XnYZ3HJNtU
-         yPMhuEnU79jQUY/J0ikOG1dbHrowOFe2FL3yLPVcJBLfJXwGW+Dxh+09QZpHtkcGFIDw
-         w3xg==
-X-Gm-Message-State: APjAAAVA2iU9H01zY5FW0fdy9lsAh2NbHwaWQXdiySfxz0dlxQpbaMSz
-        3U58E0vNw3cLbFoqCMM2aI8=
-X-Google-Smtp-Source: APXvYqy5SFIZq5y+J9shsYPIP3Rc3PCvPhXKek+NFYEwkCT27cfLiqu5oPR8Dlza+24DhsBZV56BwQ==
-X-Received: by 2002:ac8:2c1a:: with SMTP id d26mr3448187qta.287.1571834284717;
-        Wed, 23 Oct 2019 05:38:04 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id x13sm10000312qki.9.2019.10.23.05.38.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 05:38:04 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 463884DDC9; Wed, 23 Oct 2019 09:38:02 -0300 (-03)
-Date:   Wed, 23 Oct 2019 09:38:02 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Ian Rogers <irogers@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        John Garry <john.garry@huawei.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v2 5/9] perf tools: avoid a malloc for array events
-Message-ID: <20191023123802.GB15998@kernel.org>
-References: <20191017170531.171244-1-irogers@google.com>
- <20191023005337.196160-1-irogers@google.com>
- <20191023005337.196160-6-irogers@google.com>
- <20191023085830.GG22919@krava>
+        Wed, 23 Oct 2019 08:42:01 -0400
+X-UUID: a4dc8739ecee419582113529d95f9dce-20191023
+X-UUID: a4dc8739ecee419582113529d95f9dce-20191023
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <luhua.xu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1206687605; Wed, 23 Oct 2019 20:41:55 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 23 Oct 2019 20:41:51 +0800
+Received: from localhost.localdomain (10.15.20.246) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 23 Oct 2019 20:41:51 +0800
+From:   Luhua Xu <luhua.xu@mediatek.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <linux-spi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>,
+        <luhua.xu@mediatek.com>
+Subject: [PATCH 0/1] Add spi power control when set cs
+Date:   Wed, 23 Oct 2019 08:38:41 -0400
+Message-ID: <1571834322-1121-1-git-send-email-luhua.xu@mediatek.com>
+X-Mailer: git-send-email 2.6.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023085830.GG22919@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Oct 23, 2019 at 10:58:30AM +0200, Jiri Olsa escreveu:
-> On Tue, Oct 22, 2019 at 05:53:33PM -0700, Ian Rogers wrote:
-> > Use realloc rather than malloc+memcpy to possibly avoid a memory
-> > allocation when appending array elements.
-> > 
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+This patch add power control when set spi cs to fix register
+access violation.
 
-Thanks, applied,
 
-- Arnaldo
+luhua.xu (1):
+  spi: mediatek: add power control when set_cs
+
+ drivers/spi/spi-mt65xx.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
