@@ -2,74 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59E2AE1072
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 05:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F000FE107D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 05:23:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731656AbfJWDRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 23:17:16 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:47212 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbfJWDRQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 23:17:16 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iN795-0007Lx-Tp; Wed, 23 Oct 2019 03:17:12 +0000
-Date:   Wed, 23 Oct 2019 04:17:11 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Subject: Re: [PATCH v6 11/43] compat_ioctl: move drivers to compat_ptr_ioctl
-Message-ID: <20191023031711.GA26530@ZenIV.linux.org.uk>
-References: <20191009190853.245077-1-arnd@arndb.de>
- <20191009191044.308087-11-arnd@arndb.de>
- <20191022043451.GB20354@ZenIV.linux.org.uk>
- <CAK8P3a1C=skow522Ge7w=ya2hK8TPS8ncusdyX-Ne4GBWB1H4A@mail.gmail.com>
+        id S1732542AbfJWDXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 23:23:09 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53690 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727140AbfJWDXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 23:23:09 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 962BE2CD66F9CF476FA8;
+        Wed, 23 Oct 2019 11:23:05 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 23 Oct 2019 11:22:59 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <maz@kernel.org>, <james.morse@arm.com>,
+        <julien.thierry.kdev@gmail.com>, <suzuki.poulose@arm.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <steven.price@arm.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH] KVM: arm64: Select SCHED_INFO before SCHEDSTATS
+Date:   Wed, 23 Oct 2019 11:22:54 +0800
+Message-ID: <20191023032254.159510-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1C=skow522Ge7w=ya2hK8TPS8ncusdyX-Ne4GBWB1H4A@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 12:26:09PM +0200, Arnd Bergmann wrote:
-> On Tue, Oct 22, 2019 at 6:34 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Wed, Oct 09, 2019 at 09:10:11PM +0200, Arnd Bergmann wrote:
-> > > Each of these drivers has a copy of the same trivial helper function to
-> > > convert the pointer argument and then call the native ioctl handler.
-> > >
-> > > We now have a generic implementation of that, so use it.
-> >
-> > I'd rather flipped your #7 (ceph_compat_ioctl() introduction) past
-> > that one...
-> 
-> The idea was to be able to backport the ceph patch as a bugfix
-> to stable kernels without having to change it or backport
-> compat_ptr_ioctl() as well.
-> 
-> If you still prefer it that way, I'd move to a simpler version of this
-> patch and drop the Cc:stable.
+If KVM=y, it will select SCHEDSTATS, below erros can
+be seen:
+kernel/sched/stats.h: In function rq_sched_info_arrive:
+kernel/sched/stats.h:12:20: error: struct sched_info
+has no member named run_delay
+   rq->rq_sched_info.run_delay += delta;
+                    ^
+kernel/sched/stats.h:13:20: error: struct sched_info
+has no member named pcount
+   rq->rq_sched_info.pcount++;
+                    ^
+kernel/sched/stats.h: In function rq_sched_info_dequeued:
+kernel/sched/stats.h:31:20: error: struct sched_info has
+no member named run_delay
+   rq->rq_sched_info.run_delay += delta;
 
-What I'm going to do is to put the introduction of compat_ptr_ioctl()
-into a never-rebased branch; having e.g. ceph patch done on top of
-it should suffice - it can go into -stable just fine.  Trivially
-backported all the way back, has no prereqs and is guaranteed to
-cause no conflicts, so if any -stable fodder ends up depending upon
-it, there will be no problem whatsoever.  IMO that commit should
-precede everything else in the queue...
+These are because CONFIG_SCHED_INFO is not set, This patch 
+is to select SCHED_INFO before SCHEDSTATS.
 
-Another thing is that I'd fold #8 into #6 - it clearly belongs
-in there.
+Fixes: 8564d6372a7d ("KVM: arm64: Support stolen time reporting via shared structure")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ arch/arm64/kvm/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
+index d8b88e4..3c46eac 100644
+--- a/arch/arm64/kvm/Kconfig
++++ b/arch/arm64/kvm/Kconfig
+@@ -39,6 +39,7 @@ config KVM
+ 	select IRQ_BYPASS_MANAGER
+ 	select HAVE_KVM_IRQ_BYPASS
+ 	select HAVE_KVM_VCPU_RUN_PID_CHANGE
++	select SCHED_INFO
+ 	select SCHEDSTATS
+ 	---help---
+ 	  Support hosting virtualized guest machines.
+-- 
+2.7.4
+
