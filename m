@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5C3AE21CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:32:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6DFE21CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:32:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730061AbfJWRcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 13:32:12 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46786 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbfJWRcH (ORCPT
+        id S1730125AbfJWRcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 13:32:20 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44134 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728832AbfJWRcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:32:07 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n15so12218996wrw.13
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 10:32:06 -0700 (PDT)
+        Wed, 23 Oct 2019 13:32:08 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z9so22988740wrl.11
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 10:32:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Mqk9lnQxsCRkESOqxWXPCiFE5tGlzXJcbsR9dSjU8io=;
-        b=pX1fAvcoTDxwW/VJpbfmFNtdo4fhYGst7dtK6Ws3sqRgZamLy4biv+zY5OdGO4Fq5P
-         uf9m57CdjurB61LX7RzR6sh0KZJakGxXmLfRRkqSIp0oF4V901ZccrxnB4FV+p8xloQn
-         dtI66Q02YRDXTJF5I8+RO4ZkaofmzAW2UHkc6dvK3vANpPOheuq8QSjW9uPMIUh/zFvW
-         ykVzof8CUBheJ32MHr2WwuuTROI3jCVIJHOAF6Z7Tg+0/15AAFv+qwli1hep1yGjiTAq
-         3hZzC9l/fkR6UJt8edKNrVIiVmIXzK0KtecWks3ioBllug7N5WUqOzt7dWImmP+F1wUr
-         HUQA==
+        bh=hsspblqELrHacRAKlAsCml5p6cq229Pl951HlC0nXnY=;
+        b=Ly3KR86kv1OaearP5GU4+t2oco1osmydkYQVlyufCS/z/qfdUhZXs8NFBT0ivxs9P9
+         6xv+pKaCrNBchEAfTT+SegnLSq25ep7C+MMN35GR/Wn4ky+5mEuaFrDybLL3HbjV1cQP
+         99JJHDvwFD0jMqtFjLskdUSMA3XvDn0HCyOiesRMDrj52xQ3+iyNR+CiT/cReIpJBdR3
+         sqas2HjHhKcMrJC61ycS6oxNwo/gi0v9UhAzwtxAzEuuq5dvK9U1RAOQtQnDFv+D2BFn
+         6r92xzHUQzdwDBQIoxa/eLT/1dBVyp1IyOtbP01BzjlyMTyi3iqMfYRfzRkyb8D/zY/Y
+         /baw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Mqk9lnQxsCRkESOqxWXPCiFE5tGlzXJcbsR9dSjU8io=;
-        b=tg5bBW2Afr1vN5iEeWoauD6AUvxSsP+jTu/MHlANAiF7VV0MIQd8/e7SqbMQ0K44Sn
-         N/6CPZyJmXlsA5Nu13ziLA3ucBxFVrXZmu99nOY6fbidxhL/sLZXoNlLisBrPpS+9Jxw
-         m5bTEB/3dF13K49uC8lsxies0DpAEOyX6pTyT0loDJlgawKkL3QhL4YWWNXMpSLdczel
-         m2uWKPPl17Tbo6nJtoJO/F01Ox57omHsEWCNsfwe782pFFdd1S7GAGnT399kSdytl9Fd
-         V4kh3aw9xlQbNZ4ccdeMGgSgUwvjsD9h/7fhyad9Vh8GxSroFmwSHjjsdQYtc18QGnkJ
-         xyaQ==
-X-Gm-Message-State: APjAAAUXo/q9zP+LezgkZA3OZTyJr9JE3KvQf6zCwpisfpO5kURUooNt
-        p8qqMXHs++ijkKnHKHzvSQ9KXQ==
-X-Google-Smtp-Source: APXvYqxfqwTxI1LhbV428InmPQyII9sFlty46FB2NJzu3rlL1NUCyr79qCnwdyyZ+MagHlFDaepVJA==
-X-Received: by 2002:adf:b1d1:: with SMTP id r17mr9509023wra.201.1571851925290;
-        Wed, 23 Oct 2019 10:32:05 -0700 (PDT)
+        bh=hsspblqELrHacRAKlAsCml5p6cq229Pl951HlC0nXnY=;
+        b=U09hr10bmwz2z1g6Uz0kvGRno6A2UdpTIH7HXp6vo0zMBUh4i6K2cV9DKSE0MzkA9A
+         6nK6pO1Ka1R/gOeeC3U6epjPNMLcGL+WbxmA6bj4Og2gmGL+YjPOAga3sqgEuonJVn9i
+         Wg2XdPkZBihGsLRoR4cnROEbPXVsZ3dp0qjuS5VX8URaRTkZRwk1D9RpBsQHJWabd/WZ
+         h/aI/RTq6+9yigkKSlwD1uLegb+rkJlxcNJ7Bq5XO3hueaNHUc1ch3AYyLG+sYThUJSa
+         nDt8acB9pwyMoQdJ1xu/Jz6WKtlPaEGFGRrNQWvMe0ljenH4b7VN7Xq+Ec4QLC+dy2uM
+         Qp7A==
+X-Gm-Message-State: APjAAAXVVBtyUdNCdUk35HQurqalhShnYcguFm5E0nCFBpZjcpUG6mr7
+        IYO2tfexJ2amyPEh5BQK3QEBNLGvUsIMK9Gi
+X-Google-Smtp-Source: APXvYqzBva38eXIkziX3rGTFctUPyfyoGbAyVq1vcmBTKX8zojO7RnDpjPCX8MEBVYzo65FQyKl28Q==
+X-Received: by 2002:a5d:6250:: with SMTP id m16mr9468896wrv.322.1571851926789;
+        Wed, 23 Oct 2019 10:32:06 -0700 (PDT)
 Received: from e123331-lin.home (lfbn-mar-1-643-104.w90-118.abo.wanadoo.fr. [90.118.215.104])
-        by smtp.gmail.com with ESMTPSA id f7sm14900374wre.68.2019.10.23.10.32.03
+        by smtp.gmail.com with ESMTPSA id f7sm14900374wre.68.2019.10.23.10.32.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 10:32:04 -0700 (PDT)
+        Wed, 23 Oct 2019 10:32:06 -0700 (PDT)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] efi/random: treat EFI_RNG_PROTOCOL output as bootloader randomness
-Date:   Wed, 23 Oct 2019 19:31:59 +0200
-Message-Id: <20191023173201.6607-4-ard.biesheuvel@linaro.org>
+Subject: [PATCH 4/5] efi: libstub/arm: account for firmware reserved memory at the base of RAM
+Date:   Wed, 23 Oct 2019 19:32:00 +0200
+Message-Id: <20191023173201.6607-5-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191023173201.6607-1-ard.biesheuvel@linaro.org>
 References: <20191023173201.6607-1-ard.biesheuvel@linaro.org>
@@ -62,41 +61,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dominik Brodowski <linux@dominikbrodowski.net>
+The EFI stubloader for ARM starts out by allocating a 32 MB window
+at the base of RAM, in order to ensure that the decompressor (which
+blindly copies the uncompressed kernel into that window) does not
+overwrite other allocations that are made while running in the context
+of the EFI firmware.
 
-Commit 428826f5358c ("fdt: add support for rng-seed") introduced
-add_bootloader_randomness(), permitting randomness provided by the
-bootloader or firmware to be credited as entropy. However, the fact
-that the UEFI support code was already wired into the RNG subsystem
-via a call to add_device_randomness() was overlooked, and so it was
-not converted at the same time.
+In some cases, (e.g., U-Boot running on the Raspberry Pi 2), this is
+causing boot failures because this initial allocation conflicts with
+a page of reserved memory at the base of RAM that contains the SMP spin
+tables and other pieces of firmware data and which was put there by
+the bootloader under the assumption that the TEXT_OFFSET window right
+below the kernel is only used partially during early boot, and will be
+left alone once the memory reservations are processed and taken into
+account.
 
-Note that this UEFI (v2.4 or newer) feature is currently only
-implemented for EFI stub booting on ARM, and further note that
-CONFIG_RANDOM_TRUST_BOOTLOADER must be enabled, and this should be
-done only if there indeed is sufficient trust in the bootloader
-_and_ its source of randomness.
+So let's permit reserved memory regions to exist in the region starting
+at the base of RAM, and ending at TEXT_OFFSET - 5 * PAGE_SIZE, which is
+the window below the kernel that is not touched by the early boot code.
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-[ardb: update commit log]
+Acked-by: Chester Lin <clin@suse.com>
+Tested-by: Guillaume Gardet <Guillaume.Gardet@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/firmware/efi/efi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/efi/libstub/Makefile     |  1 +
+ drivers/firmware/efi/libstub/arm32-stub.c | 16 +++++++++++++---
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 69f00f7453a3..e98bbf8e56d9 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -554,7 +554,7 @@ int __init efi_config_parse_tables(void *config_tables, int count, int sz,
- 					      sizeof(*seed) + size);
- 			if (seed != NULL) {
- 				pr_notice("seeding entropy pool\n");
--				add_device_randomness(seed->bits, seed->size);
-+				add_bootloader_randomness(seed->bits, seed->size);
- 				early_memunmap(seed, sizeof(*seed) + size);
- 			} else {
- 				pr_err("Could not map UEFI random seed!\n");
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index 0460c7581220..ee0661ddb25b 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -52,6 +52,7 @@ lib-$(CONFIG_EFI_ARMSTUB)	+= arm-stub.o fdt.o string.o random.o \
+ 
+ lib-$(CONFIG_ARM)		+= arm32-stub.o
+ lib-$(CONFIG_ARM64)		+= arm64-stub.o
++CFLAGS_arm32-stub.o		:= -DTEXT_OFFSET=$(TEXT_OFFSET)
+ CFLAGS_arm64-stub.o		:= -DTEXT_OFFSET=$(TEXT_OFFSET)
+ 
+ #
+diff --git a/drivers/firmware/efi/libstub/arm32-stub.c b/drivers/firmware/efi/libstub/arm32-stub.c
+index e8f7aefb6813..ffa242ad0a82 100644
+--- a/drivers/firmware/efi/libstub/arm32-stub.c
++++ b/drivers/firmware/efi/libstub/arm32-stub.c
+@@ -195,6 +195,7 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table,
+ 				 unsigned long dram_base,
+ 				 efi_loaded_image_t *image)
+ {
++	unsigned long kernel_base;
+ 	efi_status_t status;
+ 
+ 	/*
+@@ -204,9 +205,18 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table,
+ 	 * loaded. These assumptions are made by the decompressor,
+ 	 * before any memory map is available.
+ 	 */
+-	dram_base = round_up(dram_base, SZ_128M);
++	kernel_base = round_up(dram_base, SZ_128M);
+ 
+-	status = reserve_kernel_base(sys_table, dram_base, reserve_addr,
++	/*
++	 * Note that some platforms (notably, the Raspberry Pi 2) put
++	 * spin-tables and other pieces of firmware at the base of RAM,
++	 * abusing the fact that the window of TEXT_OFFSET bytes at the
++	 * base of the kernel image is only partially used at the moment.
++	 * (Up to 5 pages are used for the swapper page tables)
++	 */
++	kernel_base += TEXT_OFFSET - 5 * PAGE_SIZE;
++
++	status = reserve_kernel_base(sys_table, kernel_base, reserve_addr,
+ 				     reserve_size);
+ 	if (status != EFI_SUCCESS) {
+ 		pr_efi_err(sys_table, "Unable to allocate memory for uncompressed kernel.\n");
+@@ -220,7 +230,7 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table,
+ 	*image_size = image->image_size;
+ 	status = efi_relocate_kernel(sys_table, image_addr, *image_size,
+ 				     *image_size,
+-				     dram_base + MAX_UNCOMP_KERNEL_SIZE, 0);
++				     kernel_base + MAX_UNCOMP_KERNEL_SIZE, 0);
+ 	if (status != EFI_SUCCESS) {
+ 		pr_efi_err(sys_table, "Failed to relocate kernel.\n");
+ 		efi_free(sys_table, *reserve_size, *reserve_addr);
 -- 
 2.17.1
 
