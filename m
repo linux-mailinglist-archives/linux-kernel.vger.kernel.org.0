@@ -2,87 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A8C2E19DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:21:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A33FDE19E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:22:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405260AbfJWMVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 08:21:35 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:55299 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbfJWMVf (ORCPT
+        id S2405288AbfJWMWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 08:22:06 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36302 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbfJWMWF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:21:35 -0400
-Received: from mail-qk1-f171.google.com ([209.85.222.171]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MFbeI-1iDxaN37DK-00H3xn; Wed, 23 Oct 2019 14:21:33 +0200
-Received: by mail-qk1-f171.google.com with SMTP id u184so19536680qkd.4;
-        Wed, 23 Oct 2019 05:21:33 -0700 (PDT)
-X-Gm-Message-State: APjAAAUF7DXtXcZia4FgF4ZT0ql5Pz8CqHq2LvFyMTLtPihHFBrDKsbV
-        rpcSvWjmmFg7U54+KIGSqLMSfxzgMnysbiR2RvQ=
-X-Google-Smtp-Source: APXvYqywolZK5PhhD1Ci5xyPoP7evjr9xymo+jxueW74UL7uRR5HCmN3nKfxdtCNF+ok3sOC78HxeesW7dFmNGJpN8M=
-X-Received: by 2002:a37:a50f:: with SMTP id o15mr6758290qke.3.1571833292457;
- Wed, 23 Oct 2019 05:21:32 -0700 (PDT)
+        Wed, 23 Oct 2019 08:22:05 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u16so15915478lfq.3;
+        Wed, 23 Oct 2019 05:22:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=xkXwREeBStAj9upykTUmZ3LVJRMdaPsgaMN2GgOTWoU=;
+        b=Aq93TynFyD7BNc6JK918UXM5nETc77RaS0a4HknTzslS09BpYlfNHH3OHh37xOSZFZ
+         54ar6Wsftobeib4B9nCKsCkWjgtUE3nplnwPFZWOEse4YFsm45xYQPzuzUekD/yHEyKa
+         jkrE99+Q+HSjUjAiVDBX7jrpxrrpwCOCDI8WnPUjNDsJh1sV+C5tQy0rStGstuB7PuDx
+         RLvcg2Xmkmu5WIXstrB6mT5PtLEDjeJ40+WrEk/5KLuJp8f9CmFK0yRj/fc+t85LToOl
+         1zWtnPZYtj5u/Yq/rBRSD2e5xYIcxK94u3bb/I4vIdxVZY/4VOiFonPNO2SuYpgGG2q+
+         mVpA==
+X-Gm-Message-State: APjAAAXpo2R4q40/yRexg9TU/xYiwck4l9QPvx8tf8a3PMy1z/hOePfG
+        95plpzKhpKkJ3pvmXruNKUE=
+X-Google-Smtp-Source: APXvYqwM3bQU5wHBNEVk5BRziUfB39YFyB5gjHz3Riyjo7ybB6x2Y/GeZghncf9QAcn7kt/vNPQKfA==
+X-Received: by 2002:a19:ee05:: with SMTP id g5mr10547186lfb.70.1571833323119;
+        Wed, 23 Oct 2019 05:22:03 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id b10sm9381660lji.48.2019.10.23.05.22.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 05:22:02 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 15:21:50 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: bd70528: Add MODULE ALIAS to autoload module
+Message-ID: <20191023122150.GA2524@localhost.localdomain>
 MIME-Version: 1.0
-References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-4-arnd@arndb.de> <20191023100958.GB10630@pi3>
-In-Reply-To: <20191023100958.GB10630@pi3>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 23 Oct 2019 14:21:15 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2YtMV2rSkR2yq5-47BmDKViROrwxaix8MsKxPSvbsz-w@mail.gmail.com>
-Message-ID: <CAK8P3a2YtMV2rSkR2yq5-47BmDKViROrwxaix8MsKxPSvbsz-w@mail.gmail.com>
-Subject: Re: [PATCH 04/36] usb: gadget: s3c-hsudc: remove platform header dependency
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:qymyn6buMSNBWWTrimal6uo7OkrWGoTa0u/NRCPJeLPD6HR10sj
- Zi+nvZyx5srLrMp+d+B1UEUoRRXZr7cT6pqWBszIpZPjXYWQJeCkCm9OlEwfirKaBF38YHr
- pYUgFDlGDEgI89UXGyTiCJoeAevHYNULSIEidHqbrZyk6cKiPQm5UR5xj9qUDtEtZK4LVCn
- Q+6XmOU0b+MjF7n6Gv6RA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:fJiyN2UF8kw=:NOSOrNeGDRdF/UQXcogyXh
- NUGWP8gzBuMM4oyyfHEcx4l1oOHnFm+7IVQY/7ruXauVGR/zJPiNXQYsErcCoIvW8DTQ/HfO7
- FSoCxZZEd4uUbGwkTsCgWyLbfwPKZkkmr+qrlv8Vr6Y430bQOTYzeGf16ktZDNO7kLDqLyPzX
- IY1Y7oMZPx2HJEbTYayJ+hjcki3lP46oj9goK5mF/O6FSz5EwALyhRI2ddYfre37VM0M83Cqr
- x0JgaswHbsgaw9CrthyyOIgau+SK8AjHRSW9Rx073ZcrSndUae2PwVkV93xNRTJ4dlFWLEu5x
- KXDznyR26MGYXqme4IQ67nnZyZLYNRKma3HfYGyN5OD/UpbagewCSz1ifA5Pd9Fw3mYPujcph
- OzX8YL4j/4JOWndq0YaoremoletotE7ogVvJSCzPGmxcA3DbkEhS8T9TovMBQ7fz3Gw9NSOQJ
- DyOuH1sHe79sCfSZDsGSObpzz67iqLX03CdXDdz3iR8VzeDP0zyOQYhjwr9ToCkX7Egovewci
- SjdAMBls9U9rPb0FVlSXgjOkvy2nSibTQ8NEQ4vBeaKtemXQ2phXvDOoJMGeO1Z1+DoKF5iNU
- HK4Fxq2XWbNkqkfL+pDmqrmTJnESsoTK/tclVVCPKk1mAUHEviVBYKYiTyvHvH+xhhq3S6eIf
- e91yOYm/3Us6gKp7Ja5AG7K55lKsu0MDN0cnccPZUc7rTCY6K8BaB2mwEtywPHp5zOwH6qXyt
- uVoKMk9i0xkdqWyfTCR5Dsj3FAZlVoYXU3O1w4AQLH87vcu6pFglaNip12i4QPK1sK3QJju2y
- raOG4RPbpgh6lrMi6OssESTvx+gBLgsfiXovGtqTBaU0Kn4UDi+v+mCIv5yOy79ImXmEEyB7y
- PXxekqAFU1h7EK+lisrQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 12:10 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Thu, Oct 10, 2019 at 10:29:48PM +0200, Arnd Bergmann wrote:
-> > @@ -1188,7 +1139,8 @@ static int s3c_hsudc_start(struct usb_gadget *gadget,
-> >
-> >       pm_runtime_get_sync(hsudc->dev);
-> >
-> > -     s3c_hsudc_init_phy();
-> > +     if (hsudc->pd->phy_init)
-> > +             hsudc->pd->gpio_init();
->
-> Copy paste error - phy_init().
+The bd70528 GPIO driver is probed by MFD driver. Add MODULE_ALIAS
+in order to allow udev to load the module when MFD sub-device cell
+for GPIO is added.
 
-Fixed, thanks!
+Fixes: 18bc64b3aebfa ("gpio: Initial support for ROHM bd70528 GPIO block")
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+I'm not really sure if this is a bug-fix or feature but I guess the
+Fixes tag won't harm, right?
 
-> Are here (and in previous usb gadget patch) any dependencies? If so, I
-> would need an ack to take it through samsung-soc.
+ drivers/gpio/gpio-bd70528.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Yes. This patch should not depend on anything else, but later patches
-in the series depend on it, so I'd like to keep everything together.
+diff --git a/drivers/gpio/gpio-bd70528.c b/drivers/gpio/gpio-bd70528.c
+index fd85605d2dab..8123260a92a2 100644
+--- a/drivers/gpio/gpio-bd70528.c
++++ b/drivers/gpio/gpio-bd70528.c
+@@ -230,3 +230,4 @@ module_platform_driver(bd70528_gpio);
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+ MODULE_DESCRIPTION("BD70528 voltage regulator driver");
+ MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:bd70528-gpio");
+-- 
+2.21.0
 
-      Arnd
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
