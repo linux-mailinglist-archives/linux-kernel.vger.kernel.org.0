@@ -2,100 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10484E1486
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A534E1491
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390442AbfJWImt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:42:49 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:43742 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390272AbfJWImt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:42:49 -0400
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id 11C1CFFCF3A22F217689;
-        Wed, 23 Oct 2019 16:42:45 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 23 Oct 2019 16:42:44 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Wed, 23 Oct 2019 16:42:44 +0800
-Date:   Wed, 23 Oct 2019 16:45:36 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>
-CC:     Chao Yu <chao@kernel.org>, <linux-erofs@lists.ozlabs.org>,
-        Gao Xiang <xiang@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] erofs: support superblock checksum
-Message-ID: <20191023084536.GA16289@architecture4>
-References: <20191022180620.19638-1-pratikshinde320@gmail.com>
- <20191023040557.230886-1-gaoxiang25@huawei.com>
- <f158affb-c5c5-9cbe-d87d-17210bc635fe@huawei.com>
+        id S2390500AbfJWIpl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 23 Oct 2019 04:45:41 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:32180 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390034AbfJWIpk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 04:45:40 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-173-UtFTQs3SPJ-8JSk6ctjl9Q-1; Wed, 23 Oct 2019 09:45:37 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 23 Oct 2019 09:45:36 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 23 Oct 2019 09:45:36 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Yin Fengwei' <fengwei.yin@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "lenb@kernel.org" <lenb@kernel.org>
+Subject: RE: [PATCH v3] ACPI/processor_idle: Remove dummy wait if kernel is in
+ guest mode
+Thread-Topic: [PATCH v3] ACPI/processor_idle: Remove dummy wait if kernel is
+ in guest mode
+Thread-Index: AQHViXZzrjg4+aYFMUePkP2//whb1adn5/Eg
+Date:   Wed, 23 Oct 2019 08:45:36 +0000
+Message-ID: <30ee0a348f624698801691f65eeecd87@AcuMS.aculab.com>
+References: <20191023074945.17016-1-fengwei.yin@intel.com>
+In-Reply-To: <20191023074945.17016-1-fengwei.yin@intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <f158affb-c5c5-9cbe-d87d-17210bc635fe@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme701-chm.china.huawei.com (10.1.199.97) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+X-MC-Unique: UtFTQs3SPJ-8JSk6ctjl9Q-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
+From: Yin Fengwei
+> Sent: 23 October 2019 08:50
 
-On Wed, Oct 23, 2019 at 04:15:29PM +0800, Chao Yu wrote:
-> Hi, Xiang, Pratik,
+
+> In function acpi_idle_do_entry(), an ioport access is used for dummy
+> wait to guarantee hardware behavior. But it could trigger unnecessary
+> vmexit if kernel is running as guest in virtualization environtment.
 > 
-> On 2019/10/23 12:05, Gao Xiang wrote:
-
-<snip>
-
-> >  }
-> >  
-> > +static int erofs_superblock_csum_verify(struct super_block *sb, void *sbdata)
-> > +{
-> > +	struct erofs_super_block *dsb;
-> > +	u32 expected_crc, nblocks, crc;
-> > +	void *kaddr;
-> > +	struct page *page;
-> > +	int i;
-> > +
-> > +	dsb = kmemdup(sbdata + EROFS_SUPER_OFFSET,
-> > +		      EROFS_BLKSIZ - EROFS_SUPER_OFFSET, GFP_KERNEL);
-> > +	if (!dsb)
-> > +		return -ENOMEM;
-> > +
-> > +	expected_crc = le32_to_cpu(dsb->checksum);
-> > +	nblocks = le32_to_cpu(dsb->chksum_blocks);
+> If it's in virtualization environment, the deeper C state enter
+> operation (inb()) will trap to hyervisor. It's not needed to do
+> dummy wait after the inb() call. So we remove the dummy io port
+> access to avoid unnecessary VMexit.
 > 
-> Now, we try to use nblocks's value before checking its validation, I guess fuzz
-> test can easily make the value extreme larger, result in checking latter blocks
-> unnecessarily.
+> We keep dummy io port access to maintain timing for native environment.
 > 
-> IMO, we'd better
-> 1. check validation of superblock to make sure all fields in sb are valid
-> 2. use .nblocks to count and check payload blocks following sb
+> Signed-off-by: Yin Fengwei <fengwei.yin@intel.com>
+> ---
+> ChangeLog:
+> v2 -> v3:
+>  - Remove dummy io port access totally for virtualization env.
+> 
+> v1 -> v2:
+>  - Use ndelay instead of dead loop for dummy delay.
+> 
+>  drivers/acpi/processor_idle.c | 36 ++++++++++++++++++++++++++++++++---
+>  1 file changed, 33 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+> index ed56c6d20b08..0c4a97dd6917 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -58,6 +58,17 @@ struct cpuidle_driver acpi_idle_driver = {
+>  static
+>  DEFINE_PER_CPU(struct acpi_processor_cx * [CPUIDLE_STATE_MAX], acpi_cstate);
+> 
+> +static void (*dummy_wait)(u64 address);
+> +
+> +static void default_dummy_wait(u64 address)
+> +{
+> +	inl(address);
+> +}
+> +
+> +static void default_noop_wait(u64 address)
+> +{
+> +}
+> +
 
-That is quite a good point. :-)
+Overengineered...
+Just add:
 
-My first thought is to check the following payloads of sb (e.g, some per-fs
-metadata should be checked at mount time together. or for small images, check
-the whole image at the mount time) as well since if we introduce a new feature
-to some kernel version, forward compatibility needs to be considered. So it's
-better to make proper scalability, for this case, we have some choices:
- 1) limit `chksum_blocks' upbound at runtime (e.g. refuse >= 65536 blocks,
-    totally 256M.)
- 2) just get rid of the whole `chksum_blocks' mess and checksum the first 4k
-    at all, don't consider any latter scalability.
+static void wait_for_freeze(void)
+{
+#ifdef	CONFIG_X86
+	/* No delay is needed if we are a guest */
+	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
+		return;
+#endif
+	/* Dummy wait op - must do something useless after P_LVL2 read
+	   because chipsets cannot guarantee that STPCLK# signal
+	   gets asserted in time to freeze execution properly. */
+	inl(acpi_gbl_FADT.xpm_timer_block.address);
+}
 
-Some perferred idea about this? I plan to release erofs-utils v1.0 tomorrow
-and hold up this feature for the next erofs-utils release, but I think we can
-get it ready for v5.5 since it is not quite complex feature...
+and use it to replace the inl().
 
-Thanks,
-Gao Xiang
+...
+> +#ifdef	CONFIG_X86
+> +	/* For x86, if we are running in guest, we don't need extra
+> +	 * access ioport as dummy wait.
+> +	 */
+> +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR)) {
+> +		pr_err("We are in virtual env");
+> +		dummy_wait = default_noop_wait;
+> +	} else {
+> +		pr_err("We are not in virtual env");
+> +	}
+> +#endif
+
+WTF are the pr_err() for???
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
