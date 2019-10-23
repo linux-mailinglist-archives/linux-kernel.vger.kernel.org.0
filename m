@@ -2,89 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F7D5E154A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B91C6E1594
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:17:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390740AbfJWJHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 05:07:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38794 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390394AbfJWJHU (ORCPT
+        id S2390877AbfJWJQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 05:16:57 -0400
+Received: from smtp121.ord1d.emailsrvr.com ([184.106.54.121]:47860 "EHLO
+        smtp121.ord1d.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390604AbfJWJQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 05:07:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oKDgB7O1I09/oCMUnXpYyhb3gKOQx5fRjqbW0BZ+hv4=; b=dk9z3IKSwNhchvnAwS0ryAm/L
-        hU1dpr1BfYsJE1ob+7o5Azm4TC26qg+GhHJSwZ1hyBlwWvWXT0pZYhZgK5/3v0xuXsL6dua+qcG1O
-        kuHT+3zfd6JZaJLZrT49J/ERk/5c92Zy5HdIroeIVXJTwkWdcZyVpD4QpJGbAIlkAYdNldAKEtPtP
-        FDHgK75+livj2MmlpjR+mi/ovDD4yhlFUDJ1e38ZuwxcE0fRyD3ganRaBvKCitMCbJ/q/Xt3Ur9QE
-        6Z/1aaTVfIw2/6WJh90N3K90B8TFGV5UuMPvlAiwLhIjlMDuI0iLxHRSdah2PGooybOgl9skQGYqx
-        tOy35+XnQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNCbn-0007eU-HC; Wed, 23 Oct 2019 09:07:11 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 37C76300C3C;
-        Wed, 23 Oct 2019 11:06:10 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 158C42B1C5851; Wed, 23 Oct 2019 11:07:08 +0200 (CEST)
-Date:   Wed, 23 Oct 2019 11:07:08 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, jeyu@kernel.org
-Subject: Re: [PATCH v4 15/16] module: Move where we mark modules RO,X
-Message-ID: <20191023090708.GQ1817@hirez.programming.kicks-ass.net>
-References: <20191018073525.768931536@infradead.org>
- <20191018074634.801435443@infradead.org>
- <20191021222110.49044eb5@oasis.local.home>
- <20191022202401.GO1817@hirez.programming.kicks-ass.net>
- <20191022164023.2102fb1a@gandalf.local.home>
+        Wed, 23 Oct 2019 05:16:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+        s=20190130-41we5z8j; t=1571821643;
+        bh=evRO7seMrvDvO+KFOLaqik2PBghLNKezlXn4gdXjNCs=;
+        h=Subject:To:From:Date:From;
+        b=JsFt4YeAz1Pyo4qGFDuIL6sqJLAfaMxuUIa1O88PmBo0mCtlatJsF03eyzPE3WGcy
+         ffvxsEOeMJ6MZtHkhOG8iJX8aYbbRG5axGvWnJOtquMh/Nn+8NElgnc2lKHsxVI41e
+         S0V1FsabmGukHnB1G5bULgQ4slx1TWP9kI0ahY4g=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp16.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id C1E39400A9;
+        Wed, 23 Oct 2019 05:07:22 -0400 (EDT)
+X-Sender-Id: abbotti@mev.co.uk
+Received: from [10.0.0.173] (remote.quintadena.com [81.133.34.160])
+        (using TLSv1.2 with cipher AES128-SHA)
+        by 0.0.0.0:465 (trex/5.7.12);
+        Wed, 23 Oct 2019 05:07:23 -0400
+Subject: Re: [PATCH -next] staging: comedi: remove unused variable
+ 'route_table_size'
+To:     YueHaibing <yuehaibing@huawei.com>, hsweeten@visionengravers.com,
+        gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20191023075206.33088-1-yuehaibing@huawei.com>
+From:   Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+Message-ID: <516d7146-fe16-6d8e-9812-038280c256df@mev.co.uk>
+Date:   Wed, 23 Oct 2019 10:07:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022164023.2102fb1a@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191023075206.33088-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 04:40:23PM -0400, Steven Rostedt wrote:
-> On Tue, 22 Oct 2019 22:24:01 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-
-> > I'm not particularly proud of the "__function__" hack, but it works :/ I
+On 23/10/2019 08:52, YueHaibing wrote:
+> drivers/staging/comedi/drivers/ni_routes.c:52:21: warning:
+>   route_table_size defined but not used [-Wunused-const-variable=]
 > 
-> If anything, that should be defined as a macro:
+> It is never used since introduction.
 > 
-> #define TRACE_EVENT_FIELD_SPECIAL "__trace_event_special__"
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>   drivers/staging/comedi/drivers/ni_routes.c | 2 --
+>   1 file changed, 2 deletions(-)
 > 
-> And use that to test?
-
-Possibly, also, we should probably start with a character that C doesn't
-allow in typenames, like '$'.
-
-That way we can have a much shorter string and still be certain it will
-never conflict; "$func" comes to mind.
-
-> > couldn't come up with anything else for [uk]probes which seem to have
-> > dynamic fields and if we're having it then syscall_enter can also make
-> > use of it, the syscall_metadata crud was going to be ugly otherwise.
-> > 
-> > (also, win on LOC)
+> diff --git a/drivers/staging/comedi/drivers/ni_routes.c b/drivers/staging/comedi/drivers/ni_routes.c
+> index eb61494..673d732 100644
+> --- a/drivers/staging/comedi/drivers/ni_routes.c
+> +++ b/drivers/staging/comedi/drivers/ni_routes.c
+> @@ -49,8 +49,6 @@
+>   /* Helper for accessing data. */
+>   #define RVi(table, src, dest)	((table)[(dest) * NI_NUM_NAMES + (src)])
+>   
+> -static const size_t route_table_size = NI_NUM_NAMES * NI_NUM_NAMES;
+> -
+>   /*
+>    * Find the proper route_values and ni_device_routes tables for this particular
+>    * device.
 > 
-> I'm more worried about text/data bloat. But if anything, we may be able
-> to deal with that later.
 
-We use almost the exact same data the function would've used, except we
-don't have the actual function. I just don't see how it can be more.
+Looks good, thanks!
+
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
