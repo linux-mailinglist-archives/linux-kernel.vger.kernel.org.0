@@ -2,836 +2,586 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 276A9E1C8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:28:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44655E1BC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391986AbfJWN1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 09:27:40 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:55030 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390077AbfJWN1k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:27:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571837258;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+QwaX1cTcMJpIPw4pGz+8aksK5AS2TfxLcxj423/inA=;
-        b=RtcnXXWdCjI3vsU+BeThoCdeHnj10NwtiaqB/zOq/QtYojy4Ik5vOVGGPW1BVkszoQyPIT
-        kIud1f6U6hS7TEXraXUh3gT79LIG87esWYBXN/aQK04mrRmTLQPh/+hmi/9GHWqG/i63AC
-        LmokQ9IylgLsG69tckJSC8g3KhPRM9w=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-41-8WBxIzTIPzGprfzevcSLWw-1; Wed, 23 Oct 2019 09:27:34 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6B77D801E66;
-        Wed, 23 Oct 2019 13:27:30 +0000 (UTC)
-Received: from jason-ThinkPad-X1-Carbon-6th.redhat.com (ovpn-12-126.pek2.redhat.com [10.72.12.126])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D733C60126;
-        Wed, 23 Oct 2019 13:25:34 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        cohuck@redhat.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
-        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
-        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
-        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
-        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
-        stefanha@redhat.com, Jason Wang <jasowang@redhat.com>
-Subject: [PATCH V5 6/6] docs: sample driver to demonstrate how to implement virtio-mdev framework
-Date:   Wed, 23 Oct 2019 21:07:52 +0800
-Message-Id: <20191023130752.18980-7-jasowang@redhat.com>
-In-Reply-To: <20191023130752.18980-1-jasowang@redhat.com>
-References: <20191023130752.18980-1-jasowang@redhat.com>
+        id S2405588AbfJWNJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:09:38 -0400
+Received: from mga18.intel.com ([134.134.136.126]:18589 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405579AbfJWNJh (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 09:09:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 06:09:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
+   d="scan'208";a="196772235"
+Received: from shilongz-mobl.ccr.corp.intel.com (HELO [10.254.210.50]) ([10.254.210.50])
+  by fmsmga008.fm.intel.com with ESMTP; 23 Oct 2019 06:09:34 -0700
+Subject: Re: [PATCH v3 3/5] perf report: Sort by sampled cycles percent per
+ block for stdio
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <20191022080710.6491-1-yao.jin@linux.intel.com>
+ <20191022080710.6491-4-yao.jin@linux.intel.com>
+ <20191023113649.GO22919@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <32cbd687-9089-91ba-a2de-d9784cc37a20@linux.intel.com>
+Date:   Wed, 23 Oct 2019 21:09:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: 8WBxIzTIPzGprfzevcSLWw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191023113649.GO22919@krava>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This sample driver creates mdev device that simulate virtio net device
-over virtio mdev transport. The device is implemented through vringh
-and workqueue. A device specific dma ops is to make sure HVA is used
-directly as the IOVA. This should be sufficient for kernel virtio
-driver to work.
 
-Only 'virtio' type is supported right now. I plan to add 'vhost' type
-on top which requires some virtual IOMMU implemented in this sample
-driver.
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- MAINTAINERS                |   1 +
- samples/Kconfig            |   7 +
- samples/vfio-mdev/Makefile |   1 +
- samples/vfio-mdev/mvnet.c  | 691 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 700 insertions(+)
- create mode 100644 samples/vfio-mdev/mvnet.c
+On 10/23/2019 7:36 PM, Jiri Olsa wrote:
+> On Tue, Oct 22, 2019 at 04:07:08PM +0800, Jin Yao wrote:
+> 
+> SNIP
+> 
+>> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+>> index cdb436d6e11f..44aed40e9071 100644
+>> --- a/tools/perf/builtin-report.c
+>> +++ b/tools/perf/builtin-report.c
+>> @@ -51,6 +51,7 @@
+>>   #include "util/util.h" // perf_tip()
+>>   #include "ui/ui.h"
+>>   #include "ui/progress.h"
+>> +#include "util/block-info.h"
+>>   
+>>   #include <dlfcn.h>
+>>   #include <errno.h>
+>> @@ -96,10 +97,64 @@ struct report {
+>>   	float			min_percent;
+>>   	u64			nr_entries;
+>>   	u64			queue_size;
+>> +	u64			cycles_count;
+>> +	u64			block_cycles;
+>>   	int			socket_filter;
+>>   	DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
+>>   	struct branch_type_stat	brtype_stat;
+>>   	bool			symbol_ipc;
+>> +	bool			total_cycles;
+>> +	struct block_hist	block_hist;
+>> +};
+> 
+> as I said please move all below into util/block_info.c
+> 
+> thanks,
+> jirka
+> 
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9e10ae9c2b4d..8b17927a81fd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17248,6 +17248,7 @@ F:=09include/linux/virtio*.h
- F:=09include/uapi/linux/virtio_*.h
- F:=09drivers/crypto/virtio/
- F:=09mm/balloon_compaction.c
-+F:=09samples/vfio-mdev/mvnet.c
-=20
- VIRTIO BLOCK AND SCSI DRIVERS
- M:=09"Michael S. Tsirkin" <mst@redhat.com>
-diff --git a/samples/Kconfig b/samples/Kconfig
-index c8dacb4dda80..a1a1ca2c00b7 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -131,6 +131,13 @@ config SAMPLE_VFIO_MDEV_MDPY
- =09  mediated device.  It is a simple framebuffer and supports
- =09  the region display interface (VFIO_GFX_PLANE_TYPE_REGION).
-=20
-+config SAMPLE_VIRTIO_MDEV_NET
-+        tristate "Build virtio mdev net example mediated device sample cod=
-e -- loadable modules only"
-+=09depends on VIRTIO_MDEV_DEVICE && VHOST_RING && m
-+=09help
-+=09  Build a networking sample device for use as a virtio
-+=09  mediated device.
-+
- config SAMPLE_VFIO_MDEV_MDPY_FB
- =09tristate "Build VFIO mdpy example guest fbdev driver -- loadable module=
- only"
- =09depends on FB && m
-diff --git a/samples/vfio-mdev/Makefile b/samples/vfio-mdev/Makefile
-index 10d179c4fdeb..f34af90ed0a0 100644
---- a/samples/vfio-mdev/Makefile
-+++ b/samples/vfio-mdev/Makefile
-@@ -3,3 +3,4 @@ obj-$(CONFIG_SAMPLE_VFIO_MDEV_MTTY) +=3D mtty.o
- obj-$(CONFIG_SAMPLE_VFIO_MDEV_MDPY) +=3D mdpy.o
- obj-$(CONFIG_SAMPLE_VFIO_MDEV_MDPY_FB) +=3D mdpy-fb.o
- obj-$(CONFIG_SAMPLE_VFIO_MDEV_MBOCHS) +=3D mbochs.o
-+obj-$(CONFIG_SAMPLE_VIRTIO_MDEV_NET) +=3D mvnet.o
-diff --git a/samples/vfio-mdev/mvnet.c b/samples/vfio-mdev/mvnet.c
-new file mode 100644
-index 000000000000..a2a902d59fb7
---- /dev/null
-+++ b/samples/vfio-mdev/mvnet.c
-@@ -0,0 +1,691 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Mediated virtual virtio-net device driver.
-+ *
-+ * Copyright (c) 2019, Red Hat Inc. All rights reserved.
-+ *     Author: Jason Wang <jasowang@redhat.com>
-+ *
-+ * Sample driver that creates mdev device that simulates ethernet loopback
-+ * device.
-+ *
-+ * Usage:
-+ *
-+ * # modprobe virtio_mdev
-+ * # modprobe mvnet
-+ * # cd /sys/devices/virtual/mvnet/mvnet/mdev_supported_types/mvnet-virtio
-+ * # echo "83b8f4f2-509f-382f-3c1e-e6bfe0fa1001" > ./create
-+ * # cd devices/83b8f4f2-509f-382f-3c1e-e6bfe0fa1001
-+ * # ls -d virtio0
-+ * virtio0
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/fs.h>
-+#include <linux/poll.h>
-+#include <linux/slab.h>
-+#include <linux/sched.h>
-+#include <linux/wait.h>
-+#include <linux/uuid.h>
-+#include <linux/iommu.h>
-+#include <linux/sysfs.h>
-+#include <linux/file.h>
-+#include <linux/etherdevice.h>
-+#include <linux/mdev.h>
-+#include <linux/vringh.h>
-+#include <linux/virtio_mdev_ops.h>
-+#include <uapi/linux/virtio_config.h>
-+#include <uapi/linux/virtio_net.h>
-+
-+#define VERSION_STRING  "0.1"
-+#define DRIVER_AUTHOR   "Red Hat Corporation"
-+
-+#define MVNET_CLASS_NAME "mvnet"
-+#define MVNET_NAME       "mvnet"
-+
-+/*
-+ * Global Structures
-+ */
-+
-+static struct mvnet_dev {
-+=09struct class=09*vd_class;
-+=09struct idr=09vd_idr;
-+=09struct device=09dev;
-+} mvnet_dev;
-+
-+struct mvnet_virtqueue {
-+=09struct vringh vring;
-+=09struct vringh_kiov iov;
-+=09unsigned short head;
-+=09bool ready;
-+=09u64 desc_addr;
-+=09u64 device_addr;
-+=09u64 driver_addr;
-+=09u32 num;
-+=09void *private;
-+=09irqreturn_t (*cb)(void *data);
-+};
-+
-+#define MVNET_QUEUE_ALIGN PAGE_SIZE
-+#define MVNET_QUEUE_MAX 256
-+#define MVNET_DEVICE_ID 0x1
-+#define MVNET_VENDOR_ID 0
-+
-+u64 mvnet_features =3D (1ULL << VIRTIO_F_ANY_LAYOUT) |
-+=09=09     (1ULL << VIRTIO_F_VERSION_1) |
-+=09=09     (1ULL << VIRTIO_F_IOMMU_PLATFORM);
-+
-+/* State of each mdev device */
-+struct mvnet_state {
-+=09struct mvnet_virtqueue vqs[2];
-+=09struct work_struct work;
-+=09spinlock_t lock;
-+=09struct mdev_device *mdev;
-+=09struct virtio_net_config config;
-+=09void *buffer;
-+=09u32 status;
-+=09u32 generation;
-+=09u64 features;
-+=09struct list_head next;
-+};
-+
-+static struct mutex mdev_list_lock;
-+static struct list_head mdev_devices_list;
-+
-+static void mvnet_queue_ready(struct mvnet_state *mvnet, unsigned int idx)
-+{
-+=09struct mvnet_virtqueue *vq =3D &mvnet->vqs[idx];
-+=09int ret;
-+
-+=09ret =3D vringh_init_kern(&vq->vring, mvnet_features, MVNET_QUEUE_MAX,
-+=09=09=09       false, (struct vring_desc *)vq->desc_addr,
-+=09=09=09       (struct vring_avail *)vq->driver_addr,
-+=09=09=09       (struct vring_used *)vq->device_addr);
-+}
-+
-+static void mvnet_vq_reset(struct mvnet_virtqueue *vq)
-+{
-+=09vq->ready =3D 0;
-+=09vq->desc_addr =3D 0;
-+=09vq->driver_addr =3D 0;
-+=09vq->device_addr =3D 0;
-+=09vq->cb =3D NULL;
-+=09vq->private =3D NULL;
-+=09vringh_init_kern(&vq->vring, mvnet_features, MVNET_QUEUE_MAX,
-+=09=09=09false, 0, 0, 0);
-+}
-+
-+static void mvnet_reset(struct mvnet_state *mvnet)
-+{
-+=09int i;
-+
-+=09for (i =3D 0; i < 2; i++)
-+=09=09mvnet_vq_reset(&mvnet->vqs[i]);
-+
-+=09mvnet->features =3D 0;
-+=09mvnet->status =3D 0;
-+=09++mvnet->generation;
-+}
-+
-+static void mvnet_work(struct work_struct *work)
-+{
-+=09struct mvnet_state *mvnet =3D container_of(work, struct
-+=09=09=09=09=09=09 mvnet_state, work);
-+=09struct mvnet_virtqueue *txq =3D &mvnet->vqs[1];
-+=09struct mvnet_virtqueue *rxq =3D &mvnet->vqs[0];
-+=09size_t read, write, total_write;
-+=09int err;
-+=09int pkts =3D 0;
-+
-+=09spin_lock(&mvnet->lock);
-+
-+=09if (!txq->ready || !rxq->ready)
-+=09=09goto out;
-+
-+=09while (true) {
-+=09=09total_write =3D 0;
-+=09=09err =3D vringh_getdesc_kern(&txq->vring, &txq->iov, NULL,
-+=09=09=09=09=09  &txq->head, GFP_ATOMIC);
-+=09=09if (err <=3D 0)
-+=09=09=09break;
-+
-+=09=09err =3D vringh_getdesc_kern(&rxq->vring, NULL, &rxq->iov,
-+=09=09=09=09=09  &rxq->head, GFP_ATOMIC);
-+=09=09if (err <=3D 0) {
-+=09=09=09vringh_complete_kern(&txq->vring, txq->head, 0);
-+=09=09=09break;
-+=09=09}
-+
-+=09=09while (true) {
-+=09=09=09read =3D vringh_iov_pull_kern(&txq->iov, mvnet->buffer,
-+=09=09=09=09=09=09    PAGE_SIZE);
-+=09=09=09if (read <=3D 0)
-+=09=09=09=09break;
-+
-+=09=09=09write =3D vringh_iov_push_kern(&rxq->iov, mvnet->buffer,
-+=09=09=09=09=09=09     read);
-+=09=09=09if (write <=3D 0)
-+=09=09=09=09break;
-+
-+=09=09=09total_write +=3D write;
-+=09=09}
-+
-+=09=09/* Make sure data is wrote before advancing index */
-+=09=09smp_wmb();
-+
-+=09=09vringh_complete_kern(&txq->vring, txq->head, 0);
-+=09=09vringh_complete_kern(&rxq->vring, rxq->head, total_write);
-+
-+=09=09/* Make sure used is visible before rasing the interrupt. */
-+=09=09smp_wmb();
-+
-+=09=09local_bh_disable();
-+=09=09if (txq->cb)
-+=09=09=09txq->cb(txq->private);
-+=09=09if (rxq->cb)
-+=09=09=09rxq->cb(rxq->private);
-+=09=09local_bh_enable();
-+
-+=09=09if (++pkts > 4) {
-+=09=09=09schedule_work(&mvnet->work);
-+=09=09=09goto out;
-+=09=09}
-+=09}
-+
-+out:
-+=09spin_unlock(&mvnet->lock);
-+}
-+
-+static dma_addr_t mvnet_map_page(struct device *dev, struct page *page,
-+=09=09=09=09 unsigned long offset, size_t size,
-+=09=09=09=09 enum dma_data_direction dir,
-+=09=09=09=09 unsigned long attrs)
-+{
-+=09/* Vringh can only use HVA */
-+=09return (dma_addr_t)(page_address(page) + offset);
-+}
-+
-+static void mvnet_unmap_page(struct device *dev, dma_addr_t dma_addr,
-+=09=09=09     size_t size, enum dma_data_direction dir,
-+=09=09=09     unsigned long attrs)
-+{
-+}
-+
-+static void *mvnet_alloc_coherent(struct device *dev, size_t size,
-+=09=09=09=09  dma_addr_t *dma_addr, gfp_t flag,
-+=09=09=09=09  unsigned long attrs)
-+{
-+=09void *addr =3D kmalloc(size, flag);
-+
-+=09if (addr =3D=3D NULL)
-+=09=09*dma_addr =3D DMA_MAPPING_ERROR;
-+=09else
-+=09=09*dma_addr =3D (dma_addr_t) addr;
-+
-+=09return addr;
-+}
-+
-+static void mvnet_free_coherent(struct device *dev, size_t size,
-+=09=09=09=09void *vaddr, dma_addr_t dma_addr,
-+=09=09=09=09unsigned long attrs)
-+{
-+=09kfree((void *)dma_addr);
-+}
-+
-+static const struct dma_map_ops mvnet_dma_ops =3D {
-+=09.map_page =3D mvnet_map_page,
-+=09.unmap_page =3D mvnet_unmap_page,
-+=09.alloc =3D mvnet_alloc_coherent,
-+=09.free =3D mvnet_free_coherent,
-+};
-+
-+static const struct virtio_mdev_device_ops virtio_mdev_ops;
-+
-+static int mvnet_create(struct kobject *kobj, struct mdev_device *mdev)
-+{
-+=09struct mvnet_state *mvnet;
-+=09struct virtio_net_config *config;
-+=09struct device *dev =3D mdev_dev(mdev);
-+
-+=09if (!mdev)
-+=09=09return -EINVAL;
-+
-+=09mvnet =3D kzalloc(sizeof(struct mvnet_state), GFP_KERNEL);
-+=09if (mvnet =3D=3D NULL)
-+=09=09return -ENOMEM;
-+
-+=09mvnet->buffer =3D kmalloc(PAGE_SIZE, GFP_KERNEL);
-+=09if (!mvnet->buffer) {
-+=09=09kfree(mvnet);
-+=09=09return -ENOMEM;
-+=09}
-+
-+=09config =3D &mvnet->config;
-+=09config->mtu =3D 1500;
-+=09config->status =3D VIRTIO_NET_S_LINK_UP;
-+=09eth_random_addr(config->mac);
-+
-+=09INIT_WORK(&mvnet->work, mvnet_work);
-+
-+=09spin_lock_init(&mvnet->lock);
-+=09mvnet->mdev =3D mdev;
-+=09mdev_set_drvdata(mdev, mvnet);
-+
-+=09mutex_lock(&mdev_list_lock);
-+=09list_add(&mvnet->next, &mdev_devices_list);
-+=09mutex_unlock(&mdev_list_lock);
-+
-+=09dev->coherent_dma_mask =3D DMA_BIT_MASK(64);
-+=09set_dma_ops(dev, &mvnet_dma_ops);
-+
-+=09mdev_set_virtio_ops(mdev, &virtio_mdev_ops);
-+
-+=09return 0;
-+}
-+
-+static int mvnet_remove(struct mdev_device *mdev)
-+{
-+=09struct mvnet_state *mds, *tmp_mds;
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+=09int ret =3D -EINVAL;
-+
-+=09mutex_lock(&mdev_list_lock);
-+=09list_for_each_entry_safe(mds, tmp_mds, &mdev_devices_list, next) {
-+=09=09if (mvnet =3D=3D mds) {
-+=09=09=09list_del(&mvnet->next);
-+=09=09=09mdev_set_drvdata(mdev, NULL);
-+=09=09=09kfree(mvnet->buffer);
-+=09=09=09kfree(mvnet);
-+=09=09=09ret =3D 0;
-+=09=09=09break;
-+=09=09}
-+=09}
-+=09mutex_unlock(&mdev_list_lock);
-+
-+=09return ret;
-+}
-+
-+static ssize_t
-+sample_mvnet_dev_show(struct device *dev, struct device_attribute *attr,
-+=09=09     char *buf)
-+{
-+=09if (mdev_from_dev(dev))
-+=09=09return sprintf(buf, "This is MDEV %s\n", dev_name(dev));
-+
-+=09return sprintf(buf, "\n");
-+}
-+
-+static DEVICE_ATTR_RO(sample_mvnet_dev);
-+
-+static struct attribute *mvnet_dev_attrs[] =3D {
-+=09&dev_attr_sample_mvnet_dev.attr,
-+=09NULL,
-+};
-+
-+static const struct attribute_group mvnet_dev_group =3D {
-+=09.name  =3D "mvnet_dev",
-+=09.attrs =3D mvnet_dev_attrs,
-+};
-+
-+static const struct attribute_group *mvnet_dev_groups[] =3D {
-+=09&mvnet_dev_group,
-+=09NULL,
-+};
-+
-+static ssize_t
-+sample_mdev_dev_show(struct device *dev, struct device_attribute *attr,
-+=09=09     char *buf)
-+{
-+=09if (mdev_from_dev(dev))
-+=09=09return sprintf(buf, "This is MDEV %s\n", dev_name(dev));
-+
-+=09return sprintf(buf, "\n");
-+}
-+
-+static DEVICE_ATTR_RO(sample_mdev_dev);
-+
-+static struct attribute *mdev_dev_attrs[] =3D {
-+=09&dev_attr_sample_mdev_dev.attr,
-+=09NULL,
-+};
-+
-+static const struct attribute_group mdev_dev_group =3D {
-+=09.name  =3D "vendor",
-+=09.attrs =3D mdev_dev_attrs,
-+};
-+
-+static const struct attribute_group *mdev_dev_groups[] =3D {
-+=09&mdev_dev_group,
-+=09NULL,
-+};
-+
-+#define MVNET_STRING_LEN 16
-+
-+static ssize_t
-+name_show(struct kobject *kobj, struct device *dev, char *buf)
-+{
-+=09char name[MVNET_STRING_LEN];
-+=09const char *name_str =3D "virtio-net";
-+
-+=09snprintf(name, MVNET_STRING_LEN, "%s", dev_driver_string(dev));
-+=09if (!strcmp(kobj->name, name))
-+=09=09return sprintf(buf, "%s\n", name_str);
-+
-+=09return -EINVAL;
-+}
-+
-+static MDEV_TYPE_ATTR_RO(name);
-+
-+static ssize_t
-+available_instances_show(struct kobject *kobj, struct device *dev, char *b=
-uf)
-+{
-+=09return sprintf(buf, "%d\n", INT_MAX);
-+}
-+
-+static MDEV_TYPE_ATTR_RO(available_instances);
-+
-+static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
-+=09=09=09       char *buf)
-+{
-+=09return sprintf(buf, "%s\n", VIRTIO_MDEV_DEVICE_API_STRING);
-+}
-+
-+static MDEV_TYPE_ATTR_RO(device_api);
-+
-+static struct attribute *mdev_types_attrs[] =3D {
-+=09&mdev_type_attr_name.attr,
-+=09&mdev_type_attr_device_api.attr,
-+=09&mdev_type_attr_available_instances.attr,
-+=09NULL,
-+};
-+
-+static struct attribute_group mdev_type_group =3D {
-+=09.name  =3D "virtio",
-+=09.attrs =3D mdev_types_attrs,
-+};
-+
-+/* TBD: "vhost" type */
-+
-+static struct attribute_group *mdev_type_groups[] =3D {
-+=09&mdev_type_group,
-+=09NULL,
-+};
-+
-+static int mvnet_set_vq_address(struct mdev_device *mdev, u16 idx,
-+=09=09=09=09u64 desc_area, u64 driver_area, u64 device_area)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+=09struct mvnet_virtqueue *vq =3D &mvnet->vqs[idx];
-+
-+=09vq->desc_addr =3D desc_area;
-+=09vq->driver_addr =3D driver_area;
-+=09vq->device_addr =3D device_area;
-+
-+=09return 0;
-+}
-+
-+static void mvnet_set_vq_num(struct mdev_device *mdev, u16 idx, u32 num)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+=09struct mvnet_virtqueue *vq =3D &mvnet->vqs[idx];
-+
-+=09vq->num =3D num;
-+}
-+
-+static void mvnet_kick_vq(struct mdev_device *mdev, u16 idx)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+=09struct mvnet_virtqueue *vq =3D &mvnet->vqs[idx];
-+
-+=09if (vq->ready)
-+=09=09schedule_work(&mvnet->work);
-+}
-+
-+static void mvnet_set_vq_cb(struct mdev_device *mdev, u16 idx,
-+=09=09=09    struct virtio_mdev_callback *cb)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+=09struct mvnet_virtqueue *vq =3D &mvnet->vqs[idx];
-+
-+=09vq->cb =3D cb->callback;
-+=09vq->private =3D cb->private;
-+}
-+
-+static void mvnet_set_vq_ready(struct mdev_device *mdev, u16 idx, bool rea=
-dy)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+=09struct mvnet_virtqueue *vq =3D &mvnet->vqs[idx];
-+
-+=09spin_lock(&mvnet->lock);
-+=09vq->ready =3D ready;
-+=09if (vq->ready)
-+=09=09mvnet_queue_ready(mvnet, idx);
-+=09spin_unlock(&mvnet->lock);
-+}
-+
-+static bool mvnet_get_vq_ready(struct mdev_device *mdev, u16 idx)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+=09struct mvnet_virtqueue *vq =3D &mvnet->vqs[idx];
-+
-+=09return vq->ready;
-+}
-+
-+static int mvnet_set_vq_state(struct mdev_device *mdev, u16 idx, u64 state=
-)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+=09struct mvnet_virtqueue *vq =3D &mvnet->vqs[idx];
-+=09struct vringh *vrh =3D &vq->vring;
-+
-+=09spin_lock(&mvnet->lock);
-+=09vrh->last_avail_idx =3D state;
-+=09spin_unlock(&mvnet->lock);
-+
-+=09return 0;
-+}
-+
-+static u64 mvnet_get_vq_state(struct mdev_device *mdev, u16 idx)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+=09struct mvnet_virtqueue *vq =3D &mvnet->vqs[idx];
-+=09struct vringh *vrh =3D &vq->vring;
-+
-+=09return vrh->last_avail_idx;
-+}
-+
-+static u16 mvnet_get_vq_align(struct mdev_device *mdev)
-+{
-+=09return MVNET_QUEUE_ALIGN;
-+}
-+
-+static u64 mvnet_get_features(struct mdev_device *mdev)
-+{
-+=09return mvnet_features;
-+}
-+
-+static int mvnet_set_features(struct mdev_device *mdev, u64 features)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+
-+=09/* DMA mapping must be done by driver */
-+=09if (!(features & (1ULL << VIRTIO_F_IOMMU_PLATFORM)))
-+=09=09return -EINVAL;
-+
-+=09mvnet->features =3D features & mvnet_features;
-+
-+=09return 0;
-+}
-+
-+static void mvnet_set_config_cb(struct mdev_device *mdev,
-+=09=09=09=09struct virtio_mdev_callback *cb)
-+{
-+=09/* We don't support config interrupt */
-+}
-+
-+static u16 mvnet_get_vq_num_max(struct mdev_device *mdev)
-+{
-+=09return MVNET_QUEUE_MAX;
-+}
-+
-+static u32 mvnet_get_device_id(struct mdev_device *mdev)
-+{
-+=09return MVNET_DEVICE_ID;
-+}
-+
-+static u32 mvnet_get_vendor_id(struct mdev_device *mdev)
-+{
-+=09return MVNET_VENDOR_ID;
-+}
-+
-+static u8 mvnet_get_status(struct mdev_device *mdev)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+
-+=09return mvnet->status;
-+}
-+
-+static void mvnet_set_status(struct mdev_device *mdev, u8 status)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+
-+=09mvnet->status =3D status;
-+
-+=09if (status =3D=3D 0) {
-+=09=09spin_lock(&mvnet->lock);
-+=09=09mvnet_reset(mvnet);
-+=09=09spin_unlock(&mvnet->lock);
-+=09}
-+}
-+
-+static void mvnet_get_config(struct mdev_device *mdev, unsigned int offset=
-,
-+=09=09=09     void *buf, unsigned int len)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+
-+=09if (offset + len < sizeof(struct virtio_net_config))
-+=09=09memcpy(buf, &mvnet->config + offset, len);
-+}
-+
-+static void mvnet_set_config(struct mdev_device *mdev, unsigned int offset=
-,
-+=09=09=09     const void *buf, unsigned int len)
-+{
-+=09/* No writable config supportted by mvnet */
-+}
-+
-+static u64 mvnet_get_mdev_features(struct mdev_device *mdev)
-+{
-+=09return VIRTIO_MDEV_F_VERSION_1;
-+}
-+
-+static u32 mvnet_get_generation(struct mdev_device *mdev)
-+{
-+=09struct mvnet_state *mvnet =3D mdev_get_drvdata(mdev);
-+
-+=09return mvnet->generation;
-+}
-+
-+static const struct virtio_mdev_device_ops virtio_mdev_ops =3D {
-+=09.set_vq_address         =3D mvnet_set_vq_address,
-+=09.set_vq_num             =3D mvnet_set_vq_num,
-+=09.kick_vq                =3D mvnet_kick_vq,
-+=09.set_vq_cb              =3D mvnet_set_vq_cb,
-+=09.set_vq_ready           =3D mvnet_set_vq_ready,
-+=09.get_vq_ready           =3D mvnet_get_vq_ready,
-+=09.set_vq_state           =3D mvnet_set_vq_state,
-+=09.get_vq_state           =3D mvnet_get_vq_state,
-+=09.get_vq_align           =3D mvnet_get_vq_align,
-+=09.get_features           =3D mvnet_get_features,
-+=09.set_features           =3D mvnet_set_features,
-+=09.set_config_cb          =3D mvnet_set_config_cb,
-+=09.get_vq_num_max         =3D mvnet_get_vq_num_max,
-+=09.get_device_id          =3D mvnet_get_device_id,
-+=09.get_vendor_id          =3D mvnet_get_vendor_id,
-+=09.get_status             =3D mvnet_get_status,
-+=09.set_status             =3D mvnet_set_status,
-+=09.get_config             =3D mvnet_get_config,
-+=09.set_config             =3D mvnet_set_config,
-+=09.get_mdev_features      =3D mvnet_get_mdev_features,
-+=09.get_generation         =3D mvnet_get_generation,
-+};
-+
-+static const struct mdev_parent_ops mdev_fops =3D {
-+=09.owner                  =3D THIS_MODULE,
-+=09.dev_attr_groups        =3D mvnet_dev_groups,
-+=09.mdev_attr_groups       =3D mdev_dev_groups,
-+=09.supported_type_groups  =3D mdev_type_groups,
-+=09.create                 =3D mvnet_create,
-+=09.remove=09=09=09=3D mvnet_remove,
-+};
-+
-+static void mvnet_device_release(struct device *dev)
-+{
-+=09dev_dbg(dev, "mvnet: released\n");
-+}
-+
-+static int __init mvnet_dev_init(void)
-+{
-+=09int ret =3D 0;
-+
-+=09pr_info("mvnet_dev: %s\n", __func__);
-+
-+=09memset(&mvnet_dev, 0, sizeof(mvnet_dev));
-+
-+=09idr_init(&mvnet_dev.vd_idr);
-+
-+=09mvnet_dev.vd_class =3D class_create(THIS_MODULE, MVNET_CLASS_NAME);
-+
-+=09if (IS_ERR(mvnet_dev.vd_class)) {
-+=09=09pr_err("Error: failed to register mvnet_dev class\n");
-+=09=09ret =3D PTR_ERR(mvnet_dev.vd_class);
-+=09=09goto failed1;
-+=09}
-+
-+=09mvnet_dev.dev.class =3D mvnet_dev.vd_class;
-+=09mvnet_dev.dev.release =3D mvnet_device_release;
-+=09dev_set_name(&mvnet_dev.dev, "%s", MVNET_NAME);
-+
-+=09ret =3D device_register(&mvnet_dev.dev);
-+=09if (ret)
-+=09=09goto failed2;
-+
-+=09ret =3D mdev_register_device(&mvnet_dev.dev, &mdev_fops);
-+=09if (ret)
-+=09=09goto failed3;
-+
-+=09mutex_init(&mdev_list_lock);
-+=09INIT_LIST_HEAD(&mdev_devices_list);
-+
-+=09goto all_done;
-+
-+failed3:
-+
-+=09device_unregister(&mvnet_dev.dev);
-+failed2:
-+=09class_destroy(mvnet_dev.vd_class);
-+
-+failed1:
-+all_done:
-+=09return ret;
-+}
-+
-+static void __exit mvnet_dev_exit(void)
-+{
-+=09mvnet_dev.dev.bus =3D NULL;
-+=09mdev_unregister_device(&mvnet_dev.dev);
-+
-+=09device_unregister(&mvnet_dev.dev);
-+=09idr_destroy(&mvnet_dev.vd_idr);
-+=09class_destroy(mvnet_dev.vd_class);
-+=09mvnet_dev.vd_class =3D NULL;
-+=09pr_info("mvnet_dev: Unloaded!\n");
-+}
-+
-+module_init(mvnet_dev_init)
-+module_exit(mvnet_dev_exit)
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_INFO(supported, "Simulate loopback ethernet device over mdev");
-+MODULE_VERSION(VERSION_STRING);
-+MODULE_AUTHOR(DRIVER_AUTHOR);
---=20
-2.19.1
+Hi Jiri,
 
+Above fields are not suitable to be moved to struct block_info because 
+they are not per-block info. For example, total_cycles are the sum of 
+sampled cycles for all blocks.
+
+Oh maybe you just suggest to create a new struct in util/block_info.c 
+and move above info to the new struct? Is my understanding correct?
+
+Thanks
+Jin Yao
+
+>> +
+>> +struct block_fmt {
+>> +	struct perf_hpp_fmt	fmt;
+>> +	int			idx;
+>> +	int			width;
+>> +	const char		*header;
+>> +	struct report		*rep;
+>> +};
+>> +
+>> +enum {
+>> +	PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT,
+>> +	PERF_HPP_REPORT__BLOCK_LBR_CYCLES,
+>> +	PERF_HPP_REPORT__BLOCK_CYCLES_PCT,
+>> +	PERF_HPP_REPORT__BLOCK_AVG_CYCLES,
+>> +	PERF_HPP_REPORT__BLOCK_RANGE,
+>> +	PERF_HPP_REPORT__BLOCK_DSO,
+>> +	PERF_HPP_REPORT__BLOCK_MAX_INDEX
+>> +};
+>> +
+>> +static struct block_fmt block_fmts[PERF_HPP_REPORT__BLOCK_MAX_INDEX];
+>> +
+>> +static struct block_header_column{
+>> +	const char *name;
+>> +	int width;
+>> +} block_columns[PERF_HPP_REPORT__BLOCK_MAX_INDEX] = {
+>> +	[PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT] = {
+>> +		.name = "Sampled Cycles%",
+>> +		.width = 15,
+>> +	},
+>> +	[PERF_HPP_REPORT__BLOCK_LBR_CYCLES] = {
+>> +		.name = "Sampled Cycles",
+>> +		.width = 14,
+>> +	},
+>> +	[PERF_HPP_REPORT__BLOCK_CYCLES_PCT] = {
+>> +		.name = "Avg Cycles%",
+>> +		.width = 11,
+>> +	},
+>> +	[PERF_HPP_REPORT__BLOCK_AVG_CYCLES] = {
+>> +		.name = "Avg Cycles",
+>> +		.width = 10,
+>> +	},
+>> +	[PERF_HPP_REPORT__BLOCK_RANGE] = {
+>> +		.name = "[Program Block Range]",
+>> +		.width = 70,
+>> +	},
+>> +	[PERF_HPP_REPORT__BLOCK_DSO] = {
+>> +		.name = "Shared Object",
+>> +		.width = 20,
+>> +	}
+>>   };
+>>   
+>>   static int report__config(const char *var, const char *value, void *cb)
+>> @@ -277,7 +332,8 @@ static int process_sample_event(struct perf_tool *tool,
+>>   		if (!sample->branch_stack)
+>>   			goto out_put;
+>>   
+>> -		iter.add_entry_cb = hist_iter__branch_callback;
+>> +		if (!rep->total_cycles)
+>> +			iter.add_entry_cb = hist_iter__branch_callback;
+>>   		iter.ops = &hist_iter_branch;
+>>   	} else if (rep->mem_mode) {
+>>   		iter.ops = &hist_iter_mem;
+>> @@ -290,9 +346,10 @@ static int process_sample_event(struct perf_tool *tool,
+>>   	if (al.map != NULL)
+>>   		al.map->dso->hit = 1;
+>>   
+>> -	if (ui__has_annotation() || rep->symbol_ipc) {
+>> +	if (ui__has_annotation() || rep->symbol_ipc || rep->total_cycles) {
+>>   		hist__account_cycles(sample->branch_stack, &al, sample,
+>> -				     rep->nonany_branch_mode, NULL);
+>> +				     rep->nonany_branch_mode,
+>> +				     &rep->cycles_count);
+>>   	}
+>>   
+>>   	ret = hist_entry_iter__add(&iter, &al, rep->max_stack, rep);
+>> @@ -480,6 +537,269 @@ static size_t hists__fprintf_nr_sample_events(struct hists *hists, struct report
+>>   	return ret + fprintf(fp, "\n#\n");
+>>   }
+>>   
+>> +static int block_column_header(struct perf_hpp_fmt *fmt __maybe_unused,
+>> +			       struct perf_hpp *hpp __maybe_unused,
+>> +			       struct hists *hists __maybe_unused,
+>> +			       int line __maybe_unused,
+>> +			       int *span __maybe_unused)
+>> +{
+>> +	struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
+>> +
+>> +	return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width,
+>> +			 block_fmt->header);
+>> +}
+>> +
+>> +static int block_column_width(struct perf_hpp_fmt *fmt __maybe_unused,
+>> +			      struct perf_hpp *hpp __maybe_unused,
+>> +			      struct hists *hists __maybe_unused)
+>> +{
+>> +	struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
+>> +
+>> +	return block_fmt->width;
+>> +}
+>> +
+>> +static int block_total_cycles_pct_entry(struct perf_hpp_fmt *fmt,
+>> +					struct perf_hpp *hpp,
+>> +					struct hist_entry *he)
+>> +{
+>> +	struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
+>> +	struct report *rep = block_fmt->rep;
+>> +	struct block_info *bi = he->block_info;
+>> +	double ratio = 0.0;
+>> +	char buf[16];
+>> +
+>> +	if (rep->cycles_count)
+>> +		ratio = (double)bi->cycles / (double)rep->cycles_count;
+>> +
+>> +	sprintf(buf, "%.2f%%", 100.0 * ratio);
+>> +
+>> +	return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width, buf);
+>> +}
+>> +
+>> +static int64_t block_total_cycles_pct_sort(struct perf_hpp_fmt *fmt,
+>> +					   struct hist_entry *left,
+>> +					   struct hist_entry *right)
+>> +{
+>> +	struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
+>> +	struct report *rep = block_fmt->rep;
+>> +	struct block_info *bi_l = left->block_info;
+>> +	struct block_info *bi_r = right->block_info;
+>> +	double l, r;
+>> +
+>> +	if (rep->cycles_count) {
+>> +		l = ((double)bi_l->cycles / (double)rep->cycles_count) * 1000.0;
+>> +		r = ((double)bi_r->cycles / (double)rep->cycles_count) * 1000.0;
+>> +		return (int64_t)l - (int64_t)r;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void cycles_string(u64 cycles, char *buf, int size)
+>> +{
+>> +	if (cycles >= 1000000)
+>> +		scnprintf(buf, size, "%.1fM", (double)cycles / 1000000.0);
+>> +	else if (cycles >= 1000)
+>> +		scnprintf(buf, size, "%.1fK", (double)cycles / 1000.0);
+>> +	else
+>> +		scnprintf(buf, size, "%1d", cycles);
+>> +}
+>> +
+>> +static int block_cycles_lbr_entry(struct perf_hpp_fmt *fmt,
+>> +				  struct perf_hpp *hpp, struct hist_entry *he)
+>> +{
+>> +	struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
+>> +	struct block_info *bi = he->block_info;
+>> +	char cycles_buf[16];
+>> +
+>> +	cycles_string(bi->cycles_aggr, cycles_buf, sizeof(cycles_buf));
+>> +
+>> +	return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width,
+>> +			 cycles_buf);
+>> +}
+>> +
+>> +static int block_cycles_pct_entry(struct perf_hpp_fmt *fmt,
+>> +				  struct perf_hpp *hpp, struct hist_entry *he)
+>> +{
+>> +	struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
+>> +	struct report *rep = block_fmt->rep;
+>> +	struct block_info *bi = he->block_info;
+>> +	double ratio = 0.0;
+>> +	u64 avg;
+>> +	char buf[16];
+>> +
+>> +	if (rep->block_cycles && bi->num_aggr) {
+>> +		avg = bi->cycles_aggr / bi->num_aggr;
+>> +		ratio = (double)avg / (double)rep->block_cycles;
+>> +	}
+>> +
+>> +	sprintf(buf, "%.2f%%", 100.0 * ratio);
+>> +
+>> +	return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width, buf);
+>> +}
+>> +
+>> +static int block_avg_cycles_entry(struct perf_hpp_fmt *fmt,
+>> +				  struct perf_hpp *hpp,
+>> +				  struct hist_entry *he)
+>> +{
+>> +	struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
+>> +	struct block_info *bi = he->block_info;
+>> +	char cycles_buf[16];
+>> +
+>> +	cycles_string(bi->cycles_aggr / bi->num_aggr, cycles_buf,
+>> +		      sizeof(cycles_buf));
+>> +
+>> +	return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width,
+>> +			 cycles_buf);
+>> +}
+>> +
+>> +static int block_range_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
+>> +			     struct hist_entry *he)
+>> +{
+>> +	struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
+>> +	struct block_info *bi = he->block_info;
+>> +	char buf[128];
+>> +	char *start_line, *end_line;
+>> +
+>> +	symbol_conf.disable_add2line_warn = true;
+>> +
+>> +	start_line = map__srcline(he->ms.map, bi->sym->start + bi->start,
+>> +				  he->ms.sym);
+>> +
+>> +	end_line = map__srcline(he->ms.map, bi->sym->start + bi->end,
+>> +				he->ms.sym);
+>> +
+>> +	if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
+>> +		scnprintf(buf, sizeof(buf), "[%s -> %s]",
+>> +			  start_line, end_line);
+>> +	} else {
+>> +		scnprintf(buf, sizeof(buf), "[%7lx -> %7lx]",
+>> +			  bi->start, bi->end);
+>> +	}
+>> +
+>> +	free_srcline(start_line);
+>> +	free_srcline(end_line);
+>> +
+>> +	return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width, buf);
+>> +}
+>> +
+>> +static int block_dso_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
+>> +			   struct hist_entry *he)
+>> +{
+>> +	struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
+>> +	struct map *map = he->ms.map;
+>> +
+>> +	if (map && map->dso) {
+>> +		return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width,
+>> +				 map->dso->short_name);
+>> +	}
+>> +
+>> +	return scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width,
+>> +			 "[unknown]");
+>> +}
+>> +
+>> +static void init_block_header(struct block_fmt *block_fmt)
+>> +{
+>> +	struct perf_hpp_fmt *fmt = &block_fmt->fmt;
+>> +
+>> +	BUG_ON(block_fmt->idx >= PERF_HPP_REPORT__BLOCK_MAX_INDEX);
+>> +
+>> +	block_fmt->header = block_columns[block_fmt->idx].name;
+>> +	block_fmt->width = block_columns[block_fmt->idx].width;
+>> +
+>> +	fmt->header = block_column_header;
+>> +	fmt->width = block_column_width;
+>> +}
+>> +
+>> +static void block_hpp_register(struct block_fmt *block_fmt, int idx,
+>> +			       struct perf_hpp_list *hpp_list,
+>> +			       struct report *rep)
+>> +{
+>> +	struct perf_hpp_fmt *fmt = &block_fmt->fmt;
+>> +
+>> +	block_fmt->rep = rep;
+>> +	block_fmt->idx = idx;
+>> +	INIT_LIST_HEAD(&fmt->list);
+>> +	INIT_LIST_HEAD(&fmt->sort_list);
+>> +
+>> +	switch (idx) {
+>> +	case PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT:
+>> +		fmt->entry = block_total_cycles_pct_entry;
+>> +		fmt->cmp = block_info__cmp;
+>> +		fmt->sort = block_total_cycles_pct_sort;
+>> +		break;
+>> +	case PERF_HPP_REPORT__BLOCK_LBR_CYCLES:
+>> +		fmt->entry = block_cycles_lbr_entry;
+>> +		break;
+>> +	case PERF_HPP_REPORT__BLOCK_CYCLES_PCT:
+>> +		fmt->entry = block_cycles_pct_entry;
+>> +		break;
+>> +	case PERF_HPP_REPORT__BLOCK_AVG_CYCLES:
+>> +		fmt->entry = block_avg_cycles_entry;
+>> +		break;
+>> +	case PERF_HPP_REPORT__BLOCK_RANGE:
+>> +		fmt->entry = block_range_entry;
+>> +		break;
+>> +	case PERF_HPP_REPORT__BLOCK_DSO:
+>> +		fmt->entry = block_dso_entry;
+>> +		break;
+>> +	default:
+>> +		return;
+>> +	}
+>> +
+>> +	init_block_header(block_fmt);
+>> +	perf_hpp_list__column_register(hpp_list, fmt);
+>> +}
+>> +
+>> +static void register_block_columns(struct perf_hpp_list *hpp_list,
+>> +				   struct report *rep)
+>> +{
+>> +	for (int i = 0; i < PERF_HPP_REPORT__BLOCK_MAX_INDEX; i++)
+>> +		block_hpp_register(&block_fmts[i], i, hpp_list, rep);
+>> +}
+>> +
+>> +static void init_block_hist(struct block_hist *bh, struct report *rep)
+>> +{
+>> +	__hists__init(&bh->block_hists, &bh->block_list);
+>> +	perf_hpp_list__init(&bh->block_list);
+>> +	bh->block_list.nr_header_lines = 1;
+>> +
+>> +	register_block_columns(&bh->block_list, rep);
+>> +
+>> +	perf_hpp_list__register_sort_field(&bh->block_list,
+>> +		&block_fmts[PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT].fmt);
+>> +}
+>> +
+>> +static void get_block_hists(struct hists *hists, struct block_hist *bh,
+>> +			    struct report *rep)
+>> +{
+>> +	struct rb_node *next = rb_first_cached(&hists->entries);
+>> +	struct hist_entry *he;
+>> +
+>> +	init_block_hist(bh, rep);
+>> +
+>> +	while (next) {
+>> +		he = rb_entry(next, struct hist_entry, rb_node);
+>> +		block_info__process_sym(he, bh, &rep->block_cycles,
+>> +					rep->cycles_count);
+>> +		next = rb_next(&he->rb_node);
+>> +	}
+>> +
+>> +	hists__output_resort(&bh->block_hists, NULL);
+>> +}
+>> +
+>> +static int hists__fprintf_all_blocks(struct hists *hists, struct report *rep)
+>> +{
+>> +	struct block_hist *bh = &rep->block_hist;
+>> +
+>> +	get_block_hists(hists, bh, rep);
+>> +	symbol_conf.report_individual_block = true;
+>> +	hists__fprintf(&bh->block_hists, true, 0, 0, 0,
+>> +		       stdout, true);
+>> +	hists__delete_entries(&bh->block_hists);
+>> +	return 0;
+>> +}
+>> +
+>>   static int perf_evlist__tty_browse_hists(struct evlist *evlist,
+>>   					 struct report *rep,
+>>   					 const char *help)
+>> @@ -500,6 +820,12 @@ static int perf_evlist__tty_browse_hists(struct evlist *evlist,
+>>   			continue;
+>>   
+>>   		hists__fprintf_nr_sample_events(hists, rep, evname, stdout);
+>> +
+>> +		if (rep->total_cycles) {
+>> +			hists__fprintf_all_blocks(hists, rep);
+>> +			continue;
+>> +		}
+>> +
+>>   		hists__fprintf(hists, !quiet, 0, 0, rep->min_percent, stdout,
+>>   			       !(symbol_conf.use_callchain ||
+>>   			         symbol_conf.show_branchflag_count));
+>> @@ -1373,6 +1699,15 @@ int cmd_report(int argc, const char **argv)
+>>   		goto error;
+>>   	}
+>>   
+>> +	if (sort_order && strstr(sort_order, "total_cycles") &&
+>> +	    (sort__mode == SORT_MODE__BRANCH)) {
+>> +		report.total_cycles = true;
+>> +		if (!report.use_stdio) {
+>> +			pr_err("Error: -s total_cycles can be only used together with --stdio\n");
+>> +			goto error;
+>> +		}
+>> +	}
+>> +
+>>   	if (strcmp(input_name, "-") != 0)
+>>   		setup_browser(true);
+>>   	else
+>> @@ -1423,7 +1758,7 @@ int cmd_report(int argc, const char **argv)
+>>   	 * so don't allocate extra space that won't be used in the stdio
+>>   	 * implementation.
+>>   	 */
+>> -	if (ui__has_annotation() || report.symbol_ipc) {
+>> +	if (ui__has_annotation() || report.symbol_ipc || report.total_cycles) {
+>>   		ret = symbol__annotation_init();
+>>   		if (ret < 0)
+>>   			goto error;
+>> diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
+>> index 5365606e9dad..655ef7708cd0 100644
+>> --- a/tools/perf/ui/stdio/hist.c
+>> +++ b/tools/perf/ui/stdio/hist.c
+>> @@ -558,6 +558,25 @@ static int hist_entry__block_fprintf(struct hist_entry *he,
+>>   	return ret;
+>>   }
+>>   
+>> +static int hist_entry__individual_block_fprintf(struct hist_entry *he,
+>> +						char *bf, size_t size,
+>> +						FILE *fp)
+>> +{
+>> +	int ret = 0;
+>> +
+>> +	struct perf_hpp hpp = {
+>> +		.buf		= bf,
+>> +		.size		= size,
+>> +		.skip		= false,
+>> +	};
+>> +
+>> +	hist_entry__snprintf(he, &hpp);
+>> +	if (!hpp.skip)
+>> +		ret += fprintf(fp, "%s\n", bf);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>   static int hist_entry__fprintf(struct hist_entry *he, size_t size,
+>>   			       char *bf, size_t bfsz, FILE *fp,
+>>   			       bool ignore_callchains)
+>> @@ -580,6 +599,9 @@ static int hist_entry__fprintf(struct hist_entry *he, size_t size,
+>>   	if (symbol_conf.report_block)
+>>   		return hist_entry__block_fprintf(he, bf, size, fp);
+>>   
+>> +	if (symbol_conf.report_individual_block)
+>> +		return hist_entry__individual_block_fprintf(he, bf, size, fp);
+>> +
+>>   	hist_entry__snprintf(he, &hpp);
+>>   
+>>   	ret = fprintf(fp, "%s\n", bf);
+>> diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+>> index 0e27d6830011..7cf137b0451b 100644
+>> --- a/tools/perf/util/hist.c
+>> +++ b/tools/perf/util/hist.c
+>> @@ -758,6 +758,10 @@ struct hist_entry *hists__add_entry_block(struct hists *hists,
+>>   	struct hist_entry entry = {
+>>   		.block_info = block_info,
+>>   		.hists = hists,
+>> +		.ms = {
+>> +			.map = al->map,
+>> +			.sym = al->sym,
+>> +		},
+>>   	}, *he = hists__findnew_entry(hists, &entry, al, false);
+>>   
+>>   	return he;
+>> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+>> index 43d1d410854a..eb286700a8a9 100644
+>> --- a/tools/perf/util/sort.c
+>> +++ b/tools/perf/util/sort.c
+>> @@ -492,6 +492,10 @@ struct sort_entry sort_sym_ipc_null = {
+>>   	.se_width_idx	= HISTC_SYMBOL_IPC,
+>>   };
+>>   
+>> +struct sort_entry sort_block_cycles = {
+>> +	.se_cmp		= sort__sym_cmp,
+>> +};
+>> +
+>>   /* --sort srcfile */
+>>   
+>>   static char no_srcfile[1];
+>> @@ -1695,6 +1699,7 @@ static struct sort_dimension bstack_sort_dimensions[] = {
+>>   	DIM(SORT_SRCLINE_FROM, "srcline_from", sort_srcline_from),
+>>   	DIM(SORT_SRCLINE_TO, "srcline_to", sort_srcline_to),
+>>   	DIM(SORT_SYM_IPC, "ipc_lbr", sort_sym_ipc),
+>> +	DIM(SORT_BLOCK_CYCLES, "total_cycles", sort_block_cycles),
+>>   };
+>>   
+>>   #undef DIM
+>> diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+>> index 5aff9542d9b7..2ede6c70ad56 100644
+>> --- a/tools/perf/util/sort.h
+>> +++ b/tools/perf/util/sort.h
+>> @@ -239,6 +239,7 @@ enum sort_type {
+>>   	SORT_SRCLINE_FROM,
+>>   	SORT_SRCLINE_TO,
+>>   	SORT_SYM_IPC,
+>> +	SORT_BLOCK_CYCLES,
+>>   
+>>   	/* memory mode specific sort keys */
+>>   	__SORT_MEMORY_MODE,
+>> diff --git a/tools/perf/util/symbol_conf.h b/tools/perf/util/symbol_conf.h
+>> index e6880789864c..10f1ec3e0349 100644
+>> --- a/tools/perf/util/symbol_conf.h
+>> +++ b/tools/perf/util/symbol_conf.h
+>> @@ -40,6 +40,7 @@ struct symbol_conf {
+>>   			raw_trace,
+>>   			report_hierarchy,
+>>   			report_block,
+>> +			report_individual_block,
+>>   			inline_name,
+>>   			disable_add2line_warn;
+>>   	const char	*vmlinux_name,
+>> -- 
+>> 2.17.1
+>>
+> 
