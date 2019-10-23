@@ -2,146 +2,256 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DE92E17E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03742E17DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:28:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404421AbfJWK1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 06:27:55 -0400
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:58660 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403831AbfJWK1x (ORCPT
+        id S2404442AbfJWK14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 06:27:56 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46360 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404405AbfJWK14 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 06:27:53 -0400
-X-AuditID: c0a8fbf4-199ff70000001fa6-81-5db02b257c8e
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 88.3C.08102.52B20BD5; Wed, 23 Oct 2019 12:27:49 +0200 (CEST)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Wed, 23 Oct 2019 12:27:44 +0200
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
-CC:     "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>
-Subject: Re: [RFC PATCH 09/13] mfd: rtc: support RTC on ROHM BD71828 with
- BD70528 driver
-Thread-Topic: [RFC PATCH 09/13] mfd: rtc: support RTC on ROHM BD71828 with
- BD70528 driver
-Thread-Index: AQHVhNCZAuXq65juYU207wWeSYVtU6dee5aAgAAGywCAAANsgIAJaAyA
-Date:   Wed, 23 Oct 2019 10:27:43 +0000
-Message-ID: <bf7a8ce661277aca3c4dede5fb17ef4163a56027.camel@fi.rohmeurope.com>
-References: <cover.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
-         <9ccc83f3dfd0fd0dc8178adf41b52115f960c45a.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
-         <20191017101225.GB3125@piout.net>
-         <a1aa91f74b41033fed4a7106247f48f9b9f78bd9.camel@fi.rohmeurope.com>
-         <20191017104859.GC3125@piout.net>
-In-Reply-To: <20191017104859.GC3125@piout.net>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <010E24F802C4034F91829371010E81DE@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        Wed, 23 Oct 2019 06:27:56 -0400
+Received: by mail-ed1-f68.google.com with SMTP id r18so15310772eds.13;
+        Wed, 23 Oct 2019 03:27:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sN1khWqhEdLQ73NvMDu4PylBTsZjnLiQFTCzkxlO2MQ=;
+        b=F0u+ehzjT4ae6OiQ4jqVxPd5zPWvOQP8p8fz9TX0JEIN3ItYei2pAC25a4Sf8v5XT8
+         5vntyrdAAvA3SDOngyFPP/lICBsDdd14HJ8wPFNoMT2OkGz89XwZet9eLrMO/KNtn1hv
+         Vs8f3AqJBy5wfukxCHEk7jXyVh+BCyQdTcu6VVdUL6UzL5lfRLmqiPg+tT5M/e1niwt+
+         9Ja4/t5HQwnUN/GiMtUfZo+T0yYHDTxON7ALiJutEJlJLPwYkI+KKEvYbIgi38sG/bIK
+         6MoL+JSw4OsHzyKN5YQbhFW8VQZmduuWRV8eahT7X4xIF5skEgnr/wxRp04kbdvx4fQc
+         EDXg==
+X-Gm-Message-State: APjAAAWtihdFFSqOwAdTfUs3dkSweS89l2WGmV27DrhfBaHW1OqDV1vM
+        dWfleWu6IT2fUTshtC1pxwc=
+X-Google-Smtp-Source: APXvYqweO7L9OX5pU8/x+P5juNGpeFrV4kxRZI/Y+xaj7+Ve9ixjue5f2pYzFGNYsQIqVVZTlnBVtQ==
+X-Received: by 2002:a17:906:a2d1:: with SMTP id by17mr32249056ejb.206.1571826473749;
+        Wed, 23 Oct 2019 03:27:53 -0700 (PDT)
+Received: from pi3 ([194.230.155.217])
+        by smtp.googlemail.com with ESMTPSA id q2sm681528edh.41.2019.10.23.03.27.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 03:27:52 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 12:27:50 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/36] ARM: samsung: make pm-debug platform independent
+Message-ID: <20191023102750.GD10630@pi3>
+References: <20191010202802.1132272-1-arnd@arndb.de>
+ <20191010203043.1241612-1-arnd@arndb.de>
+ <20191010203043.1241612-5-arnd@arndb.de>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0wTZxzG8969vb6gt73WIq9VmKuSTRGQbH+8RrKQbJrbxGXJ/liCadhp
-        T0osLbkWozOZzRhT62IYY1EaKGrAaWEDKwQxNmNNcVASTBUYZf4AQRN/BGfGjxGJesep8M/d
-        k+/zfp7nveR7iDXc40yoyOGWZIdoN3OJsPPcs2BGWnqLZZPnjw9ofWxATw9PnNXTydoopL+M
-        jnO0LtKno8d6W3X0n7YWSO9MdQE63X+EoVVzvzL06Y+3dfRi3RygNy7XcLTt8e+AXm3s52jD
-        3zGG1jR0QxqLbqW3ol0cLQ9F9PT54AWYmyQ0+ZuA8GSoXC/4mw4KHb5beiEYOMoJNwevcMJf
-        Q+2McMI/ywjnGmf0wn/B1C8S85fk7BLd+74sKnRkffT1Elu0Z5wt6Vu3v202ynlA/1ovSEAE
-        f0ii3kboBYnIgAcB+f/7mF41DLgbkOG6TC9AiMM5xBufHxvxx8R/7Yf58yyuRMR/fgiqxnKc
-        T46XjbPaoZ0kXlWp0/Q2Er8+BVQNcRo5P9TKqpk8/pwMP2K1qosMKbvLqToBZ5LT/vr5SIBT
-        yFHPBKNqFieT4P0ZnXZnTOqvXGM1nUQejD1/NTeT0OwoVONZvJ40X87S0FwSjnRxmn6XVB0b
-        nf8UHi8jPdXjsAKs8C1q8C3QvkW0bxHtW0SfAroAIMVikb1QdEvZmbJUmik7bcXKa7ezOAi0
-        hZm8BF6EPw0DBoEwWIkYcxIvRZsthrd2Oa0HbKLLViCX2iVXGBDEmo38zU2/WQy8VTzwjSQ7
-        X1urEDQn8++N/mQxYLVrrySVSPJrdzVCZsKH3m+xGJbJUqG0f0+R3b1gMyhBDU80GV2SwyrJ
-        YqnbVqBuR4FLWQ/VWqr0ihsUnHeViMXKVEOjIBtVPKg9w6KeQL3yjNQ2nGEN0OF0SKZkfqsK
-        YBWwlTre1D0EyQiYl/Od6xV3qfLvvEl7qBQxSlHq281qkVtcsEweUM2FY8T02UAv3V2WDue2
-        PMtqi321+WR+O/dY3BjnTwwYmR7binI4cnx7yp+d0/GM9IzhkcbNM9sDnty56um+Q5XtI8zV
-        6TRnR/ehne1caA20sisnja2wYqx37Ns8e+XPkdvuHXmrT31XaM1JCUy90/EJ/rf7jj9UVZO6
-        cdVEnhm6bGL2BlZ2iS8Bxt9KQPgDAAA=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191010203043.1241612-5-arnd@arndb.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8gYWdhaW4gQWxleGFuZHJlLA0KDQpPbiBUaHUsIDIwMTktMTAtMTcgYXQgMTI6NDggKzAy
-MDAsIEFsZXhhbmRyZSBCZWxsb25pIHdyb3RlOg0KPiBPbiAxNy8xMC8yMDE5IDEwOjM2OjQ0KzAw
-MDAsIFZhaXR0aW5lbiwgTWF0dGkgd3JvdGU6DQo+ID4gSGVsbG8gQWxleGFuZHJlLA0KPiA+IA0K
-PiA+IFRoYW5rcyBmb3IgcXVpY2sgY2hlY2shIEknbGwgYmUgb2ZmIGZvciB0aGUgcmVzdCBvZiB0
-aGUgd2VlayBidXQgSQ0KPiA+IHdpbGwNCj4gPiByZS13b3JrIHRoaXMgcGF0Y2ggYXQgbmV4dCB3
-ZWVrIDopIEkgYWdyZWUgd2l0aCB5b3UgcmVnYXJkaW5nIG1vc3QNCj4gPiBvZg0KPiA+IHRoZSBj
-b21tZW50cy4NCj4gPiANCj4gPiA+ID4gKw0KPiA+ID4gPiArDQo+ID4gPiA+ICsvKg0KPiA+ID4g
-PiArICogUlRDIGRlZmluaXRpb25zIHNoYXJlZCBiZXR3ZWVuDQo+ID4gPiA+ICsgKg0KPiA+ID4g
-PiArICogQkQ3MDUyOA0KPiA+ID4gPiArICogYW5kIEJENzE4MjgNCj4gPiA+ID4gKyAqLw0KPiA+
-ID4gPiArDQo+ID4gPiA+ICsjZGVmaW5lIFJPSE1fQkQxX01BU0tfUlRDX1NFQwkJMHg3Zg0KPiA+
-ID4gPiArI2RlZmluZSBST0hNX0JEMV9NQVNLX1JUQ19NSU5VVEUJMHg3Zg0KPiA+ID4gPiArI2Rl
-ZmluZSBST0hNX0JEMV9NQVNLX1JUQ19IT1VSXzI0SAkweDgwDQo+ID4gPiA+ICsjZGVmaW5lIFJP
-SE1fQkQxX01BU0tfUlRDX0hPVVJfUE0JMHgyMA0KPiA+ID4gPiArI2RlZmluZSBST0hNX0JEMV9N
-QVNLX1JUQ19IT1VSCQkweDNmDQo+ID4gPiA+ICsjZGVmaW5lIFJPSE1fQkQxX01BU0tfUlRDX0RB
-WQkJMHgzZg0KPiA+ID4gPiArI2RlZmluZSBST0hNX0JEMV9NQVNLX1JUQ19XRUVLCQkweDA3DQo+
-ID4gPiA+ICsjZGVmaW5lIFJPSE1fQkQxX01BU0tfUlRDX01PTlRICQkweDFmDQo+ID4gPiA+ICsj
-ZGVmaW5lIFJPSE1fQkQxX01BU0tfUlRDX1lFQVIJCTB4ZmYNCj4gPiA+ID4gKyNkZWZpbmUgUk9I
-TV9CRDFfTUFTS19BTE1fRU4JCTB4Nw0KPiA+ID4gPiArDQo+ID4gPiANCj4gPiA+IEFsbCB0aGF0
-IHJlbmFtaW5nIGlzIGRpc3RyYWN0aW5nIGFuZCB1c2VsZXNzLiBQbGVhc2UgcmVzdWJtaXQNCj4g
-PiA+IHdpdGhvdXQNCj4gPiA+IHJlbmFtaW5nIGRlZmluZXMsIHN0cnVjdHMgYW5kIGZ1bmN0aW9u
-cyB0byBtYWtlIGl0IGVhc2llciB0bw0KPiA+ID4gcmV2aWV3Lg0KPiA+IA0KPiA+IEkgd291bGQg
-cHJlZmVyIHJlbmFtaW5nIGJlY2F1c2UgaXQgbWFrZXMgaXQgY2xlYXJseSB2aXNpYmxlIHdoaWNo
-DQo+ID4gZGVmaW5lcy9zdHJ1Y3RzL2Z1bmN0aW9ucyBhcmUgY29tbW9uIGZvciBib3RoIFBNSUNz
-IGFuZCB3aGljaCBhcmUNCj4gPiBQTUlDDQo+ID4gc3BlY2lmaWMuIEJ1dCBJIHJlYWxseSB1bmRl
-cnN0YW5kIHRoZSBwcm9ibGVtIG9mIHNwb3R0aW5nIHJlYWwNCj4gPiBjaGFuZ2VzLg0KPiA+IFdv
-dWxkIGl0IGJlIE9rIGlmIEkgZGlkIHJlbmFtaW5nIGluIHNlcGFyYXRlIHBhdGNoIHdoaWNoIGRv
-ZXMgbm90DQo+ID4gYnJpbmcNCj4gPiBpbiBhbnkgb3RoZXIgY2hhbmdlcyAtIGFuZCB0aGVuIHRo
-ZSBmdW5jdGlvbmFsIGNoYW5nZXMgaW4gc2VwYXJhdGUNCj4gPiBwYXRjaD8NCj4gPiANCj4gDQo+
-IE5vLCB1bmxlc3MgeW91IGNhbiBndWFyYW50ZWUgdGhhdCBhbGwgZnV0dXJlIFBNSUNzIGZyb20g
-cm9obSBtYXRjaGluZw0KPiB0aGUgd2lsZGNhcmQgd2lsbCB1c2UgdGhpcyBkcml2ZXIuDQo+IA0K
-SSBzdGFydGVkIHJlLXdvcmtpbmcgdGhpcyBwYXRjaCBhbmQgcmVtZW1iZXJlZCBteSBvcmlnaW5h
-bCBpZGVhDQpyZWdhcmRpbmcgdGhlIG5hbWluZyA6KSBJIHNob3VsZCBoYXZlIGNvbW1lbnRlZCBp
-dCBhcyBJIGhhZCBhbHJlYWR5DQpmb3Jnb3R0ZW4gaXQuIFlvdSBhcmUgY29ycmVjdCB3aGF0IGNv
-bWVzIHRvIHRoZSBkaWZmaWN1bHR5IG9mIHVzaW5nDQpjb3JyZWN0IHdpbGQtY2FyZHMuIEFuZCBJ
-IGFncmVlIHdpdGggeW91IHdoYXQgY29tZXMgdG8gZnVuY3Rpb24gYW5kDQpzdHJ1Y3QgbmFtZXMg
-bGlrZSBiZDd4eDI4IC0gdGhvc2UgYXJlIHNvbWV3aGF0IGZyYWdpbGUgYXMgbmV4dCBQTUlDDQp3
-aGljaCB3ZSB3YW50IHRvIHN1cHBvcnQgd2l0aCB0aGlzIGRyaXZlciBtYXkgYmUgQkQxMjM0NSAt
-IHlpZWxkaW5nIG91cg0Kd2lsZC1jYXJkIHVzZWxlc3MuDQoNCkJ1dCBpZiB3ZSB0YWtlIGEgbG9v
-ayBvZiBjb21tb24gZGVmaW5pdGlvbnMgaW4gaGVhZGVyIHJvaG0tc2hhcmVkLmgNCndoaWNoIEkg
-YWRkZWQgLSB0aG9zZSBhcmUgcHJlZml4ZWQgYXMgUk9ITV9CRDEuIE15IGlkZWEgd2FzIGludHJv
-ZHVjaW5nDQp0aGlzIGNvbW1vbiBSVEMgZGVmaW5lIGdyb3VwIDEgLSB3aGljaCB3b3VsZCBiZSBj
-b21tb24gZGVmaW5lIGdyb3VwIGZvcg0KYWxsIGRldmljZXMgd2hpY2ggYmVsb25nIHRvIEJEMSBn
-cm91cC4gQ3VycmVudGx5IHRoYXQgd291bGQgYmUgQkQ3MTgyOA0KYW5kIEJENzA1MjguIFdoYXQg
-d2FzIG1pc3NpbmcgaXMgdGhlIGNvbW1lbnQgZXhwbGFpbmluZyB0aGlzIChhbmQgbGFjaw0Kb2Yg
-Y29tbWVudCBtYWRlIHRoaXMgdXNlbGVzcyBhcyBldmVuIEkgZm9yZ290IGl0IGFscmVhZHkpLg0K
-DQpJIGFscmVhZHkgcmV2ZXJ0ZWQgdGhpcyBuYW1pbmcgY2hhbmdlIGFuZCBhbGwgQkQ3MDUyOCBz
-cGVjaWZpYyBhbmQNCmNvbW1vbiBkZWZpbmVzL2Z1bmN0aW9ucy9lbnVtcyBhcmUgcHJlZml4ZWQg
-d2l0aCB0aGUgZ29vZCBvbGQgQkQ3MDUyOC4NCk9ubHkgbmV3IGRlZmluaXRpb25zIHdoaWNoIEkg
-YWRkZWQgZm9yIEJENzE4MjggYXJlIHByZWZpeGVkIHdpdGgNCkJENzE4MjguIEJ1dCBob3cgZG8g
-eW91IHNlZSB0aGUgZ3JvdXBpbmcgdGhlIGNvbW1vbiBkZWZpbmVzIHRvIGZvcm1hdA0KUk9ITV9C
-RDxncm91cCBudW1iZXI+X0ZPT19CQVIgaW4gdGhlIHJvaG0tc2hhcmVkLmggLSB3aXRoIGNvbW1l
-bnQgdGhhdA0KZ3JvdXAgQkQxIGNvbnNpc3RzIG9mIGRlZmluaXRpb25zIHdoaWNoIGFyZSBjb21t
-b24gZm9yIEJENzA1MjggYW5kDQpCRDcxODI4Pw0KDQpNeSBvbmx5IGZlYXIgd2hlbiB1c2luZyBw
-cmVmaXggQkQ3MDUyOCBmb3IgY29tbW9uIGRlZmluZXMgaXMgdGhhdA0Kc29tZW9uZSBjaGFuZ2Vz
-IHNvbWUgZGVmaW5lcyB0byBtYXRjaCB0aGUgQkQ3MDUyOCBkYXRhLXNoZWV0IHdpdGhvdXQNCmV2
-YWx1YXRpbmcgaWYgdGhpcyBpbXBhY3RzIHRvIG90aGVyIFBNSUNzLiBJdCBtYXkgYmUgdXNlbGVz
-cyBwYXJhbm9pYQ0KdGhvdWdoIC0gaGVuY2UgSSBhbSBhc2tpbmcgZm9yIHlvdXIgb3BpbmlvbiBh
-dCB0aGlzIHBoYXNlLiBJIGNhbiBkbw0KdGhpcyBncm91cGluZyBpbiBvd24gcGF0Y2ggLSBvciBq
-dXN0IGxlYXZlIGl0IGFzIGl0IGlzIG5vdyBpbiBteSBsb2NhbA0KcmVwbyAtIHdpdGggdGhlIG9s
-ZCBCRDcwNTI4IGJlaW5nIGNvbW1vbiBwcmVmaXguDQoNCkJyLA0KCU1hdHRpIFZhaXR0aW5lbg0K
-DQo=
+On Thu, Oct 10, 2019 at 10:29:49PM +0200, Arnd Bergmann wrote:
+> The pm-debug code is one of the few things shared between s3c24xx/s3c64xx
+> and the newer s5pv210. In order to make s5pv210 independent of plat-samsung,
+> change the common bits of this code to no longer reference the s3c specific
+> bits.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/mach-s3c24xx/include/mach/pm-core.h  |  7 +--
+>  arch/arm/mach-s3c64xx/include/mach/pm-core.h  | 44 +---------------
+>  arch/arm/mach-s3c64xx/pm.c                    | 50 +++++++++++++++++++
+>  arch/arm/mach-s5pv210/pm.c                    |  6 +--
+>  .../arm/plat-samsung/include/plat/pm-common.h | 29 +++++------
+>  arch/arm/plat-samsung/pm-debug.c              | 23 ++-------
+>  arch/arm/plat-samsung/pm.c                    | 10 ++--
+>  7 files changed, 80 insertions(+), 89 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s3c24xx/include/mach/pm-core.h b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
+> index 5e4ce89d0158..8f87606c4cdc 100644
+> --- a/arch/arm/mach-s3c24xx/include/mach/pm-core.h
+> +++ b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
+> @@ -15,6 +15,7 @@
+>  
+>  static inline void s3c_pm_debug_init_uart(void)
+>  {
+> +#ifdef CONFIG_SAMSUNG_PM_DEBUG
+>  	unsigned long tmp = __raw_readl(S3C2410_CLKCON);
+>  
+>  	/* re-start uart clocks */
+> @@ -24,6 +25,7 @@ static inline void s3c_pm_debug_init_uart(void)
+>  
+>  	__raw_writel(tmp, S3C2410_CLKCON);
+>  	udelay(10);
+> +#endif
+>  }
+>  
+>  static inline void s3c_pm_arch_prepare_irqs(void)
+> @@ -75,11 +77,6 @@ static inline void s3c_pm_arch_show_resume_irqs(void)
+>  				s3c_irqwake_eintmask);
+>  }
+>  
+> -static inline void s3c_pm_arch_update_uart(void __iomem *regs,
+> -					   struct pm_uart_save *save)
+> -{
+> -}
+> -
+>  static inline void s3c_pm_restored_gpios(void) { }
+>  static inline void samsung_pm_saved_gpios(void) { }
+>  
+> diff --git a/arch/arm/mach-s3c64xx/include/mach/pm-core.h b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
+> index bbf79ed28583..33cf242734a0 100644
+> --- a/arch/arm/mach-s3c64xx/include/mach/pm-core.h
+> +++ b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
+> @@ -20,6 +20,7 @@
+>  
+>  static inline void s3c_pm_debug_init_uart(void)
+>  {
+> +#ifdef CONFIG_SAMSUNG_PM_DEBUG
+>  	u32 tmp = __raw_readl(S3C_PCLK_GATE);
+>  
+>  	/* As a note, since the S3C64XX UARTs generally have multiple
+> @@ -35,6 +36,7 @@ static inline void s3c_pm_debug_init_uart(void)
+>  
+>  	__raw_writel(tmp, S3C_PCLK_GATE);
+>  	udelay(10);
+> +#endif
+>  }
+>  
+>  static inline void s3c_pm_arch_prepare_irqs(void)
+> @@ -63,48 +65,6 @@ static inline void s3c_pm_arch_show_resume_irqs(void)
+>  #define s3c_irqwake_intallow  0
+>  #endif
+>  
+> -static inline void s3c_pm_arch_update_uart(void __iomem *regs,
+> -					   struct pm_uart_save *save)
+> -{
+> -	u32 ucon = __raw_readl(regs + S3C2410_UCON);
+> -	u32 ucon_clk = ucon & S3C6400_UCON_CLKMASK;
+> -	u32 save_clk = save->ucon & S3C6400_UCON_CLKMASK;
+> -	u32 new_ucon;
+> -	u32 delta;
+> -
+> -	/* S3C64XX UART blocks only support level interrupts, so ensure that
+> -	 * when we restore unused UART blocks we force the level interrupt
+> -	 * settigs. */
+> -	save->ucon |= S3C2410_UCON_TXILEVEL | S3C2410_UCON_RXILEVEL;
+> -
+> -	/* We have a constraint on changing the clock type of the UART
+> -	 * between UCLKx and PCLK, so ensure that when we restore UCON
+> -	 * that the CLK field is correctly modified if the bootloader
+> -	 * has changed anything.
+> -	 */
+> -	if (ucon_clk != save_clk) {
+> -		new_ucon = save->ucon;
+> -		delta = ucon_clk ^ save_clk;
+> -
+> -		/* change from UCLKx => wrong PCLK,
+> -		 * either UCLK can be tested for by a bit-test
+> -		 * with UCLK0 */
+> -		if (ucon_clk & S3C6400_UCON_UCLK0 &&
+> -		    !(save_clk & S3C6400_UCON_UCLK0) &&
+> -		    delta & S3C6400_UCON_PCLK2) {
+> -			new_ucon &= ~S3C6400_UCON_UCLK0;
+> -		} else if (delta == S3C6400_UCON_PCLK2) {
+> -			/* as an precaution, don't change from
+> -			 * PCLK2 => PCLK or vice-versa */
+> -			new_ucon ^= S3C6400_UCON_PCLK2;
+> -		}
+> -
+> -		S3C_PMDBG("ucon change %04x => %04x (save=%04x)\n",
+> -			  ucon, new_ucon, save->ucon);
+> -		save->ucon = new_ucon;
+> -	}
+> -}
+> -
+>  static inline void s3c_pm_restored_gpios(void)
+>  {
+>  	/* ensure sleep mode has been cleared from the system */
+> diff --git a/arch/arm/mach-s3c64xx/pm.c b/arch/arm/mach-s3c64xx/pm.c
+> index fd6dbb263ed5..a612e9779057 100644
+> --- a/arch/arm/mach-s3c64xx/pm.c
+> +++ b/arch/arm/mach-s3c64xx/pm.c
+> @@ -305,6 +305,56 @@ static void s3c64xx_pm_prepare(void)
+>  	__raw_writel(__raw_readl(S3C64XX_WAKEUP_STAT), S3C64XX_WAKEUP_STAT);
+>  }
+>  
+> +#ifdef CONFIG_SAMSUNG_PM_DEBUG
+> +void s3c_pm_arch_update_uart(void __iomem *regs, struct pm_uart_save *save)
+> +{
+> +	u32 ucon;
+> +	u32 ucon_clk
+> +	u32 save_clk;
+> +	u32 new_ucon;
+> +	u32 delta;
+> +
+> +	if (!soc_is_s3c64xx())
+> +		return;
+> +
+> +	ucon = __raw_readl(regs + S3C2410_UCON);
+> +	ucon_clk = ucon & S3C6400_UCON_CLKMASK;
+> +	sav_clk = save->ucon & S3C6400_UCON_CLKMASK;
+> +
+> +	/* S3C64XX UART blocks only support level interrupts, so ensure that
+> +	 * when we restore unused UART blocks we force the level interrupt
+> +	 * settigs. */
+> +	save->ucon |= S3C2410_UCON_TXILEVEL | S3C2410_UCON_RXILEVEL;
+> +
+> +	/* We have a constraint on changing the clock type of the UART
+> +	 * between UCLKx and PCLK, so ensure that when we restore UCON
+> +	 * that the CLK field is correctly modified if the bootloader
+> +	 * has changed anything.
+> +	 */
+> +	if (ucon_clk != save_clk) {
+> +		new_ucon = save->ucon;
+> +		delta = ucon_clk ^ save_clk;
+> +
+> +		/* change from UCLKx => wrong PCLK,
+> +		 * either UCLK can be tested for by a bit-test
+> +		 * with UCLK0 */
+> +		if (ucon_clk & S3C6400_UCON_UCLK0 &&
+> +		    !(save_clk & S3C6400_UCON_UCLK0) &&
+> +		    delta & S3C6400_UCON_PCLK2) {
+> +			new_ucon &= ~S3C6400_UCON_UCLK0;
+> +		} else if (delta == S3C6400_UCON_PCLK2) {
+> +			/* as an precaution, don't change from
+> +			 * PCLK2 => PCLK or vice-versa */
+> +			new_ucon ^= S3C6400_UCON_PCLK2;
+> +		}
+> +
+> +		S3C_PMDBG("ucon change %04x => %04x (save=%04x)\n",
+> +			  ucon, new_ucon, save->ucon);
+> +		save->ucon = new_ucon;
+> +	}
+> +}
+> +#endif
+> +
+>  int __init s3c64xx_pm_init(void)
+>  {
+>  	int i;
+> diff --git a/arch/arm/mach-s5pv210/pm.c b/arch/arm/mach-s5pv210/pm.c
+> index b336df0c57f3..efdb5a27c060 100644
+> --- a/arch/arm/mach-s5pv210/pm.c
+> +++ b/arch/arm/mach-s5pv210/pm.c
+> @@ -99,8 +99,6 @@ static int s5pv210_suspend_enter(suspend_state_t state)
+>  	u32 eint_wakeup_mask = s5pv210_read_eint_wakeup_mask();
+>  	int ret;
+>  
+> -	s3c_pm_debug_init();
+
+Your patch is not equivalent here. If there is a reason behind removal
+of UART init (e.g. not needed), I prefer to make it in separate patch.
+
+Rest looks good.
+
+Best regards,
+Krzysztof
+
