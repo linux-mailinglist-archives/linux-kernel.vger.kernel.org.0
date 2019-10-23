@@ -2,79 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54744E15D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B50CDE15EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:30:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403954AbfJWJ3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 05:29:44 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:45868 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1732648AbfJWJ3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 05:29:42 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7286D15DB;
-        Wed, 23 Oct 2019 02:29:21 -0700 (PDT)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.145.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F1A653F718;
-        Wed, 23 Oct 2019 02:29:20 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 11:29:19 +0200
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     James Hogan <jhogan@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Wanpeng Li <wanpengli@tencent.com>, kvm@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Cornelia Huck <cohuck@redhat.com>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        kvmarm@lists.cs.columbia.edu, Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH v2 09/15] KVM: Move memslot deletion to helper function
-Message-ID: <20191023092919.GF2652@e113682-lin.lund.arm.com>
-References: <20191022003537.13013-1-sean.j.christopherson@intel.com>
- <20191022003537.13013-10-sean.j.christopherson@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022003537.13013-10-sean.j.christopherson@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2403981AbfJWJ34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 05:29:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39598 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390363AbfJWJ3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 05:29:54 -0400
+Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B86821928;
+        Wed, 23 Oct 2019 09:29:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571822993;
+        bh=qDjKGJyQVo3F8Wi8mGENmG0Ak/6nIdbJH/SzAL2uh50=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cJLALp3jHDWYPQYu5RNU2aNgFd/gF5L/ONiQy+6dAvXjk1VzY/AKeGBr+b7t3hbg1
+         f+7JHJyN8P55oNhRCa8UC5a11wEcweViRUuBC0L27yV3vgl6eMEw0bgYeT3glihTSL
+         9b7YsbwYZ1sBSB4kkbJ1hDIoMcvdxRYLEw1m11NE=
+From:   Mike Rapoport <rppt@kernel.org>
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Helge Deller <deller@gmx.de>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        Sam Creasey <sammy@sammy.net>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Mike Rapoport <rppt@kernel.org>, linux-alpha@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-kernel@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
+        linux-um@lists.infradead.org, sparclinux@vger.kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH 04/12] m68k: nommu: use pgtable-nopud instead of 4level-fixup
+Date:   Wed, 23 Oct 2019 12:28:53 +0300
+Message-Id: <1571822941-29776-5-git-send-email-rppt@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1571822941-29776-1-git-send-email-rppt@kernel.org>
+References: <1571822941-29776-1-git-send-email-rppt@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sean,
+From: Mike Rapoport <rppt@linux.ibm.com>
 
-On Mon, Oct 21, 2019 at 05:35:31PM -0700, Sean Christopherson wrote:
-> Move memslot deletion into its own routine so that the success path for
-> other memslot updates does not need to use kvm_free_memslot(), i.e. can
-> explicitly destroy the dirty bitmap when necessary.  This paves the way
-> for dropping @dont from kvm_free_memslot(), i.e. all callers now pass
-> NULL for @dont.
-> 
-> Add a comment above the code to make a copy of the existing memslot
-> prior to deletion, it is not at all obvious that the pointer will become
-> stale due sorting and/or installation of new memslots.
+The generic nommu implementation of page table manipulation takes care of
+folding of the upper levels and does not require fixups.
 
-nit: due to / during
+Simply replace of include/asm-generic/4level-fixup.h with
+include/asm-generic/pgtable-nopud.h.
 
-> 
-> Note, kvm_arch_commit_memory_region() allows an architecture to free
-> resources when moving a memslot or changing its flags, i.e. implement
-> logic similar to the dirty bitmap is handling, if such functionality is
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ arch/m68k/include/asm/pgtable_no.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-nit: s/is handling/handling/
+diff --git a/arch/m68k/include/asm/pgtable_no.h b/arch/m68k/include/asm/pgtable_no.h
+index c18165b..ccc4568 100644
+--- a/arch/m68k/include/asm/pgtable_no.h
++++ b/arch/m68k/include/asm/pgtable_no.h
+@@ -2,7 +2,7 @@
+ #ifndef _M68KNOMMU_PGTABLE_H
+ #define _M68KNOMMU_PGTABLE_H
+ 
+-#include <asm-generic/4level-fixup.h>
++#include <asm-generic/pgtable-nopud.h>
+ 
+ /*
+  * (C) Copyright 2000-2002, Greg Ungerer <gerg@snapgear.com>
+-- 
+2.7.4
 
-> needed in the future.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-
-Otherwise looks good to me.
-
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
