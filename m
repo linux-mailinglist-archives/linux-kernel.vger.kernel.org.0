@@ -2,130 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CF56E146F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:38:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4AA5E1474
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:39:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390452AbfJWIil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:38:41 -0400
-Received: from mail-eopbgr60057.outbound.protection.outlook.com ([40.107.6.57]:1448
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        id S2390477AbfJWIiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:38:51 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:2433 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389913AbfJWIik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:38:40 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CwqCV/BX+/qHF/BVpoZIAoGWWJuk3wBchjtaXV5ORbMsweEYMPtd2Ct3klPLGHBLCO1bEikXJ5hPdimOuTHO/BLoVu7RcvkN573i8KS4oY3eIPlLiZAaI5cVK9/OpLId/Uw5SdJT451cOAVCOx/xO5JIffTykY7QDmRSmIDmNtcMOGmePqJNnZ1oTyYN16TdhDZ4oK5HNwkzl64nR3w8Iqj8DBOekyzlKQT6Q7uN5rGqw99TTFrGhKJW/xobDcPT82XgAKaAgmJd/IoFLSjKlVSQ9rIl/Bys/ciuaGCe8BjmSRfKyZhdVU6rV5S9POFWrsfcPuGjaB/w7rEpIVXLOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1qyVv2XoSnBmT8uj3uxIR7IOkKTnsoHT/E2wpQc7SzA=;
- b=B+PD4CRndHb3qlR/vRJX9+pSCql9SvpoSkZOaGVHR6AtmQBSsdFwNdbI8hLPyFtizG3Y267/xHDUeJ7/DexSEbkjaVF/32h8ifXCCvc3oEtGvr4Mr0p0RiS+UGOaU0X3P59FrI00ntaIj4b97/kyiH2df+dpA1EdiiTLvQNHleaoSmBtUmGz1jKVRuSnbjwM6sSCyFQdSg2H7yl/NeNwOXAITDbqdl8Re5BY3z4XspROpBYWZJWe/0bqQvThXu5q/EuGPA9eHqTl9hwKmDIsYYxyosMVRyz2BGkWg0OglSCjW8AZ+Pod1JfU3Ag2GfP1lAk7TT4MsNCrUsstR+fryw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1qyVv2XoSnBmT8uj3uxIR7IOkKTnsoHT/E2wpQc7SzA=;
- b=PVtmj+m0physl6RmXbMLYUITTfDngpcxNMVvl8oszZzgz+MCb+qPsjOBAsl7vrxOUFP+RQ9Ielpb9MFOCwWkPIPvdck/4WRcRTehSAl1jNcBYf0pgLD3rgmzrpHxbNZNVMXjQl9m2eCgWhnzSsLrOG8hmBbJiUsj548EXdL68fs=
-Received: from AM7PR04MB7015.eurprd04.prod.outlook.com (52.135.57.19) by
- AM7PR04MB7032.eurprd04.prod.outlook.com (10.255.191.204) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2367.21; Wed, 23 Oct 2019 08:38:36 +0000
-Received: from AM7PR04MB7015.eurprd04.prod.outlook.com
- ([fe80::3924:7adb:47f2:2ece]) by AM7PR04MB7015.eurprd04.prod.outlook.com
- ([fe80::3924:7adb:47f2:2ece%7]) with mapi id 15.20.2367.022; Wed, 23 Oct 2019
- 08:38:36 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Viorel Suman <viorel.suman@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-CC:     Daniel Baluta <daniel.baluta@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ccaione@baylibre.com" <ccaione@baylibre.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "angus@akkea.ca" <angus@akkea.ca>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "agx@sigxcpu.org" <agx@sigxcpu.org>, Jacky Bai <ping.bai@nxp.com>,
-        "baruch@tkos.co.il" <baruch@tkos.co.il>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
+        id S2389913AbfJWIiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 04:38:51 -0400
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id C961B789A126E53FB2EE;
+        Wed, 23 Oct 2019 16:38:49 +0800 (CST)
+Received: from dggeme754-chm.china.huawei.com (10.3.19.100) by
+ DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 23 Oct 2019 16:38:49 +0800
+Received: from [127.0.0.1] (10.184.212.80) by dggeme754-chm.china.huawei.com
+ (10.3.19.100) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 23
+ Oct 2019 16:38:48 +0800
+From:   "liwei (GF)" <liwei391@huawei.com>
+Subject: Re: [PATCH v3 1/2] arm64: Relax ICC_PMR_EL1 accesses when
+ ICC_CTLR_EL1.PMHE is clear
+To:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+        "Catalin Marinas" <catalin.marinas@arm.com>
+CC:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        <huawei.libin@huawei.com>, <guohanjun@huawei.com>,
         <linux-arm-kernel@lists.infradead.org>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
-Subject: Re: [PATCH v4] arm64: dts: imx8mq: Init rates and parents configs for
- clocks
-Thread-Topic: [PATCH v4] arm64: dts: imx8mq: Init rates and parents configs
- for clocks
-Thread-Index: AQHVRVgHX+vi+LJNg0ufd7EEy7KERw==
-Date:   Wed, 23 Oct 2019 08:38:36 +0000
-Message-ID: <AM7PR04MB7015B699FDF9F4BDB69C1499EE6B0@AM7PR04MB7015.eurprd04.prod.outlook.com>
-References: <20190728152040.15323-1-daniel.baluta@nxp.com>
- <VI1PR04MB70239C63D88ED27D929E29C1EEAA0@VI1PR04MB7023.eurprd04.prod.outlook.com>
- <1571812158.5953.2.camel@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [92.121.36.198]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 6bd9f901-222a-40d9-9ac2-08d757946554
-x-ms-traffictypediagnostic: AM7PR04MB7032:|AM7PR04MB7032:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM7PR04MB7032C7A3C4EE0720112BB8C0EE6B0@AM7PR04MB7032.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 019919A9E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(396003)(376002)(39860400002)(136003)(189003)(199004)(33656002)(14454004)(54906003)(316002)(229853002)(25786009)(186003)(53546011)(6506007)(110136005)(102836004)(8936002)(4001150100001)(26005)(99286004)(7696005)(76176011)(478600001)(71190400001)(486006)(44832011)(71200400001)(81156014)(81166006)(14444005)(446003)(64756008)(66446008)(476003)(91956017)(66556008)(66946007)(66476007)(8676002)(305945005)(3846002)(74316002)(6116002)(256004)(9686003)(55016002)(7736002)(52536014)(4744005)(6246003)(7416002)(66066001)(5660300002)(6636002)(6436002)(86362001)(76116006)(4326008)(2906002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM7PR04MB7032;H:AM7PR04MB7015.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: NFPkoNc1+zkG2rr/8k5zXcMtQsWsTxMPDYe59X81B2ZDYVJm4TGyFPHqVBhQR0LbBvTd+0SRYh84CxfvdBOls3OBTH7ufr3dzCqhMWkLXpGEpMZWV7lAAUcMl5XewUKzaRY0e+dQ2j83VI66PjLvCHfBApSSVPu4zb+USTqPmSoZBxXpoZ2xFR12YMIdibIEjHYz0yBvbY0/MkghRV4gUipS+fiXoQ2LY/o8N93I95qGQfwkrurcwkGvCuAhOf9nbXP3nd8Eq4SRK3mnP6OeRCdjtPeMtLz1hi4YvrMn27BSLZ9W1sXrs46+s7FVIxyAd2EM83r/MfaVfN1zXQxEZunTo+CzFQo66RdV0aHbXqFVOoskgZHeRMy8ivg0ByuXr6fEjM4LyjU15sTQFpdnKMxW1FHT51BFb9U90Y5TDlyH+ukdHjQEgbwZMWMGbnhf
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        <linux-kernel@vger.kernel.org>
+References: <20191002090613.14236-1-maz@kernel.org>
+ <20191002090613.14236-2-maz@kernel.org>
+Message-ID: <ad164b94-06af-ffe7-b8ff-317b4078b1a5@huawei.com>
+Date:   Wed, 23 Oct 2019 16:38:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6bd9f901-222a-40d9-9ac2-08d757946554
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2019 08:38:36.1730
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3hqBkEhdDGkOSpQNuIiudjk7ISSTLcY7/fdMS72WAcBRbcbA0SHukyvmuS3tZivP8RwB58nsSAOoZji0Iu64TA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7032
+In-Reply-To: <20191002090613.14236-2-maz@kernel.org>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.212.80]
+X-ClientProxiedBy: dggeme712-chm.china.huawei.com (10.1.199.108) To
+ dggeme754-chm.china.huawei.com (10.3.19.100)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-23 9:29 AM, Viorel Suman wrote:=0A=
-> On Mi, 2019-08-21 at 20:39 +0000, Leonard Crestez wrote:=0A=
->> The audio PLLs should run below 650 mHz so please use 393216000 and=0A=
->> 361267200 instead of 786432000 and 722534400. For the 8mm equivalent see=
-=0A=
->> commit 053a4ffe2988 ("clk: imx: imx8mm: fix audio pll setting").=0A=
-> =0A=
-> Hi Leonard,=0A=
-> =0A=
-> Audio PLL IP on 8mm and 8mn is different than the Audio PLL IP on 8mq,=0A=
-> so the requirement to run below 650 MHZ may not apply to 8mq.=0A=
-=0A=
-This "max 650mHz" limit is from internal ADD and is also mentioned for =0A=
-imx8mq.=0A=
-=0A=
-Peng: you made the change in our internal tree, can you confirm this =0A=
-requirement also applies to 8mq?=0A=
-=0A=
-Viorel: Is there any impact from 393216000 vs 786432000 on PLL on audio? =
-=0A=
-As far as I can know this rate goes through various dividers anyway.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+Hi Marc,
+
+On 2019/10/2 17:06, Marc Zyngier wrote:
+> The GICv3 architecture specification is incredibly misleading when it
+> comes to PMR and the requirement for a DSB. It turns out that this DSB
+> is only required if the CPU interface sends an Upstream Control
+> message to the redistributor in order to update the RD's view of PMR.
+> 
+> This message is only sent when ICC_CTLR_EL1.PMHE is set, which isn't
+> the case in Linux. It can still be set from EL3, so some special care
+> is required. But the upshot is that in the (hopefuly large) majority
+> of the cases, we can drop the DSB altogether.
+> 
+> This relies on a new static key being set if the boot CPU has PMHE
+> set. The drawback is that this static key has to be exported to
+> modules.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Julien Thierry <julien.thierry.kdev@gmail.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>  arch/arm64/include/asm/barrier.h   | 12 ++++++++++++
+>  arch/arm64/include/asm/daifflags.h |  3 ++-
+>  arch/arm64/include/asm/irqflags.h  | 19 ++++++++++---------
+>  arch/arm64/include/asm/kvm_host.h  |  3 +--
+>  arch/arm64/kernel/entry.S          |  6 ++++--
+>  arch/arm64/kvm/hyp/switch.c        |  4 ++--
+>  drivers/irqchip/irq-gic-v3.c       | 20 ++++++++++++++++++++
+>  include/linux/irqchip/arm-gic-v3.h |  2 ++
+>  8 files changed, 53 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/barrier.h b/arch/arm64/include/asm/barrier.h
+> index e0e2b1946f42..7d9cc5ec4971 100644
+> --- a/arch/arm64/include/asm/barrier.h
+> +++ b/arch/arm64/include/asm/barrier.h
+> @@ -29,6 +29,18 @@
+>  						 SB_BARRIER_INSN"nop\n",	\
+>  						 ARM64_HAS_SB))
+>  
+> +#ifdef CONFIG_ARM64_PSEUDO_NMI
+> +#define pmr_sync()						\
+> +	do {							\
+> +		extern struct static_key_false gic_pmr_sync;	\
+> +								\
+> +		if (static_branch_unlikely(&gic_pmr_sync))	\
+> +			dsb(sy);				\
+> +	} while(0)
+> +#else
+> +#define pmr_sync()	do {} while (0)
+> +#endif
+> +
+
+Thank you for solving this problem, it helps a lot indeed.
+
+The pmr_sync() will call dsb(sy) when ARM64_PSEUDO_NMI=y and gic_pmr_sync=force,
+but if pseudo nmi is not enabled through boot option, it just take one more
+redundant calling than before at the following two place.
+
+I think change dsb(sy) to
++                       asm volatile(ALTERNATIVE("nop", "dsb sy",       \
++                               ARM64_HAS_IRQ_PRIO_MASKING)     \
++                               : : : "memory");                \
+may be more appropriate.
+
+Thanks,
+Wei
+
+>  
+> @@ -34,14 +35,14 @@ static inline void arch_local_irq_enable(void)
+>  	}
+>  
+>  	asm volatile(ALTERNATIVE(
+> -		"msr	daifclr, #2		// arch_local_irq_enable\n"
+> -		"nop",
+> -		__msr_s(SYS_ICC_PMR_EL1, "%0")
+> -		"dsb	sy",
+> +		"msr	daifclr, #2		// arch_local_irq_enable",
+> +		__msr_s(SYS_ICC_PMR_EL1, "%0"),
+>  		ARM64_HAS_IRQ_PRIO_MASKING)
+>  		:
+>  		: "r" ((unsigned long) GIC_PRIO_IRQON)
+>  		: "memory");
+> +
+> +	pmr_sync();
+>  }
+>  
+>  static inline void arch_local_irq_disable(void)
+> @@ -116,14 +117,14 @@ static inline unsigned long arch_local_irq_save(void)
+>  static inline void arch_local_irq_restore(unsigned long flags)
+>  {
+>  	asm volatile(ALTERNATIVE(
+> -			"msr	daif, %0\n"
+> -			"nop",
+> -			__msr_s(SYS_ICC_PMR_EL1, "%0")
+> -			"dsb	sy",
+> -			ARM64_HAS_IRQ_PRIO_MASKING)
+> +		"msr	daif, %0",
+> +		__msr_s(SYS_ICC_PMR_EL1, "%0"),
+> +		ARM64_HAS_IRQ_PRIO_MASKING)
+>  		:
+>  		: "r" (flags)
+>  		: "memory");
+> +
+> +	pmr_sync();
+>  }
+>  
+
