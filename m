@@ -2,235 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BF76E1BDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:11:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5B19E1C10
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405636AbfJWNLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 09:11:03 -0400
-Received: from [217.140.110.172] ([217.140.110.172]:51720 "EHLO foss.arm.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbfJWNLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:11:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 593254A7;
-        Wed, 23 Oct 2019 06:10:44 -0700 (PDT)
-Received: from [10.37.9.47] (unknown [10.37.9.47])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 17FFD3F6C4;
-        Wed, 23 Oct 2019 06:10:42 -0700 (PDT)
-Subject: Re: [PATCH v4] coresight: Serialize enabling/disabling a link device.
-To:     yabinc@google.com, mathieu.poirier@linaro.org,
-        alexander.shishkin@linux.intel.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20191018181403.106836-1-yabinc@google.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <d4b10a7f-6823-8b6d-c63d-a1df3c719a2e@arm.com>
-Date:   Wed, 23 Oct 2019 14:14:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S2405193AbfJWNO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:14:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389590AbfJWNO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 09:14:56 -0400
+Received: from earth.universe (monacowifi.monaco.mc [82.113.13.92])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D31E21906;
+        Wed, 23 Oct 2019 13:14:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571836495;
+        bh=E6T55uP3FrNoFRn1ScztDiriAouaJNVm+C23qSgGr54=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KRZo+1m99h+6klvOJNcfToHQwLue1EIjCd65zwAMbXCJmUecwaD6rTEZZMg9+kYGQ
+         X5a4WwTr2/f7Tv+/O8EavXhqMgoo2QXEcQz50Xv0uqv9yVI1aI0ToD4bwbFdEjF4FY
+         xMiNVRLd3aBYkcz5+MbbKBcELuqBmnzcS8WN5k6k=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 6FA8C3C09B2; Wed, 23 Oct 2019 15:14:52 +0200 (CEST)
+Date:   Wed, 23 Oct 2019 15:14:52 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Adam Ford <aford173@gmail.com>,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh@kernel.org>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwrng: omap3-rom - Fix unused function warnings
+Message-ID: <20191023131452.2rilepif7x5lpfma@earth.universe>
+References: <20191022142741.1794378-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20191018181403.106836-1-yabinc@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="sf4hte6kcc3ifsee"
+Content-Disposition: inline
+In-Reply-To: <20191022142741.1794378-1-arnd@arndb.de>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/2019 07:14 PM, Yabin Cui wrote:
-> When tracing etm data of multiple threads on multiple cpus through perf
-> interface, some link devices are shared between paths of different cpus.
-> It creates race conditions when different cpus wants to enable/disable
-> the same link device at the same time.
-> 
-> Example 1:
-> Two cpus want to enable different ports of a coresight funnel, thus
-> calling the funnel enable operation at the same time. But the funnel
-> enable operation isn't reentrantable.
-> 
-> Example 2:
-> For an enabled coresight dynamic replicator with refcnt=1, one cpu wants
-> to disable it, while another cpu wants to enable it. Ideally we still have
-> an enabled replicator with refcnt=1 at the end. But in reality the result
-> is uncertain.
-> 
-> Since coresight devices claim themselves when enabled for self-hosted
-> usage, the race conditions above usually make the link devices not usable
-> after many cycles.
-> 
-> To fix the race conditions, this patch uses spinlocks to serialize
-> enabling/disabling link devices.
-> 
-> Fixes: a06ae8609b3d ("coresight: add CoreSight core layer framework")
-> Signed-off-by: Yabin Cui <yabinc@google.com>
+
+--sf4hte6kcc3ifsee
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Tue, Oct 22, 2019 at 04:27:31PM +0200, Arnd Bergmann wrote:
+> When runtime-pm is disabled, we get a few harmless warnings:
+>=20
+> drivers/char/hw_random/omap3-rom-rng.c:65:12: error: unused function 'oma=
+p_rom_rng_runtime_suspend' [-Werror,-Wunused-function]
+> drivers/char/hw_random/omap3-rom-rng.c:81:12: error: unused function 'oma=
+p_rom_rng_runtime_resume' [-Werror,-Wunused-function]
+>=20
+> Mark these functions as __maybe_unused so gcc can drop them
+> silently.
+>=20
+> Fixes: 8d9d4bdc495f ("hwrng: omap3-rom - Use runtime PM instead of custom=
+ functions")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
-> 
-> v3 -> v4: moved lock from coresight_enable/disable_link() to
-> enable/disable functions of each link device.
-> 
-> I also removed lock protection of csdev->enable in v3. Because that
-> needs to move csdev->enable inside the enable/disable functions of
-> each link device. That's much effort with almost no benefits.
-> csdev->enable seems only used for source devices in sysfs interface.
-> 
-> ---
->   .../hwtracing/coresight/coresight-funnel.c    | 29 ++++++++----
->   .../coresight/coresight-replicator.c          | 31 +++++++++----
->   .../hwtracing/coresight/coresight-tmc-etf.c   | 39 ++++++++--------
->   drivers/hwtracing/coresight/coresight.c       | 45 ++++++-------------
->   4 files changed, 77 insertions(+), 67 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-> index 05f7896c3a01..8326d03a0d03 100644
-> --- a/drivers/hwtracing/coresight/coresight-funnel.c
-> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
-> @@ -44,6 +44,7 @@ struct funnel_drvdata {
->   	struct clk		*atclk;
->   	struct coresight_device	*csdev;
->   	unsigned long		priority;
-> +	spinlock_t		spinlock;
->   };
->   
->   static int dynamic_funnel_enable_hw(struct funnel_drvdata *drvdata, int port)
-> @@ -76,12 +77,20 @@ static int funnel_enable(struct coresight_device *csdev, int inport,
->   {
->   	int rc = 0;
->   	struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> +	unsigned long flags;
->   
-> -	if (drvdata->base)
-> -		rc = dynamic_funnel_enable_hw(drvdata, inport);
-> +	spin_lock_irqsave(&drvdata->spinlock, flags);
-> +	if (atomic_inc_return(&csdev->refcnt[inport]) == 1) {
-> +		if (drvdata->base)
-> +			rc = dynamic_funnel_enable_hw(drvdata, inport);
->   
-> -	if (!rc)
-> -		dev_dbg(&csdev->dev, "FUNNEL inport %d enabled\n", inport);
-> +		if (rc)
-> +			atomic_dec(&csdev->refcnt[inport]);
-> +		else
-> +			dev_dbg(&csdev->dev, "FUNNEL inport %d enabled\n",
-> +				inport);
-> +	}
-> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
->   	return rc;
->   }
->   
-> @@ -107,11 +116,15 @@ static void funnel_disable(struct coresight_device *csdev, int inport,
->   			   int outport)
->   {
->   	struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> +	unsigned long flags;
->   
-> -	if (drvdata->base)
-> -		dynamic_funnel_disable_hw(drvdata, inport);
-> -
-> -	dev_dbg(&csdev->dev, "FUNNEL inport %d disabled\n", inport);
-> +	spin_lock_irqsave(&drvdata->spinlock, flags);
-> +	if (atomic_dec_return(&csdev->refcnt[inport]) == 0) {
-> +		if (drvdata->base)
-> +			dynamic_funnel_disable_hw(drvdata, inport);
-> +		dev_dbg(&csdev->dev, "FUNNEL inport %d disabled\n", inport);
-> +	}
-> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
->   }
->   
->   static const struct coresight_ops_link funnel_link_ops = {
-> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-> index b29ba640eb25..427d8b8d0917 100644
-> --- a/drivers/hwtracing/coresight/coresight-replicator.c
-> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
-> @@ -36,6 +36,7 @@ struct replicator_drvdata {
->   	void __iomem		*base;
->   	struct clk		*atclk;
->   	struct coresight_device	*csdev;
-> +	spinlock_t		spinlock;
->   };
->   
->   static void dynamic_replicator_reset(struct replicator_drvdata *drvdata)
-> @@ -97,11 +98,20 @@ static int replicator_enable(struct coresight_device *csdev, int inport,
->   {
->   	int rc = 0;
->   	struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> -
-> -	if (drvdata->base)
-> -		rc = dynamic_replicator_enable(drvdata, inport, outport);
-> -	if (!rc)
-> -		dev_dbg(&csdev->dev, "REPLICATOR enabled\n");
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&drvdata->spinlock, flags);
-> +	if (atomic_inc_return(&csdev->refcnt[outport]) == 1) {
 
-Since we now have the spinlock to protect us, we could simply do an
-atomic_read() and then do the hw_enable() followed by an atomic_inc(),
-if we are successful. That way we could make it more cleaner and avoid
-the atomic_dec() if we encounter a failure. In fact we could simply get
-away with the refcnt and replace them with a simple integer, but that
-may be a different patch.
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
+-- Sebastian
 
-> +		if (drvdata->base)
-> +			rc = dynamic_replicator_enable(drvdata, inport,
-> +						       outport);
-> +
-> +		if (rc)
-> +			atomic_dec(&csdev->refcnt[outport]);
-> +		else
-> +			dev_dbg(&csdev->dev, "REPLICATOR enabled\n");
-> +	}
-> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
->   	return rc;
->   }
->   
-> @@ -137,10 +147,15 @@ static void replicator_disable(struct coresight_device *csdev, int inport,
->   			       int outport)
->   {
->   	struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> +	unsigned long flags;
->   
-> -	if (drvdata->base)
-> -		dynamic_replicator_disable(drvdata, inport, outport);
-> -	dev_dbg(&csdev->dev, "REPLICATOR disabled\n");
-> +	spin_lock_irqsave(&drvdata->spinlock, flags);
-> +	if (atomic_dec_return(&csdev->refcnt[outport]) == 0) {
-> +		if (drvdata->base)
-> +			dynamic_replicator_disable(drvdata, inport, outport);
-> +		dev_dbg(&csdev->dev, "REPLICATOR disabled\n");
-> +	}
-> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>  drivers/char/hw_random/omap3-rom-rng.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/char/hw_random/omap3-rom-rng.c b/drivers/char/hw_ran=
+dom/omap3-rom-rng.c
+> index 0b90983c95c8..e08a8887e718 100644
+> --- a/drivers/char/hw_random/omap3-rom-rng.c
+> +++ b/drivers/char/hw_random/omap3-rom-rng.c
+> @@ -62,7 +62,7 @@ static int omap3_rom_rng_read(struct hwrng *rng, void *=
+data, size_t max, bool w)
+>  	return r;
+>  }
+> =20
+> -static int omap_rom_rng_runtime_suspend(struct device *dev)
+> +static int __maybe_unused omap_rom_rng_runtime_suspend(struct device *de=
+v)
+>  {
+>  	struct omap_rom_rng *ddata;
+>  	int r;
+> @@ -78,7 +78,7 @@ static int omap_rom_rng_runtime_suspend(struct device *=
+dev)
+>  	return 0;
+>  }
+> =20
+> -static int omap_rom_rng_runtime_resume(struct device *dev)
+> +static int __maybe_unused omap_rom_rng_runtime_resume(struct device *dev)
+>  {
+>  	struct omap_rom_rng *ddata;
+>  	int r;
+> --=20
+> 2.20.0
+>=20
 
+--sf4hte6kcc3ifsee
+Content-Type: application/pgp-signature; name="signature.asc"
 
->   }
->   
->   static const struct coresight_ops_link replicator_link_ops = {
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-> index 807416b75ecc..cb4a38541bf8 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-> @@ -334,23 +334,25 @@ static int tmc_disable_etf_sink(struct coresight_device *csdev)
->   static int tmc_enable_etf_link(struct coresight_device *csdev,
->   			       int inport, int outport)
->   {
-> -	int ret;
-> +	int ret = 0;
->   	unsigned long flags;
->   	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->   
->   	spin_lock_irqsave(&drvdata->spinlock, flags);
-> -	if (drvdata->reading) {
-> -		spin_unlock_irqrestore(&drvdata->spinlock, flags);
-> -		return -EBUSY;
-> +	if (atomic_inc_return(&csdev->refcnt[0]) == 1) {
-> +		if (drvdata->reading)
-> +			ret = -EBUSY;
+-----BEGIN PGP SIGNATURE-----
 
-Could we not check the drvdata->reading before the refcount and bail
-out early ? We are protected by the spinlock anyway. Similar to the
-above case we could check the refcount and only increment when we have
-enabled.
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl2wUkQACgkQ2O7X88g7
++prkIQ//eDW6JCdb1BVZK+8ld4GNb5f9QiGBp78CEzw4Nt7b9sjiSkuODvtpwUEz
+LUYeSj3XJErABjT9CEteFHYmXlS4Tge9a12s4596KR1sut3960u83ZSVMD2MaFd7
+jnNp9oZsiJivbZPWMqCiFPxpaV8nmvYvnyX5yMgDFrAMFFS6qk2w6ZznJctahXzs
+WyKmQQTOc7wFo0AsT3iomSxZsyPKjPWUcXF1fO49Anzka3+6aV5k6mmEVEhMep/r
+txA1zr6Fw3OKwF72r1x1bg2VcLluU4K66cm8R636W1FzujvHUgkWYr3BcUwaCqwr
+LlTzvVokm6Pq2L9hFVIo5WrCP2qnnlzKXu6M0BoFcSWq0sXi2slhE1J1jlg63NpG
+nHn/cpu8DPDfvZ/SdvDfESCGaMubItcv4EhauN/Ar8x2buf3duK4OE4ApJGUWnOV
+BzghZnt1iY6y1JC4Rbnl6NJYaZm54sYjMildCKza4OuoLYGeTZKEM/bqpbiVodtI
+Rm4nUpxCkZ2vfI2XxyDYuxmzzF/lu+1oZOTHDpVlv0OlqAJhgXzvUiuikMxS+6xQ
+LSAzY1uG14pfrwKAUtWoh1vG/ZVoK5UpRYyhBnAAPcXH3C4h6TKxBwGCJ0BrhLmI
+PfZIF2uCFofMB8Q3A8/cGxx6WGVgKWU1xkQhGr51TMgxA13+vwk=
+=uPzb
+-----END PGP SIGNATURE-----
 
-
-Cheers
-Suzuki
+--sf4hte6kcc3ifsee--
