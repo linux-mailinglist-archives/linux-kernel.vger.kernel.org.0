@@ -2,70 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AF47E148B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:44:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D9A4E1494
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390457AbfJWIoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:44:23 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:58222 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390343AbfJWIoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:44:23 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1iNCFc-0004MA-Ja; Wed, 23 Oct 2019 16:44:16 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1iNCFY-0003xp-75; Wed, 23 Oct 2019 16:44:12 +0800
-Date:   Wed, 23 Oct 2019 16:44:12 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-        Joe Perches <joe@perches.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
-        Otto Sabart <ottosabart@seberm.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5.1 RESEND] dt-bindings: hwrng: Add Samsung Exynos 5250+
- True RNG bindings
-Message-ID: <20191023084412.va5gswstckblm5a4@gondor.apana.org.au>
-References: <CGME20190111132222eucas1p1d80caf8ba30422bc5fe1a1fac4cf48e8@eucas1p1.samsung.com>
- <CAL_JsqKt-ujsB-t9A=4dEAjqrvcquUG+qF3tFg1YCqmup_5wcw@mail.gmail.com>
- <20190111132139.12333-1-l.stelmach@samsung.com>
- <CAJKOXPfM+EUzBBBhrtSFw5-e7hiimsFT8okcd8J9gGyFdzd2+w@mail.gmail.com>
- <58f7d127-b798-04b8-1bc6-d37a8af273f7@suse.de>
+        id S2390511AbfJWIqB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 23 Oct 2019 04:46:01 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:56174 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390034AbfJWIqA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 04:46:00 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x9N8idV2013066, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV02.realtek.com.tw[172.21.6.19])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x9N8idV2013066
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 23 Oct 2019 16:44:39 +0800
+Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
+ RTITCASV02.realtek.com.tw (172.21.6.19) with Microsoft SMTP Server (TLS) id
+ 14.3.468.0; Wed, 23 Oct 2019 16:44:38 +0800
+Received: from RTEXMB01.realtek.com.tw (172.21.6.94) by
+ RTEXMB03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Wed, 23 Oct 2019 16:44:37 +0800
+Received: from RTEXMB01.realtek.com.tw ([fe80::6d88:58e2:6d4b:ff7c]) by
+ RTEXMB01.realtek.com.tw ([fe80::6d88:58e2:6d4b:ff7c%13]) with mapi id
+ 15.01.1779.005; Wed, 23 Oct 2019 16:44:37 +0800
+From:   Kailang <kailang@realtek.com>
+To:     Takashi Iwai <tiwai@suse.de>, Aaron Ma <aaron.ma@canonical.com>
+CC:     "perex@perex.cz" <perex@perex.cz>,
+        "hui.wang@canonical.com" <hui.wang@canonical.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
+Thread-Topic: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
+Thread-Index: AQHViO7vxXHEn3Xl7Ee6N1/g4hdxKqdmTdyAgAGbrzA=
+Date:   Wed, 23 Oct 2019 08:44:37 +0000
+Message-ID: <848ebd7fd86e4c05936e70f500f718e9@realtek.com>
+References: <20191022153855.14368-1-aaron.ma@canonical.com>
+ <s5hpniodaq4.wl-tiwai@suse.de>
+In-Reply-To: <s5hpniodaq4.wl-tiwai@suse.de>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.22.105.211]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <58f7d127-b798-04b8-1bc6-d37a8af273f7@suse.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 10:16:48AM +0200, Andreas Färber wrote:
->
-> For some reason this text file in linux-next is lonely in devicetree/...
-> rather than living in Documentation/devicetree/... - please fix that.
-> The patch here looks correct, so not sure what went wrong:
+
+
+> -----Original Message-----
+> From: Takashi Iwai <tiwai@suse.de>
+> Sent: Wednesday, October 23, 2019 12:08 AM
+> To: Aaron Ma <aaron.ma@canonical.com>
+> Cc: perex@perex.cz; Kailang <kailang@realtek.com>;
+> hui.wang@canonical.com; alsa-devel@alsa-project.org;
+> linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/devicetree/bindings/rng/samsung,exynos5250-trng.txt?h=next-20191023&id=85552c22f03c9066c33f26f34538b67fee6a91a8
+> On Tue, 22 Oct 2019 17:38:55 +0200,
+> Aaron Ma wrote:
+> >
+> > These 2 ThinkCentres installed a new realtek codec ID 0x623, it has 2
+> > front mics with the same location on pin 0x18 and 0x19.
+> >
+> > Apply fixup ALC283_FIXUP_HEADSET_MIC to change 1 front mic location to
+> > right, then pulseaudio can handle them.
+> > One "Front Mic" and one "Mic" will be shown, and audio output works
+> > fine.
+> >
+> > Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+> 
+> I'd like to have Kailang's review about the new codec before applying.
+> 
+> Kailang, could you take a look?
+OK.
+I will post you the patch for ALC623 codec tomorrow.
+Thanks.
 
-It's because the patch
-
-	https://patchwork.kernel.org/patch/11181265/
-
-was generated at the wrong level (p0 instead of p1).
-
-I'll fix this up in my tree.  Thanks for the heads up.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> > ---
+> >  sound/pci/hda/patch_realtek.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/sound/pci/hda/patch_realtek.c
+> > b/sound/pci/hda/patch_realtek.c index b000b36ac3c6..c34d8b435f58
+> > 100644
+> > --- a/sound/pci/hda/patch_realtek.c
+> > +++ b/sound/pci/hda/patch_realtek.c
+> > @@ -7186,6 +7186,8 @@ static const struct snd_pci_quirk alc269_fixup_tbl[]
+> = {
+> >  	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station",
+> ALC294_FIXUP_LENOVO_MIC_LOCATION),
+> >  	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station",
+> ALC294_FIXUP_LENOVO_MIC_LOCATION),
+> >  	SND_PCI_QUIRK(0x17aa, 0x3151, "ThinkCentre Station",
+> > ALC283_FIXUP_HEADSET_MIC),
+> > +	SND_PCI_QUIRK(0x17aa, 0x3178, "ThinkCentre Station",
+> ALC283_FIXUP_HEADSET_MIC),
+> > +	SND_PCI_QUIRK(0x17aa, 0x3176, "ThinkCentre Station",
+> > +ALC283_FIXUP_HEADSET_MIC),
+> >  	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80",
+> ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+> >  	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210",
+> ALC283_FIXUP_INT_MIC),
+> >  	SND_PCI_QUIRK(0x17aa, 0x3978, "Lenovo B50-70",
+> > ALC269_FIXUP_DMIC_THINKPAD_ACPI), @@ -9187,6 +9189,7 @@ static
+> const struct hda_device_id snd_hda_id_realtek[] = {
+> >  	HDA_CODEC_ENTRY(0x10ec0298, "ALC298", patch_alc269),
+> >  	HDA_CODEC_ENTRY(0x10ec0299, "ALC299", patch_alc269),
+> >  	HDA_CODEC_ENTRY(0x10ec0300, "ALC300", patch_alc269),
+> > +	HDA_CODEC_ENTRY(0x10ec0623, "ALC623", patch_alc269),
+> >  	HDA_CODEC_REV_ENTRY(0x10ec0861, 0x100340, "ALC660",
+> patch_alc861),
+> >  	HDA_CODEC_ENTRY(0x10ec0660, "ALC660-VD", patch_alc861vd),
+> >  	HDA_CODEC_ENTRY(0x10ec0861, "ALC861", patch_alc861),
+> > --
+> > 2.17.1
+> >
+> 
+> ------Please consider the environment before printing this e-mail.
