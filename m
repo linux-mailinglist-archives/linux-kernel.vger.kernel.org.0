@@ -2,263 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F541E1C07
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:14:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BF76E1BDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:11:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405743AbfJWNN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 09:13:28 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33027 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405714AbfJWNN1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:13:27 -0400
-Received: by mail-ed1-f67.google.com with SMTP id c4so15728049edl.0;
-        Wed, 23 Oct 2019 06:13:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=o54Jyg7LaPMTM/R2ezpXAUg6vHkjUZaxwTxf8dd6jXk=;
-        b=qhqmL5gdouqSgD5QVpG81sTI3R3KOtcjzZIrNZIWSUG5ZNYdmCdOSslCn64pZVgdx/
-         fSNfEVAfob6EaqnuYgeqbxGu0U/g8vvB1wYTAd/4KfRUFvBglWwhAn1WZDBHvB6cYsDk
-         2GZL75nT+dNoVkm6qPGmFK7QCI55HwhXqqXm60tzluR75iHixp7SLOc3aUUK57XOrKqk
-         QqO2PGSnGtdt4+J+sQ6HL4mgSthVMsER3kfgR3PWy0aneNGir1rpeCqnIOncIVDOgQSX
-         mQf5zo7fKjgVVKnB48oRKlE0CupCC0ai0bo7HygthNy3BVQ1dnALnZeEEePGRvQSdda8
-         8v1w==
-X-Gm-Message-State: APjAAAXUEd9o+7iii/oUQVATVpHwGd/BlFGWRMWRpeWyp+0z9i7GHenX
-        hrNctcFeighXUFUCCPY4WSA=
-X-Google-Smtp-Source: APXvYqxJH5rltespiv1WDhAborQbNiDE5+2CReq8AP71JjFfyUdkdzYR7L1/bvADJTpzB8Q1SXMf1g==
-X-Received: by 2002:a17:906:704:: with SMTP id y4mr32582518ejb.259.1571836404632;
-        Wed, 23 Oct 2019 06:13:24 -0700 (PDT)
-Received: from pi3 ([194.230.155.217])
-        by smtp.googlemail.com with ESMTPSA id v5sm269620edd.90.2019.10.23.06.13.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 06:13:23 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 15:13:21 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH 28/36] fbdev: s3c2410fb: remove mach header dependency
-Message-ID: <20191023131321.GH11048@pi3>
-References: <20191010202802.1132272-1-arnd@arndb.de>
- <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-28-arnd@arndb.de>
+        id S2405636AbfJWNLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:11:03 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:51720 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1726032AbfJWNLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 09:11:02 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 593254A7;
+        Wed, 23 Oct 2019 06:10:44 -0700 (PDT)
+Received: from [10.37.9.47] (unknown [10.37.9.47])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 17FFD3F6C4;
+        Wed, 23 Oct 2019 06:10:42 -0700 (PDT)
+Subject: Re: [PATCH v4] coresight: Serialize enabling/disabling a link device.
+To:     yabinc@google.com, mathieu.poirier@linaro.org,
+        alexander.shishkin@linux.intel.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20191018181403.106836-1-yabinc@google.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <d4b10a7f-6823-8b6d-c63d-a1df3c719a2e@arm.com>
+Date:   Wed, 23 Oct 2019 14:14:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191010203043.1241612-28-arnd@arndb.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191018181403.106836-1-yabinc@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:30:12PM +0200, Arnd Bergmann wrote:
-> The s3c2410fb driver is too deeply intertwined with the s3c24xx
-> platform code. Change it in a way that avoids the use of platform
-> header files but having all interface data in a platform_data
-> header, and the private register definitions next to the driver
-> itself.
+On 10/18/2019 07:14 PM, Yabin Cui wrote:
+> When tracing etm data of multiple threads on multiple cpus through perf
+> interface, some link devices are shared between paths of different cpus.
+> It creates race conditions when different cpus wants to enable/disable
+> the same link device at the same time.
 > 
-> One ugly bit here is that the driver pokes directly into gpio
-> registers, which are owned by another driver. Passing the
-> mapped addresses in platform_data is somewhat suboptimal, but
-> it is a small improvement over the previous version.
+> Example 1:
+> Two cpus want to enable different ports of a coresight funnel, thus
+> calling the funnel enable operation at the same time. But the funnel
+> enable operation isn't reentrantable.
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Example 2:
+> For an enabled coresight dynamic replicator with refcnt=1, one cpu wants
+> to disable it, while another cpu wants to enable it. Ideally we still have
+> an enabled replicator with refcnt=1 at the end. But in reality the result
+> is uncertain.
+> 
+> Since coresight devices claim themselves when enabled for self-hosted
+> usage, the race conditions above usually make the link devices not usable
+> after many cycles.
+> 
+> To fix the race conditions, this patch uses spinlocks to serialize
+> enabling/disabling link devices.
+> 
+> Fixes: a06ae8609b3d ("coresight: add CoreSight core layer framework")
+> Signed-off-by: Yabin Cui <yabinc@google.com>
 > ---
->  arch/arm/mach-s3c24xx/include/mach/fb.h       |  2 --
->  arch/arm/mach-s3c24xx/mach-amlm5900.c         |  7 ++--
->  arch/arm/mach-s3c24xx/mach-anubis.c           |  1 -
->  arch/arm/mach-s3c24xx/mach-at2440evb.c        |  3 +-
->  arch/arm/mach-s3c24xx/mach-bast.c             |  3 +-
->  arch/arm/mach-s3c24xx/mach-gta02.c            |  2 +-
->  arch/arm/mach-s3c24xx/mach-h1940.c            |  7 ++--
->  arch/arm/mach-s3c24xx/mach-jive.c             | 10 ++++--
->  arch/arm/mach-s3c24xx/mach-mini2440.c         |  9 +++--
->  arch/arm/mach-s3c24xx/mach-n30.c              |  3 +-
->  arch/arm/mach-s3c24xx/mach-osiris.c           |  1 -
->  arch/arm/mach-s3c24xx/mach-qt2410.c           |  3 +-
->  arch/arm/mach-s3c24xx/mach-rx1950.c           |  8 +++--
->  arch/arm/mach-s3c24xx/mach-rx3715.c           |  7 ++--
->  arch/arm/mach-s3c24xx/mach-smdk2413.c         |  3 +-
->  arch/arm/mach-s3c24xx/mach-smdk2416.c         |  1 -
->  arch/arm/mach-s3c24xx/mach-smdk2440.c         |  8 +++--
->  arch/arm/mach-s3c24xx/mach-smdk2443.c         |  3 +-
->  arch/arm/mach-s3c24xx/mach-vstms.c            |  3 +-
->  arch/arm/plat-samsung/devs.c                  |  2 +-
->  .../video/fbdev/s3c2410fb-regs-lcd.h          | 28 ++++------------
->  drivers/video/fbdev/s3c2410fb.c               | 16 +++++----
->  .../linux/platform_data}/fb-s3c2410.h         | 33 ++++++++++++++++++-
->  23 files changed, 98 insertions(+), 65 deletions(-)
->  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/fb.h
->  rename arch/arm/mach-s3c24xx/include/mach/regs-lcd.h => drivers/video/fbdev/s3c2410fb-regs-lcd.h (84%)
->  rename {arch/arm/plat-samsung/include/plat => include/linux/platform_data}/fb-s3c2410.h (57%)
 > 
-> diff --git a/arch/arm/mach-s3c24xx/include/mach/fb.h b/arch/arm/mach-s3c24xx/include/mach/fb.h
-> deleted file mode 100644
-> index 4e539cb8b884..000000000000
-> --- a/arch/arm/mach-s3c24xx/include/mach/fb.h
-> +++ /dev/null
-> @@ -1,2 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0 */
-> -#include <plat/fb-s3c2410.h>
-> diff --git a/arch/arm/mach-s3c24xx/mach-amlm5900.c b/arch/arm/mach-s3c24xx/mach-amlm5900.c
-> index 40ad23b52bc0..ef6de1b1d0c6 100644
-> --- a/arch/arm/mach-s3c24xx/mach-amlm5900.c
-> +++ b/arch/arm/mach-s3c24xx/mach-amlm5900.c
-> @@ -30,9 +30,8 @@
->  #include <mach/hardware.h>
->  #include <asm/irq.h>
->  #include <asm/mach-types.h>
-> -#include <mach/fb.h>
-> +#include <linux/platform_data/fb-s3c2410.h>
->  
-> -#include <mach/regs-lcd.h>
->  #include <mach/regs-gpio.h>
->  #include <mach/gpio-samsung.h>
->  
-> @@ -194,13 +193,17 @@ static struct s3c2410fb_mach_info __initdata amlm5900_fb_info = {
->  
->  	.gpccon =	0xaaaaaaaa,
->  	.gpccon_mask =	0xffffffff,
-> +	.gpccon_reg =	S3C2410_GPCCON,
->  	.gpcup =	0x0000ffff,
->  	.gpcup_mask =	0xffffffff,
-> +	.gpcup_reg =	S3C2410_GPCUP,
->  
->  	.gpdcon =	0xaaaaaaaa,
->  	.gpdcon_mask =	0xffffffff,
-> +	.gpdcon_reg =	S3C2410_GPDCON,
->  	.gpdup =	0x0000ffff,
->  	.gpdup_mask =	0xffffffff,
-> +	.gpdup_reg =	S3C2410_GPDUP,
->  };
->  #endif
->  
-> diff --git a/arch/arm/mach-s3c24xx/mach-anubis.c b/arch/arm/mach-s3c24xx/mach-anubis.c
-> index 072966dcad78..e1a73274e90b 100644
-> --- a/arch/arm/mach-s3c24xx/mach-anubis.c
-> +++ b/arch/arm/mach-s3c24xx/mach-anubis.c
-> @@ -29,7 +29,6 @@
->  #include <asm/mach-types.h>
->  
->  #include <mach/regs-gpio.h>
-> -#include <mach/regs-lcd.h>
->  #include <mach/gpio-samsung.h>
->  #include <linux/platform_data/mtd-nand-s3c2410.h>
->  #include <linux/platform_data/i2c-s3c2410.h>
-> diff --git a/arch/arm/mach-s3c24xx/mach-at2440evb.c b/arch/arm/mach-s3c24xx/mach-at2440evb.c
-> index b2199906e678..bfda6dd2a9d5 100644
-> --- a/arch/arm/mach-s3c24xx/mach-at2440evb.c
-> +++ b/arch/arm/mach-s3c24xx/mach-at2440evb.c
-> @@ -25,12 +25,11 @@
->  #include <asm/mach/irq.h>
->  
->  #include <mach/hardware.h>
-> -#include <mach/fb.h>
-> +#include <linux/platform_data/fb-s3c2410.h>
->  #include <asm/irq.h>
->  #include <asm/mach-types.h>
->  
->  #include <mach/regs-gpio.h>
-> -#include <mach/regs-lcd.h>
->  #include <mach/gpio-samsung.h>
->  #include <linux/platform_data/mtd-nand-s3c2410.h>
->  #include <linux/platform_data/i2c-s3c2410.h>
-> diff --git a/arch/arm/mach-s3c24xx/mach-bast.c b/arch/arm/mach-s3c24xx/mach-bast.c
-> index a7c3955ae8f6..cc941b5030ea 100644
-> --- a/arch/arm/mach-s3c24xx/mach-bast.c
-> +++ b/arch/arm/mach-s3c24xx/mach-bast.c
-> @@ -40,10 +40,9 @@
->  #include <asm/mach/irq.h>
->  #include <asm/mach-types.h>
->  
-> -#include <mach/fb.h>
->  #include <mach/hardware.h>
-> +#include <linux/platform_data/fb-s3c2410.h>
->  #include <mach/regs-gpio.h>
-> -#include <mach/regs-lcd.h>
->  #include <mach/gpio-samsung.h>
->  
->  #include <plat/cpu.h>
-> diff --git a/arch/arm/mach-s3c24xx/mach-gta02.c b/arch/arm/mach-s3c24xx/mach-gta02.c
-> index 61b8c6badeb8..1e42782dbd30 100644
-> --- a/arch/arm/mach-s3c24xx/mach-gta02.c
-> +++ b/arch/arm/mach-s3c24xx/mach-gta02.c
-> @@ -57,8 +57,8 @@
->  #include <linux/platform_data/touchscreen-s3c2410.h>
->  #include <linux/platform_data/usb-ohci-s3c2410.h>
->  #include <linux/platform_data/usb-s3c2410_udc.h>
-> +#include <linux/platform_data/fb-s3c2410.h>
->  
-> -#include <mach/fb.h>
->  #include <mach/hardware.h>
->  #include <mach/regs-gpio.h>
->  #include <mach/regs-irq.h>
-> diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-> index 446891e23511..d56e3befa459 100644
-> --- a/arch/arm/mach-s3c24xx/mach-h1940.c
-> +++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-> @@ -47,11 +47,10 @@
->  
->  #include <sound/uda1380.h>
->  
-> -#include <mach/fb.h>
-> +#include <linux/platform_data/fb-s3c2410.h>
->  #include <mach/hardware.h>
->  #include <mach/regs-clock.h>
->  #include <mach/regs-gpio.h>
-> -#include <mach/regs-lcd.h>
->  #include <mach/gpio-samsung.h>
->  
->  #include <plat/cpu.h>
-> @@ -211,12 +210,16 @@ static struct s3c2410fb_mach_info h1940_fb_info __initdata = {
->  	.lpcsel =	0x02,
->  	.gpccon =	0xaa940659,
->  	.gpccon_mask =	0xffffc0f0,
-> +	.gpccon_reg =	S3C2410_GPCCON,
->  	.gpcup =	0x0000ffff,
->  	.gpcup_mask =	0xffffffff,
-> +	.gpcup_reg =	S3C2410_GPCUP,
->  	.gpdcon =	0xaa84aaa0,
->  	.gpdcon_mask =	0xffffffff,
-> +	.gpdcon_reg =	S3C2410_GPDCON,
->  	.gpdup =	0x0000faff,
->  	.gpdup_mask =	0xffffffff,
-> +	.gpdup_reg =	S3C2410_GPDUP,
->  };
->  
->  static int power_supply_init(struct device *dev)
-> diff --git a/arch/arm/mach-s3c24xx/mach-jive.c b/arch/arm/mach-s3c24xx/mach-jive.c
-> index 885e8f12e4b9..3b33132b2334 100644
-> --- a/arch/arm/mach-s3c24xx/mach-jive.c
-> +++ b/arch/arm/mach-s3c24xx/mach-jive.c
-> @@ -32,8 +32,7 @@
->  #include <linux/platform_data/i2c-s3c2410.h>
->  
->  #include <mach/regs-gpio.h>
-> -#include <mach/regs-lcd.h>
-> -#include <mach/fb.h>
-> +#include <linux/platform_data/fb-s3c2410.h>
->  #include <mach/gpio-samsung.h>
->  
->  #include <asm/mach-types.h>
-> @@ -321,6 +320,7 @@ static struct s3c2410fb_mach_info jive_lcd_config = {
->  	 * data. */
->  
->  	.gpcup		= (0xf << 1) | (0x3f << 10),
-> +	.gpcup_reg =	S3C2410_GPCUP,
+> v3 -> v4: moved lock from coresight_enable/disable_link() to
+> enable/disable functions of each link device.
+> 
+> I also removed lock protection of csdev->enable in v3. Because that
+> needs to move csdev->enable inside the enable/disable functions of
+> each link device. That's much effort with almost no benefits.
+> csdev->enable seems only used for source devices in sysfs interface.
+> 
+> ---
+>   .../hwtracing/coresight/coresight-funnel.c    | 29 ++++++++----
+>   .../coresight/coresight-replicator.c          | 31 +++++++++----
+>   .../hwtracing/coresight/coresight-tmc-etf.c   | 39 ++++++++--------
+>   drivers/hwtracing/coresight/coresight.c       | 45 ++++++-------------
+>   4 files changed, 77 insertions(+), 67 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+> index 05f7896c3a01..8326d03a0d03 100644
+> --- a/drivers/hwtracing/coresight/coresight-funnel.c
+> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
+> @@ -44,6 +44,7 @@ struct funnel_drvdata {
+>   	struct clk		*atclk;
+>   	struct coresight_device	*csdev;
+>   	unsigned long		priority;
+> +	spinlock_t		spinlock;
+>   };
+>   
+>   static int dynamic_funnel_enable_hw(struct funnel_drvdata *drvdata, int port)
+> @@ -76,12 +77,20 @@ static int funnel_enable(struct coresight_device *csdev, int inport,
+>   {
+>   	int rc = 0;
+>   	struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +	unsigned long flags;
+>   
+> -	if (drvdata->base)
+> -		rc = dynamic_funnel_enable_hw(drvdata, inport);
+> +	spin_lock_irqsave(&drvdata->spinlock, flags);
+> +	if (atomic_inc_return(&csdev->refcnt[inport]) == 1) {
+> +		if (drvdata->base)
+> +			rc = dynamic_funnel_enable_hw(drvdata, inport);
+>   
+> -	if (!rc)
+> -		dev_dbg(&csdev->dev, "FUNNEL inport %d enabled\n", inport);
+> +		if (rc)
+> +			atomic_dec(&csdev->refcnt[inport]);
+> +		else
+> +			dev_dbg(&csdev->dev, "FUNNEL inport %d enabled\n",
+> +				inport);
+> +	}
+> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>   	return rc;
+>   }
+>   
+> @@ -107,11 +116,15 @@ static void funnel_disable(struct coresight_device *csdev, int inport,
+>   			   int outport)
+>   {
+>   	struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +	unsigned long flags;
+>   
+> -	if (drvdata->base)
+> -		dynamic_funnel_disable_hw(drvdata, inport);
+> -
+> -	dev_dbg(&csdev->dev, "FUNNEL inport %d disabled\n", inport);
+> +	spin_lock_irqsave(&drvdata->spinlock, flags);
+> +	if (atomic_dec_return(&csdev->refcnt[inport]) == 0) {
+> +		if (drvdata->base)
+> +			dynamic_funnel_disable_hw(drvdata, inport);
+> +		dev_dbg(&csdev->dev, "FUNNEL inport %d disabled\n", inport);
+> +	}
+> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>   }
+>   
+>   static const struct coresight_ops_link funnel_link_ops = {
+> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+> index b29ba640eb25..427d8b8d0917 100644
+> --- a/drivers/hwtracing/coresight/coresight-replicator.c
+> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
+> @@ -36,6 +36,7 @@ struct replicator_drvdata {
+>   	void __iomem		*base;
+>   	struct clk		*atclk;
+>   	struct coresight_device	*csdev;
+> +	spinlock_t		spinlock;
+>   };
+>   
+>   static void dynamic_replicator_reset(struct replicator_drvdata *drvdata)
+> @@ -97,11 +98,20 @@ static int replicator_enable(struct coresight_device *csdev, int inport,
+>   {
+>   	int rc = 0;
+>   	struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> -
+> -	if (drvdata->base)
+> -		rc = dynamic_replicator_enable(drvdata, inport, outport);
+> -	if (!rc)
+> -		dev_dbg(&csdev->dev, "REPLICATOR enabled\n");
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&drvdata->spinlock, flags);
+> +	if (atomic_inc_return(&csdev->refcnt[outport]) == 1) {
 
-Nits: indentation before/after '=' looks wrong. Tab should be
-before '=', one space after.
+Since we now have the spinlock to protect us, we could simply do an
+atomic_read() and then do the hw_enable() followed by an atomic_inc(),
+if we are successful. That way we could make it more cleaner and avoid
+the atomic_dec() if we encounter a failure. In fact we could simply get
+away with the refcnt and replace them with a simple integer, but that
+may be a different patch.
 
-Best regards,
-Krzysztof
 
+> +		if (drvdata->base)
+> +			rc = dynamic_replicator_enable(drvdata, inport,
+> +						       outport);
+> +
+> +		if (rc)
+> +			atomic_dec(&csdev->refcnt[outport]);
+> +		else
+> +			dev_dbg(&csdev->dev, "REPLICATOR enabled\n");
+> +	}
+> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>   	return rc;
+>   }
+>   
+> @@ -137,10 +147,15 @@ static void replicator_disable(struct coresight_device *csdev, int inport,
+>   			       int outport)
+>   {
+>   	struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +	unsigned long flags;
+>   
+> -	if (drvdata->base)
+> -		dynamic_replicator_disable(drvdata, inport, outport);
+> -	dev_dbg(&csdev->dev, "REPLICATOR disabled\n");
+> +	spin_lock_irqsave(&drvdata->spinlock, flags);
+> +	if (atomic_dec_return(&csdev->refcnt[outport]) == 0) {
+> +		if (drvdata->base)
+> +			dynamic_replicator_disable(drvdata, inport, outport);
+> +		dev_dbg(&csdev->dev, "REPLICATOR disabled\n");
+> +	}
+> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+
+
+>   }
+>   
+>   static const struct coresight_ops_link replicator_link_ops = {
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> index 807416b75ecc..cb4a38541bf8 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> @@ -334,23 +334,25 @@ static int tmc_disable_etf_sink(struct coresight_device *csdev)
+>   static int tmc_enable_etf_link(struct coresight_device *csdev,
+>   			       int inport, int outport)
+>   {
+> -	int ret;
+> +	int ret = 0;
+>   	unsigned long flags;
+>   	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>   
+>   	spin_lock_irqsave(&drvdata->spinlock, flags);
+> -	if (drvdata->reading) {
+> -		spin_unlock_irqrestore(&drvdata->spinlock, flags);
+> -		return -EBUSY;
+> +	if (atomic_inc_return(&csdev->refcnt[0]) == 1) {
+> +		if (drvdata->reading)
+> +			ret = -EBUSY;
+
+Could we not check the drvdata->reading before the refcount and bail
+out early ? We are protected by the spinlock anyway. Similar to the
+above case we could check the refcount and only increment when we have
+enabled.
+
+
+Cheers
+Suzuki
