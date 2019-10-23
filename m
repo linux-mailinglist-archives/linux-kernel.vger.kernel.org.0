@@ -2,48 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9B73E22E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 20:56:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09458E22CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 20:56:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390811AbfJWS4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 14:56:36 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59854 "EHLO
+        id S2404454AbfJWS4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 14:56:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59378 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390366AbfJWS4a (ORCPT
+        with ESMTP id S1727309AbfJWS4P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 14:56:30 -0400
+        Wed, 23 Oct 2019 14:56:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=k/lGzSE95qaQc9LVPN5qXwbt/UcIqtdwXTpshhYt58w=; b=rmUuRnN1eEog
-        /IbKf5Uzgyosjs0QBqetAmV5uIX+mWYy6Y238FHhDe2cIEeBASvQXVB/9cXbEBvmVx484sVjOufpb
-        wGOuttvp2WFb3qqQpQZGBM/yw8VH0WGJynKmdREz5nRIqjJmYN98KjQWdKJAwe/3R4TPAXcAKared
-        9UijM=;
+        List-Archive; bh=TnhcvqGIFKnz9lf8OV8nCnZizb4cr6gyBDUnaKlbK5Q=; b=ESz8SQfkF8mz
+        KtoZjP4wE9f5fRgQzfqfwvP24AykigX9cveHf/ii+UqsSfFoKc492pmwwO2XmvNldmKRnyTgNYeYx
+        O5Yz3X+W87Er3qp4vd3UArwD7xW6PT32o43NgFSNQHASxlbcNgrmBUR6ErvsPp5c4Z/wVZLYLckox
+        0Eky4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iNLni-0001Ax-PV; Wed, 23 Oct 2019 18:56:06 +0000
+        id 1iNLno-0001CK-Pa; Wed, 23 Oct 2019 18:56:12 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 3A39E2743293; Wed, 23 Oct 2019 19:56:06 +0100 (BST)
+        id 377F72743021; Wed, 23 Oct 2019 19:56:12 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Mao Wenan <maowenan@huawei.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        gregkh@linuxfoundation.org, kaichieh.chuang@mediatek.com,
-        kernel-janitors@vger.kernel.org, lgirdwood@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Mark Brown <broonie@kernel.org>, matthias.bgg@gmail.com,
-        perex@perex.cz, shunli.wang@mediatek.com, tglx@linutronix.de,
-        tiwai@suse.com, tzungbi@google.com, yuehaibing@huawei.com
-Subject: Applied "ASoC: mediatek: Check SND_SOC_CROS_EC_CODEC dependency" to the asoc tree
-In-Reply-To: <20191023063103.44941-1-maowenan@huawei.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Subject: Applied "regulator: bd70528: Add MODULE_ALIAS to allow module auto loading" to the regulator tree
+In-Reply-To: <20191023121452.GA1812@localhost.localdomain>
 X-Patchwork-Hint: ignore
-Message-Id: <20191023185606.3A39E2743293@ypsilon.sirena.org.uk>
-Date:   Wed, 23 Oct 2019 19:56:06 +0100 (BST)
+Message-Id: <20191023185612.377F72743021@ypsilon.sirena.org.uk>
+Date:   Wed, 23 Oct 2019 19:56:12 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -51,11 +46,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: mediatek: Check SND_SOC_CROS_EC_CODEC dependency
+   regulator: bd70528: Add MODULE_ALIAS to allow module auto loading
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -76,42 +71,33 @@ to this mail.
 Thanks,
 Mark
 
-From ef5dee551e3e6568fb203ea57fa24f55cb64d451 Mon Sep 17 00:00:00 2001
-From: Mao Wenan <maowenan@huawei.com>
-Date: Wed, 23 Oct 2019 14:31:03 +0800
-Subject: [PATCH] ASoC: mediatek: Check SND_SOC_CROS_EC_CODEC dependency
+From 55d5f62c3fa005a6a8010363d7d1855909ceefbc Mon Sep 17 00:00:00 2001
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Date: Wed, 23 Oct 2019 15:14:52 +0300
+Subject: [PATCH] regulator: bd70528: Add MODULE_ALIAS to allow module auto
+ loading
 
-If SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A=y,
-below errors can be seen:
-sound/soc/codecs/cros_ec_codec.o: In function `send_ec_host_command':
-cros_ec_codec.c:(.text+0x534): undefined reference to `cros_ec_cmd_xfer_status'
-cros_ec_codec.c:(.text+0x101c): undefined reference to `cros_ec_get_host_event'
+The bd70528 regulator driver is probed by MFD driver. Add MODULE_ALIAS
+in order to allow udev to load the module when MFD sub-device cell for
+regulators is added.
 
-This is because it will select SND_SOC_CROS_EC_CODEC
-after commit 2cc3cd5fdc8b ("ASoC: mediatek: mt8183: support WoV"),
-but SND_SOC_CROS_EC_CODEC depends on CROS_EC.
-
-Fixes: 2cc3cd5fdc8b ("ASoC: mediatek: mt8183: support WoV")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
-Link: https://lore.kernel.org/r/20191023063103.44941-1-maowenan@huawei.com
+Fixes: 99ea37bd1e7d7 ("regulator: bd70528: Support ROHM BD70528 regulator block")
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Link: https://lore.kernel.org/r/20191023121452.GA1812@localhost.localdomain
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/mediatek/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/bd70528-regulator.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
-index 8b29f3979899..a656d2014127 100644
---- a/sound/soc/mediatek/Kconfig
-+++ b/sound/soc/mediatek/Kconfig
-@@ -125,7 +125,7 @@ config SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A
- 	select SND_SOC_MAX98357A
- 	select SND_SOC_BT_SCO
- 	select SND_SOC_TS3A227E
--	select SND_SOC_CROS_EC_CODEC
-+	select SND_SOC_CROS_EC_CODEC if CROS_EC
- 	help
- 	  This adds ASoC driver for Mediatek MT8183 boards
- 	  with the MT6358 TS3A227E MAX98357A audio codec.
+diff --git a/drivers/regulator/bd70528-regulator.c b/drivers/regulator/bd70528-regulator.c
+index 0248a61f1006..ec764022621f 100644
+--- a/drivers/regulator/bd70528-regulator.c
++++ b/drivers/regulator/bd70528-regulator.c
+@@ -286,3 +286,4 @@ module_platform_driver(bd70528_regulator);
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+ MODULE_DESCRIPTION("BD70528 voltage regulator driver");
+ MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:bd70528-pmic");
 -- 
 2.20.1
 
