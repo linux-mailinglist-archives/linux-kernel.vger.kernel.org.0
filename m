@@ -2,187 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F07D8E141E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:25:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1068CE1427
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:27:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390226AbfJWIZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:25:34 -0400
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:59030 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727574AbfJWIZe (ORCPT
+        id S2390311AbfJWI04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:26:56 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:32680 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390301AbfJWI0y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:25:34 -0400
-Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9N8MukP020880;
-        Wed, 23 Oct 2019 04:25:04 -0400
-Received: from nam01-sn1-obe.outbound.protection.outlook.com (mail-sn1nam01lp2058.outbound.protection.outlook.com [104.47.32.58])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2vt9t5shuu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Oct 2019 04:25:04 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iB/hBKX9+oy16Fxrg6kkVeScTvJkTw1FE+v0Nz75e4aQ9gbvaQQhHIyhpNV3Q/ttgSh/xth+XOdU1doj6Wsn3Gb3rXMuaPLRCg2hUVQ1F7yj4LyG+4k47q8W+uSniR4fiPIjA6ttg2zDrVehJHLF4xqohdN45nfxUyLKXOg21oxijpn+2joYH0CS0gKQ5UwXo0L2tAJVLG7qGHS4SVVL/v//POChM10IO0hm3TTRz1M9o4vzIv2C/TaD7TG5isGwmlfFQGeoL7O0sB53J8z9UDdqPuBeqEX5V/LZxRHe3oiuE0JzSbmM5RD0l4WMCD2mk4qw6ICcE5a+8k8LyJwhDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YryXgmMF7Et2pKEPYdw5ueu47oSmn94ihj836DrvTG4=;
- b=lLwRPP9xmpD7ODrrphCBFKXO8qleavqRr25D+XjQdNx9ogcCQZTWVo7+76abN4dLfWb3Xw7ZU1vwWGFeegzMcYkw3ZK90esFnOyzPDjGgAvXTDiwlWp/Ht1RfckHiLIlpwR8cgB1jgEB7z0QPVwxallDaX09MjcpGAiJWKqbGcLjUVvSdmQW9OkemudXXUneC5GZ9cUeecNGSytKNLMkdTForuNCyC60LkKRYTaJIvl3Kc7GmxMH9JQSN5iqNBk8A1gE4zAHsXPbQLJceQfhuFsXWdZHZmpF2JbwPtZqfq+zMb+1FMHB4+FNrnmgEaWoFJuQnKYKwGaTF85NJfXcYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.57) smtp.rcpttodomain=microchip.com smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YryXgmMF7Et2pKEPYdw5ueu47oSmn94ihj836DrvTG4=;
- b=Br2ZDNSwlf8ufeb+Q+IG81vnqHoyg9GTyVsuWtzrgI3ky9OTM+dlUPafBFn2MXaVUhqkLonp9imRotXYDX0iE/v5qvGd9VjrRVha6DkGNhNgd9uEXoOlPydrTzvt7zoIyCZltsViCo6nLHEV8J1IubPh0HxZbpqsrcDIguoTv8Q=
-Received: from BYAPR03CA0003.namprd03.prod.outlook.com (2603:10b6:a02:a8::16)
- by MWHPR03MB3101.namprd03.prod.outlook.com (2603:10b6:301:3c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.28; Wed, 23 Oct
- 2019 08:25:00 +0000
-Received: from BL2NAM02FT004.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::206) by BYAPR03CA0003.outlook.office365.com
- (2603:10b6:a02:a8::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2387.22 via Frontend
- Transport; Wed, 23 Oct 2019 08:25:00 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- BL2NAM02FT004.mail.protection.outlook.com (10.152.76.168) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2367.14
- via Frontend Transport; Wed, 23 Oct 2019 08:25:00 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x9N8OoQA012195
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Wed, 23 Oct 2019 01:24:51 -0700
-Received: from saturn.ad.analog.com (10.48.65.116) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Oct 2019 04:24:57 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <ludovic.desroches@microchip.com>, <jic23@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <knaack.h@gmx.de>, <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH] iio: at91-sama5d2_adc: fix iio_triggered_buffer_{predisable,postenable} positions
-Date:   Wed, 23 Oct 2019 11:25:08 +0300
-Message-ID: <20191023082508.17583-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 23 Oct 2019 04:26:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571819213;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=HaclBkUySXchpujJDOKDQ24Kar8EqBHEiLvQYvykVcM=;
+        b=atLm8UqZ2P1diJTrhVLykLL10B3a+Wwfh7AxxPcMci8CPn7s7taOqQuVP/JBQWgPj4aTlr
+        QCqqjJqIQ8JtcVmdNutLl03qPQJMQvfc1C3DEJuxcv7D3eXxnsucNiRozuagRaxpB19vgr
+        NwBOmtV0cR3RWq8ZPxNzRLaWGKjQruQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-364-LuY7b88DMPqLlrFS4Rg2Ag-1; Wed, 23 Oct 2019 04:26:50 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EE743100550E;
+        Wed, 23 Oct 2019 08:26:47 +0000 (UTC)
+Received: from [10.36.117.79] (ovpn-117-79.ams2.redhat.com [10.36.117.79])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B8CE19C78;
+        Wed, 23 Oct 2019 08:26:33 +0000 (UTC)
+Subject: Re: [PATCH v12 2/6] mm: Use zone and order instead of free area in
+ free_list manipulators
+To:     Alexander Duyck <alexander.duyck@gmail.com>, kvm@vger.kernel.org,
+        mst@redhat.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+        mhocko@kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, vbabka@suse.cz
+Cc:     yang.zhang.wz@gmail.com, nitesh@redhat.com, konrad.wilk@oracle.com,
+        pagupta@redhat.com, riel@surriel.com, lcapitulino@redhat.com,
+        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com,
+        alexander.h.duyck@linux.intel.com, osalvador@suse.de
+References: <20191022221223.17338.5860.stgit@localhost.localdomain>
+ <20191022222805.17338.3243.stgit@localhost.localdomain>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <c3544859-606d-4e8f-2e48-2d7868e0fa13@redhat.com>
+Date:   Wed, 23 Oct 2019 10:26:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(376002)(346002)(199004)(189003)(336012)(478600001)(486006)(2616005)(26005)(5024004)(14444005)(44832011)(5660300002)(476003)(186003)(426003)(4326008)(126002)(7696005)(6666004)(7416002)(356004)(107886003)(51416003)(316002)(305945005)(7636002)(47776003)(54906003)(106002)(86362001)(70586007)(48376002)(110136005)(2201001)(36756003)(8676002)(2870700001)(8936002)(50226002)(50466002)(1076003)(2906002)(246002)(70206006)(142933001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB3101;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fdfbc7cd-6c7a-47eb-7a12-08d757927f11
-X-MS-TrafficTypeDiagnostic: MWHPR03MB3101:
-X-Microsoft-Antispam-PRVS: <MWHPR03MB31015E7D62E5D78911F2DE14F96B0@MWHPR03MB3101.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
-X-Forefront-PRVS: 019919A9E4
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: u/ONxHq0E8SBU9eD+sPYE+xoUPiXMSGGvulwHo5Ro3V8pJQ8aGJ8ifV+TLesTVohY9q9/bvF6aExNjwHmM/SW3T3c+Zyf6qJEriwJzgk3DPLYXB2WIiJty4j+i6pSa6W0ACxHKEpvWwt+rF8wSoNxI4egvR7nE1+q4OdJqvrqvgI470IM5XAUDRg32FHLdS2C8VIZpQTRnRAOeG8meH4xMe+sl5ZhWQwyev0/gQcU8nHe/jzDbWD3FMxKzofudmvJsHP2BZTOfjnA5/iupptKDf4UrbDtCTabcGA3IL5SWg09SjF7pBUBEVHRdhiRlK85X8bIskc/WZQxbLAWL6aJkHVLzWdApERL2CT09yN7c/LGR/NsTYg30Nj4XIjvIKyVAf8mhhHAfpz67PF9m3Fk36KCKfgqhQpSdeWDLGD1mM=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2019 08:25:00.4347
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdfbc7cd-6c7a-47eb-7a12-08d757927f11
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR03MB3101
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-23_02:2019-10-22,2019-10-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- spamscore=0 suspectscore=0 clxscore=1011 impostorscore=0 mlxscore=0
- phishscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910230083
+In-Reply-To: <20191022222805.17338.3243.stgit@localhost.localdomain>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: LuY7b88DMPqLlrFS4Rg2Ag-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The iio_triggered_buffer_{predisable,postenable} functions attach/detach
-poll functions.
+On 23.10.19 00:28, Alexander Duyck wrote:
+> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>=20
+> In order to enable the use of the zone from the list manipulator function=
+s
+> I will need access to the zone pointer. As it turns out most of the
+> accessors were always just being directly passed &zone->free_area[order]
+> anyway so it would make sense to just fold that into the function itself
+> and pass the zone and order as arguments instead of the free area.
+>=20
+> In order to be able to reference the zone we need to move the declaration
+> of the functions down so that we have the zone defined before we define t=
+he
+> list manipulation functions. Since the functions are only used in the fil=
+e
+> mm/page_alloc.c we can just move them there to reduce noise in the header=
+.
+>=20
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Pankaj Gupta <pagupta@redhat.com>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> ---
+>   include/linux/mmzone.h |   32 -----------------------
+>   mm/page_alloc.c        |   67 +++++++++++++++++++++++++++++++++++------=
+-------
+>   2 files changed, 49 insertions(+), 50 deletions(-)
 
-The iio_triggered_buffer_postenable() should be called first to attach the
-poll function, and then the driver can init the data to be triggered.
+Did you see
 
-Similarly, iio_triggered_buffer_predisable() should be called last to first
-disable the data (to be triggered) and then the poll function should be
-detached.
+https://lore.kernel.org/lkml/20191001152928.27008.8178.stgit@localhost.loca=
+ldomain/T/#m4d2bc2f37bd7bdc3ae35c4f197905c275d0ad2f9
 
-For this driver, the predisable & postenable hooks are also need to take
-into consideration the touchscreen, so the hooks need to be put in places
-that avoid the code for that cares about it.
+this time?
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/iio/adc/at91-sama5d2_adc.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+And the difference to the old patch is only an empty line.
 
-diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-index e1850f3d5cf3..ac3e5c4c9840 100644
---- a/drivers/iio/adc/at91-sama5d2_adc.c
-+++ b/drivers/iio/adc/at91-sama5d2_adc.c
-@@ -889,20 +889,24 @@ static int at91_adc_buffer_postenable(struct iio_dev *indio_dev)
- 	if (!(indio_dev->currentmode & INDIO_ALL_TRIGGERED_MODES))
- 		return -EINVAL;
- 
-+	ret = iio_triggered_buffer_postenable(indio_dev);
-+	if (ret)
-+		return ret;
-+
- 	/* we continue with the triggered buffer */
- 	ret = at91_adc_dma_start(indio_dev);
- 	if (ret) {
- 		dev_err(&indio_dev->dev, "buffer postenable failed\n");
-+		iio_triggered_buffer_predisable(indio_dev);
- 		return ret;
- 	}
- 
--	return iio_triggered_buffer_postenable(indio_dev);
-+	return 0;
- }
- 
- static int at91_adc_buffer_predisable(struct iio_dev *indio_dev)
- {
- 	struct at91_adc_state *st = iio_priv(indio_dev);
--	int ret;
- 	u8 bit;
- 
- 	/* check if we are disabling triggered buffer or the touchscreen */
-@@ -916,13 +920,8 @@ static int at91_adc_buffer_predisable(struct iio_dev *indio_dev)
- 	if (!(indio_dev->currentmode & INDIO_ALL_TRIGGERED_MODES))
- 		return -EINVAL;
- 
--	/* continue with the triggered buffer */
--	ret = iio_triggered_buffer_predisable(indio_dev);
--	if (ret < 0)
--		dev_err(&indio_dev->dev, "buffer predisable failed\n");
--
- 	if (!st->dma_st.dma_chan)
--		return ret;
-+		goto out;
- 
- 	/* if we are using DMA we must clear registers and end DMA */
- 	dmaengine_terminate_sync(st->dma_st.dma_chan);
-@@ -949,7 +948,9 @@ static int at91_adc_buffer_predisable(struct iio_dev *indio_dev)
- 
- 	/* read overflow register to clear possible overflow status */
- 	at91_adc_readl(st, AT91_SAMA5D2_OVER);
--	return ret;
-+
-+out:
-+	return iio_triggered_buffer_predisable(indio_dev);
- }
- 
- static const struct iio_buffer_setup_ops at91_buffer_setup_ops = {
--- 
-2.20.1
+--=20
+
+Thanks,
+
+David / dhildenb
 
