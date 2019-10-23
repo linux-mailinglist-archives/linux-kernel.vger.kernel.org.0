@@ -2,106 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C09D4E11A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 07:28:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D0C2E11AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 07:30:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389584AbfJWF2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 01:28:53 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:44878 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389545AbfJWF2s (ORCPT
+        id S2389612AbfJWF37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 01:29:59 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:40024 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730204AbfJWF36 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 01:28:48 -0400
-Received: from mr2.cc.vt.edu (mail.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x9N5Slqp020041
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 01:28:47 -0400
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x9N5Sget005129
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 01:28:47 -0400
-Received: by mail-qk1-f200.google.com with SMTP id n17so1695753qkg.14
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 22:28:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=ISQDTJmGCoaQ4xeld4Mhg9Q600xoGHfVZT32mcJtg7w=;
-        b=JZLU3yyUogJB1lR0vbh50hmLTZ8ddo5bOD9d6UEp80o0P5QbHx25Z0YE/w8k6OtjtK
-         NsDt1nilgW5dxW5SkuQOYYy1/w/1iqNOp8DTQbRGoCUrtfknw/hmWjDcI5oTZoe1IKQa
-         dUA814DID98SG1MLfm9oqLNTAXzTVhr/lLs1q+Nl4gqlRzTmwYgjvpyDHo++tU2D/MyE
-         0Qdg1xDPQ/4CD0n6/rH5vq0i5E2moCY8OZq7kAtGZA+5q0jXhEMV9yA2i6OBb7er0tID
-         dYxEoIls5Id/gN6qsG43uWYr6RvP8Zh95TVtVLhuzhIWvEDJb2Kt9ihSGAnu+W2WOSep
-         SObA==
-X-Gm-Message-State: APjAAAXcABS8nAXrPHEZKfhayIdnw2zpVrL0qCJryFvXM7Kx2I9e1VK1
-        KUChrEBS08MsLlbLVfutaCg8f3lN0v7i5XWLy6syTtKyk/lpE+70i8UFLDCkWvO6IxZ6eAJQ3Ve
-        wsgZ+08AaiNgtRgXFXVFV9b5YdNoebZNvI18=
-X-Received: by 2002:ac8:4a03:: with SMTP id x3mr1713089qtq.117.1571808522466;
-        Tue, 22 Oct 2019 22:28:42 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqw5nRxuWdRuBTyicKO9kNgnNeEtVqZyh2Z4Ty5Wd3Rj/224bq/k+ZD4kmE2tsjBWrP+H4/Kvg==
-X-Received: by 2002:ac8:4a03:: with SMTP id x3mr1713074qtq.117.1571808522200;
-        Tue, 22 Oct 2019 22:28:42 -0700 (PDT)
-Received: from turing-police.lan ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id 14sm10397445qtb.54.2019.10.22.22.28.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 22:28:41 -0700 (PDT)
-From:   Valdis Kletnieks <valdis.kletnieks@vt.edu>
-X-Google-Original-From: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Valdis.Kletnieks@vt.edu
-Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] staging: exfat: Update TODO
-Date:   Wed, 23 Oct 2019 01:27:51 -0400
-Message-Id: <20191023052752.693689-9-Valdis.Kletnieks@vt.edu>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191023052752.693689-1-Valdis.Kletnieks@vt.edu>
-References: <20191023052752.693689-1-Valdis.Kletnieks@vt.edu>
+        Wed, 23 Oct 2019 01:29:58 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9N5TtlJ091320;
+        Wed, 23 Oct 2019 00:29:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571808595;
+        bh=Hi7eqp7k33xU8scvMYGLmRaKPB2Y1yz2In2DfbGOD9w=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=EzeP7+NJPphcPvxER9+TBrztxnnb6fibxgVa73D8UUlGzOSMGJ22HZHkFjjlyYrNz
+         wsnek13dsBbUKoWkBAiStBDMlK2YOyaS06wJGIGOPKMsCav7k+Ro4okuX6PbOPmX/r
+         IwA1/Hxs0Jn5dit2B2DcvUlvYVNiYIb1ykXAxPe0=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9N5Td1F044859
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 23 Oct 2019 00:29:40 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 23
+ Oct 2019 00:29:39 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 23 Oct 2019 00:29:39 -0500
+Received: from [10.1.3.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9N5Sqiq100120;
+        Wed, 23 Oct 2019 00:28:52 -0500
+Subject: Re: [PATCH 3/3] phy: ti: j721e-wiz: Manage typec-gpio-dir
+To:     Roger Quadros <rogerq@ti.com>, <kishon@ti.com>
+CC:     <aniljoy@cadence.com>, <adouglas@cadence.com>, <nsekhar@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20191022132249.869-1-rogerq@ti.com>
+ <20191022132249.869-4-rogerq@ti.com>
+From:   Jyri Sarha <jsarha@ti.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jsarha@ti.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <35e5a15c-5513-9c0d-6fdd-df06f8c95450@ti.com>
+Date:   Wed, 23 Oct 2019 08:28:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191022132249.869-4-rogerq@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
----
- drivers/staging/exfat/TODO | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+On 22/10/2019 16:22, Roger Quadros wrote:
+> Based on this GPIO state we need to configure LN10
+> bit to swap lane0 and lane1 if required (flipped connector).
+> 
+> Type-C companions typically need some time after the cable is
+> plugged before and before they reflect the correct status of
+> Type-C plug orientation on the DIR line.
+> 
+> Type-C Spec specifies CC attachment debounce time (tCCDebounce)
+> of 100 ms (min) to 200 ms (max).
+> 
+> Use the DT property to figure out if we need to add delay
+> or not before sampling the Type-C DIR line.
+> 
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> ---
+>  drivers/phy/ti/phy-j721e-wiz.c | 41 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/drivers/phy/ti/phy-j721e-wiz.c b/drivers/phy/ti/phy-j721e-wiz.c
+> index 2a95da843e9f..2becdbcb762a 100644
+> --- a/drivers/phy/ti/phy-j721e-wiz.c
+> +++ b/drivers/phy/ti/phy-j721e-wiz.c
+> @@ -9,6 +9,8 @@
+>  #include <dt-bindings/phy/phy.h>
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/mux/consumer.h>
+> @@ -22,6 +24,7 @@
+>  #define WIZ_SERDES_CTRL		0x404
+>  #define WIZ_SERDES_TOP_CTRL	0x408
+>  #define WIZ_SERDES_RST		0x40c
+> +#define WIZ_SERDES_TYPEC	0x410
+>  #define WIZ_LANECTL(n)		(0x480 + (0x40 * (n)))
+>  
+>  #define WIZ_MAX_LANES		4
+> @@ -29,6 +32,8 @@
+>  #define WIZ_DIV_NUM_CLOCKS_16G	2
+>  #define WIZ_DIV_NUM_CLOCKS_10G	1
+>  
+> +#define WIZ_SERDES_TYPEC_LN10_SWAP	BIT(30)
+> +
+>  enum wiz_lane_standard_mode {
+>  	LANE_MODE_GEN1,
+>  	LANE_MODE_GEN2,
+> @@ -206,6 +211,8 @@ struct wiz {
+>  	u32			num_lanes;
+>  	struct platform_device	*serdes_pdev;
+>  	struct reset_controller_dev wiz_phy_reset_dev;
+> +	struct gpio_desc	*gpio_typec_dir;
+> +	int			typec_dir_delay;
+>  };
+>  
+>  static int wiz_reset(struct wiz *wiz)
+> @@ -703,6 +710,21 @@ static int wiz_phy_reset_deassert(struct reset_controller_dev *rcdev,
+>  	struct wiz *wiz = dev_get_drvdata(dev);
+>  	int ret;
+>  
+> +	/* if typec-dir gpio was specified, set LN10 SWAP bit based on that */
+> +	if (id == 0 && wiz->gpio_typec_dir) {
+> +		if (wiz->typec_dir_delay)
+> +			msleep_interruptible(wiz->typec_dir_delay);
+> +
+> +		if (gpiod_get_value_cansleep(wiz->gpio_typec_dir)) {
+> +			regmap_update_bits(wiz->regmap, WIZ_SERDES_TYPEC,
+> +					   WIZ_SERDES_TYPEC_LN10_SWAP,
+> +					   WIZ_SERDES_TYPEC_LN10_SWAP);
 
-diff --git a/drivers/staging/exfat/TODO b/drivers/staging/exfat/TODO
-index b60e50b9cf4e..110c30834bd2 100644
---- a/drivers/staging/exfat/TODO
-+++ b/drivers/staging/exfat/TODO
-@@ -1,21 +1,17 @@
- exfat_core.c - ffsReadFile - the goto err_out seem to leak a brelse().
- same for ffsWriteFile.
- 
--exfat_core.c - fs_sync(sb,0) all over the place looks fishy as hell.
--There's only one place that calls it with a non-zero argument.
--Randomly removing fs_sync() calls is *not* the right answer, especially
--if the removal then leaves a call to fs_set_vol_flags(VOL_CLEAN), as that
--says the file system is clean and synced when we *know* it isn't.
--The proper fix here is to go through and actually analyze how DELAYED_SYNC
--should work, and any time we're setting VOL_CLEAN, ensure the file system
--has in fact been synced to disk.  In other words, changing the 'false' to
--'true' is probably more correct. Also, it's likely that the one current
--place where it actually does an bdev_sync isn't sufficient in the DELAYED_SYNC
--case.
--
- ffsTruncateFile -  if (old_size <= new_size) {
- That doesn't look right. How did it ever work? Are they relying on lazy
- block allocation when actual writes happen? If nothing else, it never
- does the 'fid->size = new_size' and do the inode update....
- 
- ffsSetAttr() is just dangling in the breeze, not wired up at all...
-+
-+exfat_core.c - The original code called fs_sync(sb,0) all over the place,
-+with only one place that calls it with a non-zero argument. That's now been
-+reversed, but a proper audit of sync and flush-to-disk is certainly needed.
-+
-+buf_sync(), sync_alloc_bitmap(), and FAT_sync() aren't actually used
-+anyplace.  This is probably related to the borked original implementatin
-+of fs_sync() that didn't actually do anything either.
+A nit pick, but wouldn't it be more coherent with the rest of the driver
+to define a REG_FIELD also for TYPEC_LN10_SWAP bit?
+
+> +		} else {
+> +			regmap_update_bits(wiz->regmap, WIZ_SERDES_TYPEC,
+> +					   WIZ_SERDES_TYPEC_LN10_SWAP, 0);
+> +		}
+> +	}
+> +
+>  	if (id == 0) {
+>  		ret = regmap_field_write(wiz->phy_reset_n, true);
+>  		return ret;
+> @@ -789,6 +811,25 @@ static int wiz_probe(struct platform_device *pdev)
+>  		goto err_addr_to_resource;
+>  	}
+>  
+> +	wiz->gpio_typec_dir = devm_gpiod_get_optional(dev, "typec-dir",
+> +						      GPIOD_IN);
+> +	if (IS_ERR(wiz->gpio_typec_dir)) {
+> +		ret = PTR_ERR(wiz->gpio_typec_dir);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "Failed to request typec-dir gpio: %d\n",
+> +				ret);
+> +		goto err_addr_to_resource;
+> +	}
+> +
+> +	if (wiz->gpio_typec_dir) {
+> +		ret = of_property_read_u32(node, "typec-dir-debounce",
+> +					   &wiz->typec_dir_delay);
+> +		if (ret && ret != -EINVAL) {
+> +			dev_err(dev, "Invalid typec-dir-debounce property\n");
+> +			goto err_addr_to_resource;
+> +		}
+> +	}
+> +
+>  	wiz->dev = dev;
+>  	wiz->regmap = regmap;
+>  	wiz->num_lanes = num_lanes;
+> 
+
+
 -- 
-2.23.0
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
