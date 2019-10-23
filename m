@@ -2,114 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A823FE16E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B045E1705
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:58:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391048AbfJWJ50 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 23 Oct 2019 05:57:26 -0400
-Received: from mail-oln040092253097.outbound.protection.outlook.com ([40.92.253.97]:18528
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390971AbfJWJ5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 05:57:24 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YBEpUDMgoF+jHpuewsnEIeGOu7JOjQyLPDyhBMys6FziCQTocxXqLz9TuBlQTDJ8TU49/z7Qkk0lW9OrxctAjfHEKZxw7nPeehjPnYE0BBl4JilafXTlp1lSG7j9Vjf3QFTcQ7YLSo+aihY7coJ98o/1J87aiUH4/FKpoc5jNEtBv+UdTQ3sGGVIOaDjh94MeFUBNhZTuaUuVj4c4xtcZ3J1Zm9TU8+538oE3LSiLV6U5LRfinYfHlJEhQZLRrPOBZpsDxHbvUYT5pTVq1/tswDmGRhpGFv6JgS90lJkZ0QdCmyenulXU7cKz1zp2s9QdEycpFLso8sf1InZxgw3Wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=syfUwvI/D4Epfi/TgZkatcDK5Oufx/BMI1XGzElOzsA=;
- b=fcvrFuf4smSN5y4b3Y8zXEQfY/4yH3Pgnt5h1KviPWZ5DlFcOTRQ4Oyv1Tul+rXKDN3cJ8Pt6buvP/1ZYwR8VMbFC8FTGMi1dcU13psdI43N9DSQfI0YtxLDaxBsZxhgPa9/FcuplO6fsycl/m5+imQK+Sl+cl2lIC4bHWNgxx51Yn/mN4GIBRsp/p0R1iAgaZbJG159R0hrcJlCl3C8+qc+1QuL+3qetVtzevgpi7o6iJupfVDTA/+XXLiK3djiHKsVkt0u2SIWEPNaohp2SW484yB2+9M0k9ORHOxjn9Do6u+C6YRLwjJcijghNH0cGwPVrEpd79mRsURNEe0M1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from PU1APC01FT013.eop-APC01.prod.protection.outlook.com
- (10.152.252.60) by PU1APC01HT221.eop-APC01.prod.protection.outlook.com
- (10.152.253.159) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2367.14; Wed, 23 Oct
- 2019 09:57:18 +0000
-Received: from SL2P216MB0187.KORP216.PROD.OUTLOOK.COM (10.152.252.56) by
- PU1APC01FT013.mail.protection.outlook.com (10.152.252.78) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2387.20 via Frontend Transport; Wed, 23 Oct 2019 09:57:18 +0000
-Received: from SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
- ([fe80::ec26:6771:625e:71d]) by SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
- ([fe80::ec26:6771:625e:71d%8]) with mapi id 15.20.2387.019; Wed, 23 Oct 2019
- 09:57:17 +0000
-From:   Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-To:     "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "logang@deltatee.com" <logang@deltatee.com>
-Subject: Re: [PATCH 1/1] PCI: Add hp_mmio_size and hp_mmio_pref_size
- parameters
-Thread-Topic: [PATCH 1/1] PCI: Add hp_mmio_size and hp_mmio_pref_size
- parameters
-Thread-Index: AQHViX0m6toKrk1OzESm1M80C1WD26dn+tqAgAACogA=
-Date:   Wed, 23 Oct 2019 09:57:17 +0000
-Message-ID: <SL2P216MB0187D47276DED3EA634123BE806B0@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
-References: <PSXP216MB01833367A1A154AEB816AE4E806B0@PSXP216MB0183.KORP216.PROD.OUTLOOK.COM>
- <20191023094743.GU2819@lahna.fi.intel.com>
-In-Reply-To: <20191023094743.GU2819@lahna.fi.intel.com>
-Accept-Language: en-AU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: ME2PR01CA0218.ausprd01.prod.outlook.com
- (2603:10c6:220:19::14) To SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
- (2603:1096:100:22::19)
-x-incomingtopheadermarker: OriginalChecksum:379183CF568804A8CF9553F3B06305BE33C8ED8CF75319F8170CDD0C263B3837;UpperCasedChecksum:A8A118439133A174A247B9000ABB1EB3FCE0DC1F83782102F71A1C6DD82AB697;SizeAsReceived:7667;Count:48
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [XhAnspKP3MvUZ83Bqo/QF8Xu8KY4QxXLlbGnFO+QjvI=]
-x-microsoft-original-message-id: <20191023095708.GB4742@nicholas-dell-linux>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 48
-x-eopattributedmessage: 0
-x-ms-traffictypediagnostic: PU1APC01HT221:
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: SLJ6ZGMdPab9ubzLn/R0wzxYwEIsJnWneQNnwAl+YFvGHUxCHvPl0BgBr/TAxcN6gCl1jPEbiq06Cc0SdBJjWeLc42Gk2eJGQ06mTSTr0/k9v4oXAvv4nWwCiTaJxW+Kd1unJQaieTAfEOuoSmSBaekpQH7xInLuIxuUNlcCCicKwi0D1S0XIEv7ailww02o
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <DE93B908AF4A4343A1C01CAF96DEA464@KORP216.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: 8BIT
+        id S2404204AbfJWJ6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 05:58:12 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40684 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404168AbfJWJ6H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 05:58:07 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p59so6861445edp.7
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 02:58:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BmDPouxVk6it30/vik+XTYalvYPYU+sttbaOcqxWe8k=;
+        b=lkmMltuZ/rmrh6wByUf6P17He3TtFKb+/zDEG9266MdGz2dHwPgA/DDUkgeKcajNVD
+         1jYbawnxYxl5gGPFgMNDRE3UHgL9KIGEvsgOZjH+XhMQAJbXkvSm3neB6NBb4S//dH4O
+         RVlHi8ZkXVljLJer3klnOVzJUu3Pqd75x95dQZPN+jt5xpja68wBTbt9gBnEt2fp06mO
+         8dEPzhqD6OqVglmlVRIG4J4r5WjGPWq7DUUVBtv2++9S7pkFRLZCEnjPkHMnHMLfRuF1
+         adPmRE8yUH26nGzfQgboNLycesY/6rFNKdpePKoWLg5WXLlrUnZUzTRJ5b2hHi6e6W0/
+         odDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BmDPouxVk6it30/vik+XTYalvYPYU+sttbaOcqxWe8k=;
+        b=IvjzRKu0LBK/eCKrVLvzlftX0WWkQytMPwF/SFsFV6kGn4RPqw1T0pTpXmsstQY7T2
+         OCXepxbec7oxJfqkbYEV8nqIZpLgspAk79bcaDRC/GtT65GO0sGjOHNS83bUSB48T5gx
+         rCprr/gdNggXHeo2eICVeeXZ2rXLbh6TYIeLdMPTHZ+0ffz9QNb6umyrVU6N3E3ouVms
+         qjMxTsWz0lgvh9QhxfYEzyQ7q3dLIJJ9CpAn1da5z3tkztxm3/nVANnUTlriJL9F1NtU
+         xxxRX5Ag1Q4uGNiQdsEN6S9zlfClG+DZnNDL5eibIG7UN0GkxIqQSVgWlMiexY8ngNDv
+         MEOg==
+X-Gm-Message-State: APjAAAWBmGuvCtxJNstXOeKTTtaOFGSREKCXS6dBHaHLtPYkZCNss9zy
+        wTCknd5whl838NUkICEFAR8CaQ==
+X-Google-Smtp-Source: APXvYqwwnJNkyjrhmSVe5LFXgH4GcnEmaTCDcRouJZWqVhNsj0iP0tU/IIwYvhapTTOZfxFlH/84TA==
+X-Received: by 2002:a17:906:3b4e:: with SMTP id h14mr12796863ejf.111.1571824684170;
+        Wed, 23 Oct 2019 02:58:04 -0700 (PDT)
+Received: from netronome.com ([62.119.166.9])
+        by smtp.gmail.com with ESMTPSA id s26sm880294eds.80.2019.10.23.02.58.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 02:58:03 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 11:57:59 +0200
+From:   Simon Horman <simon.horman@netronome.com>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     netdev@vger.kernel.org, Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S . Miller " <davem@davemloft.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Paul Blakey <paulb@mellanox.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/4] flow_dissector: skip the ICMP dissector for
+ non ICMP packets
+Message-ID: <20191023095758.GB8732@netronome.com>
+References: <20191021200948.23775-1-mcroce@redhat.com>
+ <20191021200948.23775-3-mcroce@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 381825c1-5a3d-48ed-d709-08d7579f636b
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2019 09:57:17.8951
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1APC01HT221
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021200948.23775-3-mcroce@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 12:47:43PM +0300, mika.westerberg@linux.intel.com wrote:
-> On Wed, Oct 23, 2019 at 08:37:48AM +0000, Nicholas Johnson wrote:
-> >  			} else if (!strncmp(str, "hpmemsize=", 10)) {
-> > -				pci_hotplug_mem_size = memparse(str + 10, &str);
-> > +				pci_hotplug_mmio_size =
-> > +					memparse(str + 10, &str);
-> > +				pci_hotplug_mmio_pref_size =
-> > +					memparse(str + 10, &str);
+On Mon, Oct 21, 2019 at 10:09:46PM +0200, Matteo Croce wrote:
+> FLOW_DISSECTOR_KEY_ICMP is checked for every packet, not only ICMP ones.
+> Even if the test overhead is probably negligible, move the
+> ICMP dissector code under the big 'switch(ip_proto)' so it gets called
+> only for ICMP packets.
 > 
-> Does this actually work correctly? The first memparse(str + 10, &str)
-> modifies str so the next call will not start from the correct position
-> anymore.
-I have been using this for a long time now and have not had any issues.
-Does it modify str? I thought that was done by the loop.
+> Signed-off-by: Matteo Croce <mcroce@redhat.com>
 
-Can somebody else please weigh in here? I am worried now, and I want to 
-be sure. If it is a problem, then I will have to read it into 
-pci_hotplug_mmio_size and then set:
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
 
-pci_hotplug_mmio_pref_size = pci_hotplug_mmio_size
-
+> ---
+>  net/core/flow_dissector.c | 34 +++++++++++++++++++++++++---------
+>  1 file changed, 25 insertions(+), 9 deletions(-)
 > 
-> Otherwise the patch looks good to me.
-Thanks, I will re-post with your last suggestions of going over 80 
-characters shortly.
+> diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
+> index affde70dad47..6443fac65ce8 100644
+> --- a/net/core/flow_dissector.c
+> +++ b/net/core/flow_dissector.c
+> @@ -203,6 +203,25 @@ __be32 __skb_flow_get_ports(const struct sk_buff *skb, int thoff, u8 ip_proto,
+>  }
+>  EXPORT_SYMBOL(__skb_flow_get_ports);
+>  
+> +/* If FLOW_DISSECTOR_KEY_ICMP is set, get the Type and Code from an ICMP packet
+> + * using skb_flow_get_be16().
+> + */
+> +static void __skb_flow_dissect_icmp(const struct sk_buff *skb,
+> +				    struct flow_dissector *flow_dissector,
+> +				    void *target_container,
+> +				    void *data, int thoff, int hlen)
+> +{
+> +	struct flow_dissector_key_icmp *key_icmp;
+> +
+> +	if (!dissector_uses_key(flow_dissector, FLOW_DISSECTOR_KEY_ICMP))
+> +		return;
+> +
+> +	key_icmp = skb_flow_dissector_target(flow_dissector,
+> +					     FLOW_DISSECTOR_KEY_ICMP,
+> +					     target_container);
+> +	key_icmp->icmp = skb_flow_get_be16(skb, thoff, data, hlen);
+> +}
+> +
+>  void skb_flow_dissect_meta(const struct sk_buff *skb,
+>  			   struct flow_dissector *flow_dissector,
+>  			   void *target_container)
+> @@ -853,7 +872,6 @@ bool __skb_flow_dissect(const struct net *net,
+>  	struct flow_dissector_key_basic *key_basic;
+>  	struct flow_dissector_key_addrs *key_addrs;
+>  	struct flow_dissector_key_ports *key_ports;
+> -	struct flow_dissector_key_icmp *key_icmp;
+>  	struct flow_dissector_key_tags *key_tags;
+>  	struct flow_dissector_key_vlan *key_vlan;
+>  	struct bpf_prog *attached = NULL;
+> @@ -1295,6 +1313,12 @@ bool __skb_flow_dissect(const struct net *net,
+>  				       data, nhoff, hlen);
+>  		break;
+>  
+> +	case IPPROTO_ICMP:
+> +	case IPPROTO_ICMPV6:
+> +		__skb_flow_dissect_icmp(skb, flow_dissector, target_container,
+> +					data, nhoff, hlen);
+> +		break;
+> +
+>  	default:
+>  		break;
+>  	}
+> @@ -1308,14 +1332,6 @@ bool __skb_flow_dissect(const struct net *net,
+>  							data, hlen);
+>  	}
+>  
+> -	if (dissector_uses_key(flow_dissector,
+> -			       FLOW_DISSECTOR_KEY_ICMP)) {
+> -		key_icmp = skb_flow_dissector_target(flow_dissector,
+> -						     FLOW_DISSECTOR_KEY_ICMP,
+> -						     target_container);
+> -		key_icmp->icmp = skb_flow_get_be16(skb, nhoff, data, hlen);
+> -	}
+> -
+>  	/* Process result of IP proto processing */
+>  	switch (fdret) {
+>  	case FLOW_DISSECT_RET_PROTO_AGAIN:
+> -- 
+> 2.21.0
+> 
