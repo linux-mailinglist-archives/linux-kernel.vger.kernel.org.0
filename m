@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87393E18C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:22:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EEFCE18E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404918AbfJWLWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 07:22:11 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61541 "EHLO mga17.intel.com"
+        id S2404560AbfJWLWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 07:22:44 -0400
+Received: from mga14.intel.com ([192.55.52.115]:29707 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404872AbfJWLWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 07:22:07 -0400
+        id S2404885AbfJWLWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 07:22:08 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 04:22:07 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 04:22:07 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
-   d="scan'208";a="197399999"
+   d="scan'208";a="399359469"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 23 Oct 2019 04:22:03 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 23 Oct 2019 04:22:03 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 99DB7635; Wed, 23 Oct 2019 14:21:55 +0300 (EEST)
+        id A5660648; Wed, 23 Oct 2019 14:21:55 +0300 (EEST)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-usb@vger.kernel.org
 Cc:     Andreas Noever <andreas.noever@gmail.com>,
@@ -38,9 +38,9 @@ Cc:     Andreas Noever <andreas.noever@gmail.com>,
         Oliver Neukum <oneukum@suse.com>,
         Christian Kellner <ckellner@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 15/25] thunderbolt: Add Display Port adapter pairing and resource management
-Date:   Wed, 23 Oct 2019 14:21:44 +0300
-Message-Id: <20191023112154.64235-16-mika.westerberg@linux.intel.com>
+Subject: [PATCH 16/25] thunderbolt: Add bandwidth management for Display Port tunnels
+Date:   Wed, 23 Oct 2019 14:21:45 +0300
+Message-Id: <20191023112154.64235-17-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191023112154.64235-1-mika.westerberg@linux.intel.com>
 References: <20191023112154.64235-1-mika.westerberg@linux.intel.com>
@@ -51,664 +51,561 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To perform proper Display Port tunneling for Thunderbolt 3 devices we
-need to allocate DP resources for DP IN port before they can be used.
-The reason for this is that the user can also connect a monitor directly
-to the Type-C ports in which case the Thunderbolt controller acts as
-re-driver for Display Port (no tunneling takes place) taking the DP
-sinks away from the connection manager. This allocation is done using
-special sink allocation registers available through the link controller.
-
-We can pair DP IN to DP OUT only if
-
- * DP IN has sink allocated via link controller
- * DP OUT port receives hotplug event
-
-For DP IN adapters (only for the host router) we first query whether
-there is DP resource available (it may be the previous instance of the
-driver for example already allocated it) and if it is we add it to the
-list. We then update the list when after each plug/unplug event to a DP
-IN/OUT adapter. Each time the list is updated we try to find additional
-DP IN <-> DP OUT pairs for tunnel establishment. This strategy also
-makes it possible to establish another tunnel in case there are 3
-monitors connected and one gets unplugged releasing the DP IN adapter
-for the new tunnel.
+Titan Ridge supports Display Port 1.4 which adds HBR3 (High Bit Rate)
+rates that may be up to 8.1 Gb/s over 4 lanes. This translates to
+effective data bandwidth of 25.92 Gb/s (as 8/10 encoding is removed by
+the DP adapters when going over Thunderbolt fabric). If another high
+rate monitor is connected we may need to reduce the bandwidth it
+consumes so that it fits into the total 40 Gb/s available on the
+Thunderbolt fabric.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/thunderbolt/lc.c      | 161 +++++++++++++++++++++++++++
- drivers/thunderbolt/switch.c  |  44 ++++++++
- drivers/thunderbolt/tb.c      | 201 ++++++++++++++++++++++++++++------
- drivers/thunderbolt/tb.h      |   9 ++
- drivers/thunderbolt/tb_regs.h |   6 +
- 5 files changed, 387 insertions(+), 34 deletions(-)
+ drivers/thunderbolt/path.c    |  22 +++
+ drivers/thunderbolt/tb.c      |  52 ++++++-
+ drivers/thunderbolt/tb.h      |   2 +
+ drivers/thunderbolt/tb_regs.h |  17 ++
+ drivers/thunderbolt/tunnel.c  | 282 +++++++++++++++++++++++++++++++++-
+ drivers/thunderbolt/tunnel.h  |  10 +-
+ 6 files changed, 381 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/thunderbolt/lc.c b/drivers/thunderbolt/lc.c
-index df56523eb822..bd44d50246d2 100644
---- a/drivers/thunderbolt/lc.c
-+++ b/drivers/thunderbolt/lc.c
-@@ -205,3 +205,164 @@ bool tb_lc_lane_bonding_possible(struct tb_switch *sw)
- 
- 	return !!(val & TB_LC_PORT_ATTR_BE);
- }
-+
-+static int tb_lc_dp_sink_from_port(const struct tb_switch *sw,
-+				   struct tb_port *in)
-+{
-+	struct tb_port *port;
-+
-+	/* The first DP IN port is sink 0 and second is sink 1 */
-+	tb_switch_for_each_port(sw, port) {
-+		if (tb_port_is_dpin(port))
-+			return in != port;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int tb_lc_dp_sink_available(struct tb_switch *sw, int sink)
-+{
-+	u32 val, alloc;
-+	int ret;
-+
-+	ret = tb_sw_read(sw, &val, TB_CFG_SWITCH,
-+			 sw->cap_lc + TB_LC_SNK_ALLOCATION, 1);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Sink is available for CM/SW to use if the allocation valie is
-+	 * either 0 or 1.
-+	 */
-+	if (!sink) {
-+		alloc = val & TB_LC_SNK_ALLOCATION_SNK0_MASK;
-+		if (!alloc || alloc == TB_LC_SNK_ALLOCATION_SNK0_CM)
-+			return 0;
-+	} else {
-+		alloc = (val & TB_LC_SNK_ALLOCATION_SNK1_MASK) >>
-+			TB_LC_SNK_ALLOCATION_SNK1_SHIFT;
-+		if (!alloc || alloc == TB_LC_SNK_ALLOCATION_SNK1_CM)
-+			return 0;
-+	}
-+
-+	return -EBUSY;
-+}
-+
-+/**
-+ * tb_lc_dp_sink_query() - Is DP sink available for DP IN port
-+ * @sw: Switch whose DP sink is queried
-+ * @in: DP IN port to check
-+ *
-+ * Queries through LC SNK_ALLOCATION registers whether DP sink is available
-+ * for the given DP IN port or not.
-+ */
-+bool tb_lc_dp_sink_query(struct tb_switch *sw, struct tb_port *in)
-+{
-+	int sink;
-+
-+	/*
-+	 * For older generations sink is always available as there is no
-+	 * allocation mechanism.
-+	 */
-+	if (sw->generation < 3)
-+		return true;
-+
-+	sink = tb_lc_dp_sink_from_port(sw, in);
-+	if (sink < 0)
-+		return false;
-+
-+	return !tb_lc_dp_sink_available(sw, sink);
-+}
-+
-+/**
-+ * tb_lc_dp_sink_alloc() - Allocate DP sink
-+ * @sw: Switch whose DP sink is allocated
-+ * @in: DP IN port the DP sink is allocated for
-+ *
-+ * Allocate DP sink for @in via LC SNK_ALLOCATION registers. If the
-+ * resource is available and allocation is successful returns %0. In all
-+ * other cases returs negative errno. In particular %-EBUSY is returned if
-+ * the resource was not available.
-+ */
-+int tb_lc_dp_sink_alloc(struct tb_switch *sw, struct tb_port *in)
-+{
-+	int ret, sink;
-+	u32 val;
-+
-+	if (sw->generation < 3)
-+		return 0;
-+
-+	sink = tb_lc_dp_sink_from_port(sw, in);
-+	if (sink < 0)
-+		return sink;
-+
-+	ret = tb_lc_dp_sink_available(sw, sink);
-+	if (ret)
-+		return ret;
-+
-+	ret = tb_sw_read(sw, &val, TB_CFG_SWITCH,
-+			 sw->cap_lc + TB_LC_SNK_ALLOCATION, 1);
-+	if (ret)
-+		return ret;
-+
-+	if (!sink) {
-+		val &= ~TB_LC_SNK_ALLOCATION_SNK0_MASK;
-+		val |= TB_LC_SNK_ALLOCATION_SNK0_CM;
-+	} else {
-+		val &= ~TB_LC_SNK_ALLOCATION_SNK1_MASK;
-+		val |= TB_LC_SNK_ALLOCATION_SNK1_CM <<
-+			TB_LC_SNK_ALLOCATION_SNK1_SHIFT;
-+	}
-+
-+	ret = tb_sw_write(sw, &val, TB_CFG_SWITCH,
-+			  sw->cap_lc + TB_LC_SNK_ALLOCATION, 1);
-+
-+	if (ret)
-+		return ret;
-+
-+	tb_port_dbg(in, "sink %d allocated\n", sink);
-+	return 0;
-+}
-+
-+/**
-+ * tb_lc_dp_sink_dealloc() - De-allocate DP sink
-+ * @sw: Switch whose DP sink is de-allocated
-+ * @in: DP IN port whose DP sink is de-allocated
-+ *
-+ * De-allocate DP sink from @in using LC SNK_ALLOCATION registers.
-+ */
-+int tb_lc_dp_sink_dealloc(struct tb_switch *sw, struct tb_port *in)
-+{
-+	int ret, sink;
-+	u32 val;
-+
-+	if (sw->generation < 3)
-+		return 0;
-+
-+	sink = tb_lc_dp_sink_from_port(sw, in);
-+	if (sink < 0)
-+		return sink;
-+
-+	/* Needs to be owned by CM/SW */
-+	ret = tb_lc_dp_sink_available(sw, sink);
-+	if (ret)
-+		return ret;
-+
-+	ret = tb_sw_read(sw, &val, TB_CFG_SWITCH,
-+			 sw->cap_lc + TB_LC_SNK_ALLOCATION, 1);
-+	if (ret)
-+		return ret;
-+
-+	if (!sink)
-+		val &= ~TB_LC_SNK_ALLOCATION_SNK0_MASK;
-+	else
-+		val &= ~TB_LC_SNK_ALLOCATION_SNK1_MASK;
-+
-+	ret = tb_sw_write(sw, &val, TB_CFG_SWITCH,
-+			  sw->cap_lc + TB_LC_SNK_ALLOCATION, 1);
-+	if (ret)
-+		return ret;
-+
-+	tb_port_dbg(in, "sink %d de-allocated\n", sink);
-+	return 0;
-+}
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index 404a78a82746..677f383c16ab 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -645,6 +645,7 @@ static int tb_init_port(struct tb_port *port)
- 		ida_init(&port->out_hopids);
+diff --git a/drivers/thunderbolt/path.c b/drivers/thunderbolt/path.c
+index 6cf66597d5d8..ad58559ea88e 100644
+--- a/drivers/thunderbolt/path.c
++++ b/drivers/thunderbolt/path.c
+@@ -557,3 +557,25 @@ bool tb_path_is_invalid(struct tb_path *path)
  	}
- 
-+	INIT_LIST_HEAD(&port->list);
- 	return 0;
- 
+ 	return false;
  }
-@@ -2323,6 +2324,49 @@ void tb_switch_suspend(struct tb_switch *sw)
- 	tb_lc_set_sleep(sw);
- }
- 
-+/**
-+ * tb_switch_query_dp_resource() - Query availability of DP resource
-+ * @sw: Switch whose DP resource is queried
-+ * @in: DP IN port
-+ *
-+ * Queries availability of DP resource for DP tunneling using switch
-+ * specific means. Returns %true if resource is available.
-+ */
-+bool tb_switch_query_dp_resource(struct tb_switch *sw, struct tb_port *in)
-+{
-+	return tb_lc_dp_sink_query(sw, in);
-+}
 +
 +/**
-+ * tb_switch_alloc_dp_resource() - Allocate available DP resource
-+ * @sw: Switch whose DP resource is allocated
-+ * @in: DP IN port
++ * tb_path_switch_on_path() - Does the path go through certain switch
++ * @path: Path to check
++ * @sw: Switch to check
 + *
-+ * Allocates DP resource for DP tunneling. The resource must be
-+ * available for this to succeed (see tb_switch_query_dp_resource()).
-+ * Returns %0 in success and negative errno otherwise.
++ * Goes over all hops on path and checks if @sw is any of them.
++ * Direction does not matter.
 + */
-+int tb_switch_alloc_dp_resource(struct tb_switch *sw, struct tb_port *in)
++bool tb_path_switch_on_path(const struct tb_path *path,
++			    const struct tb_switch *sw)
 +{
-+	return tb_lc_dp_sink_alloc(sw, in);
-+}
++	int i;
 +
-+/**
-+ * tb_switch_dealloc_dp_resource() - De-allocate DP resource
-+ * @sw: Switch whose DP resource is de-allocated
-+ * @in: DP IN port
-+ *
-+ * De-allocates DP resource that was previously allocated for DP
-+ * tunneling.
-+ */
-+void tb_switch_dealloc_dp_resource(struct tb_switch *sw, struct tb_port *in)
-+{
-+	if (tb_lc_dp_sink_dealloc(sw, in)) {
-+		tb_sw_warn(sw, "failed to de-allocate DP resource for port %d\n",
-+			   in->port);
++	for (i = 0; i < path->path_length; i++) {
++		if (path->hops[i].in_port->sw == sw ||
++		    path->hops[i].out_port->sw == sw)
++			return true;
 +	}
-+}
 +
- struct tb_sw_lookup {
- 	struct tb *tb;
- 	u8 link;
++	return false;
++}
 diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
-index c24b577e049e..8f58b9c3ef07 100644
+index 8f58b9c3ef07..bb763a5cf103 100644
 --- a/drivers/thunderbolt/tb.c
 +++ b/drivers/thunderbolt/tb.c
-@@ -18,6 +18,7 @@
- /**
-  * struct tb_cm - Simple Thunderbolt connection manager
-  * @tunnel_list: List of active tunnels
-+ * @dp_resources: List of available DP resources for DP tunneling
-  * @hotplug_active: tb_handle_hotplug will stop progressing plug
-  *		    events and exit if this is not set (it needs to
-  *		    acquire the lock one more time). Used to drain wq
-@@ -25,6 +26,7 @@
-  */
- struct tb_cm {
- 	struct list_head tunnel_list;
-+	struct list_head dp_resources;
- 	bool hotplug_active;
- };
- 
-@@ -56,6 +58,42 @@ static void tb_queue_hotplug(struct tb *tb, u64 route, u8 port, bool unplug)
- 
- /* enumeration & hot plug handling */
- 
-+static void tb_add_dp_resources(struct tb_switch *sw)
-+{
-+	struct tb_cm *tcm = tb_priv(sw->tb);
-+	struct tb_port *port;
-+
-+	tb_switch_for_each_port(sw, port) {
-+		if (!tb_port_is_dpin(port))
-+			continue;
-+
-+		if (!tb_switch_query_dp_resource(sw, port))
-+			continue;
-+
-+		list_add_tail(&port->list, &tcm->dp_resources);
-+		tb_port_dbg(port, "DP IN resource available\n");
-+	}
-+}
-+
-+static void tb_remove_dp_resources(struct tb_switch *sw)
-+{
-+	struct tb_cm *tcm = tb_priv(sw->tb);
-+	struct tb_port *port, *tmp;
-+
-+	/* Clear children resources first */
-+	tb_switch_for_each_port(sw, port) {
-+		if (tb_port_has_remote(port))
-+			tb_remove_dp_resources(port->remote->sw);
-+	}
-+
-+	list_for_each_entry_safe(port, tmp, &tcm->dp_resources, list) {
-+		if (port->sw == sw) {
-+			tb_port_dbg(port, "DP OUT resource unavailable\n");
-+			list_del_init(&port->list);
-+		}
-+	}
-+}
-+
- static void tb_discover_tunnels(struct tb_switch *sw)
- {
- 	struct tb *tb = sw->tb;
-@@ -223,8 +261,9 @@ static void tb_scan_port(struct tb_port *port)
- 	tb_scan_switch(sw);
- }
- 
--static int tb_free_tunnel(struct tb *tb, enum tb_tunnel_type type,
--			  struct tb_port *src_port, struct tb_port *dst_port)
-+static struct tb_tunnel *tb_find_tunnel(struct tb *tb, enum tb_tunnel_type type,
-+					struct tb_port *src_port,
-+					struct tb_port *dst_port)
- {
- 	struct tb_cm *tcm = tb_priv(tb);
- 	struct tb_tunnel *tunnel;
-@@ -233,14 +272,32 @@ static int tb_free_tunnel(struct tb *tb, enum tb_tunnel_type type,
- 		if (tunnel->type == type &&
- 		    ((src_port && src_port == tunnel->src_port) ||
- 		     (dst_port && dst_port == tunnel->dst_port))) {
--			tb_tunnel_deactivate(tunnel);
--			list_del(&tunnel->list);
--			tb_tunnel_free(tunnel);
--			return 0;
-+			return tunnel;
- 		}
- 	}
- 
--	return -ENODEV;
-+	return NULL;
-+}
-+
-+static void tb_deactivate_and_free_tunnel(struct tb_tunnel *tunnel)
-+{
-+	if (!tunnel)
-+		return;
-+
-+	tb_tunnel_deactivate(tunnel);
-+	list_del(&tunnel->list);
-+
-+	/*
-+	 * In case of DP tunnel make sure the DP IN resource is deallocated
-+	 * properly.
-+	 */
-+	if (tb_tunnel_is_dp(tunnel)) {
-+		struct tb_port *in = tunnel->src_port;
-+
-+		tb_switch_dealloc_dp_resource(in->sw, in);
-+	}
-+
-+	tb_tunnel_free(tunnel);
- }
- 
- /**
-@@ -253,11 +310,8 @@ static void tb_free_invalid_tunnels(struct tb *tb)
- 	struct tb_tunnel *n;
- 
- 	list_for_each_entry_safe(tunnel, n, &tcm->tunnel_list, list) {
--		if (tb_tunnel_is_invalid(tunnel)) {
--			tb_tunnel_deactivate(tunnel);
--			list_del(&tunnel->list);
--			tb_tunnel_free(tunnel);
--		}
-+		if (tb_tunnel_is_invalid(tunnel))
-+			tb_deactivate_and_free_tunnel(tunnel);
- 	}
- }
- 
-@@ -273,6 +327,7 @@ static void tb_free_unplugged_children(struct tb_switch *sw)
- 			continue;
- 
- 		if (port->remote->sw->is_unplugged) {
-+			tb_remove_dp_resources(port->remote->sw);
- 			tb_switch_lane_bonding_disable(port->remote->sw);
- 			tb_switch_remove(port->remote->sw);
- 			port->remote = NULL;
-@@ -367,42 +422,112 @@ static struct tb_port *tb_find_pcie_down(struct tb_switch *sw,
+@@ -422,11 +422,51 @@ static struct tb_port *tb_find_pcie_down(struct tb_switch *sw,
  	return tb_find_unused_port(sw, TB_TYPE_PCIE_DOWN);
  }
  
--static int tb_tunnel_dp(struct tb *tb, struct tb_port *out)
-+static void tb_tunnel_dp(struct tb *tb)
- {
- 	struct tb_cm *tcm = tb_priv(tb);
--	struct tb_switch *sw = out->sw;
-+	struct tb_port *port, *in, *out;
- 	struct tb_tunnel *tunnel;
--	struct tb_port *in;
- 
--	if (tb_port_is_enabled(out))
--		return 0;
-+	/*
-+	 * Find pair of inactive DP IN and DP OUT adapters and then
-+	 * establish a DP tunnel between them.
-+	 */
-+	tb_dbg(tb, "looking for DP IN <-> DP OUT pairs:\n");
-+
-+	in = NULL;
-+	out = NULL;
-+	list_for_each_entry(port, &tcm->dp_resources, list) {
-+		if (tb_port_is_enabled(port)) {
-+			tb_port_dbg(port, "in use\n");
-+			continue;
-+		}
- 
--	do {
--		sw = tb_to_switch(sw->dev.parent);
--		if (!sw)
--			return 0;
--		in = tb_find_unused_port(sw, TB_TYPE_DP_HDMI_IN);
--	} while (!in);
-+		tb_port_dbg(port, "available\n");
-+
-+		if (!in && tb_port_is_dpin(port))
-+			in = port;
-+		else if (!out && tb_port_is_dpout(port))
-+			out = port;
-+	}
-+
-+	if (!in) {
-+		tb_dbg(tb, "no suitable DP IN adapter available, not tunneling\n");
-+		return;
-+	}
-+	if (!out) {
-+		tb_dbg(tb, "no suitable DP OUT adapter available, not tunneling\n");
-+		return;
-+	}
-+
-+	if (tb_switch_alloc_dp_resource(in->sw, in)) {
-+		tb_port_dbg(in, "no resource available for DP IN, not tunneling\n");
-+		return;
-+	}
- 
- 	tunnel = tb_tunnel_alloc_dp(tb, in, out);
- 	if (!tunnel) {
--		tb_port_dbg(out, "DP tunnel allocation failed\n");
--		return -ENOMEM;
-+		tb_port_dbg(out, "could not allocate DP tunnel\n");
-+		goto dealloc_dp;
- 	}
- 
- 	if (tb_tunnel_activate(tunnel)) {
- 		tb_port_info(out, "DP tunnel activation failed, aborting\n");
- 		tb_tunnel_free(tunnel);
--		return -EIO;
-+		goto dealloc_dp;
- 	}
- 
- 	list_add_tail(&tunnel->list, &tcm->tunnel_list);
--	return 0;
-+	return;
-+
-+dealloc_dp:
-+	tb_switch_dealloc_dp_resource(in->sw, in);
- }
- 
--static void tb_teardown_dp(struct tb *tb, struct tb_port *out)
-+static void tb_dp_resource_unavailable(struct tb *tb, struct tb_port *port)
- {
--	tb_free_tunnel(tb, TB_TUNNEL_DP, NULL, out);
-+	struct tb_port *in, *out;
++static int tb_available_bw(struct tb_cm *tcm, struct tb_port *in,
++			   struct tb_port *out)
++{
++	struct tb_switch *sw = out->sw;
 +	struct tb_tunnel *tunnel;
++	int bw, available_bw = 40000;
 +
-+	if (tb_port_is_dpin(port)) {
-+		tb_port_dbg(port, "DP IN resource unavailable\n");
-+		in = port;
-+		out = NULL;
-+	} else {
-+		tb_port_dbg(port, "DP OUT resource unavailable\n");
-+		in = NULL;
-+		out = port;
++	while (sw && sw != in->sw) {
++		bw = sw->link_speed * sw->link_width * 1000; /* Mb/s */
++		/* Leave 10% guard band */
++		bw -= bw / 10;
++
++		/*
++		 * Check for any active DP tunnels that go through this
++		 * switch and reduce their consumed bandwidth from
++		 * available.
++		 */
++		list_for_each_entry(tunnel, &tcm->tunnel_list, list) {
++			int consumed_bw;
++
++			if (!tb_tunnel_switch_on_path(tunnel, sw))
++				continue;
++
++			consumed_bw = tb_tunnel_consumed_bandwidth(tunnel);
++			if (consumed_bw < 0)
++				return consumed_bw;
++
++			bw -= consumed_bw;
++		}
++
++		if (bw < available_bw)
++			available_bw = bw;
++
++		sw = tb_switch_parent(sw);
 +	}
 +
-+	tunnel = tb_find_tunnel(tb, TB_TUNNEL_DP, in, out);
-+	tb_deactivate_and_free_tunnel(tunnel);
-+	list_del_init(&port->list);
-+
-+	/*
-+	 * See if there is another DP OUT port that can be used for
-+	 * to create another tunnel.
-+	 */
-+	tb_tunnel_dp(tb);
++	return available_bw;
 +}
 +
-+static void tb_dp_resource_available(struct tb *tb, struct tb_port *port)
-+{
-+	struct tb_cm *tcm = tb_priv(tb);
-+	struct tb_port *p;
-+
-+	if (tb_port_is_enabled(port))
-+		return;
-+
-+	list_for_each_entry(p, &tcm->dp_resources, list) {
-+		if (p == port)
-+			return;
-+	}
-+
-+	tb_port_dbg(port, "DP %s resource available\n",
-+		    tb_port_is_dpin(port) ? "IN" : "OUT");
-+	list_add_tail(&port->list, &tcm->dp_resources);
-+
-+	/* Look for suitable DP IN <-> DP OUT pairs now */
-+	tb_tunnel_dp(tb);
- }
- 
- static int tb_tunnel_pci(struct tb *tb, struct tb_switch *sw)
-@@ -477,6 +602,7 @@ static int tb_approve_xdomain_paths(struct tb *tb, struct tb_xdomain *xd)
- static void __tb_disconnect_xdomain_paths(struct tb *tb, struct tb_xdomain *xd)
+ static void tb_tunnel_dp(struct tb *tb)
  {
- 	struct tb_port *dst_port;
-+	struct tb_tunnel *tunnel;
- 	struct tb_switch *sw;
+ 	struct tb_cm *tcm = tb_priv(tb);
+ 	struct tb_port *port, *in, *out;
+ 	struct tb_tunnel *tunnel;
++	int available_bw;
  
- 	sw = tb_to_switch(xd->dev.parent);
-@@ -487,7 +613,8 @@ static void __tb_disconnect_xdomain_paths(struct tb *tb, struct tb_xdomain *xd)
- 	 * case of cable disconnect) so it is fine if we cannot find it
- 	 * here anymore.
- 	 */
--	tb_free_tunnel(tb, TB_TUNNEL_DMA, NULL, dst_port);
-+	tunnel = tb_find_tunnel(tb, TB_TUNNEL_DMA, NULL, dst_port);
-+	tb_deactivate_and_free_tunnel(tunnel);
- }
- 
- static int tb_disconnect_xdomain_paths(struct tb *tb, struct tb_xdomain *xd)
-@@ -542,11 +669,14 @@ static void tb_handle_hotplug(struct work_struct *work)
- 			tb_port_dbg(port, "switch unplugged\n");
- 			tb_sw_set_unplugged(port->remote->sw);
- 			tb_free_invalid_tunnels(tb);
-+			tb_remove_dp_resources(port->remote->sw);
- 			tb_switch_lane_bonding_disable(port->remote->sw);
- 			tb_switch_remove(port->remote->sw);
- 			port->remote = NULL;
- 			if (port->dual_link_port)
- 				port->dual_link_port->remote = NULL;
-+			/* Maybe we can create another DP tunnel */
-+			tb_tunnel_dp(tb);
- 		} else if (port->xdomain) {
- 			struct tb_xdomain *xd = tb_xdomain_get(port->xdomain);
- 
-@@ -563,8 +693,8 @@ static void tb_handle_hotplug(struct work_struct *work)
- 			port->xdomain = NULL;
- 			__tb_disconnect_xdomain_paths(tb, xd);
- 			tb_xdomain_put(xd);
--		} else if (tb_port_is_dpout(port)) {
--			tb_teardown_dp(tb, port);
-+		} else if (tb_port_is_dpout(port) || tb_port_is_dpin(port)) {
-+			tb_dp_resource_unavailable(tb, port);
- 		} else {
- 			tb_port_dbg(port,
- 				   "got unplug event for disconnected port, ignoring\n");
-@@ -577,8 +707,8 @@ static void tb_handle_hotplug(struct work_struct *work)
- 			tb_scan_port(port);
- 			if (!port->remote)
- 				tb_port_dbg(port, "hotplug: no switch found\n");
--		} else if (tb_port_is_dpout(port)) {
--			tb_tunnel_dp(tb, port);
-+		} else if (tb_port_is_dpout(port) || tb_port_is_dpin(port)) {
-+			tb_dp_resource_available(tb, port);
- 		}
+ 	/*
+ 	 * Find pair of inactive DP IN and DP OUT adapters and then
+@@ -464,7 +504,17 @@ static void tb_tunnel_dp(struct tb *tb)
+ 		return;
  	}
  
-@@ -691,6 +821,8 @@ static int tb_start(struct tb *tb)
- 	tb_scan_switch(tb->root_switch);
- 	/* Find out tunnels created by the boot firmware */
- 	tb_discover_tunnels(tb->root_switch);
-+	/* Add DP IN resources for the root switch */
-+	tb_add_dp_resources(tb->root_switch);
- 	/* Make the discovered switches available to the userspace */
- 	device_for_each_child(&tb->root_switch->dev, NULL,
- 			      tb_scan_finalize_switch);
-@@ -820,6 +952,7 @@ struct tb *tb_probe(struct tb_nhi *nhi)
- 
- 	tcm = tb_priv(tb);
- 	INIT_LIST_HEAD(&tcm->tunnel_list);
-+	INIT_LIST_HEAD(&tcm->dp_resources);
- 
- 	return tb;
- }
+-	tunnel = tb_tunnel_alloc_dp(tb, in, out);
++	/* Calculate available bandwidth between in and out */
++	available_bw = tb_available_bw(tcm, in, out);
++	if (available_bw < 0) {
++		tb_warn(tb, "failed to determine available bandwidth\n");
++		return;
++	}
++
++	tb_dbg(tb, "available bandwidth for new DP tunnel %u Mb/s\n",
++	       available_bw);
++
++	tunnel = tb_tunnel_alloc_dp(tb, in, out, available_bw);
+ 	if (!tunnel) {
+ 		tb_port_dbg(out, "could not allocate DP tunnel\n");
+ 		goto dealloc_dp;
 diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index 3d7b2202d248..5311e6e3f3df 100644
+index 5311e6e3f3df..ec851f20c571 100644
 --- a/drivers/thunderbolt/tb.h
 +++ b/drivers/thunderbolt/tb.h
-@@ -137,6 +137,7 @@ struct tb_switch {
-  * @link_nr: Is this primary or secondary port on the dual_link.
-  * @in_hopids: Currently allocated input HopIDs
-  * @out_hopids: Currently allocated output HopIDs
-+ * @list: Used to link ports to DP resources list
-  */
- struct tb_port {
- 	struct tb_regs_port_header config;
-@@ -152,6 +153,7 @@ struct tb_port {
- 	u8 link_nr:1;
- 	struct ida in_hopids;
- 	struct ida out_hopids;
-+	struct list_head list;
- };
+@@ -691,6 +691,8 @@ void tb_path_free(struct tb_path *path);
+ int tb_path_activate(struct tb_path *path);
+ void tb_path_deactivate(struct tb_path *path);
+ bool tb_path_is_invalid(struct tb_path *path);
++bool tb_path_switch_on_path(const struct tb_path *path,
++			    const struct tb_switch *sw);
  
- /**
-@@ -650,6 +652,10 @@ static inline bool tb_switch_is_icm(const struct tb_switch *sw)
- int tb_switch_lane_bonding_enable(struct tb_switch *sw);
- void tb_switch_lane_bonding_disable(struct tb_switch *sw);
- 
-+bool tb_switch_query_dp_resource(struct tb_switch *sw, struct tb_port *in);
-+int tb_switch_alloc_dp_resource(struct tb_switch *sw, struct tb_port *in);
-+void tb_switch_dealloc_dp_resource(struct tb_switch *sw, struct tb_port *in);
-+
- int tb_wait_for_port(struct tb_port *port, bool wait_if_unplugged);
- int tb_port_add_nfc_credits(struct tb_port *port, int credits);
- int tb_port_set_initial_credits(struct tb_port *port, u32 credits);
-@@ -694,6 +700,9 @@ int tb_lc_configure_link(struct tb_switch *sw);
- void tb_lc_unconfigure_link(struct tb_switch *sw);
- int tb_lc_set_sleep(struct tb_switch *sw);
- bool tb_lc_lane_bonding_possible(struct tb_switch *sw);
-+bool tb_lc_dp_sink_query(struct tb_switch *sw, struct tb_port *in);
-+int tb_lc_dp_sink_alloc(struct tb_switch *sw, struct tb_port *in);
-+int tb_lc_dp_sink_dealloc(struct tb_switch *sw, struct tb_port *in);
- 
- static inline int tb_route_length(u64 route)
- {
+ int tb_drom_read(struct tb_switch *sw);
+ int tb_drom_read_uid_only(struct tb_switch *sw, u64 *uid);
 diff --git a/drivers/thunderbolt/tb_regs.h b/drivers/thunderbolt/tb_regs.h
-index 8d11b4a2d552..aec35e61cc14 100644
+index aec35e61cc14..7ee45b73c7f7 100644
 --- a/drivers/thunderbolt/tb_regs.h
 +++ b/drivers/thunderbolt/tb_regs.h
-@@ -295,6 +295,12 @@ struct tb_regs_hop {
- #define TB_LC_DESC_PORT_SIZE_SHIFT	16
- #define TB_LC_DESC_PORT_SIZE_MASK	GENMASK(27, 16)
- #define TB_LC_FUSE			0x03
-+#define TB_LC_SNK_ALLOCATION		0x10
-+#define TB_LC_SNK_ALLOCATION_SNK0_MASK	GENMASK(3, 0)
-+#define TB_LC_SNK_ALLOCATION_SNK0_CM	0x1
-+#define TB_LC_SNK_ALLOCATION_SNK1_SHIFT	4
-+#define TB_LC_SNK_ALLOCATION_SNK1_MASK	GENMASK(7, 4)
-+#define TB_LC_SNK_ALLOCATION_SNK1_CM	0x1
+@@ -255,6 +255,23 @@ struct tb_regs_port_header {
+ #define DP_STATUS_CTRL				0x06
+ #define DP_STATUS_CTRL_CMHS			BIT(25)
+ #define DP_STATUS_CTRL_UF			BIT(26)
++#define DP_COMMON_CAP				0x07
++/*
++ * DP_COMMON_CAP offsets work also for DP_LOCAL_CAP and DP_REMOTE_CAP
++ * with exception of DPRX done.
++ */
++#define DP_COMMON_CAP_RATE_MASK			GENMASK(11, 8)
++#define DP_COMMON_CAP_RATE_SHIFT		8
++#define DP_COMMON_CAP_RATE_RBR			0x0
++#define DP_COMMON_CAP_RATE_HBR			0x1
++#define DP_COMMON_CAP_RATE_HBR2			0x2
++#define DP_COMMON_CAP_RATE_HBR3			0x3
++#define DP_COMMON_CAP_LANES_MASK		GENMASK(14, 12)
++#define DP_COMMON_CAP_LANES_SHIFT		12
++#define DP_COMMON_CAP_1_LANE			0x0
++#define DP_COMMON_CAP_2_LANES			0x1
++#define DP_COMMON_CAP_4_LANES			0x2
++#define DP_COMMON_CAP_DPRX_DONE			BIT(31)
  
- /* Link controller registers */
- #define TB_LC_PORT_ATTR			0x8d
+ /* PCIe adapter registers */
+ #define ADP_PCIE_CS_0				0x00
+diff --git a/drivers/thunderbolt/tunnel.c b/drivers/thunderbolt/tunnel.c
+index 009c2683a386..0d3463c4e24a 100644
+--- a/drivers/thunderbolt/tunnel.c
++++ b/drivers/thunderbolt/tunnel.c
+@@ -279,11 +279,138 @@ static int tb_dp_cm_handshake(struct tb_port *in, struct tb_port *out)
+ 	return -ETIMEDOUT;
+ }
+ 
++static inline u32 tb_dp_cap_get_rate(u32 val)
++{
++	u32 rate = (val & DP_COMMON_CAP_RATE_MASK) >> DP_COMMON_CAP_RATE_SHIFT;
++
++	switch (rate) {
++	case DP_COMMON_CAP_RATE_RBR:
++		return 1620;
++	case DP_COMMON_CAP_RATE_HBR:
++		return 2700;
++	case DP_COMMON_CAP_RATE_HBR2:
++		return 5400;
++	case DP_COMMON_CAP_RATE_HBR3:
++		return 8100;
++	default:
++		return 0;
++	}
++}
++
++static inline u32 tb_dp_cap_set_rate(u32 val, u32 rate)
++{
++	val &= ~DP_COMMON_CAP_RATE_MASK;
++	switch (rate) {
++	default:
++		WARN(1, "invalid rate %u passed, defaulting to 1620 MB/s\n", rate);
++		/* Fallthrough */
++	case 1620:
++		val |= DP_COMMON_CAP_RATE_RBR << DP_COMMON_CAP_RATE_SHIFT;
++		break;
++	case 2700:
++		val |= DP_COMMON_CAP_RATE_HBR << DP_COMMON_CAP_RATE_SHIFT;
++		break;
++	case 5400:
++		val |= DP_COMMON_CAP_RATE_HBR2 << DP_COMMON_CAP_RATE_SHIFT;
++		break;
++	case 8100:
++		val |= DP_COMMON_CAP_RATE_HBR3 << DP_COMMON_CAP_RATE_SHIFT;
++		break;
++	}
++	return val;
++}
++
++static inline u32 tb_dp_cap_get_lanes(u32 val)
++{
++	u32 lanes = (val & DP_COMMON_CAP_LANES_MASK) >> DP_COMMON_CAP_LANES_SHIFT;
++
++	switch (lanes) {
++	case DP_COMMON_CAP_1_LANE:
++		return 1;
++	case DP_COMMON_CAP_2_LANES:
++		return 2;
++	case DP_COMMON_CAP_4_LANES:
++		return 4;
++	default:
++		return 0;
++	}
++}
++
++static inline u32 tb_dp_cap_set_lanes(u32 val, u32 lanes)
++{
++	val &= ~DP_COMMON_CAP_LANES_MASK;
++	switch (lanes) {
++	default:
++		WARN(1, "invalid number of lanes %u passed, defaulting to 1\n",
++		     lanes);
++		/* Fallthrough */
++	case 1:
++		val |= DP_COMMON_CAP_1_LANE << DP_COMMON_CAP_LANES_SHIFT;
++		break;
++	case 2:
++		val |= DP_COMMON_CAP_2_LANES << DP_COMMON_CAP_LANES_SHIFT;
++		break;
++	case 4:
++		val |= DP_COMMON_CAP_4_LANES << DP_COMMON_CAP_LANES_SHIFT;
++		break;
++	}
++	return val;
++}
++
++static unsigned int tb_dp_bandwidth(unsigned int rate, unsigned int lanes)
++{
++	/* Tunneling removes the DP 8b/10b encoding */
++	return rate * lanes * 8 / 10;
++}
++
++static int tb_dp_reduce_bandwidth(int max_bw, u32 in_rate, u32 in_lanes,
++				  u32 out_rate, u32 out_lanes, u32 *new_rate,
++				  u32 *new_lanes)
++{
++	static const u32 dp_bw[][2] = {
++		/* Mb/s, lanes */
++		{ 8100, 4 }, /* 25920 Mb/s */
++		{ 5400, 4 }, /* 17280 Mb/s */
++		{ 8100, 2 }, /* 12960 Mb/s */
++		{ 2700, 4 }, /* 8640 Mb/s */
++		{ 5400, 2 }, /* 8640 Mb/s */
++		{ 8100, 1 }, /* 6480 Mb/s */
++		{ 1620, 4 }, /* 5184 Mb/s */
++		{ 5400, 1 }, /* 4320 Mb/s */
++		{ 2700, 2 }, /* 4320 Mb/s */
++		{ 1620, 2 }, /* 2592 Mb/s */
++		{ 2700, 1 }, /* 2160 Mb/s */
++		{ 1620, 1 }, /* 1296 Mb/s */
++	};
++	unsigned int i;
++
++	/*
++	 * Find a combination that can fit into max_bw and does not
++	 * exceed the maximum rate and lanes supported by the DP OUT and
++	 * DP IN adapters.
++	 */
++	for (i = 0; i < ARRAY_SIZE(dp_bw); i++) {
++		if (dp_bw[i][0] > out_rate || dp_bw[i][1] > out_lanes)
++			continue;
++
++		if (dp_bw[i][0] > in_rate || dp_bw[i][1] > in_lanes)
++			continue;
++
++		if (tb_dp_bandwidth(dp_bw[i][0], dp_bw[i][1]) <= max_bw) {
++			*new_rate = dp_bw[i][0];
++			*new_lanes = dp_bw[i][1];
++			return 0;
++		}
++	}
++
++	return -ENOSR;
++}
++
+ static int tb_dp_xchg_caps(struct tb_tunnel *tunnel)
+ {
++	u32 out_dp_cap, out_rate, out_lanes, in_dp_cap, in_rate, in_lanes, bw;
+ 	struct tb_port *out = tunnel->dst_port;
+ 	struct tb_port *in = tunnel->src_port;
+-	u32 in_dp_cap, out_dp_cap;
+ 	int ret;
+ 
+ 	/*
+@@ -318,6 +445,44 @@ static int tb_dp_xchg_caps(struct tb_tunnel *tunnel)
+ 	if (ret)
+ 		return ret;
+ 
++	in_rate = tb_dp_cap_get_rate(in_dp_cap);
++	in_lanes = tb_dp_cap_get_lanes(in_dp_cap);
++	tb_port_dbg(in, "maximum supported bandwidth %u Mb/s x%u = %u Mb/s\n",
++		    in_rate, in_lanes, tb_dp_bandwidth(in_rate, in_lanes));
++
++	/*
++	 * If the tunnel bandwidth is limited (max_bw is set) then see
++	 * if we need to reduce bandwidth to fit there.
++	 */
++	out_rate = tb_dp_cap_get_rate(out_dp_cap);
++	out_lanes = tb_dp_cap_get_lanes(out_dp_cap);
++	bw = tb_dp_bandwidth(out_rate, out_lanes);
++	tb_port_dbg(out, "maximum supported bandwidth %u Mb/s x%u = %u Mb/s\n",
++		    out_rate, out_lanes, bw);
++
++	if (tunnel->max_bw && bw > tunnel->max_bw) {
++		u32 new_rate, new_lanes, new_bw;
++
++		ret = tb_dp_reduce_bandwidth(tunnel->max_bw, in_rate, in_lanes,
++					     out_rate, out_lanes, &new_rate,
++					     &new_lanes);
++		if (ret) {
++			tb_port_info(out, "not enough bandwidth for DP tunnel\n");
++			return ret;
++		}
++
++		new_bw = tb_dp_bandwidth(new_rate, new_lanes);
++		tb_port_dbg(out, "bandwidth reduced to %u Mb/s x%u = %u Mb/s\n",
++			    new_rate, new_lanes, new_bw);
++
++		/*
++		 * Set new rate and number of lanes before writing it to
++		 * the IN port remote caps.
++		 */
++		out_dp_cap = tb_dp_cap_set_rate(out_dp_cap, new_rate);
++		out_dp_cap = tb_dp_cap_set_lanes(out_dp_cap, new_lanes);
++	}
++
+ 	return tb_port_write(in, &out_dp_cap, TB_CFG_PORT,
+ 			     in->cap_adap + DP_REMOTE_CAP, 1);
+ }
+@@ -359,6 +524,56 @@ static int tb_dp_activate(struct tb_tunnel *tunnel, bool active)
+ 	return 0;
+ }
+ 
++static int tb_dp_consumed_bandwidth(struct tb_tunnel *tunnel)
++{
++	struct tb_port *in = tunnel->src_port;
++	const struct tb_switch *sw = in->sw;
++	u32 val, rate = 0, lanes = 0;
++	int ret;
++
++	if (tb_switch_is_titan_ridge(sw)) {
++		int timeout = 10;
++
++		/*
++		 * Wait for DPRX done. Normally it should be already set
++		 * for active tunnel.
++		 */
++		do {
++			ret = tb_port_read(in, &val, TB_CFG_PORT,
++					   in->cap_adap + DP_COMMON_CAP, 1);
++			if (ret)
++				return ret;
++
++			if (val & DP_COMMON_CAP_DPRX_DONE) {
++				rate = tb_dp_cap_get_rate(val);
++				lanes = tb_dp_cap_get_lanes(val);
++				break;
++			}
++			msleep(250);
++		} while (timeout--);
++
++		if (!timeout)
++			return -ETIMEDOUT;
++	} else if (sw->generation >= 2) {
++		/*
++		 * Read from the copied remote cap so that we take into
++		 * account if capabilities were reduced during exchange.
++		 */
++		ret = tb_port_read(in, &val, TB_CFG_PORT,
++				   in->cap_adap + DP_REMOTE_CAP, 1);
++		if (ret)
++			return ret;
++
++		rate = tb_dp_cap_get_rate(val);
++		lanes = tb_dp_cap_get_lanes(val);
++	} else {
++		/* No bandwidth management for legacy devices  */
++		return 0;
++	}
++
++	return tb_dp_bandwidth(rate, lanes);
++}
++
+ static void tb_dp_init_aux_path(struct tb_path *path)
+ {
+ 	int i;
+@@ -423,6 +638,7 @@ struct tb_tunnel *tb_tunnel_discover_dp(struct tb *tb, struct tb_port *in)
+ 
+ 	tunnel->init = tb_dp_xchg_caps;
+ 	tunnel->activate = tb_dp_activate;
++	tunnel->consumed_bandwidth = tb_dp_consumed_bandwidth;
+ 	tunnel->src_port = in;
+ 
+ 	path = tb_path_discover(in, TB_DP_VIDEO_HOPID, NULL, -1,
+@@ -481,6 +697,7 @@ struct tb_tunnel *tb_tunnel_discover_dp(struct tb *tb, struct tb_port *in)
+  * @tb: Pointer to the domain structure
+  * @in: DP in adapter port
+  * @out: DP out adapter port
++ * @max_bw: Maximum available bandwidth for the DP tunnel (%0 if not limited)
+  *
+  * Allocates a tunnel between @in and @out that is capable of tunneling
+  * Display Port traffic.
+@@ -488,7 +705,7 @@ struct tb_tunnel *tb_tunnel_discover_dp(struct tb *tb, struct tb_port *in)
+  * Return: Returns a tb_tunnel on success or NULL on failure.
+  */
+ struct tb_tunnel *tb_tunnel_alloc_dp(struct tb *tb, struct tb_port *in,
+-				     struct tb_port *out)
++				     struct tb_port *out, int max_bw)
+ {
+ 	struct tb_tunnel *tunnel;
+ 	struct tb_path **paths;
+@@ -503,8 +720,10 @@ struct tb_tunnel *tb_tunnel_alloc_dp(struct tb *tb, struct tb_port *in,
+ 
+ 	tunnel->init = tb_dp_xchg_caps;
+ 	tunnel->activate = tb_dp_activate;
++	tunnel->consumed_bandwidth = tb_dp_consumed_bandwidth;
+ 	tunnel->src_port = in;
+ 	tunnel->dst_port = out;
++	tunnel->max_bw = max_bw;
+ 
+ 	paths = tunnel->paths;
+ 
+@@ -751,3 +970,62 @@ void tb_tunnel_deactivate(struct tb_tunnel *tunnel)
+ 			tb_path_deactivate(tunnel->paths[i]);
+ 	}
+ }
++
++/**
++ * tb_tunnel_switch_on_path() - Does the tunnel go through switch
++ * @tunnel: Tunnel to check
++ * @sw: Switch to check
++ *
++ * Returns true if @tunnel goes through @sw (direction does not matter),
++ * false otherwise.
++ */
++bool tb_tunnel_switch_on_path(const struct tb_tunnel *tunnel,
++			      const struct tb_switch *sw)
++{
++	int i;
++
++	for (i = 0; i < tunnel->npaths; i++) {
++		if (!tunnel->paths[i])
++			continue;
++		if (tb_path_switch_on_path(tunnel->paths[i], sw))
++			return true;
++	}
++
++	return false;
++}
++
++static bool tb_tunnel_is_active(const struct tb_tunnel *tunnel)
++{
++	int i;
++
++	for (i = 0; i < tunnel->npaths; i++) {
++		if (!tunnel->paths[i])
++			return false;
++		if (!tunnel->paths[i]->activated)
++			return false;
++	}
++
++	return true;
++}
++
++/**
++ * tb_tunnel_consumed_bandwidth() - Return bandwidth consumed by the tunnel
++ * @tunnel: Tunnel to check
++ *
++ * Returns bandwidth currently consumed by @tunnel and %0 if the @tunnel
++ * is not active or does consume bandwidth.
++ */
++int tb_tunnel_consumed_bandwidth(struct tb_tunnel *tunnel)
++{
++	if (!tb_tunnel_is_active(tunnel))
++		return 0;
++
++	if (tunnel->consumed_bandwidth) {
++		int ret = tunnel->consumed_bandwidth(tunnel);
++
++		tb_tunnel_dbg(tunnel, "consumed bandwidth %d Mb/s\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
+diff --git a/drivers/thunderbolt/tunnel.h b/drivers/thunderbolt/tunnel.h
+index c68bbcd3a62c..ba888da005f5 100644
+--- a/drivers/thunderbolt/tunnel.h
++++ b/drivers/thunderbolt/tunnel.h
+@@ -27,8 +27,11 @@ enum tb_tunnel_type {
+  * @npaths: Number of paths in @paths
+  * @init: Optional tunnel specific initialization
+  * @activate: Optional tunnel specific activation/deactivation
++ * @consumed_bandwidth: Return how much bandwidth the tunnel consumes
+  * @list: Tunnels are linked using this field
+  * @type: Type of the tunnel
++ * @max_bw: Maximum bandwidth (Mb/s) available for the tunnel (only for DP).
++ *	    Only set if the bandwidth needs to be limited.
+  */
+ struct tb_tunnel {
+ 	struct tb *tb;
+@@ -38,8 +41,10 @@ struct tb_tunnel {
+ 	size_t npaths;
+ 	int (*init)(struct tb_tunnel *tunnel);
+ 	int (*activate)(struct tb_tunnel *tunnel, bool activate);
++	int (*consumed_bandwidth)(struct tb_tunnel *tunnel);
+ 	struct list_head list;
+ 	enum tb_tunnel_type type;
++	unsigned int max_bw;
+ };
+ 
+ struct tb_tunnel *tb_tunnel_discover_pci(struct tb *tb, struct tb_port *down);
+@@ -47,7 +52,7 @@ struct tb_tunnel *tb_tunnel_alloc_pci(struct tb *tb, struct tb_port *up,
+ 				      struct tb_port *down);
+ struct tb_tunnel *tb_tunnel_discover_dp(struct tb *tb, struct tb_port *in);
+ struct tb_tunnel *tb_tunnel_alloc_dp(struct tb *tb, struct tb_port *in,
+-				     struct tb_port *out);
++				     struct tb_port *out, int max_bw);
+ struct tb_tunnel *tb_tunnel_alloc_dma(struct tb *tb, struct tb_port *nhi,
+ 				      struct tb_port *dst, int transmit_ring,
+ 				      int transmit_path, int receive_ring,
+@@ -58,6 +63,9 @@ int tb_tunnel_activate(struct tb_tunnel *tunnel);
+ int tb_tunnel_restart(struct tb_tunnel *tunnel);
+ void tb_tunnel_deactivate(struct tb_tunnel *tunnel);
+ bool tb_tunnel_is_invalid(struct tb_tunnel *tunnel);
++bool tb_tunnel_switch_on_path(const struct tb_tunnel *tunnel,
++			      const struct tb_switch *sw);
++int tb_tunnel_consumed_bandwidth(struct tb_tunnel *tunnel);
+ 
+ static inline bool tb_tunnel_is_pci(const struct tb_tunnel *tunnel)
+ {
 -- 
 2.23.0
 
