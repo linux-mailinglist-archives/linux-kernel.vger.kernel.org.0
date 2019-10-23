@@ -2,127 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7D4BE1089
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 05:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BDEE10A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 05:43:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732854AbfJWD0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 23:26:12 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42623 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732542AbfJWD0M (ORCPT
+        id S1733109AbfJWDnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 23:43:14 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:43959 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730808AbfJWDnO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 23:26:12 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 21so723859pfj.9
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 20:26:11 -0700 (PDT)
+        Tue, 22 Oct 2019 23:43:14 -0400
+Received: by mail-qk1-f195.google.com with SMTP id a194so14436443qkg.10;
+        Tue, 22 Oct 2019 20:43:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=/UlXYMZppBsSqe1vUiYDqERsW7xBrjIEOgZPw2HevXQ=;
-        b=Of993IQqMLC66eF00w8dmizT/a6HT3ZI87pGzsxKyvSWD+kCvdW4DiBN4LmAPwUc06
-         IxuBFUqjFceVK5QoPCC8AGawzgTctgoOMQeMdOGiLUG8e96xxVu9xODLI6bade4ALOq5
-         UpgTGh5csfvIeadwi9tSJXsYtXMAOqcrW7QUGlPUIKgOa4T4g3vBv2JBh01ORZyabaTX
-         8Kq4npb/1KrvUN7ZRyB2kgXtod30n4cYXnFQf7IXLRQ2XGYKQS6V0wLRhz9oJsfyOPp9
-         LQwI+7HhvF4fxvXGDdB04OmFg0Y+yUoHcJT7fKdNR8sSSrrelmRi7YvX8+dNTTEkbzvs
-         gbaw==
+        bh=1VLjmkD3Rwi0EmWCkc7vL9OT1uRUJflAVuUFK1TCUfs=;
+        b=jBkAkT8KEpSceUnUT5D05nwe+iUUaw4Z2mTUBn3UmLbvelJfBJ0apbdnjAvMT5YvY3
+         ntlBx/J1kfkGuRuxJfFxXJf2vGgCVZTHEIHO57WyPJwTDbFtfIHT+ZKaN/KMYhlFvbZg
+         l5uHyObZQT100bTkbf22/rl6axphYwccnbaGlNbtA7ZHNCnG5G+uK+fKnMQcl0zxeKhy
+         OjEkXlm2lczwehiMu+tWksfrRrrhUMMho7Ws55ENPgLgFzE/p/4SpSz1sJWyxxny2pCR
+         I84UJUFwbPpDwBAgMSF7HEay+FmmXN2jMIRe5bgfbKXigapMT68B3xN3ohWxw4Xv9+yv
+         6X3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/UlXYMZppBsSqe1vUiYDqERsW7xBrjIEOgZPw2HevXQ=;
-        b=uHuM9FDhdoEzA8L3R2RI9M/6TpeyV2rIIiP8HuRf7ghm3kVJb8Mh5Xe86JUfm3Dic6
-         gkblyH03Ki0VzLY51ogwaHFCcFizDBCQuHvoxRIuXAMOsx3y52lLPmqVujvLEOs44eSi
-         mSZKtOSNsaSX9U1Yzuz2slG0JDtbUHZd8uejDDc3tDc6tRW3GdQ9H4HbxRj9xk5KW5B8
-         TSU0dEy6iGpkjHNKTeuwtcpoHg499U5XE/u1nTOqvqMaO0hXCn67BBnZHCCar04umXIF
-         qK2M0cmvxERMV6RrQ5/I+UQlKyytXJ2pvJvjvcac7biAXVYP/RvGzkLvMlx94mKKsH1T
-         Yi0g==
-X-Gm-Message-State: APjAAAXlKRAh7UA8ss7YYJtVkHI0c5tXHI4sms2L/CpgH5e/F0nXH8aj
-        zIxjMAVTdPzQayyOdmye8gJe4g==
-X-Google-Smtp-Source: APXvYqynLoFjILHM41lE+4jb0UI2aJV2uE0h4ShZERIOG33lA0L4lJ6LJkceyIhhirWA25OIYT9srQ==
-X-Received: by 2002:a17:90a:6283:: with SMTP id d3mr8926771pjj.27.1571801171251;
-        Tue, 22 Oct 2019 20:26:11 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id a20sm16271438pjs.30.2019.10.22.20.26.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Oct 2019 20:26:10 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 08:56:08 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] cpufreq: mark duplicate frequencies as invalid and
- continue as normal
-Message-ID: <20191023032608.v7lgqirvpbwgsyz4@vireshk-i7>
-References: <20191022173215.13350-1-sudeep.holla@arm.com>
+        bh=1VLjmkD3Rwi0EmWCkc7vL9OT1uRUJflAVuUFK1TCUfs=;
+        b=ClIVLf5A/lh41Z4zexUPHGBx4y87X1oWdoUcY48xVnwq/m5ywxPqqB8yzGxTHfkvxE
+         BB40oYAQcN2UmESTZullRmDqKSzySBma9/JBcj7/ZA5PIgE3VQxXu/EsU3m4FmyJetah
+         4us3ClohzwsqdkXDAcPYOQcXL7LbTe7ZXxzyFokge9LshpWSTodH4K4l0Whg62y1P7+i
+         UVuWpu18A+FLWK1VnzoakdB6+h5UsZpdMm6QQFUZOroZkIIoYtds0eBcklxG3Rp7xTUn
+         /NmmwrGOVUeaoKkffCFM1omcS3b96ZTJNi88v1rn1DvqeF5KkDzpaQT3nxRVIICXvKbO
+         fQeQ==
+X-Gm-Message-State: APjAAAW4KF0I6+UiKmotqvdVAkHXTM+nTWIYMPNq8rtfv9Ml1pnRlg9T
+        SiF3NWgFVzJ5fFKRZ52Hz6rinSVbuGc=
+X-Google-Smtp-Source: APXvYqyfwugcAWTEZOsrSK/23d7kNjtNUgsTU3k7oaizdL5WSdU/HGKgK5xsqWdRyhpv5GrVnl6Udw==
+X-Received: by 2002:a37:9a8a:: with SMTP id c132mr6452527qke.92.1571802192882;
+        Tue, 22 Oct 2019 20:43:12 -0700 (PDT)
+Received: from smtp.gmail.com (gwcrusp.semfio.usp.br. [143.107.150.86])
+        by smtp.gmail.com with ESMTPSA id c15sm146qkc.101.2019.10.22.20.43.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2019 20:43:12 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 00:43:07 -0300
+From:   Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Dragos Bogdan <dragos.bogdan@analog.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        devicetree@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: Re: [PATCH v2 2/2] dt-bindings: iio: adc: Add DT docs for AD7292
+Message-ID: <20191023034305.f6zm6hyvh3nlltas@smtp.gmail.com>
+References: <20191016025220.td3xb7oxlfkznxl6@smtp.gmail.com>
+ <20191017191152.GA11222@bogus>
+ <20191019150652.h6bkfz2w2ohemvwy@smtp.gmail.com>
+ <CAL_JsqKqgko02KstmytNNUUF0-QR7rpMF4dV=X55N=TnDahd+Q@mail.gmail.com>
+ <20191022140604.ovmooly47qax2sms@smtp.gmail.com>
+ <CAL_JsqLf8kpOu0MQN-TAhQkiZCGfMKWmztnHNo+2BAVqfX8yGQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191022173215.13350-1-sudeep.holla@arm.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <CAL_JsqLf8kpOu0MQN-TAhQkiZCGfMKWmztnHNo+2BAVqfX8yGQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-10-19, 18:32, Sudeep Holla wrote:
-> Currently if we encounter duplicate frequency table entries, we abort
-> the validation and return error immediately. Instead of failing, we
-> can mark the entry as invalid and continue to function normal.
-> 
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/cpufreq/freq_table.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> Hi Viresh,
-> 
-> Since commit da0c6dc00c69 ("cpufreq: Handle sorted frequency tables more
-> efficiently"), I seem to have modified the firmware entry on my TC2 to
-> drop 500MHz and had not seen the issue with duplicate entries and had
-> totally forgotten about it.
-> 
-> Recently I reverted back to original setting as I corrupted it and
-> started seeing this issues. I don't know the background for raising
-> duplicates as fatal error but we did allow it when we add arm_big_little.c
-> and hence this RFC. If there are known issues with this approach, I can
-> continue with changed firmware config.
-> 
-> With switcher, we have:
-> (little cluster)
-> Virt: 175 MHz, 200 MHz, 250 MHz, 300 MHz, 350 MHz, 400 MHz, 450 MHz, 500 MHz
-> Actu: 350 MHz, 400 MHz, 500 MHz, 600 MHz, 700 MHz, 800 MHz, 900 MHz, 1000 MHz
-> (big cluster)
-> 500 MHz, 600 MHz, 700 MHz, 800 MHz, 900 MHz, 1000 MHz, 1.10 GHz, 1.20 GHz
-> 
-> with 500 MHz duplicate in merged table.
-> 
-> Regards,
-> Sudeep
-> 
-> diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
-> index ded427e0a488..e9bf287846d6 100644
-> --- a/drivers/cpufreq/freq_table.c
-> +++ b/drivers/cpufreq/freq_table.c
-> @@ -305,9 +305,10 @@ static int set_freq_table_sorted(struct cpufreq_policy *policy)
->  		}
->  
->  		if (pos->frequency == prev->frequency) {
-> -			pr_warn("Duplicate freq-table entries: %u\n",
-> +			pr_warn("Duplicate freq-table entries: %u marking it invalid\n,",
->  				pos->frequency);
-> -			return -EINVAL;
-> +			pos->frequency = CPUFREQ_ENTRY_INVALID;
-> +			continue;
->  		}
->  
->  		/* Frequency increased from prev to pos */
+Hi Rob,
 
-Of course we can do this, but I don't see why we shouldn't force
-people to fix the freq-tables instead. What's the point of allowing
-people to have duplicate entries instead ? This shouldn't happen with
-OPP tables as we check for duplicate entries there as well.
+OK, thanks for the explanation.
 
--- 
-viresh
+I indeed missed some details from the documentation. I will be more
+careful on my next readings.
+
+I see there are other documentation files at Documentation/devicetree/
+and Documentation/devicetree/bindings/. Besides these, would you
+recommend other documentation and/or material for those who want to
+write dt-bindings that validate with dt-schema?
+
+Thanks in advance,
+
+Marcelo
+
+On 10/22, Rob Herring wrote:
+> On Tue, Oct 22, 2019 at 9:06 AM Marcelo Schmitt
+> <marcelo.schmitt1@gmail.com> wrote:
+> >
+> > Hi,
+> >
+> > I ran the DTC and CHECK for AD7292 schema however, the target '__build'
+> > did not run due to errors found in regulator/fixed-regulator.yaml and
+> > arm/allwinner,sun4i-a10-csi.yaml.
+> 
+> Fixes for those are still pending in -next. Use 'make -k' and ignore those.
+> 
+> >
+> > I recall seeing something about the maxItems requirement over regulator
+> > supplies being changed on the iio mailing list, so I updated my repo
+> > locally, cloned and reinstalled the dt-schema toolset. However, I still
+> > can't make it go through the '__build' target.
+> >
+> > Python 3.7.5rc1 is my default python and I got the following pip3
+> > packages installed:
+> >
+> > ruamel.yaml        0.16.5
+> > ruamel.yaml.clib   0.2.0
+> > rfc3987            1.3.8
+> > jsonschema         3.0.1
+> > dtschema           0.0.1  at $HOME/<iio repo dir>/dt-schema
+> >
+> > Debian Bullseye packages installed:
+> > python3-yaml/testing,now 5.1.2-1
+> > libyaml-dev/testing,now 0.2.2-1
+> >
+> > I was only able to run DTC after installing the libyaml-dev package, so
+> > I think it might be worth to add it to the project dependencies at
+> > https://github.com/robherring/dt-schema.
+> 
+> Strictly speaking, it's not a dependency for dt-schema. It's
+> documented in Documentation/devicetree/writing-schema.rst. I've added
+> a pointer to that in bindings/submitting-patches.txt. I'm not sure how
+> else to make it more obvious.
+> 
+> BTW, You will get a useful error message if libyaml is missing when
+> building 'make dtbs_check'. I need to make that work for
+> dt_binding_check.
+> 
+> > apt-get install libyaml-dev
+> 
+> You need the lib too, but that tends to already be installed. IIRC,
+> installing the headers doesn't install the lib automatically.
+> 
+> In any case, I wanted to avoid putting in distro specific instructions
+> in the kernel.
+> 
+> Rob
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups "Kernel USP" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-usp+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kernel-usp/CAL_JsqLf8kpOu0MQN-TAhQkiZCGfMKWmztnHNo%2B2BAVqfX8yGQ%40mail.gmail.com.
