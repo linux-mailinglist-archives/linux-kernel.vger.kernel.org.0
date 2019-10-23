@@ -2,241 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B41DE21CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:32:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73347E21D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:32:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbfJWRcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 13:32:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33836 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729112AbfJWRcL (ORCPT
+        id S1730227AbfJWRcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 13:32:36 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38308 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730140AbfJWRcf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:32:11 -0400
-Received: by mail-wr1-f68.google.com with SMTP id t16so17877201wrr.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 10:32:09 -0700 (PDT)
+        Wed, 23 Oct 2019 13:32:35 -0400
+Received: by mail-io1-f67.google.com with SMTP id u8so25923478iom.5
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 10:32:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=AM8qD/o4h2H6Ujs4bkJx9MWFdX3hm6Majf5eCB4KbcI=;
-        b=wxqdK5tk1SGp2NyVKXbHUnTrf2YWkH8y4xfwk9TCmTpMmuexpDolcRCai7i+JszNCH
-         73F9fXkBTLT+t8Y741mVhZVvQ31kMNENdSn3Yri2joPjKQShFhElqC7RQX6hJsnPQjyj
-         D8a6ModHgFFMLTF8k/+gHYUXs6pOxBQO4NNCiFoNHQGFfc0QXRTaFjU4vqiHBQZ8gWeH
-         EROhmcVVYlUtRi7lXHpPKIs9l2sAldhnWRnCYC7pNuyZyZckWClC3vA/dcYuJWBmiLKI
-         f9lbTMQe9vJyB5wUFWELuLAfvnG0Ow2vrDZKbRfsOD65pCqt5kLfxsy0O4goewmruFmk
-         mxZw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FHddi31URb1ZVMU1f/OlQcKL3JwlroIUzHSEfU1rm9E=;
+        b=iIjn6zOkon2+vy3u6ieqyT3hIL8hquUtW4WVxARJ6GHQwHgVlZingSEfEw9ylY7oSA
+         1F16bAeKpgTLYL8UJtX2Etu3picTNixpMhzj/ekoOwp/cmGSBH7kGopfJcid2JgAy8Zk
+         1ekeWPNa7uy0YtmbrdEsazn/sa0lGt/eFUJMFsJwBgjiSuI4qlqblHgEO7XKfG3qksLr
+         IDlP36H3VVyB02zXq77wDIDehyaKyQ3jmqrMyVY2/qASiIgVPru4z632XnyVSIxYBQHb
+         w03wb0KJl4xmm3rZ2KTkP2qYtu2ybDHY5MESrnzdRpr3BOw+46Vdgg7SldIhK+UA0OV0
+         GUcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=AM8qD/o4h2H6Ujs4bkJx9MWFdX3hm6Majf5eCB4KbcI=;
-        b=TpTHyJAwOJxhwdnMszo0Qb+2Ra/M/S8fwP2FiYjgayhS6rbyQt85tSIN3mPUD50P1i
-         S9Zi7oXVR3+EqqP4EwBhNwR0nQ2iRo/BgSv67spbaRTqavrqroYHREBZQ6tXltBU/iG8
-         MZJN2MA5JzxDHQrmKPWjvK/xchlNlEBtcQSFfeEFkQ3a6WAtP9HSb20ZTqQ5ODy1p0Fx
-         05iyIikYDMV88vgplNBAFr7EipLudE35hdOD4i8XBLc5ENU6V/VroAlnmsub3ji59RRV
-         fEph3iygce8mbwXcV+56Hlh5CKeULTGwD4c3NXwfGNx7GdyrkwlOGTppuPdIozOpZ8kJ
-         vyoA==
-X-Gm-Message-State: APjAAAU2KXLfxlm4bVKUh86l1wJnUJcRMqNWnefcyXyRgIlju9CtlTAT
-        iMRy5znQOMBfwlm0UjHJhOCKkw==
-X-Google-Smtp-Source: APXvYqy7fphEm6a63UteaNDfkK7BVMKc0efrlnAmml4AtBsh6mAD0hntD1rhy9VPi/3xG7uLgaVAKA==
-X-Received: by 2002:adf:e30a:: with SMTP id b10mr9145208wrj.44.1571851928233;
-        Wed, 23 Oct 2019 10:32:08 -0700 (PDT)
-Received: from e123331-lin.home (lfbn-mar-1-643-104.w90-118.abo.wanadoo.fr. [90.118.215.104])
-        by smtp.gmail.com with ESMTPSA id f7sm14900374wre.68.2019.10.23.10.32.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 10:32:07 -0700 (PDT)
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Kairui Song <kasong@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] x86, efi: never relocate kernel below lowest acceptable address
-Date:   Wed, 23 Oct 2019 19:32:01 +0200
-Message-Id: <20191023173201.6607-6-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191023173201.6607-1-ard.biesheuvel@linaro.org>
-References: <20191023173201.6607-1-ard.biesheuvel@linaro.org>
-X-ARM-No-Footer: FoSSMail
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FHddi31URb1ZVMU1f/OlQcKL3JwlroIUzHSEfU1rm9E=;
+        b=LxfVudPcwKtBhaZkCKVrVuTn5A8IVBCtY3duYLEtOuAszNcvlvybvNNZPinLPbej3k
+         3VnkqodZPw1fvLnlaPl99oiYYJG7pHT4k7jL1tjfF33g7Q8geJOo+QV0oC9z1f6uCqZ/
+         4X5SaLR0JXwaBTD0ytr9l0XxIfbXCaTYSvs1QNs+302jRbXK+3O/U6hQ9h42rCuROOiW
+         h1lHbbi72bw9qC9JIC5iXAip4RiqCvEQTq9GLwGjL58A4DfR7Cbc65qGdWUljrBln5V3
+         XP4kQbk97yZ2DUQRLqeNUr3gqBj1J5zz+ilJxQ/N20O4WcPWrtxiNflkGsCeP4qEyytD
+         yYbA==
+X-Gm-Message-State: APjAAAWxgVrAJ/kV17Rro3+Bj+HQhrQuyaKWJTl/fXI5RmqJnl71v4K8
+        m2tLZZ2cn0eZE1gJrllJrp+JpJg541apOxYr0m3qHg==
+X-Google-Smtp-Source: APXvYqxyBYMtAL3D/OX0ZAdgMK8IVMiPoByH/BDSVN52PLwP4Oc1eswZzBzK266InVy9jGWBwrafm+J4exhXkFSElJs=
+X-Received: by 2002:a6b:d104:: with SMTP id l4mr4641180iob.50.1571851952354;
+ Wed, 23 Oct 2019 10:32:32 -0700 (PDT)
+MIME-Version: 1.0
+References: <a38ab93d870a3b1b341a5c0da14fc7f3d4056684.1570630040.git.michal.simek@xilinx.com>
+In-Reply-To: <a38ab93d870a3b1b341a5c0da14fc7f3d4056684.1570630040.git.michal.simek@xilinx.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 23 Oct 2019 11:32:21 -0600
+Message-ID: <CANLsYkzkk9yPezSyU50TmWjDAZ-5D2Hmo0YztQzm+mnyZf1Www@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: zynq: enablement of coresight topology
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>, git@xilinx.com,
+        Zumeng Chen <zumeng.chen@windriver.com>,
+        Quanyang Wang <quanyang.wang@windriver.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Rob Herring <robherring2@gmail.com>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        devicetree@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        u-boot@lists.denx.de
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kairui Song <kasong@redhat.com>
+Hi Michal,
 
-Currently, kernel fails to boot on some HyperV VMs when using EFI.
-And it's a potential issue on all x86 platforms.
+I was not CC'ed on the original post so I just noticed this today,
+hence the late reply.  I don't know if you were looking for feedback
+or already picked up the patch but here it is anyway.
 
-It's caused by broken kernel relocation on EFI systems, when below three
-conditions are met:
+On Wed, 9 Oct 2019 at 08:07, Michal Simek <michal.simek@xilinx.com> wrote:
+>
+> From: Zumeng Chen <zumeng.chen@windriver.com>
+>
+> This patch is to build the coresight topology structure of zynq-7000
+> series according to the docs of coresight and userguide of zynq-7000.
+>
+> Signed-off-by: Zumeng Chen <zumeng.chen@windriver.com>
+> Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+>
+>  arch/arm/boot/dts/zynq-7000.dtsi | 158 +++++++++++++++++++++++++++++++
+>  1 file changed, 158 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/zynq-7000.dtsi b/arch/arm/boot/dts/zynq-7000.dtsi
+> index ca6425ad794c..86430ad76fee 100644
+> --- a/arch/arm/boot/dts/zynq-7000.dtsi
+> +++ b/arch/arm/boot/dts/zynq-7000.dtsi
+> @@ -59,6 +59,40 @@
+>                 regulator-always-on;
+>         };
+>
+> +       replicator {
+> +               compatible = "arm,coresight-static-replicator";
+> +               clocks = <&clkc 27>, <&clkc 46>, <&clkc 47>;
+> +               clock-names = "apb_pclk", "dbg_trc", "dbg_apb";
+> +
+> +               out-ports {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +
+> +                       /* replicator output ports */
+> +                       port@0 {
+> +                               reg = <0>;
+> +                               replicator_out_port0: endpoint {
+> +                                       remote-endpoint = <&tpiu_in_port>;
+> +                               };
+> +                       };
+> +                       port@1 {
+> +                               reg = <1>;
+> +                               replicator_out_port1: endpoint {
+> +                                       remote-endpoint = <&etb_in_port>;
+> +                               };
+> +                       };
+> +               };
+> +               in-ports {
+> +                       /* replicator input port */
+> +                       port {
+> +                               replicator_in_port0: endpoint {
+> +                                       slave-mode;
 
-1. Kernel image is not loaded to the default address (LOAD_PHYSICAL_ADDR)
-   by the loader.
-2. There isn't enough room to contain the kernel, starting from the
-   default load address (eg. something else occupied part the region).
-3. In the memmap provided by EFI firmware, there is a memory region
-   starts below LOAD_PHYSICAL_ADDR, and suitable for containing the
-   kernel.
+The slave-mode property is no longer required and probably an
+oversight since it doesn't appear elsewhere in this patch.
 
-EFI stub will perform a kernel relocation when condition 1 is met. But
-due to condition 2, EFI stub can't relocate kernel to the preferred
-address, so it fallback to ask EFI firmware to alloc lowest usable memory
-region, got the low region mentioned in condition 3, and relocated
-kernel there.
+> +                                       remote-endpoint = <&funnel_out_port>;
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +
+>         amba: amba {
+>                 compatible = "simple-bus";
+>                 #address-cells = <1>;
+> @@ -365,5 +399,129 @@
+>                         reg = <0xf8005000 0x1000>;
+>                         timeout-sec = <10>;
+>                 };
+> +
+> +               etb@f8801000 {
+> +                       compatible = "arm,coresight-etb10", "arm,primecell";
+> +                       reg = <0xf8801000 0x1000>;
+> +                       clocks = <&clkc 27>, <&clkc 46>, <&clkc 47>;
+> +                       clock-names = "apb_pclk", "dbg_trc", "dbg_apb";
+> +                       in-ports {
+> +                               port {
+> +                                       etb_in_port: endpoint {
+> +                                               remote-endpoint = <&replicator_out_port1>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               tpiu@f8803000 {
+> +                       compatible = "arm,coresight-tpiu", "arm,primecell";
+> +                       reg = <0xf8803000 0x1000>;
+> +                       clocks = <&clkc 27>, <&clkc 46>, <&clkc 47>;
+> +                       clock-names = "apb_pclk", "dbg_trc", "dbg_apb";
+> +                       in-ports {
+> +                               port {
+> +                                       tpiu_in_port: endpoint {
+> +                                               remote-endpoint = <&replicator_out_port0>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               funnel@f8804000 {
+> +                       compatible = "arm,coresight-static-funnel", "arm,primecell";
+> +                       reg = <0xf8804000 0x1000>;
+> +                       clocks = <&clkc 27>, <&clkc 46>, <&clkc 47>;
+> +                       clock-names = "apb_pclk", "dbg_trc", "dbg_apb";
+> +
+> +                       /* funnel output ports */
+> +                       out-ports {
+> +                               port {
+> +                                       funnel_out_port: endpoint {
+> +                                               remote-endpoint =
+> +                                                       <&replicator_in_port0>;
+> +                                       };
+> +                               };
+> +                       };
+> +
+> +                       in-ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               /* funnel input ports */
+> +                               port@0 {
+> +                                       reg = <0>;
+> +                                       funnel0_in_port0: endpoint {
+> +                                               remote-endpoint = <&ptm0_out_port>;
+> +                                       };
+> +                               };
+> +
+> +                               port@1 {
+> +                                       reg = <1>;
+> +                                       funnel0_in_port1: endpoint {
+> +                                               remote-endpoint = <&ptm1_out_port>;
+> +                                       };
+> +                               };
+> +
+> +                               port@2 {
+> +                                       reg = <2>;
+> +                                       funnel0_in_port2: endpoint {
+> +                                       };
+> +                               };
+> +
+> +                               port@3 {
+> +                                       reg = <3>;
+> +                                       funnel0_in_port3: endpoint {
+> +                                               remote-endpoint = <&itm_out_port>;
+> +                                       };
+> +                               };
+> +                               /* The other input ports are not connect to anything */
+> +                       };
+> +               };
+> +
+> +               /* ITM is not supported by kernel, only leave device node here */
+> +               itm@f8805000 {
+> +                       compatible = "arm,coresight-etm3x", "arm,primecell";
 
-It's incorrect to relocate the kernel below LOAD_PHYSICAL_ADDR. This
-is the lowest acceptable kernel relocation address.
+If I remember correctly ITM and ETMv3 are quite different - please
+remove entirely.
 
-The first thing goes wrong is in arch/x86/boot/compressed/head_64.S.
-Kernel decompression will force use LOAD_PHYSICAL_ADDR as the output
-address if kernel is located below it. Then the relocation before
-decompression, which move kernel to the end of the decompression buffer,
-will overwrite other memory region, as there is no enough memory there.
+> +                       reg = <0xf8805000 0x1000>;
+> +                       clocks = <&clkc 27>, <&clkc 46>, <&clkc 47>;
+> +                       clock-names = "apb_pclk", "dbg_trc", "dbg_apb";
+> +                       out-ports {
+> +                               port {
+> +                                       itm_out_port: endpoint {
+> +                                               remote-endpoint = <&funnel0_in_port3>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               ptm@f889c000 {
+> +                       compatible = "arm,coresight-etm3x", "arm,primecell";
+> +                       reg = <0xf889c000 0x1000>;
+> +                       clocks = <&clkc 27>, <&clkc 46>, <&clkc 47>;
+> +                       clock-names = "apb_pclk", "dbg_trc", "dbg_apb";
+> +                       cpu = <&cpu0>;
+> +                       out-ports {
+> +                               port {
+> +                                       ptm0_out_port: endpoint {
+> +                                               remote-endpoint = <&funnel0_in_port0>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               ptm@f889d000 {
+> +                       compatible = "arm,coresight-etm3x", "arm,primecell";
+> +                       reg = <0xf889d000 0x1000>;
+> +                       clocks = <&clkc 27>, <&clkc 46>, <&clkc 47>;
+> +                       clock-names = "apb_pclk", "dbg_trc", "dbg_apb";
+> +                       cpu = <&cpu1>;
+> +                       out-ports {
+> +                               port {
+> +                                       ptm1_out_port: endpoint {
+> +                                               remote-endpoint = <&funnel0_in_port1>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
 
-To fix it, just don't let EFI stub relocate the kernel to any address
-lower than lowest acceptable address.
+With the above:
 
-Signed-off-by: Kairui Song <kasong@redhat.com>
-Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-[ardb: introduce efi_low_alloc_above() to reduce the scope of the change]
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/x86/boot/compressed/eboot.c              |  4 +++-
- drivers/firmware/efi/libstub/arm32-stub.c     |  2 +-
- .../firmware/efi/libstub/efi-stub-helper.c    | 24 ++++++++-----------
- include/linux/efi.h                           | 18 ++++++++++++--
- 4 files changed, 30 insertions(+), 18 deletions(-)
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
-index d6662fdef300..82bc60c8acb2 100644
---- a/arch/x86/boot/compressed/eboot.c
-+++ b/arch/x86/boot/compressed/eboot.c
-@@ -13,6 +13,7 @@
- #include <asm/e820/types.h>
- #include <asm/setup.h>
- #include <asm/desc.h>
-+#include <asm/boot.h>
- 
- #include "../string.h"
- #include "eboot.h"
-@@ -813,7 +814,8 @@ efi_main(struct efi_config *c, struct boot_params *boot_params)
- 		status = efi_relocate_kernel(sys_table, &bzimage_addr,
- 					     hdr->init_size, hdr->init_size,
- 					     hdr->pref_address,
--					     hdr->kernel_alignment);
-+					     hdr->kernel_alignment,
-+					     LOAD_PHYSICAL_ADDR);
- 		if (status != EFI_SUCCESS) {
- 			efi_printk(sys_table, "efi_relocate_kernel() failed!\n");
- 			goto fail;
-diff --git a/drivers/firmware/efi/libstub/arm32-stub.c b/drivers/firmware/efi/libstub/arm32-stub.c
-index ffa242ad0a82..41213bf5fcf5 100644
---- a/drivers/firmware/efi/libstub/arm32-stub.c
-+++ b/drivers/firmware/efi/libstub/arm32-stub.c
-@@ -230,7 +230,7 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table,
- 	*image_size = image->image_size;
- 	status = efi_relocate_kernel(sys_table, image_addr, *image_size,
- 				     *image_size,
--				     kernel_base + MAX_UNCOMP_KERNEL_SIZE, 0);
-+				     kernel_base + MAX_UNCOMP_KERNEL_SIZE, 0, 0);
- 	if (status != EFI_SUCCESS) {
- 		pr_efi_err(sys_table, "Failed to relocate kernel.\n");
- 		efi_free(sys_table, *reserve_size, *reserve_addr);
-diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
-index 3caae7f2cf56..35dbc2791c97 100644
---- a/drivers/firmware/efi/libstub/efi-stub-helper.c
-+++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
-@@ -260,11 +260,11 @@ efi_status_t efi_high_alloc(efi_system_table_t *sys_table_arg,
- }
- 
- /*
-- * Allocate at the lowest possible address.
-+ * Allocate at the lowest possible address that is not below 'min'.
-  */
--efi_status_t efi_low_alloc(efi_system_table_t *sys_table_arg,
--			   unsigned long size, unsigned long align,
--			   unsigned long *addr)
-+efi_status_t efi_low_alloc_above(efi_system_table_t *sys_table_arg,
-+				 unsigned long size, unsigned long align,
-+				 unsigned long *addr, unsigned long min)
- {
- 	unsigned long map_size, desc_size, buff_size;
- 	efi_memory_desc_t *map;
-@@ -311,13 +311,8 @@ efi_status_t efi_low_alloc(efi_system_table_t *sys_table_arg,
- 		start = desc->phys_addr;
- 		end = start + desc->num_pages * EFI_PAGE_SIZE;
- 
--		/*
--		 * Don't allocate at 0x0. It will confuse code that
--		 * checks pointers against NULL. Skip the first 8
--		 * bytes so we start at a nice even number.
--		 */
--		if (start == 0x0)
--			start += 8;
-+		if (start < min)
-+			start = min;
- 
- 		start = round_up(start, align);
- 		if ((start + size) > end)
-@@ -698,7 +693,8 @@ efi_status_t efi_relocate_kernel(efi_system_table_t *sys_table_arg,
- 				 unsigned long image_size,
- 				 unsigned long alloc_size,
- 				 unsigned long preferred_addr,
--				 unsigned long alignment)
-+				 unsigned long alignment,
-+				 unsigned long min_addr)
- {
- 	unsigned long cur_image_addr;
- 	unsigned long new_addr = 0;
-@@ -731,8 +727,8 @@ efi_status_t efi_relocate_kernel(efi_system_table_t *sys_table_arg,
- 	 * possible.
- 	 */
- 	if (status != EFI_SUCCESS) {
--		status = efi_low_alloc(sys_table_arg, alloc_size, alignment,
--				       &new_addr);
-+		status = efi_low_alloc_above(sys_table_arg, alloc_size,
-+					     alignment, &new_addr, min_addr);
- 	}
- 	if (status != EFI_SUCCESS) {
- 		pr_efi_err(sys_table_arg, "Failed to allocate usable memory for kernel.\n");
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index bd3837022307..d87acf62958e 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1579,9 +1579,22 @@ char *efi_convert_cmdline(efi_system_table_t *sys_table_arg,
- efi_status_t efi_get_memory_map(efi_system_table_t *sys_table_arg,
- 				struct efi_boot_memmap *map);
- 
-+efi_status_t efi_low_alloc_above(efi_system_table_t *sys_table_arg,
-+				 unsigned long size, unsigned long align,
-+				 unsigned long *addr, unsigned long min);
-+
-+static inline
- efi_status_t efi_low_alloc(efi_system_table_t *sys_table_arg,
- 			   unsigned long size, unsigned long align,
--			   unsigned long *addr);
-+			   unsigned long *addr)
-+{
-+	/*
-+	 * Don't allocate at 0x0. It will confuse code that
-+	 * checks pointers against NULL. Skip the first 8
-+	 * bytes so we start at a nice even number.
-+	 */
-+	return efi_low_alloc_above(sys_table_arg, size, align, addr, 0x8);
-+}
- 
- efi_status_t efi_high_alloc(efi_system_table_t *sys_table_arg,
- 			    unsigned long size, unsigned long align,
-@@ -1592,7 +1605,8 @@ efi_status_t efi_relocate_kernel(efi_system_table_t *sys_table_arg,
- 				 unsigned long image_size,
- 				 unsigned long alloc_size,
- 				 unsigned long preferred_addr,
--				 unsigned long alignment);
-+				 unsigned long alignment,
-+				 unsigned long min_addr);
- 
- efi_status_t handle_cmdline_files(efi_system_table_t *sys_table_arg,
- 				  efi_loaded_image_t *image,
--- 
-2.17.1
-
+>         };
+>  };
+> --
+> 2.17.1
+>
