@@ -2,211 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 901D2E10B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 06:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EAE8E10BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 06:11:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbfJWEDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 00:03:25 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4705 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725780AbfJWEDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 00:03:25 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 96040EF763408D7CB488;
-        Wed, 23 Oct 2019 12:03:20 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 23 Oct
- 2019 12:03:11 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <chao@kernel.org>, <linux-erofs@lists.ozlabs.org>
-CC:     <linux-kernel@vger.kernel.org>, Gao Xiang <xiang@kernel.org>,
-        "Pratik Shinde" <pratikshinde320@gmail.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v4] erofs: support superblock checksum
-Date:   Wed, 23 Oct 2019 12:05:57 +0800
-Message-ID: <20191023040557.230886-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191022180620.19638-1-pratikshinde320@gmail.com>
-References: <20191022180620.19638-1-pratikshinde320@gmail.com>
+        id S1729081AbfJWELT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 00:11:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54484 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727574AbfJWELT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 00:11:19 -0400
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50D3221928
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 04:11:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571803877;
+        bh=Gibqdh2Co8u4JylpxSaH4/x76GwQHMi9FG9hIlKKtek=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yeiVt0pL096iSqYCKZeiQ9dctzQYy574QUj8xgZboFtW5nXfqGi4XxllH/ec2+sxf
+         pzqoE68RFnb2hXuFHcK4N1D9Vu6+gTeRBSBwSFOfft4GDWGdnKafzZeRdW8VEBywM7
+         05RhG1a8ayx+mQx1nleRif40EJxWMb56m+XcZzcQ=
+Received: by mail-wr1-f50.google.com with SMTP id p4so20360643wrm.8
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 21:11:17 -0700 (PDT)
+X-Gm-Message-State: APjAAAU8Ri/zhUwg5VPoYdnYlsi/CrD0MpHXwpQPVLpCak6lC3PLWTMM
+        j1wQlESLebgm6ViF+PF6PvelVWyr4SA9Rq2eFEkaRA==
+X-Google-Smtp-Source: APXvYqxNmV1lwxPxGnlytrDZFlyMjNhOxN6X9ZkZQPM6PGzlRFh30f+cYzArtw27U3+B4cK0+W1rFr1aTAQYBBpw/fA=
+X-Received: by 2002:a05:6000:1288:: with SMTP id f8mr6102479wrx.111.1571803875660;
+ Tue, 22 Oct 2019 21:11:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+References: <20191012191602.45649-1-dancol@google.com> <20191012191602.45649-4-dancol@google.com>
+ <CALCETrVZHd+csdRL-uKbVN3Z7yeNNtxiDy-UsutMi=K3ZgCiYw@mail.gmail.com>
+ <CAKOZuevUqs_Oe1UEwguQK7Ate3ai1DSVSij=0R=vmz9LzX4k6Q@mail.gmail.com> <CALCETrUyq=J37gU-MYXqLdoi7uH7iNNVRjvcGUT11JA1QuTFyg@mail.gmail.com>
+In-Reply-To: <CALCETrUyq=J37gU-MYXqLdoi7uH7iNNVRjvcGUT11JA1QuTFyg@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 22 Oct 2019 21:11:04 -0700
+X-Gmail-Original-Message-ID: <CALCETrX=1XUwsuKc6dinj3ZTnrK85m_+UL=iaYKj4EZtf-xm5g@mail.gmail.com>
+Message-ID: <CALCETrX=1XUwsuKc6dinj3ZTnrK85m_+UL=iaYKj4EZtf-xm5g@mail.gmail.com>
+Subject: Re: [PATCH 3/7] Add a UFFD_SECURE flag to the userfaultfd API.
+To:     Andy Lutomirski <luto@kernel.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>
+Cc:     Daniel Colascione <dancol@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Nosh Minwalla <nosh@google.com>,
+        Tim Murray <timmurray@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pratik Shinde <pratikshinde320@gmail.com>
+Trying again.  It looks like I used the wrong address for Pavel.
 
-Introduce superblock checksum feature in order to check
-a number of given blocks at mounting time.
-
-Signed-off-by: Pratik Shinde <pratikshinde320@gmail.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
-changes from v3:
- (based on Pratik's v3 patch)
- - add LIBCRC32C dependency;
- - use kmap() in order to avoid sleeping in atomic context;
- - skip the first 1024 byte for x86 boot sector,
-   co-tested with userspace utils,
-   https://lore.kernel.org/r/20191023034957.184711-1-gaoxiang25@huawei.com
-
- fs/erofs/Kconfig    |  1 +
- fs/erofs/erofs_fs.h |  6 +++--
- fs/erofs/internal.h |  2 ++
- fs/erofs/super.c    | 53 +++++++++++++++++++++++++++++++++++++++++++--
- 4 files changed, 58 insertions(+), 4 deletions(-)
-
-diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-index 9d634d3a1845..74b0aaa7114c 100644
---- a/fs/erofs/Kconfig
-+++ b/fs/erofs/Kconfig
-@@ -3,6 +3,7 @@
- config EROFS_FS
- 	tristate "EROFS filesystem support"
- 	depends on BLOCK
-+	select LIBCRC32C
- 	help
- 	  EROFS (Enhanced Read-Only File System) is a lightweight
- 	  read-only file system with modern designs (eg. page-sized
-diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
-index b1ee5654750d..461913be1d1c 100644
---- a/fs/erofs/erofs_fs.h
-+++ b/fs/erofs/erofs_fs.h
-@@ -11,6 +11,8 @@
- 
- #define EROFS_SUPER_OFFSET      1024
- 
-+#define EROFS_FEATURE_COMPAT_SB_CHKSUM          0x00000001
-+
- /*
-  * Any bits that aren't in EROFS_ALL_FEATURE_INCOMPAT should
-  * be incompatible with this kernel version.
-@@ -37,8 +39,8 @@ struct erofs_super_block {
- 	__u8 uuid[16];          /* 128-bit uuid for volume */
- 	__u8 volume_name[16];   /* volume name */
- 	__le32 feature_incompat;
--
--	__u8 reserved2[44];
-+	__le32 chksum_blocks;	/* number of blocks used for checksum */
-+	__u8 reserved2[40];
- };
- 
- /*
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 544a453f3076..a3778f597bf6 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -85,6 +85,7 @@ struct erofs_sb_info {
- 
- 	u8 uuid[16];                    /* 128-bit uuid for volume */
- 	u8 volume_name[16];             /* volume name */
-+	u32 feature_compat;
- 	u32 feature_incompat;
- 
- 	unsigned int mount_opt;
-@@ -426,6 +427,7 @@ static inline void z_erofs_exit_zip_subsystem(void) {}
- #endif	/* !CONFIG_EROFS_FS_ZIP */
- 
- #define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
-+#define EFSBADCRC       EBADMSG         /* Bad CRC detected */
- 
- #endif	/* __EROFS_INTERNAL_H */
- 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 0e369494f2f2..18d1ec18a671 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -9,6 +9,7 @@
- #include <linux/statfs.h>
- #include <linux/parser.h>
- #include <linux/seq_file.h>
-+#include <linux/crc32c.h>
- #include "xattr.h"
- 
- #define CREATE_TRACE_POINTS
-@@ -46,6 +47,47 @@ void _erofs_info(struct super_block *sb, const char *function,
- 	va_end(args);
- }
- 
-+static int erofs_superblock_csum_verify(struct super_block *sb, void *sbdata)
-+{
-+	struct erofs_super_block *dsb;
-+	u32 expected_crc, nblocks, crc;
-+	void *kaddr;
-+	struct page *page;
-+	int i;
-+
-+	dsb = kmemdup(sbdata + EROFS_SUPER_OFFSET,
-+		      EROFS_BLKSIZ - EROFS_SUPER_OFFSET, GFP_KERNEL);
-+	if (!dsb)
-+		return -ENOMEM;
-+
-+	expected_crc = le32_to_cpu(dsb->checksum);
-+	nblocks = le32_to_cpu(dsb->chksum_blocks);
-+	dsb->checksum = 0;
-+	/* to allow for x86 boot sectors and other oddities. */
-+	crc = crc32c(~0, dsb, EROFS_BLKSIZ - EROFS_SUPER_OFFSET);
-+	kfree(dsb);
-+
-+	for (i = 1; i < nblocks; i++) {
-+		page = erofs_get_meta_page(sb, i);
-+		if (IS_ERR(page))
-+			return PTR_ERR(page);
-+
-+		kaddr = kmap_atomic(page);
-+		crc = crc32c(crc, kaddr, EROFS_BLKSIZ);
-+		kunmap_atomic(kaddr);
-+
-+		unlock_page(page);
-+		put_page(page);
-+	}
-+
-+	if (crc != expected_crc) {
-+		erofs_err(sb, "invalid checksum 0x%08x, 0x%08x expected",
-+			  crc, expected_crc);
-+		return -EFSBADCRC;
-+	}
-+	return 0;
-+}
-+
- static void erofs_inode_init_once(void *ptr)
- {
- 	struct erofs_inode *vi = ptr;
-@@ -112,7 +154,7 @@ static int erofs_read_superblock(struct super_block *sb)
- 
- 	sbi = EROFS_SB(sb);
- 
--	data = kmap_atomic(page);
-+	data = kmap(page);
- 	dsb = (struct erofs_super_block *)(data + EROFS_SUPER_OFFSET);
- 
- 	ret = -EINVAL;
-@@ -121,6 +163,13 @@ static int erofs_read_superblock(struct super_block *sb)
- 		goto out;
- 	}
- 
-+	sbi->feature_compat = le32_to_cpu(dsb->feature_compat);
-+	if (sbi->feature_compat & EROFS_FEATURE_COMPAT_SB_CHKSUM) {
-+		ret = erofs_superblock_csum_verify(sb, data);
-+		if (ret)
-+			goto out;
-+	}
-+
- 	blkszbits = dsb->blkszbits;
- 	/* 9(512 bytes) + LOG_SECTORS_PER_BLOCK == LOG_BLOCK_SIZE */
- 	if (blkszbits != LOG_BLOCK_SIZE) {
-@@ -155,7 +204,7 @@ static int erofs_read_superblock(struct super_block *sb)
- 	}
- 	ret = 0;
- out:
--	kunmap_atomic(data);
-+	kunmap(data);
- 	put_page(page);
- 	return ret;
- }
--- 
-2.17.1
-
+On Sat, Oct 12, 2019 at 6:14 PM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> [adding more people because this is going to be an ABI break, sigh]
+>
+> On Sat, Oct 12, 2019 at 5:52 PM Daniel Colascione <dancol@google.com> wrote:
+> >
+> > On Sat, Oct 12, 2019 at 4:10 PM Andy Lutomirski <luto@kernel.org> wrote:
+> > >
+> > > On Sat, Oct 12, 2019 at 12:16 PM Daniel Colascione <dancol@google.com> wrote:
+> > > >
+> > > > The new secure flag makes userfaultfd use a new "secure" anonymous
+> > > > file object instead of the default one, letting security modules
+> > > > supervise userfaultfd use.
+> > > >
+> > > > Requiring that users pass a new flag lets us avoid changing the
+> > > > semantics for existing callers.
+> > >
+> > > Is there any good reason not to make this be the default?
+> > >
+> > >
+> > > The only downside I can see is that it would increase the memory usage
+> > > of userfaultfd(), but that doesn't seem like such a big deal.  A
+> > > lighter-weight alternative would be to have a single inode shared by
+> > > all userfaultfd instances, which would require a somewhat different
+> > > internal anon_inode API.
+> >
+> > I'd also prefer to just make SELinux use mandatory, but there's a
+> > nasty interaction with UFFD_EVENT_FORK. Adding a new UFFD_SECURE mode
+> > which blocks UFFD_EVENT_FORK sidesteps this problem. Maybe you know a
+> > better way to deal with it.
+>
+> ...
+>
+> > But maybe we can go further: let's separate authentication and
+> > authorization, as we do in other LSM hooks. Let's split my
+> > inode_init_security_anon into two hooks, inode_init_security_anon and
+> > inode_create_anon. We'd define the former to just initialize the file
+> > object's security information --- in the SELinux case, figuring out
+> > its class and SID --- and define the latter to answer the yes/no
+> > question of whether a particular anonymous inode creation should be
+> > allowed. Normally, anon_inode_getfile2() would just call both hooks.
+> > We'd add another anon_inode_getfd flag, ANON_INODE_SKIP_AUTHORIZATION
+> > or something, that would tell anon_inode_getfile2() to skip calling
+> > the authorization hook, effectively making the creation always
+> > succeed. We can then make the UFFD code pass
+> > ANON_INODE_SKIP_AUTHORIZATION when it's creating a file object in the
+> > fork child while creating UFFD_EVENT_FORK messages.
+>
+> That sounds like an improvement.  Or maybe just teach SELinux that
+> this particular fd creation is actually making an anon_inode that is a
+> child of an existing anon inode and that the context should be copied
+> or whatever SELinux wants to do.  Like this, maybe:
+>
+> static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
+>                                   struct userfaultfd_ctx *new,
+>                                   struct uffd_msg *msg)
+> {
+>         int fd;
+>
+> Change this:
+>
+>         fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, new,
+>                               O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS));
+>
+> to something like:
+>
+>       fd = anon_inode_make_child_fd(..., ctx->inode, ...);
+>
+> where ctx->inode is the one context's inode.
+>
+> *** HOWEVER *** !!!
+>
+> Now that you've pointed this mechanism out, it is utterly and
+> completely broken and should be removed from the kernel outright or at
+> least severely restricted.  A .read implementation MUST NOT ACT ON THE
+> CALLING TASK.  Ever.  Just imagine the effect of passing a userfaultfd
+> as stdin to a setuid program.
+>
+> So I think the right solution might be to attempt to *remove*
+> UFFD_EVENT_FORK.  Maybe the solution is to say that, unless the
+> creator of a userfaultfd() has global CAP_SYS_ADMIN, then it cannot
+> use UFFD_FEATURE_EVENT_FORK) and print a warning (once) when
+> UFFD_FEATURE_EVENT_FORK is allowed.  And, after some suitable
+> deprecation period, just remove it.  If it's genuinely useful, it
+> needs an entirely new API based on ioctl() or a syscall.  Or even
+> recvmsg() :)
+>
+> And UFFD_SECURE should just become automatic, since you don't have a
+> problem any more. :-p
+>
+> --Andy
