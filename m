@@ -2,134 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D9A4E1494
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4828E148D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:44:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390511AbfJWIqB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 23 Oct 2019 04:46:01 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:56174 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390034AbfJWIqA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:46:00 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x9N8idV2013066, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCASV02.realtek.com.tw[172.21.6.19])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x9N8idV2013066
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 23 Oct 2019 16:44:39 +0800
-Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
- RTITCASV02.realtek.com.tw (172.21.6.19) with Microsoft SMTP Server (TLS) id
- 14.3.468.0; Wed, 23 Oct 2019 16:44:38 +0800
-Received: from RTEXMB01.realtek.com.tw (172.21.6.94) by
- RTEXMB03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Wed, 23 Oct 2019 16:44:37 +0800
-Received: from RTEXMB01.realtek.com.tw ([fe80::6d88:58e2:6d4b:ff7c]) by
- RTEXMB01.realtek.com.tw ([fe80::6d88:58e2:6d4b:ff7c%13]) with mapi id
- 15.01.1779.005; Wed, 23 Oct 2019 16:44:37 +0800
-From:   Kailang <kailang@realtek.com>
-To:     Takashi Iwai <tiwai@suse.de>, Aaron Ma <aaron.ma@canonical.com>
-CC:     "perex@perex.cz" <perex@perex.cz>,
-        "hui.wang@canonical.com" <hui.wang@canonical.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
-Thread-Topic: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
-Thread-Index: AQHViO7vxXHEn3Xl7Ee6N1/g4hdxKqdmTdyAgAGbrzA=
-Date:   Wed, 23 Oct 2019 08:44:37 +0000
-Message-ID: <848ebd7fd86e4c05936e70f500f718e9@realtek.com>
-References: <20191022153855.14368-1-aaron.ma@canonical.com>
- <s5hpniodaq4.wl-tiwai@suse.de>
-In-Reply-To: <s5hpniodaq4.wl-tiwai@suse.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.22.105.211]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S2390474AbfJWIoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:44:44 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:9008 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390314AbfJWIon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 04:44:43 -0400
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id 84449A8BB3FDE9F2AFCE;
+        Wed, 23 Oct 2019 16:44:41 +0800 (CST)
+Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
+        by mse-fl1.zte.com.cn with ESMTP id x9N8gZPE097006;
+        Wed, 23 Oct 2019 16:42:35 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019102316425529-92111 ;
+          Wed, 23 Oct 2019 16:42:55 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     tglx@linutronix.de
+Cc:     mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        peterz@infradead.org, tony.luck@intel.com,
+        jacob.jun.pan@linux.intel.com, sean.j.christopherson@intel.com,
+        drake@endlessm.com, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, up2wing@gmail.com,
+        wang.liang82@zte.com.cn
+Subject: [PATCH] x86/apic: fix apic_id_is_primary_thread() comment
+Date:   Wed, 23 Oct 2019 16:44:56 +0800
+Message-Id: <1571820296-30422-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-10-23 16:42:55,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-10-23 16:42:38,
+        Serialize complete at 2019-10-23 16:42:38
+X-MAIL: mse-fl1.zte.com.cn x9N8gZPE097006
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+No functional change.
 
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+---
+ arch/x86/kernel/apic/apic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> -----Original Message-----
-> From: Takashi Iwai <tiwai@suse.de>
-> Sent: Wednesday, October 23, 2019 12:08 AM
-> To: Aaron Ma <aaron.ma@canonical.com>
-> Cc: perex@perex.cz; Kailang <kailang@realtek.com>;
-> hui.wang@canonical.com; alsa-devel@alsa-project.org;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
-> 
-> On Tue, 22 Oct 2019 17:38:55 +0200,
-> Aaron Ma wrote:
-> >
-> > These 2 ThinkCentres installed a new realtek codec ID 0x623, it has 2
-> > front mics with the same location on pin 0x18 and 0x19.
-> >
-> > Apply fixup ALC283_FIXUP_HEADSET_MIC to change 1 front mic location to
-> > right, then pulseaudio can handle them.
-> > One "Front Mic" and one "Mic" will be shown, and audio output works
-> > fine.
-> >
-> > Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-> 
-> I'd like to have Kailang's review about the new codec before applying.
-> 
-> Kailang, could you take a look?
-OK.
-I will post you the patch for ALC623 codec tomorrow.
-Thanks.
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 9e2dd2b..aefd970 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -2335,7 +2335,7 @@ void disconnect_bsp_APIC(int virt_wire_setup)
+ #ifdef CONFIG_SMP
+ /**
+  * apic_id_is_primary_thread - Check whether APIC ID belongs to a primary thread
+- * @id:	APIC ID to check
++ * @apicid:	APIC ID to check
+  */
+ bool apic_id_is_primary_thread(unsigned int apicid)
+ {
+-- 
+1.8.3.1
 
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
-> > ---
-> >  sound/pci/hda/patch_realtek.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/sound/pci/hda/patch_realtek.c
-> > b/sound/pci/hda/patch_realtek.c index b000b36ac3c6..c34d8b435f58
-> > 100644
-> > --- a/sound/pci/hda/patch_realtek.c
-> > +++ b/sound/pci/hda/patch_realtek.c
-> > @@ -7186,6 +7186,8 @@ static const struct snd_pci_quirk alc269_fixup_tbl[]
-> = {
-> >  	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station",
-> ALC294_FIXUP_LENOVO_MIC_LOCATION),
-> >  	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station",
-> ALC294_FIXUP_LENOVO_MIC_LOCATION),
-> >  	SND_PCI_QUIRK(0x17aa, 0x3151, "ThinkCentre Station",
-> > ALC283_FIXUP_HEADSET_MIC),
-> > +	SND_PCI_QUIRK(0x17aa, 0x3178, "ThinkCentre Station",
-> ALC283_FIXUP_HEADSET_MIC),
-> > +	SND_PCI_QUIRK(0x17aa, 0x3176, "ThinkCentre Station",
-> > +ALC283_FIXUP_HEADSET_MIC),
-> >  	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80",
-> ALC269_FIXUP_DMIC_THINKPAD_ACPI),
-> >  	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210",
-> ALC283_FIXUP_INT_MIC),
-> >  	SND_PCI_QUIRK(0x17aa, 0x3978, "Lenovo B50-70",
-> > ALC269_FIXUP_DMIC_THINKPAD_ACPI), @@ -9187,6 +9189,7 @@ static
-> const struct hda_device_id snd_hda_id_realtek[] = {
-> >  	HDA_CODEC_ENTRY(0x10ec0298, "ALC298", patch_alc269),
-> >  	HDA_CODEC_ENTRY(0x10ec0299, "ALC299", patch_alc269),
-> >  	HDA_CODEC_ENTRY(0x10ec0300, "ALC300", patch_alc269),
-> > +	HDA_CODEC_ENTRY(0x10ec0623, "ALC623", patch_alc269),
-> >  	HDA_CODEC_REV_ENTRY(0x10ec0861, 0x100340, "ALC660",
-> patch_alc861),
-> >  	HDA_CODEC_ENTRY(0x10ec0660, "ALC660-VD", patch_alc861vd),
-> >  	HDA_CODEC_ENTRY(0x10ec0861, "ALC861", patch_alc861),
-> > --
-> > 2.17.1
-> >
-> 
-> ------Please consider the environment before printing this e-mail.
