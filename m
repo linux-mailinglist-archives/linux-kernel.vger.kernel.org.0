@@ -2,173 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0841FE16C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAB8AE16DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:57:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390967AbfJWJ4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 05:56:15 -0400
-Received: from outbound-smtp21.blacknight.com ([81.17.249.41]:46754 "EHLO
-        outbound-smtp21.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390952AbfJWJ4N (ORCPT
+        id S2391029AbfJWJ5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 05:57:22 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44822 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390880AbfJWJ5W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 05:56:13 -0400
-Received: from mail.blacknight.com (pemlinmail02.blacknight.ie [81.17.254.11])
-        by outbound-smtp21.blacknight.com (Postfix) with ESMTPS id 4D617B8781
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 10:56:11 +0100 (IST)
-Received: (qmail 9435 invoked from network); 23 Oct 2019 09:56:11 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.19.210])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 23 Oct 2019 09:56:11 -0000
-Date:   Wed, 23 Oct 2019 10:56:08 +0100
-From:   Mel Gorman <mgorman@suse.de>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        Waiman Long <longman@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Aquini <aquini@redhat.com>
-Subject: Re: [PATCH] mm/vmstat: Reduce zone lock hold time when reading
- /proc/pagetypeinfo
-Message-ID: <20191023095607.GE3016@techsingularity.net>
-References: <20191022162156.17316-1-longman@redhat.com>
- <20191022165745.GT9379@dhcp22.suse.cz>
- <20191023083143.GC3016@techsingularity.net>
- <20191023090422.GK754@dhcp22.suse.cz>
+        Wed, 23 Oct 2019 05:57:22 -0400
+Received: by mail-ed1-f68.google.com with SMTP id r16so15251832edq.11
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 02:57:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/NsmOCl0y6Xsu2o/7hjfK3x4RxKT1/LHqLenfxqsBu4=;
+        b=M+iC1Qnn0TshdtMKZlRUc9MwyHpOanqAsn4vIwnb0kzaLjvPhHuuUhiLQrCRWK9P4l
+         hqDMurj8khv4+wIgJCCykcJIKG1+3vlczvZ2fOKKLV+GIHdTgiSKjJuLYkf28WsnvV4H
+         Pw01NYEroGCPQYXskYPLxVxY+hQgYI17PkbmPD0aU3DRunvINBQMAJPMMCTTNrw6Zsj8
+         BIaxRkuNbhA9CZKe6KLs5nA5dhUW1JevILfFZmu6crtPAFEV+GKL4D03im42FJbGY/+m
+         RckSW7rYczSX5kAfMfvC1mIqioPokfEcvFqBWC3R1FTn9xvzotr1F9sWPYEWAuKHfwyY
+         rPpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/NsmOCl0y6Xsu2o/7hjfK3x4RxKT1/LHqLenfxqsBu4=;
+        b=ZMV5tUplE/S9mgSW4Bb7ZBBjILIvyBWQ5BW9VzolQVu0ZxFYCkDdm6Vbbqwl759yCO
+         IcrPLd1jLQjTm/d+poYnIJxpGDupZwMP73VABai1OHyaK8ZWD2i+FEuYCmXsw6PP8PbJ
+         vuLYffzkUvv8TLmkP8YWwNd4XROpIN4ZH5gmPOORtmX4Gq827PDHHdngf0MOvJZzTf5U
+         3l+p+gWTDqsoC13dck88gc2mtBg0cbnR4pCSUuAWs429u5JCfDcsoSjYrO81w8N5FHDs
+         QannTQIlqhbxEs3B3+/+zS2L5uY/b+c7VLcSD38+mKuz0S5iz9lwES/tdGkVOd5PT5+q
+         CVSg==
+X-Gm-Message-State: APjAAAVk34J/D2fcE51wQGDfn8JBj86rXac4kUgefbZ1rAWBEA9losVE
+        20GUVQ0160N6SDPaDk8TOoE04A==
+X-Google-Smtp-Source: APXvYqxOeXB5dcGaik2DpU7A8VO5NugXaB6+Iv+ZKZhAoP9s7OBGYf2kw0dFdZ407h4y+Sap+6cS0Q==
+X-Received: by 2002:a17:906:254e:: with SMTP id j14mr6727439ejb.150.1571824640463;
+        Wed, 23 Oct 2019 02:57:20 -0700 (PDT)
+Received: from netronome.com ([62.119.166.9])
+        by smtp.gmail.com with ESMTPSA id b53sm783428ede.96.2019.10.23.02.57.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 02:57:19 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 11:57:15 +0200
+From:   Simon Horman <simon.horman@netronome.com>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     netdev@vger.kernel.org, Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S . Miller " <davem@davemloft.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Paul Blakey <paulb@mellanox.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] flow_dissector: add meaningful comments
+Message-ID: <20191023095712.GA8732@netronome.com>
+References: <20191021200948.23775-1-mcroce@redhat.com>
+ <20191021200948.23775-2-mcroce@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191023090422.GK754@dhcp22.suse.cz>
+In-Reply-To: <20191021200948.23775-2-mcroce@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 11:04:22AM +0200, Michal Hocko wrote:
-> On Wed 23-10-19 09:31:43, Mel Gorman wrote:
-> > On Tue, Oct 22, 2019 at 06:57:45PM +0200, Michal Hocko wrote:
-> > > [Cc Mel]
-> > > 
-> > > On Tue 22-10-19 12:21:56, Waiman Long wrote:
-> > > > The pagetypeinfo_showfree_print() function prints out the number of
-> > > > free blocks for each of the page orders and migrate types. The current
-> > > > code just iterates the each of the free lists to get counts.  There are
-> > > > bug reports about hard lockup panics when reading the /proc/pagetyeinfo
-> > > > file just because it look too long to iterate all the free lists within
-> > > > a zone while holing the zone lock with irq disabled.
-> > > > 
-> > > > Given the fact that /proc/pagetypeinfo is readable by all, the possiblity
-> > > > of crashing a system by the simple act of reading /proc/pagetypeinfo
-> > > > by any user is a security problem that needs to be addressed.
-> > > 
-> > > Should we make the file 0400? It is a useful thing when debugging but
-> > > not something regular users would really need for life.
-> > > 
-> > 
-> > I think this would be useful in general. The information is not that
-> > useful outside of debugging. Even then it's only useful when trying to
-> > get a handle on why a path like compaction is taking too long.
+On Mon, Oct 21, 2019 at 10:09:45PM +0200, Matteo Croce wrote:
+> Documents two piece of code which can't be understood at a glance.
 > 
-> So can we go with this to address the security aspect of this and have
-> something trivial to backport.
-> 
+> Signed-off-by: Matteo Croce <mcroce@redhat.com>
 
-Yes.
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
 
-> > > > There is a free_area structure associated with each page order. There
-> > > > is also a nr_free count within the free_area for all the different
-> > > > migration types combined. Tracking the number of free list entries
-> > > > for each migration type will probably add some overhead to the fast
-> > > > paths like moving pages from one migration type to another which may
-> > > > not be desirable.
-> > > 
-> > > Have you tried to measure that overhead?
-> > >  
-> > 
-> > I would prefer this option not be taken. It would increase the cost of
-> > watermark calculations which is a relatively fast path.
+> ---
+>  include/net/flow_dissector.h | 1 +
+>  net/core/flow_dissector.c    | 6 ++++++
+>  2 files changed, 7 insertions(+)
 > 
-> Is the change for the wmark check going to require more than
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index c0b2e0306720..5d95313ba4a5 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -3448,9 +3448,6 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
->  		struct free_area *area = &z->free_area[o];
->  		int mt;
+> diff --git a/include/net/flow_dissector.h b/include/net/flow_dissector.h
+> index 90bd210be060..7747af3cc500 100644
+> --- a/include/net/flow_dissector.h
+> +++ b/include/net/flow_dissector.h
+> @@ -282,6 +282,7 @@ struct flow_keys {
+>  	struct flow_dissector_key_vlan cvlan;
+>  	struct flow_dissector_key_keyid keyid;
+>  	struct flow_dissector_key_ports ports;
+> +	/* 'addrs' must be the last member */
+>  	struct flow_dissector_key_addrs addrs;
+>  };
 >  
-> -		if (!area->nr_free)
-> -			continue;
-> -
->  		for (mt = 0; mt < MIGRATE_PCPTYPES; mt++) {
->  			if (!free_area_empty(area, mt))
->  				return true;
-> 
-> Is this really going to be visible in practice? Sure we are going to do
-> more checks but most orders tend to have at least some memory in a
-> reasonably balanced system and we can hardly expect an optimal
-> allocation path on those that are not.
+> diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
+> index 7c09d87d3269..affde70dad47 100644
+> --- a/net/core/flow_dissector.c
+> +++ b/net/core/flow_dissector.c
+> @@ -1374,6 +1374,9 @@ static inline size_t flow_keys_hash_length(const struct flow_keys *flow)
+>  {
+>  	size_t diff = FLOW_KEYS_HASH_OFFSET + sizeof(flow->addrs);
+>  	BUILD_BUG_ON((sizeof(*flow) - FLOW_KEYS_HASH_OFFSET) % sizeof(u32));
+> +	/* flow.addrs MUST be the last member in struct flow_keys because
+> +	 * different L3 protocols have different address length
+> +	 */
+>  	BUILD_BUG_ON(offsetof(typeof(*flow), addrs) !=
+>  		     sizeof(*flow) - sizeof(flow->addrs));
 >  
-
-You also have to iterate over them all later in the same function.  The the
-free counts are per migrate type then they would have to be iterated over
-every time.
-
-Similarly, there would be multiple places where all the counters would
-have to be iterated -- find_suitable_fallback, show_free_areas,
-fast_isolate_freepages, fill_contig_page_info, zone_init_free_lists etc.
-
-It'd be a small cost but given that it's aimed at fixing a problem with
-reading pagetypeinfo, is it really worth it? I don't think so.
-
-> > > > we can actually skip iterating the list of one of the migration types
-> > > > and used nr_free to compute the missing count. Since MIGRATE_MOVABLE
-> > > > is usually the largest one on large memory systems, this is the one
-> > > > to be skipped. Since the printing order is migration-type => order, we
-> > > > will have to store the counts in an internal 2D array before printing
-> > > > them out.
-> > > > 
-> > > > Even by skipping the MIGRATE_MOVABLE pages, we may still be holding the
-> > > > zone lock for too long blocking out other zone lock waiters from being
-> > > > run. This can be problematic for systems with large amount of memory.
-> > > > So a check is added to temporarily release the lock and reschedule if
-> > > > more than 64k of list entries have been iterated for each order. With
-> > > > a MAX_ORDER of 11, the worst case will be iterating about 700k of list
-> > > > entries before releasing the lock.
-> > > 
-> > > But you are still iterating through the whole free_list at once so if it
-> > > gets really large then this is still possible. I think it would be
-> > > preferable to use per migratetype nr_free if it doesn't cause any
-> > > regressions.
-> > > 
-> > 
-> > I think it will. The patch as it is contains the overhead within the
-> > reader of the pagetypeinfo proc file which is a non-critical path. The
-> > page allocator paths on the other hand is very important.
+> @@ -1421,6 +1424,9 @@ __be32 flow_get_u32_dst(const struct flow_keys *flow)
+>  }
+>  EXPORT_SYMBOL(flow_get_u32_dst);
+>  
+> +/* Sort the source and destination IP (and the ports if the IP are the same),
+> + * to have consistent hash within the two directions
+> + */
+>  static inline void __flow_hash_consistentify(struct flow_keys *keys)
+>  {
+>  	int addr_diff, i;
+> -- 
+> 2.21.0
 > 
-> As pointed out in other email. The problem with this patch is that it
-> hasn't really removed the iteration over the whole free_list which is
-> the primary problem. So I think that we should either consider this a
-> non-issue and make it "admin knows this is potentially expensive" or do
-> something like Andrew was suggesting if we do not want to change the
-> nr_free accounting.
-> 
-
-Again, the cost is when reading a proc file. From what Andrew said,
-the lock is necessary to safely walk the list but if anything. I would
-be ok with limiting the length of the walk but honestly, I would also
-be ok with simply deleting the proc file. The utility for debugging a
-problem with it is limited now (it was more important when fragmentation
-avoidance was first introduced) and there is little an admin can do with
-the information. I can't remember the last time I asked for the contents
-of the file when trying to debug a problem. There is a possibility that
-someone will complain but I'm not aware of any utility that reads the
-information and does something useful with it. In the unlikely event
-something breaks, the file can be re-added with a limited walk.
-
--- 
-Mel Gorman
-SUSE Labs
