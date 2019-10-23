@@ -2,72 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F763E1440
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EDDCE1445
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:33:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390302AbfJWIbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 04:31:48 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:34700 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390082AbfJWIbs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:31:48 -0400
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id 447B0E2D470FAD69E41C;
-        Wed, 23 Oct 2019 16:31:46 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id x9N8UNET081660;
-        Wed, 23 Oct 2019 16:30:23 +0800 (GMT-8)
-        (envelope-from zhong.shiqi@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019102316304296-91731 ;
-          Wed, 23 Oct 2019 16:30:42 +0800 
-From:   zhongshiqi <zhong.shiqi@zte.com.cn>
-To:     Julia.Lawall@lip6.fr
-Cc:     Gilles.Muller@lip6.fr, nicolas.palix@imag.fr,
-        michal.lkml@markovi.net, cocci@systeme.lip6.fr,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        wang.yi59@zte.com.cn, cheng.shengyu@zte.com.cn,
-        zhongshiqi <zhong.shiqi@zte.com.cn>
-Subject: [PATCH] Configuring COCCI parameter as a directory is supportted
-Date:   Wed, 23 Oct 2019 16:32:43 +0800
-Message-Id: <1571819563-18118-1-git-send-email-zhong.shiqi@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-10-23 16:30:43,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-10-23 16:30:26,
-        Serialize complete at 2019-10-23 16:30:26
-X-MAIL: mse-fl1.zte.com.cn x9N8UNET081660
+        id S2390361AbfJWIc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:32:58 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38929 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732361AbfJWIc6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 04:32:58 -0400
+Received: by mail-ot1-f68.google.com with SMTP id s22so16678775otr.6
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 01:32:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L8bkA9mtw+vWpI8oRxFifBMw8ummqV2rsVRmeQUbBco=;
+        b=viCUfLzzS1NUVQ5Tnwemu4lRHQh7rs8CcijmjomS/9Miv9Fu+1airI68eF8A8nJSyM
+         546inlstZ+rsV3j10IwzBsycIFGDPHrgXpTekkK2mvUwZ8G3lCLjyeEM7EQy/lZHZhaB
+         E5ZzJt4Q/pPYmawXeV71ABnjju8sA8DJIMrKRYDgXJbiwCuKZsPLIjF+dRKIDvkcbLbB
+         PqQsxIkRG98Hk2GjN6zHwsA4r1gwOzIDXX1ehjEkdS0m14uNImJD2Ybj2n3J9f6LxhoR
+         vIFuKY91tEAHwK1Lh0VLR3AqD94qvyZtf73j7lbvTR4BDSKOqQihceTRTuyCyrprb6I3
+         jZlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L8bkA9mtw+vWpI8oRxFifBMw8ummqV2rsVRmeQUbBco=;
+        b=IcSg8uqshEGkw9i8pn/qvJjgL0LF4GiomLpBztwEsNb2OqiBWvBZWD9DczN1Xsjj90
+         jRyPxx3gWDLYTsikeqViFv4uhdZ3A8UBaJSiNPkn6SpH/XwfrsxvgWyYRWvfmrrGnX6P
+         7Qq+NleIqp4JirNbX4dxvXq9R7j9nvgqinl8CeIepBvgL0Tyts3gAdatxhpSHWWQJ+di
+         rmJ7hcwiB3uuO7wljnAZR8HV8xJ595vYiw5btP4iHcSaXykcUjmFpGuTURo1XQPYhd2G
+         ebLOGu8BBcuBFl+vCoC52efJASZFk2lDeyWu8pBdqTB0wcI+qQDuVEe594oTNOfOXvum
+         WHaw==
+X-Gm-Message-State: APjAAAWrqkvDo6DcidKuSMFKL1PS2/jZTgpip3CLXn3fZzjPn9ri2CP+
+        AMKvqY5IYEdE8Sh7fMCQ1AO+Yb1X6f81QxKTlQFJVA==
+X-Google-Smtp-Source: APXvYqx9C835htw9b+vjF88aUM7e4S/FRS+3eHUvwsbpuC8bReEl39lomHdHjZsPRkBvLfkVQLrdUBNmVyoQXSiyMP0=
+X-Received: by 2002:a9d:7d12:: with SMTP id v18mr4103680otn.103.1571819576961;
+ Wed, 23 Oct 2019 01:32:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191023063103.44941-1-maowenan@huawei.com>
+In-Reply-To: <20191023063103.44941-1-maowenan@huawei.com>
+From:   Tzung-Bi Shih <tzungbi@google.com>
+Date:   Wed, 23 Oct 2019 16:32:46 +0800
+Message-ID: <CA+Px+wX7-tn-rXeKqnPtp74tU5cLxhJwF6XZ_jeQX-tnAfvO5g@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: mediatek: Check SND_SOC_CROS_EC_CODEC dependency
+To:     Mao Wenan <maowenan@huawei.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        =?UTF-8?B?U2h1bmxpIFdhbmcgKOeOi+mhuuWIqSk=?= 
+        <shunli.wang@mediatek.com>, yuehaibing@huawei.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        tglx@linutronix.de, KaiChieh Chuang <kaichieh.chuang@mediatek.com>,
+        ALSA development <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch puts a modification in scripts/coccicheck which supports users
-in configuring COCCI parameter as a directory to traverse files in
-directory. 
+On Wed, Oct 23, 2019 at 2:31 PM Mao Wenan <maowenan@huawei.com> wrote:
+>
+> If SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A=y,
+> below errors can be seen:
+> sound/soc/codecs/cros_ec_codec.o: In function `send_ec_host_command':
+> cros_ec_codec.c:(.text+0x534): undefined reference to `cros_ec_cmd_xfer_status'
+> cros_ec_codec.c:(.text+0x101c): undefined reference to `cros_ec_get_host_event'
+>
+> This is because it will select SND_SOC_CROS_EC_CODEC
+> after commit 2cc3cd5fdc8b ("ASoC: mediatek: mt8183: support WoV"),
+> but SND_SOC_CROS_EC_CODEC depends on CROS_EC.
+>
+> Fixes: 2cc3cd5fdc8b ("ASoC: mediatek: mt8183: support WoV")
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
+>  sound/soc/mediatek/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
+> index 8b29f39..a656d20 100644
+> --- a/sound/soc/mediatek/Kconfig
+> +++ b/sound/soc/mediatek/Kconfig
+> @@ -125,7 +125,7 @@ config SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A
+>         select SND_SOC_MAX98357A
+>         select SND_SOC_BT_SCO
+>         select SND_SOC_TS3A227E
+> -       select SND_SOC_CROS_EC_CODEC
+> +       select SND_SOC_CROS_EC_CODEC if CROS_EC
+>         help
+>           This adds ASoC driver for Mediatek MT8183 boards
+>           with the MT6358 TS3A227E MAX98357A audio codec.
+> --
+> 2.7.4
+>
 
-Signed-off-by: zhongshiqi <zhong.shiqi@zte.com.cn>
----
- scripts/coccicheck | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/scripts/coccicheck b/scripts/coccicheck
-index e04d328..a1c4197 100755
---- a/scripts/coccicheck
-+++ b/scripts/coccicheck
-@@ -257,6 +257,10 @@ if [ "$COCCI" = "" ] ; then
-     for f in `find $srctree/scripts/coccinelle/ -name '*.cocci' -type f | sort`; do
- 	coccinelle $f
-     done
-+elif [ -d "$COCCI" ] ; then
-+    for f in `find $COCCI/ -name '*.cocci' -type f | sort`; do
-+	coccinelle $f
-+    done
- else
-     coccinelle $COCCI
- fi
--- 
-2.9.5
-
+Just realized your patch seems not showing in the list
+(https://mailman.alsa-project.org/pipermail/alsa-devel/2019-October/thread.html).
+I have no idea why.
