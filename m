@@ -2,52 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94510E17CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7ACDE17D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 12:26:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404391AbfJWKZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 06:25:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56370 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391001AbfJWKZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 06:25:06 -0400
-Subject: Re: [GIT PULL] Btrfs fixes for 5.4-rc5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571826306;
-        bh=dkE3MrqlPJvwnrTN1PpFKAE8Ll7LIwAMZtG0/eVUxes=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=QKjMO6Iwqc6sLTVHlbFoAqM0SzLM1e/lUeMfH9HNby9O2345vN1Z2ACs8nV+SpsZb
-         qsuwxrYEvD7UajIyRzDK+FGo8ciSVXFjdWNWyZCDBdqrmq/M0Xit2owJwxqLc9+swq
-         2ASByCg2akqS8pjjk+lVMi0kBCcq/6VPuZQfjNB4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <cover.1571751313.git.dsterba@suse.com>
-References: <cover.1571751313.git.dsterba@suse.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cover.1571751313.git.dsterba@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.4-rc4-tag
-X-PR-Tracked-Commit-Id: ba0b084ac309283db6e329785c1dc4f45fdbd379
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 54955e3bfde54dcdd29694741f2ddfc6b763b193
-Message-Id: <157182630637.4124.5490393115058163263.pr-tracker-bot@kernel.org>
-Date:   Wed, 23 Oct 2019 10:25:06 +0000
-To:     David Sterba <dsterba@suse.com>
-Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S2404311AbfJWK0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 06:26:18 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42961 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391001AbfJWK0S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 06:26:18 -0400
+Received: by mail-lf1-f67.google.com with SMTP id z12so15592582lfj.9
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 03:26:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aRWUNj4J7qgXSXD2PSfXvGDEs07MKcTmNuTdcaVnUGw=;
+        b=Slb+IaA7gxUyVr09pbGzJOB54Jv239tGUr7XIcQxfolpIG44u/NoAMOhLnza+Em4WR
+         TEPsZuhBtQdRHRD82otLdcY2uJ9E7K4xMc5ZFii1pfI6kkUC5qwEGbYYfYuTwlvtQiDO
+         wMOTH/ObIO23qcZyZJ2PI3HvK563JGx6aHaAU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aRWUNj4J7qgXSXD2PSfXvGDEs07MKcTmNuTdcaVnUGw=;
+        b=JGoxbDuy0m5K0RU28WFiqJ9idHmOrGFOtbMqPAGA0Rs+oL1eJCljvBkxfHPr4jTR9z
+         oGxuTJzjIB81W/CujJ4/qjdtRVLb0aNxsm0CIuzUPKFCANfgF+y6xAdCy3IgdrJ1lihl
+         UJbPmsoe/YHzdu19oy1B3KQVEN66XQ7/jkwl2M4Sdj+Rj0zhtKEhkgKlMHR9KG3zXzJj
+         nf/bDqdEJuenXTZBUga2HtyDnq6JtpyC76cIAFoNuRLaQfVhX8f3GDTnxeCY8Dh/mKME
+         R4kaseSQcqb55O29881ymY59sJ8OmabIQ6X3KX7mVwLaEgKcxPeBBEs69k2gdLGf+hyW
+         l4cw==
+X-Gm-Message-State: APjAAAU6fY5YUSy2bBffJTmtNT8NE4RtEu5BU6FoZQDaC1tiSxdbxitj
+        JjHjL6q2JZt+ikIIN2rQ61XMAu0eKB3/ag==
+X-Google-Smtp-Source: APXvYqzWg7bFb/Mv2tuV7W5xFInN2aMIyFzfUf0tolc1jhbB7dOKT9cHv9wH7nO0ctnfcTeWj8P+LA==
+X-Received: by 2002:a19:ec16:: with SMTP id b22mr10397159lfa.137.1571826375904;
+        Wed, 23 Oct 2019 03:26:15 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id b25sm10210171ljj.36.2019.10.23.03.26.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2019 03:26:11 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id j19so20496851lja.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 03:26:06 -0700 (PDT)
+X-Received: by 2002:a2e:29dd:: with SMTP id p90mr21979653ljp.26.1571826364626;
+ Wed, 23 Oct 2019 03:26:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <1571822941-29776-1-git-send-email-rppt@kernel.org>
+In-Reply-To: <1571822941-29776-1-git-send-email-rppt@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 23 Oct 2019 06:25:48 -0400
+X-Gmail-Original-Message-ID: <CAHk-=whd6wNfx2bq7BmN4ouZgt=NQ5pw+3uqPOTbvz_Qb3itFg@mail.gmail.com>
+Message-ID: <CAHk-=whd6wNfx2bq7BmN4ouZgt=NQ5pw+3uqPOTbvz_Qb3itFg@mail.gmail.com>
+Subject: Re: [PATCH 00/12] mm: remove __ARCH_HAS_4LEVEL_HACK
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Helge Deller <deller@gmx.de>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        Sam Creasey <sammy@sammy.net>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        alpha <linux-alpha@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-c6x-dev@linux-c6x.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-parisc@vger.kernel.org, linux-um@lists.infradead.org,
+        sparclinux@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 22 Oct 2019 15:52:07 +0200:
+On Wed, Oct 23, 2019 at 5:29 AM Mike Rapoport <rppt@kernel.org> wrote:
+>
+> These patches convert several architectures to use page table folding and
+> remove __ARCH_HAS_4LEVEL_HACK along with include/asm-generic/4level-fixup.h.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.4-rc4-tag
+Thanks for doing this.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/54955e3bfde54dcdd29694741f2ddfc6b763b193
+The patches look sane from a quick scan, and it's definitely the right
+thing to do. So ack on my part, but obviously testing the different
+architectures would be a really good thing...
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+                Linus
