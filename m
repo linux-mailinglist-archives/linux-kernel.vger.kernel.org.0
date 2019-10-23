@@ -2,219 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06169E1CF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1BBFE1D33
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:46:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405972AbfJWNlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 09:41:42 -0400
-Received: from mga17.intel.com ([192.55.52.151]:7394 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732361AbfJWNlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:41:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 06:41:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,221,1569308400"; 
-   d="scan'208";a="281621924"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 23 Oct 2019 06:41:39 -0700
-Date:   Wed, 23 Oct 2019 06:46:00 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     "Raj, Ashok" <ashok.raj@intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v6 00/10] Nested Shared Virtual Address (SVA) VT-d
- support
-Message-ID: <20191023064600.5e24234b@jacob-builder>
-In-Reply-To: <20191023002751.GA100970@otc-nc-03>
-References: <1571788403-42095-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20191023002751.GA100970@otc-nc-03>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S2406104AbfJWNqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:46:38 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:42714 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729191AbfJWNqh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 09:46:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571838396;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=580cpyTZn31Tsw5lMtWLo7PXKcx4eNMbv5larOIYwnY=;
+        b=dRUBgccVcuJCmFQ8WF4IqNlYta0SpjjDTABJu3i4ug77Iux62v8IKs5wQX2FQJh7lWMHSv
+        cigKnyS2jdzVDVLkWFPGc3MB2SYiNYVCk6zOjI4G1xs8+Oyr+1xzl9IiX/Y18A92zyaDYN
+        sa9AcneI/MI8Aaspm13rI05Z/tEVUJ0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-378-HjTE_xT0PXuakUoiGj67-g-1; Wed, 23 Oct 2019 09:46:34 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2DF81800D49;
+        Wed, 23 Oct 2019 13:46:32 +0000 (UTC)
+Received: from optiplex-lnx (ovpn-112-50.rdu2.redhat.com [10.10.112.50])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 245C319C77;
+        Wed, 23 Oct 2019 13:46:24 +0000 (UTC)
+Date:   Wed, 23 Oct 2019 09:46:22 -0400
+From:   Rafael Aquini <aquini@redhat.com>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>, Waiman Long <longman@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [RFC PATCH 2/2] mm, vmstat: reduce zone->lock holding time by
+ /proc/pagetypeinfo
+Message-ID: <20191023134622.GA22601@optiplex-lnx>
+References: <20191023095607.GE3016@techsingularity.net>
+ <20191023102737.32274-1-mhocko@kernel.org>
+ <20191023102737.32274-3-mhocko@kernel.org>
+ <30211965-8ad0-416d-0fe1-113270bd1ea8@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <30211965-8ad0-416d-0fe1-113270bd1ea8@suse.cz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: HjTE_xT0PXuakUoiGj67-g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Oct 2019 17:27:51 -0700
-"Raj, Ashok" <ashok.raj@intel.com> wrote:
+On Wed, Oct 23, 2019 at 03:32:05PM +0200, Vlastimil Babka wrote:
+> On 10/23/19 12:27 PM, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
+> >=20
+> > pagetypeinfo_showfree_print is called by zone->lock held in irq mode.
+> > This is not really nice because it blocks both any interrupts on that
+> > cpu and the page allocator. On large machines this might even trigger
+> > the hard lockup detector.
+> >=20
+> > Considering the pagetypeinfo is a debugging tool we do not really need
+> > exact numbers here. The primary reason to look at the outuput is to see
+> > how pageblocks are spread among different migratetypes therefore puttin=
+g
+> > a bound on the number of pages on the free_list sounds like a reasonabl=
+e
+> > tradeoff.
+> >=20
+> > The new output will simply tell
+> > [...]
+> > Node    6, zone   Normal, type      Movable >100000 >100000 >100000 >10=
+0000  41019  31560  23996  10054   3229    983    648
+> >=20
+> > instead of
+> > Node    6, zone   Normal, type      Movable 399568 294127 221558 102119=
+  41019  31560  23996  10054   3229    983    648
+> >=20
+> > The limit has been chosen arbitrary and it is a subject of a future
+> > change should there be a need for that.
+> >=20
+> > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+>=20
+> Hmm dunno, I would rather e.g. hide the file behind some config or boot
+> option than do this. Or move it to /sys/kernel/debug ?
+>
 
-> Hi Jacob
-> 
-> On Tue, Oct 22, 2019 at 04:53:13PM -0700, Jacob Pan wrote:
-> > Shared virtual address (SVA), a.k.a, Shared virtual memory (SVM) on
-> > Intel platforms allow address space sharing between device DMA and
-> > applications. SVA can reduce programming complexity and enhance
-> > security. This series is intended to enable SVA virtualization,
-> > i.e. shared guest application address space and physical device DMA
-> > address. Only IOMMU portion  
-> 
-> Last line "i.e shared guest application address space and physical
-> device DMA address" doesn't read well. 
-> 
-> Simply rephrase as "enable use of SVA within a guest user application"
-> 
-Much better, thanks!
-> > of the changes are included in this series. Additional support is
-> > needed in VFIO and QEMU (will be submitted separately) to complete
-> > this functionality.
-> > 
-> > To make incremental changes and reduce the size of each patchset.
-> > This series does not inlcude support for page request services.
-> > 
-> > In VT-d implementation, PASID table is per device and maintained in
-> > the host. Guest PASID table is shadowed in VMM where virtual IOMMU
-> > is emulated.
-> > 
-> >     .-------------.  .---------------------------.
-> >     |   vIOMMU    |  | Guest process CR3, FL only|
-> >     |             |  '---------------------------'
-> >     .----------------/
-> >     | PASID Entry |--- PASID cache flush -
-> >     '-------------'                       |
-> >     |             |                       V
-> >     |             |                CR3 in GPA
-> >     '-------------'
-> > Guest
-> > ------| Shadow |--------------------------|--------
-> >       v        v                          v
-> > Host
-> >     .-------------.  .----------------------.
-> >     |   pIOMMU    |  | Bind FL for GVA-GPA  |
-> >     |             |  '----------------------'
-> >     .----------------/  |
-> >     | PASID Entry |     V (Nested xlate)
-> >     '----------------\.------------------------------.
-> >     |             |   |SL for GPA-HPA, default domain|
-> >     |             |   '------------------------------'
-> >     '-------------'  
-> 
-> is the SL for GPA-HPA default domain? When you assign a device to 
-> Guest, this isn't default domain right?
-> 
-SL is harvested from default domain for PCI device assignment. Once we
-add mdev support, you are right that SL is not default domain, but this
-patchset is not dealing with mdev yet. Jumping ahead :)
+You beat me to it. I was going to suggest moving it to debug, as well.
 
-> > Where:
-> >  - FL = First level/stage one page tables
-> >  - SL = Second level/stage two page tables
-> > 
-> > This is the remaining VT-d only portion of V5 since the uAPIs and
-> > IOASID common code have been applied to Joerg's IOMMU core branch.
-> > (https://lkml.org/lkml/2019/10/2/833)
-> > 
-> > The complete set with VFIO patches are here:
-> > https://github.com/jacobpan/linux.git:siov_sva
-> > 
-> > The complete nested SVA upstream patches are divided into three
-> > phases: 1. Common APIs and PCI device direct assignment
-> >     2. Page Request Services (PRS) support
-> >     3. Mediated device assignment
-> > 
-> > With this set and the accompanied VFIO code, we will achieve phase
-> > #1.
-> > 
-> > Thanks,
-> > 
-> > Jacob
-> > 
-> > ChangeLog:
-> > 	- V6
-> > 	  - Rebased on top of Joerg's core branch
-> > 	  (git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
-> > core)
-> > 	  - Adapt to new uAPIs and IOASID allocators
-> > 
-> > 	- V5
-> > 	  Rebased on v5.3-rc4 which has some of the IOMMU fault
-> > APIs merged. Addressed v4 review comments from Eric Auger, Baolu
-> > Lu, and Jonathan Cameron. Specific changes are as follows:
-> > 	  - Refined custom IOASID allocator to support multiple
-> > vIOMMU, hotplug cases.
-> > 	  - Extracted vendor data from IOMMU guest PASID bind data,
-> > for VT-d will support all necessary guest PASID entry fields for
-> > PASID bind.
-> > 	  - Support non-identity host-guest PASID mapping
-> > 	  - Exception handling in various cases
-> > 
-> > 	- V4
-> > 	  - Redesigned IOASID allocator such that it can support
-> > custom allocators with shared helper functions. Use separate XArray
-> > 	  to store IOASIDs per allocator. Took advice from Eric
-> > Auger to have default allocator use the generic allocator structure.
-> > 	  Combined into one patch in that the default allocator is
-> > just "another" allocator now. Can be built as a module in case of
-> > 	  driver use without IOMMU.
-> > 	  - Extended bind guest PASID data to support SMMU and
-> > non-identity guest to host PASID mapping
-> > https://lkml.org/lkml/2019/5/21/802
-> > 	  - Rebased on Jean's sva/api common tree, new patches
-> > starts with [PATCH v4 10/22]
-> > 
-> > 	- V3
-> > 	  - Addressed thorough review comments from Eric Auger
-> > (Thank you!)
-> > 	  - Moved IOASID allocator from driver core to IOMMU code
-> > per suggestion by Christoph Hellwig
-> > 	    (https://lkml.org/lkml/2019/4/26/462)
-> > 	  - Rebased on top of Jean's SVA API branch and Eric's v7[1]
-> > 	    (git://linux-arm.org/linux-jpb.git sva/api)
-> > 	  - All IOMMU APIs are unmodified (except the new bind
-> > guest PASID call in patch 9/16)
-> > 
-> > 	- V2
-> > 	  - Rebased on Joerg's IOMMU x86/vt-d branch v5.1-rc4
-> > 	  - Integrated with Eric Auger's new v7 series for common
-> > APIs (https://github.com/eauger/linux/tree/v5.1-rc3-2stage-v7)
-> > 	  - Addressed review comments from Andy Shevchenko and Alex
-> > Williamson on IOASID custom allocator.
-> > 	  - Support multiple custom IOASID allocators (vIOMMUs) and
-> > dynamic registration.
-> > 
-> > 
-> > Jacob Pan (9):
-> >   iommu/vt-d: Add custom allocator for IOASID
-> >   iommu/vt-d: Replace Intel specific PASID allocator with IOASID
-> >   iommu/vt-d: Move domain helper to header
-> >   iommu/vt-d: Avoid duplicated code for PASID setup
-> >   iommu/vt-d: Add nested translation helper function
-> >   iommu/vt-d: Misc macro clean up for SVM
-> >   iommu/vt-d: Add bind guest PASID support
-> >   iommu/vt-d: Support flushing more translation cache types
-> >   iommu/vt-d: Add svm/sva invalidate function
-> > 
-> > Lu Baolu (1):
-> >   iommu/vt-d: Enlightened PASID allocation
-> > 
-> >  drivers/iommu/Kconfig       |   1 +
-> >  drivers/iommu/dmar.c        |  46 ++++++
-> >  drivers/iommu/intel-iommu.c | 259 +++++++++++++++++++++++++++++++--
-> >  drivers/iommu/intel-pasid.c | 343
-> > +++++++++++++++++++++++++++++++++++++-------
-> > drivers/iommu/intel-pasid.h |  25 +++- drivers/iommu/intel-svm.c
-> > | 298 ++++++++++++++++++++++++++++++--------
-> > include/linux/intel-iommu.h |  39 ++++- include/linux/intel-svm.h
-> > |  17 +++ 8 files changed, 904 insertions(+), 124 deletions(-)
-> > 
-> > -- 
-> > 2.7.4
-> >   
 
-[Jacob Pan]
+=20
+> > ---
+> >  mm/vmstat.c | 19 ++++++++++++++++++-
+> >  1 file changed, 18 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/mm/vmstat.c b/mm/vmstat.c
+> > index 4e885ecd44d1..762034fc3b83 100644
+> > --- a/mm/vmstat.c
+> > +++ b/mm/vmstat.c
+> > @@ -1386,8 +1386,25 @@ static void pagetypeinfo_showfree_print(struct s=
+eq_file *m,
+> > =20
+> >  =09=09=09area =3D &(zone->free_area[order]);
+> > =20
+> > -=09=09=09list_for_each(curr, &area->free_list[mtype])
+> > +=09=09=09list_for_each(curr, &area->free_list[mtype]) {
+> >  =09=09=09=09freecount++;
+> > +=09=09=09=09/*
+> > +=09=09=09=09 * Cap the free_list iteration because it might
+> > +=09=09=09=09 * be really large and we are under a spinlock
+> > +=09=09=09=09 * so a long time spent here could trigger a
+> > +=09=09=09=09 * hard lockup detector. Anyway this is a
+> > +=09=09=09=09 * debugging tool so knowing there is a handful
+> > +=09=09=09=09 * of pages in this order should be more than
+> > +=09=09=09=09 * sufficient
+> > +=09=09=09=09 */
+> > +=09=09=09=09if (freecount > 100000) {
+> > +=09=09=09=09=09seq_printf(m, ">%6lu ", freecount);
+> > +=09=09=09=09=09spin_unlock_irq(&zone->lock);
+> > +=09=09=09=09=09cond_resched();
+> > +=09=09=09=09=09spin_lock_irq(&zone->lock);
+> > +=09=09=09=09=09continue;
+> > +=09=09=09=09}
+> > +=09=09=09}
+> >  =09=09=09seq_printf(m, "%6lu ", freecount);
+> >  =09=09}
+> >  =09=09seq_putc(m, '\n');
+> >=20
+>=20
+
