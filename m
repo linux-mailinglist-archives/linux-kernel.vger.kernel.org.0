@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36D06E18BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:22:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C183EE18BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:22:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404826AbfJWLWD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 07:22:03 -0400
-Received: from mga05.intel.com ([192.55.52.43]:63098 "EHLO mga05.intel.com"
+        id S2404811AbfJWLWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 07:22:00 -0400
+Received: from mga03.intel.com ([134.134.136.65]:46941 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404696AbfJWLWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2404628AbfJWLWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 23 Oct 2019 07:22:00 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 04:21:59 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 04:21:59 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
-   d="scan'208";a="210009575"
+   d="scan'208";a="209903772"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 23 Oct 2019 04:21:55 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 23 Oct 2019 04:21:55 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 1689823E; Wed, 23 Oct 2019 14:21:55 +0300 (EEST)
+        id 1ECA537B; Wed, 23 Oct 2019 14:21:55 +0300 (EEST)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-usb@vger.kernel.org
 Cc:     Andreas Noever <andreas.noever@gmail.com>,
@@ -38,9 +38,9 @@ Cc:     Andreas Noever <andreas.noever@gmail.com>,
         Oliver Neukum <oneukum@suse.com>,
         Christian Kellner <ckellner@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 02/25] thunderbolt: Log switch route string on config read/write timeout
-Date:   Wed, 23 Oct 2019 14:21:31 +0300
-Message-Id: <20191023112154.64235-3-mika.westerberg@linux.intel.com>
+Subject: [PATCH 03/25] thunderbolt: Log error if adding switch fails
+Date:   Wed, 23 Oct 2019 14:21:32 +0300
+Message-Id: <20191023112154.64235-4-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191023112154.64235-1-mika.westerberg@linux.intel.com>
 References: <20191023112154.64235-1-mika.westerberg@linux.intel.com>
@@ -51,40 +51,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This helps to point out which switch config read/write triggered the
-timeout.
+If we fail to add a switch for some reason log an error instead of
+keeping silent. This is useful for debugging.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/thunderbolt/ctl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/thunderbolt/switch.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
-index 2ec1af8f7968..d97813e80e5f 100644
---- a/drivers/thunderbolt/ctl.c
-+++ b/drivers/thunderbolt/ctl.c
-@@ -962,8 +962,8 @@ int tb_cfg_read(struct tb_ctl *ctl, void *buffer, u64 route, u32 port,
- 		return tb_cfg_get_error(ctl, space, &res);
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index f9efd670d032..fd7878020f70 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -1775,21 +1775,25 @@ int tb_switch_add(struct tb_switch *sw)
+ 	 * configuration based mailbox.
+ 	 */
+ 	ret = tb_switch_add_dma_port(sw);
+-	if (ret)
++	if (ret) {
++		dev_err(&sw->dev, "failed to add DMA port\n");
+ 		return ret;
++	}
  
- 	case -ETIMEDOUT:
--		tb_ctl_warn(ctl, "timeout reading config space %u from %#x\n",
--			    space, offset);
-+		tb_ctl_warn(ctl, "%llx: timeout reading config space %u from %#x\n",
-+			    route, space, offset);
- 		break;
+ 	if (!sw->safe_mode) {
+ 		/* read drom */
+ 		ret = tb_drom_read(sw);
+ 		if (ret) {
+-			tb_sw_warn(sw, "tb_eeprom_read_rom failed\n");
++			dev_err(&sw->dev, "reading DROM failed\n");
+ 			return ret;
+ 		}
+ 		tb_sw_dbg(sw, "uid: %#llx\n", sw->uid);
  
- 	default:
-@@ -988,8 +988,8 @@ int tb_cfg_write(struct tb_ctl *ctl, const void *buffer, u64 route, u32 port,
- 		return tb_cfg_get_error(ctl, space, &res);
+ 		ret = tb_switch_set_uuid(sw);
+-		if (ret)
++		if (ret) {
++			dev_err(&sw->dev, "failed to set UUID\n");
+ 			return ret;
++		}
  
- 	case -ETIMEDOUT:
--		tb_ctl_warn(ctl, "timeout writing config space %u to %#x\n",
--			    space, offset);
-+		tb_ctl_warn(ctl, "%llx: timeout writing config space %u to %#x\n",
-+			    route, space, offset);
- 		break;
+ 		for (i = 0; i <= sw->config.max_port_number; i++) {
+ 			if (sw->ports[i].disabled) {
+@@ -1797,14 +1801,18 @@ int tb_switch_add(struct tb_switch *sw)
+ 				continue;
+ 			}
+ 			ret = tb_init_port(&sw->ports[i]);
+-			if (ret)
++			if (ret) {
++				dev_err(&sw->dev, "failed to initialize port %d\n", i);
+ 				return ret;
++			}
+ 		}
+ 	}
  
- 	default:
+ 	ret = device_add(&sw->dev);
+-	if (ret)
++	if (ret) {
++		dev_err(&sw->dev, "failed to add device: %d\n", ret);
+ 		return ret;
++	}
+ 
+ 	if (tb_route(sw)) {
+ 		dev_info(&sw->dev, "new device found, vendor=%#x device=%#x\n",
+@@ -1816,6 +1824,7 @@ int tb_switch_add(struct tb_switch *sw)
+ 
+ 	ret = tb_switch_nvm_add(sw);
+ 	if (ret) {
++		dev_err(&sw->dev, "failed to add NVM devices\n");
+ 		device_del(&sw->dev);
+ 		return ret;
+ 	}
 -- 
 2.23.0
 
