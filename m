@@ -2,184 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C395E20B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 18:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 183FCE20BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 18:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436551AbfJWQgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 12:36:03 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:48554 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407300AbfJWQgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 12:36:00 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iNJc4-0006Vy-8G; Wed, 23 Oct 2019 10:35:59 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iNJc3-00016n-3f; Wed, 23 Oct 2019 10:35:55 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed, 23 Oct 2019 10:35:45 -0600
-Message-Id: <20191023163545.4193-8-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191023163545.4193-1-logang@deltatee.com>
-References: <20191023163545.4193-1-logang@deltatee.com>
+        id S2407297AbfJWQhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 12:37:03 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51218 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403971AbfJWQhD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 12:37:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=m700Ovhtawx1D7xYGjJcWREMnvuFfL4T8auLxTc4g+o=; b=tVW+N1CGFWe7AqjwhhUwObc5T
+        4DcO3owdYhBJ4EIo45+VMPO/QapuVR8eKr7Hk4KYvWTFDygVNHMgTfW2vVYJf4451ljrE1z7fnQGU
+        v2h/cr+LcMpU9LhKonteQt9Mc7RpjlboPdAiJmpHZKMCFJhUOm0rhoqvgfT6tteSrf55k=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iNJd3-0000wd-He; Wed, 23 Oct 2019 16:36:57 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 0F4AA2743021; Wed, 23 Oct 2019 17:36:57 +0100 (BST)
+Date:   Wed, 23 Oct 2019 17:36:56 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] cpufreq: s3c64xx: Remove pointless NULL check in
+ s3c64xx_cpufreq_driver_init
+Message-ID: <20191023163656.GH5723@sirena.co.uk>
+References: <20191023000906.14374-1-natechancellor@gmail.com>
+ <20191023032302.tu5nkvulo2yoctgr@vireshk-i7>
+ <20191023104304.GA5723@sirena.co.uk>
+ <20191023162628.GA10997@ubuntu-m2-xlarge-x86>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, hch@lst.de, sagi@grimberg.me, Chaitanya.Kulkarni@wdc.com, maxg@mellanox.com, sbates@raithlin.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
-        autolearn_force=no version=3.4.2
-Subject: [PATCH 7/7] nvmet: Open code nvmet_req_execute()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/Gk0KcsbyUMelFU1"
+Content-Disposition: inline
+In-Reply-To: <20191023162628.GA10997@ubuntu-m2-xlarge-x86>
+X-Cookie: MMM-MM!!  So THIS is BIO-NEBULATION!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that nvmet_req_execute does nothing, open code it.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-[logang@deltatee.com: separated out of a larger draft patch from hch]
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- drivers/nvme/target/core.c  | 6 ------
- drivers/nvme/target/fc.c    | 4 ++--
- drivers/nvme/target/loop.c  | 2 +-
- drivers/nvme/target/nvmet.h | 1 -
- drivers/nvme/target/rdma.c  | 4 ++--
- drivers/nvme/target/tcp.c   | 6 +++---
- 6 files changed, 8 insertions(+), 15 deletions(-)
+--/Gk0KcsbyUMelFU1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
-index 87fe82ccfa89..f7da0e50beeb 100644
---- a/drivers/nvme/target/core.c
-+++ b/drivers/nvme/target/core.c
-@@ -942,12 +942,6 @@ bool nvmet_check_data_len(struct nvmet_req *req, size_t data_len)
- }
- EXPORT_SYMBOL_GPL(nvmet_check_data_len);
- 
--void nvmet_req_execute(struct nvmet_req *req)
--{
--	req->execute(req);
--}
--EXPORT_SYMBOL_GPL(nvmet_req_execute);
--
- int nvmet_req_alloc_sgl(struct nvmet_req *req)
- {
- 	struct pci_dev *p2p_dev = NULL;
-diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
-index ce8d819f86cc..7f9c11138b93 100644
---- a/drivers/nvme/target/fc.c
-+++ b/drivers/nvme/target/fc.c
-@@ -2015,7 +2015,7 @@ nvmet_fc_fod_op_done(struct nvmet_fc_fcp_iod *fod)
- 		}
- 
- 		/* data transfer complete, resume with nvmet layer */
--		nvmet_req_execute(&fod->req);
-+		fod->req.execute(&fod->req);
- 		break;
- 
- 	case NVMET_FCOP_READDATA:
-@@ -2231,7 +2231,7 @@ nvmet_fc_handle_fcp_rqst(struct nvmet_fc_tgtport *tgtport,
- 	 * can invoke the nvmet_layer now. If read data, cmd completion will
- 	 * push the data
- 	 */
--	nvmet_req_execute(&fod->req);
-+	fod->req.execute(&fod->req);
- 	return;
- 
- transport_error:
-diff --git a/drivers/nvme/target/loop.c b/drivers/nvme/target/loop.c
-index 11f5aea97d1b..f4b878b113f7 100644
---- a/drivers/nvme/target/loop.c
-+++ b/drivers/nvme/target/loop.c
-@@ -126,7 +126,7 @@ static void nvme_loop_execute_work(struct work_struct *work)
- 	struct nvme_loop_iod *iod =
- 		container_of(work, struct nvme_loop_iod, work);
- 
--	nvmet_req_execute(&iod->req);
-+	iod->req.execute(&iod->req);
- }
- 
- static blk_status_t nvme_loop_queue_rq(struct blk_mq_hw_ctx *hctx,
-diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-index ff55f1005b35..46df45e837c9 100644
---- a/drivers/nvme/target/nvmet.h
-+++ b/drivers/nvme/target/nvmet.h
-@@ -374,7 +374,6 @@ bool nvmet_req_init(struct nvmet_req *req, struct nvmet_cq *cq,
- 		struct nvmet_sq *sq, const struct nvmet_fabrics_ops *ops);
- void nvmet_req_uninit(struct nvmet_req *req);
- bool nvmet_check_data_len(struct nvmet_req *req, size_t data_len);
--void nvmet_req_execute(struct nvmet_req *req);
- void nvmet_req_complete(struct nvmet_req *req, u16 status);
- int nvmet_req_alloc_sgl(struct nvmet_req *req);
- void nvmet_req_free_sgl(struct nvmet_req *req);
-diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
-index 36d906a7f70d..248e68da2e13 100644
---- a/drivers/nvme/target/rdma.c
-+++ b/drivers/nvme/target/rdma.c
-@@ -603,7 +603,7 @@ static void nvmet_rdma_read_data_done(struct ib_cq *cq, struct ib_wc *wc)
- 		return;
- 	}
- 
--	nvmet_req_execute(&rsp->req);
-+	rsp->req.execute(&rsp->req);
- }
- 
- static void nvmet_rdma_use_inline_sg(struct nvmet_rdma_rsp *rsp, u32 len,
-@@ -746,7 +746,7 @@ static bool nvmet_rdma_execute_command(struct nvmet_rdma_rsp *rsp)
- 				queue->cm_id->port_num, &rsp->read_cqe, NULL))
- 			nvmet_req_complete(&rsp->req, NVME_SC_DATA_XFER_ERROR);
- 	} else {
--		nvmet_req_execute(&rsp->req);
-+		rsp->req.execute(&rsp->req);
- 	}
- 
- 	return true;
-diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
-index 3378480c49f6..af674fc0bb1e 100644
---- a/drivers/nvme/target/tcp.c
-+++ b/drivers/nvme/target/tcp.c
-@@ -930,7 +930,7 @@ static int nvmet_tcp_done_recv_pdu(struct nvmet_tcp_queue *queue)
- 		goto out;
- 	}
- 
--	nvmet_req_execute(&queue->cmd->req);
-+	queue->cmd->req.execute(&queue->cmd->req);
- out:
- 	nvmet_prepare_receive_pdu(queue);
- 	return ret;
-@@ -1050,7 +1050,7 @@ static int nvmet_tcp_try_recv_data(struct nvmet_tcp_queue *queue)
- 			nvmet_tcp_prep_recv_ddgst(cmd);
- 			return 0;
- 		}
--		nvmet_req_execute(&cmd->req);
-+		cmd->req.execute(&cmd->req);
- 	}
- 
- 	nvmet_prepare_receive_pdu(queue);
-@@ -1090,7 +1090,7 @@ static int nvmet_tcp_try_recv_ddgst(struct nvmet_tcp_queue *queue)
- 
- 	if (!(cmd->flags & NVMET_TCP_F_INIT_FAILED) &&
- 	    cmd->rbytes_done == cmd->req.transfer_len)
--		nvmet_req_execute(&cmd->req);
-+		cmd->req.execute(&cmd->req);
- 	ret = 0;
- out:
- 	nvmet_prepare_receive_pdu(queue);
--- 
-2.20.1
+On Wed, Oct 23, 2019 at 09:26:28AM -0700, Nathan Chancellor wrote:
+> On Wed, Oct 23, 2019 at 11:43:04AM +0100, Mark Brown wrote:
 
+> > The driver should also have supported s3c6400 as well.
+
+> Kconfig says otherwise, unless I am missing something.
+
+> config ARM_S3C64XX_CPUFREQ
+>         bool "Samsung S3C64XX"
+>         depends on CPU_S3C6410
+>         default y
+>         help
+>           This adds the CPUFreq driver for Samsung S3C6410 SoC.
+>=20
+>           If in doubt, say N.
+
+Note the XX in the config option.
+
+--/Gk0KcsbyUMelFU1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2wgagACgkQJNaLcl1U
+h9B+kgf/Tu4Mcdc2QLhbFdhdn07a8/luddZop3Dn6jL3SW5BZhP4E4UY9ekG3fTz
+CKU0uGyVB8qUYZKlNQIgwWmBghGl9HeqKuLUGEdsDcOxVxccnSJYTMk2ZNLz6IK9
+lH0wfeiXPIV7wguJCqAkkVZVfxdFZcKoQx00n6rTWjh7Py5qzuJtzwf/DTaDGsjC
+F5nqTo4vdQQSNm6WSAEX/I629qmL3Yd/ogB+jUVFYvcqxozLMcuae+CP5Nu8MH8T
+w5LrxCUugVJnkaUm6XUkeO29V9d2qmA3f9YU9BmyAm8caPdBABp5cjciu0X4sSCk
+03ZCDlb+0oZqbtMSlcjVKXin63aMOA==
+=JqnS
+-----END PGP SIGNATURE-----
+
+--/Gk0KcsbyUMelFU1--
