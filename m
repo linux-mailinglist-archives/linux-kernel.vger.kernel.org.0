@@ -2,58 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8C15E1D6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41E86E1D5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:52:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406238AbfJWNzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 09:55:20 -0400
-Received: from out28-146.mail.aliyun.com ([115.124.28.146]:58893 "EHLO
-        out28-146.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406181AbfJWNzU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:55:20 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1084395|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.434615-0.0129558-0.552429;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03312;MF=liu.xiang@zlingsmart.com;NM=1;PH=DS;RN=3;RT=3;SR=0;TI=SMTPD_---.FpNUs9Y_1571838908;
-Received: from localhost(mailfrom:liu.xiang@zlingsmart.com fp:SMTPD_---.FpNUs9Y_1571838908)
-          by smtp.aliyun-inc.com(10.194.97.246);
-          Wed, 23 Oct 2019 21:55:09 +0800
-From:   Liu Xiang <liuxiang_1999@126.com>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, liuxiang_1999@126.com
-Subject: [PATCH] mm: gup: fix comment of __get_user_pages()
-Date:   Wed, 23 Oct 2019 21:51:47 +0800
-Message-Id: <1571838707-4994-1-git-send-email-liuxiang_1999@126.com>
-X-Mailer: git-send-email 1.9.1
+        id S2406181AbfJWNwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:52:11 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53412 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2404484AbfJWNwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 09:52:11 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 741B29750C5E0B14BABF;
+        Wed, 23 Oct 2019 21:52:09 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 23 Oct 2019
+ 21:51:59 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <ssantosh@kernel.org>, <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] memory: emif: remove set but not used variables 'cs1_used' and 'custom_configs'
+Date:   Wed, 23 Oct 2019 21:51:49 +0800
+Message-ID: <20191023135149.34704-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because nr_pages is unsigned long, it can not be negative.
+drivers/memory/emif.c:1616:9: warning:
+ variable cs1_used set but not used [-Wunused-but-set-variable]
+drivers/memory/emif.c:1624:36: warning:
+ variable custom_configs set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Liu Xiang <liuxiang_1999@126.com>
+They are never used since introduction.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- mm/gup.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/memory/emif.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 8f236a3..0236954 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -735,10 +735,10 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
-  * @nonblocking: whether waiting for disk IO or mmap_sem contention
-  *
-  * Returns number of pages pinned. This may be fewer than the number
-- * requested. If nr_pages is 0 or negative, returns 0. If no pages
-- * were pinned, returns -errno. Each page returned must be released
-- * with a put_page() call when it is finished with. vmas will only
-- * remain valid while mmap_sem is held.
-+ * requested. If nr_pages is 0, returns 0. If no pages were pinned,
-+ * returns -errno. Each page returned must be released with a
-+ * put_page() call when it is finished with. vmas will only remain
-+ * valid while mmap_sem is held.
-  *
-  * Must be called with mmap_sem held.  It may be released.  See below.
-  *
+diff --git a/drivers/memory/emif.c b/drivers/memory/emif.c
+index 402c6bc..9d9127b 100644
+--- a/drivers/memory/emif.c
++++ b/drivers/memory/emif.c
+@@ -1613,7 +1613,7 @@ static void emif_shutdown(struct platform_device *pdev)
+ static int get_emif_reg_values(struct emif_data *emif, u32 freq,
+ 		struct emif_regs *regs)
+ {
+-	u32				cs1_used, ip_rev, phy_type;
++	u32				ip_rev, phy_type;
+ 	u32				cl, type;
+ 	const struct lpddr2_timings	*timings;
+ 	const struct lpddr2_min_tck	*min_tck;
+@@ -1621,7 +1621,6 @@ static int get_emif_reg_values(struct emif_data *emif, u32 freq,
+ 	const struct lpddr2_addressing	*addressing;
+ 	struct emif_data		*emif_for_calc;
+ 	struct device			*dev;
+-	const struct emif_custom_configs *custom_configs;
+ 
+ 	dev = emif->dev;
+ 	/*
+@@ -1639,12 +1638,10 @@ static int get_emif_reg_values(struct emif_data *emif, u32 freq,
+ 
+ 	device_info	= emif_for_calc->plat_data->device_info;
+ 	type		= device_info->type;
+-	cs1_used	= device_info->cs1_used;
+ 	ip_rev		= emif_for_calc->plat_data->ip_rev;
+ 	phy_type	= emif_for_calc->plat_data->phy_type;
+ 
+ 	min_tck		= emif_for_calc->plat_data->min_tck;
+-	custom_configs	= emif_for_calc->plat_data->custom_configs;
+ 
+ 	set_ddr_clk_period(freq);
+ 
 -- 
-1.9.1
+2.7.4
+
 
