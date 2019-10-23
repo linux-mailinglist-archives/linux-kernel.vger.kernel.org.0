@@ -2,172 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 587A1E2708
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 01:39:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D34F6E271D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 01:40:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392742AbfJWXjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 19:39:35 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:50180 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731524AbfJWXjf (ORCPT
+        id S2392785AbfJWXkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 19:40:14 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:51344 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731522AbfJWXj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 19:39:35 -0400
-Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
-  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="Tudor.Ambarus@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa4.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa4.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: jtrQPELkTf96hdPQFwQLLKv1VTH6hHSOmkYmgMdhioBFCtleChGC7Mr1K2U26WVkkW1mvgSohl
- m2x7AiZvv43+pCn/viZpvd+kbdtNZlI3T7zc1OFs4Ukno3o0mOogoon1nT7+K0PdpuUaqPjC6Q
- K4YGB9Fk2Br7eu4ew2jcehoIFqSWQ/+3fyrNpPslsrg1b2RPqpO8udiqLNyfF/mLtsyp9VnUOc
- EUGR9qpNhzpbKdSSCAp2jaJDUB8ktgxtHF6zCa4sO6j6MCIOevSa9HKk9p5qq16iVawWUcBCPY
- hpA=
-X-IronPort-AV: E=Sophos;i="5.68,222,1569308400"; 
-   d="scan'208";a="52734423"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Oct 2019 16:39:33 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 23 Oct 2019 16:39:32 -0700
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Wed, 23 Oct 2019 16:39:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ShH+UuYM/KjZFDbapbMUZKA2mSHNblMXwfLFlUMcbiJRoheyYlqvnjIm5fuN+0/Z+yNcLB0Y4CsJRokd5U0bCpcteRcDWfQ1y4TdLLk45wWHsH5sSdgUVeb/qWcEpQDGh3Rx1G1JKEChnsmmLyaXElUlyhfQfhX4q/f4SQpFREWWrauQ33hK+nFIpNKQ/BQenZeNMN3Vk8MNTKnmOZKMzbodshJ0qDovDg/L50Sn4h4pwISowZ2VNTd+Xso4I2uc4DP98yuzyzAomrWn0cQUGNVyuErRlJ9V6soLbFiuk+aYA4CE7aygR79/maCuVSMqIbA1bXWS9WPEFpQhlExSnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RdmjXG7420KWh8/jN2HQjnhf2Q2MrKeJCkhOu4lVcFs=;
- b=n7009cbBfR3UBMiuxSqgvgOkY8nIHRq3rqsed9eGmXJbVXGcI0hoxU1SjCgVbdE+w4JfejQte/bkIO9FxxNwIwSyMFD7qogepJi58kgQbFWIWawBYEOpPN5MLHq7wGM6kDqaEWzCyRWDMQNVFzOXx8xvrf9H8l23kOKxOOkkCttq5avcDO1Pr2OFB37y+nbdNAWICHnk8KNgPABjiKIljhWSQ4sbQ0+cZ6R2YJ3sp24InnlE4Yf4k9VdYmMrgzPqP59K0SZYPuX6++DIiuYWRZtdLM5+1fNFonGBWKDRqn2zOWqrlLZLWt/6woLfACDi14Aejft6FV8JU7XY9lSLJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RdmjXG7420KWh8/jN2HQjnhf2Q2MrKeJCkhOu4lVcFs=;
- b=dAnP4hD29ZS6e+D/es3FgFoWbFkS08H6El/QGvMp17npYACmdPs7//Ih/qZu0R/grdONNzBCMnonuHmL75brTtGxV4IroF3AV1FKwHTR+TPCWVJnXOHu/9vPWdvew+w8fVZ+10LxcWUzGQcWWeAxsPN8a58lVYZs8jxitOUHlLs=
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
- MN2PR11MB3885.namprd11.prod.outlook.com (10.255.180.155) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.16; Wed, 23 Oct 2019 23:39:31 +0000
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::c09c:36c8:3301:4457]) by MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::c09c:36c8:3301:4457%5]) with mapi id 15.20.2347.029; Wed, 23 Oct 2019
- 23:39:31 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <boris.brezillon@collabora.com>
-CC:     <linux-arm-kernel@lists.infradead.org>, <vigneshr@ti.com>,
-        <geert+renesas@glider.be>, <andrew@aj.id.au>, <richard@nod.at>,
-        <linux-kernel@vger.kernel.org>, <vz@mleia.com>,
-        <marek.vasut@gmail.com>, <jonas@norrbonn.se>,
-        <linux-mtd@lists.infradead.org>, <joel@jms.id.au>,
-        <miquel.raynal@bootlin.com>, <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <computersforpeace@gmail.com>, <dwmw2@infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>
-Subject: Re: [PATCH v2 08/22] mtd: spi-nor: Rework write_enable/disable()
-Thread-Topic: [PATCH v2 08/22] mtd: spi-nor: Rework write_enable/disable()
-Thread-Index: AQHVcqwmGxayarzEFkyHj/sWgnNJNqdTkUSAgBV/k4A=
-Date:   Wed, 23 Oct 2019 23:39:31 +0000
-Message-ID: <34fbb0d7-ee8f-a6d7-4a3e-d64f2f8555ff@microchip.com>
-References: <20190924074533.6618-1-tudor.ambarus@microchip.com>
- <20190924074533.6618-9-tudor.ambarus@microchip.com>
- <20191010092117.4c5018a8@dhcp-172-31-174-146.wireless.concordia.ca>
-In-Reply-To: <20191010092117.4c5018a8@dhcp-172-31-174-146.wireless.concordia.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0701CA0045.eurprd07.prod.outlook.com
- (2603:10a6:800:90::31) To MN2PR11MB4448.namprd11.prod.outlook.com
- (2603:10b6:208:193::29)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [86.120.239.29]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: db2dfadd-4b5a-4438-19ac-08d75812407d
-x-ms-traffictypediagnostic: MN2PR11MB3885:
-x-microsoft-antispam-prvs: <MN2PR11MB38855D5FA398C4BCF80AE2F2F06B0@MN2PR11MB3885.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 019919A9E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(366004)(346002)(136003)(396003)(39860400002)(376002)(189003)(199004)(486006)(476003)(316002)(71190400001)(71200400001)(5660300002)(6246003)(2616005)(11346002)(4326008)(186003)(76176011)(66556008)(53546011)(66066001)(6506007)(64756008)(66946007)(66476007)(52116002)(8936002)(6436002)(66446008)(386003)(3846002)(6116002)(2906002)(229853002)(14454004)(8676002)(6486002)(25786009)(99286004)(256004)(31686004)(7416002)(14444005)(478600001)(81156014)(81166006)(26005)(54906003)(305945005)(6916009)(6512007)(7736002)(86362001)(102836004)(31696002)(446003)(36756003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3885;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: RoF+qe9VXtq5vCez5ZjO0w2sNTfz/0qSw8msjJjS6KE+om8VBLPx0UzhyJVhJObHFHvbrzJQQeEFX+3mpu+pVR4pWn168uAY+rkCDC6qtcfuVO+F/Triufov8g2Y176D0H9AVniF092XlkJmICQeSfyu3KylZ6KgMtnlz8GApEBZPVPC6uLBMHnbvj0W/elDmahoxQkI8y0OFm5UVfdHgv7uYEi04fZSA/09x0BZ++zZGIWIet0cbZ9D+93vGBREAQgN7O1KKJOYfONcblYNlFQ0xQ3NwsUHsyueMOgciH0vCYoGbL/HzjoCTFk1PyVKKuCrME5qZQFM+3/eib6cBw4dwhX2Mgyyx/LQbwyW6ub2ZP976L/Xuuubfs02iVou76/mfs09og5Lp2ZRRaI1pyWTkdC0sh67znm3Yov37DM3C2/6JRa78dFg0Na/dArx
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E7DCA71C3CF6514FA144E9772E45EACA@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: db2dfadd-4b5a-4438-19ac-08d75812407d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2019 23:39:31.2479
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NcBQ6/P57dwA9YCpIDu0F6D7LeB/T0uBDkH+TDVGNGAHSrU8VO0t6b06anD+MY95WwXh6ebjK/UlifSsXQqd5vxJSLESR0V+E2feusfMsKM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3885
+        Wed, 23 Oct 2019 19:39:58 -0400
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B488820106BE;
+        Wed, 23 Oct 2019 16:39:55 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B488820106BE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1571873995;
+        bh=EbL/+S+i5zAm2sZAw2rfqgxrNxhU5pb2Dq78teEHmhs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XVA1357l0nZ26mmoPFX3oWFBAXzcOSzL64a8NqKvDGPpF9ArX1AWjqgmbvmyglMK1
+         akDj+Bzo1G92Ol1jvoVWTNBrroJsfC91cx4YdQ+cXEbtBcW2lTiUkEwskgRnTso9AN
+         zgxWNsctsTREUD18jMsHdZAXxD7jOVqE8Wuja6ow=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, dhowells@redhat.com, casey@schaufler-ca.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+Cc:     nramas@linux.microsoft.com
+Subject: [PATCH v2 0/4] KEYS: measure keys when they are created or updated
+Date:   Wed, 23 Oct 2019 16:39:46 -0700
+Message-Id: <20191023233950.22072-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDEwLzEwLzIwMTkgMTA6MjEgQU0sIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gRXh0
-ZXJuYWwgRS1NYWlsDQo+IA0KPiANCj4gT24gVHVlLCAyNCBTZXAgMjAxOSAwNzo0NjoxOCArMDAw
-MA0KPiA8VHVkb3IuQW1iYXJ1c0BtaWNyb2NoaXAuY29tPiB3cm90ZToNCj4gDQo+PiBGcm9tOiBU
-dWRvciBBbWJhcnVzIDx0dWRvci5hbWJhcnVzQG1pY3JvY2hpcC5jb20+DQo+Pg0KPj4gc3RhdGlj
-IGludCB3cml0ZV9lbmFibGUoc3RydWN0IHNwaV9ub3IgKm5vcikNCj4+IHN0YXRpYyBpbnQgd3Jp
-dGVfZGlzYWJsZShzdHJ1Y3Qgc3BpX25vciAqbm9yKQ0KPj4gYmVjb21lDQo+PiBzdGF0aWMgaW50
-IHNwaV9ub3Jfd3JpdGVfZW5hYmxlKHN0cnVjdCBzcGlfbm9yICpub3IpDQo+PiBzdGF0aWMgaW50
-IHNwaV9ub3Jfd3JpdGVfZGlzYWJsZShzdHJ1Y3Qgc3BpX25vciAqbm9yKQ0KPj4NCj4+IENoZWNr
-IGZvciBlcnJvcnMgYWZ0ZXIgZWFjaCBjYWxsIHRvIHRoZW0uIE1vdmUgdGhlbSB1cCBpbiB0aGUN
-Cj4+IGZpbGUgYXMgdGhlIGZpcnN0IFNQSSBOT1IgUmVnaXN0ZXIgT3BlcmF0aW9ucywgdG8gYXZv
-aWQgZnVydGhlcg0KPj4gZm9yd2FyZCBkZWNsYXJhdGlvbnMuDQo+IA0KPiBTYW1lIGhlcmUsIHNw
-bGl0IHRoYXQgaW4gMyBwYXRjaGVzIHBsZWFzZS4NCg0KOikNCg0KPiANCj4+DQo+PiBTaWduZWQt
-b2ZmLWJ5OiBUdWRvciBBbWJhcnVzIDx0dWRvci5hbWJhcnVzQG1pY3JvY2hpcC5jb20+DQo+PiAt
-LS0NCj4+ICBkcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyB8IDE3NSArKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0NCj4+ICAxIGZpbGUgY2hhbmdlZCwgMTIwIGlu
-c2VydGlvbnMoKyksIDU1IGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L210ZC9zcGktbm9yL3NwaS1ub3IuYyBiL2RyaXZlcnMvbXRkL3NwaS1ub3Ivc3BpLW5vci5jDQo+
-PiBpbmRleCAwZmIxMjRiZDJlNzcuLjBhZWUwNjhhNTgzNSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZl
-cnMvbXRkL3NwaS1ub3Ivc3BpLW5vci5jDQo+PiArKysgYi9kcml2ZXJzL210ZC9zcGktbm9yL3Nw
-aS1ub3IuYw0KPj4gQEAgLTM4OSw2ICszODksNjQgQEAgc3RhdGljIHNzaXplX3Qgc3BpX25vcl93
-cml0ZV9kYXRhKHN0cnVjdCBzcGlfbm9yICpub3IsIGxvZmZfdCB0bywgc2l6ZV90IGxlbiwNCj4+
-ICB9DQo+PiAgDQo+PiAgLyoqDQo+PiArICogc3BpX25vcl93cml0ZV9lbmFibGUoKSAtIFNldCB3
-cml0ZSBlbmFibGUgbGF0Y2ggd2l0aCBXcml0ZSBFbmFibGUgY29tbWFuZC4NCj4+ICsgKiBAbm9y
-OiAgICAgICAgcG9pbnRlciB0byAnc3RydWN0IHNwaV9ub3InDQo+PiArICoNCj4+ICsgKiBSZXR1
-cm46IDAgb24gc3VjY2VzcywgLWVycm5vIG90aGVyd2lzZS4NCj4+ICsgKi8NCj4+ICtzdGF0aWMg
-aW50IHNwaV9ub3Jfd3JpdGVfZW5hYmxlKHN0cnVjdCBzcGlfbm9yICpub3IpDQo+PiArew0KPj4g
-KwlpbnQgcmV0Ow0KPj4gKw0KPj4gKwlpZiAobm9yLT5zcGltZW0pIHsNCj4+ICsJCXN0cnVjdCBz
-cGlfbWVtX29wIG9wID0NCj4+ICsJCQlTUElfTUVNX09QKFNQSV9NRU1fT1BfQ01EKFNQSU5PUl9P
-UF9XUkVOLCAxKSwNCj4+ICsJCQkJICAgU1BJX01FTV9PUF9OT19BRERSLA0KPj4gKwkJCQkgICBT
-UElfTUVNX09QX05PX0RVTU1ZLA0KPj4gKwkJCQkgICBTUElfTUVNX09QX05PX0RBVEEpOw0KPj4g
-Kw0KPj4gKwkJcmV0ID0gc3BpX21lbV9leGVjX29wKG5vci0+c3BpbWVtLCAmb3ApOw0KPj4gKwl9
-IGVsc2Ugew0KPj4gKwkJcmV0ID0gbm9yLT5jb250cm9sbGVyX29wcy0+d3JpdGVfcmVnKG5vciwg
-U1BJTk9SX09QX1dSRU4sDQo+PiArCQkJCQkJICAgICBOVUxMLCAwKTsNCj4+ICsJfQ0KPj4gKw0K
-Pj4gKwlpZiAocmV0KQ0KPj4gKwkJZGV2X2Vycihub3ItPmRldiwgImVycm9yICVkIG9uIFdyaXRl
-IEVuYWJsZVxuIiwgcmV0KTsNCj4gDQo+IERvIHdlIHJlYWxseSBuZWVkIHRoZXNlIGVycm9yIG1l
-c3NhZ2VzPyBJIG1lYW4sIGlmIHRoZXJlJ3MgYW4gZXJyb3IgaXQNCj4gc2hvdWxkIGJlIHByb3Bh
-Z2F0ZWQgdG8gdGhlIHVwcGVyIGxheWVyLCBzbyBtYXliZSB3ZSBzaG91bGQgdXNlDQo+IGRldl9k
-YmcoKSBoZXJlLg0KPiANCg0KSSBmaW5kIHRoZW0gdXNlZnVsLiBPbiBlcnJvciBjb25kaXRpb25z
-LCBJIHdvdWxkIGxpa2UgdG8gc2VlIHdoYXQgd2VyZSB0aGUNCmRpZmZpY3VsdGllcyB3aGVuIGlu
-dGVyYWN0aW5nIHdpdGggdGhlIGhhcmR3YXJlLg0KDQo=
+Problem Statement:
+
+Keys created or updated in the system are currently not being measured.
+Therefore an attestation service, for instance, would not be able to
+attest whether or not the trusted keys keyring(s), for instance, contain
+only known good (trusted) keys.
+
+ima measures system files, command line arguments passed to kexec, and
+boot aggregate. It can be used to measure keys as well. But there is
+no mechanism available in the kernel for ima to know when a key is
+created or updated.
+
+This change aims to address measuring keys created or updated
+in the system.
+
+To achieve the above the following changes have been made:
+
+ - Added a new ima hook namely, ima_post_key_create_or_update, which
+   measures the key. The measurement can be controlled through ima policy.
+
+   In this change set a new ima policy hook BUILTIN_TRUSTED_KEYS has been
+   added to measure keys added to the builtin_trusted_keys keyring.
+   In future, this can be extended to measure keys added to other
+   keyrings.
+
+Change Log:
+
+  v2:
+
+  => Per suggestion from Mimi reordered the patch set to first
+     enable measuring keys added or updated in the system.
+     And, then scope the measurement to keys added to 
+     builtin_trusted_keys keyring through ima policy.
+  => Removed security_key_create_or_update function and instead
+     call ima hook, to measure the key, directly from 
+     key_create_or_update function.
+
+  v1:
+
+  => LSM function for key_create_or_update. It calls ima.
+  => Added ima hook for measuring keys
+  => ima measures keys based on ima policy.
+
+  v0:
+
+  => Added LSM hook for key_create_or_update.
+  => Measure keys added to builtin or secondary trusted keys keyring.
+
+Background:
+
+Currently ima measures file hashes and .ima signatures. ima signatures
+are validated against keys in the ".ima" keyring. If the kernel is built
+with CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY enabled,
+then all keys in ".ima" keyring must be signed by a key in
+".builtin_trusted_keys" or ".secondary_trusted_keys" keyrings.
+
+Although ima supports the above configuration, not having an insight
+into what keys are present in these trusted keys keyrings would prevent
+an attestation service from validating a client machine.
+ 
+On systems with CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
+enabled, measuring keys in the  ".builtin_trusted_keys" keyring provides
+a mechanism to attest that the client's system binaries are indeed signed
+by signers that chain to known trusted keys.
+
+Without this change, to attest the clients one needs to maintain
+an "allowed list" of file hashes of all versions of all client binaries
+that are deployed on the clients in the enterprise. That is a huge
+operational challenge in a large scale environment of clients with
+heterogenous builds. This also limits scalability and agility of
+rolling out frequent client binary updates.
+
+Testing performed:
+
+  * Booted the kernel with this change.
+  * Executed keyctl tests from the Linux Test Project (LTP)
+  * Added a new key to a keyring and verified "key create" code path.
+    => In this case added a key to builtin_trusted_keys keyring.
+    => Verified ima measured this key only when a policy is set.
+  * Added the same key again and verified "key update" code path.
+    => Add the same key to builtin_trusted_keys keyring.
+    => Verified ima measured the key only when a policy is set.
+
+Questions and concerns raised by reviewers on this patch set:
+
+Question 1:
+Is "Signed with a trusted key" equal to "Trusted file"?
+Doesn't the service need the hashes of the system files to determine
+whether a file is trusted or not?
+"Signed with a trusted key" does not equal "Trusted"
+
+Answer:
+Agree "Signed with a trusted key" may not equal "Trusted".
+To address this, the attesting service can maintain a small
+manageable set of bad hashes (a "Blocked list") and a list of
+trusted keys expected in client's .builtin_trusted_keys" keyring.
+Using this data, the service can detect the presence of
+"Disallowed (untrusted) version of client binaries".
+
+Question 2:
+Providing more data to the service (such as ".builtin_trusted_keys"),
+empowers the service  to deny access to clients (block clients).
+IMA walks a fine line in enforcing and measuring file integrity.
+This patchset breaches that fine line and in doing so brings back
+the fears of trusted computing.
+
+Answer:
+Any new measurement we add in IMA will provide more data to service
+and can enable it to deny access to clients. It is not clear why this patch
+set would breach the fine line between measuring and enforcing.
+Since this patch set is disabled by default and enabled through
+CONFIG_IMA_MEASURE_TRUSTED_KEYS, only those enterprises that
+require this new measurement can opt-in for it. Since it is disabled
+by default, it does not restrict the autonomy of independent users
+who are unaffected by attestation.
+
+Question 3:
+IMA log already contains a pointer to the IMA keys used for signature
+verification. Why does the service need to care what keys were used
+to sign (install) the IMA keys? What is gained by measuring the keys
+in the ".builtin_trusted_keys"
+
+
+Answer:
+To attest the clients using the current IMA log, service needs to maintain
+hashes of all the deployed versions of all the system binaries for their
+enterprise. This will introduce a very high operational overhead in
+a large scale environment of clients with heterogenous builds.
+This limits scalability and agility of rolling out frequent client
+binary updates.
+
+
+On the other hand, with the current patch set, we will have IMA
+validate the file signature on the clients and the service validate
+that the IMA keys were installed using trusted keys.
+
+
+This provides a chain of trust:
+    => IMA Key validates file signature on the client
+    => Built-In trusted key attests IMA key on the client
+    => Attestation service attests the Built-In trusted keys
+         reported by the client in the IMA log
+
+
+This approach, therefore, would require the service to maintain
+a manageble set of trusted keys that it receives from a trusted source.
+And, verify if the clients only have keys from that set of trusted keys.
+
+Question 4:
+Where will the attestation service receive the keys to validate against?
+
+Answer:
+Attestation service will receive the keys from a trusted source such as
+the enterprise build services that provides the client builds.
+The service will use this set of keys to verify that the keys reported by
+the clients in the IMA log contains only keys from this trusted list.
+
+
+Question 5:
+What is changing in the IMA log through this patch set?
+
+
+Answer:
+This patch set does not remove any data that is currently included
+in the IMA log. It only adds more data to the IMA log - the data on
+".builtin_trusted_keys"
+
+Lakshmi Ramasubramanian (4):
+  KEYS: Defined an ima hook for measuring keys on key create or update
+  KEYS: Queue key for measurement if ima is not initialized. Measure
+    queued keys when ima is initialized
+  KEYS: Added BUILTIN_TRUSTED_KEYS enum to measure keys added to
+    builtin_trusted_keys keyring
+  KEYS: Enabled ima policy to measure keys added to builtin_trusted_keys
+    keyring
+
+ Documentation/ABI/testing/ima_policy |  1 +
+ certs/system_keyring.c               |  5 ++
+ include/keys/system_keyring.h        |  2 +
+ include/linux/ima.h                  |  8 +++
+ security/integrity/ima/ima.h         | 18 ++++++
+ security/integrity/ima/ima_api.c     |  1 +
+ security/integrity/ima/ima_init.c    | 10 ++-
+ security/integrity/ima/ima_main.c    | 49 +++++++++++++++
+ security/integrity/ima/ima_policy.c  |  5 +-
+ security/integrity/ima/ima_queue.c   | 94 ++++++++++++++++++++++++++++
+ security/keys/key.c                  |  9 +++
+ 11 files changed, 200 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
