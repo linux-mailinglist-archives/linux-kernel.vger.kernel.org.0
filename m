@@ -2,118 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D925DE132C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 09:33:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E7EE131F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 09:30:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389910AbfJWHc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 03:32:59 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:51092 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389658AbfJWHc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 03:32:59 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 388871A06EF;
-        Wed, 23 Oct 2019 09:32:55 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4F7061A06E3;
-        Wed, 23 Oct 2019 09:32:50 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0C054402F0;
-        Wed, 23 Oct 2019 15:32:43 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
-        tiwai@suse.com
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: fsl_esai: Add spin lock to protect reset and stop
-Date:   Wed, 23 Oct 2019 15:29:49 +0800
-Message-Id: <1571815789-15656-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2389829AbfJWHaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 03:30:16 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:46266 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389459AbfJWHaQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 03:30:16 -0400
+Received: by mail-il1-f194.google.com with SMTP id m16so11562456iln.13
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 00:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a/eREjOiXcNhufL9DgQopGz4FLxgM/xyBmpBfgdAUZM=;
+        b=k4viSWddhZ6TKb4tB8HqvScD0/HK7k0Cy3zYqS4VIz2vBUs1Nf4hOvsxAGTsTjoL/e
+         OyuYHC5mO5M1/tJsY1lvvb3LX+xdShCDn6JWOXsDwdEz8kNNQ9o+MJYxv0KNpXnEZbIT
+         COCFxWpVlEHJk0LifLkoMiOwXa3v2D5CwodZEFSIaSuvcX/gdkx8JyNc72a3nmgBajte
+         g13Bz2lyBJuVrtoD6M+MUjMdGuP+LL+6J/+YVaU81BELS6N5P0qHU8gKES0zfp/UZ12z
+         vOr9FWsR2l6mVW6c+cV99KLivXONHN+Ozs3yuftfsfzrCuwGpBYYKaDba9z/G1NU/U0b
+         rV2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a/eREjOiXcNhufL9DgQopGz4FLxgM/xyBmpBfgdAUZM=;
+        b=f3XqCaNk9c6bo/4/6zuWCBrktLYVjzLVKW3Zvkmph9Afg9RAOyXdQa7o+AhiwTDPlU
+         JPn28yQtuxCI9Ug7tCow2No4OrsLlP3w9IjwfpyGF6MlN9ILNW94Xj4uX7+cQNXZkE4n
+         1juimHJul68NVzVNO5fmYPybQ+KwUsme8cZWrkzraIHz6INkKFqUWjxVvTGrHwzcvKcm
+         4eY2sD9NN9IrzvpW4D/S0hFXx8ge6nhPAPOr3ifTnGQT2KVNKdICSIIbRKHa5id96q6E
+         cWndeMgXX+Ewkt3SXp6uhe4wBhJEQhF2Zvur95GBlfgon1Jm2shD6X7XExfjuc8vY1pc
+         bstg==
+X-Gm-Message-State: APjAAAXnvlbs2ZmDccJepOtxpWfSMXGwr9GcPiCUP+aacmVIAacTrBvi
+        e41ZQzkqvCuaEKAxBW3xkmpvZa2imbMbx2cez7KPLg==
+X-Google-Smtp-Source: APXvYqyRlGK1oEwk1RoOfA9S4tf+gVhDDuQFE+LN9hnnSLY3yCv1j8mvau3zqyjGrggq8l2c26tLc2A8LwQgE+ji4Yk=
+X-Received: by 2002:a92:8f94:: with SMTP id r20mr37550938ilk.41.1571815814849;
+ Wed, 23 Oct 2019 00:30:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191018002746.149200-1-eranian@google.com> <20191021102059.GD1800@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191021102059.GD1800@hirez.programming.kicks-ass.net>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Wed, 23 Oct 2019 00:30:03 -0700
+Message-ID: <CABPqkBQ86=EpsKXMyYgqGdUhSHOi2uCQQfEtupMPavDRiK_30Q@mail.gmail.com>
+Subject: Re: [PATCH] perf/core: fix multiplexing event scheduling issue
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, mingo@elte.hu,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        "Liang, Kan" <kan.liang@intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Ian Rogers <irogers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-xrun may happen at the end of stream, the
-trigger->fsl_esai_trigger_stop maybe called in the middle of
-fsl_esai_hw_reset, this may cause esai in wrong state
-after stop, and there may be endless xrun interrupt.
-So Add spin lock to lock these two function.
+On Mon, Oct 21, 2019 at 3:21 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Thu, Oct 17, 2019 at 05:27:46PM -0700, Stephane Eranian wrote:
+> > This patch complements the following commit:
+> > 7fa343b7fdc4 ("perf/core: Fix corner case in perf_rotate_context()")
+> >
+> > The fix from Song addresses the consequences of the problem but
+> > not the cause. This patch fixes the causes and can sit on top of
+> > Song's patch.
+>
+> I'm tempted to say the other way around.
+>
+> Consider the case where you claim fixed2 with a pinned event and then
+> have another fixed2 in the flexible list. At that point you're _never_
+> going to run any other flexible events (without Song's patch).
+>
+In that case, there is no deactivation or removal of events, so yes, my patch
+will not help that case. I said his patch is still useful. You gave one example,
+even though in this case the rotate will not yield a reschedule of that flexible
+event because fixed2 is used by a pinned event. So checking for it, will not
+really help.
 
-Fixes: 7ccafa2b3879 ("ASoC: fsl_esai: recover the channel swap after xrun")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- sound/soc/fsl/fsl_esai.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> This patch isn't going to help with that. Similarly, Songs patch helps
+> with your situation where it will allow rotation to resume after you
+> disable/remove all active events (while you still have pending events).
+>
+Yes, it will unblock the case where active events are deactivated or
+removed. But it will delay the unblocking until the next mux timer
+expires. And I am saying this is too far away in many cases. For instance,
+we do not run with the 1ms timer for uncore, this is way too much overhead.
+Imagine this timer is set to 10ms or event 100ms, just with Song's patch, the
+inactive events would have to wait for up to 100ms to be scheduled again.
+This is not acceptable for us.
 
-diff --git a/sound/soc/fsl/fsl_esai.c b/sound/soc/fsl/fsl_esai.c
-index 37b14c48b537..6a797648b66d 100644
---- a/sound/soc/fsl/fsl_esai.c
-+++ b/sound/soc/fsl/fsl_esai.c
-@@ -33,6 +33,7 @@
-  * @fsysclk: system clock source to derive HCK, SCK and FS
-  * @spbaclk: SPBA clock (optional, depending on SoC design)
-  * @task: tasklet to handle the reset operation
-+ * @lock: spin lock to handle reset and stop behavior
-  * @fifo_depth: depth of tx/rx FIFO
-  * @slot_width: width of each DAI slot
-  * @slots: number of slots
-@@ -56,6 +57,7 @@ struct fsl_esai {
- 	struct clk *fsysclk;
- 	struct clk *spbaclk;
- 	struct tasklet_struct task;
-+	spinlock_t lock; /* Protect reset and stop */
- 	u32 fifo_depth;
- 	u32 slot_width;
- 	u32 slots;
-@@ -676,8 +678,10 @@ static void fsl_esai_hw_reset(unsigned long arg)
- {
- 	struct fsl_esai *esai_priv = (struct fsl_esai *)arg;
- 	bool tx = true, rx = false, enabled[2];
-+	unsigned long lock_flags;
- 	u32 tfcr, rfcr;
- 
-+	spin_lock_irqsave(&esai_priv->lock, lock_flags);
- 	/* Save the registers */
- 	regmap_read(esai_priv->regmap, REG_ESAI_TFCR, &tfcr);
- 	regmap_read(esai_priv->regmap, REG_ESAI_RFCR, &rfcr);
-@@ -715,6 +719,8 @@ static void fsl_esai_hw_reset(unsigned long arg)
- 		fsl_esai_trigger_start(esai_priv, tx);
- 	if (enabled[rx])
- 		fsl_esai_trigger_start(esai_priv, rx);
-+
-+	spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
- }
- 
- static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
-@@ -722,6 +728,7 @@ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
- {
- 	struct fsl_esai *esai_priv = snd_soc_dai_get_drvdata(dai);
- 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
-+	unsigned long lock_flags;
- 
- 	esai_priv->channels[tx] = substream->runtime->channels;
- 
-@@ -734,7 +741,9 @@ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
- 	case SNDRV_PCM_TRIGGER_STOP:
- 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-+		spin_lock_irqsave(&esai_priv->lock, lock_flags);
- 		fsl_esai_trigger_stop(esai_priv, tx);
-+		spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -1002,6 +1011,7 @@ static int fsl_esai_probe(struct platform_device *pdev)
- 
- 	dev_set_drvdata(&pdev->dev, esai_priv);
- 
-+	spin_lock_init(&esai_priv->lock);
- 	ret = fsl_esai_hw_init(esai_priv);
- 	if (ret)
- 		return ret;
--- 
-2.21.0
+> > This patch fixes a scheduling problem in the core functions of
+> > perf_events. Under certain conditions, some events would not be
+> > scheduled even though many counters would be available. This
+> > is related to multiplexing and is architecture agnostic and
+> > PMU agnostic (i.e., core or uncore).
+> >
+> > This problem can easily be reproduced when you have two perf
+> > stat sessions. The first session does not cause multiplexing,
+> > let's say it is measuring 1 event, E1. While it is measuring,
+> > a second session starts and causes multiplexing. Let's say it
+> > adds 6 events, B1-B6. Now, 7 events compete and are multiplexed.
+> > When the second session terminates, all 6 (B1-B6) events are
+> > removed. Normally, you'd expect the E1 event to continue to run
+> > with no multiplexing. However, the problem is that depending on
+> > the state Of E1 when B1-B6 are removed, it may never be scheduled
+> > again. If E1 was inactive at the time of removal, despite the
+> > multiplexing hrtimer still firing, it will not find any active
+> > events and will not try to reschedule. This is what Song's patch
+> > fixes. It forces the multiplexing code to consider non-active events.
+>
+> This; so Song's patch fixes the fundamental problem of the rotation not
+> working right under certain conditions.
+>
+> > However, the cause is not addressed. The kernel should not rely on
+> > the multiplexing hrtimer to unblock inactive events. That timer
+> > can have abitrary duration in the milliseconds. Until the timer
+> > fires, counters are available, but no measurable events are using
+> > them. We do not want to introduce blind spots of arbitrary durations.
+>
+> This I disagree with -- you don't get a guarantee other than
+> timer_period/n when you multiplex, and idling the counters until the
+> next tick doesn't violate that at all.
 
+My take is that if you have free counters and "idling" events, the kernel
+should take every effort to schedule them as soon as they become available.
+In the situation I described in the patch, once I remove the active
+events, there
+is no more reasons for multiplexing, all the counters are free (ignore
+watchdog).
+Now you may be arguing, that it may take more time to ctx_resched() then to
+wait for the timer to expire. But I am not sure I buy that. Similarly,
+I am not sure
+there is code to cancel an active mux hrtimer when we clear rotate_necessary.
+Maybe we just let it lapse and clear itself via a ctx_sched_out() in
+the rotation code.
+
+>
+> > This patch addresses the cause of the problem, by checking that,
+> > when an event is disabled or removed and the context was multiplexing
+> > events, inactive events gets immediately a chance to be scheduled by
+> > calling ctx_resched(). The rescheduling is done on  event of equal
+> > or lower priority types.  With that in place, as soon as a counter
+> > is freed, schedulable inactive events may run, thereby eliminating
+> > a blind spot.
+>
+> Disagreed, Song's patch removed the fundamental blind spot of rotation
+> completely failing.
+Sure it removed the infinite blocking of schedulable events. My patch addresses
+the issue of having free counters following a deactivation/removal and
+not scheduling
+the idling events on them, thereby creating a blind spot where no
+event is monitoring.
+
+>
+> This just slightly optimizes counter usage -- at a cost of having to
+> reprogram the counters more often.
+>
+Only on deactivation/removal AND multiplexing so it is not every time but
+only where there is an opportunity to keep the counters busy.
+
+> Not saying we shouldn't do this, but this justification is just all
+> sorts of wrong.
+
+I think the patches are not mutually exclusive. They sort of complement each
+other. My problem was that if you have free counters and idling events, you may
+not need to do one more rotation and wait for it to resume active
+collection, especially
+when the timer may be set to a value larger than default. In my case,
+I debug my issue
+without Song's patch. I discovered it at the time I was ready to
+submit my patch to LKML.
+My patch by itself solved the problem I was seeing. Song patch is
+needed to solve the
+problem of the first flexible event not schedulable while other could
+be. My patch does
+not address that. It would address the case where that ref-cycles
+pinned event is removed
+and the flexible ref-cycles could take the counter immediately. So, I
+am okay with you saying
+this is an optimization and I think it is useful.
