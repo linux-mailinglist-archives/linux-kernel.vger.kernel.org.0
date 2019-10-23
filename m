@@ -2,79 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62FBBE270F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 01:40:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D57DE2725
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 01:45:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408067AbfJWXj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 19:39:58 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:51392 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392754AbfJWXj5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 19:39:57 -0400
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 8BC3F2010AC5;
-        Wed, 23 Oct 2019 16:39:56 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8BC3F2010AC5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1571873996;
-        bh=oW+D4pzJ9HOm7aty1xLpBXhe3vkoiV3VtOmUq5zybZE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KwrDmZZIX88BVDaFpk62/UTRFfg8vDbcNg/bsMUDBiNi77P2GSx4LNT8y4J9GKkym
-         Wtc46DQVk8VizdzAXeO6xaHmLPoewvNihz/8v19k4v5pUqILUk7NKyUv39pJZE02hz
-         ER9MYfNKYCwEu+SdZkqeHNokHzuArKR4libWkqHk=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, dhowells@redhat.com, casey@schaufler-ca.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Cc:     nramas@linux.microsoft.com
-Subject: [PATCH v2 4/4] KEYS: Enabled ima policy to measure keys added to builtin_trusted_keys keyring
-Date:   Wed, 23 Oct 2019 16:39:50 -0700
-Message-Id: <20191023233950.22072-5-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191023233950.22072-1-nramas@linux.microsoft.com>
-References: <20191023233950.22072-1-nramas@linux.microsoft.com>
+        id S2392116AbfJWXpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 19:45:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39996 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725852AbfJWXpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 19:45:42 -0400
+Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com [209.85.161.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FB212084C;
+        Wed, 23 Oct 2019 23:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571874342;
+        bh=Fa2BUPBPRcQjdyWWpFyyHoW4dQxZIcz9syU46fPjnKI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tA9Qqei3FhXSnB6neknr+m6VKuRlDXX5FuvMql6gJUtN7mx7PvTa45NEp2xjOYGL1
+         cGr6CzFFB6rrHDAK1kZH3KE6/YHDKCN9enufBCDoDZBm6x8DslCKNvCwlS7T4yCTwI
+         hl3IboeGHDLkCCGFIe0Q3BGQfdpZm3HhbQG6uQQ4=
+Received: by mail-yw1-f43.google.com with SMTP id d5so2448285ywk.9;
+        Wed, 23 Oct 2019 16:45:42 -0700 (PDT)
+X-Gm-Message-State: APjAAAUphaqRr894cJExS/kShWSzyLF6Lm1Lw/RPp9Wu6F79l/WT/oEj
+        IbKY0pn93zDyFXSeX4RWQctZFRGF35K7ebSakA==
+X-Google-Smtp-Source: APXvYqyFLY8JEsxRT4xuHCHY1O1xGIo/yncNBmpBlQbPJqs9qHVdgTyVJ0Tp+2CyWQP/88e55lcfuUKbBeS/tmTHYMA=
+X-Received: by 2002:a81:748a:: with SMTP id p132mr4577615ywc.174.1571874341350;
+ Wed, 23 Oct 2019 16:45:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191014061617.10296-1-daniel@0x0f.com> <20191023200228.GA29675@bogus>
+ <20191023224357.GA26445@goma>
+In-Reply-To: <20191023224357.GA26445@goma>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 23 Oct 2019 18:45:29 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKTiieO_7gM4YNGV-BAT67Mi+PX4Gqyyd7nowZsjhnFqQ@mail.gmail.com>
+Message-ID: <CAL_JsqKTiieO_7gM4YNGV-BAT67Mi+PX4Gqyyd7nowZsjhnFqQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: arm: Initial MStar vendor prefixes and
+ compatible strings
+To:     Daniel Palmer <daniel@0x0f.com>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Updated ima policy handler to check if the ima policy enables
-measurement of keys added to the builtin_trusted_keys keyring.
+On Wed, Oct 23, 2019 at 5:44 PM Daniel Palmer <daniel@0x0f.com> wrote:
+>
+> On Wed, Oct 23, 2019 at 03:02:28PM -0500, Rob Herring wrote:
+> > > +# SPDX-License-Identifier: (GPL-2.0+ OR X11)
+> >
+> > (GPL-2.0-only OR BSD-2-Clause) is preferred. Any reason to differ?
+>
+> I used the sunxi file as a template and thought they had some
+> reason to do that. I'll change it to just GPL-2.0.
 
-With this patch measurement of keys added to the builtin_trusted_keys
-keyring is enabled end-to-end.
+That wasn't a choice, but dual license it please.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima_policy.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> > > +      - description: thingy.jp BreadBee
+> > > +        items:
+> > > +          - const: thingyjp,breadbee
+> > > +          - const: mstar,infinity
+> > > +          - const: mstar,infinity3
+> >
+> > infinity vs. infinity3? What's the difference? It's generally sufficient
+> > to just list a board compatible and a SoC compatible.
+>
+> Apart from some very slight differences (max clock speed, different PWM block)
+> they are the same and the PCB for the BreadBee can take either the msc313(i1) or
+> msc313e(i3). My v2 patch will remove the mstar,infinity line from there and move
+> it to a second board called the breadbee-crust to handle the i1 configuration.
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 6df7f641ff66..944636076152 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -370,7 +370,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- {
- 	int i;
- 
--	if (func == KEXEC_CMDLINE) {
-+	if ((func == KEXEC_CMDLINE) || (func == BUILTIN_TRUSTED_KEYS)) {
- 		if ((rule->flags & IMA_FUNC) && (rule->func == func))
- 			return true;
- 		return false;
-@@ -959,6 +959,9 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = POLICY_CHECK;
- 			else if (strcmp(args[0].from, "KEXEC_CMDLINE") == 0)
- 				entry->func = KEXEC_CMDLINE;
-+			else if (strcmp(args[0].from,
-+					"BUILTIN_TRUSTED_KEYS") == 0)
-+				entry->func = BUILTIN_TRUSTED_KEYS;
- 			else
- 				result = -EINVAL;
- 			if (!result)
--- 
-2.17.1
+Sounds like you want:
 
+items:
+ - const: thingyjp,breadbee
+ - enum:
+     - mstar,infinity
+     - mstar,infinity3
+
+If one board can do both chips. Though if the same PCB is populated
+differently beyond the SoC, then maybe 2 board compatibles makes
+sense.
+
+Why not use the part numbers (msc313...)?
+
+Rob
