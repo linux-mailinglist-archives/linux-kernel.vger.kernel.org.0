@@ -2,78 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F85BE1DBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 16:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCDBDE1DC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 16:12:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403800AbfJWOKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 10:10:54 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:42527 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732167AbfJWOKy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 10:10:54 -0400
-Received: by mail-vs1-f68.google.com with SMTP id m22so13830169vsl.9
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 07:10:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fG37TgkjRgodwOFImG22RhwIkrCCrAzjQbxW8lk57aA=;
-        b=D2NK+E0jUEC6S8U5LXxwgNzVFeiIChH36mUSdgsJZx4/1Q0yUsGFQ91kDxfv6nmUdo
-         d73pvbw5WW0VT366SU5S69b9U1t/ZLipm/28Q5/rXMHI3/fuMNLkJwXwQFb8iJvGBbTp
-         olEDcFDWzo9IU8jfTj7YpKqO9uSrNl8b8wFkuHZh0nfE73ZGxqA+Smbbav8zQh4iUY+6
-         jWGV2W3ThEDm0sRQunB/wKmyPNdiZLPvXGPL1nEp0en1JoDwjSOihiN0fl5YYT+GM5wQ
-         5G1Njjcy+15KJjhQ80PzwazP1lK8UnlMulZozbwZM3Crn+yZ5OPbifcFN8T90x+mfgO1
-         0+NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fG37TgkjRgodwOFImG22RhwIkrCCrAzjQbxW8lk57aA=;
-        b=jt4KQdeKb2k3jyx56MVFBRO+O5pkFG8+zbVKpOdBu/yY15WdNhTSceBx0ooxSzAr/8
-         fW1M3M94cryB9VnXPQSombpRkAH/uHK/6EPv+BtYLGhXrYuifqacbMX7lfaPWy2WkwUU
-         3KNjalQ9U4wHxkNnguZoKDOtVR6PTn8OQNZE+5/kmrPZHfuyiI1n03tN3FTS244AAr9K
-         77kwUX/Z/dG1f/0Xogee2T6aGd48DHwamA6rCCkZ+bUFTU9KXli7d+l3yRXdrziScNO5
-         VJN7gpLpC0dClkijpS00/HytFZM9LBj4//NHwZUKZaUpOuiL08V8HPOWK+VOKb91jk4P
-         v8VQ==
-X-Gm-Message-State: APjAAAXqaeuV9Wa+0bt39g9CNQVp27yGoLIx8SJbLor6Ymb2Do1FzWTN
-        58HkIbTdHV7XSI7O6NbYWvCOx8x//D9rOdGEQPhq6Q==
-X-Google-Smtp-Source: APXvYqyBN27XhVntB3JqKmKsl042MmlixEPkG6vgrf/n1wSvy5PQikVfBPMGE09acfAUnJ/mSqYDFU/nehFejtIl/LE=
-X-Received: by 2002:a67:7944:: with SMTP id u65mr5866520vsc.10.1571839851606;
- Wed, 23 Oct 2019 07:10:51 -0700 (PDT)
+        id S2406310AbfJWOMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 10:12:32 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:53276 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S2405316AbfJWOMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 10:12:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A90CA492;
+        Wed, 23 Oct 2019 07:12:08 -0700 (PDT)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B8C4A3F71F;
+        Wed, 23 Oct 2019 07:12:05 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] sched/topology: Don't try to build empty sched
+ domains
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Cc:     lizefan@huawei.com, tj@kernel.org, hannes@cmpxchg.org,
+        mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
+        morten.rasmussen@arm.com, qperret@google.com,
+        stable@vger.kernel.org
+References: <20191015154250.12951-1-valentin.schneider@arm.com>
+ <20191015154250.12951-2-valentin.schneider@arm.com>
+ <9134acf7-69bb-403b-2e9c-0eb7fb7efabd@arm.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <595dc187-bbe7-bd24-a322-db0d777697c0@arm.com>
+Date:   Wed, 23 Oct 2019 15:12:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 23 Oct 2019 16:10:40 +0200
-Message-ID: <CACRpkdYdfaLBgw=dGAK+xyhX3ru9SYa+QPNyAWJD4Y=BbfxUKQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] gpio: pca953x: Convert to bitmap (extended) API
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Yury Norov <yury.norov@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <9134acf7-69bb-403b-2e9c-0eb7fb7efabd@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 7:29 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On 23/10/2019 12:46, Dietmar Eggemann wrote:
+> Can you not just prevent that a cpuset pointer (cp) is added to the
+> cpuset array (csa[]) in case cpumask_empty(cp->effective_cpus)?
+> 
+> @@ -798,9 +800,14 @@ static int generate_sched_domains(cpumask_var_t
+> **domains, cpumask_subset(cp->cpus_allowed, top_cpuset.effective_cpus))
+>                         continue;
+> 
+> -   if (is_sched_load_balance(cp))
+> +   if (is_sched_load_balance(cp) && !cpumask_empty(cp->effective_cpus))
+>             csa[csn++] = cp;
+> 
 
-> While converting gpio-pca953x driver to bitmap API, I noticed that we have
-> no function to replace bits.
->
-> So, that's how patch 7 appears.
+I think you're right. Let me give it a shot and I'll spin a v4 with this +
+better changelog for the key.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Nice, I see that Andrew picked up the patches so no action required
-from my side I guess? Else poke me.
-
-Yours,
-Linus Walleij
+>>  		dp = doms[nslot];
+>>  
+>>  		if (nslot == ndoms) {
+> 
+> [...]
+> 
