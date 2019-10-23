@@ -2,100 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54401E1AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B484E1ADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:39:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391596AbfJWMmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 08:42:20 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:20758 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389887AbfJWMmU (ORCPT
+        id S2390427AbfJWMi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 08:38:56 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:45328 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732680AbfJWMiz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:42:20 -0400
-X-UUID: 35fdebd5099745e5b87bf119d7f48853-20191023
-X-UUID: 35fdebd5099745e5b87bf119d7f48853-20191023
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <luhua.xu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1724853019; Wed, 23 Oct 2019 20:42:16 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 23 Oct 2019 20:42:11 +0800
-Received: from localhost.localdomain (10.15.20.246) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 23 Oct 2019 20:42:11 +0800
-From:   Luhua Xu <luhua.xu@mediatek.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>,
-        <luhua.xu@mediatek.com>
-Subject: [PATCH 1/1] spi: mediatek: add power control when set_cs
-Date:   Wed, 23 Oct 2019 08:38:42 -0400
-Message-ID: <1571834322-1121-2-git-send-email-luhua.xu@mediatek.com>
-X-Mailer: git-send-email 2.6.4
-In-Reply-To: <1571834322-1121-1-git-send-email-luhua.xu@mediatek.com>
-References: <1571834322-1121-1-git-send-email-luhua.xu@mediatek.com>
+        Wed, 23 Oct 2019 08:38:55 -0400
+Received: by mail-il1-f195.google.com with SMTP id u1so18717581ilq.12;
+        Wed, 23 Oct 2019 05:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HjfcC+LWRIyOsNxEHwYIpjkdYtQXmiWTIubUTXxO2eo=;
+        b=RyFVYm5QcD/pDncnlALI3oYymUXhSlp+xSfaaBOUsTaRawqVrzjBGbEt/uSImBrYNQ
+         v3NPD1GAmEm5Z58MfMXl/7vp6RAbNCRKwkcZlNJBrRnwHHhHHSKl++O1Dj/P6WHWXfgI
+         4ChEbP2qVOr/+h+Ti971lfr8GPaUEH/UoWxJsH7nJra3NOJ9RlLi7ONqNmN/8OXytcAY
+         xtaQdAk0fucOMD8gKtq+iVFoIzfVGGkb2yt1K36PwI7xR4dw499OOLKW+2TOpvWwBW/r
+         U14/r2mJ1boN8AwJObH4CF+yuiGpf2ALMPs1jS4RJBBe096rtBlnS5LVeuXPEBGGbNFj
+         vnow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HjfcC+LWRIyOsNxEHwYIpjkdYtQXmiWTIubUTXxO2eo=;
+        b=nekMdu0VZ1CuzMpTmMDfZjtMWd1hQ1ybaFui1doGPxNySAypAD8PIykAxEb7Qm1biJ
+         YvH/35HxBInjjR2gCy72Q7KECdFarBW2fw8TqDXaN5/iWpZ42BThmR9nGpi1SRy0CyTW
+         SN+F9v9P78jJidU6le4Mrvhl0t49U5PV9K3aSFSXYoEpP/6Yb3TRC4QPVKXdaxRMKMGe
+         6V2hwItkGiyNj44VXzzhQe1576zXGq57wlWdfoFRK7EVm6yrN9MYRJOVvXsGGNeV1mwI
+         sTIwfGWfVYXkTiDaHQJK2fRsX8MAwSQ85WzZrKuc0CadTlnurTPOFr3Kd4VW++Pu7RiK
+         q2cg==
+X-Gm-Message-State: APjAAAXJsvFOlmlonFYtqbwojp6K1EvkwAj9+ASdj29HlJgqyPoxXDiA
+        9BdQZZUmRTo9tQ3qST99irTTPdjheM46VxrsSGI=
+X-Google-Smtp-Source: APXvYqxtHmlkACdtW1f6pccY35u7IhqbrLYqUejRnnHxLMYHWGZo78EH3dBev8jkJ6/XmjTx1ZFvlCEPuVe1iPOQ6Vo=
+X-Received: by 2002:a92:5c4f:: with SMTP id q76mr9669699ilb.158.1571834334838;
+ Wed, 23 Oct 2019 05:38:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20191002114626.12407-1-aford173@gmail.com> <1550E9D9-43ED-4345-A9AF-6D9F097FC64E@holtmann.org>
+ <CAHCN7xKA9-K4uYU9oFW+A7ywc8TGixNa-yHJgL7uSTbyXnisTQ@mail.gmail.com>
+In-Reply-To: <CAHCN7xKA9-K4uYU9oFW+A7ywc8TGixNa-yHJgL7uSTbyXnisTQ@mail.gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Wed, 23 Oct 2019 07:38:43 -0500
+Message-ID: <CAHCN7xKAkYacV6qWuONVqRyJuODt2mNquTWAgEFb0NcjjqpnsA@mail.gmail.com>
+Subject: Re: [PATCH] Revert "Bluetooth: hci_ll: set operational frequency earlier"
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adam Ford <adam.ford@logicpd.com>,
+        Sebastian Reichel <sre@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "luhua.xu" <luhua.xu@mediatek.com>
+On Thu, Oct 17, 2019 at 12:57 PM Adam Ford <aford173@gmail.com> wrote:
+>
+> On Wed, Oct 16, 2019 at 1:36 PM Marcel Holtmann <marcel@holtmann.org> wrote:
+> >
+> > Hi Adam,
+> >
+> > > As nice as it would be to update firmware faster, that patch broke
+> > > at least two different boards, an OMAP4+WL1285 based Motorola Droid
+> > > 4, as reported by Sebasian Reichel and the Logic PD i.MX6Q +
+> > > WL1837MOD.
+> > >
+> > > This reverts commit a2e02f38eff84f199c8e32359eb213f81f270047.
+> > >
+> > > Signed-off-by: Adam Ford <aford173@gmail.com>
+> >
+> > patch has been applied to bluetooth-next tree.
+>
+> Any change this can get pushed upstream to stable?  (including 5.4?)
+>
 
-Use runtime PM to power spi when set_cs
-As set_cs may be called from interrupt context,
-set runtime PM IRQ safe for spi.
+Marcel,  I have confirmed this revert also fixes a regression on my
+omap36xx based device using a wl1283 Bluetooth.  At this point, I
+believe we've identified at least 3 devices with regressions that this
+revert fixes.
 
-Signed-off-by: luhua.xu <luhua.xu@mediatek.com>
----
- drivers/spi/spi-mt65xx.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/spi/spi-mt65xx.c b/drivers/spi/spi-mt65xx.c
-index 6888a4d..039b67d 100644
---- a/drivers/spi/spi-mt65xx.c
-+++ b/drivers/spi/spi-mt65xx.c
-@@ -262,8 +262,16 @@ static int mtk_spi_prepare_message(struct spi_master *master,
- static void mtk_spi_set_cs(struct spi_device *spi, bool enable)
- {
- 	u32 reg_val;
-+	int ret;
- 	struct mtk_spi *mdata = spi_master_get_devdata(spi->master);
- 
-+	ret = pm_runtime_get_sync(spi->master->dev.parent);
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(spi->master->dev.parent);
-+		dev_err(&spi->dev, "failed to power device(%d)\n", ret);
-+		return;
-+	}
-+
- 	reg_val = readl(mdata->base + SPI_CMD_REG);
- 	if (!enable) {
- 		reg_val |= SPI_CMD_PAUSE_EN;
-@@ -274,6 +282,9 @@ static void mtk_spi_set_cs(struct spi_device *spi, bool enable)
- 		mdata->state = MTK_SPI_IDLE;
- 		mtk_spi_reset(mdata);
- 	}
-+
-+	pm_runtime_mark_last_busy(spi->master->dev.parent);
-+	pm_runtime_put_autosuspend(spi->master->dev.parent);
- }
- 
- static void mtk_spi_prepare_transfer(struct spi_master *master,
-@@ -749,6 +760,7 @@ static int mtk_spi_probe(struct platform_device *pdev)
- 	clk_disable_unprepare(mdata->spi_clk);
- 
- 	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_irq_safe(&pdev->dev);
- 
- 	ret = devm_spi_register_master(&pdev->dev, master);
- 	if (ret) {
--- 
-2.6.4
-
+adam
+> adam
+> >
+> > Regards
+> >
+> > Marcel
+> >
