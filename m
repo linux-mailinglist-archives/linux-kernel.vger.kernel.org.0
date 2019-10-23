@@ -2,105 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D125E0FD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 03:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FF52E0FD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 03:56:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388490AbfJWB45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 21:56:57 -0400
-Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:44180 "EHLO
-        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727582AbfJWB44 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 21:56:56 -0400
-Received: from pps.filterd (m0122332.ppops.net [127.0.0.1])
-        by mx0a-00190b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9N1rN5u029356;
-        Wed, 23 Oct 2019 02:55:41 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=jan2016.eng;
- bh=BqGmH2JxEqEbAiNxKXAPOoEeFbhaMLD6EHMMK5gsR7M=;
- b=TFoKqTjPSi3jM8T+9S17AYzdJGDKfA+EOIRNcdniE53+1eqrriNmmTtdT39ZAtcZ1UIg
- wZ34Semn3qYT30dMKJnVlN0cz/qj43SPXSwxtbBMtnGCp6oPVECwTfMBrlNSL6eYAgt9
- fiugceUovGL6gvEiMF+LsxVWLrk1WXLIRl6LLoHqIpD260jHJ6aI88rzLwmeTVIugU8Z
- ZiOC2cs0lNf5zs0ASNApb+4TCq5fp7kDI6PAnYGGEoNZlIvd+SGhXwGq54RtUmpK70AK
- H4lj/JN8gBd2IqpHoJucOUI+fRuWS0zF04o34E7yH1B8P1fDrLzwtzXL6PDxhe4tsjz6 dw== 
-Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18] (may be forged))
-        by mx0a-00190b01.pphosted.com with ESMTP id 2vqthjjek3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Oct 2019 02:55:41 +0100
-Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
-        by prod-mail-ppoint1.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x9N1lCuD024927;
-        Tue, 22 Oct 2019 21:55:40 -0400
-Received: from email.msg.corp.akamai.com ([172.27.123.33])
-        by prod-mail-ppoint1.akamai.com with ESMTP id 2vqwtwq07e-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 22 Oct 2019 21:55:40 -0400
-Received: from USMA1EX-DAG1MB5.msg.corp.akamai.com (172.27.123.105) by
- usma1ex-dag1mb6.msg.corp.akamai.com (172.27.123.65) with Microsoft SMTP
- Server (TLS) id 15.0.1473.3; Tue, 22 Oct 2019 21:55:39 -0400
-Received: from usma1ex-cas4.msg.corp.akamai.com (172.27.123.57) by
- usma1ex-dag1mb5.msg.corp.akamai.com (172.27.123.105) with Microsoft SMTP
- Server (TLS) id 15.0.1473.3; Tue, 22 Oct 2019 21:55:39 -0400
-Received: from igorcastle.kendall.corp.akamai.com (172.29.170.135) by
- usma1ex-cas4.msg.corp.akamai.com (172.27.123.57) with Microsoft SMTP Server
- id 15.0.1473.3 via Frontend Transport; Tue, 22 Oct 2019 18:55:39 -0700
-Received: by igorcastle.kendall.corp.akamai.com (Postfix, from userid 29659)
-        id 51C8F61E64; Tue, 22 Oct 2019 21:55:37 -0400 (EDT)
-From:   Igor Lubashev <ilubashe@akamai.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-CC:     Igor Lubashev <ilubashe@akamai.com>, Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] perf kvm: Use evlist layer api when possible
-Date:   Tue, 22 Oct 2019 21:54:53 -0400
-Message-ID: <1571795693-23558-4-git-send-email-ilubashe@akamai.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1571795693-23558-1-git-send-email-ilubashe@akamai.com>
-References: <1571795693-23558-1-git-send-email-ilubashe@akamai.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-22_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=789
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910230015
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-23_01:2019-10-22,2019-10-23 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 mlxlogscore=776 bulkscore=0 phishscore=0
- adultscore=0 suspectscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910230016
+        id S2388189AbfJWB4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 21:56:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727582AbfJWB4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Oct 2019 21:56:23 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D82B52064A;
+        Wed, 23 Oct 2019 01:56:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571795782;
+        bh=7K4aAK3LqRh8jXXyar1/Xb/Z6TWqqFQnOKm4QUrFieo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pC4WKRsLT4Eq3kgZaw8DuTmD/QC0WMjYDHLMLBOcyBV8tMKHYe5I7oRo0gXqtL3GA
+         1mxLLvmFtnJHwDXBEWwHlckTDa7n+aqrUUjFfRGNQGgjDUVub3S8ArioIFjeDnI9I6
+         OyTtxz0s5jjxPXA04EmhWdMmpSjAm5IPBVQ469TA=
+Date:   Wed, 23 Oct 2019 10:56:18 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jaswinder.singh@linaro.org
+Subject: Re: [BUGFIX PATCH v2 1/5] selftests: proc: Make va_max 1GB on 32bit
+ arch
+Message-Id: <20191023105618.48a8fcee869fbae8ead31cee@kernel.org>
+In-Reply-To: <20191021173053.GB5355@avx2>
+References: <157164647813.17692.3834082082658965225.stgit@devnote2>
+        <157164648909.17692.6080553792829040898.stgit@devnote2>
+        <20191021173053.GB5355@avx2>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No need for layer violations when a proper evlist api is available.
+On Mon, 21 Oct 2019 20:30:53 +0300
+Alexey Dobriyan <adobriyan@gmail.com> wrote:
 
-Signed-off-by: Igor Lubashev <ilubashe@akamai.com>
----
- tools/perf/builtin-kvm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Mon, Oct 21, 2019 at 05:28:09PM +0900, Masami Hiramatsu wrote:
+> > Currently proc-self-map-files-002.c sets va_max (max test address
+> > of user virtual address) to 4GB, but it is too big for 32bit
+> > arch and 1UL << 32 is overflow on 32bit long.
+> > 
+> > Make va_max 1GB on 32bit arch like i386 and arm.
+> 
+> > +#if __BITS_PER_LONG == 32
+> > +# define VA_MAX (1UL << 30)
+> > +#elif __BITS_PER_LONG == 64
+> > +# define VA_MAX (1UL << 32)
+> > +#else
+> > +# define VA_MAX 0
+> > +#endif
+> > +
+> >  int main(void)
+> >  {
+> >  	const int PAGE_SIZE = sysconf(_SC_PAGESIZE);
+> > -	const unsigned long va_max = 1UL << 32;
+> > +	const unsigned long va_max = VA_MAX;
+> 
+> No, just make it like 1MB unconditionally.
 
-diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-index 5217aa3596c7..340927c2b243 100644
---- a/tools/perf/builtin-kvm.c
-+++ b/tools/perf/builtin-kvm.c
-@@ -1005,7 +1005,7 @@ static int kvm_events_live_report(struct perf_kvm_stat *kvm)
- 		}
- 
- 		if (!rc && !done)
--			err = fdarray__poll(fda, 100);
-+			err = evlist__poll(kvm->evlist, 100);
- 	}
- 
- 	evlist__disable(kvm->evlist);
+Ah, I sse. BTW, would you mean 1GB?
+
+> This is not intended to cover all address space, just large enough part
+> (larger than reasonable vm.mmap_min_addr)
+
+Then, should we better to check the /proc/sys/vm/mmap_min_addr?
+
+Thank you,
+
 -- 
-2.7.4
-
+Masami Hiramatsu <mhiramat@kernel.org>
