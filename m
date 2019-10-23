@@ -2,120 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBFD9E21E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7591E21DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:35:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730945AbfJWRfc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 13:35:32 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:27963 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730701AbfJWRfb (ORCPT
+        id S1730513AbfJWRfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 13:35:00 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:39150 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730302AbfJWRfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:35:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571852130;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pYPluV593635tS2En896gI8nsdrbZHAmMeMjWWNFoNQ=;
-        b=bqHj+xvPlJ3pHHEVJTKupVCycdfvW4gSoedVTdQDpkhgN2vHhQhTEpYNWDgUvfsOp+QWEX
-        +LRE7yuMThSaxmo9c8M1tvS9eW3QKus1z73bxqxUKQd/8lmiy4Iau0v5GSP9RVEI5xCHWA
-        awHGrR2CCqZW1YLN5IjVgtig4BI0HtQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-236-86yMyZUaPui-i3hDilpdVA-1; Wed, 23 Oct 2019 13:35:26 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 645CA107AD34;
-        Wed, 23 Oct 2019 17:35:24 +0000 (UTC)
-Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8CABF5D6D0;
-        Wed, 23 Oct 2019 17:35:22 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Aquini <aquini@redhat.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH 2/2] mm, vmstat: List total free blocks for each order in /proc/pagetypeinfo
-Date:   Wed, 23 Oct 2019 13:34:23 -0400
-Message-Id: <20191023173423.12532-2-longman@redhat.com>
-In-Reply-To: <20191023102737.32274-3-mhocko@kernel.org>
-References: <20191023102737.32274-3-mhocko@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: 86yMyZUaPui-i3hDilpdVA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        Wed, 23 Oct 2019 13:35:00 -0400
+Received: from [10.137.112.108] (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 77F5220106BE;
+        Wed, 23 Oct 2019 10:34:59 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 77F5220106BE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1571852099;
+        bh=vqQGCbajvg6tqXYaZDPRkvd/epy9EBlB+JVvTXS6jQA=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=j6z1WeObOALb27C7iDRzG4wPZqcwVGNUh1P4LtXHp+HGbkTypLgpORQIJ23yZaCQJ
+         J7iqhkI5q75gg/uB+y/fKJBye0NhlgHGemY+oZRf0sL2UZSejk617HCbed5imFn7zr
+         95TU5QubcPetP850MWP2G5mo2BOsafnXV2fwsF6A=
+Subject: Re: [PATCH v1 5/6] KEYS: measure queued keys
+To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        casey@schaufler-ca.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+References: <20191023001818.3684-1-nramas@linux.microsoft.com>
+ <20191023001818.3684-6-nramas@linux.microsoft.com>
+ <1571836990.5104.96.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <89d778d1-1ac9-4a58-b159-7db68b7fa4ad@linux.microsoft.com>
+Date:   Wed, 23 Oct 2019 10:34:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <1571836990.5104.96.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the free block count for each migration types in
-/proc/pagetypeinfo may not show the exact count if it excceeds
-100,000. Users may not know how much more the counts will be. As the
-free_area structure has already tracked the total free block count in
-nr_free, we may as well print it out with no additional cost. That will
-give users a rough idea of where the upper bounds will be.
+On 10/23/19 6:23 AM, Mimi Zohar wrote:
 
-If there is no overflow, the presence of the total counts will also
-enable us to check if the nr_free counts match the total number of
-entries in the free lists.
+> The ordering of this patch set is awkward.  It should first introduce
+> a generic method for measuring keys based on the keyring.  Then add
+> the additional support needed for the specific builtin_trusted_keys
+> keyring usecase.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- mm/vmstat.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Would the following ordering of the patch set be acceptable:
 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index c5b82fdf54af..172946d8f358 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1373,6 +1373,7 @@ static void pagetypeinfo_showfree_print(struct seq_fi=
-le *m,
- =09=09=09=09=09pg_data_t *pgdat, struct zone *zone)
- {
- =09int order, mtype;
-+=09struct free_area *area;
- =09unsigned long iteration_count =3D 0;
-=20
- =09for (mtype =3D 0; mtype < MIGRATE_TYPES; mtype++) {
-@@ -1382,7 +1383,6 @@ static void pagetypeinfo_showfree_print(struct seq_fi=
-le *m,
- =09=09=09=09=09migratetype_names[mtype]);
- =09=09for (order =3D 0; order < MAX_ORDER; ++order) {
- =09=09=09unsigned long freecount =3D 0;
--=09=09=09struct free_area *area;
- =09=09=09struct list_head *curr;
- =09=09=09bool overflow =3D false;
-=20
-@@ -1419,6 +1419,17 @@ static void pagetypeinfo_showfree_print(struct seq_f=
-ile *m,
- =09=09}
- =09=09seq_putc(m, '\n');
- =09}
-+
-+=09/*
-+=09 * List total free blocks per order
-+=09 */
-+=09seq_printf(m, "Node %4d, zone %8s, total             ",
-+=09=09   pgdat->node_id, zone->name);
-+=09for (order =3D 0; order < MAX_ORDER; ++order) {
-+=09=09area =3D &(zone->free_area[order]);
-+=09=09seq_printf(m, "%6lu ", area->nr_free);
-+=09}
-+=09seq_putc(m, '\n');
- }
-=20
- /* Print out the free pages at each order for each migatetype */
---=20
-2.18.1
+  => PATCH 0/5: Cover letter
 
+  => PATCH 1/5: Define the enum "hook(BUILTIN_TRUSTED_KEYS)" in ima.h
+
+  => PATCH 2/5: Define ima hook
+                This will initially do nothing if ima is not yet
+                initialized.
+                Call process_buffer_measurement() if ima is initialized.
+
+  => PATCH 3/5: key_create_or_update change and the call to ima hook
+
+  => PATCH 4/5: Queue\De-Queue of key measurement requests.
+                Enable queuing of key in the ima hook if ima is not
+                initialized.
+
+  => PATCH 5/5: ima policy to enable measurement of keys which will
+                enable end-to-end working of this feature.
+
+thanks,
+  -lakshmi
