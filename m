@@ -2,173 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0C39E1CA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:32:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E953E1CAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:34:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392006AbfJWNcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 09:32:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43522 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389224AbfJWNcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:32:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A5B46B8FB;
-        Wed, 23 Oct 2019 13:32:06 +0000 (UTC)
-Subject: Re: [RFC PATCH 2/2] mm, vmstat: reduce zone->lock holding time by
- /proc/pagetypeinfo
-To:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>, Waiman Long <longman@redhat.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <guro@fb.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Aquini <aquini@redhat.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-References: <20191023095607.GE3016@techsingularity.net>
- <20191023102737.32274-1-mhocko@kernel.org>
- <20191023102737.32274-3-mhocko@kernel.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <30211965-8ad0-416d-0fe1-113270bd1ea8@suse.cz>
-Date:   Wed, 23 Oct 2019 15:32:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S2405863AbfJWNel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:34:41 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37181 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391453AbfJWNel (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 09:34:41 -0400
+Received: by mail-oi1-f193.google.com with SMTP id i16so17367430oie.4
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 06:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rlgAUb4WY4bYebtDST8C0ocqKTOSomIXSLYZGI3cJAU=;
+        b=i0jlpYaBX/vOYcjTU0UXPJ7iDxNoV+6RP+NKrDfSO8B7MpNwF0xXYjeLKlOhInFTTq
+         CeWj1wBO4K3Z8iR2m9Itkbz1pbmSzuKwcj8h21fX5f8O1g4QkS2Vxfshh4JIPC9TVj25
+         7nhx916QgsQRibCng0aNrDPEFl3hVJtEoztmU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rlgAUb4WY4bYebtDST8C0ocqKTOSomIXSLYZGI3cJAU=;
+        b=jp3M18cdvG2xXpqmV0cSLQ3e7sWkHcoTCFNqDGUCR8idLsH5ldHbDhuy7N1H7zki1S
+         aw9oKImTc47sN1yPnwTtCrzACm5tFj+sxlMUXFh0ZeFuZ/8i9mwRWgaY+NQNzIjPCF8H
+         eC555eO2hmyTewavVgZ5reTgZcu27k9by3o1aD8/lIXFgEyLYink5cyGIz4UR3tGdUWX
+         vvM+AlAQg1r6ZkTDuoFMUQguye44Ui94l3Eq2HDYsPVXeG640wkBj8qpaNfKTl/ZqnsV
+         Z0kAkCuLUd07pot/KR1+VAzWF7cZDZRhJCSYWBLYs83aJNdxjZL8AgvfGKnnLCVbL6/c
+         2hVQ==
+X-Gm-Message-State: APjAAAUeUCYQU7RsCGYJEPJjZBhFQuUSEcF8F6S1NfH554YJr5ZPBS7h
+        M42uOSGgjTHh40JWz8mfGluSfNU8OnmJera3AyPEKK6U
+X-Google-Smtp-Source: APXvYqy6RDvKXlzgV6NahYfYxTpMsFQqfwHGTFFoshW8+fYVQTSO5pSR4bQUi60/9B5kzbnKoIVIfHs8KxTFUlcyEc4=
+X-Received: by 2002:aca:1b10:: with SMTP id b16mr7955262oib.110.1571837680242;
+ Wed, 23 Oct 2019 06:34:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191023102737.32274-3-mhocko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191018113832.5460-1-kraxel@redhat.com> <20191022090533.GB11828@phenom.ffwll.local>
+ <87mudreh2p.fsf@intel.com>
+In-Reply-To: <87mudreh2p.fsf@intel.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Wed, 23 Oct 2019 15:34:27 +0200
+Message-ID: <CAKMK7uGm7gYQoEyoZDYYzGO6OBw6AdEwHRDOPDtvNOm-ijWJMQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/virtio: print a single line with device features
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/23/19 12:27 PM, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> pagetypeinfo_showfree_print is called by zone->lock held in irq mode.
-> This is not really nice because it blocks both any interrupts on that
-> cpu and the page allocator. On large machines this might even trigger
-> the hard lockup detector.
-> 
-> Considering the pagetypeinfo is a debugging tool we do not really need
-> exact numbers here. The primary reason to look at the outuput is to see
-> how pageblocks are spread among different migratetypes therefore putting
-> a bound on the number of pages on the free_list sounds like a reasonable
-> tradeoff.
-> 
-> The new output will simply tell
-> [...]
-> Node    6, zone   Normal, type      Movable >100000 >100000 >100000 >100000  41019  31560  23996  10054   3229    983    648
-> 
-> instead of
-> Node    6, zone   Normal, type      Movable 399568 294127 221558 102119  41019  31560  23996  10054   3229    983    648
-> 
-> The limit has been chosen arbitrary and it is a subject of a future
-> change should there be a need for that.
-> 
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+On Wed, Oct 23, 2019 at 3:18 PM Jani Nikula <jani.nikula@linux.intel.com> wrote:
+>
+> On Tue, 22 Oct 2019, Daniel Vetter <daniel@ffwll.ch> wrote:
+> > On Fri, Oct 18, 2019 at 01:38:32PM +0200, Gerd Hoffmann wrote:
+> >> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> >> ---
+> >>  drivers/gpu/drm/virtio/virtgpu_kms.c | 9 ++++-----
+> >>  1 file changed, 4 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
+> >> index 0b3cdb0d83b0..2f5773e43557 100644
+> >> --- a/drivers/gpu/drm/virtio/virtgpu_kms.c
+> >> +++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
+> >> @@ -155,16 +155,15 @@ int virtio_gpu_init(struct drm_device *dev)
+> >>  #ifdef __LITTLE_ENDIAN
+> >>      if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_VIRGL))
+> >>              vgdev->has_virgl_3d = true;
+> >> -    DRM_INFO("virgl 3d acceleration %s\n",
+> >> -             vgdev->has_virgl_3d ? "enabled" : "not supported by host");
+> >> -#else
+> >> -    DRM_INFO("virgl 3d acceleration not supported by guest\n");
+> >>  #endif
+> >>      if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_EDID)) {
+> >>              vgdev->has_edid = true;
+> >> -            DRM_INFO("EDID support available.\n");
+> >>      }
+> >>
+> >> +    DRM_INFO("features: %cvirgl %cedid\n",
+> >> +             vgdev->has_virgl_3d ? '+' : '-',
+> >> +             vgdev->has_edid     ? '+' : '-');
+> >
+> > Maybe we should move the various yesno/onoff/enableddisabled helpers from
+> > i915_utils.h to drm_utils.h and use them more widely?
+>
+> I'm trying to take it one step further by adding them to
+> include/linux/string-choice.h [1]. Maybe, uh, fourth time's the charm?
+>
+> BR,
+> Jani.
+>
+> [1] http://lore.kernel.org/r/20191023131308.9420-1-jani.nikula@intel.com
 
-Hmm dunno, I would rather e.g. hide the file behind some config or boot
-option than do this. Or move it to /sys/kernel/debug ?
+Oh nice, r-b: me on that.
 
-> ---
->  mm/vmstat.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 4e885ecd44d1..762034fc3b83 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1386,8 +1386,25 @@ static void pagetypeinfo_showfree_print(struct seq_file *m,
->  
->  			area = &(zone->free_area[order]);
->  
-> -			list_for_each(curr, &area->free_list[mtype])
-> +			list_for_each(curr, &area->free_list[mtype]) {
->  				freecount++;
-> +				/*
-> +				 * Cap the free_list iteration because it might
-> +				 * be really large and we are under a spinlock
-> +				 * so a long time spent here could trigger a
-> +				 * hard lockup detector. Anyway this is a
-> +				 * debugging tool so knowing there is a handful
-> +				 * of pages in this order should be more than
-> +				 * sufficient
-> +				 */
-> +				if (freecount > 100000) {
-> +					seq_printf(m, ">%6lu ", freecount);
-> +					spin_unlock_irq(&zone->lock);
-> +					cond_resched();
-> +					spin_lock_irq(&zone->lock);
-> +					continue;
-> +				}
-> +			}
->  			seq_printf(m, "%6lu ", freecount);
->  		}
->  		seq_putc(m, '\n');
-> 
-
+I think the rule for new headers like this is "just do it" once you
+have enough senior kernel maintainers' approval. Maybe ask Dave Airlie
+for ack and with Greg's r-b then just stuff it into drm-misc-next or
+so?
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
