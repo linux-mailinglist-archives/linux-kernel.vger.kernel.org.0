@@ -2,195 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29565E2235
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:58:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A996E2141
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732807AbfJWR54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 13:57:56 -0400
-Received: from mga02.intel.com ([134.134.136.20]:46634 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732626AbfJWR5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:57:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 10:57:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,221,1569308400"; 
-   d="scan'208";a="196854544"
-Received: from kmaklai-mobl2.amr.corp.intel.com (HELO [10.252.137.221]) ([10.252.137.221])
-  by fmsmga008.fm.intel.com with ESMTP; 23 Oct 2019 10:57:52 -0700
-Subject: Re: [alsa-devel] [PATCH v2 4/5] soundwire: intel/cadence: add flag
- for interrupt enable
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        broonie@kernel.org, srinivas.kandagatla@linaro.org,
-        jank@cadence.com, slawomir.blauciak@intel.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-References: <20190916190952.32388-1-pierre-louis.bossart@linux.intel.com>
- <20190916190952.32388-5-pierre-louis.bossart@linux.intel.com>
- <20191021041404.GY2654@vkoul-mobl>
- <8ba388e7-e344-068b-b233-8d96903abf6b@linux.intel.com>
- <20191022045518.GJ2654@vkoul-mobl>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <c6aeb19f-8646-6396-10a7-47acac540106@linux.intel.com>
-Date:   Tue, 22 Oct 2019 15:41:55 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726874AbfJWRAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 13:00:40 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37618 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726316AbfJWRAj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 13:00:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571850038;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=mS56Ocf2Wr6s6lxq3UrbaaoGODBCpGlIzwdbwNzrmFM=;
+        b=A6f167nnaJ6DttIs4zWbA1olBTys1ifRwlWe0+2BHJqeiNrrz5hF6NX0n/fJzBPJ4cpbrh
+        dj6MiydnVp654E3/SS5/MkswuL+TgKl4xzPvc139mDR1g2Urpaor/uj3LsmDwuNycVccHF
+        Y8DCdzBiHYtWRH1pA4Eb+ePY5/E41M0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-182-adgGpz8OP6mPpsyr71ygaA-1; Wed, 23 Oct 2019 13:00:34 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 70B2C1800D6B;
+        Wed, 23 Oct 2019 17:00:32 +0000 (UTC)
+Received: from treble (ovpn-121-225.rdu2.redhat.com [10.10.121.225])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A93D16061E;
+        Wed, 23 Oct 2019 17:00:27 +0000 (UTC)
+Date:   Wed, 23 Oct 2019 12:00:25 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jeyu@kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v4 15/16] module: Move where we mark modules RO,X
+Message-ID: <20191023170025.f34g3vxaqr4f5gqh@treble>
+References: <20191018073525.768931536@infradead.org>
+ <20191018074634.801435443@infradead.org>
+ <20191021135312.jbbxsuipxldocdjk@treble>
+ <20191021141402.GI1817@hirez.programming.kicks-ass.net>
+ <20191023114835.GT1817@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20191022045518.GJ2654@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20191023114835.GT1817@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: adgGpz8OP6mPpsyr71ygaA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 23, 2019 at 01:48:35PM +0200, Peter Zijlstra wrote:
+> Now sadly that commit missed all the useful information, luckily I could
+> find the patch in my LKML folder, more sad, that thread still didn't
+> contain the actual useful information, for that I was directed to
+> github:
+>=20
+>   https://github.com/dynup/kpatch/issues/580
+>=20
+> Now, someone is owning me a beer for having to look at github for this.
 
+Deal.  And you probably deserve a few more for fixing our crap.
 
-On 10/21/19 11:55 PM, Vinod Koul wrote:
-> On 21-10-19, 05:26, Pierre-Louis Bossart wrote:
->> On 10/20/19 11:14 PM, Vinod Koul wrote:
->>> On 16-09-19, 14:09, Pierre-Louis Bossart wrote:
->>>> Prepare for future PM support and fix error handling by disabling
->>>> interrupts as needed.
->>>>
->>>> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
->>>> ---
->>>>    drivers/soundwire/cadence_master.c | 18 ++++++++++++------
->>>>    drivers/soundwire/cadence_master.h |  2 +-
->>>>    drivers/soundwire/intel.c          | 12 +++++++-----
->>>>    3 files changed, 20 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
->>>> index 5f900cf2acb9..a71df99ca18f 100644
->>>> --- a/drivers/soundwire/cadence_master.c
->>>> +++ b/drivers/soundwire/cadence_master.c
->>>> @@ -819,14 +819,17 @@ EXPORT_SYMBOL(sdw_cdns_exit_reset);
->>>>     * sdw_cdns_enable_interrupt() - Enable SDW interrupts and update config
->>>>     * @cdns: Cadence instance
->>>>     */
->>>> -int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns)
->>>> +int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns, bool state)
->>>>    {
->>>> -	u32 mask;
->>>> +	u32 slave_intmask0 = 0;
->>>> +	u32 slave_intmask1 = 0;
->>>> +	u32 mask = 0;
->>>> +
->>>> +	if (!state)
->>>> +		goto update_masks;
->>>> -	cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK0,
->>>> -		    CDNS_MCP_SLAVE_INTMASK0_MASK);
->>>> -	cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK1,
->>>> -		    CDNS_MCP_SLAVE_INTMASK1_MASK);
->>>> +	slave_intmask0 = CDNS_MCP_SLAVE_INTMASK0_MASK;
->>>> +	slave_intmask1 = CDNS_MCP_SLAVE_INTMASK1_MASK;
->>>>    	/* enable detection of all slave state changes */
->>>>    	mask = CDNS_MCP_INT_SLAVE_MASK;
->>>> @@ -849,6 +852,9 @@ int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns)
->>>>    	if (interrupt_mask) /* parameter override */
->>>>    		mask = interrupt_mask;
->>>> +update_masks:
->>>> +	cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK0, slave_intmask0);
->>>> +	cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK1, slave_intmask1);
->>>>    	cdns_writel(cdns, CDNS_MCP_INTMASK, mask);
->>>>    	/* commit changes */
->>>> diff --git a/drivers/soundwire/cadence_master.h b/drivers/soundwire/cadence_master.h
->>>> index 1a67728c5000..302351808098 100644
->>>> --- a/drivers/soundwire/cadence_master.h
->>>> +++ b/drivers/soundwire/cadence_master.h
->>>> @@ -162,7 +162,7 @@ int sdw_cdns_init(struct sdw_cdns *cdns);
->>>>    int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
->>>>    		      struct sdw_cdns_stream_config config);
->>>>    int sdw_cdns_exit_reset(struct sdw_cdns *cdns);
->>>> -int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns);
->>>> +int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns, bool state);
->>>>    #ifdef CONFIG_DEBUG_FS
->>>>    void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root);
->>>> diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
->>>> index cdb3243e8823..08530c136c5f 100644
->>>> --- a/drivers/soundwire/intel.c
->>>> +++ b/drivers/soundwire/intel.c
->>>> @@ -1036,7 +1036,7 @@ static int intel_probe(struct platform_device *pdev)
->>>>    	ret = sdw_add_bus_master(&sdw->cdns.bus);
->>>>    	if (ret) {
->>>>    		dev_err(&pdev->dev, "sdw_add_bus_master fail: %d\n", ret);
->>>> -		goto err_master_reg;
->>>> +		return ret;
->>>
->>> I am not sure I like this line change, before this IIRC the function and
->>> single place of return, so changing this doesn't seem to improve
->>> anything here..?
->>
->> Doing a goto to do a return is not very nice either.
-> 
-> Hrmm, isn't that what you are doing few lines below. The point here is
-> that this line of change here doesnt change anything, doesnt improve
-> anything so why change :)
+The github thing is supposed to be temporary, at least in theory we'll
+eventually have all klp patch module building code in the kernel tree.
 
-I knew there was a reason.. the existing code on your soundwire/next 
-branch mixes goto and return, so I chose to use a return for the first 
-case as well.
+> That finally explained that what happens is that the RELA was trying to
+> fix up the paravirt indirect call to 'local_irq_disable', which
+> apply_paravirt() will have overwritten with 'CLI; NOP'. This then
+> obviously goes *bang*.
+>=20
+> This then raises a number of questions:
+>=20
+>  1) why is that RELA (that obviously does not depend on any module)
+>     applied so late?
 
-	ret = sdw_add_bus_master(&sdw->cdns.bus);
-	if (ret) {
-		dev_err(&pdev->dev, "sdw_add_bus_master fail: %d\n", ret);
-		goto err_master_reg; >>> changed to return ret;
-	}
+Good question.  The 'pv_ops' symbol is exported by the core kernel, so I
+can't see any reason why we'd need to apply that rela late.  In theory,
+kpatch-build isn't supposed to convert that to a klp rela.  Maybe
+something went wrong in the patch creation code.
 
-	if (sdw->cdns.bus.prop.hw_disabled) {
-		dev_info(&pdev->dev, "SoundWire master %d is disabled, ignoring\n",
-			 sdw->cdns.bus.link_id);
-		return 0;
-	}
+I'm also questioning why we even need to apply the parainstructions
+section late.  Maybe we can remove that apply_paravirt() call
+altogether, along with .klp.arch.parainstruction sections.
 
+I'll need to look into it...
 
+>  2) why can't we unconditionally skip RELA's to paravirt sites?
 
-> 
->> I can change this, but it doesn't really matter: this entire code will be
->> removed anyways to get rid of platform_devices and the probe itself will be
->> split in two.
->>
->>>
->>>>    	}
->>>>    	if (sdw->cdns.bus.prop.hw_disabled) {
->>>> @@ -1067,7 +1067,7 @@ static int intel_probe(struct platform_device *pdev)
->>>>    		goto err_init;
->>>>    	}
->>>> -	ret = sdw_cdns_enable_interrupt(&sdw->cdns);
->>>> +	ret = sdw_cdns_enable_interrupt(&sdw->cdns, true);
->>>>    	if (ret < 0) {
->>>>    		dev_err(sdw->cdns.dev, "cannot enable interrupts\n");
->>>>    		goto err_init;
->>>> @@ -1076,7 +1076,7 @@ static int intel_probe(struct platform_device *pdev)
->>>>    	ret = sdw_cdns_exit_reset(&sdw->cdns);
->>>>    	if (ret < 0) {
->>>>    		dev_err(sdw->cdns.dev, "unable to exit bus reset sequence\n");
->>>> -		goto err_init;
->>>> +		goto err_interrupt;
->>>>    	}
->>>>    	/* Register DAIs */
->>>> @@ -1084,18 +1084,19 @@ static int intel_probe(struct platform_device *pdev)
->>>>    	if (ret) {
->>>>    		dev_err(sdw->cdns.dev, "DAI registration failed: %d\n", ret);
->>>>    		snd_soc_unregister_component(sdw->cdns.dev);
->>>> -		goto err_dai;
->>>> +		goto err_interrupt;
->>>>    	}
->>>>    	intel_debugfs_init(sdw);
->>>>    	return 0;
->>>> +err_interrupt:
->>>> +	sdw_cdns_enable_interrupt(&sdw->cdns, false);
->>>>    err_dai:
->>>
->>> Isn't this unused now?
-> 
-> ??? you missed this.
+We could, but I don't think it's needed if we fix #1.
 
-fixed.
+>  3) Is there ever a possible module-dependent RELA to a paravirt /
+>     alternative site?
+
+Good question...
+
+> Now, for 1), I would propose '.klp.rela.${mod}' sections only contain
+> RELAs that depend on symbols in ${mod} (or modules in general).
+
+That was already the goal, but we've apparently failed at that.
+
+> We can fix up RELAs that depend on core kernel early without problems.
+> Let them be in the normal .rela sections and be fixed up on loading
+> the patch-module as per usual.
+
+If such symbols aren't exported, then they still need to be in
+.klp.rela.vmlinux sections, since normal relas won't work.
+
+> This should also deal with 2, paravirt should always have RELAs into the
+> core kernel.
+>=20
+> Then for 3) we only have alternatives left, and I _think_ it unlikely to
+> be the case, but I'll have to have a hard look at that.
+
+I'm not sure about alternatives, but maybe we can enforce such
+limitations with tooling and/or kernel checks.
+
+--=20
+Josh
+
