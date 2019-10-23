@@ -2,185 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9753CE131C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 09:29:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D925DE132C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 09:33:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389765AbfJWH31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 03:29:27 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37520 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389459AbfJWH30 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 03:29:26 -0400
-Received: by mail-lj1-f195.google.com with SMTP id l21so19940700lje.4;
-        Wed, 23 Oct 2019 00:29:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ln81R0efE/ZH1psBIcBlQmI7xQI8ZFqWWj7CvH8xre0=;
-        b=KvKekcwv0dOijxy2Al4fHEN72Et9MQpp1mxiQfImKOQYNJwxlPvDZy4ISGWKtINQlY
-         f6893cHnHV1EvufCLn2Vv6uzhVcXK2EG5xnHHQbgwNid1K5IBSoEQCQ75QKmuQYbU5if
-         GJqmymIATeN7XkaNU4PT5M0suDtvKDVIrieyayDb1d0+mz6TgJ44bKzzobxaKnBrr6kS
-         pDyECDwobqJIVkR85PLN0nqfp4JNIvMN1Erlrv9HmXML4MgmsGcVcPM+Q+KUMwFksoIQ
-         58XwyaZXXEqHQ+zoynFXTfcHEc3gCRB5sTnR+fxblm8/sCJ9FD39r0o8KoXlJGr0K5uU
-         CNaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ln81R0efE/ZH1psBIcBlQmI7xQI8ZFqWWj7CvH8xre0=;
-        b=ZNu1J6jolsdDVqcgZaxD7wnq6OrAm9L7nRLFZT0WtpE3xyyzB/ahLIAsNJJIhWl+ou
-         dnkauQe72gt4Eyjh3bULfZVfIEldQv7LopLoKezAnmN5Zgg5XeFxoPP/CvXvM0TLFMpY
-         2Jny+7EqnOMQGRDzLvY5SRMzkgI1AWXyOn5tkV9npmgu024f2irORDjyNWynif4Fram9
-         NKRSeUdz24JMwRxG/sSw5C+s27fxoc09M358zP7Oy4UxGs++AB2ty3ppmCvL5v2HRPB4
-         23uUmuL/7YF0M094cHld+ITfKAveJBV3KcFTcgOfy55kFYjSAPCU9aS2+lC+wN/JqFVt
-         Jx4A==
-X-Gm-Message-State: APjAAAVP70K+hGH2PfRekqv6LdZWOWPTwyvNxzUGloEMLCWLxFixKkwn
-        3tsspMLlGCkz7tE0xu2hFHNbnlcO
-X-Google-Smtp-Source: APXvYqzMaq6WCqannQ5qOGTc2Wl+Lp5cCBUZ9bu6HJgeq4GU1xz01AmOS487IIOca6jO+wYQLJAoBg==
-X-Received: by 2002:a2e:89c9:: with SMTP id c9mr20563733ljk.108.1571815764054;
-        Wed, 23 Oct 2019 00:29:24 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.199.94])
-        by smtp.gmail.com with ESMTPSA id g27sm9236540lja.33.2019.10.23.00.29.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 00:29:22 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id 76D83460F9C; Wed, 23 Oct 2019 10:29:20 +0300 (MSK)
-Date:   Wed, 23 Oct 2019 10:29:20 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Pavel Emelyanov <xemul@virtuozzo.com>,
-        Daniel Colascione <dancol@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Nosh Minwalla <nosh@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Andrey Vagin <avagin@gmail.com>
-Subject: Re: [PATCH 3/7] Add a UFFD_SECURE flag to the userfaultfd API.
-Message-ID: <20191023072920.GF12121@uranus.lan>
-References: <20191012191602.45649-1-dancol@google.com>
- <20191012191602.45649-4-dancol@google.com>
- <CALCETrVZHd+csdRL-uKbVN3Z7yeNNtxiDy-UsutMi=K3ZgCiYw@mail.gmail.com>
- <CAKOZuevUqs_Oe1UEwguQK7Ate3ai1DSVSij=0R=vmz9LzX4k6Q@mail.gmail.com>
- <CALCETrUyq=J37gU-MYXqLdoi7uH7iNNVRjvcGUT11JA1QuTFyg@mail.gmail.com>
- <CALCETrX=1XUwsuKc6dinj3ZTnrK85m_+UL=iaYKj4EZtf-xm5g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrX=1XUwsuKc6dinj3ZTnrK85m_+UL=iaYKj4EZtf-xm5g@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S2389910AbfJWHc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 03:32:59 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:51092 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389658AbfJWHc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 03:32:59 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 388871A06EF;
+        Wed, 23 Oct 2019 09:32:55 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4F7061A06E3;
+        Wed, 23 Oct 2019 09:32:50 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0C054402F0;
+        Wed, 23 Oct 2019 15:32:43 +0800 (SGT)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
+        festevam@gmail.com, broonie@kernel.org,
+        alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
+        tiwai@suse.com
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: fsl_esai: Add spin lock to protect reset and stop
+Date:   Wed, 23 Oct 2019 15:29:49 +0800
+Message-Id: <1571815789-15656-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 09:11:04PM -0700, Andy Lutomirski wrote:
-> Trying again.  It looks like I used the wrong address for Pavel.
+xrun may happen at the end of stream, the
+trigger->fsl_esai_trigger_stop maybe called in the middle of
+fsl_esai_hw_reset, this may cause esai in wrong state
+after stop, and there may be endless xrun interrupt.
+So Add spin lock to lock these two function.
 
-Thanks for CC Andy! I must confess I didn't dive into userfaultfd engine
-personally but let me CC more people involved from criu side. (overquoting
-left untouched for their sake).
+Fixes: 7ccafa2b3879 ("ASoC: fsl_esai: recover the channel swap after xrun")
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ sound/soc/fsl/fsl_esai.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> 
-> On Sat, Oct 12, 2019 at 6:14 PM Andy Lutomirski <luto@kernel.org> wrote:
-> >
-> > [adding more people because this is going to be an ABI break, sigh]
-> >
-> > On Sat, Oct 12, 2019 at 5:52 PM Daniel Colascione <dancol@google.com> wrote:
-> > >
-> > > On Sat, Oct 12, 2019 at 4:10 PM Andy Lutomirski <luto@kernel.org> wrote:
-> > > >
-> > > > On Sat, Oct 12, 2019 at 12:16 PM Daniel Colascione <dancol@google.com> wrote:
-> > > > >
-> > > > > The new secure flag makes userfaultfd use a new "secure" anonymous
-> > > > > file object instead of the default one, letting security modules
-> > > > > supervise userfaultfd use.
-> > > > >
-> > > > > Requiring that users pass a new flag lets us avoid changing the
-> > > > > semantics for existing callers.
-> > > >
-> > > > Is there any good reason not to make this be the default?
-> > > >
-> > > >
-> > > > The only downside I can see is that it would increase the memory usage
-> > > > of userfaultfd(), but that doesn't seem like such a big deal.  A
-> > > > lighter-weight alternative would be to have a single inode shared by
-> > > > all userfaultfd instances, which would require a somewhat different
-> > > > internal anon_inode API.
-> > >
-> > > I'd also prefer to just make SELinux use mandatory, but there's a
-> > > nasty interaction with UFFD_EVENT_FORK. Adding a new UFFD_SECURE mode
-> > > which blocks UFFD_EVENT_FORK sidesteps this problem. Maybe you know a
-> > > better way to deal with it.
-> >
-> > ...
-> >
-> > > But maybe we can go further: let's separate authentication and
-> > > authorization, as we do in other LSM hooks. Let's split my
-> > > inode_init_security_anon into two hooks, inode_init_security_anon and
-> > > inode_create_anon. We'd define the former to just initialize the file
-> > > object's security information --- in the SELinux case, figuring out
-> > > its class and SID --- and define the latter to answer the yes/no
-> > > question of whether a particular anonymous inode creation should be
-> > > allowed. Normally, anon_inode_getfile2() would just call both hooks.
-> > > We'd add another anon_inode_getfd flag, ANON_INODE_SKIP_AUTHORIZATION
-> > > or something, that would tell anon_inode_getfile2() to skip calling
-> > > the authorization hook, effectively making the creation always
-> > > succeed. We can then make the UFFD code pass
-> > > ANON_INODE_SKIP_AUTHORIZATION when it's creating a file object in the
-> > > fork child while creating UFFD_EVENT_FORK messages.
-> >
-> > That sounds like an improvement.  Or maybe just teach SELinux that
-> > this particular fd creation is actually making an anon_inode that is a
-> > child of an existing anon inode and that the context should be copied
-> > or whatever SELinux wants to do.  Like this, maybe:
-> >
-> > static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
-> >                                   struct userfaultfd_ctx *new,
-> >                                   struct uffd_msg *msg)
-> > {
-> >         int fd;
-> >
-> > Change this:
-> >
-> >         fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, new,
-> >                               O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS));
-> >
-> > to something like:
-> >
-> >       fd = anon_inode_make_child_fd(..., ctx->inode, ...);
-> >
-> > where ctx->inode is the one context's inode.
-> >
-> > *** HOWEVER *** !!!
-> >
-> > Now that you've pointed this mechanism out, it is utterly and
-> > completely broken and should be removed from the kernel outright or at
-> > least severely restricted.  A .read implementation MUST NOT ACT ON THE
-> > CALLING TASK.  Ever.  Just imagine the effect of passing a userfaultfd
-> > as stdin to a setuid program.
-> >
-> > So I think the right solution might be to attempt to *remove*
-> > UFFD_EVENT_FORK.  Maybe the solution is to say that, unless the
-> > creator of a userfaultfd() has global CAP_SYS_ADMIN, then it cannot
-> > use UFFD_FEATURE_EVENT_FORK) and print a warning (once) when
-> > UFFD_FEATURE_EVENT_FORK is allowed.  And, after some suitable
-> > deprecation period, just remove it.  If it's genuinely useful, it
-> > needs an entirely new API based on ioctl() or a syscall.  Or even
-> > recvmsg() :)
-> >
-> > And UFFD_SECURE should just become automatic, since you don't have a
-> > problem any more. :-p
-> >
-> > --Andy
-> 
+diff --git a/sound/soc/fsl/fsl_esai.c b/sound/soc/fsl/fsl_esai.c
+index 37b14c48b537..6a797648b66d 100644
+--- a/sound/soc/fsl/fsl_esai.c
++++ b/sound/soc/fsl/fsl_esai.c
+@@ -33,6 +33,7 @@
+  * @fsysclk: system clock source to derive HCK, SCK and FS
+  * @spbaclk: SPBA clock (optional, depending on SoC design)
+  * @task: tasklet to handle the reset operation
++ * @lock: spin lock to handle reset and stop behavior
+  * @fifo_depth: depth of tx/rx FIFO
+  * @slot_width: width of each DAI slot
+  * @slots: number of slots
+@@ -56,6 +57,7 @@ struct fsl_esai {
+ 	struct clk *fsysclk;
+ 	struct clk *spbaclk;
+ 	struct tasklet_struct task;
++	spinlock_t lock; /* Protect reset and stop */
+ 	u32 fifo_depth;
+ 	u32 slot_width;
+ 	u32 slots;
+@@ -676,8 +678,10 @@ static void fsl_esai_hw_reset(unsigned long arg)
+ {
+ 	struct fsl_esai *esai_priv = (struct fsl_esai *)arg;
+ 	bool tx = true, rx = false, enabled[2];
++	unsigned long lock_flags;
+ 	u32 tfcr, rfcr;
+ 
++	spin_lock_irqsave(&esai_priv->lock, lock_flags);
+ 	/* Save the registers */
+ 	regmap_read(esai_priv->regmap, REG_ESAI_TFCR, &tfcr);
+ 	regmap_read(esai_priv->regmap, REG_ESAI_RFCR, &rfcr);
+@@ -715,6 +719,8 @@ static void fsl_esai_hw_reset(unsigned long arg)
+ 		fsl_esai_trigger_start(esai_priv, tx);
+ 	if (enabled[rx])
+ 		fsl_esai_trigger_start(esai_priv, rx);
++
++	spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
+ }
+ 
+ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
+@@ -722,6 +728,7 @@ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
+ {
+ 	struct fsl_esai *esai_priv = snd_soc_dai_get_drvdata(dai);
+ 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
++	unsigned long lock_flags;
+ 
+ 	esai_priv->channels[tx] = substream->runtime->channels;
+ 
+@@ -734,7 +741,9 @@ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	case SNDRV_PCM_TRIGGER_SUSPEND:
+ 	case SNDRV_PCM_TRIGGER_STOP:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++		spin_lock_irqsave(&esai_priv->lock, lock_flags);
+ 		fsl_esai_trigger_stop(esai_priv, tx);
++		spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -1002,6 +1011,7 @@ static int fsl_esai_probe(struct platform_device *pdev)
+ 
+ 	dev_set_drvdata(&pdev->dev, esai_priv);
+ 
++	spin_lock_init(&esai_priv->lock);
+ 	ret = fsl_esai_hw_init(esai_priv);
+ 	if (ret)
+ 		return ret;
+-- 
+2.21.0
 
-	Cyrill
