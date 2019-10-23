@@ -2,124 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A7BE127D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 08:51:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F4050E1285
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 08:52:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389570AbfJWGva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 02:51:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54280 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbfJWGva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 02:51:30 -0400
-Received: from localhost (unknown [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 884232064A;
-        Wed, 23 Oct 2019 06:51:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571813489;
-        bh=hBmd5KPV6GhZmi3teZ7pgUcmVyOexynGR7kSJghi+Ig=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zg/KpCnvvZCquZPkNV/bKcz4j8uihmbrrjeSjyqVX03QfN/9c4lefnzZgpNmiVCys
-         j9LRFc4+UxKCVkjHtE8FQBcP+//WlTQTgezIXfawEDfRUvCqRwFo9Mg/ctX9a4l1EO
-         l0sVppcq7djBD2yKfJ09z9t6wATXSxZFZtShIXZ4=
-Date:   Wed, 23 Oct 2019 08:51:26 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        lakml <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] media: dt-bindings: media: Fixup Allwinner A10 CSI
- binding
-Message-ID: <20191023065126.ckqgvqkzeqtt3j3m@gilmour>
-References: <b47ec7088aa4b07458519ab151de92df552a9302.1570101510.git.amit.kucheria@linaro.org>
- <20191003115154.6f2jgj3dnqsved2y@gilmour>
- <CAHLCerNoLyQ-e70=1VMPO_J_amA+-2vtHwfoUabo4dhUWj-H0A@mail.gmail.com>
- <20191007100535.6gp6b3h6ueyeln3b@gilmour>
- <CAP245DXT=HL+m-LqoC25EBnOaPmF1pUW0fEZp6EZB-MdgOJoWw@mail.gmail.com>
- <20191007104835.v6iqpoolqtajryik@gilmour>
- <CAL_JsqLVkikYVpjs1m+QqsOK2CfSm9+LfZWXbWEoszeSt3RGaA@mail.gmail.com>
+        id S2389582AbfJWGww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 02:52:52 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35667 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbfJWGww (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 02:52:52 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l10so20284715wrb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 23:52:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=kmtb4K0rNRYR6l8glRe+TfiUWbt5tG9y6EvhXSR2S34=;
+        b=boLXMSL/b1vtVUCNgvKDZ1TBphBQcTnI8xC4MdbV4iSBBLh+RZxV9lE9F0OKBozWze
+         QS77BX9z4QJma02fn4ymiAMuphc0BitowAIqHywZBpQ9ajOZaxCs91dCnZNRgktljn+R
+         mL2CPpTU/oIkVvu5c1NHxwHFiF107yu/k+4D+5IT2hTDqMs2cuF33ttdjcbaildjRgFI
+         Y3FtELHwkd5960O646vm6CDQGOdYA4vxffiRJwmtc05wMSQOHLqKvO5dqRFOX2MzvKNT
+         lGv2VfbK3WBflbQ8iZ1mPlleKPvT95eh5p4vqL2reR9G0e8S+DMUPRAd8ufnXLrLR6Ip
+         AJpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=kmtb4K0rNRYR6l8glRe+TfiUWbt5tG9y6EvhXSR2S34=;
+        b=EzR3JcQBVqH74cCiZ+f2yY2OD52/yh0q1KQZiulOQlKwW7de3eB49IZEiaDxl7d4Hb
+         Vn3xolompAT4aHUX/CIRQw1Px9oae7n5E1G7TAdQqC7Y/yQDg3XqPIBNJf2E9l7XmeMs
+         LZLKrBG5m8Y+N3n8ibfk6KVrp96zNR8UoV7b6IwgU7g9dCWDpkIKBVsd6AeBCkAw3JWr
+         akHc42/iJ4McHInMBoAfa+9xU1kX+YDY0bIS9VxsKsR4b7jhEmOk3P/fg4ZoEaaIbHRn
+         I9Fp82dDPoC34rcZS0SDtO5YBTEJAa/V6UyJrCsV+On2U6a3JEfHc7NAsjFPWV7sUixD
+         UHxQ==
+X-Gm-Message-State: APjAAAWhfL/5r+HcGR9iH7Rg/KhVhSLvZSjwwvQHFcL74Nq0AmIwT0e7
+        oY9j3QGPwdoVUKJgata3DIHzOZlwq2QLgS1yjnM=
+X-Google-Smtp-Source: APXvYqw/bzHuAeFIEZpH9/NapvWMUjsy9U1z373Io997WssO9DC4auMKEoPjRTwQon147gzrwWvDCc/AWmzpTAahh28=
+X-Received: by 2002:a5d:4902:: with SMTP id x2mr7140467wrq.374.1571813569161;
+ Tue, 22 Oct 2019 23:52:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="meupzleynumtgrf3"
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLVkikYVpjs1m+QqsOK2CfSm9+LfZWXbWEoszeSt3RGaA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Reply-To: chezakiahchedin58@gmail.com
+Received: by 2002:adf:c3d4:0:0:0:0:0 with HTTP; Tue, 22 Oct 2019 23:52:48
+ -0700 (PDT)
+From:   Aisha Al-Qaddafi <chezakiahchedin58@gmail.com>
+Date:   Tue, 22 Oct 2019 23:52:48 -0700
+X-Google-Sender-Auth: bj_hVgCKKhHI1CyDxyu6wu14cVE
+Message-ID: <CAB7GnjD47npQoNL4a2p1oV1S1qJteC9UHTokP2B6=66cHNUMZQ@mail.gmail.com>
+Subject: INFORMATIONEN
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sehr geehrter Herr / Frau,
 
---meupzleynumtgrf3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Bitte verzeihen Sie mir, wenn meine Anfrage von Ihrer freundlichen
+Person nicht akzeptiert wird. Ich bin Aisha Al-Qaddafi; Ich bin die
+einzige leibliche Tochter meines verstorbenen Vaters (Oberst Muammar
+Gaddafi, der der fr=C3=BChere libysche Pr=C3=A4sident war).
 
-Hi Rob,
 
-On Tue, Oct 22, 2019 at 11:17:35AM -0500, Rob Herring wrote:
-> On Mon, Oct 7, 2019 at 5:48 AM Maxime Ripard <mripard@kernel.org> wrote:
-> >
-> > On Mon, Oct 07, 2019 at 03:45:29PM +0530, Amit Kucheria wrote:
-> > > On Mon, Oct 7, 2019 at 3:35 PM Maxime Ripard <mripard@kernel.org> wrote:
-> > > >
-> > > > On Sat, Oct 05, 2019 at 04:15:57PM +0530, Amit Kucheria wrote:
-> > > > > On Thu, Oct 3, 2019 at 5:22 PM Maxime Ripard <mripard@kernel.org> wrote:
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > On Thu, Oct 03, 2019 at 04:52:24PM +0530, Amit Kucheria wrote:
-> > > > > > > This new binding fails dt_binding_check due to a typo. Fix it up.
-> > > > > > >
-> > > > > > > linux.git/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml: $id: path/filename 'arm/allwinner,sun4i-a10-csi.yaml' doesn't match actual filename
-> > > > > > > linux.git/Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.example.dts' failed
-> > > > > > > make[2]: *** [Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.example.dts] Error 1
-> > > > > > > make[2]: *** Waiting for unfinished jobs....
-> > > > > > > linux.git/Makefile:1284: recipe for target 'dt_binding_check' failed
-> > > > > > > make[1]: *** [dt_binding_check] Error 2
-> > > > > > >
-> > > > > > > Fixes: c5e8f4ccd7750 ("media: dt-bindings: media: Add Allwinner A10 CSI binding")
-> > > > > > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > > > > >
-> > > > > > Thanks for your patch.
-> > > > > >
-> > > > > > It has already been submitted though:
-> > > > > > https://lore.kernel.org/linux-arm-kernel/1568808060-17516-1-git-send-email-pragnesh.patel@sifive.com/
-> > > > > >
-> > > > > > I'm not sure why it hasn't been applied yet though :/
-> > > > >
-> > > > > Perhaps a Fixes tag will allow more attention to it?
-> > > >
-> > > > I've added a fixes tag and merged it through the sunxi tree.
-> > > >
-> > > > Sorry for the time it took, and thanks for sending that fix!
-> > >
-> > > Will it get merged for -rc2?
-> >
-> > -rc2 was released yesterday, so we're a bit late for that, but it's
-> >  going to be in next tomorrow.
->
-> Is this going to Linus anytime soon? It is affecting anyone submitting
-> bindings against current -rc's.
+Ich bitte um Ihre Unterst=C3=BCtzung bei der =C3=9Cberweisung meines
+Erbschaftsgeldes in H=C3=B6he von 25.000.000,00 USD (25 Millionen
+US-Dollar) auf Ihr Konto als mein Anlageverwalter, da ich derzeit
+Fl=C3=BCchtling bin und meine Familie nach meinem Tod mit der libyschen
+Regierung Streitigkeiten hat Vater.
 
-Sorry for the delay, I just sent a PR
 
-Maxime
+Ich interessiere mich jedoch f=C3=BCr Sie als meinen Anlageverwalter in
+Ihrem Land, und ich plane, meine Erbschaftsfonds wie folgt in ein
+profitables Unternehmen und einen =C3=B6ffentlichen Nutzen zu investieren:
 
---meupzleynumtgrf3
-Content-Type: application/pgp-signature; name="signature.asc"
+=C2=A0=C2=A0=C2=A0=C2=A01. Richten Sie ein Waisenhaus ein, um den Waisenhau=
+skindern zu helfen.
+=C2=A0=C2=A0=C2=A0=C2=A02. Bauen Sie ein Pflegeheim f=C3=BCr =C3=A4ltere, w=
+eniger privilegierte Menschen
+=C2=A0=C2=A0=C2=A0=C2=A03. Investition in Gastfreundschaft und Hotelmanagem=
+ent
 
------BEGIN PGP SIGNATURE-----
+=C2=A0Ich bin bereit, mit Ihnen ein Verh=C3=A4ltnis zwischen Investition un=
+d
+Unternehmensgewinn zu verhandeln, das auf den k=C3=BCnftigen Gewinnen aus
+Kapitalanlagen basiert. Wenn Sie Interesse haben, dieses Projekt in
+Ihrem Land abzuwickeln, setzen Sie sich bitte umgehend mit mir in
+Verbindung, um weitere Informationen zu erhalten.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXa/4bgAKCRDj7w1vZxhR
-xUD5AQDHOQrg1fK8A/nnxv6B5Ya2z3WganmGJXv2EF+TFJppWwEA2zroQ3o10xRD
-FT086EzZEJZgS5tYvtRNiHiZJZpaRQM=
-=enB/
------END PGP SIGNATURE-----
-
---meupzleynumtgrf3--
+Ihre dringende Antwort wird gesch=C3=A4tzt.
+Dein
+Frau Aisha Al-Qaddafi.
