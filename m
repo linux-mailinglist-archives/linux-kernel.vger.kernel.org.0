@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 442C2E18EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 233B9E18D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405047AbfJWLXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 07:23:13 -0400
-Received: from mga05.intel.com ([192.55.52.43]:63100 "EHLO mga05.intel.com"
+        id S2404857AbfJWLWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 07:22:06 -0400
+Received: from mga14.intel.com ([192.55.52.115]:29695 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404831AbfJWLWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 07:22:04 -0400
+        id S2404734AbfJWLWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 07:22:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 04:22:03 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 04:22:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
-   d="scan'208";a="210009628"
+   d="scan'208";a="399359456"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 23 Oct 2019 04:22:00 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 23 Oct 2019 04:22:00 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 6DDAC5BA; Wed, 23 Oct 2019 14:21:55 +0300 (EEST)
+        id 781865F6; Wed, 23 Oct 2019 14:21:55 +0300 (EEST)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-usb@vger.kernel.org
 Cc:     Andreas Noever <andreas.noever@gmail.com>,
@@ -38,9 +38,9 @@ Cc:     Andreas Noever <andreas.noever@gmail.com>,
         Oliver Neukum <oneukum@suse.com>,
         Christian Kellner <ckellner@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 11/25] thunderbolt: Add default linking between lane adapters if not provided by DROM
-Date:   Wed, 23 Oct 2019 14:21:40 +0300
-Message-Id: <20191023112154.64235-12-mika.westerberg@linux.intel.com>
+Subject: [PATCH 12/25] thunderbolt: Expand controller name in tb_switch_is_xy()
+Date:   Wed, 23 Oct 2019 14:21:41 +0300
+Message-Id: <20191023112154.64235-13-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191023112154.64235-1-mika.westerberg@linux.intel.com>
 References: <20191023112154.64235-1-mika.westerberg@linux.intel.com>
@@ -51,96 +51,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We currently read how sibling lane adapter ports relate each other from
-DROM (Device ROM). If the two lane adapter ports go through the same
-physical connector these lanes can then be bonded together. However,
-some cases DROM does not provide this information or it is missing
-completely (host routers typically do not have DROM). In this case we
-have hard-coded the relationship.
-
-Expand this to work with both legacy devices where lane adapter ports 1
-and 2, and 3 and 4 are always linked together, and with USB4 devices
-where lane adapter 1 is always following lane adapter 0 or is disabled
-completely (see USB4 section 5.2.1 for more information).
+For a casual reader tb_switch_is_cr() does not tell much so instead
+spell out the full controller name in the function name. For example
+tb_switch_is_cr() becomes tb_switch_is_cactus_ridge() which is easier
+to understand.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/thunderbolt/eeprom.c | 11 -----------
- drivers/thunderbolt/switch.c | 32 ++++++++++++++++++++++++++++++++
- 2 files changed, 32 insertions(+), 11 deletions(-)
+ drivers/thunderbolt/cap.c | 6 +++---
+ drivers/thunderbolt/tb.c  | 4 ++--
+ drivers/thunderbolt/tb.h  | 8 ++++----
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/thunderbolt/eeprom.c b/drivers/thunderbolt/eeprom.c
-index ee5196479854..8dd7de0cc826 100644
---- a/drivers/thunderbolt/eeprom.c
-+++ b/drivers/thunderbolt/eeprom.c
-@@ -514,17 +514,6 @@ int tb_drom_read(struct tb_switch *sw)
- 		 * no entries). Hardcode the configuration here.
- 		 */
- 		tb_drom_read_uid_only(sw, &sw->uid);
--
--		sw->ports[1].link_nr = 0;
--		sw->ports[2].link_nr = 1;
--		sw->ports[1].dual_link_port = &sw->ports[2];
--		sw->ports[2].dual_link_port = &sw->ports[1];
--
--		sw->ports[3].link_nr = 0;
--		sw->ports[4].link_nr = 1;
--		sw->ports[3].dual_link_port = &sw->ports[4];
--		sw->ports[4].dual_link_port = &sw->ports[3];
--
+diff --git a/drivers/thunderbolt/cap.c b/drivers/thunderbolt/cap.c
+index 8bf8e031f0bc..fdd77bb4628d 100644
+--- a/drivers/thunderbolt/cap.c
++++ b/drivers/thunderbolt/cap.c
+@@ -33,9 +33,9 @@ static int tb_port_enable_tmu(struct tb_port *port, bool enable)
+ 	 * Legacy devices need to have TMU access enabled before port
+ 	 * space can be fully accessed.
+ 	 */
+-	if (tb_switch_is_lr(sw))
++	if (tb_switch_is_light_ridge(sw))
+ 		offset = 0x26;
+-	else if (tb_switch_is_er(sw))
++	else if (tb_switch_is_eagle_ridge(sw))
+ 		offset = 0x2a;
+ 	else
  		return 0;
- 	}
+@@ -60,7 +60,7 @@ static void tb_port_dummy_read(struct tb_port *port)
+ 	 * reading stale data on next read perform one dummy read after
+ 	 * port capabilities are walked.
+ 	 */
+-	if (tb_switch_is_lr(port->sw)) {
++	if (tb_switch_is_light_ridge(port->sw)) {
+ 		u32 dummy;
  
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index 7e2cde5da31c..404a78a82746 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -1926,6 +1926,36 @@ static int tb_switch_add_dma_port(struct tb_switch *sw)
- 	return -ESHUTDOWN;
+ 		tb_port_read(port, &dummy, TB_CFG_PORT, 0, 1);
+diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
+index f2ce6adc1f48..e8e2d20cf4c6 100644
+--- a/drivers/thunderbolt/tb.c
++++ b/drivers/thunderbolt/tb.c
+@@ -342,9 +342,9 @@ static struct tb_port *tb_find_pcie_down(struct tb_switch *sw,
+ 		 * Hard-coded Thunderbolt port to PCIe down port mapping
+ 		 * per controller.
+ 		 */
+-		if (tb_switch_is_cr(sw))
++		if (tb_switch_is_cactus_ridge(sw))
+ 			index = !phy_port ? 6 : 7;
+-		else if (tb_switch_is_fr(sw))
++		else if (tb_switch_is_falcon_ridge(sw))
+ 			index = !phy_port ? 6 : 8;
+ 		else
+ 			goto out;
+diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
+index 16d529983004..a6f1fa0d4771 100644
+--- a/drivers/thunderbolt/tb.h
++++ b/drivers/thunderbolt/tb.h
+@@ -576,17 +576,17 @@ static inline struct tb_switch *tb_switch_parent(struct tb_switch *sw)
+ 	return tb_to_switch(sw->dev.parent);
  }
  
-+static void tb_switch_default_link_ports(struct tb_switch *sw)
-+{
-+	int i;
-+
-+	for (i = 1; i <= sw->config.max_port_number; i += 2) {
-+		struct tb_port *port = &sw->ports[i];
-+		struct tb_port *subordinate;
-+
-+		if (!tb_port_is_null(port))
-+			continue;
-+
-+		/* Check for the subordinate port */
-+		if (i == sw->config.max_port_number ||
-+		    !tb_port_is_null(&sw->ports[i + 1]))
-+			continue;
-+
-+		/* Link them if not already done so (by DROM) */
-+		subordinate = &sw->ports[i + 1];
-+		if (!port->dual_link_port && !subordinate->dual_link_port) {
-+			port->link_nr = 0;
-+			port->dual_link_port = subordinate;
-+			subordinate->link_nr = 1;
-+			subordinate->dual_link_port = port;
-+
-+			tb_sw_dbg(sw, "linked ports %d <-> %d\n",
-+				  port->port, subordinate->port);
-+		}
-+	}
-+}
-+
- static bool tb_switch_lane_bonding_possible(struct tb_switch *sw)
+-static inline bool tb_switch_is_lr(const struct tb_switch *sw)
++static inline bool tb_switch_is_light_ridge(const struct tb_switch *sw)
  {
- 	const struct tb_port *up = tb_upstream_port(sw);
-@@ -2099,6 +2129,8 @@ int tb_switch_add(struct tb_switch *sw)
- 			}
- 		}
+ 	return sw->config.device_id == PCI_DEVICE_ID_INTEL_LIGHT_RIDGE;
+ }
  
-+		tb_switch_default_link_ports(sw);
-+
- 		ret = tb_switch_update_link_attributes(sw);
- 		if (ret)
- 			return ret;
+-static inline bool tb_switch_is_er(const struct tb_switch *sw)
++static inline bool tb_switch_is_eagle_ridge(const struct tb_switch *sw)
+ {
+ 	return sw->config.device_id == PCI_DEVICE_ID_INTEL_EAGLE_RIDGE;
+ }
+ 
+-static inline bool tb_switch_is_cr(const struct tb_switch *sw)
++static inline bool tb_switch_is_cactus_ridge(const struct tb_switch *sw)
+ {
+ 	switch (sw->config.device_id) {
+ 	case PCI_DEVICE_ID_INTEL_CACTUS_RIDGE_2C:
+@@ -597,7 +597,7 @@ static inline bool tb_switch_is_cr(const struct tb_switch *sw)
+ 	}
+ }
+ 
+-static inline bool tb_switch_is_fr(const struct tb_switch *sw)
++static inline bool tb_switch_is_falcon_ridge(const struct tb_switch *sw)
+ {
+ 	switch (sw->config.device_id) {
+ 	case PCI_DEVICE_ID_INTEL_FALCON_RIDGE_2C_BRIDGE:
 -- 
 2.23.0
 
