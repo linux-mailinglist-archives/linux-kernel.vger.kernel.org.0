@@ -2,87 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 123C0E21AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86ECAE21D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:33:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbfJWRY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 13:24:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32780 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbfJWRY0 (ORCPT
+        id S1730285AbfJWRdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 13:33:23 -0400
+Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:37112 "EHLO
+        emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726538AbfJWRdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:24:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bG3/WLQ3BKtHlYI3WFB7izs5MtpxdRb40qU5GLuq7Kc=; b=uGPIy0ZlzUq7xee7gYH6zC3G2
-        pSrOyTAvWP+Wpg6vgAZSinr7A2/uNC+nOEmCHmCOqLTI8/zJvB+NLkxefC248I+ClUm+cwguY+Nln
-        i2myUnQID2xvEzjNYXcRnH8vMWKtCF64XjrlHnPS4x02FrIsPQGxBNGyWP+pHdwlqDXK2KYql6Smm
-        b/VttAo5viTNxoBVU/xaMwnpd/goLs5Uf3vsX9NKku6Qk7xB7NAmSuVrOGChBDT/j0bVb7HrZjlZE
-        yblsP/9LqUE4osPgpwuuiFPziJsaIIm+qmX4gSbd5fFkKKoVZcevHIu1LvRofn9XdxY1AvtHUgeZx
-        ZC6VLKRlA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNKMu-0006oY-I8; Wed, 23 Oct 2019 17:24:20 +0000
-Date:   Wed, 23 Oct 2019 10:24:20 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     hughd@google.com, aarcange@redhat.com,
-        kirill.shutemov@linux.intel.com, gavin.dg@linux.alibaba.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [v2 PATCH] mm: thp: handle page cache THP correctly in
- PageTransCompoundMap
-Message-ID: <20191023172420.GB2963@bombadil.infradead.org>
-References: <1571850304-82802-1-git-send-email-yang.shi@linux.alibaba.com>
+        Wed, 23 Oct 2019 13:33:22 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Oct 2019 13:33:21 EDT
+Received: from darkstar.musicnaut.iki.fi (85-76-128-127-nat.elisa-mobile.fi [85.76.128.127])
+        by emh04.mail.saunalahti.fi (Postfix) with ESMTP id 09E8E30184;
+        Wed, 23 Oct 2019 20:26:10 +0300 (EEST)
+Date:   Wed, 23 Oct 2019 20:26:10 +0300
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Wambui Karuga <wambui.karugax@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: octeon: Remove typedef declaration
+Message-ID: <20191023172610.GB18977@darkstar.musicnaut.iki.fi>
+References: <20191008040943.9283-1-wambui.karugax@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1571850304-82802-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191008040943.9283-1-wambui.karugax@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 01:05:04AM +0800, Yang Shi wrote:
-> +	return map_count >= 0 &&
-> +	       map_count == atomic_read(&head[1].compound_mapcount);
->  }
+Hi,
 
-I didn't like Hugh's duplicate definition either.  May I suggest:
+On Tue, Oct 08, 2019 at 07:09:43AM +0300, Wambui Karuga wrote:
+> Fixes checkpatch.pl warning: do not add new typedefs in
+> drivers/staging/octeon/octeon-stubs.h:41
+> 
+> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+> ---
+>  drivers/staging/octeon/octeon-stubs.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/octeon/octeon-stubs.h b/drivers/staging/octeon/octeon-stubs.h
+> index a4ac3bfb62a8..773591348ef4 100644
+> --- a/drivers/staging/octeon/octeon-stubs.h
+> +++ b/drivers/staging/octeon/octeon-stubs.h
+> @@ -38,7 +38,7 @@
+>  #define CVMX_NPI_RSL_INT_BLOCKS		0
+>  #define CVMX_POW_WQ_INT_PC		0
+>  
+> -typedef union {
+> +union cvmx_pip_wqe_word2 {
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 2f2199a51941..3d0efd937d2b 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -695,11 +695,6 @@ static inline void *kvcalloc(size_t n, size_t size, gfp_t flags)
- 
- extern void kvfree(const void *addr);
- 
--static inline atomic_t *compound_mapcount_ptr(struct page *page)
--{
--	return &page[1].compound_mapcount;
--}
--
- static inline int compound_mapcount(struct page *page)
- {
- 	VM_BUG_ON_PAGE(!PageCompound(page), page);
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 2222fa795284..270aa8fd2800 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -221,6 +221,11 @@ struct page {
- #endif
- } _struct_page_alignment;
- 
-+static inline atomic_t *compound_mapcount_ptr(struct page *page)
-+{
-+	return &page[1].compound_mapcount;
-+}
-+
- /*
-  * Used for sizing the vmemmap region on some architectures
-  */
+The "real" definition is in arch/mips/include/asm/octeon/cvmx-wqe.h.
+
+octeon-stubs.h is just a temporary hack to allow compile testing without
+MIPS cross-compiler. Changing only the stubs file is not really an
+improvement.
+
+A.
