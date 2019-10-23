@@ -2,98 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EFA1E240B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 22:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5479BE241B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 22:11:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391546AbfJWUK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 16:10:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45802 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391332AbfJWUK1 (ORCPT
+        id S2391394AbfJWULo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 16:11:44 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39036 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfJWULn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 16:10:27 -0400
-Received: by mail-wr1-f68.google.com with SMTP id q13so18491642wrs.12;
-        Wed, 23 Oct 2019 13:10:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dpe0zCbR3c1VkH/n1U/vOC6ekNORqcDkTSfYoQ4laf4=;
-        b=iYHQNJHmQbhRm4umf4o2ihYkcxoZoiFdeHMW6g10R+LYk5ClYI4rP3GaTktcJuUIHs
-         HQxSdartm1UsLMWKhma8Fk31En2dOM4r2stHvB3TA3irwopFfnmnJgBlfRzzTghStD2s
-         GEEHGXA872OvJ1TKQGRg2cPB6BTvcxXH1bO/eoTHqiGOhdX8rBj91SV3fjkggIM5BcqC
-         1nSU9YcIIHbmiRPK6g9Ow7QzAra7eBFzUePfQEgLpZ1XMk9KleGi4Qspt84bWr2ayqVV
-         g74jQvyQLno/hsohQwudKYKam9vDmUnAZ3u+qGslOtIYgygjF0A+6Oef1qTS2U+tU3Fu
-         6/gg==
+        Wed, 23 Oct 2019 16:11:43 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w144so18557170oia.6;
+        Wed, 23 Oct 2019 13:11:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dpe0zCbR3c1VkH/n1U/vOC6ekNORqcDkTSfYoQ4laf4=;
-        b=JsqEu1OkOViFVOPSddnXhaVFrxrM5795x42E6cedm4ZLhiObQ2nr/MdrOFGOEMJpxf
-         aVok/lw2BgMPVCK7j5umZxpHY9tf6NszxVpsIoCi63KJ281gTR72r54IaJMMOgUwwHN0
-         dZ7eBjFp27ExZ0rgRAk31fIDy6QbUVh3mjAQWNgogzAqBW+4kKik6e2pIqUgvI1gKuR4
-         UmUD0b6OjSuG+Laru1SW7TkslDhsm5vlKF7rOaoPdXC4QS8gCMAh1RJ01cPphJZDopIX
-         veevbdhLni1clV2fuaEytfYWOfxCMysXSnp2ghq3lhNTDbzQ1QLhE7403HWd4yBQJMZ/
-         cvAg==
-X-Gm-Message-State: APjAAAVoHKsLOGDDTN7aNcMtMQjiMUUpAE2ivztBq+nP373hgxhYuRNJ
-        guSXbMl04rc+wsvagROmFqI=
-X-Google-Smtp-Source: APXvYqz68Wn9kNMfnDrY2c9bI9xvs8OblM3ux7zEgB84kOYTwNMVTM+UoHgwIP1ztIVFRF33kYRzyw==
-X-Received: by 2002:a5d:4d46:: with SMTP id a6mr480347wru.196.1571861425413;
-        Wed, 23 Oct 2019 13:10:25 -0700 (PDT)
-Received: from Red.localdomain (lfbn-1-7036-79.w90-116.abo.wanadoo.fr. [90.116.209.79])
-        by smtp.googlemail.com with ESMTPSA id h17sm277261wmb.33.2019.10.23.13.10.24
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ssgTw4r4WsQxJaQ0k03EQpF6DWzjNZA4/vVMy3/jAcM=;
+        b=V0sdBl4weOMtEjEq6E+NxyfRgZMUyMjW1WVOwonRqCWpME8iVs0y55/PinN8P1G+8D
+         bVSisEY/7YGJX00TyRHc8Hse4xvxkJNALMxTYHaRDGszsNdwE2ywcHM5rl6FCra5rKtW
+         9ZqiHvfjyNcLw49p9dDR2MJwx7uOC7GRBF6JxkJFeNc0EIkN8FetvuuKGXzAPObzIl6L
+         2dqDVrV8ejq/3hC66ATdH36xqQESgQKreVOUfq3WP+LrimfgAGWFExD73t1XvRuepBWu
+         Y6jWQ5UXqu+788BER6AI+40I7DpwGRE4j1FeJMvgYesm1VjzYVFUxPG8DHLJKWYABXBk
+         dKIA==
+X-Gm-Message-State: APjAAAXM/ZVwUCJQjMiItMrWZgXGP5u9R1ktkqH8Lhm3Ljf2ErOXo80C
+        HYx6UlwstCu6f46GkpkwRQ==
+X-Google-Smtp-Source: APXvYqwwKmIXhOF7O4GFPIsSTdhEVmGYoVwlyXr/mkWIGXxrFLlArngzjnMcD7Lh9nvgON2DEJ3P2w==
+X-Received: by 2002:aca:cf92:: with SMTP id f140mr1557736oig.57.1571861502798;
+        Wed, 23 Oct 2019 13:11:42 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id a69sm5985960oib.14.2019.10.23.13.11.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 13:10:24 -0700 (PDT)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        mark.rutland@arm.com, mripard@kernel.org, robh+dt@kernel.org,
-        wens@csie.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH v2 4/4] ARM: dts: sun9i: a80: Add Security System node
-Date:   Wed, 23 Oct 2019 22:10:16 +0200
-Message-Id: <20191023201016.26195-5-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191023201016.26195-1-clabbe.montjoie@gmail.com>
-References: <20191023201016.26195-1-clabbe.montjoie@gmail.com>
+        Wed, 23 Oct 2019 13:11:42 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 15:11:41 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     balbi@kernel.org, khilman@baylibre.com, devicetree@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dongjin Kim <tobetter@gmail.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>, Tim <elatllat@gmail.com>
+Subject: Re: [PATCH 1/3] doc: dt: bindings: usb: dwc3: Update entries for
+ disabling SS instances in park mode
+Message-ID: <20191023201141.GA21235@bogus>
+References: <20191014141718.22603-1-narmstrong@baylibre.com>
+ <20191014141718.22603-2-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191014141718.22603-2-narmstrong@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchs the node for sun8i-ss which is availlable on the A80.
+On Mon, Oct 14, 2019 at 04:17:16PM +0200, Neil Armstrong wrote:
+> This patch updates the documentation with the information related
+> to the quirks that needs to be added for disabling all SuperSpeed XHCi
+> instances in park mode.
+> 
+> CC: Dongjin Kim <tobetter@gmail.com>
+> Cc: Jianxin Pan <jianxin.pan@amlogic.com>
+> Reported-by: Tim <elatllat@gmail.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/usb/dwc3.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
----
- arch/arm/boot/dts/sun9i-a80.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Sigh, what's one more to the never ending list of quirks...
 
-diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
-index b9b6fb00be28..d7498a1a158e 100644
---- a/arch/arm/boot/dts/sun9i-a80.dtsi
-+++ b/arch/arm/boot/dts/sun9i-a80.dtsi
-@@ -457,6 +457,16 @@
- 			reg = <0x01700000 0x100>;
- 		};
- 
-+		crypto: crypto@1c02000 {
-+			compatible = "allwinner,sun9i-a80-crypto";
-+			reg = <0x01c02000 0x1000>;
-+			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-+			resets = <&ccu RST_BUS_SS>;
-+			reset-names = "bus";
-+			clocks = <&ccu CLK_BUS_SS>, <&ccu CLK_SS>;
-+			clock-names = "bus", "mod";
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun9i-a80-mmc";
- 			reg = <0x01c0f000 0x1000>;
--- 
-2.21.0
-
+Acked-by: Rob Herring <robh@kernel.org>
