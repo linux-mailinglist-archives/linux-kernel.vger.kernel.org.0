@@ -2,111 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2497FE1F13
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 17:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0AAE1F1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 17:21:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406591AbfJWPUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 11:20:13 -0400
-Received: from sonic301-2.consmr.mail.bf2.yahoo.com ([74.6.129.41]:36858 "EHLO
-        sonic301-2.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390636AbfJWPUN (ORCPT
+        id S2406624AbfJWPVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 11:21:10 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57218 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2406602AbfJWPVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 11:20:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1571844011; bh=rLzamwWDU6w+ljUNz15IdfH92SpsSZVAbr+GO8Whobg=; h=Date:From:Reply-To:Subject:From:Subject; b=eVygccjpxvj3t034xJtqhk9aD8QcwtWT/3uCFtuOeU7ddtG8R2AQIfUQ3Glu044y1oeHZtIbU4sXzgANDFvLTLZHBMOnn8UVYY4LgXu/U8s/ojyOpLifq7zvGbYsWZHJMB182+8sqEwVwVKjRODR7+QPcff5OszWoMXp185CCY6aDSyrDw3/3iP6O+NQAKaF2EKCI0DCSV4ab77oPyWOLkLLfhEzjUEe+pOJvhvsxA0H9uuoK0dKSQKmBZzwa52Ufya0W4fU98j6kE3rIZdEeT9QvrZJ/fOr73QtgP0DisCJF7VEL3713LGSuIG4KmemnA8hWGMOMO6EiLPi24Rn7A==
-X-YMail-OSG: wKOfQCoVM1nTCA25UKNC4C8RYoXfGIFDDrklSIlNj11xDM7X6PrzROMVKUcdkCn
- v_WyfTUk482XWV5u0BJvKzNWzzN3UWFHyOlg.ABTVCvOSXWT8Xb0cw41.xyKT4EzL.f6oPnQS2lz
- Ak.uCTuULjaS95E8YUcJ7MhpJDP3FDgwpM8rNOZc5wYYWsgRtnPet.kuha1r_bOi_dNTVfWS5BM8
- lhs3WJgRDRICcPz0WPI4Q7TMZzzNDPamWBwDiBRvMGgS0FJkgbpxP.8UJVuseqFMN0uMP.Mh.wSQ
- gHiBnJBaYRi5ygDlNFohet2RIoo7CRARJbLmuwhtcycBVGrLu1.bKj_HhXabeICXZJ5Vs9QzEoxd
- CzndDIdziWvjiVovppHJOriLwWsEA2hUydnbITsTZBgbl5QoMRTPR_M46EgkR8G3LZDa7AUSnpYy
- rLJmzPJko38fkaMe9qeJ8jbUyIXzMip80gP87ACvzcWlClasQcEU7139k3T5dgIknqgQ6wqK0W4J
- Nppxbc6Rt9oXOAOmwIy4q0IYpCJZnawdjwb9fBALCBg5Xc25_J07pvbyiP6UiiqblAh9Ga6EaRcv
- AA7gwa4w1Zh33M9nO6yvz4Sl1Mm7Q4D2z1bJRXajZ0xqRhLeRCbpB3MmaX3fiv0SG084yER79Vde
- flfLbSLNUsTLpgg51DLqGbIE4ZoyyOsPEu8t6NV2vQCVWhD3cAmKJfKN2SN_kaVkndIocn_h.KL5
- 6JyK.mx6zeCrIf_CEvQw3r67R5cTL8dLPuxiaddIjFC3sq2juGv5IrbPlGg14kCc1vEZzv7rX6nO
- rA22RTstDY0Pvec9brZ6Gsc6MMyGGViJC.PAAwWbRMZRBsou3qaPQ8BFv9qW8yKtBZ5n6BwcTf5X
- 1TL.AxlcQkFq.Ye0FRw_DGqOBbkxaa7K9Xj6b6Z94fJrChvljb_Tqq3QtX7iev.ZGEJ3QL_UL0mM
- 3KgsjfV4c.90Q6UwFtbAeP5ruu3Qf573XNmdOze8dBunoFhzhFGr4F7O_esmxNEuWBeQo2F0RKzr
- 2f3MtOZ1doAeVPqvzXwsRUNotgdaO5ZxDe4_6fVGQvOfJ1HEFPo2j.k5OCBIQLq5YZU_D3gKf4Um
- LqRrmDTtY5ESveVV7SAoFLTPF4DdZ7ETWfrDIQOFLeX3R3vls6qec1X.NkmJjLgqhcqpb86YKr24
- m5kHmUyV8eSQbpn3MUKiqttC_gJCiOwuehcqb9Msy3h0Nz3agO83aqQZgjyh13Z_dS9n_K74OKtK
- r1z12PE7C5uotfTnieSYoeI24qH2HLz0au4SyoNhBxWD.cegKfc2yqD5KZC2K0Ft5g1db3O9g8VE
- 0heZSKg--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Wed, 23 Oct 2019 15:20:11 +0000
-Date:   Wed, 23 Oct 2019 15:20:08 +0000 (UTC)
-From:   "MR.Abderazack Zebdani" <zebdanimrabderazack@gmail.com>
-Reply-To: zebdanimrabderazack@gmail.com
-Message-ID: <18223875.3879344.1571844008168@mail.yahoo.com>
-Subject: DEAR I NEED YOUR URGENT RESPONSE
+        Wed, 23 Oct 2019 11:21:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571844068;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=93aeFP5T+vRMcJvg4/fDd9Eq3JQGr3j/oyGTUsAl3c8=;
+        b=X6XOxHcsPUVkExbGbppmroJ8efNJVeE0cdUS9YOlHlJu/G8iKuYc05J+kYS4KVQE/mzqq8
+        r/wPdp+YrIFs+u1kLr3mEgEgWqIr2z+MWEKs06KbLOZdc7fxLpdbGV+P1ahgkkRNsnXEYS
+        IDYtdBLh7nt8KFLPx56l4PGGssBVOqc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-225-3MTVpcEMNnCZYTLXuZa83Q-1; Wed, 23 Oct 2019 11:21:04 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CB7A1107AFA9;
+        Wed, 23 Oct 2019 15:21:02 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3036A1001B20;
+        Wed, 23 Oct 2019 15:21:01 +0000 (UTC)
+Subject: Re: [RFC PATCH 2/2] mm, vmstat: reduce zone->lock holding time by
+ /proc/pagetypeinfo
+From:   Waiman Long <longman@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <guro@fb.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Aquini <aquini@redhat.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+References: <20191023095607.GE3016@techsingularity.net>
+ <20191023102737.32274-1-mhocko@kernel.org>
+ <20191023102737.32274-3-mhocko@kernel.org>
+ <a3510617-fd23-9f90-3c40-700bcb0f353c@redhat.com>
+Organization: Red Hat
+Message-ID: <c5d19ad0-db65-e592-490a-3ba73f81296b@redhat.com>
+Date:   Wed, 23 Oct 2019 11:21:00 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <a3510617-fd23-9f90-3c40-700bcb0f353c@redhat.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: 3MTVpcEMNnCZYTLXuZa83Q-1
+X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/23/19 10:56 AM, Waiman Long wrote:
+> On 10/23/19 6:27 AM, Michal Hocko wrote:
+>> From: Michal Hocko <mhocko@suse.com>
+>>
+>> pagetypeinfo_showfree_print is called by zone->lock held in irq mode.
+>> This is not really nice because it blocks both any interrupts on that
+>> cpu and the page allocator. On large machines this might even trigger
+>> the hard lockup detector.
+>>
+>> Considering the pagetypeinfo is a debugging tool we do not really need
+>> exact numbers here. The primary reason to look at the outuput is to see
+>> how pageblocks are spread among different migratetypes therefore putting
+>> a bound on the number of pages on the free_list sounds like a reasonable
+>> tradeoff.
+>>
+>> The new output will simply tell
+>> [...]
+>> Node    6, zone   Normal, type      Movable >100000 >100000 >100000 >100=
+000  41019  31560  23996  10054   3229    983    648
+>>
+>> instead of
+>> Node    6, zone   Normal, type      Movable 399568 294127 221558 102119 =
+ 41019  31560  23996  10054   3229    983    648
+>>
+>> The limit has been chosen arbitrary and it is a subject of a future
+>> change should there be a need for that.
+>>
+>> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+>> Signed-off-by: Michal Hocko <mhocko@suse.com>
+>> ---
+>>  mm/vmstat.c | 19 ++++++++++++++++++-
+>>  1 file changed, 18 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/vmstat.c b/mm/vmstat.c
+>> index 4e885ecd44d1..762034fc3b83 100644
+>> --- a/mm/vmstat.c
+>> +++ b/mm/vmstat.c
+>> @@ -1386,8 +1386,25 @@ static void pagetypeinfo_showfree_print(struct se=
+q_file *m,
+>> =20
+>>  =09=09=09area =3D &(zone->free_area[order]);
+>> =20
+>> -=09=09=09list_for_each(curr, &area->free_list[mtype])
+>> +=09=09=09list_for_each(curr, &area->free_list[mtype]) {
+>>  =09=09=09=09freecount++;
+>> +=09=09=09=09/*
+>> +=09=09=09=09 * Cap the free_list iteration because it might
+>> +=09=09=09=09 * be really large and we are under a spinlock
+>> +=09=09=09=09 * so a long time spent here could trigger a
+>> +=09=09=09=09 * hard lockup detector. Anyway this is a
+>> +=09=09=09=09 * debugging tool so knowing there is a handful
+>> +=09=09=09=09 * of pages in this order should be more than
+>> +=09=09=09=09 * sufficient
+>> +=09=09=09=09 */
+>> +=09=09=09=09if (freecount > 100000) {
+>> +=09=09=09=09=09seq_printf(m, ">%6lu ", freecount);
+
+It will print ">100001" which seems a bit awk and will be incorrect if
+it is exactly 100001. Could you just hardcode ">100000" into seq_printf()?
+
+Cheers,
+Longman
 
 
-Greetings My Dear Friend,
-
-Before I introduce myself, I wish to inform you that this letter is not a h=
-oax mail and I urge you to treat it serious.This letter must come to you as=
- a big surprise, but I believe it is only a day that people meet and become=
- great friends and business partners. Please I want you to read this letter=
- very carefully and I must apologize for barging this message into your mai=
-l box without any formal introduction due to the urgency and confidentialit=
-y of this business. I make this contact with you as I believe that you can =
-be of great assistance to me. My name is Mr.Abderazack Zebdani, from Burkin=
-a Faso, West Africa. I work in Bank Of Africa (BOA) as telex manager, pleas=
-e see this as a confidential message and do not reveal it to another person=
- and let me know whether you can be of assistance regarding my proposal bel=
-ow because it is top secret.
-
-I am about to retire from active Banking service to start a new life but I =
-am skeptical to reveal this particular secret to a stranger. You must assur=
-e me that everything will be handled confidentially because we are not goin=
-g to suffer again in life. It has been 10 years now that most of the greedy=
- African Politicians used our bank to launder money overseas through the he=
-lp of their Political advisers. Most of the funds which they transferred ou=
-t of the shores of Africa were gold and oil money that was supposed to have=
- been used to develop the continent. Their Political advisers always inflat=
-ed the amounts before transferring to foreign accounts, so I also used the =
-opportunity to divert part of the funds hence I am aware that there is no o=
-fficial trace of how much was transferred as all the accounts used for such=
- transfers were being closed after transfer. I acted as the Bank Officer to=
- most of the politicians and when I discovered that they were using me to s=
-ucceed in their greedy act; I also cleaned some of their banking records fr=
-om the Bank files and no one cared to ask me because the money was too much=
- for them to control. They laundered over $5billion Dollars during the proc=
-ess.
-
-Before I send this message to you, I have already diverted ($10.5million Do=
-llars) to an escrow account belonging to no one in the bank. The bank is an=
-xious now to know who the beneficiary to the funds because they have made a=
- lot of profits with the funds. It is more than Eight years now and most of=
- the politicians are no longer using our bank to transfer funds overseas. T=
-he ($10.5million Dollars) has been laying waste in our bank and I don=E2=80=
-=99t want to retire from the bank without transferring the funds to a forei=
-gn account to enable me share the proceeds with the receiver (a foreigner).=
- The money will be shared 60% for me and 40% for you. There is no one comin=
-g to ask you about the funds because I secured everything. I only want you =
-to assist me by providing a reliable bank account where the funds can be tr=
-ansferred.
-
-You are not to face any difficulties or legal implications as I am going to=
- handle the transfer personally. If you are capable of receiving the funds,=
- do let me know immediately to enable me give you a detailed information on=
- what to do. For me, I have not stolen the money from anyone because the ot=
-her people that took the whole money did not face any problems. This is my =
-chance to grab my own life opportunity but you must keep the details of the=
- funds secret to avoid any leakages as no one in the bank knows about my pl=
-ans.Please get back to me if you are interested and capable to handle this =
-project, I am looking forward to hear from you immediately for further info=
-rmation.
-Thanks with my best regards.
-Mr.Abderazack Zebdani.
-Telex Manager
-Bank Of Africa (BOA)
-Burkina Faso.
