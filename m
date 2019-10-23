@@ -2,136 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8AAFE23B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 22:03:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BEEDE23D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 22:06:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406705AbfJWUDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 16:03:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43436 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405410AbfJWUDC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 16:03:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 53304B545;
-        Wed, 23 Oct 2019 20:02:59 +0000 (UTC)
-Date:   Wed, 23 Oct 2019 22:02:56 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Aquini <aquini@redhat.com>
-Subject: Re: [PATCH 1/2] mm, vmstat: Release zone lock more frequently when
- reading /proc/pagetypeinfo
-Message-ID: <20191023200256.GP17610@dhcp22.suse.cz>
-References: <20191023102737.32274-3-mhocko@kernel.org>
- <20191023173423.12532-1-longman@redhat.com>
- <20191023180121.GN17610@dhcp22.suse.cz>
- <58a9adaf-9a1c-398b-dce1-cb30997807c1@redhat.com>
+        id S2390642AbfJWUFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 16:05:22 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51060 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfJWUFV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 16:05:21 -0400
+Received: by mail-wm1-f67.google.com with SMTP id q13so284934wmj.0;
+        Wed, 23 Oct 2019 13:05:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Hsfe3o9u2LRY+0nocL08VDzRyf/zs8Qk4HLwEzdn4Dk=;
+        b=HYubk8XvcGGvQYdserWcLKzcweNYV7O56pRPn71Qjf0wSFj+KijzfLknYRkt3CjBaM
+         OTFerJPUekyKHYKjZm7pYw9EaouZK/rv/qAJccVs+FppdmBQ7+SE86z4td2vTiOFbf1q
+         g/r70kz3dNhO4kZnmATWY9L2cgY3D+ATrlgfbHGmdhfvZsqCHmhnoqRolBYlvPz/NVRO
+         AheiQzOSbwxXwWvljdXe8ruhOqcUxnZQaBtgw6q3miQSeHpppWjg3X3mvsGR0YQUlgYd
+         jhTGwD2YKTm+j8somZm5Xbwl/PUkQBfBikFaJtbfmqAnVpyRg0ssXDfWQLNNv80KR+5Q
+         wkpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Hsfe3o9u2LRY+0nocL08VDzRyf/zs8Qk4HLwEzdn4Dk=;
+        b=EwUsxEC/HwmEK3WwU5iwCWz9knCd86kvgRBQFggZT43kZahzsungCQI4zM597ZV4JU
+         rar4yLkwi8jhtPN9zsDa/fy00AMeO4lxPd/uGlg77baBcVOJvYrxjNdDh/YBQael008X
+         GLGBOyR0DT3hgSLBAGLQYHOrcJUQVQM/+Ff4QAtZioIbW7JaxAxL7VI0hqJvtzXzVG2L
+         l/pBs/8qFiliCNBn7lyDTRlBHHYID3uZFlbJ6ek0dc0sKj+AfTSQD4BMMzj/8bkRWx9b
+         1uXCHmY+BTPO8//kDS17OKGgDAcyYoLU99XgrmSv2coF5QYaLh+57kbUkl03gF/aWAiY
+         xoIg==
+X-Gm-Message-State: APjAAAXHgYABvJwt0yXP+INUZABVpidCHqSgyiSYIM3QQhSUdH3uO6NP
+        0mDPuDQa8UL7XUTKrsQ8DMM=
+X-Google-Smtp-Source: APXvYqxSa2MeRkZVb6t+RtDHLWlQ4c6ajTmBvfRtiRqVfHtaIt4cPqmkepgTyG/iRGVmYvEDFcmFQg==
+X-Received: by 2002:a1c:9d07:: with SMTP id g7mr1495189wme.53.1571861118310;
+        Wed, 23 Oct 2019 13:05:18 -0700 (PDT)
+Received: from Red.localdomain (lfbn-1-7036-79.w90-116.abo.wanadoo.fr. [90.116.209.79])
+        by smtp.googlemail.com with ESMTPSA id b5sm177555wmj.18.2019.10.23.13.05.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 13:05:17 -0700 (PDT)
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     catalin.marinas@arm.com, davem@davemloft.net,
+        herbert@gondor.apana.org.au, linux@armlinux.org.uk,
+        mark.rutland@arm.com, mripard@kernel.org, robh+dt@kernel.org,
+        wens@csie.org, will@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: [PATCH v6 00/11] crypto: add sun8i-ce driver for Allwinner crypto engine
+Date:   Wed, 23 Oct 2019 22:05:02 +0200
+Message-Id: <20191023200513.22630-1-clabbe.montjoie@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <58a9adaf-9a1c-398b-dce1-cb30997807c1@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 23-10-19 14:14:14, Waiman Long wrote:
-> On 10/23/19 2:01 PM, Michal Hocko wrote:
-> > On Wed 23-10-19 13:34:22, Waiman Long wrote:
-> >> With a threshold of 100000, it is still possible that the zone lock
-> >> will be held for a very long time in the worst case scenario where all
-> >> the counts are just below the threshold. With up to 6 migration types
-> >> and 11 orders, it means up to 6.6 millions.
-> >>
-> >> Track the total number of list iterations done since the acquisition
-> >> of the zone lock and release it whenever 100000 iterations or more have
-> >> been completed. This will cap the lock hold time to no more than 200,000
-> >> list iterations.
-> >>
-> >> Signed-off-by: Waiman Long <longman@redhat.com>
-> >> ---
-> >>  mm/vmstat.c | 18 ++++++++++++++----
-> >>  1 file changed, 14 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> >> index 57ba091e5460..c5b82fdf54af 100644
-> >> --- a/mm/vmstat.c
-> >> +++ b/mm/vmstat.c
-> >> @@ -1373,6 +1373,7 @@ static void pagetypeinfo_showfree_print(struct seq_file *m,
-> >>  					pg_data_t *pgdat, struct zone *zone)
-> >>  {
-> >>  	int order, mtype;
-> >> +	unsigned long iteration_count = 0;
-> >>  
-> >>  	for (mtype = 0; mtype < MIGRATE_TYPES; mtype++) {
-> >>  		seq_printf(m, "Node %4d, zone %8s, type %12s ",
-> >> @@ -1397,15 +1398,24 @@ static void pagetypeinfo_showfree_print(struct seq_file *m,
-> >>  				 * of pages in this order should be more than
-> >>  				 * sufficient
-> >>  				 */
-> >> -				if (++freecount >= 100000) {
-> >> +				if (++freecount > 100000) {
-> >>  					overflow = true;
-> >> -					spin_unlock_irq(&zone->lock);
-> >> -					cond_resched();
-> >> -					spin_lock_irq(&zone->lock);
-> >> +					freecount--;
-> >>  					break;
-> >>  				}
-> >>  			}
-> >>  			seq_printf(m, "%s%6lu ", overflow ? ">" : "", freecount);
-> >> +			/*
-> >> +			 * Take a break and release the zone lock when
-> >> +			 * 100000 or more entries have been iterated.
-> >> +			 */
-> >> +			iteration_count += freecount;
-> >> +			if (iteration_count >= 100000) {
-> >> +				iteration_count = 0;
-> >> +				spin_unlock_irq(&zone->lock);
-> >> +				cond_resched();
-> >> +				spin_lock_irq(&zone->lock);
-> >> +			}
-> > Aren't you overengineering this a bit? If you are still worried then we
-> > can simply cond_resched for each order
-> > diff --git a/mm/vmstat.c b/mm/vmstat.c
-> > index c156ce24a322..ddb89f4e0486 100644
-> > --- a/mm/vmstat.c
-> > +++ b/mm/vmstat.c
-> > @@ -1399,13 +1399,13 @@ static void pagetypeinfo_showfree_print(struct seq_file *m,
-> >  				 */
-> >  				if (++freecount >= 100000) {
-> >  					overflow = true;
-> > -					spin_unlock_irq(&zone->lock);
-> > -					cond_resched();
-> > -					spin_lock_irq(&zone->lock);
-> >  					break;
-> >  				}
-> >  			}
-> >  			seq_printf(m, "%s%6lu ", overflow ? ">" : "", freecount);
-> > +			spin_unlock_irq(&zone->lock);
-> > +			cond_resched();
-> > +			spin_lock_irq(&zone->lock);
-> >  		}
-> >  		seq_putc(m, '\n');
-> >  	}
-> >
-> > I do not have a strong opinion here but I can fold this into my patch 2.
-> 
-> If the free list is empty or is very short, there is probably no need to
-> release and reacquire the lock. How about adding a check for a lower
-> bound like:
+Hello
 
-Again, does it really make any sense to micro optimize something like
-this. It is a debugging tool. I would rather go simple.
+This patch serie adds support for the Allwinner crypto engine.
+The Crypto Engine is the third generation of Allwinner cryptogaphic offloader.
+The first generation is the Security System already handled by the
+sun4i-ss driver.
+The second is named also Security System and is present on A80 and A83T
+SoCs, originaly this driver supported it also, but supporting both IP bringing
+too much complexity and another driver (sun8i-ss) will came for it.
+
+For the moment, the driver support only DES3/AES in ECB/CBC mode.
+Patchs for CTR/CTS/XTS, RSA and RNGs will came later.
+
+This serie is tested with CRYPTO_MANAGER_EXTRA_TESTS
+and tested on:
+sun50i-a64-bananapi-m64
+sun50i-a64-pine64-plus
+sun50i-h5-libretech-all-h3-cc
+sun50i-h6-pine-h64
+sun8i-h2-plus-libretech-all-h3-cc
+sun8i-h2-plus-orangepi-r1
+sun8i-h2-plus-orangepi-zero
+sun8i-h3-libretech-all-h3-cc
+sun8i-h3-orangepi-pc
+sun8i-r40-bananapi-m2-ultra
+
+DT and defconfig will go thru the mripard tree
+
+Regards
+
+Changes since v5:
+- fixed uninitialized err in sun8i_ce_allocate_chanlist (reported by lkp@intel.com/dan.carpenter@oracle.com)
+
+Changes since v4:
+- fixed some typos in kconfig
+- made sun8i_ce_pm_ops static
+- Use devm_platform_ioremap_resource
+
+Changes since v3:
+- removed need of reset-names
+- made reset mandatory
+
+Changes since v2:
+- changed additionalproperties
+- splited fallbacks functions out of sun8i_ce_cipher()
+- changed variant "model" to "has_t_dlen_in_bytes"
+- splited sun8i_ce_register_algs/sun8i_ce_get_clks out of sun8i_ce_probe()
+
+Changes since v1:
+- Add sun4i-ss to allwinner directory
+- Cleaned variant structure
+- Renamed clock name from ahb to bus (and mbus to ram)
+- Fixed DT bindings problem reported by mripard
+- Cleaned unneeded status = ""  in R40 DT
+- Removed old unnecessary interrupt_names in A64 DT
+- Added arm64 defconfig
+- Added support for PM functions
+- Splitted probe functions
+- Reworked clock settings
+- made reset mandatory
+
+Corentin Labbe (11):
+  crypto: Add allwinner subdirectory
+  crypto: Add Allwinner sun8i-ce Crypto Engine
+  dt-bindings: crypto: Add DT bindings documentation for sun8i-ce Crypto
+    Engine
+  ARM: dts: sun8i: R40: add crypto engine node
+  ARM: dts: sun8i: H3: Add Crypto Engine node
+  ARM64: dts: allwinner: sun50i: Add Crypto Engine node on A64
+  ARM64: dts: allwinner: sun50i: Add crypto engine node on H5
+  ARM64: dts: allwinner: sun50i: Add Crypto Engine node on H6
+  sunxi_defconfig: add new Allwinner crypto options
+  arm64: defconfig: add new Allwinner crypto options
+  crypto: sun4i-ss: Move to Allwinner directory
+
+ .../bindings/crypto/allwinner,sun8i-ce.yaml   |  88 +++
+ MAINTAINERS                                   |   4 +-
+ arch/arm/boot/dts/sun8i-h3.dtsi               |   9 +
+ arch/arm/boot/dts/sun8i-r40.dtsi              |   9 +
+ arch/arm/configs/sunxi_defconfig              |   2 +
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |   9 +
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |   9 +
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |   9 +
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/crypto/Kconfig                        |  28 +-
+ drivers/crypto/Makefile                       |   2 +-
+ drivers/crypto/allwinner/Kconfig              |  60 ++
+ drivers/crypto/allwinner/Makefile             |   2 +
+ .../{sunxi-ss => allwinner/sun4i-ss}/Makefile |   0
+ .../sun4i-ss}/sun4i-ss-cipher.c               |   0
+ .../sun4i-ss}/sun4i-ss-core.c                 |   0
+ .../sun4i-ss}/sun4i-ss-hash.c                 |   0
+ .../sun4i-ss}/sun4i-ss-prng.c                 |   0
+ .../sun4i-ss}/sun4i-ss.h                      |   0
+ drivers/crypto/allwinner/sun8i-ce/Makefile    |   2 +
+ .../allwinner/sun8i-ce/sun8i-ce-cipher.c      | 434 +++++++++++
+ .../crypto/allwinner/sun8i-ce/sun8i-ce-core.c | 676 ++++++++++++++++++
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h  | 254 +++++++
+ 23 files changed, 1570 insertions(+), 29 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/crypto/allwinner,sun8i-ce.yaml
+ create mode 100644 drivers/crypto/allwinner/Kconfig
+ create mode 100644 drivers/crypto/allwinner/Makefile
+ rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/Makefile (100%)
+ rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/sun4i-ss-cipher.c (100%)
+ rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/sun4i-ss-core.c (100%)
+ rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/sun4i-ss-hash.c (100%)
+ rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/sun4i-ss-prng.c (100%)
+ rename drivers/crypto/{sunxi-ss => allwinner/sun4i-ss}/sun4i-ss.h (100%)
+ create mode 100644 drivers/crypto/allwinner/sun8i-ce/Makefile
+ create mode 100644 drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+ create mode 100644 drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+ create mode 100644 drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
+
 -- 
-Michal Hocko
-SUSE Labs
+2.21.0
+
