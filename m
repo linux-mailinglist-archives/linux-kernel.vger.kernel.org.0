@@ -2,85 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0908E1CCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:36:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B6EE1CC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 15:36:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392074AbfJWNgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 09:36:09 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:44333 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389807AbfJWNgI (ORCPT
+        id S2405905AbfJWNgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 09:36:10 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55081 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392059AbfJWNgJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:36:08 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MMGZS-1igRY912gQ-00JNsX; Wed, 23 Oct 2019 15:36:07 +0200
-Received: by mail-qk1-f180.google.com with SMTP id a194so15664356qkg.10;
-        Wed, 23 Oct 2019 06:36:06 -0700 (PDT)
-X-Gm-Message-State: APjAAAUs+06u4SNx39KClRYOpsTnfrvFRb9XBO/YIh26An3BB/kzEwwh
-        bYGBVR4fTdXCelohvVrEfzWBgbptP7y61NCK43g=
-X-Google-Smtp-Source: APXvYqwqW5j67aigUtbaQwMvvZPaRM75Zx1vwHK4rpCvIcwvfeEYCvDuZFw2giioKFckU9rb9ypL7pHNYyg0dml8Ps0=
-X-Received: by 2002:aed:3c67:: with SMTP id u36mr9047061qte.142.1571837765100;
- Wed, 23 Oct 2019 06:36:05 -0700 (PDT)
+        Wed, 23 Oct 2019 09:36:09 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g7so3218721wmk.4
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 06:36:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=dVgB2gHwyu9BrwAHrTVrhxxTLMnU+GjkCtVmW3QXNgU=;
+        b=Zp1rNYOb7wPsdMPdMbYe//+9NYjGitazC3K4MBrZR7qVyf3SurlVK/iVTX8rXrD1MV
+         duJiT6vf8/dVRyCoGAADOWO6mdvdO7LXMGSTBsL1aPHRptzHVSr6EVhNUNTbTuXzEcJM
+         CBCb+Jmcnci8Xj7Z+C2D9+RBLni3QkUE+aLyNfm640DulCjNSyCQlNWPphsu43/xiaCJ
+         jGtO0Rf565kxFLQCtlztfZCV3214dAbiLSZKIvSf0BlByQ/4iOlt67agx4AGUfiCjZMI
+         RoTZ6xCVKLtvHbzydaTmcuGrVnWq27zH7gygGQ2YGfnHqhgxkVmC2lGKxGSiWzVcr6KU
+         QN9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=dVgB2gHwyu9BrwAHrTVrhxxTLMnU+GjkCtVmW3QXNgU=;
+        b=UUM6s2GY2LhX/qLNWA6eqDblhK3xIL/IlMXEXAyrpVsp9G2lxihujOT8fvNK9DzwFK
+         0GnB0a1ZLS1Lr9ez67u8DRxsHOWYhz4xgAdyYYuN62zS10hhFie82ou2tPEMFf8IAtXP
+         YpNDAkNqh5+nZQhKFVDsa2qR0xNyQVXWhmKwIdqbWcmT7J8NQh5JWXG6aYtYfGkpVr2x
+         oTZ/6Kwq0qLQp9XfMWpg6zBzxfIrngO2jKChgPtWFdFSfJbh8FmzVEF1fHmK+Tl3Z/L3
+         ANCMLgZKvejpT8Y/k1pcIuwB5VjfdNUoAhI93rPIgQEEuwZYsA5bCOHmz84SO0gcrVmB
+         yEHA==
+X-Gm-Message-State: APjAAAVP4uTRi1YiBflrYT6EwMvOrgpubE2ZIGKcQeT2KbvAVH0MY46H
+        IwNm2s8pWp3q2YQ4qEouDQmzHTUAvroktuuL7hQ=
+X-Google-Smtp-Source: APXvYqzu60dP5ZzLHoNcR4C1Z90wK3ujHk4eIk60CblS8nkYpWGmu8JElmh7udCx+t1YVbQaCRFZhRaASS5NgAdsuk0=
+X-Received: by 2002:a7b:ce84:: with SMTP id q4mr4860246wmj.36.1571837768313;
+ Wed, 23 Oct 2019 06:36:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-28-arnd@arndb.de> <20191023131321.GH11048@pi3>
-In-Reply-To: <20191023131321.GH11048@pi3>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 23 Oct 2019 15:35:49 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a03JtFrCYFUQAFnSENghrXSCDBQXB-QfiDG3yTxXxdpaw@mail.gmail.com>
-Message-ID: <CAK8P3a03JtFrCYFUQAFnSENghrXSCDBQXB-QfiDG3yTxXxdpaw@mail.gmail.com>
-Subject: Re: [PATCH 28/36] fbdev: s3c2410fb: remove mach header dependency
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Received: by 2002:a5d:400a:0:0:0:0:0 with HTTP; Wed, 23 Oct 2019 06:36:07
+ -0700 (PDT)
+Reply-To: mrs.lisarobinson746@gmail.com
+From:   "Mrs. Lisa" <helpdesk.eit.ac.nz@gmail.com>
+Date:   Wed, 23 Oct 2019 06:36:07 -0700
+Message-ID: <CAK7Er8aKyL3H-yzE3WwHqgdy-pvjcQoKmcraD43WMg3fDh48xQ@mail.gmail.com>
+Subject: Mrs. Lisa Charity Donation
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:dlcVjROea1jaoI1MdzPRxFVjhVzRcIC5nkL5pQCG9c45CBvt/Gw
- OtS9RyEw9Wl+/QXCFcTyHcQMzd/kSbVdMywUxqWJw7PBsf3xheHztLfkvmMef+6rB5f7XYD
- /wypCgz03sZllX8iYByJGqCmIUTWHW6TPGSiQfO0sUcn6Xc1mp2mcMglRC9PpdWFJFEDpOm
- s+GIC3mT/30V55XKx434g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:SlBXf2eBKF8=:LpnGX2aRKKhX+6Ax5hvUbj
- RP/UDtVFQ4CgxwMrzqfiKPJkWvny8Z0/R9H0m5Bqp2PeRqPVZCAOQ2pc0Gex5YkqWhsbqv7At
- srpiYCqw3yPZDMvr88lHykMICXKXo/LE0++1APDBQw9fL9pcwqWhCV48GVPlH8ifb15ihMvXH
- 4/KDZSw3yTUyvP/p1H67XmJp1jwZZDUJ2OpsEm4jwGxk+fX/F8kR0FSk60wLMnvT98MK8b2+i
- QAFoZUHlVdwcf04eSa0jCr6rOo8mrmH0SzjpKUmfsS9KXsXPcdm3BsA7EbuaLBfmgKZhea1D6
- cyhZPK4e6Dnfzsl8GmWxC6t0yVaFhNDj/5CcH4QzwSV74tX3urzqXC9hb/xH1shGi/XQm7D3d
- bq6PFa9Fhy795yfhUIG6ws8qk9gQKW2rtDg9WMXpeaUPJqbItjT+LGN+Byt0kK0HPwUtWS8d0
- FnVH+tA+VpSBR9cPbMGU2LEJIeiXVk0/L7tTYslYYnTGjZr9VjA+O3Pft5pPaSEV+1sxMHzRq
- hl5vin0aqfPk6RkNWHvqrL/omUGzLE9mPNq0hywEMkyG6n4G74bgN5tgf3Cli2Pa/IrXL6p2w
- vHlnf76tnf34Aj6Z4Aq12PR4rgC/bxe58YVqlF2WhfNgzU1EYDN9tr4NPyTekO26fzrzeD3LW
- x8Vl/W8hfAgUzYesNEN9UJZ6u496nXVieIBUbBWCHT3HwqzlHK97MSSDF7QcFRX185C6nOw4W
- ZwIjzC1VNizQYPonXkpiDX8Cb9GSYkbUjArBdKKAqNGRF1Xt8XC/LOx1tVORgmYdaBiEakrWu
- meRx9kHAMRafEfqq2gQPp9euWpIDeUnG1xjAVBkHWaXXUboEVAumYTPUUx4vqB5bJx9Q20ZsD
- QL3BGk5AOyeSPKwFkSVw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 3:13 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Thu, Oct 10, 2019 at 10:30:12PM +0200, Arnd Bergmann wrote:
-
-> > @@ -321,6 +320,7 @@ static struct s3c2410fb_mach_info jive_lcd_config = {
-> >        * data. */
-> >
-> >       .gpcup          = (0xf << 1) | (0x3f << 10),
-> > +     .gpcup_reg =    S3C2410_GPCUP,
->
-> Nits: indentation before/after '=' looks wrong. Tab should be
-> before '=', one space after.
-
-Ok, fixed now for the four boards that had inconsistent indentation --
-jive, mini2440, smdk2440, and rx1950. Unfortunately each board
-seemed to have its own way of doing this.
-
-      Arnd
+-- 
+I am Lisa Robinson, you have a donation of $1,200,000.00 USD. Contact
+me now for more information.
