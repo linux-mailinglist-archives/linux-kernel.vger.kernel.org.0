@@ -2,141 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A663CE1B58
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:53:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98858E1B74
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391916AbfJWMxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 08:53:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49374 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391880AbfJWMxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:53:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CECD2B67E;
-        Wed, 23 Oct 2019 12:53:14 +0000 (UTC)
-From:   Michal Suchanek <msuchanek@suse.de>
-To:     linux-scsi@vger.kernel.org
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 8/8] scsi: sr: wait for the medium to become ready
-Date:   Wed, 23 Oct 2019 14:52:47 +0200
-Message-Id: <94dc98dc67b1d183d04c338c7978efa0556db6ac.1571834862.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1571834862.git.msuchanek@suse.de>
-References: <cover.1571834862.git.msuchanek@suse.de>
+        id S2391968AbfJWMyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 08:54:06 -0400
+Received: from mga14.intel.com ([192.55.52.115]:36025 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390962AbfJWMyF (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 08:54:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 05:54:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
+   d="scan'208";a="196768236"
+Received: from shilongz-mobl.ccr.corp.intel.com (HELO [10.254.210.50]) ([10.254.210.50])
+  by fmsmga008.fm.intel.com with ESMTP; 23 Oct 2019 05:54:03 -0700
+Subject: Re: [PATCH v3 5/5] perf report: Sort by sampled cycles percent per
+ block for tui
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <20191022080710.6491-1-yao.jin@linux.intel.com>
+ <20191022080710.6491-6-yao.jin@linux.intel.com>
+ <20191023113656.GP22919@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <67f89552-dec9-e42e-0e3c-b55d9f5b92f4@linux.intel.com>
+Date:   Wed, 23 Oct 2019 20:54:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191023113656.GP22919@krava>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the autoclose IOCLT provided by cdrom driver to wait for drive to
-close in open_finish, and attempt to open once more after the door
-closes.
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
- drivers/scsi/sr.c | 54 ++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 42 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-index 8090c5bdec09..34d9a818b9e0 100644
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -521,29 +521,58 @@ static blk_status_t sr_init_command(struct scsi_cmnd *SCpnt)
- 	return ret;
- }
- 
--static int sr_block_open(struct block_device *bdev, fmode_t mode)
-+static int __sr_block_open(struct block_device *bdev, fmode_t mode)
- {
--	struct scsi_cd *cd;
--	struct scsi_device *sdev;
--	int ret = -ENXIO;
--
--	cd = scsi_cd_get(bdev->bd_disk);
--	if (!cd)
--		goto out;
-+	struct scsi_cd *cd = scsi_cd(bdev->bd_disk);
-+	int ret;
- 
--	sdev = cd->device;
--	scsi_autopm_get_device(sdev);
- 	check_disk_change(bdev);
- 
- 	mutex_lock(&sr_mutex);
- 	ret = cdrom_open(&cd->cdi, bdev, mode);
- 	mutex_unlock(&sr_mutex);
- 
-+	return ret;
-+}
-+
-+static int sr_block_open(struct block_device *bdev, fmode_t mode)
-+{
-+	struct scsi_cd *cd = scsi_cd_get(bdev->bd_disk);
-+	struct scsi_device *sdev;
-+	int ret;
-+
-+	if (!cd)
-+		return -ENXIO;
-+
-+	sdev = cd->device;
-+	scsi_autopm_get_device(sdev);
-+	ret = __sr_block_open(bdev, mode);
- 	scsi_autopm_put_device(sdev);
--	if (ret)
-+
-+	if (ret == -ERESTARTSYS)
- 		scsi_cd_put(cd);
- 
--out:
-+	return ret;
-+}
-+
-+static int sr_block_open_finish(struct block_device *bdev, fmode_t mode,
-+				int ret)
-+{
-+	struct scsi_cd *cd = scsi_cd(bdev->bd_disk);
-+
-+	/* wait for drive to get ready */
-+	if ((ret == -ENOMEDIUM) && !(mode & FMODE_NDELAY)) {
-+		struct scsi_device *sdev = cd->device;
-+		/*
-+		 * Cannot use sr_block_ioctl because it locks sr_mutex blocking
-+		 * out any processes trying to access the drive
-+		 */
-+		scsi_autopm_get_device(sdev);
-+		cdrom_ioctl(&cd->cdi, bdev, mode, CDROM_AUTOCLOSE, 0);
-+		ret = __sr_block_open(bdev, mode);
-+		scsi_autopm_put_device(sdev);
-+	}
-+
- 	return ret;
- }
- 
-@@ -639,6 +668,7 @@ static const struct block_device_operations sr_bdops =
- {
- 	.owner		= THIS_MODULE,
- 	.open		= sr_block_open,
-+	.open_finish	= sr_block_open_finish,
- 	.release	= sr_block_release,
- 	.ioctl		= sr_block_ioctl,
- 	.check_events	= sr_block_check_events,
--- 
-2.23.0
+On 10/23/2019 7:36 PM, Jiri Olsa wrote:
+> On Tue, Oct 22, 2019 at 04:07:10PM +0800, Jin Yao wrote:
+>> Previous patch has implemented a new sort option "total_cycles".
+>> But there was only stdio mode supported.
+>>
+>> This patch supports the tui mode and support '--percent-limit'.
+>>
+>> For example,
+>>
+>>   perf record -b ./div
+>>   perf report -s total_cycles --percent-limit 1
+>>
+>>   # Samples: 2753248 of event 'cycles'
+>>   Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                                              [Program Block Range]         Shared Object
+>>            26.04%            2.8M        0.40%          18                                             [div.c:42 -> div.c:39]                   div
+>>            15.17%            1.2M        0.16%           7                                 [random_r.c:357 -> random_r.c:380]          libc-2.27.so
+>>             5.11%          402.0K        0.04%           2                                             [div.c:27 -> div.c:28]                   div
+>>             4.87%          381.6K        0.04%           2                                     [random.c:288 -> random.c:291]          libc-2.27.so
+>>             4.53%          381.0K        0.04%           2                                             [div.c:40 -> div.c:40]                   div
+>>             3.85%          300.9K        0.02%           1                                             [div.c:22 -> div.c:25]                   div
+>>             3.08%          241.1K        0.02%           1                                           [rand.c:26 -> rand.c:27]          libc-2.27.so
+>>             3.06%          240.0K        0.02%           1                                     [random.c:291 -> random.c:291]          libc-2.27.so
+>>             2.78%          215.7K        0.02%           1                                     [random.c:298 -> random.c:298]          libc-2.27.so
+>>             2.52%          198.3K        0.02%           1                                     [random.c:293 -> random.c:293]          libc-2.27.so
+>>             2.36%          184.8K        0.02%           1                                           [rand.c:28 -> rand.c:28]          libc-2.27.so
+>>             2.33%          180.5K        0.02%           1                                     [random.c:295 -> random.c:295]          libc-2.27.so
+>>             2.28%          176.7K        0.02%           1                                     [random.c:295 -> random.c:295]          libc-2.27.so
+>>             2.20%          168.8K        0.02%           1                                         [rand@plt+0 -> rand@plt+0]                   div
+>>             1.98%          158.2K        0.02%           1                                 [random_r.c:388 -> random_r.c:388]          libc-2.27.so
+>>             1.57%          123.3K        0.02%           1                                             [div.c:42 -> div.c:44]                   div
+>>             1.44%          116.0K        0.42%          19                                 [random_r.c:357 -> random_r.c:394]          libc-2.27.so
+>>
+>>   v3:
+>>   ---
+>>   Minor change since the function name is changed:
+>>   block_total_cycles_percent -> block_info__total_cycles_percent
+>>
+>> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+>> ---
+>>   tools/perf/builtin-report.c    | 30 +++++++++++++---
+>>   tools/perf/ui/browsers/hists.c | 62 +++++++++++++++++++++++++++++++++-
+>>   tools/perf/ui/browsers/hists.h |  2 ++
+>>   tools/perf/util/hist.h         | 12 +++++++
+>>   4 files changed, 101 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+>> index dbae1812ce47..707512f177cb 100644
+>> --- a/tools/perf/builtin-report.c
+>> +++ b/tools/perf/builtin-report.c
+>> @@ -800,6 +800,27 @@ static int hists__fprintf_all_blocks(struct hists *hists, struct report *rep)
+>>   	return 0;
+>>   }
+>>   
+>> +static int perf_evlist__tui_block_hists_browse(struct evlist *evlist,
+>> +					       struct report *rep)
+>> +{
+>> +	struct block_hist *bh = &rep->block_hist;
+>> +	struct evsel *pos;
+>> +	int ret;
+>> +
+>> +	evlist__for_each_entry(evlist, pos) {
+>> +		struct hists *hists = evsel__hists(pos);
+>> +
+>> +		get_block_hists(hists, bh, rep);
+> 
+> same here, this is display function, compute the data before
+> 
+> thanks,
+> jirka
+>
 
+That will be a little bit complicated. But OK, I will try that.
+
+Thanks
+Jin Yao
+
+>> +		symbol_conf.report_individual_block = true;
+>> +		ret = block_hists_tui_browse(bh, pos, rep->min_percent);
+>> +		hists__delete_entries(&bh->block_hists);
+>> +		if (ret != 0)
+>> +			return ret;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+> 
+> SNIP
+> 
