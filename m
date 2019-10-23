@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C272E21CB
+	by mail.lfdr.de (Postfix) with ESMTP id D5C3AE21CC
 	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:32:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730018AbfJWRcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 13:32:10 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36164 "EHLO
+        id S1730061AbfJWRcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 13:32:12 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46786 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729939AbfJWRcH (ORCPT
+        with ESMTP id S1726944AbfJWRcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 23 Oct 2019 13:32:07 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w18so22475122wrt.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 10:32:04 -0700 (PDT)
+Received: by mail-wr1-f66.google.com with SMTP id n15so12218996wrw.13
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 10:32:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wkSWabqYVL066Xoh2VEh6KAZRi4MksvH/vrykc5mNu8=;
-        b=CgvSGucEXePDgb8HdjupEKmoCsfnrmGoc0SxZhaKnsPQEzyPYUcSQFwcJnbR0krN8q
-         VX72j5JlYGgnGcQm/oQQJ/ljNtlO6cDakEe+QRyytOLgpzuq66qzM+4QvHSzgodKPxwn
-         vVGkk/HhJXGSojQj5WKh3I8K6mofh1N3nPF8TbIIazVdOWWFCjGFBq2MAEwDI7VX52TG
-         N2IiLk5LnzGwvso2360v8V3/W8mMJdOErj2q7OQSLoluHuypaUfiwBhkB02iR8Ipb1Zc
-         hrEcPwSM+UGTS54oreMCu45yPBRz6RpSGxjSJcGrqv3XGl71gi1jOfU76YejZT6qNZO+
-         z8AA==
+        bh=Mqk9lnQxsCRkESOqxWXPCiFE5tGlzXJcbsR9dSjU8io=;
+        b=pX1fAvcoTDxwW/VJpbfmFNtdo4fhYGst7dtK6Ws3sqRgZamLy4biv+zY5OdGO4Fq5P
+         uf9m57CdjurB61LX7RzR6sh0KZJakGxXmLfRRkqSIp0oF4V901ZccrxnB4FV+p8xloQn
+         dtI66Q02YRDXTJF5I8+RO4ZkaofmzAW2UHkc6dvK3vANpPOheuq8QSjW9uPMIUh/zFvW
+         ykVzof8CUBheJ32MHr2WwuuTROI3jCVIJHOAF6Z7Tg+0/15AAFv+qwli1hep1yGjiTAq
+         3hZzC9l/fkR6UJt8edKNrVIiVmIXzK0KtecWks3ioBllug7N5WUqOzt7dWImmP+F1wUr
+         HUQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=wkSWabqYVL066Xoh2VEh6KAZRi4MksvH/vrykc5mNu8=;
-        b=MCoHmVH2PZxqGLLTAo6adnUulyikpulYtJle90iSJTBcFqZASrQMRlDB5aVEn6YAri
-         rln63a8BY7VlNXqIMiKLCFuj0/J4/SiYkUMZ6ddzoPlIPmXAVDfKEywPrEzxeoq7WSOk
-         d0PEEXvv8esdk9o6sPrvPQgfwMbfnwwCbXfEc1GYIZ8sCL1bXLfNz5qhbM8P0p3ti9mI
-         Itdcwu8QPtHCPf4n4i6P0knCsaF9QO3RkGlMA7U4jCLImU3psXjd7z3L2clBT2Hu/uug
-         5PJ9kISHvTwVZ4Vy1Xy+s5EaPhKPied1s8oYDfN2FFVK5rmJaWx5/p8NvuissejgtRU2
-         djcw==
-X-Gm-Message-State: APjAAAVbEDxXmVCnKENuB3t6s63bNeD/vo5sARXgfbYdk+1OfBdFDEZV
-        7L1LhDMmhcGecXxv2uUMWMkrzw==
-X-Google-Smtp-Source: APXvYqy08L9FIbY2r412z5v6+7nNGPipvOr2gI9T5+G9vq3J5rQy7aJf6LEJ1eQbJxDAegBfh7tChQ==
-X-Received: by 2002:adf:ee10:: with SMTP id y16mr9429013wrn.67.1571851923689;
-        Wed, 23 Oct 2019 10:32:03 -0700 (PDT)
+        bh=Mqk9lnQxsCRkESOqxWXPCiFE5tGlzXJcbsR9dSjU8io=;
+        b=tg5bBW2Afr1vN5iEeWoauD6AUvxSsP+jTu/MHlANAiF7VV0MIQd8/e7SqbMQ0K44Sn
+         N/6CPZyJmXlsA5Nu13ziLA3ucBxFVrXZmu99nOY6fbidxhL/sLZXoNlLisBrPpS+9Jxw
+         m5bTEB/3dF13K49uC8lsxies0DpAEOyX6pTyT0loDJlgawKkL3QhL4YWWNXMpSLdczel
+         m2uWKPPl17Tbo6nJtoJO/F01Ox57omHsEWCNsfwe782pFFdd1S7GAGnT399kSdytl9Fd
+         V4kh3aw9xlQbNZ4ccdeMGgSgUwvjsD9h/7fhyad9Vh8GxSroFmwSHjjsdQYtc18QGnkJ
+         xyaQ==
+X-Gm-Message-State: APjAAAUXo/q9zP+LezgkZA3OZTyJr9JE3KvQf6zCwpisfpO5kURUooNt
+        p8qqMXHs++ijkKnHKHzvSQ9KXQ==
+X-Google-Smtp-Source: APXvYqxfqwTxI1LhbV428InmPQyII9sFlty46FB2NJzu3rlL1NUCyr79qCnwdyyZ+MagHlFDaepVJA==
+X-Received: by 2002:adf:b1d1:: with SMTP id r17mr9509023wra.201.1571851925290;
+        Wed, 23 Oct 2019 10:32:05 -0700 (PDT)
 Received: from e123331-lin.home (lfbn-mar-1-643-104.w90-118.abo.wanadoo.fr. [90.118.215.104])
-        by smtp.gmail.com with ESMTPSA id f7sm14900374wre.68.2019.10.23.10.32.02
+        by smtp.gmail.com with ESMTPSA id f7sm14900374wre.68.2019.10.23.10.32.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 10:32:02 -0700 (PDT)
+        Wed, 23 Oct 2019 10:32:04 -0700 (PDT)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
+Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] efi/tpm: return -EINVAL when determining tpm final events log size fails
-Date:   Wed, 23 Oct 2019 19:31:58 +0200
-Message-Id: <20191023173201.6607-3-ard.biesheuvel@linaro.org>
+Subject: [PATCH 3/5] efi/random: treat EFI_RNG_PROTOCOL output as bootloader randomness
+Date:   Wed, 23 Oct 2019 19:31:59 +0200
+Message-Id: <20191023173201.6607-4-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191023173201.6607-1-ard.biesheuvel@linaro.org>
 References: <20191023173201.6607-1-ard.biesheuvel@linaro.org>
@@ -62,34 +62,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jerry Snitselaar <jsnitsel@redhat.com>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-Currently nothing checks the return value of efi_tpm_eventlog_init,
-but in case that changes in the future make sure an error is
-returned when it fails to determine the tpm final events log
-size.
+Commit 428826f5358c ("fdt: add support for rng-seed") introduced
+add_bootloader_randomness(), permitting randomness provided by the
+bootloader or firmware to be credited as entropy. However, the fact
+that the UEFI support code was already wired into the RNG subsystem
+via a call to add_device_randomness() was overlooked, and so it was
+not converted at the same time.
 
-Fixes: e658c82be556 ("efi/tpm: Only set 'efi_tpm_final_log_size' after ...")
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Note that this UEFI (v2.4 or newer) feature is currently only
+implemented for EFI stub booting on ARM, and further note that
+CONFIG_RANDOM_TRUST_BOOTLOADER must be enabled, and this should be
+done only if there indeed is sufficient trust in the bootloader
+_and_ its source of randomness.
+
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+[ardb: update commit log]
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/firmware/efi/tpm.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/firmware/efi/efi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-index ebd7977653a8..31f9f0e369b9 100644
---- a/drivers/firmware/efi/tpm.c
-+++ b/drivers/firmware/efi/tpm.c
-@@ -88,6 +88,7 @@ int __init efi_tpm_eventlog_init(void)
- 
- 	if (tbl_size < 0) {
- 		pr_err(FW_BUG "Failed to parse event in TPM Final Events Log\n");
-+		ret = -EINVAL;
- 		goto out_calc;
- 	}
- 
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index 69f00f7453a3..e98bbf8e56d9 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -554,7 +554,7 @@ int __init efi_config_parse_tables(void *config_tables, int count, int sz,
+ 					      sizeof(*seed) + size);
+ 			if (seed != NULL) {
+ 				pr_notice("seeding entropy pool\n");
+-				add_device_randomness(seed->bits, seed->size);
++				add_bootloader_randomness(seed->bits, seed->size);
+ 				early_memunmap(seed, sizeof(*seed) + size);
+ 			} else {
+ 				pr_err("Could not map UEFI random seed!\n");
 -- 
 2.17.1
 
