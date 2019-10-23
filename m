@@ -2,178 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7C3AE1F0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 17:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2497FE1F13
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 17:20:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406579AbfJWPR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 11:17:28 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49354 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390140AbfJWPR2 (ORCPT
+        id S2406591AbfJWPUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 11:20:13 -0400
+Received: from sonic301-2.consmr.mail.bf2.yahoo.com ([74.6.129.41]:36858 "EHLO
+        sonic301-2.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390636AbfJWPUN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 11:17:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RSwZx5vXYUgltg6SGAgq4hYjxU5vyXKL5mMiSRK1G+c=; b=glSAeidi9my/AlJrLdNkbFUKp
-        CHfBM7dYonAuhtzeGlRiirtBYrxg1M/IqUVhyq0nhlSMeQhu85UFv3aAPiHcNG+v4wBBwI5itww7m
-        WMOFic49egghTv8tdW6einsAIORpmqfWBdtg5BxsCrb7ck972Te1g0Uhc5uAfzgSn/QHHGw+6pk4a
-        FJ1Pfqdf5buIekasrF8v8ygA+Kg8Fj/ZYdSZ2I+UnW4s3jPp23VqhhaPDKw1eEinYBp6fO7mzCEzl
-        alvwIcZ6dteZgr5S9qb7Wq2SDF1kHEtimShzcQ495HZHVout1vIemy7tfPzLHY5E3YM940Uo3Raxj
-        WWFa0tnKw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNINd-0007k2-1F; Wed, 23 Oct 2019 15:16:57 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A0A69300EBF;
-        Wed, 23 Oct 2019 17:15:56 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B11FF2B1D76AD; Wed, 23 Oct 2019 17:16:54 +0200 (CEST)
-Date:   Wed, 23 Oct 2019 17:16:54 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jeyu@kernel.org
-Subject: Re: [PATCH v4 15/16] module: Move where we mark modules RO,X
-Message-ID: <20191023151654.GF19358@hirez.programming.kicks-ass.net>
-References: <20191018073525.768931536@infradead.org>
- <20191018074634.801435443@infradead.org>
- <20191021135312.jbbxsuipxldocdjk@treble>
- <20191021141402.GI1817@hirez.programming.kicks-ass.net>
- <20191023114835.GT1817@hirez.programming.kicks-ass.net>
+        Wed, 23 Oct 2019 11:20:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1571844011; bh=rLzamwWDU6w+ljUNz15IdfH92SpsSZVAbr+GO8Whobg=; h=Date:From:Reply-To:Subject:From:Subject; b=eVygccjpxvj3t034xJtqhk9aD8QcwtWT/3uCFtuOeU7ddtG8R2AQIfUQ3Glu044y1oeHZtIbU4sXzgANDFvLTLZHBMOnn8UVYY4LgXu/U8s/ojyOpLifq7zvGbYsWZHJMB182+8sqEwVwVKjRODR7+QPcff5OszWoMXp185CCY6aDSyrDw3/3iP6O+NQAKaF2EKCI0DCSV4ab77oPyWOLkLLfhEzjUEe+pOJvhvsxA0H9uuoK0dKSQKmBZzwa52Ufya0W4fU98j6kE3rIZdEeT9QvrZJ/fOr73QtgP0DisCJF7VEL3713LGSuIG4KmemnA8hWGMOMO6EiLPi24Rn7A==
+X-YMail-OSG: wKOfQCoVM1nTCA25UKNC4C8RYoXfGIFDDrklSIlNj11xDM7X6PrzROMVKUcdkCn
+ v_WyfTUk482XWV5u0BJvKzNWzzN3UWFHyOlg.ABTVCvOSXWT8Xb0cw41.xyKT4EzL.f6oPnQS2lz
+ Ak.uCTuULjaS95E8YUcJ7MhpJDP3FDgwpM8rNOZc5wYYWsgRtnPet.kuha1r_bOi_dNTVfWS5BM8
+ lhs3WJgRDRICcPz0WPI4Q7TMZzzNDPamWBwDiBRvMGgS0FJkgbpxP.8UJVuseqFMN0uMP.Mh.wSQ
+ gHiBnJBaYRi5ygDlNFohet2RIoo7CRARJbLmuwhtcycBVGrLu1.bKj_HhXabeICXZJ5Vs9QzEoxd
+ CzndDIdziWvjiVovppHJOriLwWsEA2hUydnbITsTZBgbl5QoMRTPR_M46EgkR8G3LZDa7AUSnpYy
+ rLJmzPJko38fkaMe9qeJ8jbUyIXzMip80gP87ACvzcWlClasQcEU7139k3T5dgIknqgQ6wqK0W4J
+ Nppxbc6Rt9oXOAOmwIy4q0IYpCJZnawdjwb9fBALCBg5Xc25_J07pvbyiP6UiiqblAh9Ga6EaRcv
+ AA7gwa4w1Zh33M9nO6yvz4Sl1Mm7Q4D2z1bJRXajZ0xqRhLeRCbpB3MmaX3fiv0SG084yER79Vde
+ flfLbSLNUsTLpgg51DLqGbIE4ZoyyOsPEu8t6NV2vQCVWhD3cAmKJfKN2SN_kaVkndIocn_h.KL5
+ 6JyK.mx6zeCrIf_CEvQw3r67R5cTL8dLPuxiaddIjFC3sq2juGv5IrbPlGg14kCc1vEZzv7rX6nO
+ rA22RTstDY0Pvec9brZ6Gsc6MMyGGViJC.PAAwWbRMZRBsou3qaPQ8BFv9qW8yKtBZ5n6BwcTf5X
+ 1TL.AxlcQkFq.Ye0FRw_DGqOBbkxaa7K9Xj6b6Z94fJrChvljb_Tqq3QtX7iev.ZGEJ3QL_UL0mM
+ 3KgsjfV4c.90Q6UwFtbAeP5ruu3Qf573XNmdOze8dBunoFhzhFGr4F7O_esmxNEuWBeQo2F0RKzr
+ 2f3MtOZ1doAeVPqvzXwsRUNotgdaO5ZxDe4_6fVGQvOfJ1HEFPo2j.k5OCBIQLq5YZU_D3gKf4Um
+ LqRrmDTtY5ESveVV7SAoFLTPF4DdZ7ETWfrDIQOFLeX3R3vls6qec1X.NkmJjLgqhcqpb86YKr24
+ m5kHmUyV8eSQbpn3MUKiqttC_gJCiOwuehcqb9Msy3h0Nz3agO83aqQZgjyh13Z_dS9n_K74OKtK
+ r1z12PE7C5uotfTnieSYoeI24qH2HLz0au4SyoNhBxWD.cegKfc2yqD5KZC2K0Ft5g1db3O9g8VE
+ 0heZSKg--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Wed, 23 Oct 2019 15:20:11 +0000
+Date:   Wed, 23 Oct 2019 15:20:08 +0000 (UTC)
+From:   "MR.Abderazack Zebdani" <zebdanimrabderazack@gmail.com>
+Reply-To: zebdanimrabderazack@gmail.com
+Message-ID: <18223875.3879344.1571844008168@mail.yahoo.com>
+Subject: DEAR I NEED YOUR URGENT RESPONSE
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023114835.GT1817@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 01:48:35PM +0200, Peter Zijlstra wrote:
-> On Mon, Oct 21, 2019 at 04:14:02PM +0200, Peter Zijlstra wrote:
-> > On Mon, Oct 21, 2019 at 08:53:12AM -0500, Josh Poimboeuf wrote:
-> 
-> > > Doesn't livepatch code also need to be modified?  We have:
-> > 
-> > Urgh bah.. I was too focussed on the other klp borkage :/ But yes,
-> > arm64/ftrace and klp are the only two users of that function (outside of
-> > module.c) and Mark was already writing a patch for arm64.
-> > 
-> > Means these last two patches need to wait a little until we've fixed
-> > those.
-> 
-> So the other KLP issue:
-> 
-> <mbenes> peterz: ad klp, apply_relocate_add() and text_poke()... what
->          about apply_alternatives() and apply_paravirt()? They call
->          text_poke_early(), which was ok with module_disable/enable_ro(), but
-> 	 now it is not, I suppose. See arch_klp_init_object_loaded() in
->          arch/x86/kernel/livepatch.c.
-> 
-> <peterz> mbenes: hurm, I don't see why we would need to do
->          apply_alternatives() / apply_paravirt() later, why can't we do that
-> 	 the moment we load the module
-> 
-> <peterz> mbenes: that is, those things _never_ change after boot
-> 
-> <mbenes> peterz: as jpoimboe explained. See commit
->          d4c3e6e1b193497da3a2ce495fb1db0243e41e37 for detailed explanation.
-> 
-> Now sadly that commit missed all the useful information, luckily I could
-> find the patch in my LKML folder, more sad, that thread still didn't
-> contain the actual useful information, for that I was directed to
-> github:
-> 
->   https://github.com/dynup/kpatch/issues/580
-> 
-> Now, someone is owning me a beer for having to look at github for this.
-> 
-> That finally explained that what happens is that the RELA was trying to
-> fix up the paravirt indirect call to 'local_irq_disable', which
-> apply_paravirt() will have overwritten with 'CLI; NOP'. This then
-> obviously goes *bang*.
-> 
-> This then raises a number of questions:
-> 
->  1) why is that RELA (that obviously does not depend on any module)
->     applied so late?
-> 
->  2) why can't we unconditionally skip RELA's to paravirt sites?
-> 
->  3) Is there ever a possible module-dependent RELA to a paravirt /
->     alternative site?
-> 
-> 
-> Now, for 1), I would propose '.klp.rela.${mod}' sections only contain
-> RELAs that depend on symbols in ${mod} (or modules in general). We can
-> fix up RELAs that depend on core kernel early without problems. Let them
-> be in the normal .rela sections and be fixed up on loading the
-> patch-module as per usual.
-> 
-> This should also deal with 2, paravirt should always have RELAs into the
-> core kernel.
-> 
-> Then for 3) we only have alternatives left, and I _think_ it unlikely to
-> be the case, but I'll have to have a hard look at that.
-> 
-> Hmmm ?
 
-Something like so on top, I suppose.
 
----
+Greetings My Dear Friend,
 
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -131,7 +131,8 @@ static int __apply_relocate_add(Elf64_Sh
- 		   unsigned int symindex,
- 		   unsigned int relsec,
- 		   struct module *me,
--		   void *(*write)(void *addr, const void *val, size_t size))
-+		   void *(*write)(void *addr, const void *val, size_t size),
-+		   bool klp)
- {
- 	unsigned int i;
- 	Elf64_Rela *rel = (void *)sechdrs[relsec].sh_addr;
-@@ -157,6 +158,14 @@ static int __apply_relocate_add(Elf64_Sh
- 
- 		val = sym->st_value + rel[i].r_addend;
- 
-+		/*
-+		 * .klp.rela.* sections should only contain module
-+		 * related RELAs. All core-kernel RELAs should be in
-+		 * normal .rela.* sections and be applied when loading
-+		 * the patch module itself.
-+		 */
-+		WARN_ON_ONCE(klp && core_kernel_text(val));
-+
- 		switch (ELF64_R_TYPE(rel[i].r_info)) {
- 		case R_X86_64_NONE:
- 			break;
-@@ -223,7 +232,7 @@ int apply_relocate_add(Elf64_Shdr *sechd
- 		   unsigned int relsec,
- 		   struct module *me)
- {
--	return __apply_relocate_add(sechdrs, strtab, symindex, relsec, me, memcpy);
-+	return __apply_relocate_add(sechdrs, strtab, symindex, relsec, me, memcpy, false);
- }
- 
- int klp_apply_relocate_add(Elf64_Shdr *sechdrs,
-@@ -234,7 +243,7 @@ int klp_apply_relocate_add(Elf64_Shdr *s
- {
- 	int ret;
- 
--	ret = __apply_relocate_add(sechdrs, strtab, symindex, relsec, me, text_poke);
-+	ret = __apply_relocate_add(sechdrs, strtab, symindex, relsec, me, text_poke, true);
- 	if (!ret)
- 		text_poke_sync();
- 
+Before I introduce myself, I wish to inform you that this letter is not a h=
+oax mail and I urge you to treat it serious.This letter must come to you as=
+ a big surprise, but I believe it is only a day that people meet and become=
+ great friends and business partners. Please I want you to read this letter=
+ very carefully and I must apologize for barging this message into your mai=
+l box without any formal introduction due to the urgency and confidentialit=
+y of this business. I make this contact with you as I believe that you can =
+be of great assistance to me. My name is Mr.Abderazack Zebdani, from Burkin=
+a Faso, West Africa. I work in Bank Of Africa (BOA) as telex manager, pleas=
+e see this as a confidential message and do not reveal it to another person=
+ and let me know whether you can be of assistance regarding my proposal bel=
+ow because it is top secret.
+
+I am about to retire from active Banking service to start a new life but I =
+am skeptical to reveal this particular secret to a stranger. You must assur=
+e me that everything will be handled confidentially because we are not goin=
+g to suffer again in life. It has been 10 years now that most of the greedy=
+ African Politicians used our bank to launder money overseas through the he=
+lp of their Political advisers. Most of the funds which they transferred ou=
+t of the shores of Africa were gold and oil money that was supposed to have=
+ been used to develop the continent. Their Political advisers always inflat=
+ed the amounts before transferring to foreign accounts, so I also used the =
+opportunity to divert part of the funds hence I am aware that there is no o=
+fficial trace of how much was transferred as all the accounts used for such=
+ transfers were being closed after transfer. I acted as the Bank Officer to=
+ most of the politicians and when I discovered that they were using me to s=
+ucceed in their greedy act; I also cleaned some of their banking records fr=
+om the Bank files and no one cared to ask me because the money was too much=
+ for them to control. They laundered over $5billion Dollars during the proc=
+ess.
+
+Before I send this message to you, I have already diverted ($10.5million Do=
+llars) to an escrow account belonging to no one in the bank. The bank is an=
+xious now to know who the beneficiary to the funds because they have made a=
+ lot of profits with the funds. It is more than Eight years now and most of=
+ the politicians are no longer using our bank to transfer funds overseas. T=
+he ($10.5million Dollars) has been laying waste in our bank and I don=E2=80=
+=99t want to retire from the bank without transferring the funds to a forei=
+gn account to enable me share the proceeds with the receiver (a foreigner).=
+ The money will be shared 60% for me and 40% for you. There is no one comin=
+g to ask you about the funds because I secured everything. I only want you =
+to assist me by providing a reliable bank account where the funds can be tr=
+ansferred.
+
+You are not to face any difficulties or legal implications as I am going to=
+ handle the transfer personally. If you are capable of receiving the funds,=
+ do let me know immediately to enable me give you a detailed information on=
+ what to do. For me, I have not stolen the money from anyone because the ot=
+her people that took the whole money did not face any problems. This is my =
+chance to grab my own life opportunity but you must keep the details of the=
+ funds secret to avoid any leakages as no one in the bank knows about my pl=
+ans.Please get back to me if you are interested and capable to handle this =
+project, I am looking forward to hear from you immediately for further info=
+rmation.
+Thanks with my best regards.
+Mr.Abderazack Zebdani.
+Telex Manager
+Bank Of Africa (BOA)
+Burkina Faso.
