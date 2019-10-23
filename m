@@ -2,81 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B05E7E15A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6F40E15A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:21:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403796AbfJWJVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 05:21:15 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57372 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2403757AbfJWJVO (ORCPT
+        id S2403780AbfJWJVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 05:21:11 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43506 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403757AbfJWJVL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 05:21:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571822473;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GMpXAQSd5E7qm/XtkcXKzvy4PNfzv6ftxdxzuMplztA=;
-        b=Ar3RZk5QwhCbmhYwDxH0Pxmo8kTm7ru6x2elK73wMArBgpCsFxL/vGdcFIJ78f+W8Tn1Xl
-        pxKb9zic+Q7dSPQZe5m0xaY5mEtniI2EV7PCJkDUTAycNul1NM9UU2WwsQOBbileNQlniT
-        D7pTcWwij7MgWh88Gnlu/mvoU+j5Bi8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-137-H0bJdmAkMD2-xbGpKL4_Ag-1; Wed, 23 Oct 2019 05:21:09 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7A54E80183D;
-        Wed, 23 Oct 2019 09:21:08 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-33.pek2.redhat.com [10.72.12.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 016585C1B2;
-        Wed, 23 Oct 2019 09:20:53 +0000 (UTC)
-Subject: Re: [PATCH 1/3 v4] x86/kdump: always reserve the low 1MiB when the
- crashkernel option is specified
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, bhe@redhat.com, dyoung@redhat.com,
-        jgross@suse.com, dhowells@redhat.com, Thomas.Lendacky@amd.com,
-        ebiederm@xmission.com, vgoyal@redhat.com, kexec@lists.infradead.org
-References: <20191017094347.20327-1-lijiang@redhat.com>
- <20191017094347.20327-2-lijiang@redhat.com> <20191022083015.GB31700@zn.tnic>
- <75648e8d-4ef7-0537-618e-e4a57f0d3b9b@redhat.com>
- <20191023074602.GB16060@zn.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <98c9f97d-de22-2041-d0a4-214542807706@redhat.com>
-Date:   Wed, 23 Oct 2019 17:20:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 23 Oct 2019 05:21:11 -0400
+Received: by mail-ed1-f68.google.com with SMTP id q24so9215343edr.10;
+        Wed, 23 Oct 2019 02:21:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RR8CC8SQ8Dt9vU2p+011hdqVQSDGaSdoOwPBwDXuWag=;
+        b=Ll4N4XtDP4JpSj2M02FePNghQcFL9Cmf0OqSqmghmzOKF8i2xSfNgTFwiGUxeoX7A3
+         6Ym9nn4tR0mUUItPivyq6jEblhKs2w9QhFLKzsygjChMQ5BcHnJVGcDnKCHqXMwDcpBg
+         mUTTnBOX9I6m/HwMWkOjO8Xky+QQCRzp1L8PyMK7zmPLbnTLFGIgAGMTWdoA4XE5+NP+
+         4Sj/3i70RcBLT/UgrcUqcVLHhxl9tUwFJFWUN27msTIuE+L05wXtyKgMbOsUtOB+FmSI
+         Bs5lBUwi4s0t8c9dDDl0Wzk1x4GGuLQYfaLQY8XfWT2UTC5yu0i+GZ5tx+TMSy1IFlPD
+         /A/Q==
+X-Gm-Message-State: APjAAAVrPZy94t8TWrdU23RkpZvWGnXHeXxXF6VUy79udb0LhlcLp1Vl
+        jfI1Rs9b6wheauiNvJAnBTg=
+X-Google-Smtp-Source: APXvYqxuVcaV+VBzNpgps2gFjmkQkSUYEY/wz9MqeGbZAanEIxv8UUUdlRAUYHNvjy6Ht6iiwKFRMA==
+X-Received: by 2002:a17:906:76c9:: with SMTP id q9mr31542254ejn.53.1571822469791;
+        Wed, 23 Oct 2019 02:21:09 -0700 (PDT)
+Received: from pi3 ([194.230.155.217])
+        by smtp.googlemail.com with ESMTPSA id o22sm739665edv.26.2019.10.23.02.21.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 02:21:08 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 11:21:06 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Chanwoo Choi <cw00.choi@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH RESEND] dt-bindings: max77693: fix missing curly brace
+Message-ID: <20191023092106.GB10247@pi3>
+References: <20191023080427.GA18784@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20191023074602.GB16060@zn.tnic>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: H0bJdmAkMD2-xbGpKL4_Ag-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191023080427.GA18784@localhost.localdomain>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=E5=9C=A8 2019=E5=B9=B410=E6=9C=8823=E6=97=A5 15:46, Borislav Petkov =E5=86=
-=99=E9=81=93:
-> On Wed, Oct 23, 2019 at 01:35:09PM +0800, lijiang wrote:
->> Would you mind if i improve this patch as follow? Thanks.
->=20
-> Yap, looks good to me.
->=20
-Thanks for your comment.
+On Wed, Oct 23, 2019 at 11:04:27AM +0300, Matti Vaittinen wrote:
+> Add missing curly brace to charger node example.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+> 
+> Resending as I forgot to add the LKML in first attempt. Sorry peeps.
 
-OK. I will post this one and the third patch in this series later.
+LKML is nice as it agregates all patches but more important is the list
+specific to the subsystem:
+devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
 
-Thanks.
-Lianbo
+(+Cc)
 
+You also keep cc-ing wrong email at localhost.
 
-> Thx.
->=20
+For the patch itself:
 
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
