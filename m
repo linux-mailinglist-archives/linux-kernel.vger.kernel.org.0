@@ -2,121 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5396EE0FB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 03:31:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C688E0FBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 03:39:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733173AbfJWBbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 22 Oct 2019 21:31:49 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37274 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730047AbfJWBbt (ORCPT
+        id S1733289AbfJWBjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 22 Oct 2019 21:39:20 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47504 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730047AbfJWBjT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Oct 2019 21:31:49 -0400
-Received: by mail-pl1-f196.google.com with SMTP id u20so9251120plq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2019 18:31:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=U+vdvB09PkcmP9LOSiC0ehQS4Gt1iKc8AAE0Dv+6kRA=;
-        b=icuzZkfsf6ZSelPljNgPbP4csFqQFl2Ak5zwtLrdaLzvtkDGqlGgHiI5ub/qNRiYTQ
-         apk71bTqumsbDb7iSBkXZkY6/OKbTlASf7av5e31sVfx88j1rni0PhG7iMpdyhYmM3Bq
-         S7+HsNCX6tXaG571Wv7zg2f2pLhe1sYoMKHukdQ1zSiRKeja3NPf/JrKf9efFnsBVaNy
-         +//ppc/74V7hoIpZ+5Bxp9cC0faI8PSbJjxKwB0dJhx/FQZBK9acMIuBtw/qXSaOEn9B
-         VFFmbeX102i95ofIX9FtrFPXLWGBY6UqP3xft51SwN7QCAlzxjlHvKZQObOL1Shk63c8
-         E7/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=U+vdvB09PkcmP9LOSiC0ehQS4Gt1iKc8AAE0Dv+6kRA=;
-        b=DnUNB9pVJfXvrfJ6H9IWmxb8AUx4ScFOlJwDx0wW/2vNSlXDO2cpHbPrbmyN2uHkpZ
-         OxjDtUf2IjyrIqo77IMi0zrwUyp3eNTwlpuTzUAP1KxTIuARtcbnV4zXoX9Gt4bkzJE7
-         wBgytjOVRvmDUVU1+pn5BDm2lVH+WdWrJ1Z7uSfLrCCfb4c4B5GFgtKiwpU1RPhr5srX
-         wsDWEyCdzcAUu1Y2rZXv+2Vs9bLNE/kuNXogg5oz/HAC1LZwzVcCAbco6YuEJm/Jlj/m
-         hFnFh/pO6IaIf9QALGE6HPmClykHLXWVSl5Hj0I6wNPnPrLCz3ce/68tGf96wAOApE8u
-         n0zA==
-X-Gm-Message-State: APjAAAUTSSb+qCc2Y3H6tVBtok2aUVWXNjb9tZFRB7BavfHCn3CkaAtk
-        ruV4H/0lLi7iqK/Eulu3+13Mig==
-X-Google-Smtp-Source: APXvYqxE8RiHT/nJrFWc4+VZpi4jlH8YH8RQGdcO2b3ip3wceSVMGwRPpH13x8KxC3Mfvmi0sr0OYQ==
-X-Received: by 2002:a17:902:bc81:: with SMTP id bb1mr6876407plb.244.1571794307043;
-        Tue, 22 Oct 2019 18:31:47 -0700 (PDT)
-Received: from [100.112.92.218] ([104.133.9.106])
-        by smtp.gmail.com with ESMTPSA id g20sm20806561pfo.73.2019.10.22.18.31.45
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 22 Oct 2019 18:31:46 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 18:31:27 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-cc:     Hugh Dickins <hughd@google.com>, aarcange@redhat.com,
-        kirill.shutemov@linux.intel.com, gavin.dg@linux.alibaba.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: thp: handle page cache THP correctly in
- PageTransCompoundMap
-In-Reply-To: <4ea5d015-19cb-d5d9-42f7-d1319d8de7c4@linux.alibaba.com>
-Message-ID: <alpine.LSU.2.11.1910221802270.2748@eggly.anvils>
-References: <1571769577-89735-1-git-send-email-yang.shi@linux.alibaba.com> <alpine.LSU.2.11.1910221454060.2077@eggly.anvils> <4ea5d015-19cb-d5d9-42f7-d1319d8de7c4@linux.alibaba.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Tue, 22 Oct 2019 21:39:19 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9N1YOd8190852;
+        Wed, 23 Oct 2019 01:36:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=mgnTopzGZ8f1FGKvPSTHhrMy24Rq85HzQQkpuJIKlp0=;
+ b=BuVelkAPmWzz/ViA5GxMxUd6Ilv/ZHMliID3HYO+ysbz6xcFLl0G7qwrW9ZnhZ5+fw5K
+ ZZwhM1WQ1gpb5f91a2e/3a5K45dUKqz8th5DCDbvJQLQfhXq8imBPNdnNJzDlaNpoHbk
+ MtpwAQQ9uayFJCsgXIPxV4TOl4+N6WL5OrEp1fWLAPHtJEr3Ae5bbcqtmT5o/9Nh6ytW
+ BCV30iby7KyJaxOZfvfwdPZ6v+bRwsi0ufN6DxKVo9xw4OiXTuuAcdsjuY8Jq3hxlM9O
+ YCK0rVUp3NoDs/PhwZcs9Sw9XoQZjTDwsW4wqZi80KUm3adpOAZZ4Jpw0VMvsphz52N8 lA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2vqu4qt1qa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Oct 2019 01:36:11 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9N1YE5W158224;
+        Wed, 23 Oct 2019 01:36:10 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2vsx23yaku-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Oct 2019 01:36:10 +0000
+Received: from abhmp0021.oracle.com (abhmp0021.oracle.com [141.146.116.27])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9N1a7iT001979;
+        Wed, 23 Oct 2019 01:36:08 GMT
+Received: from [10.191.28.118] (/10.191.28.118)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 23 Oct 2019 01:36:07 +0000
+Subject: Re: [PATCH v7 3/5] x86/kvm: Add "nopvspin" parameter to disable PV
+ spinlocks
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, wanpengli@tencent.com, jmattson@google.com,
+        joro@8bytes.org, boris.ostrovsky@oracle.com, jgross@suse.com,
+        peterz@infradead.org, will@kernel.org,
+        linux-hyperv@vger.kernel.org, kvm@vger.kernel.org,
+        mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+        sthemmin@microsoft.com, sashal@kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        "H. Peter Anvin" <hpa@zytor.com>
+References: <1571649076-2421-1-git-send-email-zhenzhong.duan@oracle.com>
+ <1571649076-2421-4-git-send-email-zhenzhong.duan@oracle.com>
+ <8736fl1071.fsf@vitty.brq.redhat.com>
+ <dbc50272-a4f5-ce7c-ba71-75031521f420@oracle.com>
+ <20191022210355.GR2343@linux.intel.com>
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <f0065d49-36ae-8b1d-81b9-6e899042169f@oracle.com>
+Date:   Wed, 23 Oct 2019 09:36:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20191022210355.GR2343@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9418 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910230013
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9418 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910230013
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Oct 2019, Yang Shi wrote:
-> On 10/22/19 3:27 PM, Hugh Dickins wrote:
-> > 
-> > I completely agree that the current PageTransCompoundMap() is wrong.
-> > 
-> > A fix for that is one of many patches I've not yet got to upstreaming.
-> > Comparing yours and mine, I'm worried by your use of PageDoubleMap(),
-> > because really that's a flag for anon THP, and not properly supported
-> > on shmem (or now I suppose file) THP - I forget the details, is it
-> > that it sometimes gets set, but never cleared?  Generally, we just
-> > don't refer to PageDoubleMap() on shmem THPs (but there may be
-> > exceptions: sorting out the THP mapcount maze, and eliminating
-> > PageDoubleMap(), is one of my long-held ambitions, not yet reached).
-> > 
-> > Here's the patch I've been carrying, but it's from earlier, so I
-> > should warn that I've done no more than build-testing it on 5.4,
-> > and I'm too far away from these issues at the moment to be able to
-> > make a good judgement or argue for it - I hope you and others can
-> > decide which patch is the better.  I should also add that we're
-> > barely using PageTransCompoundMap() at all: at best it can only
-> > give a heuristic guess as to whether the page is pmd-mapped in
-> > any particular case, and we preferred to take forward the KVM
-> > patches we posted back in April 2016, plumbing hva down to where
-> > it's needed - though of course those are somewhat different now.
-> 
-> Thanks for catching this. I was definitely thinking about using
-> compount_mapcount instead of DoubleMap flag when I was working the patch. I
-> just simply thought it would change less file by using DoubleMap flag but I
-> didn't notice it was kind of unbalanced for file THP.
-> 
-> With the unbalanced DoubleMap flag, it sounds better to use
-> compound_mapcount.
 
-Yes: no doubt PageDoubleMap could be fixed on shmem+file, but I have no
-interest in doing that, because it's just unnecessary overhead for them.
-(They have their own overhead, of subpage mapcounting for pmd: which is
-something to eliminate and unify with anon when I get around to it.)
+On 2019/10/23 5:03, Sean Christopherson wrote:
+> On Tue, Oct 22, 2019 at 08:46:46PM +0800, Zhenzhong Duan wrote:
+>> Hi Vitaly,
+>>
+>> On 2019/10/22 19:36, Vitaly Kuznetsov wrote:
+>>
+>>> Zhenzhong Duan<zhenzhong.duan@oracle.com>  writes:
+>>>
+>> ...snip
+>>
+>>>> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+>>>> index 249f14a..3945aa5 100644
+>>>> --- a/arch/x86/kernel/kvm.c
+>>>> +++ b/arch/x86/kernel/kvm.c
+>>>> @@ -825,18 +825,36 @@ __visible bool __kvm_vcpu_is_preempted(long cpu)
+>>>>    */
+>>>>   void __init kvm_spinlock_init(void)
+>>>>   {
+>>>> -	/* Does host kernel support KVM_FEATURE_PV_UNHALT? */
+>>>> -	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT))
+>>>> +	/*
+>>>> +	 * In case host doesn't support KVM_FEATURE_PV_UNHALT there is still an
+>>>> +	 * advantage of keeping virt_spin_lock_key enabled: virt_spin_lock() is
+>>>> +	 * preferred over native qspinlock when vCPU is preempted.
+>>>> +	 */
+>>>> +	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT)) {
+>>>> +		pr_info("PV spinlocks disabled, no host support.\n");
+>>>>   		return;
+>>>> +	}
+>>>> +	/*
+>>>> +	 * Disable PV qspinlock and use native qspinlock when dedicated pCPUs
+>>>> +	 * are available.
+>>>> +	 */
+>>>>   	if (kvm_para_has_hint(KVM_HINTS_REALTIME)) {
+>>>> -		static_branch_disable(&virt_spin_lock_key);
+>>>> -		return;
+>>>> +		pr_info("PV spinlocks disabled with KVM_HINTS_REALTIME hints.\n");
+>>>> +		goto out;
+>>>>   	}
+>>>> -	/* Don't use the pvqspinlock code if there is only 1 vCPU. */
+>>>> -	if (num_possible_cpus() == 1)
+>>>> -		return;
+>>>> +	if (num_possible_cpus() == 1) {
+>>>> +		pr_info("PV spinlocks disabled, single CPU.\n");
+>>>> +		goto out;
+>>>> +	}
+>>>> +
+>>>> +	if (nopvspin) {
+>>>> +		pr_info("PV spinlocks disabled, forced by \"nopvspin\" parameter.\n");
+>>>> +		goto out;
+>>>> +	}
+>>>> +
+>>>> +	pr_info("PV spinlocks enabled\n");
+>>>>   	__pv_init_lock_hash();
+>>>>   	pv_ops.lock.queued_spin_lock_slowpath = __pv_queued_spin_lock_slowpath;
+>>>> @@ -849,6 +867,8 @@ void __init kvm_spinlock_init(void)
+>>>>   		pv_ops.lock.vcpu_is_preempted =
+>>>>   			PV_CALLEE_SAVE(__kvm_vcpu_is_preempted);
+>>>>   	}
+>>>> +out:
+>>>> +	static_branch_disable(&virt_spin_lock_key);
+>>> You probably need to add 'return' before 'out:' as it seems you're
+>>> disabling virt_spin_lock_key in all cases now).
+>> virt_spin_lock_key is kept enabled in !kvm_para_has_feature(KVM_FEATURE_PV_UNHALT)
+>> case which is the only case virt_spin_lock() optimization is used.
+>>
+>> When PV qspinlock is enabled, virt_spin_lock() isn't called in
+>> __pv_queued_spin_lock_slowpath() in which case we don't care
+>> virt_spin_lock_key's value.
+>>
+>> So adding 'return' or not are both ok, I chosed to save a line,
+>> let me know if you prefer to add a 'return' and I'll change it.
+> It'd be worth adding a comment here if you end up spinning another version
+> to change the logging prefix.  The logic is sound and I like the end
+> result, but I had the same knee jerk "this can't be right!?!?" reaction as
+> Vitaly.
 
-> 
-> Thanks for sharing your patch, I'm going to rework v2 by using
-> compound_mapcount. Do you mind I might steal your patch?
+Sure, will do in next version.
 
-Please do! One less for me to worry about, thanks.
+Thanks
 
-> 
-> I'm supposed we'd better fix this bug regardless of whether you would like to
-> move forward your KVM patches.
+Zhenzhong
 
-Absolutely. There remain a few other uses of PageTransCompoundMap
-anyway, and I really wanted this outright mm fix to go in before
-re-submitting AndresLC's KVM patch (I'll ask a KVM-savvy colleague
-to take that over, Cc'ing you, once the mm end is correct).
-
-Hugh
