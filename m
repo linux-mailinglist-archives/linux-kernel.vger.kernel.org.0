@@ -2,77 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C97E1E1522
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15B25E150F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:02:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390780AbfJWJDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 05:03:15 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46122 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390768AbfJWJDM (ORCPT
+        id S2390692AbfJWJCq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 05:02:46 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:46780 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390590AbfJWJCp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 05:03:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=i6LtAFOvODnH5XqzqyricMUy+nwnZUTa5qYXhMKnI0Q=; b=vnM+RvIXEiRs34icSGuaYMfN/
-        bmUu/35lgSwhyKs6sqSh8ILAiu6qQ5M4Jcjk4M0T6hpUs/hN4gZWVmLOYumADNK1L7p+EpVq60Mod
-        mZJbAjrSp7zlQ16LJpGOc1eki2PJW3zpNs8MDbOz/5PQKi1rqkI9wb55Hu1GShP6OSjMk5fQlRuZn
-        dZwpfmGuJK/WTMWCIPe7f4U1sl6H7M5oHTBguk1lzZj+xhmoL2lEzBwmZIXiZe2aAbZB3Xh5Z/hyM
-        hI+HrbX692hE3PRffO5BHYX/gYafpeOHbpNCevTJ18SR5IeqPpKWjrYIokG6LmiKQe4Orojs+loT+
-        ondZijbHw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNCXI-0004JV-Gz; Wed, 23 Oct 2019 09:02:32 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A311130038D;
-        Wed, 23 Oct 2019 11:01:31 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A265E26539495; Wed, 23 Oct 2019 11:02:29 +0200 (CEST)
-Date:   Wed, 23 Oct 2019 11:02:29 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH 3/3] x86/ftrace: Use text_poke()
-Message-ID: <20191023090229.GP1817@hirez.programming.kicks-ass.net>
-References: <20191022215841.2qsmhd6vxi4mwade@ast-mbp.dhcp.thefacebook.com>
- <7364B113-DD65-423D-BED3-FF90C4DF8334@amacapital.net>
- <20191022234921.n5nplxlyq25mksxg@ast-mbp.dhcp.thefacebook.com>
- <CALCETrUa02muQYndyyeOZu8C6v33+A+9-2bsktxaW5N5-X6axA@mail.gmail.com>
+        Wed, 23 Oct 2019 05:02:45 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9N92cQT040531;
+        Wed, 23 Oct 2019 04:02:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571821358;
+        bh=vG+W4quqVd/rx5gPIFHyLx5O+cQx6BhNDY55hfW2vMM=;
+        h=From:To:CC:Subject:Date;
+        b=awNAdFysYIKsbC0K9Fa3reRPmlnmx4B27vKWMvmYPhzlbLokot9WQ63nJ0ePKbaoT
+         DLDi792xpdzOmfU3VGNIllg3YjA2VIYXKtAW61a2ERRm+UQFuzhd1UloyDE2cMpiQV
+         hicEgt9Gh2Z0fTFdnRwMHdp1SASYvToF9IEqcnfg=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9N92c1d021864;
+        Wed, 23 Oct 2019 04:02:38 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 23
+ Oct 2019 04:02:27 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 23 Oct 2019 04:02:37 -0500
+Received: from lta0400828a.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9N92Ynk085549;
+        Wed, 23 Oct 2019 04:02:34 -0500
+From:   Roger Quadros <rogerq@ti.com>
+To:     <felipe.balbi@linux.intel.com>, <gregkh@linuxfoundation.org>
+CC:     <pawell@cadence.com>, <peter.chen@nxp.com>, <nsekhar@ti.com>,
+        <kurahul@cadence.com>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
+Subject: [PATCH] usb: cdns3: gadget: Don't manage pullups
+Date:   Wed, 23 Oct 2019 12:02:32 +0300
+Message-ID: <20191023090232.27237-1-rogerq@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrUa02muQYndyyeOZu8C6v33+A+9-2bsktxaW5N5-X6axA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 09:20:27PM -0700, Andy Lutomirski wrote:
-> Also, Alexei, are you testing on a CONFIG_FRAME_POINTER=y kernel?  The
-> ftrace code has a somewhat nasty special case to make
-> CONFIG_FRAME_POINTER=y work right, and your example trampoline does
-> not but arguably should have exaclty the same fixup.  For good
-> performance, you should be using CONFIG_FRAME_POINTER=n.
+The USB gadget core is supposed to manage pullups
+of the controller. Don't manage pullups from within
+the controller driver. Otherwise, function drivers
+are not able to keep the controller disconnected from
+the bus till they are ready. (e.g. g_webcam)
 
-Trampolines and JITs (which both lack ORC data) should always have frame
-pointers. That way, when ORC fails, it can fall back to FP and we can
-still get sensible unwinds.
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+Hi Greg/Felipe,
 
-See:
+This can be used for -rc as it is a bug fix.
 
-  ae6a45a08689 ("x86/unwind/orc: Fall back to using frame pointers for generated code")
+cheers,
+-roger
+
+ drivers/usb/cdns3/gadget.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+index 2ca280f4c054..714382d96055 100644
+--- a/drivers/usb/cdns3/gadget.c
++++ b/drivers/usb/cdns3/gadget.c
+@@ -2324,8 +2324,6 @@ static void cdns3_gadget_config(struct cdns3_device *priv_dev)
+ 	writel(USB_CONF_CLK2OFFDS | USB_CONF_L1DS, &regs->usb_conf);
+ 
+ 	cdns3_configure_dmult(priv_dev, NULL);
+-
+-	cdns3_gadget_pullup(&priv_dev->gadget, 1);
+ }
+ 
+ /**
+@@ -2708,8 +2706,6 @@ static int cdns3_gadget_suspend(struct cdns3 *cdns, bool do_wakeup)
+ 	/* disable interrupt for device */
+ 	writel(0, &priv_dev->regs->usb_ien);
+ 
+-	cdns3_gadget_pullup(&priv_dev->gadget, 0);
+-
+ 	return 0;
+ }
+ 
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
