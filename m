@@ -2,139 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A534E1491
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2355E1496
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 10:46:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390500AbfJWIpl convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 23 Oct 2019 04:45:41 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:32180 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390034AbfJWIpk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 04:45:40 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-173-UtFTQs3SPJ-8JSk6ctjl9Q-1; Wed, 23 Oct 2019 09:45:37 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 23 Oct 2019 09:45:36 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 23 Oct 2019 09:45:36 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Yin Fengwei' <fengwei.yin@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "lenb@kernel.org" <lenb@kernel.org>
-Subject: RE: [PATCH v3] ACPI/processor_idle: Remove dummy wait if kernel is in
- guest mode
-Thread-Topic: [PATCH v3] ACPI/processor_idle: Remove dummy wait if kernel is
- in guest mode
-Thread-Index: AQHViXZzrjg4+aYFMUePkP2//whb1adn5/Eg
-Date:   Wed, 23 Oct 2019 08:45:36 +0000
-Message-ID: <30ee0a348f624698801691f65eeecd87@AcuMS.aculab.com>
-References: <20191023074945.17016-1-fengwei.yin@intel.com>
-In-Reply-To: <20191023074945.17016-1-fengwei.yin@intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S2390521AbfJWIqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 04:46:17 -0400
+Received: from [217.140.110.172] ([217.140.110.172]:44834 "EHLO foss.arm.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S2390034AbfJWIqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 04:46:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A4AB332;
+        Wed, 23 Oct 2019 01:45:58 -0700 (PDT)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB1E53F71A;
+        Wed, 23 Oct 2019 01:45:55 -0700 (PDT)
+Subject: Re: [PATCH v3 2/2] sched/topology: Allow sched_asym_cpucapacity to be
+ disabled
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Cc:     lizefan@huawei.com, tj@kernel.org, hannes@cmpxchg.org,
+        mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
+        morten.rasmussen@arm.com, qperret@google.com,
+        stable@vger.kernel.org
+References: <20191015154250.12951-1-valentin.schneider@arm.com>
+ <20191015154250.12951-3-valentin.schneider@arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <fb378e1c-4b13-5ac4-8c86-8422b5362c7b@arm.com>
+Date:   Wed, 23 Oct 2019 10:45:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-MC-Unique: UtFTQs3SPJ-8JSk6ctjl9Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20191015154250.12951-3-valentin.schneider@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yin Fengwei
-> Sent: 23 October 2019 08:50
+On 15/10/2019 17:42, Valentin Schneider wrote:
+> While the static key is correctly initialized as being disabled, it will
+> remain forever enabled once turned on. This means that if we start with an
+> asymmetric system and hotplug out enough CPUs to end up with an SMP system,
+> the static key will remain set - which is obviously wrong. We should detect
+> this and turn off things like misfit migration and capacity aware wakeups.
+> 
+> As Quentin pointed out, having separate root domains makes this slightly
+> trickier. We could have exclusive cpusets that create an SMP island - IOW,
+> the domains within this root domain will not see any asymmetry. This means
+> we need to count how many asymmetric root domains we have.
 
+Could you make the example a little bit more obvious so we'll remember
+later the exact testcase?
 
-> In function acpi_idle_do_entry(), an ioport access is used for dummy
-> wait to guarantee hardware behavior. But it could trigger unnecessary
-> vmexit if kernel is running as guest in virtualization environtment.
+We start with 2 asym (hmp) (CPU capacity) exclusive cpusets and we turn
+one into a sym (smp) exclusive cpuset via CPU hp.
+
+This patch w/ extra debug on Juno [CPU0 - CPU5] = [L b b L L L]:
+
+root@juno:~# ./scripts/create_excl_cpusets3
+[   32.898483] detach_destroy_domains(): sched_asym_cpucapacity is
+disabled cpu_map=0-5
+[   32.906255] build_sched_domains(): sched_asym_cpucapacity is enabled
+cpu_map=0-1,3
+[   32.913813] build_sched_domains(): sched_asym_cpucapacity is enabled
+cpu_map=2,4-5
+root@juno:~# echo 0 > /sys/devices/system/cpu/cpu1/online
+[   62.709591] IRQ 2: no longer affine to CPU1
+[   62.713840] CPU1: shutdown
+[   62.716525] psci: CPU1 killed.
+root@juno:~# [   62.728779] detach_destroy_domains():
+sched_asym_cpucapacity still enabled cpu_map=0-1,3 <-- Your v1 would
+just have disabled sched_asym_cpucapacity here.
+
+A hint that systems with a mix of asym and sym CPU capacity rd's have to
+live with the fact that specific asym code is also enabled for the CPUs
+of the smp rd's wouldn't harm here.
+
+Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+
+> Change the simple key enablement to an increment, and decrement the key
+> counter when destroying domains that cover asymmetric CPUs.
 > 
-> If it's in virtualization environment, the deeper C state enter
-> operation (inb()) will trap to hyervisor. It's not needed to do
-> dummy wait after the inb() call. So we remove the dummy io port
-> access to avoid unnecessary VMexit.
-> 
-> We keep dummy io port access to maintain timing for native environment.
-> 
-> Signed-off-by: Yin Fengwei <fengwei.yin@intel.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: df054e8445a4 ("sched/topology: Add static_key for asymmetric CPU capacity optimizations")
+> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 > ---
-> ChangeLog:
-> v2 -> v3:
->  - Remove dummy io port access totally for virtualization env.
+>  kernel/sched/topology.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> v1 -> v2:
->  - Use ndelay instead of dead loop for dummy delay.
-> 
->  drivers/acpi/processor_idle.c | 36 ++++++++++++++++++++++++++++++++---
->  1 file changed, 33 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-> index ed56c6d20b08..0c4a97dd6917 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -58,6 +58,17 @@ struct cpuidle_driver acpi_idle_driver = {
->  static
->  DEFINE_PER_CPU(struct acpi_processor_cx * [CPUIDLE_STATE_MAX], acpi_cstate);
-> 
-> +static void (*dummy_wait)(u64 address);
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 9318acf1d1fe..f0e730143380 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -2029,7 +2029,7 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
+>  	rcu_read_unlock();
+>  
+>  	if (has_asym)
+> -		static_branch_enable_cpuslocked(&sched_asym_cpucapacity);
+> +		static_branch_inc_cpuslocked(&sched_asym_cpucapacity);
+>  
+>  	if (rq && sched_debug_enabled) {
+>  		pr_info("root domain span: %*pbl (max cpu_capacity = %lu)\n",
+> @@ -2125,7 +2125,10 @@ int sched_init_domains(const struct cpumask *cpu_map)
+>  static void detach_destroy_domains(const struct cpumask *cpu_map)
+>  {
+>  	int i;
+> +	unsigned int cpu = cpumask_any(cpu_map);
 > +
-> +static void default_dummy_wait(u64 address)
-> +{
-> +	inl(address);
-> +}
-> +
-> +static void default_noop_wait(u64 address)
-> +{
-> +}
-> +
-
-Overengineered...
-Just add:
-
-static void wait_for_freeze(void)
-{
-#ifdef	CONFIG_X86
-	/* No delay is needed if we are a guest */
-	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-		return;
-#endif
-	/* Dummy wait op - must do something useless after P_LVL2 read
-	   because chipsets cannot guarantee that STPCLK# signal
-	   gets asserted in time to freeze execution properly. */
-	inl(acpi_gbl_FADT.xpm_timer_block.address);
-}
-
-and use it to replace the inl().
-
-...
-> +#ifdef	CONFIG_X86
-> +	/* For x86, if we are running in guest, we don't need extra
-> +	 * access ioport as dummy wait.
-> +	 */
-> +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR)) {
-> +		pr_err("We are in virtual env");
-> +		dummy_wait = default_noop_wait;
-> +	} else {
-> +		pr_err("We are not in virtual env");
-> +	}
-> +#endif
-
-WTF are the pr_err() for???
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+> +	if (rcu_access_pointer(per_cpu(sd_asym_cpucapacity, cpu)))
+> +		static_branch_dec_cpuslocked(&sched_asym_cpucapacity);
+>  
+>  	rcu_read_lock();
+>  	for_each_cpu(i, cpu_map)
+> --
+> 2.22.0
