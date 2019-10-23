@@ -2,303 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71549E1211
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 08:25:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CE29E121A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 08:25:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733296AbfJWGZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 02:25:25 -0400
-Received: from mail-eopbgr150088.outbound.protection.outlook.com ([40.107.15.88]:32740
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725947AbfJWGZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 02:25:25 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TGuuBNE55uGFhDbovelsgB+C3DkhiNh7588HUN7XsWGqfx524Xod3544RGFbUhDJO/LIMGDs9Hsj40lkhW9Qc2+YdU//JaoiPfCo8fkRvCeuKa87aLTHHFZQpKVsUYh+U3n8NAwo6RyEpcQ7LURf1gMskJnb6AlcZwCwYdfsrrZcSC3Rrft9xKSikMbw9+gm/TPW+JZmuC9tsb9rPI9dvP9ZnbXDsEqGPmeppJrNNTV7NHIdrm7ZCais9HEnfnYp3QbcV1roUMSnXUNGcBK75KwbZ5F4wMVj2BHH2lwB63kARscDqj87/Di0lBJpxMqWfWJcKyCUh7buU1U7xAv0zA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vwFcst4YdmOpjXouE+DS7TwC839qNMPH0c2dslst9FA=;
- b=DHWROIS5Qx8sJEmBk/NQfbc6qvaAL7Y3i2fgTpAjJjb7hm8mpJZv4QmMCHKHe9jnKe+WQxABilMwViqdoNrncYNTEAc+WgiQiqOCjsL3d5fjT2iQ1AfIoAkBvLo9w0+CzYje8yA9RIM1SAEbThoR81w14shZ35n0P2BlQH6M+o2TrHJMdje3xWzdRZrvtTQ4luY6/CBo6a5js08BBrP6HZrv1lMFSNLLVlaEYFdkc6DWv1s7vTVsVV6jIxadau6ULXN6VP3GOA3mZIqER70satUrmBnnuGWVsJslkVzp9sWQeZ3bqzNgEA73byVd/ZFOMVoxmtvZyAYQJIfV9Uv/uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vwFcst4YdmOpjXouE+DS7TwC839qNMPH0c2dslst9FA=;
- b=nLzBgvZWAguCpYzm9Ovg9/VdDQM+u+quoEt3XwrERF7ZTDQr+/inIEmbfTvpDKBpb9v0tKniriyWFQxuoQnkkd+fTmBpk78FCRBmoSNBheG3hvXHc3Dh42gDOcxc9WU2FAi3tHqB+ylMBEhGQetDAEPi5UBKFT2MmsveKo8ZuK0=
-Received: from VE1PR04MB6479.eurprd04.prod.outlook.com (20.179.232.225) by
- VE1PR04MB6448.eurprd04.prod.outlook.com (20.179.233.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2367.24; Wed, 23 Oct 2019 06:25:20 +0000
-Received: from VE1PR04MB6479.eurprd04.prod.outlook.com
- ([fe80::e052:9278:76a3:27c]) by VE1PR04MB6479.eurprd04.prod.outlook.com
- ([fe80::e052:9278:76a3:27c%6]) with mapi id 15.20.2367.025; Wed, 23 Oct 2019
- 06:25:20 +0000
-From:   "S.j. Wang" <shengjiu.wang@nxp.com>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-CC:     "timur@kernel.org" <timur@kernel.org>,
-        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: fsl_asrc: refine the setting of internal clock
- divider
-Thread-Topic: [PATCH] ASoC: fsl_asrc: refine the setting of internal clock
- divider
-Thread-Index: AdWJZk9DEXe2B671Q+yQ9uqxyJIM0A==
-Date:   Wed, 23 Oct 2019 06:25:20 +0000
-Message-ID: <VE1PR04MB647949BE7BDB9CD2B1B2C521E36B0@VE1PR04MB6479.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shengjiu.wang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 77250e01-f42b-4d61-201f-08d75781c7af
-x-ms-traffictypediagnostic: VE1PR04MB6448:
-x-microsoft-antispam-prvs: <VE1PR04MB6448E91B048F160B86096405E36B0@VE1PR04MB6448.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 019919A9E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(366004)(346002)(376002)(39860400002)(199004)(189003)(64756008)(6436002)(66446008)(478600001)(66066001)(316002)(8936002)(74316002)(2906002)(7416002)(6916009)(5660300002)(4326008)(7696005)(305945005)(71200400001)(476003)(54906003)(186003)(66476007)(8676002)(52536014)(66556008)(33656002)(71190400001)(55016002)(66946007)(76116006)(81156014)(7736002)(81166006)(6506007)(229853002)(486006)(26005)(25786009)(9686003)(3846002)(256004)(14444005)(1411001)(6116002)(99286004)(14454004)(86362001)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6448;H:VE1PR04MB6479.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: pcJ6o003m1XG1Z9aGX74nywKkFbQc8vcF9oD9AHy6uqfDwb8SmPSnGQDho8EMemP9aMscDgnVj2QF6PcmGzeIJPe2jON5ZiG5C+VS7Revz71rlI6Nn7myVLZ1G1jXP57j4mLAUHvrVtuilSur2RqjZfPC/Magz27or56dUHxo3ejpTbaOaZ1F1vN8fwVoJXqmliVXavhdcIf9VAj7DK9PUL8+3Sh9Hk0xzgsqmHxfI/7GvL+ncraqy2ALI8XL5mDuqfe3D6IxmHusKIVzbh5bTi7efFgAZZdDqRs4bw67nm0P4wZEBSL2pPJxtZcIjTIyfD8K+4z6BnctBLXJcK/HBoVvMA/37UaucUHJ4AIO3dsIThZqoNqwu7twxXWrf3bHkJEIt4NdjfRkyl+amHwg3wlSC21DDLDQ5UikfKfqptpRxgwxNfqf+OqTPtFyj8w
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
+        id S2388872AbfJWGZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 02:25:50 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:42648 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727194AbfJWGZu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 02:25:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571811948;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=e5qrmu4lA/33yMhhY8eqqHcwG1Y/E2lbnUfcnug30Pk=;
+        b=cMnqqgrjv9LFZBrJoA3Qw/k+mUbcB4zqcRWQy7/n1am+ltGS0L/YbZzLjL2axGiaUCD2iv
+        MTWB1B3q98+0wOyWW8HI5Qm4zzOvfqSxTecXpziYNb86nFH50WqkGYzNgrhpxYjWnfx3HV
+        hjutIbkbyCn3iCFTbvTrz73QMXWjvQs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-154-HaOHJZxdM5u-YLv4NgN0Ag-1; Wed, 23 Oct 2019 02:25:44 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B19BC800D54;
+        Wed, 23 Oct 2019 06:25:43 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-43.ams2.redhat.com [10.36.116.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B9B335C240;
+        Wed, 23 Oct 2019 06:25:40 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id EB4A19D72; Wed, 23 Oct 2019 08:25:39 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Gurchetan Singh <gurchetansingh@chromium.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/3] drm/virtio: fix byteorder handling in virtio_gpu_cmd_transfer_{from,to}_host_3d functions
+Date:   Wed, 23 Oct 2019 08:25:37 +0200
+Message-Id: <20191023062539.11728-2-kraxel@redhat.com>
+In-Reply-To: <20191023062539.11728-1-kraxel@redhat.com>
+References: <20191023062539.11728-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: HaOHJZxdM5u-YLv4NgN0Ag-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77250e01-f42b-4d61-201f-08d75781c7af
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2019 06:25:20.7056
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UDivvz047kj41ZQ+pVdNDfJPGpldpGqHkxopiXrpeTVoFpSNNjemufAqGeskFCIZGjL9IyvvGyZ3z/9x44MKKQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6448
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
->=20
-> On Thu, Oct 17, 2019 at 02:21:08PM +0800, Shengjiu Wang wrote:
-> > For P2P output, the output divider should align with the output sample
->=20
-> I think we should avoid "P2P" (or "M2M") keyword in the mainline code as
-> we know M2M will never get merged while somebody working with the
-> mainline and caring about new feature might be confused.
+Be consistent with the rest of the code base.
+No functional change.
 
-Ok. But we still curious that is there a way to upstream m2m?
+v2:
+ - fix sparse warnings for virtio_gpu_cmd_transfer_to_host_2d call.
+ - move convert_to_hw_box helper function.
 
->=20
-> > rate, if use ideal sample rate, there will be a lot of overload, which
-> > would cause underrun.
->=20
-> If I understand it correctly, setting to ideal ratio provides a faster co=
-nverting
-> speed but increases the load of the processor of ASRC. So we choose a
-> slower converting speed here since real- time playback mode doesn't reall=
-y
-> need a faster conversion?
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/virtio/virtgpu_drv.h   |  5 +++--
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c | 22 +++-------------------
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 19 +++++++++++++++----
+ 3 files changed, 21 insertions(+), 25 deletions(-)
 
-Yes.  Slower speed is enough for real-time playback
-
->=20
-> It makes sense to me, yet I feel that the delay at the beginning of the a=
-udio
-> playback might be longer as a compromise. I am okay with this decision
-> though...
->=20
-> > The maximum divider of asrc clock is 1024, but there is no judgement
-> > for this limitaion in driver, which may cause the divider setting not
-> > correct.
-> >
-> > For non-ideal ratio mode, the clock rate should divide the sample rate
-> > with no remainder, and the quotient should be less than 1024.
-> >
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > ---
-> >  sound/soc/fsl/fsl_asrc.c | 40
-> > +++++++++++++++++++++++++++++++---------
-> >  1 file changed, 31 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c index
-> > 0bf91a6f54b9..44d05ec28bd3 100644
-> > --- a/sound/soc/fsl/fsl_asrc.c
-> > +++ b/sound/soc/fsl/fsl_asrc.c
-> > @@ -260,7 +260,7 @@ static int fsl_asrc_set_ideal_ratio(struct
-> fsl_asrc_pair *pair,
-> >   * of struct asrc_config which includes in/output sample rate, width,
-> channel
-> >   * and clock settings.
-> >   */
-> > -static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
-> > +static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair, bool p2p)
-> >  {
-> >       struct asrc_config *config =3D pair->config;
-> >       struct fsl_asrc *asrc_priv =3D pair->asrc_priv; @@ -268,7 +268,8
-> > @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
-> >       enum asrc_word_width input_word_width;
-> >       enum asrc_word_width output_word_width;
-> >       u32 inrate, outrate, indiv, outdiv;
-> > -     u32 clk_index[2], div[2];
-> > +     u32 clk_index[2], div[2], rem[2];
-> > +     u64 clk_rate;
-> >       int in, out, channels;
-> >       int pre_proc, post_proc;
-> >       struct clk *clk;
-> > @@ -351,7 +352,9 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pai=
-r
-> *pair)
-> >       /* We only have output clock for ideal ratio mode */
-> >       clk =3D asrc_priv->asrck_clk[clk_index[ideal ? OUT : IN]];
-> >
-> > -     div[IN] =3D clk_get_rate(clk) / inrate;
-> > +     clk_rate =3D clk_get_rate(clk);
->=20
-> The fsl_asrc.c file has config.inclk being set to INCLK_NONE and this set=
-s the
-> "ideal" in this function to true. So, although we tend to not use ideal r=
-atio
-> setting for p2p cases, yet the input clock is still not physically connec=
-ted, so
-> we still use output clock for div[IN] calculation?
-
-For p2p case, it can be ideal or non-ideal.  For non-ideal, we still use
-Output clock for div calculation.
-
->=20
-> I am thinking something simplier: if we decided not to use ideal ratio fo=
-r
-> "P2P", instead of adding "bool p2p" with the confusing "ideal" in this
-> function, could we just set config.inclk to the same clock as the output =
-one
-> for "P2P"? By doing so, "P2P" won't go through ideal ratio mode while sti=
-ll
-> having a clock rate from the output clock for div[IN] calculation here.
-
-Bool p2p is to force output rate to be sample rate, no impact to ideal
-Ratio mode.
-
->=20
-> > +     rem[IN] =3D do_div(clk_rate, inrate);
-> > +     div[IN] =3D (u32)clk_rate;
-> >       if (div[IN] =3D=3D 0) {
->=20
-> Could we check div[IN] and rem[IN] here? Like:
->         if (div[IN] =3D=3D 0 || div[IN] > 1024) {
->                 pair_err();
->                 goto out;
->         }
->=20
->         if (!ideal && rem[IN]) {
->                 pair_err();
->                 goto out;
->         }
->=20
-> According to your commit log, I think the max-1024 limitation should be
-> applied to all cases, not confined to "!ideal" cases right? And we should
-> add some comments also, indicating it is limited by hardware.
-
-For ideal mode,  my test result is  the divider not impact the output resul=
-t.
-Which means it is ok for ideal mode even divider is not correct...=20
-
->=20
-> >               pair_err("failed to support input sample rate %dHz by
-> asrck_%x\n",
-> >                               inrate, clk_index[ideal ? OUT : IN]); @@
-> > -360,11 +363,20 @@ static int fsl_asrc_config_pair(struct
-> > fsl_asrc_pair *pair)
-> >
-> >       clk =3D asrc_priv->asrck_clk[clk_index[OUT]];
-> >
-> > -     /* Use fixed output rate for Ideal Ratio mode (INCLK_NONE) */
-> > -     if (ideal)
-> > -             div[OUT] =3D clk_get_rate(clk) / IDEAL_RATIO_RATE;
-> > -     else
-> > -             div[OUT] =3D clk_get_rate(clk) / outrate;
-> > +     /*
-> > +      * When P2P mode, output rate should align with the out samplerat=
-e.
-> > +      * if set too high output rate, there will be lots of Overload.
-> > +      * When M2M mode, output rate should also need to align with the
-> > + out
->=20
-> For this "should", do you actually mean "M2M could also"? Sorry, I'm just
-> trying to understand everyting here, not intentionally being picky at wor=
-ds.
-> My understanding is that we still keep the ideal ratio setting because
-> "M2M" still uses it.
-
-We use IDEAL_RATIO_RATE as output rate for m2m mode, it likes a
-Tricky operation, in order to improve the performance. I think
-The correct operation is to use the real output rate, but the performance
-Is bad.  So it is a compromise.
-
->=20
-> > +      * samplerate, but M2M must use less time to achieve good
-> performance.
-> > +      */
-> > +     clk_rate =3D clk_get_rate(clk);
-> > +     if (p2p || !ideal) {
-> > +             rem[OUT] =3D do_div(clk_rate, outrate);
-> > +             div[OUT] =3D clk_rate;
-> > +     } else {
-> > +             rem[OUT] =3D do_div(clk_rate, IDEAL_RATIO_RATE);
-> > +             div[OUT] =3D clk_rate;
-> > +     }
-> >
-> >       if (div[OUT] =3D=3D 0) {
-> >               pair_err("failed to support output sample rate %dHz by
-> > asrck_%x\n", @@ -372,6 +384,16 @@ static int fsl_asrc_config_pair(struc=
-t
-> fsl_asrc_pair *pair)
-> >               return -EINVAL;
-> >       }
-> >
-> > +     if (!ideal && (div[IN] > 1024 || div[OUT] > 1024 ||
-> > +                    rem[IN] !=3D 0 || rem[OUT] !=3D 0)) {
-> > +     if (!ideal && (div[IN] > 1024 || div[OUT] > 1024 || rem[IN] ||
-> > + rem[OUT] !=3D 0)) {
->=20
-> So for ideal =3D=3D true, these limitaions are not applied any more?
-> Remember that the "ideal" is true for "p2p =3D=3D true" cases here.
-
-No, not applied.  for ideal, the div don't impact the output result
-Even it is not accurate.
-
->=20
-> > +             pair_err("The divider can't be used for non ideal mode\n"=
-);
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     /* Divider range is [1, 1024] */
-> > +     div[IN] =3D min_t(u32, 1024, div[IN]);
-> > +     div[OUT] =3D min_t(u32, 1024, div[OUT]);
->=20
-> Hmm, this looks like we want to allow ideal ratio cases and p2p cases to
-> operate any way, even if the divider wasn't within the range to get the
-> in/out rates from the output clock?
-
-Yes. We still allow the p2p =3D true,  ideal =3D false.  Note that p2p is n=
-ot
-Equal to ideal.
-
-
-Best regards
-Wang shengjiu
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/=
+virtgpu_drv.h
+index 0b56ba005e25..eedae2a7b532 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.h
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+@@ -38,6 +38,7 @@
+ #include <drm/drm_gem_shmem_helper.h>
+ #include <drm/drm_ioctl.h>
+ #include <drm/drm_probe_helper.h>
++#include <drm/virtgpu_drm.h>
+=20
+ #define DRIVER_NAME "virtio_gpu"
+ #define DRIVER_DESC "virtio GPU"
+@@ -312,13 +313,13 @@ void virtio_gpu_cmd_submit(struct virtio_gpu_device *=
+vgdev,
+ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
+ =09=09=09=09=09  uint32_t ctx_id,
+ =09=09=09=09=09  uint64_t offset, uint32_t level,
+-=09=09=09=09=09  struct virtio_gpu_box *box,
++=09=09=09=09=09  struct drm_virtgpu_3d_box *box,
+ =09=09=09=09=09  struct virtio_gpu_object_array *objs,
+ =09=09=09=09=09  struct virtio_gpu_fence *fence);
+ void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_gpu_device *vgdev,
+ =09=09=09=09=09uint32_t ctx_id,
+ =09=09=09=09=09uint64_t offset, uint32_t level,
+-=09=09=09=09=09struct virtio_gpu_box *box,
++=09=09=09=09=09struct drm_virtgpu_3d_box *box,
+ =09=09=09=09=09struct virtio_gpu_object_array *objs,
+ =09=09=09=09=09struct virtio_gpu_fence *fence);
+ void
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virti=
+o/virtgpu_ioctl.c
+index 9af1ec62434f..205ec4abae2b 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+@@ -33,17 +33,6 @@
+=20
+ #include "virtgpu_drv.h"
+=20
+-static void convert_to_hw_box(struct virtio_gpu_box *dst,
+-=09=09=09      const struct drm_virtgpu_3d_box *src)
+-{
+-=09dst->x =3D cpu_to_le32(src->x);
+-=09dst->y =3D cpu_to_le32(src->y);
+-=09dst->z =3D cpu_to_le32(src->z);
+-=09dst->w =3D cpu_to_le32(src->w);
+-=09dst->h =3D cpu_to_le32(src->h);
+-=09dst->d =3D cpu_to_le32(src->d);
+-}
+-
+ static int virtio_gpu_map_ioctl(struct drm_device *dev, void *data,
+ =09=09=09=09struct drm_file *file_priv)
+ {
+@@ -304,7 +293,6 @@ static int virtio_gpu_transfer_from_host_ioctl(struct d=
+rm_device *dev,
+ =09struct virtio_gpu_fence *fence;
+ =09int ret;
+ =09u32 offset =3D args->offset;
+-=09struct virtio_gpu_box box;
+=20
+ =09if (vgdev->has_virgl_3d =3D=3D false)
+ =09=09return -ENOSYS;
+@@ -317,8 +305,6 @@ static int virtio_gpu_transfer_from_host_ioctl(struct d=
+rm_device *dev,
+ =09if (ret !=3D 0)
+ =09=09goto err_put_free;
+=20
+-=09convert_to_hw_box(&box, &args->box);
+-
+ =09fence =3D virtio_gpu_fence_alloc(vgdev);
+ =09if (!fence) {
+ =09=09ret =3D -ENOMEM;
+@@ -326,7 +312,7 @@ static int virtio_gpu_transfer_from_host_ioctl(struct d=
+rm_device *dev,
+ =09}
+ =09virtio_gpu_cmd_transfer_from_host_3d
+ =09=09(vgdev, vfpriv->ctx_id, offset, args->level,
+-=09=09 &box, objs, fence);
++=09=09 &args->box, objs, fence);
+ =09dma_fence_put(&fence->f);
+ =09return 0;
+=20
+@@ -345,7 +331,6 @@ static int virtio_gpu_transfer_to_host_ioctl(struct drm=
+_device *dev, void *data,
+ =09struct drm_virtgpu_3d_transfer_to_host *args =3D data;
+ =09struct virtio_gpu_object_array *objs;
+ =09struct virtio_gpu_fence *fence;
+-=09struct virtio_gpu_box box;
+ =09int ret;
+ =09u32 offset =3D args->offset;
+=20
+@@ -353,11 +338,10 @@ static int virtio_gpu_transfer_to_host_ioctl(struct d=
+rm_device *dev, void *data,
+ =09if (objs =3D=3D NULL)
+ =09=09return -ENOENT;
+=20
+-=09convert_to_hw_box(&box, &args->box);
+ =09if (!vgdev->has_virgl_3d) {
+ =09=09virtio_gpu_cmd_transfer_to_host_2d
+ =09=09=09(vgdev, offset,
+-=09=09=09 box.w, box.h, box.x, box.y,
++=09=09=09 args->box.w, args->box.h, args->box.x, args->box.y,
+ =09=09=09 objs, NULL);
+ =09} else {
+ =09=09ret =3D virtio_gpu_array_lock_resv(objs);
+@@ -372,7 +356,7 @@ static int virtio_gpu_transfer_to_host_ioctl(struct drm=
+_device *dev, void *data,
+ =09=09virtio_gpu_cmd_transfer_to_host_3d
+ =09=09=09(vgdev,
+ =09=09=09 vfpriv ? vfpriv->ctx_id : 0, offset,
+-=09=09=09 args->level, &box, objs, fence);
++=09=09=09 args->level, &args->box, objs, fence);
+ =09=09dma_fence_put(&fence->f);
+ =09}
+ =09return 0;
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/v=
+irtgpu_vq.c
+index 74ad3bc3ebe8..9274c4063c70 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -40,6 +40,17 @@
+ =09=09=09       + MAX_INLINE_CMD_SIZE=09=09 \
+ =09=09=09       + MAX_INLINE_RESP_SIZE)
+=20
++static void convert_to_hw_box(struct virtio_gpu_box *dst,
++=09=09=09      const struct drm_virtgpu_3d_box *src)
++{
++=09dst->x =3D cpu_to_le32(src->x);
++=09dst->y =3D cpu_to_le32(src->y);
++=09dst->z =3D cpu_to_le32(src->z);
++=09dst->w =3D cpu_to_le32(src->w);
++=09dst->h =3D cpu_to_le32(src->h);
++=09dst->d =3D cpu_to_le32(src->d);
++}
++
+ void virtio_gpu_ctrl_ack(struct virtqueue *vq)
+ {
+ =09struct drm_device *dev =3D vq->vdev->priv;
+@@ -965,7 +976,7 @@ virtio_gpu_cmd_resource_create_3d(struct virtio_gpu_dev=
+ice *vgdev,
+ void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_gpu_device *vgdev,
+ =09=09=09=09=09uint32_t ctx_id,
+ =09=09=09=09=09uint64_t offset, uint32_t level,
+-=09=09=09=09=09struct virtio_gpu_box *box,
++=09=09=09=09=09struct drm_virtgpu_3d_box *box,
+ =09=09=09=09=09struct virtio_gpu_object_array *objs,
+ =09=09=09=09=09struct virtio_gpu_fence *fence)
+ {
+@@ -987,7 +998,7 @@ void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_g=
+pu_device *vgdev,
+ =09cmd_p->hdr.type =3D cpu_to_le32(VIRTIO_GPU_CMD_TRANSFER_TO_HOST_3D);
+ =09cmd_p->hdr.ctx_id =3D cpu_to_le32(ctx_id);
+ =09cmd_p->resource_id =3D cpu_to_le32(bo->hw_res_handle);
+-=09cmd_p->box =3D *box;
++=09convert_to_hw_box(&cmd_p->box, box);
+ =09cmd_p->offset =3D cpu_to_le64(offset);
+ =09cmd_p->level =3D cpu_to_le32(level);
+=20
+@@ -997,7 +1008,7 @@ void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_=
+gpu_device *vgdev,
+ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
+ =09=09=09=09=09  uint32_t ctx_id,
+ =09=09=09=09=09  uint64_t offset, uint32_t level,
+-=09=09=09=09=09  struct virtio_gpu_box *box,
++=09=09=09=09=09  struct drm_virtgpu_3d_box *box,
+ =09=09=09=09=09  struct virtio_gpu_object_array *objs,
+ =09=09=09=09=09  struct virtio_gpu_fence *fence)
+ {
+@@ -1013,7 +1024,7 @@ void virtio_gpu_cmd_transfer_from_host_3d(struct virt=
+io_gpu_device *vgdev,
+ =09cmd_p->hdr.type =3D cpu_to_le32(VIRTIO_GPU_CMD_TRANSFER_FROM_HOST_3D);
+ =09cmd_p->hdr.ctx_id =3D cpu_to_le32(ctx_id);
+ =09cmd_p->resource_id =3D cpu_to_le32(bo->hw_res_handle);
+-=09cmd_p->box =3D *box;
++=09convert_to_hw_box(&cmd_p->box, box);
+ =09cmd_p->offset =3D cpu_to_le64(offset);
+ =09cmd_p->level =3D cpu_to_le32(level);
+=20
+--=20
+2.18.1
 
