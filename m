@@ -2,103 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41603E19FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFF74E1A02
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:27:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391286AbfJWMZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 08:25:15 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35560 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfJWMZP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:25:15 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m7so20912252lji.2;
-        Wed, 23 Oct 2019 05:25:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r9+MqOGg237UtvCUQdK1EPhEYug24PsHTPELGNNApqE=;
-        b=G4lrrxtFgBigL8IIJzBRET+s0UBBLXZAmQtsIN7YoDugmdcQ36L1IygnzS02rprq0e
-         zgao5uNIAg9LZ93Re+eIWwb+nydm/m7qEU65QsT3gv3KQGBWs7j66CMvqrB8sICj03G5
-         LCyZ1xugiTt2hm4IGWbx/u38VR6XFO3QRCbDhNYD+6JEYCLHmauschGPhmgCVYEnF0x5
-         Nmw+qZ+a5edSrN46Mz2HvqoOvF3gYhU6c3fHuplrA0fEkP6ODJqUd/FI41kNz8e6jjvo
-         6cBbXHiAcBcQk0cCXFSgPW43uFEqtDlh7BzwVx58g/BhiDu3GtBoNZTd8rKNOxouEFjw
-         YHtQ==
-X-Gm-Message-State: APjAAAUMf2RfAzQLsdr9Z2leEE5z5GYOJzUaUo+IMAJDc6CaKPGkJqnr
-        kqaAAkzZBeAtO0WVjCYhfiM=
-X-Google-Smtp-Source: APXvYqxU2PDif2P0Gg8wHE54RZBKfO0WSlwbdj4/2t8iczBY1GjzcRG+ByigXXBVn8grG65+d3Ut2w==
-X-Received: by 2002:a2e:9848:: with SMTP id e8mr946107ljj.155.1571833512095;
-        Wed, 23 Oct 2019 05:25:12 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id t8sm9233160lfc.80.2019.10.23.05.25.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Oct 2019 05:25:11 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@kernel.org>)
-        id 1iNFhg-0007Fv-Fr; Wed, 23 Oct 2019 14:25:28 +0200
-Date:   Wed, 23 Oct 2019 14:25:28 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
-Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peter_hong@fintek.com.tw,
-        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-Subject: Re: [PATCH V2 6/7] USB: serial: f81232: Add generator for F81534A
-Message-ID: <20191023122528.GX24768@localhost>
-References: <20190923022449.10952-1-hpeter+linux_kernel@gmail.com>
- <20190923022449.10952-7-hpeter+linux_kernel@gmail.com>
+        id S1733282AbfJWM1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 08:27:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59508 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725947AbfJWM1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 08:27:49 -0400
+Received: from earth.universe (monacowifi.monaco.mc [82.113.13.92])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EE942086D;
+        Wed, 23 Oct 2019 12:27:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571833668;
+        bh=t8T7r1ufu3VJCAxY8EdZbRggUlqydUzVwu4ytEqymNY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rEP/KHnEMJt+p5oYo2wj9P7HvDzYxvMMwbEVPFb+ct/AWVpFypiPGZHrOr4EWYoAE
+         jlhMIW2NSPmc6niovedZIbrtq6DoVMMbZ2gRRS9/YcbVTFlwTJQY/yAge1392WcaYi
+         MH10fJB3ITMrv12A5eyEmGMImZ8HqZj4mTiHnPro=
+Received: by earth.universe (Postfix, from userid 1000)
+        id A982F3C09B2; Wed, 23 Oct 2019 14:27:45 +0200 (CEST)
+Date:   Wed, 23 Oct 2019 14:27:45 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Tony Lindgren <tony@atomide.com>, Adam Ford <aford173@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-bluetooth@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCHv2 4/4] Bluetooth: btwilink: drop superseded driver
+Message-ID: <20191023122745.ldh2ghnzazdhaf2x@earth.universe>
+References: <20191003134147.9458-1-sre@kernel.org>
+ <20191003134147.9458-5-sre@kernel.org>
+ <BC1F82AC-2988-4BC6-99EA-1C9F9289E582@holtmann.org>
+ <20191020205901.56bafijk7cu3rpaj@earth.universe>
+ <AC376F8D-77F3-4497-94D1-FE25A5ED9337@holtmann.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="iqu4xmpkphwkun2f"
 Content-Disposition: inline
-In-Reply-To: <20190923022449.10952-7-hpeter+linux_kernel@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <AC376F8D-77F3-4497-94D1-FE25A5ED9337@holtmann.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 10:24:48AM +0800, Ji-Ze Hong (Peter Hong) wrote:
-> The Fintek F81534A series is contains 1 HUB / 1 GPIO device / n UARTs,
-> but the UART is default disable and need enabled by GPIO device(2c42/16F8).
-> 
-> When F81534A plug to host, we can only see 1 HUB & 1 GPIO device and we
-> need write 0x8fff to GPIO device register F81534A_CMD_ENABLE_PORT(116h)
-> to enable all available serial ports.
-> 
-> Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
-> ---
->  drivers/usb/serial/f81232.c | 135 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 134 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/serial/f81232.c b/drivers/usb/serial/f81232.c
-> index 01cb5a5ea1d2..82cc1e6cff62 100644
-> --- a/drivers/usb/serial/f81232.c
-> +++ b/drivers/usb/serial/f81232.c
-> @@ -36,6 +36,9 @@
->  	{ USB_DEVICE(0x2c42, 0x1635) },	/* 8 port UART device */ \
->  	{ USB_DEVICE(0x2c42, 0x1636) }	/* 12 port UART device */
->  
-> +#define F81534A_CTRL_ID		\
-> +	{ USB_DEVICE(0x2c42, 0x16f8) }	/* Global control device */
-> +
->  static const struct usb_device_id id_table[] = {
->  	F81232_ID,
->  	{ }					/* Terminating entry */
-> @@ -46,6 +49,11 @@ static const struct usb_device_id f81534a_id_table[] = {
->  	{ }					/* Terminating entry */
->  };
->  
-> +static const struct usb_device_id f81534a_ctrl_id_table[] = {
-> +	F81534A_CTRL_ID,
-> +	{ }					/* Terminating entry */
-> +};
-> +
->  static const struct usb_device_id all_serial_id_table[] = {
->  	F81232_ID,
->  	F81534A_SERIES_ID,
 
-Forgot to mention: don't you want F81534A_CTRL_ID in the combined
-(MODULE_DEVICE_TABLE) as well?
+--iqu4xmpkphwkun2f
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Johan
+Hi,
+
+On Mon, Oct 21, 2019 at 05:14:15PM +0200, Marcel Holtmann wrote:
+> Hi Sebastian,
+>=20
+> >>> All users of this driver have been converted to the serdev based
+> >>> hci_ll driver. The unused driver can be safely dropped now.
+> >>>=20
+> >>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> >>> ---
+> >>> drivers/bluetooth/Kconfig    |  11 --
+> >>> drivers/bluetooth/Makefile   |   1 -
+> >>> drivers/bluetooth/btwilink.c | 337 -----------------------------------
+> >>> 3 files changed, 349 deletions(-)
+> >>> delete mode 100644 drivers/bluetooth/btwilink.c
+> >>=20
+> >> patch has been applied to bluetooth-next tree.
+> >>=20
+> >> However what I really like to see is that you re-introduce a
+> >> btwilink driver that is purely serdev based and doesn=E2=80=99t rely on
+> >> any hci_uart/hci_ldisc code. A clean serdev only driver is that
+> >> best and easier to maintain long term.
+> >=20
+> > So basically move the serdev implementation from hci_ll.c into its
+> > own driver and make hci_ll hci_uart based only? That effectively
+> > means, that we have two implementations of the protocol. I don't
+> > think this will improve maintainability, since then bugs needs to
+> > be fixed in two places? Note, that we have a couple of drivers
+> > with serdev+hci_uart by now:
+> >=20
+> > for file in $(grep -l serdev drivers/bluetooth/hci_*c) ; grep -l hci_ua=
+rt_register_proto "${file}"
+> > hci_bcm.c
+> > hci_h5.c
+> > hci_ldisc.c
+> > hci_ll.c
+> > hci_mrvl.c
+> > hci_qca.c
+>=20
+> I would like to have something similar to btmtkuart.c which is a
+> pure serdev driver that doesn=E2=80=99t depend on any hci_ldisc.c
+> framework. If we have this, then we would just drop hci_ll.c from
+> the kernel and focus on the serdev only version. As noted, there
+> is no need for any other driver at that point since everything is
+> probed anyway. Users will not even notice the difference.
+
+This can be achieved by just removing the hci_uart part from
+hci_ll. But AFAIK there are some non-wilink based TI HCILL
+devices, which do not require any extra platform data and might
+still use the hci_uart part.
+
+-- Sebastian
+
+--iqu4xmpkphwkun2f
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl2wRzoACgkQ2O7X88g7
++pogDw//Xb2ZDLcdKOs0TDYMMcP6rvRkA9S5ou7bDl8c2XgGbqsQSr7a851UVUxK
+S6ya43Jt6jQFTyR1pB55sSvoNu278E/TuBS3dPVwML5LasWRte3eFnITIdI0lHZ4
+ixeJ7JUUsvFLsiZ0GYTFm9ps4lAoh8qvpMFy0zrF4sdNoUq8QEUH4iAePN7Y7C+z
+Tc8RKRND96YNf1oar+mOpwDjqrV9DLahcOncO5VQn5pIO6N65g28K5tBslPIG3ZV
+MDoDmQTpjLnUxLpXs6oWkEbgBmBpI3Hx+ogRZfj1OF0m0qeCEGhvvcBp6STHiEkG
+u0vlQUC4RvnbGVul73MdOTSqfoghGuHiqyxazDWNmHFpo81HdhaHSB6/IxCKl8e4
+XJYYCbDTur4uWIMw9t5NTe7QUHrOezj2QrCNXDyikz1mNN4O4WrahKzkiLA0GSAu
+V2r+gcr6Z7r0QJs5cAimiYF3Hm5xl/sPhnhCqyRfFSBX93SeraGPkqF/PvcPWDRu
+J0H10QcDLI3xo3jnhUQPgcDoMeuNsKhE4w6sQvUPfbsXUme4/6d2+hrLsevQj+HE
+1Ozg/BKkIAlPQ8Pbtz93lZoseLJPCFROArLqLZERiRb++iAfVj/inJZzyhewhZJD
+cYzanohB9A6ZpLXiZLtuRKsQxCEoBYLX314LKlZJ2FaaUeSKIDY=
+=qmL6
+-----END PGP SIGNATURE-----
+
+--iqu4xmpkphwkun2f--
