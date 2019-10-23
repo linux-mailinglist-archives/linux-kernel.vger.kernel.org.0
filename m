@@ -2,63 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A60F2E18FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE853E18FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:27:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404775AbfJWL0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 07:26:50 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44239 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732149AbfJWL0t (ORCPT
+        id S2404818AbfJWL1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 07:27:21 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55078 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732149AbfJWL1V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 07:26:49 -0400
-Received: by mail-qt1-f194.google.com with SMTP id z22so11184082qtq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 04:26:49 -0700 (PDT)
+        Wed, 23 Oct 2019 07:27:21 -0400
+Received: by mail-wm1-f67.google.com with SMTP id g7so2738449wmk.4;
+        Wed, 23 Oct 2019 04:27:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fb1aYcSbpq+9iaeIeVo4QA9jJ6hhJT83G2zP5+xozbs=;
+        b=LuEjJ4KrhoHTIiiGH1NOFoCM9U0V8AryNd/hjKDnuqr9sxyP4/5VcFSjDgqPX26yyX
+         ZvjcUjAWd0f1J2iMs23WBPsWr9UxC1dqqTRX6RUXpFU0qfZCkbzObSQNpRyoEdLbycuJ
+         53SDQ6yvIEUkgJGRBeQxmgcQMwiZd1DvOsAUMPCDhDnk9d2nROA+P4fhimgc7kSkmub4
+         MrpLurFv3dE82YJP0ExNlmWHBTaN7lPjECkPjceHMcZCZ4czSio4mYLvDaSo9h9RIt2j
+         2CLCTLpa6YOCPEpApEpcK2xkr9AkS+U2RWn1/vkklVs4LkXf47k7ObIW1DarR0ssannk
+         6QJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UDV4KF2TcyJeFtsDx4AfVS/KB1B7na/iul1Gz4g+FY4=;
-        b=a/fxyHQU5JQzMqcZslAKrGEqrHtSu5C3GG5mSuACCnWD2XoXqLem3113iCQeKFVAOR
-         htd38BDkL/d9JA4sCsXE/jnzc9NK858huF5u9N7rZWvpbE4cp6V2H+j42kzAKD8bQSqV
-         EnwdWiog4JdXdMsM8g0aSvDDFJ6O6YHQZpl1IszdcIWl9Bcp2XeDCNwecC8vqE2jPi9w
-         dF2XasrQ4wlq0xnhWOGQPfCePlP09hkrRH+y7m8cbSEgJZCmXBo2S++xfMIkvo5N1Rd7
-         YNWGE4A+GYQS4Rx+Q8WuYCrS2kBGugtYog23u5c8eJJmr072VNye80DonmK4E9GwzhKU
-         hdXA==
-X-Gm-Message-State: APjAAAWtSh8qCSnSTkAY1FKsk4EYhRfH5hclLiVA1tcm4tkEFVwNMrff
-        rKWWafMvJDZz1F1TpdkK/7o=
-X-Google-Smtp-Source: APXvYqz/fgaEiwBZMBSEukJE3ai0fP9FpUG0+nH+tVZt9l6l573OcQUZIXE5ZsLpayeP1/sFMdOfEQ==
-X-Received: by 2002:ac8:23f0:: with SMTP id r45mr8455685qtr.208.1571830008751;
-        Wed, 23 Oct 2019 04:26:48 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id c6sm16873584qtc.83.2019.10.23.04.26.47
+        bh=fb1aYcSbpq+9iaeIeVo4QA9jJ6hhJT83G2zP5+xozbs=;
+        b=YihR6IVPePMnZe4HnV1nh1Ldqn8kg1BZcy/Z3RwJHJJfCDQcPy1/dxPZRb9RaFn7El
+         L6aTuRPCmt2x2MvX1iEMY966Q3nmvApSigARd140K4DVeoJlz/KfN5FGtgLErW+UXOT8
+         g8t6ugIpTnUxijJOHWdBC23HGjG1NXH284kH8xH2uctLQ2E9QtB9OF1KoL64zIumA6an
+         IX/InbZJIkw2WSeO+WYus/Px1Qsh4Epr2z3brJDFNxXENav70a/yi+65NkGSNLegaB3E
+         J/V76KSX5C7je0dIcsQuEVhUBu/P1NxGjOMPnyC4etKASjZTqnCq1Je/NuDY0l3hDFUa
+         QKzg==
+X-Gm-Message-State: APjAAAWHNIE0oMlSYnRUo/jhwkpNmcuZ/eTFYtfWbtz7Pivb3QwP64Pz
+        o7MBmZT/NYHZQrNzZlmI65r6q8TboBI=
+X-Google-Smtp-Source: APXvYqzff6sJKilGEJW39S2vUAbOgiLqQa9sel9inqOQpL5mM8DbqO2+in5jdzxWiqHhD/VXwOUMkQ==
+X-Received: by 2002:a1c:7517:: with SMTP id o23mr7738150wmc.34.1571830038540;
+        Wed, 23 Oct 2019 04:27:18 -0700 (PDT)
+Received: from mail.google.com ([104.238.174.53])
+        by smtp.gmail.com with ESMTPSA id g11sm20566012wmh.45.2019.10.23.04.27.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 04:26:47 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 657DE40244; Wed, 23 Oct 2019 11:26:46 +0000 (UTC)
-Date:   Wed, 23 Oct 2019 11:26:46 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Tuowen Zhao <ztuowen@gmail.com>
-Cc:     lee.jones@linaro.org, linux-kernel@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
-        acelan.kao@canonical.com, davem@davemloft.net
-Subject: Re: [PATCH v5 4/4] docs: driver-model: add devm_ioremap_uc
-Message-ID: <20191023112646.GI11244@42.do-not-panic.com>
-References: <20191016210629.1005086-1-ztuowen@gmail.com>
- <20191016210629.1005086-5-ztuowen@gmail.com>
+        Wed, 23 Oct 2019 04:27:17 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 19:27:11 +0800
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Changbin Du <changbin.du@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jiri Kosina <trivial@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel-doc: trivial improvement for warning message
+Message-ID: <20191023112709.dpc64xc3g3e7wks3@mail.google.com>
+References: <20191020132323.29658-1-changbin.du@gmail.com>
+ <20191021185406.GC9214@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191016210629.1005086-5-ztuowen@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191021185406.GC9214@bombadil.infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 03:06:30PM -0600, Tuowen Zhao wrote:
-> Signed-off-by: Tuowen Zhao <ztuowen@gmail.com>
+On Mon, Oct 21, 2019 at 11:54:06AM -0700, Matthew Wilcox wrote:
+> On Sun, Oct 20, 2019 at 09:23:23PM +0800, Changbin Du wrote:
+> > The message "Function parameter or member ..." looks weird.
+> > 
+> > Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> > ---
+> >  scripts/kernel-doc | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+> > index 81dc91760b23..cd3d2ca52c34 100755
+> > --- a/scripts/kernel-doc
+> > +++ b/scripts/kernel-doc
+> > @@ -1475,8 +1475,13 @@ sub push_parameter($$$$) {
+> >  		$parameterdescs{$param} = $undescribed;
+> >  
+> >  	        if (show_warnings($type, $declaration_name) && $param !~ /\./) {
+> > -			print STDERR
+> > -			      "${file}:$.: warning: Function parameter or member '$param' not described in '$declaration_name'\n";
+> > +			if ($decl_type eq "struct" or $decl_type eq 'union') {
+> > +				print STDERR
+> > +					"${file}:$.: warning: $decl_type member '$param' not described in '$declaration_name'\n";
+> > +			} else {
+> > +				print STDERR
+> > +					"${file}:$.: warning: $decl_type parameter '$param' not described in '$declaration_name'\n";
+> > +			}
+> >  			++$warnings;
+> 
+> How about instead ...
+> 
+> 		if (show_warnings($type, $declaration_name) && $param !~ /\./) {			if ($decl_type eq "struct")
+> 				$msg = "struct member";
+> 			elif ($decl_type eq "union")
+> 				$msg = "union member";
+> 			else
+> 				$msg = "function parameter";
+> 			print STDERR "${file}:$.: warning: $msg '$param' not described in '$declaration_name'\n";
+> 
+> (please excuse my perl, i am not a native speaker)
+This removes some duplicated characters, but need to decalare a extra variable.
+I am okay for both approaches. :)
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-
-  Luis
+-- 
+Cheers,
+Changbin Du
