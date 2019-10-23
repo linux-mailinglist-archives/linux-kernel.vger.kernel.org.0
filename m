@@ -2,70 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56201E22B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 20:49:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C8B9E22BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 20:49:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403801AbfJWStO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 14:49:14 -0400
-Received: from smtprelay0242.hostedemail.com ([216.40.44.242]:57924 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726506AbfJWStN (ORCPT
+        id S2404135AbfJWStf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 14:49:35 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10702 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404015AbfJWStf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 14:49:13 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id B81DA1822327E;
-        Wed, 23 Oct 2019 18:49:11 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2689:2693:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3870:3871:3873:4321:5007:10004:10400:11232:11658:11914:12050:12297:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:21080:21451:21627:30054:30090:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: seed76_500e99da2a55d
-X-Filterd-Recvd-Size: 1829
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 23 Oct 2019 18:49:10 +0000 (UTC)
-Message-ID: <bff0a1c4fc69b83c763ffbce42a0152e1573499a.camel@perches.com>
-Subject: Re: [Kgdb-bugreport] [PATCH] kernel: convert switch/case
- fallthrough comments to fallthrough;
-From:   Joe Perches <joe@perches.com>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-pm@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Date:   Wed, 23 Oct 2019 11:49:08 -0700
-In-Reply-To: <20191021090909.yjyed4qodjjcioqc@holly.lan>
-References: <f31b38b9ad515a138edaecf85701b1e3db064114.camel@perches.com>
-         <20191021090909.yjyed4qodjjcioqc@holly.lan>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 23 Oct 2019 14:49:35 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9NIlXdk059268
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 14:49:34 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vttpc463h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 14:49:33 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 23 Oct 2019 19:49:31 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 23 Oct 2019 19:49:28 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9NInRD459506866
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Oct 2019 18:49:27 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5014842049;
+        Wed, 23 Oct 2019 18:49:27 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C45A42042;
+        Wed, 23 Oct 2019 18:49:26 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.184.174])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 23 Oct 2019 18:49:25 +0000 (GMT)
+Subject: Re: [PATCH v1 5/6] KEYS: measure queued keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        dhowells@redhat.com, casey@schaufler-ca.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+Date:   Wed, 23 Oct 2019 14:49:25 -0400
+In-Reply-To: <1571853139.5104.154.camel@linux.ibm.com>
+References: <20191023001818.3684-1-nramas@linux.microsoft.com>
+         <20191023001818.3684-6-nramas@linux.microsoft.com>
+         <1571836990.5104.96.camel@linux.ibm.com>
+         <89d778d1-1ac9-4a58-b159-7db68b7fa4ad@linux.microsoft.com>
+         <1571853139.5104.154.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19102318-0016-0000-0000-000002BC4B8E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19102318-0017-0000-0000-0000331D8CDD
+Message-Id: <1571856565.5104.176.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-23_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910230174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-10-21 at 10:09 +0100, Daniel Thompson wrote:
-> On Fri, Oct 18, 2019 at 09:35:08AM -0700, Joe Perches wrote:
-> > Use the new pseudo keyword "fallthrough;" and not the
-> > various /* fallthrough */ style comments.
+On Wed, 2019-10-23 at 13:52 -0400, Mimi Zohar wrote:
+> On Wed, 2019-10-23 at 10:34 -0700, Lakshmi Ramasubramanian wrote:
+> > On 10/23/19 6:23 AM, Mimi Zohar wrote:
 > > 
-> > Signed-off-by: Joe Perches <joe@perches.com>
-> > ---
+> > > The ordering of this patch set is awkward.  It should first introduce
+> > > a generic method for measuring keys based on the keyring.  Then add
+> > > the additional support needed for the specific builtin_trusted_keys
+> > > keyring usecase.
 > > 
-> > This is a single patch for the kernel/ source tree,
-> > which would otherwise be sent through as separate
-> > patches to 19 maintainer sections.
+> > Would the following ordering of the patch set be acceptable:
+> > 
+> >   => PATCH 0/5: Cover letter
+> > 
+> >   => PATCH 1/5: Define the enum "hook(BUILTIN_TRUSTED_KEYS)" in ima.h
+> > 
+> >   => PATCH 2/5: Define ima hook
+> >                 This will initially do nothing if ima is not yet
+> >                 initialized.
+> >                 Call process_buffer_measurement() if ima is initialized.
+> > 
+> >   => PATCH 3/5: key_create_or_update change and the call to ima hook
+> > 
+> >   => PATCH 4/5: Queue\De-Queue of key measurement requests.
+> >                 Enable queuing of key in the ima hook if ima is not
+> >                 initialized.
+> > 
+> >   => PATCH 5/5: ima policy to enable measurement of keys which will
+> >                 enable end-to-end working of this feature.
 > 
-> For the kernel/debug/ files:
-> 
-> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> 
-> Will you be putting this in an immutable branch once you've collected
-> enough acks?
+> The first patches need to introduce the generic concept of measuring
+> keys based on policy.  Only afterwards would you add any builtin
+> trusted keyring specific code.
 
-No, I expect Linus will either run the script
-or apply this patch one day.
+1. Extend the IMA policy language to support identifying keyrings
+2. Define a new IMA hook which calls process_buffer_measurement()
+3. Call the new IMA hook (eg. from post_key_create_or_update)
+4. Define an early workqueue for saving keys loaded prior to IMA is
+initialized.  (Remember we don't hard code policy in the kernel.)
 
+I'll be pushing out linux-integrity shortly.  For the time being,
+please base your patches on -rc3.
+
+thanks,
+
+Mimi
 
