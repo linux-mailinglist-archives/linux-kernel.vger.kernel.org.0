@@ -2,315 +2,512 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72C6CE1307
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 09:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B2CDE1310
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 09:25:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389812AbfJWHZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 03:25:10 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:43413 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389224AbfJWHZI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 03:25:08 -0400
-Received: by mail-io1-f69.google.com with SMTP id i2so22213123ioo.10
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 00:25:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=+ke/5pvEZ1OCG2Pj/p3NXXUgpoPPR+2t9C0yTNu8RM8=;
-        b=ME2kMNy23lRSTFP96lLboWajjR42GWNA9mb3en++I162UTPGo39UsmWlBr/yOa+Hkz
-         NJVljzE8R0mq9LGA7r/UXgI4O4a7YaCVVUJ6/Gln42xiYDyz/I3LGAuzbzuXxmJdEsj5
-         4dLbFZp4ii97h+e88/mdnrAbH0r58db+WtfOfq4yNfHyQ4W1s9ljsl6/zVY1O7SaFPhc
-         t/WNHTon3wsB1BcDM6iKHOobPrxKD4gbpRPfjzupGuVrYRfZjbaR11w5fNfTRid6JMML
-         JYrEIyq9UY67xiZe1LpxlZ2DYt9AY/QOHJjOWlTX8sc+hizsHTfjvD9GQwhtDJMPY3Xk
-         AWQQ==
-X-Gm-Message-State: APjAAAUE68/RGhiPHSe+vkvgkmvuCbpCggb7kZZFUdHqzRIoTcSo3ULT
-        0Ntywfzgo6MjwLWqUsQXGkhZ6UGC5lju/oYcpz4dwSv1NeAG
-X-Google-Smtp-Source: APXvYqzpIp4kGf1aRpUorR51KAQ2Zs+q2Tupp7uReCAp1RJlOApjo41O4e/A008ukgL8gSs4cuEGuQxdqgATEumHqKpOKqG/rofw
+        id S2389899AbfJWHZe convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 23 Oct 2019 03:25:34 -0400
+Received: from mga18.intel.com ([134.134.136.126]:59530 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389633AbfJWHZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 03:25:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 00:25:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,219,1569308400"; 
+   d="scan'208";a="349313310"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2019 00:25:32 -0700
+Received: from fmsmsx125.amr.corp.intel.com (10.18.125.40) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 23 Oct 2019 00:25:32 -0700
+Received: from lcsmsx156.ger.corp.intel.com (10.186.165.234) by
+ FMSMSX125.amr.corp.intel.com (10.18.125.40) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 23 Oct 2019 00:25:32 -0700
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.149]) by
+ LCSMSX156.ger.corp.intel.com ([169.254.15.207]) with mapi id 14.03.0439.000;
+ Wed, 23 Oct 2019 10:25:29 +0300
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Can Guo <cang@codeaurora.org>,
+        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "nguyenb@codeaurora.org" <nguyenb@codeaurora.org>,
+        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        "saravanak@google.com" <saravanak@google.com>,
+        "salyzyn@google.com" <salyzyn@google.com>
+CC:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Evan Green" <evgreen@chromium.org>,
+        Janek Kotas <jank@cadence.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v1 1/1] scsi: ufs: Add command logging infrastructure
+Thread-Topic: [PATCH v1 1/1] scsi: ufs: Add command logging infrastructure
+Thread-Index: AQHViWLiQJ3KN81uNUixbqKujGzstadn0rRg
+Date:   Wed, 23 Oct 2019 07:25:28 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DCF0AFE@hasmsx108.ger.corp.intel.com>
+References: <1571808560-3965-1-git-send-email-cang@codeaurora.org>
+In-Reply-To: <1571808560-3965-1-git-send-email-cang@codeaurora.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjE0NjI4NmEtODcwYi00MTE5LWE1MTAtZTY4NmYwMDc2MWVhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYVdDV01DNGZkczJPT1RISnRxZHJLNlU3bTk5Y1hMRURRc1dtOGE4ODc0dDc2S0NDZFZOTmJtMGFHNzNuSVdRZyJ9
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.184.70.10]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:c8e:: with SMTP id b14mr37551168ile.16.1571815507310;
- Wed, 23 Oct 2019 00:25:07 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 00:25:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f74fa005958ed0fa@google.com>
-Subject: INFO: task hung in vfs_unlink
-From:   syzbot <syzbot+36feff43582f1f97716a@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+> Add the necessary infrastructure to keep timestamp history of commands,
+> events and other useful info for debugging complex issues. This helps in
+> diagnosing events leading upto failure.
 
-syzbot found the following crash on:
+Why not use tracepoints, for that?
+Thanks
+Tomas
 
-HEAD commit:    d72e90f3 Linux 4.18-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=104dc658400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=68af3495408deac5
-dashboard link: https://syzkaller.appspot.com/bug?extid=36feff43582f1f97716a
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/Kconfig  |  12 +++
+>  drivers/scsi/ufs/ufshcd.c | 214
+> +++++++++++++++++++++++++++++++++++++++-------
+>  drivers/scsi/ufs/ufshcd.h |  24 +++++-
+>  3 files changed, 218 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig index
+> 0b845ab..afc70cb 100644
+> --- a/drivers/scsi/ufs/Kconfig
+> +++ b/drivers/scsi/ufs/Kconfig
+> @@ -50,6 +50,18 @@ config SCSI_UFSHCD
+>  	  However, do not compile this as a module if your root file system
+>  	  (the one containing the directory /) is located on a UFS device.
+> 
+> +config SCSI_UFSHCD_CMD_LOGGING
+> +	bool "Universal Flash Storage host controller driver layer command
+> logging support"
+> +	depends on SCSI_UFSHCD
+> +	help
+> +	  This selects the UFS host controller driver layer command logging.
+> +	  UFS host controller driver layer command logging records all the
+> +	  command information sent from UFS host controller for debugging
+> +	  purpose.
+> +
+> +	  Select this if you want above mentioned debug information captured.
+> +	  If unsure, say N.
+> +
+>  config SCSI_UFSHCD_PCI
+>  	tristate "PCI bus based UFS Controller support"
+>  	depends on SCSI_UFSHCD && PCI
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c index
+> c28c144..f3faa85 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -91,6 +91,9 @@
+>  /* default delay of autosuspend: 2000 ms */  #define
+> RPM_AUTOSUSPEND_DELAY_MS 2000
+> 
+> +/* Maximum command logging entries */
+> +#define UFSHCD_MAX_CMD_LOGGING	20
+> +
+>  #define ufshcd_toggle_vreg(_dev, _vreg, _on)				\
+>  	({                                                              \
+>  		int _ret;                                               \
+> @@ -328,14 +331,135 @@ static void ufshcd_add_tm_upiu_trace(struct
+> ufs_hba *hba, unsigned int tag,
+>  			&descp->input_param1);
+>  }
+> 
+> -static void ufshcd_add_command_trace(struct ufs_hba *hba,
+> -		unsigned int tag, const char *str)
+> +static inline void ufshcd_add_command_trace(struct ufs_hba *hba,
+> +			struct ufshcd_cmd_log_entry *entry)
+> +{
+> +	if (trace_ufshcd_command_enabled()) {
+> +		u32 intr = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
+> +
+> +		trace_ufshcd_command(dev_name(hba->dev), entry->str,
+> entry->tag,
+> +				     entry->doorbell, entry->transfer_len, intr,
+> +				     entry->lba, entry->cmd_id);
+> +	}
+> +}
+> +
+> +#ifdef CONFIG_SCSI_UFSHCD_CMD_LOGGING
+> +static void ufshcd_cmd_log_init(struct ufs_hba *hba) {
+> +	/* Allocate log entries */
+> +	if (!hba->cmd_log.entries) {
+> +		hba->cmd_log.entries =
+> kcalloc(UFSHCD_MAX_CMD_LOGGING,
+> +			sizeof(struct ufshcd_cmd_log_entry), GFP_KERNEL);
+> +		if (!hba->cmd_log.entries)
+> +			return;
+> +		dev_dbg(hba->dev, "%s: cmd_log.entries initialized\n",
+> +				__func__);
+> +	}
+> +}
+> +
+> +static void __ufshcd_cmd_log(struct ufs_hba *hba, char *str, char *cmd_type,
+> +			     unsigned int tag, u8 cmd_id, u8 idn, u8 lun,
+> +			     sector_t lba, int transfer_len) {
+> +	struct ufshcd_cmd_log_entry *entry;
+> +
+> +	if (!hba->cmd_log.entries)
+> +		return;
+> +
+> +	entry = &hba->cmd_log.entries[hba->cmd_log.pos];
+> +	entry->lun = lun;
+> +	entry->str = str;
+> +	entry->cmd_type = cmd_type;
+> +	entry->cmd_id = cmd_id;
+> +	entry->lba = lba;
+> +	entry->transfer_len = transfer_len;
+> +	entry->idn = idn;
+> +	entry->doorbell = ufshcd_readl(hba,
+> REG_UTP_TRANSFER_REQ_DOOR_BELL);
+> +	entry->tag = tag;
+> +	entry->tstamp = ktime_get();
+> +	entry->outstanding_reqs = hba->outstanding_reqs;
+> +	entry->seq_num = hba->cmd_log.seq_num;
+> +	hba->cmd_log.seq_num++;
+> +	hba->cmd_log.pos = (hba->cmd_log.pos + 1) %
+> UFSHCD_MAX_CMD_LOGGING;
+> +
+> +	ufshcd_add_command_trace(hba, entry);
+> +}
+> +
+> +static void ufshcd_cmd_log(struct ufs_hba *hba, char *str, char *cmd_type,
+> +	unsigned int tag, u8 cmd_id, u8 idn)
+> +{
+> +	__ufshcd_cmd_log(hba, str, cmd_type, tag, cmd_id, idn, 0, 0, 0); }
+> +
+> +static void ufshcd_dme_cmd_log(struct ufs_hba *hba, char *str, u8
+> +cmd_id) {
+> +	ufshcd_cmd_log(hba, str, "dme", 0, cmd_id, 0); }
+> +
+> +static void ufshcd_print_cmd_log(struct ufs_hba *hba) {
+> +	int i;
+> +	int pos;
+> +	struct ufshcd_cmd_log_entry *p;
+> +
+> +	if (!hba->cmd_log.entries)
+> +		return;
+> +
+> +	pos = hba->cmd_log.pos;
+> +	for (i = 0; i < UFSHCD_MAX_CMD_LOGGING; i++) {
+> +		p = &hba->cmd_log.entries[pos];
+> +		pos = (pos + 1) % UFSHCD_MAX_CMD_LOGGING;
+> +
+> +		if (ktime_to_us(p->tstamp)) {
+> +			pr_err("%s: %s: seq_no=%u lun=0x%x cmd_id=0x%02x
+> lba=0x%llx txfer_len=%d tag=%u, doorbell=0x%x outstanding=0x%x idn=%d
+> time=%lld us\n",
+> +				p->cmd_type, p->str, p->seq_num,
+> +				p->lun, p->cmd_id, (unsigned long long)p->lba,
+> +				p->transfer_len, p->tag, p->doorbell,
+> +				p->outstanding_reqs, p->idn,
+> +				ktime_to_us(p->tstamp));
+> +				usleep_range(1000, 1100);
+> +		}
+> +	}
+> +}
+> +#else
+> +static void ufshcd_cmd_log_init(struct ufs_hba *hba) { }
+> +
+> +static void __ufshcd_cmd_log(struct ufs_hba *hba, char *str, char *cmd_type,
+> +			     unsigned int tag, u8 cmd_id, u8 idn, u8 lun,
+> +			     sector_t lba, int transfer_len) {
+> +	struct ufshcd_cmd_log_entry entry;
+> +
+> +	entry.str = str;
+> +	entry.lba = lba;
+> +	entry.cmd_id = cmd_id;
+> +	entry.transfer_len = transfer_len;
+> +	entry.doorbell = ufshcd_readl(hba,
+> REG_UTP_TRANSFER_REQ_DOOR_BELL);
+> +	entry.tag = tag;
+> +
+> +	ufshcd_add_command_trace(hba, &entry); }
+> +
+> +static void ufshcd_dme_cmd_log(struct ufs_hba *hba, char *str, u8
+> +cmd_id) { }
+> +
+> +static void ufshcd_print_cmd_log(struct ufs_hba *hba) { } #endif
+> +
+> +static inline void ufshcd_cond_add_cmd_trace(struct ufs_hba *hba,
+> +					unsigned int tag, const char *str)
+>  {
+> -	sector_t lba = -1;
+> -	u8 opcode = 0;
+> -	u32 intr, doorbell;
+>  	struct ufshcd_lrb *lrbp = &hba->lrb[tag];
+> -	int transfer_len = -1;
+> +	char *cmd_type = NULL;
+> +	u8 opcode = 0;
+> +	u8 cmd_id = 0, idn = 0;
+> +	sector_t lba = 0;
+> +	int transfer_len = 0;
+> 
+>  	if (!trace_ufshcd_command_enabled()) {
+>  		/* trace UPIU W/O tracing command */
+> @@ -361,10 +485,23 @@ static void ufshcd_add_command_trace(struct
+> ufs_hba *hba,
+>  		}
+>  	}
+> 
+> -	intr = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
+> -	doorbell = ufshcd_readl(hba, REG_UTP_TRANSFER_REQ_DOOR_BELL);
+> -	trace_ufshcd_command(dev_name(hba->dev), str, tag,
+> -				doorbell, transfer_len, intr, lba, opcode);
+> +	if (lrbp->cmd && ((lrbp->command_type == UTP_CMD_TYPE_SCSI) ||
+> +			  (lrbp->command_type ==
+> UTP_CMD_TYPE_UFS_STORAGE))) {
+> +		cmd_type = "scsi";
+> +		cmd_id = (u8)(*lrbp->cmd->cmnd);
+> +	} else if (lrbp->command_type == UTP_CMD_TYPE_DEV_MANAGE) {
+> +		if (hba->dev_cmd.type == DEV_CMD_TYPE_NOP) {
+> +			cmd_type = "nop";
+> +			cmd_id = 0;
+> +		} else if (hba->dev_cmd.type == DEV_CMD_TYPE_QUERY) {
+> +			cmd_type = "query";
+> +			cmd_id = hba-
+> >dev_cmd.query.request.upiu_req.opcode;
+> +			idn = hba->dev_cmd.query.request.upiu_req.idn;
+> +		}
+> +	}
+> +
+> +	__ufshcd_cmd_log(hba, (char *) str, cmd_type, tag, cmd_id, idn,
+> +			 lrbp->lun, lba, transfer_len);
+>  }
+> 
+>  static void ufshcd_print_clk_freqs(struct ufs_hba *hba) @@ -1886,7 +2023,8
+> @@ void ufshcd_send_command(struct ufs_hba *hba, unsigned int task_tag)
+>  	ufshcd_writel(hba, 1 << task_tag,
+> REG_UTP_TRANSFER_REQ_DOOR_BELL);
+>  	/* Make sure that doorbell is committed immediately */
+>  	wmb();
+> -	ufshcd_add_command_trace(hba, task_tag, "send");
+> +	ufshcd_cond_add_cmd_trace(hba, task_tag,
+> +			hba->lrb[task_tag].cmd ? "scsi_send" :
+> "dev_cmd_send");
+>  }
+> 
+>  /**
+> @@ -2001,6 +2139,7 @@ static inline u8 ufshcd_get_upmcrs(struct ufs_hba
+> *hba)
+> 
+>  	hba->active_uic_cmd = uic_cmd;
+> 
+> +	ufshcd_dme_cmd_log(hba, "dme_send", hba->active_uic_cmd-
+> >command);
+>  	/* Write Args */
+>  	ufshcd_writel(hba, uic_cmd->argument1,
+> REG_UIC_COMMAND_ARG_1);
+>  	ufshcd_writel(hba, uic_cmd->argument2,
+> REG_UIC_COMMAND_ARG_2); @@ -2031,6 +2170,8 @@ static inline u8
+> ufshcd_get_upmcrs(struct ufs_hba *hba)
+>  	else
+>  		ret = -ETIMEDOUT;
+> 
+> +	ufshcd_dme_cmd_log(hba, "dme_cmpl_1", hba->active_uic_cmd-
+> >command);
+> +
+>  	spin_lock_irqsave(hba->host->host_lock, flags);
+>  	hba->active_uic_cmd = NULL;
+>  	spin_unlock_irqrestore(hba->host->host_lock, flags); @@ -3797,11
+> +3938,14 @@ static int ufshcd_uic_pwr_ctrl(struct ufs_hba *hba, struct
+> uic_command *cmd)
+>  			cmd->command, status);
+>  		ret = (status != PWR_OK) ? status : -1;
+>  	}
+> +	ufshcd_dme_cmd_log(hba, "dme_cmpl_2", hba->active_uic_cmd-
+> >command);
+> +
+>  out:
+>  	if (ret) {
+>  		ufshcd_print_host_state(hba);
+>  		ufshcd_print_pwr_info(hba);
+>  		ufshcd_print_host_regs(hba);
+> +		ufshcd_print_cmd_log(hba);
+>  	}
+> 
+>  	spin_lock_irqsave(hba->host->host_lock, flags); @@ -4712,6 +4856,7
+> @@ static void ufshcd_slave_destroy(struct scsi_device *sdev)
+>  	int result = 0;
+>  	int scsi_status;
+>  	int ocs;
+> +	bool print_prdt;
+> 
+>  	/* overall command status of utrd */
+>  	ocs = ufshcd_get_tr_ocs(lrbp);
+> @@ -4787,8 +4932,11 @@ static void ufshcd_slave_destroy(struct scsi_device
+> *sdev)
+>  		break;
+>  	} /* end of switch */
+> 
+> -	if (host_byte(result) != DID_OK)
+> -		ufshcd_print_trs(hba, 1 << lrbp->task_tag, true);
+> +	if (host_byte(result) != DID_OK) {
+> +		print_prdt = (ocs == OCS_INVALID_PRDT_ATTR ||
+> +				ocs == OCS_MISMATCH_DATA_BUF_SIZE);
+> +		ufshcd_print_trs(hba, 1 << lrbp->task_tag, print_prdt);
+> +	}
+>  	return result;
+>  }
+> 
+> @@ -4828,7 +4976,7 @@ static void __ufshcd_transfer_req_compl(struct
+> ufs_hba *hba,
+>  		lrbp = &hba->lrb[index];
+>  		cmd = lrbp->cmd;
+>  		if (cmd) {
+> -			ufshcd_add_command_trace(hba, index, "complete");
+> +			ufshcd_cond_add_cmd_trace(hba, index, "scsi_cmpl");
+>  			result = ufshcd_transfer_rsp_status(hba, lrbp);
+>  			scsi_dma_unmap(cmd);
+>  			cmd->result = result;
+> @@ -4841,8 +4989,8 @@ static void __ufshcd_transfer_req_compl(struct
+> ufs_hba *hba,
+>  		} else if (lrbp->command_type ==
+> UTP_CMD_TYPE_DEV_MANAGE ||
+>  			lrbp->command_type ==
+> UTP_CMD_TYPE_UFS_STORAGE) {
+>  			if (hba->dev_cmd.complete) {
+> -				ufshcd_add_command_trace(hba, index,
+> -						"dev_complete");
+> +				ufshcd_cond_add_cmd_trace(hba, index,
+> +						"dev_cmd_cmpl");
+>  				complete(hba->dev_cmd.complete);
+>  			}
+>  		}
+> @@ -5307,6 +5455,23 @@ static void ufshcd_err_handler(struct work_struct
+> *work)
+>  		if (!ret)
+>  			goto skip_err_handling;
+>  	}
+> +
+> +	/*
+> +	 * Dump controller state before resetting. Transfer requests state
+> +	 * will be dump as part of the request completion.
+> +	 */
+> +	if (hba->saved_err & (INT_FATAL_ERRORS | UIC_ERROR)) {
+> +		dev_err(hba->dev, "%s: saved_err 0x%x saved_uic_err
+> 0x%x\n",
+> +			__func__, hba->saved_err, hba->saved_uic_err);
+> +		spin_unlock_irqrestore(hba->host->host_lock, flags);
+> +		ufshcd_print_host_regs(hba);
+> +		ufshcd_print_host_state(hba);
+> +		ufshcd_print_pwr_info(hba);
+> +		ufshcd_print_tmrs(hba, hba->outstanding_tasks);
+> +		ufshcd_print_cmd_log(hba);
+> +		spin_lock_irqsave(hba->host->host_lock, flags);
+> +	}
+> +
+>  	if ((hba->saved_err & INT_FATAL_ERRORS) ||
+>  	    (hba->saved_err & UFSHCD_UIC_HIBERN8_MASK) ||
+>  	    ((hba->saved_err & UIC_ERROR) &&
+> @@ -5523,21 +5688,6 @@ static void ufshcd_check_errors(struct ufs_hba
+> *hba)
+> 
+>  			hba->ufshcd_state = UFSHCD_STATE_EH_SCHEDULED;
+> 
+> -			/* dump controller state before resetting */
+> -			if (hba->saved_err & (INT_FATAL_ERRORS |
+> UIC_ERROR)) {
+> -				bool pr_prdt = !!(hba->saved_err &
+> -						SYSTEM_BUS_FATAL_ERROR);
+> -
+> -				dev_err(hba->dev, "%s: saved_err 0x%x
+> saved_uic_err 0x%x\n",
+> -					__func__, hba->saved_err,
+> -					hba->saved_uic_err);
+> -
+> -				ufshcd_print_host_regs(hba);
+> -				ufshcd_print_pwr_info(hba);
+> -				ufshcd_print_tmrs(hba, hba-
+> >outstanding_tasks);
+> -				ufshcd_print_trs(hba, hba->outstanding_reqs,
+> -							pr_prdt);
+> -			}
+>  			schedule_work(&hba->eh_work);
+>  		}
+>  	}
+> @@ -8425,6 +8575,8 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem
+> *mmio_base, unsigned int irq)
+>  	 */
+>  	ufshcd_set_ufs_dev_active(hba);
+> 
+> +	ufshcd_cmd_log_init(hba);
+> +
+>  	async_schedule(ufshcd_async_scan, hba);
+>  	ufs_sysfs_add_nodes(hba->dev);
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h index
+> e0fe247..97cc5b0 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -414,7 +414,7 @@ struct ufs_init_prefetch {
+>  	u32 icc_level;
+>  };
+> 
+> -#define UFS_ERR_REG_HIST_LENGTH 8
+> +#define UIC_ERR_REG_HIST_LENGTH 20
+>  /**
+>   * struct ufs_err_reg_hist - keeps history of errors
+>   * @pos: index to indicate cyclic buffer position @@ -471,6 +471,27 @@ struct
+> ufs_stats {
+>  	struct ufs_err_reg_hist task_abort;
+>  };
+> 
+> +struct ufshcd_cmd_log_entry {
+> +	char *str;	/* context like "send", "complete" */
+> +	char *cmd_type;	/* "scsi", "query", "nop", "dme" */
+> +	u8 lun;
+> +	u8 cmd_id;
+> +	sector_t lba;
+> +	int transfer_len;
+> +	u8 idn;		/* used only for query idn */
+> +	u32 doorbell;
+> +	u32 outstanding_reqs;
+> +	u32 seq_num;
+> +	unsigned int tag;
+> +	ktime_t tstamp;
+> +};
+> +
+> +struct ufshcd_cmd_log {
+> +	struct ufshcd_cmd_log_entry *entries;
+> +	int pos;
+> +	u32 seq_num;
+> +};
+> +
+>  /**
+>   * struct ufs_hba - per adapter private structure
+>   * @mmio_base: UFSHCI base register address @@ -692,6 +713,7 @@ struct
+> ufs_hba {
+>  	struct ufs_pwr_mode_info max_pwr_info;
+> 
+>  	struct ufs_clk_gating clk_gating;
+> +	struct ufshcd_cmd_log cmd_log;
+>  	/* Control to enable/disable host capabilities */
+>  	u32 caps;
+>  	/* Allow dynamic clk gating */
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+36feff43582f1f97716a@syzkaller.appspotmail.com
-
-binder: 12679:12746 ioctl 40046207 0 returned -16
-binder: 12679:12746 unknown command -565157109
-binder: 12679:12746 ioctl c0306201 204edfd0 returned -22
-binder: 12679:12743 unknown command 0
-binder: 12679:12743 ioctl c0306201 20007000 returned -22
-INFO: task syz-executor7:12738 blocked for more than 140 seconds.
-       Not tainted 4.18.0-rc6+ #160
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor7   D25832 12738   4599 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2853 [inline]
-  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
-  schedule+0xfb/0x450 kernel/sched/core.c:3545
-  __rwsem_down_write_failed_common+0x95d/0x1630  
-kernel/locking/rwsem-xadd.c:566
-  rwsem_down_write_failed+0xe/0x10 kernel/locking/rwsem-xadd.c:595
-  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
-  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
-  down_write+0xaa/0x130 kernel/locking/rwsem.c:72
-  inode_lock include/linux/fs.h:715 [inline]
-  vfs_unlink+0xd1/0x510 fs/namei.c:4001
-  do_unlinkat+0x6cc/0xa30 fs/namei.c:4073
-  __do_sys_unlink fs/namei.c:4120 [inline]
-  __se_sys_unlink fs/namei.c:4118 [inline]
-  __x64_sys_unlink+0x42/0x50 fs/namei.c:4118
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455ab9
-Code: e0 1f 48 89 04 24 e8 b6 6f fd ff e8 81 6a fd ff e8 5c 68 fd ff 48 8d  
-05 23 cd 48 00 48 89 04 24 48 c7 44 24 08 1d 00 00 00 e8 <13> 5e fd ff 0f  
-0b e8 8c 44 00 00 e9 07 f0 ff ff cc cc cc cc cc cc
-RSP: 002b:00007f2301e2cc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000057
-RAX: ffffffffffffffda RBX: 00007f2301e2d6d4 RCX: 0000000000455ab9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000300
-RBP: 000000000072bf48 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004c0088 R14: 00000000004d4350 R15: 0000000000000001
-INFO: task syz-executor7:12740 blocked for more than 140 seconds.
-       Not tainted 4.18.0-rc6+ #160
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor7   D24216 12740   4599 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2853 [inline]
-  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
-  schedule+0xfb/0x450 kernel/sched/core.c:3545
-  __rwsem_down_write_failed_common+0x95d/0x1630  
-kernel/locking/rwsem-xadd.c:566
-  rwsem_down_write_failed+0xe/0x10 kernel/locking/rwsem-xadd.c:595
-  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
-  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
-  down_write+0xaa/0x130 kernel/locking/rwsem.c:72
-  inode_lock include/linux/fs.h:715 [inline]
-  lock_mount+0x8c/0x2e0 fs/namespace.c:2088
-  do_add_mount+0x27/0x370 fs/namespace.c:2465
-  do_new_mount fs/namespace.c:2532 [inline]
-  do_mount+0x193f/0x30e0 fs/namespace.c:2848
-  ksys_mount+0x12d/0x140 fs/namespace.c:3064
-  __do_sys_mount fs/namespace.c:3078 [inline]
-  __se_sys_mount fs/namespace.c:3075 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455ab9
-Code: e0 1f 48 89 04 24 e8 b6 6f fd ff e8 81 6a fd ff e8 5c 68 fd ff 48 8d  
-05 23 cd 48 00 48 89 04 24 48 c7 44 24 08 1d 00 00 00 e8 <13> 5e fd ff 0f  
-0b e8 8c 44 00 00 e9 07 f0 ff ff cc cc cc cc cc cc
-RSP: 002b:00007f2301e0bc68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f2301e0c6d4 RCX: 0000000000455ab9
-RDX: 0000000020000900 RSI: 0000000020000000 RDI: 0000000000000000
-RBP: 000000000072bff0 R08: 0000000020000380 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004c0201 R14: 00000000004cfe50 R15: 0000000000000002
-INFO: task syz-executor7:12742 blocked for more than 140 seconds.
-       Not tainted 4.18.0-rc6+ #160
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor7   D25408 12742   4599 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2853 [inline]
-  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
-  schedule+0xfb/0x450 kernel/sched/core.c:3545
-  __rwsem_down_write_failed_common+0x95d/0x1630  
-kernel/locking/rwsem-xadd.c:566
-  rwsem_down_write_failed+0xe/0x10 kernel/locking/rwsem-xadd.c:595
-  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
-  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
-  down_write+0xaa/0x130 kernel/locking/rwsem.c:72
-  inode_lock include/linux/fs.h:715 [inline]
-  utimes_common.isra.1+0x45c/0x8e0 fs/utimes.c:90
-  do_utimes+0x1f7/0x380 fs/utimes.c:156
-  do_futimesat+0x249/0x350 fs/utimes.c:212
-  __do_sys_utimes fs/utimes.c:225 [inline]
-  __se_sys_utimes fs/utimes.c:222 [inline]
-  __x64_sys_utimes+0x59/0x80 fs/utimes.c:222
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455ab9
-Code: e0 1f 48 89 04 24 e8 b6 6f fd ff e8 81 6a fd ff e8 5c 68 fd ff 48 8d  
-05 23 cd 48 00 48 89 04 24 48 c7 44 24 08 1d 00 00 00 e8 <13> 5e fd ff 0f  
-0b e8 8c 44 00 00 e9 07 f0 ff ff cc cc cc cc cc cc
-RSP: 002b:00007f2301deac68 EFLAGS: 00000246 ORIG_RAX: 00000000000000eb
-RAX: ffffffffffffffda RBX: 00007f2301deb6d4 RCX: 0000000000455ab9
-RDX: 0000000000000000 RSI: 00000000200002c0 RDI: 00000000200000c0
-RBP: 000000000072c098 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004c2735 R14: 00000000004d4410 R15: 0000000000000003
-INFO: task syz-executor7:12744 blocked for more than 140 seconds.
-       Not tainted 4.18.0-rc6+ #160
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor7   D26504 12744   4599 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2853 [inline]
-  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
-  schedule+0xfb/0x450 kernel/sched/core.c:3545
-  __rwsem_down_write_failed_common+0x95d/0x1630  
-kernel/locking/rwsem-xadd.c:566
-  rwsem_down_write_failed+0xe/0x10 kernel/locking/rwsem-xadd.c:595
-  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
-  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
-  down_write_nested+0xae/0x130 kernel/locking/rwsem.c:194
-  inode_lock_nested include/linux/fs.h:750 [inline]
-  do_unlinkat+0x3d8/0xa30 fs/namei.c:4059
-  __do_sys_unlink fs/namei.c:4120 [inline]
-  __se_sys_unlink fs/namei.c:4118 [inline]
-  __x64_sys_unlink+0x42/0x50 fs/namei.c:4118
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455ab9
-Code: e0 1f 48 89 04 24 e8 b6 6f fd ff e8 81 6a fd ff e8 5c 68 fd ff 48 8d  
-05 23 cd 48 00 48 89 04 24 48 c7 44 24 08 1d 00 00 00 e8 <13> 5e fd ff 0f  
-0b e8 8c 44 00 00 e9 07 f0 ff ff cc cc cc cc cc cc
-RSP: 002b:00007f2301dc9c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000057
-RAX: ffffffffffffffda RBX: 00007f2301dca6d4 RCX: 0000000000455ab9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000300
-RBP: 000000000072c140 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004c0088 R14: 00000000004d4350 R15: 0000000000000004
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/902:
-  #0: 00000000b4fedee0 (rcu_read_lock){....}, at:  
-debug_show_all_locks+0xd0/0x428 kernel/locking/lockdep.c:4461
-1 lock held by rsyslogd/4458:
-  #0: 00000000cd393d5f (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200  
-fs/file.c:766
-2 locks held by getty/4548:
-  #0: 00000000900c6e8e (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 000000004ed6f2b2 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4549:
-  #0: 000000004a7c6f30 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 00000000950f14ac (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4550:
-  #0: 00000000cd10982b (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 00000000e9751603 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4551:
-  #0: 000000000fcf93b3 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 00000000fbe330db (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4552:
-  #0: 00000000604559fd (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 00000000736bec6e (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4553:
-  #0: 00000000bbb8dd50 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 0000000051ed7442 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4554:
-  #0: 00000000f0092d1e (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 00000000e841c59b (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by syz-executor7/12668:
-  #0: 00000000b9e8b92c (sb_writers#23){.+.+}, at: sb_start_write  
-include/linux/fs.h:1554 [inline]
-  #0: 00000000b9e8b92c (sb_writers#23){.+.+}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-  #1: 000000000ea5b75f (&sb->s_type->i_mutex_key#25){++++}, at: inode_lock  
-include/linux/fs.h:715 [inline]
-  #1: 000000000ea5b75f (&sb->s_type->i_mutex_key#25){++++}, at:  
-utimes_common.isra.1+0x45c/0x8e0 fs/utimes.c:90
-3 locks held by syz-executor7/12738:
-  #0: 00000000b9e8b92c (sb_writers#23){.+.+}, at: sb_start_write  
-include/linux/fs.h:1554 [inline]
-  #0: 00000000b9e8b92c (sb_writers#23){.+.+}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-  #1: 000000005a55d485 (&sb->s_type->i_mutex_key#25/1){+.+.}, at:  
-inode_lock_nested include/linux/fs.h:750 [inline]
-  #1: 000000005a55d485 (&sb->s_type->i_mutex_key#25/1){+.+.}, at:  
-do_unlinkat+0x3d8/0xa30 fs/namei.c:4059
-  #2: 000000000ea5b75f (&sb->s_type->i_mutex_key#25){++++}, at: inode_lock  
-include/linux/fs.h:715 [inline]
-  #2: 000000000ea5b75f (&sb->s_type->i_mutex_key#25){++++}, at:  
-vfs_unlink+0xd1/0x510 fs/namei.c:4001
-1 lock held by syz-executor7/12740:
-  #0: 000000005a55d485 (&sb->s_type->i_mutex_key#25){++++}, at: inode_lock  
-include/linux/fs.h:715 [inline]
-  #0: 000000005a55d485 (&sb->s_type->i_mutex_key#25){++++}, at:  
-lock_mount+0x8c/0x2e0 fs/namespace.c:2088
-2 locks held by syz-executor7/12742:
-  #0: 00000000b9e8b92c (sb_writers#23){.+.+}, at: sb_start_write  
-include/linux/fs.h:1554 [inline]
-  #0: 00000000b9e8b92c (sb_writers#23){.+.+}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-  #1: 000000000ea5b75f (&sb->s_type->i_mutex_key#25){++++}, at: inode_lock  
-include/linux/fs.h:715 [inline]
-  #1: 000000000ea5b75f (&sb->s_type->i_mutex_key#25){++++}, at:  
-utimes_common.isra.1+0x45c/0x8e0 fs/utimes.c:90
-2 locks held by syz-executor7/12744:
-  #0: 00000000b9e8b92c (sb_writers#23){.+.+}, at: sb_start_write  
-include/linux/fs.h:1554 [inline]
-  #0: 00000000b9e8b92c (sb_writers#23){.+.+}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-  #1: 000000005a55d485 (&sb->s_type->i_mutex_key#25/1){+.+.}, at:  
-inode_lock_nested include/linux/fs.h:750 [inline]
-  #1: 000000005a55d485 (&sb->s_type->i_mutex_key#25/1){+.+.}, at:  
-do_unlinkat+0x3d8/0xa30 fs/namei.c:4059
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 902 Comm: khungtaskd Not tainted 4.18.0-rc6+ #160
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:196 [inline]
-  watchdog+0x9c4/0xf80 kernel/hung_task.c:252
-  kthread+0x345/0x410 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0x6/0x10  
-arch/x86/include/asm/irqflags.h:54
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
