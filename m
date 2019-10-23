@@ -2,72 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E4A4E137B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 09:56:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 335D9E1382
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 09:59:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390059AbfJWH4F convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 23 Oct 2019 03:56:05 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:58344 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727574AbfJWH4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 03:56:04 -0400
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id 992C3B43E8505BBCA215;
-        Wed, 23 Oct 2019 15:56:02 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id x9N7svf9034682;
-        Wed, 23 Oct 2019 15:54:57 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019102315551692-90833 ;
-          Wed, 23 Oct 2019 15:55:16 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     tony.luck@intel.com
-Cc:     bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        wang.yi59@zte.com.cn, up2wing@gmail.com, wang.liang82@zte.com.cn
-Subject: [PATCH] x86/mce/amd: fix -Wmissing-prototypes warnings
-Date:   Wed, 23 Oct 2019 15:57:17 +0800
-Message-Id: <1571817437-7570-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        id S2390079AbfJWH7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 03:59:34 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:35940 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727574AbfJWH7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 03:59:34 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A09A113FE714AAF0BAA1;
+        Wed, 23 Oct 2019 15:59:30 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 23 Oct 2019
+ 15:59:22 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <Felix.Kuehling@amd.com>, <Philip.Yang@amd.com>, <jgg@ziepe.ca>,
+        <kraxel@redhat.com>, <tzimmermann@suse.de>, <tianci.yin@amd.com>
+CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'adev'
+Date:   Wed, 23 Oct 2019 15:58:31 +0800
+Message-ID: <20191023075831.33636-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-10-23 15:55:17,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-10-23 15:55:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-MAIL: mse-fl1.zte.com.cn x9N7svf9034682
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We get two warnings when build kernel W=1:
-arch/x86/kernel/cpu/mce/amd.c:586:6: warning: no previous prototype for ‘disable_err_thresholding’ [-Wmissing-prototypes]
+drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:1221:24: warning: variable adev set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:488:24: warning: variable adev set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:547:24: warning: variable adev set but not used [-Wunused-but-set-variable]
 
-Make the function static to fix this.
+It is never used, so can removed it.
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/x86/kernel/cpu/mce/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index 6ea7fdc..5167bd2 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -583,7 +583,7 @@ bool amd_filter_mce(struct mce *m)
-  * - Prevent possible spurious interrupts from the IF bank on Family 0x17
-  *   Models 0x10-0x2F due to Erratum #1114.
-  */
--void disable_err_thresholding(struct cpuinfo_x86 *c, unsigned int bank)
-+static void disable_err_thresholding(struct cpuinfo_x86 *c, unsigned int bank)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+index a61b0d9..ba00262 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@ -485,15 +485,12 @@ static int amdgpu_move_vram_ram(struct ttm_buffer_object *bo, bool evict,
+ 				struct ttm_operation_ctx *ctx,
+ 				struct ttm_mem_reg *new_mem)
  {
- 	int i, num_msrs;
- 	u64 hwcr;
+-	struct amdgpu_device *adev;
+ 	struct ttm_mem_reg *old_mem = &bo->mem;
+ 	struct ttm_mem_reg tmp_mem;
+ 	struct ttm_place placements;
+ 	struct ttm_placement placement;
+ 	int r;
+ 
+-	adev = amdgpu_ttm_adev(bo->bdev);
+-
+ 	/* create space/pages for new_mem in GTT space */
+ 	tmp_mem = *new_mem;
+ 	tmp_mem.mm_node = NULL;
+@@ -544,15 +541,12 @@ static int amdgpu_move_ram_vram(struct ttm_buffer_object *bo, bool evict,
+ 				struct ttm_operation_ctx *ctx,
+ 				struct ttm_mem_reg *new_mem)
+ {
+-	struct amdgpu_device *adev;
+ 	struct ttm_mem_reg *old_mem = &bo->mem;
+ 	struct ttm_mem_reg tmp_mem;
+ 	struct ttm_placement placement;
+ 	struct ttm_place placements;
+ 	int r;
+ 
+-	adev = amdgpu_ttm_adev(bo->bdev);
+-
+ 	/* make space in GTT for old_mem buffer */
+ 	tmp_mem = *new_mem;
+ 	tmp_mem.mm_node = NULL;
+@@ -1218,11 +1212,8 @@ static struct ttm_backend_func amdgpu_backend_func = {
+ static struct ttm_tt *amdgpu_ttm_tt_create(struct ttm_buffer_object *bo,
+ 					   uint32_t page_flags)
+ {
+-	struct amdgpu_device *adev;
+ 	struct amdgpu_ttm_tt *gtt;
+ 
+-	adev = amdgpu_ttm_adev(bo->bdev);
+-
+ 	gtt = kzalloc(sizeof(struct amdgpu_ttm_tt), GFP_KERNEL);
+ 	if (gtt == NULL) {
+ 		return NULL;
 -- 
-1.8.3.1
+2.7.4
+
 
