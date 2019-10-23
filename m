@@ -2,327 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC602E2216
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEA42E2227
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 19:55:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732110AbfJWRvF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 13:51:05 -0400
-Received: from mga17.intel.com ([192.55.52.151]:29594 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730513AbfJWRvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:51:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 10:51:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,221,1569308400"; 
-   d="scan'208";a="201210147"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga003.jf.intel.com with ESMTP; 23 Oct 2019 10:51:03 -0700
-Date:   Wed, 23 Oct 2019 10:55:23 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     "Raj, Ashok" <ashok.raj@intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v6 01/10] iommu/vt-d: Enlightened PASID allocation
-Message-ID: <20191023105523.75895d76@jacob-builder>
-In-Reply-To: <f17d8df6-d77a-32b9-104c-1ae246c7a117@linux.intel.com>
-References: <1571788403-42095-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1571788403-42095-2-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20191023004503.GB100970@otc-nc-03>
-        <f17d8df6-d77a-32b9-104c-1ae246c7a117@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1732405AbfJWRz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 13:55:29 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39644 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731858AbfJWRz2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 13:55:28 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r141so10942862wme.4
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 10:55:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MR7X5cmUMbAGyhVMpKWag4LE423qdgpRZ6IdJUs55wA=;
+        b=uqhMc1a63bKmXWyKOABmgVPjW27vGN/zwMb4NXvxGYn8/VE1uX8grEqp+Pbe2qAV0J
+         Zcns/FJwXGsNA120ov9re2KZ9YWZg8keiacR8VdO+UOiaT1H0jsFBFBQDJPe2Zs1crIf
+         W4yZYqvXGMh9tSyG7k0JuSX0mQrcrncOl06PjDp51eMJwzVB1InHOHOrHZbuJnXIREVp
+         crB+33+IwqGkJPQSqVZ3MS+yG13myXzL4cZWEV3+xOp/9lXXCctFoNLQ1C4L56Lsegfu
+         YwryuamkB61A0u50IbQhGE5SKKUChBnZCnmvDvXETWJlBuvoEWbNdc4VcKVN2m4750yn
+         lADQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MR7X5cmUMbAGyhVMpKWag4LE423qdgpRZ6IdJUs55wA=;
+        b=frePQPLLhH8Qepj+a+JBomD3guWcz1uShaHiS1IU0FupB8mnZaAgo97VrNUPCeZRW9
+         /KS+1k0iMOVcaSWF0aO08WK0H9F8L06jVAAaQu7XoIRDVNDvzZ4kUhENRMImK4IrqSmh
+         x2qlcxTtiySWmFeI7wkK3GWzrF/BdWKkP+BfUBxS+h/bUyLMnp8lHAUAuyvU+ABezT3D
+         TERdfjFZWsd4BA7og2IwUp++sUUIrTcYUrj5DiNvmD2g5eEC0TDb6lM4gat6GcjQ+Drl
+         WgTPSQ++pFCVLuSvwNFxEWHLVzzoZuQpxkBj68nVJ9Cy/W/PA1tAaP8mHxVZC36Gjjam
+         DHtw==
+X-Gm-Message-State: APjAAAWtnE/cMJfJe8LHWdp6+eVSJCjSx79VvvWSi92QaCu7DuhgxnYi
+        c/0qyLJhqosQ7wq1FeB2LMb1jA==
+X-Google-Smtp-Source: APXvYqz/B9MnKi/QliYF4Oj44EBnIW/k+njNbJ+2Om+Kztd3MM3IhkLqJRcLcz8RJ+X1b/mfdRvbjw==
+X-Received: by 2002:a1c:dd06:: with SMTP id u6mr1069919wmg.109.1571853326343;
+        Wed, 23 Oct 2019 10:55:26 -0700 (PDT)
+Received: from netronome.com (fred-musen.rivierenbuurt.horms.nl. [2001:470:7eb3:404:a2a4:c5ff:fe4c:9ce9])
+        by smtp.gmail.com with ESMTPSA id d8sm9238615wrr.71.2019.10.23.10.55.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 10:55:25 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 19:55:23 +0200
+From:   Simon Horman <simon.horman@netronome.com>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     netdev <netdev@vger.kernel.org>,
+        Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Paul Blakey <paulb@mellanox.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 3/4] flow_dissector: extract more ICMP
+ information
+Message-ID: <20191023175522.GB28355@netronome.com>
+References: <20191021200948.23775-1-mcroce@redhat.com>
+ <20191021200948.23775-4-mcroce@redhat.com>
+ <20191023100009.GC8732@netronome.com>
+ <CAGnkfhxg1sXkmiNS-+H184omQaKbp_+_Sy7Vi-9W9qLwGGPU6g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGnkfhxg1sXkmiNS-+H184omQaKbp_+_Sy7Vi-9W9qLwGGPU6g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Oct 2019 09:53:04 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+On Wed, Oct 23, 2019 at 12:53:37PM +0200, Matteo Croce wrote:
+> On Wed, Oct 23, 2019 at 12:00 PM Simon Horman
+> <simon.horman@netronome.com> wrote:
+> > On Mon, Oct 21, 2019 at 10:09:47PM +0200, Matteo Croce wrote:
+> > > +     switch (ih->type) {
+> > > +     case ICMP_ECHO:
+> > > +     case ICMP_ECHOREPLY:
+> > > +     case ICMP_TIMESTAMP:
+> > > +     case ICMP_TIMESTAMPREPLY:
+> > > +     case ICMPV6_ECHO_REQUEST:
+> > > +     case ICMPV6_ECHO_REPLY:
+> > > +             /* As we use 0 to signal that the Id field is not present,
+> > > +              * avoid confusion with packets without such field
+> > > +              */
+> > > +             key_icmp->id = ih->un.echo.id ? : 1;
+> >
+> > Its not obvious to me why the kernel should treat id-zero as a special
+> > value if it is not special on the wire.
+> >
+> > Perhaps a caller who needs to know if the id is present can
+> > check the ICMP type as this code does, say using a helper.
+> >
+> 
+> Hi,
+> 
+> The problem is that the 0-0 Type-Code pair identifies the echo replies.
+> So instead of adding a bool is_present value I hardcoded the info in
+> the ID field making it always non null, at the expense of a possible
+> collision, which is harmless.
 
-> Hi Ashok,
-> 
-> Thanks for reviewing the patch.
-> 
-> On 10/23/19 8:45 AM, Raj, Ashok wrote:
-> > On Tue, Oct 22, 2019 at 04:53:14PM -0700, Jacob Pan wrote:  
-> >> From: Lu Baolu <baolu.lu@linux.intel.com>
-> >>
-> >> If Intel IOMMU runs in caching mode, a.k.a. virtual IOMMU, the
-> >> IOMMU driver should rely on the emulation software to allocate
-> >> and free PASID IDs. The Intel vt-d spec revision 3.0 defines a
-> >> register set to support this. This includes a capability register,
-> >> a virtual command register and a virtual response register. Refer
-> >> to section 10.4.42, 10.4.43, 10.4.44 for more information.  
-> > 
-> > The above paragraph seems a bit confusing, there is no reference
-> > to caching mode for for VCMD... some suggestion below.
-> > 
-> > Enabling IOMMU in a guest requires communication with the host
-> > driver for certain aspects. Use of PASID ID to enable Shared Virtual
-> > Addressing (SVA) requires managing PASID's in the host. VT-d 3.0
-> > spec provides a Virtual Command Register (VCMD) to facilitate this.
-> > Writes to this register in the guest are trapped by Qemu and
-> > proxies the call to the host driver....  
-> 
-> Yours is better. Will use it.
-> 
-I will roll that in to v7
-> > 
-> >   
-> >>
-> >> This patch adds the enlightened PASID allocation/free interfaces
-> >> via the virtual command register.
-> >>
-> >> Cc: Ashok Raj <ashok.raj@intel.com>
-> >> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> >> Cc: Kevin Tian <kevin.tian@intel.com>
-> >> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-> >> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> >> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> >> Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> >> ---
-> >>   drivers/iommu/intel-pasid.c | 83
-> >> +++++++++++++++++++++++++++++++++++++++++++++
-> >> drivers/iommu/intel-pasid.h | 13 ++++++-
-> >> include/linux/intel-iommu.h |  2 ++ 3 files changed, 97
-> >> insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/iommu/intel-pasid.c
-> >> b/drivers/iommu/intel-pasid.c index 040a445be300..76bcbb21e112
-> >> 100644 --- a/drivers/iommu/intel-pasid.c
-> >> +++ b/drivers/iommu/intel-pasid.c
-> >> @@ -63,6 +63,89 @@ void *intel_pasid_lookup_id(int pasid)
-> >>   	return p;
-> >>   }
-> >>   
-> >> +static int check_vcmd_pasid(struct intel_iommu *iommu)
-> >> +{
-> >> +	u64 cap;
-> >> +
-> >> +	if (!ecap_vcs(iommu->ecap)) {
-> >> +		pr_warn("IOMMU: %s: Hardware doesn't support
-> >> virtual command\n",
-> >> +			iommu->name);
-> >> +		return -ENODEV;
-> >> +	}
-> >> +
-> >> +	cap = dmar_readq(iommu->reg + DMAR_VCCAP_REG);
-> >> +	if (!(cap & DMA_VCS_PAS)) {
-> >> +		pr_warn("IOMMU: %s: Emulation software doesn't
-> >> support PASID allocation\n",
-> >> +			iommu->name);
-> >> +		return -ENODEV;
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int
-> >> *pasid) +{
-> >> +	u64 res;
-> >> +	u8 status_code;
-> >> +	unsigned long flags;
-> >> +	int ret = 0;
-> >> +
-> >> +	ret = check_vcmd_pasid(iommu);  
-> > 
-> > Do you have to check this everytime? every dmar_readq is going to
-> > trap to the other side ...  
-> 
-> Yes. We don't need to check it every time. Check once and save the
-> result during boot is enough.
-> 
-> How about below incremental change?
-> 
-Below is good but I was thinking to include vccap in struct
-intel_iommu{} where cap and ecaps reside. i.e.
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 14b87ae2916a..e2cf25c9c956 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -528,6 +528,7 @@ struct intel_iommu {
-        u64             reg_size; /* size of hw register set */
-        u64             cap;
-        u64             ecap;
-+       u64             vccap;
+Sorry, I feel that I'm missing something here.
 
-Also, we can use a static branch here.
+My reading of the code above is that for the cased types above
+(echo, echo reply, ...) the id is present. Otherwise it is not.
+My idea would be to put a check for those types in a helper.
 
-> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-> index ff7e877b7a4d..c15d9d7e1e73 100644
-> --- a/drivers/iommu/intel-pasid.c
-> +++ b/drivers/iommu/intel-pasid.c
-> @@ -29,22 +29,29 @@ u32 intel_pasid_max_id = PASID_MAX;
-> 
->   static int check_vcmd_pasid(struct intel_iommu *iommu)
->   {
-> +       static int vcmd_supported = -EINVAL;
->          u64 cap;
-> 
-> +       if (vcmd_supported != -EINVAL)
-> +               return vcmd_supported;
-> +
->          if (!ecap_vcs(iommu->ecap)) {
->                  pr_warn("IOMMU: %s: Hardware doesn't support virtual 
-> command\n",
->                          iommu->name);
-> -               return -ENODEV;
-> +               vcmd_supported = -ENODEV;
-> +               return vcmd_supported;
->          }
-> 
->          cap = dmar_readq(iommu->reg + DMAR_VCCAP_REG);
->          if (!(cap & DMA_VCS_PAS)) {
->                  pr_warn("IOMMU: %s: Emulation software doesn't
-> support PASID allocation\n",
->                          iommu->name);
-> -               return -ENODEV;
-> +               vcmd_supported = -ENODEV;
-> +               return vcmd_supported;
->          }
-> 
-> -       return 0;
-> +       vcmd_supported = 0;
-> +       return vcmd_supported;
->   }
-> 
->   int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int *pasid)
-> 
-> Best regards,
-> baolu
-> 
-> >   
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	raw_spin_lock_irqsave(&iommu->register_lock, flags);
-> >> +	dmar_writeq(iommu->reg + DMAR_VCMD_REG, VCMD_CMD_ALLOC);
-> >> +	IOMMU_WAIT_OP(iommu, DMAR_VCRSP_REG, dmar_readq,
-> >> +		      !(res & VCMD_VRSP_IP), res);
-> >> +	raw_spin_unlock_irqrestore(&iommu->register_lock, flags);
-> >> +
-> >> +	status_code = VCMD_VRSP_SC(res);
-> >> +	switch (status_code) {
-> >> +	case VCMD_VRSP_SC_SUCCESS:
-> >> +		*pasid = VCMD_VRSP_RESULT(res);
-> >> +		break;
-> >> +	case VCMD_VRSP_SC_NO_PASID_AVAIL:
-> >> +		pr_info("IOMMU: %s: No PASID available\n",
-> >> iommu->name);
-> >> +		ret = -ENOMEM;
-> >> +		break;
-> >> +	default:
-> >> +		ret = -ENODEV;
-> >> +		pr_warn("IOMMU: %s: Unexpected error code %d\n",
-> >> +			iommu->name, status_code);
-> >> +	}
-> >> +
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +void vcmd_free_pasid(struct intel_iommu *iommu, unsigned int
-> >> pasid) +{
-> >> +	u64 res;
-> >> +	u8 status_code;
-> >> +	unsigned long flags;
-> >> +
-> >> +	if (check_vcmd_pasid(iommu))
-> >> +		return;
-> >> +
-> >> +	raw_spin_lock_irqsave(&iommu->register_lock, flags);
-> >> +	dmar_writeq(iommu->reg + DMAR_VCMD_REG, (pasid << 8) |
-> >> VCMD_CMD_FREE);
-> >> +	IOMMU_WAIT_OP(iommu, DMAR_VCRSP_REG, dmar_readq,
-> >> +		      !(res & VCMD_VRSP_IP), res);
-> >> +	raw_spin_unlock_irqrestore(&iommu->register_lock, flags);
-> >> +
-> >> +	status_code = VCMD_VRSP_SC(res);
-> >> +	switch (status_code) {
-> >> +	case VCMD_VRSP_SC_SUCCESS:
-> >> +		break;
-> >> +	case VCMD_VRSP_SC_INVALID_PASID:
-> >> +		pr_info("IOMMU: %s: Invalid PASID\n",
-> >> iommu->name);
-> >> +		break;
-> >> +	default:
-> >> +		pr_warn("IOMMU: %s: Unexpected error code %d\n",
-> >> +			iommu->name, status_code);
-> >> +	}
-> >> +}
-> >> +
-> >>   /*
-> >>    * Per device pasid table management:
-> >>    */
-> >> diff --git a/drivers/iommu/intel-pasid.h
-> >> b/drivers/iommu/intel-pasid.h index fc8cd8f17de1..e413e884e685
-> >> 100644 --- a/drivers/iommu/intel-pasid.h
-> >> +++ b/drivers/iommu/intel-pasid.h
-> >> @@ -23,6 +23,16 @@
-> >>   #define is_pasid_enabled(entry)		(((entry)->lo >>
-> >> 3) & 0x1) #define get_pasid_dir_size(entry)	(1 <<
-> >> ((((entry)->lo >> 9) & 0x7) + 7)) 
-> >> +/* Virtual command interface for enlightened pasid management. */
-> >> +#define VCMD_CMD_ALLOC			0x1
-> >> +#define VCMD_CMD_FREE			0x2
-> >> +#define VCMD_VRSP_IP			0x1
-> >> +#define VCMD_VRSP_SC(e)			(((e) >> 1) & 0x3)
-> >> +#define VCMD_VRSP_SC_SUCCESS		0
-> >> +#define VCMD_VRSP_SC_NO_PASID_AVAIL	1
-> >> +#define VCMD_VRSP_SC_INVALID_PASID	1
-> >> +#define VCMD_VRSP_RESULT(e)		(((e) >> 8) & 0xfffff)
-> >> +
-> >>   /*
-> >>    * Domain ID reserved for pasid entries programmed for
-> >> first-level
-> >>    * only and pass-through transfer modes.
-> >> @@ -95,5 +105,6 @@ int intel_pasid_setup_pass_through(struct
-> >> intel_iommu *iommu, struct device *dev, int pasid);
-> >>   void intel_pasid_tear_down_entry(struct intel_iommu *iommu,
-> >>   				 struct device *dev, int pasid);
-> >> -
-> >> +int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int
-> >> *pasid); +void vcmd_free_pasid(struct intel_iommu *iommu, unsigned
-> >> int pasid); #endif /* __INTEL_PASID_H */
-> >> diff --git a/include/linux/intel-iommu.h
-> >> b/include/linux/intel-iommu.h index ed11ef594378..eea7468694a7
-> >> 100644 --- a/include/linux/intel-iommu.h
-> >> +++ b/include/linux/intel-iommu.h
-> >> @@ -161,6 +161,7 @@
-> >>   #define ecap_smpwc(e)		(((e) >> 48) & 0x1)
-> >>   #define ecap_flts(e)		(((e) >> 47) & 0x1)
-> >>   #define ecap_slts(e)		(((e) >> 46) & 0x1)
-> >> +#define ecap_vcs(e)		(((e) >> 44) & 0x1)
-> >>   #define ecap_smts(e)		(((e) >> 43) & 0x1)
-> >>   #define ecap_dit(e)		((e >> 41) & 0x1)
-> >>   #define ecap_pasid(e)		((e >> 40) & 0x1)
-> >> @@ -279,6 +280,7 @@
-> >>   
-> >>   /* PRS_REG */
-> >>   #define DMA_PRS_PPR	((u32)1)
-> >> +#define DMA_VCS_PAS	((u64)1)
-> >>   
-> >>   #define IOMMU_WAIT_OP(iommu, offset, op, cond,
-> >> sts)			\ do
-> >> {
-> >> \ -- 2.7.4
-> >>  
-> >   
+I do agree that the override you have used is harmless enough
+in the context of the only user of the id which appears in
+the following patch of this series.
 
-[Jacob Pan]
+
+Some other things I noticed in this patch on a second pass:
+
+* I think you can remove the icmp field from struct flow_dissector_key_ports
+
+* I think that adding icmp to struct flow_keys should be accompanied by
+  adding ICMP to flow_keys_dissector_symmetric_keys. But I think this is
+  not desirable outside of the bonding use-case and rather
+  the bonding driver should define its own structures that
+  includes the keys it needs - basically copies of struct flow_keys
+  and flow_keys_dissector_symmetric_keys with some modifications.
+
+* Modifying flow_keys_have_l4 affects the behaviour of
+  skb_get_hash_flowi6() but there is not a corresponding update
+  to flow_keys_have_l4(). I didn't look at all the other call sites
+  but it strikes me that this is a) a wide-spread behavioural change
+  and b) is perhaps not required for the bond-use case.
