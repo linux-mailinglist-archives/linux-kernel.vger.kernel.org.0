@@ -2,129 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9B06E1961
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF1AFE196A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 13:54:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405117AbfJWLwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 07:52:46 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46992 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732092AbfJWLwq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 07:52:46 -0400
-Received: by mail-lf1-f67.google.com with SMTP id t8so15804911lfc.13;
-        Wed, 23 Oct 2019 04:52:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UP5gdkUuUJ2fsIKZrjEEkYxT+1Zl1EyXr08pcip8sao=;
-        b=ZOwB7v2fJxbfdvIDy77oGHpdx0ITObnIMzLP1PBA0JYHycFiCFTimtItIut2yaexKd
-         Nvw9nLxfhtbFpmjUSdzOmVq74vn0R+SnDGIf9Zd9zgtJBGyw5L7wMJiaDrp4OrQFvlQ/
-         gllURpAn+uBcYT2QYmqeNDvD0C5wTyTHVqylvt4EKVPLDQLWIZN2bxKPdvsIPKJ4dhsQ
-         79tWPVmD0A04/28kdiIrdqSxOQD0K8hld1jwB69hFG+X8BjDPlqUQEIPCTv11aPQqqn1
-         +IJ91s3X0GznTY/541ho3JC7cdnmJ2of77P40E2+lUP+HFX5I58PV/hfvF3dm/7cfEhM
-         XgAw==
-X-Gm-Message-State: APjAAAW16DTjjcrGwAFdZ0e7hn36uy/C+sMIFMy73uEm0rpF5TYLxsxz
-        HsOAvJpHOJHgNnQzJirvCSM=
-X-Google-Smtp-Source: APXvYqyRaVJn6WIOly1Fo+ZbC/dp1NYNTs+N33NvoETznb2nPYT//qen03pc4/5IirEEcUHwT5GFNQ==
-X-Received: by 2002:a19:5517:: with SMTP id n23mr5873958lfe.139.1571831564526;
-        Wed, 23 Oct 2019 04:52:44 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id u24sm6049489ljl.64.2019.10.23.04.52.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Oct 2019 04:52:43 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@kernel.org>)
-        id 1iNFCG-00074i-P9; Wed, 23 Oct 2019 13:53:00 +0200
-Date:   Wed, 23 Oct 2019 13:53:00 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
-Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peter_hong@fintek.com.tw,
-        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-Subject: Re: [PATCH V2 5/7] USB: serial: f81232: Set F81534A serial port with
- RS232 mode
-Message-ID: <20191023115300.GU24768@localhost>
-References: <20190923022449.10952-1-hpeter+linux_kernel@gmail.com>
- <20190923022449.10952-6-hpeter+linux_kernel@gmail.com>
+        id S2405141AbfJWLyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 07:54:25 -0400
+Received: from mail-eopbgr40062.outbound.protection.outlook.com ([40.107.4.62]:52754
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733169AbfJWLyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 07:54:24 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TSrOomg77Vy30ONNC/PlqR02INUyvfm1bOXCm/9vm42rW58LA2M+7QFsKC5Vixz7KtQbJcS5t+mR7FOOXNplOOLRXuNjgq/lbQtGvfwz3T1VSeIrFEhIKt2+eTcznd/EMDdNx+BK5tk/mhViMTfUcoeq+AYow7frFsuSvUAvh2W3CNHW18BmDDs7L8BILpHv24x7fcic93u56nc6vse87Kk7ONkvy6DuxaHN6zR8j42qLEH5lmPAhbZUTerSzKFkm41diTt3sq/+kH8FhrUXrfK9SOZ+IZGNLWD0R+rplSYSGuxoVE5b90jA98UuBPTpmDMTe1XvVncuWzt+GvDSqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fNEdv9CnAQB4wIzj3rvG26oICmiCQ4jzPMg6qBZQa5s=;
+ b=YyGxAuRjxj/l6dyjWUb9jc5kb2b5Goed6/ciu1l2tDFMUA+l4Z1ge6l3KesHjtFNDgw5Qk3dsuAlHiKm2rKzfHKXzZNqhpr37htGTojclyIIa2BKaYQCBdBL7a3IAOHqJXBc6DB+cL6VRBBySbVaD8KttxsTR38Y7tNUnaS8vXlf7S0KFIZ9/TyLD8n3C+ecb3GEX1YEajvLiaEw9x11qM6ju/MSz0e+WMFpwKbM4NsUFBXr/MsSrYQb2Tvl6auNHfTziEm//Tk1CD/8Qdeev9sj7mvkURcmxAEEbObL9AiXWXISLzNNuqfDdvxoNvwBKyYUzeQWYgeA+RAFqp4u9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fNEdv9CnAQB4wIzj3rvG26oICmiCQ4jzPMg6qBZQa5s=;
+ b=eW3Ff4wGVZ6h9gLIhMu2fxkog3FT8OeydXeRweCP0i9VCV9unzO3MxiFKtFKMCN4g5wqKPx7eEvrRnq/s1DzFsHA1e/SsiWF8yujFkzJ2zOxpKQT8i7Kqo+YSZ5zdruSnSNSZQZY/zk/TX9YWJPjXePlh771T+xiadF3NkLIfog=
+Received: from VI1PR04MB5134.eurprd04.prod.outlook.com (20.177.51.208) by
+ VI1PR04MB5358.eurprd04.prod.outlook.com (20.178.120.83) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2367.24; Wed, 23 Oct 2019 11:53:41 +0000
+Received: from VI1PR04MB5134.eurprd04.prod.outlook.com
+ ([fe80::10f0:af2c:76ac:dfb]) by VI1PR04MB5134.eurprd04.prod.outlook.com
+ ([fe80::10f0:af2c:76ac:dfb%7]) with mapi id 15.20.2347.030; Wed, 23 Oct 2019
+ 11:53:41 +0000
+From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
+To:     Robin Murphy <robin.murphy@arm.com>, "hch@lst.de" <hch@lst.de>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>
+CC:     Leo Li <leoyang.li@nxp.com>,
+        Diana Madalina Craciun <diana.craciun@nxp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Madalin-cristian Bucur <madalin.bucur@nxp.com>
+Subject: Re: [RFC PATCH 1/3] dma-mapping: introduce a new dma api
+ dma_addr_to_phys_addr()
+Thread-Topic: [RFC PATCH 1/3] dma-mapping: introduce a new dma api
+ dma_addr_to_phys_addr()
+Thread-Index: AQHViNfyo/IzAF7o50+e1U9qS9i5xadmpruAgAF4mgA=
+Date:   Wed, 23 Oct 2019 11:53:41 +0000
+Message-ID: <50a42575-02b2-c558-0609-90e2ad3f515b@nxp.com>
+References: <20191022125502.12495-1-laurentiu.tudor@nxp.com>
+ <20191022125502.12495-2-laurentiu.tudor@nxp.com>
+ <62561dca-cdd7-fe01-a0c3-7b5971c96e7e@arm.com>
+In-Reply-To: <62561dca-cdd7-fe01-a0c3-7b5971c96e7e@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=laurentiu.tudor@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 662831db-6016-4aa9-8de4-08d757afa617
+x-ms-traffictypediagnostic: VI1PR04MB5358:|VI1PR04MB5358:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB5358FB3DBAEE4B32D3B63CACEC6B0@VI1PR04MB5358.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 019919A9E4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(346002)(136003)(366004)(396003)(189003)(199004)(2616005)(446003)(476003)(186003)(11346002)(316002)(71190400001)(54906003)(44832011)(36756003)(6116002)(3846002)(2906002)(71200400001)(6636002)(31686004)(66066001)(110136005)(561944003)(26005)(486006)(5660300002)(2501003)(66476007)(81166006)(6436002)(229853002)(6512007)(305945005)(66946007)(64756008)(2201001)(6246003)(7736002)(66556008)(81156014)(66446008)(8676002)(8936002)(76116006)(4326008)(25786009)(478600001)(6506007)(53546011)(102836004)(256004)(86362001)(99286004)(31696002)(14454004)(6486002)(76176011)(91956017);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5358;H:VI1PR04MB5134.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 8zF8o+RwJ1QDiYONjx9ZcucusaWvvrl5iZ9aPe0/leaPEn+ClNHc0PadCrNB97VGgByMxNdeMLe5QRH9YtUl0Uj6aTZqtN+UASAnWc+rt2rKiuXGdANzfmKee24PE5HksyptS3RBraPJ7EIpzdh1uVnkuC4sEIBPMIknFPHRTjrVAPlTm8tdREfxfLCbX17stVz6aGznjYd/yAq4lKLhcZDMfG0Fet5rZUEFRyncnHPDxb6RWx7gKY9ytzN4MkLYnn+Il/ZQNFGQbaFxFTHCkAbr4MeFlFR5kNcqPnH1ZtS4jpF+gwbRjyHsQFQI6rR9HPHSlO9JcSWhUAtWq0s7W7vs1gxzNceJgHqQ8D8/QIRONeA+9YNK4O4HebEmJicQGr3xERAAFvaocQ6vhagE50UQW5hocObUrDB9GNxFwSmZkYiCFd79WQv30l/MUGW0
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2679FB9EA0E4F3418A83611381CF1016@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923022449.10952-6-hpeter+linux_kernel@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 662831db-6016-4aa9-8de4-08d757afa617
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2019 11:53:41.2130
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rZ9b3MBn2MpIjNUt7THnaogG+u+TbUAQlMHHKaO8tFPkZPKhlq208xycloTKIqFU45/SGb1WfjlP/LHI6JAuoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5358
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 10:24:47AM +0800, Ji-Ze Hong (Peter Hong) wrote:
-> The Fintek F81532A/534A/535/536 is USB-to-2/4/8/12 serial ports device
-> and the serial ports are default disabled. Each port contains max 3 pins
-> GPIO and the 3 pins are default pull high with input mode.
-> 
-> When the serial port had activated (running probe()), we'll transform the
-> 3 pins from GPIO function publicly to control Tranceiver privately use.
-
-I'm not sure I understand what you're saying here.
-
-> We'll default set to 0/0/1 for control transceiver to RS232 mode.
-> 
-> Otherwise, If the serial port is not active, the 3 pins is in GPIO mode
-> and controlled by global GPIO device with VID/PID: 2c42/16f8.
-
-Does this mean that you can control the three GPIOs either through the
-serial device or through the gpio-control device (which are two separate
-USB devices)?
-
-> Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
-> ---
->  drivers/usb/serial/f81232.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/usb/serial/f81232.c b/drivers/usb/serial/f81232.c
-> index 36a17aedc2ae..01cb5a5ea1d2 100644
-> --- a/drivers/usb/serial/f81232.c
-> +++ b/drivers/usb/serial/f81232.c
-> @@ -96,6 +96,15 @@ MODULE_DEVICE_TABLE(usb, all_serial_id_table);
->  #define F81534A_TRIGGER_MULTPILE_4X	BIT(3)
->  #define F81534A_FIFO_128BYTE		(BIT(1) | BIT(0))
->  
-> +/* Serial port self GPIO control, 2bytes [control&output data][input data] */
-> +#define F81534A_GPIO_REG		0x10e
-> +#define F81534A_GPIO_MODE2_DIR		BIT(6) /* 1: input, 0: output */
-> +#define F81534A_GPIO_MODE1_DIR		BIT(5)
-> +#define F81534A_GPIO_MODE0_DIR		BIT(4)
-> +#define F81534A_GPIO_MODE2_OUTPUT	BIT(2)
-> +#define F81534A_GPIO_MODE1_OUTPUT	BIT(1)
-> +#define F81534A_GPIO_MODE0_OUTPUT	BIT(0)
-> +
->  struct f81232_private {
->  	struct mutex lock;
->  	u8 modem_control;
-> @@ -866,6 +875,14 @@ static int f81232_port_probe(struct usb_serial_port *port)
->  
->  static int f81534a_port_probe(struct usb_serial_port *port)
->  {
-> +	int status;
-> +
-> +	/* tri-state with pull-high, default RS232 Mode */
-> +	status = f81232_set_register(port, F81534A_GPIO_REG,
-> +					F81534A_GPIO_MODE2_DIR);
-> +	if (status)
-> +		return status;
-
-Ok, so you reset the tranceiver config on every probe.
-
-Are the three GPIOs always connected to one particular tranceiver, or
-are they truly general purpose?
-
-In the latter case, it doesn't seem like a good idea to drive pins 0
-and 1 low here as you have know idea what they're used for.
-
-> +
->  	return f81232_port_probe(port);
->  }
-
-Johan
+SGkgUm9iaW4sDQoNCk9uIDIyLjEwLjIwMTkgMTY6MjUsIFJvYmluIE11cnBoeSB3cm90ZToNCj4g
+T24gMjIvMTAvMjAxOSAxMzo1NSwgTGF1cmVudGl1IFR1ZG9yIHdyb3RlOg0KPj4gRnJvbTogTGF1
+cmVudGl1IFR1ZG9yIDxsYXVyZW50aXUudHVkb3JAbnhwLmNvbT4NCj4+DQo+PiBJbnRyb2R1Y2Ug
+YSBuZXcgZG1hIG1hcCBvcCBjYWxsZWQgZG1hX2FkZHJfdG9fcGh5c19hZGRyKCkgdGhhdCBjb252
+ZXJ0cw0KPj4gYSBkbWEgYWRkcmVzcyB0byB0aGUgcGh5c2ljYWwgYWRkcmVzcyBiYWNraW5nIGl0
+IHVwIGFuZCBhZGQgd3JhcHBlciBmb3INCj4+IGl0Lg0KPiANCj4gSSdkIHJlYWxseSBsb3ZlIGl0
+IGlmIHRoZXJlIHdhcyBhIG5hbWUgd2hpY2ggY291bGQgZW5jYXBzdWxhdGUgdGhhdCB0aGlzIA0K
+PiBpcyAqb25seSogZm9yIGV4dHJlbWUgc3BlY2lhbCBjYXNlcyBvZiBjb25zdHJhaW5lZCBkZXNj
+cmlwdG9ycy9wYWdldGFibGUgDQo+IGVudHJpZXMvZXRjLiB3aGVyZSB0aGVyZSdzIHNpbXBseSBu
+byBwcmFjdGljYWwgd2F5IHRvIGtlZXAgdHJhY2sgb2YgYSANCj4gQ1BVIGFkZHJlc3MgYWxvbmdz
+aWRlIHRoZSBETUEgYWRkcmVzcywgYW5kIHRoZSBvbmx5IG9wdGlvbiBpcyB0aGlzIA0KPiBwb3Rl
+bnRpYWxseS1hcmJpdHJhcmlseS1jb21wbGV4IG9wZXJhdGlvbiAoSSBtZWFuLCBvbiBzb21lIHN5
+c3RlbXMgaXQgDQo+IG1heSBlbmQgdXAgdGFraW5nIGxvY2tzIGFuZCBwb2tpbmcgaGFyZHdhcmUp
+Lg0KPiANCj4gRWl0aGVyIHdheSBpdCdzIHRyaWNreSAtIG11Y2ggYXMgSSBkb24ndCBsaWtlIGFk
+ZGluZyBhbiBpbnRlcmZhY2Ugd2hpY2ggDQo+IGlzIHJpcGUgZm9yIGRyaXZlcnMgdG8gbWlzdXNl
+LCBJIGFsc28gcmVhbGx5IGRvbid0IHdhbnQgaGFja3MgbGlrZSANCj4gYmRmOTU5MjMwODZmIHNo
+b3ZlZCBpbnRvIG90aGVyIEFQSXMgdG8gY29tcGVuc2F0ZSwgc28gb24gYmFsYW5jZSBJJ2QgDQo+
+IHByb2JhYmx5IGNvbnNpZGVyIHRoaXMgcHJvcG9zYWwgZXZlciBzbyBzbGlnaHRseSB0aGUgbGVz
+c2VyIGV2aWwuDQoNCldlIGhhZCBhbiBpbnRlcm5hbCBkaXNjdXNzaW9uIG92ZXIgdGhlc2UgcG9p
+bnRzIHlvdSBhcmUgcmFpc2luZyBhbmQgDQpNYWRhbGluIChjYy1lZCkgY2FtZSB1cCB3aXRoIGFu
+b3RoZXIgaWRlYTogaW5zdGVhZCBvZiBhZGRpbmcgdGhpcyBwcm9uZSANCnRvIG1pc3VzZSBhcGkg
+aG93IGFib3V0IGV4cGVyaW1lbnRpbmcgd2l0aCBhIG5ldyBkbWEgdW5tYXAgYW5kIGRtYSBzeW5j
+IA0KdmFyaWFudHMgdGhhdCB3b3VsZCByZXR1cm4gdGhlIHBoeXNpY2FsIGFkZHJlc3MgYnkgY2Fs
+bGluZyB0aGUgbmV3bHkgDQppbnRyb2R1Y2VkIGRtYSBtYXAgb3AuIFNvbWV0aGluZyBhbG9uZyB0
+aGVzZSBsaW5lczoNCiAgKiBwaHlzX2FkZHJfdCBkbWFfdW5tYXBfcGFnZV9yZXRfcGh5cyguLi4p
+DQogICogcGh5c19hZGRyX3QgZG1hX3VubWFwX3NpbmdsZV9yZXRfcGh5cyguLi4pDQogICogcGh5
+c19hZGRyX3QgZG1hX3N5bmNfc2luZ2xlX2Zvcl9jcHVfcmV0X3BoeXMoLi4uKQ0KSSdtIHRoaW5r
+aW5nIHRoYXQgdGhpcyBwcm9wb3NhbCBzaG91bGQgcmVkdWNlIHRoZSByaXNrcyBvcGVuZWQgYnkg
+dGhlIA0KaW5pdGlhbCB2YXJpYW50Lg0KUGxlYXNlIGxldCBtZSBrbm93IHdoYXQgeW91IHRoaW5r
+Lg0KDQotLS0NClRoYW5rcyAmIEJlc3QgUmVnYXJkcywgTGF1cmVudGl1
