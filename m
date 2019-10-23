@@ -2,222 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49522E19B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:15:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7EADE19C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 14:16:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391248AbfJWMPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 08:15:05 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37190 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbfJWMPF (ORCPT
+        id S2391269AbfJWMQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 08:16:13 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51610 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730796AbfJWMQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:15:05 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r4so15580375edy.4;
-        Wed, 23 Oct 2019 05:15:03 -0700 (PDT)
+        Wed, 23 Oct 2019 08:16:13 -0400
+Received: by mail-wm1-f67.google.com with SMTP id q70so13804830wme.1;
+        Wed, 23 Oct 2019 05:16:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CVMZIlFOmsUq+Vskr+tW0iGHn90ty7G6Hxjpnt8OG8M=;
+        b=ojnE0DcvbLt/j4uUZPeFzmfKmga2rO8E+9NXFcWrlKCvPSGUgr/vQUU+szzDg1mDA+
+         v5NhCBILtyORwkN20a+IzCYLSo0bhiFsahfEB5sOikH758RLyZdDpnK4LsnhdngGsI7Q
+         jq3Z7lDpcyKYLQ6He4l2vT2rSbdmO3/R74AlnQvfKurtejnhO9FBxTBItXeVcM92zZvB
+         dl56umDy9DdZX68gLVthIzBQFJEeG9E3tmamcBX6IiC6Dg7isKf9s1Rb17K7BNQa2tI9
+         VHYNAv7l98J09PaL6TE344tTiLdPL3w/vbngEYCQSU2/6Zhi4FwLQwR9oCw1x9zOTmTg
+         EPJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EM2bqpofr7QfnOYg3+B2AOXvOUUZQ5S8Y8TJAmAFfq0=;
-        b=aHLwrBSYHYBX8ny5Ytg9RTFyowYRjSeR65rt8zybXVNkcDEKyozlfQxUzsb66+moAq
-         aaGy/Re7vaSZUhCz6VL1nSSbqNoTiVaLtLSKY66jbPs/qb61XP4aVk+uFPAxU3ETQZJa
-         beZdRvbsylAMgadk6CJ/TOUSZ34UeedrIFrHRzn9RqIoi9mHPOY5PWC0qrCDzTj0Vghd
-         sZSs23Fq+oqBWlxTaqf2tGSV87I8jhE4s+hrrXCdZ0DRxMvz5BeLG4v/UHM++sN+znbg
-         rDDbKTDne8oFIq+YJgay5vNzUpaSPsWxlA0GmWziVIdULIsxKioXu11mL/m5qfKTFfM/
-         +/Eg==
-X-Gm-Message-State: APjAAAXd7/qWlzK/zFIGfaOBTOFGiggIwiyKOzcSEtZ7l/EBEerENDAX
-        P8bruKoY1lcO4QVIyUannDQ=
-X-Google-Smtp-Source: APXvYqzMHg39Wi2a6r4kf+i1HiG2eaoZDJ9aezTMqReWB2uYi5hp2/274lnrfoQNk4EHNQ+xelbuwA==
-X-Received: by 2002:a17:906:a0f:: with SMTP id w15mr12009761ejf.321.1571832902425;
-        Wed, 23 Oct 2019 05:15:02 -0700 (PDT)
-Received: from pi3 ([194.230.155.217])
-        by smtp.googlemail.com with ESMTPSA id r16sm760759eds.72.2019.10.23.05.15.00
+        bh=CVMZIlFOmsUq+Vskr+tW0iGHn90ty7G6Hxjpnt8OG8M=;
+        b=oe/Kib51tvoG5skXGBDRuLLGSIFTSB+2fttQgBbjEWxH4haKTvDj2TCO+li+jNl6tK
+         2VFs3HdcufEGdT9/ZVJkkrOSDtj/wCXYiB7IUBOsXu+WKcSNQa9ZaZ61iRr1aRb2A+dc
+         p0mqMROwdr2LTCo92YT+X1ST3pOprkmenKiupvbPIskpdCHbJ1LVBEt6DhxcfWqmvFgR
+         7PiaCoUuZZU5xq+SZ2m8D1EQkke33eXdj15eeyU4wEJ4Wo4L3C0ix+Etuc+wMI7bJSjD
+         sQcoo4wsT5rvfLrRgfbQKK7gjZOarHeMFQxFupRykW1AcAdarxVHlhYeJTWIe/FrzZHT
+         Kkzg==
+X-Gm-Message-State: APjAAAW0Ps5WABEvoAA7IvR2VokWQ+PssuOL5gXpm0VzxlMCduD46usO
+        s0ueEPugLp42N6XP2CDeiXCO8GBZvTU=
+X-Google-Smtp-Source: APXvYqyPu5nM/9wohUAJp6nNJluOH/TU3xDM7gzETkX6nv5t8ka6YdF9i5MOGNXaVmNYHrsl/qf8Hw==
+X-Received: by 2002:a1c:6405:: with SMTP id y5mr3559550wmb.175.1571832970440;
+        Wed, 23 Oct 2019 05:16:10 -0700 (PDT)
+Received: from andrea.guest.corp.microsoft.com ([2a01:110:8012:1012:517c:6bd4:d9e0:aab5])
+        by smtp.gmail.com with ESMTPSA id a189sm7930047wma.2.2019.10.23.05.16.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 05:15:01 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 14:14:58 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Olof Johansson <olof@lixom.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH 11/36] ARM: s5pv210: split from plat-samsung
-Message-ID: <20191023121458.GB11048@pi3>
-References: <20191010202802.1132272-1-arnd@arndb.de>
- <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-11-arnd@arndb.de>
+        Wed, 23 Oct 2019 05:16:09 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 14:16:03 +0200
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        bsingharora@gmail.com, dvyukov@google.com, elver@google.com,
+        stable@vger.kernel.org,
+        syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v6] taskstats: fix data-race
+Message-ID: <20191023121603.GA16344@andrea.guest.corp.microsoft.com>
+References: <20191009114809.8643-1-christian.brauner@ubuntu.com>
+ <20191021113327.22365-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191010203043.1241612-11-arnd@arndb.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191021113327.22365-1-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:29:55PM +0200, Arnd Bergmann wrote:
-> These can be build completely independently, so split
-> the two Kconfig symbols.
+On Mon, Oct 21, 2019 at 01:33:27PM +0200, Christian Brauner wrote:
+> When assiging and testing taskstats in taskstats_exit() there's a race
+> when writing and reading sig->stats when a thread-group with more than
+> one thread exits:
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm/Kconfig.debug        | 6 +++---
->  arch/arm/Makefile             | 1 -
->  arch/arm/plat-samsung/Kconfig | 2 +-
->  drivers/mmc/host/Kconfig      | 2 +-
->  drivers/pwm/Kconfig           | 2 +-
->  drivers/spi/Kconfig           | 2 +-
->  drivers/tty/serial/Kconfig    | 2 +-
->  sound/soc/samsung/Kconfig     | 2 +-
->  8 files changed, 9 insertions(+), 10 deletions(-)
+> cpu0:
+> thread catches fatal signal and whole thread-group gets taken down
+>  do_exit()
+>  do_group_exit()
+>  taskstats_exit()
+>  taskstats_tgid_alloc()
+> The tasks reads sig->stats without holding sighand lock.
 > 
-> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> index 9c4f2d6deb06..4c4e97ae4fcb 100644
-> --- a/arch/arm/Kconfig.debug
-> +++ b/arch/arm/Kconfig.debug
-> @@ -998,7 +998,7 @@ choice
->  		  via SCIFA4 on Renesas SH-Mobile AG5 (SH73A0).
->  
->  	config DEBUG_S3C_UART0
-> -		depends on PLAT_SAMSUNG || ARCH_EXYNOS
-> +		depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
-
-How are you going to select DEBUG_S5PV210_UART now?
-
-Best regards,
-Krzysztof
-
-
->  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
->  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
->  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
-> @@ -1010,7 +1010,7 @@ choice
->  		  by the boot-loader before use.
->  
->  	config DEBUG_S3C_UART1
-> -		depends on PLAT_SAMSUNG || ARCH_EXYNOS
-> +		depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
->  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
->  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
->  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
-> @@ -1022,7 +1022,7 @@ choice
->  		  by the boot-loader before use.
->  
->  	config DEBUG_S3C_UART2
-> -		depends on PLAT_SAMSUNG || ARCH_EXYNOS
-> +		depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
->  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
->  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
->  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
-> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> index f492d7c338fe..a1bc15cda751 100644
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@ -235,7 +235,6 @@ machine-$(CONFIG_PLAT_SPEAR)		+= spear
->  # by CONFIG_* macro name.
->  plat-$(CONFIG_ARCH_OMAP)	+= omap
->  plat-$(CONFIG_ARCH_S3C64XX)	+= samsung
-> -plat-$(CONFIG_ARCH_S5PV210)	+= samsung
->  plat-$(CONFIG_PLAT_ORION)	+= orion
->  plat-$(CONFIG_PLAT_PXA)		+= pxa
->  plat-$(CONFIG_PLAT_S3C24XX)	+= samsung
-> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-> index 740bdb23f38a..1530946cc672 100644
-> --- a/arch/arm/plat-samsung/Kconfig
-> +++ b/arch/arm/plat-samsung/Kconfig
-> @@ -4,7 +4,7 @@
->  
->  config PLAT_SAMSUNG
->  	bool
-> -	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
-> +	depends on PLAT_S3C24XX || ARCH_S3C64XX
->  	default y
->  	select GENERIC_IRQ_CHIP
->  	select NO_IOPORT_MAP
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 400a581c918c..16a0e5430b44 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -275,7 +275,7 @@ config MMC_SDHCI_TEGRA
->  
->  config MMC_SDHCI_S3C
->  	tristate "SDHCI support on Samsung S3C SoC"
-> -	depends on MMC_SDHCI && (PLAT_SAMSUNG || ARCH_EXYNOS)
-> +	depends on MMC_SDHCI && (PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS)
->  	help
->  	  This selects the Secure Digital Host Controller Interface (SDHCI)
->  	  often referrered to as the HSMMC block in some of the Samsung S3C
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index e3a2518503ed..8eb738cac0c7 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -394,7 +394,7 @@ config PWM_ROCKCHIP
->  
->  config PWM_SAMSUNG
->  	tristate "Samsung PWM support"
-> -	depends on PLAT_SAMSUNG || ARCH_EXYNOS
-> +	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
->  	help
->  	  Generic PWM framework driver for Samsung.
->  
-> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-> index 6f7fdcbb9151..355391ee643d 100644
-> --- a/drivers/spi/Kconfig
-> +++ b/drivers/spi/Kconfig
-> @@ -625,7 +625,7 @@ config SPI_S3C24XX_FIQ
->  
->  config SPI_S3C64XX
->  	tristate "Samsung S3C64XX series type SPI"
-> -	depends on (PLAT_SAMSUNG || ARCH_EXYNOS || COMPILE_TEST)
-> +	depends on (PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST)
->  	help
->  	  SPI driver for Samsung S3C64XX and newer SoCs.
->  
-> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-> index 4789b5d62f63..17f01cf3009c 100644
-> --- a/drivers/tty/serial/Kconfig
-> +++ b/drivers/tty/serial/Kconfig
-> @@ -237,7 +237,7 @@ config SERIAL_CLPS711X_CONSOLE
->  
->  config SERIAL_SAMSUNG
->  	tristate "Samsung SoC serial support"
-> -	depends on PLAT_SAMSUNG || ARCH_EXYNOS
-> +	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
->  	select SERIAL_CORE
->  	help
->  	  Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
-> diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-> index 638983123d8f..7a0035dd9995 100644
-> --- a/sound/soc/samsung/Kconfig
-> +++ b/sound/soc/samsung/Kconfig
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  menuconfig SND_SOC_SAMSUNG
->  	tristate "ASoC support for Samsung"
-> -	depends on PLAT_SAMSUNG || ARCH_EXYNOS || COMPILE_TEST
-> +	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
->  	depends on COMMON_CLK
->  	select SND_SOC_GENERIC_DMAENGINE_PCM
->  	---help---
-> -- 
-> 2.20.0
+> cpu1:
+> task calls exit_group()
+>  do_exit()
+>  do_group_exit()
+>  taskstats_exit()
+>  taskstats_tgid_alloc()
+> The task takes sighand lock and assigns new stats to sig->stats.
 > 
+> The first approach used smp_load_acquire() and smp_store_release().
+> However, after having discussed this it seems that the data dependency
+> for kmem_cache_alloc() would be fixed by WRITE_ONCE().
+> Furthermore, the smp_load_acquire() would only manage to order the stats
+> check before the thread_group_empty() check. So it seems just using
+> READ_ONCE() and WRITE_ONCE() will do the job and I wanted to bring this
+> up for discussion at least.
+
+Mmh, the RELEASE was intended to order the memory initialization in
+kmem_cache_zalloc() with the later ->stats pointer assignment; AFAICT,
+there is no data dependency between such memory accesses.
+
+Correspondingly, the ACQUIRE was intended to order the ->stats pointer
+load with later, _independent dereferences of the same pointer; the
+latter are, e.g., in taskstats_exit() (but not thread_group_empty()).
+
+Looking again, I see that fill_tgid_exit()'s dereferences of ->stats
+are protected by ->siglock: maybe you meant to rely on such a critical
+section pairing with the critical section in taskstats_tgid_alloc()?
+
+That memcpy(-, tsk->signal->stats, -) at the end of taskstats_exit()
+also bugs me: could these dereferences of ->stats happen concurrently
+with other stores to the same memory locations?
+
+Thanks,
+  Andrea
