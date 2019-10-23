@@ -2,184 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E30E16B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:55:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEE7CE16C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 11:56:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390912AbfJWJyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 05:54:54 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46947 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390246AbfJWJyy (ORCPT
+        id S2390954AbfJWJ4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 05:56:12 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50246 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2390278AbfJWJ4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 05:54:54 -0400
-Received: by mail-lj1-f194.google.com with SMTP id d1so20332995ljl.13
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 02:54:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=antmicro-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RseJbARsp4zZmSYZa3mBVZ+J4mOiNk8o0Hk/Uodixac=;
-        b=oEa6goVbFlEFPi2VsLP+4D6bF276hL+d8S1U5fdHxP7AzDevelgMOsPlNNmZKXvujr
-         djoqsLj1Gvel08INKZQmFQy1skvGYAdFQiUZWxgj6sc/qBvADTsHrnexKAfQY1DCibCw
-         ZyT90uCs4hY+tCsnhfmfUGPP2cRwob1R0V3aHwWdP4tRTIu0iOW9JqFO8QyhOGPrNvL1
-         H1hy73G8wFIduI+q/slN2TXdq/oTUdoR+pbcKlv48iCOYw1pEN1L4sDUjpNmUjDjGRKB
-         Z41G5pSC+PSVRDdBU1CqrLuXtvHzQvOPm8uENpElUciKmm1oVYartpU1TamjwDtUtyVR
-         Y5Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RseJbARsp4zZmSYZa3mBVZ+J4mOiNk8o0Hk/Uodixac=;
-        b=WtNlrXNXp9yUnXFPId9hfBwlAU2cZLjaqYgaOQX84o2Q0LUl9QZ2+1qrb1hJPMb/5/
-         Bq8Ndd3/TpXNbYMIOhvzxGucLkVaVuENknGe/q5W006ltaX1gzpBP++ogEbXbei7g8Ay
-         Lgmqad6kICh+BmPNgYr4ULTL7yClNLAGb35J6+vvxy8Bb7sfnS8XuDgRx2k3FyKSUNXK
-         KBUZDJsPEymj4a2Tvt/CRA18QuLWsNcj0hPLx1Ipv+Ad0HG6csQPoGjhFU15FWEhzfTs
-         wjc1+WX27ESu79YN3dKkfLYysZFzRsyhC2NaCQl23DOlV8DB0AnjNbmAUq1XspdAIw5T
-         n/LA==
-X-Gm-Message-State: APjAAAXUKeKiem0hmhnKc9Uapaxs+iVvD80gbv8iUsTK5BIav78jNMlL
-        ZVZbZiB2MbNW3JA1IIlE+uKa0Q==
-X-Google-Smtp-Source: APXvYqyJl56KzCgKPlNhrUrXj1Ty6IPLUatOhK7VsrenqN8txKOggHYnkPZxIo57UYGpqchDKT4n0A==
-X-Received: by 2002:a2e:4e12:: with SMTP id c18mr22200182ljb.51.1571824491757;
-        Wed, 23 Oct 2019 02:54:51 -0700 (PDT)
-Received: from localhost.localdomain (d79-196.icpnet.pl. [77.65.79.196])
-        by smtp.gmail.com with ESMTPSA id f8sm3176147ljj.98.2019.10.23.02.54.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 02:54:51 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 11:54:44 +0200
-From:   Mateusz Holenko <mholenko@antmicro.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        openrisc@lists.librecores.org
-Cc:     Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        Wed, 23 Oct 2019 05:56:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571824571;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=PjIrWxilILjTXJMM4pZ+a2frsZYLFCvzVYmdT4dKHeA=;
+        b=b5zDXq8J97LwC5WX8PDjo+cfJdZZOnEezlbTMRhRHpU2HUGLbaQxaw+As7v+urTLtBvPCO
+        jM5JM27+/lVGh8aIP74TVhqRuUiISgaAurfsQFsZZn7yRTifKcU5ghkF4R+odbPzYeFbAN
+        WSNSePJTMlPVIAqAazHXU5EXB1LqDpc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-45-AIB5fJO8MnCfZd5pS6ln_A-1; Wed, 23 Oct 2019 05:56:07 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B56EC1800DD0;
+        Wed, 23 Oct 2019 09:56:05 +0000 (UTC)
+Received: from steredhat.redhat.com (unknown [10.36.118.164])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1BEEB5C1B2;
+        Wed, 23 Oct 2019 09:55:54 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Filip Kokosinski <fkokosinski@internships.antmicro.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Joel Stanley <joel@jms.id.au>
-Subject: [PATCH 1/1] openrisc: add support for LiteX
-Message-ID: <20191023115427.23684-1-mholenko@antmicro.com>
-References: <20191023115427.23684-0-mholenko@antmicro.com>
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dexuan Cui <decui@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Jorgen Hansen <jhansen@vmware.com>,
+        Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-hyperv@vger.kernel.org,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH net-next 00/14] vsock: add multi-transports support
+Date:   Wed, 23 Oct 2019 11:55:40 +0200
+Message-Id: <20191023095554.11340-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023115427.23684-0-mholenko@antmicro.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: AIB5fJO8MnCfZd5pS6ln_A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filip Kokosinski <fkokosinski@internships.antmicro.com>
+This series adds the multi-transports support to vsock, following
+this proposal: https://www.spinics.net/lists/netdev/msg575792.html
 
-This adds support for a basic LiteX-based SoC with a mor1kx soft CPU.
+With the multi-transports support, we can use VSOCK with nested VMs
+(using also different hypervisors) loading both guest->host and
+host->guest transports at the same time.
+Before this series, vmci-transport supported this behavior but only
+using VMware hypervisor on L0, L1, etc.
 
-Signed-off-by: Filip Kokosinski <fkokosinski@internships.antmicro.com>
-Signed-off-by: Mateusz Holenko <mholenko@antmicro.com>
----
- MAINTAINERS                               |  1 +
- arch/openrisc/boot/dts/or1klitex.dts      | 49 +++++++++++++++++++++++
- arch/openrisc/configs/or1klitex_defconfig | 18 +++++++++
- 3 files changed, 68 insertions(+)
- create mode 100644 arch/openrisc/boot/dts/or1klitex.dts
- create mode 100644 arch/openrisc/configs/or1klitex_defconfig
+RFC: https://patchwork.ozlabs.org/cover/1168442/
+RFC -> v1:
+- Added R-b/A-b from Dexuan and Stefan
+- Fixed comments and typos in several patches (Stefan)
+- Patch 7: changed .notify_buffer_size return to void (Stefan)
+- Added patch 8 to simplify the API exposed to the transports (Stefan)
+- Patch 11:
+  + documented VSOCK_TRANSPORT_F_* flags (Stefan)
+  + fixed vsock_assign_transport() when the socket is already assigned
+  + moved features outside of struct vsock_transport, and used as
+    parameter of vsock_core_register() as a preparation of Patch 12
+- Removed "vsock: add 'transport_hg' to handle g2h\h2g transports" patch
+- Added patch 12 to register vmci_transport only when VMCI guest/host
+  are active
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c24a37833e78..e84b2cb4c186 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9500,6 +9500,7 @@ S:	Maintained
- F:	include/linux/litex.h
- F:	Documentation/devicetree/bindings/*/litex,*.yaml
- F:	drivers/tty/serial/liteuart.c
-+F:	arch/openrisc/boot/dts/or1klitex.dts
- 
- LIVE PATCHING
- M:	Josh Poimboeuf <jpoimboe@redhat.com>
-diff --git a/arch/openrisc/boot/dts/or1klitex.dts b/arch/openrisc/boot/dts/or1klitex.dts
-new file mode 100644
-index 000000000000..63399398002d
---- /dev/null
-+++ b/arch/openrisc/boot/dts/or1klitex.dts
-@@ -0,0 +1,49 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * LiteX-based System on Chip
-+ *
-+ * Copyright (C) 2019 Antmicro Ltd <www.antmicro.com>
-+ */
-+
-+/dts-v1/;
-+/ {
-+	compatible = "opencores,or1ksim";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	interrupt-parent = <&pic>;
-+
-+	aliases {
-+		serial0 = &serial0;
-+	};
-+
-+	chosen {
-+		bootargs = "console=liteuart";
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x10000000>;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		cpu@0 {
-+			compatible = "opencores,or1200-rtlsvn481";
-+			reg = <0>;
-+			clock-frequency = <100000000>;
-+		};
-+	};
-+
-+	pic: pic {
-+		compatible = "opencores,or1k-pic";
-+		#interrupt-cells = <1>;
-+		interrupt-controller;
-+	};
-+
-+	serial0: serial@e0001800 {
-+		device_type = "serial";
-+		compatible = "litex,liteuart";
-+		reg = <0xe0001800 0x100>;
-+	};
-+};
-diff --git a/arch/openrisc/configs/or1klitex_defconfig b/arch/openrisc/configs/or1klitex_defconfig
-new file mode 100644
-index 000000000000..0e4c2e74451c
---- /dev/null
-+++ b/arch/openrisc/configs/or1klitex_defconfig
-@@ -0,0 +1,18 @@
-+CONFIG_BLK_DEV_INITRD=y
-+CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
-+CONFIG_BUG_ON_DATA_CORRUPTION=y
-+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+CONFIG_CROSS_COMPILE="or32-linux-"
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+CONFIG_EMBEDDED=y
-+CONFIG_HZ_100=y
-+CONFIG_INITRAMFS_SOURCE="openrisc-rootfs.cpio.gz"
-+CONFIG_OF_OVERLAY=y
-+CONFIG_OPENRISC_BUILTIN_DTB="or1klitex"
-+CONFIG_PANIC_ON_OOPS=y
-+CONFIG_PRINTK_TIME=y
-+CONFIG_SERIAL_LITEUART=y
-+CONFIG_SERIAL_LITEUART_CONSOLE=y
-+CONFIG_SOFTLOCKUP_DETECTOR=y
-+CONFIG_TTY_PRINTK=y
--- 
-2.23.0
+The first 9 patches are cleanups and preparations, maybe some of
+these can go regardless of this series.
+
+Patch 10 changes the hvs_remote_addr_init(). setting the
+VMADDR_CID_HOST as remote CID instead of VMADDR_CID_ANY to make
+the choice of transport to be used work properly.
+
+Patch 11 adds multi-transports support.
+
+Patch 12 touch a little bit the vmci_transport and the vmci driver
+to register the vmci_transport only when there are active host/guest.
+
+Patch 13 prevents the transport modules unloading while sockets are
+assigned to them.
+
+Patch 14 fixes an issue in the bind() logic discoverable only with
+the new multi-transport support.
+
+I've tested this series with nested KVM (vsock-transport [L0,L1],
+virtio-transport[L1,L2]) and with VMware (L0) + KVM (L1)
+(vmci-transport [L0,L1], vhost-transport [L1], virtio-transport[L2]).
+
+Dexuan successfully tested the RFC series on HyperV with a Linux guest.
+
+Stefano Garzarella (14):
+  vsock/vmci: remove unused VSOCK_DEFAULT_CONNECT_TIMEOUT
+  vsock: remove vm_sockets_get_local_cid()
+  vsock: remove include/linux/vm_sockets.h file
+  vsock: add 'transport' member in the struct vsock_sock
+  vsock/virtio: add transport parameter to the
+    virtio_transport_reset_no_sock()
+  vsock: add 'struct vsock_sock *' param to vsock_core_get_transport()
+  vsock: handle buffer_size sockopts in the core
+  vsock: add vsock_create_connected() called by transports
+  vsock: move vsock_insert_unbound() in the vsock_create()
+  hv_sock: set VMADDR_CID_HOST in the hvs_remote_addr_init()
+  vsock: add multi-transports support
+  vsock/vmci: register vmci_transport only when VMCI guest/host are
+    active
+  vsock: prevent transport modules unloading
+  vsock: fix bind() behaviour taking care of CID
+
+ drivers/misc/vmw_vmci/vmci_driver.c     |  50 ++++
+ drivers/misc/vmw_vmci/vmci_driver.h     |   2 +
+ drivers/misc/vmw_vmci/vmci_guest.c      |   2 +
+ drivers/misc/vmw_vmci/vmci_host.c       |   7 +
+ drivers/vhost/vsock.c                   |  96 +++---
+ include/linux/virtio_vsock.h            |  18 +-
+ include/linux/vm_sockets.h              |  15 -
+ include/linux/vmw_vmci_api.h            |   2 +
+ include/net/af_vsock.h                  |  44 +--
+ include/net/vsock_addr.h                |   2 +-
+ net/vmw_vsock/af_vsock.c                | 376 ++++++++++++++++++------
+ net/vmw_vsock/hyperv_transport.c        |  70 ++---
+ net/vmw_vsock/virtio_transport.c        | 177 ++++++-----
+ net/vmw_vsock/virtio_transport_common.c | 131 +++------
+ net/vmw_vsock/vmci_transport.c          | 137 +++------
+ net/vmw_vsock/vmci_transport.h          |   3 -
+ net/vmw_vsock/vmci_transport_notify.h   |   1 -
+ 17 files changed, 627 insertions(+), 506 deletions(-)
+ delete mode 100644 include/linux/vm_sockets.h
+
+--=20
+2.21.0
 
