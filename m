@@ -2,106 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4543E1EEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 17:10:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50B7BE1EF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2019 17:11:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406541AbfJWPKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 11:10:20 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:25273 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2406533AbfJWPKU (ORCPT
+        id S2392422AbfJWPLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 11:11:31 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48410 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390450AbfJWPLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 11:10:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571843419;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tlaewf16ukXOc2N6dF0rd3mLZ8BjJkXYbd4jVtG8Wwg=;
-        b=LbchELzQpdSI/qQruRz2IQcO66fu1MXxBjv6wNQDsxmCm1ZlmBY+mPLttE4jx/4V2XXRso
-        d3QA6A8FhK6S4iwM80y53hCmIyjzNaO7vnCl6SQlnH3XPhn3e6DZVqJ5NkO/2SGtlx569F
-        nj8xVAgi/KuE9MnISEO7yaBFlCTqWpA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-280-9FH-jAAlMq6rZptRE9Q6BQ-1; Wed, 23 Oct 2019 11:10:15 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6CCBD1800D6B;
-        Wed, 23 Oct 2019 15:10:13 +0000 (UTC)
-Received: from optiplex-lnx (ovpn-112-50.rdu2.redhat.com [10.10.112.50])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F2265C241;
-        Wed, 23 Oct 2019 15:10:08 +0000 (UTC)
-Date:   Wed, 23 Oct 2019 11:10:05 -0400
-From:   Rafael Aquini <aquini@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>, Waiman Long <longman@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [RFC PATCH 1/2] mm, vmstat: hide /proc/pagetypeinfo from normal
- users
-Message-ID: <20191023151005.GE22601@optiplex-lnx>
-References: <20191023095607.GE3016@techsingularity.net>
- <20191023102737.32274-1-mhocko@kernel.org>
- <20191023102737.32274-2-mhocko@kernel.org>
+        Wed, 23 Oct 2019 11:11:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PhqiM7k8Nuof6KgmdrlTPjIEr+PxrVC9EYrr77F4vhg=; b=JMaBWX29MUdVV8baiU7Nevbin
+        qCw2GM3znvT01YwVCdtTXNKQxEV+c5AOrp7J9/YXLTn6OYmG/ZuP7COlZkW/RySoyImpQcofp7DSt
+        FhDfOtLOA2iI6rZwfpQyko/4xUr1AF+QgytABppp69cbMC+W3SrOoWqAKveQOfgwlwHzA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iNIIE-0000pA-Ae; Wed, 23 Oct 2019 15:11:22 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 64951274301E; Wed, 23 Oct 2019 16:11:21 +0100 (BST)
+Date:   Wed, 23 Oct 2019 16:11:21 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Luhua Xu <luhua.xu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        wsd_upstream@mediatek.com
+Subject: Re: [PATCH 1/1] spi: mediatek: add power control when set_cs
+Message-ID: <20191023151121.GC5723@sirena.co.uk>
+References: <1571834322-1121-1-git-send-email-luhua.xu@mediatek.com>
+ <1571834322-1121-2-git-send-email-luhua.xu@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20191023102737.32274-2-mhocko@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: 9FH-jAAlMq6rZptRE9Q6BQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="L6iaP+gRLNZHKoI4"
 Content-Disposition: inline
+In-Reply-To: <1571834322-1121-2-git-send-email-luhua.xu@mediatek.com>
+X-Cookie: MMM-MM!!  So THIS is BIO-NEBULATION!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 12:27:36PM +0200, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
->=20
-> /proc/pagetypeinfo is a debugging tool to examine internal page
-> allocator state wrt to fragmentation. It is not very useful for
-> any other use so normal users really do not need to read this file.
->=20
-> Waiman Long has noticed that reading this file can have negative side
-> effects because zone->lock is necessary for gathering data and that
-> a) interferes with the page allocator and its users and b) can lead to
-> hard lockups on large machines which have very long free_list.
->=20
-> Reduce both issues by simply not exporting the file to regular users.
->=20
-> Reported-by: Waiman Long <longman@redhat.com>
-> Cc: stable
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/vmstat.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 6afc892a148a..4e885ecd44d1 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1972,7 +1972,7 @@ void __init init_mm_internals(void)
->  #endif
->  #ifdef CONFIG_PROC_FS
->  =09proc_create_seq("buddyinfo", 0444, NULL, &fragmentation_op);
-> -=09proc_create_seq("pagetypeinfo", 0444, NULL, &pagetypeinfo_op);
-> +=09proc_create_seq("pagetypeinfo", 0400, NULL, &pagetypeinfo_op);
->  =09proc_create_seq("vmstat", 0444, NULL, &vmstat_op);
->  =09proc_create_seq("zoneinfo", 0444, NULL, &zoneinfo_op);
->  #endif
-> --=20
-> 2.20.1
->
-=20
-Acked-by: Rafael Aquini <aquini@redhat.com>
 
+--L6iaP+gRLNZHKoI4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Oct 23, 2019 at 08:38:42AM -0400, Luhua Xu wrote:
+> From: "luhua.xu" <luhua.xu@mediatek.com>
+
+> Use runtime PM to power spi when set_cs
+> As set_cs may be called from interrupt context,
+> set runtime PM IRQ safe for spi.
+
+Why might we be trying to set the chip select state while the device is
+runtime idle?  It seems like whatever is trying to set the chip select
+should be dealing with this, not the chip select operation itself since
+that's unlikely to be happening in isolation.
+
+--L6iaP+gRLNZHKoI4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2wbZgACgkQJNaLcl1U
+h9ATSQf+OUsqd9lrmv01u0bHiJLMN7oKTLAH9rbukbP246Gj/NJZHv9XEa4/EIG+
+PrOIpiUSATTLRjt0aOjWURk0NVAazV0jwYPnXYRkH/kfMQB9Ix7DL9N3fL8munYX
+zQm8Ec+DPhLw9B+g+lqoJe22GgsC+68vBXMTUNrFSvOT+yiuuI3452HBWEhGugX/
+BGZm/N7Vw25js2S62hMg0PTy0GRbjjdX1GNBhofOefbVBuFcZsVbcfkKNNDFgxUs
+Ye6/kVYIiHbQWTjsuiVGhshWe7AM3/MpzohQBr+csZUSxJjEI+TLAYzBMVjE4tc/
+tVV/VzlC14zM1pODYKEoGhOsluhPJQ==
+=eE5N
+-----END PGP SIGNATURE-----
+
+--L6iaP+gRLNZHKoI4--
