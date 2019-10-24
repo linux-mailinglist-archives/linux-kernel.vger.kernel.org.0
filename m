@@ -2,132 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3788CE2C37
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 10:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A92FE2C3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 10:33:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438226AbfJXIc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 04:32:57 -0400
-Received: from sender4-pp-o94.zoho.com ([136.143.188.94]:25440 "EHLO
-        sender4-pp-o94.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbfJXIc5 (ORCPT
+        id S2438257AbfJXIdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 04:33:08 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40220 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2438241AbfJXIdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 04:32:57 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1571905966; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=fuh9qei8RdUSfY5W0FLhIUYatGRLIOqxNwteNfbFB94MmNS6tS9OnmZlseSGPOGpeNlP4BZJq0/4oh8HBctW6+F8pNUkotmum/x/42DaE2MsbEA0fOpABCB3vlS4JwI2Z54vq3h1GIYWxB+sFScYoCbdO+0INkBjlYj5ZfmQztU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1571905966; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=6qjWp9fOyWXfySwwwbqXJ9MJYL8BpwYnEj4RnXxr3K0=; 
-        b=g6tP5B5WfnSbo7nK9MlX7ieHngqDxhkZwHQ+J4G4zqgtYSGJIEbJByBclIpqp6W80WTiHaAp8OpZkgm/txeUIPkBuxGEnS4o8JvWq+sviDiNr5KIGvjWBq2epNRj4GeCiq+k4uSITEBhwYjSxPTXPO+ciqx2t4XazmfARl+sJlA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
-  b=en++J+n2joHAE3eJ8yZSg9AttC6X5AzJq1oawRX50ORH983ZZsk1Um/Bx7JuxaKLH2AtTFAtsW3U
-    SL1L8HyyrcNFd0v2MP7nYknMaTKf9oPdwO/JAdvi01XwAenHajDz  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1571905966;
-        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        l=1787; bh=6qjWp9fOyWXfySwwwbqXJ9MJYL8BpwYnEj4RnXxr3K0=;
-        b=dNMkj4Zsv4tqbI+z0VZv7QNXVAuBkCy15ENTYe6qiRhXHHnf0ssLJhp4/rUA1fZJ
-        e7jGdLKjE8ircJ+TUd5E5mKulQA6gKCSA/Gqwa6Hd3BZ8w17bMV7ecswFK0qK3sk30/
-        fVrHOsfP02VtnepJcqgDFggLyAZqhJ73kuS2SwcQ=
-Received: from [192.168.88.140] (182.148.156.27 [182.148.156.27]) by mx.zohomail.com
-        with SMTPS id 1571905962349714.4127332922549; Thu, 24 Oct 2019 01:32:42 -0700 (PDT)
-Subject: Re: [PATCH RESEND 2/2] dmaengine: JZ4780: Add support for the X1000.
-To:     Paul Cercueil <paul@crapouillou.net>
-References: <1571799903-44561-1-git-send-email-zhouyanjie@zoho.com>
- <1571814137-46002-1-git-send-email-zhouyanjie@zoho.com>
- <1571814137-46002-3-git-send-email-zhouyanjie@zoho.com>
- <1571846901.3.0@crapouillou.net>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, paul.burton@mips.com, vkoul@kernel.org,
-        mark.rutland@arm.com, Zubair.Kakakhel@imgtec.com,
-        dan.j.williams@intel.com
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-Message-ID: <5DB1619F.8080904@zoho.com>
-Date:   Thu, 24 Oct 2019 16:32:31 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.8.0
+        Thu, 24 Oct 2019 04:33:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571905985;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GP6qD2J1CBmhiVD+sbR/nBuazK8LU9m7yhlITTEQS64=;
+        b=AOlZgQZOV2vsGc3u91nDFVabCURQZD0C6/X53vifylKMPYENkQwKEiDql68+dxKTLUyj/u
+        62wNz2SOtwZuyW1uAhWhfx9fKtMKBrnaPeVZCmDU4ELRdrNcovLpzn1lVTpIvlA7AoXpUH
+        bjrD/K/9iWYY79k6M7rGZB/pYIqfMq4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-176-zHllE4ZJP_6HPNgUQkm_IQ-1; Thu, 24 Oct 2019 04:33:02 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B751A800D5A;
+        Thu, 24 Oct 2019 08:33:00 +0000 (UTC)
+Received: from [10.72.13.32] (ovpn-13-32.pek2.redhat.com [10.72.13.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A93A5D717;
+        Thu, 24 Oct 2019 08:32:43 +0000 (UTC)
+Subject: Re: [PATCH v2] vhost: introduce mdev based hardware backend
+From:   Jason Wang <jasowang@redhat.com>
+To:     Tiwei Bie <tiwei.bie@intel.com>
+Cc:     mst@redhat.com, alex.williamson@redhat.com,
+        maxime.coquelin@redhat.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        lingshan.zhu@intel.com
+References: <20191022095230.2514-1-tiwei.bie@intel.com>
+ <47a572fd-5597-1972-e177-8ee25ca51247@redhat.com>
+ <20191023030253.GA15401@___>
+ <ac36f1e3-b972-71ac-fe0c-3db03e016dcf@redhat.com>
+ <20191023070747.GA30533@___>
+ <106834b5-dae5-82b2-0f97-16951709d075@redhat.com> <20191023101135.GA6367@___>
+ <5a7bc5da-d501-2750-90bf-545dd55f85fa@redhat.com>
+ <20191024042155.GA21090@___>
+ <d37529e1-5147-bbe5-cb9d-299bd6d4aa1a@redhat.com>
+Message-ID: <d4cc4f4e-2635-4041-2f68-cd043a97f25a@redhat.com>
+Date:   Thu, 24 Oct 2019 16:32:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <1571846901.3.0@crapouillou.net>
+In-Reply-To: <d37529e1-5147-bbe5-cb9d-299bd6d4aa1a@redhat.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: zHllE4ZJP_6HPNgUQkm_IQ-1
+X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Hi Paul,
+On 2019/10/24 =E4=B8=8B=E5=8D=884:03, Jason Wang wrote:
+>
+> On 2019/10/24 =E4=B8=8B=E5=8D=8812:21, Tiwei Bie wrote:
+>> On Wed, Oct 23, 2019 at 06:29:21PM +0800, Jason Wang wrote:
+>>> On 2019/10/23 =E4=B8=8B=E5=8D=886:11, Tiwei Bie wrote:
+>>>> On Wed, Oct 23, 2019 at 03:25:00PM +0800, Jason Wang wrote:
+>>>>> On 2019/10/23 =E4=B8=8B=E5=8D=883:07, Tiwei Bie wrote:
+>>>>>> On Wed, Oct 23, 2019 at 01:46:23PM +0800, Jason Wang wrote:
+>>>>>>> On 2019/10/23 =E4=B8=8A=E5=8D=8811:02, Tiwei Bie wrote:
+>>>>>>>> On Tue, Oct 22, 2019 at 09:30:16PM +0800, Jason Wang wrote:
+>>>>>>>>> On 2019/10/22 =E4=B8=8B=E5=8D=885:52, Tiwei Bie wrote:
+>>>>>>>>>> This patch introduces a mdev based hardware vhost backend.
+>>>>>>>>>> This backend is built on top of the same abstraction used
+>>>>>>>>>> in virtio-mdev and provides a generic vhost interface for
+>>>>>>>>>> userspace to accelerate the virtio devices in guest.
+>>>>>>>>>>
+>>>>>>>>>> This backend is implemented as a mdev device driver on top
+>>>>>>>>>> of the same mdev device ops used in virtio-mdev but using
+>>>>>>>>>> a different mdev class id, and it will register the device
+>>>>>>>>>> as a VFIO device for userspace to use. Userspace can setup
+>>>>>>>>>> the IOMMU with the existing VFIO container/group APIs and
+>>>>>>>>>> then get the device fd with the device name. After getting
+>>>>>>>>>> the device fd of this device, userspace can use vhost ioctls
+>>>>>>>>>> to setup the backend.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+>>>>>>>>>> ---
+>>>>>>>>>> This patch depends on below series:
+>>>>>>>>>> https://lkml.org/lkml/2019/10/17/286
+>>>>>>>>>>
+>>>>>>>>>> v1 -> v2:
+>>>>>>>>>> - Replace _SET_STATE with _SET_STATUS (MST);
+>>>>>>>>>> - Check status bits at each step (MST);
+>>>>>>>>>> - Report the max ring size and max number of queues (MST);
+>>>>>>>>>> - Add missing MODULE_DEVICE_TABLE (Jason);
+>>>>>>>>>> - Only support the network backend w/o multiqueue for now;
+>>>>>>>>> Any idea on how to extend it to support devices other than=20
+>>>>>>>>> net? I think we
+>>>>>>>>> want a generic API or an API that could be made generic in the=20
+>>>>>>>>> future.
+>>>>>>>>>
+>>>>>>>>> Do we want to e.g having a generic vhost mdev for all kinds of=20
+>>>>>>>>> devices or
+>>>>>>>>> introducing e.g vhost-net-mdev and vhost-scsi-mdev?
+>>>>>>>> One possible way is to do what vhost-user does. I.e. Apart from
+>>>>>>>> the generic ring, features, ... related ioctls, we also introduce
+>>>>>>>> device specific ioctls when we need them. As vhost-mdev just needs
+>>>>>>>> to forward configs between parent and userspace and even won't
+>>>>>>>> cache any info when possible,
+>>>>>>> So it looks to me this is only possible if we expose e.g=20
+>>>>>>> set_config and
+>>>>>>> get_config to userspace.
+>>>>>> The set_config and get_config interface isn't really everything
+>>>>>> of device specific settings. We also have ctrlq in virtio-net.
+>>>>> Yes, but it could be processed by the exist API. Isn't it? Just=20
+>>>>> set ctrl vq
+>>>>> address and let parent to deal with that.
+>>>> I mean how to expose ctrlq related settings to userspace?
+>>>
+>>> I think it works like:
+>>>
+>>> 1) userspace find ctrl_vq is supported
+>>>
+>>> 2) then it can allocate memory for ctrl vq and set its address through
+>>> vhost-mdev
+>>>
+>>> 3) userspace can populate ctrl vq itself
+>> I see. That is to say, userspace e.g. QEMU will program the
+>> ctrl vq with the existing VHOST_*_VRING_* ioctls, and parent
+>> drivers should know that the addresses used in ctrl vq are
+>> host virtual addresses in vhost-mdev's case.
+>
+>
+> That's really good point. And that means parent needs to differ vhost=20
+> from virtio. It should work.=20
 
-On 2019=E5=B9=B410=E6=9C=8824=E6=97=A5 00:08, Paul Cercueil wrote:
-> Hi Zhou,
->
->
-> Le mer., oct. 23, 2019 at 15:02, Zhou Yanjie <zhouyanjie@zoho.com> a=20
-> =C3=A9crit :
->> Add support for probing the dma-jz4780 driver on the X1000 Soc.
->>
->> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
->> ---
->>  drivers/dma/dma-jz4780.c | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
->> index cafb1cc0..f809a6e 100644
->> --- a/drivers/dma/dma-jz4780.c
->> +++ b/drivers/dma/dma-jz4780.c
->> @@ -1019,11 +1019,18 @@ static const struct jz4780_dma_soc_data=20
->> jz4780_dma_soc_data =3D {
->>      .flags =3D JZ_SOC_DATA_ALLOW_LEGACY_DT |=20
->> JZ_SOC_DATA_PROGRAMMABLE_DMA,
->>  };
->>
->> +static const struct jz4780_dma_soc_data x1000_dma_soc_data =3D {
->> +    .nb_channels =3D 8,
->> +    .transfer_ord_max =3D 7,
->> +    .flags =3D JZ_SOC_DATA_ALLOW_LEGACY_DT |=20
->> JZ_SOC_DATA_PROGRAMMABLE_DMA,
->
-> Please don't use JZ_SOC_DATA_ALLOW_LEGACY_DT for new bindings.
->
-> With that flag removed:
-> Reviewed-by: Paul Cercueil <paul@crapouillou.net>
->
 
-I'll remove it in v2.
-
-Best regards!
-
->
->> +};
->> +
->>  static const struct of_device_id jz4780_dma_dt_match[] =3D {
->>      { .compatible =3D "ingenic,jz4740-dma", .data =3D=20
->> &jz4740_dma_soc_data },
->>      { .compatible =3D "ingenic,jz4725b-dma", .data =3D=20
->> &jz4725b_dma_soc_data },
->>      { .compatible =3D "ingenic,jz4770-dma", .data =3D=20
->> &jz4770_dma_soc_data },
->>      { .compatible =3D "ingenic,jz4780-dma", .data =3D=20
->> &jz4780_dma_soc_data },
->> +    { .compatible =3D "ingenic,x1000-dma", .data =3D &x1000_dma_soc_dat=
-a },
->>      {},
->>  };
->>  MODULE_DEVICE_TABLE(of, jz4780_dma_dt_match);
->> --=20
->> 2.7.4
->>
->>
->
->
+HVA may only work when we have something similar to VHOST_SET_OWNER=20
+which can reuse MM of its owner.
 
 
+> But is there any chance to use DMA address? I'm asking since the API=20
+> then tends to be device specific.=20
+
+
+I wonder whether we can introduce MAP IOMMU notifier and get DMA=20
+mappings from that.
+
+Thanks
 
