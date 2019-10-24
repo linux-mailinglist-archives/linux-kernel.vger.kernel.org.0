@@ -2,95 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F76E2C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 10:51:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A46B1E2C9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 10:52:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438431AbfJXIvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 04:51:43 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44311 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438424AbfJXIvm (ORCPT
+        id S2438485AbfJXIwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 04:52:06 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46134 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730467AbfJXIwE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 04:51:42 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z11so1724464wro.11
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 01:51:41 -0700 (PDT)
+        Thu, 24 Oct 2019 04:52:04 -0400
+Received: by mail-pl1-f194.google.com with SMTP id q21so3444120plr.13;
+        Thu, 24 Oct 2019 01:52:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=fPafem2hR/ska8s4Ts11miGShcwALkaxEk63pABP18k=;
-        b=MKq3vxNgA6N6LZtD3555euhwlFyHrHkksEfpuAL/LePJ9EDdtWRufP+OopgR3oGc8l
-         /llPd+ElQd78oDMLp0Dxttpsv8l+ri6VF2c3QxDW5n7exM05MmOjPv1ZRnQV/ZHWaapY
-         gybRxS4P3MHt9UKUytjvbtGs7CxZmNr4HMawPZfDQggdd4rUkHnYA4AtbHw62+Gg31u6
-         vuGBHao/sxRbDDswl0hR0kHCtv/AePamD/AdN4/P1M75UIFiaTzLRgTt6BJJdCAnZWOn
-         6vZc6DSPwypUc74u9uyg8toi0znLQwYP/Ny5Itlt2srN2BTXGisNSU+6yKQjuxvNG2hD
-         aErQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uPX6O9l+kuYjBcPYdh37KOiS7f3AWvLRqvSNRDK/hlY=;
+        b=rrxFfBuNj1V+uFY7mLjfFUPtV4lB6aOMWJC30bQxiPaE9cV/lD9sVOk3SIk3xxu0UX
+         7F6JWvBWNVcMfeQWKPE8B5LBRJjebHT/fuosPKegNwFQzyIYFqbONhmfvmuGJ4lcZfxN
+         MDyqg014EdBJuLkMqaIOgHYKfC8AYe+RSXf2U0eV33pxwwElrd7XoEzdWfO0gI2utY+f
+         2uNL8ed8lY1uV4upV/zKMvG/NspEHAmx+GchOcN00B0baykx4rU66sP4SS9BkTDBMdRV
+         25+LfK7LnYZKNtfAg4wEHKm85FsLkusC2tgS3ToH08UFikNjzerI4RCY9jdRwyBgtwdb
+         pgsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=fPafem2hR/ska8s4Ts11miGShcwALkaxEk63pABP18k=;
-        b=lLJNT1YvnSnHXSCOGlg5zuiqMngC9uADs6itScP0lEVXoGkANtVGczVlzEKMz0PWzG
-         PsnB2De+k12ZIA4qpxTHUi23ASVhEHGz9ZqOwiDFDzMjPnYjbUrVx2Fhgv4x9uKTAZfX
-         Yx1x8yWlPEwMWcJDKhYt8Ja+ucVTkxfRjFhtlLIirlN/CSsaRLboS+UAH52GB7MdNA0j
-         ANWZ4qeAlOWxxWBuFDPKVwv6IqrqKEFfB+0vaxzELtEYlWzrCXTsx6wOwhL5hzrK+rc0
-         /y+3QZ5MJhSV9yl6bHmK9UpEEgZDDBbDBsYB6frZhFYOSK8oXgwBLjEwNxtdySRosX9A
-         Nc4g==
-X-Gm-Message-State: APjAAAURWfXDjgUfXqPP8B4EUrB1Y8Xqh4tZNMXuv9x8U9DCD0radKUb
-        u2ENZ9+pWFgmIkILJHKBOTw2RAsdXWKG/rrhVXk=
-X-Google-Smtp-Source: APXvYqzmWgmNFay681YQ7N3j8HSpMg3cTPwyFLNzCwNuIHjSTPW7BA0fJrJvyr8hZfarhdAhPwC1Bkz9VQxCIa4HMLU=
-X-Received: by 2002:a5d:6b0e:: with SMTP id v14mr2717826wrw.280.1571907100320;
- Thu, 24 Oct 2019 01:51:40 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uPX6O9l+kuYjBcPYdh37KOiS7f3AWvLRqvSNRDK/hlY=;
+        b=Pp7aTGlLmlj69k73EB4mIzKLJsspL7zQ11zRs/Tj+Slgr3TtCi4ZuOP7S1n2aYLcB1
+         AomH5N7XunEwzrWWxuz7LM26PUMb9hTdHNEyGUtcceHS43f6tj1otwrnBhmyhbIFxQpL
+         WzFWKY30QiCG7JMzKI4ZITb0s4BXSbQoBzp3/CfT9ZhhMMAd7jnXYbS+7PKZQAAXEDaf
+         kX5h9bL1wf7/5MVXDjARPKAlCa+1Wwxozf7fczPUXIwCqW60QLh9pg4z9i+TVrvDK5d5
+         Clzds1qJEeP5ZkiZeQbtGfzn/udA2+o1Z5IodxKh6pFFmMSo49EoXHPY8CgySm6Cz1me
+         odUg==
+X-Gm-Message-State: APjAAAWG/pPwv+v+EHnlliDcfkibmj/d5HRh6NiAQ7WJ6de33PHBLZqI
+        nLd+/DG1pAIi1wNYfEkuo+o=
+X-Google-Smtp-Source: APXvYqwhJuw0T1sHz53pKJca5ZWdTYoQJUWebP9bGeR93OHzONyszouIpVMtloMWhRzOz/GbyuihGw==
+X-Received: by 2002:a17:902:b60a:: with SMTP id b10mr15125831pls.130.1571907123451;
+        Thu, 24 Oct 2019 01:52:03 -0700 (PDT)
+Received: from [192.168.1.60] (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
+        by smtp.gmail.com with ESMTPSA id s191sm23097338pgc.94.2019.10.24.01.52.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Oct 2019 01:52:02 -0700 (PDT)
+Subject: Re: [PATCH V2 5/7] USB: serial: f81232: Set F81534A serial port with
+ RS232 mode
+To:     Johan Hovold <johan@kernel.org>
+Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw,
+        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
+References: <20190923022449.10952-1-hpeter+linux_kernel@gmail.com>
+ <20190923022449.10952-6-hpeter+linux_kernel@gmail.com>
+ <20191023115300.GU24768@localhost>
+From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
+Message-ID: <f3a8b0bd-79f7-3bef-4d07-69774c87873a@gmail.com>
+Date:   Thu, 24 Oct 2019 16:52:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Received: by 2002:a1c:9e03:0:0:0:0:0 with HTTP; Thu, 24 Oct 2019 01:51:39
- -0700 (PDT)
-Reply-To: miss.fatimayusuf11@gmail.com
-From:   "Miss.Fatima Yusuf" <josephkeshi33@gmail.com>
-Date:   Thu, 24 Oct 2019 09:51:39 +0100
-Message-ID: <CA+y30FHyOwMV-wpir=17n_Kn0-zwkZU5P=ELKKwr198HgWZbgg@mail.gmail.com>
-Subject: Hello Dear,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191023115300.GU24768@localhost>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear,
+Hi Johan,
 
-Greetings, to you. I have come across your name and contact as search
-the mail for a very good partner.
+Johan Hovold 於 2019/10/23 下午 07:53 寫道:
+> On Mon, Sep 23, 2019 at 10:24:47AM +0800, Ji-Ze Hong (Peter Hong) wrote:
+>> The Fintek F81532A/534A/535/536 is USB-to-2/4/8/12 serial ports device
+>> and the serial ports are default disabled. Each port contains max 3 pins
+>> GPIO and the 3 pins are default pull high with input mode.
+>>
+>> When the serial port had activated (running probe()), we'll transform the
+>> 3 pins from GPIO function publicly to control Tranceiver privately use.
+> 
+> I'm not sure I understand what you're saying here.
+> 
+>> We'll default set to 0/0/1 for control transceiver to RS232 mode.
+>>
+>> Otherwise, If the serial port is not active, the 3 pins is in GPIO mode
+>> and controlled by global GPIO device with VID/PID: 2c42/16f8.
+> 
+> Does this mean that you can control the three GPIOs either through the
+> serial device or through the gpio-control device (which are two separate
+> USB devices)?
+> 
 
-Briefly I will explain a business to you and if it would be to your
-interest, then we can move ahead to effectively build this business
-relationship.
+Yes, when 1 F81534A connect to Host, it'll report device as following.
+	virtual HUB
+		GPIO Device.
+		serial port 1
+		...
+		serial port n
 
-I have inherited the sum of $9.7 million dollars from my late father.
-The funds had been with a bank here in my country.
+The link are F81534A pin-out:
+	https://imgur.com/a/AZHqQ1N
 
-As a result of some agreement clause, they could not release the funds
-to me here locally.
+So we can control F81534A series all GPIO pins via GPIO Device.
+Serial ports are also control MODE0_x,  MODE1_x,  MODE2_x
+(e.g. UART1 MODE0_1,  MODE1_1,  MODE2_1), but when Serial ports
+is h/w disabled (DTR pull low), the mode pin will change to GPIO pin.
 
-In one occasion I went to the bank, a director of the bank called me
-and explained to me that even if I want to transfer the funds out to
-the account of a foreign partner, that it would take much time,
-lawyers and many expenses.
-He explained to me that the rigors are so much and most foreign
-partners might not be interested to involve in such expenditure
-because of the fear of scam.
 
-He advised me that, I can get a foreign partner but instead of
-transferring the funds to the account of the foreign partner, the bank
-will offer an ATM card to my partner.
+> Ok, so you reset the tranceiver config on every probe.
+> 
+> Are the three GPIOs always connected to one particular tranceiver, or
+> are they truly general purpose?
+> 
+> In the latter case, it doesn't seem like a good idea to drive pins 0
+> and 1 low here as you have know idea what they're used for.
 
-The ATM card is a PREMIUM PLATINUM CARD and this would allow us to
-make withdrawals of the fund in your country to the tune of
-50,000-100,000 dollars per day.
+If we want to change the mode pin to GPIO pin, it need do h/w disable.
+It the serial ports are activated, the 3 pin will be mode pin and set
+default 0/0/1 to RS232 mode due to this driver not implement RS422/485
+currently.
 
-He explained to me that the card is good and would be sent to the
-contact of my foreign partner by DHL or FEDEX.
-
-If you are interested to partner with me, please reach back to me for
-details and we can also discuss my investment plans.
-
-Kind Regards,
-Miss.Fatima Yusuf
+Thanks
+-- 
+With Best Regards,
+Peter Hong
