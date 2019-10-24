@@ -2,83 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D76B8E3940
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 19:05:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BBB3E3939
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 19:05:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410176AbfJXRFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 13:05:25 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39115 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2410164AbfJXRFX (ORCPT
+        id S2410162AbfJXRFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 13:05:22 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:15918 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410113AbfJXRFV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 13:05:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571936722;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=03+5VBqCPd68lTAQRb1/kJfIJ/zUP3/Day5xyJuYTDk=;
-        b=iHeBh7deK3GUuk+MT5EmdtQT+VJqfR8JxS+SlMf2gE23/BI84cqdwl/tsPscol6y8bj/5D
-        llz8i85IW3NpG8OFRbpE7uc/K/+Wg8trPWVTqQdrGCX9pVV2cIHo/CcfmpfFqitCByWsZN
-        Ubbvi0xrSCSlOc9v6hO8LuAv7MNBR4o=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-60-2XGw77MHNBi44lXx18IItw-1; Thu, 24 Oct 2019 13:05:18 -0400
-Received: by mail-lj1-f199.google.com with SMTP id m7so353982lje.11
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 10:05:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j/o8TfhScpVV/SFKEy17AB1Zf2axWbjJiCRdK+oaodM=;
-        b=VMkrt3HbWdkDCRgmDg5dqVeKt5QGoeJo6phR/vTfbpOGBTznhjOebSHdDFRFNVexrK
-         daDEeeCCIwm8d5jL2XbQMpveZBcmhccqlMrGqIqQCZB8sjijY/0XPHF12iPUBVx644j+
-         WwihCzmpBqngrQZzp4oGxlU+6Jy7PuBB/Dr+Iu1bIZBK+3KXSgh7h9cq/3tNIfP8Vj8t
-         qQtXbEU+Po9sRzeLqQ4xVeyQotol5G/EPDyT7gNW5GSf28SlhEt1G/XqPIadUW5O/LJO
-         +3n9PQXagRAp1LTW3Jb5taVkWhWa0LG3EHKb951QlSOEHLFW/rAso6y8LAyPTOZXTVKB
-         rkYw==
-X-Gm-Message-State: APjAAAVNdS/XEDBEaApmbwP4Uvszl1bs4kuQwRRrbRUGs+eSdXRIdZ3s
-        T0YsoJ4t6CsRYyyW57EPI+bOP/B0c7KRMUS3j3wpQ3rZrM4iPcyVzgEMfKehWsC8Nd0wEVO3Rhp
-        qPQFT3JEyQ4knbS3e6H4Pwd+eDKUfGT+IMr+v9aHf
-X-Received: by 2002:a05:6512:51a:: with SMTP id o26mr3538272lfb.132.1571936717132;
-        Thu, 24 Oct 2019 10:05:17 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzIPhBNg98lecbpGanzXdv/jvDEOMcLhjDgpSTFOb/kzuzr1Y8DKoHvodVSYY7pWM8MkSV9AFU5hw5SZdcroyw=
-X-Received: by 2002:a05:6512:51a:: with SMTP id o26mr3538262lfb.132.1571936716917;
- Thu, 24 Oct 2019 10:05:16 -0700 (PDT)
+        Thu, 24 Oct 2019 13:05:21 -0400
+Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+  Codrin.Ciubotariu@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Codrin.Ciubotariu@microchip.com";
+  x-sender="Codrin.Ciubotariu@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa2.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Codrin.Ciubotariu@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Codrin.Ciubotariu@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: sDuzIKqKF2WoEdz+uGasTVOVvMm1648yY9+1myKia5vT3IOofPzBelK9wDcm8eqODPKUMYBsUO
+ +H+5YxuTOb/ZEyoImoURrgH6mJU8ZuMSE4mbBWi83PCyUmfh2AH/nsYEnMCe/RIuTIEB9WH2K5
+ 5MieozXW211RLZt6ktQt2hPv/ACKZ+txINGN+7LN2T+THB7gvX63HBh3z5QpXzpkSPXk75FCl0
+ DPtU7O94lm7cEmwBoc8oEN8A6Kn9JzFO0xNJFH1iv6ySTe/ajLS+QTsUAEn/Mg0puP9vay04v2
+ zrY=
+X-IronPort-AV: E=Sophos;i="5.68,225,1569308400"; 
+   d="scan'208";a="53974558"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Oct 2019 10:05:19 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 24 Oct 2019 10:05:18 -0700
+Received: from rob-ult-m19940.microchip.com (10.10.85.251) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 24 Oct 2019 10:05:16 -0700
+From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <mpm@selenic.com>, <herbert@gondor.apana.org.au>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>, <arnd@arndb.de>,
+        <Tudor.Ambarus@microchip.com>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Subject: [PATCH 1/2] dt-bindings: rng: atmel-trng: add new compatible
+Date:   Thu, 24 Oct 2019 20:04:51 +0300
+Message-ID: <20191024170452.2145-1-codrin.ciubotariu@microchip.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191022141438.22002-1-mcroce@redhat.com> <20191023.202813.607713311547571229.davem@davemloft.net>
-In-Reply-To: <20191023.202813.607713311547571229.davem@davemloft.net>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Thu, 24 Oct 2019 19:04:40 +0200
-Message-ID: <CAGnkfhwbuXS7hYWuBqERi-FA1ZbjFqWN81aOP_MpcqsmPkkLVQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] mvpp2: prefetch frame header
-To:     David Miller <davem@davemloft.net>
-Cc:     netdev <netdev@vger.kernel.org>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Stefan Chulski <stefanc@marvell.com>,
-        LKML <linux-kernel@vger.kernel.org>
-X-MC-Unique: 2XGw77MHNBi44lXx18IItw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 5:28 AM David Miller <davem@davemloft.net> wrote:
-> You cannot unmap it this early, because of all of the err_drop_frame
-> code paths that might be taken next.  The DMA mapping must stay in place
-> in those cases.
+Add compatible for new IP found on sam9x60 SoC.
 
-Thanks for noting this.
-I'm sending a series with this and other small fixes.
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
+ Documentation/devicetree/bindings/rng/atmel-trng.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
---=20
-Matteo Croce
-per aspera ad upstream
+diff --git a/Documentation/devicetree/bindings/rng/atmel-trng.txt b/Documentation/devicetree/bindings/rng/atmel-trng.txt
+index 4ac5aaa2d024..3900ee4f3532 100644
+--- a/Documentation/devicetree/bindings/rng/atmel-trng.txt
++++ b/Documentation/devicetree/bindings/rng/atmel-trng.txt
+@@ -1,7 +1,7 @@
+ Atmel TRNG (True Random Number Generator) block
+ 
+ Required properties:
+-- compatible : Should be "atmel,at91sam9g45-trng"
++- compatible : Should be "atmel,at91sam9g45-trng" or "microchip,sam9x60-trng"
+ - reg : Offset and length of the register set of this block
+ - interrupts : the interrupt number for the TRNG block
+ - clocks: should contain the TRNG clk source
+-- 
+2.20.1
 
