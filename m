@@ -2,125 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 781E8E2B02
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:23:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22205E2B0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407087AbfJXHWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 03:22:45 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:29526 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2390502AbfJXHWo (ORCPT
+        id S2408565AbfJXH0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 03:26:48 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:45742 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407153AbfJXH0s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 03:22:44 -0400
-X-UUID: c00efe6b6a6b490a8ec249bb5f663775-20191024
-X-UUID: c00efe6b6a6b490a8ec249bb5f663775-20191024
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 222561763; Thu, 24 Oct 2019 15:22:33 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 24 Oct
- 2019 15:22:31 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 24 Oct 2019 15:22:30 +0800
-Message-ID: <1571901752.19130.135.camel@mhfsdcap03>
-Subject: Re: [PATCH v4 3/7] iommu/mediatek: Use gather to achieve the tlb
- range flush
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Will Deacon <will@kernel.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Evan Green <evgreen@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@google.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <youlin.pei@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        <anan.sun@mediatek.com>, <cui.zhang@mediatek.com>,
-        <chao.hao@mediatek.com>, <edison.hsieh@mediatek.com>
-Date:   Thu, 24 Oct 2019 15:22:32 +0800
-In-Reply-To: <20191023165543.GB27471@willie-the-truck>
-References: <1571196792-12382-1-git-send-email-yong.wu@mediatek.com>
-         <1571196792-12382-4-git-send-email-yong.wu@mediatek.com>
-         <20191023165543.GB27471@willie-the-truck>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Thu, 24 Oct 2019 03:26:48 -0400
+Received: by mail-vs1-f67.google.com with SMTP id l5so4272560vsh.12
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 00:26:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oUomV4NKm5feOyCKiprxveYg7vZ2wgnhBDMrhdx0nIM=;
+        b=gFxnT8dlqP/lGdkch6//3BBHhDqglBib2whMUWpVJIsROUsP/77APdKqriRJS4XLqO
+         wTly8BXNtStUR9+6C5V53UmJYaetuKzvVDlcAZfP8YT7khCQF39z5CLCQHMx2GGh5nE1
+         mo2H/EQJfk4EK4waMt4diiJ/ktNT3r3j5QRgR2m60hVISxyk1by28DIQ+qlQONl5l4CY
+         9ly2ruACmk3o/dBszYvHsBT7x4mhiiK9LpUVglrkROKB5OEhPexb7XpklT8cvsZS7eVd
+         58/Hp9cCqvEnPfHaJXm/rjO0Sr02rWKA2oqT+AAo/DqjyiDunc8owynk6zEhr506rIV+
+         p4ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oUomV4NKm5feOyCKiprxveYg7vZ2wgnhBDMrhdx0nIM=;
+        b=BhgeYodCt1VUsGXi7BgbJAV8WnMVWp5Zg5PGk5iyHQlEbhFFNYYnh2EFp8dOrH6/09
+         JNJSOUkYeOyLKsi4TQEUFQArbFQ2bqZC6ofrMmX+nMfsy6dI2jUXkZcHM2jsVsXU1IrI
+         telZwUZ3FhlkRRzEx7fpeRjtPXdeB7S2KbieHoReDdjTtsNL2Kn/lTTcm2knEERvSsW0
+         FSAF3WGeL32OsSPDVC8RAm0u+t6sWRAD2HZEReQondWEJsjxWsweAAtXnIsfKFeoDR1L
+         i2ktrSrolJUx6MXc92u1qpBuMG7XH3XLyhNcmk0KPvXGKQHKhqfa+2kqWmupfk95hl8K
+         HYHg==
+X-Gm-Message-State: APjAAAXCXychnx9YeDZsnloxJKXOHL1tk5y8Uq7Cn8356nuZDszebhsP
+        C4g9NtxKdf3qL98snL6Mh31qptQDzl4amqg6f2r6Dw==
+X-Google-Smtp-Source: APXvYqxN+aIO2XD2M6+HQH0XizWdoSREtq9zxsin6Retg4BsRB4/GR2sJ0UQYx2Zrj041naS7bM1ORU/wvdUB3uw180=
+X-Received: by 2002:a05:6102:505:: with SMTP id l5mr8122513vsa.9.1571902005508;
+ Thu, 24 Oct 2019 00:26:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: B3428B34711F9D4340351C5FBF71C7D9A7707DD264962EFF9A5C5A10E427B3F82000:8
-X-MTK:  N
+References: <20191022102334.67e5d3d1@canb.auug.org.au> <CAP245DXChLoSUkj49FrYq4HVkcP2pS8=qamWDDUNOg7aygDwpA@mail.gmail.com>
+ <20191022221406.298ccd6a@canb.auug.org.au>
+In-Reply-To: <20191022221406.298ccd6a@canb.auug.org.au>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Thu, 24 Oct 2019 12:56:34 +0530
+Message-ID: <CAHLCerOkeOEEUgtJ=YgDKKXDiyFXHQ4LBdzg3-3VtKvpyceqFg@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the thermal tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000a929510595a2f4b9"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-10-23 at 17:55 +0100, Will Deacon wrote:
-> On Wed, Oct 16, 2019 at 11:33:08AM +0800, Yong Wu wrote:
-> > Use the iommu_gather mechanism to achieve the tlb range flush.
-> > Gather the iova range in the "tlb_add_page", then flush the merged iova
-> > range in iotlb_sync.
-> > 
-> > Suggested-by: Tomasz Figa <tfiga@chromium.org>
-> > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> > ---
-> >  drivers/iommu/mtk_iommu.c | 12 ++++++++----
-> >  1 file changed, 8 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> > index c2f6c78..81ac95f 100644
-> > --- a/drivers/iommu/mtk_iommu.c
-> > +++ b/drivers/iommu/mtk_iommu.c
-> > @@ -245,11 +245,9 @@ static void mtk_iommu_tlb_flush_page_nosync(struct iommu_iotlb_gather *gather,
-> >  					    void *cookie)
-> >  {
-> >  	struct mtk_iommu_data *data = cookie;
-> > -	unsigned long flags;
-> > +	struct iommu_domain *domain = &data->m4u_dom->domain;
-> >  
-> > -	spin_lock_irqsave(&data->tlb_lock, flags);
-> > -	mtk_iommu_tlb_add_flush_nosync(iova, granule, granule, true, cookie);
-> > -	spin_unlock_irqrestore(&data->tlb_lock, flags);
-> > +	iommu_iotlb_gather_add_page(domain, gather, iova, granule);
-> 
-> You need to be careful here, because iommu_iotlb_gather_add_page() can
-> call iommu_tlb_sync() in some situations and you don't hold the lock.
+--000000000000a929510595a2f4b9
+Content-Type: text/plain; charset="UTF-8"
 
-The mtk_iommu_iotlb_sync below already has the lock in it, so I delete
-the lock here.
+Hi Stephen,
 
-> 
-> >  static const struct iommu_flush_ops mtk_iommu_flush_ops = {
-> > @@ -469,9 +467,15 @@ static void mtk_iommu_iotlb_sync(struct iommu_domain *domain,
-> >  				 struct iommu_iotlb_gather *gather)
-> >  {
-> >  	struct mtk_iommu_data *data = mtk_iommu_get_m4u_data();
-> > +	size_t length = gather->end - gather->start;
-> >  	unsigned long flags;
-> >  
-> > +	if (gather->start == ULONG_MAX)
-> > +		return;
-> > +
-> >  	spin_lock_irqsave(&data->tlb_lock, flags);
-> > +	mtk_iommu_tlb_add_flush_nosync(gather->start, length, gather->pgsize,
-> > +				       false, data);
-> >  	mtk_iommu_tlb_sync(data);
-> >  	spin_unlock_irqrestore(&data->tlb_lock, flags);
-> 
-> Modulo my comment above, this fixes my previous comment. Given that mainline
-> is already broken, I guess the runtime bisectability isn't a problem.
+On Tue, Oct 22, 2019 at 4:48 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Amit,
+>
+> On Tue, 22 Oct 2019 15:20:00 +0530 Amit Kucheria <amit.kucheria@linaro.org> wrote:
+> >
+> > What compiler version do you use? Any additional flags to make? I'm
+> > not seeing this, even with W=1.
+>
+> $ x86_64-linux-gnu-gcc --version
+> x86_64-linux-gnu-gcc (Debian 9.2.1-8) 9.2.1 20190909
+>
+> No special flags to make.
 
-As the reply in [2/7]. the mainline is not broken after [2/7], it only
-go to the previous status before commit(4d689b619445).
+So this warning only shows up with gcc 9.x. I was using 8.x from my
+distro. Will upgrade.
 
-After using the iommu_gather, the iova will be the merged range in this
-iotlb_sync, it is just fit to do the tlb-flush/tlb-sync. then it fixes
-our potential issue(No tlb-sync for the previous tlb-flush range).
+I believe the "fix" is to simply initialize the three variables to
+zero (See attached diff). I'll squash that into the patch unless
+someone disagrees.
 
-> 
-> Will
+In practice though, we depend on the enum tsens_irq_type irq_type
+function parameter to throw a compilation error if we use anything not
+defined in the enum. That is also the reason we removed the 'default'
+case during review - we should never end up with an undefined value at
+runtime.
 
+Regards,
+Amit
 
+--000000000000a929510595a2f4b9
+Content-Type: text/x-patch; charset="US-ASCII"; name="variable_init.patch"
+Content-Disposition: attachment; filename="variable_init.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k24doiz50>
+X-Attachment-Id: f_k24doiz50
+
+ZGlmZiAtLWdpdCBpL2RyaXZlcnMvdGhlcm1hbC9xY29tL3RzZW5zLWNvbW1vbi5jIHcvZHJpdmVy
+cy90aGVybWFsL3Fjb20vdHNlbnMtY29tbW9uLmMKaW5kZXggMDNiZjFiODEzM2VhYy4uNDM1OWE0
+MjQ3YWMzMSAxMDA2NDQKLS0tIGkvZHJpdmVycy90aGVybWFsL3Fjb20vdHNlbnMtY29tbW9uLmMK
+KysrIHcvZHJpdmVycy90aGVybWFsL3Fjb20vdHNlbnMtY29tbW9uLmMKQEAgLTE4MCw3ICsxODAs
+NyBAQCBzdGF0aWMgaW5saW5lIGVudW0gdHNlbnNfdmVyIHRzZW5zX3ZlcnNpb24oc3RydWN0IHRz
+ZW5zX3ByaXYgKnByaXYpCiBzdGF0aWMgdm9pZCB0c2Vuc19zZXRfaW50ZXJydXB0X3YxKHN0cnVj
+dCB0c2Vuc19wcml2ICpwcml2LCB1MzIgaHdfaWQsCiAJCQkJICAgZW51bSB0c2Vuc19pcnFfdHlw
+ZSBpcnFfdHlwZSwgYm9vbCBlbmFibGUpCiB7Ci0JdTMyIGluZGV4OworCXUzMiBpbmRleCA9IDA7
+CiAKIAlzd2l0Y2ggKGlycV90eXBlKSB7CiAJY2FzZSBVUFBFUjoKQEAgLTE5Niw3ICsxOTYsNyBA
+QCBzdGF0aWMgdm9pZCB0c2Vuc19zZXRfaW50ZXJydXB0X3YxKHN0cnVjdCB0c2Vuc19wcml2ICpw
+cml2LCB1MzIgaHdfaWQsCiBzdGF0aWMgdm9pZCB0c2Vuc19zZXRfaW50ZXJydXB0X3YyKHN0cnVj
+dCB0c2Vuc19wcml2ICpwcml2LCB1MzIgaHdfaWQsCiAJCQkJICAgZW51bSB0c2Vuc19pcnFfdHlw
+ZSBpcnFfdHlwZSwgYm9vbCBlbmFibGUpCiB7Ci0JdTMyIGluZGV4X21hc2ssIGluZGV4X2NsZWFy
+OworCXUzMiBpbmRleF9tYXNrID0gMCwgaW5kZXhfY2xlYXIgPSAwOwogCiAJLyoKIAkgKiBUbyBl
+bmFibGUgdGhlIGludGVycnVwdCBmbGFnIGZvciBhIHNlbnNvcjoK
+--000000000000a929510595a2f4b9--
