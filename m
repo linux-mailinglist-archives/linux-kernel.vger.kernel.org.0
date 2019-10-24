@@ -2,94 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06FA6E37D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 189D4E37D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439855AbfJXQYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 12:24:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54242 "EHLO mail.kernel.org"
+        id S2439877AbfJXQZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 12:25:28 -0400
+Received: from foss.arm.com ([217.140.110.172]:55846 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733261AbfJXQY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 12:24:29 -0400
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EB6D20650
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 16:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571934269;
-        bh=xD1gHG7sdYECgBcaX1I3ErLN5e+7Bcvxfw58Z5UkxWg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=cMgz30XMQHcj05ka5AvwAN4vg3QH06UOV2FiniGBcXY6aLJkgav30QRcBc4Yj5V4r
-         i8nr6g22rn/+HUJNQgotVd06w4Zv/wyX9vjfDHPv6LG0sdkcn4nTddMILQyCol0aE3
-         oiClyv3XYuC1hKYFlD6aF2kIocdrwoBL50dH+hno=
-Received: by mail-wr1-f44.google.com with SMTP id r1so16987852wrs.9
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 09:24:29 -0700 (PDT)
-X-Gm-Message-State: APjAAAUTCsjsr3cDJihqeT9zdZdC5I7qNMGVy6/8nLIcGpfBrkix2nmD
-        2FXDiaEMLUQRltEMGn+0SfIknBhpUKoAGo+EQiGJsw==
-X-Google-Smtp-Source: APXvYqwH/8k3vOnYy8kFWtwcVyKD76drxnPThFvixiYP9/NJ4zhI9FrC8FyUhlrBqq3QTOq33KRRMBKNqm/rGC3Sdls=
-X-Received: by 2002:a5d:51c2:: with SMTP id n2mr4522564wrv.149.1571934267795;
- Thu, 24 Oct 2019 09:24:27 -0700 (PDT)
+        id S2439858AbfJXQZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 12:25:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBE51328;
+        Thu, 24 Oct 2019 09:25:11 -0700 (PDT)
+Received: from e112269-lin.cambridge.arm.com (e112269-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A4993F71F;
+        Thu, 24 Oct 2019 09:25:10 -0700 (PDT)
+From:   Steven Price <steven.price@arm.com>
+To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        Erico Nunes <nunes.erico@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        Steven Price <steven.price@arm.com>
+Subject: [RESEND PATCH v4] drm: Don't free jobs in wait_event_interruptible()
+Date:   Thu, 24 Oct 2019 17:24:24 +0100
+Message-Id: <20191024162424.38548-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191023122705.198339581@linutronix.de> <20191023123118.386844979@linutronix.de>
- <CALCETrWLk9LKV4+_mrOKDc3GUvXbCjqA5R6cdpqq02xoRCBOHw@mail.gmail.com>
-In-Reply-To: <CALCETrWLk9LKV4+_mrOKDc3GUvXbCjqA5R6cdpqq02xoRCBOHw@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 24 Oct 2019 09:24:13 -0700
-X-Gmail-Original-Message-ID: <CALCETrV79pw7-nisp4VdEkQ4=fr2nfJFOMCtyKmWZR6PG3=oWg@mail.gmail.com>
-Message-ID: <CALCETrV79pw7-nisp4VdEkQ4=fr2nfJFOMCtyKmWZR6PG3=oWg@mail.gmail.com>
-Subject: Re: [patch V2 08/17] x86/entry: Move syscall irq tracing to C code
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 2:30 PM Andy Lutomirski <luto@kernel.org> wrote:
->
-> On Wed, Oct 23, 2019 at 5:31 AM Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> > Interrupt state tracing can be safely done in C code. The few stack
-> > operations in assembly do not need to be covered.
-> >
-> > Remove the now pointless indirection via .Lsyscall_32_done and jump to
-> > swapgs_restore_regs_and_return_to_usermode directly.
->
-> This doesn't look right.
+drm_sched_cleanup_jobs() attempts to free finished jobs, however because
+it is called as the condition of wait_event_interruptible() it must not
+sleep. Unfortuantly some free callbacks (notibly for Panfrost) do sleep.
 
-Well, I feel a bit silly.  I read this:
+Instead let's rename drm_sched_cleanup_jobs() to
+drm_sched_get_cleanup_job() and simply return a job for processing if
+there is one. The caller can then call the free_job() callback outside
+the wait_event_interruptible() where sleeping is possible before
+re-checking and returning to sleep if necessary.
 
->
-> >  #define SYSCALL_EXIT_WORK_FLAGS                                \
-> > @@ -279,6 +282,9 @@ static void syscall_slow_exit_work(struc
+Signed-off-by: Steven Price <steven.price@arm.com>
+---
+Previous posting: https://lore.kernel.org/lkml/20190926141630.14258-1-steven.price@arm.com/
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ drivers/gpu/drm/scheduler/sched_main.c | 45 +++++++++++++++-----------
+ 1 file changed, 26 insertions(+), 19 deletions(-)
 
-and I applied the diff in my head to the wrong function, and I didn't
-notice that it didn't really apply there.  Oddly, gitweb gets this
-right:
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index 9a0ee74d82dc..148468447ba9 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -622,43 +622,41 @@ static void drm_sched_process_job(struct dma_fence *f, struct dma_fence_cb *cb)
+ }
+ 
+ /**
+- * drm_sched_cleanup_jobs - destroy finished jobs
++ * drm_sched_get_cleanup_job - fetch the next finished job to be destroyed
+  *
+  * @sched: scheduler instance
+  *
+- * Remove all finished jobs from the mirror list and destroy them.
++ * Returns the next finished job from the mirror list (if there is one)
++ * ready for it to be destroyed.
+  */
+-static void drm_sched_cleanup_jobs(struct drm_gpu_scheduler *sched)
++static struct drm_sched_job *
++drm_sched_get_cleanup_job(struct drm_gpu_scheduler *sched)
+ {
++	struct drm_sched_job *job = NULL;
+ 	unsigned long flags;
+ 
+ 	/* Don't destroy jobs while the timeout worker is running */
+ 	if (sched->timeout != MAX_SCHEDULE_TIMEOUT &&
+ 	    !cancel_delayed_work(&sched->work_tdr))
+-		return;
+-
++		return NULL;
+ 
+-	while (!list_empty(&sched->ring_mirror_list)) {
+-		struct drm_sched_job *job;
++	spin_lock_irqsave(&sched->job_list_lock, flags);
+ 
+-		job = list_first_entry(&sched->ring_mirror_list,
++	job = list_first_entry_or_null(&sched->ring_mirror_list,
+ 				       struct drm_sched_job, node);
+-		if (!dma_fence_is_signaled(&job->s_fence->finished))
+-			break;
+ 
+-		spin_lock_irqsave(&sched->job_list_lock, flags);
++	if (job && dma_fence_is_signaled(&job->s_fence->finished)) {
+ 		/* remove job from ring_mirror_list */
+ 		list_del_init(&job->node);
+-		spin_unlock_irqrestore(&sched->job_list_lock, flags);
+-
+-		sched->ops->free_job(job);
++	} else {
++		job = NULL;
++		/* queue timeout for next job */
++		drm_sched_start_timeout(sched);
+ 	}
+ 
+-	/* queue timeout for next job */
+-	spin_lock_irqsave(&sched->job_list_lock, flags);
+-	drm_sched_start_timeout(sched);
+ 	spin_unlock_irqrestore(&sched->job_list_lock, flags);
+ 
++	return job;
+ }
+ 
+ /**
+@@ -698,12 +696,21 @@ static int drm_sched_main(void *param)
+ 		struct drm_sched_fence *s_fence;
+ 		struct drm_sched_job *sched_job;
+ 		struct dma_fence *fence;
++		struct drm_sched_job *cleanup_job = NULL;
+ 
+ 		wait_event_interruptible(sched->wake_up_worker,
+-					 (drm_sched_cleanup_jobs(sched),
++					 (cleanup_job = drm_sched_get_cleanup_job(sched)) ||
+ 					 (!drm_sched_blocked(sched) &&
+ 					  (entity = drm_sched_select_entity(sched))) ||
+-					 kthread_should_stop()));
++					 kthread_should_stop());
++
++		while (cleanup_job) {
++			sched->ops->free_job(cleanup_job);
++			/* queue timeout for next job */
++			drm_sched_start_timeout(sched);
++
++			cleanup_job = drm_sched_get_cleanup_job(sched);
++		}
+ 
+ 		if (!entity)
+ 			continue;
+-- 
+2.20.1
 
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=WIP.core/entry&id=e3158f93138ded84eb44fa97606197f6adcf9366
-
-Looking at the actual code:
-
-Acked-by: Andy Lutomirski <luto@kernel.org>
-
-with one minor caveat: you are making a subtle and mostly irrelevant
-semantic change: with your patch, user mode will be traced as IRQs on
-even if a nasty user has used iopl() to turn off interrupts.  This is
-probably a good thing, but I think you should mention it in the
-changelog.
-
-FWIW, the rest of the series looks pretty good, too.
