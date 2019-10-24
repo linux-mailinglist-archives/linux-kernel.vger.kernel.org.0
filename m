@@ -2,113 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A3E4E35F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:49:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D189E3601
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:53:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409494AbfJXOtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 10:49:47 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:46536 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2409485AbfJXOtr (ORCPT
+        id S2409539AbfJXOxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 10:53:21 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.218]:33798 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2409522AbfJXOxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 10:49:47 -0400
-Received: by mail-qt1-f194.google.com with SMTP id u22so38198869qtq.13
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 07:49:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pd8O3Eb7qSMRp9Kj05XZyId359rCorPJtmLFzVCz1tU=;
-        b=BcaBLSXmWaHk5110Xo0O38xPCC95AqKidjb+KH5ChdckilUoZbt1WyEwYm1yUOa4RM
-         RfiRdAcCfWShMq1AjdO4X2NNxO19cCSlBCF7CR4/hwIxt4Qc9ZpW6S48IFadbBdf17cX
-         JALXMDwZp1n9/94SF0EcqIO9snuYmxP7M7P7Uz6YvVLb9xy5N6KEnmIYf6UEPboXYSS4
-         atki90J22tNTjqSCVObVMuAnhhzK1cJm0cqovSZ96lgg/WHDuWXptOynmVwTtSpq1U9m
-         ZexHeZgG4YVPSYrJr3pZGyq4CSR3sZlmC9nig7ZRz43wPKhTVKpcWL8SFOKxwtxlIzAv
-         Hxqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pd8O3Eb7qSMRp9Kj05XZyId359rCorPJtmLFzVCz1tU=;
-        b=SYG/zsb0t86UcK2YEuDdkjOBhJVYI4MSW4GX4sWAgEIidv2mirCPLoccgkRKdvgJqP
-         SXJG1GH+8yr1r7P4+4yXx8T/vlKsN2NOPDmeUpeRTUomdPjcreg/M24BiAdWT9Njunsw
-         +idst09kN18o+Cz10Z7v2eVVUHtRvsf7O4cPlByWzzVf5Y99wcnkJUbSI6GWJOmiqyYH
-         CxLTljzenqodZzgaIERHsj1wSZb4HSCZRJT02bk7J45kx5/00m+D9v0fOaYA5YHnhAhu
-         4whEZz+KW3smvg5S7QRKODRYKKlOrGpgWrfqN86S/BkgPGZcqYBiQM+o9beO/1x0IKVf
-         Vkvw==
-X-Gm-Message-State: APjAAAVl0pQiM6kWbWpAKFah88qPaxCzZeV6GCK/z01TzH5V9EzS//wG
-        psKZT67cUHB1RijtxxHEHWKgltqvZ+UouD4csYsG2A==
-X-Google-Smtp-Source: APXvYqxizfGeXucr8Xm3hiQaEdwpD1zIkSfhY2uthQgN/hAxrw59HH8nPL+eRe3wXdx0aAtlxBla3csbcsZB0vAO3is=
-X-Received: by 2002:a0c:fec3:: with SMTP id z3mr15231985qvs.122.1571928585784;
- Thu, 24 Oct 2019 07:49:45 -0700 (PDT)
+        Thu, 24 Oct 2019 10:53:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1571928798;
+        s=strato-dkim-0002; d=aepfle.de;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=0mp4UnfMmFBuAFZUwVWAjKo0HN743MLM5cwfxhfpVk0=;
+        b=Nw1GQz9jiGSQNi7TAYWR/0CCpMMHrmYhxmQU73QOYACcGXLJMNX7tPevrIjR1OWxvY
+        S5IA2By8AOpBD32oqnrPbU+nvOFl49lcGjlFmiFjt1o0vKfT8ikdoQdPGB2K+VS6JIFh
+        SpUzxbzN8mFb0qjdQ4g0sU8gMp8R88uS86YDIUH9pGDWn22OPfVeoBmgOCLv6r9yqO4P
+        obOpc0VTWZB/Ldp2hqbBEJXceDOPPB8QKhdIWz+JJW3CgMTV4E6bfgcWL00I+yeU3P4m
+        2+CCEiP5yR5ApO84NJp6c3ox3+0G5Phr5WRkbdQm4WTspYkhX4VjqsvklJDKGON2aDrn
+        m8Yg==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuz7MdiQehTvc3KJf+T+odQ=="
+X-RZG-CLASS-ID: mo00
+Received: from sender
+        by smtp.strato.de (RZmta 44.28.1 DYNA|AUTH)
+        with ESMTPSA id e01a77v9OEoBcWQ
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 24 Oct 2019 16:50:11 +0200 (CEST)
+From:   Olaf Hering <olaf@aepfle.de>
+To:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-hyperv@vger.kernel.org (open list:Hyper-V CORE AND DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Cc:     Olaf Hering <olaf@aepfle.de>
+Subject: [PATCH v1] tools/hv: async name resolution in kvp_daemon
+Date:   Thu, 24 Oct 2019 16:49:43 +0200
+Message-Id: <20191024144943.26199-1-olaf@aepfle.de>
+X-Mailer: git-send-email 2.16.4
 MIME-Version: 1.0
-References: <20191009114809.8643-1-christian.brauner@ubuntu.com>
- <20191021113327.22365-1-christian.brauner@ubuntu.com> <20191023121603.GA16344@andrea.guest.corp.microsoft.com>
- <CACT4Y+Y86HFnQGHyxv+f32tKDJXnRxmL7jQ3tGxVcksvtK3L7Q@mail.gmail.com>
- <20191024113155.GA7406@andrea.guest.corp.microsoft.com> <CACT4Y+Z2-mm6Qk0cecJdiA5B_VsQ1v8k2z+RWrDQv6dTNFXFog@mail.gmail.com>
- <20191024130502.GA11335@andrea.guest.corp.microsoft.com> <CACT4Y+ahUr11pQQ7=dw80Abj5owUPnPdufbMYvsKLM6iDg5QQg@mail.gmail.com>
- <20191024134319.GA12693@andrea.guest.corp.microsoft.com> <CACT4Y+ZXQyqgBvwgb6cy7NP5FTBbktq5j4ZyySp7jrbcJwFUTA@mail.gmail.com>
- <20191024144049.GA13747@andrea.guest.corp.microsoft.com>
-In-Reply-To: <20191024144049.GA13747@andrea.guest.corp.microsoft.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 24 Oct 2019 16:49:33 +0200
-Message-ID: <CACT4Y+aCSZmrmGv+=LPfzt0VBD5XqjsvSQ+6LHyr8VQW5tN6xg@mail.gmail.com>
-Subject: Re: [PATCH v6] taskstats: fix data-race
-To:     Andrea Parri <parri.andrea@gmail.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Will Deacon <will@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, bsingharora@gmail.com,
-        Marco Elver <elver@google.com>,
-        stable <stable@vger.kernel.org>,
-        syzbot <syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 4:40 PM Andrea Parri <parri.andrea@gmail.com> wrote:
->
-> On Thu, Oct 24, 2019 at 03:58:40PM +0200, Dmitry Vyukov wrote:
-> > On Thu, Oct 24, 2019 at 3:43 PM Andrea Parri <parri.andrea@gmail.com> wrote:
-> > >
-> > > > But why? I think kernel contains lots of such cases and it seems to be
-> > > > officially documented by the LKMM:
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/explanation.txt
-> > > > address dependencies and ppo
-> > >
-> > > Well, that same documentation also alerts about some of the pitfalls
-> > > developers can incur while relying on dependencies.  I'm sure you're
-> > > more than aware of some of the debate surrounding these issues.
-> >
-> > I thought that LKMM is finally supposed to stop all these
-> > centi-threads around subtle details of ordering. And not we finally
-> > have it. And it says that using address-dependencies is legal. And you
-> > are one of the authors. And now you are arguing here that we better
-> > not use it :) Can we have some black/white yes/no for code correctness
-> > reflected in LKMM please :) If we are banning address dependencies,
-> > don't we need to fix all of rcu uses?
->
-> Current limitations of the LKMM are listed in tools/memory-model/README
-> (and I myself discussed a number of them at LPC recently); the relevant
-> point here seems to be:
->
-> 1.      Compiler optimizations are not accurately modeled.  Of course,
->         the use of READ_ONCE() and WRITE_ONCE() limits the compiler's
->         ability to optimize, but under some circumstances it is possible
->         for the compiler to undermine the memory model.  [...]
->
->         Note that this limitation in turn limits LKMM's ability to
->         accurately model address, control, and data dependencies.
->
-> A less elegant, but hopefully more effective, way to phrase such point
-> is maybe "feel free to rely on dependencies, but then do not blame the
-> LKMM authors please".  ;-)
+The hostname is resolved just once since commit 58125210ab3b ("Tools:
+hv: cache FQDN in kvp_daemon to avoid timeouts") to make sure the VM
+responds within the timeout limits to requests from the host.
 
-We are not going to blame LKMM authors :)
+If for some reason getaddrinfo fails, the string returned by the
+"FullyQualifiedDomainName" request contains some error string, which is
+then used by tools on the host side.
 
-Acquire will introduce actual hardware barrier on arm/power/etc. Maybe
-it does not matter here. But I feel if we start replacing all
-load-depends/rcu with acquire, it will be noticeable overhead. So what
-do we do in the context of the whole kernel?
+Adjust the code to resolve the current hostname in a separate thread.
+This thread loops until getaddrinfo returns success. During this time
+all "FullyQualifiedDomainName" requests will be answered with an empty
+string.
+
+Signed-off-by: Olaf Hering <olaf@aepfle.de>
+---
+ tools/hv/Makefile        |  2 ++
+ tools/hv/hv_kvp_daemon.c | 69 ++++++++++++++++++++++++++++++++----------------
+ 2 files changed, 48 insertions(+), 23 deletions(-)
+
+diff --git a/tools/hv/Makefile b/tools/hv/Makefile
+index b57143d9459c..3b5481015a84 100644
+--- a/tools/hv/Makefile
++++ b/tools/hv/Makefile
+@@ -22,6 +22,8 @@ ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
+ 
+ ALL_SCRIPTS := hv_get_dhcp_info.sh hv_get_dns_info.sh hv_set_ifconfig.sh
+ 
++$(OUTPUT)hv_kvp_daemon: LDFLAGS += -lpthread
++
+ all: $(ALL_PROGRAMS)
+ 
+ export srctree OUTPUT CC LD CFLAGS
+diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
+index e9ef4ca6a655..22cf1c4dbf5c 100644
+--- a/tools/hv/hv_kvp_daemon.c
++++ b/tools/hv/hv_kvp_daemon.c
+@@ -41,6 +41,7 @@
+ #include <net/if.h>
+ #include <limits.h>
+ #include <getopt.h>
++#include <pthread.h>
+ 
+ /*
+  * KVP protocol: The user mode component first registers with the
+@@ -85,7 +86,7 @@ static char *processor_arch;
+ static char *os_build;
+ static char *os_version;
+ static char *lic_version = "Unknown version";
+-static char full_domain_name[HV_KVP_EXCHANGE_MAX_VALUE_SIZE];
++static char *full_domain_name;
+ static struct utsname uts_buf;
+ 
+ /*
+@@ -1327,27 +1328,53 @@ static int kvp_set_ip_info(char *if_name, struct hv_kvp_ipaddr_value *new_val)
+ 	return error;
+ }
+ 
+-
+-static void
+-kvp_get_domain_name(char *buffer, int length)
++/*
++ * Async retrival of Fully Qualified Domain Name because getaddrinfo takes an
++ * unpredictable amount of time to finish.
++ */
++static void *kvp_getaddrinfo(void *p)
+ {
+-	struct addrinfo	hints, *info ;
+-	int error = 0;
++	char *tmp, **str_ptr = (char **)p;
++	char hostname[HOST_NAME_MAX + 1];
++	struct addrinfo	*info, hints = {
++		.ai_family = AF_INET, /* Get only ipv4 addrinfo. */
++		.ai_socktype = SOCK_STREAM,
++		.ai_flags = AI_CANONNAME,
++	};
++	int ret;
++
++	if (gethostname(hostname, sizeof(hostname) - 1) < 0)
++		goto out;
++
++	do {
++		ret = getaddrinfo(hostname, NULL, &hints, &info);
++		if (ret)
++			sleep(1);
++	} while (ret);
++
++	ret = asprintf(&tmp, "%s", info->ai_canonname);
++	freeaddrinfo(info);
++	if (ret <= 0)
++		goto out;
++
++	if (ret > HV_KVP_EXCHANGE_MAX_VALUE_SIZE)
++		tmp[HV_KVP_EXCHANGE_MAX_VALUE_SIZE - 1] = '\0';
++	*str_ptr = tmp;
+ 
+-	gethostname(buffer, length);
+-	memset(&hints, 0, sizeof(hints));
+-	hints.ai_family = AF_INET; /*Get only ipv4 addrinfo. */
+-	hints.ai_socktype = SOCK_STREAM;
+-	hints.ai_flags = AI_CANONNAME;
++out:
++	pthread_exit(NULL);
++}
++
++static void kvp_obtain_domain_name(char **str_ptr)
++{
++	pthread_t t;
+ 
+-	error = getaddrinfo(buffer, NULL, &hints, &info);
+-	if (error != 0) {
+-		snprintf(buffer, length, "getaddrinfo failed: 0x%x %s",
+-			error, gai_strerror(error));
++	if (pthread_create(&t, NULL, kvp_getaddrinfo, str_ptr)) {
++		syslog(LOG_ERR, "pthread_create failed; error: %d %s",
++			errno, strerror(errno));
+ 		return;
+ 	}
+-	snprintf(buffer, length, "%s", info->ai_canonname);
+-	freeaddrinfo(info);
++	pthread_detach(t);
+ }
+ 
+ void print_usage(char *argv[])
+@@ -1412,11 +1439,7 @@ int main(int argc, char *argv[])
+ 	 * Retrieve OS release information.
+ 	 */
+ 	kvp_get_os_info();
+-	/*
+-	 * Cache Fully Qualified Domain Name because getaddrinfo takes an
+-	 * unpredictable amount of time to finish.
+-	 */
+-	kvp_get_domain_name(full_domain_name, sizeof(full_domain_name));
++	kvp_obtain_domain_name(&full_domain_name);
+ 
+ 	if (kvp_file_init()) {
+ 		syslog(LOG_ERR, "Failed to initialize the pools");
+@@ -1571,7 +1594,7 @@ int main(int argc, char *argv[])
+ 
+ 		switch (hv_msg->body.kvp_enum_data.index) {
+ 		case FullyQualifiedDomainName:
+-			strcpy(key_value, full_domain_name);
++			strcpy(key_value, full_domain_name ? : "");
+ 			strcpy(key_name, "FullyQualifiedDomainName");
+ 			break;
+ 		case IntegrationServicesVersion:
