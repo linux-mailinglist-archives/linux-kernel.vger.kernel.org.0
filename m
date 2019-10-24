@@ -2,193 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8F28E2ADE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:15:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AB83E2AFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:21:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437904AbfJXHPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 03:15:24 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:50579 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437885AbfJXHPY (ORCPT
+        id S2407054AbfJXHVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 03:21:40 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:45002 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404734AbfJXHVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 03:15:24 -0400
-X-Originating-IP: 93.2.121.143
-Received: from uno.localdomain (143.121.2.93.rev.sfr.net [93.2.121.143])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 5F255E0015;
-        Thu, 24 Oct 2019 07:15:16 +0000 (UTC)
-Date:   Thu, 24 Oct 2019 09:17:03 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v7 0/9] backlight: gpio: simplify the driver
-Message-ID: <20191024071703.6keoebzlfnn2qmyd@uno.localdomain>
-References: <20191022083630.28175-1-brgl@bgdev.pl>
- <CAMRc=MeyrDZgmHJ+2SMipP7y9NggxiVfkAh4kCLePFWvUku9aQ@mail.gmail.com>
- <20191023155941.q563d3cfizre4zvt@holly.lan>
- <20191024064726.GB15843@dell>
+        Thu, 24 Oct 2019 03:21:40 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x9O7KK2a031046, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x9O7KK2a031046
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 24 Oct 2019 15:20:20 +0800
+Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
+ RTITCASV01.realtek.com.tw (172.21.6.18) with Microsoft SMTP Server (TLS) id
+ 14.3.468.0; Thu, 24 Oct 2019 15:20:19 +0800
+Received: from RTEXMB01.realtek.com.tw (172.21.6.94) by
+ RTEXMB03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Thu, 24 Oct 2019 15:20:19 +0800
+Received: from RTEXMB01.realtek.com.tw ([fe80::6d88:58e2:6d4b:ff7c]) by
+ RTEXMB01.realtek.com.tw ([fe80::6d88:58e2:6d4b:ff7c%13]) with mapi id
+ 15.01.1779.005; Thu, 24 Oct 2019 15:20:19 +0800
+From:   Kailang <kailang@realtek.com>
+To:     Aaron Ma <aaron.ma@canonical.com>, Takashi Iwai <tiwai@suse.de>
+CC:     "perex@perex.cz" <perex@perex.cz>,
+        "hui.wang@canonical.com" <hui.wang@canonical.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
+Thread-Topic: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
+Thread-Index: AQHViO7vxXHEn3Xl7Ee6N1/g4hdxKqdmTdyAgAGbrzD//5F4gIAB6clQ
+Date:   Thu, 24 Oct 2019 07:20:19 +0000
+Message-ID: <ed97b6a8bd9445ecb48bc763d9aaba7a@realtek.com>
+References: <20191022153855.14368-1-aaron.ma@canonical.com>
+ <s5hpniodaq4.wl-tiwai@suse.de> <848ebd7fd86e4c05936e70f500f718e9@realtek.com>
+ <892889ae-0ce1-fbf6-d19f-50a5686e84c2@canonical.com>
+In-Reply-To: <892889ae-0ce1-fbf6-d19f-50a5686e84c2@canonical.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.22.105.211]
+Content-Type: multipart/mixed;
+        boundary="_002_ed97b6a8bd9445ecb48bc763d9aaba7arealtekcom_"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wfpai4ndwplq7h5c"
-Content-Disposition: inline
-In-Reply-To: <20191024064726.GB15843@dell>
-User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--_002_ed97b6a8bd9445ecb48bc763d9aaba7arealtekcom_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
---wfpai4ndwplq7h5c
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+SGkgVGFrYXNoaSwNCg0KQXR0YWNoIHBhdGNoIHdhcyBzdXBwb3J0IEFMQzYyMy4NCg0KQlIsDQpL
+YWlsYW5nDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWFyb24gTWEg
+PGFhcm9uLm1hQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IFdlZG5lc2RheSwgT2N0b2JlciAyMywg
+MjAxOSA2OjA2IFBNDQo+IFRvOiBLYWlsYW5nIDxrYWlsYW5nQHJlYWx0ZWsuY29tPjsgVGFrYXNo
+aSBJd2FpIDx0aXdhaUBzdXNlLmRlPg0KPiBDYzogcGVyZXhAcGVyZXguY3o7IGh1aS53YW5nQGNh
+bm9uaWNhbC5jb207IGFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZzsNCj4gbGludXgta2VybmVs
+QHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBBTFNBOiBoZGEvcmVhbHRl
+ayAtIEZpeCAyIGZyb250IG1pY3Mgb2YgY29kZWMgMHg2MjMNCj4gDQo+IE9uIDEwLzIzLzE5IDQ6
+NDQgUE0sIEthaWxhbmcgd3JvdGU6DQo+ID4NCj4gPg0KPiA+PiAtLS0tLU9yaWdpbmFsIE1lc3Nh
+Z2UtLS0tLQ0KPiA+PiBGcm9tOiBUYWthc2hpIEl3YWkgPHRpd2FpQHN1c2UuZGU+DQo+ID4+IFNl
+bnQ6IFdlZG5lc2RheSwgT2N0b2JlciAyMywgMjAxOSAxMjowOCBBTQ0KPiA+PiBUbzogQWFyb24g
+TWEgPGFhcm9uLm1hQGNhbm9uaWNhbC5jb20+DQo+ID4+IENjOiBwZXJleEBwZXJleC5jejsgS2Fp
+bGFuZyA8a2FpbGFuZ0ByZWFsdGVrLmNvbT47DQo+ID4+IGh1aS53YW5nQGNhbm9uaWNhbC5jb207
+IGFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZzsNCj4gPj4gbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZw0KPiA+PiBTdWJqZWN0OiBSZTogW1BBVENIXSBBTFNBOiBoZGEvcmVhbHRlayAtIEZp
+eCAyIGZyb250IG1pY3Mgb2YgY29kZWMNCj4gPj4gMHg2MjMNCj4gPj4NCj4gPj4gT24gVHVlLCAy
+MiBPY3QgMjAxOSAxNzozODo1NSArMDIwMCwNCj4gPj4gQWFyb24gTWEgd3JvdGU6DQo+ID4+Pg0K
+PiA+Pj4gVGhlc2UgMiBUaGlua0NlbnRyZXMgaW5zdGFsbGVkIGEgbmV3IHJlYWx0ZWsgY29kZWMg
+SUQgMHg2MjMsIGl0IGhhcw0KPiA+Pj4gMiBmcm9udCBtaWNzIHdpdGggdGhlIHNhbWUgbG9jYXRp
+b24gb24gcGluIDB4MTggYW5kIDB4MTkuDQo+ID4+Pg0KPiA+Pj4gQXBwbHkgZml4dXAgQUxDMjgz
+X0ZJWFVQX0hFQURTRVRfTUlDIHRvIGNoYW5nZSAxIGZyb250IG1pYyBsb2NhdGlvbg0KPiA+Pj4g
+dG8gcmlnaHQsIHRoZW4gcHVsc2VhdWRpbyBjYW4gaGFuZGxlIHRoZW0uDQo+ID4+PiBPbmUgIkZy
+b250IE1pYyIgYW5kIG9uZSAiTWljIiB3aWxsIGJlIHNob3duLCBhbmQgYXVkaW8gb3V0cHV0IHdv
+cmtzDQo+ID4+PiBmaW5lLg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1vZmYtYnk6IEFhcm9uIE1hIDxh
+YXJvbi5tYUBjYW5vbmljYWwuY29tPg0KPiA+Pg0KPiA+PiBJJ2QgbGlrZSB0byBoYXZlIEthaWxh
+bmcncyByZXZpZXcgYWJvdXQgdGhlIG5ldyBjb2RlYyBiZWZvcmUgYXBwbHlpbmcuDQo+ID4+DQo+
+ID4+IEthaWxhbmcsIGNvdWxkIHlvdSB0YWtlIGEgbG9vaz8NCj4gPiBPSy4NCj4gPiBJIHdpbGwg
+cG9zdCB5b3UgdGhlIHBhdGNoIGZvciBBTEM2MjMgY29kZWMgdG9tb3Jyb3cuDQo+ID4gVGhhbmtz
+Lg0KPiANCj4gQ2MgbWUgdG9vLg0KPiANCj4gVGhhbmsgeW91Lg0KPiBBYXJvbg0KPiANCj4gPg0K
+PiA+Pg0KPiA+Pg0KPiA+PiB0aGFua3MsDQo+ID4+DQo+ID4+IFRha2FzaGkNCj4gPj4NCj4gPj4+
+IC0tLQ0KPiA+Pj4gIHNvdW5kL3BjaS9oZGEvcGF0Y2hfcmVhbHRlay5jIHwgMyArKysNCj4gPj4+
+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspDQo+ID4+Pg0KPiA+Pj4gZGlmZiAtLWdp
+dCBhL3NvdW5kL3BjaS9oZGEvcGF0Y2hfcmVhbHRlay5jDQo+ID4+PiBiL3NvdW5kL3BjaS9oZGEv
+cGF0Y2hfcmVhbHRlay5jIGluZGV4IGIwMDBiMzZhYzNjNi4uYzM0ZDhiNDM1ZjU4DQo+ID4+PiAx
+MDA2NDQNCj4gPj4+IC0tLSBhL3NvdW5kL3BjaS9oZGEvcGF0Y2hfcmVhbHRlay5jDQo+ID4+PiAr
+KysgYi9zb3VuZC9wY2kvaGRhL3BhdGNoX3JlYWx0ZWsuYw0KPiA+Pj4gQEAgLTcxODYsNiArNzE4
+Niw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc25kX3BjaV9xdWlyaw0KPiA+Pj4gYWxjMjY5X2Zp
+eHVwX3RibFtdDQo+ID4+ID0gew0KPiA+Pj4gIAlTTkRfUENJX1FVSVJLKDB4MTdhYSwgMHgzMTJm
+LCAiVGhpbmtDZW50cmUgU3RhdGlvbiIsDQo+ID4+IEFMQzI5NF9GSVhVUF9MRU5PVk9fTUlDX0xP
+Q0FUSU9OKSwNCj4gPj4+ICAJU05EX1BDSV9RVUlSSygweDE3YWEsIDB4MzEzYywgIlRoaW5rQ2Vu
+dHJlIFN0YXRpb24iLA0KPiA+PiBBTEMyOTRfRklYVVBfTEVOT1ZPX01JQ19MT0NBVElPTiksDQo+
+ID4+PiAgCVNORF9QQ0lfUVVJUksoMHgxN2FhLCAweDMxNTEsICJUaGlua0NlbnRyZSBTdGF0aW9u
+IiwNCj4gPj4+IEFMQzI4M19GSVhVUF9IRUFEU0VUX01JQyksDQo+ID4+PiArCVNORF9QQ0lfUVVJ
+UksoMHgxN2FhLCAweDMxNzgsICJUaGlua0NlbnRyZSBTdGF0aW9uIiwNCj4gPj4gQUxDMjgzX0ZJ
+WFVQX0hFQURTRVRfTUlDKSwNCj4gPj4+ICsJU05EX1BDSV9RVUlSSygweDE3YWEsIDB4MzE3Niwg
+IlRoaW5rQ2VudHJlIFN0YXRpb24iLA0KPiA+Pj4gK0FMQzI4M19GSVhVUF9IRUFEU0VUX01JQyks
+DQo+ID4+PiAgCVNORF9QQ0lfUVVJUksoMHgxN2FhLCAweDM5MDIsICJMZW5vdm8gRTUwLTgwIiwN
+Cj4gPj4gQUxDMjY5X0ZJWFVQX0RNSUNfVEhJTktQQURfQUNQSSksDQo+ID4+PiAgCVNORF9QQ0lf
+UVVJUksoMHgxN2FhLCAweDM5NzcsICJJZGVhUGFkIFMyMTAiLA0KPiA+PiBBTEMyODNfRklYVVBf
+SU5UX01JQyksDQo+ID4+PiAgCVNORF9QQ0lfUVVJUksoMHgxN2FhLCAweDM5NzgsICJMZW5vdm8g
+QjUwLTcwIiwNCj4gPj4+IEFMQzI2OV9GSVhVUF9ETUlDX1RISU5LUEFEX0FDUEkpLCBAQCAtOTE4
+Nyw2ICs5MTg5LDcgQEAgc3RhdGljDQo+ID4+IGNvbnN0IHN0cnVjdCBoZGFfZGV2aWNlX2lkIHNu
+ZF9oZGFfaWRfcmVhbHRla1tdID0gew0KPiA+Pj4gIAlIREFfQ09ERUNfRU5UUlkoMHgxMGVjMDI5
+OCwgIkFMQzI5OCIsIHBhdGNoX2FsYzI2OSksDQo+ID4+PiAgCUhEQV9DT0RFQ19FTlRSWSgweDEw
+ZWMwMjk5LCAiQUxDMjk5IiwgcGF0Y2hfYWxjMjY5KSwNCj4gPj4+ICAJSERBX0NPREVDX0VOVFJZ
+KDB4MTBlYzAzMDAsICJBTEMzMDAiLCBwYXRjaF9hbGMyNjkpLA0KPiA+Pj4gKwlIREFfQ09ERUNf
+RU5UUlkoMHgxMGVjMDYyMywgIkFMQzYyMyIsIHBhdGNoX2FsYzI2OSksDQo+ID4+PiAgCUhEQV9D
+T0RFQ19SRVZfRU5UUlkoMHgxMGVjMDg2MSwgMHgxMDAzNDAsICJBTEM2NjAiLA0KPiA+PiBwYXRj
+aF9hbGM4NjEpLA0KPiA+Pj4gIAlIREFfQ09ERUNfRU5UUlkoMHgxMGVjMDY2MCwgIkFMQzY2MC1W
+RCIsIHBhdGNoX2FsYzg2MXZkKSwNCj4gPj4+ICAJSERBX0NPREVDX0VOVFJZKDB4MTBlYzA4NjEs
+ICJBTEM4NjEiLCBwYXRjaF9hbGM4NjEpLA0KPiA+Pj4gLS0NCj4gPj4+IDIuMTcuMQ0KPiA+Pj4N
+Cj4gPj4NCj4gPj4gLS0tLS0tUGxlYXNlIGNvbnNpZGVyIHRoZSBlbnZpcm9ubWVudCBiZWZvcmUg
+cHJpbnRpbmcgdGhpcyBlLW1haWwuDQo=
 
-Hello,
+--_002_ed97b6a8bd9445ecb48bc763d9aaba7arealtekcom_
+Content-Type: application/octet-stream; name="0000-add-support-alc623.patch"
+Content-Description: 0000-add-support-alc623.patch
+Content-Disposition: attachment; filename="0000-add-support-alc623.patch";
+	size=1990; creation-date="Thu, 24 Oct 2019 07:18:58 GMT";
+	modification-date="Thu, 24 Oct 2019 07:18:35 GMT"
+Content-Transfer-Encoding: base64
 
-On Thu, Oct 24, 2019 at 07:47:26AM +0100, Lee Jones wrote:
-> On Wed, 23 Oct 2019, Daniel Thompson wrote:
->
-> > On Tue, Oct 22, 2019 at 11:29:54AM +0200, Bartosz Golaszewski wrote:
-> > > wt., 22 pa=C5=BA 2019 o 10:36 Bartosz Golaszewski <brgl@bgdev.pl> nap=
-isa=C5=82(a):
-> > > >
-> > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > >
-> > > > While working on my other series related to gpio-backlight[1] I not=
-iced
-> > > > that we could simplify the driver if we made the only user of platf=
-orm
-> > > > data use GPIO lookups and device properties. This series tries to do
-> > > > that.
-> > > >
-> > > > First two patches contain minor fixes. Third patch makes the driver
-> > > > explicitly drive the GPIO line. Fourth patch adds all necessary data
-> > > > structures to ecovec24. Patch 5/9 unifies much of the code for both
-> > > > pdata and non-pdata cases. Patches 6-7/9 remove unused platform data
-> > > > fields. Last two patches contain additional improvements for the GP=
-IO
-> > > > backlight driver while we're already modifying it.
-> > > >
-> > > > I don't have access to this HW but hopefully this works. Only compi=
-le
-> > > > tested.
-> > > >
-> > > > [1] https://lkml.org/lkml/2019/6/25/900
-> > > >
-> > > > v1 -> v2:
-> > > > - rebased on top of v5.3-rc1 and adjusted to the recent changes fro=
-m Andy
-> > > > - added additional two patches with minor improvements
-> > > >
-> > > > v2 -> v3:
-> > > > - in patch 7/7: used initializers to set values for pdata and dev l=
-ocal vars
-> > > >
-> > > > v3 -> v4:
-> > > > - rebased on top of v5.4-rc1
-> > > > - removed changes that are no longer relevant after commit ec665b75=
-6e6f
-> > > >   ("backlight: gpio-backlight: Correct initial power state handling=
-")
-> > > > - added patch 7/7
-> > > >
-> > > > v4 -> v5:
-> > > > - in patch 7/7: added a comment replacing the name of the function =
-being
-> > > >   pulled into probe()
-> > > >
-> > > > v5 -> v6:
-> > > > - added a patch making the driver explicitly set the direction of t=
-he GPIO
-> > > >   to output
-> > > > - added a patch removing a redundant newline
-> > > >
-> > > > v6 -> v7:
-> > > > - renamed the function calculating the new GPIO value for status up=
-date
-> > > > - collected more tags
-> > > >
-> > > > Bartosz Golaszewski (9):
-> > > >   backlight: gpio: remove unneeded include
-> > > >   backlight: gpio: remove stray newline
-> > > >   backlight: gpio: explicitly set the direction of the GPIO
-> > > >   sh: ecovec24: add additional properties to the backlight device
-> > > >   backlight: gpio: simplify the platform data handling
-> > > >   sh: ecovec24: don't set unused fields in platform data
-> > > >   backlight: gpio: remove unused fields from platform data
-> > > >   backlight: gpio: use a helper variable for &pdev->dev
-> > > >   backlight: gpio: pull gpio_backlight_initial_power_state() into p=
-robe
-> > > >
-> > > >  arch/sh/boards/mach-ecovec24/setup.c         |  33 +++--
-> > > >  drivers/video/backlight/gpio_backlight.c     | 128 +++++++--------=
-----
-> > > >  include/linux/platform_data/gpio_backlight.h |   3 -
-> > > >  3 files changed, 69 insertions(+), 95 deletions(-)
-> > > >
-> > > >
-> > >
-> > > Lee, Daniel, Jingoo,
-> > >
-> > > Jacopo is travelling until November 1st and won't be able to test this
-> > > again before this date. Do you think you can pick it up and in case
-> > > anything's broken on SH, we can fix it after v5.5-rc1, so that it
-> > > doesn't miss another merge window?
->
-> November 1st (-rc6) will be fine.
->
-> I'd rather apply it late-tested than early-non-tested.
->
-> Hopefully Jacopo can prioritise testing this on Thursday or Friday,
-> since Monday will be -rc7 which is really cutting it fine.
+RnJvbSAzMTAzZjY2ODMwOTNlNDczNjhkODc2NzFmMzcyNmYxYTExZjllZjI4IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBLYWlsYW5nIFlhbmcgPGthaWxhbmdAcmVhbHRlay5jb20+CkRh
+dGU6IFRodSwgMjQgT2N0IDIwMTkgMTU6MTM6MzIgKzA4MDAKU3ViamVjdDogW1BBVENIXSBBTFNB
+OiBoZGEvcmVhbHRlayAtIEFkZCBzdXBwb3J0IGZvciBBTEM2MjMKClN1cHBvcnQgbmV3IGNvZGVj
+IEFMQzYyMy4KClNpZ25lZC1vZmYtYnk6IEthaWxhbmcgWWFuZyA8a2FpbGFuZ0ByZWFsdGVrLmNv
+bT4KCmRpZmYgLS1naXQgYS9zb3VuZC9wY2kvaGRhL3BhdGNoX3JlYWx0ZWsuYyBiL3NvdW5kL3Bj
+aS9oZGEvcGF0Y2hfcmVhbHRlay5jCmluZGV4IDA4NWEyZjk1ZTA3Ni4uYTBjMjM3Y2MxM2Q0IDEw
+MDY0NAotLS0gYS9zb3VuZC9wY2kvaGRhL3BhdGNoX3JlYWx0ZWsuYworKysgYi9zb3VuZC9wY2kv
+aGRhL3BhdGNoX3JlYWx0ZWsuYwpAQCAtNDA5LDYgKzQwOSw5IEBAIHN0YXRpYyB2b2lkIGFsY19m
+aWxsX2VhcGRfY29lZihzdHJ1Y3QgaGRhX2NvZGVjICpjb2RlYykKIAljYXNlIDB4MTBlYzA2NzI6
+CiAJCWFsY191cGRhdGVfY29lZl9pZHgoY29kZWMsIDB4ZCwgMCwgMTw8MTQpOyAvKiBFQVBEIEN0
+cmwgKi8KIAkJYnJlYWs7CisJY2FzZSAweDEwZWMwNjIzOgorCQlhbGNfdXBkYXRlX2NvZWZfaWR4
+KGNvZGVjLCAweDE5LCAxPDwxMywgMCk7CisJCWJyZWFrOwogCWNhc2UgMHgxMGVjMDY2ODoKIAkJ
+YWxjX3VwZGF0ZV9jb2VmX2lkeChjb2RlYywgMHg3LCAzPDwxMywgMCk7CiAJCWJyZWFrOwpAQCAt
+MjkyMCw2ICsyOTIzLDcgQEAgZW51bSB7CiAJQUxDMjY5X1RZUEVfQUxDMjI1LAogCUFMQzI2OV9U
+WVBFX0FMQzI5NCwKIAlBTEMyNjlfVFlQRV9BTEMzMDAsCisJQUxDMjY5X1RZUEVfQUxDNjIzLAog
+CUFMQzI2OV9UWVBFX0FMQzcwMCwKIH07CiAKQEAgLTI5NTUsNiArMjk1OSw3IEBAIHN0YXRpYyBp
+bnQgYWxjMjY5X3BhcnNlX2F1dG9fY29uZmlnKHN0cnVjdCBoZGFfY29kZWMgKmNvZGVjKQogCWNh
+c2UgQUxDMjY5X1RZUEVfQUxDMjI1OgogCWNhc2UgQUxDMjY5X1RZUEVfQUxDMjk0OgogCWNhc2Ug
+QUxDMjY5X1RZUEVfQUxDMzAwOgorCWNhc2UgQUxDMjY5X1RZUEVfQUxDNjIzOgogCWNhc2UgQUxD
+MjY5X1RZUEVfQUxDNzAwOgogCQlzc2lkcyA9IGFsYzI2OV9zc2lkczsKIAkJYnJlYWs7CkBAIC04
+MDE3LDYgKzgwMjIsOSBAQCBzdGF0aWMgaW50IHBhdGNoX2FsYzI2OShzdHJ1Y3QgaGRhX2NvZGVj
+ICpjb2RlYykKIAkJc3BlYy0+Y29kZWNfdmFyaWFudCA9IEFMQzI2OV9UWVBFX0FMQzMwMDsKIAkJ
+c3BlYy0+Z2VuLm1peGVyX25pZCA9IDA7IC8qIG5vIGxvb3BiYWNrIG9uIEFMQzMwMCAqLwogCQli
+cmVhazsKKwljYXNlIDB4MTBlYzA2MjM6CisJCXNwZWMtPmNvZGVjX3ZhcmlhbnQgPSBBTEMyNjlf
+VFlQRV9BTEM2MjM7CisJCWJyZWFrOwogCWNhc2UgMHgxMGVjMDcwMDoKIAljYXNlIDB4MTBlYzA3
+MDE6CiAJY2FzZSAweDEwZWMwNzAzOgpAQCAtOTIxOCw2ICs5MjI2LDcgQEAgc3RhdGljIGNvbnN0
+IHN0cnVjdCBoZGFfZGV2aWNlX2lkIHNuZF9oZGFfaWRfcmVhbHRla1tdID0gewogCUhEQV9DT0RF
+Q19FTlRSWSgweDEwZWMwMjk4LCAiQUxDMjk4IiwgcGF0Y2hfYWxjMjY5KSwKIAlIREFfQ09ERUNf
+RU5UUlkoMHgxMGVjMDI5OSwgIkFMQzI5OSIsIHBhdGNoX2FsYzI2OSksCiAJSERBX0NPREVDX0VO
+VFJZKDB4MTBlYzAzMDAsICJBTEMzMDAiLCBwYXRjaF9hbGMyNjkpLAorCUhEQV9DT0RFQ19FTlRS
+WSgweDEwZWMwNjIzLCAiQUxDNjIzIiwgcGF0Y2hfYWxjMjY5KSwKIAlIREFfQ09ERUNfUkVWX0VO
+VFJZKDB4MTBlYzA4NjEsIDB4MTAwMzQwLCAiQUxDNjYwIiwgcGF0Y2hfYWxjODYxKSwKIAlIREFf
+Q09ERUNfRU5UUlkoMHgxMGVjMDY2MCwgIkFMQzY2MC1WRCIsIHBhdGNoX2FsYzg2MXZkKSwKIAlI
+REFfQ09ERUNfRU5UUlkoMHgxMGVjMDg2MSwgIkFMQzg2MSIsIHBhdGNoX2FsYzg2MSksCg==
 
-I'll do my best, I'll get home Friday late afternoon :)
-
-
->
-> > Outside of holidays and other emergencies Lee usually collects up the
-> > patches for backlight. I'm not sure when he plans to close things for
-> > v5.5.
->
-> In special cases such as these I can remain flexible.
->
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
-
---wfpai4ndwplq7h5c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl2xT+kACgkQcjQGjxah
-VjyWSRAAxMG+doVs6jKDU7YNSv/u74lWN3O4ddF1jNPc3tEP3zjxqXDzGlzX8QeD
-LJ8SjmP4xIcU6gTJOEj30PbxQk4w/uCuhVk50LHZxsH8LY6d+NF8F65UaPpJ843X
-WFmK4WDdXkIRZ/HxRL83m9hLmpHRZTGtjW71t+4h7W1aFZfJe6AaWDp+uh76/9qi
-o2gfkjhELb5+wViBHfLexMgWNIGfY7kMXjSiZPZk1hghTvIkNqKm7thvwm5ecgd1
-V0pkF84tBb2qUGV15DC8fYmlsNxiv3iWeh+j8kayiMvGeQSuwPfAQBxW5ihfydau
-NRconH89vXqfl85J6QdEQXI8oM3jLh2rr5bs1QCudeX+Q4yZyxgCWDImCTjO6338
-BTjm4kNGbeaiNbU/t1vVJnjK+DeHluhaK5ahq4IAcwB16ultNHfe/IggX/xoZHkY
-KwSh0NmnVOWcIyokDlOZLvViA16qdD5II0rHx1D75VvwAS3QnyDXBt/A2FF4MYP+
-DQMV8jXkSw7YI5U1j55uEWBA1ePpeZMj2sG7wNBu48uyOzGgbUitnYKm1hkihJM9
-i5D6B9vBJiUOO1auaGcmaNZXWqjuAzk7chajL2O6hprhB3uNUSqHX6oBpJQFb6Yd
-tOpoiYc2px3euAANQVkKw7rOWYBeZlpR7Ic2tvc0lkaeb5agFgA=
-=OTLb
------END PGP SIGNATURE-----
-
---wfpai4ndwplq7h5c--
+--_002_ed97b6a8bd9445ecb48bc763d9aaba7arealtekcom_--
