@@ -2,130 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13265E348D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D795E3494
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:45:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393725AbfJXNn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 09:43:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35274 "EHLO mail.kernel.org"
+        id S2393749AbfJXNp0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 09:45:26 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:35278 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390977AbfJXNn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 09:43:57 -0400
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2393677AbfJXNpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 09:45:24 -0400
+Received: from zn.tnic (p200300EC2F0F6D006C14721BC32EDA46.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:6d00:6c14:721b:c32e:da46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E1CA21872;
-        Thu, 24 Oct 2019 13:43:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571924635;
-        bh=caSJPvAyaGnacOClomQ1HCfNRqauq+PIcyVlnhrA6XI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tUa0Pg2Mn3DvNc6g2InTIhVUe2oTAODOSrgEYn+XRxvy6ZmrAOrFKaQOst92uuLBv
-         S2JT3ThsRk5QEXP4sUlFhdnwyxQAIQXUoiMBgk9TbC2MUBCIOlXv7xk/OclQPV869c
-         Avr220gPzM4n7H/1UF9mH9zBRsWClxGquhMFZEl8=
-Received: by mail-lj1-f176.google.com with SMTP id u22so7091590lji.7;
-        Thu, 24 Oct 2019 06:43:55 -0700 (PDT)
-X-Gm-Message-State: APjAAAW843DnVNtoMEx79QiMR3E1dU9Oiqr/aj0hf60mEYzNUMRnDF/n
-        7K19WZNNJnkU7jyZG8djqumYIknGcjjnUPo+z6o=
-X-Google-Smtp-Source: APXvYqzONfnyNEwRsWpMnM9gNIgiRSukkKKMwEXSa9QMdk8AsXyfGNhvzssWnDDRpo2MxLwilM9jDntvj1Q+BKD6ips=
-X-Received: by 2002:a2e:9848:: with SMTP id e8mr7727758ljj.148.1571924633210;
- Thu, 24 Oct 2019 06:43:53 -0700 (PDT)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 62C761EC0CB2;
+        Thu, 24 Oct 2019 15:45:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1571924719;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=ZDDiIZV3N/1CCiWoHasK1HUYfVsvlhqlkoWiG1CA6ws=;
+        b=Of9iK+JsmYNONFtkeLUj9egCEHJpdvzCfczMFWtS3SdEVJQxU8uZqj3e8xgaMRKMikxKsf
+        SJ5k3neCBb/U7AEz9snyj06KhRrwswAPd2pZjSveI/Wend8ho72MXkzdeo/tLbKrb0AxL3
+        DMbvcueT96ApYV6uTfXPCcXaflemDkE=
+Date:   Thu, 24 Oct 2019 15:45:11 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Markus Elfring <Markus.Elfring@web.de>, linux-edac@vger.kernel.org,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rrichter@marvell.com>,
+        Stefan Schaeckeler <sschaeck@cisco.com>,
+        Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] EDAC: Aspeed: Use devm_platform_ioremap_resource() in
+ aspeed_probe()
+Message-ID: <20191024134511.GA1942@zn.tnic>
+References: <baabb9e9-a1b2-3a04-9fb6-aa632de5f722@web.de>
+ <CACPK8XfUJ5VGpTS3gwxSVZbdWZKPH6PwT2JKGGJ2yzoXYKdtZg@mail.gmail.com>
 MIME-Version: 1.0
-References: <20191024123526.4778-1-ribalda@kernel.org> <20191024133333.GE3966@mara.localdomain>
-In-Reply-To: <20191024133333.GE3966@mara.localdomain>
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date:   Thu, 24 Oct 2019 15:43:36 +0200
-X-Gmail-Original-Message-ID: <CAPybu_2hdvq_M-8X0_-MVxSjaJ8H0x+zDRaa4Cf=b0PQtVnzmQ@mail.gmail.com>
-Message-ID: <CAPybu_2hdvq_M-8X0_-MVxSjaJ8H0x+zDRaa4Cf=b0PQtVnzmQ@mail.gmail.com>
-Subject: Re: [PATCH v2] Documentation: media: *_DEFAULT targets for subdevs
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CACPK8XfUJ5VGpTS3gwxSVZbdWZKPH6PwT2JKGGJ2yzoXYKdtZg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari
-
-Lets say the user wants to select the active pixels. He needs to set
-the crop and the compose.
-
-1) he gets V4L2_SEL_TGT_CROP_DEFAULT
-
-2) he sets V4L2_SEL_TGT_CROP
-
-How does he knows which compose to use? What if the compose starts at
-(0,0) instead of (32,32)....?
-
-I think it is easier if
-
-3) he gets V4L2_SEL_TGT_COMPOSE_DEFAULT
-
-4) he sets V4L2_SEL_TGT_COMPOSE
-
-This is similar as how we do it today with a v4l2_device. What if we
-simply replicate that behaviour?
-
-
-Best regards
-
-On Thu, Oct 24, 2019 at 3:32 PM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Ricardo,
->
-> On Thu, Oct 24, 2019 at 02:35:25PM +0200, Ricardo Ribalda Delgado wrote:
-> > Some sensors have optical blanking areas, this is, pixels that are
-> > painted and do not account for light, only noise.
+On Wed, Oct 23, 2019 at 06:23:53AM +0000, Joel Stanley wrote:
+> On Sat, 21 Sep 2019 at 16:47, Markus Elfring <Markus.Elfring@web.de> wrote:
 > >
-> > These special pixels are very useful for calibrating the sensor, but
-> > should not be displayed on a DEFAULT target.
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Sat, 21 Sep 2019 18:32:46 +0200
 > >
-> > Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> > ---
+> > Simplify this function implementation by using a known wrapper function.
 > >
-> > v2: Changes by Sakari Ailus <sakari.ailus@linux.intel.com>
+> > This issue was detected by using the Coccinelle software.
 > >
-> > Only change CROP_DEFAULT
-> >
-> >  Documentation/media/uapi/v4l/v4l2-selection-targets.rst | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/media/uapi/v4l/v4l2-selection-targets.rst b/Documentation/media/uapi/v4l/v4l2-selection-targets.rst
-> > index f74f239b0510..41c6674ec283 100644
-> > --- a/Documentation/media/uapi/v4l/v4l2-selection-targets.rst
-> > +++ b/Documentation/media/uapi/v4l/v4l2-selection-targets.rst
-> > @@ -38,8 +38,10 @@ of the two interfaces they are used.
-> >      * - ``V4L2_SEL_TGT_CROP_DEFAULT``
-> >        - 0x0001
-> >        - Suggested cropping rectangle that covers the "whole picture".
-> > +        This includes only active pixels and excludes other non-active
-> > +        pixels such as black pixels.
-> > +      - Yes
-> >        - Yes
-> > -      - No
-> >      * - ``V4L2_SEL_TGT_CROP_BOUNDS``
-> >        - 0x0002
-> >        - Bounds of the crop rectangle. All valid crop rectangles fit inside
-> > @@ -61,7 +63,7 @@ of the two interfaces they are used.
-> >        - 0x0101
-> >        - Suggested composition rectangle that covers the "whole picture".
-> >        - Yes
-> > -      - No
-> > +      - Yes
->
-> This is COMPOSE_DEFAULT that wasn't meant to be changed. So with this chunk
-> dropped,
->
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
->
-> >      * - ``V4L2_SEL_TGT_COMPOSE_BOUNDS``
-> >        - 0x0102
-> >        - Bounds of the compose rectangle. All valid compose rectangles fit
->
-> --
-> Sakari Ailus
-> sakari.ailus@linux.intel.com
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> 
+> Acked-by: Joel Stanley <joel@jms.id.au>
+
+Applied, thanks.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
