@@ -2,127 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE7E6E28E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 05:32:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09986E28E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 05:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437216AbfJXDc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 23:32:56 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35542 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392870AbfJXDcz (ORCPT
+        id S2437301AbfJXDd3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 23:33:29 -0400
+Received: from sonic306-21.consmr.mail.gq1.yahoo.com ([98.137.68.84]:42597
+        "EHLO sonic306-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2437291AbfJXDd3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 23:32:55 -0400
-Received: by mail-pg1-f195.google.com with SMTP id c8so8544526pgb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 20:32:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=x9yyQ2FOaYcmSfcpOJxtcwGG2Qu1XU68PHFcRqzXa3M=;
-        b=l5kJGcsHDzkhBVaQTnz47UD9J1r2EmTtlolEqaO5EjuBlCtue3iG0RvKqmtBm2YwXR
-         +8xepoTs24e/xk4M/s+f7E7+EwKKKZp/FE5YERFeXwtjz1auyqSYxDJUMg8UbLlaPFdB
-         3VffsRs0Ugwj+erGFiWCyDNCi9CJRFmgsh7fQHFjQ9wNJPwdh/k2PXzAOk0VFHWDHWu+
-         IajaTpK1/Gk7IONkVrWywQ/wiPOs4C5HohianltFhvm24sSeWfmeoRgxEk9olnOESANF
-         O6TMAkmFj5lXneRX4r7OL4lDekc3wS/p1piBZzlQcYYcdTguBhAAsN5e4jrx1Bc5YZT1
-         OK6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=x9yyQ2FOaYcmSfcpOJxtcwGG2Qu1XU68PHFcRqzXa3M=;
-        b=OdPP2J5ALBsneCRzmIsFkj5j0Nw4OLyIuwFY4ESjcLrgzNWtXX/DM8yfbMLzt3jYCm
-         Lg17GsrmcZsKorYbqq6tvSJ6NuRROqWlzGVMODbn01biMweYkdJyL5ZaAXW4+JQ4MWUo
-         AmiiOTQSGLvT6glTDTOzhx0bU7KLqA5DdbaHvzjpAVpgWJMI2o6KSiLmKb8SpfJlQlTc
-         eWq72czsGJ9jB3PRMMQiUP9UiXd+gV6hzovSH9QxgLgN1TWsb1v4fd1PuujV7ymc2P//
-         Q5dMQ4eUkqjSBDnINrfB+8zJ5Ft+r9dyssPXGtan+XYcfVlNRvh4CoQ8ZAF65Xhba9WS
-         kAYA==
-X-Gm-Message-State: APjAAAUXrNP6a+XHNw9e+n1sYEy70jzrPEyfFMk5j9HnBwQt5y/9vRW1
-        2ppM6BZrVTYggqqUthQeaxFkKw==
-X-Google-Smtp-Source: APXvYqxbNeSTJySZFCyFfN/ef676Nbp3ELs2xUm7ue0KSYLuBZnSumm7Lik1hNs0oOuY7TDT2WmUdg==
-X-Received: by 2002:a63:c40e:: with SMTP id h14mr13966574pgd.254.1571887975017;
-        Wed, 23 Oct 2019 20:32:55 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.79])
-        by smtp.gmail.com with ESMTPSA id n2sm25393079pgg.77.2019.10.23.20.32.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Oct 2019 20:32:54 -0700 (PDT)
-Subject: Re: [PATCH] blk-mq: remove needless goto from blk_mq_get_driver_tag
-To:     Bart Van Assche <bvanassche@acm.org>,
-        =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     kernel@collabora.com, krisman@collabora.com
-References: <20191022174108.15554-1-andrealmeid@collabora.com>
- <2a8a99a6-4b39-e459-988a-ba9502919044@acm.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f3e19c37-2430-81d5-ed5b-bc15d93e93c2@kernel.dk>
-Date:   Wed, 23 Oct 2019 21:32:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 23 Oct 2019 23:33:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1571888008; bh=MUzNlJKVHsdOf5x4Tno5rHvOy1PcgxZhaxQfuSoCL8w=; h=Date:From:To:Cc:Subject:From:Subject; b=YXWvEZJbfG+PO9/IsK/qG3dNJ4dS2Qaa4zeTaIgc5hI8LrcXlnYGzXe49/tCU4ACl0YKPoteJHaRfjUKo2y48lGURe+QRbHT62PIZf66cg6vXax47r3M5l5WT+7K+IZWdgT6++c6jT4KY6DEL44f9aSlaaLt1GW9y+xDbHvSSjnuu9wq0PYeT6Hu31mw6l/Dxi5aB2jJebAUXPe24KeZrRy1cZumje/yyzbNAGjDRmvjOwIP9OBjVH8985ACOGHyNPbzuGx7hPQdwESpC09EpcncJzDlGUCVikgqFOp2+/AA9yCr5MsrjP2uHAL39QF1Z5M9QznK9e9OnXucvjhB8A==
+X-YMail-OSG: iu4b2QQVM1k4kDgIw2_rp4EYA4aVCmI7mZT4VfFqbxRRW6Z..zQWkZ8RfaD0YOO
+ ErjAC7IB4LG4Tf.LNfmz516wZG_l2yfcbpBegy6tY0MlhT_L6xKtR8XkFTi_bkH97uobk1tsGIXd
+ 0wJgNCp5hXJHqhsgwRbZIAZFZGzcJxBzhEJbOAzEmD3EmT8SjENE8HUbKpURKFlK.kDmsHsFBe7z
+ H275feQybXR.TeVsRwp8d.Ku3NtMjuya7EyhOUpuQiFZMrDt4iylik.ay10HXlegQEUX8d7jCbUf
+ GOvxA7jVIm7s3fCfpgHtyB_DPSBWRmCW1Lnyf1nzHwSLJ0IYpjiK2f4OxYmNd5MTE3cRc_WPDVyx
+ Fj0WOfp0RbPKb4JiT4TeylVEh9G_sI03zctIK4YEJCMUwK60MJzsF4_8j.UkLzE75R8pVuj0yN80
+ WMzLuCrIbr4IYSQbd9WjrNLp6.Sy.X2WSPnB0bRV775QasXEkGjMcdtf8gUK4sr_CD0hqb8xuvXq
+ 6xJRfXnjN.w9aOq9rQXts0qNCrMUyC0pfBPPanYzaJMNaEDL1YZgaYEXq5CnK0vCRsOs95lLLC4Y
+ 3571qjZ_y6WccceBBkO9ZG2RmLh3oJIk.F.WOyfjITxD4x4Qs3TTWBM7rnLS5UdQfxo_zB4eHx8F
+ 9U5EqtObRZDShCwOdY9Dp.NgTWAPyhDs6QkDTydlthzCDLx2F0.1pFL3UE0ZL2iezPUF0E23uJ8k
+ ik45BMCkdIZqZZqGupZX1jLQm7U4iH_oMS9VTfXv7iYuS.93NOtCYR8Nbo8MNbCNwFjc_3xG5bbd
+ ZwUt.0OcQ_l076EV8BljyC1Wllz.XLvfwoW3BVsSVd70p0AbNKLrWPy.qOXpIFEyMLgZ8LJv_vVd
+ OTu3xHdFtJu9NqgTRKR6vyBQfRGqLObV5hHgU4wxZIiplpzgCLXtnzzq8.8wCra7E56u1xtkNKNc
+ sis3cVA2SV90nBAl2KyQog84BGA.P.p0JKrHHkV5zQ7xwmgb5yvf9d2tetMV0sXZgUaXgycabhU0
+ H9Jkr4JxjfdDUbqEynOZUiLkqr10lfuXJfOe3cieVQx9JbV8b_uI0gEaQdrVNYf5yXtfLjuKjqo_
+ ejJZ6RjQ8eUfB9Y.5rv85ugV.DYVWs2IMmg.DSILd885RyuYhy4JpSgOnMHtfU1ugRyLskien7OP
+ DNEUqOcRMGUKKGfb.KtstpUAKYGbir5nYRglIZfJNNzUe6u3nEZBT7XLLCd0fVwo_sUBfe7Oc_gk
+ 9qUoHgv6c1YKmPQU2SwDf2vCvCfAlwuwHMsaF2CTW8T2hWMVoptIkjoioNl7zyjCLxLKc1IdvISj
+ H2S1lvDIY3zq5slTZumnwOq_snH.45fka3doFbX8f8xAV4bQRJfk-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.gq1.yahoo.com with HTTP; Thu, 24 Oct 2019 03:33:28 +0000
+Received: by smtp425.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 827f6da61f2baf0698881a00456dc1d7;
+          Thu, 24 Oct 2019 03:33:24 +0000 (UTC)
+Date:   Thu, 24 Oct 2019 11:33:10 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
+Cc:     debian-devel@lists.debian.org, opensuse@opensuse.org,
+        kernel-team@android.com, devel@lists.fedoraproject.org,
+        gentoo-dev@lists.gentoo.org, arch-dev-public@archlinux.org,
+        ubuntu-devel-discuss@lists.ubuntu.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Coly Li <colyli@suse.de>,
+        Yann Collet <yann.collet.73@gmail.com>,
+        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        Zefan Li <lizefan@huawei.com>, Li Guifu <blucerlee@gmail.com>
+Subject: [ANNOUNCE] erofs-utils: release 1.0 and package inclusion requests
+Message-ID: <20191024033259.GA2513@hsiangkao-HP-ZHAN-66-Pro-G1>
 MIME-Version: 1.0
-In-Reply-To: <2a8a99a6-4b39-e459-988a-ba9502919044@acm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/23/19 7:34 PM, Bart Van Assche wrote:
-> On 2019-10-22 10:41, André Almeida wrote:
->> The only usage of the label "done" is when (rq->tag != -1) at the
->> begging of the function. Rather than jumping to label, we can just
->> remove this label and execute the code at the "if". Besides that,
->> the code that would be executed after the label "done" is the return of
->> the logical expression (rq->tag != -1) but since we are already inside
->> the if, we now that this is true. Remove the label and replace the goto
->> with the proper result of the label.
->>
->> Signed-off-by: André Almeida <andrealmeid@collabora.com>
->> ---
->> Hello,
->>
->> I've used `blktest` to check if this change add any regression. I have
->> used `./check block` and I got the same results with and without this
->> patch (a bunch of "passed" and three "not run" because of the virtual
->> scsi capabilities). Please let me know if there would be a better way to
->> test changes at block stack.
->>
->> This commit was rebase at linux-block/for-5.5/block.
->>
->> Thanks,
->> 	André
->> ---
->>   block/blk-mq.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index 8538dc415499..1e067b78ab97 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -1036,7 +1036,7 @@ bool blk_mq_get_driver_tag(struct request *rq)
->>   	bool shared;
->>   
->>   	if (rq->tag != -1)
->> -		goto done;
->> +		return true;
->>   
->>   	if (blk_mq_tag_is_reserved(data.hctx->sched_tags, rq->internal_tag))
->>   		data.flags |= BLK_MQ_REQ_RESERVED;
->> @@ -1051,7 +1051,6 @@ bool blk_mq_get_driver_tag(struct request *rq)
->>   		data.hctx->tags->rqs[rq->tag] = rq;
->>   	}
->>   
->> -done:
->>   	return rq->tag != -1;
->>   }
-> 
-> Do we really need code changes like the above? I'm not aware of any text
-> in the Documentation/ directory that forbids the use of goto statements.
+Hi folks,
 
-Agree, it looks fine as-is. It's also a fast path, so I'd never get rid
-of that without looking at the generated code.
+I'm here to announce erofs-utils 1.0, which is userspace utilities of
+EROFS file system and available at,
 
--- 
-Jens Axboe
+git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git tags/v1.0
+
+ * first release with the following new features:
+   - (mkfs.erofs) uncompressed file support;
+   - (mkfs.erofs) uncompressed tail-end packing inline data support;
+   - (mkfs.erofs) lz4 / lz4HC compressed file support;
+   - (mkfs.erofs) special file support;
+   - (mkfs.erofs) inline / shared xattrs support;
+   - (mkfs.erofs) Posix ACL support;
+
+It's also a package inclusion request (I've noticed a openSUSE package)
+and please kindly read README first before starting.
+
+As related materials mentioned [1] [2], the goal of EROFS is to save
+extra storage space with guaranteed end-to-end performance for read-only
+files, which has better performance via fixed-sized output compression
+and inplace decompression over all other compression filesystems
+based on fixed-sized input compression. It even has better performance
+in a large compression ratio range compared with generic uncompressed
+filesystems with proper CPU-storage combinations.
+
+EROFS has been widely deployed to all HUAWEI smartphones for Android
+system partitions from EMUI 9.1. In other words, if you buy any new
+HUAWEI smartphones this year or upgrade your old phones with recent
+EMUI 9.1+ releases, you will surely get an EROFS commercial copy.
+EROFS is stable enough proven by 200-million+ devices [3] on the market.
+In conclusion, it's highly recommended to try it out now with latest
+code for all similar scenarios.
+
+What we are recently working on are
+ - demonstrate a new XZ algorithm in order to prepare for high CR
+   compression, which is the next step of the generic approach;
+ - prepare for releasing erofs-utils 1.0;
+
+The roadmap of EROFS was discussed in China Linux Storage and File
+System Workshop 2019 [4] shown as the presentation [5].
+And it's still an open discussion as well since we are quite happy
+to hear, implement and enhance any useful feature requests from
+communities with proper priority and provide more complete and
+competitive solution to all interested users and enrich related
+ecosystem.
+
+In the end, feel free to feedback any comments, questions, bugs,
+suggestions, etc. to us for better improvements and welcome to join
+us as well :-)
+ linux-erofs@lists.ozlabs.org
+
+Best regards and have a great day,
+Gao Xiang
+
+[1] https://kccncosschn19eng.sched.com/event/Nru2/erofs-an-introduction-and-our-smartphone-practice-xiang-gao-huawei
+[2] https://www.usenix.org/conference/atc19/presentation/gao
+[3] https://www.huaweicentral.com/huawei-exceeds-200-million-smartphone-shipment-64-days-ahead-compared-to-2018/
+[4] Here are some past year annual report:
+    https://blogs.oracle.com/linux/china-linux-storage-and-file-system-clsf-workshop-2014-v2
+    https://blogs.oracle.com/linux/china-linux-storage-and-file-system-clsf-workshop-2015-report-v2
+[5] https://github.com/hsiangkao/erofs-roadmap/raw/master/erofs-roadmap.pdf
 
