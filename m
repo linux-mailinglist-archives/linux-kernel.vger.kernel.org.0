@@ -2,94 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 090E5E27CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 03:42:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8835E27D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 03:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405081AbfJXBl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 21:41:56 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34043 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbfJXBl4 (ORCPT
+        id S2407708AbfJXBsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 21:48:08 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:17634 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbfJXBsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 21:41:56 -0400
-Received: by mail-lj1-f193.google.com with SMTP id j19so23146898lja.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 18:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8OJxaH+6kPmw9dgASj0fuVpQ14VN3FuPc/5yGSGtmbY=;
-        b=Ztl5xY+MLrQm864BsPw6LxqQ7I482HU/mx+dmOZ3vBiev+zX+ecZlrDHrjPP1TJ5M0
-         G1slYe3ezYIVVAOb2tNWoDLJLHhD2Cq6H0rjPHtbPmltWsEi235k+6Bbo49lYMGy7KwI
-         ZUNKfysobLawVrjElAPcaLxASua/+EdSTxJrhZA2hUUL1kCZLO1oXm46VpEXehooJ2sQ
-         GgBjKEg/L0bqGBaeDaY0zYdWAXOZfrHpYl0VaLF5l+JtJuNtN6QC6DZGRoZP4Tlb2y3m
-         yynPG36KPPVA+HJWOKqXL2VPvB5d09J6tZSSxrrlrnhYSQB7nnQE5Nrylhs1XdHy1NBs
-         L5pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8OJxaH+6kPmw9dgASj0fuVpQ14VN3FuPc/5yGSGtmbY=;
-        b=b6jIyJRWKY8RS/se9dM/Edb6kRcvBY6vdrfjZlpE7aQyArtpTFX5uPFmTUyREG9+ao
-         d/haZv0A8xvLOjF0BZSGBxVo/rE2KDOfwFkKgqzhiSXaboxEi6uqB2ccKVCi18Md5FD/
-         rmgF/PLPtPHkTQsVX+4RbPJRvnthDoXaCNMdFTO0wwG77gjgnyLuAV/PHBf8T0GSBhx3
-         XVVECoblO6pyx/803dFxTDlj8enBXAxYQ7vcQ+ps2ReXEdCGG7SBtyktopOftbZDi1cU
-         alvkpYJXUTaT3HwGboghBy/6XaFAFtxIfvRAOFBDd9RaBs3ZThlDJWIs4j9YLdkZy2pS
-         60SQ==
-X-Gm-Message-State: APjAAAU9AezLyi+7hBtJgPeDxbEE0rJGZO7V3ItRdgg6gTXaOZvq2D3s
-        TVg4YkVH1GyW7YZdUuo0PCJcxd8R04wkzikzgsN0ZA==
-X-Google-Smtp-Source: APXvYqxFU/AdvtGEjXjz6AO9yFhahr2FZeEFXGQJlEkrVWjpBVlmtuHmyjLej6w3l0uiAHH5Qi0htKzJtZqZqFYOG2Q=
-X-Received: by 2002:a2e:2c0f:: with SMTP id s15mr24577899ljs.63.1571881313012;
- Wed, 23 Oct 2019 18:41:53 -0700 (PDT)
+        Wed, 23 Oct 2019 21:48:07 -0400
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x9O1m38r025121
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 10:48:03 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x9O1m38r025121
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1571881684;
+        bh=Pg0PBlnvPGzMa1Lyb7SgzTssmkI1SxEtJ6FEB1T4F30=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ofNboEQUqp9lsgicKTvUAhaI7rxygS4zx6c0oGCexmwGMPEnMQ2X2tFyof+S6L0J6
+         v0OmQrC6FYcrzKSBR3CwB375LfzIrrpjUdons4tKy3jNeXm/SD874D9IsRl4EWrzNp
+         AjNjFCpTMcSsJCfcmcotwgHuxmfSEPWVX5uHhVjI3yoONOKjO0dL6pnEoKFQdXWHLL
+         vpvhZaeulMcrd9JVnoaJWAOwCMbJzvw7ZD38JJ4c0m6AOkpSah3shwoWHWn0wGLBTf
+         X7yYyHqp8S9OjAFYIPhc3QrG0AUr7iQoh/FqYciJRtC/TCAFmaJckK+MB/dxA7Z62/
+         xXXczs18i3CRA==
+X-Nifty-SrcIP: [209.85.222.52]
+Received: by mail-ua1-f52.google.com with SMTP id m21so6646308ual.13
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 18:48:03 -0700 (PDT)
+X-Gm-Message-State: APjAAAXqhaCeoxRxgc0ESYmXbVgvVDmaSK8YOZsPnBkTEgPL8U/ThyJv
+        UBXyk4V19NPdvI6B139gWmYTcC15+3sk/qZyUZ4=
+X-Google-Smtp-Source: APXvYqx1CqHmDEr3VPRqLGPoMM6fTlsUos2Z4E1CXGQPNl+XNURVhKBiM/jscveAYlAHmW9WHc6ytxEH92P8yvA+VtU=
+X-Received: by 2002:a9f:3e81:: with SMTP id x1mr7475449uai.121.1571881682588;
+ Wed, 23 Oct 2019 18:48:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <2e3d8287d05ce2d642c0445fbef6f1960124c557.1571828539.git.baolin.wang@linaro.org>
- <CAK8P3a0i_xvSzeRxfT-5LLpaAfGx3USsuXX1dv1x6Bg87jeopg@mail.gmail.com> <CAOesGMg5MH3Dq8yBLhHZCJJwMqVaiqqJyhs-tNE_nWDzUaTPCw@mail.gmail.com>
-In-Reply-To: <CAOesGMg5MH3Dq8yBLhHZCJJwMqVaiqqJyhs-tNE_nWDzUaTPCw@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Thu, 24 Oct 2019 09:41:41 +0800
-Message-ID: <CAMz4kuKRzqtevbUfpT93MLM_9L6jA5oT7g=r9RKVyG4xK=_E1g@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Update the Spreadtrum SoC maintainer
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Orson Zhai <orsonzhai@gmail.com>, baolin.wang7@gmail.com,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191018161033.261971-7-samitolvanen@google.com> <20191022162826.GC699@lakrids.cambridge.arm.com>
+ <CABCJKudsD6jghk4i8Tp4aJg0d7skt6sU=gQ3JXqW8sjkUuX7vA@mail.gmail.com>
+In-Reply-To: <CABCJKudsD6jghk4i8Tp4aJg0d7skt6sU=gQ3JXqW8sjkUuX7vA@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 24 Oct 2019 10:47:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATrz4fTp1RWHfwq36M4Xs1CdkoZtnoYfZ4ouNKow5F0RQ@mail.gmail.com>
+Message-ID: <CAK7LNATrz4fTp1RWHfwq36M4Xs1CdkoZtnoYfZ4ouNKow5F0RQ@mail.gmail.com>
+Subject: Re: [PATCH 06/18] add support for Clang's Shadow Call Stack (SCS)
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Oct 2019 at 23:37, Olof Johansson <olof@lixom.net> wrote:
+On Thu, Oct 24, 2019 at 1:59 AM Sami Tolvanen <samitolvanen@google.com> wrote:
 >
-> On Wed, Oct 23, 2019 at 5:17 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> On Tue, Oct 22, 2019 at 9:28 AM Mark Rutland <mark.rutland@arm.com> wrote:
+> > I think it would be preferable to follow the example of CC_FLAGS_FTRACE
+> > so that this can be filtered out, e.g.
 > >
-> > On Wed, Oct 23, 2019 at 1:06 PM Baolin Wang <baolin.wang@linaro.org> wrote:
-> > > +F:     drivers/power/reset/sc27xx-poweroff.c
-> > > +F:     drivers/leds/leds-sc27xx-bltc.c
-> > > +F:     drivers/input/misc/sc27xx-vibra.c
-> > > +F:     drivers/power/supply/sc27xx_fuel_gauge.c
-> > > +F:     drivers/power/supply/sc2731_charger.c
-> > > +F:     drivers/rtc/rtc-sc27xx.c
-> > > +F:     drivers/regulator/sc2731-regulator.c
-> > > +F:     drivers/nvmem/sc27xx-efuse.c
-> > > +F:     drivers/iio/adc/sc27xx_adc.c
-> > >  N:     sprd
+> > ifdef CONFIG_SHADOW_CALL_STACK
+> > CFLAGS_SCS := -fsanitize=shadow-call-stack
+> > KBUILD_CFLAGS += $(CFLAGS_SCS)
+> > export CC_FLAGS_SCS
+> > endif
 > >
-> > Maybe add a regex pattern for "sc27xx" instead of listing each file
-> > individually?
-> > That would simplify it when files move around or you add more drivers that
-> > follow the same naming.
+> > ... with removal being:
+> >
+> > CFLAGS_REMOVE := $(CC_FLAGS_SCS)
+> >
+> > ... or:
+> >
+> > CFLAGS_REMOVE_obj.o := $(CC_FLAGS_SCS)
+> >
+> > That way you only need to define the flags once, so the enable and
+> > disable falgs remain in sync by construction.
 >
-> Agreed.
->
-> In addition to that: Baolin, when you resend this, feel free to send
-> it to soc@kernel.org so we get it into our patchwork tracker (if you
-> want us to apply it directly).
+> CFLAGS_REMOVE appears to be only implemented for objects, which means
+> there's no convenient way to filter out flags for everything in
+> arch/arm64/kvm/hyp, for example. I could add a CFLAGS_REMOVE
+> separately for each object file, or we could add something like
+> ccflags-remove-y to complement ccflags-y, which should be relatively
+> simple. Masahiro, do you have any suggestions?
 
-Sorry, I missed soc@kernel.org mail list, and will add it in V2. Thanks.
+
+I am fine with 'ccflags-remove-y'.
+
+Thanks.
+
 
 -- 
-Baolin Wang
 Best Regards
+Masahiro Yamada
