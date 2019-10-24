@@ -2,118 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DA0FE37D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B9AE37D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:28:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439867AbfJXQZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 12:25:15 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58888 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733261AbfJXQZP (ORCPT
+        id S2409755AbfJXQ16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 12:27:58 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:56946 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2405586AbfJXQ15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 12:25:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qRvbB1DtzyIxHygXmCt9H0/9hok1MUyXJRvheNP/d/A=; b=0fNHH7wYU8K5SQRItorJjuSmY
-        BDNJr8VcbWKdq5PzXU7KMo3ChB2WOzqRKkNaQPggtGijmFUWibJY5cZbmoBty7Ye7npOTFCr1CvVn
-        oi+w30QJVb2ACfsUGLjCyEmXuGnUG4wbByZQi6fmFgIqGjc3+507wrFWJZYnbLDvj2qkp2IkHtQlc
-        oj+AxStnPUeTxuJaR0b+7/SQ1bRFOi2nDg+rGmsZbMGTtGep1aFrAnFjjF9s8QIechHZqQPi0Plhe
-        ieZuCxykvVRcmsgVr7Yn7U1F5/7CaoPOqj2Yys2Sz/JT5HpHwv+6wKNXCFTkr1XPjTPB07kVJ4xGn
-        L+jnPuDnw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNfue-0001RD-3t; Thu, 24 Oct 2019 16:24:36 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7DC773056C0;
-        Thu, 24 Oct 2019 18:23:34 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F3AC82100B87D; Thu, 24 Oct 2019 18:24:32 +0200 (CEST)
-Date:   Thu, 24 Oct 2019 18:24:32 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     syzbot <syzbot+c034966b0b02f94f7f34@syzkaller.appspotmail.com>
-Cc:     aarcange@redhat.com, akpm@linux-foundation.org,
-        christian@brauner.io, cyphar@cyphar.com, elena.reshetova@intel.com,
-        elver@google.com, guro@fb.com, keescook@chromium.org,
-        ldv@altlinux.org, linux-kernel@vger.kernel.org,
-        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        viro@zeniv.linux.org.uk, wad@chromium.org
-Subject: Re: KCSAN: data-race in __rb_rotate_set_parents / vm_area_dup
-Message-ID: <20191024162432.GA4097@hirez.programming.kicks-ass.net>
-References: <000000000000b49e190595aa39fe@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000b49e190595aa39fe@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 24 Oct 2019 12:27:57 -0400
+Received: from mr3.cc.vt.edu (mr3.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x9OGRuTc029169
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 12:27:56 -0400
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x9OGRpdZ003156
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 12:27:56 -0400
+Received: by mail-qk1-f199.google.com with SMTP id k67so24048105qkc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 09:27:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=bsN59ZY0yNzgZCIBp0VQtgU1UUq95H4MJw3f/UhzjmQ=;
+        b=NIVmaXkqomzUuTOn9azDCcJnh4ZwX5ZzkyuOai3B+zXT9j/tcGDMpibMixIPSrs3ee
+         HUCaVHY1df6J6nRkY1z31cdsWdVJGS0R6/eogAYJVtsC+KZr/0dIamXjhB5nzDKQsZdg
+         A9DA0o+Y8/So4mU1MjPxPw1qTsTXMGvx7lor4sFF+/wnjEKWSOB9OqfGsclbff9tTrIn
+         2Owyu7yOTbi1Y97IUOrwLoA5i6ZI90BtyIjEFvAEwXKA2GOuT3EyUH05d00juNaUVVqO
+         FvtyDXmBbeWuWe603Q0RYlveZlE/nqnniXgCFx8cmppPkOyUgTxpXcvPXj92i+Ebd1QH
+         OZcw==
+X-Gm-Message-State: APjAAAVnXqwVT+yipscWLecXgu/esayVrk0Wy71UOGzEZ4ZVlNRBZbxC
+        nauUy9sLzfQorGYX10e/u3Mx7Ujs5wcDGjMHcTgUTe13MPsa63zbkgZjJzU4waiO5Mj5dPDCVQ/
+        8FP/d65ztiSxSt1Bqs6SOffx9S5C1SK4W0ds=
+X-Received: by 2002:a0c:92dc:: with SMTP id c28mr15714534qvc.26.1571934470701;
+        Thu, 24 Oct 2019 09:27:50 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzkQAmcVf+6706DClmV4SjT0O16B06ZuqsaMrMGTqHXVbTS3u02dKBqi7McVkGiv/fbSgjmkQ==
+X-Received: by 2002:a0c:92dc:: with SMTP id c28mr15714469qvc.26.1571934470085;
+        Thu, 24 Oct 2019 09:27:50 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id d126sm10733461qkc.93.2019.10.24.09.27.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2019 09:27:48 -0700 (PDT)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Joe Perches <joe@perches.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/15] staging: exfat: Clean up return codes - FFS_PERMISSIONERR
+In-Reply-To: <915cd2a3ee58222b63c14f9f1819a0aa0b379a4f.camel@perches.com>
+References: <20191024155327.1095907-1-Valdis.Kletnieks@vt.edu> <20191024155327.1095907-5-Valdis.Kletnieks@vt.edu>
+ <915cd2a3ee58222b63c14f9f1819a0aa0b379a4f.camel@perches.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1571934467_59326P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 24 Oct 2019 12:27:47 -0400
+Message-ID: <1107916.1571934467@turing-police>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 09:07:08AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    05f22368 x86, kcsan: Enable KCSAN for x86
-> git tree:       https://github.com/google/ktsan.git kcsan
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1060c47b600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=87d111955f40591f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c034966b0b02f94f7f34
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+c034966b0b02f94f7f34@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KCSAN: data-race in __rb_rotate_set_parents / vm_area_dup
-> 
-> read to 0xffff88811eef53e8 of 200 bytes by task 7738 on cpu 0:
->  vm_area_dup+0x70/0xf0 kernel/fork.c:359
->  __split_vma+0x88/0x350 mm/mmap.c:2678
->  __do_munmap+0xb02/0xb60 mm/mmap.c:2803
->  do_munmap mm/mmap.c:2856 [inline]
->  mmap_region+0x165/0xd50 mm/mmap.c:1749
->  do_mmap+0x6d4/0xba0 mm/mmap.c:1577
->  do_mmap_pgoff include/linux/mm.h:2353 [inline]
->  vm_mmap_pgoff+0x12d/0x190 mm/util.c:496
->  ksys_mmap_pgoff+0x2d8/0x420 mm/mmap.c:1629
->  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
->  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
->  __x64_sys_mmap+0x91/0xc0 arch/x86/kernel/sys_x86_64.c:91
->  do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> write to 0xffff88811eef5440 of 8 bytes by task 7737 on cpu 1:
->  __rb_rotate_set_parents+0x4d/0xf0 lib/rbtree.c:79
->  __rb_insert lib/rbtree.c:215 [inline]
->  __rb_insert_augmented+0x109/0x370 lib/rbtree.c:459
->  rb_insert_augmented include/linux/rbtree_augmented.h:50 [inline]
->  rb_insert_augmented_cached include/linux/rbtree_augmented.h:60 [inline]
->  vma_interval_tree_insert+0x196/0x230 mm/interval_tree.c:23
->  __vma_link_file+0xd9/0x110 mm/mmap.c:634
->  __vma_adjust+0x1ac/0x12a0 mm/mmap.c:842
->  vma_adjust include/linux/mm.h:2276 [inline]
->  __split_vma+0x208/0x350 mm/mmap.c:2707
->  split_vma+0x73/0xa0 mm/mmap.c:2736
->  mprotect_fixup+0x43f/0x510 mm/mprotect.c:413
->  do_mprotect_pkey+0x3eb/0x660 mm/mprotect.c:553
->  __do_sys_mprotect mm/mprotect.c:578 [inline]
->  __se_sys_mprotect mm/mprotect.c:575 [inline]
->  __x64_sys_mprotect+0x51/0x70 mm/mprotect.c:575
->  do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+--==_Exmh_1571934467_59326P
+Content-Type: text/plain; charset=us-ascii
 
-What is this thing trying to tell me? That the copy on alloc is racy,
-because at that point the object isn't exposed yet.
+On Thu, 24 Oct 2019 09:23:33 -0700, Joe Perches said:
+> On Thu, 2019-10-24 at 11:53 -0400, Valdis Kletnieks wrote:
 
-How do you tell it to shut up?
+> >  	if (err) {
+> > -		if (err == FFS_PERMISSIONERR)
+> > +		if (err == -EPERM)
+> >  			err = -EPERM;
+> >  		else if (err == FFS_INVALIDPATH)
+> >  			err = -EINVAL;
+>
+> These test and assign to same value blocks look kinda silly.
+
+One patch, one thing.  Those are getting cleaned up in a subsequent patch.:)
+
+--==_Exmh_1571934467_59326P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQIVAwUBXbHRAgdmEQWDXROgAQLonRAAgmgi1IyWgKM8Z+fUANqetKRbDPtKzie3
+y57H8MYZukD2LXLVrzSbZAZxEZzOr5/UXll3daYEWN6FH2nmXBpmMZO9La7jFEll
+m7wEEG0ET6g03Kke3ZYyEFntLjnFEhmYxk2lWy03zFpJQ292BU+TmH0AFob8S5Xg
+M665oOaEB6Biv+4jJ5+cgBGDyiDgxED6G6qLStbLC2lbERJ3jfoDuR2WegOA6zu5
+ZTGY2/fWCJ/ejYfVF5rM7mTlg0FQD+9xYHgNRZdRg2YsNDhk5Osnisols8OVk3im
+H0Y5xsBgzhtZljIlwk1PI/IlWIGn/f3dgNH9LTdsXxm4aKE76VUFnZAk1/y2wMRP
+ZXieXPr8D9VvSLD5YpINE1hkBRNb/fVbm0zpiSnWN/U4jNtvAYAeFrEfhOiDc+Dn
+VCKBiOmUrrb0AkaZJt5D6+BgEZFnYaO1hHUqkL83R8QAK6d+azSTgVVvHDNc4Fif
+iTt/pKW7kN6YP+M6pi07uZI7uEzGsGwSrigiJXE+nOv0xe/BbeDGSDMO4Env3Wym
+laF62431/LAMsQxv7SJ1+i64AI1vLcOIw11avtsgIGnbNyAF0INfQs+GPTlGOQvA
+j3cNLGrfw6bDIKloyLfUA7+P8iCTBaTX2tpO+FyX2Sg9N0nfPFH6yqPLvqhznwPi
+Dt+U26hCtuM=
+=Ofym
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1571934467_59326P--
