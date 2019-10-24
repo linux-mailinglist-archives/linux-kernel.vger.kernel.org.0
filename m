@@ -2,74 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52917E2AE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:15:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E717E2B2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:32:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437917AbfJXHP2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 03:15:28 -0400
-Received: from twhmllg4.macronix.com ([122.147.135.202]:56770 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437885AbfJXHP1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 03:15:27 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id x9O7E52w080302;
-        Thu, 24 Oct 2019 15:14:07 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     miquel.raynal@bootlin.com, richard@nod.at, marek.vasut@gmail.com,
-        dwmw2@infradead.org, bbrezillon@kernel.org,
-        computersforpeace@gmail.com, vigneshr@ti.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     devicetree@vger.kernel.org, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        masonccyang@mxic.com.tw
-Subject: [PATCH v4 2/2] dt-bindings: mtd: Document Macronix NAND device bindings
-Date:   Thu, 24 Oct 2019 15:40:07 +0800
-Message-Id: <1571902807-10388-3-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1571902807-10388-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1571902807-10388-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG4.macronix.com x9O7E52w080302
+        id S2408622AbfJXHc3 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 24 Oct 2019 03:32:29 -0400
+Received: from mga14.intel.com ([192.55.52.115]:60448 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404582AbfJXHc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 03:32:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 00:32:28 -0700
+X-IronPort-AV: E=Sophos;i="5.68,223,1569308400"; 
+   d="scan'208";a="192102228"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 00:32:23 -0700
+From:   Jani Nikula <jani.nikula@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        intel-gfx@lists.freedesktop.org,
+        Vishal Kulkarni <vishal@chelsio.com>, netdev@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v4] string-choice: add yesno(), onoff(), enableddisabled(), plural() helpers
+In-Reply-To: <20191023155619.43e0013f0c8c673a5c508c1e@linux-foundation.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20191023131308.9420-1-jani.nikula@intel.com> <20191023155619.43e0013f0c8c673a5c508c1e@linux-foundation.org>
+Date:   Thu, 24 Oct 2019 10:32:20 +0300
+Message-ID: <877e4uegzf.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the bindings used by the Macronix NAND device.
+On Wed, 23 Oct 2019, Andrew Morton <akpm@linux-foundation.org> wrote:
+> On Wed, 23 Oct 2019 16:13:08 +0300 Jani Nikula <jani.nikula@intel.com> wrote:
+>
+>> The kernel has plenty of ternary operators to choose between constant
+>> strings, such as condition ? "yes" : "no", as well as value == 1 ? "" :
+>> "s":
+>> 
+>> $ git grep '? "yes" : "no"' | wc -l
+>> 258
+>> $ git grep '? "on" : "off"' | wc -l
+>> 204
+>> $ git grep '? "enabled" : "disabled"' | wc -l
+>> 196
+>> $ git grep '? "" : "s"' | wc -l
+>> 25
+>> 
+>> Additionally, there are some occurences of the same in reverse order,
+>> split to multiple lines, or otherwise not caught by the simple grep.
+>> 
+>> Add helpers to return the constant strings. Remove existing equivalent
+>> and conflicting functions in i915, cxgb4, and USB core. Further
+>> conversion can be done incrementally.
+>> 
+>> The main goal here is to abstract recurring patterns, and slightly clean
+>> up the code base by not open coding the ternary operators.
+>
+> Fair enough.
+>
+>> --- /dev/null
+>> +++ b/include/linux/string-choice.h
+>> @@ -0,0 +1,31 @@
+>> +/* SPDX-License-Identifier: MIT */
+>> +/*
+>> + * Copyright © 2019 Intel Corporation
+>> + */
+>> +
+>> +#ifndef __STRING_CHOICE_H__
+>> +#define __STRING_CHOICE_H__
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +static inline const char *yesno(bool v)
+>> +{
+>> +	return v ? "yes" : "no";
+>> +}
+>> +
+>> +static inline const char *onoff(bool v)
+>> +{
+>> +	return v ? "on" : "off";
+>> +}
+>> +
+>> +static inline const char *enableddisabled(bool v)
+>> +{
+>> +	return v ? "enabled" : "disabled";
+>> +}
+>> +
+>> +static inline const char *plural(long v)
+>> +{
+>> +	return v == 1 ? "" : "s";
+>> +}
+>> +
+>> +#endif /* __STRING_CHOICE_H__ */
+>
+> These aren't very good function names.  Better to create a kernel-style
+> namespace such as "choice_" and then add the expected underscores:
+>
+> choice_yes_no()
+> choice_enabled_disabled()
+> choice_plural()
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- .../devicetree/bindings/mtd/nand-macronix.txt        | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/nand-macronix.txt
+I was merely using existing function names used in several drivers in
+the kernel. But I can rename no problem.
 
-diff --git a/Documentation/devicetree/bindings/mtd/nand-macronix.txt b/Documentation/devicetree/bindings/mtd/nand-macronix.txt
-new file mode 100644
-index 0000000..cb60358
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/nand-macronix.txt
-@@ -0,0 +1,20 @@
-+Macronix NANDs Device Tree Bindings
-+-----------------------------------
-+
-+Macronix NANDs support randomizer operation for user data scrambled,
-+which can be enabled with a SET_FEATURE. The penalty of randomizer
-+is subpage accesses prohibited. By adding a new specific property
-+in children nodes to enable randomizer function.
-+
-+Required NAND chip properties in children mode:
-+- randomizer enable: should be "mxic,enable-randomizer-otp"
-+
-+Example:
-+
-+	nand: nand-controller@unit-address {
-+
-+		nand@0 {
-+			reg = <0>;
-+			mxic,enable-randomizer-otp;
-+		};
-+	};
+Are your suggestions the names we can settle on now, or should I expect
+to receive more opinions, but only after I send v5?
+
+> (Example: note that slabinfo.c already has an "onoff()").
+
+Under tools/ though? I did mean to address all conflicts in this patch.
+
+> Also, I worry that making these functions inline means that each .o
+> file will contain its own copy of the strings ("yes", "no", "enabled",
+> etc) if the .c file calls the relevant helper.  I'm not sure if the
+> linker is smart enough (yet) to fix this up.  If not, we will end up
+> with a smaller kernel by uninlining these functions. 
+> lib/string-choice.c would suit.
+>
+> And doing this will cause additional savings: calling a single-arg
+> out-of-line function generates less .text than calling yesno().  When I
+> did this: 
+>
+> --- a/include/linux/string-choice.h~string-choice-add-yesno-onoff-enableddisabled-plural-helpers-fix
+> +++ a/include/linux/string-choice.h
+> @@ -8,10 +8,7 @@
+>  
+>  #include <linux/types.h>
+>  
+> -static inline const char *yesno(bool v)
+> -{
+> -	return v ? "yes" : "no";
+> -}
+> +const char *yesno(bool v);
+>  
+>  static inline const char *onoff(bool v)
+>  {
+>
+> The text segment of drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.o
+> (78 callsites) shrunk by 118 bytes.
+
+So we've already been back and forth on that particular topic in the
+history of this patch. v2 had lib/string-choice.c and no inlines [1].
+
+In the end, starting to use functions, inline or not, will let us rework
+the implementation as we see fit, without touching the callers.
+
+Again, it's no problem to go back to lib/string-choice.c, *once* more,
+and the effort is trivial, but the ping-pong is getting old.
+
+
+BR,
+Jani.
+
+
+[1] http://lore.kernel.org/r/20190930141842.15075-1-jani.nikula@intel.com
+
 -- 
-1.9.1
-
+Jani Nikula, Intel Open Source Graphics Center
