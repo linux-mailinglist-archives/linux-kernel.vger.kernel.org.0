@@ -2,186 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF15CE2E20
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:07:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5ACE2E2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393146AbfJXKH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 06:07:26 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:46852 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbfJXKH0 (ORCPT
+        id S2393251AbfJXKJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 06:09:03 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:54102 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393241AbfJXKJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 06:07:26 -0400
-Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 32F3F25B768;
-        Thu, 24 Oct 2019 21:07:23 +1100 (AEDT)
-Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 8C36236BD; Thu, 24 Oct 2019 12:07:20 +0200 (CEST)
-Date:   Thu, 24 Oct 2019 12:07:20 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Lianbo Jiang <lijiang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, jgross@suse.com,
-        Thomas.Lendacky@amd.com, bhe@redhat.com, x86@kernel.org,
-        kexec@lists.infradead.org, dhowells@redhat.com, mingo@redhat.com,
-        bp@alien8.de, ebiederm@xmission.com, hpa@zytor.com,
-        tglx@linutronix.de, dyoung@redhat.com, vgoyal@redhat.com,
-        d.hatayama@fujitsu.com
-Subject: Re: [PATCH 1/2 v5] x86/kdump: always reserve the low 1MiB when the
- crashkernel option is specified
-Message-ID: <20191024100719.GC11441@verge.net.au>
-References: <20191023141912.29110-1-lijiang@redhat.com>
- <20191023141912.29110-2-lijiang@redhat.com>
+        Thu, 24 Oct 2019 06:09:02 -0400
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x9OA8tth056753;
+        Thu, 24 Oct 2019 19:08:55 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp);
+ Thu, 24 Oct 2019 19:08:55 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126227201116.bbtec.net [126.227.201.116])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x9OA8n86056449
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 24 Oct 2019 19:08:54 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: INFO: task syz-executor can't die for more than 143 seconds. (2)
+To:     axboe@kernel.dk
+References: <000000000000c52dbf05958f3f3a@google.com>
+Cc:     syzbot <syzbot+b48daca8639150bc5e73@syzkaller.appspotmail.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <3fbc4bb2-a03b-fbfa-4803-47a6d0075ff2@I-love.SAKURA.ne.jp>
+Date:   Thu, 24 Oct 2019 19:08:48 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023141912.29110-2-lijiang@redhat.com>
-Organisation: Horms Solutions BV
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <000000000000c52dbf05958f3f3a@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linbo,
+On 2019/10/23 16:56, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    c4b9850b Add linux-next specific files for 20191018
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=177b3ab0e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c940ef12efcd1ec
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b48daca8639150bc5e73
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1356b8ff600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f48687600000
 
-thanks for your patch.
+The reproducer is trying to allocate 64TB of disk space on /dev/nullb0 using fallocate()
+but __blkdev_issue_zero_pages() cannot bail out upon SIGKILL (and therefore cannot
+terminate for minutes). Can we make it killable? I don't know what action is needed
+for undoing this loop...
 
-On Wed, Oct 23, 2019 at 10:19:11PM +0800, Lianbo Jiang wrote:
-> Kdump kernel will reuse the first 640k region because the real mode
-> trampoline has to work in this area. When the vmcore is dumped, the
-> old memory in this area may be accessed, therefore, kernel has to
-> copy the contents of the first 640k area to a backup region so that
-> kdump kernel can read the old memory from the backup area of the
-> first 640k area, which is done in the purgatory().
-> 
-> But, the current handling of copying the first 640k area runs into
-> problems when SME is enabled, kernel does not properly copy these
-> old memory to the backup area in the purgatory(), thereby, kdump
-> kernel reads out the encrypted contents, because the kdump kernel
-> must access the first kernel's memory with the encryption bit set
-> when SME is enabled in the first kernel. Please refer to this link:
-> 
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=204793
-> 
-> Finally, it causes the following errors, and the crash tool gets
-> invalid pointers when parsing the vmcore.
-> 
-> crash> kmem -s|grep -i invalid
-> kmem: dma-kmalloc-512: slab:ffffd77680001c00 invalid freepointer:a6086ac099f0c5a4
-> kmem: dma-kmalloc-512: slab:ffffd77680001c00 invalid freepointer:a6086ac099f0c5a4
-> crash>
-> 
-> To avoid the above errors, when the crashkernel option is specified,
-> lets reserve the remaining low 1MiB memory(after reserving real mode
-> memory) so that the allocated memory does not fall into the low 1MiB
-> area, which makes us not to copy the first 640k content to a backup
-> region in purgatory(). This indicates that it does not need to be
-> included in crash dumps or used for anything except the processor
-> trampolines that must live in the low 1MiB.
-> 
-> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-> ---
-> BTW:I also tried to fix the above problem in purgatory(), but there
-> are too many restricts in purgatory() context, for example: i can't
-> allocate new memory to create the identity mapping page table for
-> SME situation.
-> 
-> Currently, there are two places where the first 640k area is needed,
-> the first one is in the find_trampoline_placement(), another one is
-> in the reserve_real_mode(), and their content doesn't matter.
-> 
-> In addition, also need to clean all the code related to the backup
-> region later.
-> 
->  arch/x86/realmode/init.c |  2 ++
->  include/linux/kexec.h    |  2 ++
->  kernel/kexec_core.c      | 13 +++++++++++++
->  3 files changed, 17 insertions(+)
-> 
-> diff --git a/arch/x86/realmode/init.c b/arch/x86/realmode/init.c
-> index 7dce39c8c034..064cc79a015d 100644
-> --- a/arch/x86/realmode/init.c
-> +++ b/arch/x86/realmode/init.c
-> @@ -3,6 +3,7 @@
->  #include <linux/slab.h>
->  #include <linux/memblock.h>
->  #include <linux/mem_encrypt.h>
-> +#include <linux/kexec.h>
->  
->  #include <asm/set_memory.h>
->  #include <asm/pgtable.h>
-> @@ -34,6 +35,7 @@ void __init reserve_real_mode(void)
->  
->  	memblock_reserve(mem, size);
->  	set_real_mode_mem(mem);
-> +	kexec_reserve_low_1MiB();
->  }
->  
->  static void __init setup_real_mode(void)
-> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-> index 1776eb2e43a4..30acf1d738bc 100644
-> --- a/include/linux/kexec.h
-> +++ b/include/linux/kexec.h
-> @@ -306,6 +306,7 @@ extern void __crash_kexec(struct pt_regs *);
->  extern void crash_kexec(struct pt_regs *);
->  int kexec_should_crash(struct task_struct *);
->  int kexec_crash_loaded(void);
-> +void __init kexec_reserve_low_1MiB(void);
->  void crash_save_cpu(struct pt_regs *regs, int cpu);
->  extern int kimage_crash_copy_vmcoreinfo(struct kimage *image);
->  
-> @@ -397,6 +398,7 @@ static inline void __crash_kexec(struct pt_regs *regs) { }
->  static inline void crash_kexec(struct pt_regs *regs) { }
->  static inline int kexec_should_crash(struct task_struct *p) { return 0; }
->  static inline int kexec_crash_loaded(void) { return 0; }
-> +static inline void __init kexec_reserve_low_1MiB(void) { }
->  #define kexec_in_progress false
->  #endif /* CONFIG_KEXEC_CORE */
->  
-> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-> index 15d70a90b50d..5bd89f1fee42 100644
-> --- a/kernel/kexec_core.c
-> +++ b/kernel/kexec_core.c
-> @@ -37,6 +37,7 @@
->  #include <linux/compiler.h>
->  #include <linux/hugetlb.h>
->  #include <linux/frame.h>
-> +#include <linux/memblock.h>
->  
->  #include <asm/page.h>
->  #include <asm/sections.h>
-> @@ -70,6 +71,18 @@ struct resource crashk_low_res = {
->  	.desc  = IORES_DESC_CRASH_KERNEL
->  };
->  
-> +/*
-> + * When the crashkernel option is specified, only use the low
-> + * 1MiB for the real mode trampoline.
-> + */
-> +void __init kexec_reserve_low_1MiB(void)
-> +{
-> +	if (strstr(boot_command_line, "crashkernel=")) {
+        while (nr_sects != 0) {
+                bio = blk_next_bio(bio, __blkdev_sectors_to_bio_pages(nr_sects),
+                                   gfp_mask);
+                bio->bi_iter.bi_sector = sector;
+                bio_set_dev(bio, bdev);
+                bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
 
-Could you comment on the issue of using strstr which
-was raised by Hatayama-san in response to an earlier revision
-of this patch?
+                while (nr_sects != 0) {
+                        sz = min((sector_t) PAGE_SIZE, nr_sects << 9);
+                        bi_size = bio_add_page(bio, ZERO_PAGE(0), sz, 0);
+                        nr_sects -= bi_size >> 9;
+                        sector += bi_size >> 9;
+                        if (bi_size < sz)
+                                break;
+                }
+                cond_resched();
+        }
 
-Thanks in advance!
-
-> +		memblock_reserve(0, 1<<20);
-> +		pr_info("Reserving the low 1MiB of memory for crashkernel\n");
-> +	}
-> +}
-> +
->  int kexec_should_crash(struct task_struct *p)
->  {
->  	/*
-> -- 
-> 2.17.1
-> 
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
-> 
