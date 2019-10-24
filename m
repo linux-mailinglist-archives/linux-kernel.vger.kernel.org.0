@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53608E3842
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A97BFE3828
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:39:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503666AbfJXQj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 12:39:28 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51960 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503520AbfJXQin (ORCPT
+        id S2503564AbfJXQit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 12:38:49 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41382 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503532AbfJXQip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 12:38:43 -0400
-Received: by mail-wm1-f68.google.com with SMTP id q70so3589954wme.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 09:38:42 -0700 (PDT)
+        Thu, 24 Oct 2019 12:38:45 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p4so26845255wrm.8
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 09:38:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=e4HNR/0VM5m4e7dMrNKrSD8efxMPd+5rZb481ikFf74=;
-        b=M7WkmfL0zrA5DnctlcBxlGdxMtMvI7tb2Et+EcJD17XeKNEcanCAnSlnnFtfrQBuM3
-         sDhf5LBd626wET1CuSWyl/rNSMkVh7OT3aDCOds4shDrMV1BOqn/YQFAjcw5wHDP541P
-         1/KOQc4D2Q7cPOFKXNBlEJmLOHeUPfL218/n4FP/xi+GZncaONIbCHbY3wj8Ui4KD2w1
-         efGgPXWk+q/VIFUq9zoDrdj/MKBbzRWvdbAMOHU8q6g3mk2yO4zDLW0HKVtQslGanI6m
-         yJaTeQurgB38QyJxOF/EQuEb5uHiE/GtD2I2MEEBn+DHfT1q9WyC8IMLjupNUcM8DF8w
-         2oAg==
+        bh=J8DxW1d6v2NWJpBGtpmglXzzbNqCWfH+E3Y1OAoSPDQ=;
+        b=TocT4wWJl8/oyox28PzGdGFVTCR25Etd7BhP7Qc2cT5lzmEIZQi4tVOoNnf+I+jzVG
+         jH7I9TaqB1wIT4XzmJhJOBEWcNaJ5ICg+n0N50/AVxig+aa7g/rFuKqHScLtkHqD1DAp
+         eh/o1FgmMvGXskWwY+tBnjWvoGtX5TFg3g4wy3Nm/0yL0A2lDLBM7gWPHzm7PYmnZEeB
+         e/QOnIvS51dRheVYG+4wU+2vpucvGzRotxn7/Ub5aur/FiB+/VYXGyqTEAV2Gql4ncro
+         faX5qcVVEkPX+IqaJDgtdfJVRys2rkt+pKna51QOy+7bQEu5rfElCk68o3c1diDOkQen
+         hv1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=e4HNR/0VM5m4e7dMrNKrSD8efxMPd+5rZb481ikFf74=;
-        b=ZuHEpBUcryN4uCaO0e36tgjqH0Aew0Nv65WyUqvUggZgWyxOffiN+Gt2/Y1bOsEMMr
-         UuqIHY26h+ytf/F+ncVarq+o+G1DdMlg3C22gKmt1d7mVdFRvIBZujuUeMBdKi9KsQWw
-         IBJ8/14Ixy5Obc0B0c6nQhfA4nMEKUU1/b82ODxELFQtb4yML1GWe2BHBfQPniKl5+sM
-         IMY2VBRr4WoAVv0FgX2yVKc1Rcs+BY8Nser60qD4+R2zXo7VMjv+gZaVklbAJm8IMBkM
-         tZjbCMiDFdn2mgCZZu5tLMQ8JTnOC+8fCLHgVguSJ4QlTtFXWh5SbbmeaRL0pm3w3l+L
-         LjiA==
-X-Gm-Message-State: APjAAAXACZ68wpe5hBE0UzQI3UWKTBQT09ueeE7/sSOIjUt9KAhtBW0P
-        IVls2KxbMo4lqqE6QO3Gohh6PQ==
-X-Google-Smtp-Source: APXvYqxEHli1uD77KL/ELWWxWiIIpMJMsjHrKFyV9fTmvffZSzc7lJEAUYH66gJFBm49CiohcZ1L0Q==
-X-Received: by 2002:a1c:2884:: with SMTP id o126mr6171815wmo.153.1571935121495;
-        Thu, 24 Oct 2019 09:38:41 -0700 (PDT)
+        bh=J8DxW1d6v2NWJpBGtpmglXzzbNqCWfH+E3Y1OAoSPDQ=;
+        b=d4hbNYkApd7XQMRxEhFl5ES4gf23cMaKQSyQBdXyyUE9dbMgfBL4m2fRiXf5HgAJCC
+         DfQkWW2umsSc4hN89RaCav9+SueFWb+g0fAeI+21s5R7efGooN38lSkvljSbDNoNwLPX
+         u6Re5cZ07Nd8LnmwCKf2svHULoVYrdx/AQfcuSfZckic4o0HbLSotvhjUDHNS+dzaZBj
+         jsuJrcrbX1NvSMEWebOKaeqI4kxFFz8UciQt8FhjR6ay6T0mYhAcC6TMXQUHXWAV0yup
+         zOifkUNXz4uoxkbVaN98L7WG8v6RdqJazkTXSggu565jj2V65AIgbfWMWSPrg4nIAWD4
+         aDMg==
+X-Gm-Message-State: APjAAAU8vEl/kwrS6qlL/jPQ1ihQqG6WYGu9l+Va49le8a+Rsi80SaAa
+        YHdCl+qON5MO2OBy5CNZDxgqxA==
+X-Google-Smtp-Source: APXvYqzqEEkHDBCb4DZUQVidIpkiui9GSpU76/wGElNi8aPtzMHnP5x265jbONW6aIDcRe7IUqFl4A==
+X-Received: by 2002:adf:8103:: with SMTP id 3mr5023528wrm.194.1571935122686;
+        Thu, 24 Oct 2019 09:38:42 -0700 (PDT)
 Received: from localhost.localdomain ([95.149.164.99])
-        by smtp.gmail.com with ESMTPSA id 6sm3446175wmd.36.2019.10.24.09.38.40
+        by smtp.gmail.com with ESMTPSA id 6sm3446175wmd.36.2019.10.24.09.38.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2019 09:38:40 -0700 (PDT)
+        Thu, 24 Oct 2019 09:38:41 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     daniel.thompson@linaro.org, arnd@arndb.de, broonie@kernel.org,
         linus.walleij@linaro.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         baohua@kernel.org, stephan@gerhold.net,
         Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v3 05/10] mfd: mfd-core: Remove mfd_clone_cell()
-Date:   Thu, 24 Oct 2019 17:38:27 +0100
-Message-Id: <20191024163832.31326-6-lee.jones@linaro.org>
+Subject: [PATCH v3 06/10] x86: olpc-xo1-pm: Remove invocation of MFD's .enable()/.disable() call-backs
+Date:   Thu, 24 Oct 2019 17:38:28 +0100
+Message-Id: <20191024163832.31326-7-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191024163832.31326-1-lee.jones@linaro.org>
 References: <20191024163832.31326-1-lee.jones@linaro.org>
@@ -61,90 +61,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Providing a subsystem-level API helper seems over-kill just to save a
-few lines of C-code.  Previous commits saw us convert mfd_clone_cell()'s
-only user over to use a more traditional style of MFD child-device
-registration.  Now we can remove the superfluous helper from the MFD API.
+IO regions are now requested and released by this device's parent.
 
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 ---
- drivers/mfd/mfd-core.c   | 33 ---------------------------------
- include/linux/mfd/core.h | 18 ------------------
- 2 files changed, 51 deletions(-)
+ arch/x86/platform/olpc/olpc-xo1-pm.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-index 23276a80e3b4..8126665bb2d8 100644
---- a/drivers/mfd/mfd-core.c
-+++ b/drivers/mfd/mfd-core.c
-@@ -382,38 +382,5 @@ int devm_mfd_add_devices(struct device *dev, int id,
- }
- EXPORT_SYMBOL(devm_mfd_add_devices);
+diff --git a/arch/x86/platform/olpc/olpc-xo1-pm.c b/arch/x86/platform/olpc/olpc-xo1-pm.c
+index e1a32062a375..f067ac780ba7 100644
+--- a/arch/x86/platform/olpc/olpc-xo1-pm.c
++++ b/arch/x86/platform/olpc/olpc-xo1-pm.c
+@@ -12,7 +12,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/export.h>
+ #include <linux/pm.h>
+-#include <linux/mfd/core.h>
+ #include <linux/suspend.h>
+ #include <linux/olpc-ec.h>
  
--int mfd_clone_cell(const char *cell, const char **clones, size_t n_clones)
--{
--	struct mfd_cell cell_entry;
--	struct device *dev;
--	struct platform_device *pdev;
--	int i;
--
--	/* fetch the parent cell's device (should already be registered!) */
--	dev = bus_find_device_by_name(&platform_bus_type, NULL, cell);
--	if (!dev) {
--		printk(KERN_ERR "failed to find device for cell %s\n", cell);
--		return -ENODEV;
--	}
--	pdev = to_platform_device(dev);
--	memcpy(&cell_entry, mfd_get_cell(pdev), sizeof(cell_entry));
--
--	WARN_ON(!cell_entry.enable);
--
--	for (i = 0; i < n_clones; i++) {
--		cell_entry.name = clones[i];
--		/* don't give up if a single call fails; just report error */
--		if (mfd_add_device(pdev->dev.parent, -1, &cell_entry,
--				   cell_entry.usage_count, NULL, 0, NULL))
--			dev_err(dev, "failed to create platform device '%s'\n",
--					clones[i]);
--	}
--
--	put_device(dev);
--
--	return 0;
--}
--EXPORT_SYMBOL(mfd_clone_cell);
--
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Ian Molton, Dmitry Baryshkov");
-diff --git a/include/linux/mfd/core.h b/include/linux/mfd/core.h
-index b43fc5773ad7..bd8c0e089164 100644
---- a/include/linux/mfd/core.h
-+++ b/include/linux/mfd/core.h
-@@ -86,24 +86,6 @@ struct mfd_cell {
- extern int mfd_cell_enable(struct platform_device *pdev);
- extern int mfd_cell_disable(struct platform_device *pdev);
+@@ -120,16 +119,11 @@ static const struct platform_suspend_ops xo1_suspend_ops = {
+ static int xo1_pm_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+-	int err;
  
--/*
-- * "Clone" multiple platform devices for a single cell. This is to be used
-- * for devices that have multiple users of a cell.  For example, if an mfd
-- * driver wants the cell "foo" to be used by a GPIO driver, an MTD driver,
-- * and a platform driver, the following bit of code would be use after first
-- * calling mfd_add_devices():
-- *
-- * const char *fclones[] = { "foo-gpio", "foo-mtd" };
-- * err = mfd_clone_cells("foo", fclones, ARRAY_SIZE(fclones));
-- *
-- * Each driver (MTD, GPIO, and platform driver) would then register
-- * platform_drivers for "foo-mtd", "foo-gpio", and "foo", respectively.
-- * The cell's .enable/.disable hooks should be used to deal with hardware
-- * resource contention.
-- */
--extern int mfd_clone_cell(const char *cell, const char **clones,
--		size_t n_clones);
+ 	/* don't run on non-XOs */
+ 	if (!machine_is_olpc())
+ 		return -ENODEV;
+ 
+-	err = mfd_cell_enable(pdev);
+-	if (err)
+-		return err;
 -
- /*
-  * Given a platform device that's been created by mfd_add_devices(), fetch
-  * the mfd_cell that created it.
+ 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "can't fetch device resource info\n");
+@@ -152,8 +146,6 @@ static int xo1_pm_probe(struct platform_device *pdev)
+ 
+ static int xo1_pm_remove(struct platform_device *pdev)
+ {
+-	mfd_cell_disable(pdev);
+-
+ 	if (strcmp(pdev->name, "cs5535-pms") == 0)
+ 		pms_base = 0;
+ 	else if (strcmp(pdev->name, "olpc-xo1-pm-acpi") == 0)
 -- 
 2.17.1
 
