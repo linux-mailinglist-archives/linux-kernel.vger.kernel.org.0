@@ -2,133 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36FA7E2FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 13:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19CE3E2FC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 13:02:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392811AbfJXLCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 07:02:18 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35074 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391693AbfJXLCR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 07:02:17 -0400
-Received: by mail-ot1-f68.google.com with SMTP id z6so20279183otb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 04:02:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Wp7j55fCu8VBbV3w6xxbpPhvOdRSu/ha8VU4hcpzHdY=;
-        b=GSxZTUgn5T2HRAlKrADzvv53PhUqCr6HGwWIfZ+q0bFeBI/8il22Kv3vpugrhHlUKc
-         JSd3yXOh4TDUfIqO8JPYXGilp4Vg98FIe9l+pL6F5FO2iW7zWgkU28rHfnrJDKC/RUhT
-         9y7xvvCroceLV28G/DNxI6s3sI/MSBb0LxVcLxj5vL25ilXRyhqWJ+AnuTdwWYD+wKpX
-         O5vqsk+9Nvl/sUnYEZWYKKkmZRx3M69w2mSa0T0GYjtT0TBikdjdIHl9bdIy1avJXFGR
-         mVT16n7Jv0qZPjTSiWzuZVrSqaZmV1oEhg+iVLOxp3SXxbxsxWpuo8R2VJIKx8+2qGRR
-         M+7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Wp7j55fCu8VBbV3w6xxbpPhvOdRSu/ha8VU4hcpzHdY=;
-        b=oBGePFsu+zeocMJfvIAxB4AYF6efNSJgMzVxqBuqaNWQnAiUfBqHgBf79D2N9TwyMZ
-         OoEcOwpaH58VKdaxU49dEXMJvaBu+d32Evs9IleW6d0GSNDRN/t6OLyw4Y1v72oI241V
-         uBKtMbtZpR2OotpjuBiu2wvNldA2bnAhj5hkX3ERVoblMrKnUkhd5C8dvq4UFGc/nrpg
-         ogyzxzYvjtGhzmT47tsSA5A4ilXg1DCY79HJj2xLM+Rbq6ciDZMVhhx/1s205Auu189J
-         q/31RzN0vFj4vzFMlkOmRZFGdd0hxPPbjo/pPscqwHHd8+5QG9lHLiIL25a7z2w5Xf0L
-         MTTQ==
-X-Gm-Message-State: APjAAAXiOHNhtFLamc7emM+rAgi88CMLKkTRKJothTVqUan5HI9ODhjZ
-        CWLwZdixVPOpHrieTV7ZPAd0uDErFjAdyQbhd/iWxg==
-X-Google-Smtp-Source: APXvYqzzXJwi5QeAS4Gnmcn5kNWx1bB+mxOrVbyaL3mIhkaZR6F+nFKJsdPfH9bNhx4bqmlmQAfh3F8piEDK6aQ6BY4=
-X-Received: by 2002:a9d:82e:: with SMTP id 43mr8537524oty.23.1571914935893;
- Thu, 24 Oct 2019 04:02:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191017141305.146193-1-elver@google.com> <20191017141305.146193-2-elver@google.com>
- <20191022154858.GA13700@redhat.com> <CANpmjNPUT2B3rWaa=5Ee2Xs3HHDaUiBGpG09Q4h9Gemhsp9KFw@mail.gmail.com>
- <20191023162432.GC14327@redhat.com>
-In-Reply-To: <20191023162432.GC14327@redhat.com>
-From:   Marco Elver <elver@google.com>
-Date:   Thu, 24 Oct 2019 13:02:03 +0200
-Message-ID: <CANpmjNOOT+KR7m8KpETk1czyJLr3TeHsvvejwyuY3JXKr=eajg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] kcsan: Add Kernel Concurrency Sanitizer infrastructure
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alexander Potapenko <glider@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-efi@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S2393410AbfJXLCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 07:02:50 -0400
+Received: from foss.arm.com ([217.140.110.172]:47442 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393393AbfJXLCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 07:02:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6EFB04AC;
+        Thu, 24 Oct 2019 04:02:34 -0700 (PDT)
+Received: from entos-d05.shanghai.arm.com (entos-d05.shanghai.arm.com [10.169.40.35])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8A5543F71A;
+        Thu, 24 Oct 2019 04:02:29 -0700 (PDT)
+From:   Jianyong Wu <jianyong.wu@arm.com>
+To:     netdev@vger.kernel.org, yangbo.lu@nxp.com, john.stultz@linaro.org,
+        tglx@linutronix.de, pbonzini@redhat.com,
+        sean.j.christopherson@intel.com, maz@kernel.org,
+        richardcochran@gmail.com, Mark.Rutland@arm.com, will@kernel.org,
+        suzuki.poulose@arm.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        Steve.Capper@arm.com, Kaly.Xin@arm.com, justin.he@arm.com,
+        jianyong.wu@arm.com, nd@arm.com
+Subject: [RFC PATCH v6 2/7] psci: Let arm_smccc_1_1_invoke available by modules
+Date:   Thu, 24 Oct 2019 19:02:04 +0800
+Message-Id: <20191024110209.21328-3-jianyong.wu@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191024110209.21328-1-jianyong.wu@arm.com>
+References: <20191024110209.21328-1-jianyong.wu@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Oct 2019 at 18:24, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> On 10/22, Marco Elver wrote:
-> >
-> > On Tue, 22 Oct 2019 at 17:49, Oleg Nesterov <oleg@redhat.com> wrote:
-> > >
-> > > Just for example. Suppose that task->state = TASK_UNINTERRUPTIBLE, this task
-> > > does __set_current_state(TASK_RUNNING), another CPU does wake_up_process(task)
-> > > which does the same UNINTERRUPTIBLE -> RUNNING transition.
-> > >
-> > > Looks like, this is the "data race" according to kcsan?
-> >
-> > Yes, they are "data races". They are probably not "race conditions" though.
-> >
-> > This is a fair distinction to make, and we never claimed to find "race
-> > conditions" only
->
-> I see, thanks, just wanted to be sure...
->
-> > KCSAN's goal is to find *data races* according to the LKMM.  Some data
-> > races are race conditions (usually the more interesting bugs) -- but
-> > not *all* data races are race conditions. Those are what are usually
-> > referred to as "benign", but they can still become bugs on the wrong
-> > arch/compiler combination. Hence, the need to annotate these accesses
-> > with READ_ONCE, WRITE_ONCE or use atomic_t:
->
-> Well, if I see READ_ONCE() in the code I want to understand why it was
-> used. Is it really needed for correctness or we want to shut up kcsan?
-> Say, why should wait_event(wq, *ptr) use READ_ONCE()? Nevermind, please
-> forget.
->
-> Btw, why __kcsan_check_watchpoint() does user_access_save() before
-> try_consume_watchpoint() ?
+Export arm_smccc_1_1_get_conduit and apply it to get conduit
+in arm_smccc_1_1_invoke, then modules can use this arm_smccc_1_1_invoke.
 
-Instrumentation is added in UACCESS regions. Since we do not access
-user-memory, we do user_access_save to ensure everything is safe
-(otherwise objtool complains that we do calls to non-whitelisted
-functions). I will try to optimize this a bit, but we can't avoid it.
+Signed-off-by: Jianyong Wu <jianyong.wu@arm.com>
+---
+ drivers/firmware/psci/psci.c | 1 +
+ include/linux/arm-smccc.h    | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-> Oleg.
->
+diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+index 5f31f1bea1af..cf509171422c 100644
+--- a/drivers/firmware/psci/psci.c
++++ b/drivers/firmware/psci/psci.c
+@@ -71,6 +71,7 @@ enum arm_smccc_conduit arm_smccc_1_1_get_conduit(void)
+ 		return SMCCC_CONDUIT_NONE;
+ 	}
+ }
++EXPORT_SYMBOL(arm_smccc_1_1_get_conduit);
+ 
+ typedef unsigned long (psci_fn)(unsigned long, unsigned long,
+ 				unsigned long, unsigned long);
+diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
+index 701fa1da6b4a..6f82c87308ed 100644
+--- a/include/linux/arm-smccc.h
++++ b/include/linux/arm-smccc.h
+@@ -373,7 +373,7 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
+  * The return value also provides the conduit that was used.
+  */
+ #define arm_smccc_1_1_invoke(...) ({					\
+-		int method = psci_ops.conduit;				\
++		int method = arm_smccc_1_1_get_conduit();		\
+ 		switch (method) {					\
+ 		case PSCI_CONDUIT_HVC:					\
+ 			arm_smccc_1_1_hvc(__VA_ARGS__);			\
+-- 
+2.17.1
+
