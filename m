@@ -2,79 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BC8CE3FB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 00:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 733BFE3FC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 00:58:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732877AbfJXWxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 18:53:04 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40605 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732652AbfJXWxE (ORCPT
+        id S1732941AbfJXW6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 18:58:51 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43285 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730384AbfJXW6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 18:53:04 -0400
-Received: by mail-oi1-f196.google.com with SMTP id b25so87094oib.7;
-        Thu, 24 Oct 2019 15:53:03 -0700 (PDT)
+        Thu, 24 Oct 2019 18:58:51 -0400
+Received: by mail-io1-f66.google.com with SMTP id c11so189318iom.10
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 15:58:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LUBTpk9ooV35xQmJoHGn2mN1fpHGsBmiJOBvpI0fOq4=;
+        b=IEZZ4TeaPYu9KusTwoj7WfdPn1cK9KTxR4CsgVIUWzNM7sVDrk3QIl2JqN9AP1q0fD
+         mQXxqZpLv+F4Ydq+wQp+MJN/9hawT5YJAt+K9tIz6QieiXo0WvRn8I3QJPxmkUA/T0hn
+         cpV5d5m4J3wPcN2XdvKbdGsqTagFTIPB8b/3uzjMERWxapHtaBLtmCNwGpnmZdsLLejh
+         FhVD6WbH5LS1wKsH4UWrLuZQ27dBPSyLar0UMkbAufifbBJb9MamMy0Jjn3rcFBLSNp8
+         ZhWEIPwBzFvS5cxxxuHtZWn7eq8Y7pAtrgiUUXBzQ66D4OswlcQgnNug4JdMNlAxil2E
+         aWSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PHAlgjyftB77apGb+aIDH/iUEr5YTnjZAyjURTt+1ek=;
-        b=Tms2Cy2WtxcWsa1MSb2MP35EKpoYwCsSzUWqm2g4AE2MbHMjGoFG35jdGeRZu/6lvS
-         jPIeTgNu4HOo5AmbGNiV51SjAWgN1uB7dXrVPiiLiUkTM67QQATxU0J+Jt9YwxSbpbZz
-         p47iQ3p6t7RvVYXmEu7qqOZEcfa9USI22Kh7eTKKW5zwBDUKwzv0m8NlfTxEuJyhlnDM
-         ioYChsLOG2VJmqXLMahJWjHvYGP5Ni9yt0knSl+azmJ26RArBLkjh4Xz5sSHz6hm/d4Y
-         SEl/Rvr2H+dwuMwegC+OKaUNER3ZdQJdr0Vre2Ey+4T+R9/lVNewmUbEAVwvnk4Ea8aC
-         JBmA==
-X-Gm-Message-State: APjAAAW3aT4yHzDRcTcywOnO2JDedq7cLPFrAZ7IZ4jBNoHaax0DXYOa
-        2nL5v8Os7516rLwqpg1w4Q==
-X-Google-Smtp-Source: APXvYqxLLOybpoUQdqUi4zwyI739/mCOO6k17Sx+gGPlyn2e7YB8PCSksprbWMBJjSIZSr3Fq4+K0g==
-X-Received: by 2002:aca:100e:: with SMTP id 14mr411171oiq.20.1571957583265;
-        Thu, 24 Oct 2019 15:53:03 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y6sm35386oiy.45.2019.10.24.15.53.02
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LUBTpk9ooV35xQmJoHGn2mN1fpHGsBmiJOBvpI0fOq4=;
+        b=nNdi/dAYX2NXt1vMjw7YhyAd+oH+Dt5aqiwrwjVrxqBvSO6tH4YmYyscKTH2n/3KOx
+         vY13dXfq9X3MVZzxuWJb5FKDNVnALrRH721qbUgbGD6Epm615NHEjRdXiHs+mhJpgpfX
+         hjCjWx3EauUS2R1LtqulufXXhYVZxEdV4kY7UbTYn2Rz9rjHEzn5OHLp/zHRW0EBZCAb
+         tq4vwSOS/lphnIn1NuWBL63n1tyWQwpW1OrRC0vLcD13A2JAii79dMldOTUptNPPdMoH
+         D1a5JZueOGNGP4AbBzJSsHy9kVgmF7pEdIVtX88mR1BLABpffWw8wqZjtKIhj+5/RR4D
+         UQ8A==
+X-Gm-Message-State: APjAAAUAD3HYCotWNFPS0ENzgiTKXiTuhQW4FPw8iifyNjxBxCzVkP5C
+        KrPcuzOgm0Noi1hjxz8mnwHqcw==
+X-Google-Smtp-Source: APXvYqxalK2YIo83Fu+BbBhgGuXezPvIjtKCSmn+b8821E2LzS3kdbtWvqRZW1DApkW9NtiE75wsTw==
+X-Received: by 2002:a5d:8d0e:: with SMTP id p14mr637597ioj.4.1571957928395;
+        Thu, 24 Oct 2019 15:58:48 -0700 (PDT)
+Received: from viisi.Home ([64.62.168.194])
+        by smtp.gmail.com with ESMTPSA id b18sm58112ilo.70.2019.10.24.15.58.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2019 15:53:02 -0700 (PDT)
-Date:   Thu, 24 Oct 2019 17:53:02 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Biwen Li <biwen.li@nxp.com>
-Cc:     peda@axentia.se, leoyang.li@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Biwen Li <biwen.li@nxp.com>
-Subject: Re: [v5,1/3] dt-bindings: i2c: support property idle-state
-Message-ID: <20191024225302.GA16606@bogus>
-References: <20191022041152.3663-1-biwen.li@nxp.com>
+        Thu, 24 Oct 2019 15:58:47 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+To:     linux-riscv@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, hch@lst.dev, greentime.hu@sifive.com,
+        luc.vanoostenryck@gmail.com
+Subject: [PATCH v4 0/8] riscv: resolve most warnings from sparse
+Date:   Thu, 24 Oct 2019 15:58:32 -0700
+Message-Id: <20191024225838.27743-1-paul.walmsley@sifive.com>
+X-Mailer: git-send-email 2.24.0.rc0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022041152.3663-1-biwen.li@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Oct 2019 12:11:50 +0800, Biwen Li wrote:
-> This supports property idle-state
-> 
-> Signed-off-by: Biwen Li <biwen.li@nxp.com>
-> ---
-> Change in v5:
-> 	- none
-> 
-> Change in v4:
-> 	- none
-> 
-> Change in v3:
-> 	- update subject and description
-> 	- add some information for property idle-state
-> 
-> Change in v2:
-> 	- update subject and description
-> 	- add property idle-state
-> 
->  Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+Resolve most warnings from the 'sparse' static analysis tool for the
+arch/riscv codebase.  This makes life easier for us as maintainers,
+and makes it easier for developers to use static analysis tools on
+their own changes.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This fourth version drops some patches that were in the previous
+versions, and restructures some of what was left.  Much of this was
+based on feedback from Christoph Hellwig <hch@lst.de>, Luc Van
+Oostenryck <luc.vanoostenryck@gmail.com>, and Greentime Hu
+<greentime.hu@sifive.com>.
+
+Applies on the current riscv fixes branch, which itself is based on
+v5.4-rc5.  Tested on RV32 QEMU, RV64 QEMU, and the SiFive HiFive
+Unleashed board.
+
+
+- Paul
+
+
+Paul Walmsley (6):
+  riscv: add prototypes for assembly language functions from head.S
+  riscv: init: merge split string literals in preprocessor directive
+  riscv: mark some code and data as file-static
+  riscv: add missing header file includes
+  riscv: fp: add missing __user pointer annotations
+  riscv: for C functions called only from assembly, mark with __visible
+
+Kernel object size difference:
+   text	   data	    bss	    dec	    hex	filename
+6662533	2136168	 312608	9111309	 8b070d	vmlinux.rv64.orig
+6662537	2136160	 312608	9111305	 8b0709	vmlinux.rv64.patched
+6443041	1792976	 255184	8491201	 8190c1	vmlinux.rv32.orig
+6443021	1792968	 255184	8491173	 8190a5	vmlinux.rv32.patched
+
+ arch/riscv/include/asm/irq.h        |  3 +++
+ arch/riscv/include/asm/switch_to.h  |  1 +
+ arch/riscv/kernel/cpufeature.c      |  1 +
+ arch/riscv/kernel/head.h            | 21 +++++++++++++++++++++
+ arch/riscv/kernel/irq.c             |  2 +-
+ arch/riscv/kernel/module-sections.c |  1 +
+ arch/riscv/kernel/process.c         |  2 ++
+ arch/riscv/kernel/ptrace.c          |  4 ++--
+ arch/riscv/kernel/reset.c           |  1 +
+ arch/riscv/kernel/setup.c           |  2 ++
+ arch/riscv/kernel/signal.c          |  8 ++++----
+ arch/riscv/kernel/smp.c             |  2 ++
+ arch/riscv/kernel/smpboot.c         |  5 ++++-
+ arch/riscv/kernel/syscall_table.c   |  1 +
+ arch/riscv/kernel/time.c            |  1 +
+ arch/riscv/kernel/traps.c           |  5 +++--
+ arch/riscv/kernel/vdso.c            |  3 ++-
+ arch/riscv/mm/context.c             |  1 +
+ arch/riscv/mm/fault.c               |  2 ++
+ arch/riscv/mm/init.c                |  5 +++--
+ arch/riscv/mm/sifive_l2_cache.c     |  2 +-
+ 21 files changed, 59 insertions(+), 14 deletions(-)
+ create mode 100644 arch/riscv/kernel/head.h
+
+-- 
+2.24.0.rc0
+
