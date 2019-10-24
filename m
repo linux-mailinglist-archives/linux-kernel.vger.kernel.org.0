@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9524E3BB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:03:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60590E3BC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:04:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504406AbfJXTDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 15:03:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42680 "EHLO mail.kernel.org"
+        id S2504415AbfJXTEN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 15:04:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391577AbfJXTDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 15:03:18 -0400
+        id S2392896AbfJXTEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 15:04:13 -0400
 Received: from localhost (unknown [109.190.253.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBE492070B;
-        Thu, 24 Oct 2019 19:03:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B01A21A4A;
+        Thu, 24 Oct 2019 19:04:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571943797;
-        bh=ePbGhKrM0X2X47Ig0cCqNbkm6vptO7VyM2yJnt4HOIA=;
+        s=default; t=1571943851;
+        bh=BLF6bNI1LMtwSe4KBH8lI9gpwa1CAzLQZtAXBhg/Zeg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RtSj9ZsU+Qi/+k4LBe1ymBcSWx41hn33zdDT0kZRVK/BKRx2NjzZaugw+m+Ax7OgR
-         1of8SxMH/iJeyGtG2GxLaBGjUnkI9tRXqPBq3sj8s9batNIfLycusnajxA8I1HUfEF
-         l9r+xiRzlYUv7fKlZKX/QOAKdLIBdxgGFsrUltjA=
-Date:   Thu, 24 Oct 2019 20:27:49 +0200
+        b=MkTv/uGKp2Ko24fnOFRYlxw3fOz+rJ/zpy+ay3PCdOr6dljJzXalGBW/IY3+Sh4hL
+         ZHOWCerCbnV2Qh5nnsg5KeRQFfDkLn9qByozVmo20BVKP/rDjDFq0c/zH514KPQ7NO
+         Cfb6oa5WQR+YTrQMDIs/O1AAzoZU+1E2jnQNot1E=
+Date:   Thu, 24 Oct 2019 20:28:49 +0200
 From:   Maxime Ripard <mripard@kernel.org>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
@@ -38,7 +38,7 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         devicetree <devicetree@vger.kernel.org>
 Subject: Re: [PATCH v10 5/6] arm64: dts: allwinner: a64: Add MIPI DSI pipeline
-Message-ID: <20191024182749.czihj3gnvj5yz2eo@hendrix>
+Message-ID: <20191024182849.3oifqjl553twxwq4@hendrix>
 References: <20191005141913.22020-1-jagan@amarulasolutions.com>
  <20191005141913.22020-6-jagan@amarulasolutions.com>
  <20191007105708.raxavxk4n7bvxh7x@gilmour>
@@ -46,18 +46,18 @@ References: <20191005141913.22020-1-jagan@amarulasolutions.com>
  <20191016080306.44pmo3rfmtnkgosq@gilmour>
  <CAMty3ZCTE=W+TNRvdowec-eYB625j97uG8F3fzVMtRFsKsqFFQ@mail.gmail.com>
  <20191017095225.ntx647ivegaldlyf@gilmour>
- <CAMty3ZAvqRLh16vFd-63h4+SzQkNydGfNKX_pByqFD-hZfncpQ@mail.gmail.com>
+ <CAMty3ZDYcwJ4XMm45BLjXnvPXeu-rMAiN5v=CDhvuLsAm5tf=Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMty3ZAvqRLh16vFd-63h4+SzQkNydGfNKX_pByqFD-hZfncpQ@mail.gmail.com>
+In-Reply-To: <CAMty3ZDYcwJ4XMm45BLjXnvPXeu-rMAiN5v=CDhvuLsAm5tf=Q@mail.gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 01:28:28PM +0530, Jagan Teki wrote:
+On Thu, Oct 24, 2019 at 06:26:36PM +0530, Jagan Teki wrote:
 > On Thu, Oct 17, 2019 at 3:22 PM Maxime Ripard <mripard@kernel.org> wrote:
 > >
 > > On Wed, Oct 16, 2019 at 02:19:44PM +0530, Jagan Teki wrote:
@@ -132,44 +132,12 @@ On Thu, Oct 24, 2019 at 01:28:28PM +0530, Jagan Teki wrote:
 > >
 > > No, the bus clock name is not needed if there's only one clock.
 >
-> Okay, is it because the same clock handle it on PHY side?
+> Looks like we need "bus" clock required since the
+> devm_regmap_init_mmio_clk is created only if bus clock-names added in
+> dt.
 
-No, because there's only one clock and thus you don't need to
-differentiate them.
+Yeah, hence why I said you'd need "a bit of work on the driver side"
 
-> >
-> > > I'm not exactly sure, this is correct but trying to understand if it
-> > > is possible or not? something like
-> > >
-> > >    clocks:
-> > >       minItems: 1
-> > >       maxItems: 2
-> > >      items:
-> > >        - description: Bus Clock
-> > >        - description: Module Clock
-> >
-> > That's correct.
-> >
-> > >    clock-names:
-> > >       minItems: 1
-> > >       maxItems: 2
-> > >      items:
-> > >        - const: bus
-> > >        - const: mod
-> >
-> > Here, just keep the current clock-names definition, and make it
-> > required only for SoCs that are not the A64
->
-> Okay, please have a look here I have pasted the diff for comments.
->
->    clocks:
-> +    minItems: 2
->      items:
->        - description: Bus Clock
->        - description: Module Clock
-
-Didn't you tell me that you didn't need the module clock?
-
-How do you handle the case were you just have the bus clock then?
+Replacing the clock name by NULL should work.
 
 Maxime
