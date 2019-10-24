@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6C4AE3687
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 17:24:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D9A3E3690
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 17:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503146AbfJXPYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 11:24:38 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:35452 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403837AbfJXPYi (ORCPT
+        id S2503162AbfJXPZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 11:25:47 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40520 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503092AbfJXPZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 11:24:38 -0400
+        Thu, 24 Oct 2019 11:25:47 -0400
 Received: from ramsan ([84.195.182.253])
-        by michel.telenet-ops.be with bizsmtp
-        id HTQb210125USYZQ06TQc4S; Thu, 24 Oct 2019 17:24:36 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id HTRk2100l5USYZQ01TRkp3; Thu, 24 Oct 2019 17:25:45 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNeyZ-00076g-TW; Thu, 24 Oct 2019 17:24:35 +0200
+        id 1iNezg-00076z-ON; Thu, 24 Oct 2019 17:25:44 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNeyZ-0007rH-SC; Thu, 24 Oct 2019 17:24:35 +0200
+        id 1iNezg-0007tb-Lr; Thu, 24 Oct 2019 17:25:44 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
+To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Jiri Kosina <trivial@kernel.org>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH trivial] s390/dasd: spelling s/configruation/configuration/
-Date:   Thu, 24 Oct 2019 17:24:33 +0200
-Message-Id: <20191024152433.30165-1-geert+renesas@glider.be>
+Subject: [PATCH trivial] scsi: isci: Spelling s/configruation/configuration/
+Date:   Thu, 24 Oct 2019 17:25:43 +0200
+Message-Id: <20191024152543.30310-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -44,22 +41,22 @@ Fix misspelling of "configuration".
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/s390/block/dasd_3990_erp.c | 2 +-
+ drivers/scsi/isci/port_config.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/s390/block/dasd_3990_erp.c b/drivers/s390/block/dasd_3990_erp.c
-index ee73b0607e47c7c6..4691a3c35d725ec1 100644
---- a/drivers/s390/block/dasd_3990_erp.c
-+++ b/drivers/s390/block/dasd_3990_erp.c
-@@ -1987,7 +1987,7 @@ dasd_3990_erp_compound_code(struct dasd_ccw_req * erp, char *sense)
-  * DASD_3990_ERP_COMPOUND_CONFIG
+diff --git a/drivers/scsi/isci/port_config.c b/drivers/scsi/isci/port_config.c
+index 9e8de1462593aa73..b1c1975055792b15 100644
+--- a/drivers/scsi/isci/port_config.c
++++ b/drivers/scsi/isci/port_config.c
+@@ -147,7 +147,7 @@ static struct isci_port *sci_port_configuration_agent_find_port(
+ /**
   *
-  * DESCRIPTION
-- *   Handles the compound ERP action for configruation
-+ *   Handles the compound ERP action for configuration
-  *   dependent error.
-  *   Note: duplex handling is not implemented (yet).
+  * @controller: This is the controller object that contains the port agent
+- * @port_agent: This is the port configruation agent for the controller.
++ * @port_agent: This is the port configuration agent for the controller.
   *
+  * This routine will validate the port configuration is correct for the SCU
+  * hardware.  The SCU hardware allows for port configurations as follows. LP0
 -- 
 2.17.1
 
