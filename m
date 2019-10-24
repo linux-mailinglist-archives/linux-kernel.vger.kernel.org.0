@@ -2,194 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF2DEE2E97
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA5A3E2E9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:17:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393234AbfJXKRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 06:17:18 -0400
-Received: from foss.arm.com ([217.140.110.172]:46106 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392611AbfJXKRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 06:17:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1D85B42;
-        Thu, 24 Oct 2019 03:17:01 -0700 (PDT)
-Received: from [192.168.1.123] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6A6B3F71F;
-        Thu, 24 Oct 2019 03:16:59 -0700 (PDT)
-Subject: Re: [PATCH] PCI: Warn about host bridge device when its numa node is
- NO_NODE
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Yunsheng Lin <linyunsheng@huawei.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mhocko@kernel.org, peterz@infradead.org, geert@linux-m68k.org,
-        gregkh@linuxfoundation.org, paul.burton@mips.com
-References: <20191023171039.GA173290@google.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <a33e01bd-3054-a2c4-c206-f893e7373e65@arm.com>
-Date:   Thu, 24 Oct 2019 11:16:41 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S2393261AbfJXKRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 06:17:32 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56684 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393238AbfJXKRb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 06:17:31 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9OAGrZv062102;
+        Thu, 24 Oct 2019 05:16:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571912213;
+        bh=EDshKvGHmjEvne+M6Hf6EnpsTzXcgkgN/NsvR3Me/fA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=OrB2X0i9vOq6STYWMQhlOd7VV5xFv+QVlwTG1BAPg777P1hzOCNNZhelH9YhXYCOQ
+         lg1j5kiGCgOF3IDjWqkCya4vuWdak+qw8hK5rFVOpJyMKx/Kp2NE9XeuzJmbiElybP
+         H65Rde5K804+tD8617dKMLFIkhVh6k0S6ftkivYs=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9OAGr9w004417
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 24 Oct 2019 05:16:53 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 24
+ Oct 2019 05:16:43 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 24 Oct 2019 05:16:43 -0500
+Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9OAGose119563;
+        Thu, 24 Oct 2019 05:16:51 -0500
+Subject: Re: [PATCH v2 1/2] dt-bindings: usb: Add binding for the TI wrapper
+ for Cadence USB3 controller
+To:     <felipe.balbi@linux.intel.com>, <gregkh@linuxfoundation.org>
+CC:     <pawell@cadence.com>, <peter.chen@nxp.com>, <nsekhar@ti.com>,
+        <kurahul@cadence.com>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+References: <20191021131305.8689-1-rogerq@ti.com>
+ <20191021131305.8689-2-rogerq@ti.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <3fdcbd1f-f9e2-2363-56f4-30d2f8ea4560@ti.com>
+Date:   Thu, 24 Oct 2019 13:16:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191023171039.GA173290@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+In-Reply-To: <20191021131305.8689-2-rogerq@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-23 6:10 pm, Bjorn Helgaas wrote:
-> On Wed, Oct 23, 2019 at 04:22:43PM +0800, Yunsheng Lin wrote:
->> On 2019/10/23 5:04, Bjorn Helgaas wrote:
->>> On Sat, Oct 19, 2019 at 02:45:43PM +0800, Yunsheng Lin wrote:
-> 
->>> I think the underlying problem you're addressing is that:
->>>
->>>    - NUMA_NO_NODE == -1,
->>>    - dev_to_node(dev) may return NUMA_NO_NODE,
->>>    - kmalloc(dev) relies on cpumask_of_node(dev_to_node(dev)), and
->>>    - cpumask_of_node(NUMA_NO_NODE) makes an invalid array reference
->>>
->>> For example, on arm64, mips loongson, s390, and x86,
->>> cpumask_of_node(node) returns "node_to_cpumask_map[node]", and -1 is
->>> an invalid array index.
->>
->> The invalid array index of -1 is the underlying problem here when
->> cpumask_of_node(dev_to_node(dev)) is called and cpumask_of_node()
->> is not NUMA_NO_NODE aware yet.
->>
->> In the "numa: make node_to_cpumask_map() NUMA_NO_NODE aware" thread
->> disscusion, it is requested that it is better to warn about the pcie
->> device without a node assigned by the firmware before making the
->> cpumask_of_node() NUMA_NO_NODE aware, so that the system with pci
->> devices of "NUMA_NO_NODE" node can be fixed by their vendor.
->>
->> See: https://lore.kernel.org/lkml/20191011111539.GX2311@hirez.programming.kicks-ass.net/
-> 
-> Right.  We should warn if the NUMA node number would help us but DT or
-> the firmware didn't give us one.
-> 
-> But we can do that independently of any cpumask_of_node() changes.
-> There's no need to do one patch before the other.  Even if you make
-> cpumask_of_node() tolerate NUMA_NO_NODE, we'll still get the warning
-> because we're not actually changing any node assignments.
-> 
->> So maybe change the warning to below:
->>
->> if (nr_node_ids > 1 && pcibus_to_node(bus) == NUMA_NO_NODE)
->> 	dev_err(&bus->dev, FW_BUG "No node assigned on NUMA capable HW. Please contact your vendor for updates.\n");
-> 
-> I think this is perfect and I don't see the need for the refinement
-> below:
-> 
->> And it seems a pci device's parent will always set to the bridge
->> device in pci_setup_device(), and device_add() which will set the
->> node to its parent's when the child device' node is NUMA_NO_NODE,
->> maybe we can add the bridge device' node checking to make sure
->> the pci device really does not have a node assigned, as below:
->>
->> if (nr_node_ids > 1 && pcibus_to_node(bus) == NUMA_NO_NODE &&
->>      dev_to_node(bus->bridge) == NUMA_NO_NODE)
->> 	dev_err(&bus->dev, FW_BUG "No node assigned on NUMA capable HW. Please contact your vendor for updates.\n");
-> 
-> Anyway, would the attached patch work for you?  I have it tentatively
-> queued up on pci/enumeration for v5.5.
-> 
->>>> It is possible to
->>>> have a PCI bridge shared between two nodes, such that the PCI
->>>> devices have equidistance. But the moment you scale this out, you
->>>> either get devices that are 'local' to a package while having
->>>> multiple packages, or if you maintain a single bridge in a big
->>>> system, things become so slow it all doesn't matter anyway.
->>>> Assigning a node (one of the shared) is, in the generic ase of
->>>> multiple packages, the better solution over assigning all nodes.
->>>>
->>>> As pci_device_add() will assign the pci device' node according to
->>>> the bus the device is on, which is decided by pcibus_to_node().
->>>> Currently different arch may implement the pcibus_to_node() based
->>>> on bus->sysdata or bus device' node, which has the same node as
->>>> the bridge device.
->>>>
->>>> And for devices behind another bridge case, the child bus device
->>>> is setup with proper parent bus device and inherit its parent'
->>>> sysdata in pci_alloc_child_bus(), so the pcie device under the
->>>> child bus should have the same node as the parent bridge when
->>>> device_add() is called, which will set the node to its parent's
->>>> node when the child device' node is NUMA_NO_NODE.
->>>>
->>>> So this patch only warns about the case when a host bridge device
->>>> is registered with a node of NO_NODE in pci_register_host_bridge().
->>>> And it only warns about that when there are more than one numa
->>>> nodes in the system.
->>>
->>>
->>>> [1] https://lore.kernel.org/lkml/1568724534-146242-1-git-send-email-linyunsheng@huawei.com/
->>>>
->>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->>>> ---
->>>>   drivers/pci/probe.c | 3 +++
->>>>   1 file changed, 3 insertions(+)
->>>>
->>>> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
->>>> index 3d5271a..22be96a 100644
->>>> --- a/drivers/pci/probe.c
->>>> +++ b/drivers/pci/probe.c
->>>> @@ -927,6 +927,9 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
->>>>   	list_add_tail(&bus->node, &pci_root_buses);
->>>>   	up_write(&pci_bus_sem);
->>>>   
->>>> +	if (nr_node_ids > 1 && dev_to_node(bus->bridge) == NUMA_NO_NODE)
->>>> +		dev_err(bus->bridge, FW_BUG "No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.\n");
->>>> +
->>>>   	return 0;
->>>>   
->>>>   unregister:
-> 
-> commit 8f8cf239c4f1
-> Author: Yunsheng Lin <linyunsheng@huawei.com>
-> Date:   Sat Oct 19 14:45:43 2019 +0800
-> 
->      PCI: Warn if no host bridge NUMA node info
->      
->      In pci_call_probe(), we try to run driver probe functions on the node where
->      the device is attached.  If we don't know which node the device is attached
->      to, the driver will likely run on the wrong node.  This will still work,
->      but performance will not be as good as it could be.
+Hi,
 
-Is it guaranteed to be purely a performance issue? In other words, is 
-there definitely no way a physical node could be disabled via 
-idle/hotplug/etc. such that unattributed devices can silently disappear 
-while still in use?
+On 21/10/2019 16:13, Roger Quadros wrote:
+> TI platforms have a wrapper module around the Cadence USB3
+> controller. Add binding information for that.
 
->      
->      On NUMA systems, warn if we don't know which node a PCI host bridge is
->      attached to.  This is likely an indication that ACPI didn't supply a _PXM
->      method or the DT didn't supply a "numa-node-id" property.
->      
->      [bhelgaas: commit log, check bus node]
->      Link: https://lore.kernel.org/r/1571467543-26125-1-git-send-email-linyunsheng@huawei.com
->      Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->      Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Please ignore this. I missed converting this to yaml format.
+Will send v3.
+
+cheers,
+-roger
 > 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 3d5271a7a849..40259c38d66a 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -897,6 +897,9 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
->   	else
->   		pr_info("PCI host bridge to bus %s\n", name);
->   
-> +	if (nr_node_ids > 1 && pcibus_to_node(bus) == NUMA_NO_NODE)
-> +		dev_warn(&bus->dev, "Unknown NUMA node; performance will be reduced\n");
-
-I think this still deserves the FW_BUG prefix.
-
-Robin.
-
+> Cc: Rob Herring <robh@kernel.org>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> ---
+>   .../devicetree/bindings/usb/ti,j721e-usb.txt  | 52 +++++++++++++++++++
+>   1 file changed, 52 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/usb/ti,j721e-usb.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/ti,j721e-usb.txt b/Documentation/devicetree/bindings/usb/ti,j721e-usb.txt
+> new file mode 100644
+> index 000000000000..bac57c26b09b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/ti,j721e-usb.txt
+> @@ -0,0 +1,52 @@
+> +Binding for the TI specific wrapper for the Cadence USBSS-DRD controller
 > +
->   	/* Add initial resources to the bus */
->   	resource_list_for_each_entry_safe(window, n, &resources) {
->   		list_move_tail(&window->node, &bridge->windows);
+> +Required properties:
+> +  - compatible: Should contain "ti,j721e-usb"
+> +  - reg: Physical base address and size of the wrappers register area.
+> +  - power-domains: Should contain a phandle to a PM domain provider node
+> +                   and an args specifier containing the USB device id
+> +                   value. This property is as per the binding documentation:
+> +                   Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+> +  - clocks: Clock phandles to usb2_refclk and lpm_clk
+> +  - clock-names: Should contain "ref" and "lpm"
+> +
+> +Optional properties:
+> + - ti,usb2-only: If present, it restricts the controller to USB2.0 mode of
+> +		 operation. Must be present if USB3 PHY is not available
+> +		 for USB.
+> + - ti,vbus-divider: Should be present if USB VBUS line is connected to the
+> +		 VBUS pin of the SoC via a 1/3 voltage divider.
+> +
+> +Sub-nodes:
+> +The USB2 PHY and the Cadence USB3 controller should be the sub-nodes.
+> +
+> +Example:
+> +
+> +	ti_usb0: cdns_usb@4104000 {
+> +		compatible = "ti,j721e-usb";
+> +		reg = <0x00 0x4104000 0x00 0x100>;
+> +		power-domains = <&k3_pds 288 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 288 15>, <&k3_clks 288 3>;
+> +		clock-names = "ref", "lpm";
+> +		assigned-clocks = <&k3_clks 288 15>;	/* USB2_REFCLK */
+> +		assigned-clock-parents = <&k3_clks 288 16>; /* HFOSC0 */
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		usb0: usb@6000000 {
+> +			compatible = "cdns,usb3";
+> +			reg = <0x00 0x6000000 0x00 0x10000>,
+> +			      <0x00 0x6010000 0x00 0x10000>,
+> +			      <0x00 0x6020000 0x00 0x10000>;
+> +			reg-names = "otg", "xhci", "dev";
+> +			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,	/* irq.0 */
+> +				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,	/* irq.6 */
+> +				     <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;	/* otgirq.0 */
+> +			interrupt-names = "host",
+> +					  "peripheral",
+> +					  "otg";
+> +			maximum-speed = "super-speed";
+> +			dr_mode = "otg";
+> +		};
+> +	};
 > 
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
