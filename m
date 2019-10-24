@@ -2,103 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DED40E3841
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89082E3822
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:38:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503664AbfJXQjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 12:39:21 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:44749 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503655AbfJXQjU (ORCPT
+        id S2503500AbfJXQii (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 12:38:38 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55657 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503426AbfJXQih (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 12:39:20 -0400
-Received: by mail-qt1-f195.google.com with SMTP id z22so18269402qtq.11;
-        Thu, 24 Oct 2019 09:39:19 -0700 (PDT)
+        Thu, 24 Oct 2019 12:38:37 -0400
+Received: by mail-wm1-f68.google.com with SMTP id g24so3569593wmh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 09:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1qxEej9ZhTTEroEC+KQyp8Bt7h8gyIv3VgjtcTdAbGc=;
-        b=cChmRdzX28Kw1sZcn+RGsEflTdu+W0jowQ985PnjZ9JMREt9BwXphzbCAZw7enPVRO
-         FK3gUvfSYrD5tWP9/Xzr9PX7cpuu7ymqz6odOX8F4rK1198PnxVJ0rnX+6/UdzGP/sms
-         VXbz+zNUgnuMB11mVCofXcA3L1BGMVeXGx41c1C9ItAgdMzJ/jZbmyVj6+081eI4A8PW
-         ySnhjBu1TgDfl2QSn9S1KjUnMcbRvi9x6QpHUORPLiWZBgtnqTS8mwyZDCznUiEDFJdW
-         PDRnNI2VZ3f2RR0CqGFo2bCFtka+FIkrrKZine4AAuMzOqykTtuqDrYKTLrCDuuqnBgh
-         9J4A==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=dYt5aHbdAcoo6iOaj0orMUSAvQMPaS0z8lFzdR/A7V4=;
+        b=Ns1ZYl/2Z7R9SELtWm3ZXQehrrSdTOXVC8OUXM2hM0HYtFG2jHyYkGzlMM2tGrTBJ1
+         PadyzrB/+/j1eT5StN3toKeTz/PAXMrdKQyTCN9tYT3/SrXTiz9OS8EQg9ceVBDcPJ7L
+         YSa27E3euj3OEjinq0HDg27dX+MgxGueXHGRrPQH4u9yXzWJnkWkbzvnb4fsmU0ZWYub
+         kcuwX4TIz5K5q8WW7B/Ef+2cKaUd9IS+JwxARfmgBNUVClV4wHRRliuFbGBmnc0YKw4X
+         8mAK159WfLfu+f4lRLQkqNbihdts9A4/BXWsd0Ngz+C0SmzIAb52ebd0PPe3zgJzwog4
+         ToKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1qxEej9ZhTTEroEC+KQyp8Bt7h8gyIv3VgjtcTdAbGc=;
-        b=BT1TNt6aLAJhRYbOpxalS7aHdaTGP2vhQEhNiBiXXcGfysIIxkMERg9JdsaxtaOcbl
-         dJjyfM/Ua1/QhlXRLNul5QR3KOMkZxG2iv9//TX5NeWakqhun3I6cba7PMiqgPtB0wxC
-         6v3ODynnXNTZ5UAkPe1Sw7gzyIynBsELqCF+Cs4fcjOX4nCAO9qLoH3oj74SSI3+a9pl
-         F2KPJ0zuClpytLEr2VEoRMauoqoUW/i890uGpR1vqWlRIaLQ6hfXaBoHv1U+/wet4hOe
-         r34Z3jz0bLit1bokVfDxaMjqa4zhDqGcFNWW2916J0dJSXoU8juNxVoNZpqY2N0KaVu7
-         A8Pg==
-X-Gm-Message-State: APjAAAWJ7jSIT8KAYWT3j0OYATeaQWfYYIURWQma9ctyGWyf/TegG2jS
-        7hFvIWV6HNGF1nc7feN/vNM=
-X-Google-Smtp-Source: APXvYqx5wkL3B+B9EVLQiK3NwD0XfT33+WW76uAeEeNoCepjIHPbYXy9SGJ7HSpve1JTxF1pjnaCwA==
-X-Received: by 2002:a0c:fe45:: with SMTP id u5mr15592957qvs.17.1571935157520;
-        Thu, 24 Oct 2019 09:39:17 -0700 (PDT)
-Received: from localhost.localdomain ([201.53.210.37])
-        by smtp.gmail.com with ESMTPSA id l15sm14660121qkj.16.2019.10.24.09.39.14
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dYt5aHbdAcoo6iOaj0orMUSAvQMPaS0z8lFzdR/A7V4=;
+        b=nF7F4UF2FX1rLB6m6mNznEGqFZ+VFr8hUHFEQAMps4EiSAfQIpAA8q2EQ9MqGhjDW3
+         O9XL+v8bQjw5EwImRxutwJYtP1JZCL0SqqJns78jT9PdREkX3StICQcSLydwj5znI7+T
+         EFDQprzUSAXesn+LygEhI7tb+jsqQiJd//5uUYy8NiCP0XCC6IhRWFtEWirlvGURiJyx
+         l5s2pgBQ5uc0w2sabR7fkFc3zGgV/xN/SAWPa2qIGXNG9F2s0DjZgDfvDHiZrdkNbDGG
+         dIOtGCE0FTb4YGLZEqIt36NmDuL6W1wKOFBRz3WWRs+yClk/jAkWc+0GwhoRNiReYqUQ
+         omaQ==
+X-Gm-Message-State: APjAAAWYArogiynG8kBVnD0VFDVgj9n8Z0nyQEjnubXYnaiXc1fQDrE5
+        RkzDwK4IAbbl6YLVEgZw3j8gnw==
+X-Google-Smtp-Source: APXvYqxajiI3u0bx2uwGq4iPJh90TzC5CDZXmjeWLns9qC3nWHb0jFRD4YDKVNeGdlHzDhTCWW5zoA==
+X-Received: by 2002:a1c:67d7:: with SMTP id b206mr5566577wmc.68.1571935116224;
+        Thu, 24 Oct 2019 09:38:36 -0700 (PDT)
+Received: from localhost.localdomain ([95.149.164.99])
+        by smtp.gmail.com with ESMTPSA id 6sm3446175wmd.36.2019.10.24.09.38.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2019 09:39:16 -0700 (PDT)
-From:   Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
-To:     outreachy-kernel@googlegroups.com, sudipm.mukherjee@gmail.com,
-        teddy.wang@siliconmotion.com, gregkh@linuxfoundation.org,
-        linux-fbdev@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org,
-        trivial@kernel.org
-Cc:     Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
-Subject: [PATCH 3/3] staging: sm750fb: align arguments with open parenthesis in file sm750_cursor.h
-Date:   Thu, 24 Oct 2019 13:38:22 -0300
-Message-Id: <20191024163822.7157-4-gabrielabittencourt00@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191024163822.7157-1-gabrielabittencourt00@gmail.com>
-References: <20191024163822.7157-1-gabrielabittencourt00@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 24 Oct 2019 09:38:35 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     daniel.thompson@linaro.org, arnd@arndb.de, broonie@kernel.org,
+        linus.walleij@linaro.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        baohua@kernel.org, stephan@gerhold.net,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH v3 00/10] Simplify MFD Core
+Date:   Thu, 24 Oct 2019 17:38:22 +0100
+Message-Id: <20191024163832.31326-1-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleans up checks of "Alignment should match open parenthesis"
-in file sm750_cursor.h
+MFD currently has one over-complicated user.  CS5535 uses a mixture of
+cell cloning, reference counting and subsystem-level call-backs to
+achieve its goal of requesting an IO memory region only once across 3
+consumers.  The same can be achieved by handling the region centrally
+during the parent device's .probe() sequence.  Releasing can be handed
+in a similar way during .remove().
+ 
+While we're here, take the opportunity to provide some clean-ups and
+error checking to issues noticed along the way.
+ 
+This also paves the way for clean cell disabling via Device Tree being
+discussed at [0]
+ 
+[0] https://lkml.org/lkml/2019/10/18/612.
 
-Signed-off-by: Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
----
- drivers/staging/sm750fb/sm750_cursor.h | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+Lee Jones (10):
+  mfd: cs5535-mfd: Use PLATFORM_DEVID_* defines and tidy error message
+  mfd: cs5535-mfd: Remove mfd_cell->id hack
+  mfd: cs5535-mfd: Request shared IO regions centrally
+  mfd: cs5535-mfd: Register clients using their own dedicated MFD cell
+    entries
+  mfd: mfd-core: Remove mfd_clone_cell()
+  x86: olpc-xo1-pm: Remove invocation of MFD's .enable()/.disable()
+    call-backs
+  x86: olpc-xo1-sci: Remove invocation of MFD's .enable()/.disable()
+    call-backs
+  mfd: mfd-core: Protect against NULL call-back function pointer
+  mfd: mfd-core: Remove usage counting for .{en,dis}able() call-backs
+  mfd: mfd-core: Move pdev->mfd_cell creation back into mfd_add_device()
 
-diff --git a/drivers/staging/sm750fb/sm750_cursor.h b/drivers/staging/sm750fb/sm750_cursor.h
-index 16ac07eb58d6..b59643dd61ed 100644
---- a/drivers/staging/sm750fb/sm750_cursor.h
-+++ b/drivers/staging/sm750fb/sm750_cursor.h
-@@ -5,14 +5,11 @@
- /* hw_cursor_xxx works for voyager,718 and 750 */
- void sm750_hw_cursor_enable(struct lynx_cursor *cursor);
- void sm750_hw_cursor_disable(struct lynx_cursor *cursor);
--void sm750_hw_cursor_setSize(struct lynx_cursor *cursor,
--						int w, int h);
--void sm750_hw_cursor_setPos(struct lynx_cursor *cursor,
--						int x, int y);
--void sm750_hw_cursor_setColor(struct lynx_cursor *cursor,
--						u32 fg, u32 bg);
--void sm750_hw_cursor_setData(struct lynx_cursor *cursor,
--			u16 rop, const u8 *data, const u8 *mask);
--void sm750_hw_cursor_setData2(struct lynx_cursor *cursor,
--			u16 rop, const u8 *data, const u8 *mask);
-+void sm750_hw_cursor_setSize(struct lynx_cursor *cursor, int w, int h);
-+void sm750_hw_cursor_setPos(struct lynx_cursor *cursor, int x, int y);
-+void sm750_hw_cursor_setColor(struct lynx_cursor *cursor, u32 fg, u32 bg);
-+void sm750_hw_cursor_setData(struct lynx_cursor *cursor, u16 rop,
-+			     const u8 *data, const u8 *mask);
-+void sm750_hw_cursor_setData2(struct lynx_cursor *cursor, u16 rop,
-+			      const u8 *data, const u8 *mask);
- #endif
+ arch/x86/platform/olpc/olpc-xo1-pm.c  |   8 --
+ arch/x86/platform/olpc/olpc-xo1-sci.c |   6 --
+ drivers/mfd/cs5535-mfd.c              | 105 +++++++++++-------------
+ drivers/mfd/mfd-core.c                | 113 +++++---------------------
+ include/linux/mfd/core.h              |  20 -----
+ 5 files changed, 65 insertions(+), 187 deletions(-)
+
 -- 
-2.20.1
+2.17.1
 
