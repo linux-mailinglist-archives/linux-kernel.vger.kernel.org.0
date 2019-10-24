@@ -2,143 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0866E2826
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 04:31:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9A6E282D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 04:31:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437051AbfJXCbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 22:31:01 -0400
-Received: from mail-eopbgr10080.outbound.protection.outlook.com ([40.107.1.80]:25089
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2437004AbfJXCa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 22:30:59 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nlyZCvE698wyhB+LgH9xI+GlPgNteaSVgdwMT0MqGQxr0FF7zdbeTwWSUePQ74SEFYB4SXSZgE0zEk3w42D4DvoDYQE0ksBRX41krEsxkDk3T7mPlBL8vpBDKg9RDUkQzpkW5H5lMc2W4zN8LlEBNHB38LuCkj0C5SSRYcgGt2i4fFbeJ258VqoUIZx0fifbJGLyNKZx4mSybF0FVqmA3M8yT8JShQOcq1PtpzjKeu9TfFswvMkBFZsn+Ty1KFk1C54vW7bGxpFaPQtS1XNn0jyMW3BNzku6BvlJFoKgYCi15RfeE5SSdevzQ1Od0E78sN8ncTNorwV8yq1pq5/EFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bI9tTg17t8EgZCrbJoJol28GjuuJsBUZnFzIqIKwFhU=;
- b=A/rBUM+5F7x9R7gYRpbmES/EqNXozwY7s48csmb8H8JCt4IZeUUTSUmGGa3+j6uqxo9SDftVVPz755soTarLd8l1ENMbOr26S6N5b+vTAprS2X7ffvXkrG8WvTBYtCuToiWeoeLV9JJZxjIwasVK+ZShXyHY2Id3ift1FEYZuEPyUKNVHM59P9GQZ1fvWNs7bgDaZYSxVwyiWSUITafLYOFBAlL0FWo8tVIxg8lx55P9dkElNgHRYmMtAX8e5vCCelApjz+43NteHHLphpgKRMvTKg6Acm96fm1bPjdBQZg8kuGmXoyoJMOjlqv38YAf+TYAZiNmcAIEEpFPPT4dzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bI9tTg17t8EgZCrbJoJol28GjuuJsBUZnFzIqIKwFhU=;
- b=pr31gBgbSh+NyUWyr1xv4opVkL0hj4LoTxaPXEqsQoVI9+R1cFaeYLnkmZChcsPiN9mEjMw9w7mOnQLZg5cOaAqxZDjS6FuYqlBXhR7kFzArFtCJf3JhqkNUtg+r+LOOf7NzfSGpEdrO4nikpqJsxds2XTEkFIyBDma8G7iFReI=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB5315.eurprd04.prod.outlook.com (20.176.215.97) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.21; Thu, 24 Oct 2019 02:30:56 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::843c:e722:27cb:74e1]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::843c:e722:27cb:74e1%5]) with mapi id 15.20.2347.030; Thu, 24 Oct 2019
- 02:30:56 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 3/3] clk: imx: imx6ul: use imx_obtain_fixed_clk_hw to simplify
- code
-Thread-Topic: [PATCH 3/3] clk: imx: imx6ul: use imx_obtain_fixed_clk_hw to
- simplify code
-Thread-Index: AQHVihMQWUCjM/gMv0eoOrW/rlEoYA==
-Date:   Thu, 24 Oct 2019 02:30:56 +0000
-Message-ID: <1571884049-29263-4-git-send-email-peng.fan@nxp.com>
-References: <1571884049-29263-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1571884049-29263-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR02CA0200.apcprd02.prod.outlook.com
- (2603:1096:201:20::12) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: fc6d7540-35a9-4478-48e3-08d7582a333b
-x-ms-traffictypediagnostic: AM0PR04MB5315:|AM0PR04MB5315:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB5315B526923280B146F5FB2E886A0@AM0PR04MB5315.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:669;
-x-forefront-prvs: 0200DDA8BE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(346002)(396003)(39860400002)(376002)(199004)(189003)(256004)(99286004)(6512007)(52116002)(3846002)(4326008)(476003)(76176011)(446003)(8936002)(2906002)(5660300002)(6436002)(11346002)(50226002)(6116002)(6506007)(486006)(7736002)(71190400001)(71200400001)(386003)(305945005)(86362001)(81166006)(81156014)(2201001)(8676002)(66066001)(110136005)(26005)(6486002)(54906003)(2616005)(102836004)(478600001)(316002)(66446008)(2501003)(66556008)(66476007)(64756008)(44832011)(186003)(66946007)(25786009)(36756003)(14454004)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5315;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nidm5K3oYVUfPR8gqSfFIQ20UdFZYHfPvyCch23p7iJMdpRtZ9uYIBaLRR/TrA3Hw6ik47AAG7fkWMX/M8uwSuJCcXK679/ClI0MEKafyyBNOKdPYZ09pGnX5RhBPMj7k4ZDgEyAg74d+vAwbdzdYAT3N2vcpqMnX5DWr0yawH4mjpEqYcgMsGDK61C8ixKTVH/pzbk9jG230i9kf3/Lgo2u9Ommr5uNLnXpLckslrZRBrrTNT5cJ26eDZ6sqitOpWTAZWc5sWNcpFTuTjYqWZOcZ7Ygnv89UaNHnONimDb+Ey9f9AxY9eQ/8uwQoUa9IQU4hKRRIqLb0+cYPNIDdRC1d77xeuE1+bbmGN9abxhjltgpBUi8+RUjKzmRWZ8zNa7Tn4mcarXo2bbpeHpcgZugub3O46LJ5IBDH5cbj+y1Fc8Zl6ZL5cHqilceQS1E
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S2437077AbfJXCbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 22:31:18 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38724 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437066AbfJXCbR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 22:31:17 -0400
+Received: by mail-ed1-f65.google.com with SMTP id y8so5073250edu.5
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 19:31:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gnpimtDmP0lqthi2a9dQUIzsbuDYbXbk8lwy1rA6ZU4=;
+        b=rWfKpJmH4ifuIAc04embim+n/JBDGLFT0Hj+ihXkCmiMhnOlUJ7dovXsW/rUmYCG6F
+         NxvohT6iNXBI6t174vtu7YcDkT26RFlgZNkwGZix5mNkPhEVfaQJud2KWOstCgH42cLL
+         C6TMjBSQEmYIn9WfT37PSeJ/iFVaR6bQjE0zyQcvJKF2mvrqFmnCmfG0685/oCLWd2D/
+         kj3C67iakdIgJwUCaU7RXbrXgjL50UBwhAsUqAr4lASSx5NA4IH+9zeFS8WnF3708s4S
+         VD43nmX5iXHmxRFB4FSaXMMTYJZZ+KuoOiJB3j+OaIRifCMquB5u1LE663zK8s24CJAE
+         4+WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gnpimtDmP0lqthi2a9dQUIzsbuDYbXbk8lwy1rA6ZU4=;
+        b=nawRc9G295eYg2r/t0HeGqjgJORv305G+kklOT5QPC2IjOzDYtYMZdeaECxAeNlGel
+         anZz08mWdSKul+wpOLS1mQNWtQ03yepK7T3rI4OoMBy6aN3zvoBfKzrqMUEjGHDCsOyq
+         5PdEgRcuqA9wnfHPr8c6qiVLv+BGn7nLW6NKVv/np0xeNEfPyE5GiMw4sfxYUsbXwarX
+         mXjFkX7k9H8TUXdgMrvw+x8LvW4Q59tQfzVAsdccXQ3DR1Y3WzPx3CyWdw4KAnT0uAGW
+         pFlSq2Ovdk1TE2bdodHnEMzGREADoAbuGPH9Sul1YvjfjUdKLaOmI5+MB/pio1KtOnGb
+         UHVA==
+X-Gm-Message-State: APjAAAVJO3Ijwp2nh2VMucXyKY1jQ8axgkG2dt5mdmTnJjyfDdEhzWDu
+        8HdPLoo7Eff7ghQHrMGkmDjcqg==
+X-Google-Smtp-Source: APXvYqy84bemiVw55n7fco+FbX1+KuwznFlI0XsqhDfwNJccDH40WXATcHh+QUP1GE+pY3XO2S2c9A==
+X-Received: by 2002:a17:906:780e:: with SMTP id u14mr26591750ejm.97.1571884275784;
+        Wed, 23 Oct 2019 19:31:15 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.210.43])
+        by smtp.googlemail.com with ESMTPSA id x23sm430555eda.83.2019.10.23.19.31.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2019 19:31:15 -0700 (PDT)
+Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <b7849297-e4a4-aaec-9a64-2b481663588b@plexistor.com>
+ <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
+ <20191023221332.GE2044@dread.disaster.area>
+From:   Boaz Harrosh <boaz@plexistor.com>
+Message-ID: <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
+Date:   Thu, 24 Oct 2019 05:31:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc6d7540-35a9-4478-48e3-08d7582a333b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2019 02:30:56.9137
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qStNSryXhqk4EIIst/zLh8afk36pvzBB/xBgLQ4XcOgVMYqwFEBaf0HzjN5foC4GYO94tfp75mTs6u5YXkvpNA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5315
+In-Reply-To: <20191023221332.GE2044@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On 24/10/2019 01:13, Dave Chinner wrote:
+> On Wed, Oct 23, 2019 at 04:09:50PM +0300, Boaz Harrosh wrote:
+>> On 22/10/2019 14:21, Boaz Harrosh wrote:
+>>> On 20/10/2019 18:59, ira.weiny@intel.com wrote:
+>> Please explain the use case behind your model?
+> 
+> No application changes needed to control whether they use DAX or
+> not. It allows the admin to control the application behaviour
+> completely, so they can turn off DAX if necessary. Applications are
+> unaware of constraints that may prevent DAX from being used, and so
+> admins need a mechanism to prevent DAX aware application from
+> actually using DAX if the capability is present.
+> 
+> e.g. given how slow some PMEM devices are when it comes to writing
+> data, especially under extremely high concurrency, DAX is not
+> necessarily a performance win for every application. Admins need a
+> guaranteed method of turning off DAX in these situations - apps may
+> not provide such a knob, or even be aware of a thing called DAX...
+> 
 
-imx_obtain_fixed_clk_hw could be used to simplify code to replace
-__clk_get_hw(of_clk_get_by_name(node, "name"))
+Thank you Dave for explaining. Forgive my slowness. I now understand
+your intention.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx6ul.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+But if so please address my first concern. That in the submitted implementation
+you must set the flag-bit after the create of the file but before the write.
+So exactly the above slow writes must always be DAX if I ever want the file
+to be DAX accessed in the future.
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index bc931988fe7b..46a8a20e891d 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -126,12 +126,12 @@ static void __init imx6ul_clocks_init(struct device_n=
-ode *ccm_node)
-=20
- 	hws[IMX6UL_CLK_DUMMY] =3D imx_clk_hw_fixed("dummy", 0);
-=20
--	hws[IMX6UL_CLK_CKIL] =3D __clk_get_hw(of_clk_get_by_name(ccm_node, "ckil"=
-));
--	hws[IMX6UL_CLK_OSC] =3D __clk_get_hw(of_clk_get_by_name(ccm_node, "osc"))=
-;
-+	hws[IMX6UL_CLK_CKIL] =3D imx_obtain_fixed_clk_hw(ccm_node, "ckil");
-+	hws[IMX6UL_CLK_OSC] =3D imx_obtain_fixed_clk_hw(ccm_node, "osc");
-=20
- 	/* ipp_di clock is external input */
--	hws[IMX6UL_CLK_IPP_DI0] =3D __clk_get_hw(of_clk_get_by_name(ccm_node, "ip=
-p_di0"));
--	hws[IMX6UL_CLK_IPP_DI1] =3D __clk_get_hw(of_clk_get_by_name(ccm_node, "ip=
-p_di1"));
-+	hws[IMX6UL_CLK_IPP_DI0] =3D imx_obtain_fixed_clk_hw(ccm_node, "ipp_di0");
-+	hws[IMX6UL_CLK_IPP_DI1] =3D imx_obtain_fixed_clk_hw(of_clk_get_by_name(cc=
-m_node, "ipp_di1");
-=20
- 	np =3D of_find_compatible_node(NULL, NULL, "fsl,imx6ul-anatop");
- 	base =3D of_iomap(np, 0);
---=20
-2.16.4
+In fact I do not see how you do this without changing the application because
+most applications create thier own files, so you do not have a chance to set
+the DAX-flag before the write happens. So the only effective fixture is the
+inheritance from the parent directory.
+But then again how do you separate from the slow writes that we would like
+none-DAX to the DAX reads that are fast and save so much resources and latency.
 
+What if, say in XFS when setting the DAX-bit we take all the three write-locks
+same as a truncate. Then we check that there are no active page-cache mappings
+ie. a single opener. Then allow to set the bit. Else return EBUISY. (file is in use)
+
+> e.g. the data set being accessed by the application is mapped and
+> modified by RDMA applications, so those files must not be accessed
+> using DAX by any application because DAX+RDMA are currently
+> incompatible. Hence you can have RDMA on pmem devices co-exist
+> within the same filesystem as other applications using DAX to access
+> the pmem...
+> 
+
+I actually like the lastest patchset that takes a lease on the file.
+But yes an outside admin tool to set different needs.
+
+> Cheers,
+> Dave.
+> 
+
+Yes, thanks
+Boaz
