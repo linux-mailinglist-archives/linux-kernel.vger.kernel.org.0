@@ -2,89 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C9D8E29D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 07:27:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3629E29ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 07:32:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437518AbfJXF1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 01:27:43 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:9963 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2437484AbfJXF1m (ORCPT
+        id S2406841AbfJXFcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 01:32:35 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44818 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404071AbfJXFce (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 01:27:42 -0400
-X-UUID: c72893a83a2447c38eb22ecb4b75e09e-20191024
-X-UUID: c72893a83a2447c38eb22ecb4b75e09e-20191024
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1708865212; Thu, 24 Oct 2019 13:27:35 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 24 Oct 2019 13:27:32 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 24 Oct 2019 13:27:33 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH v16 5/5] arm64: dts: add gce node for mt8183
-Date:   Thu, 24 Oct 2019 13:27:32 +0800
-Message-ID: <20191024052732.7767-6-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20191024052732.7767-1-bibby.hsieh@mediatek.com>
-References: <20191024052732.7767-1-bibby.hsieh@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Thu, 24 Oct 2019 01:32:34 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q21so14362600pfn.11
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 22:32:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=t4PAHH8PJaCZ4qiU56+PESatCmdynQQlnlANmSc3Nko=;
+        b=LjjEwZkkgUv6wfE1FBdccGQk4cftdKD9U4BnZA3syJjmzYufUKVCllwB4FjaHJNAFz
+         xKsY22E2ojGlVWHJRdoAKOCH13dbOQRrkZPn2i6+5bUKihu5Ka66mlnHAOuT81AM5wb4
+         7gu/Nt2/9jJt9zsFgqAO5i2G+n1bumZf0Lj64=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=t4PAHH8PJaCZ4qiU56+PESatCmdynQQlnlANmSc3Nko=;
+        b=R+bf57oPIbVurJo9jNDvVPkxr3S8vPvg89Tmp2bR7JHuMIn2u1uDgt2MTzWplZQYUA
+         IiDONx1Ej+SLUvRvFY5ZVm3xzYlxwhIlbk3IWjJEW2nNriS+hHLbSFo+AdUhOA0N2ZOi
+         DGrLCy2jI/2R0cwwq7Z1me83DOUuT0dhZjxOua2L39pplmBP+goNJcKiJq3KYvNB9doK
+         +rZfmBJ428MrsTiZC6dmTOR9BD52cWTHV+aakG7b4rAbUZOKUA+TqyNqB9F5b26fb1nM
+         Lvd2fZLUyxDlAngo8sSB3m/eTrw80+pmEDm4t4GKdPLR/nIMVwoxWWtFLf0e4L5cSWcM
+         i2YQ==
+X-Gm-Message-State: APjAAAU1NmB5iG0N/Cl93gS4CALrH69OrhvdNoWDy+Xgsz7yPxIe22Er
+        nLzDUa1P2sBtDtrDMrPolWxCuw==
+X-Google-Smtp-Source: APXvYqxpdZoWV3+xyLulndr7rwvyUTVaUc6FLaeDLcNGv6LTqTVuranco+MpYNdRb4AjnneGiuKmOQ==
+X-Received: by 2002:a63:7247:: with SMTP id c7mr10891580pgn.311.1571895153531;
+        Wed, 23 Oct 2019 22:32:33 -0700 (PDT)
+Received: from shitalt.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id e17sm29491331pfl.40.2019.10.23.22.32.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 23 Oct 2019 22:32:32 -0700 (PDT)
+From:   Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vikas Gupta <vikas.gupta@broadcom.com>,
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tee-dev@lists.linaro.org, bcm-kernel-feedback-list@broadcom.com,
+        netdev@vger.kernel.org,
+        Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+Subject: [PATCH V3 0/3] Add OP-TEE based bnxt f/w manager
+Date:   Thu, 24 Oct 2019 11:02:38 +0530
+Message-Id: <1571895161-26487-1-git-send-email-sheetal.tigadoli@broadcom.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add gce device node for mt8183
+This patch series adds support for TEE based BNXT firmware
+management module and the driver changes to invoke OP-TEE
+APIs to fastboot firmware and to collect crash dump.
 
-Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+changes from v2:
+ - address review comments from Jakub
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 6cbbd7726d36..954bcd766c97 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/power/mt8183-power.h>
-+#include <dt-bindings/gce/mt8183-gce.h>
- #include "mt8183-pinfunc.h"
- 
- / {
-@@ -336,6 +337,15 @@
- 			status = "disabled";
- 		};
- 
-+		gce: mailbox@10238000 {
-+			compatible = "mediatek,mt8183-gce";
-+			reg = <0 0x10238000 0 0x4000>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_LOW>;
-+			#mbox-cells = <3>;
-+			clocks = <&infracfg CLK_INFRA_GCE>;
-+			clock-names = "gce";
-+		};
-+
- 		uart0: serial@11002000 {
- 			compatible = "mediatek,mt8183-uart",
- 				     "mediatek,mt6577-uart";
+Vasundhara Volam (2):
+  bnxt_en: Add support to invoke OP-TEE API to reset firmware
+  bnxt_en: Add support to collect crash dump via ethtool
+
+Vikas Gupta (1):
+  firmware: broadcom: add OP-TEE based BNXT f/w manager
+
+ drivers/firmware/broadcom/Kconfig                 |   8 +
+ drivers/firmware/broadcom/Makefile                |   1 +
+ drivers/firmware/broadcom/tee_bnxt_fw.c           | 277 ++++++++++++++++++++++
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c         |  13 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h         |   6 +
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c |  37 ++-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h |   2 +
+ include/linux/firmware/broadcom/tee_bnxt_fw.h     |  14 ++
+ 8 files changed, 354 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/firmware/broadcom/tee_bnxt_fw.c
+ create mode 100644 include/linux/firmware/broadcom/tee_bnxt_fw.h
+
 -- 
-2.18.0
+1.9.1
 
