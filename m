@@ -2,109 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D666DE283B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 04:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCC88E2844
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 04:37:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437113AbfJXCe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 22:34:57 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38468 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408246AbfJXCey (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 22:34:54 -0400
-Received: by mail-qt1-f195.google.com with SMTP id o25so22104606qtr.5;
-        Wed, 23 Oct 2019 19:34:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Kpk3lLUqgGwLu+uXg2SWXaoH3Lz9YjBH7H2wUph1KgI=;
-        b=nWxtxJU3yLMrtDbaMEkPB29QLCMcQtyzX2+hbfzVWMRP3v+2pgmefyckvjP6h5n72d
-         I0PgUVUtiNoIpWg0rO8w8Vxtvwl4aTcTTGf9U7olB8sw05kA78KiHu+dJYCcrsn8kV5g
-         k2GoOT6orFcDnv38hj/dOQPkiS31f4qTF/d3b7RQM0XzIOvvzygynGDAJcQJPLyZMi57
-         vE0jheD1nyUxdYONNZc5/IZxFVud1ocKSoTZT+fUMu/QtYEAmwR7zkqY9cuR3ek2lQi+
-         biH1tqQ/UZjQZbuCoeJPj4LR4SSgYJtMXMAYjc5m+n7rREqCUlQmmat5aohDdJEWkq99
-         ZXzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Kpk3lLUqgGwLu+uXg2SWXaoH3Lz9YjBH7H2wUph1KgI=;
-        b=rZUEKQSnDYYIkL62nV3xltuEp3DdgOHuh2HSecpgf5b1yTwO0IJe8uKl16DHiOXdNz
-         36w3Ufy4wtXR+Qc2GkZzorrOgD7jNfAaCu36+kPI+QsfaV8gKLcOMCWhm8V57XMKwrB6
-         XUYnkTFc60l77f/FaRKoSpudUrx4mvaxRB9sjTBF+EbdUNY4ymlbY5u2+DbH2QlDbAQx
-         WN/+fSWe2XOfa4JJ7o3Y4gpbm/AKdw3higVE66iQT+OClq9UaHAIyBd6xuqWN/DNrM/t
-         o8bvuAkhMECwZR82M3rcHuvJa968v3vDSjDWi6nQ4875j99M5XBtqhIY/LDyCK9IF3hB
-         5qYQ==
-X-Gm-Message-State: APjAAAU6QEX08wUDFsJcuC+xewAr6Je1JMui/MASsU0dV20XPtu/LhBZ
-        K3sKFeHYXHdelWbtBux1SQKobvQH
-X-Google-Smtp-Source: APXvYqxAGw9VOw8bBlElMlkLouVTAjqYK4ikrAJTc3OBpJnPWW9l1JnFcB25s6S9Vnz0CKe01JbldA==
-X-Received: by 2002:a05:6214:803:: with SMTP id df3mr12589055qvb.215.1571884492658;
-        Wed, 23 Oct 2019 19:34:52 -0700 (PDT)
-Received: from localhost.localdomain ([186.212.94.31])
-        by smtp.gmail.com with ESMTPSA id q16sm10252495qke.22.2019.10.23.19.34.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 19:34:52 -0700 (PDT)
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, mpdesouza@suse.com
-Subject: [PATCH 5/5] btrfs: ioctl: Call btrfs_vol_uevent on subvolume deletion
-Date:   Wed, 23 Oct 2019 23:36:36 -0300
-Message-Id: <20191024023636.21124-6-marcos.souza.org@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191024023636.21124-1-marcos.souza.org@gmail.com>
-References: <20191024023636.21124-1-marcos.souza.org@gmail.com>
+        id S2408251AbfJXChM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 22:37:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40736 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2406322AbfJXChM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 22:37:12 -0400
+Received: from redsun51.ssa.fujisawa.hgst.com (unknown [199.255.47.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9087E205ED;
+        Thu, 24 Oct 2019 02:37:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571884631;
+        bh=jzD/o5fFFKb4zWGB61Nq3oM/Rw9gexxnXww5qQGCnnc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QGHV+0RWpDokCcVFBTQ6ochibC6yeFefd3NENUYBx6NKaKfgAIC2LHU+i/Z0boyx6
+         QhDrVJegviiXyxWzpUxADfgu+OjZf6JsncZvsO8Db7CLGgVT6LYPBaP/5hJzfA7hBK
+         OSTURxqzz7+fkE7m8UtdRxnKX+NTmYA8LtNgTeKI=
+Date:   Thu, 24 Oct 2019 11:37:04 +0900
+From:   Keith Busch <kbusch@kernel.org>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Keith Busch <keith.busch@intel.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI/DPC: Add pcie_ports=dpc-native parameter to bring
+ back old behavior
+Message-ID: <20191024023704.GA3152@redsun51.ssa.fujisawa.hgst.com>
+References: <20191023192205.97024-1-olof@lixom.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191023192205.97024-1-olof@lixom.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
+On Wed, Oct 23, 2019 at 12:22:05PM -0700, Olof Johansson wrote:
+> In commit eed85ff4c0da7 ("PCI/DPC: Enable DPC only if AER is available"),
+> the behavior was changed such that native (kernel) handling of DPC
+> got tied to whether the kernel also handled AER. While this is what
+> the standard recommends, there are BIOSes out there that lack the DPC
+> handling since it was never required in the past.
+> 
+> To make DPC still work on said platforms the same way they did before,
+> add a "pcie_ports=dpc-native" kernel parameter that can be passed in
+> if needed, while keeping defaults unchanged.
 
-Since the function btrfs_ioctl_snap_destroy is used for deleting both
-subvolumes and snapshots it was needed call btrfs_is_snapshot,
-which checks a giver btrfs_root and returns true if it's a snapshot.
-The current code is interested in subvolumes only.
+If platform firmware wants to handle AER events, but the kernel enables
+the DPC capability, the ports will be trapping events that firmware is
+expecting to handle. Not that that's a bad thing: firmware is generally
+worse at handling these errors.
 
-btrfs_vol_uevent will export two environment variables to udev:
-BTRFS_VOL_NAME: containing the name of the subvolume deleted
-BTRFS_VOL_DEL: will signalize that a volume is being deleted
+> +/*
+> + * If the user specified "pcie_ports=dpc-native", use the PCIe services
+> + * for DPC, but cuse platform defaults for the others.
 
-One can create a udev rule and check for BTRFS_VOL_DEL being set,
-these values one could detect whenever a subvolume is deleted, and
-take any action based on the subvolume name contained in BTRFS_VOL_NAME.
+s/cuse/use
 
-Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
----
- fs/btrfs/ioctl.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> @@ -1534,9 +1534,11 @@ static inline int pci_irqd_intx_xlate(struct irq_domain *d,
+>  #ifdef CONFIG_PCIEPORTBUS
+>  extern bool pcie_ports_disabled;
+>  extern bool pcie_ports_native;
+> +extern bool pcie_ports_dpc_native;
+>  #else
+>  #define pcie_ports_disabled	true
+>  #define pcie_ports_native	false
+> +#define pcie_ports_dpc_native	false
+>  #endif
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index c538d3648195..173f2a258508 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -2869,6 +2869,7 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
- {
- 	struct dentry *parent = file->f_path.dentry;
- 	struct btrfs_fs_info *fs_info = btrfs_sb(parent->d_sb);
-+	struct block_device *bdev = fs_info->fs_devices->latest_bdev;
- 	struct dentry *dentry;
- 	struct inode *dir = d_inode(parent);
- 	struct inode *inode;
-@@ -2962,6 +2963,10 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
- 	err = btrfs_delete_subvolume(dir, dentry);
- 	inode_unlock(inode);
- 	if (!err) {
-+		/* send uevent only to subvolume deletion */
-+		if (!btrfs_is_snapshot(dest))
-+			btrfs_vol_uevent(bdev, false, vol_args->name);
-+
- 		fsnotify_rmdir(dir, dentry);
- 		d_delete(dentry);
- 	}
--- 
-2.23.0
-
+You do not have any references to pcie_ports_dpc_native outside of files that
+require CONFIG_PCIEPORTBUS, so no need to define a default.
