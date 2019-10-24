@@ -2,85 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76C21E28E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 05:33:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4144E28EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 05:35:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437288AbfJXDdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 23:33:17 -0400
-Received: from mga12.intel.com ([192.55.52.136]:31425 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392870AbfJXDdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 23:33:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 20:33:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,223,1569308400"; 
-   d="scan'208";a="188457716"
-Received: from shbuild999.sh.intel.com (HELO localhost) ([10.239.147.113])
-  by orsmga007.jf.intel.com with ESMTP; 23 Oct 2019 20:33:13 -0700
-Date:   Thu, 24 Oct 2019 11:33:13 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Qian Cai <cai@lca.pw>, Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>, Roman Gushchin <guro@fb.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Aquini <aquini@redhat.com>
-Subject: Re: [PATCH] mm/vmstat: Reduce zone lock hold time when reading
- /proc/pagetypeinfo
-Message-ID: <20191024033313.GA42124@shbuild999.sh.intel.com>
-References: <20191022162156.17316-1-longman@redhat.com>
- <20191022145902.d9c4a719c0b32175e06e4eee@linux-foundation.org>
- <2236495a-ead0-e08e-3fb6-f3ab906b75b6@redhat.com>
- <1571842093.5937.84.camel@lca.pw>
- <a4398f60-c07e-8fa9-c26d-3b8f688e65a1@redhat.com>
+        id S2437321AbfJXDfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 23:35:48 -0400
+Received: from mx1.unisoc.com ([222.66.158.135]:45203 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2392415AbfJXDfr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 23:35:47 -0400
+Received: from ig2.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+        by SHSQR01.spreadtrum.com with ESMTPS id x9O3YLUh004509
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 24 Oct 2019 11:34:21 +0800 (CST)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from localhost (10.0.93.106) by BJMBX02.spreadtrum.com (10.0.64.8)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Thu, 24 Oct 2019 11:34:35
+ +0800
+From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, Yuming Han <yuming.han@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH] tracing: use kvcalloc for tgid_map array allocation
+Date:   Thu, 24 Oct 2019 11:34:30 +0800
+Message-ID: <1571888070-24425-1-git-send-email-chunyan.zhang@unisoc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1571884773-23990-1-git-send-email-chunyan.zhang@unisoc.com>
+References: <1571884773-23990-1-git-send-email-chunyan.zhang@unisoc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a4398f60-c07e-8fa9-c26d-3b8f688e65a1@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-Originating-IP: [10.0.93.106]
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL: SHSQR01.spreadtrum.com x9O3YLUh004509
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 11:01:04PM +0800, Waiman Long wrote:
-> On 10/23/19 10:48 AM, Qian Cai wrote:
-> >>> this still isn't a bulletproof fix.  Maybe just terminate the list
-> >>> walk if freecount reaches 1024.  Would anyone really care?
-> >>>
-> >>> Sigh.  I wonder if anyone really uses this thing for anything
-> >>> important.  Can we just remove it all?
-> >>>
-> >> Removing it will be a breakage of kernel API.
-> > Who cares about breaking this part of the API that essentially nobody will use
-> > this file?
-> >
-> There are certainly tools that use /proc/pagetypeinfo and this is how
-> the problem is found. I am not against removing it, but we have to be
-> careful and deprecate it in way that minimize user impact.
 
-We have been using the /proc/pagetypeinfo for debugging, mainly for
-client platforms like phones/tablets. We met problems like very slow
-system response or OOM things, and many of them could be related with
-memory pressure or fragmentation issues, where monitoring /proc/pagetypeinfo
-will be very useful for debugging.
+From: Yuming Han <yuming.han@unisoc.com>
 
-So I think Michal's idea to change it to 0400 is a good idea.
+Fail to allocate memory for tgid_map, because it requires order-6 page.
+detail as:
 
-Thanks,
-Feng
+c3 sh: page allocation failure: order:6,
+   mode:0x140c0c0(GFP_KERNEL), nodemask=(null)
+c3 sh cpuset=/ mems_allowed=0
+c3 CPU: 3 PID: 5632 Comm: sh Tainted: G        W  O    4.14.133+ #10
+c3 Hardware name: Generic DT based system
+c3 Backtrace:
+c3 [<c010bdbc>] (dump_backtrace) from [<c010c08c>](show_stack+0x18/0x1c)
+c3 [<c010c074>] (show_stack) from [<c0993c54>](dump_stack+0x84/0xa4)
+c3 [<c0993bd0>] (dump_stack) from [<c0229858>](warn_alloc+0xc4/0x19c)
+c3 [<c0229798>] (warn_alloc) from [<c022a6e4>](__alloc_pages_nodemask+0xd18/0xf28)
+c3 [<c02299cc>] (__alloc_pages_nodemask) from [<c0248344>](kmalloc_order+0x20/0x38)
+c3 [<c0248324>] (kmalloc_order) from [<c0248380>](kmalloc_order_trace+0x24/0x108)
+c3 [<c024835c>] (kmalloc_order_trace) from [<c01e6078>](set_tracer_flag+0xb0/0x158)
+c3 [<c01e5fc8>] (set_tracer_flag) from [<c01e6404>](trace_options_core_write+0x7c/0xcc)
+c3 [<c01e6388>] (trace_options_core_write) from [<c0278b1c>](__vfs_write+0x40/0x14c)
+c3 [<c0278adc>] (__vfs_write) from [<c0278e10>](vfs_write+0xc4/0x198)
+c3 [<c0278d4c>] (vfs_write) from [<c027906c>](SyS_write+0x6c/0xd0)
+c3 [<c0279000>] (SyS_write) from [<c01079a0>](ret_fast_syscall+0x0/0x54)
 
+Switch to use kvcalloc to avoid unexpected allocation failures.
+
+Signed-off-by: Yuming Han <yuming.han@unisoc.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+---
+ kernel/trace/trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 6a0ee9178365..2fa72419bbd7 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4609,7 +4609,7 @@ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
  
-> Cheers,
-> Longman
-> 
-> 
+ 	if (mask == TRACE_ITER_RECORD_TGID) {
+ 		if (!tgid_map)
+-			tgid_map = kcalloc(PID_MAX_DEFAULT + 1,
++			tgid_map = kvcalloc(PID_MAX_DEFAULT + 1,
+ 					   sizeof(*tgid_map),
+ 					   GFP_KERNEL);
+ 		if (!tgid_map) {
+-- 
+2.20.1
+
+
