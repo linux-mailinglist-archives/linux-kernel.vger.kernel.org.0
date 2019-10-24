@@ -2,114 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEB29E3284
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 14:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DD1DE3288
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 14:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501960AbfJXMjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 08:39:00 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33584 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbfJXMi7 (ORCPT
+        id S2501972AbfJXMjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 08:39:12 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45830 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbfJXMjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 08:38:59 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s1so17136138wro.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 05:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DJ9YPx7+n1PCdyUhZ2dP1UoOL9smelF9iCjqcb3ACuQ=;
-        b=OC7T25s1P6P+UU4+3mI+CNjv0Ku6/AuM5iNGxza+4kgK+zIgYufjMaQgvJdsHJ8Sr2
-         MdDenmU891PzzJpPKN6NhBcOOlQEtUQXxu/FPHDFBBC9FQrCVtbsXgxBELTZ6F5XC/ax
-         nMpELi2hZ20KJDv3LvlzfxBVWH0CHLXa1ta0A=
+        Thu, 24 Oct 2019 08:39:12 -0400
+Received: by mail-ot1-f67.google.com with SMTP id 41so20478255oti.12
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 05:39:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=DJ9YPx7+n1PCdyUhZ2dP1UoOL9smelF9iCjqcb3ACuQ=;
-        b=bR0C9jg8ZFybzdyWx1jpjB0hxtxgKjAbC02z5NLajcZrMSygY2JmrBWLn5C0NeL8Xk
-         Yik5oaAnc9vA3CpXsbtVt8DzVy8tC14HfiWydsQns8lZVGWhGvm9pKF8D1h7YDQbQtjq
-         +ia5dChrxFZALZCQqk2Tfz6o/xyI7by5u4nJd0vOdSxoOI5gmSHYetTd8Fg1WjFwhaZf
-         OJF+G/T6vzrPo1WmBZs6vcdFA34HPmApF9D3DuC7JNLGkwEgpI3M7Mc+3gvKSI6d5tuM
-         q/aUqMCx/F2z9lBG34crl22ZD5CqqNC+GURIt6mBX3aYARuXivGaRzftyTvcnX4ZUEVm
-         Tlag==
-X-Gm-Message-State: APjAAAXBWhgSq9LYyPqXD42aHWZUnRY5/YBwZD62EE1no9YwLco87bWg
-        fD8zHRrkh6rB8MdKBoIjNlCUGw==
-X-Google-Smtp-Source: APXvYqzJz9HtesuNFtknXFUbo5uGWFpCON0/JuQdLXmV+NUQ5T2p0OSvCdnTHV2dFr2Z4sMGd+CjlQ==
-X-Received: by 2002:adf:d190:: with SMTP id v16mr3844066wrc.64.1571920735886;
-        Thu, 24 Oct 2019 05:38:55 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id l6sm2465278wmg.2.2019.10.24.05.38.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2019 05:38:54 -0700 (PDT)
-Date:   Thu, 24 Oct 2019 14:38:53 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Iago Toral Quiroga <itoral@igalia.com>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/v3d: fix double free of bin
-Message-ID: <20191024123853.GH11828@phenom.ffwll.local>
-Mail-Followup-To: Colin King <colin.king@canonical.com>,
-        Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Iago Toral Quiroga <itoral@igalia.com>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191024104801.3122-1-colin.king@canonical.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h/Ozpin6WAJYhCs7IuxGEPTaFDrBNPxT2ybsEoTgZa8=;
+        b=VRa08cahs+XeKWz1yxbvfYDYbyCZuchC1Gqd+ykGczLQhf2jcdZQTetjFMWFylZ2EC
+         RVnM4L15fI06E9ZYj85Ui21VImiCIb1r5DYCRq4E+XN8/Pwg9npcZWV120ZwoiuCIxRu
+         QSCplAgfe1psaL85jdwfCmUpoRsMSYsfU8PHWG4g+cYT7AYld9nBT5mr9LrEn7G6LeNI
+         Z09oXxecaFHwq2xcjwbs0Y6WB+iTRn7mtPxFeXcVt+C5RJJgZ+cZz0/h06eKBJTF25Gt
+         mJgBZr4hxwazgymiUNnBf5yu7vaeVqRCdHAiE3Z23YdT/AL4sAWCkJ6hHXgPPJ9Jui0M
+         ut4g==
+X-Gm-Message-State: APjAAAXZnspAntKiunIs65C6olNwDDP7Y/zpJhh4N4EFJP2mDl5x6Pqu
+        FOgsoyp65Aeu4lxrTnzAoUUeuQTNOvhThMKGyXM=
+X-Google-Smtp-Source: APXvYqw0Ig2z1uuW9alu3vhqiC0nMabAO0elG1y20TV13hU8hqVTNjUIi4wsceW9yCuJQGS6MLGKCernIca5rkJjg6w=
+X-Received: by 2002:a9d:459b:: with SMTP id x27mr10908377ote.167.1571920749753;
+ Thu, 24 Oct 2019 05:39:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191024104801.3122-1-colin.king@canonical.com>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191023122505.64684-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20191023122505.64684-1-andriy.shevchenko@linux.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 24 Oct 2019 14:38:57 +0200
+Message-ID: <CAJZ5v0j5UH52ze=wL_kc394ojaudkaAKGp5=x6-bq4dEnPHp-g@mail.gmail.com>
+Subject: Re: [PATCH v1] driver core: platform: Declare ret variable only once
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 11:48:01AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Two different fixes have addressed the same memory leak of bin and
-> this now causes a double free of bin.  While the individual memory
-> leak fixes are fine, both fixes together are problematic.
-> 
-> Addresses-Coverity: ("Double free")
-> Fixes: 29cd13cfd762 ("drm/v3d: Fix memory leak in v3d_submit_cl_ioctl")
-> Fixes: 0d352a3a8a1f (" rm/v3d: don't leak bin job if v3d_job_init fails.")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Wed, Oct 23, 2019 at 2:25 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> We may define ret variable only once and avoid adding it each time
+> platform_get_irq_optional() get extended.
+>
+> For the sake of consistency do the same in __platform_get_irq_byname().
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-That sounds like wrong merge resolution somewhere, and we don't have those
-patches merged together in any final tree yet anywhere. What's this based
-on?
--Daniel
+Fine by me:
+
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
 > ---
->  drivers/gpu/drm/v3d/v3d_gem.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
-> index 549dde83408b..37515e47b47e 100644
-> --- a/drivers/gpu/drm/v3d/v3d_gem.c
-> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
-> @@ -568,7 +568,6 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
->  		ret = v3d_job_init(v3d, file_priv, &bin->base,
->  				   v3d_job_free, args->in_sync_bcl);
->  		if (ret) {
-> -			kfree(bin);
->  			v3d_job_put(&render->base);
->  			kfree(bin);
->  			return ret;
-> -- 
-> 2.20.1
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+>  drivers/base/platform.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> index e0ca682a756d..dad9806875f7 100644
+> --- a/drivers/base/platform.c
+> +++ b/drivers/base/platform.c
+> @@ -106,9 +106,9 @@ int platform_get_irq_optional(struct platform_device *dev, unsigned int num)
+>         return dev->archdata.irqs[num];
+>  #else
+>         struct resource *r;
+> -       if (IS_ENABLED(CONFIG_OF_IRQ) && dev->dev.of_node) {
+> -               int ret;
+> +       int ret;
+>
+> +       if (IS_ENABLED(CONFIG_OF_IRQ) && dev->dev.of_node) {
+>                 ret = of_irq_get(dev->dev.of_node, num);
+>                 if (ret > 0 || ret == -EPROBE_DEFER)
+>                         return ret;
+> @@ -117,8 +117,6 @@ int platform_get_irq_optional(struct platform_device *dev, unsigned int num)
+>         r = platform_get_resource(dev, IORESOURCE_IRQ, num);
+>         if (has_acpi_companion(&dev->dev)) {
+>                 if (r && r->flags & IORESOURCE_DISABLED) {
+> -                       int ret;
+> -
+>                         ret = acpi_irq_get(ACPI_HANDLE(&dev->dev), num, r);
+>                         if (ret)
+>                                 return ret;
+> @@ -151,8 +149,7 @@ int platform_get_irq_optional(struct platform_device *dev, unsigned int num)
+>          * allows a common code path across either kind of resource.
+>          */
+>         if (num == 0 && has_acpi_companion(&dev->dev)) {
+> -               int ret = acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
+> -
+> +               ret = acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
+>                 /* Our callers expect -ENXIO for missing IRQs. */
+>                 if (ret >= 0 || ret == -EPROBE_DEFER)
+>                         return ret;
+> @@ -240,10 +237,9 @@ static int __platform_get_irq_byname(struct platform_device *dev,
+>                                      const char *name)
+>  {
+>         struct resource *r;
+> +       int ret;
+>
+>         if (IS_ENABLED(CONFIG_OF_IRQ) && dev->dev.of_node) {
+> -               int ret;
+> -
+>                 ret = of_irq_get_byname(dev->dev.of_node, name);
+>                 if (ret > 0 || ret == -EPROBE_DEFER)
+>                         return ret;
+> --
+> 2.23.0
+>
