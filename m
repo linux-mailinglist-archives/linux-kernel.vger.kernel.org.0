@@ -2,75 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0661AE28D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 05:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A6E3E28C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 05:25:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437282AbfJXD2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 23:28:15 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:41454 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437263AbfJXD2O (ORCPT
+        id S2408324AbfJXDZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 23:25:40 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39026 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390629AbfJXDZj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 23:28:14 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::b7e])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id A299C14B7A410;
-        Wed, 23 Oct 2019 20:28:13 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 20:28:13 -0700 (PDT)
-Message-Id: <20191023.202813.607713311547571229.davem@davemloft.net>
-To:     mcroce@redhat.com
-Cc:     netdev@vger.kernel.org, antoine.tenart@bootlin.com,
-        maxime.chevallier@bootlin.com, mw@semihalf.com,
-        stefanc@marvell.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] mvpp2: prefetch frame header
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191022141438.22002-1-mcroce@redhat.com>
-References: <20191022141438.22002-1-mcroce@redhat.com>
-X-Mailer: Mew version 6.8 on Emacs 26.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 23 Oct 2019 20:28:14 -0700 (PDT)
+        Wed, 23 Oct 2019 23:25:39 -0400
+Received: by mail-pl1-f194.google.com with SMTP id s17so11117918plp.6;
+        Wed, 23 Oct 2019 20:25:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=hL+v0VkC8nJZ/yYasVVgoGkbvgueSaBBRK1E46vpngU=;
+        b=cfP9jwhqOFa3Vyoo5fskQENeWHMYsaigLQ8xtjIEM5zJoA+Rq1Ue06Np5/krsZaMIw
+         l/EQ2wbVLdCWYJAt1DcFCMNA8NIGRky3whO9LVAAQAALv9qr/uUgTVJveuDwr279TvN1
+         JX9y/RURDl96/B5aq8Lxyzzg96YbhzeARNUhFz8ehVls68FvU1lMOVk6nlrr0OyHTO1/
+         LO3bhuZgjxvH3RwjXK1nHRmHbfVs+dxy7T6w6t7ukMsrbfg+71lHzCG8Mcb7PNijQf38
+         Yz80yF8KKyRWQTW1UNKIgpv9V76hX4cVKry9PQzlVlQIydVnuQBKc6XKE6GsT3tBd6EP
+         9eLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=hL+v0VkC8nJZ/yYasVVgoGkbvgueSaBBRK1E46vpngU=;
+        b=r1gVwusupyRKxHXRvJ0jn/KucEChKkTrmaqZLV8/Z1l7QZg+h0/4ZgzYdErGbiIRPw
+         SqIKAM0eAMOB693Rz2xDv3bUBE3CpMHOOxYL1J27lhnYkELCYVjq5VRC88BWvaMIfJL/
+         3VNH05WfhqlCSQSGPibOtgdC7bJ8CIDSDt9ZhgoarOPDloWgTaWzW5zLkucjsVB1pLn3
+         4cT/k1YjqZtJlMv05P76AEFFcYg1zzJ6J5GnzE2Yj+jsdbT5aOpOC2W4kRsTbKH3nyaE
+         vfKS9TLqVOp8xGVsxk1SGi41hD4pprUgzemyUYxE14NCK7MMFevIuaDAYRNlNa7qWql6
+         tBfg==
+X-Gm-Message-State: APjAAAWiAisnC0GwYAYkv5t6UZ600A9hogWXqJb2PL6H2pVmC1f14zMd
+        FesRu+2z+nqtyqSHHgsmKk4=
+X-Google-Smtp-Source: APXvYqzbPeO9Sylf2UWrSs/mFlQJikvRlBtwZ0Ytzy9PU0f4W4+Z/AVwT9xzRUzfQkBXgjOJgWK+Hg==
+X-Received: by 2002:a17:902:524:: with SMTP id 33mr13606140plf.123.1571887538912;
+        Wed, 23 Oct 2019 20:25:38 -0700 (PDT)
+Received: from software.domain.org ([66.42.68.162])
+        by smtp.gmail.com with ESMTPSA id y10sm23642731pfe.148.2019.10.23.20.25.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 23 Oct 2019 20:25:38 -0700 (PDT)
+From:   Huacai Chen <chenhc@lemote.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        chenhuacai@gmail.com, linux-kernel@vger.kernel.org,
+        Huacai Chen <chenhc@lemote.com>, stable@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] timekeeping/vsyscall: Update vdso data unconditionally
+Date:   Thu, 24 Oct 2019 11:28:29 +0800
+Message-Id: <1571887709-11447-1-git-send-email-chenhc@lemote.com>
+X-Mailer: git-send-email 2.7.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matteo Croce <mcroce@redhat.com>
-Date: Tue, 22 Oct 2019 16:14:38 +0200
+In do_hres(), we currently use whether the return value of __arch_get_
+hw_counter() is negative to indicate fallback, but MIPS returns 0 when
+clock_mode is invalid.
 
-> When receiving traffic, eth_type_trans() is high up on the perf top list,
-> because it's the first function which access the packet data.
-> 
-> Move the DMA unmap a bit higher, and put a prefetch just after it, so we
-> have more time to load the data into the cache.
-> 
-> The packet rate increase is about 13% with a tc drop test: 1620 => 1830 kpps
-> 
-> Signed-off-by: Matteo Croce <mcroce@redhat.com>
-> ---
->  drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> index 111b3b8239e1..17378e0d8da1 100644
-> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> @@ -2966,6 +2966,11 @@ static int mvpp2_rx(struct mvpp2_port *port, struct napi_struct *napi,
->  			continue;
->  		}
->  
-> +		dma_unmap_single(dev->dev.parent, dma_addr,
-> +				 bm_pool->buf_size, DMA_FROM_DEVICE);
-> +
-> +		prefetch(data);
-> +
->  		if (bm_pool->frag_size > PAGE_SIZE)
->  			frag_size = 0;
->  		else
+It is sure that MIPS has a bug when clock_mode is invalid and should
+return ULL_MAX as ARM64 does (Vincenzo has already submitted a patch).
+But at the time we found another bug: currently update_vsyscall() and
+update_vsyscall_tz() rely on __arch_use_vsyscall() to update the vdso
+data, which causes __cvdso_clock_getres() and some other functions get
+wrong results when clock_mode is invalid. So, in this patch we update
+vdso data unconditionally.
 
-You cannot unmap it this early, because of all of the err_drop_frame
-code paths that might be taken next.  The DMA mapping must stay in place
-in those cases.
+Fixes: 44f57d788e7deecb50 ("timekeeping: Provide a generic update_vsyscall() implementation")
+Cc: stable@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+---
+ kernel/time/vsyscall.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
+index 4bc37ac..5ee0f77 100644
+--- a/kernel/time/vsyscall.c
++++ b/kernel/time/vsyscall.c
+@@ -110,8 +110,7 @@ void update_vsyscall(struct timekeeper *tk)
+ 	nsec		= nsec + tk->wall_to_monotonic.tv_nsec;
+ 	vdso_ts->sec	+= __iter_div_u64_rem(nsec, NSEC_PER_SEC, &vdso_ts->nsec);
+ 
+-	if (__arch_use_vsyscall(vdata))
+-		update_vdso_data(vdata, tk);
++	update_vdso_data(vdata, tk);
+ 
+ 	__arch_update_vsyscall(vdata, tk);
+ 
+@@ -124,10 +123,8 @@ void update_vsyscall_tz(void)
+ {
+ 	struct vdso_data *vdata = __arch_get_k_vdso_data();
+ 
+-	if (__arch_use_vsyscall(vdata)) {
+-		vdata[CS_HRES_COARSE].tz_minuteswest = sys_tz.tz_minuteswest;
+-		vdata[CS_HRES_COARSE].tz_dsttime = sys_tz.tz_dsttime;
+-	}
++	vdata[CS_HRES_COARSE].tz_minuteswest = sys_tz.tz_minuteswest;
++	vdata[CS_HRES_COARSE].tz_dsttime = sys_tz.tz_dsttime;
+ 
+ 	__arch_sync_vdso_data(vdata);
+ }
+-- 
+2.7.0
+
