@@ -2,157 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 284C5E384E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6EF3E37EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:32:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409901AbfJXQkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 12:40:10 -0400
-Received: from esa6.hc3370-68.iphmx.com ([216.71.155.175]:47377 "EHLO
-        esa6.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389313AbfJXQkJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 12:40:09 -0400
-X-Greylist: delayed 488 seconds by postgrey-1.27 at vger.kernel.org; Thu, 24 Oct 2019 12:40:08 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1571935208;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=eJ2wyJm8Kl2QlOaMXdo0FdX1O4PfbUE+wJqSBTjNDvw=;
-  b=N6YyewRcOmpHwqm8l7Mfj9txDBDIffGW7Lok2+JA82lo3Nd4HYOGFckg
-   9T/aiRPUhn5UlpjCOB0v8NJIak6i6JpQjbtlNds5gvtTu4Hsmysu34uKD
-   t1onfPvb48X5gd79ma8EUNXBAJkBKxTJEv396Srn/J+xA2l/NUmI+QVgU
-   4=;
-Authentication-Results: esa6.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  andrew.cooper3@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="andrew.cooper3@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa6.hc3370-68.iphmx.com: domain of
-  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="Andrew.Cooper3@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: 2WpCl0BcYn7VtPh8E/1pwTYpPhQ+Ve3kSiEGQX66QXjIUenNN7fQhb1tzp2OY+jzrGgSABcxVS
- yqZB39Ae0uBLWqbyL4I1sEb+jgEvIdvWqTtz/PdqK18zTzNQwwHsKAdtCz5LukEx9gz8lpwxx2
- qfG/cTKIZvGACNIJBRWzCD893s+ihHnbOQtiuVUyttMcuT248nt/o26o3sHwq6XG0+QBVydFKL
- vEV7utaCAm2gMvVLJ9eGh0Mw3vFEyMKtwzXJMfRCwBbJxabY/zQAMzlJ9uqJVemIfpfIzWZWR6
- Png=
-X-SBRS: 2.7
-X-MesageID: 7743405
-X-Ironport-Server: esa6.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.68,225,1569297600"; 
-   d="scan'208";a="7743405"
-Subject: Re: [Xen-devel] [PATCH] x86/stackframe/32: repair 32-bit Xen PV
-To:     Andy Lutomirski <luto@kernel.org>, Jan Beulich <jbeulich@suse.com>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        X86 ML <x86@kernel.org>,
-        "Peter Zijlstra" <peterz@infradead.org>
-CC:     lkml <linux-kernel@vger.kernel.org>
-References: <ef1c9381-dfc7-7150-feca-581f4d798513@suse.com>
- <CALCETrWAALF7EgxHGs-rtZwk1Fxttr56QKXeB6QssXbyXDs+kA@mail.gmail.com>
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
- 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
- 6+ahAA==
-Message-ID: <8f9f812b-c28a-5828-d8d9-37ae7e2f99da@citrix.com>
-Date:   Thu, 24 Oct 2019 17:31:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2393936AbfJXQcV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 12:32:21 -0400
+Received: from mail-db3eur04hn2012.outbound.protection.outlook.com ([52.101.138.12]:42110
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389313AbfJXQcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 12:32:21 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=f4yMr25Ohn+eGi2D/ngdXQh9Etu989gs7syCKCAnXdzc1Y7wPzAjby21OMS/ZwC8pgQN1pTJp+gxTJ+dEe7SM0j3XYOZlZw/dxfrwVH3boEio2wtIGKJdho8g+kYtkZhEFoCQ4f4MczXmimH/yycpddEAA5Aohp98iDBOfNFPZFPiAvEmCNQA7A+A8jDjdce27cX1Els6einHsDvqLx3c7VdPAnu00z94NHcAdfj+aWq24krU0jTKsM+svuInOQOCksDI7hVtt+MPEn3eznUVyNMmn+EgbG9bxr0cIaTzkP7HfpIMRDebpiTAxaZYS3md+cCP6hpK8Tr4jrxD7FWFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fawo5oN1s8a05mGnV6DWzrYYQpaf6Uj7iAa1CYWy5SU=;
+ b=EWWgZ8SkdDLuYgetyaWwEK/U/U/FkchTVEi1iV/JBvbPiYN7unRSLK617Bmsk1cFm8stofhhlUC9zn0Hg5wmiK71UycUjX7ne2NmmLLGdvXRjaHY00MokGKiiknqF55CMLeXTabgCUyoFvzAa0zbl6eqwFGgkCgh0r6e9QP+fyRGGnkbKRLTrVV+8EI/5BYyPIQx8sAtu0EBYlt90IGbdaE0qvpQtlKXMFG5mj/SemjU1uyWr2ExCLB30vk3+YtLkBP8H/kaIPEhpr5mrT1nx0CrFgGW+WqAvOfsrZbP5k0viphPgWnEmiYPuZAlRTyNcIkBK8hLwaMM8Lf0XsuLqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
+ header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fawo5oN1s8a05mGnV6DWzrYYQpaf6Uj7iAa1CYWy5SU=;
+ b=cEdT/jIQL2Jni67qKnGqowNuBsszi9fHoIBV0a1g28Wx/6zR4EM/mEPO7BODhVddCofLGEJCDNexL7iCTxQDSd1oXCpSNFClfM1ik+4+zhBKMH9DICPvfE4sI/SAJPofRVALGjMeX8wuiS2fEZHpiqAJiOlsB8xEiCLcmqSaO/o=
+Received: from AM4PR0802MB2242.eurprd08.prod.outlook.com (10.172.218.15) by
+ AM4PR0802MB2305.eurprd08.prod.outlook.com (10.172.218.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.18; Thu, 24 Oct 2019 16:32:07 +0000
+Received: from AM4PR0802MB2242.eurprd08.prod.outlook.com
+ ([fe80::9c3e:dc5:e056:9f89]) by AM4PR0802MB2242.eurprd08.prod.outlook.com
+ ([fe80::9c3e:dc5:e056:9f89%12]) with mapi id 15.20.2387.023; Thu, 24 Oct 2019
+ 16:32:07 +0000
+From:   Roman Kagan <rkagan@virtuozzo.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+CC:     "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Michael Kelley <mikelley@microsoft.com>
+Subject: Re: [PATCH] x86/hyper-v: micro-optimize send_ipi_one case
+Thread-Topic: [PATCH] x86/hyper-v: micro-optimize send_ipi_one case
+Thread-Index: AQHVioF8f6JnvYZ8LUKUUp53PHF9w6dp/CAA
+Date:   Thu, 24 Oct 2019 16:32:07 +0000
+Message-ID: <20191024163204.GA4673@rkaganb.sw.ru>
+References: <20191024152152.25577-1-vkuznets@redhat.com>
+In-Reply-To: <20191024152152.25577-1-vkuznets@redhat.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.12.1 (2019-06-15)
+mail-followup-to: Roman Kagan <rkagan@virtuozzo.com>,   Vitaly Kuznetsov
+ <vkuznets@redhat.com>, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  x86@kernel.org, "K. Y. Srinivasan"
+ <kys@microsoft.com>,   Haiyang Zhang <haiyangz@microsoft.com>, Stephen
+ Hemminger <sthemmin@microsoft.com>,    Sasha Levin <sashal@kernel.org>,        Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,       Michael Kelley
+ <mikelley@microsoft.com>
+x-originating-ip: [185.231.240.5]
+x-clientproxiedby: HE1P18901CA0020.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:3:8b::30) To AM4PR0802MB2242.eurprd08.prod.outlook.com
+ (2603:10a6:200:5f::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=rkagan@virtuozzo.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3a944c21-b0e2-48f0-7f95-08d7589fb5ff
+x-ms-traffictypediagnostic: AM4PR0802MB2305:|AM4PR0802MB2305:|AM4PR0802MB2305:
+x-microsoft-antispam-prvs: <AM4PR0802MB2305344845E4DD6519CC55E7C96A0@AM4PR0802MB2305.eurprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0200DDA8BE
+x-forefront-antispam-report: SFV:SPM;SFS:(10019020)(39840400004)(366004)(376002)(136003)(346002)(396003)(189003)(199004)(229853002)(6486002)(9686003)(305945005)(2906002)(7736002)(76176011)(52116002)(4326008)(6246003)(33656002)(6512007)(1076003)(316002)(6436002)(256004)(14454004)(86362001)(186003)(66556008)(64756008)(66446008)(26005)(81156014)(8676002)(81166006)(8936002)(99286004)(66476007)(478600001)(66946007)(5660300002)(66066001)(54906003)(446003)(6116002)(36756003)(25786009)(58126008)(386003)(6506007)(11346002)(7416002)(6916009)(102836004)(486006)(476003)(71190400001)(71200400001)(3846002)(14444005)(30126002);DIR:OUT;SFP:1501;SCL:5;SRVR:AM4PR0802MB2305;H:AM4PR0802MB2242.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+x-ms-exchange-transport-forked: True
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: BHYxf4M9FHHHHkEw6B1P5t1K/5JgPzcHciYQa3hxJctZELaJl7UGO6DPK36Fz+NhGYG3lRZ5s0cayj/7AGuxgpNovQ9uX9ebIjgpy3nJS9ABihkvmYKyeBbmxwgKO9Cxg/FvtdK7jGsqEHzgEatqkUgN7/AThHm6TRtMdEJ+xnbavSsM2cPXTt1V5RpKBs5Sv8f1/LTXRFQSv+zLEx9n9M5gFO/12ZBFGFfBUAXRAmyYN6OtdXbKLKCCCAvVGDY6Q6ZsrSIdLVb5SyCyg8IhMzYJsC5j9qkDR2ehWsSuEW4riDoIqx2VNvCBxAkDFCG9ZGXakxW7dNGMlBnuZ7orLaCarRFvOTZGV4YgHRdfhEFG9nxTde+IUqm+YKXWJWGfjFWhTDQ2kY320cQs7s/u/kGG3tge1RaWkDvYc6Oc8RUZM2+hPA9iONEDWBScdC4pxp708ZrZFxwRS2vI6gHFB6zgFdZERMmmG/SunfjTZ55j3AE2o5qravlbaOoh1tq/IlHiKBl2G6wbfjweAawzow==
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <03073080DC5DAE4AA941C4E9409541E0@eurprd08.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrWAALF7EgxHGs-rtZwk1Fxttr56QKXeB6QssXbyXDs+kA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a944c21-b0e2-48f0-7f95-08d7589fb5ff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2019 16:32:07.5388
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VRg6FX4h/YS9Af2t+BBdUbfhinXHpy+bvFI9uZxOxiO2VrtezmuIgJzZiWEMiYXLsPG6V4uVUTtF3df9TX4X5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0802MB2305
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/10/2019 17:11, Andy Lutomirski wrote:
->> +# define USER_SEGMENT_RPL_MASK (SEGMENT_RPL_MASK & ~1)
->> +#endif
->> +
->>         .section .entry.text, "ax"
->>
->>  /*
->> @@ -172,7 +183,7 @@
->>         ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
->>         .if \no_user_check == 0
->>         /* coming from usermode? */
->> -       testl   $SEGMENT_RPL_MASK, PT_CS(%esp)
->> +       testl   $USER_SEGMENT_RPL_MASK, PT_CS(%esp)
-> Shouldn't PT_CS(%esp) be 0 if we came from the kernel?  I'm guessing
-> the actual bug is in whatever code put 1 in here in the first place.
+On Thu, Oct 24, 2019 at 05:21:52PM +0200, Vitaly Kuznetsov wrote:
+> When sending an IPI to a single CPU there is no need to deal with cpumasks.
+> With 2 CPU guest on WS2019 I'm seeing a minor (like 3%, 8043 -> 7761 CPU
+> cycles) improvement with smp_call_function_single() loop benchmark. The
+> optimization, however, is tiny and straitforward. Also, send_ipi_one() is
+> important for PV spinlock kick.
+> 
+> I was also wondering if it would make sense to switch to using regular
+> APIC IPI send for CPU > 64 case but no, it is twice as expesive (12650 CPU
+> cycles for __send_ipi_mask_ex() call, 26000 for orig_apic.send_IPI(cpu,
+> vector)).
 
-Ring1 kernels (32bit) consistently see RPL1 everywhere under Xen.
+Is it with APICv or emulated apic?
 
-Back in the days of a 32bit Xen, int $0x80 really was wired directly
-from ring 3 to 1, and didn't bounce through Xen.  This isn't possible in
-long mode, because all IDT gates are required to be 64bit code segments.
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+>  arch/x86/hyperv/hv_apic.c           | 22 +++++++++++++++++++---
+>  arch/x86/include/asm/trace/hyperv.h | 15 +++++++++++++++
+>  2 files changed, 34 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+> index e01078e93dd3..847f9d0328fe 100644
+> --- a/arch/x86/hyperv/hv_apic.c
+> +++ b/arch/x86/hyperv/hv_apic.c
+> @@ -194,10 +194,26 @@ static bool __send_ipi_mask(const struct cpumask *mask, int vector)
+>  
+>  static bool __send_ipi_one(int cpu, int vector)
+>  {
+> -	struct cpumask mask = CPU_MASK_NONE;
+> +	int ret;
+>  
+> -	cpumask_set_cpu(cpu, &mask);
+> -	return __send_ipi_mask(&mask, vector);
+> +	trace_hyperv_send_ipi_one(cpu, vector);
+> +
+> +	if (unlikely(!hv_hypercall_pg))
+> +		return false;
+> +
+> +	if (unlikely((vector < HV_IPI_LOW_VECTOR) ||
+> +		     (vector > HV_IPI_HIGH_VECTOR)))
+> +		return false;
 
-Ring3 kernels (64bit) consistently see RPL0 everywhere under Xen,
-because presumably this was less invasive when designing the ABI.
+I guess 'ulikely' is unnecessary in these cases.
 
-~Andrew
+> +
+> +	if (cpu >= 64)
+> +		goto do_ex_hypercall;
+> +
+> +	ret = hv_do_fast_hypercall16(HVCALL_SEND_IPI, vector,
+> +				     BIT_ULL(hv_cpu_number_to_vp_number(cpu)));
+> +	return ((ret == 0) ? true : false);
+
+D'oh.  Isn't "return ret == 0;" or just "return ret;" good enough?
+
+These tiny nitpicks are no reason to hold the patch though, so
+
+Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
