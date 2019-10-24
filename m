@@ -2,110 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6B90E338C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:11:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 050C9E339F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:12:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502377AbfJXNLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 09:11:09 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33566 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502360AbfJXNLI (ORCPT
+        id S2502421AbfJXNM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 09:12:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43422 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393478AbfJXNM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 09:11:08 -0400
-Received: by mail-pl1-f195.google.com with SMTP id y8so3339301plk.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 06:11:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Xo0WkUjWDnE/H4X4N+cQZqf98SENyk0SBmAI3sBPGIg=;
-        b=t/LA5FmdSWO2uLJcRujTTOOL5Hdq4SSWNNzt8gtbUWoxM6Wsx5tjOqE1izAXivO0Ia
-         AgBOnEXQDAWeIqWePIuwWicCQbMmdWgCUgf1Kf2Lc1UZeDBLyXaf1AvQU3D2yMVaUuAv
-         OBi7x+7VaZjtscab1aWVmwprqqv5CNubZTit1UUJ+JmvUHKvn1wFiTszs0JauF//be0+
-         g/ppiwm/nlPZ141Zc5VJWQUcGu4YM/wzRRzGmeQsFB88P9FJ7Xn5fiZfSuPsLf0v8fEW
-         BlW1Cm5bvXgD6AP/CydfVi4ccRS1AETvzKQs3ZofIEK0GOtFu0LtgzTPc0CMPg4H2g1U
-         uxOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xo0WkUjWDnE/H4X4N+cQZqf98SENyk0SBmAI3sBPGIg=;
-        b=ivOyjGiAUH9RoDA8wq9SGgTAVTnPfqRWEq/lMbMo4UY6tp5dO+JKxna/pNwo/zKwEs
-         NBiUgbp4LzzXhgpCKVTLn+AOl8sY5yRRpQad/TVk2tRXV7uPhejvAwt/w6nl2N/NhT1l
-         yl7HrJWpzpFsqBQ3kemsbE7nAm2PZvLCD/Se/GckbxjkcwGygrIRq3WAJKtyyZKDASX5
-         I8iSKw6uYJn5pJGrkoWzhsTUDizh4DAGnYB6CriRAOqWUD0fgNKFt1ZwctrpM7XQ4x1R
-         J/lCWAXxc4zXVWnJBdHy7RxTNlcuN+8MKxI+IoxxskRdms1cQ0YqjC8lUBnqz3mSeZpB
-         WK6w==
-X-Gm-Message-State: APjAAAVzUeoajlWrUQhykLtJIeMMrPC0lxpsHACwZwcR9tU2ByMrPR80
-        Txk8LWl0o1y2Qnk0RTklq8xhdASQ5ZSapA9Gvsap+Q==
-X-Google-Smtp-Source: APXvYqyy5qlLBB9opQM1zjilQUiju2zRB6OI/DofEJGzghw2O2H+RqiQobefmx7Itav5M1rRYtcWroC7W5dIZdO1IdA=
-X-Received: by 2002:a17:902:9696:: with SMTP id n22mr14759199plp.252.1571922666109;
- Thu, 24 Oct 2019 06:11:06 -0700 (PDT)
+        Thu, 24 Oct 2019 09:12:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Ytz4euQ3Q9IiQz4tzDOyqx9l5irsf3dHQZgptwpBWK4=; b=IQ8lRqhl5fUKjdfhzlK2LtcFbT
+        ADtwLGl+3iKxddWBK8Tla9MBG84wPpzPvgJOMdMkgp7fyM1UvasRb742v4912vRIUM0v4ntKXfvrr
+        0FXECfgafbisrvDHiF+eb/hyEdWJCGyvhRFV+YGD5U/tSTegRmptZ9bHLpG1ohFMPrYj/AkKduclU
+        gG6uyXAOCEsXDRjo2wTpFO0EHREP0idSNbpJofcTFCuZtVx5LXYEGsPIs0uUjN7/7tF4jBW71Dp1L
+        OZZf5qqSL2/j0rdyCSCz/32qXI7cnab27HRgxXsLK0Ry73JygnlTWgfguNcMYXUgk12NuQmKgfPre
+        BaVZk9Zw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iNcv8-0004bG-FR; Thu, 24 Oct 2019 13:12:54 +0000
+Date:   Thu, 24 Oct 2019 06:12:54 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-scsi@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 6/8] bdev: add open_finish.
+Message-ID: <20191024131254.GE2963@bombadil.infradead.org>
+References: <cover.1571834862.git.msuchanek@suse.de>
+ <ea2652294651cbc8549736728c650d16d2fe1808.1571834862.git.msuchanek@suse.de>
+ <20191024022232.GB11485@infradead.org>
+ <20191024085514.GI938@kitsune.suse.cz>
 MIME-Version: 1.0
-References: <df26802a60c09d155291c2abbcb51e4530eb19d7.1571762488.git.andreyknvl@google.com>
- <201910240119.fyrtJQLH%lkp@intel.com>
-In-Reply-To: <201910240119.fyrtJQLH%lkp@intel.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Thu, 24 Oct 2019 15:10:54 +0200
-Message-ID: <CAAeHK+zeY2YLkf8+T2PQ6Q288XYphCnj6bP7EKdsfePAXrS4mw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] kcov: remote coverage support
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, USB list <linux-usb@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Windsor <dwindsor@gmail.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191024085514.GI938@kitsune.suse.cz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 7:20 PM kbuild test robot <lkp@intel.com> wrote:
->
-> Hi Andrey,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on linus/master]
-> [cannot apply to v5.4-rc4 next-20191023]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
->
-> url:    https://github.com/0day-ci/linux/commits/Andrey-Konovalov/kcov-collect-coverage-from-usb-and-vhost/20191023-185245
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 3b7c59a1950c75f2c0152e5a9cd77675b09233d6
-> config: arm-allmodconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (GCC) 7.4.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.4.0 make.cross ARCH=arm
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
->
-> All errors (new ones prefixed by >>):
->
->    kernel/kcov.o: In function `kcov_remote_stop':
-> >> kcov.c:(.text+0x1094): undefined reference to `__aeabi_uldivmod'
->    kcov.c:(.text+0x1144): undefined reference to `__aeabi_uldivmod'
+On Thu, Oct 24, 2019 at 10:55:14AM +0200, Michal Suchánek wrote:
+> On Wed, Oct 23, 2019 at 07:22:32PM -0700, Christoph Hellwig wrote:
+> > On Wed, Oct 23, 2019 at 02:52:45PM +0200, Michal Suchanek wrote:
+> > > Opening a block device may require a long operation such as waiting for
+> > > the cdrom tray to close. Performing this operation with locks held locks
+> > > out other attempts to open the device. These processes waiting to open
+> > > the device are not killable.
 
-OK, looks like arm32 can't divide 64 bit integers. Will fix in v3.
+You can use mutex_lock_killable() to fix that.
 
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
