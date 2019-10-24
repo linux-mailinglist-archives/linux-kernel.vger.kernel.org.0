@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50449E3FA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 00:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 832E4E3FA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 00:52:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732498AbfJXWwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 18:52:18 -0400
-Received: from mail-yw1-f73.google.com ([209.85.161.73]:43682 "EHLO
-        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732326AbfJXWwP (ORCPT
+        id S1732576AbfJXWw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 18:52:26 -0400
+Received: from mail-yb1-f201.google.com ([209.85.219.201]:40522 "EHLO
+        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732510AbfJXWwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 18:52:15 -0400
-Received: by mail-yw1-f73.google.com with SMTP id y200so398907ywg.10
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 15:52:15 -0700 (PDT)
+        Thu, 24 Oct 2019 18:52:20 -0400
+Received: by mail-yb1-f201.google.com with SMTP id q127so450616ybq.7
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 15:52:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=R+pagykxtiUayWbEADuJoiydRcDW6HSTgqXK05LN0/E=;
-        b=I2431xJR5AtRuX5qoSiIk24z/5OCLlzSdjGi52dpOv12+bHMiaLVBU12PGCDes+r8X
-         wAjuAIWuv6ZomAao/O113wncVLizdeeBSlEx1bsxh2/lzn4uD6epbHPViDUva3cOvsU0
-         /UNdmDsfJIMrSw5i/0SaDjUj5Es5bVAzDEP1qir0eAi1qvv8mC+P/O4o1w4HC3L6pF50
-         AQP27T022w3AaGsGKKMo5gVcBxRaoqeynh9ofqgqyGFYUY3HeancjS86aO6xkUTlSXJv
-         nGykeYWoGX6nqGCK04zTzj6lvvXPcGONfsDAOADFXZa+d2m7LYp8SgIBde5lho4ylCuw
-         NBDg==
+        bh=P4MEC/JNWY+R+03CT6BMcXkN4eq/H40mvA6s8gty/0o=;
+        b=LgK71Giry5j2UUrcqZm8M1t7G3cAfX70fiBl3GzVzX02VQgK8Xy/2JaMhQllH7/ZPL
+         nbGIhdXyHvO6fXRGrMomvZJWhyGPRIV+y5d/BACVs3jLEuafWJis56Ilg2TYMyAOMkM5
+         SfUjIveEskgTQm3JvXHTwS4MAd3espod1yTXwztKlrb0HBnCQxMl0mltDYsrGzXFlpAt
+         6tZqhZ8nWrGVt0cWZi2CF1EWQFTr31Hkxzp7LT+IslJa1Cl5Oy3SBFezMzAOQVF4maYG
+         e9EgGYHPCM5PcJ0/rpT9DVxNu/NMQhoXs2qqn/CdhLriWJXwzW/tS3v6g8YNS9Gn2Pkb
+         dSag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=R+pagykxtiUayWbEADuJoiydRcDW6HSTgqXK05LN0/E=;
-        b=ikr7Cb+lo3GX1tLMIDd1EGY0V1mGmYO7qsW+wnFbiusA66UHteI2ab96c1cd9NCi1h
-         BoWq5KFKGdWu6rKEnB9MO5BCX+ritsx/jy4LXVyXSd8xa1EBqcObC5MG1hA3XQ9c0gOM
-         rwkeCpuQKyWsF5DYm7pobRZpFBDb9XoghxDCP8+vV6ePmkoVvjVbnfknxQcmvgn34k9k
-         fKUUovAQh9wzzRr4Flxc7AvO0pAvPSQcfTfUp70Y1EXHvoL7QPpxy30Lfo0zZeE7Kfcl
-         3Zp3ei4fGIJ+wdGy/4dgxH84Syt3Np660iBIKzN7Qt2WHAI1eegdBhe3V1CtwGe+bq/K
-         c7gw==
-X-Gm-Message-State: APjAAAV2x6ogxah6YZcC4e+/qi4fxnfNQkV2KJ0DrY7UjGY7FonkB2K+
-        2VXe8hYBdGhCNapTXNdgnjWQUUe9MSrA6x1+Bts=
-X-Google-Smtp-Source: APXvYqxu3PYbJO97f2mzp9DNQTcnJCAUNKZZIOqlBzTc4OuUnzwTI3m0AgfuJaiQwAi1b2GOeoccGn5nuZqvAM1i7Q0=
-X-Received: by 2002:a25:cc87:: with SMTP id l129mr704884ybf.48.1571957534881;
- Thu, 24 Oct 2019 15:52:14 -0700 (PDT)
-Date:   Thu, 24 Oct 2019 15:51:25 -0700
+        bh=P4MEC/JNWY+R+03CT6BMcXkN4eq/H40mvA6s8gty/0o=;
+        b=ElBxoXlnEqiEvjpLv7okxKLKvDFKqR7V+XotdUo/YV0JDe9ZuxxOdeH/UbnrS2xsS4
+         QSMV+XgEz8FP1K0GGOcArpYC5nk9akPJre+KR7Vo1T6b+C89vUjgV0s8XzuJU0efJAmV
+         W8taLmU7k1wHC8ErGasX29tIPLjaJhlGt+fHC5MPYXbgbpdLBFdHAjETbm3kpMvOob/F
+         SIkQNQiQ8C8i9Y5H9ZJY6/QBdqolUnld4Ygoi639D5YuWhBrcyn09/P7xZe++SqOGkbE
+         2ZW/O1PaIIefFhSX02g9c+2l6Zd7pITMYtOth7CofOEcpsAbwrpTkU1O9uwq0GBVLBmY
+         dVdQ==
+X-Gm-Message-State: APjAAAVOOxXW9JKdIZbWKsPcpBNUqM+2K5yPgUImxikFP/LOImNWo3Bk
+        Y478NMEOD26c+MJe/iXCCxDhmHI9DCoCM2PpAd4=
+X-Google-Smtp-Source: APXvYqxj5BIdKecvMwrjzhKVp3MzlCFpXSuWCACeGyF0YdtpM7lXtWd326/xzWB6Xxpi8A45K4ijH/MY+l7rtLgFqfA=
+X-Received: by 2002:a25:2a46:: with SMTP id q67mr381984ybq.123.1571957539222;
+ Thu, 24 Oct 2019 15:52:19 -0700 (PDT)
+Date:   Thu, 24 Oct 2019 15:51:26 -0700
 In-Reply-To: <20191024225132.13410-1-samitolvanen@google.com>
-Message-Id: <20191024225132.13410-11-samitolvanen@google.com>
+Message-Id: <20191024225132.13410-12-samitolvanen@google.com>
 Mime-Version: 1.0
 References: <20191018161033.261971-1-samitolvanen@google.com> <20191024225132.13410-1-samitolvanen@google.com>
 X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
-Subject: [PATCH v2 10/17] arm64: disable kretprobes with SCS
+Subject: [PATCH v2 11/17] arm64: reserve x18 from general allocation with SCS
 From:   samitolvanen@google.com
 To:     Will Deacon <will@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -72,28 +72,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With CONFIG_KRETPROBES, function return addresses are modified to
-redirect control flow to kretprobe_trampoline. This is incompatible
-with SCS.
+Reserve the x18 register from general allocation when SCS is enabled,
+because the compiler uses the register to store the current task's
+shadow stack pointer. Note that all external kernel modules must also be
+compiled with -ffixed-x18 if the kernel has SCS enabled.
 
 Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 ---
- arch/arm64/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 8cda176dad9a..42867174920f 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -165,7 +165,7 @@ config ARM64
- 	select HAVE_STACKPROTECTOR
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_KPROBES
--	select HAVE_KRETPROBES
-+	select HAVE_KRETPROBES if !SHADOW_CALL_STACK
- 	select HAVE_GENERIC_VDSO
- 	select IOMMU_DMA if IOMMU_SUPPORT
- 	select IRQ_DOMAIN
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 2c0238ce0551..ef76101201b2 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -72,6 +72,10 @@ stack_protector_prepare: prepare0
+ 					include/generated/asm-offsets.h))
+ endif
+ 
++ifeq ($(CONFIG_SHADOW_CALL_STACK), y)
++KBUILD_CFLAGS	+= -ffixed-x18
++endif
++
+ ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
+ KBUILD_CPPFLAGS	+= -mbig-endian
+ CHECKFLAGS	+= -D__AARCH64EB__
 -- 
 2.24.0.rc0.303.g954a862665-goog
 
