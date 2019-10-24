@@ -2,75 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DB47E33E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2163E3427
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:28:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502533AbfJXNXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 09:23:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46586 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502515AbfJXNXP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 09:23:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gcU9exE6Bvro/lea/dgeXKEnFVXdIrFpf/E5Hgk7fI4=; b=OQCC9foswnxnaiFBJw3Vkn25h
-        EYAPQY1qAspChDW7b9MiGr3xvZzEnkoJFlItmOqqQMuKR/ZYbKaWpl0U9RQ6lloZL7osMS1qn6Ow6
-        aWk1g63FvYQPN6aNWq8gvaLOVZyaCumFoludpul3tgKhob/nbDJjq4uR8cgUloPmSKzZOdRHtfHyc
-        1UEDbFuUYEkAqqinWPFaWz9z9C38x6reQS3b0Xysu8mwc3wpIZ2RSFOLNGZBxKZ2r2GPE5LpIDBIU
-        vujiXu4n4Pz9PYh+gTk9i8t8xxMcbqb4UwrxGsXaSU391MPAxVU6XeAr3dY8/2Ul4JmJa15oFEhnX
-        0/GSrw+7Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNd58-0000Lv-KB; Thu, 24 Oct 2019 13:23:14 +0000
-Date:   Thu, 24 Oct 2019 06:23:14 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Michal Suchanek <msuchanek@suse.de>, linux-scsi@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] cdrom: factor out common open_for_* code
-Message-ID: <20191024132314.GG2963@bombadil.infradead.org>
-References: <cover.1571834862.git.msuchanek@suse.de>
- <da032629db4a770a5f98ff400b91b44873cbdf46.1571834862.git.msuchanek@suse.de>
- <20191024021958.GA11485@infradead.org>
+        id S2393587AbfJXN2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 09:28:52 -0400
+Received: from foss.arm.com ([217.140.110.172]:51362 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388733AbfJXN2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 09:28:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A65C3C8F;
+        Thu, 24 Oct 2019 06:28:36 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 004113F71A;
+        Thu, 24 Oct 2019 06:28:34 -0700 (PDT)
+Date:   Thu, 24 Oct 2019 14:28:32 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 06/18] add support for Clang's Shadow Call Stack (SCS)
+Message-ID: <20191024132832.GG4300@lakrids.cambridge.arm.com>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191018161033.261971-7-samitolvanen@google.com>
+ <20191022162826.GC699@lakrids.cambridge.arm.com>
+ <CABCJKudxvS9Eehr0dEFUR4H44K-PUULbjrh0i=pP_r5MGrKptA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191024021958.GA11485@infradead.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CABCJKudxvS9Eehr0dEFUR4H44K-PUULbjrh0i=pP_r5MGrKptA@mail.gmail.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 07:19:58PM -0700, Christoph Hellwig wrote:
-> >  static
-> > -int open_for_data(struct cdrom_device_info *cdi)
-> > +int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
+On Tue, Oct 22, 2019 at 12:26:02PM -0700, Sami Tolvanen wrote:
+> On Tue, Oct 22, 2019 at 9:28 AM Mark Rutland <mark.rutland@arm.com> wrote:
+
+> > > +config SHADOW_CALL_STACK
+> > > +     bool "Clang Shadow Call Stack"
+> > > +     depends on ARCH_SUPPORTS_SHADOW_CALL_STACK
+> > > +     depends on CC_IS_CLANG && CLANG_VERSION >= 70000
+> >
+> > Is there a reason for an explicit version check rather than a
+> > CC_HAS_<feature> check? e.g. was this available but broken in prior
+> > versions of clang?
 > 
-> Please fix the coding style.  static never should be on a line of its
-> own..
+> No, this feature was added in Clang 7. However,
+> -fsanitize=shadow-call-stack might require architecture-specific
+> flags, so a simple $(cc-option, -fsanitize=shadow-call-stack) in
+> arch/Kconfig is not going to work. I could add something like this to
+> arch/arm64/Kconfig though:
+> 
+> select ARCH_SUPPORTS_SHADOW_CALL_STACK if CC_HAVE_SHADOW_CALL_STACK
+> ...
+> config CC_HAVE_SHADOW_CALL_STACK
+>        def_bool $(cc-option, -fsanitize=shadow-call-stack -ffixed-x18)
+> 
+> And then drop CC_IS_CLANG and version check entirely. Thoughts?
 
-It's OK to have the static on a line by itself; it's having 'static int'
-on a line by itself that Linus gets unhappy about because he can't use
-grep to see the return type.
+That sounds good to me, yes!
 
-But there's no need for it to be on a line by itself here, it all fits fine
-in 80 columns.
-
+Thanks,
+Mark.
