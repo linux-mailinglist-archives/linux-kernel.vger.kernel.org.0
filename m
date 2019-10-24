@@ -2,106 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 168BFE347D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEB43E348B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:43:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393677AbfJXNli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 09:41:38 -0400
-Received: from inca-roads.misterjones.org ([213.251.177.50]:53014 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387547AbfJXNli (ORCPT
+        id S2393702AbfJXNn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 09:43:28 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36081 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393656AbfJXNn1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 09:41:38 -0400
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iNdMr-0000ve-QZ; Thu, 24 Oct 2019 15:41:33 +0200
-To:     James Morse <james.morse@arm.com>
-Subject: Re: [PATCH RFC 0/7] Support KVM being compiled as a kernel module  on arm64
-X-PHP-Originating-Script: 0:main.inc
+        Thu, 24 Oct 2019 09:43:27 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c22so2671207wmd.1;
+        Thu, 24 Oct 2019 06:43:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FGm/Y7V816AbGprOQHUkgpBjccypqHGHqD5N/dMxVkw=;
+        b=WemCD9WeMOlk2CrvosRt1hMf4Lxem6lm1hZUuyoJj0K6NGWgX+19cYcBRdqNTF1ixs
+         nlh1LJY5VZtICct6frTaqVEVQql6wmU2dSjd6C3zNeiwgELILHPNudrwZvNdIlVDEPLq
+         BJ73ykuJ+94u4uQBPNyV6tMgo0+ZUCp+bITF5QywIsdfDdC7jUIdAE17pFsc36PxQ4xV
+         vTCReHMAJl8u78OBLKl+EAV7iyvexnZ1AhZoSIYgkKHBhwgYVLTcTBZkhYdtjrBMVgMm
+         QjtxBqDMzT3+wxvIx9QrBTJjUHsuCvdPR3l7fqri3ZZWQX/SN7CDxmP1Gcl/uWO84fe1
+         4Lgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FGm/Y7V816AbGprOQHUkgpBjccypqHGHqD5N/dMxVkw=;
+        b=i4lX+0Oc7ue6+81NUA8GZE/BHEtuP+L/IdnPtVmBAncwlFhQvzkutC5jEEA1QDX81B
+         0CQfh7yu9zCxJh8FCd6ZsXqNH0pMG40lsJKgkt4Iuc+fVl/R/JXqCWYDuVvAdt7wz0PM
+         esbIwRz8vXWKIeNCpPrXs9jVIl2ER6NWpaVcJ9YaIpoHWokjfJngU07SkrZoOsfenlyH
+         TV/HSHGB4UNMas6vEa3nC1ob2SxGwh4ygZq9Ro1o6J8lY9zGMHQNEH2uquwZAqM0U3ek
+         c6way7LGxSiv2n5en8OWif332jn23Ugrdqa0G1AbiSycPDf5KoGDypL49mCdBFIYykbT
+         xotA==
+X-Gm-Message-State: APjAAAW0kvt/Kphgd1ouWfEbFhC9FkPjPavkrPiCrFNsSRUc9k2vn7YZ
+        BDoSANhk70t1kYwCa4Ig4h4=
+X-Google-Smtp-Source: APXvYqzOXOUeSsq0bKR1Uijb/ZiwdTPLXJEsLwvGyotcdrS+xtT/7Fg0PiKSxgnSjNVkIwYqOuYnSQ==
+X-Received: by 2002:a7b:cd19:: with SMTP id f25mr5273390wmj.154.1571924605222;
+        Thu, 24 Oct 2019 06:43:25 -0700 (PDT)
+Received: from andrea.guest.corp.microsoft.com ([2a01:110:8012:1012:e185:86b0:69d4:5ba5])
+        by smtp.gmail.com with ESMTPSA id o6sm15323168wrx.89.2019.10.24.06.43.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2019 06:43:24 -0700 (PDT)
+Date:   Thu, 24 Oct 2019 15:43:19 +0200
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Will Deacon <will@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, bsingharora@gmail.com,
+        Marco Elver <elver@google.com>,
+        stable <stable@vger.kernel.org>,
+        syzbot <syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH v6] taskstats: fix data-race
+Message-ID: <20191024134319.GA12693@andrea.guest.corp.microsoft.com>
+References: <20191009114809.8643-1-christian.brauner@ubuntu.com>
+ <20191021113327.22365-1-christian.brauner@ubuntu.com>
+ <20191023121603.GA16344@andrea.guest.corp.microsoft.com>
+ <CACT4Y+Y86HFnQGHyxv+f32tKDJXnRxmL7jQ3tGxVcksvtK3L7Q@mail.gmail.com>
+ <20191024113155.GA7406@andrea.guest.corp.microsoft.com>
+ <CACT4Y+Z2-mm6Qk0cecJdiA5B_VsQ1v8k2z+RWrDQv6dTNFXFog@mail.gmail.com>
+ <20191024130502.GA11335@andrea.guest.corp.microsoft.com>
+ <CACT4Y+ahUr11pQQ7=dw80Abj5owUPnPdufbMYvsKLM6iDg5QQg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 24 Oct 2019 14:41:33 +0100
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     Shannon Zhao <shannon.zhao@linux.alibaba.com>,
-        <kvmarm@lists.cs.columbia.edu>, <suzuki.poulose@arm.com>,
-        <christoffer.dall@arm.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <8cbd81d6-4ab8-9d2a-5162-8782201cd13d@arm.com>
-References: <1571912870-18471-1-git-send-email-shannon.zhao@linux.alibaba.com>
- <8cbd81d6-4ab8-9d2a-5162-8782201cd13d@arm.com>
-Message-ID: <c17e8b0f32902a0811cc6a4ed71e607e@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: james.morse@arm.com, shannon.zhao@linux.alibaba.com, kvmarm@lists.cs.columbia.edu, suzuki.poulose@arm.com, christoffer.dall@arm.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+ahUr11pQQ7=dw80Abj5owUPnPdufbMYvsKLM6iDg5QQg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-24 11:58, James Morse wrote:
-> Hi Shannon,
->
-> On 24/10/2019 11:27, Shannon Zhao wrote:
->> Curently KVM ARM64 doesn't support to compile as a kernel module. 
->> It's
->> useful to compile KVM as a module.
->
->> For example, it could reload kvm without rebooting host machine.
->
-> What problem does this solve?
->
-> KVM has some funny requirements that aren't normal for a module. On
-> v8.0 hardware it must
-> have an idmap. Modules don't usually expect their code to be
-> physically contiguous, but
-> KVM does. KVM influences they way some of the irqchip stuff is set up
-> during early boot
-> (EOI mode ... not that I understand it).
+> But why? I think kernel contains lots of such cases and it seems to be
+> officially documented by the LKMM:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/explanation.txt
+> address dependencies and ppo
 
-We change the EOImode solely based on how we were booted (EL2 or not).
-KVM doesn't directly influences that (it comes in the picture much
-later).
+Well, that same documentation also alerts about some of the pitfalls
+developers can incur while relying on dependencies.  I'm sure you're
+more than aware of some of the debate surrounding these issues.
 
-> (I think KVM-as-a-module on x86 is an artifact of how it was 
-> developed)
->
->
->> This patchset support this feature while there are some limitations
->> to be solved. But I just send it out as RFC to get more suggestion 
->> and
->> comments.
->
->> Curently it only supports for VHE system due to the hyp code section
->> address variables like __hyp_text_start.
->
-> We still need to support !VHE systems, and we need to do it with a
-> single image.
->
->
->> Also it can't call
->> kvm_update_va_mask when loading kvm module and kernel panic with 
->> below
->> errors. So I make kern_hyp_va into a nop funtion.
->
-> Making this work for the single-Image on v8.0 is going to be a
-> tremendous amount of work.
-> What is the payoff?
-
-I can only agree. !VHE is something we're going to support for the 
-foreseeable
-future (which is roughly equivalent to "forever"), and modules have 
-properties
-that are fundamentally incompatible with the way KVM works with !VHE.
-
-If the only purpose of this work is to be able to swap KVM 
-implementations
-in a development environment, then it really isn't worth the effort.
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
+  Andrea
