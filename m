@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B81DCE3583
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:25:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 328C4E3578
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502840AbfJXOZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 10:25:11 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:32862 "EHLO huawei.com"
+        id S2409440AbfJXOYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 10:24:55 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4759 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2409438AbfJXOZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 10:25:09 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 4B66193F067BE1EE2EF5;
+        id S2409390AbfJXOYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 10:24:53 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 97E4D15FBED8605D361F;
         Thu, 24 Oct 2019 22:24:50 +0800 (CST)
 Received: from localhost.localdomain (10.69.192.58) by
  DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
@@ -22,9 +22,9 @@ To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>, <hare@suse.com>,
         <ming.lei@redhat.com>, "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 2/6] scsi: hisi_sas: Pass scsi_cmnd pointer to hisi_sas_hw.slot_index_alloc
-Date:   Thu, 24 Oct 2019 22:21:17 +0800
-Message-ID: <1571926881-75524-3-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 3/6] scsi: hisi_sas: Add bitmaps_alloc_v3_hw()
+Date:   Thu, 24 Oct 2019 22:21:18 +0800
+Message-ID: <1571926881-75524-4-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1571926881-75524-1-git-send-email-john.garry@huawei.com>
 References: <1571926881-75524-1-git-send-email-john.garry@huawei.com>
@@ -37,66 +37,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In future we will want to pass both the domain_device and scsi_cmnd
-pointers to hisi_sas_hw.slot_index_alloc.
+We will want to make this non-generic in future.
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas.h       | 3 ++-
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 4 ++--
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 3 ++-
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-index fbfaa92765cf..4eb8f1c53f78 100644
---- a/drivers/scsi/hisi_sas/hisi_sas.h
-+++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -278,7 +278,8 @@ struct hisi_sas_hw {
- 	void (*setup_itct)(struct hisi_hba *hisi_hba,
- 			   struct hisi_sas_device *device);
- 	int (*slot_index_alloc)(struct hisi_hba *hisi_hba,
--				struct domain_device *device);
-+				struct domain_device *device,
-+				struct scsi_cmnd *scmd);
- 	void (*slot_index_free)(struct hisi_hba *hisi_hba, int slot_idx);
- 	int (*bitmaps_alloc)(struct hisi_hba *hisi_hba);
- 	struct hisi_sas_device *(*alloc_dev)(struct domain_device *device);
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index f4937da9baf8..53802c1cc1d0 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -438,7 +438,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
- 	}
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index 2ae7070db41a..a46717efb870 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -556,6 +556,13 @@ static u32 hisi_sas_phy_read32(struct hisi_hba *hisi_hba,
+ 	readl_poll_timeout_atomic(regs, val, cond, delay_us, timeout_us);\
+ })
  
- 	if (hisi_hba->hw->slot_index_alloc)
--		rc = hisi_hba->hw->slot_index_alloc(hisi_hba, device);
-+		rc = hisi_hba->hw->slot_index_alloc(hisi_hba, device, NULL);
- 	else {
- 		struct scsi_cmnd *scsi_cmnd = NULL;
- 
-@@ -1929,7 +1929,7 @@ hisi_sas_internal_abort_task_exec(struct hisi_hba *hisi_hba, int device_id,
- 
- 	/* simply get a slot and send abort command */
- 	if (hisi_hba->hw->slot_index_alloc)
--		rc = hisi_hba->hw->slot_index_alloc(hisi_hba, device);
-+		rc = hisi_hba->hw->slot_index_alloc(hisi_hba, device, NULL);
- 	else
- 		rc = hisi_sas_slot_index_alloc(hisi_hba, NULL);
- 	if (rc < 0)
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index 683e1b99c9ae..b98ae960964b 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -791,7 +791,8 @@ static int bitmaps_alloc_v2_hw(struct hisi_hba *hisi_hba)
- 
- static int
- slot_index_alloc_quirk_v2_hw(struct hisi_hba *hisi_hba,
--			     struct domain_device *device)
-+			     struct domain_device *device,
-+			     struct scsi_cmnd *scmd)
++static int bitmaps_alloc_v3_hw(struct hisi_hba *hisi_hba)
++{
++	return sbitmap_init_node(&hisi_hba->slot_index_tags,
++				 HISI_SAS_UNRESERVED_IPTT, -1,
++				 GFP_KERNEL, dev_to_node(hisi_hba->dev));
++}
++
+ static void init_reg_v3_hw(struct hisi_hba *hisi_hba)
  {
- 	struct sbitmap *slot_index_tags;
- 	int sata_dev = dev_is_sata(device);
+ 	int i;
+@@ -3083,6 +3090,7 @@ static struct scsi_host_template sht_v3_hw = {
+ static const struct hisi_sas_hw hisi_sas_v3_hw = {
+ 	.hw_init = hisi_sas_v3_init,
+ 	.setup_itct = setup_itct_v3_hw,
++	.bitmaps_alloc = bitmaps_alloc_v3_hw,
+ 	.get_wideport_bitmap = get_wideport_bitmap_v3_hw,
+ 	.complete_hdr_size = sizeof(struct hisi_sas_complete_v3_hdr),
+ 	.clear_itct = clear_itct_v3_hw,
 -- 
 2.17.1
 
