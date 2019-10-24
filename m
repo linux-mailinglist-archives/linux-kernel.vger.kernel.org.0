@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52E3BE29D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 07:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 307F6E29D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 07:27:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437495AbfJXF1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 01:27:40 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:54715 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2437482AbfJXF1k (ORCPT
+        id S2437530AbfJXF1o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 01:27:44 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:16335 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2437491AbfJXF1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 01:27:40 -0400
-X-UUID: 0890066f6f3b4fc7b14a9caba242d9f0-20191024
-X-UUID: 0890066f6f3b4fc7b14a9caba242d9f0-20191024
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        Thu, 24 Oct 2019 01:27:43 -0400
+X-UUID: 53489065ca984852bd0d69e662b0ea68-20191024
+X-UUID: 53489065ca984852bd0d69e662b0ea68-20191024
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 98263183; Thu, 24 Oct 2019 13:27:35 +0800
+        with ESMTP id 1876239772; Thu, 24 Oct 2019 13:27:35 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 24 Oct 2019 13:27:31 +0800
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 24 Oct 2019 13:27:32 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
  Transport; Thu, 24 Oct 2019 13:27:33 +0800
@@ -36,49 +36,63 @@ CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
         Houlong Wei <houlong.wei@mediatek.com>,
         Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH v16 0/5] support gce on mt8183 platform
-Date:   Thu, 24 Oct 2019 13:27:27 +0800
-Message-ID: <20191024052732.7767-1-bibby.hsieh@mediatek.com>
+Subject: [PATCH v16 1/5] soc: mediatek: cmdq: remove OR opertaion from err return
+Date:   Thu, 24 Oct 2019 13:27:28 +0800
+Message-ID: <20191024052732.7767-2-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20191024052732.7767-1-bibby.hsieh@mediatek.com>
+References: <20191024052732.7767-1-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: B039364EEA4D0CD98FA660FC5F352C786E5CD3E32FC419F5E3E4B8E5AE8D9CE92000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v15:
- - rebase onto 5.4-rc1
- - rollback the v14 change
- - add a patch to fixup the combination of return value
+That make debugging confuseidly when we OR two error return number.
 
-Changes since v14:
- - change input argument as pointer in append_commend()
+Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+---
+ drivers/soc/mediatek/mtk-cmdq-helper.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-Changes since v13:
- - separate poll function as poll w/ & w/o mask function
- - directly pass inst into append_command function instead
-   of returns a pointer
- - fixup coding style
- - rebase onto 5.3-rc1
-
-[... snip ...]
-
-Bibby Hsieh (5):
-  soc: mediatek: cmdq: remove OR opertaion from err return
-  soc: mediatek: cmdq: define the instruction struct
-  soc: mediatek: cmdq: add polling function
-  soc: mediatek: cmdq: add cmdq_dev_get_client_reg function
-  arm64: dts: add gce node for mt8183
-
- arch/arm64/boot/dts/mediatek/mt8183.dtsi |  10 ++
- drivers/soc/mediatek/mtk-cmdq-helper.c   | 146 +++++++++++++++++++----
- include/linux/mailbox/mtk-cmdq-mailbox.h |  11 ++
- include/linux/soc/mediatek/mtk-cmdq.h    |  53 ++++++++
- 4 files changed, 194 insertions(+), 26 deletions(-)
-
+diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
+index 7aa0517ff2f3..5ea509e86488 100644
+--- a/drivers/soc/mediatek/mtk-cmdq-helper.c
++++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
+@@ -149,13 +149,16 @@ int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys,
+ 			u16 offset, u32 value, u32 mask)
+ {
+ 	u32 offset_mask = offset;
+-	int err = 0;
++	int err;
+ 
+ 	if (mask != 0xffffffff) {
+ 		err = cmdq_pkt_append_command(pkt, CMDQ_CODE_MASK, 0, ~mask);
++		if (err < 0)
++			return err;
++
+ 		offset_mask |= CMDQ_WRITE_ENABLE_MASK;
+ 	}
+-	err |= cmdq_pkt_write(pkt, value, subsys, offset_mask);
++	err = cmdq_pkt_write(pkt, value, subsys, offset_mask);
+ 
+ 	return err;
+ }
+@@ -197,9 +200,11 @@ static int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
+ 
+ 	/* insert EOC and generate IRQ for each command iteration */
+ 	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_EOC, 0, CMDQ_EOC_IRQ_EN);
++	if (err < 0)
++		return err;
+ 
+ 	/* JUMP to end */
+-	err |= cmdq_pkt_append_command(pkt, CMDQ_CODE_JUMP, 0, CMDQ_JUMP_PASS);
++	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_JUMP, 0, CMDQ_JUMP_PASS);
+ 
+ 	return err;
+ }
 -- 
 2.18.0
 
