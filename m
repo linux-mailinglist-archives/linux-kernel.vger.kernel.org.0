@@ -2,144 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0932E2E7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:13:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7D12E2E80
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:13:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405435AbfJXKNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 06:13:25 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:53290 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391927AbfJXKNX (ORCPT
+        id S2392354AbfJXKNj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 06:13:39 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37289 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391875AbfJXKNX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 24 Oct 2019 06:13:23 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iNa7E-0002oh-6Z; Thu, 24 Oct 2019 12:13:12 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B9EF21C0087;
-        Thu, 24 Oct 2019 12:13:11 +0200 (CEST)
-Date:   Thu, 24 Oct 2019 10:13:11 -0000
-From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/apic] x86/ioapic: Rename misnamed functions
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191017101938.412489856@linutronix.de>
-References: <20191017101938.412489856@linutronix.de>
-MIME-Version: 1.0
-Message-ID: <157191199146.29376.13205140020620411699.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by mail-wr1-f67.google.com with SMTP id e11so16696500wrv.4
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 03:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=E0Qq1lNGBY9K/n1HNDcbzQvafIKVtTjxua78199y0Ag=;
+        b=OtTWbUvVOM2iwHQpoOwwI1UnAhJtD/y62mQMVMkoYZ3ww+sDiC0C3IVG9ZscaJrkgn
+         NiBnR4njWxQei6rPGKV8+iiYVsHt2ZkE68QaPZeRekFJJQspWgxtS6/IwwKIn6NsCN8J
+         dUAjvOWvpMN1FNiWpaIKhxe/aCKbqfL7L5fzqvitsDciXZIG0QmnNnfhZyca12TzIUwo
+         S6yOHYEz+joDlgRS8h3Z15r3Gm3TikUIL52QNvB4841Y3Wzp9yWt6P821bKvL3wfbr42
+         jxs0VqvaNcXG3yGTN28xAxP+cFltZXNyUMq9olcO2XQ03AfofbVSElP2koxuww1GtWEQ
+         cesw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:in-reply-to:references;
+        bh=E0Qq1lNGBY9K/n1HNDcbzQvafIKVtTjxua78199y0Ag=;
+        b=n8wy5uUllRLkCpBbGKWdRM81z3cgo8F15z3cWslLBucqL1WC9Uy0o039sSnVWeFJQH
+         czLkcLCWLOab7OT0LhGeUOja+ycym1Yf8EEIOE5UCy5Cd3KAP2Ktfvw/ZnnlNFk8e1RR
+         EZw2QKTvHkubgG1nAqvES49EHdbWupElLRMDu3mjZLX3qGJ15wxx8uj7w3tDCyRWTvnI
+         qGi/WlTO7nBf6vA3M/j+oAA3Skx/SmNcyU7LoJfTxKRyZvVxQRU32uHIJJk7hVu0VdD+
+         /t1ffKAXS+TzplVSgH4wkYKked4EYajCd11tIDG4D7tsWfCvvkSlp0PuKW/qNnSbvgjn
+         1thw==
+X-Gm-Message-State: APjAAAUXYkPxFfbsMobv8woBpjIbItRBRPbNEFfzwPJ9zqNvsLgI0EDr
+        zDP+pzWaeKWaq/IwX4h5cfhj0AYwlxeFX0HG
+X-Google-Smtp-Source: APXvYqwsbNByeVpgsdT7AP1vJKjq5FS1kvH+EeS+2LruajwpjBeA7AqFH480WTXQmfmey1xz1ZMgAw==
+X-Received: by 2002:adf:fd8a:: with SMTP id d10mr2894178wrr.368.1571912000848;
+        Thu, 24 Oct 2019 03:13:20 -0700 (PDT)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id f204sm1273607wmf.32.2019.10.24.03.13.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Oct 2019 03:13:20 -0700 (PDT)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com, git@xilinx.com, palmer@sifive.com,
+        hch@infradead.org, longman@redhat.com, helgaas@kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Jackie Liu <liuyun01@kylinos.cn>,
+        Wesley Terpstra <wesley@sifive.com>,
+        Firoz Khan <firoz.khan@linaro.org>, sparclinux@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
+        James Hogan <jhogan@kernel.org>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-snps-arc@lists.infradead.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Biggers <ebiggers@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-mips@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 1/2] asm-generic: Make msi.h a mandatory include/asm header
+Date:   Thu, 24 Oct 2019 12:13:11 +0200
+Message-Id: <a021f232968cfffe3f2d838da47214c6bbdeeedb.1571911976.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1571911976.git.michal.simek@xilinx.com>
+References: <cover.1571911976.git.michal.simek@xilinx.com>
+In-Reply-To: <cover.1571911976.git.michal.simek@xilinx.com>
+References: <cover.1571911976.git.michal.simek@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/apic branch of tip:
+msi.h is generic for all architectures expect of x86 which has own version.
+Enabling MSI by including msi.h to architecture Kbuild is just additional
+step which doesn't need to be done.
+The patch was created based on request to enable MSI for Microblaze.
 
-Commit-ID:     2579a4eefc04d1c23eef8f3f0db3309f955e5792
-Gitweb:        https://git.kernel.org/tip/2579a4eefc04d1c23eef8f3f0db3309f955e5792
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Thu, 17 Oct 2019 12:19:02 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 24 Oct 2019 12:09:21 +02:00
-
-x86/ioapic: Rename misnamed functions
-
-ioapic_irqd_[un]mask() are misnomers as both functions do way more than
-masking and unmasking the interrupt line. Both deal with the moving the
-affinity of the interrupt within interrupt context. The mask/unmask is just
-a tiny part of the functionality.
-
-Rename them to ioapic_prepare/finish_move(), fixup the call sites and
-rename the related variables in the code to reflect what this is about.
-
-No functional change.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Siewior <bigeasy@linutronix.de>
-Link: https://lkml.kernel.org/r/20191017101938.412489856@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
- arch/x86/kernel/apic/io_apic.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-index f0262cb..913c886 100644
---- a/arch/x86/kernel/apic/io_apic.c
-+++ b/arch/x86/kernel/apic/io_apic.c
-@@ -1725,7 +1725,7 @@ static bool io_apic_level_ack_pending(struct mp_chip_data *data)
- 	return false;
- }
+https://lore.kernel.org/linux-riscv/20191008154604.GA7903@infradead.org/
+---
+ arch/arc/include/asm/Kbuild     | 1 -
+ arch/arm/include/asm/Kbuild     | 1 -
+ arch/arm64/include/asm/Kbuild   | 1 -
+ arch/mips/include/asm/Kbuild    | 1 -
+ arch/powerpc/include/asm/Kbuild | 1 -
+ arch/riscv/include/asm/Kbuild   | 1 -
+ arch/sparc/include/asm/Kbuild   | 1 -
+ include/asm-generic/Kbuild      | 1 +
+ 8 files changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/arch/arc/include/asm/Kbuild b/arch/arc/include/asm/Kbuild
+index 393d4f5e1450..1b505694691e 100644
+--- a/arch/arc/include/asm/Kbuild
++++ b/arch/arc/include/asm/Kbuild
+@@ -17,7 +17,6 @@ generic-y += local64.h
+ generic-y += mcs_spinlock.h
+ generic-y += mm-arch-hooks.h
+ generic-y += mmiowb.h
+-generic-y += msi.h
+ generic-y += parport.h
+ generic-y += percpu.h
+ generic-y += preempt.h
+diff --git a/arch/arm/include/asm/Kbuild b/arch/arm/include/asm/Kbuild
+index 68ca86f85eb7..fa579b23b4df 100644
+--- a/arch/arm/include/asm/Kbuild
++++ b/arch/arm/include/asm/Kbuild
+@@ -12,7 +12,6 @@ generic-y += local.h
+ generic-y += local64.h
+ generic-y += mm-arch-hooks.h
+ generic-y += mmiowb.h
+-generic-y += msi.h
+ generic-y += parport.h
+ generic-y += preempt.h
+ generic-y += seccomp.h
+diff --git a/arch/arm64/include/asm/Kbuild b/arch/arm64/include/asm/Kbuild
+index 98a5405c8558..bd23f87d6c55 100644
+--- a/arch/arm64/include/asm/Kbuild
++++ b/arch/arm64/include/asm/Kbuild
+@@ -16,7 +16,6 @@ generic-y += local64.h
+ generic-y += mcs_spinlock.h
+ generic-y += mm-arch-hooks.h
+ generic-y += mmiowb.h
+-generic-y += msi.h
+ generic-y += qrwlock.h
+ generic-y += qspinlock.h
+ generic-y += serial.h
+diff --git a/arch/mips/include/asm/Kbuild b/arch/mips/include/asm/Kbuild
+index c8b595c60910..61b0fc2026e6 100644
+--- a/arch/mips/include/asm/Kbuild
++++ b/arch/mips/include/asm/Kbuild
+@@ -13,7 +13,6 @@ generic-y += irq_work.h
+ generic-y += local64.h
+ generic-y += mcs_spinlock.h
+ generic-y += mm-arch-hooks.h
+-generic-y += msi.h
+ generic-y += parport.h
+ generic-y += percpu.h
+ generic-y += preempt.h
+diff --git a/arch/powerpc/include/asm/Kbuild b/arch/powerpc/include/asm/Kbuild
+index 64870c7be4a3..17726f2e46de 100644
+--- a/arch/powerpc/include/asm/Kbuild
++++ b/arch/powerpc/include/asm/Kbuild
+@@ -10,4 +10,3 @@ generic-y += local64.h
+ generic-y += mcs_spinlock.h
+ generic-y += preempt.h
+ generic-y += vtime.h
+-generic-y += msi.h
+diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
+index 16970f246860..1efaeddf1e4b 100644
+--- a/arch/riscv/include/asm/Kbuild
++++ b/arch/riscv/include/asm/Kbuild
+@@ -22,7 +22,6 @@ generic-y += kvm_para.h
+ generic-y += local.h
+ generic-y += local64.h
+ generic-y += mm-arch-hooks.h
+-generic-y += msi.h
+ generic-y += percpu.h
+ generic-y += preempt.h
+ generic-y += sections.h
+diff --git a/arch/sparc/include/asm/Kbuild b/arch/sparc/include/asm/Kbuild
+index b6212164847b..62de2eb2773d 100644
+--- a/arch/sparc/include/asm/Kbuild
++++ b/arch/sparc/include/asm/Kbuild
+@@ -18,7 +18,6 @@ generic-y += mcs_spinlock.h
+ generic-y += mm-arch-hooks.h
+ generic-y += mmiowb.h
+ generic-y += module.h
+-generic-y += msi.h
+ generic-y += preempt.h
+ generic-y += serial.h
+ generic-y += trace_clock.h
+diff --git a/include/asm-generic/Kbuild b/include/asm-generic/Kbuild
+index adff14fcb8e4..ddfee1bd9dc1 100644
+--- a/include/asm-generic/Kbuild
++++ b/include/asm-generic/Kbuild
+@@ -4,4 +4,5 @@
+ # (This file is not included when SRCARCH=um since UML borrows several
+ # asm headers from the host architecutre.)
  
--static inline bool ioapic_irqd_mask(struct irq_data *data)
-+static inline bool ioapic_prepare_move(struct irq_data *data)
- {
- 	/* If we are moving the IRQ we need to mask it */
- 	if (unlikely(irqd_is_setaffinity_pending(data))) {
-@@ -1736,9 +1736,9 @@ static inline bool ioapic_irqd_mask(struct irq_data *data)
- 	return false;
- }
- 
--static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
-+static inline void ioapic_finish_move(struct irq_data *data, bool moveit)
- {
--	if (unlikely(masked)) {
-+	if (unlikely(moveit)) {
- 		/* Only migrate the irq if the ack has been received.
- 		 *
- 		 * On rare occasions the broadcast level triggered ack gets
-@@ -1773,11 +1773,11 @@ static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
- 	}
- }
- #else
--static inline bool ioapic_irqd_mask(struct irq_data *data)
-+static inline bool ioapic_prepare_move(struct irq_data *data)
- {
- 	return false;
- }
--static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
-+static inline void ioapic_finish_move(struct irq_data *data, bool moveit)
- {
- }
- #endif
-@@ -1786,11 +1786,11 @@ static void ioapic_ack_level(struct irq_data *irq_data)
- {
- 	struct irq_cfg *cfg = irqd_cfg(irq_data);
- 	unsigned long v;
--	bool masked;
-+	bool moveit;
- 	int i;
- 
- 	irq_complete_move(cfg);
--	masked = ioapic_irqd_mask(irq_data);
-+	moveit = ioapic_prepare_move(irq_data);
- 
- 	/*
- 	 * It appears there is an erratum which affects at least version 0x11
-@@ -1845,7 +1845,7 @@ static void ioapic_ack_level(struct irq_data *irq_data)
- 		eoi_ioapic_pin(cfg->vector, irq_data->chip_data);
- 	}
- 
--	ioapic_irqd_unmask(irq_data, masked);
-+	ioapic_finish_move(irq_data, moveit);
- }
- 
- static void ioapic_ir_ack_level(struct irq_data *irq_data)
++mandatory-y += msi.h
+ mandatory-y += simd.h
+-- 
+2.17.1
+
