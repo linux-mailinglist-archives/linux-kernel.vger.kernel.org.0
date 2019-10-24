@@ -2,159 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63622E3BAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 959E5E3BBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504376AbfJXTCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 15:02:42 -0400
-Received: from mga18.intel.com ([134.134.136.126]:7222 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2504337AbfJXTCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 15:02:40 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 12:02:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,225,1569308400"; 
-   d="scan'208";a="399868603"
-Received: from nesterov-mobl1.ccr.corp.intel.com (HELO localhost) ([10.252.8.153])
-  by fmsmga006.fm.intel.com with ESMTP; 24 Oct 2019 12:02:35 -0700
-Date:   Thu, 24 Oct 2019 22:02:34 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     ivan.lazeev@gmail.com, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8] tpm_crb: fix fTPM on AMD Zen+ CPUs
-Message-ID: <20191024190217.GA7002@linux.intel.com>
-References: <20191016182814.18350-1-ivan.lazeev@gmail.com>
- <20191021155735.GA7387@linux.intel.com>
- <20191023115151.GF21973@linux.intel.com>
- <20191023232035.ir7hmed4m3emovyx@cantor>
+        id S2408249AbfJXTDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 15:03:39 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33721 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390604AbfJXTDj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 15:03:39 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 6so2631954wmf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 12:03:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=sOlMPkHiIzj/1B8Xdw7OYCh86kzsC/Xbe8Wte/5yW6Q=;
+        b=T0qtov6jc1dWgVKPBKr+vQM05EqJtQlosqzBPsldHBN/WJeMn12v6oSWAzvVChG/Oo
+         adeXB39MdZpTCFvYC/HeOChfNtKImaaFdp8DJBp72XB2JW6AnmcRfIiKLe5QGUuDj8yf
+         WHHGTBqYrJlXmU+E/n5xRTvVG+QGDBYBCrWL4xzSx5GFZHoy3px+saTNPB6aO2rbXbXC
+         W+AiGoI9xIrsr8E+I6cUQaJPWE6g0wvsZpCdKH0UH7mVRdyqjkdiMipiKXJh2EYOoO61
+         l8LzLMJ+FMudrZPfYCvX/8WAV9D/F/gdzfKF3ahPkEONDiwrOYBeDaiedjOZKcEaD+gs
+         epxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sOlMPkHiIzj/1B8Xdw7OYCh86kzsC/Xbe8Wte/5yW6Q=;
+        b=G8xmP4Dywgm2jobMN0c/tN9+Hm91+v9WwTX/PrghkRrrxg88YOXfxVfT3LTLInQz3j
+         lVxyF651JXeH9oF2CE5+D4jP9QIRVak/1a9lS5VdkAqdYvKueySYApE9yzfnDFHub1VH
+         1ahxe5wLC/Vr4JrRxokML1PIbZWi4r+Q8AY2v1jBtjUc2sl7LzkETAdm8XKzDaA13YFs
+         zQFWnxajzLNi0sq/G0hSUpysgZh8dq+EzI+sXHwXBLp8GhoOzhFgwLaEEVbBzIEr6/uA
+         xM6/gjNIu4BIXWeisWNPGvWjBqselgPLZbX6Q6Wc2twChE+Z23+S77WNC2AI6z+Qt8Nl
+         tB5g==
+X-Gm-Message-State: APjAAAXRieuqth8VNwj+/tuOJM5oziWtT9I1tn3AyHJvjxw5i8cbqdvJ
+        JK7eBDuXiqMmTdOJNQn/orcsxmBlc8yt/fZ7gCIGJw==
+X-Google-Smtp-Source: APXvYqy/lvarHvt9DQzDe9G2HXXmTGxdzgcZNoWA9U7wCC2qWxO7jfRxZT7bqAZWy7ZQ+Tb8pwH1UPf1ZIWJ3aTgkPw=
+X-Received: by 2002:a7b:c74a:: with SMTP id w10mr6252770wmk.30.1571943816673;
+ Thu, 24 Oct 2019 12:03:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023232035.ir7hmed4m3emovyx@cantor>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191017170531.171244-1-irogers@google.com> <20191023005337.196160-1-irogers@google.com>
+ <20191023005337.196160-7-irogers@google.com> <20191023090131.GH22919@krava>
+In-Reply-To: <20191023090131.GH22919@krava>
+From:   Ian Rogers <irogers@google.com>
+Date:   Thu, 24 Oct 2019 12:03:25 -0700
+Message-ID: <CAP-5=fV4=0D=71Ea_ViHMo0opqME2JX2oGsTLPix3hbfdeV7MA@mail.gmail.com>
+Subject: Re: [PATCH v2 6/9] perf tools: add destructors for parse event terms
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        John Garry <john.garry@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 04:20:35PM -0700, Jerry Snitselaar wrote:
-> On Wed Oct 23 19, Jarkko Sakkinen wrote:
-> > On Mon, Oct 21, 2019 at 06:57:35PM +0300, Jarkko Sakkinen wrote:
-> > > Almost tested this today. Unfortunately the USB stick at hand was
-> > > broken.  I'll retry tomorrow or Wed depending on which day I visit at
-> > > the office and which day I WFH.
-> > > 
-> > > At least the AMI BIOS had all the TPM stuff in it. The hardware I'll be
-> > > using is Udoo Bolt V8 (thanks Jerry for pointing me out this device)
-> > > with AMD Ryzen Embedded V1605B [1]
-> > > 
-> > > Thanks for the patience with your patch.
-> > > 
-> > > [1] https://en.wikichip.org/wiki/amd/ryzen_embedded/v1605b
-> > 
-> > Jerry, are you confident to give this tested-by?
-> > 
-> > I'm still in process of finding what I should put to .config in order
-> > to get USB keyboard working with UDOO BOLT.
-> > 
-> > /Jarkko
-> 
-> I ran it through the tpm2 kselftests and it passed:
-> 
-> TAP version 13
-> 1..2
-> # selftests: tpm2: test_smoke.sh
-> # test_read_partial_overwrite (tpm2_tests.SmokeTest) ... ok
-> # test_read_partial_resp (tpm2_tests.SmokeTest) ... ok
-> # test_seal_with_auth (tpm2_tests.SmokeTest) ... ok
-> # test_seal_with_policy (tpm2_tests.SmokeTest) ... ok
-> # test_seal_with_too_long_auth (tpm2_tests.SmokeTest) ... ok
-> # test_send_two_cmds (tpm2_tests.SmokeTest) ... ok
-> # test_too_short_cmd (tpm2_tests.SmokeTest) ... ok
-> # test_unseal_with_wrong_auth (tpm2_tests.SmokeTest) ... ok
-> # test_unseal_with_wrong_policy (tpm2_tests.SmokeTest) ... ok
-> #
-> # ----------------------------------------------------------------------
-> # Ran 9 tests in 12.305s
-> #
-> # OK
-> ok 1 selftests: tpm2: test_smoke.sh
-> # selftests: tpm2: test_space.sh
-> # test_flush_context (tpm2_tests.SpaceTest) ... ok
-> # test_get_handles (tpm2_tests.SpaceTest) ... ok
-> # test_invalid_cc (tpm2_tests.SpaceTest) ... ok
-> # test_make_two_spaces (tpm2_tests.SpaceTest) ... ok
-> #
-> # ----------------------------------------------------------------------
-> # Ran 4 tests in 11.355s
-> #
-> # OK
-> ok 2 selftests: tpm2: test_space.sh
-> 
-> 
-> I also did some other testing of tpm2-tools commands, creating a
-> trusted key and encrypted key, and running rngtest against /dev/random
-> with the current hwrng being tpm-rng-0.
-> 
-> I ran the selftests on an intel nuc as well:
-> 
-> TAP version 13
-> 1..2
-> # selftests: tpm2: test_smoke.sh
-> # test_read_partial_overwrite (tpm2_tests.SmokeTest) ... ok
-> # test_read_partial_resp (tpm2_tests.SmokeTest) ... ok
-> # test_seal_with_auth (tpm2_tests.SmokeTest) ... ok
-> # test_seal_with_policy (tpm2_tests.SmokeTest) ... ok
-> # test_seal_with_too_long_auth (tpm2_tests.SmokeTest) ... ok
-> # test_send_two_cmds (tpm2_tests.SmokeTest) ... ok
-> # test_too_short_cmd (tpm2_tests.SmokeTest) ... ok
-> # test_unseal_with_wrong_auth (tpm2_tests.SmokeTest) ... ok
-> # test_unseal_with_wrong_policy (tpm2_tests.SmokeTest) ... ok
-> # # ----------------------------------------------------------------------
-> # Ran 9 tests in 29.620s
-> # # OK
-> ok 1 selftests: tpm2: test_smoke.sh
-> # selftests: tpm2: test_space.sh
-> # test_flush_context (tpm2_tests.SpaceTest) ... ok
-> # test_get_handles (tpm2_tests.SpaceTest) ... ok
-> # test_invalid_cc (tpm2_tests.SpaceTest) ... ok
-> # test_make_two_spaces (tpm2_tests.SpaceTest) ... ok
-> # # ----------------------------------------------------------------------
-> # Ran 4 tests in 26.337s
-> # # OK
-> ok 2 selftests: tpm2: test_space.sh
-> 
-> 
-> So,
-> 
-> Tested-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> 
-> 
-> 
-> One thing I've noticed on the bolt and the nuc:
-> 
-> [    0.808935] tpm_tis MSFT0101:00: IRQ index 0 not found
-> 
-> I'm guessing this is Stefan's patches causing this?
-> 
-> 1ea32c83c699 | 2019-09-02 | tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts (Stefan Berger)
-> 5b359c7c4372 | 2019-09-02 | tpm_tis_core: Turn on the TPM before probing IRQ's (Stefan Berger)
-> 
-> I've never noticed tpm_tis messages before on a tpm_crb system, and doublechecked that I don't see it with 5.3.
+Sorry, the intent here is that patch v2 be used in preference to the
+1st patch, it looks like you've applied both. The first patch split
+apart tracepoint_name to avoid accessing out of scope stack memory,
+the second patch allocates heap memory that is correctly destructed
+(and consequently needs 1 fewer struct tracepoint_name member). Please
+disregard the 1st patch and just apply the second series.
 
-I'd guess it is related to:
+Thanks,
+Ian
 
-https://patchwork.kernel.org/patch/11200049/
 
-Thank you for the tested-by. I pushed this now. I'll try to get also
-my tested-by before sending the PR (still fighting to find correct
-kernel config to enable USB keyboard with UDOO BOLT).
-
-/Jarkko
+On Wed, Oct 23, 2019 at 2:01 AM Jiri Olsa <jolsa@redhat.com> wrote:
+>
+> On Tue, Oct 22, 2019 at 05:53:34PM -0700, Ian Rogers wrote:
+> > If parsing fails then destructors are ran to clean the up the stack.
+> > Rename the head union member to make the term and evlist use cases more
+> > distinct, this simplifies matching the correct destructor.
+>
+> I'm getting compilation fail:
+>
+>   CC       util/parse-events-bison.o
+> util/parse-events.y: In function =E2=80=98yydestruct=E2=80=99:
+> util/parse-events.y:125:45: error: =E2=80=98struct tracepoint_name=E2=80=
+=99 has no member named =E2=80=98sys=E2=80=99; did you mean =E2=80=98sys1=
+=E2=80=99?
+>   125 | %destructor { free ($$.sys); free ($$.event); } <tracepoint_name>
+>
+> jirka
+>
