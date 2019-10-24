@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2B6E3C76
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:51:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8836E3C7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:51:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502167AbfJXTvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 15:51:17 -0400
-Received: from mga07.intel.com ([134.134.136.100]:62203 "EHLO mga07.intel.com"
+        id S2408281AbfJXTv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 15:51:27 -0400
+Received: from mga07.intel.com ([134.134.136.100]:62195 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437405AbfJXTuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 15:50:46 -0400
+        id S2437981AbfJXTup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 15:50:45 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
   by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 12:50:43 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,225,1569308400"; 
-   d="scan'208";a="282043142"
+   d="scan'208";a="282043147"
 Received: from jacob-builder.jf.intel.com ([10.7.199.155])
   by orsmga001.jf.intel.com with ESMTP; 24 Oct 2019 12:50:43 -0700
 From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -35,9 +35,9 @@ Cc:     "Yi Liu" <yi.l.liu@intel.com>,
         Jonathan Cameron <jic23@kernel.org>,
         Eric Auger <eric.auger@redhat.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v7 03/11] iommu/vt-d: Add custom allocator for IOASID
-Date:   Thu, 24 Oct 2019 12:54:56 -0700
-Message-Id: <1571946904-86776-4-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v7 04/11] iommu/vt-d: Replace Intel specific PASID allocator with IOASID
+Date:   Thu, 24 Oct 2019 12:54:57 -0700
+Message-Id: <1571946904-86776-5-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
@@ -46,146 +46,208 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When VT-d driver runs in the guest, PASID allocation must be
-performed via virtual command interface. This patch registers a
-custom IOASID allocator which takes precedence over the default
-XArray based allocator. The resulting IOASID allocation will always
-come from the host. This ensures that PASID namespace is system-
-wide.
+Make use of generic IOASID code to manage PASID allocation,
+free, and lookup. Replace Intel specific code.
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Liu, Yi L <yi.l.liu@intel.com>
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- drivers/iommu/Kconfig       |  1 +
- drivers/iommu/intel-iommu.c | 67 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/intel-iommu.h |  2 ++
- 3 files changed, 70 insertions(+)
+ drivers/iommu/intel-iommu.c | 12 ++++++------
+ drivers/iommu/intel-pasid.c | 36 ------------------------------------
+ drivers/iommu/intel-svm.c   | 39 +++++++++++++++++++++++----------------
+ 3 files changed, 29 insertions(+), 58 deletions(-)
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index fd50ddffffbf..961fe5795a90 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -211,6 +211,7 @@ config INTEL_IOMMU_SVM
- 	bool "Support for Shared Virtual Memory with Intel IOMMU"
- 	depends on INTEL_IOMMU && X86
- 	select PCI_PASID
-+	select IOASID
- 	select MMU_NOTIFIER
- 	help
- 	  Shared Virtual Memory (SVM) provides a facility for devices
 diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 3f974919d3bd..ced1d89ef977 100644
+index ced1d89ef977..2ea09b988a23 100644
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -1706,6 +1706,9 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
- 		if (ecap_prs(iommu->ecap))
- 			intel_svm_finish_prq(iommu);
- 	}
-+	if (ecap_vcs(iommu->ecap) && vccap_pasid(iommu->vccap))
-+		ioasid_unregister_allocator(&iommu->pasid_allocator);
-+
- #endif
+@@ -5311,7 +5311,7 @@ static void auxiliary_unlink_device(struct dmar_domain *domain,
+ 	domain->auxd_refcnt--;
+ 
+ 	if (!domain->auxd_refcnt && domain->default_pasid > 0)
+-		intel_pasid_free_id(domain->default_pasid);
++		ioasid_free(domain->default_pasid);
  }
  
-@@ -4910,6 +4913,44 @@ static int __init probe_acpi_namespace_devices(void)
- 	return 0;
- }
+ static int aux_domain_add_dev(struct dmar_domain *domain,
+@@ -5329,10 +5329,10 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
+ 	if (domain->default_pasid <= 0) {
+ 		int pasid;
  
-+#ifdef CONFIG_INTEL_IOMMU_SVM
-+static ioasid_t intel_ioasid_alloc(ioasid_t min, ioasid_t max, void *data)
-+{
-+	struct intel_iommu *iommu = data;
-+	ioasid_t ioasid;
-+
-+	/*
-+	 * VT-d virtual command interface always uses the full 20 bit
-+	 * PASID range. Host can partition guest PASID range based on
-+	 * policies but it is out of guest's control.
-+	 */
-+	if (min < PASID_MIN || max > intel_pasid_max_id)
-+		return INVALID_IOASID;
-+
-+	if (vcmd_alloc_pasid(iommu, &ioasid))
-+		return INVALID_IOASID;
-+
-+	return ioasid;
-+}
-+
-+static void intel_ioasid_free(ioasid_t ioasid, void *data)
-+{
-+	struct intel_iommu *iommu = data;
-+
-+	if (!iommu)
-+		return;
-+	/*
-+	 * Sanity check the ioasid owner is done at upper layer, e.g. VFIO
-+	 * We can only free the PASID when all the devices are unbond.
-+	 */
-+	if (ioasid_find(NULL, ioasid, NULL)) {
-+		pr_alert("Cannot free active IOASID %d\n", ioasid);
-+		return;
-+	}
-+	vcmd_free_pasid(iommu, ioasid);
-+}
-+#endif
-+
- int __init intel_iommu_init(void)
+-		pasid = intel_pasid_alloc_id(domain, PASID_MIN,
+-					     pci_max_pasids(to_pci_dev(dev)),
+-					     GFP_KERNEL);
+-		if (pasid <= 0) {
++		/* No private data needed for the default pasid */
++		pasid = ioasid_alloc(NULL, PASID_MIN, pci_max_pasids(to_pci_dev(dev)) - 1,
++				NULL);
++		if (pasid == INVALID_IOASID) {
+ 			pr_err("Can't allocate default pasid\n");
+ 			return -ENODEV;
+ 		}
+@@ -5368,7 +5368,7 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
+ 	spin_unlock(&iommu->lock);
+ 	spin_unlock_irqrestore(&device_domain_lock, flags);
+ 	if (!domain->auxd_refcnt && domain->default_pasid > 0)
+-		intel_pasid_free_id(domain->default_pasid);
++		ioasid_free(domain->default_pasid);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
+index d81e857d2b25..e79d680fe300 100644
+--- a/drivers/iommu/intel-pasid.c
++++ b/drivers/iommu/intel-pasid.c
+@@ -26,42 +26,6 @@
+  */
+ static DEFINE_SPINLOCK(pasid_lock);
+ u32 intel_pasid_max_id = PASID_MAX;
+-static DEFINE_IDR(pasid_idr);
+-
+-int intel_pasid_alloc_id(void *ptr, int start, int end, gfp_t gfp)
+-{
+-	int ret, min, max;
+-
+-	min = max_t(int, start, PASID_MIN);
+-	max = min_t(int, end, intel_pasid_max_id);
+-
+-	WARN_ON(in_interrupt());
+-	idr_preload(gfp);
+-	spin_lock(&pasid_lock);
+-	ret = idr_alloc(&pasid_idr, ptr, min, max, GFP_ATOMIC);
+-	spin_unlock(&pasid_lock);
+-	idr_preload_end();
+-
+-	return ret;
+-}
+-
+-void intel_pasid_free_id(int pasid)
+-{
+-	spin_lock(&pasid_lock);
+-	idr_remove(&pasid_idr, pasid);
+-	spin_unlock(&pasid_lock);
+-}
+-
+-void *intel_pasid_lookup_id(int pasid)
+-{
+-	void *p;
+-
+-	spin_lock(&pasid_lock);
+-	p = idr_find(&pasid_idr, pasid);
+-	spin_unlock(&pasid_lock);
+-
+-	return p;
+-}
+ 
+ int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int *pasid)
  {
- 	int ret = -ENODEV;
-@@ -5020,6 +5061,32 @@ int __init intel_iommu_init(void)
- 				       "%s", iommu->name);
- 		iommu_device_set_ops(&iommu->iommu, &intel_iommu_ops);
- 		iommu_device_register(&iommu->iommu);
-+#ifdef CONFIG_INTEL_IOMMU_SVM
-+		if (ecap_vcs(iommu->ecap) && vccap_pasid(iommu->vccap)) {
-+			pr_info("Register custom PASID allocator\n");
-+			/*
-+			 * Register a custom ASID allocator if we are running
-+			 * in a guest, the purpose is to have a system wide PASID
-+			 * namespace among all PASID users.
-+			 * There can be multiple vIOMMUs in each guest but only
-+			 * one allocator is active. All vIOMMU allocators will
-+			 * eventually be calling the same host allocator.
-+			 */
-+			iommu->pasid_allocator.alloc = intel_ioasid_alloc;
-+			iommu->pasid_allocator.free = intel_ioasid_free;
-+			iommu->pasid_allocator.pdata = (void *)iommu;
-+			ret = ioasid_register_allocator(&iommu->pasid_allocator);
-+			if (ret) {
-+				pr_warn("Custom PASID allocator registeration failed\n");
-+				/*
-+				 * Disable scalable mode on this IOMMU if there
-+				 * is no custom allocator. Mixing SM capable vIOMMU
-+				 * and non-SM vIOMMU are not supported.
-+				 */
-+				intel_iommu_sm = 0;
-+			}
-+		}
-+#endif
- 	}
- 
- 	bus_set_iommu(&pci_bus_type, &intel_iommu_ops);
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 1d4b8dcdc5d8..c624733cb2e6 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -19,6 +19,7 @@
- #include <linux/iommu.h>
- #include <linux/io-64-nonatomic-lo-hi.h>
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index 9b159132405d..a9a7f85a09bc 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -17,6 +17,7 @@
  #include <linux/dmar.h>
+ #include <linux/interrupt.h>
+ #include <linux/mm_types.h>
 +#include <linux/ioasid.h>
+ #include <asm/page.h>
  
- #include <asm/cacheflush.h>
- #include <asm/iommu.h>
-@@ -546,6 +547,7 @@ struct intel_iommu {
- #ifdef CONFIG_INTEL_IOMMU_SVM
- 	struct page_req_dsc *prq;
- 	unsigned char prq_name[16];    /* Name for PRQ interrupt */
-+	struct ioasid_allocator_ops pasid_allocator; /* Custom allocator for PASIDs */
- #endif
- 	struct q_inval  *qi;            /* Queued invalidation info */
- 	u32 *iommu_state; /* Store iommu states between suspend and resume.*/
+ #include "intel-pasid.h"
+@@ -318,16 +319,15 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 		if (pasid_max > intel_pasid_max_id)
+ 			pasid_max = intel_pasid_max_id;
+ 
+-		/* Do not use PASID 0 in caching mode (virtualised IOMMU) */
+-		ret = intel_pasid_alloc_id(svm,
+-					   !!cap_caching_mode(iommu->cap),
+-					   pasid_max - 1, GFP_KERNEL);
+-		if (ret < 0) {
++		/* Do not use PASID 0, reserved for RID to PASID */
++		svm->pasid = ioasid_alloc(NULL, PASID_MIN,
++					pasid_max - 1, svm);
++		if (svm->pasid == INVALID_IOASID) {
+ 			kfree(svm);
+ 			kfree(sdev);
++			ret = ENOSPC;
+ 			goto out;
+ 		}
+-		svm->pasid = ret;
+ 		svm->notifier.ops = &intel_mmuops;
+ 		svm->mm = mm;
+ 		svm->flags = flags;
+@@ -337,7 +337,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 		if (mm) {
+ 			ret = mmu_notifier_register(&svm->notifier, mm);
+ 			if (ret) {
+-				intel_pasid_free_id(svm->pasid);
++				ioasid_free(svm->pasid);
+ 				kfree(svm);
+ 				kfree(sdev);
+ 				goto out;
+@@ -353,7 +353,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 		if (ret) {
+ 			if (mm)
+ 				mmu_notifier_unregister(&svm->notifier, mm);
+-			intel_pasid_free_id(svm->pasid);
++			ioasid_free(svm->pasid);
+ 			kfree(svm);
+ 			kfree(sdev);
+ 			goto out;
+@@ -401,7 +401,12 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
+ 	if (!iommu)
+ 		goto out;
+ 
+-	svm = intel_pasid_lookup_id(pasid);
++	svm = ioasid_find(NULL, pasid, NULL);
++	if (IS_ERR(svm)) {
++		ret = PTR_ERR(svm);
++		goto out;
++	}
++
+ 	if (!svm)
+ 		goto out;
+ 
+@@ -423,7 +428,9 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
+ 				kfree_rcu(sdev, rcu);
+ 
+ 				if (list_empty(&svm->devs)) {
+-					intel_pasid_free_id(svm->pasid);
++					/* Clear private data so that free pass check */
++					ioasid_set_data(svm->pasid, NULL);
++					ioasid_free(svm->pasid);
+ 					if (svm->mm)
+ 						mmu_notifier_unregister(&svm->notifier, svm->mm);
+ 
+@@ -458,10 +465,11 @@ int intel_svm_is_pasid_valid(struct device *dev, int pasid)
+ 	if (!iommu)
+ 		goto out;
+ 
+-	svm = intel_pasid_lookup_id(pasid);
+-	if (!svm)
++	svm = ioasid_find(NULL, pasid, NULL);
++	if (IS_ERR(svm)) {
++		ret = PTR_ERR(svm);
+ 		goto out;
+-
++	}
+ 	/* init_mm is used in this case */
+ 	if (!svm->mm)
+ 		ret = 1;
+@@ -568,13 +576,12 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+ 
+ 		if (!svm || svm->pasid != req->pasid) {
+ 			rcu_read_lock();
+-			svm = intel_pasid_lookup_id(req->pasid);
++			svm = ioasid_find(NULL, req->pasid, NULL);
+ 			/* It *can't* go away, because the driver is not permitted
+ 			 * to unbind the mm while any page faults are outstanding.
+ 			 * So we only need RCU to protect the internal idr code. */
+ 			rcu_read_unlock();
+-
+-			if (!svm) {
++			if (IS_ERR(svm) || !svm) {
+ 				pr_err("%s: Page request for invalid PASID %d: %08llx %08llx\n",
+ 				       iommu->name, req->pasid, ((unsigned long long *)req)[0],
+ 				       ((unsigned long long *)req)[1]);
 -- 
 2.7.4
 
