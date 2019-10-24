@@ -2,90 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA103E3CC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 22:08:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DE1BE3D0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 22:17:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393713AbfJXUIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 16:08:43 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:47057 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfJXUIn (ORCPT
+        id S1727327AbfJXURB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 16:17:01 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:47021 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfJXURB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 16:08:43 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 89so78898oth.13;
-        Thu, 24 Oct 2019 13:08:42 -0700 (PDT)
+        Thu, 24 Oct 2019 16:17:01 -0400
+Received: by mail-oi1-f193.google.com with SMTP id k25so21741192oiw.13;
+        Thu, 24 Oct 2019 13:16:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Kd4rux9zK4/dM1SoU+NCgZWD5uCiq/LTC7LQfOYrfr0=;
-        b=XhAqLnGm3J5Jx1lfeFRMdzlU0nfgbFU+iE1Zm2bKYj3FLDYtF1ll73kFibNsIash/e
-         LiAtAgv3LFU+6O5pNwmOABP5Q8o8fWMMXn3k2nkHyhUiYIUm+GUTJo22elEo+guAHtPE
-         TBKU9Tt+RMs1XWZfbjQEARoP4taKCy7aNJtMGmN/0keHFmoHOarA6qyupKoScvuzQMPu
-         QYhNzVA3U0OSAjxYf4EHekwScAJoeZdehS6kdght/YPx2wWadiDZyEJcTQfAYv+vNS1Q
-         n4u4szJc9tLXHeMRQ6aHq905bp8XVHbbuWyXYk46uzzto0V5th3DIzDm94efmXXcHzOG
-         u5vA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NoDa2hDhS4AMPTGgcpEaE/wDOgHtq9oF44sew+cusWM=;
+        b=TknIaVe1DwXQf304trnDKU8fu+4npe0Dv2lbNNU+6ivN6habXLaemRKGjVVphPrCvB
+         vZrxLM/T7hlRUeve3Gxxzq0d1GYe+SFtFG+ZIklbomY4Yq31J/8yaX9nWzRJCTjWqe8r
+         7Aoyb7ieYejjpnQBPg/zP6d0tJtp3B3+9wCpHFD7J6FgqDlp1z3rplu5FVoysmTrcn30
+         XKIgrbv/JGvQk2SYeQvoqcpbJxq+fRwzrKH2ou6CP9OopYzX5DCwSui3gbdieVx30Gls
+         xIHv3dJpcWKjD+7Xyj6lkzGtKOgJJDh2ZOWzoL9EC/JwRAFZasM/WWS/uhFtXPhNs16g
+         pA/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kd4rux9zK4/dM1SoU+NCgZWD5uCiq/LTC7LQfOYrfr0=;
-        b=udqnnggXxGwSqeiaOpJYfL/LAx6ELZX/P5woNirqSE1Rq+RqzZEFJfxgr3udox0Kc0
-         RtscJ0WAiroS/McJElDjzM77ZKEfzMgU2o2xhN1dwredim5dakx3TVWUqrm+Ds4baxA+
-         Bl/uQeP179MCSLVaN2dM6Y6pKXI/PlGmoIr3P8NrUXotlGDr6GuDru9X1EhFqJO3qWN6
-         lrC39Oo8d/avU0kuCr045nzuSlyUG7VJpekaahXRr+L0N3nYnZmPVv7L3KF8vH1EUgPO
-         NzEXjXVaQoZqJYZUVkuZQlKOCzcpJZ3ceryqC7e1HY/Rc8ndDRN5QwctxmI2200KqXn9
-         T3Bg==
-X-Gm-Message-State: APjAAAWGlniOl3k4TmghRG16RupiQoW/TcTSVviJv8eSPucxfbXDQNY9
-        3tj4dHB6kdzanAYCrAC7PRiNOQNo2tYQcrxsQHE=
-X-Google-Smtp-Source: APXvYqz84I0v7XTW8iDg6npWUg0bkWh5xFxmoF+OiWXABrvJLf217zrAxoylNNyEKiBYAHSZa6iAxuz1xcNzIGJY0b8=
-X-Received: by 2002:a9d:3675:: with SMTP id w108mr13346820otb.81.1571947722161;
- Thu, 24 Oct 2019 13:08:42 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NoDa2hDhS4AMPTGgcpEaE/wDOgHtq9oF44sew+cusWM=;
+        b=GyqUgOdwN2sR3C8hdKP+1VsqhD0HvlLrwPIL0wCosx1IEck3HRMQqp7tcRjs5aTZbw
+         /MkHtH3q9S6Ibv9HrDLWxcfSUA3/w3ecF0P9XCyOYoeM6i91ww+rUJtVd1qt65b0qWB/
+         2zW+/Jzepow/ljQ0xSnqWqX41LybOXP6MAgAQSjo2JW4sOW3pLCLIw6dtkpyjnWCIZK0
+         HmukVbeoI3YfhNwIGmWFw+ZqTeN0thDNWpRSzrbUze/iv1CdpugrmmLPJkdYQP75Vxfm
+         Vf6QIx1sRmsscQwzaZxnYGEJB4pDwLk6AS8minlQuAEdPdTmY2eRvjaZ1FwCg7FIzK6e
+         /7bQ==
+X-Gm-Message-State: APjAAAWQpPEsCGKEeJt9oYutEeZ0ievcZcsN7UOi1oTz6D/Gg6Rfb+cR
+        T320Y8dtVzbaYcEVbZ89qTCvrpoQ
+X-Google-Smtp-Source: APXvYqxzB+wVw/ariPdKi1TZg9s+xZYhCUYj4CVs9iE1EKS+ulfnanJF1JSuBueX/tM60NE5yl1gfA==
+X-Received: by 2002:aca:4584:: with SMTP id s126mr6348066oia.21.1571948218335;
+        Thu, 24 Oct 2019 13:16:58 -0700 (PDT)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id z5sm7323655oto.77.2019.10.24.13.16.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2019 13:16:57 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] media: v4l2-device.h: Explicitly compare grpmask to zero in v4l2_device_mask_call_all
+Date:   Thu, 24 Oct 2019 13:12:41 -0700
+Message-Id: <20191024201240.49063-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.24.0.rc1
 MIME-Version: 1.0
-References: <20191021133950.30490-1-narmstrong@baylibre.com>
-In-Reply-To: <20191021133950.30490-1-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 24 Oct 2019 22:08:31 +0200
-Message-ID: <CAFBinCBFPLx0KTGb8D5FRus=hYMriYQ-jKSENyVpzwWpT+g2yw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: soc: amlogic: canvas: convert to yaml
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     robh+dt@kernel.org, mjourdan@baylibre.com,
-        devicetree@vger.kernel.org, khilman@baylibre.com,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 3:40 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Now that we have the DT validation in place, let's convert the device tree
-> bindings for the Amlogic Canvas over to a YAML schemas.
->
-> Cc: Maxime Jourdan <mjourdan@baylibre.com>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-one nit-pick below, but I leave it up to Maxime to decide whether it's needed:
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+When building with Clang + -Wtautological-constant-compare, several of
+the ivtv drivers warn along the lines of:
 
-[...]
-> diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml
-> new file mode 100644
-> index 000000000000..4322f876753d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright 2019 BayLibre, SAS
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/soc/amlogic/amlogic,canvas.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Amlogic Canvas
-personally I prefer "Amlogic Canvas Video Lookup Table" because that's
-also what we use (abbreviated as video-lut) for the node name
+ drivers/media/pci/cx18/cx18-driver.c:1005:21: warning: converting the
+ result of '<<' to a boolean always evaluates to true
+ [-Wtautological-constant-compare]
+                         cx18_call_hw(cx, CX18_HW_GPIO_RESET_CTRL,
+                                         ^
+ drivers/media/pci/cx18/cx18-cards.h:18:37: note: expanded from macro
+ 'CX18_HW_GPIO_RESET_CTRL'
+ #define CX18_HW_GPIO_RESET_CTRL         (1 << 6)
+                                           ^
+ 1 warning generated.
 
+This is because the shift operation is implicitly converted to a boolean
+in v4l2_device_mask_call_all before being negated. This can be solved by
+just comparing the mask result to 0 explicity so that there is no
+boolean conversion.
 
-Martin
+Link: https://github.com/ClangBuiltLinux/linux/issues/752
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+
+I am aware that there is suddenly a style mismatch (some macros using
+!(grpmask) and this one using (grpmask) == 0) but I chose to display the
+minimal fix. If you want me to update all the macros to use this style,
+I'd be happy to in a followup patch.
+
+There are 19 of these warnings in the drivers/media/pci folder, which
+can be seen here:
+
+https://github.com/ClangBuiltLinux/linux/issues/488#issuecomment-545218125
+
+This is the simplest fix but if you all prefer an alternative one, I
+would be happy to see/review/test it. The ultimate goal is to get
+-Wtautological-compare enabled because there are several subwarnings
+that would be helpful to have and right now they are all disabled:
+
+https://github.com/ClangBuiltLinux/linux/issues/488
+
+ include/media/v4l2-device.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/media/v4l2-device.h b/include/media/v4l2-device.h
+index e0b8f2602670..8564b3227887 100644
+--- a/include/media/v4l2-device.h
++++ b/include/media/v4l2-device.h
+@@ -431,8 +431,8 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
+ 		struct v4l2_subdev *__sd;				\
+ 									\
+ 		__v4l2_device_call_subdevs_p(v4l2_dev, __sd,		\
+-			!(grpmsk) || (__sd->grp_id & (grpmsk)), o, f ,	\
+-			##args);					\
++			(grpmsk) == 0 || (__sd->grp_id & (grpmsk)), o,	\
++			f , ##args);					\
+ 	} while (0)
+ 
+ /**
+-- 
+2.24.0.rc1
+
