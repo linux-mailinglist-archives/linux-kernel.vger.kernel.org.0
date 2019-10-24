@@ -2,25 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E5A2E3182
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 13:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A938CE3189
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 13:54:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439469AbfJXLxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 07:53:03 -0400
-Received: from 7.mo7.mail-out.ovh.net ([46.105.43.131]:58691 "EHLO
-        7.mo7.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbfJXLxD (ORCPT
+        id S2439506AbfJXLyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 07:54:44 -0400
+Received: from 6.mo173.mail-out.ovh.net ([46.105.43.93]:47485 "EHLO
+        6.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbfJXLyn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 07:53:03 -0400
-X-Greylist: delayed 12499 seconds by postgrey-1.27 at vger.kernel.org; Thu, 24 Oct 2019 07:53:02 EDT
-Received: from player788.ha.ovh.net (unknown [10.109.159.69])
-        by mo7.mail-out.ovh.net (Postfix) with ESMTP id D98AF138D5B
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 09:04:46 +0200 (CEST)
+        Thu, 24 Oct 2019 07:54:43 -0400
+Received: from player737.ha.ovh.net (unknown [10.108.35.210])
+        by mo173.mail-out.ovh.net (Postfix) with ESMTP id 56DBC11D3C0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 09:06:16 +0200 (CEST)
 Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
         (Authenticated sender: groug@kaod.org)
-        by player788.ha.ovh.net (Postfix) with ESMTPSA id CA63BB4D6960;
-        Thu, 24 Oct 2019 07:04:07 +0000 (UTC)
-Date:   Thu, 24 Oct 2019 09:04:03 +0200
+        by player737.ha.ovh.net (Postfix) with ESMTPSA id DFAA11E5A0F5;
+        Thu, 24 Oct 2019 07:05:28 +0000 (UTC)
+Date:   Thu, 24 Oct 2019 09:05:27 +0200
 From:   Greg Kurz <groug@kaod.org>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
@@ -41,61 +40,58 @@ Cc:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
         linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
         linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
         kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/45] KVM: PPC: Book3S HV: Uninit vCPU if vcore
- creation fails
-Message-ID: <20191024090403.5e564e39@bahia.lan>
-In-Reply-To: <20191022015925.31916-2-sean.j.christopherson@intel.com>
+Subject: Re: [PATCH 02/45] KVM: PPC: Book3S PR: Free shared page if mmu
+ initialization fails
+Message-ID: <20191024090527.6b73a3bc@bahia.lan>
+In-Reply-To: <20191022015925.31916-3-sean.j.christopherson@intel.com>
 References: <20191022015925.31916-1-sean.j.christopherson@intel.com>
-        <20191022015925.31916-2-sean.j.christopherson@intel.com>
+        <20191022015925.31916-3-sean.j.christopherson@intel.com>
 X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 5552375392181655889
+X-Ovh-Tracer-Id: 5577708138938931537
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrledtgdduudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrledtgdduudegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2019 18:58:41 -0700
+On Mon, 21 Oct 2019 18:58:42 -0700
 Sean Christopherson <sean.j.christopherson@intel.com> wrote:
 
-> Call kvm_vcpu_uninit() if vcore creation fails to avoid leaking any
-> resources allocated by kvm_vcpu_init(), i.e. the vcpu->run page.
+> Explicitly free the shared page if kvmppc_mmu_init() fails during
+> kvmppc_core_vcpu_create(), as the page is freed only in
+> kvmppc_core_vcpu_free(), which is not reached via kvm_vcpu_uninit().
 > 
-> Fixes: 371fefd6f2dc4 ("KVM: PPC: Allow book3s_hv guests to use SMT processor modes")
+> Fixes: 96bc451a15329 ("KVM: PPC: Introduce shared page")
 > Cc: stable@vger.kernel.org
 > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > ---
 
 Reviewed-by: Greg Kurz <groug@kaod.org>
 
->  arch/powerpc/kvm/book3s_hv.c | 4 +++-
+>  arch/powerpc/kvm/book3s_pr.c | 4 +++-
 >  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-> index 709cf1fd4cf4..36abbe3c346d 100644
-> --- a/arch/powerpc/kvm/book3s_hv.c
-> +++ b/arch/powerpc/kvm/book3s_hv.c
-> @@ -2354,7 +2354,7 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_hv(struct kvm *kvm,
->  	mutex_unlock(&kvm->lock);
+> diff --git a/arch/powerpc/kvm/book3s_pr.c b/arch/powerpc/kvm/book3s_pr.c
+> index cc65af8fe6f7..3f6ad3f58628 100644
+> --- a/arch/powerpc/kvm/book3s_pr.c
+> +++ b/arch/powerpc/kvm/book3s_pr.c
+> @@ -1769,10 +1769,12 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_pr(struct kvm *kvm,
 >  
->  	if (!vcore)
-> -		goto free_vcpu;
-> +		goto uninit_vcpu;
->  
->  	spin_lock(&vcore->lock);
->  	++vcore->num_threads;
-> @@ -2371,6 +2371,8 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_hv(struct kvm *kvm,
+>  	err = kvmppc_mmu_init(vcpu);
+>  	if (err < 0)
+> -		goto uninit_vcpu;
+> +		goto free_shared_page;
 >  
 >  	return vcpu;
 >  
-> +uninit_vcpu:
-> +	kvm_vcpu_uninit(vcpu);
->  free_vcpu:
->  	kmem_cache_free(kvm_vcpu_cache, vcpu);
->  out:
+> +free_shared_page:
+> +	free_page((unsigned long)vcpu->arch.shared);
+>  uninit_vcpu:
+>  	kvm_vcpu_uninit(vcpu);
+>  free_shadow_vcpu:
 
