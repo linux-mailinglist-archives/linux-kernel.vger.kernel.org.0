@@ -2,101 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DEA8E372E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 17:55:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1B4EE3638
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 17:12:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503391AbfJXPzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 11:55:00 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57013 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2503392AbfJXPy5 (ORCPT
+        id S2409615AbfJXPMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 11:12:09 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37100 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2409601AbfJXPMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 11:54:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571932496;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=T2ExiigEByCtsmRRvNsGaGfhM9mM9F5zlr4YhPOUDug=;
-        b=Slhwk2iVkogSau2UovSoFzTFDf8kgcKFe2LUv/K41U/tRIYekv/IZrhEgLwINFL1mD14yc
-        Uy2QdBHLm3vqFWsU+L2vfmuYarNV2CmSKFHwUtLEZzn0VzG3QUCx50rep1/RwXiu2YhQQ9
-        JlWZcMPU/YmcwbDO0COLhph1QDQ5O+8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-74-gGkffQx-MgiQBUn_hUtQng-1; Thu, 24 Oct 2019 11:54:52 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5A6E885EE90;
-        Thu, 24 Oct 2019 15:10:55 +0000 (UTC)
-Received: from mail (ovpn-123-192.rdu2.redhat.com [10.10.123.192])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 25B35196B2;
-        Thu, 24 Oct 2019 15:10:55 +0000 (UTC)
-Date:   Thu, 24 Oct 2019 11:10:54 -0400
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Nosh Minwalla <nosh@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/7] Add a UFFD_SECURE flag to the userfaultfd API.
-Message-ID: <20191024151054.GJ9902@redhat.com>
-References: <20191012191602.45649-1-dancol@google.com>
- <20191012191602.45649-4-dancol@google.com>
- <CALCETrVZHd+csdRL-uKbVN3Z7yeNNtxiDy-UsutMi=K3ZgCiYw@mail.gmail.com>
- <CAKOZuevUqs_Oe1UEwguQK7Ate3ai1DSVSij=0R=vmz9LzX4k6Q@mail.gmail.com>
- <CALCETrUyq=J37gU-MYXqLdoi7uH7iNNVRjvcGUT11JA1QuTFyg@mail.gmail.com>
- <CAG48ez3P27-xqdjKLqfP_0Q_v9K92CgEjU4C=kob2Ax7=NoZbA@mail.gmail.com>
- <20191023190959.GA9902@redhat.com>
- <20191024090258.GA9802@linux.ibm.com>
+        Thu, 24 Oct 2019 11:12:08 -0400
+Received: by mail-pl1-f194.google.com with SMTP id p13so785656pll.4;
+        Thu, 24 Oct 2019 08:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=D/0gh8iCctdTGEMvU3sJnefOfV6UStdjIGzOfvoBHNE=;
+        b=H4/JyP3I6ZBOaWndgpyylmETE7dbpU5EAZ1pEAENRLW6SXLmnbhblTa3LQuIk23wHB
+         gUJflM6FQvXhseyyS+RKser/a136qzVgaawJQSflA4AEtjIKAjw7zFdRjE3OBp1v6aIw
+         sIOLDtHibJF9ozZPeMtnYZz+nsyHT5Kxfu9+KX4v2JA5Hk8Xvvfgu/jJXnfBgfx2MIZs
+         3tjC1/lQ/Hsfi0LGM/xtskaOdkOMFolGFohvmMrWnCBJejczilqeVieRxPeMF5Bd76K0
+         1paKw/jh/k6KDEUM2NapcA+GzPLZ4Pg9Dpawfv0zfAcTGwYX3ikmA7nHRwVJQnfyYSdS
+         xWpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=D/0gh8iCctdTGEMvU3sJnefOfV6UStdjIGzOfvoBHNE=;
+        b=aGeije0mj7yw6ATlf3jyFlGYlx/4R4T33RQQ9HjzfCuqaVYQC7+DWqyOQziW+tCBlp
+         oS6yrUYWY+PnlQmAAEe//+cRbVNbzo3NSc4NgVWfQ5f6/E4AidxxRsoN+we17oWli7jp
+         2LZlDsp7szUP8+EO92xvvfZ4Zm2QVIPZLTSz8h4A99RcN0Xu7bqhqdQh193UmPGs2+zS
+         Awis4CXYCHwzUVFC7TA7fwJt6OyDiKgNp69QtkIgYU6d437+DRhNtZqhFJuDNCI8cKNk
+         bfFEz+hXaic+T450xdjP4CCNZJkplLW5ahXcoput164H/meZfrrJdjDKsibXgyy8lM8E
+         wN5Q==
+X-Gm-Message-State: APjAAAWq9nm6hWa2B4aG+OZQtsrH0JW7X2vmfmKVC/M+b9Z991BBHsSx
+        YgbUURoiGsZb4x2iOOeXYgo8MrV3/BuZyA==
+X-Google-Smtp-Source: APXvYqwImggu94yIxE//05ayD8VbKsumlgqtNN5+1iMaUe5/mf+r3CP52BhswyvUYn3sidMU1UHuxw==
+X-Received: by 2002:a17:902:a50a:: with SMTP id s10mr17098744plq.59.1571929927634;
+        Thu, 24 Oct 2019 08:12:07 -0700 (PDT)
+Received: from nishad ([106.51.232.103])
+        by smtp.gmail.com with ESMTPSA id z12sm30480588pfj.41.2019.10.24.08.12.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Oct 2019 08:12:06 -0700 (PDT)
+Date:   Thu, 24 Oct 2019 20:42:00 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Yangbo Lu <yangbo.lu@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: dpaa2: Use the correct style for SPDX License Identifier
+Message-ID: <20191024151155.GA3340@nishad>
 MIME-Version: 1.0
-In-Reply-To: <20191024090258.GA9802@linux.ibm.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: gGkffQx-MgiQBUn_hUtQng-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This patch corrects the SPDX License Identifier style in
+header files related to DPAA2 Ethernet driver supporting
+Freescale SoCs with DPAA2. For C header files
+Documentation/process/license-rules.rst mandates C-like comments
+(opposed to C source files where C++ style should be used)
 
-On Thu, Oct 24, 2019 at 12:02:59PM +0300, Mike Rapoport wrote:
-> That's no the reason that UFFD_FEATURE_EVENT_FORK does not show up in
-> Debian code search, CRIU simply is not there. Debian packages CRIU only i=
-n
-> experimental and I believe that's not indexed by the code search.
->=20
-> As for the limitations, the races were fixed, I just forgot to update the
-> wiki. As for the supported memory types and COW pages, these only affect
-> efficiency of post-copy, but not the correctness.
+Changes made by using a script provided by Joe Perches here:
+https://lkml.org/lkml/2019/2/7/46.
 
-That's what I was hoping for. If the wiki information is stale and
-there are no races it is totally plausible that it's being actively
-used in production so we need to fix the kernel bug. I was just
-checking because I wasn't sure anymore of the status after I read the
-wiki.
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+---
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.h | 2 +-
+ drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h | 2 +-
+ drivers/net/ethernet/freescale/dpaa2/dprtc.h     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-If the CRIU initialization code that issues the uffd syscall runs as
-global root the ABI breaking permission check from Andy sounds the
-simplest for a short term fix, because it will be unnoticed by any
-production usage with CIRU --lazy-pages.
-
-Then later we could add a UFFD_FEATURE_EVENT_FORK2 that will not
-require root permission.
-
-Thanks,
-Andrea
+diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.h b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.h
+index ff2e177395d4..df2458a5e9ef 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.h
++++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright 2018 NXP
+  */
+diff --git a/drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h b/drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h
+index 720cd50f5895..4ac05bfef338 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h
++++ b/drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright 2013-2016 Freescale Semiconductor Inc.
+  * Copyright 2016-2018 NXP
+diff --git a/drivers/net/ethernet/freescale/dpaa2/dprtc.h b/drivers/net/ethernet/freescale/dpaa2/dprtc.h
+index be7914c1634d..311c184e1aef 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/dprtc.h
++++ b/drivers/net/ethernet/freescale/dpaa2/dprtc.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright 2013-2016 Freescale Semiconductor Inc.
+  * Copyright 2016-2018 NXP
+-- 
+2.17.1
 
