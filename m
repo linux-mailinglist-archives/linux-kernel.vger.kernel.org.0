@@ -2,185 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3304FE314F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 13:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04B70E3159
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 13:49:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439306AbfJXLsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 07:48:13 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:32995 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726389AbfJXLsM (ORCPT
+        id S2439339AbfJXLtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 07:49:33 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46116 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726326AbfJXLtc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 07:48:12 -0400
-Received: by mail-lj1-f193.google.com with SMTP id a22so24685499ljd.0;
-        Thu, 24 Oct 2019 04:48:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8J2+2b/3DwPctSPRqZRS55vvq4sBN5gRrY6PrhiAAS4=;
-        b=A6HAHYErCxIRaB9k1eW/L459j1+pyTOYnEUhX2mM28PJeGwNokJQovaqjALJlQCyn5
-         wbAhKey2PN/nJSHCeU2tMp3/xBGq+9k1zkr2f6mJ9XLJ8TN+Rup4RwcOaitUotKFjD9b
-         m/3F13P8Yg7gVBrKHBZCxR6zYHSlKLyf9A35+Av2HIYFk3vaGwzZXBxN/RP30ZspAJ36
-         XJOp1N9yNltNGfY+xvkuTvp2B/u0LYKtZlRiCrr72hF9b0YLn2LP4SEw8WYXCCdijnr8
-         fvhX8pKzObFnP9543XkNi6lZDE27s7OCD7wjbJrVz0dsKGTEGKtzn+q/JEmq1S3Iucz/
-         KlaQ==
-X-Gm-Message-State: APjAAAWs1O/dh28OjIcY6dtCfZNQGqCmgOrmF15sKaTkSQer0wVijytw
-        6F9IiLc67YSbyvmCur/tYqs=
-X-Google-Smtp-Source: APXvYqxN8dcNomoDwNF2GbvvQMePhthWb0lfDLo9guH463q8RkhSVhWtxrzpFc5Fvl8TqSnHgcaACw==
-X-Received: by 2002:a2e:9890:: with SMTP id b16mr26169264ljj.4.1571917689423;
-        Thu, 24 Oct 2019 04:48:09 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id j7sm11764858lfc.16.2019.10.24.04.48.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2019 04:48:08 -0700 (PDT)
-Date:   Thu, 24 Oct 2019 14:47:56 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [RFC PATCH v2 10/13] regulator: bd71828: Support in-kernel APIs to
- change run-level
-Message-ID: <8e97e506bab0358dbbff2786796f4123db7e3961.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Thu, 24 Oct 2019 07:49:32 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9OBdBot022926;
+        Thu, 24 Oct 2019 11:48:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=+83lcVguJyvnyafDeVP9ncl+WMvkJ+8ZOi3EzqtPjgg=;
+ b=PpqDwkeJLhJ7Ingfq7KJFOlkrifCd+/mA6l8d9UJ1OOM/xI0iraz0D8SdpNPN0VdCxTa
+ xoUl6oQNnxJdYQ69+qro0MemPKSRZLJesx7Mq3CCloJRBn2sbnhIdzna6ddDNltl/eEd
+ gIV2KA9OKZ2qd8GcfHEZlEjZSmR+gY1DGF8oh+0JyDSUFLo00OhWzNVR4zz9m71jpbrn
+ gvuccVAW7JjSwBDWewa7pc8WRmYf6Mk8W4x4j2UOeuAmTmp35PqTXSOdLXVQdw7IYPZR
+ PRQqjrPEGuMAZnr6hVloS9IaWycgWbMs+G9wF9wPmSlHlB65eAxQT4kJRhZqbb8/+Tig ZQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2vqu4r2vjg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 24 Oct 2019 11:48:46 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9OBeE34147828;
+        Thu, 24 Oct 2019 11:48:46 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2vtsk4kdhe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 24 Oct 2019 11:48:46 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9OBmc76019554;
+        Thu, 24 Oct 2019 11:48:38 GMT
+Received: from tomti.i.net-space.pl (/10.175.165.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 24 Oct 2019 04:48:37 -0700
+From:   Daniel Kiper <daniel.kiper@oracle.com>
+To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, xen-devel@lists.xenproject.org
+Cc:     ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        bp@alien8.de, corbet@lwn.net, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, eric.snowberg@oracle.com,
+        hpa@zytor.com, jgross@suse.com, kanth.ghatraju@oracle.com,
+        konrad.wilk@oracle.com, mingo@redhat.com, rdunlap@infradead.org,
+        ross.philipson@oracle.com, tglx@linutronix.de
+Subject: [PATCH v4 0/3] x86/boot: Introduce the kernel_info et consortes
+Date:   Thu, 24 Oct 2019 13:48:11 +0200
+Message-Id: <20191024114814.6488-1-daniel.kiper@oracle.com>
+X-Mailer: git-send-email 2.11.0
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9419 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=663
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910240116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9419 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=742 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910240116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add exported functions bd71828_set_runlevel and
-bd71828_get_runlevel for setting and getting the system run
-level.
+Hi,
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
+Due to very limited space in the setup_header this patch series introduces new
+kernel_info struct which will be used to convey information from the kernel to
+the bootloader. This way the boot protocol can be extended regardless of the
+setup_header limitations. Additionally, the patch series introduces some
+convenience features like the setup_indirect struct and the
+kernel_info.setup_type_max field.
 
-No changes since v1
+Daniel
 
- drivers/regulator/bd71828-regulator.c | 67 +++++++++++++++++++++++++++
- include/linux/mfd/rohm-bd71828.h      |  2 +
- 2 files changed, 69 insertions(+)
+ Documentation/x86/boot.rst             | 174 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ arch/x86/boot/Makefile                 |   2 +-
+ arch/x86/boot/compressed/Makefile      |   4 +-
+ arch/x86/boot/compressed/kaslr.c       |  12 ++++++
+ arch/x86/boot/compressed/kernel_info.S |  22 ++++++++++
+ arch/x86/boot/header.S                 |   3 +-
+ arch/x86/boot/tools/build.c            |   5 +++
+ arch/x86/include/uapi/asm/bootparam.h  |  16 +++++++-
+ arch/x86/kernel/e820.c                 |  11 +++++
+ arch/x86/kernel/kdebugfs.c             |  20 +++++++--
+ arch/x86/kernel/ksysfs.c               |  30 ++++++++++----
+ arch/x86/kernel/setup.c                |   4 ++
+ arch/x86/mm/ioremap.c                  |  11 +++++
+ 13 files changed, 298 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/regulator/bd71828-regulator.c b/drivers/regulator/bd71828-regulator.c
-index d9e1381b5964..eaff9b1b20f9 100644
---- a/drivers/regulator/bd71828-regulator.c
-+++ b/drivers/regulator/bd71828-regulator.c
-@@ -505,6 +505,73 @@ int bd71828_set_runlevel_voltage(struct regulator *regulator, unsigned int uv,
- }
- EXPORT_SYMBOL(bd71828_set_runlevel_voltage);
- 
-+/**
-+ * bd71828_set_runlevel - change system run-level.
-+ *
-+ * @regulator:	pointer to one of the BD71828 regulators obtained by
-+ *		call to regulator_get
-+ * @level:	New run-level the system should enter
-+ *
-+ * Changes the system to run-level which was given as argument. This
-+ * operation will change state of all regulators which are set to be
-+ * controlled by run-levels. Note that 'regulator' must point to a
-+ * regulator which is controlled by run-levels.
-+ */
-+int bd71828_set_runlevel(struct regulator *regulator, unsigned int level)
-+{
-+	struct regulator_dev *rdev = regulator->rdev;
-+	struct bd71828_regulator_data *rd = rdev_get_drvdata(rdev);
-+
-+	if (!rd)
-+		return -ENOENT;
-+
-+	if (!rd || !rd->allow_runlvl)
-+		return -EINVAL;
-+
-+	if (rd->gps)
-+		return bd71828_dvs_gpio_set_run_level(rd, level);
-+
-+	return bd71828_dvs_i2c_set_run_level(rd->regmap, level);
-+}
-+EXPORT_SYMBOL(bd71828_set_runlevel);
-+
-+/**
-+ * bd71828_get_runlevel - get the current system run-level.
-+ *
-+ * @regulator:	pointer to one of the BD71828 regulators obtained by
-+ *		call to regulator_get
-+ * @level:	Pointer to value where current run-level is stored
-+ *
-+ * Returns the current system run-level. Note that 'regulator' must
-+ * point to a regulator which is controlled by run-levels.
-+ */
-+int bd71828_get_runlevel(struct regulator *regulator, unsigned int *level)
-+{
-+	struct regulator_dev *rdev = regulator->rdev;
-+	struct bd71828_regulator_data *rd = rdev_get_drvdata(rdev);
-+	int ret;
-+
-+	if (!rd)
-+		return -ENOENT;
-+
-+	if (!rd || !rd->allow_runlvl)
-+		return -EINVAL;
-+
-+	if (!rd->gps)
-+		ret = bd71828_dvs_i2c_get_run_level(rd->regmap, rd);
-+	else
-+		ret = bd71828_dvs_gpio_get_run_level(rd);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	*level = (unsigned int) ret;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(bd71828_get_runlevel);
-+
-+
- static const struct regulator_ops dvs_buck_gpio_ops = {
- 	.is_enabled = bd71828_dvs_gpio_is_enabled,
- 	.get_voltage = bd71828_dvs_gpio_get_voltage,
-diff --git a/include/linux/mfd/rohm-bd71828.h b/include/linux/mfd/rohm-bd71828.h
-index 5f15c6a309e6..bbbd4f118550 100644
---- a/include/linux/mfd/rohm-bd71828.h
-+++ b/include/linux/mfd/rohm-bd71828.h
-@@ -424,5 +424,7 @@ enum {
- 
- int bd71828_set_runlevel_voltage(struct regulator *regulator, unsigned int uv,
- 				 unsigned int level);
-+int bd71828_set_runlevel(struct regulator *regulator, unsigned int level);
-+int bd71828_get_runlevel(struct regulator *regulator, unsigned int *level);
- 
- #endif /* __LINUX_MFD_BD71828_H__ */
--- 
-2.21.0
+Daniel Kiper (3):
+      x86/boot: Introduce the kernel_info
+      x86/boot: Introduce the kernel_info.setup_type_max
+      x86/boot: Introduce the setup_indirect
 
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
