@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0D0AE3830
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CE2E3833
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503616AbfJXQjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 12:39:05 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36200 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503547AbfJXQjB (ORCPT
+        id S2503642AbfJXQjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 12:39:15 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35684 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503629AbfJXQjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 12:39:01 -0400
-Received: by mail-qt1-f193.google.com with SMTP id d17so24185857qto.3;
-        Thu, 24 Oct 2019 09:38:58 -0700 (PDT)
+        Thu, 24 Oct 2019 12:39:12 -0400
+Received: by mail-qt1-f195.google.com with SMTP id m15so38886491qtq.2;
+        Thu, 24 Oct 2019 09:39:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JBkAEAHyhcMPhU/HM87Wnb8+AYbsPLYrzfZ2kbcSds4=;
-        b=U77v+xrQBX5EgzRNSk0HwGcyC7fd1Fr8Ij5+E9THHVZwterT/Vq+sgvSm9y7Jabwbd
-         Tj7s2JGAD73155WXh7726JQLEum1Qm6cWiJBfsWasVtT61Ts8fUaRrJiNsE0s5rS+jjV
-         7LQzcK8yaQFiODf6uh84hqCSnGxG570yDuWQRRddOZk2rgql770Hn+KEXoGfPQ0tu8NE
-         80h5rQUI14/ApIyzx15gFnmgLMZmslLqpVwBn1epXMD/34V2Y6gIRDd0esp/DgcgmUlz
-         HxvKUSst3EOUNdzpLq1c9LdEgKUk5yHFzIYxL1jqlRNxXjUji/4IDbkPFXdl+NgVuSjU
-         CJMg==
+        bh=PBStHmHEV5B5bW8UOdDVAaSdAsUZ6zk/15tXrG1wW9k=;
+        b=RIXq/4wfdukLU5uuWuQF2OK8a4dUMHXkUmt1Ftle/qClyK9CzBLcYC0Rm6YzufgGOQ
+         jSuqdlsNKDchwzegUeM3Bb7VhPXkL2Pff271WlEIX8eoQMSmGyjxcVfRg6U2wnBVlY5t
+         S4Z0L90uHwuHpRbim+lNpzPn7ZT9+O4F0m0ylnzgriPk4XNrie0AdQdjVSpcJwJR4zve
+         ia16euZ4t0T8cOyak/+6e+g0TDFP7VBYlvEU1Zm2TMifaulcsYHTRX42omvOdLtnSD0q
+         xMRDpyaGJZ7NAV3JU6yUvJqVhC2bCFQmoNDLEmBR5aAos8qWmT19EVhadgmioTtC29JD
+         hAfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JBkAEAHyhcMPhU/HM87Wnb8+AYbsPLYrzfZ2kbcSds4=;
-        b=Vo7xAyS3xy03nZRL0KNN9a0Eu8nZZ6elHWWKQSf5TcZs8n1KBQdXRWdcYTRQhoZSMX
-         EdzSXKlzPANTagwOPGIy4xu/CMlu3ezD2HtkKLeRRWp9Walcn6jEMoNeQYhZA5PDRWyx
-         IcpqYz6ycHSn3knhMkmA6BuwP/WRTUCc7DkIsWC4ikK8SETGZDYObWGXM0zJ4WT2SbpU
-         nsWufkE4X9g1nuCBXDis/Exbwa740jZ3c43zBqN+DaDRdWjpdeTZzShJ+iiofuLeRfmR
-         tTHtbsvnyZnenm/wZz/h3xmimYOq/mV9GEVpRZw0nbABWm+VRs9vDHjpBXCnL8eP2tpO
-         dwXg==
-X-Gm-Message-State: APjAAAUhi9dYh3lSazbnu8k45ILXjssXs+MLR6v3Drlkd8RaYYMhpe1k
-        kThvOuzltXhGdblb8aj1gNU=
-X-Google-Smtp-Source: APXvYqwsyAuKL1oNUlTF/saCGiUkUfhTm47TCg9IXrbcJpfJqFln8YXoQD6i5Tl5ddPVsi3KTJUoSQ==
-X-Received: by 2002:ac8:ac4:: with SMTP id g4mr5103867qti.326.1571935137807;
-        Thu, 24 Oct 2019 09:38:57 -0700 (PDT)
+        bh=PBStHmHEV5B5bW8UOdDVAaSdAsUZ6zk/15tXrG1wW9k=;
+        b=guj84vdgeRNh/48PXmhe6NN/ERdrWbGVox2WaUa06jCJSuM6OZwnwyr21+JvZkk3Kd
+         pOQpfbfmxT+TcDW7dDIx601IdjJUcZbCsraqtxifYp9sDZinTXs3inwYIQ4xDHfOJ+xX
+         E3KAT7BFOjgYph3D3kZv7a7IQDk0KATpYjw8UG+O+gcOhJLiIF1kLR/eORiJWA6NQxs7
+         /Y09S95hgDs8t5Md83pnnyvlIxTI/KX3TnSyXdmHDyJXynJKvUGQ9Zq740kVEpdTgx+O
+         fi6uGZBpbkHr4mfSmPfOHnpOzi+4j8h/y1h1zTsGjdU7Fhj+xw0zBeWPEY3Ic6AE558o
+         GSvg==
+X-Gm-Message-State: APjAAAViGloi8rxx9PNA4pQEaba3SX788maE3rJujoqz/Frwl3Oz2pmy
+        KzqZrKuUk9tnBftuulPyHy8=
+X-Google-Smtp-Source: APXvYqyG2CvSxVSEZAf+22TWA18DwezJJpUt3QES1hnt1261ClLqV7jx8YbDvZ0i+vCFlf+VD/Vezw==
+X-Received: by 2002:a0c:e801:: with SMTP id y1mr633274qvn.76.1571935151427;
+        Thu, 24 Oct 2019 09:39:11 -0700 (PDT)
 Received: from localhost.localdomain ([201.53.210.37])
-        by smtp.gmail.com with ESMTPSA id l15sm14660121qkj.16.2019.10.24.09.38.54
+        by smtp.gmail.com with ESMTPSA id l15sm14660121qkj.16.2019.10.24.09.39.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2019 09:38:57 -0700 (PDT)
+        Thu, 24 Oct 2019 09:39:10 -0700 (PDT)
 From:   Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
 To:     outreachy-kernel@googlegroups.com, sudipm.mukherjee@gmail.com,
         teddy.wang@siliconmotion.com, gregkh@linuxfoundation.org,
@@ -52,9 +52,9 @@ To:     outreachy-kernel@googlegroups.com, sudipm.mukherjee@gmail.com,
         linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org,
         trivial@kernel.org
 Cc:     Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
-Subject: [PATCH 1/3] staging: sm750fb: align arguments with open parenthesis in ddk750_sii164.c
-Date:   Thu, 24 Oct 2019 13:38:20 -0300
-Message-Id: <20191024163822.7157-2-gabrielabittencourt00@gmail.com>
+Subject: [PATCH 2/3] staging: sm750fb: align arguments with open parenthesis in file sm750_accel.h
+Date:   Thu, 24 Oct 2019 13:38:21 -0300
+Message-Id: <20191024163822.7157-3-gabrielabittencourt00@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191024163822.7157-1-gabrielabittencourt00@gmail.com>
 References: <20191024163822.7157-1-gabrielabittencourt00@gmail.com>
@@ -66,26 +66,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Cleans up checks of "Alignment should match open parenthesis"
-in file ddk750_sii164.c
+in file sm750_accel.h
 
 Signed-off-by: Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
 ---
- drivers/staging/sm750fb/ddk750_sii164.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/sm750fb/sm750_accel.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/sm750fb/ddk750_sii164.c b/drivers/staging/sm750fb/ddk750_sii164.c
-index bee58edc84e7..73e0e9f41ec5 100644
---- a/drivers/staging/sm750fb/ddk750_sii164.c
-+++ b/drivers/staging/sm750fb/ddk750_sii164.c
-@@ -141,7 +141,7 @@ long sii164InitChip(unsigned char edge_select,
+diff --git a/drivers/staging/sm750fb/sm750_accel.h b/drivers/staging/sm750fb/sm750_accel.h
+index c16350b5a310..2c79cb730a0a 100644
+--- a/drivers/staging/sm750fb/sm750_accel.h
++++ b/drivers/staging/sm750fb/sm750_accel.h
+@@ -190,9 +190,9 @@ void sm750_hw_set2dformat(struct lynx_accel *accel, int fmt);
+ void sm750_hw_de_init(struct lynx_accel *accel);
  
- 	/* Check if SII164 Chip exists */
- 	if ((sii164GetVendorID() == SII164_VENDOR_ID) &&
--			(sii164GetDeviceID() == SII164_DEVICE_ID)) {
-+	    (sii164GetDeviceID() == SII164_DEVICE_ID)) {
- 		/*
- 		 *  Initialize SII164 controller chip.
- 		 */
+ int sm750_hw_fillrect(struct lynx_accel *accel,
+-				u32 base, u32 pitch, u32 Bpp,
+-				u32 x, u32 y, u32 width, u32 height,
+-				u32 color, u32 rop);
++		      u32 base, u32 pitch, u32 Bpp,
++		      u32 x, u32 y, u32 width, u32 height,
++		      u32 color, u32 rop);
+ 
+ /**
+  * sm750_hm_copyarea
 -- 
 2.20.1
 
