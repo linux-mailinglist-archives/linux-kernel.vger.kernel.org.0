@@ -2,124 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3491E3EDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 00:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76D77E3EF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 00:18:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730348AbfJXWOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 18:14:17 -0400
-Received: from ozlabs.org ([203.11.71.1]:55243 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730134AbfJXWOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 18:14:17 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46zhNj0zrRz9sPV;
-        Fri, 25 Oct 2019 09:14:13 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1571955253;
-        bh=unMoINuP9v74vy+zeCf+u6//zhJz+EsUW+VXvnn9j44=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=jL+YtCn7vFbKW40IkKjQ5pJUNsDmB28mBlIn/BS2hqjXw6uBeP9KvtYAA1ipgLUax
-         5UxAJsC3pRi6xHVDbt5k6jtjRV+NDJtDvDMUxXxrBBK9zzTDJ+nKD0apy1RX3lsr/x
-         fhYdJxWAkFClAIy35Xz6mS3OX1SoRhhucnTinffRxdS//P0uWEg5qaLjyGHIIQusaY
-         yqWOAloEyO+Rp0nNanQfAlYGdFgGG6e6+hjdvhhf7OldnT8AM7MtijS68RxtPCrefH
-         X8jjJlUV8+ZW1F0SGEMsJ5Mv+pMDXszKARGDhe8PpESYbdGVZanBZMD0deTRN0vxtC
-         rYf98VpKOi6DQ==
-Date:   Fri, 25 Oct 2019 09:14:12 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Daniel =?UTF-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        lkft-triage@lists.linaro.org
-Subject: linux-next: bad merge resolution in the tip tree (Was: Linux-next:
- 20191022: perf: bpf_helpers_doc.py: not found)
-Message-ID: <20191025091412.77bea416@canb.auug.org.au>
-In-Reply-To: <CAEUSe79P0z4N=3TnF9ytWfemX8NqY1Mr_zt6PDgMAZQb=4ChpA@mail.gmail.com>
-References: <CA+G9fYvWdkmmkrq7hvADZ-1qnUNEwRULoTPfOQDnu1aZW8cDEA@mail.gmail.com>
-        <20191023024149.GA29009@leoy-ThinkPad-X240s>
-        <CAEUSe79P0z4N=3TnF9ytWfemX8NqY1Mr_zt6PDgMAZQb=4ChpA@mail.gmail.com>
+        id S1730795AbfJXWRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 18:17:55 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45059 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730733AbfJXWRx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 18:17:53 -0400
+Received: by mail-lj1-f193.google.com with SMTP id q64so328927ljb.12;
+        Thu, 24 Oct 2019 15:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=vyj3Be8ThUFoK8NpwpKfu1gKOQi5QB5c0e9A2mKmK20=;
+        b=n7ux1CRFg4jPC+fCnnx5zXkZUdX5q/Pi2HXBawFzaNkNG8sBZ/CmltstLxlIaj8w7d
+         xi0m1awbvIgRCjBDImmik6bYbJJN8JpNVRqjaCBdT595K/CjkhjB7ujwLPPmtSdXIMKa
+         daCB5c6D39xss0v8cIekki2DOf4qTayHmcODOiVytJ0lxZkk1B2b24UtDAeSGHXnEO/o
+         55jLd1F2HxbDI79pfxvS8u/due4yJTtdvbVmIz0pyqU1llk3WOxRfwp+OqeF6Ku3mF5Z
+         TPi2/hHMy4u/xlULWCCZh77knNjSCMesOoIfhEjxKnFQk103U8Pkg42/BSdZI2YCcY+G
+         3bBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=vyj3Be8ThUFoK8NpwpKfu1gKOQi5QB5c0e9A2mKmK20=;
+        b=fjiFj+1eawaClPrSkLtq8XPhHpFKIKYKo0f/8c+0emW+z+T/JWR4LIrG31IH004T36
+         tShOiWEjyfDYnUSAht/QCW4loARQmwVV89qAtXidhRxnuGaYTwN2GDvmaqzecT1n957F
+         UTfiauS6SeiVdvgBAtPkZL5ZJ0iaZeY9RWXdzt+sQIzW0foBPecNeuGRPU6sRzHan/nQ
+         3Rb0u5/2UwU+GuLajUM646pYtVhJVxB/kA7HgREPK1VuvPhGS5JOnGjlF+AcEy98f6Sc
+         avTHiVZUNAKwaQA4n1KDuHUNOeEbmJiof7Q7rnydpU9lRsaADilhslkNf2vWe4RkuwVN
+         alYQ==
+X-Gm-Message-State: APjAAAW6QKd447ITeQe7uTW3+B9JvSJL73LbsNnxsNJ4rH1/xaiIv4Cg
+        Drkx3tCt1/sn3ZOuSKYsbLw=
+X-Google-Smtp-Source: APXvYqwen03VEfHw4MV5info0TIfzU+Gljh/2KM2cNwme9LoiF+pgehP+Nil6rgeLT9BOA0MWHd0dQ==
+X-Received: by 2002:a2e:99cc:: with SMTP id l12mr28063ljj.175.1571955470973;
+        Thu, 24 Oct 2019 15:17:50 -0700 (PDT)
+Received: from localhost.localdomain (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
+        by smtp.gmail.com with ESMTPSA id i6sm11338765lfo.83.2019.10.24.15.17.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2019 15:17:50 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 13/17] ARM: dts: tegra20: paz00: Set up voltage regulators for DVFS
+Date:   Fri, 25 Oct 2019 01:14:12 +0300
+Message-Id: <20191024221416.14197-14-digetx@gmail.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191024221416.14197-1-digetx@gmail.com>
+References: <20191024221416.14197-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/rQjFlvQ/A_Sb7.IYHqDhM55";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/rQjFlvQ/A_Sb7.IYHqDhM55
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Set min/max voltage and couple CPU/CORE/RTC regulators.
 
-Hi Ingo,
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/boot/dts/tegra20-paz00.dts | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-On Thu, 24 Oct 2019 13:05:54 -0500 Daniel D=C3=ADaz <daniel.diaz@linaro.org=
-> wrote:
->
-> By the way, while looking at this, we found this unresolved conflict
-> in the tree:
-> -----8<----------8<----------8<-----
->   $ git show 2b5d5b1927a8c
->   commit 2b5d5b1927a8c17bf3ce5b4f781c6ba11e02cadd
->   Merge: c1e45431c592 ae79d5588a04
->   Author: Ingo Molnar <mingo@kernel.org>
->   Date:   Mon Oct 21 07:13:15 2019 +0200
->=20
->       Merge branch 'perf/core'
->=20
->       Conflicts:
->               tools/perf/check-headers.sh
->=20
->   diff --cc tools/perf/check-headers.sh
->   index 499235a41162,93c46d38024e..1f73e6f7438c
->   --- a/tools/perf/check-headers.sh
->   +++ b/tools/perf/check-headers.sh
->   @@@ -28,7 -28,7 +28,11 @@@ arch/x86/include/asm/disabled-features.
->     arch/x86/include/asm/required-features.h
->     arch/x86/include/asm/cpufeatures.h
->     arch/x86/include/asm/inat_types.h
->   ++<<<<<<< HEAD
->    +arch/x86/include/asm/emulate_prefix.h
->   ++=3D=3D=3D=3D=3D=3D=3D
->   + arch/x86/include/asm/msr-index.h
->   ++>>>>>>> perf/core =20
->     arch/x86/include/uapi/asm/prctl.h
->     arch/x86/lib/x86-opcode-map.txt
->     arch/x86/tools/gen-insn-attr-x86.awk
-> ----->8---------->8---------->8----- =20
->=20
-> That's still on next-20191024.
->=20
-> Greetings!
->=20
-> Daniel D=C3=ADaz
-> daniel.diaz@linaro.org
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 8861e0976e37..6e9fe192c648 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -337,18 +337,26 @@
+ 					regulator-always-on;
+ 				};
+ 
+-				sm0 {
++				core_vdd_reg: sm0 {
+ 					regulator-name = "+1.2vs_sm0,vdd_core";
+ 					regulator-min-microvolt = <1200000>;
+-					regulator-max-microvolt = <1200000>;
++					regulator-max-microvolt = <1225000>;
++					regulator-coupled-with = <&rtc_vdd_reg &cpu_vdd_reg>;
++					regulator-coupled-max-spread = <170000 450000>;
+ 					regulator-always-on;
++
++					nvidia,tegra-core-regulator;
+ 				};
+ 
+-				sm1 {
++				cpu_vdd_reg: sm1 {
+ 					regulator-name = "+1.0vs_sm1,vdd_cpu";
+-					regulator-min-microvolt = <1000000>;
+-					regulator-max-microvolt = <1000000>;
++					regulator-min-microvolt = <750000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-coupled-with = <&core_vdd_reg &rtc_vdd_reg>;
++					regulator-coupled-max-spread = <450000 450000>;
+ 					regulator-always-on;
++
++					nvidia,tegra-cpu-regulator;
+ 				};
+ 
+ 				sm2_reg: sm2 {
+@@ -367,10 +375,15 @@
+ 					regulator-always-on;
+ 				};
+ 
+-				ldo2 {
++				rtc_vdd_reg: ldo2 {
+ 					regulator-name = "+1.2vs_ldo2,vdd_rtc";
+ 					regulator-min-microvolt = <1200000>;
+-					regulator-max-microvolt = <1200000>;
++					regulator-max-microvolt = <1225000>;
++					regulator-coupled-with = <&core_vdd_reg &cpu_vdd_reg>;
++					regulator-coupled-max-spread = <170000 450000>;
++					regulator-always-on;
++
++					nvidia,tegra-rtc-regulator;
+ 				};
+ 
+ 				ldo3 {
+-- 
+2.23.0
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/rQjFlvQ/A_Sb7.IYHqDhM55
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2yIjQACgkQAVBC80lX
-0GxC5gf/anJx6HndU8+qLPUfGyZwQH0nsqze2ppYHbaiovBAxrUPZ3F6AFLCihdc
-cakYc0X887BZNddUDPvFdF+zCQhWBnXXub1UzDZhecq7RbJWTjFD9yW/Rs1yRzYJ
-O/vYDRNDtYK/qJELnpExsHmInlA630gwWifiOFInhiMJksRRpeNlCOnk1dWD5U5G
-z84dLfIHJxw+ZEAGUr0DsTeFinzb8CxXzx95kz/Ggb+TWoPioq1doExBzBSDji++
-QUoKKZ9+3UbTzQwCk7CdIbPmhGXfKKZoMmvLeIpcfXnybWADDZam1VyRMgss7O5O
-R8CpVoRYm93iHoD/jHEcouzq5R8n1Q==
-=YiY5
------END PGP SIGNATURE-----
-
---Sig_/rQjFlvQ/A_Sb7.IYHqDhM55--
