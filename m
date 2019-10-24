@@ -2,179 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55383E360E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E711E3614
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:59:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502905AbfJXO57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 10:57:59 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:58169 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407327AbfJXO56 (ORCPT
+        id S2502953AbfJXO7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 10:59:20 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45924 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502933AbfJXO7U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 10:57:58 -0400
-X-Originating-IP: 92.137.17.54
-Received: from localhost (alyon-657-1-975-54.w92-137.abo.wanadoo.fr [92.137.17.54])
-        (Authenticated sender: gregory.clement@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 2EB3E1BF20B;
-        Thu, 24 Oct 2019 14:57:53 +0000 (UTC)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Jon Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] spi: Fix SPI_CS_HIGH setting when using native and GPIO CS
-In-Reply-To: <dfabf9eb-4f81-91e5-55dc-caea0cdabd2d@nvidia.com>
-References: <20191018152929.3287-1-gregory.clement@bootlin.com> <dfabf9eb-4f81-91e5-55dc-caea0cdabd2d@nvidia.com>
-Date:   Thu, 24 Oct 2019 16:57:52 +0200
-Message-ID: <87zhhqp4wf.fsf@FE-laptop>
+        Thu, 24 Oct 2019 10:59:20 -0400
+Received: by mail-lj1-f194.google.com with SMTP id q64so25365577ljb.12
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 07:59:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xbQMeJJ9T8fWlFqiHSQLTmNnq/8kdMOS/oIgpPAnuSg=;
+        b=slLLmfP6q3EpXVFMzwJ0ES3wxJsTLqgTsMISi62sdBjEfrvp58m6xQcLvwxfTa5jj+
+         Y7X5jtpavnHg72oFovsb+9+Gk+w5uSVAE/P2If9BiXuEG4iW/msDZcWGEexsPTZDb70G
+         47jLnQDCGJ5KFVNa5VbKZd2+8QNLQNFt43TVm+hIE0xk0J9Rym0jnYINFDhBcDFuXR18
+         Ccv8b3k4XV4FWt86LjsyV8+esnz/ATpT5oInnIDFhe78EZxfFU2pzK9GSo5DDz8pk9VH
+         8cwt8ZvIJV+fOuWMLwO55SqKvmpHelfNmo8H0ngjitnSfNNhiGIHN9fQN734cn9hD23X
+         gUEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xbQMeJJ9T8fWlFqiHSQLTmNnq/8kdMOS/oIgpPAnuSg=;
+        b=AeZrj9kdaIvGE+xUal0z0PL6R4nAsbRUJPEahtLffMpsXDbI6i//PIsmFXGTnSAod+
+         Q/Qb0tbM+4R8WirrcqnEjo4gATvkUik/6WHAneQFLGTbUVucm34m0IKyby9O89NilDxH
+         eFX+7ViRUKSAK2Mft6yFzYd4rctGIDmHi5OGtrG1Bpuyw0hhokE++HZ+IYaUi6KNBWlt
+         H8GZL23iF6N2MRkoOP+WcZIOWldR72L9OFg8djHxHcQr4tXRYp1fhVTs0bkftgig3vs0
+         3IxeEC5u0OEoQt0XITqnxV9J+QyQLOxp7B9BymSVY5lCWJV9yrcHrQYbZ+UwJoUMcsLi
+         E26Q==
+X-Gm-Message-State: APjAAAUzCALhjQeCxQ9m/hwbXmpQ1Im/chFRyIpu77kXDaj+XKetCm4I
+        QLOdCofKrn8CEdYAUfXzj1uVKNAvull6iqYlTOhbFA==
+X-Google-Smtp-Source: APXvYqxwUacw9eEIksvXho6kjW10NGc5Ru7v55eIHAfb5TObudzVLJ6rPi6TEYfHLPZBJ/aHCkr3UMsIZyWZqVKgihg=
+X-Received: by 2002:a2e:8987:: with SMTP id c7mr1657197lji.225.1571929156491;
+ Thu, 24 Oct 2019 07:59:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
+ <20191021075038.GA27361@gmail.com> <CAKfTPtCcvKuf1Gt0W-BeEbQxFP_co14jdv_L5zEpS==Ecibabg@mail.gmail.com>
+ <20191024123844.GB2708@pauld.bos.csb> <20191024134650.GD2708@pauld.bos.csb>
+In-Reply-To: <20191024134650.GD2708@pauld.bos.csb>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Thu, 24 Oct 2019 16:59:05 +0200
+Message-ID: <CAKfTPtB0VruWXq+wGgvNOMFJvvZQiZyi2AgBoJP3Uaeduu2Lqg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] sched/fair: rework the CFS load balance
+To:     Phil Auld <pauld@redhat.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Parth Shah <parth@linux.ibm.com>,
+        Rik van Riel <riel@surriel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jon,
-
-> On 18/10/2019 16:29, Gregory CLEMENT wrote:
->> When improving the CS GPIO support at core level, the SPI_CS_HIGH
->> has been enabled for all the CS lines used for a given SPI controller.
->> 
->> However, the SPI framework allows to have on the same controller native
->> CS and GPIO CS. The native CS may not support the SPI_CS_HIGH, so they
->> should not be setup automatically.
->> 
->> With this patch the setting is done only for the CS that will use a
->> GPIO as CS
->> 
->> Fixes: f3186dd87669 ("spi: Optionally use GPIO descriptors for CS GPIOs")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->> ---
->>  drivers/spi/spi.c | 18 +++++++++---------
->>  1 file changed, 9 insertions(+), 9 deletions(-)
->> 
->> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
->> index 5414a10afd65..1b68acc28c8f 100644
->> --- a/drivers/spi/spi.c
->> +++ b/drivers/spi/spi.c
->> @@ -1880,15 +1880,7 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
->>  		spi->mode |= SPI_3WIRE;
->>  	if (of_property_read_bool(nc, "spi-lsb-first"))
->>  		spi->mode |= SPI_LSB_FIRST;
->> -
->> -	/*
->> -	 * For descriptors associated with the device, polarity inversion is
->> -	 * handled in the gpiolib, so all chip selects are "active high" in
->> -	 * the logical sense, the gpiolib will invert the line if need be.
->> -	 */
->> -	if (ctlr->use_gpio_descriptors)
->> -		spi->mode |= SPI_CS_HIGH;
->> -	else if (of_property_read_bool(nc, "spi-cs-high"))
->> +	if (of_property_read_bool(nc, "spi-cs-high"))
->>  		spi->mode |= SPI_CS_HIGH;
->>  
->>  	/* Device DUAL/QUAD mode */
->> @@ -1952,6 +1944,14 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
->>  	}
->>  	spi->chip_select = value;
->>  
->> +	/*
->> +	 * For descriptors associated with the device, polarity inversion is
->> +	 * handled in the gpiolib, so all gpio chip selects are "active high"
->> +	 * in the logical sense, the gpiolib will invert the line if need be.
->> +	 */
->> +	if ((ctlr->use_gpio_descriptors) && ctlr->cs_gpiods[spi->chip_select])
->> +		spi->mode |= SPI_CS_HIGH;
->> +
+On Thu, 24 Oct 2019 at 15:47, Phil Auld <pauld@redhat.com> wrote:
 >
-> This patch is causing a boot regression on one of our Tegra boards. 
-> Bisect is pointing to this commit and reverting on top of today's -next
-> fixes the problem. 
+> On Thu, Oct 24, 2019 at 08:38:44AM -0400 Phil Auld wrote:
+> > Hi Vincent,
+> >
+> > On Mon, Oct 21, 2019 at 10:44:20AM +0200 Vincent Guittot wrote:
+> > > On Mon, 21 Oct 2019 at 09:50, Ingo Molnar <mingo@kernel.org> wrote:
+> > > >
+
+[...]
+
+> > > > A full run on Mel Gorman's magic scalability test-suite would be super
+> > > > useful ...
+> > > >
+> > > > Anyway, please be on the lookout for such performance regression reports.
+> > >
+> > > Yes I monitor the regressions on the mailing list
+> >
+> >
+> > Our kernel perf tests show good results across the board for v4.
+> >
+> > The issue we hit on the 8-node system is fixed. Thanks!
+> >
+> > As we didn't see the fairness issue I don't expect the results to be
+> > that different on v4a (with the followup patch) but those tests are
+> > queued up now and we'll see what they look like.
+> >
 >
-> This patch is causing the following NULL pointer crash which I assume is
-> because we have not checked if 'ctlr->cs_gpiods' is valid before
-> dereferencing ...
+> Initial results with fix patch (v4a) show that the outlier issues on
+> the 8-node system have returned.  Median time for 152 and 156 threads
+> (160 cpu system) goes up significantly and worst case goes from 340
+> and 250 to 550 sec. for both. And doubles from 150 to 300 for 144
 
-I've just submitted a fixe for it
-
-https://patchwork.kernel.org/patch/11209839/
+For v3, you had a x4 slow down IIRC.
 
 
-Thanks,
+> threads. These look more like the results from v3.
 
-Gregory
+OK. For v3, we were not sure that your UC triggers the slow path but
+it seems that we have the confirmation now.
+The problem happens only for this  8 node 160 cores system, isn't it ?
+
+The fix favors the local group so your UC seems to prefer spreading
+tasks at wake up
+If you have any traces that you can share, this could help to
+understand what's going on. I will try to reproduce the problem on my
+system
 
 >
-> [    2.083593] Unable to handle kernel NULL pointer dereference at virtual address 00000000
-> [    2.091800] pgd = (ptrval)
-> [    2.094513] [00000000] *pgd=00000000
-> [    2.098122] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-> [    2.103436] Modules linked in:
-> [    2.106501] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc4-next-20191024-00013-gdda3f5db0962 #402
-> [    2.115808] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> [    2.122084] PC is at spi_register_controller+0x870/0xac0
-> [    2.127409] LR is at of_find_property+0x44/0x4c
-> [    2.131943] pc : [<c0629b98>]    lr : [<c078b068>]    psr: 20000013
-> [    2.138210] sp : ee8cdda8  ip : 00000000  fp : 00000000
-> [    2.143436] r10: eefe88e8  r9 : 00000001  r8 : eefe8898
-> [    2.148662] r7 : ee2dac00  r6 : c0d2019c  r5 : c0d20190  r4 : ee2d8800
-> [    2.155190] r3 : 00000000  r2 : 00000000  r1 : ffffffff  r0 : 00000001
-> [    2.161719] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-> [    2.168857] Control: 10c5387d  Table: 8000406a  DAC: 00000051
-> [    2.174604] Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
-> [    2.180613] Stack: (0xee8cdda8 to 0xee8ce000)
-> [    2.184976] dda0:                   00000000 00000044 c0629e0c 00000000 c1004e48 c0d202c8
-> [    2.193161] ddc0: 00000000 d20df1b4 c0628544 ee2d2040 ee2d8800 eea6c010 eea6c010 40000000
-> [    2.201344] dde0: 00000000 00000055 c0f8cd14 c0629e1c ee2d8800 ee2d8bc0 eea6c010 eea6c000
-> [    2.209528] de00: 40000000 c062db18 eea6b500 ee2d8bc0 eea6c010 00000000 c10807d4 00000000
-> [    2.217710] de20: c10807d4 00000000 00000000 c05b1050 c1110834 eea6c010 c1110838 c05af028
-> [    2.225893] de40: eea6c010 c10807d4 c10807d4 c1004e48 00000000 c0f0058c c0f71854 c05af2b8
-> [    2.234077] de60: c0f71854 c078be00 c0b91164 eea6c010 00000000 c10807d4 c1004e48 00000000
-> [    2.242259] de80: c0f0058c c0f71854 c0f8cd14 c05af568 00000000 c10807d4 eea6c010 c05af5f0
-> [    2.250442] dea0: 00000000 c10807d4 c05af570 c05ad39c c0f0058c ee90ea5c eea651b4 d20df1b4
-> [    2.258626] dec0: c1077590 c10807d4 ee2d2580 c1077590 00000000 c05ae390 c0d20a60 c10c73a0
-> [    2.266809] dee0: ffffe000 c10807d4 c10c73a0 ffffe000 c0f3b368 c05b0144 c1004e48 c10c73a0
-> [    2.274992] df00: ffffe000 c010306c 0000011e c01454b4 c0de9d70 c0d32c00 00000000 00000006
-> [    2.283175] df20: 00000006 c0cbf1b0 00000000 c1004e48 c0cd2680 c0cbf224 00000000 efffcc21
-> [    2.291358] df40: efffcc45 d20df1b4 00000000 c10d4e00 c10d4e00 d20df1b4 c10d4e00 c10d4e00
-> [    2.299541] df60: 00000007 c0f71834 0000011e c0f01040 00000006 00000006 00000000 c0f0058c
-> [    2.307723] df80: c0aad7c4 00000000 c0aad7c4 00000000 00000000 00000000 00000000 00000000
-> [    2.315906] dfa0: 00000000 c0aad7cc 00000000 c01010e8 00000000 00000000 00000000 00000000
-> [    2.324088] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> [    2.332271] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-> [    2.340463] [<c0629b98>] (spi_register_controller) from [<c0629e1c>] (devm_spi_register_controller+0x34/0x6c)
-> [    2.350389] [<c0629e1c>] (devm_spi_register_controller) from [<c062db18>] (tegra_spi_probe+0x33c/0x448)
-> [    2.359794] [<c062db18>] (tegra_spi_probe) from [<c05b1050>] (platform_drv_probe+0x48/0x98)
-> [    2.368155] [<c05b1050>] (platform_drv_probe) from [<c05af028>] (really_probe+0x234/0x34c)
-> [    2.376427] [<c05af028>] (really_probe) from [<c05af2b8>] (driver_probe_device+0x60/0x168)
-> [    2.384699] [<c05af2b8>] (driver_probe_device) from [<c05af568>] (device_driver_attach+0x58/0x60)
-> [    2.393578] [<c05af568>] (device_driver_attach) from [<c05af5f0>] (__driver_attach+0x80/0xbc)
-> [    2.402108] [<c05af5f0>] (__driver_attach) from [<c05ad39c>] (bus_for_each_dev+0x74/0xb4)
-> [    2.410292] [<c05ad39c>] (bus_for_each_dev) from [<c05ae390>] (bus_add_driver+0x164/0x1e8)
-> [    2.418563] [<c05ae390>] (bus_add_driver) from [<c05b0144>] (driver_register+0x7c/0x114)
-> [    2.426663] [<c05b0144>] (driver_register) from [<c010306c>] (do_one_initcall+0x54/0x2a8)
-> [    2.434851] [<c010306c>] (do_one_initcall) from [<c0f01040>] (kernel_init_freeable+0x14c/0x1e8)
-> [    2.443560] [<c0f01040>] (kernel_init_freeable) from [<c0aad7cc>] (kernel_init+0x8/0x10c)
-> [    2.451747] [<c0aad7cc>] (kernel_init) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-> [    2.459318] Exception stack(0xee8cdfb0 to 0xee8cdff8)
-> [    2.464374] dfa0:                                     00000000 00000000 00000000 00000000
-> [    2.472557] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> [    2.480740] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> [    2.487362] Code: e3520000 0a000006 e59422f8 e6ef3073 (e7923103) 
-> [    2.493510] ---[ end trace c189900877242550 ]---
->
-> Cheers
-> Jon
->
-> -- 
-> nvpublic
+> We're re-running the test to get more samples.
 
--- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Thanks
+Vincent
+
+>
+>
+> Other tests and systems were still fine.
+>
+>
+> Cheers,
+> Phil
+>
+>
+> > Numbers for my specific testcase (the cgroup imbalance) are basically
+> > the same as I posted for v3 (plus the better 8-node numbers). I.e. this
+> > series solves that issue.
+> >
+> >
+> > Cheers,
+> > Phil
+> >
+> >
+> > >
+> > > >
+> > > > Also, we seem to have grown a fair amount of these TODO entries:
+> > > >
+> > > >   kernel/sched/fair.c: * XXX borrowed from update_sg_lb_stats
+> > > >   kernel/sched/fair.c: * XXX: only do this for the part of runnable > running ?
+> > > >   kernel/sched/fair.c:     * XXX illustrate
+> > > >   kernel/sched/fair.c:    } else if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
+> > > >   kernel/sched/fair.c: * can also include other factors [XXX].
+> > > >   kernel/sched/fair.c: * [XXX expand on:
+> > > >   kernel/sched/fair.c: * [XXX more?]
+> > > >   kernel/sched/fair.c: * [XXX write more on how we solve this.. _after_ merging pjt's patches that
+> > > >   kernel/sched/fair.c:             * XXX for now avg_load is not computed and always 0 so we
+> > > >   kernel/sched/fair.c:            /* XXX broken for overlapping NUMA groups */
+> > > >
+> > >
+> > > I will have a look :-)
+> > >
+> > > > :-)
+> > > >
+> > > > Thanks,
+> > > >
+> > > >         Ingo
+> >
+> > --
+> >
+>
+> --
+>
