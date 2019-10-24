@@ -2,132 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C9A6E282D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 04:31:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80B7CE2846
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 04:37:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437077AbfJXCbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 22:31:18 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38724 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437066AbfJXCbR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 22:31:17 -0400
-Received: by mail-ed1-f65.google.com with SMTP id y8so5073250edu.5
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 19:31:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gnpimtDmP0lqthi2a9dQUIzsbuDYbXbk8lwy1rA6ZU4=;
-        b=rWfKpJmH4ifuIAc04embim+n/JBDGLFT0Hj+ihXkCmiMhnOlUJ7dovXsW/rUmYCG6F
-         NxvohT6iNXBI6t174vtu7YcDkT26RFlgZNkwGZix5mNkPhEVfaQJud2KWOstCgH42cLL
-         C6TMjBSQEmYIn9WfT37PSeJ/iFVaR6bQjE0zyQcvJKF2mvrqFmnCmfG0685/oCLWd2D/
-         kj3C67iakdIgJwUCaU7RXbrXgjL50UBwhAsUqAr4lASSx5NA4IH+9zeFS8WnF3708s4S
-         VD43nmX5iXHmxRFB4FSaXMMTYJZZ+KuoOiJB3j+OaIRifCMquB5u1LE663zK8s24CJAE
-         4+WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gnpimtDmP0lqthi2a9dQUIzsbuDYbXbk8lwy1rA6ZU4=;
-        b=nawRc9G295eYg2r/t0HeGqjgJORv305G+kklOT5QPC2IjOzDYtYMZdeaECxAeNlGel
-         anZz08mWdSKul+wpOLS1mQNWtQ03yepK7T3rI4OoMBy6aN3zvoBfKzrqMUEjGHDCsOyq
-         5PdEgRcuqA9wnfHPr8c6qiVLv+BGn7nLW6NKVv/np0xeNEfPyE5GiMw4sfxYUsbXwarX
-         mXjFkX7k9H8TUXdgMrvw+x8LvW4Q59tQfzVAsdccXQ3DR1Y3WzPx3CyWdw4KAnT0uAGW
-         pFlSq2Ovdk1TE2bdodHnEMzGREADoAbuGPH9Sul1YvjfjUdKLaOmI5+MB/pio1KtOnGb
-         UHVA==
-X-Gm-Message-State: APjAAAVJO3Ijwp2nh2VMucXyKY1jQ8axgkG2dt5mdmTnJjyfDdEhzWDu
-        8HdPLoo7Eff7ghQHrMGkmDjcqg==
-X-Google-Smtp-Source: APXvYqy84bemiVw55n7fco+FbX1+KuwznFlI0XsqhDfwNJccDH40WXATcHh+QUP1GE+pY3XO2S2c9A==
-X-Received: by 2002:a17:906:780e:: with SMTP id u14mr26591750ejm.97.1571884275784;
-        Wed, 23 Oct 2019 19:31:15 -0700 (PDT)
-Received: from [10.68.217.182] ([217.70.210.43])
-        by smtp.googlemail.com with ESMTPSA id x23sm430555eda.83.2019.10.23.19.31.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2019 19:31:15 -0700 (PDT)
-Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20191020155935.12297-1-ira.weiny@intel.com>
- <b7849297-e4a4-aaec-9a64-2b481663588b@plexistor.com>
- <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
- <20191023221332.GE2044@dread.disaster.area>
-From:   Boaz Harrosh <boaz@plexistor.com>
-Message-ID: <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
-Date:   Thu, 24 Oct 2019 05:31:13 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
-MIME-Version: 1.0
-In-Reply-To: <20191023221332.GE2044@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S2392287AbfJXChb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 22:37:31 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:34812 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390493AbfJXChb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 22:37:31 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 39FB7200345;
+        Thu, 24 Oct 2019 04:37:30 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ADA0D2000F8;
+        Thu, 24 Oct 2019 04:37:25 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D9D0E402C4;
+        Thu, 24 Oct 2019 10:37:19 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/3] ARM: dts: imx6q: Add missing cooling device properties for CPUs
+Date:   Thu, 24 Oct 2019 10:34:23 +0800
+Message-Id: <1571884465-19720-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/10/2019 01:13, Dave Chinner wrote:
-> On Wed, Oct 23, 2019 at 04:09:50PM +0300, Boaz Harrosh wrote:
->> On 22/10/2019 14:21, Boaz Harrosh wrote:
->>> On 20/10/2019 18:59, ira.weiny@intel.com wrote:
->> Please explain the use case behind your model?
-> 
-> No application changes needed to control whether they use DAX or
-> not. It allows the admin to control the application behaviour
-> completely, so they can turn off DAX if necessary. Applications are
-> unaware of constraints that may prevent DAX from being used, and so
-> admins need a mechanism to prevent DAX aware application from
-> actually using DAX if the capability is present.
-> 
-> e.g. given how slow some PMEM devices are when it comes to writing
-> data, especially under extremely high concurrency, DAX is not
-> necessarily a performance win for every application. Admins need a
-> guaranteed method of turning off DAX in these situations - apps may
-> not provide such a knob, or even be aware of a thing called DAX...
-> 
+The cooling device properties "#cooling-cells" should either be present
+for all the CPUs of a cluster or none. If these are present only for a
+subset of CPUs of a cluster then things will start falling apart as soon
+as the CPUs are brought online in a different order. For example, this
+will happen because the operating system looks for such properties in the
+CPU node it is trying to bring up, so that it can register a cooling
+device.
 
-Thank you Dave for explaining. Forgive my slowness. I now understand
-your intention.
+Add such missing properties.
 
-But if so please address my first concern. That in the submitted implementation
-you must set the flag-bit after the create of the file but before the write.
-So exactly the above slow writes must always be DAX if I ever want the file
-to be DAX accessed in the future.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm/boot/dts/imx6q.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-In fact I do not see how you do this without changing the application because
-most applications create thier own files, so you do not have a chance to set
-the DAX-flag before the write happens. So the only effective fixture is the
-inheritance from the parent directory.
-But then again how do you separate from the slow writes that we would like
-none-DAX to the DAX reads that are fast and save so much resources and latency.
+diff --git a/arch/arm/boot/dts/imx6q.dtsi b/arch/arm/boot/dts/imx6q.dtsi
+index d038f41..9d3be1c 100644
+--- a/arch/arm/boot/dts/imx6q.dtsi
++++ b/arch/arm/boot/dts/imx6q.dtsi
+@@ -73,6 +73,7 @@
+ 				396000	1175000
+ 			>;
+ 			clock-latency = <61036>; /* two CLK32 periods */
++			#cooling-cells = <2>;
+ 			clocks = <&clks IMX6QDL_CLK_ARM>,
+ 				 <&clks IMX6QDL_CLK_PLL2_PFD2_396M>,
+ 				 <&clks IMX6QDL_CLK_STEP>,
+@@ -107,6 +108,7 @@
+ 				396000	1175000
+ 			>;
+ 			clock-latency = <61036>; /* two CLK32 periods */
++			#cooling-cells = <2>;
+ 			clocks = <&clks IMX6QDL_CLK_ARM>,
+ 				 <&clks IMX6QDL_CLK_PLL2_PFD2_396M>,
+ 				 <&clks IMX6QDL_CLK_STEP>,
+@@ -141,6 +143,7 @@
+ 				396000	1175000
+ 			>;
+ 			clock-latency = <61036>; /* two CLK32 periods */
++			#cooling-cells = <2>;
+ 			clocks = <&clks IMX6QDL_CLK_ARM>,
+ 				 <&clks IMX6QDL_CLK_PLL2_PFD2_396M>,
+ 				 <&clks IMX6QDL_CLK_STEP>,
+-- 
+2.7.4
 
-What if, say in XFS when setting the DAX-bit we take all the three write-locks
-same as a truncate. Then we check that there are no active page-cache mappings
-ie. a single opener. Then allow to set the bit. Else return EBUISY. (file is in use)
-
-> e.g. the data set being accessed by the application is mapped and
-> modified by RDMA applications, so those files must not be accessed
-> using DAX by any application because DAX+RDMA are currently
-> incompatible. Hence you can have RDMA on pmem devices co-exist
-> within the same filesystem as other applications using DAX to access
-> the pmem...
-> 
-
-I actually like the lastest patchset that takes a lease on the file.
-But yes an outside admin tool to set different needs.
-
-> Cheers,
-> Dave.
-> 
-
-Yes, thanks
-Boaz
