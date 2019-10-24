@@ -2,82 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FAC8E2B96
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:58:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9958BE2B9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:59:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408806AbfJXH6e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 03:58:34 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:54294
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2408694AbfJXH6e (ORCPT
+        id S2408838AbfJXH7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 03:59:54 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:39470 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404701AbfJXH7y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 03:58:34 -0400
-X-IronPort-AV: E=Sophos;i="5.68,224,1569276000"; 
-   d="scan'208";a="324077627"
-Received: from portablejulia.rsr.lip6.fr ([132.227.76.63])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 09:58:31 +0200
-Date:   Thu, 24 Oct 2019 09:58:32 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: julia@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Yi Wang <wang.yi59@zte.com.cn>,
-        Xue Zhihong <xue.zhihong@zte.com.cn>,
-        Zhong Shiqi <zhong.shiqi@zte.com.cn>
-Subject: Re: [PATCH v2] coccicheck: support $COCCI being defined as a
- directory
-In-Reply-To: <37ad0bcd-941d-e02e-ae99-e89f2ce98ff0@web.de>
-Message-ID: <alpine.DEB.2.21.1910240956450.4479@hadrien>
-References: <alpine.DEB.2.21.1910240816040.2771@hadrien> <37ad0bcd-941d-e02e-ae99-e89f2ce98ff0@web.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 24 Oct 2019 03:59:54 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9O7xpKB066748;
+        Thu, 24 Oct 2019 02:59:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571903991;
+        bh=+IUED6wuPtdFzwetdXLMK4dsNj7i3Pf25koVr6ceON8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=u/xwwGQ+I3WW3uguQVeK3bzwHYzzz5PMJetrrqu/u552Yzuo4i2ulMhDzKB3TFdVT
+         +pIFGA5kZLiYwjONdqEG68vnQFqwzNuPRUfWToKn0kPY3ecAAQE4+HnSc/RS8cH+1B
+         Kwg8G7zmiUCkv6waemSF4KNy6XPmnJpV5bMQYdUo=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9O7xpeq046214;
+        Thu, 24 Oct 2019 02:59:51 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 24
+ Oct 2019 02:59:39 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 24 Oct 2019 02:59:49 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9O7xlgJ040749;
+        Thu, 24 Oct 2019 02:59:48 -0500
+Subject: Re: [PATCH v2] clk: ti: dra7-atl-clock: Remove ti_clk_add_alias call
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, <mturquette@baylibre.com>
+CC:     <sboyd@kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20191002083436.10194-1-peter.ujfalusi@ti.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <0770a061-c731-dfee-0de7-c16dcf87454e@ti.com>
+Date:   Thu, 24 Oct 2019 10:59:47 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1170188596-1571903912=:4479"
+In-Reply-To: <20191002083436.10194-1-peter.ujfalusi@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 02/10/2019 11:34, Peter Ujfalusi wrote:
+> ti_clk_register() calls it already so the driver should not create
+> duplicated alias.
+> 
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
+> Hi,
+> 
+> changes since v1:
+> - removed unused ret variable
+> 
 
---8323329-1170188596-1571903912=:4479
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Queued up for 5.4 fixes, thanks.
+
+-Tero
 
 
+> Regards,
+> Peter
+> 
+>   drivers/clk/ti/clk-dra7-atl.c | 6 ------
+>   1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+> index a01ca9395179..f65e16c4f3c4 100644
+> --- a/drivers/clk/ti/clk-dra7-atl.c
+> +++ b/drivers/clk/ti/clk-dra7-atl.c
+> @@ -174,7 +174,6 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
+>   	struct clk_init_data init = { NULL };
+>   	const char **parent_names = NULL;
+>   	struct clk *clk;
+> -	int ret;
+>   
+>   	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
+>   	if (!clk_hw) {
+> @@ -207,11 +206,6 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
+>   	clk = ti_clk_register(NULL, &clk_hw->hw, node->name);
+>   
+>   	if (!IS_ERR(clk)) {
+> -		ret = ti_clk_add_alias(NULL, clk, node->name);
+> -		if (ret) {
+> -			clk_unregister(clk);
+> -			goto cleanup;
+> -		}
+>   		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+>   		kfree(parent_names);
+>   		return;
+> 
 
-On Thu, 24 Oct 2019, Markus Elfring wrote:
-
-> > Second the commit log could be more concise as:
->
-> I like your desire for choosing a more appropriate commit message.
->
->
-> > Allow defining COCCI as a directory that contains .cocci files.
->
-> I would prefer to concentrate the patch subject on other information.
->
->
-> > In general, at least in simple cases, it is not necessary to mention the
-> > name of the file you are modifying in the comit log, because one can see
-> > that just below from looking at the diffstat and the patch.
->
-> This view can be reasonable. - How does it fit to the usual requirement
-> for the specification of a “subsystem” (or “prefix”) according to the
-> canonical patch format?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=13b86bc4cd648eae69fdcf3d04b2750c76350053#n656
-
-Huh?  I was talking about the log message, not the subject line.  Likewise
-"Allow defining..." was not proposed as a subject line, but as the log
-message.  With that degree of orientation, I think one can look at the
-code and figure out what the intent is.  At least if one knows the meaning
-of -d.
-
-julia
---8323329-1170188596-1571903912=:4479--
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
