@@ -2,111 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7145CE3824
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32DBBE3844
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:39:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503539AbfJXQio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 12:38:44 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:39745 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2503426AbfJXQim (ORCPT
+        id S2503684AbfJXQjd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 12:39:33 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41476 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503520AbfJXQjc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 12:38:42 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R671e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Tg4pDHR_1571934793;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Tg4pDHR_1571934793)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 25 Oct 2019 00:33:16 +0800
-Subject: Re: [v4 PATCH] mm: thp: handle page cache THP correctly in
- PageTransCompoundMap
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     hughd@google.com, aarcange@redhat.com,
-        kirill.shutemov@linux.intel.com, gavin.dg@linux.alibaba.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <1571865575-42913-1-git-send-email-yang.shi@linux.alibaba.com>
- <20191024135547.GH2963@bombadil.infradead.org>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <c3932146-1b91-fa90-b947-9d4ebe5c5135@linux.alibaba.com>
-Date:   Thu, 24 Oct 2019 09:33:11 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Thu, 24 Oct 2019 12:39:32 -0400
+Received: by mail-ed1-f65.google.com with SMTP id a21so2117968edj.8;
+        Thu, 24 Oct 2019 09:39:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pRqAgw8aUktyBYgNnb2aGpfKrZwvconn64RNMt6pvOk=;
+        b=CJqtir2sSTj7bmYkAv7LfJhtDFH0PyQr+c2dGu7uxe7p2oSLY6KDCbiIvsZc7UvCWc
+         pRoxXUcoX2N7GgUpG3PuBVr12awPFjQiuPqJL2wGyx2GO7ldejs2EC+miqPLB6VreAFr
+         bG69RFepiS3uHdpDbPPEHkscdalyEJ9DI+57De7g0XOYmjC14tIa/RieQj3oWMNvPMl6
+         NwfvxxUOvJyGa6Zm4lKkhrNEJlVuyYJefpcgqaMo1FqVnQRES9YoiGQ9yXIUL0fV6TGO
+         w5oxucMiUJEjGm+3SgBuTkKrqekrziijN38GKgDfUQNRhQOrUAlKiooYLa/9Xdsy0J6y
+         xL7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=pRqAgw8aUktyBYgNnb2aGpfKrZwvconn64RNMt6pvOk=;
+        b=OFIcBktxumP3C/a5tBFmAGCaYfztnoWCxZ8RE/BaBJYMfBjvw6H8I5BXeBcNR7NC/s
+         rsekTIKiv3KZSfHcQChz4xIIlBnKISllJY8HG4D8OzFoLhvPt0TMncfcz6AZ1V+TMws3
+         AMbRhxMswdbwShnzLJ84KZ031HePVSXr1HRf0kEiujOc5q/d218A3pqTG1/DyEipjmcS
+         ppU/a5/HK9lgLSokvz9cRQ4oDg8bOQNLoKwJgfNjRKL+zqwxK8T6JTJ89xQ/wDce+t91
+         lPAtFP/+l63kus3q0sJ9/rgAB/Eacq2NozeIVo6z0PjKyB0ZriZvCqZfpOVn5x3ABG7j
+         HI7Q==
+X-Gm-Message-State: APjAAAWkFQ201avclfdKQuUS6nf0nNbA8gbp2D8a5fHijPuWBnFmuGP9
+        agfQvbwF8DPZrq8kJfR13POHpJwP
+X-Google-Smtp-Source: APXvYqyvM662DlxSAfisSvgKvUn1O7EE4ce1G8d6ykXQTVf3YfAUbnCH9Fumzu4j2S+SaGhGh6x+7Q==
+X-Received: by 2002:a17:906:1c87:: with SMTP id g7mr31650421ejh.189.1571934809400;
+        Thu, 24 Oct 2019 09:33:29 -0700 (PDT)
+Received: from [10.67.50.53] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id f8sm941401eds.71.2019.10.24.09.33.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Oct 2019 09:33:28 -0700 (PDT)
+Subject: Re: [PATCH net-next] net: dsa: qca8k: Initialize the switch with
+ correct number of ports
+To:     Andrew Lunn <andrew@lunn.ch>,
+        =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+Cc:     Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1571924818-27725-1-git-send-email-michal.vokac@ysoft.com>
+ <20191024141211.GC30147@lunn.ch>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <a6e8b1cb-4c32-34ba-2a10-d736a953c108@gmail.com>
+Date:   Thu, 24 Oct 2019 09:33:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191024135547.GH2963@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191024141211.GC30147@lunn.ch>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/24/19 7:12 AM, Andrew Lunn wrote:
+> On Thu, Oct 24, 2019 at 03:46:58PM +0200, Michal Vokáč wrote:
+>> Since commit 0394a63acfe2 ("net: dsa: enable and disable all ports")
+>> the dsa core disables all unused ports of a switch. In this case
+>> disabling ports with numbers higher than QCA8K_NUM_PORTS causes that
+>> some switch registers are overwritten with incorrect content.
+> 
+> Humm.
+> 
+> The same problem might exist in other drivers:
+> 
+> linux/drivers/net/dsa$ grep -r "ds->num_ports = DSA_MAX_PORTS"
+> qca8k.c:	priv->ds->num_ports = DSA_MAX_PORTS;
+> b53/b53_common.c:	ds->num_ports = DSA_MAX_PORTS;
+
+Not for b53 because this later gets clamped with dev->num_ports in
+b53_setup().
+
+> mt7530.c:	priv->ds->num_ports = DSA_MAX_PORTS;
+> microchip/ksz_common.c:	ds->num_ports = DSA_MAX_PORTS;
+> dsa_loop.c:	ds->num_ports = DSA_MAX_PORTS;
+> 
+> dsa_loop.c looks O.K, it does support DSA_MAX_PORTS ports.
+> 
+> But the others?
+> 
+>     Andrew
+> 
 
 
-On 10/24/19 6:55 AM, Matthew Wilcox wrote:
-> On Thu, Oct 24, 2019 at 05:19:35AM +0800, Yang Shi wrote:
->> We have usecase to use tmpfs as QEMU memory backend and we would like to
->> take the advantage of THP as well.  But, our test shows the EPT is not
->> PMD mapped even though the underlying THP are PMD mapped on host.
->> The number showed by /sys/kernel/debug/kvm/largepage is much less than
->> the number of PMD mapped shmem pages as the below:
->>
->> 7f2778200000-7f2878200000 rw-s 00000000 00:14 262232 /dev/shm/qemu_back_mem.mem.Hz2hSf (deleted)
->> Size:            4194304 kB
->> [snip]
->> AnonHugePages:         0 kB
->> ShmemPmdMapped:   579584 kB
->> [snip]
->> Locked:                0 kB
->>
->> cat /sys/kernel/debug/kvm/largepages
->> 12
->>
->> And some benchmarks do worse than with anonymous THPs.
->>
->> By digging into the code we figured out that commit 127393fbe597 ("mm:
->> thp: kvm: fix memory corruption in KVM with THP enabled") checks if
->> there is a single PTE mapping on the page for anonymous THP when
->> setting up EPT map.  But, the _mapcount < 0 check doesn't fit to page
->> cache THP since every subpage of page cache THP would get _mapcount
->> inc'ed once it is PMD mapped, so PageTransCompoundMap() always returns
->> false for page cache THP.  This would prevent KVM from setting up PMD
->> mapped EPT entry.
->>
->> So we need handle page cache THP correctly.  However, when page cache
->> THP's PMD gets split, kernel just remove the map instead of setting up
->> PTE map like what anonymous THP does.  Before KVM calls get_user_pages()
->> the subpages may get PTE mapped even though it is still a THP since the
->> page cache THP may be mapped by other processes at the mean time.
->>
->> Checking its _mapcount and whether the THP has PTE mapped or not.
->> Although this may report some false negative cases (PTE mapped by other
->> processes), it looks not trivial to make this accurate.
-> I don't understand why you care how it's mapped into userspace.  If there
-> is a PMD-sized page in the page cache, then you can use a PMD mapping
-> in the EPT tables to map it.  Why would another process having a PTE
-> mapping on the page cause you to not use a PMD mapping?
-
-We don't care if the THP is PTE mapped by other process, but either 
-PageDoubleMap flag or _mapcount/compound_mapcount can't tell us if the 
-PTE map comes from the current process or other process unless gup could 
-return pmd's status.
-
-I think the commit 127393fbe597 ("mm: thp: kvm: fix memory corruption in 
-KVM with THP enabled") elaborates the trade-off clearly (not full commit 
-log, just paste the most related part):
-
-    Ideally instead of the page->_mapcount < 1 check, get_user_pages()
-     should return the granularity of the "page" mapping in the "mm" passed
-     to get_user_pages().  However it's non trivial change to pass the "pmd"
-     status belonging to the "mm" walked by get_user_pages up the stack (up
-     to the caller of get_user_pages).  So the fix just checks if there is
-     not a single pte mapping on the page returned by get_user_pages, and in
-     turn if the caller can assume that the whole compound page is mapped in
-     the current "mm" (in a pmd_trans_huge()).  In such case the entire
-     compound page is safe to map into the secondary MMU without additional
-     get_user_pages() calls on the surrounding tail/head pages.  In addition
-     of being faster, not having to run other get_user_pages() calls also
-     reduces the memory footprint of the secondary MMU fault in case the pmd
-     split happened as result of memory pressure.
-
-
+-- 
+Florian
