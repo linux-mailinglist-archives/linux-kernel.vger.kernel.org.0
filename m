@@ -2,170 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB83E2AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A89E2B03
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:23:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407054AbfJXHVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 03:21:40 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:45002 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404734AbfJXHVk (ORCPT
+        id S2392953AbfJXHWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 03:22:47 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:63411 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2390783AbfJXHWp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 03:21:40 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x9O7KK2a031046, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x9O7KK2a031046
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 24 Oct 2019 15:20:20 +0800
-Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
- RTITCASV01.realtek.com.tw (172.21.6.18) with Microsoft SMTP Server (TLS) id
- 14.3.468.0; Thu, 24 Oct 2019 15:20:19 +0800
-Received: from RTEXMB01.realtek.com.tw (172.21.6.94) by
- RTEXMB03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Thu, 24 Oct 2019 15:20:19 +0800
-Received: from RTEXMB01.realtek.com.tw ([fe80::6d88:58e2:6d4b:ff7c]) by
- RTEXMB01.realtek.com.tw ([fe80::6d88:58e2:6d4b:ff7c%13]) with mapi id
- 15.01.1779.005; Thu, 24 Oct 2019 15:20:19 +0800
-From:   Kailang <kailang@realtek.com>
-To:     Aaron Ma <aaron.ma@canonical.com>, Takashi Iwai <tiwai@suse.de>
-CC:     "perex@perex.cz" <perex@perex.cz>,
-        "hui.wang@canonical.com" <hui.wang@canonical.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
-Thread-Topic: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
-Thread-Index: AQHViO7vxXHEn3Xl7Ee6N1/g4hdxKqdmTdyAgAGbrzD//5F4gIAB6clQ
-Date:   Thu, 24 Oct 2019 07:20:19 +0000
-Message-ID: <ed97b6a8bd9445ecb48bc763d9aaba7a@realtek.com>
-References: <20191022153855.14368-1-aaron.ma@canonical.com>
- <s5hpniodaq4.wl-tiwai@suse.de> <848ebd7fd86e4c05936e70f500f718e9@realtek.com>
- <892889ae-0ce1-fbf6-d19f-50a5686e84c2@canonical.com>
-In-Reply-To: <892889ae-0ce1-fbf6-d19f-50a5686e84c2@canonical.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.22.105.211]
-Content-Type: multipart/mixed;
-        boundary="_002_ed97b6a8bd9445ecb48bc763d9aaba7arealtekcom_"
+        Thu, 24 Oct 2019 03:22:45 -0400
+X-UUID: d19484b7065342aa99b1cf23ca602cb3-20191024
+X-UUID: d19484b7065342aa99b1cf23ca602cb3-20191024
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 6435572; Thu, 24 Oct 2019 15:22:30 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N1.mediatek.inc
+ (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 24 Oct
+ 2019 15:22:26 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 24 Oct 2019 15:22:25 +0800
+Message-ID: <1571901746.19130.134.camel@mhfsdcap03>
+Subject: Re: [PATCH v4 2/7] iommu/mediatek: Add a new tlb_lock for tlb_flush
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     Will Deacon <will@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Evan Green <evgreen@chromium.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Tomasz Figa <tfiga@google.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <youlin.pei@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        <anan.sun@mediatek.com>, <cui.zhang@mediatek.com>,
+        <chao.hao@mediatek.com>, <edison.hsieh@mediatek.com>
+Date:   Thu, 24 Oct 2019 15:22:26 +0800
+In-Reply-To: <20191023165252.GA27471@willie-the-truck>
+References: <1571196792-12382-1-git-send-email-yong.wu@mediatek.com>
+         <1571196792-12382-3-git-send-email-yong.wu@mediatek.com>
+         <20191023165252.GA27471@willie-the-truck>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: A424D45C3762AE65D19C9E0D6AC3052D0F4FDCA255F395DA386AC98B86DDEC702000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---_002_ed97b6a8bd9445ecb48bc763d9aaba7arealtekcom_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+On Wed, 2019-10-23 at 17:52 +0100, Will Deacon wrote:
+> On Wed, Oct 16, 2019 at 11:33:07AM +0800, Yong Wu wrote:
+> > The commit 4d689b619445 ("iommu/io-pgtable-arm-v7s: Convert to IOMMU API
+> > TLB sync") help move the tlb_sync of unmap from v7s into the iommu
+> > framework. It helps add a new function "mtk_iommu_iotlb_sync", But it
+> > lacked the lock, then it will cause the variable "tlb_flush_active"
+> > may be changed unexpectedly, we could see this warning log randomly:
+> > 
+> > mtk-iommu 10205000.iommu: Partial TLB flush timed out, falling back to
+> > full flush
+> > 
+> > The HW requires tlb_flush/tlb_sync in pairs strictly, this patch adds
+> > a new tlb_lock for tlb operations to fix this issue.
+> > 
+> > Fixes: 4d689b619445 ("iommu/io-pgtable-arm-v7s: Convert to IOMMU API TLB
+> > sync")
+> > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> > ---
+> >  drivers/iommu/mtk_iommu.c | 23 ++++++++++++++++++++++-
+> >  drivers/iommu/mtk_iommu.h |  1 +
+> >  2 files changed, 23 insertions(+), 1 deletion(-)
+> 
+> [...]
+> 
+> >  static void mtk_iommu_tlb_flush_page_nosync(struct iommu_iotlb_gather *gather,
+> >  					    unsigned long iova, size_t granule,
+> >  					    void *cookie)
+> >  {
+> > +	struct mtk_iommu_data *data = cookie;
+> > +	unsigned long flags;
+> > +
+> > +	spin_lock_irqsave(&data->tlb_lock, flags);
+> >  	mtk_iommu_tlb_add_flush_nosync(iova, granule, granule, true, cookie);
+> > +	spin_unlock_irqrestore(&data->tlb_lock, flags);
+> 
+> Given that you release the lock here, what prevents another nosync()
+> operation being issued before you've managed to do the sync()?
 
-SGkgVGFrYXNoaSwNCg0KQXR0YWNoIHBhdGNoIHdhcyBzdXBwb3J0IEFMQzYyMy4NCg0KQlIsDQpL
-YWlsYW5nDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWFyb24gTWEg
-PGFhcm9uLm1hQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IFdlZG5lc2RheSwgT2N0b2JlciAyMywg
-MjAxOSA2OjA2IFBNDQo+IFRvOiBLYWlsYW5nIDxrYWlsYW5nQHJlYWx0ZWsuY29tPjsgVGFrYXNo
-aSBJd2FpIDx0aXdhaUBzdXNlLmRlPg0KPiBDYzogcGVyZXhAcGVyZXguY3o7IGh1aS53YW5nQGNh
-bm9uaWNhbC5jb207IGFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZzsNCj4gbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBBTFNBOiBoZGEvcmVhbHRl
-ayAtIEZpeCAyIGZyb250IG1pY3Mgb2YgY29kZWMgMHg2MjMNCj4gDQo+IE9uIDEwLzIzLzE5IDQ6
-NDQgUE0sIEthaWxhbmcgd3JvdGU6DQo+ID4NCj4gPg0KPiA+PiAtLS0tLU9yaWdpbmFsIE1lc3Nh
-Z2UtLS0tLQ0KPiA+PiBGcm9tOiBUYWthc2hpIEl3YWkgPHRpd2FpQHN1c2UuZGU+DQo+ID4+IFNl
-bnQ6IFdlZG5lc2RheSwgT2N0b2JlciAyMywgMjAxOSAxMjowOCBBTQ0KPiA+PiBUbzogQWFyb24g
-TWEgPGFhcm9uLm1hQGNhbm9uaWNhbC5jb20+DQo+ID4+IENjOiBwZXJleEBwZXJleC5jejsgS2Fp
-bGFuZyA8a2FpbGFuZ0ByZWFsdGVrLmNvbT47DQo+ID4+IGh1aS53YW5nQGNhbm9uaWNhbC5jb207
-IGFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZzsNCj4gPj4gbGludXgta2VybmVsQHZnZXIua2Vy
-bmVsLm9yZw0KPiA+PiBTdWJqZWN0OiBSZTogW1BBVENIXSBBTFNBOiBoZGEvcmVhbHRlayAtIEZp
-eCAyIGZyb250IG1pY3Mgb2YgY29kZWMNCj4gPj4gMHg2MjMNCj4gPj4NCj4gPj4gT24gVHVlLCAy
-MiBPY3QgMjAxOSAxNzozODo1NSArMDIwMCwNCj4gPj4gQWFyb24gTWEgd3JvdGU6DQo+ID4+Pg0K
-PiA+Pj4gVGhlc2UgMiBUaGlua0NlbnRyZXMgaW5zdGFsbGVkIGEgbmV3IHJlYWx0ZWsgY29kZWMg
-SUQgMHg2MjMsIGl0IGhhcw0KPiA+Pj4gMiBmcm9udCBtaWNzIHdpdGggdGhlIHNhbWUgbG9jYXRp
-b24gb24gcGluIDB4MTggYW5kIDB4MTkuDQo+ID4+Pg0KPiA+Pj4gQXBwbHkgZml4dXAgQUxDMjgz
-X0ZJWFVQX0hFQURTRVRfTUlDIHRvIGNoYW5nZSAxIGZyb250IG1pYyBsb2NhdGlvbg0KPiA+Pj4g
-dG8gcmlnaHQsIHRoZW4gcHVsc2VhdWRpbyBjYW4gaGFuZGxlIHRoZW0uDQo+ID4+PiBPbmUgIkZy
-b250IE1pYyIgYW5kIG9uZSAiTWljIiB3aWxsIGJlIHNob3duLCBhbmQgYXVkaW8gb3V0cHV0IHdv
-cmtzDQo+ID4+PiBmaW5lLg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1vZmYtYnk6IEFhcm9uIE1hIDxh
-YXJvbi5tYUBjYW5vbmljYWwuY29tPg0KPiA+Pg0KPiA+PiBJJ2QgbGlrZSB0byBoYXZlIEthaWxh
-bmcncyByZXZpZXcgYWJvdXQgdGhlIG5ldyBjb2RlYyBiZWZvcmUgYXBwbHlpbmcuDQo+ID4+DQo+
-ID4+IEthaWxhbmcsIGNvdWxkIHlvdSB0YWtlIGEgbG9vaz8NCj4gPiBPSy4NCj4gPiBJIHdpbGwg
-cG9zdCB5b3UgdGhlIHBhdGNoIGZvciBBTEM2MjMgY29kZWMgdG9tb3Jyb3cuDQo+ID4gVGhhbmtz
-Lg0KPiANCj4gQ2MgbWUgdG9vLg0KPiANCj4gVGhhbmsgeW91Lg0KPiBBYXJvbg0KPiANCj4gPg0K
-PiA+Pg0KPiA+Pg0KPiA+PiB0aGFua3MsDQo+ID4+DQo+ID4+IFRha2FzaGkNCj4gPj4NCj4gPj4+
-IC0tLQ0KPiA+Pj4gIHNvdW5kL3BjaS9oZGEvcGF0Y2hfcmVhbHRlay5jIHwgMyArKysNCj4gPj4+
-ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspDQo+ID4+Pg0KPiA+Pj4gZGlmZiAtLWdp
-dCBhL3NvdW5kL3BjaS9oZGEvcGF0Y2hfcmVhbHRlay5jDQo+ID4+PiBiL3NvdW5kL3BjaS9oZGEv
-cGF0Y2hfcmVhbHRlay5jIGluZGV4IGIwMDBiMzZhYzNjNi4uYzM0ZDhiNDM1ZjU4DQo+ID4+PiAx
-MDA2NDQNCj4gPj4+IC0tLSBhL3NvdW5kL3BjaS9oZGEvcGF0Y2hfcmVhbHRlay5jDQo+ID4+PiAr
-KysgYi9zb3VuZC9wY2kvaGRhL3BhdGNoX3JlYWx0ZWsuYw0KPiA+Pj4gQEAgLTcxODYsNiArNzE4
-Niw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc25kX3BjaV9xdWlyaw0KPiA+Pj4gYWxjMjY5X2Zp
-eHVwX3RibFtdDQo+ID4+ID0gew0KPiA+Pj4gIAlTTkRfUENJX1FVSVJLKDB4MTdhYSwgMHgzMTJm
-LCAiVGhpbmtDZW50cmUgU3RhdGlvbiIsDQo+ID4+IEFMQzI5NF9GSVhVUF9MRU5PVk9fTUlDX0xP
-Q0FUSU9OKSwNCj4gPj4+ICAJU05EX1BDSV9RVUlSSygweDE3YWEsIDB4MzEzYywgIlRoaW5rQ2Vu
-dHJlIFN0YXRpb24iLA0KPiA+PiBBTEMyOTRfRklYVVBfTEVOT1ZPX01JQ19MT0NBVElPTiksDQo+
-ID4+PiAgCVNORF9QQ0lfUVVJUksoMHgxN2FhLCAweDMxNTEsICJUaGlua0NlbnRyZSBTdGF0aW9u
-IiwNCj4gPj4+IEFMQzI4M19GSVhVUF9IRUFEU0VUX01JQyksDQo+ID4+PiArCVNORF9QQ0lfUVVJ
-UksoMHgxN2FhLCAweDMxNzgsICJUaGlua0NlbnRyZSBTdGF0aW9uIiwNCj4gPj4gQUxDMjgzX0ZJ
-WFVQX0hFQURTRVRfTUlDKSwNCj4gPj4+ICsJU05EX1BDSV9RVUlSSygweDE3YWEsIDB4MzE3Niwg
-IlRoaW5rQ2VudHJlIFN0YXRpb24iLA0KPiA+Pj4gK0FMQzI4M19GSVhVUF9IRUFEU0VUX01JQyks
-DQo+ID4+PiAgCVNORF9QQ0lfUVVJUksoMHgxN2FhLCAweDM5MDIsICJMZW5vdm8gRTUwLTgwIiwN
-Cj4gPj4gQUxDMjY5X0ZJWFVQX0RNSUNfVEhJTktQQURfQUNQSSksDQo+ID4+PiAgCVNORF9QQ0lf
-UVVJUksoMHgxN2FhLCAweDM5NzcsICJJZGVhUGFkIFMyMTAiLA0KPiA+PiBBTEMyODNfRklYVVBf
-SU5UX01JQyksDQo+ID4+PiAgCVNORF9QQ0lfUVVJUksoMHgxN2FhLCAweDM5NzgsICJMZW5vdm8g
-QjUwLTcwIiwNCj4gPj4+IEFMQzI2OV9GSVhVUF9ETUlDX1RISU5LUEFEX0FDUEkpLCBAQCAtOTE4
-Nyw2ICs5MTg5LDcgQEAgc3RhdGljDQo+ID4+IGNvbnN0IHN0cnVjdCBoZGFfZGV2aWNlX2lkIHNu
-ZF9oZGFfaWRfcmVhbHRla1tdID0gew0KPiA+Pj4gIAlIREFfQ09ERUNfRU5UUlkoMHgxMGVjMDI5
-OCwgIkFMQzI5OCIsIHBhdGNoX2FsYzI2OSksDQo+ID4+PiAgCUhEQV9DT0RFQ19FTlRSWSgweDEw
-ZWMwMjk5LCAiQUxDMjk5IiwgcGF0Y2hfYWxjMjY5KSwNCj4gPj4+ICAJSERBX0NPREVDX0VOVFJZ
-KDB4MTBlYzAzMDAsICJBTEMzMDAiLCBwYXRjaF9hbGMyNjkpLA0KPiA+Pj4gKwlIREFfQ09ERUNf
-RU5UUlkoMHgxMGVjMDYyMywgIkFMQzYyMyIsIHBhdGNoX2FsYzI2OSksDQo+ID4+PiAgCUhEQV9D
-T0RFQ19SRVZfRU5UUlkoMHgxMGVjMDg2MSwgMHgxMDAzNDAsICJBTEM2NjAiLA0KPiA+PiBwYXRj
-aF9hbGM4NjEpLA0KPiA+Pj4gIAlIREFfQ09ERUNfRU5UUlkoMHgxMGVjMDY2MCwgIkFMQzY2MC1W
-RCIsIHBhdGNoX2FsYzg2MXZkKSwNCj4gPj4+ICAJSERBX0NPREVDX0VOVFJZKDB4MTBlYzA4NjEs
-ICJBTEM4NjEiLCBwYXRjaF9hbGM4NjEpLA0KPiA+Pj4gLS0NCj4gPj4+IDIuMTcuMQ0KPiA+Pj4N
-Cj4gPj4NCj4gPj4gLS0tLS0tUGxlYXNlIGNvbnNpZGVyIHRoZSBlbnZpcm9ubWVudCBiZWZvcmUg
-cHJpbnRpbmcgdGhpcyBlLW1haWwuDQo=
+This patch can not guarantee each flush_nosync() always followed by a
+sync().
 
---_002_ed97b6a8bd9445ecb48bc763d9aaba7arealtekcom_
-Content-Type: application/octet-stream; name="0000-add-support-alc623.patch"
-Content-Description: 0000-add-support-alc623.patch
-Content-Disposition: attachment; filename="0000-add-support-alc623.patch";
-	size=1990; creation-date="Thu, 24 Oct 2019 07:18:58 GMT";
-	modification-date="Thu, 24 Oct 2019 07:18:35 GMT"
-Content-Transfer-Encoding: base64
+The current mainline don't guarantee this too(Current v7s call
+flush_nosync 16 times, then call tlb_sync 1 time in the
+supersection/largepage case.). At this situation, it don't guarantee the
+previous tlb_flushes are finished, But we never got the timeout
+issue(Fortunately our HW always work well at that time. Maybe the HW
+finish the previous tlb flush so quickly even though we don't polling
+its finish flag).
 
-RnJvbSAzMTAzZjY2ODMwOTNlNDczNjhkODc2NzFmMzcyNmYxYTExZjllZjI4IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBLYWlsYW5nIFlhbmcgPGthaWxhbmdAcmVhbHRlay5jb20+CkRh
-dGU6IFRodSwgMjQgT2N0IDIwMTkgMTU6MTM6MzIgKzA4MDAKU3ViamVjdDogW1BBVENIXSBBTFNB
-OiBoZGEvcmVhbHRlayAtIEFkZCBzdXBwb3J0IGZvciBBTEM2MjMKClN1cHBvcnQgbmV3IGNvZGVj
-IEFMQzYyMy4KClNpZ25lZC1vZmYtYnk6IEthaWxhbmcgWWFuZyA8a2FpbGFuZ0ByZWFsdGVrLmNv
-bT4KCmRpZmYgLS1naXQgYS9zb3VuZC9wY2kvaGRhL3BhdGNoX3JlYWx0ZWsuYyBiL3NvdW5kL3Bj
-aS9oZGEvcGF0Y2hfcmVhbHRlay5jCmluZGV4IDA4NWEyZjk1ZTA3Ni4uYTBjMjM3Y2MxM2Q0IDEw
-MDY0NAotLS0gYS9zb3VuZC9wY2kvaGRhL3BhdGNoX3JlYWx0ZWsuYworKysgYi9zb3VuZC9wY2kv
-aGRhL3BhdGNoX3JlYWx0ZWsuYwpAQCAtNDA5LDYgKzQwOSw5IEBAIHN0YXRpYyB2b2lkIGFsY19m
-aWxsX2VhcGRfY29lZihzdHJ1Y3QgaGRhX2NvZGVjICpjb2RlYykKIAljYXNlIDB4MTBlYzA2NzI6
-CiAJCWFsY191cGRhdGVfY29lZl9pZHgoY29kZWMsIDB4ZCwgMCwgMTw8MTQpOyAvKiBFQVBEIEN0
-cmwgKi8KIAkJYnJlYWs7CisJY2FzZSAweDEwZWMwNjIzOgorCQlhbGNfdXBkYXRlX2NvZWZfaWR4
-KGNvZGVjLCAweDE5LCAxPDwxMywgMCk7CisJCWJyZWFrOwogCWNhc2UgMHgxMGVjMDY2ODoKIAkJ
-YWxjX3VwZGF0ZV9jb2VmX2lkeChjb2RlYywgMHg3LCAzPDwxMywgMCk7CiAJCWJyZWFrOwpAQCAt
-MjkyMCw2ICsyOTIzLDcgQEAgZW51bSB7CiAJQUxDMjY5X1RZUEVfQUxDMjI1LAogCUFMQzI2OV9U
-WVBFX0FMQzI5NCwKIAlBTEMyNjlfVFlQRV9BTEMzMDAsCisJQUxDMjY5X1RZUEVfQUxDNjIzLAog
-CUFMQzI2OV9UWVBFX0FMQzcwMCwKIH07CiAKQEAgLTI5NTUsNiArMjk1OSw3IEBAIHN0YXRpYyBp
-bnQgYWxjMjY5X3BhcnNlX2F1dG9fY29uZmlnKHN0cnVjdCBoZGFfY29kZWMgKmNvZGVjKQogCWNh
-c2UgQUxDMjY5X1RZUEVfQUxDMjI1OgogCWNhc2UgQUxDMjY5X1RZUEVfQUxDMjk0OgogCWNhc2Ug
-QUxDMjY5X1RZUEVfQUxDMzAwOgorCWNhc2UgQUxDMjY5X1RZUEVfQUxDNjIzOgogCWNhc2UgQUxD
-MjY5X1RZUEVfQUxDNzAwOgogCQlzc2lkcyA9IGFsYzI2OV9zc2lkczsKIAkJYnJlYWs7CkBAIC04
-MDE3LDYgKzgwMjIsOSBAQCBzdGF0aWMgaW50IHBhdGNoX2FsYzI2OShzdHJ1Y3QgaGRhX2NvZGVj
-ICpjb2RlYykKIAkJc3BlYy0+Y29kZWNfdmFyaWFudCA9IEFMQzI2OV9UWVBFX0FMQzMwMDsKIAkJ
-c3BlYy0+Z2VuLm1peGVyX25pZCA9IDA7IC8qIG5vIGxvb3BiYWNrIG9uIEFMQzMwMCAqLwogCQli
-cmVhazsKKwljYXNlIDB4MTBlYzA2MjM6CisJCXNwZWMtPmNvZGVjX3ZhcmlhbnQgPSBBTEMyNjlf
-VFlQRV9BTEM2MjM7CisJCWJyZWFrOwogCWNhc2UgMHgxMGVjMDcwMDoKIAljYXNlIDB4MTBlYzA3
-MDE6CiAJY2FzZSAweDEwZWMwNzAzOgpAQCAtOTIxOCw2ICs5MjI2LDcgQEAgc3RhdGljIGNvbnN0
-IHN0cnVjdCBoZGFfZGV2aWNlX2lkIHNuZF9oZGFfaWRfcmVhbHRla1tdID0gewogCUhEQV9DT0RF
-Q19FTlRSWSgweDEwZWMwMjk4LCAiQUxDMjk4IiwgcGF0Y2hfYWxjMjY5KSwKIAlIREFfQ09ERUNf
-RU5UUlkoMHgxMGVjMDI5OSwgIkFMQzI5OSIsIHBhdGNoX2FsYzI2OSksCiAJSERBX0NPREVDX0VO
-VFJZKDB4MTBlYzAzMDAsICJBTEMzMDAiLCBwYXRjaF9hbGMyNjkpLAorCUhEQV9DT0RFQ19FTlRS
-WSgweDEwZWMwNjIzLCAiQUxDNjIzIiwgcGF0Y2hfYWxjMjY5KSwKIAlIREFfQ09ERUNfUkVWX0VO
-VFJZKDB4MTBlYzA4NjEsIDB4MTAwMzQwLCAiQUxDNjYwIiwgcGF0Y2hfYWxjODYxKSwKIAlIREFf
-Q09ERUNfRU5UUlkoMHgxMGVjMDY2MCwgIkFMQzY2MC1WRCIsIHBhdGNoX2FsYzg2MXZkKSwKIAlI
-REFfQ09ERUNfRU5UUlkoMHgxMGVjMDg2MSwgIkFMQzg2MSIsIHBhdGNoX2FsYzg2MSksCg==
+We got the timeout issue only after this commit 4d689b619445. This patch
+only fixes this issue via adding a new lock in iotlb_sync.(It don't
+adjust the sequence of flush_nosync() and sync()).
 
---_002_ed97b6a8bd9445ecb48bc763d9aaba7arealtekcom_--
+> 
+> Will
+
+
