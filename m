@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1A89E2B03
+	by mail.lfdr.de (Postfix) with ESMTP id 781E8E2B02
 	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:23:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392953AbfJXHWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 03:22:47 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:63411 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2390783AbfJXHWp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2407087AbfJXHWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 24 Oct 2019 03:22:45 -0400
-X-UUID: d19484b7065342aa99b1cf23ca602cb3-20191024
-X-UUID: d19484b7065342aa99b1cf23ca602cb3-20191024
-Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:29526 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2390502AbfJXHWo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 03:22:44 -0400
+X-UUID: c00efe6b6a6b490a8ec249bb5f663775-20191024
+X-UUID: c00efe6b6a6b490a8ec249bb5f663775-20191024
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 6435572; Thu, 24 Oct 2019 15:22:30 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N1.mediatek.inc
- (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 24 Oct
- 2019 15:22:26 +0800
+        with ESMTP id 222561763; Thu, 24 Oct 2019 15:22:33 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 24 Oct
+ 2019 15:22:31 +0800
 Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
  (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 24 Oct 2019 15:22:25 +0800
-Message-ID: <1571901746.19130.134.camel@mhfsdcap03>
-Subject: Re: [PATCH v4 2/7] iommu/mediatek: Add a new tlb_lock for tlb_flush
+ Transport; Thu, 24 Oct 2019 15:22:30 +0800
+Message-ID: <1571901752.19130.135.camel@mhfsdcap03>
+Subject: Re: [PATCH v4 3/7] iommu/mediatek: Use gather to achieve the tlb
+ range flush
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Will Deacon <will@kernel.org>
 CC:     Matthias Brugger <matthias.bgg@gmail.com>,
@@ -41,74 +42,83 @@ CC:     Matthias Brugger <matthias.bgg@gmail.com>,
         Nicolas Boichat <drinkcat@chromium.org>,
         <anan.sun@mediatek.com>, <cui.zhang@mediatek.com>,
         <chao.hao@mediatek.com>, <edison.hsieh@mediatek.com>
-Date:   Thu, 24 Oct 2019 15:22:26 +0800
-In-Reply-To: <20191023165252.GA27471@willie-the-truck>
+Date:   Thu, 24 Oct 2019 15:22:32 +0800
+In-Reply-To: <20191023165543.GB27471@willie-the-truck>
 References: <1571196792-12382-1-git-send-email-yong.wu@mediatek.com>
-         <1571196792-12382-3-git-send-email-yong.wu@mediatek.com>
-         <20191023165252.GA27471@willie-the-truck>
+         <1571196792-12382-4-git-send-email-yong.wu@mediatek.com>
+         <20191023165543.GB27471@willie-the-truck>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: A424D45C3762AE65D19C9E0D6AC3052D0F4FDCA255F395DA386AC98B86DDEC702000:8
+X-TM-SNTS-SMTP: B3428B34711F9D4340351C5FBF71C7D9A7707DD264962EFF9A5C5A10E427B3F82000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-10-23 at 17:52 +0100, Will Deacon wrote:
-> On Wed, Oct 16, 2019 at 11:33:07AM +0800, Yong Wu wrote:
-> > The commit 4d689b619445 ("iommu/io-pgtable-arm-v7s: Convert to IOMMU API
-> > TLB sync") help move the tlb_sync of unmap from v7s into the iommu
-> > framework. It helps add a new function "mtk_iommu_iotlb_sync", But it
-> > lacked the lock, then it will cause the variable "tlb_flush_active"
-> > may be changed unexpectedly, we could see this warning log randomly:
+On Wed, 2019-10-23 at 17:55 +0100, Will Deacon wrote:
+> On Wed, Oct 16, 2019 at 11:33:08AM +0800, Yong Wu wrote:
+> > Use the iommu_gather mechanism to achieve the tlb range flush.
+> > Gather the iova range in the "tlb_add_page", then flush the merged iova
+> > range in iotlb_sync.
 > > 
-> > mtk-iommu 10205000.iommu: Partial TLB flush timed out, falling back to
-> > full flush
-> > 
-> > The HW requires tlb_flush/tlb_sync in pairs strictly, this patch adds
-> > a new tlb_lock for tlb operations to fix this issue.
-> > 
-> > Fixes: 4d689b619445 ("iommu/io-pgtable-arm-v7s: Convert to IOMMU API TLB
-> > sync")
+> > Suggested-by: Tomasz Figa <tfiga@chromium.org>
 > > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 > > ---
-> >  drivers/iommu/mtk_iommu.c | 23 ++++++++++++++++++++++-
-> >  drivers/iommu/mtk_iommu.h |  1 +
-> >  2 files changed, 23 insertions(+), 1 deletion(-)
-> 
-> [...]
-> 
-> >  static void mtk_iommu_tlb_flush_page_nosync(struct iommu_iotlb_gather *gather,
-> >  					    unsigned long iova, size_t granule,
+> >  drivers/iommu/mtk_iommu.c | 12 ++++++++----
+> >  1 file changed, 8 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+> > index c2f6c78..81ac95f 100644
+> > --- a/drivers/iommu/mtk_iommu.c
+> > +++ b/drivers/iommu/mtk_iommu.c
+> > @@ -245,11 +245,9 @@ static void mtk_iommu_tlb_flush_page_nosync(struct iommu_iotlb_gather *gather,
 > >  					    void *cookie)
 > >  {
-> > +	struct mtk_iommu_data *data = cookie;
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&data->tlb_lock, flags);
-> >  	mtk_iommu_tlb_add_flush_nosync(iova, granule, granule, true, cookie);
-> > +	spin_unlock_irqrestore(&data->tlb_lock, flags);
+> >  	struct mtk_iommu_data *data = cookie;
+> > -	unsigned long flags;
+> > +	struct iommu_domain *domain = &data->m4u_dom->domain;
+> >  
+> > -	spin_lock_irqsave(&data->tlb_lock, flags);
+> > -	mtk_iommu_tlb_add_flush_nosync(iova, granule, granule, true, cookie);
+> > -	spin_unlock_irqrestore(&data->tlb_lock, flags);
+> > +	iommu_iotlb_gather_add_page(domain, gather, iova, granule);
 > 
-> Given that you release the lock here, what prevents another nosync()
-> operation being issued before you've managed to do the sync()?
+> You need to be careful here, because iommu_iotlb_gather_add_page() can
+> call iommu_tlb_sync() in some situations and you don't hold the lock.
 
-This patch can not guarantee each flush_nosync() always followed by a
-sync().
+The mtk_iommu_iotlb_sync below already has the lock in it, so I delete
+the lock here.
 
-The current mainline don't guarantee this too(Current v7s call
-flush_nosync 16 times, then call tlb_sync 1 time in the
-supersection/largepage case.). At this situation, it don't guarantee the
-previous tlb_flushes are finished, But we never got the timeout
-issue(Fortunately our HW always work well at that time. Maybe the HW
-finish the previous tlb flush so quickly even though we don't polling
-its finish flag).
+> 
+> >  static const struct iommu_flush_ops mtk_iommu_flush_ops = {
+> > @@ -469,9 +467,15 @@ static void mtk_iommu_iotlb_sync(struct iommu_domain *domain,
+> >  				 struct iommu_iotlb_gather *gather)
+> >  {
+> >  	struct mtk_iommu_data *data = mtk_iommu_get_m4u_data();
+> > +	size_t length = gather->end - gather->start;
+> >  	unsigned long flags;
+> >  
+> > +	if (gather->start == ULONG_MAX)
+> > +		return;
+> > +
+> >  	spin_lock_irqsave(&data->tlb_lock, flags);
+> > +	mtk_iommu_tlb_add_flush_nosync(gather->start, length, gather->pgsize,
+> > +				       false, data);
+> >  	mtk_iommu_tlb_sync(data);
+> >  	spin_unlock_irqrestore(&data->tlb_lock, flags);
+> 
+> Modulo my comment above, this fixes my previous comment. Given that mainline
+> is already broken, I guess the runtime bisectability isn't a problem.
 
-We got the timeout issue only after this commit 4d689b619445. This patch
-only fixes this issue via adding a new lock in iotlb_sync.(It don't
-adjust the sequence of flush_nosync() and sync()).
+As the reply in [2/7]. the mainline is not broken after [2/7], it only
+go to the previous status before commit(4d689b619445).
+
+After using the iommu_gather, the iova will be the merged range in this
+iotlb_sync, it is just fit to do the tlb-flush/tlb-sync. then it fixes
+our potential issue(No tlb-sync for the previous tlb-flush range).
 
 > 
 > Will
