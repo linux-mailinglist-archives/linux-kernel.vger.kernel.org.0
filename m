@@ -2,121 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47834E3933
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 19:05:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEBA2E391E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 19:02:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410098AbfJXRFN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 13:05:13 -0400
-Received: from dougal.metanate.com ([90.155.101.14]:61211 "EHLO metanate.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405819AbfJXRFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 13:05:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
-         s=stronger; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=sCKa65N8pDZk/BvuYm93WNP3he5hb1vXX9CJBcDMFMo=; b=ZgRkNkVxdM6qxsaIjJ7G34YwPa
-        X5OQB5CdqUqQ17bmonlNjvYGrT1POGv9XnxFRtDdeuU+El3xSfRoQtD6wwh3vnqST12cL+VnqkSac
-        yQhfQY+uJhJoURnimGgjl4Tu9Yq89KDM8kpKHyvrMLah+3SEWasRTlAxulNqE2LoyVwtCXeFQkpMX
-        b9zePA3As8lliLb/bIWzlbJr7/Q/dXVrSY8a8ZpRB9+WPwceO5DY6oEqLHhdzdpSxAVwSnPjg5+Io
-        n+3oCSIcs49FIwnJEBLmrigzDkgtWpt3FjezMXoWiK+DLiHhA8OnrdIrCIuW/4X91IjO4vPMmkn7y
-        D//dEcxw==;
-Received: from 188-39-28-98.static.enta.net ([188.39.28.98] helo=donbot.corp.numark.com)
-        by email.metanate.com with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <john@metanate.com>)
-        id 1iNgFA-0004oc-O1; Thu, 24 Oct 2019 17:45:48 +0100
-From:   John Keeping <john@metanate.com>
-To:     linux-usb@vger.kernel.org
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, John Keeping <john@metanate.com>
-Subject: [PATCH 6/6] USB: gadget: f_hid: return ENODEV from read/write after deletion
-Date:   Thu, 24 Oct 2019 17:45:38 +0100
-Message-Id: <20191024164538.3161474-7-john@metanate.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191024164538.3161474-1-john@metanate.com>
-References: <20191024164538.3161474-1-john@metanate.com>
+        id S2410032AbfJXRCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 13:02:11 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:35554 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730622AbfJXRCL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 13:02:11 -0400
+Received: by mail-il1-f200.google.com with SMTP id o12so16220105ilf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 10:02:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=gnBVB/MCcAJVEx5kLX5YbPi7DcmZ/XW3gOmdfm/l+IA=;
+        b=dQoVpL6Lo/Wjx4Gh/Iabd04ZccQ71C82JfOi3r+KFw4VDBuvvMVqdmSJ9NgeQ2oHtE
+         0Zb2pE5MnIDRscSHHqdXukf+MkkJUk5csOKZ1p8GEctDngwSRG/L08g/QnbB0sgQu0tR
+         Z8JsyzW0fJ9uukZ4MDV0wU/UfUDj2CLHzQnXYa/nXqQjyeOaNrOmAV5fvuXHZR5hs6Wc
+         agayhRXIj7sfzcdQDaa1Io79pZn01zSw7ZXKs4HqWIOomFsOsUQucnUA2CavD/ozKISm
+         XH24nvbC6LUyKvv8s3JhOOsIg9YoTGRM/34kCPuiZgrDZI32Fe43KSAqoxG7A+c/MI06
+         l1mA==
+X-Gm-Message-State: APjAAAURzXH2nU3QnSJXKJLSwKajzKdlu1YIyAw2m41HPRwU5r7zE4C6
+        oTQ4Hw8IAs7AJZ9xSIgI7l+32b+sEuGEljzY7cOccbv9/1Bj
+X-Google-Smtp-Source: APXvYqwLrzXvLYspWxVGMVkDRKKtVf4XeXPJuGmcakuCAHepWXmGZfBZv+K8zdKynEexb7HeYziOoQZhYu/LXY4PeumEjm9NEvkP
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated: YES
+X-Received: by 2002:a92:9a54:: with SMTP id t81mr44665340ili.147.1571936528622;
+ Thu, 24 Oct 2019 10:02:08 -0700 (PDT)
+Date:   Thu, 24 Oct 2019 10:02:08 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000065ef5f0595aafe71@google.com>
+Subject: KMSAN: uninit-value in aes_encrypt (2)
+From:   syzbot <syzbot+9e3b178624a8a2f8fa28@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, glider@google.com,
+        herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a file descriptor to /dev/hidgN is kept open after the gadget
-function has been deleted, reading or writing will block indefinitely
-since no requests will ever be processed.
+Hello,
 
-Add a flag to note that the function has been deleted and check this in
-read & write if there is no other action to take.  When setting this
-flag, also wake up any readers/writers so that they get ENODEV
-immediately.
+syzbot found the following crash on:
 
-Signed-off-by: John Keeping <john@metanate.com>
+HEAD commit:    3c8ca708 test_kmsan.c: fix SPDX comment
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=14129497600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c07a3d4f8a59e198
+dashboard link: https://syzkaller.appspot.com/bug?extid=9e3b178624a8a2f8fa28
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11331128e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140b47ef600000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9e3b178624a8a2f8fa28@syzkaller.appspotmail.com
+
+IPv6: ADDRCONF(NETDEV_CHANGE): hsr0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device batadv0
+=====================================================
+BUG: KMSAN: uninit-value in subshift lib/crypto/aes.c:149 [inline]
+BUG: KMSAN: uninit-value in aes_encrypt+0x12d5/0x1bd0 lib/crypto/aes.c:282
+CPU: 0 PID: 12200 Comm: syz-executor134 Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+  kmsan_report+0x14a/0x2f0 mm/kmsan/kmsan_report.c:110
+  __msan_warning+0x73/0xf0 mm/kmsan/kmsan_instr.c:245
+  subshift lib/crypto/aes.c:149 [inline]
+  aes_encrypt+0x12d5/0x1bd0 lib/crypto/aes.c:282
+  aesti_encrypt+0xe8/0x130 crypto/aes_ti.c:31
+  crypto_cipher_encrypt_one include/linux/crypto.h:1763 [inline]
+  crypto_cbcmac_digest_update+0x3cf/0x550 crypto/ccm.c:871
+  crypto_shash_update crypto/shash.c:107 [inline]
+  shash_ahash_finup+0x659/0xb20 crypto/shash.c:276
+  shash_async_finup+0xbb/0x110 crypto/shash.c:291
+  crypto_ahash_op+0x1cd/0x6e0 crypto/ahash.c:368
+  crypto_ahash_finup+0x8c/0xb0 crypto/ahash.c:393
+  crypto_ccm_auth+0x14b2/0x1570 crypto/ccm.c:230
+  crypto_ccm_encrypt+0x283/0x840 crypto/ccm.c:309
+  crypto_aead_encrypt+0xf2/0x180 crypto/aead.c:99
+  tls_do_encryption net/tls/tls_sw.c:521 [inline]
+  tls_push_record+0x341e/0x4e50 net/tls/tls_sw.c:730
+  bpf_exec_tx_verdict+0x1454/0x1c80 net/tls/tls_sw.c:770
+  tls_sw_sendmsg+0x158d/0x2710 net/tls/tls_sw.c:1033
+  inet6_sendmsg+0x2d8/0x2e0 net/ipv6/af_inet6.c:576
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg net/socket.c:657 [inline]
+  __sys_sendto+0x8fc/0xc70 net/socket.c:1952
+  __do_sys_sendto net/socket.c:1964 [inline]
+  __se_sys_sendto+0x107/0x130 net/socket.c:1960
+  __x64_sys_sendto+0x6e/0x90 net/socket.c:1960
+  do_syscall_64+0xb6/0x160 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x441cf9
+Code: 43 02 00 85 c0 b8 00 00 00 00 48 0f 44 c3 5b c3 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 0b 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00000000007eff08 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441cf9
+RDX: fffffffffffffee0 RSI: 00000000200005c0 RDI: 0000000000000003
+RBP: 00000000007eff30 R08: 0000000000000000 R09: 00000000000000b6
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000403490
+R13: 0000000000403520 R14: 0000000000000000 R15: 0000000000000000
+
+Uninit was stored to memory at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:151 [inline]
+  kmsan_internal_chain_origin+0xbd/0x170 mm/kmsan/kmsan.c:319
+  __msan_chain_origin+0x6b/0xe0 mm/kmsan/kmsan_instr.c:179
+  __crypto_xor+0x1e8/0x1470 crypto/algapi.c:992
+  crypto_xor include/crypto/algapi.h:213 [inline]
+  crypto_cbcmac_digest_update+0x2ba/0x550 crypto/ccm.c:865
+  crypto_shash_update crypto/shash.c:107 [inline]
+  shash_ahash_finup+0x659/0xb20 crypto/shash.c:276
+  shash_async_finup+0xbb/0x110 crypto/shash.c:291
+  crypto_ahash_op+0x1cd/0x6e0 crypto/ahash.c:368
+  crypto_ahash_finup+0x8c/0xb0 crypto/ahash.c:393
+  crypto_ccm_auth+0x14b2/0x1570 crypto/ccm.c:230
+  crypto_ccm_encrypt+0x283/0x840 crypto/ccm.c:309
+  crypto_aead_encrypt+0xf2/0x180 crypto/aead.c:99
+  tls_do_encryption net/tls/tls_sw.c:521 [inline]
+  tls_push_record+0x341e/0x4e50 net/tls/tls_sw.c:730
+  bpf_exec_tx_verdict+0x1454/0x1c80 net/tls/tls_sw.c:770
+  tls_sw_sendmsg+0x158d/0x2710 net/tls/tls_sw.c:1033
+  inet6_sendmsg+0x2d8/0x2e0 net/ipv6/af_inet6.c:576
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg net/socket.c:657 [inline]
+  __sys_sendto+0x8fc/0xc70 net/socket.c:1952
+  __do_sys_sendto net/socket.c:1964 [inline]
+  __se_sys_sendto+0x107/0x130 net/socket.c:1960
+  __x64_sys_sendto+0x6e/0x90 net/socket.c:1960
+  do_syscall_64+0xb6/0x160 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+
+Uninit was created at:
+  kmsan_save_stack_with_flags+0x3f/0x90 mm/kmsan/kmsan.c:151
+  kmsan_internal_alloc_meta_for_pages mm/kmsan/kmsan_shadow.c:362 [inline]
+  kmsan_alloc_page+0x153/0x370 mm/kmsan/kmsan_shadow.c:391
+  __alloc_pages_nodemask+0x149d/0x60c0 mm/page_alloc.c:4794
+  alloc_pages_current+0x68d/0x9a0 mm/mempolicy.c:2188
+  alloc_pages include/linux/gfp.h:511 [inline]
+  skb_page_frag_refill+0x2b0/0x580 net/core/sock.c:2372
+  sk_page_frag_refill+0xa4/0x330 net/core/sock.c:2392
+  sk_msg_alloc+0x203/0x1050 net/core/skmsg.c:37
+  tls_alloc_encrypted_msg net/tls/tls_sw.c:284 [inline]
+  tls_sw_sendmsg+0xb56/0x2710 net/tls/tls_sw.c:953
+  inet6_sendmsg+0x2d8/0x2e0 net/ipv6/af_inet6.c:576
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg net/socket.c:657 [inline]
+  __sys_sendto+0x8fc/0xc70 net/socket.c:1952
+  __do_sys_sendto net/socket.c:1964 [inline]
+  __se_sys_sendto+0x107/0x130 net/socket.c:1960
+  __x64_sys_sendto+0x6e/0x90 net/socket.c:1960
+  do_syscall_64+0xb6/0x160 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+=====================================================
+
+
 ---
- drivers/usb/gadget/function/f_hid.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
-index 2c3e835962a5..fdb8356e334b 100644
---- a/drivers/usb/gadget/function/f_hid.c
-+++ b/drivers/usb/gadget/function/f_hid.c
-@@ -59,6 +59,7 @@ struct f_hidg {
- 	struct usb_request		*req;
- 
- 	struct kref			kref;
-+	bool				deleted;
- 	int				minor;
- 	struct usb_function		func;
- 
-@@ -271,10 +272,14 @@ static ssize_t f_hidg_read(struct file *file, char __user *buffer,
- 	/* wait for at least one buffer to complete */
- 	while (!READ_COND) {
- 		spin_unlock_irqrestore(&hidg->read_spinlock, flags);
-+		if (READ_ONCE(hidg->deleted))
-+			return -ENODEV;
-+
- 		if (file->f_flags & O_NONBLOCK)
- 			return -EAGAIN;
- 
--		if (wait_event_interruptible(hidg->read_queue, READ_COND))
-+		if (wait_event_interruptible(hidg->read_queue,
-+				READ_COND || READ_ONCE(hidg->deleted)))
- 			return -ERESTARTSYS;
- 
- 		spin_lock_irqsave(&hidg->read_spinlock, flags);
-@@ -358,11 +363,14 @@ static ssize_t f_hidg_write(struct file *file, const char __user *buffer,
- 	/* write queue */
- 	while (!WRITE_COND) {
- 		spin_unlock_irqrestore(&hidg->write_spinlock, flags);
-+		if (READ_ONCE(hidg->deleted))
-+			return -ENODEV;
-+
- 		if (file->f_flags & O_NONBLOCK)
- 			return -EAGAIN;
- 
--		if (wait_event_interruptible_exclusive(
--				hidg->write_queue, WRITE_COND))
-+		if (wait_event_interruptible_exclusive(hidg->write_queue,
-+				WRITE_COND || READ_ONCE(hidg->deleted)))
- 			return -ERESTARTSYS;
- 
- 		spin_lock_irqsave(&hidg->write_spinlock, flags);
-@@ -1070,6 +1078,10 @@ static void hidg_free(struct usb_function *f)
- 
- 	hidg = func_to_hidg(f);
- 	opts = container_of(f->fi, struct f_hid_opts, func_inst);
-+	WRITE_ONCE(hidg->deleted, true);
-+	wake_up(&hidg->read_queue);
-+	wake_up(&hidg->write_queue);
-+
- 	kref_put(&hidg->kref, hidg_release);
- 	mutex_lock(&opts->lock);
- 	--opts->refcnt;
--- 
-2.23.0
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
