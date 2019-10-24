@@ -2,64 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3BCFE2C94
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 10:51:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 868C8E2C7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 10:50:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438477AbfJXIvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 04:51:55 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:44724 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438453AbfJXIvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 04:51:50 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B88732000D3;
-        Thu, 24 Oct 2019 10:51:48 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3232420085F;
-        Thu, 24 Oct 2019 10:51:44 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 4F778402F0;
-        Thu, 24 Oct 2019 16:51:38 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 3/3] ARM: dts: imx6ul-14x14-evk: Assign power supplies for magnetometer
-Date:   Thu, 24 Oct 2019 16:48:40 +0800
-Message-Id: <1571906920-29966-3-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1571906920-29966-1-git-send-email-Anson.Huang@nxp.com>
-References: <1571906920-29966-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2438378AbfJXIuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 04:50:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51128 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729514AbfJXIuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 04:50:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E726EB087;
+        Thu, 24 Oct 2019 08:50:15 +0000 (UTC)
+Date:   Thu, 24 Oct 2019 10:50:14 +0200
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-scsi@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] cdrom: factor out common open_for_* code
+Message-ID: <20191024085014.GF938@kitsune.suse.cz>
+References: <cover.1571834862.git.msuchanek@suse.de>
+ <da032629db4a770a5f98ff400b91b44873cbdf46.1571834862.git.msuchanek@suse.de>
+ <20191024021958.GA11485@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191024021958.GA11485@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On i.MX6UL 14x14 EVK board, mag3110's power is controlled by
-sensor regulator, assign power supplies for mag3110 driver
-to do power management.
+On Wed, Oct 23, 2019 at 07:19:58PM -0700, Christoph Hellwig wrote:
+> >  static
+> > -int open_for_data(struct cdrom_device_info *cdi)
+> > +int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
+> 
+> Please fix the coding style.  static never should be on a line of its
+> own..
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/imx6ul-14x14-evk.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+That's fine.
 
-diff --git a/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi b/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
-index c74ba60..7b155ed 100644
---- a/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
-+++ b/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
-@@ -193,6 +193,8 @@
- 	magnetometer@e {
- 		compatible = "fsl,mag3110";
- 		reg = <0x0e>;
-+		vdd-supply = <&reg_sensors>;
-+		vddio-supply = <&reg_sensors>;
- 	};
- };
- 
--- 
-2.7.4
+> 
+> >  			} else {
+> >  				cd_dbg(CD_OPEN, "bummer. this drive can't close the tray.\n");
+> > -				ret=-ENOMEDIUM;
+> > -				goto clean_up_and_return;
+> > +				return -ENOMEDIUM;
+> 
+> Can you revert the polarity of the if opening the block before and
+> return early for the -ENOMEDIUM case to save on leven of indentation?
 
+Then I will get complaints I do unrelated changes and it's hard to
+review. The code gets removed later anyway.
+
+Thanks
+
+Michal
