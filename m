@@ -2,120 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9D7BE3598
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:30:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58797E34EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:01:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391794AbfJXOaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 10:30:07 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44211 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732393AbfJXOaG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 10:30:06 -0400
-Received: by mail-wr1-f67.google.com with SMTP id z11so2968215wro.11
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 07:30:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bNO7Hto8/G2C7TUubatFVtXdTSGgn6JkX2p3XRrLHjY=;
-        b=QeMmMxh28hQkPLiQhJxGAproWHoOfw30dZwErAfDAmevRDEL8xxWL9fPosFYvxUewe
-         00lGqpsnEIcA8iyJOaLFS1ut+WVykTBqaKBUUVOz62wnTvj1Sa85kLaY/6G4DL3FaSnk
-         9/WJDg1LFi2qfCzJtiWf01c1RJdDniCh8l4uNXNEdexVg55M9umTc8Cz55tHPVIgLYaw
-         pgLTfRVSgoyzYKVF0XDFJte6C6986VGqH31VbdbMcb7O0Fq62V4StYvL5wzBYda6NCtV
-         DsBgKVCCyVHBd9WgMV4HnKOhMg8WffO0Aa9QyRJw/FbewIWmbQQjqvip+vQG33bNLM36
-         V7tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bNO7Hto8/G2C7TUubatFVtXdTSGgn6JkX2p3XRrLHjY=;
-        b=f/O7AMdIOijoPbnoQ2LOPlEI0nBz8xT6LvBDxkCokCPOnlJhprxjTvpw9H3aIo3VGi
-         s0UZzPXv5Y5wmk60a1JHYaQxuHY3M4+1Y9uHgc8L4r7AHYZ0Ze0EqarVDszrQTYf5IlG
-         USCwBk5yjX4CNitbJ49oSoPItZtUvMtWxKbX15Jym4Gg80WJX4wkxw9SGMxHOI7SSaxJ
-         dEktjBjbmlQSi2FKD+2bZMVui6F0afQb+7EPnKIq9sj8zpQC7+HYytQy51Ut2FJmFFre
-         GXhKxxQrJHt+rD8rEx9o1CgYajRGh4eAANPDf7FiZd6IgPmwv0D/tImNVPo//DHXsXF5
-         tWng==
-X-Gm-Message-State: APjAAAXn8dLb7UTW9L+sIBjR5QqylZPaAVSiE3EffJSbzziY9aCKvaqN
-        qC0ml1fELQuMtbbQEoLx2vM=
-X-Google-Smtp-Source: APXvYqyF7Wn7rwZo5yw8FQ8NtsqXf8pKes23nKfzo2ZiGHEksOHI/JG11zBpzy4MyPLl6jRsC2+h/w==
-X-Received: by 2002:adf:92e7:: with SMTP id 94mr4422784wrn.199.1571927403902;
-        Thu, 24 Oct 2019 07:30:03 -0700 (PDT)
-Received: from aherlnxbspsrv01.lgs-net.com ([193.8.40.126])
-        by smtp.gmail.com with ESMTPSA id a11sm1702190wmh.40.2019.10.24.07.30.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2019 07:30:03 -0700 (PDT)
-From:   Andrey Zhizhikin <andrey.z@gmail.com>
-X-Google-Original-From: Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org,
-        andriy.shevchenko@linux.intel.com, lee.jones@linaro.org,
-        linux-kernel@vger.kernel.org
-Cc:     Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
-Subject: [PATCH 2/2] mfd: add regulator cell to Cherry Trail Whiskey Cove PMIC
-Date:   Thu, 24 Oct 2019 14:29:39 +0000
-Message-Id: <20191024142939.25920-3-andrey.zhizhikin@leica-geosystems.com>
+        id S2502394AbfJXOBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 10:01:20 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5152 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390869AbfJXOBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 10:01:20 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6651CCF2303E9D9DCF6D;
+        Thu, 24 Oct 2019 22:01:12 +0800 (CST)
+Received: from huawei.com (10.175.102.38) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Thu, 24 Oct 2019
+ 22:00:53 +0800
+From:   Tan Xiaojun <tanxiaojun@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <ak@linux.intel.com>,
+        <adrian.hunter@intel.com>, <yao.jin@linux.intel.com>,
+        <tmricht@linux.ibm.com>, <brueckner@linux.ibm.com>,
+        <songliubraving@fb.com>, <gregkh@linuxfoundation.org>,
+        <kim.phillips@arm.com>, <James.Clark@arm.com>,
+        <jeremy.linton@arm.com>
+CC:     <gengdongjiu@huawei.com>, <wxf.wang@hisilicon.com>,
+        <liwei391@huawei.com>, <tanxiaojun@huawei.com>,
+        <huawei.libin@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-perf-users@vger.kernel.org>
+Subject: [RFC v2 0/4] perf tools: Add support for some spe events and precise ip
+Date:   Thu, 24 Oct 2019 22:48:26 +0800
+Message-ID: <20191024144830.16534-1-tanxiaojun@huawei.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191024142939.25920-1-andrey.zhizhikin@leica-geosystems.com>
-References: <20191024142939.25920-1-andrey.zhizhikin@leica-geosystems.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a regulator mfd cell to Whiskey Cove PMIC driver, which is used to
-supply various voltage rails.
+After the commit ffd3d18c20b8 ("perf tools: Add ARM Statistical
+Profiling Extensions (SPE) support") is merged, "perf record" and
+"perf report --dump-raw-trace" have been supported. However, the
+raw data that is dumped cannot be used without parsing.
 
-In addition, make the initialization of this mfd driver early enough in
-order to provide regulator cell to mmc sub-system when it is initialized.
+This patchset is to improve the "perf report" support for spe, and
+further process the data. Currently, support for the three events
+of llc-miss, tlb-miss, and branch-miss is added.
 
-Signed-off-by: Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
----
- drivers/mfd/intel_soc_pmic_chtwc.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+And through the spe to support the precise ip of the branch-misses
+event, like "branch-misses:pp".
 
-diff --git a/drivers/mfd/intel_soc_pmic_chtwc.c b/drivers/mfd/intel_soc_pmic_chtwc.c
-index be84bb2aa837..47c0d9994784 100644
---- a/drivers/mfd/intel_soc_pmic_chtwc.c
-+++ b/drivers/mfd/intel_soc_pmic_chtwc.c
-@@ -17,6 +17,7 @@
- #include <linux/mfd/core.h>
- #include <linux/mfd/intel_soc_pmic.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/intel-cht-wc-regulator.h>
- 
- /* PMIC device registers */
- #define REG_OFFSET_MASK		GENMASK(7, 0)
-@@ -58,6 +59,11 @@ static struct mfd_cell cht_wc_dev[] = {
- 		.name = "cht_wcove_ext_chgr",
- 		.num_resources = ARRAY_SIZE(cht_wc_ext_charger_resources),
- 		.resources = cht_wc_ext_charger_resources,
-+	}, {
-+		.name = "cht_wcove_regulator",
-+		.id = CHT_WC_REGULATOR_VSDIO + 1,
-+		.num_resources = 0,
-+		.resources = NULL,
- 	},
- 	{	.name = "cht_wcove_region", },
- 	{	.name = "cht_wcove_leds", },
-@@ -215,7 +221,7 @@ static const struct acpi_device_id cht_wc_acpi_ids[] = {
- 	{ }
- };
- 
--static struct i2c_driver cht_wc_driver = {
-+static struct i2c_driver cht_wc_i2c_driver = {
- 	.driver	= {
- 		.name	= "CHT Whiskey Cove PMIC",
- 		.pm     = &cht_wc_pm_ops,
-@@ -225,4 +231,9 @@ static struct i2c_driver cht_wc_driver = {
- 	.shutdown = cht_wc_shutdown,
- 	.id_table = cht_wc_i2c_id,
- };
--builtin_i2c_driver(cht_wc_driver);
-+
-+static int __init cht_wc_i2c_init(void)
-+{
-+	return i2c_add_driver(&cht_wc_i2c_driver);
-+}
-+subsys_initcall(cht_wc_i2c_init);
+v1->v2:
+Some cleanup and bugfix fixes were made, and support for the precise
+ip of branch-misses was added. Thanks for the suggestions of Jeremy
+and James.
+
+Tan Xiaojun (4):
+  perf tools: Move arm-spe-pkt-decoder.h/c to the new dir
+  perf tools: Add support for "report" for some spe events
+  perf report: Add --spe options for arm-spe
+  perf tools: Support "branch-misses:pp" on arm64
+
+ tools/perf/Documentation/perf-report.txt      |   9 +
+ tools/perf/builtin-report.c                   |   5 +
+ tools/perf/util/Build                         |   2 +-
+ tools/perf/util/arm-spe-decoder/Build         |   1 +
+ .../util/arm-spe-decoder/arm-spe-decoder.c    | 219 +++++
+ .../util/arm-spe-decoder/arm-spe-decoder.h    |  65 ++
+ .../arm-spe-pkt-decoder.c                     |   0
+ .../arm-spe-pkt-decoder.h                     |   2 +
+ tools/perf/util/arm-spe.c                     | 770 +++++++++++++++++-
+ tools/perf/util/arm-spe.h                     |   3 +
+ tools/perf/util/auxtrace.c                    |  45 +
+ tools/perf/util/auxtrace.h                    |  27 +
+ tools/perf/util/evlist.c                      |   2 +
+ tools/perf/util/session.h                     |   2 +
+ 14 files changed, 1114 insertions(+), 38 deletions(-)
+ create mode 100644 tools/perf/util/arm-spe-decoder/Build
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+ rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.c (100%)
+ rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.h (96%)
+
 -- 
 2.17.1
 
