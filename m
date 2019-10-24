@@ -2,57 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC695E2841
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 04:36:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE861E2834
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 04:34:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437121AbfJXCgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 22:36:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50726 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391468AbfJXCgI (ORCPT
+        id S2406392AbfJXCej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 22:34:39 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:38922 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726928AbfJXCej (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 22:36:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7Fj9mHRF3mevdCZVhB7KKO9UNPbwjnvX89JMWBIzhco=; b=o+3jGmAqn0XHHr5GOXSJrA0oc
-        shld319a6f6WtdzX9apf3HCHkkWxFIFvwfqb0yjN5VRW6deoAw04ZNe0ZCkPfy7eBFenlcN9RhOT6
-        BTFxpLhy4E1hnVi6ZcuGjchtN1kNNgWOhClLWFZYDZh9ihdxRvewI17ri0YLZpTVAs/iEp1Wjroql
-        ZWc9Dcga4AUhAll8gI8PzOAUYPzqhjPOvkrO1ztPsc01XrcZGaqB3PWXplDxB/qxFAPpTvyh8lJsN
-        aOFFoNjRz8K90j07uU5/DKv7m/ptYEVTNun+vXQTyFCy7B5/G6K5SpWBzMHS/4JRkaCkIy7wV0Vn/
-        SvJiFTAFQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNSys-0001uQ-Pm; Thu, 24 Oct 2019 02:36:06 +0000
-Date:   Wed, 23 Oct 2019 19:36:06 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Boaz Harrosh <boaz@plexistor.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org
-Subject: Re: Please add the zuf tree to linux-next
-Message-ID: <20191024023606.GA1884@infradead.org>
-References: <1b192a85-e1da-0925-ef26-178b93d0aa45@plexistor.com>
+        Wed, 23 Oct 2019 22:34:39 -0400
+Received: by mail-qk1-f193.google.com with SMTP id 4so21959146qki.6;
+        Wed, 23 Oct 2019 19:34:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rCbbBeI2mrlE99eAAhqWdNCOhdnLzoQ596t+H8kOQ94=;
+        b=CWBgBcklTcLn5N9+5T3lhBBa8/2KvbnIHecMFx8Sn6ezg4ntO94DQXxmtoALyatiuu
+         JpqJ7sESPaZHgaiPheOA4Bjnov8uP2W/FBskCBzYYQMnw4ovuj51lDUgd4SgqaCEfMh1
+         kNC38pL30X8jA6eqeM0GPzTKRZs1kP/Q+8l6UBpGFcgpqZ7xW/7zBKPDFIHBgwZpgCkH
+         cyd6Q1XW/oKB8i4ChYU61oA1FbbXm3DfyNo9ugf+9YThwiZeYVpzA3P4y4Of+dmS2ZFD
+         m9epYsfEkDzfx1xZQ6FPTOAR2/UoCZcgzMnX1BtclhbRK91KJJaIKs+Cw3SbFNNejn/N
+         glbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rCbbBeI2mrlE99eAAhqWdNCOhdnLzoQ596t+H8kOQ94=;
+        b=jeGhE4eccQ+F9lsWwAfKxBxVZtwcQ0A7zc3MO7aRPYFvZFfBRrYgVLfc/vDEmvw5HK
+         0QiVbDNqiWFdqIOswlTvFrUjMCsgX5hiowUrog5RLWplnuT3uTU+sTV08nX/17YoPu7y
+         KpwMr8Yq7N6nmNHRdAC9cWsQzVxECYQmjkvQUmi+DrLtUMEFIofLB6drklIcQckY4Cbb
+         TrP7ix3y5BYNQQlo+6bVdbDW5rAtUG5i7h0tV/sWqYVnObzUa0/yr43/49BLmVPQrtTt
+         pC1ld6p3WzeRs1df+xtzKiKLG6RLEb7TRMU+1S3HcmzoW/+awi4DYpnyp9dAuxzb501f
+         /cdg==
+X-Gm-Message-State: APjAAAVfpy+ekNcIS5Z5tc30ZlyLAFt6cLSbwUkzwfrOncaRhfIjaZDF
+        SNb6Nch6n5QSVUZpjd7pruJ3LwCn
+X-Google-Smtp-Source: APXvYqw+V9P8bgtlsBvYAp2Zw06lp4vJkz8+U8vjUyxESApoZj4w5UguZkhj9rCVeIZzsjbpgTHBdA==
+X-Received: by 2002:a37:2fc1:: with SMTP id v184mr11964494qkh.18.1571884477856;
+        Wed, 23 Oct 2019 19:34:37 -0700 (PDT)
+Received: from localhost.localdomain ([186.212.94.31])
+        by smtp.gmail.com with ESMTPSA id q16sm10252495qke.22.2019.10.23.19.34.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 19:34:37 -0700 (PDT)
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-btrfs@vger.kernel.org, mpdesouza@suse.com
+Subject: [PATCH 0/5] btrfs: send uevent on subvolume add/remove
+Date:   Wed, 23 Oct 2019 23:36:31 -0300
+Message-Id: <20191024023636.21124-1-marcos.souza.org@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b192a85-e1da-0925-ef26-178b93d0aa45@plexistor.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 03:34:29AM +0300, Boaz Harrosh wrote:
-> Hello Stephen
-> 
-> Please add the zuf tree below to the linux-next tree.
-> 	[https://github.com/NetApp/zufs-zuf zuf]
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
 
-I don't remember us coming to the conclusion that this actually is
-useful doesn't just badly duplicate the fuse functionality.
+Hey guys,
+
+these patches make btrfs to send an uevent to userspace whenever a subvolume is
+added/removed. The changes are pretty straightforward. This patchset was based
+in btrfs-misc-next.
+
+The first patch adds an additional argument to btrfs_kobject_uevent to receive a
+envp, and just forward this argument to kobject_uevent_envp.
+
+Patch number 2 creates a new function that will be called by patches 4 and 5 to
+setup the environment variable to be set to userspace using uevent. These two
+environment variables are BTRFS_VOL_{NEW,DEL} and BTRFS_VOL_NAME. The first
+variable will have the value 1 for subvolume add/remove (only one will be
+exported, so udev can distinguish the event), and the second one hold the name
+of the subvolume being added/removed.
+
+Feel free to suggest any other useful information to be exported to userspace
+when adding/removing a subvolume.
+
+Patches 3 and 5 call btrfs_vol_uevent to send the event on subvolume add/remove.
+
+Patch 4 creates a helper function to distinguish a subvolume from a snapshot,
+since the same function is used to delete both. This function is used in patch
+5.
+
+Thanks for you reviews!
+
+Marcos Paulo de Souza (5):
+  btrfs: sysfs: Add envp argument to btrfs_kobject_uevent
+  btrfs: ioctl: Introduce btrfs_vol_uevent
+  btrfs: ioctl: Call btrfs_vol_uevent on subvol creation
+  btrfs: ctree.h: Add btrfs_is_snapshot function
+  btrfs: ioctl: Call btrfs_vol_uevent on subvolume deletion
+
+ fs/btrfs/ctree.h   | 14 ++++++++++++++
+ fs/btrfs/ioctl.c   | 39 ++++++++++++++++++++++++++++++++++++++-
+ fs/btrfs/sysfs.c   |  7 +++++--
+ fs/btrfs/sysfs.h   |  3 ++-
+ fs/btrfs/volumes.c |  2 +-
+ 5 files changed, 60 insertions(+), 5 deletions(-)
+
+-- 
+2.23.0
+
