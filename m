@@ -2,133 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1381E3493
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9509E349D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393737AbfJXNpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 09:45:24 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34639 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393632AbfJXNpY (ORCPT
+        id S2393761AbfJXNqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 09:46:16 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:52663 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393672AbfJXNqP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 09:45:24 -0400
-Received: by mail-lj1-f195.google.com with SMTP id j19so25113536lja.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 06:45:22 -0700 (PDT)
+        Thu, 24 Oct 2019 09:46:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/fWYhCmJ93NQhT0I63wTXutn+dxi511+rgvXvN58Juw=;
-        b=COChlb5Mp2PZWd2gN4YbVP4ENvRu9Tw+0i1E65YlR/n6dbdc00DDRL9BlVyRNiMzYo
-         6Yi2HjsraB7heDkJ5SbI744uW2oJLsgjAAcCh0u5XHnKl7UmZWz07cVo9m2hjofK+R8K
-         Xat1zC5Pb9+DssUbOVRAaNt8qxC53pcGyoGTg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/fWYhCmJ93NQhT0I63wTXutn+dxi511+rgvXvN58Juw=;
-        b=mhG4zrtrqGmNSSML8b94UuL00PnkxEDIMUJKT5nZJMVL5Q0u29DCXqDlsTjBDYZZ9+
-         RqtySC7UvAo9N/icWmbZKG2vXeIlTBAT60U2cjQBlapryfYVg0iv+bALkyJAtGOFdJor
-         e4oN1/ozOG6T1LnRkf2A+/pzGRO5/IvGX495278+HaTK5onlAhTIayyMfICByBZG7UOz
-         lvS0Hw9wPriVvGHl6EZX57pltsbd9kG6sf7rhs0BfPRXiGraKHdfseSBagOELbf5+M2S
-         +SNPoIdW1QaG82Abe2jwbJYYb0l4WuU+xsKfE1wGyn2mXUS8RGK/fb524dvJa8UT3N27
-         FHdw==
-X-Gm-Message-State: APjAAAWmXY2oGALK+zWvWc4SDUtuvF59PtZXeux6zpNqTKzl9Lg39Xnn
-        d3af2b4pwy67hp6qpfHussikfw==
-X-Google-Smtp-Source: APXvYqy2DBWkOtEXsuzhsqwJjpCTQz3sNvep3L9L8lQliUGX0tAat3ID5dEFH7aEnbHO+0vQecjBwA==
-X-Received: by 2002:a2e:b4e8:: with SMTP id s8mr7270549ljm.73.1571924722093;
-        Thu, 24 Oct 2019 06:45:22 -0700 (PDT)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o196sm10069411lff.59.2019.10.24.06.45.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Oct 2019 06:45:21 -0700 (PDT)
-Subject: Re: [RFC PATCH 3/3] decompress/keepalive.h: add config option for
- toggling a set of bits
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Gao Xiang <xiang@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Sascha Hauer <kernel@pengutronix.de>
-References: <20191017114906.30302-1-linux@rasmusvillemoes.dk>
- <20191017114906.30302-4-linux@rasmusvillemoes.dk>
- <CACRpkdYpnX0JMT9tG8AYhRQiXo90GJoF_J8c6f+KoWKvZmyj-g@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <23b46dec-30f5-29a1-7bca-99d3af10c98e@rasmusvillemoes.dk>
-Date:   Thu, 24 Oct 2019 15:45:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1571924774; x=1603460774;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=vkZQhzMWV/fyOBV+LDd85sbkFNcBkgjmi8yYaRFWN1c=;
+  b=HqRzEDUvViqLaTnw84MGA2zw+ovupwGaJQbD8cpekEpbOlFwfy+VhTj9
+   Nb3rveeV1cYfQ7C3gMhCgYJj4zjUe1I54Dg9rwB0wD/p0QBG6aDW37kPN
+   eQoxWJ+AmuNno3xfHOdRCDxVgvxwTW0BsUdKZrelzqLTSXW0y7gJbHTqa
+   M=;
+X-IronPort-AV: E=Sophos;i="5.68,224,1569283200"; 
+   d="scan'208";a="762792918"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1e-27fb8269.us-east-1.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 24 Oct 2019 13:46:12 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1e-27fb8269.us-east-1.amazon.com (Postfix) with ESMTPS id B6CC6A26BE;
+        Thu, 24 Oct 2019 13:46:08 +0000 (UTC)
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 24 Oct 2019 13:46:07 +0000
+Received: from udc4a3e82dbc15a031435.hfa15.amazon.com (10.43.161.34) by
+ EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 24 Oct 2019 13:45:59 +0000
+From:   Talel Shenhar <talel@amazon.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <bp@alien8.de>,
+        <mchehab@kernel.org>, <james.morse@arm.com>, <talel@amazon.com>,
+        <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
+        <nicolas.ferre@microchip.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>
+CC:     <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
+        <hhhawa@amazon.com>, <ronenk@amazon.com>, <jonnyc@amazon.com>,
+        <hanochu@amazon.com>, <amirkl@amazon.com>, <barakw@amazon.com>
+Subject: [PATCH v7 0/2] Amazon's Annapurna Labs POS Driver
+Date:   Thu, 24 Oct 2019 16:45:44 +0300
+Message-ID: <1571924746-8107-1-git-send-email-talel@amazon.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYpnX0JMT9tG8AYhRQiXo90GJoF_J8c6f+KoWKvZmyj-g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.43.161.34]
+X-ClientProxiedBy: EX13D21UWA004.ant.amazon.com (10.43.160.252) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/10/2019 14.17, Linus Walleij wrote:
-> On Thu, Oct 17, 2019 at 1:49 PM Rasmus Villemoes
-> <linux@rasmusvillemoes.dk> wrote:
-> 
->> +config DECOMPRESS_KEEPALIVE_TOGGLE_REG
->> +       hex "Address of register to modify while decompressing"
->> +       help
->> +         Set this to a physical address of a 32-bit memory word to
->> +         modify while decompressing.
->> +
->> +config DECOMPRESS_KEEPALIVE_TOGGLE_MASK
->> +       hex "Bit mask to toggle while decompressing"
->> +       help
->> +         The register selected above will periodically be xor'ed with
->> +         this value during decompression.
-> 
-> I would not allow users to store these vital hex values in their
-> defconfig and other unsafe places. Instead follow the pattern from
-> arch/arm/Kconfig.debug for storing the DEBUG_UART_PHYS:
-> 
-> config DEBUG_UART_PHYS
->         hex "Physical base address of debug UART"
->         default 0x01c20000 if DEBUG_DAVINCI_DMx_UART0
->         default 0x01c28000 if DEBUG_SUNXI_UART0
->         default 0x01c28400 if DEBUG_SUNXI_UART1
-> ....
-> i.e. make sure to provide the right default values. We probably
-> need at least one example for others to follow.
->
-> Maybe this is your plan, I don't know, wanted to point it out
-> anyways.
+Amazon's Annapurna Labs SoCs include a Point of Serialization error logging
+unit that reports an error when a write error occurs (e.g. attempt to write
+to a read only register).This error shall be reported via the EDAC
+subsystem as uncorrectable-error.
 
-The thing is, there is no proper default value for the use cases I have
-in mind: Custom hardware based on some SOC, where the designer has wired
-on an external gpio-triggered watchdog. That could be gpio 25 of gpio
-bank 0, or gpio 2 of gpio bank 3, or ... so I don't see how there could
-possibly be any sane default value - the kernel certainly shouldn't grow
-a config option for every single custom board out there.
+This patch series introduces the support for this unit.
 
-That's why this is different from the previously existing
-arch_decomp_wdog - that was (AFAICT) about feeding the SOC's builtin
-watchdog.
+Changes since v6:
+=================
+- reworked the commit message for the driver patch
+- dt-bindings: added -only to  GPL-2.0
+- fixed filename in MAINTAINERS
+- added driver managed unwind
 
-I realize this is rather specific, and the current implementation for
-example won't work if the gpio value cannot be toggled in such a simple
-way (perhaps there are separate "set" and "clear" registers or whatnot)
-- but as I said, it is sufficient for the many different cases I've seen
-so far (and something like my patches have been used for years on those
-boards).
+Changes since v5:
+=================
+- added missing include to dt binding
 
-An alternative is to simply provide a complete implementation of
-decompress_keepalive() (or arch_decomp_wdog if we want to keep that
-name) in an external .o/.c/.S file, and do something like
+Changes since v4:
+================
+- fixed dt binding according to new dt scheme
+- added back the use of _relaxed accessors
 
-OBJS += $(CONFIG_DECOMP_WDOG:"%"=%)
+Changes since v3:
+=================
+- ported to be edac device
+- converted dt-bindings to new scheme
+- added unit address to dt example
 
-in arch/foo/boot/compressed/Makefile. Then the physical address etc. do
-not get written in Kconfig, and it should work for all cases, including
-the ones that need to write 0x55, 0xaa, 0x12 in order to some
-SOC-specific register.
+Changes since v2:
+=================
+- squashed left shifting fix to the driver
 
-Rasmus
+Changes since v1:
+=================
+- move MODULE_ to the end of the file
+- simplified resource remapping devm_platform_ioremap_resource()
+- use platform_get_irq() instead of irq_of_parse_and_map()
+- removed the use of _relaxed accessor in favor to the regular ones
+- removed driver selected based on arch
+- added casting to u64 before left shifting (reported by kbuild test robot)
+
+
+Talel Shenhar (2):
+  dt-bindings: soc: al-pos: Amazon's Annapurna Labs POS
+  soc: amazon: al-pos-edac: Introduce Amazon's Annapurna Labs POS EDAC
+    driver
+
+ .../bindings/edac/amazon,al-pos-edac.yaml          |  41 +++++
+ MAINTAINERS                                        |   7 +
+ drivers/edac/Kconfig                               |   6 +
+ drivers/edac/Makefile                              |   1 +
+ drivers/edac/al_pos_edac.c                         | 174 +++++++++++++++++++++
+ 5 files changed, 229 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/edac/amazon,al-pos-edac.yaml
+ create mode 100644 drivers/edac/al_pos_edac.c
+
+-- 
+2.7.4
+
