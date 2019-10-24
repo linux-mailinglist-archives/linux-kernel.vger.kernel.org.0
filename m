@@ -2,120 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1AACE37FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7145CE3824
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503447AbfJXQdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 12:33:03 -0400
-Received: from mga09.intel.com ([134.134.136.24]:44518 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2503367AbfJXQdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 12:33:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 09:33:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,225,1569308400"; 
-   d="scan'208";a="202351313"
-Received: from unknown (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga006.jf.intel.com with ESMTP; 24 Oct 2019 09:33:01 -0700
-Subject: Re: [RFC] Memory Tiering
-To:     Jonathan Adams <jwadams@google.com>
-Cc:     Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "Verma, Vishal L" <vishal.l.verma@intel.com>,
-        Wu Fengguang <fengguang.wu@intel.com>,
-        Huang Ying <ying.huang@intel.com>
-References: <c3d6de4d-f7c3-b505-2e64-8ee5f70b2118@intel.com>
- <CA+VK+GMAqMVXKQqjGzSj9P+-TKr_Jn6qQ1cHSyxhDsoChorm_w@mail.gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <bab0848c-3229-bcb5-8921-d150939a7ce2@intel.com>
-Date:   Thu, 24 Oct 2019 09:33:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2503539AbfJXQio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 12:38:44 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:39745 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2503426AbfJXQim (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 12:38:42 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R671e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Tg4pDHR_1571934793;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Tg4pDHR_1571934793)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 25 Oct 2019 00:33:16 +0800
+Subject: Re: [v4 PATCH] mm: thp: handle page cache THP correctly in
+ PageTransCompoundMap
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     hughd@google.com, aarcange@redhat.com,
+        kirill.shutemov@linux.intel.com, gavin.dg@linux.alibaba.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <1571865575-42913-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20191024135547.GH2963@bombadil.infradead.org>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <c3932146-1b91-fa90-b947-9d4ebe5c5135@linux.alibaba.com>
+Date:   Thu, 24 Oct 2019 09:33:11 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CA+VK+GMAqMVXKQqjGzSj9P+-TKr_Jn6qQ1cHSyxhDsoChorm_w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20191024135547.GH2963@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/23/19 4:11 PM, Jonathan Adams wrote:
-> we would have a bidirectional attachment:
-> 
-> A is marked "move cold pages to" B
-> B is marked "move hot pages to" A
-> C is marked "move cold pages to" D
-> D is marked "move hot pages to" C
-> 
-> By using autonuma for moving PMEM pages back to DRAM, you avoid
-> needing the B->A  & D->C links, at the cost of migrating the pages
-> back synchronously at pagefault time (assuming my understanding of how
-> autonuma works is accurate).
-> 
-> Our approach still lets you have multiple levels of hierarchy for a
-> given socket (you could imaging an "E" node with the same relation to
-> "B" as "B" has to "A"), but doesn't make it easy to represent (say) an
-> "E" which was equally close to all sockets (which I could imagine for
-> something like remote memory on GenZ or what-have-you), since there
-> wouldn't be a single back link; there would need to be something like
-> your autonuma support to achieve that.
-> 
-> Does that make sense?
 
-Yes, it does.  We've actually tried a few other approaches separate from
-autonuma-based ones for promotion.  For some of those, we have a
-promotion path which is separate from the demotion path.
 
-That said, I took a quick look to see what the autonuma behavior was and
-couldn't find anything obvious.  Ying, when moving a slow page due to
-autonuma, do we move it close to the CPU that did the access, or do we
-promote it to the DRAM close to the slow memory where it is now?
+On 10/24/19 6:55 AM, Matthew Wilcox wrote:
+> On Thu, Oct 24, 2019 at 05:19:35AM +0800, Yang Shi wrote:
+>> We have usecase to use tmpfs as QEMU memory backend and we would like to
+>> take the advantage of THP as well.  But, our test shows the EPT is not
+>> PMD mapped even though the underlying THP are PMD mapped on host.
+>> The number showed by /sys/kernel/debug/kvm/largepage is much less than
+>> the number of PMD mapped shmem pages as the below:
+>>
+>> 7f2778200000-7f2878200000 rw-s 00000000 00:14 262232 /dev/shm/qemu_back_mem.mem.Hz2hSf (deleted)
+>> Size:            4194304 kB
+>> [snip]
+>> AnonHugePages:         0 kB
+>> ShmemPmdMapped:   579584 kB
+>> [snip]
+>> Locked:                0 kB
+>>
+>> cat /sys/kernel/debug/kvm/largepages
+>> 12
+>>
+>> And some benchmarks do worse than with anonymous THPs.
+>>
+>> By digging into the code we figured out that commit 127393fbe597 ("mm:
+>> thp: kvm: fix memory corruption in KVM with THP enabled") checks if
+>> there is a single PTE mapping on the page for anonymous THP when
+>> setting up EPT map.  But, the _mapcount < 0 check doesn't fit to page
+>> cache THP since every subpage of page cache THP would get _mapcount
+>> inc'ed once it is PMD mapped, so PageTransCompoundMap() always returns
+>> false for page cache THP.  This would prevent KVM from setting up PMD
+>> mapped EPT entry.
+>>
+>> So we need handle page cache THP correctly.  However, when page cache
+>> THP's PMD gets split, kernel just remove the map instead of setting up
+>> PTE map like what anonymous THP does.  Before KVM calls get_user_pages()
+>> the subpages may get PTE mapped even though it is still a THP since the
+>> page cache THP may be mapped by other processes at the mean time.
+>>
+>> Checking its _mapcount and whether the THP has PTE mapped or not.
+>> Although this may report some false negative cases (PTE mapped by other
+>> processes), it looks not trivial to make this accurate.
+> I don't understand why you care how it's mapped into userspace.  If there
+> is a PMD-sized page in the page cache, then you can use a PMD mapping
+> in the EPT tables to map it.  Why would another process having a PTE
+> mapping on the page cause you to not use a PMD mapping?
+
+We don't care if the THP is PTE mapped by other process, but either 
+PageDoubleMap flag or _mapcount/compound_mapcount can't tell us if the 
+PTE map comes from the current process or other process unless gup could 
+return pmd's status.
+
+I think the commit 127393fbe597 ("mm: thp: kvm: fix memory corruption in 
+KVM with THP enabled") elaborates the trade-off clearly (not full commit 
+log, just paste the most related part):
+
+    Ideally instead of the page->_mapcount < 1 check, get_user_pages()
+     should return the granularity of the "page" mapping in the "mm" passed
+     to get_user_pages().  However it's non trivial change to pass the "pmd"
+     status belonging to the "mm" walked by get_user_pages up the stack (up
+     to the caller of get_user_pages).  So the fix just checks if there is
+     not a single pte mapping on the page returned by get_user_pages, and in
+     turn if the caller can assume that the whole compound page is mapped in
+     the current "mm" (in a pmd_trans_huge()).  In such case the entire
+     compound page is safe to map into the secondary MMU without additional
+     get_user_pages() calls on the surrounding tail/head pages.  In addition
+     of being faster, not having to run other get_user_pages() calls also
+     reduces the memory footprint of the secondary MMU fault in case the pmd
+     split happened as result of memory pressure.
+
+
