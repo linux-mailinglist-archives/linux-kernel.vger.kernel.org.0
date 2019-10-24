@@ -2,129 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5BF0E3B7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 20:59:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC2B3E3AFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 20:30:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394173AbfJXS7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 14:59:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40846 "EHLO mail.kernel.org"
+        id S2392310AbfJXSaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 14:30:39 -0400
+Received: from sauhun.de ([88.99.104.3]:43626 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390034AbfJXS7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 14:59:47 -0400
-Received: from localhost (unknown [109.190.253.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E6C42166E;
-        Thu, 24 Oct 2019 18:59:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571943587;
-        bh=a+uIvZuoQVHuTrFvBOzthw/TKu6zM/j2cbpgzHnS7NU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WcOVK2MoQPmQQSsCISXcIBuI7zyFW7PCPi3sEWyZrvsujyJU9KqXd8Lz9FuUcEycP
-         LovoXS6q0NzSjx0T9bwgKdiO0D2IdOC+9eCmPibS/8rcntyqRQWHweq3RvmcIYOhW0
-         RouTokS1q8E5knnKBp9KdlV/2jWAkeeZMIoYyjos=
-Date:   Thu, 24 Oct 2019 20:24:05 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
+        id S1726155AbfJXSai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 14:30:38 -0400
+Received: from localhost (x4d0bc9de.dyn.telefonica.de [77.11.201.222])
+        by pokefinder.org (Postfix) with ESMTPSA id 5D3C52C011D;
+        Thu, 24 Oct 2019 20:30:36 +0200 (CEST)
+Date:   Thu, 24 Oct 2019 20:30:35 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Eugen.Hristev@microchip.com
+Cc:     peda@axentia.se, mark.rutland@arm.com,
+        Ludovic.Desroches@microchip.com, linux-i2c@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 2/4] dt-bindings: crypto: Add DT bindings
- documentation for sun8i-ss Security System
-Message-ID: <20191024182405.a4x5vc4hxwsev2hp@hendrix>
-References: <20191023201016.26195-1-clabbe.montjoie@gmail.com>
- <20191023201016.26195-3-clabbe.montjoie@gmail.com>
- <20191024065005.hdypdl2dgqsrry5i@gilmour>
- <20191024093118.GA15113@Red>
+        linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com,
+        robh+dt@kernel.org, Nicolas.Ferre@microchip.com
+Subject: Re: [PATCH v5 0/9] i2c: add support for filters
+Message-ID: <20191024183035.GA1870@kunai>
+References: <1568189911-31641-1-git-send-email-eugen.hristev@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
 Content-Disposition: inline
-In-Reply-To: <20191024093118.GA15113@Red>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1568189911-31641-1-git-send-email-eugen.hristev@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 11:31:18AM +0200, Corentin Labbe wrote:
-> On Thu, Oct 24, 2019 at 08:50:05AM +0200, Maxime Ripard wrote:
-> > Hi,
-> >
-> > On Wed, Oct 23, 2019 at 10:10:14PM +0200, Corentin Labbe wrote:
-> > > This patch adds documentation for Device-Tree bindings of the
-> > > Security System cryptographic offloader driver.
-> > >
-> > > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-> > > ---
-> > >  .../bindings/crypto/allwinner,sun8i-ss.yaml   | 64 +++++++++++++++++++
-> > >  1 file changed, 64 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/crypto/allwinner,sun8i-ss.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/crypto/allwinner,sun8i-ss.yaml b/Documentation/devicetree/bindings/crypto/allwinner,sun8i-ss.yaml
-> > > new file mode 100644
-> > > index 000000000000..99b7736975bc
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/crypto/allwinner,sun8i-ss.yaml
-> > > @@ -0,0 +1,64 @@
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/crypto/allwinner,sun8i-ss.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Allwinner Security System v2 driver
-> > > +
-> > > +maintainers:
-> > > +  - Corentin Labbe <corentin.labbe@gmail.com>
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    enum:
-> > > +      - allwinner,sun8i-a83t-crypto
-> > > +      - allwinner,sun9i-a80-crypto
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  interrupts:
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks:
-> > > +    items:
-> > > +      - description: Bus clock
-> > > +      - description: Module clock
-> > > +
-> > > +  clock-names:
-> > > +    items:
-> > > +      - const: bus
-> > > +      - const: mod
-> > > +
-> > > +  resets:
-> > > +    maxItems: 1
-> >
-> > The A83t at least has a reset line, so please make a condition to have
-> > it required.
-> >
->
-> Hello
->
-> The A80 have one also, so I need to set minItems: 1
-> But setting both minItems: 1 and maxItems:1 lead to a check failure:
->
-> properties:resets: {'minItems': 1, 'maxItems': 1} is not valid under
-> any of the given schemas
->
-> How to do that ?
 
-IIRC the meta-schema prevent having both because the tooling will
-insert it for you.
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It doesn't really matter at this level though. maxItems alone will
-make sure that there's a single element, and the schemas in the tools
-will make sure that the type for resets is correct.
+On Wed, Sep 11, 2019 at 08:24:14AM +0000, Eugen.Hristev@microchip.com wrote:
+> From: Eugen Hristev <eugen.hristev@microchip.com>
+>=20
+> Hello,
+>=20
+> This series adds support for analog and digital filters for i2c controlle=
+rs
+>=20
+> This series is based on the series:
+> [PATCH v2 0/9] i2c: at91: filters support for at91 SoCs
+> and later
+> [PATCH v4 0/9] i2c: add support for filters
+> and enhanced to add the bindings for all controllers plus an extra bindin=
+gs
+> for the width of the spikes in nanoseconds (digital filters) and cut-off
+> frequency (analog filters)
+>=20
+> First, bindings are created for
+> 'i2c-analog-filter'
+> 'i2c-digital-filter'
+> 'i2c-digital-filter-width-ns'
+> 'i2c-analog-filter-cutoff-frequency'
+>=20
+> The support is added in the i2c core to retrieve filter width/cutoff freq=
+uency
+> and add it to the timings structure.
+> Next, the at91 driver is enhanced for supporting digital filter, advanced
+> digital filter (with selectable spike width) and the analog filter.
+>=20
+> Finally the device tree for two boards are modified to make use of the
+> new properties.
+>=20
+> This series is the result of the comments on the ML in the direction
+> requested: to make the bindings globally available for i2c drivers.
 
-What you'd need here though would be to add resets to the list of
-required properties, otherwise it will only be checked against if the
-property is there.
+Applied patches 1-7 to for-next (patch 3 is v6). Thanks for your
+patience and thanks to Ludovic and Peter for the review! Patches 8-9
+should go via the at91 tree.
+
+
+--+QahgC5+KEYLbs62
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl2x7ccACgkQFA3kzBSg
+Kba+Dg//cHsbTuGv5z7zSiIUbnmUbVpJKyL+PUx03ES4RnXIjjdVJRM/sgyTocpE
+zkokcnhPi9H4kv7O7CFo8VGVsQ1v1aBOgLSF9sRvdGB0kdEwRDJGypFLdmYFPpSE
+fwxxDvhwCtKkxBtKwxCAmx7aP5wemaNemm1l2dTkC0dLZsfSce/HZQ7Q11MK5V7Y
+I7gJMneVuUIw98wcLnut83YULvXC5HJNyKyhmRRivqE5+TZoJTwVIhxiFswjCTNO
+Br6JoVz0ODQBmGUOCH4dFkI5X5CsBSRwRNC4V4x0ygr2iIjR/Rd/TU422wqylJk2
+91d7wRXozOk/4f//UCxt3nlTeCXhgSUsO+7j6ljkjCHFxY3ONXdJ05lTMPZXJUAc
+m0qVQjU73ZMl08RAItQOwcaQi1qiGcNHXJN40aJu3/z7dLjLgCPCKAUjnQTDWrrz
+rwZejgvmHmTOd+zM3mmweCFu5v9qkuEeL7UCqLrGYyUHQPF3ycm5N96FkMbgbVnX
+lROYUlXXOXp3QBSzqZ/EavNT26siD6joTXpKZMPml5u4VgmJ9MJ1AW7iTHwPZyYk
+vqubo6pR02wJ95b9vyEr7OohP5sewbrNpHsk+8Tzyp4AlbcmdoIqMPgVb/77mpKN
+frMOQ5tiehviyqrYqbv1IbJANmRg3UQD7RzDRX0lMIMW/BMyHxw=
+=u9NZ
+-----END PGP SIGNATURE-----
+
+--+QahgC5+KEYLbs62--
