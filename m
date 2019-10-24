@@ -2,87 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD491E3C5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDEF7E3C7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:51:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437508AbfJXTuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 15:50:22 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:59734 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437127AbfJXTuW (ORCPT
+        id S2408253AbfJXTvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 15:51:13 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35568 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438129AbfJXTut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 15:50:22 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D1D86891AB;
-        Fri, 25 Oct 2019 08:50:18 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1571946618;
-        bh=Hs8NcqdoljgJGEwJZDugNhLtA/5VyqVGE/xZcIF5ZMg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=G8ldo2dqp4J5lq1pnturQcTs3+2QXGPrAwl3SDqG1M4YDQXBC+A5mdgvmrMw4GGvk
-         gGEwXd9lJ6xp4Nh6SXO4afBzSqb3Jccxy7UOcE+uXPNE9sZIg7hhr3XkHeViYVwasM
-         X2DU1jlUKZnGOfkuYDVbZC89Ia7z4pJElSWNPFgwbpjWmYzNDoLBgTRnoQEsl+DhjD
-         y7309s0e2pmijL8o8RLN07iPqlXMt9s5X+V4R7VqCaZwYeKPUOMEmgVugNcd50yYGR
-         Dh1001ZeYdsU5ToF/Vn8N3wHMfZSNqeHs1DCREj92STg0JkFe09rGKChiEw3j8wcKZ
-         phQDI5Dak+f1w==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5db2007a0000>; Fri, 25 Oct 2019 08:50:18 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
-        by smtp (Postfix) with ESMTP id E513313EEFC;
-        Fri, 25 Oct 2019 08:50:22 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id B140728005C; Fri, 25 Oct 2019 08:50:18 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     corbet@lwn.net, rppt@linux.ibm.com, willy@infradead.org
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v3 3/3] docs/core-api: memory-allocation: mention size helpers
-Date:   Fri, 25 Oct 2019 08:50:16 +1300
-Message-Id: <20191024195016.11054-4-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191024195016.11054-1-chris.packham@alliedtelesis.co.nz>
-References: <20191024195016.11054-1-chris.packham@alliedtelesis.co.nz>
+        Thu, 24 Oct 2019 15:50:49 -0400
+Received: by mail-oi1-f196.google.com with SMTP id x3so21745828oig.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 12:50:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=obOaJfYPGUFMBdJ+GFQAYWd7jIJzRz2RvyNeFwhCwqc=;
+        b=NCfTLHjlbgJYN9lpItCC3wyK0gNVuM4U9DSlxbPK0EpUIoR4v5tAhulLLZtiiIO7Sf
+         6VOOfxx4kF7UZCx0vTa8gWHltGDFLyzVVSKJWoNH5Yc4+G99eA8vVCVCi7bH2TW0CF+U
+         BQPpM8M5NsvjEUV31BQMA2SQL9JeKZy3fpGrrDkl9ZdCCO0NX61tJi1OW4NgJNJM2lZa
+         LBAGeN7fNx3FUeS3GP+/TAbus4kdH5sCNx5FbueK9qM4weHgda+EVFJ2dIY8VpZeeJuo
+         AGU77VNP8VPk8VEe8qzdOSFPnOL/oHOqwmsGtSpDEEFpZSPk2ImzImmCD1suJLEEYjQP
+         9e0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=obOaJfYPGUFMBdJ+GFQAYWd7jIJzRz2RvyNeFwhCwqc=;
+        b=VTFUszrVCctVY7+KVtHAP7+lKLuslbcBu/LR6svFOYA+25jmcAmgSfkkWahOVg2yJc
+         +O1+D15mYdpg6diqgi9szDknfjCUAVkEZNgBQyVHdkAg+E+ZAHIiwJaBY4E3yIWt/Ugj
+         38c3JBWoEcMQmn6n/E/65gHIipG8jV2fS3gU6VQs2ys1oO5FtJ+kdre/kBReYJAp0pXJ
+         kohayFThkzy4HMbS/hAfC/oAGy4hys5b2+GKvQJEdJV3KNII4sHEorsUC9siZomlJM1Z
+         N6GCVOqLGobJh8oznhIFomoypuM2O+KWl+Tubb2gwWzGndvkibfggqQwc7ZMVhaAvzDG
+         xnCw==
+X-Gm-Message-State: APjAAAVx+ETmfp9G2ub1qE5XQ6sA1iHCk1hS9ykmGp+95mzkXVWBl0T2
+        NQ3Ma81M+TYXFcEzj8b1uvfuxYxzHYL5oaKDRRE=
+X-Google-Smtp-Source: APXvYqxQGKa/dRUXVPSOSFXXQKDj8etCne7ZHnOYBVb6ZrUtCaweeYFBd5Yj1la5eq8jLWjRNlFy65R3H8uw+cSuBYM=
+X-Received: by 2002:aca:dd02:: with SMTP id u2mr954574oig.39.1571946647940;
+ Thu, 24 Oct 2019 12:50:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+References: <20191021142904.12401-1-narmstrong@baylibre.com>
+In-Reply-To: <20191021142904.12401-1-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 24 Oct 2019 21:50:36 +0200
+Message-ID: <CAFBinCD7NzK8EphtVTx77aSQxRytm4F8JhzbJMZ1aXfaQyFVMg@mail.gmail.com>
+Subject: Re: [PATCH 0/5] arm64: dts: meson: new fixes following YAML bindings
+ schemas conversion
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mention struct_size(), array_size() and array3_size() in the same place
-as kmalloc() and friends.
+Hi Neil,
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
+On Mon, Oct 21, 2019 at 4:29 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> This is the first set of DT fixes following the first YAML bindings conversion
+> at [1], [2], [3] and [4] and v5.4-rc1 bindings changes.
+>
+> These are only cosmetic changes, and should not break drivers implementation
+> following the bindings.
+>
+> [1] https://patchwork.kernel.org/patch/11202077/
+> [2] https://patchwork.kernel.org/patch/11202183/
+> [3] https://patchwork.kernel.org/patch/11202207/
+> [4] https://patchwork.kernel.org/patch/11202265/
+>
+> Neil Armstrong (5):
+>   arm64: dts: meson-g12a: fix gpu irq order
+>   arm64: dts: meson-gxm: fix gpu irq order
+>   arm64: dts: meson-g12b-odroid-n2: add missing amlogic,s922x compatible
+>   arm64: dts: meson-gx: cec node should be disabled by default
+>   arm64: dts: meson-gx: fix i2c compatible
+for the whole series:
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Notes:
-    Changes in v3:
-    - rebase against v5.4-rc4
-    Changes in v2:
-    - Drop use of c:func:
 
- Documentation/core-api/memory-allocation.rst | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thank you!
 
-diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation=
-/core-api/memory-allocation.rst
-index e47d48655085..4aa82ddd01b8 100644
---- a/Documentation/core-api/memory-allocation.rst
-+++ b/Documentation/core-api/memory-allocation.rst
-@@ -91,7 +91,8 @@ The most straightforward way to allocate memory is to u=
-se a function
- from the kmalloc() family. And, to be on the safe side it's best to use
- routines that set memory to zero, like kzalloc(). If you need to
- allocate memory for an array, there are kmalloc_array() and kcalloc()
--helpers.
-+helpers. The helpers struct_size(), array_size() and array3_size() can
-+be used to safely calculate object sizes without overflowing.
-=20
- The maximal size of a chunk that can be allocated with `kmalloc` is
- limited. The actual limit depends on the hardware and the kernel
---=20
-2.23.0
-
+Martin
