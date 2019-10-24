@@ -2,113 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E03AE27D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 03:47:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17E79E27DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 03:51:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406370AbfJXBrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 21:47:40 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46780 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbfJXBrk (ORCPT
+        id S2407918AbfJXBvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 21:51:35 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36551 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbfJXBvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 21:47:40 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b25so3964pfi.13
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2019 18:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=r+v++LJz2UtADy1cS2OkPl2XbtGtt1rFLT7PbQVU178=;
-        b=FfyvblohnumehZApPiCnRaZxuyFEHdqk5OyDTBEOP+BfOTBvUjkFq6SSx4hsS/iPs1
-         omQJinbl9mu6pQnGVTsqhimfp9y+eLEp1dgFM5P58PG5vQz9PKTPuIqnjJtYLtWLFVTZ
-         8tAL70O/gmliWAM0nMpyEBRzzKwHsjQKI+Mso=
+        Wed, 23 Oct 2019 21:51:35 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 23so13229460pgk.3;
+        Wed, 23 Oct 2019 18:51:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r+v++LJz2UtADy1cS2OkPl2XbtGtt1rFLT7PbQVU178=;
-        b=qpynnleXJQvPflnclpvtLZg9TWryHBuZSssuLpOnWBi53D7ZCIezPYtIMkerqjr7d6
-         /lY9vi60cduFmWBgkhan3JEFrS+KO19+KqHOvpJGVoSvUfHCSmG5wpAlh7hH/CdKsmnH
-         jIqyByCCCGfp4jDDMM+CgbFSInPxGhtvdgMMdQPShzzuEagSm7f+XH2w4+ja/Vx02cZX
-         v4x2sLfEahYm+hiozPDQPwS9S1W8L7fktZE2tdQXiZW+6B/VtT4GLplhz5mD6j1TT1t/
-         FCnFNCgFvzRlM3xkzIaDlkZnmVoqhTUacWoPkgBYyMj4X5KWGOs1ufIMLFs13uyFRebA
-         of8g==
-X-Gm-Message-State: APjAAAWQlczk3N8LCuSQvFascYrpbNk5LbIc410gbUdYNCv0GiZHlfeH
-        f+6f6wEDZ0NS1YcgTgqTTdpAEQ==
-X-Google-Smtp-Source: APXvYqzjuQPwTlwiGWQJArevnuNtf/BUZhD73XiE/Bfu4lxll4NKeL0JCsdquj30nMOYWLPGj/0JHw==
-X-Received: by 2002:aa7:9105:: with SMTP id 5mr11748563pfh.245.1571881658843;
-        Wed, 23 Oct 2019 18:47:38 -0700 (PDT)
-Received: from goma (p1092222-ipngn200709sizuokaden.shizuoka.ocn.ne.jp. [220.106.235.222])
-        by smtp.gmail.com with ESMTPSA id y138sm25464902pfb.174.2019.10.23.18.47.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 18:47:37 -0700 (PDT)
-Date:   Thu, 24 Oct 2019 10:47:33 +0900
-From:   Daniel Palmer <daniel@0x0f.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: arm: Initial MStar vendor prefixes and
- compatible strings
-Message-ID: <20191024014731.GA3731@goma>
-References: <20191014061617.10296-1-daniel@0x0f.com>
- <20191023200228.GA29675@bogus>
- <20191023224357.GA26445@goma>
- <CAL_JsqKTiieO_7gM4YNGV-BAT67Mi+PX4Gqyyd7nowZsjhnFqQ@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=dC2JOSYLSqsQKskxCJEnzUZbandc2aRmShMqQ/yyRms=;
+        b=UE577jVc9UJbU1v+WWtk/HgqeKHX8gdxifxJIqG9YnNL0x1dUXVLitMxxCLo9Ipcai
+         3MEhCrTMlETgREZLcHoTIlyXLB9p4LSEE4lFtpdeyBcF04ONElfy5r5qiD73uPiQfn1M
+         OPS5YCUnqPR/HRkn4U+jVwR40gyyaWO0fBzsKqYB8GDfPLWrDz6aGSs4nnzrEDkXzs3P
+         Wb3pV17ExFXzC9kxrHBDGqWGDCvbHpG574qwrpMFJaW8pshj5GwibfZsJHhAjujR9r65
+         YL40aK3iPRSMue0kkocjd8xTDC+cQ1i9bzHtwVmFEwtOLMkagbx8zWQ8pjQnJcejOikv
+         NM8Q==
+X-Gm-Message-State: APjAAAXo4zQ+AmMw7cs2nKllBX5GNxME7l52SgJ5Bha8ByCc0J14Xa2F
+        PT0JTB29x1pdVRqBtjASyz8KIWPD
+X-Google-Smtp-Source: APXvYqwydSoB8gVso3rsDpUc5pi921+AX3MVUhhzVkWKIgjkQwkV0QLQ5ryNMjhQmHy1BVgok7j0Zg==
+X-Received: by 2002:aa7:92c9:: with SMTP id k9mr14607454pfa.215.1571881894594;
+        Wed, 23 Oct 2019 18:51:34 -0700 (PDT)
+Received: from localhost.localdomain ([2601:647:4000:c3:68e9:e651:6431:4a0])
+        by smtp.gmail.com with ESMTPSA id 64sm24733672pfx.31.2019.10.23.18.51.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2019 18:51:33 -0700 (PDT)
+Subject: Re: [PATCH v3 1/1] blk-mq: fill header with kernel-doc
+To:     =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     axboe@kernel.dk, kernel@collabora.com, krisman@collabora.com
+References: <20191022000724.32746-1-andrealmeid@collabora.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
+ mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
+ LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
+ fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
+ AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
+ 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
+ AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
+ igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
+ Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
+ jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
+ macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
+ CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
+ RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
+ PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
+ eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
+ lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
+ T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
+ ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
+ CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
+ oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
+ //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
+ mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
+ goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
+Message-ID: <8ed6b0f8-4655-9a76-77c1-11962cee6ebf@acm.org>
+Date:   Wed, 23 Oct 2019 18:51:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKTiieO_7gM4YNGV-BAT67Mi+PX4Gqyyd7nowZsjhnFqQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191022000724.32746-1-andrealmeid@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 06:45:29PM -0500, Rob Herring wrote:
-> > I used the sunxi file as a template and thought they had some
-> > reason to do that. I'll change it to just GPL-2.0.
-> 
-> That wasn't a choice, but dual license it please.
+On 2019-10-21 17:07, André Almeida wrote:
+> Insert documentation for structs, enums and functions at header file.
+> Format existing and new comments at struct blk_mq_ops as
+> kernel-doc comments.
 
-Will do.
-
-> Sounds like you want:
-> 
-> items:
->  - const: thingyjp,breadbee
->  - enum:
->      - mstar,infinity
->      - mstar,infinity3
-> 
-> If one board can do both chips. Though if the same PCB is populated
-> differently beyond the SoC, then maybe 2 board compatibles makes
-> sense.
-
-You can take one chip off and swap it with the other without any PCB/component
-changes but as I've been working on both chips there are a few differences
-coming up that means you can't use the same DT for both configurations.
-For example the ethernet phy needs to be configured differently, the i1
-SoC has less instances of the DMA controller blocks and so on.
-
-The version of the chip can be detected from a register and I had considered
-patching over the differences based on that but I couldn't find an example
-of doing it within the kernel. So I'm detecting the chip version in u-boot and
-loading the right DT there.
- 
-> Why not use the part numbers (msc313...)?
-
-I had initially done that when I thought i1 was the msc31e and i3 was the
-msc313e. For the i1 the only part I have found so far is the msc313 but
-the i3 is a series of around 4 or 5 different configurations of the same SoC 
-with differing amounts of DDR and pins. This is like the AllWinner V3S and 
-S3/S3L where the same V3 SoC is packaged differently. As there is no source
-of this information that appears on a google search I've started documenting
-it at http://linux-chenxing.org/
-
-I think the only place the actual chip model will need to be used will be a
-compatible string for the pinctrl driver to setup the right pin numbers.
-
-Thanks,
-
-Daniel
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
