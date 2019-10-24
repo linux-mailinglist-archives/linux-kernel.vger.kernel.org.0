@@ -2,92 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC9CDE3E2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 23:30:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36B07E3E3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 23:32:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729293AbfJXVaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 17:30:14 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38676 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729262AbfJXVaN (ORCPT
+        id S1729483AbfJXVcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 17:32:23 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:43526 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbfJXVcX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 17:30:13 -0400
-Received: by mail-lf1-f68.google.com with SMTP id q28so17082999lfa.5
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 14:30:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h5FP/voiQdxeaQU3Va8HH5cRZmi1OHTMwBKcRrrOo6E=;
-        b=G+CKE+0sNMbBuosjchwhgzz8NQwfbV/8kKBYcW1zgIA+wCHZXB0W4xnrddKNkrujly
-         nBXQf8TMFFxtwDaqAlubm1WQBu/DIP2jq0ClHTeKxpnxD8j4n3vqHGpl41RLHFrD0jXc
-         jfdzDY5G/0JxiPvAj8Pc7cihC14c7Kl2f6hiQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h5FP/voiQdxeaQU3Va8HH5cRZmi1OHTMwBKcRrrOo6E=;
-        b=h7A0jEY+aNfAfJ8RCmlZK4neNBVBlJ/+iBd3dpCfmjrZerBvc4pJ/PgVD+YqsiaZhp
-         yO7xp1Plxyyw34Do5GAz1Yjt01kZ9EEklsv2MXK3eehzRzNwXjO7fpd055At759178wO
-         01B9wKLLCCgeC13iVTlHgSSuk+zhaEFfdWz9w3tciaEwEKZxTdAGaGAhClac/0bcFIOI
-         rPzrdyD20SMuuJqjsF5fQoEeXREDIjB1X7fn6I3SRx0kPQciq2NXtZn/yfiEFLi672Wf
-         4edVD9FaxkQgWZXaLRTyU5oFcPxIKF1RDtNIHlYgLgfngfZijuQf7tkmYJJpMM86x//e
-         Q8Pg==
-X-Gm-Message-State: APjAAAVgEdH7QI9s9QtXDhIUvNrz0qWQ/lRy0NMFRp5Q+/VSKsBSAorz
-        HkzeLGBsFPYHcbmshJGCpOI2Q+fSXnkCTQ==
-X-Google-Smtp-Source: APXvYqxTeYRNDiiFxgFPogFWQ+89fYv2PckFtDlKHrNfp2BhUH5pTla3BE1u6aVeN7d2V9WOPSq74g==
-X-Received: by 2002:a19:ac01:: with SMTP id g1mr188110lfc.141.1571952610274;
-        Thu, 24 Oct 2019 14:30:10 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id b141sm12566315lfg.67.2019.10.24.14.30.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2019 14:30:08 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id y3so257407ljj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 14:30:08 -0700 (PDT)
-X-Received: by 2002:a05:651c:331:: with SMTP id b17mr3303284ljp.133.1571952607809;
- Thu, 24 Oct 2019 14:30:07 -0700 (PDT)
+        Thu, 24 Oct 2019 17:32:23 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9OLSVH7149758;
+        Thu, 24 Oct 2019 21:31:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=7VNCm8/h59zAbyDESPWUwTXCjH05vwC9XImN45kK2og=;
+ b=ZWe+8JC8tshXEZcb6gNK3DIukQBAeEETMDfC0XT+N8FqGLQdH+2w/5kCuFjMuhYFZfrF
+ jmBi5rHi6Gp04aj29Gtkcuipcx3qIlSvzQn65mu6O2Pa9dOs/GymgzHnXfK6kwVO3OfF
+ SEScMPC4vddgRHA9rKDDOI/ql3xPgRjrO2Lu6l+H7+yhB0J8kzDEK0PqlnChiJAm3Rz1
+ ALRRvJlEHcg0QtxHc6Ved+o1gxypFqjqP5HJty2LtbuGc6o7kJDjmC939b8bZUux993k
+ Dfh/uaB77xaC2dXC20VbSg1iTtOuYdOcadr0p7mXpE7My9AXjLmsabANBNw8tyfO2crW eg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2vqteq6c9c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 24 Oct 2019 21:31:54 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9OLSQLM014161;
+        Thu, 24 Oct 2019 21:31:54 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2vtsk5t3by-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 24 Oct 2019 21:31:54 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9OLVrJF006728;
+        Thu, 24 Oct 2019 21:31:53 GMT
+Received: from dhcp-10-10-58-254.usdhcp.oraclecorp.com (/10.10.58.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 24 Oct 2019 14:31:52 -0700
+Subject: Re: [PATCH 4/5] tracing: Handle the trace array ref counter in new
+ functions
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
+        Srinivas Eeda <srinivas.eeda@oracle.com>,
+        Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+References: <1565805327-579-1-git-send-email-divya.indi@oracle.com>
+ <1565805327-579-5-git-send-email-divya.indi@oracle.com>
+ <20191015190436.65c8c7a3@gandalf.local.home>
+ <4cad186e-ba8b-8e1a-731b-4350a095ba5a@oracle.com>
+ <20191022225253.4086195c@oasis.local.home>
+ <2b08751a-4028-2130-9a70-c2aa2d76a31c@oracle.com>
+ <20191024090037.78fe9f30@gandalf.local.home>
+From:   Divya Indi <divya.indi@oracle.com>
+Message-ID: <74a1af20-5f99-bb64-1e0f-c8405bd68014@oracle.com>
+Date:   Thu, 24 Oct 2019 14:31:51 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <30394.1571936252@warthog.procyon.org.uk>
-In-Reply-To: <30394.1571936252@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 24 Oct 2019 17:29:51 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wiMho2AhcTWC3-3zGK7639XL9UT=AheMXY0pxGHDACn6g@mail.gmail.com>
-Message-ID: <CAHk-=wiMho2AhcTWC3-3zGK7639XL9UT=AheMXY0pxGHDACn6g@mail.gmail.com>
-Subject: Re: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191024090037.78fe9f30@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9420 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910240202
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9420 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910240202
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 12:57 PM David Howells <dhowells@redhat.com> wrote:
+Hi Steven,
+
+On 10/24/19 6:00 AM, Steven Rostedt wrote:
+> On Wed, 23 Oct 2019 15:57:49 -0700
+> Divya Indi <divya.indi@oracle.com> wrote:
 >
-> pipe: Add fsync() support
+>> Hi Steven,                                                                         
+>>                                                                                  
+>> A few clarifications on this discussion on reference counter -                   
+>>                                                                                  
+>> 1) We will still need to export trace_array_put() to be used for every           
+>> trace_array_get_by_name() OR trace_array_create() + trace_array_get().        
+> I'm fine with exporting trace_array_put, and even trace_array_get.
+>       
+>>                                                                                  
+>> How else will we reduce the reference counter [For eg: When multiple modules     
+>> lookup the same trace array (say, reference counter = 4)]?                       
+>>                                                                                  
+>> 2) tr = trace_array_create("my_tr");                                             
+>>    trace_array_get(tr);                                                          
+>>                                                                                  
+>> Both of these functions will iterate through the list of trace arrays to verify  
+>> whether the trace array exists (redundant, but more intuitive? Does this seem    
+>> acceptable?)                                                                     
+>>                                                                                  
+>> To avoid iterating twice, we went with increasing ref_ctr in trace_array_create. 
+>> This necessitated a trace_array_put() in instance_mkdir (Or as suggested below,
+>> we can do this trace_array_put() in instance_rmdir().)                        
+>>                                                                                                                
+>>                                                                                  
+>> 3) A summary of suggested changes (Let me know if this looks good) -                                              
+>>                                                                                  
+>> tr = trace_array_get_by_name("foo-bar"); // ref_ctr++.                           
+>>                                                                                  
+>> if (!tr)                                                                         
+>> {                                                                                
+>>         // instance_mkdir also causes ref_ctr = 1                                
+> You'll need locking for anyone who does this, and check the return
+> status below for "foo-bar" existing already (due to another thread
+> jumping in here).
+
+Right, Noted! Thanks for the pointer. 
+
 >
-> The keyrings testsuite needs the ability to wait for all the outstanding
-> notifications in the queue to have been processed so that it can then go
-> through them to find out whether the notifications it expected have been
-> emitted.
-
-Can't you just do
-
-    ioctl(fd, FIONREAD, &count);
-
-in a loop instead? "No paperwork. Just sprinkle some msleep() crack on
-him, and let's get out of here"
-
-               Linus
+> -- Steve
+>
+>>         tr = trace_array_create("foo-bar"); // ref_ctr = 1                       
+>>         trace_array_get(tr); // ref_ctr++                                        
+>> }                                                                                
+>>                                                                                  
+>> trace_array_printk(.....);                                                       
+>> trace_array_set_clr_event(......);                                               
+>> ...                                                                              
+>> ...                                                                              
+>> ...                                                                              
+>> // Done using the trace array.                                                   
+>> trace_array_put(tr); // ref_ctr--                                                
+>> ...                                                                              
+>> ...                                                                              
+>> ...                                                                              
+>> // We can now remove the trace array via trace_array_destroy or instance_rmdir()
+>> trace_array_destroy(tr); // ref_ctr > 1 returns -EBUSY.
