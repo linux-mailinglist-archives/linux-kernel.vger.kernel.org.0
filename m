@@ -2,84 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F8A4E3925
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 19:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D76B8E3940
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 19:05:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410046AbfJXRDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 13:03:39 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56468 "EHLO
+        id S2410176AbfJXRFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 13:05:25 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39115 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2410047AbfJXRDj (ORCPT
+        with ESMTP id S2410164AbfJXRFX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 13:03:39 -0400
+        Thu, 24 Oct 2019 13:05:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571936618;
+        s=mimecast20190719; t=1571936722;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=KPuVZSjsJby28GYRrSW7KOOUQEyPDIp7ehYqx2CiMW8=;
-        b=B2KqYigeTOy41TCbKdWuujH9Kmc/DgRUCAo8a2h4j/s6nnLVD1Jetjp09J1WGB9d+QvcU3
-        048u/Ua6FXJaXijMUSEfFCR0SB5jJlC62e5lwwsQR+P06AfiYqzeiZBNtEv0QDgjzDPpfC
-        CewWVt/09BD0Cc5C/2e7lwHYjJm7sLo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-305-4DGjzRdVOO-j_UhaexIoDw-1; Thu, 24 Oct 2019 13:03:34 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1CED11800DFB;
-        Thu, 24 Oct 2019 17:03:22 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EA8096012E;
-        Thu, 24 Oct 2019 17:03:16 +0000 (UTC)
-Subject: Re: [PATCH 0/2] Enabling MSI for Microblaze
-To:     Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com,
-        palmer@sifive.com, hch@infradead.org, helgaas@kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Jackie Liu <liuyun01@kylinos.cn>,
-        Wesley Terpstra <wesley@sifive.com>,
-        Firoz Khan <firoz.khan@linaro.org>, sparclinux@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
-        James Hogan <jhogan@kernel.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-snps-arc@lists.infradead.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Biggers <ebiggers@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-mips@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org
-References: <cover.1571911976.git.michal.simek@xilinx.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <e9feafd1-8497-025b-e81d-f0e974038f3c@redhat.com>
-Date:   Thu, 24 Oct 2019 13:03:16 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        bh=03+5VBqCPd68lTAQRb1/kJfIJ/zUP3/Day5xyJuYTDk=;
+        b=iHeBh7deK3GUuk+MT5EmdtQT+VJqfR8JxS+SlMf2gE23/BI84cqdwl/tsPscol6y8bj/5D
+        llz8i85IW3NpG8OFRbpE7uc/K/+Wg8trPWVTqQdrGCX9pVV2cIHo/CcfmpfFqitCByWsZN
+        Ubbvi0xrSCSlOc9v6hO8LuAv7MNBR4o=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-60-2XGw77MHNBi44lXx18IItw-1; Thu, 24 Oct 2019 13:05:18 -0400
+Received: by mail-lj1-f199.google.com with SMTP id m7so353982lje.11
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 10:05:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j/o8TfhScpVV/SFKEy17AB1Zf2axWbjJiCRdK+oaodM=;
+        b=VMkrt3HbWdkDCRgmDg5dqVeKt5QGoeJo6phR/vTfbpOGBTznhjOebSHdDFRFNVexrK
+         daDEeeCCIwm8d5jL2XbQMpveZBcmhccqlMrGqIqQCZB8sjijY/0XPHF12iPUBVx644j+
+         WwihCzmpBqngrQZzp4oGxlU+6Jy7PuBB/Dr+Iu1bIZBK+3KXSgh7h9cq/3tNIfP8Vj8t
+         qQtXbEU+Po9sRzeLqQ4xVeyQotol5G/EPDyT7gNW5GSf28SlhEt1G/XqPIadUW5O/LJO
+         +3n9PQXagRAp1LTW3Jb5taVkWhWa0LG3EHKb951QlSOEHLFW/rAso6y8LAyPTOZXTVKB
+         rkYw==
+X-Gm-Message-State: APjAAAVNdS/XEDBEaApmbwP4Uvszl1bs4kuQwRRrbRUGs+eSdXRIdZ3s
+        T0YsoJ4t6CsRYyyW57EPI+bOP/B0c7KRMUS3j3wpQ3rZrM4iPcyVzgEMfKehWsC8Nd0wEVO3Rhp
+        qPQFT3JEyQ4knbS3e6H4Pwd+eDKUfGT+IMr+v9aHf
+X-Received: by 2002:a05:6512:51a:: with SMTP id o26mr3538272lfb.132.1571936717132;
+        Thu, 24 Oct 2019 10:05:17 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzIPhBNg98lecbpGanzXdv/jvDEOMcLhjDgpSTFOb/kzuzr1Y8DKoHvodVSYY7pWM8MkSV9AFU5hw5SZdcroyw=
+X-Received: by 2002:a05:6512:51a:: with SMTP id o26mr3538262lfb.132.1571936716917;
+ Thu, 24 Oct 2019 10:05:16 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cover.1571911976.git.michal.simek@xilinx.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: 4DGjzRdVOO-j_UhaexIoDw-1
+References: <20191022141438.22002-1-mcroce@redhat.com> <20191023.202813.607713311547571229.davem@davemloft.net>
+In-Reply-To: <20191023.202813.607713311547571229.davem@davemloft.net>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Thu, 24 Oct 2019 19:04:40 +0200
+Message-ID: <CAGnkfhwbuXS7hYWuBqERi-FA1ZbjFqWN81aOP_MpcqsmPkkLVQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] mvpp2: prefetch frame header
+To:     David Miller <davem@davemloft.net>
+Cc:     netdev <netdev@vger.kernel.org>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        LKML <linux-kernel@vger.kernel.org>
+X-MC-Unique: 2XGw77MHNBi44lXx18IItw-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -88,41 +69,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/19 6:13 AM, Michal Simek wrote:
-> Hi,
->
-> these two patches come from discussion with Christoph, Bjorn, Palmer and
-> Waiman. The first patch was suggestion by Christoph here
-> https://lore.kernel.org/linux-riscv/20191008154604.GA7903@infradead.org/
-> The second part was discussed
-> https://lore.kernel.org/linux-pci/mhng-5d9bcb53-225e-441f-86cc-b335624b3e=
-7c@palmer-si-x1e/
-> and
-> https://lore.kernel.org/linux-pci/20191017181937.7004-1-palmer@sifive.com=
-/
->
-> Thanks,
-> Michal
->
->
-> Michal Simek (1):
->   asm-generic: Make msi.h a mandatory include/asm header
->
-> Palmer Dabbelt (1):
->   pci: Default to PCI_MSI_IRQ_DOMAIN
->
->  arch/arc/include/asm/Kbuild     | 1 -
->  arch/arm/include/asm/Kbuild     | 1 -
->  arch/arm64/include/asm/Kbuild   | 1 -
->  arch/mips/include/asm/Kbuild    | 1 -
->  arch/powerpc/include/asm/Kbuild | 1 -
->  arch/riscv/include/asm/Kbuild   | 1 -
->  arch/sparc/include/asm/Kbuild   | 1 -
->  drivers/pci/Kconfig             | 2 +-
->  include/asm-generic/Kbuild      | 1 +
->  9 files changed, 2 insertions(+), 8 deletions(-)
->
-That looks OK.
+On Thu, Oct 24, 2019 at 5:28 AM David Miller <davem@davemloft.net> wrote:
+> You cannot unmap it this early, because of all of the err_drop_frame
+> code paths that might be taken next.  The DMA mapping must stay in place
+> in those cases.
 
-Acked-by: Waiman Long <longman@redhat.com>
+Thanks for noting this.
+I'm sending a series with this and other small fixes.
+
+Regards,
+--=20
+Matteo Croce
+per aspera ad upstream
 
