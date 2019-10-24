@@ -2,80 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00544E3A38
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 19:40:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1626E3A3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 19:40:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503882AbfJXRkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 13:40:20 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:59618 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729458AbfJXRkT (ORCPT
+        id S2503916AbfJXRkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 13:40:49 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:49092 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729458AbfJXRks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 13:40:19 -0400
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C0E872010AC3;
-        Thu, 24 Oct 2019 10:40:18 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C0E872010AC3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1571938819;
-        bh=IDatuhvAIUC8shfzil97Wc2552dWcbQTynpu3KtnO84=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=oq7uLOnCiIJzJwKl9UtoSEsELanj0SNiNpRNkf9QVKFoTu6UFAw3U0jslONs7uWcF
-         A+Pl8F79LgCQ4zHWSptkJGYeWpxb+b8VfxcAT/agpYuQRQJYOtZ5Q/F0REVjtsus4B
-         ynwZmDSY2ruTgnlJoEsiy8VF3xAHRuXX28ZWXfi4=
-Subject: Re: [PATCH v9 4/8] powerpc/ima: define trusted boot policy
-To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Eric Ricther <erichte@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>
-References: <20191024034717.70552-1-nayna@linux.ibm.com>
- <20191024034717.70552-5-nayna@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <3e36c14f-d4bb-5da5-b188-ca84bc282f0d@linux.microsoft.com>
-Date:   Thu, 24 Oct 2019 10:40:36 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        Thu, 24 Oct 2019 13:40:48 -0400
+Received: from localhost.localdomain (p4FEFC197.dip0.t-ipconnect.de [79.239.193.151])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 602ADCECF4;
+        Thu, 24 Oct 2019 19:49:47 +0200 (CEST)
+From:   Marcel Holtmann <marcel@holtmann.org>
+To:     arnd@arndb.de, gregkh@linuxfoundation.org,
+        johannes@sipsolutions.net, davem@davemloft.net
+Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH] rfkill: allocate static minor
+Date:   Thu, 24 Oct 2019 19:40:42 +0200
+Message-Id: <20191024174042.19851-1-marcel@holtmann.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20191024034717.70552-5-nayna@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/23/2019 8:47 PM, Nayna Jain wrote:
+udev has a feature of creating /dev/<node> device-nodes if it finds
+a devnode:<node> modalias. This allows for auto-loading of modules that
+provide the node. This requires to use a statically allocated minor
+number for misc character devices.
 
-> +/*
-> + * The "secure_and_trusted_rules" contains rules for both the secure boot and
-> + * trusted boot. The "template=ima-modsig" option includes the appended
-> + * signature, when available, in the IMA measurement list.
-> + */
-> +static const char *const secure_and_trusted_rules[] = {
-> +	"measure func=KEXEC_KERNEL_CHECK template=ima-modsig",
-> +	"measure func=MODULE_CHECK template=ima-modsig",
-> +	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig",
-> +#ifndef CONFIG_MODULE_SIG_FORCE
-> +	"appraise func=MODULE_CHECK appraise_type=imasig|modsig",
-> +#endif
-> +	NULL
-> +};
+However, rfkill uses dynamic minor numbers and prevents auto-loading
+of the module. So allocate the next static misc minor number and use
+it for rfkill.
 
-Same comment as earlier - any way to avoid using conditional compilation 
-in C file?
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+---
+ include/linux/miscdevice.h | 1 +
+ net/rfkill/core.c          | 9 +++++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-  -lakshmi
+diff --git a/include/linux/miscdevice.h b/include/linux/miscdevice.h
+index 3247a3dc7934..b06b75776a32 100644
+--- a/include/linux/miscdevice.h
++++ b/include/linux/miscdevice.h
+@@ -57,6 +57,7 @@
+ #define UHID_MINOR		239
+ #define USERIO_MINOR		240
+ #define VHOST_VSOCK_MINOR	241
++#define RFKILL_MINOR		242
+ #define MISC_DYNAMIC_MINOR	255
+ 
+ struct device;
+diff --git a/net/rfkill/core.c b/net/rfkill/core.c
+index f9b08a6d8dbe..0bf9bf1ceb8f 100644
+--- a/net/rfkill/core.c
++++ b/net/rfkill/core.c
+@@ -1316,10 +1316,12 @@ static const struct file_operations rfkill_fops = {
+ 	.llseek		= no_llseek,
+ };
+ 
++#define RFKILL_NAME "rfkill"
++
+ static struct miscdevice rfkill_miscdev = {
+-	.name	= "rfkill",
+ 	.fops	= &rfkill_fops,
+-	.minor	= MISC_DYNAMIC_MINOR,
++	.name	= RFKILL_NAME,
++	.minor	= RFKILL_MINOR,
+ };
+ 
+ static int __init rfkill_init(void)
+@@ -1371,3 +1373,6 @@ static void __exit rfkill_exit(void)
+ 	class_unregister(&rfkill_class);
+ }
+ module_exit(rfkill_exit);
++
++MODULE_ALIAS_MISCDEV(RFKILL_MINOR);
++MODULE_ALIAS("devname:" RFKILL_NAME);
+-- 
+2.21.0
+
