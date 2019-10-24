@@ -2,64 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9417DE3C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9182E3C62
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:50:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437380AbfJXTtA convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 24 Oct 2019 15:49:00 -0400
-Received: from mga01.intel.com ([192.55.52.88]:59469 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437273AbfJXTs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 15:48:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 12:48:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,225,1569308400"; 
-   d="scan'208";a="399879464"
-Received: from vcostago-desk1.jf.intel.com (HELO vcostago-desk1) ([10.54.70.82])
-  by fmsmga006.fm.intel.com with ESMTP; 24 Oct 2019 12:48:59 -0700
-From:   Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To:     Davidlohr Bueso <dave@stgolabs.net>, netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: WARNING: at net/sched/sch_generic.c:448
-In-Reply-To: <20191024032105.xmewznsphltnrido@linux-p48b>
-References: <20191024032105.xmewznsphltnrido@linux-p48b>
-Date:   Thu, 24 Oct 2019 12:50:11 -0700
-Message-ID: <87mudpylcc.fsf@linux.intel.com>
+        id S2437906AbfJXTuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 15:50:32 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:59745 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437545AbfJXTuX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 15:50:23 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 8116A891AC;
+        Fri, 25 Oct 2019 08:50:22 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1571946622;
+        bh=ThiNpTXHoycHPLCDbXolfJgvcU9M5rnzh6PH45SgY74=;
+        h=From:To:Cc:Subject:Date;
+        b=bEF2VBnxH3bvcE4sA9EW7lI4R/hGYa1rlxcy3I7TT15bBnmCoRGNRgbM2626TeK2M
+         U8QQulm1/9lP/0uKlXFIm+aIrd1P1LJUecMUDHPs04v4h5S41WJEv37MoVuj5tKHXT
+         kff0lu4bd+Ohcysx25wZU3rw9uwxCgnhbBdM06HZmSzThT+At5w3VB3TSzD8OXvixP
+         e3wLtNWPPdTReYVMSpjDDILXOFxHa3lX/0Li+a7bjVwZ5JnMhhDom2FOjtSyKUtO2Q
+         duzYZ0FdN/ky3PnmECJp9AAIFj9ycarX7siUXQeGUZe4SGC3dM33ZFXq8ssocYQftZ
+         cChWwUxKz10Dw==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5db200790000>; Fri, 25 Oct 2019 08:50:21 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id 896A313EEEB;
+        Fri, 25 Oct 2019 08:50:22 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 5358A28005C; Fri, 25 Oct 2019 08:50:18 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     corbet@lwn.net, rppt@linux.ibm.com, willy@infradead.org
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v3 0/3] docs/core-api: memory-allocation: minor cleanups
+Date:   Fri, 25 Oct 2019 08:50:13 +1300
+Message-Id: <20191024195016.11054-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Clean up some formatting and add references to helpers for calculating si=
+zes
+safely.
 
-Davidlohr Bueso <dave@stgolabs.net> writes:
+This series is based of v5.4-rc4.
 
-> Hi,
->
-> I'm hitting the following in linux-next, and as far back as v5.2, ring any bells?
->
-> [  478.588144] NETDEV WATCHDOG: eth0 (igb): transmit queue 0 timed out
-> [  478.601994] WARNING: CPU: 10 PID: 74 at net/sched/sch_generic.c:448 dev_watchdog+0x253/0x260
-> [  478.620613] Modules linked in: ebtable_filter(E) ebtables(E) ip6table_filter(E) ip6_tables(E) iptable_filter(E) ip_tables(E) x_tables(E) bpfilter(E) scsi_transport_iscsi(E) af_packet(E) iscsi_ibft(E) iscsi_boot_sysfs(E) ext4(E) intel_rapl_msr(E) intel_rapl_common(E) crc16(E) mbcache(E) jbd2(E) sb_edac(E) x86_pkg_temp_thermal(E) intel_powerclamp(E) coretemp(E) kvm_intel(E) kvm(E) irqbypass(E) crc32_pclmul(E) iTCO_wdt(E) ghash_clmulni_intel(E) iTCO_vendor_support(E) aesni_intel(E) crypto_simd(E) cryptd(E) glue_helper(E) ipmi_si(E) igb(E) ioatdma(E) pcspkr(E) ipmi_devintf(E) mei_me(E) lpc_ich(E) mfd_core(E) ipmi_msghandler(E) joydev(E) i2c_i801(E) mei(E) dca(E) button(E) btrfs(E) libcrc32c(E) xor(E) raid6_pq(E) hid_generic(E) usbhid(E) sd_mod(E) mgag200(E) drm_kms_helper(E) syscopyarea(E) sysfillrect(E) sysimgblt(E) fb_sys_fops(E) i2c_algo_bit(E) isci(E) ehci_pci(E) drm_vram_helper(E) ahci(E) ehci_hcd(E) libsas(E) crc32c_intel(E) ttm(E) libahci(E) scsi_transport_sas(E) drm(E) usbcore(E)
-> [  478.620658]  libata(E) wmi(E) sg(E) dm_multipath(E) dm_mod(E) scsi_dh_rdac(E) scsi_dh_emc(E) scsi_dh_alua(E) scsi_mod(E)
-> [  478.837008] CPU: 10 PID: 74 Comm: ksoftirqd/10 Kdump: loaded Tainted: G            E     5.4.0-rc4-2-default+ #2
-> [  478.859457] Hardware name: Intel Corporation LH Pass/SVRBD-ROW_P, BIOS SE5C600.86B.02.01.SP04.112220131546 11/22/2013
-> [  478.882867] RIP: 0010:dev_watchdog+0x253/0x260
+There was a merge conflict with commit 59bb47985c1d ("mm, sl[aou]b: guara=
+ntee
+natural alignment for kmalloc(power-of-two)") and the c:func: patch is
+dependent on the typo fix. The former was resolved with a rebase, the lat=
+ter by
+actually sending it as part of the series.
 
-Not ringing any bells, but if this timeout is happening, you should also
-be seeing some igb "TX Hang" warnings. Usually this warning happens when
-some packet is stuck (for whatever reason) in the transmission queue.
+Chris Packham (3):
+  docs/core-api: memory-allocation: fix typo
+  docs/core-api: memory-allocation: remove uses of c:func:
+  docs/core-api: memory-allocation: mention size helpers
 
-Can you share more details about what you are running? specially the
-kind of configuration (if any) you are doing to the controller.
+ Documentation/core-api/memory-allocation.rst | 50 ++++++++++----------
+ 1 file changed, 24 insertions(+), 26 deletions(-)
 
+--=20
+2.23.0
 
-Cheers,
---
-Vinicius
