@@ -2,189 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E633E2F7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 047E4E2F84
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:55:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392699AbfJXKzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 06:55:04 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:34971 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728813AbfJXKzE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 06:55:04 -0400
-Received: from [114.245.47.48] (helo=localhost.localdomain)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <aaron.ma@canonical.com>)
-        id 1iNalg-0000GJ-H0; Thu, 24 Oct 2019 10:55:01 +0000
-Subject: Re: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
-To:     Takashi Iwai <tiwai@suse.de>, Kailang <kailang@realtek.com>
-Cc:     "perex@perex.cz" <perex@perex.cz>,
-        "hui.wang@canonical.com" <hui.wang@canonical.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20191022153855.14368-1-aaron.ma@canonical.com>
- <s5hpniodaq4.wl-tiwai@suse.de> <848ebd7fd86e4c05936e70f500f718e9@realtek.com>
- <892889ae-0ce1-fbf6-d19f-50a5686e84c2@canonical.com>
- <ed97b6a8bd9445ecb48bc763d9aaba7a@realtek.com> <s5ha79qxwh3.wl-tiwai@suse.de>
-From:   Aaron Ma <aaron.ma@canonical.com>
-Autocrypt: addr=aaron.ma@canonical.com; prefer-encrypt=mutual; keydata=
- mQENBFffeLkBCACi4eE4dPsgWN6B9UDOVcAvb5QgU/hRG6yS0I1lGKQv4KA+bke0c5g8clbO
- 9gIlIl2bityfA9NzBsDik4Iei3AxMbFyxv9keMwcOFQBIOZF0P3f05qjxftF8P+yp9QTV4hp
- BkFzsXzWRgXN3r8hU8wqZybepF4B1C83sm2kQ5A5N0AUGbZli9i2G+/VscG9sWfLy8T7f4YW
- MjmlijCjoV6k29vsmTWQPZ7EApNpvR5BnZQPmQWzkkr0lNXlsKcyLgefQtlwg6drK4fe4wz0
- ouBIHJEiXE1LWK1hUzkCUASra4WRwKk1Mv/NLLE/aJRqEvF2ukt3uVuM77RWfl7/H/v5ABEB
- AAG0IUFhcm9uIE1hIDxhYXJvbi5tYUBjYW5vbmljYWwuY29tPokBNwQTAQgAIQUCV994uQIb
- AwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDNxCzQfVU6ntJ9B/9aVy0+RkLqF9QpLmw+
- LAf1m3Fd+4ZarPTerqDqkLla3ekYhbrEtlI1mYuB5f+gtrIjmcW27gacHdslKB9YwaL8B4ZB
- GJKhcrntLg4YPzYUnXZkHHTv1hMw7fBYw82cBT+EbG0Djh6Po6Ihqyr3auHhfFcp1PZH4Mtq
- 6hN5KaDZzF/go+tRF5e4bn61Nhdue7mrhFSlfkzLG2ehHWmRV+S91ksH81YDFnazK0sRINBx
- V1S8ts3WJ2f1AbgmnDlbK3c/AfI5YxnIHn/x2ZdXj1P/wn7DgZHmpMy5DMuk0gN34NLUPLA/
- cHeKoBAF8emugljiKecKBpMTLe8FrVOxbkrauQENBFffeLkBCACweKP3Wx+gK81+rOUpuQ00
- sCyKzdtMuXXJ7oL4GzYHbLfJq+F+UHpQbytVGTn3R5+Y61v41g2zTYZooaC+Hs1+ixf+buG2
- +2LZjPSELWPNzH9lsKNlCcEvu1XhyyHkBDbnFFHWlUlql3nSXMo//dOTG/XGKaEaZUxjCLUC
- 8ehLc16DJDvdXsPwWhHrCH/4k92F6qQ14QigBMsl75jDTDJMEYgRYEBT1D/bwxdIeoN1BfIG
- mYgf059RrWax4SMiJtVDSUuDOpdwoEcZ0FWesRfbFrM+k/XKiIbjMZSvLunA4FIsOdWYOob4
- Hh0rsm1G+fBLYtT+bE26OWpQ/lSn4TdhABEBAAGJAR8EGAEIAAkFAlffeLkCGwwACgkQzcQs
- 0H1VOp6p5Af/ap5EVuP1AhFdPD3pXLNrUUt72W3cuAOjXyss43qFC2YRjGfktrizsDjQU46g
- VKoD6EW9XUPgvYM+k8BJEoXDLhHWnCnMKlbHP3OImxzLRhF4kdlnLicz1zKRcessQatRpJgG
- NIiD+eFyh0CZcWBO1BB5rWikjO/idicHao2stFdaBmIeXvhT9Xp6XNFEmzOmfHps+kKpWshY
- 9LDAU0ERBNsW4bekOCa/QxfqcbZYRjrVQvya0EhrPhq0bBpzkIL/7QSBMcdv6IajTlHnLARF
- nAIofCEKeEl7+ksiRapL5Nykcbt4dldE3sQWxIybC94SZ4inENKw6I8RNpigWm0R5w==
-Message-ID: <e618acfb-535f-e560-c135-a3fde43dae77@canonical.com>
-Date:   Thu, 24 Oct 2019 18:54:53 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S2393315AbfJXKzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 06:55:09 -0400
+Received: from vps.xff.cz ([195.181.215.36]:33810 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728813AbfJXKzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 06:55:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1571914506; bh=1EYHhZa3jmmFFim3CNdXdWqGggwNarNck0+eiGZhSdU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XYbnHjp+wt4niF1BOdOuTn1CKEEUtjd5UaC6KAyEc4QWCXi7opj09D5URcrsrO1FN
+         ZWo05sWeiM/7f+RrZBggguVUQUxmcEdQjNO0cAAWEkwILKQWyatoPCQH1UdMADM4wG
+         t7ELJtQRA2B/wiAc5iU4Kc86XCJIFsJ3LevethF0=
+From:   Ondrej Jirman <megous@megous.com>
+To:     linux-sunxi@googlegroups.com,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Ondrej Jirman <megous@megous.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/4] Add USB 3 support for H6 and Orange Pi 3
+Date:   Thu, 24 Oct 2019 12:54:56 +0200
+Message-Id: <20191024105500.2252707-1-megous@megous.com>
 MIME-Version: 1.0
-In-Reply-To: <s5ha79qxwh3.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/19 6:35 PM, Takashi Iwai wrote:
-> On Thu, 24 Oct 2019 09:20:19 +0200,
-> Kailang wrote:
->>
->> Hi Takashi,
->>
->> Attach patch was support ALC623.
-> 
-> Thanks, applied now.
-> 
-> Aaron, could you rebase your patch and resubmit?
-> 
-> 
+This series implements USB 3 support for Xunlong Orange Pi 3 board.
 
-Yes I will.
-One line of same changes.
+This is a re-hash of the Icenowy's earlier USB3 work[1] without code
+that caused controversy previously. Orange Pi 3 board doesn't need vbus
+supply to be dynamically enabled, so that code is not needed to support
+USB3 on this board.
 
-Thanks,
-Aaron
+Most of patches are already reviewed. I've converted dt-bindings to yaml
+format, and added the Orange Pi 3 board modifications.
 
-> Takashi
-> 
->>
->> BR,
->> Kailang
->>
->>> -----Original Message-----
->>> From: Aaron Ma <aaron.ma@canonical.com>
->>> Sent: Wednesday, October 23, 2019 6:06 PM
->>> To: Kailang <kailang@realtek.com>; Takashi Iwai <tiwai@suse.de>
->>> Cc: perex@perex.cz; hui.wang@canonical.com; alsa-devel@alsa-project.org;
->>> linux-kernel@vger.kernel.org
->>> Subject: Re: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
->>>
->>> On 10/23/19 4:44 PM, Kailang wrote:
->>>>
->>>>
->>>>> -----Original Message-----
->>>>> From: Takashi Iwai <tiwai@suse.de>
->>>>> Sent: Wednesday, October 23, 2019 12:08 AM
->>>>> To: Aaron Ma <aaron.ma@canonical.com>
->>>>> Cc: perex@perex.cz; Kailang <kailang@realtek.com>;
->>>>> hui.wang@canonical.com; alsa-devel@alsa-project.org;
->>>>> linux-kernel@vger.kernel.org
->>>>> Subject: Re: [PATCH] ALSA: hda/realtek - Fix 2 front mics of codec
->>>>> 0x623
->>>>>
->>>>> On Tue, 22 Oct 2019 17:38:55 +0200,
->>>>> Aaron Ma wrote:
->>>>>>
->>>>>> These 2 ThinkCentres installed a new realtek codec ID 0x623, it has
->>>>>> 2 front mics with the same location on pin 0x18 and 0x19.
->>>>>>
->>>>>> Apply fixup ALC283_FIXUP_HEADSET_MIC to change 1 front mic location
->>>>>> to right, then pulseaudio can handle them.
->>>>>> One "Front Mic" and one "Mic" will be shown, and audio output works
->>>>>> fine.
->>>>>>
->>>>>> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
->>>>>
->>>>> I'd like to have Kailang's review about the new codec before applying.
->>>>>
->>>>> Kailang, could you take a look?
->>>> OK.
->>>> I will post you the patch for ALC623 codec tomorrow.
->>>> Thanks.
->>>
->>> Cc me too.
->>>
->>> Thank you.
->>> Aaron
->>>
->>>>
->>>>>
->>>>>
->>>>> thanks,
->>>>>
->>>>> Takashi
->>>>>
->>>>>> ---
->>>>>>  sound/pci/hda/patch_realtek.c | 3 +++
->>>>>>  1 file changed, 3 insertions(+)
->>>>>>
->>>>>> diff --git a/sound/pci/hda/patch_realtek.c
->>>>>> b/sound/pci/hda/patch_realtek.c index b000b36ac3c6..c34d8b435f58
->>>>>> 100644
->>>>>> --- a/sound/pci/hda/patch_realtek.c
->>>>>> +++ b/sound/pci/hda/patch_realtek.c
->>>>>> @@ -7186,6 +7186,8 @@ static const struct snd_pci_quirk
->>>>>> alc269_fixup_tbl[]
->>>>> = {
->>>>>>  	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station",
->>>>> ALC294_FIXUP_LENOVO_MIC_LOCATION),
->>>>>>  	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station",
->>>>> ALC294_FIXUP_LENOVO_MIC_LOCATION),
->>>>>>  	SND_PCI_QUIRK(0x17aa, 0x3151, "ThinkCentre Station",
->>>>>> ALC283_FIXUP_HEADSET_MIC),
->>>>>> +	SND_PCI_QUIRK(0x17aa, 0x3178, "ThinkCentre Station",
->>>>> ALC283_FIXUP_HEADSET_MIC),
->>>>>> +	SND_PCI_QUIRK(0x17aa, 0x3176, "ThinkCentre Station",
->>>>>> +ALC283_FIXUP_HEADSET_MIC),
->>>>>>  	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80",
->>>>> ALC269_FIXUP_DMIC_THINKPAD_ACPI),
->>>>>>  	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210",
->>>>> ALC283_FIXUP_INT_MIC),
->>>>>>  	SND_PCI_QUIRK(0x17aa, 0x3978, "Lenovo B50-70",
->>>>>> ALC269_FIXUP_DMIC_THINKPAD_ACPI), @@ -9187,6 +9189,7 @@ static
->>>>> const struct hda_device_id snd_hda_id_realtek[] = {
->>>>>>  	HDA_CODEC_ENTRY(0x10ec0298, "ALC298", patch_alc269),
->>>>>>  	HDA_CODEC_ENTRY(0x10ec0299, "ALC299", patch_alc269),
->>>>>>  	HDA_CODEC_ENTRY(0x10ec0300, "ALC300", patch_alc269),
->>>>>> +	HDA_CODEC_ENTRY(0x10ec0623, "ALC623", patch_alc269),
->>>>>>  	HDA_CODEC_REV_ENTRY(0x10ec0861, 0x100340, "ALC660",
->>>>> patch_alc861),
->>>>>>  	HDA_CODEC_ENTRY(0x10ec0660, "ALC660-VD", patch_alc861vd),
->>>>>>  	HDA_CODEC_ENTRY(0x10ec0861, "ALC861", patch_alc861),
->>>>>> --
->>>>>> 2.17.1
->>>>>>
->>>>>
->>>>> ------Please consider the environment before printing this e-mail.
->> [2 0000-add-support-alc623.patch <application/octet-stream (base64)>]
->>
+Hopefully with this series we can get USB3 support into mainline for
+Orange Pi 3, and build on it later to support more boards, where
+supporting them is more complicated.
+
+Please take a look.
+
+thank you and regards,
+  Ondrej Jirman
+
+[1] https://lore.kernel.org/patchwork/patch/1058919/
+
+Changes in v2:
+- Added Maxime's Acked-By's
+- Fixed title of DT bindings file
+
+Changes since Icenowy v5 series:
+- use earlier patches that did not include VBUS regulator/connector
+  code
+- converted dt bindings to yaml
+- added patch to enable usb3 on Orange Pi 3
+
+Icenowy Zheng (2):
+  phy: allwinner: add phy driver for USB3 PHY on Allwinner H6 SoC
+  arm64: dts: allwinner: h6: add USB3 device nodes
+
+Ondrej Jirman (2):
+  dt-bindings: Add bindings for USB3 phy on Allwinner H6
+  arm64: dts: allwinner: orange-pi-3: Enable USB 3.0 host support
+
+ .../phy/allwinner,sun50i-h6-usb3-phy.yaml     |  47 +++++
+ .../dts/allwinner/sun50i-h6-orangepi-3.dts    |   8 +
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  32 +++
+ drivers/phy/allwinner/Kconfig                 |  12 ++
+ drivers/phy/allwinner/Makefile                |   1 +
+ drivers/phy/allwinner/phy-sun50i-usb3.c       | 195 ++++++++++++++++++
+ 6 files changed, 295 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb3-phy.yaml
+ create mode 100644 drivers/phy/allwinner/phy-sun50i-usb3.c
+
+-- 
+2.23.0
+
