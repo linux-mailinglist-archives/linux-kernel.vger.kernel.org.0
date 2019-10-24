@@ -2,212 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37CC6E2AEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0817BE2AC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:07:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437958AbfJXHPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 03:15:40 -0400
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:11570 "EHLO
-        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437940AbfJXHPh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 03:15:37 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 46zJFS55d2zKmhs;
-        Thu, 24 Oct 2019 09:06:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id DAIjq9oYK49d; Thu, 24 Oct 2019 09:06:30 +0200 (CEST)
-Date:   Thu, 24 Oct 2019 18:06:04 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v14 2/6] namei: LOOKUP_IN_ROOT: chroot-like path
- resolution
-Message-ID: <20191024070604.howuh6x6qrzd5jsm@yavin.dot.cyphar.com>
-References: <20191010054140.8483-1-cyphar@cyphar.com>
- <20191010054140.8483-3-cyphar@cyphar.com>
- <CAHk-=wh8L50f31vW8BwRUXhLiq3eoCQ3tg8ER4Yp2dzuU1w5rQ@mail.gmail.com>
- <20191012040815.gnc43cfmo5mnv67u@yavin.dot.cyphar.com>
- <20191012041541.milbmfbjpj5bcl5a@yavin.dot.cyphar.com>
+        id S2392481AbfJXHHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 03:07:09 -0400
+Received: from mout.web.de ([217.72.192.78]:49737 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727635AbfJXHHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 03:07:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1571900801;
+        bh=TpHiSzxCEIcAvar3A4yeKF3u8As5hzD8I+DOTDKwT5o=;
+        h=X-UI-Sender-Class:Cc:References:Subject:From:To:Date:In-Reply-To;
+        b=G9ubtSSlv9b8l/CVhirUvglEu7nB3uh6Ntn6a3TKtjfTBHtcmnTaDEHA9ePh6hmhB
+         JRrusH8GjF6nnvuH7Ui8xOSgtVEmdM5GaPlxGzLekXoN9I1l5euaxdwh+bsgfaGE5T
+         NihT8/lHEny15gbZbo0dan5e40Sf76k7fXHz4BCA=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.133.110.199]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0McWj6-1if45Y0KrQ-00Hiba; Thu, 24
+ Oct 2019 09:06:40 +0200
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Yi Wang <wang.yi59@zte.com.cn>,
+        Xue Zhihong <xue.zhihong@zte.com.cn>
+References: <1571897060-32374-1-git-send-email-zhong.shiqi@zte.com.cn>
+Subject: Re: [PATCH v2] coccicheck: support $COCCI being defined as a
+ directory
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+To:     Zhong Shiqi <zhong.shiqi@zte.com.cn>, cocci@systeme.lip6.fr
+Message-ID: <5762844f-2c39-2106-21fa-65e8297d4235@web.de>
+Date:   Thu, 24 Oct 2019 09:06:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i56sxfhksaspu3tw"
-Content-Disposition: inline
-In-Reply-To: <20191012041541.milbmfbjpj5bcl5a@yavin.dot.cyphar.com>
+In-Reply-To: <1571897060-32374-1-git-send-email-zhong.shiqi@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:z5Cz3dlOtdVoGDAFiUwZTRszL4aVafnN1BRC72MSMqg9BTm1Kxg
+ oYTIg9Nx2K7tlbFzocCpcp9gX8rwdfr/rujQgGUFdYZi1QOpR7ygZtanIEdZqVBNyVsL+Gn
+ VBoFyWOtUH2bzvEmal0je9Ok4W6dLmg4ZTvacptDp3IV7hGFLqhWjbLjah0Uj8d5/b9/Ued
+ QpFatQvVNVTAaw5+tOz/A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8fmZgCwGmRU=:49cATmb4XR3EEFi3d4Ng9W
+ S1IsFp9q4xdL6cbzsLNzq1HOaZJ+jpK+BhcOOBRoKwHvSBXhE9VD0ME7ehP5F1pRBq6XJQA+g
+ 0wXJgMhX+guQ0UnamUla/6XyvQOUsPveOcs1VN4wrhhQwcaFQgdOyRj6OHLF9MyHsEyRaf4s7
+ asfAMjLlY0KvtUj6vxt3VegyaLqJZPsGVs1tM7qJJOYva+RjhSz3JpogTAgRHTC6QMtgunU3r
+ IUt+5lywGnLj6zKcLjUsvRkwVLuh8CIor+wqe9eAHhH6jk1cLRyBD7NHet6fjmnx4rDxftLsg
+ gy+Qhx5iwdP4FNPyVsiwd0C5XMBalG6C7tf4uHnp/iMYMNmRDSwU5r05WEmZvmszMuqgpy7No
+ t8R119enSu8pPqA3pw+fNPc4HkEEZ+ox2R+yJubBhUzfivb67c78wdWERJe4CR5obQoqpXLA+
+ 4/lome3/Phi7MyVMengrUB72q4ZaXEOov0nd20Ztwa9jNm0KdKyhjd96HI+nEjSmOiewhxV/3
+ W0cnKipuEg52vcmoExU3xARIup3j8ugKI0dOdPqbZTXHrstUa5NPinNkOjAlmk1HoPN4Djdnx
+ /cgZ9fSaW+bnq9nZC1f36AcvyN0bXBg2euv2zfoHdMRZx+miBNZdBMkRpSFl+4cIEWI3bXZKv
+ 7QxGu5WkQQMzjwK5vPDmkouarqPfTe8n3UB6d7QDO/gUps4hkPvgI5fC6ot7BriYi0BTqvy0M
+ ipYH7n7Olq3PK9qPgPdYQicxqRz3IIirQpeCGg3iEbD8i8wPWkK8bbhACyRpFAGCoSNbh+LQf
+ Gg/BnvKOolMvFi7s0pfKo4LRaozralXerkUOxr7KblhMMmO43ZsD03dYjR1kG8+S9wiQIw2pc
+ NxfqXd7QCfc5HrUWvK6Mk8fviX7f1a5sssf3HYxHGr4rZXRPWcQgdpcIWdweAUoXz8aZ19UiL
+ MdYPQ/OU4/WWvfvTYNhuP/IfWW6gTgNS3JeG0PXo6lNBYiF2RVDA5Q8eBLf9UrS10XKW/vuDX
+ 2nEXtjfcVlgp4617tnGxgzG5ctwWYnsEnqKU4vZraNLcp18L1wn2EP8u0uEOG+GlkNrpBfTwl
+ wGTK1ZVE59FE0uSP5pnuyt8M+5JcADY3jEIj9P/l5cjU7+kvLq4wTzHPI9Ja9GoZbcz33rTDZ
+ 14+BBwBuH3mf6PVVwDitNKZM2Dr8z7puJbmH8FY+/F3dEOJ4cNVZa58PgMwOpwLHyN6wfz1xg
+ 9uIPFAcN0kvkAxdz8BT04CJKnH4SK3c+uTVZTr5pIB5V0n3emonA5rX2q3MM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I find that the commit message should still be considerably improved.
+How do you think about to use the subject =E2=80=9C[PATCH] coccicheck:
+Support search for SmPL scripts within selected directory hierarchy=E2=80=
+=9D?
 
---i56sxfhksaspu3tw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2019-10-12, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2019-10-12, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > On 2019-10-10, Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> > > On Wed, Oct 9, 2019 at 10:42 PM Aleksa Sarai <cyphar@cyphar.com> wrot=
-e:
-> > > >
-> > > > --- a/fs/namei.c
-> > > > +++ b/fs/namei.c
-> > > > @@ -2277,6 +2277,11 @@ static const char *path_init(struct nameidat=
-a *nd, unsigned flags)
-> > > >
-> > > >         nd->m_seq =3D read_seqbegin(&mount_lock);
-> > > >
-> > > > +       /* LOOKUP_IN_ROOT treats absolute paths as being relative-t=
-o-dirfd. */
-> > > > +       if (flags & LOOKUP_IN_ROOT)
-> > > > +               while (*s =3D=3D '/')
-> > > > +                       s++;
-> > > > +
-> > > >         /* Figure out the starting path and root (if needed). */
-> > > >         if (*s =3D=3D '/') {
-> > > >                 error =3D nd_jump_root(nd);
-> > >=20
-> > > Hmm. Wouldn't this make more sense all inside the if (*s =3D- '/') te=
-st?
-> > > That way if would be where we check for "should we start at the root",
-> > > which seems to make more sense conceptually.
-> >=20
-> > I don't really agree (though I do think that both options are pretty
-> > ugly). Doing it before the block makes it clear that absolute paths are
-> > just treated relative-to-dirfd -- doing it inside the block makes it
-> > look more like "/" is a special-case for nd_jump_root(). And while that
->=20
-> Sorry, I meant "special-case for LOOKUP_IN_ROOT".
->=20
-> > is somewhat true, this is just a side-effect of making the code more
-> > clean -- my earlier versions reworked the dirfd handling to always grab
-> > nd->root first if LOOKUP_IS_SCOPED. I switched to this method based on
-> > Al's review.
-> >=20
-> > In fairness, I do agree that the lonely while loop looks ugly.
->=20
-> And with the old way I did it (where we grabbed nd->root first) the
-> semantics were slightly more clear -- stripping leading "/"s doesn't
-> really look as "clearly obvious" as grabbing nd->root beforehand and
-> treating "/"s normally. But the code was also needlessly more complex.
->=20
-> > > That test for '/' currently has a "} else if (..)", but that's
-> > > pointless since it ends with a "return" anyway. So the "else" logic is
-> > > just noise.
-> >=20
-> > This depends on the fact that LOOKUP_BENEATH always triggers -EXDEV for
-> > nd_jump_root() -- if we ever add another "scoped lookup" flag then the
-> > logic will have to be further reworked.
-> >=20
-> > (It should be noted that the new version doesn't always end with a
-> > "return", but you could change it to act that way given the above
-> > assumption.)
-> >=20
-> > > And if you get rid of the unnecessary else, moving the LOOKUP_IN_ROOT
-> > > inside the if-statement works fine.
-> > >=20
-> > > So this could be something like
-> > >=20
-> > >     --- a/fs/namei.c
-> > >     +++ b/fs/namei.c
-> > >     @@ -2194,11 +2196,19 @@ static const char *path_init(struct
-> > > nameidata *nd, unsigned flags)
-> > >=20
-> > >         nd->m_seq =3D read_seqbegin(&mount_lock);
-> > >         if (*s =3D=3D '/') {
-> > >     -           set_root(nd);
-> > >     -           if (likely(!nd_jump_root(nd)))
-> > >     -                   return s;
-> > >     -           return ERR_PTR(-ECHILD);
-> > >     -   } else if (nd->dfd =3D=3D AT_FDCWD) {
-> > >     +           /* LOOKUP_IN_ROOT treats absolute paths as being
-> > > relative-to-dirfd. */
-> > >     +           if (!(flags & LOOKUP_IN_ROOT)) {
-> > >     +                   set_root(nd);
-> > >     +                   if (likely(!nd_jump_root(nd)))
-> > >     +                           return s;
-> > >     +                   return ERR_PTR(-ECHILD);
-> > >     +           }
-> > >     +
-> > >     +           /* Skip initial '/' for LOOKUP_IN_ROOT */
-> > >     +           do { s++; } while (*s =3D=3D '/');
-> > >     +   }
-> > >     +
-> > >     +   if (nd->dfd =3D=3D AT_FDCWD) {
-> > >                 if (flags & LOOKUP_RCU) {
-> > >                         struct fs_struct *fs =3D current->fs;
-> > >                         unsigned seq;
-> > >=20
-> > > instead. The patch ends up slightly bigger (due to the re-indentation)
-> > > but now it handles all the "start at root" in the same place. Doesn't
-> > > that make sense?
-> >=20
-> > It is correct (though I'd need to clean it up a bit to handle
-> > nd_jump_root() correctly), and if you really would like me to change it
-> > I will -- but I just don't agree that it's cleaner.
+> Put a modification in scripts/coccicheck which supports users in
+> configuring COCCI parameter as a directory to traverse files in
+> directory whose next level directory contains rule files with Suffix of =
+cocci.
 
-Linus, did you still want me to make your proposed change?
+* Please avoid a typo in this change description.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+* Would you like to integrate a wording approach like the following?
 
---i56sxfhksaspu3tw
-Content-Type: application/pgp-signature; name="signature.asc"
+  A search can be performed for SmPL scripts within a directory hierarchy.
+  Start a corresponding file determination if the environment variable =E2=
+=80=9CCOCCI=E2=80=9D
+  contains an acceptable path.
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXbFNWQAKCRCdlLljIbnQ
-Ert5AP0aC5CrGCVvHOpelKBjUDOS5duq76VaVyiiUWcy3eeeFwD/aQEQPqkGREqr
-5Lo0df+nvE9H+89b7vJGbcaEZNxkTQc=
-=rtfF
------END PGP SIGNATURE-----
-
---i56sxfhksaspu3tw--
+Regards,
+Markus
