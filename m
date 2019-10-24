@@ -2,147 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 747DEE33AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 539CDE339B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:12:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502434AbfJXNOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 09:14:04 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33355 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502405AbfJXNOE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 09:14:04 -0400
-Received: by mail-qk1-f195.google.com with SMTP id 71so19468922qkl.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 06:14:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JQHcyUnSIp339K9FKmfDYw9UCbM8Q9Ch8P2/s1FBU9s=;
-        b=msl1HfiQYnIpkl7hU80XjsF7bZtllIkrpxf3WO7plSCw75gbGg9RfOzqf2ThJZSI9i
-         hySC5uA444uiteodVBFS1PuxXkqcIBEAGVnS9rhaFOgYInfKZb2HE4tv+ORlaR3bd5V7
-         6bULjoWlbDAk3UE14BgBJOacrxfygYoQHHuPXVPNi0LoRJcSqnb/qH5qPywqpal6Veo4
-         nSXSq5u5REQ7ylpz/K9g4INW6rc8Emxwne+UJN6j7alhtV4PJe+7UK7ju1lsMeLtp7eY
-         G1B/60+BQkYSYGxZlGD9iZnpGHT9I2XFZhaoNBH2iEhi+A4e9IbyLeZNH/UH0opzzvl3
-         E/Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JQHcyUnSIp339K9FKmfDYw9UCbM8Q9Ch8P2/s1FBU9s=;
-        b=GD9qlSxr009oDJ5ypE+FQyGn299H7ACw6zEBWNm/OhSd8XedgTIAyw7hRh3WUwydbR
-         KEK6XV4n0DrYH1VxgCIsSNJRy0oirK7oNvVtljPRxxPUecnM7+arD+uhF7ebWovtSgDU
-         lM212OBPQrJPk4KoWWXX6cmnNmqBWQYWS44AnO0Ht90tWCuWo6MLssOwN9lxcXze+2/U
-         LYeeZafw2kfT0zUE0a8XG0VxC2NbA3cjFKFIXBhenFoIz6j4tz9qDhxwhGOhB/03QMAY
-         m38zHE7ND4DOmxn2aG73FW9Yo71+yied71wvecN18ob46ite4L/vpwITvp+2xvnLbkg6
-         yfHQ==
-X-Gm-Message-State: APjAAAVrfce+jNwIflWg4f8kD0Gvj83LXsGEm+5T04VOWZ7umzFQTkNS
-        YRcYgHGjVz1u1vm7FcxS5U7igU7KlZi7mXS6vq58bQ==
-X-Google-Smtp-Source: APXvYqwZ7apFX/YX+sP24Otc+tiWUNJLzt1FSVCurx1ko1dlteIYXugGs1AhlFccwEmG7l/NhWDo20oDb1SkZ5RCcGw=
-X-Received: by 2002:a05:620a:a11:: with SMTP id i17mr3508638qka.8.1571922840980;
- Thu, 24 Oct 2019 06:14:00 -0700 (PDT)
+        id S2502409AbfJXNMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 09:12:37 -0400
+Received: from foss.arm.com ([217.140.110.172]:50898 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390361AbfJXNMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 09:12:37 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90865C8F;
+        Thu, 24 Oct 2019 06:12:21 -0700 (PDT)
+Received: from [10.37.9.200] (unknown [10.37.9.200])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 103823F71A;
+        Thu, 24 Oct 2019 06:12:14 -0700 (PDT)
+Subject: Re: [PATCHv7 18/33] lib/vdso: Add unlikely() hint into
+ vdso_read_begin()
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     Andrei Vagin <avagin@gmail.com>
+Cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+References: <20191011012341.846266-1-dima@arista.com>
+ <20191011012341.846266-19-dima@arista.com>
+ <100f6921-9081-7eb0-7acc-f10cfb647c21@arm.com>
+ <20191024061311.GA4541@gmail.com>
+ <9aa9857e-ee1c-0117-bfcb-45fc6bcab866@arm.com>
+Message-ID: <c749983f-24a8-a159-5e29-6fdd741f6023@arm.com>
+Date:   Thu, 24 Oct 2019 14:14:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191009114809.8643-1-christian.brauner@ubuntu.com>
- <20191021113327.22365-1-christian.brauner@ubuntu.com> <20191023121603.GA16344@andrea.guest.corp.microsoft.com>
- <CACT4Y+Y86HFnQGHyxv+f32tKDJXnRxmL7jQ3tGxVcksvtK3L7Q@mail.gmail.com>
- <20191024113155.GA7406@andrea.guest.corp.microsoft.com> <CACT4Y+Z2-mm6Qk0cecJdiA5B_VsQ1v8k2z+RWrDQv6dTNFXFog@mail.gmail.com>
- <20191024130502.GA11335@andrea.guest.corp.microsoft.com>
-In-Reply-To: <20191024130502.GA11335@andrea.guest.corp.microsoft.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 24 Oct 2019 15:13:48 +0200
-Message-ID: <CACT4Y+ahUr11pQQ7=dw80Abj5owUPnPdufbMYvsKLM6iDg5QQg@mail.gmail.com>
-Subject: Re: [PATCH v6] taskstats: fix data-race
-To:     Andrea Parri <parri.andrea@gmail.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Will Deacon <will@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, bsingharora@gmail.com,
-        Marco Elver <elver@google.com>,
-        stable <stable@vger.kernel.org>,
-        syzbot <syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <9aa9857e-ee1c-0117-bfcb-45fc6bcab866@arm.com>
+Content-Type: text/plain; charset=koi8-r
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 3:05 PM Andrea Parri <parri.andrea@gmail.com> wrote:
->
-> On Thu, Oct 24, 2019 at 01:51:20PM +0200, Dmitry Vyukov wrote:
-> > On Thu, Oct 24, 2019 at 1:32 PM Andrea Parri <parri.andrea@gmail.com> wrote:
-> > >
-> > > > How these later loads can be completely independent of the pointer
-> > > > value? They need to obtain the pointer value from somewhere. And this
-> > > > can only be done by loaded it. And if a thread loads a pointer and
-> > > > then dereferences that pointer, that's a data/address dependency and
-> > > > we assume this is now covered by READ_ONCE.
-> > >
-> > > The "dependency" I was considering here is a dependency _between the
-> > > load of sig->stats in taskstats_tgid_alloc() and the (program-order)
-> > > later loads of *(sig->stats) in taskstats_exit().  Roughly speaking,
-> > > such a dependency should correspond to a dependency chain at the asm
-> > > or registers level from the first load to the later loads; e.g., in:
-> > >
-> > >   Thread [register r0 contains the address of sig->stats]
-> > >
-> > >   A: LOAD r1,[r0]       // LOAD_ACQUIRE sig->stats
-> > >      ...
-> > >   B: LOAD r2,[r0]       // LOAD *(sig->stats)
-> > >   C: LOAD r3,[r2]
-> > >
-> > > there would be no such dependency from A to C.  Compare, e.g., with:
-> > >
-> > >   Thread [register r0 contains the address of sig->stats]
-> > >
-> > >   A: LOAD r1,[r0]       // LOAD_ACQUIRE sig->stats
-> > >      ...
-> > >   C: LOAD r3,[r1]       // LOAD *(sig->stats)
-> > >
-> > > AFAICT, there's no guarantee that the compilers will generate such a
-> > > dependency from the code under discussion.
-> >
-> > Fixing this by making A ACQUIRE looks like somewhat weird code pattern
-> > to me (though correct). B is what loads the address used to read
-> > indirect data, so B ought to be ACQUIRE (or LOAD-DEPENDS which we get
-> > from READ_ONCE).
-> >
-> > What you are suggesting is:
-> >
-> > addr = ptr.load(memory_order_acquire);
-> > if (addr) {
-> >   addr = ptr.load(memory_order_relaxed);
-> >   data = *addr;
-> > }
-> >
-> > whereas the canonical/non-convoluted form of this pattern is:
-> >
-> > addr = ptr.load(memory_order_consume);
-> > if (addr)
-> >   data = *addr;
->
-> No, I'd rather be suggesting:
->
->   addr = ptr.load(memory_order_acquire);
->   if (addr)
->     data = *addr;
->
-> since I'd not expect any form of encouragement to rely on "consume" or
-> on "READ_ONCE() + true-address-dependency" from myself.  ;-)
+Hi Andrei,
 
-But why? I think kernel contains lots of such cases and it seems to be
-officially documented by the LKMM:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/explanation.txt
-address dependencies and ppo
-Am I missing something? Why do we need acquire with address dependency?
+On 10/24/19 10:30 AM, Vincenzo Frascino wrote:
+[...]
+>> Here is my test:
+>> https://github.com/avagin/vdso-perf
+>>
+>> It is calling clock_gettime() in a loop for three seconds and then
+>> reports a number of iterations.
+>>
+> 
+> I am happy to run the test on arm64 and provide some results.
+>
 
-> IAC, v6 looks more like:
->
->   addr = ptr.load(memory_order_consume);
->   if (!!addr)
->     *ptr = 1;
->   data = *ptr;
->
-> to me (hence my comments/questions ...).
->
-> Thanks,
->   Andrea
+Please find below the results:
+
+clock            | before     | after      | diff
+==================================================
+monotonic          17326692     17951770     3.6%
+monotonic-coarse   43624027     44215292     1.3%
+monotonic-raw      17541809     17554932     0.1%
+boottime           17334982     17954361     3.5%
+
+The improvement for arm64 for monotonic and boottime is around 3.5%.
+
+I created a pull request on github to send to you back the changes I had
+to do to vdso-perf to cross-compile it on arm64 [1].
+
+[1] https://github.com/avagin/vdso-perf/pull/1
+
+
+>> Thanks,
+>> Andrei
+>>
+> 
+
+-- 
+Regards,
+Vincenzo
