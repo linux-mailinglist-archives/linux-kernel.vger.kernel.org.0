@@ -2,115 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5421E36E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 17:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99A84E36DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 17:41:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409727AbfJXPlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 11:41:50 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:51443 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2409615AbfJXPlt (ORCPT
+        id S2409703AbfJXPlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 11:41:31 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:49731 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2405824AbfJXPla (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 11:41:49 -0400
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x9OFfT9D030417;
-        Fri, 25 Oct 2019 00:41:30 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x9OFfT9D030417
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1571931690;
-        bh=l4I3j33otfIQZSfw7zL4nNKREYId00X6FYw//AMabaE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=J7JzzEq9jjLw/A4o0vktjGoZM/o7nOPyZ8FJ0n8aolcVy3rE56fx7QD8thRLNPdul
-         mnDh+esLCS0XIygkfjxyVUEmrfI67Ks/JVCIIjjR9J9dhTRAAIdAWj7a0m5mWJ255Y
-         W76ZVDt21NQ5YpFO9usnpk7YY/YERETFjeDQ8DWSpGQbROFdWil1E1vKtBCrh+JLQU
-         E4GkkVdSdsoaCkWHzMWamdBpvGD2t65EVEaeiJdH+oRM/Zf7rgSUAgE9ZzpniLbdn3
-         Aby5i/iYIdpGmZEbLsmF0l5JBAGizqtLGrTlzsgvNSsWaOatg/Kmb0a24xTyXnDE1a
-         Cox9VvptnGKUg==
-X-Nifty-SrcIP: [209.85.221.170]
-Received: by mail-vk1-f170.google.com with SMTP id 70so5405055vkz.8;
-        Thu, 24 Oct 2019 08:41:30 -0700 (PDT)
-X-Gm-Message-State: APjAAAXNjydu3jidSu95JZarNCINHp/QuAJm2bx+Q3zTqU7VmPi3Wt8l
-        wWw+Ru0gS3qo1gUa2PpZ+hlkltsK1hY3CeAfhjk=
-X-Google-Smtp-Source: APXvYqzECnMU+WoRoqmpGp2qCaUvuGA+5Jc8kg37Z+KgqZpCHvCQICZwcWI/5OzGByPm5gI//L5m5unfHNDIvbYQnaM=
-X-Received: by 2002:a1f:a349:: with SMTP id m70mr9104948vke.26.1571931688982;
- Thu, 24 Oct 2019 08:41:28 -0700 (PDT)
+        Thu, 24 Oct 2019 11:41:30 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9OFeiOc016236;
+        Thu, 24 Oct 2019 17:41:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=LV706jSi2f+46Tg4TfZ6VFseIWlovRjlpB2QmvImJLM=;
+ b=Lvr6UMzPZIbaUCdsuXyTfwXFrY9t3F2VK2AkIkERTLYyOwsPzXtIf4Aa3yFAUcVqaEMI
+ DuQHh9FaNMTMLbvKd0MAMXA7LgyvBZexsQ75zcv7eWNF8V5ttSevNh5X+oq34RzKtxpJ
+ ytA4YhXmydgdIzo+ikwYb/wuhgZF0c6JCxJIaP4QMPWQWRfOWduET4d1ciKMGhn26+As
+ BxIqlqS3OFq9mdsWMSoPi7RDEBZFQdu+AZA2IB205jUdxIT/8gLeFQFWwMT3F8GqF2XP
+ lgSwocuJioc0Lfn9mlmFJhw7eH+as/+0HyjqU6wQ9LKE0XLGYn//gsqggJnuosuLtwVM gQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2vt9s1tp5c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 24 Oct 2019 17:41:25 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 177D0100038;
+        Thu, 24 Oct 2019 17:41:25 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0BDFA2C6E5F;
+        Thu, 24 Oct 2019 17:41:25 +0200 (CEST)
+Received: from localhost (10.75.127.49) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 24 Oct 2019 17:41:24
+ +0200
+From:   Pascal Paillet <p.paillet@st.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <p.paillet@st.com>, <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH 0/1] Enable stm32_pwr regulator driver for stm32mp157
+Date:   Thu, 24 Oct 2019 17:41:20 +0200
+Message-ID: <20191024154121.8503-1-p.paillet@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <e895d04ef5a282b5b48fcb21cbc175d2@www.loen.fr> <693a3b68-a0f1-81fe-40ce-2b6ba189450c@web.de>
- <868spgzcti.wl-maz@kernel.org> <c8816d85b696cb96318e17b7010b84f09bc67bf7.camel@perches.com>
-In-Reply-To: <c8816d85b696cb96318e17b7010b84f09bc67bf7.camel@perches.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 25 Oct 2019 00:40:52 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQqSThGRM_wRGR2ou3B+Oqpr0nF9Fg4rhSR4Hvnxwnj3g@mail.gmail.com>
-Message-ID: <CAK7LNAQqSThGRM_wRGR2ou3B+Oqpr0nF9Fg4rhSR4Hvnxwnj3g@mail.gmail.com>
-Subject: Re: coccinelle: api/devm_platform_ioremap_resource: remove useless script
-To:     Joe Perches <joe@perches.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Markus Elfring <Markus.Elfring@web.de>,
-        Himanshu Jha <himanshujha199640@gmail.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        kernel-janitors@vger.kernel.org,
-        Coccinelle <cocci@systeme.lip6.fr>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        YueHaibing <yuehaibing@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-24_09:2019-10-23,2019-10-24 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 20, 2019 at 7:13 AM Joe Perches <joe@perches.com> wrote:
->
-> On Sat, 2019-10-19 at 21:43 +0100, Marc Zyngier wrote:
-> > Providing Coccinelle scripts that scream about perfectly valid code is
-> > pointless, and the result is actively harmful.
->
-> Doubtful.
->
-> If the new code is smaller object code and correct
-> than the conversion is worthwhile.
+Enable the STM32 PWR regulator driver for stm32mp157 machine.
 
-I agree.
+Pascal Paillet (1):
+  regulator: stm32_pwr: Enable driver for stm32mp157
 
-We use multi-platform defconfig.
-I always appreciate the code refactoring
-that reduces the object size.
-
-
-
-> fyi:
->
-> There are already ~450 uses of this function and maybe
-> ~800 possible additional conversions.
->
-> > If said script was providing a correct semantic patch instead of being
-> > an incentive for people to churn untested patches that span the whole
-> > tree, that'd be a different story.
->
-> Right.
->
->
-
-
-Alexandre Belloni used
-https://lore.kernel.org/lkml/9bbcce19c777583815c92ce3c2ff2586@www.loen.fr/
-as a reference, but this is not the output from coccicheck.
-The patch author just created a wrong patch by hand.
-
-The deleted semantic patch supports MODE=patch,
-which creates a correct patch, and is useful.
-
+ drivers/regulator/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
