@@ -2,49 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD687E3296
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 14:42:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20970E32A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 14:43:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502054AbfJXMl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 08:41:58 -0400
-Received: from mga12.intel.com ([192.55.52.136]:7929 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729449AbfJXMl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 08:41:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 05:41:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,224,1569308400"; 
-   d="scan'208";a="188577330"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga007.jf.intel.com with ESMTP; 24 Oct 2019 05:41:55 -0700
-Received: from atirumal-mobl1.amr.corp.intel.com (unknown [10.251.26.228])
-        by linux.intel.com (Postfix) with ESMTP id B986658029F;
-        Thu, 24 Oct 2019 05:41:54 -0700 (PDT)
-Subject: Re: [alsa-devel] [PATCH 1/3] soundwire: remove bitfield for
- unique_id, use u8
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        broonie@kernel.org, srinivas.kandagatla@linaro.org,
-        jank@cadence.com, slawomir.blauciak@intel.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-References: <20191022234808.17432-1-pierre-louis.bossart@linux.intel.com>
- <20191022234808.17432-2-pierre-louis.bossart@linux.intel.com>
- <20191024112955.GC2620@vkoul-mobl>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <3b41953e-df3b-cf20-dae9-f3635c532895@linux.intel.com>
-Date:   Thu, 24 Oct 2019 07:42:13 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        id S2501953AbfJXMnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 08:43:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37232 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbfJXMnl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 08:43:41 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iNcSp-0007ln-59; Thu, 24 Oct 2019 12:43:39 +0000
+Subject: Re: [PATCH][next] drm/v3d: fix double free of bin
+To:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Iago Toral Quiroga <itoral@igalia.com>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191024104801.3122-1-colin.king@canonical.com>
+ <20191024123853.GH11828@phenom.ffwll.local>
+From:   Colin Ian King <colin.king@canonical.com>
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <821f0799-1f37-c853-d2c6-dd95883e02d8@canonical.com>
+Date:   Thu, 24 Oct 2019 13:43:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-In-Reply-To: <20191024112955.GC2620@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191024123853.GH11828@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,63 +82,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/19 6:29 AM, Vinod Koul wrote:
-> On 22-10-19, 18:48, Pierre-Louis Bossart wrote:
->> There is no good reason why the unique_id needs to be stored as 4
->> bits. The code will work without changes with a u8 since all values
-> 
-> Well this was due to the fact the slave id defined by MIPI has unique id
-> as 4 bits. In fact if you look closely there are other fields in
-> sdw_slave_id doing this
-
-it's not because we extract 4 bits that we need to store the information 
-in 4 bits.
-
-> 
->> are already filtered while parsing the ACPI tables and Slave devID
->> registers.
+On 24/10/2019 13:38, Daniel Vetter wrote:
+> On Thu, Oct 24, 2019 at 11:48:01AM +0100, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
 >>
->> Use u8 representation. This will allow us to encode a
->> "IGNORE_UNIQUE_ID" value to account for firmware/BIOS creativity.
-> 
-> Why are we shoving firmware/BIOS issues into the core?
-
-The core uses a matching formula which is too strict and does not work 
-on multiple platforms.
-
-You can argue that the BIOS should be fixed, but the counter argument is 
-that the practice of ignoring the unique ID is allowed by the MIPI standard.
-
-> 
+>> Two different fixes have addressed the same memory leak of bin and
+>> this now causes a double free of bin.  While the individual memory
+>> leak fixes are fine, both fixes together are problematic.
 >>
->> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>> Addresses-Coverity: ("Double free")
+>> Fixes: 29cd13cfd762 ("drm/v3d: Fix memory leak in v3d_submit_cl_ioctl")
+>> Fixes: 0d352a3a8a1f (" rm/v3d: don't leak bin job if v3d_job_init fails.")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> That sounds like wrong merge resolution somewhere, and we don't have those
+> patches merged together in any final tree yet anywhere. What's this based
+> on?
+> -Daniel
+
+linux-next
+
+Colin
+> 
 >> ---
->>   include/linux/soundwire/sdw.h | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>  drivers/gpu/drm/v3d/v3d_gem.c | 1 -
+>>  1 file changed, 1 deletion(-)
 >>
->> diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
->> index 688b40e65c89..28745b9ba279 100644
->> --- a/include/linux/soundwire/sdw.h
->> +++ b/include/linux/soundwire/sdw.h
->> @@ -403,6 +403,8 @@ int sdw_slave_read_prop(struct sdw_slave *slave);
->>    * SDW Slave Structures and APIs
->>    */
->>   
->> +#define SDW_IGNORED_UNIQUE_ID 0xFF
->> +
->>   /**
->>    * struct sdw_slave_id - Slave ID
->>    * @mfg_id: MIPI Manufacturer ID
->> @@ -418,7 +420,7 @@ struct sdw_slave_id {
->>   	__u16 mfg_id;
->>   	__u16 part_id;
->>   	__u8 class_id;
->> -	__u8 unique_id:4;
->> +	__u8 unique_id;
->>   	__u8 sdw_version:4;
->>   };
->>   
+>> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+>> index 549dde83408b..37515e47b47e 100644
+>> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+>> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+>> @@ -568,7 +568,6 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+>>  		ret = v3d_job_init(v3d, file_priv, &bin->base,
+>>  				   v3d_job_free, args->in_sync_bcl);
+>>  		if (ret) {
+>> -			kfree(bin);
+>>  			v3d_job_put(&render->base);
+>>  			kfree(bin);
+>>  			return ret;
 >> -- 
 >> 2.20.1
+>>
 > 
 
