@@ -2,87 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDEF7E3C7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5ADEE3C85
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408253AbfJXTvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 15:51:13 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:35568 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438129AbfJXTut (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 15:50:49 -0400
-Received: by mail-oi1-f196.google.com with SMTP id x3so21745828oig.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 12:50:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=obOaJfYPGUFMBdJ+GFQAYWd7jIJzRz2RvyNeFwhCwqc=;
-        b=NCfTLHjlbgJYN9lpItCC3wyK0gNVuM4U9DSlxbPK0EpUIoR4v5tAhulLLZtiiIO7Sf
-         6VOOfxx4kF7UZCx0vTa8gWHltGDFLyzVVSKJWoNH5Yc4+G99eA8vVCVCi7bH2TW0CF+U
-         BQPpM8M5NsvjEUV31BQMA2SQL9JeKZy3fpGrrDkl9ZdCCO0NX61tJi1OW4NgJNJM2lZa
-         LBAGeN7fNx3FUeS3GP+/TAbus4kdH5sCNx5FbueK9qM4weHgda+EVFJ2dIY8VpZeeJuo
-         AGU77VNP8VPk8VEe8qzdOSFPnOL/oHOqwmsGtSpDEEFpZSPk2ImzImmCD1suJLEEYjQP
-         9e0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=obOaJfYPGUFMBdJ+GFQAYWd7jIJzRz2RvyNeFwhCwqc=;
-        b=VTFUszrVCctVY7+KVtHAP7+lKLuslbcBu/LR6svFOYA+25jmcAmgSfkkWahOVg2yJc
-         +O1+D15mYdpg6diqgi9szDknfjCUAVkEZNgBQyVHdkAg+E+ZAHIiwJaBY4E3yIWt/Ugj
-         38c3JBWoEcMQmn6n/E/65gHIipG8jV2fS3gU6VQs2ys1oO5FtJ+kdre/kBReYJAp0pXJ
-         kohayFThkzy4HMbS/hAfC/oAGy4hys5b2+GKvQJEdJV3KNII4sHEorsUC9siZomlJM1Z
-         N6GCVOqLGobJh8oznhIFomoypuM2O+KWl+Tubb2gwWzGndvkibfggqQwc7ZMVhaAvzDG
-         xnCw==
-X-Gm-Message-State: APjAAAVx+ETmfp9G2ub1qE5XQ6sA1iHCk1hS9ykmGp+95mzkXVWBl0T2
-        NQ3Ma81M+TYXFcEzj8b1uvfuxYxzHYL5oaKDRRE=
-X-Google-Smtp-Source: APXvYqxQGKa/dRUXVPSOSFXXQKDj8etCne7ZHnOYBVb6ZrUtCaweeYFBd5Yj1la5eq8jLWjRNlFy65R3H8uw+cSuBYM=
-X-Received: by 2002:aca:dd02:: with SMTP id u2mr954574oig.39.1571946647940;
- Thu, 24 Oct 2019 12:50:47 -0700 (PDT)
+        id S2392910AbfJXTwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 15:52:00 -0400
+Received: from ozlabs.org ([203.11.71.1]:47283 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390431AbfJXTwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 15:52:00 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46zdDP46YWz9sPV;
+        Fri, 25 Oct 2019 06:51:48 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1571946716;
+        bh=UWyXQ1Iw+UMZYj2SA6HBAw1NT5T7pfbx2QffwK989yU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jwX9fOuI11zIRK3ojPaBk/qXRXsPsMVeh2/gaacyvzQwL+V0aiYZkAhFPheFd9k0J
+         et2FGYEubuOkFNq4vzQyFgqNJo6wcYfVP2HuSgPzo9JP9B04IjIQFB2GD4D2CW362S
+         RmoMZ2HHnMqnEWbvmOCnSeko+OCrRH1U/t2yVj6g9O1O9Phf3fr5j/9TUDRDTGgSJv
+         JJpGFSBVqVfJyPLUxl37q7A5t/3+kLWuHell801boDx4L5/SwSZLopVdtrSgKgmUHR
+         HlyXd1W/5Q1x4JDtE6HM/ZlzOkwAZigTbqsjCBQeJGumdnSd+iDpplh2FiQA0aDLTr
+         R1fjqzpS8AefQ==
+Date:   Fri, 25 Oct 2019 06:51:35 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Sean Paul <sean@poorly.run>,
+        Maxime Ripard <mripard@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Iago Toral Quiroga <itoral@igalia.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] drm/v3d: fix double free of bin
+Message-ID: <20191025065135.09175b37@canb.auug.org.au>
+In-Reply-To: <CAKMK7uGbMx21+g2kQyGu5H-L7N-guKJhsZ6b1ROnz5+kDRt3LA@mail.gmail.com>
+References: <20191024104801.3122-1-colin.king@canonical.com>
+        <20191024123853.GH11828@phenom.ffwll.local>
+        <821f0799-1f37-c853-d2c6-dd95883e02d8@canonical.com>
+        <CAKMK7uGbMx21+g2kQyGu5H-L7N-guKJhsZ6b1ROnz5+kDRt3LA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20191021142904.12401-1-narmstrong@baylibre.com>
-In-Reply-To: <20191021142904.12401-1-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 24 Oct 2019 21:50:36 +0200
-Message-ID: <CAFBinCD7NzK8EphtVTx77aSQxRytm4F8JhzbJMZ1aXfaQyFVMg@mail.gmail.com>
-Subject: Re: [PATCH 0/5] arm64: dts: meson: new fixes following YAML bindings
- schemas conversion
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/xwrizZz4UyloQa1ZZxKFEFk";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+--Sig_/xwrizZz4UyloQa1ZZxKFEFk
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2019 at 4:29 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> This is the first set of DT fixes following the first YAML bindings conversion
-> at [1], [2], [3] and [4] and v5.4-rc1 bindings changes.
->
-> These are only cosmetic changes, and should not break drivers implementation
-> following the bindings.
->
-> [1] https://patchwork.kernel.org/patch/11202077/
-> [2] https://patchwork.kernel.org/patch/11202183/
-> [3] https://patchwork.kernel.org/patch/11202207/
-> [4] https://patchwork.kernel.org/patch/11202265/
->
-> Neil Armstrong (5):
->   arm64: dts: meson-g12a: fix gpu irq order
->   arm64: dts: meson-gxm: fix gpu irq order
->   arm64: dts: meson-g12b-odroid-n2: add missing amlogic,s922x compatible
->   arm64: dts: meson-gx: cec node should be disabled by default
->   arm64: dts: meson-gx: fix i2c compatible
-for the whole series:
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Hi all,
 
+On Thu, 24 Oct 2019 14:49:36 +0200 Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+> Ok adding Stephen. There's a merge conflict between drm-misc-fixes and
+> drm-next (I think) and the merge double-added the kfree(bin). See
+> above for the relevant sha1. Dave is already on here as a heads-up,
+> but also adding drm-misc maintainers.
+>=20
+> > >> ---
+> > >>  drivers/gpu/drm/v3d/v3d_gem.c | 1 -
+> > >>  1 file changed, 1 deletion(-)
+> > >>
+> > >> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d=
+_gem.c
+> > >> index 549dde83408b..37515e47b47e 100644
+> > >> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> > >> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> > >> @@ -568,7 +568,6 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void=
+ *data,
+> > >>              ret =3D v3d_job_init(v3d, file_priv, &bin->base,
+> > >>                                 v3d_job_free, args->in_sync_bcl);
+> > >>              if (ret) {
+> > >> -                    kfree(bin);
+> > >>                      v3d_job_put(&render->base);
+> > >>                      kfree(bin);
+> > >>                      return ret;
 
-Thank you!
+I will add this as a merge fixup until drm-misc-fixes is merged into
+the drm tree.
 
-Martin
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/xwrizZz4UyloQa1ZZxKFEFk
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2yAMcACgkQAVBC80lX
+0Gy2ZggAiZaoH9RPu5iXGznPgZhzyg1plQKDAAPWiIwMq1c3Bivg6umaIroB14qg
+LGpurXf9YO+Vj8S06ukixB/b1vAycWSWXfauEZPhe6lF1YGykeZUVDeKCcIoR/oU
+we0+KgwxN1r854mdr4+OlzjC9VssQ8c3HiGztCldR0PnenNt/BP7m+4mQtmB2gdL
+H+cQREBnDZFHYKVNiDoIybIlyg34/MXC0nt2JGsY/A/UsBIFoLKEePnMc6j7Jh3O
+4mkIfZb2SYcUVz0a6Ds0XuqAOVb9IRKiTHMdE1v59cnSS+AcyNog821sMAgtwAYR
+lLyleGdyeEodrJ5AFmvnpCvc4bGZ9w==
+=RhRC
+-----END PGP SIGNATURE-----
+
+--Sig_/xwrizZz4UyloQa1ZZxKFEFk--
