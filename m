@@ -2,86 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53A00E2770
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 02:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CCADE2778
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 02:48:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392867AbfJXApg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 23 Oct 2019 20:45:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392229AbfJXApg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Oct 2019 20:45:36 -0400
-Received: from lenoir.home (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EDE82084B;
-        Thu, 24 Oct 2019 00:45:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571877935;
-        bh=OCnHofUdhqX5/lVrpGj0gGxJBg5HNLhVPUUgH1rUszk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kdJrRDXbENBRwZ3Sp4Asn4pCaapfy94wQ6A0bq9QEvYWnRfo0/kaq69Gf2fqA32Tg
-         7rg/HgRvuPVyPYH5vBv7FPscEH4NijTk3sX89tz/KdT7fRTrW2+OfjhAe3O2Jdok8j
-         7Na7pzNpwGBaJiGmTmXPsGqUkKaiPY7YvnCQ3SiE=
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: [GIT PULL] sched/nohz: Make kcpustat's CPUTIME_SYSTEM vtime aware
-Date:   Thu, 24 Oct 2019 02:45:30 +0200
-Message-Id: <20191024004530.7037-1-frederic@kernel.org>
+        id S2407541AbfJXAsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 23 Oct 2019 20:48:23 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:58337 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405717AbfJXAsV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Oct 2019 20:48:21 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id DDCB4806A8;
+        Thu, 24 Oct 2019 13:48:17 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1571878097;
+        bh=bWxQWGDdDIXjwP+uossCQGN3ASh7mBW21CgA8eHWdRI=;
+        h=From:To:Cc:Subject:Date;
+        b=MEGIZDU8xWNROqowDzvJuQ2tZSo2JvBwRhtEBrgzQP90+fvOQ/WLZaG0DX0JC878D
+         9/uF4Uhd273Lziay1j7WIroL649J7acYj8+j4nkf1CQ27vvuBYE8a49EKqzc2/wWUR
+         pGaK3cuM7kW6ZKOH1kx+U2C54HXmxi0TnT+Mpmn60wO/QXKCQj5XE6NFFjKqgBLcum
+         2V1W8ryLlfetrkz8MeenGFn4JUlX8xS066EidXqAeaG4OpIA64VpTUE0xb90r6KPlV
+         cKesx9lTOBu2krlzuTr12O2uv35PcziR/8TKIiZ2/h0QhRcwf6seusf2m8UJdvqwSZ
+         iBvxH1aJ6ZLkg==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5db0f4d10000>; Thu, 24 Oct 2019 13:48:17 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id CEC6E13ED56;
+        Thu, 24 Oct 2019 13:48:21 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 9DE4428005C; Thu, 24 Oct 2019 13:48:17 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, rjui@broadcom.com,
+        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v3 0/2] gpio: brcm: XGS iProc GPIO driver
+Date:   Thu, 24 Oct 2019 13:48:13 +1300
+Message-Id: <20191024004816.5539-1-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016025700.31277-1-frederic@kernel.org>
-References: <20191016025700.31277-1-frederic@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ingo, Peter, 
+This is ported this from Broadcom's XLDK (now heavily modified). There se=
+em to
+be 3 different IP blocks for 3 separate banks of GPIOs in the iProc chips=
+.
 
-Please pull the nohz/kcpustat-for-tip branch that can be found at:
+I've dropped everything except support for the Chip Common A GPIO
+controller because the other blocks actually seem to be supportable with
+other drivers. The driver itself is halfway between pinctrl-nsp-gpio.c
+and pinctrl-iproc-gpio.c.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
-	nohz/kcpustat-for-tip
+Chris Packham (2):
+  dt-bindings: gpio: brcm: Add bindings for xgs-iproc
+  gpio: Add xgs-iproc driver
 
-HEAD: e179e89320c53a96c5d585af38126cfb124da789
+ .../bindings/gpio/brcm,xgs-iproc.yaml         |  70 ++++
+ drivers/gpio/Kconfig                          |   9 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-xgs-iproc.c                 | 321 ++++++++++++++++++
+ 4 files changed, 401 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/brcm,xgs-iproc=
+.yaml
+ create mode 100644 drivers/gpio/gpio-xgs-iproc.c
 
-Thanks,
-	Frederic
----
+--=20
+2.23.0
 
-Frederic Weisbecker (14):
-      sched/vtime: Record CPU under seqcount for kcpustat needs
-      sched/cputime: Add vtime idle task state
-      sched/cputime: Add vtime guest task state
-      context_tracking: Remove context_tracking_active()
-      context_tracking: s/context_tracking_is_enabled/context_tracking_enabled()
-      context_tracking: Rename context_tracking_is_cpu_enabled() to context_tracking_enabled_this_cpu()
-      context_tracking: Introduce context_tracking_enabled_cpu()
-      sched/vtime: Rename vtime_accounting_cpu_enabled() to vtime_accounting_enabled_this_cpu()
-      sched/vtime: Introduce vtime_accounting_enabled_cpu()
-      context_tracking: Check static key on context_tracking_enabled_*cpu()
-      sched/kcpustat: Introduce vtime-aware kcpustat accessor for CPUTIME_SYSTEM
-      procfs: Use vtime aware kcpustat accessor to fetch CPUTIME_SYSTEM
-      cpufreq: Use vtime aware kcpustat accessor to fetch CPUTIME_SYSTEM
-      leds: Use vtime aware kcpustat accessor to fetch CPUTIME_SYSTEM
-
-
- arch/x86/entry/calling.h                |   2 +-
- drivers/cpufreq/cpufreq.c               |   2 +-
- drivers/leds/trigger/ledtrig-activity.c |   2 +-
- fs/proc/stat.c                          |   4 +-
- include/linux/context_tracking.h        |  26 +++----
- include/linux/context_tracking_state.h  |  21 +++---
- include/linux/kernel_stat.h             |  11 +++
- include/linux/sched.h                   |   9 ++-
- include/linux/tick.h                    |   2 +-
- include/linux/vtime.h                   |  23 +++---
- kernel/context_tracking.c               |   6 +-
- kernel/sched/cputime.c                  | 119 ++++++++++++++++++++++++++++----
- kernel/time/tick-sched.c                |   2 +-
- 13 files changed, 172 insertions(+), 57 deletions(-)
