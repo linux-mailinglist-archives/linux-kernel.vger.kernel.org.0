@@ -2,148 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21467E2B9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:59:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E22F2E2B3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 09:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408827AbfJXH7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 03:59:37 -0400
-Received: from wp051.webpack.hosteurope.de ([80.237.132.58]:35610 "EHLO
-        wp051.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405209AbfJXH7g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 03:59:36 -0400
-X-Greylist: delayed 1378 seconds by postgrey-1.27 at vger.kernel.org; Thu, 24 Oct 2019 03:59:36 EDT
-Received: from p200300cd5f0509008cc3eaf0bbac9dd5.dip0.t-ipconnect.de ([2003:cd:5f05:900:8cc3:eaf0:bbac:9dd5]); authenticated
-        by wp051.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        id 1iNXfh-0002uw-UO; Thu, 24 Oct 2019 09:36:37 +0200
-To:     linux-kernel@vger.kernel.org
-From:   Robert Stupp <snazy@snazy.de>
-Subject: mlockall(MCL_CURRENT) blocking infinitely
-Message-ID: <4576b336-66e6-e2bb-cd6a-51300ed74ab8@snazy.de>
-Date:   Thu, 24 Oct 2019 09:36:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S2408655AbfJXHkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 03:40:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59750 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727635AbfJXHkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 03:40:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 44E04AF6A;
+        Thu, 24 Oct 2019 07:40:00 +0000 (UTC)
+Subject: Ping: [PATCH] x86/stackframe/32: repair 32-bit Xen PV
+From:   Jan Beulich <jbeulich@suse.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+References: <ef1c9381-dfc7-7150-feca-581f4d798513@suse.com>
+Message-ID: <279e6368-7446-9419-fef9-c4069b6aee5a@suse.com>
+Date:   Thu, 24 Oct 2019 09:40:16 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef1c9381-dfc7-7150-feca-581f4d798513@suse.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-bounce-key: webpack.hosteurope.de;snazy@snazy.de;1571903976;f6e34a93;
-X-HE-SMSGID: 1iNXfh-0002uw-UO
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys,
+On 07.10.2019 12:41, Jan Beulich wrote:
+> Once again RPL checks have been introduced which don't account for a
+> 32-bit kernel living in ring 1 when running in a PV Xen domain. The
+> case in FIXUP_FRAME has been preventing boot; adjust BUG_IF_WRONG_CR3
+> as well just in case.
+> 
+> Fixes: 3c88c692c287 ("x86/stackframe/32: Provide consistent pt_regs")
+> Signed-off-by: Jan Beulich <jbeulich@suse.com>
 
-I've got an issue with `mlockall(MCL_CURRENT)` after upgrading Ubuntu 
-19.04 to 19.10 - i.e. kernel version change from 5.0.x to 5.3.x.
+Ping?
 
-The following simple program hangs forever with one CPU running at 100% 
-(kernel):
+I'd like to further note that there appears to a likely related
+2nd problem - I'm seeing seemingly random attempts to enter VM86
+mode when running PV under Xen. I suspect a never written eflags
+value to get inspected. While the issue here kills the kernel
+reliably during boot, that other issue sometimes allows the
+system to at least come up in a partly functional way (depending
+on which user processes get killed because of there not being
+any VM86 mode available when running PV under [64-bit] Xen).
 
-#include <stdio.h>
-#include <sys/mman.h>
-int main(char** argv) {
-   printf("Before mlockall(MCL_CURRENT)\n");
-   // works in 5.0
-   // hangs forever w/ 5.1 and newer
-   mlockall(MCL_CURRENT);
-   printf("After mlockall(MCL_CURRENT)\n");
-}
+Jan
 
-All kernel versions since 5.1 (tried 5.1.0, 5.1.21, 5.2.21, 5.3.0-19, 
-5.3.7, 5.4-rc4) show the same symptom (hanging in mlockall(MCL_CURRENT) 
-with 100% kernel-CPU). 5.0 kernel versions (5.0.21) are fine.
-
-First, I thought, that it's something generic, so I tried the above 
-program in a fresh install of Ubuntu eoan (5.3.x) in a VM in virtualbox, 
-but it works fine there. So I suspect, that it has to do with something 
-that's specific to my machine.
-
-My first suspicion was that some library "hijacks" mlockall(), but 
-calling the test program with `LD_DEBUG=all` shows that glibc gets 
-called directly:
-      12248:    symbol=mlockall;  lookup in file=./test [0]
-      12248:    symbol=mlockall;  lookup in 
-file=/lib/x86_64-linux-gnu/libc.so.6 [0]
-      12248:    binding file ./test [0] to 
-/lib/x86_64-linux-gnu/libc.so.6 [0]: normal symbol `mlockall' [GLIBC_2.2.5]
-An `strace` doesn't show anything meaningful (beside that mlockall's 
-been called but never returns). dmesg and syslog don't show anything 
-obvious (to me) as well.
-
-Some information about the machine:
-- Intel(R) Core(TM) i7-6900K, Intel X99 chipset
-- NVMe 1.1b
-- 64GB RAM (4x 16GB)
-
-I've also reverted all changes for sysctl and ld.conf and checked for 
-other suspicious software without any luck.
-
-I also tried a bunch of variations of the above program, but only 
-`mlockall(MCL_CURRENT)` or `mlockall(MCL_FUTURE | MCL_CURRENT)` hang.
-
-A `git diff v5.0..v5.1 mm/` doesn't show anything obvious (to me).
-
-It seems, there's no debug/trace information that would help to find out 
-what exactly it's doing.
-
-I'm kinda lost at the moment.
-
-
-PS: Variations of the above test program:
-
-#include <stdio.h>
-#include <sys/mman.h>
-char foo[65536];
-int main(char** argv) {
-   printf("Before mlock()\n");
-   int e = mlock(foo, 8192); // works in 5.0, 5.1, 5.2, 5.3, 5.4
-   printf("After mlock()=%d\n", e);
-}
-
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/mman.h>
-int main(char** argv) {
-   printf("Before mlockall(MCL_FUTURE)\n");
-   int e = mlockall(MCL_FUTURE); // works in 5.0, 5.1, 5.2, 5.3, 5.4
-   printf("After mlockall(MCL_FUTURE) = %d\n", e);
-   void* mem = malloc(1024 * 1024 * 1024);
-   printf("After malloc()\n");
-   mem = malloc(1024 * 1024 * 1024);
-   printf("After malloc()\n");
-   mem = malloc(1024 * 1024 * 1024);
-   printf("After malloc()\n");
-   // works in 5.0, 5.1, 5.2, 5.3, 5.4
-}
-
-
-#include <stdio.h>
-#include <sys/mman.h>
-int main(char** argv) {
-   printf("Before munlockall()\n");
-   int e = munlockall(); // works in 5.0, 5.1, 5.2, 5.3, 5.4
-   printf("After munlockall() = %d\n", e);
-}
-
-
-#include <stdio.h>
-#include <sys/mman.h>
-int main(char** argv) {
-   printf("Before mlockall(MCL_CURRENT|MCL_FUTURE)\n");
-   // works in 5.0
-   // hangs forever w/ 5.1 and newer
-   int e = mlockall(MCL_CURRENT|MCL_FUTURE);
-   printf("After mlockall(MCL_CURRENT|MCL_FUTURE) = %d\n", e);
-}
-
-PPS: Kernel version images installed from 
-https://kernel.ubuntu.com/~kernel-ppa/mainline/?C=N;O=D
-
--- 
-Robert Stupp
-@snazy
+> --- a/arch/x86/entry/entry_32.S
+> +++ b/arch/x86/entry/entry_32.S
+> @@ -48,6 +48,17 @@
+>  
+>  #include "calling.h"
+>  
+> +#ifndef CONFIG_XEN_PV
+> +# define USER_SEGMENT_RPL_MASK SEGMENT_RPL_MASK
+> +#else
+> +/*
+> + * When running paravirtualized on Xen the kernel runs in ring 1, and hence
+> + * simple mask based tests (i.e. ones not comparing against USER_RPL) have to
+> + * ignore bit 0. See also the C-level get_kernel_rpl().
+> + */
+> +# define USER_SEGMENT_RPL_MASK (SEGMENT_RPL_MASK & ~1)
+> +#endif
+> +
+>  	.section .entry.text, "ax"
+>  
+>  /*
+> @@ -172,7 +183,7 @@
+>  	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
+>  	.if \no_user_check == 0
+>  	/* coming from usermode? */
+> -	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
+> +	testl	$USER_SEGMENT_RPL_MASK, PT_CS(%esp)
+>  	jz	.Lend_\@
+>  	.endif
+>  	/* On user-cr3? */
+> @@ -217,7 +228,7 @@
+>  	testl	$X86_EFLAGS_VM, 4*4(%esp)
+>  	jnz	.Lfrom_usermode_no_fixup_\@
+>  #endif
+> -	testl	$SEGMENT_RPL_MASK, 3*4(%esp)
+> +	testl	$USER_SEGMENT_RPL_MASK, 3*4(%esp)
+>  	jnz	.Lfrom_usermode_no_fixup_\@
+>  
+>  	orl	$CS_FROM_KERNEL, 3*4(%esp)
+> 
 
