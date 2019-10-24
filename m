@@ -2,59 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CFEDE3FD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 00:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C04EBE3FF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 01:08:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733172AbfJXW7I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 18:59:08 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44849 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733082AbfJXW7C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 18:59:02 -0400
-Received: by mail-il1-f194.google.com with SMTP id f13so133396ils.11
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 15:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6ewd1rVkhq4LpaE/RWcspGCRKM0wa097bcHOPlCsLiI=;
-        b=mQgVZqoRA4C+jywJUfgezpEMpK4tDsxVj3MUVMhVw/V9KcdTEUnsDGiizEdRxNe0bb
-         ELefZpeh5KMWKi4lWruJDQ1QC90tpmN8TVijGarn6mOv9PaWnFbEE0XJXBbh4hO+7lBA
-         FpbKaB41bdmIsd+CpF7LR63qOH935RjV9rLd1yJ2oY61BFupVypeGI25J9q2RtDWUQIC
-         5ON3WMxbPtMeEjsiOeIkqRf9s6M6n0vj52bbh2pV32Aet4/ciZ4liSoH8flRfWTzhJ8i
-         kvZCYSijtjo2lWxjVxcOl6cVpTV8MG7bOXT5NFkZtM4uYql59ionZXhmaOv70wcgiZU0
-         hBZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6ewd1rVkhq4LpaE/RWcspGCRKM0wa097bcHOPlCsLiI=;
-        b=rotjCCX04GVgzqRtBVRyLyZF6Heg8SIoYByKN0T2keo5ZLZPKWzlbDKreSOjtq1Woy
-         5ogA7JA995zGfQlkZQ92ebrQyY6VPsocDdSpVBqI0bHJ2oQyqSqXTrjjBG1F0NQdCTO2
-         dzo1QD9s2Bq5T2ZlncWCJMWNWKJHJs5/dUMr9uyzsofM9S5a8g5lFhn5eYeCGW+g6izm
-         4CCT03oCCk4EcUTMjToXdEFzw4sFWhytW+9uwlT1X09m850KmJmwJLtl4TIAnNN6OvWg
-         p+JXbeADLMpMhl25T1fOQaXmb2bwrxaaGp+FO5WDrWF9T53rci2s3D8RywKP7NbvoEI3
-         rb3g==
-X-Gm-Message-State: APjAAAXut4PA79PiY2++D6pGwsKpWirjK2MSPOtMVDaoJFgdZcupLlZb
-        aQY8+ro3wulmxLGLyrTdUc5tGQ==
-X-Google-Smtp-Source: APXvYqz43O6FDAWcYOVrF1HCpzRXwF5m1tk03ArHzCfCtyXH/mGlZwggHZNmnwLL7SV3KQivEs92Mw==
-X-Received: by 2002:a92:dd88:: with SMTP id g8mr569648iln.199.1571957941595;
-        Thu, 24 Oct 2019 15:59:01 -0700 (PDT)
-Received: from viisi.Home ([64.62.168.194])
-        by smtp.gmail.com with ESMTPSA id b18sm58112ilo.70.2019.10.24.15.58.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2019 15:59:01 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-To:     linux-riscv@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, hch@lst.dev, greentime.hu@sifive.com,
-        luc.vanoostenryck@gmail.com, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v4 6/6] riscv: for C functions called only from assembly, mark with __visible
-Date:   Thu, 24 Oct 2019 15:58:38 -0700
-Message-Id: <20191024225838.27743-7-paul.walmsley@sifive.com>
-X-Mailer: git-send-email 2.24.0.rc0
-In-Reply-To: <20191024225838.27743-1-paul.walmsley@sifive.com>
-References: <20191024225838.27743-1-paul.walmsley@sifive.com>
+        id S2387601AbfJXXHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 19:07:54 -0400
+Received: from mga18.intel.com ([134.134.136.126]:23481 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725977AbfJXXHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 19:07:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 16:07:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,226,1569308400"; 
+   d="scan'208";a="202445828"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
+  by orsmga006.jf.intel.com with ESMTP; 24 Oct 2019 16:07:45 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     James Hogan <jhogan@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>
+Subject: [PATCH v3 00/15] KVM: Dynamically size memslot arrays
+Date:   Thu, 24 Oct 2019 16:07:29 -0700
+Message-Id: <20191024230744.14543-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,129 +53,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather than adding prototypes for C functions called only by assembly
-code, mark them as __visible.  This avoids adding prototypes that will
-never be used by the callers.  Resolves the following sparse warnings:
+The end goal of this series is to dynamically size the memslot array so
+that KVM allocates memory based on the number of memslots in use, as
+opposed to unconditionally allocating memory for the maximum number of
+memslots.  On x86, each memslot consumes 88 bytes, and so with 2 address
+spaces of 512 memslots, each VM consumes ~90k bytes for the memslots.
+E.g. given a VM that uses a total of 30 memslots, dynamic sizing reduces
+the memory footprint from 90k to ~2.6k bytes.
 
-arch/riscv/kernel/irq.c:27:29: warning: symbol 'do_IRQ' was not declared. Should it be static?
-arch/riscv/kernel/ptrace.c:151:6: warning: symbol 'do_syscall_trace_enter' was not declared. Should it be static?
-arch/riscv/kernel/ptrace.c:165:6: warning: symbol 'do_syscall_trace_exit' was not declared. Should it be static?
-arch/riscv/kernel/signal.c:295:17: warning: symbol 'do_notify_resume' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:92:1: warning: symbol 'do_trap_unknown' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:94:1: warning: symbol 'do_trap_insn_misaligned' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:96:1: warning: symbol 'do_trap_insn_fault' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:98:1: warning: symbol 'do_trap_insn_illegal' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:100:1: warning: symbol 'do_trap_load_misaligned' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:102:1: warning: symbol 'do_trap_load_fault' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:104:1: warning: symbol 'do_trap_store_misaligned' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:106:1: warning: symbol 'do_trap_store_fault' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:108:1: warning: symbol 'do_trap_ecall_u' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:110:1: warning: symbol 'do_trap_ecall_s' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:112:1: warning: symbol 'do_trap_ecall_m' was not declared. Should it be static?
-arch/riscv/kernel/traps.c:124:17: warning: symbol 'do_trap_break' was not declared. Should it be static?
-arch/riscv/kernel/smpboot.c:136:24: warning: symbol 'smp_callin' was not declared. Should it be static?
+The changes required to support dynamic sizing are relatively small,
+e.g. are essentially contained in patches 14/15 and 15/15.  Patches 1-13
+clean up the memslot code, which has gotten quite crusty, especially
+__kvm_set_memory_region().  The clean up is likely not strictly necessary
+to switch to dynamic sizing, but I didn't have a remotely reasonable
+level of confidence in the correctness of the dynamic sizing without first
+doing the clean up.
 
-Based on a suggestion from Luc Van Oostenryck.
+Christoffer, I added your Tested-by to the patches that I was confident
+would be fully tested based on the desription of what you tested.  Let me
+know if you disagree with any of 'em.
 
-This version includes changes based on feedback from Christoph Hellwig
-<hch@lst.de>.
+v3:
+  - Fix build errors on PPC and MIPS due to missed params during
+    refactoring [kbuild test robot].
+  - Rename the helpers for update_memslots() and add comments describing
+    the new algorithm and how it interacts with searching [Paolo].
+  - Remove the unnecessary and obnoxious warning regarding memslots being
+    a flexible array [Paolo].
+  - Fix typos in the changelog of patch 09/15 [Christoffer].
+  - Collect tags [Christoffer].
 
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de> # for do_syscall_trace_*
----
- arch/riscv/kernel/irq.c     | 2 +-
- arch/riscv/kernel/ptrace.c  | 4 ++--
- arch/riscv/kernel/signal.c  | 4 ++--
- arch/riscv/kernel/smpboot.c | 2 +-
- arch/riscv/kernel/traps.c   | 4 ++--
- 5 files changed, 8 insertions(+), 8 deletions(-)
+v2:
+  - Split "Drop kvm_arch_create_memslot()" into three patches to move
+    minor functional changes to standalone patches [Janosch].
+  - Rebase to latest kvm/queue (f0574a1cea5b, "KVM: x86: fix ...")
+  - Collect an Acked-by and a Reviewed-by
 
-diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
-index 6d8659388c49..fffac6ddb0e0 100644
---- a/arch/riscv/kernel/irq.c
-+++ b/arch/riscv/kernel/irq.c
-@@ -24,7 +24,7 @@ int arch_show_interrupts(struct seq_file *p, int prec)
- 	return 0;
- }
- 
--asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs)
-+asmlinkage __visible void __irq_entry do_IRQ(struct pt_regs *regs)
- {
- 	struct pt_regs *old_regs = set_irq_regs(regs);
- 
-diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
-index 368751438366..1252113ef8b2 100644
---- a/arch/riscv/kernel/ptrace.c
-+++ b/arch/riscv/kernel/ptrace.c
-@@ -148,7 +148,7 @@ long arch_ptrace(struct task_struct *child, long request,
-  * Allows PTRACE_SYSCALL to work.  These are called from entry.S in
-  * {handle,ret_from}_syscall.
-  */
--void do_syscall_trace_enter(struct pt_regs *regs)
-+__visible void do_syscall_trace_enter(struct pt_regs *regs)
- {
- 	if (test_thread_flag(TIF_SYSCALL_TRACE))
- 		if (tracehook_report_syscall_entry(regs))
-@@ -162,7 +162,7 @@ void do_syscall_trace_enter(struct pt_regs *regs)
- 	audit_syscall_entry(regs->a7, regs->a0, regs->a1, regs->a2, regs->a3);
- }
- 
--void do_syscall_trace_exit(struct pt_regs *regs)
-+__visible void do_syscall_trace_exit(struct pt_regs *regs)
- {
- 	audit_syscall_exit(regs);
- 
-diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-index 64bc914ce9ff..d0f6f212f5df 100644
---- a/arch/riscv/kernel/signal.c
-+++ b/arch/riscv/kernel/signal.c
-@@ -292,8 +292,8 @@ static void do_signal(struct pt_regs *regs)
-  * notification of userspace execution resumption
-  * - triggered by the _TIF_WORK_MASK flags
-  */
--asmlinkage void do_notify_resume(struct pt_regs *regs,
--	unsigned long thread_info_flags)
-+asmlinkage __visible void do_notify_resume(struct pt_regs *regs,
-+					   unsigned long thread_info_flags)
- {
- 	/* Handle pending signal delivery */
- 	if (thread_info_flags & _TIF_SIGPENDING)
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index ec0be2f6a2e8..261f4087cc39 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -133,7 +133,7 @@ void __init smp_cpus_done(unsigned int max_cpus)
- /*
-  * C entry point for a secondary processor.
-  */
--asmlinkage void __init smp_callin(void)
-+asmlinkage __visible void __init smp_callin(void)
- {
- 	struct mm_struct *mm = &init_mm;
- 
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index 0b6e271efc43..473de3ae8bb7 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -84,7 +84,7 @@ static void do_trap_error(struct pt_regs *regs, int signo, int code,
- }
- 
- #define DO_ERROR_INFO(name, signo, code, str)				\
--asmlinkage void name(struct pt_regs *regs)				\
-+asmlinkage __visible void name(struct pt_regs *regs)			\
- {									\
- 	do_trap_error(regs, signo, code, regs->sepc, "Oops - " str);	\
- }
-@@ -121,7 +121,7 @@ static inline unsigned long get_break_insn_length(unsigned long pc)
- 	return (((insn & __INSN_LENGTH_MASK) == __INSN_LENGTH_32) ? 4UL : 2UL);
- }
- 
--asmlinkage void do_trap_break(struct pt_regs *regs)
-+asmlinkage __visible void do_trap_break(struct pt_regs *regs)
- {
- 	if (user_mode(regs))
- 		force_sig_fault(SIGTRAP, TRAP_BRKPT, (void __user *)regs->sepc);
+
+Sean Christopherson (15):
+  KVM: Reinstall old memslots if arch preparation fails
+  KVM: Don't free new memslot if allocation of said memslot fails
+  KVM: PPC: Move memslot memory allocation into prepare_memory_region()
+  KVM: x86: Allocate memslot resources during prepare_memory_region()
+  KVM: Drop kvm_arch_create_memslot()
+  KVM: Explicitly free allocated-but-unused dirty bitmap
+  KVM: Refactor error handling for setting memory region
+  KVM: Move setting of memslot into helper routine
+  KVM: Move memslot deletion to helper function
+  KVM: Simplify kvm_free_memslot() and all its descendents
+  KVM: Clean up local variable usage in __kvm_set_memory_region()
+  KVM: Provide common implementation for generic dirty log functions
+  KVM: Ensure validity of memslot with respect to kvm_get_dirty_log()
+  KVM: Terminate memslot walks via used_slots
+  KVM: Dynamically size memslot array based on number of used slots
+
+ arch/mips/include/asm/kvm_host.h      |   2 +-
+ arch/mips/kvm/mips.c                  |  69 +--
+ arch/powerpc/include/asm/kvm_ppc.h    |  17 +-
+ arch/powerpc/kvm/book3s.c             |  22 +-
+ arch/powerpc/kvm/book3s_hv.c          |  36 +-
+ arch/powerpc/kvm/book3s_pr.c          |  20 +-
+ arch/powerpc/kvm/booke.c              |  17 +-
+ arch/powerpc/kvm/powerpc.c            |  13 +-
+ arch/s390/include/asm/kvm_host.h      |   2 +-
+ arch/s390/kvm/kvm-s390.c              |  21 +-
+ arch/x86/include/asm/kvm_page_track.h |   3 +-
+ arch/x86/kvm/page_track.c             |  15 +-
+ arch/x86/kvm/x86.c                    | 101 +----
+ include/linux/kvm_host.h              |  46 +-
+ virt/kvm/arm/arm.c                    |  48 +-
+ virt/kvm/arm/mmu.c                    |  18 +-
+ virt/kvm/kvm_main.c                   | 621 +++++++++++++++++---------
+ 17 files changed, 542 insertions(+), 529 deletions(-)
+
 -- 
-2.24.0.rc0
+2.22.0
 
