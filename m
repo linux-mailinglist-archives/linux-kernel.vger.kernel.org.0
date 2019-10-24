@@ -2,173 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75E9DE3520
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5253E3512
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:09:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502645AbfJXOLt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 10:11:49 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5161 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391409AbfJXOLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 10:11:43 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 60E745363B7315A47AA4;
-        Thu, 24 Oct 2019 22:11:35 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 24 Oct 2019 22:11:29 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>,
-        Luo Jiaxing <luojiaxing@huawei.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH v2 18/18] scsi: hisi_sas: Record the phy down event in debugfs
-Date:   Thu, 24 Oct 2019 22:08:25 +0800
-Message-ID: <1571926105-74636-19-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1571926105-74636-1-git-send-email-john.garry@huawei.com>
-References: <1571926105-74636-1-git-send-email-john.garry@huawei.com>
+        id S2409357AbfJXOJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 10:09:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:57958 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389658AbfJXOJh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 10:09:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lKm45370EhrH8zZ54o5/PLqtFk0+iVXt+l8pnOZZmpQ=; b=OFeOLH4zOtHPY7V/OhqklOhC+
+        87yER8lXEp9nRYndHoU//ASyXzhJa72HswKTcm9o412MHF930mrFXeHte8Qg0nfR4cpvTCPoIz3bk
+        q+sCK08K4J8Oa7Z2s+fND8Gh/2l0CRzYfR95JMQXNil7PM9+FCO4Dea4fvbfoYjGNwi3+aZw4By3p
+        PoA/Aou3Je1LkOkLeeMjI2LGbdwSIyjh1sdK2kDI/eAEJKzlUqt/DVoqHWlmFasw3ghMGD3TVspqf
+        VtbX2ZmyK5n3KeTFHz2bLBwqA2bf/rB3WL10Ws1jg9GXYvdFC2AO/0x1AT+pySpKRSjEOLZ/8vBJ6
+        /yQl3eJCg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iNdnv-0000Ey-VK; Thu, 24 Oct 2019 14:09:32 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0F333300489;
+        Thu, 24 Oct 2019 16:08:32 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 812062B1D7CA5; Thu, 24 Oct 2019 16:09:30 +0200 (CEST)
+Date:   Thu, 24 Oct 2019 16:09:30 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com, adrian.hunter@intel.com,
+        mathieu.poirier@linaro.org, mark.rutland@arm.com
+Subject: Re: [PATCH v2 1/4] perf: Allow using AUX data in perf samples
+Message-ID: <20191024140930.GH4114@hirez.programming.kicks-ass.net>
+References: <20191022095812.67071-1-alexander.shishkin@linux.intel.com>
+ <20191022095812.67071-2-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191022095812.67071-2-alexander.shishkin@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luo Jiaxing <luojiaxing@huawei.com>
+On Tue, Oct 22, 2019 at 12:58:09PM +0300, Alexander Shishkin wrote:
+> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> index bb7b271397a6..84dbd1499a24 100644
+> --- a/include/uapi/linux/perf_event.h
+> +++ b/include/uapi/linux/perf_event.h
+> @@ -141,8 +141,9 @@ enum perf_event_sample_format {
+>  	PERF_SAMPLE_TRANSACTION			= 1U << 17,
+>  	PERF_SAMPLE_REGS_INTR			= 1U << 18,
+>  	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
+> +	PERF_SAMPLE_AUX				= 1U << 20,
+>  
+> -	PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
+> +	PERF_SAMPLE_MAX = 1U << 21,		/* non-ABI */
+>  
+>  	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
+>  };
+> @@ -424,7 +425,7 @@ struct perf_event_attr {
+>  	 */
+>  	__u32	aux_watermark;
+>  	__u16	sample_max_stack;
+> -	__u16	__reserved_2;	/* align to __u64 */
+> +	__u16	aux_sample_size;
+>  };
 
-The number of phy down reflects the quality of the link between SAS
-controller and disk. In order to allow the user to confirm the link quality
-of the system, we record the number of phy down for each phy.
+While I understand; would it not be better to make that a u32 (like
+sample_stack_user) ? That way we only have to ref the output format and
+not also the config format to get more output.
 
-The user can check the current phy down count by reading the debugfs file
-corresponding to the specific phy, or clear the phy down count by writing 0
-to the debugfs file.
-
-Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas.h       |  1 +
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 63 ++++++++++++++++++++++++++
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |  2 +
- 3 files changed, 66 insertions(+)
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-index 72823222e08f..233c73e01246 100644
---- a/drivers/scsi/hisi_sas/hisi_sas.h
-+++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -169,6 +169,7 @@ struct hisi_sas_phy {
- 	enum sas_linkrate	minimum_linkrate;
- 	enum sas_linkrate	maximum_linkrate;
- 	int enable;
-+	atomic_t down_cnt;
- };
- 
- struct hisi_sas_port {
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 669ad7463615..18c95b33592b 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -3705,6 +3705,52 @@ static const struct file_operations hisi_sas_debugfs_bist_enable_ops = {
- 	.owner = THIS_MODULE,
- };
- 
-+static ssize_t hisi_sas_debugfs_phy_down_cnt_write(struct file *filp,
-+						   const char __user *buf,
-+						   size_t count, loff_t *ppos)
-+{
-+	struct seq_file *s = filp->private_data;
-+	struct hisi_sas_phy *phy = s->private;
-+	unsigned int set_val;
-+	int res;
-+
-+	res = kstrtouint_from_user(buf, count, 0, &set_val);
-+	if (res)
-+		return res;
-+
-+	if (set_val > 0)
-+		return -EINVAL;
-+
-+	atomic_set(&phy->down_cnt, 0);
-+
-+	return count;
-+}
-+
-+static int hisi_sas_debugfs_phy_down_cnt_show(struct seq_file *s, void *p)
-+{
-+	struct hisi_sas_phy *phy = s->private;
-+
-+	seq_printf(s, "%d\n", atomic_read(&phy->down_cnt));
-+
-+	return 0;
-+}
-+
-+static int hisi_sas_debugfs_phy_down_cnt_open(struct inode *inode,
-+					      struct file *filp)
-+{
-+	return single_open(filp, hisi_sas_debugfs_phy_down_cnt_show,
-+			   inode->i_private);
-+}
-+
-+static const struct file_operations hisi_sas_debugfs_phy_down_cnt_ops = {
-+	.open = hisi_sas_debugfs_phy_down_cnt_open,
-+	.read = seq_read,
-+	.write = hisi_sas_debugfs_phy_down_cnt_write,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+	.owner = THIS_MODULE,
-+};
-+
- void hisi_sas_debugfs_work_handler(struct work_struct *work)
- {
- 	struct hisi_hba *hisi_hba =
-@@ -3839,6 +3885,21 @@ static int hisi_sas_debugfs_alloc(struct hisi_hba *hisi_hba, int dump_index)
- 	return -ENOMEM;
- }
- 
-+static void hisi_sas_debugfs_phy_down_cnt_init(struct hisi_hba *hisi_hba)
-+{
-+	struct dentry *dir = debugfs_create_dir("phy_down_cnt",
-+						hisi_hba->debugfs_dir);
-+	char name[16];
-+	int phy_no;
-+
-+	for (phy_no = 0; phy_no < hisi_hba->n_phy; phy_no++) {
-+		snprintf(name, 16, "%d", phy_no);
-+		debugfs_create_file(name, 0600, dir,
-+				    &hisi_hba->phy[phy_no],
-+				    &hisi_sas_debugfs_phy_down_cnt_ops);
-+	}
-+}
-+
- static void hisi_sas_debugfs_bist_init(struct hisi_hba *hisi_hba)
- {
- 	hisi_hba->debugfs_bist_dentry =
-@@ -3885,6 +3946,8 @@ void hisi_sas_debugfs_init(struct hisi_hba *hisi_hba)
- 	hisi_hba->debugfs_dump_dentry =
- 			debugfs_create_dir("dump", hisi_hba->debugfs_dir);
- 
-+	hisi_sas_debugfs_phy_down_cnt_init(hisi_hba);
-+
- 	for (i = 0; i < hisi_sas_debugfs_dump_count; i++) {
- 		if (hisi_sas_debugfs_alloc(hisi_hba, i)) {
- 			debugfs_remove_recursive(hisi_hba->debugfs_dir);
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index e4da309009c0..2ae7070db41a 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -1549,6 +1549,8 @@ static irqreturn_t phy_down_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
- 	u32 phy_state, sl_ctrl, txid_auto;
- 	struct device *dev = hisi_hba->dev;
- 
-+	atomic_inc(&phy->down_cnt);
-+
- 	del_timer(&phy->timer);
- 	hisi_sas_phy_write32(hisi_hba, phy_no, PHYCTRL_NOT_RDY_MSK, 1);
- 
--- 
-2.17.1
-
+>  /*
+> @@ -864,6 +865,8 @@ enum perf_event_type {
+>  	 *	{ u64			abi; # enum perf_sample_regs_abi
+>  	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
+>  	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
+> +	 *	{ u64			size;
+> +	 *	  char			data[size]; } && PERF_SAMPLE_AUX
+>  	 * };
+>  	 */
+>  	PERF_RECORD_SAMPLE			= 9,
