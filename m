@@ -2,63 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 858F2E2F25
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:33:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A198E2EF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:31:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438861AbfJXKdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 06:33:40 -0400
-Received: from mta147.atlashoster.net ([5.39.37.51]:37305 "EHLO rajiweb.com"
+        id S2407398AbfJXKbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 06:31:05 -0400
+Received: from onstation.org ([52.200.56.107]:37172 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407882AbfJXKdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 06:33:39 -0400
-X-Greylist: delayed 3427 seconds by postgrey-1.27 at vger.kernel.org; Thu, 24 Oct 2019 06:33:38 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=noudeu.com;
-         s=default; h=Message-ID:Reply-To:Subject:To:From:Date:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Cc:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=eW4oia9U94AZzYr70xneAWl7LFkhnhsIxwR0Ug4GFC0=; b=O6AgD3qmgJppiUOR5hYh4et0bS
-        SFWAGw1EQ9S3BDvHhSt0peKy6Y8+KV0bXk70mkcSyUt+bdyWQIKTZg13K7FkN2XFMnRA5fVwsmjDt
-        Vs4kWs9EIhkR+vwSv4gzeozA+k5YaYH+wyDw3R0t2R3nILbsncVuf2cCRQYXG2be4UKFRb8V2KJi7
-        jnfGVz45r1uQJTBN+R/LYW9Do0lCQKmzUsRDl4HpgL/vxQqpMFByALe9E8V/TIPNOpUiXsDRT1zBL
-        E6j8ZHaQFj0YVEBe6CeGS3x8EtMpzuLyx3k3fCGC2Wi79ongVwEQNTtnW9/ITM2diEUrDvfR+agpd
-        z9Nn2TGQ==;
-Received: from [::1] (port=49738 helo=hosting.atlashoster.net)
-        by hosting.atlashoster.net with esmtpa (Exim 4.92)
-        (envelope-from <andrewkabore1@gmail.com>)
-        id 1iNZXZ-0007Om-NJ; Thu, 24 Oct 2019 11:36:21 +0200
+        id S2404801AbfJXKbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 06:31:05 -0400
+Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 29D713E951;
+        Thu, 24 Oct 2019 10:31:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1571913064;
+        bh=yJXhW2YAvxRlZip0bP5m7RlkRR4+fexngI8FBQ676yw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fQTpJKMtXW2dbjwt6j5ka6YgqbZ1crOJ375u/XDBlX+E3kEubIOEidtWfTGO8gd3X
+         EmvSEIkaN/JB0j3agUtqEoA36nv91bryIQ4T43hjD0IiWEWLRRNbBKjBXJH6M7WjrF
+         AYEZSF7Qb4NU/FGWVajkoWPnVmvHvBZLWGs5bjWw=
+From:   Brian Masney <masneyb@onstation.org>
+To:     bjorn.andersson@linaro.org, georgi.djakov@linaro.org
+Cc:     robh+dt@kernel.org, agross@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        jonathan@marek.ca
+Subject: [PATCH v3 0/2] interconnect: qcom: add msm8974 support
+Date:   Thu, 24 Oct 2019 06:30:52 -0400
+Message-Id: <20191024103054.9770-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 24 Oct 2019 11:36:21 +0200
-From:   Mr Andrew Kabore <andrewkabore1@gmail.com>
-To:     undisclosed-recipients:;
-Subject: Greetings
-Reply-To: mrandrewkabore@naver.com
-Mail-Reply-To: mrandrewkabore@naver.com
-Message-ID: <2d05a0def75ecdf459784ab460685740@gmail.com>
-X-Sender: andrewkabore1@gmail.com
-User-Agent: Roundcube Webmail/1.3.8
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hosting.atlashoster.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - gmail.com
-X-Get-Message-Sender-Via: hosting.atlashoster.net: authenticated_id: contact@noudeu.com
-X-Authenticated-Sender: hosting.atlashoster.net: contact@noudeu.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Here's a patch series that adds interconnect support for the Qualcomm
+MSM8974, which is needed so that the GPU can be supported upstream.
 
+The only change in this series is support for more paths that were
+hardcoded in the downstream drivers. See patch #2 for details.
+
+Brian Masney (2):
+  dt-bindings: interconnect: qcom: add msm8974 bindings
+  interconnect: qcom: add msm8974 driver
+
+ .../bindings/interconnect/qcom,msm8974.yaml   |  62 ++
+ drivers/interconnect/qcom/Kconfig             |   9 +
+ drivers/interconnect/qcom/Makefile            |   2 +
+ drivers/interconnect/qcom/msm8974.c           | 784 ++++++++++++++++++
+ .../dt-bindings/interconnect/qcom,msm8974.h   | 146 ++++
+ 5 files changed, 1003 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,msm8974.yaml
+ create mode 100644 drivers/interconnect/qcom/msm8974.c
+ create mode 100644 include/dt-bindings/interconnect/qcom,msm8974.h
 
 -- 
-Hello dear, I need your assistance to transfer money sum of $usd35 
-million, Get back to me for more details.
-Mr. Andrew
+2.21.0
+
