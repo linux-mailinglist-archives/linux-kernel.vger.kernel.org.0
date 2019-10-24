@@ -2,82 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 802FAE385C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E956E3802
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 18:36:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393965AbfJXQlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 12:41:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60434 "EHLO mail.kernel.org"
+        id S2503467AbfJXQgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 12:36:16 -0400
+Received: from foss.arm.com ([217.140.110.172]:56142 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390204AbfJXQln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 12:41:43 -0400
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E1F521925
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 16:33:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571934839;
-        bh=1SNHEg6+c998ctNCmd9SgwSXFWQKSNG1btG3g+zXoyw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=b/TQ/9/CbwW5SRUBfFuJHDwGl6ndjWOCM/d9EMkad3YaXL0FAm+86hjsxnERu7yH4
-         sjURls7sokdzhUyNIzGgkzPpElNUh3EDG/lcGFuqXN7wtCXu2GD11z6lecOndhLUod
-         EBQXFXo8LqoUIoKIATNtZqQ0XBcc89G+oAiFVsoE=
-Received: by mail-wr1-f47.google.com with SMTP id t16so21693103wrr.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 09:33:59 -0700 (PDT)
-X-Gm-Message-State: APjAAAU6LhPBR5QWcywVh7I/BW5vWKXtC1TZRqLZCcrKXUdcD6pPHkI2
-        YjeZQTXdgKnvR9Pu47MqsAAP1AMtJ06Ht490kIj8wA==
-X-Google-Smtp-Source: APXvYqyYjlrS0PO0VZ1qRMGKSsFiVVDLw2A2GrTFkiqLwXEeea+luMRqO7GJCnjTjc6QcZfFsb1uJ7GKgNFlLm/NEro=
-X-Received: by 2002:adf:f342:: with SMTP id e2mr4921768wrp.61.1571934837618;
- Thu, 24 Oct 2019 09:33:57 -0700 (PDT)
+        id S2503452AbfJXQgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 12:36:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D418369;
+        Thu, 24 Oct 2019 09:35:52 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 459D93F71F;
+        Thu, 24 Oct 2019 09:35:48 -0700 (PDT)
+Date:   Thu, 24 Oct 2019 17:35:46 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Marco Elver <elver@google.com>
+Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Alexander Potapenko <glider@google.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-efi@vger.kernel.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [PATCH v2 4/8] seqlock, kcsan: Add annotations for KCSAN
+Message-ID: <20191024163545.GI4300@lakrids.cambridge.arm.com>
+References: <20191017141305.146193-1-elver@google.com>
+ <20191017141305.146193-5-elver@google.com>
+ <20191024122801.GD4300@lakrids.cambridge.arm.com>
+ <CANpmjNPFkqOSEcEP475-NeeJnY5pZ44m+bEhtOs8E_xkRKr-TQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <ef1c9381-dfc7-7150-feca-581f4d798513@suse.com>
- <CALCETrWAALF7EgxHGs-rtZwk1Fxttr56QKXeB6QssXbyXDs+kA@mail.gmail.com> <8f9f812b-c28a-5828-d8d9-37ae7e2f99da@citrix.com>
-In-Reply-To: <8f9f812b-c28a-5828-d8d9-37ae7e2f99da@citrix.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 24 Oct 2019 09:33:45 -0700
-X-Gmail-Original-Message-ID: <CALCETrXp0oEu1zeCHUjPJb+i6Y7vR6zCtHGKzP3qpW3S49mhBg@mail.gmail.com>
-Message-ID: <CALCETrXp0oEu1zeCHUjPJb+i6Y7vR6zCtHGKzP3qpW3S49mhBg@mail.gmail.com>
-Subject: Re: [Xen-devel] [PATCH] x86/stackframe/32: repair 32-bit Xen PV
-To:     Andrew Cooper <andrew.cooper3@citrix.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Jan Beulich <jbeulich@suse.com>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        X86 ML <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNPFkqOSEcEP475-NeeJnY5pZ44m+bEhtOs8E_xkRKr-TQ@mail.gmail.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 9:32 AM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
->
-> On 24/10/2019 17:11, Andy Lutomirski wrote:
-> >> +# define USER_SEGMENT_RPL_MASK (SEGMENT_RPL_MASK & ~1)
-> >> +#endif
-> >> +
-> >>         .section .entry.text, "ax"
-> >>
-> >>  /*
-> >> @@ -172,7 +183,7 @@
-> >>         ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
-> >>         .if \no_user_check == 0
-> >>         /* coming from usermode? */
-> >> -       testl   $SEGMENT_RPL_MASK, PT_CS(%esp)
-> >> +       testl   $USER_SEGMENT_RPL_MASK, PT_CS(%esp)
-> > Shouldn't PT_CS(%esp) be 0 if we came from the kernel?  I'm guessing
-> > the actual bug is in whatever code put 1 in here in the first place.
->
-> Ring1 kernels (32bit) consistently see RPL1 everywhere under Xen.
->
-> Back in the days of a 32bit Xen, int $0x80 really was wired directly
-> from ring 3 to 1, and didn't bounce through Xen.  This isn't possible in
-> long mode, because all IDT gates are required to be 64bit code segments.
->
-> Ring3 kernels (64bit) consistently see RPL0 everywhere under Xen,
-> because presumably this was less invasive when designing the ABI.
->
+On Thu, Oct 24, 2019 at 04:17:11PM +0200, Marco Elver wrote:
+> On Thu, 24 Oct 2019 at 14:28, Mark Rutland <mark.rutland@arm.com> wrote:
+> >
+> > On Thu, Oct 17, 2019 at 04:13:01PM +0200, Marco Elver wrote:
+> > > Since seqlocks in the Linux kernel do not require the use of marked
+> > > atomic accesses in critical sections, we teach KCSAN to assume such
+> > > accesses are atomic. KCSAN currently also pretends that writes to
+> > > `sequence` are atomic, although currently plain writes are used (their
+> > > corresponding reads are READ_ONCE).
+> > >
+> > > Further, to avoid false positives in the absence of clear ending of a
+> > > seqlock reader critical section (only when using the raw interface),
+> > > KCSAN assumes a fixed number of accesses after start of a seqlock
+> > > critical section are atomic.
+> >
+> > Do we have many examples where there's not a clear end to a seqlock
+> > sequence? Or are there just a handful?
+> >
+> > If there aren't that many, I wonder if we can make it mandatory to have
+> > an explicit end, or to add some helper for those patterns so that we can
+> > reliably hook them.
+> 
+> In an ideal world, all usage of seqlocks would be via seqlock_t, which
+> follows a somewhat saner usage, where we already do normal begin/end
+> markings -- with subtle exception to readers needing to be flat atomic
+> regions, e.g. because usage like this:
+> - fs/namespace.c:__legitimize_mnt - unbalanced read_seqretry
+> - fs/dcache.c:d_walk - unbalanced need_seqretry
+> 
+> But anything directly accessing seqcount_t seems to be unpredictable.
+> Filtering for usage of read_seqcount_retry not following 'do { .. }
+> while (read_seqcount_retry(..));' (although even the ones in while
+> loops aren't necessarily predictable):
+> 
+> $ git grep 'read_seqcount_retry' | grep -Ev 'seqlock.h|Doc|\* ' | grep
+> -v 'while ('
+> => about 1/3 of the total read_seqcount_retry usage.
+> 
+> Just looking at fs/namei.c, I would conclude that it'd be a pretty
+> daunting task to prescribe and migrate to an interface that forces
+> clear begin/end.
+> 
+> Which is why I concluded that for now, it is probably better to make
+> KCSAN play well with the existing code.
 
-OK, gotcha.
+Thanks for the detailed explanation, it's very helpful.
 
-So I'm fine with this patch if you improve the comment and definition.
+That all sounds reasonable to me -- could you fold some of that into the
+commit message?
+
+Thanks,
+Mark.
