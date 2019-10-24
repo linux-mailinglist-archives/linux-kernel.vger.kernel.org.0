@@ -2,317 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E199E34A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:47:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4572CE34AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:47:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393799AbfJXNrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 09:47:02 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46023 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2393764AbfJXNrC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 09:47:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571924819;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EfRA8cSd2wOIFv2uoOiidflVlPEJr9nmbvdtu17QN6g=;
-        b=WVowUe9wQqRgw8lY3bfmYYX+74+Fs/y7jL0K4Rs+H/SbZ4d/zylCBilLo5XMfM/9YBi4hd
-        fzxsTEgTZMeCmFJPr2HdZcc3B0WfVOi2Eb7IwDDxFMqNy66ycHbcRKoWq7z4CAOfKrmVPa
-        PFiC2ek+Ansq+FxG3LmCFQd7o1KBWXU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-341-HTUcDf8sNRuo5RIHR4MeMQ-1; Thu, 24 Oct 2019 09:46:56 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 94180801E5C;
-        Thu, 24 Oct 2019 13:46:54 +0000 (UTC)
-Received: from pauld.bos.csb (dhcp-17-51.bos.redhat.com [10.18.17.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E82015FCDF;
-        Thu, 24 Oct 2019 13:46:52 +0000 (UTC)
-Date:   Thu, 24 Oct 2019 09:46:51 -0400
-From:   Phil Auld <pauld@redhat.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Parth Shah <parth@linux.ibm.com>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [PATCH v4 00/10] sched/fair: rework the CFS load balance
-Message-ID: <20191024134650.GD2708@pauld.bos.csb>
-References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
- <20191021075038.GA27361@gmail.com>
- <CAKfTPtCcvKuf1Gt0W-BeEbQxFP_co14jdv_L5zEpS==Ecibabg@mail.gmail.com>
- <20191024123844.GB2708@pauld.bos.csb>
+        id S2393829AbfJXNrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 09:47:20 -0400
+Received: from uho.ysoft.cz ([81.19.3.130]:52638 "EHLO uho.ysoft.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393816AbfJXNrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 09:47:19 -0400
+Received: from iota-build.ysoft.local (unknown [10.1.5.151])
+        by uho.ysoft.cz (Postfix) with ESMTP id EBF7DA46D1;
+        Thu, 24 Oct 2019 15:47:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+        s=20160406-ysoft-com; t=1571924837;
+        bh=09J4vORehZpPUrCjny9gMof7LTXInUPHQqnUVJsRbps=;
+        h=From:To:Cc:Subject:Date:From;
+        b=n//OPWXdEDnZd017TCo9yp15YZ5BasUfGALobr6LZixLa/KX90UNZ2EXqF+uvLOFa
+         ju8lGPSdQIjymJYYp/NA1xqsR7hJ61kdtEvrGcL9qgmUsRmHB+4T/cEqA5hjEb8afU
+         VD8L/E0Nbd2IJXBxfaHo+XJV6TGROvImCTOuDdec=
+From:   =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+To:     Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+Subject: [PATCH net-next] net: dsa: qca8k: Initialize the switch with correct number of ports
+Date:   Thu, 24 Oct 2019 15:46:58 +0200
+Message-Id: <1571924818-27725-1-git-send-email-michal.vokac@ysoft.com>
+X-Mailer: git-send-email 2.1.4
 MIME-Version: 1.0
-In-Reply-To: <20191024123844.GB2708@pauld.bos.csb>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: HTUcDf8sNRuo5RIHR4MeMQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 08:38:44AM -0400 Phil Auld wrote:
-> Hi Vincent,
->=20
-> On Mon, Oct 21, 2019 at 10:44:20AM +0200 Vincent Guittot wrote:
-> > On Mon, 21 Oct 2019 at 09:50, Ingo Molnar <mingo@kernel.org> wrote:
-> > >
-> > >
-> > > * Vincent Guittot <vincent.guittot@linaro.org> wrote:
-> > >
-> > > > Several wrong task placement have been raised with the current load
-> > > > balance algorithm but their fixes are not always straight forward a=
-nd
-> > > > end up with using biased values to force migrations. A cleanup and =
-rework
-> > > > of the load balance will help to handle such UCs and enable to fine=
- grain
-> > > > the behavior of the scheduler for other cases.
-> > > >
-> > > > Patch 1 has already been sent separately and only consolidate asym =
-policy
-> > > > in one place and help the review of the changes in load_balance.
-> > > >
-> > > > Patch 2 renames the sum of h_nr_running in stats.
-> > > >
-> > > > Patch 3 removes meaningless imbalance computation to make review of
-> > > > patch 4 easier.
-> > > >
-> > > > Patch 4 reworks load_balance algorithm and fixes some wrong task pl=
-acement
-> > > > but try to stay conservative.
-> > > >
-> > > > Patch 5 add the sum of nr_running to monitor non cfs tasks and take=
- that
-> > > > into account when pulling tasks.
-> > > >
-> > > > Patch 6 replaces runnable_load by load now that the signal is only =
-used
-> > > > when overloaded.
-> > > >
-> > > > Patch 7 improves the spread of tasks at the 1st scheduling level.
-> > > >
-> > > > Patch 8 uses utilization instead of load in all steps of misfit tas=
-k
-> > > > path.
-> > > >
-> > > > Patch 9 replaces runnable_load_avg by load_avg in the wake up path.
-> > > >
-> > > > Patch 10 optimizes find_idlest_group() that was using both runnable=
-_load
-> > > > and load. This has not been squashed with previous patch to ease th=
-e
-> > > > review.
-> > > >
-> > > > Patch 11 reworks find_idlest_group() to follow the same steps as
-> > > > find_busiest_group()
-> > > >
-> > > > Some benchmarks results based on 8 iterations of each tests:
-> > > > - small arm64 dual quad cores system
-> > > >
-> > > >            tip/sched/core        w/ this patchset    improvement
-> > > > schedpipe      53125 +/-0.18%        53443 +/-0.52%   (+0.60%)
-> > > >
-> > > > hackbench -l (2560/#grp) -g #grp
-> > > >  1 groups      1.579 +/-29.16%       1.410 +/-13.46% (+10.70%)
-> > > >  4 groups      1.269 +/-9.69%        1.205 +/-3.27%   (+5.00%)
-> > > >  8 groups      1.117 +/-1.51%        1.123 +/-1.27%   (+4.57%)
-> > > > 16 groups      1.176 +/-1.76%        1.164 +/-2.42%   (+1.07%)
-> > > >
-> > > > Unixbench shell8
-> > > >   1 test     1963.48 +/-0.36%       1902.88 +/-0.73%    (-3.09%)
-> > > > 224 tests    2427.60 +/-0.20%       2469.80 +/-0.42%  (1.74%)
-> > > >
-> > > > - large arm64 2 nodes / 224 cores system
-> > > >
-> > > >            tip/sched/core        w/ this patchset    improvement
-> > > > schedpipe     124084 +/-1.36%       124445 +/-0.67%   (+0.29%)
-> > > >
-> > > > hackbench -l (256000/#grp) -g #grp
-> > > >   1 groups    15.305 +/-1.50%       14.001 +/-1.99%   (+8.52%)
-> > > >   4 groups     5.959 +/-0.70%        5.542 +/-3.76%   (+6.99%)
-> > > >  16 groups     3.120 +/-1.72%        3.253 +/-0.61%   (-4.92%)
-> > > >  32 groups     2.911 +/-0.88%        2.837 +/-1.16%   (+2.54%)
-> > > >  64 groups     2.805 +/-1.90%        2.716 +/-1.18%   (+3.17%)
-> > > > 128 groups     3.166 +/-7.71%        3.891 +/-6.77%   (+5.82%)
-> > > > 256 groups     3.655 +/-10.09%       3.185 +/-6.65%  (+12.87%)
-> > > >
-> > > > dbench
-> > > >   1 groups   328.176 +/-0.29%      330.217 +/-0.32%   (+0.62%)
-> > > >   4 groups   930.739 +/-0.50%      957.173 +/-0.66%   (+2.84%)
-> > > >  16 groups  1928.292 +/-0.36%     1978.234 +/-0.88%   (+0.92%)
-> > > >  32 groups  2369.348 +/-1.72%     2454.020 +/-0.90%   (+3.57%)
-> > > >  64 groups  2583.880 +/-3.39%     2618.860 +/-0.84%   (+1.35%)
-> > > > 128 groups  2256.406 +/-10.67%    2392.498 +/-2.13%   (+6.03%)
-> > > > 256 groups  1257.546 +/-3.81%     1674.684 +/-4.97%  (+33.17%)
-> > > >
-> > > > Unixbench shell8
-> > > >   1 test     6944.16 +/-0.02     6605.82 +/-0.11      (-4.87%)
-> > > > 224 tests   13499.02 +/-0.14    13637.94 +/-0.47%     (+1.03%)
-> > > > lkp reported a -10% regression on shell8 (1 test) for v3 that
-> > > > seems that is partially recovered on my platform with v4.
-> > > >
-> > > > tip/sched/core sha1:
-> > > >   commit 563c4f85f9f0 ("Merge branch 'sched/rt' into sched/core, to=
- pick up -rt changes")
-> > > >
-> > > > Changes since v3:
-> > > > - small typo and variable ordering fixes
-> > > > - add some acked/reviewed tag
-> > > > - set 1 instead of load for migrate_misfit
-> > > > - use nr_h_running instead of load for asym_packing
-> > > > - update the optimization of find_idlest_group() and put back somes
-> > > >  conditions when comparing load
-> > > > - rework find_idlest_group() to match find_busiest_group() behavior
-> > > >
-> > > > Changes since v2:
-> > > > - fix typo and reorder code
-> > > > - some minor code fixes
-> > > > - optimize the find_idles_group()
-> > > >
-> > > > Not covered in this patchset:
-> > > > - Better detection of overloaded and fully busy state, especially f=
-or cases
-> > > >   when nr_running > nr CPUs.
-> > > >
-> > > > Vincent Guittot (11):
-> > > >   sched/fair: clean up asym packing
-> > > >   sched/fair: rename sum_nr_running to sum_h_nr_running
-> > > >   sched/fair: remove meaningless imbalance calculation
-> > > >   sched/fair: rework load_balance
-> > > >   sched/fair: use rq->nr_running when balancing load
-> > > >   sched/fair: use load instead of runnable load in load_balance
-> > > >   sched/fair: evenly spread tasks when not overloaded
-> > > >   sched/fair: use utilization to select misfit task
-> > > >   sched/fair: use load instead of runnable load in wakeup path
-> > > >   sched/fair: optimize find_idlest_group
-> > > >   sched/fair: rework find_idlest_group
-> > > >
-> > > >  kernel/sched/fair.c | 1181 +++++++++++++++++++++++++++++----------=
-------------
-> > > >  1 file changed, 682 insertions(+), 499 deletions(-)
-> > >
-> > > Thanks, that's an excellent series!
-> > >
-> > > I've queued it up in sched/core with a handful of readability edits t=
-o
-> > > comments and changelogs.
-> >=20
-> > Thanks
-> >=20
-> > >
-> > > There are some upstreaming caveats though, I expect this series to be=
- a
-> > > performance regression magnet:
-> > >
-> > >  - load_balance() and wake-up changes invariably are such: some workl=
-oads
-> > >    only work/scale well by accident, and if we touch the logic it mig=
-ht
-> > >    flip over into a less advantageous scheduling pattern.
-> > >
-> > >  - In particular the changes from balancing and waking on runnable lo=
-ad
-> > >    to full load that includes blocking *will* shift IO-intensive
-> > >    workloads that you tests don't fully capture I believe. You also m=
-ade
-> > >    idle balancing more aggressive in essence - which might reduce cac=
-he
-> > >    locality for some workloads.
-> > >
-> > > A full run on Mel Gorman's magic scalability test-suite would be supe=
-r
-> > > useful ...
-> > >
-> > > Anyway, please be on the lookout for such performance regression repo=
-rts.
-> >=20
-> > Yes I monitor the regressions on the mailing list
->=20
->=20
-> Our kernel perf tests show good results across the board for v4.=20
->=20
-> The issue we hit on the 8-node system is fixed. Thanks!
->=20
-> As we didn't see the fairness issue I don't expect the results to be
-> that different on v4a (with the followup patch) but those tests are
-> queued up now and we'll see what they look like.=20
->=20
+Since commit 0394a63acfe2 ("net: dsa: enable and disable all ports")
+the dsa core disables all unused ports of a switch. In this case
+disabling ports with numbers higher than QCA8K_NUM_PORTS causes that
+some switch registers are overwritten with incorrect content.
 
-Initial results with fix patch (v4a) show that the outlier issues on=20
-the 8-node system have returned.  Median time for 152 and 156 threads=20
-(160 cpu system) goes up significantly and worst case goes from 340=20
-and 250 to 550 sec. for both. And doubles from 150 to 300 for 144=20
-threads. These look more like the results from v3.=20
+To fix this, initialize the dsa_switch->num_ports with correct number
+of ports.
 
-We're re-running the test to get more samples.=20
+Fixes: 7e99e3470172 ("net: dsa: remove dsa_switch_alloc helper")
+Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+---
+I actually tried and gave a T-b tag to the whole series that contains
+the offending commit but obviously I was not careful enough. Who knows
+what was on my mind and what I actually tested back then. Sorry.
 
+ drivers/net/dsa/qca8k.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Other tests and systems were still fine.
-
-
-Cheers,
-Phil
-
-
-> Numbers for my specific testcase (the cgroup imbalance) are basically=20
-> the same as I posted for v3 (plus the better 8-node numbers). I.e. this
-> series solves that issue.=20
->=20
->=20
-> Cheers,
-> Phil
->=20
->=20
-> >=20
-> > >
-> > > Also, we seem to have grown a fair amount of these TODO entries:
-> > >
-> > >   kernel/sched/fair.c: * XXX borrowed from update_sg_lb_stats
-> > >   kernel/sched/fair.c: * XXX: only do this for the part of runnable >=
- running ?
-> > >   kernel/sched/fair.c:     * XXX illustrate
-> > >   kernel/sched/fair.c:    } else if (sd_flag & SD_BALANCE_WAKE) { /* =
-XXX always ? */
-> > >   kernel/sched/fair.c: * can also include other factors [XXX].
-> > >   kernel/sched/fair.c: * [XXX expand on:
-> > >   kernel/sched/fair.c: * [XXX more?]
-> > >   kernel/sched/fair.c: * [XXX write more on how we solve this.. _afte=
-r_ merging pjt's patches that
-> > >   kernel/sched/fair.c:             * XXX for now avg_load is not comp=
-uted and always 0 so we
-> > >   kernel/sched/fair.c:            /* XXX broken for overlapping NUMA =
-groups */
-> > >
-> >=20
-> > I will have a look :-)
-> >=20
-> > > :-)
-> > >
-> > > Thanks,
-> > >
-> > >         Ingo
->=20
-> --=20
->=20
-
---=20
+diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
+index 7e742cd491e8..36c6ed98f8e7 100644
+--- a/drivers/net/dsa/qca8k.c
++++ b/drivers/net/dsa/qca8k.c
+@@ -1083,7 +1083,7 @@ qca8k_sw_probe(struct mdio_device *mdiodev)
+ 		return -ENOMEM;
+ 
+ 	priv->ds->dev = &mdiodev->dev;
+-	priv->ds->num_ports = DSA_MAX_PORTS;
++	priv->ds->num_ports = QCA8K_NUM_PORTS;
+ 	priv->ds->priv = priv;
+ 	priv->ops = qca8k_switch_ops;
+ 	priv->ds->ops = &priv->ops;
+-- 
+2.1.4
 
