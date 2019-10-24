@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1FDFE2F86
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:55:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60BBEE2F87
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 12:55:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436948AbfJXKzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 06:55:19 -0400
-Received: from vps.xff.cz ([195.181.215.36]:33888 "EHLO vps.xff.cz"
+        id S2436989AbfJXKzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 06:55:21 -0400
+Received: from vps.xff.cz ([195.181.215.36]:33904 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393302AbfJXKzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2393303AbfJXKzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 24 Oct 2019 06:55:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1571914508; bh=HFSrXSPJyZ/r/g3KvWIYj4ef7s1MoOfxTtkAX4wXq50=;
+        t=1571914508; bh=rvHO6Ql5Z6q6IXgZ/y4EmcuplbV8fwNwaT/xhLAZqRo=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=oq65D8PRWktFv0x9bU7Jk6SEk/wEqhbyf0qhYKLyGZ3fN8tymjHYEswyGtFyeicY0
-         GBVembdw4qlbzN6MTq7X9UFylMmHcO3RE0t7aOSZ1iaw4pvjJ7gpBDAjBZJgksLdet
-         3XrR2P/fL7oiH59N/e6zC5+JbjN9eo2ZJHzox0i0=
+        b=BvbxtNUueqhappaLJUWDxEGYA7JlQ6HWbKvyK5pHxteWG5EUqDliJiutekRC8TyCP
+         ftpu9j6GMibnxIPHz0SgTtKYZrPlEhgFfX9QxFE9gpJF2J1xgWVrEbTVZVqz3SQcjA
+         FNuLK63+b+fS2vtSzGlN0JNIjGcIFFP1EheeL9iQ=
 From:   Ondrej Jirman <megous@megous.com>
 To:     linux-sunxi@googlegroups.com,
         Kishon Vijay Abraham I <kishon@ti.com>,
@@ -26,14 +26,14 @@ To:     linux-sunxi@googlegroups.com,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Thomas Gleixner <tglx@linutronix.de>,
         Arnd Bergmann <arnd@arndb.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Ondrej Jirman <megous@megous.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Ondrej Jirman <megous@megous.com>
-Subject: [PATCH v2 3/4] arm64: dts: allwinner: h6: add USB3 device nodes
-Date:   Thu, 24 Oct 2019 12:54:59 +0200
-Message-Id: <20191024105500.2252707-4-megous@megous.com>
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 4/4] arm64: dts: allwinner: orange-pi-3: Enable USB 3.0 host support
+Date:   Thu, 24 Oct 2019 12:55:00 +0200
+Message-Id: <20191024105500.2252707-5-megous@megous.com>
 In-Reply-To: <20191024105500.2252707-1-megous@megous.com>
 References: <20191024105500.2252707-1-megous@megous.com>
 MIME-Version: 1.0
@@ -43,63 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
-
-Allwinner H6 SoC features USB3 functionality, with a DWC3 controller and
-a custom PHY.
-
-Add device tree nodes for them.
+Enable Allwinner's USB 3.0 phy and the host controller. Orange Pi 3
+board has GL3510 USB 3.0 4-port hub connected to the SoC's USB 3.0
+port. All four ports are exposed via USB3-A connectors. VBUS is
+always on, since it's powered directly from DCIN (VCC-5V) and
+not switchable.
 
 Signed-off-by: Ondrej Jirman <megous@megous.com>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 32 ++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 0d5ea19336a1..80233db478e6 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -537,6 +537,38 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+index eb379cd402ac..259af5b0f1a7 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+@@ -94,6 +94,10 @@
+ 	status = "okay";
+ };
  
-+		dwc3: dwc3@5200000 {
-+			compatible = "snps,dwc3";
-+			reg = <0x05200000 0x10000>;
-+			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_XHCI>,
-+				 <&ccu CLK_BUS_XHCI>,
-+				 <&rtc 0>;
-+			clock-names = "ref", "bus_early", "suspend";
-+			resets = <&ccu RST_BUS_XHCI>;
-+			/*
-+			 * The datasheet of the chip doesn't declare the
-+			 * peripheral function, and there's no boards known
-+			 * to have a USB Type-B port routed to the port.
-+			 * In addition, no one has tested the peripheral
-+			 * function yet.
-+			 * So set the dr_mode to "host" in the DTSI file.
-+			 */
-+			dr_mode = "host";
-+			phys = <&usb3phy>;
-+			phy-names = "usb3-phy";
-+			status = "disabled";
-+		};
++&dwc3 {
++	status = "okay";
++};
 +
-+		usb3phy: phy@5210000 {
-+			compatible = "allwinner,sun50i-h6-usb3-phy";
-+			reg = <0x5210000 0x10000>;
-+			clocks = <&ccu CLK_USB_PHY1>;
-+			resets = <&ccu RST_USB_PHY1>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -285,3 +289,7 @@
+ 	usb3_vbus-supply = <&reg_vcc5v>;
+ 	status = "okay";
+ };
 +
- 		ehci3: usb@5311000 {
- 			compatible = "allwinner,sun50i-h6-ehci", "generic-ehci";
- 			reg = <0x05311000 0x100>;
++&usb3phy {
++	status = "okay";
++};
 -- 
 2.23.0
 
