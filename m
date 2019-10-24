@@ -2,110 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1A4CE346A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 989CEE347F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 15:41:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393651AbfJXNjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 09:39:17 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45375 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733296AbfJXNjQ (ORCPT
+        id S2393687AbfJXNly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 09:41:54 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:57606 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387547AbfJXNly (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 09:39:16 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1so14264217pgj.12
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 06:39:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=suq9Sbqez65nm6sNwjXVb4eVX4KIX9kkoJj8FM98PoM=;
-        b=OHYw/9D+5pRDJM5o00TqrXMqaZZHH0YXF8fFIHxdq5w0p9wSW1QT2CM5tKV07TQK9X
-         USyRxNJtE78wYc01M3eWTZmGSUTa7Og4HhUAbT18qkFqKvGyUNJrMcuNF2EGJE9Nu1+Q
-         jGuVq4mDYULKEiXPnSFYHbVPbUcxxuH2CZgsnfpwAJ3Ouq2wj2tgfIJQCoXVJeBuptxY
-         zFDe5ZxaFcvST5tmVOxPFuGVw25Yd7oWCDsO1OxGv01ieE2RLWMNam6EwIlR3jGk+GN7
-         AJcGnNRAZt1So7BQSQ/v7BIFMeLCFisLVibyPPH/x8AY1gOHoBcQNzoeq5JKu0APBvQP
-         dCFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=suq9Sbqez65nm6sNwjXVb4eVX4KIX9kkoJj8FM98PoM=;
-        b=eth0Y+DAFkL2X90YmoJmWkTIrnEaudJP2/bwNjERsxFOplKbgUO+DTlXgJw9ehmIXk
-         Z5uDGSCb5D1oNyUVg3+rwWwCZmt60gcU9DWu/Bq90OAFHOQ2uWh39MnEdvllXY/OkGtE
-         n0f0znd6UWzaxT3JAR/MTO5oyOhR343tReulagw/+SLr8iqWaacqxwYlGckwLWTcCV6Q
-         ukjr3/LTVUZ50TS88CTihTHHhqAWGqdkkArJr7W0ILK2CmTUt1o0eJP7/U8cJNREmRxT
-         kbh7tsfGSgFYYN7ts45KPPDB/UN7HzsTKDO/406YEAKLO+UASvFaJP6MSs+4hSTqNxYD
-         Bzpw==
-X-Gm-Message-State: APjAAAVoRrEEnWLodlUD4ytkBJE+sGDOAZRQouGg8eVgaasAXXpfPFVW
-        qN9aw9E/k2WmV1zl2OyuBiMLphCkmXkJ9kyNJ5zsWQ==
-X-Google-Smtp-Source: APXvYqyCMBjaWqJGYxfc2KvlmcpxPxYmygFWjwLlOZ++J3LD4PX1QzcetP3vbmeNZx4vVL82pcs5q5JVkP9MAlrTQ0A=
-X-Received: by 2002:a65:4c03:: with SMTP id u3mr16680974pgq.440.1571924355500;
- Thu, 24 Oct 2019 06:39:15 -0700 (PDT)
+        Thu, 24 Oct 2019 09:41:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OAutKv7rGXnkE1j1DaVotv1AkngiHVnTMwQ9RDX6DQo=; b=YymXEMEd9zGGXFwJBxUDcZs1P
+        AbpTjgsiYGx9pTMY9m/pgaxFVLlUUjJl6FV4JNrln2Rja0tgWs6a9h9eGkiP1mJZzKcTayvj4eqYx
+        Uf1l4IZETORw7Thd1AWC5NiXodt/I8+LLGAutX00NR6j0MYTalpf1xnxMb0GN/ovJCY+3jGG4w4F2
+        OL8V0N1b/e/9adDVCWU+9F6jK/ecg/lTMASLz0OFCkfJ0A70bIFvYjOjOYBVZ/+ykjyORyzZ7/aWK
+        jmrU18Oc0+Za60o4epbz5rpOGibX44DKb9IeBxSNdIe9WuRI9M3ip7MtGs3mdfPCd73KblSwqGu/9
+        +TIOD2q5A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iNdMv-0008JZ-KD; Thu, 24 Oct 2019 13:41:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 815BF303DDD;
+        Thu, 24 Oct 2019 15:40:35 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AE9A42B1EE1A2; Thu, 24 Oct 2019 15:41:33 +0200 (CEST)
+Date:   Thu, 24 Oct 2019 15:41:33 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     acme@kernel.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, namhyung@kernel.org, vitaly.slobodskoy@intel.com,
+        pavel.gerasimov@intel.com, ak@linux.intel.com, eranian@google.com,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH V3 01/13] perf/core: Add new branch sample type for LBR
+ TOS
+Message-ID: <20191024134133.GC4114@hirez.programming.kicks-ass.net>
+References: <20191022171136.4022-1-kan.liang@linux.intel.com>
+ <20191022171136.4022-2-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-References: <453d1fe3843d576eeeef6f8536eead59c1e566f3.1571762488.git.andreyknvl@google.com>
- <201910240309.CaNX9Uju%lkp@intel.com>
-In-Reply-To: <201910240309.CaNX9Uju%lkp@intel.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Thu, 24 Oct 2019 15:39:04 +0200
-Message-ID: <CAAeHK+zZszdu9dLNW0UBjCpT4nVW5uiZPMpeMogBqN3T5oTPPw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] usb, kcov: collect coverage from hub_event
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, USB list <linux-usb@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Windsor <dwindsor@gmail.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191022171136.4022-2-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 9:11 PM kbuild test robot <lkp@intel.com> wrote:
->
-> Hi Andrey,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on linus/master]
-> [cannot apply to v5.4-rc4 next-20191023]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
->
-> url:    https://github.com/0day-ci/linux/commits/Andrey-Konovalov/kcov-collect-coverage-from-usb-and-vhost/20191023-185245
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 3b7c59a1950c75f2c0152e5a9cd77675b09233d6
-> config: s390-allmodconfig (attached as .config)
-> compiler: s390-linux-gcc (GCC) 7.4.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.4.0 make.cross ARCH=s390
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
->
-> All errors (new ones prefixed by >>):
->
-> >> ERROR: "kcov_remote_stop" [drivers/usb/core/usbcore.ko] undefined!
-> >> ERROR: "kcov_remote_start" [drivers/usb/core/usbcore.ko] undefined!
-
-Indeed, we need EXPORT_SYMBOL() for kcov_common_handle(),
-kcov_remote_start() and kcov_remote_stop(). Will fix in v3.
-
->
+On Tue, Oct 22, 2019 at 10:11:24AM -0700, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> In LBR call stack mode, the depth of reconstructed LBR call stack limits
+> to the number of LBR registers. With LBR Top-of-Stack (TOS) information,
+> perf tool may stitch the stacks of two samples. The reconstructed LBR
+> call stack can break the HW limitation.
+> 
+> Add a new branch sample type to retrieve LBR TOS.
+> 
+> Only when the new branch sample type is set, the TOS information is
+> dumped into the PERF_SAMPLE_BRANCH_STACK output.
+> Perf tool should check the attr.branch_sample_type, and apply the
+> corresponding format for PERF_SAMPLE_BRANCH_STACK samples.
+> Otherwise, some user case may be broken. For example, users may parse a
+> perf.data, which include the new branch sample type, with an old version
+> perf tool (without the check). Users probably get incorrect information
+> without any warning.
+> 
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>  include/linux/perf_event.h      |  2 ++
+>  include/uapi/linux/perf_event.h | 10 +++++++++-
+>  kernel/events/core.c            | 11 +++++++++++
+>  3 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 61448c19a132..2b229ea1cc15 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -92,6 +92,7 @@ struct perf_raw_record {
+>  /*
+>   * branch stack layout:
+>   *  nr: number of taken branches stored in entries[]
+> + *  tos: Top-of-Stack (TOS) information. PMU specific data.
+>   *
+>   * Note that nr can vary from sample to sample
+>   * branches (to, from) are stored from most recent
+> @@ -100,6 +101,7 @@ struct perf_raw_record {
+>   */
+>  struct perf_branch_stack {
+>  	__u64				nr;
+> +	__u64				tos; /* PMU specific data */
+>  	struct perf_branch_entry	entries[0];
+>  };
+>  
+> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> index bb7b271397a6..b1f022190571 100644
+> --- a/include/uapi/linux/perf_event.h
+> +++ b/include/uapi/linux/perf_event.h
+> @@ -180,6 +180,8 @@ enum perf_branch_sample_type_shift {
+>  
+>  	PERF_SAMPLE_BRANCH_TYPE_SAVE_SHIFT	= 16, /* save branch type */
+>  
+> +	PERF_SAMPLE_BRANCH_LBR_TOS_SHIFT	= 17, /* save LBR TOS */
+
+I think I prefer not having LBR here either, who knows what other
+hardware can make use of that.
+
+On that, you've completely failed to Cc the other architecture that
+implement PERF_SAMPLE_BRANCH.
+
+Aside from that I can live with this version.
+
+> +
+>  	PERF_SAMPLE_BRANCH_MAX_SHIFT		/* non-ABI */
+>  };
+>  
+> @@ -207,6 +209,8 @@ enum perf_branch_sample_type {
+>  	PERF_SAMPLE_BRANCH_TYPE_SAVE	=
+>  		1U << PERF_SAMPLE_BRANCH_TYPE_SAVE_SHIFT,
+>  
+> +	PERF_SAMPLE_BRANCH_LBR_TOS	= 1U << PERF_SAMPLE_BRANCH_LBR_TOS_SHIFT,
+> +
+>  	PERF_SAMPLE_BRANCH_MAX		= 1U << PERF_SAMPLE_BRANCH_MAX_SHIFT,
+>  };
+>  
+> @@ -849,7 +853,11 @@ enum perf_event_type {
+>  	 *	  char                  data[size];}&& PERF_SAMPLE_RAW
+>  	 *
+>  	 *	{ u64                   nr;
+> -	 *        { u64 from, to, flags } lbr[nr];} && PERF_SAMPLE_BRANCH_STACK
+> +	 *        { u64 from, to, flags } lbr[nr];
+> +	 *
+> +	 *        # only available if PERF_SAMPLE_BRANCH_LBR_TOS is set
+> +	 *        u64			tos;
+> +	 *      } && PERF_SAMPLE_BRANCH_STACK
+>  	 *
+>  	 * 	{ u64			abi; # enum perf_sample_regs_abi
+>  	 * 	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_USER
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 9ec0b0bfddbd..18b0a7d2c67e 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -6343,6 +6343,11 @@ static void perf_output_read(struct perf_output_handle *handle,
+>  		perf_output_read_one(handle, event, enabled, running);
+>  }
+>  
+> +static inline bool perf_sample_save_lbr_tos(struct perf_event *event)
+> +{
+> +	return event->attr.branch_sample_type & PERF_SAMPLE_BRANCH_LBR_TOS;
+> +}
+> +
+>  void perf_output_sample(struct perf_output_handle *handle,
+>  			struct perf_event_header *header,
+>  			struct perf_sample_data *data,
+> @@ -6432,6 +6437,8 @@ void perf_output_sample(struct perf_output_handle *handle,
+>  
+>  			perf_output_put(handle, data->br_stack->nr);
+>  			perf_output_copy(handle, data->br_stack->entries, size);
+> +			if (perf_sample_save_lbr_tos(event))
+> +				perf_output_put(handle, data->br_stack->tos);
+>  		} else {
+>  			/*
+>  			 * we always store at least the value of nr
+> @@ -6619,7 +6626,11 @@ void perf_prepare_sample(struct perf_event_header *header,
+>  		if (data->br_stack) {
+>  			size += data->br_stack->nr
+>  			      * sizeof(struct perf_branch_entry);
+> +
+> +			if (perf_sample_save_lbr_tos(event))
+> +				size += sizeof(u64);
+>  		}
+> +
+>  		header->size += size;
+>  	}
+>  
+> -- 
+> 2.17.1
+> 
