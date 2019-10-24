@@ -2,151 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B18BE34E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:00:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE323E34EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 16:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404616AbfJXOAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 10:00:16 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45227 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728051AbfJXOAQ (ORCPT
+        id S2404950AbfJXOBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 10:01:54 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:57888 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731381AbfJXOBy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 10:00:16 -0400
-Received: by mail-lj1-f196.google.com with SMTP id q64so25136703ljb.12
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 07:00:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ETnYlIOesiteekWPyJgAfWES8RdJm16QvlmzUfSowEU=;
-        b=GMZ44Hqbk53I7pWfgmTWV0ZC0+4UtToR0khtqVu3jop0xojD9Qc6m7uvG/cXC6Eupz
-         1+z1NnTXTuTrwhSojYGP/I+564V+XBCWiHDArS8VV9EDfsDToOYfiMSpFpFPv3tKasD+
-         C6koPzlrid7OURuuLNPI7mUQTDL11F3oj2gYr3JwHjV1Fb+K3kOKRudFMEz22lEx5RjX
-         5cTFtIxxlIpKVL6RRRagXS2tN7MPN5vTEtWhQSlbHunwGdrGXdH/4PZfE+3b/yjCZ4rB
-         c78h+YOrVm84Gff9+ugQYgxvweeFElDbEalp5uBfnS06so4/eYWj8YweGVtIycCDnyDc
-         owUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ETnYlIOesiteekWPyJgAfWES8RdJm16QvlmzUfSowEU=;
-        b=MU939PqTW66K6lOwm+dzUF9y5ayxE7S9LdTMo6znd/06c3wl9Du5kiYdfaoM80fXMO
-         kePaZbRPpgAb/CEdp5QalQx9O1lj47ywSYoUfVaL2tLAkyphF6govygzSrwLOKr6EI1L
-         0qycyt8BoVAwD0okBISXePW9yteGwUpSNj59k+ZIXYRLD9uxu48xYz78fj1YLFyjCHyb
-         +FTsxlhmKG/m/aFvqJWMjoERcsoVZYiPy5Gy/3iK0O7Le0CFPEO9LHLUiq9ySVjAmCb8
-         Y/Fl20LqX9MM0/y2ueN6Sep9odLt67ZWYitKNJgv711uXsmFSytPwp6ciCFrIdDjcMYo
-         QVpw==
-X-Gm-Message-State: APjAAAUFDXdZGaDpqXT5aPLo7LKDYheolxl0t/ZRox0hZTOYzjsoBKWk
-        2p2BrH+AOWtEuCDwQ3z9/9UbYIWoK8oeMgX/s5uS4Q==
-X-Google-Smtp-Source: APXvYqyMDp5Uuaml1Ws/21yGHZv6a4hjyBotJCALB8+5EfrsYKWTASAc2wy+o3/eAiLik4SRk8Q3DrYyombrkyLxW2M=
-X-Received: by 2002:a05:651c:237:: with SMTP id z23mr3559694ljn.214.1571925613874;
- Thu, 24 Oct 2019 07:00:13 -0700 (PDT)
+        Thu, 24 Oct 2019 10:01:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PH0bJrrct13OtBTiOhljVf6qdjT6mdvYcPf9jH5za6c=; b=2RLgaYAnVgKkblXMxNOUOTT9h
+        Rf0uLT0nhkvEeARLz7h2ThZy4ujzXWuOBkzpxifosRltObEf80IMz5QgLfdeC0d6jNqDukg48j+if
+        pHXxZG1qAnNWADM5BxidUvMc/IpsphlN+8wZa87kZvfRkuKO/9qMiLcTorpq3jIh7yeYmRk/Wfv/O
+        cjKFvhyRl+byyl5Hyco98nsR/Cs7wTluom3VUW+8ygFQWrK4GBjwVS2YptzkPhPwaqqijnBYMtFIr
+        V4oQHkSOTGhcXOmWnmNz5myXFQ1hww4jTEwYNhyst6XUQTbfT2VEsEjkBDs2fNfkJkR0y0+7DsMav
+        yo2yGNM3Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iNdgK-0000Aw-NU; Thu, 24 Oct 2019 14:01:40 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CBD44306DEB;
+        Thu, 24 Oct 2019 16:00:40 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2FE462B1D7CA3; Thu, 24 Oct 2019 16:01:39 +0200 (CEST)
+Date:   Thu, 24 Oct 2019 16:01:39 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com, adrian.hunter@intel.com,
+        mathieu.poirier@linaro.org, mark.rutland@arm.com
+Subject: Re: [PATCH v2 1/4] perf: Allow using AUX data in perf samples
+Message-ID: <20191024140139.GF4114@hirez.programming.kicks-ass.net>
+References: <20191022095812.67071-1-alexander.shishkin@linux.intel.com>
+ <20191022095812.67071-2-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
-References: <20191023205630.14469-1-patrick.bellasi@matbug.net>
-In-Reply-To: <20191023205630.14469-1-patrick.bellasi@matbug.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Thu, 24 Oct 2019 16:00:02 +0200
-Message-ID: <CAKfTPtAegZKuGoLv0PTRV8J9Bz8Qz3=xtAtkjfnv5_jFOn8u6g@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/fair: util_est: fast ramp-up EWMA on utilization increases
-To:     Patrick Bellasi <patrick.bellasi@matbug.net>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Douglas Raillard <douglas.raillard@arm.com>,
-        Quentin Perret <qperret@google.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191022095812.67071-2-alexander.shishkin@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Oct 2019 at 22:56, Patrick Bellasi
-<patrick.bellasi@matbug.net> wrote:
->
-> The estimated utilization for a task:
->
->    util_est = max(util_avg, est.enqueue, est.ewma)
->
-> is defined based on:
->  - util_avg: the PELT defined utilization
->  - est.enqueued: the util_avg at the end of the last activation
->  - est.ewma:     a exponential moving average on the est.enqueued
->                  samples
->
-> According to this definition, when a task suddenly change its bandwidth
-> requirements from small to big, the EWMA will need to collect multiple
-> samples before converging up to track the new big utilization.
->
-> This slow convergence towards bigger utilization values is not
-> aligned to the default scheduler behavior, which is to optimize for
-> performance. Moreover, the est.ewma component fails to compensate for
-> temporarely utilization drops which spans just few est.enqueued samples.
->
-> To let util_est do a better job in the scenario depicted above, change
-> its definition by making util_est directly follow upward motion and
-> only decay the est.ewma on downward.
->
-> Signed-off-by: Patrick Bellasi <patrick.bellasi@matbug.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-
-> ---
->  kernel/sched/fair.c     | 14 +++++++++++++-
->  kernel/sched/features.h |  1 +
->  2 files changed, 14 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index a81c36472822..a14487462b6c 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -3768,11 +3768,22 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
->         if (ue.enqueued & UTIL_AVG_UNCHANGED)
->                 return;
->
-> +       /*
-> +        * Reset EWMA on utilization increases, the moving average is used only
-> +        * to smooth utilization decreases.
-> +        */
-> +       ue.enqueued = (task_util(p) | UTIL_AVG_UNCHANGED);
-> +       if (sched_feat(UTIL_EST_FASTUP)) {
-> +               if (ue.ewma < ue.enqueued) {
-> +                       ue.ewma = ue.enqueued;
-> +                       goto done;
-> +               }
-> +       }
+On Tue, Oct 22, 2019 at 12:58:09PM +0300, Alexander Shishkin wrote:
+> @@ -11213,6 +11367,9 @@ SYSCALL_DEFINE5(perf_event_open,
+>  	if (event->attr.aux_output && !perf_get_aux_event(event, group_leader))
+>  		goto err_locked;
+>  
+> +	if (event->attr.aux_sample_size && !perf_get_aux_event(event, group_leader))
+> +		goto err_locked;
 > +
->         /*
->          * Skip update of task's estimated utilization when its EWMA is
->          * already ~1% close to its last activation value.
->          */
-> -       ue.enqueued = (task_util(p) | UTIL_AVG_UNCHANGED);
->         last_ewma_diff = ue.enqueued - ue.ewma;
->         if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
->                 return;
-> @@ -3805,6 +3816,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
->         ue.ewma <<= UTIL_EST_WEIGHT_SHIFT;
->         ue.ewma  += last_ewma_diff;
->         ue.ewma >>= UTIL_EST_WEIGHT_SHIFT;
-> +done:
->         WRITE_ONCE(p->se.avg.util_est, ue);
->  }
->
-> diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-> index 2410db5e9a35..7481cd96f391 100644
-> --- a/kernel/sched/features.h
-> +++ b/kernel/sched/features.h
-> @@ -89,3 +89,4 @@ SCHED_FEAT(WA_BIAS, true)
->   * UtilEstimation. Use estimated CPU utilization.
->   */
->  SCHED_FEAT(UTIL_EST, true)
-> +SCHED_FEAT(UTIL_EST_FASTUP, true)
-> --
-> 2.17.1
->
+
+Either aux_sample_size and aux_output are mutually exclusive, or you're
+leaking a refcount on group_leader. The first wants a check, the second
+wants error path fixes.
+
+>  	/*
+>  	 * Must be under the same ctx::mutex as perf_install_in_context(),
+>  	 * because we need to serialize with concurrent event creation.
