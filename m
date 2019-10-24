@@ -2,142 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6550E3F5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 00:28:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60879E3F63
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 00:32:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731649AbfJXW2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 18:28:16 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:33129 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727635AbfJXW2Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 18:28:16 -0400
-Received: by mail-io1-f68.google.com with SMTP id z19so184928ior.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 15:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XCM3g32MITF4GHb+oh5v+TIhOkEpHsOH3vQSr3W0WRk=;
-        b=CQIX5upXSRilRWi+FpGPGzoOCwHajz0fPbjaVlJXT/KmgvGoSlcegf5VNYl0nUgVMT
-         q6aH41GxKDkzusd1pbPLpEm5jCPIJ/z+R5vHL/ywKHTyrneke0Jd6jsvdtphrbpfHs9L
-         2IKPP2M6Q87pcpqPMEXdN0SLYiYNOg4Rsz0gs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XCM3g32MITF4GHb+oh5v+TIhOkEpHsOH3vQSr3W0WRk=;
-        b=qKf9RV2GkDl51SO26Gj4HeWN5Fr7lIQKZ8B4/kffp6fXLYr64Sa/66njJADsF+H1sd
-         q0Dh5EyAUqWqw2C7VH0kPyyrktiwpEzHUc9wZbn55mzFpcSTK28JkBzOeHukucZp6qSu
-         RDXniuZ6nzixPXK4O/rpxgunLqPxqgbq2A9L64Z/UK8GZyT9oWhUQ8MO74Wm56T1GhPJ
-         5bDYPZtYyIC+1cZH08pjGdNbGbjbaFXAvg2LKWpXGqgHp8AnL89yQN5D6CP3IFxAfZeg
-         yY0NEMHjTykZgUuF103WjOJhDWayMsVZoFIC6akgFG5qGa9BIWuab26IcT3ynYR5zr3w
-         bfvQ==
-X-Gm-Message-State: APjAAAWPkyTmP1nDsHfvX5BKGU0drtGtDskRlj/cZqu6cCRPHRCxZQMc
-        D/O3si8feaXLoX6ihf1997oTnQ==
-X-Google-Smtp-Source: APXvYqzCtCM9LXmGJHOpfuVQbx7JXeVeBo6muUo9JY0O3BjIG8W/jual4SeOzAnCgTLtWn7xJQzncQ==
-X-Received: by 2002:a02:2244:: with SMTP id o65mr696073jao.118.1571956095197;
-        Thu, 24 Oct 2019 15:28:15 -0700 (PDT)
-Received: from ncrews2.bld.corp.google.com ([2620:15c:183:200:cb43:2cd4:65f5:5c84])
-        by smtp.gmail.com with ESMTPSA id x64sm39042ill.75.2019.10.24.15.28.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 24 Oct 2019 15:28:14 -0700 (PDT)
-From:   Nick Crews <ncrews@chromium.org>
-To:     enric.balletbo@collabora.com, bleung@chromium.org,
-        linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com,
-        pavel@ucw.cz
-Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de,
-        weiyongjun1@huawei.com, dlaurie@chromium.org, djkurtz@chromium.org,
-        dtor@google.com, sjg@chromium.org, groeck@chromium.com,
-        Nick Crews <ncrews@chromium.org>
-Subject: [PATCH v8 2/2] power_supply: platform/chrome: wilco_ec: Add charging config driver
-Date:   Thu, 24 Oct 2019 16:28:05 -0600
-Message-Id: <20191024222805.183642-2-ncrews@chromium.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191024222805.183642-1-ncrews@chromium.org>
-References: <20191024222805.183642-1-ncrews@chromium.org>
+        id S1731676AbfJXWcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 18:32:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731152AbfJXWcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 18:32:02 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 895E720578;
+        Thu, 24 Oct 2019 22:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571956321;
+        bh=w/WNbEhCYReBCGhJK/JvS+wNspAgCCxkJ/ZDpf0dz0Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=GCSCdhbiPQVzfrntQjeAbI7xZNmQLoHty2THFOvCOU/jqCmme03KHxZoeanRQs3Sb
+         fr8Ua0J9tQuZrpY3riPNv9g0WBxFKyxcEgrfJ+2glj7l2htQathKRt6fgkwyezgxj6
+         y466EiCIesFxXuSHTyPNLV0W//vc5pk1j7Oq+CyM=
+Date:   Thu, 24 Oct 2019 17:32:00 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Xiang Zheng <zhengxiang9@huawei.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, alex.williamson@redhat.com,
+        Wang Haibin <wanghaibin.wang@huawei.com>,
+        Guoheyi <guoheyi@huawei.com>,
+        yebiaoxiang <yebiaoxiang@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: Kernel panic while doing vfio-pci hot-plug/unplug test
+Message-ID: <20191024223200.GA22495@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191024112232.GD2963@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a device to control the charging algorithm used on Wilco devices,
-which will be picked up by the drivers/power/supply/wilco-charger.c
-driver. See Documentation/ABI/testing/sysfs-class-power-wilco for the
-userspace interface and other info.
+On Thu, Oct 24, 2019 at 04:22:32AM -0700, Matthew Wilcox wrote:
+> On Wed, Oct 23, 2019 at 03:46:38PM -0500, Bjorn Helgaas wrote:
+> > [+cc Thomas, Rafael, beginning of thread at
+> > https://lore.kernel.org/r/79827f2f-9b43-4411-1376-b9063b67aee3@huawei.com]
+> > 
+> > On Wed, Oct 23, 2019 at 09:38:51AM -0700, Matthew Wilcox wrote:
+> > > On Wed, Oct 23, 2019 at 10:15:40AM -0500, Bjorn Helgaas wrote:
+> > > > I don't like being one of a handful of callers of __add_wait_queue(),
+> > > > so I like that solution from that point of view.
+> > > > 
+> > > > The 7ea7e98fd8d0 ("PCI: Block on access to temporarily unavailable pci
+> > > > device") commit log suggests that using __add_wait_queue() is a
+> > > > significant optimization, but I don't know how important that is in
+> > > > practical terms.  Config accesses are never a performance path anyway,
+> > > > so I'd be inclined to use add_wait_queue() unless somebody complains.
+> > > 
+> > > Wow, this has got pretty messy in the umpteen years since I last looked
+> > > at it.
+> > > 
+> > > Some problems I see:
+> > > 
+> > > 1. Commit df65c1bcd9b7b639177a5a15da1b8dc3bee4f5fa (tglx) says:
+> > > 
+> > >     x86/PCI: Select CONFIG_PCI_LOCKLESS_CONFIG
+> > >     
+> > >     All x86 PCI configuration space accessors have either their own
+> > >     serialization or can operate completely lockless (ECAM).
+> > >     
+> > >     Disable the global lock in the generic PCI configuration space accessors.
+> > > 
+> > > The concept behind this patch is broken.  We still need to lock out
+> > > config space accesses when devices are undergoing D-state transitions.
+> > > I would suggest that for the contention case that tglx is concerned about,
+> > > we should have a pci_bus_read_config_unlocked_##size set of functions
+> > > which can be used for devices we know never go into D states.
+> > 
+> > Host bridges that can't do config accesses atomically, e.g., they have
+> > something like the 0xcf8/0xcfc addr/data ports, need serialization.
+> > CONFIG_PCI_LOCKLESS_CONFIG removes the use of pci_lock for that, and I
+> > think that part makes sense regardless of whether devices can enter D
+> > states.
+> 
+> I disagree.  If a device is in D state, we need to block the access.
+> Maybe there needs to be a different mechanism for doing it that's not
+> a machine-wide lock, but it needs to happen.
 
-Signed-off-by: Nick Crews <ncrews@chromium.org>
----
- drivers/platform/chrome/wilco_ec/core.c | 15 ++++++++++++++-
- include/linux/platform_data/wilco-ec.h  |  2 ++
- 2 files changed, 16 insertions(+), 1 deletion(-)
+I'm missing something here.  If we're using 0xcf8/0xcfc, we need to
+serialize so the address in 0xcf8 is preserved until we do the load or
+store to 0xcfc, and x86 does that with pci_config_lock.  If we're
+using ECAM, we don't need that serialization.
 
-diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
-index 36c78e52ff3c..5210c357feef 100644
---- a/drivers/platform/chrome/wilco_ec/core.c
-+++ b/drivers/platform/chrome/wilco_ec/core.c
-@@ -98,6 +98,16 @@ static int wilco_ec_probe(struct platform_device *pdev)
- 		goto unregister_rtc;
- 	}
- 
-+	/* Register child device to be found by charger config driver. */
-+	ec->charger_pdev = platform_device_register_data(dev, "wilco-charger",
-+							 PLATFORM_DEVID_AUTO,
-+							 NULL, 0);
-+	if (IS_ERR(ec->charger_pdev)) {
-+		dev_err(dev, "Failed to create charger platform device\n");
-+		ret = PTR_ERR(ec->charger_pdev);
-+		goto remove_sysfs;
-+	}
-+
- 	/* Register child device that will be found by the telemetry driver. */
- 	ec->telem_pdev = platform_device_register_data(dev, "wilco_telem",
- 						       PLATFORM_DEVID_AUTO,
-@@ -105,11 +115,13 @@ static int wilco_ec_probe(struct platform_device *pdev)
- 	if (IS_ERR(ec->telem_pdev)) {
- 		dev_err(dev, "Failed to create telemetry platform device\n");
- 		ret = PTR_ERR(ec->telem_pdev);
--		goto remove_sysfs;
-+		goto unregister_charge_config;
- 	}
- 
- 	return 0;
- 
-+unregister_charge_config:
-+	platform_device_unregister(ec->charger_pdev);
- remove_sysfs:
- 	wilco_ec_remove_sysfs(ec);
- unregister_rtc:
-@@ -125,6 +137,7 @@ static int wilco_ec_remove(struct platform_device *pdev)
- {
- 	struct wilco_ec_device *ec = platform_get_drvdata(pdev);
- 
-+	platform_device_unregister(ec->charger_pdev);
- 	wilco_ec_remove_sysfs(ec);
- 	platform_device_unregister(ec->telem_pdev);
- 	platform_device_unregister(ec->rtc_pdev);
-diff --git a/include/linux/platform_data/wilco-ec.h b/include/linux/platform_data/wilco-ec.h
-index 0f7df3498a24..afede15a95bf 100644
---- a/include/linux/platform_data/wilco-ec.h
-+++ b/include/linux/platform_data/wilco-ec.h
-@@ -29,6 +29,7 @@
-  * @data_size: Size of the data buffer used for EC communication.
-  * @debugfs_pdev: The child platform_device used by the debugfs sub-driver.
-  * @rtc_pdev: The child platform_device used by the RTC sub-driver.
-+ * @charger_pdev: Child platform_device used by the charger config sub-driver.
-  * @telem_pdev: The child platform_device used by the telemetry sub-driver.
-  */
- struct wilco_ec_device {
-@@ -41,6 +42,7 @@ struct wilco_ec_device {
- 	size_t data_size;
- 	struct platform_device *debugfs_pdev;
- 	struct platform_device *rtc_pdev;
-+	struct platform_device *charger_pdev;
- 	struct platform_device *telem_pdev;
- };
- 
--- 
-2.21.0
+We might need serialization for some other reason, but not because of
+that host bridge config access mechanism.
 
+Config accesses are supposed to work fine in all D states except
+D3cold, as long as any upstream bridges are in D0.  At least, I think
+that's what the spec says.
+
+> > We *should* prevent config accesses during D-state transitions (per
+> > PCIe r5.0, sec 5.9), but I don't think pci_lock ever did that.
+> 
+> It used to set block_ucfg_access.  Maybe that's been lost; I see
+> there are still calls to pci_dev_lock() in pci_reset_function(),
+> for example.
+
+You have an incredible memory!  pci_ucfg_wait was renamed to
+pci_cfg_wait in 2011 with fb51ccbf217c ("PCI: Rework config space
+blocking services").
+
+But even then, I don't see a connection with D-state transitions,
+e.g., there's nothing in pci_raw_set_power_state() that calls
+pci_dev_lock() or otherwise sets block_cfg_wait.
