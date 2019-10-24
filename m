@@ -2,113 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80EB9E3E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 23:32:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9CDE3E2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 23:30:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729470AbfJXVbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 17:31:42 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40593 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729404AbfJXVbl (ORCPT
+        id S1729293AbfJXVaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 17:30:14 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38676 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729262AbfJXVaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 17:31:41 -0400
-Received: by mail-lj1-f195.google.com with SMTP id u22so253744lji.7;
-        Thu, 24 Oct 2019 14:31:39 -0700 (PDT)
+        Thu, 24 Oct 2019 17:30:13 -0400
+Received: by mail-lf1-f68.google.com with SMTP id q28so17082999lfa.5
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 14:30:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=eSQ3m+e1MU4dsQtSCsit4VaAvQDaKTn6EdmojNuKjSc=;
-        b=NZ4aahfnXpfmG4v61UhNZ9t7J+0jrG3GJ4nh3YI98GcIV/6jRgCwZR7kYfoeh/+DyC
-         pzGSWcOEjKw64BWaRhIV06rtXMgnkHsBYhkGB4ZV7jbBwu901zxcW2IXthWIWqMFJDoe
-         Df7iGNVRcg3RY/vJr7gnRUrhhb2R9Px2vMG080yQhwpW1YnwA2nEZ2fkL6P1VEc1rr8V
-         XoRJ/TtkT50zq9LCWJCE0KPukh+687r2T/Gux5HHz1Pj0yrkBfso3IwvkscO2awx4ywP
-         NByLwLiyAu4RiEnCAPoS4h6dRLLlmQwwxTGs+UbMP/ys0EvEGkbR7IWwk0iw9By6sSJn
-         OwYA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h5FP/voiQdxeaQU3Va8HH5cRZmi1OHTMwBKcRrrOo6E=;
+        b=G+CKE+0sNMbBuosjchwhgzz8NQwfbV/8kKBYcW1zgIA+wCHZXB0W4xnrddKNkrujly
+         nBXQf8TMFFxtwDaqAlubm1WQBu/DIP2jq0ClHTeKxpnxD8j4n3vqHGpl41RLHFrD0jXc
+         jfdzDY5G/0JxiPvAj8Pc7cihC14c7Kl2f6hiQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=eSQ3m+e1MU4dsQtSCsit4VaAvQDaKTn6EdmojNuKjSc=;
-        b=C7bAWZp0TazJshTutp8hmKxdQqbkSK3oXuzG3A/G3FSqbr75po2eATuOExHkZbFm0n
-         iHdEtASp7wgWk9aGK7aTfiEdsNXAwnSymxYb1FcFDezwxb7fSJJnACK7dq6N+oBlcdgB
-         u7+df8zmMpIN75iEilkXffeUqgq7L7kJUmE10thcYhv3X1jaulf7riGhlKRHHX2zO13L
-         nilvwyXFfIut897C9HQvuV+csuqc3UYffR9DpQh3UsYPjPyux/CAHfXZfZxGJJcR7Reh
-         9w0KP10HpLlHhtHCpM9IQYw/UrlhDg20UiKNOeoJZ9ni8nvPo6/x9/3xLole+XYJkBvl
-         Yb4Q==
-X-Gm-Message-State: APjAAAXkdHc1GfS68cXx5Eq73Ff0GmWR02TQex/ZprwNt2kyOcDQdI/8
-        niW/JB0x295l1UdVpa6dLYY=
-X-Google-Smtp-Source: APXvYqzC0nwCxdi3VvyO1zohmAjYqJFlsSgakuNgILaQ+FnFsVqoq3/yMLnmQgg55KmRQ8gQrCMblA==
-X-Received: by 2002:a2e:4751:: with SMTP id u78mr27323211lja.210.1571952698932;
-        Thu, 24 Oct 2019 14:31:38 -0700 (PDT)
-Received: from localhost.localdomain ([93.152.168.243])
-        by smtp.gmail.com with ESMTPSA id t8sm20228336ljd.18.2019.10.24.14.31.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2019 14:31:38 -0700 (PDT)
-From:   Samuil Ivanov <samuil.ivanovbg@gmail.com>
-To:     gregkh@linuxfoundation.org, manishc@marvell.com,
-        GR-Linux-NIC-Dev@marvell.com
-Cc:     samuil.ivanovbg@gmail.com, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] Staging: qlge: Rename prefix of a function to qlge
-Date:   Fri, 25 Oct 2019 00:29:41 +0300
-Message-Id: <20191024212941.28149-4-samuil.ivanovbg@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191024212941.28149-1-samuil.ivanovbg@gmail.com>
-References: <20191024212941.28149-1-samuil.ivanovbg@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h5FP/voiQdxeaQU3Va8HH5cRZmi1OHTMwBKcRrrOo6E=;
+        b=h7A0jEY+aNfAfJ8RCmlZK4neNBVBlJ/+iBd3dpCfmjrZerBvc4pJ/PgVD+YqsiaZhp
+         yO7xp1Plxyyw34Do5GAz1Yjt01kZ9EEklsv2MXK3eehzRzNwXjO7fpd055At759178wO
+         01B9wKLLCCgeC13iVTlHgSSuk+zhaEFfdWz9w3tciaEwEKZxTdAGaGAhClac/0bcFIOI
+         rPzrdyD20SMuuJqjsF5fQoEeXREDIjB1X7fn6I3SRx0kPQciq2NXtZn/yfiEFLi672Wf
+         4edVD9FaxkQgWZXaLRTyU5oFcPxIKF1RDtNIHlYgLgfngfZijuQf7tkmYJJpMM86x//e
+         Q8Pg==
+X-Gm-Message-State: APjAAAVgEdH7QI9s9QtXDhIUvNrz0qWQ/lRy0NMFRp5Q+/VSKsBSAorz
+        HkzeLGBsFPYHcbmshJGCpOI2Q+fSXnkCTQ==
+X-Google-Smtp-Source: APXvYqxTeYRNDiiFxgFPogFWQ+89fYv2PckFtDlKHrNfp2BhUH5pTla3BE1u6aVeN7d2V9WOPSq74g==
+X-Received: by 2002:a19:ac01:: with SMTP id g1mr188110lfc.141.1571952610274;
+        Thu, 24 Oct 2019 14:30:10 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id b141sm12566315lfg.67.2019.10.24.14.30.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2019 14:30:08 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id y3so257407ljj.6
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 14:30:08 -0700 (PDT)
+X-Received: by 2002:a05:651c:331:: with SMTP id b17mr3303284ljp.133.1571952607809;
+ Thu, 24 Oct 2019 14:30:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <30394.1571936252@warthog.procyon.org.uk>
+In-Reply-To: <30394.1571936252@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 24 Oct 2019 17:29:51 -0400
+X-Gmail-Original-Message-ID: <CAHk-=wiMho2AhcTWC3-3zGK7639XL9UT=AheMXY0pxGHDACn6g@mail.gmail.com>
+Message-ID: <CAHk-=wiMho2AhcTWC3-3zGK7639XL9UT=AheMXY0pxGHDACn6g@mail.gmail.com>
+Subject: Re: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function ql_mb_about_fw renamed to
-qlge_mb_about_fw and it's clients updated.
+On Thu, Oct 24, 2019 at 12:57 PM David Howells <dhowells@redhat.com> wrote:
+>
+> pipe: Add fsync() support
+>
+> The keyrings testsuite needs the ability to wait for all the outstanding
+> notifications in the queue to have been processed so that it can then go
+> through them to find out whether the notifications it expected have been
+> emitted.
 
-Signed-off-by: Samuil Ivanov <samuil.ivanovbg@gmail.com>
----
- drivers/staging/qlge/qlge.h      | 2 +-
- drivers/staging/qlge/qlge_main.c | 2 +-
- drivers/staging/qlge/qlge_mpi.c  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Can't you just do
 
-diff --git a/drivers/staging/qlge/qlge.h b/drivers/staging/qlge/qlge.h
-index d3f10c95c781..649f1fd10739 100644
---- a/drivers/staging/qlge/qlge.h
-+++ b/drivers/staging/qlge/qlge.h
-@@ -2266,7 +2266,7 @@ int qlge_soft_reset_mpi_risc(struct ql_adapter *qdev);
- int ql_dump_risc_ram_area(struct ql_adapter *qdev, void *buf, u32 ram_addr,
- 			  int word_count);
- int ql_core_dump(struct ql_adapter *qdev, struct ql_mpi_coredump *mpi_coredump);
--int ql_mb_about_fw(struct ql_adapter *qdev);
-+int qlge_mb_about_fw(struct ql_adapter *qdev);
- int ql_mb_wol_set_magic(struct ql_adapter *qdev, u32 enable_wol);
- int ql_mb_wol_mode(struct ql_adapter *qdev, u32 wol);
- int ql_mb_set_led_cfg(struct ql_adapter *qdev, u32 led_config);
-diff --git a/drivers/staging/qlge/qlge_main.c b/drivers/staging/qlge/qlge_main.c
-index 0c381d91faa6..b8f4f4e5e579 100644
---- a/drivers/staging/qlge/qlge_main.c
-+++ b/drivers/staging/qlge/qlge_main.c
-@@ -880,7 +880,7 @@ static int ql_8000_port_initialize(struct ql_adapter *qdev)
- 	 * Get MPI firmware version for driver banner
- 	 * and ethool info.
- 	 */
--	status = ql_mb_about_fw(qdev);
-+	status = qlge_mb_about_fw(qdev);
- 	if (status)
- 		goto exit;
- 	status = ql_mb_get_fw_state(qdev);
-diff --git a/drivers/staging/qlge/qlge_mpi.c b/drivers/staging/qlge/qlge_mpi.c
-index ccffe0b256fa..092695719c58 100644
---- a/drivers/staging/qlge/qlge_mpi.c
-+++ b/drivers/staging/qlge/qlge_mpi.c
-@@ -612,7 +612,7 @@ static int ql_mailbox_command(struct ql_adapter *qdev, struct mbox_params *mbcp)
-  * driver banner and for ethtool info.
-  * Returns zero on success.
-  */
--int ql_mb_about_fw(struct ql_adapter *qdev)
-+int qlge_mb_about_fw(struct ql_adapter *qdev)
- {
- 	struct mbox_params mbc;
- 	struct mbox_params *mbcp = &mbc;
--- 
-2.17.1
+    ioctl(fd, FIONREAD, &count);
 
+in a loop instead? "No paperwork. Just sprinkle some msleep() crack on
+him, and let's get out of here"
+
+               Linus
