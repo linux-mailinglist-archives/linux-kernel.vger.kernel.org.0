@@ -2,118 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 945D2E29D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 07:27:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52E3BE29D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 07:27:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437564AbfJXF1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 01:27:50 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:32970 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437533AbfJXF1r (ORCPT
+        id S2437495AbfJXF1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 01:27:40 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:54715 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2437482AbfJXF1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 01:27:47 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 6so1158902wmf.0;
-        Wed, 23 Oct 2019 22:27:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=r/3m8yVlp3IftHGnBzL00thvcpnAHjKPgAOc8BVz5Sg=;
-        b=NVwK2wzK46s5iSwY1pkocCVDUpy16wHtNDM3k55829LrMyzIxfpy86cs25faBZ8KxN
-         SrfLFOnx3uKmwg+NwmbPnzkb75BSGFMkGIjNItM5JLxRyQixKg/EUMzRnlriNCIC5z23
-         f111b/IOeFrpG8HF1KUlqO2wlZVSo6ebv723pehGTVsGZBessbNv9ygIlpvkbrpyApJG
-         CX0lIFN8BuFgoahyzJXtoLoePrOopzMtPJlSvHjgobYHONEDqkL9LlxbQadC2GnnLhrj
-         zby0adr2oy9AnFJaDznKe0CrbxFwbnR8zxBUqW0Q2o9iGLIdKJ2yEiRX/DUec7AVo8Bm
-         COug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r/3m8yVlp3IftHGnBzL00thvcpnAHjKPgAOc8BVz5Sg=;
-        b=OGkIIm3i7fPXExJnekKvu4nlkS5Gz0mXTvjpYuv1qtUfmSBBCmAj60fz68mm8VuHzQ
-         UUfg1pOF7AfbbkMP10kbeoU9EpkbYBFOrY/cx/0FtqWHQsZHRs5vrkrjv8C6SGpYmKr8
-         kX8hP4zIXdUUdFo9INr7CbA89QqWjuhbSBWM8JfSYoYDATi7qVUaY4JAmP/ndCqhkhy9
-         P+pwWciGlQjzkikXP2OqyhWw1I9DmkoZb0OGRl9A1H8EGxza0uSK0WC+kY5jyIaS2THp
-         FZLI/1EMZJeYO8GHRmZRDEGlyafoqWklLqdpab9RoQyExgnhaEa60Mf2I80G4trHmu6k
-         FV5A==
-X-Gm-Message-State: APjAAAUDjfbBAUUWMi7tYgB/Py5BdBsxhWSHQ5KMssgusFxSECmS4WKd
-        ucZADJw2GyQMGebKhoNTl43ZiDkIFiyFpVAfciM=
-X-Google-Smtp-Source: APXvYqyfkOklb/dFvpi6Ox2Z5lrSld4jw/eIg/nPcRza21UouP4LLzRgN1Ih2hzPCOxUH/hpj0T13/RtR8YA0yI8uJw=
-X-Received: by 2002:a1c:4456:: with SMTP id r83mr2924831wma.2.1571894864264;
- Wed, 23 Oct 2019 22:27:44 -0700 (PDT)
+        Thu, 24 Oct 2019 01:27:40 -0400
+X-UUID: 0890066f6f3b4fc7b14a9caba242d9f0-20191024
+X-UUID: 0890066f6f3b4fc7b14a9caba242d9f0-20191024
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 98263183; Thu, 24 Oct 2019 13:27:35 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 24 Oct 2019 13:27:31 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 24 Oct 2019 13:27:33 +0800
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>
+Subject: [PATCH v16 0/5] support gce on mt8183 platform
+Date:   Thu, 24 Oct 2019 13:27:27 +0800
+Message-ID: <20191024052732.7767-1-bibby.hsieh@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-References: <1571222654-12315-1-git-send-email-chunyan.zhang@unisoc.com>
-In-Reply-To: <1571222654-12315-1-git-send-email-chunyan.zhang@unisoc.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Thu, 24 Oct 2019 13:27:08 +0800
-Message-ID: <CAAfSe-uu4gW5sGfQruCGWzJeANYnqq6Kc5kQZJbztmRsK3uKJw@mail.gmail.com>
-Subject: Re: [PATCH] clk: sprd: change to implement .prepare instead of .enable
-To:     Chunyan Zhang <chunyan.zhang@unisoc.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Xiaolong Zhang <xiaolong.zhang@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-SNTS-SMTP: B039364EEA4D0CD98FA660FC5F352C786E5CD3E32FC419F5E3E4B8E5AE8D9CE92000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Changes since v15:
+ - rebase onto 5.4-rc1
+ - rollback the v14 change
+ - add a patch to fixup the combination of return value
 
-Please ignore this patch, and sorry for the noise.
-I will resend this along with another patch.
+Changes since v14:
+ - change input argument as pointer in append_commend()
 
-Thanks,
-Chunyan
+Changes since v13:
+ - separate poll function as poll w/ & w/o mask function
+ - directly pass inst into append_command function instead
+   of returns a pointer
+ - fixup coding style
+ - rebase onto 5.3-rc1
 
-On Wed, 16 Oct 2019 at 18:44, Chunyan Zhang <chunyan.zhang@unisoc.com> wrote:
->
->
-> From: Xiaolong Zhang <xiaolong.zhang@unisoc.com>
->
-> Some pll_sc_gate clocks need to wait a certain long time for being stable
-> after enabled, for this reason enabling this kind of clocks shouldn't be
-> done in clk_ops.enable() which would be called at interrupt context. So
-> we move the operation to .prepare(), and also hooks to .unprepare() with
-> disabling pll_sc_gate clocks.
->
-> Signed-off-by: Xiaolong Zhang <xiaolong.zhang@unisoc.com>
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> ---
->  drivers/clk/sprd/gate.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/sprd/gate.c b/drivers/clk/sprd/gate.c
-> index 1491c00575fa..d8b480f852f3 100644
-> --- a/drivers/clk/sprd/gate.c
-> +++ b/drivers/clk/sprd/gate.c
-> @@ -80,7 +80,7 @@ static int sprd_sc_gate_enable(struct clk_hw *hw)
->         return 0;
->  }
->
-> -static int sprd_pll_sc_gate_enable(struct clk_hw *hw)
-> +static int sprd_pll_sc_gate_prepare(struct clk_hw *hw)
->  {
->         struct sprd_gate *sg = hw_to_sprd_gate(hw);
->
-> @@ -120,9 +120,11 @@ const struct clk_ops sprd_sc_gate_ops = {
->  };
->  EXPORT_SYMBOL_GPL(sprd_sc_gate_ops);
->
-> +#define sprd_pll_sc_gate_unprepare sprd_sc_gate_disable
-> +
->  const struct clk_ops sprd_pll_sc_gate_ops = {
-> -       .disable        = sprd_sc_gate_disable,
-> -       .enable         = sprd_pll_sc_gate_enable,
-> +       .unprepare      = sprd_pll_sc_gate_unprepare,
-> +       .prepare        = sprd_pll_sc_gate_prepare,
->         .is_enabled     = sprd_gate_is_enabled,
->  };
->  EXPORT_SYMBOL_GPL(sprd_pll_sc_gate_ops);
-> --
-> 2.20.1
->
->
+[... snip ...]
+
+Bibby Hsieh (5):
+  soc: mediatek: cmdq: remove OR opertaion from err return
+  soc: mediatek: cmdq: define the instruction struct
+  soc: mediatek: cmdq: add polling function
+  soc: mediatek: cmdq: add cmdq_dev_get_client_reg function
+  arm64: dts: add gce node for mt8183
+
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi |  10 ++
+ drivers/soc/mediatek/mtk-cmdq-helper.c   | 146 +++++++++++++++++++----
+ include/linux/mailbox/mtk-cmdq-mailbox.h |  11 ++
+ include/linux/soc/mediatek/mtk-cmdq.h    |  53 ++++++++
+ 4 files changed, 194 insertions(+), 26 deletions(-)
+
+-- 
+2.18.0
+
