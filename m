@@ -2,202 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E039FE3B7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 20:59:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C6E2E3B81
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 21:00:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504204AbfJXS7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 14:59:48 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45345 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391713AbfJXS7r (ORCPT
+        id S2394181AbfJXTAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 15:00:03 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46433 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390493AbfJXTAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 14:59:47 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1so14765335pgj.12
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 11:59:45 -0700 (PDT)
+        Thu, 24 Oct 2019 15:00:03 -0400
+Received: by mail-oi1-f195.google.com with SMTP id k25so21543546oiw.13
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 12:00:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=k6xNtUF9jI9qyms60Is2SLb9trGjLSZ26AnY5k3NkMw=;
-        b=KiR8cBXdVm85Y0kEZZhG1oFziSPy/Cbz+rgVJFf0wZbD5lzlqJYj24vksF96PQVdSn
-         S+be1phIyjrKAuYKJ88vyWHJSd6zBKDNKbyjl7RMzeJnk1sdZK+3g3EoKC+w2R2b2fdj
-         uosethmdStrHWWyfvR05YotUOjjWF1mlTB56giOrSrjXRol1yhcy5d8WuuUfCToiJSJQ
-         /c2CIAFvf9qxDun/zNYa4TX3jA00JtPB/pRtWj3TSscngA1DdcDvOSv3oTkDSiFVrHZv
-         3Jli+ialvPb6hIEj96c5wX6PwRwE31LZ8VK2eSTtYTbaGpy8Nan8d2SdxuNk5lcqYpNa
-         SM1w==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cZrSMPu/e6BXUdEIOUcOkTaeF4a2vUNu+HOk7EqusHk=;
+        b=ii2r79JrxO4W/+AltDDnipA6v8AYCjoTvxzErHC4fsMuwU9OX/JQYyCiHpt2/aWzSW
+         JqTLXdd4d91DoApvs//Rxbn3y/lQW11BG4rQHthZ6CgoJ3HD6Ny5gvIuqafYl3TmKfpX
+         x47weENDi9qMN3t+NcCkzsW8SkH31pCCwYZf1gFKNCeF1nYYRXtTp7KUyQaR+Tz8qNi+
+         TRyeJjuzd2NCwhqqQJYRb45ngpf7IyVkjfNCPzkz1elc96gSPmVvm1N0yj8QijdaO14W
+         amMnewlPycMv50LUh8nLAzeRNbK56XkDiD1fUImaIYbxv84SykH1djPoBcvZYysxFp26
+         7Z2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=k6xNtUF9jI9qyms60Is2SLb9trGjLSZ26AnY5k3NkMw=;
-        b=k0URBEeksT+qsXPxeqLcHJeApyzSe7GU3ovYKOse2z2+Jl1IvW0KF2EkrfIWAhzdDm
-         g4FqpCjS3kTuI8jdeIWkCgnyt4nVlXThnC/Ewb2BA15Xs8sSkF1HU2Zjs8EappEBTxJ9
-         jfqdSskMCew+DdWZ+K6Ssw3DdlnzrvtN5C3+q7xZWh0EPzn3ve8KiDivqIYO4u7UI+eC
-         izN9ySnrpVOJyINvKljXoa8iE+7bP0lrOVVSzmUSGrza2z9oPJFwxwarfWD/6cw4mhIJ
-         ib4cIQdx0ouKNEkkr72zD9QG14TjVCzzLmqnyG8NSkVDuB7wmFOxLASo6rv6yY0/p1Hm
-         B1QA==
-X-Gm-Message-State: APjAAAXfyjVCQJnwZiCG2PEBC2vRVwtnOLQax7Xfi36NN8RQRXnqfjgR
-        xXPCDtJ5iuztDEvTc7pHaHiqxaArCm0=
-X-Google-Smtp-Source: APXvYqyAOsOUjUDr9He3KDPr1dMy8xJnqE02iUQAel6Y3KZok/1lK3ubpUKL6eRwBv8kwqGA0+qPAg==
-X-Received: by 2002:a17:90a:a00a:: with SMTP id q10mr8756130pjp.108.1571943585110;
-        Thu, 24 Oct 2019 11:59:45 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id i16sm29915753pfa.184.2019.10.24.11.59.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2019 11:59:44 -0700 (PDT)
-Date:   Thu, 24 Oct 2019 11:59:43 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Vlastimil Babka <vbabka@suse.cz>
-cc:     Michal Hocko <mhocko@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: [patch for-5.3 0/4] revert immediate fallback to remote
- hugepages
-In-Reply-To: <53c4a6ca-a4d0-0862-8744-f999b17d82d8@suse.cz>
-Message-ID: <alpine.DEB.2.21.1910241156370.130350@chino.kir.corp.google.com>
-References: <20190904205522.GA9871@redhat.com> <alpine.DEB.2.21.1909051400380.217933@chino.kir.corp.google.com> <20190909193020.GD2063@dhcp22.suse.cz> <20190925070817.GH23050@dhcp22.suse.cz> <alpine.DEB.2.21.1909261149380.39830@chino.kir.corp.google.com>
- <20190927074803.GB26848@dhcp22.suse.cz> <CAHk-=wgba5zOJtGBFCBP3Oc1m4ma+AR+80s=hy=BbvNr3GqEmA@mail.gmail.com> <20190930112817.GC15942@dhcp22.suse.cz> <20191001054343.GA15624@dhcp22.suse.cz> <20191001083743.GC15624@dhcp22.suse.cz> <20191018141550.GS5017@dhcp22.suse.cz>
- <53c4a6ca-a4d0-0862-8744-f999b17d82d8@suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cZrSMPu/e6BXUdEIOUcOkTaeF4a2vUNu+HOk7EqusHk=;
+        b=rMOaF+OgVbVMrkjN6zJNXJPRWsIGP/uHPzwKzL+zeuCquAy+BdP8ROjbf3qOGSUCOz
+         jROw1upvb4KZdqgkAaOa0Xd9HwbtIarHVy+Vzt57daSqO9xw7BgoDeUp7KSYjlirab65
+         x0FYQwCWeHRI/33oGpew8hgRSVGyyJpTrHgBF/xnkfYWgsRl98VIc//prWG1ro90epBx
+         PnBQerlxAupixFkyPACvGoNUgcVDW3ymqmGk2zCvlWcW6pUf28eQPUGNkK0DNG3Y69dk
+         ev8XC6xFqxNLSK4jj+02vBRdK7XhjpHYbD/4ZQZCUkWkFEqnX2AaKcSd7BpaEEIuOo0N
+         BgLg==
+X-Gm-Message-State: APjAAAUaCmIxMh2Ozmlao4cg8+rfvUwBj1aVrlLpajvXB7gnsfez+zh/
+        Pxz7pBTY6P5SIJ4LsIN43igsHi08YJTBztBIRZR5AA==
+X-Google-Smtp-Source: APXvYqy7KOpcCjwUn9hCaZeF/eWIhLGxf+u8iFlSSssAFUwD03cvY4TKXfNKw9riL/HBNgMdRAtT/hNFxf2TGV7d7NA=
+X-Received: by 2002:aca:f17:: with SMTP id 23mr5693390oip.155.1571943601922;
+ Thu, 24 Oct 2019 12:00:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <000000000000b49e190595aa39fe@google.com> <20191024162432.GA4097@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191024162432.GA4097@hirez.programming.kicks-ass.net>
+From:   Marco Elver <elver@google.com>
+Date:   Thu, 24 Oct 2019 20:59:50 +0200
+Message-ID: <CANpmjNPfTeMsdwghPiocjQDg6e0c_6Ks+jfKqh1Rqb4vm6edeA@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __rb_rotate_set_parents / vm_area_dup
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     syzbot <syzbot+c034966b0b02f94f7f34@syzkaller.appspotmail.com>,
+        aarcange@redhat.com, Andrew Morton <akpm@linux-foundation.org>,
+        christian@brauner.io, cyphar@cyphar.com, elena.reshetova@intel.com,
+        guro@fb.com, Kees Cook <keescook@chromium.org>, ldv@altlinux.org,
+        LKML <linux-kernel@vger.kernel.org>, luto@amacapital.net,
+        mhocko@suse.com, Ingo Molnar <mingo@kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Thomas Gleixner <tglx@linutronix.de>, viro@zeniv.linux.org.uk,
+        wad@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Oct 2019, Vlastimil Babka wrote:
+On Thu, 24 Oct 2019 at 18:25, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Thu, Oct 24, 2019 at 09:07:08AM -0700, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    05f22368 x86, kcsan: Enable KCSAN for x86
+> > git tree:       https://github.com/google/ktsan.git kcsan
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=1060c47b600000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=87d111955f40591f
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=c034966b0b02f94f7f34
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> >
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+c034966b0b02f94f7f34@syzkaller.appspotmail.com
+> >
+> > ==================================================================
+> > BUG: KCSAN: data-race in __rb_rotate_set_parents / vm_area_dup
+> >
+> > read to 0xffff88811eef53e8 of 200 bytes by task 7738 on cpu 0:
+> >  vm_area_dup+0x70/0xf0 kernel/fork.c:359
+> >  __split_vma+0x88/0x350 mm/mmap.c:2678
+> >  __do_munmap+0xb02/0xb60 mm/mmap.c:2803
+> >  do_munmap mm/mmap.c:2856 [inline]
+> >  mmap_region+0x165/0xd50 mm/mmap.c:1749
+> >  do_mmap+0x6d4/0xba0 mm/mmap.c:1577
+> >  do_mmap_pgoff include/linux/mm.h:2353 [inline]
+> >  vm_mmap_pgoff+0x12d/0x190 mm/util.c:496
+> >  ksys_mmap_pgoff+0x2d8/0x420 mm/mmap.c:1629
+> >  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+> >  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+> >  __x64_sys_mmap+0x91/0xc0 arch/x86/kernel/sys_x86_64.c:91
+> >  do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> >
+> > write to 0xffff88811eef5440 of 8 bytes by task 7737 on cpu 1:
+> >  __rb_rotate_set_parents+0x4d/0xf0 lib/rbtree.c:79
+> >  __rb_insert lib/rbtree.c:215 [inline]
+> >  __rb_insert_augmented+0x109/0x370 lib/rbtree.c:459
+> >  rb_insert_augmented include/linux/rbtree_augmented.h:50 [inline]
+> >  rb_insert_augmented_cached include/linux/rbtree_augmented.h:60 [inline]
+> >  vma_interval_tree_insert+0x196/0x230 mm/interval_tree.c:23
+> >  __vma_link_file+0xd9/0x110 mm/mmap.c:634
+> >  __vma_adjust+0x1ac/0x12a0 mm/mmap.c:842
+> >  vma_adjust include/linux/mm.h:2276 [inline]
+> >  __split_vma+0x208/0x350 mm/mmap.c:2707
+> >  split_vma+0x73/0xa0 mm/mmap.c:2736
+> >  mprotect_fixup+0x43f/0x510 mm/mprotect.c:413
+> >  do_mprotect_pkey+0x3eb/0x660 mm/mprotect.c:553
+> >  __do_sys_mprotect mm/mprotect.c:578 [inline]
+> >  __se_sys_mprotect mm/mprotect.c:575 [inline]
+> >  __x64_sys_mprotect+0x51/0x70 mm/mprotect.c:575
+> >  do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> What is this thing trying to tell me? That the copy on alloc is racy,
+> because at that point the object isn't exposed yet.
 
-> From 8bd960e4e8e7e99fe13baf0d00b61910b3ae8d23 Mon Sep 17 00:00:00 2001
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Date: Tue, 1 Oct 2019 14:20:58 +0200
-> Subject: [PATCH] mm, thp: tweak reclaim/compaction effort of local-only and
->  all-node allocations
-> 
-> THP page faults now attempt a __GFP_THISNODE allocation first, which should
-> only compact existing free memory, followed by another attempt that can
-> allocate from any node using reclaim/compaction effort specified by global
-> defrag setting and madvise.
-> 
-> This patch makes the following changes to the scheme:
-> 
-> - before the patch, the first allocation relies on a check for pageblock order
->   and __GFP_IO to prevent excessive reclaim. This however affects also the
->   second attempt, which is not limited to single node. Instead of that, reuse
->   the existing check for costly order __GFP_NORETRY allocations, and make sure
->   the first THP attempt uses __GFP_NORETRY. As a side-effect, all costly order
->   __GFP_NORETRY allocations will bail out if compaction needs reclaim, while
->   previously they only bailed out when compaction was deferred due to previous
->   failures. This should be still acceptable within the __GFP_NORETRY semantics.
-> 
-> - before the patch, the second allocation attempt (on all nodes) was passing
->   __GFP_NORETRY. This is redundant as the check for pageblock order (discussed
->   above) was stronger. It's also contrary to madvise(MADV_HUGEPAGE) which means
->   some effort to allocate THP is requested. After this patch, the second
->   attempt doesn't pass __GFP_THISNODE nor __GFP_NORETRY.
-> 
-> To sum up, THP page faults now try the following attempt:
-> 
-> 1. local node only THP allocation with no reclaim, just compaction.
-> 2. THP allocation from any node with effort determined by global defrag setting
->    and VMA madvise
-> 3. fallback to base pages on any node
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  mm/mempolicy.c  | 16 +++++++++-------
->  mm/page_alloc.c | 24 +++++-------------------
->  2 files changed, 14 insertions(+), 26 deletions(-)
-> 
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index 4ae967bcf954..2c48146f3ee2 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -2129,18 +2129,20 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
->  		nmask = policy_nodemask(gfp, pol);
->  		if (!nmask || node_isset(hpage_node, *nmask)) {
->  			mpol_cond_put(pol);
-> +			/*
-> +			 * First, try to allocate THP only on local node, but
-> +			 * don't reclaim unnecessarily, just compact.
-> +			 */
->  			page = __alloc_pages_node(hpage_node,
-> -						gfp | __GFP_THISNODE, order);
-> +				gfp | __GFP_THISNODE | __GFP_NORETRY, order);
->  
->  			/*
-> -			 * If hugepage allocations are configured to always
-> -			 * synchronous compact or the vma has been madvised
-> -			 * to prefer hugepage backing, retry allowing remote
-> -			 * memory as well.
-> +			 * If that fails, allow both compaction and reclaim,
-> +			 * but on all nodes.
->  			 */
-> -			if (!page && (gfp & __GFP_DIRECT_RECLAIM))
-> +			if (!page)
->  				page = __alloc_pages_node(hpage_node,
-> -						gfp | __GFP_NORETRY, order);
-> +								gfp, order);
->  
->  			goto out;
->  		}
+In vm_area_dup, *orig is being concurrently modified while being
+copied into *new.
 
-Hi Vlastimil,
+> How do you tell it to shut up?
 
-For the default case where thp enabled is not set to "always" and the VMA 
-is not madvised for MADV_HUGEPAGE, how does this prefer to return node 
-local pages rather than remote hugepages?  The idea is to optimize for 
-access latency when the vma has not been explicitly madvised.
+We wanted to get feedback on what is happening here, as it didn't seem
+straightforward to dismiss on our side.
 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index ecc3dbad606b..36d7d852f7b1 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4473,8 +4473,11 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
->  		if (page)
->  			goto got_pg;
->  
-> -		 if (order >= pageblock_order && (gfp_mask & __GFP_IO) &&
-> -		     !(gfp_mask & __GFP_RETRY_MAYFAIL)) {
-> +		/*
-> +		 * Checks for costly allocations with __GFP_NORETRY, which
-> +		 * includes some THP page fault allocations
-> +		 */
-> +		if (costly_order && (gfp_mask & __GFP_NORETRY)) {
->  			/*
->  			 * If allocating entire pageblock(s) and compaction
->  			 * failed because all zones are below low watermarks
-> @@ -4495,23 +4498,6 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
->  			if (compact_result == COMPACT_SKIPPED ||
->  			    compact_result == COMPACT_DEFERRED)
->  				goto nopage;
-> -		}
-> -
-> -		/*
-> -		 * Checks for costly allocations with __GFP_NORETRY, which
-> -		 * includes THP page fault allocations
-> -		 */
-> -		if (costly_order && (gfp_mask & __GFP_NORETRY)) {
-> -			/*
-> -			 * If compaction is deferred for high-order allocations,
-> -			 * it is because sync compaction recently failed. If
-> -			 * this is the case and the caller requested a THP
-> -			 * allocation, we do not want to heavily disrupt the
-> -			 * system, so we fail the allocation instead of entering
-> -			 * direct reclaim.
-> -			 */
-> -			if (compact_result == COMPACT_DEFERRED)
-> -				goto nopage;
->  
->  			/*
->  			 * Looks like reclaim/compaction is worth trying, but
-> -- 
-> 2.23.0
-> 
-> 
+Is it correct to assume that, the parts of the *orig struct that are
+being modified while being copied, will subsequently be re-initialized
+for *new?
+
+If no explicit markings are useful (READ_ONCE would suppress it, but
+seems strange if the above assumption is true), I will think of a way
+to suppress these for now and no further action is needed here.
+
+Many thanks,
+-- Marco
