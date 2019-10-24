@@ -2,141 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E606E36DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 17:41:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3B8EE3676
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 17:22:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407492AbfJXPlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 11:41:22 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:35241 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2405824AbfJXPlV (ORCPT
+        id S2503101AbfJXPWJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 11:22:09 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:58728 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503091AbfJXPWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 11:41:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571931680;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=3wFDaqZ0NbxQNGne9paddG3mzo8aRis+uvC8kKNNdSM=;
-        b=d2nf1cpjgMHDl3jGz3GYBAgIuwwO3b/xCtn1EfFM0RdNT0FJhAaceOV8aS1tvjHMxaTd8I
-        QvMSnHRFi1BlbA/drCjhCejf0bAHg2ev3St3ANB0cFe23B8Y3d849PEKn7yllz4Y5KNUA/
-        038XQpwsx/s8VVzVDU8INuVryb8jOnY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-336-ra28wWr0N-iUCwABpxgLJw-1; Thu, 24 Oct 2019 11:41:11 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 35FCA801E74;
-        Thu, 24 Oct 2019 15:21:58 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.34.246.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 90C7C5D9CA;
-        Thu, 24 Oct 2019 15:21:53 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     linux-hyperv@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: [PATCH] x86/hyper-v: micro-optimize send_ipi_one case
-Date:   Thu, 24 Oct 2019 17:21:52 +0200
-Message-Id: <20191024152152.25577-1-vkuznets@redhat.com>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: ra28wWr0N-iUCwABpxgLJw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        Thu, 24 Oct 2019 11:22:07 -0400
+Received: from ramsan ([84.195.182.253])
+        by michel.telenet-ops.be with bizsmtp
+        id HTN42100f5USYZQ06TN4cn; Thu, 24 Oct 2019 17:22:05 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iNew8-00075D-LG; Thu, 24 Oct 2019 17:22:04 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iNew8-0007mV-Iv; Thu, 24 Oct 2019 17:22:04 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Jiri Kosina <trivial@kernel.org>
+Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] [trivial] net: Fix misspellings of "configure" and "configuration"
+Date:   Thu, 24 Oct 2019 17:22:01 +0200
+Message-Id: <20191024152201.29868-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When sending an IPI to a single CPU there is no need to deal with cpumasks.
-With 2 CPU guest on WS2019 I'm seeing a minor (like 3%, 8043 -> 7761 CPU
-cycles) improvement with smp_call_function_single() loop benchmark. The
-optimization, however, is tiny and straitforward. Also, send_ipi_one() is
-important for PV spinlock kick.
+Fix various misspellings of "configuration" and "configure".
 
-I was also wondering if it would make sense to switch to using regular
-APIC IPI send for CPU > 64 case but no, it is twice as expesive (12650 CPU
-cycles for __send_ipi_mask_ex() call, 26000 for orig_apic.send_IPI(cpu,
-vector)).
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/x86/hyperv/hv_apic.c           | 22 +++++++++++++++++++---
- arch/x86/include/asm/trace/hyperv.h | 15 +++++++++++++++
- 2 files changed, 34 insertions(+), 3 deletions(-)
+v2:
+  - Merge
+    [trivial] net/mlx5e: Spelling s/configuraiton/configuration/
+    [trivial] qed: Spelling s/configuraiton/configuration/
+  - Fix typo in subject,
+  - Extend with various other similar misspellings.
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c | 2 +-
+ drivers/net/ethernet/qlogic/qed/qed_int.h                | 4 ++--
+ drivers/net/ethernet/qlogic/qed/qed_sriov.h              | 2 +-
+ drivers/net/ethernet/qlogic/qede/qede_filter.c           | 2 +-
+ drivers/net/wireless/ath/ath9k/ar9003_hw.c               | 2 +-
+ drivers/net/wireless/intel/iwlwifi/iwl-fh.h              | 2 +-
+ drivers/net/wireless/ti/wlcore/spi.c                     | 2 +-
+ include/uapi/linux/dcbnl.h                               | 2 +-
+ 8 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-index e01078e93dd3..847f9d0328fe 100644
---- a/arch/x86/hyperv/hv_apic.c
-+++ b/arch/x86/hyperv/hv_apic.c
-@@ -194,10 +194,26 @@ static bool __send_ipi_mask(const struct cpumask *mas=
-k, int vector)
-=20
- static bool __send_ipi_one(int cpu, int vector)
- {
--=09struct cpumask mask =3D CPU_MASK_NONE;
-+=09int ret;
-=20
--=09cpumask_set_cpu(cpu, &mask);
--=09return __send_ipi_mask(&mask, vector);
-+=09trace_hyperv_send_ipi_one(cpu, vector);
-+
-+=09if (unlikely(!hv_hypercall_pg))
-+=09=09return false;
-+
-+=09if (unlikely((vector < HV_IPI_LOW_VECTOR) ||
-+=09=09     (vector > HV_IPI_HIGH_VECTOR)))
-+=09=09return false;
-+
-+=09if (cpu >=3D 64)
-+=09=09goto do_ex_hypercall;
-+
-+=09ret =3D hv_do_fast_hypercall16(HVCALL_SEND_IPI, vector,
-+=09=09=09=09     BIT_ULL(hv_cpu_number_to_vp_number(cpu)));
-+=09return ((ret =3D=3D 0) ? true : false);
-+
-+do_ex_hypercall:
-+=09return __send_ipi_mask_ex(cpumask_of(cpu), vector);
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c b/drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c
+index 633b117eb13e8143..7b672ada63a39733 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c
+@@ -175,7 +175,7 @@ static int update_xoff_threshold(struct mlx5e_port_buffer *port_buffer,
+  *	@port_buffer: <output> port receive buffer configuration
+  *	@change: <output>
+  *
+- *	Update buffer configuration based on pfc configuraiton and
++ *	Update buffer configuration based on pfc configuration and
+  *	priority to buffer mapping.
+  *	Buffer's lossy bit is changed to:
+  *		lossless if there is at least one PFC enabled priority
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_int.h b/drivers/net/ethernet/qlogic/qed/qed_int.h
+index d473b522afc5137f..9ad568d93ae6501c 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_int.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_int.h
+@@ -37,14 +37,14 @@
+ #include <linux/slab.h>
+ #include "qed.h"
+ 
+-/* Fields of IGU PF CONFIGRATION REGISTER */
++/* Fields of IGU PF CONFIGURATION REGISTER */
+ #define IGU_PF_CONF_FUNC_EN       (0x1 << 0)    /* function enable        */
+ #define IGU_PF_CONF_MSI_MSIX_EN   (0x1 << 1)    /* MSI/MSIX enable        */
+ #define IGU_PF_CONF_INT_LINE_EN   (0x1 << 2)    /* INT enable             */
+ #define IGU_PF_CONF_ATTN_BIT_EN   (0x1 << 3)    /* attention enable       */
+ #define IGU_PF_CONF_SINGLE_ISR_EN (0x1 << 4)    /* single ISR mode enable */
+ #define IGU_PF_CONF_SIMD_MODE     (0x1 << 5)    /* simd all ones mode     */
+-/* Fields of IGU VF CONFIGRATION REGISTER */
++/* Fields of IGU VF CONFIGURATION REGISTER */
+ #define IGU_VF_CONF_FUNC_EN        (0x1 << 0)	/* function enable        */
+ #define IGU_VF_CONF_MSI_MSIX_EN    (0x1 << 1)	/* MSI/MSIX enable        */
+ #define IGU_VF_CONF_SINGLE_ISR_EN  (0x1 << 4)	/* single ISR mode enable */
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_sriov.h b/drivers/net/ethernet/qlogic/qed/qed_sriov.h
+index 9a8fd79611f24909..368e88565783bb50 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_sriov.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_sriov.h
+@@ -305,7 +305,7 @@ void qed_iov_bulletin_set_udp_ports(struct qed_hwfn *p_hwfn,
+ 
+ /**
+  * @brief Read sriov related information and allocated resources
+- *  reads from configuraiton space, shmem, etc.
++ *  reads from configuration space, shmem, etc.
+  *
+  * @param p_hwfn
+  *
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_filter.c b/drivers/net/ethernet/qlogic/qede/qede_filter.c
+index 9a6a9a008714659a..d6cfe4ffbaf3d883 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_filter.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_filter.c
+@@ -1298,7 +1298,7 @@ void qede_config_rx_mode(struct net_device *ndev)
+ 	rx_mode.type = QED_FILTER_TYPE_RX_MODE;
+ 
+ 	/* Remove all previous unicast secondary macs and multicast macs
+-	 * (configrue / leave the primary mac)
++	 * (configure / leave the primary mac)
+ 	 */
+ 	rc = qede_set_ucast_rx_mac(edev, QED_FILTER_XCAST_TYPE_REPLACE,
+ 				   edev->ndev->dev_addr);
+diff --git a/drivers/net/wireless/ath/ath9k/ar9003_hw.c b/drivers/net/wireless/ath/ath9k/ar9003_hw.c
+index 2fe12b0de5b4f2a4..42f00a2a8c8007d2 100644
+--- a/drivers/net/wireless/ath/ath9k/ar9003_hw.c
++++ b/drivers/net/wireless/ath/ath9k/ar9003_hw.c
+@@ -1037,7 +1037,7 @@ static void ar9003_hw_configpcipowersave(struct ath_hw *ah,
+ 	}
+ 
+ 	/*
+-	 * Configire PCIE after Ini init. SERDES values now come from ini file
++	 * Configure PCIE after Ini init. SERDES values now come from ini file
+ 	 * This enables PCIe low power mode.
+ 	 */
+ 	array = power_off ? &ah->iniPcieSerdes :
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-fh.h b/drivers/net/wireless/intel/iwlwifi/iwl-fh.h
+index 0c12df5582409db3..05c1c77c88a0f738 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-fh.h
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-fh.h
+@@ -148,7 +148,7 @@ static inline unsigned int FH_MEM_CBBC_QUEUE(struct iwl_trans *trans,
+  *
+  * Bits 3:0:
+  * Define the maximum number of pending read requests.
+- * Maximum configration value allowed is 0xC
++ * Maximum configuration value allowed is 0xC
+  * Bits 9:8:
+  * Define the maximum transfer size. (64 / 128 / 256)
+  * Bit 10:
+diff --git a/drivers/net/wireless/ti/wlcore/spi.c b/drivers/net/wireless/ti/wlcore/spi.c
+index d4c09e54fd634d61..18c4d998ce4b92e6 100644
+--- a/drivers/net/wireless/ti/wlcore/spi.c
++++ b/drivers/net/wireless/ti/wlcore/spi.c
+@@ -186,7 +186,7 @@ static void wl12xx_spi_init(struct device *child)
+ 
+ 	spi_sync(to_spi_device(glue->dev), &m);
+ 
+-	/* Restore chip select configration to normal */
++	/* Restore chip select configuration to normal */
+ 	spi->mode ^= SPI_CS_HIGH;
+ 	kfree(cmd);
  }
-=20
- static void hv_send_ipi(int cpu, int vector)
-diff --git a/arch/x86/include/asm/trace/hyperv.h b/arch/x86/include/asm/tra=
-ce/hyperv.h
-index ace464f09681..4d705cb4d63b 100644
---- a/arch/x86/include/asm/trace/hyperv.h
-+++ b/arch/x86/include/asm/trace/hyperv.h
-@@ -71,6 +71,21 @@ TRACE_EVENT(hyperv_send_ipi_mask,
- =09=09      __entry->ncpus, __entry->vector)
- =09);
-=20
-+TRACE_EVENT(hyperv_send_ipi_one,
-+=09    TP_PROTO(int cpu,
-+=09=09     int vector),
-+=09    TP_ARGS(cpu, vector),
-+=09    TP_STRUCT__entry(
-+=09=09    __field(int, cpu)
-+=09=09    __field(int, vector)
-+=09=09    ),
-+=09    TP_fast_assign(__entry->cpu =3D cpu;
-+=09=09=09   __entry->vector =3D vector;
-+=09=09    ),
-+=09    TP_printk("cpu %d vector %x",
-+=09=09      __entry->cpu, __entry->vector)
-+=09);
-+
- #endif /* CONFIG_HYPERV */
-=20
- #undef TRACE_INCLUDE_PATH
---=20
-2.20.1
+diff --git a/include/uapi/linux/dcbnl.h b/include/uapi/linux/dcbnl.h
+index 69df19aa8e728909..a791a94013a69a61 100644
+--- a/include/uapi/linux/dcbnl.h
++++ b/include/uapi/linux/dcbnl.h
+@@ -286,7 +286,7 @@ struct dcbmsg {
+  * @DCB_CMD_GNUMTCS: get the number of traffic classes currently supported
+  * @DCB_CMD_SNUMTCS: set the number of traffic classes
+  * @DCB_CMD_GBCN: set backward congestion notification configuration
+- * @DCB_CMD_SBCN: get backward congestion notification configration.
++ * @DCB_CMD_SBCN: get backward congestion notification configuration.
+  * @DCB_CMD_GAPP: get application protocol configuration
+  * @DCB_CMD_SAPP: set application protocol configuration
+  * @DCB_CMD_IEEE_SET: set IEEE 802.1Qaz configuration
+-- 
+2.17.1
 
