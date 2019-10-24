@@ -2,87 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3520EE366C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 17:20:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E606E36DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 17:41:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503083AbfJXPUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 11:20:18 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:38894 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502953AbfJXPUS (ORCPT
+        id S2407492AbfJXPlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 11:41:22 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:35241 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2405824AbfJXPlV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 11:20:18 -0400
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 650BD20106BE;
-        Thu, 24 Oct 2019 08:20:17 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 650BD20106BE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1571930417;
-        bh=fOMyGZiF2U/ZovXZCK4NxXGRhszfJdpIiYVpPS9my4M=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Aec2M9vnd4bkFq+YJyfVqt/f6e6cTCfnbLFWz6VXmyIfPtpveq4FRmSkcxURnmukq
-         yc5P586Y1pzliC68WKrbH+wbgqDa7TwK90cxmoKM7Pcp1YO/7hI0hzZNTw+cVejRq1
-         3bYYgWQLDV+AOyZqQHWlEumXZxWRsb4zKUtge8tM=
-Subject: Re: [PATCH v9 5/8] ima: make process_buffer_measurement() generic
-To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Eric Ricther <erichte@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>
-References: <20191024034717.70552-1-nayna@linux.ibm.com>
- <20191024034717.70552-6-nayna@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <1ae56786-4d5c-ba8e-e30c-ced1e15ccb9c@linux.microsoft.com>
-Date:   Thu, 24 Oct 2019 08:20:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 24 Oct 2019 11:41:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571931680;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=3wFDaqZ0NbxQNGne9paddG3mzo8aRis+uvC8kKNNdSM=;
+        b=d2nf1cpjgMHDl3jGz3GYBAgIuwwO3b/xCtn1EfFM0RdNT0FJhAaceOV8aS1tvjHMxaTd8I
+        QvMSnHRFi1BlbA/drCjhCejf0bAHg2ev3St3ANB0cFe23B8Y3d849PEKn7yllz4Y5KNUA/
+        038XQpwsx/s8VVzVDU8INuVryb8jOnY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-336-ra28wWr0N-iUCwABpxgLJw-1; Thu, 24 Oct 2019 11:41:11 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 35FCA801E74;
+        Thu, 24 Oct 2019 15:21:58 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.34.246.221])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 90C7C5D9CA;
+        Thu, 24 Oct 2019 15:21:53 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     linux-hyperv@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Michael Kelley <mikelley@microsoft.com>
+Subject: [PATCH] x86/hyper-v: micro-optimize send_ipi_one case
+Date:   Thu, 24 Oct 2019 17:21:52 +0200
+Message-Id: <20191024152152.25577-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20191024034717.70552-6-nayna@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: ra28wWr0N-iUCwABpxgLJw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/23/19 8:47 PM, Nayna Jain wrote:
+When sending an IPI to a single CPU there is no need to deal with cpumasks.
+With 2 CPU guest on WS2019 I'm seeing a minor (like 3%, 8043 -> 7761 CPU
+cycles) improvement with smp_call_function_single() loop benchmark. The
+optimization, however, is tiny and straitforward. Also, send_ipi_one() is
+important for PV spinlock kick.
 
-Hi Nayna,
+I was also wondering if it would make sense to switch to using regular
+APIC IPI send for CPU > 64 case but no, it is twice as expesive (12650 CPU
+cycles for __send_ipi_mask_ex() call, 26000 for orig_apic.send_IPI(cpu,
+vector)).
 
-> +void process_buffer_measurement(const void *buf, int size,
-> +				const char *eventname, enum ima_hooks func,
-> +				int pcr)
->   {
->   	int ret = 0;
->   	struct ima_template_entry *entry = NULL;
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/hyperv/hv_apic.c           | 22 +++++++++++++++++++---
+ arch/x86/include/asm/trace/hyperv.h | 15 +++++++++++++++
+ 2 files changed, 34 insertions(+), 3 deletions(-)
 
-> +	if (func) {
-> +		security_task_getsecid(current, &secid);
-> +		action = ima_get_action(NULL, current_cred(), secid, 0, func,
-> +					&pcr, &template);
-> +		if (!(action & IMA_MEASURE))
-> +			return;
-> +	}
+diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+index e01078e93dd3..847f9d0328fe 100644
+--- a/arch/x86/hyperv/hv_apic.c
++++ b/arch/x86/hyperv/hv_apic.c
+@@ -194,10 +194,26 @@ static bool __send_ipi_mask(const struct cpumask *mas=
+k, int vector)
+=20
+ static bool __send_ipi_one(int cpu, int vector)
+ {
+-=09struct cpumask mask =3D CPU_MASK_NONE;
++=09int ret;
+=20
+-=09cpumask_set_cpu(cpu, &mask);
+-=09return __send_ipi_mask(&mask, vector);
++=09trace_hyperv_send_ipi_one(cpu, vector);
++
++=09if (unlikely(!hv_hypercall_pg))
++=09=09return false;
++
++=09if (unlikely((vector < HV_IPI_LOW_VECTOR) ||
++=09=09     (vector > HV_IPI_HIGH_VECTOR)))
++=09=09return false;
++
++=09if (cpu >=3D 64)
++=09=09goto do_ex_hypercall;
++
++=09ret =3D hv_do_fast_hypercall16(HVCALL_SEND_IPI, vector,
++=09=09=09=09     BIT_ULL(hv_cpu_number_to_vp_number(cpu)));
++=09return ((ret =3D=3D 0) ? true : false);
++
++do_ex_hypercall:
++=09return __send_ipi_mask_ex(cpumask_of(cpu), vector);
+ }
+=20
+ static void hv_send_ipi(int cpu, int vector)
+diff --git a/arch/x86/include/asm/trace/hyperv.h b/arch/x86/include/asm/tra=
+ce/hyperv.h
+index ace464f09681..4d705cb4d63b 100644
+--- a/arch/x86/include/asm/trace/hyperv.h
++++ b/arch/x86/include/asm/trace/hyperv.h
+@@ -71,6 +71,21 @@ TRACE_EVENT(hyperv_send_ipi_mask,
+ =09=09      __entry->ncpus, __entry->vector)
+ =09);
+=20
++TRACE_EVENT(hyperv_send_ipi_one,
++=09    TP_PROTO(int cpu,
++=09=09     int vector),
++=09    TP_ARGS(cpu, vector),
++=09    TP_STRUCT__entry(
++=09=09    __field(int, cpu)
++=09=09    __field(int, vector)
++=09=09    ),
++=09    TP_fast_assign(__entry->cpu =3D cpu;
++=09=09=09   __entry->vector =3D vector;
++=09=09    ),
++=09    TP_printk("cpu %d vector %x",
++=09=09      __entry->cpu, __entry->vector)
++=09);
++
+ #endif /* CONFIG_HYPERV */
+=20
+ #undef TRACE_INCLUDE_PATH
+--=20
+2.20.1
 
-In your change set process_buffer_measurement is called with NONE for 
-the parameter func. So ima_get_action (the above if block) will not be 
-executed.
-
-Wouldn't it better to update ima_get_action (and related functions) to 
-handle the ima policy (func param)?
-
-thanks,
-  -lakshmi
