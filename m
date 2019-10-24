@@ -2,98 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F240E3062
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 13:30:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E5A2E3182
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2019 13:53:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439010AbfJXLaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 07:30:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439001AbfJXLaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 07:30:00 -0400
-Received: from localhost (unknown [122.181.210.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D021620856;
-        Thu, 24 Oct 2019 11:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571916599;
-        bh=kQFBcxNmjHibeaxCaSYIXnvQiiyNhH2RsaW0IcDrCyY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PWARDvzBYDMGrGirwmA5/ugE7yPufb1g6YtyMnTGSO9xqY3IL4LqVWeT++Isa8T1q
-         q6bNcCn2We5sUloFHsyL8wCHoyvC+EkUvTHt1TuOM3b6nVhtUsu1smBRvqsayBRUs4
-         g5kBHMQshA1kJsY7cfkNZguhIAXNei3og/3I2nnQ=
-Date:   Thu, 24 Oct 2019 16:59:55 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [PATCH 1/3] soundwire: remove bitfield for unique_id, use u8
-Message-ID: <20191024112955.GC2620@vkoul-mobl>
-References: <20191022234808.17432-1-pierre-louis.bossart@linux.intel.com>
- <20191022234808.17432-2-pierre-louis.bossart@linux.intel.com>
+        id S2439469AbfJXLxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 07:53:03 -0400
+Received: from 7.mo7.mail-out.ovh.net ([46.105.43.131]:58691 "EHLO
+        7.mo7.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbfJXLxD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 07:53:03 -0400
+X-Greylist: delayed 12499 seconds by postgrey-1.27 at vger.kernel.org; Thu, 24 Oct 2019 07:53:02 EDT
+Received: from player788.ha.ovh.net (unknown [10.109.159.69])
+        by mo7.mail-out.ovh.net (Postfix) with ESMTP id D98AF138D5B
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 09:04:46 +0200 (CEST)
+Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
+        (Authenticated sender: groug@kaod.org)
+        by player788.ha.ovh.net (Postfix) with ESMTPSA id CA63BB4D6960;
+        Thu, 24 Oct 2019 07:04:07 +0000 (UTC)
+Date:   Thu, 24 Oct 2019 09:04:03 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/45] KVM: PPC: Book3S HV: Uninit vCPU if vcore
+ creation fails
+Message-ID: <20191024090403.5e564e39@bahia.lan>
+In-Reply-To: <20191022015925.31916-2-sean.j.christopherson@intel.com>
+References: <20191022015925.31916-1-sean.j.christopherson@intel.com>
+        <20191022015925.31916-2-sean.j.christopherson@intel.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022234808.17432-2-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 5552375392181655889
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrledtgdduudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-10-19, 18:48, Pierre-Louis Bossart wrote:
-> There is no good reason why the unique_id needs to be stored as 4
-> bits. The code will work without changes with a u8 since all values
+On Mon, 21 Oct 2019 18:58:41 -0700
+Sean Christopherson <sean.j.christopherson@intel.com> wrote:
 
-Well this was due to the fact the slave id defined by MIPI has unique id
-as 4 bits. In fact if you look closely there are other fields in
-sdw_slave_id doing this
-
-> are already filtered while parsing the ACPI tables and Slave devID
-> registers.
+> Call kvm_vcpu_uninit() if vcore creation fails to avoid leaking any
+> resources allocated by kvm_vcpu_init(), i.e. the vcpu->run page.
 > 
-> Use u8 representation. This will allow us to encode a
-> "IGNORE_UNIQUE_ID" value to account for firmware/BIOS creativity.
-
-Why are we shoving firmware/BIOS issues into the core?
-
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> Fixes: 371fefd6f2dc4 ("KVM: PPC: Allow book3s_hv guests to use SMT processor modes")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > ---
->  include/linux/soundwire/sdw.h | 4 +++-
+
+Reviewed-by: Greg Kurz <groug@kaod.org>
+
+>  arch/powerpc/kvm/book3s_hv.c | 4 +++-
 >  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-> index 688b40e65c89..28745b9ba279 100644
-> --- a/include/linux/soundwire/sdw.h
-> +++ b/include/linux/soundwire/sdw.h
-> @@ -403,6 +403,8 @@ int sdw_slave_read_prop(struct sdw_slave *slave);
->   * SDW Slave Structures and APIs
->   */
+> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+> index 709cf1fd4cf4..36abbe3c346d 100644
+> --- a/arch/powerpc/kvm/book3s_hv.c
+> +++ b/arch/powerpc/kvm/book3s_hv.c
+> @@ -2354,7 +2354,7 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_hv(struct kvm *kvm,
+>  	mutex_unlock(&kvm->lock);
 >  
-> +#define SDW_IGNORED_UNIQUE_ID 0xFF
-> +
->  /**
->   * struct sdw_slave_id - Slave ID
->   * @mfg_id: MIPI Manufacturer ID
-> @@ -418,7 +420,7 @@ struct sdw_slave_id {
->  	__u16 mfg_id;
->  	__u16 part_id;
->  	__u8 class_id;
-> -	__u8 unique_id:4;
-> +	__u8 unique_id;
->  	__u8 sdw_version:4;
->  };
+>  	if (!vcore)
+> -		goto free_vcpu;
+> +		goto uninit_vcpu;
 >  
-> -- 
-> 2.20.1
+>  	spin_lock(&vcore->lock);
+>  	++vcore->num_threads;
+> @@ -2371,6 +2371,8 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_hv(struct kvm *kvm,
+>  
+>  	return vcpu;
+>  
+> +uninit_vcpu:
+> +	kvm_vcpu_uninit(vcpu);
+>  free_vcpu:
+>  	kmem_cache_free(kvm_vcpu_cache, vcpu);
+>  out:
 
--- 
-~Vinod
