@@ -2,82 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E39B5E44F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 09:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C1C8E44F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 09:57:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437433AbfJYHzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 03:55:45 -0400
-Received: from mga02.intel.com ([134.134.136.20]:50101 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437406AbfJYHzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 03:55:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2019 00:55:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,227,1569308400"; 
-   d="scan'208";a="188853263"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007.jf.intel.com with ESMTP; 25 Oct 2019 00:55:41 -0700
-Received: from andy by smile with local (Exim 4.92.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iNuRg-0001jo-Ru; Fri, 25 Oct 2019 10:55:40 +0300
-Date:   Fri, 25 Oct 2019 10:55:40 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andrey Zhizhikin <andrey.z@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, lee.jones@linaro.org,
-        linux-kernel@vger.kernel.org,
-        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
-Subject: Re: [PATCH 0/2] add regulator driver and mfd cell for Intel Cherry
- Trail Whiskey Cove PMIC
-Message-ID: <20191025075540.GD32742@smile.fi.intel.com>
-References: <20191024142939.25920-1-andrey.zhizhikin@leica-geosystems.com>
- <20191025075335.GC32742@smile.fi.intel.com>
+        id S2437458AbfJYH5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 03:57:46 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45944 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437161AbfJYH5q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 03:57:46 -0400
+Received: by mail-oi1-f196.google.com with SMTP id o205so926082oib.12
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 00:57:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A4Obnzy7VbllcsBWAG1yWv4o6m8aHs6PeND33uMddFQ=;
+        b=C2WP10JyK1MppkzRqSHulgcscDYsqiLiBI3wtdAmPTB43ecwDcf2Et2d424gR3CZRb
+         1knVJpz/7OaG3zXSaQCoBKhNpanO/Fq0fYReYvRvh0GAcDvgPBzafw5aI1s6lpMym+JR
+         Ew26fljQWcMycdHeHTFDWtU/Rlr4mXnZ3UdcafF0ormG4euC0zET/G5IyqWaE6s+qWwU
+         QTEmy+vSZgghbEGzE3G8L7hgcpCyIQAbNFvCBDXe48Zy+XhkCCdNneJ/gSnTvReIcafu
+         w6zGnY0NzYX63aIODGCI0/oQSEULNSUEyAxJN+5h+/fg1ilVEx6vJN7d8aCbF8CzgSFR
+         lu7g==
+X-Gm-Message-State: APjAAAWzHdKKa3WB8IJ9kiMsFINcn9r/zIylJeFJPQsNbWSsKwcUE1Dv
+        VWus+/9aAZAi0u180lC18Czc9IwIZJ5CzOQfrE0=
+X-Google-Smtp-Source: APXvYqyfnJ+dy4wBkvd4/tg8hxR0xQoQa82GCOzKvlEF+4HiTRrSEXgg68lJoNd3q+IHUF3QAJjVi6QqyPRctI5LUaA=
+X-Received: by 2002:a05:6808:3b4:: with SMTP id n20mr1723311oie.131.1571990265293;
+ Fri, 25 Oct 2019 00:57:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191025075335.GC32742@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191025044721.16617-1-alastair@au1.ibm.com>
+In-Reply-To: <20191025044721.16617-1-alastair@au1.ibm.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 25 Oct 2019 09:57:34 +0200
+Message-ID: <CAMuHMdUXVy1AYcqquJ2UHdG=2Own=HA3sAGzL_4M+nYd-xh+Dg@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Add support for OpenCAPI SCM devices
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>
+Cc:     alastair@d-silva.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Vasant Hegde <hegdevasant@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Wei Yang <richard.weiyang@gmail.com>, Qian Cai <cai@lca.pw>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 10:53:35AM +0300, Andy Shevchenko wrote:
-> On Thu, Oct 24, 2019 at 02:29:37PM +0000, Andrey Zhizhikin wrote:
-> > This patchset introduces additional regulator driver for Intel Cherry
-> > Trail Whiskey Cove PMIC. It also adds a cell in mfd driver for this
-> > PMIC, which is used to instantiate this regulator.
-> > 
-> > Regulator support for this PMIC was present in kernel release from Intel
-> > targeted Aero platform, but was not entirely ported upstream and has
-> > been omitted in mainline kernel releases. Consecutively, absence of
-> > regulator caused the SD Card interface not to be provided with Vqcc
-> > voltage source needed to operate with UHS-I cards.
-> > 
-> > Following patches are addessing this issue and making sd card interface
-> > to be fully operable with UHS-I cards. Regulator driver lists an ACPI id
-> > of the SD Card interface in consumers and exposes optional "vqmmc"
-> > voltage source, which mmc driver uses to switch signalling voltages
-> > between 1.8V and 3.3V. 
-> > 
-> > This set contains of 2 patches: one is implementing the regulator driver
-> > (based on a non upstreamed version from Intel Aero), and another patch
-> > registers this driver as mfd cell in exising Whiskey Cove PMIC driver.
-> 
-> Thank you.
-> Hans, Cc'ed, has quite interested in these kind of patches.
-> Am I right, Hans?
+Hi Alastair,
 
-Since it's about UHS/SD, Cc to Adrian as well.
+On Fri, Oct 25, 2019 at 6:48 AM Alastair D'Silva <alastair@au1.ibm.com> wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+>
+> This series adds support for OpenCAPI SCM devices, exposing
+> them as nvdimms so that we can make use of the existing
+> infrastructure.
+
+Thanks for your series!
+
+The long CC list is a sign of get_maintainter.pl-considered-harmful.
+Please trim it (by removing me, a.o. ;-) for next submission.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
