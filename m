@@ -2,88 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4904EE4621
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:47:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3429DE4613
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:46:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436812AbfJYIrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 04:47:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408325AbfJYIrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 04:47:14 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81A7821D7B;
-        Fri, 25 Oct 2019 08:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571993233;
-        bh=039HuaFgcdGT65Y6FWPIC8uOq0spz2Q7eWMRchOOfPs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TbQPyi/hluNPR0aOxEgL6H+rBFTtk94aHiaqS1B5VaB+7TDmu9i+Do4uVGlmFFekt
-         9X+Bp+pMdZ0P0z5SE53nBG/KQojohc2qDKKj8MZloAd1dlKCERUKqHEJc78Q0AOXRE
-         gfEg2owzK0aJaA9gmL7LPgYGaiacvIdrG+oCcwNU=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [BUGFIX PATCH 6/6] perf/probe: Fix to show ranges of variables in functions without entry_pc
-Date:   Fri, 25 Oct 2019 17:47:10 +0900
-Message-Id: <157199323018.8075.8179744380479673672.stgit@devnote2>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <157199317547.8075.1010940983970397945.stgit@devnote2>
-References: <157199317547.8075.1010940983970397945.stgit@devnote2>
-User-Agent: StGit/0.17.1-dirty
+        id S2408459AbfJYIqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 04:46:25 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:41972 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733196AbfJYIqY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 04:46:24 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9P8kE7d045217;
+        Fri, 25 Oct 2019 03:46:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571993174;
+        bh=dbZbXXGm8jxdvBrYuzqBWnW2NMiJ85DT5sG+ajCyaSk=;
+        h=From:To:CC:Subject:Date;
+        b=R2TjSGsFL5tydwDobGjr4hLgjoDxVnT9M376/eIlJcDaMDnu2WpecWNPwmzj1JO82
+         iX0Q5WEEJgk5Z24UPqp7dk9TyfTd5bmzp1XLaA5yuHb4mK+Fn+gFgx6Pq3rNRTGw5Q
+         0vHTsNXBnZeP6akRGAgR6VvmqawCkzijxNrTBHrk=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9P8kENG057942;
+        Fri, 25 Oct 2019 03:46:14 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 25
+ Oct 2019 03:46:03 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 25 Oct 2019 03:46:03 -0500
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9P8kBYu105244;
+        Fri, 25 Oct 2019 03:46:12 -0500
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <nm@ti.com>, <t-kristo@ti.com>, <ssantosh@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <grygorii.strashko@ti.com>
+Subject: [PATCH] firmware: ti_sci: rm: Add support for tx_tdtype parameter for tx channel
+Date:   Fri, 25 Oct 2019 11:47:15 +0300
+Message-ID: <20191025084715.25098-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix to show ranges of variables (--range and --vars option) in
-functions which DIE has only ranges but no entry_pc attribute.
+The system controller's resource manager have support for configuring the
+TDTYPE of TCHAN_CFG register on j721e.
+With this parameter the teardown completion can be controlled:
+TDTYPE == 0: Return without waiting for peer to complete the teardown
+TDTYPE == 1: Wait for peer to complete the teardown
 
-Without this fix,
-  # tools/perf/perf probe --range -V clear_tasks_mm_cpumask
-  Available variables at clear_tasks_mm_cpumask
-  	@<clear_tasks_mm_cpumask+0>
-  		(No matched variables)
-
-With this fix,
-  # tools/perf/perf probe --range -V clear_tasks_mm_cpumask
-  Available variables at clear_tasks_mm_cpumask
-	@<clear_tasks_mm_cpumask+0>
-		[VAL]	int	cpu	@<clear_tasks_mm_cpumask+[0-35,317-317,2052-2059]>
-
-Fixes: 349e8d261131 ("perf probe: Add --range option to show a variable's location range")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- tools/perf/util/dwarf-aux.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-index e0c507d6b3b4..ac82fd937e4b 100644
---- a/tools/perf/util/dwarf-aux.c
-+++ b/tools/perf/util/dwarf-aux.c
-@@ -1019,7 +1019,7 @@ static int die_get_var_innermost_scope(Dwarf_Die *sp_die, Dwarf_Die *vr_die,
- 	bool first = true;
- 	const char *name;
+I know it is kind of getting late for 5.5, but can you consider this small
+addition so I can add the support for it in the initial DMA driver?
+
+Thanks and regards,
+Peter
+
+ drivers/firmware/ti_sci.c              | 1 +
+ drivers/firmware/ti_sci.h              | 7 +++++++
+ include/linux/soc/ti/ti_sci_protocol.h | 2 ++
+ 3 files changed, 10 insertions(+)
+
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index 4126be9e3216..f13e4a96f3b7 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -2412,6 +2412,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const struct ti_sci_handle *handle,
+ 	req->fdepth = params->fdepth;
+ 	req->tx_sched_priority = params->tx_sched_priority;
+ 	req->tx_burst_size = params->tx_burst_size;
++	req->tx_tdtype = params->tx_tdtype;
  
--	ret = dwarf_entrypc(sp_die, &entry);
-+	ret = die_entrypc(sp_die, &entry);
- 	if (ret)
- 		return ret;
+ 	ret = ti_sci_do_xfer(info, xfer);
+ 	if (ret) {
+diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
+index f0d068c03944..255327171dae 100644
+--- a/drivers/firmware/ti_sci.h
++++ b/drivers/firmware/ti_sci.h
+@@ -910,6 +910,7 @@ struct rm_ti_sci_msg_udmap_rx_flow_opt_cfg {
+  *   12 - Valid bit for @ref ti_sci_msg_rm_udmap_tx_ch_cfg::tx_credit_count
+  *   13 - Valid bit for @ref ti_sci_msg_rm_udmap_tx_ch_cfg::fdepth
+  *   14 - Valid bit for @ref ti_sci_msg_rm_udmap_tx_ch_cfg::tx_burst_size
++ *   15 - Valid bit for @ref ti_sci_msg_rm_udmap_tx_ch_cfg::tx_tdtype
+  *
+  * @nav_id: SoC device ID of Navigator Subsystem where tx channel is located
+  *
+@@ -973,6 +974,11 @@ struct rm_ti_sci_msg_udmap_rx_flow_opt_cfg {
+  *
+  * @tx_burst_size: UDMAP transmit channel burst size configuration to be
+  * programmed into the tx_burst_size field of the TCHAN_TCFG register.
++ *
++ * @tx_tdtype: UDMAP transmit channel teardown type configuration to be
++ * programmed into the tdtype field of the TCHAN_TCFG register:
++ * 0 - Return immediately
++ * 1 - Wait for completion message from remote peer
+  */
+ struct ti_sci_msg_rm_udmap_tx_ch_cfg_req {
+ 	struct ti_sci_msg_hdr hdr;
+@@ -994,6 +1000,7 @@ struct ti_sci_msg_rm_udmap_tx_ch_cfg_req {
+ 	u16 fdepth;
+ 	u8 tx_sched_priority;
+ 	u8 tx_burst_size;
++	u8 tx_tdtype;
+ } __packed;
  
-@@ -1082,7 +1082,7 @@ int die_get_var_range(Dwarf_Die *sp_die, Dwarf_Die *vr_die, struct strbuf *buf)
- 	bool first = true;
- 	const char *name;
+ /**
+diff --git a/include/linux/soc/ti/ti_sci_protocol.h b/include/linux/soc/ti/ti_sci_protocol.h
+index 9531ec823298..f3aed0b91564 100644
+--- a/include/linux/soc/ti/ti_sci_protocol.h
++++ b/include/linux/soc/ti/ti_sci_protocol.h
+@@ -342,6 +342,7 @@ struct ti_sci_msg_rm_udmap_tx_ch_cfg {
+ #define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_SUPR_TDPKT_VALID        BIT(11)
+ #define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_CREDIT_COUNT_VALID      BIT(12)
+ #define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_FDEPTH_VALID            BIT(13)
++#define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_TDTYPE_VALID            BIT(15)
+ 	u16 nav_id;
+ 	u16 index;
+ 	u8 tx_pause_on_err;
+@@ -359,6 +360,7 @@ struct ti_sci_msg_rm_udmap_tx_ch_cfg {
+ 	u16 fdepth;
+ 	u8 tx_sched_priority;
+ 	u8 tx_burst_size;
++	u8 tx_tdtype;
+ };
  
--	ret = dwarf_entrypc(sp_die, &entry);
-+	ret = die_entrypc(sp_die, &entry);
- 	if (ret)
- 		return ret;
- 
+ /**
+-- 
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
