@@ -2,117 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6093E5426
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:15:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90BF1E542B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:17:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbfJYTPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 15:15:37 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15296 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726632AbfJYTPh (ORCPT
+        id S1726713AbfJYTRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 15:17:12 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46695 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbfJYTRM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 15:15:37 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9PJBqIX003104
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 15:15:34 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vv52aumxh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 15:15:34 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 25 Oct 2019 20:15:32 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 25 Oct 2019 20:15:30 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9PJFTGC56688726
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Oct 2019 19:15:29 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 47E21A405B;
-        Fri, 25 Oct 2019 19:15:29 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A9C1A404D;
-        Fri, 25 Oct 2019 19:15:28 +0000 (GMT)
-Received: from dhcp-9-31-103-196.watson.ibm.com (unknown [9.31.103.196])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 25 Oct 2019 19:15:28 +0000 (GMT)
-Subject: Re: [PATCH] tpm: Add major_version sysfs file
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
-Date:   Fri, 25 Oct 2019 15:15:28 -0400
-In-Reply-To: <20191025184522.5txabdikcrn2dgvj@cantor>
-References: <20191025142847.14931-1-jsnitsel@redhat.com>
-         <1572027516.4532.41.camel@linux.ibm.com>
-         <20191025184522.5txabdikcrn2dgvj@cantor>
+        Fri, 25 Oct 2019 15:17:12 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f19so2129407pgn.13;
+        Fri, 25 Oct 2019 12:17:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CQ/0y5Q6U9cve/rqfcOyl2Y7XrZFSX/kWDN3gMk9jY0=;
+        b=cDRuooQ7ESXeuKARMwPhRSPK81ZuqJ3KGR+tYRw3ElchzVawLyMafPX5ShC5MbXQut
+         PP4CMYeFmn64xJs3hYF5C/zSkOeAs+nvpQPoqf4Yt1f8eeEJVuLO/9lnP1u65h8E1Hku
+         6fqXpBKhw/KXPgqOfMd/TbTJIaZv+dtNv/2HJFwxWHsvvFTzMBL7XlcuDnHhONkM50jJ
+         oKsiy2cgZRjsvoYb9fBbVvCSJCeWP5cdoAqics6asWLT4QLBqDF2q86UX+YYYAVLJs9u
+         CEvKBuQMASnzV3jinpz+/cEAvDQKtKRiUDoQkeaS0oGUD2Lfe4Ox/j5wr51yVIXbh44Q
+         zHGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CQ/0y5Q6U9cve/rqfcOyl2Y7XrZFSX/kWDN3gMk9jY0=;
+        b=NSFUXLIzxsTzG539xksZu9OhX2Z0UxqPZ3PPN/tAOMKCTw4zHk7KQkXYKC4PESwP39
+         IO9NhWQda4+IzZieT/3H4ZVj5LwJkTWdemBLUDfVjKIErBIREu7rg22Ncht46SCDpIZO
+         YvwZLetomUOHD6d41deMa3K1UjNT/Bx0tAGBlhEhBOzwn7XTpDPVG/Sum0vsjIHlJLKr
+         YQD+E4LMM0+dSiO2U2Gu0EvO/JHIkd+MJ4D4Szi86VWgfT4wW8DDm0ctGaec5BK4hAjT
+         1wixpS075edw440EiYudGSS7ju3M5ykFxSMG708YulfJ4ldItYHv46Qx2n5cVo7th0Fe
+         pFCw==
+X-Gm-Message-State: APjAAAXudOIWdn5o3Dzn3uTlQSc0O3/IZkgYIZUnb/5vG9lJZ3kwpEyZ
+        NVru7DA41NJ9Kv28rR8nIywZgAxzSjBmLGD70nqCCb9mYalAiQ==
+X-Google-Smtp-Source: APXvYqxq23c54bfWmKNY1x+nomIQ+g5QNYTgWlzistI8eYNkLPIZUUyXsKRJxxJKc3UFtzsP6ZCBTOTecnJWtTezXj0=
+X-Received: by 2002:a65:5542:: with SMTP id t2mr4116778pgr.74.1572031031301;
+ Fri, 25 Oct 2019 12:17:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191025190047.38130-1-stuart.w.hayes@gmail.com> <20191025190047.38130-3-stuart.w.hayes@gmail.com>
+In-Reply-To: <20191025190047.38130-3-stuart.w.hayes@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 25 Oct 2019 22:16:59 +0300
+Message-ID: <CAHp75Vd54iDEe0ucTW8Gz9Q6cDGnA88XcBMy9-C5P1QuLzDm0Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] PCI: pciehp: Wait for PDS if in-band presence is disabled
+To:     Stuart Hayes <stuart.w.hayes@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Austin Bolen <austin_bolen@dell.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lukas Wunner <lukas@wunner.de>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19102519-0008-0000-0000-00000327A0B9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19102519-0009-0000-0000-00004A46D912
-Message-Id: <1572030928.4532.57.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-25_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910250173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-10-25 at 11:45 -0700, Jerry Snitselaar wrote:
-> On Fri Oct 25 19, Mimi Zohar wrote:
-> >On Fri, 2019-10-25 at 07:28 -0700, Jerry Snitselaar wrote:
-> >> Easily determining what TCG version a tpm device implements
-> >> has been a pain point for userspace for a long time, so
-> >> add a sysfs file to report the tcg version of a tpm device.
-> >
-> >Use "TCG" uppercase consistently.
+On Fri, Oct 25, 2019 at 10:01 PM Stuart Hayes <stuart.w.hayes@gmail.com> wrote:
+>
+> From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+>
+> When inband presence is disabled, PDS may come up at any time, or not
+> at all. PDS being low may indicate that the card is still mating, and
+> we could expect contact bounce to bring down the link as well.
+>
+> It is reasonable to assume that most cards will mate in a hotplug slot
+> in about a second. Thus, when we know PDS only reflects out-of-band
+> presence, it's worthwhile to wait the extra second or so to make sure
+> the card is properly mated before loading the driver, and to prevent
+> the hotplug code from disabling a device if the presence detect change
+> goes active after the device is enabled.
+>
 
-And "TPM"
+FWIW,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-> > 
-> >>
-> >> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> >> Cc: Peter Huewe <peterhuewe@gmx.de>
-> >> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> >> Cc: linux-integrity@vger.kernel.org
-> >> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> >
-> >thanks!
-> >
-> >Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> >
-> >FYI, on my system(s) the new file is accessible as
-> >/sys/class/tpm/tpm0/version_major.  Does this need to be documented
-> >anywhere?
-> >
-> >
-> 
-> Yes, there should be an entry added to
-> Documentation/ABI/stable/sysfs-class-tpm.
-> I will fix that up and the TCG not being uppercase in a v2.
-> 
-> Should Documentation/ABI/stable/sysfs-class-tpm updated in
-> some way to reflect that those are all links under device
-> now and not actually there.
 
-The importance is that there is a common file that can be used by
-userspace applications, instead of having to search for it, not that
-it is a link per-se.
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+> ---
+> v2:
+>   replace while(true) loop with do...while
+> v3
+>   remove unused variable declaration (pds)
+>   modify text of warning message
+> v4
+>   remove "!!" boolean conversion from "if" condition for readability
+>
+>  drivers/pci/hotplug/pciehp_hpc.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+> index dc109d521f30..02d95ab27a12 100644
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -242,6 +242,22 @@ static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
+>         return found;
+>  }
+>
+> +static void pcie_wait_for_presence(struct pci_dev *pdev)
+> +{
+> +       int timeout = 1250;
+> +       u16 slot_status;
+> +
+> +       do {
+> +               pcie_capability_read_word(pdev, PCI_EXP_SLTSTA, &slot_status);
+> +               if (slot_status & PCI_EXP_SLTSTA_PDS)
+> +                       return;
+> +               msleep(10);
+> +               timeout -= 10;
+> +       } while (timeout > 0);
+> +
+> +       pci_info(pdev, "Timeout waiting for Presence Detect state to be set\n");
+> +}
+> +
+>  int pciehp_check_link_status(struct controller *ctrl)
+>  {
+>         struct pci_dev *pdev = ctrl_dev(ctrl);
+> @@ -251,6 +267,9 @@ int pciehp_check_link_status(struct controller *ctrl)
+>         if (!pcie_wait_for_link(pdev, true))
+>                 return -1;
+>
+> +       if (ctrl->inband_presence_disabled)
+> +               pcie_wait_for_presence(pdev);
+> +
+>         found = pci_bus_check_dev(ctrl->pcie->port->subordinate,
+>                                         PCI_DEVFN(0, 0));
+>
+> --
+> 2.18.1
+>
 
-Mimi
 
+-- 
+With Best Regards,
+Andy Shevchenko
