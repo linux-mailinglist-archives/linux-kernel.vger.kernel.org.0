@@ -2,131 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B9D4E55C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 23:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C09DE55CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 23:23:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725985AbfJYVUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 17:20:18 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33296 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbfJYVUS (ORCPT
+        id S1726150AbfJYVXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 17:23:23 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36777 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbfJYVXX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 17:20:18 -0400
-Received: by mail-oi1-f195.google.com with SMTP id a15so2556579oic.0;
-        Fri, 25 Oct 2019 14:20:17 -0700 (PDT)
+        Fri, 25 Oct 2019 17:23:23 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 23so2360208pgk.3;
+        Fri, 25 Oct 2019 14:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k7mM1YAB7j9cvjOb/HqAxXCujobS240Bo0w21vdsY1w=;
+        b=pi2tVgiT9aqazAYDlnNx3FH4kOZg6SRZoAAgVBh6VR/3pAbY5oJyJTHkSiIyF4CuU7
+         DMqs+bSwx/Crk7vDa/RyaL+R7mbs/orQI8QxMTaK8RR8cGZuA6ZnJ9y5dgAZPnASD0mu
+         9W1EPOyymwsRZqmkCKC0gw+5wWwVIiOyKhG3ewSsnDU/fKHV+03XVOf7jZczPLspH+8p
+         5z98dtNXwxLfcB/vZS4zvK7sHv54NVtq0N3ARlz3jcS8rQ24s/W3bA5PDZ2KellSPrRL
+         jJiZYZ/16rn5upnZ5Y1MjgLd6jC/9dAmyaaJC2MlHDFBiaQR//9cpX21UOVEzWIJ64Bl
+         3Akw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=JUXQFIqn/d86Rnbor0L71lToepY+28ApeXSzEW1WrrY=;
-        b=Z9YZNCD0qdWPS5D6PmXn3t7lk1x2n5HB2cMpnqPK+AmjVa+HuZuFP7fDOzbRXJ0qsH
-         HgGzMHO/uUpZrqCIxUBbG/CRaSofExMvULktaACAVl3hoxyqzcVYbCm/RgDPtpUUJTUx
-         wqZQUHFxLHV51rhwd0OOR9oQ5Mxr+IiPuUnPIGa1xmP/E9OySsVPlBruWD/C67sbp7kC
-         lQsknTUNgNbj75Q2B1qm/DgAQN8/Ad1j7bH1gC04SiiCfUmskhIN2xdNo/mpbdUgb2f0
-         xaaEQgng3vcjlPs48gvtdy0cPrYaU++CqkJ71SvRER/ziXIisxHmZp/BWznX99OAom6g
-         nJDw==
-X-Gm-Message-State: APjAAAU+1Vo3UautgOV7Sul9kk7EcOCQ7LfyIq1CQQubx8ZlCLDx3ogy
-        JjYAzsIB/Sjo8kkHia55BuZE51w=
-X-Google-Smtp-Source: APXvYqz+woZytbel6lM3PcEJFze0yi42BfFRIteIU1+6GGt93bF3v+SwJ+tZUfL0epSsIXoR2YEYnA==
-X-Received: by 2002:a05:6808:10:: with SMTP id u16mr4879719oic.16.1572038416910;
-        Fri, 25 Oct 2019 14:20:16 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id x80sm908528oia.37.2019.10.25.14.20.15
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k7mM1YAB7j9cvjOb/HqAxXCujobS240Bo0w21vdsY1w=;
+        b=oRpfid64KGBkoyri7jrsK5UpLecGD5W09QUEt5f+nDHyS7gK3l1yJLR5w3D4XRDeap
+         kErbmx3Nti+bnrDjqXoDKRDlgHZTzpHfG+NB55YBSyNL9O9bfhxsDimJpLYYeaHreniL
+         25ljUJPVzJSQyOUtj1ID4htJiLUwe5SXQAKljRraXhlsQ1pEhVg+2hTW3trttY56dTqS
+         pOoBfY6ioFqb3uFTDt1v0Dlo+Hiu5g1h0tGNs+wrm/hcEHPIA656ecdAF+6v8AO3m2Ru
+         Hq6M57oV4Mv0a71Tb/YG7+Qk9laT9kLcbLHtNPwhn5BbHN6dMFcwBCrF6cyfQBEER1wE
+         iA8w==
+X-Gm-Message-State: APjAAAVJGQ+MfqDnv5Cvosyv8fVLh8ZOFLsE2MS9fXizPQowQcisPQEs
+        mdXNtF4qXB8F1yYtdV66Xw5qoZ9XvZI=
+X-Google-Smtp-Source: APXvYqzTFCBHjd13CWS/a0Gdd1iSXbr8uW7LLcyfqefhI2rLGrPSDKHAfWAbnkuii4ydDR+Pc8ayAw==
+X-Received: by 2002:a63:1d60:: with SMTP id d32mr6843817pgm.37.1572038601840;
+        Fri, 25 Oct 2019 14:23:21 -0700 (PDT)
+Received: from localhost ([100.118.89.196])
+        by smtp.gmail.com with ESMTPSA id a16sm4238064pfa.53.2019.10.25.14.23.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 14:20:15 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 16:20:15 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     linux-realtek-soc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] dt-bindings: rtc: realtek: Convert RTD119x to
- schema
-Message-ID: <20191025212015.GA29978@bogus>
-References: <20191020040817.16882-1-afaerber@suse.de>
- <20191020040817.16882-3-afaerber@suse.de>
+        Fri, 25 Oct 2019 14:23:21 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] arm64: dts: qcom: sdm845-cheza: delete zap-shader
+Date:   Fri, 25 Oct 2019 14:21:06 -0700
+Message-Id: <20191025212106.2657-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191020040817.16882-3-afaerber@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 20, 2019 at 06:08:11AM +0200, Andreas Färber wrote:
-> Convert the RTD119x binding to a YAML schema.
-> 
-> Signed-off-by: Andreas Färber <afaerber@suse.de>
-> ---
->  v2: New
->  
->  .../devicetree/bindings/rtc/realtek,rtd119x.txt    | 16 ---------
->  .../devicetree/bindings/rtc/realtek,rtd119x.yaml   | 38 ++++++++++++++++++++++
->  2 files changed, 38 insertions(+), 16 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/rtc/realtek,rtd119x.txt
->  create mode 100644 Documentation/devicetree/bindings/rtc/realtek,rtd119x.yaml
+From: Rob Clark <robdclark@chromium.org>
 
+This is unused on cheza.  Delete the node to get ride of the reserved-
+memory section, and to avoid the driver from attempting to load a zap
+shader that doesn't exist every time it powers up the GPU.
 
-> diff --git a/Documentation/devicetree/bindings/rtc/realtek,rtd119x.yaml b/Documentation/devicetree/bindings/rtc/realtek,rtd119x.yaml
-> new file mode 100644
-> index 000000000000..71b7396bd469
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/realtek,rtd119x.yaml
-> @@ -0,0 +1,38 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
+(This also avoids a massive amount of dmesg spam about missing zap fw.)
 
-Missing ()
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+Cc: Douglas Anderson <dianders@chromium.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi | 2 ++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi       | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-Though I'm not sure it matters other than consistency.
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+index 34881c0113cb..99a28d64ee62 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+@@ -165,6 +165,8 @@
+ /delete-node/ &venus_mem;
+ /delete-node/ &cdsp_mem;
+ /delete-node/ &cdsp_pas;
++/delete-node/ &zap_shader;
++/delete-node/ &gpu_mem;
+ 
+ /* Increase the size from 120 MB to 128 MB */
+ &mpss_region {
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index f406a4340b05..2287354fef86 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -2824,7 +2824,7 @@
+ 
+ 			qcom,gmu = <&gmu>;
+ 
+-			zap-shader {
++			zap_shader: zap-shader {
+ 				memory-region = <&gpu_mem>;
+ 			};
+ 
+-- 
+2.21.0
 
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/realtek,rtd119x.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Realtek RTD129x Real-Time Clock
-> +
-> +allOf:
-> +  - $ref: "rtc.yaml#"
-> +
-> +maintainers:
-> +  - Andreas Färber <afaerber@suse.de>
-> +
-> +properties:
-> +  compatible:
-> +    const: realtek,rtd1295-rtc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: Specifies the clock gate
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +
-> +examples:
-> +  - |
-> +	rtc@9801b600 {
-> +		compatible = "realtek,rtd1295-clk";
-> +		reg = <0x9801b600 0x100>;
-> +		clocks = <&clkc RTD1295_CLK_EN_MISC_RTC>;
-
-You need the include file here or the example won't build (run 'make 
-dt_binding_check').
-
-> +	};
-> +...
-> -- 
-> 2.16.4
-> 
