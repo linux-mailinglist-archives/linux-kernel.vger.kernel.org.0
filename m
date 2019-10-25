@@ -2,60 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2255E46C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:12:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D7A6E46D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:14:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438314AbfJYJMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 05:12:17 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:50384 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2393522AbfJYJMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 05:12:17 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id F0B85A2AF2293B7914DC;
-        Fri, 25 Oct 2019 17:12:01 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Fri, 25 Oct 2019
- 17:11:54 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <kvalo@codeaurora.org>, <davem@davemloft.net>
-CC:     <ath10k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] ath10k: remove unneeded semicolon
-Date:   Fri, 25 Oct 2019 17:10:41 +0800
-Message-ID: <20191025091041.34056-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+        id S2408758AbfJYJOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 05:14:54 -0400
+Received: from mga07.intel.com ([134.134.136.100]:39273 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2408744AbfJYJOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 05:14:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2019 02:14:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,228,1569308400"; 
+   d="scan'208";a="400050841"
+Received: from brentlu-desk0.itwn.intel.com ([10.5.253.11])
+  by fmsmga006.fm.intel.com with ESMTP; 25 Oct 2019 02:14:50 -0700
+From:   Brent Lu <brent.lu@intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Brent Lu <brent.lu@intel.com>,
+        "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        Tzung-Bi Shih <tzungbi@google.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Naveen M <naveen.m@intel.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: eve: implement set_bias_level function for rt5514
+Date:   Fri, 25 Oct 2019 17:11:31 +0800
+Message-Id: <1571994691-20199-1-git-send-email-brent.lu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-remove unneeded semicolon.
+The first DMIC capture always fail (zero sequence data from PCM port)
+after using DSP hotwording function (i.e. Google assistant).
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+This rt5514 codec requires to control mclk directly in the set_bias_level
+function. Implement this function in machine driver to control the
+ssp1_mclk clock explicitly could fix this issue.
+
+Signed-off-by: Brent Lu <brent.lu@intel.com>
 ---
- drivers/net/wireless/ath/ath10k/htt_rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  | 50 ++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/htt_rx.c b/drivers/net/wireless/ath/ath10k/htt_rx.c
-index 9f0e7b4..d95b63f 100644
---- a/drivers/net/wireless/ath/ath10k/htt_rx.c
-+++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
-@@ -2073,7 +2073,7 @@ static void ath10k_htt_rx_mpdu_desc_pn_hl(struct htt_hl_rx_desc *rx_desc,
- 	case 24:
- 		pn->pn24 = __le32_to_cpu(rx_desc->pn_31_0);
- 		break;
--	};
-+	}
- }
+diff --git a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
+index dc09a85..b546de8 100644
+--- a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
++++ b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
+@@ -653,6 +653,55 @@ static struct snd_soc_dai_link kabylake_dais[] = {
+ 	},
+ };
  
- static bool ath10k_htt_rx_pn_cmp48(union htt_rx_pn_t *new_pn,
++static int kabylake_set_bias_level(struct snd_soc_card *card,
++	struct snd_soc_dapm_context *dapm, enum snd_soc_bias_level level)
++{
++	struct snd_soc_component *component = dapm->component;
++	struct kbl_codec_private *priv = snd_soc_card_get_drvdata(card);
++	int ret = 0;
++
++	if (!component || strcmp(component->name, RT5514_DEV_NAME))
++		return 0;
++
++	if (IS_ERR(priv->mclk))
++		return 0;
++
++	/*
++	 * It's required to control mclk directly in the set_bias_level
++	 * function for rt5514 codec or the recording function could
++	 * break.
++	 */
++	switch (level) {
++	case SND_SOC_BIAS_PREPARE:
++		if (dapm->bias_level == SND_SOC_BIAS_ON) {
++			dev_dbg(card->dev, "Disable mclk");
++			clk_disable_unprepare(priv->mclk);
++		} else {
++			dev_dbg(card->dev, "Enable mclk");
++			ret = clk_set_rate(priv->mclk, 24000000);
++			if (ret) {
++				dev_err(card->dev, "Can't set rate for mclk, err: %d\n",
++					ret);
++				return ret;
++			}
++
++			ret = clk_prepare_enable(priv->mclk);
++			if (ret) {
++				dev_err(card->dev, "Can't enable mclk, err: %d\n",
++					ret);
++
++				/* mclk is already enabled in FW */
++				ret = 0;
++			}
++		}
++		break;
++	default:
++		break;
++	}
++
++	return ret;
++}
++
+ static int kabylake_card_late_probe(struct snd_soc_card *card)
+ {
+ 	struct kbl_codec_private *ctx = snd_soc_card_get_drvdata(card);
+@@ -692,6 +741,7 @@ static struct snd_soc_card kabylake_audio_card = {
+ 	.owner = THIS_MODULE,
+ 	.dai_link = kabylake_dais,
+ 	.num_links = ARRAY_SIZE(kabylake_dais),
++	.set_bias_level = kabylake_set_bias_level,
+ 	.controls = kabylake_controls,
+ 	.num_controls = ARRAY_SIZE(kabylake_controls),
+ 	.dapm_widgets = kabylake_widgets,
 -- 
 2.7.4
-
 
