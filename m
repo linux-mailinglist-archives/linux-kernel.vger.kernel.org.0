@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73AABE4DB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0755BE4DB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395000AbfJYOCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 10:02:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53042 "EHLO mail.kernel.org"
+        id S2394943AbfJYOBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 10:01:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2505410AbfJYN54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:57:56 -0400
+        id S2505479AbfJYN6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 09:58:07 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3D2A222C4;
-        Fri, 25 Oct 2019 13:57:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDC6F222C2;
+        Fri, 25 Oct 2019 13:58:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572011875;
-        bh=+WwV0E1ym9y6aqcP9TKtSk5RdtH6hq+0LURBV+jXbNw=;
+        s=default; t=1572011887;
+        bh=56jLaJVyE7J6WQTZ+h1JWCw4Ord1UhA/TJ58CERVaLg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q5+VBezDkazN+T6dlRjLByxOC2B8gAHHA1oQikxtm/ZrOCUn0X1U0Pg41QLOFESIh
-         iWKMmxRRLzF5qjBWxwhNLp0bABIWZwDmVB5a0PBCkdeTZOC7V0vnVTxaCo6hRkcBo9
-         nXF7xTKBgsPpz+rzjBKM9S+jcjzpNOuAgx/jg3QU=
+        b=lCECg/QqOn0qpCNHMJ2kJQ/ojVr16MWV5s6WeWmLOozBN/Dsq/6JxF64F0xtmmmGn
+         ZIXC3/ok1NW3QLQimCO4+WZI3qmcQ72R9gv9r8bZbbV1+aUyBQOH7VkVENE9Lr/gAn
+         //vbrPV1DWzcz1HG7/2O5nzlHcv24C/3WQarnDfk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bart Van Assche <bvanassche@acm.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 23/25] RDMA/iwcm: Fix a lock inversion issue
-Date:   Fri, 25 Oct 2019 09:57:11 -0400
-Message-Id: <20191025135715.25468-23-sashal@kernel.org>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 03/20] ACPI: video: Use vendor backlight on Sony VPCEH3U1E
+Date:   Fri, 25 Oct 2019 09:57:43 -0400
+Message-Id: <20191025135801.25739-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191025135715.25468-1-sashal@kernel.org>
-References: <20191025135715.25468-1-sashal@kernel.org>
+In-Reply-To: <20191025135801.25739-1-sashal@kernel.org>
+References: <20191025135801.25739-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -43,85 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Zhang Rui <rui.zhang@intel.com>
 
-[ Upstream commit b66f31efbdad95ec274345721d99d1d835e6de01 ]
+[ Upstream commit aefa763b18a220f5fc1d5ab02af09158b6cc36ea ]
 
-This patch fixes the lock inversion complaint:
+On Sony Vaio VPCEH3U1E, ACPI backlight control does not work, and native
+backlight works. Thus force use vendor backlight control on this system.
 
-============================================
-WARNING: possible recursive locking detected
-5.3.0-rc7-dbg+ #1 Not tainted
---------------------------------------------
-kworker/u16:6/171 is trying to acquire lock:
-00000000035c6e6c (&id_priv->handler_mutex){+.+.}, at: rdma_destroy_id+0x78/0x4a0 [rdma_cm]
-
-but task is already holding lock:
-00000000bc7c307d (&id_priv->handler_mutex){+.+.}, at: iw_conn_req_handler+0x151/0x680 [rdma_cm]
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&id_priv->handler_mutex);
-  lock(&id_priv->handler_mutex);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-3 locks held by kworker/u16:6/171:
- #0: 00000000e2eaa773 ((wq_completion)iw_cm_wq){+.+.}, at: process_one_work+0x472/0xac0
- #1: 000000001efd357b ((work_completion)(&work->work)#3){+.+.}, at: process_one_work+0x476/0xac0
- #2: 00000000bc7c307d (&id_priv->handler_mutex){+.+.}, at: iw_conn_req_handler+0x151/0x680 [rdma_cm]
-
-stack backtrace:
-CPU: 3 PID: 171 Comm: kworker/u16:6 Not tainted 5.3.0-rc7-dbg+ #1
-Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
-Workqueue: iw_cm_wq cm_work_handler [iw_cm]
-Call Trace:
- dump_stack+0x8a/0xd6
- __lock_acquire.cold+0xe1/0x24d
- lock_acquire+0x106/0x240
- __mutex_lock+0x12e/0xcb0
- mutex_lock_nested+0x1f/0x30
- rdma_destroy_id+0x78/0x4a0 [rdma_cm]
- iw_conn_req_handler+0x5c9/0x680 [rdma_cm]
- cm_work_handler+0xe62/0x1100 [iw_cm]
- process_one_work+0x56d/0xac0
- worker_thread+0x7a/0x5d0
- kthread+0x1bc/0x210
- ret_from_fork+0x24/0x30
-
-This is not a bug as there are actually two lock classes here.
-
-Link: https://lore.kernel.org/r/20190930231707.48259-3-bvanassche@acm.org
-Fixes: de910bd92137 ("RDMA/cma: Simplify locking needed for serialization of callbacks")
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=202401
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/cma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/acpi/video_detect.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
-index 7c5eca312aa88..f698c6a28c142 100644
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -2212,9 +2212,10 @@ static int iw_conn_req_handler(struct iw_cm_id *cm_id,
- 		conn_id->cm_id.iw = NULL;
- 		cma_exch(conn_id, RDMA_CM_DESTROYING);
- 		mutex_unlock(&conn_id->handler_mutex);
-+		mutex_unlock(&listen_id->handler_mutex);
- 		cma_deref_id(conn_id);
- 		rdma_destroy_id(&conn_id->id);
--		goto out;
-+		return ret;
- 	}
+diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
+index cdc47375178e7..555f568dbf3e4 100644
+--- a/drivers/acpi/video_detect.c
++++ b/drivers/acpi/video_detect.c
+@@ -135,6 +135,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "UL30A"),
+ 		},
+ 	},
++	{
++	.callback = video_detect_force_vendor,
++	.ident = "Sony VPCEH3U1E",
++	.matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "Sony Corporation"),
++		DMI_MATCH(DMI_PRODUCT_NAME, "VPCEH3U1E"),
++		},
++	},
  
- 	mutex_unlock(&conn_id->handler_mutex);
+ 	/*
+ 	 * These models have a working acpi_video backlight control, and using
 -- 
 2.20.1
 
