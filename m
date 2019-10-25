@@ -2,99 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 695FBE4750
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:32:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD90E4744
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438674AbfJYJby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 05:31:54 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33669 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438658AbfJYJbv (ORCPT
+        id S2438603AbfJYJbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 05:31:44 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:38593 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405781AbfJYJbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 05:31:51 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s1so1525406wro.0;
-        Fri, 25 Oct 2019 02:31:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=77A9mrU+GvtRghygf59d/zr0EDg/QRoehlw2HaK8WGw=;
-        b=Q/bVBEeBy5tn//kvTzIw8xbzOxwDulRXcCUWsPpI8xQ6ggu0HmedYpLkER8xsKbfjV
-         AFpOxBm+U+vwz+IIZpRK2UwME7D/Rp56Zi6J+MHzhnLufJMwYsinSvFdTL8fNS1Fiu8h
-         ppc3Fke/XsQ5VDC/mYoNXf2OI5oWftNfG27SNvXdgRJu2uEpEOERnbLjEXun37HwOn2z
-         il/O+0xNfYM8n+vgcQLtJWP1L/C3FhBbFlqMEQ/pFlSCra2R/C6JNJWjH0PKrcNRR7aq
-         U+jvbZRK+/psfuBjSU+PgdVM1tfi5aBLh4hzualXLH5rggJjwbhe2JRr5LaboKvjwOnD
-         28NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=77A9mrU+GvtRghygf59d/zr0EDg/QRoehlw2HaK8WGw=;
-        b=tHo0r/1/HcHrKrowyzemEfv1kuRedSh2Rdine4jJ1gUx48t3MinA/ro50on/yAZEas
-         p5Q/uHAZ83h8G1tH4OD1y3+aqZLIsmrsIlV1lhWcL7qLr/GtYokoU8TgdPLbZ448IEYZ
-         7mhlJeAPi2koHEYFsjXgQffdLitP+B4xDX77C2OAp5Sn2FNFWPU9wftPqCmAR+ilnHH8
-         yc1A1Q9/7SqCoD1zl9KWInB5IEW+FIpLKp/U7myq3S7OXqusYj5Q63ThNj23R0xToC3f
-         UVJJcdxASjvX8kOswuc/K2s1pJ0FnPQWGHm9Xt8nWp8Vm40O1x+Z9tyPO0YIciCdxeHt
-         m+dQ==
-X-Gm-Message-State: APjAAAVfpn6Ijgb05dr2Hi/531FmeP/qD0o0eLbRJVzlx1rSqpQXIvnL
-        0pKeGzlKGWvgdIB3+JKjQOo=
-X-Google-Smtp-Source: APXvYqwrEopp9G/Q+1sxJJWFLmASvDAv315NCV9IEEkbnpTD+PMY12Z8Jo4hHk0tAxrx6iy/pjdIGg==
-X-Received: by 2002:adf:ee03:: with SMTP id y3mr2026446wrn.116.1571995909648;
-        Fri, 25 Oct 2019 02:31:49 -0700 (PDT)
-Received: from localhost.localdomain ([109.126.132.16])
-        by smtp.gmail.com with ESMTPSA id l7sm2054551wro.17.2019.10.25.02.31.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 02:31:49 -0700 (PDT)
-From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH 3/3] io_uring: Fix race for sqes with userspace
-Date:   Fri, 25 Oct 2019 12:31:31 +0300
-Message-Id: <cfb7206ba1ac48615fd705ac74fc2d554a0c5422.1571991701.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1571991701.git.asml.silence@gmail.com>
-References: <cover.1571991701.git.asml.silence@gmail.com>
+        Fri, 25 Oct 2019 05:31:44 -0400
+X-Originating-IP: 92.137.17.54
+Received: from localhost (alyon-657-1-975-54.w92-137.abo.wanadoo.fr [92.137.17.54])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id E7C3160004;
+        Fri, 25 Oct 2019 09:31:41 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     YueHaibing <yuehaibing@huawei.com>, jason@lakedaemon.net,
+        andrew@lunn.ch, sebastian.hesselbarth@gmail.com,
+        linus.walleij@linaro.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] pinctrl: armada-37xx: remove unneeded semicolon
+In-Reply-To: <20191025092233.25108-1-yuehaibing@huawei.com>
+References: <20191025092233.25108-1-yuehaibing@huawei.com>
+Date:   Fri, 25 Oct 2019 11:31:41 +0200
+Message-ID: <87lft9p3wi.fsf@FE-laptop>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+YueHaibing <yuehaibing@huawei.com> writes:
 
-io_ring_submit() finalises with
-1. io_commit_sqring(), which releases sqes to the userspace
-2. Then calls to io_queue_link_head(), accessing released head's sqe
+> Remove unneeded semicolon.
+> This is detected by coccinelle.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Reorder them.
+I am against this patch, I don't see any value of this change. It will
+only make backporting future fix more difficult and will obscurate the
+git blame.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I could see the interest of scripts/coccinelle/misc/semicolon.cocci
+when submitting new code, but not for existing code.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 949c82a40d16..32f6598ecae9 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2795,13 +2795,14 @@ static int io_ring_submit(struct io_ring_ctx *ctx, unsigned int to_submit)
- 		submit++;
- 		io_submit_sqe(ctx, &s, statep, &link);
- 	}
--	io_commit_sqring(ctx);
- 
- 	if (link)
- 		io_queue_link_head(ctx, link, &link->submit, shadow_req);
- 	if (statep)
- 		io_submit_state_end(statep);
- 
-+	io_commit_sqring(ctx);
-+
- 	return submit;
- }
- 
+Gregory
+
+> ---
+>  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> index 9df4277..fd32989 100644
+> --- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> @@ -733,7 +733,7 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
+>  			ret = 0;
+>  			break;
+>  		}
+> -	};
+> +	}
+>  	if (ret) {
+>  		dev_err(dev, "no gpio-controller child node\n");
+>  		return ret;
+> @@ -800,7 +800,7 @@ static int armada_37xx_gpiochip_register(struct platform_device *pdev,
+>  			ret = 0;
+>  			break;
+>  		}
+> -	};
+> +	}
+>  	if (ret)
+>  		return ret;
+>  
+> -- 
+> 2.7.4
+>
+>
+
 -- 
-2.23.0
-
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
