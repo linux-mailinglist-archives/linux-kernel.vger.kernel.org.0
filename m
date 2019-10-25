@@ -2,177 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0102FE4AAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:03:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93DE4E4AA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:02:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504094AbfJYMCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 08:02:39 -0400
-Received: from mail-eopbgr810053.outbound.protection.outlook.com ([40.107.81.53]:19482
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726375AbfJYMCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 08:02:39 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WNS91Qgiow8S2Yi5j78QWI336LtUcf7jpdjnWOZAOvzsczji2e6x+W8HdVKlvpSIu2CPxmpvjIlJDzI1m5J7BrZ1OwHheVwH4L0my2nppmiPv33JS3jVFSpYymc5OR0WfinE3J3PI/k31/+wK0prpl0L/7mhlvkS4fmJruzyv1Vv/j086LpgTZixSOgCUAKGOxfEoXojDUKiQFbTpochs39Bgz7yUQMv+fUV7oiMbGA8leJeBz3/gsJLLFFgyKwZ9u+6SNQZlXON7FrK8i5rSlyDErq8SXCdsUWnuACQx55vWejbCDtwTBDIjwpp69T2Of02JsPIgChIAZAzYE+B8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IEtw73Pj30IMlGn/H9mHF0GC4ROHu6+pTJAAqtQoHlw=;
- b=aAHgRnc8DhqIEL/12VnSmsOTItFPiKjMTJnRStqRqTtYv8ydE3YZ2Zshkbsssdqbt4rCt0aHFe1sU7CBA4wGm6wOA8XgfpQFVszW1XgSKcE8tunhDW5u5703I4s9DjI3cQgId08D/EG7RXN546DLn2xHdomLv1RW4t853MIkqnHiAJ46mFdmuu7bzvj+wnbMAMXuQdiULSnwYVUYJJFY8bXdEtNY8evGZyMroMLLuoZmSuQhSl0Fz+6qSnXOi/DXLma1dDd6Gmw9/I7JkE/hn+ywNOsajkTWgUZnhFcZbcgUy805CvslTVLVSqhYLre3f/mwy1VOpRaGZNrxbfUjeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IEtw73Pj30IMlGn/H9mHF0GC4ROHu6+pTJAAqtQoHlw=;
- b=VQ7bRN8v/rMgsywtmyl04w+4AS76MJI/9dRSuhBf7gvhUvGIBzOr5ZPMvKCVB02S9sPQAwua2uCWmRKMs3Pmhf89xJOPX84DChtuQ7g8WupCFK3/PtbmK8/mLkeABTK6W7bye8H/AivZUZo0ChNqnMzoSGWn6IPSAIiMHhLFP2k=
-Received: from BYAPR02MB5591.namprd02.prod.outlook.com (20.178.1.29) by
- BYAPR02MB5655.namprd02.prod.outlook.com (20.177.231.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.23; Fri, 25 Oct 2019 12:01:51 +0000
-Received: from BYAPR02MB5591.namprd02.prod.outlook.com
- ([fe80::f13b:8984:42b7:26ed]) by BYAPR02MB5591.namprd02.prod.outlook.com
- ([fe80::f13b:8984:42b7:26ed%5]) with mapi id 15.20.2387.023; Fri, 25 Oct 2019
- 12:01:50 +0000
-From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
-To:     Jack Pham <jackp@codeaurora.org>, Felipe Balbi <balbi@kernel.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>
-Subject: RE: [PATCH] usb: dwc3: gadget: Correct the logic for finding last SG
- entry
-Thread-Topic: [PATCH] usb: dwc3: gadget: Correct the logic for finding last SG
- entry
-Thread-Index: AQHVFi8wapUkz2GgO0KPkbPlYU1PoKaMvgMAgAH+Z2CAARGqgIDZi58AgALQ1iA=
-Date:   Fri, 25 Oct 2019 12:01:50 +0000
-Message-ID: <BYAPR02MB5591EFB659784B6A017B446EA7650@BYAPR02MB5591.namprd02.prod.outlook.com>
-References: <1559141985-17104-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <87y32gcvc1.fsf@linux.intel.com>
- <BYAPR02MB559181C009B74446A797838DA7170@BYAPR02MB5591.namprd02.prod.outlook.com>
- <87ftoldh48.fsf@linux.intel.com>
- <20191023165804.GD9754@jackp-linux.qualcomm.com>
-In-Reply-To: <20191023165804.GD9754@jackp-linux.qualcomm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anuragku@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 669c1913-0380-4293-f991-08d759431eb9
-x-ms-traffictypediagnostic: BYAPR02MB5655:|BYAPR02MB5655:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR02MB5655940BA9B585E36C75935EA7650@BYAPR02MB5655.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 02015246A9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(396003)(39860400002)(376002)(136003)(199004)(189003)(13464003)(51444003)(76116006)(66066001)(33656002)(64756008)(66556008)(66476007)(55016002)(446003)(66946007)(4326008)(6246003)(186003)(6436002)(26005)(25786009)(478600001)(66446008)(6116002)(11346002)(3846002)(14454004)(316002)(54906003)(229853002)(7736002)(305945005)(110136005)(9686003)(74316002)(476003)(6506007)(2906002)(256004)(486006)(7696005)(5660300002)(99286004)(71190400001)(71200400001)(76176011)(81166006)(81156014)(102836004)(52536014)(8676002)(8936002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB5655;H:BYAPR02MB5591.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nvtk1HmZMoj66nZJnJQv/cZFqJafMNFpWKBGcZB0RQFBED3MHfGIpD3My2Qso/mO0VRMCvnSsWwTAEVKaPqPALQPOba7NJkT1sk6vHVw9UiZLjsUbYxZHW4MKNeadJN99gg+9ex+THXcnehOK7Bc8u6JZ3kws7rIvsrh40/F1DTO0fXG0fFsK9V+CisTyejtwIWlJXwFFnBgC+rHSrk596cAMub6RqJV2PYTuGyfBaZ6gxZmbCvyBUDAp6viGgItTIQ1gG0gqzRnRfF/0rYmDTqOuH0RXHKoQU4aHFgRQVRmTg9MfuleFgTQdBAPuFFdYPLr+Bo9FBC0NDk4H0ubyYqZsfplaZNprOVMwCCk+OtXPk/CNl7VX5bT5UP43DuuAdmrtRHPk97x8TcJp6hPnR4xEJjrpnqyktGHEAm1zBLcujvaowxoKrhoFJYhUtP7
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2503944AbfJYMCF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:02:05 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:25790 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2502539AbfJYMCE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 08:02:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572004923;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IBg/RemnUO6FrGBf0EaqOcr2gXDDQq0ETHC+883fOmI=;
+        b=QLizEG5HiQ1UD/o52bIlhmIdM6K3ICA2+5sbykhC27eRB2cuFb7VLUBk5adiYaemE/fFhm
+        5HMJdb1+ioPyWEI8M2wpNWanNKvIpMppmS2T2jEe1ZkiICZPC8jZxJIP37yiCJE7o2ntpP
+        mCNTIU8ANm0dl+r4LPkwDLlqUqFdZdQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-280-9JO_5gNoPreq6XvpTBvKag-1; Fri, 25 Oct 2019 08:01:59 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DC4EA800D41;
+        Fri, 25 Oct 2019 12:01:57 +0000 (UTC)
+Received: from krava (unknown [10.43.17.61])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 8A7DC5D9CA;
+        Fri, 25 Oct 2019 12:01:55 +0000 (UTC)
+Date:   Fri, 25 Oct 2019 14:01:54 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Yunfeng Ye <yeyunfeng@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
+        "linfeilong@huawei.com" <linfeilong@huawei.com>
+Subject: Re: [PATCH] perf c2c: Fix memory leak in c2c_he_zalloc()
+Message-ID: <20191025120154.GA25352@krava>
+References: <9d5f26f8-9429-bcb6-d491-cb789f761ea2@huawei.com>
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 669c1913-0380-4293-f991-08d759431eb9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2019 12:01:50.7770
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: K5RY6QbWIPmUznlB0Mp5Y5npXu4S2eiON8uT+Wo7itvJLr8yHFZnYPXcsMAKPN1uQdhpOUOcpVIvCcX6RAZE2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5655
+In-Reply-To: <9d5f26f8-9429-bcb6-d491-cb789f761ea2@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: 9JO_5gNoPreq6XvpTBvKag-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 25, 2019 at 05:42:47PM +0800, Yunfeng Ye wrote:
+> A memory leak in c2c_he_zalloc() is found by visual inspection.
+>=20
+> Fix this by adding memory free on the error paths in c2c_he_zalloc().
+>=20
+> Fixes: 7f834c2e84bb ("perf c2c report: Display node for cacheline address=
+")
+> Fixes: 1e181b92a2da ("perf c2c report: Add 'node' sort key")
+> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
 
-Hi Jack,
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
->-----Original Message-----
->From: Jack Pham [mailto:jackp@codeaurora.org]
->Sent: Wednesday, October 23, 2019 10:28 PM
->To: Felipe Balbi <balbi@kernel.org>
->Cc: Anurag Kumar Vulisha <anuragku@xilinx.com>; Greg Kroah-Hartman
-><gregkh@linuxfoundation.org>; linux-usb@vger.kernel.org; linux-
->kernel@vger.kernel.org; v.anuragkumar@gmail.com
->Subject: Re: [PATCH] usb: dwc3: gadget: Correct the logic for finding last=
- SG
->entry
->
->Hi Anurag,
->
->On Fri, Jun 07, 2019 at 09:49:59AM +0300, Felipe Balbi wrote:
->> Anurag Kumar Vulisha <anuragku@xilinx.com> writes:
->> >>> The dma_map_sg() merges sg1 & sg2 memory regions into sg1-
->> >>>dma_address.
->> >>> Similarly sg3 & sg4 into sg2->dma_address, sg5 & sg6 into the
->> >>> sg3->dma_address and sg6 & sg8 into sg4->dma_address. Here the
->> >>memory
->> >>> regions are merged but the page_link properties like SG_END are not
->> >>> retained into the merged sgs.
->> >>
->> >>isn't this a bug in the scatterlist mapping code? Why doesn't it keep
->> >>SG_END?
->> >>
->> >
->> > Thanks for providing your comment.
->> >
->> > I don't think it is a bug, instead I feel some enhancement needs to be=
- done
->in
->> > dma-mapping code.
->> >
->> > SG_END represents the last sg entry in the sglist and it is correctly =
-getting
->> > set to the last sg entry.
->> >
->> > The issue happens only when 2 or more sg entry pages are merged into
->> > contiguous dma-able address and sg_is_last() is used to find the last =
-sg
->entry
->> > with valid dma address.
->>
->> Right, and that's something that's bound to happen. I'm arguing that,
->perhaps,
->> dma API should move SG_END in case entries are merged.
->>
->> > I think that along with sg_is_last() a new flag (SG_DMA_END) and funct=
-ion
->> > (something like sg_dma_is_last() ) needs to be added into dma-mapping
->code for
->> > identifying the last valid sg entry with valid dma address. So that we=
- can
->> > make use of that function instead of sg_is_last().
->>
->> Sure, propose a patch to DMA API.
->
->I'm curious if this was ever resolved. I just ran into this exact issue
->with Android ADB which uses 16KB buffers, along with f_fs supporting
->S/G since 5.0, combined with our IOMMU which performs this merging
->behavior, so it resulted in a single TRB getting queued with CHN=3D1 and
->LST=3D0 and thus the transfer never completes. Your initial patch resolves
->the issue for me, but upon revisiting this discussion I couldn't tell if
->you had attempted to patch DMA API instead as per Felipe's suggestion.
->
+thanks,
+jirka
 
-We were stuck with some internal priority tasks, so couldn't initiate the
-discussion with IOMMU maintainers. Will work on preparing the patch
-and  sending the same very soon.
+> ---
+>  tools/perf/builtin-c2c.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+> index e69f44941aad..ad7d38a9dcbe 100644
+> --- a/tools/perf/builtin-c2c.c
+> +++ b/tools/perf/builtin-c2c.c
+> @@ -138,21 +138,29 @@ static void *c2c_he_zalloc(size_t size)
+>=20
+>  =09c2c_he->cpuset =3D bitmap_alloc(c2c.cpus_cnt);
+>  =09if (!c2c_he->cpuset)
+> -=09=09return NULL;
+> +=09=09goto free_c2c_he;
+>=20
+>  =09c2c_he->nodeset =3D bitmap_alloc(c2c.nodes_cnt);
+>  =09if (!c2c_he->nodeset)
+> -=09=09return NULL;
+> +=09=09goto free_cpuset;
+>=20
+>  =09c2c_he->node_stats =3D zalloc(c2c.nodes_cnt * sizeof(*c2c_he->node_st=
+ats));
+>  =09if (!c2c_he->node_stats)
+> -=09=09return NULL;
+> +=09=09goto free_nodeset;
+>=20
+>  =09init_stats(&c2c_he->cstats.lcl_hitm);
+>  =09init_stats(&c2c_he->cstats.rmt_hitm);
+>  =09init_stats(&c2c_he->cstats.load);
+>=20
+>  =09return &c2c_he->he;
+> +
+> +free_nodeset:
+> +=09free(c2c_he->nodeset);
+> +free_cpuset:
+> +=09free(c2c_he->cpuset);
+> +free_c2c_he:
+> +=09free(c2c_he);
+> +=09return NULL;
+>  }
+>=20
+>  static void c2c_he_free(void *he)
+> --=20
+> 2.7.4
+>=20
 
-Thanks,
-Anurag Kumar Vulisha
-
->Thanks,
->Jack
->--
->The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
->a Linux Foundation Collaborative Project
