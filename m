@@ -2,98 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FF31E52F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 20:03:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE37BE5322
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 20:07:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731291AbfJYSDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 14:03:16 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34818 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731263AbfJYSDP (ORCPT
+        id S1731996AbfJYSHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 14:07:39 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46574 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731344AbfJYSFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 14:03:15 -0400
-Received: by mail-wr1-f66.google.com with SMTP id l10so3361724wrb.2;
-        Fri, 25 Oct 2019 11:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sRSIHOYVf7qsnfaK43V65CarnMxSZE8djVm9tqub2po=;
-        b=UOxfDy9ZzHGAxhNjRVvaf0zjdR6eD0x87dUCgE/m3lOw8syrbLC0jl6VTQAuAd0ajR
-         sU6K5U6RmcCdPEwdWbOYTyN57Zr5igBt1h17+uNappPUeBSms0Cf7DBAVCJMIdpu3gDY
-         lTHkMThgdz+wvmS0YmRDl1dOfJFZNQOaRC6mXfFMvLnQPutF17vMJ8QEu67M6jhwO51Z
-         6Xz0oy05cwgQO06HJS925Jq4KcDAo8Gddpuj0W8qvf7DhP5tPrW8i+o/ODPoTorI6H7p
-         VNeyeRHmw8oLr+SQusaGAzd2JzOC/QzWKxcoo5tdRjEsY7K+/1XJCA5V3rNKhiGw4e/6
-         rWYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sRSIHOYVf7qsnfaK43V65CarnMxSZE8djVm9tqub2po=;
-        b=Xxa9Sds1WHaquAmfk/6OIhiboOSwKeARlMhVvvjN0XOowT5JOa3my73vcbrLKnTy28
-         5RtiV3Lw3kShClp0F3EYSXwHGQJeuCDt3/C79yzLHY1I99B53i89vD2sGzDM29FpVclw
-         N9KyKuHBKFQgj6drtHiFPt5Gkg7Oi/N1OYL/WP3ZbKw7mgYTW1e6UWYGCqAKnWrNGg//
-         0QlBFPsevrhT3pbU4QSBUVZNE/sEcmlUwXj26KV1AAsPZFGv+2NsQR3XAzNZWDuzyCoj
-         P4FgqwgSx85sZ6A/kOQV9QVZJ4fCjVNib89Fxxn/nOGJWrrINkaI2emn2Bde/Kcw+4qA
-         vYPA==
-X-Gm-Message-State: APjAAAXs23/qluFd/9WeSLkHEkLuAqaz0DJqzUlydKrun6B+7VbF3nx/
-        28KR4jtSgt2Vm+4i2QiWEk+9mn67
-X-Google-Smtp-Source: APXvYqwkRYq2HbhgxrRAmcfZOalDe3reg9s9NfmT4jljb9+TLvoLV1/HugYILjPVCiYVeX2qzzOhJQ==
-X-Received: by 2002:adf:ffc5:: with SMTP id x5mr1090391wrs.93.1572026593089;
-        Fri, 25 Oct 2019 11:03:13 -0700 (PDT)
-Received: from [10.69.45.46] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id z189sm4141012wmc.25.2019.10.25.11.03.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Oct 2019 11:03:12 -0700 (PDT)
-Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20191025140736.0c9e9d64@canb.auug.org.au>
-From:   James Smart <jsmart2021@gmail.com>
-Message-ID: <13203518-3fc5-bce9-3ed7-9487cd81a9f9@gmail.com>
-Date:   Fri, 25 Oct 2019 11:03:09 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 25 Oct 2019 14:05:40 -0400
+Received: from [167.98.27.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1iO3xv-0008OK-KH; Fri, 25 Oct 2019 19:05:35 +0100
+Received: from ben by deadeye with local (Exim 4.92.2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1iO3xv-0001iB-3H; Fri, 25 Oct 2019 19:05:35 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <20191025140736.0c9e9d64@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "Eric Biggers" <ebiggers@google.com>,
+        "Peter Robinson" <pbrobinson@gmail.com>
+Date:   Fri, 25 Oct 2019 19:03:10 +0100
+Message-ID: <lsq.1572026582.778072635@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+X-Patchwork-Hint: ignore
+Subject: [PATCH 3.16 09/47] crypto: ghash - fix unaligned memory access in
+ ghash_setkey()
+In-Reply-To: <lsq.1572026581.992411028@decadent.org.uk>
+X-SA-Exim-Connect-IP: 167.98.27.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/2019 8:07 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the scsi-mkp tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/scsi/lpfc/lpfc_debugfs.c: In function 'lpfc_debugfs_ras_log_release':
-> drivers/scsi/lpfc/lpfc_debugfs.c:2109:2: error: implicit declaration of function 'vfree'; did you mean 'kvfree'? [-Werror=implicit-function-declaration]
->   2109 |  vfree(debug->buffer);
->        |  ^~~~~
->        |  kvfree
-> drivers/scsi/lpfc/lpfc_debugfs.c: In function 'lpfc_debugfs_ras_log_open':
-> drivers/scsi/lpfc/lpfc_debugfs.c:2150:18: error: implicit declaration of function 'vmalloc'; did you mean 'kvmalloc'? [-Werror=implicit-function-declaration]
->   2150 |  debug->buffer = vmalloc(size);
->        |                  ^~~~~~~
->        |                  kvmalloc
-> drivers/scsi/lpfc/lpfc_debugfs.c:2150:16: warning: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
->   2150 |  debug->buffer = vmalloc(size);
->        |                ^
-> 
-> Caused by commit
-> 
->    95bfc6d8ad86 ("scsi: lpfc: Make FW logging dynamically configurable")
-> 
-> I have used the scsi-mkp tree from next-20191024 for today.
-> 
+3.16.76-rc1 review patch.  If anyone has any objections, please let me know.
 
-I will resolve this quickly...
+------------------
 
--- james
+From: Eric Biggers <ebiggers@google.com>
+
+commit 5c6bc4dfa515738149998bb0db2481a4fdead979 upstream.
+
+Changing ghash_mod_init() to be subsys_initcall made it start running
+before the alignment fault handler has been installed on ARM.  In kernel
+builds where the keys in the ghash test vectors happened to be
+misaligned in the kernel image, this exposed the longstanding bug that
+ghash_setkey() is incorrectly casting the key buffer (which can have any
+alignment) to be128 for passing to gf128mul_init_4k_lle().
+
+Fix this by memcpy()ing the key to a temporary buffer.
+
+Don't fix it by setting an alignmask on the algorithm instead because
+that would unnecessarily force alignment of the data too.
+
+Fixes: 2cdc6899a88e ("crypto: ghash - Add GHASH digest algorithm for GCM")
+Reported-by: Peter Robinson <pbrobinson@gmail.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Tested-by: Peter Robinson <pbrobinson@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ crypto/ghash-generic.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/crypto/ghash-generic.c
++++ b/crypto/ghash-generic.c
+@@ -45,6 +45,7 @@ static int ghash_setkey(struct crypto_sh
+ 			const u8 *key, unsigned int keylen)
+ {
+ 	struct ghash_ctx *ctx = crypto_shash_ctx(tfm);
++	be128 k;
+ 
+ 	if (keylen != GHASH_BLOCK_SIZE) {
+ 		crypto_shash_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
+@@ -53,7 +54,12 @@ static int ghash_setkey(struct crypto_sh
+ 
+ 	if (ctx->gf128)
+ 		gf128mul_free_4k(ctx->gf128);
+-	ctx->gf128 = gf128mul_init_4k_lle((be128 *)key);
++
++	BUILD_BUG_ON(sizeof(k) != GHASH_BLOCK_SIZE);
++	memcpy(&k, key, GHASH_BLOCK_SIZE); /* avoid violating alignment rules */
++	ctx->gf128 = gf128mul_init_4k_lle(&k);
++	memzero_explicit(&k, GHASH_BLOCK_SIZE);
++
+ 	if (!ctx->gf128)
+ 		return -ENOMEM;
+ 
+
