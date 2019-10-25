@@ -2,81 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03685E4CDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D81AAE4CD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:56:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2632788AbfJYN4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 09:56:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50348 "EHLO mail.kernel.org"
+        id S2505201AbfJYNz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 09:55:57 -0400
+Received: from mout.gmx.net ([212.227.15.19]:49741 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2505244AbfJYN4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:56:09 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2094C222C4;
-        Fri, 25 Oct 2019 13:56:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572011768;
-        bh=pMRvbdDCb4dImnhTz2eaL8s9Wnfeqq0pbrx6tQqzFUM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vH9YQTXkSLH0RSFM9TnDV3JA9GtB38aOiz87Ldl2whCttA+57qH7d+Ta3Lgm1ORMv
-         i2iLjyC1WfdHKrIgikNxDuijt4IlU64RtJeOv/Mq1mmUpDTdRzo7Y0ILprjkOzEPGe
-         2wpyIyeoTgRJ1vckmil5ALNHNOdv+fO22UmgNgtM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 03/37] ACPI: video: Use vendor backlight on Sony VPCEH3U1E
-Date:   Fri, 25 Oct 2019 09:55:27 -0400
-Message-Id: <20191025135603.25093-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191025135603.25093-1-sashal@kernel.org>
-References: <20191025135603.25093-1-sashal@kernel.org>
+        id S2505113AbfJYNzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 09:55:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1572011730;
+        bh=9ZX9RlREpwyQtZ8vBq/razbq3sDXMud2kIHv3bYsfgg=;
+        h=X-UI-Sender-Class:Subject:From:Reply-To:To:Cc:Date:In-Reply-To:
+         References;
+        b=Yykzode7tpUWi6O4QGEvkGXPIGjjZ5fk6fNJE1exbY4VLdsNBrZAEnGUD+Vch1+mN
+         bHJYWbSYL71uw/dW9OSDeYVCNg5AI8mqn9moUXfeMZ3Q+dErHLupTtOYODlOHZyb2D
+         03lBioZjIj3bb/6BOjLu2rijBoGSFJTidaj+au74=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from bear.fritz.box ([80.128.101.49]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MNKm0-1ickgq3bBq-00Ooc9; Fri, 25
+ Oct 2019 15:55:30 +0200
+Message-ID: <8534fa18abf0b586690355e0441eccc96d1ca2b9.camel@gmx.de>
+Subject: Re: mlockall(MCL_CURRENT) blocking infinitely
+From:   Robert Stupp <snazy@gmx.de>
+Reply-To: snazy@snazy.de
+To:     Michal Hocko <mhocko@kernel.org>, snazy@snazy.de
+Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>
+Date:   Fri, 25 Oct 2019 15:55:28 +0200
+In-Reply-To: <20191025132700.GJ17610@dhcp22.suse.cz>
+References: <4576b336-66e6-e2bb-cd6a-51300ed74ab8@snazy.de>
+         <b8ff71f5-2d9c-7ebb-d621-017d4b9bc932@infradead.org>
+         <20191025092143.GE658@dhcp22.suse.cz>
+         <70393308155182714dcb7485fdd6025c1fa59421.camel@gmx.de>
+         <20191025114633.GE17610@dhcp22.suse.cz>
+         <d740f26ea94f9f1c2fc0530c1ea944f8e59aad85.camel@gmx.de>
+         <20191025120505.GG17610@dhcp22.suse.cz>
+         <20191025121104.GH17610@dhcp22.suse.cz>
+         <c8950b81000e08bfca9fd9128cf87d8a329a904b.camel@gmx.de>
+         <20191025132700.GJ17610@dhcp22.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:u7Vgsxlud6XI8Pq7y2tuCkslo2bG6hGtqcWfHx+KA7pi0+PHEYx
+ a09WBHs+j1qA0LPVEnGJ5wLoCjbtB8Cy7LLPMMs+MPCzip7ndGdzhCj2+ggczscTa1knhvm
+ ZZT6Rx/fuXdotVJ3M8Fqm1F0Ds/qxFPHp65KO9lU6Ux6vy9kDFKmdezxudYAQHcG3Tb+tJa
+ Qaihmc/KsJGePqSZzc8Fw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:fW6HAR9cnRU=:51wgE3xaOojpK9VWIdew9o
+ MyWo0BKaiTwokyTybxWW7aMuRKLwoQzmFSHek6ZzUZJFlTu/59ZI0/8x322O1izTj6ILH29s5
+ ccaOHosVurlV3CciVGNofecu6ToF+kd4xznXatszsnTZ3P900OswMsRYbrR1OlPYazMUd0oxW
+ 57qQQ1UUNmzBj51cED2kTNIm7YDTPMmo/W1AFDMX/LHC6Y01unPAPoM2zjU7IoVrk/FMTmUqs
+ OyvzuB02bYVhyNn8L04ba8K0iOLPsiGdgnRG4xauTjGRtCTJjld4wn1ZlYCOxO/GzGd0pFtcP
+ OV7PXu+ieiaPCidCQktFNbBeRyCp7M4O8V4C3xIWeVz1S94NrqkPooMjY2mloUMV4jZygR8Ub
+ ZpoNwyHtm2P8CgJqKAeiL3MpmJdwUnG0BIgl1g3yMB5Fl//pO1jnPZalDKTQS4n3YAx/ETpBF
+ LTKyEJE5sQjFTCa9hQ6TiqmWfMOxR6JGIdQ6f6xDg/mNwXQkf1ViNtCG9jpgaEfHqM8CkdSn3
+ 2rMeETZ/DqBo7uvODyEU1gfGDTeoNlnTJf9OQK8BuyhtmM3gdkLpnDcGo1bQQdyLZXoBhmI0y
+ yBUZmUUnzfkGfr+KXUC2PrkaNFG6M+CJn2AR6n5yNRUNnUBig8oujKn7Iv56KtMCsP2GQIbBO
+ ZwO5bMUuipXGaAPUutnTKttKv+sVeEoAd1cLhtMK/0EL1493ZKYdinbZRorvH9Ut0u+sNCtXw
+ OM1YpNXJ7oHr8epoHa0DR5DvEKVY4U/OTAJZLRaCoqE78D0hpK1/9JfIZ2ESoQLmDioLvpTSQ
+ PyMzg1JyXJlikTRK8dx454/X9uBX8ALGSeOeyKQQw3UGL2x3+/mW9HX5nnZMPe4JBMV6adXtK
+ d1m7jZdUJ4vGYvd6NkUlIO+2SvIB+BsZtr3Vsyr3yPuQ2bNwiSBjLQditiPuYUxxSeVgd7xSx
+ NVuMAnYG+/Ru55Ah/V/HVhjWPHYuJcmBiEswOpgTdSk4pZbrF3sCibrh6Ztl2Jowi7r9XQaRx
+ pWbJg/MvFnJnhPjrxKFQsSTG7799L64x3ZpqTziDHYOS3rwNFHT0tqtbsdEjfVnh1cZ+MjVf5
+ R9F37YlE1JsWIojhQ+zVbhMzvDoqT4ibbiKb7pEtQ+wmApqbF1JkvMd+U73smVkuBkNQkDp26
+ 5hcT55Xirnv6BpBqnEg0/K36y82OckHKLNbJDkwzh6nZfwEZEBZMKeQD30l+jtjjg0glMOf4U
+ CuNdp8ZoaIMI1r6SIAWm1gih+baLV5S6aNU9NkA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhang Rui <rui.zhang@intel.com>
+On Fri, 2019-10-25 at 15:27 +0200, Michal Hocko wrote:
+> > Pss:                   5 kB
 
-[ Upstream commit aefa763b18a220f5fc1d5ab02af09158b6cc36ea ]
-
-On Sony Vaio VPCEH3U1E, ACPI backlight control does not work, and native
-backlight works. Thus force use vendor backlight control on this system.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=202401
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/acpi/video_detect.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
-index 43587ac680e47..0e0a3929e34e2 100644
---- a/drivers/acpi/video_detect.c
-+++ b/drivers/acpi/video_detect.c
-@@ -141,6 +141,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
- 		DMI_MATCH(DMI_PRODUCT_NAME, "UL30A"),
- 		},
- 	},
-+	{
-+	.callback = video_detect_force_vendor,
-+	.ident = "Sony VPCEH3U1E",
-+	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "Sony Corporation"),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "VPCEH3U1E"),
-+		},
-+	},
- 
- 	/*
- 	 * These models have a working acpi_video backlight control, and using
--- 
-2.20.1
+Seems Pss==Locked is wrong here - or better: it doesn't look right that
+Locked==Pss?
 
