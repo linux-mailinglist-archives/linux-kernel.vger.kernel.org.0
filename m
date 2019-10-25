@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92294E5516
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 22:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01094E5519
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 22:26:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbfJYUZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 16:25:41 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:35308 "EHLO ale.deltatee.com"
+        id S1728365AbfJYUZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 16:25:50 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:35314 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728077AbfJYUZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 16:25:40 -0400
+        id S1728279AbfJYUZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 16:25:46 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1iO69R-00078d-Ir; Fri, 25 Oct 2019 14:25:39 -0600
+        id 1iO69R-00078e-Ir; Fri, 25 Oct 2019 14:25:39 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1iO69Q-00038z-Ok; Fri, 25 Oct 2019 14:25:36 -0600
+        id 1iO69Q-000392-RZ; Fri, 25 Oct 2019 14:25:36 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
 Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
@@ -27,8 +27,8 @@ Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
         Max Gurtovoy <maxg@mellanox.com>,
         Stephen Bates <sbates@raithlin.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date:   Fri, 25 Oct 2019 14:25:34 -0600
-Message-Id: <20191025202535.12036-3-logang@deltatee.com>
+Date:   Fri, 25 Oct 2019 14:25:35 -0600
+Message-Id: <20191025202535.12036-4-logang@deltatee.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191025202535.12036-1-logang@deltatee.com>
 References: <20191025202535.12036-1-logang@deltatee.com>
@@ -39,10 +39,10 @@ X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
-        autolearn_force=no version=3.4.2
-Subject: [RFC PATCH 2/3] nvme: Create helper function to obtain command effects
+X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
+        version=3.4.2
+Subject: [RFC PATCH 3/3] nvme: Introduce nvme_execute_passthru_rq_nowait()
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -50,92 +50,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Separate the code to obtain command effects from the code
-to start a passthru request and open code nvme_known_admin_effects()
-in the new helper.
+This function is similar to nvme_execute_passthru_rq() but does
+not wait and will call a callback when the request is complete.
 
-The new helper function will be necessary for nvmet passthru
-code to determine if we need to change out of interrupt context
-to handle the effects.
+The new function can also be called in interrupt context, so if there
+are side effects, the request will be executed in a work queue to
+avoid sleeping.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 ---
- drivers/nvme/host/core.c | 41 +++++++++++++++++++++-------------------
- 1 file changed, 22 insertions(+), 19 deletions(-)
+ drivers/nvme/host/core.c | 42 ++++++++++++++++++++++++++++++++++++++++
+ drivers/nvme/host/nvme.h |  7 +++++++
+ 2 files changed, 49 insertions(+)
 
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index c2bde988d1aa..2b4f0ea55f8d 100644
+index 2b4f0ea55f8d..6d3cade0e63d 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
-@@ -886,22 +886,8 @@ static void *nvme_add_user_metadata(struct bio *bio, void __user *ubuf,
- 	return ERR_PTR(ret);
+@@ -4211,6 +4211,48 @@ void nvme_sync_queues(struct nvme_ctrl *ctrl)
  }
+ EXPORT_SYMBOL_GPL(nvme_sync_queues);
  
--static u32 nvme_known_admin_effects(u8 opcode)
--{
--	switch (opcode) {
--	case nvme_admin_format_nvm:
--		return NVME_CMD_EFFECTS_CSUPP | NVME_CMD_EFFECTS_LBCC |
--					NVME_CMD_EFFECTS_CSE_MASK;
--	case nvme_admin_sanitize_nvm:
--		return NVME_CMD_EFFECTS_CSE_MASK;
--	default:
--		break;
--	}
--	return 0;
--}
--
--static u32 nvme_passthru_start(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
--			       u8 opcode)
-+static u32 nvme_command_effects(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-+				u8 opcode)
- {
- 	u32 effects = 0;
- 
-@@ -917,7 +903,24 @@ static u32 nvme_passthru_start(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 
- 	if (ctrl->effects)
- 		effects = le32_to_cpu(ctrl->effects->acs[opcode]);
--	effects |= nvme_known_admin_effects(opcode);
++#ifdef CONFIG_NVME_TARGET_PASSTHRU
++static void nvme_execute_passthru_rq_work(struct work_struct *w)
++{
++	struct nvme_request *req = container_of(w, struct nvme_request, work);
++	struct request *rq = blk_mq_rq_from_pdu(req);
++	rq_end_io_fn *done = rq->end_io;
++	void *end_io_data = rq->end_io_data;
 +
-+	switch (opcode) {
-+	case nvme_admin_format_nvm:
-+		effects |= NVME_CMD_EFFECTS_CSUPP | NVME_CMD_EFFECTS_LBCC |
-+					NVME_CMD_EFFECTS_CSE_MASK;
-+		break;
-+	case nvme_admin_sanitize_nvm:
-+		effects |= NVME_CMD_EFFECTS_CSE_MASK;
-+		break;
-+	default:
-+		break;
++	nvme_execute_passthru_rq(rq);
++
++	if (done) {
++		rq->end_io_data = end_io_data;
++		done(rq, 0);
 +	}
-+
-+	return effects;
 +}
 +
-+static void nvme_passthru_start(struct nvme_ctrl *ctrl, u32 effects)
++void nvme_execute_passthru_rq_nowait(struct request *rq, rq_end_io_fn *done)
 +{
- 
- 	/*
- 	 * For simplicity, IO to all namespaces is quiesced even if the command
-@@ -931,7 +934,6 @@ static u32 nvme_passthru_start(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 		nvme_start_freeze(ctrl);
- 		nvme_wait_freeze(ctrl);
- 	}
--	return effects;
- }
- 
- static void nvme_update_formats(struct nvme_ctrl *ctrl)
-@@ -975,7 +977,8 @@ static void nvme_execute_passthru_rq(struct request *rq)
- 	struct gendisk *disk = ns ? ns->disk : NULL;
- 	u32 effects;
- 
--	effects = nvme_passthru_start(ctrl, ns, cmd->common.opcode);
++	struct nvme_command *cmd = nvme_req(rq)->cmd;
++	struct nvme_ctrl *ctrl = nvme_req(rq)->ctrl;
++	struct nvme_ns *ns = rq->q->queuedata;
++	struct gendisk *disk = ns ? ns->disk : NULL;
++	u32 effects;
++
++	/*
++	 * This function may be called in interrupt context, so we cannot sleep
++	 * but nvme_passthru_[start|end]() may sleep so we need to execute
++	 * the command in a work queue.
++	 */
 +	effects = nvme_command_effects(ctrl, ns, cmd->common.opcode);
-+	nvme_passthru_start(ctrl, effects);
- 	blk_execute_rq(rq->q, disk, rq, 0);
- 	nvme_passthru_end(ctrl, effects);
++	if (effects) {
++		rq->end_io = done;
++		INIT_WORK(&nvme_req(rq)->work, nvme_execute_passthru_rq_work);
++		queue_work(nvme_wq, &nvme_req(rq)->work);
++		return;
++	}
++
++	blk_execute_rq_nowait(rq->q, disk, rq, 0, done);
++}
++EXPORT_SYMBOL_GPL(nvme_execute_passthru_rq_nowait);
++#endif /* CONFIG_NVME_TARGET_PASSTHRU */
++
+ /*
+  * Check we didn't inadvertently grow the command structure sizes:
+  */
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 22e8401352c2..9523779de662 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -128,6 +128,9 @@ struct nvme_request {
+ 	u8			flags;
+ 	u16			status;
+ 	struct nvme_ctrl	*ctrl;
++#ifdef CONFIG_NVME_TARGET_PASSTHRU
++	struct work_struct	work;
++#endif
+ };
+ 
+ /*
+@@ -652,4 +655,8 @@ static inline struct nvme_ns *nvme_get_ns_from_dev(struct device *dev)
+ 	return dev_to_disk(dev)->private_data;
  }
+ 
++#ifdef CONFIG_NVME_TARGET_PASSTHRU
++void nvme_execute_passthru_rq_nowait(struct request *rq, rq_end_io_fn *done);
++#endif /* CONFIG_NVME_TARGET_PASSTHRU */
++
+ #endif /* _NVME_H */
 -- 
 2.20.1
 
