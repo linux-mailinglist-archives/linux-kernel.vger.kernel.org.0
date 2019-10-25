@@ -2,69 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E375E4089
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 02:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 149CDE408F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 02:24:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbfJYAUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 20:20:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726462AbfJYAUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 20:20:54 -0400
-Received: from redsun51.ssa.fujisawa.hgst.com (unknown [199.255.47.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3030D21929;
-        Fri, 25 Oct 2019 00:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571962854;
-        bh=bC985rj/uGr5kpM3lV8+Lzv14SErAUJ30tXkNbNlDNU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mR+2whxhjFQ/HKwosMbLS1XgQA4+o7WRtuXfJ0BJvvnTDWvKzt0nhxZQiC8dw7pau
-         glmXpqG25L32OylS3HzItJywufNSTaMwJee2IrXk10hx11/LO28Z7NZwBvXcz27Obs
-         dHBNDDXi7+ICUbJE0HefWpLvzKHrBcQpQCHfvIl0=
-Date:   Fri, 25 Oct 2019 09:20:50 +0900
-From:   Keith Busch <kbusch@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>
-Subject: Re: [PATCH 0/7] Remove data_len field from the nvmet_req struct
-Message-ID: <20191025002050.GC28602@redsun51.ssa.fujisawa.hgst.com>
-References: <20191023163545.4193-1-logang@deltatee.com>
+        id S1727958AbfJYAX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 20:23:57 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46741 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbfJYAX4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 20:23:56 -0400
+Received: by mail-lj1-f196.google.com with SMTP id d1so589198ljl.13
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 17:23:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q2fgicRSBCHO3h5cuJiqh9yLktldXuNEsASbg79hEk8=;
+        b=vYJ6J557hoJJf9Rv4HokILjRkJ+cnXH4bg8uA6pK7pZdKY6QC819qqBomX+a0BXBYb
+         EGIxj5ws4QzfaxdBaam30tX3pAKU1N7JJpqo3wB9Ho2cXd18o1VhhPEWaiy0KD5To32e
+         piM3SJ7OlsLJ2FpfV7n+eFwH0G6TIKNlMYxQ0zPEMum+hW4XJ53DAZRz2trsn1QX4vu2
+         CNJWJD36GVyNSuk2mq9q3fRz7Mev/X8KgoT3IL6I25Veq/7pVep4ac/2vsW0ZoZj7tTp
+         QFqYGK0bmW+odytuX98jpSuqCeaTWn54vuRq/0scNhT0S/POWAZVcve0FGP7TrQ+pUd2
+         Vc/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q2fgicRSBCHO3h5cuJiqh9yLktldXuNEsASbg79hEk8=;
+        b=Ejsp3Ju7UQTZFT2Vqmqhm0fm/VXf7XplaTemMiP6mCsUWhbvGKElb8M8iNGfTGub02
+         pxQmh0wS1DNuYIjutXKa136bFW/g1qc0KimAT2vOKeNpBQtEGcMp35QCZLjbNEyI6BDO
+         6WaH9x4DL55twU8o/UvN3/7mESt23HM4LLJe7xaqOlu+0/nExFK7juA2fHYoH96dVvw3
+         cz5mgtOnnsFgi7gUh0DlsTtWfIvMAgbNLN4OxyBaRXxJ0qIOPCgiY4zH+P2eW/xWDBmM
+         Zo1RabHYOpC2Rig8LgHrz1utCBwaoVGL+e0ar4h+cmuCp4PExiJLeHpD6PY6LXhnLWTN
+         rLIw==
+X-Gm-Message-State: APjAAAVSwuuW3FYJ4fCLn1OVXjN7tFXqSdWCCGRV9OWMIHOVgl7Fzte5
+        tY2qNEDMa+xLAfMTs+kwrj5jQRqy
+X-Google-Smtp-Source: APXvYqw1plFLNKSTv6b0KToqOaCpldy26Yf73Urft7pocbcLMinonzehmXFFL1soRW+ToKiWJC+7Ow==
+X-Received: by 2002:a2e:8694:: with SMTP id l20mr282249lji.64.1571963032967;
+        Thu, 24 Oct 2019 17:23:52 -0700 (PDT)
+Received: from localhost.localdomain (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
+        by smtp.gmail.com with ESMTPSA id p18sm78949lfh.24.2019.10.24.17.23.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2019 17:23:52 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] regulator: core: Release coupled_rdevs on regulator_init_coupling() error
+Date:   Fri, 25 Oct 2019 03:22:39 +0300
+Message-Id: <20191025002240.25288-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023163545.4193-1-logang@deltatee.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 10:35:38AM -0600, Logan Gunthorpe wrote:
-> Hi,
-> 
-> This patchset is a cleanup in preparation for the passthru patchset.
-> The aim is to remove the data_len field in the nvmet_req struct and
-> instead just check the length is appropriate inside the execute
-> handlers. This is more appropriate for passthru which may have
-> commands with unknown lengths (like Vendor Specific Commands).
-> It's also in improvement seeing it can often be confusing when
-> it's best to use the data_len field over the transfer_len field.
-> The first two patches in this series remove some questionable uses
-> of the data_len field in nvmt-tcp
-> 
-> Most of this patchset was extracted from a draft patch from
-> Christoph[1].
-> 
-> The series is based on v5.4-rc4 and a git branch is available here:
-> 
-> https://github.com/sbates130272/linux-p2pmem/branches nvmet_data_len
-> 
-> Logan
+This patch fixes memory leak which should happen if regulator's coupling
+fails to initialize.
 
-Thanks, applied to nvme-5.5 with the requested author attribution.
+Fixes: d8ca7d184b33 ("regulator: core: Introduce API for regulators coupling customization")
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/regulator/core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index a46be221dbdc..51ce280c1ce1 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -5198,6 +5198,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 	regulator_remove_coupling(rdev);
+ 	mutex_unlock(&regulator_list_mutex);
+ wash:
++	kfree(rdev->coupling_desc.coupled_rdevs);
+ 	kfree(rdev->constraints);
+ 	mutex_lock(&regulator_list_mutex);
+ 	regulator_ena_gpio_free(rdev);
+-- 
+2.23.0
+
