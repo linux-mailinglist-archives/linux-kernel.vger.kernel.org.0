@@ -2,145 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63438E4420
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 09:11:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83466E4436
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 09:16:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406539AbfJYHLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 03:11:18 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:1146 "EHLO pegase1.c-s.fr"
+        id S2406693AbfJYHQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 03:16:36 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:54508 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406166AbfJYHLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 03:11:17 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46zwJL1km6z9txyl;
-        Fri, 25 Oct 2019 09:11:14 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=JS6Rw9Wo; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id IEyuu55Vu2Vj; Fri, 25 Oct 2019 09:11:14 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46zwJL044Jz9txyd;
-        Fri, 25 Oct 2019 09:11:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1571987474; bh=sSY9vZFiyvVRvxrTbg3cBY9vh4bHCPcOU8OggoNJn50=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=JS6Rw9Woz5UGQqHdTS6uzWgmc4CU/P/yOx+M2iQQgUsIUyeQU6CEy1rN1WbGM/gMX
-         jg5kH3n063w2jEkgx41+z8O5phWdZyM3jwWcRyaHHpi22TkWJphSF18ZBHt9X26ALg
-         0sa7mSxQ44NMG02wKJaVu3L7vo7n7mt0UVXaQK8I=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id DF5238B7C7;
-        Fri, 25 Oct 2019 09:11:14 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id NUWV8rK7Wu_n; Fri, 25 Oct 2019 09:11:14 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D5FF28B7BE;
-        Fri, 25 Oct 2019 09:11:12 +0200 (CEST)
-Subject: Re: [PATCH V7] mm/debug: Add tests validating architecture page table
- helpers
-To:     Qian Cai <cai@lca.pw>,
-        Anshuman Khandual <Anshuman.Khandual@arm.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <ccdd4f7a-c7dc-ca10-d30c-0bc05c7136c7@arm.com>
- <69256008-2235-4AF1-A3BA-0146C82CCB93@lca.pw>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <3cfec421-4006-4159-ca32-313ff5196ff9@c-s.fr>
-Date:   Fri, 25 Oct 2019 09:11:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <69256008-2235-4AF1-A3BA-0146C82CCB93@lca.pw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S2406555AbfJYHQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 03:16:35 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EA5701A040B;
+        Fri, 25 Oct 2019 09:16:32 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C8FEC1A0412;
+        Fri, 25 Oct 2019 09:16:27 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8064C402BC;
+        Fri, 25 Oct 2019 15:16:21 +0800 (SGT)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
+        festevam@gmail.com, broonie@kernel.org,
+        alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
+        tiwai@suse.com
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2] ASoC: fsl_asrc: refine the setting of internal clock divider
+Date:   Fri, 25 Oct 2019 15:13:22 +0800
+Message-Id: <a0cd2ecf5e833fbdc064ba73391481d6073e7254.1571986398.git.shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The output divider should align with the output sample
+rate, if use ideal sample rate, there will be a lot of overload,
+which would cause underrun.
 
+The maximum divider of asrc clock is 1024, but there is no
+judgement for this limitaion in driver, which may cause the divider
+setting not correct.
 
-Le 25/10/2019 à 07:52, Qian Cai a écrit :
-> 
-> 
->> On Oct 24, 2019, at 11:45 PM, Anshuman Khandual <Anshuman.Khandual@arm.com> wrote:
->>
->> Nothing specific. But just tested this with x86 defconfig with relevant configs
->> which are required for this test. Not sure if it involved W=1.
-> 
-> No, it will not. It needs to run like,
-> 
-> make W=1 -j 64 2>/tmp/warns
-> 
+For non-ideal ratio mode, the clock rate should divide the sample
+rate with no remainder, and the quotient should be less than 1024.
 
-Are we talking about this peace of code ?
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+Change in v2
+- remove p2p/m2m word
+- use use_ideal_rate
 
-+static unsigned long __init get_random_vaddr(void)
-+{
-+	unsigned long random_vaddr, random_pages, total_user_pages;
+ sound/soc/fsl/fsl_asrc.c | 37 +++++++++++++++++++++++++++----------
+ 1 file changed, 27 insertions(+), 10 deletions(-)
+
+diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
+index 0bf91a6f54b9..89cf333154c7 100644
+--- a/sound/soc/fsl/fsl_asrc.c
++++ b/sound/soc/fsl/fsl_asrc.c
+@@ -259,8 +259,11 @@ static int fsl_asrc_set_ideal_ratio(struct fsl_asrc_pair *pair,
+  * It configures those ASRC registers according to a configuration instance
+  * of struct asrc_config which includes in/output sample rate, width, channel
+  * and clock settings.
++ *
++ * Note:
++ * use_ideal_rate = true is need by some case which need higher performance.
+  */
+-static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
++static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair, bool use_ideal_rate)
+ {
+ 	struct asrc_config *config = pair->config;
+ 	struct fsl_asrc *asrc_priv = pair->asrc_priv;
+@@ -268,7 +271,8 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
+ 	enum asrc_word_width input_word_width;
+ 	enum asrc_word_width output_word_width;
+ 	u32 inrate, outrate, indiv, outdiv;
+-	u32 clk_index[2], div[2];
++	u32 clk_index[2], div[2], rem[2];
++	u64 clk_rate;
+ 	int in, out, channels;
+ 	int pre_proc, post_proc;
+ 	struct clk *clk;
+@@ -351,8 +355,10 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
+ 	/* We only have output clock for ideal ratio mode */
+ 	clk = asrc_priv->asrck_clk[clk_index[ideal ? OUT : IN]];
+ 
+-	div[IN] = clk_get_rate(clk) / inrate;
+-	if (div[IN] == 0) {
++	clk_rate = clk_get_rate(clk);
++	rem[IN] = do_div(clk_rate, inrate);
++	div[IN] = (u32)clk_rate;
++	if (div[IN] == 0 || (!ideal && (div[IN] > 1024 || rem[IN] != 0))) {
+ 		pair_err("failed to support input sample rate %dHz by asrck_%x\n",
+ 				inrate, clk_index[ideal ? OUT : IN]);
+ 		return -EINVAL;
+@@ -360,18 +366,29 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
+ 
+ 	clk = asrc_priv->asrck_clk[clk_index[OUT]];
+ 
+-	/* Use fixed output rate for Ideal Ratio mode (INCLK_NONE) */
+-	if (ideal)
+-		div[OUT] = clk_get_rate(clk) / IDEAL_RATIO_RATE;
++	/*
++	 * Output rate should be align with the out samplerate. If set too
++	 * high output rate, there will be lots of Overload.
++	 * But some case need higher performance, then we can use
++	 * IDEAL_RATIO_RATE specifically for such case.
++	 */
++	clk_rate = clk_get_rate(clk);
++	if (ideal && use_ideal_rate)
++		rem[OUT] = do_div(clk_rate, IDEAL_RATIO_RATE);
+ 	else
+-		div[OUT] = clk_get_rate(clk) / outrate;
++		rem[OUT] = do_div(clk_rate, outrate);
++	div[OUT] = clk_rate;
+ 
+-	if (div[OUT] == 0) {
++	if (div[OUT] == 0 || (!ideal && (div[OUT] > 1024 || rem[OUT] != 0))) {
+ 		pair_err("failed to support output sample rate %dHz by asrck_%x\n",
+ 				outrate, clk_index[OUT]);
+ 		return -EINVAL;
+ 	}
+ 
++	/* Divider range is [1, 1024] */
++	div[IN] = min_t(u32, 1024, div[IN]);
++	div[OUT] = min_t(u32, 1024, div[OUT]);
 +
-+	total_user_pages = (TASK_SIZE - FIRST_USER_ADDRESS) / PAGE_SIZE;
-+
-+	random_pages = get_random_long() % total_user_pages;
-+	random_vaddr = FIRST_USER_ADDRESS + random_pages * PAGE_SIZE;
-+
-+	WARN_ON((random_vaddr > TASK_SIZE) ||
-+		(random_vaddr < FIRST_USER_ADDRESS));
-+	return random_vaddr;
-+}
-+
+ 	/* Set the channel number */
+ 	channels = config->channel_num;
+ 
+@@ -560,7 +577,7 @@ static int fsl_asrc_dai_hw_params(struct snd_pcm_substream *substream,
+ 		config.output_sample_rate = rate;
+ 	}
+ 
+-	ret = fsl_asrc_config_pair(pair);
++	ret = fsl_asrc_config_pair(pair, false);
+ 	if (ret) {
+ 		dev_err(dai->dev, "fail to config asrc pair\n");
+ 		return ret;
+-- 
+2.21.0
 
-ramdom_vaddr is unsigned,
-random_pages is unsigned and lower than total_user_pages
-
-So the max value random_vaddr can get is FIRST_USER_ADDRESS + 
-((TASK_SIZE - FIRST_USER_ADDRESS - 1) / PAGE_SIZE) * PAGE_SIZE = 
-TASK_SIZE - 1
-And the min value random_vaddr can get is FIRST_USER_ADDRESS (that's 
-when random_pages = 0)
-
-So the WARN_ON() is just unneeded, isn't it ?
-
-Christophe
