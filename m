@@ -2,182 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 972D9E4E50
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15BCBE4E8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:08:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503041AbfJYOGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 10:06:36 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:42357 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407421AbfJYOGe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 10:06:34 -0400
-Received: by mail-yb1-f195.google.com with SMTP id 4so883883ybq.9
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 07:06:33 -0700 (PDT)
+        id S2503258AbfJYOIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 10:08:02 -0400
+Received: from mail-eopbgr1310054.outbound.protection.outlook.com ([40.107.131.54]:60989
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2503124AbfJYOH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 10:07:58 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=F5gE7KcOSrd0yCFQtseFRd8y8zHMfrTMh9IGk8gVpxby7i2lV4crdq4xgY2mPDEMDJC+S84b2ON6iU0pz4x8yf2AdbjG1BKlWuMVyxhFnKnrHXrUpNYc4FfpzyvNjEo71w8EC7wWeK7ZNcs7Ze/LMUvNOwUcb2LXW3GGfv1QdSGeKlpBULO1XtDw7P/2+Z549SHFCCDpvSor81k1TS07dJxCF1L+OrNEY1GaXoG568jVTxqmpkzVoF1kGZVJhrvFyq5TwypSazFBLPTJoXAeNYddvOajGyp7KHFUHesUT5SdmGSYqwqC65g884PplLSgqNvKFcV8KmpWasBxNHgiMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dd0KZD27Mw9UtCFHDg7DoPRSsckqKDe6hrnGhFMwleg=;
+ b=ByQKI+iCNFjLpTrYUBmHyJ5V0ZAcl6cXwHZA4RrwmZmT1MLP7WtgyaPPMwUJ5ut04EdSB5XnOduL5hILeJIPAO8tk4iq0bzn0jITKv+SQ3H9SEjAghpsNOoonT4eqTeyAs8ryIM5Baz+qf3NUSJCS8ELHPOhFs1G90MVRIGFjoEUAn7SgK4O3riGOP0USP7YsRvw4NuPUVXPeHJgr4tEQuMUdAXr3Tu/Jklm5muceOJma3hhxvAm5lIcTGSvzCfcjFDescIWisaJOtpeY3CnaoWNFR2JWhTMFD3cIvbO+tThxbv6KqbAznZB1MyudjhiZnoBDkIEJquSGWVOM8OeAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=teo-en-ming-corp.com; dmarc=pass action=none
+ header.from=teo-en-ming-corp.com; dkim=pass header.d=teo-en-ming-corp.com;
+ arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9hV5nwXUEgXhwQ5IosopcGJTF2NHW7/vTGTmNW9G34I=;
-        b=VifDnRc70NasJQuNqZ6GKXuHy+pog7Il9EYThxh46rlyggmTevIjVlWWW3BDI7BX8/
-         wlYX5LkB0paoZC1KPIFgth+U25Pfzy2Dk+RpUyeGJsnhZnPg79LzGQqXe2KkzPXYRghH
-         NqFkRvxXEQKju+Q6MFIb/wZkpDCWXgdNX0WvFHPXl+Hr4DgxgainAF6JcS6oBo3xgcg/
-         vxUQBHZLFuS1+XqP0ChE2d7qlZoP4D5ficQilafhQ6deH/GmdCOz6+L4Zegsbr44ierq
-         DMjOgUz0FWpLxwy3K8HlVU/BmUkx5ZqxIJDa/FJiJPTiMLvUlBUumiRmSBCIcGZa9FGd
-         g7ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9hV5nwXUEgXhwQ5IosopcGJTF2NHW7/vTGTmNW9G34I=;
-        b=Jp7lo7qpG9/zSqGbmrU0vm6TukOixTBejQJyxJCJvLKoHxyOybA5xwvfO1RQZVyvH9
-         eLyg+CuKdhA/uV/YtwGNazkt7/0Ik71n6NEEOEvVHd3GHS3tKK1NKhMY7A2p+booX1/A
-         JkvoVUidK6eJ1Lw7LVA/STfXIPq8X93ZXfIxs6uvDjHx3EGypHSZdGX1SrurSrVceCja
-         IC4/VpBgPw6gV8dfgzQjcXA1uoy9h+mI8qoxa4hbYrRUca7SGuMuCP4BmyHI1zMK1o8h
-         jwPbsumpDecjawvztk+dzn7qIx02n7AhG+Lb8R+yJyrHF2FRuRYKg9CgyM5+MxlUEjz5
-         as6Q==
-X-Gm-Message-State: APjAAAVUoPXQivLSTCMEt91/JbjK2Un+G6KwAxBV/U+ra/H+M6RjxtYC
-        BjAuzJ/7iZl8qRp4OB+JjZJB6Q==
-X-Google-Smtp-Source: APXvYqx7fYQnCFaQaxuLFh4DK2xG1DIqcPQZX3c4Cb03ut+f4/rVew1nspg17lq1TCTJePaSNg3xIQ==
-X-Received: by 2002:a25:7611:: with SMTP id r17mr3361276ybc.399.1572012393139;
-        Fri, 25 Oct 2019 07:06:33 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id b201sm710130ywe.2.2019.10.25.07.06.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 07:06:32 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 10:06:32 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Hai Li <hali@codeaurora.org>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
-        Nikita Travkin <nikitos.tr@gmail.com>,
-        freedreno@lists.freedesktop.org
-Subject: Re: [Freedreno] [PATCH v2] drm/msm/dsi: Implement qcom,
- dsi-phy-regulator-ldo-mode for 28nm PHY
-Message-ID: <20191025140632.GH85762@art_vandelay>
-References: <20191023165617.28738-1-stephan@gerhold.net>
+ d=teoenmingcorp.onmicrosoft.com; s=selector2-teoenmingcorp-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dd0KZD27Mw9UtCFHDg7DoPRSsckqKDe6hrnGhFMwleg=;
+ b=P0gtKy5EiQPAdoGLFkbxEABJ8V0JQhq7HnWnSHVmqn7306UXPG3CaWAnFCX0fuKsAyVMzbAvQ2aWB2SwSl4EXTQaC1yqmgM3TzG3LCPREDTCp1VhfKBxXE1FkOLrl2wLVwDGq7Jce1br3Q4Zmx+6gB3oNNwl9eaqRxDa+Xj6piw=
+Received: from SG2PR01MB2141.apcprd01.prod.exchangelabs.com (10.170.143.19) by
+ SG2PR01MB3352.apcprd01.prod.exchangelabs.com (20.178.152.142) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Fri, 25 Oct 2019 14:07:53 +0000
+Received: from SG2PR01MB2141.apcprd01.prod.exchangelabs.com
+ ([fe80::48a5:3998:fd15:92e8]) by SG2PR01MB2141.apcprd01.prod.exchangelabs.com
+ ([fe80::48a5:3998:fd15:92e8%6]) with mapi id 15.20.2367.027; Fri, 25 Oct 2019
+ 14:07:53 +0000
+From:   Turritopsis Dohrnii Teo En Ming <ceo@teo-en-ming-corp.com>
+To:     linux-kernel <linux-kernel@vger.kernel.org>
+CC:     Turritopsis Dohrnii Teo En Ming <ceo@teo-en-ming-corp.com>
+Subject: I bought my Sony A6300 4K camera on 03 JUNE 2016
+Thread-Topic: I bought my Sony A6300 4K camera on 03 JUNE 2016
+Thread-Index: AdWLPXeoIGDkviafS5eWQzkvvJe7mw==
+Date:   Fri, 25 Oct 2019 14:07:53 +0000
+Message-ID: <SG2PR01MB21416F8F998EAF0D20F9EB0A87650@SG2PR01MB2141.apcprd01.prod.exchangelabs.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ceo@teo-en-ming-corp.com; 
+x-originating-ip: [2401:7400:c802:1ef3:41e9:3466:4716:2746]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7cc2616c-a23c-4c67-52cb-08d75954ba5b
+x-ms-traffictypediagnostic: SG2PR01MB3352:
+x-ms-exchange-purlcount: 4
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SG2PR01MB3352F9D80CC8E5FCA493D80987650@SG2PR01MB3352.apcprd01.prod.exchangelabs.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3826;
+x-forefront-prvs: 02015246A9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39830400003)(136003)(376002)(396003)(346002)(199004)(189003)(64756008)(66476007)(66556008)(107886003)(66946007)(25786009)(66446008)(6506007)(6116002)(76116006)(508600001)(102836004)(55016002)(71200400001)(71190400001)(99286004)(74316002)(305945005)(4326008)(7736002)(7696005)(8936002)(6916009)(9686003)(6306002)(81166006)(81156014)(8676002)(186003)(5660300002)(476003)(33656002)(486006)(256004)(316002)(14444005)(2906002)(966005)(6436002)(14454004)(86362001)(46003)(52536014);DIR:OUT;SFP:1101;SCL:1;SRVR:SG2PR01MB3352;H:SG2PR01MB2141.apcprd01.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:3;
+received-spf: None (protection.outlook.com: teo-en-ming-corp.com does not
+ designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: VH8kCWX6rNgIVqjXPfzmKSmH5JJ6ikbHPGO13B0hCIVKEuROJ+jTSya+p08Hc5XP3lDGeR5KPG71vB8Hpv+v9FdqHUESo6YJGaDq9oIWO85gOdtA+gAr6L1npc64sbuSQf0I5aKH/mo0we4v66LXK1fpAgY41UQh+3OlTfv7JgNu9nh6g4x7p80wieHNvg8i718WlD5bqe9rGHkGcQwRYdpWNQwQXPobbdz15eiz21XXl/5lW5nzgqEh1kkhTyOnrIOkAiaB9NChhmZHoD0sF3lPJUnI4Ld5VarWgQi2CdSt9ILUprXXMYxar8tF7ITkwhqi9squ5v2Mnwju7BCBcE0E/VRppKpUs1st+oZkd0yCziznPVgi1jxtRwQrEn0Rki+qvTS62tEd/WhjuchMZrlMF2kLRpgAfRmcxP1/H5MVD2hByIGWMFJ58B0rTfpJJ05P7Q9tb2iAe4yRAe5LSHUgI9luFP7DwCWJkDN4IAQ=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023165617.28738-1-stephan@gerhold.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: teo-en-ming-corp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cc2616c-a23c-4c67-52cb-08d75954ba5b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2019 14:07:53.4446
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 23b3f6ae-c453-4b93-aec9-f17508e5885c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yUu/jrL85biAvE9BO/gu9p8HGg7rQPrVnXJUrZ0SAaSXfNEMaylfr43hpxG4VifwkVExCDgtmwTEBUQhegm35cC6BuzhjQPXwtK50hErvhE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR01MB3352
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 06:56:17PM +0200, Stephan Gerhold wrote:
-> The DSI PHY regulator supports two regulator modes: LDO and DCDC.
-> This mode can be selected using the "qcom,dsi-phy-regulator-ldo-mode"
-> device tree property.
-> 
-> However, at the moment only the 20nm PHY driver actually implements
-> that option. Add a check in the 28nm PHY driver to program the
-> registers correctly for LDO mode.
-> 
-> Tested-by: Nikita Travkin <nikitos.tr@gmail.com> # l8150
-> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Subject: I bought my Sony A6300 4K camera on 03 JUNE 2016
 
-Thanks for your patch! I've pushed it to msm-next.
+Good day from Singapore,
 
-Sean
+TAX INVOICE FOR 03 JUNE 2016
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
 
-> ---
-> Changes in v2: Move DCDC/LDO code into separate methods
-> v1: https://lore.kernel.org/linux-arm-msm/20191021163425.83697-1-stephan@gerhold.net/
-> 
-> This is needed to make the display work on Longcheer L8150,
-> which has recently gained mainline support in:
-> https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit/?id=16e8e8072108426029f0c16dff7fbe77fae3df8f
-> 
-> This patch is based on code from the downstream kernel:
-> https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/drivers/video/msm/mdss/msm_mdss_io_8974.c?h=LA.BR.1.2.9.1-02310-8x16.0#n152
-> 
-> The LDO regulator configuration is taken from msm8916-qrd.dtsi:
-> https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/arch/arm/boot/dts/qcom/msm8916-qrd.dtsi?h=LA.BR.1.2.9.1-02310-8x16.0#n56
-> ---
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c | 42 +++++++++++++++++-----
->  1 file changed, 34 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-> index b3f678f6c2aa..b384ea20f359 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-> @@ -39,15 +39,10 @@ static void dsi_28nm_dphy_set_timing(struct msm_dsi_phy *phy,
->  		DSI_28nm_PHY_TIMING_CTRL_11_TRIG3_CMD(0));
->  }
->  
-> -static void dsi_28nm_phy_regulator_ctrl(struct msm_dsi_phy *phy, bool enable)
-> +static void dsi_28nm_phy_regulator_enable_dcdc(struct msm_dsi_phy *phy)
->  {
->  	void __iomem *base = phy->reg_base;
->  
-> -	if (!enable) {
-> -		dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 0);
-> -		return;
-> -	}
-> -
->  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x0);
->  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 1);
->  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_5, 0);
-> @@ -56,6 +51,39 @@ static void dsi_28nm_phy_regulator_ctrl(struct msm_dsi_phy *phy, bool enable)
->  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_1, 0x9);
->  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x7);
->  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_4, 0x20);
-> +	dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x00);
-> +}
-> +
-> +static void dsi_28nm_phy_regulator_enable_ldo(struct msm_dsi_phy *phy)
-> +{
-> +	void __iomem *base = phy->reg_base;
-> +
-> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x0);
-> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 0);
-> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_5, 0x7);
-> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_3, 0);
-> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_2, 0x1);
-> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_1, 0x1);
-> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_4, 0x20);
-> +
-> +	if (phy->cfg->type == MSM_DSI_PHY_28NM_LP)
-> +		dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x05);
-> +	else
-> +		dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x0d);
-> +}
-> +
-> +static void dsi_28nm_phy_regulator_ctrl(struct msm_dsi_phy *phy, bool enable)
-> +{
-> +	if (!enable) {
-> +		dsi_phy_write(phy->reg_base +
-> +			      REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 0);
-> +		return;
-> +	}
-> +
-> +	if (phy->regulator_ldo_mode)
-> +		dsi_28nm_phy_regulator_enable_ldo(phy);
-> +	else
-> +		dsi_28nm_phy_regulator_enable_dcdc(phy);
->  }
->  
->  static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
-> @@ -77,8 +105,6 @@ static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
->  
->  	dsi_28nm_phy_regulator_ctrl(phy, true);
->  
-> -	dsi_phy_write(base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x00);
-> -
->  	dsi_28nm_dphy_set_timing(phy, timing);
->  
->  	dsi_phy_write(base + REG_DSI_28nm_PHY_CTRL_1, 0x00);
-> -- 
-> 2.23.0
-> 
-> _______________________________________________
-> Freedreno mailing list
-> Freedreno@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/freedreno
+1. SONY SDXC 64 GB PROFESSIONAL 4K 95MB/S (SF-64P) 1 PCS
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+2. SONY ILCE-6300L KIT W/SELP1650 LENS 1 PCS
+
+3. SONY CASE 1 PCS
+
+4. SONY NP-FW50 BATTERY 2 PCS
+
+GRAND TOTAL: SGD$1728.00
+
+TAX INVOICE FOR 26 JULY 2016
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+
+1. SONY SEL 55-210MM F4.5-6.3 OSS LENS (SEL55210) 1 PCS
+
+2. HOYA 49 HMC UV (C) FILTER 1 PCS
+
+3. SAMURAI DRY BOX 1 PCS
+
+4. SONY NP-FW50 BATTERY 2 PCS
+
+GRAND TOTAL: SGD$400.00
+
+Today is 25 October 2019 Friday Singapore Time.
+
+I have been using my Sony A6300 4K camera for 3 years, 4 months, 23 days ex=
+actly WITHOUT UPGRADING my camera because of my extreme poverty. I SIMPLY L=
+OVE TO FLAUNT MY POVERTY!
+
+
+
+-----BEGIN EMAIL SIGNATURE-----
+
+The Gospel for all Targeted Individuals (TIs):
+
+[The New York Times] Microwave Weapons Are Prime Suspect in Ills of
+U.S. Embassy Workers
+
+Link:=A0https://www.nytimes.com/2018/09/01/science/sonic-attack-cuba-microw=
+ave.html
+
+***************************************************************************=
+*****************
+
+Singaporean Mr. Turritopsis Dohrnii Teo En Ming's Academic
+Qualifications as at 14 Feb 2019 and refugee seeking attempts at the
+United Nations Refugee Agency Bangkok (21 Mar 2017) and in Taiwan (5
+Aug 2019):
+
+[1]=A0https://tdtemcerts.wordpress.com/
+
+[2]=A0https://tdtemcerts.blogspot.sg/
+
+[3]=A0https://www.scribd.com/user/270125049/Teo-En-Ming
+
+-----END EMAIL SIGNATURE-----
+
