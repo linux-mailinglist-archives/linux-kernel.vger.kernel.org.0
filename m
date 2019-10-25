@@ -2,65 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1D11E5217
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 19:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CC49E521C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 19:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505854AbfJYRL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 13:11:57 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51713 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505798AbfJYRL4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 13:11:56 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iO37w-00014o-0d; Fri, 25 Oct 2019 17:11:52 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/vmwgfx: remove redundant assignment to variable ret
-Date:   Fri, 25 Oct 2019 18:11:51 +0100
-Message-Id: <20191025171151.3493-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S2633223AbfJYRMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 13:12:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45350 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2505842AbfJYRMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 13:12:43 -0400
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A06CD21D71;
+        Fri, 25 Oct 2019 17:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572023562;
+        bh=Z9kAbxaXKmbqq+OCusdDlzS7M+q9LbO89gcG35ir0CE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LK3DZoETxxt3Vx/AZOSrcG6Svt1lTR1XOwfx4jzOFxa5ghw2U5wmTPAqlPg+/A/MB
+         XuqqbEva2CS6sCg3lPJcyunXWzVhQMKmM0tB+j9+5rMzWzelksgRQX/bbf8EH7ErkV
+         n27ysL5zWgoUkUXAaX9RnB0EXijNmOiVvuhKoRhQ=
+Received: by mail-qt1-f179.google.com with SMTP id m15so4356290qtq.2;
+        Fri, 25 Oct 2019 10:12:42 -0700 (PDT)
+X-Gm-Message-State: APjAAAVt5AuVLM5VVDiMuRrPK96hAC4UotQOzRlLnigp6jk0t/C7fy8d
+        +0oelijbrjrDQ3YrNE5PUr8+8y5mNrlZs+SAIA==
+X-Google-Smtp-Source: APXvYqwyBAHU7XOj/9lEMryFKsyNgzQcpd0Pku9No2ZatJFpJeBh2HE7sqmId/JADfJ+vHbJLB4UWp8J+xFC4MKtpOw=
+X-Received: by 2002:ac8:741a:: with SMTP id p26mr4135876qtq.143.1572023561814;
+ Fri, 25 Oct 2019 10:12:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20191024202703.8017-1-chris.packham@alliedtelesis.co.nz> <20191024202703.8017-2-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20191024202703.8017-2-chris.packham@alliedtelesis.co.nz>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 25 Oct 2019 12:12:30 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ6a6cSrZsTg6piXmuB6-zuP+EO9vwkRoeH2aS9AVOT1g@mail.gmail.com>
+Message-ID: <CAL_JsqJ6a6cSrZsTg6piXmuB6-zuP+EO9vwkRoeH2aS9AVOT1g@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: gpio: brcm: Add bindings for xgs-iproc
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Oct 24, 2019 at 3:27 PM Chris Packham
+<chris.packham@alliedtelesis.co.nz> wrote:
+>
+> This GPIO controller is present on a number of Broadcom switch ASICs
+> with integrated SoCs. It is similar to the nsp-gpio and iproc-gpio
+> blocks but different enough to require a separate driver.
+>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>
+> Notes:
+>     Changes in v4:
+>     - rename brcm,xgs-iproc.yaml -> brcm,xgs-iproc-gpio.yaml as suggested
+>
+>     Changes in v3:
+>     - incorporate review comments from Rob and Bart
+>
+>     Changes in v2:
+>     - Document as DT schema
+>     - Include ngpios, #gpio-cells and gpio-controller properties
+>
+>  .../bindings/gpio/brcm,xgs-iproc-gpio.yaml    | 70 +++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml b/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml
+> new file mode 100644
+> index 000000000000..ec1fd3a64aa2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml
+> @@ -0,0 +1,70 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/brcm,xgs-iproc.yaml#
 
-The variable ret is being assigned with a value that
-is never read and is being re-assigned on the next statement.
-The assignment is redundant and hence can be removed.
+Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml: $id:
+path/filename 'gpio/brcm,xgs-iproc.yaml' doesn't match actual filename
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c | 2 --
- 1 file changed, 2 deletions(-)
+Otherwise,
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c b/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-index e5a283263211..b6a8ce23d3a8 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-@@ -959,8 +959,6 @@ int vmw_kms_sou_init_display(struct vmw_private *dev_priv)
- 		return -ENOSYS;
- 	}
- 
--	ret = -ENOMEM;
--
- 	ret = drm_vblank_init(dev, VMWGFX_NUM_DISPLAY_UNITS);
- 	if (unlikely(ret != 0))
- 		return ret;
--- 
-2.20.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
