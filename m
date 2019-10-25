@@ -2,313 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0B35E42EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 07:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A282E42F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 07:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392958AbfJYFd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 01:33:27 -0400
-Received: from mail-eopbgr70084.outbound.protection.outlook.com ([40.107.7.84]:30403
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732032AbfJYFd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 01:33:27 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bANNtyattuCfVFk8oXdarzoigiZc3BRwRMZxF9JyJWRW4nf3reDAtpW+wDj3+jIShsIaEfxBqo6ahkpvyKz+22NjHLa2cMNKoRmf9Ds+MPtLfewbA4ncz8c14k+Ot8ohkfeigy0p0aCgctfhlp9XPgJhXwpOlV0aX6sK9FQo3F1wPsOmnIZhhxh6eYbIYL3Tno6qZye3MzRQXzlSMHnljchXw6ul3zSa+mjVEfSLpAdwXgWdGzadgFCyZvszNOaKIcTtRJabyr0pvdxJJEwkVAWZoyuE9YPAPZDw/0uBODx6VY3wbHgccyKjUF79h4c6LjriOcwdlQJWy5XGoaxUbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MUBVgelz4AwMtHaj0VsEAB8Tt+bc2KN8Yn6Wk5H4+0E=;
- b=lBSkSWZOHuHB9vuaNPZJpqUVMvcZ3clqy97u4hUjd8CTjESUwWh3q1agYNlJDJhkEJTP4A8L8JfZMt7G8CmE1ZzW1YqQ0OiRxe6a0hDrTjhgAMVu7ELI2JGxFnrz6pAifH0pfjPE8X9wTDSFGqv5QwKDdnsAJ0gUIL5DDp/OR0Jf1warSCsiYiY0aoSeVXJoAFcfqirnUrQn/HhFL1pNTBt9NKdsmVWPqWwHl9eI8JiOnIlbUTV1qXLySw4rwCApr6mUDOxCGU/Gl7ffTqinSFbWnmZpM4znovk7gFftWiEGNWcCYoNBLs/ApZlvz69gv2gfCWS41Q5MlkzgR3cXAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MUBVgelz4AwMtHaj0VsEAB8Tt+bc2KN8Yn6Wk5H4+0E=;
- b=iKPguvyGDRzn9PVZdJ33N96QnJCEWy8BsaAqqdPgxbqWSKOU+tlznkCg3GO+n1WpZinPVY3k4BaKoOVWpdKPoiskhN/pUrTcKSqMUAfBlXjxxxoIc7fPzPqJyYX+VElLWtjEh8pubG+OfcVA6EbG+yZ2D+JYHYaR1jx1SrNmawU=
-Received: from VE1PR04MB6479.eurprd04.prod.outlook.com (20.179.232.225) by
- VE1PR04MB6621.eurprd04.prod.outlook.com (20.179.234.213) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.16; Fri, 25 Oct 2019 05:33:17 +0000
-Received: from VE1PR04MB6479.eurprd04.prod.outlook.com
- ([fe80::e052:9278:76a3:27c]) by VE1PR04MB6479.eurprd04.prod.outlook.com
- ([fe80::e052:9278:76a3:27c%6]) with mapi id 15.20.2387.025; Fri, 25 Oct 2019
- 05:33:17 +0000
-From:   "S.j. Wang" <shengjiu.wang@nxp.com>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-CC:     "timur@kernel.org" <timur@kernel.org>,
-        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: fsl_asrc: refine the setting of internal clock
- divider
-Thread-Topic: [PATCH] ASoC: fsl_asrc: refine the setting of internal clock
- divider
-Thread-Index: AdWK9JxJMGzwqHsSSM+MgjXQwBho3Q==
-Date:   Fri, 25 Oct 2019 05:33:17 +0000
-Message-ID: <VE1PR04MB6479AC63FFE5D57B4E2C33D2E3650@VE1PR04MB6479.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shengjiu.wang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 1c541a0d-ca89-4f03-6280-08d7590cd70d
-x-ms-traffictypediagnostic: VE1PR04MB6621:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <VE1PR04MB66217ACEB8DBD0A20901DA64E3650@VE1PR04MB6621.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 02015246A9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(376002)(136003)(366004)(39860400002)(189003)(199004)(102836004)(52536014)(76116006)(66066001)(7736002)(6506007)(6436002)(305945005)(26005)(55016002)(25786009)(2906002)(7416002)(186003)(8936002)(9686003)(6306002)(3846002)(7696005)(8676002)(1411001)(66476007)(486006)(256004)(14454004)(6116002)(5660300002)(66556008)(64756008)(66946007)(74316002)(14444005)(229853002)(81156014)(6916009)(81166006)(33656002)(478600001)(966005)(45080400002)(71190400001)(54906003)(71200400001)(4326008)(86362001)(6246003)(316002)(99286004)(476003)(66446008);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6621;H:VE1PR04MB6479.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: pOo3QArFOPUBQPwjY1TM9LIelmVU956hvJyjyG9XDwa1e+XjiE5RPrrBYnI0oFDBRO6KeF2WZZxsDDd2wkvfBTn2g3WeD9RNQta2hGCcb2rJ+dhApv7gb9Bi5Oxw25sSCvW/yot2Jiml6njfXiIYiHfnP39EdmaLahvVueuRy9A2Xa5o9yGdebLpoNzCB3XzM/plm9WMZVKiHJfpTtWm36v7fk//Rr3P9Z5ikBABnAETYy3fNzbj3NcWBk/4sQKGA4quxcVfy0aulY80Hrhv4hRO6VvcHgqRgAgyIBQA90pQkWqjUcKiPmcqQ8MEGX0oMbwhtjAU2q074cuGGa4owDKZ3M4CwOjxcGyqRxNw2IvnM0R+JdhU++FcCl5nf2WST5qdeRwZQrnZGWqdEgG6zg7PhBTH/OLNW8P00VetcF+Cwe1gudQJWZXBm5hKjm83
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2393044AbfJYFiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 01:38:54 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:5554 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2393008AbfJYFix (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 01:38:53 -0400
+X-UUID: 1c1ad6368989436e8fe9507eb69c7957-20191025
+X-UUID: 1c1ad6368989436e8fe9507eb69c7957-20191025
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1106138998; Fri, 25 Oct 2019 13:38:46 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 25 Oct 2019 13:38:42 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 25 Oct 2019 13:38:43 +0800
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
+        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>
+Subject: [PATCH] drm/mediatek: covert to helper nonblocking atomic commit
+Date:   Fri, 25 Oct 2019 13:38:41 +0800
+Message-ID: <20191025053843.16808-1-bibby.hsieh@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c541a0d-ca89-4f03-6280-08d7590cd70d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2019 05:33:17.6613
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5Bdj5SPVsEECrGMBWqbAdN6DQBb92uZ8Ku9JkmNDSbX38qV15glplFKw/vFHpBTJiaIfOClu2aJnxoGzzNT11Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6621
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
->=20
-> On Wed, Oct 23, 2019 at 06:25:20AM +0000, S.j. Wang wrote:
-> > > On Thu, Oct 17, 2019 at 02:21:08PM +0800, Shengjiu Wang wrote:
-> > > > For P2P output, the output divider should align with the output
-> > > > sample
-> > >
-> > > I think we should avoid "P2P" (or "M2M") keyword in the mainline
-> > > code as we know M2M will never get merged while somebody working
-> > > with the mainline and caring about new feature might be confused.
-> >
-> > Ok. But we still curious that is there a way to upstream m2m?
->=20
-> Hmm..I would love to see that happening. Here is an old discussion that
-> you may want to take a look:
-> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fmail
-> man.alsa-project.org%2Fpipermail%2Falsa-devel%2F2014-
-> May%2F076797.html&amp;data=3D02%7C01%7Cshengjiu.wang%40nxp.com%7
-> Ce902d2bac4254d2faa0f08d757ecac0e%7C686ea1d3bc2b4c6fa92cd99c5c301
-> 635%7C0%7C0%7C637074546320396681&amp;sdata=3Dbg%2BLwRQnUPhW8f
-> mE972O%2F53MyVftJkK140PSnmC%2FDKQ%3D&amp;reserved=3D0
->=20
-> > > It makes sense to me, yet I feel that the delay at the beginning of
-> > > the audio playback might be longer as a compromise. I am okay with
-> > > this decision though...
-> > >
-> > > > The maximum divider of asrc clock is 1024, but there is no
-> > > > judgement for this limitaion in driver, which may cause the
-> > > > divider setting not correct.
-> > > >
-> > > > For non-ideal ratio mode, the clock rate should divide the sample
-> > > > rate with no remainder, and the quotient should be less than 1024.
-> > > >
-> > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
->=20
-> > > > @@ -351,7 +352,9 @@ static int fsl_asrc_config_pair(struct
-> > > > fsl_asrc_pair
-> > > *pair)
-> > > >       /* We only have output clock for ideal ratio mode */
-> > > >       clk =3D asrc_priv->asrck_clk[clk_index[ideal ? OUT : IN]];
-> > > >
-> > > > -     div[IN] =3D clk_get_rate(clk) / inrate;
-> > > > +     clk_rate =3D clk_get_rate(clk);
-> > >
-> > > The fsl_asrc.c file has config.inclk being set to INCLK_NONE and
-> > > this sets the "ideal" in this function to true. So, although we tend
-> > > to not use ideal ratio setting for p2p cases, yet the input clock is
-> > > still not physically connected, so we still use output clock for div[=
-IN]
-> calculation?
-> >
-> > For p2p case, it can be ideal or non-ideal.  For non-ideal, we still
-> > use Output clock for div calculation.
-> >
-> > >
-> > > I am thinking something simplier: if we decided not to use ideal
-> > > ratio for "P2P", instead of adding "bool p2p" with the confusing
-> > > "ideal" in this function, could we just set config.inclk to the same
-> > > clock as the output one for "P2P"? By doing so, "P2P" won't go
-> > > through ideal ratio mode while still having a clock rate from the out=
-put
-> clock for div[IN] calculation here.
-> >
-> > Bool p2p is to force output rate to be sample rate, no impact to ideal
-> > Ratio mode.
->=20
-> I just realized that the function has a bottom part for ideal mode
-> exclusively -- if we treat p2p as !ideal, those configurations will be mi=
-ssing.
-> So you're right, should have an extra boolean variable.
->=20
-> > >
-> > > > +     rem[IN] =3D do_div(clk_rate, inrate);
-> > > > +     div[IN] =3D (u32)clk_rate;
-> > > >       if (div[IN] =3D=3D 0) {
-> > >
-> > > Could we check div[IN] and rem[IN] here? Like:
-> > >         if (div[IN] =3D=3D 0 || div[IN] > 1024) {
-> > >                 pair_err();
-> > >                 goto out;
-> > >         }
-> > >
-> > >         if (!ideal && rem[IN]) {
-> > >                 pair_err();
-> > >                 goto out;
-> > >         }
-> > >
-> > > According to your commit log, I think the max-1024 limitation should
-> > > be applied to all cases, not confined to "!ideal" cases right? And
-> > > we should add some comments also, indicating it is limited by hardwar=
-e.
-> >
-> > For ideal mode,  my test result is  the divider not impact the output r=
-esult.
-> > Which means it is ok for ideal mode even divider is not correct...
->=20
-> OK.
->=20
-> > >
-> > > >               pair_err("failed to support input sample rate %dHz
-> > > > by
-> > > asrck_%x\n",
-> > > >                               inrate, clk_index[ideal ? OUT :
-> > > > IN]); @@
-> > > > -360,11 +363,20 @@ static int fsl_asrc_config_pair(struct
-> > > > fsl_asrc_pair *pair)
-> > > >
-> > > >       clk =3D asrc_priv->asrck_clk[clk_index[OUT]];
-> > > >
-> > > > -     /* Use fixed output rate for Ideal Ratio mode (INCLK_NONE) */
-> > > > -     if (ideal)
-> > > > -             div[OUT] =3D clk_get_rate(clk) / IDEAL_RATIO_RATE;
-> > > > -     else
-> > > > -             div[OUT] =3D clk_get_rate(clk) / outrate;
-> > > > +     /*
-> > > > +      * When P2P mode, output rate should align with the out
-> samplerate.
-> > > > +      * if set too high output rate, there will be lots of Overloa=
-d.
-> > > > +      * When M2M mode, output rate should also need to align with
-> > > > + the out
-> > >
-> > > For this "should", do you actually mean "M2M could also"? Sorry, I'm
-> > > just trying to understand everyting here, not intentionally being pic=
-ky at
-> words.
-> > > My understanding is that we still keep the ideal ratio setting
-> > > because "M2M" still uses it.
-> >
-> > We use IDEAL_RATIO_RATE as output rate for m2m mode, it likes a Tricky
-> > operation, in order to improve the performance. I think The correct
-> > operation is to use the real output rate, but the performance Is bad.
-> > So it is a compromise.
->=20
-> I see.
->=20
-> > >
-> > > > +      * samplerate, but M2M must use less time to achieve good
-> > > performance.
-> > > > +      */
-> > > > +     clk_rate =3D clk_get_rate(clk);
-> > > > +     if (p2p || !ideal) {
-> > > > +             rem[OUT] =3D do_div(clk_rate, outrate);
-> > > > +             div[OUT] =3D clk_rate;
-> > > > +     } else {
-> > > > +             rem[OUT] =3D do_div(clk_rate, IDEAL_RATIO_RATE);
-> > > > +             div[OUT] =3D clk_rate;
-> > > > +     }
-> > > >
-> > > >       if (div[OUT] =3D=3D 0) {
-> > > >               pair_err("failed to support output sample rate %dHz
-> > > > by asrck_%x\n", @@ -372,6 +384,16 @@ static int
-> > > > fsl_asrc_config_pair(struct
-> > > fsl_asrc_pair *pair)
-> > > >               return -EINVAL;
-> > > >       }
-> > > >
-> > > > +     if (!ideal && (div[IN] > 1024 || div[OUT] > 1024 ||
-> > > > +                    rem[IN] !=3D 0 || rem[OUT] !=3D 0)) {
-> > > > +     if (!ideal && (div[IN] > 1024 || div[OUT] > 1024 || rem[IN]
-> > > > + || rem[OUT] !=3D 0)) {
-> > >
-> > > So for ideal =3D=3D true, these limitaions are not applied any more?
-> > > Remember that the "ideal" is true for "p2p =3D=3D true" cases here.
-> >
-> > No, not applied.  for ideal, the div don't impact the output result
-> > Even it is not accurate.
->=20
-> I see.
->=20
-> > >
-> > > > +             pair_err("The divider can't be used for non ideal mod=
-e\n");
-> > > > +             return -EINVAL;
-> > > > +     }
-> > > > +
-> > > > +     /* Divider range is [1, 1024] */
-> > > > +     div[IN] =3D min_t(u32, 1024, div[IN]);
-> > > > +     div[OUT] =3D min_t(u32, 1024, div[OUT]);
-> > >
-> > > Hmm, this looks like we want to allow ideal ratio cases and p2p
-> > > cases to operate any way, even if the divider wasn't within the
-> > > range to get the in/out rates from the output clock?
-> >
-> > Yes. We still allow the p2p =3D true,  ideal =3D false.  Note that p2p =
-is
-> > not Equal to ideal.
->=20
-> Got it.
->=20
-> Overall, I feel it's better to have a naming to state the purpose of usin=
-g
-> ideal configurations without the IDEAL_RATIO_RATE setup.
->         bool use_ideal_rate;
-> And we can put into the asrc_config structure if there's no major problem=
-.
->=20
+In order to commit state asynchronously, we change
+.atomic_commit to drm_atomic_helper_commit().
 
-Asrc_config may exposed to user, I don't think user need to care about
-The using of ideal rate or not.=20
+Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 11 ++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 86 ++-----------------------
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  7 --
+ 3 files changed, 16 insertions(+), 88 deletions(-)
 
-> So the condition check for the calculation would be:
-> +       if (ideal && config->use_ideal_rate)
-> +               rem[OUT] =3D do_div(clk_rate, IDEAL_RATIO_RATE);
-> +       else
-> +               rem[OUT] =3D do_div(clk_rate, outrate);
-> +       div[OUT] =3D clk_rate;
->=20
-> And for that if (!ideal && div[IN]....rem[OUT]), I feel it would be clear=
- to
-> have them separately, as the existing "div[IN] =3D=3D 0"
-> and "div[OUT] =3D=3D 0" checks, so that we can tell users which side of t=
-he
-> divider is out of range and what the sample rate and clock rate are.
->=20
-Do you mean need to combine this judgement with "div[IN] =3D=3D 0"
-Or "div[OUT] =3D=3D 0"?
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index b97eb5f58483..b07dc9b59ca3 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -317,6 +317,7 @@ static int mtk_crtc_ddp_hw_init(struct mtk_drm_crtc *mtk_crtc)
+ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ {
+ 	struct drm_device *drm = mtk_crtc->base.dev;
++	struct drm_crtc *crtc = &mtk_crtc->base;
+ 	int i;
+ 
+ 	DRM_DEBUG_DRIVER("%s\n", __func__);
+@@ -340,6 +341,13 @@ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ 	mtk_disp_mutex_unprepare(mtk_crtc->mutex);
+ 
+ 	pm_runtime_put(drm->dev);
++
++	if (crtc->state->event && !crtc->state->active) {
++		spin_lock_irq(&crtc->dev->event_lock);
++		drm_crtc_send_vblank_event(crtc, crtc->state->event);
++		crtc->state->event = NULL;
++		spin_unlock_irq(&crtc->dev->event_lock);
++	}
+ }
+ 
+ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
+@@ -456,12 +464,15 @@ static void mtk_drm_crtc_atomic_begin(struct drm_crtc *crtc,
+ 	if (mtk_crtc->event && state->base.event)
+ 		DRM_ERROR("new event while there is still a pending event\n");
+ 
++	spin_lock_irq(&crtc->dev->event_lock);
+ 	if (state->base.event) {
+ 		state->base.event->pipe = drm_crtc_index(crtc);
+ 		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
++		WARN_ON(mtk_crtc->event);
+ 		mtk_crtc->event = state->base.event;
+ 		state->base.event = NULL;
+ 	}
++	spin_unlock_irq(&crtc->dev->event_lock);
+ }
+ 
+ static void mtk_drm_crtc_atomic_flush(struct drm_crtc *crtc,
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 6588dc6dd5e3..16e5771d182e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -36,89 +36,14 @@
+ #define DRIVER_MAJOR 1
+ #define DRIVER_MINOR 0
+ 
+-static void mtk_atomic_schedule(struct mtk_drm_private *private,
+-				struct drm_atomic_state *state)
+-{
+-	private->commit.state = state;
+-	schedule_work(&private->commit.work);
+-}
+-
+-static void mtk_atomic_complete(struct mtk_drm_private *private,
+-				struct drm_atomic_state *state)
+-{
+-	struct drm_device *drm = private->drm;
+-
+-	drm_atomic_helper_wait_for_fences(drm, state, false);
+-
+-	/*
+-	 * Mediatek drm supports runtime PM, so plane registers cannot be
+-	 * written when their crtc is disabled.
+-	 *
+-	 * The comment for drm_atomic_helper_commit states:
+-	 *     For drivers supporting runtime PM the recommended sequence is
+-	 *
+-	 *     drm_atomic_helper_commit_modeset_disables(dev, state);
+-	 *     drm_atomic_helper_commit_modeset_enables(dev, state);
+-	 *     drm_atomic_helper_commit_planes(dev, state,
+-	 *                                     DRM_PLANE_COMMIT_ACTIVE_ONLY);
+-	 *
+-	 * See the kerneldoc entries for these three functions for more details.
+-	 */
+-	drm_atomic_helper_commit_modeset_disables(drm, state);
+-	drm_atomic_helper_commit_modeset_enables(drm, state);
+-	drm_atomic_helper_commit_planes(drm, state,
+-					DRM_PLANE_COMMIT_ACTIVE_ONLY);
+-
+-	drm_atomic_helper_wait_for_vblanks(drm, state);
+-
+-	drm_atomic_helper_cleanup_planes(drm, state);
+-	drm_atomic_state_put(state);
+-}
+-
+-static void mtk_atomic_work(struct work_struct *work)
+-{
+-	struct mtk_drm_private *private = container_of(work,
+-			struct mtk_drm_private, commit.work);
+-
+-	mtk_atomic_complete(private, private->commit.state);
+-}
+-
+-static int mtk_atomic_commit(struct drm_device *drm,
+-			     struct drm_atomic_state *state,
+-			     bool async)
+-{
+-	struct mtk_drm_private *private = drm->dev_private;
+-	int ret;
+-
+-	ret = drm_atomic_helper_prepare_planes(drm, state);
+-	if (ret)
+-		return ret;
+-
+-	mutex_lock(&private->commit.lock);
+-	flush_work(&private->commit.work);
+-
+-	ret = drm_atomic_helper_swap_state(state, true);
+-	if (ret) {
+-		mutex_unlock(&private->commit.lock);
+-		drm_atomic_helper_cleanup_planes(drm, state);
+-		return ret;
+-	}
+-
+-	drm_atomic_state_get(state);
+-	if (async)
+-		mtk_atomic_schedule(private, state);
+-	else
+-		mtk_atomic_complete(private, state);
+-
+-	mutex_unlock(&private->commit.lock);
+-
+-	return 0;
+-}
++static const struct drm_mode_config_helper_funcs mtk_drm_mode_config_helpers = {
++	.atomic_commit_tail = drm_atomic_helper_commit_tail_rpm,
++};
+ 
+ static const struct drm_mode_config_funcs mtk_drm_mode_config_funcs = {
+ 	.fb_create = mtk_drm_mode_fb_create,
+ 	.atomic_check = drm_atomic_helper_check,
+-	.atomic_commit = mtk_atomic_commit,
++	.atomic_commit = drm_atomic_helper_commit,
+ };
+ 
+ static const enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
+@@ -265,6 +190,7 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+ 	drm->mode_config.max_width = 4096;
+ 	drm->mode_config.max_height = 4096;
+ 	drm->mode_config.funcs = &mtk_drm_mode_config_funcs;
++	drm->mode_config.helper_private = &mtk_drm_mode_config_helpers;
+ 
+ 	ret = component_bind_all(drm->dev, drm);
+ 	if (ret)
+@@ -540,8 +466,6 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ 	if (!private)
+ 		return -ENOMEM;
+ 
+-	mutex_init(&private->commit.lock);
+-	INIT_WORK(&private->commit.work, mtk_atomic_work);
+ 	private->data = of_device_get_match_data(dev);
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+index b6a82728d563..9f4ce60174f6 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+@@ -46,13 +46,6 @@ struct mtk_drm_private {
+ 	struct device_node *comp_node[DDP_COMPONENT_ID_MAX];
+ 	struct mtk_ddp_comp *ddp_comp[DDP_COMPONENT_ID_MAX];
+ 	const struct mtk_mmsys_driver_data *data;
+-
+-	struct {
+-		struct drm_atomic_state *state;
+-		struct work_struct work;
+-		struct mutex lock;
+-	} commit;
+-
+ 	struct drm_atomic_state *suspend_state;
+ 
+ 	bool dma_parms_allocated;
+-- 
+2.18.0
 
-Best regards
-Wang shengjiu
