@@ -2,167 +2,257 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8336E5110
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69F35E5114
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505596AbfJYQVm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 12:21:42 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37401 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505349AbfJYQVm (ORCPT
+        id S2632775AbfJYQWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 12:22:15 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37845 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2504588AbfJYQWO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 12:21:42 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q130so2593214wme.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 09:21:41 -0700 (PDT)
+        Fri, 25 Oct 2019 12:22:14 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e11so3015583wrv.4;
+        Fri, 25 Oct 2019 09:22:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VRe/VJkh6D1luCxouiqp32mJabv36hi1AArq7g56blc=;
-        b=A/9hunm6K9dVRdWwPoXf6v4RE8kYk4+IFpHd8TcungJpmsieHl/196qLOhKqGE5nr+
-         0mm6q65T6u162FfWyR4IoOKdfG8jROcx6UDB4H7O215wH3CeF8eZ7IV+zpu4TojyYABK
-         Te+AG869H08CsPBaV9qkbUL+gQO0nYm0l5MPYqJtBF/0Wr6ZAoASbBVW4pM3T8QYqMYM
-         77BMYztJEQYUVcZJbUWHCwMap4/4Q8j00Hd5qNGEgVuJAujpUpo/Ryq/aoTk9wJVriKM
-         g6XwhrG7+b6Pi8wrqnIcBcAmmm3CGqLviaf7mo+wLpb79Jdm9MFvMpwODYSLyzFySmSA
-         1/7Q==
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=6DKBsyh9rd4szCk7pHckqGu4/wV1h0ZRgzPXT5s9i04=;
+        b=vTTirIWntOdHc9ARQukkY7j+0REIQ75LK2GTvlFXy/HbtvHfOD5coAGlf4PSURexny
+         oYaYAz+lw0YPUezNFtkU1EOM9QFh/7JG0jK6gGh8np4b0ELc1T5X+uggCYHcssyexb/3
+         nBfiITmIcr4yD4Oa6L+xBb5pL2xIG4GUyrhOTYW7icc1jGEKR+ErGRrRcHVpk9XkfP3P
+         zfvIRCRbafu5t+O0iN8zjXloD42BxJQBpm/a8Kp1hv3ZtCp4xhqbzNAZtj6hUIOlZVEx
+         k+8hZ7ObXPY5TnIzt2MQa9jcTxwQTy7CuOkYer9zyfp/Vk8aojmVTSw59G/Oxb1WSQpa
+         PRjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VRe/VJkh6D1luCxouiqp32mJabv36hi1AArq7g56blc=;
-        b=d8Z5XdGkSTj919GTGvrqM/EKW5D7RjbVi7bDIR8XKAUip5lzuDHihCDi7SlraMgZRG
-         OMzug6v5JMmv3f/m9h1ZWqM2KcqiQGLKWX8TWqIVoYhWr+CM+R30M2tGu2UNs+4/s339
-         IZ534tC95XNIatgFJjRbAh6+GPleK35VRvHZmPNVoOIzJ/AQxvJ7WQj/p+2dr1klchXw
-         tWddj3Gx+ylTobTAg5Gm/PRn5ZcBvTW99OT2P5F1W/+P5UeRQgDkDVm7+Op1IBaxN68Q
-         EyxlIW4srQiYKToJSuZb7Khx9ra+5U5PZvyh/DRx+ANjlfyJXL1YbSc5npAt5BZhDbFT
-         EskA==
-X-Gm-Message-State: APjAAAWB/wZRqcsTQqDU3+oZPizQa/Iq9RCZnXPUxJntEAo+Xrw6+tgi
-        vYNd/j0pZJys73JoB5KOqFDooLOPjLckbht62QA=
-X-Google-Smtp-Source: APXvYqzIHcUQAVHMlv2MA6G5in/xBhepeKFD4DVXlyQXF7s6ZneNn5mc7FDAOKdlU/SSSx1fP81B6HRIvBinwB3r2T8=
-X-Received: by 2002:a1c:f212:: with SMTP id s18mr4117785wmc.72.1572020500514;
- Fri, 25 Oct 2019 09:21:40 -0700 (PDT)
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=6DKBsyh9rd4szCk7pHckqGu4/wV1h0ZRgzPXT5s9i04=;
+        b=DPIEzARJHl0R6zIjVl0udzGoJP+Cv5rnc4QQMAkzzuyznhx4+1WBpniBkYJ//cg2uR
+         aEGio3A1mKVFKT7Le90lkxCsDZL2Ausrq/DL+cnVG0wt8eh9b24luepNjDvaPLKNEt4W
+         Hrepko8A5vxeCNPGHt07Rhu0C8lLZMbyoS0pFoGGwrLKyZhVa5CRvYjGshioYvI8FA8k
+         wlshKrWtmTZE39fw5mX2WXW6dCCNq6gqzvXwWpYDebh8gxD6JIMFjgpDx+MUbcl0sjnw
+         qX4e3Rgd8uCAQgrARbUxiuD5TYtADNTNon2ICCvezeHDdKJhlXPV+2w33reGT4WAK91t
+         HCsg==
+X-Gm-Message-State: APjAAAU+iTaJCgak+AXrLZpQUZ67nf9zGNuV8Y+eNmxTch7SVI4cry6V
+        jZmteIdOi6dztF8qkeLpCb3o+eNN
+X-Google-Smtp-Source: APXvYqxRz8zzjI9/+FFus3XHgA9PvhPBNj4SZ0eQXtxLHYwVTKnHYi4esAS8xxkybgN8g0tJUTHWBg==
+X-Received: by 2002:adf:e5cf:: with SMTP id a15mr4029419wrn.143.1572020529884;
+        Fri, 25 Oct 2019 09:22:09 -0700 (PDT)
+Received: from [192.168.43.159] ([109.126.132.16])
+        by smtp.gmail.com with ESMTPSA id a11sm3155396wmh.40.2019.10.25.09.22.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2019 09:22:09 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <5badf1c0-9a7d-0950-2943-ff8db33e0929@gmail.com>
+ <bfb58429-6abe-06f0-3fd8-14a0040cecf0@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [BUG] io_uring: defer logic based on shared data
+Message-ID: <b44b0488-ba66-0187-2d9b-6949ceb613fb@gmail.com>
+Date:   Fri, 25 Oct 2019 19:21:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <20191024142939.25920-1-andrey.zhizhikin@leica-geosystems.com>
- <20191024142939.25920-2-andrey.zhizhikin@leica-geosystems.com>
- <20191025121737.GC4568@sirena.org.uk> <CAHtQpK60d_GT4JMBBwGc2q1FqVT7NNhK5T7rSY0GL288ukUc1A@mail.gmail.com>
- <20191025160242.GE32742@smile.fi.intel.com>
-In-Reply-To: <20191025160242.GE32742@smile.fi.intel.com>
-From:   Andrey Zhizhikin <andrey.z@gmail.com>
-Date:   Fri, 25 Oct 2019 18:21:29 +0200
-Message-ID: <CAHtQpK7-KRR8+U_AZwrLEOKMeqtFc-gSbd28x0OPtApQJ5jCPQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] regulator: add support for Intel Cherry Whiskey Cove regulator
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <bfb58429-6abe-06f0-3fd8-14a0040cecf0@kernel.dk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="NoC8xj7Uw8eyBPdqTqrq7u7fElAPP7pFw"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 6:02 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Fri, Oct 25, 2019 at 05:26:56PM +0200, Andrey Zhizhikin wrote:
-> > On Fri, Oct 25, 2019 at 4:43 PM Mark Brown <broonie@kernel.org> wrote:
-> > > On Fri, Oct 25, 2019 at 03:55:17PM +0200, Andrey Zhizhikin wrote:
-> > > > On Fri, Oct 25, 2019 at 2:17 PM Mark Brown <broonie@kernel.org> wrote:
-> > > > > On Thu, Oct 24, 2019 at 02:29:38PM +0000, Andrey Zhizhikin wrote:
-> > >
-> > > Please don't take things off-list unless there is a really strong reason
-> > > to do so.  Sending things to the list ensures that everyone gets a
-> > > chance to read and comment on things.  (From some of the things
-> > > in your mail I think this might've been unintentional.)
->
-> > Sorry for mess, sometimes it happens but I try not to create it...
->
-> Script nodded... :)
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--NoC8xj7Uw8eyBPdqTqrq7u7fElAPP7pFw
+Content-Type: multipart/mixed; boundary="z8mmP2Vpy7y45yY1OVFAnMpYGiQTDX9Aa";
+ protected-headers="v1"
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <b44b0488-ba66-0187-2d9b-6949ceb613fb@gmail.com>
+Subject: Re: [BUG] io_uring: defer logic based on shared data
+References: <5badf1c0-9a7d-0950-2943-ff8db33e0929@gmail.com>
+ <bfb58429-6abe-06f0-3fd8-14a0040cecf0@kernel.dk>
+In-Reply-To: <bfb58429-6abe-06f0-3fd8-14a0040cecf0@kernel.dk>
 
-Point taken! :)
+--z8mmP2Vpy7y45yY1OVFAnMpYGiQTDX9Aa
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
->
-> > On Fri, Oct 25, 2019 at 2:17 PM Mark Brown <broonie@kernel.org> wrote:
-> > > On Thu, Oct 24, 2019 at 02:29:38PM +0000, Andrey Zhizhikin wrote:
->
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +/*
-> > > > + * intel-cht-wc-regulator.c - CherryTrail regulator driver
-> > > > + *
-> > >
-> > > Please use C++ style for the entire comment so things look more
-> > > consistent.
-> >
-> > This is what I'm puzzled about - which style to use for the file
-> > header since the introduction of SPDX and a rule that it should be
-> > "C++ style" commented for source files and "C style" for header files.
-> > After this introduction, should the more-or-less standard header be
-> > also done in C++ style? I saw different source files are doing
-> > different things... But all-in-all I would follow you advise here with
-> > converting entire block to C++.
-> >
-> > [Mark]: The only thing SPDX cares about is the first line, the making
-> > the rest of the block a C++ one is mostly a preference I have.
-> >
-> > Got it, would be done!
->
-> Also remove the file name(s) from file(s). If we would ever rename the file,
-> its name will be additional churn inside file (or often being forgotten).
+On 25/10/2019 19:03, Jens Axboe wrote:
+> On 10/25/19 3:55 AM, Pavel Begunkov wrote:
+>> I found 2 problems with __io_sequence_defer().
+>>
+>> 1. it uses @sq_dropped, but doesn't consider @cq_overflow
+>> 2. @sq_dropped and @cq_overflow are write-shared with userspace, so
+>> it can be maliciously changed.
+>>
+>> see sent liburing test (test/defer *_hung()), which left an unkillable=
 
-OK, would use this pattern for all my future work now.
+>> process for me
+>=20
+> OK, how about the below. I'll split this in two, as it's really two
+> separate fixes.
+cached_sq_dropped is good, but I was concerned about cached_cq_overflow.
+io_cqring_fill_event() can be called in async, so shouldn't we do some
+synchronisation then?
 
->
-> > > Is this really a limitation of the *regulator* or is it a
-> > > limitation of the consumer?  The combination of the way this is
-> > > written and the register layout makes it look like it's a
-> > > consumer limitation in which case leave it up to the consumer to
-> > > figure out what constraints it has.
-> >
-> > This is a tricky point. Since there is no datasheet available from
->
-> Key word "publicly".
->
-> I may look for it some like in November and perhaps be able to answer to
-> (some) questions.
+>=20
+>=20
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 5d10984381cf..5d9d960c1c17 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -191,6 +191,7 @@ struct io_ring_ctx {
+>  		unsigned		sq_entries;
+>  		unsigned		sq_mask;
+>  		unsigned		sq_thread_idle;
+> +		unsigned		cached_sq_dropped;
+>  		struct io_uring_sqe	*sq_sqes;
+> =20
+>  		struct list_head	defer_list;
+> @@ -208,6 +209,7 @@ struct io_ring_ctx {
+> =20
+>  	struct {
+>  		unsigned		cached_cq_tail;
+> +		unsigned		cached_cq_overflow;
+>  		unsigned		cq_entries;
+>  		unsigned		cq_mask;
+>  		struct wait_queue_head	cq_wait;
+> @@ -419,7 +421,8 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct=
+ io_uring_params *p)
+>  static inline bool __io_sequence_defer(struct io_ring_ctx *ctx,
+>  				       struct io_kiocb *req)
+>  {
+> -	return req->sequence !=3D ctx->cached_cq_tail + ctx->rings->sq_droppe=
+d;
+> +	return req->sequence !=3D ctx->cached_cq_tail + ctx->cached_sq_droppe=
+d
+> +					+ ctx->cached_cq_overflow;
+>  }
+> =20
+>  static inline bool io_sequence_defer(struct io_ring_ctx *ctx,
+> @@ -590,9 +593,8 @@ static void io_cqring_fill_event(struct io_ring_ctx=
+ *ctx, u64 ki_user_data,
+>  		WRITE_ONCE(cqe->res, res);
+>  		WRITE_ONCE(cqe->flags, 0);
+>  	} else {
+> -		unsigned overflow =3D READ_ONCE(ctx->rings->cq_overflow);
+> -
+> -		WRITE_ONCE(ctx->rings->cq_overflow, overflow + 1);
+> +		ctx->cached_cq_overflow++;
+> +		WRITE_ONCE(ctx->rings->cq_overflow, ctx->cached_cq_overflow);
+>  	}
+>  }
+> =20
+> @@ -2601,7 +2603,8 @@ static bool io_get_sqring(struct io_ring_ctx *ctx=
+, struct sqe_submit *s)
+> =20
+>  	/* drop invalid entries */
+>  	ctx->cached_sq_head++;
+> -	rings->sq_dropped++;
+> +	ctx->cached_sq_dropped++;
+> +	WRITE_ONCE(rings->sq_dropped, ctx->cached_sq_dropped);
+>  	return false;
+>  }
+> =20
+> @@ -2685,6 +2688,7 @@ static int io_sq_thread(void *data)
+> =20
+>  	timeout =3D inflight =3D 0;
+>  	while (!kthread_should_park()) {
+> +		unsigned prev_cq, cur_cq;
+>  		bool mm_fault =3D false;
+>  		unsigned int to_submit;
+> =20
+> @@ -2767,8 +2771,12 @@ static int io_sq_thread(void *data)
+>  		}
+> =20
+>  		to_submit =3D min(to_submit, ctx->sq_entries);
+> +		prev_cq =3D ctx->cached_cq_tail + ctx->cached_cq_overflow;
+>  		inflight +=3D io_submit_sqes(ctx, to_submit, cur_mm !=3D NULL,
+>  					   mm_fault);
+> +		cur_cq =3D ctx->cached_cq_tail + ctx->cached_cq_overflow;
+> +		if ((ctx->flags & IORING_SETUP_IOPOLL) && (prev_cq !=3D cur_cq))
+> +			inflight -=3D cur_cq - prev_cq;
+> =20
+>  		/* Commit SQ ring head once we've consumed all SQEs */
+>  		io_commit_sqring(ctx);
+>=20
 
-That would be really great! The main point that needs to be clarified
-at this moment is about voltages provided by vsdio cell, and if it
-safe to include all of them all in the vsel table.
+--=20
+Yours sincerely,
+Pavel Begunkov
 
->
-> > Intel on this IP - I went with a safe option of taking this part from
-> > original Intel patch, which they did for Aero board as the range was
-> > described there in exactly this way.
->
-> > > This *definitely* appears to be board specific configuration and
-> > > should be defined for the board.
-> >
-> > Above those two points above: I totally agree this is not the
-> > regulator configuration but rather a specific board one. The only
-> > thing I was not able to locate is a correct board file to put this
-> > into.
->
-> See below.
->
-> > Maybe you or Hans can guide me here on where to have this code as best?
-> >
-> > [Mark]: I *think* drivers/platform/x86 might be what you're looking
-> > for but I'm not super familiar with x86.  There's also
-> > arch/x86/platform but I think they're also trying to push things out
-> > of arch/.
->
-> It's more likely drivers/acpi/acpi_lpss.c.
 
-Thanks for the hint, I'd definitely would have a look at it!
+--z8mmP2Vpy7y45yY1OVFAnMpYGiQTDX9Aa--
 
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+--NoC8xj7Uw8eyBPdqTqrq7u7fElAPP7pFw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
--- 
-Regards,
-Andrey.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl2zIRQACgkQWt5b1Glr
++6UMnA/+LIcb3IDLD9JOlRI/2et04+7kGFLTQPIIRRu26dvUsXHTM956kkCUYBRq
+TaxWd0SwPjYdrKuL5HnV2U3n59gxz3NzcBG/SqGaNICtc2DgZhIowkyOZCoiuyq1
+IRp5T69XJu7S55LiPP0swbewps6LN4580ZAStksf27zZQP4ntfffWVrjEKhXMo3A
+QS/GCjxIoQzjnhxgWrx2QgVcLBkEtVFGUG3F9fOL0kC5Zm/mvryyJ28oLtDx+FvI
+GOiXQCWNb13d60sWLXCdsd1v4cLnoiEeQm+jWa0Lq0+fMzfxhK8QsCjQoYP/D0/N
+mddMAydPuSyVwxq7+0Il96luXp/aKyt1S14WEtGR0SxM7J9MgtCO7+7wf8jc7m9R
+ftoJa11ZhkbCkGjxj4ONI4IzhN/SLqu/b8+L6DfLoNQ519afJVJxtLVWbZw8f7hA
+K0Zfua2oASQmZI9uG1yEpxH3S2f46W5BMWyhH17JRiZyvyYDjx2qGldNUB1/IdgW
+eHSfcOlp2iBzHd7O1vLXKQK0LE7WRrfOS2Wp8t1ALx36bxx3D7lRme/uqqOMAy49
+d0sdhE+4gtWu8/Ry1fAz6MUhCiDQAQyJX9edCyZaqEjNjVno83r21npZdCda9uK9
+Z1CiChee0bFGUgH6d0ftOgW/3/r+pNw9SsLQe8qITYuuwkpw5UE=
+=aOit
+-----END PGP SIGNATURE-----
+
+--NoC8xj7Uw8eyBPdqTqrq7u7fElAPP7pFw--
