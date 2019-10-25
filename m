@@ -2,64 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A0BE48D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 12:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17E59E48D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 12:49:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394475AbfJYKsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 06:48:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58614 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390754AbfJYKsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 06:48:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 65F43B15F;
-        Fri, 25 Oct 2019 10:47:58 +0000 (UTC)
-From:   Thomas Renninger <trenn@suse.com>
-To:     "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>,
-        Borislav Petkov <bp@suse.de>
-Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Fontana <rfontana@redhat.com>
-Subject: Re: [PATCHv2 0/3] Update cpupower and make it more accurate
-Date:   Fri, 25 Oct 2019 12:47:58 +0200
-Message-ID: <14300539.3gDY5kWNTU@skinner.arch.suse.de>
-In-Reply-To: <ab5d732b-f322-0aeb-3970-99167afc177c@amd.com>
-References: <cover.1570819652.git.Janakarajan.Natarajan@amd.com> <ab5d732b-f322-0aeb-3970-99167afc177c@amd.com>
+        id S2394495AbfJYKt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 06:49:29 -0400
+Received: from mga09.intel.com ([134.134.136.24]:28492 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392179AbfJYKt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 06:49:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2019 03:49:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,228,1569308400"; 
+   d="scan'208";a="201777176"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003.jf.intel.com with ESMTP; 25 Oct 2019 03:49:26 -0700
+Received: from andy by smile with local (Exim 4.92.2)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1iNx9p-00048m-Gv; Fri, 25 Oct 2019 13:49:25 +0300
+Date:   Fri, 25 Oct 2019 13:49:25 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andrey Zhizhikin <andrey.z@gmail.com>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org, lee.jones@linaro.org,
+        linux-kernel@vger.kernel.org,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+Subject: Re: [PATCH 2/2] mfd: add regulator cell to Cherry Trail Whiskey Cove
+ PMIC
+Message-ID: <20191025104925.GR32742@smile.fi.intel.com>
+References: <20191024142939.25920-1-andrey.zhizhikin@leica-geosystems.com>
+ <20191024142939.25920-3-andrey.zhizhikin@leica-geosystems.com>
+ <20191025080655.GF32742@smile.fi.intel.com>
+ <CAHtQpK7P2X42WxZzok+XVZESV7O_JWK3Th7JMnMQsaq6f0gELw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHtQpK7P2X42WxZzok+XVZESV7O_JWK3Th7JMnMQsaq6f0gELw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Removed: Pu Wen <puwen@hygon.com>
-
-On Tuesday, October 22, 2019 6:39:11 PM CEST Natarajan, Janakarajan wrote:
-> On 10/11/2019 2:37 PM, Natarajan, Janakarajan wrote:
+On Fri, Oct 25, 2019 at 11:16:22AM +0200, Andrey Zhizhikin wrote:
+> On Fri, Oct 25, 2019 at 10:07 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Oct 24, 2019 at 02:29:39PM +0000, Andrey Zhizhikin wrote:
+> > > Add a regulator mfd cell to Whiskey Cove PMIC driver, which is used to
+> > > supply various voltage rails.
+> > >
+> > > In addition, make the initialization of this mfd driver early enough in
+> > > order to provide regulator cell to mmc sub-system when it is initialized.
+> >
+> > Doesn't deferred probe mechanism work for you?
+> > MMC core returns that error till we have the driver initialized.
 > 
-> > This patchset updates cpupower to make it more accurate by removing
-> > the userspace to kernel transitions and read_msr initiated IPI delays.
+> This would work for mmc sub-system, but my idea was that later when
+> more cells are added to this mfd - it might turn out that we would
+> require an early initialization anyway. So I decided to take an
+> opportunity to adjust it with this patch as well, and this is what I
+> roughly explained in the commit message. When I'm reading it now,
+> exactly this point was not mentioned in commit message at all, and I
+> rather coupled the early init with mmc sub-system, which creates a
+> source of confusion here. I guess if there would be no other
+> objections about early init - I'd go with v2 of this patch, where I
+> would clean-up the point below and adjust the commit description.
+> 
+> Thanks a lot for pointing this out!
 
-Acked-by: Thomas Renninger <trenn@suse.de>
+> > > -static struct i2c_driver cht_wc_driver = {
+> > > +static struct i2c_driver cht_wc_i2c_driver = {
+> >
+> > Renaming is not explained in the commit message.
+> 
+> True, this point I forgot to mention. Actually, this is tightly
+> coupled with the fact that mfd driver has been moved to an earlier
+> init stage and since it does belong to I2C sub-system (and represented
+> by i2c_device structure) - I decided to make a name sound more
+> logical.
 
-Shuan: If you do not object, it would be great if you can schedule these
-to be included into Rafael's pm tree.
+So, seems you have three changes in one patch. Please, split accordingly.
 
-It's a nice enhancement for these CPUs.
-Doing it even nicer and more generic (per cpu measures) needs further
-restructuring, but should not delay this any further.
+In v2 also Cc all stakeholders I mentioned.
 
-
-        Thomas
-
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
