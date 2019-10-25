@@ -2,70 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BB28E498D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:13:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27EC4E4940
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:08:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410137AbfJYLNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 07:13:50 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:50448 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404433AbfJYLNr (ORCPT
+        id S2502560AbfJYLIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 07:08:43 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:36422 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438658AbfJYLIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 07:13:47 -0400
+        Fri, 25 Oct 2019 07:08:42 -0400
 Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id HnDj210095USYZQ01nDj2M; Fri, 25 Oct 2019 13:13:45 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id Hn8b2100g5USYZQ01n8bmC; Fri, 25 Oct 2019 13:08:40 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNxSN-0003rD-Ob; Fri, 25 Oct 2019 13:08:35 +0200
+        id 1iNxSN-0003rD-NR; Fri, 25 Oct 2019 13:08:35 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNvpi-0006IC-KD; Fri, 25 Oct 2019 11:24:34 +0200
+        id 1iNvs4-0006Lj-Uv; Fri, 25 Oct 2019 11:27:00 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] drm/bridge: ti-tfp410: Update drm_connector_init_with_ddc() error message
-Date:   Fri, 25 Oct 2019 11:24:33 +0200
-Message-Id: <20191025092433.24138-1-geert+renesas@glider.be>
+To:     patches@armlinux.org.uk, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ARM: ARM_ERRATA_775420: Spelling s/date/data/
+Date:   Fri, 25 Oct 2019 11:27:00 +0200
+Message-Id: <20191025092700.24367-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code was changed to call drm_connector_init_with_ddc() instead of
-drm_connector_init(), but the corresponding error message was not
-updated.
+Caching dates is never a good idea ;-)
 
-Fixes: cfb444552926989f ("drm/bridge: ti-tfp410: Provide ddc symlink in connector sysfs directory")
+Fixes: 7253b85cc62d6ff8 ("ARM: 7541/1: Add ARM ERRATA 775420 workaround")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
 v2:
-  - Add Reviewed-by.
+  - Add Reviewed-by,
+  - Add Fixes.
 ---
- drivers/gpu/drm/bridge/ti-tfp410.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/ti-tfp410.c b/drivers/gpu/drm/bridge/ti-tfp410.c
-index aa3198dc9903cefb..5ca4c0417c186e6e 100644
---- a/drivers/gpu/drm/bridge/ti-tfp410.c
-+++ b/drivers/gpu/drm/bridge/ti-tfp410.c
-@@ -140,7 +140,8 @@ static int tfp410_attach(struct drm_bridge *bridge)
- 					  dvi->connector_type,
- 					  dvi->ddc);
- 	if (ret) {
--		dev_err(dvi->dev, "drm_connector_init() failed: %d\n", ret);
-+		dev_err(dvi->dev, "drm_connector_init_with_ddc() failed: %d\n",
-+			ret);
- 		return ret;
- 	}
- 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 8a50efb559f35a2c..b7dbeb652cb1edd5 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1020,7 +1020,7 @@ config ARM_ERRATA_775420
+        depends on CPU_V7
+        help
+ 	 This option enables the workaround for the 775420 Cortex-A9 (r2p2,
+-	 r2p6,r2p8,r2p10,r3p0) erratum. In case a date cache maintenance
++	 r2p6,r2p8,r2p10,r3p0) erratum. In case a data cache maintenance
+ 	 operation aborts with MMU exception, it might cause the processor
+ 	 to deadlock. This workaround puts DSB before executing ISB if
+ 	 an abort may occur on cache maintenance.
 -- 
 2.17.1
 
