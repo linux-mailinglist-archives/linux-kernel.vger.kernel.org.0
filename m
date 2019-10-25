@@ -2,93 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E20A4E51EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 19:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9134DE520C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 19:09:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409647AbfJYRGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 13:06:16 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44346 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404975AbfJYRFb (ORCPT
+        id S2505808AbfJYRJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 13:09:01 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51551 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2505797AbfJYRHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 13:05:31 -0400
-Received: by mail-ot1-f67.google.com with SMTP id n48so2508456ota.11;
-        Fri, 25 Oct 2019 10:05:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1AgdABbWJsmP+A2yUEZpKyjJoywiJ/30OEkpvdzMQXE=;
-        b=fkUYjq/RBT7KX8uWpE/S3Y7Qr7r8rK9o62Sx9hq/weytZ5O5Ph6ANvw8EmYJ9u6J41
-         LESxXBWJGM5Wfvypfi5Z8aEEM0V5ENBYLkFU0HrGGXDwkijc5Uq76WeON985IbuMz6Iw
-         EKDFvU8mLioZPBpFOIkFXM7Bcwx8zOyduwGhwATuK00jKnJdH9QBvlHFsrjBy1JOOKnN
-         BhqY53NaleJeNsqtok2baGbAS1Rp+tUQdRMB6L2dRo9TSZJlKVqAGeSDM3XJdoBju9V/
-         Foi3rzWFw7+dmA/npGSbipAs1IptqCX3Q5itgGwOTvNfzu4xF8GzkOeYLwaok66lGinS
-         0UsA==
-X-Gm-Message-State: APjAAAW3DDHNu4Z/fumYVQ51+iPFu/sWXyGde77jZ6fbhSBjDYxKBXFw
-        /xpo84hN5z1s+VJUdiTTKXP6Mk4=
-X-Google-Smtp-Source: APXvYqzAIN39CFwejymy8N75FlRSEB+gx7AUGQuhXy4lYkgVhNH9amWjIoeuN/NJ45wpnUM65WYw2g==
-X-Received: by 2002:a9d:6f17:: with SMTP id n23mr3512605otq.54.1572023129944;
-        Fri, 25 Oct 2019 10:05:29 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a21sm702920oia.27.2019.10.25.10.05.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 10:05:29 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 12:05:28 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v4 1/7] dt-bindings: sram: Convert SRAM bindings to
- json-schema
-Message-ID: <20191025170527.GA12121@bogus>
-References: <20191021161351.20789-1-krzk@kernel.org>
+        Fri, 25 Oct 2019 13:07:30 -0400
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iO33g-0000qH-Bv; Fri, 25 Oct 2019 17:07:28 +0000
+Date:   Fri, 25 Oct 2019 19:07:27 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     Christian Brauner <christian@brauner.io>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: For review: documentation of clone3() system call
+Message-ID: <20191025170726.rqsquw4v4cuhduek@wittgenstein>
+References: <CAKgNAkjo2WHq+zESU1iuCHJJ0x-fTNrakS9-d1+BjzUuV2uf2Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191021161351.20789-1-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKgNAkjo2WHq+zESU1iuCHJJ0x-fTNrakS9-d1+BjzUuV2uf2Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2019 18:13:45 +0200, Krzysztof Kozlowski wrote:
-> Convert generic mmio-sram bindings to DT schema format using
-> json-schema.  Require the address/size cells to be 1, not equal to root
-> node.  This also fixes the check for clocks property to be in main root
-> node instead of children.
+On Fri, Oct 25, 2019 at 06:59:31PM +0200, Michael Kerrisk (man-pages) wrote:
+> Hello Christian and all,
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> I've made a first shot at adding documentation for clone3(). You can
+> see the diff here:
+> https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=faa0e55ae9e490d71c826546bbdef954a1800969
 > 
-> ---
+> In the end, I decided that the most straightforward approach was to
+> add the documentation as part of the existing clone(2) page. This has
+> the advantage of avoiding duplication of information across two pages,
+> and perhaps also makes it easier to see the commonality of the two
+> APIs.
 > 
-> Changes since v3:
-> 1. Integrate Samsung SRAM bindings here,
-> 2. Move 'clocks' one level up (error in previous bindings),
-> 3. Add 'additionalProperties: false',
-> 4. Fix names of children in examples,
-> 5. Fix children nodes address pattern,
-> 6. Address other review comments
+> Because the new text is integrated into the existing page, I think it
+> makes most sense to just show that page text for review purposes. I
+> welcome input on the below.
 > 
-> Changes since v2:
-> 1. Add Rob as maintainer,
-> 2. Use "contains" for compatible,
-> 3. Fix address and size cells to 1,
-> 4. Add maxitems to reg under children,
-> 5. Remove unneeded string type from label.
+> The notable changes are:
+> * In the first part of the page, up to and including the paragraph
+> with the subheading "The flags bit mask"
+> * Minor changes in the description of CLONE_CHILD_CLEARTID,
+> CLONE_CHILD_SETTID, CLONE_PARENT_SETTID, and CLONE_PIDFD, to reflect
+> the argument differences between clone() and clone2()
 > 
-> Changes since v1:
-> 1. Indent example with four spaces (more readable).
-> ---
->  .../devicetree/bindings/sram/sram.txt         |  80 ----------
->  .../devicetree/bindings/sram/sram.yaml        | 137 ++++++++++++++++++
->  2 files changed, 137 insertions(+), 80 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sram/sram.txt
->  create mode 100644 Documentation/devicetree/bindings/sram/sram.yaml
+> Most of the resy of page is unchanged.
 > 
+> I welcome fixes, suggestions for improvements, etc.
 
-Applied the series, thanks.
+Thank you Michael, for doing this. I will hopefully get around to
+reviewing this soon but it might take a few days (latest after next week
+:( because of OSS/LSS).
 
-Rob
+Christian
