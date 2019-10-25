@@ -2,140 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 035F4E5478
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B55D4E547E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:41:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbfJYTkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 15:40:35 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36837 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727348AbfJYTkf (ORCPT
+        id S1727426AbfJYTlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 15:41:05 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:40074 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbfJYTlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 15:40:35 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w18so3646211wrt.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 12:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2Gj222psC+ydWsaF5gMlny1BmmWIVdou0S6Ni7ju44k=;
-        b=SlrAb0VpRC2LidQiFdSzxi13PPngSwAVFMlhwTS3HufxE9huKhmIAgqmIR//798lPx
-         bOQ2RR/GU0hW0KqsOP8l98Ar1lQDKXoQA/L6z9fLQxb/D/WZFmMR+SdgcBbZtxTMxGLx
-         RFNjhh0n5RhjmOQPhAXid/4PH1covWIixTMlc=
+        Fri, 25 Oct 2019 15:41:04 -0400
+Received: by mail-yb1-f196.google.com with SMTP id d12so1352913ybn.7;
+        Fri, 25 Oct 2019 12:41:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=2Gj222psC+ydWsaF5gMlny1BmmWIVdou0S6Ni7ju44k=;
-        b=K+agSMN1L9iFnD6swBRh5oGPA0PQ5LkjQ4l0SL31x4cQ5S18LscPL1pYy0DUmE48+3
-         dlSknep1yNYsWVXvfQNG0zwDY9kxQTncKqShyc8zikU76WKf7nYGHK3N135JSxAArOxk
-         qct21q1AtjT+ONVOhWTbgf2NJUHFchTfzczLpZalHZVxztoYfpo8kLGEdqRwBgAaanDo
-         hoYqyoGnuXdJwpKgtex2ZK1n20fDfIZVIgL2S1zuWmf1zJdaAs5HZJg0UPgaSSlqfztE
-         ZGd5g7IibhHWgBH4l94fVvd4NC6n2ngYKAqgx6Mmm/2e6uGlCpaQJ4Y2T3mvORAGaABR
-         kdhA==
-X-Gm-Message-State: APjAAAUrc96e4ixiVeP2aCzJ+O9Li2NQyz8ETjjRpkYYkgUHRKn0QckZ
-        rYtde4ho6j8vkhshPPq9CdnmOg==
-X-Google-Smtp-Source: APXvYqxxJig4xVfD7GpZ084avKsgHqDpYcderhQdMAjUkkO5TbzG8sIK5Jy5u4TdOHceXtEdNV6Mvw==
-X-Received: by 2002:a05:6000:351:: with SMTP id e17mr4260765wre.96.1572032432883;
-        Fri, 25 Oct 2019 12:40:32 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id r65sm3210045wmr.9.2019.10.25.12.40.31
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=K6rid3xoZ0SUQoUbenfuddaBWiDM3moIgw0C3o2jRnk=;
+        b=SdscXnbpRp8+9dDackirDap/mrhvQUZHdpAdPgmDkjKQ1WziduyAEazOI5kL56j18h
+         IA8M4J/QnTLgCQq0XQHCUmChwxevBJ94Sr6ldZQC2LxB0c8nEhYGy8ArN7qAfNXFyZQH
+         eqLE2nl4QfQaF+dUBCWOjvmrZoAkCtRxFD54zStDH+n1LdJBrEco8zc+DkC6IKZvYxGi
+         ERDd5yqYTyti+SG+zbFCtQFjHoJJ9QdiP84QpzhFBrdGjF370xVNsyG9Z7CVSAZgbj/k
+         FHQvD53fz1tGcd7FtBBP2mLBV8uF5MfbSxtwpMdX9ZNcXsf2l1i43a82IoVhWt5T7ReA
+         imMA==
+X-Gm-Message-State: APjAAAVQVBQza6Qb0VnXd9+el6o66Cytd+i2duYpeDhtcg5zUbaPRxW9
+        GFYS9Ggrj8dRe3A3Yjo4bYAcIVI=
+X-Google-Smtp-Source: APXvYqzdWvAAHX5FZcfrQ3oJzfNP/kKDWxh6B5Dzyl4KOyRE8HPtwOQDWvcC5f50KEGgRl6vBFBitg==
+X-Received: by 2002:a9d:7b41:: with SMTP id f1mr4283724oto.323.1572032462697;
+        Fri, 25 Oct 2019 12:41:02 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o184sm815722oia.28.2019.10.25.12.41.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 12:40:31 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 21:40:29 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Wambui Karuga <wambui.karugax@gmail.com>,
-        dri-devel@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, sean@poorly.run, airlied@linux.ie,
-        daniel@ffwll.ch, linux-kernel@vger.kernel.org,
-        outreachy-kernel@googlegroups.com
-Subject: Re: [Outreachy kernel] [Outreachy][PATCH] drm: use DIV_ROUND_UP
- helper macro for calculations
-Message-ID: <20191025194029.GU11828@phenom.ffwll.local>
-Mail-Followup-To: Julia Lawall <julia.lawall@lip6.fr>,
-        Wambui Karuga <wambui.karugax@gmail.com>,
-        dri-devel@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, sean@poorly.run, airlied@linux.ie,
-        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
-References: <20191025094907.3582-1-wambui.karugax@gmail.com>
- <alpine.DEB.2.21.1910251212070.3307@hadrien>
+        Fri, 25 Oct 2019 12:41:01 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 14:41:01 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Ikjoon Jang <ikjn@chromium.org>
+Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Nicolas Boitchat <drinkcat@chromium.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: input: Add DT bindings for Whiskers
+ switch
+Message-ID: <20191025194101.GA4734@bogus>
+References: <20191023024348.225969-1-ikjn@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1910251212070.3307@hadrien>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
+In-Reply-To: <20191023024348.225969-1-ikjn@chromium.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 12:12:23PM +0200, Julia Lawall wrote:
-> 
-> 
-> On Fri, 25 Oct 2019, Wambui Karuga wrote:
-> 
-> > Replace open coded divisor calculations with the DIV_ROUND_UP kernel
-> > macro for better readability.
-> > Issue found using coccinelle:
-> > @@
-> > expression n,d;
-> > @@
-> > (
-> > - ((n + d - 1) / d)
-> > + DIV_ROUND_UP(n,d)
-> > |
-> > - ((n + (d - 1)) / d)
-> > + DIV_ROUND_UP(n,d)
-> > )
-> >
-> > Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
-> 
-> Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+On Wed, Oct 23, 2019 at 10:43:48AM +0800, Ikjoon Jang wrote:
+> Add the DT binding document for Hammer's TABLET_MODE switch.
 
-Applied to drm-misc-next, thanks for your patch.
--Daniel
+This doesn't have any properties. Why does it need to be in DT? Just 
+have the EC driver instantiate it.
 
 > 
+> Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
+> ---
+>  .../devicetree/bindings/input/cros-cbas.yaml  | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/cros-cbas.yaml
 > 
-> > ---
-> >  drivers/gpu/drm/drm_agpsupport.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/drm_agpsupport.c b/drivers/gpu/drm/drm_agpsupport.c
-> > index 6e09f27fd9d6..4c7ad46fdd21 100644
-> > --- a/drivers/gpu/drm/drm_agpsupport.c
-> > +++ b/drivers/gpu/drm/drm_agpsupport.c
-> > @@ -212,7 +212,7 @@ int drm_agp_alloc(struct drm_device *dev, struct drm_agp_buffer *request)
-> >  	if (!entry)
-> >  		return -ENOMEM;
-> >
-> > -	pages = (request->size + PAGE_SIZE - 1) / PAGE_SIZE;
-> > +	pages = DIV_ROUND_UP(request->size, PAGE_SIZE);
-> >  	type = (u32) request->type;
-> >  	memory = agp_allocate_memory(dev->agp->bridge, pages, type);
-> >  	if (!memory) {
-> > @@ -325,7 +325,7 @@ int drm_agp_bind(struct drm_device *dev, struct drm_agp_binding *request)
-> >  	entry = drm_agp_lookup_entry(dev, request->handle);
-> >  	if (!entry || entry->bound)
-> >  		return -EINVAL;
-> > -	page = (request->offset + PAGE_SIZE - 1) / PAGE_SIZE;
-> > +	page = DIV_ROUND_UP(request->offset, PAGE_SIZE);
-> >  	retcode = drm_bind_agp(entry->memory, page);
-> >  	if (retcode)
-> >  		return retcode;
-> > --
-> > 2.23.0
-> >
-> > --
-> > You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
-> > To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
-> > To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20191025094907.3582-1-wambui.karugax%40gmail.com.
-> >
+> diff --git a/Documentation/devicetree/bindings/input/cros-cbas.yaml b/Documentation/devicetree/bindings/input/cros-cbas.yaml
+> new file mode 100644
+> index 000000000000..3bc989c6a295
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/cros-cbas.yaml
+> @@ -0,0 +1,22 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+(GPL-2.0-only OR BSD-2-Clause) for new bindings please.
+
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/cros-cbas.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ChromeOS Hammer's Base Attached Switch
+> +
+> +maintainers:
+> +  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> +
+> +description:
+> +  This device is used to signal when a detachable base is attached to a
+> +  Chrome OS tablet. The node for this device must be under a cros-ec node
+> +  like google,cros-ec-spi or google,cros-ec-i2c.
+
+This should probably just be part of an EC schema where it can be 
+enforced that this is a child node. It could be either embedded into it 
+or referenced. I'd lean toward the former given this is only a 
+compatible string...
+
+> +
+> +properties:
+> +  compatible:
+> +    const: google,cros-cbas
+> +
+> +required:
+> +  - compatible
+
+Add here:
+
+additionalProperties: false.
+
+> -- 
+> 2.23.0.866.gb869b98d4c-goog
+> 
