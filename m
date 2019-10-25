@@ -2,131 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0D8DE4438
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 09:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14BA2E442F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 09:14:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406729AbfJYHRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 03:17:14 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:55410 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733140AbfJYHRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 03:17:13 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 38CE71A0409;
-        Fri, 25 Oct 2019 09:17:11 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4F49B1A00FD;
-        Fri, 25 Oct 2019 09:17:06 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 04A9C402BC;
-        Fri, 25 Oct 2019 15:16:59 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
-        tiwai@suse.com
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] ASoC: fsl_esai: Add spin lock to protect reset, stop and start
-Date:   Fri, 25 Oct 2019 15:13:53 +0800
-Message-Id: <36e1d0157d2b71985b88e841d416d04c584c04fe.1571986436.git.shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2406627AbfJYHOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 03:14:54 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5179 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2406555AbfJYHOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 03:14:54 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3B05BC9B8F20A4332C18;
+        Fri, 25 Oct 2019 15:14:50 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Fri, 25 Oct 2019
+ 15:14:44 +0800
+Subject: Re: [PATCH] audit: remove redundant condition check in
+ kauditd_thread()
+To:     Paul Moore <paul@paul-moore.com>, <eparis@redhat.com>
+CC:     <linux-audit@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <hushiyuan@huawei.com>, <linfeilong@huawei.com>
+References: <7869bb43-5cb1-270a-07d1-31574595e13e@huawei.com>
+ <16e0170d878.280e.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+Message-ID: <a700333e-53b8-1a28-b27d-2ba3f612df2a@huawei.com>
+Date:   Fri, 25 Oct 2019 15:14:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <16e0170d878.280e.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-xrun may happen at the end of stream, the
-trigger->fsl_esai_trigger_stop maybe called in the middle of
-fsl_esai_hw_reset, this may cause esai in wrong state
-after stop, and there may be endless xrun interrupt.
 
-This issue may also happen with trigger->fsl_esai_trigger_start.
 
-So Add spin lock to lock those functions.
+On 2019/10/25 13:43, Paul Moore wrote:
+> On October 23, 2019 3:27:50 PM Yunfeng Ye <yeyunfeng@huawei.com> wrote:
+>> Warning is found by the code analysis tool:
+>>  "the condition 'if(ac && rc < 0)' is redundant: ac"
+>>
+>>
+>> The @ac variable has been checked before. It can't be a null pointer
+>> here, so remove the redundant condition check.
+>>
+>>
+>> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+>> ---
+>> kernel/audit.c | 4 ++--
+>> 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> Hello,
+> 
+> Thank you for the patch.  Looking quickly at it, it appears to be correct, unfortunately I'm not in a position to merge non-critical patches, but I expect to merge this next week.
+> 
+ok, thanks.
 
-Fixes: 7ccafa2b3879 ("ASoC: fsl_esai: recover the channel swap after xrun")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
-Change in v2
--add lock for fsl_esai_trigger_start.
-
- sound/soc/fsl/fsl_esai.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/sound/soc/fsl/fsl_esai.c b/sound/soc/fsl/fsl_esai.c
-index 37b14c48b537..9b28e2af26e4 100644
---- a/sound/soc/fsl/fsl_esai.c
-+++ b/sound/soc/fsl/fsl_esai.c
-@@ -33,6 +33,7 @@
-  * @fsysclk: system clock source to derive HCK, SCK and FS
-  * @spbaclk: SPBA clock (optional, depending on SoC design)
-  * @task: tasklet to handle the reset operation
-+ * @lock: spin lock to handle reset and stop behavior
-  * @fifo_depth: depth of tx/rx FIFO
-  * @slot_width: width of each DAI slot
-  * @slots: number of slots
-@@ -56,6 +57,7 @@ struct fsl_esai {
- 	struct clk *fsysclk;
- 	struct clk *spbaclk;
- 	struct tasklet_struct task;
-+	spinlock_t lock; /* Protect reset and stop */
- 	u32 fifo_depth;
- 	u32 slot_width;
- 	u32 slots;
-@@ -676,8 +678,10 @@ static void fsl_esai_hw_reset(unsigned long arg)
- {
- 	struct fsl_esai *esai_priv = (struct fsl_esai *)arg;
- 	bool tx = true, rx = false, enabled[2];
-+	unsigned long lock_flags;
- 	u32 tfcr, rfcr;
- 
-+	spin_lock_irqsave(&esai_priv->lock, lock_flags);
- 	/* Save the registers */
- 	regmap_read(esai_priv->regmap, REG_ESAI_TFCR, &tfcr);
- 	regmap_read(esai_priv->regmap, REG_ESAI_RFCR, &rfcr);
-@@ -715,6 +719,8 @@ static void fsl_esai_hw_reset(unsigned long arg)
- 		fsl_esai_trigger_start(esai_priv, tx);
- 	if (enabled[rx])
- 		fsl_esai_trigger_start(esai_priv, rx);
-+
-+	spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
- }
- 
- static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
-@@ -722,6 +728,7 @@ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
- {
- 	struct fsl_esai *esai_priv = snd_soc_dai_get_drvdata(dai);
- 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
-+	unsigned long lock_flags;
- 
- 	esai_priv->channels[tx] = substream->runtime->channels;
- 
-@@ -729,12 +736,16 @@ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
- 	case SNDRV_PCM_TRIGGER_START:
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-+		spin_lock_irqsave(&esai_priv->lock, lock_flags);
- 		fsl_esai_trigger_start(esai_priv, tx);
-+		spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
- 		break;
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
- 	case SNDRV_PCM_TRIGGER_STOP:
- 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-+		spin_lock_irqsave(&esai_priv->lock, lock_flags);
- 		fsl_esai_trigger_stop(esai_priv, tx);
-+		spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -1002,6 +1013,7 @@ static int fsl_esai_probe(struct platform_device *pdev)
- 
- 	dev_set_drvdata(&pdev->dev, esai_priv);
- 
-+	spin_lock_init(&esai_priv->lock);
- 	ret = fsl_esai_hw_init(esai_priv);
- 	if (ret)
- 		return ret;
--- 
-2.21.0
+> 
+>> diff --git a/kernel/audit.c b/kernel/audit.c
+>> index da8dc0db5bd3..193f3a1f4425 100644
+>> --- a/kernel/audit.c
+>> +++ b/kernel/audit.c
+>> @@ -830,7 +830,7 @@ static int kauditd_thread(void *dummy)
+>>  rc = kauditd_send_queue(sk, portid,
+>>  &audit_hold_queue, UNICAST_RETRIES,
+>>  NULL, kauditd_rehold_skb);
+>> - if (ac && rc < 0) {
+>> + if (rc < 0) {
+>>  sk = NULL;
+>>  auditd_reset(ac);
+>>  goto main_queue;
+>> @@ -840,7 +840,7 @@ static int kauditd_thread(void *dummy)
+>>  rc = kauditd_send_queue(sk, portid,
+>>  &audit_retry_queue, UNICAST_RETRIES,
+>>  NULL, kauditd_hold_skb);
+>> - if (ac && rc < 0) {
+>> + if (rc < 0) {
+>>  sk = NULL;
+>>  auditd_reset(ac);
+>>  goto main_queue;
+>> --
+>> 2.7.4.3
+> 
+> --
+> paul moore
+> www.paul-moore.com
+> 
+> 
+> 
+> 
+> 
+> 
 
