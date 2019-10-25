@@ -2,128 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C9F1E4D2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8524BE4D1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:58:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505531AbfJYN6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 09:58:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53504 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2505505AbfJYN6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:58:16 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D649222C4;
-        Fri, 25 Oct 2019 13:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572011895;
-        bh=AicnZ9XfDMx3XkBE1GCecASN86fDAtFADqghqLPnsv4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bVpuGDrS+Vt5HVI9bA+RhmHkcPh6/YW8g2/XgJdKJGeSKX8Gkb9EagmQH+h8FWRjS
-         SdABbT3Cfjjipx2hu46V4Jqj/ZPrvVpe79EjBhxX9Jx/yrjimsDRuIICoSl6bu7/yv
-         yjcoqJgrm6Dd5yPYEfbj8vSd1vrjjMAdRWLj+glk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rob Clark <robdclark@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.9 07/20] drm/msm: stop abusing dma_map/unmap for cache
-Date:   Fri, 25 Oct 2019 09:57:47 -0400
-Message-Id: <20191025135801.25739-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191025135801.25739-1-sashal@kernel.org>
-References: <20191025135801.25739-1-sashal@kernel.org>
+        id S2505439AbfJYN57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 09:57:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35768 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2505383AbfJYN5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 09:57:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5A20DB8B0;
+        Fri, 25 Oct 2019 13:57:50 +0000 (UTC)
+Date:   Fri, 25 Oct 2019 15:57:49 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     snazy@snazy.de
+Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>
+Subject: Re: mlockall(MCL_CURRENT) blocking infinitely
+Message-ID: <20191025135749.GK17610@dhcp22.suse.cz>
+References: <b8ff71f5-2d9c-7ebb-d621-017d4b9bc932@infradead.org>
+ <20191025092143.GE658@dhcp22.suse.cz>
+ <70393308155182714dcb7485fdd6025c1fa59421.camel@gmx.de>
+ <20191025114633.GE17610@dhcp22.suse.cz>
+ <d740f26ea94f9f1c2fc0530c1ea944f8e59aad85.camel@gmx.de>
+ <20191025120505.GG17610@dhcp22.suse.cz>
+ <20191025121104.GH17610@dhcp22.suse.cz>
+ <c8950b81000e08bfca9fd9128cf87d8a329a904b.camel@gmx.de>
+ <20191025132700.GJ17610@dhcp22.suse.cz>
+ <707b72c6dac76c534dcce60830fa300c44f53404.camel@gmx.de>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <707b72c6dac76c534dcce60830fa300c44f53404.camel@gmx.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+On Fri 25-10-19 15:45:37, Robert Stupp wrote:
+> On Fri, 2019-10-25 at 15:27 +0200, Michal Hocko wrote:
+> > On Fri 25-10-19 15:10:39, Robert Stupp wrote:
+> > [...]
+> > > cat /proc/$(pidof test)/smaps
+> >
+> > Nothing really unusual that would jump at me except for
+> > > 7f8be90ed000-7f8be9265000 r-xp 00025000 103:02
+> > > 44307431                  /lib/x86_64-linux-gnu/libc-2.30.so
+> > > Size:               1504 kB
+> > > KernelPageSize:        4 kB
+> > > MMUPageSize:           4 kB
+> > > Rss:                 832 kB
+> > > Pss:                   5 kB
+> > > Shared_Clean:        832 kB
+> > > Shared_Dirty:          0 kB
+> > > Private_Clean:         0 kB
+> > > Private_Dirty:         0 kB
+> > > Referenced:          832 kB
+> > > Anonymous:             0 kB
+> > > LazyFree:              0 kB
+> > > AnonHugePages:         0 kB
+> > > ShmemPmdMapped:        0 kB
+> > > Shared_Hugetlb:        0 kB
+> > > Private_Hugetlb:       0 kB
+> > > Swap:                  0 kB
+> > > SwapPss:               0 kB
+> > > Locked:                5 kB
+> >
+> > Huh, 5kB, is this really the case or some copy&paste error?
+> > How can we end up with !pagesize multiple here?
 
-[ Upstream commit 0036bc73ccbe7e600a3468bf8e8879b122252274 ]
+Ohh, I haven't noticed pss and didn't realize that Locked is pss like as
+well.
 
-Recently splats like this started showing up:
+> >
+> > > THPeligible:		0
+> > > VmFlags: rd ex mr mw me lo sd
+> 
+> mlockall() seems to lock everything though, it just never returns.
+> 
+> Pretty sure that it's not a copy&paste error. Got a couple more runs
+> that have an "odd size" - this time with 3kB...
+> All "Locked" values seem to be okay - except that one. And it's always
+> odd for the same one (the one with `Size: 1504 kB`).
+> It's not always odd (3 kB or 5 kB) though - sometimes it says 4 kB.
+> Seems it's a little breadcrumb?
 
-   WARNING: CPU: 4 PID: 251 at drivers/iommu/dma-iommu.c:451 __iommu_dma_unmap+0xb8/0xc0
-   Modules linked in: ath10k_snoc ath10k_core fuse msm ath mac80211 uvcvideo cfg80211 videobuf2_vmalloc videobuf2_memops vide
-   CPU: 4 PID: 251 Comm: kworker/u16:4 Tainted: G        W         5.2.0-rc5-next-20190619+ #2317
-   Hardware name: LENOVO 81JL/LNVNB161216, BIOS 9UCN23WW(V1.06) 10/25/2018
-   Workqueue: msm msm_gem_free_work [msm]
-   pstate: 80c00005 (Nzcv daif +PAN +UAO)
-   pc : __iommu_dma_unmap+0xb8/0xc0
-   lr : __iommu_dma_unmap+0x54/0xc0
-   sp : ffff0000119abce0
-   x29: ffff0000119abce0 x28: 0000000000000000
-   x27: ffff8001f9946648 x26: ffff8001ec271068
-   x25: 0000000000000000 x24: ffff8001ea3580a8
-   x23: ffff8001f95ba010 x22: ffff80018e83ba88
-   x21: ffff8001e548f000 x20: fffffffffffff000
-   x19: 0000000000001000 x18: 00000000c00001fe
-   x17: 0000000000000000 x16: 0000000000000000
-   x15: ffff000015b70068 x14: 0000000000000005
-   x13: 0003142cc1be1768 x12: 0000000000000001
-   x11: ffff8001f6de9100 x10: 0000000000000009
-   x9 : ffff000015b78000 x8 : 0000000000000000
-   x7 : 0000000000000001 x6 : fffffffffffff000
-   x5 : 0000000000000fff x4 : ffff00001065dbc8
-   x3 : 000000000000000d x2 : 0000000000001000
-   x1 : fffffffffffff000 x0 : 0000000000000000
-   Call trace:
-    __iommu_dma_unmap+0xb8/0xc0
-    iommu_dma_unmap_sg+0x98/0xb8
-    put_pages+0x5c/0xf0 [msm]
-    msm_gem_free_work+0x10c/0x150 [msm]
-    process_one_work+0x1e0/0x330
-    worker_thread+0x40/0x438
-    kthread+0x12c/0x130
-    ret_from_fork+0x10/0x18
-   ---[ end trace afc0dc5ab81a06bf ]---
-
-Not quite sure what triggered that, but we really shouldn't be abusing
-dma_{map,unmap}_sg() for cache maint.
-
-Cc: Stephen Boyd <sboyd@kernel.org>
-Tested-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
-Signed-off-by: Rob Clark <robdclark@chromium.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190630124735.27786-1-robdclark@gmail.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/msm/msm_gem.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-index 795660e29b2ce..a472d4d902dde 100644
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -106,7 +106,7 @@ static struct page **get_pages(struct drm_gem_object *obj)
- 		 * because display controller, GPU, etc. are not coherent:
- 		 */
- 		if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
--			dma_map_sg(dev->dev, msm_obj->sgt->sgl,
-+			dma_sync_sg_for_device(dev->dev, msm_obj->sgt->sgl,
- 					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
- 	}
- 
-@@ -124,7 +124,7 @@ static void put_pages(struct drm_gem_object *obj)
- 			 * GPU, etc. are not coherent:
- 			 */
- 			if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
--				dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
-+				dma_sync_sg_for_cpu(obj->dev->dev, msm_obj->sgt->sgl,
- 					     msm_obj->sgt->nents,
- 					     DMA_BIDIRECTIONAL);
- 
+Please try to watch for stack of the syscall and see if there is any
+pattern.
 -- 
-2.20.1
-
+Michal Hocko
+SUSE Labs
