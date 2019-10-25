@@ -2,48 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBD5BE483E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 12:12:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B579E4846
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 12:12:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409079AbfJYKMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 06:12:22 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37652 "EHLO
+        id S2409105AbfJYKMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 06:12:23 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37660 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2409011AbfJYKMV (ORCPT
+        with ESMTP id S2409013AbfJYKMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 06:12:21 -0400
+        Fri, 25 Oct 2019 06:12:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Mfwi8AbI+njv6OXBWSEU3ESst6lzCiQazpD9WrFtGOs=; b=PejzMVlZbUqx
-        fSWESryCFXJJPU17sFwlk8S7+h3cO3184RFLTHRDblukpGYd9k6aH+GZ92FC7DUHc/FverGf3dyhE
-        11xAB+QcwD6u3+XkSgQ+ZsuE7z8ez8yPINS6cItdVxMHrr29OdjzG9Ncm+6mzIx6ULE8NaXmNJWy9
-        2yxTc=;
+        List-Archive; bh=SshFH95hlvnohJa9NKLS6Cf2fJ2qBzDlAgOlmqIfTKM=; b=w9XbI4Vt67gR
+        Ja/tZ9IXUqWXXEHb4sreas4M7HNAtDRlxbyl3Om+EIGpt+UQuJcMbwIixGWL5rjwvk7vHL2Jqpqvx
+        qvylhr8HjuvHYsCSxf97K3SSzj2MSj/0is4eCkDg2Qfk6d5Sj26nWhZa/y1fQV3pbWqS6dxHH8ez/
+        7fpy0=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iNwZo-0006dx-NU; Fri, 25 Oct 2019 10:12:12 +0000
+        id 1iNwZo-0006e0-Rl; Fri, 25 Oct 2019 10:12:12 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 251942743267; Fri, 25 Oct 2019 11:12:12 +0100 (BST)
+        id 582B3274326E; Fri, 25 Oct 2019 11:12:12 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     alsa-devel@alsa-project.org, Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
+Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
         Jiri Kosina <trivial@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: pxa: poodle: Spelling s/enpoints/endpoints/, s/connetion/connection/" to the asoc tree
-In-Reply-To: <20191024153130.31082-1-geert+renesas@glider.be>
+Subject: Applied "ASoC: Spelling s/configr/configur/" to the asoc tree
+In-Reply-To: <20191024151603.29043-1-geert+renesas@glider.be>
 X-Patchwork-Hint: ignore
-Message-Id: <20191025101212.251942743267@ypsilon.sirena.org.uk>
+Message-Id: <20191025101212.582B3274326E@ypsilon.sirena.org.uk>
 Date:   Fri, 25 Oct 2019 11:12:12 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,7 +48,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: pxa: poodle: Spelling s/enpoints/endpoints/, s/connetion/connection/
+   ASoC: Spelling s/configr/configur/
 
 has been applied to the asoc tree at
 
@@ -77,34 +73,47 @@ to this mail.
 Thanks,
 Mark
 
-From 16c33235321d5ce3463ebefc205d7cf11929d59f Mon Sep 17 00:00:00 2001
+From c19255659b6ed952948ce54a260efb2ad950cc54 Mon Sep 17 00:00:00 2001
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Thu, 24 Oct 2019 17:31:30 +0200
-Subject: [PATCH] ASoC: pxa: poodle: Spelling s/enpoints/endpoints/,
- s/connetion/connection/
+Date: Thu, 24 Oct 2019 17:16:03 +0200
+Subject: [PATCH] ASoC: Spelling s/configr/configur/
 
-Fix misspelling of "endpoints" and "connection".
+Fix misspellings of "configuration" and "configure".
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20191024153130.31082-1-geert+renesas@glider.be
+Link: https://lore.kernel.org/r/20191024151603.29043-1-geert+renesas@glider.be
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/pxa/poodle.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/sound/wm8904.h     | 2 +-
+ sound/soc/codecs/cx2072x.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/pxa/poodle.c b/sound/soc/pxa/poodle.c
-index 48d5c2252b10..59ef04d0467a 100644
---- a/sound/soc/pxa/poodle.c
-+++ b/sound/soc/pxa/poodle.c
-@@ -56,7 +56,7 @@ static void poodle_ext_control(struct snd_soc_dapm_context *dapm)
- 		snd_soc_dapm_disable_pin(dapm, "Headphone Jack");
- 	}
+diff --git a/include/sound/wm8904.h b/include/sound/wm8904.h
+index 14074405f501..88ac1870510e 100644
+--- a/include/sound/wm8904.h
++++ b/include/sound/wm8904.h
+@@ -120,7 +120,7 @@
+  * DRC configurations are specified with a label and a set of register
+  * values to write (the enable bits will be ignored).  At runtime an
+  * enumerated control will be presented for each DRC block allowing
+- * the user to choose the configration to use.
++ * the user to choose the configuration to use.
+  *
+  * Configurations may be generated by hand or by using the DRC control
+  * panel provided by the WISCE - see  http://www.wolfsonmicro.com/wisce/
+diff --git a/sound/soc/codecs/cx2072x.c b/sound/soc/codecs/cx2072x.c
+index 1c1ba7bea4d8..2ad00ed21bec 100644
+--- a/sound/soc/codecs/cx2072x.c
++++ b/sound/soc/codecs/cx2072x.c
+@@ -1507,7 +1507,7 @@ static int cx2072x_probe(struct snd_soc_component *codec)
+ 	regmap_multi_reg_write(cx2072x->regmap, cx2072x_reg_init,
+ 			       ARRAY_SIZE(cx2072x_reg_init));
  
--	/* set the enpoints to their new connetion states */
-+	/* set the endpoints to their new connection states */
- 	if (poodle_spk_func == POODLE_SPK_ON)
- 		snd_soc_dapm_enable_pin(dapm, "Ext Spk");
- 	else
+-	/* configre PortC as input device */
++	/* configure PortC as input device */
+ 	regmap_update_bits(cx2072x->regmap, CX2072X_PORTC_PIN_CTRL,
+ 			   0x20, 0x20);
+ 
 -- 
 2.20.1
 
