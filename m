@@ -2,93 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 109A7E45EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B5CDE45FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:43:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408359AbfJYIlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 04:41:23 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:44650 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405057AbfJYIlW (ORCPT
+        id S2408412AbfJYInN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 04:43:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58154 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408361AbfJYInN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 04:41:22 -0400
-Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
-  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="Ludovic.Desroches@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa5.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: SRZRZ0DKDT47obkNCrvEEvEWA9lxJz/n+4y8g1CvS6lC6iKUhdYJyCIxMDppQvIyWY9fWQLNGd
- oD63BNCCZr4cM8HSqEuN/OloqWFETGhtnFklHEzNsZPk00D9OmFxm+hZ9G77f6ghUlfsLjYOLy
- MH6dkXXsHFZzAqUuHB/xmEQgP7bzOZI9gmpny4lOekLsMt02UFWVu6+7vkSB9al1cT84W1Rkdb
- MWCzTInjefQprVsAkDVEhizo+laZBHe3JXOQieEUQlBT1z2I0nhq7p5Qy9Ej8Xq6ukYM2vbX0m
- RG0=
-X-IronPort-AV: E=Sophos;i="5.68,228,1569308400"; 
-   d="scan'208";a="52901142"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Oct 2019 01:41:17 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 25 Oct 2019 01:41:15 -0700
-Received: from M43218.corp.atmel.com (10.10.85.251) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Fri, 25 Oct 2019 01:41:14 -0700
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-CC:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <linux-kernel@vger.kernel.org>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH] ARM: dts: at91: sama5d4: fix pinctrl muxing
-Date:   Fri, 25 Oct 2019 10:42:10 +0200
-Message-ID: <20191025084210.14726-1-ludovic.desroches@microchip.com>
-X-Mailer: git-send-email 2.24.0.rc0
+        Fri, 25 Oct 2019 04:43:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/9XjHHhi9cmHqBCDafIhrq5RljTOrxtN4eiY5hNBvRw=; b=D8BWFPd3KhZg5ubJIgIjUHoO6
+        7lbcZxfhDOuR8J8Ne1ba5PEghIoeC8Bq3rNF+b+jNOirqQx2WARbWho8w7sy+gPTIO+p5snNBPLh9
+        +ASQb/C6jqvqsZzs1Vaf0bB7xzqbUxwTiPH24ze2HDrSN4+0xSLcdzX1H/opAcBt6Z9Sf9/5R7p3b
+        dmNYaMTXq4uPTT6mgRHd4LrLoPiYFjkY8sSt4WP4jWDyu1pTITquH/+Ch/uFABr0QuVlJqtPxAROB
+        arFPZQIfT1JXQAyhJ+TW+DYMM14fPcwZ+N7fE4ClKRf0rHBrPxntz089yDd5Q2DbE0u0PWgQhqBFT
+        Z+bgFkw/w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iNvBW-0004YE-JM; Fri, 25 Oct 2019 08:43:02 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 91DF9303DA1;
+        Fri, 25 Oct 2019 10:42:01 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 64768201A660C; Fri, 25 Oct 2019 10:43:00 +0200 (CEST)
+Date:   Fri, 25 Oct 2019 10:43:00 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jeyu@kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v4 15/16] module: Move where we mark modules RO,X
+Message-ID: <20191025084300.GG4131@hirez.programming.kicks-ass.net>
+References: <20191018073525.768931536@infradead.org>
+ <20191018074634.801435443@infradead.org>
+ <20191021135312.jbbxsuipxldocdjk@treble>
+ <20191021141402.GI1817@hirez.programming.kicks-ass.net>
+ <20191023114835.GT1817@hirez.programming.kicks-ass.net>
+ <20191023170025.f34g3vxaqr4f5gqh@treble>
+ <20191024131634.GC4131@hirez.programming.kicks-ass.net>
+ <20191025064456.6jjrngm4m3mspaxw@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191025064456.6jjrngm4m3mspaxw@pathway.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix pinctrl muxing, PD28, PD29 and PD31 can be muxed to peripheral A. It
-allows to use SCK0, SCK1 and SPI0_NPCS2 signals.
+On Fri, Oct 25, 2019 at 08:44:56AM +0200, Petr Mladek wrote:
+> On Thu 2019-10-24 15:16:34, Peter Zijlstra wrote:
+> > On Wed, Oct 23, 2019 at 12:00:25PM -0500, Josh Poimboeuf wrote:
+> > 
+> > > > This then raises a number of questions:
+> > > > 
+> > > >  1) why is that RELA (that obviously does not depend on any module)
+> > > >     applied so late?
+> > > 
+> > > Good question.  The 'pv_ops' symbol is exported by the core kernel, so I
+> > > can't see any reason why we'd need to apply that rela late.  In theory,
+> > > kpatch-build isn't supposed to convert that to a klp rela.  Maybe
+> > > something went wrong in the patch creation code.
+> > > 
+> > > I'm also questioning why we even need to apply the parainstructions
+> > > section late.  Maybe we can remove that apply_paravirt() call
+> > > altogether, along with .klp.arch.parainstruction sections.
+> 
+> Hmm, the original bug report against livepatching was actually about
+> paravirt ops, see below.
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Fixes: 679f8d92bb01 ("ARM: at91/dt: sama5d4: add pioD pin mux mask and enable pioD")
-Cc: stable@vger.kernel.org
----
- arch/arm/boot/dts/sama5d4.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes, I found that.
 
-diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
-index 6ab27a7b388d..a4cef07c38cb 100644
---- a/arch/arm/boot/dts/sama5d4.dtsi
-+++ b/arch/arm/boot/dts/sama5d4.dtsi
-@@ -914,7 +914,7 @@ /*   A          B          C  */
- 					0xffffffff 0x3ffcfe7c 0x1c010101	/* pioA */
- 					0x7fffffff 0xfffccc3a 0x3f00cc3a	/* pioB */
- 					0xffffffff 0x3ff83fff 0xff00ffff	/* pioC */
--					0x0003ff00 0x8002a800 0x00000000	/* pioD */
-+					0xb003ff00 0x8002a800 0x00000000	/* pioD */
- 					0xffffffff 0x7fffffff 0x76fff1bf	/* pioE */
- 					>;
- 
--- 
-2.24.0.rc0
+> > > I'm not sure about alternatives, but maybe we can enforce such
+> > > limitations with tooling and/or kernel checks.
+> > 
+> > Right, so on IRC you implied you might have some additional details on
+> > how alternatives were affected; did you manage to dig that up?
+> 
+> I am not sure what Josh had in mind. But the problem with livepatches,
+> paravort ops, and alternatives was described in the related patchset, see
+> https://lkml.kernel.org/r/1471481911-5003-1-git-send-email-jeyu@redhat.com
 
+Yes, and my complaint there is that that thread is void of useful
+content.
+
+> The original bug report is
+> https://lkml.kernel.org/r/20160329120518.GA21252@canonical.com
+
+I found the github (*groan*) link in the thread above.
+
+From all that I could only make that the paravirt stuff is just doing it
+wrong (see earlier emails, core-kernel RELAs really should be applied at
+the time of patch-module load, there's no excuse for them to be delayed
+to the .klp.rela. section) at which point paravirt will also magically
+work.
+
+But none of that explains why apply_alternatives() is also delayed.
+
+So I'm very tempted to just revert that patchset for doing it all
+wrong.
