@@ -2,103 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 037A9E4CA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:50:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3409CE4CBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:55:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504931AbfJYNur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 09:50:47 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39816 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502085AbfJYNur (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:50:47 -0400
-Received: by mail-io1-f65.google.com with SMTP id y12so2490838ioa.6
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 06:50:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pHXHkRZYMYriBwnGx1XM0y5ekEDpj7Yqy5vMy8KNTfI=;
-        b=0cQoRyAcYNQaeNht9WUlKmJ4thYDBCv0oGZ90WqeIlTJc/i2dvhTHtH9lLGX+i9xMJ
-         JNUEzJItBVmQ/pue/RpcicBZXfmgvVyCD8ta53VyAsFNMWZnIX5Hq2d5dhnxFf0DinkA
-         b61XpECUWEWOztP77nH4HlIkiQTTuLjYxQ3AxvK5A/3VSPv5faRfmsint3I440JUecgz
-         VzrV+RQbGZTBDQzjq9/g6PGatAMbhG+fOWV26uaBrDiAtHwbI3WV+jzo0ZoFkL9zjS/h
-         4qlhySnaCAJkPLVAjF8sVbNc3Voxzx9dYl5rXOho+EJRi6a8Mxx2LDtpFri1YyapPvdm
-         slBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pHXHkRZYMYriBwnGx1XM0y5ekEDpj7Yqy5vMy8KNTfI=;
-        b=KTPg8sXFwdbhSpRyHuTVr3MhiNqASsjw7FBEn29CFLMdURfIiGiysmqsx8OcOCoZbM
-         GOqDM1yHMekHi9DzgmrHT09qA1XgJRO6FxDxwXeYActrd7kNWv8Q1hx9RXK5HEtoih5U
-         De2XiVapKTEE1/mqOQyhOxz1HqSy4wTk7cFL8GsNz7SvAq9Gt/p6r5VT48H7MX6jnM5T
-         nFNuSlRiTBVt00RUn0jOojEfoAVZb9Iir+J44k2dLfMShsUbZEYZqKL7O6wNy4gDpX7+
-         RuIkcej6iRBTOyid2U9GX+YgupX4EZO4TtJsF6FIb32i8A8ftSu5GmvUKirhJSAcm3vo
-         qAmg==
-X-Gm-Message-State: APjAAAXklBueRn0YmySIFIL1nWe/bVSBG0oYWd52UWOEm5J+9w70sJPj
-        /8R9QzUfG27yvqic0h09zws/Sw==
-X-Google-Smtp-Source: APXvYqxsot+KuzrRp/bZ42yX1xRSsmzeoxhjDbcJwWvURaSHFnyWN/tmsc5x4vnk1y4l48NbZvEEzw==
-X-Received: by 2002:a5e:d607:: with SMTP id w7mr3921189iom.237.1572011444742;
-        Fri, 25 Oct 2019 06:50:44 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id l21sm266655iok.87.2019.10.25.06.50.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Oct 2019 06:50:43 -0700 (PDT)
-Subject: Re: KASAN: null-ptr-deref Write in io_wq_cancel_all
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+d958a65633ea70280b23@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <000000000000fbbe1e0595bac322@google.com>
- <CACT4Y+Y946C-kyiBSZtyKY7PU4qxrysOfukd42--pXdyTRyjbw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0e1b3410-95b0-f9d9-6838-486eae0bf5d7@kernel.dk>
-Date:   Fri, 25 Oct 2019 07:50:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2504958AbfJYNzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 09:55:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48774 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2502258AbfJYNzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 09:55:09 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FC3D20679;
+        Fri, 25 Oct 2019 13:55:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572011707;
+        bh=B4DUFriqZcFFuyn1w6X7MkgyeS1ormCP/XOxkdR5JcY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=vmtl4mgf6pfn/fP9OC0nlwQ0WwEzSxKM6aQrIlPbsW036BKj7CdsCEhtOtkcQgn0V
+         PKMMvCg6FhWeCAORu/GlvMDEGqKIdHO+JxrCNkRUqzxzBdU6daR9Zg5xry1YigypbZ
+         uSc9EK6PJwrBKFYLgMXc4cBWGddp6Mf8buTKEtPg=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Xin Long <lucien.xin@gmail.com>,
+        syzbot+eb349eeee854e389c36d@syzkaller.appspotmail.com,
+        syzbot+4a0643a653ac375612d1@syzkaller.appspotmail.com,
+        Edward Cree <ecree@solarflare.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 01/33] net: ipv6: fix listify ip6_rcv_finish in case of forwarding
+Date:   Fri, 25 Oct 2019 09:54:33 -0400
+Message-Id: <20191025135505.24762-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Y946C-kyiBSZtyKY7PU4qxrysOfukd42--pXdyTRyjbw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25/19 5:58 AM, Dmitry Vyukov wrote:
-> On Fri, Oct 25, 2019 at 1:51 PM syzbot
-> <syzbot+d958a65633ea70280b23@syzkaller.appspotmail.com> wrote:
->>
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    139c2d13 Add linux-next specific files for 20191025
->> git tree:       linux-next
->> console output: https://syzkaller.appspot.com/x/log.txt?x=17ab5a70e00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=28fd7a693df38d29
->> dashboard link: https://syzkaller.appspot.com/bug?extid=d958a65633ea70280b23
->> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->>
->> Unfortunately, I don't have any reproducer for this crash yet.
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+d958a65633ea70280b23@syzkaller.appspotmail.com
-> 
-> +Jens
+From: Xin Long <lucien.xin@gmail.com>
 
-Let me know if/when you have a reproducer for this one. I initially thought
-this was a basic NULL pointer check, but it doesn't look like it. I wonder
-if the thread handling the request got a signal, and since it had the
-task file_table with the io_uring fd attached, it's triggering an exit.
+[ Upstream commit c7a42eb49212f93a800560662d17d5293960d3c3 ]
 
-I'll poke at it, but don't immediately see the issue.
+We need a similar fix for ipv6 as Commit 0761680d5215 ("net: ipv4: fix
+listify ip_rcv_finish in case of forwarding") does for ipv4.
 
+This issue can be reprocuded by syzbot since Commit 323ebb61e32b ("net:
+use listified RX for handling GRO_NORMAL skbs") on net-next. The call
+trace was:
+
+  kernel BUG at include/linux/skbuff.h:2225!
+  RIP: 0010:__skb_pull include/linux/skbuff.h:2225 [inline]
+  RIP: 0010:skb_pull+0xea/0x110 net/core/skbuff.c:1902
+  Call Trace:
+    sctp_inq_pop+0x2f1/0xd80 net/sctp/inqueue.c:202
+    sctp_endpoint_bh_rcv+0x184/0x8d0 net/sctp/endpointola.c:385
+    sctp_inq_push+0x1e4/0x280 net/sctp/inqueue.c:80
+    sctp_rcv+0x2807/0x3590 net/sctp/input.c:256
+    sctp6_rcv+0x17/0x30 net/sctp/ipv6.c:1049
+    ip6_protocol_deliver_rcu+0x2fe/0x1660 net/ipv6/ip6_input.c:397
+    ip6_input_finish+0x84/0x170 net/ipv6/ip6_input.c:438
+    NF_HOOK include/linux/netfilter.h:305 [inline]
+    NF_HOOK include/linux/netfilter.h:299 [inline]
+    ip6_input+0xe4/0x3f0 net/ipv6/ip6_input.c:447
+    dst_input include/net/dst.h:442 [inline]
+    ip6_sublist_rcv_finish+0x98/0x1e0 net/ipv6/ip6_input.c:84
+    ip6_list_rcv_finish net/ipv6/ip6_input.c:118 [inline]
+    ip6_sublist_rcv+0x80c/0xcf0 net/ipv6/ip6_input.c:282
+    ipv6_list_rcv+0x373/0x4b0 net/ipv6/ip6_input.c:316
+    __netif_receive_skb_list_ptype net/core/dev.c:5049 [inline]
+    __netif_receive_skb_list_core+0x5fc/0x9d0 net/core/dev.c:5097
+    __netif_receive_skb_list net/core/dev.c:5149 [inline]
+    netif_receive_skb_list_internal+0x7eb/0xe60 net/core/dev.c:5244
+    gro_normal_list.part.0+0x1e/0xb0 net/core/dev.c:5757
+    gro_normal_list net/core/dev.c:5755 [inline]
+    gro_normal_one net/core/dev.c:5769 [inline]
+    napi_frags_finish net/core/dev.c:5782 [inline]
+    napi_gro_frags+0xa6a/0xea0 net/core/dev.c:5855
+    tun_get_user+0x2e98/0x3fa0 drivers/net/tun.c:1974
+    tun_chr_write_iter+0xbd/0x156 drivers/net/tun.c:2020
+
+Fixes: d8269e2cbf90 ("net: ipv6: listify ipv6_rcv() and ip6_rcv_finish()")
+Fixes: 323ebb61e32b ("net: use listified RX for handling GRO_NORMAL skbs")
+Reported-by: syzbot+eb349eeee854e389c36d@syzkaller.appspotmail.com
+Reported-by: syzbot+4a0643a653ac375612d1@syzkaller.appspotmail.com
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/ipv6/ip6_input.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/ipv6/ip6_input.c b/net/ipv6/ip6_input.c
+index a593aaf257483..2bb0b66181a74 100644
+--- a/net/ipv6/ip6_input.c
++++ b/net/ipv6/ip6_input.c
+@@ -80,8 +80,10 @@ static void ip6_sublist_rcv_finish(struct list_head *head)
+ {
+ 	struct sk_buff *skb, *next;
+ 
+-	list_for_each_entry_safe(skb, next, head, list)
++	list_for_each_entry_safe(skb, next, head, list) {
++		skb_list_del_init(skb);
+ 		dst_input(skb);
++	}
+ }
+ 
+ static void ip6_list_rcv_finish(struct net *net, struct sock *sk,
 -- 
-Jens Axboe
+2.20.1
 
