@@ -2,100 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26AFFE4933
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D03C7E4970
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:10:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394520AbfJYLG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 07:06:28 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:38207 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393421AbfJYLG2 (ORCPT
+        id S2439615AbfJYLKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 07:10:44 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:37766 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2437030AbfJYLKo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 07:06:28 -0400
-Received: by mail-qt1-f196.google.com with SMTP id o25so2598087qtr.5
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 04:06:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aAYJchrbdICiOouupZ3A2UdeXvhJ/5TzX3VjCK2DOiM=;
-        b=oxpJk3tEnskZxe8iXIuVvPHl3cMuWRs4x09179QW10AzgrypuocXGoAbrt+D014hA1
-         Uat5zpvrxGy3L82G7JaJtlBgjCmeRXaHhgOJD3ONf0PYclBoKI4JBBMqbiH3VolgsRuX
-         3qlqdt4OcJtacnig67cUQlwvcOhVVAcWgPRkjmwBlgaRPatTQgcZw7/FhXiLMiypQSaQ
-         E+V+OORTvGtHbONsMyjfZe79DqXPmhuXkjVutWyih4K9p9cgpvvDqbAo7goV32ogmk5r
-         Sd9GBGvNwCl4qVepMy7wG+z2CNkLudarZqiEEJdh02drso6inseQak9NP6MRPJOxCe3H
-         K6Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aAYJchrbdICiOouupZ3A2UdeXvhJ/5TzX3VjCK2DOiM=;
-        b=cbjIG7oMAxBeR1misgGnLtU79hpU64V+osSzifv+X1QI2TBdUHhN/EG/UWN4u/J5HO
-         kUSmx2Fg1f3hl2TEBiccGsrAc8Ay4a20E4675eTCkUek1tPxS9BsLVl4l3Kth8vzs7eS
-         aYsAafgJt3BDC+OSPoNC+sYenZp4K7aPzU51/QuCUX0EsH32KsotAxCK2m8FKLydNjf5
-         /lGYuSdQdLlq89MkGYvOSpt2PLiHvRL4+1TqK885Rp1pYQ61ycB8K5GXNSBBWIrSZRiM
-         1L/x9faCj1uyiGllAwLMewS9jXl0BNfyOEFZgoPOuTtApGbmXU63AuYPum0yx+jfm1E3
-         5IZg==
-X-Gm-Message-State: APjAAAV1xK+BJOQ2FGqr1U3WU0fKzc6cin/+61r2ayySVMffEkK6jj6p
-        j1q5NTnhwo7XkiWNtGZ3s1Y=
-X-Google-Smtp-Source: APXvYqwkYOtNgqNBsGOZ0X77v5ngzGtMWQBie9c47GqL28SaJZ30mFMzXisPFswYGKwPLUNbWnHCAA==
-X-Received: by 2002:a0c:d985:: with SMTP id y5mr2554913qvj.208.1572001586755;
-        Fri, 25 Oct 2019 04:06:26 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::fd3c])
-        by smtp.gmail.com with ESMTPSA id q44sm1557323qtk.16.2019.10.25.04.06.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Oct 2019 04:06:25 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 04:06:23 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Li Zefan <lizefan@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Song Liu <liu.song.a23@gmail.com>
-Subject: Re: [PATCH 1/2] cgroup: Add generation number with cgroup id
-Message-ID: <20191025110623.GH3622521@devbig004.ftw2.facebook.com>
-References: <20191016125019.157144-1-namhyung@kernel.org>
- <20191016125019.157144-2-namhyung@kernel.org>
- <20191024174433.GA3622521@devbig004.ftw2.facebook.com>
- <CAM9d7chWpj105TYR0qP3T8FJ=-2wjp+sh6Rk8zkvJb_ugtL3Dw@mail.gmail.com>
+        Fri, 25 Oct 2019 07:10:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572001843;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TdJfsRTRsop6kJ0wm+muChXm7G7utcbXCoWG3VUu7rE=;
+        b=MBGdJF/tD3D9VfPkkQDbNX2KoRprIJoV8nqD8eYR8oYGT6heoJMKpr3TN7KdNMAt5nzE6H
+        7OYDcVEKZErGZgg1TPq+oc9AZ8fkIblBDtTTRoSNlzOsHXc5MZDiq+6xrc4sNV3q92lrkg
+        IYpcZb7s3At0mvnGZx0EfhWLmELKXWw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-216-861dr80_ONCLLYjyGzsS9w-1; Fri, 25 Oct 2019 07:10:39 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8F765801E6F;
+        Fri, 25 Oct 2019 11:10:35 +0000 (UTC)
+Received: from crecklin.bos.csb (ovpn-125-176.rdu2.redhat.com [10.10.125.176])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D5711001B2D;
+        Fri, 25 Oct 2019 11:10:29 +0000 (UTC)
+Reply-To: crecklin@redhat.com
+Subject: Re: [PATCH] security/keyring: avoid pagefaults in
+ keyring_read_iterator
+From:   Chris von Recklinghausen <crecklin@redhat.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
+References: <20191018184030.8407-1-crecklin@redhat.com>
+ <30309.1571667719@warthog.procyon.org.uk>
+ <b8aa0f7c-0a90-efae-9fb7-aa85b19a0d9a@redhat.com>
+Organization: Red Hat
+Message-ID: <3c87bfba-9dc9-665f-17e8-0656e87c658b@redhat.com>
+Date:   Fri, 25 Oct 2019 07:10:29 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM9d7chWpj105TYR0qP3T8FJ=-2wjp+sh6Rk8zkvJb_ugtL3Dw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <b8aa0f7c-0a90-efae-9fb7-aa85b19a0d9a@redhat.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: 861dr80_ONCLLYjyGzsS9w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 10/21/2019 11:46 AM, Chris von Recklinghausen wrote:
+> On 10/21/2019 10:21 AM, David Howells wrote:
+>> Chris von Recklinghausen <crecklin@redhat.com> wrote:
+>>
+>>> The put_user call from keyring_read_iterator caused a page fault which
+>>> attempts to lock mm->mmap_sem and type->lock_class (key->sem) in the re=
+verse
+>>> order that keyring_read_iterator did, thus causing the circular locking
+>>> dependency.
+>>>
+>>> Remedy this by using access_ok and __put_user instead of put_user so we=
+'ll
+>>> return an error instead of faulting in the page.
+>> I wonder if it's better to create a kernel buffer outside of the lock in
+>> keyctl_read_key().  Hmmm...  The reason I didn't want to do that is that
+>> keyrings have don't have limits on the size.  Maybe that's not actually =
+a
+>> problem, since 1MiB would be able to hold a list of a quarter of a milli=
+on
+>> keys.
+>>
+>> David
+>>
+> Hi David,
+>
+> Thanks for the feedback.
+>
+> I can try to prototype that, but regardless of where the kernel buffer
+> is allocated, the important part is causing the initial pagefault in the
+> read path outside the lock so __put_user won't fail due to a valid user
+> address but page backing the user address isn't in-core.
+>
+> I'll start work on v2.
 
-On Fri, Oct 25, 2019 at 05:30:35PM +0900, Namhyung Kim wrote:
-> > Any chance I can persuade you into making this conversion?  idr is
-> > exactly the wrong data structure to use for cyclic allocations.  We've
-> > been doing it mostly for historical reasons but I really hope we can
-> > move away from it.  These lookups aren't in super hot paths and doing
-> > locked lookups should be fine.
-> 
-> As you know, it entails change in kernfs id and its users.
-> And I really want to finish the perf cgroup sampling work first.
-> Can I work on this after the perf work is done?
+Actually I'm going to back off on a v2 effort at this point and request
+that folks comment on the code as-is. Changing keyctl_read_key to use
+its own kernel buffer might be a worthwhile effort, but it doesn't
+appear to me to have any effects on preventing pagefaults on user pages
+at inopportune points of the code.
 
-Sure, but I think we should get the userland visible behaviors right.
-Ignoring implementation details:
+Thanks,
 
-* cgroup vs. css IDs doesn't matter for now.  css IDs aren't visible
-  to userland anyway and it could be that keeping using idr as-is or
-  always using 64bit IDs is the better solution for them.
+Chris
 
-* On 32bit ino setups, 32bit ino + gen as cgroup and export fs IDs.
+>
+> Thanks,
+>
+> Chris
+>
 
-* On 64bit ino setups, 64bit unique ino (allocated whichever way) + 0
-  gen as cgroup and export fs IDs.
-
-Thanks.
-
--- 
-tejun
