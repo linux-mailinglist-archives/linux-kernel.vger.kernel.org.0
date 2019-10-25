@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5FFDE461B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5992E461D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:46:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408526AbfJYIqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 04:46:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55568 "EHLO mail.kernel.org"
+        id S2408557AbfJYIq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 04:46:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408483AbfJYIqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 04:46:47 -0400
+        id S2408545AbfJYIq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 04:46:56 -0400
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2A95222D1;
-        Fri, 25 Oct 2019 08:46:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95C1E21D7B;
+        Fri, 25 Oct 2019 08:46:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571993206;
-        bh=6eWq3hv5VBg/qQEOMb6GcenvkecaJOsTfWAIxPa5bMM=;
+        s=default; t=1571993215;
+        bh=mOY8k8MUu58dp5lg/2CDtLKLce93A6FHiu1bWkMvodA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fr8QSHijtFDJra6WXf8X2CQoAfup6fRiFePEigP85khudssvKMgCUL55BYv3udMuC
-         2zNRNSYEu7HQ/885zgAfJftQOEdpaX61/2nXWXjtpfAgPDvriGpEjsP9nrA9vARXYq
-         Y78AP1dl2pNdIu1Yz20d1QrKbdgeP9Zu9QSKZLfA=
+        b=HiyoNmAFdZBmXG6RseleNHpklvFdTeeFnA+ki6jfAhelNsx2Hqq1Hx+0ueSiZTQoS
+         GyjjunFyvm5KTcZQE+BA+sWBmM2/DuH8MvnzVEfykLcjwMEUKTBhjIbjAuuFi+slIp
+         nLbO4bH57dIym9ddyzyXwGTPGN2CxPrdR87mILMg=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [BUGFIX PATCH 3/6] perf/probe: Fix to probe an inline function which has no entry pc
-Date:   Fri, 25 Oct 2019 17:46:43 +0900
-Message-Id: <157199320336.8075.16189530425277588587.stgit@devnote2>
+Subject: [BUGFIX PATCH 4/6] perf/probe: Fix to list probe event with correct line number
+Date:   Fri, 25 Oct 2019 17:46:52 +0900
+Message-Id: <157199321227.8075.14655572419136993015.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <157199317547.8075.1010940983970397945.stgit@devnote2>
 References: <157199317547.8075.1010940983970397945.stgit@devnote2>
@@ -43,40 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix perf probe to probe an inlne function which has no entry pc
-or low pc but only has ranges attribute.
+Since debuginfo__find_probe_point() uses dwarf_entrypc() for
+finding the entry address of the function on which a probe is,
+it will fail when the function DIE has only ranges attribute.
 
-This seems very rare case, but I could find a few examples, as
-same as probe_point_search_cb(), use die_entrypc() to get the
-entry address in probe_point_inline_cb() too.
+To fix this issue, use die_entrypc() instead of dwarf_entrypc().
 
-Without this patch,
-  # tools/perf/perf probe -D __amd_put_nb_event_constraints
-  Failed to get entry address of __amd_put_nb_event_constraints.
-  Probe point '__amd_put_nb_event_constraints' not found.
-    Error: Failed to add events.
+Without this fix, perf probe -l shows incorrect offset.
+  # perf probe -l
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask+18446744071579263632@work/linux/linux/kernel/cpu.c)
+    probe:clear_tasks_mm_cpumask_1 (on clear_tasks_mm_cpumask+18446744071579263752@work/linux/linux/kernel/cpu.c)
 
-With this patch,
-  # tools/perf/perf probe -D __amd_put_nb_event_constraints
-  p:probe/__amd_put_nb_event_constraints amd_put_event_constraints+43
+With this,
+  # perf probe -l
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask@work/linux/linux/kernel/cpu.c)
+    probe:clear_tasks_mm_cpumask_1 (on clear_tasks_mm_cpumask:21@work/linux/linux/kernel/cpu.c)
 
-Fixes: 4ea42b181434 ("perf: Add perf probe subcommand, a kprobe-event setup helper")
+Fixes: 1d46ea2a6a40 ("perf probe: Fix listing incorrect line number with inline function")
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- tools/perf/util/probe-finder.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/probe-finder.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 71633f55f045..2fa932bcf960 100644
+index 2fa932bcf960..88e17a4f5ac3 100644
 --- a/tools/perf/util/probe-finder.c
 +++ b/tools/perf/util/probe-finder.c
-@@ -930,7 +930,7 @@ static int probe_point_inline_cb(Dwarf_Die *in_die, void *data)
- 		ret = find_probe_point_lazy(in_die, pf);
- 	else {
- 		/* Get probe address */
--		if (dwarf_entrypc(in_die, &addr) != 0) {
-+		if (die_entrypc(in_die, &addr) != 0) {
- 			pr_warning("Failed to get entry address of %s.\n",
- 				   dwarf_diename(in_die));
- 			return -ENOENT;
+@@ -1566,7 +1566,7 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, unsigned long addr,
+ 		/* Get function entry information */
+ 		func = basefunc = dwarf_diename(&spdie);
+ 		if (!func ||
+-		    dwarf_entrypc(&spdie, &baseaddr) != 0 ||
++		    die_entrypc(&spdie, &baseaddr) != 0 ||
+ 		    dwarf_decl_line(&spdie, &baseline) != 0) {
+ 			lineno = 0;
+ 			goto post;
+@@ -1583,7 +1583,7 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, unsigned long addr,
+ 		while (die_find_top_inlinefunc(&spdie, (Dwarf_Addr)addr,
+ 						&indie)) {
+ 			/* There is an inline function */
+-			if (dwarf_entrypc(&indie, &_addr) == 0 &&
++			if (die_entrypc(&indie, &_addr) == 0 &&
+ 			    _addr == addr) {
+ 				/*
+ 				 * addr is at an inline function entry.
 
