@@ -2,156 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDDF9E4A43
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:46:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E67CCE4A3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502199AbfJYLqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 07:46:45 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:38454 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730727AbfJYLqo (ORCPT
+        id S2502086AbfJYLqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 07:46:05 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52392 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730088AbfJYLqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 07:46:44 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9PBk0uX092059;
-        Fri, 25 Oct 2019 06:46:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572003960;
-        bh=gipLVgrX2XvJaGiONhXv6tXJVahdjiAPKwWbGchh4eE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=l4T7eKbtrPl8WPLWtvgXYBxbPq69m9YNnxDLyDkSgbLDCelIyUzFUOucKMsGVWK0V
-         KGLjWoXCvcSTwCI/HfGyYuA/BjiMhcXOkfeDkdMHzds+s61L9TR1xJwVmJE7dE53Pt
-         Nd4KFvobxMjsHHNsrr15z6mUbKGU121x2FhEc4Jg=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9PBk0VY051064;
-        Fri, 25 Oct 2019 06:46:00 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 25
- Oct 2019 06:46:00 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 25 Oct 2019 06:45:49 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9PBjt0R102018;
-        Fri, 25 Oct 2019 06:45:56 -0500
-Subject: Re: [PATCH v2 2/4] phy: allwinner: add phy driver for USB3 PHY on
- Allwinner H6 SoC
-To:     Ondrej Jirman <megous@megous.com>, <linux-sunxi@googlegroups.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-References: <20191024105500.2252707-1-megous@megous.com>
- <20191024105500.2252707-3-megous@megous.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <a1ec53c4-7dc9-3bb3-8193-cfa5baad378e@ti.com>
-Date:   Fri, 25 Oct 2019 17:15:25 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191024105500.2252707-3-megous@megous.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 25 Oct 2019 07:46:04 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p21so1785710wmg.2;
+        Fri, 25 Oct 2019 04:46:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=ef0+hHhWKCL6Ca0t5L5+DnFrjs6xNw6+Odbfva8qwPs=;
+        b=MweLNAF2NZ7iEpk6wMj4PgBgpG0sqWOQGUnZ5/A9SGuzDzfVMXAN5EOmXw054lnilC
+         JpvmjXsT/o5JUWHkilzQ2uVNbpRohLVa7vT3MLWYjKbzLw0zfei+xFbAfcpkzUMVHcNT
+         1yuGX4/2mATN/KrU26ulSjsIbQhVgWDlKT89ksOjIDjRWMF97PGryx1U/4GKJcCWlN3Q
+         FEJIHXFkbTrYjPv+N/bdFEOW1ghAqmjl+ZUX4kwlH3mBK5/tH9GhXQEFjxOsG3Uf7DF1
+         8rliUCEFFCibiUJens7WliBKOngilDkc+PKmVWT4F1ICYgPD7EDjpsafY4vWcdZi+n9Z
+         dtiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=ef0+hHhWKCL6Ca0t5L5+DnFrjs6xNw6+Odbfva8qwPs=;
+        b=HjcyKQ93uuk7clM+wMechRaJcC2vhSYsVuJ1ZqtCvh6g9dkz/QiXDvvezF6KqLtEaz
+         N2zugzszywtnFlti8woXMZhdm7+o4bE5Gb45ErydCgjiGDlAWvq75PxJMhtrYTUOcoQy
+         vmT3y/fzzQhiQvUuo9mr/joR0zH+wCYK/3jMAeOlIc5M/aZtzsFbrLsE3nBINXMJZCKo
+         mdnhqwxtD+MiP01iT/N/+Q2sTaHI1ewLGoUYwmJcOV/Yc9HEnxV/4ktEZvtuvaIosegG
+         LPu0ulnzKgw1A2tU/ldI6KESu2R6uJL2Ul5LO5rrCRZS7QT4SWXmDgWjq4Az2OUE5jr0
+         rIzw==
+X-Gm-Message-State: APjAAAVQo8HIMTdum7YuiiPOPiEoDpCAe3ds1wunF7VKuf3cWZ0fYQZN
+        qaFpGRaZARq4eiO5pz21LNo=
+X-Google-Smtp-Source: APXvYqxyiXMNCEwujviBcaGWHHKgI5g4AoZaYE7MQ718Qwr4MDjEGH3/HrmtiPExX3WW7QD0UVNFjg==
+X-Received: by 2002:a1c:f305:: with SMTP id q5mr3127071wmq.137.1572003961887;
+        Fri, 25 Oct 2019 04:46:01 -0700 (PDT)
+Received: from 640k.lan ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id g69sm1881335wme.31.2019.10.25.04.46.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Oct 2019 04:46:01 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM changes for Linux 5.4-rc5
+Date:   Fri, 25 Oct 2019 13:45:59 +0200
+Message-Id: <1572003959-43063-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Linus,
 
-On 24/10/19 4:24 PM, Ondrej Jirman wrote:
-> From: Icenowy Zheng <icenowy@aosc.io>
-> 
-> Allwinner H6 SoC contains a USB3 PHY (with USB2 DP/DM lines also
-> controlled).
-> 
-> Add a driver for it.
-> 
-> The register operations in this driver is mainly extracted from the BSP
-> USB3 driver.
-> 
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> Acked-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/phy/allwinner/Kconfig           |  12 ++
->  drivers/phy/allwinner/Makefile          |   1 +
->  drivers/phy/allwinner/phy-sun50i-usb3.c | 195 ++++++++++++++++++++++++
->  3 files changed, 208 insertions(+)
->  create mode 100644 drivers/phy/allwinner/phy-sun50i-usb3.c
-> 
-> diff --git a/drivers/phy/allwinner/Kconfig b/drivers/phy/allwinner/Kconfig
-> index 215425296c77..fcae35ddd430 100644
-> --- a/drivers/phy/allwinner/Kconfig
-> +++ b/drivers/phy/allwinner/Kconfig
-> @@ -45,3 +45,15 @@ config PHY_SUN9I_USB
->  	  sun9i SoCs.
->  
->  	  This driver controls each individual USB 2 host PHY.
-> +
-> +config PHY_SUN50I_USB3
-> +	tristate "Allwinner sun50i SoC USB3 PHY driver"
-> +	depends on ARCH_SUNXI && HAS_IOMEM && OF
-> +	depends on RESET_CONTROLLER
-> +	select USB_COMMON
+The following changes since commit 3b7c59a1950c75f2c0152e5a9cd77675b09233d6:
 
-Looks like USB_COMMON is not required here.
-> +	select GENERIC_PHY
-> +	help
-> +	  Enable this to support the USB3.0-capable transceiver that is
-> +	  part of some Allwinner sun50i SoCs.
-> +
-> +	  This driver controls each individual USB 2+3 host PHY combo.
-> diff --git a/drivers/phy/allwinner/Makefile b/drivers/phy/allwinner/Makefile
-> index 799a65c0b58d..bd74901a1255 100644
-> --- a/drivers/phy/allwinner/Makefile
-> +++ b/drivers/phy/allwinner/Makefile
-> @@ -2,3 +2,4 @@
->  obj-$(CONFIG_PHY_SUN4I_USB)		+= phy-sun4i-usb.o
->  obj-$(CONFIG_PHY_SUN6I_MIPI_DPHY)	+= phy-sun6i-mipi-dphy.o
->  obj-$(CONFIG_PHY_SUN9I_USB)		+= phy-sun9i-usb.o
-> +obj-$(CONFIG_PHY_SUN50I_USB3)		+= phy-sun50i-usb3.o
-> diff --git a/drivers/phy/allwinner/phy-sun50i-usb3.c b/drivers/phy/allwinner/phy-sun50i-usb3.c
-> new file mode 100644
-> index 000000000000..8e170a4d0a11
-> --- /dev/null
-> +++ b/drivers/phy/allwinner/phy-sun50i-usb3.c
-> @@ -0,0 +1,195 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Allwinner sun50i(H6) USB 3.0 phy driver
-> + *
-> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-> + *
-> + * Based on phy-sun9i-usb.c, which is:
-> + *
-> + * Copyright (C) 2014-2015 Chen-Yu Tsai <wens@csie.org>
-> + *
-> + * Based on code from Allwinner BSP, which is:
-> + *
-> + * Copyright (c) 2010-2015 Allwinner Technology Co., Ltd.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/usb/of.h>
+  Merge tag 'pinctrl-v5.4-2' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl (2019-10-22 06:40:07 -0400)
 
-this too..
+are available in the git repository at:
 
-Thanks
-Kishon
+
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+
+for you to fetch changes up to 671ddc700fd08b94967b1e2a937020e30c838609:
+
+  KVM: nVMX: Don't leak L1 MMIO regions to L2 (2019-10-22 19:04:40 +0200)
+
+----------------------------------------------------------------
+Bugfixes for ARM, PPC and x86, plus selftest improvements.
+
+----------------------------------------------------------------
+Greg Kurz (1):
+      KVM: PPC: Book3S HV: XIVE: Ensure VP isn't already in use
+
+Jim Mattson (2):
+      kvm: x86: Expose RDPID in KVM_GET_SUPPORTED_CPUID
+      KVM: nVMX: Don't leak L1 MMIO regions to L2
+
+Liran Alon (1):
+      KVM: VMX: Remove specialized handling of unexpected exit-reasons
+
+Marc Zyngier (4):
+      KVM: arm64: pmu: Fix cycle counter truncation
+      arm64: KVM: Handle PMCR_EL0.LC as RES1 on pure AArch64 systems
+      KVM: arm64: pmu: Set the CHAINED attribute before creating the in-kernel event
+      KVM: arm64: pmu: Reset sample period on overflow handling
+
+Miaohe Lin (1):
+      KVM: SVM: Fix potential wrong physical id in avic_handle_ldr_update
+
+Paolo Bonzini (3):
+      kvm: clear kvmclock MSR on reset
+      Merge tag 'kvmarm-fixes-5.4-2' of git://git.kernel.org/.../kvmarm/kvmarm into HEAD
+      Merge tag 'kvm-ppc-fixes-5.4-1' of git://git.kernel.org/.../paulus/powerpc into HEAD
+
+Vitaly Kuznetsov (5):
+      selftests: kvm: synchronize .gitignore to Makefile
+      selftests: kvm: vmx_set_nested_state_test: don't check for VMX support twice
+      selftests: kvm: consolidate VMX support checks
+      selftests: kvm: vmx_dirty_log_test: skip the test when VMX is not supported
+      selftests: kvm: fix sync_regs_test with newer gccs
+
+Wanpeng Li (1):
+      KVM: Don't shrink/grow vCPU halt_poll_ns if host side polling is disabled
+
+kbuild test robot (1):
+      KVM: x86: fix bugon.cocci warnings
+
+ arch/arm64/kvm/sys_regs.c                          |  4 ++
+ arch/powerpc/kvm/book3s_xive.c                     | 24 +++++---
+ arch/powerpc/kvm/book3s_xive.h                     | 12 ++++
+ arch/powerpc/kvm/book3s_xive_native.c              |  6 +-
+ arch/x86/include/asm/kvm_host.h                    |  2 +-
+ arch/x86/kvm/cpuid.c                               |  2 +-
+ arch/x86/kvm/lapic.c                               |  5 --
+ arch/x86/kvm/lapic.h                               |  5 ++
+ arch/x86/kvm/svm.c                                 |  6 +-
+ arch/x86/kvm/vmx/nested.c                          | 64 ++++++++++++----------
+ arch/x86/kvm/vmx/nested.h                          | 13 ++++-
+ arch/x86/kvm/vmx/vmx.c                             | 12 ----
+ arch/x86/kvm/x86.c                                 | 19 ++++---
+ tools/testing/selftests/kvm/.gitignore             |  2 +
+ tools/testing/selftests/kvm/include/x86_64/vmx.h   |  2 +
+ tools/testing/selftests/kvm/lib/x86_64/vmx.c       | 10 ++++
+ .../testing/selftests/kvm/x86_64/sync_regs_test.c  | 21 +++----
+ .../kvm/x86_64/vmx_close_while_nested_test.c       |  6 +-
+ .../selftests/kvm/x86_64/vmx_dirty_log_test.c      |  2 +
+ .../kvm/x86_64/vmx_set_nested_state_test.c         | 13 +----
+ .../selftests/kvm/x86_64/vmx_tsc_adjust_test.c     |  6 +-
+ virt/kvm/arm/pmu.c                                 | 48 +++++++++++-----
+ virt/kvm/kvm_main.c                                | 29 +++++-----
+ 23 files changed, 186 insertions(+), 127 deletions(-)
