@@ -2,88 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D37AE5568
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 22:48:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E342E556E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 22:49:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbfJYUsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 16:48:45 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41207 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfJYUso (ORCPT
+        id S1728760AbfJYUtf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 16:49:35 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40804 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbfJYUte (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 16:48:44 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q7so2366143pfh.8;
-        Fri, 25 Oct 2019 13:48:44 -0700 (PDT)
+        Fri, 25 Oct 2019 16:49:34 -0400
+Received: by mail-vs1-f65.google.com with SMTP id v10so2364900vsc.7
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 13:49:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=MdpCrK6CHk9RaIYJNl7SmLN35pgtJyN8+9/hgHFqLKQ=;
-        b=IoapcdrtD2ejegECqYohNWcYgxOKZEuhyBHDiAcZO79Ph/0UYvn7IxKCpOnQfePXDH
-         mSN/fMH00dIY2pYC0yfCqSx3qTICGqHFrqrzUi8JvqJ2RMaVvU+t8J75NtCHJfl2UmlU
-         biP1d8noouj9M7dHMdHe8z5cKp94B9hf2A2rXlVELLMzRqNsMdnw8y0/W/wSmE8NlhZ8
-         Png4vdHBCigDCgToWQEczFCbSmLNbXX5r2T68rFIAVg1bokR/xTQ3Fqdv7UbO1RRSd6k
-         FjvZNk0loJ4oiln4OmEwtV2SvJoEkHk/yo/s8qInCYj95QvBHBou1JmIn4T18HtDSZuu
-         1HOA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B01qVjfF1LUa0PK52bjL02zxaBRU3eQBI1v+W/4JeHk=;
+        b=LoSD3OZaEiLCMCyYB7WH+dmOE3giL1Rn/oOCaqr8KZIUPs9oNnBAX6h7DIpplETh/t
+         Omaop/utJ7AeIZA9zdG2w3rvVFoP7cm2sHz8InOOQrKWFNZwxRR99vskLqIZWxI+akK7
+         Cn8Rjj+QMmBCU8FITbSo18rQdoyRMsKUvjpt6Ar8qszVQ65XaVmFB+VKjRWHMe854GK3
+         ASqeAGPJEm1/jq31LvxmrmHzMfPkeiCJgRdv49M55kLjJgk0flgNf6HmaNmtlpmBIPyW
+         bbCRcDAnLzrC5k0HlPPGloTl1WOPl/1JYKEDPIqkdq+OQXGt/qBiXYUzNyt2hflsRSK0
+         sD9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=MdpCrK6CHk9RaIYJNl7SmLN35pgtJyN8+9/hgHFqLKQ=;
-        b=Ns1x8rud/bk+CWe7QqLdXAOcuX9kdsJgo08eDMDUKE4yHarQLZ+MqMh7fDeK0r109Z
-         EQ+3cP0g28h5D/oZA7bRlnXVluRAYMdMVtl/ZAXL+1fsVM0DyKOOzSYLhlH1KxZHuGSG
-         WrlZC9vq5/sCgN2q5cxSyFBaM3KkWOI4vb93W0FEbyv8CLoFS79ii84DbprtuQGVCyjk
-         Q2cKQ8e/H8emsQ2YH6uFxvxUI0s3gwDqXXO4erhRnGIqY2xgMLOmJ10iHQHOzXMzW+O3
-         J1IvOVPetLaDGQ8nix8Zghp7VBdjgg6Sxltw5pjBx64X7xlgGo4PMOijmU5/vU2K0RSE
-         rsog==
-X-Gm-Message-State: APjAAAVoRj04jFl8N5etc0+vd9j8xDhIB9yKsYOzMEeBC9uz+fHpNv1/
-        OeEs1FjWY7hWaRcXViKYJvk=
-X-Google-Smtp-Source: APXvYqzF1kWAJ9G9WNc1OIfESATEjeNZ2o1PmiIJqF8bqI972+lW6COjq/HxTYGiyiuGn7KZA6B2Tw==
-X-Received: by 2002:a65:538c:: with SMTP id x12mr6679544pgq.289.1572036523879;
-        Fri, 25 Oct 2019 13:48:43 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id z63sm5004640pgb.75.2019.10.25.13.48.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 13:48:43 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 13:48:41 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v5.4-rc4
-Message-ID: <20191025204841.GA169639@dtor-ws>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B01qVjfF1LUa0PK52bjL02zxaBRU3eQBI1v+W/4JeHk=;
+        b=WtEkPP1Q/zXQnWNUAyF2K6nVgx45nSDzTZyoVEA7H6g83O9IQqJZ+CbFn972SHkrsJ
+         qdOqmIYe7COh2v8s17exATboeW52wILaZ7/TiHkSmvK+4L584sJ7PI8dNpapaVnFSsQP
+         T0HIUBhACN9FBZFKjtDKYBArIZc3CrCjiZhzeoBk7jKl7VRlmAXW+wBxdiEUnmkK2XRU
+         /Tlqthts8L+r8BcqH1iZFhsNwBWFmkDxnRfiuYJL+ammEXaFv3HhLSNgs5/UgLCsKsZ/
+         pCI2JWGYS6g/j8opMCiUEJuhZX734kI1wo4oz9RdXAH3Oi4bc9gnSjitb0ApELahOS66
+         b5jA==
+X-Gm-Message-State: APjAAAU1yyIXuIHYwYewZFvbuiH/Xs9XXwDA0txJpQgY8lyoXio7HYng
+        wymqL/oswUvdXDObwqjqwHep0gy+qo8T55Zk4negHA==
+X-Google-Smtp-Source: APXvYqzcB7+AMsKpePQsUZyUkWAMYpmk/dddGNr2g0bTzgYSUkedQgyZ3hkkauso52AIP99G7DNDWaPuxb1mAJtXqiU=
+X-Received: by 2002:a67:ffc7:: with SMTP id w7mr3154037vsq.15.1572036572738;
+ Fri, 25 Oct 2019 13:49:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191024225132.13410-1-samitolvanen@google.com> <20191024225132.13410-6-samitolvanen@google.com>
+ <20191025105643.GD40270@lakrids.cambridge.arm.com>
+In-Reply-To: <20191025105643.GD40270@lakrids.cambridge.arm.com>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Fri, 25 Oct 2019 13:49:21 -0700
+Message-ID: <CABCJKuc+XiDRdqfvjwCF7y=1wX3QO0MCUpeu4Gdcz91+nmnEAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 05/17] add support for Clang's Shadow Call Stack (SCS)
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Oct 25, 2019 at 3:56 AM Mark Rutland <mark.rutland@arm.com> wrote:
+> > +#define SCS_SIZE     1024
+>
+> I think it'd be worth a comment on how this size was chosen. IIRC this
+> empirical?
 
-Please pull from:
+Correct. I'll add a comment.
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+> > +#define SCS_END_MAGIC        0xaf0194819b1635f6UL
+>
+> Keyboard smash? ... or is there a prize for whoever figures out the
+> secret? ;)
 
-to receive updates for the input subsystem. There is a fix for st1232
-driver to properly report coordinates for 2nd and subsequent fingers
-when more than one is on the surface.
+It's a random number, so if someone figures out a secret in it,
+they'll definitely deserve a prize. :)
 
-Changelog:
----------
+> > +static inline void task_set_scs(struct task_struct *tsk, void *s)
+> > +{
+> > +     task_thread_info(tsk)->shadow_call_stack = s;
+> > +}
+>
+> This should probably be named get and set, or have:
+>
+> #define task_scs(tsk)   (task_thread_info(tsk)->shadow_call_stack)
+>
+> ... which can have a trivial implementation as NULL for the !SCS case.
 
-Dixit Parmar (1):
-      Input: st1232 - fix reporting multitouch coordinates
+Sure, sounds good.
 
-Diffstat:
---------
+> For all the trivial wrappers you can put the implementation on the same
+> line as the prototype. That makes it a bit easier to compare against the
+> prototypes on the other side of the ifdeffery.
+>
+> e.g. this lot can be:
+>
+> static inline void *task_scs(struct task_struct *tsk) { return 0; }
+> static inline void task_set_scs(struct task_struct *tsk, void *s) { }
+> static inline void scs_init(void) { }
 
- drivers/input/touchscreen/st1232.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Agreed.
 
-Thanks.
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index bcdf53125210..ae7ebe9f0586 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -94,6 +94,7 @@
+> >  #include <linux/livepatch.h>
+> >  #include <linux/thread_info.h>
+> >  #include <linux/stackleak.h>
+> > +#include <linux/scs.h>
+>
+> Nit: alphabetical order, please (this should come before stackleak.h).
 
+The includes in kernel/fork.c aren't in alphabetical order, so I just
+added this to the end here.
 
--- 
-Dmitry
+> > +     retval = scs_prepare(p, node);
+> > +     if (retval)
+> > +             goto bad_fork_cleanup_thread;
+>
+> Can we please fold scs_prepare() into scs_task_init() and do this in
+> dup_task_struct()? That way we set this up consistently in one place,
+> where we're also allocating the regular stack.
+
+Yes, that does sound cleaner. I'll change that.
+
+> > +     scs_task_reset(idle);
+>
+> I'm a bit confused by this -- please see comments below on
+> scs_task_reset().
+
+> > +static inline void *__scs_base(struct task_struct *tsk)
+> > +{
+> > +     return (void *)((uintptr_t)task_scs(tsk) & ~(SCS_SIZE - 1));
+> > +}
+>
+> We only ever assign the base to task_scs(tsk), with the current live
+> value being in a register that we don't read. Are we expecting arch code
+> to keep this up-to-date with the register value?
+>
+> I would have expected that we just leave this as the base (as we do for
+> the regular stack in the task struct), and it's down to arch code to
+> save/restore the current value where necessary.
+>
+> Am I missing some caveat with that approach?
+
+To keep the address of the currently active shadow stack out of
+memory, the arm64 implementation clears this field when it loads x18
+and saves the current value before a context switch. The generic code
+doesn't expect the arch code to necessarily do so, but does allow it.
+This requires us to use __scs_base() when accessing the base pointer
+and to reset it in idle tasks before they're reused, hence
+scs_task_reset().
+
+> > +     BUILD_BUG_ON(SCS_SIZE > PAGE_SIZE);
+>
+> It's probably worth a comment on why we rely on SCS_SIZE <= PAGE_SIZE.
+
+Ack.
+
+> > +static inline unsigned long *scs_magic(struct task_struct *tsk)
+> > +{
+> > +     return (unsigned long *)(__scs_base(tsk) + SCS_SIZE - sizeof(long));
+>
+> Slightly simpler as:
+>
+>         return (unsigned long *)(__scs_base(tsk) + SCS_SIZE) - 1;
+
+Yes, that's a bit cleaner.
+
+I'll fix these in v3. Thank you for the review!
+
+Sami
