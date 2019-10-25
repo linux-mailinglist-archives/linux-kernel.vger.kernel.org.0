@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0627AE4988
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:13:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BB28E498D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:13:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408654AbfJYLNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 07:13:45 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:44324 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404433AbfJYLNp (ORCPT
+        id S2410137AbfJYLNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 07:13:50 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:50448 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404433AbfJYLNr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 07:13:45 -0400
+        Fri, 25 Oct 2019 07:13:47 -0400
 Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id HnDi2100b5USYZQ01nDiZ5; Fri, 25 Oct 2019 13:13:43 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id HnDj210095USYZQ01nDj2M; Fri, 25 Oct 2019 13:13:45 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNxSN-0003rD-Pb; Fri, 25 Oct 2019 13:08:35 +0200
+        id 1iNxSN-0003rD-Ob; Fri, 25 Oct 2019 13:08:35 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNvpN-0006Go-9V; Fri, 25 Oct 2019 11:24:13 +0200
+        id 1iNvpi-0006IC-KD; Fri, 25 Oct 2019 11:24:34 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Andrzej Hajda <a.hajda@samsung.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
@@ -29,9 +29,9 @@ To:     Andrzej Hajda <a.hajda@samsung.com>,
         Daniel Vetter <daniel@ffwll.ch>
 Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] drm/bridge: ti-tfp410: Update drm_connector_init_with_ddc() error message
-Date:   Fri, 25 Oct 2019 11:24:11 +0200
-Message-Id: <20191025092411.24059-1-geert+renesas@glider.be>
+Subject: [PATCH v2] drm/bridge: ti-tfp410: Update drm_connector_init_with_ddc() error message
+Date:   Fri, 25 Oct 2019 11:24:33 +0200
+Message-Id: <20191025092433.24138-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
