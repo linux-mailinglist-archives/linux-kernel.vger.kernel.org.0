@@ -2,103 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B068E5708
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 01:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C14ECE5709
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 01:29:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbfJYX2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 19:28:37 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:19410 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725847AbfJYX2g (ORCPT
+        id S1726444AbfJYX3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 19:29:41 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43152 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfJYX3l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 19:28:36 -0400
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9PNNu5W012210
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 16:28:35 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=ZG/Rp0U9V1GZOvfP/+5tTW4GxOxccc3k62QOVqXPKFw=;
- b=WqnNccPHtxf/h2T43Jhgq/aMjlDc8eyeqXajd6mZqGvxeNk/wHtUIYP99KYCMc9dE7ye
- qlUZT7/cKlbgZnJlEj1UlCkniS7ZJXbVzHILjKw5FoQtwaBiC7+VI8DDz6rp1k36Y9vC
- AEHNNYpHSrtnNkfaalyYCKGwk8BhzxCpPng= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2vv7ah8w71-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 16:28:35 -0700
-Received: from 2401:db00:30:6007:face:0:1:0 (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 25 Oct 2019 16:28:34 -0700
-Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 89D70192BA24C; Fri, 25 Oct 2019 16:28:31 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Roman Gushchin <guro@fb.com>
-Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
-To:     <linux-mm@kvack.org>
-CC:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
-        Roman Gushchin <guro@fb.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH] mm: slab: make page_cgroup_ino() to recognize non-compound slab pages properly
-Date:   Fri, 25 Oct 2019 16:27:10 -0700
-Message-ID: <20191025232710.4081957-1-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Fri, 25 Oct 2019 19:29:41 -0400
+Received: by mail-qt1-f195.google.com with SMTP id t20so5747580qtr.10
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 16:29:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=QTe/mbHSIGF8oyKbKycoldd59M1YyY11WJBJiD/SUAo=;
+        b=DaB/UDJYQMh1LUc+LAjr6OOYvjQ7nXfj+AhOR/wDO/Nm5udxMuFGjNHMnaCs+Qur4C
+         5t1reY8OeD6PoiQqKJRyPurNC7CNLHl83DxsyZqDWD8bGdhTAv+MdnLBWzHHqcFw1VTc
+         ApVjWij7lLaM9Ir2Jep9LKRRrutpMWQoNIFIG000V5jN1yXz85RFRIoc71p+9CI1DUmG
+         X5worjrOfshIj+uD8m5zHBUCxgRTup2eqP6IR2bCtDkq1LnU8OXrvKCstITgQR5meD+v
+         8mI3xTGH++qS8feOShOQQ4SJcuKb51hGiDQh2tQLxsI2syBoAyIPxrxpj0REasJ49W7c
+         C+OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=QTe/mbHSIGF8oyKbKycoldd59M1YyY11WJBJiD/SUAo=;
+        b=O8S54MgFwbZay6C9D+D90lDmCVtCvGPSvK407LIVAOsX+R5cm/6OxiAFAuXq/hRs30
+         ClKGeuR+XrFmDOOxueQ/Vs2bsFhqb3mdLp3SYlbBwruvaMlV/sXSOaecPT9QY6knw1Zo
+         VNQ6nRnlPWR5K3RX6AARnfxEPywyHeyNGQPncWywS2AsDB71kFLhJi9og5jn5wtHIW5S
+         w4FsKxNxr2giegP8qUSImpXbb11tPDA3IMUilSbqUBZuYiVn8kZBOByY2EoKeu9JjFor
+         1HeIQ4qb2ecGEVKYAmh1ST/6tGPeNzO7nFhTnj6k1huCsmpGikPFCqtIDFqDehKipKmt
+         6wbg==
+X-Gm-Message-State: APjAAAU29KN5qgrLYbDb9f5udWnvL1y5dwS1arKV8Im25tx8fiJ0THRB
+        cWOAwvTxRtiBmy3sMBj+kwQ=
+X-Google-Smtp-Source: APXvYqwSbgP7CVSsJKguPWXzctIkaWdwFBC78hDo373R593Z6gMUb5X/2W2rNjBNT5TngsGpKp19yA==
+X-Received: by 2002:a0c:8b5b:: with SMTP id d27mr5989394qvc.29.1572046180069;
+        Fri, 25 Oct 2019 16:29:40 -0700 (PDT)
+Received: from cristiane-Inspiron-5420 ([131.100.148.220])
+        by smtp.gmail.com with ESMTPSA id o13sm3096434qto.96.2019.10.25.16.29.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Oct 2019 16:29:39 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 20:29:35 -0300
+From:   Cristiane Naves <cristianenavescardoso09@gmail.com>
+To:     outreachy-kernel@googlegroups.com
+Cc:     outreachy-kernel@googlegroups.com,
+        Rob Springer <rspringer@google.com>,
+        Todd Poynor <toddpoynor@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] staging: gasket: Fix lines ending with a '('
+Message-ID: <20191025232935.GA813@cristiane-Inspiron-5420>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-25_11:2019-10-25,2019-10-25 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
- phishscore=0 mlxscore=0 spamscore=0 priorityscore=1501 adultscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 impostorscore=0 suspectscore=1
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910250215
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-page_cgroup_ino() doesn't return a valid memcg pointer for non-compund
-slab pages, because it depends on PgHead AND PgSlab flags to be set
-to determine the memory cgroup from the kmem_cache.
-It's correct for compound pages, but not for generic small pages. Those
-don't have PgHead set, so it ends up returning zero.
+Fix lines ending with a '('. Issue found by checkpatch.
 
-Fix this by replacing the condition to PageSlab() && !PageTail().
-
-Before this patch:
-[root@localhost ~]# ./page-types -c /sys/fs/cgroup/user.slice/user-0.slice/user@0.service/ | grep slab
-0x0000000000000080	        38        0  _______S___________________________________	slab
-
-After this patch:
-[root@localhost ~]# ./page-types -c /sys/fs/cgroup/user.slice/user-0.slice/user@0.service/ | grep slab
-0x0000000000000080	       147        0  _______S___________________________________	slab
-
-Fixes: 4d96ba353075 ("mm: memcg/slab: stop setting page->mem_cgroup pointer for slab pages")
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Shakeel Butt <shakeelb@google.com>
+Signed-off-by: Cristiane Naves <cristianenavescardoso09@gmail.com>
 ---
- mm/memcontrol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/gasket/gasket_ioctl.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index ea085877c548..00b4188b1bed 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -476,7 +476,7 @@ ino_t page_cgroup_ino(struct page *page)
- 	unsigned long ino = 0;
+diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+index d1b3e9a..e3047d3 100644
+--- a/drivers/staging/gasket/gasket_ioctl.c
++++ b/drivers/staging/gasket/gasket_ioctl.c
+@@ -54,9 +54,9 @@ static int gasket_read_page_table_size(struct gasket_dev *gasket_dev,
+ 	ibuf.size = gasket_page_table_num_entries(
+ 		gasket_dev->page_table[ibuf.page_table_index]);
  
- 	rcu_read_lock();
--	if (PageHead(page) && PageSlab(page))
-+	if (PageSlab(page) && !PageTail(page))
- 		memcg = memcg_from_slab_page(page);
- 	else
- 		memcg = READ_ONCE(page->mem_cgroup);
+-	trace_gasket_ioctl_page_table_data(
+-		ibuf.page_table_index, ibuf.size, ibuf.host_address,
+-		ibuf.device_address);
++	trace_gasket_ioctl_page_table_data(ibuf.page_table_index, ibuf.size,
++					   ibuf.host_address,
++					   ibuf.device_address);
+ 
+ 	if (copy_to_user(argp, &ibuf, sizeof(ibuf)))
+ 		return -EFAULT;
+@@ -101,9 +101,9 @@ static int gasket_partition_page_table(struct gasket_dev *gasket_dev,
+ 	if (copy_from_user(&ibuf, argp, sizeof(struct gasket_page_table_ioctl)))
+ 		return -EFAULT;
+ 
+-	trace_gasket_ioctl_page_table_data(
+-		ibuf.page_table_index, ibuf.size, ibuf.host_address,
+-		ibuf.device_address);
++	trace_gasket_ioctl_page_table_data(ibuf.page_table_index, ibuf.size,
++					   ibuf.host_address,
++					   ibuf.device_address);
+ 
+ 	if (ibuf.page_table_index >= gasket_dev->num_page_tables)
+ 		return -EFAULT;
 -- 
-2.17.1
+2.7.4
 
