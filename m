@@ -2,93 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDD5CE4EE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B270E4EEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:25:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394691AbfJYOZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 10:25:12 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:44110 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393877AbfJYOZM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 10:25:12 -0400
-Received: by mail-yw1-f65.google.com with SMTP id i123so808944ywe.11
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 07:25:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=vI0RylTKBYG4Ui3+hV7HofEEj4gnQQcQyhXuTz+fkr3dPVg//+mka+L75dkg3FsHzQ
-         1NnIbvCLNtW6YAt1AANMYjOud1MaiMLWyppvfSFyZ8kKlsUMWs8R2R0J+Kk8Iak8oEZh
-         3vmhnAUK5ulK6r0OAb92lu1MD8Ime0j/3LH0bmWIQLy19BCnHrlQ89D0yYOrL14sVeAR
-         /iQlBynZG1Oz7ZKjqY8dwZ7BP4rWJvFB6KFuz2zIsMvzYXgYeGVVWEoNAtJS+3gUSZcE
-         Acdiki0LnANqomJZ1aTxOSdA8+byKv/PrePdZMG10Os062OFHpHECM2unRYbPc+4tES9
-         DnNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=CBh6DMxU/9itExjt/UTNoe2XPLTZWGoClW/b5DX/QyAW/+ofswYaVSBhqqnJEIlhSd
-         PF4QWAunXQtOEbAjCimMWw6Dfl2YcsUSTk16+sNuvHBKIZE7686uOmpomo+SUhRhSTbz
-         IqmWY7F6LUzBkTQ+Y63fnkFUhMhVDQkpAGQuavErsfsK927JDcOrWzpBSXlOSSvkhNQS
-         jmRl6DV4e4lS8OQXlfE8k6QwgoiLmXU2TdOaYSZCtbNSJ+SchEKx0P4zKlkFNVIh/oDD
-         1Tu7C9cR2McTdnNMxVvbQ9imZhA/x7qsSxu4MHc4eJo9+JbZphPliFI/na36UQGucpHk
-         zLcA==
-X-Gm-Message-State: APjAAAVvE8JJ0auyeu61ZUw9j7Ao6w3XCWJicKA7waeGSAI1xlx59BE4
-        iZ5ADrWCygkXbKYNnvVlLAPADTwZ/yzibX/2uQ0=
-X-Google-Smtp-Source: APXvYqydmYtNlBy85BKjMUUzit3cBRdCruVaiuMBw/ykMUWJHQStfbTN4SNNTTyEDep04Y5KVgIt6kN2KoD+lSTljf4=
-X-Received: by 2002:a81:2f0b:: with SMTP id v11mr2693884ywv.483.1572013511554;
- Fri, 25 Oct 2019 07:25:11 -0700 (PDT)
+        id S2394925AbfJYOZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 10:25:38 -0400
+Received: from smtp3-1.goneo.de ([85.220.129.38]:52047 "EHLO smtp3-1.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393877AbfJYOZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 10:25:38 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp3.goneo.de (Postfix) with ESMTP id 7296923FF75;
+        Fri, 25 Oct 2019 16:25:34 +0200 (CEST)
+X-Virus-Scanned: by goneo
+X-Spam-Flag: NO
+X-Spam-Score: -3.012
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.012 tagged_above=-999 tests=[ALL_TRUSTED=-1,
+        AWL=-0.112, BAYES_00=-1.9] autolearn=ham
+Received: from smtp3.goneo.de ([127.0.0.1])
+        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id eyTABLuGukdQ; Fri, 25 Oct 2019 16:25:33 +0200 (CEST)
+Received: from lem-wkst-02.lemonage.de. (hq.lemonage.de [87.138.178.34])
+        by smtp3.goneo.de (Postfix) with ESMTPA id 0C88123F192;
+        Fri, 25 Oct 2019 16:25:31 +0200 (CEST)
+From:   Lars Poeschel <poeschel@lemonage.de>
+Cc:     Lars Poeschel <poeschel@lemonage.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jilayne Lovejoy <opensource@jilayne.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Steve Winslow <swinslow@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>,
+        Allison Randal <allison@lohutok.net>,
+        Johan Hovold <johan@kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Subject: [PATCH v10 0/7] nfc: pn533: add uart phy driver
+Date:   Fri, 25 Oct 2019 16:25:14 +0200
+Message-Id: <20191025142521.22695-1-poeschel@lemonage.de>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Received: by 2002:a25:7797:0:0:0:0:0 with HTTP; Fri, 25 Oct 2019 07:25:10
- -0700 (PDT)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <moordavis0002@gmail.com>
-Date:   Fri, 25 Oct 2019 16:25:10 +0200
-Message-ID: <CALTCcCwzwTW0ibP+yj-hWUxwYGAhRtfUyOWO4a8wiSQqnGYnVw@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo
+The purpose of this patch series is to add a uart phy driver to the
+pn533 nfc driver.
+It first changes the dt strings and docs. The dt compatible strings
+need to change, because I would add "pn532-uart" to the already
+existing "pn533-i2c" one. These two are now unified into just
+"pn532". Then the neccessary changes to the pn533 core driver are
+made. Then the uart phy is added.
+As the pn532 chip supports a autopoll, I wanted to use this instead
+of the software poll loop in the pn533 core driver. It is added and
+activated by the last to patches.
+The way to add the autopoll later in seperate patches is chosen, to
+show, that the uart phy driver can also work with the software poll
+loop, if someone needs that for some reason.
 
-Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8,5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+Cc: Lars Poeschel <poeschel@lemonage.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jilayne Lovejoy <opensource@jilayne.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Cc: Steve Winslow <swinslow@gmail.com>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Allison Randal <allison@lohutok.net>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Simon Horman <horms@verge.net.au>
 
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: eddywilliam0002gmail.com
+Lars Poeschel (7):
+  nfc: pn533: i2c: "pn532" as dt compatible string
+  nfc: pn532: Add uart phy docs and rename it
+  nfc: pn533: Add dev_up/dev_down hooks to phy_ops
+  nfc: pn533: Split pn533 init & nfc_register
+  nfc: pn533: add UART phy driver
+  nfc: pn533: Add autopoll capability
+  nfc: pn532_uart: Make use of pn532 autopoll
 
-Vielen Dank im Voraus,
-Mr. Eddy William,
+ .../net/nfc/{pn533-i2c.txt => pn532.txt}      |  25 +-
+ drivers/nfc/pn533/Kconfig                     |  11 +
+ drivers/nfc/pn533/Makefile                    |   2 +
+ drivers/nfc/pn533/i2c.c                       |  32 +-
+ drivers/nfc/pn533/pn533.c                     | 281 +++++++++++++--
+ drivers/nfc/pn533/pn533.h                     |  40 ++-
+ drivers/nfc/pn533/uart.c                      | 323 ++++++++++++++++++
+ drivers/nfc/pn533/usb.c                       |  16 +-
+ 8 files changed, 667 insertions(+), 63 deletions(-)
+ rename Documentation/devicetree/bindings/net/nfc/{pn533-i2c.txt => pn532.txt} (42%)
+ create mode 100644 drivers/nfc/pn533/uart.c
 
+-- 
+2.23.0
 
-
-Hello
-
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0002gmail.=
-com
-
-Many thanks in advance,
-Mr.Eddy William,
