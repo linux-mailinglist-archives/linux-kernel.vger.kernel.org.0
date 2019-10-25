@@ -2,91 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 852F3E508F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 17:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7BBAE509B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 17:57:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395546AbfJYPzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 11:55:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59716 "EHLO mail.kernel.org"
+        id S2502441AbfJYP5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 11:57:14 -0400
+Received: from foss.arm.com ([217.140.110.172]:42634 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388846AbfJYPzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 11:55:19 -0400
-Received: from linux-8ccs (ip5f5adbc4.dynamic.kabel-deutschland.de [95.90.219.196])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5365B21D82;
-        Fri, 25 Oct 2019 15:55:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572018918;
-        bh=Nw4tcBEy3DU9heHAkhjNFAQuKkoY5IaSyDmY66cQMCo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=chgH956Bw7NG2P8+Xa+XBs5lyvvGU5pYJ5dZbXv2GbxqGQbY+PZTHJ2Z5C9fyOt68
-         f+b4GTMvps70lC4QGUB29wPxTtCELllUERclYCjUcTygR2SESPoKZwUXsfUJf+Asqy
-         mPghncrIY8uPkb+W8Cg5qWekXDHhaxHS8u4DGsds=
-Date:   Fri, 25 Oct 2019 17:55:13 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthias Maennich <maennich@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Modules fixes for v5.4-rc5
-Message-ID: <20191025155512.GA30503@linux-8ccs>
+        id S2388136AbfJYP5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 11:57:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C30B328;
+        Fri, 25 Oct 2019 08:57:13 -0700 (PDT)
+Received: from C02TF0J2HF1T.local (C02TF0J2HF1T.cambridge.arm.com [10.1.26.186])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 78F003F71A;
+        Fri, 25 Oct 2019 08:57:10 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 16:57:08 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Steven Price <steven.price@arm.com>
+Cc:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        linux-doc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        James Morse <james.morse@arm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>
+Subject: Re: [PATCH v7 10/10] arm64: Retrieve stolen time as paravirtualized
+ guest
+Message-ID: <20191025155708.GB999@C02TF0J2HF1T.local>
+References: <20191021152823.14882-1-steven.price@arm.com>
+ <20191021152823.14882-11-steven.price@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191021152823.14882-11-steven.price@arm.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, Oct 21, 2019 at 04:28:23PM +0100, Steven Price wrote:
+> Enable paravirtualization features when running under a hypervisor
+> supporting the PV_TIME_ST hypercall.
+> 
+> For each (v)CPU, we ask the hypervisor for the location of a shared
+> page which the hypervisor will use to report stolen time to us. We set
+> pv_time_ops to the stolen time function which simply reads the stolen
+> value from the shared page for a VCPU. We guarantee single-copy
+> atomicity using READ_ONCE which means we can also read the stolen
+> time for another VCPU than the currently running one while it is
+> potentially being updated by the hypervisor.
+> 
+> Signed-off-by: Steven Price <steven.price@arm.com>
 
-Please pull this small set of fixes for v5.4-rc5. As usual, details
-can be found in the signed tag.
-
-Thanks!
-
-Jessica
-
----
-
-The following changes since commit 4f5cafb5cb8471e54afdc9054d973535614f7675:
-
-  Linux 5.4-rc3 (2019-10-13 16:37:36 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git tags/modules-for-v5.4-rc5
-
-for you to fetch changes up to 09684950050be09ed6cd591e6fbf0c71d3473237:
-
-  scripts/nsdeps: use alternative sed delimiter (2019-10-23 11:21:06 +0200)
-
-----------------------------------------------------------------
-Modules fixes for v5.4-rc5
-
-- Revert __ksymtab_$namespace.$symbol naming scheme back to
-  __ksymtab_$symbol, as it was causing issues with depmod. Instead,
-  have modpost extract a symbol's namespace from __kstrtabns and
-  __ksymtab_strings.
-
-- Fix `make nsdeps` for out of tree kernel builds (make O=...) caused by
-  unescaped '/'. Use a different sed delimiter to avoid this problem.
-
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
-
-----------------------------------------------------------------
-Jessica Yu (1):
-      scripts/nsdeps: use alternative sed delimiter
-
-Matthias Maennich (3):
-      modpost: delegate updating namespaces to separate function
-      modpost: make updating the symbol namespace explicit
-      symbol namespaces: revert to previous __ksymtab name scheme
-
- include/linux/export.h | 14 +++++-------
- scripts/mod/modpost.c  | 59 ++++++++++++++++++++++++++++++++++----------------
- scripts/mod/modpost.h  |  1 +
- scripts/nsdeps         |  2 +-
- 4 files changed, 47 insertions(+), 29 deletions(-)
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
