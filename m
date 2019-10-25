@@ -2,128 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E15A8E47C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2606DE47CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:50:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439208AbfJYJth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 05:49:37 -0400
-Received: from foss.arm.com ([217.140.110.172]:38030 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439180AbfJYJth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 05:49:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9075628;
-        Fri, 25 Oct 2019 02:49:36 -0700 (PDT)
-Received: from [10.1.194.43] (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 485953F71F;
-        Fri, 25 Oct 2019 02:49:35 -0700 (PDT)
-Subject: Re: [RESEND PATCH v4] drm: Don't free jobs in
- wait_event_interruptible()
-To:     Christian Gmeiner <christian.gmeiner@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Erico Nunes <nunes.erico@gmail.com>
-References: <20191024162424.38548-1-steven.price@arm.com>
- <CAH9NwWdviH0gohPxZY97izenbSDnbQCL4kLeANg7UeCR7u1UUw@mail.gmail.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <d703ad9c-8aca-ca29-5727-d3e2ddad62bf@arm.com>
-Date:   Fri, 25 Oct 2019 10:49:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2408871AbfJYJuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 05:50:12 -0400
+Received: from mout-p-102.mailbox.org ([80.241.56.152]:53530 "EHLO
+        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407918AbfJYJuL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 05:50:11 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 46zzqj258lzKmZ4;
+        Fri, 25 Oct 2019 11:50:09 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id TLtJwWbBoCxd; Fri, 25 Oct 2019 11:50:05 +0200 (CEST)
+Date:   Fri, 25 Oct 2019 20:49:56 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Christian Brauner <christian@brauner.io>,
+        Linux API <linux-api@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: clone3() example code
+Message-ID: <20191025094956.hvr44v2lbfxf7dfs@yavin.dot.cyphar.com>
+References: <CAKgNAkgKX1Z6Uns3pAvXe-JMSmWqo2PrqeoS65aEriZsV35QmA@mail.gmail.com>
+ <20191025084142.jpwypkyczehylhgv@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <CAH9NwWdviH0gohPxZY97izenbSDnbQCL4kLeANg7UeCR7u1UUw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qfxueoggiia3z6jh"
+Content-Disposition: inline
+In-Reply-To: <20191025084142.jpwypkyczehylhgv@wittgenstein>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/10/2019 10:43, Christian Gmeiner wrote:
-> Am Do., 24. Okt. 2019 um 18:25 Uhr schrieb Steven Price <steven.price@arm.com>:
->>
->> drm_sched_cleanup_jobs() attempts to free finished jobs, however because
->> it is called as the condition of wait_event_interruptible() it must not
->> sleep. Unfortuantly some free callbacks (notibly for Panfrost) do sleep.
->>
->> Instead let's rename drm_sched_cleanup_jobs() to
->> drm_sched_get_cleanup_job() and simply return a job for processing if
->> there is one. The caller can then call the free_job() callback outside
->> the wait_event_interruptible() where sleeping is possible before
->> re-checking and returning to sleep if necessary.
->>
->> Signed-off-by: Steven Price <steven.price@arm.com>
-> 
-> Tested-by: Christian Gmeiner <christian.gmeiner@gmail.com>
-> 
-> Without this patch I get the following warning:
 
-Thanks, if you've got an (easily) reproducible case, can you check which
-commit this fixes. I *think*:
+--qfxueoggiia3z6jh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 5918045c4ed4 ("drm/scheduler: rework job destruction")
+On 2019-10-25, Christian Brauner <christian.brauner@ubuntu.com> wrote:
+> #define ptr_to_u64(ptr) ((__u64)((uintptr_t)(ptr)))
+>=20
+> int main(int argc, char *argv[])
+> {
+> 	int pidfd =3D -1;
+> 	pid_t parent_tid =3D -1, pid =3D -1;
+> 	struct clone_args args =3D {0};
+>=20
+> 	args.parent_tid =3D ptr_to_u64(&parent_tid); /* CLONE_PARENT_SETTID */
+> 	args.pidfd =3D ptr_to_u64(&pidfd); /* CLONE_PIDFD */
+> 	args.flags =3D CLONE_PIDFD | CLONE_PARENT_SETTID;
+> 	args.exit_signal =3D SIGCHLD;
+>=20
+> 	pid =3D sys_clone3(&args);
 
-But I haven't got a reliable way of reproducing this (with Panfrost).
+I'd suggest that
 
-Thanks,
+	struct clone_args args =3D {
+		.flags =3D CLONE_PIDFD | CLONE_PARENT_SETTID,
+		.parent_tid =3D ptr_to_u64(&parent_tid), /* CLONE_PARENT_SETTID */
+		.pidfd =3D ptr_to_u64(&pidfd),           /* CLONE_PIDFD */
+		.exit_signal =3D SIGCHLD,
+	};
 
-Steve
+or alternatively
 
-> 
-> [  242.935254] ------------[ cut here ]------------
-> [  242.940044] WARNING: CPU: 2 PID: 109 at kernel/sched/core.c:6731
-> __might_sleep+0x94/0xa8
-> [  242.948242] do not call blocking ops when !TASK_RUNNING; state=1
-> set at [<38751e36>] prepare_to_wait_event+0xa8/0x180
-> [  242.958923] Modules linked in:
-> [  242.962010] CPU: 2 PID: 109 Comm: 130000.gpu Not tainted 5.4.0-rc4 #10
-> [  242.968551] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-> [  242.975112] [<c0113160>] (unwind_backtrace) from [<c010cf34>]
-> (show_stack+0x10/0x14)
-> [  242.982879] [<c010cf34>] (show_stack) from [<c0c065ec>]
-> (dump_stack+0xd8/0x110)
-> [  242.990213] [<c0c065ec>] (dump_stack) from [<c0128adc>] (__warn+0xc0/0x10c)
-> [  242.997194] [<c0128adc>] (__warn) from [<c0128f10>]
-> (warn_slowpath_fmt+0x8c/0xb8)
-> [  243.004697] [<c0128f10>] (warn_slowpath_fmt) from [<c01598bc>]
-> (__might_sleep+0x94/0xa8)
-> [  243.012810] [<c01598bc>] (__might_sleep) from [<c0c246e4>]
-> (__mutex_lock+0x38/0xa1c)
-> [  243.020571] [<c0c246e4>] (__mutex_lock) from [<c0c250e4>]
-> (mutex_lock_nested+0x1c/0x24)
-> [  243.028600] [<c0c250e4>] (mutex_lock_nested) from [<c064f020>]
-> (etnaviv_cmdbuf_free+0x40/0x8c)
-> [  243.037233] [<c064f020>] (etnaviv_cmdbuf_free) from [<c06503a0>]
-> (etnaviv_submit_put+0x38/0x1c8)
-> [  243.046042] [<c06503a0>] (etnaviv_submit_put) from [<c064177c>]
-> (drm_sched_cleanup_jobs+0xc8/0xec)
-> [  243.055021] [<c064177c>] (drm_sched_cleanup_jobs) from [<c06419b4>]
-> (drm_sched_main+0x214/0x298)
-> [  243.063826] [<c06419b4>] (drm_sched_main) from [<c0152890>]
-> (kthread+0x140/0x158)
-> [  243.071329] [<c0152890>] (kthread) from [<c01010b4>]
-> (ret_from_fork+0x14/0x20)
-> [  243.078563] Exception stack(0xec691fb0 to 0xec691ff8)
-> [  243.083630] 1fa0:                                     00000000
-> 00000000 00000000 00000000
-> [  243.091822] 1fc0: 00000000 00000000 00000000 00000000 00000000
-> 00000000 00000000 00000000
-> [  243.100013] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> [  243.106795] irq event stamp: 321
-> [  243.110098] hardirqs last  enabled at (339): [<c0193854>]
-> console_unlock+0x430/0x620
-> [  243.117864] hardirqs last disabled at (346): [<c01934cc>]
-> console_unlock+0xa8/0x620
-> [  243.125592] softirqs last  enabled at (362): [<c01024e0>]
-> __do_softirq+0x2c0/0x590
-> [  243.133232] softirqs last disabled at (373): [<c0130ed0>]
-> irq_exit+0x100/0x18c
-> [  243.140517] ---[ end trace 8afcd79e9e2725b2 ]---
-> 
+	pid =3D sys_clone3(&(struct clone_args) {
+		.flags =3D CLONE_PIDFD | CLONE_PARENT_SETTID,
+		.parent_tid =3D ptr_to_u64(&parent_tid), /* CLONE_PARENT_SETTID */
+		.pidfd =3D ptr_to_u64(&pidfd),           /* CLONE_PIDFD */
+		.exit_signal =3D SIGCHLD,
+	});
 
+are easier to read.
+
+> 	if (pid < 0) {
+> 		fprintf(stderr, "%s - Failed to create new process\n", strerror(errno));
+> 		exit(EXIT_FAILURE);
+> 	}
+>=20
+> 	if (pid =3D=3D 0) {
+> 		printf("Child process with pid %d\n", getpid());
+> 		exit(EXIT_SUCCESS);
+> 	}
+>=20
+> 	printf("Parent process received child's pid %d as return value\n", pid);
+> 	printf("Parent process received child's pidfd %d\n", *(int *)args.pidfd);
+> 	printf("Parent process received child's pid %d as return argument\n",
+> 	       *(pid_t *)args.parent_tid);
+>=20
+> 	if (0) {
+> 		if (waitid(P_ALL, pid, NULL, 0) =3D=3D 0) {
+> 			fprintf(stderr, "Managed to wait on CLONE_NO_WAITALL process with wait=
+id(P_ALL)\n");
+> 			exit(EXIT_FAILURE);
+> 		}
+> 		printf("Child process %d requested CLONE_NO_WAITALL\n", pid);
+> 	} else {
+> 		printf("Child process %d did not request CLONE_NO_WAITALL\n", pid);
+> 	}
+>=20
+> 	if (wait_for_pid(pid))
+> 		exit(EXIT_FAILURE);
+>=20
+> 	if (pid !=3D *(pid_t *)args.parent_tid)
+> 		exit(EXIT_FAILURE);
+>=20
+> 	close(pidfd);
+>=20
+> 	return 0;
+> }
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--qfxueoggiia3z6jh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXbLFQAAKCRCdlLljIbnQ
+El81AP0Zq9hqMvdLZ606cwcrvwrlF1Dz1SNfa3Qr2ixC8xKfigD+OBZQIMDUhECt
+fIXlzzzhuKElKrMxiI6ydgtkfRPGJgA=
+=Ka/u
+-----END PGP SIGNATURE-----
+
+--qfxueoggiia3z6jh--
