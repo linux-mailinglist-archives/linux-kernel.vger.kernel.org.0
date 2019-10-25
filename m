@@ -2,141 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FEE9E4A9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB53CE4AA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:00:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502460AbfJYL6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 07:58:35 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43726 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393594AbfJYL6e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 07:58:34 -0400
-Received: by mail-qk1-f196.google.com with SMTP id a194so1435440qkg.10
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 04:58:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x/CO042MKi/LDA0//fO8T8qW/x60c6gkFFIpJRb5i00=;
-        b=Vulhdg5+bi6395aeNLgqwghz4EgLOcJsEI/3HMat2oFGMbAlTAIqYOokEpLLn/56bT
-         oItkzIybVV+1L6fCOpOC/fdaFNHFpx23IV5vbo0coydsWc/Hm0eYsQEyBfZXWEAOYqeE
-         HicdmU/loEWdtC6st19ARI4BPGcPV3K0QNkOW3gjEDRMI39IbhmkCXF6oEk2oF79A0MH
-         SUeksEcorpIMghlhNHjO3OKPt5Z+cn2DvMQ0XvADz4AYmLvu1jPXIbkyU2duRyMCgVg1
-         5MiuJLbd1M3m/Vbe9lhdcbcoL6YzUH+AJJ2NcaHJPeZXUA1WFACSeTycHATL6O00qjk6
-         49jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x/CO042MKi/LDA0//fO8T8qW/x60c6gkFFIpJRb5i00=;
-        b=lBf0zff7g7AdRtZdsOP6eFLUd2LpUZkjh4HpydzKZZsS6XoAOd+V63asmO9ydpV31z
-         9BpHV4kIwjvT1GNKqLaL+2OHGQnrHAgIYc9lr3oxAvR/8djxXoS9yxTsnTL6Da55pqGz
-         4xhOOjfHtQry7xgrrexpUJwT4Dfo94ma5+7Ur3JBk1FtZvDHdZJXNGWUf0FQ1FF2b94X
-         zEcnmJnliwkGNlqSGUaVY/0fwybkpJivdLqDyhd7JvDigsoXBuIWc12sEMO7cwQbKTyH
-         iKBHQAJbEP7rkP8gXV3P+gYhfaV18YjnyGYKsfgx85OVoGcSs7L7DrX1S3iOVSV99An1
-         L0GQ==
-X-Gm-Message-State: APjAAAWNWfp4jHKGomeB6KXiKRva2MVwY6SB6g6M0Ac1folUAfmv9pI+
-        IelVUOZj8wlkGNnPY6tp/S9Y4TsPk0s00GVywabX9Q==
-X-Google-Smtp-Source: APXvYqwkabvJ1Z+Z6wGHKHEz2XSrHtVQfHPiyVmo2GjLPCCQJh5nhVsd3QSNFn2Ib30TbjvK3F/GQy52IW7MFslMkvg=
-X-Received: by 2002:a37:4a87:: with SMTP id x129mr2363244qka.43.1572004712309;
- Fri, 25 Oct 2019 04:58:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <000000000000fbbe1e0595bac322@google.com>
-In-Reply-To: <000000000000fbbe1e0595bac322@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 25 Oct 2019 13:58:21 +0200
-Message-ID: <CACT4Y+Y946C-kyiBSZtyKY7PU4qxrysOfukd42--pXdyTRyjbw@mail.gmail.com>
-Subject: Re: KASAN: null-ptr-deref Write in io_wq_cancel_all
-To:     syzbot <syzbot+d958a65633ea70280b23@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>
+        id S2502537AbfJYMAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:00:20 -0400
+Received: from mout.gmx.net ([212.227.17.22]:37445 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393571AbfJYMAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 08:00:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1572004802;
+        bh=QLKXtV17sfPFmWYlxFIwH+LjXFG47KnZbF1kx/5IACU=;
+        h=X-UI-Sender-Class:Subject:From:Reply-To:To:Cc:Date:In-Reply-To:
+         References;
+        b=d7JuN3VWX5OlemphcXkYhq7uaMIighoycPKHKdXiWTk5JI4B8v9AXTuDRvo/+sycG
+         xmSUGW6zSglxoXRlL7n+TQEPh6mhvV7/dW5F3zHy9B6EkpNGFXseCOi4IJ5CHzLE+M
+         Zpa/dz9gAerPE8mu6ReMncCR9l93tvl0TDAorZWA=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from bear.fritz.box ([80.128.101.49]) by mail.gmx.com (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MN5if-1igsYZ2xpF-00J1bu; Fri, 25
+ Oct 2019 14:00:02 +0200
+Message-ID: <eab6798a6081fba94353be71681fcd8c7dcf8011.camel@gmx.de>
+Subject: Re: mlockall(MCL_CURRENT) blocking infinitely
+From:   Robert Stupp <snazy@gmx.de>
+Reply-To: snazy@snazy.de
+To:     Michal Hocko <mhocko@kernel.org>, snazy@snazy.de
+Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>
+Date:   Fri, 25 Oct 2019 13:59:59 +0200
+In-Reply-To: <20191025115038.GF17610@dhcp22.suse.cz>
+References: <4576b336-66e6-e2bb-cd6a-51300ed74ab8@snazy.de>
+         <b8ff71f5-2d9c-7ebb-d621-017d4b9bc932@infradead.org>
+         <20191025092143.GE658@dhcp22.suse.cz>
+         <70393308155182714dcb7485fdd6025c1fa59421.camel@gmx.de>
+         <20191025114633.GE17610@dhcp22.suse.cz>
+         <20191025115038.GF17610@dhcp22.suse.cz>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:L2t+JTSwqitjznGbUvYHd13raRoRwOPCm3kUjC2Vlflm80ujit3
+ wY1czjQ6GvrAu7Bq1SX3fPBsVf3AtTjd021mjCSEZj2mo1rBBXgHlO5qiY43ZbUKCdNmHSL
+ WueQLkLIm+6EUTuxZmnj74oTJ/2SAeOIGqYDHQ6Qoer49jdaPLWk0mjrSODiZv0UoulIWI1
+ MKDYU/7rSP19+ArJ1/svA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:caOO7iEICsk=:Z99ZqXlGBXrIGF+94jMRzE
+ McA/2bHBx1Gk6U1swxRMuZFFJLMcaN3mnjZoEM6jnRdhrMBb7gXNhWX/A4cPCz9TwI/jIxmr+
+ bQeRd0QcTfRQqWtthrFx3rH5Mp477tk0YYZinCLdwSfKhx1bWMPHsHbpOielVSEhX04O14Pt8
+ zruNAK/H7QxErDSfyizZclVljNJYh3NHCHCzpBLJrsIxTpiCT5n51+R9Yjd50FaKgvRqA9AFF
+ ogNfa0DAZCerjSBs4NKIe/B//y1MVCMCzXk1Nwdsft25tj5VOV28OBf0Gh8+SrH8pZ5XlJ6kP
+ 2DQl7V4st3YUov0UvKcGzN93fcUEon07kAPNlqkvHJ/gCwUc9sV3mUsvf/YR+nZnYy3Ov5IRE
+ fQVcWHQRt/5dbJ5zQAQuZREap4l1QQp3EpT23NLHGLx/DhVC/JwcAxWROuQVHaYGgEAO9fMZn
+ q5YuHzFsDMazzHyAo57fjEIsFOZLkVtEAAUyhI1TEKZjHq/OBIcX9BSTNM41msK66F7M2ElpE
+ PZ6FoStR3vCsW8qW0S9+HdPPyTXRPcNy6lrROw9J+IrhdvFukRCjrSEzW0iCLlkr9X5JQGKDE
+ BPO98yhwNdTQhsxumUFU9fJ6K814+btUj7IPZRK08mFUf54o2rNDK/m1IJapeEj6UpSR0zAx+
+ eOVzn4vuv3zUpZmOC+vwYM209QE6DISHVb8zJ5b0aIPq2hU1Qz/i8b6FIfmRU87dzFDxn3BDK
+ MiDwkB/AHtxDe+akT/ROj5PQZ6IohBBruv9q4cYvpXV5c9FH0u3I6pApr36WrUUo3j0+8bfrA
+ TUwW3QFalvQFnO5+hvJmIGl2SnJHlZBW+x+DDpE+mCZsMnU5dxE7f3opng/u2EcTU9ePC+ZOw
+ qoWmztI/4DcPyucM7jAfJjVKkvIO8z7/g8kkXiP1vtj92VvlZaMN27YUvl8s5+n64z4MKruKQ
+ UqpMGm6Yxg0TZBuq0fA5jMqbZmwSnrT+VWHEefwUP3So1/yEE7guUCd/46Sa1Tif2BKG8DbDI
+ KcgoSJyOBlxOMKtv8ruvbwvcDPdE1kRqPh5Vnd4M6hrT5/s+EpHwmIkFJXNosZz3odFf+tXaw
+ 9Am7bspInS9T+lbbJlKs6I3uVU5+pJY5WQ8U785EIrr8xim+vQN+AmX6HGpIwVsOyS7Ybzj1b
+ 0arE3d+3PBoU4tZMJZ+iW44NvQLK6E7L1eYy/xGIJbZA1nkDTq8dharjDot/J9j5l2RPQZqPc
+ NCXdBq+YqEeUIsmEepoWj6QT1su1nkBPO5NK9bA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 1:51 PM syzbot
-<syzbot+d958a65633ea70280b23@syzkaller.appspotmail.com> wrote:
+On Fri, 2019-10-25 at 13:50 +0200, Michal Hocko wrote:
+> On Fri 25-10-19 13:46:33, Michal Hocko wrote:
+> > On Fri 25-10-19 13:02:23, Robert Stupp wrote:
+> > > On Fri, 2019-10-25 at 11:21 +0200, Michal Hocko wrote:
+> > > > On Thu 24-10-19 16:34:46, Randy Dunlap wrote:
+> > > > > [adding linux-mm + people]
+> > > > >
+> > > > > On 10/24/19 12:36 AM, Robert Stupp wrote:
+> > > > > > Hi guys,
+> > > > > >
+> > > > > > I've got an issue with `mlockall(MCL_CURRENT)` after
+> > > > > > upgrading
+> > > > > > Ubuntu 19.04 to 19.10 - i.e. kernel version change from
+> > > > > > 5.0.x to
+> > > > > > 5.3.x.
+> > > > > >
+> > > > > > The following simple program hangs forever with one CPU
+> > > > > > running
+> > > > > > at 100% (kernel):
+> > > >
+> > > > Can you capture everal snapshots of proc/$(pidof
+> > > > $YOURTASK)/stack
+> > > > while
+> > > > this is happening?
 >
-> Hello,
+> Btw. I have tested
+> $ cat test_mlockall.c
+> #include <stdio.h>
+> #include <sys/mman.h>
+> int main(char** argv) {
+> 	printf("Before mlockall(MCL_CURRENT|MCL_FUTURE)\n");
+> 	// works in 5.0
+> 	// hangs forever w/ 5.1 and newer
+> 	int e =3D mlockall(MCL_CURRENT|MCL_FUTURE);
+> 	printf("After mlockall(MCL_CURRENT|MCL_FUTURE) %d\n", e);
+> }
 >
-> syzbot found the following crash on:
->
-> HEAD commit:    139c2d13 Add linux-next specific files for 20191025
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17ab5a70e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=28fd7a693df38d29
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d958a65633ea70280b23
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+d958a65633ea70280b23@syzkaller.appspotmail.com
+> $./test_mlockall
+> Before mlockall(MCL_CURRENT|MCL_FUTURE)
+> After mlockall(MCL_CURRENT|MCL_FUTURE) 0
 
-+Jens
+I suspect, that it's something that's "special" on my machine. But I've
+got no clue what that might be. Do you think it makes sense to try with
+all the spectre/meltdown mitigations disabled? Or SMT disabled?
 
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in set_bit
-> include/asm-generic/bitops-instrumented.h:28 [inline]
-> BUG: KASAN: null-ptr-deref in io_wq_cancel_all+0x28/0x2a0 fs/io-wq.c:574
-> Write of size 8 at addr 0000000000000004 by task syz-executor.5/17477
->
-> CPU: 1 PID: 17477 Comm: syz-executor.5 Not tainted 5.4.0-rc4-next-20191025
-> #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->   __kasan_report.cold+0x5/0x41 mm/kasan/report.c:510
->   kasan_report+0x12/0x20 mm/kasan/common.c:634
->   check_memory_region_inline mm/kasan/generic.c:185 [inline]
->   check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
->   __kasan_check_write+0x14/0x20 mm/kasan/common.c:98
->   set_bit include/asm-generic/bitops-instrumented.h:28 [inline]
->   io_wq_cancel_all+0x28/0x2a0 fs/io-wq.c:574
->   io_ring_ctx_wait_and_kill+0x1e2/0x710 fs/io_uring.c:3679
->   io_uring_release+0x42/0x50 fs/io_uring.c:3691
->   __fput+0x2ff/0x890 fs/file_table.c:280
->   ____fput+0x16/0x20 fs/file_table.c:313
->   task_work_run+0x145/0x1c0 kernel/task_work.c:113
->   exit_task_work include/linux/task_work.h:22 [inline]
->   do_exit+0x904/0x2e60 kernel/exit.c:817
->   do_group_exit+0x135/0x360 kernel/exit.c:921
->   get_signal+0x47c/0x24f0 kernel/signal.c:2734
->   do_signal+0x87/0x1700 arch/x86/kernel/signal.c:815
->   exit_to_usermode_loop+0x286/0x380 arch/x86/entry/common.c:159
->   prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
->   syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
->   do_syscall_64+0x65f/0x760 arch/x86/entry/common.c:300
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x459ef9
-> Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f7129716c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> RAX: 0000000000000005 RBX: 0000000000000002 RCX: 0000000000459ef9
-> RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000ebf
-> RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f71297176d4
-> R13: 00000000004c14ae R14: 00000000004d4c68 R15: 00000000ffffffff
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000fbbe1e0595bac322%40google.com.
