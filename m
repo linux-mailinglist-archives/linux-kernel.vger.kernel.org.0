@@ -2,119 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A17BBE4C8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFEFAE4C82
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:42:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440422AbfJYNnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 09:43:31 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:56345 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbfJYNna (ORCPT
+        id S2504872AbfJYNmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 09:42:46 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35388 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2504824AbfJYNmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:43:30 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iNzsH-00072g-Pn; Fri, 25 Oct 2019 07:43:29 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iNzsG-0006vL-SW; Fri, 25 Oct 2019 07:43:29 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191025112917.22518-1-mszeredi@redhat.com>
-Date:   Fri, 25 Oct 2019 08:42:24 -0500
-In-Reply-To: <20191025112917.22518-1-mszeredi@redhat.com> (Miklos Szeredi's
-        message of "Fri, 25 Oct 2019 13:29:12 +0200")
-Message-ID: <87r231rlfj.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 25 Oct 2019 09:42:45 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m7so2802733lji.2;
+        Fri, 25 Oct 2019 06:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZRSlUd6LBzNrzynd46ONvlcqzPRdK4ulFGHewpixHno=;
+        b=mbv7Y0biARyzPb/EJCakviuvn06QIZwjPvOKGlL92CvQOQ/Iy4BtFxYOrMgJ+MFBDH
+         6pmFbG3RUuMa/ORC1X2mbZAjYTkwBIK9GwuQFFb2NN0b62deyS9LN5D+HnGZFFnFY2Uk
+         FlJz94rvnlbcMKdQeHw1rtlgMCMK34aOizlf8KXAVtg1EB31/Lm1ckOJc0sJT7B2slIe
+         3aztx+4T+0DPco7Mc1wuV4941KCORw9DZ6f0OAYgEqXWX/wJKreIdHGJbguHZTflI6ql
+         dZvUwo8qB0UihBYr/gQ/M8q2UH5xQDHe1jfVrj0ZPTJe2XnzNb7M2TnakXPK2KA/Ycgg
+         /uGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZRSlUd6LBzNrzynd46ONvlcqzPRdK4ulFGHewpixHno=;
+        b=pnKuqxySHA1lDTTT1W2ZRfRPIh/bkAmHG7kcg7Wpm3iZDZKZ+n7ZgeToiGL3CLZaf5
+         6V+cGO+sbSdFQohUymcZ+XISCX33nB/kPfm9Rk+Sm9443B1M7HdzTnIf7WLgU7o1MxOk
+         +J+R7QtyYwPFqxDd/FmOeTizXA474WXI2wESxaVW7e9zX172tk3smGU3dpVcEDYvyNq+
+         79SVCeBIAe0Rx2UwQFQM9/kt3eLDGlnGljWdsRfExp6Th4FjuyzyyNBlHkp+Pu+KjKT5
+         vo3NHo3d6KOcvSJdSdjGVQ4KZNIXu9IEM13Wny6LGDL0PgF0BdxDjjcqz+stVisI7wEZ
+         ObvQ==
+X-Gm-Message-State: APjAAAUEvsRHZRbrtvVj1CY/cBNk8bZZBfqpofmaCcLYRRSDvqXTAxsQ
+        DAqKc1GLoQl64eo0C6K7hMG+qjI+wRZK8esgGVs=
+X-Google-Smtp-Source: APXvYqxmA+8A2DXEytTBc07CV8DHJQ2sr633xeYXjNR88vJQfKd3uRsGxawHg0NP3EBLqa36vlTpkvn303BIHXcmPqc=
+X-Received: by 2002:a2e:7c13:: with SMTP id x19mr2680919ljc.0.1572010962438;
+ Fri, 25 Oct 2019 06:42:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1iNzsG-0006vL-SW;;;mid=<87r231rlfj.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19PFgdLj+d0f0xnbf++PpDtbqlJ7o3tTO0=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4944]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Miklos Szeredi <mszeredi@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 365 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 3.8 (1.0%), b_tie_ro: 2.5 (0.7%), parse: 1.31
-        (0.4%), extract_message_metadata: 4.8 (1.3%), get_uri_detail_list:
-        1.73 (0.5%), tests_pri_-1000: 6 (1.5%), tests_pri_-950: 1.88 (0.5%),
-        tests_pri_-900: 1.48 (0.4%), tests_pri_-90: 24 (6.5%), check_bayes: 22
-        (6.0%), b_tokenize: 8 (2.3%), b_tok_get_all: 6 (1.6%), b_comp_prob:
-        2.5 (0.7%), b_tok_touch_all: 2.7 (0.7%), b_finish: 0.75 (0.2%),
-        tests_pri_0: 300 (82.3%), check_dkim_signature: 0.62 (0.2%),
-        check_dkim_adsp: 2.4 (0.7%), poll_dns_idle: 0.52 (0.1%), tests_pri_10:
-        2.5 (0.7%), tests_pri_500: 8 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC PATCH 0/5] allow unprivileged overlay mounts
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <20191025082247.3371-1-offougajoris@gmail.com>
+In-Reply-To: <20191025082247.3371-1-offougajoris@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 25 Oct 2019 10:42:44 -0300
+Message-ID: <CAOMZO5ChthYBiH6tLd2AyEWiKNtYGMpTjnuRxX2VP++-cnYvuQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: imx7d-pico: Add LCD support
+To:     Joris Offouga <offougajoris@gmail.com>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Otavio Salvador <otavio@ossystems.com.br>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miklos Szeredi <mszeredi@redhat.com> writes:
+Hi Joris,
 
-> Hi Eric,
+On Fri, Oct 25, 2019 at 5:22 AM Joris Offouga <offougajoris@gmail.com> wrote:
 >
-> Can you please have a look at this patchset?
+> Add support for the VXT VL050-8048NT-C01 panel connected through
+> the 24 bit parallel LCDIF interface.
 >
-> The most interesting one is the last oneliner adding FS_USERNS_MOUNT;
-> whether I'm correct in stating that this isn't going to introduce any
-> holes, or not...
+> Signed-off-by: Joris Offouga <offougajoris@gmail.com>
+> Signed-off-by: Fabio Estevam <festevam@gmail.com>
+> Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 
-I will take some time and dig through this.
+When you send someone else's patch you need to keep the original From line.
 
-From a robustness standpoint I worry about the stackable filesystem
-side.  As that is uniquely an attack vector with overlayfs.
+In this case it needs to be:
+From: Fabio Estevam <festevam@gmail.com>
 
-There is definitely demand for this.
+Your Signed-off-by should come as the last one, since you are one
+final person submitting upstream.
+
+Please send a v2 with these fixes.
+
+Thanks
 
 
-> Thanks,
-> Miklos
->
+
+
 > ---
-> Miklos Szeredi (5):
->   ovl: document permission model
->   ovl: ignore failure to copy up unknown xattrs
->   vfs: allow unprivileged whiteout creation
->   ovl: user xattr
->   ovl: unprivieged mounts
+>  arch/arm/boot/dts/imx7d-pico.dtsi | 84 +++++++++++++++++++++++++++++++
+>  1 file changed, 84 insertions(+)
 >
->  Documentation/filesystems/overlayfs.txt | 44 +++++++++++++
->  fs/char_dev.c                           |  3 +
->  fs/namei.c                              | 17 ++---
->  fs/overlayfs/copy_up.c                  | 34 +++++++---
->  fs/overlayfs/dir.c                      |  2 +-
->  fs/overlayfs/export.c                   |  2 +-
->  fs/overlayfs/inode.c                    | 39 ++++++------
->  fs/overlayfs/namei.c                    | 56 +++++++++--------
->  fs/overlayfs/overlayfs.h                | 81 +++++++++++++++---------
->  fs/overlayfs/ovl_entry.h                |  1 +
->  fs/overlayfs/readdir.c                  |  5 +-
->  fs/overlayfs/super.c                    | 53 +++++++++++-----
->  fs/overlayfs/util.c                     | 82 +++++++++++++++++++++----
->  include/linux/device_cgroup.h           |  3 +
->  14 files changed, 298 insertions(+), 124 deletions(-)
-
-Eric
+> diff --git a/arch/arm/boot/dts/imx7d-pico.dtsi b/arch/arm/boot/dts/imx7d-pico.dtsi
+> index 6f50ebf31a0a..9042b1e6f1db 100644
+> --- a/arch/arm/boot/dts/imx7d-pico.dtsi
+> +++ b/arch/arm/boot/dts/imx7d-pico.dtsi
+> @@ -69,6 +69,37 @@
+>                 clocks = <&clks IMX7D_CLKO2_ROOT_DIV>;
+>                 clock-names = "ext_clock";
+>         };
+> +
+> +       backlight: backlight {
+> +               compatible = "pwm-backlight";
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&pinctrl_backlight>;
+> +               pwms = <&pwm4 0 50000 0>;
+> +               brightness-levels = <0 36 72 108 144 180 216 255>;
+> +               default-brightness-level = <6>;
+> +               status = "okay";
+> +       };
+> +
+> +       reg_lcd_3v3: regulator-lcd-3v3 {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "lcd-3v3";
+> +               regulator-min-microvolt = <3300000>;
+> +               regulator-max-microvolt = <3300000>;
+> +               gpio = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+> +               enable-active-high;
+> +       };
+> +
+> +       panel {
+> +               compatible = "vxt,vl050-8048nt-c01";
+> +               backlight = <&backlight>;
+> +               power-supply = <&reg_lcd_3v3>;
+> +
+> +               port {
+> +                       panel_in: endpoint {
+> +                               remote-endpoint = <&display_out>;
+> +                       };
+> +               };
+> +       };
+>  };
+>
+>  &clks {
+> @@ -230,6 +261,18 @@
+>         };
+>  };
+>
+> +&lcdif {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_lcdif>;
+> +       status = "okay";
+> +
+> +       port {
+> +               display_out: endpoint {
+> +                       remote-endpoint = <&panel_in>;
+> +               };
+> +       };
+> +};
+> +
+>  &sai1 {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&pinctrl_sai1>;
+> @@ -349,6 +392,13 @@
+>  };
+>
+>  &iomuxc {
+> +
+> +       pinctrl_backlight: backlight {
+> +               fsl,pins = <
+> +                       MX7D_PAD_GPIO1_IO11__PWM4_OUT           0x0
+> +               >;
+> +       };
+> +
+>         pinctrl_ecspi3: ecspi3grp {
+>                 fsl,pins = <
+>                         MX7D_PAD_I2C1_SCL__ECSPI3_MISO          0x2
+> @@ -413,6 +463,40 @@
+>                 >;
+>         };
+>
+> +       pinctrl_lcdif: lcdifgrp {
+> +               fsl,pins = <
+> +                       MX7D_PAD_LCD_DATA00__LCD_DATA0          0x79
+> +                       MX7D_PAD_LCD_DATA01__LCD_DATA1          0x79
+> +                       MX7D_PAD_LCD_DATA02__LCD_DATA2          0x79
+> +                       MX7D_PAD_LCD_DATA03__LCD_DATA3          0x79
+> +                       MX7D_PAD_LCD_DATA04__LCD_DATA4          0x79
+> +                       MX7D_PAD_LCD_DATA05__LCD_DATA5          0x79
+> +                       MX7D_PAD_LCD_DATA06__LCD_DATA6          0x79
+> +                       MX7D_PAD_LCD_DATA07__LCD_DATA7          0x79
+> +                       MX7D_PAD_LCD_DATA08__LCD_DATA8          0x79
+> +                       MX7D_PAD_LCD_DATA09__LCD_DATA9          0x79
+> +                       MX7D_PAD_LCD_DATA10__LCD_DATA10         0x79
+> +                       MX7D_PAD_LCD_DATA11__LCD_DATA11         0x79
+> +                       MX7D_PAD_LCD_DATA12__LCD_DATA12         0x79
+> +                       MX7D_PAD_LCD_DATA13__LCD_DATA13         0x79
+> +                       MX7D_PAD_LCD_DATA14__LCD_DATA14         0x79
+> +                       MX7D_PAD_LCD_DATA15__LCD_DATA15         0x79
+> +                       MX7D_PAD_LCD_DATA16__LCD_DATA16         0x79
+> +                       MX7D_PAD_LCD_DATA17__LCD_DATA17         0x79
+> +                       MX7D_PAD_LCD_DATA18__LCD_DATA18         0x79
+> +                       MX7D_PAD_LCD_DATA19__LCD_DATA19         0x79
+> +                       MX7D_PAD_LCD_DATA20__LCD_DATA20         0x79
+> +                       MX7D_PAD_LCD_DATA21__LCD_DATA21         0x79
+> +                       MX7D_PAD_LCD_DATA22__LCD_DATA22         0x79
+> +                       MX7D_PAD_LCD_DATA23__LCD_DATA23         0x79
+> +                       MX7D_PAD_LCD_CLK__LCD_CLK               0x79
+> +                       MX7D_PAD_LCD_ENABLE__LCD_ENABLE         0x78
+> +                       MX7D_PAD_LCD_VSYNC__LCD_VSYNC           0x78
+> +                       MX7D_PAD_LCD_HSYNC__LCD_HSYNC           0x78
+> +                       MX7D_PAD_LCD_RESET__GPIO3_IO4           0x14
+> +               >;
+> +       };
+> +
+>         pinctrl_pwm1: pwm1 {
+>                 fsl,pins = <
+>                         MX7D_PAD_GPIO1_IO08__PWM1_OUT   0x7f
+> --
+> 2.17.1
+>
