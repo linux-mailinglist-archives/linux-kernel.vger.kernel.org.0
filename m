@@ -2,105 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A022E4AAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:02:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07A63E4AAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:03:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504012AbfJYMCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 08:02:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38047 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502539AbfJYMCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 08:02:23 -0400
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 51DF677323
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 12:02:23 +0000 (UTC)
-Received: by mail-wm1-f71.google.com with SMTP id a81so1019212wma.4
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 05:02:23 -0700 (PDT)
+        id S2504150AbfJYMCy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:02:54 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:43646 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502539AbfJYMCy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 08:02:54 -0400
+Received: by mail-qt1-f196.google.com with SMTP id t20so2766368qtr.10
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 05:02:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=U3muYkVb3sn/zD3GnI85KoquW1PDnagsDLGnaKlzxUg=;
+        b=f4k77EVP3oB4TFXVyejNteYMnBZxJxaPv8yN3YKZaUih/akVpJpz0PNswqsYe66tUn
+         N0ITsPRgnY4LreqhjwD5DBfzXKkKzwt1St7lMeCB0Yp8v2NQDZgGjx+M08dNoog9n7ZI
+         mewMpnX+8qU3u0sHTOjU7bPeMnjmGHRoDoOV8EFtaaaH/XqVYF0VmiVm9R36gf+bh0bq
+         65NWOFmTuUdi0Oe8GkOHKJOA94GrI7mONOr1/x4ChNNx+VnxHLPCTEjhVURKm3OeLg2K
+         +13SambnQ31yajHSVkLMYDmQ6jrTVqGB0z4jtVAkFbYGxThNppfkbg7ZfNKkOV3645qt
+         uWSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nhnGjNYl34BBej/G9IX/zdJYT44shCWthBnaow9hDa0=;
-        b=g1dYTTVYRlnM/iM+4jeX+Texf207jbABhAVpIVBEM0bUS1amuF+SwiFxzyPIo06r0k
-         kBLeYgPQwodexL9mNJR2gqAfUO8ZkBoE3ekTlCsYu11kczxcBMm7WtfIqrl85ybkwklh
-         YziFODkSWJpGRmJ/36LNjiakX6IOiHKBCLb5ZZmgnIUIRqcVjh0HETOjAbIEI//pCpU4
-         iSMQUVPLbP0w7xFacXoeu2E/q+jFI3RaqZBpgc1kJBVVfqLFDxKuKN/LUF3gHpGOXblh
-         kpiBrk74G3pTOgQfYtxk+n/fJf8sgtipHAq0fnYQXZq1jsa8YeuMSEEfcTe0DTDHmK0A
-         m5Iw==
-X-Gm-Message-State: APjAAAVC6rl1nRsCfhAxrHh3Rd7UFVmAO37grmJI0SWG7mpI1mVCbeAi
-        o2fv37SDKbuhOIliH/6U9yqb9STY4psH7igYFx/9lw9K1R3BpdxY+OxXtlCfF2pLgr7JmdAYMGA
-        WqEgv4befRTQX9VsGkREGOepg
-X-Received: by 2002:a1c:9847:: with SMTP id a68mr3155391wme.18.1572004941654;
-        Fri, 25 Oct 2019 05:02:21 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxwsMVOR60a0YiZNHpidmA8uSmWVIC5eakJiKfRUewwkkwxWAf6JFvuj/ZwuF4qfke5tp78TQ==
-X-Received: by 2002:a1c:9847:: with SMTP id a68mr3155367wme.18.1572004941369;
-        Fri, 25 Oct 2019 05:02:21 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:9c7b:17ec:2a40:d29? ([2001:b07:6468:f312:9c7b:17ec:2a40:d29])
-        by smtp.gmail.com with ESMTPSA id 79sm2637628wmb.7.2019.10.25.05.02.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2019 05:02:20 -0700 (PDT)
-Subject: Re: [PATCH] x86/kvm: Fix -Wmissing-prototypes warnings
-To:     wang.yi59@zte.com.cn, kvm@vger.kernel.org
-Cc:     rkrcmar@redhat.com, sean.j.christopherson@intel.com,
-        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
-        joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        up2wing@gmail.com, wang.liang82@zte.com.cn
-References: <201910250958273740534@zte.com.cn>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <07bbeb02-e8fe-36d5-a761-402a48fe076f@redhat.com>
-Date:   Fri, 25 Oct 2019 14:02:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=U3muYkVb3sn/zD3GnI85KoquW1PDnagsDLGnaKlzxUg=;
+        b=jueQwO7mho7iEp2P6s77sTqKlDmIxEF0Y2kgxUL7UA/oFcqILDAMu7eohVuM2H1fOX
+         nAYU/oj//J6kM9wrbH/qBRFPQO9VcK66okwXtn4+acjsoe7iFaYH2h+IBiD6tfldRtJ+
+         77sEV8WDMRgsR3wAdyUEU2pmrNAa/bWygMDRhlJqAlhO0Rt9x9gRzJAqYu6t1mwEDjV6
+         pkZslgrHdI5q0S5XFqd2R3BMf79H5SVNijwfdTLC09rLhvaDuH+YQrRw3zysBxYeBP0f
+         ut2NbpwbDbIJstozeSGzQprlrDwdFxQNYCBON7UAzuxcbjOWA/DNyUxHPUigIQiHt93A
+         LYfA==
+X-Gm-Message-State: APjAAAUQZF8VndASpE39ncg7PDOotIu/mVpTvan6iphN+WV7N+pR2cWo
+        u+Q4YT/LvTRk0B+y+uuc9OE=
+X-Google-Smtp-Source: APXvYqxyathMCAeGIRon/l7dS54Jlq7okRabEc4gt560TDidgz/g1QfGAoadWP2Sp4XPsfqiMddMXw==
+X-Received: by 2002:ac8:2a31:: with SMTP id k46mr2663074qtk.392.1572004971789;
+        Fri, 25 Oct 2019 05:02:51 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.179.80.16])
+        by smtp.gmail.com with ESMTPSA id 144sm1083827qkj.5.2019.10.25.05.02.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2019 05:02:50 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 5894041199; Fri, 25 Oct 2019 09:02:48 -0300 (-03)
+Date:   Fri, 25 Oct 2019 09:02:48 -0300
+To:     Hewenliang <hewenliang4@huawei.com>
+Cc:     peterz@infradead.org, jolsa@redhat.com, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        ilubashe@akamai.com, ak@linux.intel.com,
+        linux-kernel@vger.kernel.org, hushiyuan@huawei.com,
+        linfeilong@huawei.com
+Subject: Re: [PATCH] perf tools: Call closedir to release the resource before
+ we return
+Message-ID: <20191025120248.GA23511@kernel.org>
+References: <20191025031605.23658-1-hewenliang4@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <201910250958273740534@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191025031605.23658-1-hewenliang4@huawei.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Queued, thanks.  It may not appear on git.kernel.org until after KVM
-Forum though.
+Em Thu, Oct 24, 2019 at 11:16:05PM -0400, Hewenliang escreveu:
+> We should close the directory on pattern failure before the return
+> of rm_rf_depth_pat.
+> 
+> Fixes: cdb6b0235f170 ("perf tools: Add pattern name checking to rm_rf")
+> Signed-off-by: Hewenliang <hewenliang4@huawei.com>
 
-Paolo
+I've already applied:
 
-On 25/10/19 03:58, wang.yi59@zte.com.cn wrote:
-> Gentle Ping :)
-> 
->> We get two warning when build kernel with W=1:
->> arch/x86/kernel/kvm.c:872:6: warning: no previous prototype for ‘arch_haltpoll_enable’ [-Wmissing-prototypes]
->> arch/x86/kernel/kvm.c:885:6: warning: no previous prototype for ‘arch_haltpoll_disable’ [-Wmissing-prototypes]
->>
->> Including the missing head file can fix this.
->>
->> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
->> ---
->>  arch/x86/kernel/kvm.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
->> index e820568..32ef1ee 100644
->> --- a/arch/x86/kernel/kvm.c
->> +++ b/arch/x86/kernel/kvm.c
->> @@ -33,6 +33,7 @@
->>  #include <asm/apicdef.h>
->>  #include <asm/hypervisor.h>
->>  #include <asm/tlb.h>
->> +#include <asm/cpuidle_haltpoll.h>
->>
->>  static int kvmapf = 1;
-> 
-> 
+commit 6080728ff8e9c9116e52e6f840152356ac2fea56
+Author: Yunfeng Ye <yeyunfeng@huawei.com>
+Date:   Tue Oct 15 16:30:08 2019 +0800
+
+    perf tools: Fix resource leak of closedir() on the error paths
+    
+    Both build_mem_topology() and rm_rf_depth_pat() have resource leaks of
+    closedir() on the error paths.
+    
+    Fix this by calling closedir() before function returns.
+    
+    Fixes: e2091cedd51b ("perf tools: Add MEM_TOPOLOGY feature to perf data file")
+    Fixes: cdb6b0235f17 ("perf tools: Add pattern name checking to rm_rf")
+    Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+    Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+[acme@quaco perf]$ git tag --contains 6080728ff8e9c9116e52e6f840152356ac2fea56
+perf-urgent-for-mingo-5.4-20191017
+[acme@quaco perf]$ 
+
+It is already in tip/perf/urgent, should get to Linus soon.
+
+- Arnaldo
+
 > ---
-> Best wishes
-> Yi Wang
+>  tools/perf/util/util.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
+> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+> index 5eda6e19c947..1aadca8c43f3 100644
+> --- a/tools/perf/util/util.c
+> +++ b/tools/perf/util/util.c
+> @@ -154,8 +154,10 @@ static int rm_rf_depth_pat(const char *path, int depth, const char **pat)
+>  		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
+>  			continue;
+>  
+> -		if (!match_pat(d->d_name, pat))
+> +		if (!match_pat(d->d_name, pat)) {
+> +			closedir(dir);
+>  			return -2;
+> +		}
+>  
+>  		scnprintf(namebuf, sizeof(namebuf), "%s/%s",
+>  			  path, d->d_name);
+> -- 
+> 2.19.1
 
+-- 
+
+- Arnaldo
