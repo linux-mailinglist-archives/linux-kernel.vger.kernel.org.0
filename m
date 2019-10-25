@@ -2,155 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 638E5E48C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 12:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D94CE48D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 12:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409646AbfJYKoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 06:44:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38664 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407973AbfJYKoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 06:44:11 -0400
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2D4B181F01
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 10:44:11 +0000 (UTC)
-Received: by mail-wm1-f69.google.com with SMTP id m16so710684wmg.8
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 03:44:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=xLtoZSUJtLXfr2GPGv3stYcfCQVAfI7dC3ODzlq3CwA=;
-        b=ctPFeHg2+vaY7ssChWmFaHsZhV0R2F52DosApWOIlyIiiegXHXCXNy3yOQVAa92yfI
-         Yz75DGu2Uh3UTahOBR6DkWyJZsmNU5MvJzT33W+T0yMrzmbLlIyuXj6cglsQ6QAX0ZIs
-         AokeRZt0Y/wfC/zf8YjTaw5YGs+93sKt+vxrVRCDnuh4bo1vJQ5t9g5HdPtin9jJKcem
-         6KQPMY9U3aWdWXHuAYrkON3Osk/4aooSZLes1gwS2w4xk6xVItcHZOqkVud+cZJjiSZ6
-         byTmIutiLdv/u9pG4EishHZQSnM/Eovyg8RCW6+005Sidbt5uXyX9h0yPLZK+RzAxf7c
-         QY0g==
-X-Gm-Message-State: APjAAAW2FBegbfHHX9v8UX4I+C4eGErLCXrA3oHtp5NBAwEVHaSdlBoI
-        1XkKx1CMrrD5OXl2CUZEs08wA+w1rueFiT+WFwc0lbUGT4PAa3gyTH/dooPnrSyjGnovz1zwhjZ
-        0J5tMKWJL2oejHZhJMJbVwsB6
-X-Received: by 2002:a1c:6405:: with SMTP id y5mr3080024wmb.175.1572000249772;
-        Fri, 25 Oct 2019 03:44:09 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxsRUknjwKaf4n/Q/NFMTG8SODIFMIf015chHWuD9N5BsDqxI54rtI51KxXOfmREWqKoD6dAQ==
-X-Received: by 2002:a1c:6405:: with SMTP id y5mr3079992wmb.175.1572000249403;
-        Fri, 25 Oct 2019 03:44:09 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id g5sm1882252wma.43.2019.10.25.03.44.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 03:44:08 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Roman Kagan <rkagan@virtuozzo.com>
-Cc:     "linux-hyperv\@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86\@kernel.org" <x86@kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: Re: [PATCH] x86/hyper-v: micro-optimize send_ipi_one case
-In-Reply-To: <20191024163204.GA4673@rkaganb.sw.ru>
-References: <20191024152152.25577-1-vkuznets@redhat.com> <20191024163204.GA4673@rkaganb.sw.ru>
-Date:   Fri, 25 Oct 2019 12:44:07 +0200
-Message-ID: <87r231xfyg.fsf@vitty.brq.redhat.com>
+        id S2394487AbfJYKsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 06:48:24 -0400
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:18162 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2394465AbfJYKsY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 06:48:24 -0400
+Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9PAlRBw027852;
+        Fri, 25 Oct 2019 06:47:38 -0400
+Received: from nam03-co1-obe.outbound.protection.outlook.com (mail-co1nam03lp2057.outbound.protection.outlook.com [104.47.40.57])
+        by mx0b-00128a01.pphosted.com with ESMTP id 2vt9t2b0ru-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 25 Oct 2019 06:47:38 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Lbe7B3vAkdB2IfaLEf/iSH+w6UFyUsoZIeL8jqz4IIuJvmTnkP9AMW3mRJ2/CYlRsi8CJId0keKtekduQ+Fq1YvXjNKwZy9JPXf1l1Sfi3gbW1CBSrvzI2JLlak6CorahD0Or9nZOFji1hQQkPOu3tZSNvy6CssgNRt8PAj7rQgSt+CgwzYbbfvgh2nmTCIN6GgTmPwxhaqF/4ZHj7zlu9ptr/HXR8LgeTDnxLuE4auIYZ9Lz7/rLh//U/9hPO5i1j2PsfUD/+LNo1dCOtr/ySA3t61NpFZYENAGttQmHPcXNOsKLmeVzpvEyBCQtTmZmq5Wz943k4mXSQrDuoQtkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nXr1CS+Onv/bAP35WOni6UcuvOJhwmrcteAKlw4f6/8=;
+ b=IVnFA+lL1RG+kC0FXt4Owm04B7HLqFfvfweFBq2s6/9A2MYiVb4n/GgBJUL5+8MaWnJ+uj4PboPyyHfqs3bJVPbESBTu1MCpc+sdxkUVWv7lk+81QEWcAczf7vEuPirN94i0EmKaOW8ZsrVivhRTB6XGwNG0psJP+WUiGDK4nKfEz+vZNVgnhuiiHi8iYPOSXpHxxkialMP3RKgQH/Y9FFKhEQo9r19VtLYAXDV7qm3/q1m3zZA3i9/u9WYkqunUQHzT1h5vCF4cV3Wx5iT9ssBzv3SJrUhBbs7toDizw2hce1Ye9eVFSCXAX4siGHbELjHi3E2Z2+yBgiTuxvX1pQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 137.71.25.57) smtp.rcpttodomain=samsung.com smtp.mailfrom=analog.com;
+ dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nXr1CS+Onv/bAP35WOni6UcuvOJhwmrcteAKlw4f6/8=;
+ b=yepqcDDjrq0hOqDQeM0xvQOR3JU+RvILCTtONKKbz2lycYH6PcJAKbL6glDbcSM5uoYBSsAEJjLrN0j+ubxzFI2PEJtpEVQA+8wxKLjA2GXodvDwR+AAfhh9dhLDSRIACH/P/Sk+Oo6Q/TzvRWnjcRYHTE+A4B/pWbW7XMWB/cI=
+Received: from BY5PR03CA0024.namprd03.prod.outlook.com (2603:10b6:a03:1e0::34)
+ by DM6PR03MB4859.namprd03.prod.outlook.com (2603:10b6:5:188::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2367.21; Fri, 25 Oct
+ 2019 10:47:36 +0000
+Received: from BL2NAM02FT044.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::203) by BY5PR03CA0024.outlook.office365.com
+ (2603:10b6:a03:1e0::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2387.25 via Frontend
+ Transport; Fri, 25 Oct 2019 10:47:35 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
+Received: from nwd2mta2.analog.com (137.71.25.57) by
+ BL2NAM02FT044.mail.protection.outlook.com (10.152.77.35) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2387.20
+ via Frontend Transport; Fri, 25 Oct 2019 10:47:35 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x9PAlPYm027211
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Fri, 25 Oct 2019 03:47:25 -0700
+Received: from btogorean-pc.ad.analog.com (10.48.65.146) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.408.0; Fri, 25 Oct 2019 06:47:31 -0400
+From:   Bogdan Togorean <bogdan.togorean@analog.com>
+To:     <dri-devel@lists.freedesktop.org>
+CC:     <airlied@linux.ie>, <daniel@ffwll.ch>, <narmstrong@baylibre.com>,
+        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@siol.net>, <tglx@linutronix.de>,
+        <sam@ravnborg.org>, <wsa+renesas@sang-engineering.com>,
+        <matt.redfearn@thinci.com>, <linux-kernel@vger.kernel.org>,
+        Bogdan Togorean <bogdan.togorean@analog.com>
+Subject: [RESEND PATCH] drm: bridge: adv7511: Fix low refresh rate register for ADV7533/5
+Date:   Fri, 25 Oct 2019 13:44:18 +0300
+Message-ID: <20191025104417.28901-1-bogdan.togorean@analog.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(136003)(396003)(376002)(189003)(199004)(305945005)(47776003)(14444005)(54906003)(478600001)(70586007)(48376002)(476003)(86362001)(8936002)(70206006)(50226002)(2870700001)(8676002)(7416002)(106002)(36756003)(126002)(1076003)(2351001)(486006)(2906002)(44832011)(7636002)(336012)(246002)(2616005)(316002)(5660300002)(356004)(6666004)(426003)(186003)(107886003)(4326008)(26005)(7696005)(6916009)(51416003)(50466002)(16453002)(16060500001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR03MB4859;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0a3d6a52-b18b-47f3-7c9a-08d75938bf06
+X-MS-TrafficTypeDiagnostic: DM6PR03MB4859:
+X-Microsoft-Antispam-PRVS: <DM6PR03MB485976D0E3D09057EB5CBF4B9B650@DM6PR03MB4859.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:419;
+X-Forefront-PRVS: 02015246A9
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /OQI62jjY9M0nINvHuCfFTgAmJ5h7W83uzauoj3Ra3tiQ/HYF3/xeSMryi4Dr3Paq5lW1UionmPDpbNfRRe3hAiKduxb0Iay0TjyAT7JxQq5U9XUz4hmv88b1j6z53jHLQt39t0zdmXdd4tOnA8FgWWrok+DFVY9b5Doms2WKhVqTsPLirkHc54JNFgLZD4e13Fr9Ld/KNqUwT5lbUGiDDlo1cTj5G4pRGQU0b1V/wTLxWq9I0CGD7Uy1ZzAKjXd/dOrwOTpMuiGhBRAXk5Km5BTdNJzfRa5+ntGfyAV0WbXBe+GIDu2x/sVzc/jJtzNrVL/viAiW4v/JNBcjSlp+Egv8SwtvuF0q2j4FkD2S8jdgZEjd6+5OqgWRjqY9i/z72opb/nuXXbW2NdSFKrJljobxYQUiFnPd47oJAFriuOKq4cG/C8rwGiN6o3aAcC5
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2019 10:47:35.3614
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a3d6a52-b18b-47f3-7c9a-08d75938bf06
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB4859
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-25_06:2019-10-25,2019-10-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 suspectscore=1 mlxlogscore=830 phishscore=0
+ impostorscore=0 clxscore=1011 malwarescore=0 spamscore=0 bulkscore=0
+ mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910250102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Roman Kagan <rkagan@virtuozzo.com> writes:
+For ADV7533 and ADV7535 low refresh rate is selected using
+bits [3:2] of 0x4a main register.
+So depending on ADV model write 0xfb or 0x4a register.
 
-> On Thu, Oct 24, 2019 at 05:21:52PM +0200, Vitaly Kuznetsov wrote:
->> When sending an IPI to a single CPU there is no need to deal with cpumasks.
->> With 2 CPU guest on WS2019 I'm seeing a minor (like 3%, 8043 -> 7761 CPU
->> cycles) improvement with smp_call_function_single() loop benchmark. The
->> optimization, however, is tiny and straitforward. Also, send_ipi_one() is
->> important for PV spinlock kick.
->> 
->> I was also wondering if it would make sense to switch to using regular
->> APIC IPI send for CPU > 64 case but no, it is twice as expesive (12650 CPU
->> cycles for __send_ipi_mask_ex() call, 26000 for orig_apic.send_IPI(cpu,
->> vector)).
->
-> Is it with APICv or emulated apic?
+Fixes: 9c8af882bf12: ("drm: Add adv7511 encoder driver")
+Signed-off-by: Bogdan Togorean <bogdan.togorean@analog.com>
+---
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-That's actually a good question. Yesterday I was testing this on WS2019
-host with Xeon e5-2420 v2 (Ivy Bridge EN) which I *think* should already
-support APICv - but I'm not sure and ark.intel.com is not
-helpful. Today, I decided to re-test on something more modern and I got
-WS2016 host with E5-2667 v4 (Broadwell) and the results are:
-
-'Ex' hypercall: 18000 cycles
-orig_apic.send_IPI(): 46000 cycles
-
-I'm, however, just assuming that Hyper-V uses APICv when it's available
-and have no idea how to check from within the guest. I'm also not sure
-if WS2019 is so much faster or if there are other differences on these
-hosts which matter.
-
->
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->>  arch/x86/hyperv/hv_apic.c           | 22 +++++++++++++++++++---
->>  arch/x86/include/asm/trace/hyperv.h | 15 +++++++++++++++
->>  2 files changed, 34 insertions(+), 3 deletions(-)
->> 
->> diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
->> index e01078e93dd3..847f9d0328fe 100644
->> --- a/arch/x86/hyperv/hv_apic.c
->> +++ b/arch/x86/hyperv/hv_apic.c
->> @@ -194,10 +194,26 @@ static bool __send_ipi_mask(const struct cpumask *mask, int vector)
->>  
->>  static bool __send_ipi_one(int cpu, int vector)
->>  {
->> -	struct cpumask mask = CPU_MASK_NONE;
->> +	int ret;
->>  
->> -	cpumask_set_cpu(cpu, &mask);
->> -	return __send_ipi_mask(&mask, vector);
->> +	trace_hyperv_send_ipi_one(cpu, vector);
->> +
->> +	if (unlikely(!hv_hypercall_pg))
->> +		return false;
->> +
->> +	if (unlikely((vector < HV_IPI_LOW_VECTOR) ||
->> +		     (vector > HV_IPI_HIGH_VECTOR)))
->> +		return false;
->
-> I guess 'ulikely' is unnecessary in these cases.
->
-
-All I can say is that the resulting asm with my gcc is a bit different
-:-)
-
->> +
->> +	if (cpu >= 64)
->> +		goto do_ex_hypercall;
->> +
->> +	ret = hv_do_fast_hypercall16(HVCALL_SEND_IPI, vector,
->> +				     BIT_ULL(hv_cpu_number_to_vp_number(cpu)));
->> +	return ((ret == 0) ? true : false);
->
-> D'oh.  Isn't "return ret == 0;" or just "return ret;" good enough?
-
-That's how we do stuff in __send_ipi_mask() :-) I'll send v2
-implementing Joe's suggestion to drop 'ret' and just do
-return !hv_do_fast_hypercall16().
-
->
-> These tiny nitpicks are no reason to hold the patch though, so
->
-> Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
-
-Thanks!
-
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+index 9e13e466e72c..2f8f7510f07e 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+@@ -756,8 +756,13 @@ static void adv7511_mode_set(struct adv7511 *adv7511,
+ 	else
+ 		low_refresh_rate = ADV7511_LOW_REFRESH_RATE_NONE;
+ 
+-	regmap_update_bits(adv7511->regmap, 0xfb,
+-		0x6, low_refresh_rate << 1);
++	if (adv7511->type == ADV7511)
++		regmap_update_bits(adv7511->regmap, 0xfb,
++			0x6, low_refresh_rate << 1);
++	else
++		regmap_update_bits(adv7511->regmap, 0x4a,
++			0xc, low_refresh_rate << 2);
++
+ 	regmap_update_bits(adv7511->regmap, 0x17,
+ 		0x60, (vsync_polarity << 6) | (hsync_polarity << 5));
+ 
 -- 
-Vitaly
+2.23.0
+
