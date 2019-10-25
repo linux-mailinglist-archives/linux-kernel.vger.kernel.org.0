@@ -2,125 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D75DFE43CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 08:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40B74E43E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 08:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393200AbfJYGys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 02:54:48 -0400
-Received: from mail-pf1-f169.google.com ([209.85.210.169]:45218 "EHLO
-        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733098AbfJYGys (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 02:54:48 -0400
-Received: by mail-pf1-f169.google.com with SMTP id x28so909083pfi.12
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 23:54:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=m+VkYOgB7cCdSZGNDZmPasUQ1M1DmEk9SPAL9l8GP1A=;
-        b=MD7VplAMSnE6eBcOxhBncJ1w7gZgL2vajru9wAqudsdqaQdHSjaosigKCexVhSgoKE
-         Nq9j/jeyMN+LeTVVmmAoP0z/DFE4hUYz9NCVTZMKqbSqX+i3ZAtgwb7gGHg+p4X7+TEo
-         3kiESUbManeemJ3xCExgKIBZWb6+cHq4shtvyoPft8qTN7pMtV8ZWbnQUD2XM4XdY7Rv
-         loSwM9UinPzIrmZwAFqKpGadpFiLSvlbq7vDyppqk/Uv5sf04RsliKidoTQAgdRVtUfz
-         RAZdpGYb6zsW5Uu31WIZHN9C6A5UeFjipvLod8tVE4H1EvCHExEQKbX315/EAQDHfeGM
-         9Nyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m+VkYOgB7cCdSZGNDZmPasUQ1M1DmEk9SPAL9l8GP1A=;
-        b=hhzSnF51MAjkUWxOidFL7X1PqHDwE1Ll5IqjQcb+NGH+udp/n/YgyjZYBvVrOA+85z
-         JTovrdvUVxet+pv5TJXXG3urM3gGY8+zBG+9SdsUt2CkqubESly6q23qP5ruYVhfqwT/
-         nOhXkpuizdxdjxJQs8T8zgC+nPmNM0XRbDif3UpolASB32ndGggYH7tz9sotY6Ft9ksq
-         yq5xKoESi87L0ssDKIGRpb6MNpRh2Fd/zBBGuSe/6BCArGXXm23sWyyWRKmQPXIproOD
-         e0mtgcWh2LHIRG28wtPI8gJZZAo4ntScLQcgkIyqv851TDorIHtgCwL2HvIIQmVFTY9i
-         +02Q==
-X-Gm-Message-State: APjAAAW1DNvESfgPOR7UtNLvLr9yGMn5sxW8Y/mc+N2MqkEhqZTsGYNX
-        N9yl/yIB5tJD5KnI5BUu6Go=
-X-Google-Smtp-Source: APXvYqwQ2i3psJ0yIsvpXC4E8x2YWCDuJQPZ1N62DtBq1Tv3B55wCjarX0d9MG67laCjyfLsu1WfCA==
-X-Received: by 2002:a17:90a:fe04:: with SMTP id ck4mr2048608pjb.90.1571986487460;
-        Thu, 24 Oct 2019 23:54:47 -0700 (PDT)
-Received: from Asurada (c-73-162-191-63.hsd1.ca.comcast.net. [73.162.191.63])
-        by smtp.gmail.com with ESMTPSA id d14sm1800708pfh.36.2019.10.24.23.54.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Oct 2019 23:54:47 -0700 (PDT)
-Date:   Thu, 24 Oct 2019 23:54:34 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     "S.j. Wang" <shengjiu.wang@nxp.com>
-Cc:     "timur@kernel.org" <timur@kernel.org>,
-        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: fsl_asrc: refine the setting of internal clock
- divider
-Message-ID: <20191025065433.GA4632@Asurada>
-References: <VE1PR04MB6479AC63FFE5D57B4E2C33D2E3650@VE1PR04MB6479.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VE1PR04MB6479AC63FFE5D57B4E2C33D2E3650@VE1PR04MB6479.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.22 (2013-10-16)
+        id S2405768AbfJYG7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 02:59:35 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:37694 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727595AbfJYG7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 02:59:35 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 51A0E2008F3;
+        Fri, 25 Oct 2019 08:59:33 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0A94B200438;
+        Fri, 25 Oct 2019 08:59:28 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 432B2402BC;
+        Fri, 25 Oct 2019 14:59:21 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, daniel.baluta@nxp.com, aisheng.dong@nxp.com,
+        abel.vesa@nxp.com, leonard.crestez@nxp.com,
+        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/2] soc: imx8: Using existing serial_number instead of UID
+Date:   Fri, 25 Oct 2019 14:56:22 +0800
+Message-Id: <1571986583-21138-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 05:33:17AM +0000, S.j. Wang wrote:
-> > > > > +             pair_err("The divider can't be used for non ideal mode\n");
-> > > > > +             return -EINVAL;
-> > > > > +     }
-> > > > > +
-> > > > > +     /* Divider range is [1, 1024] */
-> > > > > +     div[IN] = min_t(u32, 1024, div[IN]);
-> > > > > +     div[OUT] = min_t(u32, 1024, div[OUT]);
-> > > >
-> > > > Hmm, this looks like we want to allow ideal ratio cases and p2p
-> > > > cases to operate any way, even if the divider wasn't within the
-> > > > range to get the in/out rates from the output clock?
-> > >
-> > > Yes. We still allow the p2p = true,  ideal = false.  Note that p2p is
-> > > not Equal to ideal.
-> > 
-> > Got it.
-> > 
-> > Overall, I feel it's better to have a naming to state the purpose of using
-> > ideal configurations without the IDEAL_RATIO_RATE setup.
-> >         bool use_ideal_rate;
-> > And we can put into the asrc_config structure if there's no major problem.
-> > 
-> 
-> Asrc_config may exposed to user, I don't think user need to care about
-> The using of ideal rate or not. 
+The soc_device_attribute structure already contains a serial_number
+attribute to show SoC's unique ID, just use it to show SoC's unique
+ID instead of creating a new file called soc_uid.
 
-Given that M2M could use output rate instead of ideal ratio rate
-as well, it could be a configuration from my point of view. Yet,
-we may just add it as a function parameter like you did, for now
-to ease the situation, until we have such a need someday.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/soc/imx/soc-imx8.c | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
-> 
-> > So the condition check for the calculation would be:
-> > +       if (ideal && config->use_ideal_rate)
-> > +               rem[OUT] = do_div(clk_rate, IDEAL_RATIO_RATE);
-> > +       else
-> > +               rem[OUT] = do_div(clk_rate, outrate);
-> > +       div[OUT] = clk_rate;
-> > 
-> > And for that if (!ideal && div[IN]....rem[OUT]), I feel it would be clear to
-> > have them separately, as the existing "div[IN] == 0"
-> > and "div[OUT] == 0" checks, so that we can tell users which side of the
-> > divider is out of range and what the sample rate and clock rate are.
-> > 
-> Do you mean need to combine this judgement with "div[IN] == 0"
-> Or "div[OUT] == 0"?
+diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
+index b9831576..fcbf745 100644
+--- a/drivers/soc/imx/soc-imx8.c
++++ b/drivers/soc/imx/soc-imx8.c
+@@ -29,14 +29,6 @@ struct imx8_soc_data {
+ 
+ static u64 soc_uid;
+ 
+-static ssize_t soc_uid_show(struct device *dev,
+-			    struct device_attribute *attr, char *buf)
+-{
+-	return sprintf(buf, "%016llX\n", soc_uid);
+-}
+-
+-static DEVICE_ATTR_RO(soc_uid);
+-
+ static u32 __init imx8mq_soc_revision(void)
+ {
+ 	struct device_node *np;
+@@ -174,22 +166,25 @@ static int __init imx8_soc_init(void)
+ 		goto free_soc;
+ 	}
+ 
++	soc_dev_attr->serial_number = kasprintf(GFP_KERNEL, "%016llX", soc_uid);
++	if (!soc_dev_attr->serial_number) {
++		ret = -ENOMEM;
++		goto free_rev;
++	}
++
+ 	soc_dev = soc_device_register(soc_dev_attr);
+ 	if (IS_ERR(soc_dev)) {
+ 		ret = PTR_ERR(soc_dev);
+-		goto free_rev;
++		goto free_serial_number;
+ 	}
+ 
+-	ret = device_create_file(soc_device_to_device(soc_dev),
+-				 &dev_attr_soc_uid);
+-	if (ret)
+-		goto free_rev;
+-
+ 	if (IS_ENABLED(CONFIG_ARM_IMX_CPUFREQ_DT))
+ 		platform_device_register_simple("imx-cpufreq-dt", -1, NULL, 0);
+ 
+ 	return 0;
+ 
++free_serial_number:
++	kfree(soc_dev_attr->serial_number);
+ free_rev:
+ 	if (strcmp(soc_dev_attr->revision, "unknown"))
+ 		kfree(soc_dev_attr->revision);
+-- 
+2.7.4
 
-Not necessarily. Could put in the else path so its error message
-would be more ideal ratio configuration specific.
-
-Thanks
