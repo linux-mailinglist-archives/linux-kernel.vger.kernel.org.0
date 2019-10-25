@@ -2,95 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B12E4845
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 12:12:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6458CE4848
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 12:12:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409145AbfJYKM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 06:12:28 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:47940 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2409097AbfJYKMY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 06:12:24 -0400
-X-IronPort-AV: E=Sophos;i="5.68,228,1569276000"; 
-   d="scan'208";a="408167341"
-Received: from portablejulia.rsr.lip6.fr ([132.227.76.63])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2019 12:12:22 +0200
-Date:   Fri, 25 Oct 2019 12:12:23 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: julia@hadrien
-To:     Wambui Karuga <wambui.karugax@gmail.com>
-cc:     dri-devel@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, sean@poorly.run, airlied@linux.ie,
-        daniel@ffwll.ch, linux-kernel@vger.kernel.org,
-        outreachy-kernel@googlegroups.com
-Subject: Re: [Outreachy kernel] [Outreachy][PATCH] drm: use DIV_ROUND_UP
- helper macro for calculations
-In-Reply-To: <20191025094907.3582-1-wambui.karugax@gmail.com>
-Message-ID: <alpine.DEB.2.21.1910251212070.3307@hadrien>
-References: <20191025094907.3582-1-wambui.karugax@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S2409168AbfJYKMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 06:12:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:38478 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2409111AbfJYKMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 06:12:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F65028;
+        Fri, 25 Oct 2019 03:12:32 -0700 (PDT)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.145.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 026823F6C4;
+        Fri, 25 Oct 2019 03:12:31 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 12:12:30 +0200
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     Shannon Zhao <shannon.zhao@linux.alibaba.com>
+Cc:     Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+        kvmarm@lists.cs.columbia.edu, suzuki.poulose@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC 0/7] Support KVM being compiled as a kernel module on
+ arm64
+Message-ID: <20191025101230.GJ2652@e113682-lin.lund.arm.com>
+References: <1571912870-18471-1-git-send-email-shannon.zhao@linux.alibaba.com>
+ <8cbd81d6-4ab8-9d2a-5162-8782201cd13d@arm.com>
+ <c17e8b0f32902a0811cc6a4ed71e607e@www.loen.fr>
+ <18653462-38dc-cce1-d0a1-2a7e891163da@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <18653462-38dc-cce1-d0a1-2a7e891163da@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 25, 2019 at 10:48:46AM +0800, Shannon Zhao wrote:
+> 
+> 
+> On 2019/10/24 21:41, Marc Zyngier wrote:
+> > On 2019-10-24 11:58, James Morse wrote:
+> > > Hi Shannon,
+> > > 
+> > > On 24/10/2019 11:27, Shannon Zhao wrote:
+> > > > Curently KVM ARM64 doesn't support to compile as a kernel module. It's
+> > > > useful to compile KVM as a module.
+> > > 
+> > > > For example, it could reload kvm without rebooting host machine.
+> > > 
+> > > What problem does this solve?
+> > > 
+> > > KVM has some funny requirements that aren't normal for a module. On
+> > > v8.0 hardware it must
+> > > have an idmap. Modules don't usually expect their code to be
+> > > physically contiguous, but
+> > > KVM does. KVM influences they way some of the irqchip stuff is set up
+> > > during early boot
+> > > (EOI mode ... not that I understand it).
+> > 
+> > We change the EOImode solely based on how we were booted (EL2 or not).
+> > KVM doesn't directly influences that (it comes in the picture much
+> > later).
+> > 
+> > > (I think KVM-as-a-module on x86 is an artifact of how it was developed)
+> > > 
+> > > 
+> > > > This patchset support this feature while there are some limitations
+> > > > to be solved. But I just send it out as RFC to get more suggestion and
+> > > > comments.
+> > > 
+> > > > Curently it only supports for VHE system due to the hyp code section
+> > > > address variables like __hyp_text_start.
+> > > 
+> > > We still need to support !VHE systems, and we need to do it with a
+> > > single image.
+> > > 
+> > > 
+> > > > Also it can't call
+> > > > kvm_update_va_mask when loading kvm module and kernel panic with below
+> > > > errors. So I make kern_hyp_va into a nop funtion.
+> > > 
+> > > Making this work for the single-Image on v8.0 is going to be a
+> > > tremendous amount of work.
+> > > What is the payoff?
+> > 
+> > I can only agree. !VHE is something we're going to support for the
+> > foreseeable
+> > future (which is roughly equivalent to "forever"), and modules have
+> > properties
+> > that are fundamentally incompatible with the way KVM works with !VHE.
+> > 
+> Yes, with this patchset we still support !VHE system with built-in KVM.
+> While for VHE system we could support kernel module and check at module init
+> to avoid wrong usage of kvm module on !VHE systems.
+> 
+> > If the only purpose of this work is to be able to swap KVM implementations
+> > in a development environment, then it really isn't worth the effort.
+> > 
+> Making KVM as a kernel module has many advantages both for development and
+> real use environment. For example, we can backport and update KVM codes
+> independently and don't need to recompile kernel. Also making KVM as a
+> kernel module is a basic for kvm hot upgrade feature without shutdown VMs
+> and hosts. This is very important for Cloud Service Provider to provides
+> non-stop services for its customers.
+> 
+But KVM on arm64 is pretty intertwined with the rest of the kernel, and
+things like the arch timers, for example, really depend on the exact
+semantics of how the rest of the kernel changes.  I fear that you'd end
+up back-porting patches that depend on changes to irqchip and timers in
+the core code, and you'll get even more oddly-defined behavior in the
+wild.
+
+How would you manage that, and how would the end result be a more stable
+environment than what you have today?
+
+Also, I'm curious if you expect to find more bugs in the hypervisor
+itself than in the rest of the kernel, because it's only in the former
+case you can avoid a reboot of the host, and all things considered this
+would appear to only help in a small fraction of the cases where you
+have to patch things?
 
 
-On Fri, 25 Oct 2019, Wambui Karuga wrote:
+Thanks,
 
-> Replace open coded divisor calculations with the DIV_ROUND_UP kernel
-> macro for better readability.
-> Issue found using coccinelle:
-> @@
-> expression n,d;
-> @@
-> (
-> - ((n + d - 1) / d)
-> + DIV_ROUND_UP(n,d)
-> |
-> - ((n + (d - 1)) / d)
-> + DIV_ROUND_UP(n,d)
-> )
->
-> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
-
-Acked-by: Julia Lawall <julia.lawall@lip6.fr>
-
-
-> ---
->  drivers/gpu/drm/drm_agpsupport.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_agpsupport.c b/drivers/gpu/drm/drm_agpsupport.c
-> index 6e09f27fd9d6..4c7ad46fdd21 100644
-> --- a/drivers/gpu/drm/drm_agpsupport.c
-> +++ b/drivers/gpu/drm/drm_agpsupport.c
-> @@ -212,7 +212,7 @@ int drm_agp_alloc(struct drm_device *dev, struct drm_agp_buffer *request)
->  	if (!entry)
->  		return -ENOMEM;
->
-> -	pages = (request->size + PAGE_SIZE - 1) / PAGE_SIZE;
-> +	pages = DIV_ROUND_UP(request->size, PAGE_SIZE);
->  	type = (u32) request->type;
->  	memory = agp_allocate_memory(dev->agp->bridge, pages, type);
->  	if (!memory) {
-> @@ -325,7 +325,7 @@ int drm_agp_bind(struct drm_device *dev, struct drm_agp_binding *request)
->  	entry = drm_agp_lookup_entry(dev, request->handle);
->  	if (!entry || entry->bound)
->  		return -EINVAL;
-> -	page = (request->offset + PAGE_SIZE - 1) / PAGE_SIZE;
-> +	page = DIV_ROUND_UP(request->offset, PAGE_SIZE);
->  	retcode = drm_bind_agp(entry->memory, page);
->  	if (retcode)
->  		return retcode;
-> --
-> 2.23.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20191025094907.3582-1-wambui.karugax%40gmail.com.
->
+    Christoffer
