@@ -2,64 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C5EAE4AF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:21:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A85CDE4AFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408090AbfJYMVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 08:21:17 -0400
-Received: from mga05.intel.com ([192.55.52.43]:13927 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404706AbfJYMVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 08:21:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2019 05:21:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,228,1569308400"; 
-   d="scan'208";a="223904396"
-Received: from um.fi.intel.com (HELO um) ([10.237.72.57])
-  by fmsmga004.fm.intel.com with ESMTP; 25 Oct 2019 05:21:14 -0700
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        jolsa@redhat.com, adrian.hunter@intel.com,
-        mathieu.poirier@linaro.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com
-Subject: Re: [PATCH v2 1/4] perf: Allow using AUX data in perf samples
-In-Reply-To: <20191024140624.GG4114@hirez.programming.kicks-ass.net>
-References: <20191022095812.67071-1-alexander.shishkin@linux.intel.com> <20191022095812.67071-2-alexander.shishkin@linux.intel.com> <20191024140624.GG4114@hirez.programming.kicks-ass.net>
-Date:   Fri, 25 Oct 2019 15:21:13 +0300
-Message-ID: <878sp9ggna.fsf@ashishki-desk.ger.corp.intel.com>
+        id S2440208AbfJYMZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:25:22 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:34375 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407261AbfJYMZV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 08:25:21 -0400
+Received: by mail-io1-f65.google.com with SMTP id q1so2205612ion.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 05:25:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=56CrbKjpo1LNY8+IqgfXYngvQ533oWMTRgx9BxzPQtg=;
+        b=ATgvwVOyv8a3OqTftc6rOHr2T01cPTPGr3psYRcZqI7beZCaGYjyqusW+xB5+6PHwa
+         VPd6NCdji4zyXwV+Xqhjc4W0rPQcDvzb2Y8sFY+6skZdpRU4IUWwleeN826ZJ87IDKWK
+         DiS/kYIa5XQsOn+9UlaapwulD1qaAHnqGiW/zbU8FVNX0qJ27L2zJu6sudNSvJ7RqJjQ
+         X0rZStwoql7yav2WnRQkXlzeLZf3nviE1HZ3S6aWKF7Hq+wFqPioblADS9cvZSlOYozM
+         WWnYssWpuJtFvytMYZNZ9Dkz3Px57NeL0D5CmyfMHoccWzxCFJQU1h9tD7sogoMs0GCY
+         6gtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=56CrbKjpo1LNY8+IqgfXYngvQ533oWMTRgx9BxzPQtg=;
+        b=dqqpeENN08yBCvQSmO7nfBDEI1LZ3MW1CjjAY7AHYCuxApHa2rPhYtLuUx6K6z56e5
+         zeBWjL0ECgJoLA3sZSLsJ0SPE2arWi0i5N86/1+oZtaTbmdY+Htf1rM0JMG/4Hg1L8pr
+         qIzbhSkRihS0cUSPD+BAibk4N3TZFRZBJAAZjumtZMMXM75Or3qUAU6kozwtapJBs8RB
+         JpX3MMOSVJb8HZEcBGuHHDVBmigP4h1mAp6majhRv0gnEMXj0Yk1jPgM5te8jOEg6ZzD
+         u7VWwA15oZyKdnx/n8JPImgHVBf6phfORpq0LygzIqU+NMeseVj0t35hfaV9vNRAvap+
+         2cPw==
+X-Gm-Message-State: APjAAAWd5uvlIuKqj1Gfdy9GjzSeP0DKWdjS3ZElq39bKu7ryKNq/ThY
+        jeRfliuM4BzlOaWidCOGaomFDGAxBvhBml/9fTM=
+X-Google-Smtp-Source: APXvYqyt5eVoSVArctvcKe0irxW8JrhSNRGAhATkcNLUwVd8A4uXLkozRjVpIm3pGVtOqRuX/hSWjasR2hRbs3IL6HE=
+X-Received: by 2002:a02:9f8b:: with SMTP id a11mr3722216jam.10.1572006319322;
+ Fri, 25 Oct 2019 05:25:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+Received: by 2002:a6b:8e11:0:0:0:0:0 with HTTP; Fri, 25 Oct 2019 05:25:18
+ -0700 (PDT)
+Reply-To: mthida828@gmail.com
+From:   George Melvin <samuelnwangoro@gmail.com>
+Date:   Fri, 25 Oct 2019 13:25:18 +0100
+Message-ID: <CAHi8z6EftSAxiMOPuP-e3jcyHuKKe-t2vYzKC=U=bJ6EHvOeHQ@mail.gmail.com>
+Subject: Dear Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter Zijlstra <peterz@infradead.org> writes:
+-- 
+Dear Friend
 
->> @@ -6511,6 +6629,13 @@ void perf_output_sample(struct perf_output_handle *handle,
->>  	if (sample_type & PERF_SAMPLE_PHYS_ADDR)
->>  		perf_output_put(handle, data->phys_addr);
->>  
->> +	if (sample_type & PERF_SAMPLE_AUX) {
->> +		perf_output_put(handle, data->aux_size);
->> +
->> +		if (data->aux_size)
->> +			perf_aux_sample_output(event, handle, data);
->> +	}
->> +
->>  	if (!event->attr.watermark) {
->>  		int wakeup_events = event->attr.wakeup_events;
->
->
-> So, afaict, you can simply remove the line in perf_sample_data_init().
+How are you today hope fine?I sent you an urgent letter four {4} days
+ago without any response form you, I have a business proposal that
+might Interest you, Please contact me through my private email for
+more details. (mthida828@gmail.com)
 
-That's right, thanks for catching this.
-
-Regards,
---
-Alex
+Thank
+Regards
+George Melvin
