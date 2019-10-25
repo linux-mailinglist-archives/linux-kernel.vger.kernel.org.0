@@ -2,46 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4133E520A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 19:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C30F1E5210
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 19:09:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505850AbfJYRI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 13:08:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:43400 "EHLO foss.arm.com"
+        id S2633212AbfJYRJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 13:09:37 -0400
+Received: from foss.arm.com ([217.140.110.172]:43456 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2505835AbfJYRIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 13:08:21 -0400
+        id S2409415AbfJYRJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 13:09:37 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4299D328;
-        Fri, 25 Oct 2019 10:08:20 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D3A2328;
+        Fri, 25 Oct 2019 10:09:36 -0700 (PDT)
 Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C4B993F71A;
-        Fri, 25 Oct 2019 10:08:17 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 865353F71A;
+        Fri, 25 Oct 2019 10:09:33 -0700 (PDT)
 From:   James Morse <james.morse@arm.com>
-Subject: Re: [PATCH V4 0/2] Add support for arm64 to carry ima measurement
-To:     Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc:     prsriva <prsriva@linux.microsoft.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-integrity@vger.kernel.org,
-        kexec mailing list <kexec@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>, jean-philippe@linaro.org,
-        arnd@arndb.de, takahiro.akashi@linaro.org, sboyd@kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>, zohar@linux.ibm.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>, duwe@lst.de,
-        bauerman@linux.ibm.com, Thomas Gleixner <tglx@linutronix.de>,
-        allison@lohutok.net, Ard Biesheuvel <ard.biesheuvel@linaro.org>
-References: <20191011003600.22090-1-prsriva@linux.microsoft.com>
- <87d92514-e5e4-a79f-467f-f24a4ed279b6@arm.com>
- <b35b239c-990c-0d5b-0298-8f9e35064e2b@linux.microsoft.com>
- <0053eb68-0905-4679-c97a-00c5cb6f1abb@arm.com>
- <CA+CK2bBVcE91YbJx1f_BkNqbD03wGLNtyane7PjCnEu8i_cH2Q@mail.gmail.com>
-Message-ID: <b53ba912-6fec-211d-9494-bc6ae6fa3f31@arm.com>
-Date:   Fri, 25 Oct 2019 18:08:16 +0100
+Subject: Re: [PATCH V9 2/2] arm64/mm: Enable memory hot remove
+To:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+        will@kernel.org, mark.rutland@arm.com, david@redhat.com,
+        cai@lca.pw, logang@deltatee.com, cpandya@codeaurora.org,
+        arunks@codeaurora.org, dan.j.williams@intel.com,
+        mgorman@techsingularity.net, osalvador@suse.de,
+        ard.biesheuvel@arm.com, steve.capper@arm.com, broonie@kernel.org,
+        valentin.schneider@arm.com, Robin.Murphy@arm.com,
+        steven.price@arm.com, suzuki.poulose@arm.com, ira.weiny@intel.com
+References: <1570609308-15697-1-git-send-email-anshuman.khandual@arm.com>
+ <1570609308-15697-3-git-send-email-anshuman.khandual@arm.com>
+ <20191010113433.GI28269@mbp> <f51cdb20-ddc4-4fb7-6c45-791d2e1e690c@arm.com>
+ <20191018094825.GD19734@arrakis.emea.arm.com>
+ <f5581644-42b7-097e-6a86-ba7db9d0b544@arm.com>
+Message-ID: <5db2aab1-1dde-4545-a03d-e7ae2d86aec7@arm.com>
+Date:   Fri, 25 Oct 2019 18:09:32 +0100
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CA+CK2bBVcE91YbJx1f_BkNqbD03wGLNtyane7PjCnEu8i_cH2Q@mail.gmail.com>
+In-Reply-To: <f5581644-42b7-097e-6a86-ba7db9d0b544@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -50,55 +49,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
+Hi guys,
 
-On 15/10/2019 19:47, Pavel Tatashin wrote:
->> I think the UEFI persistent-memory-reservations thing is a better fit for this [0][1].
-
-> Thank you for your thought. As I understand you propose the to use the
-> existing method as such:
-> 1. Use the existing kexec ABI to pass reservation from kernel to
-> kernel using EFI the same as is done for GICv3 tables.
-> 2. Allow this memory to be reservable only during first Linux boot via
-> EFI memory reserve
-> 3. Allow to have this memory pre-reserved by firmware or to be
-> embedded into device tree.
+On 21/10/2019 10:53, Anshuman Khandual wrote:
+> On 10/18/2019 03:18 PM, Catalin Marinas wrote:
+>> On Fri, Oct 11, 2019 at 08:26:32AM +0530, Anshuman Khandual wrote:
+>>> On 10/10/2019 05:04 PM, Catalin Marinas wrote:
+>>>> Mark Rutland mentioned at some point that, as a preparatory patch to
+>>>> this series, we'd need to make sure we don't hot-remove memory already
+>>>> given to the kernel at boot. Any plans here?
+>>>
+>>> Hmm, this series just enables platform memory hot remove as required from
+>>> generic memory hotplug framework. The path here is triggered either from
+>>> remove_memory() or __remove_memory() which takes physical memory range
+>>> arguments like (nid, start, size) and do the needful. arch_remove_memory()
+>>> should never be required to test given memory range for anything including
+>>> being part of the boot memory.
+>>
+>> Assuming arch_remove_memory() doesn't (cannot) check, is there a risk on
 > 
-> A question I have is how to tell that a reserved region is reserved
-> for IMA use. With GICv3 it is done by reading the registers, finding
-> the interrupt tables memory, and check that the memory ranges are
-> indeed pre-reserved.
+> Platform can definitely enumerate boot memory ranges. But checking on it in
+> arch_remove_memory() which deals with actual procedural details might not be
+> ideal IMHO. Refusing a requested removal attempt should have been done up in
+> the call chain. This will require making generic hot plug reject any removal
+> request which falls within enumerated boot memory. IFAICS currently there is
+> no generic way to remember which memory came as part of the boot process.
+> Probably be a new MEMBLOCK flag will do.
 
-Good point, efi_mem_reserve_persistent() has no way of describing what a region is for,
-you have to know that from somewhere else.
+Memblock flags are fun because they have to be provided to the walkers like
+for_each_mem_range().
 
-
-> Is there a way to name memory with the current ABI that you think is acceptable?
-
-This would need to go in the chosen node of the DT, like power-pc already does. This would
-work on arm64:ACPI systems too (because they have a DT chosen node).
-
-
-I'd like to understand why removing these entries is needed, it doesn't look like we have
-an API call to remove them from the efi mem-reserve...
-
-If it had a fixed position in memory its the sort of thing we'd expect firmware to
-reserved during boot. (e.g. ramoops).
-
-~
-
-From ima_add_kexec_buffer() this really is a transient memory reservation over kexec.
-I think the efi mem-reserve and a DT-chosen node entry with the PA is the only way to make
-this work smoothly between DT<->ACPI systems.
-
-We'd need a way of removing the efi mem-reserve in ima_free_kexec_buffer(), otherwise the
-memory remains lost. The DT-chosen node entry should have its pointer zero'd out once
-we've done this. (like we do for the KASLR seed).
+Unless hot remove is a hot path, it should be enough to check against the UEFI memory map
+or DT memory node. (we already have helpers to query the attributes from the memory map at
+runtime, so it is still available).
 
 
-Not considered is parsing the DT-chosen node entry as if it were a memreserve during early
-boot. This wouldn't work if you kexec something that doesn't know what the node is, it
-would overwrite the the memory and may not remove the node for the next kexec, which does.
+>> arm64 that, for example, one removes memory available at boot and then
+>> kexecs a new kernel? Does the kexec tool present the new kernel with the
+>> original memory map?
+> I dont know, probably James can help here. But as I had mentioned earlier,
+> the callers of remove_memory() should be able to control that. ACPI should
+> definitely be aware about which ranges were part of boot memory and refrain
+> from removing any subset, if the platform is known to have problems with
+> any subsequent kexec operation because the way boot memory map get used.
+> 
+> Though I am not much aware about kexec internals, it should inherit the
+> memory state at given point in time
+
+It does, but t = first-boot
+
+
+> accommodating all previous memory hot and remove operations.
+
+This would imply we rewrite the tables we get from firmware as the facts about the
+platform change ... that way madness lies!
+
+ACPI doesn't describe memory, the UEFI memory map does. You may be using the UEFI memory
+map on either a DT or ACPI system. If you don't have UEFI, you're using the DT memory-node.
+
+Linux passes on exactly what it had at boot through kexec. We don't rewrite the tables.
+Memory is either described in DT, or in the UEFI memory map that was left in memory by the
+EFI stub. Linux remembers where the UEFI memory map is through kexec using the additional
+entries in the DT chosen node that were put there by the EFI stub.
+
+
+The bootloader (including the EFI stub) needs to know what memory is removable. Certain
+allocations can't move once they have been made:
+ * The kernel's randomised physical address should not be in removable memory. With UEFI,
+   the EFI stub does this.
+ * Firmware structures like the DT or ACPI tables should not be in removable memory.
+   Neither should reservations for runtime use, like the RAS CPER regions, or the UEFI
+   runtime services.
+ * The EFI stub should not allocate the authoritative copy of the memory map in removable
+   memory. (we have runtime helpers to lookup the attributes. we pass the boot-time memory
+   map to the next OS via kexec).
+ * During paging_init() we allocate memory for swapper_pg_dir. This isn't something we can
+easily move around.
+
+Its not just software!:
+ * The GIC ITS property/pending (?) tables should not be in removable memory.
+
+
+The simplest thing to do here is decree that all memory present at boot, is non-removable.
+Firmware may need to trim the memory available to UEFI to the minimum needed to boot the
+system, we can hot-add the rest of it once we're up and running.
+
+
+> As an example cloud environment scenario, memory
+> resources might have increased or decreased during a guest lifetime, so
+> when the guest needs to have new OS image why should not it have all the
+> memory ? I dont know if it's feasible for the guest to expect previous hot
+> add or remove operations to be played again after the kexec.
+
+Firmware can't know that we kexec'd, so it can't replay the operations.
+
+I think we need a way of determining whether a particular block of removable memory is
+present or not. If we do this during boot, then kexec works in the same way as a normal boot.
+
+
+> There is another fundamental question here. Is there a notion of a minimum
+> subset of boot memory which cannot be hot removed no matter what ? If yes,
+> how that is being conveyed to the kernel currently ?
+
+Yes. The UEFI memory map.
+
+See drivers/firmware/efi/libstub/fdt.c::exit_boot_func()
+the EFI stub calls efi_get_virtmap() to get the running memory map, then stores in the DT
+with update_fdt_memmap().
+
+The memory described at this stage may not be removed as allocations from the EFI stub
+can't be moved. The biggest of these, is the kernel, which relocates itself to a random
+physical address during the EFI stub.
+
+See drivers/firmware/efi/libstub/arm64-stub.c::handle_kernel_image()
+The memcpy() is at the end.
+
+
+> The point is that all these need to be established between ACPI, EFI and
+> kernel. AFAICS this problem is for MM subsystem (including the platform
+> part of it) to solve instead.
+
+>> I can see x86 has CONFIG_FIRMWARE_MEMMAP suggesting that it is used by
+>> kexec. try_remove_memory() calls firmware_map_remove() so maybe they
+>> solve this problem differently.
+>>
+>> Correspondingly, after an arch_add_memory(), do we want a kexec kernel
+>> to access it? x86 seems to use the firmware_map_add_hotplug() mechanism.
+> 
+> Hmm, kexec could use it instead on arm64 as well ?
+
+Mmm, a linux specific description of the platform that we have to keep over kexec.
+
+How do we describe this if we kexec something that isn't linux? How do we tell a version
+of linux that doesn't support hotplug not to overwrite it?
+
+It would be better if we had something in ACPI to tell us at runtime whether a hot
+pluggable range of memory was populated.
+
+(I haven't looked to see whether ACPI can already do this)
+
 
 
 Thanks,
