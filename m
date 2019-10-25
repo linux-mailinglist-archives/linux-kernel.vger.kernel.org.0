@@ -2,131 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F211E465D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27C1DE4664
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:57:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438117AbfJYI43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 04:56:29 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37699 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393338AbfJYI40 (ORCPT
+        id S2438163AbfJYI5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 04:57:10 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:4492 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2437851AbfJYI5K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 04:56:26 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e11so1369902wrv.4
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 01:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Za+k390P96EYSItDepM5dTHhQrr03QyXzfLr1/CgGOk=;
-        b=LSvtfixYphn1xvmJLPG4xBTjQ7hqgGvgq1+mPntlD8fi5f4h8YKYgCwpXkbFX6/fe+
-         fRf9pY1fyyidqk0Xkvx4W+3xLBGvFWcZzFXra7cW0QAyx4PSmXKg4XC1X57hCTWJVzEI
-         hYXRzBOKNHUPFZ7zeE9/x3KMFLn6BkkIN7oGtfrukb2ELldOfeyQ0+Jg/NAvg0cZDbz5
-         dbXDybMmt5ptDPiDoIyXUDaPFwJBRBHSCAH3h28TXK0e85Mssz1DYVvqDzRLqZj2HS8s
-         517Yn8K4zb3+8o9PMEFcixmTiiRzLbqQ0T5vpPX6Z5kF3M5TeYtpGQ4ILJZGGFLGAu1G
-         vJow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Za+k390P96EYSItDepM5dTHhQrr03QyXzfLr1/CgGOk=;
-        b=SnPrhrZS58im8BaQo8ME9IRHrzkG/38x2b/WPnLyekwDffL5Mm9nHhtQVnEmNK4fzc
-         RK9DE2dgJvA+9bRjuhd73NP3lkLEAgl8Reiw18xkRIh6V6otNU5JdmyY2/xubQn002Ys
-         0FP4nxCjffDeyEVCd32wQ+6WfaPvDw1mp6DBB9LRbTfhRRTmrTJ00ZNeAo4XtbfmDQI2
-         SS8R/NDUWA7Y++mmiLlyd5PLV+AipiJeRNLxLEqusZDsaS9M7IPw2kQ3zuTpeORApS+h
-         UeJyU7+BJexeMg4jwtQDKQlUJ1qIVJOJpZVgbYvCuFoLJfRA8dt7MU4SSdxuLlqf6Cxz
-         eBbw==
-X-Gm-Message-State: APjAAAUkpE/WmEzRS8hWRzZZNPNgEI0Z/o4ZJ1HM2oj34cnC89OZjs6I
-        o3TJDSIbTXWAXVcggN8Yyywrmw==
-X-Google-Smtp-Source: APXvYqwVzxvbTRKbXJBqofPICUZqHUpZWS5OByE8bfHop6pOmKVSBV0+6k4fVzLoIWf1HYnMBXh9hg==
-X-Received: by 2002:adf:ee10:: with SMTP id y16mr1843678wrn.67.1571993784357;
-        Fri, 25 Oct 2019 01:56:24 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id c16sm1918320wrw.32.2019.10.25.01.56.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 01:56:23 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 09:56:22 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     arnd@arndb.de, broonie@kernel.org, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        baohua@kernel.org, stephan@gerhold.net
-Subject: Re: [PATCH v3 10/10] mfd: mfd-core: Move pdev->mfd_cell creation
- back into mfd_add_device()
-Message-ID: <20191025085622.7gdfbaesiwgnrfd3@holly.lan>
-References: <20191024163832.31326-1-lee.jones@linaro.org>
- <20191024163832.31326-11-lee.jones@linaro.org>
+        Fri, 25 Oct 2019 04:57:10 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9P8ulZV000677;
+        Fri, 25 Oct 2019 10:57:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=1bGUFwD+2UgboE1ietTsPulFCvB9SBgC3gckInFtWYQ=;
+ b=LDZwF2QuJhmbo2IepC9jiZpT5Gc7Gw+qsUANIlxZdSFB3ts4bZuZ7WvK71SAJ6jAngM2
+ J/0tF9Od5VpCG8MzVS1vpkgNCd8rkpx8KJIwrdD4y/loFtHifIEqrzhHSDFuJpP6z11a
+ trKnmgPyQfoATRqSmuxVxqoauIRgk2yhTdcqNo7o2EngIX22m60fMqet4f7zRJ9tqmQG
+ rVKBfH8GSfa5gv881r1UIrfU7dfnXST+Pgos5dJQVYniab5r2Vkk5dOoz/HuItFiBqJ0
+ WDBoKrLTp6Wo0DIOjxAZOVwGvn5EyJ34Abdw3SWVCxGG/BzU+VsWUVFcl2ObCtTxDTgY EA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2vt9s1xp6c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 25 Oct 2019 10:57:05 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3A1FA100038;
+        Fri, 25 Oct 2019 10:57:05 +0200 (CEST)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 26E642BDA69;
+        Fri, 25 Oct 2019 10:57:05 +0200 (CEST)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 25 Oct
+ 2019 10:57:05 +0200
+Received: from localhost (10.48.1.6) by Webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 25 Oct 2019 10:57:04 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <arnaud.pouliquen@st.com>
+Subject: [PATCH] remoteproc: stm32: use workqueue to treat mailbox callback
+Date:   Fri, 25 Oct 2019 10:56:39 +0200
+Message-ID: <20191025085639.2697-1-arnaud.pouliquen@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191024163832.31326-11-lee.jones@linaro.org>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-Originating-IP: [10.48.1.6]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-25_05:2019-10-23,2019-10-25 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 05:38:32PM +0100, Lee Jones wrote:
-> Most of the complexity of mfd_platform_add_cell() has been removed. The
-> only functionality left duplicates cell memory into the child's platform
-> device. Since it's only a few lines, moving it to the main thread and
-> removing the superfluous function makes sense.
-> 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+The mailbox callback is under interrupt context. A consequence is
+that RPMsg Callbacks are also in interrupt context.
+Create workqueue to treat the callbacks in normal context.
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+---
+ drivers/remoteproc/stm32_rproc.c | 38 +++++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 2cf4b2992bfc..f791770b8850 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -18,6 +18,7 @@
+ #include <linux/regmap.h>
+ #include <linux/remoteproc.h>
+ #include <linux/reset.h>
++#include <linux/workqueue.h>
+ 
+ #include "remoteproc_internal.h"
+ 
+@@ -31,7 +32,9 @@
+ #define STM32_SMC_REG_WRITE	0x1
+ 
+ #define STM32_MBX_VQ0		"vq0"
++#define STM32_MBX_VQ0_ID	0
+ #define STM32_MBX_VQ1		"vq1"
++#define STM32_MBX_VQ1_ID	1
+ #define STM32_MBX_SHUTDOWN	"shutdown"
+ 
+ struct stm32_syscon {
+@@ -58,6 +61,7 @@ struct stm32_mbox {
+ 	const unsigned char name[10];
+ 	struct mbox_chan *chan;
+ 	struct mbox_client client;
++	struct work_struct vq_work;
+ 	int vq_id;
+ };
+ 
+@@ -68,6 +72,7 @@ struct stm32_rproc {
+ 	u32 nb_rmems;
+ 	struct stm32_rproc_mem *rmems;
+ 	struct stm32_mbox mb[MBOX_NB_MBX];
++	struct workqueue_struct *workqueue;
+ 	bool secured_soc;
+ };
+ 
+@@ -261,13 +266,22 @@ static irqreturn_t stm32_rproc_wdg(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static void stm32_rproc_mb_vq_work(struct work_struct *work)
++{
++	struct stm32_mbox *mb = container_of(work, struct stm32_mbox, vq_work);
++	struct rproc *rproc = dev_get_drvdata(mb->client.dev);
++
++	if (rproc_vq_interrupt(rproc, mb->vq_id) == IRQ_NONE)
++		dev_dbg(&rproc->dev, "no message found in vq%d\n", mb->vq_id);
++}
++
+ static void stm32_rproc_mb_callback(struct mbox_client *cl, void *data)
+ {
+ 	struct rproc *rproc = dev_get_drvdata(cl->dev);
+ 	struct stm32_mbox *mb = container_of(cl, struct stm32_mbox, client);
++	struct stm32_rproc *ddata = rproc->priv;
+ 
+-	if (rproc_vq_interrupt(rproc, mb->vq_id) == IRQ_NONE)
+-		dev_dbg(&rproc->dev, "no message found in vq%d\n", mb->vq_id);
++	queue_work(ddata->workqueue, &mb->vq_work);
+ }
+ 
+ static void stm32_rproc_free_mbox(struct rproc *rproc)
+@@ -285,7 +299,7 @@ static void stm32_rproc_free_mbox(struct rproc *rproc)
+ static const struct stm32_mbox stm32_rproc_mbox[MBOX_NB_MBX] = {
+ 	{
+ 		.name = STM32_MBX_VQ0,
+-		.vq_id = 0,
++		.vq_id = STM32_MBX_VQ0_ID,
+ 		.client = {
+ 			.rx_callback = stm32_rproc_mb_callback,
+ 			.tx_block = false,
+@@ -293,7 +307,7 @@ static const struct stm32_mbox stm32_rproc_mbox[MBOX_NB_MBX] = {
+ 	},
+ 	{
+ 		.name = STM32_MBX_VQ1,
+-		.vq_id = 1,
++		.vq_id = STM32_MBX_VQ1_ID,
+ 		.client = {
+ 			.rx_callback = stm32_rproc_mb_callback,
+ 			.tx_block = false,
+@@ -332,6 +346,10 @@ static void stm32_rproc_request_mbox(struct rproc *rproc)
+ 			dev_warn(dev, "cannot get %s mbox\n", name);
+ 			ddata->mb[i].chan = NULL;
+ 		}
++		if (ddata->mb[i].vq_id >= 0) {
++			INIT_WORK(&ddata->mb[i].vq_work,
++				  stm32_rproc_mb_vq_work);
++		}
+ 	}
+ }
+ 
+@@ -589,12 +607,18 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+ 
+ 	rproc->has_iommu = false;
+ 	ddata = rproc->priv;
++	ddata->workqueue = create_workqueue(dev_name(dev));
++	if (!ddata->workqueue) {
++		dev_err(dev, "cannot create workqueue\n");
++		ret = -ENOMEM;
++		goto free_rproc;
++	}
+ 
+ 	platform_set_drvdata(pdev, rproc);
+ 
+ 	ret = stm32_rproc_parse_dt(pdev);
+ 	if (ret)
+-		goto free_rproc;
++		goto free_wkq;
+ 
+ 	stm32_rproc_request_mbox(rproc);
+ 
+@@ -606,6 +630,8 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+ 
+ free_mb:
+ 	stm32_rproc_free_mbox(rproc);
++free_wkq:
++	destroy_workqueue(ddata->workqueue);
+ free_rproc:
+ 	rproc_free(rproc);
+ 	return ret;
+@@ -614,12 +640,14 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+ static int stm32_rproc_remove(struct platform_device *pdev)
+ {
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
++	struct stm32_rproc *ddata = rproc->priv;
+ 
+ 	if (atomic_read(&rproc->power) > 0)
+ 		rproc_shutdown(rproc);
+ 
+ 	rproc_del(rproc);
+ 	stm32_rproc_free_mbox(rproc);
++	destroy_workqueue(ddata->workqueue);
+ 	rproc_free(rproc);
+ 
+ 	return 0;
+-- 
+2.17.1
 
-> ---
->  drivers/mfd/mfd-core.c | 21 ++++-----------------
->  1 file changed, 4 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-> index 2535dd3605c0..cb3e0a14bbdd 100644
-> --- a/drivers/mfd/mfd-core.c
-> +++ b/drivers/mfd/mfd-core.c
-> @@ -49,19 +49,6 @@ int mfd_cell_disable(struct platform_device *pdev)
->  }
->  EXPORT_SYMBOL(mfd_cell_disable);
->  
-> -static int mfd_platform_add_cell(struct platform_device *pdev,
-> -				 const struct mfd_cell *cell)
-> -{
-> -	if (!cell)
-> -		return 0;
-> -
-> -	pdev->mfd_cell = kmemdup(cell, sizeof(*cell), GFP_KERNEL);
-> -	if (!pdev->mfd_cell)
-> -		return -ENOMEM;
-> -
-> -	return 0;
-> -}
-> -
->  #if IS_ENABLED(CONFIG_ACPI)
->  static void mfd_acpi_add_device(const struct mfd_cell *cell,
->  				struct platform_device *pdev)
-> @@ -141,6 +128,10 @@ static int mfd_add_device(struct device *parent, int id,
->  	if (!pdev)
->  		goto fail_alloc;
->  
-> +	pdev->mfd_cell = kmemdup(cell, sizeof(*cell), GFP_KERNEL);
-> +	if (!pdev->mfd_cell)
-> +		goto fail_device;
-> +
->  	res = kcalloc(cell->num_resources, sizeof(*res), GFP_KERNEL);
->  	if (!res)
->  		goto fail_device;
-> @@ -183,10 +174,6 @@ static int mfd_add_device(struct device *parent, int id,
->  			goto fail_alias;
->  	}
->  
-> -	ret = mfd_platform_add_cell(pdev, cell);
-> -	if (ret)
-> -		goto fail_alias;
-> -
->  	for (r = 0; r < cell->num_resources; r++) {
->  		res[r].name = cell->resources[r].name;
->  		res[r].flags = cell->resources[r].flags;
-> -- 
-> 2.17.1
-> 
