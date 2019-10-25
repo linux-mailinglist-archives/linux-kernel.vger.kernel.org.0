@@ -2,340 +2,318 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 043ECE4776
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:36:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3286EE47BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:48:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394358AbfJYJg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 05:36:29 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41238 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394278AbfJYJg2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 05:36:28 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p4so1497759wrm.8;
-        Fri, 25 Oct 2019 02:36:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to;
-        bh=bl2WOS2669jS0p4MM0ZtP9XkzD7cMvf/ibHDNKVuLWk=;
-        b=IXiaoaldrF6iUk12g/Y3LCoVjCI4RxHAJPOklslTv7UtWVgPxy0aost/o83pfOPyFw
-         nDUw2908sAD2OSWhlTK37/BTR4TVZIz8IOJeFuYxnSlSqgEMPmpaFhwgViSKXlvYJwHi
-         DUq40a892m/o2cDB7ixVEd7i0FT03fjKb9VQdkgF7ey3T5kdkaXIHVPBbHeG8P3zeJFu
-         rQSlrsvGzKKrxtArvk9pUiMUV8eJTnayrExznWNw8mSr6kTYYvbQc8a77CGWpZitgFtd
-         A6+5SuwhSqKhHMwD5LP5kokvGmv6iHLNzJQR/F4Bew/nsN5rbmCLufRikbFnmOECma9U
-         I2uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to;
-        bh=bl2WOS2669jS0p4MM0ZtP9XkzD7cMvf/ibHDNKVuLWk=;
-        b=fHpzpfXnvL+ZcvtrC3WXwD6dJa27t5VkBOgyjSXZrLdJ63TaRrvmbwNCo9kDAq0jGQ
-         f8soefgWlNKS6gA+oV4lLqzuqn3v9MPit1ownFzkFANwx7DNOrju6Lf7EviuJnzIc4k7
-         9OENA7QhlXiebzttAhtUO2ssEGCFYNVG+BsyWJmwlRkMCifo1H0HhhPW2rZc40fP9+1G
-         uEpApcop7q7jnDXs7I/VB2unIM0cGdx7xXjiGlIX42ub3xe4Mp5yY2dWAgLxvryajJ0A
-         9603xrIU+O9ctrzIReTZVHqJ/wX+enSWyfsDFwELbh3L1Qj+nuEcAR0aT/6SBsH55AOp
-         ioNQ==
-X-Gm-Message-State: APjAAAV2RkfzEfOPaV0oAwxv8t1ZNxx8+Vf954I9UfI9HsHf0dRfOiMC
-        5tuTna4BLmoEJdmBBkHmcQHjB1Ic
-X-Google-Smtp-Source: APXvYqwUa0z/dIvO3qhLSYkp+dj9hOcmQP6zs05xxHjGoxbU0I2lzNTwfMZs/h/KIjZMlrg96lWJxw==
-X-Received: by 2002:adf:9481:: with SMTP id 1mr1759151wrr.77.1571996184787;
-        Fri, 25 Oct 2019 02:36:24 -0700 (PDT)
-Received: from [192.168.43.159] ([109.126.132.16])
-        by smtp.gmail.com with ESMTPSA id d11sm1843285wrf.80.2019.10.25.02.36.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2019 02:36:23 -0700 (PDT)
-Subject: Re: [PATCH 2/3] io_uring: Fix broken links with offloading
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1571991701.git.asml.silence@gmail.com>
- <bd0eaa7729e3b8b599a25167df0a4ee583da69cc.1571991701.git.asml.silence@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
- bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
- 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
- +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
- W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
- CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
- Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
- EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
- jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
- NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
- bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
- PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
- Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
- Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
- xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
- aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
- HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
- 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
- 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
- 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
- M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
- reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
- IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
- dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
- Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
- jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
- Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
- dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
- xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
- DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
- F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
- 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
- aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
- 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
- LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
- uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
- rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
- 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
- JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
- UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
- m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
- OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <dd88f5be-930b-53e5-c3b6-12927d6634b1@gmail.com>
-Date:   Fri, 25 Oct 2019 12:36:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <bd0eaa7729e3b8b599a25167df0a4ee583da69cc.1571991701.git.asml.silence@gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="mHWPEBz81cRimIQsEmEbITjOhg7CAv6pF"
+        id S2439075AbfJYJsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 05:48:25 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:60806 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391988AbfJYJsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 05:48:24 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B0F0620043E;
+        Fri, 25 Oct 2019 11:48:21 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 471D4200056;
+        Fri, 25 Oct 2019 11:48:14 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0BC5B402BC;
+        Fri, 25 Oct 2019 17:48:04 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, wsa@the-dreams.de,
+        leoyang.li@nxp.com, aisheng.dong@nxp.com, xiaoning.wang@nxp.com,
+        o.rempel@pengutronix.de
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, laurentiu.tudor@nxp.com,
+        jiafei.pan@nxp.com, xiaobo.xie@nxp.com, Biwen Li <biwen.li@nxp.com>
+Subject: [v3] i2c: imx: support slave mode for imx I2C driver
+Date:   Fri, 25 Oct 2019 17:37:03 +0800
+Message-Id: <20191025093703.36864-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---mHWPEBz81cRimIQsEmEbITjOhg7CAv6pF
-Content-Type: multipart/mixed; boundary="dAxsiZJdm05bU2fyu7JGJI1vDxCHPKQ6V";
- protected-headers="v1"
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <dd88f5be-930b-53e5-c3b6-12927d6634b1@gmail.com>
-Subject: Re: [PATCH 2/3] io_uring: Fix broken links with offloading
-References: <cover.1571991701.git.asml.silence@gmail.com>
- <bd0eaa7729e3b8b599a25167df0a4ee583da69cc.1571991701.git.asml.silence@gmail.com>
-In-Reply-To: <bd0eaa7729e3b8b599a25167df0a4ee583da69cc.1571991701.git.asml.silence@gmail.com>
+The patch supports slave mode for imx I2C driver
 
---dAxsiZJdm05bU2fyu7JGJI1vDxCHPKQ6V
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+Change in v3:
+    - support layerscape and i.mx platform
 
-On 25/10/2019 12:31, Pavel Begunkov (Silence) wrote:
-> From: Pavel Begunkov <asml.silence@gmail.com>
->=20
-> io_sq_thread() processes sqes by 8 without considering links. As a
-> result, links will be randomely subdivided.
->=20
-> The easiest way to fix it is to call io_get_sqring() inside
-> io_submit_sqes() as do io_ring_submit().
->=20
-> Downsides:
-> 1. This removes optimisation of not grabbing mm_struct for fixed files
-> 2. It submitting all sqes in one go, without finer-grained sheduling
-> with cq processing.
->=20
-Is this logic with not-grabbing mm and fixed files critical?
-I want to put it back later after some cleanup.=20
+Change in v2:
+	- remove MACRO CONFIG_I2C_SLAVE
 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  fs/io_uring.c | 62 +++++++++++++++++++++++++++------------------------=
+ drivers/i2c/busses/i2c-imx.c | 209 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 191 insertions(+), 18 deletions(-)
 
->  1 file changed, 33 insertions(+), 29 deletions(-)
->=20
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 0e141d905a5b..949c82a40d16 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -735,6 +735,14 @@ static unsigned io_cqring_events(struct io_rings *=
-rings)
->  	return READ_ONCE(rings->cq.tail) - READ_ONCE(rings->cq.head);
->  }
-> =20
-> +static inline unsigned int io_sqring_entries(struct io_ring_ctx *ctx)
-> +{
-> +	struct io_rings *rings =3D ctx->rings;
-> +
-> +	/* make sure SQ entry isn't read before tail */
-> +	return smp_load_acquire(&rings->sq.tail) - ctx->cached_sq_head;
-> +}
-> +
->  /*
->   * Find and free completed poll iocbs
->   */
-> @@ -2560,8 +2568,8 @@ static bool io_get_sqring(struct io_ring_ctx *ctx=
-, struct sqe_submit *s)
->  	return false;
->  }
-> =20
-> -static int io_submit_sqes(struct io_ring_ctx *ctx, struct sqe_submit *=
-sqes,
-> -			  unsigned int nr, bool has_user, bool mm_fault)
-> +static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
-> +			  bool has_user, bool mm_fault)
->  {
->  	struct io_submit_state state, *statep =3D NULL;
->  	struct io_kiocb *link =3D NULL;
-> @@ -2575,6 +2583,11 @@ static int io_submit_sqes(struct io_ring_ctx *ct=
-x, struct sqe_submit *sqes,
->  	}
-> =20
->  	for (i =3D 0; i < nr; i++) {
-> +		struct sqe_submit s;
-> +
-> +		if (!io_get_sqring(ctx, &s))
-> +			break;
-> +
->  		/*
->  		 * If previous wasn't linked and we have a linked command,
->  		 * that's the end of the chain. Submit the previous link.
-> @@ -2584,9 +2597,9 @@ static int io_submit_sqes(struct io_ring_ctx *ctx=
-, struct sqe_submit *sqes,
->  			link =3D NULL;
->  			shadow_req =3D NULL;
->  		}
-> -		prev_was_link =3D (sqes[i].sqe->flags & IOSQE_IO_LINK) !=3D 0;
-> +		prev_was_link =3D (s.sqe->flags & IOSQE_IO_LINK) !=3D 0;
-> =20
-> -		if (link && (sqes[i].sqe->flags & IOSQE_IO_DRAIN)) {
-> +		if (link && (s.sqe->flags & IOSQE_IO_DRAIN)) {
->  			if (!shadow_req) {
->  				shadow_req =3D io_get_req(ctx, NULL);
->  				if (unlikely(!shadow_req))
-> @@ -2594,18 +2607,18 @@ static int io_submit_sqes(struct io_ring_ctx *c=
-tx, struct sqe_submit *sqes,
->  				shadow_req->flags |=3D (REQ_F_IO_DRAIN | REQ_F_SHADOW_DRAIN);
->  				refcount_dec(&shadow_req->refs);
->  			}
-> -			shadow_req->sequence =3D sqes[i].sequence;
-> +			shadow_req->sequence =3D s.sequence;
->  		}
-> =20
->  out:
->  		if (unlikely(mm_fault)) {
-> -			io_cqring_add_event(ctx, sqes[i].sqe->user_data,
-> +			io_cqring_add_event(ctx, s.sqe->user_data,
->  						-EFAULT);
->  		} else {
-> -			sqes[i].has_user =3D has_user;
-> -			sqes[i].needs_lock =3D true;
-> -			sqes[i].needs_fixed_file =3D true;
-> -			io_submit_sqe(ctx, &sqes[i], statep, &link);
-> +			s.has_user =3D has_user;
-> +			s.needs_lock =3D true;
-> +			s.needs_fixed_file =3D true;
-> +			io_submit_sqe(ctx, &s, statep, &link);
->  			submitted++;
->  		}
->  	}
-> @@ -2620,7 +2633,6 @@ static int io_submit_sqes(struct io_ring_ctx *ctx=
-, struct sqe_submit *sqes,
-> =20
->  static int io_sq_thread(void *data)
->  {
-> -	struct sqe_submit sqes[IO_IOPOLL_BATCH];
->  	struct io_ring_ctx *ctx =3D data;
->  	struct mm_struct *cur_mm =3D NULL;
->  	mm_segment_t old_fs;
-> @@ -2635,8 +2647,8 @@ static int io_sq_thread(void *data)
-> =20
->  	timeout =3D inflight =3D 0;
->  	while (!kthread_should_park()) {
-> -		bool all_fixed, mm_fault =3D false;
-> -		int i;
-> +		bool mm_fault =3D false;
-> +		unsigned int to_submit;
-> =20
->  		if (inflight) {
->  			unsigned nr_events =3D 0;
-> @@ -2656,7 +2668,8 @@ static int io_sq_thread(void *data)
->  				timeout =3D jiffies + ctx->sq_thread_idle;
->  		}
-> =20
-> -		if (!io_get_sqring(ctx, &sqes[0])) {
-> +		to_submit =3D io_sqring_entries(ctx);
-> +		if (!to_submit) {
->  			/*
->  			 * We're polling. If we're within the defined idle
->  			 * period, then let us spin without work before going
-> @@ -2687,7 +2700,8 @@ static int io_sq_thread(void *data)
->  			/* make sure to read SQ tail after writing flags */
->  			smp_mb();
-> =20
-> -			if (!io_get_sqring(ctx, &sqes[0])) {
-> +			to_submit =3D io_sqring_entries(ctx);
-> +			if (!to_submit) {
->  				if (kthread_should_park()) {
->  					finish_wait(&ctx->sqo_wait, &wait);
->  					break;
-> @@ -2705,19 +2719,8 @@ static int io_sq_thread(void *data)
->  			ctx->rings->sq_flags &=3D ~IORING_SQ_NEED_WAKEUP;
->  		}
-> =20
-> -		i =3D 0;
-> -		all_fixed =3D true;
-> -		do {
-> -			if (all_fixed && io_sqe_needs_user(sqes[i].sqe))
-> -				all_fixed =3D false;
-> -
-> -			i++;
-> -			if (i =3D=3D ARRAY_SIZE(sqes))
-> -				break;
-> -		} while (io_get_sqring(ctx, &sqes[i]));
-> -
->  		/* Unless all new commands are FIXED regions, grab mm */
-> -		if (!all_fixed && !cur_mm) {
-> +		if (!cur_mm) {
->  			mm_fault =3D !mmget_not_zero(ctx->sqo_mm);
->  			if (!mm_fault) {
->  				use_mm(ctx->sqo_mm);
-> @@ -2725,8 +2728,9 @@ static int io_sq_thread(void *data)
->  			}
->  		}
-> =20
-> -		inflight +=3D io_submit_sqes(ctx, sqes, i, cur_mm !=3D NULL,
-> -						mm_fault);
-> +		to_submit =3D min(to_submit, ctx->sq_entries);
-> +		inflight +=3D io_submit_sqes(ctx, to_submit, cur_mm !=3D NULL,
-> +					   mm_fault);
-> =20
->  		/* Commit SQ ring head once we've consumed all SQEs */
->  		io_commit_sqring(ctx);
->=20
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index a3b61336fe55..a91bf122f66c 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -203,6 +203,7 @@ struct imx_i2c_struct {
+ 	struct pinctrl_state *pinctrl_pins_gpio;
+ 
+ 	struct imx_i2c_dma	*dma;
++	struct i2c_client	*slave;
+ };
+ 
+ static const struct imx_i2c_hwdata imx1_i2c_hwdata = {
+@@ -279,6 +280,14 @@ static inline unsigned char imx_i2c_read_reg(struct imx_i2c_struct *i2c_imx,
+ 	return readb(i2c_imx->base + (reg << i2c_imx->hwdata->regshift));
+ }
+ 
++/* Set up i2c controller register and i2c status register to default value. */
++static void i2c_imx_reset_regs(struct imx_i2c_struct *i2c_imx)
++{
++	imx_i2c_write_reg(i2c_imx->hwdata->i2cr_ien_opcode ^ I2CR_IEN,
++			i2c_imx, IMX_I2C_I2CR);
++	imx_i2c_write_reg(i2c_imx->hwdata->i2sr_clr_opcode, i2c_imx, IMX_I2C_I2SR);
++}
++
+ /* Functions for DMA support */
+ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+ 						dma_addr_t phy_addr)
+@@ -588,23 +597,33 @@ static void i2c_imx_stop(struct imx_i2c_struct *i2c_imx)
+ 	imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
+ }
+ 
+-static irqreturn_t i2c_imx_isr(int irq, void *dev_id)
++/* Clear interrupt flag bit */
++static void i2c_imx_clr_if_bit(unsigned int status, struct imx_i2c_struct *i2c_imx)
+ {
+-	struct imx_i2c_struct *i2c_imx = dev_id;
+-	unsigned int temp;
++	status &= ~I2SR_IIF;
++	status |= (i2c_imx->hwdata->i2sr_clr_opcode & I2SR_IIF);
++	imx_i2c_write_reg(status, i2c_imx, IMX_I2C_I2SR);
++}
+ 
+-	temp = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2SR);
+-	if (temp & I2SR_IIF) {
+-		/* save status register */
+-		i2c_imx->i2csr = temp;
+-		temp &= ~I2SR_IIF;
+-		temp |= (i2c_imx->hwdata->i2sr_clr_opcode & I2SR_IIF);
+-		imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2SR);
+-		wake_up(&i2c_imx->queue);
+-		return IRQ_HANDLED;
+-	}
++/* Clear arbitration lost bit */
++static void i2c_imx_clr_al_bit(unsigned int status, struct imx_i2c_struct *i2c_imx)
++{
++	status &= ~I2SR_IAL;
++	status |= (i2c_imx->hwdata->i2sr_clr_opcode & I2SR_IAL);
++	imx_i2c_write_reg(status, i2c_imx, IMX_I2C_I2SR);
++}
++
++static irqreturn_t i2c_imx_master_isr(struct imx_i2c_struct *i2c_imx)
++{
++	unsigned int status;
++
++	/* Save status register */
++	status = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2SR);
++	i2c_imx->i2csr = status | I2SR_IIF;
+ 
+-	return IRQ_NONE;
++	wake_up(&i2c_imx->queue);
++
++	return IRQ_HANDLED;
+ }
+ 
+ static int i2c_imx_dma_write(struct imx_i2c_struct *i2c_imx,
+@@ -900,6 +919,11 @@ static int i2c_imx_xfer(struct i2c_adapter *adapter,
+ 
+ 	dev_dbg(&i2c_imx->adapter.dev, "<%s>\n", __func__);
+ 
++	if (i2c_imx->slave) {
++		dev_err(&i2c_imx->adapter.dev, "Please not do operations of master mode in slave mode");
++		return -EBUSY;
++	}
++
+ 	result = pm_runtime_get_sync(i2c_imx->adapter.dev.parent);
+ 	if (result < 0)
+ 		goto out;
+@@ -1048,11 +1072,163 @@ static u32 i2c_imx_func(struct i2c_adapter *adapter)
+ 		| I2C_FUNC_SMBUS_READ_BLOCK_DATA;
+ }
+ 
++static int i2c_imx_slave_init(struct imx_i2c_struct *i2c_imx)
++{
++	int temp;
++
++	/* Resume */
++	temp = pm_runtime_get_sync(i2c_imx->adapter.dev.parent);
++	if (temp < 0) {
++		dev_err(&i2c_imx->adapter.dev, "failed to resume i2c controller");
++		return temp;
++	}
++
++	/* Set slave addr. */
++	imx_i2c_write_reg((i2c_imx->slave->addr << 1), i2c_imx, IMX_I2C_IADR);
++
++	i2c_imx_reset_regs(i2c_imx);
++
++	/* Enable module */
++	temp = i2c_imx->hwdata->i2cr_ien_opcode;
++	imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
++
++	/* Enable interrupt from i2c module */
++	temp |= I2CR_IIEN;
++	imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
++
++	/* Wait controller to be stable */
++	usleep_range(50, 150);
++	return 0;
++}
++
++static irqreturn_t i2c_imx_slave_isr(struct imx_i2c_struct *i2c_imx)
++{
++	unsigned int status, ctl;
++	u8 value;
++
++	if (!i2c_imx->slave) {
++		dev_err(&i2c_imx->adapter.dev, "cannot deal with slave irq,i2c_imx->slave is null");
++		return IRQ_NONE;
++	}
++
++	status = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2SR);
++	ctl = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
++	if (status & I2SR_IAL) { /* Arbitration lost */
++		i2c_imx_clr_al_bit(status, i2c_imx);
++	} else if (status & I2SR_IAAS) { /* Addressed as a slave */
++		if (status & I2SR_SRW) { /* Master wants to read from us*/
++			dev_dbg(&i2c_imx->adapter.dev, "read requested");
++			i2c_slave_event(i2c_imx->slave, I2C_SLAVE_READ_REQUESTED, &value);
++
++			/* Slave transmit */
++			ctl |= I2CR_MTX;
++			imx_i2c_write_reg(ctl, i2c_imx, IMX_I2C_I2CR);
++
++			/* Send data */
++			imx_i2c_write_reg(value, i2c_imx, IMX_I2C_I2DR);
++		} else { /* Master wants to write to us */
++			dev_dbg(&i2c_imx->adapter.dev, "write requested");
++			i2c_slave_event(i2c_imx->slave,	I2C_SLAVE_WRITE_REQUESTED, &value);
++
++			/* Slave receive */
++			ctl &= ~I2CR_MTX;
++			imx_i2c_write_reg(ctl, i2c_imx, IMX_I2C_I2CR);
++			/* Dummy read */
++			imx_i2c_read_reg(i2c_imx, IMX_I2C_I2DR);
++		}
++	} else if (!(ctl & I2CR_MTX)) { /* Receive mode */
++			if (status & I2SR_IBB) { /* No STOP signal detected */
++				ctl &= ~I2CR_MTX;
++				imx_i2c_write_reg(ctl, i2c_imx, IMX_I2C_I2CR);
++
++				value = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2DR);
++				i2c_slave_event(i2c_imx->slave,	I2C_SLAVE_WRITE_RECEIVED, &value);
++			} else { /* STOP signal is detected */
++				dev_dbg(&i2c_imx->adapter.dev,
++					"STOP signal detected");
++				i2c_slave_event(i2c_imx->slave, I2C_SLAVE_STOP, &value);
++			}
++	} else if (!(status & I2SR_RXAK)) {	/* Transmit mode received ACK */
++		ctl |= I2CR_MTX;
++		imx_i2c_write_reg(ctl, i2c_imx, IMX_I2C_I2CR);
++
++		i2c_slave_event(i2c_imx->slave,	I2C_SLAVE_READ_PROCESSED, &value);
++
++		imx_i2c_write_reg(value, i2c_imx, IMX_I2C_I2DR);
++	} else { /* Transmit mode received NAK */
++		ctl &= ~I2CR_MTX;
++		imx_i2c_write_reg(ctl, i2c_imx, IMX_I2C_I2CR);
++		imx_i2c_read_reg(i2c_imx, IMX_I2C_I2DR);
++	}
++	return IRQ_HANDLED;
++}
++
++static int i2c_imx_reg_slave(struct i2c_client *client)
++{
++	struct imx_i2c_struct *i2c_imx = i2c_get_adapdata(client->adapter);
++	int ret;
++	if (i2c_imx->slave)
++		return -EBUSY;
++
++	i2c_imx->slave = client;
++
++	ret = i2c_imx_slave_init(i2c_imx);
++	if (ret < 0)
++		dev_err(&i2c_imx->adapter.dev, "failed to switch to slave mode");
++
++	return ret;
++}
++
++static int i2c_imx_unreg_slave(struct i2c_client *client)
++{
++	struct imx_i2c_struct *i2c_imx = i2c_get_adapdata(client->adapter);
++	int ret;
++
++	if (!i2c_imx->slave)
++		return -EINVAL;
++
++	/* Reset slave address. */
++	imx_i2c_write_reg(0, i2c_imx, IMX_I2C_IADR);
++
++	i2c_imx_reset_regs(i2c_imx);
++
++	i2c_imx->slave = NULL;
++
++	/* Suspend */
++	ret = pm_runtime_put_sync(i2c_imx->adapter.dev.parent);
++	if (ret < 0)
++		dev_err(&i2c_imx->adapter.dev, "failed to suspend i2c controller");
++
++	return ret;
++}
++
+ static const struct i2c_algorithm i2c_imx_algo = {
+ 	.master_xfer	= i2c_imx_xfer,
+ 	.functionality	= i2c_imx_func,
++	.reg_slave	= i2c_imx_reg_slave,
++	.unreg_slave	= i2c_imx_unreg_slave,
+ };
+ 
++static irqreturn_t i2c_imx_isr(int irq, void *dev_id)
++{
++	struct imx_i2c_struct *i2c_imx = dev_id;
++	unsigned int status, ctl;
++	irqreturn_t irq_status = IRQ_NONE;
++
++	status = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2SR);
++	ctl = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
++
++	if (status & I2SR_IIF) {
++		i2c_imx_clr_if_bit(status, i2c_imx);
++		if (ctl & I2CR_MSTA)
++			irq_status = i2c_imx_master_isr(i2c_imx);
++		else
++			irq_status = i2c_imx_slave_isr(i2c_imx);
++	}
++
++	return irq_status;
++}
++
+ static int i2c_imx_probe(struct platform_device *pdev)
+ {
+ 	struct imx_i2c_struct *i2c_imx;
+@@ -1148,10 +1324,7 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 	clk_notifier_register(i2c_imx->clk, &i2c_imx->clk_change_nb);
+ 	i2c_imx_set_clk(i2c_imx, clk_get_rate(i2c_imx->clk));
+ 
+-	/* Set up chip registers to defaults */
+-	imx_i2c_write_reg(i2c_imx->hwdata->i2cr_ien_opcode ^ I2CR_IEN,
+-			i2c_imx, IMX_I2C_I2CR);
+-	imx_i2c_write_reg(i2c_imx->hwdata->i2sr_clr_opcode, i2c_imx, IMX_I2C_I2SR);
++	i2c_imx_reset_regs(i2c_imx);
+ 
+ 	/* Init optional bus recovery function */
+ 	ret = i2c_imx_init_recovery_info(i2c_imx, pdev);
+-- 
+2.17.1
 
---=20
-Yours sincerely,
-Pavel Begunkov
-
-
---dAxsiZJdm05bU2fyu7JGJI1vDxCHPKQ6V--
-
---mHWPEBz81cRimIQsEmEbITjOhg7CAv6pF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl2ywhUACgkQWt5b1Glr
-+6UXShAAsvlD9gTd60XZrIeaxjVekD4n8DwcS7+4pON7+sQLN3bz2sIuCS2igy7f
-Z2JPtveb6DLZcOeNvO/D3VEI3CwMmlIxHfkS6uccWx9J+6kP2C2ogKljMrDC9Vsj
-+Zr/afFnLxo/AULBdyLRnc7S1hJvHcH/E4YR0H1aiXRoBiRcdDnMr2kZiMgvuzmj
-TneXnZdxe35P7RQ9SAPyiYd5qrvKMKxHrGSV4Xc6Lde3+WN+/VTER3Kabbx0MdfJ
-zAYJsrN8xMtuDnx4rpFadKsD6RP7lTO1ThaGwa63/erZe/f0h5ZbAYm7kTmaXvTE
-K0Qu7LgOSPZt6u8/O+73w2S437aI7QtKmOjkz9QA7CdelRQVwKuGB4GiJuGUWrSN
-ewEQzVhb0TsM/ohkwvx7Z+s8penPRvfKPEohXa6td9HBnWFEG1/UJcVEiYbE4ExJ
-lGLNV+uv79huUmik2u64fCoLE+Ls68H2z72tFLttey6HGaIH+bJ1aDcEoT2KzyY7
-FsrbzefpWgU0sH0Jdqbi9wONq24BqWmHe0Q2K2tT/cpmxRcPjsBiuSakPuHV0yHL
-28q5DI4+PLZPl1bZK7mBO7EuO7dxTECiLlQFGMndnpYiSKPKfFRyt6jd+rgQIiZK
-kfg9yZ3xJc+2W0WRIVSmKTyWMN9UAT6RjtzH5yAjyrN8j283rWk=
-=8ZaJ
------END PGP SIGNATURE-----
-
---mHWPEBz81cRimIQsEmEbITjOhg7CAv6pF--
