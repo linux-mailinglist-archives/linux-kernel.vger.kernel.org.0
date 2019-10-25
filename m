@@ -2,117 +2,287 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA862E439D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 08:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DB40E43A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 08:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405056AbfJYGfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 02:35:00 -0400
-Received: from foss.arm.com ([217.140.110.172]:35572 "EHLO foss.arm.com"
+        id S2405116AbfJYGkN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 25 Oct 2019 02:40:13 -0400
+Received: from mga11.intel.com ([192.55.52.93]:7617 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388289AbfJYGfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 02:35:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB71328;
-        Thu, 24 Oct 2019 23:34:58 -0700 (PDT)
-Received: from [10.162.41.137] (p8cg001049571a15.blr.arm.com [10.162.41.137])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DD333F718;
-        Thu, 24 Oct 2019 23:37:36 -0700 (PDT)
-Subject: Re: [PATCH V7] mm/debug: Add tests validating architecture page table
- helpers
-To:     Qian Cai <cai@lca.pw>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <ccdd4f7a-c7dc-ca10-d30c-0bc05c7136c7@arm.com>
- <69256008-2235-4AF1-A3BA-0146C82CCB93@lca.pw>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <5ce5a76c-ea89-c2a1-6665-7d75bce5fb87@arm.com>
-Date:   Fri, 25 Oct 2019 12:05:18 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <69256008-2235-4AF1-A3BA-0146C82CCB93@lca.pw>
-Content-Type: text/plain; charset=utf-8
+        id S2388287AbfJYGkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 02:40:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 23:40:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,227,1569308400"; 
+   d="scan'208";a="228796143"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by fmsmga002.fm.intel.com with ESMTP; 24 Oct 2019 23:40:12 -0700
+Received: from FMSMSX110.amr.corp.intel.com (10.18.116.10) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 24 Oct 2019 23:40:11 -0700
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ fmsmsx110.amr.corp.intel.com (10.18.116.10) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 24 Oct 2019 23:40:11 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.166]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.165]) with mapi id 14.03.0439.000;
+ Fri, 25 Oct 2019 14:40:10 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+CC:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Jonathan Cameron" <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>
+Subject: RE: [PATCH v7 03/11] iommu/vt-d: Add custom allocator for IOASID
+Thread-Topic: [PATCH v7 03/11] iommu/vt-d: Add custom allocator for IOASID
+Thread-Index: AQHViqRVDFt/7gHf3E+EfuPtxXQ8nKdqHQYAgAAk/YCAAKNMUA==
+Date:   Fri, 25 Oct 2019 06:40:09 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDC60@SHSMSX104.ccr.corp.intel.com>
+References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1571946904-86776-4-git-send-email-jacob.jun.pan@linux.intel.com>
+        <ae437be4-e633-e670-0e1f-d07b4364f651@linux.intel.com>
+ <20191024214311.43d76a5c@jacob-builder>
+In-Reply-To: <20191024214311.43d76a5c@jacob-builder>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTEzODgyNTMtYmI3OS00ODYwLWIwMjctNWI3YzA3YWQ3MzhkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibFYrRmhiMDV1RmtrSHU2eUE0elFTMlJmYUNRcVVkTjNVQ2hkVlNGWEt5ZnoyN0hKQ3g2RzJcL1ZPY093ZHhIMUoifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/25/2019 11:22 AM, Qian Cai wrote:
+> From: Jacob Pan [mailto:jacob.jun.pan@linux.intel.com]
+> Sent: Friday, October 25, 2019 12:43 PM
 > 
+> Hi Baolu,
 > 
->> On Oct 24, 2019, at 11:45 PM, Anshuman Khandual <Anshuman.Khandual@arm.com> wrote:
->>
->> Nothing specific. But just tested this with x86 defconfig with relevant configs
->> which are required for this test. Not sure if it involved W=1.
+> Thanks for the review. please see my comments inline.
 > 
-> No, it will not. It needs to run like,
+> On Fri, 25 Oct 2019 10:30:48 +0800
+> Lu Baolu <baolu.lu@linux.intel.com> wrote:
 > 
-> make W=1 -j 64 2>/tmp/warns
+> > Hi Jacob,
+> >
+> > On 10/25/19 3:54 AM, Jacob Pan wrote:
+> > > When VT-d driver runs in the guest, PASID allocation must be
+> > > performed via virtual command interface. This patch registers a
+> > > custom IOASID allocator which takes precedence over the default
+> > > XArray based allocator. The resulting IOASID allocation will always
+> > > come from the host. This ensures that PASID namespace is system-
+> > > wide.
+> > >
+> > > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> > > Signed-off-by: Liu, Yi L <yi.l.liu@intel.com>
+> > > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > > ---
+> > >   drivers/iommu/Kconfig       |  1 +
+> > >   drivers/iommu/intel-iommu.c | 67
+> > > +++++++++++++++++++++++++++++++++++++++++++++
+> > > include/linux/intel-iommu.h |  2 ++ 3 files changed, 70
+> > > insertions(+)
+> > >
+> > > diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> > > index fd50ddffffbf..961fe5795a90 100644
+> > > --- a/drivers/iommu/Kconfig
+> > > +++ b/drivers/iommu/Kconfig
+> > > @@ -211,6 +211,7 @@ config INTEL_IOMMU_SVM
+> > >   	bool "Support for Shared Virtual Memory with Intel IOMMU"
+> > >   	depends on INTEL_IOMMU && X86
+> > >   	select PCI_PASID
+> > > +	select IOASID
+> > >   	select MMU_NOTIFIER
+> > >   	help
+> > >   	  Shared Virtual Memory (SVM) provides a facility for
+> > > devices diff --git a/drivers/iommu/intel-iommu.c
+> > > b/drivers/iommu/intel-iommu.c index 3f974919d3bd..ced1d89ef977
+> > > 100644 --- a/drivers/iommu/intel-iommu.c
+> > > +++ b/drivers/iommu/intel-iommu.c
+> > > @@ -1706,6 +1706,9 @@ static void free_dmar_iommu(struct
+> > > intel_iommu *iommu) if (ecap_prs(iommu->ecap))
+> > >   			intel_svm_finish_prq(iommu);
+> > >   	}
+> > > +	if (ecap_vcs(iommu->ecap) && vccap_pasid(iommu->vccap))
+> > > +
+> > > ioasid_unregister_allocator(&iommu->pasid_allocator);
+> >
+> > Since scalable mode is disabled if pasid allocator failed to register,
+> > add sm_support(iommu) check here will be better.
+> >
+> I was thinking to be symmetric with register call, checking for the
+> same conditions. Also, I like your advice below to only disable SVA
+> instead of scalable mode.
+> > > +
+> > >   #endif
+> > >   }
+> > >
+> > > @@ -4910,6 +4913,44 @@ static int __init
+> > > probe_acpi_namespace_devices(void) return 0;
+> > >   }
+> > >
+> > > +#ifdef CONFIG_INTEL_IOMMU_SVM
+> > > +static ioasid_t intel_ioasid_alloc(ioasid_t min, ioasid_t max,
+> > > void *data) +{
+> > > +	struct intel_iommu *iommu = data;
+> > > +	ioasid_t ioasid;
+> > > +
+> > > +	/*
+> > > +	 * VT-d virtual command interface always uses the full 20
+> > > bit
+> > > +	 * PASID range. Host can partition guest PASID range based
+> > > on
+> > > +	 * policies but it is out of guest's control.
+> > > +	 */
+> > > +	if (min < PASID_MIN || max > intel_pasid_max_id)
+> > > +		return INVALID_IOASID;
+> > > +
+> > > +	if (vcmd_alloc_pasid(iommu, &ioasid))
+> > > +		return INVALID_IOASID;
+> > > +
+> > > +	return ioasid;
+> > > +}
+> > > +
+> > > +static void intel_ioasid_free(ioasid_t ioasid, void *data)
+> > > +{
+> > > +	struct intel_iommu *iommu = data;
+> > > +
+> > > +	if (!iommu)
+> > > +		return;
+> > > +	/*
+> > > +	 * Sanity check the ioasid owner is done at upper layer,
+> > > e.g. VFIO
+> > > +	 * We can only free the PASID when all the devices are
+> > > unbond.
+> > > +	 */
+> > > +	if (ioasid_find(NULL, ioasid, NULL)) {
+> > > +		pr_alert("Cannot free active IOASID %d\n", ioasid);
+> > > +		return;
+> > > +	}
+> > > +	vcmd_free_pasid(iommu, ioasid);
+> > > +}
+> > > +#endif
+> > > +
+> > >   int __init intel_iommu_init(void)
+> > >   {
+> > >   	int ret = -ENODEV;
+> > > @@ -5020,6 +5061,32 @@ int __init intel_iommu_init(void)
+> > >   				       "%s", iommu->name);
+> > >   		iommu_device_set_ops(&iommu->iommu,
+> > > &intel_iommu_ops); iommu_device_register(&iommu->iommu);
+> > > +#ifdef CONFIG_INTEL_IOMMU_SVM
+> > > +		if (ecap_vcs(iommu->ecap) &&
+> > > vccap_pasid(iommu->vccap)) {
+> > > +			pr_info("Register custom PASID
+> > > allocator\n");
+> > > +			/*
+> > > +			 * Register a custom ASID allocator if we
+> > > are running
+> > > +			 * in a guest, the purpose is to have a
+> > > system wide PASID
+> > > +			 * namespace among all PASID users.
+> > > +			 * There can be multiple vIOMMUs in each
+> > > guest but only
+> > > +			 * one allocator is active. All vIOMMU
+> > > allocators will
+> > > +			 * eventually be calling the same host
+> > > allocator.
+> > > +			 */
+> > > +			iommu->pasid_allocator.alloc =
+> > > intel_ioasid_alloc;
+> > > +			iommu->pasid_allocator.free =
+> > > intel_ioasid_free;
+> > > +			iommu->pasid_allocator.pdata = (void
+> > > *)iommu;
+> > > +			ret =
+> > > ioasid_register_allocator(&iommu->pasid_allocator);
+> > > +			if (ret) {
+> > > +				pr_warn("Custom PASID allocator
+> > > registeration failed\n");
+> > > +				/*
+> > > +				 * Disable scalable mode on this
+> > > IOMMU if there
+> > > +				 * is no custom allocator. Mixing
+> > > SM capable vIOMMU
+> > > +				 * and non-SM vIOMMU are not
+> > > supported.
+> > > +				 */
+> > > +				intel_iommu_sm = 0;
+> >
+> > It's insufficient to disable scalable mode by only clearing
+> > intel_iommu_sm. The DMA_RTADDR_SMT bit in root entry has already
+> been
+> > set. Probably, you need to
+> >
+> > for each iommu
+> > 	clear DMA_RTADDR_SMT in root entry
+> >
+> > Alternatively, since vSVA is the only customer of this custom PASID
+> > allocator, is it possible to only disable SVA here?
+> >
+> Yeah, I think disable SVA is better. We can still do gIOVA in SM. I
+> guess we need to introduce a flag for sva_enabled.
 
-Ahh, so we explicitly ask for it.
+I'm not sure whether tying above logic to SVA is the right approach.
+If vcmd interface doesn't work, the whole SM mode doesn't make
+sense which is based on PASID-granular protection (SVA is only one
+usage atop). If the only remaining usage of SM is to map gIOVA using 
+reserved PASID#0, then why not disabling SM and just fallback to 
+legacy mode?
 
-Unfortunately compiler still flags it as an warning. Just wondering why this
-is still a problem if the second condition for an OR expression is always false.
-Because evaluation still needs to be performed for the first condition anyways,
-before arriving at the result.
+Based on that I prefer to disabling the SM mode completely (better
+through an interface), and move the logic out of CONFIG_INTEL_
+IOMMU_SVM
 
-  DESCEND  objtool
-  CALL    scripts/atomic/check-atomics.sh
-  CALL    scripts/checksyscalls.sh
-  CHK     include/generated/compile.h
-  CC      mm/debug_vm_pgtable.o
-In file included from ./arch/x86/include/asm/bug.h:83:0,
-                 from ./include/linux/bug.h:5,
-                 from ./include/linux/mmdebug.h:5,
-                 from ./include/linux/gfp.h:5,
-                 from mm/debug_vm_pgtable.c:13:
-mm/debug_vm_pgtable.c: In function ‘get_random_vaddr’:
-mm/debug_vm_pgtable.c:314:17: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
-   (random_vaddr < FIRST_USER_ADDRESS));
-                 ^
-./include/asm-generic/bug.h:113:25: note: in definition of macro ‘WARN_ON’
-  int __ret_warn_on = !!(condition);    \
-                         ^~~~~~~~~
 
-As you mentioned GCC is quite stubborn here. Anyways, lets keep it unchanged.
+> > > +			}
+> > > +		}
+> > > +#endif
+> > >   	}
+> > >
+> > >   	bus_set_iommu(&pci_bus_type, &intel_iommu_ops);
+> > > diff --git a/include/linux/intel-iommu.h
+> > > b/include/linux/intel-iommu.h index 1d4b8dcdc5d8..c624733cb2e6
+> > > 100644 --- a/include/linux/intel-iommu.h
+> > > +++ b/include/linux/intel-iommu.h
+> > > @@ -19,6 +19,7 @@
+> > >   #include <linux/iommu.h>
+> > >   #include <linux/io-64-nonatomic-lo-hi.h>
+> > >   #include <linux/dmar.h>
+> > > +#include <linux/ioasid.h>
+> > >
+> > >   #include <asm/cacheflush.h>
+> > >   #include <asm/iommu.h>
+> > > @@ -546,6 +547,7 @@ struct intel_iommu {
+> > >   #ifdef CONFIG_INTEL_IOMMU_SVM
+> > >   	struct page_req_dsc *prq;
+> > >   	unsigned char prq_name[16];    /* Name for PRQ interrupt
+> > > */
+> > > +	struct ioasid_allocator_ops pasid_allocator; /* Custom
+> > > allocator for PASIDs */ #endif
+> > >   	struct q_inval  *qi;            /* Queued invalidation
+> > > info */ u32 *iommu_state; /* Store iommu states between suspend and
+> > > resume.*/
+> >
+> > Best regards,
+> > baolu
+> 
+> [Jacob Pan]
