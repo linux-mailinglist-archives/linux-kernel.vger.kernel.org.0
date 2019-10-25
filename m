@@ -2,229 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12841E50D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:08:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08CBCE50D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504952AbfJYQIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 12:08:50 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39471 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504301AbfJYQIt (ORCPT
+        id S2505114AbfJYQJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 12:09:46 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39870 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732660AbfJYQJq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 12:08:49 -0400
-Received: by mail-wm1-f68.google.com with SMTP id r141so2542310wme.4
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 09:08:47 -0700 (PDT)
+        Fri, 25 Oct 2019 12:09:46 -0400
+Received: by mail-io1-f66.google.com with SMTP id y12so3030938ioa.6
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 09:09:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pUAd15LRZOGwcYUMNoWJDAN25LcrehG7DRhTjZLaCUQ=;
-        b=TX3fDtskQmARxaduJ9lW2PYUO1GrW/aaoetTvbCvWaK7Y6aiSmPid5yYypW/7fPr3S
-         pTzYMe+iwvF8daPxny21YlbO3e25Jvl1JvaJitNVo4nuI3+/Y7OyCh+R7vTHG3kqoofX
-         wjCQUO47OFRuIZkvZ2y1VJArRHsZODtnmnay4fne3iIlZR8JZJRFj2fvJLVqKwvk/zko
-         bWiSWJZGL95li5wQSGofbVYJgioN1O9PVXwrDPm7fDK39g7hfCLzMjBnPcgzXh5is9qw
-         GMXE/6DbCobNqz7yWibJaox8AUyumylmLg9TZ9QrObNXyNlUI8to+hEACV5igUw9BiIN
-         sIUQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=Dz0z7UVAhXaZ2nhvm3ocuonZIUSL4pst5GiKI/ZhGtE=;
+        b=L01rlG7zsE0qvXGgPDCS0+sPo58JpVpzg8Bue+LfRnE7SLWrrvtmNxaMaktJbE9rlr
+         P6dbojoa+RJR2Po0fG4VVLiZlM35lo17A2OXtzJW6e3FHZmgwLkz9j9GcCoMNX/aDPNQ
+         uEkjsBDCzPzgPzcHROspcDP7JADhrcZU1L0lvb12Vzs0x9ElpDDjmEghW25qyqC3KERy
+         wTUlQcaH0EvVdyQ/y58MYE36tKJkZDbdlzAHk6RgsgQvlORGtUCLfLUhDaO2VCy82Ivs
+         zvn1YKdpzrBYSpqW7fIMRcQjDNaA0DvQd5JBoaGdVx5CinEz7atmXkx/XVAWqsWy6skz
+         ZCTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pUAd15LRZOGwcYUMNoWJDAN25LcrehG7DRhTjZLaCUQ=;
-        b=S9vhUy9KDOKzBgc6s3IRvdaBAXlmR3h/ISLa/LN3G37vdOfO2CKJ452rxKZofpFdQt
-         y+wPsV8jz9kD8O7pivrJhn896BAqyKNYYlIOgAAfJELifFrCkhB+tg853VnCNQTyG08B
-         75WVLN+LTngSQdP+g8YC5KiNJxgNICeVEVaFhc0usES3rFwEaxIZ1lZKGLqo1mVaaLMj
-         tnaw/SoMmy54yaBG5hYtAiAH22k+5THEMlb0uOqUZBHQfNFlazlUQVyAagY4LIJUGeh9
-         vHuJzRdvKKU2o25pb09uBs8G1QF156gc7J1kXpnyrWisyM2R/vPOolLKfDqMEfEIsL6N
-         nrtQ==
-X-Gm-Message-State: APjAAAV9ex5+QOQsybbV/YwmWZNv8b7QmFynZVgQYDGav4QkdABl5mQ5
-        cWU7Ir9snLQPebZzENsBv7335VtbKxQKHgY4TV2EXiApBctyiw==
-X-Google-Smtp-Source: APXvYqxgEKH4JI31XMApFgp97WIl0mpGTv/DJYlY9rEO7toLsBkrC/1TRbAdMMaeG/BVltRL3FzSpAjcCsP0I2qd/rQ=
-X-Received: by 2002:a1c:a791:: with SMTP id q139mr4111694wme.155.1572019725853;
- Fri, 25 Oct 2019 09:08:45 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Dz0z7UVAhXaZ2nhvm3ocuonZIUSL4pst5GiKI/ZhGtE=;
+        b=jwOfncUvh98gMHac22BxigEPmhN+VAsY+KL3ijBHDhn8NLWpX0aPvW99Fz1+uHXqPF
+         xDsY2IvtK3uIuRXGKm6oBf80YnPh71NiMWlHDrnjO6bUky5IC2hEljaGqm9aknATQ6pQ
+         D+fu9jTqRPTMMNByfQdGsnxrxUj/jtNXTkXBXlNtpBBSZV0QYUrouawF2VJTCGCrcQSj
+         x/XRM9t2aGM+QWZGJaAYgfr69+3PIGV0dm9GzKyJkaej9ax2kk3Si2r70vEJGh8eOL0s
+         v/iof5BUae2ojOg6vOXitBaibga/cHV00IDt8PYqAU5jbqYjOcKbSjja9xUBppZdJ1El
+         a0qA==
+X-Gm-Message-State: APjAAAV1rI3qRKCKLSl3xFvu/hzNYOU3WwYQlllpx5iOgSuzuzj+ClDX
+        xCoe/L7fTAIm84MvwzdiQ523N3dFu6Jj4w==
+X-Google-Smtp-Source: APXvYqzOZUhzbeEKJ5g6jFEYeljYX/YeQgv5uN7hCHqgyJ91neZSYbfRbbMAA8q9lMX7dcoREkWlmA==
+X-Received: by 2002:a02:704b:: with SMTP id f72mr4637699jac.125.1572019783542;
+        Fri, 25 Oct 2019 09:09:43 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id h82sm419959ild.1.2019.10.25.09.09.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Oct 2019 09:09:42 -0700 (PDT)
+Subject: Re: [BUG] io_uring: defer logic based on shared data
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <5badf1c0-9a7d-0950-2943-ff8db33e0929@gmail.com>
+ <bfb58429-6abe-06f0-3fd8-14a0040cecf0@kernel.dk>
+Message-ID: <dfd21591-5187-0a8b-cc55-cfe5d57dd471@kernel.dk>
+Date:   Fri, 25 Oct 2019 10:09:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191023005337.196160-1-irogers@google.com> <20191024190202.109403-1-irogers@google.com>
- <20191024190202.109403-7-irogers@google.com> <20191025082714.GH31679@krava>
-In-Reply-To: <20191025082714.GH31679@krava>
-From:   Ian Rogers <irogers@google.com>
-Date:   Fri, 25 Oct 2019 09:08:34 -0700
-Message-ID: <CAP-5=fU6quu74JwZSd70UMTSS2wf_29hBgvdXfJZedOfrE7ohw@mail.gmail.com>
-Subject: Re: [PATCH v3 6/9] perf tools: add destructors for parse event terms
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        John Garry <john.garry@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <bfb58429-6abe-06f0-3fd8-14a0040cecf0@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 1:27 AM Jiri Olsa <jolsa@redhat.com> wrote:
->
-> On Thu, Oct 24, 2019 at 12:01:59PM -0700, Ian Rogers wrote:
-> > If parsing fails then destructors are ran to clean the up the stack.
-> > Rename the head union member to make the term and evlist use cases more
-> > distinct, this simplifies matching the correct destructor.
->
-> nice did not know about this.. looks like it's been in bison for some time, right?
+On 10/25/19 10:03 AM, Jens Axboe wrote:
+> On 10/25/19 3:55 AM, Pavel Begunkov wrote:
+>> I found 2 problems with __io_sequence_defer().
+>>
+>> 1. it uses @sq_dropped, but doesn't consider @cq_overflow
+>> 2. @sq_dropped and @cq_overflow are write-shared with userspace, so
+>> it can be maliciously changed.
+>>
+>> see sent liburing test (test/defer *_hung()), which left an unkillable
+>> process for me
+> 
+> OK, how about the below. I'll split this in two, as it's really two
+> separate fixes.
 
-Looks like it wasn't in Bison 1 but in Bison 2, we're at Bison 3 and
-Bison 2 is > 14 years old:
-https://web.archive.org/web/20050924004158/http://www.gnu.org/software/bison/manual/html_mono/bison.html#Destructor-Decl
+Patch 1:
 
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/parse-events.y | 69 +++++++++++++++++++++++-----------
-> >  1 file changed, 48 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-> > index 545ab7cefc20..4725b14b9db4 100644
-> > --- a/tools/perf/util/parse-events.y
-> > +++ b/tools/perf/util/parse-events.y
-> > @@ -12,6 +12,7 @@
-> >  #include <stdio.h>
-> >  #include <linux/compiler.h>
-> >  #include <linux/types.h>
-> > +#include <linux/zalloc.h>
-> >  #include "pmu.h"
-> >  #include "evsel.h"
-> >  #include "parse-events.h"
-> > @@ -37,6 +38,25 @@ static struct list_head* alloc_list()
-> >       return list;
-> >  }
-> >
-> > +static void free_list_evsel(struct list_head* list_evsel)
-> > +{
-> > +     struct perf_evsel *pos, *tmp;
-> > +
-> > +     list_for_each_entry_safe(pos, tmp, list_evsel, node) {
-> > +             list_del_init(&pos->node);
-> > +             perf_evsel__delete(pos);
-> > +     }
-> > +     free(list_evsel);
->
-> I think you need to iterate 'struct evsel' in here, not 'struct perf_evsel'
->
-> should be:
->
->         struct evsel *evsel, *tmp;
->
->         list_for_each_entry_safe(evsel, tmp, list_evsel, core.node) {
->                 list_del_init(&evsel->core.node);
->                 evsel__delete(evsel);
->         }
+http://git.kernel.dk/cgit/linux-block/commit/?h=for-linus&id=9a9a21d9cf65cb621cce4052a4527868a80009ad
 
-Thanks, I'll address this.
+and patch 2:
 
-Ian
+http://git.kernel.dk/cgit/linux-block/commit/?h=for-linus&id=ed348662f74c4f63537b3c188585e39cdea22713
 
-> thanks,
-> jirka
->
-> > +}
-> > +
-> > +static void free_term(struct parse_events_term *term)
-> > +{
-> > +     if (term->type_val == PARSE_EVENTS__TERM_TYPE_STR)
-> > +             free(term->val.str);
-> > +     zfree(&term->array.ranges);
-> > +     free(term);
-> > +}
-> > +
-> >  static void inc_group_count(struct list_head *list,
-> >                      struct parse_events_state *parse_state)
-> >  {
-> > @@ -66,6 +86,7 @@ static void inc_group_count(struct list_head *list,
-> >  %type <num> PE_VALUE_SYM_TOOL
-> >  %type <num> PE_RAW
-> >  %type <num> PE_TERM
-> > +%type <num> value_sym
-> >  %type <str> PE_NAME
-> >  %type <str> PE_BPF_OBJECT
-> >  %type <str> PE_BPF_SOURCE
-> > @@ -76,37 +97,43 @@ static void inc_group_count(struct list_head *list,
-> >  %type <str> PE_EVENT_NAME
-> >  %type <str> PE_PMU_EVENT_PRE PE_PMU_EVENT_SUF PE_KERNEL_PMU_EVENT
-> >  %type <str> PE_DRV_CFG_TERM
-> > -%type <num> value_sym
-> > -%type <head> event_config
-> > -%type <head> opt_event_config
-> > -%type <head> opt_pmu_config
-> > +%destructor { free ($$); } <str>
-> >  %type <term> event_term
-> > -%type <head> event_pmu
-> > -%type <head> event_legacy_symbol
-> > -%type <head> event_legacy_cache
-> > -%type <head> event_legacy_mem
-> > -%type <head> event_legacy_tracepoint
-> > +%destructor { free_term ($$); } <term>
-> > +%type <list_terms> event_config
-> > +%type <list_terms> opt_event_config
-> > +%type <list_terms> opt_pmu_config
-> > +%destructor { parse_events_terms__delete ($$); } <list_terms>
-> > +%type <list_evsel> event_pmu
-> > +%type <list_evsel> event_legacy_symbol
-> > +%type <list_evsel> event_legacy_cache
-> > +%type <list_evsel> event_legacy_mem
-> > +%type <list_evsel> event_legacy_tracepoint
-> > +%type <list_evsel> event_legacy_numeric
-> > +%type <list_evsel> event_legacy_raw
-> > +%type <list_evsel> event_bpf_file
-> > +%type <list_evsel> event_def
-> > +%type <list_evsel> event_mod
-> > +%type <list_evsel> event_name
-> > +%type <list_evsel> event
-> > +%type <list_evsel> events
-> > +%type <list_evsel> group_def
-> > +%type <list_evsel> group
-> > +%type <list_evsel> groups
-> > +%destructor { free_list_evsel ($$); } <list_evsel>
-> >  %type <tracepoint_name> tracepoint_name
-> > -%type <head> event_legacy_numeric
-> > -%type <head> event_legacy_raw
-> > -%type <head> event_bpf_file
-> > -%type <head> event_def
-> > -%type <head> event_mod
-> > -%type <head> event_name
-> > -%type <head> event
-> > -%type <head> events
-> > -%type <head> group_def
-> > -%type <head> group
-> > -%type <head> groups
-> > +%destructor { free ($$.sys); free ($$.event); } <tracepoint_name>
-> >  %type <array> array
-> >  %type <array> array_term
-> >  %type <array> array_terms
-> > +%destructor { free ($$.ranges); } <array>
-> >
-> >  %union
-> >  {
-> >       char *str;
-> >       u64 num;
-> > -     struct list_head *head;
-> > +     struct list_head *list_evsel;
-> > +     struct list_head *list_terms;
-> >       struct parse_events_term *term;
-> >       struct tracepoint_name {
-> >               char *sys;
-> > --
-> > 2.23.0.866.gb869b98d4c-goog
-> >
->
+Let me know what you think, and if/when I can add your reviewed/test-by
+to them.
+
+-- 
+Jens Axboe
+
