@@ -2,117 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B8FCE5380
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 20:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A862E5367
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 20:10:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388095AbfJYSKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 14:10:38 -0400
-Received: from mail.andi.de1.cc ([85.214.55.253]:58994 "EHLO mail.andi.de1.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732355AbfJYSIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 14:08:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ukusdiIWPioOyFF8K+EMog1oWe2UbKn/QGBiyiSBlcI=; b=TkkERhIk8BBAwoGeaxAN1ziqjG
-        l+PP57GcZFlFrZe+8Ex1cit7g7VgrEpsXkPptk1n8IbWDzMu4ghOXS5+62xp6kJ68ILnVYvF6h+T/
-        HtNN8wIp29Z8E9XjPQBeBDXoJGiW4TzIZZPdYPZ+jLas/GjF5jghcn34foMfTYFkiKO8=;
-Received: from p200300ccff09ca001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff09:ca00:1a3d:a2ff:febf:d33a] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iO401-0005qr-ID; Fri, 25 Oct 2019 20:07:45 +0200
-Date:   Fri, 25 Oct 2019 20:07:43 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        manivannan.sadhasivam@linaro.org, andrew.smirnov@gmail.com,
-        marex@denx.de, angus@akkea.ca, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        j.neuschaefer@gmx.net,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>,
-        Marco Felsch <m.felsch@pengutronix.de>
-Subject: Re: [PATCH v3 3/3] ARM: dts: imx: add devicetree for Kobo Clara HD
-Message-ID: <20191025200743.48455cc9@aktux>
-In-Reply-To: <20191025134621.GN3208@dragon>
-References: <20191010192357.27884-1-andreas@kemnade.info>
-        <20191010192357.27884-4-andreas@kemnade.info>
-        <20191025134621.GN3208@dragon>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -1.0 (-)
+        id S2387633AbfJYSJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 14:09:00 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:50975 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732979AbfJYSIg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 14:08:36 -0400
+Received: by mail-pg1-f201.google.com with SMTP id r24so2338207pgj.17
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 11:08:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=kVRScVzVdmvaFoKwm7QtsLTFIeCMqlMKNHJqjiwIzwM=;
+        b=AItMRH1UHy5LoenPDuyGkF1OiRvd0m877S2ToMuZivwha+hreqICwLyqyN9Ru2Y3vi
+         deNqYrxmehH1S8leYnGzbZ4xYWQLuSEWdSeDdaeAOKcvVmk7a5CSvPsAdouwQJpw3iCT
+         n2cLjvCsPvN6FiMbHKWUfiTAwXkiXJRhLpsaN2OXL26vA2wHypi9uFh/7qkxG3lHwCR2
+         /IhupQ0bfr/hjyWVoMWXmmkEEkqPngb16yymwoKxhdzQhAapCGT7NOCnVPusDeGPFTLD
+         geiDwPXy31fWFC4WLVMn2vnjZK/DSxYngLBmwARl64D+PXeGTcryng5l2NkuDZ5GUQYG
+         ymGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=kVRScVzVdmvaFoKwm7QtsLTFIeCMqlMKNHJqjiwIzwM=;
+        b=ZhGyAKfsZ6pugYJkJkkLP831+89j5JHkXmO+HeJ94CQRLPaBO1kOcMP7MwsqV5X0dK
+         5OiCljFjpEDrR9c4++dr26OIzEEq6V9vRErLZ+GtV0A4YZDaqTyQ5WuXHVFlrNP/jJRw
+         VdkfQN6j1G9C7IyZqwulQxd0JiNwwvmPcSiYJaHPZi9wNSGSWXeL1l/rnAbpSbDwPzkn
+         UNeNwrb9ACPrdUUvdZVYVVZovtgBBaKlJUk/UUdadp0waU3Z9eRYr+IgJ/VfnNyIOM7K
+         5cvJAR7iqpjPQWfj19+d5O+o6Ow+oY8lZZ9Y9EeFth53E6BT4V5c1Nero9Fda8Fflvlz
+         MlZg==
+X-Gm-Message-State: APjAAAUGOTI+oiGwG7X5U20+9E3+R+Lh9jlZWVmGVVE3d1vfjJJMDSMA
+        CSi4SP9F/EpTkbMN2oJJMK2onqOocWxK
+X-Google-Smtp-Source: APXvYqynPqIJ4hVRg5XDUe9xe9kDv4LxessSXAhwz9Vr0geBG3zYf3JlIDqhF3KzgC8ZV8hsDgy+TiNc8doq
+X-Received: by 2002:a65:6456:: with SMTP id s22mr5837656pgv.287.1572026915558;
+ Fri, 25 Oct 2019 11:08:35 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 11:08:18 -0700
+In-Reply-To: <20191024190202.109403-1-irogers@google.com>
+Message-Id: <20191025180827.191916-1-irogers@google.com>
+Mime-Version: 1.0
+References: <20191024190202.109403-1-irogers@google.com>
+X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
+Subject: [PATCH v4 0/9] Improvements to memory usage by parse events
+From:   Ian Rogers <irogers@google.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        John Garry <john.garry@huawei.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, clang-built-linux@googlegroups.com
+Cc:     Stephane Eranian <eranian@google.com>,
+        Ian Rogers <irogers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The parse events parser leaks memory for certain expressions as well
+as allowing a char* to reference stack, heap or .rodata. This series
+of patches improves the hygeine and adds free-ing operations to
+reclaim memory in the parser in error and non-error situations.
 
-On Fri, 25 Oct 2019 21:46:24 +0800
-Shawn Guo <shawnguo@kernel.org> wrote:
+The series of patches was generated with LLVM's address sanitizer and
+libFuzzer:
+https://llvm.org/docs/LibFuzzer.html
+called on the parse_events function with randomly generated input. With
+the patches no leaks or memory corruption issues were present.
 
-[...]
-> > +
-> > +		pinctrl_wifi_reset: wifi_reset_grp {
-> > +			fsl,pins = <
-> > +				MX6SLL_PAD_SD2_DATA7__GPIO5_IO00	0x10059		/* WIFI_RST */
-> > +			>;
-> > +		};
-> > +
-> > +		pinctrl_wifi_power: wifi_power_grp {  
-> 
-> I guess you can have one pinctrl node to include both reset and power
-> pins?  Also, to be consistent with other pinctrl nodes on naming, the
-> node name should probably be wifigrp.
-> 
-well, the problems they are used in different nodes, so I cannot do
-that:
+The v4 patches address review comments from Jiri Olsa, turning a long
+error message into a single warning, fixing the data type in a list
+iterator and reordering patches.
 
-       reg_wifi: regulator-wifi {
-                compatible = "regulator-fixed";
-                pinctrl-names = "default";
-                pinctrl-0 = <&pinctrl_wifi_power>;
-                regulator-name = "SD3_SPWR";
-                regulator-min-microvolt = <3000000>;
-                regulator-max-microvolt = <3000000>;
-                gpio = <&gpio4 29 GPIO_ACTIVE_HIGH>;
-                enable-active-high;
-        };
+The v3 patches address review comments from Jiri Olsa improving commit
+messages, handling ENOMEM errors from strdup better, and removing a
+printed warning if an invalid event is passed.
 
-        wifi_pwrseq: wifi_pwrseq {
-                compatible = "mmc-pwrseq-simple";
-                pinctrl-names = "default";
-                pinctrl-0 = <&pinctrl_wifi_reset>;
-                post-power-on-delay-ms = <20>;
-                reset-gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
-        };
+The v2 patches are preferable to an earlier proposed patch:
+   perf tools: avoid reading out of scope array
 
-So having them combined breaks the mux where you use it rule.
-I got in earlier mails:
+Ian Rogers (9):
+  perf tools: add parse events handle error
+  perf tools: move ALLOC_LIST into a function
+  perf tools: avoid a malloc for array events
+  perf tools: splice events onto evlist even on error
+  perf tools: ensure config and str in terms are unique
+  perf tools: add destructors for parse event terms
+  perf tools: before yyabort-ing free components
+  perf tools: if pmu configuration fails free terms
+  perf tools: add a deep delete for parse event terms
 
-> > +	wifi_pwrseq: wifi_pwrseq {
-> > +		compatible = "mmc-pwrseq-simple";
-> > +		post-power-on-delay-ms = <20>;
-> > +		reset-gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;  
+ tools/perf/util/parse-events.c | 177 ++++++++++-----
+ tools/perf/util/parse-events.h |   3 +
+ tools/perf/util/parse-events.y | 388 ++++++++++++++++++++++++---------
+ tools/perf/util/pmu.c          |  32 +--
+ 4 files changed, 433 insertions(+), 167 deletions(-)
 
-> Can you add a pinctrl-entry here please? The general rule is to mux
-> things where you use it
-[...]
-> > +			compatible = "regulator-fixed";
-> > +			regulator-name = "SD3_SPWR";
-> > +			regulator-min-microvolt = <3000000>;
-> > +			regulator-max-microvolt = <3000000>;
-> > +
-> > +			gpio = <&gpio4 29 GPIO_ACTIVE_HIGH>;  
+-- 
+2.24.0.rc0.303.g954a862665-goog
 
-> Please add a pinctrl here to mux this gpio.
-
-Regards,
-Andreas
