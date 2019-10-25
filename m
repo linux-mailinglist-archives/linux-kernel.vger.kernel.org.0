@@ -2,98 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8524BE4D1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:58:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85618E4D2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:58:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505439AbfJYN57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 09:57:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35768 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2505383AbfJYN5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:57:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5A20DB8B0;
-        Fri, 25 Oct 2019 13:57:50 +0000 (UTC)
-Date:   Fri, 25 Oct 2019 15:57:49 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     snazy@snazy.de
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>
-Subject: Re: mlockall(MCL_CURRENT) blocking infinitely
-Message-ID: <20191025135749.GK17610@dhcp22.suse.cz>
-References: <b8ff71f5-2d9c-7ebb-d621-017d4b9bc932@infradead.org>
- <20191025092143.GE658@dhcp22.suse.cz>
- <70393308155182714dcb7485fdd6025c1fa59421.camel@gmx.de>
- <20191025114633.GE17610@dhcp22.suse.cz>
- <d740f26ea94f9f1c2fc0530c1ea944f8e59aad85.camel@gmx.de>
- <20191025120505.GG17610@dhcp22.suse.cz>
- <20191025121104.GH17610@dhcp22.suse.cz>
- <c8950b81000e08bfca9fd9128cf87d8a329a904b.camel@gmx.de>
- <20191025132700.GJ17610@dhcp22.suse.cz>
- <707b72c6dac76c534dcce60830fa300c44f53404.camel@gmx.de>
+        id S2505560AbfJYN6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 09:58:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53556 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2505514AbfJYN6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 09:58:18 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F145222C2;
+        Fri, 25 Oct 2019 13:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572011898;
+        bh=6fwHDYAVti6MCwtld+8+l3TvOFU3KBYtoriCECp5pMg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oi+l7OHVloAJ/tHT9Gqs8X+zhUjIY7rG7fuuZPz25wv4wWL0fEXjKC6PYXSgglw+a
+         QQq1MO0tVtT33Ee5i6vizWU4xuQp5OIxhEIxgXe8Hd8W2IvgAbbKDMRC9GZ1VDzaNc
+         pjdy/6KvR0wGcH2Q5JRGHZg1tdLZYdZ4akiB7yGk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 09/20] sch_netem: fix rcu splat in netem_enqueue()
+Date:   Fri, 25 Oct 2019 09:57:49 -0400
+Message-Id: <20191025135801.25739-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191025135801.25739-1-sashal@kernel.org>
+References: <20191025135801.25739-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <707b72c6dac76c534dcce60830fa300c44f53404.camel@gmx.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 25-10-19 15:45:37, Robert Stupp wrote:
-> On Fri, 2019-10-25 at 15:27 +0200, Michal Hocko wrote:
-> > On Fri 25-10-19 15:10:39, Robert Stupp wrote:
-> > [...]
-> > > cat /proc/$(pidof test)/smaps
-> >
-> > Nothing really unusual that would jump at me except for
-> > > 7f8be90ed000-7f8be9265000 r-xp 00025000 103:02
-> > > 44307431                  /lib/x86_64-linux-gnu/libc-2.30.so
-> > > Size:               1504 kB
-> > > KernelPageSize:        4 kB
-> > > MMUPageSize:           4 kB
-> > > Rss:                 832 kB
-> > > Pss:                   5 kB
-> > > Shared_Clean:        832 kB
-> > > Shared_Dirty:          0 kB
-> > > Private_Clean:         0 kB
-> > > Private_Dirty:         0 kB
-> > > Referenced:          832 kB
-> > > Anonymous:             0 kB
-> > > LazyFree:              0 kB
-> > > AnonHugePages:         0 kB
-> > > ShmemPmdMapped:        0 kB
-> > > Shared_Hugetlb:        0 kB
-> > > Private_Hugetlb:       0 kB
-> > > Swap:                  0 kB
-> > > SwapPss:               0 kB
-> > > Locked:                5 kB
-> >
-> > Huh, 5kB, is this really the case or some copy&paste error?
-> > How can we end up with !pagesize multiple here?
+From: Eric Dumazet <edumazet@google.com>
 
-Ohh, I haven't noticed pss and didn't realize that Locked is pss like as
-well.
+[ Upstream commit 159d2c7d8106177bd9a986fd005a311fe0d11285 ]
 
-> >
-> > > THPeligible:		0
-> > > VmFlags: rd ex mr mw me lo sd
-> 
-> mlockall() seems to lock everything though, it just never returns.
-> 
-> Pretty sure that it's not a copy&paste error. Got a couple more runs
-> that have an "odd size" - this time with 3kB...
-> All "Locked" values seem to be okay - except that one. And it's always
-> odd for the same one (the one with `Size: 1504 kB`).
-> It's not always odd (3 kB or 5 kB) though - sometimes it says 4 kB.
-> Seems it's a little breadcrumb?
+qdisc_root() use from netem_enqueue() triggers a lockdep warning.
 
-Please try to watch for stack of the syscall and see if there is any
-pattern.
+__dev_queue_xmit() uses rcu_read_lock_bh() which is
+not equivalent to rcu_read_lock() + local_bh_disable_bh as far
+as lockdep is concerned.
+
+WARNING: suspicious RCU usage
+5.3.0-rc7+ #0 Not tainted
+-----------------------------
+include/net/sch_generic.h:492 suspicious rcu_dereference_check() usage!
+
+other info that might help us debug this:
+
+rcu_scheduler_active = 2, debug_locks = 1
+3 locks held by syz-executor427/8855:
+ #0: 00000000b5525c01 (rcu_read_lock_bh){....}, at: lwtunnel_xmit_redirect include/net/lwtunnel.h:92 [inline]
+ #0: 00000000b5525c01 (rcu_read_lock_bh){....}, at: ip_finish_output2+0x2dc/0x2570 net/ipv4/ip_output.c:214
+ #1: 00000000b5525c01 (rcu_read_lock_bh){....}, at: __dev_queue_xmit+0x20a/0x3650 net/core/dev.c:3804
+ #2: 00000000364bae92 (&(&sch->q.lock)->rlock){+.-.}, at: spin_lock include/linux/spinlock.h:338 [inline]
+ #2: 00000000364bae92 (&(&sch->q.lock)->rlock){+.-.}, at: __dev_xmit_skb net/core/dev.c:3502 [inline]
+ #2: 00000000364bae92 (&(&sch->q.lock)->rlock){+.-.}, at: __dev_queue_xmit+0x14b8/0x3650 net/core/dev.c:3838
+
+stack backtrace:
+CPU: 0 PID: 8855 Comm: syz-executor427 Not tainted 5.3.0-rc7+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ lockdep_rcu_suspicious+0x153/0x15d kernel/locking/lockdep.c:5357
+ qdisc_root include/net/sch_generic.h:492 [inline]
+ netem_enqueue+0x1cfb/0x2d80 net/sched/sch_netem.c:479
+ __dev_xmit_skb net/core/dev.c:3527 [inline]
+ __dev_queue_xmit+0x15d2/0x3650 net/core/dev.c:3838
+ dev_queue_xmit+0x18/0x20 net/core/dev.c:3902
+ neigh_hh_output include/net/neighbour.h:500 [inline]
+ neigh_output include/net/neighbour.h:509 [inline]
+ ip_finish_output2+0x1726/0x2570 net/ipv4/ip_output.c:228
+ __ip_finish_output net/ipv4/ip_output.c:308 [inline]
+ __ip_finish_output+0x5fc/0xb90 net/ipv4/ip_output.c:290
+ ip_finish_output+0x38/0x1f0 net/ipv4/ip_output.c:318
+ NF_HOOK_COND include/linux/netfilter.h:294 [inline]
+ ip_mc_output+0x292/0xf40 net/ipv4/ip_output.c:417
+ dst_output include/net/dst.h:436 [inline]
+ ip_local_out+0xbb/0x190 net/ipv4/ip_output.c:125
+ ip_send_skb+0x42/0xf0 net/ipv4/ip_output.c:1555
+ udp_send_skb.isra.0+0x6b2/0x1160 net/ipv4/udp.c:887
+ udp_sendmsg+0x1e96/0x2820 net/ipv4/udp.c:1174
+ inet_sendmsg+0x9e/0xe0 net/ipv4/af_inet.c:807
+ sock_sendmsg_nosec net/socket.c:637 [inline]
+ sock_sendmsg+0xd7/0x130 net/socket.c:657
+ ___sys_sendmsg+0x3e2/0x920 net/socket.c:2311
+ __sys_sendmmsg+0x1bf/0x4d0 net/socket.c:2413
+ __do_sys_sendmmsg net/socket.c:2442 [inline]
+ __se_sys_sendmmsg net/socket.c:2439 [inline]
+ __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2439
+ do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/net/sch_generic.h | 5 +++++
+ net/sched/sch_netem.c     | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/include/net/sch_generic.h b/include/net/sch_generic.h
+index 538f3c4458b04..5d5a137b9067f 100644
+--- a/include/net/sch_generic.h
++++ b/include/net/sch_generic.h
+@@ -276,6 +276,11 @@ static inline struct Qdisc *qdisc_root(const struct Qdisc *qdisc)
+ 	return q;
+ }
+ 
++static inline struct Qdisc *qdisc_root_bh(const struct Qdisc *qdisc)
++{
++	return rcu_dereference_bh(qdisc->dev_queue->qdisc);
++}
++
+ static inline struct Qdisc *qdisc_root_sleeping(const struct Qdisc *qdisc)
+ {
+ 	return qdisc->dev_queue->qdisc_sleeping;
+diff --git a/net/sched/sch_netem.c b/net/sched/sch_netem.c
+index 12e3ae09c4ba1..95002e56fa48b 100644
+--- a/net/sched/sch_netem.c
++++ b/net/sched/sch_netem.c
+@@ -475,7 +475,7 @@ static int netem_enqueue(struct sk_buff *skb, struct Qdisc *sch,
+ 	 * skb will be queued.
+ 	 */
+ 	if (count > 1 && (skb2 = skb_clone(skb, GFP_ATOMIC)) != NULL) {
+-		struct Qdisc *rootq = qdisc_root(sch);
++		struct Qdisc *rootq = qdisc_root_bh(sch);
+ 		u32 dupsave = q->duplicate; /* prevent duplicating a dup... */
+ 
+ 		q->duplicate = 0;
 -- 
-Michal Hocko
-SUSE Labs
+2.20.1
+
