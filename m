@@ -2,83 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6422AE5382
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 20:10:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B8FCE5380
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 20:10:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732147AbfJYSHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 14:07:48 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46646 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731363AbfJYSFl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 14:05:41 -0400
-Received: from [167.98.27.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id S2388095AbfJYSKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 14:10:38 -0400
+Received: from mail.andi.de1.cc ([85.214.55.253]:58994 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732355AbfJYSIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 14:08:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ukusdiIWPioOyFF8K+EMog1oWe2UbKn/QGBiyiSBlcI=; b=TkkERhIk8BBAwoGeaxAN1ziqjG
+        l+PP57GcZFlFrZe+8Ex1cit7g7VgrEpsXkPptk1n8IbWDzMu4ghOXS5+62xp6kJ68ILnVYvF6h+T/
+        HtNN8wIp29Z8E9XjPQBeBDXoJGiW4TzIZZPdYPZ+jLas/GjF5jghcn34foMfTYFkiKO8=;
+Received: from p200300ccff09ca001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff09:ca00:1a3d:a2ff:febf:d33a] helo=aktux)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iO3xz-0008Ot-Ah; Fri, 25 Oct 2019 19:05:39 +0100
-Received: from ben by deadeye with local (Exim 4.92.2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iO3xw-0001lI-MN; Fri, 25 Oct 2019 19:05:36 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        (envelope-from <andreas@kemnade.info>)
+        id 1iO401-0005qr-ID; Fri, 25 Oct 2019 20:07:45 +0200
+Date:   Fri, 25 Oct 2019 20:07:43 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        manivannan.sadhasivam@linaro.org, andrew.smirnov@gmail.com,
+        marex@denx.de, angus@akkea.ca, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        j.neuschaefer@gmx.net,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
+        Marco Felsch <m.felsch@pengutronix.de>
+Subject: Re: [PATCH v3 3/3] ARM: dts: imx: add devicetree for Kobo Clara HD
+Message-ID: <20191025200743.48455cc9@aktux>
+In-Reply-To: <20191025134621.GN3208@dragon>
+References: <20191010192357.27884-1-andreas@kemnade.info>
+        <20191010192357.27884-4-andreas@kemnade.info>
+        <20191025134621.GN3208@dragon>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Like Xu" <like.xu@linux.intel.com>,
-        "Joe Perches" <joe@perches.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>
-Date:   Fri, 25 Oct 2019 19:03:48 +0100
-Message-ID: <lsq.1572026582.631294584@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 47/47] KVM: x86/vPMU: refine kvm_pmu err msg when
- event creation failed
-In-Reply-To: <lsq.1572026581.992411028@decadent.org.uk>
-X-SA-Exim-Connect-IP: 167.98.27.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.76-rc1 review patch.  If anyone has any objections, please let me know.
+Hi,
 
-------------------
+On Fri, 25 Oct 2019 21:46:24 +0800
+Shawn Guo <shawnguo@kernel.org> wrote:
 
-From: Like Xu <like.xu@linux.intel.com>
+[...]
+> > +
+> > +		pinctrl_wifi_reset: wifi_reset_grp {
+> > +			fsl,pins = <
+> > +				MX6SLL_PAD_SD2_DATA7__GPIO5_IO00	0x10059		/* WIFI_RST */
+> > +			>;
+> > +		};
+> > +
+> > +		pinctrl_wifi_power: wifi_power_grp {  
+> 
+> I guess you can have one pinctrl node to include both reset and power
+> pins?  Also, to be consistent with other pinctrl nodes on naming, the
+> node name should probably be wifigrp.
+> 
+well, the problems they are used in different nodes, so I cannot do
+that:
 
-commit 6fc3977ccc5d3c22e851f2dce2d3ce2a0a843842 upstream.
+       reg_wifi: regulator-wifi {
+                compatible = "regulator-fixed";
+                pinctrl-names = "default";
+                pinctrl-0 = <&pinctrl_wifi_power>;
+                regulator-name = "SD3_SPWR";
+                regulator-min-microvolt = <3000000>;
+                regulator-max-microvolt = <3000000>;
+                gpio = <&gpio4 29 GPIO_ACTIVE_HIGH>;
+                enable-active-high;
+        };
 
-If a perf_event creation fails due to any reason of the host perf
-subsystem, it has no chance to log the corresponding event for guest
-which may cause abnormal sampling data in guest result. In debug mode,
-this message helps to understand the state of vPMC and we may not
-limit the number of occurrences but not in a spamming style.
+        wifi_pwrseq: wifi_pwrseq {
+                compatible = "mmc-pwrseq-simple";
+                pinctrl-names = "default";
+                pinctrl-0 = <&pinctrl_wifi_reset>;
+                post-power-on-delay-ms = <20>;
+                reset-gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
+        };
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Like Xu <like.xu@linux.intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/x86/kvm/pmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+So having them combined breaks the mux where you use it rule.
+I got in earlier mails:
 
---- a/arch/x86/kvm/pmu.c
-+++ b/arch/x86/kvm/pmu.c
-@@ -187,8 +187,8 @@ static void reprogram_counter(struct kvm
- 						 intr ? kvm_perf_overflow_intr :
- 						 kvm_perf_overflow, pmc);
- 	if (IS_ERR(event)) {
--		printk_once("kvm: pmu event creation failed %ld\n",
--				PTR_ERR(event));
-+		pr_debug_ratelimited("kvm_pmu: event creation failed %ld for pmc->idx = %d\n",
-+			    PTR_ERR(event), pmc->idx);
- 		return;
- 	}
- 
+> > +	wifi_pwrseq: wifi_pwrseq {
+> > +		compatible = "mmc-pwrseq-simple";
+> > +		post-power-on-delay-ms = <20>;
+> > +		reset-gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;  
 
+> Can you add a pinctrl-entry here please? The general rule is to mux
+> things where you use it
+[...]
+> > +			compatible = "regulator-fixed";
+> > +			regulator-name = "SD3_SPWR";
+> > +			regulator-min-microvolt = <3000000>;
+> > +			regulator-max-microvolt = <3000000>;
+> > +
+> > +			gpio = <&gpio4 29 GPIO_ACTIVE_HIGH>;  
+
+> Please add a pinctrl here to mux this gpio.
+
+Regards,
+Andreas
