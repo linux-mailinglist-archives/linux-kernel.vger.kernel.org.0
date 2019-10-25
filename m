@@ -2,139 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA238E4AB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18583E4AB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:04:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504264AbfJYMGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 08:06:10 -0400
-Received: from zaphod.cobb.me.uk ([213.138.97.131]:38554 "EHLO
-        zaphod.cobb.me.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504094AbfJYMGJ (ORCPT
+        id S2502539AbfJYMEE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:04:04 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53086 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2436494AbfJYMED (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 08:06:09 -0400
-X-Greylist: delayed 330 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Oct 2019 08:06:09 EDT
-Received: by zaphod.cobb.me.uk (Postfix, from userid 107)
-        id D3C7E142BC7; Fri, 25 Oct 2019 13:00:38 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cobb.uk.net;
-        s=201703; t=1572004838;
-        bh=z2R3/wIjiAroIpaPZgutujimo2VOUGI1UeGM8irz3r4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=itZaNIUoqPBmrxSnwJZzuFFOo/xNHr8vyEcQ13myAJUUEJiUq+hupVmACeQLCvUe0
-         dqdQr4uCGnvjWEpvNgL568fx/r6DbEDZQVyWHbru+Sh3OM4KXSP/xylqAAnjA84Ch5
-         4TpbusdpHH8MvYWha4Lq2QPozsZTt3Qit+1aeFPcARJ57HqMXyReHywlD/Nw1hGktK
-         6zfstxNgT32uCiVS/7H8T817Zw7kMHLsab7Tpmfk5wQMKt8ukZM9vNsFxzap+uFfOh
-         e31r0w5fJrvYgK6l2XBHsvFa4X82l32JOI/3Sf7SzX+E7eNfx6S4qY2dODwcnLhezv
-         l4VaPhnsw1Fxw==
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on zaphod.cobb.me.uk
-X-Spam-Status: No, score=-0.8 required=12.0 tests=ALL_TRUSTED,DKIM_INVALID,
-        DKIM_SIGNED,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: 
-X-Spam-Bar: 
-Received: from black.home.cobb.me.uk (unknown [192.168.0.205])
-        by zaphod.cobb.me.uk (Postfix) with ESMTP id 7C289142BC2;
-        Fri, 25 Oct 2019 13:00:34 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cobb.uk.net;
-        s=201703; t=1572004834;
-        bh=z2R3/wIjiAroIpaPZgutujimo2VOUGI1UeGM8irz3r4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HGzvs+NpNISdIKghIq+lbOyvMUu0YxoxAVLNxpm3Q2LyBrA1I6eblDVSPfUYfz8Yw
-         xyYVcuzrPu84uKTqlQKnrne3jJ8RXbkb8087XCq0uhy3nQRaYol/K5KICao+fy3N5Z
-         T+17p8FCDbL9y056p+NCL4l/kutkgXgUsa96Dk3lMj2zzUZeOeo4wiMlSLG9aYuDhU
-         AL1upwBfz5YYpkzf5t7Wf9AZIvue0zBJWD79RyZMc+SEX8gsXcL98F5wArtxJDqtah
-         BiQTh4Y4rh6h2gVIguzlabMj2iZX0N3BhqMzNLMBfxjpXt9a+v3Go3SCkyYa1OuWjM
-         0PpA6+OPg0mAg==
-Received: from [192.168.0.211] (novatech.home.cobb.me.uk [192.168.0.211])
-        by black.home.cobb.me.uk (Postfix) with ESMTPS id 9A5CE5F45F;
-        Fri, 25 Oct 2019 13:00:33 +0100 (BST)
-Subject: Re: [PATCH 5/5] btrfs: ioctl: Call btrfs_vol_uevent on subvolume
- deletion
-To:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Fri, 25 Oct 2019 08:04:03 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9PC2SXJ016312
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 08:04:03 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vucdsjnuu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 08:02:56 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
+        Fri, 25 Oct 2019 13:00:41 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 25 Oct 2019 13:00:38 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9PC0bFW17367244
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 25 Oct 2019 12:00:37 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EABE7A4051;
+        Fri, 25 Oct 2019 12:00:36 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5CBF8A4057;
+        Fri, 25 Oct 2019 12:00:35 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.124.35.242])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 25 Oct 2019 12:00:35 +0000 (GMT)
+Subject: Re: [PATCH] sched/fair: Make sched-idle cpu selection consistent
+ throughout
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
         linux-kernel@vger.kernel.org
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, mpdesouza@suse.com
-References: <20191024023636.21124-1-marcos.souza.org@gmail.com>
- <20191024023636.21124-6-marcos.souza.org@gmail.com>
-From:   Graham Cobb <g.btrfs@cobb.uk.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=g.btrfs@cobb.uk.net; prefer-encrypt=mutual; keydata=
- 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 myxb
-Message-ID: <dcfbad52-6e5b-a9cc-e1a7-6b3db8e26e7c@cobb.uk.net>
-Date:   Fri, 25 Oct 2019 13:00:33 +0100
+References: <5eba2fb4af9ebc7396101bb9bd6c8aa9c8af0710.1571899508.git.viresh.kumar@linaro.org>
+ <7d3a1549-a99c-ae42-6074-8ed2ecd7074f@linux.ibm.com>
+ <20191025081108.6gaprbwm5fvokun6@vireshk-i7>
+From:   Parth Shah <parth@linux.ibm.com>
+Date:   Fri, 25 Oct 2019 17:30:34 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20191024023636.21124-6-marcos.souza.org@gmail.com>
+In-Reply-To: <20191025081108.6gaprbwm5fvokun6@vireshk-i7>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19102512-4275-0000-0000-000003777F6C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19102512-4276-0000-0000-0000388AAD04
+Message-Id: <3c8f52ac-4302-5152-2d57-2fe912e1ff9b@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-25_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910250114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/10/2019 03:36, Marcos Paulo de Souza wrote:
-> From: Marcos Paulo de Souza <mpdesouza@suse.com>
+
+
+On 10/25/19 1:41 PM, Viresh Kumar wrote:
+> On 25-10-19, 12:13, Parth Shah wrote:
+>> Hi Viresh,
+>>
+>> On 10/24/19 12:15 PM, Viresh Kumar wrote:
+>>> There are instances where we keep searching for an idle CPU despite
+>>> having a sched-idle cpu already (in find_idlest_group_cpu(),
+>>> select_idle_smt() and select_idle_cpu() and then there are places where
+>>> we don't necessarily do that and return a sched-idle cpu as soon as we
+>>> find one (in select_idle_sibling()). This looks a bit inconsistent and
+>>> it may be worth having the same policy everywhere.
+>>>
+>>> On the other hand, choosing a sched-idle cpu over a idle one shall be
+>>> beneficial from performance point of view as well, as we don't need to
+>>> get the cpu online from a deep idle state which is quite a time
+>>> consuming process and delays the scheduling of the newly wakeup task.
+>>>
+>>> This patch tries to simplify code around sched-idle cpu selection and
+>>> make it consistent throughout.
+>>>
+>>> FWIW, tests were done with the help of rt-app (8 SCHED_OTHER and 5
+>>> SCHED_IDLE tasks, not bound to any cpu) on ARM platform (octa-core), and
+>>> no significant difference in scheduling latency of SCHED_OTHER tasks was
+>>> found.
+>>>
+>>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>> ---
+>>
+>> [...]
+>>
+>>> @@ -5755,13 +5749,11 @@ static int select_idle_smt(struct task_struct *p, int target)
+>>>  	for_each_cpu(cpu, cpu_smt_mask(target)) {
+>>>  		if (!cpumask_test_cpu(cpu, p->cpus_ptr))
+>>>  			continue;
+>>> -		if (available_idle_cpu(cpu))
+>>> +		if (available_idle_cpu(cpu) || sched_idle_cpu(cpu))
+>>>  			return cpu;
+>>
+>> I guess this is a correct approach, but just wondering what if we still
+>> keep searching for a sched_idle CPU even though we have found an
+>> available_idle CPU?
 > 
-> Since the function btrfs_ioctl_snap_destroy is used for deleting both
-> subvolumes and snapshots it was needed call btrfs_is_snapshot,
-> which checks a giver btrfs_root and returns true if it's a snapshot.
-> The current code is interested in subvolumes only.
+> I do believe selecting a sched-idle CPU should almost always be better
+> (performance wise), unless we have a strong argument against it. And
+> anyway, the load balancer will get triggered at a later point of time
+> and will pull away these newly wakeup tasks to idle CPUs. The
+> advantage we get out of it is that the tasks get serviced a bit
+> earlier when they first get queued.
+> 
+> It is really up to the maintainers to see what kind of policy do we
+> want to adapt here and not a choice I can make :)
+> 
 
-To me, as a user, a snapshot *is* a subvolume. I don't even know what
-"is a snapshot" means. Does it mean "was created using the btrfs
-subvolume snapshot command"? Does it matter whether the snapshot has
-been modified? Whether the originally snapshot subvolume still exists?
-Or what?
+yeah, I agree. I will favor selecting sched-idle first for smaller domains
+like SMT but would leave on experts.
+BTW, if sched-idle is given priority then maybe...
+> @@ -5818,13 +5810,11 @@ static int select_idle_cpu(struct task_struct *p,
+> struct sched_domain *sd, int t
+>
+>  	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
+>  		if (!--nr)
+> -			return si_cpu;
+> +			return -1;
+>  		if (!cpumask_test_cpu(cpu, p->cpus_ptr))
+>  			continue;
+> -		if (available_idle_cpu(cpu))
+> +		if (available_idle_cpu(cpu) || sched_idle_cpu(cpu))
+>  			break;
+...here too can be optimized I guess.
 
-I note that the man page for "btrfs subvolume" says "A snapshot is a
-subvolume like any other, with given initial content.". And I certainly
-have some subvolumes which are being used as normal parts of the
-filesystem, which were originally created as snapshots (for various
-reasons, including reverting changes and going back to an earlier
-snapshot, or an easy way to make sure that large common files are
-actually sharing blocks).
 
-I would expect this event would be generated for any subvolume deletion.
-If it is useful to distinguish subvolumes originally created as
-snapshots in some way then export another flag (named to make it clear
-what it really indicates, such as BTRFS_VOL_FROM_SNAPSHOT). I don't know
-your particular purpose, but my guess is that a more useful flag might
-actually be BTRFS_VOL_FROM_READONLY_SNAPSHOT.
+Thanks,
+Parth
 
-Graham
