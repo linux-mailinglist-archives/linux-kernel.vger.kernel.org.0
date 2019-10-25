@@ -2,60 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78E99E4716
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:27:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0DBDE4738
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:30:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438554AbfJYJ1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 05:27:16 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5185 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2438521AbfJYJ1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 05:27:15 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4D28A2CF5CE95DC33BE1;
-        Fri, 25 Oct 2019 17:27:08 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Fri, 25 Oct 2019
- 17:26:57 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <marcel@holtmann.org>, <johan.hedberg@gmail.com>
-CC:     <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] Bluetooth: btrtl: remove unneeded semicolon
-Date:   Fri, 25 Oct 2019 17:26:53 +0800
-Message-ID: <20191025092653.30428-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2408808AbfJYJaP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 05:30:15 -0400
+Received: from foss.arm.com ([217.140.110.172]:37738 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2408067AbfJYJaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 05:30:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D17831F;
+        Fri, 25 Oct 2019 02:30:14 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E2A2B3F71F;
+        Fri, 25 Oct 2019 02:30:12 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 10:30:08 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Abhishek Shah <abhishek.shah@broadcom.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH 1/1] PCI: iproc: Invalidate PAXB address mapping before
+ programming it
+Message-ID: <20191025093008.GA8852@e121166-lin.cambridge.arm.com>
+References: <20190906035813.24046-1-abhishek.shah@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906035813.24046-1-abhishek.shah@broadcom.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unneeded semicolon.
-This is detected by coccinelle.
+On Fri, Sep 06, 2019 at 09:28:13AM +0530, Abhishek Shah wrote:
+> Invalidate PAXB inbound/outbound address mapping each time before
+> programming it. This is helpful for the cases where we need to
+> reprogram inbound/outbound address mapping without resetting PAXB.
+> kexec kernel is one such example.
+> 
+> Signed-off-by: Abhishek Shah <abhishek.shah@broadcom.com>
+> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> Reviewed-by: Vikram Mysore Prakash <vikram.prakash@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-iproc.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/bluetooth/btrtl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Merged in pci/iproc (rewrote commit log), thanks.
 
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index ae9a204..f838537 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -778,7 +778,7 @@ int btrtl_get_uart_settings(struct hci_dev *hdev,
- 			rtl_dev_dbg(hdev, "skipping config entry 0x%x (len %u)",
- 				   le16_to_cpu(entry->offset), entry->len);
- 			break;
--		};
-+		}
- 
- 		i += sizeof(*entry) + entry->len;
- 	}
--- 
-2.7.4
+Lorenzo
 
-
+> diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+> index e3ca46497470..99a9521ba7ab 100644
+> --- a/drivers/pci/controller/pcie-iproc.c
+> +++ b/drivers/pci/controller/pcie-iproc.c
+> @@ -1245,6 +1245,32 @@ static int iproc_pcie_map_dma_ranges(struct iproc_pcie *pcie)
+>  	return ret;
+>  }
+>  
+> +static void iproc_pcie_invalidate_mapping(struct iproc_pcie *pcie)
+> +{
+> +	struct iproc_pcie_ib *ib = &pcie->ib;
+> +	struct iproc_pcie_ob *ob = &pcie->ob;
+> +	int idx;
+> +
+> +	if (pcie->ep_is_internal)
+> +		return;
+> +
+> +	if (pcie->need_ob_cfg) {
+> +		/* iterate through all OARR mapping regions */
+> +		for (idx = ob->nr_windows - 1; idx >= 0; idx--) {
+> +			iproc_pcie_write_reg(pcie,
+> +					     MAP_REG(IPROC_PCIE_OARR0, idx), 0);
+> +		}
+> +	}
+> +
+> +	if (pcie->need_ib_cfg) {
+> +		/* iterate through all IARR mapping regions */
+> +		for (idx = 0; idx < ib->nr_regions; idx++) {
+> +			iproc_pcie_write_reg(pcie,
+> +					     MAP_REG(IPROC_PCIE_IARR0, idx), 0);
+> +		}
+> +	}
+> +}
+> +
+>  static int iproce_pcie_get_msi(struct iproc_pcie *pcie,
+>  			       struct device_node *msi_node,
+>  			       u64 *msi_addr)
+> @@ -1517,6 +1543,8 @@ int iproc_pcie_setup(struct iproc_pcie *pcie, struct list_head *res)
+>  	iproc_pcie_perst_ctrl(pcie, true);
+>  	iproc_pcie_perst_ctrl(pcie, false);
+>  
+> +	iproc_pcie_invalidate_mapping(pcie);
+> +
+>  	if (pcie->need_ob_cfg) {
+>  		ret = iproc_pcie_map_ranges(pcie, res);
+>  		if (ret) {
+> -- 
+> 2.17.1
+> 
