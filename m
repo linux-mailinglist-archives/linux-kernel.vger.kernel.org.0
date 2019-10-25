@@ -2,79 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A95D9E4ED8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:23:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDD5CE4EE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:25:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394364AbfJYOXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 10:23:03 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:36143 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392999AbfJYOXD (ORCPT
+        id S2394691AbfJYOZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 10:25:12 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:44110 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393877AbfJYOZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 10:23:03 -0400
-Received: by mail-il1-f196.google.com with SMTP id s75so2009519ilc.3;
-        Fri, 25 Oct 2019 07:23:02 -0700 (PDT)
+        Fri, 25 Oct 2019 10:25:12 -0400
+Received: by mail-yw1-f65.google.com with SMTP id i123so808944ywe.11
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 07:25:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ePhtzU5NI6z2BX2GKzTIAEd2EINs+iRTKDQWAsMttns=;
-        b=V6JKuvB8C9r57btbIHWT9QPSij4Qf9wRAL966ReKuoUJJQsIL7YcP62zdSPHfNJdhS
-         BRJYHY6s2yx/0uMtNUNPftQ2Q3WVS64fUCSIW0D2K7ljqduyMiKms6uxLENAtGvOVesG
-         m1R74DhamLyH8vrS28kWW0hlDZnj/6+3o9G9AJi82IYKOoMAhfWr8g8ZYp2IziO6l5Ps
-         ejzCcVf1U3a/YY1w6ZZDCTQeBkHzQVh8oWAtLn9KNUur1v01Jo/c/OfI8eOOqDbhoCM2
-         SSOxSRZqdbrV69DMcKz4zCQ4LRW4iXiT/dHttQCMW7zOxHbQc8r76055f/GaCCK7903t
-         SNjw==
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=vI0RylTKBYG4Ui3+hV7HofEEj4gnQQcQyhXuTz+fkr3dPVg//+mka+L75dkg3FsHzQ
+         1NnIbvCLNtW6YAt1AANMYjOud1MaiMLWyppvfSFyZ8kKlsUMWs8R2R0J+Kk8Iak8oEZh
+         3vmhnAUK5ulK6r0OAb92lu1MD8Ime0j/3LH0bmWIQLy19BCnHrlQ89D0yYOrL14sVeAR
+         /iQlBynZG1Oz7ZKjqY8dwZ7BP4rWJvFB6KFuz2zIsMvzYXgYeGVVWEoNAtJS+3gUSZcE
+         Acdiki0LnANqomJZ1aTxOSdA8+byKv/PrePdZMG10Os062OFHpHECM2unRYbPc+4tES9
+         DnNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ePhtzU5NI6z2BX2GKzTIAEd2EINs+iRTKDQWAsMttns=;
-        b=obtC0t7w2c+PPtd4kf8SytFD3NWiy3HVsVYB6iOx6penPGjg2UCEGoPy2+G2qDbEiW
-         +AE7pbHDqx0PHJTkUj8a+qMD76TTzsCRAi3qat5Bg7VlSrgvY0hLy5b7RN5loQc5o71c
-         vuA/+XU2dSVm1F4smidCGzutIyjhao2U9zeKBIV7Dx8vAcK2J7+MEdVv02kW1ger2D8L
-         hmblUOZlHXTV0XKZo52g8VvatkrBTqBELA3Ld3256UGfmnfPkVNp4AOODL07jVzyAGsA
-         DRLxoS2YluLLHNowEyiQAaiVlIsxQa8x64mF/Ch9POB47aH27HMUb5QeAes6z3NpE+zj
-         idDA==
-X-Gm-Message-State: APjAAAXLf5tQ2DsxpR6rckcKrOP2yBoSUCiZF+pQWY4kLlpAGZbs9dPS
-        xeFe9ep2QWm/CKYI/D/7Qd9ltZxE
-X-Google-Smtp-Source: APXvYqwd5FaJDyLRZxvSrDF+ugbwgjF6WU/G/6DS2v6aOS1/J+mH1PSz7Wdg6gxoi7G+N9WlwBonpQ==
-X-Received: by 2002:a92:9a54:: with SMTP id t81mr4282508ili.147.1572013381778;
-        Fri, 25 Oct 2019 07:23:01 -0700 (PDT)
-Received: from ?IPv6:2601:282:800:fd80:b19c:9c8b:8bde:d55c? ([2601:282:800:fd80:b19c:9c8b:8bde:d55c])
-        by smtp.googlemail.com with ESMTPSA id j21sm297593ioj.86.2019.10.25.07.23.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Oct 2019 07:23:00 -0700 (PDT)
-Subject: Re: [PATCH AUTOSEL 4.9 19/20] ipv6: Handle race in addrconf_dad_work
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     Rajendra Dendukuri <rajendra.dendukuri@broadcom.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-References: <20191025135801.25739-1-sashal@kernel.org>
- <20191025135801.25739-19-sashal@kernel.org>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <f3c4a11c-b5b5-455a-6c88-83b8cc56623d@gmail.com>
-Date:   Fri, 25 Oct 2019 08:22:59 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=CBh6DMxU/9itExjt/UTNoe2XPLTZWGoClW/b5DX/QyAW/+ofswYaVSBhqqnJEIlhSd
+         PF4QWAunXQtOEbAjCimMWw6Dfl2YcsUSTk16+sNuvHBKIZE7686uOmpomo+SUhRhSTbz
+         IqmWY7F6LUzBkTQ+Y63fnkFUhMhVDQkpAGQuavErsfsK927JDcOrWzpBSXlOSSvkhNQS
+         jmRl6DV4e4lS8OQXlfE8k6QwgoiLmXU2TdOaYSZCtbNSJ+SchEKx0P4zKlkFNVIh/oDD
+         1Tu7C9cR2McTdnNMxVvbQ9imZhA/x7qsSxu4MHc4eJo9+JbZphPliFI/na36UQGucpHk
+         zLcA==
+X-Gm-Message-State: APjAAAVvE8JJ0auyeu61ZUw9j7Ao6w3XCWJicKA7waeGSAI1xlx59BE4
+        iZ5ADrWCygkXbKYNnvVlLAPADTwZ/yzibX/2uQ0=
+X-Google-Smtp-Source: APXvYqydmYtNlBy85BKjMUUzit3cBRdCruVaiuMBw/ykMUWJHQStfbTN4SNNTTyEDep04Y5KVgIt6kN2KoD+lSTljf4=
+X-Received: by 2002:a81:2f0b:: with SMTP id v11mr2693884ywv.483.1572013511554;
+ Fri, 25 Oct 2019 07:25:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191025135801.25739-19-sashal@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:7797:0:0:0:0:0 with HTTP; Fri, 25 Oct 2019 07:25:10
+ -0700 (PDT)
+Reply-To: eddywilliam0002@gmail.com
+From:   eddy william <moordavis0002@gmail.com>
+Date:   Fri, 25 Oct 2019 16:25:10 +0200
+Message-ID: <CALTCcCwzwTW0ibP+yj-hWUxwYGAhRtfUyOWO4a8wiSQqnGYnVw@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25/19 7:57 AM, Sasha Levin wrote:
-> From: David Ahern <dsahern@gmail.com>
-> 
-> [ Upstream commit a3ce2a21bb8969ae27917281244fa91bf5f286d7 ]
-> 
+Hallo
 
-that patch was reverted in favor of a different solution. It should NOT
-be backported to any releases.
+Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
+Ihnen anbieten
+die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
+($8,5 Millionen US-Dollar)
+Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
 
+Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
+bei einem Autounfall ums Leben gekommen ist
+und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
+nd 50%
+sein f=C3=BCr dich.
+Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
+Informationen: eddywilliam0002gmail.com
+
+Vielen Dank im Voraus,
+Mr. Eddy William,
+
+
+
+Hello
+
+My name is Eddy William I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($8.5 Million)
+dollars my client left in the bank before his death.
+
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+Please contact my private email here for more details:eddywilliam0002gmail.=
+com
+
+Many thanks in advance,
+Mr.Eddy William,
