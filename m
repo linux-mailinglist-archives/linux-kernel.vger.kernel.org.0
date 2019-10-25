@@ -2,126 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97192E5155
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E034E516A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:37:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633050AbfJYQfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 12:35:06 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:38291 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727811AbfJYQfG (ORCPT
+        id S2633116AbfJYQhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 12:37:50 -0400
+Received: from mail-pf1-f174.google.com ([209.85.210.174]:36343 "EHLO
+        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2633105AbfJYQht (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 12:35:06 -0400
-Received: by mail-oi1-f193.google.com with SMTP id v186so2020537oie.5;
-        Fri, 25 Oct 2019 09:35:05 -0700 (PDT)
+        Fri, 25 Oct 2019 12:37:49 -0400
+Received: by mail-pf1-f174.google.com with SMTP id v19so1927724pfm.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 09:37:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=UYQi1UzbB7iZ/+eKxNJToErjLhDOEYJn/+pcDU6Q51Y=;
+        b=gvoy3JML0FuZJ4rgTDUQ31bkdiDBxyr6ogVg5zGFYaYUCu1HuFEzXUHVndHUuSifpp
+         bucFPK1zq6qsuMyKSBtlartp7gP8Mb74kwH+2zajpKFAcL/RmkWlcgZqEK7PWy/6nlOU
+         8rFqVN0FryzoWjYhd7mkMUFViL4PWXe5arHB3nSzAV3PNy2ydkCf1qOicGro7L2j2C4n
+         fyeIUR2t3QevI+vePXPOXBbZoyPhFGXmYosEv4A9ebbmP2/EeC8bKTkGzvwhCy8PIVDu
+         ry2FNh1VPlo0lyr0nk73pb+AbDBtWr96Me3mkQN73Ckf+egJ6jMLPgTJjnvWiTq9YNJ/
+         PjsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yF/H3rJbJdDx83JTlFll9X6DSAUOcAkkMlYZ2qdb7W8=;
-        b=QiwAJalqCI8mNc1wnZCikHiR/CnYe0MVtgCchW39277vQyJo1AlM0g6QSsS4OvQ1dm
-         E54K5WhID+Whu8iG2qhJHnKEZKqw63gSzsn38lbk91QT8pZWdoMmPtRJZqxEZx4xxlhv
-         cpwZimI/LMynnruvrJXu2iCRP2J604IJmKxzfnMaagMQw2S47xvCCbw8e9T5fP/6WoT4
-         ZqAriFHgCUWCSAVS8/dfwl2iZvP6c2B04+cm/IVqsJIER5zc1MCA8suTGWXUfPVop996
-         yQvm6Ojp/DmEU3h1dromQ1RM1yUhtc3+fALxw9kqiLyCiV68bqfE5suojDchyvncnsLw
-         pJUA==
-X-Gm-Message-State: APjAAAWgcMoVDugrCNN3PBsfmApwWkdY9Dm8MXPeyrPAQT9VCQCuuL8a
-        46M+TwQzPCWVI0W0txh5XeE5DZM=
-X-Google-Smtp-Source: APXvYqzFwnoi2h7408Dc9NQGKmnU5cVF5hryFdhRKy0DlizILQRgNbq8bMnefvU0IgZdMGEtFQImJQ==
-X-Received: by 2002:a54:4e8a:: with SMTP id c10mr3912144oiy.65.1572021305176;
-        Fri, 25 Oct 2019 09:35:05 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r3sm861176otk.31.2019.10.25.09.35.03
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=UYQi1UzbB7iZ/+eKxNJToErjLhDOEYJn/+pcDU6Q51Y=;
+        b=ef6RfNVadP3OPFVLTauWQqNBV1wSHhGd3y/qKs7MvFA/hDeu2EWBfmleRfK1t9Un1s
+         avIEhSFTipB9qdWNJAkLvTl01uDp5u7ZOjFDitSXz5Ids+QWAr62Mq5rw2KRIlNzukuK
+         u45umhEuyhVfm1/ooEjjZF8Us7VBQCMy1cjdT7e6IrfGoD0h03u93cK7CZqBLW66apxr
+         7bFoxj6d3ecU4vGTZnONqGLLAd4tlwnrKmSU6OxVGDByA11cCgqe4guD+NOdsL3uJZhH
+         cBOXar8/LLpiVEu2oCFOiNZVje9xxAq1sTwKu6KFCl77/r9GOPRmxXqtaZ+VB78I+30p
+         3Eow==
+X-Gm-Message-State: APjAAAV+8A8q3gNLDVVSicFLEi4nuCiqxEaJ2erEcmDrti5sQh5H2tYX
+        R2gp+nTg6zL4yYcj4NFPkA8JEw==
+X-Google-Smtp-Source: APXvYqxakIs5zLyRaXbMPlWoXw1ffrHcyN8UtDf9R6ZXgLJ2TO3N4A4by4aXTKEvljfg/0VZVJvRtw==
+X-Received: by 2002:a62:30c5:: with SMTP id w188mr5478533pfw.105.1572021468983;
+        Fri, 25 Oct 2019 09:37:48 -0700 (PDT)
+Received: from cakuba.hsd1.ca.comcast.net (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
+        by smtp.gmail.com with ESMTPSA id b14sm2805214pfi.95.2019.10.25.09.37.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 09:35:04 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 11:35:03 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dan Robertson <dan@dlrobertson.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v4 1/2] dt-bindings: iio: accel: bma400: add bindings
-Message-ID: <20191025163503.GA19293@bogus>
-References: <20191018031848.18538-1-dan@dlrobertson.com>
- <20191018031848.18538-2-dan@dlrobertson.com>
+        Fri, 25 Oct 2019 09:37:48 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 09:37:45 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Boris Pismenny <borisp@mellanox.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>,
+        Dave Watson <davejwatson@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>, davem@davemloft.net,
+        glider@google.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+9e3b178624a8a2f8fa28@syzkaller.appspotmail.com>
+Subject: Re: [net/tls] Re: KMSAN: uninit-value in aes_encrypt (2)
+Message-ID: <20191025093745.29dcb185@cakuba.hsd1.ca.comcast.net>
+In-Reply-To: <20191025142924.7pgxabkbsbvpgygl@gondor.apana.org.au>
+References: <00000000000065ef5f0595aafe71@google.com>
+        <20191024172353.GA740@sol.localdomain>
+        <20191024104537.5a98f5b7@cakuba.hsd1.ca.comcast.net>
+        <20191025142924.7pgxabkbsbvpgygl@gondor.apana.org.au>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018031848.18538-2-dan@dlrobertson.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 03:18:47AM +0000, Dan Robertson wrote:
-> Add devicetree binding for the Bosch BMA400 3-axes ultra-low power
-> accelerometer sensor.
+On Fri, 25 Oct 2019 22:29:25 +0800, Herbert Xu wrote:
+> On Thu, Oct 24, 2019 at 10:45:37AM -0700, Jakub Kicinski wrote:
+> >
+> > Oh, thanks for the CC, I don't see any of these in my inbox. We have 
+> > 6 TLS maintainers, the 3 that were CCed on the thread above don't
+> > participate much :(  
 > 
-> Signed-off-by: Dan Robertson <dan@dlrobertson.com>
-> ---
->  .../devicetree/bindings/iio/accel/bma400.yaml | 39 +++++++++++++++++++
->  1 file changed, 39 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/accel/bma400.yaml
+> Can you please ensure that all the maintainers are listed in the
+> MAINTAINERS file so people can cc them when needed?
 
-bosch,bma400.yaml
+Yes, to be clear we are all listed. Coincidentally we're listed in
+order of addition, which turns out to be reverse to the amount of
+caring.. And in the threads above it seems someone decided to only 
+CC first few (i.e. the oldest, i.e. the least caring).
 
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/accel/bma400.yaml b/Documentation/devicetree/bindings/iio/accel/bma400.yaml
-> new file mode 100644
-> index 000000000000..e0a85dc7bf34
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/accel/bma400.yaml
-> @@ -0,0 +1,39 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/accel/bma400.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Bosch BMA400 triaxial acceleration sensor
-> +
-> +maintainers:
-> +  - Dan Robertson <dan@dlrobertson.com>
-> +
-> +description: |
-> +  Acceleration and temerature iio sensors with an i2c interface
-> +
-> +  Specifications about the sensor can be found at:
-> +    https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BMA400-DS000.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - bosch,bma400
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +examples:
-> +  - |
-> +    i2c0 {
-
-i2c {
-
-(will enable i2c bus schema)
-
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +      bma400@14 {
-
-accelerometer@14
-
-> +        compatible = "bosch,bma400";
-> +        reg = <0x14>;
-> +      };
-> +    };
-> 
-> 
+I'll send a patch to remove Dave Watson at least. He's FB email address
+is dead, I've been trying to get in touch with him for 2 months with no
+luck..
