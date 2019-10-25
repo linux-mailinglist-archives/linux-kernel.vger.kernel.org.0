@@ -2,284 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C17E53A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 20:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C3FAE53AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 20:18:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388296AbfJYSO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 14:14:27 -0400
-Received: from mga18.intel.com ([134.134.136.126]:12175 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388172AbfJYSO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 14:14:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2019 11:14:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,229,1569308400"; 
-   d="scan'208";a="192617509"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga008.jf.intel.com with ESMTP; 25 Oct 2019 11:14:25 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id F1D5D300EE9; Fri, 25 Oct 2019 11:14:24 -0700 (PDT)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     acme@kernel.org
-Cc:     jolsa@kernel.org, eranian@google.com, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v3 7/7] perf stat: Use affinity for enabling/disabling events
-Date:   Fri, 25 Oct 2019 11:14:17 -0700
-Message-Id: <20191025181417.10670-8-andi@firstfloor.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191025181417.10670-1-andi@firstfloor.org>
-References: <20191025181417.10670-1-andi@firstfloor.org>
+        id S2388526AbfJYSSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 14:18:10 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42328 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387489AbfJYSRk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 14:17:40 -0400
+Received: by mail-io1-f67.google.com with SMTP id i26so3449294iog.9
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 11:17:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=cEp2IwZKQPQmmm2FW1iKbpwmFQ8Xs6tcg4OA6zfr4/M=;
+        b=icig6KsD2TpQ66Xr/S/wECboULwzQnRngVtCPdD1hQPltOc0nDqrUFCOWfzH/IJHq5
+         V8kUHDFd+o4xtXCPRL8oILKPDf0mFUYyV8n2m2g33KkkD5hxkP+TTvkv51hbep+S8yUC
+         kAxUR3dtNowOfrl/A1hBY4e0t0GlU+Jtfz+QHIzc3XsKZ+sUjME4J7xWsopxa139lln0
+         iyvVjNwQeZ25EUMxEJwbNvXX18nKPoFIpn4a1RxowHzurplABQ4AP9zMzQJ/3pi729I3
+         SCLgOH8O84N9NS+rBeK5wlvQ+VN55mblWwOlsaw4vTE4ovnQ2yJQymttUBdqwpySeiwR
+         Kpeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cEp2IwZKQPQmmm2FW1iKbpwmFQ8Xs6tcg4OA6zfr4/M=;
+        b=jiRV7YAjMp6dWeZMdDGJ7JvmBFZLUxjalMvhQ4OB26XYGVUT3E3vlSvcI0uS16IvhS
+         e2QaFBpxWzGDAxCUFu9oVj+Z8/+3jU6G+kBfd/8nDXofEOTsVBBGW4eD0NwWLbT45lpT
+         mAchDK5iQtmwnkinxlco1KU/QAPHRnHaaQAjVHLQtNz7nAOfe/8wdJ4ZGKa16atWIIf7
+         b+Ede6aJtqZUONYhSymJLLUVne7WDXuXy7xFLF3Acphfrlm6I/S9p2SURGXw54wqTBIW
+         KzphTRiJKHktM/+rLRD/hKcV5V/L9QBtUIV3E0jb2psFvGlmST/puUt32+B6lDuU1Dap
+         PM6Q==
+X-Gm-Message-State: APjAAAWDzjRJ0YBqoospiUGuVmGGTcHHM7mkjrKrvdaImhY1VqUu2bX9
+        BwwnN+8Jope2ppAclLnSPJ9sk3fvgjDkVA==
+X-Google-Smtp-Source: APXvYqysoFK5c7/3wdwPSUl84Q1Nx5uXQAZ2VHCAU284/KLJkgalKBQBScryp9skgcrtBxD+r2CHaQ==
+X-Received: by 2002:a5e:9e0a:: with SMTP id i10mr5317901ioq.208.1572027457864;
+        Fri, 25 Oct 2019 11:17:37 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id y26sm341850ion.1.2019.10.25.11.17.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Oct 2019 11:17:36 -0700 (PDT)
+Subject: Re: [BUG] io_uring: defer logic based on shared data
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <5badf1c0-9a7d-0950-2943-ff8db33e0929@gmail.com>
+ <bfb58429-6abe-06f0-3fd8-14a0040cecf0@kernel.dk>
+ <b44b0488-ba66-0187-2d9b-6949ceb613fb@gmail.com>
+ <96446fe1-4f32-642b-7100-ebfa291d7127@kernel.dk>
+ <df3b9edd-86ad-5460-b61b-66707c0fb630@kernel.dk>
+ <31a7765b-bb6d-985a-454d-d998678100d1@gmail.com>
+ <b4e1f03c-e044-b09f-d943-cad3ab5b4969@kernel.dk>
+ <e5a6f77a-3404-0dc8-ac6e-584737d71a33@gmail.com>
+ <a0d8a8e1-18dc-8090-037c-e5baf9bd45c3@kernel.dk>
+ <436eb658-582d-c752-f20a-2f2c43d741a3@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <f3b7a9fb-1a95-5419-3408-669d8b466d48@kernel.dk>
+Date:   Fri, 25 Oct 2019 12:17:35 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <436eb658-582d-c752-f20a-2f2c43d741a3@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+On 10/25/19 12:13 PM, Pavel Begunkov wrote:
+> On 25/10/2019 19:57, Jens Axboe wrote:
+>> On 10/25/19 10:55 AM, Pavel Begunkov wrote:
+>>> On 25/10/2019 19:44, Jens Axboe wrote:
+>>>> On 10/25/19 10:40 AM, Pavel Begunkov wrote:
+>>>>> On 25/10/2019 19:32, Jens Axboe wrote:
+>>>>>> On 10/25/19 10:27 AM, Jens Axboe wrote:
+>>>>>>> On 10/25/19 10:21 AM, Pavel Begunkov wrote:
+>>>>>>>> On 25/10/2019 19:03, Jens Axboe wrote:
+>>>>>>>>> On 10/25/19 3:55 AM, Pavel Begunkov wrote:
+>>>>>>>>>> I found 2 problems with __io_sequence_defer().
+>>>>>>>>>>
+>>>>>>>>>> 1. it uses @sq_dropped, but doesn't consider @cq_overflow
+>>>>>>>>>> 2. @sq_dropped and @cq_overflow are write-shared with userspace, so
+>>>>>>>>>> it can be maliciously changed.
+>>>>>>>>>>
+>>>>>>>>>> see sent liburing test (test/defer *_hung()), which left an unkillable
+>>>>>>>>>> process for me
+>>>>>>>>>
+>>>>>>>>> OK, how about the below. I'll split this in two, as it's really two
+>>>>>>>>> separate fixes.
+>>>>>>>> cached_sq_dropped is good, but I was concerned about cached_cq_overflow.
+>>>>>>>> io_cqring_fill_event() can be called in async, so shouldn't we do some
+>>>>>>>> synchronisation then?
+>>>>>>>
+>>>>>>> We should probably make it an atomic just to be on the safe side, I'll
+>>>>>>> update the series.
+>>>>>>
+>>>>>> Here we go, patch 1:
+>>>>>>
+>>>>>> http://git.kernel.dk/cgit/linux-block/commit/?h=for-linus&id=f2a241f596ed9e12b7c8f960e79ccda8053ea294
+>>>>>>
+>>>>>> patch 2:
+>>>>>>
+>>>>>> http://git.kernel.dk/cgit/linux-block/commit/?h=for-linus&id=b7d0297d2df5bfa0d1ecf9d6c66d23676751ef6a
+>>>>>>
+>>>>> 1. submit rqs (not yet completed)
+>>>>> 2. poll_list is empty, inflight = 0
+>>>>> 3. async completed and placed into poll_list
+>>>>>
+>>>>> So, poll_list is not empty, but we won't get to polling again.
+>>>>> At least until someone submitted something.
+>>>>
+>>>> But if they are issued, the will sit in ->poll_list as well. That list
+>>>> holds both "submitted, but pending" and completed entries.
+>>>>
+>>> Missed it, then should work. Thanks!
+>>
+>> Glad we agree :-)
+>>
+>>>> + ret = iters = 0;
+>>> A small suggestion, could we just initialise it in declaration
+>>> to be a bit more concise?
+>>> e.g. int ret = 0, iters = 0;
+>>>
+>>> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+>>> And let me test it as both patches are ready.
+>>
+>> Sure, I'll make that change and add your reviewed-by. Thanks!
+>>
+> Stress tested, works well!
+> 
+> Tested-by: Pavel Begunkov <asml.silence@gmail.com>
 
-Restructure event enabling/disabling to use affinity, which
-minimizes the number of IPIs needed.
+Great, thanks for finding these, sending patches, and testing the ones
+that I fixed!
 
-Before on a large test case with 94 CPUs:
-
-% time     seconds  usecs/call     calls    errors syscall
------- ----------- ----------- --------- --------- ----------------
- 54.65    1.899986          22     84812       660 ioctl
-
-after:
-
- 39.21    0.930451          10     84796       644 ioctl
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-
----
-
-v2: Use new iterator macros
----
- tools/perf/lib/evsel.c              | 49 +++++++++++++++++++++--------
- tools/perf/lib/include/perf/evsel.h |  2 ++
- tools/perf/util/evlist.c            | 48 +++++++++++++++++++++++++---
- tools/perf/util/evsel.c             | 13 ++++++++
- tools/perf/util/evsel.h             |  2 ++
- 5 files changed, 96 insertions(+), 18 deletions(-)
-
-diff --git a/tools/perf/lib/evsel.c b/tools/perf/lib/evsel.c
-index ea775dacbd2d..89ddfade0b96 100644
---- a/tools/perf/lib/evsel.c
-+++ b/tools/perf/lib/evsel.c
-@@ -198,38 +198,61 @@ int perf_evsel__read(struct perf_evsel *evsel, int cpu, int thread,
- }
- 
- static int perf_evsel__run_ioctl(struct perf_evsel *evsel,
--				 int ioc,  void *arg)
-+				 int ioc,  void *arg,
-+				 int cpu)
- {
--	int cpu, thread;
-+	int thread;
- 
--	for (cpu = 0; cpu < xyarray__max_x(evsel->fd); cpu++) {
--		for (thread = 0; thread < xyarray__max_y(evsel->fd); thread++) {
--			int fd = FD(evsel, cpu, thread),
--			    err = ioctl(fd, ioc, arg);
-+	for (thread = 0; thread < xyarray__max_y(evsel->fd); thread++) {
-+		int fd = FD(evsel, cpu, thread),
-+		    err = ioctl(fd, ioc, arg);
- 
--			if (err)
--				return err;
--		}
-+		if (err)
-+			return err;
- 	}
- 
- 	return 0;
- }
- 
-+int perf_evsel__enable_cpu(struct perf_evsel *evsel, int cpu)
-+{
-+	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, 0, cpu);
-+}
-+
- int perf_evsel__enable(struct perf_evsel *evsel)
- {
--	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, 0);
-+	int i;
-+	int err = 0;
-+
-+	for (i = 0; i < evsel->cpus->nr && !err; i++)
-+		err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, 0, i);
-+	return err;
-+}
-+
-+int perf_evsel__disable_cpu(struct perf_evsel *evsel, int cpu)
-+{
-+	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, 0, cpu);
- }
- 
- int perf_evsel__disable(struct perf_evsel *evsel)
- {
--	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, 0);
-+	int i;
-+	int err = 0;
-+
-+	for (i = 0; i < evsel->cpus->nr && !err; i++)
-+		err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, 0, i);
-+	return err;
- }
- 
- int perf_evsel__apply_filter(struct perf_evsel *evsel, const char *filter)
- {
--	return perf_evsel__run_ioctl(evsel,
-+	int err = 0, i;
-+
-+	for (i = 0; i < evsel->cpus->nr && !err; i++)
-+		err = perf_evsel__run_ioctl(evsel,
- 				     PERF_EVENT_IOC_SET_FILTER,
--				     (void *)filter);
-+				     (void *)filter, i);
-+	return err;
- }
- 
- struct perf_cpu_map *perf_evsel__cpus(struct perf_evsel *evsel)
-diff --git a/tools/perf/lib/include/perf/evsel.h b/tools/perf/lib/include/perf/evsel.h
-index e7add554f861..c82ec39a4ad0 100644
---- a/tools/perf/lib/include/perf/evsel.h
-+++ b/tools/perf/lib/include/perf/evsel.h
-@@ -30,7 +30,9 @@ LIBPERF_API void perf_evsel__close_cpu(struct perf_evsel *evsel, int cpu);
- LIBPERF_API int perf_evsel__read(struct perf_evsel *evsel, int cpu, int thread,
- 				 struct perf_counts_values *count);
- LIBPERF_API int perf_evsel__enable(struct perf_evsel *evsel);
-+LIBPERF_API int perf_evsel__enable_cpu(struct perf_evsel *evsel, int cpu);
- LIBPERF_API int perf_evsel__disable(struct perf_evsel *evsel);
-+LIBPERF_API int perf_evsel__disable_cpu(struct perf_evsel *evsel, int cpu);
- LIBPERF_API struct perf_cpu_map *perf_evsel__cpus(struct perf_evsel *evsel);
- LIBPERF_API struct perf_thread_map *perf_evsel__threads(struct perf_evsel *evsel);
- LIBPERF_API struct perf_event_attr *perf_evsel__attr(struct perf_evsel *evsel);
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index ca9b06979fc0..e3e4c2fedc8a 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -379,26 +379,64 @@ void evlist__cpu_iter_next(struct evsel *ev)
- void evlist__disable(struct evlist *evlist)
- {
- 	struct evsel *pos;
-+	struct affinity affinity;
-+	struct perf_cpu_map *cpus;
-+	int i, cpu;
-+
-+	if (affinity__setup(&affinity) < 0)
-+		return;
-+
-+	cpus = evlist__cpu_iter_start(evlist);
-+	cpumap__for_each_cpu (cpus, i, cpu) {
-+		affinity__set(&affinity, cpu);
- 
-+		evlist__for_each_entry(evlist, pos) {
-+			if (evlist__cpu_iter_skip(pos, cpu))
-+				continue;
-+			if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos->core.fd)
-+				continue;
-+			evsel__disable_cpu(pos, pos->cpu_index);
-+			evlist__cpu_iter_next(pos);
-+		}
-+	}
-+	affinity__cleanup(&affinity);
- 	evlist__for_each_entry(evlist, pos) {
--		if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos->core.fd)
-+		if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
- 			continue;
--		evsel__disable(pos);
-+		pos->disabled = true;
- 	}
--
- 	evlist->enabled = false;
- }
- 
- void evlist__enable(struct evlist *evlist)
- {
- 	struct evsel *pos;
-+	struct affinity affinity;
-+	struct perf_cpu_map *cpus;
-+	int i, cpu;
-+
-+	if (affinity__setup(&affinity) < 0)
-+		return;
- 
-+	cpus = evlist__cpu_iter_start(evlist);
-+	cpumap__for_each_cpu (cpus, i, cpu) {
-+		affinity__set(&affinity, cpu);
-+
-+		evlist__for_each_entry(evlist, pos) {
-+			if (evlist__cpu_iter_skip(pos, cpu))
-+				continue;
-+			if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
-+				continue;
-+			evsel__enable_cpu(pos, pos->cpu_index);
-+			evlist__cpu_iter_next(pos);
-+		}
-+	}
-+	affinity__cleanup(&affinity);
- 	evlist__for_each_entry(evlist, pos) {
- 		if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
- 			continue;
--		evsel__enable(pos);
-+		pos->disabled = false;
- 	}
--
- 	evlist->enabled = true;
- }
- 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 7106f9a067df..79050a6f4991 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1205,13 +1205,26 @@ int perf_evsel__append_addr_filter(struct evsel *evsel, const char *filter)
- 	return perf_evsel__append_filter(evsel, "%s,%s", filter);
- }
- 
-+/* Caller has to clear disabled after going through all CPUs. */
-+int evsel__enable_cpu(struct evsel *evsel, int cpu)
-+{
-+	int err = perf_evsel__enable_cpu(&evsel->core, cpu);
-+	return err;
-+}
-+
- int evsel__enable(struct evsel *evsel)
- {
- 	int err = perf_evsel__enable(&evsel->core);
- 
- 	if (!err)
- 		evsel->disabled = false;
-+	return err;
-+}
- 
-+/* Caller has to set disabled after going through all CPUs. */
-+int evsel__disable_cpu(struct evsel *evsel, int cpu)
-+{
-+	int err = perf_evsel__disable_cpu(&evsel->core, cpu);
- 	return err;
- }
- 
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 9fc9f6698aa4..15977bbe7b63 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -222,8 +222,10 @@ int perf_evsel__set_filter(struct evsel *evsel, const char *filter);
- int perf_evsel__append_tp_filter(struct evsel *evsel, const char *filter);
- int perf_evsel__append_addr_filter(struct evsel *evsel,
- 				   const char *filter);
-+int evsel__enable_cpu(struct evsel *evsel, int cpu);
- int evsel__enable(struct evsel *evsel);
- int evsel__disable(struct evsel *evsel);
-+int evsel__disable_cpu(struct evsel *evsel, int cpu);
- 
- int perf_evsel__open_per_cpu(struct evsel *evsel,
- 			     struct perf_cpu_map *cpus,
 -- 
-2.21.0
+Jens Axboe
 
