@@ -2,83 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6BD0E47B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECF2DE47B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439098AbfJYJrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 05:47:11 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35314 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438836AbfJYJrL (ORCPT
+        id S2394400AbfJYJsU convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 25 Oct 2019 05:48:20 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:37006 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391988AbfJYJsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 05:47:11 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y6so1206889lfj.2;
-        Fri, 25 Oct 2019 02:47:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6eirW4NBi16Kvo5Dh5yyQapiDDYkl5K/PGUWrysKXq0=;
-        b=Pu2V5WOtgvnwTDPCt1/n3ii0Y6nVoZ6H3ugc70sbV2tKC4G0JJHNb5Sx8f5pWApMnp
-         Eu4FbEyJKmLC+aSsS9Dd260N/6vaUXK9wlx2faa3TxV5uK8jUmkHRlXgsLA89AVS8Je9
-         bNpMwysi1Vvhw9+1CpqaYynsvTTUCr3bC3F53S1mfDj1wXNdVwX0YHddSj4kDIkjVIhw
-         NVSn2o2DMZFxLnz7zTpIAXEVZxPY78mQPD4pDnIxslLQPjZ06bDPvEShBDg1fugjgrGa
-         kxcQT7WZPGtvnxnH80R14wied9GYWt/BVOS3/rQ3Qvg/2vZuYjo0A4HjRZlUp7pGKTEj
-         CzJQ==
-X-Gm-Message-State: APjAAAWqanEG5mJNq3JivSyCAmE7WUSVcoWjRs2LqBoCR/dqQFlVtubS
-        qmVzNWzjBcsjryNvkq65uEM=
-X-Google-Smtp-Source: APXvYqygr8TZ9oIml7y17u/lHTi2jbAY+LwT+Q2s+sgmZ3TaMDnluE1o1RqVDkDDKjll4Fx0SBX9Ig==
-X-Received: by 2002:ac2:5deb:: with SMTP id z11mr938373lfq.35.1571996829137;
-        Fri, 25 Oct 2019 02:47:09 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id o196sm573858lff.59.2019.10.25.02.47.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 02:47:08 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Subject: [PATCH v4] Documentation: media: *_DEFAULT targets for subdevs
-Date:   Fri, 25 Oct 2019 11:47:06 +0200
-Message-Id: <20191025094706.6490-1-ribalda@kernel.org>
-X-Mailer: git-send-email 2.23.0
+        Fri, 25 Oct 2019 05:48:19 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iNwCM-0004dr-SG; Fri, 25 Oct 2019 11:47:58 +0200
+Date:   Fri, 25 Oct 2019 11:47:58 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Joerg Vehlow <lkml@jv-coder.de>
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Tom Rix <trix@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] xfrm : lock input tasklet skb queue
+Message-ID: <20191025094758.pchz4wupvo3qs6hy@linutronix.de>
+References: <CACVy4SUkfn4642Vne=c1yuWhne=2cutPZQ5XeXz_QBz1g67CrA@mail.gmail.com>
+ <20191024103134.GD13225@gauss3.secunet.de>
+ <ad094bfc-ebb3-012b-275b-05fb5a8f86e5@jv-coder.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <ad094bfc-ebb3-012b-275b-05fb5a8f86e5@jv-coder.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some sensors have optical blanking areas, this is, pixels that are
-painted and do not account for light, only noise.
+On 2019-10-25 11:37:59 [+0200], Joerg Vehlow wrote:
+> Hi,
+> 
+> I always expected this to be applied to the RT patches. That's why
+> I originally send my patch to to Sebastian, Thomas and Steven (I added
+> them again now. The website of the rt patches says patches for the
+> CONFIG_REEMPT_RT patchset should be send to lkml.
+> 
+> I hope one of the rt patch maintainers will reply here.
 
-These special pixels are very useful for calibrating the sensor, but
-should not be displayed on a DEFAULT target.
+I've seen the first patch and it was not mentioned that it was RT
+related so I did not pay any attention to it. 
+Please repost your v2, please add RT next to patch, please state the RT
+version and the actual problem and I take a look.
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
----
- Documentation/media/uapi/v4l/v4l2-selection-targets.rst | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> Jörg
 
-diff --git a/Documentation/media/uapi/v4l/v4l2-selection-targets.rst b/Documentation/media/uapi/v4l/v4l2-selection-targets.rst
-index f74f239b0510..aae0c0013eb1 100644
---- a/Documentation/media/uapi/v4l/v4l2-selection-targets.rst
-+++ b/Documentation/media/uapi/v4l/v4l2-selection-targets.rst
-@@ -38,8 +38,10 @@ of the two interfaces they are used.
-     * - ``V4L2_SEL_TGT_CROP_DEFAULT``
-       - 0x0001
-       - Suggested cropping rectangle that covers the "whole picture".
-+        This includes only active pixels and excludes other non-active
-+        pixels such as black pixels.
-+      - Yes
-       - Yes
--      - No
-     * - ``V4L2_SEL_TGT_CROP_BOUNDS``
-       - 0x0002
-       - Bounds of the crop rectangle. All valid crop rectangles fit inside
--- 
-2.23.0
-
+Sebastian
