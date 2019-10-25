@@ -2,80 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14D78E4EFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3178E4EF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:26:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409218AbfJYO0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 10:26:21 -0400
-Received: from smtp3-1.goneo.de ([85.220.129.38]:36414 "EHLO smtp3-1.goneo.de"
+        id S2395372AbfJYOZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 10:25:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404022AbfJYO0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 10:26:15 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id F074B240028;
-        Fri, 25 Oct 2019 16:26:13 +0200 (CEST)
-X-Virus-Scanned: by goneo
-X-Spam-Flag: NO
-X-Spam-Score: -3.005
-X-Spam-Level: 
-X-Spam-Status: No, score=-3.005 tagged_above=-999 tests=[ALL_TRUSTED=-1,
-        AWL=-0.105, BAYES_00=-1.9] autolearn=ham
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 8slKb-VbIwi3; Fri, 25 Oct 2019 16:26:12 +0200 (CEST)
-Received: from lem-wkst-02.lemonage.de. (hq.lemonage.de [87.138.178.34])
-        by smtp3.goneo.de (Postfix) with ESMTPA id 89EDF23FF75;
-        Fri, 25 Oct 2019 16:26:12 +0200 (CEST)
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     Lars Poeschel <poeschel@lemonage.de>,
-        netdev@vger.kernel.org (open list:NFC SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Cc:     Johan Hovold <johan@kernel.org>
-Subject: [PATCH v10 7/7] nfc: pn532_uart: Make use of pn532 autopoll
-Date:   Fri, 25 Oct 2019 16:25:21 +0200
-Message-Id: <20191025142521.22695-8-poeschel@lemonage.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191025142521.22695-1-poeschel@lemonage.de>
-References: <20191025142521.22695-1-poeschel@lemonage.de>
+        id S2395358AbfJYOZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 10:25:54 -0400
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B21D6222C1;
+        Fri, 25 Oct 2019 14:25:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572013552;
+        bh=DU7fSFJ7Tbm2ALQlO0YChij89rQy5SaOWUBg7BPLtqY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lls4C6GhAMZkjiMHxUNM8e3MpVtTjHRcp7rtbeWxNU6wPCOgmjE3zkRA3BaLtvaMu
+         Ik1lbhOO5WwIWedKrjVgJYkBqK0RyKpoQxLvxyz5dqKrbrzgU/En4i9HWrJoKn8Xec
+         mU9sGQ/QhVMGbMoSZaRbAqSBj0FGKs5gqZfGPCOg=
+Received: by mail-qt1-f171.google.com with SMTP id r5so3545969qtd.0;
+        Fri, 25 Oct 2019 07:25:52 -0700 (PDT)
+X-Gm-Message-State: APjAAAWv9kXSGcLQHmxNmIBYseNidlOOwCLmGapkoXxClHjEZYBO6900
+        TRXOLZtPVMHe/Oe1LSWC/PhVaxt+5HYrQcBPdQ==
+X-Google-Smtp-Source: APXvYqyHGFuHzLeeCiWmC38AWf47YzHtjUGWCvnVQnR7njmNGQzh6atSkOGaDQVT1lTzgwxR3JWh+i3JbBURQZyByQQ=
+X-Received: by 2002:a05:6214:1552:: with SMTP id t18mr3275282qvw.136.1572013551842;
+ Fri, 25 Oct 2019 07:25:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190705164221.4462-1-robh@kernel.org> <20190705164221.4462-2-robh@kernel.org>
+ <CAMuHMdW86UOVp5vjdFBzjbqsG_wemjZ77LyVnc+oZ6ZDccv_cA@mail.gmail.com>
+In-Reply-To: <CAMuHMdW86UOVp5vjdFBzjbqsG_wemjZ77LyVnc+oZ6ZDccv_cA@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 25 Oct 2019 09:25:39 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJA_ZZ5CjoGrB4NofAcwMPXhnC0ddWZqZ9SXSTNAWB3cQ@mail.gmail.com>
+Message-ID: <CAL_JsqJA_ZZ5CjoGrB4NofAcwMPXhnC0ddWZqZ9SXSTNAWB3cQ@mail.gmail.com>
+Subject: Re: [PATCH v3 01/13] dt-bindings: display: Convert common panel
+ bindings to DT schema
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This switches the pn532 UART phy driver from manually polling to the new
-autopoll mechanism.
+On Fri, Oct 25, 2019 at 8:07 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Rob,
+>
+> On Fri, Jul 5, 2019 at 6:46 PM Rob Herring <robh@kernel.org> wrote:
+> > Convert the common panel bindings to DT schema consolidating scattered
+> > definitions to a single schema file.
+> >
+> > The 'simple-panel' binding just a collection of properties and not a
+> > complete binding itself. All of the 'simple-panel' properties are
+> > covered by the panel-common.txt binding with the exception of the
+> > 'no-hpd' property, so add that to the schema.
+> >
+> > As there are lots of references to simple-panel.txt, just keep the file
+> > with a reference to common.yaml for now until all the bindings are
+> > converted.
+> >
+> > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Cc: dri-devel@lists.freedesktop.org
+> > Acked-by: Sam Ravnborg <sam@ravnborg.org>
+> > Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > Reviewed-by: Thierry Reding <treding@nvidia.com>
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+>
+> This is now commit 821a1f7171aeea5e ("dt-bindings: display: Convert
+> common panel bindings to DT schema").
+>
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/panel/panel-common.yaml
+>
+> > +  backlight:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      For panels whose backlight is controlled by an external backlight
+> > +      controller, this property contains a phandle that references the
+> > +      controller.
+>
+> This paragraph seems to apply to all nodes named "backlight", causing
+> e.g. (for ARCH=arm mach_shmobile_defconfig) "make dtbs_check
+> DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/panel/panel-common.yaml"
+> to start complaining:
+>
+>     arch/arm/boot/dts/r8a7740-armadillo800eva.dt.yaml: backlight:
+> {'compatible': ['pwm-backlight'], 'pwms': [[40, 2, 33333, 1]],
+> 'brightness-levels': [[0, 1, 2, 4, 8, 16, 32, 64, 128, 255]],
+> 'default-brightness-level': [[9]], 'pinctrl-0': [[41]],
+> 'pinctrl-names': ['default'], 'power-supply': [[42]], 'enable-gpios':
+> [[15, 61, 0]]} is not of type 'array'
+>     arch/arm/boot/dts/r8a7740-armadillo800eva.dt.yaml: backlight:
+> {'groups': ['tpu0_to2_1'], 'function': ['tpu0'], 'phandle': [[41]]} is
+> not of type 'array'
+>
+> Do you know what's wrong?
 
-Cc: Johan Hovold <johan@kernel.org>
-Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
----
-Changes in v10:
-- Rebased the patch series on net-next 'Commit 503a64635d5e ("Merge
-  branch 'DPAA-Ethernet-changes'")'
+I'm not seeing that. What does .../bindings/processed-schema.yaml look like?
 
-Changes in v9:
-- Rebased the patch series on v5.4-rc2
-
-Changes in v6:
-- Rebased the patch series on v5.3-rc5
-
- drivers/nfc/pn533/uart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/nfc/pn533/uart.c b/drivers/nfc/pn533/uart.c
-index b408848e7779..5415ccc33ff0 100644
---- a/drivers/nfc/pn533/uart.c
-+++ b/drivers/nfc/pn533/uart.c
-@@ -261,7 +261,7 @@ static int pn532_uart_probe(struct serdev_device *serdev)
- 	serdev_device_set_flow_control(serdev, false);
- 	pn532->send_wakeup = PN532_SEND_WAKEUP;
- 	timer_setup(&pn532->cmd_timeout, pn532_cmd_timeout, 0);
--	priv = pn53x_common_init(PN533_DEVICE_PN532,
-+	priv = pn53x_common_init(PN533_DEVICE_PN532_AUTOPOLL,
- 				     PN533_PROTO_REQ_ACK_RESP,
- 				     pn532, &uart_phy_ops, NULL,
- 				     &pn532->serdev->dev);
--- 
-2.23.0
-
+Rob
