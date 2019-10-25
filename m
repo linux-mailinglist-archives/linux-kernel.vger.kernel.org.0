@@ -2,161 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28074E545B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06EE0E5461
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:31:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbfJYTaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 15:30:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35134 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfJYTaD (ORCPT
+        id S1727209AbfJYTbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 15:31:16 -0400
+Received: from mail-lj1-f179.google.com ([209.85.208.179]:34470 "EHLO
+        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfJYTbO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 15:30:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eRmEhu6UaEE9aDlNXBAMxFiri2OdztWgkwKxSJoiZ7s=; b=N0sE4R4O6dRfbhhWJpeT2AZCV
-        5qYj2nO9mONNABKxdKeG5MU9hjSvSqIyIU/ZowuG3q1df2Mt5b6L+AEwwrbVGmuivPhzfAeVJsuxe
-        llD1ZFLQL8MHpA+KduLWRmHp1xqT5+hgS0V74Gbm2Q6SBS0aiuD7nf2S4lhioXwcIDbFUMXVC69cd
-        sAxkeE42hfhRi7u5Uk01raoShpsq6U9iHP2Pw9nd67tEF4E8QjAgzWESB5Q2DGv0bce9YhNnJoKZW
-        MteCGtihh7nGLw56DwWPDYGsUoTc8+U428/IpU9P7mnAMWKyWZs6VtULssZFyI084NS1MW9EwpdOH
-        Bo2KVaH4Q==;
-Received: from [2601:1c0:6280:3f0::9ef4]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iO5He-0003Ig-Tg; Fri, 25 Oct 2019 19:30:02 +0000
-Subject: Re: [PATCH] namespace: fix namespace.pl script to support relative
- paths
-To:     "Keller, Jacob E" <jacob.e.keller@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>
-References: <20190129204319.15238-1-jacob.e.keller@intel.com>
- <7b26e6cc-10ce-5df2-6375-1f95bc4da04e@infradead.org>
- <02874ECE860811409154E81DA85FBB58968DBE54@ORSMSX121.amr.corp.intel.com>
- <CAK7LNARyUEakeG_N9TWcO2cjFSzbgY__k_QJm6C+oOz+fW0aeg@mail.gmail.com>
- <02874ECE860811409154E81DA85FBB58968E1402@ORSMSX121.amr.corp.intel.com>
- <CAK7LNARAhZtzdnS9+mgtamj=pLdV81dudnYVDa8NRxcQPpF0bw@mail.gmail.com>
- <02874ECE860811409154E81DA85FBB589693A38A@ORSMSX121.amr.corp.intel.com>
- <CAK7LNAQow8N9a5e_=pu7qDiuvETy1x1P5fxp20zYOZgQhXPJhg@mail.gmail.com>
- <02874ECE860811409154E81DA85FBB589693D053@ORSMSX121.amr.corp.intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6127ec91-ad81-f0d7-576e-22e06e677442@infradead.org>
-Date:   Fri, 25 Oct 2019 12:30:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Fri, 25 Oct 2019 15:31:14 -0400
+Received: by mail-lj1-f179.google.com with SMTP id 139so3821276ljf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 12:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=lvFlsS5TAetH+Eayr5diNLg/TJmy49QuVl3DajZzA6Y=;
+        b=dsRQtSYw/eltA2XHa3cHZVV2aj9px75LTI6GQOS4GtXoEbj7RgjGfq2SZaz1AK1pCd
+         q+ue+WZLlZMtSSL6f0MRgyws23C1qOJQ8w+7CHy5rZs2xkkfJE3Wl35HvBF/Wy45URDQ
+         hQeAdvn65AAr2TZvOH9se8c24P6K30ZHmOIVxtOX+DE3s45wn7VUZGBDNS2a5Wx/Vf8s
+         JgNSNU47eQZTI0ESZmuw1nt5Naw1YroDEOV5HUABiXEztQO4OZ7ndw5m7WzFeSuV0k3Y
+         pSQ2PXS6W3GSVJ9FJwW3qMoe57wpji0feKOWpM5lTT1aQ3dhKK1XcADvjxuJCFzCxtUY
+         mMEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=lvFlsS5TAetH+Eayr5diNLg/TJmy49QuVl3DajZzA6Y=;
+        b=BgopkvScIaQ/eUoizoHRXeBE87e7Q/4ILJ+i9j4wWLFia+UWhxiuGcoG+FlyJf1CcU
+         GXQFZV1BwJERy9adrNAOj2qudrmMQt8L7g7CBZTnvTUzK9TVAZlqZbNPPPXUzJATJ4qa
+         p+Z+UPRH7qvyKPXsB08UFaJ6L4Uhd69Yt355uv/f+ddCTXh7AZCjPBFB/pibcmHmV+tP
+         +Ymia8PIfnMSM/FCcp1/jQajPpKc49ll0XGqoozMn5RTqeZxwNceYnmgm58LQ3e/FCxz
+         qCOOYu0P5F/7pdXvd2oqPnJKNlYRczRGBafQ+GGQyYosQKarr8xxpUzTGPW2XIFjzrQf
+         E5iQ==
+X-Gm-Message-State: APjAAAUimKBE9GRwrja2wBk5rR5Os9dfGpIKCxc17++f7+Gb2KtUou0y
+        Th0XDlArj+zq78NuSQ4Ewm3AnuSsn3iiihG4Lsk=
+X-Google-Smtp-Source: APXvYqyqqD3ACPca4rjEI84rjyrLDtaG0pwgRuDnX0vYmfm/K1da9nX/3D4bl432oXUfo3eSWfEPfrJPfXQ0UcAWq54=
+X-Received: by 2002:a2e:9691:: with SMTP id q17mr3605856lji.223.1572031872763;
+ Fri, 25 Oct 2019 12:31:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <02874ECE860811409154E81DA85FBB589693D053@ORSMSX121.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Sat, 26 Oct 2019 05:31:01 +1000
+Message-ID: <CAPM=9twWc0UkE53E5JDV_SW4R-4YFxvDBD2n_Cx_vHr0vj0zqw@mail.gmail.com>
+Subject: [git pull] drm fixes for 5.4-rc5
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25/19 10:45 AM, Keller, Jacob E wrote:
-> 
->> -----Original Message-----
->> From: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Sent: Wednesday, October 23, 2019 6:22 PM
->> To: Keller, Jacob E <jacob.e.keller@intel.com>
->> Cc: Randy Dunlap <rdunlap@infradead.org>; intel-wired-lan@lists.osuosl.org;
->> linux-kernel@vger.kernel.org; linux-kbuild <linux-kbuild@vger.kernel.org>
->> Subject: Re: [PATCH] namespace: fix namespace.pl script to support relative
->> paths
->>
->> On Thu, Oct 24, 2019 at 6:34 AM Keller, Jacob E
->> <jacob.e.keller@intel.com> wrote:
->>>
->>>> -----Original Message-----
->>>> From: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>> Sent: Tuesday, October 22, 2019 10:22 PM
->>>> To: Keller, Jacob E <jacob.e.keller@intel.com>; Randy Dunlap
->>>> <rdunlap@infradead.org>
->>>> Cc: intel-wired-lan@lists.osuosl.org; linux-kernel@vger.kernel.org; linux-
->> kbuild
->>>> <linux-kbuild@vger.kernel.org>
->>>> Subject: Re: [PATCH] namespace: fix namespace.pl script to support relative
->>>> paths
->>>>
->>>> This scripts has been 5-year broken,
->>>> and I did not see any complaint except from you.
->>>> So, I wonder how many people are using this.
->>>>
->>>> Nor, do I understand how to use it.
->>>>
->>>> Could you teach me a bit more about this script?
->>>>
->>>>
->>>>
->>>> Something might be missing in my mind, but
->>>> I do not know how to use this script in a useful way.
->>>>
->>>>
->>>>
->>>> It provides three checks.
->>>>
->>>> [1] list_multiply_defined()
->>>>
->>>> This warns multiple definition of functions.
->>>>
->>>> The compiler would fail if it saw any multiple definition,
->>>> so the reports from this check are all false-positive.
->>>>
->>>>
->>>> [2] resolve_external_references()
->>>>
->>>> This warns unresolved symbols.
->>>>
->>>> The compiler would fail if it saw any unresolved symbol,
->>>> so the reports from this check are all false-positive, too.
->>>>
->>>>
->>>
->>> The compiler won't necessarily fail when building modules, because the symbol
->> might be in another loadable module.
->>
->> Right, but this is already checked by modpost, isn't it?
->>
->>
->>
->>>>
->>>>
->>>> [3] list_extra_externals
->>>>
->>>> This warns symbols with no reference.
->>>>
->>>> This potentially contains lots of false-positives.
->>>> For example, the core framework provides APIs, but if all drivers
->>>> are disabled, there is no user of those APIs.
->>>>
->>>
->>> We use this to help verify that driver modules do not expose symbols.
->>
->> Ah, the output is quite large, so
->> you search for only modules in your interest. Right?
->>
-> 
-> We run it on only one module at a time, yes.
-> 
->>
->> If you want to detect missing 'static',
->> have you tried 'sparse'?
->>
-> 
-> We've used that as well. 
-> 
-> To be fair, I agree that it covers similar functionality as other tools. I haven't looked directly at namespace.pl output in a while, and the fix here is multiple years old that took a long time to get picked up.
-> 
-> If it's agreed that the tool has no value, and especially if it results in false indications of a problem, then maybe removing it to prevent someone from mis-reading its output makes sense?
+Hi Linus,
 
-If there is a satisfactory alternative, I expect that namespace.pl is old,
-unmaintained, and unneeded, and should go away.
+Quiet week this week, which I suspect means some people just didn't
+get around to sending me fixes pulls in time. This has 2 komeda and a
+bunch of amdgpu fixes in it.
 
--- 
-~Randy
+Thanks,
+Dave.
 
+drm-fixes-2019-10-25:
+drm fixes for v5.4-rc5
+
+komeda:
+- typo fixes
+- flushing pipes fix
+
+amdgpu:
+- Fix suspend/resume issue related to multi-media engines
+- Fix memory leak in user ptr code related to hmm conversion
+- Fix possible VM faults when allocating page table memory
+- Fix error handling in bo list ioctl
+The following changes since commit 7d194c2100ad2a6dded545887d02754948ca5241=
+:
+
+  Linux 5.4-rc4 (2019-10-20 15:56:22 -0400)
+
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-10-25
+
+for you to fetch changes up to 2a3608409f46e0bae5b6b1a77ddf4c42116698da:
+
+  Merge tag 'drm-fixes-5.4-2019-10-23' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes (2019-10-25
+14:48:53 +1000)
+
+----------------------------------------------------------------
+drm fixes for v5.4-rc5
+
+komeda:
+- typo fixes
+- flushing pipes fix
+
+amdgpu:
+- Fix suspend/resume issue related to multi-media engines
+- Fix memory leak in user ptr code related to hmm conversion
+- Fix possible VM faults when allocating page table memory
+- Fix error handling in bo list ioctl
+
+----------------------------------------------------------------
+Alex Deucher (4):
+      drm/amdgpu/uvd6: fix allocation size in enc ring test (v2)
+      drm/amdgpu/uvd7: fix allocation size in enc ring test (v2)
+      drm/amdgpu/vcn: fix allocation size in enc ring test
+      drm/amdgpu/vce: fix allocation size in enc ring test
+
+Christian K=C3=B6nig (2):
+      drm/amdgpu: fix potential VM faults
+      drm/amdgpu: fix error handling in amdgpu_bo_list_create
+
+Dave Airlie (2):
+      Merge tag 'drm-misc-fixes-2019-10-23' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
+      Merge tag 'drm-fixes-5.4-2019-10-23' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+
+Mihail Atanassov (2):
+      drm/komeda: Don't flush inactive pipes
+      drm/komeda: Fix typos in komeda_splitter_validate
+
+Philip Yang (1):
+      drm/amdgpu: user pages array memory leak fix
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c        |  7 ++++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             |  8 ++---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c         |  3 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c            | 20 +++++++++----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vce.h            |  1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c            | 35 ++++++++++++++----=
+----
+ drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c              | 31 ++++++++++++------=
+-
+ drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c              | 33 +++++++++++++-----=
+--
+ drivers/gpu/drm/arm/display/komeda/komeda_kms.c    |  3 +-
+ .../drm/arm/display/komeda/komeda_pipeline_state.c |  4 +--
+ 10 files changed, 96 insertions(+), 49 deletions(-)
