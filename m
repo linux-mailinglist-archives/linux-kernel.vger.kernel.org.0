@@ -2,66 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1A8DE4A1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92860E4A1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:40:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501957AbfJYLiq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 07:38:46 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:42844 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727283AbfJYLiq (ORCPT
+        id S2409923AbfJYLjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 07:39:52 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:37776 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727283AbfJYLjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 07:38:46 -0400
-Received: from ramsan ([84.195.182.253])
-        by michel.telenet-ops.be with bizsmtp
-        id Hnej2100e5USYZQ06nejBg; Fri, 25 Oct 2019 13:38:43 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iNxvX-000481-Q1; Fri, 25 Oct 2019 13:38:43 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iNxvX-00026E-O6; Fri, 25 Oct 2019 13:38:43 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     patches@armlinux.org.uk, Russell King <rmk+kernel@arm.linux.org.uk>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ARM: ARM_ERRATA_775420: Spelling s/date/data/
-Date:   Fri, 25 Oct 2019 13:38:43 +0200
-Message-Id: <20191025113843.8029-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Fri, 25 Oct 2019 07:39:52 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9PBdp3j090721;
+        Fri, 25 Oct 2019 06:39:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572003591;
+        bh=TtOkjwPBoPyM5VIPZXm9zE0mKlSziofkfWXNj6bcDwE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=l9xTYOq4CAazDACc6FEUJ7/oDWIbbFh7FrESwg53t9Lsvf62dAamf589mhg6YvqCa
+         5hyMxFPr7gCujCU8l6LhYp/SsUcZ5SDj4RMasCoO0R2Uu8q7A1RIgWET22ZM/Q5MW7
+         Iawy6HEi1gF2rpD8B/Us/1MG0V50qTaLtKGJH7vg=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9PBdouE096419
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 25 Oct 2019 06:39:50 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 25
+ Oct 2019 06:39:40 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 25 Oct 2019 06:39:39 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9PBdlCa063355;
+        Fri, 25 Oct 2019 06:39:48 -0500
+Subject: Re: [PATCH] phy: ti: gmii-sel: fix mac tx internal delay for
+ rgmii-rxid
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+CC:     <netdev@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20191023144744.1246-1-grygorii.strashko@ti.com>
+ <45a6ffd4-c0bd-1845-cb71-9adbafde2dd8@gmail.com>
+ <98235ce5-a86b-46be-c390-18bbbfd1df03@ti.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <55af0ece-be69-ae73-8b57-43cd6750664b@ti.com>
+Date:   Fri, 25 Oct 2019 17:09:17 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <98235ce5-a86b-46be-c390-18bbbfd1df03@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Caching dates is never a good idea ;-)
 
-Fixes: 7253b85cc62d6ff8 ("ARM: 7541/1: Add ARM ERRATA 775420 workaround")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
-KernelVersion: v5.4-rc4
 
-v2:
-  - Add Reviewed-by,
-  - Add Fixes.
----
- arch/arm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 24/10/19 11:12 AM, Grygorii Strashko wrote:
+> 
+> 
+> On 24/10/2019 05:41, Florian Fainelli wrote:
+>>
+>>
+>> On 10/23/2019 7:47 AM, Grygorii Strashko wrote:
+>>> Now phy-gmii-sel will disable MAC TX internal delay for PHY interface mode
+>>> "rgmii-rxid" which is incorrect.
+>>> Hence, fix it by enabling MAC TX internal delay in the case of "rgmii-rxid"
+>>> mode.
+>>>
+>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>>
+>> Should this have a:
+>>
+>> Fixes: 92b58b34741f ("phy: ti: introduce phy-gmii-sel driver")
+>>
+> 
+> Yes. it should.
+> Kishon, would you like me to re-submit or can you fix while applying?
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 8a50efb559f35a2c..b7dbeb652cb1edd5 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1020,7 +1020,7 @@ config ARM_ERRATA_775420
-        depends on CPU_V7
-        help
- 	 This option enables the workaround for the 775420 Cortex-A9 (r2p2,
--	 r2p6,r2p8,r2p10,r3p0) erratum. In case a date cache maintenance
-+	 r2p6,r2p8,r2p10,r3p0) erratum. In case a data cache maintenance
- 	 operation aborts with MMU exception, it might cause the processor
- 	 to deadlock. This workaround puts DSB before executing ISB if
- 	 an abort may occur on cache maintenance.
--- 
-2.17.1
 
+merged now, thanks!
+
+-Kishon
