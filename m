@@ -2,61 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8DEE41E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 04:57:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 775FDE41E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 04:58:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391467AbfJYC5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 22:57:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39392 "EHLO mail.kernel.org"
+        id S2391547AbfJYC6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 22:58:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389230AbfJYC5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 22:57:03 -0400
-Received: from localhost (unknown [38.98.37.137])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2389230AbfJYC6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 22:58:11 -0400
+Received: from dragon (li937-157.members.linode.com [45.56.119.157])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E86421929;
-        Fri, 25 Oct 2019 02:57:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 637B221929;
+        Fri, 25 Oct 2019 02:57:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571972223;
-        bh=NPN4Lzq7O1KC2vVhwGJeYdnNqlHdVp9NAz4fHW8yYOk=;
+        s=default; t=1571972290;
+        bh=Pv99gGUhMu9Zgja2DFKQIDN8Qw7xgxA0yc7ICmoKRDA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hfirNwxIXa6/ivSQFS2SjYN3jeaI+NC0wVP3ralF6uRWq+E4ylaKBVmUib2tXL4yN
-         LjbksyjRFPdRH3tY1zaKTE3iVr5cd7JRRaFrfpcoHPBackv+WKZPMiYdiygveN+NDr
-         m8sV/IecqZD6a6ixWoUj3dH2rcmHVi9BevArNccc=
-Date:   Thu, 24 Oct 2019 22:56:08 -0400
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Cc:     linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/15] staging: exfat: Clean up return codes -
- FFS_FORMATERR
-Message-ID: <20191025025608.GA445350@kroah.com>
-References: <20191024155327.1095907-1-Valdis.Kletnieks@vt.edu>
- <20191024155327.1095907-10-Valdis.Kletnieks@vt.edu>
+        b=CuU+++ByNPb4vYd9Mqpwhljltb614f8boUhgLiuDMDyMfQTP2aqBSaTKXOPgvF2II
+         z/cFiR1dGsb1lADHuYNsXGhBM5OkTtzm5mQmoJdOiBesvf6vX1fWqQ3cxG6ikR6Bub
+         5HX8T+4BtmczDfXie574pRiWPJRKv4bVG/opQvLY=
+Date:   Fri, 25 Oct 2019 10:57:47 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Peng Fan <peng.fan@nxp.com>, Andy Duan <fugang.duan@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
+        "dinguyen@kernel.org" <dinguyen@kernel.org>,
+        "marcin.juszkiewicz@linaro.org" <marcin.juszkiewicz@linaro.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "stefan@agner.ch" <stefan@agner.ch>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
+        "ronald@innovation.ch" <ronald@innovation.ch>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V6 3/5] arm64: dts: imx8qxp: Add scu key node
+Message-ID: <20191025025745.GA3208@dragon>
+References: <1570412509-7893-1-git-send-email-Anson.Huang@nxp.com>
+ <1570412509-7893-3-git-send-email-Anson.Huang@nxp.com>
+ <DB3PR0402MB3916BA030CDAD9057017F52FF56C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191024155327.1095907-10-Valdis.Kletnieks@vt.edu>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <DB3PR0402MB3916BA030CDAD9057017F52FF56C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 11:53:20AM -0400, Valdis Kletnieks wrote:
-> Convert FFS_FORMATERR to -EFSCORRUPTED
+On Fri, Oct 18, 2019 at 01:40:10AM +0000, Anson Huang wrote:
+> Hi, Shawn
+> 	Dmitry has picked up the #1 and #2 patch, would you please pick up #3 ~ #5, thanks.
 > 
-> Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
-> ---
->  drivers/staging/exfat/exfat.h       | 3 ++-
->  drivers/staging/exfat/exfat_core.c  | 4 ++--
->  drivers/staging/exfat/exfat_super.c | 2 +-
->  3 files changed, 5 insertions(+), 4 deletions(-)
 
-This causes build errors, maybe because I didn't take your other series.
+Applied #3 ~ #5, thanks.
 
-So I'm stopping here, please rebase and resend.
-
-thanks,
-
-greg k-h
+Shawn
