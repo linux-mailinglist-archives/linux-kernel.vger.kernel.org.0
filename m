@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99E7AE55FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 23:35:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FD6FE55FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 23:35:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfJYVfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 17:35:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60898 "EHLO mail.kernel.org"
+        id S1726700AbfJYVfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 17:35:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbfJYVfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 17:35:05 -0400
-Subject: Re: [GIT PULL] KVM changes for Linux 5.4-rc5
+        id S1725865AbfJYVfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 17:35:06 -0400
+Subject: Re: [GIT PULL] Modules fixes for v5.4-rc5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572039305;
-        bh=pcJg0LOXnS2SS0hUm6EUQCdRc08q50KmG7tFF5hdh14=;
+        s=default; t=1572039306;
+        bh=3fM2FA6QG8rgWV+HZ9oJh4rrxUuqc1MlGZpz7vRt5BU=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=g1c1/hIze9UYEMThUbJC3/kTH6MLN9giuAD+kRknJ+1wbTUoUTD9Kz3dnN8RqUID8
-         TTbdg3duymEcdX3OLFnFLInHw7DgkjPeDlx1pyMG7nPP/6pQEEn/gqI881kFCMscdU
-         RfvHtdOQG4EOU8l4VvUSiReFLRHpeLd7AA5VFb3c=
+        b=XqOcmoBMtpbZUJa6drmYyTRZNyMd30nlf7jcJ5a9WKIP618TvszYMHbvnrlNqH/db
+         Iz7koeLfMb55twmISzNaNbmTF7gQFd6eTC9O1hjJCbNYhzfq14VI+oHC4LFF77zhlt
+         fTPmuHUBiZ/80B0D/b8ipXxLFmVwdmhKgnwSoTOY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1572003959-43063-1-git-send-email-pbonzini@redhat.com>
-References: <1572003959-43063-1-git-send-email-pbonzini@redhat.com>
+In-Reply-To: <20191025155512.GA30503@linux-8ccs>
+References: <20191025155512.GA30503@linux-8ccs>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1572003959-43063-1-git-send-email-pbonzini@redhat.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git
- tags/for-linus
-X-PR-Tracked-Commit-Id: 671ddc700fd08b94967b1e2a937020e30c838609
+X-PR-Tracked-Message-Id: <20191025155512.GA30503@linux-8ccs>
+X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git
+ tags/modules-for-v5.4-rc5
+X-PR-Tracked-Commit-Id: 09684950050be09ed6cd591e6fbf0c71d3473237
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8c123380b30f408647f3b159831c863cd56b1400
-Message-Id: <157203930529.23557.6500819875416650825.pr-tracker-bot@kernel.org>
-Date:   Fri, 25 Oct 2019 21:35:05 +0000
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        rkrcmar@redhat.com, kvm@vger.kernel.org
+X-PR-Merge-Commit-Id: 9e2dd2ca85d211a6ef2a1e95ba9239ec69959b1e
+Message-Id: <157203930606.23557.2041549109544035521.pr-tracker-bot@kernel.org>
+Date:   Fri, 25 Oct 2019 21:35:06 +0000
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthias Maennich <maennich@google.com>,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 25 Oct 2019 13:45:59 +0200:
+The pull request you sent on Fri, 25 Oct 2019 17:55:13 +0200:
 
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git tags/modules-for-v5.4-rc5
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8c123380b30f408647f3b159831c863cd56b1400
+https://git.kernel.org/torvalds/c/9e2dd2ca85d211a6ef2a1e95ba9239ec69959b1e
 
 Thank you!
 
