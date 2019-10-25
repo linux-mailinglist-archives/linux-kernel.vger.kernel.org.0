@@ -2,157 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18583E4AB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:04:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0102FE4AAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:03:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502539AbfJYMEE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 08:04:04 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53086 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2436494AbfJYMED (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 08:04:03 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9PC2SXJ016312
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 08:04:03 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2vucdsjnuu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 08:02:56 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
-        Fri, 25 Oct 2019 13:00:41 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 25 Oct 2019 13:00:38 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9PC0bFW17367244
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Oct 2019 12:00:37 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EABE7A4051;
-        Fri, 25 Oct 2019 12:00:36 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5CBF8A4057;
-        Fri, 25 Oct 2019 12:00:35 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.35.242])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 25 Oct 2019 12:00:35 +0000 (GMT)
-Subject: Re: [PATCH] sched/fair: Make sched-idle cpu selection consistent
- throughout
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-References: <5eba2fb4af9ebc7396101bb9bd6c8aa9c8af0710.1571899508.git.viresh.kumar@linaro.org>
- <7d3a1549-a99c-ae42-6074-8ed2ecd7074f@linux.ibm.com>
- <20191025081108.6gaprbwm5fvokun6@vireshk-i7>
-From:   Parth Shah <parth@linux.ibm.com>
-Date:   Fri, 25 Oct 2019 17:30:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20191025081108.6gaprbwm5fvokun6@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
+        id S2504094AbfJYMCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:02:39 -0400
+Received: from mail-eopbgr810053.outbound.protection.outlook.com ([40.107.81.53]:19482
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726375AbfJYMCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 08:02:39 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WNS91Qgiow8S2Yi5j78QWI336LtUcf7jpdjnWOZAOvzsczji2e6x+W8HdVKlvpSIu2CPxmpvjIlJDzI1m5J7BrZ1OwHheVwH4L0my2nppmiPv33JS3jVFSpYymc5OR0WfinE3J3PI/k31/+wK0prpl0L/7mhlvkS4fmJruzyv1Vv/j086LpgTZixSOgCUAKGOxfEoXojDUKiQFbTpochs39Bgz7yUQMv+fUV7oiMbGA8leJeBz3/gsJLLFFgyKwZ9u+6SNQZlXON7FrK8i5rSlyDErq8SXCdsUWnuACQx55vWejbCDtwTBDIjwpp69T2Of02JsPIgChIAZAzYE+B8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IEtw73Pj30IMlGn/H9mHF0GC4ROHu6+pTJAAqtQoHlw=;
+ b=aAHgRnc8DhqIEL/12VnSmsOTItFPiKjMTJnRStqRqTtYv8ydE3YZ2Zshkbsssdqbt4rCt0aHFe1sU7CBA4wGm6wOA8XgfpQFVszW1XgSKcE8tunhDW5u5703I4s9DjI3cQgId08D/EG7RXN546DLn2xHdomLv1RW4t853MIkqnHiAJ46mFdmuu7bzvj+wnbMAMXuQdiULSnwYVUYJJFY8bXdEtNY8evGZyMroMLLuoZmSuQhSl0Fz+6qSnXOi/DXLma1dDd6Gmw9/I7JkE/hn+ywNOsajkTWgUZnhFcZbcgUy805CvslTVLVSqhYLre3f/mwy1VOpRaGZNrxbfUjeg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IEtw73Pj30IMlGn/H9mHF0GC4ROHu6+pTJAAqtQoHlw=;
+ b=VQ7bRN8v/rMgsywtmyl04w+4AS76MJI/9dRSuhBf7gvhUvGIBzOr5ZPMvKCVB02S9sPQAwua2uCWmRKMs3Pmhf89xJOPX84DChtuQ7g8WupCFK3/PtbmK8/mLkeABTK6W7bye8H/AivZUZo0ChNqnMzoSGWn6IPSAIiMHhLFP2k=
+Received: from BYAPR02MB5591.namprd02.prod.outlook.com (20.178.1.29) by
+ BYAPR02MB5655.namprd02.prod.outlook.com (20.177.231.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2387.23; Fri, 25 Oct 2019 12:01:51 +0000
+Received: from BYAPR02MB5591.namprd02.prod.outlook.com
+ ([fe80::f13b:8984:42b7:26ed]) by BYAPR02MB5591.namprd02.prod.outlook.com
+ ([fe80::f13b:8984:42b7:26ed%5]) with mapi id 15.20.2387.023; Fri, 25 Oct 2019
+ 12:01:50 +0000
+From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
+To:     Jack Pham <jackp@codeaurora.org>, Felipe Balbi <balbi@kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>
+Subject: RE: [PATCH] usb: dwc3: gadget: Correct the logic for finding last SG
+ entry
+Thread-Topic: [PATCH] usb: dwc3: gadget: Correct the logic for finding last SG
+ entry
+Thread-Index: AQHVFi8wapUkz2GgO0KPkbPlYU1PoKaMvgMAgAH+Z2CAARGqgIDZi58AgALQ1iA=
+Date:   Fri, 25 Oct 2019 12:01:50 +0000
+Message-ID: <BYAPR02MB5591EFB659784B6A017B446EA7650@BYAPR02MB5591.namprd02.prod.outlook.com>
+References: <1559141985-17104-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <87y32gcvc1.fsf@linux.intel.com>
+ <BYAPR02MB559181C009B74446A797838DA7170@BYAPR02MB5591.namprd02.prod.outlook.com>
+ <87ftoldh48.fsf@linux.intel.com>
+ <20191023165804.GD9754@jackp-linux.qualcomm.com>
+In-Reply-To: <20191023165804.GD9754@jackp-linux.qualcomm.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19102512-4275-0000-0000-000003777F6C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19102512-4276-0000-0000-0000388AAD04
-Message-Id: <3c8f52ac-4302-5152-2d57-2fe912e1ff9b@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-25_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910250114
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anuragku@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 669c1913-0380-4293-f991-08d759431eb9
+x-ms-traffictypediagnostic: BYAPR02MB5655:|BYAPR02MB5655:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR02MB5655940BA9B585E36C75935EA7650@BYAPR02MB5655.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 02015246A9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(396003)(39860400002)(376002)(136003)(199004)(189003)(13464003)(51444003)(76116006)(66066001)(33656002)(64756008)(66556008)(66476007)(55016002)(446003)(66946007)(4326008)(6246003)(186003)(6436002)(26005)(25786009)(478600001)(66446008)(6116002)(11346002)(3846002)(14454004)(316002)(54906003)(229853002)(7736002)(305945005)(110136005)(9686003)(74316002)(476003)(6506007)(2906002)(256004)(486006)(7696005)(5660300002)(99286004)(71190400001)(71200400001)(76176011)(81166006)(81156014)(102836004)(52536014)(8676002)(8936002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB5655;H:BYAPR02MB5591.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: nvtk1HmZMoj66nZJnJQv/cZFqJafMNFpWKBGcZB0RQFBED3MHfGIpD3My2Qso/mO0VRMCvnSsWwTAEVKaPqPALQPOba7NJkT1sk6vHVw9UiZLjsUbYxZHW4MKNeadJN99gg+9ex+THXcnehOK7Bc8u6JZ3kws7rIvsrh40/F1DTO0fXG0fFsK9V+CisTyejtwIWlJXwFFnBgC+rHSrk596cAMub6RqJV2PYTuGyfBaZ6gxZmbCvyBUDAp6viGgItTIQ1gG0gqzRnRfF/0rYmDTqOuH0RXHKoQU4aHFgRQVRmTg9MfuleFgTQdBAPuFFdYPLr+Bo9FBC0NDk4H0ubyYqZsfplaZNprOVMwCCk+OtXPk/CNl7VX5bT5UP43DuuAdmrtRHPk97x8TcJp6hPnR4xEJjrpnqyktGHEAm1zBLcujvaowxoKrhoFJYhUtP7
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 669c1913-0380-4293-f991-08d759431eb9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2019 12:01:50.7770
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: K5RY6QbWIPmUznlB0Mp5Y5npXu4S2eiON8uT+Wo7itvJLr8yHFZnYPXcsMAKPN1uQdhpOUOcpVIvCcX6RAZE2g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5655
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Hi Jack,
 
-On 10/25/19 1:41 PM, Viresh Kumar wrote:
-> On 25-10-19, 12:13, Parth Shah wrote:
->> Hi Viresh,
->>
->> On 10/24/19 12:15 PM, Viresh Kumar wrote:
->>> There are instances where we keep searching for an idle CPU despite
->>> having a sched-idle cpu already (in find_idlest_group_cpu(),
->>> select_idle_smt() and select_idle_cpu() and then there are places where
->>> we don't necessarily do that and return a sched-idle cpu as soon as we
->>> find one (in select_idle_sibling()). This looks a bit inconsistent and
->>> it may be worth having the same policy everywhere.
->>>
->>> On the other hand, choosing a sched-idle cpu over a idle one shall be
->>> beneficial from performance point of view as well, as we don't need to
->>> get the cpu online from a deep idle state which is quite a time
->>> consuming process and delays the scheduling of the newly wakeup task.
->>>
->>> This patch tries to simplify code around sched-idle cpu selection and
->>> make it consistent throughout.
->>>
->>> FWIW, tests were done with the help of rt-app (8 SCHED_OTHER and 5
->>> SCHED_IDLE tasks, not bound to any cpu) on ARM platform (octa-core), and
->>> no significant difference in scheduling latency of SCHED_OTHER tasks was
->>> found.
->>>
->>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->>> ---
->>
->> [...]
->>
->>> @@ -5755,13 +5749,11 @@ static int select_idle_smt(struct task_struct *p, int target)
->>>  	for_each_cpu(cpu, cpu_smt_mask(target)) {
->>>  		if (!cpumask_test_cpu(cpu, p->cpus_ptr))
->>>  			continue;
->>> -		if (available_idle_cpu(cpu))
->>> +		if (available_idle_cpu(cpu) || sched_idle_cpu(cpu))
->>>  			return cpu;
->>
->> I guess this is a correct approach, but just wondering what if we still
->> keep searching for a sched_idle CPU even though we have found an
->> available_idle CPU?
-> 
-> I do believe selecting a sched-idle CPU should almost always be better
-> (performance wise), unless we have a strong argument against it. And
-> anyway, the load balancer will get triggered at a later point of time
-> and will pull away these newly wakeup tasks to idle CPUs. The
-> advantage we get out of it is that the tasks get serviced a bit
-> earlier when they first get queued.
-> 
-> It is really up to the maintainers to see what kind of policy do we
-> want to adapt here and not a choice I can make :)
-> 
-
-yeah, I agree. I will favor selecting sched-idle first for smaller domains
-like SMT but would leave on experts.
-BTW, if sched-idle is given priority then maybe...
-> @@ -5818,13 +5810,11 @@ static int select_idle_cpu(struct task_struct *p,
-> struct sched_domain *sd, int t
+>-----Original Message-----
+>From: Jack Pham [mailto:jackp@codeaurora.org]
+>Sent: Wednesday, October 23, 2019 10:28 PM
+>To: Felipe Balbi <balbi@kernel.org>
+>Cc: Anurag Kumar Vulisha <anuragku@xilinx.com>; Greg Kroah-Hartman
+><gregkh@linuxfoundation.org>; linux-usb@vger.kernel.org; linux-
+>kernel@vger.kernel.org; v.anuragkumar@gmail.com
+>Subject: Re: [PATCH] usb: dwc3: gadget: Correct the logic for finding last=
+ SG
+>entry
 >
->  	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
->  		if (!--nr)
-> -			return si_cpu;
-> +			return -1;
->  		if (!cpumask_test_cpu(cpu, p->cpus_ptr))
->  			continue;
-> -		if (available_idle_cpu(cpu))
-> +		if (available_idle_cpu(cpu) || sched_idle_cpu(cpu))
->  			break;
-...here too can be optimized I guess.
+>Hi Anurag,
+>
+>On Fri, Jun 07, 2019 at 09:49:59AM +0300, Felipe Balbi wrote:
+>> Anurag Kumar Vulisha <anuragku@xilinx.com> writes:
+>> >>> The dma_map_sg() merges sg1 & sg2 memory regions into sg1-
+>> >>>dma_address.
+>> >>> Similarly sg3 & sg4 into sg2->dma_address, sg5 & sg6 into the
+>> >>> sg3->dma_address and sg6 & sg8 into sg4->dma_address. Here the
+>> >>memory
+>> >>> regions are merged but the page_link properties like SG_END are not
+>> >>> retained into the merged sgs.
+>> >>
+>> >>isn't this a bug in the scatterlist mapping code? Why doesn't it keep
+>> >>SG_END?
+>> >>
+>> >
+>> > Thanks for providing your comment.
+>> >
+>> > I don't think it is a bug, instead I feel some enhancement needs to be=
+ done
+>in
+>> > dma-mapping code.
+>> >
+>> > SG_END represents the last sg entry in the sglist and it is correctly =
+getting
+>> > set to the last sg entry.
+>> >
+>> > The issue happens only when 2 or more sg entry pages are merged into
+>> > contiguous dma-able address and sg_is_last() is used to find the last =
+sg
+>entry
+>> > with valid dma address.
+>>
+>> Right, and that's something that's bound to happen. I'm arguing that,
+>perhaps,
+>> dma API should move SG_END in case entries are merged.
+>>
+>> > I think that along with sg_is_last() a new flag (SG_DMA_END) and funct=
+ion
+>> > (something like sg_dma_is_last() ) needs to be added into dma-mapping
+>code for
+>> > identifying the last valid sg entry with valid dma address. So that we=
+ can
+>> > make use of that function instead of sg_is_last().
+>>
+>> Sure, propose a patch to DMA API.
+>
+>I'm curious if this was ever resolved. I just ran into this exact issue
+>with Android ADB which uses 16KB buffers, along with f_fs supporting
+>S/G since 5.0, combined with our IOMMU which performs this merging
+>behavior, so it resulted in a single TRB getting queued with CHN=3D1 and
+>LST=3D0 and thus the transfer never completes. Your initial patch resolves
+>the issue for me, but upon revisiting this discussion I couldn't tell if
+>you had attempted to patch DMA API instead as per Felipe's suggestion.
+>
 
+We were stuck with some internal priority tasks, so couldn't initiate the
+discussion with IOMMU maintainers. Will work on preparing the patch
+and  sending the same very soon.
 
 Thanks,
-Parth
+Anurag Kumar Vulisha
 
+>Thanks,
+>Jack
+>--
+>The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+>a Linux Foundation Collaborative Project
