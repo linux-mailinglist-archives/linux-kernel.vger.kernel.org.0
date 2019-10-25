@@ -2,91 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21FEEE4128
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 03:43:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 897B3E413E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 03:46:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389132AbfJYBnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 21:43:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56438 "EHLO mail.kernel.org"
+        id S2389447AbfJYBqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 21:46:39 -0400
+Received: from mga02.intel.com ([134.134.136.20]:47340 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726841AbfJYBnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 21:43:03 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EF3721D7F;
-        Fri, 25 Oct 2019 01:43:01 +0000 (UTC)
-Date:   Thu, 24 Oct 2019 21:42:59 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Sami Tolvanen <samitolvanen@google.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 16/17] arm64: disable SCS for hypervisor code
-Message-ID: <20191024214259.1b37535c@gandalf.local.home>
-In-Reply-To: <CAK7LNATPpL-B0APPXFcWPCR6ZTSrXv-v_ZkdFqjKJ4pwUpcWug@mail.gmail.com>
-References: <20191018161033.261971-1-samitolvanen@google.com>
-        <20191024225132.13410-1-samitolvanen@google.com>
-        <20191024225132.13410-17-samitolvanen@google.com>
-        <CAK7LNATPpL-B0APPXFcWPCR6ZTSrXv-v_ZkdFqjKJ4pwUpcWug@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2389252AbfJYBqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 21:46:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 18:46:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,226,1569308400"; 
+   d="scan'208";a="197896687"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga007.fm.intel.com with ESMTP; 24 Oct 2019 18:46:35 -0700
+Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>
+Subject: Re: [PATCH v6 02/10] iommu/vt-d: Add custom allocator for IOASID
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+References: <1571788403-42095-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1571788403-42095-3-git-send-email-jacob.jun.pan@linux.intel.com>
+ <20191023005129.GC100970@otc-nc-03>
+ <0a0f33b8-e3d8-3d29-ca71-552f1875bc62@linux.intel.com>
+ <20191023160152.07305918@jacob-builder>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <85d806c3-0378-5f09-85fe-5c8f83c87c5f@linux.intel.com>
+Date:   Fri, 25 Oct 2019 09:44:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20191023160152.07305918@jacob-builder>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Oct 2019 10:29:47 +0900
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+Hi,
 
-> On Fri, Oct 25, 2019 at 7:52 AM <samitolvanen@google.com> wrote:
-> >
-> > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> > ---
-> >  arch/arm64/kvm/hyp/Makefile | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
-> > index ea710f674cb6..8289ea086e5e 100644
-> > --- a/arch/arm64/kvm/hyp/Makefile
-> > +++ b/arch/arm64/kvm/hyp/Makefile
-> > @@ -28,3 +28,6 @@ GCOV_PROFILE  := n
-> >  KASAN_SANITIZE := n
-> >  UBSAN_SANITIZE := n
-> >  KCOV_INSTRUMENT        := n
-> > +
-> > +ORIG_CFLAGS := $(KBUILD_CFLAGS)
-> > +KBUILD_CFLAGS = $(subst $(CC_FLAGS_SCS),,$(ORIG_CFLAGS))  
+On 10/24/19 7:01 AM, Jacob Pan wrote:
+> On Wed, 23 Oct 2019 10:21:51 +0800
+> Lu Baolu <baolu.lu@linux.intel.com> wrote:
 > 
+>>>> +#ifdef CONFIG_INTEL_IOMMU_SVM
+>>>
+>>> Maybe move them to intel-svm.c instead? that's where the bulk
+>>> of the svm support is?
+>>
+>> I think this is a generic PASID allocator for guest IOMMU although
+>> vSVA is currently the only consumer. Instead of making it SVM
+>> specific, I'd like to suggest moving it to intel-pasid.c and replace
+>> the @svm parameter with a void * one in intel_ioasid_free().
 > 
-> $(subst ... ) is not the correct use here.
+> make sense to use void*, no need to tie that to svm bind data type.
 > 
-> It works like sed,   s/$(CC_CFLAGS_SCS)//
-> instead of matching by word.
+> In terms of location, perhaps we can move if we have more consumers of
+> custom allocator?
 > 
-> 
-> 
-> 
-> KBUILD_CFLAGS := $(filter-out $(CC_FLAGS_SCS), $(KBUILD_CFLAGS))
-> 
-> is more correct, and simpler.
 
-I guess that would work too. Not sure why I never used it. I see mips
-used it for their -pg flags.
+Make sense to me.
 
--- Steve
+Best regards,
+baolu
