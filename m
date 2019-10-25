@@ -2,182 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D38DDE5108
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:19:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C90B2E50F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:13:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505478AbfJYQTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 12:19:02 -0400
-Received: from smtp4.emailarray.com ([65.39.216.22]:60041 "EHLO
-        smtp4.emailarray.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505248AbfJYQTB (ORCPT
+        id S2632747AbfJYQNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 12:13:16 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45214 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503806AbfJYQNP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 12:19:01 -0400
-Received: (qmail 62457 invoked by uid 89); 25 Oct 2019 16:12:21 -0000
-Received: from unknown (HELO ?172.20.54.239?) (amxlbW9uQGZsdWdzdmFtcC5jb21AMTk5LjIwMS42NC4xMjk=) (POLARISLOCAL)  
-  by smtp4.emailarray.com with (AES256-GCM-SHA384 encrypted) SMTP; 25 Oct 2019 16:12:21 -0000
-From:   "Jonathan Lemon" <jlemon@flugsvamp.com>
-To:     "Laurentiu Tudor" <laurentiu.tudor@nxp.com>
-Cc:     hch@lst.de, joro@8bytes.org,
-        "Ioana Ciocoi Radulescu" <ruxandra.radulescu@nxp.com>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        netdev@vger.kernel.org, "Ioana Ciornei" <ioana.ciornei@nxp.com>,
-        "Leo Li" <leoyang.li@nxp.com>, robin.murphy@arm.com,
-        "Diana Madalina Craciun" <diana.craciun@nxp.com>,
-        davem@davemloft.net, "Madalin Bucur" <madalin.bucur@nxp.com>
-Subject: Re: [PATCH v2 3/3] dpaa2_eth: use new unmap and sync dma api variants
-Date:   Fri, 25 Oct 2019 09:12:15 -0700
-X-Mailer: MailMate (1.13r5655)
-Message-ID: <BC2F1623-D8A5-4A6E-BAF4-5C551637E472@flugsvamp.com>
-In-Reply-To: <20191024124130.16871-4-laurentiu.tudor@nxp.com>
-References: <20191024124130.16871-1-laurentiu.tudor@nxp.com>
- <20191024124130.16871-4-laurentiu.tudor@nxp.com>
+        Fri, 25 Oct 2019 12:13:15 -0400
+Received: by mail-pf1-f195.google.com with SMTP id c7so695446pfo.12
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 09:13:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DbUUYSktrWx+Mr7+/XFosbA8omgMeae0KrcIpIaZY+4=;
+        b=g0+LbZNvC0/oQnA0E65voBPgI5E6LKImNIIY7vUgQIElbTP/N/BrP2eccHFrkwmFmY
+         s/iRUc4IV33YfRn/jX8Dy5Rq/NFKpFf4+d+q8dsh1+mEWOqN1FDBuMLWAS/i7aiQDsTm
+         rjZgYLDqNmvlES6m6SYlAsPse7N2DqlyyNu11QSUp8oEHIxqBkd52aZQWm93ynBV3QBI
+         VCthI6AJ3X/avwK3KIFyPQAxihrQ2sHp2eIyAT+Q3Xy0iCAz40Kk5xkOkrJWkVcFD2wn
+         MvWrFjUXMSAKazqGJ9Szf/+biteH0kYub08b0Xot8NmyY7SnoyQ4Z6XqA8WCb+zcBNyS
+         Pmhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DbUUYSktrWx+Mr7+/XFosbA8omgMeae0KrcIpIaZY+4=;
+        b=dtrkBmHQGbEcuN65dp0pFY74ao3mL8UE9WeuBkkGCM+n5zvc7rDmCP368xy5+d5/Qd
+         Imzxb18vLgB8/nIP5ptzFcYZYbJiTNJGk74aorKXBb2/T8BtNzR9MyYSN9/xJ7ZZyOcu
+         8R/SDQpbU2J/NFiEaj+tDm+t2jUDV+qESeEiBMkrvrqXY/7vDG7yHCfzOiOkUBpdBdTD
+         NORZvK3oux5D3uA2jrbiUrod9RFvkSRUkTaTO22MLWhpA+e786xfxYXzXkimmnWTkGQR
+         m9wELWvSPT80AiC8IrOgAF8a3htp10i7vCUh+ey6urA2p53VCOoSwPPIX/Zr4tCi4BJu
+         JTRg==
+X-Gm-Message-State: APjAAAVTGvDgc0h8tQguG31VkFCVEUS7Qbhga1LAttyzhGTswaaJI4Db
+        +cSeK5L0AxW/zraQj0SUzt0CUg==
+X-Google-Smtp-Source: APXvYqz718L4D//TNkiHsd9UJJI/rWp8OgsETUNxs43YHSJTame92Lk+FqeWsvk+iMUqY5sAjjX7wQ==
+X-Received: by 2002:a63:4c1c:: with SMTP id z28mr5276599pga.167.1572019994202;
+        Fri, 25 Oct 2019 09:13:14 -0700 (PDT)
+Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
+        by smtp.gmail.com with ESMTPSA id h14sm3024927pfo.15.2019.10.25.09.13.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2019 09:13:13 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 09:13:10 -0700
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     dev@dpdk.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [dpdk-dev] Please stop using iopl() in DPDK
+Message-ID: <20191025091310.05770edc@hermes.lan>
+In-Reply-To: <CALCETrVepdYd4uN8jrG8i6iaixWp+N3MdGv5WhjOdCr9sLRK1w@mail.gmail.com>
+References: <CALCETrVepdYd4uN8jrG8i6iaixWp+N3MdGv5WhjOdCr9sLRK1w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 24 Oct 2019 21:45:56 -0700
+Andy Lutomirski <luto@kernel.org> wrote:
+
+> Hi all-
+> 
+> Supporting iopl() in the Linux kernel is becoming a maintainability
+> problem.  As far as I know, DPDK is the only major modern user of
+> iopl().
+> 
+> After doing some research, DPDK uses direct io port access for only a
+> single purpose: accessing legacy virtio configuration structures.
+> These structures are mapped in IO space in BAR 0 on legacy virtio
+> devices.
+
+Yes. Legacy virtio seems to have been designed without consideration
+of how to use it in userspace. Xen, Vmware and Hyper-V all use memory
+as a doorbell mechanism which is easier to use from userspace.
 
 
-On 24 Oct 2019, at 5:41, Laurentiu Tudor wrote:
+> There are at least three ways you could avoid using iopl().  Here they
+> are in rough order of quality in my opinion:
+> 
+> 1. Change pci_uio_ioport_read() and pci_uio_ioport_write() to use
+> read() and write() on resource0 in sysfs.
 
-> From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
->
-> Convert this driver to usage of the newly introduced dma unmap and
-> sync DMA APIs. This will get rid of the unsupported direct usage of
-> iommu_iova_to_phys() API.
->
-> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> ---
->  .../net/ethernet/freescale/dpaa2/dpaa2-eth.c  | 40 
-> +++++++------------
->  .../net/ethernet/freescale/dpaa2/dpaa2-eth.h  |  1 -
->  2 files changed, 15 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c 
-> b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-> index 19379bae0144..8c3391e6e598 100644
-> --- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-> +++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-> @@ -29,16 +29,6 @@ MODULE_LICENSE("Dual BSD/GPL");
->  MODULE_AUTHOR("Freescale Semiconductor, Inc");
->  MODULE_DESCRIPTION("Freescale DPAA2 Ethernet Driver");
->
-> -static void *dpaa2_iova_to_virt(struct iommu_domain *domain,
-> -				dma_addr_t iova_addr)
-> -{
-> -	phys_addr_t phys_addr;
-> -
-> -	phys_addr = domain ? iommu_iova_to_phys(domain, iova_addr) : 
-> iova_addr;
-> -
-> -	return phys_to_virt(phys_addr);
-> -}
-> -
->  static void validate_rx_csum(struct dpaa2_eth_priv *priv,
->  			     u32 fd_status,
->  			     struct sk_buff *skb)
-> @@ -85,9 +75,10 @@ static void free_rx_fd(struct dpaa2_eth_priv *priv,
->  	sgt = vaddr + dpaa2_fd_get_offset(fd);
->  	for (i = 1; i < DPAA2_ETH_MAX_SG_ENTRIES; i++) {
->  		addr = dpaa2_sg_get_addr(&sgt[i]);
-> -		sg_vaddr = dpaa2_iova_to_virt(priv->iommu_domain, addr);
-> -		dma_unmap_page(dev, addr, DPAA2_ETH_RX_BUF_SIZE,
-> -			       DMA_BIDIRECTIONAL);
-> +		sg_vaddr = page_to_virt
-> +				(dma_unmap_page_desc(dev, addr,
-> +						    DPAA2_ETH_RX_BUF_SIZE,
-> +						    DMA_BIDIRECTIONAL));
-
-This is doing virt -> page -> virt.  Why not just have the new
-function return the VA corresponding to the addr, which would
-match the other functions?
--- 
-Jonathan
+The cost of entering the kernel for a doorbell mechanism is too
+expensive and would kill performance. 
 
 
->
->  		free_pages((unsigned long)sg_vaddr, 0);
->  		if (dpaa2_sg_is_final(&sgt[i]))
-> @@ -143,9 +134,10 @@ static struct sk_buff *build_frag_skb(struct 
-> dpaa2_eth_priv *priv,
->
->  		/* Get the address and length from the S/G entry */
->  		sg_addr = dpaa2_sg_get_addr(sge);
-> -		sg_vaddr = dpaa2_iova_to_virt(priv->iommu_domain, sg_addr);
-> -		dma_unmap_page(dev, sg_addr, DPAA2_ETH_RX_BUF_SIZE,
-> -			       DMA_BIDIRECTIONAL);
-> +		sg_vaddr = page_to_virt
-> +				(dma_unmap_page_desc(dev, sg_addr,
-> +						    DPAA2_ETH_RX_BUF_SIZE,
-> +						    DMA_BIDIRECTIONAL));
->
->  		sg_length = dpaa2_sg_get_len(sge);
->
-> @@ -210,9 +202,9 @@ static void free_bufs(struct dpaa2_eth_priv *priv, 
-> u64 *buf_array, int count)
->  	int i;
->
->  	for (i = 0; i < count; i++) {
-> -		vaddr = dpaa2_iova_to_virt(priv->iommu_domain, buf_array[i]);
-> -		dma_unmap_page(dev, buf_array[i], DPAA2_ETH_RX_BUF_SIZE,
-> -			       DMA_BIDIRECTIONAL);
-> +		vaddr = page_to_virt(dma_unmap_page_desc(dev, buf_array[i],
-> +							 DPAA2_ETH_RX_BUF_SIZE,
-> +							 DMA_BIDIRECTIONAL));
->  		free_pages((unsigned long)vaddr, 0);
->  	}
->  }
-> @@ -369,9 +361,8 @@ static void dpaa2_eth_rx(struct dpaa2_eth_priv 
-> *priv,
->  	/* Tracing point */
->  	trace_dpaa2_rx_fd(priv->net_dev, fd);
->
-> -	vaddr = dpaa2_iova_to_virt(priv->iommu_domain, addr);
-> -	dma_sync_single_for_cpu(dev, addr, DPAA2_ETH_RX_BUF_SIZE,
-> -				DMA_BIDIRECTIONAL);
-> +	vaddr = dma_sync_single_for_cpu_desc(dev, addr, 
-> DPAA2_ETH_RX_BUF_SIZE,
-> +					     DMA_BIDIRECTIONAL);
->
->  	fas = dpaa2_get_fas(vaddr, false);
->  	prefetch(fas);
-> @@ -682,7 +673,8 @@ static void free_tx_fd(const struct dpaa2_eth_priv 
-> *priv,
->  	u32 fd_len = dpaa2_fd_get_len(fd);
->
->  	fd_addr = dpaa2_fd_get_addr(fd);
-> -	buffer_start = dpaa2_iova_to_virt(priv->iommu_domain, fd_addr);
-> +	buffer_start = dma_sync_single_for_cpu_desc(dev, fd_addr, 
-> sizeof(*swa),
-> +						    DMA_BIDIRECTIONAL);
->  	swa = (struct dpaa2_eth_swa *)buffer_start;
->
->  	if (fd_format == dpaa2_fd_single) {
-> @@ -3448,8 +3440,6 @@ static int dpaa2_eth_probe(struct fsl_mc_device 
-> *dpni_dev)
->  	priv = netdev_priv(net_dev);
->  	priv->net_dev = net_dev;
->
-> -	priv->iommu_domain = iommu_get_domain_for_dev(dev);
-> -
->  	/* Obtain a MC portal */
->  	err = fsl_mc_portal_allocate(dpni_dev, 
-> FSL_MC_IO_ATOMIC_CONTEXT_PORTAL,
->  				     &priv->mc_io);
-> diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.h 
-> b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.h
-> index 8a0e65b3267f..4e5183617ebd 100644
-> --- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.h
-> +++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.h
-> @@ -374,7 +374,6 @@ struct dpaa2_eth_priv {
->
->  	struct fsl_mc_device *dpbp_dev;
->  	u16 bpid;
-> -	struct iommu_domain *iommu_domain;
->
->  	bool tx_tstamp; /* Tx timestamping enabled */
->  	bool rx_tstamp; /* Rx timestamping enabled */
-> -- 
-> 2.17.1
+> 2. Use the alternative access mechanism in the virtio legacy spec:
+> there is a way to access all of these structures via configuration
+> space.
+
+There is no way to use memory doorbell on older versions of virtio.
+Users want to run DPDK on old stuff like RHEL6 and even older
+kernel forks. There are even use cases where virtio is used for
+a non-Linux host; such as GCP.
+
+
+> 3. Use ioperm() instead of iopl().
+
+Ioperm has the wrong thread semantics. All DPDK applications have
+multiple threads and the initialization logic needs to work even
+if the thread is started later; threads can also be started by
+the user application.
+
+Iopl applies to whole process so this is not an issue.
+
+> 
+> 
+> We are considering changes to the kernel that will potentially harm
+> the performance of any program that uses iopl(3) -- in particular,
+> context switches will become more expensive, and the scheduler might
+> need to explicitly penalize such programs to ensure fairness.  Using
+> ioperm() already hurts performance, and the proposed changes to iopl()
+> will make it even worse.  Alternatively, the kernel could drop iopl()
+> support entirely.  I will certainly make a change to allow
+> distributions to remove iopl() support entirely from their kernels,
+> and I expect that distributions will do this.
+> 
+> Please fix DPDK.
+
+Please fix virtio.
