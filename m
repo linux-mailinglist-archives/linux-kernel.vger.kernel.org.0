@@ -2,130 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44CD8E433C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 08:09:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B0F0E4348
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 08:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394242AbfJYGJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 02:09:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54592 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2394092AbfJYGJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 02:09:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B5C05B544;
-        Fri, 25 Oct 2019 06:09:02 +0000 (UTC)
-Subject: Re: [PATCH] x86/stackframe/32: repair 32-bit Xen PV
-To:     Jan Beulich <JBeulich@suse.com>, Andy Lutomirski <luto@kernel.org>
-Cc:     X86 ML <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
-References: <ef1c9381-dfc7-7150-feca-581f4d798513@suse.com>
- <CALCETrWAALF7EgxHGs-rtZwk1Fxttr56QKXeB6QssXbyXDs+kA@mail.gmail.com>
- <4c4b0cdf-55e5-7be5-bf49-08fe8fd18dca@suse.com>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <76fd94f0-cfc6-5ad5-673b-725f4d72a69b@suse.com>
-Date:   Fri, 25 Oct 2019 08:09:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <4c4b0cdf-55e5-7be5-bf49-08fe8fd18dca@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S2404279AbfJYGKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 02:10:51 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54968 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394262AbfJYGKu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 02:10:50 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g7so699967wmk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 23:10:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=UZtQcpZNm2bgRElTtB0/YYRtxpmigD0UWuciJCpp5gM=;
+        b=QrKWgESwGfrtCnkB4ANF4RDTIvZX+3mgrn+F048ehqIGeg2PIMapuhi5B29YdIPJRF
+         OuF/1XgB1E3hujF7fmLSGOWHCpq+9DlFVEduBO8ipDdnjmiangiskHjwO3FsA7j8x1KD
+         1Smuo6qnW1seJDFFROI5kLkQKHJzW7j8nL7QRsx6D6T92OoNZE6hSbJWqfQ2kzquPzUV
+         EGGwKGRq2Dt/b39DcGka7dZFK17Wt7MIOIDReJEBLetmCZXSMWSBNVp4MthobvqT9E3G
+         LimR87SPwJ5FuFVOpPQc3/2WoUZLiJcnk52cJ7R4bO2cA7rCH/FuOM9im/yZQR0mR3/u
+         6apw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=UZtQcpZNm2bgRElTtB0/YYRtxpmigD0UWuciJCpp5gM=;
+        b=qGc+sSUvxMVnhAo406+yb/0bMMfYoUvq9tPcphUv18+2Lo3jfgFAnYMLdlE721Pcgt
+         /PYngINE/iJ+S1d/Zk4EdLq44gVJWRDYg75vIDmOpAIwSpDcrTIqHDI7lxX8mqVSvmZ8
+         FfPd2CK5Oy8u6VMFxLHT+4r19uuSmn+CtsIZQ7iGtJpjcumSUcuJMue6iOax4PIEOccm
+         c0lL65fMW323ZcnZ1IJmkypujKtJA8vxKgo05vjTNE4U50mXdu/6kXBTNYFnJPsINpNq
+         VDeee5HuQNNLMmPZHu7qYtlFXA/mtB9k55VGld55Zh0DRRx+XrFPWMZiZqnNgF420tcs
+         FcRA==
+X-Gm-Message-State: APjAAAUa5CMDkJ7d8A18SvKGWgicFHksyMs+tX3K6bpUU50guTKBpr7b
+        GYDC1oHJovCTbr2oTjfp17EdotnhIxghvqO5
+X-Google-Smtp-Source: APXvYqwEgYO6Ro5u2lCKSVB90BazD7V/pF/lyQv5RjmcJQ3shOXOE39URbi4sRXKy/2ygEnJau+JXA==
+X-Received: by 2002:a7b:c924:: with SMTP id h4mr1846926wml.46.1571983844471;
+        Thu, 24 Oct 2019 23:10:44 -0700 (PDT)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id k24sm6458006wmi.1.2019.10.24.23.10.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Oct 2019 23:10:43 -0700 (PDT)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com, git@xilinx.com, palmer@sifive.com,
+        hch@infradead.org, longman@redhat.com, helgaas@kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Jackie Liu <liuyun01@kylinos.cn>,
+        Wesley Terpstra <wesley@sifive.com>,
+        Firoz Khan <firoz.khan@linaro.org>, sparclinux@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
+        James Hogan <jhogan@kernel.org>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-snps-arc@lists.infradead.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Biggers <ebiggers@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-mips@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2 0/2] Enabling MSI for Microblaze
+Date:   Fri, 25 Oct 2019 08:10:36 +0200
+Message-Id: <cover.1571983829.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.10.19 08:06, Jan Beulich wrote:
-> On 24.10.2019 18:11, Andy Lutomirski wrote:
->> On Mon, Oct 7, 2019 at 3:41 AM Jan Beulich <jbeulich@suse.com> wrote:
->>>
->>> Once again RPL checks have been introduced which don't account for a
->>> 32-bit kernel living in ring 1 when running in a PV Xen domain. The
->>> case in FIXUP_FRAME has been preventing boot; adjust BUG_IF_WRONG_CR3
->>> as well just in case.
->>
->> I'm okay with the generated code, but IMO the macro is too indirect
->> for something that's trivial.
->>
->>>
->>> Fixes: 3c88c692c287 ("x86/stackframe/32: Provide consistent pt_regs")
->>> Signed-off-by: Jan Beulich <jbeulich@suse.com>
->>>
->>> --- a/arch/x86/entry/entry_32.S
->>> +++ b/arch/x86/entry/entry_32.S
->>> @@ -48,6 +48,17 @@
->>>
->>>    #include "calling.h"
->>>
->>> +#ifndef CONFIG_XEN_PV
->>> +# define USER_SEGMENT_RPL_MASK SEGMENT_RPL_MASK
->>> +#else
->>> +/*
->>> + * When running paravirtualized on Xen the kernel runs in ring 1, and hence
->>> + * simple mask based tests (i.e. ones not comparing against USER_RPL) have to
->>> + * ignore bit 0. See also the C-level get_kernel_rpl().
->>> + */
->>
->> How about:
->>
->> /*
->>    * When running on Xen PV, the actual %cs register in the kernel is 1, not 0.
->>    * If we need to distinguish between a %cs from kernel mode and a %cs from
->>    * user mode, we can do test $2 instead of test $3.
->>    */
->> #define USER_SEGMENT_RPL_MASK 2
-> 
-> I.e. you're fine using just the single bit in all configurations?
-> 
->>> +# define USER_SEGMENT_RPL_MASK (SEGMENT_RPL_MASK & ~1)
->>> +#endif
->>> +
->>>           .section .entry.text, "ax"
->>>
->>>    /*
->>> @@ -172,7 +183,7 @@
->>>           ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
->>>           .if \no_user_check == 0
->>>           /* coming from usermode? */
->>> -       testl   $SEGMENT_RPL_MASK, PT_CS(%esp)
->>> +       testl   $USER_SEGMENT_RPL_MASK, PT_CS(%esp)
->>
->> Shouldn't PT_CS(%esp) be 0 if we came from the kernel?  I'm guessing
->> the actual bug is in whatever code put 1 in here in the first place.
->>
->> In other words, I'm having trouble understanding why there is any
->> context in which some value would be 3 for user mode and 1 for kernel
->> mode.  Obviously if we're manually IRETing to kernel mode, we need to
->> set CS to 1, but if we're filling in our own PT_CS, we should just
->> write 0.
->>
->> The supposedly offending commit (""x86/stackframe/32: Provide
->> consistent pt_regs") looks correct to me, so I suspect that the
->> problem is elsewhere.  Or is it intentional that Xen PV's asm
->> (arch/x86/xen/whatever) sticks 1 into the CS field on the stack?
-> 
-> Manually created / updated frames _could_ in principle modify the
-> RPL, but ones coming from hardware (old 32-bit hypervisors) or Xen
-> (64-bit hypervisors) will have an RPL of 1, as already said by
-> Andrew. We could in principle also add a VM assist for the
-> hypervisor to store an RPL of 0, but I'd expect this to require
-> further kernel changes, and together with the old behavior still
-> being required to support I'm unconvinced this would be worth it.
-> 
->> Also, why are we supporting 32-bit Linux PV guests at all?  Can we
->> just delete this code instead?
-> 
-> This was already suggested by Jürgen (now also CC-ed), but in reply
-> it was pointed out that the process would be to first deprecate the
-> code, and remove it only a couple of releases later if no-one comes
-> up with a reason to retain it.
+Hi,
 
-Thanks for the reminder.
+these two patches come from discussion with Christoph, Bjorn, Palmer and
+Waiman. The first patch was suggestion by Christoph here
+https://lore.kernel.org/linux-riscv/20191008154604.GA7903@infradead.org/
+The second part was discussed
+https://lore.kernel.org/linux-pci/mhng-5d9bcb53-225e-441f-86cc-b335624b3e7c@palmer-si-x1e/
+and
+https://lore.kernel.org/linux-pci/20191017181937.7004-1-palmer@sifive.com/
 
-I'll send a patch with the deprecation warning for 32-bit PV.
+Thanks,
+Michal
 
+Changes in v2:
+- Fix typo in commit message s/expect/except/ - Reported-by: Masahiro
 
-Juergen
+Michal Simek (1):
+  asm-generic: Make msi.h a mandatory include/asm header
+
+Palmer Dabbelt (1):
+  pci: Default to PCI_MSI_IRQ_DOMAIN
+
+ arch/arc/include/asm/Kbuild     | 1 -
+ arch/arm/include/asm/Kbuild     | 1 -
+ arch/arm64/include/asm/Kbuild   | 1 -
+ arch/mips/include/asm/Kbuild    | 1 -
+ arch/powerpc/include/asm/Kbuild | 1 -
+ arch/riscv/include/asm/Kbuild   | 1 -
+ arch/sparc/include/asm/Kbuild   | 1 -
+ drivers/pci/Kconfig             | 2 +-
+ include/asm-generic/Kbuild      | 1 +
+ 9 files changed, 2 insertions(+), 8 deletions(-)
+
+-- 
+2.17.1
+
