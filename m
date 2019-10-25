@@ -2,155 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27B10E545F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41FE4E5463
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:32:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbfJYTbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 15:31:13 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41744 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727143AbfJYTbN (ORCPT
+        id S1727240AbfJYTcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 15:32:31 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:33701 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfJYTca (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 15:31:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572031871;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=S/xdyRsNHfBtMV1DseEdmIGdbbGR2o5yNrdis2nPB90=;
-        b=GCGwtzIoxjzM6lnkp+VC4SKvWbmXBIPc1e5SvJMM48oaWR1LZmyitjZ2RItJ/2i7A/B/RR
-        +6/Q1DTR7dt43inkEnyfigvp5o/dqfq9dxGKyhD4OHccq438O5kPRyZgE7EUSd8AXwlmFI
-        0EljLm+kuKZINroHIVjnSYYsGgHaBwg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-312-u90dXLTROhOmVtUgkgnK3A-1; Fri, 25 Oct 2019 15:31:06 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 12C715E6;
-        Fri, 25 Oct 2019 19:31:05 +0000 (UTC)
-Received: from cantor.redhat.com (ovpn-117-192.phx2.redhat.com [10.3.117.192])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A0E2160852;
-        Fri, 25 Oct 2019 19:31:04 +0000 (UTC)
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
-Subject: [PATCH v2] tpm: Add major_version sysfs file
-Date:   Fri, 25 Oct 2019 12:31:03 -0700
-Message-Id: <20191025193103.30226-1-jsnitsel@redhat.com>
+        Fri, 25 Oct 2019 15:32:30 -0400
+Received: by mail-oi1-f194.google.com with SMTP id a15so2377864oic.0;
+        Fri, 25 Oct 2019 12:32:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mXGKxFl6d9Tad1bXOR5KQzZcHvU397AW0AArFi6DfxM=;
+        b=WVEnLj2o706lId/1UETsUawHM2H2f2qjEep5xS/nnW9Y++hm4UBhVxl993EH9EbfF/
+         K7zV14M4qUT8YappXTAE0RR/90F2hVWrv8IHBzb+DjXgLy3Nd3/vcVQjMVWSzixcPQ77
+         pRZQRiVLyPI92lFGlArtThV9DkiG38Jrb1RRRXGpYWmTdJ5AwFsAEtY+SGcyRRppKcai
+         CXCjchzj5pEnbvoAQDw0WWt2O3McJr6kJZVfDSmoVm+Q4YzuHaJoojLTMvV4xZtn36Qd
+         xN9ASpHsyopqsG2c1A5DyOVBsuyhfNTswGPLu6FU4Jljti5gV7X+eCXgailG7N4VYAre
+         4gGA==
+X-Gm-Message-State: APjAAAWv6XCa2hmZSTA3KxPlvsi5b8B0D8bMYkiUw8Z67zgWQ2zcEFz4
+        mIh/XOu3uOsj+0z6G5VP6O/i38s=
+X-Google-Smtp-Source: APXvYqz471H2Ocr7A2/odSeE1SFq90vFIedMYY4Lihx8KArdbgC7Ngmc9bPTrZmbPIh8cFpnZHPH3w==
+X-Received: by 2002:aca:b841:: with SMTP id i62mr4248024oif.123.1572031949663;
+        Fri, 25 Oct 2019 12:32:29 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t18sm990562otm.8.2019.10.25.12.32.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2019 12:32:29 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 14:32:28 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     vincent.cheng.xh@renesas.com
+Cc:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andrew@lunn.ch, mark.rutland@arm.com,
+        richardcochran@gmail.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: ptp: Add bindings doc for IDT
+ ClockMatrix based PTP clock
+Message-ID: <20191025193228.GA31398@bogus>
+References: <1571687868-22834-1-git-send-email-vincent.cheng.xh@renesas.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: u90dXLTROhOmVtUgkgnK3A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1571687868-22834-1-git-send-email-vincent.cheng.xh@renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Easily determining what TCG version a tpm device implements
-has been a pain point for userspace for a long time, so
-add a sysfs file to report the TCG version of a tpm device.
+On Mon, Oct 21, 2019 at 03:57:47PM -0400, vincent.cheng.xh@renesas.com wrote:
+> From: Vincent Cheng <vincent.cheng.xh@renesas.com>
+> 
+> Add device tree binding doc for the IDT ClockMatrix PTP clock.
+> 
+> Co-developed-by: Richard Cochran <richardcochran@gmail.com>
+> Signed-off-by: Richard Cochran <richardcochran@gmail.com>
+> Signed-off-by: Vincent Cheng <vincent.cheng.xh@renesas.com>
+> ---
+> 
+> Changes since v2:
+>  - As suggested by Rob Herring:
+>    1. Replace with DT schema
+>    2. Remove '-ptp' from compatible string
+>    3. Replace wildcard 'x' with the part numbers.
+> 
+> Changes since v1:
+>  - No changes
+> ---
+>  .../devicetree/bindings/ptp/ptp-idtcm.yaml         | 63 ++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml b/Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml
+> new file mode 100644
+> index 0000000..d3771e0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/ptp/ptp-idtcm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: IDT ClockMatrix (TM) PTP Clock Device Tree Bindings
+> +
+> +maintainers:
+> +  - Vincent Cheng <vincent.cheng.xh@renesas.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      # For System Synchronizer
+> +      - idt,8a34000
+> +      - idt,8a34001
+> +      - idt,8a34002
+> +      - idt,8a34003
+> +      - idt,8a34004
+> +      - idt,8a34005
+> +      - idt,8a34006
+> +      - idt,8a34007
+> +      - idt,8a34008
+> +      - idt,8a34009
+> +      # For Port Synchronizer
+> +      - idt,8a34010
+> +      - idt,8a34011
+> +      - idt,8a34012
+> +      - idt,8a34013
+> +      - idt,8a34014
+> +      - idt,8a34015
+> +      - idt,8a34016
+> +      - idt,8a34017
+> +      - idt,8a34018
+> +      - idt,8a34019
+> +      # For Universal Frequency Translator (UFT)
+> +      - idt,8a34040
+> +      - idt,8a34041
+> +      - idt,8a34042
+> +      - idt,8a34043
+> +      - idt,8a34044
+> +      - idt,8a34045
+> +      - idt,8a34046
+> +      - idt,8a34047
+> +      - idt,8a34048
+> +      - idt,8a34049
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description:
+> +      I2C slave address of the device.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    phc@5b {
 
-Also add an entry to Documentation/ABI/stable/sysfs-class-tpm
-describing the new file.
+ptp@5b
 
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
----
-v2: - Fix TCG usage in commit message.
-    - Add entry to sysfs-class-tpm in Documentation/ABI/stable
+Examples are built now and this fails:
 
- Documentation/ABI/stable/sysfs-class-tpm | 11 ++++++++
- drivers/char/tpm/tpm-sysfs.c             | 34 +++++++++++++++++++-----
- 2 files changed, 38 insertions(+), 7 deletions(-)
+Documentation/devicetree/bindings/ptp/ptp-idtcm.example.dts:19.15-28: 
+Warning (reg_format): /example-0/phc@5b:reg: property has invalid length (4 bytes) (#address-cells == 1, #size-cells == 1)
 
-diff --git a/Documentation/ABI/stable/sysfs-class-tpm b/Documentation/ABI/s=
-table/sysfs-class-tpm
-index c0e23830f56a..c6bd02bafafd 100644
---- a/Documentation/ABI/stable/sysfs-class-tpm
-+++ b/Documentation/ABI/stable/sysfs-class-tpm
-@@ -183,3 +183,14 @@ Description:=09The "timeouts" property shows the 4 ven=
-dor-specific values
- =09=09The four timeout values are shown in usecs, with a trailing
- =09=09"[original]" or "[adjusted]" depending on whether the values
- =09=09were scaled by the driver to be reported in usec from msecs.
-+
-+What:=09=09/sys/class/tpm/tpmX/major_version
-+Date:=09=09October 2019
-+KernelVersion:=095.5
-+Contact:=09linux-integrity@vger.kernel.org
-+Description:=09The "major_version" property shows the TCG spec version
-+=09=09implemented by the TPM device.
-+
-+=09=09Example output:
-+
-+=09=092.0
-diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index edfa89160010..9372c2d6f0b3 100644
---- a/drivers/char/tpm/tpm-sysfs.c
-+++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -309,7 +309,17 @@ static ssize_t timeouts_show(struct device *dev, struc=
-t device_attribute *attr,
- }
- static DEVICE_ATTR_RO(timeouts);
-=20
--static struct attribute *tpm_dev_attrs[] =3D {
-+static ssize_t major_version_show(struct device *dev,
-+=09=09=09=09  struct device_attribute *attr, char *buf)
-+{
-+=09struct tpm_chip *chip =3D to_tpm_chip(dev);
-+
-+=09return sprintf(buf, "%s\n", chip->flags & TPM_CHIP_FLAG_TPM2
-+=09=09       ? "2.0" : "1.2");
-+}
-+static DEVICE_ATTR_RO(major_version);
-+
-+static struct attribute *tpm12_dev_attrs[] =3D {
- =09&dev_attr_pubek.attr,
- =09&dev_attr_pcrs.attr,
- =09&dev_attr_enabled.attr,
-@@ -320,18 +330,28 @@ static struct attribute *tpm_dev_attrs[] =3D {
- =09&dev_attr_cancel.attr,
- =09&dev_attr_durations.attr,
- =09&dev_attr_timeouts.attr,
-+=09&dev_attr_major_version.attr,
- =09NULL,
- };
-=20
--static const struct attribute_group tpm_dev_group =3D {
--=09.attrs =3D tpm_dev_attrs,
-+static struct attribute *tpm20_dev_attrs[] =3D {
-+=09&dev_attr_major_version.attr,
-+=09NULL
-+};
-+
-+static const struct attribute_group tpm12_dev_group =3D {
-+=09.attrs =3D tpm12_dev_attrs,
-+};
-+
-+static const struct attribute_group tpm20_dev_group =3D {
-+=09.attrs =3D tpm20_dev_attrs,
- };
-=20
- void tpm_sysfs_add_device(struct tpm_chip *chip)
- {
--=09if (chip->flags & TPM_CHIP_FLAG_TPM2)
--=09=09return;
--
- =09WARN_ON(chip->groups_cnt !=3D 0);
--=09chip->groups[chip->groups_cnt++] =3D &tpm_dev_group;
-+=09if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+=09=09chip->groups[chip->groups_cnt++] =3D &tpm20_dev_group;
-+=09else
-+=09=09chip->groups[chip->groups_cnt++] =3D &tpm12_dev_group;
- }
---=20
-2.23.0
+The problem is i2c devices need to be shown under an i2c bus node.
 
+> +          compatible = "idt,8a34000";
+> +          reg = <0x5b>;
+> +    };
+> -- 
+> 2.7.4
+> 
