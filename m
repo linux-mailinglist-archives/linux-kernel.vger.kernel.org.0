@@ -2,100 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B293E41F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 05:07:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDDBAE41F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 05:09:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391711AbfJYDHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 23:07:40 -0400
-Received: from ozlabs.org ([203.11.71.1]:36373 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391622AbfJYDHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 23:07:40 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46zpvF444Yz9sPh;
-        Fri, 25 Oct 2019 14:07:37 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1571972857;
-        bh=Wcc7GmXRkytzaoO7yz2JCTW9vMTn48DxT18BiwpgEUQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=A1wCE4HslN+dI9HIEBgyIr8spiNvFkTBKARKrejYkCf7jpUWO9qKP0nTMk3KeE6Iv
-         FqvQZ3JKaFFXeHpsHPaOlQLOKgmi09fothFhRA+7mJqGHnM3A0jAQ0oxhji3YIvL/u
-         9KJQeFEYee8odWfZRfasLGOd6I6oEw6VgfG+oCOI31vBCFrOlyMQlUp0nXYVl38uNW
-         77J8OETwmpTQK2szfe/mjxRnxjZbAV+55PwKP5A35ydLqrMrcmNVNajLOqkoFz0Lcw
-         ZjnHUj8RVTUmnxL46XmX+T2xZ+7g4HQWUTaQfdOvakw5mdVDnDY7dHEjFUg5VnbPZl
-         5s9BgyHk4Q8LA==
-Date:   Fri, 25 Oct 2019 14:07:36 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        James Smart <jsmart2021@gmail.com>
-Subject: linux-next: build failure after merge of the scsi-mkp tree
-Message-ID: <20191025140736.0c9e9d64@canb.auug.org.au>
+        id S2391939AbfJYDJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 23:09:44 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38998 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729283AbfJYDJn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 23:09:43 -0400
+Received: by mail-io1-f66.google.com with SMTP id y12so719286ioa.6
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2019 20:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=NDnBP4/LxhdGXSkB81z59K6SH35dARBNL26jgxKs1DU=;
+        b=Ark4hOE7lqn5cgq/Ov0R55L1DNSP47nM+/2lKqSaYlr/WWlTf3ju7IgIPjgTmpii/A
+         hALDty3X+F3p4kuLNe7SxZakxh/OnoIYX14cm2g3aeUL8r9kav7bIKNzKfJKEfdw+tNP
+         Ej3qXt9Zonj4wENgpQNwu9KuYvrc3Ec+cAPRZcUbxqpW3Jttr+ND4OrNkpFimhkVb+Z7
+         l8ImnHWofoJtjSU6dElBzmF6xcaCJXJ7J2cSY8/T9xg5pfhS9hvbHPKD0Ix+YT53mKlf
+         zE8Dqgbu/kVRb7r0sCsXmaQFxvlp4gMpY7fpAynPSaKrgCcNQGQcTO4shg8rOIK92I6n
+         XFLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=NDnBP4/LxhdGXSkB81z59K6SH35dARBNL26jgxKs1DU=;
+        b=Si+sdrXgxsiehyKao/kvTYBw0PMXmg0z+pm2opF+V31Ex1y8r9VnR0mcvGFIaiRUhF
+         GsZPXUBseK7OBq6VsvKbi6NrJdCUSDV4YCMJo/i3pBnnD1BsvSkzJlPPSFGMg0AT6pBA
+         IrDkbJdnP43jXn2hT2/2EeK/FpnvMjjEiUOxDXkvNJaZ6JmnxpzG9ohdhH4fZosxfMum
+         nqf2B89ubNcY/byoA3jVC++XbgsVtWDfs0iJIvA+nmgVvH8NVxo3iB2BKJmuEBRLfAEd
+         7rLxTc6wKOkuejRr3ii3Tp4N1kdj7AwFBpsE6ZaA5zhD6CRH3TeW+dN6isxFP/K3CNuS
+         aPiw==
+X-Gm-Message-State: APjAAAUlq1YT3L8jVB8FGoya6jQ9uP6sr/Zqe68pbCMcuHQ715tJuXJn
+        pqwjDP4KtErNImBz4A07TcalfQ==
+X-Google-Smtp-Source: APXvYqy0FbVU82h3B9ymHO5htMn2YmR821IaXarEdMsXRvsC8BJsi2gz+DV6xh78xXHlEDsYOjR82g==
+X-Received: by 2002:a6b:7d0b:: with SMTP id c11mr1526968ioq.236.1571972982795;
+        Thu, 24 Oct 2019 20:09:42 -0700 (PDT)
+Received: from localhost ([64.62.168.194])
+        by smtp.gmail.com with ESMTPSA id d6sm173269ilc.39.2019.10.24.20.09.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2019 20:09:42 -0700 (PDT)
+Date:   Thu, 24 Oct 2019 20:09:40 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Atish Patra <atish.patra@wdc.com>
+cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Christoph Hellwig <hch@lst.de>, Anup Patel <Anup.Patel@wdc.com>
+Subject: Re: [PATCH v4 0/3] Optimize tlbflush path
+In-Reply-To: <alpine.DEB.2.21.9999.1908301939300.16731@viisi.sifive.com>
+Message-ID: <alpine.DEB.2.21.9999.1910242001550.28076@viisi.sifive.com>
+References: <20190822075151.24838-1-atish.patra@wdc.com> <alpine.DEB.2.21.9999.1908301939300.16731@viisi.sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/f0ti=U1JDDubgaKxd22sHes";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/f0ti=U1JDDubgaKxd22sHes
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 30 Aug 2019, Paul Walmsley wrote:
 
-Hi all,
+> On Thu, 22 Aug 2019, Atish Patra wrote:
+> 
+> > This series adds few optimizations to reduce the trap cost in the tlb
+> > flush path. We should only make SBI calls to remote tlb flush only if
+> > absolutely required. 
+> 
+> The patches look great.  My understanding is that these optimization 
+> patches may actually be a partial workaround for the TLB flushing bug that 
+> we've been looking at for the last month or so, which can corrupt memory 
+> or crash the system.
 
-After merging the scsi-mkp tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+I don't think we're any closer to root-causing this issue.  Meanwhile, 
+OpenSBI has merged patches to work around it.  So since many of us have 
+looked at Atish's TLB optimization patches, and we all think they are 
+useful optimizations, let's plan to merge it for v5.5-rc1.
 
-drivers/scsi/lpfc/lpfc_debugfs.c: In function 'lpfc_debugfs_ras_log_release=
-':
-drivers/scsi/lpfc/lpfc_debugfs.c:2109:2: error: implicit declaration of fun=
-ction 'vfree'; did you mean 'kvfree'? [-Werror=3Dimplicit-function-declarat=
-ion]
- 2109 |  vfree(debug->buffer);
-      |  ^~~~~
-      |  kvfree
-drivers/scsi/lpfc/lpfc_debugfs.c: In function 'lpfc_debugfs_ras_log_open':
-drivers/scsi/lpfc/lpfc_debugfs.c:2150:18: error: implicit declaration of fu=
-nction 'vmalloc'; did you mean 'kvmalloc'? [-Werror=3Dimplicit-function-dec=
-laration]
- 2150 |  debug->buffer =3D vmalloc(size);
-      |                  ^~~~~~~
-      |                  kvmalloc
-drivers/scsi/lpfc/lpfc_debugfs.c:2150:16: warning: assignment to 'char *' f=
-rom 'int' makes pointer from integer without a cast [-Wint-conversion]
- 2150 |  debug->buffer =3D vmalloc(size);
-      |                ^
 
-Caused by commit
-
-  95bfc6d8ad86 ("scsi: lpfc: Make FW logging dynamically configurable")
-
-I have used the scsi-mkp tree from next-20191024 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/f0ti=U1JDDubgaKxd22sHes
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2yZvgACgkQAVBC80lX
-0Gydbwf/Vc3oPByi1E+pcxq7+hsLXzK8V0c8iX39Sx9aO4CjuiuAWH2oxTcN4YoN
-MNn1dZ86gNdFDdTxQ3OAZY+q/MA9TnCLGUmxuGrxvFDsumBK4+YqjlY0UgH89lR9
-E8aoHi3A/+HMtyANFgrh0c/REqURZdVuWnU4HN0a92pGcpzpuI/gy7Oqqq2pJeQX
-PcA3l62PJXiVbm4BYEtxTx6of27SiFbyaaV8TIvyOdLnWmZ/Mz88nyrnbYMr3Hpv
-VIc34kQJ0Eqh9JPcrqmyAofcPB/aPbKSUiSv3TibEywKsiNdQemutbLknSBz7nE0
-/ZnZbGCa15k7bepf6Qn3Sz5EYw+h5A==
-=mo8E
------END PGP SIGNATURE-----
-
---Sig_/f0ti=U1JDDubgaKxd22sHes--
+- Paul
