@@ -2,127 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24155E4D47
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:59:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94E5DE4D4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2632977AbfJYN7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 09:59:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54996 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2632945AbfJYN7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:59:15 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52669222C9;
-        Fri, 25 Oct 2019 13:59:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572011954;
-        bh=hYJm1cFdOAmx6GLYpJvVEn8yPe42AQ1KAIXNR8DbkTg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=anbmIYYOTveMRDzw4dCNxnGV6FWDMezqGn8YBISD18I7O1m8Wbj5TyaqNvXyOz3IA
-         V5qptt2g3iIXCtzbrhR8GM9dhBgCHUQGcBPAf59CEOUsSYFHKLjN1P9yYfjAdFOVsh
-         8J+hD9W0trqBGtBdVer+hGU+hJySWZ6+Cl5SfZCI=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        AceLan Kao <acelan.kao@canonical.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.4 16/16] bdi: Do not use freezable workqueue
-Date:   Fri, 25 Oct 2019 09:58:40 -0400
-Message-Id: <20191025135842.25977-16-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191025135842.25977-1-sashal@kernel.org>
-References: <20191025135842.25977-1-sashal@kernel.org>
+        id S2632926AbfJYN7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 09:59:10 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33756 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2505705AbfJYN7F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 09:59:05 -0400
+Received: by mail-lj1-f194.google.com with SMTP id a22so2880934ljd.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 06:59:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digitalsocialweb-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:reply-to:to:subject:content-transfer-encoding
+         :date:message-id;
+        bh=BIrXkQbz0VOKYBZ72WJMNAib3nvrsy3PYgyT1Ms+edA=;
+        b=TyEQEU94d1/B6cdSlaMb+pF22gJrFGiSFogZhiEHW++m8p1+4uXsjo5x/X9h4MyiOl
+         p05QeiNpCfmEaUAUzI69hxLpn4ddW9T+fKQDS4+lYooQuArwbr/8nmn1jGJFfIRDD2Jr
+         U0BkdEnj/e5IStkwuweYnv83xDwh20QVkJFQ4sp8olNfVyhfqTUO4DHZu1jD86U7OGNO
+         J0QUR6s4Ncm75z6tLitbRtAiVHifL2ZOPioqmjNyxpEMOPL0gBpT4llhNLmdBWECyvez
+         JZGTdNCnNdrzduJES/z7kSpxkhatH7ckgCL2t3fo6nDTn3kC9KBvSTCtxuIbOYweCFQk
+         +PyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:reply-to:to:subject
+         :content-transfer-encoding:date:message-id;
+        bh=BIrXkQbz0VOKYBZ72WJMNAib3nvrsy3PYgyT1Ms+edA=;
+        b=Nqi13/1URE8pLV6D6XGWwCnvxK/nKjXJbT71DXR80FiDtLuevEeg3ULomyO7bACXc1
+         qejAAddy5eIM49Wacd5wct5q/BPEI/8xADI7xVWkPptxMt/NFiItPK9kJxyCXZu3XHYw
+         h7aOoXf5OB1tNgeYroSLGZpVTn5lzPVT1s3q4zTIwVCzsytI27+AfE8Lyf/25cmdRR9K
+         Oy93cEpTgNMTdpZY7o4dmyvh9IXCwgniFstVGPqT+Um0odXGEm62XoS8U9iZOl9Hek8V
+         6qnWatbFPtDN3CEToW/qlBB8yM7gCileI/ufHVXc+ctG6qk7ctTLf2DG/y1+bZNs9pCb
+         7wYw==
+X-Gm-Message-State: APjAAAWV1SpQ8eIYFmW3R7g0CD/dmZQIrmi96QwKK8FVpkYLzUqA0Zdp
+        O09IQ4jY7MjNTgvUjX/MT+C3pCyLyfo=
+X-Google-Smtp-Source: APXvYqwywo3woV9+nN5vXnirm1Nv5GbLNzgdbvaAFUOJHSzOrK2CJRDVgP5l+agHLMCl6GcNQSN9wQ==
+X-Received: by 2002:a2e:9dca:: with SMTP id x10mr2326834ljj.112.1572011942762;
+        Fri, 25 Oct 2019 06:59:02 -0700 (PDT)
+Received: from 72.255.54.232 ([72.255.54.232])
+        by smtp.gmail.com with ESMTPSA id k7sm764879lja.19.2019.10.25.06.59.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Fri, 25 Oct 2019 06:59:02 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+From:   "Gabriel Gonser" <gabriel@digitalsocialweb.com>
+Reply-To: gabriel@digitalsocialweb.com
+To:     linux-kernel@vger.kernel.org
+Subject: Paid Advertisement Request.
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Smart_Send_3_1_6
+Date:   Fri, 25 Oct 2019 18:58:57 +0500
+Message-ID: <53924095274721899428561@DESKTOP-L09MN1Q>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Hi,
 
-[ Upstream commit a2b90f11217790ec0964ba9c93a4abb369758c26 ]
-
-A removable block device, such as NVMe or SSD connected over Thunderbolt
-can be hot-removed any time including when the system is suspended. When
-device is hot-removed during suspend and the system gets resumed, kernel
-first resumes devices and then thaws the userspace including freezable
-workqueues. What happens in that case is that the NVMe driver notices
-that the device is unplugged and removes it from the system. This ends
-up calling bdi_unregister() for the gendisk which then schedules
-wb_workfn() to be run one more time.
-
-However, since the bdi_wq is still frozen flush_delayed_work() call in
-wb_shutdown() blocks forever halting system resume process. User sees
-this as hang as nothing is happening anymore.
-
-Triggering sysrq-w reveals this:
-
-  Workqueue: nvme-wq nvme_remove_dead_ctrl_work [nvme]
-  Call Trace:
-   ? __schedule+0x2c5/0x630
-   ? wait_for_completion+0xa4/0x120
-   schedule+0x3e/0xc0
-   schedule_timeout+0x1c9/0x320
-   ? resched_curr+0x1f/0xd0
-   ? wait_for_completion+0xa4/0x120
-   wait_for_completion+0xc3/0x120
-   ? wake_up_q+0x60/0x60
-   __flush_work+0x131/0x1e0
-   ? flush_workqueue_prep_pwqs+0x130/0x130
-   bdi_unregister+0xb9/0x130
-   del_gendisk+0x2d2/0x2e0
-   nvme_ns_remove+0xed/0x110 [nvme_core]
-   nvme_remove_namespaces+0x96/0xd0 [nvme_core]
-   nvme_remove+0x5b/0x160 [nvme]
-   pci_device_remove+0x36/0x90
-   device_release_driver_internal+0xdf/0x1c0
-   nvme_remove_dead_ctrl_work+0x14/0x30 [nvme]
-   process_one_work+0x1c2/0x3f0
-   worker_thread+0x48/0x3e0
-   kthread+0x100/0x140
-   ? current_work+0x30/0x30
-   ? kthread_park+0x80/0x80
-   ret_from_fork+0x35/0x40
-
-This is not limited to NVMes so exactly same issue can be reproduced by
-hot-removing SSD (over Thunderbolt) while the system is suspended.
-
-Prevent this from happening by removing WQ_FREEZABLE from bdi_wq.
-
-Reported-by: AceLan Kao <acelan.kao@canonical.com>
-Link: https://marc.info/?l=linux-kernel&m=138695698516487
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=204385
-Link: https://lore.kernel.org/lkml/20191002122136.GD2819@lahna.fi.intel.com/#t
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- mm/backing-dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 07e3b3b8e8469..c682fb90cf356 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -245,8 +245,8 @@ static int __init default_bdi_init(void)
- {
- 	int err;
- 
--	bdi_wq = alloc_workqueue("writeback", WQ_MEM_RECLAIM | WQ_FREEZABLE |
--					      WQ_UNBOUND | WQ_SYSFS, 0);
-+	bdi_wq = alloc_workqueue("writeback", WQ_MEM_RECLAIM | WQ_UNBOUND |
-+				 WQ_SYSFS, 0);
- 	if (!bdi_wq)
- 		return -ENOMEM;
- 
--- 
-2.20.1
-
+=0AWe are a Guest Posting services provider and found your blog during our =
+outreach campaign.
+We can do a long-term relationship if you can allow us to post a unique, go=
+od quality and non-promotional articles on your website.=A0
+=0AWe have a team of US and UK native writers to research and write quality=
+ articles that fit your blog niche.
+=0APlease let me know the price per guest post on your website; we can pay =
+you via PayPal for publishing unique articles on your website with one anch=
+or website.=A0=0AWill be waiting to have your very positive response!=A0
+=0A
+Best Regards,
+=0A
+Jason Dunlap.
