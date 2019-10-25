@@ -2,95 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08CBCE50D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D38DDE5108
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:19:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505114AbfJYQJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 12:09:46 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39870 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732660AbfJYQJq (ORCPT
+        id S2505478AbfJYQTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 12:19:02 -0400
+Received: from smtp4.emailarray.com ([65.39.216.22]:60041 "EHLO
+        smtp4.emailarray.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2505248AbfJYQTB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 12:09:46 -0400
-Received: by mail-io1-f66.google.com with SMTP id y12so3030938ioa.6
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 09:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=Dz0z7UVAhXaZ2nhvm3ocuonZIUSL4pst5GiKI/ZhGtE=;
-        b=L01rlG7zsE0qvXGgPDCS0+sPo58JpVpzg8Bue+LfRnE7SLWrrvtmNxaMaktJbE9rlr
-         P6dbojoa+RJR2Po0fG4VVLiZlM35lo17A2OXtzJW6e3FHZmgwLkz9j9GcCoMNX/aDPNQ
-         uEkjsBDCzPzgPzcHROspcDP7JADhrcZU1L0lvb12Vzs0x9ElpDDjmEghW25qyqC3KERy
-         wTUlQcaH0EvVdyQ/y58MYE36tKJkZDbdlzAHk6RgsgQvlORGtUCLfLUhDaO2VCy82Ivs
-         zvn1YKdpzrBYSpqW7fIMRcQjDNaA0DvQd5JBoaGdVx5CinEz7atmXkx/XVAWqsWy6skz
-         ZCTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Dz0z7UVAhXaZ2nhvm3ocuonZIUSL4pst5GiKI/ZhGtE=;
-        b=jwOfncUvh98gMHac22BxigEPmhN+VAsY+KL3ijBHDhn8NLWpX0aPvW99Fz1+uHXqPF
-         xDsY2IvtK3uIuRXGKm6oBf80YnPh71NiMWlHDrnjO6bUky5IC2hEljaGqm9aknATQ6pQ
-         D+fu9jTqRPTMMNByfQdGsnxrxUj/jtNXTkXBXlNtpBBSZV0QYUrouawF2VJTCGCrcQSj
-         x/XRM9t2aGM+QWZGJaAYgfr69+3PIGV0dm9GzKyJkaej9ax2kk3Si2r70vEJGh8eOL0s
-         v/iof5BUae2ojOg6vOXitBaibga/cHV00IDt8PYqAU5jbqYjOcKbSjja9xUBppZdJ1El
-         a0qA==
-X-Gm-Message-State: APjAAAV1rI3qRKCKLSl3xFvu/hzNYOU3WwYQlllpx5iOgSuzuzj+ClDX
-        xCoe/L7fTAIm84MvwzdiQ523N3dFu6Jj4w==
-X-Google-Smtp-Source: APXvYqzOZUhzbeEKJ5g6jFEYeljYX/YeQgv5uN7hCHqgyJ91neZSYbfRbbMAA8q9lMX7dcoREkWlmA==
-X-Received: by 2002:a02:704b:: with SMTP id f72mr4637699jac.125.1572019783542;
-        Fri, 25 Oct 2019 09:09:43 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id h82sm419959ild.1.2019.10.25.09.09.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Oct 2019 09:09:42 -0700 (PDT)
-Subject: Re: [BUG] io_uring: defer logic based on shared data
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <5badf1c0-9a7d-0950-2943-ff8db33e0929@gmail.com>
- <bfb58429-6abe-06f0-3fd8-14a0040cecf0@kernel.dk>
-Message-ID: <dfd21591-5187-0a8b-cc55-cfe5d57dd471@kernel.dk>
-Date:   Fri, 25 Oct 2019 10:09:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 25 Oct 2019 12:19:01 -0400
+Received: (qmail 62457 invoked by uid 89); 25 Oct 2019 16:12:21 -0000
+Received: from unknown (HELO ?172.20.54.239?) (amxlbW9uQGZsdWdzdmFtcC5jb21AMTk5LjIwMS42NC4xMjk=) (POLARISLOCAL)  
+  by smtp4.emailarray.com with (AES256-GCM-SHA384 encrypted) SMTP; 25 Oct 2019 16:12:21 -0000
+From:   "Jonathan Lemon" <jlemon@flugsvamp.com>
+To:     "Laurentiu Tudor" <laurentiu.tudor@nxp.com>
+Cc:     hch@lst.de, joro@8bytes.org,
+        "Ioana Ciocoi Radulescu" <ruxandra.radulescu@nxp.com>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, "Ioana Ciornei" <ioana.ciornei@nxp.com>,
+        "Leo Li" <leoyang.li@nxp.com>, robin.murphy@arm.com,
+        "Diana Madalina Craciun" <diana.craciun@nxp.com>,
+        davem@davemloft.net, "Madalin Bucur" <madalin.bucur@nxp.com>
+Subject: Re: [PATCH v2 3/3] dpaa2_eth: use new unmap and sync dma api variants
+Date:   Fri, 25 Oct 2019 09:12:15 -0700
+X-Mailer: MailMate (1.13r5655)
+Message-ID: <BC2F1623-D8A5-4A6E-BAF4-5C551637E472@flugsvamp.com>
+In-Reply-To: <20191024124130.16871-4-laurentiu.tudor@nxp.com>
+References: <20191024124130.16871-1-laurentiu.tudor@nxp.com>
+ <20191024124130.16871-4-laurentiu.tudor@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <bfb58429-6abe-06f0-3fd8-14a0040cecf0@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25/19 10:03 AM, Jens Axboe wrote:
-> On 10/25/19 3:55 AM, Pavel Begunkov wrote:
->> I found 2 problems with __io_sequence_defer().
->>
->> 1. it uses @sq_dropped, but doesn't consider @cq_overflow
->> 2. @sq_dropped and @cq_overflow are write-shared with userspace, so
->> it can be maliciously changed.
->>
->> see sent liburing test (test/defer *_hung()), which left an unkillable
->> process for me
-> 
-> OK, how about the below. I'll split this in two, as it's really two
-> separate fixes.
 
-Patch 1:
 
-http://git.kernel.dk/cgit/linux-block/commit/?h=for-linus&id=9a9a21d9cf65cb621cce4052a4527868a80009ad
+On 24 Oct 2019, at 5:41, Laurentiu Tudor wrote:
 
-and patch 2:
+> From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+>
+> Convert this driver to usage of the newly introduced dma unmap and
+> sync DMA APIs. This will get rid of the unsupported direct usage of
+> iommu_iova_to_phys() API.
+>
+> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+> ---
+>  .../net/ethernet/freescale/dpaa2/dpaa2-eth.c  | 40 
+> +++++++------------
+>  .../net/ethernet/freescale/dpaa2/dpaa2-eth.h  |  1 -
+>  2 files changed, 15 insertions(+), 26 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c 
+> b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
+> index 19379bae0144..8c3391e6e598 100644
+> --- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
+> +++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
+> @@ -29,16 +29,6 @@ MODULE_LICENSE("Dual BSD/GPL");
+>  MODULE_AUTHOR("Freescale Semiconductor, Inc");
+>  MODULE_DESCRIPTION("Freescale DPAA2 Ethernet Driver");
+>
+> -static void *dpaa2_iova_to_virt(struct iommu_domain *domain,
+> -				dma_addr_t iova_addr)
+> -{
+> -	phys_addr_t phys_addr;
+> -
+> -	phys_addr = domain ? iommu_iova_to_phys(domain, iova_addr) : 
+> iova_addr;
+> -
+> -	return phys_to_virt(phys_addr);
+> -}
+> -
+>  static void validate_rx_csum(struct dpaa2_eth_priv *priv,
+>  			     u32 fd_status,
+>  			     struct sk_buff *skb)
+> @@ -85,9 +75,10 @@ static void free_rx_fd(struct dpaa2_eth_priv *priv,
+>  	sgt = vaddr + dpaa2_fd_get_offset(fd);
+>  	for (i = 1; i < DPAA2_ETH_MAX_SG_ENTRIES; i++) {
+>  		addr = dpaa2_sg_get_addr(&sgt[i]);
+> -		sg_vaddr = dpaa2_iova_to_virt(priv->iommu_domain, addr);
+> -		dma_unmap_page(dev, addr, DPAA2_ETH_RX_BUF_SIZE,
+> -			       DMA_BIDIRECTIONAL);
+> +		sg_vaddr = page_to_virt
+> +				(dma_unmap_page_desc(dev, addr,
+> +						    DPAA2_ETH_RX_BUF_SIZE,
+> +						    DMA_BIDIRECTIONAL));
 
-http://git.kernel.dk/cgit/linux-block/commit/?h=for-linus&id=ed348662f74c4f63537b3c188585e39cdea22713
-
-Let me know what you think, and if/when I can add your reviewed/test-by
-to them.
-
+This is doing virt -> page -> virt.  Why not just have the new
+function return the VA corresponding to the addr, which would
+match the other functions?
 -- 
-Jens Axboe
+Jonathan
 
+
+>
+>  		free_pages((unsigned long)sg_vaddr, 0);
+>  		if (dpaa2_sg_is_final(&sgt[i]))
+> @@ -143,9 +134,10 @@ static struct sk_buff *build_frag_skb(struct 
+> dpaa2_eth_priv *priv,
+>
+>  		/* Get the address and length from the S/G entry */
+>  		sg_addr = dpaa2_sg_get_addr(sge);
+> -		sg_vaddr = dpaa2_iova_to_virt(priv->iommu_domain, sg_addr);
+> -		dma_unmap_page(dev, sg_addr, DPAA2_ETH_RX_BUF_SIZE,
+> -			       DMA_BIDIRECTIONAL);
+> +		sg_vaddr = page_to_virt
+> +				(dma_unmap_page_desc(dev, sg_addr,
+> +						    DPAA2_ETH_RX_BUF_SIZE,
+> +						    DMA_BIDIRECTIONAL));
+>
+>  		sg_length = dpaa2_sg_get_len(sge);
+>
+> @@ -210,9 +202,9 @@ static void free_bufs(struct dpaa2_eth_priv *priv, 
+> u64 *buf_array, int count)
+>  	int i;
+>
+>  	for (i = 0; i < count; i++) {
+> -		vaddr = dpaa2_iova_to_virt(priv->iommu_domain, buf_array[i]);
+> -		dma_unmap_page(dev, buf_array[i], DPAA2_ETH_RX_BUF_SIZE,
+> -			       DMA_BIDIRECTIONAL);
+> +		vaddr = page_to_virt(dma_unmap_page_desc(dev, buf_array[i],
+> +							 DPAA2_ETH_RX_BUF_SIZE,
+> +							 DMA_BIDIRECTIONAL));
+>  		free_pages((unsigned long)vaddr, 0);
+>  	}
+>  }
+> @@ -369,9 +361,8 @@ static void dpaa2_eth_rx(struct dpaa2_eth_priv 
+> *priv,
+>  	/* Tracing point */
+>  	trace_dpaa2_rx_fd(priv->net_dev, fd);
+>
+> -	vaddr = dpaa2_iova_to_virt(priv->iommu_domain, addr);
+> -	dma_sync_single_for_cpu(dev, addr, DPAA2_ETH_RX_BUF_SIZE,
+> -				DMA_BIDIRECTIONAL);
+> +	vaddr = dma_sync_single_for_cpu_desc(dev, addr, 
+> DPAA2_ETH_RX_BUF_SIZE,
+> +					     DMA_BIDIRECTIONAL);
+>
+>  	fas = dpaa2_get_fas(vaddr, false);
+>  	prefetch(fas);
+> @@ -682,7 +673,8 @@ static void free_tx_fd(const struct dpaa2_eth_priv 
+> *priv,
+>  	u32 fd_len = dpaa2_fd_get_len(fd);
+>
+>  	fd_addr = dpaa2_fd_get_addr(fd);
+> -	buffer_start = dpaa2_iova_to_virt(priv->iommu_domain, fd_addr);
+> +	buffer_start = dma_sync_single_for_cpu_desc(dev, fd_addr, 
+> sizeof(*swa),
+> +						    DMA_BIDIRECTIONAL);
+>  	swa = (struct dpaa2_eth_swa *)buffer_start;
+>
+>  	if (fd_format == dpaa2_fd_single) {
+> @@ -3448,8 +3440,6 @@ static int dpaa2_eth_probe(struct fsl_mc_device 
+> *dpni_dev)
+>  	priv = netdev_priv(net_dev);
+>  	priv->net_dev = net_dev;
+>
+> -	priv->iommu_domain = iommu_get_domain_for_dev(dev);
+> -
+>  	/* Obtain a MC portal */
+>  	err = fsl_mc_portal_allocate(dpni_dev, 
+> FSL_MC_IO_ATOMIC_CONTEXT_PORTAL,
+>  				     &priv->mc_io);
+> diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.h 
+> b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.h
+> index 8a0e65b3267f..4e5183617ebd 100644
+> --- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.h
+> +++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.h
+> @@ -374,7 +374,6 @@ struct dpaa2_eth_priv {
+>
+>  	struct fsl_mc_device *dpbp_dev;
+>  	u16 bpid;
+> -	struct iommu_domain *iommu_domain;
+>
+>  	bool tx_tstamp; /* Tx timestamping enabled */
+>  	bool rx_tstamp; /* Rx timestamping enabled */
+> -- 
+> 2.17.1
