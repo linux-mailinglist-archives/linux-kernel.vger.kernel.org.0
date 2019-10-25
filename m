@@ -2,100 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64260E49F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C68DEE4A2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:43:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439690AbfJYL3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 07:29:34 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50707 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2439522AbfJYL33 (ORCPT
+        id S2439558AbfJYLnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 07:43:43 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:45153 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727283AbfJYLnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 07:29:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572002968;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9uL6B8L1AUAy/UiZQvA9Cim16okzyI5YnHL1NCMV9QY=;
-        b=d48BzWsHTqzy6ckzTzBbMxSAWuiaf0vrm54/BJ+yFoz01vYCeWp/H98Dvl+LkpRlisLH0F
-        5M9h2gs1ga82BVUljLdXT9AAxbFSzKLMTvLjlyJiiUN2Gu7fW0mlGKrmRuf3iS7nEQtqzY
-        q0vMq3B0TSPjwDhtDBXk0M34HNPELG0=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-351-gql4jOGdMU6fVGp2id9bSA-1; Fri, 25 Oct 2019 07:29:27 -0400
-Received: by mail-wr1-f71.google.com with SMTP id e14so912718wrm.21
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 04:29:26 -0700 (PDT)
+        Fri, 25 Oct 2019 07:43:43 -0400
+Received: by mail-qk1-f193.google.com with SMTP id q70so1383155qke.12
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 04:43:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:message-id:date
+         :cc:to;
+        bh=E9nwf1YnY9pgW+e3Ube7+XXgcr6xzGBKmokqCPeg0mE=;
+        b=Ml4IXHboDAqwNWI0i/qzHerMfWI34df39mlOHYlModZhSVkgOb0DSm2OQajuHR+3AS
+         puQCNAXeKUGSV4h1A1krXJmC3dajIbBkyY1J46X9jAOt7WXfJsYTdfC0jhZwqzaa017v
+         g0O5utdk6/B3q5rEiLY50JOdWhwvPj8yDF4E4bLg3SkzeMt8gbBBAJFI9n88B/kwVyvI
+         nqwrnjqJ1hxjM7cMqmLJ7L5Rkm0fY5AwB2xjAxu6GmTU1cALGRjBU60DIvIkdg/ixtWU
+         3lmKtGU2iGzY+fBau3KjBnygS2eYfLS0wUYVQi32Wns6AcTHvtkBsmNJzXl6dJw8VYNB
+         aKjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1a/jvPs2SyoieuY5sUx5bSduqfiYAGGvkqIa6LCkCRY=;
-        b=BikOp1uXl6f4XGwBjxLqVkQfLFXUqBodPFyjcf3o3Cf4/Enkzs8bLfNAr9B1EptZGO
-         XFdLK5uPrL/WPMVR0JfVnouOib6xg+Oft0/EfWrdC7H93w2jH1XZGvLAnRnl9hyYxbpu
-         muFmz4y5nWZq5PWAMHD9Z/NimZCRTW+mD4nTZ1R7J8CHnIvSCL14pUz/tLFji6/SNE7v
-         SrliLsUJoWRJlRFF4BFp0jEtE/ATf6JXEEdj9fArlhfUG4aFU1nT/4Xl2UdXc8p75mbI
-         W/MQ/uDSn2sRxyW4E6G5M62fEP9zw8P78sDV+xGcMHqvArtFnTbYJuvi3u0jDhA+3kNY
-         mFxQ==
-X-Gm-Message-State: APjAAAWwDjVzc6fOtcXZrwNDy+q2PsPNuI3FS1SY5eiGf20UxMJ6IaBb
-        jlRo4nhKHAopdy9D0koEeQDQcmh2wDHDtoHrsbsRrJ8wSnOFrCStwBhPVD3LnGr+KQnfwZOsOV4
-        tfoSsuYclCN7qvR3trNmK5GMi
-X-Received: by 2002:adf:e7cf:: with SMTP id e15mr2518269wrn.303.1572002965917;
-        Fri, 25 Oct 2019 04:29:25 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwvfPJJ2c/wmZStZlRDQhI1hTNTMWyooEQFpsvxbtMEd+kN4kjZa+gDkGbcqMbI/WXcN+LFaw==
-X-Received: by 2002:adf:e7cf:: with SMTP id e15mr2518261wrn.303.1572002965778;
-        Fri, 25 Oct 2019 04:29:25 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (185-79-95-246.pool.digikabel.hu. [185.79.95.246])
-        by smtp.gmail.com with ESMTPSA id l18sm3974080wrn.48.2019.10.25.04.29.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 04:29:25 -0700 (PDT)
-From:   Miklos Szeredi <mszeredi@redhat.com>
-To:     "Eric W . Biederman" <ebiederm@xmission.com>
-Cc:     linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 5/5] ovl: unprivieged mounts
-Date:   Fri, 25 Oct 2019 13:29:17 +0200
-Message-Id: <20191025112917.22518-6-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191025112917.22518-1-mszeredi@redhat.com>
-References: <20191025112917.22518-1-mszeredi@redhat.com>
-MIME-Version: 1.0
-X-MC-Unique: gql4jOGdMU6fVGp2id9bSA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:message-id:date:cc:to;
+        bh=E9nwf1YnY9pgW+e3Ube7+XXgcr6xzGBKmokqCPeg0mE=;
+        b=NN0dpHfG5j9LW4wKRGpSiYaa7Djt+FzPydbOKKR+Gw3cfI6HgCblTydcMSLNrWIymw
+         vjv58kLXmJeLDyGca/HlKfarnSVcYaVIxJkVcGMfELVSwh8ElXFIx+3aqixQk8x5jIjB
+         8PtOjwh3luM6WkkVxTVoTm2/lApMMi4RZao8UsdSXnRdxuTQuwdARsfI6HUKZ2pyZ6wq
+         v9C2JVX3oUcQO8FbFPtZCp5ZXjoXelcTIwFyhsTizmlxZ8YvF8fSjj3/GLvQ07jsUsJV
+         81i+82eCOt4e58R3aN9VjX5VgthsPR4Ao68ZKOwMJBhtxdx6EF3vBm9JxUhrLYixXsq7
+         jjyw==
+X-Gm-Message-State: APjAAAUXeoOCtZY4rr0xBcbu1MrUdmmBnScCBmSRi+laoKWt1iS0Kwlj
+        65gmRTfI0jrw3fgkT18LUV2DQdspjtKL2A==
+X-Google-Smtp-Source: APXvYqwHiSXHt83C8STql3OpjAcR4WCFyY4taXIzTx4s/TJDoXDAUTaaIe2TPILSQJU3aE1Kjpx27A==
+X-Received: by 2002:a05:620a:4f:: with SMTP id t15mr2414890qkt.286.1572002345463;
+        Fri, 25 Oct 2019 04:19:05 -0700 (PDT)
+Received: from [10.250.15.239] ([76.191.34.78])
+        by smtp.gmail.com with ESMTPSA id l5sm861600qtj.52.2019.10.25.04.19.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2019 04:19:04 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re:  [PATCH 2/2] mm, vmstat: reduce zone->lock holding time by /proc/pagetypeinfo
+Message-Id: <192965B3-B446-499C-AEE8-DFF087D46B87@lca.pw>
+Date:   Fri, 25 Oct 2019 07:18:37 -0400
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>, Waiman Long <longman@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Aquini <aquini@redhat.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+To:     Michal Hocko <mhocko@kernel.org>
+X-Mailer: iPhone Mail (17A878)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable unprivileged user namespace mounts of overlayfs.  Overlayfs's
-permission model (*) ensures that the mounter itself cannot gain additional
-privileges by the act of creating an overlayfs mount.
+=EF=BB=BF
 
-This feature request is coming from the "rootless" container crowd.
+> On Oct 25, 2019, at 3:26 AM, Michal Hocko <mhocko@kernel.org> wrote:
+>=20
+> Considering the pagetypeinfo is a debugging tool we do not really need
+> exact numbers here. The primary reason to look at the outuput is to see
+> how pageblocks are spread among different migratetypes and low number of
+> pages is much more interesting therefore putting a bound on the number
+> of pages on the free_list sounds like a reasonable tradeoff.
+>=20
+> The new output will simply tell
+> [...]
+> Node    6, zone   Normal, type      Movable >100000 >100000 >100000 >10000=
+0  41019  31560  23996  10054   3229    983    648
 
-(*) Documentation/filesystems/overlayfs.txt#Permission model
-
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/overlayfs/super.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index d122c07f2a43..c7f21a049c6b 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -1739,6 +1739,7 @@ static struct dentry *ovl_mount(struct file_system_ty=
-pe *fs_type, int flags,
- static struct file_system_type ovl_fs_type =3D {
- =09.owner=09=09=3D THIS_MODULE,
- =09.name=09=09=3D "overlay",
-+=09.fs_flags=09=3D FS_USERNS_MOUNT,
- =09.mount=09=09=3D ovl_mount,
- =09.kill_sb=09=3D kill_anon_super,
- };
---=20
-2.21.0
-
+It was mentioned that developers could use this file is to see the movement o=
+f those numbers for debugging, so this supposed to introduce regressions as t=
+here is no movement anymore for those 100k+ items?=
