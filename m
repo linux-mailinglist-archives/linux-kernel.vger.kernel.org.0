@@ -2,56 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0161CE41D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 04:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB2E9E41BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 04:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391015AbfJYCs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 22:48:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55198 "EHLO mail.kernel.org"
+        id S2390758AbfJYCrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 22:47:45 -0400
+Received: from gate.crashing.org ([63.228.1.57]:53148 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728416AbfJYCs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 22:48:58 -0400
-Received: from localhost (unknown [38.98.37.137])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C31121929;
-        Fri, 25 Oct 2019 02:48:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571971737;
-        bh=nLvmHTl9M+EjHvOkgVDNxdCekjne3edjHpCDMdQ+qIk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=h2PYV4sArSzNuN8BzLdUsbts1x+CX7QREnpZ+96d2SyA//xSW4bRwlAxwkdpOCKqL
-         BPd3aq7n2WonoV18ng/fMH9bhaLTArifhGlDo5auD7ohhsNWHel+F/1tJrnxMruYdd
-         147pI4UgtStqwsesdtxbBOVhaL7wxRQC2/o3e8ig=
-Date:   Thu, 24 Oct 2019 22:45:08 -0400
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Cc:     linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/8] staging: exfat: Clean up namespace pollution, part 1
-Message-ID: <20191025024508.GA344075@kroah.com>
-References: <20191023052752.693689-1-Valdis.Kletnieks@vt.edu>
- <20191023052752.693689-2-Valdis.Kletnieks@vt.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023052752.693689-2-Valdis.Kletnieks@vt.edu>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1728416AbfJYCro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 22:47:44 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x9P2lPkV002163;
+        Thu, 24 Oct 2019 21:47:26 -0500
+Message-ID: <572a7d510ace5e5a5ba41c4774d330133291c82a.camel@kernel.crashing.org>
+Subject: [PATCH] net: ethernet: ftgmac100: Fix DMA coherency issue with SW
+ checksum
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vijay Khemka <vijaykhemka@fb.com>, openbmc@lists.ozlabs.org,
+        Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org
+Date:   Fri, 25 Oct 2019 13:47:24 +1100
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 01:27:44AM -0400, Valdis Kletnieks wrote:
-> Make as much as possible static.  We're over-exuberant here for the benefit
-> of a following patch, as the compiler will flag now-unused static code
+We are calling the checksum helper after the dma_map_single()
+call to map the packet. This is incorrect as the checksumming
+code will touch the packet from the CPU. This means the cache
+won't be properly flushes (or the bounce buffering will leave
+us with the unmodified packet to DMA).
 
-This adds a bunch of compiler warnings, which isn't ok.  Please fix this
-up to be correct and not add build warnings, as it just hides real
-issues.
+This moves the calculation of the checksum & vlan tags to
+before the DMA mapping.
 
-I'll drop this series and wait for a new version with this fixed up.
+This also has the side effect of fixing another bug: If the
+checksum helper fails, we goto "drop" to drop the packet, which
+will not unmap the DMA mapping.
 
-thanks,
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Fixes: 05690d633f30 ftgmac100: Upgrade to NETIF_F_HW_CSUM
+CC: stable@vger.kernel.org [v4.12+]
+---
+ drivers/net/ethernet/faraday/ftgmac100.c | 25 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
-greg k-h
+diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
+index 9b7af94a40bb..96e9565f1e08 100644
+--- a/drivers/net/ethernet/faraday/ftgmac100.c
++++ b/drivers/net/ethernet/faraday/ftgmac100.c
+@@ -727,6 +727,18 @@ static netdev_tx_t ftgmac100_hard_start_xmit(struct sk_buff *skb,
+ 	 */
+ 	nfrags = skb_shinfo(skb)->nr_frags;
+ 
++	/* Setup HW checksumming */
++	csum_vlan = 0;
++	if (skb->ip_summed == CHECKSUM_PARTIAL &&
++	    !ftgmac100_prep_tx_csum(skb, &csum_vlan))
++		goto drop;
++
++	/* Add VLAN tag */
++	if (skb_vlan_tag_present(skb)) {
++		csum_vlan |= FTGMAC100_TXDES1_INS_VLANTAG;
++		csum_vlan |= skb_vlan_tag_get(skb) & 0xffff;
++	}
++
+ 	/* Get header len */
+ 	len = skb_headlen(skb);
+ 
+@@ -753,19 +765,6 @@ static netdev_tx_t ftgmac100_hard_start_xmit(struct sk_buff *skb,
+ 	if (nfrags == 0)
+ 		f_ctl_stat |= FTGMAC100_TXDES0_LTS;
+ 	txdes->txdes3 = cpu_to_le32(map);
+-
+-	/* Setup HW checksumming */
+-	csum_vlan = 0;
+-	if (skb->ip_summed == CHECKSUM_PARTIAL &&
+-	    !ftgmac100_prep_tx_csum(skb, &csum_vlan))
+-		goto drop;
+-
+-	/* Add VLAN tag */
+-	if (skb_vlan_tag_present(skb)) {
+-		csum_vlan |= FTGMAC100_TXDES1_INS_VLANTAG;
+-		csum_vlan |= skb_vlan_tag_get(skb) & 0xffff;
+-	}
+-
+ 	txdes->txdes1 = cpu_to_le32(csum_vlan);
+ 
+ 	/* Next descriptor */
+
+
