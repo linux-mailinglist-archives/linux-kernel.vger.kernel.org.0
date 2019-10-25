@@ -2,119 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB53CE4AA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:00:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 511DCE4AA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:00:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502537AbfJYMAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 08:00:20 -0400
-Received: from mout.gmx.net ([212.227.17.22]:37445 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393571AbfJYMAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 08:00:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1572004802;
-        bh=QLKXtV17sfPFmWYlxFIwH+LjXFG47KnZbF1kx/5IACU=;
-        h=X-UI-Sender-Class:Subject:From:Reply-To:To:Cc:Date:In-Reply-To:
-         References;
-        b=d7JuN3VWX5OlemphcXkYhq7uaMIighoycPKHKdXiWTk5JI4B8v9AXTuDRvo/+sycG
-         xmSUGW6zSglxoXRlL7n+TQEPh6mhvV7/dW5F3zHy9B6EkpNGFXseCOi4IJ5CHzLE+M
-         Zpa/dz9gAerPE8mu6ReMncCR9l93tvl0TDAorZWA=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from bear.fritz.box ([80.128.101.49]) by mail.gmx.com (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MN5if-1igsYZ2xpF-00J1bu; Fri, 25
- Oct 2019 14:00:02 +0200
-Message-ID: <eab6798a6081fba94353be71681fcd8c7dcf8011.camel@gmx.de>
-Subject: Re: mlockall(MCL_CURRENT) blocking infinitely
-From:   Robert Stupp <snazy@gmx.de>
-Reply-To: snazy@snazy.de
-To:     Michal Hocko <mhocko@kernel.org>, snazy@snazy.de
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>
-Date:   Fri, 25 Oct 2019 13:59:59 +0200
-In-Reply-To: <20191025115038.GF17610@dhcp22.suse.cz>
-References: <4576b336-66e6-e2bb-cd6a-51300ed74ab8@snazy.de>
-         <b8ff71f5-2d9c-7ebb-d621-017d4b9bc932@infradead.org>
-         <20191025092143.GE658@dhcp22.suse.cz>
-         <70393308155182714dcb7485fdd6025c1fa59421.camel@gmx.de>
-         <20191025114633.GE17610@dhcp22.suse.cz>
-         <20191025115038.GF17610@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        id S2503802AbfJYMAe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:00:34 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51500 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2409923AbfJYMAe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 08:00:34 -0400
+Received: by mail-wm1-f68.google.com with SMTP id q70so1842896wme.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 05:00:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UhHAdHsaOmL633PWB+Nv1shzHRTR1yQ6YiNmAxA5vZ0=;
+        b=c+HAYxssJ6PmAichZwcofghRZRRfb4FXHmThSMVT18jqwxfH98y+ArRu2B2v81lO1b
+         rAKP+Eij3RVSTBFtNNMSwr2CCaIIotMdQfx4XtS/EghtV2mDxqZt/sBAUYYZTDmY9Vvd
+         ggD6H5htobsWbw22Imh87vdNeiRFjqgPnt0tJRUJJ0Fy/bp8uswnmR5Hy06uAaeulyZL
+         HEHgT0knd3yfzPOYH3jWqzZCi7wQstYA10GvBYVADJo5O7x80cGLTytmIZdvDQVeRdA0
+         jevbZifhvawJlFkXGMmZ/G8sJrextdLlW7M91txbhXPSxEXBPnOq8Pelw8bjIVcrr6/2
+         s0Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UhHAdHsaOmL633PWB+Nv1shzHRTR1yQ6YiNmAxA5vZ0=;
+        b=N3OdmJq/4o3jPpOJijsfVCC0Me9+TcwwEglr6DBXuvUTMQE93Y4Aj6Z1ww28iISjhx
+         LfKqOXG8n5b/C4YsQitzs58PixfgdDPooa4yDKye1qDvWRHST2yLJmImjQbUM7l61xkW
+         NcKLF3e/aHKxQDui8hDp6D7Z4e67R93tWAS/Yv67Lnt5bo65oxXurCRVa51vQPHnsiBa
+         lUeRltJBXYw0xwID/unicOe0XVoigkmkFtTaaD2qtQyVI3rcCJZeOl5KkWQG2bnSYVgu
+         rXas+X+COPONg+KPT/4AsMXPknniY7mXhw/rEr5GLUiwufedQbBhsIXIHPFU5/3ZfNhf
+         dguA==
+X-Gm-Message-State: APjAAAXlA2TRPrLzFF16uHr8+toPQtasDzUscQH6yRCjOuyIRFe97rt1
+        /9ktmmRee6XP1iJSmplq251p+jWW9VOaQ6quqYQ=
+X-Google-Smtp-Source: APXvYqz53WRnRzuRZle2h9/cd3RYP1HGa5S/+d6xQfKRmQmSIRqOEf2+ejx8NuH4glFtcf2jjdWIqZsCaCeFhOy8gv4=
+X-Received: by 2002:a1c:1d53:: with SMTP id d80mr2234228wmd.88.1572004832208;
+ Fri, 25 Oct 2019 05:00:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:L2t+JTSwqitjznGbUvYHd13raRoRwOPCm3kUjC2Vlflm80ujit3
- wY1czjQ6GvrAu7Bq1SX3fPBsVf3AtTjd021mjCSEZj2mo1rBBXgHlO5qiY43ZbUKCdNmHSL
- WueQLkLIm+6EUTuxZmnj74oTJ/2SAeOIGqYDHQ6Qoer49jdaPLWk0mjrSODiZv0UoulIWI1
- MKDYU/7rSP19+ArJ1/svA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:caOO7iEICsk=:Z99ZqXlGBXrIGF+94jMRzE
- McA/2bHBx1Gk6U1swxRMuZFFJLMcaN3mnjZoEM6jnRdhrMBb7gXNhWX/A4cPCz9TwI/jIxmr+
- bQeRd0QcTfRQqWtthrFx3rH5Mp477tk0YYZinCLdwSfKhx1bWMPHsHbpOielVSEhX04O14Pt8
- zruNAK/H7QxErDSfyizZclVljNJYh3NHCHCzpBLJrsIxTpiCT5n51+R9Yjd50FaKgvRqA9AFF
- ogNfa0DAZCerjSBs4NKIe/B//y1MVCMCzXk1Nwdsft25tj5VOV28OBf0Gh8+SrH8pZ5XlJ6kP
- 2DQl7V4st3YUov0UvKcGzN93fcUEon07kAPNlqkvHJ/gCwUc9sV3mUsvf/YR+nZnYy3Ov5IRE
- fQVcWHQRt/5dbJ5zQAQuZREap4l1QQp3EpT23NLHGLx/DhVC/JwcAxWROuQVHaYGgEAO9fMZn
- q5YuHzFsDMazzHyAo57fjEIsFOZLkVtEAAUyhI1TEKZjHq/OBIcX9BSTNM41msK66F7M2ElpE
- PZ6FoStR3vCsW8qW0S9+HdPPyTXRPcNy6lrROw9J+IrhdvFukRCjrSEzW0iCLlkr9X5JQGKDE
- BPO98yhwNdTQhsxumUFU9fJ6K814+btUj7IPZRK08mFUf54o2rNDK/m1IJapeEj6UpSR0zAx+
- eOVzn4vuv3zUpZmOC+vwYM209QE6DISHVb8zJ5b0aIPq2hU1Qz/i8b6FIfmRU87dzFDxn3BDK
- MiDwkB/AHtxDe+akT/ROj5PQZ6IohBBruv9q4cYvpXV5c9FH0u3I6pApr36WrUUo3j0+8bfrA
- TUwW3QFalvQFnO5+hvJmIGl2SnJHlZBW+x+DDpE+mCZsMnU5dxE7f3opng/u2EcTU9ePC+ZOw
- qoWmztI/4DcPyucM7jAfJjVKkvIO8z7/g8kkXiP1vtj92VvlZaMN27YUvl8s5+n64z4MKruKQ
- UqpMGm6Yxg0TZBuq0fA5jMqbZmwSnrT+VWHEefwUP3So1/yEE7guUCd/46Sa1Tif2BKG8DbDI
- KcgoSJyOBlxOMKtv8ruvbwvcDPdE1kRqPh5Vnd4M6hrT5/s+EpHwmIkFJXNosZz3odFf+tXaw
- 9Am7bspInS9T+lbbJlKs6I3uVU5+pJY5WQ8U785EIrr8xim+vQN+AmX6HGpIwVsOyS7Ybzj1b
- 0arE3d+3PBoU4tZMJZ+iW44NvQLK6E7L1eYy/xGIJbZA1nkDTq8dharjDot/J9j5l2RPQZqPc
- NCXdBq+YqEeUIsmEepoWj6QT1su1nkBPO5NK9bA==
+References: <20191024142939.25920-1-andrey.zhizhikin@leica-geosystems.com>
+ <20191024142939.25920-3-andrey.zhizhikin@leica-geosystems.com>
+ <20191025080655.GF32742@smile.fi.intel.com> <CAHtQpK7P2X42WxZzok+XVZESV7O_JWK3Th7JMnMQsaq6f0gELw@mail.gmail.com>
+ <20191025104925.GR32742@smile.fi.intel.com>
+In-Reply-To: <20191025104925.GR32742@smile.fi.intel.com>
+From:   Andrey Zhizhikin <andrey.z@gmail.com>
+Date:   Fri, 25 Oct 2019 14:00:21 +0200
+Message-ID: <CAHtQpK6OLkzSO_k6qv_Le3w8bSocwwZWiFSaOWLJLjDkVNSMCQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mfd: add regulator cell to Cherry Trail Whiskey Cove PMIC
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-10-25 at 13:50 +0200, Michal Hocko wrote:
-> On Fri 25-10-19 13:46:33, Michal Hocko wrote:
-> > On Fri 25-10-19 13:02:23, Robert Stupp wrote:
-> > > On Fri, 2019-10-25 at 11:21 +0200, Michal Hocko wrote:
-> > > > On Thu 24-10-19 16:34:46, Randy Dunlap wrote:
-> > > > > [adding linux-mm + people]
-> > > > >
-> > > > > On 10/24/19 12:36 AM, Robert Stupp wrote:
-> > > > > > Hi guys,
-> > > > > >
-> > > > > > I've got an issue with `mlockall(MCL_CURRENT)` after
-> > > > > > upgrading
-> > > > > > Ubuntu 19.04 to 19.10 - i.e. kernel version change from
-> > > > > > 5.0.x to
-> > > > > > 5.3.x.
-> > > > > >
-> > > > > > The following simple program hangs forever with one CPU
-> > > > > > running
-> > > > > > at 100% (kernel):
+On Fri, Oct 25, 2019 at 12:49 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Fri, Oct 25, 2019 at 11:16:22AM +0200, Andrey Zhizhikin wrote:
+> > On Fri, Oct 25, 2019 at 10:07 AM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Thu, Oct 24, 2019 at 02:29:39PM +0000, Andrey Zhizhikin wrote:
+> > > > Add a regulator mfd cell to Whiskey Cove PMIC driver, which is used to
+> > > > supply various voltage rails.
 > > > >
-> > > > Can you capture everal snapshots of proc/$(pidof
-> > > > $YOURTASK)/stack
-> > > > while
-> > > > this is happening?
+> > > > In addition, make the initialization of this mfd driver early enough in
+> > > > order to provide regulator cell to mmc sub-system when it is initialized.
+> > >
+> > > Doesn't deferred probe mechanism work for you?
+> > > MMC core returns that error till we have the driver initialized.
+> >
+> > This would work for mmc sub-system, but my idea was that later when
+> > more cells are added to this mfd - it might turn out that we would
+> > require an early initialization anyway. So I decided to take an
+> > opportunity to adjust it with this patch as well, and this is what I
+> > roughly explained in the commit message. When I'm reading it now,
+> > exactly this point was not mentioned in commit message at all, and I
+> > rather coupled the early init with mmc sub-system, which creates a
+> > source of confusion here. I guess if there would be no other
+> > objections about early init - I'd go with v2 of this patch, where I
+> > would clean-up the point below and adjust the commit description.
+> >
+> > Thanks a lot for pointing this out!
 >
-> Btw. I have tested
-> $ cat test_mlockall.c
-> #include <stdio.h>
-> #include <sys/mman.h>
-> int main(char** argv) {
-> 	printf("Before mlockall(MCL_CURRENT|MCL_FUTURE)\n");
-> 	// works in 5.0
-> 	// hangs forever w/ 5.1 and newer
-> 	int e =3D mlockall(MCL_CURRENT|MCL_FUTURE);
-> 	printf("After mlockall(MCL_CURRENT|MCL_FUTURE) %d\n", e);
-> }
+> > > > -static struct i2c_driver cht_wc_driver = {
+> > > > +static struct i2c_driver cht_wc_i2c_driver = {
+> > >
+> > > Renaming is not explained in the commit message.
+> >
+> > True, this point I forgot to mention. Actually, this is tightly
+> > coupled with the fact that mfd driver has been moved to an earlier
+> > init stage and since it does belong to I2C sub-system (and represented
+> > by i2c_device structure) - I decided to make a name sound more
+> > logical.
 >
-> $./test_mlockall
-> Before mlockall(MCL_CURRENT|MCL_FUTURE)
-> After mlockall(MCL_CURRENT|MCL_FUTURE) 0
+> So, seems you have three changes in one patch. Please, split accordingly.
 
-I suspect, that it's something that's "special" on my machine. But I've
-got no clue what that might be. Do you think it makes sense to try with
-all the spectre/meltdown mitigations disabled? Or SMT disabled?
+Got it, thanks! Now I see it would be more logical to have 3 patches
+in the following order:
+- i2c driver renaming
+- additional regulator cell
+- early init
 
+If you don't mind - I'd wait for other people to comment on this
+patch, collect all points, and then come up with v2 of this patch (and
+whole series in fact).
+
+>
+> In v2 also Cc all stakeholders I mentioned.
+
+Would certainly do!
+
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
+
+-- 
+Regards,
+Andrey.
