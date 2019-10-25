@@ -2,194 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C30F1E5210
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 19:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0905E5215
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 19:12:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633212AbfJYRJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 13:09:37 -0400
-Received: from foss.arm.com ([217.140.110.172]:43456 "EHLO foss.arm.com"
+        id S2505823AbfJYRL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 13:11:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:43494 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409415AbfJYRJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 13:09:37 -0400
+        id S2502873AbfJYRLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 13:11:03 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D3A2328;
-        Fri, 25 Oct 2019 10:09:36 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 865353F71A;
-        Fri, 25 Oct 2019 10:09:33 -0700 (PDT)
-From:   James Morse <james.morse@arm.com>
-Subject: Re: [PATCH V9 2/2] arm64/mm: Enable memory hot remove
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-        will@kernel.org, mark.rutland@arm.com, david@redhat.com,
-        cai@lca.pw, logang@deltatee.com, cpandya@codeaurora.org,
-        arunks@codeaurora.org, dan.j.williams@intel.com,
-        mgorman@techsingularity.net, osalvador@suse.de,
-        ard.biesheuvel@arm.com, steve.capper@arm.com, broonie@kernel.org,
-        valentin.schneider@arm.com, Robin.Murphy@arm.com,
-        steven.price@arm.com, suzuki.poulose@arm.com, ira.weiny@intel.com
-References: <1570609308-15697-1-git-send-email-anshuman.khandual@arm.com>
- <1570609308-15697-3-git-send-email-anshuman.khandual@arm.com>
- <20191010113433.GI28269@mbp> <f51cdb20-ddc4-4fb7-6c45-791d2e1e690c@arm.com>
- <20191018094825.GD19734@arrakis.emea.arm.com>
- <f5581644-42b7-097e-6a86-ba7db9d0b544@arm.com>
-Message-ID: <5db2aab1-1dde-4545-a03d-e7ae2d86aec7@arm.com>
-Date:   Fri, 25 Oct 2019 18:09:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <f5581644-42b7-097e-6a86-ba7db9d0b544@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09FEE328;
+        Fri, 25 Oct 2019 10:11:02 -0700 (PDT)
+Received: from e108454-lin.cambridge.arm.com (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06E883F71A;
+        Fri, 25 Oct 2019 10:11:00 -0700 (PDT)
+From:   Julien Grall <julien.grall@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     will@kernel.org, catalin.marinas@arm.com, suzuki.poulose@arm.com,
+        Dave.Martin@arm.com, Julien Grall <julien.grall@arm.com>
+Subject: [PATCH] arm64: cpufeature: Export Armv8.6 Matrix feature to userspace
+Date:   Fri, 25 Oct 2019 18:10:56 +0100
+Message-Id: <20191025171056.30641-1-julien.grall@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys,
+This patch provides support for reporting the presence of Armv8.6
+Matrix and its optional features to userspace.
 
-On 21/10/2019 10:53, Anshuman Khandual wrote:
-> On 10/18/2019 03:18 PM, Catalin Marinas wrote:
->> On Fri, Oct 11, 2019 at 08:26:32AM +0530, Anshuman Khandual wrote:
->>> On 10/10/2019 05:04 PM, Catalin Marinas wrote:
->>>> Mark Rutland mentioned at some point that, as a preparatory patch to
->>>> this series, we'd need to make sure we don't hot-remove memory already
->>>> given to the kernel at boot. Any plans here?
->>>
->>> Hmm, this series just enables platform memory hot remove as required from
->>> generic memory hotplug framework. The path here is triggered either from
->>> remove_memory() or __remove_memory() which takes physical memory range
->>> arguments like (nid, start, size) and do the needful. arch_remove_memory()
->>> should never be required to test given memory range for anything including
->>> being part of the boot memory.
->>
->> Assuming arch_remove_memory() doesn't (cannot) check, is there a risk on
-> 
-> Platform can definitely enumerate boot memory ranges. But checking on it in
-> arch_remove_memory() which deals with actual procedural details might not be
-> ideal IMHO. Refusing a requested removal attempt should have been done up in
-> the call chain. This will require making generic hot plug reject any removal
-> request which falls within enumerated boot memory. IFAICS currently there is
-> no generic way to remember which memory came as part of the boot process.
-> Probably be a new MEMBLOCK flag will do.
+Signed-off-by: Julien Grall <julien.grall@arm.com>
 
-Memblock flags are fun because they have to be provided to the walkers like
-for_each_mem_range().
+---
 
-Unless hot remove is a hot path, it should be enough to check against the UEFI memory map
-or DT memory node. (we already have helpers to query the attributes from the memory map at
-runtime, so it is still available).
+This based on [1] + commit ec52c7134b1f "arm64: cpufeature: Treat
+ID_AA64ZFR0_EL1 as RAZ when SVE is not enabled" (taken from v5.4-rc4).
 
+[1]  arm64/for-next/elf-hwcap-docs
+---
+ Documentation/arm64/cpu-feature-registers.rst |  8 ++++++++
+ Documentation/arm64/elf_hwcaps.rst            | 15 +++++++++++++++
+ arch/arm64/include/asm/hwcap.h                |  4 ++++
+ arch/arm64/include/asm/sysreg.h               |  7 +++++++
+ arch/arm64/include/uapi/asm/hwcap.h           |  4 ++++
+ arch/arm64/kernel/cpufeature.c                | 11 +++++++++++
+ arch/arm64/kernel/cpuinfo.c                   |  4 ++++
+ 7 files changed, 53 insertions(+)
 
->> arm64 that, for example, one removes memory available at boot and then
->> kexecs a new kernel? Does the kexec tool present the new kernel with the
->> original memory map?
-> I dont know, probably James can help here. But as I had mentioned earlier,
-> the callers of remove_memory() should be able to control that. ACPI should
-> definitely be aware about which ranges were part of boot memory and refrain
-> from removing any subset, if the platform is known to have problems with
-> any subsequent kexec operation because the way boot memory map get used.
-> 
-> Though I am not much aware about kexec internals, it should inherit the
-> memory state at given point in time
+diff --git a/Documentation/arm64/cpu-feature-registers.rst b/Documentation/arm64/cpu-feature-registers.rst
+index ffcf4e2c71ef..d1d6d56a7b08 100644
+--- a/Documentation/arm64/cpu-feature-registers.rst
++++ b/Documentation/arm64/cpu-feature-registers.rst
+@@ -193,6 +193,8 @@ infrastructure:
+      +------------------------------+---------+---------+
+      | Name                         |  bits   | visible |
+      +------------------------------+---------+---------+
++     | I8MM                         | [52-55] |    y    |
++     +------------------------------+---------+---------+
+      | SB                           | [36-39] |    y    |
+      +------------------------------+---------+---------+
+      | FRINTTS                      | [32-35] |    y    |
+@@ -227,6 +229,12 @@ infrastructure:
+      +------------------------------+---------+---------+
+      | Name                         |  bits   | visible |
+      +------------------------------+---------+---------+
++     | F64MM                        | [56-59] |    y    |
++     +------------------------------+---------+---------+
++     | F32MM                        | [52-55] |    y    |
++     +------------------------------+---------+---------+
++     | I8MM                         | [44-47] |    y    |
++     +------------------------------+---------+---------+
+      | SM4                          | [43-40] |    y    |
+      +------------------------------+---------+---------+
+      | SHA3                         | [35-32] |    y    |
+diff --git a/Documentation/arm64/elf_hwcaps.rst b/Documentation/arm64/elf_hwcaps.rst
+index 7fa3d215ae6a..b2bcc6868f4a 100644
+--- a/Documentation/arm64/elf_hwcaps.rst
++++ b/Documentation/arm64/elf_hwcaps.rst
+@@ -204,6 +204,21 @@ HWCAP2_FRINT
+ 
+     Functionality implied by ID_AA64ISAR1_EL1.FRINTTS == 0b0001.
+ 
++HWCAP2_SVEI8MM
++
++    Functionality implied by ID_AA64ZFR0_EL1.I8MM == 0b0001.
++
++HWCAP2_SVEF32MM
++
++    Functionality implied by ID_AA64ZFR0_EL1.F32MM == 0b0001.
++
++HWCAP2_SVEF64MM
++
++    Functionality implied by ID_AA64ZFR0_EL1.F64MM == 0b0001.
++
++HWCAP2_I8MM
++
++    Functionality implied by ID_AA64ISAR1_EL1.I8MM == 0b0001.
+ 
+ 4. Unused AT_HWCAP bits
+ -----------------------
+diff --git a/arch/arm64/include/asm/hwcap.h b/arch/arm64/include/asm/hwcap.h
+index 3d2f2472a36c..99dc0e08b4d3 100644
+--- a/arch/arm64/include/asm/hwcap.h
++++ b/arch/arm64/include/asm/hwcap.h
+@@ -86,6 +86,10 @@
+ #define KERNEL_HWCAP_SVESM4		__khwcap2_feature(SVESM4)
+ #define KERNEL_HWCAP_FLAGM2		__khwcap2_feature(FLAGM2)
+ #define KERNEL_HWCAP_FRINT		__khwcap2_feature(FRINT)
++#define KERNEL_HWCAP_SVEI8MM		__khwcap2_feature(SVEI8MM)
++#define KERNEL_HWCAP_SVEF32MM		__khwcap2_feature(SVEF32MM)
++#define KERNEL_HWCAP_SVEF64MM		__khwcap2_feature(SVEF64MM)
++#define KERNEL_HWCAP_I8MM		__khwcap2_feature(I8MM)
+ 
+ /*
+  * This yields a mask that user programs can use to figure out what
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index 972d196c7714..35b27a9620ef 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -553,6 +553,7 @@
+ #define ID_AA64ISAR0_AES_SHIFT		4
+ 
+ /* id_aa64isar1 */
++#define ID_AA64ISAR1_I8MM_SHIFT		52
+ #define ID_AA64ISAR1_SB_SHIFT		36
+ #define ID_AA64ISAR1_FRINTTS_SHIFT	32
+ #define ID_AA64ISAR1_GPI_SHIFT		28
+@@ -605,12 +606,18 @@
+ #define ID_AA64PFR1_SSBS_PSTATE_INSNS	2
+ 
+ /* id_aa64zfr0 */
++#define ID_AA64ZFR0_F64MM_SHIFT		56
++#define ID_AA64ZFR0_F32MM_SHIFT		52
++#define ID_AA64ZFR0_I8MM_SHIFT		44
+ #define ID_AA64ZFR0_SM4_SHIFT		40
+ #define ID_AA64ZFR0_SHA3_SHIFT		32
+ #define ID_AA64ZFR0_BITPERM_SHIFT	16
+ #define ID_AA64ZFR0_AES_SHIFT		4
+ #define ID_AA64ZFR0_SVEVER_SHIFT	0
+ 
++#define ID_AA64ZFR0_F64MM		0x1
++#define ID_AA64ZFR0_F32MM		0x1
++#define ID_AA64ZFR0_I8MM		0x1
+ #define ID_AA64ZFR0_SM4			0x1
+ #define ID_AA64ZFR0_SHA3		0x1
+ #define ID_AA64ZFR0_BITPERM		0x1
+diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
+index a1e72886b30c..10f207b81091 100644
+--- a/arch/arm64/include/uapi/asm/hwcap.h
++++ b/arch/arm64/include/uapi/asm/hwcap.h
+@@ -65,5 +65,9 @@
+ #define HWCAP2_SVESM4		(1 << 6)
+ #define HWCAP2_FLAGM2		(1 << 7)
+ #define HWCAP2_FRINT		(1 << 8)
++#define HWCAP2_SVEI8MM		(1 << 9)
++#define HWCAP2_SVEF32MM		(1 << 10)
++#define HWCAP2_SVEF64MM		(1 << 11)
++#define HWCAP2_I8MM		(1 << 12)
+ 
+ #endif /* _UAPI__ASM_HWCAP_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 80f459ad0190..6d196c66f80d 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -135,6 +135,7 @@ static const struct arm64_ftr_bits ftr_id_aa64isar0[] = {
+ };
+ 
+ static const struct arm64_ftr_bits ftr_id_aa64isar1[] = {
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_I8MM_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_SB_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_FRINTTS_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_PTR_AUTH),
+@@ -177,6 +178,12 @@ static const struct arm64_ftr_bits ftr_id_aa64pfr1[] = {
+ 
+ static const struct arm64_ftr_bits ftr_id_aa64zfr0[] = {
+ 	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
++		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_F64MM_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
++		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_F32MM_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
++		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_I8MM_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
+ 		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_SM4_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
+ 		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_SHA3_SHIFT, 4, 0),
+@@ -1650,6 +1657,7 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+ 	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_LRCPC_SHIFT, FTR_UNSIGNED, 2, CAP_HWCAP, KERNEL_HWCAP_ILRCPC),
+ 	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_FRINTTS_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, KERNEL_HWCAP_FRINT),
+ 	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_SB_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, KERNEL_HWCAP_SB),
++	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_I8MM_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, KERNEL_HWCAP_I8MM),
+ 	HWCAP_CAP(SYS_ID_AA64MMFR2_EL1, ID_AA64MMFR2_AT_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, KERNEL_HWCAP_USCAT),
+ #ifdef CONFIG_ARM64_SVE
+ 	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_SVE_SHIFT, FTR_UNSIGNED, ID_AA64PFR0_SVE, CAP_HWCAP, KERNEL_HWCAP_SVE),
+@@ -1659,6 +1667,9 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+ 	HWCAP_CAP(SYS_ID_AA64ZFR0_EL1, ID_AA64ZFR0_BITPERM_SHIFT, FTR_UNSIGNED, ID_AA64ZFR0_BITPERM, CAP_HWCAP, KERNEL_HWCAP_SVEBITPERM),
+ 	HWCAP_CAP(SYS_ID_AA64ZFR0_EL1, ID_AA64ZFR0_SHA3_SHIFT, FTR_UNSIGNED, ID_AA64ZFR0_SHA3, CAP_HWCAP, KERNEL_HWCAP_SVESHA3),
+ 	HWCAP_CAP(SYS_ID_AA64ZFR0_EL1, ID_AA64ZFR0_SM4_SHIFT, FTR_UNSIGNED, ID_AA64ZFR0_SM4, CAP_HWCAP, KERNEL_HWCAP_SVESM4),
++	HWCAP_CAP(SYS_ID_AA64ZFR0_EL1, ID_AA64ZFR0_I8MM_SHIFT, FTR_UNSIGNED, ID_AA64ZFR0_I8MM, CAP_HWCAP, KERNEL_HWCAP_SVEI8MM),
++	HWCAP_CAP(SYS_ID_AA64ZFR0_EL1, ID_AA64ZFR0_F32MM_SHIFT, FTR_UNSIGNED, ID_AA64ZFR0_F32MM, CAP_HWCAP, KERNEL_HWCAP_SVEF32MM),
++	HWCAP_CAP(SYS_ID_AA64ZFR0_EL1, ID_AA64ZFR0_F64MM_SHIFT, FTR_UNSIGNED, ID_AA64ZFR0_F64MM, CAP_HWCAP, KERNEL_HWCAP_SVEF64MM),
+ #endif
+ 	HWCAP_CAP(SYS_ID_AA64PFR1_EL1, ID_AA64PFR1_SSBS_SHIFT, FTR_UNSIGNED, ID_AA64PFR1_SSBS_PSTATE_INSNS, CAP_HWCAP, KERNEL_HWCAP_SSBS),
+ #ifdef CONFIG_ARM64_PTR_AUTH
+diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+index 05933c065732..ae76c794bd09 100644
+--- a/arch/arm64/kernel/cpuinfo.c
++++ b/arch/arm64/kernel/cpuinfo.c
+@@ -84,6 +84,10 @@ static const char *const hwcap_str[] = {
+ 	"svesm4",
+ 	"flagm2",
+ 	"frint",
++	"svei8mm",
++	"svef32mm",
++	"svef64mm",
++	"i8mm",
+ 	NULL
+ };
+ 
+-- 
+2.11.0
 
-It does, but t = first-boot
-
-
-> accommodating all previous memory hot and remove operations.
-
-This would imply we rewrite the tables we get from firmware as the facts about the
-platform change ... that way madness lies!
-
-ACPI doesn't describe memory, the UEFI memory map does. You may be using the UEFI memory
-map on either a DT or ACPI system. If you don't have UEFI, you're using the DT memory-node.
-
-Linux passes on exactly what it had at boot through kexec. We don't rewrite the tables.
-Memory is either described in DT, or in the UEFI memory map that was left in memory by the
-EFI stub. Linux remembers where the UEFI memory map is through kexec using the additional
-entries in the DT chosen node that were put there by the EFI stub.
-
-
-The bootloader (including the EFI stub) needs to know what memory is removable. Certain
-allocations can't move once they have been made:
- * The kernel's randomised physical address should not be in removable memory. With UEFI,
-   the EFI stub does this.
- * Firmware structures like the DT or ACPI tables should not be in removable memory.
-   Neither should reservations for runtime use, like the RAS CPER regions, or the UEFI
-   runtime services.
- * The EFI stub should not allocate the authoritative copy of the memory map in removable
-   memory. (we have runtime helpers to lookup the attributes. we pass the boot-time memory
-   map to the next OS via kexec).
- * During paging_init() we allocate memory for swapper_pg_dir. This isn't something we can
-easily move around.
-
-Its not just software!:
- * The GIC ITS property/pending (?) tables should not be in removable memory.
-
-
-The simplest thing to do here is decree that all memory present at boot, is non-removable.
-Firmware may need to trim the memory available to UEFI to the minimum needed to boot the
-system, we can hot-add the rest of it once we're up and running.
-
-
-> As an example cloud environment scenario, memory
-> resources might have increased or decreased during a guest lifetime, so
-> when the guest needs to have new OS image why should not it have all the
-> memory ? I dont know if it's feasible for the guest to expect previous hot
-> add or remove operations to be played again after the kexec.
-
-Firmware can't know that we kexec'd, so it can't replay the operations.
-
-I think we need a way of determining whether a particular block of removable memory is
-present or not. If we do this during boot, then kexec works in the same way as a normal boot.
-
-
-> There is another fundamental question here. Is there a notion of a minimum
-> subset of boot memory which cannot be hot removed no matter what ? If yes,
-> how that is being conveyed to the kernel currently ?
-
-Yes. The UEFI memory map.
-
-See drivers/firmware/efi/libstub/fdt.c::exit_boot_func()
-the EFI stub calls efi_get_virtmap() to get the running memory map, then stores in the DT
-with update_fdt_memmap().
-
-The memory described at this stage may not be removed as allocations from the EFI stub
-can't be moved. The biggest of these, is the kernel, which relocates itself to a random
-physical address during the EFI stub.
-
-See drivers/firmware/efi/libstub/arm64-stub.c::handle_kernel_image()
-The memcpy() is at the end.
-
-
-> The point is that all these need to be established between ACPI, EFI and
-> kernel. AFAICS this problem is for MM subsystem (including the platform
-> part of it) to solve instead.
-
->> I can see x86 has CONFIG_FIRMWARE_MEMMAP suggesting that it is used by
->> kexec. try_remove_memory() calls firmware_map_remove() so maybe they
->> solve this problem differently.
->>
->> Correspondingly, after an arch_add_memory(), do we want a kexec kernel
->> to access it? x86 seems to use the firmware_map_add_hotplug() mechanism.
-> 
-> Hmm, kexec could use it instead on arm64 as well ?
-
-Mmm, a linux specific description of the platform that we have to keep over kexec.
-
-How do we describe this if we kexec something that isn't linux? How do we tell a version
-of linux that doesn't support hotplug not to overwrite it?
-
-It would be better if we had something in ACPI to tell us at runtime whether a hot
-pluggable range of memory was populated.
-
-(I haven't looked to see whether ACPI can already do this)
-
-
-
-Thanks,
-
-James
