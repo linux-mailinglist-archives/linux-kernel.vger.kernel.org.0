@@ -2,138 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F98E479C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A437AE47A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438836AbfJYJng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 05:43:36 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:38688 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408741AbfJYJnf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 05:43:35 -0400
-Received: by mail-ua1-f66.google.com with SMTP id u99so407017uau.5
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 02:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T3PJ1YVyTJFvMhEoIkYosgkgBaLCT/JOrQALKa66OJ4=;
-        b=sb0BId1/yfrCX+z50q9tkL4zULyiLoZlRkJlJYrlxL1Cy2xp3lExOwyLp1z8Wbizrj
-         ydXxVG2lJxE4G8zrim8Y0N7S2h+DfTwqPZc16X+zxqNMS2nh1wLNuvZhScSJwzebuD1C
-         rz4DrFxV+G3MIOZl8eN/3+bfNLJc6ylZcZwpUkSWhs4VwoJVT2ywHJt8QR03VqZ1BWUE
-         Slqyjs5I5QJ6SwKreiOxqTJ3C0FPkYmiV5WoEvS6O5/WiQosmCdh/KmBndK1ZiJDMoFr
-         RBi9x3E63HsAccoZimP01EELqLe5qHMKIwCHzJHjoDx3yD3Ou1AHp8sQorQ24L6q7pxV
-         WQcg==
+        id S2438920AbfJYJn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 05:43:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48011 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2438841AbfJYJn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 05:43:56 -0400
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7055F4E83E
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 09:43:56 +0000 (UTC)
+Received: by mail-wm1-f70.google.com with SMTP id l184so643277wmf.6
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 02:43:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T3PJ1YVyTJFvMhEoIkYosgkgBaLCT/JOrQALKa66OJ4=;
-        b=Op1EpB4mdLlUKojZL02Os4lw/Edg7QBjfcCq3XbzmkzInAJFu8SosFd7VAZjXLOuQg
-         K7+32FvAIisYlh0MMHHKk9reMr/6dYYsVsD2p1gTBo/8eQbAi/4ksesUH21saiH1vlDE
-         ObKb920MClcPcg+TLpZ3dggRTxovDK/ER4crLnG2aFSe1U1BjYjXJlwMm0dsM2VNx95x
-         8TON1twZZuQduwLD2USY5p+jFOeEtVE0gmrSgVfcfo7Be+euA99bLp7r3BnDoBGFkIL8
-         mmEoVsB2TKxDbTwH0+4uvhQfIjeL/veQrC6shbSxm8HS1o4UgPbca/1en2UxdrSDGf/t
-         dYaw==
-X-Gm-Message-State: APjAAAXwnQ4JvFlK74NXbmZf6Od8nnnIONtE+iwdS4WQizlmuK/LCXyY
-        UT1F8izCxxidiTjWE+EdtTQ2I9ivQduE//RqCG0=
-X-Google-Smtp-Source: APXvYqzL1ZYR3yoTTIqq/eHaohHEzTwejRq9kyMSCLwrIzVJvVEY+GSI1r+a+v/gxdPJP4zRPI9ye6r8+J47fUg8h7s=
-X-Received: by 2002:ab0:5bdb:: with SMTP id z27mr1115284uae.118.1571996614402;
- Fri, 25 Oct 2019 02:43:34 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tQMby8CZSJniqh4uopuVoL0d2iSgxdS4fKi9gs56q5c=;
+        b=bzheGcpyyxx3gdpD8Ab9XDp7FG20jl6gBQzPw08RCE0cQQjNeOR5ZFw9yxfA34TES6
+         7DYhosuJv5vzLOPB0HvYeqAzR+entF8RuykfZIEPoalw9B7i8zSRaWGhaaNNdBaPN3HE
+         yaDTiWuSUvbN4t1AMpZubDn9B43xHuiZVKfW9lFu5wD3VdtQ6o1vLmxZUPYuiwVDPTwm
+         s1I2O4aI6Zx+/W8445e8TpQUCaNJo06DIpNHvsKkn5GrRYIE/s4SR9AGmg+G2lGAcqSV
+         nPpA6A6ALdyobPhOrB2IyhqQcIViuasEt5jI3sU36/JGN7gAZ0qsDI8haDfmcpxmav+u
+         hE6w==
+X-Gm-Message-State: APjAAAUVQhpM1vdLAdZFoJlmbGZxfRz7wSa+pCNYlKc3cpM1HnF+XYc9
+        NsOb0TZOOM6x5upYodTJm8hUMaWA5L9BG8K/Q6BmXxAY0qiPvIMqht0efXvEG+/cOy18JyQmwVB
+        3mzkAVKtsSH28wxfJ4LkPA8bM
+X-Received: by 2002:a1c:7e57:: with SMTP id z84mr2736431wmc.84.1571996634788;
+        Fri, 25 Oct 2019 02:43:54 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqy4P0x3HWNFBaL87i3kllo1EHrbNDatuCnfoVLYIXHeIIElpykyGmW+yCU7P+vw8tejmbzgmw==
+X-Received: by 2002:a1c:7e57:: with SMTP id z84mr2736400wmc.84.1571996634474;
+        Fri, 25 Oct 2019 02:43:54 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:302c:998e:a769:c583? ([2001:b07:6468:f312:302c:998e:a769:c583])
+        by smtp.gmail.com with ESMTPSA id u1sm1850401wru.90.2019.10.25.02.43.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2019 02:43:54 -0700 (PDT)
+Subject: Re: [PATCH] KVM: x86: get rid of odd out jump label in pdptrs_changed
+To:     Miaohe Lin <linmiaohe@huawei.com>, rkrcmar@redhat.com,
+        sean.j.christopherson@intel.com, vkuznets@redhat.com,
+        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
+Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1571968878-10437-1-git-send-email-linmiaohe@huawei.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <ecd5eb9a-938b-a8f3-ed69-76d2343bfdcc@redhat.com>
+Date:   Fri, 25 Oct 2019 11:43:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20191024162424.38548-1-steven.price@arm.com>
-In-Reply-To: <20191024162424.38548-1-steven.price@arm.com>
-From:   Christian Gmeiner <christian.gmeiner@gmail.com>
-Date:   Fri, 25 Oct 2019 11:43:27 +0200
-Message-ID: <CAH9NwWdviH0gohPxZY97izenbSDnbQCL4kLeANg7UeCR7u1UUw@mail.gmail.com>
-Subject: Re: [RESEND PATCH v4] drm: Don't free jobs in wait_event_interruptible()
-To:     Steven Price <steven.price@arm.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Erico Nunes <nunes.erico@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1571968878-10437-1-git-send-email-linmiaohe@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Do., 24. Okt. 2019 um 18:25 Uhr schrieb Steven Price <steven.price@arm.com>:
->
-> drm_sched_cleanup_jobs() attempts to free finished jobs, however because
-> it is called as the condition of wait_event_interruptible() it must not
-> sleep. Unfortuantly some free callbacks (notibly for Panfrost) do sleep.
->
-> Instead let's rename drm_sched_cleanup_jobs() to
-> drm_sched_get_cleanup_job() and simply return a job for processing if
-> there is one. The caller can then call the free_job() callback outside
-> the wait_event_interruptible() where sleeping is possible before
-> re-checking and returning to sleep if necessary.
->
-> Signed-off-by: Steven Price <steven.price@arm.com>
+On 25/10/19 04:01, Miaohe Lin wrote:
+> -	if (r < 0)
+> -		goto out;
+> -	changed = memcmp(pdpte, vcpu->arch.walk_mmu->pdptrs, sizeof(pdpte)) != 0;
+> -out:
+> +	if (r >= 0)
+> +		changed = memcmp(pdpte, vcpu->arch.walk_mmu->pdptrs,
+> +				 sizeof(pdpte)) != 0;
+>  
+>  	return changed;
 
-Tested-by: Christian Gmeiner <christian.gmeiner@gmail.com>
+Even better:
 
-Without this patch I get the following warning:
+	if (r < 0)
+		return true;
 
-[  242.935254] ------------[ cut here ]------------
-[  242.940044] WARNING: CPU: 2 PID: 109 at kernel/sched/core.c:6731
-__might_sleep+0x94/0xa8
-[  242.948242] do not call blocking ops when !TASK_RUNNING; state=1
-set at [<38751e36>] prepare_to_wait_event+0xa8/0x180
-[  242.958923] Modules linked in:
-[  242.962010] CPU: 2 PID: 109 Comm: 130000.gpu Not tainted 5.4.0-rc4 #10
-[  242.968551] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[  242.975112] [<c0113160>] (unwind_backtrace) from [<c010cf34>]
-(show_stack+0x10/0x14)
-[  242.982879] [<c010cf34>] (show_stack) from [<c0c065ec>]
-(dump_stack+0xd8/0x110)
-[  242.990213] [<c0c065ec>] (dump_stack) from [<c0128adc>] (__warn+0xc0/0x10c)
-[  242.997194] [<c0128adc>] (__warn) from [<c0128f10>]
-(warn_slowpath_fmt+0x8c/0xb8)
-[  243.004697] [<c0128f10>] (warn_slowpath_fmt) from [<c01598bc>]
-(__might_sleep+0x94/0xa8)
-[  243.012810] [<c01598bc>] (__might_sleep) from [<c0c246e4>]
-(__mutex_lock+0x38/0xa1c)
-[  243.020571] [<c0c246e4>] (__mutex_lock) from [<c0c250e4>]
-(mutex_lock_nested+0x1c/0x24)
-[  243.028600] [<c0c250e4>] (mutex_lock_nested) from [<c064f020>]
-(etnaviv_cmdbuf_free+0x40/0x8c)
-[  243.037233] [<c064f020>] (etnaviv_cmdbuf_free) from [<c06503a0>]
-(etnaviv_submit_put+0x38/0x1c8)
-[  243.046042] [<c06503a0>] (etnaviv_submit_put) from [<c064177c>]
-(drm_sched_cleanup_jobs+0xc8/0xec)
-[  243.055021] [<c064177c>] (drm_sched_cleanup_jobs) from [<c06419b4>]
-(drm_sched_main+0x214/0x298)
-[  243.063826] [<c06419b4>] (drm_sched_main) from [<c0152890>]
-(kthread+0x140/0x158)
-[  243.071329] [<c0152890>] (kthread) from [<c01010b4>]
-(ret_from_fork+0x14/0x20)
-[  243.078563] Exception stack(0xec691fb0 to 0xec691ff8)
-[  243.083630] 1fa0:                                     00000000
-00000000 00000000 00000000
-[  243.091822] 1fc0: 00000000 00000000 00000000 00000000 00000000
-00000000 00000000 00000000
-[  243.100013] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[  243.106795] irq event stamp: 321
-[  243.110098] hardirqs last  enabled at (339): [<c0193854>]
-console_unlock+0x430/0x620
-[  243.117864] hardirqs last disabled at (346): [<c01934cc>]
-console_unlock+0xa8/0x620
-[  243.125592] softirqs last  enabled at (362): [<c01024e0>]
-__do_softirq+0x2c0/0x590
-[  243.133232] softirqs last disabled at (373): [<c0130ed0>]
-irq_exit+0x100/0x18c
-[  243.140517] ---[ end trace 8afcd79e9e2725b2 ]---
+	return memcmp(...) != 0;
 
--- 
-greets
---
-Christian Gmeiner, MSc
-
-https://christian-gmeiner.info/privacypolicy
+Paolo
