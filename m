@@ -2,54 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98F9BE50B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:02:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09731E50BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 18:03:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503754AbfJYQCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 12:02:49 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:39564 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730061AbfJYQCt (ORCPT
+        id S2503843AbfJYQDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 12:03:25 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34542 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503806AbfJYQDZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 12:02:49 -0400
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 167462010AC4;
-        Fri, 25 Oct 2019 09:02:48 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 167462010AC4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1572019368;
-        bh=OgpaEOi3NtTvH8dAdXEaqJn/1OjtmfuxmiFQB2mjN+g=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZG+7BShM7Zs+mQe8xyrHK3yGYcucqlMeIramEfEZ1sTdU9sg8hPD0fYRb6sPTmWOE
-         mfuzyQAWb2eGe7bxnNeeHBCOX5WDqTnqNjsV8KOUmQJyoHqYr5+3BSb7PCe/79h6cs
-         un5CwwbPOuujsxZ9OErVRUI0EgJ/VAIxSVOFu1K4=
-Subject: Re: [PATCH v5 4/4] powerpc: load firmware trusted keys/hashes into
- kernel keyring
-To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Eric Ricther <erichte@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>
-References: <20191025005839.4498-1-nayna@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <5be98aad-66b9-2549-2772-ef30aa1275b4@linux.microsoft.com>
-Date:   Fri, 25 Oct 2019 09:02:47 -0700
+        Fri, 25 Oct 2019 12:03:25 -0400
+Received: by mail-io1-f66.google.com with SMTP id q1so3031342ion.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 09:03:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=epIZn6+Wd30ec+WMFBH2/DUm6JPwiv9ffXe7aBYJZg0=;
+        b=DgVFp0vMHDg+9Ok10nyLdQenddZHB7FXCw6Phi4otowCPa3Wt/J0x7vj92lnjgshQH
+         GQsNXJxAxMQ2gLi6vad0xrN6GHWz9qPZUUUJn6pmjNsbnKMUz75mJ1wO6dnLGgh2D4p4
+         bT9kR2zBcigfYI4VlCwjwoe6JSLPEAUPcmoFnhx1NL9Sz75GCAzfKdOqLxS9TYWkzjR1
+         1AeLarLvedliotQLMmGygVKiKMEv8MPeVOvaN9dkU2huCAt7YyHOncKEA/79byV4eo2+
+         10MUPTtCbka69ZfsSnPmZhwh+ui0x3clFEQsbMHa6kPYjNXCm3tHYVHgtej+kfVsrKWr
+         Qq5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=epIZn6+Wd30ec+WMFBH2/DUm6JPwiv9ffXe7aBYJZg0=;
+        b=lN5MKy/bvZ8iaoytNvQ8PBnvkXkw1xLz+TnhYfFqfSPcmqeNuLQoz3d83OVUMinZBf
+         kZ/ZUu0lefumXyvEfiX4mfDnuhPfkUV6FuxK5wcNDRYaxxhGGrydI0FVHGh/oc/jwIuP
+         lZWXfljUBI26yIKOdPXreCyolDxmiBwXobwC+jAfFIOQ/2Rmt7OqOkSw80XpyL9wVVbO
+         jaz4tSpbISkbxcUR4pS6d2CCBJqdY0I0H7xUg/It3T22lfoIJDl3Fi6gCECWbqD3smny
+         zG0tooiYZw/1XgEwrgcpG7J8DxRPed8//go+vBiAVcXU2X+HruANEJD+hMZDoHw7b6/T
+         6JSg==
+X-Gm-Message-State: APjAAAW/eH20uRyJVEf4o2DoefWZaWQcrMo0XrJF7aVypRYJru8mPztj
+        hPz3kaqG5DRerGbZWGl/6AZxt+Qg9am5gg==
+X-Google-Smtp-Source: APXvYqxKJHkOiI3fJ45XVvMviuR26Mn6895VoLiH0yZZkjV00mrF7bGDN89Qw7vCI/eXdFtBnbdgGw==
+X-Received: by 2002:a6b:b54a:: with SMTP id e71mr4579239iof.132.1572019403834;
+        Fri, 25 Oct 2019 09:03:23 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id o25sm379302ili.51.2019.10.25.09.03.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Oct 2019 09:03:22 -0700 (PDT)
+Subject: Re: [BUG] io_uring: defer logic based on shared data
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <5badf1c0-9a7d-0950-2943-ff8db33e0929@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <bfb58429-6abe-06f0-3fd8-14a0040cecf0@kernel.dk>
+Date:   Fri, 25 Oct 2019 10:03:21 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191025005839.4498-1-nayna@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <5badf1c0-9a7d-0950-2943-ff8db33e0929@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,40 +65,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/19 5:58 PM, Nayna Jain wrote:
+On 10/25/19 3:55 AM, Pavel Begunkov wrote:
+> I found 2 problems with __io_sequence_defer().
+> 
+> 1. it uses @sq_dropped, but doesn't consider @cq_overflow
+> 2. @sq_dropped and @cq_overflow are write-shared with userspace, so
+> it can be maliciously changed.
+> 
+> see sent liburing test (test/defer *_hung()), which left an unkillable
+> process for me
 
-> +
-> +/*
-> + * Get a certificate list blob from the named secure variable.
-> + */
-> +static __init void *get_cert_list(u8 *key, unsigned long keylen, uint64_t *size)
-> +{
-> +	int rc;
-> +	void *db;
-> +
-> +	rc = secvar_ops->get(key, keylen, NULL, size);
-> +	if (rc) {
-> +		pr_err("Couldn't get size: %d\n", rc);
-> +		return NULL;
-> +	}
-> +
-> +	db = kmalloc(*size, GFP_KERNEL);
+OK, how about the below. I'll split this in two, as it's really two
+separate fixes.
 
-Is there a MIN\MAX limit on size that should be validated here before 
-memory allocation?
 
-> +	if (!db)
-> +		return NULL;
-> +
-> +	rc = secvar_ops->get(key, keylen, db, size);
-> +	if (rc) {
-> +		kfree(db);
-> +		pr_err("Error reading db var: %d\n", rc);
-> +		return NULL;
-nit: set db to NULL and return from the end of the function.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5d10984381cf..5d9d960c1c17 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -191,6 +191,7 @@ struct io_ring_ctx {
+ 		unsigned		sq_entries;
+ 		unsigned		sq_mask;
+ 		unsigned		sq_thread_idle;
++		unsigned		cached_sq_dropped;
+ 		struct io_uring_sqe	*sq_sqes;
+ 
+ 		struct list_head	defer_list;
+@@ -208,6 +209,7 @@ struct io_ring_ctx {
+ 
+ 	struct {
+ 		unsigned		cached_cq_tail;
++		unsigned		cached_cq_overflow;
+ 		unsigned		cq_entries;
+ 		unsigned		cq_mask;
+ 		struct wait_queue_head	cq_wait;
+@@ -419,7 +421,8 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ static inline bool __io_sequence_defer(struct io_ring_ctx *ctx,
+ 				       struct io_kiocb *req)
+ {
+-	return req->sequence != ctx->cached_cq_tail + ctx->rings->sq_dropped;
++	return req->sequence != ctx->cached_cq_tail + ctx->cached_sq_dropped
++					+ ctx->cached_cq_overflow;
+ }
+ 
+ static inline bool io_sequence_defer(struct io_ring_ctx *ctx,
+@@ -590,9 +593,8 @@ static void io_cqring_fill_event(struct io_ring_ctx *ctx, u64 ki_user_data,
+ 		WRITE_ONCE(cqe->res, res);
+ 		WRITE_ONCE(cqe->flags, 0);
+ 	} else {
+-		unsigned overflow = READ_ONCE(ctx->rings->cq_overflow);
+-
+-		WRITE_ONCE(ctx->rings->cq_overflow, overflow + 1);
++		ctx->cached_cq_overflow++;
++		WRITE_ONCE(ctx->rings->cq_overflow, ctx->cached_cq_overflow);
+ 	}
+ }
+ 
+@@ -2601,7 +2603,8 @@ static bool io_get_sqring(struct io_ring_ctx *ctx, struct sqe_submit *s)
+ 
+ 	/* drop invalid entries */
+ 	ctx->cached_sq_head++;
+-	rings->sq_dropped++;
++	ctx->cached_sq_dropped++;
++	WRITE_ONCE(rings->sq_dropped, ctx->cached_sq_dropped);
+ 	return false;
+ }
+ 
+@@ -2685,6 +2688,7 @@ static int io_sq_thread(void *data)
+ 
+ 	timeout = inflight = 0;
+ 	while (!kthread_should_park()) {
++		unsigned prev_cq, cur_cq;
+ 		bool mm_fault = false;
+ 		unsigned int to_submit;
+ 
+@@ -2767,8 +2771,12 @@ static int io_sq_thread(void *data)
+ 		}
+ 
+ 		to_submit = min(to_submit, ctx->sq_entries);
++		prev_cq = ctx->cached_cq_tail + ctx->cached_cq_overflow;
+ 		inflight += io_submit_sqes(ctx, to_submit, cur_mm != NULL,
+ 					   mm_fault);
++		cur_cq = ctx->cached_cq_tail + ctx->cached_cq_overflow;
++		if ((ctx->flags & IORING_SETUP_IOPOLL) && (prev_cq != cur_cq))
++			inflight -= cur_cq - prev_cq;
+ 
+ 		/* Commit SQ ring head once we've consumed all SQEs */
+ 		io_commit_sqring(ctx);
 
-> +	}
-> +
-> +	return db;
-> +}
+-- 
+Jens Axboe
 
