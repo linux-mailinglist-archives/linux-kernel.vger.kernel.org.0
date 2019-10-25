@@ -2,129 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA595E4E39
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:06:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 972D9E4E50
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502524AbfJYOFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 10:05:48 -0400
-Received: from mail-bgr052101128031.outbound.protection.outlook.com ([52.101.128.31]:43597
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391167AbfJYOFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 10:05:45 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oKSmbkvHFBTaJ2LP68E+948gn0YXjwxehlBbLpOJi2f9rWBF4mUmyaWRkKhiX6SlRskKB1TTPiZWYcLOZxJMAdFkDZwuMcK/haP2MvpzoazNC9GgIzT2qWrtxp8WMlmGUflZSkJcve6aJ/p64snwpNZ9NgQsKXwFjpQnRHB9CPuKA5pMoe2ub/YJ7jIAXNmuXCrrX4ADJVlQVkHz/vbVGqSBvswQ+x7bdHJZX1C3iwKaMOOoZSz4fhttsLOSCfqOxOOWVY9AhcMhAs8wJmCuyaXb/gE2VFDl6k+ZCospQDJjOagHXHm3BJe0UzVk1VIqfTN/vuRuhrXrxwLWD6Tx9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2O/r+LuFaXM2GSlpXuXYCqLV/rv/L1195FjopVoNzMc=;
- b=DTX0zIhQKvzddaV7SYjr8IMBOIWfXTnLhRETV3DwLK/xJvd3s8pYK9YQS+0z0scAU4Vk8ePCFCC65BqCqLqazg9ByLIP7g7NWgG6FE6LlgGDD1YD1x0XKY6k6Yu4YX1pgb4HRNR4tKNb8W7o07xKmKKoSbxqhAoC9YhwCpa9IMcm4Xbr1Uaq1IpW3ZtyqMTYqxAFahvcmZlC4enFJO8nz8PgbMWYS13op+lp31FCxjzWYIH+pUoC2C5Fjt/oQZADEGoNUm27dhDdMcyRkmZggSP/xWsl+PfjHNIX4WTPXwrn6jOoUkdgxFFMsrxAw9c5xAGZKeSTpzEoay4VilLxbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
- header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2O/r+LuFaXM2GSlpXuXYCqLV/rv/L1195FjopVoNzMc=;
- b=sIMUaT4RjjIgBcxgSJU8tSyvPvP1IC0tgik9h6NiaVj6R7flGAsCAgsh7TkUZ8+bp7PQTRvd88HExB8eJRvHgBS8j1N4mdEwIn1tNxPjccCKvsX6bpfpLgyieCW09wrW8jd3nAPgCiBWLeF0Nam2caZY0ZYUff4DHRws+9lvQOI=
-Received: from AM4PR0802MB2242.eurprd08.prod.outlook.com (10.172.218.15) by
- AM4PR0802MB2305.eurprd08.prod.outlook.com (10.172.218.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.18; Fri, 25 Oct 2019 14:05:34 +0000
-Received: from AM4PR0802MB2242.eurprd08.prod.outlook.com
- ([fe80::9c3e:dc5:e056:9f89]) by AM4PR0802MB2242.eurprd08.prod.outlook.com
- ([fe80::9c3e:dc5:e056:9f89%12]) with mapi id 15.20.2387.023; Fri, 25 Oct 2019
- 14:05:34 +0000
-From:   Roman Kagan <rkagan@virtuozzo.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-CC:     "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v2] x86/hyper-v: micro-optimize send_ipi_one case
-Thread-Topic: [PATCH v2] x86/hyper-v: micro-optimize send_ipi_one case
-Thread-Index: AQHVizZYGDIi3UW4YkWmU3NiXuLPeqdrZBUA
-Date:   Fri, 25 Oct 2019 14:05:34 +0000
-Message-ID: <20191025140528.GB23240@rkaganb.sw.ru>
-References: <20191025131546.18794-1-vkuznets@redhat.com>
-In-Reply-To: <20191025131546.18794-1-vkuznets@redhat.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.12.1 (2019-06-15)
-mail-followup-to: Roman Kagan <rkagan@virtuozzo.com>,   Vitaly Kuznetsov
- <vkuznets@redhat.com>, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org,  x86@kernel.org, "K. Y. Srinivasan"
- <kys@microsoft.com>,   Haiyang Zhang <haiyangz@microsoft.com>, Stephen
- Hemminger <sthemmin@microsoft.com>,    Sasha Levin <sashal@kernel.org>,        Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,       Michael Kelley
- <mikelley@microsoft.com>,      Joe Perches <joe@perches.com>
-x-originating-ip: [185.231.240.5]
-x-clientproxiedby: HE1PR05CA0207.eurprd05.prod.outlook.com
- (2603:10a6:3:f9::31) To AM4PR0802MB2242.eurprd08.prod.outlook.com
- (2603:10a6:200:5f::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=rkagan@virtuozzo.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9c7f713f-f0ae-4066-f730-08d759546743
-x-ms-traffictypediagnostic: AM4PR0802MB2305:|AM4PR0802MB2305:|AM4PR0802MB2305:
-x-microsoft-antispam-prvs: <AM4PR0802MB2305ACB8F527740BFBA40C8FC9650@AM4PR0802MB2305.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 02015246A9
-x-forefront-antispam-report: SFV:SPM;SFS:(10019020)(376002)(346002)(136003)(366004)(396003)(39840400004)(189003)(199004)(25786009)(6436002)(6486002)(52116002)(6512007)(9686003)(186003)(26005)(476003)(6916009)(102836004)(11346002)(446003)(386003)(6506007)(229853002)(486006)(66946007)(478600001)(66446008)(64756008)(66556008)(66476007)(14444005)(81166006)(8676002)(81156014)(8936002)(76176011)(256004)(305945005)(7736002)(7416002)(99286004)(58126008)(316002)(71200400001)(71190400001)(6116002)(86362001)(66066001)(3846002)(2906002)(33656002)(5660300002)(4326008)(1076003)(4744005)(6246003)(14454004)(54906003)(36756003)(30126002);DIR:OUT;SFP:1501;SCL:5;SRVR:AM4PR0802MB2305;H:AM4PR0802MB2242.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-x-ms-exchange-transport-forked: True
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 8pd8kFQkHqtKZKOvPSqIYz4JlrN0v97YFj/WKQVwk5y2PCvgvkzXVkFG4WwPcbO79f1Lu2SiECdPuadYhSEo33GyTLy/pjn5F0mAYjw+fnu9rQFlG3rzQ2dz5WN8TEVRAqrUlaDA7uMHnJ7tpJx0uCVMYc+3RAD0xrWVEs8Pz4ygmX7vn+GnEdNkHiyJB+flE5j1DtWZq364U4Mf65NKNx/D2pHVooKaf1BXRu8phI5tUB4mwVGSlearY90A8VrOoHVGGN7vfl7xwuwedSRWf7iwEZIBh410YIUt8bEaZM2k3ceb/YrCk4ahGFCbmOkEHpvawMynCsR4MgxVxb5/mHr5Yp83IOeAHFFfXHWdL3JLS2lFbMB5k4Yih2seVqybn6tFXnuZhEFNOs7G7yCWO2ucmRK79rRXQmjgFPB8g7JLYmsJjPBVxKQdHUgrctptQ3EDDiwsmLzPffoRfanCC/2z4aOv1rZdGgPfuCFRIMazCmU1Bhop25CdCNCz7XrA8y9OBCBcytvcED7ES6mKwg==
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7910855E4302C34FB54E12C5C8111618@eurprd08.prod.outlook.com>
+        id S2503041AbfJYOGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 10:06:36 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:42357 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407421AbfJYOGe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 10:06:34 -0400
+Received: by mail-yb1-f195.google.com with SMTP id 4so883883ybq.9
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 07:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9hV5nwXUEgXhwQ5IosopcGJTF2NHW7/vTGTmNW9G34I=;
+        b=VifDnRc70NasJQuNqZ6GKXuHy+pog7Il9EYThxh46rlyggmTevIjVlWWW3BDI7BX8/
+         wlYX5LkB0paoZC1KPIFgth+U25Pfzy2Dk+RpUyeGJsnhZnPg79LzGQqXe2KkzPXYRghH
+         NqFkRvxXEQKju+Q6MFIb/wZkpDCWXgdNX0WvFHPXl+Hr4DgxgainAF6JcS6oBo3xgcg/
+         vxUQBHZLFuS1+XqP0ChE2d7qlZoP4D5ficQilafhQ6deH/GmdCOz6+L4Zegsbr44ierq
+         DMjOgUz0FWpLxwy3K8HlVU/BmUkx5ZqxIJDa/FJiJPTiMLvUlBUumiRmSBCIcGZa9FGd
+         g7ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9hV5nwXUEgXhwQ5IosopcGJTF2NHW7/vTGTmNW9G34I=;
+        b=Jp7lo7qpG9/zSqGbmrU0vm6TukOixTBejQJyxJCJvLKoHxyOybA5xwvfO1RQZVyvH9
+         eLyg+CuKdhA/uV/YtwGNazkt7/0Ik71n6NEEOEvVHd3GHS3tKK1NKhMY7A2p+booX1/A
+         JkvoVUidK6eJ1Lw7LVA/STfXIPq8X93ZXfIxs6uvDjHx3EGypHSZdGX1SrurSrVceCja
+         IC4/VpBgPw6gV8dfgzQjcXA1uoy9h+mI8qoxa4hbYrRUca7SGuMuCP4BmyHI1zMK1o8h
+         jwPbsumpDecjawvztk+dzn7qIx02n7AhG+Lb8R+yJyrHF2FRuRYKg9CgyM5+MxlUEjz5
+         as6Q==
+X-Gm-Message-State: APjAAAVUoPXQivLSTCMEt91/JbjK2Un+G6KwAxBV/U+ra/H+M6RjxtYC
+        BjAuzJ/7iZl8qRp4OB+JjZJB6Q==
+X-Google-Smtp-Source: APXvYqx7fYQnCFaQaxuLFh4DK2xG1DIqcPQZX3c4Cb03ut+f4/rVew1nspg17lq1TCTJePaSNg3xIQ==
+X-Received: by 2002:a25:7611:: with SMTP id r17mr3361276ybc.399.1572012393139;
+        Fri, 25 Oct 2019 07:06:33 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id b201sm710130ywe.2.2019.10.25.07.06.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2019 07:06:32 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 10:06:32 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Hai Li <hali@codeaurora.org>, David Airlie <airlied@linux.ie>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+        Nikita Travkin <nikitos.tr@gmail.com>,
+        freedreno@lists.freedesktop.org
+Subject: Re: [Freedreno] [PATCH v2] drm/msm/dsi: Implement qcom,
+ dsi-phy-regulator-ldo-mode for 28nm PHY
+Message-ID: <20191025140632.GH85762@art_vandelay>
+References: <20191023165617.28738-1-stephan@gerhold.net>
 MIME-Version: 1.0
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c7f713f-f0ae-4066-f730-08d759546743
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2019 14:05:34.3785
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iFCAnhKManmWYXAW1ARwqbi7ni1EVTlvJ+JfDcDjTBmCvyohSSEIYZZ0APM0rm7dSOVHEuCRpX1jq1kT5kULHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0802MB2305
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191023165617.28738-1-stephan@gerhold.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 03:15:46PM +0200, Vitaly Kuznetsov wrote:
-> When sending an IPI to a single CPU there is no need to deal with cpumasks.
-> With 2 CPU guest on WS2019 I'm seeing a minor (like 3%, 8043 -> 7761 CPU
-> cycles) improvement with smp_call_function_single() loop benchmark. The
-> optimization, however, is tiny and straitforward. Also, send_ipi_one() is
-> important for PV spinlock kick.
+On Wed, Oct 23, 2019 at 06:56:17PM +0200, Stephan Gerhold wrote:
+> The DSI PHY regulator supports two regulator modes: LDO and DCDC.
+> This mode can be selected using the "qcom,dsi-phy-regulator-ldo-mode"
+> device tree property.
 > 
-> I was also wondering if it would make sense to switch to using regular
-> APIC IPI send for CPU > 64 case but no, it is twice as expesive (12650 CPU
-> cycles for __send_ipi_mask_ex() call, 26000 for orig_apic.send_IPI(cpu,
-> vector)).
+> However, at the moment only the 20nm PHY driver actually implements
+> that option. Add a check in the 28nm PHY driver to program the
+> registers correctly for LDO mode.
 > 
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
-> Changes since v1:
->  - Style changes [Roman, Joe]
-> ---
->  arch/x86/hyperv/hv_apic.c           | 13 ++++++++++---
->  arch/x86/include/asm/trace/hyperv.h | 15 +++++++++++++++
->  2 files changed, 25 insertions(+), 3 deletions(-)
+> Tested-by: Nikita Travkin <nikitos.tr@gmail.com> # l8150
+> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 
-Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
+Thanks for your patch! I've pushed it to msm-next.
+
+Sean
+
+> ---
+> Changes in v2: Move DCDC/LDO code into separate methods
+> v1: https://lore.kernel.org/linux-arm-msm/20191021163425.83697-1-stephan@gerhold.net/
+> 
+> This is needed to make the display work on Longcheer L8150,
+> which has recently gained mainline support in:
+> https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit/?id=16e8e8072108426029f0c16dff7fbe77fae3df8f
+> 
+> This patch is based on code from the downstream kernel:
+> https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/drivers/video/msm/mdss/msm_mdss_io_8974.c?h=LA.BR.1.2.9.1-02310-8x16.0#n152
+> 
+> The LDO regulator configuration is taken from msm8916-qrd.dtsi:
+> https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/arch/arm/boot/dts/qcom/msm8916-qrd.dtsi?h=LA.BR.1.2.9.1-02310-8x16.0#n56
+> ---
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c | 42 +++++++++++++++++-----
+>  1 file changed, 34 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
+> index b3f678f6c2aa..b384ea20f359 100644
+> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
+> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
+> @@ -39,15 +39,10 @@ static void dsi_28nm_dphy_set_timing(struct msm_dsi_phy *phy,
+>  		DSI_28nm_PHY_TIMING_CTRL_11_TRIG3_CMD(0));
+>  }
+>  
+> -static void dsi_28nm_phy_regulator_ctrl(struct msm_dsi_phy *phy, bool enable)
+> +static void dsi_28nm_phy_regulator_enable_dcdc(struct msm_dsi_phy *phy)
+>  {
+>  	void __iomem *base = phy->reg_base;
+>  
+> -	if (!enable) {
+> -		dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 0);
+> -		return;
+> -	}
+> -
+>  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x0);
+>  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 1);
+>  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_5, 0);
+> @@ -56,6 +51,39 @@ static void dsi_28nm_phy_regulator_ctrl(struct msm_dsi_phy *phy, bool enable)
+>  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_1, 0x9);
+>  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x7);
+>  	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_4, 0x20);
+> +	dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x00);
+> +}
+> +
+> +static void dsi_28nm_phy_regulator_enable_ldo(struct msm_dsi_phy *phy)
+> +{
+> +	void __iomem *base = phy->reg_base;
+> +
+> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_0, 0x0);
+> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 0);
+> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_5, 0x7);
+> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_3, 0);
+> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_2, 0x1);
+> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_1, 0x1);
+> +	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_4, 0x20);
+> +
+> +	if (phy->cfg->type == MSM_DSI_PHY_28NM_LP)
+> +		dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x05);
+> +	else
+> +		dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x0d);
+> +}
+> +
+> +static void dsi_28nm_phy_regulator_ctrl(struct msm_dsi_phy *phy, bool enable)
+> +{
+> +	if (!enable) {
+> +		dsi_phy_write(phy->reg_base +
+> +			      REG_DSI_28nm_PHY_REGULATOR_CAL_PWR_CFG, 0);
+> +		return;
+> +	}
+> +
+> +	if (phy->regulator_ldo_mode)
+> +		dsi_28nm_phy_regulator_enable_ldo(phy);
+> +	else
+> +		dsi_28nm_phy_regulator_enable_dcdc(phy);
+>  }
+>  
+>  static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
+> @@ -77,8 +105,6 @@ static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
+>  
+>  	dsi_28nm_phy_regulator_ctrl(phy, true);
+>  
+> -	dsi_phy_write(base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x00);
+> -
+>  	dsi_28nm_dphy_set_timing(phy, timing);
+>  
+>  	dsi_phy_write(base + REG_DSI_28nm_PHY_CTRL_1, 0x00);
+> -- 
+> 2.23.0
+> 
+> _______________________________________________
+> Freedreno mailing list
+> Freedreno@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/freedreno
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
