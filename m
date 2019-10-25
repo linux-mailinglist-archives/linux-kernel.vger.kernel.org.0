@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D14D7E4D21
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:58:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A5C1E4D22
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505461AbfJYN6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 09:58:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53108 "EHLO mail.kernel.org"
+        id S2505474AbfJYN6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 09:58:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2505438AbfJYN6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:58:00 -0400
+        id S2389701AbfJYN6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 09:58:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2995721E6F;
-        Fri, 25 Oct 2019 13:57:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EE23222C2;
+        Fri, 25 Oct 2019 13:58:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572011879;
-        bh=kg3I6XAl43kpIssCoiead1gOzFH9ZyHlPFJo5xIoQXg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RCcQkFu4EPYF2xr/X5h8RbHacTovJY+3f0h8pDfvk2fEfX06TYRnUs8q+QPi26qpc
-         f2URJbj9JS/2h/1foDjGaIAAPfVGn3O+hcZ96OPrH06zaZGLNm97C3h1o24VvWMYwE
-         +nM0pIBdm970U+jmp2T5qHUsQ52qldHEDkTUyaww=
+        s=default; t=1572011883;
+        bh=47t+Nnmbk++aVQPPcj57svH35Wds3MJ6qI0wsT4LmTE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=1d27D0O609ZMBBRZPWFnlaMK7yVfvPh27IEOnkiVgBPpRN4yW/HQmdAO6S/tGBcmN
+         +W0t6pPjDFtKM0BuJ6iRDuWIla8/5hAiIeB9beg7g9cpvy74Fb7LaKQ5WSpSNLwP1Y
+         b8GygqRg/pFh6SbUaZWT6TvPHojTnpoBdCsDeH0U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        AceLan Kao <acelan.kao@canonical.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.14 25/25] bdi: Do not use freezable workqueue
-Date:   Fri, 25 Oct 2019 09:57:13 -0400
-Message-Id: <20191025135715.25468-25-sashal@kernel.org>
+Cc:     Patrick Talbert <ptalbert@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 01/20] PCI/ASPM: Do not initialize link state when aspm_disabled is set
+Date:   Fri, 25 Oct 2019 09:57:41 -0400
+Message-Id: <20191025135801.25739-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191025135715.25468-1-sashal@kernel.org>
-References: <20191025135715.25468-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -45,84 +41,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Patrick Talbert <ptalbert@redhat.com>
 
-[ Upstream commit a2b90f11217790ec0964ba9c93a4abb369758c26 ]
+[ Upstream commit 17c91487364fb33797ed84022564ee7544ac4945 ]
 
-A removable block device, such as NVMe or SSD connected over Thunderbolt
-can be hot-removed any time including when the system is suspended. When
-device is hot-removed during suspend and the system gets resumed, kernel
-first resumes devices and then thaws the userspace including freezable
-workqueues. What happens in that case is that the NVMe driver notices
-that the device is unplugged and removes it from the system. This ends
-up calling bdi_unregister() for the gendisk which then schedules
-wb_workfn() to be run one more time.
+Now that ASPM is configured for *all* PCIe devices at boot, a problem is
+seen with systems that set the FADT NO_ASPM bit.  This bit indicates that
+the OS should not alter the ASPM state, but when
+pcie_aspm_init_link_state() runs it only checks for !aspm_support_enabled.
+This misses the ACPI_FADT_NO_ASPM case because that is setting
+aspm_disabled.
 
-However, since the bdi_wq is still frozen flush_delayed_work() call in
-wb_shutdown() blocks forever halting system resume process. User sees
-this as hang as nothing is happening anymore.
+The result is systems may hang at boot after 1302fcf; avoidable if they
+boot with pcie_aspm=off (sets !aspm_support_enabled).
 
-Triggering sysrq-w reveals this:
+Fix this by having aspm_init_link_state() check for either
+!aspm_support_enabled or acpm_disabled.
 
-  Workqueue: nvme-wq nvme_remove_dead_ctrl_work [nvme]
-  Call Trace:
-   ? __schedule+0x2c5/0x630
-   ? wait_for_completion+0xa4/0x120
-   schedule+0x3e/0xc0
-   schedule_timeout+0x1c9/0x320
-   ? resched_curr+0x1f/0xd0
-   ? wait_for_completion+0xa4/0x120
-   wait_for_completion+0xc3/0x120
-   ? wake_up_q+0x60/0x60
-   __flush_work+0x131/0x1e0
-   ? flush_workqueue_prep_pwqs+0x130/0x130
-   bdi_unregister+0xb9/0x130
-   del_gendisk+0x2d2/0x2e0
-   nvme_ns_remove+0xed/0x110 [nvme_core]
-   nvme_remove_namespaces+0x96/0xd0 [nvme_core]
-   nvme_remove+0x5b/0x160 [nvme]
-   pci_device_remove+0x36/0x90
-   device_release_driver_internal+0xdf/0x1c0
-   nvme_remove_dead_ctrl_work+0x14/0x30 [nvme]
-   process_one_work+0x1c2/0x3f0
-   worker_thread+0x48/0x3e0
-   kthread+0x100/0x140
-   ? current_work+0x30/0x30
-   ? kthread_park+0x80/0x80
-   ret_from_fork+0x35/0x40
-
-This is not limited to NVMes so exactly same issue can be reproduced by
-hot-removing SSD (over Thunderbolt) while the system is suspended.
-
-Prevent this from happening by removing WQ_FREEZABLE from bdi_wq.
-
-Reported-by: AceLan Kao <acelan.kao@canonical.com>
-Link: https://marc.info/?l=linux-kernel&m=138695698516487
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=204385
-Link: https://lore.kernel.org/lkml/20191002122136.GD2819@lahna.fi.intel.com/#t
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=201001
+Fixes: 1302fcf0d03e ("PCI: Configure *all* devices, not just hot-added ones")
+Signed-off-by: Patrick Talbert <ptalbert@redhat.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/backing-dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/pcie/aspm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 6fa31754eadd9..e38655f1d7794 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -246,8 +246,8 @@ static int __init default_bdi_init(void)
- {
- 	int err;
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index b12fe65d07f82..f69a9180c5ffd 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -581,7 +581,7 @@ void pcie_aspm_init_link_state(struct pci_dev *pdev)
+ 	struct pcie_link_state *link;
+ 	int blacklist = !!pcie_aspm_sanity_check(pdev);
  
--	bdi_wq = alloc_workqueue("writeback", WQ_MEM_RECLAIM | WQ_FREEZABLE |
--					      WQ_UNBOUND | WQ_SYSFS, 0);
-+	bdi_wq = alloc_workqueue("writeback", WQ_MEM_RECLAIM | WQ_UNBOUND |
-+				 WQ_SYSFS, 0);
- 	if (!bdi_wq)
- 		return -ENOMEM;
+-	if (!aspm_support_enabled)
++	if (!aspm_support_enabled || aspm_disabled)
+ 		return;
  
+ 	if (pdev->link_state)
 -- 
 2.20.1
 
