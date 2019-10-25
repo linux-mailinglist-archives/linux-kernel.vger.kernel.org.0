@@ -2,82 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE6B1E4B89
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:51:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D599E4B8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:52:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731514AbfJYMvv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 08:51:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51126 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2501908AbfJYMvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 08:51:51 -0400
-Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2504631AbfJYMwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:52:41 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28512 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2501908AbfJYMwk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 08:52:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572007959;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=n8i+TCwhs+dWNyEedELhI+i+2i1MD1dNVmQL25FSLho=;
+        b=jE1NTew1lG5YZVM3W/f3hVHMophYRDCAOl3HYHcmLL6ec3tWvyQhgd4s8QIPkktxAxniQh
+        Fvxo5H0QzxExHWBvDzZHOXUV/msWVmqQeVGx/T72AN+zozJiYa6whu4K/sxIJI8aV+7rfL
+        S8K4aM9Qd7eMhEn5zXByD5mXUj0ULLg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-322-T_9r8giqN4iMM0deT0aUtQ-1; Fri, 25 Oct 2019 08:52:35 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B01C21929;
-        Fri, 25 Oct 2019 12:51:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572007910;
-        bh=DkytY8BjiI5AuxDb93s0p3G3TrO2dW16u+ibmJS95to=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=cKqUEzicNGW8uGkWlTJhD41jYzBXgSndhzFJO8s5hVkCjJH+p7csxTgoldhgESkto
-         CwPvmDbaBr4i0FPA0CFbbXfDjWoq0mwEbZgB1Vmsm5/dJlJhO2m9xfEWQ36PTg7Ux7
-         KjYUsQo19Momi8Pg+L06D68WwnGiK9E7T/vcGaBw=
-Date:   Fri, 25 Oct 2019 07:51:47 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Yunsheng Lin <linyunsheng@huawei.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mhocko@kernel.org,
-        peterz@infradead.org, geert@linux-m68k.org,
-        gregkh@linuxfoundation.org, paul.burton@mips.com
-Subject: Re: [PATCH] PCI: Warn about host bridge device when its numa node is
- NO_NODE
-Message-ID: <20191025125147.GA124662@google.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EF95A800D41;
+        Fri, 25 Oct 2019 12:52:32 +0000 (UTC)
+Received: from optiplex-lnx (ovpn-112-25.rdu2.redhat.com [10.10.112.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 74E5E10013A1;
+        Fri, 25 Oct 2019 12:52:25 +0000 (UTC)
+Date:   Fri, 25 Oct 2019 08:52:22 -0400
+From:   Rafael Aquini <aquini@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>, Waiman Long <longman@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 2/2] mm, vmstat: reduce zone->lock holding time by
+ /proc/pagetypeinfo
+Message-ID: <20191025125222.GC4596@optiplex-lnx>
+References: <20191025072610.18526-1-mhocko@kernel.org>
+ <20191025072610.18526-3-mhocko@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20191025072610.18526-3-mhocko@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: T_9r8giqN4iMM0deT0aUtQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <a33e01bd-3054-a2c4-c206-f893e7373e65@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 11:16:41AM +0100, Robin Murphy wrote:
-> On 2019-10-23 6:10 pm, Bjorn Helgaas wrote:
+On Fri, Oct 25, 2019 at 09:26:10AM +0200, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+>=20
+> pagetypeinfo_showfree_print is called by zone->lock held in irq mode.
+> This is not really nice because it blocks both any interrupts on that
+> cpu and the page allocator. On large machines this might even trigger
+> the hard lockup detector.
+>=20
+> Considering the pagetypeinfo is a debugging tool we do not really need
+> exact numbers here. The primary reason to look at the outuput is to see
+> how pageblocks are spread among different migratetypes and low number of
+> pages is much more interesting therefore putting a bound on the number
+> of pages on the free_list sounds like a reasonable tradeoff.
+>=20
+> The new output will simply tell
+> [...]
+> Node    6, zone   Normal, type      Movable >100000 >100000 >100000 >1000=
+00  41019  31560  23996  10054   3229    983    648
+>=20
+> instead of
+> Node    6, zone   Normal, type      Movable 399568 294127 221558 102119  =
+41019  31560  23996  10054   3229    983    648
+>=20
+> The limit has been chosen arbitrary and it is a subject of a future
+> change should there be a need for that.
+>=20
+> While we are at it, also drop the zone lock after each free_list
+> iteration which will help with the IRQ and page allocator responsiveness
+> even further as the IRQ lock held time is always bound to those 100k
+> pages.
+>=20
+> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> Reviewed-by: Waiman Long <longman@redhat.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/vmstat.c | 23 ++++++++++++++++++++---
+>  1 file changed, 20 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index 4e885ecd44d1..ddb89f4e0486 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -1383,12 +1383,29 @@ static void pagetypeinfo_showfree_print(struct se=
+q_file *m,
+>  =09=09=09unsigned long freecount =3D 0;
+>  =09=09=09struct free_area *area;
+>  =09=09=09struct list_head *curr;
+> +=09=09=09bool overflow =3D false;
+> =20
+>  =09=09=09area =3D &(zone->free_area[order]);
+> =20
+> -=09=09=09list_for_each(curr, &area->free_list[mtype])
+> -=09=09=09=09freecount++;
+> -=09=09=09seq_printf(m, "%6lu ", freecount);
+> +=09=09=09list_for_each(curr, &area->free_list[mtype]) {
+> +=09=09=09=09/*
+> +=09=09=09=09 * Cap the free_list iteration because it might
+> +=09=09=09=09 * be really large and we are under a spinlock
+> +=09=09=09=09 * so a long time spent here could trigger a
+> +=09=09=09=09 * hard lockup detector. Anyway this is a
+> +=09=09=09=09 * debugging tool so knowing there is a handful
+> +=09=09=09=09 * of pages in this order should be more than
+> +=09=09=09=09 * sufficient
+> +=09=09=09=09 */
+> +=09=09=09=09if (++freecount >=3D 100000) {
+> +=09=09=09=09=09overflow =3D true;
+> +=09=09=09=09=09break;
+> +=09=09=09=09}
+> +=09=09=09}
+> +=09=09=09seq_printf(m, "%s%6lu ", overflow ? ">" : "", freecount);
+> +=09=09=09spin_unlock_irq(&zone->lock);
+> +=09=09=09cond_resched();
+> +=09=09=09spin_lock_irq(&zone->lock);
+>  =09=09}
+>  =09=09seq_putc(m, '\n');
+>  =09}
+> --=20
+> 2.20.1
+>=20
+Acked-by: Rafael Aquini <aquini@redhat.com>
 
-> >      PCI: Warn if no host bridge NUMA node info
-> >      In pci_call_probe(), we try to run driver probe functions on the node where
-> >      the device is attached.  If we don't know which node the device is attached
-> >      to, the driver will likely run on the wrong node.  This will still work,
-> >      but performance will not be as good as it could be.
-> 
-> Is it guaranteed to be purely a performance issue? In other words, is there
-> definitely no way a physical node could be disabled via idle/hotplug/etc.
-> such that unattributed devices can silently disappear while still in use?
-
-I think so.  At least, if it's more than a performance issue, I have
-no idea what sort of problem might happen or how to deal with it.
-
-> > @@ -897,6 +897,9 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
-> >   	else
-> >   		pr_info("PCI host bridge to bus %s\n", name);
-> > +	if (nr_node_ids > 1 && pcibus_to_node(bus) == NUMA_NO_NODE)
-> > +		dev_warn(&bus->dev, "Unknown NUMA node; performance will be reduced\n");
-> 
-> I think this still deserves the FW_BUG prefix.
-
-Putting the warning here in pci_register_host_bridge() is convenient
-for now but doesn't seem like the ideal place.
-
-I'd rather have the warning at the point where we get the node number,
-e.g., in pci_acpi_root_get_node() or of_node_to_nid(), where we would
-know what's actually required by spec and we could point to the
-specific ACPI device or DT device node that's broken.  Then I think
-we'd have a better case for using FW_BUG.
-
-I'm a little hesitant to use FW_BUG here in pci_register_host_bridge()
-because we don't know where the node number was supposed to come from,
-so we can't reliably determine that the lack of one is a bug.
-
-Bjorn
