@@ -2,82 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBD9AE4FA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:56:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CDBAE4FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 17:00:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440533AbfJYO4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 10:56:24 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35222 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2440507AbfJYO4X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 10:56:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=aF6JPZTJ/gBdIJwVCjuZWdvm5qo4nqf8GBjBjU4VHfM=; b=KhSrz89GlOX23Pdcc/m/CEld3
-        js2tGCBFwjdMJJ34KizZkriCuEs4NYx5Ro5d1rNJ46rh8JBbTBv6pFyOMal5DlyU5GMO4Y0rIho2S
-        bxS3FKE8dzctMQEiLrCHnnYT5RqBoJcg0csb+wB6zSoSWXrJOd9CcxKeM9J0iHNnbCQFg=;
-Received: from host86-174-61-171.range86-174.btcentralplus.com ([86.174.61.171] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1iO10k-00075b-CM; Fri, 25 Oct 2019 14:56:18 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id B0C42D020AD; Fri, 25 Oct 2019 15:56:17 +0100 (BST)
-Date:   Fri, 25 Oct 2019 15:56:17 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     daniel.thompson@linaro.org, arnd@arndb.de,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, baohua@kernel.org,
-        stephan@gerhold.net
-Subject: Re: [PATCH v3 10/10] mfd: mfd-core: Move pdev->mfd_cell creation
- back into mfd_add_device()
-Message-ID: <20191025145617.GI4568@sirena.org.uk>
-References: <20191024163832.31326-1-lee.jones@linaro.org>
- <20191024163832.31326-11-lee.jones@linaro.org>
+        id S2407736AbfJYPAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 11:00:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49306 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726168AbfJYPAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 11:00:15 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9424D21D7F;
+        Fri, 25 Oct 2019 15:00:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572015613;
+        bh=f2yf9WpyouCealS+fktBfB/szXs5aGxga2kI9M3FDlY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vBpdbmlldWSSg3zELNMATQBvbJ4pmxUC9Vuhdr6ONwQF0+otKu2JdUNPyjKTpBSU9
+         vuVJfZuy4wJMlMTVoVLWs7zqUDSnwI1ZB6UsQF2wNz83KjT5pXzlqR/kUsDco828u9
+         7Vs4EWkQZqLL9LoT0NDyCOyxcrTaP4tG+/O5YqN8=
+Received: by mail-qk1-f174.google.com with SMTP id 71so2054591qkl.0;
+        Fri, 25 Oct 2019 08:00:13 -0700 (PDT)
+X-Gm-Message-State: APjAAAW8S44J4i4E9+10uNVMusOuYatgiFI8+YgBbIx/bwM2GMngBrpj
+        mptlVIHVbnYxbffYiQJxcmgpDo2MorSebVCYSQ==
+X-Google-Smtp-Source: APXvYqxyzg3cWltGQSwBHgv+PTKLola2kTTOSA/qAZ8b3mYsCjOEIv9QdBh6RrG2w1dFyen5KJGFCzbPcplD6nP0UcE=
+X-Received: by 2002:a05:620a:12b4:: with SMTP id x20mr3443712qki.254.1572015612674;
+ Fri, 25 Oct 2019 08:00:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NzX0AQGjRQPusK/O"
-Content-Disposition: inline
-In-Reply-To: <20191024163832.31326-11-lee.jones@linaro.org>
-X-Cookie: Keep out of the sunlight.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190705164221.4462-1-robh@kernel.org> <20190705164221.4462-2-robh@kernel.org>
+ <CAMuHMdW86UOVp5vjdFBzjbqsG_wemjZ77LyVnc+oZ6ZDccv_cA@mail.gmail.com>
+ <CAL_JsqJA_ZZ5CjoGrB4NofAcwMPXhnC0ddWZqZ9SXSTNAWB3cQ@mail.gmail.com> <CAMuHMdU-ubE9y3V9W_ij5OFyxNLu0LmdrH88=vkkr6uSAJrTPA@mail.gmail.com>
+In-Reply-To: <CAMuHMdU-ubE9y3V9W_ij5OFyxNLu0LmdrH88=vkkr6uSAJrTPA@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 25 Oct 2019 10:00:00 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLDoOQ-E=qh1e-jquKHcNOTSXysQV7RKWYCqPwFtYbdBQ@mail.gmail.com>
+Message-ID: <CAL_JsqLDoOQ-E=qh1e-jquKHcNOTSXysQV7RKWYCqPwFtYbdBQ@mail.gmail.com>
+Subject: Re: [PATCH v3 01/13] dt-bindings: display: Convert common panel
+ bindings to DT schema
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 25, 2019 at 9:39 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Rob,
+>
+> On Fri, Oct 25, 2019 at 4:25 PM Rob Herring <robh@kernel.org> wrote:
+> > On Fri, Oct 25, 2019 at 8:07 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > On Fri, Jul 5, 2019 at 6:46 PM Rob Herring <robh@kernel.org> wrote:
+> > > > Convert the common panel bindings to DT schema consolidating scattered
+> > > > definitions to a single schema file.
+> > > >
+> > > > The 'simple-panel' binding just a collection of properties and not a
+> > > > complete binding itself. All of the 'simple-panel' properties are
+> > > > covered by the panel-common.txt binding with the exception of the
+> > > > 'no-hpd' property, so add that to the schema.
+> > > >
+> > > > As there are lots of references to simple-panel.txt, just keep the file
+> > > > with a reference to common.yaml for now until all the bindings are
+> > > > converted.
+> > > >
+> > > > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > > > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > Cc: dri-devel@lists.freedesktop.org
+> > > > Acked-by: Sam Ravnborg <sam@ravnborg.org>
+> > > > Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > > > Reviewed-by: Thierry Reding <treding@nvidia.com>
+> > > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > >
+> > > This is now commit 821a1f7171aeea5e ("dt-bindings: display: Convert
+> > > common panel bindings to DT schema").
+> > >
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/display/panel/panel-common.yaml
+> > >
+> > > > +  backlight:
+> > > > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > > > +    description:
+> > > > +      For panels whose backlight is controlled by an external backlight
+> > > > +      controller, this property contains a phandle that references the
+> > > > +      controller.
+> > >
+> > > This paragraph seems to apply to all nodes named "backlight", causing
+> > > e.g. (for ARCH=arm mach_shmobile_defconfig) "make dtbs_check
+> > > DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/panel/panel-common.yaml"
+> > > to start complaining:
+> > >
+> > >     arch/arm/boot/dts/r8a7740-armadillo800eva.dt.yaml: backlight:
+> > > {'compatible': ['pwm-backlight'], 'pwms': [[40, 2, 33333, 1]],
+> > > 'brightness-levels': [[0, 1, 2, 4, 8, 16, 32, 64, 128, 255]],
+> > > 'default-brightness-level': [[9]], 'pinctrl-0': [[41]],
+> > > 'pinctrl-names': ['default'], 'power-supply': [[42]], 'enable-gpios':
+> > > [[15, 61, 0]]} is not of type 'array'
+> > >     arch/arm/boot/dts/r8a7740-armadillo800eva.dt.yaml: backlight:
+> > > {'groups': ['tpu0_to2_1'], 'function': ['tpu0'], 'phandle': [[41]]} is
+> > > not of type 'array'
+> > >
+> > > Do you know what's wrong?
+> >
+> > I'm not seeing that. What does .../bindings/processed-schema.yaml look like?
+>
+> I see it with both next-20191015 and v5.4-rc4.
+>
+> - $filename: /scratch/geert/linux/linux-next/Documentation/devicetree/bindings/display/panel/panel-common.yaml
+>   $id: http://devicetree.org/schemas/display/panel/panel-common.yaml#
+>   $schema: http://devicetree.org/meta-schemas/core.yaml#
+>   dependencies:
+>     height-mm: [width-mm]
+>     width-mm: [height-mm]
+>   patternProperties: {'pinctrl-[0-9]+': true}
+>   properties:
+>     $nodename: true
+>     backlight: {$ref: /schemas/types.yaml#/definitions/phandle}
+>     ddc-i2c-bus: {$ref: /schemas/types.yaml#/definitions/phandle}
+>     enable-gpios: {maxItems: 1, minItems: 1}
+>     height-mm: {}
+>     label: {}
+>     no-hpd: {type: boolean}
+>     panel-timing: {type: object}
+>     phandle: true
+>     pinctrl-names: true
+>     port: {type: object}
+>     ports: {type: object}
+>     power-supply: {}
+>     reset-gpios: {maxItems: 1, minItems: 1}
+>     rotation:
+>       allOf:
+>       - {$ref: /schemas/types.yaml#/definitions/uint32}
+>       - additionalItems: false
+>         items:
+>           additionalItems: false
+>           items:
+>             enum: [0, 90, 180, 270]
+>           maxItems: 1
+>           minItems: 1
+>           type: array
+>         maxItems: 1
+>         minItems: 1
+>         type: array
+>     status: true
+>     width-mm: {}
+>   select:
+>     properties: {$nodename: true}
+>     required: [$nodename]
 
---NzX0AQGjRQPusK/O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The problem is this causing the schema to be applied to every node.
+Update dtschema repo. This was fixed some time ago.
 
-On Thu, Oct 24, 2019 at 05:38:32PM +0100, Lee Jones wrote:
-> Most of the complexity of mfd_platform_add_cell() has been removed. The
-> only functionality left duplicates cell memory into the child's platform
-> device. Since it's only a few lines, moving it to the main thread and
-> removing the superfluous function makes sense.
-
-Reviewed-by: Mark Brown <broonie@kernel.org>
-
---NzX0AQGjRQPusK/O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2zDRAACgkQJNaLcl1U
-h9DO/Af/VagCkEQfGNe1Ncjxx+a7IFEhDSC4yzx8fMlWxETMK9yPwOBSBkR89NQZ
-pzaIK3X35Zh9LM/H8ptRf7FeKzJ8BeO3j0ck1uCAcJrvT3O4vzso8kdC1jwVQ/O0
-hHd/+39lnnDfsP3OhZjMtAGu9EZy9klwIrHmj7PKXtJ2Cn3jXUlb4qUSBujNtEHY
-TXtxGhUrHPpJBEjchkG/36VYbRhG241EBxxPriQ5vRC5dm4YIbdpkeiYLQhB0Js2
-tYQPsXSkGg7flTuGEtPZMhKXHt2TnzzKPmUcK3R4ikyCvO8Lt9g6VDIUiaeRM+jS
-wb1JBPSFwuy5dYVsQ9L1Til/GDq6Aw==
-=LFpK
------END PGP SIGNATURE-----
-
---NzX0AQGjRQPusK/O--
+Rob
