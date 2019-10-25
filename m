@@ -2,86 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B41CE570D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 01:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EE33E5712
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 01:32:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbfJYXbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 19:31:03 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:46380 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfJYXbC (ORCPT
+        id S1726511AbfJYXcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 19:32:43 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35943 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfJYXcm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 19:31:02 -0400
-Received: by mail-il1-f193.google.com with SMTP id m16so3221842iln.13
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 16:31:02 -0700 (PDT)
+        Fri, 25 Oct 2019 19:32:42 -0400
+Received: by mail-ed1-f68.google.com with SMTP id bm15so3145796edb.3;
+        Fri, 25 Oct 2019 16:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=lR5/5+r8bCmhCIY6LJthT487CIpdBcb0dtxi4yHzNfo=;
-        b=U/8ANm9ZjTcvnGCy0ASTe45RLMWWXvVGkN/QrSOs+PzJIGkftolprsdRaRykpvpKFC
-         5cfDoSA2aGycaGrQ5gyL/wmmkY41E0CLqZ/kN3aHzFGjv+/+pGuwkMcuPFyuQhHelbmt
-         GvcjTVl0h3fSMQW57MfYY9SyrBWSz39avXHo4AYqVwcNPPcbkW4KgwyP8Qdws5HlIVNq
-         cvZRcarlZOdTTH2YVIWluME8foAufixQH9SSG3WYEX/QD9pLjoO3ttCOY9pNcj1WbXZ5
-         DFXRCbZFd0kqTDJsvNlurcq4uSy8Ui0T00ooqnrVxkTMN9sr3B5LilYfEu2cR13WZmog
-         hxfQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=53yH7/uaXqdrwxgYB9Z47HSHpvLxk3mUn6GWgjoDX1k=;
+        b=DO2SmefHOAxn4ZRC/98N4YdzE/zPlygnI3sdZ/lMw8GE1Y0Jn+4ecitQL7PrEYjGNw
+         nQO6urZcflUp3c+zcDVjzayJv+IrElZA2btlmB3VaFWiL3jmKwLwSiQ1OxdhcsXuZI+L
+         g+eV3KjvUpPKvnhtHgLRTuKuPpD0jg+V0ZN5qnxWgTpnXqsP+SDsqu0W0Bzb+stVXhgk
+         RWjG2kHGTXqK0jCfgqtjCSzL8QQ4chhr/EyVRDBCuEXwVFT16w+jM6bUBju/OUqIoJDj
+         KOp0FPD9cjau7zgCUdkP/nQ5aLjrK2hB9iKTIbO5A4dd0tc0wNwqKQoR4ZxZ6SNkIybw
+         gWlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=lR5/5+r8bCmhCIY6LJthT487CIpdBcb0dtxi4yHzNfo=;
-        b=sGSjahwqP5Wn8MBXWRBnNxYyHEXcEaI95VhUOrkNf7u0G3cKc+O4z43BnctcvTIrRv
-         aN2FOAFuLqB8xn0fWD782iz1TYnMXfJIYFhWYlI2Pn8ZKvHfRSfdIqYM9sn1FbhGAwfN
-         pGrpIRsOk1JETpYgCPnkULFrpvnLnT9ZJ9Vivy9Zz3FsrXmidq8S3Kscg+JVdcRJFH2M
-         V4OseK86W0BBr9ZfBF3w8qsWAVYg6TIucLLib07pQyIC/7rPuGNqmaZUibHQWsirWKJb
-         Bu9LyUS/f8HC/n+oOVbpUsStm4fdrkDelZFgnmlmLDThosl7JHzimFZCf1pORIPglSek
-         yJAg==
-X-Gm-Message-State: APjAAAWKOIF0srlSgGLu93h8hOihAtJcECqMOljDYKX4m6kErm22uqYs
-        bDXuU1JGfQ8Q1i6k/6GK/dLfww==
-X-Google-Smtp-Source: APXvYqxCRkC7bsr4R1MRLbbtPijuvmtcRENpyOsfBauaT1t9TfBCyyNa3dtelKHzUngB/GzRY3j/mA==
-X-Received: by 2002:a92:c80b:: with SMTP id v11mr6695297iln.62.1572046262026;
-        Fri, 25 Oct 2019 16:31:02 -0700 (PDT)
-Received: from localhost ([64.62.168.194])
-        by smtp.gmail.com with ESMTPSA id n3sm557223ilm.8.2019.10.25.16.31.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 16:31:01 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 16:30:59 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Anup Patel <anup@brainfault.org>
-cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim K <rkrcmar@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Graf <graf@amazon.com>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 01/22] RISC-V: Add bitmap reprensenting ISA features
- common across CPUs
-In-Reply-To: <CAAhSdy3xV0UjDKUgHoKbyoeV5kaC9rVSy=qoBpF=XrrbT=W=-Q@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.9999.1910251629540.12828@viisi.sifive.com>
-References: <20191016160649.24622-1-anup.patel@wdc.com> <20191016160649.24622-2-anup.patel@wdc.com> <CAAhSdy3xV0UjDKUgHoKbyoeV5kaC9rVSy=qoBpF=XrrbT=W=-Q@mail.gmail.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=53yH7/uaXqdrwxgYB9Z47HSHpvLxk3mUn6GWgjoDX1k=;
+        b=lVXldsttfRBKfSEcvbvwN09r9mX0suxsDhGdq3SWPPTY82E1fYk+G5A6l2fyC/kWUX
+         HiWITpyGrgbp4ALCmWw9VGdWtgjtVdW+wp8IAtFggLuRZF+XXI/FVOqRGUAicMz+L1f7
+         RwlGT9fJrNXmfGwLfB/5S7bXRs+4SRDK1DdxqiePeTn0xRxlyPo38FDDa2d3sN+n3Ww0
+         U8IIgwRr+FXyWCkC95+9UFgJzsO/X2zJHxCvGOz1Ip637VpqS2+rS5/aTPhgvO9yGLvq
+         EEFUvTykd2XWsec481WZ0DFPe8iCfCGXu4SGfeJh1aj/nOyvoVliKKoxEGV2KZbXnRLu
+         g6+w==
+X-Gm-Message-State: APjAAAUQFGvkXZMgBA1aa5Cy+MBCxy71j9mRpd9CUSDX3MUQP8NTKSpA
+        z3T2ruWyDRLJBiUF5kHtDrniFw/k8iElssbIyYY=
+X-Google-Smtp-Source: APXvYqz769LDdVQAKT6dKxtfm0ChR8hbmqoc0jVwlkWk2TcKLi8TwfsfQMql2BOxt6F8LwNgS6lRRTuNz9I/hd3Zw1M=
+X-Received: by 2002:a17:906:e82:: with SMTP id p2mr5896396ejf.237.1572046361188;
+ Fri, 25 Oct 2019 16:32:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20191025225009.50305-1-john.stultz@linaro.org> <20191025225009.50305-2-john.stultz@linaro.org>
+In-Reply-To: <20191025225009.50305-2-john.stultz@linaro.org>
+From:   Rob Herring <rob.e.herring@gmail.com>
+Date:   Fri, 25 Oct 2019 18:32:29 -0500
+Message-ID: <CAC=3eda3sCMjCQbFX2Y0-6iVt-YRR7P_Y1ksJOsLw9CmJJRxbA@mail.gmail.com>
+Subject: Re: [RFC][PATCH 1/3] dt-bindings: dma-buf: heaps: Describe CMA
+ regions to be added to dmabuf heaps interface.
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "Andrew F . Davis" <afd@ti.com>, Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Hridya Valsaraju <hridya@google.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Oct 2019, Anup Patel wrote:
+On Fri, Oct 25, 2019 at 5:51 PM John Stultz <john.stultz@linaro.org> wrote:
+>
+> This binding specifies which CMA regions should be added to the
+> dmabuf heaps interface.
 
-> Can you consider this patch for Linux-5.4-rcX ??
+Is this an ION DT binding in disguise? I thought I killed that. ;)
 
-Unless another user of the riscv_isa bitmap comes along, it seems best 
-merged along with its user: the RISC-V KVM patches.
+>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Laura Abbott <labbott@redhat.com>
+> Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+> Cc: Sumit Semwal <sumit.semwal@linaro.org>
+> Cc: Liam Mark <lmark@codeaurora.org>
+> Cc: Pratik Patel <pratikp@codeaurora.org>
+> Cc: Brian Starkey <Brian.Starkey@arm.com>
+> Cc: Andrew F. Davis <afd@ti.com>
+> Cc: Chenbo Feng <fengc@google.com>
+> Cc: Alistair Strachan <astrachan@google.com>
+> Cc: Sandeep Patil <sspatil@google.com>
+> Cc: Hridya Valsaraju <hridya@google.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> ---
+>  .../bindings/dma/dmabuf-heap-cma.txt          | 31 +++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/dmabuf-heap-cma.txt
+>
+> diff --git a/Documentation/devicetree/bindings/dma/dmabuf-heap-cma.txt b/Documentation/devicetree/bindings/dma/dmabuf-heap-cma.txt
+> new file mode 100644
+> index 000000000000..bde7b1f1c269
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/dmabuf-heap-cma.txt
+> @@ -0,0 +1,31 @@
+> +* DMA-BUF CMA Heap
+> +
+> +Specifies a CMA region that should be added to the dma-buf heaps
+> +interface.
+> +
+> +Required properties:
+> +- compatible: Must be "dmabuf-heap-cma"
+> +- memory-region: phandle to a CMA reserved memory node
+> +
+> +Example:
+> +This example has a camera CMA node in reserved memory, which is then
+> +referenced by the dmabuf-heap-cma node.
+> +
+> +
+> +       reserved-memory {
+> +               #address-cells = <2>;
+> +               #size-cells = <2>;
+> +               ranges;
+> +               ...
+> +               cma_camera: cma-camera {
+> +                       compatible = "shared-dma-pool";
+> +                       reg = <0x0 0x24C00000 0x0 0x4000000>;
+> +                       reusable;
+> +               };
+> +               ...
+> +       };
+> +
+> +       cma_heap {
+> +               compatible = "dmabuf-heap-cma";
+> +               memory-region = <&cma_camera>;
 
+Why the indirection here? Can't you just add a flag property to
+reserved-memory nodes like we do to flag CMA nodes?
 
-- Paul
+As I suspected, it's because in patch 2 you're just abusing DT to
+instantiate platform devices. We already support binding drivers to
+reserved-memory nodes directly.
+
+Rob
