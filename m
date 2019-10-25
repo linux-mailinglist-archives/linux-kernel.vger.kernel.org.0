@@ -2,109 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 008C0E4FD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 17:06:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAAFCE4FD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 17:11:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440559AbfJYPGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 11:06:36 -0400
-Received: from mail-eopbgr720055.outbound.protection.outlook.com ([40.107.72.55]:43104
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2436893AbfJYPGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 11:06:35 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iT/6rP+CfS0LlcRyKbV+3a4mYUzOpZUlyB7D+nmdy4pDbrto9AQAa3e3ot7snwqgJSg6DDXFcKwKcAd1hhmaYXTcwly0Umc0cBpjpLRDMCYbStUxAyS65fiZUQnUcuHzw16yXriIle7NVXAQbKWraUuVO4nYOyd0AdKgUkoPWVhNOJsAi2GhIdq2V++F6GpxEMaODKUdylIOKoX+hGAhBRbuU4RDEzcgh81yxJJNVQfgS/TbXDGz2dtq2Pey90Vxdfl6065uhiKF4XlOpprcbsyQUrlSLqWhF5MOM3UUk/bbK5n27UgtllN/OpcH5NOmU90rf0sNHHbOuCmYMXHokQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DlTzp2nm49mb+C+DlK45o+ydRrwDf97826K0GkDbsNk=;
- b=Og7nxL1AxNgyk7UO5CBSBMXy7P4nhxKnnAV1NlAUJeH2Gork8FwlBXbb8seFVXQsBiiunnyZRFYOPbGl/WWIcEcuwSOCK3aaqymQYT7BIJfmpob35vn7SilabU+B9+dtAtrWAoxGUZ8u0krTF7X9yL1tmAQGyniaY5kNOSZCSILEKkkfIqPIUVCbvQDa2BQYVEFTi29mT2C4T1GlkA8bWMuJp4uHb+DsUd2cOQ7pN3ToTCbUsPkYnRZtBjBoxCjFZQjkX0a+Ah4YWvnCNxBWbGPC05JLC43zCzFb+9iLNjuE7vS6J26vl8puqPgeA18LgOPYVSpPEAx8Cvsk8OmDQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aquantia.com; dmarc=pass action=none header.from=aquantia.com;
- dkim=pass header.d=aquantia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=AQUANTIA1COM.onmicrosoft.com; s=selector2-AQUANTIA1COM-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DlTzp2nm49mb+C+DlK45o+ydRrwDf97826K0GkDbsNk=;
- b=OZJ96x4JvIWD6/H5Lqlm25PJUceEd9edlO0Cf7443nlPlZLrgeafkR4d/JhnzrmMvlZ3ghltqtOOG4C58drjm06mcU/kg2POTBJleEk3i95l2JPg2YV5ZMwtvRlm70UA6dwg4UGJo+JgKFJqiIy+RHKwnOM+Z1U6NKyk13TD2a4=
-Received: from BN8PR11MB3762.namprd11.prod.outlook.com (20.178.221.83) by
- BN8PR11MB3731.namprd11.prod.outlook.com (20.178.220.219) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.22; Fri, 25 Oct 2019 15:06:26 +0000
-Received: from BN8PR11MB3762.namprd11.prod.outlook.com
- ([fe80::accc:44e2:f64d:f2f]) by BN8PR11MB3762.namprd11.prod.outlook.com
- ([fe80::accc:44e2:f64d:f2f%3]) with mapi id 15.20.2387.023; Fri, 25 Oct 2019
- 15:06:26 +0000
-From:   Igor Russkikh <Igor.Russkikh@aquantia.com>
-To:     YueHaibing <yuehaibing@huawei.com>,
-        Egor Pomozov <epomozov@marvell.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Dmitry Bezrukov <Dmitry.Bezrukov@aquantia.com>,
-        Sergey Samoilenko <Sergey.Samoilenko@aquantia.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [EXT] [PATCH net-next] net: aquantia: Fix build error wihtout
- CONFIG_PTP_1588_CLOCK
-Thread-Topic: [EXT] [PATCH net-next] net: aquantia: Fix build error wihtout
- CONFIG_PTP_1588_CLOCK
-Thread-Index: AQHVi0XB+OhMsSq30UWkt4i3ZpBEGg==
-Date:   Fri, 25 Oct 2019 15:06:25 +0000
-Message-ID: <cdef0123-89da-b9ff-1f52-6d838846ffc9@aquantia.com>
-References: <20191025133726.31796-1-yuehaibing@huawei.com>
-In-Reply-To: <20191025133726.31796-1-yuehaibing@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: PR0P264CA0044.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:100:1::32) To BN8PR11MB3762.namprd11.prod.outlook.com
- (2603:10b6:408:8d::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Igor.Russkikh@aquantia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [95.79.108.179]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d98c9ea1-ac7f-4a04-a23b-08d7595ce7dd
-x-ms-traffictypediagnostic: BN8PR11MB3731:
-x-ld-processed: 83e2e134-991c-4ede-8ced-34d47e38e6b1,ExtFwd
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BN8PR11MB3731E1D0C7B27D3053E8EAA798650@BN8PR11MB3731.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 02015246A9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39850400004)(396003)(366004)(376002)(136003)(346002)(199004)(189003)(71200400001)(54906003)(99286004)(6636002)(6116002)(2501003)(66066001)(6246003)(3846002)(256004)(7736002)(8936002)(81166006)(81156014)(316002)(8676002)(186003)(26005)(110136005)(31696002)(229853002)(386003)(6506007)(76176011)(102836004)(52116002)(6512007)(6486002)(71190400001)(476003)(66476007)(86362001)(66556008)(4744005)(64756008)(446003)(36756003)(2616005)(66446008)(31686004)(508600001)(25786009)(4326008)(6436002)(14454004)(2906002)(5660300002)(44832011)(11346002)(66946007)(305945005)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN8PR11MB3731;H:BN8PR11MB3762.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: aquantia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: RoYTf5M3Oh4aPXSPrcZqfI5vqoJtqpLbpOyN70IEQIVpJZKSNhva3gO400j7fWYJol1DqPwoos2pBB6qPxoRftWM+l/Cv+R9z+Ns+Fum2UckJ6PQRd9IPw8Lv6Shzx79OqbJEuY0z4X6WQO1fnjWty1tPxf7In+sc1l7rhtp7029cBTFjtQUlhEMJnOwajieedCd/KVXOrX8iDyUA4O8lf6LXvHlS3JhPcaK2B7nwZyTxN/epSiBN5cuj0m+hva7UN4VqjZ0VVMeoMes4YRLOGDblMAoa9f5+51CSbbvXw/cHRbg90vQ8q20nccDv/ihwc403lPYxZbvKefhO2GEyZm0Rmdwifh06x6jGwUu6T5Q5FDUjrx2/+UfOO95nLs/EWk6RSEZvAhbEuJA3sFtVeOifCfyES1yQZBSEf0w4qNQiOY1UG3KYhu6Wj1pqwCC
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FE749B4AAE57FF498DA6F3A63793CE55@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2502982AbfJYPLQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 11:11:16 -0400
+Received: from mga07.intel.com ([134.134.136.100]:61358 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2502015AbfJYPLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 11:11:16 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2019 08:11:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,229,1569308400"; 
+   d="scan'208";a="210385776"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga001.fm.intel.com with ESMTP; 25 Oct 2019 08:11:14 -0700
+Date:   Fri, 25 Oct 2019 08:11:14 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v2 01/16] x86/intel: Initialize IA32_FEATURE_CONTROL MSR
+ at boot
+Message-ID: <20191025151114.GC17290@linux.intel.com>
+References: <20191021234632.32363-1-sean.j.christopherson@intel.com>
+ <20191021235423.32733-1-sean.j.christopherson@intel.com>
+ <20191025140927.GC6483@zn.tnic>
 MIME-Version: 1.0
-X-OriginatorOrg: aquantia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d98c9ea1-ac7f-4a04-a23b-08d7595ce7dd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2019 15:06:25.9259
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 83e2e134-991c-4ede-8ced-34d47e38e6b1
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Xpk6ruTOCw/naSCWhUif1OSdrHi7UWr/YNng9ImOi96JlupMOrqtb/lJFH5ufVLOvYAsikYXMlaj/ierVdDSmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR11MB3731
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191025140927.GC6483@zn.tnic>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IElmIFBUUF8xNTg4X0NMT0NLIGlzIG4sIGJ1aWxkaW5nIGZhaWxzOg0KPiANCj4gZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvYXF1YW50aWEvYXRsYW50aWMvYXFfcHRwLmM6IEluIGZ1bmN0aW9uIGFx
-X3B0cF9hZGpmaW5lOg0KPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9hcXVhbnRpYS9hdGxhbnRpYy9h
-cV9wdHAuYzoyNzk6MTE6DQo+ICBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rp
-b24gc2NhbGVkX3BwbV90b19wcGIgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRp
-b25dDQo+ICAgICAgICAgICAgc2NhbGVkX3BwbV90b19wcGIoc2NhbGVkX3BwbSkpOw0KDQpIaSBZ
-dWUsDQoNClRoYW5rcyBmb3Igbm90aWNpbmcgdGhpcy4gSXQgc2VlbXMgSSd2ZSBhZGRlZCBzY2Fs
-ZWRfcHBtX3RvX3BwYiB1c2FnZSBidXQgZGlkDQpub3QgY2hlY2tlZCBQVFBfMTU4OF9DTE9DSz1u
-IGNhc2UgYWZ0ZXIgdGhhdC4NCg0KPiANCj4gSnVzdCBjcCBzY2FsZWRfcHBtX3RvX3BwYigpIGZy
-b20gcHRwX2Nsb2NrLmMgdG8gZml4IHRoaXMuDQoNCkknbSBob25lc3RseSBub3Qgc3VyZSBpZiBk
-dXBsaWNhdGluZyB0aGUgY29kZSBpcyBhIGdvb2Qgd2F5IGhlcmUuDQpJJ2xsIHRoaW5rIG9uIGhv
-dyB0byBleGNsdWRlIGF0X3B0cCBhdCBhbGwgb24gc3VjaCBhIGNvbmZpZy4NCg0KUmVnYXJkcywN
-CiAgSWdvcg0K
+On Fri, Oct 25, 2019 at 04:09:27PM +0200, Borislav Petkov wrote:
+> On Mon, Oct 21, 2019 at 04:54:23PM -0700, Sean Christopherson wrote:
+> > --- a/arch/x86/kernel/cpu/Makefile
+> > +++ b/arch/x86/kernel/cpu/Makefile
+> > @@ -29,6 +29,7 @@ obj-y			+= umwait.o
+> >  obj-$(CONFIG_PROC_FS)	+= proc.o
+> >  obj-$(CONFIG_X86_FEATURE_NAMES) += capflags.o powerflags.o
+> >  
+> > +obj-$(CONFIG_X86_FEATURE_CONTROL_MSR) += feature_control.o
+> >  ifdef CONFIG_CPU_SUP_INTEL
+> >  obj-y			+= intel.o intel_pconfig.o
+> >  obj-$(CONFIG_PM)	+= intel_epb.o
+> > diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
+> > index c0e2407abdd6..d2750f53a0cb 100644
+> > --- a/arch/x86/kernel/cpu/cpu.h
+> > +++ b/arch/x86/kernel/cpu/cpu.h
+> > @@ -62,4 +62,8 @@ unsigned int aperfmperf_get_khz(int cpu);
+> >  
+> >  extern void x86_spec_ctrl_setup_ap(void);
+> >  
+> > +#ifdef CONFIG_X86_FEATURE_CONTROL_MSR
+> > +void init_feature_control_msr(struct cpuinfo_x86 *c);
+> > +#endif
+> > +
+> >  #endif /* ARCH_X86_CPU_H */
+> > diff --git a/arch/x86/kernel/cpu/feature_control.c b/arch/x86/kernel/cpu/feature_control.c
+> > new file mode 100644
+> > index 000000000000..57b928e64cf5
+> > --- /dev/null
+> > +++ b/arch/x86/kernel/cpu/feature_control.c
+> 
+> Why the separate compilation unit and the Kconfig variable? This can
+> live in ...cpu/intel.c just fine, right?
+
+Patches 03/14 and 04/14 enable CONFIG_X86_FEATURE_CONTROL_MSR for Centaur
+and Zhaoxin CPUs, putting this in intel.c would make those CPUs depend on
+CONFIG_CPU_SUP_INTEL.
+
+The common code and Kconfig is used in patch 10/16 to consolidate the VMX
+feature flag code that is copy-pasted from Intel -> Centaur/Zhaoxin.
+
+CONFIG_X86_FEATURE_CONTROL_MSR is also used by KVM in patch 16/16 to
+gatekeep CONFIG_KVM_INTEL, i.e. VMX support, instead of requiring
+CONFIG_CPU_SUP_INTEL.  In other words, allow building KVM for Cenatur or
+Zhaoxin without having to build in support for Intel.
+
+> > @@ -0,0 +1,30 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +#include <linux/tboot.h>
+> > +
+> > +#include <asm/cpufeature.h>
+> > +#include <asm/msr-index.h>
+> > +#include <asm/processor.h>
+> > +
+> > +void init_feature_control_msr(struct cpuinfo_x86 *c)
+> > +{
+> > +	u64 msr;
+> > +
+> > +	if (rdmsrl_safe(MSR_IA32_FEATURE_CONTROL, &msr))
+> > +		return;
+> > +
+> > +	if (msr & FEATURE_CONTROL_LOCKED)
+> > +		return;
+> > +
+> > +	/*
+> > +	 * Ignore whatever value BIOS left in the MSR to avoid enabling random
+> > +	 * features or faulting on the WRMSR.
+> > +	 */
+> > +	msr = FEATURE_CONTROL_LOCKED;
+> > +
+> > +	if (cpu_has(c, X86_FEATURE_VMX)) {
+> > +		msr |= FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX;
+> > +		if (tboot_enabled())
+> > +			msr |= FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX;
+> 
+> Any chance you can do s/FEATURE_CONTROL_/FT_CTL_/ or FEAT_CTL or so, to
+> those bit defines and maybe the MSR define too? They're a mouthful now.
+
+FEAT_CTL Works for me.  I'd also like to do s/VMXON/VMX to match the SDM.
+My vote is to leave the name of the MSR itself as is.
+
+Paolo, any opinion on tweaking the MSR bits/name?
+
