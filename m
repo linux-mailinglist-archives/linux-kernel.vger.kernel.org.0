@@ -2,89 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 107B2E4B54
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37215E4B64
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:43:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504553AbfJYMmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 08:42:06 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45878 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504551AbfJYMle (ORCPT
+        id S2409294AbfJYMnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:43:18 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44118 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407216AbfJYMnR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 08:41:34 -0400
-Received: by mail-lf1-f65.google.com with SMTP id v8so1610950lfa.12
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 05:41:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OvUZNskoObmKKJYsbx/wH8iXu8sDYM+jDByiAdju3Rg=;
-        b=O1Zrkhgig/GHdHnwKsmpqtbkvDL3Y1rbK+JGj+Cs0DZWtFaWKeld23eELOlF+fW35i
-         ahKQ49AZ8AKtvvJqeiZLjoI7J8pcRbGnauSMHAK4OFjos9Ny65vqjsTi7H7vouL3ATlL
-         cOrkitUQVw23vF5rAUldJcjlmIvXqFsHyVYjo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OvUZNskoObmKKJYsbx/wH8iXu8sDYM+jDByiAdju3Rg=;
-        b=lFBrjqG9k1WuUNF4Te33tC2WLNd/XGj7jNNR+CzVT7lw+Wiwg/ftvE8xucRYEWhgQS
-         pyh5FbGfsynjj/QdBGWkJ1FnuP4Tmhmntk00HxSdHcV+s6MikGfWAp5A/Hl02QMl07fj
-         lDsXeXfepK6JQ0/LA+TMV2CL7/CQNW5MeNcm+14JIyWEd8mt73sYfszTBOJb1qDhBcaM
-         G3cPOH69SaGy/mI1pXHn1yEFOIUqXwb3miqg4ja9CLJt7aH0pN9qz3SYU4+0Q5JROLMd
-         UHwzB4coClMOBHg018s+98fqcLjEDMx19CziVCMo1oLnCzECMzRS9vmmVYS+w05L+tkx
-         Cd4A==
-X-Gm-Message-State: APjAAAVtd+6I9PflWoxy/8Be5EswhjPpScuGpNtVPPDWEel7ppvLvng7
-        b0JI+nn6bTOFWGA8H+VWKOZIpg==
-X-Google-Smtp-Source: APXvYqzaZam+cJPG9bi7OgeGhos6Wma0vuM3s9YGw4M43Jx9w05f90bLjSb8WkcVyEkm6MHVqZnaoA==
-X-Received: by 2002:a05:6512:40e:: with SMTP id u14mr2657599lfk.73.1572007292444;
-        Fri, 25 Oct 2019 05:41:32 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 10sm821028lfy.57.2019.10.25.05.41.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 05:41:32 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Scott Wood <oss@buserror.net>,
-        Valentin Longchamp <valentin.longchamp@keymile.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v2 23/23] soc: fsl: qe: remove PPC32 dependency from CONFIG_QUICC_ENGINE
-Date:   Fri, 25 Oct 2019 14:40:58 +0200
-Message-Id: <20191025124058.22580-24-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191025124058.22580-1-linux@rasmusvillemoes.dk>
-References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
- <20191025124058.22580-1-linux@rasmusvillemoes.dk>
+        Fri, 25 Oct 2019 08:43:17 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iNyvz-0008LJ-IN; Fri, 25 Oct 2019 12:43:15 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] io-wq: fix unintentional integer overflow on left shift
+Date:   Fri, 25 Oct 2019 13:43:15 +0100
+Message-Id: <20191025124315.21742-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The core QE code now also builds for ARM, so replace the FSL_SOC &&
-PPC32 dependencies by the more lax requirements OF && HAS_IOMEM.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Shifting the integer value 1U is evaluated with type unsigned int
+using 32-bit arithmetic and then used in an expression that expects
+a 64-bit value, so there is potentially an integer overflow. Fix this
+by using the BIT_ULL macro to perform the shift and avoid the overflow.
+
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 46134db8fdc5 ("io-wq: small threadpool implementation for io_uring")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/soc/fsl/qe/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/io-wq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/Kconfig b/drivers/soc/fsl/qe/Kconfig
-index cfa4b2939992..0c5b8b8e46b6 100644
---- a/drivers/soc/fsl/qe/Kconfig
-+++ b/drivers/soc/fsl/qe/Kconfig
-@@ -5,7 +5,7 @@
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 35e94792d47c..ea5d37193f31 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -228,8 +228,8 @@ static struct io_wq_work *io_get_next_work(struct io_wqe *wqe, unsigned *hash)
  
- config QUICC_ENGINE
- 	bool "QUICC Engine (QE) framework support"
--	depends on FSL_SOC && PPC32
-+	depends on OF && HAS_IOMEM
- 	select GENERIC_ALLOCATOR
- 	select CRC32
- 	help
+ 		/* hashed, can run if not already running */
+ 		*hash = work->flags >> IO_WQ_HASH_SHIFT;
+-		if (!(wqe->hash_map & (1U << *hash))) {
+-			wqe->hash_map |= (1U << *hash);
++		if (!(wqe->hash_map & BIT_ULL(*hash))) {
++			wqe->hash_map |= BIT_ULL(*hash);
+ 			list_del(&work->list);
+ 			return work;
+ 		}
 -- 
-2.23.0
+2.20.1
 
