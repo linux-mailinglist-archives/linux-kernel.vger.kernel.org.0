@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A79AFE4485
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 09:33:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2F48E448F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 09:34:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394323AbfJYHdr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 03:33:47 -0400
-Received: from mail-wm1-f48.google.com ([209.85.128.48]:55687 "EHLO
-        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394292AbfJYHdp (ORCPT
+        id S2394313AbfJYHdq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 03:33:46 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:56095 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726479AbfJYHdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 03:33:45 -0400
-Received: by mail-wm1-f48.google.com with SMTP id g24so910905wmh.5
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 00:33:44 -0700 (PDT)
+        Fri, 25 Oct 2019 03:33:46 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g24so910960wmh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 00:33:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=K2G9g70k35Ma4xF7YfZ9Z31DwyEbpBEhJM1jJfvb0Ls=;
-        b=KZPcyclUjyY3yLuxdwofig+TMKb8hwaV/GkEcAnwSOzk46h9+ITKqyXeyxWpnIrWuX
-         nDy7RdqY/pj3FifZQks815NKfP+KPn5CGujJofWfn2eHvm//5FawiG/ZIE0WF4Q6ZMjf
-         sdgk8LCX96ssM3eihwYzq8pPN44a05KlVGxI2CSWb1d1qxakYWfvCZNsKuzYn4EVhTsQ
-         mNisCKFMW1Nnn9Gw2WZpqru3/5txrIpYVrSwBF09yuJmL6nTE8ixDpPz7n2xANdjYbny
-         0ZRIWRinykxgRdKuuceIFRIngP4GJhTxKaVt0AU2PoIu1kKP16DK/0x/qNIJJiAooKh7
-         u/yw==
+        bh=N2ThTAgeoHW31mlsGh12ha2Pd6KE6BHGLEXeQ2AbFfI=;
+        b=Cvs9FoyYv3MIFrp8WsjkZyLWI7/e8F24s3eJ99R0F1t4im2+jVXGtFQuSpT7wg3scc
+         wsdBc7PXrlNxj22obCjBZy14slZaCxrfheFn1+wmC8Xy1rZaOWc1eQ60VjEYGPp6b/xo
+         iIkWjEJYecuOfoEUGTAsoCrjvgxigmHbtwl2qh4UB2czJI2aNxSxmZ+EedpO2rYEueBe
+         mZWcnRQGeptOqWd2+S6GA59sILp53CTh9fm3jOrMTtjcObFTulfmEGsOM9IQDxcAoRzl
+         j7AIrrWMZL7YrxHf+6bFe9NhFOXQ1RWVWS58lPGPx5ABi9/7dLBYS8ib4dqZ2AQvMOmR
+         d80g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=K2G9g70k35Ma4xF7YfZ9Z31DwyEbpBEhJM1jJfvb0Ls=;
-        b=E+K2G32bj5BHR+yovrdkx93XDZvLYwKKYetPS2LooMLvs8hcg2CnSs1HegypNTCqIM
-         +gqqXqer51hIagOo/jFKvDTllNSorhxPB0MIMS9aoQOgg5cxUoB9P6ya+xdqOzWyWhCv
-         nHolzgvwcoD5buIcxxplwh6GDXsrlZPQDKVJiGpNAgOk3RHK7vZ8TscdOFNtU6WbOKVS
-         GXKhdutLI8LoyTW3AtSiXWzJKBRQQHjFAaiC4Yc2+6RiIY2/qvPmQZjcHK1s9coGbMO9
-         VNZdcOVmIX2lp5jGT/PfO7atJeFwHYZE165wzmsJjS0uJDAeWl9N2ayWGiqNs019Rtwm
-         Orqw==
-X-Gm-Message-State: APjAAAUPy5fzrN67YCP34x5GGt0c8rPZOiDuB0kTVaVNTw0pdyEVhrFO
-        M8njzXZ1cOF0kuu7oUC1ykZRzw==
-X-Google-Smtp-Source: APXvYqyz5HgKF726DT+MGAt4cBrrtuTFCrfsKRMpI2Z6psLGtRU1rTjmt7F4Zu6P/chlp+WcoOAfaw==
-X-Received: by 2002:a1c:1d53:: with SMTP id d80mr1047271wmd.88.1571988823439;
-        Fri, 25 Oct 2019 00:33:43 -0700 (PDT)
+        bh=N2ThTAgeoHW31mlsGh12ha2Pd6KE6BHGLEXeQ2AbFfI=;
+        b=Fo7Nlbsf/phcBxHMoq1V1zHZDVBFK0aVdRMvm6BKMmtw9tEHwRnvRj1iILlONKqLRr
+         AVe1iq7u3Gxz4dx1y1xmYGlb15Kxq1CAjU0Ip7HCcs3324pCsLc3LxdTNYyjMPQxWXBe
+         G88LdBs1gLjr/kYXF69hhpSel7XR6OAYFh1JSNn2FN61IP1WP7OtNZCb3ZvrmTryBduh
+         Q1kXqTEH4dJ9uxyR1gy2VdyKdk0wZ1XbbfpjgvE6+zNGdKUfXv0Cn5mEjjW+KaAES5Hs
+         KhXh+cV9UD3+qzL7vZG2BnUIreIf+sKgFTkm4P6seNc/g0dUO5mZOprWl02PJA7xcN4v
+         8goA==
+X-Gm-Message-State: APjAAAWGUqjAh05Ge/qoXp2PEWhd8crCHGPy9ErIIY3tuIChQQUJOpmP
+        V1H6zagqhBX7xzJ5h5lxlyiOo0x6+KHPFQ==
+X-Google-Smtp-Source: APXvYqwyGKGRjS9F8gjBeH9bcpVse8C1AwyaGfdsUQNKHh5P4Ahfrc9NpXUS5b2AvwtLf8hZ5yKnQw==
+X-Received: by 2002:a7b:cd89:: with SMTP id y9mr2191028wmj.51.1571988824531;
+        Fri, 25 Oct 2019 00:33:44 -0700 (PDT)
 Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id a11sm1586602wmh.40.2019.10.25.00.33.42
+        by smtp.gmail.com with ESMTPSA id a11sm1586602wmh.40.2019.10.25.00.33.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 00:33:42 -0700 (PDT)
+        Fri, 25 Oct 2019 00:33:43 -0700 (PDT)
 From:   Daniel Thompson <daniel.thompson@linaro.org>
 To:     Douglas Anderson <dianders@chromium.org>,
         Jason Wessel <jason.wessel@windriver.com>
 Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
         kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org,
         patches@linaro.org
-Subject: [PATCH v4 1/5] kdb: Tidy up code to handle escape sequences
-Date:   Fri, 25 Oct 2019 08:33:24 +0100
-Message-Id: <20191025073328.643-2-daniel.thompson@linaro.org>
+Subject: [PATCH v4 2/5] kdb: Simplify code to fetch characters from console
+Date:   Fri, 25 Oct 2019 08:33:25 +0100
+Message-Id: <20191025073328.643-3-daniel.thompson@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191025073328.643-1-daniel.thompson@linaro.org>
 References: <20191025073328.643-1-daniel.thompson@linaro.org>
@@ -64,166 +64,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kdb_read_get_key() has extremely complex break/continue control flow
-managed by state variables and is very hard to review or modify. In
-particular the way the escape sequence handling interacts with the
-general control flow is hard to follow. Separate out the escape key
-handling, without changing the control flow. This makes the main body of
-the code easier to review.
+Currently kdb_read_get_key() contains complex control flow that, on
+close inspection, turns out to be unnecessary. In particular:
+
+1. It is impossible to enter the branch conditioned on (escape_delay == 1)
+   except when the loop enters with (escape_delay == 2) allowing us to
+   combine the branches.
+
+2. Most of the code conditioned on (escape_delay == 2) simply modifies
+   local data and then breaks out of the loop causing the function to
+   return escape_data[0].
+
+3. Based on #2 there is not actually any need to ever explicitly set
+   escape_delay to 2 because we it is much simpler to directly return
+   escape_data[0] instead.
+
+4. escape_data[0] is, for all but one exit path, known to be '\e'.
+
+Simplify the code based on these observations.
+
+There is a subtle (and harmless) change of behaviour resulting from this
+simplification: instead of letting the escape timeout after ~1998
+milliseconds we now timeout after ~2000 milliseconds
 
 Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
- kernel/debug/kdb/kdb_io.c | 128 ++++++++++++++++++++------------------
- 1 file changed, 67 insertions(+), 61 deletions(-)
+ kernel/debug/kdb/kdb_io.c | 38 ++++++++++++++------------------------
+ 1 file changed, 14 insertions(+), 24 deletions(-)
 
 diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-index 3a5184eb6977..cfc054fd8097 100644
+index cfc054fd8097..a92ceca29637 100644
 --- a/kernel/debug/kdb/kdb_io.c
 +++ b/kernel/debug/kdb/kdb_io.c
-@@ -49,6 +49,65 @@ static int kgdb_transition_check(char *buffer)
- 	return 0;
- }
- 
-+/**
-+ * kdb_handle_escape() - validity check on an accumulated escape sequence.
-+ * @buf:	Accumulated escape characters to be examined. Note that buf
-+ *		is not a string, it is an array of characters and need not be
-+ *		nil terminated.
-+ * @sz:		Number of accumulated escape characters.
-+ *
-+ * Return: -1 if the escape sequence is unwanted, 0 if it is incomplete,
-+ * otherwise it returns a mapped key value to pass to the upper layers.
-+ */
-+static int kdb_handle_escape(char *buf, size_t sz)
-+{
-+	char *lastkey = buf + sz - 1;
+@@ -124,25 +124,18 @@ static int kdb_read_get_key(char *buffer, size_t bufsize)
+ 			touch_nmi_watchdog();
+ 			f = &kdb_poll_funcs[0];
+ 		}
+-		if (escape_delay == 2) {
+-			*ped = '\0';
+-			ped = escape_data;
+-			--escape_delay;
+-		}
+-		if (escape_delay == 1) {
+-			key = *ped++;
+-			if (!*ped)
+-				--escape_delay;
+-			break;
+-		}
 +
-+	switch (sz) {
-+	case 1:
-+		if (*lastkey == '\e')
-+			return 0;
-+		break;
+ 		key = (*f)();
 +
-+	case 2: /* \e<something> */
-+		if (*lastkey == '[')
-+			return 0;
-+		break;
-+
-+	case 3:
-+		switch (*lastkey) {
-+		case 'A': /* \e[A, up arrow */
-+			return 16;
-+		case 'B': /* \e[B, down arrow */
-+			return 14;
-+		case 'C': /* \e[C, right arrow */
-+			return 6;
-+		case 'D': /* \e[D, left arrow */
-+			return 2;
-+		case '1': /* \e[<1,3,4>], may be home, del, end */
-+		case '3':
-+		case '4':
-+			return 0;
-+		}
-+		break;
-+
-+	case 4:
-+		if (*lastkey == '~') {
-+			switch (buf[2]) {
-+			case '1': /* \e[1~, home */
-+				return 1;
-+			case '3': /* \e[3~, del */
-+				return 4;
-+			case '4': /* \e[4~, end */
-+				return 5;
-+			}
-+		}
-+		break;
-+	}
-+
-+	return -1;
-+}
-+
- static int kdb_read_get_key(char *buffer, size_t bufsize)
- {
- #define ESCAPE_UDELAY 1000
-@@ -102,68 +161,15 @@ static int kdb_read_get_key(char *buffer, size_t bufsize)
- 				escape_delay = 2;
- 				continue;
+ 		if (key == -1) {
+ 			if (escape_delay) {
+ 				udelay(ESCAPE_UDELAY);
+-				--escape_delay;
++				if (--escape_delay == 0)
++					return '\e';
  			}
--			if (ped - escape_data == 1) {
--				/* \e */
--				continue;
--			} else if (ped - escape_data == 2) {
--				/* \e<something> */
--				if (key != '[')
--					escape_delay = 2;
--				continue;
--			} else if (ped - escape_data == 3) {
--				/* \e[<something> */
--				int mapkey = 0;
--				switch (key) {
--				case 'A': /* \e[A, up arrow */
--					mapkey = 16;
--					break;
--				case 'B': /* \e[B, down arrow */
--					mapkey = 14;
--					break;
--				case 'C': /* \e[C, right arrow */
--					mapkey = 6;
--					break;
--				case 'D': /* \e[D, left arrow */
--					mapkey = 2;
--					break;
--				case '1': /* dropthrough */
--				case '3': /* dropthrough */
--				/* \e[<1,3,4>], may be home, del, end */
--				case '4':
--					mapkey = -1;
--					break;
--				}
--				if (mapkey != -1) {
--					if (mapkey > 0) {
--						escape_data[0] = mapkey;
--						escape_data[1] = '\0';
--					}
--					escape_delay = 2;
--				}
--				continue;
--			} else if (ped - escape_data == 4) {
--				/* \e[<1,3,4><something> */
--				int mapkey = 0;
--				if (key == '~') {
--					switch (escape_data[2]) {
--					case '1': /* \e[1~, home */
--						mapkey = 1;
--						break;
--					case '3': /* \e[3~, del */
--						mapkey = 4;
--						break;
--					case '4': /* \e[4~, end */
--						mapkey = 5;
--						break;
--					}
--				}
--				if (mapkey > 0) {
--					escape_data[0] = mapkey;
--					escape_data[1] = '\0';
--				}
+ 			continue;
+ 		}
++
+ 		if (bufsize <= 2) {
+ 			if (key == '\r')
+ 				key = '\n';
+@@ -150,27 +143,24 @@ static int kdb_read_get_key(char *buffer, size_t bufsize)
+ 			*buffer = '\0';
+ 			return -1;
+ 		}
++
+ 		if (escape_delay == 0 && key == '\e') {
+ 			escape_delay = ESCAPE_DELAY;
+ 			ped = escape_data;
+ 			f_escape = f;
+ 		}
+ 		if (escape_delay) {
+-			*ped++ = key;
+-			if (f_escape != f) {
 -				escape_delay = 2;
 -				continue;
-+
-+			key = kdb_handle_escape(escape_data, ped - escape_data);
-+			if (key > 0) {
-+				escape_data[0] = key;
-+				escape_data[1] = '\0';
- 			}
-+			if (key)
-+				escape_delay = 2;
-+			continue;
+-			}
++			if (f_escape != f)
++				return '\e';
+ 
++			*ped++ = key;
+ 			key = kdb_handle_escape(escape_data, ped - escape_data);
+-			if (key > 0) {
+-				escape_data[0] = key;
+-				escape_data[1] = '\0';
+-			}
+-			if (key)
+-				escape_delay = 2;
+-			continue;
++			if (key < 0)
++				return '\e';
++			if (key == 0)
++				continue;
  		}
++
  		break;	/* A key to process */
  	}
+ 	return key;
 -- 
 2.21.0
 
