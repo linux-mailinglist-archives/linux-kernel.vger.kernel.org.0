@@ -2,87 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0B29E54AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:51:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDC72E54B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:55:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbfJYTvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 15:51:46 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36742 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbfJYTvq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 15:51:46 -0400
-Received: by mail-oi1-f195.google.com with SMTP id j7so2399182oib.3;
-        Fri, 25 Oct 2019 12:51:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h2z/cGsp1B4hc5Hc2TEPB0+iYCA1ZMEOK5oa7ytat2Y=;
-        b=Dr3Q/u8zy1YLxkKKOhQ1XsNsxbQjl+zApG4/PRFS2Rieh8ci16QTM77JyEEGT2eFST
-         3vkYqB1ksldUjAzatd+Y81QAFSgB641S4anC+ApBZLstdwjSos3Vs3xuPNIhXs61wJlu
-         o0QNAat7p4kkLV5hOY0BnxSJ0XjacSYXCjbMkayZo2q4etwOnKRVGjOyFTYIqRSsT7rG
-         ItlrZi3mBoBzeqUg9142z9OTsJMKyYNwwJo/s05iNjkrHu5UAWIaN0y1FEKZZzIMYplI
-         4Q9zwXUSdXAd64OqZWJ5mLlIZAP/iMxtg+QZyq6VmvQTwYIHPyRy1+RmQmNS+bHDdDOQ
-         TWfw==
-X-Gm-Message-State: APjAAAXSXoWsWEkstL+k40tR+5Y1bc+DtFivsFZiWf2H3KdXqja8lgTx
-        doa7BIBfXBzKPOoCLOeFzw==
-X-Google-Smtp-Source: APXvYqx7jkmGfgJxpTI09sXjt/YKhiiMHaf7Np0KOYGQOU/mrPCmNUVCkYSvIBcLek7yBFrsw3AWwQ==
-X-Received: by 2002:aca:f1a:: with SMTP id 26mr4502975oip.172.1572033104907;
-        Fri, 25 Oct 2019 12:51:44 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a21sm828784oia.27.2019.10.25.12.51.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 12:51:44 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 14:51:43 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mka@chromium.org,
-        Joerg Roedel <joro@8bytes.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 03/11] dt-bindings: arm-smmu: update binding for qcom
- sc7180 SoC
-Message-ID: <20191025195143.GA31658@bogus>
-References: <20191023090219.15603-1-rnayak@codeaurora.org>
- <20191023090219.15603-4-rnayak@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023090219.15603-4-rnayak@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727720AbfJYTzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 15:55:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726410AbfJYTzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 15:55:06 -0400
+Subject: Re: [GIT PULL] MMC fixes for v5.4-rc5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572033305;
+        bh=aSnhvqlC7uURCGPv0iPE8pVfhkVBm6MUTMu2GdzWWEc=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=u1X5I9GipYQU4YeAeLluBm+A8x5AM5ZZteXPq99v+aZYbWSNi7lgpAgBXoiMJZ4/4
+         yEzziSPmX/HbQYMsCgQLDxB+5uFp92gveqqkjaK/ZeNf8iWSkm55mLjEEmohMp07QQ
+         1aEqXB7siqFvzugqfaYkMED4RLzTEe6wTceiWZ5s=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191025140058.10668-1-ulf.hansson@linaro.org>
+References: <20191025140058.10668-1-ulf.hansson@linaro.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191025140058.10668-1-ulf.hansson@linaro.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.4-rc4
+X-PR-Tracked-Commit-Id: 2bb9f7566ba7ab3c2154964461e37b52cdc6b91b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f64928480f7e4183688d2f9c6f8ae5834925b966
+Message-Id: <157203330562.840.17083029643098251235.pr-tracker-bot@kernel.org>
+Date:   Fri, 25 Oct 2019 19:55:05 +0000
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 02:32:11PM +0530, Rajendra Nayak wrote:
-> Add the soc specific compatible for sc7180 smmu-500
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> ---
->  Documentation/devicetree/bindings/iommu/arm,smmu.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> index 3133f3ba7567..347869807cf2 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> @@ -30,6 +30,7 @@ conditions.
->                    Qcom SoCs implementing "arm,mmu-500" must also include,
->                    as below, SoC-specific compatibles:
->                    "qcom,sdm845-smmu-500", "arm,mmu-500"
-> +                  "qcom,sc7180-smmu-500", "arm,mmu-500"
+The pull request you sent on Fri, 25 Oct 2019 16:00:58 +0200:
 
-This is now a schema file in my tree.
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.4-rc4
 
->  
->  - reg           : Base address and size of the SMMU.
->  
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
-> 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f64928480f7e4183688d2f9c6f8ae5834925b966
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
