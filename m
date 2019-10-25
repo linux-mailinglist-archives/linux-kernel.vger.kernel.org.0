@@ -2,77 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 536A6E4583
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:23:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2196FE4597
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:24:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408252AbfJYIXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 04:23:24 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5181 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405677AbfJYIXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 04:23:24 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id C273166034AC81CD0419;
-        Fri, 25 Oct 2019 16:23:20 +0800 (CST)
-Received: from huawei.com (10.175.104.225) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Fri, 25 Oct 2019
- 16:23:13 +0800
-From:   Hewenliang <hewenliang4@huawei.com>
-To:     <acme@redhat.com>, <tstoyanov@vmware.com>, <rostedt@goodmis.org>,
-        <namhyung@kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <linfeilong@huawei.com>, <hewenliang4@huawei.com>
-Subject: [PATCH] tools lib traceevent: Fix memory leakage in copy_filter_type
-Date:   Fri, 25 Oct 2019 04:23:12 -0400
-Message-ID: <20191025082312.62690-1-hewenliang4@huawei.com>
-X-Mailer: git-send-email 2.19.1
+        id S2437917AbfJYIYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 04:24:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:36578 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405823AbfJYIX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 04:23:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF61228;
+        Fri, 25 Oct 2019 01:23:57 -0700 (PDT)
+Received: from [10.162.41.137] (p8cg001049571a15.blr.arm.com [10.162.41.137])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D6FC3F718;
+        Fri, 25 Oct 2019 01:23:44 -0700 (PDT)
+Subject: Re: [PATCH V7] mm/debug: Add tests validating architecture page table
+ helpers
+To:     Christophe Leroy <christophe.leroy@c-s.fr>, Qian Cai <cai@lca.pw>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Steven Price <Steven.Price@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <ccdd4f7a-c7dc-ca10-d30c-0bc05c7136c7@arm.com>
+ <69256008-2235-4AF1-A3BA-0146C82CCB93@lca.pw>
+ <3cfec421-4006-4159-ca32-313ff5196ff9@c-s.fr>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <763d58b4-f532-0bba-bf2b-71433ac514fb@arm.com>
+Date:   Fri, 25 Oct 2019 13:54:14 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.225]
-X-CFilter-Loop: Reflected
+In-Reply-To: <3cfec421-4006-4159-ca32-313ff5196ff9@c-s.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is necessary to free the memory that we have allocated
-when error occurs.
 
-Fixes: ef3072cd1d5c ("tools lib traceevent: Get rid of die in add_filter_type()")
-Signed-off-by: Hewenliang <hewenliang4@huawei.com>
----
- tools/lib/traceevent/parse-filter.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-index 552592d153fb..fbaa790d10d8 100644
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -1473,8 +1473,10 @@ static int copy_filter_type(struct tep_event_filter *filter,
- 	if (strcmp(str, "TRUE") == 0 || strcmp(str, "FALSE") == 0) {
- 		/* Add trivial event */
- 		arg = allocate_arg();
--		if (arg == NULL)
-+		if (arg == NULL) {
-+			free(str);
- 			return -1;
-+		}
- 
- 		arg->type = TEP_FILTER_ARG_BOOLEAN;
- 		if (strcmp(str, "TRUE") == 0)
-@@ -1483,8 +1485,11 @@ static int copy_filter_type(struct tep_event_filter *filter,
- 			arg->boolean.value = 0;
- 
- 		filter_type = add_filter_type(filter, event->id);
--		if (filter_type == NULL)
-+		if (filter_type == NULL) {
-+			free(str);
-+			free(arg);
- 			return -1;
-+		}
- 
- 		filter_type->filter = arg;
- 
--- 
-2.19.1
+On 10/25/2019 12:41 PM, Christophe Leroy wrote:
+> 
+> 
+> Le 25/10/2019 à 07:52, Qian Cai a écrit :
+>>
+>>
+>>> On Oct 24, 2019, at 11:45 PM, Anshuman Khandual <Anshuman.Khandual@arm.com> wrote:
+>>>
+>>> Nothing specific. But just tested this with x86 defconfig with relevant configs
+>>> which are required for this test. Not sure if it involved W=1.
+>>
+>> No, it will not. It needs to run like,
+>>
+>> make W=1 -j 64 2>/tmp/warns
+>>
+> 
+> Are we talking about this peace of code ?
+> 
+> +static unsigned long __init get_random_vaddr(void)
+> +{
+> +    unsigned long random_vaddr, random_pages, total_user_pages;
+> +
+> +    total_user_pages = (TASK_SIZE - FIRST_USER_ADDRESS) / PAGE_SIZE;
+> +
+> +    random_pages = get_random_long() % total_user_pages;
+> +    random_vaddr = FIRST_USER_ADDRESS + random_pages * PAGE_SIZE;
+> +
+> +    WARN_ON((random_vaddr > TASK_SIZE) ||
+> +        (random_vaddr < FIRST_USER_ADDRESS));
+> +    return random_vaddr;
+> +}
+> +
+> 
+> ramdom_vaddr is unsigned,
+> random_pages is unsigned and lower than total_user_pages
+> 
+> So the max value random_vaddr can get is FIRST_USER_ADDRESS + ((TASK_SIZE - FIRST_USER_ADDRESS - 1) / PAGE_SIZE) * PAGE_SIZE = TASK_SIZE - 1
+> And the min value random_vaddr can get is FIRST_USER_ADDRESS (that's when random_pages = 0)
 
+That's right.
+
+> 
+> So the WARN_ON() is just unneeded, isn't it ?
+
+It is just a sanity check on possible vaddr values before it's corresponding
+page table mappings could be created. If it's worth to drop this in favor of
+avoiding these unwanted warning messages on x86, will go ahead with it as it
+is not super important.
+
+> 
+> Christophe
+> 
