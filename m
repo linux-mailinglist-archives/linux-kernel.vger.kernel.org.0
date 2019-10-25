@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D12FE4DAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A8CE4DA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:02:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505575AbfJYN61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 09:58:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53474 "EHLO mail.kernel.org"
+        id S2505548AbfJYN6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 09:58:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2505502AbfJYN6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:58:14 -0400
+        id S1732654AbfJYN6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 09:58:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D40E9222CB;
-        Fri, 25 Oct 2019 13:58:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFAB7222CD;
+        Fri, 25 Oct 2019 13:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572011894;
-        bh=LTN6V6hmihi+VaoMqArjWGsDY+jF6bjygzvWJgkpK/Q=;
+        s=default; t=1572011896;
+        bh=iBDissv+RAFwCtToVRjoa9uFXuIcswIIMG6AChOrBYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LePEQpw2NwaR8My8PP+RJ91etq11kwVVze/f6T1clE38poAX3zILV4rFTjhuJhoKn
-         PhXDKi3VNSt054usPUH3zLPoJF4V9Nqvqw3pmLz7zz5qLbJwU3QEzUXfsdB44YWvnD
-         aLNcCNeENhDYoCW1bzsXyppqXM3irqOGqunL8lHA=
+        b=jWcwYswdRTKyDUCIkheulVQKAdujauAFH3DEluDyxVaNWsCISfGAZkg/OKfn6j28d
+         rQf/bFcQETsaUXy8TDa5krPKlSWrstQPJOEfpvCnvULZts88tSwcdx8ZAhHN3Sp+LB
+         0FfJxxSH7ErvU27FWqlPOawzO0Vfs4hUlDuUtpkY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bart Van Assche <bvanassche@acm.org>,
-        Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Laurence Oberman <loberman@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 06/20] scsi: RDMA/srp: Fix a sleep-in-invalid-context bug
-Date:   Fri, 25 Oct 2019 09:57:46 -0400
-Message-Id: <20191025135801.25739-6-sashal@kernel.org>
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.9 08/20] drm/msm: Use the correct dma_sync calls in msm_gem
+Date:   Fri, 25 Oct 2019 09:57:48 -0400
+Message-Id: <20191025135801.25739-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191025135801.25739-1-sashal@kernel.org>
 References: <20191025135801.25739-1-sashal@kernel.org>
@@ -49,108 +45,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Rob Clark <robdclark@chromium.org>
 
-[ Upstream commit fd56141244066a6a21ef458670071c58b6402035 ]
+[ Upstream commit 3de433c5b38af49a5fc7602721e2ab5d39f1e69c ]
 
-The previous patch guarantees that srp_queuecommand() does not get
-invoked while reconnecting occurs. Hence remove the code from
-srp_queuecommand() that prevents command queueing while reconnecting.
-This patch avoids that the following can appear in the kernel log:
+[subject was: drm/msm: shake fist angrily at dma-mapping]
 
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:747
-in_atomic(): 1, irqs_disabled(): 0, pid: 5600, name: scsi_eh_9
-1 lock held by scsi_eh_9/5600:
- #0:  (rcu_read_lock){....}, at: [<00000000cbb798c7>] __blk_mq_run_hw_queue+0xf1/0x1e0
-Preemption disabled at:
-[<00000000139badf2>] __blk_mq_delay_run_hw_queue+0x78/0xf0
-CPU: 9 PID: 5600 Comm: scsi_eh_9 Tainted: G        W        4.15.0-rc4-dbg+ #1
-Hardware name: Dell Inc. PowerEdge R720/0VWT90, BIOS 2.5.4 01/22/2016
-Call Trace:
- dump_stack+0x67/0x99
- ___might_sleep+0x16a/0x250 [ib_srp]
- __mutex_lock+0x46/0x9d0
- srp_queuecommand+0x356/0x420 [ib_srp]
- scsi_dispatch_cmd+0xf6/0x3f0
- scsi_queue_rq+0x4a8/0x5f0
- blk_mq_dispatch_rq_list+0x73/0x440
- blk_mq_sched_dispatch_requests+0x109/0x1a0
- __blk_mq_run_hw_queue+0x131/0x1e0
- __blk_mq_delay_run_hw_queue+0x9a/0xf0
- blk_mq_run_hw_queue+0xc0/0x1e0
- blk_mq_start_hw_queues+0x2c/0x40
- scsi_run_queue+0x18e/0x2d0
- scsi_run_host_queues+0x22/0x40
- scsi_error_handler+0x18d/0x5f0
- kthread+0x11c/0x140
- ret_from_fork+0x24/0x30
+So, using dma_sync_* for our cache needs works out w/ dma iommu ops, but
+it falls appart with dma direct ops.  The problem is that, depending on
+display generation, we can have either set of dma ops (mdp4 and dpu have
+iommu wired to mdss node, which maps to toplevel drm device, but mdp5
+has iommu wired up to the mdp sub-node within mdss).
 
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: Leon Romanovsky <leonro@mellanox.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes this splat on mdp5 devices:
+
+   Unable to handle kernel paging request at virtual address ffffffff80000000
+   Mem abort info:
+     ESR = 0x96000144
+     Exception class = DABT (current EL), IL = 32 bits
+     SET = 0, FnV = 0
+     EA = 0, S1PTW = 0
+   Data abort info:
+     ISV = 0, ISS = 0x00000144
+     CM = 1, WnR = 1
+   swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000810e4000
+   [ffffffff80000000] pgd=0000000000000000
+   Internal error: Oops: 96000144 [#1] SMP
+   Modules linked in: btqcomsmd btqca bluetooth cfg80211 ecdh_generic ecc rfkill libarc4 panel_simple msm wcnss_ctrl qrtr_smd drm_kms_helper venus_enc venus_dec videobuf2_dma_sg videobuf2_memops drm venus_core ipv6 qrtr qcom_wcnss_pil v4l2_mem2mem qcom_sysmon videobuf2_v4l2 qmi_helpers videobuf2_common crct10dif_ce mdt_loader qcom_common videodev qcom_glink_smem remoteproc bmc150_accel_i2c bmc150_magn_i2c bmc150_accel_core bmc150_magn snd_soc_lpass_apq8016 snd_soc_msm8916_analog mms114 mc nf_defrag_ipv6 snd_soc_lpass_cpu snd_soc_apq8016_sbc industrialio_triggered_buffer kfifo_buf snd_soc_lpass_platform snd_soc_msm8916_digital drm_panel_orientation_quirks
+   CPU: 2 PID: 33 Comm: kworker/2:1 Not tainted 5.3.0-rc2 #1
+   Hardware name: Samsung Galaxy A5U (EUR) (DT)
+   Workqueue: events deferred_probe_work_func
+   pstate: 80000005 (Nzcv daif -PAN -UAO)
+   pc : __clean_dcache_area_poc+0x20/0x38
+   lr : arch_sync_dma_for_device+0x28/0x30
+   sp : ffff0000115736a0
+   x29: ffff0000115736a0 x28: 0000000000000001
+   x27: ffff800074830800 x26: ffff000011478000
+   x25: 0000000000000000 x24: 0000000000000001
+   x23: ffff000011478a98 x22: ffff800009fd1c10
+   x21: 0000000000000001 x20: ffff800075ad0a00
+   x19: 0000000000000000 x18: ffff0000112b2000
+   x17: 0000000000000000 x16: 0000000000000000
+   x15: 00000000fffffff0 x14: ffff000011455d70
+   x13: 0000000000000000 x12: 0000000000000028
+   x11: 0000000000000001 x10: ffff00001106c000
+   x9 : ffff7e0001d6b380 x8 : 0000000000001000
+   x7 : ffff7e0001d6b380 x6 : ffff7e0001d6b382
+   x5 : 0000000000000000 x4 : 0000000000001000
+   x3 : 000000000000003f x2 : 0000000000000040
+   x1 : ffffffff80001000 x0 : ffffffff80000000
+   Call trace:
+    __clean_dcache_area_poc+0x20/0x38
+    dma_direct_sync_sg_for_device+0xb8/0xe8
+    get_pages+0x22c/0x250 [msm]
+    msm_gem_get_and_pin_iova+0xdc/0x168 [msm]
+    ...
+
+Fixes the combination of two patches:
+
+Fixes: 0036bc73ccbe (drm/msm: stop abusing dma_map/unmap for cache)
+Fixes: 449fa54d6815 (dma-direct: correct the physical addr in dma_direct_sync_sg_for_cpu/device)
+Tested-by: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+[seanpaul changed subject to something more desriptive]
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190730214633.17820-1-robdclark@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/srp/ib_srp.c | 21 ++-------------------
- 1 file changed, 2 insertions(+), 19 deletions(-)
+ drivers/gpu/drm/msm/msm_gem.c | 47 +++++++++++++++++++++++++++++++----
+ 1 file changed, 42 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/infiniband/ulp/srp/ib_srp.c b/drivers/infiniband/ulp/srp/ib_srp.c
-index 74de1ae48d4f7..a3145ae1d66d2 100644
---- a/drivers/infiniband/ulp/srp/ib_srp.c
-+++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -2102,7 +2102,6 @@ static void srp_handle_qp_err(struct ib_cq *cq, struct ib_wc *wc,
- static int srp_queuecommand(struct Scsi_Host *shost, struct scsi_cmnd *scmnd)
- {
- 	struct srp_target_port *target = host_to_target(shost);
--	struct srp_rport *rport = target->rport;
- 	struct srp_rdma_ch *ch;
- 	struct srp_request *req;
- 	struct srp_iu *iu;
-@@ -2112,16 +2111,6 @@ static int srp_queuecommand(struct Scsi_Host *shost, struct scsi_cmnd *scmnd)
- 	u32 tag;
- 	u16 idx;
- 	int len, ret;
--	const bool in_scsi_eh = !in_interrupt() && current == shost->ehandler;
--
--	/*
--	 * The SCSI EH thread is the only context from which srp_queuecommand()
--	 * can get invoked for blocked devices (SDEV_BLOCK /
--	 * SDEV_CREATED_BLOCK). Avoid racing with srp_reconnect_rport() by
--	 * locking the rport mutex if invoked from inside the SCSI EH.
--	 */
--	if (in_scsi_eh)
--		mutex_lock(&rport->mutex);
- 
- 	scmnd->result = srp_chkready(target->rport);
- 	if (unlikely(scmnd->result))
-@@ -2183,13 +2172,7 @@ static int srp_queuecommand(struct Scsi_Host *shost, struct scsi_cmnd *scmnd)
- 		goto err_unmap;
- 	}
- 
--	ret = 0;
--
--unlock_rport:
--	if (in_scsi_eh)
--		mutex_unlock(&rport->mutex);
--
--	return ret;
-+	return 0;
- 
- err_unmap:
- 	srp_unmap_data(scmnd, ch, req);
-@@ -2211,7 +2194,7 @@ static int srp_queuecommand(struct Scsi_Host *shost, struct scsi_cmnd *scmnd)
- 		ret = SCSI_MLQUEUE_HOST_BUSY;
- 	}
- 
--	goto unlock_rport;
-+	return ret;
+diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+index a472d4d902dde..569e8c45a59aa 100644
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -40,6 +40,46 @@ static bool use_pages(struct drm_gem_object *obj)
+ 	return !msm_obj->vram_node;
  }
  
- /*
++/*
++ * Cache sync.. this is a bit over-complicated, to fit dma-mapping
++ * API.  Really GPU cache is out of scope here (handled on cmdstream)
++ * and all we need to do is invalidate newly allocated pages before
++ * mapping to CPU as uncached/writecombine.
++ *
++ * On top of this, we have the added headache, that depending on
++ * display generation, the display's iommu may be wired up to either
++ * the toplevel drm device (mdss), or to the mdp sub-node, meaning
++ * that here we either have dma-direct or iommu ops.
++ *
++ * Let this be a cautionary tail of abstraction gone wrong.
++ */
++
++static void sync_for_device(struct msm_gem_object *msm_obj)
++{
++	struct device *dev = msm_obj->base.dev->dev;
++
++	if (get_dma_ops(dev)) {
++		dma_sync_sg_for_device(dev, msm_obj->sgt->sgl,
++			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
++	} else {
++		dma_map_sg(dev, msm_obj->sgt->sgl,
++			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
++	}
++}
++
++static void sync_for_cpu(struct msm_gem_object *msm_obj)
++{
++	struct device *dev = msm_obj->base.dev->dev;
++
++	if (get_dma_ops(dev)) {
++		dma_sync_sg_for_cpu(dev, msm_obj->sgt->sgl,
++			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
++	} else {
++		dma_unmap_sg(dev, msm_obj->sgt->sgl,
++			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
++	}
++}
++
+ /* allocate pages from VRAM carveout, used when no IOMMU: */
+ static struct page **get_pages_vram(struct drm_gem_object *obj,
+ 		int npages)
+@@ -106,8 +146,7 @@ static struct page **get_pages(struct drm_gem_object *obj)
+ 		 * because display controller, GPU, etc. are not coherent:
+ 		 */
+ 		if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
+-			dma_sync_sg_for_device(dev->dev, msm_obj->sgt->sgl,
+-					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
++			sync_for_device(msm_obj);
+ 	}
+ 
+ 	return msm_obj->pages;
+@@ -124,9 +163,7 @@ static void put_pages(struct drm_gem_object *obj)
+ 			 * GPU, etc. are not coherent:
+ 			 */
+ 			if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
+-				dma_sync_sg_for_cpu(obj->dev->dev, msm_obj->sgt->sgl,
+-					     msm_obj->sgt->nents,
+-					     DMA_BIDIRECTIONAL);
++				sync_for_cpu(msm_obj);
+ 
+ 			sg_free_table(msm_obj->sgt);
+ 			kfree(msm_obj->sgt);
 -- 
 2.20.1
 
