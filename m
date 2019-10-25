@@ -2,90 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA25CE477A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67133E477C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:38:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394382AbfJYJiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 05:38:03 -0400
-Received: from mail.jv-coder.de ([5.9.79.73]:55362 "EHLO mail.jv-coder.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730158AbfJYJiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 05:38:02 -0400
-Received: from [10.61.40.7] (unknown [37.156.92.209])
-        by mail.jv-coder.de (Postfix) with ESMTPSA id 6619B9F64C;
-        Fri, 25 Oct 2019 09:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jv-coder.de; s=dkim;
-        t=1571996280; bh=3q0asO118tF1DALeYypzSAxsX3AgnykiKoF4WVnAhMk=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version;
-        b=UVm8WGJMD0FTuKmVfovQfnJa6AG7n9u5+ujc9faJRaNhjORK+A1BzW65fGe5l7HYD
-         kCrzw1sSBFUQ3k8KUJFF1w0VJzH/sjSQ7Y2ZUIwXJ3iixPwsgLEanPzVt+1hwZwuiY
-         0OCOM0ocPn4Qcfogk8ChIpv5DOvw5YYggER36tLc=
-Subject: Re: [PATCH v2 1/1] xfrm : lock input tasklet skb queue
-To:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Tom Rix <trix@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CACVy4SUkfn4642Vne=c1yuWhne=2cutPZQ5XeXz_QBz1g67CrA@mail.gmail.com>
- <20191024103134.GD13225@gauss3.secunet.de>
-From:   Joerg Vehlow <lkml@jv-coder.de>
-Message-ID: <ad094bfc-ebb3-012b-275b-05fb5a8f86e5@jv-coder.de>
-Date:   Fri, 25 Oct 2019 11:37:59 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S2438579AbfJYJiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 05:38:13 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46712 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394339AbfJYJiN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 05:38:13 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n15so1480263wrw.13
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 02:38:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BIIBynMAFwKzFTA/larjXSEWYi11jid5vleBMgrZpiw=;
+        b=twZUCNlERe6lDIM2qWubiDhmC/kWNmw46m+4Nd2CHIWeveChCv+lFQtxKiwFW21MGZ
+         XvDuljDjrnm4KcSm6WviI1B8X2FmHRzSyvIeG2wsPe+yRCcg7a1pOHnpa5fYuJbuOaVg
+         0TicP+Rux3IpWEMLD2bZGALxf1N4pQB0Ei6VfAmaU12M3ABlRPjsVE9I10wMHojBrvW5
+         QhjayQfWIRXDQDhHCRU86piCFNruAmLbH0a8LG5t+b6XLiYPxtKexJed5nQ4jYSiJPVs
+         WG526IelKMZqRIO+emE7Fk+RGuXLJYvi/7Polx4ahozlXNkCZO7NbOVA7SCxVW/aQhDk
+         42hg==
+X-Gm-Message-State: APjAAAVPF1n8bL+8ksL+kjF8Q4K57q7VUbmbcx3wAj8V7NQYV8RLP7xx
+        XbwPwHMGdeGk3HtgShJp9TjUfMghljwlAFRIBLg=
+X-Google-Smtp-Source: APXvYqwyHsJAvR4nXBbn/DB14cRtntGxksHx+h8W/f66spUXrSeObD3A8NUHf3JPOGeEZIFYGUoRrU+9QTDn3n8V+8Y=
+X-Received: by 2002:adf:e2c5:: with SMTP id d5mr1968825wrj.283.1571996291599;
+ Fri, 25 Oct 2019 02:38:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191024103134.GD13225@gauss3.secunet.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,HELO_MISC_IP,RCVD_IN_DNSWL_BLOCKED,
-        RDNS_NONE autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: *
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.jv-coder.de
+References: <20191016125019.157144-1-namhyung@kernel.org> <20191016125019.157144-2-namhyung@kernel.org>
+ <20191024174433.GA3622521@devbig004.ftw2.facebook.com> <CAM9d7chWpj105TYR0qP3T8FJ=-2wjp+sh6Rk8zkvJb_ugtL3Dw@mail.gmail.com>
+In-Reply-To: <CAM9d7chWpj105TYR0qP3T8FJ=-2wjp+sh6Rk8zkvJb_ugtL3Dw@mail.gmail.com>
+From:   Namhyung Kim <namhyung@kernel.org>
+Date:   Fri, 25 Oct 2019 18:38:00 +0900
+Message-ID: <CAM9d7chqPu2qE5XoDVu5dHGzn35NX-GyPMwq-ir6CYgk0b3soA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] cgroup: Add generation number with cgroup id
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Li Zefan <lizefan@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Song Liu <liu.song.a23@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-I always expected this to be applied to the RT patches. That's why
-I originally send my patch to to Sebastian, Thomas and Steven (I added
-them again now. The website of the rt patches says patches for the
-CONFIG_REEMPT_RT patchset should be send to lkml.
-
-I hope one of the rt patch maintainers will reply here.
-
-Jörg
-
-Am 24.10.2019 um 12:31 schrieb Steffen Klassert:
-> On Tue, Oct 22, 2019 at 05:22:04PM -0700, Tom Rix wrote:
->> On PREEMPT_RT_FULL while running netperf, a corruption
->> of the skb queue causes an oops.
->>
->> This appears to be caused by a race condition here
->>          __skb_queue_tail(&trans->queue, skb);
->>          tasklet_schedule(&trans->tasklet);
->> Where the queue is changed before the tasklet is locked by
->> tasklet_schedule.
->>
->> The fix is to use the skb queue lock.
->>
->> This is the original work of Joerg Vehlow <joerg.vehlow@aox-tech.de>
->> https://lkml.org/lkml/2019/9/9/111
->>    xfrm_input: Protect queue with lock
->>
->>    During the skb_queue_splice_init the tasklet could have been preempted
->>    and __skb_queue_tail called, which led to an inconsistent queue.
->>
->> ifdefs for CONFIG_PREEMPT_RT_FULL added to reduce runtime effects
->> on the normal kernel.
-> Has Herbert commented on your initial patch, please
-> fix PREEMPT_RT_FULL instead. There are certainly many
-> more codepaths that take such assumptions. You can not
-> fix this by distributing a spin_lock_irqsave here
-> and there.
+On Fri, Oct 25, 2019 at 5:30 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > >  /*
+> > >   * A cgroup_root represents the root of a cgroup hierarchy, and may be
+> > >   * associated with a kernfs_root to form an active hierarchy.  This is
+> > > @@ -521,7 +529,7 @@ struct cgroup_root {
+> > >       unsigned int flags;
+> > >
+> > >       /* IDs for cgroups in this hierarchy */
+> > > -     struct idr cgroup_idr;
+> > > +     struct cgroup_idr cgroup_idr;
+> >
+> > Given that there's cgroup->self css, can we get rid of the above?
 >
+> I don't follow.  Do you want to remove cgroup_idr and share the
+> css_idr for cgroup id?
 
+Or, you don't want to add cgroup_idr struct and use idr directly?
+
+Thanks
+Namhyung
