@@ -2,217 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFEFAE4C82
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:42:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91324E4C92
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:44:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504872AbfJYNmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 09:42:46 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35388 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504824AbfJYNmp (ORCPT
+        id S2502035AbfJYNor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 09:44:47 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33771 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbfJYNoq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:42:45 -0400
-Received: by mail-lj1-f193.google.com with SMTP id m7so2802733lji.2;
-        Fri, 25 Oct 2019 06:42:43 -0700 (PDT)
+        Fri, 25 Oct 2019 09:44:46 -0400
+Received: by mail-pf1-f193.google.com with SMTP id c184so1635585pfb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 06:44:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZRSlUd6LBzNrzynd46ONvlcqzPRdK4ulFGHewpixHno=;
-        b=mbv7Y0biARyzPb/EJCakviuvn06QIZwjPvOKGlL92CvQOQ/Iy4BtFxYOrMgJ+MFBDH
-         6pmFbG3RUuMa/ORC1X2mbZAjYTkwBIK9GwuQFFb2NN0b62deyS9LN5D+HnGZFFnFY2Uk
-         FlJz94rvnlbcMKdQeHw1rtlgMCMK34aOizlf8KXAVtg1EB31/Lm1ckOJc0sJT7B2slIe
-         3aztx+4T+0DPco7Mc1wuV4941KCORw9DZ6f0OAYgEqXWX/wJKreIdHGJbguHZTflI6ql
-         dZvUwo8qB0UihBYr/gQ/M8q2UH5xQDHe1jfVrj0ZPTJe2XnzNb7M2TnakXPK2KA/Ycgg
-         /uGQ==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GB66w5zMnO6g29s6wAcFRJIvcQvj59wk11SwJfYrvKA=;
+        b=Qq1IRmOU8QQXXK5dP7qVkmSaMc2yq7Rpi0+jYuWk5ryK9uF4E/5Q5RAo6IRi5rQpYO
+         MijLDpKbtbCl53iC6+V6cSZa6ckR+CG9NvnGZp30+L7k1AHj4QImzgeXM8RnK6zDGsxq
+         bVKbAvbgwnymLXAiH9nIW3DslByuA/r3z+vVz91vWhYVOQeXG4OoYJsj+3h4TlAZKdJD
+         jZjGj8QlSuEFEGqmfb6p9Jd2kqOSjwRtjpebArzGY1EAP86Y2gQqvnJ3LHir/ZHbMuIJ
+         ZLFAs2oRcdHHpbtABfKICAgOeJspOrdnp/ZB5wjPI65JZEcHb1rljP+Du8ppywyo5RBY
+         OAWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZRSlUd6LBzNrzynd46ONvlcqzPRdK4ulFGHewpixHno=;
-        b=pnKuqxySHA1lDTTT1W2ZRfRPIh/bkAmHG7kcg7Wpm3iZDZKZ+n7ZgeToiGL3CLZaf5
-         6V+cGO+sbSdFQohUymcZ+XISCX33nB/kPfm9Rk+Sm9443B1M7HdzTnIf7WLgU7o1MxOk
-         +J+R7QtyYwPFqxDd/FmOeTizXA474WXI2wESxaVW7e9zX172tk3smGU3dpVcEDYvyNq+
-         79SVCeBIAe0Rx2UwQFQM9/kt3eLDGlnGljWdsRfExp6Th4FjuyzyyNBlHkp+Pu+KjKT5
-         vo3NHo3d6KOcvSJdSdjGVQ4KZNIXu9IEM13Wny6LGDL0PgF0BdxDjjcqz+stVisI7wEZ
-         ObvQ==
-X-Gm-Message-State: APjAAAUEvsRHZRbrtvVj1CY/cBNk8bZZBfqpofmaCcLYRRSDvqXTAxsQ
-        DAqKc1GLoQl64eo0C6K7hMG+qjI+wRZK8esgGVs=
-X-Google-Smtp-Source: APXvYqxmA+8A2DXEytTBc07CV8DHJQ2sr633xeYXjNR88vJQfKd3uRsGxawHg0NP3EBLqa36vlTpkvn303BIHXcmPqc=
-X-Received: by 2002:a2e:7c13:: with SMTP id x19mr2680919ljc.0.1572010962438;
- Fri, 25 Oct 2019 06:42:42 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GB66w5zMnO6g29s6wAcFRJIvcQvj59wk11SwJfYrvKA=;
+        b=ch6GpJ4vKn8sc0EZCJqx/vllbHRtkKOsavdf8o6I9N8DStusITZ6S+ljvEGtm2oNci
+         ySMBpzRBPxyZAE2gke1g8pRdX5vUkLecrNAxnczWobUWxgmDS35NXPuEIHMVKjvMvFkr
+         +x8ijZ9PrqbZfAY+SoiVzL47jcpcFvs4odEDloRjgdS6OwrjJgH3qAR1ysGNZPW6IVPp
+         +8/gHugQ3RDZx5p7EbPUMC3Ezc91xqpiRtYK2k6eVZNEuObXX02mLafOYpjsePngsXOM
+         Lq7KtUyidmgMtb0Ixk42x/nIifv/udjlNQweIj5NE02PTzADnmHVloWfU8cPXro/gtUk
+         r+0g==
+X-Gm-Message-State: APjAAAVJ0hASJiiO6JriqTK1KQhpYbV/y0BzMtnt6U4IY8F2/gHjxEyB
+        8xojZRU5BCUe1Trw/1/6hDWImQ==
+X-Google-Smtp-Source: APXvYqyiEFjS0AsnLhLndE+VCdtmMKp2KjunxS32g/fNq7UVoFTUkMLRgGPV3k3rKDum27SdorNUaw==
+X-Received: by 2002:a17:90a:9f94:: with SMTP id o20mr4347710pjp.76.1572011086048;
+        Fri, 25 Oct 2019 06:44:46 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:180::553e])
+        by smtp.gmail.com with ESMTPSA id y17sm2913564pfo.171.2019.10.25.06.44.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2019 06:44:45 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 09:44:43 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 5/8] mm: vmscan: replace shrink_node() loop with a retry
+ jump
+Message-ID: <20191025134443.GA385668@cmpxchg.org>
+References: <20191022144803.302233-1-hannes@cmpxchg.org>
+ <20191022144803.302233-6-hannes@cmpxchg.org>
+ <20191023141857.GF17610@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <20191025082247.3371-1-offougajoris@gmail.com>
-In-Reply-To: <20191025082247.3371-1-offougajoris@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 25 Oct 2019 10:42:44 -0300
-Message-ID: <CAOMZO5ChthYBiH6tLd2AyEWiKNtYGMpTjnuRxX2VP++-cnYvuQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx7d-pico: Add LCD support
-To:     Joris Offouga <offougajoris@gmail.com>
-Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191023141857.GF17610@dhcp22.suse.cz>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joris,
+On Wed, Oct 23, 2019 at 04:18:57PM +0200, Michal Hocko wrote:
+> On Tue 22-10-19 10:48:00, Johannes Weiner wrote:
+> > Most of the function body is inside a loop, which imposes an
+> > additional indentation and scoping level that makes the code a bit
+> > hard to follow and modify.
+> 
+> I do agree!
+> 
+> > The looping only happens in case of reclaim-compaction, which isn't
+> > the common case. So rather than adding yet another function level to
+> > the reclaim path and have every reclaim invocation go through a level
+> > that only exists for one specific cornercase, use a retry goto.
+> 
+> I would just keep the core logic in its own function and do the loop
+> around it rather than a goto retry. This is certainly a matter of taste
+> but I like a loop with an explicit condition much more than a if with
+> goto.
 
-On Fri, Oct 25, 2019 at 5:22 AM Joris Offouga <offougajoris@gmail.com> wrote:
->
-> Add support for the VXT VL050-8048NT-C01 panel connected through
-> the 24 bit parallel LCDIF interface.
->
-> Signed-off-by: Joris Offouga <offougajoris@gmail.com>
-> Signed-off-by: Fabio Estevam <festevam@gmail.com>
-> Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
+Yeah, as the changelog says, I'm intentionally putting the looping
+construct into the "cold path" of the code flow: we only loops in a
+very specific cornercase, and having the whole body in a loop, or
+creating another function nesting level for it suggests otherwise.
 
-When you send someone else's patch you need to keep the original From line.
+A goto seems like the perfect tool to have a retry for one particular
+caller without muddying the code flow for the common call stack.
 
-In this case it needs to be:
-From: Fabio Estevam <festevam@gmail.com>
-
-Your Signed-off-by should come as the last one, since you are one
-final person submitting upstream.
-
-Please send a v2 with these fixes.
-
-Thanks
-
-
-
-
-> ---
->  arch/arm/boot/dts/imx7d-pico.dtsi | 84 +++++++++++++++++++++++++++++++
->  1 file changed, 84 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/imx7d-pico.dtsi b/arch/arm/boot/dts/imx7d-pico.dtsi
-> index 6f50ebf31a0a..9042b1e6f1db 100644
-> --- a/arch/arm/boot/dts/imx7d-pico.dtsi
-> +++ b/arch/arm/boot/dts/imx7d-pico.dtsi
-> @@ -69,6 +69,37 @@
->                 clocks = <&clks IMX7D_CLKO2_ROOT_DIV>;
->                 clock-names = "ext_clock";
->         };
-> +
-> +       backlight: backlight {
-> +               compatible = "pwm-backlight";
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&pinctrl_backlight>;
-> +               pwms = <&pwm4 0 50000 0>;
-> +               brightness-levels = <0 36 72 108 144 180 216 255>;
-> +               default-brightness-level = <6>;
-> +               status = "okay";
-> +       };
-> +
-> +       reg_lcd_3v3: regulator-lcd-3v3 {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "lcd-3v3";
-> +               regulator-min-microvolt = <3300000>;
-> +               regulator-max-microvolt = <3300000>;
-> +               gpio = <&gpio1 6 GPIO_ACTIVE_HIGH>;
-> +               enable-active-high;
-> +       };
-> +
-> +       panel {
-> +               compatible = "vxt,vl050-8048nt-c01";
-> +               backlight = <&backlight>;
-> +               power-supply = <&reg_lcd_3v3>;
-> +
-> +               port {
-> +                       panel_in: endpoint {
-> +                               remote-endpoint = <&display_out>;
-> +                       };
-> +               };
-> +       };
->  };
->
->  &clks {
-> @@ -230,6 +261,18 @@
->         };
->  };
->
-> +&lcdif {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_lcdif>;
-> +       status = "okay";
-> +
-> +       port {
-> +               display_out: endpoint {
-> +                       remote-endpoint = <&panel_in>;
-> +               };
-> +       };
-> +};
-> +
->  &sai1 {
->         pinctrl-names = "default";
->         pinctrl-0 = <&pinctrl_sai1>;
-> @@ -349,6 +392,13 @@
->  };
->
->  &iomuxc {
-> +
-> +       pinctrl_backlight: backlight {
-> +               fsl,pins = <
-> +                       MX7D_PAD_GPIO1_IO11__PWM4_OUT           0x0
-> +               >;
-> +       };
-> +
->         pinctrl_ecspi3: ecspi3grp {
->                 fsl,pins = <
->                         MX7D_PAD_I2C1_SCL__ECSPI3_MISO          0x2
-> @@ -413,6 +463,40 @@
->                 >;
->         };
->
-> +       pinctrl_lcdif: lcdifgrp {
-> +               fsl,pins = <
-> +                       MX7D_PAD_LCD_DATA00__LCD_DATA0          0x79
-> +                       MX7D_PAD_LCD_DATA01__LCD_DATA1          0x79
-> +                       MX7D_PAD_LCD_DATA02__LCD_DATA2          0x79
-> +                       MX7D_PAD_LCD_DATA03__LCD_DATA3          0x79
-> +                       MX7D_PAD_LCD_DATA04__LCD_DATA4          0x79
-> +                       MX7D_PAD_LCD_DATA05__LCD_DATA5          0x79
-> +                       MX7D_PAD_LCD_DATA06__LCD_DATA6          0x79
-> +                       MX7D_PAD_LCD_DATA07__LCD_DATA7          0x79
-> +                       MX7D_PAD_LCD_DATA08__LCD_DATA8          0x79
-> +                       MX7D_PAD_LCD_DATA09__LCD_DATA9          0x79
-> +                       MX7D_PAD_LCD_DATA10__LCD_DATA10         0x79
-> +                       MX7D_PAD_LCD_DATA11__LCD_DATA11         0x79
-> +                       MX7D_PAD_LCD_DATA12__LCD_DATA12         0x79
-> +                       MX7D_PAD_LCD_DATA13__LCD_DATA13         0x79
-> +                       MX7D_PAD_LCD_DATA14__LCD_DATA14         0x79
-> +                       MX7D_PAD_LCD_DATA15__LCD_DATA15         0x79
-> +                       MX7D_PAD_LCD_DATA16__LCD_DATA16         0x79
-> +                       MX7D_PAD_LCD_DATA17__LCD_DATA17         0x79
-> +                       MX7D_PAD_LCD_DATA18__LCD_DATA18         0x79
-> +                       MX7D_PAD_LCD_DATA19__LCD_DATA19         0x79
-> +                       MX7D_PAD_LCD_DATA20__LCD_DATA20         0x79
-> +                       MX7D_PAD_LCD_DATA21__LCD_DATA21         0x79
-> +                       MX7D_PAD_LCD_DATA22__LCD_DATA22         0x79
-> +                       MX7D_PAD_LCD_DATA23__LCD_DATA23         0x79
-> +                       MX7D_PAD_LCD_CLK__LCD_CLK               0x79
-> +                       MX7D_PAD_LCD_ENABLE__LCD_ENABLE         0x78
-> +                       MX7D_PAD_LCD_VSYNC__LCD_VSYNC           0x78
-> +                       MX7D_PAD_LCD_HSYNC__LCD_HSYNC           0x78
-> +                       MX7D_PAD_LCD_RESET__GPIO3_IO4           0x14
-> +               >;
-> +       };
-> +
->         pinctrl_pwm1: pwm1 {
->                 fsl,pins = <
->                         MX7D_PAD_GPIO1_IO08__PWM1_OUT   0x7f
-> --
-> 2.17.1
->
+Matter of taste, I guess.
