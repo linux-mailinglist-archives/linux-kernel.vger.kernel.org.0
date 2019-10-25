@@ -2,146 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69F14E49CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73AE9E49DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:23:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410335AbfJYLV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 07:21:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56914 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2410285AbfJYLV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 07:21:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7F148B2B1;
-        Fri, 25 Oct 2019 11:21:54 +0000 (UTC)
-From:   Michal Suchanek <msuchanek@suse.de>
-To:     linux-scsi@vger.kernel.org
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 7/7] scsi: sr: wait for the medium to become ready
-Date:   Fri, 25 Oct 2019 13:21:44 +0200
-Message-Id: <f374f9c072563c8aafed4a5aefe583ecb4b3c362.1572002144.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1572002144.git.msuchanek@suse.de>
-References: <cover.1572002144.git.msuchanek@suse.de>
-MIME-Version: 1.0
+        id S2410338AbfJYLXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 07:23:12 -0400
+Received: from comms.puri.sm ([159.203.221.185]:48150 "EHLO comms.puri.sm"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726189AbfJYLXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 07:23:12 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by comms.puri.sm (Postfix) with ESMTP id 2785FDFFDB;
+        Fri, 25 Oct 2019 04:23:11 -0700 (PDT)
+Received: from comms.puri.sm ([127.0.0.1])
+        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id n3Wpa7Rk3YNc; Fri, 25 Oct 2019 04:23:10 -0700 (PDT)
+From:   Martin Kepplinger <martin.kepplinger@puri.sm>
+To:     daniel.lezcano@linaro.org, viresh.kumar@linaro.org,
+        leo.yan@linaro.org, edubezval@gmail.com,
+        vincent.guittot@linaro.org, javi.merino@kernel.org,
+        rui.zhang@intel.com, daniel.thompson@linaro.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@puri.sm>
+Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu idle cooling driver
+Date:   Fri, 25 Oct 2019 13:22:55 +0200
+Message-Id: <20191025112255.9253-1-martin.kepplinger@puri.sm>
+In-Reply-To: <34b1ed94-1223-60ec-ac4f-0b32be67eab2@linaro.org>
+References: <34b1ed94-1223-60ec-ac4f-0b32be67eab2@linaro.org>
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the autoclose function provided by cdrom driver to wait for drive to
-close in open_finish, and attempt to open once more after the door
-closes.
+Hi Daniel,
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+Quick note: You're missing a kref_init() in this version of the cooling driver.
+
+Also, as already mentioned, set_freezable() doesn't seem to work without
+supporting suspend/resume.
+
+And since cpuidle got somewhat completely reworked in 5.4, could you create
+a new, rebased version of this? Let me know in case I missed an earlier update.
+
+thanks,
+
+                              martin
+
+
 ---
-v3: use function call rather than IOCTL
----
- drivers/scsi/sr.c | 54 ++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 42 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-index 07c319494bf4..d144ad085b35 100644
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -522,29 +522,58 @@ static blk_status_t sr_init_command(struct scsi_cmnd *SCpnt)
- 	return ret;
- }
- 
--static int sr_block_open(struct block_device *bdev, fmode_t mode)
-+static int __sr_block_open(struct block_device *bdev, fmode_t mode)
- {
--	struct scsi_cd *cd;
--	struct scsi_device *sdev;
--	int ret = -ENXIO;
--
--	cd = scsi_cd_get(bdev->bd_disk);
--	if (!cd)
--		goto out;
-+	struct scsi_cd *cd = scsi_cd(bdev->bd_disk);
-+	int ret;
- 
--	sdev = cd->device;
--	scsi_autopm_get_device(sdev);
- 	check_disk_change(bdev);
- 
- 	mutex_lock(&sr_mutex);
- 	ret = cdrom_open(&cd->cdi, bdev, mode);
- 	mutex_unlock(&sr_mutex);
- 
-+	return ret;
-+}
-+
-+static int sr_block_open(struct block_device *bdev, fmode_t mode)
-+{
-+	struct scsi_cd *cd = scsi_cd_get(bdev->bd_disk);
-+	struct scsi_device *sdev;
-+	int ret;
-+
-+	if (!cd)
-+		return -ENXIO;
-+
-+	sdev = cd->device;
-+	scsi_autopm_get_device(sdev);
-+	ret = __sr_block_open(bdev, mode);
- 	scsi_autopm_put_device(sdev);
--	if (ret)
-+
-+	if (ret == -ERESTARTSYS)
- 		scsi_cd_put(cd);
- 
--out:
-+	return ret;
-+}
-+
-+static int sr_block_open_finish(struct block_device *bdev, fmode_t mode,
-+				int ret)
-+{
-+	struct scsi_cd *cd = scsi_cd(bdev->bd_disk);
-+
-+	/* wait for drive to get ready */
-+	if ((ret == -ENOMEDIUM) && !(mode & FMODE_NDELAY)) {
-+		struct scsi_device *sdev = cd->device;
-+		/*
-+		 * Cannot use sr_block_ioctl because it locks sr_mutex blocking
-+		 * out any processes trying to access the drive
-+		 */
-+		scsi_autopm_get_device(sdev);
-+		cdrom_autoclose(&cd->cdi);
-+		ret = __sr_block_open(bdev, mode);
-+		scsi_autopm_put_device(sdev);
-+	}
-+
- 	return ret;
- }
- 
-@@ -640,6 +669,7 @@ static const struct block_device_operations sr_bdops =
- {
- 	.owner		= THIS_MODULE,
- 	.open		= sr_block_open,
-+	.open_finish	= sr_block_open_finish,
- 	.release	= sr_block_release,
- 	.ioctl		= sr_block_ioctl,
- 	.check_events	= sr_block_check_events,
--- 
-2.23.0
-
