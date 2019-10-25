@@ -2,82 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9252E4600
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E57BAE45EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:41:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408436AbfJYInZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 04:43:25 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:47318 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408405AbfJYInZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 04:43:25 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 106B120043F;
-        Fri, 25 Oct 2019 10:43:23 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CA255200444;
-        Fri, 25 Oct 2019 10:43:15 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BA655402DA;
-        Fri, 25 Oct 2019 16:43:06 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, Anson.Huang@nxp.com, ping.bai@nxp.com,
-        jun.li@nxp.com, leonard.crestez@nxp.com, daniel.baluta@nxp.com,
-        daniel.lezcano@linaro.org, shengjiu.wang@nxp.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM64: imx8mn: Change compatible string for sdma
-Date:   Fri, 25 Oct 2019 16:40:07 +0800
-Message-Id: <1571992807-31378-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2408377AbfJYIlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 04:41:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38624 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404179AbfJYIlq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 04:41:46 -0400
+Received: from [185.240.52.243] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iNvAF-0001cC-V2; Fri, 25 Oct 2019 08:41:44 +0000
+Date:   Fri, 25 Oct 2019 10:41:43 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     Christian Brauner <christian@brauner.io>,
+        Linux API <linux-api@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: clone3() example code
+Message-ID: <20191025084142.jpwypkyczehylhgv@wittgenstein>
+References: <CAKgNAkgKX1Z6Uns3pAvXe-JMSmWqo2PrqeoS65aEriZsV35QmA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAKgNAkgKX1Z6Uns3pAvXe-JMSmWqo2PrqeoS65aEriZsV35QmA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SDMA in i.MX8MN should use same configuration as i.MX8MQ
-So need to change compatible string to be "fsl,imx8mq-sdma".
 
-Fixes: 6c3debcbae47 ("arm64: dts: freescale: Add i.MX8MN dtsi support")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mn.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Fri, Oct 25, 2019 at 10:13:23AM +0200, Michael Kerrisk (man-pages) wrote:
+> Hello Christian,
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-index 785f4c420fa4..92fac295ca21 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-@@ -288,7 +288,7 @@
- 			};
- 
- 			sdma3: dma-controller@302b0000 {
--				compatible = "fsl,imx8mn-sdma", "fsl,imx7d-sdma";
-+				compatible = "fsl,imx8mn-sdma", "fsl,imx8mq-sdma";
- 				reg = <0x302b0000 0x10000>;
- 				interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clk IMX8MN_CLK_SDMA3_ROOT>,
-@@ -299,7 +299,7 @@
- 			};
- 
- 			sdma2: dma-controller@302c0000 {
--				compatible = "fsl,imx8mn-sdma", "fsl,imx7d-sdma";
-+				compatible = "fsl,imx8mn-sdma", "fsl,imx8mq-sdma";
- 				reg = <0x302c0000 0x10000>;
- 				interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clk IMX8MN_CLK_SDMA2_ROOT>,
-@@ -612,7 +612,7 @@
- 			};
- 
- 			sdma1: dma-controller@30bd0000 {
--				compatible = "fsl,imx8mn-sdma", "fsl,imx7d-sdma";
-+				compatible = "fsl,imx8mn-sdma", "fsl,imx8mq-sdma";
- 				reg = <0x30bd0000 0x10000>;
- 				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clk IMX8MN_CLK_SDMA1_ROOT>,
--- 
-2.21.0
+Hey Michael,
 
+> 
+> Do you have some example user-space code somewhere that illustrates
+> calling clone3(). I'm looking at how we might document that system
+> call in the manual page, and some example code to play with would be
+
+Excellent!
+
+> useful at this point. (I already have a simple working test program,
+> but probably you have something better.)
+
+Not sure about something better but one simple thing I used (a more
+extensive test-suite is coming):
+
+#define _GNU_SOURCE
+#include <err.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <linux/sched.h>
+#include <linux/types.h>
+#include <sched.h>
+#include <signal.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mount.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <sys/sysmacros.h>
+#include <sys/types.h>
+#include <sys/un.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#ifndef CLONE_PIDFD
+#define CLONE_PIDFD 0x00001000
+#endif
+
+#ifndef __NR_clone3
+#define __NR_clone3 -1
+#endif
+
+static pid_t sys_clone3(struct clone_args *args)
+{
+	return syscall(__NR_clone3, args, sizeof(struct clone_args));
+}
+
+static int wait_for_pid(pid_t pid)
+{
+	int status, ret;
+
+again:
+	ret = waitpid(pid, &status, 0);
+	if (ret == -1) {
+		if (errno == EINTR)
+			goto again;
+
+		return -1;
+	}
+
+	if (ret != pid)
+		goto again;
+
+	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		return -1;
+
+	return 0;
+}
+
+#define ptr_to_u64(ptr) ((__u64)((uintptr_t)(ptr)))
+
+int main(int argc, char *argv[])
+{
+	int pidfd = -1;
+	pid_t parent_tid = -1, pid = -1;
+	struct clone_args args = {0};
+
+	args.parent_tid = ptr_to_u64(&parent_tid); /* CLONE_PARENT_SETTID */
+	args.pidfd = ptr_to_u64(&pidfd); /* CLONE_PIDFD */
+	args.flags = CLONE_PIDFD | CLONE_PARENT_SETTID;
+	args.exit_signal = SIGCHLD;
+
+	pid = sys_clone3(&args);
+	if (pid < 0) {
+		fprintf(stderr, "%s - Failed to create new process\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+
+	if (pid == 0) {
+		printf("Child process with pid %d\n", getpid());
+		exit(EXIT_SUCCESS);
+	}
+
+	printf("Parent process received child's pid %d as return value\n", pid);
+	printf("Parent process received child's pidfd %d\n", *(int *)args.pidfd);
+	printf("Parent process received child's pid %d as return argument\n",
+	       *(pid_t *)args.parent_tid);
+
+	if (0) {
+		if (waitid(P_ALL, pid, NULL, 0) == 0) {
+			fprintf(stderr, "Managed to wait on CLONE_NO_WAITALL process with waitid(P_ALL)\n");
+			exit(EXIT_FAILURE);
+		}
+		printf("Child process %d requested CLONE_NO_WAITALL\n", pid);
+	} else {
+		printf("Child process %d did not request CLONE_NO_WAITALL\n", pid);
+	}
+
+	if (wait_for_pid(pid))
+		exit(EXIT_FAILURE);
+
+	if (pid != *(pid_t *)args.parent_tid)
+		exit(EXIT_FAILURE);
+
+	close(pidfd);
+
+	return 0;
+}
+
+Thanks!
+Christian
