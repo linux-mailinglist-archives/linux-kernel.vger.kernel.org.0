@@ -2,67 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A85CDE4AFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95AF6E4B16
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440208AbfJYMZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 08:25:22 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:34375 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407261AbfJYMZV (ORCPT
+        id S2440240AbfJYMdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:33:06 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43893 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726484AbfJYMdF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 08:25:21 -0400
-Received: by mail-io1-f65.google.com with SMTP id q1so2205612ion.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 05:25:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=56CrbKjpo1LNY8+IqgfXYngvQ533oWMTRgx9BxzPQtg=;
-        b=ATgvwVOyv8a3OqTftc6rOHr2T01cPTPGr3psYRcZqI7beZCaGYjyqusW+xB5+6PHwa
-         VPd6NCdji4zyXwV+Xqhjc4W0rPQcDvzb2Y8sFY+6skZdpRU4IUWwleeN826ZJ87IDKWK
-         DiS/kYIa5XQsOn+9UlaapwulD1qaAHnqGiW/zbU8FVNX0qJ27L2zJu6sudNSvJ7RqJjQ
-         X0rZStwoql7yav2WnRQkXlzeLZf3nviE1HZ3S6aWKF7Hq+wFqPioblADS9cvZSlOYozM
-         WWnYssWpuJtFvytMYZNZ9Dkz3Px57NeL0D5CmyfMHoccWzxCFJQU1h9tD7sogoMs0GCY
-         6gtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=56CrbKjpo1LNY8+IqgfXYngvQ533oWMTRgx9BxzPQtg=;
-        b=dqqpeENN08yBCvQSmO7nfBDEI1LZ3MW1CjjAY7AHYCuxApHa2rPhYtLuUx6K6z56e5
-         zeBWjL0ECgJoLA3sZSLsJ0SPE2arWi0i5N86/1+oZtaTbmdY+Htf1rM0JMG/4Hg1L8pr
-         qIzbhSkRihS0cUSPD+BAibk4N3TZFRZBJAAZjumtZMMXM75Or3qUAU6kozwtapJBs8RB
-         JpX3MMOSVJb8HZEcBGuHHDVBmigP4h1mAp6majhRv0gnEMXj0Yk1jPgM5te8jOEg6ZzD
-         u7VWwA15oZyKdnx/n8JPImgHVBf6phfORpq0LygzIqU+NMeseVj0t35hfaV9vNRAvap+
-         2cPw==
-X-Gm-Message-State: APjAAAWd5uvlIuKqj1Gfdy9GjzSeP0DKWdjS3ZElq39bKu7ryKNq/ThY
-        jeRfliuM4BzlOaWidCOGaomFDGAxBvhBml/9fTM=
-X-Google-Smtp-Source: APXvYqyt5eVoSVArctvcKe0irxW8JrhSNRGAhATkcNLUwVd8A4uXLkozRjVpIm3pGVtOqRuX/hSWjasR2hRbs3IL6HE=
-X-Received: by 2002:a02:9f8b:: with SMTP id a11mr3722216jam.10.1572006319322;
- Fri, 25 Oct 2019 05:25:19 -0700 (PDT)
+        Fri, 25 Oct 2019 08:33:05 -0400
+Received: from [185.240.52.243] (helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iNym8-0007oa-Dt; Fri, 25 Oct 2019 12:33:04 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        fweimer@redhat.com
+Cc:     jannh@google.com, oleg@redhat.com, tglx@linutronix.de,
+        arnd@arndb.de, shuah@kernel.org, dhowells@redhat.com,
+        tkjos@android.com, ldv@altlinux.org, miklos@szeredi.hu,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [REVIEW PATCH v5 0/3] close_range()
+Date:   Fri, 25 Oct 2019 14:28:48 +0200
+Message-Id: <20191025122851.30182-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Received: by 2002:a6b:8e11:0:0:0:0:0 with HTTP; Fri, 25 Oct 2019 05:25:18
- -0700 (PDT)
-Reply-To: mthida828@gmail.com
-From:   George Melvin <samuelnwangoro@gmail.com>
-Date:   Fri, 25 Oct 2019 13:25:18 +0100
-Message-ID: <CAHi8z6EftSAxiMOPuP-e3jcyHuKKe-t2vYzKC=U=bJ6EHvOeHQ@mail.gmail.com>
-Subject: Dear Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hey everyone,
+
+I've recently been pinged by quite a few people about the state of the
+close_range() patchset. I've been sitting on this for a while because
+other stuff came up. Last time it was considered to be in mergeable
+state and I plan to send it for v5.5 since quite a bunch of projects in
+userspace have expressed interest in using this including Python and
+systemd.
+
+I've also coordinated with some FreeBSD developers who got in touch with
+me. FreeBSD has expressed interest in adding the same syscall once we
+merged it.
+
+This is a resend of the close_range() patchset (cf. [1]). I'd like to
+target v5.5.
+
+[1]: https://lwn.net/Articles/789023/
+
+Thanks!
+Christian
+
+Christian Brauner (3):
+  open: add close_range()
+  arch: wire-up close_range()
+  tests: add close_range() tests
+
+ arch/alpha/kernel/syscalls/syscall.tbl        |   1 +
+ arch/arm/tools/syscall.tbl                    |   1 +
+ arch/arm64/include/asm/unistd.h               |   2 +-
+ arch/arm64/include/asm/unistd32.h             |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |   1 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   1 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   1 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   1 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   1 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   1 +
+ fs/file.c                                     |  62 +++++++-
+ fs/open.c                                     |  20 +++
+ include/linux/fdtable.h                       |   2 +
+ include/linux/syscalls.h                      |   2 +
+ include/uapi/asm-generic/unistd.h             |   4 +-
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/core/.gitignore       |   1 +
+ tools/testing/selftests/core/Makefile         |   7 +
+ .../testing/selftests/core/close_range_test.c | 149 ++++++++++++++++++
+ 27 files changed, 258 insertions(+), 10 deletions(-)
+ create mode 100644 tools/testing/selftests/core/.gitignore
+ create mode 100644 tools/testing/selftests/core/Makefile
+ create mode 100644 tools/testing/selftests/core/close_range_test.c
+
 -- 
-Dear Friend
+2.23.0
 
-How are you today hope fine?I sent you an urgent letter four {4} days
-ago without any response form you, I have a business proposal that
-might Interest you, Please contact me through my private email for
-more details. (mthida828@gmail.com)
-
-Thank
-Regards
-George Melvin
