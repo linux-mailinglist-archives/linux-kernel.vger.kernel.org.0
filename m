@@ -2,102 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D84CAE413A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 03:45:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21FEEE4128
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 03:43:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389371AbfJYBpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 21:45:19 -0400
-Received: from mga17.intel.com ([192.55.52.151]:50609 "EHLO mga17.intel.com"
+        id S2389132AbfJYBnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 21:43:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389344AbfJYBpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 21:45:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 18:45:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,226,1569308400"; 
-   d="scan'208";a="197896429"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by fmsmga007.fm.intel.com with ESMTP; 24 Oct 2019 18:45:16 -0700
-Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>
-Subject: Re: [PATCH v6 01/10] iommu/vt-d: Enlightened PASID allocation
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-References: <1571788403-42095-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1571788403-42095-2-git-send-email-jacob.jun.pan@linux.intel.com>
- <20191023004503.GB100970@otc-nc-03>
- <f17d8df6-d77a-32b9-104c-1ae246c7a117@linux.intel.com>
- <20191023105523.75895d76@jacob-builder>
- <20191023141126.38bc1644@jacob-builder>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <d5f68e37-adba-0804-904b-660e8e812ece@linux.intel.com>
-Date:   Fri, 25 Oct 2019 09:42:43 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726841AbfJYBnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 21:43:03 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EF3721D7F;
+        Fri, 25 Oct 2019 01:43:01 +0000 (UTC)
+Date:   Thu, 24 Oct 2019 21:42:59 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Sami Tolvanen <samitolvanen@google.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 16/17] arm64: disable SCS for hypervisor code
+Message-ID: <20191024214259.1b37535c@gandalf.local.home>
+In-Reply-To: <CAK7LNATPpL-B0APPXFcWPCR6ZTSrXv-v_ZkdFqjKJ4pwUpcWug@mail.gmail.com>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+        <20191024225132.13410-1-samitolvanen@google.com>
+        <20191024225132.13410-17-samitolvanen@google.com>
+        <CAK7LNATPpL-B0APPXFcWPCR6ZTSrXv-v_ZkdFqjKJ4pwUpcWug@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20191023141126.38bc1644@jacob-builder>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, 25 Oct 2019 10:29:47 +0900
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
 
-On 10/24/19 5:11 AM, Jacob Pan wrote:
-> On Wed, 23 Oct 2019 10:55:23 -0700
-> Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
+> On Fri, Oct 25, 2019 at 7:52 AM <samitolvanen@google.com> wrote:
+> >
+> > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> > ---
+> >  arch/arm64/kvm/hyp/Makefile | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
+> > index ea710f674cb6..8289ea086e5e 100644
+> > --- a/arch/arm64/kvm/hyp/Makefile
+> > +++ b/arch/arm64/kvm/hyp/Makefile
+> > @@ -28,3 +28,6 @@ GCOV_PROFILE  := n
+> >  KASAN_SANITIZE := n
+> >  UBSAN_SANITIZE := n
+> >  KCOV_INSTRUMENT        := n
+> > +
+> > +ORIG_CFLAGS := $(KBUILD_CFLAGS)
+> > +KBUILD_CFLAGS = $(subst $(CC_FLAGS_SCS),,$(ORIG_CFLAGS))  
 > 
->>>> Do you have to check this everytime? every dmar_readq is going to
->>>> trap to the other side ...
->>>
->>> Yes. We don't need to check it every time. Check once and save the
->>> result during boot is enough.
->>>
->>> How about below incremental change?
->>>    
->> Below is good but I was thinking to include vccap in struct
->> intel_iommu{} where cap and ecaps reside. i.e.
->> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
->> index 14b87ae2916a..e2cf25c9c956 100644
->> --- a/include/linux/intel-iommu.h
->> +++ b/include/linux/intel-iommu.h
->> @@ -528,6 +528,7 @@ struct intel_iommu {
->>          u64             reg_size; /* size of hw register set */
->>          u64             cap;
->>          u64             ecap;
->> +       u64             vccap;
->>
->> Also, we can use a static branch here.
->>
-> On a second thought, we cannot use static(branch) here in that we
-> cannot assume there is only one vIOMMU all the time. Have to cache the
-> vccap per iommu.
-
-intel_iommu is a per iommu structure, right? Or I missed anything?
-
 > 
->>> diff --git a/drivers/iommu/intel-pasid.c
->>> b/drivers/iommu/intel-pasid.c index ff7e877b7a4d..c15d9d7e1e73
->>> 100644 --- a/drivers/iommu/intel-pasid.c
->>> +++ b/drivers/iommu/intel-pasid.c
->>> @@ -29,22 +29,29 @@ u32 intel_pasid_max_id = PASID_MAX;
->>>
-> [Jacob Pan]
+> $(subst ... ) is not the correct use here.
 > 
+> It works like sed,   s/$(CC_CFLAGS_SCS)//
+> instead of matching by word.
+> 
+> 
+> 
+> 
+> KBUILD_CFLAGS := $(filter-out $(CC_FLAGS_SCS), $(KBUILD_CFLAGS))
+> 
+> is more correct, and simpler.
 
-Best regards,
-baolu
+I guess that would work too. Not sure why I never used it. I see mips
+used it for their -pg flags.
+
+-- Steve
