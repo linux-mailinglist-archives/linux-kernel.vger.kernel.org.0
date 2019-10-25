@@ -2,84 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D81AAE4CD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:56:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65BFEE4CDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:56:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505201AbfJYNz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 09:55:57 -0400
-Received: from mout.gmx.net ([212.227.15.19]:49741 "EHLO mout.gmx.net"
+        id S2632818AbfJYN4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 09:56:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2505113AbfJYNzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:55:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1572011730;
-        bh=9ZX9RlREpwyQtZ8vBq/razbq3sDXMud2kIHv3bYsfgg=;
-        h=X-UI-Sender-Class:Subject:From:Reply-To:To:Cc:Date:In-Reply-To:
-         References;
-        b=Yykzode7tpUWi6O4QGEvkGXPIGjjZ5fk6fNJE1exbY4VLdsNBrZAEnGUD+Vch1+mN
-         bHJYWbSYL71uw/dW9OSDeYVCNg5AI8mqn9moUXfeMZ3Q+dErHLupTtOYODlOHZyb2D
-         03lBioZjIj3bb/6BOjLu2rijBoGSFJTidaj+au74=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from bear.fritz.box ([80.128.101.49]) by mail.gmx.com (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MNKm0-1ickgq3bBq-00Ooc9; Fri, 25
- Oct 2019 15:55:30 +0200
-Message-ID: <8534fa18abf0b586690355e0441eccc96d1ca2b9.camel@gmx.de>
-Subject: Re: mlockall(MCL_CURRENT) blocking infinitely
-From:   Robert Stupp <snazy@gmx.de>
-Reply-To: snazy@snazy.de
-To:     Michal Hocko <mhocko@kernel.org>, snazy@snazy.de
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>
-Date:   Fri, 25 Oct 2019 15:55:28 +0200
-In-Reply-To: <20191025132700.GJ17610@dhcp22.suse.cz>
-References: <4576b336-66e6-e2bb-cd6a-51300ed74ab8@snazy.de>
-         <b8ff71f5-2d9c-7ebb-d621-017d4b9bc932@infradead.org>
-         <20191025092143.GE658@dhcp22.suse.cz>
-         <70393308155182714dcb7485fdd6025c1fa59421.camel@gmx.de>
-         <20191025114633.GE17610@dhcp22.suse.cz>
-         <d740f26ea94f9f1c2fc0530c1ea944f8e59aad85.camel@gmx.de>
-         <20191025120505.GG17610@dhcp22.suse.cz>
-         <20191025121104.GH17610@dhcp22.suse.cz>
-         <c8950b81000e08bfca9fd9128cf87d8a329a904b.camel@gmx.de>
-         <20191025132700.GJ17610@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        id S2632795AbfJYN4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 09:56:14 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C54B222CB;
+        Fri, 25 Oct 2019 13:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572011773;
+        bh=NcEaAectkCFyZ7qca4yYHQDM+lDAU9HA63XtClUPuzA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uaeAnNRjOcwx6bnQ73txwedDDJ9HGmaTTkRrYOHXIuIBSiubcSNd2hdphqAbFyBHs
+         jA9cq7lMXMb/IJQUUanL9NHZtzV/y1zupgPdB/ZkajETq10a2DxPlAd/bY/LiHrx4r
+         aa9WrzqZCwgFMK6YlxDJlWZOkS19nfD/Uao/0a4I=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.19 05/37] f2fs: fix to do sanity check on valid node/block count
+Date:   Fri, 25 Oct 2019 09:55:29 -0400
+Message-Id: <20191025135603.25093-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191025135603.25093-1-sashal@kernel.org>
+References: <20191025135603.25093-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:u7Vgsxlud6XI8Pq7y2tuCkslo2bG6hGtqcWfHx+KA7pi0+PHEYx
- a09WBHs+j1qA0LPVEnGJ5wLoCjbtB8Cy7LLPMMs+MPCzip7ndGdzhCj2+ggczscTa1knhvm
- ZZT6Rx/fuXdotVJ3M8Fqm1F0Ds/qxFPHp65KO9lU6Ux6vy9kDFKmdezxudYAQHcG3Tb+tJa
- Qaihmc/KsJGePqSZzc8Fw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:fW6HAR9cnRU=:51wgE3xaOojpK9VWIdew9o
- MyWo0BKaiTwokyTybxWW7aMuRKLwoQzmFSHek6ZzUZJFlTu/59ZI0/8x322O1izTj6ILH29s5
- ccaOHosVurlV3CciVGNofecu6ToF+kd4xznXatszsnTZ3P900OswMsRYbrR1OlPYazMUd0oxW
- 57qQQ1UUNmzBj51cED2kTNIm7YDTPMmo/W1AFDMX/LHC6Y01unPAPoM2zjU7IoVrk/FMTmUqs
- OyvzuB02bYVhyNn8L04ba8K0iOLPsiGdgnRG4xauTjGRtCTJjld4wn1ZlYCOxO/GzGd0pFtcP
- OV7PXu+ieiaPCidCQktFNbBeRyCp7M4O8V4C3xIWeVz1S94NrqkPooMjY2mloUMV4jZygR8Ub
- ZpoNwyHtm2P8CgJqKAeiL3MpmJdwUnG0BIgl1g3yMB5Fl//pO1jnPZalDKTQS4n3YAx/ETpBF
- LTKyEJE5sQjFTCa9hQ6TiqmWfMOxR6JGIdQ6f6xDg/mNwXQkf1ViNtCG9jpgaEfHqM8CkdSn3
- 2rMeETZ/DqBo7uvODyEU1gfGDTeoNlnTJf9OQK8BuyhtmM3gdkLpnDcGo1bQQdyLZXoBhmI0y
- yBUZmUUnzfkGfr+KXUC2PrkaNFG6M+CJn2AR6n5yNRUNnUBig8oujKn7Iv56KtMCsP2GQIbBO
- ZwO5bMUuipXGaAPUutnTKttKv+sVeEoAd1cLhtMK/0EL1493ZKYdinbZRorvH9Ut0u+sNCtXw
- OM1YpNXJ7oHr8epoHa0DR5DvEKVY4U/OTAJZLRaCoqE78D0hpK1/9JfIZ2ESoQLmDioLvpTSQ
- PyMzg1JyXJlikTRK8dx454/X9uBX8ALGSeOeyKQQw3UGL2x3+/mW9HX5nnZMPe4JBMV6adXtK
- d1m7jZdUJ4vGYvd6NkUlIO+2SvIB+BsZtr3Vsyr3yPuQ2bNwiSBjLQditiPuYUxxSeVgd7xSx
- NVuMAnYG+/Ru55Ah/V/HVhjWPHYuJcmBiEswOpgTdSk4pZbrF3sCibrh6Ztl2Jowi7r9XQaRx
- pWbJg/MvFnJnhPjrxKFQsSTG7799L64x3ZpqTziDHYOS3rwNFHT0tqtbsdEjfVnh1cZ+MjVf5
- R9F37YlE1JsWIojhQ+zVbhMzvDoqT4ibbiKb7pEtQ+wmApqbF1JkvMd+U73smVkuBkNQkDp26
- 5hcT55Xirnv6BpBqnEg0/K36y82OckHKLNbJDkwzh6nZfwEZEBZMKeQD30l+jtjjg0glMOf4U
- CuNdp8ZoaIMI1r6SIAWm1gih+baLV5S6aNU9NkA==
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-10-25 at 15:27 +0200, Michal Hocko wrote:
-> > Pss:                   5 kB
+From: Chao Yu <yuchao0@huawei.com>
 
-Seems Pss==Locked is wrong here - or better: it doesn't look right that
-Locked==Pss?
+[ Upstream commit 7b63f72f73af57bb040f03b9713ec9979d8911f4 ]
+
+As Jungyeon reported in bugzilla:
+
+https://bugzilla.kernel.org/show_bug.cgi?id=203229
+
+- Overview
+When mounting the attached crafted image, following errors are reported.
+Additionally, it hangs on sync after trying to mount it.
+
+The image is intentionally fuzzed from a normal f2fs image for testing.
+Compile options for F2FS are as follows.
+CONFIG_F2FS_FS=y
+CONFIG_F2FS_STAT_FS=y
+CONFIG_F2FS_FS_XATTR=y
+CONFIG_F2FS_FS_POSIX_ACL=y
+CONFIG_F2FS_CHECK_FS=y
+
+- Reproduces
+mkdir test
+mount -t f2fs tmp.img test
+sync
+
+- Kernel message
+ kernel BUG at fs/f2fs/recovery.c:591!
+ RIP: 0010:recover_data+0x12d8/0x1780
+ Call Trace:
+  f2fs_recover_fsync_data+0x613/0x710
+  f2fs_fill_super+0x1043/0x1aa0
+  mount_bdev+0x16d/0x1a0
+  mount_fs+0x4a/0x170
+  vfs_kern_mount+0x5d/0x100
+  do_mount+0x200/0xcf0
+  ksys_mount+0x79/0xc0
+  __x64_sys_mount+0x1c/0x20
+  do_syscall_64+0x43/0xf0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+With corrupted image wihch has out-of-range valid node/block count, during
+recovery, once we failed due to no free space, it will trigger kernel
+panic.
+
+Adding sanity check on valid node/block count in f2fs_sanity_check_ckpt()
+to detect such condition, so that potential panic can be avoided.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/f2fs/super.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 6851afc3bf805..3fc96cffe6ac5 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2344,7 +2344,8 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 	unsigned int log_blocks_per_seg;
+ 	unsigned int segment_count_main;
+ 	unsigned int cp_pack_start_sum, cp_payload;
+-	block_t user_block_count;
++	block_t user_block_count, valid_user_blocks;
++	block_t avail_node_count, valid_node_count;
+ 	int i, j;
+ 
+ 	total = le32_to_cpu(raw_super->segment_count);
+@@ -2379,6 +2380,24 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 		return 1;
+ 	}
+ 
++	valid_user_blocks = le64_to_cpu(ckpt->valid_block_count);
++	if (valid_user_blocks > user_block_count) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++			"Wrong valid_user_blocks: %u, user_block_count: %u",
++			valid_user_blocks, user_block_count);
++		return 1;
++	}
++
++	valid_node_count = le32_to_cpu(ckpt->valid_node_count);
++	avail_node_count = sbi->total_node_count - sbi->nquota_files -
++						F2FS_RESERVED_NODE_NUM;
++	if (valid_node_count > avail_node_count) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++			"Wrong valid_node_count: %u, avail_node_count: %u",
++			valid_node_count, avail_node_count);
++		return 1;
++	}
++
+ 	main_segs = le32_to_cpu(raw_super->segment_count_main);
+ 	blocks_per_seg = sbi->blocks_per_seg;
+ 
+-- 
+2.20.1
 
