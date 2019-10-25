@@ -2,131 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07A63E4AAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F9BCE4AB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:05:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504150AbfJYMCy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 08:02:54 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43646 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502539AbfJYMCy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 08:02:54 -0400
-Received: by mail-qt1-f196.google.com with SMTP id t20so2766368qtr.10
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 05:02:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=U3muYkVb3sn/zD3GnI85KoquW1PDnagsDLGnaKlzxUg=;
-        b=f4k77EVP3oB4TFXVyejNteYMnBZxJxaPv8yN3YKZaUih/akVpJpz0PNswqsYe66tUn
-         N0ITsPRgnY4LreqhjwD5DBfzXKkKzwt1St7lMeCB0Yp8v2NQDZgGjx+M08dNoog9n7ZI
-         mewMpnX+8qU3u0sHTOjU7bPeMnjmGHRoDoOV8EFtaaaH/XqVYF0VmiVm9R36gf+bh0bq
-         65NWOFmTuUdi0Oe8GkOHKJOA94GrI7mONOr1/x4ChNNx+VnxHLPCTEjhVURKm3OeLg2K
-         +13SambnQ31yajHSVkLMYDmQ6jrTVqGB0z4jtVAkFbYGxThNppfkbg7ZfNKkOV3645qt
-         uWSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=U3muYkVb3sn/zD3GnI85KoquW1PDnagsDLGnaKlzxUg=;
-        b=jueQwO7mho7iEp2P6s77sTqKlDmIxEF0Y2kgxUL7UA/oFcqILDAMu7eohVuM2H1fOX
-         nAYU/oj//J6kM9wrbH/qBRFPQO9VcK66okwXtn4+acjsoe7iFaYH2h+IBiD6tfldRtJ+
-         77sEV8WDMRgsR3wAdyUEU2pmrNAa/bWygMDRhlJqAlhO0Rt9x9gRzJAqYu6t1mwEDjV6
-         pkZslgrHdI5q0S5XFqd2R3BMf79H5SVNijwfdTLC09rLhvaDuH+YQrRw3zysBxYeBP0f
-         ut2NbpwbDbIJstozeSGzQprlrDwdFxQNYCBON7UAzuxcbjOWA/DNyUxHPUigIQiHt93A
-         LYfA==
-X-Gm-Message-State: APjAAAUQZF8VndASpE39ncg7PDOotIu/mVpTvan6iphN+WV7N+pR2cWo
-        u+Q4YT/LvTRk0B+y+uuc9OE=
-X-Google-Smtp-Source: APXvYqxyathMCAeGIRon/l7dS54Jlq7okRabEc4gt560TDidgz/g1QfGAoadWP2Sp4XPsfqiMddMXw==
-X-Received: by 2002:ac8:2a31:: with SMTP id k46mr2663074qtk.392.1572004971789;
-        Fri, 25 Oct 2019 05:02:51 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.179.80.16])
-        by smtp.gmail.com with ESMTPSA id 144sm1083827qkj.5.2019.10.25.05.02.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 05:02:50 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 5894041199; Fri, 25 Oct 2019 09:02:48 -0300 (-03)
-Date:   Fri, 25 Oct 2019 09:02:48 -0300
-To:     Hewenliang <hewenliang4@huawei.com>
-Cc:     peterz@infradead.org, jolsa@redhat.com, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        ilubashe@akamai.com, ak@linux.intel.com,
-        linux-kernel@vger.kernel.org, hushiyuan@huawei.com,
-        linfeilong@huawei.com
-Subject: Re: [PATCH] perf tools: Call closedir to release the resource before
- we return
-Message-ID: <20191025120248.GA23511@kernel.org>
-References: <20191025031605.23658-1-hewenliang4@huawei.com>
+        id S2504184AbfJYMFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:05:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53076 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2504024AbfJYMFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 08:05:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 56049B25F;
+        Fri, 25 Oct 2019 12:05:06 +0000 (UTC)
+Date:   Fri, 25 Oct 2019 14:05:05 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     snazy@snazy.de
+Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>
+Subject: Re: mlockall(MCL_CURRENT) blocking infinitely
+Message-ID: <20191025120505.GG17610@dhcp22.suse.cz>
+References: <4576b336-66e6-e2bb-cd6a-51300ed74ab8@snazy.de>
+ <b8ff71f5-2d9c-7ebb-d621-017d4b9bc932@infradead.org>
+ <20191025092143.GE658@dhcp22.suse.cz>
+ <70393308155182714dcb7485fdd6025c1fa59421.camel@gmx.de>
+ <20191025114633.GE17610@dhcp22.suse.cz>
+ <d740f26ea94f9f1c2fc0530c1ea944f8e59aad85.camel@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191025031605.23658-1-hewenliang4@huawei.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <d740f26ea94f9f1c2fc0530c1ea944f8e59aad85.camel@gmx.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Oct 24, 2019 at 11:16:05PM -0400, Hewenliang escreveu:
-> We should close the directory on pattern failure before the return
-> of rm_rf_depth_pat.
+On Fri 25-10-19 13:55:13, Robert Stupp wrote:
+> On Fri, 2019-10-25 at 13:46 +0200, Michal Hocko wrote:
+> > On Fri 25-10-19 13:02:23, Robert Stupp wrote:
+> > > On Fri, 2019-10-25 at 11:21 +0200, Michal Hocko wrote:
+> > > > On Thu 24-10-19 16:34:46, Randy Dunlap wrote:
+> > > > > [adding linux-mm + people]
+> > > > >
+> > > > > On 10/24/19 12:36 AM, Robert Stupp wrote:
+> > > > > > Hi guys,
+> > > > > >
+> > > > > > I've got an issue with `mlockall(MCL_CURRENT)` after
+> > > > > > upgrading
+> > > > > > Ubuntu 19.04 to 19.10 - i.e. kernel version change from 5.0.x
+> > > > > > to
+> > > > > > 5.3.x.
+> > > > > >
+> > > > > > The following simple program hangs forever with one CPU
+> > > > > > running
+> > > > > > at 100% (kernel):
+> > > >
+> > > > Can you capture everal snapshots of proc/$(pidof $YOURTASK)/stack
+> > > > while
+> > > > this is happening?
+> > >
+> > > Sure,
+> > >
+> > > Approach:
+> > > - one shell running
+> > >   while true; do cat /proc/$(pidof test)/stack; done
+> > > - starting ./test in another shell + ctrl-c quite some times
+> > >
+> > > Vast majority of all ./test invocations return an empty 'stack'
+> > > file.
+> > > Some tries, maybe 1 out of 20, returned these snapshots.
+> > > Was running 5.3.7 for this test.
+> > >
+> > >
+> > > [<0>] __handle_mm_fault+0x4c5/0x7a0
+> > > [<0>] handle_mm_fault+0xca/0x1f0
+> > > [<0>] __get_user_pages+0x230/0x770
+> > > [<0>] populate_vma_page_range+0x74/0x80
+> > > [<0>] __mm_populate+0xb1/0x150
+> > > [<0>] __x64_sys_mlockall+0x11c/0x190
+> > > [<0>] do_syscall_64+0x5a/0x130
+> > > [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > > [<0>] __handle_mm_fault+0x4c5/0x7a0
+> > > [<0>] handle_mm_fault+0xca/0x1f0
+> > > [<0>] __get_user_pages+0x230/0x770
+> > > [<0>] populate_vma_page_range+0x74/0x80
+> > > [<0>] __mm_populate+0xb1/0x150
+> > > [<0>] __x64_sys_mlockall+0x11c/0x190
+> > > [<0>] do_syscall_64+0x5a/0x130
+> > > [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > >
+> > >
+> > > [<0>] __handle_mm_fault+0x4c5/0x7a0
+> > > [<0>] handle_mm_fault+0xca/0x1f0
+> > > [<0>] __get_user_pages+0x230/0x770
+> > > [<0>] populate_vma_page_range+0x74/0x80
+> > > [<0>] __mm_populate+0xb1/0x150
+> > > [<0>] __x64_sys_mlockall+0x11c/0x190
+> > > [<0>] do_syscall_64+0x5a/0x130
+> > > [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > >
+> > >
+> > > [<0>] __do_fault+0x3c/0x130
+> > > [<0>] do_fault+0x248/0x640
+> > > [<0>] __handle_mm_fault+0x4c5/0x7a0
+> > > [<0>] handle_mm_fault+0xca/0x1f0
+> > > [<0>] __get_user_pages+0x230/0x770
+> > > [<0>] populate_vma_page_range+0x74/0x80
+> > > [<0>] __mm_populate+0xb1/0x150
+> > > [<0>] __x64_sys_mlockall+0x11c/0x190
+> > > [<0>] do_syscall_64+0x5a/0x130
+> > > [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > >
+> >
+> > This is expected.
+> >
+> > > // doubt this one is relevant
+> > > [<0>] __wake_up_common_lock+0x7c/0xc0
+> > > [<0>] __wake_up_sync_key+0x1e/0x30
+> > > [<0>] __wake_up_parent+0x26/0x30
+> > > [<0>] do_notify_parent+0x1cc/0x280
+> > > [<0>] do_exit+0x703/0xaf0
+> > > [<0>] do_group_exit+0x47/0xb0
+> > > [<0>] get_signal+0x165/0x880
+> > > [<0>] do_signal+0x34/0x280
+> > > [<0>] exit_to_usermode_loop+0xbf/0x160
+> > > [<0>] do_syscall_64+0x10f/0x130
+> > > [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> >
+> > Hmm, this means that the task has exited so how come there are
+> > other syscalls happening. Are you sure you are collecting stacks for
+> > the
+> > correct task?
 > 
-> Fixes: cdb6b0235f170 ("perf tools: Add pattern name checking to rm_rf")
-> Signed-off-by: Hewenliang <hewenliang4@huawei.com>
-
-I've already applied:
-
-commit 6080728ff8e9c9116e52e6f840152356ac2fea56
-Author: Yunfeng Ye <yeyunfeng@huawei.com>
-Date:   Tue Oct 15 16:30:08 2019 +0800
-
-    perf tools: Fix resource leak of closedir() on the error paths
-    
-    Both build_mem_topology() and rm_rf_depth_pat() have resource leaks of
-    closedir() on the error paths.
-    
-    Fix this by calling closedir() before function returns.
-    
-    Fixes: e2091cedd51b ("perf tools: Add MEM_TOPOLOGY feature to perf data file")
-    Fixes: cdb6b0235f17 ("perf tools: Add pattern name checking to rm_rf")
-    Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-    Acked-by: Jiri Olsa <jolsa@kernel.org>
-
-[acme@quaco perf]$ git tag --contains 6080728ff8e9c9116e52e6f840152356ac2fea56
-perf-urgent-for-mingo-5.4-20191017
-[acme@quaco perf]$ 
-
-It is already in tip/perf/urgent, should get to Linus soon.
-
-- Arnaldo
-
-> ---
->  tools/perf/util/util.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> I guess that the `cat /proc/$(pidof test)/stack` captured the stack
+> after I hit ctrl-c. Does that make sense?
 > 
-> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-> index 5eda6e19c947..1aadca8c43f3 100644
-> --- a/tools/perf/util/util.c
-> +++ b/tools/perf/util/util.c
-> @@ -154,8 +154,10 @@ static int rm_rf_depth_pat(const char *path, int depth, const char **pat)
->  		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
->  			continue;
->  
-> -		if (!match_pat(d->d_name, pat))
-> +		if (!match_pat(d->d_name, pat)) {
-> +			closedir(dir);
->  			return -2;
-> +		}
->  
->  		scnprintf(namebuf, sizeof(namebuf), "%s/%s",
->  			  path, d->d_name);
-> -- 
-> 2.19.1
+> Also tried `syscall(SYS_mlockall, MCL_CURRENT);` instead of
+> `mlockall(MCL_CURRENT)` - same behavior.
+ 
+This smells like something that could be runtime specific. Could you
+post strace output of your testcase?
 
 -- 
-
-- Arnaldo
+Michal Hocko
+SUSE Labs
