@@ -2,112 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51D01E4652
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41FA9E4656
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:55:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438039AbfJYIzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 04:55:04 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33323 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437229AbfJYIzE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 04:55:04 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 6so3783947wmf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 01:55:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=e0o1evno6haV1PZk5CsennP2f66XiGB9AxCdg0rnVFQ=;
-        b=FG4lhRPIpLv1bI2+5PQqXPccLi1M2LaG9ZFLA3JTw9apptcOjsF4yUBGQ1p2o/MVPP
-         aw/pTe89CmukvK92D40EQeECYpkHiTjrvVWy5M5Y4T323TNQ2ZIG97XnDQkuGBUITFG5
-         6bm001yu7zKieO1XyPmOa0noaAhkf71cDWchXEbw0rWk/i70Zt27f76GLPuVifDxLPgm
-         wRnSP+8ztowGnMPeWBSnDnrfcaoriRwcpl+9Kjv5OjIpiPbpUhEecKJu7U6BBZ8Qo66V
-         sRZmFoL+5r33yQDEQnwb1vBOA0QphlCzcBeFWrxEC8nf/im/I8lsYMgmfo/jsROilf0Q
-         W5yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e0o1evno6haV1PZk5CsennP2f66XiGB9AxCdg0rnVFQ=;
-        b=GJQ483a1u4v5+QMA+O4Z+KNz+myKzq1wDvl5q1xd55psF/+b7X6qAoaYXioHA/Rzyb
-         XSvJkBTS3seylC9ZvJk0QGpW9iCl6xNPxEHKQAWgC13JMlyPLKqSzAzKilUEIsRvJjQs
-         2M2VHcCXU0/5n0Qwb5o8q/7ThW58syMHLTyypV2Q6LDgcRvX8rNQ0oNnLA5wA1sz1lu+
-         W6mkfl4Yxsuo3YP0sCs1PQmWVLihs6g5CZ7xbruMkB39P+L92726uFIdISLhnOw4biN5
-         TePtVS3mJj2Qh1hYHegkG8naSmt1ieGdmii32d6LeuygYisXEpfX2Z2Ir8Dw2i8UR1mS
-         aCWA==
-X-Gm-Message-State: APjAAAUGYU5dCNdP/qEIn1aU/p1Pe6GYk13lORW1MdeGJYEZKnkM+THb
-        NTQcp/Ovu6xuTmxy+NNnkJB2zA==
-X-Google-Smtp-Source: APXvYqwxebVwU3JPLWu+FN21Yw5b1DUrU9iBzksnwjCY+rWOd7gEbbU27OgkACABTCrk/ERH3DzeHA==
-X-Received: by 2002:a1c:2e94:: with SMTP id u142mr2497100wmu.69.1571993701786;
-        Fri, 25 Oct 2019 01:55:01 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id o18sm2031749wrm.11.2019.10.25.01.55.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 01:55:01 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 09:54:59 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     arnd@arndb.de, broonie@kernel.org, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        baohua@kernel.org, stephan@gerhold.net
-Subject: Re: [PATCH v3 07/10] x86: olpc-xo1-sci: Remove invocation of MFD's
- .enable()/.disable() call-backs
-Message-ID: <20191025085459.roxig2nyxfjlf6dz@holly.lan>
-References: <20191024163832.31326-1-lee.jones@linaro.org>
- <20191024163832.31326-8-lee.jones@linaro.org>
+        id S2392237AbfJYIzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 04:55:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58440 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437607AbfJYIze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 04:55:34 -0400
+Received: from dragon (li937-157.members.linode.com [45.56.119.157])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45D2521D7B;
+        Fri, 25 Oct 2019 08:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571993734;
+        bh=5i3d+HY/V9+fI+uU7h1tX+fWD57IhBHMQfmMyo6jW0g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FIQ/dERdy5OkfSnkwC/QgV1xafO+vBptMDHo96N++fPAbjhSmlkAGTYvw3jNb1VFi
+         S7bP4XDAcKBi1T5YIgLuBu8vztAbKdPBY4ZeZ2/wEoYtZJxRlqFZ3bdlB1F17+zKeE
+         pfirmEbL1hEYAsGqA5dT8DKdV+kpfLy+KRJlkJdo=
+Date:   Fri, 25 Oct 2019 16:55:17 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Lukasz Majewski <lukma@denx.de>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v2] dts: Disable DMA support on the BK4 vf610 device's
+ fsl_lpuart driver
+Message-ID: <20191025085515.GH3208@dragon>
+References: <20191010090802.16383-1-lukma@denx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191024163832.31326-8-lee.jones@linaro.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191010090802.16383-1-lukma@denx.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 05:38:29PM +0100, Lee Jones wrote:
-> IO regions are now requested and released by this device's parent.
+On Thu, Oct 10, 2019 at 11:08:02AM +0200, Lukasz Majewski wrote:
+> This change disables the DMA support (RX/TX) on the NXP's fsl_lpuart
+> driver - the PIO mode is used instead. This change is necessary for better
+> robustness of BK4's device use cases with many potentially interrupted
+> short serial transfers.
 > 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Without it the driver hangs when some distortion happens on UART lines.
+> 
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> Suggested-by: Robin Murphy <robin.murphy@arm.com>
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Subject prefix should be 'ARM: dts: ...'.  I fixed it up and applied the
+patch.
 
-> ---
->  arch/x86/platform/olpc/olpc-xo1-sci.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/arch/x86/platform/olpc/olpc-xo1-sci.c b/arch/x86/platform/olpc/olpc-xo1-sci.c
-> index 99a28ce2244c..933dd4fe3a97 100644
-> --- a/arch/x86/platform/olpc/olpc-xo1-sci.c
-> +++ b/arch/x86/platform/olpc/olpc-xo1-sci.c
-> @@ -15,7 +15,6 @@
->  #include <linux/platform_device.h>
->  #include <linux/pm.h>
->  #include <linux/pm_wakeup.h>
-> -#include <linux/mfd/core.h>
->  #include <linux/power_supply.h>
->  #include <linux/suspend.h>
->  #include <linux/workqueue.h>
-> @@ -537,10 +536,6 @@ static int xo1_sci_probe(struct platform_device *pdev)
->  	if (!machine_is_olpc())
->  		return -ENODEV;
->  
-> -	r = mfd_cell_enable(pdev);
-> -	if (r)
-> -		return r;
-> -
->  	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
->  	if (!res) {
->  		dev_err(&pdev->dev, "can't fetch device resource info\n");
-> @@ -605,7 +600,6 @@ static int xo1_sci_probe(struct platform_device *pdev)
->  
->  static int xo1_sci_remove(struct platform_device *pdev)
->  {
-> -	mfd_cell_disable(pdev);
->  	free_irq(sci_irq, pdev);
->  	cancel_work_sync(&sci_work);
->  	free_ec_sci();
-> -- 
-> 2.17.1
-> 
+Shawn
