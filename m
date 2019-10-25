@@ -2,91 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48BA0E544E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:25:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B457E5453
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 21:25:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbfJYTYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 15:24:47 -0400
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:36844 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbfJYTYq (ORCPT
+        id S1727078AbfJYTZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 15:25:34 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38780 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbfJYTZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 15:24:46 -0400
-Received: by mail-vk1-f195.google.com with SMTP id r85so736828vke.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 12:24:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o1KNKNAvei7RdsNFTjOCPFJdbKge4JWaaDzIh5QD5WU=;
-        b=B4GQskO1pBnqkDlZ8HZ8x5c1vhCFZEW3X1j49w0bM7B18rvKIKDxfC7joa+DwOV5Vc
-         6mh8e55rxeRH5ENNIRbSFdpc4Nh+5atNEe8sNssBKJ9XjsSSar2EG+qy45G8otOvHTmf
-         44KVb2wwSKDA1+xgpzIIX2vx9nzpS4E6myim+/Oh+1q43BEhwKqUu/JmNYikfa5KyNWV
-         1iOlg2gSv7/W5mcA1DU1YxNT/6x9K2zHfgklyJ7/ytVFeVZ5QDd5kH3Gr94p0ehppWx2
-         PnfJTJ9tbP7fJYy5sGjgyqirYK5pwV8HQ9Phq/+6VkTITjeJCpYwL0osN6AX8s8CJ3/t
-         92hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o1KNKNAvei7RdsNFTjOCPFJdbKge4JWaaDzIh5QD5WU=;
-        b=cY3Hz8qE6WUcwGQGRBZnkgKN6fDj6PMcpODFtVpjOqWR6MxsPSxZRJ6lpuzVCkVnLu
-         s8dr0vwLaclSylC2J2dYPFnvUDmXCuPIWEzGOIAK7aqSYtVEUlGt+7z0cVmKlPmbd5SF
-         0wu/gJZ4ybS+yrWvZXOKM2XJETZ7qts/kHUY6rI/acmCgojUqdUlMeb6PBnK+TLJhgoM
-         OfKQlo97CxsW+cw/sFfQKv+MqTFsmauDf5/ZtwngZ8WjT0/Jq8DePlpqVtyRs0o5e/ey
-         OEsdQmxXz0LTLPfKDpphpIlOQs9mHEWytVRSXWTapUqDk1vtJRz6+2vJ423h55jsXzUH
-         5yqA==
-X-Gm-Message-State: APjAAAVwEVk6QYjSjpOfpV46abN015qHT8HgQg7nDufMOozMMOe+j6TB
-        E3QSwMb0NADcxW7K+fR4uDtjfHE3/jECibZkXxixKw==
-X-Google-Smtp-Source: APXvYqyNGrPZJ0eMOQynE8OcxFRJ+vW6Age9LhpyOufu31lfdbamMEtUIyKoPDjLtJVIa6dmx+KdXEfZL4h57Ja1Nx0=
-X-Received: by 2002:a1f:7d88:: with SMTP id y130mr2977044vkc.71.1572031484800;
- Fri, 25 Oct 2019 12:24:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191024225132.13410-1-samitolvanen@google.com> <20191024225132.13410-17-samitolvanen@google.com>
- <CAK7LNATPpL-B0APPXFcWPCR6ZTSrXv-v_ZkdFqjKJ4pwUpcWug@mail.gmail.com>
-In-Reply-To: <CAK7LNATPpL-B0APPXFcWPCR6ZTSrXv-v_ZkdFqjKJ4pwUpcWug@mail.gmail.com>
-From:   Sami Tolvanen <samitolvanen@google.com>
-Date:   Fri, 25 Oct 2019 12:24:33 -0700
-Message-ID: <CABCJKuegPN+=rHp4E+QMtfAB0w=MikZVG7vxoTBpLkE56UR4HA@mail.gmail.com>
-Subject: Re: [PATCH v2 16/17] arm64: disable SCS for hypervisor code
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        Fri, 25 Oct 2019 15:25:34 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iO5D1-0004A5-Fy; Fri, 25 Oct 2019 21:25:15 +0200
+Date:   Fri, 25 Oct 2019 21:25:15 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Tom Rix <trix@redhat.com>
+Cc:     Joerg Vehlow <lkml@jv-coder.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Gleixner <tglx@linutronix.de>,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] xfrm : lock input tasklet skb queue
+Message-ID: <20191025192515.onr3c3yb3zxgvcx2@linutronix.de>
+References: <CACVy4SUkfn4642Vne=c1yuWhne=2cutPZQ5XeXz_QBz1g67CrA@mail.gmail.com>
+ <20191024103134.GD13225@gauss3.secunet.de>
+ <ad094bfc-ebb3-012b-275b-05fb5a8f86e5@jv-coder.de>
+ <20191025094758.pchz4wupvo3qs6hy@linutronix.de>
+ <202da67b-95c7-3355-1abc-f67a40a554e9@jv-coder.de>
+ <20191025102203.zmkqvvg5tofaqfw6@linutronix.de>
+ <CACVy4SVAsG37n7q6jrRPSr-WV2QxSympuNQC2j+GJzBXqfwvtQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CACVy4SVAsG37n7q6jrRPSr-WV2QxSympuNQC2j+GJzBXqfwvtQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 6:31 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> $(subst ... ) is not the correct use here.
->
-> It works like sed,   s/$(CC_CFLAGS_SCS)//
-> instead of matching by word.
->
->
->
->
-> KBUILD_CFLAGS := $(filter-out $(CC_FLAGS_SCS), $(KBUILD_CFLAGS))
->
-> is more correct, and simpler.
+On 2019-10-25 07:26:49 [-0700], Tom Rix wrote:
+> I will work on refactoring the patch to v5.2-rt.
 
-Thanks, I will change this in v3.
+please verify first that the issue still exists.
 
-Sami
+> trix
+
+Sebastian
