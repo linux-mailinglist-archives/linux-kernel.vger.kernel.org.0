@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D72E4E4B58
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 107B2E4B54
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 14:42:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504564AbfJYMmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 08:42:10 -0400
-Received: from mail-lf1-f44.google.com ([209.85.167.44]:38561 "EHLO
-        mail-lf1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504548AbfJYMld (ORCPT
+        id S2504553AbfJYMmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 08:42:06 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45878 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2504551AbfJYMle (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 08:41:33 -0400
-Received: by mail-lf1-f44.google.com with SMTP id q28so1629594lfa.5
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 05:41:32 -0700 (PDT)
+        Fri, 25 Oct 2019 08:41:34 -0400
+Received: by mail-lf1-f65.google.com with SMTP id v8so1610950lfa.12
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 05:41:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qFJ5knvRmhJ/ykv6ig7dLhGdF7aP5T5p7rUQ0Zs3NtI=;
-        b=fN9FLv1TWt9RmdqJPXYJ1BSICN8810u9B90Dtb66/JKKA8kMmjNMG4Z/Vi2NepiVHv
-         U71PRBKlbkRbFHhqbC5PMO652qEYoi77kvUe0e46Ve9Kh+Xpu4hungqtf/54qh0BBEAR
-         F9UUwkQt99O82HP3vUEdNXGLHMuCUCABaicHY=
+        bh=OvUZNskoObmKKJYsbx/wH8iXu8sDYM+jDByiAdju3Rg=;
+        b=O1Zrkhgig/GHdHnwKsmpqtbkvDL3Y1rbK+JGj+Cs0DZWtFaWKeld23eELOlF+fW35i
+         ahKQ49AZ8AKtvvJqeiZLjoI7J8pcRbGnauSMHAK4OFjos9Ny65vqjsTi7H7vouL3ATlL
+         cOrkitUQVw23vF5rAUldJcjlmIvXqFsHyVYjo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qFJ5knvRmhJ/ykv6ig7dLhGdF7aP5T5p7rUQ0Zs3NtI=;
-        b=mPFYgKyaCm/3dpHLSskfNRvU6+23/s5a+JhqaSktd2ZzGVJF2ebluCCNcQzYpwcKU3
-         /mD5rcJ2tzMpGLOVIwndY8Huo1B8fQjSWM5jWv2CgZKm3MoGEF8Ztb3uLIbqO2VBDU5a
-         iWHL+9A/7g3/iIdHMjrhormsfvpmRuvi2uaKcQybK1NkErVkc8upPRzYHpDYHzS+GFAm
-         M5tULFxDkwZuKzlfTK5GSY2oGAOV1i10aL8jQiZ+PdsfnklyNAO/suWWmUvC9zE/h2He
-         mqwjztoDgEHTzdgJ19BdDQ9Hf8YxkS6zYz3f2PAsBMFOOuvTr1UeL/H5jW63QXdXagrx
-         s4lw==
-X-Gm-Message-State: APjAAAUl07Czk3yiXooZRSBefCLvan8WXFNAwNgYJtvebSO507oJ8GiD
-        QI507DVsaPYnkaMQQqtrJf2P1A==
-X-Google-Smtp-Source: APXvYqwTKAlx+8gqS83r5t1J60mX4EbEf9p/r/d9BH0dUVal/pLCp3KxgEe9mUFMqZVTpXniZZQs0w==
-X-Received: by 2002:ac2:55b4:: with SMTP id y20mr2600154lfg.173.1572007291311;
-        Fri, 25 Oct 2019 05:41:31 -0700 (PDT)
+        bh=OvUZNskoObmKKJYsbx/wH8iXu8sDYM+jDByiAdju3Rg=;
+        b=lFBrjqG9k1WuUNF4Te33tC2WLNd/XGj7jNNR+CzVT7lw+Wiwg/ftvE8xucRYEWhgQS
+         pyh5FbGfsynjj/QdBGWkJ1FnuP4Tmhmntk00HxSdHcV+s6MikGfWAp5A/Hl02QMl07fj
+         lDsXeXfepK6JQ0/LA+TMV2CL7/CQNW5MeNcm+14JIyWEd8mt73sYfszTBOJb1qDhBcaM
+         G3cPOH69SaGy/mI1pXHn1yEFOIUqXwb3miqg4ja9CLJt7aH0pN9qz3SYU4+0Q5JROLMd
+         UHwzB4coClMOBHg018s+98fqcLjEDMx19CziVCMo1oLnCzECMzRS9vmmVYS+w05L+tkx
+         Cd4A==
+X-Gm-Message-State: APjAAAVtd+6I9PflWoxy/8Be5EswhjPpScuGpNtVPPDWEel7ppvLvng7
+        b0JI+nn6bTOFWGA8H+VWKOZIpg==
+X-Google-Smtp-Source: APXvYqzaZam+cJPG9bi7OgeGhos6Wma0vuM3s9YGw4M43Jx9w05f90bLjSb8WkcVyEkm6MHVqZnaoA==
+X-Received: by 2002:a05:6512:40e:: with SMTP id u14mr2657599lfk.73.1572007292444;
+        Fri, 25 Oct 2019 05:41:32 -0700 (PDT)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 10sm821028lfy.57.2019.10.25.05.41.30
+        by smtp.gmail.com with ESMTPSA id 10sm821028lfy.57.2019.10.25.05.41.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 05:41:30 -0700 (PDT)
+        Fri, 25 Oct 2019 05:41:32 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -50,9 +50,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         Scott Wood <oss@buserror.net>,
         Valentin Longchamp <valentin.longchamp@keymile.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v2 22/23] soc/fsl/qe/qe.h: remove include of asm/cpm.h
-Date:   Fri, 25 Oct 2019 14:40:57 +0200
-Message-Id: <20191025124058.22580-23-linux@rasmusvillemoes.dk>
+Subject: [PATCH v2 23/23] soc: fsl: qe: remove PPC32 dependency from CONFIG_QUICC_ENGINE
+Date:   Fri, 25 Oct 2019 14:40:58 +0200
+Message-Id: <20191025124058.22580-24-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191025124058.22580-1-linux@rasmusvillemoes.dk>
 References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
@@ -64,27 +64,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-asm/cpm.h only exists on PPC, so this prevents use of this header on
-other platforms. Drivers that need asm/cpm.h (and are thus inherently
-PPC-specific) must include that explicitly.
+The core QE code now also builds for ARM, so replace the FSL_SOC &&
+PPC32 dependencies by the more lax requirements OF && HAS_IOMEM.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- include/soc/fsl/qe/qe.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/soc/fsl/qe/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/soc/fsl/qe/qe.h b/include/soc/fsl/qe/qe.h
-index c1036d16ed03..3768c226490e 100644
---- a/include/soc/fsl/qe/qe.h
-+++ b/include/soc/fsl/qe/qe.h
-@@ -17,7 +17,6 @@
- #include <linux/spinlock.h>
- #include <linux/errno.h>
- #include <linux/err.h>
--#include <asm/cpm.h>
- #include <soc/fsl/qe/immap_qe.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
+diff --git a/drivers/soc/fsl/qe/Kconfig b/drivers/soc/fsl/qe/Kconfig
+index cfa4b2939992..0c5b8b8e46b6 100644
+--- a/drivers/soc/fsl/qe/Kconfig
++++ b/drivers/soc/fsl/qe/Kconfig
+@@ -5,7 +5,7 @@
+ 
+ config QUICC_ENGINE
+ 	bool "QUICC Engine (QE) framework support"
+-	depends on FSL_SOC && PPC32
++	depends on OF && HAS_IOMEM
+ 	select GENERIC_ALLOCATOR
+ 	select CRC32
+ 	help
 -- 
 2.23.0
 
