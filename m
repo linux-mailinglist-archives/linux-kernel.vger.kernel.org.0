@@ -2,72 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E572E4654
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:55:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A99E5E466F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 10:58:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438059AbfJYIzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 04:55:32 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:61072 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437607AbfJYIzc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 04:55:32 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id 1E91D67EC5D1120E5763;
-        Fri, 25 Oct 2019 16:55:28 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x9P8sScR049383;
-        Fri, 25 Oct 2019 16:54:28 +0800 (GMT-8)
-        (envelope-from zhang.lin16@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019102516550472-127499 ;
-          Fri, 25 Oct 2019 16:55:04 +0800 
-From:   zhanglin <zhang.lin16@zte.com.cn>
-To:     dan.j.williams@intel.com
-Cc:     akpm@linux-foundation.org, jgg@ziepe.ca, mingo@kernel.org,
-        dave.hansen@linux.intel.com, namit@vmware.com, bp@suse.de,
-        christophe.leroy@c-s.fr, rdunlap@infradead.org, osalvador@suse.de,
-        richardw.yang@linux.intel.com, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        jiang.xuexin@zte.com.cn, zhanglin <zhang.lin16@zte.com.cn>
-Subject: [PATCH] kernel: Restrict permissions of /proc/iomem.
-Date:   Fri, 25 Oct 2019 16:56:41 +0800
-Message-Id: <1571993801-12665-1-git-send-email-zhang.lin16@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-10-25 16:55:04,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-10-25 16:54:34,
-        Serialize complete at 2019-10-25 16:54:34
-X-MAIL: mse-fl2.zte.com.cn x9P8sScR049383
+        id S2438220AbfJYI6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 04:58:19 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55158 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbfJYI6S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 04:58:18 -0400
+Received: by mail-wm1-f66.google.com with SMTP id g7so1191217wmk.4
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2019 01:58:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bfc4XdDPDgITfXuGMDkydNahYHOMhJfV27d5eLCxPe4=;
+        b=Kfe5Qu6VnEOWhAwoTxpz013V7Jndiwq8G1LSlscS4O48yVzRNX/enux6Ir24edhXr1
+         PjBmyY6G+AGdb8lvJ7CCDVVrnftJERZL/yyU5tCWRUW+jhEItlx2MP37hpA3Ro2HuZio
+         JTdvXDNY9sIBcxgB1wJRAzpjNdvBeEqwnRWJBDHgSPqFQjn43SiP/RM7/yYh+Rb0ADnC
+         hgYPx3wtNM67T+hutiYrh8YHkbzXOxqkM3fKsrB8AWCjK11MS0qhAJfzvuUwy+RfiYdL
+         vJJAz6s0gVinLyAGzLpJT2x52QfgdC091VFoC8roDdtcY4wJsFJb4/8QZhZBEhWpEc2c
+         kWBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bfc4XdDPDgITfXuGMDkydNahYHOMhJfV27d5eLCxPe4=;
+        b=S6qzzTwMJRLVsQALtGQEHq8C82iV/7JqvU6cdKOGPnqdX1Rhqqhb2+rpfm9Y34lOpz
+         QWMkIc6ChJUPG5d933Ad0tZ19h8v8byIeOluYAHtxpPObR1s3kX8GJSIWLg8n+HcVdmb
+         nddYRhLcw8blIkgQl1cq066oAoDUX7KzyeWzg6ZozgS6UKHYCz7ax2LT3GafzMI5Y3kQ
+         Cesl8fD0/eQ69ClZ1/lp0MROsJReA3kc3dkDeQ0+/No7c2rKRjY5/qjxO9thtorsdVKW
+         n4PiKGcLSDQxaZqA1VRTBlrSebp7TVvbie3oJ2lIQoy/kjF1DvYQXUDwOCcDpgR8dPjS
+         qRhQ==
+X-Gm-Message-State: APjAAAWuNcT6U5IOn9/0OAq7eHNSRKCsaL+m1bdUM4EW9mHXsqxwMM4Q
+        uYIK11JnzO5Z8Z4d5ZS9dRUt4FIgAwYumGsUQiM=
+X-Google-Smtp-Source: APXvYqw7oRV1JZS4pFNl8UgUqttJB5ChiBnHX9kI6iRC5EGVmpUb+c0nv/nEYSYmc8auJbZtPr3PlNk3/ddpwgpnztI=
+X-Received: by 2002:a1c:b4c1:: with SMTP id d184mr2292177wmf.37.1571993896359;
+ Fri, 25 Oct 2019 01:58:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191024142939.25920-1-andrey.zhizhikin@leica-geosystems.com>
+ <20191024142939.25920-2-andrey.zhizhikin@leica-geosystems.com> <20191025080129.GE32742@smile.fi.intel.com>
+In-Reply-To: <20191025080129.GE32742@smile.fi.intel.com>
+From:   Andrey Zhizhikin <andrey.z@gmail.com>
+Date:   Fri, 25 Oct 2019 10:58:05 +0200
+Message-ID: <CAHtQpK7e-W9cGyCan=yxM7sSN=L_SKaFy8DSNE4vQGrc_pFdQw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] regulator: add support for Intel Cherry Whiskey Cove regulator
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>, lgirdwood@gmail.com,
+        broonie@kernel.org, lee.jones@linaro.org,
+        linux-kernel@vger.kernel.org,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The permissions of /proc/iomem currently are -r--r--r--. Everyone can
-see its content. As iomem contains information about the physical memory
-content of the device, restrict the information only to root.
+On Fri, Oct 25, 2019 at 10:01 AM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Thu, Oct 24, 2019 at 02:29:38PM +0000, Andrey Zhizhikin wrote:
+> > Add regulator driver for Intel Cherry Trail Whiskey Cove PMIC, which
+> > supplies various voltage rails.
+> >
+> > This initial version supports only vsdio, which is required to source
+> > vqmmc for sd card interface.
+>
+> This patch has some style issues. I will wait for Adrian and Hans to comment on
+> the approach as a whole and then we will see how to improve the rest.
 
-Signed-off-by: zhanglin <zhang.lin16@zte.com.cn>
----
- kernel/resource.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Agreed, styling issues are coming from definition of CHT_WC_REGULATOR
+elements in regulators_info array, and they are mainly related to 80
+characters per line. I decided to leave it like this since it is more
+readable. But if the 80 characters rule is to be enforced here - I can
+go with something like this for every element:
+CHT_WC_REGULATOR(V3P3A,    3000, 3350, 0x00, 0x07,\
+                                     50, 0x01, 0x01, 0x0, true,  NULL),
 
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 30e1bc6..844456e 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -139,7 +139,8 @@ static int __init ioresources_init(void)
- {
- 	proc_create_seq_data("ioports", 0, NULL, &resource_op,
- 			&ioport_resource);
--	proc_create_seq_data("iomem", 0, NULL, &resource_op, &iomem_resource);
-+	proc_create_seq_data("iomem", S_IRUSR, NULL, &resource_op,
-+			&iomem_resource);
- 	return 0;
- }
- __initcall(ioresources_init);
--- 
-2.15.2
+Let's wait for other people's comments here and I can then come up
+with v2 of this patch.
 
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
+
+--
+Regards,
+Andrey.
