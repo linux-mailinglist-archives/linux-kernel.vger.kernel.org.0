@@ -2,74 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 653F4E55C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 23:21:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 079C3E55CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 23:24:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726160AbfJYVVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 17:21:30 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37849 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbfJYVV3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 17:21:29 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 53so3022110otv.4;
-        Fri, 25 Oct 2019 14:21:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=t2kppBEOgy6RnOJeg3mWNTbWNUIFFBZPEWBzlZe65iU=;
-        b=EEmlV7BG5gzFll2Uegx3j7UU0kpLZnb0/VVrcLfZFGf+zm0CpY15akfH0BOkg9x8MD
-         6jFtpaZVInPhXiYrQsjWA/7wgaA3RNkpIlLIJFQ1J9g3cccE2JmzSJ7vr3JcLaL4LJPO
-         3fSp+GOFtqtLvOl6mYkp06BUXZBN5Ve/r7kQxoRGMnYHJ3HHgv46mD2eA09K/4GHnyq5
-         9Zqkl1RN836wwOEzlLnxgprhR2xRRvyhU/A9r6iGohEtDVbcDJZUb+ppKJz1dG7y0HkA
-         axTjDHXi6buPtfhbA1AhOl4M0NXOiWAXW0OyvcFXXOwmtnTrCspnxxv70srzyQpMGJJI
-         PHRQ==
-X-Gm-Message-State: APjAAAUDjVzEqIoUNzd5XJjhBLp0+a6pQYOG5DP3OlPgm9W4uf8vBT6m
-        e/8weOCoBL+kH+heVgofHw==
-X-Google-Smtp-Source: APXvYqzfALz/bSOT92RSeok6HEe+wg7/IAkKBr5Ut9pLPU5O+zQ3UDEKAg0PqDzo3TuhVW8gFCuqsw==
-X-Received: by 2002:a9d:82e:: with SMTP id 43mr4568743oty.23.1572038488683;
-        Fri, 25 Oct 2019 14:21:28 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id b31sm1129632otc.70.2019.10.25.14.21.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 14:21:28 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 16:21:27 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+        id S1726224AbfJYVYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 17:24:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41466 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725283AbfJYVYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 17:24:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 040CDB1C1;
+        Fri, 25 Oct 2019 21:24:09 +0000 (UTC)
+Subject: Re: [PATCH v2 1/8] dt-bindings: watchdog: realtek: Convert RTD119x to
+ schema
+To:     Rob Herring <robh@kernel.org>
 Cc:     linux-realtek-soc@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/8] dt-bindings: arm: realtek: Tidy up conversion to
- json-schema
-Message-ID: <20191025212127.GA4819@bogus>
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 References: <20191020040817.16882-1-afaerber@suse.de>
- <20191020040817.16882-4-afaerber@suse.de>
+ <20191020040817.16882-2-afaerber@suse.de> <20191025211638.GA28819@bogus>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Organization: SUSE Software Solutions Germany GmbH
+Message-ID: <aeb0d0ed-5649-9035-c753-39e8a1511c9d@suse.de>
+Date:   Fri, 25 Oct 2019 23:24:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20191025211638.GA28819@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191020040817.16882-4-afaerber@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 20 Oct 2019 06:08:12 +0200, =?UTF-8?q?Andreas=20F=C3=A4rber?= wrote:
-> Restore the device names for compatible strings as comments.
-> Prepare for adding more SoCs by inserting oneOf.
+Am 25.10.19 um 23:16 schrieb Rob Herring:
+> On Sun, Oct 20, 2019 at 06:08:10AM +0200, Andreas Färber wrote:
+>> Convert the Realtek watchdog binding to a YAML schema.
+>>
+>> Signed-off-by: Andreas Färber <afaerber@suse.de>
+>> ---
+>>  v2: New
+>>  
+>>  .../bindings/watchdog/realtek,rtd119x.txt          | 17 ----------
+>>  .../bindings/watchdog/realtek,rtd119x.yaml         | 38 ++++++++++++++++++++++
+>>  2 files changed, 38 insertions(+), 17 deletions(-)
+>>  delete mode 100644 Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt
+>>  create mode 100644 Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt b/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt
+>> deleted file mode 100644
+>> index 05653054bd5b..000000000000
+>> --- a/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt
+>> +++ /dev/null
+>> @@ -1,17 +0,0 @@
+>> -Realtek RTD1295 Watchdog
+>> -========================
+>> -
+>> -Required properties:
+>> -
+>> -- compatible :  Should be "realtek,rtd1295-watchdog"
+>> -- reg        :  Specifies the physical base address and size of registers
+>> -- clocks     :  Specifies one clock input
+>> -
+>> -
+>> -Example:
+>> -
+>> -	watchdog@98007680 {
+>> -		compatible = "realtek,rtd1295-watchdog";
+>> -		reg = <0x98007680 0x100>;
+>> -		clocks = <&osc27M>;
+>> -	};
+>> diff --git a/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml b/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml
+>> new file mode 100644
+>> index 000000000000..5d92cfdfd046
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml
+>> @@ -0,0 +1,38 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/watchdog/realtek,rtd119x.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: Realtek RTD1295 Watchdog
+>> +
+>> +maintainers:
+>> +  - Andreas Färber <afaerber@suse.de>
+>> +
+>> +allOf:
+>> +  - $ref: watchdog.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - const: realtek,rtd1295-watchdog
 > 
-> Fixes: 693af5f3eeaa ("dt-bindings: arm: Convert Realtek board/soc bindings to json-schema")
-> Signed-off-by: Andreas F�rber <afaerber@suse.de>
-> ---
->  v2: New
->  
->  Documentation/devicetree/bindings/arm/realtek.yaml | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
+> You can drop the 'oneOf' here unless you're planning to add another 
+> entry with 2 compatible strings.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+It's a preparation for adding rtd1195-watchdog when needed, to make
+future diffs smaller. There's also RTD1395 and RTD1619 to be tested.
+
+> 
+> With that,
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+Thanks,
+Andreas
+
+-- 
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer
+HRB 36809 (AG Nürnberg)
