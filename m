@@ -2,77 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A72B8E4BD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:11:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35E55E4BD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 15:12:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393660AbfJYNLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 09:11:30 -0400
-Received: from mga12.intel.com ([192.55.52.136]:52736 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388485AbfJYNLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:11:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2019 06:11:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,228,1569308400"; 
-   d="scan'208";a="198019323"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 25 Oct 2019 06:11:27 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1iNzNH-0005AV-1v; Fri, 25 Oct 2019 21:11:27 +0800
-Date:   Fri, 25 Oct 2019 21:11:26 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Dilip Kota <eswara.kota@linux.intel.com>
-Cc:     kbuild-all@lists.01.org, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, lorenzo.pieralisi@arm.com,
-        andrew.murray@arm.com, robh@kernel.org,
-        martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
-        hch@infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
-        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com, Dilip Kota <eswara.kota@linux.intel.com>
-Subject: [RFC PATCH] dwc: PCI: intel: intel_pcie_msi_init() can be static
-Message-ID: <20191025131126.pp3k6nnwp7ee5mnb@4978f4969bb8>
-References: <c46ba3f4187fe53807948b4f10996b89a75c492c.1571638827.git.eswara.kota@linux.intel.com>
+        id S2393855AbfJYNM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 09:12:29 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45129 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731514AbfJYNM3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 09:12:29 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iNzOF-0002vT-HD; Fri, 25 Oct 2019 13:12:27 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] extcon: sm5502: remove redundant assignment to variable cable_type
+Date:   Fri, 25 Oct 2019 14:12:27 +0100
+Message-Id: <20191025131227.24894-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c46ba3f4187fe53807948b4f10996b89a75c492c.1571638827.git.eswara.kota@linux.intel.com>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 3686a0f46840 ("dwc: PCI: intel: PCIe RC controller driver")
-Signed-off-by: kbuild test robot <lkp@intel.com>
+The variable cable_type is being initialized with a value that
+is never read and is being re-assigned a little later on. The
+assignment is redundant and hence can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- pcie-intel-gw.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/extcon/extcon-sm5502.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
-index 9142c70db8085..352d0d03171b2 100644
---- a/drivers/pci/controller/dwc/pcie-intel-gw.c
-+++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
-@@ -494,13 +494,13 @@ static int intel_pcie_rc_init(struct pcie_port *pp)
- 	return intel_pcie_host_setup(lpp);
- }
- 
--int intel_pcie_msi_init(struct pcie_port *pp)
-+static int intel_pcie_msi_init(struct pcie_port *pp)
+diff --git a/drivers/extcon/extcon-sm5502.c b/drivers/extcon/extcon-sm5502.c
+index b3d93baf4fc5..bcf65aaca5d2 100644
+--- a/drivers/extcon/extcon-sm5502.c
++++ b/drivers/extcon/extcon-sm5502.c
+@@ -276,7 +276,7 @@ static int sm5502_muic_set_path(struct sm5502_muic_info *info,
+ /* Return cable type of attached or detached accessories */
+ static unsigned int sm5502_muic_get_cable_type(struct sm5502_muic_info *info)
  {
- 	/* PCIe MSI/MSIx is handled by MSI in x86 processor */
- 	return 0;
- }
+-	unsigned int cable_type = -1, adc, dev_type1;
++	unsigned int cable_type, adc, dev_type1;
+ 	int ret;
  
--u64 intel_pcie_cpu_addr(struct dw_pcie *pcie, u64 cpu_addr)
-+static u64 intel_pcie_cpu_addr(struct dw_pcie *pcie, u64 cpu_addr)
- {
- 	return cpu_addr + BUS_IATU_OFFS;
- }
+ 	/* Read ADC value according to external cable or button */
+-- 
+2.20.1
+
