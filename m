@@ -2,200 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51594E43BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 08:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE4DCE43CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 08:53:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405501AbfJYGr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 02:47:28 -0400
-Received: from mail-sz.amlogic.com ([211.162.65.117]:59973 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405056AbfJYGr1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 02:47:27 -0400
-Received: from [10.28.19.114] (10.28.19.114) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 25 Oct
- 2019 14:47:37 +0800
-Subject: Re: [PATCH v2 2/3] clk: meson: add support for A1 PLL clock ops
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1571382865-41978-1-git-send-email-jian.hu@amlogic.com>
- <1571382865-41978-3-git-send-email-jian.hu@amlogic.com>
- <1jtv82bai3.fsf@starbuckisacylon.baylibre.com>
-From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <77eb8a68-f5b5-357b-f71c-e22337d88a39@amlogic.com>
-Date:   Fri, 25 Oct 2019 14:47:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2405605AbfJYGwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 02:52:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46188 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2393177AbfJYGwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 02:52:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3D56AB2C0;
+        Fri, 25 Oct 2019 06:52:27 +0000 (UTC)
+From:   Jiri Slaby <jslaby@suse.cz>
+To:     tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH] stacktrace: don't skip first entry on noncurrent tasks
+Date:   Fri, 25 Oct 2019 08:52:26 +0200
+Message-Id: <20191025065226.10196-1-jslaby@suse.cz>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <1jtv82bai3.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.19.114]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Jerome
+When doing cat /proc/<PID>/stack, the output is missing the first entry.
+When the current code walks the stack starting in stack_trace_save_tsk,
+it skips all scheduler functions (that's OK) plus one more function. But
+this one function should be skipped only for the 'current' task as it is
+stack_trace_save_tsk proper.
 
-On 2019/10/21 19:31, Jerome Brunet wrote:
-> 
-> On Fri 18 Oct 2019 at 09:14, Jian Hu <jian.hu@amlogic.com> wrote:
-> 
->> The A1 PLL design is different with previous SoCs. The PLL
->> internal analog modules Power-on sequence is different
->> with previous, and thus requires a strict register sequence to
->> enable the PLL. Unlike the previous series, the maximum frequency
->> is 6G in G12A, for A1 the maximum is 1536M.
->>
->> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->> ---
->>   drivers/clk/meson/clk-pll.c | 66 ++++++++++++++++++++++++++++++++++++++++-----
->>   drivers/clk/meson/clk-pll.h |  1 +
->>   2 files changed, 61 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
->> index ddb1e56..b440e62 100644
->> --- a/drivers/clk/meson/clk-pll.c
->> +++ b/drivers/clk/meson/clk-pll.c
->> @@ -349,6 +349,56 @@ static void meson_clk_pll_disable(struct clk_hw *hw)
->>   	meson_parm_write(clk->map, &pll->en, 0);
->>   }
->>   
->> +/*
->> + * The A1 design is different with previous SoCs.The PLL
->> + * internal analog modules Power-on sequence is different with
->> + * previous, different PLL has the different sequence, and
->> + * thus requires a strict register sequence to enable the PLL.
->> + * When set a new target frequency, the sequence should keep
->> + * the same with the initial sequence. Unlike the previous series,
->> + * the maximum frequency is 6G in G12A, for A1 the maximum
->> + * is 1536M.
-> 
-> The comment about the max frequency belongs in your a1 driver, not in
-> the PLL driver
-> 
-OK, I will remove the max frequency comments
->> + */
->> +static void meson_params_update_with_init_seq(struct clk_regmap *clk,
->> +				       struct meson_clk_pll_data *pll,
->> +				       unsigned int m, unsigned int n,
->> +				       unsigned int frac)
->> +{
->> +	struct parm *pm = &pll->m;
->> +	struct parm *pn = &pll->n;
->> +	struct parm *pfrac = &pll->frac;
->> +	const struct reg_sequence *init_regs = pll->init_regs;
->> +	unsigned int i, val;
->> +
->> +	for (i = 0; i < pll->init_count; i++) {
->> +		if (pn->reg_off == init_regs[i].reg) {
->> +			/* Clear M N bits and Update M N value */
->> +			val = init_regs[i].def;
->> +			val &= CLRPMASK(pn->width, pn->shift);
->> +			val &= CLRPMASK(pm->width, pm->shift);
->> +			val |= n << pn->shift;
->> +			val |= m << pm->shift;
->> +			regmap_write(clk->map, pn->reg_off, val);
->> +		} else if (MESON_PARM_APPLICABLE(&pll->frac) &&
->> +			   (pfrac->reg_off == init_regs[i].reg)) {
->> +			/* Clear Frac bits and Update Frac value */
->> +			val = init_regs[i].def;
->> +			val &= CLRPMASK(pfrac->width, pfrac->shift);
->> +			val |= frac << pfrac->shift;
->> +			regmap_write(clk->map, pfrac->reg_off, val);
->> +		} else {
->> +			/*
->> +			 * According to the PLL hardware constraint,
->> +			 * the left registers should be setted again.
->> +			 */
->> +			val = init_regs[i].def;
->> +			regmap_write(clk->map, init_regs[i].reg, val);
->> +		}
->> +		if (init_regs[i].delay_us)
->> +			udelay(init_regs[i].delay_us);
->> +	}
-> 
-> So:
-> 
-> 1) All the code above this there make the PLL lock, IOW enable the
-> PLL. It does not belong in the set_rate() callback but in enable() or
-> prepare() maybe.
-> 
-> 2) All the above is works but it is a bit over complicated for what it
-> does. From the a1_hifi_init_regs I see, all you really need to do is
->    * toggle BIT(6) in CTRL2
->    * toggle BIT(28) in CTRL0 (enable PARM)
->    * toggle BIT(26) in CTRL0
-> 
-> You could use PARM 'rst' for one them and introduce another parm for the
-> other one. You would not need to repoke the whole sequence this way.
-> 
-OK, I have realized as you suggested. I will send it in the V3 patch.
->> +}
->> +
->>   static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->>   				  unsigned long parent_rate)
->>   {
->> @@ -366,16 +416,20 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->>   	if (ret)
->>   		return ret;
->>   
->> +	if (MESON_PARM_APPLICABLE(&pll->frac))
->> +		frac = __pll_params_with_frac(rate, parent_rate, m, n, pll);
->> +
->>   	enabled = meson_parm_read(clk->map, &pll->en);
->>   	if (enabled)
->>   		meson_clk_pll_disable(hw);
->>   
->> -	meson_parm_write(clk->map, &pll->n, n);
->> -	meson_parm_write(clk->map, &pll->m, m);
->> -
->> -	if (MESON_PARM_APPLICABLE(&pll->frac)) {
->> -		frac = __pll_params_with_frac(rate, parent_rate, m, n, pll);
->> -		meson_parm_write(clk->map, &pll->frac, frac);
->> +	if (pll->strict_sequence)
->> +		meson_params_update_with_init_seq(clk, pll, m, n, frac);
->> +	else {
->> +		meson_parm_write(clk->map, &pll->n, n);
->> +		meson_parm_write(clk->map, &pll->m, m);
->> +		if (MESON_PARM_APPLICABLE(&pll->frac))
->> +			meson_parm_write(clk->map, &pll->frac, frac);
->>   	}
->>   
->>   	/* If the pll is stopped, bail out now */
->> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
->> index 367efd0..d5789cef 100644
->> --- a/drivers/clk/meson/clk-pll.h
->> +++ b/drivers/clk/meson/clk-pll.h
->> @@ -41,6 +41,7 @@ struct meson_clk_pll_data {
->>   	const struct pll_params_table *table;
->>   	const struct pll_mult_range *range;
->>   	u8 flags;
->> +	bool strict_sequence;
-> 
-> Don't introduce parameter for this We have ops to tune the behavior of
-> the clock driver. Properly refactor the code if some of it is common.
-> 
-remove the strict_sequence.
->>   };
->>   
->>   extern const struct clk_ops meson_clk_pll_ro_ops;
-> 
-> .
-> 
+The original code (before the common infrastructure) skipped one
+function only for the 'current' task -- see save_stack_trace_tsk before
+3599fe12a125. So do so also in the new infrastructure now.
+
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Fixes: 214d8ca6ee85 ("stacktrace: Provide common infrastructure")
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ kernel/stacktrace.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
+index 6d1f68b7e528..d06a2e4d0142 100644
+--- a/kernel/stacktrace.c
++++ b/kernel/stacktrace.c
+@@ -141,7 +141,8 @@ unsigned int stack_trace_save_tsk(struct task_struct *tsk, unsigned long *store,
+ 	struct stacktrace_cookie c = {
+ 		.store	= store,
+ 		.size	= size,
+-		.skip	= skipnr + 1,
++		/* skip this function if they are tracing us */
++		.skip	= skipnr + !!(current == tsk),
+ 	};
+ 
+ 	if (!try_get_task_stack(tsk))
+-- 
+2.23.0
+
