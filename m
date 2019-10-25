@@ -2,136 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DACCE55AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 23:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98396E55B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 23:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726185AbfJYVNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 17:13:41 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46861 "EHLO
+        id S1726030AbfJYVQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 17:16:42 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:47033 "EHLO
         mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725283AbfJYVNl (ORCPT
+        with ESMTP id S1725783AbfJYVQm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 17:13:41 -0400
-Received: by mail-oi1-f193.google.com with SMTP id c2so2492628oic.13;
-        Fri, 25 Oct 2019 14:13:40 -0700 (PDT)
+        Fri, 25 Oct 2019 17:16:42 -0400
+Received: by mail-oi1-f193.google.com with SMTP id c2so2497107oic.13;
+        Fri, 25 Oct 2019 14:16:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YsHXnqwoM7wQXF0uPaovfdPHuECAxo/T6mEqOx5c+dY=;
-        b=d5n/hl88X3WT/lDSfXeXeT7eh88OeCGJXh8DRG3bf/6br3ocb/wuas+P+uO5Lb3nbw
-         DPjWOGbTZlvh5mTFAO4IO+vImTbmuJ5tNUrRaOg98/5mIIOkNGhaouW8CVGujBOB2jjg
-         VbZRAR5dfuu8UZ27vhgKAqADN7gKY6Dy9B3xPwuP/7+TJUeR8/kVXH6gJ8s01CzUqhN9
-         XqgtCuX8+Jau/J2Th0uMDWgg7HuxN+IruTh4GMaWknCIOzE8QR0itD02xgSCIPsjVm1d
-         Syd86ZMT9UBjAv2+HIiiz1iACDvvaXRpQJ8KdYnLThigdYv8wXuX9rkgJw1Ls42prPLe
-         QRNg==
-X-Gm-Message-State: APjAAAU7tpQIs/Z2bDboLH0G3FwCCcelOfp4pPvbDRYrJxzaVPUbCw7D
-        tfW6+Qfe/pt4cuJ/Re94eg==
-X-Google-Smtp-Source: APXvYqwE4WNyEIPHUmWISUbe3EXRa308MBi5x/EUd8BbYKV1jvLUEmP2vAxDgTjVnSwi+WqgYLFnXA==
-X-Received: by 2002:aca:1e0e:: with SMTP id m14mr4801375oic.72.1572038019693;
-        Fri, 25 Oct 2019 14:13:39 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2ob0mgbIZ9FfbUUxJInfeBH4+M1B1T0PuvLRnw558ao=;
+        b=ZcLoWZYGyK+S0cPZVOvmCr+AlDMaB+5fDbKk7x+DUqhKOozOe4Nn1JLYpraHk7JKJE
+         gh9F1NCgX3tcNA01Ju5HTHKomWrRA2iwPzw4l8vmV+CgBIpzM6XxrH03aAkBHoR2or+a
+         qz1E7ilYgXwZV8LMWTS3QGyzAYUvZzDTSAquyLVAyii+d9j4RsJY1HosEaxA5IrtVY31
+         +FIwtKZTag5BZQ1jEQGHbD8uCyQbkIeUemaQXA1KoGH6SZuq7DyNzJ8j2z5rTaBMV+0S
+         Y/eVuZFQRAeAzZ0NaVPgkXnS6UMWGewPmmoIBLIxeWieCL1Czc5Iq9d17stiEQnkKc6e
+         4szA==
+X-Gm-Message-State: APjAAAWANKudFQgZDHhBXM762MvBgFSXGBi+poqy5f3Sg8xCJOku/Vdz
+        5Knz7TT5xA3a/BwmeN7ggg==
+X-Google-Smtp-Source: APXvYqwHwU0Ux4uA/CF9wNerMjPJFEWBUMoPYqh+hsHSr/1CY4O7H/1VhWFahfac5Tz6bTnGpVvp4w==
+X-Received: by 2002:a54:478b:: with SMTP id o11mr4581792oic.169.1572038199401;
+        Fri, 25 Oct 2019 14:16:39 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n4sm875917oic.2.2019.10.25.14.13.38
+        by smtp.gmail.com with ESMTPSA id r14sm1089669otp.23.2019.10.25.14.16.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 14:13:38 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 16:13:38 -0500
+        Fri, 25 Oct 2019 14:16:38 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 16:16:38 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
+To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc:     linux-realtek-soc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        David Sterba <dsterba@suse.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        devicetree@vger.kernel.org, letux-kernel@openphoenux.org,
-        linux-mmc@vger.kernel.org, kernel@pyra-handheld.com,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 01/11] Documentation: dt: wireless: update wl1251 for
- sdio
-Message-ID: <20191025211338.GA20249@bogus>
-References: <cover.1571510481.git.hns@goldelico.com>
- <741828f69eca2a9c9a0a7e80973c91f50cc71f9b.1571510481.git.hns@goldelico.com>
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/8] dt-bindings: watchdog: realtek: Convert RTD119x
+ to schema
+Message-ID: <20191025211638.GA28819@bogus>
+References: <20191020040817.16882-1-afaerber@suse.de>
+ <20191020040817.16882-2-afaerber@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <741828f69eca2a9c9a0a7e80973c91f50cc71f9b.1571510481.git.hns@goldelico.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191020040817.16882-2-afaerber@suse.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 19, 2019 at 08:41:16PM +0200, H. Nikolaus Schaller wrote:
-> The standard method for sdio devices connected to
-> an sdio interface is to define them as a child node
-> like we can see with wlcore.
+On Sun, Oct 20, 2019 at 06:08:10AM +0200, Andreas Färber wrote:
+> Convert the Realtek watchdog binding to a YAML schema.
 > 
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> Acked-by: Kalle Valo <kvalo@codeaurora.org>
+> Signed-off-by: Andreas Färber <afaerber@suse.de>
 > ---
->  .../bindings/net/wireless/ti,wl1251.txt       | 26 +++++++++++++++++++
->  1 file changed, 26 insertions(+)
+>  v2: New
+>  
+>  .../bindings/watchdog/realtek,rtd119x.txt          | 17 ----------
+>  .../bindings/watchdog/realtek,rtd119x.yaml         | 38 ++++++++++++++++++++++
+>  2 files changed, 38 insertions(+), 17 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/net/wireless/ti,wl1251.txt b/Documentation/devicetree/bindings/net/wireless/ti,wl1251.txt
-> index bb2fcde6f7ff..88612ff29f2d 100644
-> --- a/Documentation/devicetree/bindings/net/wireless/ti,wl1251.txt
-> +++ b/Documentation/devicetree/bindings/net/wireless/ti,wl1251.txt
-> @@ -35,3 +35,29 @@ Examples:
->  		ti,power-gpio = <&gpio3 23 GPIO_ACTIVE_HIGH>; /* 87 */
->  	};
->  };
+> diff --git a/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt b/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt
+> deleted file mode 100644
+> index 05653054bd5b..000000000000
+> --- a/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.txt
+> +++ /dev/null
+> @@ -1,17 +0,0 @@
+> -Realtek RTD1295 Watchdog
+> -========================
+> -
+> -Required properties:
+> -
+> -- compatible :  Should be "realtek,rtd1295-watchdog"
+> -- reg        :  Specifies the physical base address and size of registers
+> -- clocks     :  Specifies one clock input
+> -
+> -
+> -Example:
+> -
+> -	watchdog@98007680 {
+> -		compatible = "realtek,rtd1295-watchdog";
+> -		reg = <0x98007680 0x100>;
+> -		clocks = <&osc27M>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml b/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml
+> new file mode 100644
+> index 000000000000..5d92cfdfd046
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/watchdog/realtek,rtd119x.yaml
+> @@ -0,0 +1,38 @@
+> +# SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/watchdog/realtek,rtd119x.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 > +
-> +&mmc3 {
-> +	vmmc-supply = <&wlan_en>;
+> +title: Realtek RTD1295 Watchdog
 > +
-> +	bus-width = <4>;
-> +	non-removable;
-> +	ti,non-removable;
-> +	cap-power-off-card;
+> +maintainers:
+> +  - Andreas Färber <afaerber@suse.de>
 > +
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mmc3_pins>;
+> +allOf:
+> +  - $ref: watchdog.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: realtek,rtd1295-watchdog
 
-None of the above are really relevant to this binding.
+You can drop the 'oneOf' here unless you're planning to add another 
+entry with 2 compatible strings.
+
+With that,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
 
 > +
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
+> +  reg:
+> +    maxItems: 1
 > +
-> +	wlan: wl1251@1 {
-
-wifi@1
-
-> +		compatible = "ti,wl1251";
+> +  clocks:
+> +    maxItems: 1
 > +
-> +		reg = <1>;
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
 > +
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <21 IRQ_TYPE_LEVEL_HIGH>;	/* GPIO_21 */
-> +
-> +		ti,wl1251-has-eeprom;
+> +examples:
+> +  - |
+> +	watchdog@98007680 {
+> +		compatible = "realtek,rtd1295-watchdog";
+> +		reg = <0x98007680 0x100>;
+> +		clocks = <&osc27M>;
 > +	};
-> +};
+> +...
 > -- 
-> 2.19.1
+> 2.16.4
 > 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
