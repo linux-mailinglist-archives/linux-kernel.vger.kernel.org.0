@@ -2,83 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD259E4171
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 04:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C74F7E418C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 04:33:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389913AbfJYCYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 22:24:19 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5175 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728416AbfJYCYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 22:24:19 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 89FA6803B9A47E74ED00;
-        Fri, 25 Oct 2019 10:24:16 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Fri, 25 Oct 2019
- 10:24:07 +0800
-From:   Miaohe Lin <linmiaohe@huawei.com>
-To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
-        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>
-CC:     <x86@kernel.org>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linmiaohe@huawei.com>
-Subject: [PATCH] KVM: avoid unnecessary bitmap clear ops
-Date:   Fri, 25 Oct 2019 10:24:41 +0800
-Message-ID: <1571970281-20083-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S2390091AbfJYCdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 22:33:25 -0400
+Received: from mga03.intel.com ([134.134.136.65]:13701 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728416AbfJYCdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 22:33:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 19:33:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,226,1569308400"; 
+   d="scan'208";a="197904107"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga007.fm.intel.com with ESMTP; 24 Oct 2019 19:33:21 -0700
+Cc:     baolu.lu@linux.intel.com, Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>
+Subject: Re: [PATCH v7 03/11] iommu/vt-d: Add custom allocator for IOASID
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>
+References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1571946904-86776-4-git-send-email-jacob.jun.pan@linux.intel.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <ae437be4-e633-e670-0e1f-d07b4364f651@linux.intel.com>
+Date:   Fri, 25 Oct 2019 10:30:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1571946904-86776-4-git-send-email-jacob.jun.pan@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When set one bit in bitmap, there is no need to
-clear it before.
+Hi Jacob,
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
----
- arch/x86/kvm/svm.c | 3 ++-
- arch/x86/kvm/x86.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+On 10/25/19 3:54 AM, Jacob Pan wrote:
+> When VT-d driver runs in the guest, PASID allocation must be
+> performed via virtual command interface. This patch registers a
+> custom IOASID allocator which takes precedence over the default
+> XArray based allocator. The resulting IOASID allocation will always
+> come from the host. This ensures that PASID namespace is system-
+> wide.
+> 
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Liu, Yi L <yi.l.liu@intel.com>
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> ---
+>   drivers/iommu/Kconfig       |  1 +
+>   drivers/iommu/intel-iommu.c | 67 +++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/intel-iommu.h |  2 ++
+>   3 files changed, 70 insertions(+)
+> 
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index fd50ddffffbf..961fe5795a90 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -211,6 +211,7 @@ config INTEL_IOMMU_SVM
+>   	bool "Support for Shared Virtual Memory with Intel IOMMU"
+>   	depends on INTEL_IOMMU && X86
+>   	select PCI_PASID
+> +	select IOASID
+>   	select MMU_NOTIFIER
+>   	help
+>   	  Shared Virtual Memory (SVM) provides a facility for devices
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 3f974919d3bd..ced1d89ef977 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -1706,6 +1706,9 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
+>   		if (ecap_prs(iommu->ecap))
+>   			intel_svm_finish_prq(iommu);
+>   	}
+> +	if (ecap_vcs(iommu->ecap) && vccap_pasid(iommu->vccap))
+> +		ioasid_unregister_allocator(&iommu->pasid_allocator);
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index ca200b50cde4..d997d011a942 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -2044,9 +2044,10 @@ static void avic_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 	entry &= ~AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK;
- 	entry |= (h_physical_id & AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK);
- 
--	entry &= ~AVIC_PHYSICAL_ID_ENTRY_IS_RUNNING_MASK;
- 	if (svm->avic_is_running)
- 		entry |= AVIC_PHYSICAL_ID_ENTRY_IS_RUNNING_MASK;
-+	else
-+		entry &= ~AVIC_PHYSICAL_ID_ENTRY_IS_RUNNING_MASK;
- 
- 	WRITE_ONCE(*(svm->avic_physical_id_cache), entry);
- 	avic_update_iommu_vcpu_affinity(vcpu, h_physical_id,
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index ff395f812719..9b535888ea90 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1036,9 +1036,10 @@ static void kvm_update_dr7(struct kvm_vcpu *vcpu)
- 	else
- 		dr7 = vcpu->arch.dr7;
- 	kvm_x86_ops->set_dr7(vcpu, dr7);
--	vcpu->arch.switch_db_regs &= ~KVM_DEBUGREG_BP_ENABLED;
- 	if (dr7 & DR7_BP_EN_MASK)
- 		vcpu->arch.switch_db_regs |= KVM_DEBUGREG_BP_ENABLED;
-+	else
-+		vcpu->arch.switch_db_regs &= ~KVM_DEBUGREG_BP_ENABLED;
- }
- 
- static u64 kvm_dr6_fixed(struct kvm_vcpu *vcpu)
--- 
-2.19.1
+Since scalable mode is disabled if pasid allocator failed to register,
+add sm_support(iommu) check here will be better.
 
+> +
+>   #endif
+>   }
+>   
+> @@ -4910,6 +4913,44 @@ static int __init probe_acpi_namespace_devices(void)
+>   	return 0;
+>   }
+>   
+> +#ifdef CONFIG_INTEL_IOMMU_SVM
+> +static ioasid_t intel_ioasid_alloc(ioasid_t min, ioasid_t max, void *data)
+> +{
+> +	struct intel_iommu *iommu = data;
+> +	ioasid_t ioasid;
+> +
+> +	/*
+> +	 * VT-d virtual command interface always uses the full 20 bit
+> +	 * PASID range. Host can partition guest PASID range based on
+> +	 * policies but it is out of guest's control.
+> +	 */
+> +	if (min < PASID_MIN || max > intel_pasid_max_id)
+> +		return INVALID_IOASID;
+> +
+> +	if (vcmd_alloc_pasid(iommu, &ioasid))
+> +		return INVALID_IOASID;
+> +
+> +	return ioasid;
+> +}
+> +
+> +static void intel_ioasid_free(ioasid_t ioasid, void *data)
+> +{
+> +	struct intel_iommu *iommu = data;
+> +
+> +	if (!iommu)
+> +		return;
+> +	/*
+> +	 * Sanity check the ioasid owner is done at upper layer, e.g. VFIO
+> +	 * We can only free the PASID when all the devices are unbond.
+> +	 */
+> +	if (ioasid_find(NULL, ioasid, NULL)) {
+> +		pr_alert("Cannot free active IOASID %d\n", ioasid);
+> +		return;
+> +	}
+> +	vcmd_free_pasid(iommu, ioasid);
+> +}
+> +#endif
+> +
+>   int __init intel_iommu_init(void)
+>   {
+>   	int ret = -ENODEV;
+> @@ -5020,6 +5061,32 @@ int __init intel_iommu_init(void)
+>   				       "%s", iommu->name);
+>   		iommu_device_set_ops(&iommu->iommu, &intel_iommu_ops);
+>   		iommu_device_register(&iommu->iommu);
+> +#ifdef CONFIG_INTEL_IOMMU_SVM
+> +		if (ecap_vcs(iommu->ecap) && vccap_pasid(iommu->vccap)) {
+> +			pr_info("Register custom PASID allocator\n");
+> +			/*
+> +			 * Register a custom ASID allocator if we are running
+> +			 * in a guest, the purpose is to have a system wide PASID
+> +			 * namespace among all PASID users.
+> +			 * There can be multiple vIOMMUs in each guest but only
+> +			 * one allocator is active. All vIOMMU allocators will
+> +			 * eventually be calling the same host allocator.
+> +			 */
+> +			iommu->pasid_allocator.alloc = intel_ioasid_alloc;
+> +			iommu->pasid_allocator.free = intel_ioasid_free;
+> +			iommu->pasid_allocator.pdata = (void *)iommu;
+> +			ret = ioasid_register_allocator(&iommu->pasid_allocator);
+> +			if (ret) {
+> +				pr_warn("Custom PASID allocator registeration failed\n");
+> +				/*
+> +				 * Disable scalable mode on this IOMMU if there
+> +				 * is no custom allocator. Mixing SM capable vIOMMU
+> +				 * and non-SM vIOMMU are not supported.
+> +				 */
+> +				intel_iommu_sm = 0;
+
+It's insufficient to disable scalable mode by only clearing
+intel_iommu_sm. The DMA_RTADDR_SMT bit in root entry has already been
+set. Probably, you need to
+
+for each iommu
+	clear DMA_RTADDR_SMT in root entry
+
+Alternatively, since vSVA is the only customer of this custom PASID
+allocator, is it possible to only disable SVA here?
+
+> +			}
+> +		}
+> +#endif
+>   	}
+>   
+>   	bus_set_iommu(&pci_bus_type, &intel_iommu_ops);
+> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+> index 1d4b8dcdc5d8..c624733cb2e6 100644
+> --- a/include/linux/intel-iommu.h
+> +++ b/include/linux/intel-iommu.h
+> @@ -19,6 +19,7 @@
+>   #include <linux/iommu.h>
+>   #include <linux/io-64-nonatomic-lo-hi.h>
+>   #include <linux/dmar.h>
+> +#include <linux/ioasid.h>
+>   
+>   #include <asm/cacheflush.h>
+>   #include <asm/iommu.h>
+> @@ -546,6 +547,7 @@ struct intel_iommu {
+>   #ifdef CONFIG_INTEL_IOMMU_SVM
+>   	struct page_req_dsc *prq;
+>   	unsigned char prq_name[16];    /* Name for PRQ interrupt */
+> +	struct ioasid_allocator_ops pasid_allocator; /* Custom allocator for PASIDs */
+>   #endif
+>   	struct q_inval  *qi;            /* Queued invalidation info */
+>   	u32 *iommu_state; /* Store iommu states between suspend and resume.*/
+> 
+
+Best regards,
+baolu
