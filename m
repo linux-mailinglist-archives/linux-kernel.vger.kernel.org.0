@@ -2,45 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B579E4846
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 12:12:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B860EE4843
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 12:12:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409105AbfJYKMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 06:12:23 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37660 "EHLO
+        id S2409127AbfJYKMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 06:12:25 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37732 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2409013AbfJYKMW (ORCPT
+        with ESMTP id S2409011AbfJYKMX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 06:12:22 -0400
+        Fri, 25 Oct 2019 06:12:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=SshFH95hlvnohJa9NKLS6Cf2fJ2qBzDlAgOlmqIfTKM=; b=w9XbI4Vt67gR
-        Ja/tZ9IXUqWXXEHb4sreas4M7HNAtDRlxbyl3Om+EIGpt+UQuJcMbwIixGWL5rjwvk7vHL2Jqpqvx
-        qvylhr8HjuvHYsCSxf97K3SSzj2MSj/0is4eCkDg2Qfk6d5Sj26nWhZa/y1fQV3pbWqS6dxHH8ez/
-        7fpy0=;
+        List-Archive; bh=UIHdbuehA4W5cQC/qzKEDI4VtUGGKof8itjs+eOyx+E=; b=JF2doRefoXnQ
+        lWBOkJj9/uB6Rh/B2njgORKwRLWda76rcCGjW5aM/TE7Pb8uf+ma1bvwawEJiBBbk4x8pN4jUK+7n
+        05AiVkU+lfk5wAB/2Auucd0ZxvxZUApFlrhkCcfc1x5y7o/iZYpShdZ5K0dZPqiZ132ufI1RuPzZ0
+        6iw98=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iNwZo-0006e0-Rl; Fri, 25 Oct 2019 10:12:12 +0000
+        id 1iNwZp-0006eG-Ph; Fri, 25 Oct 2019 10:12:13 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 582B3274326E; Fri, 25 Oct 2019 11:12:12 +0100 (BST)
+        id 3AA502743273; Fri, 25 Oct 2019 11:12:13 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        Jiri Kosina <trivial@kernel.org>,
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>,
+        Ben Zhang <benzh@chromium.org>,
+        Curtis Malainey <cujomalainey@chromium.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Oder Chiou <oder_chiou@realtek.com>,
         Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: Spelling s/configr/configur/" to the asoc tree
-In-Reply-To: <20191024151603.29043-1-geert+renesas@glider.be>
+Subject: Applied "ASoC: rt5677: Add missing null check for failed allocation of rt5677_dsp" to the asoc tree
+In-Reply-To: <20191024124610.18182-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191025101212.582B3274326E@ypsilon.sirena.org.uk>
-Date:   Fri, 25 Oct 2019 11:12:12 +0100 (BST)
+Message-Id: <20191025101213.3AA502743273@ypsilon.sirena.org.uk>
+Date:   Fri, 25 Oct 2019 11:12:13 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,7 +52,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: Spelling s/configr/configur/
+   ASoC: rt5677: Add missing null check for failed allocation of rt5677_dsp
 
 has been applied to the asoc tree at
 
@@ -73,47 +77,37 @@ to this mail.
 Thanks,
 Mark
 
-From c19255659b6ed952948ce54a260efb2ad950cc54 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Thu, 24 Oct 2019 17:16:03 +0200
-Subject: [PATCH] ASoC: Spelling s/configr/configur/
+From f8a60435703bdde8f8a0ceb1aa8dad59df821583 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 24 Oct 2019 13:46:10 +0100
+Subject: [PATCH] ASoC: rt5677: Add missing null check for failed allocation of
+ rt5677_dsp
 
-Fix misspellings of "configuration" and "configure".
+The allocation of rt5677_dsp can potentially fail and return null, so add
+a null check and return -ENOMEM on a memory allocation failure.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20191024151603.29043-1-geert+renesas@glider.be
+Addresses-Coverity: ("Dereference null return")
+Fixes: a0e0d135427c ("ASoC: rt5677: Add a PCM device for streaming hotword via SPI")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20191024124610.18182-1-colin.king@canonical.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/sound/wm8904.h     | 2 +-
- sound/soc/codecs/cx2072x.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/rt5677-spi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/sound/wm8904.h b/include/sound/wm8904.h
-index 14074405f501..88ac1870510e 100644
---- a/include/sound/wm8904.h
-+++ b/include/sound/wm8904.h
-@@ -120,7 +120,7 @@
-  * DRC configurations are specified with a label and a set of register
-  * values to write (the enable bits will be ignored).  At runtime an
-  * enumerated control will be presented for each DRC block allowing
-- * the user to choose the configration to use.
-+ * the user to choose the configuration to use.
-  *
-  * Configurations may be generated by hand or by using the DRC control
-  * panel provided by the WISCE - see  http://www.wolfsonmicro.com/wisce/
-diff --git a/sound/soc/codecs/cx2072x.c b/sound/soc/codecs/cx2072x.c
-index 1c1ba7bea4d8..2ad00ed21bec 100644
---- a/sound/soc/codecs/cx2072x.c
-+++ b/sound/soc/codecs/cx2072x.c
-@@ -1507,7 +1507,7 @@ static int cx2072x_probe(struct snd_soc_component *codec)
- 	regmap_multi_reg_write(cx2072x->regmap, cx2072x_reg_init,
- 			       ARRAY_SIZE(cx2072x_reg_init));
+diff --git a/sound/soc/codecs/rt5677-spi.c b/sound/soc/codecs/rt5677-spi.c
+index 36c02d200cfc..3a17643fcd9f 100644
+--- a/sound/soc/codecs/rt5677-spi.c
++++ b/sound/soc/codecs/rt5677-spi.c
+@@ -376,6 +376,8 @@ static int rt5677_spi_pcm_probe(struct snd_soc_component *component)
  
--	/* configre PortC as input device */
-+	/* configure PortC as input device */
- 	regmap_update_bits(cx2072x->regmap, CX2072X_PORTC_PIN_CTRL,
- 			   0x20, 0x20);
- 
+ 	rt5677_dsp = devm_kzalloc(component->dev, sizeof(*rt5677_dsp),
+ 			GFP_KERNEL);
++	if (!rt5677_dsp)
++		return -ENOMEM;
+ 	rt5677_dsp->dev = &g_spi->dev;
+ 	mutex_init(&rt5677_dsp->dma_lock);
+ 	INIT_DELAYED_WORK(&rt5677_dsp->copy_work, rt5677_spi_copy_work);
 -- 
 2.20.1
 
