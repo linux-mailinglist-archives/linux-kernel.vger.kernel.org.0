@@ -2,89 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B85FAE46AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5DBAE46B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 11:09:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408682AbfJYJIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 05:08:02 -0400
-Received: from mga12.intel.com ([192.55.52.136]:37215 "EHLO mga12.intel.com"
+        id S2393215AbfJYJJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 05:09:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408378AbfJYJIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 05:08:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2019 02:08:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,228,1569308400"; 
-   d="scan'208";a="197377501"
-Received: from kmsmsx152.gar.corp.intel.com ([172.21.73.87])
-  by fmsmga008.fm.intel.com with ESMTP; 25 Oct 2019 02:07:58 -0700
-Received: from pgsmsx108.gar.corp.intel.com ([169.254.8.51]) by
- KMSMSX152.gar.corp.intel.com ([169.254.11.51]) with mapi id 14.03.0439.000;
- Fri, 25 Oct 2019 17:07:57 +0800
-From:   "Lu, Brent" <brent.lu@intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-CC:     "Rojewski, Cezary" <cezary.rojewski@intel.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Tzung-Bi Shih <tzungbi@google.com>,
+        id S2391119AbfJYJJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 05:09:09 -0400
+Received: from dragon (li937-157.members.linode.com [45.56.119.157])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68E1E21929;
+        Fri, 25 Oct 2019 09:09:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571994549;
+        bh=uFG1cMRD5Tz8/465n9rsEA7W+2TvFw3woGFuCUmq66c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sS4E7jSY86V/QEQRf2wcBiJnK740L0brYSrWpZYZfwXbiStuc+EE/veFVPSj5vqWW
+         hI5yIV06HrfwU9JKBs4BhFpwG/76VnGpAt2wycyZiUWOUxfjk1fUc+NSJ9HqWN1RNL
+         8nrpiNxTSa47S8GZoUDtcQzD3mYQj0Q+98sHgfGU=
+Date:   Fri, 25 Oct 2019 17:08:52 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Mark Brown <broonie@kernel.org>,
-        "M, Naveen" <naveen.m@intel.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>
-Subject: RE: [alsa-devel] [PATCH] ASoC: Intel: eve: Enable mclk and ssp sclk
- early for rt5514
-Thread-Topic: [alsa-devel] [PATCH] ASoC: Intel: eve: Enable mclk and ssp
- sclk early for rt5514
-Thread-Index: AQHVibVeihUHG65lMUel8ewyaYl6D6dn2HEAgAM3GCA=
-Date:   Fri, 25 Oct 2019 09:07:56 +0000
-Message-ID: <CF33C36214C39B4496568E5578BE70C740320031@PGSMSX108.gar.corp.intel.com>
-References: <1571843796-5021-1-git-send-email-brent.lu@intel.com>
- <b68e5cb8-6d03-def0-646d-c68bd2604ecd@linux.intel.com>
-In-Reply-To: <b68e5cb8-6d03-def0-646d-c68bd2604ecd@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDYwNWRiZDYtYzc4MC00ZGJlLWJiYjQtYjM3NjZjZjFlZjcxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNmtGSldXOGFmUlNYNWpIbEhhK1hndE5NanVtXC8zRFhCRFhQeUhxYjVzSlJsU3Y4UGtKSGF2RkRsYXU2TDY0VTMifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Leonard Crestez <leonard.crestez@nxp.com>
+Subject: Re: [PATCH 1/3] clk: imx: imx8mm: mark sys_pll1/2 as fixed clock
+Message-ID: <20191025090850.GK3208@dragon>
+References: <1570614940-17239-1-git-send-email-peng.fan@nxp.com>
+ <20191025060847.GD3208@dragon>
+ <AM0PR04MB4481FA56EFA3C34193241D3D88650@AM0PR04MB4481.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM0PR04MB4481FA56EFA3C34193241D3D88650@AM0PR04MB4481.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBUaGUgcGF0Y2ggbG9va3MgZmluZSwgYnV0IEknZCBsaWtlIHRvIGNsZWFyIGEgZG91YnQgSSBo
-YXZlIG9uIGhvdyBNQ0xLcyBhcmUNCj4gaGFuZGxlZC4NCj4gDQo+IElJUkMsIHRoZSBoYXJkd2Fy
-ZSBleHBvc2VzIDIgTUNMSyBvdXRwdXRzLCBhbmQgaXQncyBub3QgdW5jb21tb24gdG8gc2hhcmUN
-Cj4gdGhlIHNhbWUgTUNMSyBiZXR3ZWVuIFNTUHMsIG9yIHVzZSBhIGRpZmZlcmVudCBNQ0xLIGlk
-IGZvciB0aGUgc2FtZSBTU1ANCj4gb24gZGlmZmVyZW50IHBsYXRmb3JtcyAoaXQncyBvbmUgb2Yg
-dGhlIGRpZmZlcmVuY2VzIGJldHdlZW4NCj4gYXBsLWRhNzIxOSBhbmQgZ2xrLWRhNzIxOSkuDQo+
-IA0KPiBDYW4geW91IGRvdWJsZS1jaGVjayB0aGF0IGF0IHRoZSBib2FyZCBsZXZlbCB0aGUgTUNM
-SyBwaW5zIGFyZSBhY3R1YWxseQ0KPiBkaWZmZXJlbnQ/IElmIHRoZXkgYXJlIG5vdCwgdGhlbiB3
-ZSBzaG91bGQgbm90IGJlIGVuYWJsaW5nL2Rpc2FibGluZyB0aGVtDQo+IHNlcGFyYXRlbHksIG9y
-IHlvdSdsbCBoYXZlIHNpZGUgZWZmZWN0cyBiZXR3ZWVuIGhlYWRzZXQgYW5kIERNSUNzLg0KPiAN
-Cj4gSSBhbHNvIGRvbid0IGtub3cgd2hhdCB0aGUgU0tMIGRyaXZlciBkb2VzIHdpdGggJ3NzcDBf
-bWNsaycgYW5kICdzc3AxX21jbGsnPw0KPiBDZXphcnksIHdvdWxkIHlvdSBoYXBwZW4gdG8ga25v
-dyBob3cgdGhlIG1hcHBpbmcgYmV0d2VlbiBNQ0xLIGFuZA0KPiBTU1BzIGlzIGhhbmRsZWQ/DQo+
-IA0KDQpPbiB0aGUgYm9hcmQgSSBvbmx5IHNlZSBvbmUgbWNsayBvdXRwdXQgd2hpY2ggbmFtZSBp
-cyAiR1BQRDIzL0kyU19NQ0xLIi4gSSB3aWxsDQp1c2Ugc3NwMV9tY2xrIGluc3RlYWQgc2luY2Ug
-cnQ1NTE0IGlzIGFsc28gdXNlIGl0IHdoZW4gZW5hYmxpbmcgRFNQIHZvaWNlIHdha2UgdXANCmZ1
-bmN0aW9uLg0KDQpJJ3ZlIHRhbGtlZCB0byBSZWFsdGVrIHBlb3BsZSBhYm91dCB0aGlzIGlzc3Vl
-LiBUaGV5IHNhaWQgcnQ1NTE0IHJlcXVpcmVzIGV4cGxpY2l0DQpjbG9jayBjb250cm9sIG92ZXIg
-bWNsayBpbiBpdHMgcnQ1NTE0X3NldF9iaWFzX2xldmVsKCkgZnVuY3Rpb24gd2hpY2ggZXhwbGFp
-bnMNCndoeSB0aGlzIHBhdGNoIGNvdWxkIGZpeCB0aGUgaXNzdWUgYnV0IHRoZSBwYXRjaCBzZWVt
-cyB0byBiZSBhbiBvdmVya2lsbC4gSSB3aWxsIHVwbG9hZA0KYW5vdGhlciBwYXRjaCB3aGljaCB0
-b3VjaGVzIG1jbGsgb25seSBpbiBjYXJkJ3Mgc2V0X2JpYXNfbGV2ZWwoKSBmdW5jdGlvbiAuIFRo
-YW5rcw0KZm9yIHRoZSByZXZpZXcuDQoNClJlZ2FyZHMsDQpCcmVudA0K
+On Fri, Oct 25, 2019 at 06:14:21AM +0000, Peng Fan wrote:
+> Hi Shawn,
+> 
+> > Subject: Re: [PATCH 1/3] clk: imx: imx8mm: mark sys_pll1/2 as fixed clock
+> > 
+> > On Wed, Oct 09, 2019 at 09:58:14AM +0000, Peng Fan wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > According Architecture definition guide, SYS_PLL1 is fixed at 800MHz,
+> > > SYS_PLL2 is fixed at 1000MHz, so let's use imx_clk_fixed to register
+> > > the clocks and drop code that could change the rate.
+> > >
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > 
+> > Applied all, thanks.
+> 
+> I have a v2 https://patchwork.kernel.org/cover/11208131/ patch 
+> based on Lenoard's v3 
+> https://patchwork.kernel.org/patch/11193189/ to avoid conflicts
+> when you apply Lenoard's v3 patch.
+
+Okay, I replaced it with your v2 series.  Thanks!
+
+Shawn
