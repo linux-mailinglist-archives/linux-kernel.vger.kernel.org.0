@@ -2,137 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E67CCE4A3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DB54E4A3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 13:46:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502086AbfJYLqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 07:46:05 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52392 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730088AbfJYLqE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 07:46:04 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p21so1785710wmg.2;
-        Fri, 25 Oct 2019 04:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=ef0+hHhWKCL6Ca0t5L5+DnFrjs6xNw6+Odbfva8qwPs=;
-        b=MweLNAF2NZ7iEpk6wMj4PgBgpG0sqWOQGUnZ5/A9SGuzDzfVMXAN5EOmXw054lnilC
-         JpvmjXsT/o5JUWHkilzQ2uVNbpRohLVa7vT3MLWYjKbzLw0zfei+xFbAfcpkzUMVHcNT
-         1yuGX4/2mATN/KrU26ulSjsIbQhVgWDlKT89ksOjIDjRWMF97PGryx1U/4GKJcCWlN3Q
-         FEJIHXFkbTrYjPv+N/bdFEOW1ghAqmjl+ZUX4kwlH3mBK5/tH9GhXQEFjxOsG3Uf7DF1
-         8rliUCEFFCibiUJens7WliBKOngilDkc+PKmVWT4F1ICYgPD7EDjpsafY4vWcdZi+n9Z
-         dtiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=ef0+hHhWKCL6Ca0t5L5+DnFrjs6xNw6+Odbfva8qwPs=;
-        b=HjcyKQ93uuk7clM+wMechRaJcC2vhSYsVuJ1ZqtCvh6g9dkz/QiXDvvezF6KqLtEaz
-         N2zugzszywtnFlti8woXMZhdm7+o4bE5Gb45ErydCgjiGDlAWvq75PxJMhtrYTUOcoQy
-         vmT3y/fzzQhiQvUuo9mr/joR0zH+wCYK/3jMAeOlIc5M/aZtzsFbrLsE3nBINXMJZCKo
-         mdnhqwxtD+MiP01iT/N/+Q2sTaHI1ewLGoUYwmJcOV/Yc9HEnxV/4ktEZvtuvaIosegG
-         LPu0ulnzKgw1A2tU/ldI6KESu2R6uJL2Ul5LO5rrCRZS7QT4SWXmDgWjq4Az2OUE5jr0
-         rIzw==
-X-Gm-Message-State: APjAAAVQo8HIMTdum7YuiiPOPiEoDpCAe3ds1wunF7VKuf3cWZ0fYQZN
-        qaFpGRaZARq4eiO5pz21LNo=
-X-Google-Smtp-Source: APXvYqxyiXMNCEwujviBcaGWHHKgI5g4AoZaYE7MQ718Qwr4MDjEGH3/HrmtiPExX3WW7QD0UVNFjg==
-X-Received: by 2002:a1c:f305:: with SMTP id q5mr3127071wmq.137.1572003961887;
-        Fri, 25 Oct 2019 04:46:01 -0700 (PDT)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id g69sm1881335wme.31.2019.10.25.04.46.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Oct 2019 04:46:01 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM changes for Linux 5.4-rc5
-Date:   Fri, 25 Oct 2019 13:45:59 +0200
-Message-Id: <1572003959-43063-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S2502123AbfJYLqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 07:46:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42326 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730372AbfJYLqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Oct 2019 07:46:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 570B6B454;
+        Fri, 25 Oct 2019 11:46:34 +0000 (UTC)
+Date:   Fri, 25 Oct 2019 13:46:33 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     snazy@snazy.de
+Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>
+Subject: Re: mlockall(MCL_CURRENT) blocking infinitely
+Message-ID: <20191025114633.GE17610@dhcp22.suse.cz>
+References: <4576b336-66e6-e2bb-cd6a-51300ed74ab8@snazy.de>
+ <b8ff71f5-2d9c-7ebb-d621-017d4b9bc932@infradead.org>
+ <20191025092143.GE658@dhcp22.suse.cz>
+ <70393308155182714dcb7485fdd6025c1fa59421.camel@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <70393308155182714dcb7485fdd6025c1fa59421.camel@gmx.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Fri 25-10-19 13:02:23, Robert Stupp wrote:
+> On Fri, 2019-10-25 at 11:21 +0200, Michal Hocko wrote:
+> > On Thu 24-10-19 16:34:46, Randy Dunlap wrote:
+> > > [adding linux-mm + people]
+> > >
+> > > On 10/24/19 12:36 AM, Robert Stupp wrote:
+> > > > Hi guys,
+> > > >
+> > > > I've got an issue with `mlockall(MCL_CURRENT)` after upgrading
+> > > > Ubuntu 19.04 to 19.10 - i.e. kernel version change from 5.0.x to
+> > > > 5.3.x.
+> > > >
+> > > > The following simple program hangs forever with one CPU running
+> > > > at 100% (kernel):
+> >
+> > Can you capture everal snapshots of proc/$(pidof $YOURTASK)/stack
+> > while
+> > this is happening?
+> 
+> Sure,
+> 
+> Approach:
+> - one shell running
+>   while true; do cat /proc/$(pidof test)/stack; done
+> - starting ./test in another shell + ctrl-c quite some times
+> 
+> Vast majority of all ./test invocations return an empty 'stack' file.
+> Some tries, maybe 1 out of 20, returned these snapshots.
+> Was running 5.3.7 for this test.
+> 
+> 
+> [<0>] __handle_mm_fault+0x4c5/0x7a0
+> [<0>] handle_mm_fault+0xca/0x1f0
+> [<0>] __get_user_pages+0x230/0x770
+> [<0>] populate_vma_page_range+0x74/0x80
+> [<0>] __mm_populate+0xb1/0x150
+> [<0>] __x64_sys_mlockall+0x11c/0x190
+> [<0>] do_syscall_64+0x5a/0x130
+> [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [<0>] __handle_mm_fault+0x4c5/0x7a0
+> [<0>] handle_mm_fault+0xca/0x1f0
+> [<0>] __get_user_pages+0x230/0x770
+> [<0>] populate_vma_page_range+0x74/0x80
+> [<0>] __mm_populate+0xb1/0x150
+> [<0>] __x64_sys_mlockall+0x11c/0x190
+> [<0>] do_syscall_64+0x5a/0x130
+> [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> 
+> [<0>] __handle_mm_fault+0x4c5/0x7a0
+> [<0>] handle_mm_fault+0xca/0x1f0
+> [<0>] __get_user_pages+0x230/0x770
+> [<0>] populate_vma_page_range+0x74/0x80
+> [<0>] __mm_populate+0xb1/0x150
+> [<0>] __x64_sys_mlockall+0x11c/0x190
+> [<0>] do_syscall_64+0x5a/0x130
+> [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> 
+> [<0>] __do_fault+0x3c/0x130
+> [<0>] do_fault+0x248/0x640
+> [<0>] __handle_mm_fault+0x4c5/0x7a0
+> [<0>] handle_mm_fault+0xca/0x1f0
+> [<0>] __get_user_pages+0x230/0x770
+> [<0>] populate_vma_page_range+0x74/0x80
+> [<0>] __mm_populate+0xb1/0x150
+> [<0>] __x64_sys_mlockall+0x11c/0x190
+> [<0>] do_syscall_64+0x5a/0x130
+> [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
 
-The following changes since commit 3b7c59a1950c75f2c0152e5a9cd77675b09233d6:
+This is expected.
 
-  Merge tag 'pinctrl-v5.4-2' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl (2019-10-22 06:40:07 -0400)
+> // doubt this one is relevant
+> [<0>] __wake_up_common_lock+0x7c/0xc0
+> [<0>] __wake_up_sync_key+0x1e/0x30
+> [<0>] __wake_up_parent+0x26/0x30
+> [<0>] do_notify_parent+0x1cc/0x280
+> [<0>] do_exit+0x703/0xaf0
+> [<0>] do_group_exit+0x47/0xb0
+> [<0>] get_signal+0x165/0x880
+> [<0>] do_signal+0x34/0x280
+> [<0>] exit_to_usermode_loop+0xbf/0x160
+> [<0>] do_syscall_64+0x10f/0x130
+> [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-are available in the git repository at:
-
-
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-
-for you to fetch changes up to 671ddc700fd08b94967b1e2a937020e30c838609:
-
-  KVM: nVMX: Don't leak L1 MMIO regions to L2 (2019-10-22 19:04:40 +0200)
-
-----------------------------------------------------------------
-Bugfixes for ARM, PPC and x86, plus selftest improvements.
-
-----------------------------------------------------------------
-Greg Kurz (1):
-      KVM: PPC: Book3S HV: XIVE: Ensure VP isn't already in use
-
-Jim Mattson (2):
-      kvm: x86: Expose RDPID in KVM_GET_SUPPORTED_CPUID
-      KVM: nVMX: Don't leak L1 MMIO regions to L2
-
-Liran Alon (1):
-      KVM: VMX: Remove specialized handling of unexpected exit-reasons
-
-Marc Zyngier (4):
-      KVM: arm64: pmu: Fix cycle counter truncation
-      arm64: KVM: Handle PMCR_EL0.LC as RES1 on pure AArch64 systems
-      KVM: arm64: pmu: Set the CHAINED attribute before creating the in-kernel event
-      KVM: arm64: pmu: Reset sample period on overflow handling
-
-Miaohe Lin (1):
-      KVM: SVM: Fix potential wrong physical id in avic_handle_ldr_update
-
-Paolo Bonzini (3):
-      kvm: clear kvmclock MSR on reset
-      Merge tag 'kvmarm-fixes-5.4-2' of git://git.kernel.org/.../kvmarm/kvmarm into HEAD
-      Merge tag 'kvm-ppc-fixes-5.4-1' of git://git.kernel.org/.../paulus/powerpc into HEAD
-
-Vitaly Kuznetsov (5):
-      selftests: kvm: synchronize .gitignore to Makefile
-      selftests: kvm: vmx_set_nested_state_test: don't check for VMX support twice
-      selftests: kvm: consolidate VMX support checks
-      selftests: kvm: vmx_dirty_log_test: skip the test when VMX is not supported
-      selftests: kvm: fix sync_regs_test with newer gccs
-
-Wanpeng Li (1):
-      KVM: Don't shrink/grow vCPU halt_poll_ns if host side polling is disabled
-
-kbuild test robot (1):
-      KVM: x86: fix bugon.cocci warnings
-
- arch/arm64/kvm/sys_regs.c                          |  4 ++
- arch/powerpc/kvm/book3s_xive.c                     | 24 +++++---
- arch/powerpc/kvm/book3s_xive.h                     | 12 ++++
- arch/powerpc/kvm/book3s_xive_native.c              |  6 +-
- arch/x86/include/asm/kvm_host.h                    |  2 +-
- arch/x86/kvm/cpuid.c                               |  2 +-
- arch/x86/kvm/lapic.c                               |  5 --
- arch/x86/kvm/lapic.h                               |  5 ++
- arch/x86/kvm/svm.c                                 |  6 +-
- arch/x86/kvm/vmx/nested.c                          | 64 ++++++++++++----------
- arch/x86/kvm/vmx/nested.h                          | 13 ++++-
- arch/x86/kvm/vmx/vmx.c                             | 12 ----
- arch/x86/kvm/x86.c                                 | 19 ++++---
- tools/testing/selftests/kvm/.gitignore             |  2 +
- tools/testing/selftests/kvm/include/x86_64/vmx.h   |  2 +
- tools/testing/selftests/kvm/lib/x86_64/vmx.c       | 10 ++++
- .../testing/selftests/kvm/x86_64/sync_regs_test.c  | 21 +++----
- .../kvm/x86_64/vmx_close_while_nested_test.c       |  6 +-
- .../selftests/kvm/x86_64/vmx_dirty_log_test.c      |  2 +
- .../kvm/x86_64/vmx_set_nested_state_test.c         | 13 +----
- .../selftests/kvm/x86_64/vmx_tsc_adjust_test.c     |  6 +-
- virt/kvm/arm/pmu.c                                 | 48 +++++++++++-----
- virt/kvm/kvm_main.c                                | 29 +++++-----
- 23 files changed, 186 insertions(+), 127 deletions(-)
+Hmm, this means that the task has exited so how come there are 
+other syscalls happening. Are you sure you are collecting stacks for the
+correct task?
+-- 
+Michal Hocko
+SUSE Labs
