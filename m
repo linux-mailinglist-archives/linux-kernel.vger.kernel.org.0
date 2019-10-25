@@ -2,152 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C13DE4EA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E11BE4EB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 16:13:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407767AbfJYOMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 10:12:40 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:12404 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405765AbfJYOMk (ORCPT
+        id S2392684AbfJYONq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 10:13:46 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46478 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725825AbfJYONi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 10:12:40 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9PE5ub0022030;
-        Fri, 25 Oct 2019 16:12:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=xxw6sfSBb2ziAGzEHx/zRRrJwSGgjzjjHssHA3fCJJQ=;
- b=RLIcONLNhTxfGnumeDhL8EbUmMIKOhVIPwY7JvR89xewpCIDHP6zdOLiNn80Liq4rUNU
- gKZa9r4+tEKdoefOgXXNWhSy6CjVgvSit/IYvVzR5kZLKCHlNvixlxlgDwo8L07INtaF
- ZfZUfV5MK7eL6YHLlJY7oxd22gR205i5QcXKactpPnPrCtPoOX3YdnRPej4Pys7Vb/nT
- qcFNtbG2wfJoU0IdlUmzGhkr7U7vEcOgxkrHM3rGfPkP8Gz2y18zSAawK1zQ0p4YtgWk
- yT4vXtIaC7fgdKYpu+pCvOe2UEvWUAaW0MfZ2yhgkK5rqza82wX0XhM9TMLbpzWIoyza iA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2vt9s4g6x5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 25 Oct 2019 16:12:33 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3847D100034;
-        Fri, 25 Oct 2019 16:12:33 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2A9982AB34A;
-        Fri, 25 Oct 2019 16:12:33 +0200 (CEST)
-Received: from [10.129.5.11] (10.75.127.45) by SFHDAG5NODE2.st.com
- (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 25 Oct
- 2019 16:12:25 +0200
-Subject: Re: [PATCH] i2c: i2c-stm32f7: report dma error during probe
-To:     Alain Volmat <alain.volmat@st.com>, <wsa@the-dreams.de>
-CC:     <alexandre.torgue@st.com>, <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <fabrice.gasnier@st.com>
-References: <1571921521-8502-1-git-send-email-alain.volmat@st.com>
-From:   Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Message-ID: <fbb063f9-8f16-00ba-1a5b-deb58c711e26@st.com>
-Date:   Fri, 25 Oct 2019 16:12:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 25 Oct 2019 10:13:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572012817;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NFKLs9tDQua90X4BBbVlmoEx/KurPRVIfH4NJ4epzNw=;
+        b=LI1Nc8nVvRWsP2mYyLTDLKEf6bZYDY4w4qPdgDi8AMkUVDvvVmsEKMvcgVhBH4xujAkUCx
+        TSDZLq14KS7biIOpioeEQOEfmo0QYLBAiDF4g3FWIJTKtwWFzIbfF0Gfyt3YWYvKz/xgaE
+        fTLPaoMgFQaRo1V/uCwpfuvJL9OJIyY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-293-ZY_157LsOCGTQVPvxfemLw-1; Fri, 25 Oct 2019 10:13:32 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 854C61005509;
+        Fri, 25 Oct 2019 14:13:30 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 8E7755D9CA;
+        Fri, 25 Oct 2019 14:13:27 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 25 Oct 2019 16:13:29 +0200 (CEST)
+Date:   Fri, 25 Oct 2019 16:13:25 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Tejun Heo <tj@kernel.org>, dvyukov@google.com,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        akpm@linux-foundation.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        ebiederm@xmission.com, elver@google.com, guro@fb.com,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        cgroups@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH cgroup/for-5.5] cgroup: remove
+ cgroup_enable_task_cg_lists() optimization
+Message-ID: <20191025141325.GB6020@redhat.com>
+References: <0000000000003b1e8005956939f1@google.com>
+ <20191021142111.GB1339@redhat.com>
+ <20191024190351.GD3622521@devbig004.ftw2.facebook.com>
+ <20191025125606.GI3622521@devbig004.ftw2.facebook.com>
+ <20191025133358.pxpzxkhqc3mboi5x@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <1571921521-8502-1-git-send-email-alain.volmat@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-25_08:2019-10-25,2019-10-25 signatures=0
+In-Reply-To: <20191025133358.pxpzxkhqc3mboi5x@wittgenstein>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: ZY_157LsOCGTQVPvxfemLw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On 10/25, Christian Brauner wrote:
+>
+> [+Dmitry]
+>
+> On Fri, Oct 25, 2019 at 05:56:06AM -0700, Tejun Heo wrote:
+> > On Thu, Oct 24, 2019 at 12:03:51PM -0700, Tejun Heo wrote:
+> > > cgroup_enable_task_cg_lists() is used to lazyily initialize task
+> > > cgroup associations on the first use to reduce fork / exit overheads
+> > > on systems which don't use cgroup.  Unfortunately, locking around it
+> > > has never been actually correct and its value is dubious given how th=
+e
+> > > vast majority of systems use cgroup right away from boot.
+> > >
+> > > This patch removes the optimization.  For now, replace the cg_list
+> > > based branches with WARN_ON_ONCE()'s to be on the safe side.  We can
+> > > simplify the logic further in the future.
+> > >
+> > > Signed-off-by: Tejun Heo <tj@kernel.org>
+> > > Reported-by: Oleg Nesterov <oleg@redhat.com>
+> >
+> > Applying to cgroup/for-5.5.
+>
+> The code you removed was the only place where task->flags was set from
+> !current.
 
-Looks good for me
+No, that code doesn't modify task->flags. It checks PF_EXITING under sigloc=
+k
+but this makes no sense and can't avoid the race with cgroup_exit().
 
-Reviewed-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+> So I think this fixes the syzbot data-race report in:
+> https://lore.kernel.org/r/0000000000003b1e8005956939f1@google.com
 
-Regards
+No.
 
-On 10/24/19 2:52 PM, Alain Volmat wrote:
-> Distinguish between the case where dma information is not provided
-> within the DT and the case of an error during the dma init.
-> Exit the probe with error in case of an error during dma init.
-> 
-> Fixes: bb8822cbbc53 ("i2c: i2c-stm32: Add generic DMA API")
-> 
-> Signed-off-by: Alain Volmat <alain.volmat@st.com>
-> ---
->  drivers/i2c/busses/i2c-stm32.c   | 16 ++++++++--------
->  drivers/i2c/busses/i2c-stm32f7.c |  9 +++++++++
->  2 files changed, 17 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-stm32.c b/drivers/i2c/busses/i2c-stm32.c
-> index 07d5dfce68d4..1da347e6a358 100644
-> --- a/drivers/i2c/busses/i2c-stm32.c
-> +++ b/drivers/i2c/busses/i2c-stm32.c
-> @@ -20,13 +20,13 @@ struct stm32_i2c_dma *stm32_i2c_dma_request(struct device *dev,
->  
->  	dma = devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
->  	if (!dma)
-> -		return NULL;
-> +		return ERR_PTR(-ENOMEM);
->  
->  	/* Request and configure I2C TX dma channel */
-> -	dma->chan_tx = dma_request_slave_channel(dev, "tx");
-> -	if (!dma->chan_tx) {
-> +	dma->chan_tx = dma_request_chan(dev, "tx");
-> +	if (IS_ERR(dma->chan_tx)) {
->  		dev_dbg(dev, "can't request DMA tx channel\n");
-> -		ret = -EINVAL;
-> +		ret = PTR_ERR(dma->chan_tx);
->  		goto fail_al;
->  	}
->  
-> @@ -42,10 +42,10 @@ struct stm32_i2c_dma *stm32_i2c_dma_request(struct device *dev,
->  	}
->  
->  	/* Request and configure I2C RX dma channel */
-> -	dma->chan_rx = dma_request_slave_channel(dev, "rx");
-> -	if (!dma->chan_rx) {
-> +	dma->chan_rx = dma_request_chan(dev, "rx");
-> +	if (IS_ERR(dma->chan_rx)) {
->  		dev_err(dev, "can't request DMA rx channel\n");
-> -		ret = -EINVAL;
-> +		ret = PTR_ERR(dma->chan_rx);
->  		goto fail_tx;
->  	}
->  
-> @@ -75,7 +75,7 @@ struct stm32_i2c_dma *stm32_i2c_dma_request(struct device *dev,
->  	devm_kfree(dev, dma);
->  	dev_info(dev, "can't use DMA\n");
->  
-> -	return NULL;
-> +	return ERR_PTR(ret);
->  }
->  
->  void stm32_i2c_dma_free(struct stm32_i2c_dma *dma)
-> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-> index d36cf08461f7..cc8ba8f49ae6 100644
-> --- a/drivers/i2c/busses/i2c-stm32f7.c
-> +++ b/drivers/i2c/busses/i2c-stm32f7.c
-> @@ -1950,6 +1950,15 @@ static int stm32f7_i2c_probe(struct platform_device *pdev)
->  	i2c_dev->dma = stm32_i2c_dma_request(i2c_dev->dev, phy_addr,
->  					     STM32F7_I2C_TXDR,
->  					     STM32F7_I2C_RXDR);
-> +	if (PTR_ERR(i2c_dev->dma) == -ENODEV)
-> +		i2c_dev->dma = NULL;
-> +	else if (IS_ERR(i2c_dev->dma)) {
-> +		ret = PTR_ERR(i2c_dev->dma);
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(&pdev->dev,
-> +				"Failed to request dma error %i\n", ret);
-> +		goto clk_free;
-> +	}
->  
->  	platform_set_drvdata(pdev, i2c_dev);
->  
-> 
+Almost every usage of task->flags (load or sore) can be reported as "data r=
+ace".
+
+Say, you do
+
+=09if (task->flags & PF_KTHREAD)
+
+while this task does
+
+=09current->flags |=3D PF_FREEZER_SKIP;
+=09schedule().
+
+this is data race.
+
+Oleg.
+
