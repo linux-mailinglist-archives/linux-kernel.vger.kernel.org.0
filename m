@@ -2,97 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 698ABE41F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 05:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CC4BE41FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2019 05:14:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391851AbfJYDJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 24 Oct 2019 23:09:41 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:2435 "EHLO huawei.com"
+        id S2392056AbfJYDN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 24 Oct 2019 23:13:59 -0400
+Received: from mail-eopbgr80052.outbound.protection.outlook.com ([40.107.8.52]:4434
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729283AbfJYDJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Oct 2019 23:09:41 -0400
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id 448C9DDE91490327202E;
-        Fri, 25 Oct 2019 11:09:39 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 25 Oct 2019 11:09:38 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Fri, 25 Oct 2019 11:09:38 +0800
-Date:   Fri, 25 Oct 2019 11:12:29 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Guenter Roeck <groeck@google.com>
-CC:     Philippe Liard <pliard@google.com>, <phillip@squashfs.org.uk>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] squashfs: Migrate from ll_rw_block usage to BIO
-Message-ID: <20191025031229.GB210047@architecture4>
-References: <20191018010846.186484-1-pliard@google.com>
- <20191025004531.89978-1-pliard@google.com>
- <20191025025334.GA210047@architecture4>
- <CABXOdTeQTapfvKqGrqZME8JACeJhaHram_ZWk7ZZX2VWvYORaw@mail.gmail.com>
-MIME-Version: 1.0
+        id S2391987AbfJYDN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Oct 2019 23:13:59 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iuiDbnTlplcEAsL/+Cqwm9VTRsG1jzmQlu7CcM6vVnB/SRxMz5MlieibXv/w3BSY7oqBhndkjWpxrG9SZ4zNs96VKmZR6UIlO7omjJOltn/5yZHPJqv8rwI4LzlgdFDZKLa4y6VOz6wpefuKwUQ6hJqdnGYTNTPCrjEjXooYW0XcrUrRvRsRDu03R3WDrcYkSCGaXVEvoAoAx+iTv+7BlCDLaeMZq+B3+cc5n3jSkmvt3DjS31NTGevoRM4woNt6KEq4iNnZpHL37lFe1l+vFLK75W0UH44UJUa3ICewq6upqSQezB9vvjAqdL+wSCmDUmKbZ9FAVEE7Z685AQLXGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=grUJUlgj5/Db6iMX81Vp7dEE8np1Pq+4rlUmyolSJcs=;
+ b=gPP6dC7BlfBZFF5ZsfhwFk+t9HeGKM8CczsbJz1eGP1Etz2fm2rOvqcdAf1HI3qfTbA+noenbL6vlZTVbDRN2wIn+E/ZnoeamkZrkNvWDiJVSlhTipHE6qW1PuvDl85zCcoDLBcTBe3DRHnvRv3dHpkkd9p8bcNeQnI5FJSvDlQkBfhZhg4X+xZVTYPMlLjf4JUsnfYEo2989XLDgnFu5Nxa8LDxoZeqZ69/nWrFq1hlkDK9f0SrHHXbsHb5d/kJVtZ2gMz3Hf9u/4P1eYlPTh+MTmahOjAPOX7XTP61dIz7ne3gTzrzOQMMF+NlvHCwbsPFzIgpTWAGpk1iHg3b9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=grUJUlgj5/Db6iMX81Vp7dEE8np1Pq+4rlUmyolSJcs=;
+ b=U61crKF3vRsvDUzEtN4waZwQNzANd/oNL4IdFqAimnlPU1bKEU3GghsyaFnB+KCGfcvfddvGYmK8I3Tsb6q4/V3eB5PYwU12VtOD9qKf2CF+AFWj5Ynjz1Kp6X/qf1m4TyXtE/bFU2tHfbToQZ8pysydGK/zV5RsyfMIUyXhcPA=
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) by
+ VI1PR04MB3966.eurprd04.prod.outlook.com (10.171.183.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2387.20; Fri, 25 Oct 2019 03:13:55 +0000
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::68e3:e1a6:78fd:7133]) by VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::68e3:e1a6:78fd:7133%3]) with mapi id 15.20.2387.023; Fri, 25 Oct 2019
+ 03:13:54 +0000
+From:   Peter Chen <peter.chen@nxp.com>
+To:     Pawel Laszczak <pawell@cadence.com>
+CC:     Roger Quadros <rogerq@ti.com>,
+        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "nsekhar@ti.com" <nsekhar@ti.com>,
+        Rahul Kumar <kurahul@cadence.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: cdns3: gadget: Don't manage pullups
+Thread-Topic: [PATCH] usb: cdns3: gadget: Don't manage pullups
+Thread-Index: AQHViYCigHhLS+QXN0CJz1D+9q4PbKdn8nSAgAK+9IA=
+Date:   Fri, 25 Oct 2019 03:13:54 +0000
+Message-ID: <20191025031343.GA13392@b29397-desktop>
+References: <20191023090232.27237-1-rogerq@ti.com>
+ <BYAPR07MB4709A6212601A75DCB1A25ACDD6B0@BYAPR07MB4709.namprd07.prod.outlook.com>
+In-Reply-To: <BYAPR07MB4709A6212601A75DCB1A25ACDD6B0@BYAPR07MB4709.namprd07.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peter.chen@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 6887b738-7b52-4303-e213-08d758f95e5e
+x-ms-traffictypediagnostic: VI1PR04MB3966:
+x-microsoft-antispam-prvs: <VI1PR04MB39663FD17B5248EF99371E438B650@VI1PR04MB3966.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 02015246A9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(136003)(366004)(39860400002)(376002)(346002)(396003)(199004)(189003)(476003)(66946007)(66556008)(66476007)(66446008)(76116006)(446003)(64756008)(91956017)(33716001)(2906002)(486006)(7736002)(6512007)(11346002)(316002)(14454004)(6486002)(3846002)(6116002)(33656002)(25786009)(44832011)(9686003)(229853002)(305945005)(54906003)(6916009)(81166006)(8936002)(8676002)(478600001)(4326008)(81156014)(102836004)(86362001)(6246003)(99286004)(76176011)(66574012)(1076003)(186003)(5660300002)(66066001)(14444005)(6506007)(53546011)(6436002)(256004)(26005)(71190400001)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3966;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: +h9yFB4wPPT7tnIidnyi6DPLbw4EBu4RTtUrtbdBKhxqhhLyAJVvjHiCSb5zSA1r191KvrE1EMecZ8PlSxk3bHZhlr9vKDDooHBlMuRtiv0NoZBUpcjOePU276qh8viOTkMQcKT3BmLRp4AEFHsUNsLyETM/ygM/BmYsvBcuhCCNQpu9HPICLtn46qx0iOosVkhTmeGUumzYHwxuplRj2qtuwJZjUKTnGsyNvjpyZm8o3ciOYkiqWee59OoAr8Lm/NklkC8C2xPJ3RpIwptDdCV7UWBxdjHyl+k2UbJWgiI6RBIPcrS9xNZudXUvjOuEmSmgbYbObGH29rHLrIn1G9Td9sNKro0BnnlgTXR1o8hh57pS5U8s68muJ0zdyuEc4v8KXSAzPvWFuAD1T9V9pF2RiRvGjvAonnrcqpS1UKiKybkLJf4jyHavPZwsyBbA
+x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CABXOdTeQTapfvKqGrqZME8JACeJhaHram_ZWk7ZZX2VWvYORaw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme708-chm.china.huawei.com (10.1.199.104) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+Content-ID: <AB5B58989835C5428788BF3A068EA261@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6887b738-7b52-4303-e213-08d758f95e5e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2019 03:13:54.7863
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZHAKWQwZsGeNQMhxggBz8NfzxjcdI2/PKqTIaHVLAnlrxfJ/9PrOBfYf/EWejBFL4v1jPNIuPWuvMiQZA5rzig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3966
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 08:02:14PM -0700, Guenter Roeck wrote:
-> On Thu, Oct 24, 2019 at 7:51 PM Gao Xiang <gaoxiang25@huawei.com> wrote:
-> 
-> > On Fri, Oct 25, 2019 at 09:45:31AM +0900, Philippe Liard wrote:
-> > > > Personally speaking, just for Android related use cases, I'd suggest
-> > > > latest EROFS if you care more about system overall performance more
-> > > > than compression ratio, even https://lkml.org/lkml/2017/9/22/814 is
-> > > > applied (you can do benchmark), we did much efforts 3 years ago.
-> > > >
-> > > > And that is not only performance but noticable memory overhead (a lot
-> > > > of extra memory allocations) and heavy page cache thrashing in low
-> > > > memory scenarios (it's very common [1].)
-> > >
-> > > Thanks for the suggestion. EROFS is on our radar and we will
-> > > (re)consider it once it goes out of staging. But we will most likely
-> > > stay on squashfs until this happens.
-> >
-> > EROFS is already out of staging in mainline right now,
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/erofs/
-> >
-> > If you agree on that, I'd suggest you try it right now
-> > since it's widely (200+ million devices on the market)
-> > deployed for our Android smartphones and fully open source
-> > and open community. I think this is not a regrettable
-> > attempt and we can response any question.
-> >
-> > https://lore.kernel.org/r/20191024033259.GA2513@hsiangkao-HP-ZHAN-66-Pro-G1
-> >
-> > In my personal opinion, just for Android use cases,
-> > I think it is worth taking some time.
-> >
-> > All well said. The question, though, is if that is a reason to reject
-> squashfs performance improvements. I argue that it is not. The decision to
-> switch to erofs or not is completely orthogonal to squashfs performance
-> improvements, and one doesn't preclude the other.
+On 19-10-23 09:17:45, Pawel Laszczak wrote:
+> Hi,
+>=20
+> Reviewed-by: Pawel Laszczak <pawell@cadence.com>
 
-Note that I have no objection on this patch. And I'm happy to see any
-improvements for other compression filesystems. And we are keeping on
-boosting up our overall performance as well but I think I can give
-some personal suggestions on given specific scenario since we already
-did other solutions before. Just FYI to you.
+Hi Roger & Pawel,
+
+Assume gadget function has already enabled, if you switch host mode
+to device mode, with your changes, where the device mode will be enabled
+again?
+
+Peter
+>=20
+> Regards,=20
+> Pawel,=20
+>=20
+> >The USB gadget core is supposed to manage pullups
+> >of the controller. Don't manage pullups from within
+> >the controller driver. Otherwise, function drivers
+> >are not able to keep the controller disconnected from
+> >the bus till they are ready. (e.g. g_webcam)
+> >
+> >Signed-off-by: Roger Quadros <rogerq@ti.com>
+> >---
+> >Hi Greg/Felipe,
+> >
+> >This can be used for -rc as it is a bug fix.
+> >
+> >cheers,
+> >-roger
+> >
+> > drivers/usb/cdns3/gadget.c | 4 ----
+> > 1 file changed, 4 deletions(-)
+> >
+> >diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+> >index 2ca280f4c054..714382d96055 100644
+> >--- a/drivers/usb/cdns3/gadget.c
+> >+++ b/drivers/usb/cdns3/gadget.c
+> >@@ -2324,8 +2324,6 @@ static void cdns3_gadget_config(struct cdns3_devic=
+e *priv_dev)
+> > 	writel(USB_CONF_CLK2OFFDS | USB_CONF_L1DS, &regs->usb_conf);
+> >
+> > 	cdns3_configure_dmult(priv_dev, NULL);
+> >-
+> >-	cdns3_gadget_pullup(&priv_dev->gadget, 1);
+> > }
+> >
+> > /**
+> >@@ -2708,8 +2706,6 @@ static int cdns3_gadget_suspend(struct cdns3 *cdns=
+, bool do_wakeup)
+> > 	/* disable interrupt for device */
+> > 	writel(0, &priv_dev->regs->usb_ien);
+> >
+> >-	cdns3_gadget_pullup(&priv_dev->gadget, 0);
+> >-
+> > 	return 0;
+> > }
+> >
+> >--
+> >Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> >Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>=20
+
+--=20
 
 Thanks,
-Gao Xiang
-
-> 
-> Guenter
+Peter Chen=
