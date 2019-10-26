@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1D84E5D74
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:37:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB757E5D63
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:37:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726392AbfJZNQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 09:16:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37402 "EHLO mail.kernel.org"
+        id S1726640AbfJZNQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 09:16:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726162AbfJZNQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 09:16:03 -0400
+        id S1726189AbfJZNQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 09:16:15 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A219B2070B;
-        Sat, 26 Oct 2019 13:16:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B6FF2070B;
+        Sat, 26 Oct 2019 13:16:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572095762;
-        bh=Qx5Mwi+ZX7G4BJNl1HaOQ3XGU6C1kwNJVmzWlWuN+8U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=IfUMJKm1yyQAa1pYDb3Wx4BbSGBd6FbBzVBiADMeLCWzSCLdeBHN0My1xoOf5kHHF
-         hHJ8Wami0zaHUfwPEMlhQd16mNTbSF2aCmkkvZBspU8Bm5hJmifS4k7pf4RgaxI6/4
-         YyLq4FvVfig89qBuzKZgfbjYHssInKXU+4DRxIgs=
+        s=default; t=1572095775;
+        bh=zsCfej5/3HVGt1LmhAowMZJP339FutiqxSS2vEQtYgc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=V8fTheVabvwYpwr8jzwaKIJkJTTg0ZyHDfUKlRTf3kMV0G4uV5m9aH1sQnKkza768
+         iSS8Tmq3ZIBs6aTjLvASzCziRaeLgEwDO33cnDdZ9Eg9wAJ3TNhaivMN/kMCFw7eJR
+         ZEQG6ebBSMVkR8rOIBz5pcy27no2lCF8WZa3cpN4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Shuah Khan <skhan@linuxfoundation.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 01/99] tools: bpf: Use !building_out_of_srctree to determine srctree
-Date:   Sat, 26 Oct 2019 09:14:22 -0400
-Message-Id: <20191026131600.2507-1-sashal@kernel.org>
+Cc:     Daniel Black <daniel@linux.ibm.com>, Tao Xu <tao3.xu@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 06/99] ACPI: HMAT: ACPI_HMAT_MEMORY_PD_VALID is deprecated since ACPI-6.3
+Date:   Sat, 26 Oct 2019 09:14:27 -0400
+Message-Id: <20191026131600.2507-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191026131600.2507-1-sashal@kernel.org>
+References: <20191026131600.2507-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -43,69 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shuah Khan <skhan@linuxfoundation.org>
+From: Daniel Black <daniel@linux.ibm.com>
 
-[ Upstream commit 55d554f5d14071f7c2c5dbd88d0a2eb695c97d16 ]
+[ Upstream commit 35b9ad840892d979dbeffe702dae95a3cbefa07b ]
 
-make TARGETS=bpf kselftest fails with:
+ACPI-6.3 corresponds to when HMAT revision was bumped
+from 1 to 2. In this version ACPI_HMAT_MEMORY_PD_VALID
+was deprecated and made reserved.
 
-Makefile:127: tools/build/Makefile.include: No such file or directory
+As such in revision 2+ we shouldn't be testing this flag.
 
-When the bpf tool make is invoked from tools Makefile, srctree is
-cleared and the current logic check for srctree equals to empty
-string to determine srctree location from CURDIR.
+This is as per ACPI-6.3, 5.2.27.3, Table 5-145
+"Memory Proximity Domain Attributes Structure"
+for Flags.
 
-When the build in invoked from selftests/bpf Makefile, the srctree
-is set to "." and the same logic used for srctree equals to empty is
-needed to determine srctree.
-
-Check building_out_of_srctree undefined as the condition for both
-cases to fix "make TARGETS=bpf kselftest" build failure.
-
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Song Liu <songliubraving@fb.com>
-Link: https://lore.kernel.org/bpf/20190927011344.4695-1-skhan@linuxfoundation.org
+Signed-off-by: Daniel Black <daniel@linux.ibm.com>
+Reviewed-by: Tao Xu <tao3.xu@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/bpf/Makefile     | 6 +++++-
- tools/lib/bpf/Makefile | 6 +++++-
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ drivers/acpi/hmat/hmat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/bpf/Makefile b/tools/bpf/Makefile
-index 53b60ad452f5d..93a84965345dc 100644
---- a/tools/bpf/Makefile
-+++ b/tools/bpf/Makefile
-@@ -12,7 +12,11 @@ INSTALL ?= install
- CFLAGS += -Wall -O2
- CFLAGS += -D__EXPORTED_HEADERS__ -I$(srctree)/include/uapi -I$(srctree)/include
+diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
+index 96b7d39a97c65..e938e34673d98 100644
+--- a/drivers/acpi/hmat/hmat.c
++++ b/drivers/acpi/hmat/hmat.c
+@@ -382,7 +382,7 @@ static int __init hmat_parse_proximity_domain(union acpi_subtable_headers *heade
+ 		pr_info("HMAT: Memory Flags:%04x Processor Domain:%d Memory Domain:%d\n",
+ 			p->flags, p->processor_PD, p->memory_PD);
  
--ifeq ($(srctree),)
-+# This will work when bpf is built in tools env. where srctree
-+# isn't set and when invoked from selftests build, where srctree
-+# is set to ".". building_out_of_srctree is undefined for in srctree
-+# builds
-+ifndef building_out_of_srctree
- srctree := $(patsubst %/,%,$(dir $(CURDIR)))
- srctree := $(patsubst %/,%,$(dir $(srctree)))
- endif
-diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
-index 9312066a1ae38..f23e5e285541d 100644
---- a/tools/lib/bpf/Makefile
-+++ b/tools/lib/bpf/Makefile
-@@ -7,7 +7,11 @@ BPF_EXTRAVERSION = 4
- 
- MAKEFLAGS += --no-print-directory
- 
--ifeq ($(srctree),)
-+# This will work when bpf is built in tools env. where srctree
-+# isn't set and when invoked from selftests build, where srctree
-+# is a ".". building_out_of_srctree is undefined for in srctree
-+# builds
-+ifndef building_out_of_srctree
- srctree := $(patsubst %/,%,$(dir $(CURDIR)))
- srctree := $(patsubst %/,%,$(dir $(srctree)))
- srctree := $(patsubst %/,%,$(dir $(srctree)))
+-	if (p->flags & ACPI_HMAT_MEMORY_PD_VALID) {
++	if (p->flags & ACPI_HMAT_MEMORY_PD_VALID && hmat_revision == 1) {
+ 		target = find_mem_target(p->memory_PD);
+ 		if (!target) {
+ 			pr_debug("HMAT: Memory Domain missing from SRAT\n");
 -- 
 2.20.1
 
