@@ -2,204 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 850A0E5A6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 14:12:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C698FE5A75
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 14:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbfJZMME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 08:12:04 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54916 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbfJZML7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 08:11:59 -0400
-Received: by mail-wm1-f68.google.com with SMTP id g7so4837781wmk.4
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2019 05:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NbVw9OZf55Mog4i/sEkAhwwn11xFr8zvKreYfJn7iLs=;
-        b=mefPGp8zoB4sngplTq72i2EyVeL3DuklHM38e/Gi/ILN/GE4zliseR0FQmxSwEAclg
-         xl68zhkGpfRrgYApPYFOX87LLWcPEpluAoTy1FpfI+5giIXcGLmazFqwXGa1HuUG145B
-         P4wMWoE4O3Rn1R+w539NPThKr9OpPuTGGhiw/Q82iAtgLhpwdG9uwomYhTno6gIDmWNm
-         awV8QzbheoPCvCQAPot+MOwWKtApQovy6RbgpPUocfimlomnl9gi6n1xMI+wk482ECjC
-         HtJzoTvtEwLZWkmim478iXTu55u91tNjhjApbTYkO+QDj945TPJBxk9J6/DKnzZ6dMVP
-         UqcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NbVw9OZf55Mog4i/sEkAhwwn11xFr8zvKreYfJn7iLs=;
-        b=QwQRTEC4DRvyFvZwubD238caO5+3P1MDyTEnCKO/ktPzPVirdOoVNbakNMk3Qxl0kF
-         m9wR/xDb0tuxTfsuRsIZbk8asbf8eMgDcmuelb1mIgrk7loSMk5AR/7s2po48yLc09Pk
-         poIQSXJGuAG/IBtFNqcgzQ/g/qMYaSlvV1yBnIiTdNByX27wpfPvIFldy9YSwKB659NH
-         /MZ/VSpSwuM9dXqfjA8+6fBEiJsmU5owNF1Qdilop3EW1GFoLpHZzPCHPrFhaCoJfBYh
-         wpjuc7UWyqDhgDyuX+D4Qj6syjLimQPdwWABaFJp6T+av+5L/tweGrPIKWbsA/VrlENS
-         h2fg==
-X-Gm-Message-State: APjAAAX2po81S7s65FPNaX62JPdf6R972BgrZIM36hhD1SbfLJb4yoQn
-        nRFJIOM8OUmQEYpTY58GWjs=
-X-Google-Smtp-Source: APXvYqwl5eWg+VITDyN2ZJlOeMGJRckdHk7Bpa7YTjumiFu79UNA7QXRDnZdCHTT5OiXG4jd7Son7g==
-X-Received: by 2002:a1c:a551:: with SMTP id o78mr7224184wme.4.1572091917410;
-        Sat, 26 Oct 2019 05:11:57 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
-        by smtp.gmail.com with ESMTPSA id v8sm5789906wra.79.2019.10.26.05.11.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2019 05:11:56 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 7/7] staging: rtl8188eu: reduce indentation level in rtw_alloc_stainfo
-Date:   Sat, 26 Oct 2019 14:11:35 +0200
-Message-Id: <20191026121135.181897-7-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191026121135.181897-1-straube.linux@gmail.com>
-References: <20191026121135.181897-1-straube.linux@gmail.com>
+        id S1726393AbfJZM0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 08:26:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32824 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726257AbfJZM0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 08:26:49 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D368720578;
+        Sat, 26 Oct 2019 12:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572092808;
+        bh=Tl/yYfCwTv1OF2qFO6c8Wx02cTYUgWo+y/EvJ8uVR2Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pRBaZ7RxMMILSI/1tSzGhKjYreclSed8AELjJoTAcydP7ULUXQBxJ4a3GdbLwRG9G
+         zOJpD/YYw6T/R1dAypSwHOAz48Mx8sk1am3T5s6LRC/oOdbgmax92KSuNx1rL/Zh23
+         ZLToZMGahADs5BuA8ruf9j6b9ocddioNH2ondgms=
+Date:   Sat, 26 Oct 2019 20:26:32 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Gilles DOFFE <gilles.doffe@savoirfairelinux.com>
+Cc:     devicetree@vger.kernel.org, jerome.oufella@savoirfairelinux.com,
+        rennes@savoirfairelinux.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] ARM: dts: imx6qdl-rex: add gpio expander pca9535
+Message-ID: <20191026122630.GM14401@dragon>
+References: <20191016092255.19223-1-gilles.doffe@savoirfairelinux.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016092255.19223-1-gilles.doffe@savoirfairelinux.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove else-arm from if-else statement. Move the else code out of the
-if-else and skip it by adding goto exit to the if block. The exit label
-was directly after the else-arm, so there is no change in behaviour.
-Reduces indentation level and clears a line over 80 characters
-checkpatch warning.
+On Wed, Oct 16, 2019 at 11:22:55AM +0200, Gilles DOFFE wrote:
+> The pca9535 gpio expander is present on the Rex baseboard, but missing
+> from the dtsi.
+> The pca9535 is on i2c2 bus which is common to the three SOM
+> variants (Basic/Pro/Ultra), thus it is activated by default.
+> 
+> Add also the new gpio controller and the associated interrupt line
+> MX6QDL_PAD_NANDF_CS3__GPIO6_IO16.
+> 
+> Signed-off-by: Gilles DOFFE <gilles.doffe@savoirfairelinux.com>
+> ---
+>  arch/arm/boot/dts/imx6qdl-rex.dtsi | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/imx6qdl-rex.dtsi b/arch/arm/boot/dts/imx6qdl-rex.dtsi
+> index 97f1659144ea..305b57fadc60 100644
+> --- a/arch/arm/boot/dts/imx6qdl-rex.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-rex.dtsi
+> @@ -132,6 +132,19 @@
+>  	pinctrl-0 = <&pinctrl_i2c2>;
+>  	status = "okay";
+>  
+> +	pca9535: gpio-expander@27 {
+> +		compatible = "nxp,pca9535";
+> +		reg = <0x27>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_pca9535>;
+> +		interrupt-parent = <&gpio6>;
+> +		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +	};
+> +
+>  	eeprom@57 {
+>  		compatible = "atmel,24c02";
+>  		reg = <0x57>;
+> @@ -237,6 +250,12 @@
+>  			>;
+>  		};
+>  
+> +		pinctrl_pca9535: pca9535 {
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/core/rtw_sta_mgt.c | 101 ++++++++++---------
- 1 file changed, 51 insertions(+), 50 deletions(-)
+For sake of consistency, the node name should be prefixed with 'grp',
+which tells this is a pinctrl group node.
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
-index 43925b1f43ef..776931b8bf72 100644
---- a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
-@@ -181,70 +181,71 @@ struct sta_info *rtw_alloc_stainfo(struct sta_priv *pstapriv, u8 *hwaddr)
- 					struct sta_info, list);
- 	if (!psta) {
- 		spin_unlock_bh(&pfree_sta_queue->lock);
--	} else {
--		list_del_init(&psta->list);
--		spin_unlock_bh(&pfree_sta_queue->lock);
--		_rtw_init_stainfo(psta);
--		memcpy(psta->hwaddr, hwaddr, ETH_ALEN);
--		index = wifi_mac_hash(hwaddr);
--		RT_TRACE(_module_rtl871x_sta_mgt_c_, _drv_info_,
--			 ("%s: index=%x", __func__, index));
--		if (index >= NUM_STA) {
--			RT_TRACE(_module_rtl871x_sta_mgt_c_, _drv_err_,
--				 ("ERROR => %s: index >= NUM_STA", __func__));
--			psta = NULL;
--			goto exit;
--		}
--		phash_list = &pstapriv->sta_hash[index];
--
--		spin_lock_bh(&pstapriv->sta_hash_lock);
--		list_add_tail(&psta->hash_list, phash_list);
--		pstapriv->asoc_sta_count++;
--		spin_unlock_bh(&pstapriv->sta_hash_lock);
-+		goto exit;
-+	}
- 
--		/* Commented by Albert 2009/08/13
--		 * For the SMC router, the sequence number of first packet of
--		 * WPS handshake will be 0. In this case, this packet will be
--		 * dropped by recv_decache function if we use the 0x00 as the
--		 * default value for tid_rxseq variable. So, we initialize the
--		 * tid_rxseq variable as the 0xffff.
--		 */
-+	list_del_init(&psta->list);
-+	spin_unlock_bh(&pfree_sta_queue->lock);
-+	_rtw_init_stainfo(psta);
-+	memcpy(psta->hwaddr, hwaddr, ETH_ALEN);
-+	index = wifi_mac_hash(hwaddr);
-+	RT_TRACE(_module_rtl871x_sta_mgt_c_, _drv_info_,
-+		 ("%s: index=%x", __func__, index));
-+	if (index >= NUM_STA) {
-+		RT_TRACE(_module_rtl871x_sta_mgt_c_, _drv_err_,
-+			 ("ERROR => %s: index >= NUM_STA", __func__));
-+		psta = NULL;
-+		goto exit;
-+	}
-+	phash_list = &pstapriv->sta_hash[index];
- 
--		for (i = 0; i < 16; i++)
--			memcpy(&psta->sta_recvpriv.rxcache.tid_rxseq[i],
--			       &wRxSeqInitialValue, 2);
-+	spin_lock_bh(&pstapriv->sta_hash_lock);
-+	list_add_tail(&psta->hash_list, phash_list);
-+	pstapriv->asoc_sta_count++;
-+	spin_unlock_bh(&pstapriv->sta_hash_lock);
- 
--		RT_TRACE(_module_rtl871x_sta_mgt_c_, _drv_info_,
--			 ("alloc number_%d stainfo  with hwaddr = %pM\n",
--			 pstapriv->asoc_sta_count, hwaddr));
-+	/* Commented by Albert 2009/08/13
-+	 * For the SMC router, the sequence number of first packet of
-+	 * WPS handshake will be 0. In this case, this packet will be
-+	 * dropped by recv_decache function if we use the 0x00 as the
-+	 * default value for tid_rxseq variable. So, we initialize the
-+	 * tid_rxseq variable as the 0xffff.
-+	 */
- 
--		init_addba_retry_timer(pstapriv->padapter, psta);
-+	for (i = 0; i < 16; i++)
-+		memcpy(&psta->sta_recvpriv.rxcache.tid_rxseq[i],
-+		       &wRxSeqInitialValue, 2);
- 
--		/* for A-MPDU Rx reordering buffer control */
--		for (i = 0; i < 16; i++) {
--			preorder_ctrl = &psta->recvreorder_ctrl[i];
-+	RT_TRACE(_module_rtl871x_sta_mgt_c_, _drv_info_,
-+		 ("alloc number_%d stainfo  with hwaddr = %pM\n",
-+		  pstapriv->asoc_sta_count, hwaddr));
- 
--			preorder_ctrl->padapter = pstapriv->padapter;
-+	init_addba_retry_timer(pstapriv->padapter, psta);
- 
--			preorder_ctrl->enable = false;
-+	/* for A-MPDU Rx reordering buffer control */
-+	for (i = 0; i < 16; i++) {
-+		preorder_ctrl = &psta->recvreorder_ctrl[i];
- 
--			preorder_ctrl->indicate_seq = 0xffff;
--			preorder_ctrl->wend_b = 0xffff;
--			preorder_ctrl->wsize_b = 64;/* 64; */
-+		preorder_ctrl->padapter = pstapriv->padapter;
- 
--			_rtw_init_queue(&preorder_ctrl->pending_recvframe_queue);
-+		preorder_ctrl->enable = false;
- 
--			rtw_init_recv_timer(preorder_ctrl);
--		}
-+		preorder_ctrl->indicate_seq = 0xffff;
-+		preorder_ctrl->wend_b = 0xffff;
-+		preorder_ctrl->wsize_b = 64;/* 64; */
- 
--		/* init for DM */
--		psta->rssi_stat.UndecoratedSmoothedPWDB = -1;
--		psta->rssi_stat.UndecoratedSmoothedCCK = -1;
-+		_rtw_init_queue(&preorder_ctrl->pending_recvframe_queue);
- 
--		/* init for the sequence number of received management frame */
--		psta->RxMgmtFrameSeqNum = 0xffff;
-+		rtw_init_recv_timer(preorder_ctrl);
- 	}
- 
-+	/* init for DM */
-+	psta->rssi_stat.UndecoratedSmoothedPWDB = -1;
-+	psta->rssi_stat.UndecoratedSmoothedCCK = -1;
-+
-+	/* init for the sequence number of received management frame */
-+	psta->RxMgmtFrameSeqNum = 0xffff;
-+
- exit:
- 	return psta;
- }
--- 
-2.23.0
+I fixed it up and applied the patch.
 
+Shawn
+
+> +			fsl,pins = <
+> +				MX6QDL_PAD_NANDF_CS3__GPIO6_IO16	0x17059
+> +		   >;
+> +		};
+> +
+>  		pinctrl_uart1: uart1grp {
+>  			fsl,pins = <
+>  				MX6QDL_PAD_CSI0_DAT10__UART1_TX_DATA	0x1b0b1
+> -- 
+> 2.20.1
+> 
