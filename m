@@ -2,47 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BBB3E580E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 04:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12155E5816
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 04:30:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbfJZCZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 25 Oct 2019 22:25:08 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:39786 "EHLO
+        id S1726137AbfJZCap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 25 Oct 2019 22:30:45 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:39842 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfJZCZH (ORCPT
+        with ESMTP id S1725955AbfJZCap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Oct 2019 22:25:07 -0400
+        Fri, 25 Oct 2019 22:30:45 -0400
 Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 175FA14B7272C;
-        Fri, 25 Oct 2019 19:25:07 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 19:25:06 -0700 (PDT)
-Message-Id: <20191025.192506.1304179203606625698.davem@davemloft.net>
-To:     grygorii.strashko@ti.com
-Cc:     netdev@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
-        hkallweit1@gmail.com, nsekhar@ti.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] net: phy: dp83867: enable robust auto-mdix
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 2123614B7A0B1;
+        Fri, 25 Oct 2019 19:30:44 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 19:30:42 -0700 (PDT)
+Message-Id: <20191025.193042.2056491201491217086.davem@davemloft.net>
+To:     nishadkamdar@gmail.com
+Cc:     ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, joe@perches.com,
+        u.kleine-koenig@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: Use the correct style for SPDX License
+ Identifier
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191023144846.1381-1-grygorii.strashko@ti.com>
-References: <20191023144846.1381-1-grygorii.strashko@ti.com>
+In-Reply-To: <20191023152634.GA3749@nishad>
+References: <20191023152634.GA3749@nishad>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 25 Oct 2019 19:25:07 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 25 Oct 2019 19:30:44 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Date: Wed, 23 Oct 2019 17:48:44 +0300
+From: Nishad Kamdar <nishadkamdar@gmail.com>
+Date: Wed, 23 Oct 2019 20:56:38 +0530
 
-> Patch 1 - improves link detection when dp83867 PHY is configured in manual mode
-> by enabling CFG3[9] Robust Auto-MDIX option.
+> This patch corrects the SPDX License Identifier style in
+> header file related to ethernet driver for Cortina Gemini
+> devices. For C header files Documentation/process/license-rules.rst
+> mandates C-like comments (opposed to C source files where
+> C++ style should be used)
 > 
-> Patch 2 - is minor optimization.
+> Changes made by using a script provided by Joe Perches here:
+> https://lkml.org/lkml/2019/2/7/46.
+> 
+> Suggested-by: Joe Perches <joe@perches.com>
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 
-Series applied to net-next.
+Applied, thanks.
