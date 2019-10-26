@@ -2,145 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2E8FE6015
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 02:13:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85564E6022
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 02:50:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbfJ0ANg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 20:13:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:27522 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726491AbfJ0ANf (ORCPT
+        id S1726622AbfJ0Atl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 20:49:41 -0400
+Received: from smg.telkomsa.net ([105.187.200.242]:54474 "EHLO
+        smg.telkomsa.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726474AbfJ0Atl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 20:13:35 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9R06vrj004951
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2019 20:13:34 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vvf2txa6m-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2019 20:13:33 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 27 Oct 2019 01:13:32 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 27 Oct 2019 01:13:27 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9R0DPid18350156
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 27 Oct 2019 00:13:25 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A612E4C04A;
-        Sun, 27 Oct 2019 00:13:25 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 720E34C040;
-        Sun, 27 Oct 2019 00:13:23 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.187.251])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 27 Oct 2019 00:13:23 +0000 (GMT)
-Subject: Re: [PATCH v9 5/8] ima: make process_buffer_measurement() generic
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Eric Ricther <erichte@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>
-Date:   Sat, 26 Oct 2019 20:13:22 -0400
-In-Reply-To: <8a97301a-0e25-2718-bd81-d778cb58e1d3@linux.microsoft.com>
-References: <20191024034717.70552-1-nayna@linux.ibm.com>
-         <20191024034717.70552-6-nayna@linux.ibm.com>
-         <1ae56786-4d5c-ba8e-e30c-ced1e15ccb9c@linux.microsoft.com>
-         <24cf44d5-a1f0-f59e-9884-c026b1ee2d3b@linux.vnet.ibm.com>
-         <8a97301a-0e25-2718-bd81-d778cb58e1d3@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19102700-0020-0000-0000-0000037EF37D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19102700-0021-0000-0000-000021D54469
-Message-Id: <1572135202.4532.88.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-26_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910270000
+        Sat, 26 Oct 2019 20:49:41 -0400
+X-Greylist: delayed 330 seconds by postgrey-1.27 at vger.kernel.org; Sat, 26 Oct 2019 20:49:38 EDT
+X-AuditID: 69bbcaf4-471ff70000000aa6-de-5db4e84d1dbc
+Received: from sargas.telkomsa.net (sargas.telkomsa.net [196.25.211.69])
+        by smg.telkomsa.net (Telkom Internet Messaging Gateway) with SMTP id CF.38.02726.D48E4BD5; Sun, 27 Oct 2019 02:44:07 +0200 (CAT)
+Received: from mail8.telkomsa.net (unknown [192.168.16.221])
+        by sargas.telkomsa.net (Postfix) with ESMTP id C7B422A0877;
+        Sun, 27 Oct 2019 01:27:49 +0200 (SAST)
+Date:   Sun, 27 Oct 2019 01:27:49 +0200 (SAST)
+From:   "Mrs. Ja-ANN (UNIDPF SECRETARIAT) " <online553303@telkomsa.net>
+Reply-To: Office_IDPFDC11118Secretariat@usa.com
+To:     idpfoffice@mail2usa.com
+Message-ID: <233308245.47111180.1572132469675.JavaMail.root@telkomsa.net>
+In-Reply-To: <143999948.46849349.1572099017705.JavaMail.root@telkomsa.net>
+Subject: Re: YOUR PROJECT SUBSIDY NOTICE REF-:|
+ WBDS/UNIDPF/709/SGT43658/2019
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.146.44.54]
+X-Mailer: Zimbra 7.2.4_GA_2903 (ZimbraWebClient - FF3.0 (Win)/7.2.4_GA_2900)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURT1MdN22jA6VpRraVyqwQVZNJgQg1titSIJRqMYDegoI622hXSq
+        gltQAQMxiohGEcEIbq2KFoKoQWNxrZKwNC4QAa2AG6IUhYIUZ2hQfk7Oe+fdc+87uQQmrRbK
+        CI3eyBj0tFYhlOCPxtcpA6M/lcaEPHwpD3OYborCDtzwCau7mycMy7phwxfhKqdlgurYnR+4
+        6nZDGlqJrZeExzFazU7GELxgk0RdUd2JJb6WJF0prRSloAEiE4kJoELhSVuGIBNJCCn1AsGv
+        a0dwz6EQQZnLgvOvcGoWfG7JFfJcSCmhufHWIJdSwXCoJMOL5z6UH5w8VibgOUkth7M1pRjP
+        xVQE/MrqE/F8DBUF2S89niQ1Gp6f+TjIMWoa/MmvxTx8Itxuz8M8000CV+FP5OGRkFbfhLLQ
+        qNxh5bnDynOHlZ9HmAkp2GQdw7J0PG1kdtHJgSGhQVv0xiAjo92eoGPpID1jtCAuWs09W1c5
+        cuSorYgikMKbXFNVGiMV0Du5eisaT3gpxpI9qdzVyM0JcclqmlVvNOzQMqwVAYEpfMiAZ5YY
+        KRlHJ+9mDAlDkh+BK3zJ9HZOovgBtjNMImMYUuUEoQDS3MqZjjYw8UzSVo3W+F/2IsS8uTdn
+        PrmNe0OyibSO1cR7dBuKJj4/yr+AEZ2D6DAVcej8xGP/ID79yuPBHzy+7qi4iElxfYKekfmS
+        rQGcHcXbqXfo/3UcWrAv6D7iEhhDnua7enP796/pnCJOoaqEkHFtP1gvpQrAcrVWDM32BxKw
+        fjhBgr3lnBS+NfRLwdVUNg6yi52+YC1/Igf3aZccCnoP+8OVbgcHt7r9obahPBDcXZlzwFlZ
+        sxA6Ur4vArujUQnFZ1xK6MuxL4Xm7BwVFBfcU8HZF/blkHrZHAE9nb8joM40EAlF3bYocFYN
+        rIIiU8tqeG++vha+9dav/cLF5sXFNgov4WMz0v9/IEtBYPYP1WW27l52NMqPGLGvXdt0ASz1
+        4nP9SQ/uH59aC7OFfeb1JQXvCoNF8yEvKPLwn1cCy0Xzxz3Bs3SP61ryp6dOS3fL3dVjYxu7
+        ykXqDTp3yBrb3JjwvbI3M2rerdj2tmLeqoCOwOIRbetOvZ+yRb54iSw2uyzaJ7y1cm6sXTlS
+        gbNqevZMzMDSfwFJ0ybg4wMAAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-10-25 at 10:32 -0700, Lakshmi Ramasubramanian wrote:
-> 
-> On 10/25/2019 10:24 AM, Nayna Jain wrote:
-> > 
-> > On 10/24/19 10:20 AM, Lakshmi Ramasubramanian wrote:
-> >> On 10/23/19 8:47 PM, Nayna Jain wrote:
-> >>
-> >> Hi Nayna,
-> >>
-> >>> +void process_buffer_measurement(const void *buf, int size,
-> >>> +                const char *eventname, enum ima_hooks func,
-> >>> +                int pcr)
-> >>>   {
-> >>>       int ret = 0;
-> >>>       struct ima_template_entry *entry = NULL;
-> >>
-> >>> +    if (func) {
+ 
+Sir/Madam,
+Attn:| The Manager / Director, CEO
+Your Subsidy Ref:| WBDS/UNIDPF/709/SGT43658/2019
 
-Let's comment this line.  Perhaps something like /*Unnecessary for
-auxiliary buffer measurements */
-> >>> +        security_task_getsecid(current, &secid);
-> >>> +        action = ima_get_action(NULL, current_cred(), secid, 0, func,
-> >>> +                    &pcr, &template);
-> >>> +        if (!(action & IMA_MEASURE))
-> >>> +            return;
-> >>> +    }
-> >>
-> >> In your change set process_buffer_measurement is called with NONE for 
-> >> the parameter func. So ima_get_action (the above if block) will not be 
-> >> executed.
-> >>
-> >> Wouldn't it better to update ima_get_action (and related functions) to 
-> >> handle the ima policy (func param)?
-> > 
-> > 
-> > The idea is to use ima-buf template for the auxiliary measurement 
-> > record. The auxiliary measurement record is an additional record to the 
-> > one already created based on the existing policy. When func is passed as 
-> > NONE, it represents it is an additional record. I am not sure what you 
-> > mean by updating ima_get_action, it is already handling the ima policy.
-> >
-> 
-> I was referring to using "func" in process_buffer_measurement to 
-> determine ima action. In my opinion, process_buffer_measurement should 
-> be generic.
-> 
-> ima_get_action() should instead determine the required ima action, 
-> template, pcr, etc. based on "func" passed to it.
+REF STATUS:| HEREWITH, THROUGH YOUR NAMES AND/OR UNDER YOUR COMPANY'S DATA-PROFILE IN YOUR COUNTRY;
+OUR DEPARTMENT HAS REGISTERED YOUR COMPANY'S DETAILS FOR YOU TO RECEIVE THE AMOUNT OF US$2,750,000.00 MILLION
+FROM THE (UNIDPF) INDUSTRIAL DEVELOPMENT PROJECT SUBSIDY. THIS IS A SPONSORED PROGRAM FROM THE WORLD BANK IN
+YOUR COUNTRY AND AROUND TO WORLD, FOR SMALL BUSINESSES AND INFRASTRUCTURES DEVELOPMENT PROJECT FINANCE 
+IN YOUR COUNTRY AS APPROVED, BETWEEN 2015 - 2030. ENCLOSED IS YOUR (((US$2,750,000.00 MILLION COMPANY'S 
+SUBSIDY ALLOCATION VOUCHER))) FROM OUR DEPARTMENT HERE IN NEW YORK, U.S.A.
+Kindly Re-confirm Your Detail Particulars As Follows:-
+* YOUR NAMES IN FULL:-
+* HOME TEL & MOBILE PHONE:-
+* FULL RESIDENTIAL ADDRESS:- (WITH SUBURB, CITY or STATE AND COUNTRY)
 
-Nayna's original patch moved ima_get_action() into the caller, but
-that resulted in code duplication in each of the callers.  This
-solution differentiates between the initial, which requires calling
-ima_get_action(), and auxiliary buffer measurement records.
-
-Mimi 
-
+THANKS IN ANTICIPATION OF YOUR MOST CORDIALLY REPLY
+THROUGH OUR BELOW OFFICE EMAIL.
+/
+--------------------------------------------------
+MRS. JAYNE-ANN HALTIWANGER | {CFO} CHIEF FINANCIAL OFFICE
+ROOM DC1-1118 | EMAIL: Office_UNIDPFSecretariat@mail2Usa.com
+ Tell 001(0212)963 7904 | EMAIL: Jayne-ann.idpfDC1-1118Secretariat@usa.com
+UNIDPF NEW YORK OFFICE l NO. 1 UNITED NATIONAL PLAZA, NY 10017, U.S.A
+*** This PDF File Attachment Is Free From Virus & Not Harmful ***
