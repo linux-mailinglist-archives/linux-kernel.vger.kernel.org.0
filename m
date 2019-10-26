@@ -2,68 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDE4AE58CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 07:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 422F2E58D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 08:15:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbfJZFpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 01:45:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50810 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfJZFpy (ORCPT
+        id S1726106AbfJZGPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 02:15:11 -0400
+Received: from [222.92.45.126] ([222.92.45.126]:54129 "EHLO
+        mail.chinasinye.com" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfJZGPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 01:45:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=+5wJzXbxCtQrwDXJERufHrvtviLSbDdpQ5zkUXtHDM8=; b=jvYPutk33nLzO4xA4Vlidwi/f5
-        UAGY171Z+5TWnFxLCnOY5/kamSI5NYbuCWKB+fxvnX8Wky7h9PNRx30ftSb/2St3cZezWNq+gTfxi
-        EZv2U3SHmkI3ci4WyYcYIpV5BTH5OSegZBTYr/8RD6HEFG1FCNcpxRGMp44JATFjpTi0RW8WtTYc/
-        /Fvc/+4pSutIo7Ba/lbk4bndvsQYg2vviwjIaeGCP7TLncb8tWFUsI9s/GttnLpPdlHd9AR3Lk1E6
-        SEOFYDz+x9/TCcVxPE54ufSPozof7kRkft+WHziQ7XhBMHFJBHJhybDyBghNd3AxRM5Z0u+VspdhI
-        tW6aPHgQ==;
-Received: from [2001:4bb8:184:47ee:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iOEtd-0007iR-Bq; Sat, 26 Oct 2019 05:45:53 +0000
-Date:   Sat, 26 Oct 2019 07:45:51 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] dma-mapping fix for 5.4-rc
-Message-ID: <20191026054551.GA5340@infradead.org>
+        Sat, 26 Oct 2019 02:15:11 -0400
+X-Greylist: delayed 6308 seconds by postgrey-1.27 at vger.kernel.org; Sat, 26 Oct 2019 02:15:04 EDT
+Authenticated-By: backup
+X-SpamFilter-By: BOX Solutions SpamTrap 5.63 with qID x9Q4NLt7006490, This message is accepted by code: ctauth0007
+Received: from User (chui.telkom.co.ke[197.156.190.135](maybeforged))
+        (authenticated bits=0)
+        by mail.chinasinye.com (8.15.2/2.61/5.82) with ESMTPA id x9Q4NLt7006490;
+        Sat, 26 Oct 2019 12:23:27 +0800
+Message-Id: <201910260423.x9Q4NLt7006490@mail.chinasinye.com>
+X-Authentication-Warning: mail.chinasinye.com: Host chui.telkom.co.ke [197.156.190.135] (may be forged) claimed to be User
+Reply-To: <abey.wliton2019@gmail.com>
+From:   "Abey Wilton" <backup@chinasinye.com>
+Subject: REPLY.
+Date:   Sat, 26 Oct 2019 07:25:17 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain;
+        charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
+X-Antivirus: AVG (VPS 191023-2, 10/23/2019), Outbound message
+X-Antivirus-Status: Clean
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 0e2adab6cf285c41e825b6c74a3aa61324d1132c:
+Hi,
 
-  Merge tag 'arm64-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux (2019-10-17 17:00:14 -0700)
+My name is Abey Wilton, I head the Accounts Department of L. F. H. London, United Kingdom. I am also in charge of the Audit and Financial Records Unit of the above establishment.
 
-are available in the Git repository at:
+I urgently need someone who can work with me to carry out a proposal that will be of financial benefit to the both of us and I believe you are well placed to partner with me. I assure you that everything will work out well with me on this other side doing my own part of it.
 
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-5.4-2
 
-for you to fetch changes up to 9c24eaf81cc44d4bb38081c99eafd72ed85cf7f3:
+Kindly write back to me if you are interested and want more details on how we can proceed.
 
-  iommu/vt-d: Return the correct dma mask when we are bypassing the IOMMU (2019-10-18 17:19:20 +0200)
+Abey Wilton
 
-----------------------------------------------------------------
-dma-mapping fix for 5.4
+L. F. H. London, UK.
 
- - fix a regression in the intel-iommu get_required_mask conversion
-   (Arvind Sankar)
+-- 
+This email has been checked for viruses by AVG.
+https://www.avg.com
 
-----------------------------------------------------------------
-Arvind Sankar (1):
-      iommu/vt-d: Return the correct dma mask when we are bypassing the IOMMU
-
- drivers/iommu/intel-iommu.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
