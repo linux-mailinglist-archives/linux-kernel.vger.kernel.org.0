@@ -2,112 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB789E5B82
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:23:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2A27E5C0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:28:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729977AbfJZNXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 09:23:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45472 "EHLO mail.kernel.org"
+        id S1726712AbfJZN1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 09:27:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729948AbfJZNXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 09:23:41 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726964AbfJZN1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 09:27:18 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C3B0214DA;
-        Sat, 26 Oct 2019 13:23:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 066BF20867;
+        Sat, 26 Oct 2019 13:27:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572096220;
-        bh=Yiod/UmnCXiAMYtJgu8iKS91LjH3bhMLvi22Vb4kw7k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pdav4dBGAgdY50ngutUYtIkn5cgZA9uBcF3RocrZ8m4fYRj2Fnnv4w9YfNBoklGsu
-         3OLs2fktfn6VA6//9CI6atIlrelF6r86SYc+AiC26W8qBSwmv/4K5UHqtv6Ko9lxb8
-         0XOtWTnuY0J8h3OCOErZwv0c4UnIxN7HLNDZpORM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ilya Leoshkevich <iii@linux.ibm.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Kieran Bingham <kbingham@kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 17/17] scripts/gdb: fix debugging modules on s390
-Date:   Sat, 26 Oct 2019 09:23:01 -0400
-Message-Id: <20191026132302.4622-17-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191026132302.4622-1-sashal@kernel.org>
-References: <20191026132302.4622-1-sashal@kernel.org>
+        s=default; t=1572096436;
+        bh=xWOCyH4LpE2A2ZS3DvRRqKw8BvJSQw43usiPJKaUMvA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yON2IQoQY/Zk1ndYAF3l8modBN8uczhSPyVFlAsxCQszQq7en5ohxiJRiCx27vIbx
+         Yz4Nv1Fh3Oe+nVr0tn7wux/YNYTR/d6tpU/WhhjLd4T9aKSue6CflWKxTAxYO56ztE
+         vUMOSltQ4ZhKbP3sestArcFAw40ddVAAff7iRj6k=
+Date:   Sat, 26 Oct 2019 21:26:59 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Stefan-gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>, Leo Li <leoyang.li@nxp.com>,
+        "jslaby@suse.com" <jslaby@suse.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v7 0/5] Add initial support for S32V234-EVB
+Message-ID: <20191026132657.GO14401@dragon>
+References: <1571230107-8493-1-git-send-email-stefan-gabriel.mirea@nxp.com>
+ <20191016131728.GA56859@kroah.com>
+ <VI1PR0402MB28630943CC0820644D26919CDF920@VI1PR0402MB2863.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR0402MB28630943CC0820644D26919CDF920@VI1PR0402MB2863.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilya Leoshkevich <iii@linux.ibm.com>
+On Wed, Oct 16, 2019 at 04:54:58PM +0000, Stefan-gabriel Mirea wrote:
+> On 10/16/2019 4:17 PM, Greg KH wrote:
+> > 
+> > I've taken patch 3 in my tty-next tree.  The others should probably go
+> > through an arm-specific tree, right?
+> 
+> Thank you very much, Greg! That was all for the tty tree.
+> 
+> I think that the other patches should go to the following trees:
+> * git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git:
+>     patches #1 and possibly #4 (as it covers arch/*/boot/dts/);
+> * git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git:
+>     patches #2, #5 and possibly #4 (as it covers arch/arm64/boot/dts/)
+> * git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
+>     possibly patch #4 (as it covers arch/arm64/boot/dts/freescale/fsl-*)
+> 
+> As a general question, would it be any chance to have the device tree
+> included in v5.4 (along with its compatible documentation and config
+> definition, without enablement)? That is, only the patches #1, #2 and
+> #4, because #3 is a cosmetic change and #5 enables the new configs by
+> default. That would complete a minimal support for S32V234-EVB, together
+> with the LINFlexD UART driver which was accepted.
+> 
+> From the development process documentation[1]: "An occasional exception
+> is made for drivers for previously-unsupported hardware; if they touch
+> no in-tree code, they cannot cause regressions and should be safe to add
+> at any time".
+> 
+> I know that it mentions only drivers and not device trees, but from the
+> history is seems that there have also been dts/dtsi files added outside
+> of merge windows, such as:
+> * arch/riscv/boot/dts/sifive/fu540-c000.dtsi;
+> * arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts;
+> * arch/arm64/boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts;
+> * arch/xtensa/boot/dts/lx200mx.dts;
+> * arch/xtensa/boot/dts/kc705.dts;
+> * arch/xtensa/boot/dts/xtfpga-flash-128m.dtsi;
+> * arch/arm/boot/dts/omap3-beagle-xm-ab.dts;
+> * arch/arm/boot/dts/at91-sama5d3_xplained.dts;
+> * arch/arm/boot/dts/am335x-boneblack.dts;
+> * arch/powerpc/boot/dts/charon.dts.
+> 
+> I am sorry if my question is inopportune, I am definitely not trying to
+> rush anyone. I just ask because this has been under review for some
+> time and all the feedback has been addressed. We would really appreciate
+> to have this SoC and board supported in the following LTS release if
+> there are no other issues.
 
-[ Upstream commit 585d730d41120926e3f79a601edad3930fa28366 ]
+Sorry, no.  It happens occasionally that non-fixing patches are merged
+during -rc time, mostly because they are supposed to land mainline
+during merge window, but missed the window for some reason, like
+subsystem maintainers did not send pull request to Linus in time.
+Also the patches are only taken in early -rc like rc2.
 
-Currently lx-symbols assumes that module text is always located at
-module->core_layout->base, but s390 uses the following layout:
-
-  +------+  <- module->core_layout->base
-  | GOT  |
-  +------+  <- module->core_layout->base + module->arch->plt_offset
-  | PLT  |
-  +------+  <- module->core_layout->base + module->arch->plt_offset +
-  | TEXT |     module->arch->plt_size
-  +------+
-
-Therefore, when trying to debug modules on s390, all the symbol
-addresses are skewed by plt_offset + plt_size.
-
-Fix by adding plt_offset + plt_size to module_addr in
-load_module_symbols().
-
-Link: http://lkml.kernel.org/r/20191017085917.81791-1-iii@linux.ibm.com
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-Reviewed-by: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Kieran Bingham <kbingham@kernel.org>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- scripts/gdb/linux/symbols.py | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
-index 627750cb420d0..54deae59869b5 100644
---- a/scripts/gdb/linux/symbols.py
-+++ b/scripts/gdb/linux/symbols.py
-@@ -15,7 +15,7 @@ import gdb
- import os
- import re
- 
--from linux import modules
-+from linux import modules, utils
- 
- 
- if hasattr(gdb, 'Breakpoint'):
-@@ -116,6 +116,12 @@ lx-symbols command."""
-             module_file = self._get_module_file(module_name)
- 
-         if module_file:
-+            if utils.is_target_arch('s390'):
-+                # Module text is preceded by PLT stubs on s390.
-+                module_arch = module['arch']
-+                plt_offset = int(module_arch['plt_offset'])
-+                plt_size = int(module_arch['plt_size'])
-+                module_addr = hex(int(module_addr, 0) + plt_offset + plt_size)
-             gdb.write("loading @{addr}: {filename}\n".format(
-                 addr=module_addr, filename=module_file))
-             cmdline = "add-symbol-file {filename} {addr}{sections}".format(
--- 
-2.20.1
-
+Shawn
