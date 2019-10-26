@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DD68E5C77
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A1F4E5C7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:31:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbfJZNTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 09:19:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41416 "EHLO mail.kernel.org"
+        id S1728382AbfJZNTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 09:19:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728251AbfJZNT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 09:19:26 -0400
+        id S1728281AbfJZNT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 09:19:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 085C721655;
-        Sat, 26 Oct 2019 13:19:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70CF021D7F;
+        Sat, 26 Oct 2019 13:19:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572095965;
-        bh=QpdTIUoHXnQ//a5FIK2xqAkhXc25r9Ym7Ua1sb3vdPw=;
+        s=default; t=1572095968;
+        bh=v4XNolINGmmhCLcQEr2RPFLn/beAvYiy47KnsHxry3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jrZdBXPDKboFd8M1wzPqeovYIBJC10STc1EFPn5Yifh3Vc5nzWXReoIixd2oyfyCW
-         1nV7jn1wu86HOhsHbNxf8OpwbLxi6V5Bc8nP5JQtyU1wFT4S0S4YQhHG49dj2u7KLN
-         Qf9ikqlemY+lUJCXgjEkLdM2KNXEc1HOt7qb4c8o=
+        b=T6pI3nkVF6kFftyvSeETPtfaC5ENGwNLV5kXAKSKpE7aHk1ueLeJ5NUkfZkpduu2l
+         XC77Oxwemhv/xRkKEJc4vTD+xTevom5nXSaUCa2twG/J5xATqP1a8GW7tncURg0VjB
+         iW6+C2oUXIYCXlVOqcZvq9iFyrSUQy/2GNyvdfRg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     David Howells <dhowells@redhat.com>,
-        syzbot+b9be979c55f2bea8ed30@syzkaller.appspotmail.com,
         Sasha Levin <sashal@kernel.org>, linux-afs@lists.infradead.org,
         netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 11/59] rxrpc: Fix trace-after-put looking at the put peer record
-Date:   Sat, 26 Oct 2019 09:18:22 -0400
-Message-Id: <20191026131910.3435-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 13/59] rxrpc: Fix trace-after-put looking at the put call record
+Date:   Sat, 26 Oct 2019 09:18:24 -0400
+Message-Id: <20191026131910.3435-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191026131910.3435-1-sashal@kernel.org>
 References: <20191026131910.3435-1-sashal@kernel.org>
@@ -46,109 +45,164 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 55f6c98e3674ce16038a1949c3f9ca5a9a99f289 ]
+[ Upstream commit 48c9e0ec7cbbb7370448f859ccc8e3b7eb69e755 ]
 
-rxrpc_put_peer() calls trace_rxrpc_peer() after it has done the decrement
-of the refcount - which looks at the debug_id in the peer record.  But
+rxrpc_put_call() calls trace_rxrpc_call() after it has done the decrement
+of the refcount - which looks at the debug_id in the call record.  But
 unless the refcount was reduced to zero, we no longer have the right to
 look in the record and, indeed, it may be deleted by some other thread.
 
 Fix this by getting the debug_id out before decrementing the refcount and
 then passing that into the tracepoint.
 
-This can cause the following symptoms:
-
-    BUG: KASAN: use-after-free in __rxrpc_put_peer net/rxrpc/peer_object.c:411
-    [inline]
-    BUG: KASAN: use-after-free in rxrpc_put_peer+0x685/0x6a0
-    net/rxrpc/peer_object.c:435
-    Read of size 8 at addr ffff888097ec0058 by task syz-executor823/24216
-
-Fixes: 1159d4b496f5 ("rxrpc: Add a tracepoint to track rxrpc_peer refcounting")
-Reported-by: syzbot+b9be979c55f2bea8ed30@syzkaller.appspotmail.com
+Fixes: e34d4234b0b7 ("rxrpc: Trace rxrpc_call usage")
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
  include/trace/events/rxrpc.h |  6 +++---
- net/rxrpc/peer_object.c      | 11 +++++++----
- 2 files changed, 10 insertions(+), 7 deletions(-)
+ net/rxrpc/call_accept.c      |  2 +-
+ net/rxrpc/call_object.c      | 28 +++++++++++++++++-----------
+ 3 files changed, 21 insertions(+), 15 deletions(-)
 
 diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index 0fe169c6afd84..a08916eb76152 100644
+index 0924119bcfa40..d496794a8f59d 100644
 --- a/include/trace/events/rxrpc.h
 +++ b/include/trace/events/rxrpc.h
-@@ -527,10 +527,10 @@ TRACE_EVENT(rxrpc_local,
+@@ -614,10 +614,10 @@ TRACE_EVENT(rxrpc_client,
  	    );
  
- TRACE_EVENT(rxrpc_peer,
--	    TP_PROTO(struct rxrpc_peer *peer, enum rxrpc_peer_trace op,
-+	    TP_PROTO(unsigned int peer_debug_id, enum rxrpc_peer_trace op,
- 		     int usage, const void *where),
+ TRACE_EVENT(rxrpc_call,
+-	    TP_PROTO(struct rxrpc_call *call, enum rxrpc_call_trace op,
++	    TP_PROTO(unsigned int call_debug_id, enum rxrpc_call_trace op,
+ 		     int usage, const void *where, const void *aux),
  
--	    TP_ARGS(peer, op, usage, where),
-+	    TP_ARGS(peer_debug_id, op, usage, where),
+-	    TP_ARGS(call, op, usage, where, aux),
++	    TP_ARGS(call_debug_id, op, usage, where, aux),
  
  	    TP_STRUCT__entry(
- 		    __field(unsigned int,	peer		)
-@@ -540,7 +540,7 @@ TRACE_EVENT(rxrpc_peer,
+ 		    __field(unsigned int,		call		)
+@@ -628,7 +628,7 @@ TRACE_EVENT(rxrpc_call,
  			     ),
  
  	    TP_fast_assign(
--		    __entry->peer = peer->debug_id;
-+		    __entry->peer = peer_debug_id;
+-		    __entry->call = call->debug_id;
++		    __entry->call = call_debug_id;
  		    __entry->op = op;
  		    __entry->usage = usage;
  		    __entry->where = where;
-diff --git a/net/rxrpc/peer_object.c b/net/rxrpc/peer_object.c
-index 71547e8673b99..72b4ad210426e 100644
---- a/net/rxrpc/peer_object.c
-+++ b/net/rxrpc/peer_object.c
-@@ -386,7 +386,7 @@ struct rxrpc_peer *rxrpc_get_peer(struct rxrpc_peer *peer)
- 	int n;
+diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
+index c5566bc4aaca3..47cf24630c708 100644
+--- a/net/rxrpc/call_accept.c
++++ b/net/rxrpc/call_accept.c
+@@ -101,7 +101,7 @@ static int rxrpc_service_prealloc_one(struct rxrpc_sock *rx,
+ 	call->flags |= (1 << RXRPC_CALL_IS_SERVICE);
+ 	call->state = RXRPC_CALL_SERVER_PREALLOC;
  
- 	n = atomic_inc_return(&peer->usage);
--	trace_rxrpc_peer(peer, rxrpc_peer_got, n, here);
-+	trace_rxrpc_peer(peer->debug_id, rxrpc_peer_got, n, here);
- 	return peer;
+-	trace_rxrpc_call(call, rxrpc_call_new_service,
++	trace_rxrpc_call(call->debug_id, rxrpc_call_new_service,
+ 			 atomic_read(&call->usage),
+ 			 here, (const void *)user_call_ID);
+ 
+diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
+index 215f4d98baa0f..f58e624490a97 100644
+--- a/net/rxrpc/call_object.c
++++ b/net/rxrpc/call_object.c
+@@ -242,7 +242,8 @@ struct rxrpc_call *rxrpc_new_client_call(struct rxrpc_sock *rx,
+ 	}
+ 
+ 	call->tx_total_len = p->tx_total_len;
+-	trace_rxrpc_call(call, rxrpc_call_new_client, atomic_read(&call->usage),
++	trace_rxrpc_call(call->debug_id, rxrpc_call_new_client,
++			 atomic_read(&call->usage),
+ 			 here, (const void *)p->user_call_ID);
+ 
+ 	/* We need to protect a partially set up call against the user as we
+@@ -292,8 +293,8 @@ struct rxrpc_call *rxrpc_new_client_call(struct rxrpc_sock *rx,
+ 	if (ret < 0)
+ 		goto error;
+ 
+-	trace_rxrpc_call(call, rxrpc_call_connected, atomic_read(&call->usage),
+-			 here, NULL);
++	trace_rxrpc_call(call->debug_id, rxrpc_call_connected,
++			 atomic_read(&call->usage), here, NULL);
+ 
+ 	rxrpc_start_call_timer(call);
+ 
+@@ -315,8 +316,8 @@ struct rxrpc_call *rxrpc_new_client_call(struct rxrpc_sock *rx,
+ error:
+ 	__rxrpc_set_call_completion(call, RXRPC_CALL_LOCAL_ERROR,
+ 				    RX_CALL_DEAD, ret);
+-	trace_rxrpc_call(call, rxrpc_call_error, atomic_read(&call->usage),
+-			 here, ERR_PTR(ret));
++	trace_rxrpc_call(call->debug_id, rxrpc_call_error,
++			 atomic_read(&call->usage), here, ERR_PTR(ret));
+ 	rxrpc_release_call(rx, call);
+ 	mutex_unlock(&call->user_mutex);
+ 	rxrpc_put_call(call, rxrpc_call_put);
+@@ -420,7 +421,8 @@ bool rxrpc_queue_call(struct rxrpc_call *call)
+ 	if (n == 0)
+ 		return false;
+ 	if (rxrpc_queue_work(&call->processor))
+-		trace_rxrpc_call(call, rxrpc_call_queued, n + 1, here, NULL);
++		trace_rxrpc_call(call->debug_id, rxrpc_call_queued, n + 1,
++				 here, NULL);
+ 	else
+ 		rxrpc_put_call(call, rxrpc_call_put_noqueue);
+ 	return true;
+@@ -435,7 +437,8 @@ bool __rxrpc_queue_call(struct rxrpc_call *call)
+ 	int n = atomic_read(&call->usage);
+ 	ASSERTCMP(n, >=, 1);
+ 	if (rxrpc_queue_work(&call->processor))
+-		trace_rxrpc_call(call, rxrpc_call_queued_ref, n, here, NULL);
++		trace_rxrpc_call(call->debug_id, rxrpc_call_queued_ref, n,
++				 here, NULL);
+ 	else
+ 		rxrpc_put_call(call, rxrpc_call_put_noqueue);
+ 	return true;
+@@ -450,7 +453,8 @@ void rxrpc_see_call(struct rxrpc_call *call)
+ 	if (call) {
+ 		int n = atomic_read(&call->usage);
+ 
+-		trace_rxrpc_call(call, rxrpc_call_seen, n, here, NULL);
++		trace_rxrpc_call(call->debug_id, rxrpc_call_seen, n,
++				 here, NULL);
+ 	}
  }
  
-@@ -400,7 +400,7 @@ struct rxrpc_peer *rxrpc_get_peer_maybe(struct rxrpc_peer *peer)
- 	if (peer) {
- 		int n = atomic_fetch_add_unless(&peer->usage, 1, 0);
- 		if (n > 0)
--			trace_rxrpc_peer(peer, rxrpc_peer_got, n + 1, here);
-+			trace_rxrpc_peer(peer->debug_id, rxrpc_peer_got, n + 1, here);
- 		else
- 			peer = NULL;
- 	}
-@@ -430,11 +430,13 @@ static void __rxrpc_put_peer(struct rxrpc_peer *peer)
- void rxrpc_put_peer(struct rxrpc_peer *peer)
- {
+@@ -462,7 +466,7 @@ void rxrpc_get_call(struct rxrpc_call *call, enum rxrpc_call_trace op)
  	const void *here = __builtin_return_address(0);
-+	unsigned int debug_id;
+ 	int n = atomic_inc_return(&call->usage);
+ 
+-	trace_rxrpc_call(call, op, n, here, NULL);
++	trace_rxrpc_call(call->debug_id, op, n, here, NULL);
+ }
+ 
+ /*
+@@ -477,7 +481,8 @@ void rxrpc_release_call(struct rxrpc_sock *rx, struct rxrpc_call *call)
+ 
+ 	_enter("{%d,%d}", call->debug_id, atomic_read(&call->usage));
+ 
+-	trace_rxrpc_call(call, rxrpc_call_release, atomic_read(&call->usage),
++	trace_rxrpc_call(call->debug_id, rxrpc_call_release,
++			 atomic_read(&call->usage),
+ 			 here, (const void *)call->flags);
+ 
+ 	ASSERTCMP(call->state, ==, RXRPC_CALL_COMPLETE);
+@@ -625,12 +630,13 @@ void rxrpc_put_call(struct rxrpc_call *call, enum rxrpc_call_trace op)
+ {
+ 	struct rxrpc_net *rxnet = call->rxnet;
+ 	const void *here = __builtin_return_address(0);
++	unsigned int debug_id = call->debug_id;
  	int n;
  
- 	if (peer) {
-+		debug_id = peer->debug_id;
- 		n = atomic_dec_return(&peer->usage);
--		trace_rxrpc_peer(peer, rxrpc_peer_put, n, here);
-+		trace_rxrpc_peer(debug_id, rxrpc_peer_put, n, here);
- 		if (n == 0)
- 			__rxrpc_put_peer(peer);
- 	}
-@@ -447,10 +449,11 @@ void rxrpc_put_peer(struct rxrpc_peer *peer)
- void rxrpc_put_peer_locked(struct rxrpc_peer *peer)
- {
- 	const void *here = __builtin_return_address(0);
-+	unsigned int debug_id = peer->debug_id;
- 	int n;
+ 	ASSERT(call != NULL);
  
- 	n = atomic_dec_return(&peer->usage);
--	trace_rxrpc_peer(peer, rxrpc_peer_put, n, here);
-+	trace_rxrpc_peer(debug_id, rxrpc_peer_put, n, here);
+ 	n = atomic_dec_return(&call->usage);
+-	trace_rxrpc_call(call, op, n, here, NULL);
++	trace_rxrpc_call(debug_id, op, n, here, NULL);
+ 	ASSERTCMP(n, >=, 0);
  	if (n == 0) {
- 		hash_del_rcu(&peer->hash_link);
- 		list_del_init(&peer->keepalive_link);
+ 		_debug("call %d dead", call->debug_id);
 -- 
 2.20.1
 
