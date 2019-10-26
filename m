@@ -2,94 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9669E6818
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:27:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37EA1E688D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732414AbfJ0V1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:27:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47378 "EHLO mail.kernel.org"
+        id S1732608AbfJ0VaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:30:21 -0400
+Received: from zmail.pkvoda.ru ([91.189.238.58]:33162 "EHLO zmail.pkvoda.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732737AbfJ0VZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:25:28 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE3D021783;
-        Sun, 27 Oct 2019 21:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211527;
-        bh=bNaiTRs73b3nU2uDAXq1nlYBMsWSUeirR2Lzw+CNp3Q=;
-        h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=AeRJJyAS6E+Ckbdk493mYAqTKhYG3sE+ZcY+jlmLsAUKb2o76OzLczJKA5UCyla9V
-         DiMwR80R0JXxIj5ucU0KUOM3HzUzhvEhvmfZ50CPKAADp5+zzr74SL3oG4Y0R5DAB5
-         IreC2Z4HcHYZqrH9W+pkbCb1tFjXOK8U6KJwH7TA=
-Content-Type: text/plain; charset="utf-8"
+        id S1730460AbfJ0VaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:30:15 -0400
+X-Greylist: delayed 53125 seconds by postgrey-1.27 at vger.kernel.org; Sun, 27 Oct 2019 17:30:13 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by zmail.pkvoda.ru (Postfix) with ESMTP id 2D820E1F787;
+        Sun, 27 Oct 2019 13:56:09 +1200 (+12)
+Received: from zmail.pkvoda.ru ([127.0.0.1])
+        by localhost (zmail.pkvoda.ru [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id A2MVi7Vm-LHG; Sun, 27 Oct 2019 13:56:08 +1200 (+12)
+Received: from localhost (localhost [127.0.0.1])
+        by zmail.pkvoda.ru (Postfix) with ESMTP id 55439E0D4D3;
+        Sun, 27 Oct 2019 12:22:56 +1200 (+12)
+DKIM-Filter: OpenDKIM Filter v2.10.3 zmail.pkvoda.ru 55439E0D4D3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pkvoda.ru;
+        s=F51A4050-3C61-11E8-8A04-BD5F65F0F8F4; t=1572135776;
+        bh=ev891qVfpxn5QFYVE8lqa2IqoInrQG7gyaHRfGW0BDg=;
+        h=MIME-Version:To:From:Date:Message-Id;
+        b=tEg4asjqELkf/f+kJE8rBImjkFH8ojdSFXB6eRVAoztlan/r2zWwP4JI/Iz6L8Uqq
+         NQsPblCR9Wxfu2a6/UN2OZDp9+kdTVaYS0BuFj2V7ga1nt6qnDqLqfKHwJzyaOnFXr
+         I0eT7UnQ5pJlgGl5dlnDerxyyTrD+m6nCiE9HhC8=
+X-Virus-Scanned: amavisd-new at pkvoda.ru
+Received: from zmail.pkvoda.ru ([127.0.0.1])
+        by localhost (zmail.pkvoda.ru [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id A0M8amofJHDB; Sun, 27 Oct 2019 12:22:56 +1200 (+12)
+Received: from [169.254.77.56] (unknown [184.70.118.146])
+        by zmail.pkvoda.ru (Postfix) with ESMTPSA id 789EEDFFBF8;
+        Sun, 27 Oct 2019 11:10:45 +1200 (+12)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191021105435.GE2654@vkoul-mobl>
-References: <20190917091623.3453-1-vkoul@kernel.org> <20190917161000.DAFF3206C2@mail.kernel.org> <20191016122343.GM2654@vkoul-mobl> <20191017174820.F08422089C@mail.kernel.org> <20191021105435.GE2654@vkoul-mobl>
-To:     Vinod Koul <vkoul@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc: Add missing clocks in SM8150
-User-Agent: alot/0.8.1
-Date:   Sun, 27 Oct 2019 14:25:26 -0700
-Message-Id: <20191027212527.AE3D021783@mail.kernel.org>
+Content-Description: Mail message body
+Subject: Re: Partnership
+To:     Recipients <vsmirnov@pkvoda.ru>
+From:   "VIKTOR SMIRNOV" <vsmirnov@pkvoda.ru>
+Date:   Sat, 26 Oct 2019 17:10:36 -0600
+Reply-To: pesmirnov1@yandex.com
+Message-Id: <20191026231045.789EEDFFBF8@zmail.pkvoda.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vinod Koul (2019-10-21 03:54:35)
-> On 17-10-19, 10:48, Stephen Boyd wrote:
-> > > > > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc=
--sm8150.c
-> > > > > index 12ca2d14797f..13d4d14a5744 100644
-> > > > > --- a/drivers/clk/qcom/gcc-sm8150.c
-> > > > > +++ b/drivers/clk/qcom/gcc-sm8150.c
-> > > > > @@ -1616,6 +1616,38 @@ static struct clk_branch gcc_gpu_cfg_ahb_c=
-lk =3D {
-> > > > >         },
-> > > > >  };
-> > > > > =20
-> > > > > +static struct clk_branch gcc_gpu_gpll0_clk_src =3D {
-> > > > > +       .halt_check =3D BRANCH_HALT_SKIP,
-> > > >=20
-> > > > Why skip?
-> > >=20
-> > > I will explore and add comments for that
-> > >=20
-> > > > > +       .clkr =3D {
-> > > > > +               .enable_reg =3D 0x52004,
-> > > > > +               .enable_mask =3D BIT(15),
-> > > > > +               .hw.init =3D &(struct clk_init_data){
-> > > > > +                       .name =3D "gcc_gpu_gpll0_clk_src",
-> > > > > +                       .parent_hws =3D (const struct clk_hw *[]){
-> > > > > +                               &gpll0.clkr.hw },
-> > > > > +                       .num_parents =3D 1,
-> > > > > +                       .flags =3D CLK_SET_RATE_PARENT,
-> > > > > +                       .ops =3D &clk_branch2_ops,
-> > > > > +               },
-> > > > > +       },
-> > > > > +};
-> > > > > +
-> > > > > +static struct clk_branch gcc_gpu_gpll0_div_clk_src =3D {
-> > > > > +       .halt_check =3D BRANCH_HALT_SKIP,
-> > > >=20
-> > > > Why skip?
-> > > >=20
-> >=20
-> > Any answer from the explorations?
->=20
-> Yeah so asking around the answer I got is that these are external
-> clocks and we need cannot rely on CLK_OFF bit for these clocks
->=20
+Hello, I sent you an email previously, maybe it didn't delivered. I am Vikt=
+or Smirnov, i am sorry for contacting you directly via your email, i will l=
+ike to discuss with you about a business deal that is very important.
 
-The parents are from some other clk controller? Not external to the
-chip, right? If so, I still don't get it. Please add some sort of
-comment here in the code.
+Please acknowledge receipt of this email to enable me provide you with furt=
+her details.
 
+Best Regards,
+Viktor Smirnov.
