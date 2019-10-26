@@ -2,110 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2A27E5C0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1D84E5D74
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:37:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfJZN1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 09:27:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47606 "EHLO mail.kernel.org"
+        id S1726392AbfJZNQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 09:16:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726964AbfJZN1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 09:27:18 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S1726162AbfJZNQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 09:16:03 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 066BF20867;
-        Sat, 26 Oct 2019 13:27:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A219B2070B;
+        Sat, 26 Oct 2019 13:16:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572096436;
-        bh=xWOCyH4LpE2A2ZS3DvRRqKw8BvJSQw43usiPJKaUMvA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yON2IQoQY/Zk1ndYAF3l8modBN8uczhSPyVFlAsxCQszQq7en5ohxiJRiCx27vIbx
-         Yz4Nv1Fh3Oe+nVr0tn7wux/YNYTR/d6tpU/WhhjLd4T9aKSue6CflWKxTAxYO56ztE
-         vUMOSltQ4ZhKbP3sestArcFAw40ddVAAff7iRj6k=
-Date:   Sat, 26 Oct 2019 21:26:59 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Stefan-gabriel Mirea <stefan-gabriel.mirea@nxp.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>, Leo Li <leoyang.li@nxp.com>,
-        "jslaby@suse.com" <jslaby@suse.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v7 0/5] Add initial support for S32V234-EVB
-Message-ID: <20191026132657.GO14401@dragon>
-References: <1571230107-8493-1-git-send-email-stefan-gabriel.mirea@nxp.com>
- <20191016131728.GA56859@kroah.com>
- <VI1PR0402MB28630943CC0820644D26919CDF920@VI1PR0402MB2863.eurprd04.prod.outlook.com>
+        s=default; t=1572095762;
+        bh=Qx5Mwi+ZX7G4BJNl1HaOQ3XGU6C1kwNJVmzWlWuN+8U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IfUMJKm1yyQAa1pYDb3Wx4BbSGBd6FbBzVBiADMeLCWzSCLdeBHN0My1xoOf5kHHF
+         hHJ8Wami0zaHUfwPEMlhQd16mNTbSF2aCmkkvZBspU8Bm5hJmifS4k7pf4RgaxI6/4
+         YyLq4FvVfig89qBuzKZgfbjYHssInKXU+4DRxIgs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 01/99] tools: bpf: Use !building_out_of_srctree to determine srctree
+Date:   Sat, 26 Oct 2019 09:14:22 -0400
+Message-Id: <20191026131600.2507-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI1PR0402MB28630943CC0820644D26919CDF920@VI1PR0402MB2863.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 04:54:58PM +0000, Stefan-gabriel Mirea wrote:
-> On 10/16/2019 4:17 PM, Greg KH wrote:
-> > 
-> > I've taken patch 3 in my tty-next tree.  The others should probably go
-> > through an arm-specific tree, right?
-> 
-> Thank you very much, Greg! That was all for the tty tree.
-> 
-> I think that the other patches should go to the following trees:
-> * git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git:
->     patches #1 and possibly #4 (as it covers arch/*/boot/dts/);
-> * git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git:
->     patches #2, #5 and possibly #4 (as it covers arch/arm64/boot/dts/)
-> * git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
->     possibly patch #4 (as it covers arch/arm64/boot/dts/freescale/fsl-*)
-> 
-> As a general question, would it be any chance to have the device tree
-> included in v5.4 (along with its compatible documentation and config
-> definition, without enablement)? That is, only the patches #1, #2 and
-> #4, because #3 is a cosmetic change and #5 enables the new configs by
-> default. That would complete a minimal support for S32V234-EVB, together
-> with the LINFlexD UART driver which was accepted.
-> 
-> From the development process documentation[1]: "An occasional exception
-> is made for drivers for previously-unsupported hardware; if they touch
-> no in-tree code, they cannot cause regressions and should be safe to add
-> at any time".
-> 
-> I know that it mentions only drivers and not device trees, but from the
-> history is seems that there have also been dts/dtsi files added outside
-> of merge windows, such as:
-> * arch/riscv/boot/dts/sifive/fu540-c000.dtsi;
-> * arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts;
-> * arch/arm64/boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts;
-> * arch/xtensa/boot/dts/lx200mx.dts;
-> * arch/xtensa/boot/dts/kc705.dts;
-> * arch/xtensa/boot/dts/xtfpga-flash-128m.dtsi;
-> * arch/arm/boot/dts/omap3-beagle-xm-ab.dts;
-> * arch/arm/boot/dts/at91-sama5d3_xplained.dts;
-> * arch/arm/boot/dts/am335x-boneblack.dts;
-> * arch/powerpc/boot/dts/charon.dts.
-> 
-> I am sorry if my question is inopportune, I am definitely not trying to
-> rush anyone. I just ask because this has been under review for some
-> time and all the feedback has been addressed. We would really appreciate
-> to have this SoC and board supported in the following LTS release if
-> there are no other issues.
+From: Shuah Khan <skhan@linuxfoundation.org>
 
-Sorry, no.  It happens occasionally that non-fixing patches are merged
-during -rc time, mostly because they are supposed to land mainline
-during merge window, but missed the window for some reason, like
-subsystem maintainers did not send pull request to Linus in time.
-Also the patches are only taken in early -rc like rc2.
+[ Upstream commit 55d554f5d14071f7c2c5dbd88d0a2eb695c97d16 ]
 
-Shawn
+make TARGETS=bpf kselftest fails with:
+
+Makefile:127: tools/build/Makefile.include: No such file or directory
+
+When the bpf tool make is invoked from tools Makefile, srctree is
+cleared and the current logic check for srctree equals to empty
+string to determine srctree location from CURDIR.
+
+When the build in invoked from selftests/bpf Makefile, the srctree
+is set to "." and the same logic used for srctree equals to empty is
+needed to determine srctree.
+
+Check building_out_of_srctree undefined as the condition for both
+cases to fix "make TARGETS=bpf kselftest" build failure.
+
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Song Liu <songliubraving@fb.com>
+Link: https://lore.kernel.org/bpf/20190927011344.4695-1-skhan@linuxfoundation.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/bpf/Makefile     | 6 +++++-
+ tools/lib/bpf/Makefile | 6 +++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/tools/bpf/Makefile b/tools/bpf/Makefile
+index 53b60ad452f5d..93a84965345dc 100644
+--- a/tools/bpf/Makefile
++++ b/tools/bpf/Makefile
+@@ -12,7 +12,11 @@ INSTALL ?= install
+ CFLAGS += -Wall -O2
+ CFLAGS += -D__EXPORTED_HEADERS__ -I$(srctree)/include/uapi -I$(srctree)/include
+ 
+-ifeq ($(srctree),)
++# This will work when bpf is built in tools env. where srctree
++# isn't set and when invoked from selftests build, where srctree
++# is set to ".". building_out_of_srctree is undefined for in srctree
++# builds
++ifndef building_out_of_srctree
+ srctree := $(patsubst %/,%,$(dir $(CURDIR)))
+ srctree := $(patsubst %/,%,$(dir $(srctree)))
+ endif
+diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
+index 9312066a1ae38..f23e5e285541d 100644
+--- a/tools/lib/bpf/Makefile
++++ b/tools/lib/bpf/Makefile
+@@ -7,7 +7,11 @@ BPF_EXTRAVERSION = 4
+ 
+ MAKEFLAGS += --no-print-directory
+ 
+-ifeq ($(srctree),)
++# This will work when bpf is built in tools env. where srctree
++# isn't set and when invoked from selftests build, where srctree
++# is a ".". building_out_of_srctree is undefined for in srctree
++# builds
++ifndef building_out_of_srctree
+ srctree := $(patsubst %/,%,$(dir $(CURDIR)))
+ srctree := $(patsubst %/,%,$(dir $(srctree)))
+ srctree := $(patsubst %/,%,$(dir $(srctree)))
+-- 
+2.20.1
+
