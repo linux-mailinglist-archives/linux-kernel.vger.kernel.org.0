@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D84BEE59A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 12:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FF0DE59A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 12:45:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbfJZKpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 06:45:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47380 "EHLO mail.kernel.org"
+        id S1726298AbfJZKpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 06:45:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726120AbfJZKpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 06:45:06 -0400
-Subject: Re: [GIT PULL] dax fix for v5.4-rc5
+        id S1726233AbfJZKpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 06:45:07 -0400
+Subject: Re: [GIT PULL] s390 updates for 5.4-rc5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572086705;
-        bh=Vyc5SB0hiZdfFvAUsjm2Khzs8PKzyK7s7Xp2S38xRQ4=;
+        s=default; t=1572086707;
+        bh=/O7DfNPYpSv+tqEzW3t2Yux73Vui6akwaxl+F0AQQYM=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=cAP4YFJGe8xirFgBYnuBEHyw8wdAEoA9VJ6mvAMV3pSDHpXjNFyoYYZmUO1ys9/Na
-         /ow8284V3XQTHk5TgXut1ZWqPvH68kyV/q83JSGBT04/2XY0G9atPuayW0IPNTfnsN
-         5zrXCc3I/1FLfuF7jVM0yzm5Goj0QqMrwF4dQ70Q=
+        b=yO6j4k0VsYRVFlkBlwv5LYLTEt30DMRt/uidqaymWHmK/kYSgDW8GDmzy3f3U5S2+
+         6vx3H6KBpDtTn6ZY2NtkWJ2+Y0xS9uPaRtbpNXyW9xfpENH+qME2gNM0vlHy8F6WNP
+         5czIiVSpK9MTMyirwtTqvbzsM3KvHr+F/qaxNNzM=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAPcyv4gi--MyxXOt-vb4Tw+ku=jUYmo4y+YSV+6UJf24BCDAMA@mail.gmail.com>
-References: <CAPcyv4gi--MyxXOt-vb4Tw+ku=jUYmo4y+YSV+6UJf24BCDAMA@mail.gmail.com>
+In-Reply-To: <your-ad-here.call-01572084898-ext-1277@work.hours>
+References: <your-ad-here.call-01572084898-ext-1277@work.hours>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAPcyv4gi--MyxXOt-vb4Tw+ku=jUYmo4y+YSV+6UJf24BCDAMA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm
- tags/dax-fix-5.4-rc5
-X-PR-Tracked-Commit-Id: 6370740e5f8ef12de7f9a9bf48a0393d202cd827
+X-PR-Tracked-Message-Id: <your-ad-here.call-01572084898-ext-1277@work.hours>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.4-5
+X-PR-Tracked-Commit-Id: ac49303d9ef0ad98b79867a380ef23480e48870b
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 485fc4b69cd28f295947535175c147b943b0b2e4
-Message-Id: <157208670550.20302.9647429553317188107.pr-tracker-bot@kernel.org>
-Date:   Sat, 26 Oct 2019 10:45:05 +0000
-To:     Dan Williams <dan.j.williams@intel.com>
+X-PR-Merge-Commit-Id: f877bee5ea0b56c39cd0a243e113a577b5a4ef92
+Message-Id: <157208670731.20302.6383353662643415232.pr-tracker-bot@kernel.org>
+Date:   Sat, 26 Oct 2019 10:45:07 +0000
+To:     Vasily Gorbik <gor@linux.ibm.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 25 Oct 2019 18:06:22 -0700:
+The pull request you sent on Sat, 26 Oct 2019 12:14:58 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm tags/dax-fix-5.4-rc5
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.4-5
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/485fc4b69cd28f295947535175c147b943b0b2e4
+https://git.kernel.org/torvalds/c/f877bee5ea0b56c39cd0a243e113a577b5a4ef92
 
 Thank you!
 
