@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56457E5AE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:19:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47DE0E5AE5
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:19:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbfJZNSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 09:18:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40478 "EHLO mail.kernel.org"
+        id S1728031AbfJZNSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 09:18:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727880AbfJZNSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 09:18:39 -0400
+        id S1727977AbfJZNSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 09:18:43 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4DD7222BD;
-        Sat, 26 Oct 2019 13:18:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FF8F222C3;
+        Sat, 26 Oct 2019 13:18:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572095919;
-        bh=hXaixYNIWyQ1j3DjWcDpKT80r+JhdM9KrYXg5LVe/gg=;
+        s=default; t=1572095922;
+        bh=Mm9kL3fTKhgVCOwa1CZY+whzW4MSgMeJVzsd4BL9wTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rPxkaVZwrscuKI57+WhJMbeRQdiW9ntPicRG9TBeILw5hJ998Syarn2OOOTrJL0uW
-         5QYscTNtQot9Oo598IQikoSZQ7pdvi5HgXMY2BMmRqAXVZ9m7pvgbPR8Kspkyqx5V6
-         by4dRiFUH9QWGY6YNabuBuSkAX1/+SgiW3gkdUEQ=
+        b=avFUM/b1aPw+p3GL/waA+mwelUWoE0t4Fefb/ZjmxeiKMUj3Kc415QrIr1xPQ2QKw
+         tgEOu06vo1V5lfkP0xGiCwsURiCFnhG8+/L9vIxm4/jRE+t6ItvRXaiC585/US1yf5
+         i9SF9Prhnw7vzthlnNrOh5J9YZNFLs5YnrwYAWOE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>, Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Doug Berger <opendmb@gmail.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
-        George McCollister <george.mccollister@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Sean Nyekjaer <sean.nyekjaer@prevas.dk>,
-        Tristram Ha <Tristram.Ha@microchip.com>,
-        Woojung Huh <woojung.huh@microchip.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 88/99] net: phy: micrel: Update KSZ87xx PHY name
-Date:   Sat, 26 Oct 2019 09:15:49 -0400
-Message-Id: <20191026131600.2507-88-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 91/99] net: phy: bcm7xxx: define soft_reset for 40nm EPHY
+Date:   Sat, 26 Oct 2019 09:15:52 -0400
+Message-Id: <20191026131600.2507-91-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191026131600.2507-1-sashal@kernel.org>
 References: <20191026131600.2507-1-sashal@kernel.org>
@@ -49,65 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Vasut <marex@denx.de>
+From: Doug Berger <opendmb@gmail.com>
 
-[ Upstream commit 1d951ba3da67bbc7a9b0e05987e09552c2060e18 ]
+[ Upstream commit fe586b823372a9f43f90e2c6aa0573992ce7ccb7 ]
 
-The KSZ8795 PHY ID is in fact used by KSZ8794/KSZ8795/KSZ8765 switches.
-Update the PHY ID and name to reflect that, as this family of switches
-is commonly refered to as KSZ87xx
+The internal 40nm EPHYs use a "Workaround for putting the PHY in
+IDDQ mode." These PHYs require a soft reset to restore functionality
+after they are powered back up.
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: George McCollister <george.mccollister@gmail.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
-Cc: Tristram Ha <Tristram.Ha@microchip.com>
-Cc: Woojung Huh <woojung.huh@microchip.com>
+This commit defines the soft_reset function to use genphy_soft_reset
+during phy_init_hw to accommodate this.
+
+Fixes: 6e2d85ec0559 ("net: phy: Stop with excessive soft reset")
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/micrel.c   | 4 ++--
- include/linux/micrel_phy.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/phy/bcm7xxx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index a0444e28c6e7c..63dedec0433de 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -395,7 +395,7 @@ static int ksz8061_config_init(struct phy_device *phydev)
- 
- static int ksz8795_match_phy_device(struct phy_device *phydev)
- {
--	return ksz8051_ksz8795_match_phy_device(phydev, PHY_ID_KSZ8795);
-+	return ksz8051_ksz8795_match_phy_device(phydev, PHY_ID_KSZ87XX);
- }
- 
- static int ksz9021_load_values_from_of(struct phy_device *phydev,
-@@ -1174,7 +1174,7 @@ static struct phy_driver ksphy_driver[] = {
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
- }, {
--	.name		= "Micrel KSZ8795",
-+	.name		= "Micrel KSZ87XX Switch",
- 	/* PHY_BASIC_FEATURES */
- 	.config_init	= kszphy_config_init,
- 	.config_aneg	= ksz8873mll_config_aneg,
-diff --git a/include/linux/micrel_phy.h b/include/linux/micrel_phy.h
-index ad24554f11f96..75f880c25bb86 100644
---- a/include/linux/micrel_phy.h
-+++ b/include/linux/micrel_phy.h
-@@ -31,7 +31,7 @@
- #define PHY_ID_KSZ886X		0x00221430
- #define PHY_ID_KSZ8863		0x00221435
- 
--#define PHY_ID_KSZ8795		0x00221550
-+#define PHY_ID_KSZ87XX		0x00221550
- 
- #define	PHY_ID_KSZ9477		0x00221631
- 
+diff --git a/drivers/net/phy/bcm7xxx.c b/drivers/net/phy/bcm7xxx.c
+index 8fc33867e524f..af8eabe7a6d44 100644
+--- a/drivers/net/phy/bcm7xxx.c
++++ b/drivers/net/phy/bcm7xxx.c
+@@ -572,6 +572,7 @@ static int bcm7xxx_28nm_probe(struct phy_device *phydev)
+ 	.name           = _name,					\
+ 	/* PHY_BASIC_FEATURES */					\
+ 	.flags          = PHY_IS_INTERNAL,				\
++	.soft_reset	= genphy_soft_reset,				\
+ 	.config_init    = bcm7xxx_config_init,				\
+ 	.suspend        = bcm7xxx_suspend,				\
+ 	.resume         = bcm7xxx_config_init,				\
 -- 
 2.20.1
 
