@@ -2,85 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16610E5FFA
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 01:06:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A286EE5FFD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 01:16:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbfJZXGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 19:06:53 -0400
-Received: from gate.crashing.org ([63.228.1.57]:55397 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726443AbfJZXGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 19:06:53 -0400
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x9QN6B4B014950;
-        Sat, 26 Oct 2019 18:06:11 -0500
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id x9QN69JB014947;
-        Sat, 26 Oct 2019 18:06:09 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Sat, 26 Oct 2019 18:06:09 -0500
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        luto@kernel.org, vincenzo.frascino@arm.com,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH] powerpc/32: Switch VDSO to C implementation.
-Message-ID: <20191026230609.GY28442@gate.crashing.org>
-References: <8ce3582f7f7da9ff0286ced857e5aa2e5ae6746e.1571662378.git.christophe.leroy@c-s.fr> <alpine.DEB.2.21.1910212312520.2078@nanos.tec.linutronix.de> <f4486e86-3c0c-0eec-1639-0e5956cdb8f1@c-s.fr> <95bd2367-8edc-29db-faa3-7729661e05f2@c-s.fr> <alpine.DEB.2.21.1910261751140.10190@nanos.tec.linutronix.de> <439bce37-9c2c-2afe-9c9e-2f500472f9f8@c-s.fr> <alpine.DEB.2.21.1910262026340.10190@nanos.tec.linutronix.de>
-Mime-Version: 1.0
+        id S1726548AbfJZXQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 19:16:26 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39350 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbfJZXQ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 19:16:26 -0400
+Received: by mail-qt1-f195.google.com with SMTP id t8so9009114qtc.6;
+        Sat, 26 Oct 2019 16:16:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=WembGSFsbExOh6C9xfy35r52QdLc1q9Nu1Ae4G7IdBI=;
+        b=pWkyQ1NGQb6iIZ8q127AjyQtavlLiCaXvTaXTDBO605b0pyxYH/oqDhLauXmQy1r6d
+         VzLdCYj3DxDE6D1V3JbJF2UC/geCDPQnkm+xCwH5Ddh0S4Bn2iHlFrXH2SkAVRYo+7N8
+         5Qg8AJJjFZzJJLotYEeOqLmfjvTJd6Sfx+9WABWk/eq2uRTR/w7HsohxUPcNAmopzbFx
+         VLY2hDEc1rkIXyrd94xHlmVyYWMKbVU+LsRdJ+lojihb9lV4nbEdMDShmQKc8G/J1+H6
+         jywm2KLrcgVXe+hENXm7oNZUwxzpYerV5u1zrurD9flBrdnhcHmWqXIXXWzwLrFxrGxG
+         UJBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=WembGSFsbExOh6C9xfy35r52QdLc1q9Nu1Ae4G7IdBI=;
+        b=ukVeVFHH7x6Wl60BqQWJTebmmhd22DFo2zVO8b5cyqCCM7s6UwKSn2W3awvIQYpMQ8
+         Iv95XO6tzuFazodGG0uigfpb1w7bjEaoZ/bl3CUJefQqzS/JfbhQAay3LaVB/Es4pmT0
+         LCwJ+4ujys21uivLvI+doeKEXnLNMM0zeq3BA7EYafL/nVCPhRreNYyQ2qNIn9EzeaDF
+         ul2M1W8QIhKX6/8Q5nR3vVTIJ2BpMKbKwH0Nru48PjxC0OLSz6scxaHSwtN3OnEwB+zd
+         XbCn7g32lQg00rUEg+ijucoorAQ24uwoNl49Gym1lLONA+L7ubnpriYFIg7d4fJbHJGX
+         cHEg==
+X-Gm-Message-State: APjAAAUHDBL/PxhEo+SSfiiAV+kCXr4nsXkgyluWHonSMYZkBliamCmy
+        ALy6DE3oyFaaatt77yK5CAQ=
+X-Google-Smtp-Source: APXvYqyJ5t2Ti+9RF911OfbntRMNRgN1W+sncXLrr/XZccWG7OXIn9o2GpwwABGpr4uZJtsA+5RqDw==
+X-Received: by 2002:a0c:a947:: with SMTP id z7mr10744288qva.103.1572131785586;
+        Sat, 26 Oct 2019 16:16:25 -0700 (PDT)
+Received: from cristiane-Inspiron-5420 ([131.100.148.220])
+        by smtp.gmail.com with ESMTPSA id t58sm3999075qta.78.2019.10.26.16.16.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 26 Oct 2019 16:16:25 -0700 (PDT)
+Date:   Sat, 26 Oct 2019 20:16:19 -0300
+From:   Cristiane Naves <cristianenavescardoso09@gmail.com>
+To:     outreachy-kernel@googlegroups.com
+Cc:     Michael Tretter <m.tretter@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: media: allegro-dvt: remove bool comparison
+Message-ID: <20191026231619.GA14093@cristiane-Inspiron-5420>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1910262026340.10190@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.4.2.3i
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 26, 2019 at 08:48:27PM +0200, Thomas Gleixner wrote:
-> On Sat, 26 Oct 2019, Christophe Leroy wrote:
-> Let's look at the code:
-> 
-> __cvdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
-> {
->         const struct vdso_data *vd = __arch_get_vdso_data();
-> 
->         if (likely(tv != NULL)) {
-> 		struct __kernel_timespec ts;
-> 
->                 if (do_hres(&vd[CS_HRES_COARSE], CLOCK_REALTIME, &ts))
->                         return gettimeofday_fallback(tv, tz);
-> 
->                 tv->tv_sec = ts.tv_sec;
->                 tv->tv_usec = (u32)ts.tv_nsec / NSEC_PER_USEC;
-> 
-> IIRC PPC did some magic math tricks to avoid that. Could you just for the
-> fun of it replace this division with
-> 
->        (u32)ts.tv_nsec >> 10;
+Bool tests don't need comparisons. Issue found by coccicheck.
 
-On this particular CPU (the 885, right?) a division by 1000 is just 9
-cycles.  On other CPUs it can be more, say 19 cycles like on the 750; not
-cheap at all, but not hugely expensive either, comparatively.
+Signed-off-by: Cristiane Naves <cristianenavescardoso09@gmail.com>
+---
+ drivers/staging/media/allegro-dvt/nal-h264.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-(A 64/32->32 division is expensive on all 32-bit PowerPC: there is no
-hardware help for it at all, so it's all done in software.)
+diff --git a/drivers/staging/media/allegro-dvt/nal-h264.c b/drivers/staging/media/allegro-dvt/nal-h264.c
+index 4e14b77..bd48b88 100644
+--- a/drivers/staging/media/allegro-dvt/nal-h264.c
++++ b/drivers/staging/media/allegro-dvt/nal-h264.c
+@@ -235,7 +235,7 @@ static inline int rbsp_write_bit(struct rbsp *rbsp, bool value)
+ 
+ 	rbsp->pos++;
+ 
+-	if (value == 1 ||
++	if (value ||
+ 	    (rbsp->num_consecutive_zeros < 7 && (rbsp->pos % 8 == 0))) {
+ 		rbsp->num_consecutive_zeros = 0;
+ 	} else {
+-- 
+2.7.4
 
-Of course the compiler won't do a division by a constant with a division
-instruction at all, so it's somewhat cheaper even, 5 or 6 cycles or so.
-
-> One thing which might be worth to try as well is to mark all functions in
-> that file as inline. The speedup by the do_hres() inlining was impressive
-> on PPC.
-
-The hand-optimised asm code will pretty likely win handsomely, whatever
-you do.  Especially on cores like the 885 (no branch prediction, single
-issue, small caches, etc.: every instruction counts).
-
-Is there any reason to replace this hand-optimised code?  It was written
-for exacty this reason?  These functions are critical and should be as
-fast as possible.
-
-
-Segher
