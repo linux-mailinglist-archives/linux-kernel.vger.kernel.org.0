@@ -2,51 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0C15E58B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 07:27:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFC90E58BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 07:29:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbfJZF1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 01:27:05 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:46915 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbfJZF1F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 01:27:05 -0400
-Received: from [172.20.19.11] (unknown [213.61.67.157])
-        by mail.holtmann.org (Postfix) with ESMTPSA id BBE06CED0D;
-        Sat, 26 Oct 2019 07:36:04 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3594.4.19\))
-Subject: Re: [PATCH -next] Bluetooth: btrtl: remove unneeded semicolon
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20191025092653.30428-1-yuehaibing@huawei.com>
-Date:   Sat, 26 Oct 2019 07:27:03 +0200
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <5D6A13BC-0E81-4AA6-B375-B7B762B93BD3@holtmann.org>
-References: <20191025092653.30428-1-yuehaibing@huawei.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-X-Mailer: Apple Mail (2.3594.4.19)
+        id S1726232AbfJZF3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 01:29:00 -0400
+Received: from mga07.intel.com ([134.134.136.100]:24207 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725858AbfJZF27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 01:28:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2019 22:28:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,230,1569308400"; 
+   d="scan'208";a="224122612"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 25 Oct 2019 22:28:56 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iOEdE-000AqQ-6t; Sat, 26 Oct 2019 13:28:56 +0800
+Date:   Sat, 26 Oct 2019 13:28:36 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Like Xu <like.xu@linux.intel.com>
+Cc:     kbuild-all@lists.01.org, pbonzini@redhat.com, peterz@infradead.org,
+        kvm@vger.kernel.org, like.xu@intel.com,
+        linux-kernel@vger.kernel.org, jmattson@google.com,
+        sean.j.christopherson@intel.com, wei.w.wang@intel.com,
+        kan.liang@intel.com
+Subject: [RFC PATCH] KVM: x86/vPMU: intel_msr_idx_to_pmc() can be static
+Message-ID: <20191026052836.ttzqfv336iuykjos@4978f4969bb8>
+References: <20191021160651.49508-5-like.xu@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021160651.49508-5-like.xu@linux.intel.com>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yue,
 
-> Remove unneeded semicolon.
-> This is detected by coccinelle.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> drivers/bluetooth/btrtl.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+Fixes: 0ca8f3f79a8c ("KVM: x86/vPMU: Introduce a new kvm_pmu_ops->msr_idx_to_pmc callback")
+Signed-off-by: kbuild test robot <lkp@intel.com>
+---
+ pmu_amd.c       |    2 +-
+ vmx/pmu_intel.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-patch has been applied to bluetooth-next tree.
-
-Regards
-
-Marcel
-
+diff --git a/arch/x86/kvm/pmu_amd.c b/arch/x86/kvm/pmu_amd.c
+index 88fe3f5f5bd18..ce61d180cf70c 100644
+--- a/arch/x86/kvm/pmu_amd.c
++++ b/arch/x86/kvm/pmu_amd.c
+@@ -204,7 +204,7 @@ static bool amd_is_valid_msr(struct kvm_vcpu *vcpu, u32 msr)
+ 	return false;
+ }
+ 
+-struct kvm_pmc *amd_msr_idx_to_pmc(struct kvm_vcpu *vcpu, u32 msr)
++static struct kvm_pmc *amd_msr_idx_to_pmc(struct kvm_vcpu *vcpu, u32 msr)
+ {
+ 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+ 	struct kvm_pmc *pmc;
+diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
+index 714afcd9244ca..95f0ff9e39f3c 100644
+--- a/arch/x86/kvm/vmx/pmu_intel.c
++++ b/arch/x86/kvm/vmx/pmu_intel.c
+@@ -162,7 +162,7 @@ static bool intel_is_valid_msr(struct kvm_vcpu *vcpu, u32 msr)
+ 	return ret;
+ }
+ 
+-struct kvm_pmc *intel_msr_idx_to_pmc(struct kvm_vcpu *vcpu, u32 msr)
++static struct kvm_pmc *intel_msr_idx_to_pmc(struct kvm_vcpu *vcpu, u32 msr)
+ {
+ 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+ 	struct kvm_pmc *pmc;
