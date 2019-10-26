@@ -2,75 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17F08E5918
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 09:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D877BE5910
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 09:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfJZHu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 03:50:28 -0400
-Received: from mailoutvs48.siol.net ([185.57.226.239]:60244 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726171AbfJZHu0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 03:50:26 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 37E65521C52;
-        Sat, 26 Oct 2019 09:50:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id I7VrNZFJFTNh; Sat, 26 Oct 2019 09:50:24 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id EF3EE521C51;
-        Sat, 26 Oct 2019 09:50:23 +0200 (CEST)
-Received: from localhost.localdomain (cpe-86-58-59-25.static.triera.net [86.58.59.25])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 9CA4F521D9E;
-        Sat, 26 Oct 2019 09:50:21 +0200 (CEST)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     mripard@kernel.org, paul.kocialkowski@bootlin.com
-Cc:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-        gregkh@linuxfoundation.org, wens@csie.org,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH 3/3] media: cedrus: Increase maximum supported size
-Date:   Sat, 26 Oct 2019 09:49:59 +0200
-Message-Id: <20191026074959.1073512-4-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191026074959.1073512-1-jernej.skrabec@siol.net>
-References: <20191026074959.1073512-1-jernej.skrabec@siol.net>
+        id S1726139AbfJZHs5 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 26 Oct 2019 03:48:57 -0400
+Received: from mx7.zte.com.cn ([202.103.147.169]:35016 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725966AbfJZHs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 03:48:56 -0400
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id DB9542FF0B0A63FAF0D5;
+        Sat, 26 Oct 2019 15:48:52 +0800 (CST)
+Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
+        by mse-fl1.zte.com.cn with ESMTP id x9Q7mZYT006117;
+        Sat, 26 Oct 2019 15:48:35 +0800 (GMT-8)
+        (envelope-from zhong.shiqi@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019102615491942-139233 ;
+          Sat, 26 Oct 2019 15:49:19 +0800 
+From:   zhongshiqi <zhong.shiqi@zte.com.cn>
+To:     Julia.Lawall@lip6.fr
+Cc:     Gilles.Muller@lip6.fr, nicolas.palix@imag.fr,
+        michal.lkml@markovi.net, cocci@systeme.lip6.fr,
+        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn, cheng.shengyu@zte.com.cn,
+        zhongshiqi <zhong.shiqi@zte.com.cn>
+Subject: [PATCH v4] coccicheck: Support search for SmPL scripts within selected directory hierarchy
+Date:   Sat, 26 Oct 2019 15:50:48 +0800
+Message-Id: <1572076248-43770-1-git-send-email-zhong.shiqi@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-10-26 15:49:19,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-10-26 15:48:42
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-MAIL: mse-fl1.zte.com.cn x9Q7mZYT006117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are few variations of 4k resolutions. The biggest one is
-4096x2304 which is also supported by HW. It has also nice property that
-both width and size are divisible by maximum HEVC CTB size, which is 64.
+Allow defining the environment variable “COCCI” as a directory 
+to search SmPL scripts. Start a corresponding file determination
+if it contains an acceptable path.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: zhongshiqi <zhong.shiqi@zte.com.cn>
 ---
- drivers/staging/media/sunxi/cedrus/cedrus_video.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes in v4:
+	1:rewrite change description in another wording
 
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_video.c b/drivers/=
-staging/media/sunxi/cedrus/cedrus_video.c
-index cc15a5cf107d..15cf1f10221b 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus_video.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
-@@ -29,8 +29,8 @@
-=20
- #define CEDRUS_MIN_WIDTH	16U
- #define CEDRUS_MIN_HEIGHT	16U
--#define CEDRUS_MAX_WIDTH	3840U
--#define CEDRUS_MAX_HEIGHT	2160U
-+#define CEDRUS_MAX_WIDTH	4096U
-+#define CEDRUS_MAX_HEIGHT	2304U
-=20
- static struct cedrus_format cedrus_formats[] =3D {
- 	{
---=20
-2.23.0
+Changes in v3:
+	1:rewrite change description
+	2:fix patch subject
+	3:modify commit log
+
+Changes in v2:
+	1.fix patch subject according to the reply by Markus
+	<Markus.Elfring@web.de>
+	2.change description in “imperative mood”
+ 
+ scripts/coccicheck | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/scripts/coccicheck b/scripts/coccicheck
+index e04d328..a1c4197 100755
+--- a/scripts/coccicheck
++++ b/scripts/coccicheck
+@@ -257,6 +257,10 @@ if [ "$COCCI" = "" ] ; then
+     for f in `find $srctree/scripts/coccinelle/ -name '*.cocci' -type f | sort`; do
+ 	coccinelle $f
+     done
++elif [ -d "$COCCI" ] ; then
++    for f in `find $COCCI/ -name '*.cocci' -type f | sort`; do
++	coccinelle $f
++    done
+ else
+     coccinelle $COCCI
+ fi
+-- 
+2.9.5
 
