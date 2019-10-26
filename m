@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 007ABE5AD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64440E5AE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:19:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbfJZNS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 09:18:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40202 "EHLO mail.kernel.org"
+        id S1727917AbfJZNSh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 09:18:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727818AbfJZNS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 09:18:27 -0400
+        id S1727880AbfJZNSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 09:18:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8480121E6F;
-        Sat, 26 Oct 2019 13:18:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97D0121655;
+        Sat, 26 Oct 2019 13:18:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572095907;
-        bh=0iAwcky+JaUwmjUqTrzCFVzK906qvUwgob+KWei1srA=;
+        s=default; t=1572095914;
+        bh=ZnwUf7S1kxzIWSSKaI2hTjSkgyg6l2w2zizALkYNYDk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=muvHD7jqGSYJnLbVfKQ2DhRg1sh6Pdqk9d+HGQ4hU5Li6ufaSA4pulXgEJLvpqMmm
-         5q8xzWtKHrYKOvp0G0f9/XQID4aaezePllj4lSfYXjM2Do5sZacQQTNyCtukLbndsu
-         qOwEki2WWXsxo1x1VY/OFvjRzYrAaJCVsPFdkR98=
+        b=SUcfKOStS2jbcM5FdrjfGZi2VpuyDVHDb57Q0WZ78xPASNxU3gIhzjkMIlV5GbFrQ
+         fiMKQ0SddSqfFWhSyjRCSqNfrARN77ck5HoVKRgCUeu1uvJRiqsG3ZmbalZt9Mt1E1
+         IsafR/Js4qD6POHZM5CPMT7E/JjKiddVM2hWf1Ic=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Biao Huang <biao.huang@mediatek.com>,
+Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 82/99] net: stmmac: disable/enable ptp_ref_clk in suspend/resume flow
-Date:   Sat, 26 Oct 2019 09:15:43 -0400
-Message-Id: <20191026131600.2507-82-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 86/99] net: stmmac: fix argument to stmmac_pcs_ctrl_ane()
+Date:   Sat, 26 Oct 2019 09:15:47 -0400
+Message-Id: <20191026131600.2507-86-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191026131600.2507-1-sashal@kernel.org>
 References: <20191026131600.2507-1-sashal@kernel.org>
@@ -43,50 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Biao Huang <biao.huang@mediatek.com>
+From: "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
 
-[ Upstream commit e497c20e203680aba9ccf7bb475959595908ca7e ]
+[ Upstream commit c9ad4c1049f7e0e8d59e975963dda002af47d93e ]
 
-disable ptp_ref_clk in suspend flow, and enable it in resume flow.
+The stmmac_pcs_ctrl_ane() expects a register address as
+argument 1, but for some reason the mac_device_info is
+being passed.
 
-Fixes: f573c0b9c4e0 ("stmmac: move stmmac_clk, pclk, clk_ptp_ref and stmmac_rst to platform structure")
-Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+Fix the warning (and possible bug) from sparse:
+
+drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:2613:17: warning: incorrect type in argument 1 (different address spaces)
+drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:2613:17:    expected void [noderef] <asn:2> *ioaddr
+drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:2613:17:    got struct mac_device_info *hw
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 5c4408bdc843a..374f9b49bcc14 100644
+index 374f9b49bcc14..2722778a50051 100644
 --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4475,8 +4475,10 @@ int stmmac_suspend(struct device *dev)
- 		stmmac_mac_set(priv, priv->ioaddr, false);
- 		pinctrl_pm_select_sleep_state(priv->device);
- 		/* Disable clock in case of PWM is off */
--		clk_disable(priv->plat->pclk);
--		clk_disable(priv->plat->stmmac_clk);
-+		if (priv->plat->clk_ptp_ref)
-+			clk_disable_unprepare(priv->plat->clk_ptp_ref);
-+		clk_disable_unprepare(priv->plat->pclk);
-+		clk_disable_unprepare(priv->plat->stmmac_clk);
+@@ -2564,7 +2564,7 @@ static int stmmac_hw_setup(struct net_device *dev, bool init_ptp)
  	}
- 	mutex_unlock(&priv->lock);
  
-@@ -4539,8 +4541,10 @@ int stmmac_resume(struct device *dev)
- 	} else {
- 		pinctrl_pm_select_default_state(priv->device);
- 		/* enable the clk previously disabled */
--		clk_enable(priv->plat->stmmac_clk);
--		clk_enable(priv->plat->pclk);
-+		clk_prepare_enable(priv->plat->stmmac_clk);
-+		clk_prepare_enable(priv->plat->pclk);
-+		if (priv->plat->clk_ptp_ref)
-+			clk_prepare_enable(priv->plat->clk_ptp_ref);
- 		/* reset the phy so that it's ready */
- 		if (priv->mii)
- 			stmmac_mdio_reset(priv->mii);
+ 	if (priv->hw->pcs)
+-		stmmac_pcs_ctrl_ane(priv, priv->hw, 1, priv->hw->ps, 0);
++		stmmac_pcs_ctrl_ane(priv, priv->ioaddr, 1, priv->hw->ps, 0);
+ 
+ 	/* set TX and RX rings length */
+ 	stmmac_set_rings_length(priv);
 -- 
 2.20.1
 
