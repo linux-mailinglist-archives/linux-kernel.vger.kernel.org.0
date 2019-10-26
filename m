@@ -2,60 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32EA5E5A84
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:11:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CCC1E5A8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbfJZNLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 09:11:32 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:43666 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbfJZNLb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 09:11:31 -0400
-Received: by mail-io1-f68.google.com with SMTP id c11so5533324iom.10
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2019 06:11:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=p0tofml8ZNTi1G2MZOVJ+kfT66lwExAAmCm88j0vUh0=;
-        b=EH4j23aH+Rrpc+4ykaGU+WTtDsLqSm2HdCv4h8qeJvxqud2nCvv2krtn4J+7xiulPE
-         B3osglIXn7RVPHmtzTmDLvjW2oMjXGmm1sd/+oaPIklJ6YNk1nu37oHDLYctMpMXHdnl
-         1OLae6RePKcTmzzq+tFSPSe09ECZmpmRY0C2+z2eEe2htR6u69J59mISeOEE+K5cUvqG
-         x0vl/cYxEqWyMSzhra8ePP/xAb2M5okS5PqYQq8j7UZGEgj2hIFeK33DGpbOYoxyxeP5
-         9vpDj9og6k6l+cuIhINskgyKR01ln5ea0WND/Rj21vKvVdlvm4YJQ6aPVbdeBeyST8wl
-         MycQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=p0tofml8ZNTi1G2MZOVJ+kfT66lwExAAmCm88j0vUh0=;
-        b=kxsgol5y73WEReHhz7sjcp+gr/oyisc/s8c/gSHRhuCxGwYvGXdo/noBLsjHa9+p/P
-         jKzZQkbKKxrn4ClMBYtvZdzkuRNQ5wJ4OvfF1ABVHpWUVBWq32h/lGMZSmLO1lQ5qrHE
-         R4kVA4diTM+muc57xIMtMxYq0HXKCUri3uujhiX05hwRboOkoE6894YOF6PDDYjjh5K5
-         i4vIstvPWqLGM2pmDLL1ZL6lqbB0fXPulvv1gu4bvkbKNIg/qp2B5ZS11ZD1WCw37uWf
-         KbYgXn6iuG/tg9RjLMetfW3ubpPTPxsDULah03CGbbwcLVxjXXniMHiISNMfNBJLI72U
-         posg==
-X-Gm-Message-State: APjAAAV+bC/knd6GaU27pRNDSHYuargZ2FElxiImYbe6pKNUtdScWw6R
-        owWRlpJRHwR+trwf916Xjehwfm3sp9+ICgabO/0=
-X-Google-Smtp-Source: APXvYqzgbNlzdXR2BTBQoYNjS1peariTfyZ+2NjzVLVF/y/j8LuOr/n1hfFwk0fK4a7WcZ7y86LIP3cGEjxzUjyjSFE=
-X-Received: by 2002:a5d:9ecb:: with SMTP id a11mr1294643ioe.19.1572095491244;
- Sat, 26 Oct 2019 06:11:31 -0700 (PDT)
+        id S1726439AbfJZNQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 09:16:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37462 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726377AbfJZNQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 09:16:04 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E193B21655;
+        Sat, 26 Oct 2019 13:16:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572095763;
+        bh=6ENN7JqKH0dafo1SdCaAf1Eq/G2mTYu6ydXeLUXURlM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ui/Onh4qvlTZ0MnYSfBcn2ukjglC//JeFGIHLq8nnd5PFeqdp34Yd27bVv8/mNO9T
+         l0WdPFGipJW63HrkqszrRPZ5m+UTeAip6HkYMCpp823pwFnRPo9xCyo1ad6ce2RUyt
+         2aR3I2t0VBlkmZICrYiJhS2XmqNpgKVJEaWFfJ7g=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Liu Xiang <liuxiang_1999@126.com>, Will Deacon <will@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 5.3 02/99] iommu/arm-smmu: Free context bitmap in the err path of arm_smmu_init_domain_context
+Date:   Sat, 26 Oct 2019 09:14:23 -0400
+Message-Id: <20191026131600.2507-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191026131600.2507-1-sashal@kernel.org>
+References: <20191026131600.2507-1-sashal@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a4f:f985:0:0:0:0:0 with HTTP; Sat, 26 Oct 2019 06:11:30
- -0700 (PDT)
-Reply-To: martialakakpoesq1@gmail.com
-From:   Martial Akakpo Esq <waleed.yahaya14@gmail.com>
-Date:   Sat, 26 Oct 2019 13:11:30 +0000
-Message-ID: <CABYAtL-2YWBKVcO1keSxdcE02ZBZ4S5jUKGd0N67OJ6r4AY44g@mail.gmail.com>
-Subject: Very Urgent
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Very Urgent
+From: Liu Xiang <liuxiang_1999@126.com>
 
-I want to talk to you privately, kindly get back to me
-Thanks.
+[ Upstream commit 6db7bfb431220d78e34d2d0afdb7c12683323588 ]
+
+When alloc_io_pgtable_ops is failed, context bitmap which is just allocated
+by __arm_smmu_alloc_bitmap should be freed to release the resource.
+
+Signed-off-by: Liu Xiang <liuxiang_1999@126.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/iommu/arm-smmu.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 64977c131ee62..523a641b6196f 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -936,6 +936,7 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
+ 	return 0;
+ 
+ out_clear_smmu:
++	__arm_smmu_free_bitmap(smmu->context_map, cfg->cbndx);
+ 	smmu_domain->smmu = NULL;
+ out_unlock:
+ 	mutex_unlock(&smmu_domain->init_mutex);
+-- 
+2.20.1
+
