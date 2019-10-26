@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AEA6E5D02
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D6EE5CF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:34:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbfJZNeb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 09:34:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39256 "EHLO mail.kernel.org"
+        id S1728609AbfJZNeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 09:34:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727450AbfJZNRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 09:17:41 -0400
+        id S1727476AbfJZNRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 09:17:43 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F24A821E6F;
-        Sat, 26 Oct 2019 13:17:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7058E21D80;
+        Sat, 26 Oct 2019 13:17:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572095860;
-        bh=Erj0YtBMybGdaqN3l1d/8o3zG1P1aQifLZxJEmEjtgc=;
+        s=default; t=1572095863;
+        bh=hEQwuQcwA1fIwb+HRt+DhyzFK1bKD5isu5a3MOfFdWg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xUXGG0BkdWBfMWuA9uZXELrdkvxXq0n8ipqyykNUinnZnpgp1fbqBuCStRH9oHhlW
-         saHbuNF+GDd0CvqexQ6K3rB3oOgHgqSIJUutboUz/s1hP4WoWQfA47nXI7ggNnW0vE
-         MwNlYb01zOVrLV/seDHjKkGQl7rVT/XWsumJx3fA=
+        b=E7Vv0rAkpoXSlbqhSVMW4Y05xiYBH1QZh+N3ZOLtFIE9HWrxjQFV4zCT5ePVbvdjP
+         e8KmAvNikIupJ7szGRkrdzhPM5J/tBVH9HBEU9aI+i+/CfGEvAn04GbsRruBnr3gIF
+         ptFYIy/wfC16EgVPqyEuQ4LtYyjnEz+nEhRynbLc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ursula Braun <ubraun@linux.ibm.com>,
-        Karsten Graul <kgraul@linux.ibm.com>,
+Cc:     Karsten Graul <kgraul@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
         Jakub Kicinski <jakub.kicinski@netronome.com>,
         Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 53/99] net/smc: fix SMCD link group creation with VLAN id
-Date:   Sat, 26 Oct 2019 09:15:14 -0400
-Message-Id: <20191026131600.2507-53-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 55/99] net/smc: receive pending data after RCV_SHUTDOWN
+Date:   Sat, 26 Oct 2019 09:15:16 -0400
+Message-Id: <20191026131600.2507-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191026131600.2507-1-sashal@kernel.org>
 References: <20191026131600.2507-1-sashal@kernel.org>
@@ -45,45 +45,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ursula Braun <ubraun@linux.ibm.com>
+From: Karsten Graul <kgraul@linux.ibm.com>
 
-[ Upstream commit 29ee2701529e1905c0e948688f9688c68c8d4ea4 ]
+[ Upstream commit 107529e31a87acd475ff6a0f82745821b8f70fec ]
 
-If creation of an SMCD link group with VLAN id fails, the initial
-smc_ism_get_vlan() step has to be reverted as well.
+smc_rx_recvmsg() first checks if data is available, and then if
+RCV_SHUTDOWN is set. There is a race when smc_cdc_msg_recv_action() runs
+in between these 2 checks, receives data and sets RCV_SHUTDOWN.
+In that case smc_rx_recvmsg() would return from receive without to
+process the available data.
+Fix that with a final check for data available if RCV_SHUTDOWN is set.
+Move the check for data into a function and call it twice.
+And use the existing helper smc_rx_data_available().
 
-Fixes: c6ba7c9ba43d ("net/smc: add base infrastructure for SMC-D and ISM")
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
+Fixes: 952310ccf2d8 ("smc: receive data from RMBE")
+Reviewed-by: Ursula Braun <ubraun@linux.ibm.com>
 Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
 Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/smc/smc_core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/smc/smc_rx.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
-index 4ca50ddf8d161..88556f0251ab9 100644
---- a/net/smc/smc_core.c
-+++ b/net/smc/smc_core.c
-@@ -213,7 +213,7 @@ static int smc_lgr_create(struct smc_sock *smc, struct smc_init_info *ini)
- 	lgr = kzalloc(sizeof(*lgr), GFP_KERNEL);
- 	if (!lgr) {
- 		rc = SMC_CLC_DECL_MEM;
--		goto out;
-+		goto ism_put_vlan;
- 	}
- 	lgr->is_smcd = ini->is_smcd;
- 	lgr->sync_err = 0;
-@@ -289,6 +289,9 @@ static int smc_lgr_create(struct smc_sock *smc, struct smc_init_info *ini)
- 	smc_llc_link_clear(lnk);
- free_lgr:
- 	kfree(lgr);
-+ism_put_vlan:
-+	if (ini->is_smcd && ini->vlan_id)
-+		smc_ism_put_vlan(ini->ism_dev, ini->vlan_id);
- out:
- 	if (rc < 0) {
- 		if (rc == -ENOMEM)
+diff --git a/net/smc/smc_rx.c b/net/smc/smc_rx.c
+index 0000026422885..97e8369002d71 100644
+--- a/net/smc/smc_rx.c
++++ b/net/smc/smc_rx.c
+@@ -261,6 +261,18 @@ static int smc_rx_recv_urg(struct smc_sock *smc, struct msghdr *msg, int len,
+ 	return -EAGAIN;
+ }
+ 
++static bool smc_rx_recvmsg_data_available(struct smc_sock *smc)
++{
++	struct smc_connection *conn = &smc->conn;
++
++	if (smc_rx_data_available(conn))
++		return true;
++	else if (conn->urg_state == SMC_URG_VALID)
++		/* we received a single urgent Byte - skip */
++		smc_rx_update_cons(smc, 0);
++	return false;
++}
++
+ /* smc_rx_recvmsg - receive data from RMBE
+  * @msg:	copy data to receive buffer
+  * @pipe:	copy data to pipe if set - indicates splice() call
+@@ -302,15 +314,18 @@ int smc_rx_recvmsg(struct smc_sock *smc, struct msghdr *msg,
+ 		if (read_done >= target || (pipe && read_done))
+ 			break;
+ 
+-		if (atomic_read(&conn->bytes_to_rcv))
++		if (smc_rx_recvmsg_data_available(smc))
+ 			goto copy;
+-		else if (conn->urg_state == SMC_URG_VALID)
+-			/* we received a single urgent Byte - skip */
+-			smc_rx_update_cons(smc, 0);
+ 
+ 		if (sk->sk_shutdown & RCV_SHUTDOWN ||
+-		    conn->local_tx_ctrl.conn_state_flags.peer_conn_abort)
++		    conn->local_tx_ctrl.conn_state_flags.peer_conn_abort) {
++			/* smc_cdc_msg_recv_action() could have run after
++			 * above smc_rx_recvmsg_data_available()
++			 */
++			if (smc_rx_recvmsg_data_available(smc))
++				goto copy;
+ 			break;
++		}
+ 
+ 		if (read_done) {
+ 			if (sk->sk_err ||
 -- 
 2.20.1
 
