@@ -2,75 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F4A3E5989
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 12:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25445E598C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 12:13:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbfJZKE1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 06:04:27 -0400
-Received: from email.epicentrk.ua ([194.183.174.42]:8465 "EHLO
-        zimbra.epicentrk.ua" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbfJZKE1 (ORCPT
+        id S1726198AbfJZKM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 06:12:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55354 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfJZKM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 06:04:27 -0400
-X-Greylist: delayed 17555 seconds by postgrey-1.27 at vger.kernel.org; Sat, 26 Oct 2019 06:04:25 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.epicentrk.ua (Postfix) with ESMTP id 9DCCE2AD50B;
-        Fri, 25 Oct 2019 23:33:49 +0300 (EEST)
-Received: from zimbra.epicentrk.ua ([127.0.0.1])
-        by localhost (zimbra.epicentrk.ua [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id XfmRMo3b45cu; Fri, 25 Oct 2019 23:33:49 +0300 (EEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.epicentrk.ua (Postfix) with ESMTP id 209AB2AD51E;
-        Fri, 25 Oct 2019 23:33:49 +0300 (EEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra.epicentrk.ua 209AB2AD51E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=epicentrk.ua;
-        s=A3FCAC36-7C71-11E7-AFD3-3C252C4CD05F; t=1572035629;
-        bh=/eiQ/UiTy3/5P3f9rUTf1CY9ZZHpfNZAOMbtuF4euCY=;
-        h=Date:From:Message-ID:MIME-Version;
-        b=Y6j80V3ztyYTwHQrACQ6tJ4xpV1oDv7OSQ1f2AxtzJK8D0niEKxDVx1a+tKbXqVtr
-         6wEAJLhMOp2cPzZnqhLp8oIWTzuN+lQ52F5N32CVRcJcNhCJQUJDazPC1YgayvZVPz
-         f6KAiYynfLAFscdcUZdfy/lAbLF4S3VXsCqBvOjUE/e9EkLAbtMJ3EohrR/AlmD2FX
-         h49Bioi/6dXPp55eYk4lI8SKWTcCzC0+w+fOYhzB1k/PvBifxl+TJlca/qxDc3+fVP
-         Ix+ms1A6laRpesGHBuz11d+dsT3Gwr5+PDvKkgH1YpVsTUO3WG9H0bx2ortkcQjdGW
-         OPCOICxEPBzkw==
-X-Virus-Scanned: amavisd-new at zimbra.epicentrk.ua
-Received: from zimbra.epicentrk.ua ([127.0.0.1])
-        by localhost (zimbra.epicentrk.ua [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id C9bVSE3NzEBP; Fri, 25 Oct 2019 23:33:48 +0300 (EEST)
-Received: from zimbra.epicentrk.ua (mail.zimbra.epicentrk.ua [10.71.1.50])
-        by zimbra.epicentrk.ua (Postfix) with ESMTP id 1FE7A2AB5AC;
-        Fri, 25 Oct 2019 23:33:46 +0300 (EEST)
-Date:   Fri, 25 Oct 2019 23:33:46 +0300 (EEST)
-From:   =?utf-8?B?0JrQvtGC0L7QstCw?= <o.kotova@epicentrk.ua>
-Reply-To: annie.martinez121@gmail.com
-Message-ID: <719157562.41163028.1572035626094.JavaMail.zimbra@epicentrk.ua>
-Subject: Proposition!
+        Sat, 26 Oct 2019 06:12:58 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1F6D760A61; Sat, 26 Oct 2019 10:12:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572084778;
+        bh=7I09K5+CmAYJ4+S3gYjmbFECynwUeOnBJfhDvdQI5to=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=USP3P3B2USPu6bSKWZYTpMAlcVA8OkWOIwx6TGwTA9C6p4WjZBwyXpV6Fk0+iFyil
+         asCpK1jJzEZFSHj1w3JwZDwdH0EXkOmoEoAFCSsvsebBM6cW3MPdhnoYV8gA8ytEQo
+         ZvEsfh6s6J5sBLP83tzVnTq3q/mNoS57KZ+ETFNA=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 4460560A61;
+        Sat, 26 Oct 2019 10:12:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572084777;
+        bh=7I09K5+CmAYJ4+S3gYjmbFECynwUeOnBJfhDvdQI5to=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Md6Dg7kTGuXVpqmAZfASuB5staSOsMUSox9FfGwfmr8hxY11PnlLPSFBcJdLiOtJU
+         mdT2cHbWERzIzgoBUNWQGgXxS2wswbCeNMuS7otPaViTsWBcSGTp61iIbgMQVknEic
+         h9a0ZkRJTCoymHHfGVpM9JOdL4p5RkqT+cpTbpvg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [10.71.1.50]
-X-Mailer: Zimbra 8.7.7_GA_1787 (zclient/8.7.7_GA_1787)
-Thread-Index: hhgP/kR4Xqx1IG+CrwS3OLyObogptg==
-Thread-Topic: Proposition!
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Sat, 26 Oct 2019 03:12:57 -0700
+From:   isaacm@codeaurora.org
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        joro@8bytes.org, m.szyprowski@samsung.com, robin.murphy@arm.com,
+        will@kernel.org, pratikp@codeaurora.org, lmark@codeaurora.org
+Subject: Re: [PATCH] iommu/dma: Add support for DMA_ATTR_SYS_CACHE
+In-Reply-To: <20191026053026.GA14545@lst.de>
+References: <1572050616-6143-1-git-send-email-isaacm@codeaurora.org>
+ <20191026053026.GA14545@lst.de>
+Message-ID: <e5fe861d7d506eb41c23f3fc047efdfa@codeaurora.org>
+X-Sender: isaacm@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Je voudrais r=C3=A9aliser un projet d=E2=80=99aide humanitaire =C3=A0 trave=
-rs vous bien qu=E2=80=99on ne se connait pas vraiment. J=E2=80=99ai alors d=
-=C3=A9cid=C3=A9 de vous l=C3=A9guer =C3=A0 titre de legs une somme de un mi=
-llion cinq cent mille dollars am=C3=A9ricain. Ma propre famille qui devrait=
- en b=C3=A9n=C3=A9ficier m'avait rejet=C3=A9e pour la simple raison de mon =
-mariage avec un Arabe Libyen.
+On 2019-10-25 22:30, Christoph Hellwig wrote:
+> The definition makes very little sense.
+Can you please clarify what part doesn’t make sense, and why? This is 
+really just an extension of this patch that got mainlined, so that 
+clients that use the DMA API can use IOMMU_QCOM_SYS_CACHE as well: 
+https://patchwork.kernel.org/patch/10946099/
+>  Any without a user in the same series it is a complete no-go anyway.
+IOMMU_QCOM_SYS_CACHE does not have any current users in the mainline, 
+nor did it have it in the patch series in which it got merged, yet it is 
+still present? Furthermore, there are plans to upstream support for one 
+of our SoCs that may benefit from this, as seen here: 
+https://www.spinics.net/lists/iommu/msg39608.html.
 
-=C2=AB N=E2=80=99h=C3=A9sitez pas =C3=A0 me r=C3=A9pondre =C3=A0 cet courri=
-el: annie.martinez121@gmail.com pour me parl=C3=A9 directement =C2=BB
-
-NB: Veuillez vous assurer de r=C3=A9pondre a la bonne adresse =C3=89mail me=
-rci et QUE DIEU VOUS B=C3=89NISSE.
-
-Sinc=C3=A8rement
-Mme ANNIE MARTINEZ
-E-mail Priv=C3=A9e: annie.martinez121@gmail.com
+Thanks,
+Isaac
