@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C77E5A01
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 13:40:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54742E5A02
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 13:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbfJZLko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 07:40:44 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51097 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbfJZLko (ORCPT
+        id S1726262AbfJZLmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 07:42:23 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50207 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfJZLmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 07:40:44 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 11so4815462wmk.0
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2019 04:40:42 -0700 (PDT)
+        Sat, 26 Oct 2019 07:42:23 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 11so4817717wmk.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2019 04:42:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=W/vxypmhdx/87an+/aP388jEJdL3hr+RUlVQLpWt2Kk=;
-        b=kR3FIEvo/pIuxQ2pW4trmkGyw6H7NRo/3OEYxCTyYBmDxYfvAYf2tsxnnPhN5E8IaP
-         eQe/LgwEAJq7m9d7y5MAZs1CeEk6CZSfq/prVCLFIismm8uK8ISS3URTMGqydh2D+dHv
-         wImRPO2kyuvYJB9hJKUZb8Tb0G3Tj1ZveKOz6obLtSeNEczEKbIgxghHb/SUIzv1PzxG
-         FbUGvqTm7uQTgGiYD6GSqeFbfQ4IV4VoV1k0yJl2mm79pUmUPIr00T8cIMVJH47T0v/l
-         PNDyWCH13qU0TT5rVxLeryyORpYaviGEujOMLZXeB94RdJeqV4bBb6CHTlvHjeOGQZpe
-         fOwg==
-X-Gm-Message-State: APjAAAXXJ9AmRLM2UGeXTvElkCTmGFtLmTzd6EJmhvEztsmrS9stOTGE
-        8w3fa45uvap8TpTDQ4T93ikz6NQrMPf6cJgs03Q=
-X-Google-Smtp-Source: APXvYqz1oIBJniaz8JVkUffCRISuoTlUzqgFgKCb/DI0DSGVzrJpvXjsM53KxEB2DhPAIavQL8hmjrPTvzliOdOApbw=
-X-Received: by 2002:a05:600c:2204:: with SMTP id z4mr7437100wml.67.1572090042021;
- Sat, 26 Oct 2019 04:40:42 -0700 (PDT)
+        bh=QGGHrxvstYz8pQS+YAa540baDYCxlz4g7i+Hb7CCqdM=;
+        b=ccPwIMUEktLCO4qzCrz5Qyl21vYRHCdI7R+JonzV9tZnjeIU0/XVRP6AM3TtIu5bKM
+         Kl1l6PcuJ2KjfdHy92qbeVYaW23K42t1V1njTXOPt6KGB7V7+EjSjImBTC+Ys026yeCL
+         o9KlW/Cu72mbK3nDE0W8IudshOIQYg9EMqMQxFGZflAoAJVDFh2e8+8FqmdilUjoqBb3
+         GLxtQG/iepLAMfCQLRio2nhDfAtXBWOKDRa0kiR64lvwkwDhyWW4os+igdB2PkniYrxB
+         49PW720G5G4ocyEtZYBo+RYrkzkncCxH4SC0vav2UEiDizE9Bs4dz9FrtFx9H8bopNuW
+         eFBw==
+X-Gm-Message-State: APjAAAVfPtKEPF2TsxGbZfUTAn3LBTgtbyY3GWKgKCQT/yKequ9xSGqF
+        QdVRAY5E4yOHLsV4/v2rYbTPeaG0ZNZUge3Qxyo=
+X-Google-Smtp-Source: APXvYqwaaiyCROEKYfoRqFE7ch+aPnOsGCy/y8qykI5iISzl9tI9p3/Bmv9NxoR6B+ZhYx4NP8E1M7lAfI7g05pthCg=
+X-Received: by 2002:a1c:2d49:: with SMTP id t70mr7559068wmt.131.1572090141550;
+ Sat, 26 Oct 2019 04:42:21 -0700 (PDT)
 MIME-Version: 1.0
 References: <20191016125019.157144-1-namhyung@kernel.org> <20191016125019.157144-2-namhyung@kernel.org>
  <20191024174433.GA3622521@devbig004.ftw2.facebook.com> <CAM9d7chWpj105TYR0qP3T8FJ=-2wjp+sh6Rk8zkvJb_ugtL3Dw@mail.gmail.com>
- <20191025110623.GH3622521@devbig004.ftw2.facebook.com>
-In-Reply-To: <20191025110623.GH3622521@devbig004.ftw2.facebook.com>
+ <20191025110623.GH3622521@devbig004.ftw2.facebook.com> <20191025184714.GJ3622521@devbig004.ftw2.facebook.com>
+In-Reply-To: <20191025184714.GJ3622521@devbig004.ftw2.facebook.com>
 From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Sat, 26 Oct 2019 20:40:31 +0900
-Message-ID: <CAM9d7cgY4_V1bj7ppVT-vutCob=rX+e90pjHE7-MMwBWsKp2_Q@mail.gmail.com>
+Date:   Sat, 26 Oct 2019 20:42:10 +0900
+Message-ID: <CAM9d7cguuEC1bpYgqX58KqX-H9C2B=XQE+grkxdsG2MQ8WyJnA@mail.gmail.com>
 Subject: Re: [PATCH 1/2] cgroup: Add generation number with cgroup id
 To:     Tejun Heo <tj@kernel.org>
 Cc:     Johannes Weiner <hannes@cmpxchg.org>,
@@ -52,26 +52,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 8:06 PM Tejun Heo <tj@kernel.org> wrote:
-> Sure, but I think we should get the userland visible behaviors right.
-> Ignoring implementation details:
->
-> * cgroup vs. css IDs doesn't matter for now.  css IDs aren't visible
->   to userland anyway and it could be that keeping using idr as-is or
->   always using 64bit IDs is the better solution for them.
+On Sat, Oct 26, 2019 at 3:47 AM Tejun Heo <tj@kernel.org> wrote:
+> So, something like the following.  Just to show the direction.  Only
+> compile tested and full of holes.  I'll see if I can get it working
+> over the weekend.
 
-Yes, it can be done easily IMHO.
-
->
-> * On 32bit ino setups, 32bit ino + gen as cgroup and export fs IDs.
-
-This is the current behavior, right?
-
->
-> * On 64bit ino setups, 64bit unique ino (allocated whichever way) + 0
->   gen as cgroup and export fs IDs.
-
-Hmm.. we still need gen for 64bit?  Do you want 12-byte export fs ID?
-
-Thanks
+Thanks a lot for doing this!
 Namhyung
