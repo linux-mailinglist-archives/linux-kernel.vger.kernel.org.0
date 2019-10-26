@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18532E5AC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:17:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38451E5AC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:17:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbfJZNRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 09:17:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39146 "EHLO mail.kernel.org"
+        id S1727504AbfJZNRr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 09:17:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727385AbfJZNRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 09:17:34 -0400
+        id S1727465AbfJZNRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 09:17:42 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06947222BD;
-        Sat, 26 Oct 2019 13:17:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39E55222BD;
+        Sat, 26 Oct 2019 13:17:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572095853;
-        bh=Y4a8nZRLPZyWJewIpXd7KkVvD4okkKWNtoDmdd8Yyx8=;
+        s=default; t=1572095862;
+        bh=8nYqj/0JPT07L2fvbPyBmKLq6JaKKIJB6D6zTqdr/kY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hBd1k3mJVxkmprCFW97mYPgeyD60qsh+2jQ/iKmQGh3Q5VKF5dXgizT8ii7Mo7UnV
-         xNdccLjwxHn6wgqyFpimy5vc+hutdi4fyXHkiGP7ui51Upvj9MjQ/Bi3faA+FwVy+j
-         jDuI+wMcwGH7jUKntDVmRFE6r4r7DTetoYHIQq+Y=
+        b=hfAjB+rLOpTtLqh0XsXXYD8en++lplkhyTQfjNnnvmPOSNltR87okUnIsNEQ4ZUi2
+         ckvSborhC+M5HGLI0z7zZiiCTzPvzTGIHgHpL6FLmuWdpGL/+zlT+nIebsNXRJdDm4
+         yjnq/R8J671WSLN45RRDZeowlAFJNTX7dn19BHog=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+Cc:     Karsten Graul <kgraul@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
         Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 49/99] netfilter: conntrack: avoid possible false sharing
-Date:   Sat, 26 Oct 2019 09:15:10 -0400
-Message-Id: <20191026131600.2507-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 54/99] net/smc: receive returns without data
+Date:   Sat, 26 Oct 2019 09:15:15 -0400
+Message-Id: <20191026131600.2507-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191026131600.2507-1-sashal@kernel.org>
 References: <20191026131600.2507-1-sashal@kernel.org>
@@ -49,93 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Karsten Graul <kgraul@linux.ibm.com>
 
-[ Upstream commit e37542ba111f3974dc622ae0a21c1787318de500 ]
+[ Upstream commit 882dcfe5a1785c20f45820cbe6fec4b8b647c946 ]
 
-As hinted by KCSAN, we need at least one READ_ONCE()
-to prevent a compiler optimization.
+smc_cdc_rxed_any_close_or_senddone() is used as an end condition for the
+receive loop. This conflicts with smc_cdc_msg_recv_action() which could
+run in parallel and set the bits checked by
+smc_cdc_rxed_any_close_or_senddone() before the receive is processed.
+In that case we could return from receive with no data, although data is
+available. The same applies to smc_rx_wait().
+Fix this by checking for RCV_SHUTDOWN only, which is set in
+smc_cdc_msg_recv_action() after the receive was actually processed.
 
-More details on :
-https://github.com/google/ktsan/wiki/READ_ONCE-and-WRITE_ONCE#it-may-improve-performance
-
-sysbot report :
-BUG: KCSAN: data-race in __nf_ct_refresh_acct / __nf_ct_refresh_acct
-
-read to 0xffff888123eb4f08 of 4 bytes by interrupt on cpu 0:
- __nf_ct_refresh_acct+0xd4/0x1b0 net/netfilter/nf_conntrack_core.c:1796
- nf_ct_refresh_acct include/net/netfilter/nf_conntrack.h:201 [inline]
- nf_conntrack_tcp_packet+0xd40/0x3390 net/netfilter/nf_conntrack_proto_tcp.c:1161
- nf_conntrack_handle_packet net/netfilter/nf_conntrack_core.c:1633 [inline]
- nf_conntrack_in+0x410/0xaa0 net/netfilter/nf_conntrack_core.c:1727
- ipv4_conntrack_in+0x27/0x40 net/netfilter/nf_conntrack_proto.c:178
- nf_hook_entry_hookfn include/linux/netfilter.h:135 [inline]
- nf_hook_slow+0x83/0x160 net/netfilter/core.c:512
- nf_hook include/linux/netfilter.h:260 [inline]
- NF_HOOK include/linux/netfilter.h:303 [inline]
- ip_rcv+0x12f/0x1a0 net/ipv4/ip_input.c:523
- __netif_receive_skb_one_core+0xa7/0xe0 net/core/dev.c:5004
- __netif_receive_skb+0x37/0xf0 net/core/dev.c:5118
- netif_receive_skb_internal+0x59/0x190 net/core/dev.c:5208
- napi_skb_finish net/core/dev.c:5671 [inline]
- napi_gro_receive+0x28f/0x330 net/core/dev.c:5704
- receive_buf+0x284/0x30b0 drivers/net/virtio_net.c:1061
- virtnet_receive drivers/net/virtio_net.c:1323 [inline]
- virtnet_poll+0x436/0x7d0 drivers/net/virtio_net.c:1428
- napi_poll net/core/dev.c:6352 [inline]
- net_rx_action+0x3ae/0xa50 net/core/dev.c:6418
- __do_softirq+0x115/0x33f kernel/softirq.c:292
-
-write to 0xffff888123eb4f08 of 4 bytes by task 7191 on cpu 1:
- __nf_ct_refresh_acct+0xfb/0x1b0 net/netfilter/nf_conntrack_core.c:1797
- nf_ct_refresh_acct include/net/netfilter/nf_conntrack.h:201 [inline]
- nf_conntrack_tcp_packet+0xd40/0x3390 net/netfilter/nf_conntrack_proto_tcp.c:1161
- nf_conntrack_handle_packet net/netfilter/nf_conntrack_core.c:1633 [inline]
- nf_conntrack_in+0x410/0xaa0 net/netfilter/nf_conntrack_core.c:1727
- ipv4_conntrack_local+0xbe/0x130 net/netfilter/nf_conntrack_proto.c:200
- nf_hook_entry_hookfn include/linux/netfilter.h:135 [inline]
- nf_hook_slow+0x83/0x160 net/netfilter/core.c:512
- nf_hook include/linux/netfilter.h:260 [inline]
- __ip_local_out+0x1f7/0x2b0 net/ipv4/ip_output.c:114
- ip_local_out+0x31/0x90 net/ipv4/ip_output.c:123
- __ip_queue_xmit+0x3a8/0xa40 net/ipv4/ip_output.c:532
- ip_queue_xmit+0x45/0x60 include/net/ip.h:236
- __tcp_transmit_skb+0xdeb/0x1cd0 net/ipv4/tcp_output.c:1158
- __tcp_send_ack+0x246/0x300 net/ipv4/tcp_output.c:3685
- tcp_send_ack+0x34/0x40 net/ipv4/tcp_output.c:3691
- tcp_cleanup_rbuf+0x130/0x360 net/ipv4/tcp.c:1575
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 7191 Comm: syz-fuzzer Not tainted 5.3.0+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-
-Fixes: cc16921351d8 ("netfilter: conntrack: avoid same-timeout update")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
-Cc: Florian Westphal <fw@strlen.de>
-Acked-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 952310ccf2d8 ("smc: receive data from RMBE")
+Reviewed-by: Ursula Braun <ubraun@linux.ibm.com>
+Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
 Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_conntrack_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/smc/smc_rx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 81a8ef42b88d3..56b1cf82ed3aa 100644
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -1793,8 +1793,8 @@ void __nf_ct_refresh_acct(struct nf_conn *ct,
- 	if (nf_ct_is_confirmed(ct))
- 		extra_jiffies += nfct_time_stamp;
+diff --git a/net/smc/smc_rx.c b/net/smc/smc_rx.c
+index 413a6abf227ef..0000026422885 100644
+--- a/net/smc/smc_rx.c
++++ b/net/smc/smc_rx.c
+@@ -211,8 +211,7 @@ int smc_rx_wait(struct smc_sock *smc, long *timeo,
+ 	rc = sk_wait_event(sk, timeo,
+ 			   sk->sk_err ||
+ 			   sk->sk_shutdown & RCV_SHUTDOWN ||
+-			   fcrit(conn) ||
+-			   smc_cdc_rxed_any_close_or_senddone(conn),
++			   fcrit(conn),
+ 			   &wait);
+ 	remove_wait_queue(sk_sleep(sk), &wait);
+ 	sk_clear_bit(SOCKWQ_ASYNC_WAITDATA, sk);
+@@ -310,7 +309,6 @@ int smc_rx_recvmsg(struct smc_sock *smc, struct msghdr *msg,
+ 			smc_rx_update_cons(smc, 0);
  
--	if (ct->timeout != extra_jiffies)
--		ct->timeout = extra_jiffies;
-+	if (READ_ONCE(ct->timeout) != extra_jiffies)
-+		WRITE_ONCE(ct->timeout, extra_jiffies);
- acct:
- 	if (do_acct)
- 		nf_ct_acct_update(ct, ctinfo, skb->len);
+ 		if (sk->sk_shutdown & RCV_SHUTDOWN ||
+-		    smc_cdc_rxed_any_close_or_senddone(conn) ||
+ 		    conn->local_tx_ctrl.conn_state_flags.peer_conn_abort)
+ 			break;
+ 
 -- 
 2.20.1
 
