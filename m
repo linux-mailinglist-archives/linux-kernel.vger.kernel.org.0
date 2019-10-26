@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A58AFE5A6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 14:12:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEA86E5A6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 14:12:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbfJZML5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 08:11:57 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55889 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfJZML4 (ORCPT
+        id S1726578AbfJZMMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 08:12:07 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40474 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbfJZML5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 08:11:56 -0400
-Received: by mail-wm1-f65.google.com with SMTP id g24so4839528wmh.5
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2019 05:11:55 -0700 (PDT)
+        Sat, 26 Oct 2019 08:11:57 -0400
+Received: by mail-wm1-f67.google.com with SMTP id w9so4610878wmm.5
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2019 05:11:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ROdiUFie8VPool1pzj4M8/NsYOT7cWJYujn+QRdPF48=;
-        b=AlqdrmodfB2rBN9q1tTZv458MN/RslIaLRXFeOeGkRMKbPPh8TtPe0WKzfbkx4+iwM
-         f0u6I85jzwSn9dvT5uR2vB7b2BHORpvqGVKyc9+rSjipxzxzFYHQ4zGUHDTQ6cfW5I2Z
-         xfpP72Ue4kAkYBTarXmu2HAcGCx2pDOiN25WDcX+jAasFbhpqgO0A+en5B9PV/YWMPzW
-         A9e2QQw4bR9T+3cKAamNJtFUKSzquHuX/gyN6sQ/rw4ZcHDzzitvF2rXYZmYMLNnvDOl
-         4z841TP/fVrCLDaQ0SkaDmCl50k2V2pfzwaU4Pf7k9Z89Jxr7dTajxMOKeKvfdm5Abd0
-         Z10g==
+        bh=sv48Bpld+S8ENWGw0IO9+9etbMm5gapIqiSKDckP1q0=;
+        b=PMTXYAG2F+dIWW1dp/rANy+vW/rCk05UQ4NxwIHricgk80t0jgrQwdrFVZC9xILtdL
+         DtY2BnQMx6/iAN/qcfVeusxe4whV7lbjZ5r8NgWWG6+MHAFTcyi8kmobRmGHGvM4OfKy
+         mhoBAPPGD+fw1d76X8dea9nFH4L+T1cxU7xsoxjzqQEEZyA2PHOpOGCMuO78rFgDdhHb
+         XvIizagsosP4iWNv6JVbGOimaI3dIclzOpR9udq5K3RyliiWp6wrm2kgW9b9JFOMLzvi
+         cCn32cpknHWjwTkIjxLaDOPvjz8G3VxCe1OMJzu/P3zuBHHUshu97hpmO6Td/hXlg8jl
+         qcIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ROdiUFie8VPool1pzj4M8/NsYOT7cWJYujn+QRdPF48=;
-        b=ZG8jgNm9a1kvnF24ClbwrutdlQ32NOKwBOQWqNyzXOtcmWa2GrGTm6gmue+gT+DDQC
-         8RmxjNg309p9GP2oIIztAkPuifN5/eVr1GlEJWkIc7fKCP7YDGEnalclaIhITucGs/+f
-         vg+lttor052xoQYIrI2dhfye2OgNNtDJ8YwF/D+uLMf9dqgqiyoLOv+q7SzbWlyOfvXd
-         iupghZ4gzUUDE6ZmCi3V1EAdCdRGWZNBHhQ9NObgPH0FCVEhprV+o8y7Z7tuLmp2RDUg
-         l74eTDMMLEWz0HmpltT8k+9lzQB+s49yiutkk+DuskxnZJdrslk02Erg1UU8GJtqyZhN
-         Tycw==
-X-Gm-Message-State: APjAAAUrQlUxxuWqZUTxd0Rhy5T+jciSH+u6OugtjCZQslEXLGdYU3oY
-        NWfywnI0TmN9NUPvV0ycgcE=
-X-Google-Smtp-Source: APXvYqxeTooQKZiEc2mBWfb+OQCbQqxGnXpC/cxWfdn7perNeBGaeYaAKOlietK+Z7Q0Lr9voDLU7Q==
-X-Received: by 2002:a05:600c:2487:: with SMTP id 7mr7812955wms.164.1572091914530;
-        Sat, 26 Oct 2019 05:11:54 -0700 (PDT)
+        bh=sv48Bpld+S8ENWGw0IO9+9etbMm5gapIqiSKDckP1q0=;
+        b=MnM6UFnU7hpM+0PLX2yxev8MKGWS7w+RlM1T99StfXylrzUqMNiuqBM42VXJEBKRxz
+         n/ikvRObRRPY223i8eD6LoNhHWyPxz3s/BS/h3kAfP7TPstfpCmza/wdskyp5kpgdloj
+         /wQ44csIuhryVCLhQQLp5wZIdchgKIlPWbZ6pNgOJB1NLAveA22pJJOH6aLkIZs+bRVq
+         Pxn2OxbyAnibZ+3mFwFZFtShmHZW+DWc8p7+f2RR4jOPjwfH93nrkNIDZyMkACgjdENe
+         OpNlonIuvRsK1/vcUOvvCc+kvjcTtMrl7Sgh2SZllDYrgRaWau+b3n2V6Mw3vulRGyrd
+         rcZg==
+X-Gm-Message-State: APjAAAXyYq62tbd81m2CGRvg9leIk33fTQKHhm1cw95mO4V1hTkyaDit
+        y09irFHiT2Ce3yVNAsUjJyr2rnTq
+X-Google-Smtp-Source: APXvYqxoAC2iy/8fqgTsidv12j+N6zvpRu5Z6WZQ/dD7eJ73TYwYPSZ2XlM5Ro6No4yIPlUyakkMMQ==
+X-Received: by 2002:a1c:39c1:: with SMTP id g184mr7639457wma.75.1572091915456;
+        Sat, 26 Oct 2019 05:11:55 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
-        by smtp.gmail.com with ESMTPSA id v8sm5789906wra.79.2019.10.26.05.11.53
+        by smtp.gmail.com with ESMTPSA id v8sm5789906wra.79.2019.10.26.05.11.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sat, 26 Oct 2019 05:11:54 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
@@ -50,9 +50,9 @@ To:     gregkh@linuxfoundation.org
 Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 4/7] staging: rtl8188eu: convert rtw_access_ctrl to return bool
-Date:   Sat, 26 Oct 2019 14:11:32 +0200
-Message-Id: <20191026121135.181897-4-straube.linux@gmail.com>
+Subject: [PATCH 5/7] staging: rtl8188eu: remove ternary operator
+Date:   Sat, 26 Oct 2019 14:11:33 +0200
+Message-Id: <20191026121135.181897-5-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191026121135.181897-1-straube.linux@gmail.com>
 References: <20191026121135.181897-1-straube.linux@gmail.com>
@@ -63,49 +63,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function rtw_access_ctrl returns boolean values, so change the return
-type to bool. Also convert the local variables that are used for the
-return value from u8 to bool.
+Instead of using ternary operator to set variable res, use the value
+of variable match (or the negation) directly to simplify the code and
+improve readability.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_sta_mgt.c | 6 +++---
- drivers/staging/rtl8188eu/include/sta_info.h | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_sta_mgt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
-index 157ae2f355ff..282c835a635c 100644
+index 282c835a635c..3cadc46836e1 100644
 --- a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
 +++ b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
-@@ -476,13 +476,13 @@ struct sta_info *rtw_get_bcmc_stainfo(struct adapter *padapter)
- 	return rtw_get_stainfo(pstapriv, bc_addr);
- }
+@@ -504,9 +504,9 @@ bool rtw_access_ctrl(struct adapter *padapter, u8 *mac_addr)
+ 	spin_unlock_bh(&pacl_node_q->lock);
  
--u8 rtw_access_ctrl(struct adapter *padapter, u8 *mac_addr)
-+bool rtw_access_ctrl(struct adapter *padapter, u8 *mac_addr)
- {
--	u8 res = true;
-+	bool res = true;
- #ifdef CONFIG_88EU_AP_MODE
- 	struct list_head *plist, *phead;
- 	struct rtw_wlan_acl_node *paclnode;
--	u8 match = false;
-+	bool match = false;
- 	struct sta_priv *pstapriv = &padapter->stapriv;
- 	struct wlan_acl_pool *pacl_list = &pstapriv->acl_list;
- 	struct __queue *pacl_node_q = &pacl_list->acl_node_q;
-diff --git a/drivers/staging/rtl8188eu/include/sta_info.h b/drivers/staging/rtl8188eu/include/sta_info.h
-index dc685a14aeb8..6165adafc451 100644
---- a/drivers/staging/rtl8188eu/include/sta_info.h
-+++ b/drivers/staging/rtl8188eu/include/sta_info.h
-@@ -354,6 +354,6 @@ void rtw_free_all_stainfo(struct adapter *adapt);
- struct sta_info *rtw_get_stainfo(struct sta_priv *stapriv, u8 *hwaddr);
- u32 rtw_init_bcmc_stainfo(struct adapter *adapt);
- struct sta_info *rtw_get_bcmc_stainfo(struct adapter *padapter);
--u8 rtw_access_ctrl(struct adapter *padapter, u8 *mac_addr);
-+bool rtw_access_ctrl(struct adapter *padapter, u8 *mac_addr);
+ 	if (pacl_list->mode == 1)/* accept unless in deny list */
+-		res = (match) ? false : true;
++		res = !match;
+ 	else if (pacl_list->mode == 2)/* deny unless in accept list */
+-		res = (match) ? true : false;
++		res = match;
+ 	else
+ 		res = true;
  
- #endif /* _STA_INFO_H_ */
 -- 
 2.23.0
 
