@@ -2,59 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22AFBE5967
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 11:09:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBF2CE5963
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 11:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbfJZJJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 05:09:52 -0400
-Received: from mout.perfora.net ([74.208.4.196]:38085 "EHLO mout.perfora.net"
+        id S1726210AbfJZJJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 05:09:46 -0400
+Received: from mout.perfora.net ([74.208.4.194]:34551 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726105AbfJZJJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 05:09:51 -0400
+        id S1726057AbfJZJJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 05:09:45 -0400
+X-Greylist: delayed 308 seconds by postgrey-1.27 at vger.kernel.org; Sat, 26 Oct 2019 05:09:45 EDT
 Received: from marcel-nb-toradex-int.cardiotech.int ([81.221.67.182]) by
  mrelay.perfora.net (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id
- 1Mna9J-1hfdWD3j4H-00jWpj; Sat, 26 Oct 2019 11:04:21 +0200
+ 1MUXAC-1iXByg3mRk-00QUVm; Sat, 26 Oct 2019 11:04:23 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org
 Cc:     linux-imx@nxp.com, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Philippe Schenker <philippe.schenker@toradex.com>,
         Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
-        <sebastien.szymanski@armadeus.com>
-Subject: [PATCH v2 2/5] dt-bindings: arm: fsl: add nxp based toradex apalis/colibri binding docu
-Date:   Sat, 26 Oct 2019 11:04:00 +0200
-Message-Id: <20191026090403.3057-2-marcel@ziswiler.com>
+        Rob Herring <robh+dt@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH v2 3/5] dt-bindings: input: tochscreen: ad7879: generic node names in example
+Date:   Sat, 26 Oct 2019 11:04:01 +0200
+Message-Id: <20191026090403.3057-3-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191026090403.3057-1-marcel@ziswiler.com>
 References: <20191026090403.3057-1-marcel@ziswiler.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:SnhVHRVvbDZqq57bt8ycn0RqZcXnZPwkFSn123IVncODo7yNFDn
- qt0vx1vlOB25lGok0cA11QDYKYIBSRZPmp+uDSGCPaPR9JHNp3fAZGSgoAN07B9WWEBbrDP
- Yq6tk2ASGCcm8KttiKkj7MeHU+QtzDfhQZPfSolnEfUibJGRgeffzIVcq7rjQUkdxXmWEsa
- qf41yRlidrQd5I9IUmpCQ==
+X-Provags-ID: V03:K1:AZs6m5j7/5kpHp4N1P9TZUPPmrn+q7afV0uY7Y+OBbvWyaLp11Z
+ 4azYw13OHQkir1m2J0LuVCj1RXGSiu9S7HZFq58rNgb1oV7kzbU6IiKSu18+Wik1skVyroN
+ oAEX9v4N6dLcQEc/to2v9e6QJ4Z4mSz6ZVwXImJ2reT8LiTx7PbAkXR4DwT5/qGMdzNwtNb
+ 6NhXpZYcAIpI8ssCjXacQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:JP8W5Bkf7gE=:Br9CLWaDopBnyirVCMa7E2
- dV22OqZQckCSsAxU8E4JNog0x5emZ5kIYr0wWcuAYdleNXDfN+IOwbyl5ihSz6KEBegdrjt1W
- jkc3UDHotEzSEgZKnTBJNJcYyyEyW0X5z5kjzSG/7neJst474OwPPcwVxznzqmJS6TTKoWWuy
- XvFQQ3ZJaRdCY5XdBTK8DGn9j8NyLp86zJ1OAfNpjUR5WwZYqowWOuydSEDZ0dKLvCiuABMcs
- fE43TSFIdO/ih+v3Dm3bHVoc+5Nli719yHVCTp7PwUzZIDcbkZNjZoTPFL+wPEvgE/dGqMTUv
- UHUdBXOEl025uVd9iYsxN5ztacvd/2/qUZGOa0sgKz3nrVtdSvscrXV0cRWlqPRzLOXa3Jbi3
- BArdPRxZ5VnuR17MpTrAnUneRQ4/exmiN7rE4qA0BJTkfuKCTGlMIrnLXHbHJ420V5A1i90r4
- IRCqQFXmBtawgb9JmDM3R/yQotE2rXtFfycCr0g7P/Vt4eLfjmun+OtotLNV4ox6+IPPQhmhE
- kLXnAiUM4hQzE565NpJFtVKTT6VyGypENgOQFHUtpAR6mKD/s8Tf/q02lcLRyL5VP4gjftXRJ
- caOPAQsG0WdhD96ftjF3/SaXNPUCid/im8pXktqtEqKAtO9cLtJLDaI8HVRHdyLY8O8P2ox6T
- nqTH6Q5ELYBD//NUp/W/xqtfUzj/og+Uo3yFhWyVEkGOorY+Teh4Szv47zeJd6ErLoJc7yfC5
- zgljZ2YYju8n/L53h6jYtwtW4uptIzQ/Mt/LSfH5qKZ74kQOAvoQunDJump53GF/SQgEcMbXb
- nTz33BPaldWHv1K2mLhSqH+E7XlNOUY1rNLcTpIdmWJ1RrV1EJXdqGDiUBUEPSZvgObB+pHsy
- Joy+n1okAF6waSUEh0bOYNmSoIoG6ZGbyJUVoNTgg=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2wDFJmfKpKY=:a4fHeKL+d5tPnniShUyqvK
+ SU1aZ7KUjZi7A4BX35z9CMOKiQe7S3M7pUDfG2jBpEpQLrGF3S5eL/Q4zZQhAkjNRAeopMHVH
+ JRJybCDqevRhzjrxAQEANqysq7fLI1Z3LJ9uQQItJkfPFFkF8R6DE8X+dFc8z4spmjHHPqMIw
+ t/Yg0wmqfPbtZOlUi9Pc+T1ZQoviK3gwwNiBBKtWdmj5VZdVQsdPSYk+z+VLxYaivVg9BnSc4
+ eGlbikhS8aGm/bnJjuHn2Kpi4JOaBttJG5JtTXJMb/wc+/nk+nYnA+WWMAzA5zuw7OYdyZbui
+ qhzOGAOUfumz0GFsWkWwB7LTKgvLltZtWnUsFUubfO1tAKD6WycbM2sHS+kjGjdG7Ngzolz2+
+ eFJ2oqums9QR0Hi69nfP1tkk1BMxGrFLOvglCV9E77LoReNNeMap1iLhrtXYcP4xE/rkyYOnO
+ e0h58SVpOxUvCLaNjEuxjzkYdHR2WHEEoIcIiOHRW3CR6bcTyow2nm75hyz6wSimPCm286wmQ
+ EMs9P/Y103EPjPtyb4SXZjVTtXnYf7pYaMpD6/ohPg/+Ns3fnfNWiDUMx1ZMxM1L8E2Uqw9kc
+ 4Qg3n4qACh+65i2RZPHHjLiGi3x1BWdOLdIAHRsoBIR/ZWeaGNgGKIqQR/7LXsP5SPzwLJu4x
+ TUFc8m/nGEnU29DQYh+xpEwns1febIh0Gq08PAaLxR96+/xLQnoB3cNEjpePtcY/S/jXMAJxs
+ LRvtlXKj9W9ieVpl3X4Lp+AMZJmPHk2qSO272RJi7odyVEfZgGYfVTTLZ7XtLvNCjT56d1FRs
+ EDzr6OWGvYXBL06H/54iSZDuikkrNRc4s7pDE7OOt+6RmyxjFKz/SjKxpJatydBz0zwk3t4KE
+ lPuVRv7L6N1ElrKznzzY6Chi/CzlwlhLaa8rahZrE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,42 +58,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Document the following NXP SoC based Toradex Apalis and Colibri module
-and carrier board devicetree bindings already supported:
-- toradex,apalis_imx6q            # Apalis iMX6 Module
-- toradex,apalis_imx6q-eval       # Apalis iMX6 Module on Apalisi
-				    Evaluation Board
-- toradex,apalis_imx6q-ixora      # Apalis iMX6 Module on Ixora
-- toradex,apalis_imx6q-ixora-v1.1 # Apalis iMX6 Module on Ixora V1.1
-
-- toradex,colibri_imx6dl          # Colibri iMX6 Module
-- toradex,colibri_imx6dl-eval-v3  # Colibri iMX6 Module on Colibri
-				    Evaluation Board V3
-
-- toradex,colibri-imx6ull-eval            # Colibri iMX6ULL Module on
-					    Colibri Evaluation Board
-- toradex,colibri-imx6ull-wifi-eval       # Colibri iMX6ULL Wi-Fi /
-					    Bluetooth Module on Colibri
-					    Evaluation Board
-
-- toradex,colibri-imx7s           # Colibri iMX7 Solo Module
-- toradex,colibri-imx7s-eval-v3   # Colibri iMX7 Solo Module on
-				    Colibri Evaluation Board V3
-
-- toradex,colibri-imx7d                   # Colibri iMX7 Dual Module
-- toradex,colibri-imx7d-emmc              # Colibri iMX7 Dual 1GB (eMMC)
-					    Module
-- toradex,colibri-imx7d-emmc-eval-v3      # Colibri iMX7 Dual 1GB (eMMC)
-                                            Module on Colibri Evaluation
-					    Board V3
-- toradex,colibri-imx7d-eval-v3           # Colibri iMX7 Dual Module on
-					    Colibri Evaluation Board V3
-- toradex,vf500-colibri_vf50              # Colibri VF50 Module
-- toradex,vf500-colibri_vf50-on-eval      # Colibri VF50 Module on
-					    Colibri Evaluation Board
-- toradex,vf610-colibri_vf61              # Colibri VF61 Module
-- toradex,vf610-colibri_vf61-on-eval      # Colibri VF61 Module on
-					    Colibri Evaluation Board
+Update example in ad7879 devicetree documentation to use generic touch
+controller node names.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -105,73 +67,31 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: New patch.
 
- Documentation/devicetree/bindings/arm/fsl.yaml | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ .../devicetree/bindings/input/touchscreen/ad7879.txt          | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index 41db01d77c23..96b05484527e 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -121,6 +121,10 @@ properties:
-               - fsl,imx6q-sabresd
-               - technologic,imx6q-ts4900
-               - technologic,imx6q-ts7970
-+              - toradex,apalis_imx6q            # Apalis iMX6 Module
-+              - toradex,apalis_imx6q-eval       # Apalis iMX6 Module on Apalis Evaluation Board
-+              - toradex,apalis_imx6q-ixora      # Apalis iMX6 Module on Ixora
-+              - toradex,apalis_imx6q-ixora-v1.1 # Apalis iMX6 Module on Ixora V1.1
-           - const: fsl,imx6q
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/ad7879.txt b/Documentation/devicetree/bindings/input/touchscreen/ad7879.txt
+index cdd743a1f2d5..afa38dc069f0 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/ad7879.txt
++++ b/Documentation/devicetree/bindings/input/touchscreen/ad7879.txt
+@@ -38,7 +38,7 @@ Optional properties:
  
-       - description: i.MX6QP based Boards
-@@ -142,6 +146,8 @@ properties:
-               - fsl,imx6dl-sabresd        # i.MX6 DualLite SABRE Smart Device Board
-               - technologic,imx6dl-ts4900
-               - technologic,imx6dl-ts7970
-+              - toradex,colibri_imx6dl          # Colibri iMX6 Module
-+              - toradex,colibri_imx6dl-eval-v3  # Colibri iMX6 Module on Colibri Evaluation Board V3
-               - ysoft,imx6dl-yapp4-draco  # i.MX6 DualLite Y Soft IOTA Draco board
-               - ysoft,imx6dl-yapp4-hydra  # i.MX6 DualLite Y Soft IOTA Hydra board
-               - ysoft,imx6dl-yapp4-ursa   # i.MX6 Solo Y Soft IOTA Ursa board
-@@ -194,6 +200,8 @@ properties:
-               - armadeus,imx6ull-opos6ul    # OPOS6UL (i.MX6ULL) SoM
-               - armadeus,imx6ull-opos6uldev # OPOS6UL (i.MX6ULL) SoM on OPOS6ULDev board
-               - fsl,imx6ull-14x14-evk     # i.MX6 UltraLiteLite 14x14 EVK Board
-+              - toradex,colibri-imx6ull-eval            # Colibri iMX6ULL Module on Colibri Evaluation Board
-+              - toradex,colibri-imx6ull-wifi-eval       # Colibri iMX6ULL Wi-Fi / Bluetooth Module on Colibri Evaluation Board
-           - const: fsl,imx6ull
+ Example:
  
-       - description: i.MX6ULZ based Boards
-@@ -206,6 +214,8 @@ properties:
-       - description: i.MX7S based Boards
-         items:
-           - enum:
-+              - toradex,colibri-imx7s           # Colibri iMX7 Solo Module
-+              - toradex,colibri-imx7s-eval-v3   # Colibri iMX7 Solo Module on Colibri Evaluation Board V3
-               - tq,imx7s-mba7             # i.MX7S TQ MBa7 with TQMa7S SoM
-           - const: fsl,imx7s
+-	ad7879@2c {
++	touchscreen0@2c {
+ 		compatible = "adi,ad7879-1";
+ 		reg = <0x2c>;
+ 		interrupt-parent = <&gpio1>;
+@@ -52,7 +52,7 @@ Example:
+ 		adi,conversion-interval = /bits/ 8 <255>;
+ 	};
  
-@@ -214,6 +224,10 @@ properties:
-           - enum:
-               - fsl,imx7d-sdb             # i.MX7 SabreSD Board
-               - novtech,imx7d-meerkat96   # i.MX7 Meerkat96 Board
-+              - toradex,colibri-imx7d                   # Colibri iMX7 Dual Module
-+              - toradex,colibri-imx7d-emmc              # Colibri iMX7 Dual 1GB (eMMC) Module
-+              - toradex,colibri-imx7d-emmc-eval-v3      # Colibri iMX7 Dual 1GB (eMMC) Module on Colibri Evaluation Board V3
-+              - toradex,colibri-imx7d-eval-v3           # Colibri iMX7 Dual Module on Colibri Evaluation Board V3
-               - tq,imx7d-mba7             # i.MX7D TQ MBa7 with TQMa7D SoM
-               - zii,imx7d-rmu2            # ZII RMU2 Board
-               - zii,imx7d-rpu2            # ZII RPU2 Board
-@@ -280,6 +294,10 @@ properties:
-               - fsl,vf600
-               - fsl,vf610
-               - fsl,vf610m4
-+              - toradex,vf500-colibri_vf50              # Colibri VF50 Module
-+              - toradex,vf500-colibri_vf50-on-eval      # Colibri VF50 Module on Colibri Evaluation Board
-+              - toradex,vf610-colibri_vf61              # Colibri VF61 Module
-+              - toradex,vf610-colibri_vf61-on-eval      # Colibri VF61 Module on Colibri Evaluation Board
- 
-       - description: ZII's VF610 based Boards
-         items:
+-	ad7879@1 {
++	touchscreen1@1 {
+ 		compatible = "adi,ad7879";
+ 		spi-max-frequency = <5000000>;
+ 		reg = <1>;
 -- 
 2.21.0
 
