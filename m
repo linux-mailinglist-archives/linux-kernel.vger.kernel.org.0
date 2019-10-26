@@ -2,74 +2,271 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13D45E5C65
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94068E5D7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 15:43:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728493AbfJZNT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 09:19:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41802 "EHLO mail.kernel.org"
+        id S1726466AbfJZNnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 09:43:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726673AbfJZNTx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 09:19:53 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726203AbfJZNnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 09:43:10 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A389F21D7F;
-        Sat, 26 Oct 2019 13:19:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F1D720867;
+        Sat, 26 Oct 2019 13:43:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572095992;
-        bh=VkBjWB/R8bRc62N+DtBiVl/0Znyz6mpBvpCJ5F0tXVc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I1rswr2gt6VSQqiKa6kOvLA+ooBMjLvWU8KPPnv1LxkQQNoec7kC24G9dUqJhjp2q
-         2+gmcadPyfDCTgxaKcdYkpjnta3brgUZlcoie+nW20hNfA3BDOPMx3xBoaHV+2vLxB
-         wgdVuvymuO5xUdKTLhJwxijmSm3JpRXgahE56Z9c=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 23/59] iwlwifi: dbg_ini: fix memory leak in alloc_sgtable
-Date:   Sat, 26 Oct 2019 09:18:34 -0400
-Message-Id: <20191026131910.3435-23-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191026131910.3435-1-sashal@kernel.org>
-References: <20191026131910.3435-1-sashal@kernel.org>
+        s=default; t=1572097389;
+        bh=MgueLOzk4O1/lxLZq3IymJWKFL5VawUHYQ3qLQlgLHs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DnHW0pSoT8+Zn7M8REC6SGCFLOideIS0medhl9AZz5hH/cF7g1leZ5J/n9uKTxKXW
+         c6wqJov0kwY0K+zpLxiRDCSEicZiYzri3jG6+WmVDomOUGozldlo1Ykmwu67uIYP0l
+         JIudsG03+oi70SteTexGVNJR4ulojO1VWYARnEDg=
+Date:   Sat, 26 Oct 2019 21:42:46 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+Cc:     corbet@lwn.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, catalin.marinas@arm.com,
+        will@kernel.org, leoyang.li@nxp.com, jslaby@suse.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Stoica Cosmin-Stefan <cosmin.stoica@nxp.com>,
+        Dan Nica <dan.nica@nxp.com>,
+        Larisa Grigore <Larisa.Grigore@nxp.com>
+Subject: Re: [PATCH v7 4/5] arm64: dts: fsl: Add device tree for S32V234-EVB
+Message-ID: <20191026134243.GP14401@dragon>
+References: <1571230107-8493-1-git-send-email-stefan-gabriel.mirea@nxp.com>
+ <1571230107-8493-5-git-send-email-stefan-gabriel.mirea@nxp.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1571230107-8493-5-git-send-email-stefan-gabriel.mirea@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+On Wed, Oct 16, 2019 at 03:48:26PM +0300, Stefan-Gabriel Mirea wrote:
+> From: Stoica Cosmin-Stefan <cosmin.stoica@nxp.com>
+> 
+> Add initial version of device tree for S32V234-EVB, including nodes for the
+> 4 Cortex-A53 cores, AIPS bus with UART modules, ARM architected timer and
+> Generic Interrupt Controller (GIC).
+> 
+> Keep SoC level separate from board level to let future boards with this SoC
+> share common properties, while the dts files will keep board-dependent
+> properties.
+> 
+> Signed-off-by: Stoica Cosmin-Stefan <cosmin.stoica@nxp.com>
+> Signed-off-by: Mihaela Martinas <Mihaela.Martinas@freescale.com>
+> Signed-off-by: Dan Nica <dan.nica@nxp.com>
+> Signed-off-by: Larisa Grigore <Larisa.Grigore@nxp.com>
+> Signed-off-by: Phu Luu An <phu.luuan@nxp.com>
+> Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/Makefile        |   2 +
+>  arch/arm64/boot/dts/freescale/s32v234-evb.dts |  25 ++++
+>  arch/arm64/boot/dts/freescale/s32v234.dtsi    | 139 ++++++++++++++++++
+>  3 files changed, 166 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/s32v234-evb.dts
+>  create mode 100644 arch/arm64/boot/dts/freescale/s32v234.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> index 93fce8f0c66d..730209adb2bc 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -32,3 +32,5 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mq-zii-ultra-rmb3.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mq-zii-ultra-zest.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8qxp-ai_ml.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek.dtb
+> +
+> +dtb-$(CONFIG_ARCH_S32) += s32v234-evb.dtb
+> diff --git a/arch/arm64/boot/dts/freescale/s32v234-evb.dts b/arch/arm64/boot/dts/freescale/s32v234-evb.dts
+> new file mode 100644
+> index 000000000000..4b802518cefc
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/s32v234-evb.dts
+> @@ -0,0 +1,25 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright 2015-2016 Freescale Semiconductor, Inc.
+> + * Copyright 2016-2017 NXP
+> + */
+> +
+> +/dts-v1/;
+> +#include "s32v234.dtsi"
+> +
+> +/ {
+> +	model = "NXP S32V234-EVB2 Board";
+> +	compatible = "fsl,s32v234-evb", "fsl,s32v234";
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	status = "okay";
+> +};
+> +
+> +&uart1 {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm64/boot/dts/freescale/s32v234.dtsi b/arch/arm64/boot/dts/freescale/s32v234.dtsi
+> new file mode 100644
+> index 000000000000..37225191ccbf
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/s32v234.dtsi
+> @@ -0,0 +1,139 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright 2015-2016 Freescale Semiconductor, Inc.
+> + * Copyright 2016-2018 NXP
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +/memreserve/ 0x80000000 0x00010000;
+> +
+> +/ {
+> +	compatible = "fsl,s32v234";
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +		serial1 = &uart1;
+> +	};
+> +
+> +	cpus {
+> +		#address-cells = <2>;
+> +		#size-cells = <0>;
+> +
+> +		cpu0: cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x0 0x0>;
+> +			enable-method = "spin-table";
+> +			cpu-release-addr = <0x0 0x80000000>;
+> +			next-level-cache = <&cluster0_l2_cache>;
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x0 0x1>;
+> +			enable-method = "spin-table";
+> +			cpu-release-addr = <0x0 0x80000000>;
+> +			next-level-cache = <&cluster0_l2_cache>;
+> +		};
+> +
+> +		cpu2: cpu@100 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x0 0x100>;
+> +			enable-method = "spin-table";
+> +			cpu-release-addr = <0x0 0x80000000>;
+> +			next-level-cache = <&cluster1_l2_cache>;
+> +		};
+> +
+> +		cpu3: cpu@101 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x0 0x101>;
+> +			enable-method = "spin-table";
+> +			cpu-release-addr = <0x0 0x80000000>;
+> +			next-level-cache = <&cluster1_l2_cache>;
+> +		};
+> +
+> +		cluster0_l2_cache: l2-cache0 {
+> +			compatible = "cache";
+> +		};
+> +
+> +		cluster1_l2_cache: l2-cache1 {
+> +			compatible = "cache";
+> +		};
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
+> +					  IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) |
+> +					  IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) |
+> +					  IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) |
+> +					  IRQ_TYPE_LEVEL_LOW)>;
+> +		/* clock-frequency might be modified by u-boot, depending on the
+> +		 * chip version.
+> +		 */
+> +		clock-frequency = <10000000>;
+> +	};
+> +
+> +	gic: interrupt-controller@7d001000 {
+> +		compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
+> +		#interrupt-cells = <3>;
+> +		#address-cells = <0>;
+> +		interrupt-controller;
+> +		reg = <0 0x7d001000 0 0x1000>,
+> +		      <0 0x7d002000 0 0x2000>,
+> +		      <0 0x7d004000 0 0x2000>,
+> +		      <0 0x7d006000 0 0x2000>;
+> +		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) |
+> +					 IRQ_TYPE_LEVEL_HIGH)>;
+> +	};
+> +
+> +	soc {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		compatible = "simple-bus";
+> +		interrupt-parent = <&gic>;
+> +		ranges;
+> +
+> +		aips0: aips-bus@40000000 {
+> +			compatible = "simple-bus";
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			interrupt-parent = <&gic>;
+> +			reg = <0x0 0x40000000 0x0 0x7D000>;
 
-[ Upstream commit b4b814fec1a5a849383f7b3886b654a13abbda7d ]
+We should consistently use lowercase for hex values in device tree.
 
-In alloc_sgtable if alloc_page fails, the alocated table should be
-released.
+I fixed it up during applying.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/wireless/intel/iwlwifi/fw/dbg.c | 1 +
- 1 file changed, 1 insertion(+)
+Shawn
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-index a31a42e673c46..0d567cc0a2643 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-@@ -547,6 +547,7 @@ static struct scatterlist *alloc_sgtable(int size)
- 				if (new_page)
- 					__free_page(new_page);
- 			}
-+			kfree(table);
- 			return NULL;
- 		}
- 		alloc_size = min_t(int, size, PAGE_SIZE);
--- 
-2.20.1
-
+> +			ranges;
+> +
+> +			uart0: serial@40053000 {
+> +				compatible = "fsl,s32v234-linflexuart";
+> +				reg = <0x0 0x40053000 0x0 0x1000>;
+> +				interrupts = <GIC_SPI 59 IRQ_TYPE_EDGE_RISING>;
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+> +		aips1: aips-bus@40080000 {
+> +			compatible = "simple-bus";
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			interrupt-parent = <&gic>;
+> +			reg = <0x0 0x40080000 0x0 0x70000>;
+> +			ranges;
+> +
+> +			uart1: serial@400bc000 {
+> +				compatible = "fsl,s32v234-linflexuart";
+> +				reg = <0x0 0x400bc000 0x0 0x1000>;
+> +				interrupts = <GIC_SPI 60 IRQ_TYPE_EDGE_RISING>;
+> +				status = "disabled";
+> +			};
+> +		};
+> +	};
+> +};
+> -- 
+> 2.22.0
+> 
