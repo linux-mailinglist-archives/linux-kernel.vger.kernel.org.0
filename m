@@ -2,81 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 795F2E5F2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 21:20:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D1BFE5F31
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 21:24:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfJZTUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 15:20:12 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34774 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726479AbfJZTUL (ORCPT
+        id S1726463AbfJZTYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 15:24:46 -0400
+Received: from mxwww.masterlogin.de ([95.129.51.220]:41658 "EHLO
+        mxwww.masterlogin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726311AbfJZTYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 15:20:11 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 139so6780353ljf.1;
-        Sat, 26 Oct 2019 12:20:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zWsuoyZAPYwca/EI+O1VE1qcAi/s4YJoaszzQreRPF4=;
-        b=TeDUOpDL4hTaTuuw4pizV86DSL17k4SGI2tz5Mir3tX3hbG+UF750wESPULT64i5Fa
-         DEnXuPiiBBlPAk7+3ZXVu9DjESJI44nFyrewyYrgIfVjBGEeTNz67gpP4vAckxL5qaGq
-         W/FoPayExUNlvhqsu8LYuua0xFky44Jr6DIaY1vi5al2roFxnhK0BbkimrXdyvkAKw9s
-         Z/qUBkM7UK+Q2un4H3DFIG7ABhsTsZJrd4CGFFD8q9+YFB35nwIE5vp3siMH8+BoNzRD
-         jGVqvwwi7IALYd2B+hL6eqS1Mnk2+imgEtBu/Rab3nCmpWtXMykRhNNJLMldyslLGkuf
-         jpZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zWsuoyZAPYwca/EI+O1VE1qcAi/s4YJoaszzQreRPF4=;
-        b=LC35kd+UpoZmbEUfsJLf28pd9eomjV0c2KLmCyv51HM0cSweHV0zKc4HG+Pv0Q0idn
-         /NvBA9Sst4Et7TtSL5RMYne+IlA2Gg7XqNjcX1iVdMQjXlhS36SdAccA1XkL7td0OgjX
-         hu3iUB7qYBe94IBrjYTuqmF2+dKz0RTbcaCNMCaYJfbYaYv6rU9JJ+g5bGZkDd/1+5lu
-         PKKQWYYVFzSCgZSNggqX0+rR4b8dBFE0tkxElJdzVV5E2mEgBJvFA9Lt71to+4FcQumG
-         Xh9vUeETRl948fWwOv/lO/W08xgnoc8KD2NXoqU7LUBpp1QACBuZKxrV56+6hIdI5Fna
-         PNOQ==
-X-Gm-Message-State: APjAAAVTkVuolj3adgTPg7xVotaDH8mEZezcSenqPOvCOsOZ81lwnomY
-        Zrsbg5viAIE7cxLvVkqlvuzzDL7F4yKVgxCxE58=
-X-Google-Smtp-Source: APXvYqxK5PEuDVL1bg3Au4IojFJdnipM55bXALNKVuwOG9O05h1SfUnaIBX/iObuEqHXNCOEqiNYoZMdiO08hmXs/Ew=
-X-Received: by 2002:a2e:42d6:: with SMTP id h83mr6637936ljf.21.1572117609221;
- Sat, 26 Oct 2019 12:20:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191025082247.3371-1-offougajoris@gmail.com> <20191025184544.7gwwbsrketjtwrwi@pengutronix.de>
- <5a73d00e-397a-f4ed-2bfa-bb26324685ba@gmail.com>
-In-Reply-To: <5a73d00e-397a-f4ed-2bfa-bb26324685ba@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Sat, 26 Oct 2019 16:20:10 -0300
-Message-ID: <CAOMZO5CPg=mJSKNuNVFF=zGUaZqMpr9Ocv89msS-120Shc0=RA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx7d-pico: Add LCD support
-To:     Joris Offouga <offougajoris@gmail.com>
-Cc:     Marco Felsch <m.felsch@pengutronix.de>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        open list <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 26 Oct 2019 15:24:46 -0400
+Received: from mxout1.routing.net (unknown [192.168.10.81])
+        by new.mxwww.masterlogin.de (Postfix) with ESMTPS id 3E75396F0D;
+        Sat, 26 Oct 2019 19:24:42 +0000 (UTC)
+Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
+        by mxout1.routing.net (Postfix) with ESMTP id 93B2243CF3;
+        Sat, 26 Oct 2019 19:24:42 +0000 (UTC)
+Received: from localhost.localdomain (fttx-pool-80.208.211.177.bambit.de [80.208.211.177])
+        by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 925A81005F5;
+        Sat, 26 Oct 2019 19:24:41 +0000 (UTC)
+From:   Frank Wunderlich <frank-w@public-files.de>
+To:     linux-mediatek@lists.infradead.org
+Cc:     Frank Wunderlich <frank-w@public-files.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: 
+Date:   Sat, 26 Oct 2019 21:23:59 +0200
+Message-Id: <20191026192359.27687-1-frank-w@public-files.de>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joris,
+Date: Sat, 26 Oct 2019 20:53:28 +0200
+Subject: [PATCH] serial: 8250-mtk: Ask for IRQ-count before request one
 
-On Fri, Oct 25, 2019 at 6:16 PM Joris Offouga <offougajoris@gmail.com> wrote:
+at least on bananapi-r2 we have only 1 IRQ and need to
+check for IRQ-count to fix following Errors during probe:
 
-> otherwise Fabio made me notice that I should leave his From however with
-> the changes made I should put mine?
+[    4.935780] mt6577-uart 11004000.serial: IRQ index 1 not found
+[    4.962589] 11002000.serial: ttyS1 at MMIO 0x11002000 (irq = 202, base_baud = 1625000) is a ST16650V2
+[    4.972127] mt6577-uart 11002000.serial: IRQ index 1 not found
+[    4.998927] 11003000.serial: ttyS2 at MMIO 0x11003000 (irq = 203, base_baud = 1625000) is a ST16650V2
+[    5.008474] mt6577-uart 11003000.serial: IRQ index 1 not found
 
-It is normal when we submit someone else's patch and we need to change
-a few things based on review feedback.
+based on Patch from Anson Huang
+https://patchwork.ozlabs.org/patch/1164500/
 
-Even so, the original From should be kept.
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+ drivers/tty/serial/8250/8250_mtk.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
+index b411ba4eb5e9..bf250187928a 100644
+--- a/drivers/tty/serial/8250/8250_mtk.c
++++ b/drivers/tty/serial/8250/8250_mtk.c
+@@ -485,6 +485,7 @@ static int mtk8250_probe(struct platform_device *pdev)
+ 	struct resource *regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	struct resource *irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	struct mtk8250_data *data;
++	int irq_count;
+ 	int err;
+ 
+ 	if (!regs || !irq) {
+@@ -544,7 +545,15 @@ static int mtk8250_probe(struct platform_device *pdev)
+ 	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 
+-	data->rx_wakeup_irq = platform_get_irq(pdev, 1);
++	irq_count = platform_irq_count(pdev);
++	if (irq_count < 0)
++		return irq_count;
++
++	if (irq_count > 1) {
++		data->rx_wakeup_irq = platform_get_irq(pdev, 1);
++		if (data->rx_wakeup_irq < 0)
++			data->rx_wakeup_irq = 0;
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
+
