@@ -2,110 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60AC9E589F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 06:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA814E58A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 06:46:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbfJZEZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 00:25:33 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39816 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfJZEZd (ORCPT
+        id S1726010AbfJZEk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 00:40:56 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:7919 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725853AbfJZEk4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 00:25:33 -0400
-Received: by mail-io1-f66.google.com with SMTP id y12so4733425ioa.6;
-        Fri, 25 Oct 2019 21:25:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=rHeRkxrHD5GX5EWDlQ98vXy+a783uwWXtM2tQKGXdug=;
-        b=gZRJSPMGxM1UPw1FdEvVFtbG4SqDkm9JN/GP92+GDY/bQVm73xFX5T2lkdkRAXJ9uw
-         4K927+DEPOjX0v2NhbOsDZjCOyTgg/PgzXqgwivEM6QeBnGHV0CLxMfG1XeHJninS6Jn
-         d3HUaWWFRPVWG+u/urTqRNtrGbQyLiZdTXq6MhvYlWjtoC7vQBAz3Rn6Mb3cxkdt1/Po
-         nUZHC0Eiw1kMMsF1PkX5MSMnY53N8J0Q3vB8vM9pSuefryXU7vr8bduXoiI452R8NKud
-         SwAzjj4yI/LFANHdC8I/m+7ITtp+iUIKP8EtGIgHjMBdZ+gFerdXZYr/VS+jNVHKs/wb
-         4H6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rHeRkxrHD5GX5EWDlQ98vXy+a783uwWXtM2tQKGXdug=;
-        b=rmvfTdm1a2c7VtsnYWtlwVg0qyEMQfFGHxiXqosXXhCvs4pG3viSHpDl/L7hO5D8vW
-         dQcGRdXbXp09DBNImH0+Ka1jb9NMFWI/qHIkPGpS7KSGSDdwU8QeUNYgIX0noYfPKcA7
-         TZ/+5A1bq71UiD0TxzkFzz0Sf1YyV0062kXTqODma012h0JsRZJWXAqnIZMWPBYhc0XT
-         wq8nEpHrSbsVnsZ4J7uepehiKit4cZBeO3b/+C8pM7oenKxUCinlsc0k6S7dg91U23Pt
-         YT4o2uwqULKJg5PDsgM/av2rF2TEIKK0v5wF9bSxxZSJG/Pi9kVk7IIemdGfUuLWUgeb
-         nSVA==
-X-Gm-Message-State: APjAAAVbugq37hNXtDg5c6BJsnstHz6WGtZnDGYbutbq4CY9H6uzu1h2
-        j4qJrTldkr7FLixWGHJoECA=
-X-Google-Smtp-Source: APXvYqwyjakLVT85RTryWMHfy6AKHouMUXRj6cegqSHqrg9AmKKAZBYTX2iEX2LdU+HgQdpe1I/m7g==
-X-Received: by 2002:a5d:980a:: with SMTP id a10mr7426699iol.225.1572063932870;
-        Fri, 25 Oct 2019 21:25:32 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id n123sm452068iod.62.2019.10.25.21.25.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 21:25:32 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Eddie James <eajames@linux.ibm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-media@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: aspeed-video: Fix memory leaks in aspeed_video_probe
-Date:   Fri, 25 Oct 2019 23:25:18 -0500
-Message-Id: <20191026042519.29446-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Sat, 26 Oct 2019 00:40:56 -0400
+X-IronPort-AV: E=Sophos;i="5.68,230,1569276000"; 
+   d="scan'208";a="408354237"
+Received: from ip-121.net-89-2-166.rev.numericable.fr (HELO hadrien) ([89.2.166.121])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Oct 2019 06:40:54 +0200
+Date:   Sat, 26 Oct 2019 06:40:54 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Cristiane Naves <cristianenavescardoso09@gmail.com>
+cc:     outreachy-kernel@googlegroups.com,
+        Rob Springer <rspringer@google.com>,
+        Todd Poynor <toddpoynor@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [Outreachy kernel] [RESEND PATCH] staging: gasket: Fix line
+ ending with a '('
+In-Reply-To: <20191025233909.GA1599@cristiane-Inspiron-5420>
+Message-ID: <alpine.DEB.2.21.1910260640340.2559@hadrien>
+References: <20191025233909.GA1599@cristiane-Inspiron-5420>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the implementation of aspeed_video_probe() the allocated memory for
-video should be released in case of failure. Release video if either
-devm_ioremap_resource() or aspeed_video_init() or
-aspeed_video_setup_video() fails.
 
-Fixes: d2b4387f3bdf ("media: platform: Add Aspeed Video Engine driver")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- drivers/media/platform/aspeed-video.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/aspeed-video.c b/drivers/media/platform/aspeed-video.c
-index eb12f3793062..8c473356132d 100644
---- a/drivers/media/platform/aspeed-video.c
-+++ b/drivers/media/platform/aspeed-video.c
-@@ -1663,18 +1663,24 @@ static int aspeed_video_probe(struct platform_device *pdev)
- 
- 	video->base = devm_ioremap_resource(video->dev, res);
- 
--	if (IS_ERR(video->base))
--		return PTR_ERR(video->base);
-+	if (IS_ERR(video->base)) {
-+		rc = PTR_ERR(video->base);
-+		goto free_video;
-+	}
- 
- 	rc = aspeed_video_init(video);
- 	if (rc)
--		return rc;
-+		goto free_video;
- 
- 	rc = aspeed_video_setup_video(video);
- 	if (rc)
--		return rc;
-+		goto free_video;
- 
- 	return 0;
-+
-+free_video:
-+	kfree(video);
-+	return rc;
- }
- 
- static int aspeed_video_remove(struct platform_device *pdev)
--- 
-2.17.1
+On Fri, 25 Oct 2019, Cristiane Naves wrote:
 
+> Fix line ending with a '('
+>
+> Signed-off-by: Cristiane Naves <cristianenavescardoso09@gmail.com>
+
+Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+
+
+> ---
+>  drivers/staging/gasket/gasket_ioctl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+> index 240f9bb..d1b3e9a 100644
+> --- a/drivers/staging/gasket/gasket_ioctl.c
+> +++ b/drivers/staging/gasket/gasket_ioctl.c
+> @@ -34,8 +34,8 @@ static int gasket_set_event_fd(struct gasket_dev *gasket_dev,
+>
+>  	trace_gasket_ioctl_eventfd_data(die.interrupt, die.event_fd);
+>
+> -	return gasket_interrupt_set_eventfd(
+> -		gasket_dev->interrupt_data, die.interrupt, die.event_fd);
+> +	return gasket_interrupt_set_eventfd(gasket_dev->interrupt_data,
+> +					    die.interrupt, die.event_fd);
+>  }
+>
+>  /* Read the size of the page table. */
+> --
+> 2.7.4
+>
+> --
+> You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20191025233909.GA1599%40cristiane-Inspiron-5420.
+>
