@@ -2,89 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 630EDE5957
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 11:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53FB7E5966
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2019 11:09:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726364AbfJZJBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 26 Oct 2019 05:01:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40546 "EHLO mail.kernel.org"
+        id S1726256AbfJZJJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 26 Oct 2019 05:09:51 -0400
+Received: from mout.perfora.net ([74.208.4.194]:53887 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbfJZJBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Oct 2019 05:01:17 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEE5C206DD;
-        Sat, 26 Oct 2019 09:01:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572080477;
-        bh=dT3VBbGodAYDaXlAzhc9xkeBX8hX0UBHad7K6i+wRmQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=osWcp25J+M2OpcatyBmtCSfOrMVPQ2Do23ErYWlFs/YSqXAQU/2Z6IpOSVK9ctkby
-         zN92uyIv4N5xjAqSRHAScsykZ7F1ZLZo5JY3vqpBRN5kh/y9lPZoCL/zYHIN6mHdmf
-         o89O6VnpQSPLg01b90999+LTCDtLTUaniU+WH2jE=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [BUGFIX PATCH V2 6/6] perf/probe: Fix to show ranges of variables in functions without entry_pc
-Date:   Sat, 26 Oct 2019 18:01:13 +0900
-Message-Id: <157208047363.16551.12586684059797077302.stgit@devnote2>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <157208041894.16551.2733647209130045685.stgit@devnote2>
-References: <157208041894.16551.2733647209130045685.stgit@devnote2>
-User-Agent: StGit/0.17.1-dirty
+        id S1726057AbfJZJJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Oct 2019 05:09:50 -0400
+Received: from marcel-nb-toradex-int.cardiotech.int ([81.221.67.182]) by
+ mrelay.perfora.net (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 1MQdh4-1ib1S01G0U-00Nkh2; Sat, 26 Oct 2019 11:04:18 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org
+Cc:     linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v2 1/5] arm: dts: vf-colibri: fix typo in top-level module compatible
+Date:   Sat, 26 Oct 2019 11:03:59 +0200
+Message-Id: <20191026090403.3057-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:uCkCQ5TKbiZEPOXRjuUU6qXHkYQrJJn9ygRw5CFh8WqiHqiMNIH
+ 6XJvGd+TbDVJksX+AEQotEHsuk7/gDK7WZjqhVGmXRByJJjpu+ZUZB5+yxbkuyOoioiKtxD
+ 2GKSezcg0OEusEbDk+okfru1hIlQtefsZVgtIxEzrKT14s/bJRgNnVRPWx4jXaZ09R0ZAO8
+ G5mRaDsp4xgCjj4e1g2dQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:TepQZIodI7M=:Px5RUF6fF0wHbFsrTFQJ25
+ GQ4GQEt+p0pCIXrX+GOlLwbi5hqYcyh1qe5brIuxpQos9MHZAoyQ6bZb54SdQY40Jf87ygDb+
+ jVPfkUef37vB7pjLHraBi+mvzl2/g7/ayM5QKlrCiF6tlW+DuVVfgas8+LMYl4aLwZ1KxWPAS
+ kpSE0fkTZj7CWCkB5Fegr6Gdi1/lOnayEFbeCcfDnDMXwN/HoGGTF3Kc0rrTQlSFemKyxYMQm
+ onYNhlig7UEp7TUV22LERnKQZ0e36B7zJN682s6aLlskcEONcw6uOgHhEyg7ph/5iLOC9kT2Y
+ br8APppcdMIFam+IAFvJq/jf9JqjKtZodKl4PgqI3l/SaoEqSoQ8/jxlQzvhOrh5YYIfSJDj9
+ 9JovqizTvae+Q331gaciDT6Ko65gNd0hh6PBBQ6w6Y1pjyUTK76h3MBEInk48XPq6KhOJiCzu
+ Tj+G0PlrEdOZy1HM1nsO/8FPUqvrh+8fQDLMz2W+bjTqxifOgIuqNDyrvKWXd3dhcbKv8foiT
+ j4uFVwedAj9GSVJWKL0D3ZXl1u7ompOOO+7rif8Lr9LzUczKzFqGCzcAHuiQI6AX131qrlokL
+ p3ErQqH63qhoWhTXp3EhpuIYVg8tAJhA4s9Lr+jPvL6Rz4dyaPituQOJlqNWrWTgEUb3brKDJ
+ ya2Za/oepYM2nbX/8cIE+gSCB47pyXKMa4U1HPUG/lrCaQX4YL/ZYCHYgJ8J3OUdW5pEI6H0R
+ GqY1WYwd6fGucXE4frdfR5laHdz6RSIgzFBLEX1fa3ScJwijVU+OTUzGtC80FH87LNTMiD/j6
+ +QiF7Pv0JhIch2j0ZIJul8V23MG37eWzgum1d//q4bC966RzkLYe2KK8XN9J0iXS+kHHxTTgy
+ O/qpW+r2cHBMBherExgBNHVsnXJeQ295WiI9foX4w=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix to show ranges of variables (--range and --vars option) in
-functions which DIE has only ranges but no entry_pc attribute.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Without this fix,
-  # perf probe --range -V clear_tasks_mm_cpumask
-  Available variables at clear_tasks_mm_cpumask
-  	@<clear_tasks_mm_cpumask+0>
-  		(No matched variables)
+Fix typo in top-level module compatible.
 
-With this fix,
-  # perf probe --range -V clear_tasks_mm_cpumask
-  Available variables at clear_tasks_mm_cpumask
-        @<clear_tasks_mm_cpumask+0>
-                [VAL]   int     cpu     @<clear_tasks_mm_cpumask+[0-62,104-109,1881-1888]>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-
-Fixes: 349e8d261131 ("perf probe: Add --range option to show a variable's location range")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- tools/perf/util/dwarf-aux.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-index e0c507d6b3b4..ac82fd937e4b 100644
---- a/tools/perf/util/dwarf-aux.c
-+++ b/tools/perf/util/dwarf-aux.c
-@@ -1019,7 +1019,7 @@ static int die_get_var_innermost_scope(Dwarf_Die *sp_die, Dwarf_Die *vr_die,
- 	bool first = true;
- 	const char *name;
+Changes in v2: New patch.
+
+ arch/arm/boot/dts/vf500-colibri.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/vf500-colibri.dtsi b/arch/arm/boot/dts/vf500-colibri.dtsi
+index 237b0246fa84..92255f8893ce 100644
+--- a/arch/arm/boot/dts/vf500-colibri.dtsi
++++ b/arch/arm/boot/dts/vf500-colibri.dtsi
+@@ -44,7 +44,7 @@
  
--	ret = dwarf_entrypc(sp_die, &entry);
-+	ret = die_entrypc(sp_die, &entry);
- 	if (ret)
- 		return ret;
+ / {
+ 	model = "Toradex Colibri VF50 COM";
+-	compatible = "toradex,vf610-colibri_vf50", "fsl,vf500";
++	compatible = "toradex,vf500-colibri_vf50", "fsl,vf500";
  
-@@ -1082,7 +1082,7 @@ int die_get_var_range(Dwarf_Die *sp_die, Dwarf_Die *vr_die, struct strbuf *buf)
- 	bool first = true;
- 	const char *name;
- 
--	ret = dwarf_entrypc(sp_die, &entry);
-+	ret = die_entrypc(sp_die, &entry);
- 	if (ret)
- 		return ret;
- 
+ 	memory@80000000 {
+ 		device_type = "memory";
+-- 
+2.21.0
 
