@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D241AE67EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF65CE6837
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:28:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732780AbfJ0VZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:25:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47482 "EHLO mail.kernel.org"
+        id S1730442AbfJ0VXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:23:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732770AbfJ0VZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:25:35 -0400
+        id S1732355AbfJ0VX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:23:29 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0651B21783;
-        Sun, 27 Oct 2019 21:25:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F27A214E0;
+        Sun, 27 Oct 2019 21:23:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211534;
-        bh=Y2PGDeGpqDF5Aq1B/bYZdGBz4DvQrgjH7TQuNiejeWc=;
+        s=default; t=1572211408;
+        bh=l0pchxFYAHhyUv0q79nwe2Ng0yEf+Cg2EzxFV4FdCZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZNfTg1j2vaPklHnlY1ZtqEdBUG8BDX0l2+2NuLm3sof2SSvI9FVCCcEBDgkUtvMA6
-         G00cL6Qt+/6WWIXz8IEU1Qoi+iI+xkc8BpU5BuwI7zyaw7OjhtRA3YxusDvOwrgpxp
-         pVUXe4sZY8+Bt0jVY9ZEU7Aug18zCeMV8cUW4a9M=
+        b=iNCOP68UvMKi6KcsvY24SaqIh1paPYv3fLDlnyjoyMBoFS+VFV8cOFsm8YieVchU2
+         gkLUScIQvLlXBv1B9MKazQpbov3PzPpxjvg11vvlBPSnAszFL0+1b2x/tRv9gs3D91
+         v3Zq0c5GZ9mVpn2qd43NTcsbjm1mCvVbPCxTr7z8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Bruno Thomsen <bruno.thomsen@gmail.com>,
+        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.3 141/197] mmc: mxs: fix flags passed to dmaengine_prep_slave_sg
-Date:   Sun, 27 Oct 2019 22:00:59 +0100
-Message-Id: <20191027203359.315800560@linuxfoundation.org>
+Subject: [PATCH 5.3 142/197] mmc: cqhci: Commit descriptors before setting the doorbell
+Date:   Sun, 27 Oct 2019 22:01:00 +0100
+Message-Id: <20191027203359.367516888@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -45,64 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sascha Hauer <s.hauer@pengutronix.de>
+From: Faiz Abbas <faiz_abbas@ti.com>
 
-commit 2bb9f7566ba7ab3c2154964461e37b52cdc6b91b upstream.
+commit c07d0073b9ec80a139d07ebf78e9c30d2a28279e upstream.
 
-Since ceeeb99cd821 we no longer abuse the DMA_CTRL_ACK flag for custom
-driver use and introduced the MXS_DMA_CTRL_WAIT4END instead. We have not
-changed all users to this flag though. This patch fixes it for the
-mxs-mmc driver.
+Add a write memory barrier to make sure that descriptors are actually
+written to memory, before ringing the doorbell.
 
-Fixes: ceeeb99cd821 ("dmaengine: mxs: rename custom flag")
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-Tested-by: Fabio Estevam <festevam@gmail.com>
-Reported-by: Bruno Thomsen <bruno.thomsen@gmail.com>
-Tested-by: Bruno Thomsen <bruno.thomsen@gmail.com>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/mxs-mmc.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/mmc/host/cqhci.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/mmc/host/mxs-mmc.c
-+++ b/drivers/mmc/host/mxs-mmc.c
-@@ -17,6 +17,7 @@
- #include <linux/interrupt.h>
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
-+#include <linux/dma/mxs-dma.h>
- #include <linux/highmem.h>
- #include <linux/clk.h>
- #include <linux/err.h>
-@@ -266,7 +267,7 @@ static void mxs_mmc_bc(struct mxs_mmc_ho
- 	ssp->ssp_pio_words[2] = cmd1;
- 	ssp->dma_dir = DMA_NONE;
- 	ssp->slave_dirn = DMA_TRANS_NONE;
--	desc = mxs_mmc_prep_dma(host, DMA_CTRL_ACK);
-+	desc = mxs_mmc_prep_dma(host, MXS_DMA_CTRL_WAIT4END);
- 	if (!desc)
- 		goto out;
+--- a/drivers/mmc/host/cqhci.c
++++ b/drivers/mmc/host/cqhci.c
+@@ -611,7 +611,8 @@ static int cqhci_request(struct mmc_host
+ 	cq_host->slot[tag].flags = 0;
  
-@@ -311,7 +312,7 @@ static void mxs_mmc_ac(struct mxs_mmc_ho
- 	ssp->ssp_pio_words[2] = cmd1;
- 	ssp->dma_dir = DMA_NONE;
- 	ssp->slave_dirn = DMA_TRANS_NONE;
--	desc = mxs_mmc_prep_dma(host, DMA_CTRL_ACK);
-+	desc = mxs_mmc_prep_dma(host, MXS_DMA_CTRL_WAIT4END);
- 	if (!desc)
- 		goto out;
- 
-@@ -441,7 +442,7 @@ static void mxs_mmc_adtc(struct mxs_mmc_
- 	host->data = data;
- 	ssp->dma_dir = dma_data_dir;
- 	ssp->slave_dirn = slave_dirn;
--	desc = mxs_mmc_prep_dma(host, DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-+	desc = mxs_mmc_prep_dma(host, DMA_PREP_INTERRUPT | MXS_DMA_CTRL_WAIT4END);
- 	if (!desc)
- 		goto out;
- 
+ 	cq_host->qcnt += 1;
+-
++	/* Make sure descriptors are ready before ringing the doorbell */
++	wmb();
+ 	cqhci_writel(cq_host, 1 << tag, CQHCI_TDBR);
+ 	if (!(cqhci_readl(cq_host, CQHCI_TDBR) & (1 << tag)))
+ 		pr_debug("%s: cqhci: doorbell not set for tag %d\n",
 
 
