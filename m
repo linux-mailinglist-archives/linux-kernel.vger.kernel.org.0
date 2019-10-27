@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BBA9E677C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:22:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7904E66A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:13:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731924AbfJ0VVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:21:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42182 "EHLO mail.kernel.org"
+        id S1730322AbfJ0VNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:13:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731915AbfJ0VVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:21:22 -0400
+        id S1730311AbfJ0VNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:13:41 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 278F9208C0;
-        Sun, 27 Oct 2019 21:21:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C649C208C0;
+        Sun, 27 Oct 2019 21:13:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211281;
-        bh=Q8vUDBGLJFLxIk07CFtJ+L5M4yWGiFa+eMw6EKM12Qk=;
+        s=default; t=1572210820;
+        bh=ETaAvzsQEiP4oZJWvRcthsJ/ZN8IdDXxzwucysDt7Ko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0xAzLuSfqz2nnIKm5+THlE+gBiuZJwYGiSbgcvIsKJa7tFiUQUG8tHq+H0VASXHGN
-         iInG+1GmD3ftwv4k4paS4Q+RTvyGijOQi+PLyv0JmwSjE7RN45+TngVEjtMaYbQFES
-         xGTWfMZ3ebseTupNA/5uL/NHOG6L76PNlwENloTw=
+        b=K6fkF+goOf2Knj6LqkiqMFMM52Yc8pD15WVWBen0tl2+X1cGZVq6uSM1mbDX1TBgq
+         rYSWgcUnoCbF+bIiGUAX+IYd8FMu1ltQyY6q20P3YHzQjKQ/1rEGYNaLioA/LHKb3x
+         PqaFsCiiv4/CfJdzF1Ey7ZSSUDI4Ue70oDNCzv7Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.3 097/197] ALSA: hda/realtek - Add support for ALC711
+        stable@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>,
+        John Garry <john.garry@huawei.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 03/93] scsi: megaraid: disable device when probe failed after enabled device
 Date:   Sun, 27 Oct 2019 22:00:15 +0100
-Message-Id: <20191027203357.003358388@linuxfoundation.org>
+Message-Id: <20191027203252.435486519@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kailang Yang <kailang@realtek.com>
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-commit 83629532ce45ef9df1f297b419b9ea112045685d upstream.
+[ Upstream commit 70054aa39a013fa52eff432f2223b8bd5c0048f8 ]
 
-Support new codec ALC711.
+For pci device, need to disable device when probe failed after enabled
+device.
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: https://lore.kernel.org/r/1567818450-173315-1-git-send-email-chenxiang66@hisilicon.com
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+Reviewed-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_realtek.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/megaraid.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -393,6 +393,7 @@ static void alc_fill_eapd_coef(struct hd
- 	case 0x10ec0700:
- 	case 0x10ec0701:
- 	case 0x10ec0703:
-+	case 0x10ec0711:
- 		alc_update_coef_idx(codec, 0x10, 1<<15, 0);
- 		break;
- 	case 0x10ec0662:
-@@ -7965,6 +7966,7 @@ static int patch_alc269(struct hda_codec
- 	case 0x10ec0700:
- 	case 0x10ec0701:
- 	case 0x10ec0703:
-+	case 0x10ec0711:
- 		spec->codec_variant = ALC269_TYPE_ALC700;
- 		spec->gen.mixer_nid = 0; /* ALC700 does not have any loopback mixer path */
- 		alc_update_coef_idx(codec, 0x4a, 1 << 15, 0); /* Combo jack auto trigger control */
-@@ -9105,6 +9107,7 @@ static const struct hda_device_id snd_hd
- 	HDA_CODEC_ENTRY(0x10ec0700, "ALC700", patch_alc269),
- 	HDA_CODEC_ENTRY(0x10ec0701, "ALC701", patch_alc269),
- 	HDA_CODEC_ENTRY(0x10ec0703, "ALC703", patch_alc269),
-+	HDA_CODEC_ENTRY(0x10ec0711, "ALC711", patch_alc269),
- 	HDA_CODEC_ENTRY(0x10ec0867, "ALC891", patch_alc662),
- 	HDA_CODEC_ENTRY(0x10ec0880, "ALC880", patch_alc880),
- 	HDA_CODEC_ENTRY(0x10ec0882, "ALC882", patch_alc882),
+diff --git a/drivers/scsi/megaraid.c b/drivers/scsi/megaraid.c
+index 8c7154143a4eb..a84878fbf45d2 100644
+--- a/drivers/scsi/megaraid.c
++++ b/drivers/scsi/megaraid.c
+@@ -4189,11 +4189,11 @@ megaraid_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		 */
+ 		if (pdev->subsystem_vendor == PCI_VENDOR_ID_COMPAQ &&
+ 		    pdev->subsystem_device == 0xC000)
+-		   	return -ENODEV;
++			goto out_disable_device;
+ 		/* Now check the magic signature byte */
+ 		pci_read_config_word(pdev, PCI_CONF_AMISIG, &magic);
+ 		if (magic != HBA_SIGNATURE_471 && magic != HBA_SIGNATURE)
+-			return -ENODEV;
++			goto out_disable_device;
+ 		/* Ok it is probably a megaraid */
+ 	}
+ 
+-- 
+2.20.1
+
 
 
