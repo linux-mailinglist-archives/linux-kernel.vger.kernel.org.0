@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7391BE664E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:10:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 608BBE66BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbfJ0VKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:10:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57074 "EHLO mail.kernel.org"
+        id S1730512AbfJ0VOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:14:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728797AbfJ0VKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:10:37 -0400
+        id S1730483AbfJ0VOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:14:38 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 819A520873;
-        Sun, 27 Oct 2019 21:10:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A7A1205C9;
+        Sun, 27 Oct 2019 21:14:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210637;
-        bh=yy9iRurEiMd6hM0tViCdcWOujPSbCP1i+PLRyE2P5Ls=;
+        s=default; t=1572210878;
+        bh=1xnmcLQJuvAucRr4+JBzuh6E6nUsMI+yUdoL4DunbeA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y1yjB3Oh61SDImSDfYD9gtE2VDXf62Ee9M5nCgwQeBvj32ErgYLftmU3Ao2p+FDhr
-         8l+c+G/1iTFu5AdjPrppR60oM7UMslaRzuavE+uKjnUeo0/G/aCxklC4g7emDOWx9v
-         LLJlblYA7nsB79B0IucSK70y95YbwA8HNgORibrI=
+        b=n5xpmbaG/nVloVKKL/IkGXqyo6OVXXH4p5wJHmYPU62dGKTE6q9eakOFkh9gDpb+b
+         sduYhRGs4e5/uUS1h0q15gDb0Sc9fbys7Xm8iDwZO1ldSX5TwYDC8Fh/dDlV/EnR1u
+         mivOIqKK44FckSw+Tvv9btJ6ViJOSai2Skwsz9CU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 083/119] arm64: Use firmware to detect CPUs that are not affected by Spectre-v2
+        stable@vger.kernel.org, Jens Remus <jremus@linux.ibm.com>,
+        Benjamin Block <bblock@linux.ibm.com>,
+        Steffen Maier <maier@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 48/93] scsi: zfcp: fix reaction on bit error threshold notification
 Date:   Sun, 27 Oct 2019 22:01:00 +0100
-Message-Id: <20191027203345.935698895@linuxfoundation.org>
+Message-Id: <20191027203300.360392635@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,76 +45,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Steffen Maier <maier@linux.ibm.com>
 
-[ Upstream commit 517953c2c47f9c00a002f588ac856a5bc70cede3 ]
+commit 2190168aaea42c31bff7b9a967e7b045f07df095 upstream.
 
-The SMCCC ARCH_WORKAROUND_1 service can indicate that although the
-firmware knows about the Spectre-v2 mitigation, this particular
-CPU is not vulnerable, and it is thus not necessary to call
-the firmware on this CPU.
+On excessive bit errors for the FCP channel ingress fibre path, the channel
+notifies us.  Previously, we only emitted a kernel message and a trace
+record.  Since performance can become suboptimal with I/O timeouts due to
+bit errors, we now stop using an FCP device by default on channel
+notification so multipath on top can timely failover to other paths.  A new
+module parameter zfcp.ber_stop can be used to get zfcp old behavior.
 
-Let's use this information to our benefit.
+User explanation of new kernel message:
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+ * Description:
+ * The FCP channel reported that its bit error threshold has been exceeded.
+ * These errors might result from a problem with the physical components
+ * of the local fibre link into the FCP channel.
+ * The problem might be damage or malfunction of the cable or
+ * cable connection between the FCP channel and
+ * the adjacent fabric switch port or the point-to-point peer.
+ * Find details about the errors in the HBA trace for the FCP device.
+ * The zfcp device driver closed down the FCP device
+ * to limit the performance impact from possible I/O command timeouts.
+ * User action:
+ * Check for problems on the local fibre link, ensure that fibre optics are
+ * clean and functional, and all cables are properly plugged.
+ * After the repair action, you can manually recover the FCP device by
+ * writing "0" into its "failed" sysfs attribute.
+ * If recovery through sysfs is not possible, set the CHPID of the device
+ * offline and back online on the service element.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: <stable@vger.kernel.org> #2.6.30+
+Link: https://lore.kernel.org/r/20191001104949.42810-1-maier@linux.ibm.com
+Reviewed-by: Jens Remus <jremus@linux.ibm.com>
+Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/cpu_errata.c |   32 +++++++++++++++++++++++---------
- 1 file changed, 23 insertions(+), 9 deletions(-)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -190,22 +190,36 @@ static int detect_harden_bp_fw(void)
- 	case PSCI_CONDUIT_HVC:
- 		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
- 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
--		if ((int)res.a0 < 0)
-+		switch ((int)res.a0) {
-+		case 1:
-+			/* Firmware says we're just fine */
-+			return 0;
-+		case 0:
-+			cb = call_hvc_arch_workaround_1;
-+			/* This is a guest, no need to patch KVM vectors */
-+			smccc_start = NULL;
-+			smccc_end = NULL;
-+			break;
-+		default:
- 			return -1;
--		cb = call_hvc_arch_workaround_1;
--		/* This is a guest, no need to patch KVM vectors */
--		smccc_start = NULL;
--		smccc_end = NULL;
+---
+ drivers/s390/scsi/zfcp_fsf.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+--- a/drivers/s390/scsi/zfcp_fsf.c
++++ b/drivers/s390/scsi/zfcp_fsf.c
+@@ -21,6 +21,11 @@
+ 
+ struct kmem_cache *zfcp_fsf_qtcb_cache;
+ 
++static bool ber_stop = true;
++module_param(ber_stop, bool, 0600);
++MODULE_PARM_DESC(ber_stop,
++		 "Shuts down FCP devices for FCP channels that report a bit-error count in excess of its threshold (default on)");
++
+ static void zfcp_fsf_request_timeout_handler(struct timer_list *t)
+ {
+ 	struct zfcp_fsf_req *fsf_req = from_timer(fsf_req, t, timer);
+@@ -230,10 +235,15 @@ static void zfcp_fsf_status_read_handler
+ 	case FSF_STATUS_READ_SENSE_DATA_AVAIL:
+ 		break;
+ 	case FSF_STATUS_READ_BIT_ERROR_THRESHOLD:
+-		dev_warn(&adapter->ccw_device->dev,
+-			 "The error threshold for checksum statistics "
+-			 "has been exceeded\n");
+ 		zfcp_dbf_hba_bit_err("fssrh_3", req);
++		if (ber_stop) {
++			dev_warn(&adapter->ccw_device->dev,
++				 "All paths over this FCP device are disused because of excessive bit errors\n");
++			zfcp_erp_adapter_shutdown(adapter, 0, "fssrh_b");
++		} else {
++			dev_warn(&adapter->ccw_device->dev,
++				 "The error threshold for checksum statistics has been exceeded\n");
 +		}
  		break;
- 
- 	case PSCI_CONDUIT_SMC:
- 		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
- 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
--		if ((int)res.a0 < 0)
-+		switch ((int)res.a0) {
-+		case 1:
-+			/* Firmware says we're just fine */
-+			return 0;
-+		case 0:
-+			cb = call_smc_arch_workaround_1;
-+			smccc_start = __smccc_workaround_1_smc_start;
-+			smccc_end = __smccc_workaround_1_smc_end;
-+			break;
-+		default:
- 			return -1;
--		cb = call_smc_arch_workaround_1;
--		smccc_start = __smccc_workaround_1_smc_start;
--		smccc_end = __smccc_workaround_1_smc_end;
-+		}
- 		break;
- 
- 	default:
+ 	case FSF_STATUS_READ_LINK_DOWN:
+ 		zfcp_fsf_status_read_link_down(req);
 
 
