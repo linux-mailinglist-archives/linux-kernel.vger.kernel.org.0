@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD562E6693
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:13:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F40E6795
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfJ0VNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:13:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60204 "EHLO mail.kernel.org"
+        id S1732091AbfJ0VWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:22:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730174AbfJ0VNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:13:09 -0400
+        id S1732084AbfJ0VWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:22:10 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D42A20B7C;
-        Sun, 27 Oct 2019 21:13:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05A722070B;
+        Sun, 27 Oct 2019 21:22:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210788;
-        bh=iUn0+AXJbd2oK9c2oxMcnZEUu2QM6vGDtG0r2+b2KF4=;
+        s=default; t=1572211329;
+        bh=qSmlTE+QgmSY9E9tC6knfwegASSxSRMMw6TO5CL9/D8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zbE+BEtETNBDNVxnRrxA9f0uv2SJ+ethNjo82AGdxhsxooZEtYl01Ow1Rae8USR/n
-         ICnfslNMjn7u2b678aYvQanumfhYAGiFT5gEkfa0ctPry9J2SQt05vhzwRsQayXdLm
-         atxdC2Bk5P8yZjVyALltrJxW9OduqFGgE9asP/Gw=
+        b=dDLrfVOdUXHauLiQ4cvnPQY9sIkE1W4kmWxWLwxobS2k/UrLrTJwsSXVAvtTQU3Br
+         u1oRefYbt4VeOTpXRL3F9Bc68sRqTB1xA+y2palmlw1Y5/PcRORAxQKoG3nnd+lM2e
+         i0tRhKA66JXCaYkRZokFb/ZIUza/yuRlApgAXEow=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 18/93] lib: textsearch: fix escapes in example code
-Date:   Sun, 27 Oct 2019 22:00:30 +0100
-Message-Id: <20191027203255.387257901@linuxfoundation.org>
+        stable@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
+        Rob Turk <robtu@rtist.nl>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 5.3 113/197] scsi: ch: Make it possible to open a ch device multiple times again
+Date:   Sun, 27 Oct 2019 22:00:31 +0100
+Message-Id: <20191027203357.843173402@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit 2105b52e30debe7f19f3218598d8ae777dcc6776 ]
+commit 6a0990eaa768dfb7064f06777743acc6d392084b upstream.
 
-This textsearch code example does not need the '\' escapes and they can
-be misleading to someone reading the example. Also, gcc and sparse warn
-that the "\%d" is an unknown escape sequence.
+Clearing ch->device in ch_release() is wrong because that pointer must
+remain valid until ch_remove() is called. This patch fixes the following
+crash the second time a ch device is opened:
 
-Fixes: 5968a70d7af5 ("textsearch: fix kernel-doc warnings and add kernel-api section")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+BUG: kernel NULL pointer dereference, address: 0000000000000790
+RIP: 0010:scsi_device_get+0x5/0x60
+Call Trace:
+ ch_open+0x4c/0xa0 [ch]
+ chrdev_open+0xa2/0x1c0
+ do_dentry_open+0x13a/0x380
+ path_openat+0x591/0x1470
+ do_filp_open+0x91/0x100
+ do_sys_open+0x184/0x220
+ do_syscall_64+0x5f/0x1a0
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fixes: 085e56766f74 ("scsi: ch: add refcounting")
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191009173536.247889-1-bvanassche@acm.org
+Reported-by: Rob Turk <robtu@rtist.nl>
+Suggested-by: Rob Turk <robtu@rtist.nl>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- lib/textsearch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/ch.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/lib/textsearch.c b/lib/textsearch.c
-index 5939549c0e7bc..9135c29add624 100644
---- a/lib/textsearch.c
-+++ b/lib/textsearch.c
-@@ -93,9 +93,9 @@
-  *       goto errout;
-  *   }
-  *
-- *   pos = textsearch_find_continuous(conf, \&state, example, strlen(example));
-+ *   pos = textsearch_find_continuous(conf, &state, example, strlen(example));
-  *   if (pos != UINT_MAX)
-- *       panic("Oh my god, dancing chickens at \%d\n", pos);
-+ *       panic("Oh my god, dancing chickens at %d\n", pos);
-  *
-  *   textsearch_destroy(conf);
-  */
--- 
-2.20.1
-
+--- a/drivers/scsi/ch.c
++++ b/drivers/scsi/ch.c
+@@ -579,7 +579,6 @@ ch_release(struct inode *inode, struct f
+ 	scsi_changer *ch = file->private_data;
+ 
+ 	scsi_device_put(ch->device);
+-	ch->device = NULL;
+ 	file->private_data = NULL;
+ 	kref_put(&ch->ref, ch_destroy);
+ 	return 0;
 
 
