@@ -2,43 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFAE4E66DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:16:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 270A0E666A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:11:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730734AbfJ0VPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:15:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35332 "EHLO mail.kernel.org"
+        id S1729957AbfJ0VLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:11:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730718AbfJ0VPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:15:52 -0400
+        id S1729935AbfJ0VLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:11:40 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 685C920717;
-        Sun, 27 Oct 2019 21:15:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69A132064A;
+        Sun, 27 Oct 2019 21:11:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210952;
-        bh=5bYkzf0cOA1DnTlb6MM2s3nSpeMQETLnobPhmKDtXlM=;
+        s=default; t=1572210700;
+        bh=+/yjROhR3xSWgVkmwv8FNvOENYzLi1Z49EMeWd4IlQk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TW18KZMRhG3/qMSQkI5O3hS5BRah9IJmrgfjA5ksW1QnkuGllQZ32CIpiBKilGPY1
-         CItYhFTcXChp2XzadaAUyPjGwFMIalZhFd0QAd1D35ZQ3XLb2XPs4rLy/Wcv0WpNsL
-         rLT0rUnFfDMXpAjKxMcFLcJ07YefNNlq2WVm7QBw=
+        b=C3eFAxbVLb3XQHWkux27iNybRqRD4tfFqV61Y/Gz/p72CEqdKI9TSBsWLdZhvYh2a
+         EW0pF4TxmlvrXkeu78dC/j+YmUhTWA9m7IN57Rhd1NXrXUlZmFRPYbmy0RR0pPDFq1
+         Mkkgnln/8xr90eiqX8A+IAwSsJ1gu5R2BOh4Zuu0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        James Morse <james.morse@arm.com>,
+        stable@vger.kernel.org, Steve Wahl <steve.wahl@hpe.com>,
         Borislav Petkov <bp@suse.de>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Richter <rrichter@marvell.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: [PATCH 4.19 72/93] EDAC/ghes: Fix Use after free in ghes_edac remove path
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Baoquan He <bhe@redhat.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        dimitri.sivanich@hpe.com, Feng Tang <feng.tang@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jordan Borgner <mail@jordan-borgner.de>,
+        Juergen Gross <jgross@suse.com>, mike.travis@hpe.com,
+        russ.anderson@hpe.com, Thomas Gleixner <tglx@linutronix.de>,
+        x86-ml <x86@kernel.org>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH 4.14 107/119] x86/boot/64: Make level2_kernel_pgt pages invalid outside kernel area
 Date:   Sun, 27 Oct 2019 22:01:24 +0100
-Message-Id: <20191027203309.714870582@linuxfoundation.org>
+Message-Id: <20191027203349.352290481@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,76 +54,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Morse <james.morse@arm.com>
+From: Steve Wahl <steve.wahl@hpe.com>
 
-commit 1e72e673b9d102ff2e8333e74b3308d012ddf75b upstream.
+commit 2aa85f246c181b1fa89f27e8e20c5636426be624 upstream.
 
-ghes_edac models a single logical memory controller, and uses a global
-ghes_init variable to ensure only the first ghes_edac_register() will
-do anything.
+Our hardware (UV aka Superdome Flex) has address ranges marked
+reserved by the BIOS. Access to these ranges is caught as an error,
+causing the BIOS to halt the system.
 
-ghes_edac is registered the first time a GHES entry in the HEST is
-probed. There may be multiple entries, so subsequent attempts to
-register ghes_edac are silently ignored as the work has already been
-done.
+Initial page tables mapped a large range of physical addresses that
+were not checked against the list of BIOS reserved addresses, and
+sometimes included reserved addresses in part of the mapped range.
+Including the reserved range in the map allowed processor speculative
+accesses to the reserved range, triggering a BIOS halt.
 
-When a GHES entry is unregistered, it calls ghes_edac_unregister(),
-which free()s the memory behind the global variables in ghes_edac.
+Used early in booting, the page table level2_kernel_pgt addresses 1
+GiB divided into 2 MiB pages, and it was set up to linearly map a full
+ 1 GiB of physical addresses that included the physical address range
+of the kernel image, as chosen by KASLR.  But this also included a
+large range of unused addresses on either side of the kernel image.
+And unlike the kernel image's physical address range, this extra
+mapped space was not checked against the BIOS tables of usable RAM
+addresses.  So there were times when the addresses chosen by KASLR
+would result in processor accessible mappings of BIOS reserved
+physical addresses.
 
-But there may be multiple GHES entries, the next call to
-ghes_edac_unregister() will dereference the free()d memory, and attempt
-to free it a second time.
+The kernel code did not directly access any of this extra mapped
+space, but having it mapped allowed the processor to issue speculative
+accesses into reserved memory, causing system halts.
 
-This may also be triggered on a platform with one GHES entry, if the
-driver is unbound/re-bound and unbound. The re-bind step will do
-nothing because of ghes_init, the second unbind will then do the same
-work as the first.
+This was encountered somewhat rarely on a normal system boot, and much
+more often when starting the crash kernel if "crashkernel=512M,high"
+was specified on the command line (this heavily restricts the physical
+address of the crash kernel, in our case usually within 1 GiB of
+reserved space).
 
-Doing the unregister work on the first call is unsafe, as another
-CPU may be processing a notification in ghes_edac_report_mem_error(),
-using the memory we are about to free.
+The solution is to invalidate the pages of this table outside the kernel
+image's space before the page table is activated. It fixes this problem
+on our hardware.
 
-ghes_init is already half of the reference counting. We only need
-to do the register work for the first call, and the unregister work
-for the last. Add the unregister check.
+ [ bp: Touchups. ]
 
-This means we no longer free ghes_edac's memory while there are
-GHES entries that may receive a notification.
-
-This was detected by KASAN and DEBUG_TEST_DRIVER_REMOVE.
-
- [ bp: merge into a single patch. ]
-
-Fixes: 0fe5f281f749 ("EDAC, ghes: Model a single, logical memory controller")
-Reported-by: John Garry <john.garry@huawei.com>
-Signed-off-by: James Morse <james.morse@arm.com>
+Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Robert Richter <rrichter@marvell.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20191014171919.85044-2-james.morse@arm.com
-Link: https://lkml.kernel.org/r/304df85b-8b56-b77e-1a11-aa23769f2e7c@huawei.com
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Brijesh Singh <brijesh.singh@amd.com>
+Cc: dimitri.sivanich@hpe.com
+Cc: Feng Tang <feng.tang@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jordan Borgner <mail@jordan-borgner.de>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: mike.travis@hpe.com
+Cc: russ.anderson@hpe.com
+Cc: stable@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Cc: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Link: https://lkml.kernel.org/r/9c011ee51b081534a7a15065b1681d200298b530.1569358539.git.steve.wahl@hpe.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/edac/ghes_edac.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kernel/head64.c |   22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
---- a/drivers/edac/ghes_edac.c
-+++ b/drivers/edac/ghes_edac.c
-@@ -532,7 +532,11 @@ void ghes_edac_unregister(struct ghes *g
- 	if (!ghes_pvt)
- 		return;
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -145,13 +145,31 @@ unsigned long __head __startup_64(unsign
+ 	 * we might write invalid pmds, when the kernel is relocated
+ 	 * cleanup_highmap() fixes this up along with the mappings
+ 	 * beyond _end.
++	 *
++	 * Only the region occupied by the kernel image has so far
++	 * been checked against the table of usable memory regions
++	 * provided by the firmware, so invalidate pages outside that
++	 * region. A page table entry that maps to a reserved area of
++	 * memory would allow processor speculation into that area,
++	 * and on some hardware (particularly the UV platform) even
++	 * speculative access to some reserved areas is caught as an
++	 * error, causing the BIOS to halt the system.
+ 	 */
  
-+	if (atomic_dec_return(&ghes_init))
-+		return;
+ 	pmd = fixup_pointer(level2_kernel_pgt, physaddr);
+-	for (i = 0; i < PTRS_PER_PMD; i++) {
 +
- 	mci = ghes_pvt->mci;
-+	ghes_pvt = NULL;
- 	edac_mc_del_mc(mci->pdev);
- 	edac_mc_free(mci);
- }
++	/* invalidate pages before the kernel image */
++	for (i = 0; i < pmd_index((unsigned long)_text); i++)
++		pmd[i] &= ~_PAGE_PRESENT;
++
++	/* fixup pages that are part of the kernel image */
++	for (; i <= pmd_index((unsigned long)_end); i++)
+ 		if (pmd[i] & _PAGE_PRESENT)
+ 			pmd[i] += load_delta;
+-	}
++
++	/* invalidate pages after the kernel image */
++	for (; i < PTRS_PER_PMD; i++)
++		pmd[i] &= ~_PAGE_PRESENT;
+ 
+ 	/*
+ 	 * Fixup phys_base - remove the memory encryption mask to obtain
 
 
