@@ -2,42 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79298E67C5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:24:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9DBAE65EA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732467AbfJ0VYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:24:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45578 "EHLO mail.kernel.org"
+        id S1727471AbfJ0VGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:06:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730777AbfJ0VYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:24:06 -0400
+        id S1729015AbfJ0VGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:06:34 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0727A21726;
-        Sun, 27 Oct 2019 21:24:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D6FD21726;
+        Sun, 27 Oct 2019 21:06:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211445;
-        bh=ZGKy0LfQM2/wY5dYcXvQFbwuLbdK5gPKL1YPowHNLoM=;
+        s=default; t=1572210393;
+        bh=l/WXLIXBxK9ewrr0gNrLX93jPViXHepG5+D0tblXfOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gsuENh9vddJXKUaXv3cLDhGlYbCshjCZmMpyqfC+xBRbFEd2fff/YFBYVopeGUstz
-         jgSIpSwdpN0v3eZVjL+WSpf71F6VQQmMDpQTH3F01baLBsIJs77dT4a1NniZJwAeKf
-         d8uhjbLMsRF51QWRw0MDXjqtmbwZKQDWLXparITA=
+        b=FlU04/V34M/oKW5Ypl3O4pxtriY0oegW7stBoabGWgribBErTqyNl71KB2xS61msc
+         bHe0xioBADqdHoZai0BUJ0llWRGyjkhsKl0DZcET26pCI7n9T5dTskuee/EjiEhr0J
+         ssto9Aq8vQzpgvm2ePnF5/V2s4RrqpTqATHcIjNw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jane Chu <jane.chu@oracle.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.3 154/197] mm/memory-failure: poison read receives SIGKILL instead of SIGBUS if mmaped more than once
+        stable@vger.kernel.org,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Timo Wischer <twischer@de.adit-jv.com>,
+        Junya Monden <jmonden@jp.adit-jv.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 34/49] ASoC: rsnd: Reinitialize bit clock inversion flag for every format setting
 Date:   Sun, 27 Oct 2019 22:01:12 +0100
-Message-Id: <20191027203400.001440568@linuxfoundation.org>
+Message-Id: <20191027203148.024594991@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
+References: <20191027203119.468466356@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,114 +49,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jane Chu <jane.chu@oracle.com>
+From: Junya Monden <jmonden@jp.adit-jv.com>
 
-commit 3d7fed4ad8ccb691d217efbb0f934e6a4df5ef91 upstream.
+commit 22e58665a01006d05f0239621f7d41cacca96cc4 upstream.
 
-Mmap /dev/dax more than once, then read the poison location using
-address from one of the mappings.  The other mappings due to not having
-the page mapped in will cause SIGKILLs delivered to the process.
-SIGKILL succeeds over SIGBUS, so user process loses the opportunity to
-handle the UE.
+Unlike other format-related DAI parameters, rdai->bit_clk_inv flag
+is not properly re-initialized when setting format for new stream
+processing. The inversion, if requested, is then applied not to default,
+but to a previous value, which leads to SCKP bit in SSICR register being
+set incorrectly.
+Fix this by re-setting the flag to its initial value, determined by format.
 
-Although one may add MAP_POPULATE to mmap(2) to work around the issue,
-MAP_POPULATE makes mapping 128GB of pmem several magnitudes slower, so
-isn't always an option.
-
-Details -
-
-  ndctl inject-error --block=10 --count=1 namespace6.0
-
-  ./read_poison -x dax6.0 -o 5120 -m 2
-  mmaped address 0x7f5bb6600000
-  mmaped address 0x7f3cf3600000
-  doing local read at address 0x7f3cf3601400
-  Killed
-
-Console messages in instrumented kernel -
-
-  mce: Uncorrected hardware memory error in user-access at edbe201400
-  Memory failure: tk->addr = 7f5bb6601000
-  Memory failure: address edbe201: call dev_pagemap_mapping_shift
-  dev_pagemap_mapping_shift: page edbe201: no PUD
-  Memory failure: tk->size_shift == 0
-  Memory failure: Unable to find user space address edbe201 in read_poison
-  Memory failure: tk->addr = 7f3cf3601000
-  Memory failure: address edbe201: call dev_pagemap_mapping_shift
-  Memory failure: tk->size_shift = 21
-  Memory failure: 0xedbe201: forcibly killing read_poison:22434 because of failure to unmap corrupted page
-    => to deliver SIGKILL
-  Memory failure: 0xedbe201: Killing read_poison:22434 due to hardware memory corruption
-    => to deliver SIGBUS
-
-Link: http://lkml.kernel.org/r/1565112345-28754-3-git-send-email-jane.chu@oracle.com
-Signed-off-by: Jane Chu <jane.chu@oracle.com>
-Suggested-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 1a7889ca8aba3 ("ASoC: rsnd: fixup SND_SOC_DAIFMT_xB_xF behavior")
+Cc: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Cc: Jiada Wang <jiada_wang@mentor.com>
+Cc: Timo Wischer <twischer@de.adit-jv.com>
+Cc: stable@vger.kernel.org # v3.17+
+Signed-off-by: Junya Monden <jmonden@jp.adit-jv.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Link: https://lore.kernel.org/r/20191016124255.7442-1-erosca@de.adit-jv.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memory-failure.c |   22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ sound/soc/sh/rcar/core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -199,7 +199,6 @@ struct to_kill {
- 	struct task_struct *tsk;
- 	unsigned long addr;
- 	short size_shift;
--	char addr_valid;
- };
- 
- /*
-@@ -324,22 +323,27 @@ static void add_to_kill(struct task_stru
- 		}
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -629,6 +629,7 @@ static int rsnd_soc_dai_set_fmt(struct s
  	}
- 	tk->addr = page_address_in_vma(p, vma);
--	tk->addr_valid = 1;
- 	if (is_zone_device_page(p))
- 		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
- 	else
- 		tk->size_shift = compound_order(compound_head(p)) + PAGE_SHIFT;
  
- 	/*
--	 * In theory we don't have to kill when the page was
--	 * munmaped. But it could be also a mremap. Since that's
--	 * likely very rare kill anyways just out of paranoia, but use
--	 * a SIGKILL because the error is not contained anymore.
-+	 * Send SIGKILL if "tk->addr == -EFAULT". Also, as
-+	 * "tk->size_shift" is always non-zero for !is_zone_device_page(),
-+	 * so "tk->size_shift == 0" effectively checks no mapping on
-+	 * ZONE_DEVICE. Indeed, when a devdax page is mmapped N times
-+	 * to a process' address space, it's possible not all N VMAs
-+	 * contain mappings for the page, but at least one VMA does.
-+	 * Only deliver SIGBUS with payload derived from the VMA that
-+	 * has a mapping for the page.
- 	 */
--	if (tk->addr == -EFAULT || tk->size_shift == 0) {
-+	if (tk->addr == -EFAULT) {
- 		pr_info("Memory failure: Unable to find user space address %lx in %s\n",
- 			page_to_pfn(p), tsk->comm);
--		tk->addr_valid = 0;
-+	} else if (tk->size_shift == 0) {
-+		kfree(tk);
-+		return;
- 	}
- 	get_task_struct(tsk);
- 	tk->tsk = tsk;
-@@ -366,7 +370,7 @@ static void kill_procs(struct list_head
- 			 * make sure the process doesn't catch the
- 			 * signal and then access the memory. Just kill it.
- 			 */
--			if (fail || tk->addr_valid == 0) {
-+			if (fail || tk->addr == -EFAULT) {
- 				pr_err("Memory failure: %#lx: forcibly killing %s:%d because of failure to unmap corrupted page\n",
- 				       pfn, tk->tsk->comm, tk->tsk->pid);
- 				do_send_sig_info(SIGKILL, SEND_SIG_PRIV,
+ 	/* set format */
++	rdai->bit_clk_inv = 0;
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_I2S:
+ 		rdai->sys_delay = 0;
 
 
