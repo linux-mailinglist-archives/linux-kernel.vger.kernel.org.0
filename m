@@ -2,38 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84124E6611
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:08:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61D3AE67AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbfJ0VIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:08:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54270 "EHLO mail.kernel.org"
+        id S1732314AbfJ0VXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:23:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729327AbfJ0VIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:08:06 -0400
+        id S1732282AbfJ0VXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:23:09 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CD6E2064A;
-        Sun, 27 Oct 2019 21:08:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D3702064A;
+        Sun, 27 Oct 2019 21:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210485;
-        bh=HX1uJv3K6nliWLyVHLjYQ5UaxNy1uDdm3bnjZGi1i3w=;
+        s=default; t=1572211388;
+        bh=qZbmyqNoqqWSNldczzl40r7M2ckjjBMdmgyd9fPtQOk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X4ODa/0jyTG6EgcpMi+84EeUumQrwSamSncpt8cO8INpvzQy10g8He6ln1kNvfdhc
-         DNGAGabfe3vrcCP+/TFbttiJYy8ppaEykiUi1sURVqTQxmsT4+bkJkUlSyGXGRvROh
-         OIqLYmpLKvSJjOLU9P11+VJ+JMBwqOgevr7AivWw=
+        b=lsYwpYxxAnqI3Lawo4vDD0SSoiz17vziIc3xJbtjMGfIBpgtdNagEQiW+Evu/3+R0
+         2o2Iy9We+hN7p0sQeCv6/eLOj6ktl0lkmQKgAZInxmqDacRvPM8x0PaBqFc/anvtIi
+         S5E/zxstM87KBP+7lQHrYk3iwJZCce9w6pPWUtO0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 031/119] ALSA: hda/realtek - Add support for ALC711
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        Tal Gilboa <talgi@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH 5.3 090/197] net: ethernet: broadcom: have drivers select DIMLIB as needed
 Date:   Sun, 27 Oct 2019 22:00:08 +0100
-Message-Id: <20191027203309.899226470@linuxfoundation.org>
+Message-Id: <20191027203356.604595451@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +55,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kailang Yang <kailang@realtek.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 83629532ce45ef9df1f297b419b9ea112045685d upstream.
+[ Upstream commit ddc790e92b3afa4e366ffb41818cfcd19015031e ]
 
-Support new codec ALC711.
+NET_VENDOR_BROADCOM is intended to control a kconfig menu only.
+It should not have anything to do with code generation.
+As such, it should not select DIMLIB for all drivers under
+NET_VENDOR_BROADCOM.  Instead each driver that needs DIMLIB should
+select it (being the symbols SYSTEMPORT, BNXT, and BCMGENET).
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1907021810220.13058@ramsan.of.borg/
+
+Fixes: 4f75da3666c0 ("linux/dim: Move implementation to .c files")
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Uwe Kleine-König <uwe@kleine-koenig.org>
+Cc: Tal Gilboa <talgi@mellanox.com>
+Cc: Saeed Mahameed <saeedm@mellanox.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-rdma@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Leon Romanovsky <leonro@mellanox.com>
+Cc: Or Gerlitz <ogerlitz@mellanox.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/pci/hda/patch_realtek.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/broadcom/Kconfig |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -359,6 +359,7 @@ static void alc_fill_eapd_coef(struct hd
- 	case 0x10ec0700:
- 	case 0x10ec0701:
- 	case 0x10ec0703:
-+	case 0x10ec0711:
- 		alc_update_coef_idx(codec, 0x10, 1<<15, 0);
- 		break;
- 	case 0x10ec0662:
-@@ -7272,6 +7273,7 @@ static int patch_alc269(struct hda_codec
- 	case 0x10ec0700:
- 	case 0x10ec0701:
- 	case 0x10ec0703:
-+	case 0x10ec0711:
- 		spec->codec_variant = ALC269_TYPE_ALC700;
- 		spec->gen.mixer_nid = 0; /* ALC700 does not have any loopback mixer path */
- 		alc_update_coef_idx(codec, 0x4a, 1 << 15, 0); /* Combo jack auto trigger control */
-@@ -8365,6 +8367,7 @@ static const struct hda_device_id snd_hd
- 	HDA_CODEC_ENTRY(0x10ec0700, "ALC700", patch_alc269),
- 	HDA_CODEC_ENTRY(0x10ec0701, "ALC701", patch_alc269),
- 	HDA_CODEC_ENTRY(0x10ec0703, "ALC703", patch_alc269),
-+	HDA_CODEC_ENTRY(0x10ec0711, "ALC711", patch_alc269),
- 	HDA_CODEC_ENTRY(0x10ec0867, "ALC891", patch_alc662),
- 	HDA_CODEC_ENTRY(0x10ec0880, "ALC880", patch_alc880),
- 	HDA_CODEC_ENTRY(0x10ec0882, "ALC882", patch_alc882),
+--- a/drivers/net/ethernet/broadcom/Kconfig
++++ b/drivers/net/ethernet/broadcom/Kconfig
+@@ -8,7 +8,6 @@ config NET_VENDOR_BROADCOM
+ 	default y
+ 	depends on (SSB_POSSIBLE && HAS_DMA) || PCI || BCM63XX || \
+ 		   SIBYTE_SB1xxx_SOC
+-	select DIMLIB
+ 	---help---
+ 	  If you have a network (Ethernet) chipset belonging to this class,
+ 	  say Y.
+@@ -69,6 +68,7 @@ config BCMGENET
+ 	select FIXED_PHY
+ 	select BCM7XXX_PHY
+ 	select MDIO_BCM_UNIMAC
++	select DIMLIB
+ 	help
+ 	  This driver supports the built-in Ethernet MACs found in the
+ 	  Broadcom BCM7xxx Set Top Box family chipset.
+@@ -188,6 +188,7 @@ config SYSTEMPORT
+ 	select MII
+ 	select PHYLIB
+ 	select FIXED_PHY
++	select DIMLIB
+ 	help
+ 	  This driver supports the built-in Ethernet MACs found in the
+ 	  Broadcom BCM7xxx Set Top Box family chipset using an internal
+@@ -200,6 +201,7 @@ config BNXT
+ 	select LIBCRC32C
+ 	select NET_DEVLINK
+ 	select PAGE_POOL
++	select DIMLIB
+ 	---help---
+ 	  This driver supports Broadcom NetXtreme-C/E 10/25/40/50 gigabit
+ 	  Ethernet cards.  To compile this driver as a module, choose M here:
 
 
