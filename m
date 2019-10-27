@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E7A1E65B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:04:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DC18E65E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728632AbfJ0VE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:04:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50084 "EHLO mail.kernel.org"
+        id S1727559AbfJ0VGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:06:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728612AbfJ0VEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:04:24 -0400
+        id S1727935AbfJ0VGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:06:06 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB42B20873;
-        Sun, 27 Oct 2019 21:04:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74A35214AF;
+        Sun, 27 Oct 2019 21:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210263;
-        bh=Nd/69uza/dlZHrUS8k+TlHCzIFVzAvLu8UefKxT4+6I=;
+        s=default; t=1572210366;
+        bh=xfn2grFNQHAMa2mnB8e9OG/12JI0L+LK0zEft7BaaBI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QVwBDdJgakdVRKQD2896UH00RKuQ++gKX/Zm1PCNcBc7sY69hELWaDWn5TLUqV9z1
-         6Qsd4057r3lm5L3LN8/r3zjEREziY15q732YycSUp7ALg3Qcm67AyfXMqn0gu2fgtb
-         3OboKrJrupmDyhANQ7EagQAwJSqaw/dr72KXYTig=
+        b=JzptqsSoBpYRE060pMbIIK84iwpMHNI5ycxPwEx2BuPuM7MI7lYsDe4tIM/S5i3q1
+         qghbS+VI/g9+KTFOfhfxw/gdfApUxUKKtCbkKIbhEil2tOURgLUzOQcYG3utEIuQIX
+         GPz2uTmY8AsplO5aqyuvhRBttDQfcxomtO4E50nk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
-        Sven Schnelle <svens@stackframe.org>
-Subject: [PATCH 4.4 33/41] parisc: Fix vmap memory leak in ioremap()/iounmap()
+        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.9 33/49] Input: da9063 - fix capability and drop KEY_SLEEP
 Date:   Sun, 27 Oct 2019 22:01:11 +0100
-Message-Id: <20191027203126.939170710@linuxfoundation.org>
+Message-Id: <20191027203147.681498332@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
+References: <20191027203119.468466356@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,60 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Helge Deller <deller@gmx.de>
+From: Marco Felsch <m.felsch@pengutronix.de>
 
-commit 513f7f747e1cba81f28a436911fba0b485878ebd upstream.
+commit afce285b859cea91c182015fc9858ea58c26cd0e upstream.
 
-Sven noticed that calling ioremap() and iounmap() multiple times leads
-to a vmap memory leak:
-	vmap allocation for size 4198400 failed:
-	use vmalloc=<size> to increase size
+Since commit f889beaaab1c ("Input: da9063 - report KEY_POWER instead of
+KEY_SLEEP during power key-press") KEY_SLEEP isn't supported anymore. This
+caused input device to not generate any events if "dlg,disable-key-power"
+is set.
 
-It seems we missed calling vunmap() in iounmap().
+Fix this by unconditionally setting KEY_POWER capability, and not
+declaring KEY_SLEEP.
 
-Signed-off-by: Helge Deller <deller@gmx.de>
-Noticed-by: Sven Schnelle <svens@stackframe.org>
-Cc: <stable@vger.kernel.org> # v3.16+
+Fixes: f889beaaab1c ("Input: da9063 - report KEY_POWER instead of KEY_SLEEP during power key-press")
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/mm/ioremap.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/input/misc/da9063_onkey.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/arch/parisc/mm/ioremap.c
-+++ b/arch/parisc/mm/ioremap.c
-@@ -2,7 +2,7 @@
-  * arch/parisc/mm/ioremap.c
-  *
-  * (C) Copyright 1995 1996 Linus Torvalds
-- * (C) Copyright 2001-2006 Helge Deller <deller@gmx.de>
-+ * (C) Copyright 2001-2019 Helge Deller <deller@gmx.de>
-  * (C) Copyright 2005 Kyle McMartin <kyle@parisc-linux.org>
-  */
+--- a/drivers/input/misc/da9063_onkey.c
++++ b/drivers/input/misc/da9063_onkey.c
+@@ -247,10 +247,7 @@ static int da9063_onkey_probe(struct pla
+ 	onkey->input->phys = onkey->phys;
+ 	onkey->input->dev.parent = &pdev->dev;
  
-@@ -83,7 +83,7 @@ void __iomem * __ioremap(unsigned long p
- 	addr = (void __iomem *) area->addr;
- 	if (ioremap_page_range((unsigned long)addr, (unsigned long)addr + size,
- 			       phys_addr, pgprot)) {
--		vfree(addr);
-+		vunmap(addr);
- 		return NULL;
- 	}
+-	if (onkey->key_power)
+-		input_set_capability(onkey->input, EV_KEY, KEY_POWER);
+-
+-	input_set_capability(onkey->input, EV_KEY, KEY_SLEEP);
++	input_set_capability(onkey->input, EV_KEY, KEY_POWER);
  
-@@ -91,9 +91,11 @@ void __iomem * __ioremap(unsigned long p
- }
- EXPORT_SYMBOL(__ioremap);
+ 	INIT_DELAYED_WORK(&onkey->work, da9063_poll_on);
  
--void iounmap(const volatile void __iomem *addr)
-+void iounmap(const volatile void __iomem *io_addr)
- {
--	if (addr > high_memory)
--		return vfree((void *) (PAGE_MASK & (unsigned long __force) addr));
-+	unsigned long addr = (unsigned long)io_addr & PAGE_MASK;
-+
-+	if (is_vmalloc_addr((void *)addr))
-+		vunmap((void *)addr);
- }
- EXPORT_SYMBOL(iounmap);
 
 
