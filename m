@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99D7EE632F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 15:43:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 076C7E6339
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 15:44:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbfJ0Onu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 10:43:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37120 "EHLO mail.kernel.org"
+        id S1727232AbfJ0OoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 10:44:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727169AbfJ0Ons (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 10:43:48 -0400
+        id S1727195AbfJ0On4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 10:43:56 -0400
 Received: from localhost.localdomain (82-132-239-15.dab.02.net [82.132.239.15])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34C6F21E6F;
-        Sun, 27 Oct 2019 14:43:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B2F7214AF;
+        Sun, 27 Oct 2019 14:43:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572187428;
-        bh=Zi3SgTZHLNbskJxSF49qTEustzLeR71mUmIkhQYy9qk=;
+        s=default; t=1572187435;
+        bh=CA+V3kafszvCceUU78xM+0W20S+ptHDqrXrmDcJtEwY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SNhxUkokfKoP+8W407lcxfDMIBSGo5QL47MpJFZ4yq9CZUDpfKQ+HykFonzPA1j4R
-         Wa875V3d66ikzI3/DO20IwoZ+viU8jUn4qOEYbCavkRevsTBgqnqOR+eQXPyyw9tYq
-         zzM3jvgJ2KR7N2cnihslBo7o8cBi1Q/yKHFWiBRk=
+        b=VPW71MfwQJvuMjNgpQR+ACqb6XGn2ae4zV+y4YRW5iiAi5NX8kgmg4DYzwwTvZTx1
+         1bW89oezeoNk0kPywF5wV8svGegI48vOyPU4LaGG+Mv3vbFrULE63CZdiO5EqQTFnt
+         bSHTYSa8dy8DDhcl+pHDn6c9SiIjDYOgkZ0QFXYo=
 From:   Marc Zyngier <maz@kernel.org>
 To:     kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
 Cc:     Eric Auger <eric.auger@redhat.com>,
@@ -36,9 +36,9 @@ Cc:     Eric Auger <eric.auger@redhat.com>,
         Zenghui Yu <yuzenghui@huawei.com>,
         Jayachandran C <jnair@marvell.com>,
         Robert Richter <rrichter@marvell.com>
-Subject: [PATCH v2 07/36] irqchip/gic-v3-its: Add get_vlpi_map() helper
-Date:   Sun, 27 Oct 2019 14:42:05 +0000
-Message-Id: <20191027144234.8395-8-maz@kernel.org>
+Subject: [PATCH v2 08/36] irqchip/gic-v3: Detect GICv4.1 supporting RVPEID
+Date:   Sun, 27 Oct 2019 14:42:06 +0000
+Message-Id: <20191027144234.8395-9-maz@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191027144234.8395-1-maz@kernel.org>
 References: <20191027144234.8395-1-maz@kernel.org>
@@ -49,76 +49,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Obtaining the mapping information for a VLPI is something quite common,
-and the GICv4.1 code is going to make even more use of it. Expose it as
-a separate helper.
+GICv4.1 supports the RVPEID ("Residency per vPE ID"), which allows for
+a much efficient way of making virtual CPUs resident (to allow direct
+injection of interrupts).
+
+The functionnality needs to be discovered on each and every redistributor
+in the system, and disabled if the settings are inconsistent.
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-gic-v3-its.c | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+ drivers/irqchip/irq-gic-v3.c       | 21 ++++++++++++++++++---
+ include/linux/irqchip/arm-gic-v3.h |  2 ++
+ 2 files changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 6c91c7feadf3..94c9c2e9f917 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1045,20 +1045,26 @@ static void its_send_vinvall(struct its_node *its, struct its_vpe *vpe)
- /*
-  * irqchip functions - assumes MSI, mostly.
-  */
-+static struct its_vlpi_map *get_vlpi_map(struct irq_data *d)
-+{
-+	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
-+	u32 event = its_get_event_id(d);
-+
-+	if (!irqd_is_forwarded_to_vcpu(d))
-+		return NULL;
-+
-+	return &its_dev->event_map.vlpi_maps[event];
-+}
- 
- static void lpi_write_config(struct irq_data *d, u8 clr, u8 set)
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 1edc99335a94..4f20caf9bc88 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -849,8 +849,21 @@ static int __gic_update_rdist_properties(struct redist_region *region,
+ 					 void __iomem *ptr)
  {
-+	struct its_vlpi_map *map = get_vlpi_map(d);
- 	irq_hw_number_t hwirq;
- 	void *va;
- 	u8 *cfg;
+ 	u64 typer = gic_read_typer(ptr + GICR_TYPER);
++
+ 	gic_data.rdists.has_vlpis &= !!(typer & GICR_TYPER_VLPIS);
+-	gic_data.rdists.has_direct_lpi &= !!(typer & GICR_TYPER_DirectLPIS);
++
++	/* RVPEID implies some form of DirectLPI, no matter what the doc says... :-/ */
++	gic_data.rdists.has_rvpeid &= !!(typer & GICR_TYPER_RVPEID);
++	gic_data.rdists.has_direct_lpi &= (!!(typer & GICR_TYPER_DirectLPIS) |
++					   gic_data.rdists.has_rvpeid);
++
++	/* Detect non-sensical configurations */
++	if (WARN_ON_ONCE(gic_data.rdists.has_rvpeid && !gic_data.rdists.has_vlpis)) {
++		gic_data.rdists.has_direct_lpi = false;
++		gic_data.rdists.has_vlpis = false;
++		gic_data.rdists.has_rvpeid = false;
++	}
++
+ 	gic_data.ppi_nr = min(GICR_TYPER_NR_PPIS(typer), gic_data.ppi_nr);
  
--	if (irqd_is_forwarded_to_vcpu(d)) {
--		struct its_device *its_dev = irq_data_get_irq_chip_data(d);
--		u32 event = its_get_event_id(d);
--		struct its_vlpi_map *map;
--
--		va = page_address(its_dev->event_map.vm->vprop_page);
--		map = &its_dev->event_map.vlpi_maps[event];
-+	if (map) {
-+		va = page_address(map->vm->vprop_page);
- 		hwirq = map->vintid;
+ 	return 1;
+@@ -863,9 +876,10 @@ static void gic_update_rdist_properties(void)
+ 	if (WARN_ON(gic_data.ppi_nr == UINT_MAX))
+ 		gic_data.ppi_nr = 0;
+ 	pr_info("%d PPIs implemented\n", gic_data.ppi_nr);
+-	pr_info("%sVLPI support, %sdirect LPI support\n",
++	pr_info("%sVLPI support, %sdirect LPI support, %sRVPEID support\n",
+ 		!gic_data.rdists.has_vlpis ? "no " : "",
+-		!gic_data.rdists.has_direct_lpi ? "no " : "");
++		!gic_data.rdists.has_direct_lpi ? "no " : "",
++		!gic_data.rdists.has_rvpeid ? "no " : "");
+ }
  
- 		/* Remember the updated property */
-@@ -1351,19 +1357,18 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
- static int its_vlpi_get(struct irq_data *d, struct its_cmd_info *info)
- {
- 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
--	u32 event = its_get_event_id(d);
-+	struct its_vlpi_map *map = get_vlpi_map(d);
- 	int ret = 0;
+ /* Check whether it's single security state view */
+@@ -1546,6 +1560,7 @@ static int __init gic_init_bases(void __iomem *dist_base,
+ 						 &gic_data);
+ 	irq_domain_update_bus_token(gic_data.domain, DOMAIN_BUS_WIRED);
+ 	gic_data.rdists.rdist = alloc_percpu(typeof(*gic_data.rdists.rdist));
++	gic_data.rdists.has_rvpeid = true;
+ 	gic_data.rdists.has_vlpis = true;
+ 	gic_data.rdists.has_direct_lpi = true;
  
- 	mutex_lock(&its_dev->event_map.vlpi_lock);
+diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+index b6514e8893bf..c98f34296599 100644
+--- a/include/linux/irqchip/arm-gic-v3.h
++++ b/include/linux/irqchip/arm-gic-v3.h
+@@ -234,6 +234,7 @@
+ #define GICR_TYPER_VLPIS		(1U << 1)
+ #define GICR_TYPER_DirectLPIS		(1U << 3)
+ #define GICR_TYPER_LAST			(1U << 4)
++#define GICR_TYPER_RVPEID		(1U << 7)
  
--	if (!its_dev->event_map.vm ||
--	    !its_dev->event_map.vlpi_maps[event].vm) {
-+	if (!its_dev->event_map.vm || !map->vm) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
+ #define GIC_V3_REDIST_SIZE		0x20000
  
- 	/* Copy our mapping information to the incoming request */
--	*info->map = its_dev->event_map.vlpi_maps[event];
-+	*info->map = *map;
+@@ -613,6 +614,7 @@ struct rdists {
+ 	u64			flags;
+ 	u32			gicd_typer;
+ 	bool			has_vlpis;
++	bool			has_rvpeid;
+ 	bool			has_direct_lpi;
+ };
  
- out:
- 	mutex_unlock(&its_dev->event_map.vlpi_lock);
 -- 
 2.20.1
 
