@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4BEE65B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:04:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12347E65ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbfJ0VEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:04:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50182 "EHLO mail.kernel.org"
+        id S1729020AbfJ0VGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:06:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727051AbfJ0VE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:04:29 -0400
+        id S1727702AbfJ0VGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:06:39 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADFE520873;
-        Sun, 27 Oct 2019 21:04:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E1042064A;
+        Sun, 27 Oct 2019 21:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210269;
-        bh=hCdWys4nfkW9HX9hA2t1QwKOg1sqsG2DB1dn1GyTNak=;
+        s=default; t=1572210398;
+        bh=uw4FsbykKvY5mRQRdXpS59+P12ELhRHDs100pawlrWQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f8bmJs4BESFWvjg58QXrSvZpe76kTwXzXSNpJgmJMlWbxotFd2S8UA6aJlseWEIdO
-         ewvjMfc4qyDfkzdY7vkrEaBEO52lJL5s2NGQ8YVpUHJNm7L0HoxlemUqbxsjGTCJ1c
-         oDATTNdBCboLlddgyR5AZJPfL6htnrBRem+YVOxs=
+        b=nmsddOP73VcrHXoc6fCyzitqY25qczk0kODTP7XGTAvWCSN6OrtQLMGsxKDgZcbeU
+         bRev7u0V8l0WPPGD9nJUU9ZAZ2Xktv5ZTjTV7xPtjzThhpGRIc/1kXoq8rKD8wYwz7
+         Aew2S0H4Rgdv6Qq3jjaWjaaH8u4FhakEfnWwRxBw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 35/41] btrfs: block-group: Fix a memory leak due to missing btrfs_put_block_group()
-Date:   Sun, 27 Oct 2019 22:01:13 +0100
-Message-Id: <20191027203129.173850606@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Nicolas Waisman <nico@semmle.com>,
+        Will Deacon <will@kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.9 36/49] mac80211: Reject malformed SSID elements
+Date:   Sun, 27 Oct 2019 22:01:14 +0100
+Message-Id: <20191027203152.366352267@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
+References: <20191027203119.468466356@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qu Wenruo <wqu@suse.com>
+From: Will Deacon <will@kernel.org>
 
-commit 4b654acdae850f48b8250b9a578a4eaa518c7a6f upstream.
+commit 4152561f5da3fca92af7179dd538ea89e248f9d0 upstream.
 
-In btrfs_read_block_groups(), if we have an invalid block group which
-has mixed type (DATA|METADATA) while the fs doesn't have MIXED_GROUPS
-feature, we error out without freeing the block group cache.
+Although this shouldn't occur in practice, it's a good idea to bounds
+check the length field of the SSID element prior to using it for things
+like allocations or memcpy operations.
 
-This patch will add the missing btrfs_put_block_group() to prevent
-memory leak.
-
-Note for stable backports: the file to patch in versions <= 5.3 is
-fs/btrfs/extent-tree.c
-
-Fixes: 49303381f19a ("Btrfs: bail out if block group has different mixed flag")
-CC: stable@vger.kernel.org # 4.9+
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: <stable@vger.kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Reported-by: Nicolas Waisman <nico@semmle.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Link: https://lore.kernel.org/r/20191004095132.15777-1-will@kernel.org
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/mac80211/mlme.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -9905,6 +9905,7 @@ int btrfs_read_block_groups(struct btrfs
- 			btrfs_err(info,
- "bg %llu is a mixed block group but filesystem hasn't enabled mixed block groups",
- 				  cache->key.objectid);
-+			btrfs_put_block_group(cache);
- 			ret = -EINVAL;
- 			goto error;
- 		}
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -2434,7 +2434,8 @@ struct sk_buff *ieee80211_ap_probereq_ge
+ 
+ 	rcu_read_lock();
+ 	ssid = ieee80211_bss_get_ie(cbss, WLAN_EID_SSID);
+-	if (WARN_ON_ONCE(ssid == NULL))
++	if (WARN_ONCE(!ssid || ssid[1] > IEEE80211_MAX_SSID_LEN,
++		      "invalid SSID element (len=%d)", ssid ? ssid[1] : -1))
+ 		ssid_len = 0;
+ 	else
+ 		ssid_len = ssid[1];
+@@ -4691,7 +4692,7 @@ int ieee80211_mgd_assoc(struct ieee80211
+ 
+ 	rcu_read_lock();
+ 	ssidie = ieee80211_bss_get_ie(req->bss, WLAN_EID_SSID);
+-	if (!ssidie) {
++	if (!ssidie || ssidie[1] > sizeof(assoc_data->ssid)) {
+ 		rcu_read_unlock();
+ 		kfree(assoc_data);
+ 		return -EINVAL;
 
 
