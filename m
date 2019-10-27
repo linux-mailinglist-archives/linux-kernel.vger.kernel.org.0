@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CE38E666D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:12:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A805E67D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729980AbfJ0VLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:11:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58456 "EHLO mail.kernel.org"
+        id S1732617AbfJ0VYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:24:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727643AbfJ0VLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:11:49 -0400
+        id S1732607AbfJ0VYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:24:51 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1ABDC20873;
-        Sun, 27 Oct 2019 21:11:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5232A21848;
+        Sun, 27 Oct 2019 21:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210708;
-        bh=6gtE+bESW59NPm1mXQqI0kxfVsPL/7i+8MWDrhj3JRw=;
+        s=default; t=1572211490;
+        bh=n5SPVYOGa0Hne9esLU2PNZLxEkZ0+lzMCBm6UmU2O58=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G397yLYXAkBo9HwrI45diQS7FBJKHSnej4IgR5rPi9FarC0QN1m7Bmr/MObD1yHZb
-         4RPnSiPm/y/L2SFRH0JnPQtlXXPJQTbGwUKdyznDGJ3qNhpJxW0BEfIw8uKQp5ZLiX
-         f5RwQ1ezD/xQ1tn5TRIBXzjsfXgVhwjCiso7+Zi8=
+        b=fnlQ/6dQV6iTG8ZitVg8LOVrhposB6kOkGklltZSpEhfFBo2b7QumkI/lEtK5JlL/
+         rEXmgZ6GDv4HVMyme1a7ADj0cvVEvqcUm0HS59RJvIFZjMMEj8Q+pdD/Wy0KPOk3n8
+         Jn3/nvhyq7ugV9+4zUEnQaLISYVcZIZEaxZxE1uU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 110/119] btrfs: block-group: Fix a memory leak due to missing btrfs_put_block_group()
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 5.3 169/197] CIFS: Fix use after free of file info structures
 Date:   Sun, 27 Oct 2019 22:01:27 +0100
-Message-Id: <20191027203349.523940873@linuxfoundation.org>
+Message-Id: <20191027203403.639707713@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qu Wenruo <wqu@suse.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit 4b654acdae850f48b8250b9a578a4eaa518c7a6f upstream.
+commit 1a67c415965752879e2e9fad407bc44fc7f25f23 upstream.
 
-In btrfs_read_block_groups(), if we have an invalid block group which
-has mixed type (DATA|METADATA) while the fs doesn't have MIXED_GROUPS
-feature, we error out without freeing the block group cache.
+Currently the code assumes that if a file info entry belongs
+to lists of open file handles of an inode and a tcon then
+it has non-zero reference. The recent changes broke that
+assumption when putting the last reference of the file info.
+There may be a situation when a file is being deleted but
+nothing prevents another thread to reference it again
+and start using it. This happens because we do not hold
+the inode list lock while checking the number of references
+of the file info structure. Fix this by doing the proper
+locking when doing the check.
 
-This patch will add the missing btrfs_put_block_group() to prevent
-memory leak.
-
-Note for stable backports: the file to patch in versions <= 5.3 is
-fs/btrfs/extent-tree.c
-
-Fixes: 49303381f19a ("Btrfs: bail out if block group has different mixed flag")
-CC: stable@vger.kernel.org # 4.9+
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 487317c99477d ("cifs: add spinlock for the openFileList to cifsInodeInfo")
+Fixes: cb248819d209d ("cifs: use cifsInodeInfo->open_file_lock while iterating to avoid a panic")
+Cc: Stable <stable@vger.kernel.org>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/cifs/file.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -10255,6 +10255,7 @@ int btrfs_read_block_groups(struct btrfs
- 			btrfs_err(info,
- "bg %llu is a mixed block group but filesystem hasn't enabled mixed block groups",
- 				  cache->key.objectid);
-+			btrfs_put_block_group(cache);
- 			ret = -EINVAL;
- 			goto error;
- 		}
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -405,10 +405,11 @@ void _cifsFileInfo_put(struct cifsFileIn
+ 	bool oplock_break_cancelled;
+ 
+ 	spin_lock(&tcon->open_file_lock);
+-
++	spin_lock(&cifsi->open_file_lock);
+ 	spin_lock(&cifs_file->file_info_lock);
+ 	if (--cifs_file->count > 0) {
+ 		spin_unlock(&cifs_file->file_info_lock);
++		spin_unlock(&cifsi->open_file_lock);
+ 		spin_unlock(&tcon->open_file_lock);
+ 		return;
+ 	}
+@@ -421,9 +422,7 @@ void _cifsFileInfo_put(struct cifsFileIn
+ 	cifs_add_pending_open_locked(&fid, cifs_file->tlink, &open);
+ 
+ 	/* remove it from the lists */
+-	spin_lock(&cifsi->open_file_lock);
+ 	list_del(&cifs_file->flist);
+-	spin_unlock(&cifsi->open_file_lock);
+ 	list_del(&cifs_file->tlist);
+ 	atomic_dec(&tcon->num_local_opens);
+ 
+@@ -440,6 +439,7 @@ void _cifsFileInfo_put(struct cifsFileIn
+ 		cifs_set_oplock_level(cifsi, 0);
+ 	}
+ 
++	spin_unlock(&cifsi->open_file_lock);
+ 	spin_unlock(&tcon->open_file_lock);
+ 
+ 	oplock_break_cancelled = wait_oplock_handler ?
 
 
