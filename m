@@ -2,49 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA79AE68AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1080E68FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:33:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730936AbfJ0VQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:16:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36572 "EHLO mail.kernel.org"
+        id S1730018AbfJ0VMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:12:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730925AbfJ0VQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:16:53 -0400
+        id S1729412AbfJ0VMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:12:10 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C6742070B;
-        Sun, 27 Oct 2019 21:16:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41C1E205C9;
+        Sun, 27 Oct 2019 21:12:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211012;
-        bh=3BnMbfPndXojbnIO/KjTzKqKNjsSSST0nsbkX7y7L8M=;
+        s=default; t=1572210729;
+        bh=JAreu9up1yVNJdhyI5/epM/cklFUlC5i0JLQzb4RhBc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Af4mmmGRO75jtl5t4QMnrBw8oVAcsXG48ax5ak1s+m9OSnyaqxFehH5UaxLw3Pdyu
-         zQ66BbB4NDNSEFqKAyM9Y8f7De+6cK+/hGt7NKSRJu45mzn7Pblzq5uxOFuKYPZlyB
-         gbGEoDDeleTaZHuX44fNKFEIJIclhuYBgosNE97M=
+        b=2kfKxn7JV8S+nlDlnQjK7Hv6dfKaaLvvNG0smo8oWx3QpvCsVoI6z0cXVrmn1djOO
+         aSUeXzQFpB9qgfoFxP9CFErtCzxO8s9QwuRo/Geivcbdow0LQVH5akpnvTmLviLQON
+         +LPr44S3pcl08RvwL53xsQahRrvXY2StspumKUE8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Wahl <steve.wahl@hpe.com>,
-        Borislav Petkov <bp@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Baoquan He <bhe@redhat.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        dimitri.sivanich@hpe.com, Feng Tang <feng.tang@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jordan Borgner <mail@jordan-borgner.de>,
-        Juergen Gross <jgross@suse.com>, mike.travis@hpe.com,
-        russ.anderson@hpe.com, Thomas Gleixner <tglx@linutronix.de>,
-        x86-ml <x86@kernel.org>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Subject: [PATCH 4.19 79/93] x86/boot/64: Make level2_kernel_pgt pages invalid outside kernel area
-Date:   Sun, 27 Oct 2019 22:01:31 +0100
-Message-Id: <20191027203312.260206025@linuxfoundation.org>
+        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+        Krish Sadhukhan <krish.sadhukhan@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Jitindar SIngh, Suraj" <surajjs@amazon.com>
+Subject: [PATCH 4.14 116/119] kvm: vmx: Introduce lapic_mode enumeration
+Date:   Sun, 27 Oct 2019 22:01:33 +0100
+Message-Id: <20191027203349.890737687@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,107 +45,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Wahl <steve.wahl@hpe.com>
+From: Jim Mattson <jmattson@google.com>
 
-commit 2aa85f246c181b1fa89f27e8e20c5636426be624 upstream.
+commit 588716494258899389206fa50426e78cc9df89b9 upstream.
 
-Our hardware (UV aka Superdome Flex) has address ranges marked
-reserved by the BIOS. Access to these ranges is caught as an error,
-causing the BIOS to halt the system.
+The local APIC can be in one of three modes: disabled, xAPIC or
+x2APIC. (A fourth mode, "invalid," is included for completeness.)
 
-Initial page tables mapped a large range of physical addresses that
-were not checked against the list of BIOS reserved addresses, and
-sometimes included reserved addresses in part of the mapped range.
-Including the reserved range in the map allowed processor speculative
-accesses to the reserved range, triggering a BIOS halt.
+Using the new enumeration can make some of the APIC mode logic easier
+to read. In kvm_set_apic_base, for instance, it is clear that one
+cannot transition directly from x2APIC mode to xAPIC mode or directly
+from APIC disabled to x2APIC mode.
 
-Used early in booting, the page table level2_kernel_pgt addresses 1
-GiB divided into 2 MiB pages, and it was set up to linearly map a full
- 1 GiB of physical addresses that included the physical address range
-of the kernel image, as chosen by KASLR.  But this also included a
-large range of unused addresses on either side of the kernel image.
-And unlike the kernel image's physical address range, this extra
-mapped space was not checked against the BIOS tables of usable RAM
-addresses.  So there were times when the addresses chosen by KASLR
-would result in processor accessible mappings of BIOS reserved
-physical addresses.
-
-The kernel code did not directly access any of this extra mapped
-space, but having it mapped allowed the processor to issue speculative
-accesses into reserved memory, causing system halts.
-
-This was encountered somewhat rarely on a normal system boot, and much
-more often when starting the crash kernel if "crashkernel=512M,high"
-was specified on the command line (this heavily restricts the physical
-address of the crash kernel, in our case usually within 1 GiB of
-reserved space).
-
-The solution is to invalidate the pages of this table outside the kernel
-image's space before the page table is activated. It fixes this problem
-on our hardware.
-
- [ bp: Touchups. ]
-
-Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Brijesh Singh <brijesh.singh@amd.com>
-Cc: dimitri.sivanich@hpe.com
-Cc: Feng Tang <feng.tang@intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jordan Borgner <mail@jordan-borgner.de>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: mike.travis@hpe.com
-Cc: russ.anderson@hpe.com
-Cc: stable@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Cc: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Link: https://lkml.kernel.org/r/9c011ee51b081534a7a15065b1681d200298b530.1569358539.git.steve.wahl@hpe.com
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+[Check invalid bits even if msr_info->host_initiated.  Reported by
+ Wanpeng Li. - Paolo]
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Cc: "Jitindar SIngh, Suraj" <surajjs@amazon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/head64.c |   22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ arch/x86/kvm/lapic.h |   14 ++++++++++++++
+ arch/x86/kvm/x86.c   |   26 +++++++++++++++-----------
+ 2 files changed, 29 insertions(+), 11 deletions(-)
 
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -222,13 +222,31 @@ unsigned long __head __startup_64(unsign
- 	 * we might write invalid pmds, when the kernel is relocated
- 	 * cleanup_highmap() fixes this up along with the mappings
- 	 * beyond _end.
-+	 *
-+	 * Only the region occupied by the kernel image has so far
-+	 * been checked against the table of usable memory regions
-+	 * provided by the firmware, so invalidate pages outside that
-+	 * region. A page table entry that maps to a reserved area of
-+	 * memory would allow processor speculation into that area,
-+	 * and on some hardware (particularly the UV platform) even
-+	 * speculative access to some reserved areas is caught as an
-+	 * error, causing the BIOS to halt the system.
- 	 */
+--- a/arch/x86/kvm/lapic.h
++++ b/arch/x86/kvm/lapic.h
+@@ -16,6 +16,13 @@
+ #define APIC_BUS_CYCLE_NS       1
+ #define APIC_BUS_FREQUENCY      (1000000000ULL / APIC_BUS_CYCLE_NS)
  
- 	pmd = fixup_pointer(level2_kernel_pgt, physaddr);
--	for (i = 0; i < PTRS_PER_PMD; i++) {
++enum lapic_mode {
++	LAPIC_MODE_DISABLED = 0,
++	LAPIC_MODE_INVALID = X2APIC_ENABLE,
++	LAPIC_MODE_XAPIC = MSR_IA32_APICBASE_ENABLE,
++	LAPIC_MODE_X2APIC = MSR_IA32_APICBASE_ENABLE | X2APIC_ENABLE,
++};
 +
-+	/* invalidate pages before the kernel image */
-+	for (i = 0; i < pmd_index((unsigned long)_text); i++)
-+		pmd[i] &= ~_PAGE_PRESENT;
-+
-+	/* fixup pages that are part of the kernel image */
-+	for (; i <= pmd_index((unsigned long)_end); i++)
- 		if (pmd[i] & _PAGE_PRESENT)
- 			pmd[i] += load_delta;
--	}
-+
-+	/* invalidate pages after the kernel image */
-+	for (; i < PTRS_PER_PMD; i++)
-+		pmd[i] &= ~_PAGE_PRESENT;
+ struct kvm_timer {
+ 	struct hrtimer timer;
+ 	s64 period; 				/* unit: ns */
+@@ -89,6 +96,7 @@ u64 kvm_get_apic_base(struct kvm_vcpu *v
+ int kvm_set_apic_base(struct kvm_vcpu *vcpu, struct msr_data *msr_info);
+ int kvm_apic_get_state(struct kvm_vcpu *vcpu, struct kvm_lapic_state *s);
+ int kvm_apic_set_state(struct kvm_vcpu *vcpu, struct kvm_lapic_state *s);
++enum lapic_mode kvm_get_apic_mode(struct kvm_vcpu *vcpu);
+ int kvm_lapic_find_highest_irr(struct kvm_vcpu *vcpu);
  
- 	/*
- 	 * Fixup phys_base - remove the memory encryption mask to obtain
+ u64 kvm_get_lapic_tscdeadline_msr(struct kvm_vcpu *vcpu);
+@@ -220,4 +228,10 @@ void kvm_lapic_switch_to_hv_timer(struct
+ void kvm_lapic_expired_hv_timer(struct kvm_vcpu *vcpu);
+ bool kvm_lapic_hv_timer_in_use(struct kvm_vcpu *vcpu);
+ void kvm_lapic_restart_hv_timer(struct kvm_vcpu *vcpu);
++
++static inline enum lapic_mode kvm_apic_mode(u64 apic_base)
++{
++	return apic_base & (MSR_IA32_APICBASE_ENABLE | X2APIC_ENABLE);
++}
++
+ #endif
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -306,23 +306,27 @@ u64 kvm_get_apic_base(struct kvm_vcpu *v
+ }
+ EXPORT_SYMBOL_GPL(kvm_get_apic_base);
+ 
++enum lapic_mode kvm_get_apic_mode(struct kvm_vcpu *vcpu)
++{
++	return kvm_apic_mode(kvm_get_apic_base(vcpu));
++}
++EXPORT_SYMBOL_GPL(kvm_get_apic_mode);
++
+ int kvm_set_apic_base(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ {
+-	u64 old_state = vcpu->arch.apic_base &
+-		(MSR_IA32_APICBASE_ENABLE | X2APIC_ENABLE);
+-	u64 new_state = msr_info->data &
+-		(MSR_IA32_APICBASE_ENABLE | X2APIC_ENABLE);
++	enum lapic_mode old_mode = kvm_get_apic_mode(vcpu);
++	enum lapic_mode new_mode = kvm_apic_mode(msr_info->data);
+ 	u64 reserved_bits = ((~0ULL) << cpuid_maxphyaddr(vcpu)) | 0x2ff |
+ 		(guest_cpuid_has(vcpu, X86_FEATURE_X2APIC) ? 0 : X2APIC_ENABLE);
+ 
+-	if ((msr_info->data & reserved_bits) || new_state == X2APIC_ENABLE)
+-		return 1;
+-	if (!msr_info->host_initiated &&
+-	    ((new_state == MSR_IA32_APICBASE_ENABLE &&
+-	      old_state == (MSR_IA32_APICBASE_ENABLE | X2APIC_ENABLE)) ||
+-	     (new_state == (MSR_IA32_APICBASE_ENABLE | X2APIC_ENABLE) &&
+-	      old_state == 0)))
++	if ((msr_info->data & reserved_bits) != 0 || new_mode == LAPIC_MODE_INVALID)
+ 		return 1;
++	if (!msr_info->host_initiated) {
++		if (old_mode == LAPIC_MODE_X2APIC && new_mode == LAPIC_MODE_XAPIC)
++			return 1;
++		if (old_mode == LAPIC_MODE_DISABLED && new_mode == LAPIC_MODE_X2APIC)
++			return 1;
++	}
+ 
+ 	kvm_lapic_set_base(vcpu, msr_info->data);
+ 	return 0;
 
 
