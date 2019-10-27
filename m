@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2403BE65E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59381E6681
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:12:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbfJ0VGU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:06:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52202 "EHLO mail.kernel.org"
+        id S1730087AbfJ0VMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:12:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728032AbfJ0VGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:06:15 -0400
+        id S1729488AbfJ0VMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:12:38 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1201214AF;
-        Sun, 27 Oct 2019 21:06:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8867B205C9;
+        Sun, 27 Oct 2019 21:12:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210374;
-        bh=ssO/fgfxNpvpT7q/HqGLGpAcTTDrtqgKuanlAZwDpQA=;
+        s=default; t=1572210758;
+        bh=8jmxZ2IQvza0hiJBvlidENn+RvnEXJ8eFPMGst97j9c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZsmbQJk5I7VzJ3QC3SdMvjZd5HFGRqJC7A4j5pY3jLQG/xEq9QyUaALWHGpvdKM0P
-         QxGDiw6SxKwnmf8WTDbgsc0LYlU4YdedPWAZDxdzXBtBZ2S9a7e/egywWI1WkPo4xh
-         zxG24fXdb/ASqszNGnqJpEme1rNUMmm6ddYR29SM=
+        b=g9sPiWtuOnemBRZEXUDCtH+dO8a4iuJ+9pqnx0PR+qKgUP/Gz4HlUI/uqFpBjXlAP
+         Uese+2VKXkhzrvlXVqZqTc1GBSo9tmZ2gBIFwpie8n4rKNVQehxLf271ygWGwBHitg
+         d8S2+NNKcE2TGzAvNyt3gAHb7TwrgEWLADZxGMic=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.9 44/49] memstick: jmb38x_ms: Fix an error handling path in jmb38x_ms_probe()
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
+        Sven Schnelle <svens@stackframe.org>
+Subject: [PATCH 4.14 105/119] parisc: Fix vmap memory leak in ioremap()/iounmap()
 Date:   Sun, 27 Oct 2019 22:01:22 +0100
-Message-Id: <20191027203202.077051658@linuxfoundation.org>
+Message-Id: <20191027203349.232344853@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Helge Deller <deller@gmx.de>
 
-commit 28c9fac09ab0147158db0baeec630407a5e9b892 upstream.
+commit 513f7f747e1cba81f28a436911fba0b485878ebd upstream.
 
-If 'jmb38x_ms_count_slots()' returns 0, we must undo the previous
-'pci_request_regions()' call.
+Sven noticed that calling ioremap() and iounmap() multiple times leads
+to a vmap memory leak:
+	vmap allocation for size 4198400 failed:
+	use vmalloc=<size> to increase size
 
-Goto 'err_out_int' to fix it.
+It seems we missed calling vunmap() in iounmap().
 
-Fixes: 60fdd931d577 ("memstick: add support for JMicron jmb38x MemoryStick host controller")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Helge Deller <deller@gmx.de>
+Noticed-by: Sven Schnelle <svens@stackframe.org>
+Cc: <stable@vger.kernel.org> # v3.16+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/memstick/host/jmb38x_ms.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/parisc/mm/ioremap.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/drivers/memstick/host/jmb38x_ms.c
-+++ b/drivers/memstick/host/jmb38x_ms.c
-@@ -947,7 +947,7 @@ static int jmb38x_ms_probe(struct pci_de
- 	if (!cnt) {
- 		rc = -ENODEV;
- 		pci_dev_busy = 1;
--		goto err_out;
-+		goto err_out_int;
+--- a/arch/parisc/mm/ioremap.c
++++ b/arch/parisc/mm/ioremap.c
+@@ -3,7 +3,7 @@
+  * arch/parisc/mm/ioremap.c
+  *
+  * (C) Copyright 1995 1996 Linus Torvalds
+- * (C) Copyright 2001-2006 Helge Deller <deller@gmx.de>
++ * (C) Copyright 2001-2019 Helge Deller <deller@gmx.de>
+  * (C) Copyright 2005 Kyle McMartin <kyle@parisc-linux.org>
+  */
+ 
+@@ -84,7 +84,7 @@ void __iomem * __ioremap(unsigned long p
+ 	addr = (void __iomem *) area->addr;
+ 	if (ioremap_page_range((unsigned long)addr, (unsigned long)addr + size,
+ 			       phys_addr, pgprot)) {
+-		vfree(addr);
++		vunmap(addr);
+ 		return NULL;
  	}
  
- 	jm = kzalloc(sizeof(struct jmb38x_ms)
+@@ -92,9 +92,11 @@ void __iomem * __ioremap(unsigned long p
+ }
+ EXPORT_SYMBOL(__ioremap);
+ 
+-void iounmap(const volatile void __iomem *addr)
++void iounmap(const volatile void __iomem *io_addr)
+ {
+-	if (addr > high_memory)
+-		return vfree((void *) (PAGE_MASK & (unsigned long __force) addr));
++	unsigned long addr = (unsigned long)io_addr & PAGE_MASK;
++
++	if (is_vmalloc_addr((void *)addr))
++		vunmap((void *)addr);
+ }
+ EXPORT_SYMBOL(iounmap);
 
 
