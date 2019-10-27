@@ -2,104 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B35B5E6223
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 12:12:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8E9DE6245
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 12:30:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfJ0LMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 07:12:49 -0400
-Received: from mga02.intel.com ([134.134.136.20]:12498 "EHLO mga02.intel.com"
+        id S1726997AbfJ0LaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 07:30:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726894AbfJ0LMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 07:12:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Oct 2019 04:12:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,236,1569308400"; 
-   d="scan'208";a="282690181"
-Received: from unknown (HELO snr.jf.intel.com) ([10.54.39.141])
-  by orsmga001.jf.intel.com with ESMTP; 27 Oct 2019 04:12:42 -0700
-From:   Luwei Kang <luwei.kang@intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com,
-        sean.j.christopherson@intel.com, vkuznets@redhat.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, ak@linux.intel.com, thomas.lendacky@amd.com,
-        peterz@infradead.org, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v1 8/8] perf/x86: Add event owner check when PEBS output to Intel PT
-Date:   Sun, 27 Oct 2019 19:11:17 -0400
-Message-Id: <1572217877-26484-9-git-send-email-luwei.kang@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1572217877-26484-1-git-send-email-luwei.kang@intel.com>
-References: <1572217877-26484-1-git-send-email-luwei.kang@intel.com>
+        id S1726706AbfJ0LaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 07:30:05 -0400
+Subject: Re: [GIT PULL] CIFS/SMB3 Fixes
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572175805;
+        bh=2VaHNPvCx/dmdR/cKdZwOAI/jgLgRvfZOTPcNXII2I8=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=odSZ15MmLnoqKYq1MgAOqtNeKKm/V2Rq97mpkxnP/CDoOobnRFipSV/E5glZH0mte
+         79w+er4HPwnR6B1ulQRANmewenmiaUq1ANN6cPHNrOMByLesXwO247XK1teSDCMIIw
+         WOIT1zu+NdBskQ6E/zgBRy0zhDEF5ZkwSVgZlukI=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAH2r5muwqB-D9=2ZxBkT-T77PkjAHh4TPpsr9vsDZD5nmu9jyw@mail.gmail.com>
+References: <CAH2r5muwqB-D9=2ZxBkT-T77PkjAHh4TPpsr9vsDZD5nmu9jyw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5muwqB-D9=2ZxBkT-T77PkjAHh4TPpsr9vsDZD5nmu9jyw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git
+ tags/5.4-rc5-smb3-fixes
+X-PR-Tracked-Commit-Id: d46b0da7a33dd8c99d969834f682267a45444ab3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c9a2e4a82905c4759d3894bbe827b84574a69b91
+Message-Id: <157217580523.15608.9168706059879836770.pr-tracker-bot@kernel.org>
+Date:   Sun, 27 Oct 2019 11:30:05 +0000
+To:     Steve French <smfrench@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For PEBS output to Intel PT, a Intel PT event should be the group
-leader of an PEBS counter event in host. For Intel PT
-virtualization enabling in KVM guest, the PT facilities will be
-passthrough to guest and do not allocate PT event from host perf
-event framework. This is different with PMU virtualization.
+The pull request you sent on Sat, 26 Oct 2019 21:40:04 -0500:
 
-Intel new hardware feature that can make PEBS enabled in KVM guest
-by output PEBS records to Intel PT buffer. KVM need to allocate
-a event counter for this PEBS event without Intel PT event leader.
+> git://git.samba.org/sfrench/cifs-2.6.git tags/5.4-rc5-smb3-fixes
 
-This patch add event owner check for PEBS output to PT event that
-only non-kernel event need group leader(PT).
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c9a2e4a82905c4759d3894bbe827b84574a69b91
 
-Signed-off-by: Luwei Kang <luwei.kang@intel.com>
----
- arch/x86/events/core.c     | 3 ++-
- include/linux/perf_event.h | 1 +
- kernel/events/core.c       | 2 +-
- 3 files changed, 4 insertions(+), 2 deletions(-)
+Thank you!
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 7b21455..214041a 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1014,7 +1014,8 @@ static int collect_events(struct cpu_hw_events *cpuc, struct perf_event *leader,
- 		 * away, the group was broken down and this singleton event
- 		 * can't schedule any more.
- 		 */
--		if (is_pebs_pt(leader) && !leader->aux_event)
-+		if (is_pebs_pt(leader) && !leader->aux_event &&
-+					!is_kernel_event(leader))
- 			return -EINVAL;
- 
- 		/*
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 61448c1..22ef4b0 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -928,6 +928,7 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
- extern u64 perf_event_read_value(struct perf_event *event,
- 				 u64 *enabled, u64 *running);
- 
-+extern bool is_kernel_event(struct perf_event *event);
- 
- struct perf_sample_data {
- 	/*
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 9ec0b0b..00f943b 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -166,7 +166,7 @@ static void perf_ctx_unlock(struct perf_cpu_context *cpuctx,
- 
- #define TASK_TOMBSTONE ((void *)-1L)
- 
--static bool is_kernel_event(struct perf_event *event)
-+bool is_kernel_event(struct perf_event *event)
- {
- 	return READ_ONCE(event->owner) == TASK_TOMBSTONE;
- }
 -- 
-1.8.3.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
