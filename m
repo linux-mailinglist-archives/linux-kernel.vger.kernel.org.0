@@ -2,37 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C63E6592
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:03:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7391BE664E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbfJ0VDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:03:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48458 "EHLO mail.kernel.org"
+        id S1729738AbfJ0VKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:10:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728261AbfJ0VDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:03:15 -0400
+        id S1728797AbfJ0VKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:10:37 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD4C02064A;
-        Sun, 27 Oct 2019 21:03:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 819A520873;
+        Sun, 27 Oct 2019 21:10:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210193;
-        bh=vSzc9HsvO8864r7VU+6QocCqs8J+dgGiZwvufdgUIlw=;
+        s=default; t=1572210637;
+        bh=yy9iRurEiMd6hM0tViCdcWOujPSbCP1i+PLRyE2P5Ls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SCBlHhrrjIDX4vwvvI6hLWj2aJE07T4B82u95tI96AU1woPt47qTXEuVdXnorTRsg
-         C9rbdkFXSF6KmjhYhMZ0KUtXZWF5X7AUrOYkASDXK7kQJoLm4AV0MHuabL43dU/iY/
-         ADQ5CtqRAm9aWOvAJ93OYpFTmOJyTrN31syUmUW0=
+        b=y1yjB3Oh61SDImSDfYD9gtE2VDXf62Ee9M5nCgwQeBvj32ErgYLftmU3Ao2p+FDhr
+         8l+c+G/1iTFu5AdjPrppR60oM7UMslaRzuavE+uKjnUeo0/G/aCxklC4g7emDOWx9v
+         LLJlblYA7nsB79B0IucSK70y95YbwA8HNgORibrI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 22/41] USB: ldusb: fix memleak on disconnect
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.14 083/119] arm64: Use firmware to detect CPUs that are not affected by Spectre-v2
 Date:   Sun, 27 Oct 2019 22:01:00 +0100
-Message-Id: <20191027203118.572227650@linuxfoundation.org>
+Message-Id: <20191027203345.935698895@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,37 +48,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit b14a39048c1156cfee76228bf449852da2f14df8 upstream.
+[ Upstream commit 517953c2c47f9c00a002f588ac856a5bc70cede3 ]
 
-If disconnect() races with release() after a process has been
-interrupted, release() could end up returning early and the driver would
-fail to free its driver data.
+The SMCCC ARCH_WORKAROUND_1 service can indicate that although the
+firmware knows about the Spectre-v2 mitigation, this particular
+CPU is not vulnerable, and it is thus not necessary to call
+the firmware on this CPU.
 
-Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191010125835.27031-2-johan@kernel.org
+Let's use this information to our benefit.
+
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/misc/ldusb.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/arm64/kernel/cpu_errata.c |   32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -384,10 +384,7 @@ static int ld_usb_release(struct inode *
- 		goto exit;
- 	}
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -190,22 +190,36 @@ static int detect_harden_bp_fw(void)
+ 	case PSCI_CONDUIT_HVC:
+ 		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+-		if ((int)res.a0 < 0)
++		switch ((int)res.a0) {
++		case 1:
++			/* Firmware says we're just fine */
++			return 0;
++		case 0:
++			cb = call_hvc_arch_workaround_1;
++			/* This is a guest, no need to patch KVM vectors */
++			smccc_start = NULL;
++			smccc_end = NULL;
++			break;
++		default:
+ 			return -1;
+-		cb = call_hvc_arch_workaround_1;
+-		/* This is a guest, no need to patch KVM vectors */
+-		smccc_start = NULL;
+-		smccc_end = NULL;
++		}
+ 		break;
  
--	if (mutex_lock_interruptible(&dev->mutex)) {
--		retval = -ERESTARTSYS;
--		goto exit;
--	}
-+	mutex_lock(&dev->mutex);
+ 	case PSCI_CONDUIT_SMC:
+ 		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+-		if ((int)res.a0 < 0)
++		switch ((int)res.a0) {
++		case 1:
++			/* Firmware says we're just fine */
++			return 0;
++		case 0:
++			cb = call_smc_arch_workaround_1;
++			smccc_start = __smccc_workaround_1_smc_start;
++			smccc_end = __smccc_workaround_1_smc_end;
++			break;
++		default:
+ 			return -1;
+-		cb = call_smc_arch_workaround_1;
+-		smccc_start = __smccc_workaround_1_smc_start;
+-		smccc_end = __smccc_workaround_1_smc_end;
++		}
+ 		break;
  
- 	if (dev->open_count != 1) {
- 		retval = -ENODEV;
+ 	default:
 
 
