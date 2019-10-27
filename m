@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E14FE6765
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:21:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C522FE6770
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:21:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731741AbfJ0VUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:20:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41168 "EHLO mail.kernel.org"
+        id S1731843AbfJ0VVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:21:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730775AbfJ0VUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:20:34 -0400
+        id S1731824AbfJ0VVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:21:01 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDFA920717;
-        Sun, 27 Oct 2019 21:20:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AD5F2070B;
+        Sun, 27 Oct 2019 21:20:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211234;
-        bh=ugzrjbYkU1KrYuTzjbMkb4Wxg59tEBr0j7Zeg6FgpKU=;
+        s=default; t=1572211259;
+        bh=6ONrbi08EMB0YRBly9ROiwhZSMlJi2W3Bul2pRmULnQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GJGOwsZ6XG57kNrxr2vWRvgCk/OBvePGwikAqZWJfS+izO9Usa71mwxo98QfAJAiW
-         oVVOTC95J4DRfIy/PV+gPAvW4g5MDAJAXOzJZENmvKrKJVX3xui1aVlvzq+u/9XyEa
-         0wGVERxWqBkf6iGHSliI56Ya8ePsu09I+DFICIww=
+        b=Z8Hfgyi10967sczCuVKzabxmSZaPXZn5hVXKbpQ/dnJptprZ/j0bo5BBfOF28xpCE
+         Y17YkJIQqXN5+XUhs86jZiZ5zzm5kX1iOGbcXcV6CvY8vB2b2H/OwYuGxnrotYSEp3
+         POP4ixNImzaPp3AGGekyverXlt88ZVteNqNl9L44=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Bin Meng <bmeng.cn@gmail.com>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 042/197] net: ag71xx: fix mdio subnode support
-Date:   Sun, 27 Oct 2019 21:59:20 +0100
-Message-Id: <20191027203353.984467267@linuxfoundation.org>
+Subject: [PATCH 5.3 044/197] riscv: Fix memblock reservation for device tree blob
+Date:   Sun, 27 Oct 2019 21:59:22 +0100
+Message-Id: <20191027203354.086177321@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -45,54 +46,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksij Rempel <o.rempel@pengutronix.de>
+From: Albert Ou <aou@eecs.berkeley.edu>
 
-[ Upstream commit 569aad4fcd82cba64eb10ede235d330a00f0aa09 ]
+[ Upstream commit 922b0375fc93fb1a20c5617e37c389c26bbccb70 ]
 
-This patch is syncing driver with actual devicetree documentation:
-Documentation/devicetree/bindings/net/qca,ar71xx.txt
-|Optional subnodes:
-|- mdio : specifies the mdio bus, used as a container for phy nodes
-|  according to phy.txt in the same directory
+This fixes an error with how the FDT blob is reserved in memblock.
+An incorrect physical address calculation exposed the FDT header to
+unintended corruption, which typically manifested with of_fdt_raw_init()
+faulting during late boot after fdt_totalsize() returned a wrong value.
+Systems with smaller physical memory sizes more frequently trigger this
+issue, as the kernel is more likely to allocate from the DMA32 zone
+where bbl places the DTB after the kernel image.
 
-The driver was working with fixed phy without any noticeable issues. This bug
-was uncovered by introducing dsa ar9331-switch driver.
-Since no one reported this bug until now, I assume no body is using it
-and this patch should not brake existing system.
+Commit 671f9a3e2e24 ("RISC-V: Setup initial page tables in two stages")
+changed the mapping of the DTB to reside in the fixmap area.
+Consequently, early_init_fdt_reserve_self() cannot be used anymore in
+setup_bootmem() since it relies on __pa() to derive a physical address,
+which does not work with dtb_early_va that is no longer a valid kernel
+logical address.
 
-Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The reserved[0x1] region shows the effect of the pointer underflow
+resulting from the __pa(initial_boot_params) offset subtraction:
+
+[    0.000000] MEMBLOCK configuration:
+[    0.000000]  memory size = 0x000000001fe00000 reserved size = 0x0000000000a2e514
+[    0.000000]  memory.cnt  = 0x1
+[    0.000000]  memory[0x0]     [0x0000000080200000-0x000000009fffffff], 0x000000001fe00000 bytes flags: 0x0
+[    0.000000]  reserved.cnt  = 0x2
+[    0.000000]  reserved[0x0]   [0x0000000080200000-0x0000000080c2dfeb], 0x0000000000a2dfec bytes flags: 0x0
+[    0.000000]  reserved[0x1]   [0xfffffff080100000-0xfffffff080100527], 0x0000000000000528 bytes flags: 0x0
+
+With the fix applied:
+
+[    0.000000] MEMBLOCK configuration:
+[    0.000000]  memory size = 0x000000001fe00000 reserved size = 0x0000000000a2e514
+[    0.000000]  memory.cnt  = 0x1
+[    0.000000]  memory[0x0]     [0x0000000080200000-0x000000009fffffff], 0x000000001fe00000 bytes flags: 0x0
+[    0.000000]  reserved.cnt  = 0x2
+[    0.000000]  reserved[0x0]   [0x0000000080200000-0x0000000080c2dfeb], 0x0000000000a2dfec bytes flags: 0x0
+[    0.000000]  reserved[0x1]   [0x0000000080e00000-0x0000000080e00527], 0x0000000000000528 bytes flags: 0x0
+
+Fixes: 671f9a3e2e24 ("RISC-V: Setup initial page tables in two stages")
+Signed-off-by: Albert Ou <aou@eecs.berkeley.edu>
+Tested-by: Bin Meng <bmeng.cn@gmail.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/atheros/ag71xx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/riscv/mm/init.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-index 6703960c7cf50..d1101eea15c2a 100644
---- a/drivers/net/ethernet/atheros/ag71xx.c
-+++ b/drivers/net/ethernet/atheros/ag71xx.c
-@@ -526,7 +526,7 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
- 	struct device *dev = &ag->pdev->dev;
- 	struct net_device *ndev = ag->ndev;
- 	static struct mii_bus *mii_bus;
--	struct device_node *np;
-+	struct device_node *np, *mnp;
- 	int err;
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 42bf939693d34..ed9cd9944d4f9 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -11,6 +11,7 @@
+ #include <linux/swap.h>
+ #include <linux/sizes.h>
+ #include <linux/of_fdt.h>
++#include <linux/libfdt.h>
  
- 	np = dev->of_node;
-@@ -571,7 +571,9 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
- 		msleep(200);
- 	}
+ #include <asm/fixmap.h>
+ #include <asm/tlbflush.h>
+@@ -82,6 +83,8 @@ static void __init setup_initrd(void)
+ }
+ #endif /* CONFIG_BLK_DEV_INITRD */
  
--	err = of_mdiobus_register(mii_bus, np);
-+	mnp = of_get_child_by_name(np, "mdio");
-+	err = of_mdiobus_register(mii_bus, mnp);
-+	of_node_put(mnp);
- 	if (err)
- 		goto mdio_err_put_clk;
++static phys_addr_t dtb_early_pa __initdata;
++
+ void __init setup_bootmem(void)
+ {
+ 	struct memblock_region *reg;
+@@ -117,7 +120,12 @@ void __init setup_bootmem(void)
+ 	setup_initrd();
+ #endif /* CONFIG_BLK_DEV_INITRD */
  
+-	early_init_fdt_reserve_self();
++	/*
++	 * Avoid using early_init_fdt_reserve_self() since __pa() does
++	 * not work for DTB pointers that are fixmap addresses
++	 */
++	memblock_reserve(dtb_early_pa, fdt_totalsize(dtb_early_va));
++
+ 	early_init_fdt_scan_reserved_mem();
+ 	memblock_allow_resize();
+ 	memblock_dump_all();
+@@ -393,6 +401,8 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+ 
+ 	/* Save pointer to DTB for early FDT parsing */
+ 	dtb_early_va = (void *)fix_to_virt(FIX_FDT) + (dtb_pa & ~PAGE_MASK);
++	/* Save physical address for memblock reservation */
++	dtb_early_pa = dtb_pa;
+ }
+ 
+ static void __init setup_vm_final(void)
 -- 
 2.20.1
 
