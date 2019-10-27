@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA03AE68F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:33:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91EA6E68F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:33:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730104AbfJ0VMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:12:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59608 "EHLO mail.kernel.org"
+        id S1732262AbfJ0VdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:33:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730096AbfJ0VMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:12:44 -0400
+        id S1730217AbfJ0VNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:13:15 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14F9F2064A;
-        Sun, 27 Oct 2019 21:12:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB34A20B7C;
+        Sun, 27 Oct 2019 21:13:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210763;
-        bh=HqvXM5KNaKG/zgmqzl+/ZTz93tY+4j8tnfWyNVjau/s=;
+        s=default; t=1572210794;
+        bh=7thJGh8wgTLrA4H1iy8iuAhzw2uXgJIQcuahMt884cM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FXQyzCvjkCR4r066xEKjLxF9qOW0jo5uNgkwfipGGauzuJUy9fsb3gGHV8kx9f1D7
-         i2sFMN8MSfydDGIwX0/JabbFTcqjiPIEDa3euONrBAk/vzKPgF1RAN6SRHhIxVmNwb
-         IKdeResspnYoNq+ZXVEW2ln7WqPhlOOxAvWCjvIU=
+        b=LlgcYliODXKs5S56KuVjxJvdzS1BVlme6zAkeN5k9fRU5NL/ssBNiGZV218ZXqT43
+         rswB46HtwesdoamnTaCkC1Q4BrHOC5p5tqB8R9K3IOgfMOvC+pEuTL7HfsVJhcaNE4
+         vTIkU7i9ZD9WGP+GIKE5xdFWmAj/LNIy//OcVtLA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Balbir Singh <sblbir@amzn.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
+        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 01/93] nvme-pci: Fix a race in controller removal
-Date:   Sun, 27 Oct 2019 22:00:13 +0100
-Message-Id: <20191027203251.779816158@linuxfoundation.org>
+Subject: [PATCH 4.19 02/93] scsi: ufs: skip shutdown if hba is not powered
+Date:   Sun, 27 Oct 2019 22:00:14 +0100
+Message-Id: <20191027203251.840999987@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
 References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,44 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Balbir Singh <sblbir@amzn.com>
+From: Stanley Chu <stanley.chu@mediatek.com>
 
-[ Upstream commit b224726de5e496dbf78147a66755c3d81e28bdd2 ]
+[ Upstream commit f51913eef23f74c3bd07899dc7f1ed6df9e521d8 ]
 
-User space programs like udevd may try to read to partitions at the
-same time the driver detects a namespace is unusable, and may deadlock
-if revalidate_disk() is called while such a process is waiting to
-enter the frozen queue. On detecting a dead namespace, move the disk
-revalidate after unblocking dispatchers that may be holding bd_butex.
+In some cases, hba may go through shutdown flow without successful
+initialization and then make system hang.
 
-changelog Suggested-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Balbir Singh <sblbir@amzn.com>
-Reviewed-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+For example, if ufshcd_change_power_mode() gets error and leads to
+ufshcd_hba_exit() to release resources of the host, future shutdown flow
+may hang the system since the host register will be accessed in unpowered
+state.
+
+To solve this issue, simply add checking to skip shutdown for above kind of
+situation.
+
+Link: https://lore.kernel.org/r/1568780438-28753-1-git-send-email-stanley.chu@mediatek.com
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Acked-by: Bean Huo <beanhuo@micron.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/scsi/ufs/ufshcd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index ae0b01059fc6d..5d0f99bcc987f 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -111,10 +111,13 @@ static void nvme_set_queue_dying(struct nvme_ns *ns)
- 	 */
- 	if (!ns->disk || test_and_set_bit(NVME_NS_DEAD, &ns->flags))
- 		return;
--	revalidate_disk(ns->disk);
- 	blk_set_queue_dying(ns->queue);
- 	/* Forcibly unquiesce queues to avoid blocking dispatch */
- 	blk_mq_unquiesce_queue(ns->queue);
-+	/*
-+	 * Revalidate after unblocking dispatchers that may be holding bd_butex
-+	 */
-+	revalidate_disk(ns->disk);
- }
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index b8b59cfeacd1f..4aaba3e030554 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -7874,6 +7874,9 @@ int ufshcd_shutdown(struct ufs_hba *hba)
+ {
+ 	int ret = 0;
  
- static void nvme_queue_scan(struct nvme_ctrl *ctrl)
++	if (!hba->is_powered)
++		goto out;
++
+ 	if (ufshcd_is_ufs_dev_poweroff(hba) && ufshcd_is_link_off(hba))
+ 		goto out;
+ 
 -- 
 2.20.1
 
