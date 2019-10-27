@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B4D8E67E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6701E6678
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:12:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732713AbfJ0VZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:25:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47112 "EHLO mail.kernel.org"
+        id S1729450AbfJ0VMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:12:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732099AbfJ0VZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:25:17 -0400
+        id S1730037AbfJ0VMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:12:19 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D9AE222BD;
-        Sun, 27 Oct 2019 21:25:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C402208C0;
+        Sun, 27 Oct 2019 21:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211517;
-        bh=sBK3e/HJ72aJFPRCV7NuKK2fRBkXmMl86jjjjgNUYbQ=;
+        s=default; t=1572210738;
+        bh=UwVtbbT58WKj2ejT1LaVytt/OzL+CzP+J5ulerQNzMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x1l7DicE5Xt5jH5lncunI3pi2KhV55GeXOA7WSWnggczXocKGl/eD+A1mkTvvruVK
-         iBIiE/5B2YMlxmFxsGjlfEif+23o+iJ5xRBYYC0hAYWe/y3sGq2BKD2+5cpwhvHgJq
-         fluc4j11RYLZCrr6xpOZvpB1tzsKgE5YuBTPts0w=
+        b=pdovGfCfHidFgHsJ07lr0OHNIwoUzyjBW4y2i1k6Cd/caSZQUdpYBEM7i+IELxyje
+         4+fJFo+q56spSQK8c5bOxzJcaxfAuRmnOMaoMLwiuqOWG0/+LWsK3tO/xfBKYPfySg
+         0K9SjkKmd4FYztSwuZ1aHjO/MHyqhxvZ1R3N2mcc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH 5.3 177/197] x86/hyperv: Make vapic support x2apic mode
-Date:   Sun, 27 Oct 2019 22:01:35 +0100
-Message-Id: <20191027203405.081835714@linuxfoundation.org>
+        stable@vger.kernel.org, Nicolas Waisman <nico@semmle.com>,
+        Potnuri Bharat Teja <bharat@chelsio.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 119/119] RDMA/cxgb4: Do not dma memory off of the stack
+Date:   Sun, 27 Oct 2019 22:01:36 +0100
+Message-Id: <20191027203350.079648942@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,69 +44,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Kagan <rkagan@virtuozzo.com>
+From: Greg KH <gregkh@linuxfoundation.org>
 
-commit e211288b72f15259da86eed6eca680758dbe9e74 upstream.
+commit 3840c5b78803b2b6cc1ff820100a74a092c40cbb upstream.
 
-Now that there's Hyper-V IOMMU driver, Linux can switch to x2apic mode
-when supported by the vcpus.
+Nicolas pointed out that the cxgb4 driver is doing dma off of the stack,
+which is generally considered a very bad thing.  On some architectures it
+could be a security problem, but odds are none of them actually run this
+driver, so it's just a "normal" bug.
 
-However, the apic access functions for Hyper-V enlightened apic assume
-xapic mode only.
+Resolve this by allocating the memory for a message off of the heap
+instead of the stack.  kmalloc() always will give us a proper memory
+location that DMA will work correctly from.
 
-As a result, Linux fails to bring up secondary cpus when run as a guest
-in QEMU/KVM with both hv_apic and x2apic enabled.
-
-According to Michael Kelley, when in x2apic mode, the Hyper-V synthetic
-apic MSRs behave exactly the same as the corresponding architectural
-x2apic MSRs, so there's no need to override the apic accessors.  The
-only exception is hv_apic_eoi_write, which benefits from lazy EOI when
-available; however, its implementation works for both xapic and x2apic
-modes.
-
-Fixes: 29217a474683 ("iommu/hyper-v: Add Hyper-V stub IOMMU driver")
-Fixes: 6b48cb5f8347 ("X86/Hyper-V: Enlighten APIC access")
-Suggested-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Roman Kagan <rkagan@virtuozzo.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20191010123258.16919-1-rkagan@virtuozzo.com
+Link: https://lore.kernel.org/r/20191001165611.GA3542072@kroah.com
+Reported-by: Nicolas Waisman <nico@semmle.com>
+Tested-by: Potnuri Bharat Teja <bharat@chelsio.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/hyperv/hv_apic.c |   20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ drivers/infiniband/hw/cxgb4/mem.c |   28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
---- a/arch/x86/hyperv/hv_apic.c
-+++ b/arch/x86/hyperv/hv_apic.c
-@@ -260,11 +260,21 @@ void __init hv_apic_init(void)
- 	}
+--- a/drivers/infiniband/hw/cxgb4/mem.c
++++ b/drivers/infiniband/hw/cxgb4/mem.c
+@@ -260,13 +260,17 @@ static int write_tpt_entry(struct c4iw_r
+ 			   struct sk_buff *skb)
+ {
+ 	int err;
+-	struct fw_ri_tpte tpt;
++	struct fw_ri_tpte *tpt;
+ 	u32 stag_idx;
+ 	static atomic_t key;
  
- 	if (ms_hyperv.hints & HV_X64_APIC_ACCESS_RECOMMENDED) {
--		pr_info("Hyper-V: Using MSR based APIC access\n");
-+		pr_info("Hyper-V: Using enlightened APIC (%s mode)",
-+			x2apic_enabled() ? "x2apic" : "xapic");
-+		/*
-+		 * With x2apic, architectural x2apic MSRs are equivalent to the
-+		 * respective synthetic MSRs, so there's no need to override
-+		 * the apic accessors.  The only exception is
-+		 * hv_apic_eoi_write, because it benefits from lazy EOI when
-+		 * available, but it works for both xapic and x2apic modes.
-+		 */
- 		apic_set_eoi_write(hv_apic_eoi_write);
--		apic->read      = hv_apic_read;
--		apic->write     = hv_apic_write;
--		apic->icr_write = hv_apic_icr_write;
--		apic->icr_read  = hv_apic_icr_read;
-+		if (!x2apic_enabled()) {
-+			apic->read      = hv_apic_read;
-+			apic->write     = hv_apic_write;
-+			apic->icr_write = hv_apic_icr_write;
-+			apic->icr_read  = hv_apic_icr_read;
-+		}
+ 	if (c4iw_fatal_error(rdev))
+ 		return -EIO;
+ 
++	tpt = kmalloc(sizeof(*tpt), GFP_KERNEL);
++	if (!tpt)
++		return -ENOMEM;
++
+ 	stag_state = stag_state > 0;
+ 	stag_idx = (*stag) >> 8;
+ 
+@@ -276,6 +280,7 @@ static int write_tpt_entry(struct c4iw_r
+ 			mutex_lock(&rdev->stats.lock);
+ 			rdev->stats.stag.fail++;
+ 			mutex_unlock(&rdev->stats.lock);
++			kfree(tpt);
+ 			return -ENOMEM;
+ 		}
+ 		mutex_lock(&rdev->stats.lock);
+@@ -290,28 +295,28 @@ static int write_tpt_entry(struct c4iw_r
+ 
+ 	/* write TPT entry */
+ 	if (reset_tpt_entry)
+-		memset(&tpt, 0, sizeof(tpt));
++		memset(tpt, 0, sizeof(*tpt));
+ 	else {
+-		tpt.valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |
++		tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |
+ 			FW_RI_TPTE_STAGKEY_V((*stag & FW_RI_TPTE_STAGKEY_M)) |
+ 			FW_RI_TPTE_STAGSTATE_V(stag_state) |
+ 			FW_RI_TPTE_STAGTYPE_V(type) | FW_RI_TPTE_PDID_V(pdid));
+-		tpt.locread_to_qpid = cpu_to_be32(FW_RI_TPTE_PERM_V(perm) |
++		tpt->locread_to_qpid = cpu_to_be32(FW_RI_TPTE_PERM_V(perm) |
+ 			(bind_enabled ? FW_RI_TPTE_MWBINDEN_F : 0) |
+ 			FW_RI_TPTE_ADDRTYPE_V((zbva ? FW_RI_ZERO_BASED_TO :
+ 						      FW_RI_VA_BASED_TO))|
+ 			FW_RI_TPTE_PS_V(page_size));
+-		tpt.nosnoop_pbladdr = !pbl_size ? 0 : cpu_to_be32(
++		tpt->nosnoop_pbladdr = !pbl_size ? 0 : cpu_to_be32(
+ 			FW_RI_TPTE_PBLADDR_V(PBL_OFF(rdev, pbl_addr)>>3));
+-		tpt.len_lo = cpu_to_be32((u32)(len & 0xffffffffUL));
+-		tpt.va_hi = cpu_to_be32((u32)(to >> 32));
+-		tpt.va_lo_fbo = cpu_to_be32((u32)(to & 0xffffffffUL));
+-		tpt.dca_mwbcnt_pstag = cpu_to_be32(0);
+-		tpt.len_hi = cpu_to_be32((u32)(len >> 32));
++		tpt->len_lo = cpu_to_be32((u32)(len & 0xffffffffUL));
++		tpt->va_hi = cpu_to_be32((u32)(to >> 32));
++		tpt->va_lo_fbo = cpu_to_be32((u32)(to & 0xffffffffUL));
++		tpt->dca_mwbcnt_pstag = cpu_to_be32(0);
++		tpt->len_hi = cpu_to_be32((u32)(len >> 32));
  	}
+ 	err = write_adapter_mem(rdev, stag_idx +
+ 				(rdev->lldi.vr->stag.start >> 5),
+-				sizeof(tpt), &tpt, skb);
++				sizeof(*tpt), tpt, skb);
+ 
+ 	if (reset_tpt_entry) {
+ 		c4iw_put_resource(&rdev->resource.tpt_table, stag_idx);
+@@ -319,6 +324,7 @@ static int write_tpt_entry(struct c4iw_r
+ 		rdev->stats.stag.cur -= 32;
+ 		mutex_unlock(&rdev->stats.lock);
+ 	}
++	kfree(tpt);
+ 	return err;
  }
+ 
 
 
