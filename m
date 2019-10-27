@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4F3CE63B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 16:23:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FAB8E63BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 16:35:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfJ0PXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 11:23:30 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42272 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726682AbfJ0PX3 (ORCPT
+        id S1727364AbfJ0Pf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 11:35:27 -0400
+Received: from mail-wr1-f53.google.com ([209.85.221.53]:39800 "EHLO
+        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726682AbfJ0Pf0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 11:23:29 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r1so7274644wrs.9;
-        Sun, 27 Oct 2019 08:23:28 -0700 (PDT)
+        Sun, 27 Oct 2019 11:35:26 -0400
+Received: by mail-wr1-f53.google.com with SMTP id a11so7294942wra.6;
+        Sun, 27 Oct 2019 08:35:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=6igW15FTNZ7FtCx0WIgyCMA7DFyAcrqLMXtjwXRNmLA=;
-        b=IpzaTN653x/VMl1PRi17h+qZEKf0SkYms86/7yjWeyCLKorH0aA4rIJZCOEtoKR7hs
-         zXrChV5UqjC6nwsIt8LeW3HgC7I/FAAQwcftiLpA88QJp7Dt/j/0XSsWXC6/kffekQ33
-         b4bHt4zO7n/L0w6m7irP8CA50P0yGXoyQTigACshScNaWvf65llgJp1MYokVU1l5wKzQ
-         td4WcUNEzvSZyU9tgSrCNxod3e6IJg45eGAt9p5cJtn/KaRUyr5/IKeMxs2gKQHjoyfC
-         tE/WhkzB9IFfyFXbE+k0F3GHieLdiFZSKc/eu639a1+DK/RhB3AJMyZFcpykePl+CuFz
-         A5ag==
+        bh=tDb8Ix03BeXmmQfRYUptA8l64yP3LhsJwp6xJ2O8ihc=;
+        b=CkHuGPA0gZd4wgb0vl2mhIF0pkpEMOpbEAwIF6mfJdn2LkL9rNbTcd4uqaDNX4VrXC
+         xiRjHyYJYyJBm54DSCTKVMPbZ+bZE738bSLx67D3klgw1gOio29wvGsFXxBgoOsWyIni
+         8Zhg3InN5BjdmWiPVib36PPGTwRg0vY9H9Dg4TFoaISb7CZaUOQwRDagssIQO2O5vvfa
+         uY3bPijDvQf4qFNy6EYoRtUFqAI70MyuDJ0XenLW4XwmQvKeTI27l+NvHabebW6zxG5a
+         90dyG5B0P0ldw3tB9ohfzRo81V+sfxnwL2jFvkEjHJwpZSxMfxxhASU6OOEb/w4A61a6
+         2dyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=6igW15FTNZ7FtCx0WIgyCMA7DFyAcrqLMXtjwXRNmLA=;
-        b=a7I6mdG2Ii8T6JZwmVObw1kt8jpLpX+AmEVyfNmbxwPkTPuDHanA6GriDwvt9s6A2e
-         DoJrRKubbGprhe7Wcita7Dc18RVoH8E0y2Wx7KPK4ZHYv1efbIh34nWOpwPBBs/dVbfc
-         ao/T8xGLQdxXgbWyCsIoUW/XEE+MkC8uYhIJngvU4g1HuG4ch9+lx8w0Mg1EPHOWfoTt
-         AWaJmOuNjPXhmpway7XEYLaUK1AF/lVvmJc8AlWu341x7FuF+MJibEHUBcYHArnSor74
-         QvPqJlPJ3mvxd0YGtL3uLX2Vcf0gfJEW/oYjrTqSm/SxUIgMEkt8VRDXiKsmWIbW1WMT
-         pXNQ==
-X-Gm-Message-State: APjAAAU/oWc0kr74xNqEAkyJXGgjQ/2JPp3+tO21+5rnEyvfeH31E52B
-        6qVCYummTVXdEyeoOQvsZDL8frQt
-X-Google-Smtp-Source: APXvYqyUIc8eYKFqH39Ikktps0DnWgYsp2ek8Y5cJ/Z2DcRo5ITOuExB++Squxhm8XxeSkzWItMuWw==
-X-Received: by 2002:adf:f4cb:: with SMTP id h11mr12546506wrp.260.1572189806902;
-        Sun, 27 Oct 2019 08:23:26 -0700 (PDT)
-Received: from localhost.localdomain (mob-2-43-145-251.net.vodafone.it. [2.43.145.251])
-        by smtp.gmail.com with ESMTPSA id z15sm8490315wrr.19.2019.10.27.08.23.25
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tDb8Ix03BeXmmQfRYUptA8l64yP3LhsJwp6xJ2O8ihc=;
+        b=Fm1JQbVm6A1bP6UVZH7bqLXwR3/A2W+LDeQovXYtkPr9btw5ed9s/Iztwa/QIM2zFr
+         fAL+om+/5r6u76Hjypf7/vQUJRoeytwk+fab/a7wv9xAbhc/3yB5K0bLtnwXAfJP2T+o
+         Ub0A1dBDiYZqBEBCJ4KWvSo3v0wDXqnoojKvHcxRLcCKyZyNyJB9t9wtTekswdbYdlJ/
+         JbV0SmzYmIr9E1diy+aj8g7PN7l4uVNYv2I7olgSqdz0IBTMHMve5dk39H/iX7z/nfKx
+         M1dwssbwscXmyP2h9tbQp0FnqyadbO5aPAiXZOLL+2V8+kuzFu0sSqpddz/n2Vu1smWA
+         JOKg==
+X-Gm-Message-State: APjAAAUmNYxmwgkyIuTgg0JJKZ/SV5oXKxRPO+NElIizHbAbokslBvff
+        blXmBVnHStiekK0vXppfT8Aft1hr
+X-Google-Smtp-Source: APXvYqxXaZFkP0rFOVoNSTHCOesyc0zseJZwu+rhiNBj6WOl10VrDr7eAvd/G9rdQEvjDwY8G6aOCA==
+X-Received: by 2002:a5d:678e:: with SMTP id v14mr11081520wru.393.1572190523124;
+        Sun, 27 Oct 2019 08:35:23 -0700 (PDT)
+Received: from localhost.localdomain ([109.126.132.16])
+        by smtp.gmail.com with ESMTPSA id k3sm4226282wrn.95.2019.10.27.08.35.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2019 08:23:26 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH] KVM: vmx, svm: always run with EFER.NXE=1 when shadow paging is active
-Date:   Sun, 27 Oct 2019 16:23:23 +0100
-Message-Id: <20191027152323.24326-1-pbonzini@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        Sun, 27 Oct 2019 08:35:22 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2][for-next] cleanup submission path
+Date:   Sun, 27 Oct 2019 18:35:03 +0300
+Message-Id: <cover.1572189860.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,70 +59,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VMX already does so if the host has SMEP, in order to support the combination of
-CR0.WP=1 and CR4.SMEP=1.  However, it is perfectly safe to always do so, and in
-fact VMX already ends up running with EFER.NXE=1 on old processors that lack the
-"load EFER" controls, because it may help avoiding a slow MSR write.  Removing
-all the conditionals simplifies the code.
+A small cleanup of very similar but diverged io_submit_sqes() and
+io_ring_submit()
 
-SVM does not have similar code, but it should since recent AMD processors do
-support SMEP.  So this patch also makes the code for the two vendors more similar
-while fixing NPT=0, CR0.WP=1 and CR4.SMEP=1 on AMD processors.
+Pavel Begunkov (2):
+  io_uring: handle mm_fault outside of submission
+  io_uring: merge io_submit_sqes and io_ring_submit
 
-Cc: stable@vger.kernel.org
-Cc: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/svm.c     | 10 ++++++++--
- arch/x86/kvm/vmx/vmx.c | 14 +++-----------
- 2 files changed, 11 insertions(+), 13 deletions(-)
+ fs/io_uring.c | 116 ++++++++++++++------------------------------------
+ 1 file changed, 33 insertions(+), 83 deletions(-)
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index b6feb6a11a8d..2c452293c7cc 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -732,8 +732,14 @@ static int get_npt_level(struct kvm_vcpu *vcpu)
- static void svm_set_efer(struct kvm_vcpu *vcpu, u64 efer)
- {
- 	vcpu->arch.efer = efer;
--	if (!npt_enabled && !(efer & EFER_LMA))
--		efer &= ~EFER_LME;
-+
-+	if (!npt_enabled) {
-+		/* Shadow paging assumes NX to be available.  */
-+		efer |= EFER_NX;
-+
-+		if (!(efer & EFER_LMA))
-+			efer &= ~EFER_LME;
-+	}
- 
- 	to_svm(vcpu)->vmcb->save.efer = efer | EFER_SVME;
- 	mark_dirty(to_svm(vcpu)->vmcb, VMCB_CR);
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 2a2ba277c676..e191d41afb34 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -896,17 +896,9 @@ static bool update_transition_efer(struct vcpu_vmx *vmx, int efer_offset)
- 	u64 guest_efer = vmx->vcpu.arch.efer;
- 	u64 ignore_bits = 0;
- 
--	if (!enable_ept) {
--		/*
--		 * NX is needed to handle CR0.WP=1, CR4.SMEP=1.  Testing
--		 * host CPUID is more efficient than testing guest CPUID
--		 * or CR4.  Host SMEP is anyway a requirement for guest SMEP.
--		 */
--		if (boot_cpu_has(X86_FEATURE_SMEP))
--			guest_efer |= EFER_NX;
--		else if (!(guest_efer & EFER_NX))
--			ignore_bits |= EFER_NX;
--	}
-+	/* Shadow paging assumes NX to be available.  */
-+	if (!enable_ept)
-+		guest_efer |= EFER_NX;
- 
- 	/*
- 	 * LMA and LME handled by hardware; SCE meaningless outside long mode.
 -- 
-2.21.0
+2.23.0
 
