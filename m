@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19217E6773
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:21:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AE36E673B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:19:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731864AbfJ0VVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:21:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41842 "EHLO mail.kernel.org"
+        id S1731417AbfJ0VTM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:19:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731253AbfJ0VVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:21:06 -0400
+        id S1731395AbfJ0VTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:19:07 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDC49205C9;
-        Sun, 27 Oct 2019 21:21:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF2B5214E0;
+        Sun, 27 Oct 2019 21:19:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211265;
-        bh=acrx3JS5YrBn+hV9SPGE9+4j06jBjjQtCzlyQCKbF1U=;
+        s=default; t=1572211146;
+        bh=rR/tHFx4pomAVWweAo1Zmziuu9yLjxENE/5tcvMBfd0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B2uBsA03wC026o+AmZ63H4eTsI/B3lbvoX8qLOiS5+VhSXhrGQqWAuX4yX4T112+K
-         3K4zPGt/LnkqYjME5Pii4QNxdItjIboGAbWU4RsRUDHCoukM1VW/KQNMPsZU7eHEOA
-         nyF960RHBXg1efcXaogyXxu3f/EJvtzN+UJTzRzw=
+        b=WYxczeVh6fu2xv0Ou9DLKZ6oWaIhHIBhwPNVYBka5CG2CeN/YGCBUJpj+RDBPV2oJ
+         JLuqwnBRh35d0QhbKyUYyaZN70PXZHd9nFNAeC7qYCi8uAQcSYFkjZZ2d4gbb3qGM+
+         vV3KCgiJUPupwvd1FBlBiLevXgGdHiduLpiZpQxw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Bitan Biswas <bbiswas@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 046/197] drm/amd/display: memory leak
-Date:   Sun, 27 Oct 2019 21:59:24 +0100
-Message-Id: <20191027203354.187705006@linuxfoundation.org>
+Subject: [PATCH 5.3 049/197] net: stmmac: Avoid deadlock on suspend/resume
+Date:   Sun, 27 Oct 2019 21:59:27 +0100
+Message-Id: <20191027203354.341058811@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -45,110 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit 055e547478a11a6360c7ce05e2afc3e366968a12 ]
+[ Upstream commit 134cc4cefad34d8d24670d8a911b59c3b89c6731 ]
 
-In dcn*_clock_source_create when dcn20_clk_src_construct fails allocated
-clk_src needs release.
+The stmmac driver will try to acquire its private mutex during suspend
+via phylink_resolve() -> stmmac_mac_link_down() -> stmmac_eee_init().
+However, the phylink configuration is updated with the private mutex
+held already, which causes a deadlock during suspend.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fix this by moving the phylink configuration updates out of the region
+of code protected by the private mutex.
+
+Fixes: 19e13cb27b99 ("net: stmmac: Hold rtnl lock in suspend/resume callbacks")
+Suggested-by: Bitan Biswas <bbiswas@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c | 1 +
- drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c | 1 +
- drivers/gpu/drm/amd/display/dc/dce112/dce112_resource.c | 1 +
- drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c | 1 +
- drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c   | 1 +
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c   | 1 +
- drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c   | 1 +
- 7 files changed, 7 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c b/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c
-index 6248c84553140..45f74219e79ed 100644
---- a/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c
-@@ -668,6 +668,7 @@ struct clock_source *dce100_clock_source_create(
- 		return &clk_src->base;
- 	}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 69cc9133336fc..8d5ec73e02d34 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4454,10 +4454,10 @@ int stmmac_suspend(struct device *dev)
+ 	if (!ndev || !netif_running(ndev))
+ 		return 0;
  
-+	kfree(clk_src);
- 	BREAK_TO_DEBUGGER();
- 	return NULL;
- }
-diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c
-index 764329264c3b4..0cb83b0e0e1ee 100644
---- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c
-@@ -714,6 +714,7 @@ struct clock_source *dce110_clock_source_create(
- 		return &clk_src->base;
- 	}
+-	mutex_lock(&priv->lock);
+-
+ 	phylink_mac_change(priv->phylink, false);
  
-+	kfree(clk_src);
- 	BREAK_TO_DEBUGGER();
- 	return NULL;
- }
-diff --git a/drivers/gpu/drm/amd/display/dc/dce112/dce112_resource.c b/drivers/gpu/drm/amd/display/dc/dce112/dce112_resource.c
-index 7a04be74c9cf9..918455caa9a61 100644
---- a/drivers/gpu/drm/amd/display/dc/dce112/dce112_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce112/dce112_resource.c
-@@ -687,6 +687,7 @@ struct clock_source *dce112_clock_source_create(
- 		return &clk_src->base;
- 	}
++	mutex_lock(&priv->lock);
++
+ 	netif_device_detach(ndev);
+ 	stmmac_stop_all_queues(priv);
  
-+	kfree(clk_src);
- 	BREAK_TO_DEBUGGER();
- 	return NULL;
- }
-diff --git a/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c b/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
-index ae38c9c7277cf..49f3f0fad7633 100644
---- a/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
-@@ -500,6 +500,7 @@ static struct clock_source *dce120_clock_source_create(
- 		return &clk_src->base;
- 	}
+@@ -4471,9 +4471,11 @@ int stmmac_suspend(struct device *dev)
+ 		stmmac_pmt(priv, priv->hw, priv->wolopts);
+ 		priv->irq_wake = 1;
+ 	} else {
++		mutex_unlock(&priv->lock);
+ 		rtnl_lock();
+ 		phylink_stop(priv->phylink);
+ 		rtnl_unlock();
++		mutex_lock(&priv->lock);
  
-+	kfree(clk_src);
- 	BREAK_TO_DEBUGGER();
- 	return NULL;
- }
-diff --git a/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c b/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
-index 860a524ebcfab..952440893fbb3 100644
---- a/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
-@@ -701,6 +701,7 @@ struct clock_source *dce80_clock_source_create(
- 		return &clk_src->base;
- 	}
+ 		stmmac_mac_set(priv, priv->ioaddr, false);
+ 		pinctrl_pm_select_sleep_state(priv->device);
+@@ -4565,6 +4567,8 @@ int stmmac_resume(struct device *dev)
  
-+	kfree(clk_src);
- 	BREAK_TO_DEBUGGER();
- 	return NULL;
- }
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
-index a12530a3ab9ca..3f25e8da5396a 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
-@@ -786,6 +786,7 @@ struct clock_source *dcn10_clock_source_create(
- 		return &clk_src->base;
- 	}
+ 	stmmac_start_all_queues(priv);
  
-+	kfree(clk_src);
- 	BREAK_TO_DEBUGGER();
- 	return NULL;
- }
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
-index b949e202d6cb7..5b7ff6c549f18 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
-@@ -955,6 +955,7 @@ struct clock_source *dcn20_clock_source_create(
- 		return &clk_src->base;
- 	}
++	mutex_unlock(&priv->lock);
++
+ 	if (!device_may_wakeup(priv->device)) {
+ 		rtnl_lock();
+ 		phylink_start(priv->phylink);
+@@ -4573,8 +4577,6 @@ int stmmac_resume(struct device *dev)
  
-+	kfree(clk_src);
- 	BREAK_TO_DEBUGGER();
- 	return NULL;
+ 	phylink_mac_change(priv->phylink, true);
+ 
+-	mutex_unlock(&priv->lock);
+-
+ 	return 0;
  }
+ EXPORT_SYMBOL_GPL(stmmac_resume);
 -- 
 2.20.1
 
