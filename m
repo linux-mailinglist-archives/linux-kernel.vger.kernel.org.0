@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B01EDE6789
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6021DE668A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:13:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731352AbfJ0VVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:21:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42694 "EHLO mail.kernel.org"
+        id S1730133AbfJ0VMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:12:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731992AbfJ0VVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:21:47 -0400
+        id S1730118AbfJ0VMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:12:52 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E172205C9;
-        Sun, 27 Oct 2019 21:21:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94575205C9;
+        Sun, 27 Oct 2019 21:12:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211306;
-        bh=EUuh1vPUFAlhoRbVgQeGEOyNuTvyYkG+7Olaa9exQJU=;
+        s=default; t=1572210772;
+        bh=2n/nNyHcFnf0Q7AXrJvx/JNNbVdkeXFi6BIcuQdJvrQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ueJwNpgaLX/KnAcJFGrGQIZMUOLOI8FTl0taNRaK3RC2F1J1pWYQRwlijA24OYL4a
-         hfZ/VE4FyYJ3IYqsmlUrdibcwYBP+gGkiRRym758RjKBnVdgQD19dLurZ+BUcBDv+v
-         4Z0OYlU8KhfhOcN3XskQ1cU33jr63siRqcetmIPA=
+        b=TPmPbzIeOhlvgk4uqNsJTvyqcTf/i8UpAn9I70ijpfs9G+3ffiXGXOxdbINTteKoJ
+         OSjeP92wQ7V8uB1POKgYr9V9aWsF2xXcPzuEif0srcEVcXbLSPv1/63ciQVJs9eX2C
+         3vvUdflNCm+UGxpYJV0dvxpMbhUxkULZJSDeMrn8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.3 105/197] USB: ldusb: fix read info leaks
-Date:   Sun, 27 Oct 2019 22:00:23 +0100
-Message-Id: <20191027203357.428830803@linuxfoundation.org>
+        stable@vger.kernel.org, Miaoqing Pan <miaoqing@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 12/93] nl80211: fix null pointer dereference
+Date:   Sun, 27 Oct 2019 22:00:24 +0100
+Message-Id: <20191027203254.422065221@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,80 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Miaoqing Pan <miaoqing@codeaurora.org>
 
-commit 7a6f22d7479b7a0b68eadd308a997dd64dda7dae upstream.
+[ Upstream commit b501426cf86e70649c983c52f4c823b3c40d72a3 ]
 
-Fix broken read implementation, which could be used to trigger slab info
-leaks.
+If the interface is not in MESH mode, the command 'iw wlanx mpath del'
+will cause kernel panic.
 
-The driver failed to check if the custom ring buffer was still empty
-when waking up after having waited for more data. This would happen on
-every interrupt-in completion, even if no data had been added to the
-ring buffer (e.g. on disconnect events).
+The root cause is null pointer access in mpp_flush_by_proxy(), as the
+pointer 'sdata->u.mesh.mpp_paths' is NULL for non MESH interface.
 
-Due to missing sanity checks and uninitialised (kmalloced) ring-buffer
-entries, this meant that huge slab info leaks could easily be triggered.
+Unable to handle kernel NULL pointer dereference at virtual address 00000068
+[...]
+PC is at _raw_spin_lock_bh+0x20/0x5c
+LR is at mesh_path_del+0x1c/0x17c [mac80211]
+[...]
+Process iw (pid: 4537, stack limit = 0xd83e0238)
+[...]
+[<c021211c>] (_raw_spin_lock_bh) from [<bf8c7648>] (mesh_path_del+0x1c/0x17c [mac80211])
+[<bf8c7648>] (mesh_path_del [mac80211]) from [<bf6cdb7c>] (extack_doit+0x20/0x68 [compat])
+[<bf6cdb7c>] (extack_doit [compat]) from [<c05c309c>] (genl_rcv_msg+0x274/0x30c)
+[<c05c309c>] (genl_rcv_msg) from [<c05c25d8>] (netlink_rcv_skb+0x58/0xac)
+[<c05c25d8>] (netlink_rcv_skb) from [<c05c2e14>] (genl_rcv+0x20/0x34)
+[<c05c2e14>] (genl_rcv) from [<c05c1f90>] (netlink_unicast+0x11c/0x204)
+[<c05c1f90>] (netlink_unicast) from [<c05c2420>] (netlink_sendmsg+0x30c/0x370)
+[<c05c2420>] (netlink_sendmsg) from [<c05886d0>] (sock_sendmsg+0x70/0x84)
+[<c05886d0>] (sock_sendmsg) from [<c0589f4c>] (___sys_sendmsg.part.3+0x188/0x228)
+[<c0589f4c>] (___sys_sendmsg.part.3) from [<c058add4>] (__sys_sendmsg+0x4c/0x70)
+[<c058add4>] (__sys_sendmsg) from [<c0208c80>] (ret_fast_syscall+0x0/0x44)
+Code: e2822c02 e2822001 e5832004 f590f000 (e1902f9f)
+---[ end trace bbd717600f8f884d ]---
 
-Note that the empty-buffer check after wakeup is enough to fix the info
-leak on disconnect, but let's clear the buffer on allocation and add a
-sanity check to read() to prevent further leaks.
-
-Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Reported-by: syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191018151955.25135-2-johan@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Miaoqing Pan <miaoqing@codeaurora.org>
+Link: https://lore.kernel.org/r/1569485810-761-1-git-send-email-miaoqing@codeaurora.org
+[trim useless data from commit message]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/misc/ldusb.c |   18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ net/wireless/nl80211.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -464,7 +464,7 @@ static ssize_t ld_usb_read(struct file *
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 334e3181f1c52..a28d6456e93e2 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -5843,6 +5843,9 @@ static int nl80211_del_mpath(struct sk_buff *skb, struct genl_info *info)
+ 	if (!rdev->ops->del_mpath)
+ 		return -EOPNOTSUPP;
  
- 	/* wait for data */
- 	spin_lock_irq(&dev->rbsl);
--	if (dev->ring_head == dev->ring_tail) {
-+	while (dev->ring_head == dev->ring_tail) {
- 		dev->interrupt_in_done = 0;
- 		spin_unlock_irq(&dev->rbsl);
- 		if (file->f_flags & O_NONBLOCK) {
-@@ -474,12 +474,17 @@ static ssize_t ld_usb_read(struct file *
- 		retval = wait_event_interruptible(dev->read_wait, dev->interrupt_in_done);
- 		if (retval < 0)
- 			goto unlock_exit;
--	} else {
--		spin_unlock_irq(&dev->rbsl);
++	if (dev->ieee80211_ptr->iftype != NL80211_IFTYPE_MESH_POINT)
++		return -EOPNOTSUPP;
 +
-+		spin_lock_irq(&dev->rbsl);
- 	}
-+	spin_unlock_irq(&dev->rbsl);
+ 	return rdev_del_mpath(rdev, dev, dst);
+ }
  
- 	/* actual_buffer contains actual_length + interrupt_in_buffer */
- 	actual_buffer = (size_t *)(dev->ring_buffer + dev->ring_tail * (sizeof(size_t)+dev->interrupt_in_endpoint_size));
-+	if (*actual_buffer > dev->interrupt_in_endpoint_size) {
-+		retval = -EIO;
-+		goto unlock_exit;
-+	}
- 	bytes_to_read = min(count, *actual_buffer);
- 	if (bytes_to_read < *actual_buffer)
- 		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
-@@ -690,10 +695,9 @@ static int ld_usb_probe(struct usb_inter
- 		dev_warn(&intf->dev, "Interrupt out endpoint not found (using control endpoint instead)\n");
- 
- 	dev->interrupt_in_endpoint_size = usb_endpoint_maxp(dev->interrupt_in_endpoint);
--	dev->ring_buffer =
--		kmalloc_array(ring_buffer_size,
--			      sizeof(size_t) + dev->interrupt_in_endpoint_size,
--			      GFP_KERNEL);
-+	dev->ring_buffer = kcalloc(ring_buffer_size,
-+			sizeof(size_t) + dev->interrupt_in_endpoint_size,
-+			GFP_KERNEL);
- 	if (!dev->ring_buffer)
- 		goto error;
- 	dev->interrupt_in_buffer = kmalloc(dev->interrupt_in_endpoint_size, GFP_KERNEL);
+-- 
+2.20.1
+
 
 
