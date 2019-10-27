@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF683E65C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:05:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72D58E6586
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:03:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbfJ0VE5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:04:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50608 "EHLO mail.kernel.org"
+        id S1728171AbfJ0VCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:02:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728723AbfJ0VEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:04:53 -0400
+        id S1728143AbfJ0VCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:02:50 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BD85214E0;
-        Sun, 27 Oct 2019 21:04:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 082DC2064A;
+        Sun, 27 Oct 2019 21:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210292;
-        bh=JB3tIwZcKyZUS5HkCMBOxMN0T3oELjuwa6+ZCfmripg=;
+        s=default; t=1572210169;
+        bh=F/y2DUVem61aq9Sj3NEFmdgWmxXXdL/in4eekdM29Xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d4OfHfwpgin99rwt3Gg1WtS5cuWaFGiE+sVeBqXthSRR2UO8f9BiqIVlefzaqfufy
-         F0MuvpNKgupphtd6K/IqoKTCXayhKXJ9JFPsPwY9ENINmkVyuALNX8dgqUnCDylN39
-         eIk4ED4c8F3VyR5Y9rv3RQrpTsaVTRt++mkZQN4w=
+        b=KiDzL22RS8zSzmK9T+R/tq2CWHhYCFs+jcOkSxdqG6eD4Jsy7a7m0HiYDVjxd0zQv
+         L+TVKO8sFtrtod3CmIFHJqfuXB/GePzSINLsOtIcqUUqd+Lqd/9dCctaUp44IxtT8X
+         /ahe0y7b/qUP6csv0WJahJrWk3tT6sTVkOWVraW8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Meng Zhuo <mengzhuo1203@gmail.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        linux-mips@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 15/49] MIPS: elf_hwcap: Export userspace ASEs
+        stable@vger.kernel.org,
+        syzbot+d44f7bbebdea49dbc84a@syzkaller.appspotmail.com,
+        Xin Long <lucien.xin@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 15/41] sctp: change sctp_prot .no_autobind with true
 Date:   Sun, 27 Oct 2019 22:00:53 +0100
-Message-Id: <20191027203129.665673387@linuxfoundation.org>
+Message-Id: <20191027203113.091982468@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,95 +46,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 38dffe1e4dde1d3174fdce09d67370412843ebb5 ]
+[ Upstream commit 63dfb7938b13fa2c2fbcb45f34d065769eb09414 ]
 
-A Golang developer reported MIPS hwcap isn't reflecting instructions
-that the processor actually supported so programs can't apply optimized
-code at runtime.
+syzbot reported a memory leak:
 
-Thus we export the ASEs that can be used in userspace programs.
+  BUG: memory leak, unreferenced object 0xffff888120b3d380 (size 64):
+  backtrace:
 
-Reported-by: Meng Zhuo <mengzhuo1203@gmail.com>
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: linux-mips@vger.kernel.org
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: <stable@vger.kernel.org> # 4.14+
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+    [...] slab_alloc mm/slab.c:3319 [inline]
+    [...] kmem_cache_alloc+0x13f/0x2c0 mm/slab.c:3483
+    [...] sctp_bucket_create net/sctp/socket.c:8523 [inline]
+    [...] sctp_get_port_local+0x189/0x5a0 net/sctp/socket.c:8270
+    [...] sctp_do_bind+0xcc/0x200 net/sctp/socket.c:402
+    [...] sctp_bindx_add+0x4b/0xd0 net/sctp/socket.c:497
+    [...] sctp_setsockopt_bindx+0x156/0x1b0 net/sctp/socket.c:1022
+    [...] sctp_setsockopt net/sctp/socket.c:4641 [inline]
+    [...] sctp_setsockopt+0xaea/0x2dc0 net/sctp/socket.c:4611
+    [...] sock_common_setsockopt+0x38/0x50 net/core/sock.c:3147
+    [...] __sys_setsockopt+0x10f/0x220 net/socket.c:2084
+    [...] __do_sys_setsockopt net/socket.c:2100 [inline]
+
+It was caused by when sending msgs without binding a port, in the path:
+inet_sendmsg() -> inet_send_prepare() -> inet_autobind() ->
+.get_port/sctp_get_port(), sp->bind_hash will be set while bp->port is
+not. Later when binding another port by sctp_setsockopt_bindx(), a new
+bucket will be created as bp->port is not set.
+
+sctp's autobind is supposed to call sctp_autobind() where it does all
+things including setting bp->port. Since sctp_autobind() is called in
+sctp_sendmsg() if the sk is not yet bound, it should have skipped the
+auto bind.
+
+THis patch is to avoid calling inet_autobind() in inet_send_prepare()
+by changing sctp_prot .no_autobind with true, also remove the unused
+.get_port.
+
+Reported-by: syzbot+d44f7bbebdea49dbc84a@syzkaller.appspotmail.com
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/include/uapi/asm/hwcap.h | 11 ++++++++++
- arch/mips/kernel/cpu-probe.c       | 33 ++++++++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+ net/sctp/socket.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/include/uapi/asm/hwcap.h b/arch/mips/include/uapi/asm/hwcap.h
-index c7484a7ca686d..2b6f8d569d00f 100644
---- a/arch/mips/include/uapi/asm/hwcap.h
-+++ b/arch/mips/include/uapi/asm/hwcap.h
-@@ -4,5 +4,16 @@
- /* HWCAP flags */
- #define HWCAP_MIPS_R6		(1 << 0)
- #define HWCAP_MIPS_MSA		(1 << 1)
-+#define HWCAP_MIPS_MIPS16	(1 << 3)
-+#define HWCAP_MIPS_MDMX     (1 << 4)
-+#define HWCAP_MIPS_MIPS3D   (1 << 5)
-+#define HWCAP_MIPS_SMARTMIPS (1 << 6)
-+#define HWCAP_MIPS_DSP      (1 << 7)
-+#define HWCAP_MIPS_DSP2     (1 << 8)
-+#define HWCAP_MIPS_DSP3     (1 << 9)
-+#define HWCAP_MIPS_MIPS16E2 (1 << 10)
-+#define HWCAP_LOONGSON_MMI  (1 << 11)
-+#define HWCAP_LOONGSON_EXT  (1 << 12)
-+#define HWCAP_LOONGSON_EXT2 (1 << 13)
- 
- #endif /* _UAPI_ASM_HWCAP_H */
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index 0a7b3e513650f..1a1ab0a78ac05 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -2055,6 +2055,39 @@ void cpu_probe(void)
- 		elf_hwcap |= HWCAP_MIPS_MSA;
- 	}
- 
-+	if (cpu_has_mips16)
-+		elf_hwcap |= HWCAP_MIPS_MIPS16;
-+
-+	if (cpu_has_mdmx)
-+		elf_hwcap |= HWCAP_MIPS_MDMX;
-+
-+	if (cpu_has_mips3d)
-+		elf_hwcap |= HWCAP_MIPS_MIPS3D;
-+
-+	if (cpu_has_smartmips)
-+		elf_hwcap |= HWCAP_MIPS_SMARTMIPS;
-+
-+	if (cpu_has_dsp)
-+		elf_hwcap |= HWCAP_MIPS_DSP;
-+
-+	if (cpu_has_dsp2)
-+		elf_hwcap |= HWCAP_MIPS_DSP2;
-+
-+	if (cpu_has_dsp3)
-+		elf_hwcap |= HWCAP_MIPS_DSP3;
-+
-+	if (cpu_has_loongson_mmi)
-+		elf_hwcap |= HWCAP_LOONGSON_MMI;
-+
-+	if (cpu_has_loongson_mmi)
-+		elf_hwcap |= HWCAP_LOONGSON_CAM;
-+
-+	if (cpu_has_loongson_ext)
-+		elf_hwcap |= HWCAP_LOONGSON_EXT;
-+
-+	if (cpu_has_loongson_ext)
-+		elf_hwcap |= HWCAP_LOONGSON_EXT2;
-+
- 	if (cpu_has_vz)
- 		cpu_probe_vz(c);
- 
--- 
-2.20.1
-
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -7443,7 +7443,7 @@ struct proto sctp_prot = {
+ 	.backlog_rcv =	sctp_backlog_rcv,
+ 	.hash        =	sctp_hash,
+ 	.unhash      =	sctp_unhash,
+-	.get_port    =	sctp_get_port,
++	.no_autobind =	true,
+ 	.obj_size    =  sizeof(struct sctp_sock),
+ 	.sysctl_mem  =  sysctl_sctp_mem,
+ 	.sysctl_rmem =  sysctl_sctp_rmem,
+@@ -7482,7 +7482,7 @@ struct proto sctpv6_prot = {
+ 	.backlog_rcv	= sctp_backlog_rcv,
+ 	.hash		= sctp_hash,
+ 	.unhash		= sctp_unhash,
+-	.get_port	= sctp_get_port,
++	.no_autobind	= true,
+ 	.obj_size	= sizeof(struct sctp6_sock),
+ 	.sysctl_mem	= sysctl_sctp_mem,
+ 	.sysctl_rmem	= sysctl_sctp_rmem,
 
 
