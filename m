@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0E40E68C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB301E696C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:36:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728868AbfJ0VPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:15:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34888 "EHLO mail.kernel.org"
+        id S1729059AbfJ0VGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:06:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728107AbfJ0VPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:15:30 -0400
+        id S1729047AbfJ0VGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:06:51 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19FC2214AF;
-        Sun, 27 Oct 2019 21:15:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4AA720873;
+        Sun, 27 Oct 2019 21:06:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210929;
-        bh=Po2c2GviTAUMla+oYjDjAo+YpQcwECI9M/p6lDJSJmM=;
+        s=default; t=1572210410;
+        bh=GQCxfnCFNNCNX5PCNOhkenmDHt9pXVPSq4JZ8mAOQXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G8Ad2g0BBnYLziOouPuWBEpdB8gHCHdI4aS1RuWGBG0Zkf78aUxbK8Guex0vs881X
-         sUWr4SPqmfOagFQZ7EKtyY3gR8MZUHjo3bePrv6H/gAykZdtbigdPYgymNGztPJGTU
-         WT1kIASZyYNhw2OFslG1+FPCNPdLoY89Uebud72k=
+        b=W0lZ4c9yjIcbpji1eT+2zB3g65UrilvwGjSgssRtWRcRQw8kQQsSAKbvUhZFhO5Iw
+         E1zKzrk+ExZEfJrzfi/JPLxcMAdEImaXbwt2T/VnfwBy94AmqinSOEUH3rekvFzk3O
+         YKBU/MlC/s4idTk+Gfo9GOFGYGcpR5VPoGK3Ysks=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 65/93] mm/memory-failure.c: dont access uninitialized memmaps in memory_failure()
-Date:   Sun, 27 Oct 2019 22:01:17 +0100
-Message-Id: <20191027203306.883320150@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.9 40/49] xtensa: drop EXPORT_SYMBOL for outs*/ins*
+Date:   Sun, 27 Oct 2019 22:01:18 +0100
+Message-Id: <20191027203157.584046258@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
+References: <20191027203119.468466356@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,55 +42,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 96c804a6ae8c59a9092b3d5dd581198472063184 upstream.
+commit 8b39da985194aac2998dd9e3a22d00b596cebf1e upstream.
 
-We should check for pfn_to_online_page() to not access uninitialized
-memmaps.  Reshuffle the code so we don't have to duplicate the error
-message.
+Custom outs*/ins* implementations are long gone from the xtensa port,
+remove matching EXPORT_SYMBOLs.
+This fixes the following build warnings issued by modpost since commit
+15bfc2348d54 ("modpost: check for static EXPORT_SYMBOL* functions"):
 
-Link: http://lkml.kernel.org/r/20191009142435.3975-3-david@redhat.com
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")	[visible after d0dc12e86b319]
-Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: <stable@vger.kernel.org>	[4.13+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+  WARNING: "insb" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "insw" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "insl" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "outsb" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "outsw" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "outsl" [vmlinux] is a static EXPORT_SYMBOL
+
+Cc: stable@vger.kernel.org
+Fixes: d38efc1f150f ("xtensa: adopt generic io routines")
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memory-failure.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/xtensa/kernel/xtensa_ksyms.c |    7 -------
+ 1 file changed, 7 deletions(-)
 
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1258,17 +1258,19 @@ int memory_failure(unsigned long pfn, in
- 	if (!sysctl_memory_failure_recovery)
- 		panic("Memory failure on page %lx", pfn);
+--- a/arch/xtensa/kernel/xtensa_ksyms.c
++++ b/arch/xtensa/kernel/xtensa_ksyms.c
+@@ -114,13 +114,6 @@ EXPORT_SYMBOL(__invalidate_icache_range)
+ // FIXME EXPORT_SYMBOL(screen_info);
+ #endif
  
--	if (!pfn_valid(pfn)) {
-+	p = pfn_to_online_page(pfn);
-+	if (!p) {
-+		if (pfn_valid(pfn)) {
-+			pgmap = get_dev_pagemap(pfn, NULL);
-+			if (pgmap)
-+				return memory_failure_dev_pagemap(pfn, flags,
-+								  pgmap);
-+		}
- 		pr_err("Memory failure: %#lx: memory outside kernel control\n",
- 			pfn);
- 		return -ENXIO;
- 	}
- 
--	pgmap = get_dev_pagemap(pfn, NULL);
--	if (pgmap)
--		return memory_failure_dev_pagemap(pfn, flags, pgmap);
+-EXPORT_SYMBOL(outsb);
+-EXPORT_SYMBOL(outsw);
+-EXPORT_SYMBOL(outsl);
+-EXPORT_SYMBOL(insb);
+-EXPORT_SYMBOL(insw);
+-EXPORT_SYMBOL(insl);
 -
--	p = pfn_to_page(pfn);
- 	if (PageHuge(p))
- 		return memory_failure_hugetlb(pfn, flags);
- 	if (TestSetPageHWPoison(p)) {
+ extern long common_exception_return;
+ EXPORT_SYMBOL(common_exception_return);
+ 
 
 
