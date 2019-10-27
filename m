@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C208E65D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:05:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 736FEE66C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:15:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbfJ0VFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:05:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51424 "EHLO mail.kernel.org"
+        id S1730579AbfJ0VPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:15:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727361AbfJ0VFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:05:36 -0400
+        id S1730560AbfJ0VO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:14:59 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74D682064A;
-        Sun, 27 Oct 2019 21:05:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA4C320B7C;
+        Sun, 27 Oct 2019 21:14:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210335;
-        bh=knZxpTXWNjn2pIVy9fEFckrWLQBDNEjza2UMoXFN2BM=;
+        s=default; t=1572210898;
+        bh=kZZgyc4DrtTaXEeJC0XmpsLaMMXypc6EHRuOwyLyH+I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DqbPMzi0+CkjTNonV4Ghe5gW7LK87jGnePGgKBtyIMqJCuqS5n4lKZKRUP9TR6KKU
-         ER4SALCOFEGDRDMkvV98FK85ZxiSieQBAzFbp6bKBetsLvT2eSfX4zJfIrHwDO4duo
-         bjsjTUJRa+upVLk7aHAnQyIySG0m6obK9ecsXmiU=
+        b=zjYLxsC8NodJSq17VwtsGhLC88ATC5MozP3gZFMKlSl/pmuVziyw5GIYfIWaRlGwc
+         KEYnbbZNFt/cOkZgvj/8UGLOj9Vk15oNLBLXAh1UWl0N0/4dBGbEHAlANRwcNHzba5
+         VU7+izU+wwW31tsmcKtCLy7gyiT28OYPQK6m5J9A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 29/49] USB: ldusb: fix read info leaks
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Timo Wischer <twischer@de.adit-jv.com>,
+        Junya Monden <jmonden@jp.adit-jv.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 55/93] ASoC: rsnd: Reinitialize bit clock inversion flag for every format setting
 Date:   Sun, 27 Oct 2019 22:01:07 +0100
-Message-Id: <20191027203142.135352555@linuxfoundation.org>
+Message-Id: <20191027203301.949691539@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,77 +49,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Junya Monden <jmonden@jp.adit-jv.com>
 
-commit 7a6f22d7479b7a0b68eadd308a997dd64dda7dae upstream.
+commit 22e58665a01006d05f0239621f7d41cacca96cc4 upstream.
 
-Fix broken read implementation, which could be used to trigger slab info
-leaks.
+Unlike other format-related DAI parameters, rdai->bit_clk_inv flag
+is not properly re-initialized when setting format for new stream
+processing. The inversion, if requested, is then applied not to default,
+but to a previous value, which leads to SCKP bit in SSICR register being
+set incorrectly.
+Fix this by re-setting the flag to its initial value, determined by format.
 
-The driver failed to check if the custom ring buffer was still empty
-when waking up after having waited for more data. This would happen on
-every interrupt-in completion, even if no data had been added to the
-ring buffer (e.g. on disconnect events).
-
-Due to missing sanity checks and uninitialised (kmalloced) ring-buffer
-entries, this meant that huge slab info leaks could easily be triggered.
-
-Note that the empty-buffer check after wakeup is enough to fix the info
-leak on disconnect, but let's clear the buffer on allocation and add a
-sanity check to read() to prevent further leaks.
-
-Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Reported-by: syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191018151955.25135-2-johan@kernel.org
+Fixes: 1a7889ca8aba3 ("ASoC: rsnd: fixup SND_SOC_DAIFMT_xB_xF behavior")
+Cc: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Cc: Jiada Wang <jiada_wang@mentor.com>
+Cc: Timo Wischer <twischer@de.adit-jv.com>
+Cc: stable@vger.kernel.org # v3.17+
+Signed-off-by: Junya Monden <jmonden@jp.adit-jv.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Link: https://lore.kernel.org/r/20191016124255.7442-1-erosca@de.adit-jv.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/ldusb.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ sound/soc/sh/rcar/core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -468,7 +468,7 @@ static ssize_t ld_usb_read(struct file *
- 
- 	/* wait for data */
- 	spin_lock_irq(&dev->rbsl);
--	if (dev->ring_head == dev->ring_tail) {
-+	while (dev->ring_head == dev->ring_tail) {
- 		dev->interrupt_in_done = 0;
- 		spin_unlock_irq(&dev->rbsl);
- 		if (file->f_flags & O_NONBLOCK) {
-@@ -478,12 +478,17 @@ static ssize_t ld_usb_read(struct file *
- 		retval = wait_event_interruptible(dev->read_wait, dev->interrupt_in_done);
- 		if (retval < 0)
- 			goto unlock_exit;
--	} else {
--		spin_unlock_irq(&dev->rbsl);
-+
-+		spin_lock_irq(&dev->rbsl);
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -674,6 +674,7 @@ static int rsnd_soc_dai_set_fmt(struct s
  	}
-+	spin_unlock_irq(&dev->rbsl);
  
- 	/* actual_buffer contains actual_length + interrupt_in_buffer */
- 	actual_buffer = (size_t*)(dev->ring_buffer + dev->ring_tail*(sizeof(size_t)+dev->interrupt_in_endpoint_size));
-+	if (*actual_buffer > dev->interrupt_in_endpoint_size) {
-+		retval = -EIO;
-+		goto unlock_exit;
-+	}
- 	bytes_to_read = min(count, *actual_buffer);
- 	if (bytes_to_read < *actual_buffer)
- 		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
-@@ -699,7 +704,9 @@ static int ld_usb_probe(struct usb_inter
- 		dev_warn(&intf->dev, "Interrupt out endpoint not found (using control endpoint instead)\n");
- 
- 	dev->interrupt_in_endpoint_size = usb_endpoint_maxp(dev->interrupt_in_endpoint);
--	dev->ring_buffer = kmalloc(ring_buffer_size*(sizeof(size_t)+dev->interrupt_in_endpoint_size), GFP_KERNEL);
-+	dev->ring_buffer = kcalloc(ring_buffer_size,
-+			sizeof(size_t) + dev->interrupt_in_endpoint_size,
-+			GFP_KERNEL);
- 	if (!dev->ring_buffer)
- 		goto error;
- 	dev->interrupt_in_buffer = kmalloc(dev->interrupt_in_endpoint_size, GFP_KERNEL);
+ 	/* set format */
++	rdai->bit_clk_inv = 0;
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_I2S:
+ 		rdai->sys_delay = 0;
 
 
