@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D55EE65FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:07:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EAC5E6761
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:21:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbfJ0VHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:07:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53308 "EHLO mail.kernel.org"
+        id S1731720AbfJ0VUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:20:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729141AbfJ0VHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:07:20 -0400
+        id S1730775AbfJ0VU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:20:26 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 214A9214AF;
-        Sun, 27 Oct 2019 21:07:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A78B0205C9;
+        Sun, 27 Oct 2019 21:20:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210439;
-        bh=3p+USwtJUTtC3toj8T7Yn7zw6NH0GsG2ccFhvAY7IXI=;
+        s=default; t=1572211226;
+        bh=dpkgng9xeRaRt0F4oNfxz4++ewDMoAlP1wKnaRG1FoU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MPP5thdod2y3opZO/jGJD2D4I0/gEcqVgWveKO/HhgpZX/hlSjdAeGmrmlhCJMVkJ
-         Fa2kROfHOatN+CSRUo3NRq0Tcvg3+ilchHCs8GvkLEmvvOaVqc3Rh1JAg28mEekpPw
-         +HyjyV7mn9RbQaZtMXGejoH+sgilHBCvUSJRzGKc=
+        b=EvZlq41bOGu+ilB+rGnzKHdrNtQdzn13f9vbwvHdJxVAwob8tBCU9b8mkYq5aoduH
+         d8NfaYjXQ5RcavXBp28VwwSkpQ4nhmGc6TWtLxiY4SR5ZBwRx1X2HFPqc7Nt8JFeZO
+         o80cT69L4y5Q2RGuTPQSBFOhFiVa6izfd1RgvfH0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.de>,
-        Ivan Topolsky <doktor.yak@gmail.com>,
-        Song Liu <songliubraving@fb.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 016/119] md/raid0: fix warning message for parameter default_layout
+        stable@vger.kernel.org,
+        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 075/197] net/ibmvnic: Fix EOI when running in XIVE mode.
 Date:   Sun, 27 Oct 2019 21:59:53 +0100
-Message-Id: <20191027203304.506871460@linuxfoundation.org>
+Message-Id: <20191027203355.692991500@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Song Liu <songliubraving@fb.com>
+From: "Cédric Le Goater" <clg@kaod.org>
 
-[ Upstream commit 3874d73e06c9b9dc15de0b7382fc223986d75571 ]
+[ Upstream commit 11d49ce9f7946dfed4dcf5dbde865c78058b50ab ]
 
-The message should match the parameter, i.e. raid0.default_layout.
+pSeries machines on POWER9 processors can run with the XICS (legacy)
+interrupt mode or with the XIVE exploitation interrupt mode. These
+interrupt contollers have different interfaces for interrupt
+management : XICS uses hcalls and XIVE loads and stores on a page.
+H_EOI being a XICS interface the enable_scrq_irq() routine can fail
+when the machine runs in XIVE mode.
 
-Fixes: c84a1372df92 ("md/raid0: avoid RAID0 data corruption due to layout confusion.")
-Cc: NeilBrown <neilb@suse.de>
-Reported-by: Ivan Topolsky <doktor.yak@gmail.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fix that by calling the EOI handler of the interrupt chip.
+
+Fixes: f23e0643cd0b ("ibmvnic: Clear pending interrupt after device reset")
+Signed-off-by: CÃ©dric Le Goater <clg@kaod.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/ibm/ibmvnic.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index 28fb717217706..449c4dd060fcd 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -158,7 +158,7 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
- 	} else {
- 		pr_err("md/raid0:%s: cannot assemble multi-zone RAID0 with default_layout setting\n",
- 		       mdname(mddev));
--		pr_err("md/raid0: please set raid.default_layout to 1 or 2\n");
-+		pr_err("md/raid0: please set raid0.default_layout to 1 or 2\n");
- 		err = -ENOTSUPP;
- 		goto abort;
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -2772,12 +2772,10 @@ static int enable_scrq_irq(struct ibmvni
+ 
+ 	if (adapter->resetting &&
+ 	    adapter->reset_reason == VNIC_RESET_MOBILITY) {
+-		u64 val = (0xff000000) | scrq->hw_irq;
++		struct irq_desc *desc = irq_to_desc(scrq->irq);
++		struct irq_chip *chip = irq_desc_get_chip(desc);
+ 
+-		rc = plpar_hcall_norets(H_EOI, val);
+-		if (rc)
+-			dev_err(dev, "H_EOI FAILED irq 0x%llx. rc=%ld\n",
+-				val, rc);
++		chip->irq_eoi(&desc->irq_data);
  	}
--- 
-2.20.1
-
+ 
+ 	rc = plpar_hcall_norets(H_VIOCTL, adapter->vdev->unit_address,
 
 
