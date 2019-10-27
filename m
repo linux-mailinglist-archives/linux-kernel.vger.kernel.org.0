@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C548E6629
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:09:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF664E6759
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:21:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729475AbfJ0VJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:09:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55440 "EHLO mail.kernel.org"
+        id S1731649AbfJ0VUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:20:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727247AbfJ0VJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:09:06 -0400
+        id S1731622AbfJ0VUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:20:10 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9E562064A;
-        Sun, 27 Oct 2019 21:09:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FC9F205C9;
+        Sun, 27 Oct 2019 21:20:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210545;
-        bh=LvaFGmWDLMlpjwhFzvOngmjgOS7bg/Bp9sWp/Ptl0Ew=;
+        s=default; t=1572211208;
+        bh=x/NA11M+lOlNuOhGp8WHw4vTofgmxvwg0WMPXF6S4Zg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZO0rQOzgdnMxIEuUapKufiXTrrRTlq8dbn/I0nx00V8N8Zb5ay+BXCz1pGnMTfxma
-         Dccshe7XmXYPzZM7AVFQggbjl+8bB5F9HMEgt5DGhvlswtkuS5JOW+YhyaoLAHXGkG
-         IPetE7zcri3LpSw16itpw9azUVhm1fsDGZ60aaN8=
+        b=JaGPUeM75Kkmk1P6CzyaeadUECSTMWqmBNyEVoerOw5Sl1xhHHnAJQLTo33GWA3uv
+         mwoEQ8mxB6m7kXE5tdACuzjp3RlqiJUSWHOwINwxgskGYgngX+C5VSSN7fm2cLG2q7
+         N4HrKx42O12Az5OQzCh7shm/QVdJPhAQg0dQ+q2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Juergen Gross <jgross@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 009/119] xen/efi: Set nonblocking callbacks
-Date:   Sun, 27 Oct 2019 21:59:46 +0100
-Message-Id: <20191027203301.752068958@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Wang <weiwan@google.com>,
+        Ido Schimmel <idosch@idosch.org>,
+        Jesse Hathaway <jesse@mbuki-mvuki.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        David Ahern <dsahern@gmail.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 069/197] ipv4: fix race condition between route lookup and invalidation
+Date:   Sun, 27 Oct 2019 21:59:47 +0100
+Message-Id: <20191027203355.379557651@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +48,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Wei Wang <weiwan@google.com>
 
-[ Upstream commit df359f0d09dc029829b66322707a2f558cb720f7 ]
+[ Upstream commit 5018c59607a511cdee743b629c76206d9c9e6d7b ]
 
-Other parts of the kernel expect these nonblocking EFI callbacks to
-exist and crash when running under Xen. Since the implementations of
-xen_efi_set_variable() and xen_efi_query_variable_info() do not take any
-locks, use them for the nonblocking callbacks too.
+Jesse and Ido reported the following race condition:
+<CPU A, t0> - Received packet A is forwarded and cached dst entry is
+taken from the nexthop ('nhc->nhc_rth_input'). Calls skb_dst_set()
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+<t1> - Given Jesse has busy routers ("ingesting full BGP routing tables
+from multiple ISPs"), route is added / deleted and rt_cache_flush() is
+called
+
+<CPU B, t2> - Received packet B tries to use the same cached dst entry
+from t0, but rt_cache_valid() is no longer true and it is replaced in
+rt_cache_route() by the newer one. This calls dst_dev_put() on the
+original dst entry which assigns the blackhole netdev to 'dst->dev'
+
+<CPU A, t3> - dst_input(skb) is called on packet A and it is dropped due
+to 'dst->dev' being the blackhole netdev
+
+There are 2 issues in the v4 routing code:
+1. A per-netns counter is used to do the validation of the route. That
+means whenever a route is changed in the netns, users of all routes in
+the netns needs to redo lookup. v6 has an implementation of only
+updating fn_sernum for routes that are affected.
+2. When rt_cache_valid() returns false, rt_cache_route() is called to
+throw away the current cache, and create a new one. This seems
+unnecessary because as long as this route does not change, the route
+cache does not need to be recreated.
+
+To fully solve the above 2 issues, it probably needs quite some code
+changes and requires careful testing, and does not suite for net branch.
+
+So this patch only tries to add the deleted cached rt into the uncached
+list, so user could still be able to use it to receive packets until
+it's done.
+
+Fixes: 95c47f9cf5e0 ("ipv4: call dst_dev_put() properly")
+Signed-off-by: Wei Wang <weiwan@google.com>
+Reported-by: Ido Schimmel <idosch@idosch.org>
+Reported-by: Jesse Hathaway <jesse@mbuki-mvuki.org>
+Tested-by: Jesse Hathaway <jesse@mbuki-mvuki.org>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Cc: David Ahern <dsahern@gmail.com>
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/xen/efi.c | 2 ++
- arch/x86/xen/efi.c | 2 ++
- 2 files changed, 4 insertions(+)
+ net/ipv4/route.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/xen/efi.c b/arch/arm/xen/efi.c
-index b4d78959cadf0..bc9a37b3cecd6 100644
---- a/arch/arm/xen/efi.c
-+++ b/arch/arm/xen/efi.c
-@@ -31,7 +31,9 @@ void __init xen_efi_runtime_setup(void)
- 	efi.get_variable             = xen_efi_get_variable;
- 	efi.get_next_variable        = xen_efi_get_next_variable;
- 	efi.set_variable             = xen_efi_set_variable;
-+	efi.set_variable_nonblocking = xen_efi_set_variable;
- 	efi.query_variable_info      = xen_efi_query_variable_info;
-+	efi.query_variable_info_nonblocking = xen_efi_query_variable_info;
- 	efi.update_capsule           = xen_efi_update_capsule;
- 	efi.query_capsule_caps       = xen_efi_query_capsule_caps;
- 	efi.get_next_high_mono_count = xen_efi_get_next_high_mono_count;
-diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
-index a18703be9ead9..4769a069d5bd8 100644
---- a/arch/x86/xen/efi.c
-+++ b/arch/x86/xen/efi.c
-@@ -77,7 +77,9 @@ static efi_system_table_t __init *xen_efi_probe(void)
- 	efi.get_variable             = xen_efi_get_variable;
- 	efi.get_next_variable        = xen_efi_get_next_variable;
- 	efi.set_variable             = xen_efi_set_variable;
-+	efi.set_variable_nonblocking = xen_efi_set_variable;
- 	efi.query_variable_info      = xen_efi_query_variable_info;
-+	efi.query_variable_info_nonblocking = xen_efi_query_variable_info;
- 	efi.update_capsule           = xen_efi_update_capsule;
- 	efi.query_capsule_caps       = xen_efi_query_capsule_caps;
- 	efi.get_next_high_mono_count = xen_efi_get_next_high_mono_count;
--- 
-2.20.1
-
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -1482,7 +1482,7 @@ static bool rt_cache_route(struct fib_nh
+ 	prev = cmpxchg(p, orig, rt);
+ 	if (prev == orig) {
+ 		if (orig) {
+-			dst_dev_put(&orig->dst);
++			rt_add_uncached_list(orig);
+ 			dst_release(&orig->dst);
+ 		}
+ 	} else {
 
 
