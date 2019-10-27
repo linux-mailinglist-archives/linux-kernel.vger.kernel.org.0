@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F1E2E6605
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:08:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76714E6613
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:08:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbfJ0VHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:07:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53746 "EHLO mail.kernel.org"
+        id S1729341AbfJ0VIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:08:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729224AbfJ0VHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:07:40 -0400
+        id S1729335AbfJ0VIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:08:11 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 925E320873;
-        Sun, 27 Oct 2019 21:07:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6B91208C0;
+        Sun, 27 Oct 2019 21:08:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210460;
-        bh=RsWxyvsNqS4MVQex/5Iit5lyMZbtGMxsHGAwjyXuaNE=;
+        s=default; t=1572210491;
+        bh=5GkXiogEjh0gXaUB168ghFLY0SN5YJns/jSqnDuxvFc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pYx7fFsw3xO7w6a5EyauqsSFUfwUYz/yp7zdUTWFefq4XRvhgYTcSGM/uaiGm2Zd8
-         WYnha4mf3sx/s2kLF5IwOYfV+OzO8n45pbHGrPZp/KlMI7NiGgvA8psnn3L77NJmdV
-         P8SFx8b+yw7+6aYH8Sa9JF5D8IpXhYHaA1V3hldo=
+        b=jhrmqyexcJTLbNix83xO6lvcESzU/Gl4CrwiHtsUNk/Ki/tF/scQp1T8+SK/U46nc
+         EdtIEMFEqD/OuuK/SMcruBdAlYuzHIAk17QQoJM1w9maicL4bd1yWxhAogWwr4gc0g
+         ErrripzxRLgLamaoCJPJjb56ceXq0eB7tm5JZLgo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 005/119] ieee802154: ca8210: prevent memory leak
-Date:   Sun, 27 Oct 2019 21:59:42 +0100
-Message-Id: <20191027203300.947731233@linuxfoundation.org>
+Subject: [PATCH 4.14 006/119] ARM: dts: am4372: Set memory bandwidth limit for DISPC
+Date:   Sun, 27 Oct 2019 21:59:43 +0100
+Message-Id: <20191027203301.111830911@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
 References: <20191027203259.948006506@linuxfoundation.org>
@@ -45,40 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-[ Upstream commit 6402939ec86eaf226c8b8ae00ed983936b164908 ]
+[ Upstream commit f90ec6cdf674248dcad85bf9af6e064bf472b841 ]
 
-In ca8210_probe the allocated pdata needs to be assigned to
-spi_device->dev.platform_data before calling ca8210_get_platform_data.
-Othrwise when ca8210_get_platform_data fails pdata cannot be released.
+Set memory bandwidth limit to filter out resolutions above 720p@60Hz to
+avoid underflow errors due to the bandwidth needs of higher resolutions.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Link: https://lore.kernel.org/r/20190917224713.26371-1-navid.emamdoost@gmail.com
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+am43xx can not provide enough bandwidth to DISPC to correctly handle
+'high' resolutions.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ieee802154/ca8210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/am4372.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
-index dcd10dba08c72..3a58962babd41 100644
---- a/drivers/net/ieee802154/ca8210.c
-+++ b/drivers/net/ieee802154/ca8210.c
-@@ -3153,12 +3153,12 @@ static int ca8210_probe(struct spi_device *spi_device)
- 		goto error;
- 	}
+diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+index 4714a59fd86df..345c117bd5ef5 100644
+--- a/arch/arm/boot/dts/am4372.dtsi
++++ b/arch/arm/boot/dts/am4372.dtsi
+@@ -1118,6 +1118,8 @@
+ 				ti,hwmods = "dss_dispc";
+ 				clocks = <&disp_clk>;
+ 				clock-names = "fck";
++
++				max-memory-bandwidth = <230000000>;
+ 			};
  
-+	priv->spi->dev.platform_data = pdata;
- 	ret = ca8210_get_platform_data(priv->spi, pdata);
- 	if (ret) {
- 		dev_crit(&spi_device->dev, "ca8210_get_platform_data failed\n");
- 		goto error;
- 	}
--	priv->spi->dev.platform_data = pdata;
- 
- 	ret = ca8210_dev_com_init(priv);
- 	if (ret) {
+ 			rfbi: rfbi@4832a800 {
 -- 
 2.20.1
 
