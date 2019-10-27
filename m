@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E916EE67E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92631E66E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:17:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731841AbfJ0VZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:25:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47218 "EHLO mail.kernel.org"
+        id S1730820AbfJ0VQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:16:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732715AbfJ0VZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:25:21 -0400
+        id S1730810AbfJ0VQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:16:21 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BE9621D80;
-        Sun, 27 Oct 2019 21:25:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26D7121783;
+        Sun, 27 Oct 2019 21:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211520;
-        bh=fpFNoSccBHLbv0vrydrZEkMT1fnZ0IAWrJKSOGe1NeU=;
+        s=default; t=1572210980;
+        bh=19DK42xMFXFJqJtl0anLycud8kNLzCwwMFq8BCP7JqU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bTcNy0aTJ6qWElLUdfVZdO5xx84gCjyln9hmAaAjB/qeGDRFiSJWD+5ayMsW/Lgzu
-         zr2cEr0milKgJfmqOozuaZG/toW5SfxErV5heOJY3S8rXKkXXpUC6e9tu0Zu+BUYxH
-         AJ14Ev2NLXr/F3UJG53oUecWjkL43PfLKfh7tqBM=
+        b=AGEgiuvJtDYm/o8wMB7SWXWEjYeyFv+PW06uYKsEgNJVX6gfpthJC0PLiXFdwf3A6
+         QEDJKKList3yhWIpZfZ2jwNQLyxVCUSWBZSOXsjBYApE6bJmYCSBsbs2P/55Mo0QCW
+         NhrQYUClyX0GGYQo5jW8HeTPi9Eg8yZjf15s5yqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Levin <levinale@chromium.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 5.3 178/197] pinctrl: cherryview: restore Strago DMI workaround for all versions
-Date:   Sun, 27 Oct 2019 22:01:36 +0100
-Message-Id: <20191027203405.334728832@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 85/93] Btrfs: add missing extents release on file extent cluster relocation error
+Date:   Sun, 27 Oct 2019 22:01:37 +0100
+Message-Id: <20191027203314.601523054@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,69 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 260996c30f4f3a732f45045e3e0efe27017615e4 upstream.
+commit 44db1216efe37bf670f8d1019cdc41658d84baf5 upstream.
 
-This is essentially a revert of:
+If we error out when finding a page at relocate_file_extent_cluster(), we
+need to release the outstanding extents counter on the relocation inode,
+set by the previous call to btrfs_delalloc_reserve_metadata(), otherwise
+the inode's block reserve size can never decrease to zero and metadata
+space is leaked. Therefore add a call to btrfs_delalloc_release_extents()
+in case we can't find the target page.
 
-e3f72b749da2 pinctrl: cherryview: fix Strago DMI workaround
-86c5dd6860a6 pinctrl: cherryview: limit Strago DMI workarounds to version 1.0
-
-because even with 1.1 versions of BIOS there are some pins that are
-configured as interrupts but not claimed by any driver, and they
-sometimes fire up and result in interrupt storms that cause touchpad
-stop functioning and other issues.
-
-Given that we are unlikely to qualify another firmware version for a
-while it is better to keep the workaround active on all Strago boards.
-
-Reported-by: Alex Levin <levinale@chromium.org>
-Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Alex Levin <levinale@chromium.org>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Fixes: 8b62f87bad9c ("Btrfs: rework outstanding_extents")
+CC: stable@vger.kernel.org # 4.19+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/intel/pinctrl-cherryview.c |    4 ----
- 1 file changed, 4 deletions(-)
+ fs/btrfs/relocation.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1513,7 +1513,6 @@ static const struct dmi_system_id chv_no
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1521,7 +1520,6 @@ static const struct dmi_system_id chv_no
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1529,7 +1527,6 @@ static const struct dmi_system_id chv_no
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1537,7 +1534,6 @@ static const struct dmi_system_id chv_no
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{}
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -3187,6 +3187,8 @@ static int relocate_file_extent_cluster(
+ 			if (!page) {
+ 				btrfs_delalloc_release_metadata(BTRFS_I(inode),
+ 							PAGE_SIZE, true);
++				btrfs_delalloc_release_extents(BTRFS_I(inode),
++							PAGE_SIZE, true);
+ 				ret = -ENOMEM;
+ 				goto out;
+ 			}
 
 
