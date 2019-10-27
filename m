@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AE6EE678F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B926E6691
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:13:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732067AbfJ0VWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:22:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42980 "EHLO mail.kernel.org"
+        id S1730188AbfJ0VNI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:13:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732053AbfJ0VWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:22:01 -0400
+        id S1730174AbfJ0VNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:13:04 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDC282070B;
-        Sun, 27 Oct 2019 21:22:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A13FA205C9;
+        Sun, 27 Oct 2019 21:13:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211321;
-        bh=ReglJFEYFZJHDzlpCC3pzyMEJOdfKYqm49G+LpI+siY=;
+        s=default; t=1572210783;
+        bh=OxtsmDZcRyjTy/TwgnZe5iInYm/ARc+kAq5vsnT/P2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fSSIxS/2aLYb2Moboa2+wiFHNeMW435BcVxCgBHpv5eqDlbPHHhlyuphmXY2SpNQg
-         YRMWPJH/iP9LuKEBVEiKKo/PMGwRQ9Kz/y3H6CmN+jK0HDqH5V1XrCAY04wG07uHHk
-         r11bb9CJ9vOGdPPdhsbmouosG9os4ia3qbbzDBHQ=
+        b=dpl9nj8a7K2H1ULjIqcBtEI0GFzxfmgHQNZF8fnmnhvX+lKJuUa2s5agZXQGih4Om
+         LUQfYdLv6o4ji/QbeJWKxKt4E/MqbKahHVlCzbxP/a7mtACbwAOSycUMHS6pJjhMY3
+         bOICW1Vqg8taIr2BKN0YPCaJy6aaCKl/FOh5gqpo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.3 110/197] scsi: sd: Ignore a failure to sync cache due to lack of authorization
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Paul Burton <paul.burton@mips.com>, chenhc@lemote.com,
+        ralf@linux-mips.org, jhogan@kernel.org, linux-mips@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 16/93] mips: Loongson: Fix the link time qualifier of serial_exit()
 Date:   Sun, 27 Oct 2019 22:00:28 +0100
-Message-Id: <20191027203357.686595342@linuxfoundation.org>
+Message-Id: <20191027203255.107174272@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-commit 21e3d6c81179bbdfa279efc8de456c34b814cfd2 upstream.
+[ Upstream commit 25b69a889b638b0b7e51e2c4fe717a66bec0e566 ]
 
-I've got a report about a UAS drive enclosure reporting back Sense: Logical
-unit access not authorized if the drive it holds is password protected.
-While the drive is obviously unusable in that state as a mass storage
-device, it still exists as a sd device and when the system is asked to
-perform a suspend of the drive, it will be sent a SYNCHRONIZE CACHE. If
-that fails due to password protection, the error must be ignored.
+'exit' functions should be marked as __exit, not __init.
 
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190903101840.16483-1-oneukum@suse.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 85cc028817ef ("mips: make loongsoon serial driver explicitly modular")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: chenhc@lemote.com
+Cc: ralf@linux-mips.org
+Cc: jhogan@kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/sd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/loongson64/common/serial.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1655,7 +1655,8 @@ static int sd_sync_cache(struct scsi_dis
- 		/* we need to evaluate the error return  */
- 		if (scsi_sense_valid(sshdr) &&
- 			(sshdr->asc == 0x3a ||	/* medium not present */
--			 sshdr->asc == 0x20))	/* invalid command */
-+			 sshdr->asc == 0x20 ||	/* invalid command */
-+			 (sshdr->asc == 0x74 && sshdr->ascq == 0x71)))	/* drive is password locked */
- 				/* this is no error here */
- 				return 0;
+diff --git a/arch/mips/loongson64/common/serial.c b/arch/mips/loongson64/common/serial.c
+index ffefc1cb26121..98c3a7feb10f8 100644
+--- a/arch/mips/loongson64/common/serial.c
++++ b/arch/mips/loongson64/common/serial.c
+@@ -110,7 +110,7 @@ static int __init serial_init(void)
+ }
+ module_init(serial_init);
  
+-static void __init serial_exit(void)
++static void __exit serial_exit(void)
+ {
+ 	platform_device_unregister(&uart8250_device);
+ }
+-- 
+2.20.1
+
 
 
