@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1794BE68F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:33:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78C25E6916
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:34:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730165AbfJ0VNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:13:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59962 "EHLO mail.kernel.org"
+        id S1731941AbfJ0VeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:34:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730147AbfJ0VM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:12:58 -0400
+        id S1729866AbfJ0VLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:11:17 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75D49205C9;
-        Sun, 27 Oct 2019 21:12:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FDE120B7C;
+        Sun, 27 Oct 2019 21:11:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210778;
-        bh=WxL+isxSLqVyP/vPvSWCFfVBslLsA4hnCVMimY/E5uU=;
+        s=default; t=1572210676;
+        bh=Dtp35a4Nu/vEQ4v7SvCS3q/U0bReA8dUOwAIgbfA+Uc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=elcjCHWqu3/GDcP+5WvPGX3zRIxW3Ke+TC/8HQwXjnnK7rnDHyHuilyTGYqj2h7qF
-         qg54zgNw7B1wqv2i1fKyM/j0/gpBN8MTycfyAqmdqRx2504h2vQQdH9Gy1LAw9KcrS
-         w42RSEellvM9FEMFiV9lbPXQa1HAQKy0GxzJ+CqQ=
+        b=TLjiSV8YH0xuHjbZFofkFVj/zu20iK9NQ5/gjSwTLDufHzlF3ChhRwZ+qmFhp7vv5
+         N0i4LAj+dVDj/vh8xXcUUAdex/IVeB4Hg/Jsq0kmmcWvkjSSwm+PvX7odyaU55/wlN
+         cLJmSvbzIz8plpW2AHZBwKXPHeuhM06VvgS0Tgrw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Garcia Liebana <nevola@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 14/93] netfilter: nft_connlimit: disable bh on garbage collection
-Date:   Sun, 27 Oct 2019 22:00:26 +0100
-Message-Id: <20191027203254.801058241@linuxfoundation.org>
+        Dave Martin <dave.martin@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.14 054/119] arm64: capabilities: Split the processing of errata work arounds
+Date:   Sun, 27 Oct 2019 22:00:31 +0100
+Message-Id: <20191027203323.540318577@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit 34a4c95abd25ab41fb390b985a08a651b1fa0b0f ]
+[ Upstream commit d69fe9a7e7214d49fe157ec20889892388d0fe23 ]
 
-BH must be disabled when invoking nf_conncount_gc_list() to perform
-garbage collection, otherwise deadlock might happen.
+Right now we run through the errata workarounds check on all boot
+active CPUs, with SCOPE_ALL. This wouldn't help for detecting erratum
+workarounds with a SYSTEM_SCOPE. There are none yet, but we plan to
+introduce some: let us clean this up so that such workarounds can be
+detected and enabled correctly.
 
-  nf_conncount_add+0x1f/0x50 [nf_conncount]
-  nft_connlimit_eval+0x4c/0xe0 [nft_connlimit]
-  nft_dynset_eval+0xb5/0x100 [nf_tables]
-  nft_do_chain+0xea/0x420 [nf_tables]
-  ? sch_direct_xmit+0x111/0x360
-  ? noqueue_init+0x10/0x10
-  ? __qdisc_run+0x84/0x510
-  ? tcp_packet+0x655/0x1610 [nf_conntrack]
-  ? ip_finish_output2+0x1a7/0x430
-  ? tcp_error+0x130/0x150 [nf_conntrack]
-  ? nf_conntrack_in+0x1fc/0x4c0 [nf_conntrack]
-  nft_do_chain_ipv4+0x66/0x80 [nf_tables]
-  nf_hook_slow+0x44/0xc0
-  ip_rcv+0xb5/0xd0
-  ? ip_rcv_finish_core.isra.19+0x360/0x360
-  __netif_receive_skb_one_core+0x52/0x70
-  netif_receive_skb_internal+0x34/0xe0
-  napi_gro_receive+0xba/0xe0
-  e1000_clean_rx_irq+0x1e9/0x420 [e1000e]
-  e1000e_poll+0xbe/0x290 [e1000e]
-  net_rx_action+0x149/0x3b0
-  __do_softirq+0xde/0x2d8
-  irq_exit+0xba/0xc0
-  do_IRQ+0x85/0xd0
-  common_interrupt+0xf/0xf
-  </IRQ>
-  RIP: 0010:nf_conncount_gc_list+0x3b/0x130 [nf_conncount]
+So, we run the checks with SCOPE_LOCAL_CPU on all CPUs and SCOPE_SYSTEM
+checks are run only once after all the boot time CPUs are active.
 
-Fixes: 2f971a8f4255 ("netfilter: nf_conncount: move all list iterations under spinlock")
-Reported-by: Laura Garcia Liebana <nevola@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reviewed-by: Dave Martin <dave.martin@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nft_connlimit.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/cpufeature.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/nft_connlimit.c b/net/netfilter/nft_connlimit.c
-index af1497ab94642..69d6173f91e2b 100644
---- a/net/netfilter/nft_connlimit.c
-+++ b/net/netfilter/nft_connlimit.c
-@@ -218,8 +218,13 @@ static void nft_connlimit_destroy_clone(const struct nft_ctx *ctx,
- static bool nft_connlimit_gc(struct net *net, const struct nft_expr *expr)
- {
- 	struct nft_connlimit *priv = nft_expr_priv(expr);
-+	bool ret;
- 
--	return nf_conncount_gc_list(net, &priv->list);
-+	local_bh_disable();
-+	ret = nf_conncount_gc_list(net, &priv->list);
-+	local_bh_enable();
-+
-+	return ret;
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -529,7 +529,7 @@ void __init init_cpu_features(struct cpu
+ 	 * Run the errata work around checks on the boot CPU, once we have
+ 	 * initialised the cpu feature infrastructure.
+ 	 */
+-	update_cpu_capabilities(arm64_errata, SCOPE_ALL,
++	update_cpu_capabilities(arm64_errata, SCOPE_LOCAL_CPU,
+ 				"enabling workaround for");
  }
  
- static struct nft_expr_type nft_connlimit_type;
--- 
-2.20.1
-
+@@ -1354,7 +1354,7 @@ void check_local_cpu_capabilities(void)
+ 	 * advertised capabilities.
+ 	 */
+ 	if (!sys_caps_initialised)
+-		update_cpu_capabilities(arm64_errata, SCOPE_ALL,
++		update_cpu_capabilities(arm64_errata, SCOPE_LOCAL_CPU,
+ 					"enabling workaround for");
+ 	else
+ 		verify_local_cpu_capabilities();
+@@ -1383,6 +1383,8 @@ void __init setup_cpu_features(void)
+ 
+ 	/* Set the CPU feature capabilies */
+ 	update_cpu_capabilities(arm64_features, SCOPE_ALL, "detected:");
++	update_cpu_capabilities(arm64_errata, SCOPE_SYSTEM,
++				"enabling workaround for");
+ 	enable_cpu_capabilities(arm64_features, SCOPE_ALL);
+ 	enable_cpu_capabilities(arm64_errata, SCOPE_ALL);
+ 	mark_const_caps_ready();
 
 
