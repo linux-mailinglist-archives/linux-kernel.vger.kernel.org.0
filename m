@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0146E65E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B2C5E667F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:12:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbfJ0VGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:06:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52118 "EHLO mail.kernel.org"
+        id S1729289AbfJ0VMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:12:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727465AbfJ0VGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:06:12 -0400
+        id S1727786AbfJ0VMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:12:36 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2970E20B7C;
-        Sun, 27 Oct 2019 21:06:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC87C214AF;
+        Sun, 27 Oct 2019 21:12:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210371;
-        bh=V3L3ajqgIIvjGrqd9v+vqSVseo6kV+2bOOOWCgjVJ4A=;
+        s=default; t=1572210755;
+        bh=GQCxfnCFNNCNX5PCNOhkenmDHt9pXVPSq4JZ8mAOQXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dT01JIz00BSbqvIFLZuJ1EqlJj8lvY63q0F1MOhNVIC2+3N4voMdoI3EwmQSum6jm
-         OUWqY4Xptu4dER5a3UYX4jJbDgAZZLwWE4IE3XaCKMEYQ4oZkVw1uuqT3zgmlJW/Vn
-         npdFqWHIXgrGZEoHqgbnIrtO5qSFqagehhbi6g3k=
+        b=Qo9+o/JISNvOvoqrghRUIxtyuiqRd7Re7ZEiWucMbNJPvPKjxAkcdo9S8XtPbwYva
+         JH25isIHG4f/JXgUZtO18ZtBpiUmQMKRWaWTn+pVw9fXNGrDQXeeBfHvi0r8OK73Kb
+         OP78TbC2FMLbDE9E3QEb09Id8eKl484ewMiE9HIE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 43/49] btrfs: block-group: Fix a memory leak due to missing btrfs_put_block_group()
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.14 104/119] xtensa: drop EXPORT_SYMBOL for outs*/ins*
 Date:   Sun, 27 Oct 2019 22:01:21 +0100
-Message-Id: <20191027203201.084029289@linuxfoundation.org>
+Message-Id: <20191027203349.178270519@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +42,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qu Wenruo <wqu@suse.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 4b654acdae850f48b8250b9a578a4eaa518c7a6f upstream.
+commit 8b39da985194aac2998dd9e3a22d00b596cebf1e upstream.
 
-In btrfs_read_block_groups(), if we have an invalid block group which
-has mixed type (DATA|METADATA) while the fs doesn't have MIXED_GROUPS
-feature, we error out without freeing the block group cache.
+Custom outs*/ins* implementations are long gone from the xtensa port,
+remove matching EXPORT_SYMBOLs.
+This fixes the following build warnings issued by modpost since commit
+15bfc2348d54 ("modpost: check for static EXPORT_SYMBOL* functions"):
 
-This patch will add the missing btrfs_put_block_group() to prevent
-memory leak.
+  WARNING: "insb" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "insw" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "insl" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "outsb" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "outsw" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "outsl" [vmlinux] is a static EXPORT_SYMBOL
 
-Note for stable backports: the file to patch in versions <= 5.3 is
-fs/btrfs/extent-tree.c
-
-Fixes: 49303381f19a ("Btrfs: bail out if block group has different mixed flag")
-CC: stable@vger.kernel.org # 4.9+
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: stable@vger.kernel.org
+Fixes: d38efc1f150f ("xtensa: adopt generic io routines")
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/xtensa/kernel/xtensa_ksyms.c |    7 -------
+ 1 file changed, 7 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -10325,6 +10325,7 @@ int btrfs_read_block_groups(struct btrfs
- 			btrfs_err(info,
- "bg %llu is a mixed block group but filesystem hasn't enabled mixed block groups",
- 				  cache->key.objectid);
-+			btrfs_put_block_group(cache);
- 			ret = -EINVAL;
- 			goto error;
- 		}
+--- a/arch/xtensa/kernel/xtensa_ksyms.c
++++ b/arch/xtensa/kernel/xtensa_ksyms.c
+@@ -114,13 +114,6 @@ EXPORT_SYMBOL(__invalidate_icache_range)
+ // FIXME EXPORT_SYMBOL(screen_info);
+ #endif
+ 
+-EXPORT_SYMBOL(outsb);
+-EXPORT_SYMBOL(outsw);
+-EXPORT_SYMBOL(outsl);
+-EXPORT_SYMBOL(insb);
+-EXPORT_SYMBOL(insw);
+-EXPORT_SYMBOL(insl);
+-
+ extern long common_exception_return;
+ EXPORT_SYMBOL(common_exception_return);
+ 
 
 
