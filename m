@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90ACDE6623
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:09:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A4A4E678A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729453AbfJ0VJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:09:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55298 "EHLO mail.kernel.org"
+        id S1732035AbfJ0VV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:21:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729436AbfJ0VI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:08:57 -0400
+        id S1732018AbfJ0VVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:21:54 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B506D2064A;
-        Sun, 27 Oct 2019 21:08:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F19842070B;
+        Sun, 27 Oct 2019 21:21:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210537;
-        bh=nFXKwce1i2BiC5oc42Bk3p8PO8k77yfLZ0nJhiJfJYk=;
+        s=default; t=1572211312;
+        bh=GB5Y1RO3WZ4j6evENjy3M0atHRNjnllqBD/BTpyO7YM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TsaPJxHPnUu7fekHghbh04WtOHtl5eC2frzHP7FLvLxqf4fYACzH6wUVY5i1eAJ0o
-         nHoXkgVrfdQetvfmTErzNUBDB1KdfwmQHU/pL8TSX1gwZC/aIjHe9TmYSf5WRSlUwX
-         2o6ztKsfS0wBNOgRHI5lqBcnYsGOlFSetucxYcxQ=
+        b=OtSQpCOn9wCkHU0ts4pB0dvdOyz2eBcgIFmcZ1B41ndiQtZ4AdLobdNMi3qgkwuzs
+         c3L7AM/efn4fEpdKUUVP2UGAa8Uyl0pLkw/wEzPzl918dJ5PevnYaxB8UW/g+1PGA7
+         EyYJlflE6dLoxoHXhQU4ERSkJjfXAdIzihaNzeik=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 047/119] arm64: capabilities: Move errata work around check on boot CPU
-Date:   Sun, 27 Oct 2019 22:00:24 +0100
-Message-Id: <20191027203318.941105623@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paulburton@kernel.org>,
+        Dmitry Korotin <dkorotin@wavecomp.com>,
+        linux-mips@vger.kernel.org
+Subject: [PATCH 5.3 107/197] MIPS: tlbex: Fix build_restore_pagemask KScratch restore
+Date:   Sun, 27 Oct 2019 22:00:25 +0100
+Message-Id: <20191027203357.532696395@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,59 +44,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Paul Burton <paulburton@kernel.org>
 
-[ Upstream commit 5e91107b06811f0ca147cebbedce53626c9c4443 ]
+commit b42aa3fd5957e4daf4b69129e5ce752a2a53e7d6 upstream.
 
-We trigger CPU errata work around check on the boot CPU from
-smp_prepare_boot_cpu() to make sure that we run the checks only
-after the CPU feature infrastructure is initialised. While this
-is correct, we can also do this from init_cpu_features() which
-initilises the infrastructure, and is called only on the
-Boot CPU. This helps to consolidate the CPU capability handling
-to cpufeature.c. No functional changes.
+build_restore_pagemask() will restore the value of register $1/$at when
+its restore_scratch argument is non-zero, and aims to do so by filling a
+branch delay slot. Commit 0b24cae4d535 ("MIPS: Add missing EHB in mtc0
+-> mfc0 sequence.") added an EHB instruction (Execution Hazard Barrier)
+prior to restoring $1 from a KScratch register, in order to resolve a
+hazard that can result in stale values of the KScratch register being
+observed. In particular, P-class CPUs from MIPS with out of order
+execution pipelines such as the P5600 & P6600 are affected.
 
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Unfortunately this EHB instruction was inserted in the branch delay slot
+causing the MFC0 instruction which performs the restoration to no longer
+execute along with the branch. The result is that the $1 register isn't
+actually restored, ie. the TLB refill exception handler clobbers it -
+which is exactly the problem the EHB is meant to avoid for the P-class
+CPUs.
+
+Similarly build_get_pgd_vmalloc() will restore the value of $1/$at when
+its mode argument equals refill_scratch, and suffers from the same
+problem.
+
+Fix this by in both cases moving the EHB earlier in the emitted code.
+There's no reason it needs to immediately precede the MFC0 - it simply
+needs to be between the MTC0 & MFC0.
+
+This bug only affects Cavium Octeon systems which use
+build_fast_tlb_refill_handler().
+
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Fixes: 0b24cae4d535 ("MIPS: Add missing EHB in mtc0 -> mfc0 sequence.")
+Cc: Dmitry Korotin <dkorotin@wavecomp.com>
+Cc: stable@vger.kernel.org # v3.15+
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/cpufeature.c |    5 +++++
- arch/arm64/kernel/smp.c        |    6 ------
- 2 files changed, 5 insertions(+), 6 deletions(-)
 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -521,6 +521,11 @@ void __init init_cpu_features(struct cpu
- 		init_cpu_ftr_reg(SYS_MVFR2_EL1, info->reg_mvfr2);
+---
+ arch/mips/mm/tlbex.c |   23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
+
+--- a/arch/mips/mm/tlbex.c
++++ b/arch/mips/mm/tlbex.c
+@@ -655,6 +655,13 @@ static void build_restore_pagemask(u32 *
+ 				   int restore_scratch)
+ {
+ 	if (restore_scratch) {
++		/*
++		 * Ensure the MFC0 below observes the value written to the
++		 * KScratch register by the prior MTC0.
++		 */
++		if (scratch_reg >= 0)
++			uasm_i_ehb(p);
++
+ 		/* Reset default page size */
+ 		if (PM_DEFAULT_MASK >> 16) {
+ 			uasm_i_lui(p, tmp, PM_DEFAULT_MASK >> 16);
+@@ -669,12 +676,10 @@ static void build_restore_pagemask(u32 *
+ 			uasm_i_mtc0(p, 0, C0_PAGEMASK);
+ 			uasm_il_b(p, r, lid);
+ 		}
+-		if (scratch_reg >= 0) {
+-			uasm_i_ehb(p);
++		if (scratch_reg >= 0)
+ 			UASM_i_MFC0(p, 1, c0_kscratch(), scratch_reg);
+-		} else {
++		else
+ 			UASM_i_LW(p, 1, scratchpad_offset(0), 0);
+-		}
+ 	} else {
+ 		/* Reset default page size */
+ 		if (PM_DEFAULT_MASK >> 16) {
+@@ -923,6 +928,10 @@ build_get_pgd_vmalloc64(u32 **p, struct
  	}
+ 	if (mode != not_refill && check_for_high_segbits) {
+ 		uasm_l_large_segbits_fault(l, *p);
++
++		if (mode == refill_scratch && scratch_reg >= 0)
++			uasm_i_ehb(p);
++
+ 		/*
+ 		 * We get here if we are an xsseg address, or if we are
+ 		 * an xuseg address above (PGDIR_SHIFT+PGDIR_BITS) boundary.
+@@ -941,12 +950,10 @@ build_get_pgd_vmalloc64(u32 **p, struct
+ 		uasm_i_jr(p, ptr);
  
-+	/*
-+	 * Run the errata work around checks on the boot CPU, once we have
-+	 * initialised the cpu feature infrastructure.
-+	 */
-+	update_cpu_errata_workarounds();
- }
- 
- static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -449,12 +449,6 @@ void __init smp_prepare_boot_cpu(void)
- 	jump_label_init();
- 	cpuinfo_store_boot_cpu();
- 	save_boot_cpu_run_el();
--	/*
--	 * Run the errata work around checks on the boot CPU, once we have
--	 * initialised the cpu feature infrastructure from
--	 * cpuinfo_store_boot_cpu() above.
--	 */
--	update_cpu_errata_workarounds();
- }
- 
- static u64 __init of_get_cpu_mpidr(struct device_node *dn)
+ 		if (mode == refill_scratch) {
+-			if (scratch_reg >= 0) {
+-				uasm_i_ehb(p);
++			if (scratch_reg >= 0)
+ 				UASM_i_MFC0(p, 1, c0_kscratch(), scratch_reg);
+-			} else {
++			else
+ 				UASM_i_LW(p, 1, scratchpad_offset(0), 0);
+-			}
+ 		} else {
+ 			uasm_i_nop(p);
+ 		}
 
 
