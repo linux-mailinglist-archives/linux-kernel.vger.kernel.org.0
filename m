@@ -2,75 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A277BE6123
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 07:33:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D98F1E612B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 07:56:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbfJ0GdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 02:33:04 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:53908 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbfJ0GdD (ORCPT
+        id S1726488AbfJ0Grr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 02:47:47 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:40946 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbfJ0Grr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 02:33:03 -0400
-Received: by mail-il1-f199.google.com with SMTP id a17so6555314ilb.20
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2019 23:33:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=lGwoFEs6atbJNjfwbsMMgVdENVRKdZeDwx59pl7Gnc0=;
-        b=puPLVexcd0QY89M7n1s5s4qPieUeR52gO6nJ9B08ot6SDZQ+98E+9yQjUV7u4cIHu4
-         3EoOWH6thDVVEEgHFaE9nXnkA4QVyjnyx2lfkGKMETruQnDM1/z/uMWdiZNGQujOGGep
-         5kerf/3S/f7iQcHaQAlE4CGoE2Fdfz1c3FJmfTOfslGT8UAQqgPYwhOVVVlnIJ8OrJeu
-         lkImlG473Tp9JEx/umG5dXMXjH5zUxNOn0sMeceZhEW50OLPy17WP9JaVhuQDs2nLm7M
-         Yqm5CH/GchDfeklxxMYgqAIhy+6YZc88oSZ6UPBPbQsTBxuFThQ2lSOuiPQf2ptGTY9S
-         IHhQ==
-X-Gm-Message-State: APjAAAWI840XPabWblqfCQdzfEl1PmlPBC0zGxhHTj9BGcLkfPzvUftp
-        QWl5ICdTHAJId/zO//9pFP4yzxXMKw5TjsEByJ2q+TtrHuTQ
-X-Google-Smtp-Source: APXvYqybyCpDlrzzUeGRwdrxvaNZyICTlgNIiEO6W6PPjlDKJOGQERHCbQp+yT2DLtml2AKv0s7y2mTm9ga/zJuCHcqdxwm21NZZ
-MIME-Version: 1.0
-X-Received: by 2002:a6b:5503:: with SMTP id j3mr12197785iob.151.1572157980811;
- Sat, 26 Oct 2019 23:33:00 -0700 (PDT)
-Date:   Sat, 26 Oct 2019 23:33:00 -0700
-In-Reply-To: <000000000000fbbe1e0595bac322@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fa2e630595de8d05@google.com>
-Subject: Re: KASAN: null-ptr-deref Write in io_wq_cancel_all
-From:   syzbot <syzbot+d958a65633ea70280b23@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, axboe@kernel.dk,
-        dan.j.williams@intel.com, dhowells@redhat.com, dvyukov@google.com,
-        gregkh@linuxfoundation.org, hannes@cmpxchg.org,
-        joel@joelfernandes.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mchehab+samsung@kernel.org, mingo@redhat.com,
-        patrick.bellasi@arm.com, rgb@redhat.com, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        yamada.masahiro@socionext.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Sun, 27 Oct 2019 02:47:47 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iOcL3-0002pm-HZ; Sun, 27 Oct 2019 07:47:45 +0100
+Date:   Sun, 27 Oct 2019 06:46:26 -0000
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [GIT pull] x86/urgent for 5.4-rc5
+References: <157215878694.13117.16411564430107054752.tglx@nanos.tec.linutronix.de>
+Message-ID: <157215878694.13117.10331983631021160763.tglx@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+Linus,
 
-commit d5f773aba1186142d52aef8242a426310a39fa86
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Thu Oct 24 13:25:42 2019 +0000
+please pull the latest x86-urgent-for-linus git tree from:
 
-     io_uring: replace workqueue usage with io-wq
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=142c6d18e00000
-start commit:   139c2d13 Add linux-next specific files for 20191025
-git tree:       linux-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=162c6d18e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=122c6d18e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=28fd7a693df38d29
-dashboard link: https://syzkaller.appspot.com/bug?extid=d958a65633ea70280b23
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=160573c0e00000
+up to:  6fee2a0be0ec: x86/cpu/vmware: Fix platform detection VMWARE_PORT macro
 
-Reported-by: syzbot+d958a65633ea70280b23@syzkaller.appspotmail.com
-Fixes: d5f773aba118 ("io_uring: replace workqueue usage with io-wq")
+Two fixes for the VMWare guest support:
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+  - Unbreak VMWare platform detection which got wreckaged by converting
+    an integer constant to a string constant.
+
+  - Fix the clang build of the VMWAre hypercall by explicitely specifying
+    the ouput register for INL instead of using the short form.
+
+Thanks,
+
+	tglx
+
+------------------>
+Thomas Hellstrom (2):
+      x86/cpu/vmware: Use the full form of INL in VMWARE_HYPERCALL, for clang/llvm
+      x86/cpu/vmware: Fix platform detection VMWARE_PORT macro
+
+
+ arch/x86/include/asm/vmware.h | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
+index e00c9e875933..ac9fc51e2b18 100644
+--- a/arch/x86/include/asm/vmware.h
++++ b/arch/x86/include/asm/vmware.h
+@@ -4,6 +4,7 @@
+ 
+ #include <asm/cpufeatures.h>
+ #include <asm/alternative.h>
++#include <linux/stringify.h>
+ 
+ /*
+  * The hypercall definitions differ in the low word of the %edx argument
+@@ -20,8 +21,8 @@
+  */
+ 
+ /* Old port-based version */
+-#define VMWARE_HYPERVISOR_PORT    "0x5658"
+-#define VMWARE_HYPERVISOR_PORT_HB "0x5659"
++#define VMWARE_HYPERVISOR_PORT    0x5658
++#define VMWARE_HYPERVISOR_PORT_HB 0x5659
+ 
+ /* Current vmcall / vmmcall version */
+ #define VMWARE_HYPERVISOR_HB   BIT(0)
+@@ -29,7 +30,8 @@
+ 
+ /* The low bandwidth call. The low word of edx is presumed clear. */
+ #define VMWARE_HYPERCALL						\
+-	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT ", %%dx; inl (%%dx)", \
++	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT) ", %%dx; " \
++		      "inl (%%dx), %%eax",				\
+ 		      "vmcall", X86_FEATURE_VMCALL,			\
+ 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
+ 
+@@ -38,7 +40,8 @@
+  * HB and OUT bits set.
+  */
+ #define VMWARE_HYPERCALL_HB_OUT						\
+-	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT_HB ", %%dx; rep outsb", \
++	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT_HB) ", %%dx; " \
++		      "rep outsb",					\
+ 		      "vmcall", X86_FEATURE_VMCALL,			\
+ 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
+ 
+@@ -47,7 +50,8 @@
+  * HB bit set.
+  */
+ #define VMWARE_HYPERCALL_HB_IN						\
+-	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT_HB ", %%dx; rep insb", \
++	ALTERNATIVE_2("movw $" __stringify(VMWARE_HYPERVISOR_PORT_HB) ", %%dx; " \
++		      "rep insb",					\
+ 		      "vmcall", X86_FEATURE_VMCALL,			\
+ 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
+ #endif
+
+
