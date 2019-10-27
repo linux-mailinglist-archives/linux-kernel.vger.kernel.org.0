@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AAB5E69B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:38:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0462FE68D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbfJ0VDX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:03:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48526 "EHLO mail.kernel.org"
+        id S1732301AbfJ0Vce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:32:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728267AbfJ0VDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:03:16 -0400
+        id S1730496AbfJ0VOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:14:42 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A06BF2064A;
-        Sun, 27 Oct 2019 21:03:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41D6C214AF;
+        Sun, 27 Oct 2019 21:14:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210196;
-        bh=DNogohxJudpJgaAhRb6Da2/JiIzdCiOlJWxWHOT7MTo=;
+        s=default; t=1572210880;
+        bh=xd57e78IOUAHKpYpwT2IGQZpvJCvLZa8IEjkNyMJC4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gYgVtlVHFp6BGJJRKOJZI79hNqZdHepnQAZy/lc6WqY4K6emuYyGm6FEOOwe1xOpS
-         0Af3FEqBDgGHwejDLEVhdEFvi0I9I6Rrn09EAq7Y+Bp6kRTiCWD3SjRVVVvHUV4dfW
-         7hnZ/NRpTUb2XVfKdqS9cFXLFoNsrIcPZlNRTnk8=
+        b=HAoVomn1oDb6n7cHen5nD0AyxtuMlplAGbzHU7CbiTQQ52sO9PbICaq+Zogww/G5T
+         oQeL7QZSa/3ClERVES9jrQ9H9ZJzHcl1Me58XQalQI+UI9uoJvALULJbywDK/03ZpP
+         QOVSGBeKWmalFnynKR0gteObZzAjtKn9q8dIQaIc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+cd24df4d075c319ebfc5@syzkaller.appspotmail.com,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 23/41] USB: usblp: fix use-after-free on disconnect
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 49/93] scsi: sd: Ignore a failure to sync cache due to lack of authorization
 Date:   Sun, 27 Oct 2019 22:01:01 +0100
-Message-Id: <20191027203119.192858701@linuxfoundation.org>
+Message-Id: <20191027203300.557463261@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,51 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 7a759197974894213621aa65f0571b51904733d6 upstream.
+commit 21e3d6c81179bbdfa279efc8de456c34b814cfd2 upstream.
 
-A recent commit addressing a runtime PM use-count regression, introduced
-a use-after-free by not making sure we held a reference to the struct
-usb_interface for the lifetime of the driver data.
+I've got a report about a UAS drive enclosure reporting back Sense: Logical
+unit access not authorized if the drive it holds is password protected.
+While the drive is obviously unusable in that state as a mass storage
+device, it still exists as a sd device and when the system is asked to
+perform a suspend of the drive, it will be sent a SYNCHRONIZE CACHE. If
+that fails due to password protection, the error must be ignored.
 
-Fixes: 9a31535859bf ("USB: usblp: fix runtime PM after driver unbind")
-Cc: stable <stable@vger.kernel.org>
-Reported-by: syzbot+cd24df4d075c319ebfc5@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191015175522.18490-1-johan@kernel.org
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190903101840.16483-1-oneukum@suse.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/usblp.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/scsi/sd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/class/usblp.c
-+++ b/drivers/usb/class/usblp.c
-@@ -458,6 +458,7 @@ static void usblp_cleanup(struct usblp *
- 	kfree(usblp->readbuf);
- 	kfree(usblp->device_id_string);
- 	kfree(usblp->statusbuf);
-+	usb_put_intf(usblp->intf);
- 	kfree(usblp);
- }
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1646,7 +1646,8 @@ static int sd_sync_cache(struct scsi_dis
+ 		/* we need to evaluate the error return  */
+ 		if (scsi_sense_valid(sshdr) &&
+ 			(sshdr->asc == 0x3a ||	/* medium not present */
+-			 sshdr->asc == 0x20))	/* invalid command */
++			 sshdr->asc == 0x20 ||	/* invalid command */
++			 (sshdr->asc == 0x74 && sshdr->ascq == 0x71)))	/* drive is password locked */
+ 				/* this is no error here */
+ 				return 0;
  
-@@ -1120,7 +1121,7 @@ static int usblp_probe(struct usb_interf
- 	init_waitqueue_head(&usblp->wwait);
- 	init_usb_anchor(&usblp->urbs);
- 	usblp->ifnum = intf->cur_altsetting->desc.bInterfaceNumber;
--	usblp->intf = intf;
-+	usblp->intf = usb_get_intf(intf);
- 
- 	/* Malloc device ID string buffer to the largest expected length,
- 	 * since we can re-query it on an ioctl and a dynamic string
-@@ -1209,6 +1210,7 @@ abort:
- 	kfree(usblp->readbuf);
- 	kfree(usblp->statusbuf);
- 	kfree(usblp->device_id_string);
-+	usb_put_intf(usblp->intf);
- 	kfree(usblp);
- abort_ret:
- 	return retval;
 
 
