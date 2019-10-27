@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DD55E6625
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:09:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE58DE668B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:13:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbfJ0VJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:09:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55330 "EHLO mail.kernel.org"
+        id S1730145AbfJ0VM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:12:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729455AbfJ0VJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:09:01 -0400
+        id S1730136AbfJ0VM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:12:56 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 841282064A;
-        Sun, 27 Oct 2019 21:08:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC5022064A;
+        Sun, 27 Oct 2019 21:12:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210540;
-        bh=JwJbmvmue4rSUIF6gaZB1bl6wcv45ZlgHlBozyiTPtA=;
+        s=default; t=1572210775;
+        bh=NJb3PdRwSfT1QSxxEObHPqMhGSClyyumJNuAzDmURQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1/YPhprMV9xrGYedamsbLpCSqfMG9RDk07lOAKbK6SnlZGwbv5j0I0uSSax9m7vYq
-         HeB36d8hGBfHqFBKUrpn9x2k8FmttrRS2AS73Vy6tGta5BQoQv4fMMwfteN+wSsNDU
-         LTusBUk7p6wfUdYHqXzbP5wl/6LQ/AXtTSy4+lOA=
+        b=O0ee604iqGSAuQF5Ehw9BPiVoRaTu8y7D/DxqFSDNfDa6KzCbkl2Xqfsfh2/82Kpp
+         d5X9NdIqw7I4zlZ5yrQbXZ63u2asNR6IKtMdMLcqlT0PnOKQrZFTQ7b+jDGvI0SBhH
+         SuYvnHYYUZMjTc9soHk5jf9u/FBw3r0+Ra4Pmlc4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 048/119] arm64: capabilities: Move errata processing code
+        stable@vger.kernel.org, Miaoqing Pan <miaoqing@codeaurora.org>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 13/93] mac80211: fix txq null pointer dereference
 Date:   Sun, 27 Oct 2019 22:00:25 +0100
-Message-Id: <20191027203319.576429658@linuxfoundation.org>
+Message-Id: <20191027203254.654766669@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,161 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Miaoqing Pan <miaoqing@codeaurora.org>
 
-[ Upstream commit 1e89baed5d50d2b8d9fd420830902570270703f1 ]
+[ Upstream commit 8ed31a264065ae92058ce54aa3cc8da8d81dc6d7 ]
 
-We have errata work around processing code in cpu_errata.c,
-which calls back into helpers defined in cpufeature.c. Now
-that we are going to make the handling of capabilities
-generic, by adding the information to each capability,
-move the errata work around specific processing code.
-No functional changes.
+If the interface type is P2P_DEVICE or NAN, read the file of
+'/sys/kernel/debug/ieee80211/phyx/netdev:wlanx/aqm' will get a
+NULL pointer dereference. As for those interface type, the
+pointer sdata->vif.txq is NULL.
 
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Unable to handle kernel NULL pointer dereference at virtual address 00000011
+CPU: 1 PID: 30936 Comm: cat Not tainted 4.14.104 #1
+task: ffffffc0337e4880 task.stack: ffffff800cd20000
+PC is at ieee80211_if_fmt_aqm+0x34/0xa0 [mac80211]
+LR is at ieee80211_if_fmt_aqm+0x34/0xa0 [mac80211]
+[...]
+Process cat (pid: 30936, stack limit = 0xffffff800cd20000)
+[...]
+[<ffffff8000b7cd00>] ieee80211_if_fmt_aqm+0x34/0xa0 [mac80211]
+[<ffffff8000b7c414>] ieee80211_if_read+0x60/0xbc [mac80211]
+[<ffffff8000b7ccc4>] ieee80211_if_read_aqm+0x28/0x30 [mac80211]
+[<ffffff80082eff94>] full_proxy_read+0x2c/0x48
+[<ffffff80081eef00>] __vfs_read+0x2c/0xd4
+[<ffffff80081ef084>] vfs_read+0x8c/0x108
+[<ffffff80081ef494>] SyS_read+0x40/0x7c
+
+Signed-off-by: Miaoqing Pan <miaoqing@codeaurora.org>
+Acked-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Link: https://lore.kernel.org/r/1569549796-8223-1-git-send-email-miaoqing@codeaurora.org
+[trim useless data from commit message]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/cpufeature.h |    7 -----
- arch/arm64/kernel/cpu_errata.c      |   33 ---------------------------
- arch/arm64/kernel/cpufeature.c      |   43 +++++++++++++++++++++++++++++++++---
- 3 files changed, 40 insertions(+), 43 deletions(-)
+ net/mac80211/debugfs_netdev.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -230,15 +230,8 @@ static inline bool id_aa64pfr0_32bit_el0
- }
- 
- void __init setup_cpu_features(void);
--
--void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
--			    const char *info);
--void enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps);
- void check_local_cpu_capabilities(void);
- 
--void update_cpu_errata_workarounds(void);
--void __init enable_errata_workarounds(void);
--void verify_local_cpu_errata_workarounds(void);
- 
- u64 read_sanitised_ftr_reg(u32 id);
- 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -621,36 +621,3 @@ const struct arm64_cpu_capabilities arm6
- 	{
- 	}
- };
--
--/*
-- * The CPU Errata work arounds are detected and applied at boot time
-- * and the related information is freed soon after. If the new CPU requires
-- * an errata not detected at boot, fail this CPU.
-- */
--void verify_local_cpu_errata_workarounds(void)
--{
--	const struct arm64_cpu_capabilities *caps = arm64_errata;
--
--	for (; caps->matches; caps++) {
--		if (cpus_have_cap(caps->capability)) {
--			if (caps->cpu_enable)
--				caps->cpu_enable(caps);
--		} else if (caps->matches(caps, SCOPE_LOCAL_CPU)) {
--			pr_crit("CPU%d: Requires work around for %s, not detected"
--					" at boot time\n",
--				smp_processor_id(),
--				caps->desc ? : "an erratum");
--			cpu_die_early();
--		}
--	}
--}
--
--void update_cpu_errata_workarounds(void)
--{
--	update_cpu_capabilities(arm64_errata, "enabling workaround for");
--}
--
--void __init enable_errata_workarounds(void)
--{
--	enable_cpu_capabilities(arm64_errata);
--}
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -484,6 +484,9 @@ static void __init init_cpu_ftr_reg(u32
- 	reg->user_mask = user_mask;
- }
- 
-+extern const struct arm64_cpu_capabilities arm64_errata[];
-+static void update_cpu_errata_workarounds(void);
-+
- void __init init_cpu_features(struct cpuinfo_arm64 *info)
+diff --git a/net/mac80211/debugfs_netdev.c b/net/mac80211/debugfs_netdev.c
+index d37d4acafebf5..316250ae90712 100644
+--- a/net/mac80211/debugfs_netdev.c
++++ b/net/mac80211/debugfs_netdev.c
+@@ -490,9 +490,14 @@ static ssize_t ieee80211_if_fmt_aqm(
+ 	const struct ieee80211_sub_if_data *sdata, char *buf, int buflen)
  {
- 	/* Before we start using the tables, make sure it is sorted */
-@@ -1160,8 +1163,8 @@ static bool __this_cpu_has_cap(const str
- 	return false;
+ 	struct ieee80211_local *local = sdata->local;
+-	struct txq_info *txqi = to_txq_info(sdata->vif.txq);
++	struct txq_info *txqi;
+ 	int len;
+ 
++	if (!sdata->vif.txq)
++		return 0;
++
++	txqi = to_txq_info(sdata->vif.txq);
++
+ 	spin_lock_bh(&local->fq.lock);
+ 	rcu_read_lock();
+ 
+@@ -659,7 +664,9 @@ static void add_common_files(struct ieee80211_sub_if_data *sdata)
+ 	DEBUGFS_ADD(rc_rateidx_vht_mcs_mask_5ghz);
+ 	DEBUGFS_ADD(hw_queues);
+ 
+-	if (sdata->local->ops->wake_tx_queue)
++	if (sdata->local->ops->wake_tx_queue &&
++	    sdata->vif.type != NL80211_IFTYPE_P2P_DEVICE &&
++	    sdata->vif.type != NL80211_IFTYPE_NAN)
+ 		DEBUGFS_ADD(aqm);
  }
  
--void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
--			    const char *info)
-+static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
-+				    const char *info)
- {
- 	for (; caps->matches; caps++) {
- 		if (!caps->matches(caps, caps->def_scope))
-@@ -1185,7 +1188,8 @@ static int __enable_cpu_capability(void
-  * Run through the enabled capabilities and enable() it on all active
-  * CPUs
-  */
--void __init enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps)
-+static void __init
-+enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps)
- {
- 	for (; caps->matches; caps++) {
- 		unsigned int num = caps->capability;
-@@ -1268,6 +1272,39 @@ verify_local_cpu_features(const struct a
- }
- 
- /*
-+ * The CPU Errata work arounds are detected and applied at boot time
-+ * and the related information is freed soon after. If the new CPU requires
-+ * an errata not detected at boot, fail this CPU.
-+ */
-+static void verify_local_cpu_errata_workarounds(void)
-+{
-+	const struct arm64_cpu_capabilities *caps = arm64_errata;
-+
-+	for (; caps->matches; caps++) {
-+		if (cpus_have_cap(caps->capability)) {
-+			if (caps->cpu_enable)
-+				caps->cpu_enable(caps);
-+		} else if (caps->matches(caps, SCOPE_LOCAL_CPU)) {
-+			pr_crit("CPU%d: Requires work around for %s, not detected"
-+					" at boot time\n",
-+				smp_processor_id(),
-+				caps->desc ? : "an erratum");
-+			cpu_die_early();
-+		}
-+	}
-+}
-+
-+static void update_cpu_errata_workarounds(void)
-+{
-+	update_cpu_capabilities(arm64_errata, "enabling workaround for");
-+}
-+
-+static void __init enable_errata_workarounds(void)
-+{
-+	enable_cpu_capabilities(arm64_errata);
-+}
-+
-+/*
-  * Run through the enabled system capabilities and enable() it on this CPU.
-  * The capabilities were decided based on the available CPUs at the boot time.
-  * Any new CPU should match the system wide status of the capability. If the
+-- 
+2.20.1
+
 
 
