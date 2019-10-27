@@ -2,42 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D453E6885
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28687E6961
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:36:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732412AbfJ0V33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:29:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41060 "EHLO mail.kernel.org"
+        id S1729163AbfJ0VH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:07:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731710AbfJ0VU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:20:29 -0400
+        id S1728192AbfJ0VH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:07:27 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54F0D2070B;
-        Sun, 27 Oct 2019 21:20:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C3F9214AF;
+        Sun, 27 Oct 2019 21:07:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211228;
-        bh=3+6xcR6HMWluZuqTM5picN4Lb40T3NdoJmOQ1JBR3UE=;
+        s=default; t=1572210446;
+        bh=GHu3kxfw3EEQhhSdbxenzvZRkwjxrDM1IARAor+TjfQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AO9tYzUaEifkQcSuUc98AmhV91KbzKfuL6Cw8QN3o1Tv3Qz2lLpjea8UU6OyHvdHK
-         qMGOJhzDIzgO6XQSKxnH8ljMTlcmQ+I6pnaKhfiaGsShB2khdcY3cNGGAwrNOosAgZ
-         LNvqN8F7N8OuifKZDrqciyV3vdMSM9U0hBCX+apI=
+        b=jdHqg3EfKyFr54FP75JSmgXtl4XKVMzOsKIhTVeatsNOcRQjeluzfPH6vKsMBJMPL
+         FO9Vaad/9Pu+hyMAE4hcPpCeF+s3fQ/tjXJgOZGb7Uts9ZmCQ9NS3ikt1JedgRqmAn
+         RwSQGsYf1kgmFJ89hNoKCBokEM0i/roFeaY96guc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+eb349eeee854e389c36d@syzkaller.appspotmail.com,
-        syzbot+4a0643a653ac375612d1@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Edward Cree <ecree@solarflare.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 076/197] net: ipv6: fix listify ip6_rcv_finish in case of forwarding
-Date:   Sun, 27 Oct 2019 21:59:54 +0100
-Message-Id: <20191027203355.753727115@linuxfoundation.org>
+        stable@vger.kernel.org, Yi Li <yilikernel@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 018/119] ocfs2: fix panic due to ocfs2_wq is null
+Date:   Sun, 27 Oct 2019 21:59:55 +0100
+Message-Id: <20191027203305.287771867@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,73 +50,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Yi Li <yilikernel@gmail.com>
 
-[ Upstream commit c7a42eb49212f93a800560662d17d5293960d3c3 ]
+commit b918c43021baaa3648de09e19a4a3dd555a45f40 upstream.
 
-We need a similar fix for ipv6 as Commit 0761680d5215 ("net: ipv4: fix
-listify ip_rcv_finish in case of forwarding") does for ipv4.
+mount.ocfs2 failed when reading ocfs2 filesystem superblock encounters
+an error.  ocfs2_initialize_super() returns before allocating ocfs2_wq.
+ocfs2_dismount_volume() triggers the following panic.
 
-This issue can be reprocuded by syzbot since Commit 323ebb61e32b ("net:
-use listified RX for handling GRO_NORMAL skbs") on net-next. The call
-trace was:
-
-  kernel BUG at include/linux/skbuff.h:2225!
-  RIP: 0010:__skb_pull include/linux/skbuff.h:2225 [inline]
-  RIP: 0010:skb_pull+0xea/0x110 net/core/skbuff.c:1902
+  Oct 15 16:09:27 cnwarekv-205120 kernel: On-disk corruption discovered.Please run fsck.ocfs2 once the filesystem is unmounted.
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44): ocfs2_read_locked_inode:537 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44): ocfs2_init_global_system_inodes:458 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44): ocfs2_init_global_system_inodes:491 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44): ocfs2_initialize_super:2313 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44): ocfs2_fill_super:1033 ERROR: status = -30
+  ------------[ cut here ]------------
+  Oops: 0002 [#1] SMP NOPTI
+  CPU: 1 PID: 11753 Comm: mount.ocfs2 Tainted: G  E
+        4.14.148-200.ckv.x86_64 #1
+  Hardware name: Sugon H320-G30/35N16-US, BIOS 0SSDX017 12/21/2018
+  task: ffff967af0520000 task.stack: ffffa5f05484000
+  RIP: 0010:mutex_lock+0x19/0x20
   Call Trace:
-    sctp_inq_pop+0x2f1/0xd80 net/sctp/inqueue.c:202
-    sctp_endpoint_bh_rcv+0x184/0x8d0 net/sctp/endpointola.c:385
-    sctp_inq_push+0x1e4/0x280 net/sctp/inqueue.c:80
-    sctp_rcv+0x2807/0x3590 net/sctp/input.c:256
-    sctp6_rcv+0x17/0x30 net/sctp/ipv6.c:1049
-    ip6_protocol_deliver_rcu+0x2fe/0x1660 net/ipv6/ip6_input.c:397
-    ip6_input_finish+0x84/0x170 net/ipv6/ip6_input.c:438
-    NF_HOOK include/linux/netfilter.h:305 [inline]
-    NF_HOOK include/linux/netfilter.h:299 [inline]
-    ip6_input+0xe4/0x3f0 net/ipv6/ip6_input.c:447
-    dst_input include/net/dst.h:442 [inline]
-    ip6_sublist_rcv_finish+0x98/0x1e0 net/ipv6/ip6_input.c:84
-    ip6_list_rcv_finish net/ipv6/ip6_input.c:118 [inline]
-    ip6_sublist_rcv+0x80c/0xcf0 net/ipv6/ip6_input.c:282
-    ipv6_list_rcv+0x373/0x4b0 net/ipv6/ip6_input.c:316
-    __netif_receive_skb_list_ptype net/core/dev.c:5049 [inline]
-    __netif_receive_skb_list_core+0x5fc/0x9d0 net/core/dev.c:5097
-    __netif_receive_skb_list net/core/dev.c:5149 [inline]
-    netif_receive_skb_list_internal+0x7eb/0xe60 net/core/dev.c:5244
-    gro_normal_list.part.0+0x1e/0xb0 net/core/dev.c:5757
-    gro_normal_list net/core/dev.c:5755 [inline]
-    gro_normal_one net/core/dev.c:5769 [inline]
-    napi_frags_finish net/core/dev.c:5782 [inline]
-    napi_gro_frags+0xa6a/0xea0 net/core/dev.c:5855
-    tun_get_user+0x2e98/0x3fa0 drivers/net/tun.c:1974
-    tun_chr_write_iter+0xbd/0x156 drivers/net/tun.c:2020
+    flush_workqueue+0x81/0x460
+    ocfs2_shutdown_local_alloc+0x47/0x440 [ocfs2]
+    ocfs2_dismount_volume+0x84/0x400 [ocfs2]
+    ocfs2_fill_super+0xa4/0x1270 [ocfs2]
+    ? ocfs2_initialize_super.isa.211+0xf20/0xf20 [ocfs2]
+    mount_bdev+0x17f/0x1c0
+    mount_fs+0x3a/0x160
 
-Fixes: d8269e2cbf90 ("net: ipv6: listify ipv6_rcv() and ip6_rcv_finish()")
-Fixes: 323ebb61e32b ("net: use listified RX for handling GRO_NORMAL skbs")
-Reported-by: syzbot+eb349eeee854e389c36d@syzkaller.appspotmail.com
-Reported-by: syzbot+4a0643a653ac375612d1@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Edward Cree <ecree@solarflare.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/1571139611-24107-1-git-send-email-yili@winhong.com
+Signed-off-by: Yi Li <yilikernel@gmail.com>
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Changwei Ge <gechangwei@live.cn>
+Cc: Gang He <ghe@suse.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/ip6_input.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_input.c
-+++ b/net/ipv6/ip6_input.c
-@@ -80,8 +80,10 @@ static void ip6_sublist_rcv_finish(struc
- {
- 	struct sk_buff *skb, *next;
+---
+ fs/ocfs2/journal.c    |    3 ++-
+ fs/ocfs2/localalloc.c |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -231,7 +231,8 @@ void ocfs2_recovery_exit(struct ocfs2_su
+ 	/* At this point, we know that no more recovery threads can be
+ 	 * launched, so wait for any recovery completion work to
+ 	 * complete. */
+-	flush_workqueue(osb->ocfs2_wq);
++	if (osb->ocfs2_wq)
++		flush_workqueue(osb->ocfs2_wq);
  
--	list_for_each_entry_safe(skb, next, head, list)
-+	list_for_each_entry_safe(skb, next, head, list) {
-+		skb_list_del_init(skb);
- 		dst_input(skb);
-+	}
- }
+ 	/*
+ 	 * Now that recovery is shut down, and the osb is about to be
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -391,7 +391,8 @@ void ocfs2_shutdown_local_alloc(struct o
+ 	struct ocfs2_dinode *alloc = NULL;
  
- static void ip6_list_rcv_finish(struct net *net, struct sock *sk,
+ 	cancel_delayed_work(&osb->la_enable_wq);
+-	flush_workqueue(osb->ocfs2_wq);
++	if (osb->ocfs2_wq)
++		flush_workqueue(osb->ocfs2_wq);
+ 
+ 	if (osb->local_alloc_state == OCFS2_LA_UNUSED)
+ 		goto out;
 
 
