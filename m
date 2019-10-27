@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0837EE6869
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83BC8E6887
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731595AbfJ0VT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:19:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40314 "EHLO mail.kernel.org"
+        id S1731636AbfJ0V3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:29:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730943AbfJ0VTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:19:52 -0400
+        id S1731576AbfJ0VTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:19:55 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A28352070B;
-        Sun, 27 Oct 2019 21:19:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B95DD205C9;
+        Sun, 27 Oct 2019 21:19:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211192;
-        bh=a35Svl5/lKHXrc2V5aFh4F8Q+GFYEOSVk+PbJ9K6IvQ=;
+        s=default; t=1572211195;
+        bh=SdgeleUwGEEy+z0NNe6GfPZ8rgoZzZqSWIh5LtBgLFc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r0aG0ghh787D9gG6DQc6xbRFmEupgh3ylxYg7D4UfD8xSJLBzNZXiZc6XA7BBrwkF
-         OVP70XC9ssV1kLp2W62ySaTNDYGnwn18C5NYRPIcMlnfGoy/8yth2ipuHAw4QoXfV2
-         1LtutJ8EDWqJ3zbh+O5u1VI4HaKlV6hNdaAddbvE=
+        b=R+b/bublo+LjieoUSum4KMaBw91at99qZhKHWR2QgnHsqXm/ZkBVOhjvhSZNgZJxG
+         VWc84cylV4fakgi8gowRWhIB3bup4FInKDHcHxacWJLiZ7aU0GowuPNzu+hVFt6kHz
+         HlxZtqh3/mJEe5zQMueuDosyYYXV9DKrQC1izb8A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Friedrich <afrie@gmx.net>,
-        Stephen Douthit <stephend@silicom-usa.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 064/197] libata/ahci: Fix PCS quirk application
-Date:   Sun, 27 Oct 2019 21:59:42 +0100
-Message-Id: <20191027203355.117224422@linuxfoundation.org>
+        stable@vger.kernel.org, NeilBrown <neilb@suse.de>,
+        Ivan Topolsky <doktor.yak@gmail.com>,
+        Song Liu <songliubraving@fb.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 065/197] md/raid0: fix warning message for parameter default_layout
+Date:   Sun, 27 Oct 2019 21:59:43 +0100
+Message-Id: <20191027203355.169486992@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -45,43 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Song Liu <songliubraving@fb.com>
 
-[ Upstream commit 09d6ac8dc51a033ae0043c1fe40b4d02563c2496 ]
+[ Upstream commit 3874d73e06c9b9dc15de0b7382fc223986d75571 ]
 
-Commit c312ef176399 "libata/ahci: Drop PCS quirk for Denverton and
-beyond" got the polarity wrong on the check for which board-ids should
-have the quirk applied. The board type board_ahci_pcs7 is defined at the
-end of the list such that "pcs7" boards can be special cased in the
-future if they need the quirk. All prior Intel board ids "<
-board_ahci_pcs7" should proceed with applying the quirk.
+The message should match the parameter, i.e. raid0.default_layout.
 
-Reported-by: Andreas Friedrich <afrie@gmx.net>
-Reported-by: Stephen Douthit <stephend@silicom-usa.com>
-Fixes: c312ef176399 ("libata/ahci: Drop PCS quirk for Denverton and beyond")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: c84a1372df92 ("md/raid0: avoid RAID0 data corruption due to layout confusion.")
+Cc: NeilBrown <neilb@suse.de>
+Reported-by: Ivan Topolsky <doktor.yak@gmail.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/ahci.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/md/raid0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
-index 3e63294304c72..691852b8bb41f 100644
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -1617,7 +1617,9 @@ static void ahci_intel_pcs_quirk(struct pci_dev *pdev, struct ahci_host_priv *hp
- 	 */
- 	if (!id || id->vendor != PCI_VENDOR_ID_INTEL)
- 		return;
--	if (((enum board_ids) id->driver_data) < board_ahci_pcs7)
-+
-+	/* Skip applying the quirk on Denverton and beyond */
-+	if (((enum board_ids) id->driver_data) >= board_ahci_pcs7)
- 		return;
- 
- 	/*
+diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+index 297bbc0f41f05..c3445d2cedb9d 100644
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@ -151,7 +151,7 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
+ 	} else {
+ 		pr_err("md/raid0:%s: cannot assemble multi-zone RAID0 with default_layout setting\n",
+ 		       mdname(mddev));
+-		pr_err("md/raid0: please set raid.default_layout to 1 or 2\n");
++		pr_err("md/raid0: please set raid0.default_layout to 1 or 2\n");
+ 		err = -ENOTSUPP;
+ 		goto abort;
+ 	}
 -- 
 2.20.1
 
