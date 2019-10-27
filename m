@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29F18E6662
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:11:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1079AE6797
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729883AbfJ0VLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:11:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57854 "EHLO mail.kernel.org"
+        id S1732109AbfJ0VWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:22:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729873AbfJ0VLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:11:20 -0400
+        id S1732094AbfJ0VWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:22:13 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00502214AF;
-        Sun, 27 Oct 2019 21:11:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEFF620717;
+        Sun, 27 Oct 2019 21:22:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210679;
-        bh=0Yf3Sk80zrmXm6bH+9w5Mz+Gheo+SF6FY/8Hxrs8ppQ=;
+        s=default; t=1572211332;
+        bh=1DqdVSCGOeEaLk2suDyeDQnHxAo6s39gquWznHsssWI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qy0/wXN0XgOvjdfROp1tDZn7rUxNI7gzb2o3F77IDutNFaDt78U1c2ER+GLX5URGp
-         x1gKQyIoSeIcRNkWu3k4m6AJuo7msFTDJngOWTpVcnq9AOlWbPFwwYA0UmQGEA4ivW
-         E3UuIkd2nN5IkTE1xrTHGctVl//6YCpPnQkD2riQ=
+        b=nhOl0lKtVjZEEy7ENtsvkTj/bs0mWGmmpcp0gAGLn4X9mmVKoDVcMFrhFGJiIhzIv
+         nb5oOhYsz1ypc/yIpgAxsmDDROpvwo5SLHQACCETaRYGdrC3FqkXq6+mp7O40Rfrk7
+         qDSKX7OO3xZOEs42vAreS+HcIOirfzA6uyMd6K7A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dave Martin <dave.martin@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 055/119] arm64: capabilities: Allow features based on local CPU scope
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 5.3 114/197] Revert "Input: elantech - enable SMBus on new (2018+) systems"
 Date:   Sun, 27 Oct 2019 22:00:32 +0100
-Message-Id: <20191027203324.012028429@linuxfoundation.org>
+Message-Id: <20191027203357.897770970@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,83 +45,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit fbd890b9b8497bab04c1d338bd97579a7bc53fab ]
+commit c324345ce89c3cc50226372960619c7ee940f616 upstream.
 
-So far we have treated the feature capabilities as system wide
-and this wouldn't help with features that could be detected locally
-on one or more CPUs (e.g, KPTI, Software prefetch). This patch
-splits the feature detection to two phases :
+This reverts commit 883a2a80f79ca5c0c105605fafabd1f3df99b34c.
 
- 1) Local CPU features are checked on all boot time active CPUs.
- 2) System wide features are checked only once after all CPUs are
-    active.
+Apparently use dmi_get_bios_year() as manufacturing date isn't accurate
+and this breaks older laptops with new BIOS update.
 
-Reviewed-by: Dave Martin <dave.martin@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+So let's revert this patch.
+
+There are still new HP laptops still need to use SMBus to support all
+features, but it'll be enabled via a whitelist.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20191001070845.9720-1-kai.heng.feng@canonical.com
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/cpufeature.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -485,6 +485,7 @@ static void __init init_cpu_ftr_reg(u32
+---
+ drivers/input/mouse/elantech.c |   55 +++++++++++++++++++++--------------------
+ 1 file changed, 29 insertions(+), 26 deletions(-)
+
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1827,31 +1827,6 @@ static int elantech_create_smbus(struct
+ 				  leave_breadcrumbs);
  }
  
- extern const struct arm64_cpu_capabilities arm64_errata[];
-+static const struct arm64_cpu_capabilities arm64_features[];
- static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
- 				    u16 scope_mask, const char *info);
- 
-@@ -526,11 +527,12 @@ void __init init_cpu_features(struct cpu
+-static bool elantech_use_host_notify(struct psmouse *psmouse,
+-				     struct elantech_device_info *info)
+-{
+-	if (ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version))
+-		return true;
+-
+-	switch (info->bus) {
+-	case ETP_BUS_PS2_ONLY:
+-		/* expected case */
+-		break;
+-	case ETP_BUS_SMB_HST_NTFY_ONLY:
+-	case ETP_BUS_PS2_SMB_HST_NTFY:
+-		/* SMbus implementation is stable since 2018 */
+-		if (dmi_get_bios_year() >= 2018)
+-			return true;
+-		/* fall through */
+-	default:
+-		psmouse_dbg(psmouse,
+-			    "Ignoring SMBus bus provider %d\n", info->bus);
+-		break;
+-	}
+-
+-	return false;
+-}
+-
+ /**
+  * elantech_setup_smbus - called once the PS/2 devices are enumerated
+  * and decides to instantiate a SMBus InterTouch device.
+@@ -1871,7 +1846,7 @@ static int elantech_setup_smbus(struct p
+ 		 * i2c_blacklist_pnp_ids.
+ 		 * Old ICs are up to the user to decide.
+ 		 */
+-		if (!elantech_use_host_notify(psmouse, info) ||
++		if (!ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version) ||
+ 		    psmouse_matches_pnp_id(psmouse, i2c_blacklist_pnp_ids))
+ 			return -ENXIO;
  	}
- 
- 	/*
--	 * Run the errata work around checks on the boot CPU, once we have
--	 * initialised the cpu feature infrastructure.
-+	 * Run the errata work around and local feature checks on the
-+	 * boot CPU, once we have initialised the cpu feature infrastructure.
- 	 */
- 	update_cpu_capabilities(arm64_errata, SCOPE_LOCAL_CPU,
- 				"enabling workaround for");
-+	update_cpu_capabilities(arm64_features, SCOPE_LOCAL_CPU, "detected:");
+@@ -1891,6 +1866,34 @@ static int elantech_setup_smbus(struct p
+ 	return 0;
  }
  
- static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
-@@ -1349,15 +1351,18 @@ void check_local_cpu_capabilities(void)
- 
- 	/*
- 	 * If we haven't finalised the system capabilities, this CPU gets
--	 * a chance to update the errata work arounds.
-+	 * a chance to update the errata work arounds and local features.
- 	 * Otherwise, this CPU should verify that it has all the system
- 	 * advertised capabilities.
- 	 */
--	if (!sys_caps_initialised)
-+	if (!sys_caps_initialised) {
- 		update_cpu_capabilities(arm64_errata, SCOPE_LOCAL_CPU,
- 					"enabling workaround for");
--	else
-+		update_cpu_capabilities(arm64_features, SCOPE_LOCAL_CPU,
-+					"detected:");
-+	} else {
- 		verify_local_cpu_capabilities();
++static bool elantech_use_host_notify(struct psmouse *psmouse,
++				     struct elantech_device_info *info)
++{
++	if (ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version))
++		return true;
++
++	switch (info->bus) {
++	case ETP_BUS_PS2_ONLY:
++		/* expected case */
++		break;
++	case ETP_BUS_SMB_ALERT_ONLY:
++		/* fall-through  */
++	case ETP_BUS_PS2_SMB_ALERT:
++		psmouse_dbg(psmouse, "Ignoring SMBus provider through alert protocol.\n");
++		break;
++	case ETP_BUS_SMB_HST_NTFY_ONLY:
++		/* fall-through  */
++	case ETP_BUS_PS2_SMB_HST_NTFY:
++		return true;
++	default:
++		psmouse_dbg(psmouse,
++			    "Ignoring SMBus bus provider %d.\n",
++			    info->bus);
 +	}
- }
- 
- DEFINE_STATIC_KEY_FALSE(arm64_const_caps_ready);
-@@ -1382,7 +1387,7 @@ void __init setup_cpu_features(void)
- 	int cls;
- 
- 	/* Set the CPU feature capabilies */
--	update_cpu_capabilities(arm64_features, SCOPE_ALL, "detected:");
-+	update_cpu_capabilities(arm64_features, SCOPE_SYSTEM, "detected:");
- 	update_cpu_capabilities(arm64_errata, SCOPE_SYSTEM,
- 				"enabling workaround for");
- 	enable_cpu_capabilities(arm64_features, SCOPE_ALL);
++
++	return false;
++}
++
+ int elantech_init_smbus(struct psmouse *psmouse)
+ {
+ 	struct elantech_device_info info;
 
 
