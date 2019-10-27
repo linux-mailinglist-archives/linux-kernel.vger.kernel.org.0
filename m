@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9BD0E6633
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FBBCE6848
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:28:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729017AbfJ0VJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:09:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55952 "EHLO mail.kernel.org"
+        id S1732218AbfJ0VWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:22:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728976AbfJ0VJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:09:34 -0400
+        id S1732204AbfJ0VWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:22:41 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F16020873;
-        Sun, 27 Oct 2019 21:09:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB4FA205C9;
+        Sun, 27 Oct 2019 21:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210573;
-        bh=guMc78V86eIqIsGt3antPGPaD57jfmvrq6eLIvdlquc=;
+        s=default; t=1572211360;
+        bh=V6ng7xpzLPI3DMpBaiK2pJdhQwz26GI1Xsq0xxxcOA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PTNxSSSuH+Bci+VndZ+4agnxHo8q/VwCFWF6KRtJvL4YmDMc3mu+FR82ebYdGdWS8
-         cYFAYQIKS0kFskuqnPExQTmkUX40AI6dD3LBL/SrDrBKZL5vDAHhandeQq1xWEZohO
-         TeDjKxlspaGPVydni9QzM0h7OJuaH9HT99Pxh+gg=
+        b=UZi6TzBKl9RbmP5lFhM6s9naaYbrMp018vMR40LfWGLShfZQ43GbXIaj+b+vVBHE6
+         8UQpJO6sGf/FDkYqDrop+u7/ZjTDJlTsyPvIsNLpBFszKFB1P9Y0uhVEWuUFEVmCQG
+         9NhAf6FpUUMGywto9NhzopRgeVJK4iyZQEEPNvB8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 063/119] arm64: Add MIDR encoding for Arm Cortex-A55 and Cortex-A35
-Date:   Sun, 27 Oct 2019 22:00:40 +0100
-Message-Id: <20191027203328.879416494@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Nicolas Waisman <nico@semmle.com>,
+        Will Deacon <will@kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 5.3 123/197] mac80211: Reject malformed SSID elements
+Date:   Sun, 27 Oct 2019 22:00:41 +0100
+Message-Id: <20191027203358.376623458@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,41 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Will Deacon <will@kernel.org>
 
-[ Upstream commit 6e616864f21160d8d503523b60a53a29cecc6f24 ]
+commit 4152561f5da3fca92af7179dd538ea89e248f9d0 upstream.
 
-Update the MIDR encodings for the Cortex-A55 and Cortex-A35
+Although this shouldn't occur in practice, it's a good idea to bounds
+check the length field of the SSID element prior to using it for things
+like allocations or memcpy operations.
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: <stable@vger.kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Reported-by: Nicolas Waisman <nico@semmle.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Link: https://lore.kernel.org/r/20191004095132.15777-1-will@kernel.org
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/cputype.h |    4 ++++
- 1 file changed, 4 insertions(+)
 
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -85,6 +85,8 @@
- #define ARM_CPU_PART_CORTEX_A53		0xD03
- #define ARM_CPU_PART_CORTEX_A73		0xD09
- #define ARM_CPU_PART_CORTEX_A75		0xD0A
-+#define ARM_CPU_PART_CORTEX_A35		0xD04
-+#define ARM_CPU_PART_CORTEX_A55		0xD05
+---
+ net/mac80211/mlme.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -2629,7 +2629,8 @@ struct sk_buff *ieee80211_ap_probereq_ge
  
- #define APM_CPU_PART_POTENZA		0x000
+ 	rcu_read_lock();
+ 	ssid = ieee80211_bss_get_ie(cbss, WLAN_EID_SSID);
+-	if (WARN_ON_ONCE(ssid == NULL))
++	if (WARN_ONCE(!ssid || ssid[1] > IEEE80211_MAX_SSID_LEN,
++		      "invalid SSID element (len=%d)", ssid ? ssid[1] : -1))
+ 		ssid_len = 0;
+ 	else
+ 		ssid_len = ssid[1];
+@@ -5227,7 +5228,7 @@ int ieee80211_mgd_assoc(struct ieee80211
  
-@@ -108,6 +110,8 @@
- #define MIDR_CORTEX_A72 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A72)
- #define MIDR_CORTEX_A73 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A73)
- #define MIDR_CORTEX_A75 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A75)
-+#define MIDR_CORTEX_A35 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A35)
-+#define MIDR_CORTEX_A55 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A55)
- #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
- #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
- #define MIDR_THUNDERX_83XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_83XX)
+ 	rcu_read_lock();
+ 	ssidie = ieee80211_bss_get_ie(req->bss, WLAN_EID_SSID);
+-	if (!ssidie) {
++	if (!ssidie || ssidie[1] > sizeof(assoc_data->ssid)) {
+ 		rcu_read_unlock();
+ 		kfree(assoc_data);
+ 		return -EINVAL;
 
 
