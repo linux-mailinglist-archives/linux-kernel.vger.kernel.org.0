@@ -2,99 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76E35E63F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 17:15:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 503B5E6407
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 17:19:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfJ0QNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 12:13:17 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38797 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbfJ0QNQ (ORCPT
+        id S1727683AbfJ0QSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 12:18:18 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56130 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727258AbfJ0QSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 12:13:16 -0400
-Received: by mail-lf1-f65.google.com with SMTP id q28so5929305lfa.5
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2019 09:13:15 -0700 (PDT)
+        Sun, 27 Oct 2019 12:18:16 -0400
+Received: by mail-wm1-f66.google.com with SMTP id g24so6950161wmh.5;
+        Sun, 27 Oct 2019 09:18:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Bv7WyX9iNSHEB3qVzkwmxZwKs0lg3yMNB3J/GaRSYDU=;
-        b=VcSxkBjyEaDkzrUHtI1YfwCviMWUIg/gSJhDEHx7IrE8d/PHlxxbMf4FBmPJGqsjPJ
-         MpUl0yTlRm1xR8TZvbWjEYU/3bt15kGY0C5ddPfBknhNH9Wea1tP731cH1d1SCdXEIWB
-         kui5hVRNrrufsL9oSLtTUqXClmjptWSQMObe0=
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fzxJHdWe3FCszZKpIfTnAoSqGWjqpiAHUUSq7m5VVx4=;
+        b=J1puDYWlQm8AmK/pphEqz3Tmiwv+jP4W/murkGnYs+HHoegmq7/3IEgAn2E5ZO93Sx
+         BQuNtFthdu93/m09qB/qiUX+2Nk71lhUnadCGqIuTzBjKUppvjxBxIQtnzAWPdaGC+jL
+         swavw60rQxN5LvewsVpVK+aRqeGIVOdOpwCieY3foNi2HbxPbzzbIcbozdYTiPx3zwwI
+         guqi2UEL5D31jdF4In8QohisZQaYjgXrUbW81Vb0hHf8JK1eNbVo/zeON0TlviWjIo+y
+         54IzN9HCFevVnM1CPiuXgvvAkobz7LSCiuPFAqibsLfubC1XegW0Vd+ziy/XfXp8DT8z
+         qGNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Bv7WyX9iNSHEB3qVzkwmxZwKs0lg3yMNB3J/GaRSYDU=;
-        b=S05WBnLnCczi8XW2r3GTrFhWhNP6oAsklmQ1BDei8fqPlZN8cFGsqhtXAAogVvSSsN
-         560dAEUgPhvJIklpn6If62K8Ll7ALny35iLwarDvvuCahflM0M2JqbZHpUNybRj891yC
-         0ZjNtTMbAeic5HRs84lZs2G+2BhI/k7vcO6k8xKGbyq3e9LXTOzzSfnKIvQevRq6pkKe
-         MNkY27Mvi32Z6Xu2liuq947q2zWn2V1B24eEfMAMnZJ3wPpJXwyx+4CR1rWr3D4kyumk
-         EKP92k+i8KwfhRTZGtItAGIcNP49YwNSj+AiZnJcNSSqwd1KFGRwIGUldYt/J0NtaEkw
-         loMQ==
-X-Gm-Message-State: APjAAAVjs/YWU/olTWVurKe6fFyt/6gOkQN512AZmUedAf8NwV1tJo+Q
-        Aw/8SdMQtvREVZfs0TPsWuz9u8RfA1R4nA==
-X-Google-Smtp-Source: APXvYqzYp1MlQvZ10io/n6EyhrzGjrnsuwS4FntkA/4076VAocBWYwkzyhFQrfElFnTWqVz4xYd6HQ==
-X-Received: by 2002:a19:2356:: with SMTP id j83mr8619425lfj.103.1572192794134;
-        Sun, 27 Oct 2019 09:13:14 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id z26sm4077057lji.79.2019.10.27.09.13.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2019 09:13:13 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id v8so5908698lfa.12
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2019 09:13:13 -0700 (PDT)
-X-Received: by 2002:ac2:4c94:: with SMTP id d20mr7459959lfl.170.1572192792842;
- Sun, 27 Oct 2019 09:13:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fzxJHdWe3FCszZKpIfTnAoSqGWjqpiAHUUSq7m5VVx4=;
+        b=JX+3U0l9+aNMmFLqT3zkrwKJ/dhNDFoVHMnI/vB7TsejhtIG/2+J4cwJMdOUhAFSX8
+         H6FpyZKs4N964etmti1+9iGhADw/e2Ghr1nYCacddmNJ97mjlZb+OJukGAbIznlucP+W
+         RFl+JeW2fp5hmokNwx8tYn3FnzmBDd6kdpMRvtwqw4TrTZgqHMppMY2Fq6cqJjdejzsO
+         r1gx/kEtRvMDSI3x43K1IYanO+4SV8W0KMZC0Ea2/1B4slInP5yHONbOiDknbUF4FK0u
+         8xVLe/x/qaTV/AyNVIa3r/2fYcGJ1vicZsBXL0Jg+8CToZvKG2Ssn/jywmw7fnTnQXpB
+         xuiQ==
+X-Gm-Message-State: APjAAAUPsVu5YHel7Qrt5JQRkaMb30eZ4SvuI7uxeVs/N01vmGZwK0P+
+        9cq8IoLc2bVXZNhefUPhOGghMczAEG0MvQ==
+X-Google-Smtp-Source: APXvYqxArGQ2A5p0zyY9Lwm4fMAnRlV3pFBQpHzOz3hdCU27iLZp3shZOqLi87k185MCm7c/ed5U3w==
+X-Received: by 2002:a7b:c011:: with SMTP id c17mr12464869wmb.95.1572193092324;
+        Sun, 27 Oct 2019 09:18:12 -0700 (PDT)
+Received: from localhost.localdomain (p200300F133D01300428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:33d0:1300:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id j14sm9585014wrj.35.2019.10.27.09.18.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2019 09:18:10 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
+        linux-amlogic@lists.infradead.org, khilman@baylibre.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 0/5] provide the XTAL clock via OF on Meson8/8b/8m2
+Date:   Sun, 27 Oct 2019 17:18:00 +0100
+Message-Id: <20191027161805.1176321-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <157219118016.7078.16223055699799396042.stgit@buzz>
-In-Reply-To: <157219118016.7078.16223055699799396042.stgit@buzz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 27 Oct 2019 12:12:56 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wjoTncMYdQFmY4yspKOUsDSNn1dHp1FWvJ0eRO94ZM3dQ@mail.gmail.com>
-Message-ID: <CAHk-=wjoTncMYdQFmY4yspKOUsDSNn1dHp1FWvJ0eRO94ZM3dQ@mail.gmail.com>
-Subject: Re: [PATCH] pipe: wakeup writer only if pipe buffer is at least half empty
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     David Howells <dhowells@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 27, 2019 at 11:46 AM Konstantin Khlebnikov
-<khlebnikov@yandex-team.ru> wrote:
->
-> There is no reason to wakeup writer if pipe has only one empty page.
-> This means reader consumes data slower then writer produces it.
->
-> This patch waits until buffer is at least half empty before waking writer.
+So far the HHI clock controller has been providing the XTAL clock on
+Amlogic Meson8/Meson8b/Meson8m2 SoCs.
+This is not correct because the XTAL is actually a crystal on the
+boards and the SoC has a dedicated input for it.
 
-This is a bit dangerous, at least with David's other changes.
+This updates the dt-bindings of the HHI clock controller and defines
+a fixed-clock in meson.dtsi (along with switching everything over to
+use this clock).
+The clock driver needs three updates to use this:
+- patch #2 uses clk_hw_set_parent in the CPU clock notifier. This drops
+  the explicit reference to CLKID_XTAL while at the same time making
+  the code much easier (thanks to Neil for providing this new method
+  as part of the G12A CPU clock bringup!)
+- patch #3 ensures that the clock driver doesn't rely on it's internal
+  XTAL clock while not losing support for older .dtbs that don't have
+  the XTAL clock input yet
+- with patch #4 the clock controller's own XTAL clock is not registered
+  anymore when a clock input is provided via OF
 
-In particular, there's now a "max_usage" in his series means that the
-writer might be blocked even if there's lots of free slots, because
-the writer is only allowed to use part of those slots.
+This series is a functional no-op. It's main goal is to better represent
+how the actual hardware looks like.
 
-So I'd rather not see this logic particularly now that David is
-working on modifying the overall pipe logic.
 
-I do agree with the overall idea, but I'm not entirely happy about the
-"half full" logic, because it gets subtle with David's changes.
+Changes since v1 at [0]:
+- add Rob's Reviewed-by to the dt-bindings patch
+- check that "xtal" clock is actually passed via OF instead of checking
+  that there's any parent at all (which in the worst case may not be the
+  xtal clock) as suggested by Jerome
+  
 
-Also, I'm a bit worried about cases where the readers and writers
-block on each other, and depend on "there's enough space in the pipe
-that we won't deadlock". Maybe the writer is blocked (because it
-filled the pipe), the reader reads just part of the pipe, and then the
-reader blocks on the writer doing something else, knowing that it just
-free'd up resources for the writer. But the writer is still blocked,
-and not woken up, because the pipe is still more than half full. See
-what I'm saying?
+[0] https://patchwork.kernel.org/cover/11155515/
 
-I'm not sure anything like that exists, but it's an example of a "hmm"
-condition.
 
-              Linus
+Martin Blumenstingl (5):
+  dt-bindings: clock: meson8b: add the clock inputs
+  clk: meson: meson8b: use clk_hw_set_parent in the CPU clock notifier
+  clk: meson: meson8b: change references to the XTAL clock to use the
+    name
+  clk: meson: meson8b: don't register the XTAL clock when provided via
+    OF
+  ARM: dts: meson: provide the XTAL clock using a fixed-clock
+
+ .../bindings/clock/amlogic,meson8b-clkc.txt   |   5 +
+ arch/arm/boot/dts/meson.dtsi                  |   7 ++
+ arch/arm/boot/dts/meson6.dtsi                 |   7 --
+ arch/arm/boot/dts/meson8.dtsi                 |  15 +--
+ arch/arm/boot/dts/meson8b-ec100.dts           |   2 +-
+ arch/arm/boot/dts/meson8b-mxq.dts             |   2 +-
+ arch/arm/boot/dts/meson8b-odroidc1.dts        |   2 +-
+ arch/arm/boot/dts/meson8b.dtsi                |  15 +--
+ drivers/clk/meson/meson8b.c                   | 106 +++++++++---------
+ 9 files changed, 87 insertions(+), 74 deletions(-)
+
+-- 
+2.23.0
+
