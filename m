@@ -2,48 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63ED0E67E7
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D795DE6588
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:03:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732738AbfJ0VZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:25:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47266 "EHLO mail.kernel.org"
+        id S1728215AbfJ0VDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:03:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732722AbfJ0VZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:25:24 -0400
+        id S1728200AbfJ0VDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:03:01 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E91721726;
-        Sun, 27 Oct 2019 21:25:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 650772064A;
+        Sun, 27 Oct 2019 21:02:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211523;
-        bh=mXV+aCQIaF/2EIhmrQagNBsz8p/DkxAnpB4MZwnJxkw=;
+        s=default; t=1572210179;
+        bh=NQwEx9RcIChQVdBetcBfQfha/A6S/ukjoDootdvuEps=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YVU1Dx67P+Es0Nbxw1xDaAiNTBW/eO4gPJn6DWdLhZQKxa1BZj05DeKkWiVp3bXVZ
-         yymAs9X6Tw5RUpmHJ24/T92oiaPo5vzeb8wpoNS16vZK9qQUJyrPXT63/X8JrKK1rh
-         6QuxwVBKWJ7LMmlbHG2eFow4ow27CzXBUiKIsYNo=
+        b=OSWfncbeY2TmnOvXptI2Rr65nCbtkiOErAwwjdRVRmi/kqOS3KbaW36eiK7MCdDYI
+         HZZENqPEyzynadM0dcHia8MwRlEKwwrtk6vVWUjJffF90eEof2k334yEUWrBgmwk1d
+         6uA5WFyAjZ31qiyuIY3s1cYzxdpgXtUU9MGb8IhA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Qian Cai <cai@lca.pw>, Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        Pankaj gupta <pagupta@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.3 137/197] fs/proc/page.c: dont access uninitialized memmaps in fs/proc/page.c
-Date:   Sun, 27 Oct 2019 22:00:55 +0100
-Message-Id: <20191027203359.107241702@linuxfoundation.org>
+        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 18/41] memfd: Fix locking when tagging pins
+Date:   Sun, 27 Oct 2019 22:00:56 +0100
+Message-Id: <20191027203115.316932905@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,147 +44,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
+From: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-commit aad5f69bc161af489dbb5934868bd347282f0764 upstream.
+The RCU lock is insufficient to protect the radix tree iteration as
+a deletion from the tree can occur before we take the spinlock to
+tag the entry.  In 4.19, this has manifested as a bug with the following
+trace:
 
-There are three places where we access uninitialized memmaps, namely:
-- /proc/kpagecount
-- /proc/kpageflags
-- /proc/kpagecgroup
+kernel BUG at lib/radix-tree.c:1429!
+invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 7 PID: 6935 Comm: syz-executor.2 Not tainted 4.19.36 #25
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+RIP: 0010:radix_tree_tag_set+0x200/0x2f0 lib/radix-tree.c:1429
+Code: 00 00 5b 5d 41 5c 41 5d 41 5e 41 5f c3 48 89 44 24 10 e8 a3 29 7e fe 48 8b 44 24 10 48 0f ab 03 e9 d2 fe ff ff e8 90 29 7e fe <0f> 0b 48 c7 c7 e0 5a 87 84 e8 f0 e7 08 ff 4c 89 ef e8 4a ff ac fe
+RSP: 0018:ffff88837b13fb60 EFLAGS: 00010016
+RAX: 0000000000040000 RBX: ffff8883c5515d58 RCX: ffffffff82cb2ef0
+RDX: 0000000000000b72 RSI: ffffc90004cf2000 RDI: ffff8883c5515d98
+RBP: ffff88837b13fb98 R08: ffffed106f627f7e R09: ffffed106f627f7e
+R10: 0000000000000001 R11: ffffed106f627f7d R12: 0000000000000004
+R13: ffffea000d7fea80 R14: 1ffff1106f627f6f R15: 0000000000000002
+FS:  00007fa1b8df2700(0000) GS:ffff8883e2fc0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa1b8df1db8 CR3: 000000037d4d2001 CR4: 0000000000160ee0
+Call Trace:
+ memfd_tag_pins mm/memfd.c:51 [inline]
+ memfd_wait_for_pins+0x2c5/0x12d0 mm/memfd.c:81
+ memfd_add_seals mm/memfd.c:215 [inline]
+ memfd_fcntl+0x33d/0x4a0 mm/memfd.c:247
+ do_fcntl+0x589/0xeb0 fs/fcntl.c:421
+ __do_sys_fcntl fs/fcntl.c:463 [inline]
+ __se_sys_fcntl fs/fcntl.c:448 [inline]
+ __x64_sys_fcntl+0x12d/0x180 fs/fcntl.c:448
+ do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:293
 
-We have initialized memmaps either when the section is online or when the
-page was initialized to the ZONE_DEVICE.  Uninitialized memmaps contain
-garbage and in the worst case trigger kernel BUGs, especially with
-CONFIG_PAGE_POISONING.
+The problem does not occur in mainline due to the XArray rewrite which
+changed the locking to exclude modification of the tree during iteration.
+At the time, nobody realised this was a bugfix.  Backport the locking
+changes to stable.
 
-For example, not onlining a DIMM during boot and calling /proc/kpagecount
-with CONFIG_PAGE_POISONING:
-
-  :/# cat /proc/kpagecount > tmp.test
-  BUG: unable to handle page fault for address: fffffffffffffffe
-  #PF: supervisor read access in kernel mode
-  #PF: error_code(0x0000) - not-present page
-  PGD 114616067 P4D 114616067 PUD 114618067 PMD 0
-  Oops: 0000 [#1] SMP NOPTI
-  CPU: 0 PID: 469 Comm: cat Not tainted 5.4.0-rc1-next-20191004+ #11
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.4
-  RIP: 0010:kpagecount_read+0xce/0x1e0
-  Code: e8 09 83 e0 3f 48 0f a3 02 73 2d 4c 89 e7 48 c1 e7 06 48 03 3d ab 51 01 01 74 1d 48 8b 57 08 480
-  RSP: 0018:ffffa14e409b7e78 EFLAGS: 00010202
-  RAX: fffffffffffffffe RBX: 0000000000020000 RCX: 0000000000000000
-  RDX: 0000000000000001 RSI: 00007f76b5595000 RDI: fffff35645000000
-  RBP: 00007f76b5595000 R08: 0000000000000001 R09: 0000000000000000
-  R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000140000
-  R13: 0000000000020000 R14: 00007f76b5595000 R15: ffffa14e409b7f08
-  FS:  00007f76b577d580(0000) GS:ffff8f41bd400000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: fffffffffffffffe CR3: 0000000078960000 CR4: 00000000000006f0
-  Call Trace:
-   proc_reg_read+0x3c/0x60
-   vfs_read+0xc5/0x180
-   ksys_read+0x68/0xe0
-   do_syscall_64+0x5c/0xa0
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-For now, let's drop support for ZONE_DEVICE from the three pseudo files
-in order to fix this.  To distinguish offline memory (with garbage
-memmap) from ZONE_DEVICE memory with properly initialized memmaps, we
-would have to check get_dev_pagemap() and pfn_zone_device_reserved()
-right now.  The usage of both (especially, special casing devmem) is
-frowned upon and needs to be reworked.
-
-The fundamental issue we have is:
-
-	if (pfn_to_online_page(pfn)) {
-		/* memmap initialized */
-	} else if (pfn_valid(pfn)) {
-		/*
-		 * ???
-		 * a) offline memory. memmap garbage.
-		 * b) devmem: memmap initialized to ZONE_DEVICE.
-		 * c) devmem: reserved for driver. memmap garbage.
-		 * (d) devmem: memmap currently initializing - garbage)
-		 */
-	}
-
-We'll leave the pfn_zone_device_reserved() check in stable_page_flags()
-in place as that function is also used from memory failure.  We now no
-longer dump information about pages that are not in use anymore -
-offline.
-
-Link: http://lkml.kernel.org/r/20191009142435.3975-2-david@redhat.com
-Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")	[visible after d0dc12e86b319]
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Reported-by: Qian Cai <cai@lca.pw>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-Cc: Pankaj gupta <pagupta@redhat.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Anthony Yznaga <anthony.yznaga@oracle.com>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc: <stable@vger.kernel.org>	[4.13+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: stable@vger.kernel.org
+Reported-by: zhong jiang <zhongjiang@huawei.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/proc/page.c |   28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ mm/shmem.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -42,10 +42,12 @@ static ssize_t kpagecount_read(struct fi
- 		return -EINVAL;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index f11aec40f2e1d..62668379623b2 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1854,11 +1854,12 @@ static void shmem_tag_pins(struct address_space *mapping)
+ 	void **slot;
+ 	pgoff_t start;
+ 	struct page *page;
++	unsigned int tagged = 0;
  
- 	while (count > 0) {
--		if (pfn_valid(pfn))
--			ppage = pfn_to_page(pfn);
--		else
--			ppage = NULL;
-+		/*
-+		 * TODO: ZONE_DEVICE support requires to identify
-+		 * memmaps that were actually initialized.
-+		 */
-+		ppage = pfn_to_online_page(pfn);
+ 	lru_add_drain();
+ 	start = 0;
+-	rcu_read_lock();
+ 
++	spin_lock_irq(&mapping->tree_lock);
+ restart:
+ 	radix_tree_for_each_slot(slot, &mapping->page_tree, &iter, start) {
+ 		page = radix_tree_deref_slot(slot);
+@@ -1866,19 +1867,20 @@ static void shmem_tag_pins(struct address_space *mapping)
+ 			if (radix_tree_deref_retry(page))
+ 				goto restart;
+ 		} else if (page_count(page) - page_mapcount(page) > 1) {
+-			spin_lock_irq(&mapping->tree_lock);
+ 			radix_tree_tag_set(&mapping->page_tree, iter.index,
+ 					   SHMEM_TAG_PINNED);
+-			spin_unlock_irq(&mapping->tree_lock);
+ 		}
+ 
+-		if (need_resched()) {
+-			cond_resched_rcu();
+-			start = iter.index + 1;
+-			goto restart;
+-		}
++		if (++tagged % 1024)
++			continue;
 +
- 		if (!ppage || PageSlab(ppage) || page_has_type(ppage))
- 			pcount = 0;
- 		else
-@@ -216,10 +218,11 @@ static ssize_t kpageflags_read(struct fi
- 		return -EINVAL;
++		spin_unlock_irq(&mapping->tree_lock);
++		cond_resched();
++		start = iter.index + 1;
++		spin_lock_irq(&mapping->tree_lock);
++		goto restart;
+ 	}
+-	rcu_read_unlock();
++	spin_unlock_irq(&mapping->tree_lock);
+ }
  
- 	while (count > 0) {
--		if (pfn_valid(pfn))
--			ppage = pfn_to_page(pfn);
--		else
--			ppage = NULL;
-+		/*
-+		 * TODO: ZONE_DEVICE support requires to identify
-+		 * memmaps that were actually initialized.
-+		 */
-+		ppage = pfn_to_online_page(pfn);
- 
- 		if (put_user(stable_page_flags(ppage), out)) {
- 			ret = -EFAULT;
-@@ -261,10 +264,11 @@ static ssize_t kpagecgroup_read(struct f
- 		return -EINVAL;
- 
- 	while (count > 0) {
--		if (pfn_valid(pfn))
--			ppage = pfn_to_page(pfn);
--		else
--			ppage = NULL;
-+		/*
-+		 * TODO: ZONE_DEVICE support requires to identify
-+		 * memmaps that were actually initialized.
-+		 */
-+		ppage = pfn_to_online_page(pfn);
- 
- 		if (ppage)
- 			ino = page_cgroup_ino(ppage);
+ /*
+-- 
+2.20.1
+
 
 
