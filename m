@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3205EE6956
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:36:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA03AE68F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:33:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbfJ0VIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:08:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54608 "EHLO mail.kernel.org"
+        id S1730104AbfJ0VMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:12:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727225AbfJ0VIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:08:24 -0400
+        id S1730096AbfJ0VMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:12:44 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96AF82064A;
-        Sun, 27 Oct 2019 21:08:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14F9F2064A;
+        Sun, 27 Oct 2019 21:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210503;
-        bh=ZeDfFjrTK0wY0Pvjs0FQCIo/dT7SBq2fX/KyPL6o9GE=;
+        s=default; t=1572210763;
+        bh=HqvXM5KNaKG/zgmqzl+/ZTz93tY+4j8tnfWyNVjau/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B9PtUTJhjY/QeQTbG4QCDKPw/f77JbItCmyv1ICQDpz63/2mSf9mMZ9SqjzZHgJ0U
-         lPMlm5pygm3udYefAlnTowQDMoCI5vsP13jnNrS89kg1bgBa4eUacGfToo9EnaEk1T
-         g5O2sb1rFUNAMY0Sqv+buULpIKxYaymAMmXsVuJk=
+        b=FXQyzCvjkCR4r066xEKjLxF9qOW0jo5uNgkwfipGGauzuJUy9fsb3gGHV8kx9f1D7
+         i2sFMN8MSfydDGIwX0/JabbFTcqjiPIEDa3euONrBAk/vzKPgF1RAN6SRHhIxVmNwb
+         IKdeResspnYoNq+ZXVEW2ln7WqPhlOOxAvWCjvIU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 036/119] USB: ldusb: fix read info leaks
+        stable@vger.kernel.org, Balbir Singh <sblbir@amzn.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 01/93] nvme-pci: Fix a race in controller removal
 Date:   Sun, 27 Oct 2019 22:00:13 +0100
-Message-Id: <20191027203311.758225817@linuxfoundation.org>
+Message-Id: <20191027203251.779816158@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -44,77 +47,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Balbir Singh <sblbir@amzn.com>
 
-commit 7a6f22d7479b7a0b68eadd308a997dd64dda7dae upstream.
+[ Upstream commit b224726de5e496dbf78147a66755c3d81e28bdd2 ]
 
-Fix broken read implementation, which could be used to trigger slab info
-leaks.
+User space programs like udevd may try to read to partitions at the
+same time the driver detects a namespace is unusable, and may deadlock
+if revalidate_disk() is called while such a process is waiting to
+enter the frozen queue. On detecting a dead namespace, move the disk
+revalidate after unblocking dispatchers that may be holding bd_butex.
 
-The driver failed to check if the custom ring buffer was still empty
-when waking up after having waited for more data. This would happen on
-every interrupt-in completion, even if no data had been added to the
-ring buffer (e.g. on disconnect events).
-
-Due to missing sanity checks and uninitialised (kmalloced) ring-buffer
-entries, this meant that huge slab info leaks could easily be triggered.
-
-Note that the empty-buffer check after wakeup is enough to fix the info
-leak on disconnect, but let's clear the buffer on allocation and add a
-sanity check to read() to prevent further leaks.
-
-Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Reported-by: syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191018151955.25135-2-johan@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+changelog Suggested-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Balbir Singh <sblbir@amzn.com>
+Reviewed-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/misc/ldusb.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/nvme/host/core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -467,7 +467,7 @@ static ssize_t ld_usb_read(struct file *
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index ae0b01059fc6d..5d0f99bcc987f 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -111,10 +111,13 @@ static void nvme_set_queue_dying(struct nvme_ns *ns)
+ 	 */
+ 	if (!ns->disk || test_and_set_bit(NVME_NS_DEAD, &ns->flags))
+ 		return;
+-	revalidate_disk(ns->disk);
+ 	blk_set_queue_dying(ns->queue);
+ 	/* Forcibly unquiesce queues to avoid blocking dispatch */
+ 	blk_mq_unquiesce_queue(ns->queue);
++	/*
++	 * Revalidate after unblocking dispatchers that may be holding bd_butex
++	 */
++	revalidate_disk(ns->disk);
+ }
  
- 	/* wait for data */
- 	spin_lock_irq(&dev->rbsl);
--	if (dev->ring_head == dev->ring_tail) {
-+	while (dev->ring_head == dev->ring_tail) {
- 		dev->interrupt_in_done = 0;
- 		spin_unlock_irq(&dev->rbsl);
- 		if (file->f_flags & O_NONBLOCK) {
-@@ -477,12 +477,17 @@ static ssize_t ld_usb_read(struct file *
- 		retval = wait_event_interruptible(dev->read_wait, dev->interrupt_in_done);
- 		if (retval < 0)
- 			goto unlock_exit;
--	} else {
--		spin_unlock_irq(&dev->rbsl);
-+
-+		spin_lock_irq(&dev->rbsl);
- 	}
-+	spin_unlock_irq(&dev->rbsl);
- 
- 	/* actual_buffer contains actual_length + interrupt_in_buffer */
- 	actual_buffer = (size_t *)(dev->ring_buffer + dev->ring_tail * (sizeof(size_t)+dev->interrupt_in_endpoint_size));
-+	if (*actual_buffer > dev->interrupt_in_endpoint_size) {
-+		retval = -EIO;
-+		goto unlock_exit;
-+	}
- 	bytes_to_read = min(count, *actual_buffer);
- 	if (bytes_to_read < *actual_buffer)
- 		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
-@@ -693,7 +698,9 @@ static int ld_usb_probe(struct usb_inter
- 		dev_warn(&intf->dev, "Interrupt out endpoint not found (using control endpoint instead)\n");
- 
- 	dev->interrupt_in_endpoint_size = usb_endpoint_maxp(dev->interrupt_in_endpoint);
--	dev->ring_buffer = kmalloc(ring_buffer_size*(sizeof(size_t)+dev->interrupt_in_endpoint_size), GFP_KERNEL);
-+	dev->ring_buffer = kcalloc(ring_buffer_size,
-+			sizeof(size_t) + dev->interrupt_in_endpoint_size,
-+			GFP_KERNEL);
- 	if (!dev->ring_buffer)
- 		goto error;
- 	dev->interrupt_in_buffer = kmalloc(dev->interrupt_in_endpoint_size, GFP_KERNEL);
+ static void nvme_queue_scan(struct nvme_ctrl *ctrl)
+-- 
+2.20.1
+
 
 
