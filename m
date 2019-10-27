@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8A95E688E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73677E68B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732670AbfJ0Va3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:30:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38932 "EHLO mail.kernel.org"
+        id S1731052AbfJ0VR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:17:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731331AbfJ0VSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:18:43 -0400
+        id S1731035AbfJ0VRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:17:22 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79913205C9;
-        Sun, 27 Oct 2019 21:18:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59633205C9;
+        Sun, 27 Oct 2019 21:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211123;
-        bh=u1QY37GQqiMRz3nMqJTL9xuwt1CVrLfwwm/6Qk4iZPM=;
+        s=default; t=1572211041;
+        bh=N0zoL5YhrO/1NDUD4wR1V+S0xXE5d5+U9/T9JZWM2ZM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MYn9ti7sL6heRHanG+1xsVty3JzPHXrUdomvSx3vLPlzB7bkhEO+ZOS+FoH8HLHIc
-         QoH01/mXSIKn6MFWNRzkuD9sssKJ3FT1+/RvM9qsDotdcexK/vD/sOF//EWiy/2c0B
-         zILLD72FX+ZalbqhZM1DHncQRHO0nKi9vfqzlqWA=
+        b=XGfDF0IBMDBAAhVjy0a0p+yoXsubo95qovkHGSZ8FREUkGvOgYI+6RJC1+2KncS0z
+         WZ2+tbUet89vhf/ySUo0jWkVxD36LKNfAYqhfCMIk+41iQR7eApUU+zZDlx3zrjpA4
+         WUfAuRprlW+AzA4oABS0eZGJfM0oWiShPt39v0j0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Balbir Singh <sblbir@amzn.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
+        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 005/197] nvme-pci: Fix a race in controller removal
-Date:   Sun, 27 Oct 2019 21:58:43 +0100
-Message-Id: <20191027203351.981022129@linuxfoundation.org>
+Subject: [PATCH 5.3 012/197] scsi: qla2xxx: Fix N2N link up fail
+Date:   Sun, 27 Oct 2019 21:58:50 +0100
+Message-Id: <20191027203352.341166174@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -45,44 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Balbir Singh <sblbir@amzn.com>
+From: Quinn Tran <qutran@marvell.com>
 
-[ Upstream commit b224726de5e496dbf78147a66755c3d81e28bdd2 ]
+[ Upstream commit f3f1938bb673b1b5ad182c4608f5f8a24921eea3 ]
 
-User space programs like udevd may try to read to partitions at the
-same time the driver detects a namespace is unusable, and may deadlock
-if revalidate_disk() is called while such a process is waiting to
-enter the frozen queue. On detecting a dead namespace, move the disk
-revalidate after unblocking dispatchers that may be holding bd_butex.
+During link up/bounce, qla driver would do command flush as part of
+cleanup.  In this case, the flush can intefere with FW state.  This patch
+allows FW to be in control of link up.
 
-changelog Suggested-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Balbir Singh <sblbir@amzn.com>
-Reviewed-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Link: https://lore.kernel.org/r/20190912180918.6436-7-hmadhani@marvell.com
+Signed-off-by: Quinn Tran <qutran@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_mbx.c | 2 ++
+ drivers/scsi/qla2xxx/qla_os.c  | 6 ++----
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index d3d6b7bd69033..28217cee5e762 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -103,10 +103,13 @@ static void nvme_set_queue_dying(struct nvme_ns *ns)
- 	 */
- 	if (!ns->disk || test_and_set_bit(NVME_NS_DEAD, &ns->flags))
- 		return;
--	revalidate_disk(ns->disk);
- 	blk_set_queue_dying(ns->queue);
- 	/* Forcibly unquiesce queues to avoid blocking dispatch */
- 	blk_mq_unquiesce_queue(ns->queue);
-+	/*
-+	 * Revalidate after unblocking dispatchers that may be holding bd_butex
-+	 */
-+	revalidate_disk(ns->disk);
- }
+diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
+index aadff0124f39f..abfb9c800ce28 100644
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -3905,6 +3905,7 @@ qla24xx_report_id_acquisition(scsi_qla_host_t *vha,
+ 				fcport->dm_login_expire = jiffies + 2*HZ;
+ 				fcport->scan_state = QLA_FCPORT_FOUND;
+ 				fcport->n2n_flag = 1;
++				fcport->keep_nport_handle = 1;
+ 				if (vha->flags.nvme_enabled)
+ 					fcport->fc4f_nvme = 1;
  
- static void nvme_queue_scan(struct nvme_ctrl *ctrl)
+@@ -4050,6 +4051,7 @@ qla24xx_report_id_acquisition(scsi_qla_host_t *vha,
+ 			fcport->login_retry = vha->hw->login_retry_count;
+ 			fcport->plogi_nack_done_deadline = jiffies + HZ;
+ 			fcport->scan_state = QLA_FCPORT_FOUND;
++			fcport->keep_nport_handle = 1;
+ 			fcport->n2n_flag = 1;
+ 			fcport->d_id.b.domain =
+ 				rptid_entry->u.f2.remote_nport_id[2];
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 12d5f50646fba..2835afbd2edc7 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -5150,11 +5150,9 @@ void qla24xx_create_new_sess(struct scsi_qla_host *vha, struct qla_work_evt *e)
+ 			if (dfcp)
+ 				qlt_schedule_sess_for_deletion(tfcp);
+ 
+-
+-			if (N2N_TOPO(vha->hw))
+-				fcport->flags &= ~FCF_FABRIC_DEVICE;
+-
+ 			if (N2N_TOPO(vha->hw)) {
++				fcport->flags &= ~FCF_FABRIC_DEVICE;
++				fcport->keep_nport_handle = 1;
+ 				if (vha->flags.nvme_enabled) {
+ 					fcport->fc4f_nvme = 1;
+ 					fcport->n2n_flag = 1;
 -- 
 2.20.1
 
