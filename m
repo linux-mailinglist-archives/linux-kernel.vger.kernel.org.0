@@ -2,38 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F15F6E6654
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:10:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 072AEE65B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:04:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729771AbfJ0VKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:10:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57274 "EHLO mail.kernel.org"
+        id S1728673AbfJ0VEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:04:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728879AbfJ0VKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:10:48 -0400
+        id S1728651AbfJ0VEc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:04:32 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AD92208C0;
-        Sun, 27 Oct 2019 21:10:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B8CA2064A;
+        Sun, 27 Oct 2019 21:04:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210647;
-        bh=Kin03poEpPqo7IQuKmDiZFT5cHxaIpyJ2RAzFwtVhSo=;
+        s=default; t=1572210271;
+        bh=fMC2KVqM3DIfY3q5vtjxo4yXJnY7/FVmoBRpuqNzRi0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mVcWh7taBjy5CJPU9zq2/ETCjEzfCExa0/SI1mZCHvgHkxE/qNsVuOdaDJUvgihv5
-         PAl5efcyhvdZ4E3aLg8zSDqZEal9wQ0OW1xRfcuukxzrdG1MOQ3FX5LQb3p3zKSTNx
-         JTQTSTIzYOJMOxs92b5NtO26BdsB+3dOEetHXw+I=
+        b=xpt+YiKr5PJWB/BbaIo82SliHbaqWQ7OGp54LegIOuKZVzBnuSNf9gzkLgjZuIk72
+         +qa8EgoDDbkqBSQNn0tb0Ca4pR6ZE7lt6H0NAi8sGVUhP2L4AK83b7UFMWRkvJ9b0v
+         gfl9zEoYNp5mak1nSh4XpS34YE4f7IUXr+WmDFZA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 087/119] scsi: sd: Ignore a failure to sync cache due to lack of authorization
+        stable@vger.kernel.org,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Timo Wischer <twischer@de.adit-jv.com>,
+        Junya Monden <jmonden@jp.adit-jv.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 26/41] ASoC: rsnd: Reinitialize bit clock inversion flag for every format setting
 Date:   Sun, 27 Oct 2019 22:01:04 +0100
-Message-Id: <20191027203347.479606199@linuxfoundation.org>
+Message-Id: <20191027203121.969779760@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +49,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Junya Monden <jmonden@jp.adit-jv.com>
 
-commit 21e3d6c81179bbdfa279efc8de456c34b814cfd2 upstream.
+commit 22e58665a01006d05f0239621f7d41cacca96cc4 upstream.
 
-I've got a report about a UAS drive enclosure reporting back Sense: Logical
-unit access not authorized if the drive it holds is password protected.
-While the drive is obviously unusable in that state as a mass storage
-device, it still exists as a sd device and when the system is asked to
-perform a suspend of the drive, it will be sent a SYNCHRONIZE CACHE. If
-that fails due to password protection, the error must be ignored.
+Unlike other format-related DAI parameters, rdai->bit_clk_inv flag
+is not properly re-initialized when setting format for new stream
+processing. The inversion, if requested, is then applied not to default,
+but to a previous value, which leads to SCKP bit in SSICR register being
+set incorrectly.
+Fix this by re-setting the flag to its initial value, determined by format.
 
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190903101840.16483-1-oneukum@suse.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 1a7889ca8aba3 ("ASoC: rsnd: fixup SND_SOC_DAIFMT_xB_xF behavior")
+Cc: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Cc: Jiada Wang <jiada_wang@mentor.com>
+Cc: Timo Wischer <twischer@de.adit-jv.com>
+Cc: stable@vger.kernel.org # v3.17+
+Signed-off-by: Junya Monden <jmonden@jp.adit-jv.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Link: https://lore.kernel.org/r/20191016124255.7442-1-erosca@de.adit-jv.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/sh/rcar/core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1658,7 +1658,8 @@ static int sd_sync_cache(struct scsi_dis
- 		/* we need to evaluate the error return  */
- 		if (scsi_sense_valid(sshdr) &&
- 			(sshdr->asc == 0x3a ||	/* medium not present */
--			 sshdr->asc == 0x20))	/* invalid command */
-+			 sshdr->asc == 0x20 ||	/* invalid command */
-+			 (sshdr->asc == 0x74 && sshdr->ascq == 0x71)))	/* drive is password locked */
- 				/* this is no error here */
- 				return 0;
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -524,6 +524,7 @@ static int rsnd_soc_dai_set_fmt(struct s
+ 	}
  
+ 	/* set format */
++	rdai->bit_clk_inv = 0;
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_I2S:
+ 		rdai->sys_delay = 0;
 
 
