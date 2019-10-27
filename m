@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C808E65E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1854E67D5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729002AbfJ0VG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:06:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52252 "EHLO mail.kernel.org"
+        id S1731966AbfJ0VYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:24:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728974AbfJ0VGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:06:18 -0400
+        id S1732563AbfJ0VYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:24:40 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C121721D80;
-        Sun, 27 Oct 2019 21:06:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00DEB21726;
+        Sun, 27 Oct 2019 21:24:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210377;
-        bh=HD9mHCLH10oaeXqUmRtcah0sFgC/axtPSfwRW0zPG2Y=;
+        s=default; t=1572211479;
+        bh=qjjUIQQK/K3d1S3afzT05FRefX9ssSgQs8oma/kfAOw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T2cD3IVBTH7+OYjIL/zZ2P/sVrvvdh2M2wSQnDg0grt8VvOlfZgKjRJT/QLP7chyw
-         iYE8B6I93A7JCtGANAN7EEwIRh3khCdpt0hMG3lRDQ7blkr3zCRwdcGnRLIvfITKHk
-         7DCn4XQD529niCicfgM6RlpFA76BoTpk5wdrqta4=
+        b=t6n2K/Ve9gd0hErcT7LukVYRyemUDfRgJhI9cvAWLp9/h6yJYCX9X17WSQWXkb5Y5
+         pKh73LPt+sXL2482cgDf2T/LRfkL8XQNk/NjZtJel1cV+ZjuW8TOFAqtl0lL2bqLy0
+         h/jMuyjiBMnKo1yno+Qjw5jUt2hSAuW5kO+x2CiA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 4.9 45/49] cpufreq: Avoid cpufreq_suspend() deadlock on system shutdown
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 5.3 165/197] arm64: Enable workaround for Cavium TX2 erratum 219 when running SMT
 Date:   Sun, 27 Oct 2019 22:01:23 +0100
-Message-Id: <20191027203202.190338203@linuxfoundation.org>
+Message-Id: <20191027203403.176764398@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,85 +43,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 65650b35133ff20f0c9ef0abd5c3c66dbce3ae57 upstream.
+commit 93916beb70143c46bf1d2bacf814be3a124b253b upstream.
 
-It is incorrect to set the cpufreq syscore shutdown callback pointer
-to cpufreq_suspend(), because that function cannot be run in the
-syscore stage of system shutdown for two reasons: (a) it may attempt
-to carry out actions depending on devices that have already been shut
-down at that point and (b) the RCU synchronization carried out by it
-may not be able to make progress then.
+It appears that the only case where we need to apply the TX2_219_TVM
+mitigation is when the core is in SMT mode. So let's condition the
+enabling on detecting a CPU whose MPIDR_EL1.Aff0 is non-zero.
 
-The latter issue has been present since commit 45975c7d21a1 ("rcu:
-Define RCU-sched API in terms of RCU for Tree RCU PREEMPT builds"),
-but the former one has been there since commit 90de2a4aa9f3 ("cpufreq:
-suspend cpufreq governors on shutdown") regardless.
-
-Fix that by dropping cpufreq_syscore_ops altogether and making
-device_shutdown() call cpufreq_suspend() directly before shutting
-down devices, which is along the lines of what system-wide power
-management does.
-
-Fixes: 45975c7d21a1 ("rcu: Define RCU-sched API in terms of RCU for Tree RCU PREEMPT builds")
-Fixes: 90de2a4aa9f3 ("cpufreq: suspend cpufreq governors on shutdown")
-Reported-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Tested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: 4.0+ <stable@vger.kernel.org> # 4.0+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/core.c       |    3 +++
- drivers/cpufreq/cpufreq.c |   10 ----------
- 2 files changed, 3 insertions(+), 10 deletions(-)
+ arch/arm64/kernel/cpu_errata.c |   33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -10,6 +10,7 @@
-  *
-  */
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -12,6 +12,7 @@
+ #include <asm/cpu.h>
+ #include <asm/cputype.h>
+ #include <asm/cpufeature.h>
++#include <asm/smp_plat.h>
  
-+#include <linux/cpufreq.h>
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/fwnode.h>
-@@ -2128,6 +2129,8 @@ void device_shutdown(void)
- 	wait_for_device_probe();
- 	device_block_probing();
+ static bool __maybe_unused
+ is_affected_midr_range(const struct arm64_cpu_capabilities *entry, int scope)
+@@ -623,6 +624,30 @@ check_branch_predictor(const struct arm6
+ 	return (need_wa > 0);
+ }
  
-+	cpufreq_suspend();
++static const __maybe_unused struct midr_range tx2_family_cpus[] = {
++	MIDR_ALL_VERSIONS(MIDR_BRCM_VULCAN),
++	MIDR_ALL_VERSIONS(MIDR_CAVIUM_THUNDERX2),
++	{},
++};
 +
- 	spin_lock(&devices_kset->list_lock);
- 	/*
- 	 * Walk the devices list backward, shutting down each in turn.
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -2543,14 +2543,6 @@ int cpufreq_unregister_driver(struct cpu
- }
- EXPORT_SYMBOL_GPL(cpufreq_unregister_driver);
++static bool __maybe_unused
++needs_tx2_tvm_workaround(const struct arm64_cpu_capabilities *entry,
++			 int scope)
++{
++	int i;
++
++	if (!is_affected_midr_range_list(entry, scope) ||
++	    !is_hyp_mode_available())
++		return false;
++
++	for_each_possible_cpu(i) {
++		if (MPIDR_AFFINITY_LEVEL(cpu_logical_map(i), 0) != 0)
++			return true;
++	}
++
++	return false;
++}
++
+ #ifdef CONFIG_HARDEN_EL2_VECTORS
  
--/*
-- * Stop cpufreq at shutdown to make sure it isn't holding any locks
-- * or mutexes when secondary CPUs are halted.
-- */
--static struct syscore_ops cpufreq_syscore_ops = {
--	.shutdown = cpufreq_suspend,
--};
--
- struct kobject *cpufreq_global_kobject;
- EXPORT_SYMBOL(cpufreq_global_kobject);
- 
-@@ -2562,8 +2554,6 @@ static int __init cpufreq_core_init(void
- 	cpufreq_global_kobject = kobject_create_and_add("cpufreq", &cpu_subsys.dev_root->kobj);
- 	BUG_ON(!cpufreq_global_kobject);
- 
--	register_syscore_ops(&cpufreq_syscore_ops);
--
- 	return 0;
- }
- core_initcall(cpufreq_core_init);
+ static const struct midr_range arm64_harden_el2_vectors[] = {
+@@ -857,6 +882,14 @@ const struct arm64_cpu_capabilities arm6
+ 		ERRATA_MIDR_RANGE_LIST(tx2_family_cpus),
+ 	},
+ #endif
++#ifdef CONFIG_CAVIUM_TX2_ERRATUM_219
++	{
++		.desc = "Cavium ThunderX2 erratum 219 (KVM guest sysreg trapping)",
++		.capability = ARM64_WORKAROUND_CAVIUM_TX2_219_TVM,
++		ERRATA_MIDR_RANGE_LIST(tx2_family_cpus),
++		.matches = needs_tx2_tvm_workaround,
++	},
++#endif
+ 	{
+ 	}
+ };
 
 
