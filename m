@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31704E65F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:07:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B354E67CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:24:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbfJ0VG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:06:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52882 "EHLO mail.kernel.org"
+        id S1732522AbfJ0VY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:24:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727989AbfJ0VGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:06:54 -0400
+        id S1732497AbfJ0VY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:24:26 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1ED3020873;
-        Sun, 27 Oct 2019 21:06:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B6FC21726;
+        Sun, 27 Oct 2019 21:24:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210413;
-        bh=Nd/69uza/dlZHrUS8k+TlHCzIFVzAvLu8UefKxT4+6I=;
+        s=default; t=1572211465;
+        bh=8jmxZ2IQvza0hiJBvlidENn+RvnEXJ8eFPMGst97j9c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iCTXZ2ocV6Cob7yF51b+IBI6mq1vcB2PqPmj2VZkrtMJJU3+VZG/3Itf7ZJfxx2KX
-         1E0xErak8JxnkOtKNmYQtLPJ9vwJph3YPaMJKFh9uHWZaMqHS1f88Zu3nL4eXczmmk
-         XT3ApMWUMgfv2hYuuSSS5uQsJ1XXm8QQIgcWDOZE=
+        b=Jt66F4HWVux8rflFQ84v+s/5sdCScOrps654LGfOy/uJIhe7LXAsSMKlfiklN/aUL
+         oz5GzeW64VY3KLmQVLFigYau3bJ51EACsfIchfrs0YTFW7jHIUXKCYsQcmR2euzgtW
+         Zol/lXHfJ6WaIjfr8fkQotXRL35O9PabfPf1Qb/Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
         Sven Schnelle <svens@stackframe.org>
-Subject: [PATCH 4.9 41/49] parisc: Fix vmap memory leak in ioremap()/iounmap()
+Subject: [PATCH 5.3 161/197] parisc: Fix vmap memory leak in ioremap()/iounmap()
 Date:   Sun, 27 Oct 2019 22:01:19 +0100
-Message-Id: <20191027203158.986796017@linuxfoundation.org>
+Message-Id: <20191027203401.149437135@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -65,7 +65,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/arch/parisc/mm/ioremap.c
 +++ b/arch/parisc/mm/ioremap.c
-@@ -2,7 +2,7 @@
+@@ -3,7 +3,7 @@
   * arch/parisc/mm/ioremap.c
   *
   * (C) Copyright 1995 1996 Linus Torvalds
@@ -74,7 +74,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
   * (C) Copyright 2005 Kyle McMartin <kyle@parisc-linux.org>
   */
  
-@@ -83,7 +83,7 @@ void __iomem * __ioremap(unsigned long p
+@@ -84,7 +84,7 @@ void __iomem * __ioremap(unsigned long p
  	addr = (void __iomem *) area->addr;
  	if (ioremap_page_range((unsigned long)addr, (unsigned long)addr + size,
  			       phys_addr, pgprot)) {
@@ -83,7 +83,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  		return NULL;
  	}
  
-@@ -91,9 +91,11 @@ void __iomem * __ioremap(unsigned long p
+@@ -92,9 +92,11 @@ void __iomem * __ioremap(unsigned long p
  }
  EXPORT_SYMBOL(__ioremap);
  
