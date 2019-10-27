@@ -2,49 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA4ACE681C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:27:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B81FE6675
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:12:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732694AbfJ0VZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:25:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46930 "EHLO mail.kernel.org"
+        id S1730031AbfJ0VMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:12:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732678AbfJ0VZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:25:13 -0400
+        id S1730013AbfJ0VMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:12:13 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 047F72064A;
-        Sun, 27 Oct 2019 21:25:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1ACCD2064A;
+        Sun, 27 Oct 2019 21:12:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211511;
-        bh=3BnMbfPndXojbnIO/KjTzKqKNjsSSST0nsbkX7y7L8M=;
+        s=default; t=1572210732;
+        bh=a5sdZr3g7A4P952zrAxsxcFA2hqawcCrTqhspGU8zyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=anIMeuqaS5IWC3Hr2ligPuXAcbaOQ5gi5AurbCbPCfxV8W1beIX/sC5hER8gmrz9k
-         0BLOdaBM5+lk7oLanjB025FomrD074yLXOFORjHrF39sNUd7ll6yNgM8zTgc36bfDL
-         61m/v4hQ6kvxp7we5lRnBMI/1S22NwW7Ldwe6utU=
+        b=iqreZQLJQJpk4qS3k+ckYlq2mUpwDK6IG98pPKStMqi4sVMqynC0xEoycE5unmHMz
+         WCsL9cvoIUQK9DbKRK7oMPHglnc6XWw+jzVFkTeGDrC4sJazVTm6OPtmACrN6hkEEa
+         ywHdblBHC+8hEZacXs+Omh7wVZEXvA2h42zodvjw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Wahl <steve.wahl@hpe.com>,
-        Borislav Petkov <bp@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Baoquan He <bhe@redhat.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        dimitri.sivanich@hpe.com, Feng Tang <feng.tang@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jordan Borgner <mail@jordan-borgner.de>,
-        Juergen Gross <jgross@suse.com>, mike.travis@hpe.com,
-        russ.anderson@hpe.com, Thomas Gleixner <tglx@linutronix.de>,
-        x86-ml <x86@kernel.org>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Subject: [PATCH 5.3 175/197] x86/boot/64: Make level2_kernel_pgt pages invalid outside kernel area
-Date:   Sun, 27 Oct 2019 22:01:33 +0100
-Message-Id: <20191027203404.708490338@linuxfoundation.org>
+        stable@vger.kernel.org, Junaid Shahid <junaids@google.com>,
+        Jim Mattson <jmattson@google.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        "Jitindar SIngh, Suraj" <surajjs@amazon.com>
+Subject: [PATCH 4.14 117/119] kvm: apic: Flush TLB after APIC mode/address change if VPIDs are in use
+Date:   Sun, 27 Oct 2019 22:01:34 +0100
+Message-Id: <20191027203349.948578924@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,107 +45,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Wahl <steve.wahl@hpe.com>
+From: Junaid Shahid <junaids@google.com>
 
-commit 2aa85f246c181b1fa89f27e8e20c5636426be624 upstream.
+commit a468f2dbf921d02f5107378501693137a812999b upstream.
 
-Our hardware (UV aka Superdome Flex) has address ranges marked
-reserved by the BIOS. Access to these ranges is caught as an error,
-causing the BIOS to halt the system.
+Currently, KVM flushes the TLB after a change to the APIC access page
+address or the APIC mode when EPT mode is enabled. However, even in
+shadow paging mode, a TLB flush is needed if VPIDs are being used, as
+specified in the Intel SDM Section 29.4.5.
 
-Initial page tables mapped a large range of physical addresses that
-were not checked against the list of BIOS reserved addresses, and
-sometimes included reserved addresses in part of the mapped range.
-Including the reserved range in the map allowed processor speculative
-accesses to the reserved range, triggering a BIOS halt.
+So replace vmx_flush_tlb_ept_only() with vmx_flush_tlb(), which will
+flush if either EPT or VPIDs are in use.
 
-Used early in booting, the page table level2_kernel_pgt addresses 1
-GiB divided into 2 MiB pages, and it was set up to linearly map a full
- 1 GiB of physical addresses that included the physical address range
-of the kernel image, as chosen by KASLR.  But this also included a
-large range of unused addresses on either side of the kernel image.
-And unlike the kernel image's physical address range, this extra
-mapped space was not checked against the BIOS tables of usable RAM
-addresses.  So there were times when the addresses chosen by KASLR
-would result in processor accessible mappings of BIOS reserved
-physical addresses.
-
-The kernel code did not directly access any of this extra mapped
-space, but having it mapped allowed the processor to issue speculative
-accesses into reserved memory, causing system halts.
-
-This was encountered somewhat rarely on a normal system boot, and much
-more often when starting the crash kernel if "crashkernel=512M,high"
-was specified on the command line (this heavily restricts the physical
-address of the crash kernel, in our case usually within 1 GiB of
-reserved space).
-
-The solution is to invalidate the pages of this table outside the kernel
-image's space before the page table is activated. It fixes this problem
-on our hardware.
-
- [ bp: Touchups. ]
-
-Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Brijesh Singh <brijesh.singh@amd.com>
-Cc: dimitri.sivanich@hpe.com
-Cc: Feng Tang <feng.tang@intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jordan Borgner <mail@jordan-borgner.de>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: mike.travis@hpe.com
-Cc: russ.anderson@hpe.com
-Cc: stable@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Cc: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Link: https://lkml.kernel.org/r/9c011ee51b081534a7a15065b1681d200298b530.1569358539.git.steve.wahl@hpe.com
+Signed-off-by: Junaid Shahid <junaids@google.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Cc: "Jitindar SIngh, Suraj" <surajjs@amazon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/head64.c |   22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ arch/x86/kvm/vmx.c |   14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -222,13 +222,31 @@ unsigned long __head __startup_64(unsign
- 	 * we might write invalid pmds, when the kernel is relocated
- 	 * cleanup_highmap() fixes this up along with the mappings
- 	 * beyond _end.
-+	 *
-+	 * Only the region occupied by the kernel image has so far
-+	 * been checked against the table of usable memory regions
-+	 * provided by the firmware, so invalidate pages outside that
-+	 * region. A page table entry that maps to a reserved area of
-+	 * memory would allow processor speculation into that area,
-+	 * and on some hardware (particularly the UV platform) even
-+	 * speculative access to some reserved areas is caught as an
-+	 * error, causing the BIOS to halt the system.
- 	 */
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -4444,12 +4444,6 @@ static void vmx_flush_tlb(struct kvm_vcp
+ 	__vmx_flush_tlb(vcpu, to_vmx(vcpu)->vpid, invalidate_gpa);
+ }
  
- 	pmd = fixup_pointer(level2_kernel_pgt, physaddr);
--	for (i = 0; i < PTRS_PER_PMD; i++) {
-+
-+	/* invalidate pages before the kernel image */
-+	for (i = 0; i < pmd_index((unsigned long)_text); i++)
-+		pmd[i] &= ~_PAGE_PRESENT;
-+
-+	/* fixup pages that are part of the kernel image */
-+	for (; i <= pmd_index((unsigned long)_end); i++)
- 		if (pmd[i] & _PAGE_PRESENT)
- 			pmd[i] += load_delta;
--	}
-+
-+	/* invalidate pages after the kernel image */
-+	for (; i < PTRS_PER_PMD; i++)
-+		pmd[i] &= ~_PAGE_PRESENT;
+-static void vmx_flush_tlb_ept_only(struct kvm_vcpu *vcpu)
+-{
+-	if (enable_ept)
+-		vmx_flush_tlb(vcpu, true);
+-}
+-
+ static void vmx_decache_cr0_guest_bits(struct kvm_vcpu *vcpu)
+ {
+ 	ulong cr0_guest_owned_bits = vcpu->arch.cr0_guest_owned_bits;
+@@ -9320,7 +9314,7 @@ static void vmx_set_virtual_x2apic_mode(
+ 	} else {
+ 		sec_exec_control &= ~SECONDARY_EXEC_VIRTUALIZE_X2APIC_MODE;
+ 		sec_exec_control |= SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES;
+-		vmx_flush_tlb_ept_only(vcpu);
++		vmx_flush_tlb(vcpu, true);
+ 	}
+ 	vmcs_write32(SECONDARY_VM_EXEC_CONTROL, sec_exec_control);
+ 
+@@ -9348,7 +9342,7 @@ static void vmx_set_apic_access_page_add
+ 	    !nested_cpu_has2(get_vmcs12(&vmx->vcpu),
+ 			     SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES)) {
+ 		vmcs_write64(APIC_ACCESS_ADDR, hpa);
+-		vmx_flush_tlb_ept_only(vcpu);
++		vmx_flush_tlb(vcpu, true);
+ 	}
+ }
+ 
+@@ -11243,7 +11237,7 @@ static int prepare_vmcs02(struct kvm_vcp
+ 		}
+ 	} else if (nested_cpu_has2(vmcs12,
+ 				   SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES)) {
+-		vmx_flush_tlb_ept_only(vcpu);
++		vmx_flush_tlb(vcpu, true);
+ 	}
  
  	/*
- 	 * Fixup phys_base - remove the memory encryption mask to obtain
+@@ -12198,7 +12192,7 @@ static void nested_vmx_vmexit(struct kvm
+ 	} else if (!nested_cpu_has_ept(vmcs12) &&
+ 		   nested_cpu_has2(vmcs12,
+ 				   SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES)) {
+-		vmx_flush_tlb_ept_only(vcpu);
++		vmx_flush_tlb(vcpu, true);
+ 	}
+ 
+ 	/* This is needed for same reason as it was needed in prepare_vmcs02 */
 
 
