@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D07E6595
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 478E5E67B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728317AbfJ0VDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:03:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48614 "EHLO mail.kernel.org"
+        id S1732378AbfJ0VXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:23:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbfJ0VDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:03:20 -0400
+        id S1732364AbfJ0VXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:23:34 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8459F214AF;
-        Sun, 27 Oct 2019 21:03:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2B39205C9;
+        Sun, 27 Oct 2019 21:23:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210199;
-        bh=tuhyo/2kQiRB6FSbrrp9sXMYQnq1MqaAaocMivwBshc=;
+        s=default; t=1572211414;
+        bh=lKgQpJ6lldb24qjFTVG9e/CiNh4+PFY2l5F0C51r+fE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qycvo6BnLREkL0LxhW8qW3furPvqzmj8V3ICHWHWNh3fBsOrPGZkqoEPlNQj3mIXP
-         GdZ/5a4x5yQXQR6LapDMcQTMiAzOPRMpCQ/GgfGef8Kb99ZFP6n0XSugEaEX4YrFiV
-         9S4VQ2gLP3so/nxHsSFZHaPjmiLIXfAQOyz+Gxwg=
+        b=nYeupQGG5I7HIVd303hZcG0mwHvReTW3bNUidNVRS6oxRdeTQEf17lRcmzFRtgqoR
+         OgOCh7P3MvSgRM67qH+0FHqroetx62osIzoKPgSBUe4b5AFIT44G/TX4G7se6N8wUq
+         umR3dlbgm44YTEfZb0K6CGtblkwB/009CrdnW2o4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 24/41] USB: ldusb: fix read info leaks
+        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.3 144/197] mm/memory-failure.c: dont access uninitialized memmaps in memory_failure()
 Date:   Sun, 27 Oct 2019 22:01:02 +0100
-Message-Id: <20191027203119.576856555@linuxfoundation.org>
+Message-Id: <20191027203359.469037864@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,77 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: David Hildenbrand <david@redhat.com>
 
-commit 7a6f22d7479b7a0b68eadd308a997dd64dda7dae upstream.
+commit 96c804a6ae8c59a9092b3d5dd581198472063184 upstream.
 
-Fix broken read implementation, which could be used to trigger slab info
-leaks.
+We should check for pfn_to_online_page() to not access uninitialized
+memmaps.  Reshuffle the code so we don't have to duplicate the error
+message.
 
-The driver failed to check if the custom ring buffer was still empty
-when waking up after having waited for more data. This would happen on
-every interrupt-in completion, even if no data had been added to the
-ring buffer (e.g. on disconnect events).
-
-Due to missing sanity checks and uninitialised (kmalloced) ring-buffer
-entries, this meant that huge slab info leaks could easily be triggered.
-
-Note that the empty-buffer check after wakeup is enough to fix the info
-leak on disconnect, but let's clear the buffer on allocation and add a
-sanity check to read() to prevent further leaks.
-
-Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Reported-by: syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191018151955.25135-2-johan@kernel.org
+Link: http://lkml.kernel.org/r/20191009142435.3975-3-david@redhat.com
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")	[visible after d0dc12e86b319]
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: <stable@vger.kernel.org>	[4.13+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/ldusb.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ mm/memory-failure.c |   14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -468,7 +468,7 @@ static ssize_t ld_usb_read(struct file *
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -1253,17 +1253,19 @@ int memory_failure(unsigned long pfn, in
+ 	if (!sysctl_memory_failure_recovery)
+ 		panic("Memory failure on page %lx", pfn);
  
- 	/* wait for data */
- 	spin_lock_irq(&dev->rbsl);
--	if (dev->ring_head == dev->ring_tail) {
-+	while (dev->ring_head == dev->ring_tail) {
- 		dev->interrupt_in_done = 0;
- 		spin_unlock_irq(&dev->rbsl);
- 		if (file->f_flags & O_NONBLOCK) {
-@@ -478,12 +478,17 @@ static ssize_t ld_usb_read(struct file *
- 		retval = wait_event_interruptible(dev->read_wait, dev->interrupt_in_done);
- 		if (retval < 0)
- 			goto unlock_exit;
--	} else {
--		spin_unlock_irq(&dev->rbsl);
-+
-+		spin_lock_irq(&dev->rbsl);
+-	if (!pfn_valid(pfn)) {
++	p = pfn_to_online_page(pfn);
++	if (!p) {
++		if (pfn_valid(pfn)) {
++			pgmap = get_dev_pagemap(pfn, NULL);
++			if (pgmap)
++				return memory_failure_dev_pagemap(pfn, flags,
++								  pgmap);
++		}
+ 		pr_err("Memory failure: %#lx: memory outside kernel control\n",
+ 			pfn);
+ 		return -ENXIO;
  	}
-+	spin_unlock_irq(&dev->rbsl);
  
- 	/* actual_buffer contains actual_length + interrupt_in_buffer */
- 	actual_buffer = (size_t*)(dev->ring_buffer + dev->ring_tail*(sizeof(size_t)+dev->interrupt_in_endpoint_size));
-+	if (*actual_buffer > dev->interrupt_in_endpoint_size) {
-+		retval = -EIO;
-+		goto unlock_exit;
-+	}
- 	bytes_to_read = min(count, *actual_buffer);
- 	if (bytes_to_read < *actual_buffer)
- 		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
-@@ -703,7 +708,9 @@ static int ld_usb_probe(struct usb_inter
- 		dev_warn(&intf->dev, "Interrupt out endpoint not found (using control endpoint instead)\n");
- 
- 	dev->interrupt_in_endpoint_size = usb_endpoint_maxp(dev->interrupt_in_endpoint);
--	dev->ring_buffer = kmalloc(ring_buffer_size*(sizeof(size_t)+dev->interrupt_in_endpoint_size), GFP_KERNEL);
-+	dev->ring_buffer = kcalloc(ring_buffer_size,
-+			sizeof(size_t) + dev->interrupt_in_endpoint_size,
-+			GFP_KERNEL);
- 	if (!dev->ring_buffer) {
- 		dev_err(&intf->dev, "Couldn't allocate ring_buffer\n");
- 		goto error;
+-	pgmap = get_dev_pagemap(pfn, NULL);
+-	if (pgmap)
+-		return memory_failure_dev_pagemap(pfn, flags, pgmap);
+-
+-	p = pfn_to_page(pfn);
+ 	if (PageHuge(p))
+ 		return memory_failure_hugetlb(pfn, flags);
+ 	if (TestSetPageHWPoison(p)) {
 
 
