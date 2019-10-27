@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 623EBE66A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:13:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8443FE677E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:22:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730335AbfJ0VNq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:13:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60868 "EHLO mail.kernel.org"
+        id S1731934AbfJ0VV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:21:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730319AbfJ0VNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:13:43 -0400
+        id S1731925AbfJ0VVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:21:25 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACDC72064A;
-        Sun, 27 Oct 2019 21:13:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EFE1205C9;
+        Sun, 27 Oct 2019 21:21:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210823;
-        bh=KZRpUOb3mPBcUo8o24araf8SxsKewq/8Rl1F83Gkluk=;
+        s=default; t=1572211284;
+        bh=szCVL3WGa8C+AIWwGVnSsMk9yNrdZonwa70Sb3Pb0e0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tncne9isyzMA62+KHmJn7ogYo9DC+Ssj2AlGl1MqIyjnvZqomLeMpLEyk3YRP/TU2
-         A6Fq2QDmX6pL2ZCwaxhqudq7XUVd+rDug22XUlNxigl/eU1AAF5KREV96bDEri7QTG
-         9i3Ory58X+KM4gjSdbet2QhwAe+q7M79bERgg4Lk=
+        b=CBbJJms5MS5r/Ls7UT2LBxY6lfP59bP1D0U/1m1exbyUOpsg4PeOjs49IUxRXBGhy
+         fWlT9IeM9qw0e2LqPTWgiADdPPlVRd9CkPSz1ni2OJ7Lb5/pBcCQgQ4BubgBmWTSlg
+         zoMxSgoVo3hVTwvUY04ZBvOE3CxbxXwJzmnofZ9Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 04/93] scsi: qla2xxx: Fix unbound sleep in fcport delete path.
+        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.3 098/197] ALSA: hda/realtek - Enable headset mic on Asus MJ401TA
 Date:   Sun, 27 Oct 2019 22:00:16 +0100
-Message-Id: <20191027203252.814477126@linuxfoundation.org>
+Message-Id: <20191027203357.054427454@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: Daniel Drake <drake@endlessm.com>
 
-[ Upstream commit c3b6a1d397420a0fdd97af2f06abfb78adc370df ]
+commit 8c8967a7dc01a25f57a0757fdca10987773cd1f2 upstream.
 
-There are instances, though rare, where a LOGO request cannot be sent out
-and the thread in free session done can wait indefinitely. Fix this by
-putting an upper bound to sleep.
+On Asus MJ401TA (with Realtek ALC256), the headset mic is connected to
+pin 0x19, with default configuration value 0x411111f0 (indicating no
+physical connection).
 
-Link: https://lore.kernel.org/r/20190912180918.6436-3-hmadhani@marvell.com
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Enable this by quirking the pin. Mic jack detection was also tested and
+found to be working.
+
+This enables use of the headset mic on this product.
+
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191017081501.17135-1-drake@endlessm.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/qla2xxx/qla_target.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/pci/hda/patch_realtek.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index 7a1cc0b25e594..d6dc320f81a7a 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -1023,6 +1023,7 @@ void qlt_free_session_done(struct work_struct *work)
- 
- 	if (logout_started) {
- 		bool traced = false;
-+		u16 cnt = 0;
- 
- 		while (!READ_ONCE(sess->logout_completed)) {
- 			if (!traced) {
-@@ -1032,6 +1033,9 @@ void qlt_free_session_done(struct work_struct *work)
- 				traced = true;
- 			}
- 			msleep(100);
-+			cnt++;
-+			if (cnt > 200)
-+				break;
- 		}
- 
- 		ql_dbg(ql_dbg_disc, vha, 0xf087,
--- 
-2.20.1
-
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5868,6 +5868,7 @@ enum {
+ 	ALC225_FIXUP_WYSE_AUTO_MUTE,
+ 	ALC225_FIXUP_WYSE_DISABLE_MIC_VREF,
+ 	ALC286_FIXUP_ACER_AIO_HEADSET_MIC,
++	ALC256_FIXUP_ASUS_HEADSET_MIC,
+ 	ALC256_FIXUP_ASUS_MIC_NO_PRESENCE,
+ 	ALC299_FIXUP_PREDATOR_SPK,
+ 	ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC,
+@@ -6902,6 +6903,15 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE
+ 	},
++	[ALC256_FIXUP_ASUS_HEADSET_MIC] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x19, 0x03a11020 }, /* headset mic with jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC256_FIXUP_ASUS_HEADSET_MODE
++	},
+ 	[ALC256_FIXUP_ASUS_MIC_NO_PRESENCE] = {
+ 		.type = HDA_FIXUP_PINS,
+ 		.v.pins = (const struct hda_pintbl[]) {
+@@ -7098,6 +7108,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1043, 0x1517, "Asus Zenbook UX31A", ALC269VB_FIXUP_ASUS_ZENBOOK_UX31A),
+ 	SND_PCI_QUIRK(0x1043, 0x16e3, "ASUS UX50", ALC269_FIXUP_STEREO_DMIC),
+ 	SND_PCI_QUIRK(0x1043, 0x17d1, "ASUS UX431FL", ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC),
++	SND_PCI_QUIRK(0x1043, 0x18b1, "Asus MJ401TA", ALC256_FIXUP_ASUS_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1a13, "Asus G73Jw", ALC269_FIXUP_ASUS_G73JW),
+ 	SND_PCI_QUIRK(0x1043, 0x1a30, "ASUS X705UD", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1b13, "Asus U41SV", ALC269_FIXUP_INV_DMIC),
 
 
