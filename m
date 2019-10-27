@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4257DE6972
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:36:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C19A0E68C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbfJ0VG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:06:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52380 "EHLO mail.kernel.org"
+        id S1731477AbfJ0Vb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:31:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727503AbfJ0VGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:06:24 -0400
+        id S1730180AbfJ0VP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:15:58 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B26221783;
-        Sun, 27 Oct 2019 21:06:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99BF62070B;
+        Sun, 27 Oct 2019 21:15:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210383;
-        bh=4kpBjFVHBtSenIMSIQp2j0JOTMmGi0qrCsyJrZ/a9kY=;
+        s=default; t=1572210958;
+        bh=7RgI3ynIYe9b4cD6bVr4e7slu4fJWH7ZqY2R7nOUDSc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A83qr1HJLlwNb5J4CcpDNu9UyJYDtdc+WeaGfCFRU7z59YGeHImNSKwmUHxd74Ne8
-         zDKZvsZn2Rc+wjyhXxfQaz4jnFVaLUUQFG1wmnmbdI980huJCqg0/wb083mGUm9efj
-         fK82wnZQ+8n58bEAMC+HjN/Hl9WF8vFAXKH8v5oI=
+        b=OCfa5nLl27wQlXiI4njgXTgrXnWWa4MnkLfLFDhkFFYCVNdLKUU9qlhW+hCvl8tqL
+         s/Lt5+lcwGGgIDA/Veie5PpnwOhAE/iMhTqJH+TyUlQrxtRGkIyxxGep8GGFP8HnHq
+         KFlcVl2z1lVRPrRhwZ6m56i4BiVtef2ZvBoAh3m8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.9 47/49] PCI: PM: Fix pci_power_up()
-Date:   Sun, 27 Oct 2019 22:01:25 +0100
-Message-Id: <20191027203205.369411821@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Roberto Bergantinos Corpas <rbergant@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.19 74/93] CIFS: avoid using MID 0xFFFF
+Date:   Sun, 27 Oct 2019 22:01:26 +0100
+Message-Id: <20191027203310.528256363@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,81 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Roberto Bergantinos Corpas <rbergant@redhat.com>
 
-commit 45144d42f299455911cc29366656c7324a3a7c97 upstream.
+commit 03d9a9fe3f3aec508e485dd3dcfa1e99933b4bdb upstream.
 
-There is an arbitrary difference between the system resume and
-runtime resume code paths for PCI devices regarding the delay to
-apply when switching the devices from D3cold to D0.
+According to MS-CIFS specification MID 0xFFFF should not be used by the
+CIFS client, but we actually do. Besides, this has proven to cause races
+leading to oops between SendReceive2/cifs_demultiplex_thread. On SMB1,
+MID is a 2 byte value easy to reach in CurrentMid which may conflict with
+an oplock break notification request coming from server
 
-Namely, pci_restore_standard_config() used in the runtime resume
-code path calls pci_set_power_state() which in turn invokes
-__pci_start_power_transition() to power up the device through the
-platform firmware and that function applies the transition delay
-(as per PCI Express Base Specification Revision 2.0, Section 6.6.1).
-However, pci_pm_default_resume_early() used in the system resume
-code path calls pci_power_up() which doesn't apply the delay at
-all and that causes issues to occur during resume from
-suspend-to-idle on some systems where the delay is required.
-
-Since there is no reason for that difference to exist, modify
-pci_power_up() to follow pci_set_power_state() more closely and
-invoke __pci_start_power_transition() from there to call the
-platform firmware to power up the device (in case that's necessary).
-
-Fixes: db288c9c5f9d ("PCI / PM: restore the original behavior of pci_set_power_state()")
-Reported-by: Daniel Drake <drake@endlessm.com>
-Tested-by: Daniel Drake <drake@endlessm.com>
-Link: https://lore.kernel.org/linux-pm/CAD8Lp44TYxrMgPLkHCqF9hv6smEurMXvmmvmtyFhZ6Q4SE+dig@mail.gmail.com/T/#m21be74af263c6a34f36e0fc5c77c5449d9406925
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: 3.10+ <stable@vger.kernel.org> # 3.10+
+Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/pci.c |   24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ fs/cifs/smb1ops.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -754,19 +754,6 @@ void pci_update_current_state(struct pci
- }
+--- a/fs/cifs/smb1ops.c
++++ b/fs/cifs/smb1ops.c
+@@ -183,6 +183,9 @@ cifs_get_next_mid(struct TCP_Server_Info
+ 	/* we do not want to loop forever */
+ 	last_mid = cur_mid;
+ 	cur_mid++;
++	/* avoid 0xFFFF MID */
++	if (cur_mid == 0xffff)
++		cur_mid++;
  
- /**
-- * pci_power_up - Put the given device into D0 forcibly
-- * @dev: PCI device to power up
-- */
--void pci_power_up(struct pci_dev *dev)
--{
--	if (platform_pci_power_manageable(dev))
--		platform_pci_set_power_state(dev, PCI_D0);
--
--	pci_raw_set_power_state(dev, PCI_D0);
--	pci_update_current_state(dev, PCI_D0);
--}
--
--/**
-  * pci_platform_power_transition - Use platform to change device power state
-  * @dev: PCI device to handle.
-  * @state: State to put the device into.
-@@ -942,6 +929,17 @@ int pci_set_power_state(struct pci_dev *
- EXPORT_SYMBOL(pci_set_power_state);
- 
- /**
-+ * pci_power_up - Put the given device into D0 forcibly
-+ * @dev: PCI device to power up
-+ */
-+void pci_power_up(struct pci_dev *dev)
-+{
-+	__pci_start_power_transition(dev, PCI_D0);
-+	pci_raw_set_power_state(dev, PCI_D0);
-+	pci_update_current_state(dev, PCI_D0);
-+}
-+
-+/**
-  * pci_choose_state - Choose the power state of a PCI device
-  * @dev: PCI device to be suspended
-  * @state: target sleep state for the whole system. This is the value
+ 	/*
+ 	 * This nested loop looks more expensive than it is.
 
 
