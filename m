@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B97B5E6762
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:21:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C189E65FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:07:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731730AbfJ0VUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:20:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41112 "EHLO mail.kernel.org"
+        id S1729184AbfJ0VHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:07:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730775AbfJ0VUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:20:32 -0400
+        id S1729177AbfJ0VHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:07:30 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13EAF21848;
-        Sun, 27 Oct 2019 21:20:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FF55208C0;
+        Sun, 27 Oct 2019 21:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211231;
-        bh=7yoZoRGGFhcYeBasBZNTGWbaRNQSgC+J70ieIlJyhLU=;
+        s=default; t=1572210448;
+        bh=uSraA05CveGgb7xptTPyz0Ad1mY1vPPqyU2ckisHTGY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dr7lHKvKlrWMIj++XDinxDWPTOLFyhMM1uGlff0iddWW5++0zhZU3sAQb86ytYRDv
-         E/FqblT0S37RPCs8IFfnYH1jFNwNFjA5th0/D6Lbua5fZ6kXE8PU0ksS1YOf4tiWqr
-         CETl88b82aNgMsi1QS04viPiuQjegaBw6SOj0V/I=
+        b=xzbmdjjo9IMHYBI66L3JBQHh6clrizewLN39kg4jIByP5Hxc/+3PS2373zk5gvgX4
+         FTjpZ7C7MSEu1mNjUZewKjqx9PzO8gy5eUDVSRbPDSkMfe2iMyxw2LVEy3eUdjflNe
+         b+NgxcYZYIIsVBf5F/eFHhA/b+W8IpQz+nqudg4M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Biao Huang <biao.huang@mediatek.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 077/197] net: stmmac: disable/enable ptp_ref_clk in suspend/resume flow
-Date:   Sun, 27 Oct 2019 21:59:55 +0100
-Message-Id: <20191027203355.826603403@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Walter <walteste@inf.ethz.ch>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Gonzalo Siero <gsierohu@redhat.com>
+Subject: [PATCH 4.14 019/119] ipv4: Return -ENETUNREACH if we cant create route but saddr is valid
+Date:   Sun, 27 Oct 2019 21:59:56 +0100
+Message-Id: <20191027203305.632614840@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +46,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Biao Huang <biao.huang@mediatek.com>
+From: Stefano Brivio <sbrivio@redhat.com>
 
-[ Upstream commit e497c20e203680aba9ccf7bb475959595908ca7e ]
+[ Upstream commit 595e0651d0296bad2491a4a29a7a43eae6328b02 ]
 
-disable ptp_ref_clk in suspend flow, and enable it in resume flow.
+...instead of -EINVAL. An issue was found with older kernel versions
+while unplugging a NFS client with pending RPCs, and the wrong error
+code here prevented it from recovering once link is back up with a
+configured address.
 
-Fixes: f573c0b9c4e0 ("stmmac: move stmmac_clk, pclk, clk_ptp_ref and stmmac_rst to platform structure")
-Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+Incidentally, this is not an issue anymore since commit 4f8943f80883
+("SUNRPC: Replace direct task wakeups from softirq context"), included
+in 5.2-rc7, had the effect of decoupling the forwarding of this error
+by using SO_ERROR in xs_wake_error(), as pointed out by Benjamin
+Coddington.
+
+To the best of my knowledge, this isn't currently causing any further
+issue, but the error code doesn't look appropriate anyway, and we
+might hit this in other paths as well.
+
+In detail, as analysed by Gonzalo Siero, once the route is deleted
+because the interface is down, and can't be resolved and we return
+-EINVAL here, this ends up, courtesy of inet_sk_rebuild_header(),
+as the socket error seen by tcp_write_err(), called by
+tcp_retransmit_timer().
+
+In turn, tcp_write_err() indirectly calls xs_error_report(), which
+wakes up the RPC pending tasks with a status of -EINVAL. This is then
+seen by call_status() in the SUN RPC implementation, which aborts the
+RPC call calling rpc_exit(), instead of handling this as a
+potentially temporary condition, i.e. as a timeout.
+
+Return -EINVAL only if the input parameters passed to
+ip_route_output_key_hash_rcu() are actually invalid (this is the case
+if the specified source address is multicast, limited broadcast or
+all zeroes), but return -ENETUNREACH in all cases where, at the given
+moment, the given source address doesn't allow resolving the route.
+
+While at it, drop the initialisation of err to -ENETUNREACH, which
+was added to __ip_route_output_key() back then by commit
+0315e3827048 ("net: Fix behaviour of unreachable, blackhole and
+prohibit routes"), but actually had no effect, as it was, and is,
+overwritten by the fib_lookup() return code assignment, and anyway
+ignored in all other branches, including the if (fl4->saddr) one:
+I find this rather confusing, as it would look like -ENETUNREACH is
+the "default" error, while that statement has no effect.
+
+Also note that after commit fc75fc8339e7 ("ipv4: dont create routes
+on down devices"), we would get -ENETUNREACH if the device is down,
+but -EINVAL if the source address is specified and we can't resolve
+the route, and this appears to be rather inconsistent.
+
+Reported-by: Stefan Walter <walteste@inf.ethz.ch>
+Analysed-by: Benjamin Coddington <bcodding@redhat.com>
+Analysed-by: Gonzalo Siero <gsierohu@redhat.com>
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ net/ipv4/route.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4480,8 +4480,10 @@ int stmmac_suspend(struct device *dev)
- 		stmmac_mac_set(priv, priv->ioaddr, false);
- 		pinctrl_pm_select_sleep_state(priv->device);
- 		/* Disable clock in case of PWM is off */
--		clk_disable(priv->plat->pclk);
--		clk_disable(priv->plat->stmmac_clk);
-+		if (priv->plat->clk_ptp_ref)
-+			clk_disable_unprepare(priv->plat->clk_ptp_ref);
-+		clk_disable_unprepare(priv->plat->pclk);
-+		clk_disable_unprepare(priv->plat->stmmac_clk);
- 	}
- 	mutex_unlock(&priv->lock);
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -2351,14 +2351,17 @@ struct rtable *ip_route_output_key_hash_
+ 	int orig_oif = fl4->flowi4_oif;
+ 	unsigned int flags = 0;
+ 	struct rtable *rth;
+-	int err = -ENETUNREACH;
++	int err;
  
-@@ -4544,8 +4546,10 @@ int stmmac_resume(struct device *dev)
- 	} else {
- 		pinctrl_pm_select_default_state(priv->device);
- 		/* enable the clk previously disabled */
--		clk_enable(priv->plat->stmmac_clk);
--		clk_enable(priv->plat->pclk);
-+		clk_prepare_enable(priv->plat->stmmac_clk);
-+		clk_prepare_enable(priv->plat->pclk);
-+		if (priv->plat->clk_ptp_ref)
-+			clk_prepare_enable(priv->plat->clk_ptp_ref);
- 		/* reset the phy so that it's ready */
- 		if (priv->mii)
- 			stmmac_mdio_reset(priv->mii);
+ 	if (fl4->saddr) {
+-		rth = ERR_PTR(-EINVAL);
+ 		if (ipv4_is_multicast(fl4->saddr) ||
+ 		    ipv4_is_lbcast(fl4->saddr) ||
+-		    ipv4_is_zeronet(fl4->saddr))
++		    ipv4_is_zeronet(fl4->saddr)) {
++			rth = ERR_PTR(-EINVAL);
+ 			goto out;
++		}
++
++		rth = ERR_PTR(-ENETUNREACH);
+ 
+ 		/* I removed check for oif == dev_out->oif here.
+ 		   It was wrong for two reasons:
 
 
