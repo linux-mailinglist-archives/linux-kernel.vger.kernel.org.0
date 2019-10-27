@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B516E68D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AAB5E69B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:38:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730489AbfJ0VOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:14:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33534 "EHLO mail.kernel.org"
+        id S1728304AbfJ0VDX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:03:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729298AbfJ0VOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:14:32 -0400
+        id S1728267AbfJ0VDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:03:16 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAF3F205C9;
-        Sun, 27 Oct 2019 21:14:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A06BF2064A;
+        Sun, 27 Oct 2019 21:03:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210872;
-        bh=7hY4nLWxWakh0Bh+snLKU17vH2lbqPEmuhjao7isb9o=;
+        s=default; t=1572210196;
+        bh=DNogohxJudpJgaAhRb6Da2/JiIzdCiOlJWxWHOT7MTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SacVpT/LEn8c+ggDjjgYvOC1f16nb7gJuAo+Ou3AR3CyFRQY2x2/Ev1JdEBO924ED
-         Bp1zrg/W0ZTKeXHGEcze4JtRhgXfzNlP53wbDR3ngj1dYXHODFwf4to4tQ969+dkl3
-         csFy9XM6Hy/NHHbJlwUgSXXcWvagJpOBv3E4q1Es=
+        b=gYgVtlVHFp6BGJJRKOJZI79hNqZdHepnQAZy/lc6WqY4K6emuYyGm6FEOOwe1xOpS
+         0Af3FEqBDgGHwejDLEVhdEFvi0I9I6Rrn09EAq7Y+Bp6kRTiCWD3SjRVVVvHUV4dfW
+         7hnZ/NRpTUb2XVfKdqS9cFXLFoNsrIcPZlNRTnk8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>
-Subject: [PATCH 4.19 47/93] staging: wlan-ng: fix exit return when sme->key_idx >= NUM_WEPKEYS
-Date:   Sun, 27 Oct 2019 22:00:59 +0100
-Message-Id: <20191027203300.134281452@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+cd24df4d075c319ebfc5@syzkaller.appspotmail.com,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 23/41] USB: usblp: fix use-after-free on disconnect
+Date:   Sun, 27 Oct 2019 22:01:01 +0100
+Message-Id: <20191027203119.192858701@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,40 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 153c5d8191c26165dbbd2646448ca7207f7796d0 upstream.
+commit 7a759197974894213621aa65f0571b51904733d6 upstream.
 
-Currently the exit return path when sme->key_idx >= NUM_WEPKEYS is via
-label 'exit' and this checks if result is non-zero, however result has
-not been initialized and contains garbage.  Fix this by replacing the
-goto with a return with the error code.
+A recent commit addressing a runtime PM use-count regression, introduced
+a use-after-free by not making sure we held a reference to the struct
+usb_interface for the lifetime of the driver data.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 0ca6d8e74489 ("Staging: wlan-ng: replace switch-case statements with macro")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 9a31535859bf ("USB: usblp: fix runtime PM after driver unbind")
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191014110201.9874-1-colin.king@canonical.com
+Reported-by: syzbot+cd24df4d075c319ebfc5@syzkaller.appspotmail.com
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191015175522.18490-1-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/wlan-ng/cfg80211.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/usb/class/usblp.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/wlan-ng/cfg80211.c
-+++ b/drivers/staging/wlan-ng/cfg80211.c
-@@ -476,10 +476,8 @@ static int prism2_connect(struct wiphy *
- 	/* Set the encryption - we only support wep */
- 	if (is_wep) {
- 		if (sme->key) {
--			if (sme->key_idx >= NUM_WEPKEYS) {
--				err = -EINVAL;
--				goto exit;
--			}
-+			if (sme->key_idx >= NUM_WEPKEYS)
-+				return -EINVAL;
+--- a/drivers/usb/class/usblp.c
++++ b/drivers/usb/class/usblp.c
+@@ -458,6 +458,7 @@ static void usblp_cleanup(struct usblp *
+ 	kfree(usblp->readbuf);
+ 	kfree(usblp->device_id_string);
+ 	kfree(usblp->statusbuf);
++	usb_put_intf(usblp->intf);
+ 	kfree(usblp);
+ }
  
- 			result = prism2_domibset_uint32(wlandev,
- 				DIDmib_dot11smt_dot11PrivacyTable_dot11WEPDefaultKeyID,
+@@ -1120,7 +1121,7 @@ static int usblp_probe(struct usb_interf
+ 	init_waitqueue_head(&usblp->wwait);
+ 	init_usb_anchor(&usblp->urbs);
+ 	usblp->ifnum = intf->cur_altsetting->desc.bInterfaceNumber;
+-	usblp->intf = intf;
++	usblp->intf = usb_get_intf(intf);
+ 
+ 	/* Malloc device ID string buffer to the largest expected length,
+ 	 * since we can re-query it on an ioctl and a dynamic string
+@@ -1209,6 +1210,7 @@ abort:
+ 	kfree(usblp->readbuf);
+ 	kfree(usblp->statusbuf);
+ 	kfree(usblp->device_id_string);
++	usb_put_intf(usblp->intf);
+ 	kfree(usblp);
+ abort_ret:
+ 	return retval;
 
 
