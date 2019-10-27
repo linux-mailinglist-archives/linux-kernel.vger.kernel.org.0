@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DF07E6950
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:36:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 612EEE6952
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:36:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729294AbfJ0VHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:07:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53960 "EHLO mail.kernel.org"
+        id S1729320AbfJ0VIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:08:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729280AbfJ0VHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:07:53 -0400
+        id S1728456AbfJ0VIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:08:01 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8FB720873;
-        Sun, 27 Oct 2019 21:07:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC93620873;
+        Sun, 27 Oct 2019 21:07:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210471;
-        bh=eou04PjLENAoWI783C03L1MqFmKysnwxu0zSh56ekWQ=;
+        s=default; t=1572210480;
+        bh=Ac3FKcAqWgiejFUBgLqLaR+hkkhRMrcjAXj8UqIpnlE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eRvIaNj3DiSrbEtnetnvx+Ne82fmuybtIxlDn/QjmyRqNZm9w9otrLOUJGaDyO471
-         HPtT3Tla/XVJ7tDb9uq3nm5BPOleqD3OolTuJmeY+5dBiFQ3qf5xyblzKqJ51MhL6M
-         j8PkGX6rWaisavfCnxdTyl+wQ+sMWIoDaiTdVumY=
+        b=maVgB+4mFfavoMqTBhaK8rZWsUf78dVwkABWrspg0EG2ADXsBfL8kSZ8W8qHaRJXU
+         /21k+pXVTvtsDoygspboKHb2rOovJaT06cp2uOa12EEJydemrhUEUe4gDr2hzoffwh
+         kjvJC/stQsAHlySoxBfZwUIhvR9TpeVtoalHSj5Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Yunqiang Su <ysu@wavecomp.com>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 026/119] MIPS: Treat Loongson Extensions as ASEs
-Date:   Sun, 27 Oct 2019 22:00:03 +0100
-Message-Id: <20191027203307.946766238@linuxfoundation.org>
+Subject: [PATCH 4.14 029/119] memfd: Fix locking when tagging pins
+Date:   Sun, 27 Oct 2019 22:00:06 +0100
+Message-Id: <20191027203309.163284422@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
 References: <20191027203259.948006506@linuxfoundation.org>
@@ -46,113 +44,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+From: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-[ Upstream commit d2f965549006acb865c4638f1f030ebcefdc71f6 ]
+The RCU lock is insufficient to protect the radix tree iteration as
+a deletion from the tree can occur before we take the spinlock to
+tag the entry.  In 4.19, this has manifested as a bug with the following
+trace:
 
-Recently, binutils had split Loongson-3 Extensions into four ASEs:
-MMI, CAM, EXT, EXT2. This patch do the samething in kernel and expose
-them in cpuinfo so applications can probe supported ASEs at runtime.
+kernel BUG at lib/radix-tree.c:1429!
+invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 7 PID: 6935 Comm: syz-executor.2 Not tainted 4.19.36 #25
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+RIP: 0010:radix_tree_tag_set+0x200/0x2f0 lib/radix-tree.c:1429
+Code: 00 00 5b 5d 41 5c 41 5d 41 5e 41 5f c3 48 89 44 24 10 e8 a3 29 7e fe 48 8b 44 24 10 48 0f ab 03 e9 d2 fe ff ff e8 90 29 7e fe <0f> 0b 48 c7 c7 e0 5a 87 84 e8 f0 e7 08 ff 4c 89 ef e8 4a ff ac fe
+RSP: 0018:ffff88837b13fb60 EFLAGS: 00010016
+RAX: 0000000000040000 RBX: ffff8883c5515d58 RCX: ffffffff82cb2ef0
+RDX: 0000000000000b72 RSI: ffffc90004cf2000 RDI: ffff8883c5515d98
+RBP: ffff88837b13fb98 R08: ffffed106f627f7e R09: ffffed106f627f7e
+R10: 0000000000000001 R11: ffffed106f627f7d R12: 0000000000000004
+R13: ffffea000d7fea80 R14: 1ffff1106f627f6f R15: 0000000000000002
+FS:  00007fa1b8df2700(0000) GS:ffff8883e2fc0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa1b8df1db8 CR3: 000000037d4d2001 CR4: 0000000000160ee0
+Call Trace:
+ memfd_tag_pins mm/memfd.c:51 [inline]
+ memfd_wait_for_pins+0x2c5/0x12d0 mm/memfd.c:81
+ memfd_add_seals mm/memfd.c:215 [inline]
+ memfd_fcntl+0x33d/0x4a0 mm/memfd.c:247
+ do_fcntl+0x589/0xeb0 fs/fcntl.c:421
+ __do_sys_fcntl fs/fcntl.c:463 [inline]
+ __se_sys_fcntl fs/fcntl.c:448 [inline]
+ __x64_sys_fcntl+0x12d/0x180 fs/fcntl.c:448
+ do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:293
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Huacai Chen <chenhc@lemote.com>
-Cc: Yunqiang Su <ysu@wavecomp.com>
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
+The problem does not occur in mainline due to the XArray rewrite which
+changed the locking to exclude modification of the tree during iteration.
+At the time, nobody realised this was a bugfix.  Backport the locking
+changes to stable.
+
+Cc: stable@vger.kernel.org
+Reported-by: zhong jiang <zhongjiang@huawei.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/asm/cpu-features.h | 16 ++++++++++++++++
- arch/mips/include/asm/cpu.h          |  4 ++++
- arch/mips/kernel/cpu-probe.c         |  4 ++++
- arch/mips/kernel/proc.c              |  4 ++++
- 4 files changed, 28 insertions(+)
+ mm/shmem.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/arch/mips/include/asm/cpu-features.h b/arch/mips/include/asm/cpu-features.h
-index 721b698bfe3cf..1befd483d5a3b 100644
---- a/arch/mips/include/asm/cpu-features.h
-+++ b/arch/mips/include/asm/cpu-features.h
-@@ -348,6 +348,22 @@
- #define cpu_has_dsp3		(cpu_data[0].ases & MIPS_ASE_DSP3)
- #endif
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 037e2ee9ccacc..5b2cc9f9b1f1d 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2657,11 +2657,12 @@ static void shmem_tag_pins(struct address_space *mapping)
+ 	void **slot;
+ 	pgoff_t start;
+ 	struct page *page;
++	unsigned int tagged = 0;
  
-+#ifndef cpu_has_loongson_mmi
-+#define cpu_has_loongson_mmi		__ase(MIPS_ASE_LOONGSON_MMI)
-+#endif
-+
-+#ifndef cpu_has_loongson_cam
-+#define cpu_has_loongson_cam		__ase(MIPS_ASE_LOONGSON_CAM)
-+#endif
-+
-+#ifndef cpu_has_loongson_ext
-+#define cpu_has_loongson_ext		__ase(MIPS_ASE_LOONGSON_EXT)
-+#endif
-+
-+#ifndef cpu_has_loongson_ext2
-+#define cpu_has_loongson_ext2		__ase(MIPS_ASE_LOONGSON_EXT2)
-+#endif
-+
- #ifndef cpu_has_mipsmt
- #define cpu_has_mipsmt		(cpu_data[0].ases & MIPS_ASE_MIPSMT)
- #endif
-diff --git a/arch/mips/include/asm/cpu.h b/arch/mips/include/asm/cpu.h
-index d39324c4adf13..a6fdf13585916 100644
---- a/arch/mips/include/asm/cpu.h
-+++ b/arch/mips/include/asm/cpu.h
-@@ -433,5 +433,9 @@ enum cpu_type_enum {
- #define MIPS_ASE_MSA		0x00000100 /* MIPS SIMD Architecture */
- #define MIPS_ASE_DSP3		0x00000200 /* Signal Processing ASE Rev 3*/
- #define MIPS_ASE_MIPS16E2	0x00000400 /* MIPS16e2 */
-+#define MIPS_ASE_LOONGSON_MMI	0x00000800 /* Loongson MultiMedia extensions Instructions */
-+#define MIPS_ASE_LOONGSON_CAM	0x00001000 /* Loongson CAM */
-+#define MIPS_ASE_LOONGSON_EXT	0x00002000 /* Loongson EXTensions */
-+#define MIPS_ASE_LOONGSON_EXT2	0x00004000 /* Loongson EXTensions R2 */
+ 	lru_add_drain();
+ 	start = 0;
+-	rcu_read_lock();
  
- #endif /* _ASM_CPU_H */
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index cf3fd549e16d0..3007ae1bb616a 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -1478,6 +1478,7 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
- 			__cpu_name[cpu] = "ICT Loongson-3";
- 			set_elf_platform(cpu, "loongson3a");
- 			set_isa(c, MIPS_CPU_ISA_M64R1);
-+			c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_EXT);
- 			break;
- 		case PRID_REV_LOONGSON3B_R1:
- 		case PRID_REV_LOONGSON3B_R2:
-@@ -1485,6 +1486,7 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
- 			__cpu_name[cpu] = "ICT Loongson-3";
- 			set_elf_platform(cpu, "loongson3b");
- 			set_isa(c, MIPS_CPU_ISA_M64R1);
-+			c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_EXT);
- 			break;
++	spin_lock_irq(&mapping->tree_lock);
+ 	radix_tree_for_each_slot(slot, &mapping->page_tree, &iter, start) {
+ 		page = radix_tree_deref_slot(slot);
+ 		if (!page || radix_tree_exception(page)) {
+@@ -2670,18 +2671,19 @@ static void shmem_tag_pins(struct address_space *mapping)
+ 				continue;
+ 			}
+ 		} else if (page_count(page) - page_mapcount(page) > 1) {
+-			spin_lock_irq(&mapping->tree_lock);
+ 			radix_tree_tag_set(&mapping->page_tree, iter.index,
+ 					   SHMEM_TAG_PINNED);
+-			spin_unlock_irq(&mapping->tree_lock);
  		}
  
-@@ -1845,6 +1847,8 @@ static inline void cpu_probe_loongson(struct cpuinfo_mips *c, unsigned int cpu)
- 		decode_configs(c);
- 		c->options |= MIPS_CPU_FTLB | MIPS_CPU_TLBINV | MIPS_CPU_LDPTE;
- 		c->writecombine = _CACHE_UNCACHED_ACCELERATED;
-+		c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_CAM |
-+			MIPS_ASE_LOONGSON_EXT | MIPS_ASE_LOONGSON_EXT2);
- 		break;
- 	default:
- 		panic("Unknown Loongson Processor ID!");
-diff --git a/arch/mips/kernel/proc.c b/arch/mips/kernel/proc.c
-index b2de408a259e4..f8d36710cd581 100644
---- a/arch/mips/kernel/proc.c
-+++ b/arch/mips/kernel/proc.c
-@@ -124,6 +124,10 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 	if (cpu_has_eva)	seq_printf(m, "%s", " eva");
- 	if (cpu_has_htw)	seq_printf(m, "%s", " htw");
- 	if (cpu_has_xpa)	seq_printf(m, "%s", " xpa");
-+	if (cpu_has_loongson_mmi)	seq_printf(m, "%s", " loongson-mmi");
-+	if (cpu_has_loongson_cam)	seq_printf(m, "%s", " loongson-cam");
-+	if (cpu_has_loongson_ext)	seq_printf(m, "%s", " loongson-ext");
-+	if (cpu_has_loongson_ext2)	seq_printf(m, "%s", " loongson-ext2");
- 	seq_printf(m, "\n");
+-		if (need_resched()) {
+-			slot = radix_tree_iter_resume(slot, &iter);
+-			cond_resched_rcu();
+-		}
++		if (++tagged % 1024)
++			continue;
++
++		slot = radix_tree_iter_resume(slot, &iter);
++		spin_unlock_irq(&mapping->tree_lock);
++		cond_resched();
++		spin_lock_irq(&mapping->tree_lock);
+ 	}
+-	rcu_read_unlock();
++	spin_unlock_irq(&mapping->tree_lock);
+ }
  
- 	if (cpu_has_mmips) {
+ /*
 -- 
 2.20.1
 
