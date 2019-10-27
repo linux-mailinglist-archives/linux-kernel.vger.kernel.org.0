@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6B61E66D8
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:16:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 519A2E66D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:16:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730708AbfJ0VPt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:15:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35226 "EHLO mail.kernel.org"
+        id S1730720AbfJ0VPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:15:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730692AbfJ0VPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:15:46 -0400
+        id S1730707AbfJ0VPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:15:49 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60C4A205C9;
-        Sun, 27 Oct 2019 21:15:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F2A52070B;
+        Sun, 27 Oct 2019 21:15:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210946;
-        bh=l+06AWxAeKb0gTOn8VVy4toEMu+SKlfr9RViXwvIcXU=;
+        s=default; t=1572210948;
+        bh=8jmxZ2IQvza0hiJBvlidENn+RvnEXJ8eFPMGst97j9c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YEck0PmjYPMKyKkc2pTL3TELRkeEKR8w67Xs+5iAmRKjyEVBrZHgwkPxEDR+oKKNs
-         Myf5bGxMWf1VmvvhkGbuP0y6xZ/c04GatYtKkHm7wpQFqevYNhHNbTlSrxQQpqvO1T
-         oxDlagj9uKw+bD3quQUG/YE0LB9T8ZVDd3tygo+I=
+        b=hsI21zOHMf3Wc6VeF/5wHeesRgfgPyTV7Ycx4spIRVBBkIhRRgk6sI+ZHDtyaGvdy
+         /sR8jN8QBh62Wb7uicGqBgFv9GQvYgdfHHRtDsbA7PoJF8GOt8isfqICcNg2X8XCE+
+         Gqr2YahOTQ6WskkchPsQkogQ06r0FItvx9CYc7cU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 4.19 70/93] xtensa: drop EXPORT_SYMBOL for outs*/ins*
-Date:   Sun, 27 Oct 2019 22:01:22 +0100
-Message-Id: <20191027203308.882299914@linuxfoundation.org>
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
+        Sven Schnelle <svens@stackframe.org>
+Subject: [PATCH 4.19 71/93] parisc: Fix vmap memory leak in ioremap()/iounmap()
+Date:   Sun, 27 Oct 2019 22:01:23 +0100
+Message-Id: <20191027203309.163217642@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
 References: <20191027203251.029297948@linuxfoundation.org>
@@ -42,46 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Helge Deller <deller@gmx.de>
 
-commit 8b39da985194aac2998dd9e3a22d00b596cebf1e upstream.
+commit 513f7f747e1cba81f28a436911fba0b485878ebd upstream.
 
-Custom outs*/ins* implementations are long gone from the xtensa port,
-remove matching EXPORT_SYMBOLs.
-This fixes the following build warnings issued by modpost since commit
-15bfc2348d54 ("modpost: check for static EXPORT_SYMBOL* functions"):
+Sven noticed that calling ioremap() and iounmap() multiple times leads
+to a vmap memory leak:
+	vmap allocation for size 4198400 failed:
+	use vmalloc=<size> to increase size
 
-  WARNING: "insb" [vmlinux] is a static EXPORT_SYMBOL
-  WARNING: "insw" [vmlinux] is a static EXPORT_SYMBOL
-  WARNING: "insl" [vmlinux] is a static EXPORT_SYMBOL
-  WARNING: "outsb" [vmlinux] is a static EXPORT_SYMBOL
-  WARNING: "outsw" [vmlinux] is a static EXPORT_SYMBOL
-  WARNING: "outsl" [vmlinux] is a static EXPORT_SYMBOL
+It seems we missed calling vunmap() in iounmap().
 
-Cc: stable@vger.kernel.org
-Fixes: d38efc1f150f ("xtensa: adopt generic io routines")
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Signed-off-by: Helge Deller <deller@gmx.de>
+Noticed-by: Sven Schnelle <svens@stackframe.org>
+Cc: <stable@vger.kernel.org> # v3.16+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/xtensa/kernel/xtensa_ksyms.c |    7 -------
- 1 file changed, 7 deletions(-)
+ arch/parisc/mm/ioremap.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/arch/xtensa/kernel/xtensa_ksyms.c
-+++ b/arch/xtensa/kernel/xtensa_ksyms.c
-@@ -119,13 +119,6 @@ EXPORT_SYMBOL(__invalidate_icache_range)
- // FIXME EXPORT_SYMBOL(screen_info);
- #endif
+--- a/arch/parisc/mm/ioremap.c
++++ b/arch/parisc/mm/ioremap.c
+@@ -3,7 +3,7 @@
+  * arch/parisc/mm/ioremap.c
+  *
+  * (C) Copyright 1995 1996 Linus Torvalds
+- * (C) Copyright 2001-2006 Helge Deller <deller@gmx.de>
++ * (C) Copyright 2001-2019 Helge Deller <deller@gmx.de>
+  * (C) Copyright 2005 Kyle McMartin <kyle@parisc-linux.org>
+  */
  
--EXPORT_SYMBOL(outsb);
--EXPORT_SYMBOL(outsw);
--EXPORT_SYMBOL(outsl);
--EXPORT_SYMBOL(insb);
--EXPORT_SYMBOL(insw);
--EXPORT_SYMBOL(insl);
--
- extern long common_exception_return;
- EXPORT_SYMBOL(common_exception_return);
+@@ -84,7 +84,7 @@ void __iomem * __ioremap(unsigned long p
+ 	addr = (void __iomem *) area->addr;
+ 	if (ioremap_page_range((unsigned long)addr, (unsigned long)addr + size,
+ 			       phys_addr, pgprot)) {
+-		vfree(addr);
++		vunmap(addr);
+ 		return NULL;
+ 	}
  
+@@ -92,9 +92,11 @@ void __iomem * __ioremap(unsigned long p
+ }
+ EXPORT_SYMBOL(__ioremap);
+ 
+-void iounmap(const volatile void __iomem *addr)
++void iounmap(const volatile void __iomem *io_addr)
+ {
+-	if (addr > high_memory)
+-		return vfree((void *) (PAGE_MASK & (unsigned long __force) addr));
++	unsigned long addr = (unsigned long)io_addr & PAGE_MASK;
++
++	if (is_vmalloc_addr((void *)addr))
++		vunmap((void *)addr);
+ }
+ EXPORT_SYMBOL(iounmap);
 
 
