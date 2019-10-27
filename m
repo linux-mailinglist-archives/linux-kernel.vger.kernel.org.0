@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72D58E6586
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:03:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26787E67DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbfJ0VCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:02:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47970 "EHLO mail.kernel.org"
+        id S1732650AbfJ0VZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:25:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728143AbfJ0VCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:02:50 -0400
+        id S1732634AbfJ0VZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:25:01 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 082DC2064A;
-        Sun, 27 Oct 2019 21:02:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F29221848;
+        Sun, 27 Oct 2019 21:24:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210169;
-        bh=F/y2DUVem61aq9Sj3NEFmdgWmxXXdL/in4eekdM29Xk=;
+        s=default; t=1572211500;
+        bh=3v2CFzO8u+SwFTSx3GvJ7V2Rq8W5YnaxDv4MV1yXFjM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KiDzL22RS8zSzmK9T+R/tq2CWHhYCFs+jcOkSxdqG6eD4Jsy7a7m0HiYDVjxd0zQv
-         L+TVKO8sFtrtod3CmIFHJqfuXB/GePzSINLsOtIcqUUqd+Lqd/9dCctaUp44IxtT8X
-         /ahe0y7b/qUP6csv0WJahJrWk3tT6sTVkOWVraW8=
+        b=RFN7OwTOR+nPTbeHxx0iegMIZGOiGeeTqLXbJT0UdKTH+1aGKrjWjvwMUF8QHv8oC
+         ADknZ5a7f0pTmqEOZeBZ5Gj/xK7rpMybYJ1S5thHtcp83T+nOIZb5JQCNKKMFeBakT
+         5rSgFcYbrkhYZ8V6Ll4cjN4MFoEcEJ1H9CkdKP74=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+d44f7bbebdea49dbc84a@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 15/41] sctp: change sctp_prot .no_autobind with true
-Date:   Sun, 27 Oct 2019 22:00:53 +0100
-Message-Id: <20191027203113.091982468@linuxfoundation.org>
+        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.3 136/197] drivers/base/memory.c: dont access uninitialized memmaps in soft_offline_page_store()
+Date:   Sun, 27 Oct 2019 22:00:54 +0100
+Message-Id: <20191027203359.053510896@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,71 +47,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: David Hildenbrand <david@redhat.com>
 
-[ Upstream commit 63dfb7938b13fa2c2fbcb45f34d065769eb09414 ]
+commit 641fe2e9387a36f9ee01d7c69382d1fe147a5e98 upstream.
 
-syzbot reported a memory leak:
+Uninitialized memmaps contain garbage and in the worst case trigger kernel
+BUGs, especially with CONFIG_PAGE_POISONING.  They should not get touched.
 
-  BUG: memory leak, unreferenced object 0xffff888120b3d380 (size 64):
-  backtrace:
+Right now, when trying to soft-offline a PFN that resides on a memory
+block that was never onlined, one gets a misleading error with
+CONFIG_PAGE_POISONING:
 
-    [...] slab_alloc mm/slab.c:3319 [inline]
-    [...] kmem_cache_alloc+0x13f/0x2c0 mm/slab.c:3483
-    [...] sctp_bucket_create net/sctp/socket.c:8523 [inline]
-    [...] sctp_get_port_local+0x189/0x5a0 net/sctp/socket.c:8270
-    [...] sctp_do_bind+0xcc/0x200 net/sctp/socket.c:402
-    [...] sctp_bindx_add+0x4b/0xd0 net/sctp/socket.c:497
-    [...] sctp_setsockopt_bindx+0x156/0x1b0 net/sctp/socket.c:1022
-    [...] sctp_setsockopt net/sctp/socket.c:4641 [inline]
-    [...] sctp_setsockopt+0xaea/0x2dc0 net/sctp/socket.c:4611
-    [...] sock_common_setsockopt+0x38/0x50 net/core/sock.c:3147
-    [...] __sys_setsockopt+0x10f/0x220 net/socket.c:2084
-    [...] __do_sys_setsockopt net/socket.c:2100 [inline]
+  :/# echo 5637144576 > /sys/devices/system/memory/soft_offline_page
+  [   23.097167] soft offline: 0x150000 page already poisoned
 
-It was caused by when sending msgs without binding a port, in the path:
-inet_sendmsg() -> inet_send_prepare() -> inet_autobind() ->
-.get_port/sctp_get_port(), sp->bind_hash will be set while bp->port is
-not. Later when binding another port by sctp_setsockopt_bindx(), a new
-bucket will be created as bp->port is not set.
+But the actual result depends on the garbage in the memmap.
 
-sctp's autobind is supposed to call sctp_autobind() where it does all
-things including setting bp->port. Since sctp_autobind() is called in
-sctp_sendmsg() if the sk is not yet bound, it should have skipped the
-auto bind.
+soft_offline_page() can only work with online pages, it returns -EIO in
+case of ZONE_DEVICE.  Make sure to only forward pages that are online
+(iow, managed by the buddy) and, therefore, have an initialized memmap.
 
-THis patch is to avoid calling inet_autobind() in inet_send_prepare()
-by changing sctp_prot .no_autobind with true, also remove the unused
-.get_port.
+Add a check against pfn_to_online_page() and similarly return -EIO.
 
-Reported-by: syzbot+d44f7bbebdea49dbc84a@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/20191010141200.8985-1-david@redhat.com
+Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")	[visible after d0dc12e86b319]
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: <stable@vger.kernel.org>	[4.13+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sctp/socket.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -7443,7 +7443,7 @@ struct proto sctp_prot = {
- 	.backlog_rcv =	sctp_backlog_rcv,
- 	.hash        =	sctp_hash,
- 	.unhash      =	sctp_unhash,
--	.get_port    =	sctp_get_port,
-+	.no_autobind =	true,
- 	.obj_size    =  sizeof(struct sctp_sock),
- 	.sysctl_mem  =  sysctl_sctp_mem,
- 	.sysctl_rmem =  sysctl_sctp_rmem,
-@@ -7482,7 +7482,7 @@ struct proto sctpv6_prot = {
- 	.backlog_rcv	= sctp_backlog_rcv,
- 	.hash		= sctp_hash,
- 	.unhash		= sctp_unhash,
--	.get_port	= sctp_get_port,
-+	.no_autobind	= true,
- 	.obj_size	= sizeof(struct sctp6_sock),
- 	.sysctl_mem	= sysctl_sctp_mem,
- 	.sysctl_rmem	= sysctl_sctp_rmem,
+---
+ drivers/base/memory.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -554,6 +554,9 @@ static ssize_t soft_offline_page_store(s
+ 	pfn >>= PAGE_SHIFT;
+ 	if (!pfn_valid(pfn))
+ 		return -ENXIO;
++	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
++	if (!pfn_to_online_page(pfn))
++		return -EIO;
+ 	ret = soft_offline_page(pfn_to_page(pfn), 0);
+ 	return ret == 0 ? count : ret;
+ }
 
 
