@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0554E66C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC8FE665E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:11:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730612AbfJ0VPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:15:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34348 "EHLO mail.kernel.org"
+        id S1729853AbfJ0VLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:11:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729353AbfJ0VPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:15:10 -0400
+        id S1729835AbfJ0VLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:11:09 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E633B214E0;
-        Sun, 27 Oct 2019 21:15:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE76F214AF;
+        Sun, 27 Oct 2019 21:11:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210909;
-        bh=kzLgkatN03oAoSCm0PyuozQvym8DkEP2IAbCKiizFyw=;
+        s=default; t=1572210668;
+        bh=69DDgvLNjQaegHdlogZNII2BcNevXnAIUPumxsH1M+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mzIGOp/p/zPrG/IGMs3h7CYa7/exZalyXxQdW54YQnX1vcxFyskWcu6ypm+dAjHKQ
-         8xWBMMnWwYWfA7ph9r8klfTRWCpyQd6vptYJ8TB+VKAA7USCG5hWQGZgTG5ejQ15Ty
-         ckq7dLrEVBSE2IRgon0O0vhqB1Vn1643O9uGJUKg=
+        b=aZ5I6sFuNsJMovYhjRkEs0GubVV0eYn5YpiYznskEmVM3hU2u4W0vwE0MGf2BU1zL
+         JmSnivdVxNwemAx7+nzdFeJL+ZwdcxaMLxeMgdUEcXsXmAPremJeaMBVBAESUd2HdU
+         +jQut8FNy4CQn/7eGnlz2iPuSmjEmJp1BUu+GYwQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Nicolas Waisman <nico@semmle.com>,
-        Will Deacon <will@kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.19 58/93] mac80211: Reject malformed SSID elements
+        stable@vger.kernel.org,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Timo Wischer <twischer@de.adit-jv.com>,
+        Junya Monden <jmonden@jp.adit-jv.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.14 093/119] ASoC: rsnd: Reinitialize bit clock inversion flag for every format setting
 Date:   Sun, 27 Oct 2019 22:01:10 +0100
-Message-Id: <20191027203303.292196375@linuxfoundation.org>
+Message-Id: <20191027203348.526362178@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +49,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will@kernel.org>
+From: Junya Monden <jmonden@jp.adit-jv.com>
 
-commit 4152561f5da3fca92af7179dd538ea89e248f9d0 upstream.
+commit 22e58665a01006d05f0239621f7d41cacca96cc4 upstream.
 
-Although this shouldn't occur in practice, it's a good idea to bounds
-check the length field of the SSID element prior to using it for things
-like allocations or memcpy operations.
+Unlike other format-related DAI parameters, rdai->bit_clk_inv flag
+is not properly re-initialized when setting format for new stream
+processing. The inversion, if requested, is then applied not to default,
+but to a previous value, which leads to SCKP bit in SSICR register being
+set incorrectly.
+Fix this by re-setting the flag to its initial value, determined by format.
 
-Cc: <stable@vger.kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Reported-by: Nicolas Waisman <nico@semmle.com>
-Signed-off-by: Will Deacon <will@kernel.org>
-Link: https://lore.kernel.org/r/20191004095132.15777-1-will@kernel.org
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: 1a7889ca8aba3 ("ASoC: rsnd: fixup SND_SOC_DAIFMT_xB_xF behavior")
+Cc: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Cc: Jiada Wang <jiada_wang@mentor.com>
+Cc: Timo Wischer <twischer@de.adit-jv.com>
+Cc: stable@vger.kernel.org # v3.17+
+Signed-off-by: Junya Monden <jmonden@jp.adit-jv.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Link: https://lore.kernel.org/r/20191016124255.7442-1-erosca@de.adit-jv.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/mlme.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ sound/soc/sh/rcar/core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -2554,7 +2554,8 @@ struct sk_buff *ieee80211_ap_probereq_ge
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -676,6 +676,7 @@ static int rsnd_soc_dai_set_fmt(struct s
+ 	}
  
- 	rcu_read_lock();
- 	ssid = ieee80211_bss_get_ie(cbss, WLAN_EID_SSID);
--	if (WARN_ON_ONCE(ssid == NULL))
-+	if (WARN_ONCE(!ssid || ssid[1] > IEEE80211_MAX_SSID_LEN,
-+		      "invalid SSID element (len=%d)", ssid ? ssid[1] : -1))
- 		ssid_len = 0;
- 	else
- 		ssid_len = ssid[1];
-@@ -5039,7 +5040,7 @@ int ieee80211_mgd_assoc(struct ieee80211
- 
- 	rcu_read_lock();
- 	ssidie = ieee80211_bss_get_ie(req->bss, WLAN_EID_SSID);
--	if (!ssidie) {
-+	if (!ssidie || ssidie[1] > sizeof(assoc_data->ssid)) {
- 		rcu_read_unlock();
- 		kfree(assoc_data);
- 		return -EINVAL;
+ 	/* set format */
++	rdai->bit_clk_inv = 0;
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_I2S:
+ 		rdai->sys_delay = 0;
 
 
