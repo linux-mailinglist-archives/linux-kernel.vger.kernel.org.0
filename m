@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CD74E67C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:24:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19AB8E66D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:16:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732489AbfJ0VYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:24:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45852 "EHLO mail.kernel.org"
+        id S1730658AbfJ0VPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:15:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730777AbfJ0VYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:24:17 -0400
+        id S1729470AbfJ0VP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:15:27 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1931521726;
-        Sun, 27 Oct 2019 21:24:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45B2D208C0;
+        Sun, 27 Oct 2019 21:15:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211456;
-        bh=t69A56lr0lOMmewix5iSiPHCFZCowdC0rRu0+B5hnBw=;
+        s=default; t=1572210926;
+        bh=ghYDmO0EhElmhKIB+3vLcdmH7zUkupfl6sJzekQaNOw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AJux7bHx8bwNBX+spHP+RVrVwwr2QdOFbhszpB1oe6EW2zZ5f30IGwRuNF7xfFa+8
-         63OlEWNSwIMqoHwCczXfVs/hwdJG7xXLNWzynJ2gOwevIVOclH1pt0aos3C4MBoIkr
-         6pju2HGzM+R/p7dqDDmW8vJ+lelaReqRn9A1hLvQ=
+        b=AseoX2W2hTk0jfbIgEEAykq7O2tYKGvsbsJTR1NR3AbRFMpyg+jIIJyIev9RmW6nF
+         qqT2y7aeEBX0hrkOsxdiGtORQLxFGbSwaOSGy4T4kJbkxVlSS1SF+WCdioowALAFZE
+         9l/JzzANkj6ueXrqMXzvUKKGojQ5QVVPzBwyGY2I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Johan Hovold <johan@kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 5.3 158/197] s390/zcrypt: fix memleak at release
+        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.19 64/93] mmc: cqhci: Commit descriptors before setting the doorbell
 Date:   Sun, 27 Oct 2019 22:01:16 +0100
-Message-Id: <20191027203400.212151946@linuxfoundation.org>
+Message-Id: <20191027203306.631189236@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,37 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Faiz Abbas <faiz_abbas@ti.com>
 
-commit 388bb19be8eab4674a660e0c97eaf60775362bc7 upstream.
+commit c07d0073b9ec80a139d07ebf78e9c30d2a28279e upstream.
 
-If a process is interrupted while accessing the crypto device and the
-global ap_perms_mutex is contented, release() could return early and
-fail to free related resources.
+Add a write memory barrier to make sure that descriptors are actually
+written to memory, before ringing the doorbell.
 
-Fixes: 00fab2350e6b ("s390/zcrypt: multiple zcrypt device nodes support")
-Cc: <stable@vger.kernel.org> # 4.19
-Cc: Harald Freudenberger <freude@linux.ibm.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/crypto/zcrypt_api.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/mmc/host/cqhci.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/s390/crypto/zcrypt_api.c
-+++ b/drivers/s390/crypto/zcrypt_api.c
-@@ -539,8 +539,7 @@ static int zcrypt_release(struct inode *
- 	if (filp->f_inode->i_cdev == &zcrypt_cdev) {
- 		struct zcdn_device *zcdndev;
+--- a/drivers/mmc/host/cqhci.c
++++ b/drivers/mmc/host/cqhci.c
+@@ -617,7 +617,8 @@ static int cqhci_request(struct mmc_host
+ 	cq_host->slot[tag].flags = 0;
  
--		if (mutex_lock_interruptible(&ap_perms_mutex))
--			return -ERESTARTSYS;
-+		mutex_lock(&ap_perms_mutex);
- 		zcdndev = find_zcdndev_by_devt(filp->f_inode->i_rdev);
- 		mutex_unlock(&ap_perms_mutex);
- 		if (zcdndev) {
+ 	cq_host->qcnt += 1;
+-
++	/* Make sure descriptors are ready before ringing the doorbell */
++	wmb();
+ 	cqhci_writel(cq_host, 1 << tag, CQHCI_TDBR);
+ 	if (!(cqhci_readl(cq_host, CQHCI_TDBR) & (1 << tag)))
+ 		pr_debug("%s: cqhci: doorbell not set for tag %d\n",
 
 
