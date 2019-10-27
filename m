@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6021DE668A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:13:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7151E6855
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:28:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730133AbfJ0VMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:12:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59838 "EHLO mail.kernel.org"
+        id S1732021AbfJ0VVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:21:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730118AbfJ0VMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:12:52 -0400
+        id S1732003AbfJ0VVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:21:51 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94575205C9;
-        Sun, 27 Oct 2019 21:12:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5CF4205C9;
+        Sun, 27 Oct 2019 21:21:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210772;
-        bh=2n/nNyHcFnf0Q7AXrJvx/JNNbVdkeXFi6BIcuQdJvrQ=;
+        s=default; t=1572211309;
+        bh=ZsDH3NgIiIv8WoNggeN0CAZhb5agtvBUOhbYhrM+c1E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TPmPbzIeOhlvgk4uqNsJTvyqcTf/i8UpAn9I70ijpfs9G+3ffiXGXOxdbINTteKoJ
-         OSjeP92wQ7V8uB1POKgYr9V9aWsF2xXcPzuEif0srcEVcXbLSPv1/63ciQVJs9eX2C
-         3vvUdflNCm+UGxpYJV0dvxpMbhUxkULZJSDeMrn8=
+        b=zQQw8YS+gWtCevP7F/nMAxmweZB3VENKiJIcuwPvV5XGwHyajPvVKA26PQqHcMHNC
+         dr7tRrrNzIHEalXHaisOTysASE+aiuYJlxcwObVLJn+0r7F+fqX+kj8pZwka1L8YwO
+         RSkM0OdYW6yTnk9XeRyuqTu/9FmSUZ0pCrUJaXQM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miaoqing Pan <miaoqing@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 12/93] nl80211: fix null pointer dereference
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Todd Kjos <tkjos@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 5.3 106/197] binder: Dont modify VMA bounds in ->mmap handler
 Date:   Sun, 27 Oct 2019 22:00:24 +0100
-Message-Id: <20191027203254.422065221@linuxfoundation.org>
+Message-Id: <20191027203357.480111405@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +44,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaoqing Pan <miaoqing@codeaurora.org>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit b501426cf86e70649c983c52f4c823b3c40d72a3 ]
+commit 45d02f79b539073b76077836871de6b674e36eb4 upstream.
 
-If the interface is not in MESH mode, the command 'iw wlanx mpath del'
-will cause kernel panic.
+binder_mmap() tries to prevent the creation of overly big binder mappings
+by silently truncating the size of the VMA to 4MiB. However, this violates
+the API contract of mmap(). If userspace attempts to create a large binder
+VMA, and later attempts to unmap that VMA, it will call munmap() on a range
+beyond the end of the VMA, which may have been allocated to another VMA in
+the meantime. This can lead to userspace memory corruption.
 
-The root cause is null pointer access in mpp_flush_by_proxy(), as the
-pointer 'sdata->u.mesh.mpp_paths' is NULL for non MESH interface.
+The following sequence of calls leads to a segfault without this commit:
 
-Unable to handle kernel NULL pointer dereference at virtual address 00000068
-[...]
-PC is at _raw_spin_lock_bh+0x20/0x5c
-LR is at mesh_path_del+0x1c/0x17c [mac80211]
-[...]
-Process iw (pid: 4537, stack limit = 0xd83e0238)
-[...]
-[<c021211c>] (_raw_spin_lock_bh) from [<bf8c7648>] (mesh_path_del+0x1c/0x17c [mac80211])
-[<bf8c7648>] (mesh_path_del [mac80211]) from [<bf6cdb7c>] (extack_doit+0x20/0x68 [compat])
-[<bf6cdb7c>] (extack_doit [compat]) from [<c05c309c>] (genl_rcv_msg+0x274/0x30c)
-[<c05c309c>] (genl_rcv_msg) from [<c05c25d8>] (netlink_rcv_skb+0x58/0xac)
-[<c05c25d8>] (netlink_rcv_skb) from [<c05c2e14>] (genl_rcv+0x20/0x34)
-[<c05c2e14>] (genl_rcv) from [<c05c1f90>] (netlink_unicast+0x11c/0x204)
-[<c05c1f90>] (netlink_unicast) from [<c05c2420>] (netlink_sendmsg+0x30c/0x370)
-[<c05c2420>] (netlink_sendmsg) from [<c05886d0>] (sock_sendmsg+0x70/0x84)
-[<c05886d0>] (sock_sendmsg) from [<c0589f4c>] (___sys_sendmsg.part.3+0x188/0x228)
-[<c0589f4c>] (___sys_sendmsg.part.3) from [<c058add4>] (__sys_sendmsg+0x4c/0x70)
-[<c058add4>] (__sys_sendmsg) from [<c0208c80>] (ret_fast_syscall+0x0/0x44)
-Code: e2822c02 e2822001 e5832004 f590f000 (e1902f9f)
----[ end trace bbd717600f8f884d ]---
+int main(void) {
+  int binder_fd = open("/dev/binder", O_RDWR);
+  if (binder_fd == -1) err(1, "open binder");
+  void *binder_mapping = mmap(NULL, 0x800000UL, PROT_READ, MAP_SHARED,
+                              binder_fd, 0);
+  if (binder_mapping == MAP_FAILED) err(1, "mmap binder");
+  void *data_mapping = mmap(NULL, 0x400000UL, PROT_READ|PROT_WRITE,
+                            MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+  if (data_mapping == MAP_FAILED) err(1, "mmap data");
+  munmap(binder_mapping, 0x800000UL);
+  *(char*)data_mapping = 1;
+  return 0;
+}
 
-Signed-off-by: Miaoqing Pan <miaoqing@codeaurora.org>
-Link: https://lore.kernel.org/r/1569485810-761-1-git-send-email-miaoqing@codeaurora.org
-[trim useless data from commit message]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Todd Kjos <tkjos@google.com>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Link: https://lore.kernel.org/r/20191016150119.154756-1-jannh@google.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/wireless/nl80211.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/android/binder.c       |    7 -------
+ drivers/android/binder_alloc.c |    6 ++++--
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index 334e3181f1c52..a28d6456e93e2 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -5843,6 +5843,9 @@ static int nl80211_del_mpath(struct sk_buff *skb, struct genl_info *info)
- 	if (!rdev->ops->del_mpath)
- 		return -EOPNOTSUPP;
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -95,10 +95,6 @@ DEFINE_SHOW_ATTRIBUTE(proc);
+ #define SZ_1K                               0x400
+ #endif
  
-+	if (dev->ieee80211_ptr->iftype != NL80211_IFTYPE_MESH_POINT)
-+		return -EOPNOTSUPP;
-+
- 	return rdev_del_mpath(rdev, dev, dst);
- }
+-#ifndef SZ_4M
+-#define SZ_4M                               0x400000
+-#endif
+-
+ #define FORBIDDEN_MMAP_FLAGS                (VM_WRITE)
  
--- 
-2.20.1
-
+ enum {
+@@ -5195,9 +5191,6 @@ static int binder_mmap(struct file *filp
+ 	if (proc->tsk != current->group_leader)
+ 		return -EINVAL;
+ 
+-	if ((vma->vm_end - vma->vm_start) > SZ_4M)
+-		vma->vm_end = vma->vm_start + SZ_4M;
+-
+ 	binder_debug(BINDER_DEBUG_OPEN_CLOSE,
+ 		     "%s: %d %lx-%lx (%ld K) vma %lx pagep %lx\n",
+ 		     __func__, proc->pid, vma->vm_start, vma->vm_end,
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -22,6 +22,7 @@
+ #include <asm/cacheflush.h>
+ #include <linux/uaccess.h>
+ #include <linux/highmem.h>
++#include <linux/sizes.h>
+ #include "binder_alloc.h"
+ #include "binder_trace.h"
+ 
+@@ -689,7 +690,9 @@ int binder_alloc_mmap_handler(struct bin
+ 	alloc->buffer = (void __user *)vma->vm_start;
+ 	mutex_unlock(&binder_alloc_mmap_lock);
+ 
+-	alloc->pages = kcalloc((vma->vm_end - vma->vm_start) / PAGE_SIZE,
++	alloc->buffer_size = min_t(unsigned long, vma->vm_end - vma->vm_start,
++				   SZ_4M);
++	alloc->pages = kcalloc(alloc->buffer_size / PAGE_SIZE,
+ 			       sizeof(alloc->pages[0]),
+ 			       GFP_KERNEL);
+ 	if (alloc->pages == NULL) {
+@@ -697,7 +700,6 @@ int binder_alloc_mmap_handler(struct bin
+ 		failure_string = "alloc page array";
+ 		goto err_alloc_pages_failed;
+ 	}
+-	alloc->buffer_size = vma->vm_end - vma->vm_start;
+ 
+ 	buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
+ 	if (!buffer) {
 
 
