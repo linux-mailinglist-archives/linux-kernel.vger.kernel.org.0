@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F20E7E6874
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DF07E6950
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:36:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731821AbfJ0VVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:21:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41588 "EHLO mail.kernel.org"
+        id S1729294AbfJ0VHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:07:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731806AbfJ0VUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:20:55 -0400
+        id S1729280AbfJ0VHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:07:53 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B88C2070B;
-        Sun, 27 Oct 2019 21:20:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8FB720873;
+        Sun, 27 Oct 2019 21:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211254;
-        bh=PoIO/1DhDvLFSiduFsiNLvyY8C1ess2wQO00EFowzMk=;
+        s=default; t=1572210471;
+        bh=eou04PjLENAoWI783C03L1MqFmKysnwxu0zSh56ekWQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SpLR7r+3nw7ePkN+RPRJJ33ohna6e76QiCjLrCCMtQfOdrm75JfDXhoflFYB/GCF6
-         CKQvYPi8Ioj3PoXjFsbGk0RkQ2wZG9Yzl40EIL0Wdi0oC++GToVXTXdIvyY2gUVZ4M
-         nYdnovPhdAEcYzTBSkcOy2HiJ2uQsTDW9fPovFQw=
+        b=eRvIaNj3DiSrbEtnetnvx+Ne82fmuybtIxlDn/QjmyRqNZm9w9otrLOUJGaDyO471
+         HPtT3Tla/XVJ7tDb9uq3nm5BPOleqD3OolTuJmeY+5dBiFQ3qf5xyblzKqJ51MhL6M
+         j8PkGX6rWaisavfCnxdTyl+wQ+sMWIoDaiTdVumY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
-        Igor Russkikh <igor.russkikh@aquantia.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 084/197] net: aquantia: correctly handle macvlan and multicast coexistence
-Date:   Sun, 27 Oct 2019 22:00:02 +0100
-Message-Id: <20191027203356.250906373@linuxfoundation.org>
+        stable@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        Yunqiang Su <ysu@wavecomp.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 026/119] MIPS: Treat Loongson Extensions as ASEs
+Date:   Sun, 27 Oct 2019 22:00:03 +0100
+Message-Id: <20191027203307.946766238@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,119 +46,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-[ Upstream commit 9f051db566da1e8110659ab4ab188af1c2510bb4 ]
+[ Upstream commit d2f965549006acb865c4638f1f030ebcefdc71f6 ]
 
-macvlan and multicast handling is now mixed up.
-The explicit issue is that macvlan interface gets broken (no traffic)
-after clearing MULTICAST flag on the real interface.
+Recently, binutils had split Loongson-3 Extensions into four ASEs:
+MMI, CAM, EXT, EXT2. This patch do the samething in kernel and expose
+them in cpuinfo so applications can probe supported ASEs at runtime.
 
-We now do separate logic and consider both ALLMULTI and MULTICAST
-flags on the device.
-
-Fixes: 11ba961c9161 ("net: aquantia: Fix IFF_ALLMULTI flag functionality")
-Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
-Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: Yunqiang Su <ysu@wavecomp.com>
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/aquantia/atlantic/aq_main.c          |    4 -
- drivers/net/ethernet/aquantia/atlantic/aq_nic.c           |   32 +++++++-------
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c |    7 +--
- 3 files changed, 21 insertions(+), 22 deletions(-)
+ arch/mips/include/asm/cpu-features.h | 16 ++++++++++++++++
+ arch/mips/include/asm/cpu.h          |  4 ++++
+ arch/mips/kernel/cpu-probe.c         |  4 ++++
+ arch/mips/kernel/proc.c              |  4 ++++
+ 4 files changed, 28 insertions(+)
 
---- a/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-@@ -194,9 +194,7 @@ static void aq_ndev_set_multicast_settin
- {
- 	struct aq_nic_s *aq_nic = netdev_priv(ndev);
+diff --git a/arch/mips/include/asm/cpu-features.h b/arch/mips/include/asm/cpu-features.h
+index 721b698bfe3cf..1befd483d5a3b 100644
+--- a/arch/mips/include/asm/cpu-features.h
++++ b/arch/mips/include/asm/cpu-features.h
+@@ -348,6 +348,22 @@
+ #define cpu_has_dsp3		(cpu_data[0].ases & MIPS_ASE_DSP3)
+ #endif
  
--	aq_nic_set_packet_filter(aq_nic, ndev->flags);
--
--	aq_nic_set_multicast_list(aq_nic, ndev);
-+	(void)aq_nic_set_multicast_list(aq_nic, ndev);
- }
++#ifndef cpu_has_loongson_mmi
++#define cpu_has_loongson_mmi		__ase(MIPS_ASE_LOONGSON_MMI)
++#endif
++
++#ifndef cpu_has_loongson_cam
++#define cpu_has_loongson_cam		__ase(MIPS_ASE_LOONGSON_CAM)
++#endif
++
++#ifndef cpu_has_loongson_ext
++#define cpu_has_loongson_ext		__ase(MIPS_ASE_LOONGSON_EXT)
++#endif
++
++#ifndef cpu_has_loongson_ext2
++#define cpu_has_loongson_ext2		__ase(MIPS_ASE_LOONGSON_EXT2)
++#endif
++
+ #ifndef cpu_has_mipsmt
+ #define cpu_has_mipsmt		(cpu_data[0].ases & MIPS_ASE_MIPSMT)
+ #endif
+diff --git a/arch/mips/include/asm/cpu.h b/arch/mips/include/asm/cpu.h
+index d39324c4adf13..a6fdf13585916 100644
+--- a/arch/mips/include/asm/cpu.h
++++ b/arch/mips/include/asm/cpu.h
+@@ -433,5 +433,9 @@ enum cpu_type_enum {
+ #define MIPS_ASE_MSA		0x00000100 /* MIPS SIMD Architecture */
+ #define MIPS_ASE_DSP3		0x00000200 /* Signal Processing ASE Rev 3*/
+ #define MIPS_ASE_MIPS16E2	0x00000400 /* MIPS16e2 */
++#define MIPS_ASE_LOONGSON_MMI	0x00000800 /* Loongson MultiMedia extensions Instructions */
++#define MIPS_ASE_LOONGSON_CAM	0x00001000 /* Loongson CAM */
++#define MIPS_ASE_LOONGSON_EXT	0x00002000 /* Loongson EXTensions */
++#define MIPS_ASE_LOONGSON_EXT2	0x00004000 /* Loongson EXTensions R2 */
  
- static int aq_ndo_vlan_rx_add_vid(struct net_device *ndev, __be16 proto,
---- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-@@ -631,9 +631,12 @@ err_exit:
- 
- int aq_nic_set_multicast_list(struct aq_nic_s *self, struct net_device *ndev)
- {
--	unsigned int packet_filter = self->packet_filter;
-+	const struct aq_hw_ops *hw_ops = self->aq_hw_ops;
-+	struct aq_nic_cfg_s *cfg = &self->aq_nic_cfg;
-+	unsigned int packet_filter = ndev->flags;
- 	struct netdev_hw_addr *ha = NULL;
- 	unsigned int i = 0U;
-+	int err = 0;
- 
- 	self->mc_list.count = 0;
- 	if (netdev_uc_count(ndev) > AQ_HW_MULTICAST_ADDRESS_MAX) {
-@@ -641,29 +644,26 @@ int aq_nic_set_multicast_list(struct aq_
- 	} else {
- 		netdev_for_each_uc_addr(ha, ndev) {
- 			ether_addr_copy(self->mc_list.ar[i++], ha->addr);
--
--			if (i >= AQ_HW_MULTICAST_ADDRESS_MAX)
--				break;
+ #endif /* _ASM_CPU_H */
+diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
+index cf3fd549e16d0..3007ae1bb616a 100644
+--- a/arch/mips/kernel/cpu-probe.c
++++ b/arch/mips/kernel/cpu-probe.c
+@@ -1478,6 +1478,7 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
+ 			__cpu_name[cpu] = "ICT Loongson-3";
+ 			set_elf_platform(cpu, "loongson3a");
+ 			set_isa(c, MIPS_CPU_ISA_M64R1);
++			c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_EXT);
+ 			break;
+ 		case PRID_REV_LOONGSON3B_R1:
+ 		case PRID_REV_LOONGSON3B_R2:
+@@ -1485,6 +1486,7 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
+ 			__cpu_name[cpu] = "ICT Loongson-3";
+ 			set_elf_platform(cpu, "loongson3b");
+ 			set_isa(c, MIPS_CPU_ISA_M64R1);
++			c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_EXT);
+ 			break;
  		}
- 	}
  
--	if (i + netdev_mc_count(ndev) > AQ_HW_MULTICAST_ADDRESS_MAX) {
--		packet_filter |= IFF_ALLMULTI;
--	} else {
--		netdev_for_each_mc_addr(ha, ndev) {
--			ether_addr_copy(self->mc_list.ar[i++], ha->addr);
--
--			if (i >= AQ_HW_MULTICAST_ADDRESS_MAX)
--				break;
-+	cfg->is_mc_list_enabled = !!(packet_filter & IFF_MULTICAST);
-+	if (cfg->is_mc_list_enabled) {
-+		if (i + netdev_mc_count(ndev) > AQ_HW_MULTICAST_ADDRESS_MAX) {
-+			packet_filter |= IFF_ALLMULTI;
-+		} else {
-+			netdev_for_each_mc_addr(ha, ndev) {
-+				ether_addr_copy(self->mc_list.ar[i++],
-+						ha->addr);
-+			}
- 		}
- 	}
+@@ -1845,6 +1847,8 @@ static inline void cpu_probe_loongson(struct cpuinfo_mips *c, unsigned int cpu)
+ 		decode_configs(c);
+ 		c->options |= MIPS_CPU_FTLB | MIPS_CPU_TLBINV | MIPS_CPU_LDPTE;
+ 		c->writecombine = _CACHE_UNCACHED_ACCELERATED;
++		c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_CAM |
++			MIPS_ASE_LOONGSON_EXT | MIPS_ASE_LOONGSON_EXT2);
+ 		break;
+ 	default:
+ 		panic("Unknown Loongson Processor ID!");
+diff --git a/arch/mips/kernel/proc.c b/arch/mips/kernel/proc.c
+index b2de408a259e4..f8d36710cd581 100644
+--- a/arch/mips/kernel/proc.c
++++ b/arch/mips/kernel/proc.c
+@@ -124,6 +124,10 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 	if (cpu_has_eva)	seq_printf(m, "%s", " eva");
+ 	if (cpu_has_htw)	seq_printf(m, "%s", " htw");
+ 	if (cpu_has_xpa)	seq_printf(m, "%s", " xpa");
++	if (cpu_has_loongson_mmi)	seq_printf(m, "%s", " loongson-mmi");
++	if (cpu_has_loongson_cam)	seq_printf(m, "%s", " loongson-cam");
++	if (cpu_has_loongson_ext)	seq_printf(m, "%s", " loongson-ext");
++	if (cpu_has_loongson_ext2)	seq_printf(m, "%s", " loongson-ext2");
+ 	seq_printf(m, "\n");
  
- 	if (i > 0 && i <= AQ_HW_MULTICAST_ADDRESS_MAX) {
--		packet_filter |= IFF_MULTICAST;
- 		self->mc_list.count = i;
--		self->aq_hw_ops->hw_multicast_list_set(self->aq_hw,
--						       self->mc_list.ar,
--						       self->mc_list.count);
-+		err = hw_ops->hw_multicast_list_set(self->aq_hw,
-+						    self->mc_list.ar,
-+						    self->mc_list.count);
- 	}
- 	return aq_nic_set_packet_filter(self, packet_filter);
- }
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-@@ -818,14 +818,15 @@ static int hw_atl_b0_hw_packet_filter_se
- 				     cfg->is_vlan_force_promisc);
- 
- 	hw_atl_rpfl2multicast_flr_en_set(self,
--					 IS_FILTER_ENABLED(IFF_ALLMULTI), 0);
-+					 IS_FILTER_ENABLED(IFF_ALLMULTI) &&
-+					 IS_FILTER_ENABLED(IFF_MULTICAST), 0);
- 
- 	hw_atl_rpfl2_accept_all_mc_packets_set(self,
--					       IS_FILTER_ENABLED(IFF_ALLMULTI));
-+					      IS_FILTER_ENABLED(IFF_ALLMULTI) &&
-+					      IS_FILTER_ENABLED(IFF_MULTICAST));
- 
- 	hw_atl_rpfl2broadcast_en_set(self, IS_FILTER_ENABLED(IFF_BROADCAST));
- 
--	cfg->is_mc_list_enabled = IS_FILTER_ENABLED(IFF_MULTICAST);
- 
- 	for (i = HW_ATL_B0_MAC_MIN; i < HW_ATL_B0_MAC_MAX; ++i)
- 		hw_atl_rpfl2_uc_flr_en_set(self,
+ 	if (cpu_has_mmips) {
+-- 
+2.20.1
+
 
 
