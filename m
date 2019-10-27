@@ -2,100 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAAA1E6538
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 21:06:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F9BE6546
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 21:08:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbfJ0UFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 16:05:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727235AbfJ0UFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 16:05:51 -0400
-Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B71E2070B;
-        Sun, 27 Oct 2019 20:05:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572206750;
-        bh=CUyR3fuoRdKrJf9nZf1t8S4z237j7l+D00ncfqIoSsU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=agxvakRkTOgijn/qKghHaoBmSxLV42tfG+3mDaEYBQaWHZAkmKod8SYfXy4MpEWo6
-         Dprkv23dHk6aJ3UmcpP4M8lhhTvS7xXEaYUcPvmJap/tZyHGkHa2Inqt5Kicypqv4d
-         meAoiKQjcdHD9W3YcUkXv7dyo7Dh3OrLSJTGPLUs=
-Date:   Sun, 27 Oct 2019 21:05:47 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     maowenan <maowenan@huawei.com>
-Cc:     Ajay Kaher <akaher@vmware.com>, davem@davemloft.net,
-        kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org,
-        kaber@trash.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        srivatsab@vmware.com, srivatsa@csail.mit.edu, amakhalov@vmware.com,
-        srinidhir@vmware.com, bvikas@vmware.com, anishs@vmware.com,
-        vsirnapalli@vmware.com, srostedt@vmware.com
-Subject: Re: [PATCH 4.9.y] Revert "net: sit: fix memory leak in
- sit_init_net()"
-Message-ID: <20191027200547.GB2588299@kroah.com>
-References: <1571216634-44834-1-git-send-email-akaher@vmware.com>
- <20191016183027.GC801860@kroah.com>
- <d0cbd39d-9fb7-dad8-b951-12aa299f13e8@huawei.com>
+        id S1727791AbfJ0UIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 16:08:19 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46352 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727235AbfJ0UIR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 16:08:17 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n15so7689278wrw.13;
+        Sun, 27 Oct 2019 13:08:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JHjDVXlYQwiAoE4cglFinqNu/fI+itGzM4QPPTRFWo4=;
+        b=cuMhl+y55PcWVBj2ZHyOxom1igexqesx9kTqIJhKtJmv3uuwRL+HpvzQaGaAi8NdzT
+         gUlxVTVav/TtS6qSkYbA1Pwyx2sVGSTvKn9/1t5Rv7Z8jiwVld9zRt66ZFC51NOfiH18
+         L+koAKB3f51wK4UTk3kp7qQx7vf2bL/jUQZhZAg9E+McoCydYu7Fo5fHxjRS5/ONOaZy
+         6TUmAm5ffe/zM/mEmOpgmR6/h1aYadqzpTzPCVtfLG9kHzWocfxtnYRVDVTD1tA9jm3p
+         drTBCo3NpRkrI/0Gne/+XEQXahJbKCPZ6OHsKD0cZkudAwft6NPiO84X645fxZuQFzBl
+         tPhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JHjDVXlYQwiAoE4cglFinqNu/fI+itGzM4QPPTRFWo4=;
+        b=Wa1MG1Wscoky4mg1W829d/NRWvXHLHG5yX3pgPc54YqCDj1z3KQiZNEQsTgj8YGSUc
+         Ylt17yBfpGdD5JIYDLwtAR9AUUe5pcWeOj4eypkYxoKqKqyP7sluBbaMdexkFmNcMI0i
+         JECfLqsIW/KmGvV6dgBKGarBGO3DCkYtoqRtF0bXfVrcL7Oe9lvrDZGlvjqMZY11HX6N
+         3C7gIEMElJJ6Ng6mATx+Trs8H5JJceEP6I1KMKkHFPoveeKRaswxzwVrwWsp8C5aWslB
+         JlUX9BvbdFxuSeORFr/OGpLrso5F4jO6HqwjBw7iJXCAyxP0Zid+7Qv74u7o5IF68KuR
+         zFcw==
+X-Gm-Message-State: APjAAAWYYpE8mJauNtRxG7v/TQYNmV3BeG3wIZjuyR+fPri3OoKU0cqF
+        1AlpsXonBvhZuyRg4rXN09w=
+X-Google-Smtp-Source: APXvYqwgPBWIxa4P7QHII4JbTrHsXiMvgd3gfQ3jNcNJrOx2CLIPOBo3FeNpmRirLkIIvwu0LVnAaA==
+X-Received: by 2002:adf:a4cf:: with SMTP id h15mr11978115wrb.222.1572206893835;
+        Sun, 27 Oct 2019 13:08:13 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:1f1:d0f0::4e2b:d7ca])
+        by smtp.gmail.com with ESMTPSA id o11sm8539538wmh.28.2019.10.27.13.08.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2019 13:08:12 -0700 (PDT)
+From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>, Sean Young <sean@mess.org>,
+        Christian Hewitt <christianshewitt@gmail.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Subject: [PATCH 1/2] media: rc: add keymap for Beelink GS1 remote control
+Date:   Sun, 27 Oct 2019 21:07:37 +0100
+Message-Id: <20191027200738.24802-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0cbd39d-9fb7-dad8-b951-12aa299f13e8@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 09:48:05AM +0800, maowenan wrote:
-> 
-> 
-> On 2019/10/17 2:30, Greg KH wrote:
-> > On Wed, Oct 16, 2019 at 02:33:54PM +0530, Ajay Kaher wrote:
-> >> This reverts commit 375d6d454a95ebacb9c6eb0b715da05a4458ffef which is
-> >> commit 07f12b26e21ab359261bf75cfcb424fdc7daeb6d upstream.
-> >>
-> >> Unnecessarily calling free_netdev() from sit_init_net().
-> >> ipip6_dev_free() of 4.9.y called free_netdev(), so no need
-> >> to call again after ipip6_dev_free().
-> >>
-> >> Cc: Mao Wenan <maowenan@huawei.com>
-> >> Cc: David S. Miller <davem@davemloft.net>
-> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >> Signed-off-by: Ajay Kaher <akaher@vmware.com>
-> >> ---
-> >>  net/ipv6/sit.c | 1 -
-> >>  1 file changed, 1 deletion(-)
-> >>
-> >> diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
-> >> index 47ca2a2..16eba7b 100644
-> >> --- a/net/ipv6/sit.c
-> >> +++ b/net/ipv6/sit.c
-> >> @@ -1856,7 +1856,6 @@ static int __net_init sit_init_net(struct net *net)
-> >>  
-> >>  err_reg_dev:
-> >>  	ipip6_dev_free(sitn->fb_tunnel_dev);
-> >> -	free_netdev(sitn->fb_tunnel_dev);
-> >>  err_alloc_dev:
-> >>  	return err;
-> >>  }
-> >> -- 
-> >> 2.7.4
-> >>
-> > 
-> > Mao, are you ok with this change?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> Greg, ipip6_dev_free has already called free_netdev in stable 4.9.
-> 
-> Reviewed-by: Mao Wenan <maowenan@huawei.com>
+Beelink GS1 Andoid TV Box ships with a simple NEC remote.
 
-Thanks, now queued up.
+Signed-off-by: Clément Péron <peron.clem@gmail.com>
+---
+ .../devicetree/bindings/media/rc.yaml         |  1 +
+ drivers/media/rc/keymaps/Makefile             |  1 +
+ drivers/media/rc/keymaps/rc-beelink-gs1.c     | 84 +++++++++++++++++++
+ include/media/rc-map.h                        |  1 +
+ 4 files changed, 87 insertions(+)
+ create mode 100644 drivers/media/rc/keymaps/rc-beelink-gs1.c
 
-greg k-h
+diff --git a/Documentation/devicetree/bindings/media/rc.yaml b/Documentation/devicetree/bindings/media/rc.yaml
+index 3d5c154fd230..ceb283f7888a 100644
+--- a/Documentation/devicetree/bindings/media/rc.yaml
++++ b/Documentation/devicetree/bindings/media/rc.yaml
+@@ -39,6 +39,7 @@ properties:
+           - rc-avermedia-rm-ks
+           - rc-avertv-303
+           - rc-azurewave-ad-tu700
++          - rc-beelink-gs1
+           - rc-behold
+           - rc-behold-columbus
+           - rc-budget-ci-old
+diff --git a/drivers/media/rc/keymaps/Makefile b/drivers/media/rc/keymaps/Makefile
+index 4ab4af062abf..63261ef6380a 100644
+--- a/drivers/media/rc/keymaps/Makefile
++++ b/drivers/media/rc/keymaps/Makefile
+@@ -17,6 +17,7 @@ obj-$(CONFIG_RC_MAP) += rc-adstech-dvb-t-pci.o \
+ 			rc-avermedia-rm-ks.o \
+ 			rc-avertv-303.o \
+ 			rc-azurewave-ad-tu700.o \
++			rc-beelink-gs1.o \
+ 			rc-behold.o \
+ 			rc-behold-columbus.o \
+ 			rc-budget-ci-old.o \
+diff --git a/drivers/media/rc/keymaps/rc-beelink-gs1.c b/drivers/media/rc/keymaps/rc-beelink-gs1.c
+new file mode 100644
+index 000000000000..cedbd5d20bc7
+--- /dev/null
++++ b/drivers/media/rc/keymaps/rc-beelink-gs1.c
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: GPL-2.0+
++// Copyright (c) 2019 Clément Péron
++
++#include <media/rc-map.h>
++#include <linux/module.h>
++
++/*
++ * Keymap for the Beelink GS1 remote control
++ */
++
++static struct rc_map_table beelink_gs1_table[] = {
++	/*
++	 * TV Keys (Power, Learn and Volume)
++	 * { 0x40400d, KEY_TV },
++	 * { 0x80f1, KEY_TV },
++	 * { 0x80f3, KEY_TV },
++	 * { 0x80f4, KEY_TV },
++	 */
++
++	{ 0x8051, KEY_POWER },
++	{ 0x804d, KEY_MUTE },
++	{ 0x8040, KEY_CONFIG },
++
++	{ 0x8026, KEY_UP },
++	{ 0x8028, KEY_DOWN },
++	{ 0x8025, KEY_LEFT },
++	{ 0x8027, KEY_RIGHT },
++	{ 0x800d, KEY_OK },
++
++	{ 0x8053, KEY_HOME },
++	{ 0x80bc, KEY_MEDIA },
++	{ 0x801b, KEY_BACK },
++	{ 0x8049, KEY_MENU },
++
++	{ 0x804e, KEY_VOLUMEUP },
++	{ 0x8056, KEY_VOLUMEDOWN },
++
++	{ 0x8054, KEY_SUBTITLE }, /* Web */
++	{ 0x8052, KEY_EPG }, /* Media */
++
++	{ 0x8041, KEY_CHANNELUP },
++	{ 0x8042, KEY_CHANNELDOWN },
++
++	{ 0x8031, KEY_1 },
++	{ 0x8032, KEY_2 },
++	{ 0x8033, KEY_3 },
++
++	{ 0x8034, KEY_4 },
++	{ 0x8035, KEY_5 },
++	{ 0x8036, KEY_6 },
++
++	{ 0x8037, KEY_7 },
++	{ 0x8038, KEY_8 },
++	{ 0x8039, KEY_9 },
++
++	{ 0x8044, KEY_DELETE },
++	{ 0x8030, KEY_0 },
++	{ 0x8058, KEY_MODE }, /* # Input Method */
++};
++
++static struct rc_map_list beelink_gs1_map = {
++	.map = {
++		.scan     = beelink_gs1_table,
++		.size     = ARRAY_SIZE(beelink_gs1_table),
++		.rc_proto = RC_PROTO_NEC,
++		.name     = RC_MAP_BEELINK_GS1,
++	}
++};
++
++static int __init init_rc_map_beelink_gs1(void)
++{
++	return rc_map_register(&beelink_gs1_map);
++}
++
++static void __exit exit_rc_map_beelink_gs1(void)
++{
++	rc_map_unregister(&beelink_gs1_map);
++}
++
++module_init(init_rc_map_beelink_gs1)
++module_exit(exit_rc_map_beelink_gs1)
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Clément Péron <peron.clem@gmail.com>");
+diff --git a/include/media/rc-map.h b/include/media/rc-map.h
+index 0a8669daeaaa..f99575a0d29c 100644
+--- a/include/media/rc-map.h
++++ b/include/media/rc-map.h
+@@ -168,6 +168,7 @@ struct rc_map *rc_map_get(const char *name);
+ #define RC_MAP_AVERMEDIA_RM_KS           "rc-avermedia-rm-ks"
+ #define RC_MAP_AVERTV_303                "rc-avertv-303"
+ #define RC_MAP_AZUREWAVE_AD_TU700        "rc-azurewave-ad-tu700"
++#define RC_MAP_BEELINK_GS1               "rc-beelink-gs1"
+ #define RC_MAP_BEHOLD                    "rc-behold"
+ #define RC_MAP_BEHOLD_COLUMBUS           "rc-behold-columbus"
+ #define RC_MAP_BUDGET_CI_OLD             "rc-budget-ci-old"
+-- 
+2.20.1
+
