@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 052F1E642E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 17:24:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8F1EE6426
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 17:23:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbfJ0QXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 12:23:53 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37628 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbfJ0QXr (ORCPT
+        id S1727778AbfJ0QXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 12:23:50 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46882 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727466AbfJ0QXr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 27 Oct 2019 12:23:47 -0400
-Received: by mail-wm1-f67.google.com with SMTP id q130so6700281wme.2;
-        Sun, 27 Oct 2019 09:23:44 -0700 (PDT)
+Received: by mail-wr1-f66.google.com with SMTP id n15so7342780wrw.13;
+        Sun, 27 Oct 2019 09:23:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=27lV1jSL1pOmY52iA2rX2+BpQ+8jMOYRMeA1UyL2hfM=;
-        b=AoVinyap5keVi8HvLp0UH+/Ax8BHjP5n/rdFXmYx38j237nX+kj3HaXZQ1by5mX220
-         tbhKnbprieqkKl5RGbhI08Homxfu6hHLXTSXHVGCQAfIyb5MFCeV0SDRXAwfghtEAi7M
-         uysvJW9p3hDN4TyOCkRWcCp0QvFzNBSkRtqcFroX/xV9y36BE6q8NW7cLFvv5f4THy2j
-         ajNqdk3d+JaAnDtXSF7gqtE/V/uSWkVPYL8d5N1eCj+diuwnUhNd76H0Hw6o5YKd+KLU
-         lyjsq17tzYK6Nez7LyXI73gX9Rr/GcgMjNIY72tocZ8x9J5g8xNeVhNdd++HXAoltdD6
-         XDVQ==
+        bh=FR91Xkho7A58iCTl5ApNx6Gn9blyxo7jlHkr4Z2ufbE=;
+        b=DJKRsi+4xUNfRqEYSANnCE2BCk4qocBMxIHxvNaFwMv+6reNOJ1yDYZzxawhOVKc+u
+         uTJs8mvzJAJRnXdV3PBCK7J+OLejIm0UExJaXQogyWv2+BgWDBWfXTg3kZpu0Jmdk7lG
+         /TyFplsRJQ2IpcuqsNqJKTxyHc9uJ2l/2CiD1tpl4bJ5csKhETxra1ZBvxjQGJGCtawL
+         yOxoKoQ/Qczup8O23yRK//AG/vdy4hLOGN68aA6tPyya/7qZ+H27V1gYV5prUio4nJDb
+         IQWqqg+8jrprGeXqbfvnrir+EWjX38frqDR51u3xD1yBKGVj/PN1HyM3z5ncT5s0Ameu
+         /Thw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=27lV1jSL1pOmY52iA2rX2+BpQ+8jMOYRMeA1UyL2hfM=;
-        b=FG8bv6Syl78DE9ozu8mxL8LrJU2kh+dX66JHbmB93TqEUS4VE+Kj6kbU0y6RdAPmsC
-         RnfXSqB5Cz7SkZhyI/09hJOi3II4nvMWNBsf/eFz/9oKZ0VfsNrlVjoI//3MRj8v4bMM
-         3p9UzoVSTD/ZyXzSQcKUwxlz6kcCcNgr90XjD3KnK0u+Rh6PFVhx3qSJvdeR/BKVEpqT
-         HhijPNH7hHunQEa32WtFciIifCw8pYJQXbCaLK6ru0sTHI1FQCpycgzAWvEYWrMGvTPw
-         adojgOdq8RD7hdiVEuH9ontlP6QkBqY2vfRvyi+Wp/wyJYBNkAMm/Fat1yZHj/VEQRSv
-         yqaA==
-X-Gm-Message-State: APjAAAXxC0U8qcf4KETHyIqIyPfbl+BYUESoTt+eVOu9EjM8KUBY8upD
-        iF/yeBWMwmsp9igfO8/s7t0nxJFfSIysAw==
-X-Google-Smtp-Source: APXvYqwi3N77ux5v3XITqsvD7kw7Lzj/nkEw4EMddSAn2mY2cNYvaiD7bdCqGCK8e2C00e1OyUbxYA==
-X-Received: by 2002:a1c:1fca:: with SMTP id f193mr5079801wmf.173.1572193423782;
-        Sun, 27 Oct 2019 09:23:43 -0700 (PDT)
+        bh=FR91Xkho7A58iCTl5ApNx6Gn9blyxo7jlHkr4Z2ufbE=;
+        b=hbwJ+zhCBWfzHfTFCFqeZCWau3+GTI4AlMdHlQpr4SfofLM170L51LxQsaTS2dODRQ
+         hD/lC7EcESXCJuO01CC5FzgQitUjpRBsmDH8HzUxoTA6sXASJLSs71Z8z6V3xd7ByuXr
+         j/gO2t9rr1lNO1iMyl3DozO1mDyDVqzlhGTwPesA/2PyloEgCX/UrCQHd8lrCBzFzocX
+         Xi/VHuYPijIgR0+HNbtyLf3EbU1ahzAUD7KtNZqwb3UD0Eb4TWm8s64k2Y3qTHrIPWCY
+         fuPlCpZmLP/Gwn6S4pvdUyJ5wetxkBk+ydQXks8V1inGIiMnnxfZ3ts9+jzWYOdZVOGH
+         TW+A==
+X-Gm-Message-State: APjAAAW4k76Du7kxP0oINBUTcIq/8zypjg1atTSA+4GQiV/9aSZybbKW
+        qhjZh/bZBKcE4nF2zunCAYE=
+X-Google-Smtp-Source: APXvYqwYcUCsvwTfCVC8G8QhpTTpc/gHzJpzRKp5RQnLVauGHvqBTZj2iIoo9YjsXmaCQ/Mnq8Vf2g==
+X-Received: by 2002:a5d:640e:: with SMTP id z14mr11475473wru.311.1572193425067;
+        Sun, 27 Oct 2019 09:23:45 -0700 (PDT)
 Received: from localhost.localdomain (p200300F133D01300428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:33d0:1300:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id 1sm8243299wrr.16.2019.10.27.09.23.42
+        by smtp.googlemail.com with ESMTPSA id 1sm8243299wrr.16.2019.10.27.09.23.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2019 09:23:43 -0700 (PDT)
+        Sun, 27 Oct 2019 09:23:44 -0700 (PDT)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
         linux-amlogic@lists.infradead.org, khilman@baylibre.com
@@ -52,9 +52,9 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 3/5] clk: meson: meson8b: use of_clk_hw_register to register the clocks
-Date:   Sun, 27 Oct 2019 17:23:26 +0100
-Message-Id: <20191027162328.1177402-4-martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 4/5] ARM: dts: meson8: add the DDR clock controller
+Date:   Sun, 27 Oct 2019 17:23:27 +0100
+Message-Id: <20191027162328.1177402-5-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027162328.1177402-1-martin.blumenstingl@googlemail.com>
 References: <20191027162328.1177402-1-martin.blumenstingl@googlemail.com>
@@ -65,28 +65,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch from clk_hw_register to of_clk_hw_register so we can use
-clk_parent_data.fw_name. This will be used to get the "xtal", "ddr_pll"
-and possibly others from the .dtb.
+Add the DDR clock controller and pass it's DDR_CLKID_DDR_PLL to the main
+(HHI) clock controller as "ddr_clk". The "ddr_clk" is used as one of the
+inputs for the audio clock muxes.
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/meson/meson8b.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/meson8.dtsi | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 70ac6755607e..306b809deb49 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -3696,7 +3696,7 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
- 		if (!clk_hw_onecell_data->hws[i])
- 			continue;
+diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+index 4f59a4c8f036..257c1364864c 100644
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -3,6 +3,7 @@
+  * Copyright 2014 Carlo Caione <carlo@caione.org>
+  */
  
--		ret = clk_hw_register(NULL, clk_hw_onecell_data->hws[i]);
-+		ret = of_clk_hw_register(np, clk_hw_onecell_data->hws[i]);
- 		if (ret)
- 			return;
- 	}
++#include <dt-bindings/clock/meson8-ddr-clkc.h>
+ #include <dt-bindings/clock/meson8b-clkc.h>
+ #include <dt-bindings/gpio/meson8-gpio.h>
+ #include <dt-bindings/reset/amlogic,meson8b-clkc-reset.h>
+@@ -195,6 +196,14 @@
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0xc8000000 0x8000>;
+ 
++		ddr_clkc: clock-controller@400 {
++			compatible = "amlogic,meson8-ddr-clkc";
++			reg = <0x400 0x20>;
++			clocks = <&xtal>;
++			clock-names = "xtal";
++			#clock-cells = <1>;
++		};
++
+ 		dmcbus: bus@6000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x6000 0x400>;
+@@ -455,8 +464,8 @@
+ &hhi {
+ 	clkc: clock-controller {
+ 		compatible = "amlogic,meson8-clkc";
+-		clocks = <&xtal>;
+-		clock-names = "xtal";
++		clocks = <&xtal>, <&ddr_clkc DDR_CLKID_DDR_PLL>;
++		clock-names = "xtal", "ddr_pll";
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 	};
 -- 
 2.23.0
 
