@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AA51E66DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:16:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C8BE67D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730745AbfJ0VQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:16:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35368 "EHLO mail.kernel.org"
+        id S1732603AbfJ0VYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:24:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730718AbfJ0VP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:15:56 -0400
+        id S1732581AbfJ0VYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:24:45 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1E94205C9;
-        Sun, 27 Oct 2019 21:15:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65C39222C2;
+        Sun, 27 Oct 2019 21:24:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210955;
-        bh=8IOV29BNjDY+REp3WUyqDVAt2o6u+fOSAlETP48YXZE=;
+        s=default; t=1572211484;
+        bh=Ylppbfu16KHMXB+7ecukrBDTkQE1TIOrkKxPPDpLHY4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hr0pqfHjpSBNS8p9sB0LYq1W1T43P2Xqbm1Wx1BbsxJuVy33RlO5SKyQyCinBOKLO
-         c1k/Is5GTFeKlYmnVi3MDP7qG2EwiF6ZyIYYBgBaeRVyqH/TWTUnEmZjX5Kq+Awhup
-         oYi8YPitjvuALjLIF9+7cvCA9huC7xv4ZX8FDAQg=
+        b=EmlUvbIxhKsFCq3yvyjorWbkZDsQKgyeBbTqv4MDP1/lrRm5Il3eFD24ceDQ491Vu
+         fZW68+CTpqJIQ3wDq0thNK8hhRhtaNYSay6erwwMZ2VVfCgCOudDSiOa88fPVJOv6W
+         pHHkmuchAPO42zn48Nsnk7FfsLn+I/OhWN2B1uPE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will@kernel.org>
-Subject: [PATCH 4.19 73/93] arm64: Enable workaround for Cavium TX2 erratum 219 when running SMT
+        stable@vger.kernel.org,
+        Roberto Bergantinos Corpas <rbergant@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 5.3 167/197] CIFS: avoid using MID 0xFFFF
 Date:   Sun, 27 Oct 2019 22:01:25 +0100
-Message-Id: <20191027203310.113079555@linuxfoundation.org>
+Message-Id: <20191027203403.359847100@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,78 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Roberto Bergantinos Corpas <rbergant@redhat.com>
 
-commit 93916beb70143c46bf1d2bacf814be3a124b253b upstream.
+commit 03d9a9fe3f3aec508e485dd3dcfa1e99933b4bdb upstream.
 
-It appears that the only case where we need to apply the TX2_219_TVM
-mitigation is when the core is in SMT mode. So let's condition the
-enabling on detecting a CPU whose MPIDR_EL1.Aff0 is non-zero.
+According to MS-CIFS specification MID 0xFFFF should not be used by the
+CIFS client, but we actually do. Besides, this has proven to cause races
+leading to oops between SendReceive2/cifs_demultiplex_thread. On SMB1,
+MID is a 2 byte value easy to reach in CurrentMid which may conflict with
+an oplock break notification request coming from server
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/cpu_errata.c |   33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ fs/cifs/smb1ops.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -23,6 +23,7 @@
- #include <asm/cpu.h>
- #include <asm/cputype.h>
- #include <asm/cpufeature.h>
-+#include <asm/smp_plat.h>
+--- a/fs/cifs/smb1ops.c
++++ b/fs/cifs/smb1ops.c
+@@ -171,6 +171,9 @@ cifs_get_next_mid(struct TCP_Server_Info
+ 	/* we do not want to loop forever */
+ 	last_mid = cur_mid;
+ 	cur_mid++;
++	/* avoid 0xFFFF MID */
++	if (cur_mid == 0xffff)
++		cur_mid++;
  
- static bool __maybe_unused
- is_affected_midr_range(const struct arm64_cpu_capabilities *entry, int scope)
-@@ -618,6 +619,30 @@ check_branch_predictor(const struct arm6
- 	return (need_wa > 0);
- }
- 
-+static const __maybe_unused struct midr_range tx2_family_cpus[] = {
-+	MIDR_ALL_VERSIONS(MIDR_BRCM_VULCAN),
-+	MIDR_ALL_VERSIONS(MIDR_CAVIUM_THUNDERX2),
-+	{},
-+};
-+
-+static bool __maybe_unused
-+needs_tx2_tvm_workaround(const struct arm64_cpu_capabilities *entry,
-+			 int scope)
-+{
-+	int i;
-+
-+	if (!is_affected_midr_range_list(entry, scope) ||
-+	    !is_hyp_mode_available())
-+		return false;
-+
-+	for_each_possible_cpu(i) {
-+		if (MPIDR_AFFINITY_LEVEL(cpu_logical_map(i), 0) != 0)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- #ifdef CONFIG_HARDEN_EL2_VECTORS
- 
- static const struct midr_range arm64_harden_el2_vectors[] = {
-@@ -802,6 +827,14 @@ const struct arm64_cpu_capabilities arm6
- 		.matches = has_cortex_a76_erratum_1463225,
- 	},
- #endif
-+#ifdef CONFIG_CAVIUM_TX2_ERRATUM_219
-+	{
-+		.desc = "Cavium ThunderX2 erratum 219 (KVM guest sysreg trapping)",
-+		.capability = ARM64_WORKAROUND_CAVIUM_TX2_219_TVM,
-+		ERRATA_MIDR_RANGE_LIST(tx2_family_cpus),
-+		.matches = needs_tx2_tvm_workaround,
-+	},
-+#endif
- 	{
- 	}
- };
+ 	/*
+ 	 * This nested loop looks more expensive than it is.
 
 
