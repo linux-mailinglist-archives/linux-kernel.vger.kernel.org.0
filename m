@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7151E6855
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:28:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90ACDE6623
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:09:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732021AbfJ0VVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:21:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42748 "EHLO mail.kernel.org"
+        id S1729453AbfJ0VJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:09:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732003AbfJ0VVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:21:51 -0400
+        id S1729436AbfJ0VI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:08:57 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5CF4205C9;
-        Sun, 27 Oct 2019 21:21:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B506D2064A;
+        Sun, 27 Oct 2019 21:08:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211309;
-        bh=ZsDH3NgIiIv8WoNggeN0CAZhb5agtvBUOhbYhrM+c1E=;
+        s=default; t=1572210537;
+        bh=nFXKwce1i2BiC5oc42Bk3p8PO8k77yfLZ0nJhiJfJYk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zQQw8YS+gWtCevP7F/nMAxmweZB3VENKiJIcuwPvV5XGwHyajPvVKA26PQqHcMHNC
-         dr7tRrrNzIHEalXHaisOTysASE+aiuYJlxcwObVLJn+0r7F+fqX+kj8pZwka1L8YwO
-         RSkM0OdYW6yTnk9XeRyuqTu/9FmSUZ0pCrUJaXQM=
+        b=TsaPJxHPnUu7fekHghbh04WtOHtl5eC2frzHP7FLvLxqf4fYACzH6wUVY5i1eAJ0o
+         nHoXkgVrfdQetvfmTErzNUBDB1KdfwmQHU/pL8TSX1gwZC/aIjHe9TmYSf5WRSlUwX
+         2o6ztKsfS0wBNOgRHI5lqBcnYsGOlFSetucxYcxQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Todd Kjos <tkjos@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 5.3 106/197] binder: Dont modify VMA bounds in ->mmap handler
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.14 047/119] arm64: capabilities: Move errata work around check on boot CPU
 Date:   Sun, 27 Oct 2019 22:00:24 +0100
-Message-Id: <20191027203357.480111405@linuxfoundation.org>
+Message-Id: <20191027203318.941105623@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,96 +47,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-commit 45d02f79b539073b76077836871de6b674e36eb4 upstream.
+[ Upstream commit 5e91107b06811f0ca147cebbedce53626c9c4443 ]
 
-binder_mmap() tries to prevent the creation of overly big binder mappings
-by silently truncating the size of the VMA to 4MiB. However, this violates
-the API contract of mmap(). If userspace attempts to create a large binder
-VMA, and later attempts to unmap that VMA, it will call munmap() on a range
-beyond the end of the VMA, which may have been allocated to another VMA in
-the meantime. This can lead to userspace memory corruption.
+We trigger CPU errata work around check on the boot CPU from
+smp_prepare_boot_cpu() to make sure that we run the checks only
+after the CPU feature infrastructure is initialised. While this
+is correct, we can also do this from init_cpu_features() which
+initilises the infrastructure, and is called only on the
+Boot CPU. This helps to consolidate the CPU capability handling
+to cpufeature.c. No functional changes.
 
-The following sequence of calls leads to a segfault without this commit:
-
-int main(void) {
-  int binder_fd = open("/dev/binder", O_RDWR);
-  if (binder_fd == -1) err(1, "open binder");
-  void *binder_mapping = mmap(NULL, 0x800000UL, PROT_READ, MAP_SHARED,
-                              binder_fd, 0);
-  if (binder_mapping == MAP_FAILED) err(1, "mmap binder");
-  void *data_mapping = mmap(NULL, 0x400000UL, PROT_READ|PROT_WRITE,
-                            MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-  if (data_mapping == MAP_FAILED) err(1, "mmap data");
-  munmap(binder_mapping, 0x800000UL);
-  *(char*)data_mapping = 1;
-  return 0;
-}
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Todd Kjos <tkjos@google.com>
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/r/20191016150119.154756-1-jannh@google.com
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Dave Martin <dave.martin@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/android/binder.c       |    7 -------
- drivers/android/binder_alloc.c |    6 ++++--
- 2 files changed, 4 insertions(+), 9 deletions(-)
+ arch/arm64/kernel/cpufeature.c |    5 +++++
+ arch/arm64/kernel/smp.c        |    6 ------
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -95,10 +95,6 @@ DEFINE_SHOW_ATTRIBUTE(proc);
- #define SZ_1K                               0x400
- #endif
- 
--#ifndef SZ_4M
--#define SZ_4M                               0x400000
--#endif
--
- #define FORBIDDEN_MMAP_FLAGS                (VM_WRITE)
- 
- enum {
-@@ -5195,9 +5191,6 @@ static int binder_mmap(struct file *filp
- 	if (proc->tsk != current->group_leader)
- 		return -EINVAL;
- 
--	if ((vma->vm_end - vma->vm_start) > SZ_4M)
--		vma->vm_end = vma->vm_start + SZ_4M;
--
- 	binder_debug(BINDER_DEBUG_OPEN_CLOSE,
- 		     "%s: %d %lx-%lx (%ld K) vma %lx pagep %lx\n",
- 		     __func__, proc->pid, vma->vm_start, vma->vm_end,
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -22,6 +22,7 @@
- #include <asm/cacheflush.h>
- #include <linux/uaccess.h>
- #include <linux/highmem.h>
-+#include <linux/sizes.h>
- #include "binder_alloc.h"
- #include "binder_trace.h"
- 
-@@ -689,7 +690,9 @@ int binder_alloc_mmap_handler(struct bin
- 	alloc->buffer = (void __user *)vma->vm_start;
- 	mutex_unlock(&binder_alloc_mmap_lock);
- 
--	alloc->pages = kcalloc((vma->vm_end - vma->vm_start) / PAGE_SIZE,
-+	alloc->buffer_size = min_t(unsigned long, vma->vm_end - vma->vm_start,
-+				   SZ_4M);
-+	alloc->pages = kcalloc(alloc->buffer_size / PAGE_SIZE,
- 			       sizeof(alloc->pages[0]),
- 			       GFP_KERNEL);
- 	if (alloc->pages == NULL) {
-@@ -697,7 +700,6 @@ int binder_alloc_mmap_handler(struct bin
- 		failure_string = "alloc page array";
- 		goto err_alloc_pages_failed;
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -521,6 +521,11 @@ void __init init_cpu_features(struct cpu
+ 		init_cpu_ftr_reg(SYS_MVFR2_EL1, info->reg_mvfr2);
  	}
--	alloc->buffer_size = vma->vm_end - vma->vm_start;
  
- 	buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
- 	if (!buffer) {
++	/*
++	 * Run the errata work around checks on the boot CPU, once we have
++	 * initialised the cpu feature infrastructure.
++	 */
++	update_cpu_errata_workarounds();
+ }
+ 
+ static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -449,12 +449,6 @@ void __init smp_prepare_boot_cpu(void)
+ 	jump_label_init();
+ 	cpuinfo_store_boot_cpu();
+ 	save_boot_cpu_run_el();
+-	/*
+-	 * Run the errata work around checks on the boot CPU, once we have
+-	 * initialised the cpu feature infrastructure from
+-	 * cpuinfo_store_boot_cpu() above.
+-	 */
+-	update_cpu_errata_workarounds();
+ }
+ 
+ static u64 __init of_get_cpu_mpidr(struct device_node *dn)
 
 
