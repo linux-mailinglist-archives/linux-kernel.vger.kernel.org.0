@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6C94E6787
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5E86E6689
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:13:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731998AbfJ0VVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:21:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42600 "EHLO mail.kernel.org"
+        id S1730122AbfJ0VMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:12:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731982AbfJ0VVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:21:41 -0400
+        id S1730115AbfJ0VMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:12:49 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFBF6205C9;
-        Sun, 27 Oct 2019 21:21:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 657C220B7C;
+        Sun, 27 Oct 2019 21:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211301;
-        bh=bkkkZHK4THWOGTJvtCcawwtzMIv/jQ2OkJlaPrOfbjk=;
+        s=default; t=1572210769;
+        bh=IUj/HxYB2rHKVhwAa6+OElvjVYWfgUzquy9H1go8RzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tExzcfSCZLMXWLUxx34vAUMadWO+5xuPNKpIQnk7svM1SkT3CPXSQ1uadZZB+hL2T
-         YEUESA3YonQNjS2qwEDpnNBhAoaEJD+5VH5c7iHtqf2j3qEZsJOdcul80TO0OROH0C
-         cOgJCSsj1m0K/Woxj5aVxrnWjq4DdcGh/znvuzQw=
+        b=uQRXQkrz+pCITnrP9oNpe3eyKXkpi8SYsWatdWBvaP3cudx5UQfcqQie6x29Tb/Fy
+         HdZMUpQdPeIVjue0Lw04I1EeSx6q/C2A1L4PXjZpbPTrw1ww323Az/rM8+fs0POAbU
+         8IQHZ+CdJKf19xogG7YtmV8zwjnHUwrfB4mK7JHM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+cd24df4d075c319ebfc5@syzkaller.appspotmail.com,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.3 104/197] USB: usblp: fix use-after-free on disconnect
-Date:   Sun, 27 Oct 2019 22:00:22 +0100
-Message-Id: <20191027203357.376019360@linuxfoundation.org>
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 11/93] xen/efi: Set nonblocking callbacks
+Date:   Sun, 27 Oct 2019 22:00:23 +0100
+Message-Id: <20191027203254.262432938@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,51 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-commit 7a759197974894213621aa65f0571b51904733d6 upstream.
+[ Upstream commit df359f0d09dc029829b66322707a2f558cb720f7 ]
 
-A recent commit addressing a runtime PM use-count regression, introduced
-a use-after-free by not making sure we held a reference to the struct
-usb_interface for the lifetime of the driver data.
+Other parts of the kernel expect these nonblocking EFI callbacks to
+exist and crash when running under Xen. Since the implementations of
+xen_efi_set_variable() and xen_efi_query_variable_info() do not take any
+locks, use them for the nonblocking callbacks too.
 
-Fixes: 9a31535859bf ("USB: usblp: fix runtime PM after driver unbind")
-Cc: stable <stable@vger.kernel.org>
-Reported-by: syzbot+cd24df4d075c319ebfc5@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191015175522.18490-1-johan@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/class/usblp.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/xen/efi.c | 2 ++
+ arch/x86/xen/efi.c | 2 ++
+ 2 files changed, 4 insertions(+)
 
---- a/drivers/usb/class/usblp.c
-+++ b/drivers/usb/class/usblp.c
-@@ -445,6 +445,7 @@ static void usblp_cleanup(struct usblp *
- 	kfree(usblp->readbuf);
- 	kfree(usblp->device_id_string);
- 	kfree(usblp->statusbuf);
-+	usb_put_intf(usblp->intf);
- 	kfree(usblp);
- }
- 
-@@ -1107,7 +1108,7 @@ static int usblp_probe(struct usb_interf
- 	init_waitqueue_head(&usblp->wwait);
- 	init_usb_anchor(&usblp->urbs);
- 	usblp->ifnum = intf->cur_altsetting->desc.bInterfaceNumber;
--	usblp->intf = intf;
-+	usblp->intf = usb_get_intf(intf);
- 
- 	/* Malloc device ID string buffer to the largest expected length,
- 	 * since we can re-query it on an ioctl and a dynamic string
-@@ -1196,6 +1197,7 @@ abort:
- 	kfree(usblp->readbuf);
- 	kfree(usblp->statusbuf);
- 	kfree(usblp->device_id_string);
-+	usb_put_intf(usblp->intf);
- 	kfree(usblp);
- abort_ret:
- 	return retval;
+diff --git a/arch/arm/xen/efi.c b/arch/arm/xen/efi.c
+index b4d78959cadf0..bc9a37b3cecd6 100644
+--- a/arch/arm/xen/efi.c
++++ b/arch/arm/xen/efi.c
+@@ -31,7 +31,9 @@ void __init xen_efi_runtime_setup(void)
+ 	efi.get_variable             = xen_efi_get_variable;
+ 	efi.get_next_variable        = xen_efi_get_next_variable;
+ 	efi.set_variable             = xen_efi_set_variable;
++	efi.set_variable_nonblocking = xen_efi_set_variable;
+ 	efi.query_variable_info      = xen_efi_query_variable_info;
++	efi.query_variable_info_nonblocking = xen_efi_query_variable_info;
+ 	efi.update_capsule           = xen_efi_update_capsule;
+ 	efi.query_capsule_caps       = xen_efi_query_capsule_caps;
+ 	efi.get_next_high_mono_count = xen_efi_get_next_high_mono_count;
+diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
+index 1804b27f9632a..66bcdeeee639a 100644
+--- a/arch/x86/xen/efi.c
++++ b/arch/x86/xen/efi.c
+@@ -77,7 +77,9 @@ static efi_system_table_t __init *xen_efi_probe(void)
+ 	efi.get_variable             = xen_efi_get_variable;
+ 	efi.get_next_variable        = xen_efi_get_next_variable;
+ 	efi.set_variable             = xen_efi_set_variable;
++	efi.set_variable_nonblocking = xen_efi_set_variable;
+ 	efi.query_variable_info      = xen_efi_query_variable_info;
++	efi.query_variable_info_nonblocking = xen_efi_query_variable_info;
+ 	efi.update_capsule           = xen_efi_update_capsule;
+ 	efi.query_capsule_caps       = xen_efi_query_capsule_caps;
+ 	efi.get_next_high_mono_count = xen_efi_get_next_high_mono_count;
+-- 
+2.20.1
+
 
 
