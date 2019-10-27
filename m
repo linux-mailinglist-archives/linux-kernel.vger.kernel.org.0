@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30543E66BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F15F6E6654
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:10:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbfJ0VOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:14:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33848 "EHLO mail.kernel.org"
+        id S1729771AbfJ0VKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:10:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728508AbfJ0VOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:14:50 -0400
+        id S1728879AbfJ0VKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:10:48 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDFEE20B7C;
-        Sun, 27 Oct 2019 21:14:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AD92208C0;
+        Sun, 27 Oct 2019 21:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210889;
-        bh=t/wq/WZPF0b75fqr10+zFJOVGpK2Dc4F7FNpxG8v3bI=;
+        s=default; t=1572210647;
+        bh=Kin03poEpPqo7IQuKmDiZFT5cHxaIpyJ2RAzFwtVhSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EOSEsC1CjeB0ImlEs2ukZg/0ZmzHOvorNtQZ0A7QTRyihZtYT5vt0/+Tv7dF0E15N
-         I2qNIbJFDxphYF/a3AiODGl4RxSbC9nYMEB+7hMjz9Xteihc7HRUck3LKgV73K4LTQ
-         KObw164Q3kHQGpBr3D8aYqYApJoWmc0ocxLPcOds=
+        b=mVcWh7taBjy5CJPU9zq2/ETCjEzfCExa0/SI1mZCHvgHkxE/qNsVuOdaDJUvgihv5
+         PAl5efcyhvdZ4E3aLg8zSDqZEal9wQ0OW1xRfcuukxzrdG1MOQ3FX5LQb3p3zKSTNx
+         JTQTSTIzYOJMOxs92b5NtO26BdsB+3dOEetHXw+I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
-        Rob Turk <robtu@rtist.nl>,
-        Bart Van Assche <bvanassche@acm.org>,
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 52/93] scsi: ch: Make it possible to open a ch device multiple times again
+Subject: [PATCH 4.14 087/119] scsi: sd: Ignore a failure to sync cache due to lack of authorization
 Date:   Sun, 27 Oct 2019 22:01:04 +0100
-Message-Id: <20191027203301.239747148@linuxfoundation.org>
+Message-Id: <20191027203347.479606199@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 6a0990eaa768dfb7064f06777743acc6d392084b upstream.
+commit 21e3d6c81179bbdfa279efc8de456c34b814cfd2 upstream.
 
-Clearing ch->device in ch_release() is wrong because that pointer must
-remain valid until ch_remove() is called. This patch fixes the following
-crash the second time a ch device is opened:
+I've got a report about a UAS drive enclosure reporting back Sense: Logical
+unit access not authorized if the drive it holds is password protected.
+While the drive is obviously unusable in that state as a mass storage
+device, it still exists as a sd device and when the system is asked to
+perform a suspend of the drive, it will be sent a SYNCHRONIZE CACHE. If
+that fails due to password protection, the error must be ignored.
 
-BUG: kernel NULL pointer dereference, address: 0000000000000790
-RIP: 0010:scsi_device_get+0x5/0x60
-Call Trace:
- ch_open+0x4c/0xa0 [ch]
- chrdev_open+0xa2/0x1c0
- do_dentry_open+0x13a/0x380
- path_openat+0x591/0x1470
- do_filp_open+0x91/0x100
- do_sys_open+0x184/0x220
- do_syscall_64+0x5f/0x1a0
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: 085e56766f74 ("scsi: ch: add refcounting")
-Cc: Hannes Reinecke <hare@suse.de>
 Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191009173536.247889-1-bvanassche@acm.org
-Reported-by: Rob Turk <robtu@rtist.nl>
-Suggested-by: Rob Turk <robtu@rtist.nl>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Link: https://lore.kernel.org/r/20190903101840.16483-1-oneukum@suse.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/ch.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/scsi/sd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/ch.c
-+++ b/drivers/scsi/ch.c
-@@ -578,7 +578,6 @@ ch_release(struct inode *inode, struct f
- 	scsi_changer *ch = file->private_data;
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1658,7 +1658,8 @@ static int sd_sync_cache(struct scsi_dis
+ 		/* we need to evaluate the error return  */
+ 		if (scsi_sense_valid(sshdr) &&
+ 			(sshdr->asc == 0x3a ||	/* medium not present */
+-			 sshdr->asc == 0x20))	/* invalid command */
++			 sshdr->asc == 0x20 ||	/* invalid command */
++			 (sshdr->asc == 0x74 && sshdr->ascq == 0x71)))	/* drive is password locked */
+ 				/* this is no error here */
+ 				return 0;
  
- 	scsi_device_put(ch->device);
--	ch->device = NULL;
- 	file->private_data = NULL;
- 	kref_put(&ch->ref, ch_destroy);
- 	return 0;
 
 
