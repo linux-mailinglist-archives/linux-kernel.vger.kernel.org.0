@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 485FEE66BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:15:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16D07E6595
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:03:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729704AbfJ0VOt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:14:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33748 "EHLO mail.kernel.org"
+        id S1728317AbfJ0VDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:03:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730514AbfJ0VOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:14:45 -0400
+        id S1728289AbfJ0VDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:03:20 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 405FC205C9;
-        Sun, 27 Oct 2019 21:14:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8459F214AF;
+        Sun, 27 Oct 2019 21:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210883;
-        bh=bbvKfmQiBiYhnCpebJUu9fNk1IlOgQ8bUXjT4n+ai4U=;
+        s=default; t=1572210199;
+        bh=tuhyo/2kQiRB6FSbrrp9sXMYQnq1MqaAaocMivwBshc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AgzEe5JcUYP8GJLqZC5S+U/JSvSbOQ6cYsyDv9QrLKFgz3CiVeb8u2tQkFWiBdvrS
-         zylHY5YsubQDNUbhq0OjyG2psQVImwyu0uWsSbofwkHChVoePNlZMowp3pY4sVBbil
-         kM5LZaks3fILI6Y1AJka8DX+P+8kcepvSjIyCsxU=
+        b=qycvo6BnLREkL0LxhW8qW3furPvqzmj8V3ICHWHWNh3fBsOrPGZkqoEPlNQj3mIXP
+         GdZ/5a4x5yQXQR6LapDMcQTMiAzOPRMpCQ/GgfGef8Kb99ZFP6n0XSugEaEX4YrFiV
+         9S4VQ2gLP3so/nxHsSFZHaPjmiLIXfAQOyz+Gxwg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 50/93] scsi: core: save/restore command resid for error handling
+        stable@vger.kernel.org,
+        syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 24/41] USB: ldusb: fix read info leaks
 Date:   Sun, 27 Oct 2019 22:01:02 +0100
-Message-Id: <20191027203300.858365936@linuxfoundation.org>
+Message-Id: <20191027203119.576856555@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,73 +44,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 8f8fed0cdbbd6cdbf28d9ebe662f45765d2f7d39 upstream.
+commit 7a6f22d7479b7a0b68eadd308a997dd64dda7dae upstream.
 
-When a non-passthrough command is terminated with CHECK CONDITION, request
-sense is executed by hijacking the command descriptor. Since
-scsi_eh_prep_cmnd() and scsi_eh_restore_cmnd() do not save/restore the
-original command resid, the value returned on failure of the original
-command is lost and replaced with the value set by the execution of the
-request sense command. This value may in many instances be unaligned to the
-device sector size, causing sd_done() to print a warning message about the
-incorrect unaligned resid before the command is retried.
+Fix broken read implementation, which could be used to trigger slab info
+leaks.
 
-Fix this problem by saving the original command residual in struct
-scsi_eh_save using scsi_eh_prep_cmnd() and restoring it in
-scsi_eh_restore_cmnd(). In addition, to make sure that the request sense
-command is executed with a correctly initialized command structure, also
-reset the residual to 0 in scsi_eh_prep_cmnd() after saving the original
-command value in struct scsi_eh_save.
+The driver failed to check if the custom ring buffer was still empty
+when waking up after having waited for more data. This would happen on
+every interrupt-in completion, even if no data had been added to the
+ring buffer (e.g. on disconnect events).
 
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20191001074839.1994-1-damien.lemoal@wdc.com
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Due to missing sanity checks and uninitialised (kmalloced) ring-buffer
+entries, this meant that huge slab info leaks could easily be triggered.
+
+Note that the empty-buffer check after wakeup is enough to fix the info
+leak on disconnect, but let's clear the buffer on allocation and add a
+sanity check to read() to prevent further leaks.
+
+Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.13
+Reported-by: syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191018151955.25135-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/scsi_error.c |    3 +++
- include/scsi/scsi_eh.h    |    1 +
- 2 files changed, 4 insertions(+)
+ drivers/usb/misc/ldusb.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/drivers/scsi/scsi_error.c
-+++ b/drivers/scsi/scsi_error.c
-@@ -970,6 +970,7 @@ void scsi_eh_prep_cmnd(struct scsi_cmnd
- 	ses->sdb = scmd->sdb;
- 	ses->next_rq = scmd->request->next_rq;
- 	ses->result = scmd->result;
-+	ses->resid_len = scmd->req.resid_len;
- 	ses->underflow = scmd->underflow;
- 	ses->prot_op = scmd->prot_op;
- 	ses->eh_eflags = scmd->eh_eflags;
-@@ -981,6 +982,7 @@ void scsi_eh_prep_cmnd(struct scsi_cmnd
- 	memset(&scmd->sdb, 0, sizeof(scmd->sdb));
- 	scmd->request->next_rq = NULL;
- 	scmd->result = 0;
-+	scmd->req.resid_len = 0;
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -468,7 +468,7 @@ static ssize_t ld_usb_read(struct file *
  
- 	if (sense_bytes) {
- 		scmd->sdb.length = min_t(unsigned, SCSI_SENSE_BUFFERSIZE,
-@@ -1034,6 +1036,7 @@ void scsi_eh_restore_cmnd(struct scsi_cm
- 	scmd->sdb = ses->sdb;
- 	scmd->request->next_rq = ses->next_rq;
- 	scmd->result = ses->result;
-+	scmd->req.resid_len = ses->resid_len;
- 	scmd->underflow = ses->underflow;
- 	scmd->prot_op = ses->prot_op;
- 	scmd->eh_eflags = ses->eh_eflags;
---- a/include/scsi/scsi_eh.h
-+++ b/include/scsi/scsi_eh.h
-@@ -32,6 +32,7 @@ extern int scsi_ioctl_reset(struct scsi_
- struct scsi_eh_save {
- 	/* saved state */
- 	int result;
-+	unsigned int resid_len;
- 	int eh_eflags;
- 	enum dma_data_direction data_direction;
- 	unsigned underflow;
+ 	/* wait for data */
+ 	spin_lock_irq(&dev->rbsl);
+-	if (dev->ring_head == dev->ring_tail) {
++	while (dev->ring_head == dev->ring_tail) {
+ 		dev->interrupt_in_done = 0;
+ 		spin_unlock_irq(&dev->rbsl);
+ 		if (file->f_flags & O_NONBLOCK) {
+@@ -478,12 +478,17 @@ static ssize_t ld_usb_read(struct file *
+ 		retval = wait_event_interruptible(dev->read_wait, dev->interrupt_in_done);
+ 		if (retval < 0)
+ 			goto unlock_exit;
+-	} else {
+-		spin_unlock_irq(&dev->rbsl);
++
++		spin_lock_irq(&dev->rbsl);
+ 	}
++	spin_unlock_irq(&dev->rbsl);
+ 
+ 	/* actual_buffer contains actual_length + interrupt_in_buffer */
+ 	actual_buffer = (size_t*)(dev->ring_buffer + dev->ring_tail*(sizeof(size_t)+dev->interrupt_in_endpoint_size));
++	if (*actual_buffer > dev->interrupt_in_endpoint_size) {
++		retval = -EIO;
++		goto unlock_exit;
++	}
+ 	bytes_to_read = min(count, *actual_buffer);
+ 	if (bytes_to_read < *actual_buffer)
+ 		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
+@@ -703,7 +708,9 @@ static int ld_usb_probe(struct usb_inter
+ 		dev_warn(&intf->dev, "Interrupt out endpoint not found (using control endpoint instead)\n");
+ 
+ 	dev->interrupt_in_endpoint_size = usb_endpoint_maxp(dev->interrupt_in_endpoint);
+-	dev->ring_buffer = kmalloc(ring_buffer_size*(sizeof(size_t)+dev->interrupt_in_endpoint_size), GFP_KERNEL);
++	dev->ring_buffer = kcalloc(ring_buffer_size,
++			sizeof(size_t) + dev->interrupt_in_endpoint_size,
++			GFP_KERNEL);
+ 	if (!dev->ring_buffer) {
+ 		dev_err(&intf->dev, "Couldn't allocate ring_buffer\n");
+ 		goto error;
 
 
