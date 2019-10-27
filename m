@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A5C1E6608
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:08:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CCEEE683C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:28:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbfJ0VHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:07:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53926 "EHLO mail.kernel.org"
+        id S1732592AbfJ0V2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:28:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727689AbfJ0VHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:07:49 -0400
+        id S1732343AbfJ0VXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:23:24 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5CE6214AF;
-        Sun, 27 Oct 2019 21:07:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64226205C9;
+        Sun, 27 Oct 2019 21:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210468;
-        bh=8zXU2/gmwV2RWoghEhmnpjkleRk3Pzpb5mO9YtgjhpI=;
+        s=default; t=1572211403;
+        bh=UWRrMZJKv5UW1deDCzyVTEjunYLbL4c4zEt1YclGpx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ik2nWQmU026qeTkyOEkd/p+vNc2Nni/CmzyBqDMb6FxO7+kw909/w5pNyc/X1We+Z
-         ykOaWnpRWb6mMML3A96eDZaxX7Y54EEkP29LXRdoVUkFqKCI4R1LYcZShDTc1LBsLI
-         dtCAXlO6jQi4+zhBfxjdaJN8gb0rbngJhx90SmDQ=
+        b=hOhm3e1FXQA/WRDsOFsedToMMi/v2aBZbDjrRHiSxsYprO+zSSFhUhA/TqP9X5XJ1
+         lJsi6G2/UpNKJcj69sity72m7E6cu++3v+/sgpRqS9MPj6M0tumL6GeYE9i+sKeG/V
+         qP6jhUelpWGlHnU+7UNerx08xASiItXF57cB+A3I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot+cf0adbb9c28c8866c788@syzkaller.appspotmail.com,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 025/119] net: avoid potential infinite loop in tc_ctl_action()
-Date:   Sun, 27 Oct 2019 22:00:02 +0100
-Message-Id: <20191027203307.855020627@linuxfoundation.org>
+        stable@vger.kernel.org, Marek Vasut <marex@denx.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        George McCollister <george.mccollister@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Sean Nyekjaer <sean.nyekjaer@prevas.dk>,
+        Tristram Ha <Tristram.Ha@microchip.com>,
+        Woojung Huh <woojung.huh@microchip.com>
+Subject: [PATCH 5.3 085/197] net: phy: micrel: Discern KSZ8051 and KSZ8795 PHYs
+Date:   Sun, 27 Oct 2019 22:00:03 +0100
+Message-Id: <20191027203356.311768827@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,133 +50,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Marek Vasut <marex@denx.de>
 
-[ Upstream commit 39f13ea2f61b439ebe0060393e9c39925c9ee28c ]
+[ Upstream commit 8b95599c55ed24b36cf44a4720067cfe67edbcb4 ]
 
-tc_ctl_action() has the ability to loop forever if tcf_action_add()
-returns -EAGAIN.
+The KSZ8051 PHY and the KSZ8794/KSZ8795/KSZ8765 switch share exactly the
+same PHY ID. Since KSZ8051 is higher in the ksphy_driver[] list of PHYs
+in the micrel PHY driver, it is used even with the KSZ87xx switch. This
+is wrong, since the KSZ8051 configures registers of the PHY which are
+not present on the simplified KSZ87xx switch PHYs and misconfigures
+other registers of the KSZ87xx switch PHYs.
 
-This special case has been done in case a module needed to be loaded,
-but it turns out that tcf_add_notify() could also return -EAGAIN
-if the socket sk_rcvbuf limit is hit.
+Fortunatelly, it is possible to tell apart the KSZ8051 PHY from the
+KSZ87xx switch by checking the Basic Status register Bit 0, which is
+read-only and indicates presence of the Extended Capability Registers.
+The KSZ8051 PHY has those registers while the KSZ87xx switch does not.
 
-We need to separate the two cases, and only loop for the module
-loading case.
+This patch implements simple check for the presence of this bit for
+both the KSZ8051 PHY and KSZ87xx switch, to let both use the correct
+PHY driver instance.
 
-While we are at it, add a limit of 10 attempts since unbounded
-loops are always scary.
-
-syzbot repro was something like :
-
-socket(PF_NETLINK, SOCK_RAW|SOCK_NONBLOCK, NETLINK_ROUTE) = 3
-write(3, ..., 38) = 38
-setsockopt(3, SOL_SOCKET, SO_RCVBUF, [0], 4) = 0
-sendmsg(3, {msg_name(0)=NULL, msg_iov(1)=[{..., 388}], msg_controllen=0, msg_flags=0x10}, ...)
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 1054 Comm: khungtaskd Not tainted 5.4.0-rc1+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x172/0x1f0 lib/dump_stack.c:113
- nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
- nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
- arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
- trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
- watchdog+0x9d0/0xef0 kernel/hung_task.c:289
- kthread+0x361/0x430 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 8859 Comm: syz-executor910 Not tainted 5.4.0-rc1+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:arch_local_save_flags arch/x86/include/asm/paravirt.h:751 [inline]
-RIP: 0010:lockdep_hardirqs_off+0x1df/0x2e0 kernel/locking/lockdep.c:3453
-Code: 5c 08 00 00 5b 41 5c 41 5d 5d c3 48 c7 c0 58 1d f3 88 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 80 3c 10 00 0f 85 d3 00 00 00 <48> 83 3d 21 9e 99 07 00 0f 84 b9 00 00 00 9c 58 0f 1f 44 00 00 f6
-RSP: 0018:ffff8880a6f3f1b8 EFLAGS: 00000046
-RAX: 1ffffffff11e63ab RBX: ffff88808c9c6080 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff88808c9c6914
-RBP: ffff8880a6f3f1d0 R08: ffff88808c9c6080 R09: fffffbfff16be5d1
-R10: fffffbfff16be5d0 R11: 0000000000000003 R12: ffffffff8746591f
-R13: ffff88808c9c6080 R14: ffffffff8746591f R15: 0000000000000003
-FS:  00000000011e4880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 00000000a8920000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- trace_hardirqs_off+0x62/0x240 kernel/trace/trace_preemptirq.c:45
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
- _raw_spin_lock_irqsave+0x6f/0xcd kernel/locking/spinlock.c:159
- __wake_up_common_lock+0xc8/0x150 kernel/sched/wait.c:122
- __wake_up+0xe/0x10 kernel/sched/wait.c:142
- netlink_unlock_table net/netlink/af_netlink.c:466 [inline]
- netlink_unlock_table net/netlink/af_netlink.c:463 [inline]
- netlink_broadcast_filtered+0x705/0xb80 net/netlink/af_netlink.c:1514
- netlink_broadcast+0x3a/0x50 net/netlink/af_netlink.c:1534
- rtnetlink_send+0xdd/0x110 net/core/rtnetlink.c:714
- tcf_add_notify net/sched/act_api.c:1343 [inline]
- tcf_action_add+0x243/0x370 net/sched/act_api.c:1362
- tc_ctl_action+0x3b5/0x4bc net/sched/act_api.c:1410
- rtnetlink_rcv_msg+0x463/0xb00 net/core/rtnetlink.c:5386
- netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5404
- netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
- netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
- netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:637 [inline]
- sock_sendmsg+0xd7/0x130 net/socket.c:657
- ___sys_sendmsg+0x803/0x920 net/socket.c:2311
- __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
- __do_sys_sendmsg net/socket.c:2365 [inline]
- __se_sys_sendmsg net/socket.c:2363 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
- do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440939
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot+cf0adbb9c28c8866c788@syzkaller.appspotmail.com
+Fixes: 9d162ed69f51 ("net: phy: micrel: add support for KSZ8795")
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: George McCollister <george.mccollister@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+Cc: Tristram Ha <Tristram.Ha@microchip.com>
+Cc: Woojung Huh <woojung.huh@microchip.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_api.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/net/phy/micrel.c |   40 ++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 36 insertions(+), 4 deletions(-)
 
---- a/net/sched/act_api.c
-+++ b/net/sched/act_api.c
-@@ -1072,10 +1072,16 @@ tcf_add_notify(struct net *net, struct n
- static int tcf_action_add(struct net *net, struct nlattr *nla,
- 			  struct nlmsghdr *n, u32 portid, int ovr)
- {
--	int ret = 0;
-+	int loop, ret;
- 	LIST_HEAD(actions);
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -341,6 +341,35 @@ static int ksz8041_config_aneg(struct ph
+ 	return genphy_config_aneg(phydev);
+ }
  
--	ret = tcf_action_init(net, NULL, nla, NULL, NULL, ovr, 0, &actions);
-+	for (loop = 0; loop < 10; loop++) {
-+		ret = tcf_action_init(net, NULL, nla, NULL, NULL, ovr, 0,
-+				      &actions);
-+		if (ret != -EAGAIN)
-+			break;
-+	}
++static int ksz8051_ksz8795_match_phy_device(struct phy_device *phydev,
++					    const u32 ksz_phy_id)
++{
++	int ret;
 +
- 	if (ret)
- 		return ret;
++	if ((phydev->phy_id & MICREL_PHY_ID_MASK) != ksz_phy_id)
++		return 0;
++
++	ret = phy_read(phydev, MII_BMSR);
++	if (ret < 0)
++		return ret;
++
++	/* KSZ8051 PHY and KSZ8794/KSZ8795/KSZ8765 switch share the same
++	 * exact PHY ID. However, they can be told apart by the extended
++	 * capability registers presence. The KSZ8051 PHY has them while
++	 * the switch does not.
++	 */
++	ret &= BMSR_ERCAP;
++	if (ksz_phy_id == PHY_ID_KSZ8051)
++		return ret;
++	else
++		return !ret;
++}
++
++static int ksz8051_match_phy_device(struct phy_device *phydev)
++{
++	return ksz8051_ksz8795_match_phy_device(phydev, PHY_ID_KSZ8051);
++}
++
+ static int ksz8081_config_init(struct phy_device *phydev)
+ {
+ 	/* KSZPHY_OMSO_FACTORY_TEST is set at de-assertion of the reset line
+@@ -364,6 +393,11 @@ static int ksz8061_config_init(struct ph
+ 	return kszphy_config_init(phydev);
+ }
  
-@@ -1122,10 +1128,7 @@ static int tc_ctl_action(struct sk_buff
- 		 */
- 		if (n->nlmsg_flags & NLM_F_REPLACE)
- 			ovr = 1;
--replay:
- 		ret = tcf_action_add(net, tca[TCA_ACT_TAB], n, portid, ovr);
--		if (ret == -EAGAIN)
--			goto replay;
- 		break;
- 	case RTM_DELACTION:
- 		ret = tca_action_gd(net, tca[TCA_ACT_TAB], n,
++static int ksz8795_match_phy_device(struct phy_device *phydev)
++{
++	return ksz8051_ksz8795_match_phy_device(phydev, PHY_ID_KSZ8795);
++}
++
+ static int ksz9021_load_values_from_of(struct phy_device *phydev,
+ 				       const struct device_node *of_node,
+ 				       u16 reg,
+@@ -1017,8 +1051,6 @@ static struct phy_driver ksphy_driver[]
+ 	.suspend	= genphy_suspend,
+ 	.resume		= genphy_resume,
+ }, {
+-	.phy_id		= PHY_ID_KSZ8051,
+-	.phy_id_mask	= MICREL_PHY_ID_MASK,
+ 	.name		= "Micrel KSZ8051",
+ 	/* PHY_BASIC_FEATURES */
+ 	.driver_data	= &ksz8051_type,
+@@ -1029,6 +1061,7 @@ static struct phy_driver ksphy_driver[]
+ 	.get_sset_count = kszphy_get_sset_count,
+ 	.get_strings	= kszphy_get_strings,
+ 	.get_stats	= kszphy_get_stats,
++	.match_phy_device = ksz8051_match_phy_device,
+ 	.suspend	= genphy_suspend,
+ 	.resume		= genphy_resume,
+ }, {
+@@ -1141,13 +1174,12 @@ static struct phy_driver ksphy_driver[]
+ 	.suspend	= genphy_suspend,
+ 	.resume		= genphy_resume,
+ }, {
+-	.phy_id		= PHY_ID_KSZ8795,
+-	.phy_id_mask	= MICREL_PHY_ID_MASK,
+ 	.name		= "Micrel KSZ8795",
+ 	/* PHY_BASIC_FEATURES */
+ 	.config_init	= kszphy_config_init,
+ 	.config_aneg	= ksz8873mll_config_aneg,
+ 	.read_status	= ksz8873mll_read_status,
++	.match_phy_device = ksz8795_match_phy_device,
+ 	.suspend	= genphy_suspend,
+ 	.resume		= genphy_resume,
+ }, {
 
 
