@@ -2,195 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53579E6A19
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 00:10:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22336E6A3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 00:47:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbfJ0XKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 19:10:19 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37061 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728771AbfJ0XKR (ORCPT
+        id S1727870AbfJ0Xls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 19:41:48 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58330 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726894AbfJ0Xlr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 19:10:17 -0400
-Received: by mail-pf1-f193.google.com with SMTP id u9so721398pfn.4
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2019 16:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EWtOy2BGYmJZBu9y/vV1Ye4lC5/xUzKF6q+Wq5DL66w=;
-        b=iQv0Awso6MJ9RQC+/BAVwiJn4zrQVoTvObS3K1UEZ74cB/ZENN3ZgEHxyax3lNAtmq
-         5UTBHQdEbmGVFK4rdEjl89B4Fc3nnOuh/02RPV3/9t24oWSSgqqcB/VMFsRjDSYraDUn
-         gqR+5/BFn5oCyWi0ozyGaIqt8/RZ0NmaVyLdI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EWtOy2BGYmJZBu9y/vV1Ye4lC5/xUzKF6q+Wq5DL66w=;
-        b=qowaa+rFmyh85gQ8AgBeGeNFFtYnTp6YhWpbH/tqSL6XMZ6NQp0Zu/pf3rqRJaMhWw
-         2MRdN37LuOCTesCrlatEEunfFhPidI5PGM0waPYZEbsAw/a84fRLCF3ELfCafsZuLrwQ
-         SK8hyyxSTUxwBD/ufnZW/WMjdlzzOOxPNzWEdCQiwvVwxYUDRGZxVcy3RXTXfrungvs3
-         ZpGNXGLjF02pxc6cap1osLIU0+OkrmmV+7sLqIDYMSo5uqAlsxk+eyxammsymanDM3zX
-         1ZxyD48ihKbv1KC4Lbi0i0+6dbMAzZts9/zAjzn6imQ7ru4ZtegPgkmyjF01c0SAM8bS
-         Xo8A==
-X-Gm-Message-State: APjAAAVXgCsPT/nLGpPkjSCSFd5CkkNIrkC+avl11Zsi2nGyHQ2s4dkM
-        SYzWq+FFgB2PCQbfpRNZsXddsg==
-X-Google-Smtp-Source: APXvYqzTeVruokatYzvcdv5+6+tXt1QCHSZrYqx4zdzwKgOWbWijGCTeFSzQDoRZ9HZS1jc/jouddA==
-X-Received: by 2002:a17:90a:c383:: with SMTP id h3mr18541025pjt.122.1572217815066;
-        Sun, 27 Oct 2019 16:10:15 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id r185sm9081219pfr.68.2019.10.27.16.10.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2019 16:10:14 -0700 (PDT)
-From:   Gwendal Grignou <gwendal@chromium.org>
-To:     briannorris@chromium.org, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, lee.jones@linaro.org,
-        bleung@chromium.org, enric.balletbo@collabora.com,
-        dianders@chromium.org, groeck@chromium.org,
-        fabien.lahoudere@collabora.com
-Cc:     linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v3 18/18] iio: cros_ec: Use Hertz as unit for sampling frequency
-Date:   Sun, 27 Oct 2019 16:09:21 -0700
-Message-Id: <20191027230921.205251-19-gwendal@chromium.org>
-X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
-In-Reply-To: <20191027230921.205251-1-gwendal@chromium.org>
-References: <20191027230921.205251-1-gwendal@chromium.org>
+        Sun, 27 Oct 2019 19:41:47 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9RNaqIM051811
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2019 19:41:46 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vwje7k3se-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2019 19:41:46 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ajd@linux.ibm.com>;
+        Sun, 27 Oct 2019 23:41:43 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 27 Oct 2019 23:41:36 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9RNfZ5t42532890
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 27 Oct 2019 23:41:35 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D2B4A4059;
+        Sun, 27 Oct 2019 23:41:35 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 331E5A4040;
+        Sun, 27 Oct 2019 23:41:35 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 27 Oct 2019 23:41:35 +0000 (GMT)
+Received: from [10.61.2.125] (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 9E6CDA026A;
+        Mon, 28 Oct 2019 10:41:30 +1100 (AEDT)
+Subject: Re: [PATCH 02/10] nvdimm: remove prototypes for nonexistent functions
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Anton Blanchard <anton@ozlabs.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Greg Kurz <groug@kaod.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Wei Yang <richard.weiyang@gmail.com>, Qian Cai <cai@lca.pw>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+References: <20191025044721.16617-1-alastair@au1.ibm.com>
+ <20191025044721.16617-3-alastair@au1.ibm.com>
+From:   Andrew Donnellan <ajd@linux.ibm.com>
+Date:   Mon, 28 Oct 2019 10:41:31 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191025044721.16617-3-alastair@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19102723-4275-0000-0000-0000037838DF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19102723-4276-0000-0000-0000388B6993
+Message-Id: <0eb471be-9a88-3dbf-0d75-b109fc257974@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-27_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910270246
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To be compliant with other sensors, set and get sensor sampling
-frequency in Hz, not mHz.
+On 25/10/19 3:46 pm, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> These functions don't exist, so remove the prototypes for them.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 
-Fixes: ae7b02ad2f32 ("iio: common: cros_ec_sensors: Expose
-cros_ec_sensors frequency range via iio sysfs")
+Indeed, they do not.
 
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
----
-No changes in v3.
-No changes in v2.
+Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
 
- .../cros_ec_sensors/cros_ec_sensors_core.c    | 32 +++++++++++--------
- .../linux/iio/common/cros_ec_sensors_core.h   |  6 ++--
- 2 files changed, 22 insertions(+), 16 deletions(-)
+> ---
+>   drivers/nvdimm/nd-core.h | 4 ----
+>   1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/nd-core.h b/drivers/nvdimm/nd-core.h
+> index 25fa121104d0..9f121a6aeb02 100644
+> --- a/drivers/nvdimm/nd-core.h
+> +++ b/drivers/nvdimm/nd-core.h
+> @@ -124,11 +124,7 @@ void nd_region_create_dax_seed(struct nd_region *nd_region);
+>   int nvdimm_bus_create_ndctl(struct nvdimm_bus *nvdimm_bus);
+>   void nvdimm_bus_destroy_ndctl(struct nvdimm_bus *nvdimm_bus);
+>   void nd_synchronize(void);
+> -int nvdimm_bus_register_dimms(struct nvdimm_bus *nvdimm_bus);
+> -int nvdimm_bus_register_regions(struct nvdimm_bus *nvdimm_bus);
+> -int nvdimm_bus_init_interleave_sets(struct nvdimm_bus *nvdimm_bus);
+>   void __nd_device_register(struct device *dev);
+> -int nd_match_dimm(struct device *dev, void *data);
+>   struct nd_label_id;
+>   char *nd_label_gen_id(struct nd_label_id *label_id, u8 *uuid, u32 flags);
+>   bool nd_is_uuid_unique(struct device *dev, u8 *uuid);
+> 
 
-diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-index fc40bfa4a21fd..17637cf6fd90f 100644
---- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-+++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-@@ -262,6 +262,7 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
- 	struct cros_ec_dev *ec = sensor_hub->ec;
- 	struct cros_ec_sensor_platform *sensor_platform = dev_get_platdata(dev);
- 	u32 ver_mask;
-+	int frequencies[ARRAY_SIZE(state->frequencies) / 2] = { 0 };
- 	int ret, i;
- 
- 	platform_set_drvdata(pdev, indio_dev);
-@@ -310,20 +311,22 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
- 			state->calib[i].scale = MOTION_SENSE_DEFAULT_SCALE;
- 
- 		/* 0 is a correct value used to stop the device */
--		state->frequencies[0] = 0;
- 		if (state->msg->version < 3) {
- 			get_default_min_max_freq(state->resp->info.type,
--						 &state->frequencies[1],
--						 &state->frequencies[2],
-+						 &frequencies[1],
-+						 &frequencies[2],
- 						 &state->fifo_max_event_count);
- 		} else {
--			state->frequencies[1] =
--			    state->resp->info_3.min_frequency;
--			state->frequencies[2] =
--			    state->resp->info_3.max_frequency;
-+			frequencies[1] = state->resp->info_3.min_frequency;
-+			frequencies[2] = state->resp->info_3.max_frequency;
- 			state->fifo_max_event_count =
- 			    state->resp->info_3.fifo_max_event_count;
- 		}
-+		for (i = 0; i < ARRAY_SIZE(frequencies); i++) {
-+			state->frequencies[2 * i] = frequencies[i] / 1000;
-+			state->frequencies[2 * i + 1] =
-+				(frequencies[i] % 1000) * 1000;
-+		}
- 
- 		ret = devm_iio_triggered_buffer_setup(
- 				dev, indio_dev, NULL,
-@@ -713,7 +716,7 @@ int cros_ec_sensors_core_read(struct cros_ec_sensors_core_state *st,
- 			  struct iio_chan_spec const *chan,
- 			  int *val, int *val2, long mask)
- {
--	int ret;
-+	int ret, frequency;
- 
- 	switch (mask) {
- 	case IIO_CHAN_INFO_SAMP_FREQ:
-@@ -725,8 +728,10 @@ int cros_ec_sensors_core_read(struct cros_ec_sensors_core_state *st,
- 		if (ret)
- 			break;
- 
--		*val = st->resp->sensor_odr.ret;
--		ret = IIO_VAL_INT;
-+		frequency = st->resp->sensor_odr.ret;
-+		*val = frequency / 1000;
-+		*val2 = (frequency % 1000) * 1000;
-+		ret = IIO_VAL_INT_PLUS_MICRO;
- 		break;
- 	default:
- 		ret = -EINVAL;
-@@ -761,7 +766,7 @@ int cros_ec_sensors_core_read_avail(struct iio_dev *indio_dev,
- 	case IIO_CHAN_INFO_SAMP_FREQ:
- 		*length = ARRAY_SIZE(state->frequencies);
- 		*vals = (const int *)&state->frequencies;
--		*type = IIO_VAL_INT;
-+		*type = IIO_VAL_INT_PLUS_MICRO;
- 		return IIO_AVAIL_LIST;
- 	}
- 
-@@ -783,12 +788,13 @@ int cros_ec_sensors_core_write(struct cros_ec_sensors_core_state *st,
- 			       struct iio_chan_spec const *chan,
- 			       int val, int val2, long mask)
- {
--	int ret;
-+	int ret, frequency;
- 
- 	switch (mask) {
- 	case IIO_CHAN_INFO_SAMP_FREQ:
-+		frequency = val * 1000 + val2 / 1000;
- 		st->param.cmd = MOTIONSENSE_CMD_SENSOR_ODR;
--		st->param.sensor_odr.data = val;
-+		st->param.sensor_odr.data = frequency;
- 
- 		/* Always roundup, so caller gets at least what it asks for. */
- 		st->param.sensor_odr.roundup = 1;
-diff --git a/include/linux/iio/common/cros_ec_sensors_core.h b/include/linux/iio/common/cros_ec_sensors_core.h
-index 2f3668dfc826b..50c34c278dba9 100644
---- a/include/linux/iio/common/cros_ec_sensors_core.h
-+++ b/include/linux/iio/common/cros_ec_sensors_core.h
-@@ -51,6 +51,8 @@ typedef irqreturn_t (*cros_ec_sensors_capture_t)(int irq, void *p);
-  *				is always 8-byte aligned.
-  * @read_ec_sensors_data:	function used for accessing sensors values
-  * @fifo_max_event_count:	Size of the EC sensor FIFO
-+ * @frequencies:		Table of known available frequencies:
-+ *				0, Min and Max in mHz
-  */
- struct cros_ec_sensors_core_state {
- 	struct cros_ec_device *ec;
-@@ -74,9 +76,7 @@ struct cros_ec_sensors_core_state {
- 				    unsigned long scan_mask, s16 *data);
- 
- 	u32 fifo_max_event_count;
--
--	/* Table of known available frequencies : 0, Min and Max in mHz */
--	int frequencies[3];
-+	int frequencies[6];
- };
- 
- int cros_ec_sensors_read_lpc(struct iio_dev *indio_dev, unsigned long scan_mask,
 -- 
-2.23.0.866.gb869b98d4c-goog
+Andrew Donnellan              OzLabs, ADL Canberra
+ajd@linux.ibm.com             IBM Australia Limited
 
