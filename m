@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A061E6923
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78CCBE69B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:38:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732792AbfJ0Veo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:34:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56716 "EHLO mail.kernel.org"
+        id S1728275AbfJ0VDR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:03:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729659AbfJ0VKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:10:20 -0400
+        id S1728216AbfJ0VDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:03:08 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F32920B7C;
-        Sun, 27 Oct 2019 21:10:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F4EE20873;
+        Sun, 27 Oct 2019 21:03:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210618;
-        bh=tSqkmqnfXoX2DXObang/oy5lGOvr0Kq+arr3Bk2N6kE=;
+        s=default; t=1572210187;
+        bh=99Y5+JPsjc5OFuA/1Rpq9820qIfZaSVHVwyJSPxXNgA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cyX2DEOCCA+SqZ2oE9aA7WQNhJs9Z42WDet7Qez4AhpC5yebv6rtah3LAgzfNc6jt
-         lYoIGh46LTJzpsAl19CaP9UKv1zMDLx7aZGds9iqrPrNxf3O4GXTh9IJCNz14AOhxM
-         Qosb5DOneHWJTtYDwUpz9gnBvm11bJg+e61Nwc2E=
+        b=Jv1AEcHUvGMdI1BKAYEtW+4MtaHmf5XrI1+uKJcQuv+sd6KjKJnDbXtHJ2XKMYSvO
+         xmJYdU9doaFE4MXamOWDNWchC8qMHJpA+uVujPvbiMUCZqrbM6J3wdwLZ/4bz/Dhjb
+         cqNEhdUrTSihRb6LzrXMC168UbvX3SBT8r2EJmi8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 078/119] arm64: Always enable spectre-v2 vulnerability detection
-Date:   Sun, 27 Oct 2019 22:00:55 +0100
-Message-Id: <20191027203344.153460145@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH 4.4 20/41] usb: udc: lpc32xx: fix bad bit shift operation
+Date:   Sun, 27 Oct 2019 22:00:58 +0100
+Message-Id: <20191027203116.981208973@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,90 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Linton <jeremy.linton@arm.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-[ Upstream commit 8c1e3d2bb44cbb998cb28ff9a18f105fee7f1eb3 ]
+commit b987b66ac3a2bc2f7b03a0ba48a07dc553100c07 upstream.
 
-Ensure we are always able to detect whether or not the CPU is affected
-by Spectre-v2, so that we can later advertise this to userspace.
+It seems that the right variable to use in this case is *i*, instead of
+*n*, otherwise there is an undefined behavior when right shifiting by more
+than 31 bits when multiplying n by 8; notice that *n* can take values
+equal or greater than 4 (4, 8, 16, ...).
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Also, notice that under the current conditions (bl = 3), we are skiping
+the handling of bytes 3, 7, 31... So, fix this by updating this logic
+and limit *bl* up to 4 instead of up to 3.
+
+This fix is based on function udc_stuff_fifo().
+
+Addresses-Coverity-ID: 1454834 ("Bad bit shift operation")
+Fixes: 24a28e428351 ("USB: gadget driver for LPC32xx")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Link: https://lore.kernel.org/r/20191014191830.GA10721@embeddedor
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/cpu_errata.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -76,7 +76,6 @@ cpu_enable_trap_ctr_access(const struct
- 	config_sctlr_el1(SCTLR_EL1_UCT, 0);
- }
+---
+ drivers/usb/gadget/udc/lpc32xx_udc.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/drivers/usb/gadget/udc/lpc32xx_udc.c
++++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
+@@ -1225,11 +1225,11 @@ static void udc_pop_fifo(struct lpc32xx_
+ 			tmp = readl(USBD_RXDATA(udc->udp_baseaddr));
  
--#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
- #include <asm/mmu_context.h>
- #include <asm/cacheflush.h>
+ 			bl = bytes - n;
+-			if (bl > 3)
+-				bl = 3;
++			if (bl > 4)
++				bl = 4;
  
-@@ -217,11 +216,11 @@ static int detect_harden_bp_fw(void)
- 	    ((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR_V1))
- 		cb = qcom_link_stack_sanitization;
+ 			for (i = 0; i < bl; i++)
+-				data[n + i] = (u8) ((tmp >> (n * 8)) & 0xFF);
++				data[n + i] = (u8) ((tmp >> (i * 8)) & 0xFF);
+ 		}
+ 		break;
  
--	install_bp_hardening_cb(cb, smccc_start, smccc_end);
-+	if (IS_ENABLED(CONFIG_HARDEN_BRANCH_PREDICTOR))
-+		install_bp_hardening_cb(cb, smccc_start, smccc_end);
- 
- 	return 1;
- }
--#endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
- 
- DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
- 
-@@ -457,7 +456,6 @@ out_printmsg:
- 	.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,			\
- 	CAP_MIDR_RANGE_LIST(midr_list)
- 
--#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
- /*
-  * List of CPUs that do not need any Spectre-v2 mitigation at all.
-  */
-@@ -489,6 +487,12 @@ check_branch_predictor(const struct arm6
- 	if (!need_wa)
- 		return false;
- 
-+	if (!IS_ENABLED(CONFIG_HARDEN_BRANCH_PREDICTOR)) {
-+		pr_warn_once("spectrev2 mitigation disabled by kernel configuration\n");
-+		__hardenbp_enab = false;
-+		return false;
-+	}
-+
- 	/* forced off */
- 	if (__nospectre_v2) {
- 		pr_info_once("spectrev2 mitigation disabled by command line option\n");
-@@ -500,7 +504,6 @@ check_branch_predictor(const struct arm6
- 
- 	return (need_wa > 0);
- }
--#endif
- 
- const struct arm64_cpu_capabilities arm64_errata[] = {
- #if	defined(CONFIG_ARM64_ERRATUM_826319) || \
-@@ -640,13 +643,11 @@ const struct arm64_cpu_capabilities arm6
- 		ERRATA_MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
- 	},
- #endif
--#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
- 	{
- 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
- 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
- 		.matches = check_branch_predictor,
- 	},
--#endif
- 	{
- 		.desc = "Speculative Store Bypass Disable",
- 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
 
 
