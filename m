@@ -2,40 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A08DDE66FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:17:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA4ACE681C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:27:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730958AbfJ0VRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:17:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36730 "EHLO mail.kernel.org"
+        id S1732694AbfJ0VZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:25:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730947AbfJ0VQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:16:58 -0400
+        id S1732678AbfJ0VZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:25:13 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4A90208C0;
-        Sun, 27 Oct 2019 21:16:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 047F72064A;
+        Sun, 27 Oct 2019 21:25:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211018;
-        bh=l5Ap4qy6IDx+F2UEHsXA9RX/S0oe9K0oBuAI3v//3JU=;
+        s=default; t=1572211511;
+        bh=3BnMbfPndXojbnIO/KjTzKqKNjsSSST0nsbkX7y7L8M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UHHoOtrzDHODCDGgHPQle4Aj2fcaXhgx8fzlWOHYc02Be7LRWrQcNNocDe7eJR5BJ
-         4Ybj0HJU8/CFcgAZx84ymCEcCr1pDEnMqa6LmYBagIhhFMRPojFYcLzKkjoc/um3xD
-         Xh2CqGt208zOvacmWXpvumC3NA1/LZKSGh8R/V5g=
+        b=anIMeuqaS5IWC3Hr2ligPuXAcbaOQ5gi5AurbCbPCfxV8W1beIX/sC5hER8gmrz9k
+         0BLOdaBM5+lk7oLanjB025FomrD074yLXOFORjHrF39sNUd7ll6yNgM8zTgc36bfDL
+         61m/v4hQ6kvxp7we5lRnBMI/1S22NwW7Ldwe6utU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Levin <levinale@chromium.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 4.19 81/93] pinctrl: cherryview: restore Strago DMI workaround for all versions
+        stable@vger.kernel.org, Steve Wahl <steve.wahl@hpe.com>,
+        Borislav Petkov <bp@suse.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Baoquan He <bhe@redhat.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        dimitri.sivanich@hpe.com, Feng Tang <feng.tang@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jordan Borgner <mail@jordan-borgner.de>,
+        Juergen Gross <jgross@suse.com>, mike.travis@hpe.com,
+        russ.anderson@hpe.com, Thomas Gleixner <tglx@linutronix.de>,
+        x86-ml <x86@kernel.org>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH 5.3 175/197] x86/boot/64: Make level2_kernel_pgt pages invalid outside kernel area
 Date:   Sun, 27 Oct 2019 22:01:33 +0100
-Message-Id: <20191027203313.219460624@linuxfoundation.org>
+Message-Id: <20191027203404.708490338@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,69 +54,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Steve Wahl <steve.wahl@hpe.com>
 
-commit 260996c30f4f3a732f45045e3e0efe27017615e4 upstream.
+commit 2aa85f246c181b1fa89f27e8e20c5636426be624 upstream.
 
-This is essentially a revert of:
+Our hardware (UV aka Superdome Flex) has address ranges marked
+reserved by the BIOS. Access to these ranges is caught as an error,
+causing the BIOS to halt the system.
 
-e3f72b749da2 pinctrl: cherryview: fix Strago DMI workaround
-86c5dd6860a6 pinctrl: cherryview: limit Strago DMI workarounds to version 1.0
+Initial page tables mapped a large range of physical addresses that
+were not checked against the list of BIOS reserved addresses, and
+sometimes included reserved addresses in part of the mapped range.
+Including the reserved range in the map allowed processor speculative
+accesses to the reserved range, triggering a BIOS halt.
 
-because even with 1.1 versions of BIOS there are some pins that are
-configured as interrupts but not claimed by any driver, and they
-sometimes fire up and result in interrupt storms that cause touchpad
-stop functioning and other issues.
+Used early in booting, the page table level2_kernel_pgt addresses 1
+GiB divided into 2 MiB pages, and it was set up to linearly map a full
+ 1 GiB of physical addresses that included the physical address range
+of the kernel image, as chosen by KASLR.  But this also included a
+large range of unused addresses on either side of the kernel image.
+And unlike the kernel image's physical address range, this extra
+mapped space was not checked against the BIOS tables of usable RAM
+addresses.  So there were times when the addresses chosen by KASLR
+would result in processor accessible mappings of BIOS reserved
+physical addresses.
 
-Given that we are unlikely to qualify another firmware version for a
-while it is better to keep the workaround active on all Strago boards.
+The kernel code did not directly access any of this extra mapped
+space, but having it mapped allowed the processor to issue speculative
+accesses into reserved memory, causing system halts.
 
-Reported-by: Alex Levin <levinale@chromium.org>
-Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
+This was encountered somewhat rarely on a normal system boot, and much
+more often when starting the crash kernel if "crashkernel=512M,high"
+was specified on the command line (this heavily restricts the physical
+address of the crash kernel, in our case usually within 1 GiB of
+reserved space).
+
+The solution is to invalidate the pages of this table outside the kernel
+image's space before the page table is activated. It fixes this problem
+on our hardware.
+
+ [ bp: Touchups. ]
+
+Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Brijesh Singh <brijesh.singh@amd.com>
+Cc: dimitri.sivanich@hpe.com
+Cc: Feng Tang <feng.tang@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jordan Borgner <mail@jordan-borgner.de>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: mike.travis@hpe.com
+Cc: russ.anderson@hpe.com
 Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Alex Levin <levinale@chromium.org>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Cc: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Link: https://lkml.kernel.org/r/9c011ee51b081534a7a15065b1681d200298b530.1569358539.git.steve.wahl@hpe.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/intel/pinctrl-cherryview.c |    4 ----
- 1 file changed, 4 deletions(-)
+ arch/x86/kernel/head64.c |   22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1524,7 +1524,6 @@ static const struct dmi_system_id chv_no
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1532,7 +1531,6 @@ static const struct dmi_system_id chv_no
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1540,7 +1538,6 @@ static const struct dmi_system_id chv_no
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1548,7 +1545,6 @@ static const struct dmi_system_id chv_no
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{}
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -222,13 +222,31 @@ unsigned long __head __startup_64(unsign
+ 	 * we might write invalid pmds, when the kernel is relocated
+ 	 * cleanup_highmap() fixes this up along with the mappings
+ 	 * beyond _end.
++	 *
++	 * Only the region occupied by the kernel image has so far
++	 * been checked against the table of usable memory regions
++	 * provided by the firmware, so invalidate pages outside that
++	 * region. A page table entry that maps to a reserved area of
++	 * memory would allow processor speculation into that area,
++	 * and on some hardware (particularly the UV platform) even
++	 * speculative access to some reserved areas is caught as an
++	 * error, causing the BIOS to halt the system.
+ 	 */
+ 
+ 	pmd = fixup_pointer(level2_kernel_pgt, physaddr);
+-	for (i = 0; i < PTRS_PER_PMD; i++) {
++
++	/* invalidate pages before the kernel image */
++	for (i = 0; i < pmd_index((unsigned long)_text); i++)
++		pmd[i] &= ~_PAGE_PRESENT;
++
++	/* fixup pages that are part of the kernel image */
++	for (; i <= pmd_index((unsigned long)_end); i++)
+ 		if (pmd[i] & _PAGE_PRESENT)
+ 			pmd[i] += load_delta;
+-	}
++
++	/* invalidate pages after the kernel image */
++	for (; i < PTRS_PER_PMD; i++)
++		pmd[i] &= ~_PAGE_PRESENT;
+ 
+ 	/*
+ 	 * Fixup phys_base - remove the memory encryption mask to obtain
 
 
