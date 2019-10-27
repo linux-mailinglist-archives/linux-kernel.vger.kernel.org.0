@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4067FE65E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CA1DE682B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:27:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbfJ0VGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:06:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52318 "EHLO mail.kernel.org"
+        id S1731769AbfJ0VYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:24:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727099AbfJ0VGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:06:20 -0400
+        id S1732573AbfJ0VYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:24:43 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B94E9214AF;
-        Sun, 27 Oct 2019 21:06:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC64D21726;
+        Sun, 27 Oct 2019 21:24:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210380;
-        bh=P5TbDHn4L8lp7SJMwGX8ysHqwlmcFsq8WwQEoWNuwV0=;
+        s=default; t=1572211482;
+        bh=ZFe86N/EscxSwYeE7npBjjyYeCxyrwEyFWXFXK0cBM0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RQEp1udP1XmstkZoazwqCEE8cFJJgNCUUyfEnOY7uw0QvATCe8fw44ro+nfz49qD6
-         6FHP/E+sJkO1w65t/4jDywNggZrdDAMIiSDUsH+Att9IdOalhGprPvGcV2/mIotMCS
-         dJUnyUWvrc1EpnXqY7nMT0PUT2cQQ8udjSejYqI0=
+        b=fw1NjhcBIaVbLPn8GQkBMnH8PBAbdR/hQHw+kAgnYNXZNiuNPrbrtE5sTjz1UpLzl
+         dTb0l6RLUbh1Duq6Z+ZcSRYRpesfWA39A1j1zsqMIIAPiJ7X6Xm/aQ+gTt/Tvw02L4
+         blGiIxhp+Ln0RUmmSiUryQVRvcbNtfHtVDtgv+jU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Paul Durrant <paul@xen.org>, Wei Liu <wei.liu@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 46/49] xen/netback: fix error path of xenvif_connect_data()
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 5.3 166/197] arm64: Allow CAVIUM_TX2_ERRATUM_219 to be selected
 Date:   Sun, 27 Oct 2019 22:01:24 +0100
-Message-Id: <20191027203203.808402034@linuxfoundation.org>
+Message-Id: <20191027203403.257696914@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Juergen Gross <jgross@suse.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 3d5c1a037d37392a6859afbde49be5ba6a70a6b3 upstream.
+commit 603afdc9438ac546181e843f807253d75d3dbc45 upstream.
 
-xenvif_connect_data() calls module_put() in case of error. This is
-wrong as there is no related module_get().
+Allow the user to select the workaround for TX2-219, and update
+the silicon-errata.rst file to reflect this.
 
-Remove the superfluous module_put().
-
-Fixes: 279f438e36c0a7 ("xen-netback: Don't destroy the netdev until the vif is shut down")
-Cc: <stable@vger.kernel.org> # 3.12
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Paul Durrant <paul@xen.org>
-Reviewed-by: Wei Liu <wei.liu@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/xen-netback/interface.c |    1 -
- 1 file changed, 1 deletion(-)
+ Documentation/arm64/silicon-errata.rst |    2 ++
+ arch/arm64/Kconfig                     |   17 +++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
---- a/drivers/net/xen-netback/interface.c
-+++ b/drivers/net/xen-netback/interface.c
-@@ -706,7 +706,6 @@ err_unmap:
- 	xenvif_unmap_frontend_data_rings(queue);
- 	netif_napi_del(&queue->napi);
- err:
--	module_put(THIS_MODULE);
- 	return err;
- }
+--- a/Documentation/arm64/silicon-errata.rst
++++ b/Documentation/arm64/silicon-errata.rst
+@@ -107,6 +107,8 @@ stable kernels.
+ +----------------+-----------------+-----------------+-----------------------------+
+ | Cavium         | ThunderX2 SMMUv3| #126            | N/A                         |
+ +----------------+-----------------+-----------------+-----------------------------+
++| Cavium         | ThunderX2 Core  | #219            | CAVIUM_TX2_ERRATUM_219      |
+++----------------+-----------------+-----------------+-----------------------------+
+ +----------------+-----------------+-----------------+-----------------------------+
+ | Freescale/NXP  | LS2080A/LS1043A | A-008585        | FSL_ERRATUM_A008585         |
+ +----------------+-----------------+-----------------+-----------------------------+
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -601,6 +601,23 @@ config CAVIUM_ERRATUM_30115
  
+ 	  If unsure, say Y.
+ 
++config CAVIUM_TX2_ERRATUM_219
++	bool "Cavium ThunderX2 erratum 219: PRFM between TTBR change and ISB fails"
++	default y
++	help
++	  On Cavium ThunderX2, a load, store or prefetch instruction between a
++	  TTBR update and the corresponding context synchronizing operation can
++	  cause a spurious Data Abort to be delivered to any hardware thread in
++	  the CPU core.
++
++	  Work around the issue by avoiding the problematic code sequence and
++	  trapping KVM guest TTBRx_EL1 writes to EL2 when SMT is enabled. The
++	  trap handler performs the corresponding register access, skips the
++	  instruction and ensures context synchronization by virtue of the
++	  exception return.
++
++	  If unsure, say Y.
++
+ config QCOM_FALKOR_ERRATUM_1003
+ 	bool "Falkor E1003: Incorrect translation due to ASID change"
+ 	default y
 
 
