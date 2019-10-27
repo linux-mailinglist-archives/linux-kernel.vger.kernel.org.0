@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EAC5E6761
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:21:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 976DAE65FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:07:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731720AbfJ0VUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:20:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40972 "EHLO mail.kernel.org"
+        id S1729174AbfJ0VH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:07:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730775AbfJ0VU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:20:26 -0400
+        id S1728238AbfJ0VHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:07:23 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A78B0205C9;
-        Sun, 27 Oct 2019 21:20:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 783932064A;
+        Sun, 27 Oct 2019 21:07:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211226;
-        bh=dpkgng9xeRaRt0F4oNfxz4++ewDMoAlP1wKnaRG1FoU=;
+        s=default; t=1572210443;
+        bh=WbnXvxpwEoGnorjSiLoymXvZ3F79jV+5PNgIiuu3PTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EvZlq41bOGu+ilB+rGnzKHdrNtQdzn13f9vbwvHdJxVAwob8tBCU9b8mkYq5aoduH
-         d8NfaYjXQ5RcavXBp28VwwSkpQ4nhmGc6TWtLxiY4SR5ZBwRx1X2HFPqc7Nt8JFeZO
-         o80cT69L4y5Q2RGuTPQSBFOhFiVa6izfd1RgvfH0=
+        b=RXWyOkrdUWCarX94e8XY9osv6UXv4A21KFq7VOSlDs03aOPjxvyloid7TAF5oVjhe
+         FDP0mqbCLfGeU8UMVDlvD37r5GkDW46kVLieYZ7uwWGG3vBFHypNDQQ/88d83jhfg7
+         8S5POXdG+HYDd+qD8ajczoYAYOdSx5DwRFFvnT+0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 075/197] net/ibmvnic: Fix EOI when running in XIVE mode.
-Date:   Sun, 27 Oct 2019 21:59:53 +0100
-Message-Id: <20191027203355.692991500@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 017/119] Revert "drm/radeon: Fix EEH during kexec"
+Date:   Sun, 27 Oct 2019 21:59:54 +0100
+Message-Id: <20191027203304.817080909@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Cédric Le Goater" <clg@kaod.org>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit 11d49ce9f7946dfed4dcf5dbde865c78058b50ab ]
+[ Upstream commit 8d13c187c42e110625d60094668a8f778c092879 ]
 
-pSeries machines on POWER9 processors can run with the XICS (legacy)
-interrupt mode or with the XIVE exploitation interrupt mode. These
-interrupt contollers have different interfaces for interrupt
-management : XICS uses hcalls and XIVE loads and stores on a page.
-H_EOI being a XICS interface the enable_scrq_irq() routine can fail
-when the machine runs in XIVE mode.
+This reverts commit 6f7fe9a93e6c09bf988c5059403f5f88e17e21e6.
 
-Fix that by calling the EOI handler of the interrupt chip.
+This breaks some boards.  Maybe just enable this on PPC for
+now?
 
-Fixes: f23e0643cd0b ("ibmvnic: Clear pending interrupt after device reset")
-Signed-off-by: CÃ©dric Le Goater <clg@kaod.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Bug: https://bugzilla.kernel.org/show_bug.cgi?id=205147
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/radeon/radeon_drv.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -2772,12 +2772,10 @@ static int enable_scrq_irq(struct ibmvni
+diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+index 54d97dd5780a1..f4becad0a78c0 100644
+--- a/drivers/gpu/drm/radeon/radeon_drv.c
++++ b/drivers/gpu/drm/radeon/radeon_drv.c
+@@ -368,19 +368,11 @@ radeon_pci_remove(struct pci_dev *pdev)
+ static void
+ radeon_pci_shutdown(struct pci_dev *pdev)
+ {
+-	struct drm_device *ddev = pci_get_drvdata(pdev);
+-
+ 	/* if we are running in a VM, make sure the device
+ 	 * torn down properly on reboot/shutdown
+ 	 */
+ 	if (radeon_device_is_virtual())
+ 		radeon_pci_remove(pdev);
+-
+-	/* Some adapters need to be suspended before a
+-	* shutdown occurs in order to prevent an error
+-	* during kexec.
+-	*/
+-	radeon_suspend_kms(ddev, true, true, false);
+ }
  
- 	if (adapter->resetting &&
- 	    adapter->reset_reason == VNIC_RESET_MOBILITY) {
--		u64 val = (0xff000000) | scrq->hw_irq;
-+		struct irq_desc *desc = irq_to_desc(scrq->irq);
-+		struct irq_chip *chip = irq_desc_get_chip(desc);
- 
--		rc = plpar_hcall_norets(H_EOI, val);
--		if (rc)
--			dev_err(dev, "H_EOI FAILED irq 0x%llx. rc=%ld\n",
--				val, rc);
-+		chip->irq_eoi(&desc->irq_data);
- 	}
- 
- 	rc = plpar_hcall_norets(H_VIOCTL, adapter->vdev->unit_address,
+ static int radeon_pmops_suspend(struct device *dev)
+-- 
+2.20.1
+
 
 
