@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5A9CE65D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DCCAE6846
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:28:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbfJ0VFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:05:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51690 "EHLO mail.kernel.org"
+        id S1732244AbfJ0VWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:22:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728903AbfJ0VFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:05:50 -0400
+        id S1728739AbfJ0VWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:22:49 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3666E2064A;
-        Sun, 27 Oct 2019 21:05:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19DD4205C9;
+        Sun, 27 Oct 2019 21:22:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210348;
-        bh=ssAzw6BWhGL2G6UWNKMpXMhinAanx/MjgAnixJgzSCs=;
+        s=default; t=1572211368;
+        bh=lCqS4E0uEPjyXJmJtHuFFGjg724ePFJdZapNyiHa+hE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aW8RnGzonDuxSUefqEYwRAxnpDw8lDPfJHye5banmbXcTm/MPmSOG7O2PSJZgVwWD
-         hMhrbnp9cUdZVV7jUudeb/Li3visYDCoHKNdiHtC5l4ABFYW5efZ1lu/9xcm3HcANm
-         Cx1lvieGnO6s4yblucQTg6VSdW+4wf8C/rRREGYU=
+        b=WeXRP9onOgp/092WsvlkH7Ul05NIB7IuMzhuJET0wyLRQ41fOycWNzlXCXB34q+PL
+         wC57TEgskHRneBjZTfHYS7WRyU+/j7V9vgtIYOs4OFByDebzapMJPd5kIidqQtajnE
+         nLxjo0K9Ppjl8CDPKATM6H9MULJsgmWRJ9qtJaSc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 05/49] ARM: dts: am4372: Set memory bandwidth limit for DISPC
+        stable@vger.kernel.org, Souptick Joarder <jrdr.linux@gmail.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>
+Subject: [PATCH 5.3 125/197] drm/ttm: Restore ttm prefaulting
 Date:   Sun, 27 Oct 2019 22:00:43 +0100
-Message-Id: <20191027203123.017822699@linuxfoundation.org>
+Message-Id: <20191027203358.480134362@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Thomas Hellstrom <thellstrom@vmware.com>
 
-[ Upstream commit f90ec6cdf674248dcad85bf9af6e064bf472b841 ]
+commit 941f2f72dbbe0cf8c2d6e0b180a8021a0ec477fa upstream.
 
-Set memory bandwidth limit to filter out resolutions above 720p@60Hz to
-avoid underflow errors due to the bandwidth needs of higher resolutions.
+Commit 4daa4fba3a38 ("gpu: drm: ttm: Adding new return type vm_fault_t")
+broke TTM prefaulting. Since vmf_insert_mixed() typically always returns
+VM_FAULT_NOPAGE, prefaulting stops after the second PTE.
 
-am43xx can not provide enough bandwidth to DISPC to correctly handle
-'high' resolutions.
+Restore (almost) the original behaviour. Unfortunately we can no longer
+with the new vm_fault_t return type determine whether a prefaulting
+PTE insertion hit an already populated PTE, and terminate the insertion
+loop. Instead we continue with the pre-determined number of prefaults.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 4daa4fba3a38 ("gpu: drm: ttm: Adding new return type vm_fault_t")
+Cc: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: Christian König <christian.koenig@amd.com>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Link: https://patchwork.freedesktop.org/patch/330387/
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/dts/am4372.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/ttm/ttm_bo_vm.c |   16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
-index c9c9a47446e8e..56224aa5e83ee 100644
---- a/arch/arm/boot/dts/am4372.dtsi
-+++ b/arch/arm/boot/dts/am4372.dtsi
-@@ -1117,6 +1117,8 @@
- 				ti,hwmods = "dss_dispc";
- 				clocks = <&disp_clk>;
- 				clock-names = "fck";
-+
-+				max-memory-bandwidth = <230000000>;
- 			};
+--- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
++++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
+@@ -278,15 +278,13 @@ static vm_fault_t ttm_bo_vm_fault(struct
+ 		else
+ 			ret = vmf_insert_pfn(&cvma, address, pfn);
  
- 			rfbi: rfbi@4832a800 {
--- 
-2.20.1
-
+-		/*
+-		 * Somebody beat us to this PTE or prefaulting to
+-		 * an already populated PTE, or prefaulting error.
+-		 */
+-
+-		if (unlikely((ret == VM_FAULT_NOPAGE && i > 0)))
+-			break;
+-		else if (unlikely(ret & VM_FAULT_ERROR))
+-			goto out_io_unlock;
++		/* Never error on prefaulted PTEs */
++		if (unlikely((ret & VM_FAULT_ERROR))) {
++			if (i == 0)
++				goto out_io_unlock;
++			else
++				break;
++		}
+ 
+ 		address += PAGE_SIZE;
+ 		if (unlikely(++page_offset >= page_last))
 
 
