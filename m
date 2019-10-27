@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D6B7E6746
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:19:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10D59E674A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:19:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731502AbfJ0VTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:19:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39796 "EHLO mail.kernel.org"
+        id S1731524AbfJ0VTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:19:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731452AbfJ0VT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:19:27 -0400
+        id S1731509AbfJ0VTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:19:39 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D61520717;
-        Sun, 27 Oct 2019 21:19:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68724214E0;
+        Sun, 27 Oct 2019 21:19:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211166;
-        bh=2LmyhbCXVxyjU1oqCpnEO3Teoc6Sz9N58R4YWqEugEQ=;
+        s=default; t=1572211177;
+        bh=pdGeY4BdZh9wxfXX9Yk77xJOQObU4tbUQX9BnmzykKk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mjC4QtJ3+mPNg4HZmc72oo1eULJ0bAfJj+IBH+Dc328Xom7jNlpsN09RSTOahQr7X
-         vPPgrsCOpW9mlODYy7rSQdy9immpHtDgUHKSCVNtrQDGPVq3OJXatzKzBFo6bkRT9s
-         XPj7E6jZcF0G2EQeBEr86snl3ju6dyaXGJkJ4xKw=
+        b=aDdzFDU/paDv3GeGwTV311Vx6p3AVTmZn9PBW9YY+0jNZvAsWnaffNwRu//TD1v+0
+         nEA2eWa4/izpLFEHhXdFr/3KVCzlpCljWybLsk2qdwy8K70FRN8+9ZEi2ppLXekzuO
+         w6jKFGULCdlNVIUDCKUm3ua8j/y6gr2vtInKx2kg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 056/197] namespace: fix namespace.pl script to support relative paths
-Date:   Sun, 27 Oct 2019 21:59:34 +0100
-Message-Id: <20191027203354.698291506@linuxfoundation.org>
+Subject: [PATCH 5.3 059/197] Make filldir[64]() verify the directory entry filename is valid
+Date:   Sun, 27 Oct 2019 21:59:37 +0100
+Message-Id: <20191027203354.857292722@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -45,84 +46,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 82fdd12b95727640c9a8233c09d602e4518e71f7 ]
+[ Upstream commit 8a23eb804ca4f2be909e372cf5a9e7b30ae476cd ]
 
-The namespace.pl script does not work properly if objtree is not set to
-an absolute path. The do_nm function is run from within the find
-function, which changes directories.
+This has been discussed several times, and now filesystem people are
+talking about doing it individually at the filesystem layer, so head
+that off at the pass and just do it in getdents{64}().
 
-Because of this, appending objtree, $File::Find::dir, and $source, will
-return a path which is not valid from the current directory.
+This is partially based on a patch by Jann Horn, but checks for NUL
+bytes as well, and somewhat simplified.
 
-This used to work when objtree was set to an absolute path when using
-"make namespacecheck". It appears to have not worked when calling
-./scripts/namespace.pl directly.
+There's also commentary about how it might be better if invalid names
+due to filesystem corruption don't cause an immediate failure, but only
+an error at the end of the readdir(), so that people can still see the
+filenames that are ok.
 
-This behavior was changed in 7e1c04779efd ("kbuild: Use relative path
-for $(objtree)", 2014-05-14)
+There's also been discussion about just how much POSIX strictly speaking
+requires this since it's about filesystem corruption.  It's really more
+"protect user space from bad behavior" as pointed out by Jann.  But
+since Eric Biederman looked up the POSIX wording, here it is for context:
 
-Rather than fixing the Makefile to set objtree to an absolute path, just
-fix namespace.pl to work when srctree and objtree are relative. Also fix
-the script to use an absolute path for these by default.
+ "From readdir:
 
-Use the File::Spec module for this purpose. It's been part of perl
-5 since 5.005.
+   The readdir() function shall return a pointer to a structure
+   representing the directory entry at the current position in the
+   directory stream specified by the argument dirp, and position the
+   directory stream at the next entry. It shall return a null pointer
+   upon reaching the end of the directory stream. The structure dirent
+   defined in the <dirent.h> header describes a directory entry.
 
-The curdir() function is used to get the current directory when the
-objtree and srctree aren't set in the environment.
+  From definitions:
 
-rel2abs() is used to convert possibly relative objtree and srctree
-environment variables to absolute paths.
+   3.129 Directory Entry (or Link)
 
-Finally, the catfile() function is used instead of string appending
-paths together, since this is more robust when joining paths together.
+   An object that associates a filename with a file. Several directory
+   entries can associate names with the same file.
 
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+  ...
+
+   3.169 Filename
+
+   A name consisting of 1 to {NAME_MAX} bytes used to name a file. The
+   characters composing the name may be selected from the set of all
+   character values excluding the slash character and the null byte. The
+   filenames dot and dot-dot have special meaning. A filename is
+   sometimes referred to as a 'pathname component'."
+
+Note that I didn't bother adding the checks to any legacy interfaces
+that nobody uses.
+
+Also note that if this ends up being noticeable as a performance
+regression, we can fix that to do a much more optimized model that
+checks for both NUL and '/' at the same time one word at a time.
+
+We haven't really tended to optimize 'memchr()', and it only checks for
+one pattern at a time anyway, and we really _should_ check for NUL too
+(but see the comment about "soft errors" in the code about why it
+currently only checks for '/')
+
+See the CONFIG_DCACHE_WORD_ACCESS case of hash_name() for how the name
+lookup code looks for pathname terminating characters in parallel.
+
+Link: https://lore.kernel.org/lkml/20190118161440.220134-2-jannh@google.com/
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jann Horn <jannh@google.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/namespace.pl | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ fs/readdir.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/scripts/namespace.pl b/scripts/namespace.pl
-index 6135574a6f394..1da7bca201a42 100755
---- a/scripts/namespace.pl
-+++ b/scripts/namespace.pl
-@@ -65,13 +65,14 @@
- use warnings;
- use strict;
- use File::Find;
-+use File::Spec;
+diff --git a/fs/readdir.c b/fs/readdir.c
+index 579c8ea894ae3..19bea591c3f1d 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -118,6 +118,40 @@ out:
+ }
+ EXPORT_SYMBOL(iterate_dir);
  
- my $nm = ($ENV{'NM'} || "nm") . " -p";
- my $objdump = ($ENV{'OBJDUMP'} || "objdump") . " -s -j .comment";
--my $srctree = "";
--my $objtree = "";
--$srctree = "$ENV{'srctree'}/" if (exists($ENV{'srctree'}));
--$objtree = "$ENV{'objtree'}/" if (exists($ENV{'objtree'}));
-+my $srctree = File::Spec->curdir();
-+my $objtree = File::Spec->curdir();
-+$srctree = File::Spec->rel2abs($ENV{'srctree'}) if (exists($ENV{'srctree'}));
-+$objtree = File::Spec->rel2abs($ENV{'objtree'}) if (exists($ENV{'objtree'}));
++/*
++ * POSIX says that a dirent name cannot contain NULL or a '/'.
++ *
++ * It's not 100% clear what we should really do in this case.
++ * The filesystem is clearly corrupted, but returning a hard
++ * error means that you now don't see any of the other names
++ * either, so that isn't a perfect alternative.
++ *
++ * And if you return an error, what error do you use? Several
++ * filesystems seem to have decided on EUCLEAN being the error
++ * code for EFSCORRUPTED, and that may be the error to use. Or
++ * just EIO, which is perhaps more obvious to users.
++ *
++ * In order to see the other file names in the directory, the
++ * caller might want to make this a "soft" error: skip the
++ * entry, and return the error at the end instead.
++ *
++ * Note that this should likely do a "memchr(name, 0, len)"
++ * check too, since that would be filesystem corruption as
++ * well. However, that case can't actually confuse user space,
++ * which has to do a strlen() on the name anyway to find the
++ * filename length, and the above "soft error" worry means
++ * that it's probably better left alone until we have that
++ * issue clarified.
++ */
++static int verify_dirent_name(const char *name, int len)
++{
++	if (WARN_ON_ONCE(!len))
++		return -EIO;
++	if (WARN_ON_ONCE(memchr(name, '/', len)))
++		return -EIO;
++	return 0;
++}
++
+ /*
+  * Traditional linux readdir() handling..
+  *
+@@ -227,6 +261,9 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
+ 	int reclen = ALIGN(offsetof(struct linux_dirent, d_name) + namlen + 2,
+ 		sizeof(long));
  
- if ($#ARGV != -1) {
- 	print STDERR "usage: $0 takes no parameters\n";
-@@ -231,9 +232,9 @@ sub do_nm
- 	}
- 	($source = $basename) =~ s/\.o$//;
- 	if (-e "$source.c" || -e "$source.S") {
--		$source = "$objtree$File::Find::dir/$source";
-+		$source = File::Spec->catfile($objtree, $File::Find::dir, $source)
- 	} else {
--		$source = "$srctree$File::Find::dir/$source";
-+		$source = File::Spec->catfile($srctree, $File::Find::dir, $source)
- 	}
- 	if (! -e "$source.c" && ! -e "$source.S") {
- 		# No obvious source, exclude the object if it is conglomerate
++	buf->error = verify_dirent_name(name, namlen);
++	if (unlikely(buf->error))
++		return buf->error;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
+@@ -316,6 +353,9 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+ 	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
+ 		sizeof(u64));
+ 
++	buf->error = verify_dirent_name(name, namlen);
++	if (unlikely(buf->error))
++		return buf->error;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
 -- 
 2.20.1
 
