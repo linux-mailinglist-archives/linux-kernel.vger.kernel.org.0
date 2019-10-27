@@ -2,80 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44803E6114
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 07:21:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E655CE6125
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 07:38:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726060AbfJ0GV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 02:21:56 -0400
-Received: from mxwww.masterlogin.de ([95.129.51.220]:36188 "EHLO
-        mxwww.masterlogin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbfJ0GVz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 02:21:55 -0400
-Received: from mxout1.routing.net (unknown [192.168.10.81])
-        by new.mxwww.masterlogin.de (Postfix) with ESMTPS id 75BCD96C06;
-        Sun, 27 Oct 2019 06:21:51 +0000 (UTC)
-Received: from mxbox1.masterlogin.de (unknown [192.168.10.88])
-        by mxout1.routing.net (Postfix) with ESMTP id D3DD543C53;
-        Sun, 27 Oct 2019 06:21:51 +0000 (UTC)
-Received: from localhost.localdomain (fttx-pool-217.61.153.185.bambit.de [217.61.153.185])
-        by mxbox1.masterlogin.de (Postfix) with ESMTPSA id 369AB403C2;
-        Sun, 27 Oct 2019 06:21:51 +0000 (UTC)
-From:   Frank Wunderlich <frank-w@public-files.de>
-To:     linux-mediatek@lists.infradead.org
-Cc:     Frank Wunderlich <frank-w@public-files.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] serial: 8250-mtk: Use platform_get_irq_optional() for optional irq
-Date:   Sun, 27 Oct 2019 07:21:17 +0100
-Message-Id: <20191027062117.20389-1-frank-w@public-files.de>
-X-Mailer: git-send-email 2.17.1
+        id S1726254AbfJ0GiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 02:38:09 -0400
+Received: from hn.kd.ny.adsl ([42.231.162.229]:2131 "HELO zoosbook.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1725965AbfJ0GiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 02:38:09 -0400
+X-Greylist: delayed 131732 seconds by postgrey-1.27 at vger.kernel.org; Sun, 27 Oct 2019 02:38:07 EDT
+Received: from [115.34.178.89] by mmx09.tilkbans.com with LOCAL; Sun, 27 Oct 2019 07:24:59 +0100
+Received: from [191.211.16.161] by rly04.hottestmile.com with LOCAL; Sun, 27 Oct 2019 07:21:51 +0100
+Received: from public.micromail.com.au [115.92.118.36] by mx03.listsystemsf.net with SMTP; Sun, 27 Oct 2019 07:21:35 +0100
+Message-ID: <95B7F6BF.F24EB0E4@zoosbook.com>
+Date:   Sun, 27 Oct 2019 07:00:25 +0100
+From:   "zoosbook.com" <admin@zoosbook.com>
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.18) Gecko/20081125 Thunderbird/2.0.0.18
+MIME-Version: 1.0
+To:     <linux-assembly@vger.kernel.org>
+Cc:     <linux-kernel@vger.kernel.org>, <linux-msdos@vger.kernel.org>,
+        <linux-raid@vger.kernel.org>
+Subject: FREE Bestiality Social Network
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As platform_get_irq() now prints an error when the interrupt does not
-exist, this warnings are printed on bananapi-r2:
+Hello, 
 
-[    4.935780] mt6577-uart 11004000.serial: IRQ index 1 not found
-[    4.962589] 11002000.serial: ttyS1 at MMIO 0x11002000 (irq = 202, base_baud = 1625000) is a ST16650V2
-[    4.972127] mt6577-uart 11002000.serial: IRQ index 1 not found
-[    4.998927] 11003000.serial: ttyS2 at MMIO 0x11003000 (irq = 203, base_baud = 1625000) is a ST16650V2
-[    5.008474] mt6577-uart 11003000.serial: IRQ index 1 not found
+Bestiality Social Networking Platform. With pictures, videos and friend
+about bestiality and zoophilia porn. 
+Here you can meet and talk with people that love zoo sex.
 
-Fix this by calling platform_get_irq_optional() instead.
+Register for a free account with us today
+https://www.zoosbook.com/register
 
-now it looks like this:
+Let your animalic thoughts get alive.
 
-[    4.872751] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+After you`ll get a feeling of the things inside, please give us a nice
+review here
+https://www.scamadviser.com/check-website/zoosbook.com
 
-Fixes: 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to platform_get_irq*()")
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
-changes since v1:
-	https://patchwork.kernel.org/patch/11213813/
-	change from platform_irq_count to platform_get_irq_optional
----
- drivers/tty/serial/8250/8250_mtk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+See you inside
 
-diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
-index b411ba4eb5e9..4d067f515f74 100644
---- a/drivers/tty/serial/8250/8250_mtk.c
-+++ b/drivers/tty/serial/8250/8250_mtk.c
-@@ -544,7 +544,7 @@ static int mtk8250_probe(struct platform_device *pdev)
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 
--	data->rx_wakeup_irq = platform_get_irq(pdev, 1);
-+	data->rx_wakeup_irq = platform_get_irq_optional(pdev, 1);
- 
- 	return 0;
- }
--- 
-2.17.1
 
