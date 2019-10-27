@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E2B4E68E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48B05E69BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:38:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732401AbfJ0Vcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:32:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33120 "EHLO mail.kernel.org"
+        id S1728183AbfJ0VC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:02:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727319AbfJ0VOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:14:12 -0400
+        id S1728150AbfJ0VCy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:02:54 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C9332064A;
-        Sun, 27 Oct 2019 21:14:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 737372064A;
+        Sun, 27 Oct 2019 21:02:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210852;
-        bh=sZbX5Yt3N5y0iN6FpR9DzyZ0uhLEKkpk4eAQNGBDUuY=;
+        s=default; t=1572210173;
+        bh=DM4+LY+hEWhFaO1j9NxTeFC6cPV9oXuADt/u6COqIwE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xy2aY/85Y7weDkxBOtstj6h2+eVJyTn+N27r0GzKsJJOCkWesk8RToaqH7ctj7aAR
-         tWCABB/6CRsekh5SjOyVbsW3vlzY3XjWbxyueyGZWJllRAHuDLYJ9lEZ+zMjcAB3Hz
-         2orow+amzKRf9d/kgOnXvsz4sTxj5Dxpo4vaKvhI=
+        b=cMs7GlaoXcKFHdLz2of2NprQ4NtgOghMAAuP+OAjjnoL7w/orEojqieGFwlwKugpX
+         IU0g/gVBf3pjTKoCLi+8BIs+nxbKqYeQEBM17KoPTjntyiLiVsToRyCvhOEOqtp/AW
+         EqoQCSryVXpyI52v7HJrO23X/CF6czIg4lUo74e0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Przemys=C5=82aw=20Kopa?= <prymoo@gmail.com>,
-        Rivera Valdez <riveravaldez@ysinembargo.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Daniel Drake <dan@reactivated.net>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 40/93] ALSA: hda - Force runtime PM on Nvidia HDMI codecs
-Date:   Sun, 27 Oct 2019 22:00:52 +0100
-Message-Id: <20191027203258.387618254@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot+cf0adbb9c28c8866c788@syzkaller.appspotmail.com,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 16/41] net: avoid potential infinite loop in tc_ctl_action()
+Date:   Sun, 27 Oct 2019 22:00:54 +0100
+Message-Id: <20191027203113.220664397@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,59 +44,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 94989e318b2f11e217e86bee058088064fa9a2e9 upstream.
+[ Upstream commit 39f13ea2f61b439ebe0060393e9c39925c9ee28c ]
 
-Przemysław Kopa reports that since commit b516ea586d71 ("PCI: Enable
-NVIDIA HDA controllers"), the discrete GPU Nvidia GeForce GT 540M on his
-2011 Samsung laptop refuses to runtime suspend, resulting in a power
-regression and excessive heat.
+tc_ctl_action() has the ability to loop forever if tcf_action_add()
+returns -EAGAIN.
 
-Rivera Valdez witnesses the same issue with a GeForce GT 525M (GF108M)
-of the same era, as does another Arch Linux user named "R0AR" with a
-more recent GeForce GTX 1050 Ti (GP107M).
+This special case has been done in case a module needed to be loaded,
+but it turns out that tcf_add_notify() could also return -EAGAIN
+if the socket sk_rcvbuf limit is hit.
 
-The commit exposes the discrete GPU's HDA controller and all four codecs
-on the controller do not set the CLKSTOP and EPSS bits in the Supported
-Power States Response.  They also do not set the PS-ClkStopOk bit in the
-Get Power State Response.  hda_codec_runtime_suspend() therefore does
-not call snd_hdac_codec_link_down(), which prevents each codec and the
-PCI device from runtime suspending.
+We need to separate the two cases, and only loop for the module
+loading case.
 
-The same issue is present on some AMD discrete GPUs and we addressed it
-by forcing runtime PM despite the bits not being set, see commit
-57cb54e53bdd ("ALSA: hda - Force to link down at runtime suspend on
-ATI/AMD HDMI").
+While we are at it, add a limit of 10 attempts since unbounded
+loops are always scary.
 
-Do the same for Nvidia HDMI codecs.
+syzbot repro was something like :
 
-Fixes: b516ea586d71 ("PCI: Enable NVIDIA HDA controllers")
-Link: https://bbs.archlinux.org/viewtopic.php?pid=1865512
-Link: https://bugs.freedesktop.org/show_bug.cgi?id=75985#c81
-Reported-by: Przemysław Kopa <prymoo@gmail.com>
-Reported-by: Rivera Valdez <riveravaldez@ysinembargo.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: Daniel Drake <dan@reactivated.net>
-Cc: stable@vger.kernel.org # v5.3+
-Link: https://lore.kernel.org/r/3086bc75135c1e3567c5bc4f3cc4ff5cbf7a56c2.1571324194.git.lukas@wunner.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+socket(PF_NETLINK, SOCK_RAW|SOCK_NONBLOCK, NETLINK_ROUTE) = 3
+write(3, ..., 38) = 38
+setsockopt(3, SOL_SOCKET, SO_RCVBUF, [0], 4) = 0
+sendmsg(3, {msg_name(0)=NULL, msg_iov(1)=[{..., 388}], msg_controllen=0, msg_flags=0x10}, ...)
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 1054 Comm: khungtaskd Not tainted 5.4.0-rc1+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
+ nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
+ arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
+ watchdog+0x9d0/0xef0 kernel/hung_task.c:289
+ kthread+0x361/0x430 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 8859 Comm: syz-executor910 Not tainted 5.4.0-rc1+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:arch_local_save_flags arch/x86/include/asm/paravirt.h:751 [inline]
+RIP: 0010:lockdep_hardirqs_off+0x1df/0x2e0 kernel/locking/lockdep.c:3453
+Code: 5c 08 00 00 5b 41 5c 41 5d 5d c3 48 c7 c0 58 1d f3 88 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 80 3c 10 00 0f 85 d3 00 00 00 <48> 83 3d 21 9e 99 07 00 0f 84 b9 00 00 00 9c 58 0f 1f 44 00 00 f6
+RSP: 0018:ffff8880a6f3f1b8 EFLAGS: 00000046
+RAX: 1ffffffff11e63ab RBX: ffff88808c9c6080 RCX: 0000000000000000
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff88808c9c6914
+RBP: ffff8880a6f3f1d0 R08: ffff88808c9c6080 R09: fffffbfff16be5d1
+R10: fffffbfff16be5d0 R11: 0000000000000003 R12: ffffffff8746591f
+R13: ffff88808c9c6080 R14: ffffffff8746591f R15: 0000000000000003
+FS:  00000000011e4880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffff600400 CR3: 00000000a8920000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ trace_hardirqs_off+0x62/0x240 kernel/trace/trace_preemptirq.c:45
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
+ _raw_spin_lock_irqsave+0x6f/0xcd kernel/locking/spinlock.c:159
+ __wake_up_common_lock+0xc8/0x150 kernel/sched/wait.c:122
+ __wake_up+0xe/0x10 kernel/sched/wait.c:142
+ netlink_unlock_table net/netlink/af_netlink.c:466 [inline]
+ netlink_unlock_table net/netlink/af_netlink.c:463 [inline]
+ netlink_broadcast_filtered+0x705/0xb80 net/netlink/af_netlink.c:1514
+ netlink_broadcast+0x3a/0x50 net/netlink/af_netlink.c:1534
+ rtnetlink_send+0xdd/0x110 net/core/rtnetlink.c:714
+ tcf_add_notify net/sched/act_api.c:1343 [inline]
+ tcf_action_add+0x243/0x370 net/sched/act_api.c:1362
+ tc_ctl_action+0x3b5/0x4bc net/sched/act_api.c:1410
+ rtnetlink_rcv_msg+0x463/0xb00 net/core/rtnetlink.c:5386
+ netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
+ rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5404
+ netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+ netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
+ netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
+ sock_sendmsg_nosec net/socket.c:637 [inline]
+ sock_sendmsg+0xd7/0x130 net/socket.c:657
+ ___sys_sendmsg+0x803/0x920 net/socket.c:2311
+ __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
+ __do_sys_sendmsg net/socket.c:2365 [inline]
+ __se_sys_sendmsg net/socket.c:2363 [inline]
+ __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
+ do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440939
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot+cf0adbb9c28c8866c788@syzkaller.appspotmail.com
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/pci/hda/patch_hdmi.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/sched/act_api.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -3264,6 +3264,8 @@ static int patch_nvhdmi(struct hda_codec
- 		nvhdmi_chmap_cea_alloc_validate_get_type;
- 	spec->chmap.ops.chmap_validate = nvhdmi_chmap_validate;
+--- a/net/sched/act_api.c
++++ b/net/sched/act_api.c
+@@ -946,10 +946,15 @@ static int
+ tcf_action_add(struct net *net, struct nlattr *nla, struct nlmsghdr *n,
+ 	       u32 portid, int ovr)
+ {
+-	int ret = 0;
++	int loop, ret;
+ 	LIST_HEAD(actions);
  
-+	codec->link_down_at_suspend = 1;
+-	ret = tcf_action_init(net, nla, NULL, NULL, ovr, 0, &actions);
++	for (loop = 0; loop < 10; loop++) {
++		ret = tcf_action_init(net, nla, NULL, NULL, ovr, 0, &actions);
++		if (ret != -EAGAIN)
++			break;
++	}
 +
- 	return 0;
- }
+ 	if (ret)
+ 		goto done;
  
+@@ -992,10 +997,7 @@ static int tc_ctl_action(struct sk_buff
+ 		 */
+ 		if (n->nlmsg_flags & NLM_F_REPLACE)
+ 			ovr = 1;
+-replay:
+ 		ret = tcf_action_add(net, tca[TCA_ACT_TAB], n, portid, ovr);
+-		if (ret == -EAGAIN)
+-			goto replay;
+ 		break;
+ 	case RTM_DELACTION:
+ 		ret = tca_action_gd(net, tca[TCA_ACT_TAB], n,
 
 
