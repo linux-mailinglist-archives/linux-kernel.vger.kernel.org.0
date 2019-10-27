@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17AFBE66C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:15:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F4B4E65AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:04:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730555AbfJ0VO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:14:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33922 "EHLO mail.kernel.org"
+        id S1728568AbfJ0VEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:04:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730533AbfJ0VOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:14:53 -0400
+        id S1728556AbfJ0VEI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:04:08 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07EBF214AF;
-        Sun, 27 Oct 2019 21:14:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3A2220B7C;
+        Sun, 27 Oct 2019 21:04:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210892;
-        bh=lhAvbhfQlTnRyecNnxC92jiplQHtUjhVHPGI6Ea5VTo=;
+        s=default; t=1572210248;
+        bh=uMocm4+Idqizp2zaiVTkONT4tZfh/ZwZSSAhrI2oUFI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Su3VFObjISlx3r7hcb4AMANNvXK9eCOwXlyLy7uJnh8Yq/8Y1u/HowBywyLvueMbx
-         kH/icvMqb9SyrYul7XYIJ/8AFjkA2kUo4M3rtDfdoDRc5Kw8t0p3o7VKZgVEyvMkb7
-         XmNY2lA+twIhr3uzHOx4D8rWYZKUrLc9OJBQ0sFc=
+        b=RYfl1NfNfQxdZigvbs9Vm6iprtWv0Z4N3j8t7PG12EB/vbyXIp53zAo/+8cRqBwdT
+         44GnGNdf2YVS9VO3XFNANkmRBhArYNlewBLcf5U6yrE7wZTmBBQfcQ5qnc/yF4Y/DD
+         xOKnsfgZbtNmY0OeVIfDfyXMAZvirP5JYz98BmSQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.19 53/93] Input: da9063 - fix capability and drop KEY_SLEEP
-Date:   Sun, 27 Oct 2019 22:01:05 +0100
-Message-Id: <20191027203301.409557915@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Nicolas Waisman <nico@semmle.com>,
+        Will Deacon <will@kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.4 28/41] mac80211: Reject malformed SSID elements
+Date:   Sun, 27 Oct 2019 22:01:06 +0100
+Message-Id: <20191027203123.346468408@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,41 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Felsch <m.felsch@pengutronix.de>
+From: Will Deacon <will@kernel.org>
 
-commit afce285b859cea91c182015fc9858ea58c26cd0e upstream.
+commit 4152561f5da3fca92af7179dd538ea89e248f9d0 upstream.
 
-Since commit f889beaaab1c ("Input: da9063 - report KEY_POWER instead of
-KEY_SLEEP during power key-press") KEY_SLEEP isn't supported anymore. This
-caused input device to not generate any events if "dlg,disable-key-power"
-is set.
+Although this shouldn't occur in practice, it's a good idea to bounds
+check the length field of the SSID element prior to using it for things
+like allocations or memcpy operations.
 
-Fix this by unconditionally setting KEY_POWER capability, and not
-declaring KEY_SLEEP.
-
-Fixes: f889beaaab1c ("Input: da9063 - report KEY_POWER instead of KEY_SLEEP during power key-press")
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: <stable@vger.kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Reported-by: Nicolas Waisman <nico@semmle.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Link: https://lore.kernel.org/r/20191004095132.15777-1-will@kernel.org
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/misc/da9063_onkey.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ net/mac80211/mlme.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/input/misc/da9063_onkey.c
-+++ b/drivers/input/misc/da9063_onkey.c
-@@ -248,10 +248,7 @@ static int da9063_onkey_probe(struct pla
- 	onkey->input->phys = onkey->phys;
- 	onkey->input->dev.parent = &pdev->dev;
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -2431,7 +2431,8 @@ struct sk_buff *ieee80211_ap_probereq_ge
  
--	if (onkey->key_power)
--		input_set_capability(onkey->input, EV_KEY, KEY_POWER);
--
--	input_set_capability(onkey->input, EV_KEY, KEY_SLEEP);
-+	input_set_capability(onkey->input, EV_KEY, KEY_POWER);
+ 	rcu_read_lock();
+ 	ssid = ieee80211_bss_get_ie(cbss, WLAN_EID_SSID);
+-	if (WARN_ON_ONCE(ssid == NULL))
++	if (WARN_ONCE(!ssid || ssid[1] > IEEE80211_MAX_SSID_LEN,
++		      "invalid SSID element (len=%d)", ssid ? ssid[1] : -1))
+ 		ssid_len = 0;
+ 	else
+ 		ssid_len = ssid[1];
+@@ -4669,7 +4670,7 @@ int ieee80211_mgd_assoc(struct ieee80211
  
- 	INIT_DELAYED_WORK(&onkey->work, da9063_poll_on);
- 
+ 	rcu_read_lock();
+ 	ssidie = ieee80211_bss_get_ie(req->bss, WLAN_EID_SSID);
+-	if (!ssidie) {
++	if (!ssidie || ssidie[1] > sizeof(assoc_data->ssid)) {
+ 		rcu_read_unlock();
+ 		kfree(assoc_data);
+ 		return -EINVAL;
 
 
