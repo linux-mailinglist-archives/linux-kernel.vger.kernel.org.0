@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 850E6E68E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1794BE68F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:33:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732423AbfJ0Vcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:32:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60978 "EHLO mail.kernel.org"
+        id S1730165AbfJ0VNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:13:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730349AbfJ0VNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:13:52 -0400
+        id S1730147AbfJ0VM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:12:58 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69B5A2064A;
-        Sun, 27 Oct 2019 21:13:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75D49205C9;
+        Sun, 27 Oct 2019 21:12:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210832;
-        bh=a6QrCgvPtkiusi9ilJt4Zom9bVBDTpq53Np9aJQXGDw=;
+        s=default; t=1572210778;
+        bh=WxL+isxSLqVyP/vPvSWCFfVBslLsA4hnCVMimY/E5uU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Djzpvc4l3tpjE18T1z/LjdsXrqkHYYv3HEJSxjapaa4agfzS7GXKiwocJmk5zQJM0
-         0uybJW3/zLf9+YgMGjetTphSzCU9cicy3sVDRVdjKvr9Imd5eAy6SFJ9c8B+qWMrgI
-         F9OQCA++Z3Ey43LEclVTWGu9ZhIana1mjhRZLUZU=
+        b=elcjCHWqu3/GDcP+5WvPGX3zRIxW3Ke+TC/8HQwXjnnK7rnDHyHuilyTGYqj2h7qF
+         qg54zgNw7B1wqv2i1fKyM/j0/gpBN8MTycfyAqmdqRx2504h2vQQdH9Gy1LAw9KcrS
+         w42RSEellvM9FEMFiV9lbPXQa1HAQKy0GxzJ+CqQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
+        stable@vger.kernel.org, Laura Garcia Liebana <nevola@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 07/93] ieee802154: ca8210: prevent memory leak
-Date:   Sun, 27 Oct 2019 22:00:19 +0100
-Message-Id: <20191027203253.569848272@linuxfoundation.org>
+Subject: [PATCH 4.19 14/93] netfilter: nft_connlimit: disable bh on garbage collection
+Date:   Sun, 27 Oct 2019 22:00:26 +0100
+Message-Id: <20191027203254.801058241@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
 References: <20191027203251.029297948@linuxfoundation.org>
@@ -45,40 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-[ Upstream commit 6402939ec86eaf226c8b8ae00ed983936b164908 ]
+[ Upstream commit 34a4c95abd25ab41fb390b985a08a651b1fa0b0f ]
 
-In ca8210_probe the allocated pdata needs to be assigned to
-spi_device->dev.platform_data before calling ca8210_get_platform_data.
-Othrwise when ca8210_get_platform_data fails pdata cannot be released.
+BH must be disabled when invoking nf_conncount_gc_list() to perform
+garbage collection, otherwise deadlock might happen.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Link: https://lore.kernel.org/r/20190917224713.26371-1-navid.emamdoost@gmail.com
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+  nf_conncount_add+0x1f/0x50 [nf_conncount]
+  nft_connlimit_eval+0x4c/0xe0 [nft_connlimit]
+  nft_dynset_eval+0xb5/0x100 [nf_tables]
+  nft_do_chain+0xea/0x420 [nf_tables]
+  ? sch_direct_xmit+0x111/0x360
+  ? noqueue_init+0x10/0x10
+  ? __qdisc_run+0x84/0x510
+  ? tcp_packet+0x655/0x1610 [nf_conntrack]
+  ? ip_finish_output2+0x1a7/0x430
+  ? tcp_error+0x130/0x150 [nf_conntrack]
+  ? nf_conntrack_in+0x1fc/0x4c0 [nf_conntrack]
+  nft_do_chain_ipv4+0x66/0x80 [nf_tables]
+  nf_hook_slow+0x44/0xc0
+  ip_rcv+0xb5/0xd0
+  ? ip_rcv_finish_core.isra.19+0x360/0x360
+  __netif_receive_skb_one_core+0x52/0x70
+  netif_receive_skb_internal+0x34/0xe0
+  napi_gro_receive+0xba/0xe0
+  e1000_clean_rx_irq+0x1e9/0x420 [e1000e]
+  e1000e_poll+0xbe/0x290 [e1000e]
+  net_rx_action+0x149/0x3b0
+  __do_softirq+0xde/0x2d8
+  irq_exit+0xba/0xc0
+  do_IRQ+0x85/0xd0
+  common_interrupt+0xf/0xf
+  </IRQ>
+  RIP: 0010:nf_conncount_gc_list+0x3b/0x130 [nf_conncount]
+
+Fixes: 2f971a8f4255 ("netfilter: nf_conncount: move all list iterations under spinlock")
+Reported-by: Laura Garcia Liebana <nevola@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ieee802154/ca8210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/nft_connlimit.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
-index b2ff903a9cb6e..38a41651e451c 100644
---- a/drivers/net/ieee802154/ca8210.c
-+++ b/drivers/net/ieee802154/ca8210.c
-@@ -3151,12 +3151,12 @@ static int ca8210_probe(struct spi_device *spi_device)
- 		goto error;
- 	}
+diff --git a/net/netfilter/nft_connlimit.c b/net/netfilter/nft_connlimit.c
+index af1497ab94642..69d6173f91e2b 100644
+--- a/net/netfilter/nft_connlimit.c
++++ b/net/netfilter/nft_connlimit.c
+@@ -218,8 +218,13 @@ static void nft_connlimit_destroy_clone(const struct nft_ctx *ctx,
+ static bool nft_connlimit_gc(struct net *net, const struct nft_expr *expr)
+ {
+ 	struct nft_connlimit *priv = nft_expr_priv(expr);
++	bool ret;
  
-+	priv->spi->dev.platform_data = pdata;
- 	ret = ca8210_get_platform_data(priv->spi, pdata);
- 	if (ret) {
- 		dev_crit(&spi_device->dev, "ca8210_get_platform_data failed\n");
- 		goto error;
- 	}
--	priv->spi->dev.platform_data = pdata;
+-	return nf_conncount_gc_list(net, &priv->list);
++	local_bh_disable();
++	ret = nf_conncount_gc_list(net, &priv->list);
++	local_bh_enable();
++
++	return ret;
+ }
  
- 	ret = ca8210_dev_com_init(priv);
- 	if (ret) {
+ static struct nft_expr_type nft_connlimit_type;
 -- 
 2.20.1
 
