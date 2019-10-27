@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFA22E663D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:10:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 257E1E6840
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:28:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729615AbfJ0VKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:10:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56388 "EHLO mail.kernel.org"
+        id S1732288AbfJ0VXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:23:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729606AbfJ0VKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:10:00 -0400
+        id S1728015AbfJ0VXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:23:04 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF08C2064A;
-        Sun, 27 Oct 2019 21:09:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B63022064A;
+        Sun, 27 Oct 2019 21:23:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210599;
-        bh=pXZAtazzLCACvaPEX4JchWnZpKx6+ZkzhKfFsgI1nTc=;
+        s=default; t=1572211383;
+        bh=vdyYnKwvAV0Rcj7lYYBcr2EqFHtlSNWDkV77CDNA09c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iJg2mML4BqEjIWz3BT6X5HYLPL5v06+rc04CUq2HHfGqWgtRHcEmVFLuo7RVhrnFN
-         DpLNBguwD9CBbYslROTjH7bl7kofqKX3EUz8zTyJ4P3uiTrd3eyVxUNj3gAnpqamla
-         gKQA/h7d4zFMSymzEzZoqtGIzQ7WG9gLthhWt9qA=
+        b=d+B7JSkm2NegXvgSq3NKUinQ70m7Fq+hrXSXCilqA87ltonrbSmc3h+LHLbFtC3hq
+         9ik1DGD4yBNbgSxxv9nCunHKZeTEyR3CfJJWi90EBu+vWJ/OmVAGpcUsSSlO+fxVyO
+         sxASQdNbem/UFuSKOMHBFZNfyZ80864GzVuZ4Mn8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 071/119] arm64: fix SSBS sanitization
+        stable@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>,
+        Masami Ichikawa <masami256@gmail.com>,
+        Torsten <freedesktop201910@liggy.de>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: [PATCH 5.3 130/197] drm/i915: Favor last VBT child device with conflicting AUX ch/DDC pin
 Date:   Sun, 27 Oct 2019 22:00:48 +0100
-Message-Id: <20191027203337.157715441@linuxfoundation.org>
+Message-Id: <20191027203358.739910000@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,68 +47,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-[ Upstream commit f54dada8274643e3ff4436df0ea124aeedc43cae ]
+commit 0336ab580878f4c5663dfa2b66095821fdc3e588 upstream.
 
-In valid_user_regs() we treat SSBS as a RES0 bit, and consequently it is
-unexpectedly cleared when we restore a sigframe or fiddle with GPRs via
-ptrace.
+The first come first served apporoach to handling the VBT
+child device AUX ch conflicts has backfired. We have machines
+in the wild where the VBT specifies both port A eDP and
+port E DP (in that order) with port E being the real one.
 
-This patch fixes valid_user_regs() to account for this, updating the
-function to refer to the latest ARM ARM (ARM DDI 0487D.a). For AArch32
-tasks, SSBS appears in bit 23 of SPSR_EL1, matching its position in the
-AArch32-native PSR format, and we don't need to translate it as we have
-to for DIT.
+So let's try to flip the preference around and let the last
+child device win once again.
 
-There are no other bit assignments that we need to account for today.
-As the recent documentation describes the DIT bit, we can drop our
-comment regarding DIT.
-
-While removing SSBS from the RES0 masks, existing inconsistent
-whitespace is corrected.
-
-Fixes: d71be2b6c0e19180 ("arm64: cpufeature: Detect SSBS and advertise to userspace")
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: stable@vger.kernel.org
+Cc: Jani Nikula <jani.nikula@intel.com>
+Tested-by: Masami Ichikawa <masami256@gmail.com>
+Tested-by: Torsten <freedesktop201910@liggy.de>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=111966
+Fixes: 36a0f92020dc ("drm/i915/bios: make child device order the priority order")
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191011202030.8829-1-ville.syrjala@linux.intel.com
+Acked-by: Jani Nikula <jani.nikula@intel.com>
+(cherry picked from commit 41e35ffb380bde1379e4030bb5b2ac824d5139cf)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/ptrace.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -1402,19 +1402,20 @@ asmlinkage void syscall_trace_exit(struc
- }
+---
+ drivers/gpu/drm/i915/display/intel_bios.c |   22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+
+--- a/drivers/gpu/drm/i915/display/intel_bios.c
++++ b/drivers/gpu/drm/i915/display/intel_bios.c
+@@ -1269,7 +1269,7 @@ static void sanitize_ddc_pin(struct drm_
+ 		DRM_DEBUG_KMS("port %c trying to use the same DDC pin (0x%x) as port %c, "
+ 			      "disabling port %c DVI/HDMI support\n",
+ 			      port_name(port), info->alternate_ddc_pin,
+-			      port_name(p), port_name(port));
++			      port_name(p), port_name(p));
  
- /*
-- * SPSR_ELx bits which are always architecturally RES0 per ARM DDI 0487C.a
-- * We also take into account DIT (bit 24), which is not yet documented, and
-- * treat PAN and UAO as RES0 bits, as they are meaningless at EL0, and may be
-- * allocated an EL0 meaning in future.
-+ * SPSR_ELx bits which are always architecturally RES0 per ARM DDI 0487D.a.
-+ * We permit userspace to set SSBS (AArch64 bit 12, AArch32 bit 23) which is
-+ * not described in ARM DDI 0487D.a.
-+ * We treat PAN and UAO as RES0 bits, as they are meaningless at EL0, and may
-+ * be allocated an EL0 meaning in future.
-  * Userspace cannot use these until they have an architectural meaning.
-  * Note that this follows the SPSR_ELx format, not the AArch32 PSR format.
-  * We also reserve IL for the kernel; SS is handled dynamically.
-  */
- #define SPSR_EL1_AARCH64_RES0_BITS \
--	(GENMASK_ULL(63,32) | GENMASK_ULL(27, 25) | GENMASK_ULL(23, 22) | \
--	 GENMASK_ULL(20, 10) | GENMASK_ULL(5, 5))
-+	(GENMASK_ULL(63, 32) | GENMASK_ULL(27, 25) | GENMASK_ULL(23, 22) | \
-+	 GENMASK_ULL(20, 13) | GENMASK_ULL(11, 10) | GENMASK_ULL(5, 5))
- #define SPSR_EL1_AARCH32_RES0_BITS \
--	(GENMASK_ULL(63,32) | GENMASK_ULL(23, 22) | GENMASK_ULL(20,20))
-+	(GENMASK_ULL(63, 32) | GENMASK_ULL(22, 22) | GENMASK_ULL(20, 20))
+ 		/*
+ 		 * If we have multiple ports supposedly sharing the
+@@ -1277,9 +1277,14 @@ static void sanitize_ddc_pin(struct drm_
+ 		 * port. Otherwise they share the same ddc bin and
+ 		 * system couldn't communicate with them separately.
+ 		 *
+-		 * Give child device order the priority, first come first
+-		 * served.
++		 * Give inverse child device order the priority,
++		 * last one wins. Yes, there are real machines
++		 * (eg. Asrock B250M-HDV) where VBT has both
++		 * port A and port E with the same AUX ch and
++		 * we must pick port E :(
+ 		 */
++		info = &dev_priv->vbt.ddi_port_info[p];
++
+ 		info->supports_dvi = false;
+ 		info->supports_hdmi = false;
+ 		info->alternate_ddc_pin = 0;
+@@ -1315,7 +1320,7 @@ static void sanitize_aux_ch(struct drm_i
+ 		DRM_DEBUG_KMS("port %c trying to use the same AUX CH (0x%x) as port %c, "
+ 			      "disabling port %c DP support\n",
+ 			      port_name(port), info->alternate_aux_channel,
+-			      port_name(p), port_name(port));
++			      port_name(p), port_name(p));
  
- static int valid_compat_regs(struct user_pt_regs *regs)
- {
+ 		/*
+ 		 * If we have multiple ports supposedlt sharing the
+@@ -1323,9 +1328,14 @@ static void sanitize_aux_ch(struct drm_i
+ 		 * port. Otherwise they share the same aux channel
+ 		 * and system couldn't communicate with them separately.
+ 		 *
+-		 * Give child device order the priority, first come first
+-		 * served.
++		 * Give inverse child device order the priority,
++		 * last one wins. Yes, there are real machines
++		 * (eg. Asrock B250M-HDV) where VBT has both
++		 * port A and port E with the same AUX ch and
++		 * we must pick port E :(
+ 		 */
++		info = &dev_priv->vbt.ddi_port_info[p];
++
+ 		info->supports_dp = false;
+ 		info->alternate_aux_channel = 0;
+ 	}
 
 
